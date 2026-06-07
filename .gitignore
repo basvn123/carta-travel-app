@@ -1,0 +1,19 @@
+# Dependencies
+node_modules/
+
+# Build output (hosts rebuild this from source)
+continent-app/dist/
+continent-app/.vercel/
+
+# Python
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# Environment / secrets
+.env
+.env.*
+
+# OS
+.DS_Store
+Thumbs.db

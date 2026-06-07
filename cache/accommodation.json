@@ -1,0 +1,561 @@
+{
+  "meta": {
+    "schema_version": 7,
+    "generated_at": "2026-06-07T12:59:44.918091+00:00",
+    "currency": "EUR",
+    "baseline": "BE",
+    "model": {
+      "service_fee_pct": 14.0,
+      "cleaning_fee_frac_of_night": 0.5,
+      "weekly_discount_pct": 8.0,
+      "min_nights_for_weekly": 7,
+      "seasonality": {
+        "1": 0.82,
+        "2": 0.82,
+        "3": 0.9,
+        "4": 0.98,
+        "5": 1.08,
+        "6": 1.22,
+        "7": 1.35,
+        "8": 1.35,
+        "9": 1.15,
+        "10": 1.0,
+        "11": 0.85,
+        "12": 0.92
+      },
+      "assumptions": "entire home/apt; stored value is the annual median base nightly per person (whole-home median / capacity). Runtime adds seasonality, a weekly discount, an amortised cleaning fee and the service fee."
+    },
+    "sources": [
+      "Inside Airbnb listing-level data, CC-BY 4.0, captured June 2026 (anchors)",
+      "Eurostat 2024 restaurants & hotels Price Level Indices (long-tail scaling)",
+      "AirDNA European market reviews 2025 (seasonality calibration)"
+    ],
+    "validation": {
+      "method": "Belgium baseline x Eurostat restaurants&hotels PLI, validated vs Inside Airbnb anchors",
+      "overall_mae_pct": 16.9,
+      "n_checks": 13
+    }
+  },
+  "countries": {
+    "AD": {
+      "per_person_night_eur": 24.32,
+      "cleaning_per_person_eur": 12.16,
+      "entire_home_night_eur": 97.29,
+      "typical_capacity": 4,
+      "source": "airbnb_pli_scaled"
+    },
+    "AL": {
+      "per_person_night_eur": 13.05,
+      "cleaning_per_person_eur": 6.53,
+      "entire_home_night_eur": 52.2,
+      "typical_capacity": 4,
+      "source": "airbnb_pli_scaled"
+    },
+    "AT": {
+      "per_person_night_eur": 28.75,
+      "cleaning_per_person_eur": 14.38,
+      "entire_home_night_eur": 115,
+      "typical_capacity": 4,
+      "source": "inside_airbnb_country"
+    },
+    "BA": {
+      "per_person_night_eur": 14.95,
+      "cleaning_per_person_eur": 7.47,
+      "entire_home_night_eur": 59.8,
+      "typical_capacity": 4,
+      "source": "airbnb_pli_scaled"
+    },
+    "BE": {
+      "per_person_night_eur": 28.0,
+      "cleaning_per_person_eur": 14.0,
+      "entire_home_night_eur": 112,
+      "typical_capacity": 4,
+      "source": "inside_airbnb_country"
+    },
+    "BG": {
+      "per_person_night_eur": 14.71,
+      "cleaning_per_person_eur": 7.36,
+      "entire_home_night_eur": 58.85,
+      "typical_capacity": 4,
+      "source": "airbnb_pli_scaled"
+    },
+    "CH": {
+      "per_person_night_eur": 43.75,
+      "cleaning_per_person_eur": 21.88,
+      "entire_home_night_eur": 175,
+      "typical_capacity": 4,
+      "source": "inside_airbnb_country"
+    },
+    "CY": {
+      "per_person_night_eur": 22.07,
+      "cleaning_per_person_eur": 11.04,
+      "entire_home_night_eur": 88.27,
+      "typical_capacity": 4,
+      "source": "airbnb_pli_scaled"
+    },
+    "CZ": {
+      "per_person_night_eur": 20.17,
+      "cleaning_per_person_eur": 10.09,
+      "entire_home_night_eur": 80.68,
+      "typical_capacity": 4,
+      "source": "airbnb_pli_scaled"
+    },
+    "DE": {
+      "per_person_night_eur": 31.25,
+      "cleaning_per_person_eur": 15.62,
+      "entire_home_night_eur": 125,
+      "typical_capacity": 4,
+      "source": "inside_airbnb_country"
+    },
+    "DK": {
+      "per_person_night_eur": 41.25,
+      "cleaning_per_person_eur": 20.62,
+      "entire_home_night_eur": 165,
+      "typical_capacity": 4,
+      "source": "inside_airbnb_country"
+    },
+    "EE": {
+      "per_person_night_eur": 23.25,
+      "cleaning_per_person_eur": 11.62,
+      "entire_home_night_eur": 93.02,
+      "typical_capacity": 4,
+      "source": "airbnb_pli_scaled"
+    },
+    "ES": {
+      "per_person_night_eur": 30.5,
+      "cleaning_per_person_eur": 15.25,
+      "entire_home_night_eur": 122,
+      "typical_capacity": 4,
+      "source": "inside_airbnb_country"
+    },
+    "FI": {
+      "per_person_night_eur": 32.75,
+      "cleaning_per_person_eur": 16.38,
+      "entire_home_night_eur": 130.98,
+      "typical_capacity": 4,
+      "source": "airbnb_pli_scaled"
+    },
+    "FR": {
+      "per_person_night_eur": 32.5,
+      "cleaning_per_person_eur": 16.25,
+      "entire_home_night_eur": 130,
+      "typical_capacity": 4,
+      "source": "inside_airbnb_country"
+    },
+    "GB": {
+      "per_person_night_eur": 37.5,
+      "cleaning_per_person_eur": 18.75,
+      "entire_home_night_eur": 150,
+      "typical_capacity": 4,
+      "source": "inside_airbnb_country"
+    },
+    "GR": {
+      "per_person_night_eur": 22.5,
+      "cleaning_per_person_eur": 11.25,
+      "entire_home_night_eur": 90,
+      "typical_capacity": 4,
+      "source": "inside_airbnb_country"
+    },
+    "HR": {
+      "per_person_night_eur": 20.17,
+      "cleaning_per_person_eur": 10.09,
+      "entire_home_night_eur": 80.68,
+      "typical_capacity": 4,
+      "source": "airbnb_pli_scaled"
+    },
+    "HU": {
+      "per_person_night_eur": 22.5,
+      "cleaning_per_person_eur": 11.25,
+      "entire_home_night_eur": 90,
+      "typical_capacity": 4,
+      "source": "inside_airbnb_country"
+    },
+    "IE": {
+      "per_person_night_eur": 41.25,
+      "cleaning_per_person_eur": 20.62,
+      "entire_home_night_eur": 165,
+      "typical_capacity": 4,
+      "source": "inside_airbnb_country"
+    },
+    "IS": {
+      "per_person_night_eur": 41.53,
+      "cleaning_per_person_eur": 20.77,
+      "entire_home_night_eur": 166.1,
+      "typical_capacity": 4,
+      "source": "airbnb_pli_scaled"
+    },
+    "IT": {
+      "per_person_night_eur": 31.25,
+      "cleaning_per_person_eur": 15.62,
+      "entire_home_night_eur": 125,
+      "typical_capacity": 4,
+      "source": "inside_airbnb_country"
+    },
+    "LI": {
+      "per_person_night_eur": 35.24,
+      "cleaning_per_person_eur": 17.62,
+      "entire_home_night_eur": 140.95,
+      "typical_capacity": 4,
+      "source": "airbnb_pli_scaled"
+    },
+    "LT": {
+      "per_person_night_eur": 18.75,
+      "cleaning_per_person_eur": 9.38,
+      "entire_home_night_eur": 74.98,
+      "typical_capacity": 4,
+      "source": "airbnb_pli_scaled"
+    },
+    "LU": {
+      "per_person_night_eur": 31.32,
+      "cleaning_per_person_eur": 15.66,
+      "entire_home_night_eur": 125.29,
+      "typical_capacity": 4,
+      "source": "airbnb_pli_scaled"
+    },
+    "LV": {
+      "per_person_night_eur": 20.88,
+      "cleaning_per_person_eur": 10.44,
+      "entire_home_night_eur": 83.53,
+      "typical_capacity": 4,
+      "source": "airbnb_pli_scaled"
+    },
+    "MC": {
+      "per_person_night_eur": 25.86,
+      "cleaning_per_person_eur": 12.93,
+      "entire_home_night_eur": 103.46,
+      "typical_capacity": 4,
+      "source": "airbnb_pli_scaled"
+    },
+    "MD": {
+      "per_person_night_eur": 13.76,
+      "cleaning_per_person_eur": 6.88,
+      "entire_home_night_eur": 55.05,
+      "typical_capacity": 4,
+      "source": "airbnb_pli_scaled"
+    },
+    "ME": {
+      "per_person_night_eur": 16.14,
+      "cleaning_per_person_eur": 8.07,
+      "entire_home_night_eur": 64.54,
+      "typical_capacity": 4,
+      "source": "airbnb_pli_scaled"
+    },
+    "MK": {
+      "per_person_night_eur": 11.39,
+      "cleaning_per_person_eur": 5.7,
+      "entire_home_night_eur": 45.56,
+      "typical_capacity": 4,
+      "source": "airbnb_pli_scaled"
+    },
+    "MT": {
+      "per_person_night_eur": 23.73,
+      "cleaning_per_person_eur": 11.87,
+      "entire_home_night_eur": 94.92,
+      "typical_capacity": 4,
+      "source": "airbnb_pli_scaled"
+    },
+    "NL": {
+      "per_person_night_eur": 43.75,
+      "cleaning_per_person_eur": 21.88,
+      "entire_home_night_eur": 175,
+      "typical_capacity": 4,
+      "source": "inside_airbnb_country"
+    },
+    "NO": {
+      "per_person_night_eur": 34.41,
+      "cleaning_per_person_eur": 17.2,
+      "entire_home_night_eur": 137.63,
+      "typical_capacity": 4,
+      "source": "airbnb_pli_scaled"
+    },
+    "PL": {
+      "per_person_night_eur": 15.19,
+      "cleaning_per_person_eur": 7.59,
+      "entire_home_night_eur": 60.75,
+      "typical_capacity": 4,
+      "source": "airbnb_pli_scaled"
+    },
+    "PT": {
+      "per_person_night_eur": 31.25,
+      "cleaning_per_person_eur": 15.62,
+      "entire_home_night_eur": 125,
+      "typical_capacity": 4,
+      "source": "inside_airbnb_country"
+    },
+    "RO": {
+      "per_person_night_eur": 13.76,
+      "cleaning_per_person_eur": 6.88,
+      "entire_home_night_eur": 55.05,
+      "typical_capacity": 4,
+      "source": "airbnb_pli_scaled"
+    },
+    "RS": {
+      "per_person_night_eur": 16.14,
+      "cleaning_per_person_eur": 8.07,
+      "entire_home_night_eur": 64.54,
+      "typical_capacity": 4,
+      "source": "airbnb_pli_scaled"
+    },
+    "SE": {
+      "per_person_night_eur": 27.53,
+      "cleaning_per_person_eur": 13.77,
+      "entire_home_night_eur": 110.1,
+      "typical_capacity": 4,
+      "source": "airbnb_pli_scaled"
+    },
+    "SI": {
+      "per_person_night_eur": 21.36,
+      "cleaning_per_person_eur": 10.68,
+      "entire_home_night_eur": 85.42,
+      "typical_capacity": 4,
+      "source": "airbnb_pli_scaled"
+    },
+    "SK": {
+      "per_person_night_eur": 20.17,
+      "cleaning_per_person_eur": 10.09,
+      "entire_home_night_eur": 80.68,
+      "typical_capacity": 4,
+      "source": "airbnb_pli_scaled"
+    },
+    "SM": {
+      "per_person_night_eur": 24.2,
+      "cleaning_per_person_eur": 12.1,
+      "entire_home_night_eur": 96.81,
+      "typical_capacity": 4,
+      "source": "airbnb_pli_scaled"
+    },
+    "XK": {
+      "per_person_night_eur": 13.76,
+      "cleaning_per_person_eur": 6.88,
+      "entire_home_night_eur": 55.05,
+      "typical_capacity": 4,
+      "source": "airbnb_pli_scaled"
+    }
+  },
+  "cities": {
+    "Amsterdam": {
+      "per_person_night_eur": 46.25,
+      "cleaning_per_person_eur": 23.12,
+      "entire_home_night_eur": 185,
+      "typical_capacity": 4,
+      "source": "inside_airbnb_city"
+    },
+    "Antwerp": {
+      "per_person_night_eur": 28.75,
+      "cleaning_per_person_eur": 14.38,
+      "entire_home_night_eur": 115,
+      "typical_capacity": 4,
+      "source": "inside_airbnb_city"
+    },
+    "Athens": {
+      "per_person_night_eur": 20.0,
+      "cleaning_per_person_eur": 10.0,
+      "entire_home_night_eur": 80,
+      "typical_capacity": 4,
+      "source": "inside_airbnb_city"
+    },
+    "Barcelona": {
+      "per_person_night_eur": 32.5,
+      "cleaning_per_person_eur": 16.25,
+      "entire_home_night_eur": 130,
+      "typical_capacity": 4,
+      "source": "inside_airbnb_city"
+    },
+    "Berlin": {
+      "per_person_night_eur": 28.75,
+      "cleaning_per_person_eur": 14.38,
+      "entire_home_night_eur": 115,
+      "typical_capacity": 4,
+      "source": "inside_airbnb_city"
+    },
+    "Bologna": {
+      "per_person_night_eur": 30.0,
+      "cleaning_per_person_eur": 15.0,
+      "entire_home_night_eur": 120,
+      "typical_capacity": 4,
+      "source": "inside_airbnb_city"
+    },
+    "Bordeaux": {
+      "per_person_night_eur": 28.75,
+      "cleaning_per_person_eur": 14.38,
+      "entire_home_night_eur": 115,
+      "typical_capacity": 4,
+      "source": "inside_airbnb_city"
+    },
+    "Bristol": {
+      "per_person_night_eur": 32.5,
+      "cleaning_per_person_eur": 16.25,
+      "entire_home_night_eur": 130,
+      "typical_capacity": 4,
+      "source": "inside_airbnb_city"
+    },
+    "Brussels": {
+      "per_person_night_eur": 27.5,
+      "cleaning_per_person_eur": 13.75,
+      "entire_home_night_eur": 110,
+      "typical_capacity": 4,
+      "source": "inside_airbnb_city"
+    },
+    "Budapest": {
+      "per_person_night_eur": 22.5,
+      "cleaning_per_person_eur": 11.25,
+      "entire_home_night_eur": 90,
+      "typical_capacity": 4,
+      "source": "inside_airbnb_city"
+    },
+    "Copenhagen": {
+      "per_person_night_eur": 41.25,
+      "cleaning_per_person_eur": 20.62,
+      "entire_home_night_eur": 165,
+      "typical_capacity": 4,
+      "source": "inside_airbnb_city"
+    },
+    "Crete": {
+      "per_person_night_eur": 25.0,
+      "cleaning_per_person_eur": 12.5,
+      "entire_home_night_eur": 100,
+      "typical_capacity": 4,
+      "source": "inside_airbnb_city"
+    },
+    "Dublin": {
+      "per_person_night_eur": 41.25,
+      "cleaning_per_person_eur": 20.62,
+      "entire_home_night_eur": 165,
+      "typical_capacity": 4,
+      "source": "inside_airbnb_city"
+    },
+    "Edinburgh": {
+      "per_person_night_eur": 37.5,
+      "cleaning_per_person_eur": 18.75,
+      "entire_home_night_eur": 150,
+      "typical_capacity": 4,
+      "source": "inside_airbnb_city"
+    },
+    "Florence": {
+      "per_person_night_eur": 36.25,
+      "cleaning_per_person_eur": 18.12,
+      "entire_home_night_eur": 145,
+      "typical_capacity": 4,
+      "source": "inside_airbnb_city"
+    },
+    "Geneva": {
+      "per_person_night_eur": 43.75,
+      "cleaning_per_person_eur": 21.88,
+      "entire_home_night_eur": 175,
+      "typical_capacity": 4,
+      "source": "inside_airbnb_city"
+    },
+    "Ghent": {
+      "per_person_night_eur": 28.75,
+      "cleaning_per_person_eur": 14.38,
+      "entire_home_night_eur": 115,
+      "typical_capacity": 4,
+      "source": "inside_airbnb_city"
+    },
+    "Girona": {
+      "per_person_night_eur": 27.5,
+      "cleaning_per_person_eur": 13.75,
+      "entire_home_night_eur": 110,
+      "typical_capacity": 4,
+      "source": "inside_airbnb_city"
+    },
+    "Manchester": {
+      "per_person_night_eur": 30.0,
+      "cleaning_per_person_eur": 15.0,
+      "entire_home_night_eur": 120,
+      "typical_capacity": 4,
+      "source": "inside_airbnb_city"
+    },
+    "Istanbul": {
+      "per_person_night_eur": 13.75,
+      "cleaning_per_person_eur": 6.88,
+      "entire_home_night_eur": 55,
+      "typical_capacity": 4,
+      "source": "inside_airbnb_city"
+    },
+    "Lisbon": {
+      "per_person_night_eur": 31.25,
+      "cleaning_per_person_eur": 15.62,
+      "entire_home_night_eur": 125,
+      "typical_capacity": 4,
+      "source": "inside_airbnb_city"
+    },
+    "London": {
+      "per_person_night_eur": 43.75,
+      "cleaning_per_person_eur": 21.88,
+      "entire_home_night_eur": 175,
+      "typical_capacity": 4,
+      "source": "inside_airbnb_city"
+    },
+    "Lyon": {
+      "per_person_night_eur": 28.75,
+      "cleaning_per_person_eur": 14.38,
+      "entire_home_night_eur": 115,
+      "typical_capacity": 4,
+      "source": "inside_airbnb_city"
+    },
+    "Madrid": {
+      "per_person_night_eur": 30.0,
+      "cleaning_per_person_eur": 15.0,
+      "entire_home_night_eur": 120,
+      "typical_capacity": 4,
+      "source": "inside_airbnb_city"
+    },
+    "Malaga": {
+      "per_person_night_eur": 27.5,
+      "cleaning_per_person_eur": 13.75,
+      "entire_home_night_eur": 110,
+      "typical_capacity": 4,
+      "source": "inside_airbnb_city"
+    },
+    "Mallorca": {
+      "per_person_night_eur": 36.25,
+      "cleaning_per_person_eur": 18.12,
+      "entire_home_night_eur": 145,
+      "typical_capacity": 4,
+      "source": "inside_airbnb_city"
+    },
+    "Milan": {
+      "per_person_night_eur": 33.75,
+      "cleaning_per_person_eur": 16.88,
+      "entire_home_night_eur": 135,
+      "typical_capacity": 4,
+      "source": "inside_airbnb_city"
+    },
+    "Munich": {
+      "per_person_night_eur": 35.0,
+      "cleaning_per_person_eur": 17.5,
+      "entire_home_night_eur": 140,
+      "typical_capacity": 4,
+      "source": "inside_airbnb_city"
+    },
+    "Naples": {
+      "per_person_night_eur": 23.75,
+      "cleaning_per_person_eur": 11.88,
+      "entire_home_night_eur": 95,
+      "typical_capacity": 4,
+      "source": "inside_airbnb_city"
+    },
+    "Paris": {
+      "per_person_night_eur": 40.0,
+      "cleaning_per_person_eur": 20.0,
+      "entire_home_night_eur": 160,
+      "typical_capacity": 4,
+      "source": "inside_airbnb_city"
+    },
+    "Rome": {
+      "per_person_night_eur": 32.5,
+      "cleaning_per_person_eur": 16.25,
+      "entire_home_night_eur": 130,
+      "typical_capacity": 4,
+      "source": "inside_airbnb_city"
+    },
+    "Vienna": {
+      "per_person_night_eur": 28.75,
+      "cleaning_per_person_eur": 14.38,
+      "entire_home_night_eur": 115,
+      "typical_capacity": 4,
+      "source": "inside_airbnb_city"
+    }
+  }
+}

@@ -1,0 +1,88 @@
+{
+  "schema_version": 7,
+  "generated_at": "2026-06-07T13:21:10.307950+00:00",
+  "group_size_default": 7,
+  "trip_length_days_default": 7,
+  "start_date": "2026-06-07",
+  "end_date": "2026-08-31",
+  "origins": [
+    "BRU",
+    "CRL"
+  ],
+  "currency": "EUR",
+  "home_city": "Brussels",
+  "home_lat": 50.8466,
+  "home_lon": 4.3528,
+  "europe_countries": [
+    "AD",
+    "AL",
+    "AT",
+    "BA",
+    "BE",
+    "BG",
+    "BY",
+    "CH",
+    "CY",
+    "CZ",
+    "DE",
+    "DK",
+    "EE",
+    "ES",
+    "FI",
+    "FR",
+    "GB",
+    "GR",
+    "HR",
+    "HU",
+    "IE",
+    "IS",
+    "IT",
+    "LI",
+    "LT",
+    "LU",
+    "LV",
+    "MC",
+    "MD",
+    "ME",
+    "MK",
+    "MT",
+    "NL",
+    "NO",
+    "PL",
+    "PT",
+    "RO",
+    "RS",
+    "SE",
+    "SI",
+    "SK",
+    "SM",
+    "UA",
+    "VA",
+    "XK"
+  ],
+  "baggage_options": {
+    "small": {
+      "label": "Small cabin (free)",
+      "per_direction_eur": 0.0
+    },
+    "priority_10kg": {
+      "label": "10 kg priority",
+      "per_direction_eur": 25.0
+    },
+    "checked_20kg": {
+      "label": "20 kg checked",
+      "per_direction_eur": 42.0
+    }
+  },
+  "baggage_default": "priority_10kg",
+  "ground_transport_rt_multiplier": 2.0,
+  "lifestyle_defaults": {
+    "dinners_per_week": 5,
+    "lunches_per_week": 4,
+    "fastfood_per_week": 2,
+    "drinks_per_week": 7,
+    "club_nights_per_week": 1,
+    "coffees_per_day": 1,
+    "self_catered_days_per_week": 2
+  }
+}
