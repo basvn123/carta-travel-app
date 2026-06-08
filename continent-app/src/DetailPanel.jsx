@@ -144,7 +144,7 @@ function ExploreSection({ destination, data, onSelect }) {
 
       {guide && (
         <a className="todo-guide" href={guide} target="_blank" rel="noreferrer">
-          Open the {destination.city} travel guide -&gt;
+          Explore {destination.city} - what to do, see &amp; eat -&gt;
         </a>
       )}
 

@@ -133,7 +133,7 @@ export function MapView({ priced, unreachable = [], priceMode = 'total', groupSi
   }, [selectedId]);
 
   return (
-    <div className="map-wrap" style={{ paddingTop: 'var(--filter-h)' }}>
+    <div className="map-wrap">
       <div ref={containerRef} style={{ width: '100%', height: '100%' }} />
     </div>
   );

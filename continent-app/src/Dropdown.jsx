@@ -1,15 +1,17 @@
 import React, { useState, useRef, useEffect } from 'react';
 
 /**
- * Custom searchable dropdown.
+ * Custom searchable dropdown. Supports single-select (default) or multi-select.
  *
  * Props:
- *   value           — currently selected value (any string)
- *   onChange(value) — callback when selection changes
+ *   value           — single mode: selected value (string). multi mode: array of values.
+ *   onChange(value) — single mode: receives the picked value. multi mode: receives the new array.
  *   options         — Array<{ value, label, sublabel? }>
  *   placeholder     — text shown on the trigger when nothing selected
  *   searchPlaceholder — text in the search input (only shown when options ≥ searchThreshold)
  *   searchThreshold — minimum # options to show search box (default 8)
+ *   multiple        — when true, value is an array and the menu stays open while picking
+ *   multiLabel(arr) — multi mode: format the trigger label from the selected array
  *
  * Renders a button matching native <select> styling (filter-bar friendly), with a
  * popover list that can be search-filtered. Click outside to close. Escape closes.
@@ -21,6 +23,8 @@ export function Dropdown({
   placeholder = 'Select…',
   searchPlaceholder = 'Search…',
   searchThreshold = 8,
+  multiple = false,
+  multiLabel,
 }) {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState('');
@@ -28,7 +32,32 @@ export function Dropdown({
   const inputRef = useRef(null);
 
   const showSearch = options.length >= searchThreshold;
-  const selected = options.find((o) => o.value === value);
+  const selectedValues = multiple ? (value || []) : [];
+  const isSelected = (v) => (multiple ? selectedValues.includes(v) : v === value);
+  const selected = multiple ? null : options.find((o) => o.value === value);
+
+  // Multi mode: trigger label is the caller-formatted summary (or a sensible
+  // default), and picking an item toggles it without closing the menu.
+  const triggerLabel = multiple
+    ? (selectedValues.length === 0
+        ? null
+        : (multiLabel
+            ? multiLabel(selectedValues)
+            : `${selectedValues.length} selected`))
+    : (selected ? selected.label : null);
+
+  const handlePick = (v) => {
+    if (multiple) {
+      onChange(selectedValues.includes(v)
+        ? selectedValues.filter((x) => x !== v)
+        : [...selectedValues, v]);
+      // keep the menu open so several can be toggled in one go
+    } else {
+      onChange(v);
+      setOpen(false);
+      setQuery('');
+    }
+  };
 
   // Close on outside click
   useEffect(() => {
@@ -78,7 +107,9 @@ export function Dropdown({
         type="button"
       >
         <span className="dropdown-label">
-          {selected ? selected.label : <span className="dropdown-placeholder">{placeholder}</span>}
+          {triggerLabel != null
+            ? triggerLabel
+            : <span className="dropdown-placeholder">{placeholder}</span>}
         </span>
         <span className="dropdown-chev">{open ? '▴' : '▾'}</span>
       </button>
@@ -104,13 +135,14 @@ export function Dropdown({
                 <button
                   key={opt.value}
                   type="button"
-                  className={`dropdown-item ${opt.value === value ? 'selected' : ''}`}
-                  onClick={() => {
-                    onChange(opt.value);
-                    setOpen(false);
-                    setQuery('');
-                  }}
+                  className={`dropdown-item ${isSelected(opt.value) ? 'selected' : ''} ${multiple ? 'is-multi' : ''}`}
+                  onClick={() => handlePick(opt.value)}
                 >
+                  {multiple && (
+                    <span className="dropdown-check" aria-hidden="true">
+                      {isSelected(opt.value) ? '✓' : ''}
+                    </span>
+                  )}
                   <span className="dropdown-item-label">{opt.label}</span>
                   {opt.sublabel && (
                     <span className="dropdown-item-sublabel">{opt.sublabel}</span>

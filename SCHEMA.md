@@ -144,6 +144,27 @@ Eurostat PLI).
         "reason": "Compact and well served by public transport - skip the car.",
         "rental_eur_per_day": 48,        // economy rental/day for this country
         "road_connected": true           // false for islands / sea-separated (no drive option)
+      },
+      "beauty": {                   // schema v9 "Beauty Index" (beauty_layer.py)
+        "score": 5.2,                    // 0-10 composite (display)
+        "gems": 3,                       // 1-5, dataset quantiles (meta.beauty_model.gem_cutoffs)
+        "unesco": true,                  // a WHS within ~60 km (powers the UNESCO filter)
+        "top_beach": false,              // strong, well-flagged beach (Top-beaches filter)
+        "components": { "heritage": 0.96, "nature": 0.0, "iconic": 0.12, "beach": 0.0 }
+      },
+      "image": {                    // schema v10 (harvest_images.py) - null if none
+        "url": "https://upload.wikimedia.org/.../900px-...jpg",  // sized hero (~900px)
+        "hires": "https://upload.wikimedia.org/.../...jpg",      // full-res original
+        "credit": "Bruges",              // Wikipedia article title
+        "page": "https://en.wikipedia.org/wiki/Bruges",          // attribution link
+        "source": "wikipedia"
+      },
+      "activities": {               // schema v10 (harvest_activities.py) - null if none
+        "source": "wikivoyage",          // opentripmap | wikivoyage | wikipedia_geosearch
+        "items": [                       // up to 8 real named attractions
+          { "name": "Grote Markt", "kind": "Square" },
+          { "name": "Groeninge Museum", "kind": "Museum", "link": "https://..." }
+        ]
       }
     }
   }

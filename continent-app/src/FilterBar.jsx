@@ -32,14 +32,6 @@ export function FilterBar({
   // toggle, so this state is inert there.
   const [mobileOpen, setMobileOpen] = React.useState(false);
 
-  const toggleKind = (key) => {
-    if (tripKinds.includes(key)) {
-      setTripKinds(tripKinds.filter((k) => k !== key));
-    } else {
-      setTripKinds([...tripKinds, key]);
-    }
-  };
-
   const advancedActiveCount = tripKinds.length > 0 ? 1 : 0;
   const beautyActive = (minBeauty > 1) || unescoOnly || topBeachOnly;
 
@@ -352,30 +344,24 @@ export function FilterBar({
 
           <div className="filter-divider" aria-hidden="true" />
 
-          <div className="filter-divider" aria-hidden="true" />
-
-          {/* Trip type — inline chips, just like Beauty / Highlights. No
-              separate pane: the chips wrap right here and on mobile they sit in
-              the same filter sheet as everything else. */}
-          <div className="filter trip-kinds">
-            <label className="filter-label">
-              Trip type
-              {tripKinds.length > 0 && (
-                <button className="more-clear" onClick={() => setTripKinds([])}>
-                  clear
-                </button>
-              )}
-            </label>
-            <div className="filter-control kind-chips">
-              {TRIP_KINDS.map((k) => (
-                <button
-                  key={k.key}
-                  className={`chip ${tripKinds.includes(k.key) ? 'on' : ''}`}
-                  onClick={() => toggleKind(k.key)}
-                >
-                  {k.label}
-                </button>
-              ))}
+          {/* Trip type — a multi-select dropdown, mirroring the Country filter.
+              A compact trigger keeps the bar to two tidy rows; the choices live
+              in a popover instead of wrapping a wide chip block across the row. */}
+          <div className="filter">
+            <label className="filter-label">Trip type</label>
+            <div className="filter-control">
+              <Dropdown
+                multiple
+                value={tripKinds}
+                onChange={setTripKinds}
+                options={TRIP_KINDS.map((k) => ({ value: k.key, label: k.label }))}
+                placeholder="All types"
+                multiLabel={(vals) =>
+                  vals.length === 1
+                    ? (TRIP_KINDS.find((k) => k.key === vals[0])?.label || '1 type')
+                    : `${vals.length} types`
+                }
+              />
             </div>
           </div>
 

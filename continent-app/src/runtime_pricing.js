@@ -442,17 +442,18 @@ export function buildCarRentalLink({ city, iata, departDate, returnDate }) {
   return `https://www.kayak.com/cars/${place}/${departDate}/${returnDate}`;
 }
 
-/** Link to a clean, free travel-guide page that explains what there is to do at
- *  the destination - Wikivoyage's per-city article ("See" / "Do" / "Eat"). The
- *  airport qualifier in some city names ("Warsaw (Chopin)") is stripped so the
- *  link lands on the city, not the airport. Used for the "What to do in X" link.
+/** Link to a smart Google search that surfaces everything a traveller needs to
+ *  know about the destination - top attractions, food, neighbourhoods, itinerary
+ *  and first-timer tips - rather than a single fixed guide page. The airport
+ *  qualifier in some city names ("Warsaw (Chopin)") is stripped so the search
+ *  lands on the city, not the airport. Used for the "What to do in X" link.
  */
 export function buildGuideLink({ city }) {
   if (!city) return null;
   const clean = city.replace(/\s*\(.*?\)\s*/g, '').trim();
   if (!clean) return null;
-  // Wikivoyage uses underscores for spaces in page titles.
-  return `https://en.wikivoyage.org/wiki/${encodeURIComponent(clean.replace(/\s+/g, '_'))}`;
+  const query = `${clean} travel guide: top attractions, things to do, food and first-timer tips`;
+  return `https://www.google.com/search?q=${encodeURIComponent(query)}`;
 }
 
 /** "Best trips from here": the closest OTHER destinations in the catalogue that
