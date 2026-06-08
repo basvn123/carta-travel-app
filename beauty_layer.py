@@ -246,7 +246,7 @@ def _iconic_component(city, categories):
     key = (city or "").strip().lower()
     curated = 0.0
     for name, w in ICONIC_CURATED.items():
-        if name in key or key in name and len(key) >= 4:
+        if (name in key or key in name) and len(key) >= 4:
             curated = max(curated, w)
     return min(1.0, base * 0.6 + curated)
 

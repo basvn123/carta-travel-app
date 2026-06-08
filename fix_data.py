@@ -94,19 +94,37 @@ def main():
     detour = cm.get("road_detour_factor", 1.3)
 
     # ---- A. Densify flight calendars + drop past dates ----
+    # GUARD: this interpolation path is SUPERSEDED by reharvest_flights.py, which
+    # writes REAL per-day Ryanair fares (fare_model="ryanair_cheapestPerDay_live").
+    # Re-running densify over that real data would treat each true daily price as an
+    # "anchor" and smear a synthetic monthly-cheapest interpolation (with a +5%
+    # weekend uplift) back across it - silently degrading real fares to fabricated
+    # ones. Detect live fares and skip step A entirely so this script can never
+    # clobber a reharvest. (B/C/D/E below are still safe to apply.)
+    live_fares = (
+        meta.get("flight_model", {}).get("anchor_source") == "ryanair_api_cheapest_per_day"
+        or any(
+            r.get("fare_model") == "ryanair_cheapestPerDay_live"
+            for v in ds.values() for r in (v.get("routes") or {}).values()
+        )
+    )
     touched_routes = 0
-    for v in ds.values():
-        for r in (v.get("routes") or {}).values():
-            changed = False
-            for kind in ("outbound_fare", "return_fare"):
-                fares = r.get(kind) or {}
-                if not fares:
-                    continue
-                r[kind] = densify(fares, TODAY, end)
-                changed = True
-            if changed:
-                r["fare_model"] = "interpolated_monthly_cheapest"
-                touched_routes += 1
+    if live_fares:
+        print("  A. SKIPPED - dataset already carries real per-day Ryanair fares; "
+              "not re-interpolating (use reharvest_flights.py to refresh fares).")
+    else:
+        for v in ds.values():
+            for r in (v.get("routes") or {}).values():
+                changed = False
+                for kind in ("outbound_fare", "return_fare"):
+                    fares = r.get(kind) or {}
+                    if not fares:
+                        continue
+                    r[kind] = densify(fares, TODAY, end)
+                    changed = True
+                if changed:
+                    r["fare_model"] = "interpolated_monthly_cheapest"
+                    touched_routes += 1
 
     # ---- B + C. Cost correction + country rename ----
     cost_fixed = 0
@@ -184,23 +202,26 @@ def main():
             road = haversine_km(home["lat"], home["lon"], v["lat"], v["lon"]) * detour
             drivable = road <= max_km
         unreachable = (not has_fares) and (not drivable)
-        if bool(v.get("no_ryanair_route")) != False or unreachable:
-            pass
         new_flag = unreachable
         if v.get("no_ryanair_route") != new_flag:
             v["no_ryanair_route"] = new_flag
             relabelled += 1
 
     # ---- meta bookkeeping ----
-    meta["schema_version"] = 8
-    meta["flight_model"] = {
-        "method": "daily fares interpolated between real monthly-cheapest Ryanair "
-                  "anchors; anchor days keep the exact API price; +5% weekend uplift "
-                  "on filled days; past dates dropped.",
-        "anchor_source": "ryanair_api_monthly_cheapest",
-        "densified_from": TODAY.isoformat(),
-    }
-    meta["start_date"] = TODAY.isoformat()
+    # Never downgrade the schema version (later layers - beauty=9, images=10 - may
+    # already have run); only ever raise the floor.
+    meta["schema_version"] = max(meta.get("schema_version", 0), 8)
+    # Only rewrite the flight-model note + de-stale the start date when we actually
+    # densified; otherwise leave the live-fare metadata (set by reharvest) intact.
+    if not live_fares:
+        meta["flight_model"] = {
+            "method": "daily fares interpolated between real monthly-cheapest Ryanair "
+                      "anchors; anchor days keep the exact API price; +5% weekend uplift "
+                      "on filled days; past dates dropped.",
+            "anchor_source": "ryanair_api_monthly_cheapest",
+            "densified_from": TODAY.isoformat(),
+        }
+        meta["start_date"] = TODAY.isoformat()
     val = meta.get("cost_validation", {})
     val["corrected_from_live_numbeo"] = ["Austria (Vienna)", "Croatia (Split)",
                                          "Czechia (Prague)"]

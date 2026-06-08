@@ -149,7 +149,13 @@ def label_from(text):
 
 
 def clean_city(city):
-    return re.sub(r"\s*\(.*?\)\s*", "", (city or "")).strip() or (city or "")
+    """City name fit for a Wikivoyage/Wikipedia title: drop the airport qualifier
+    in parens AND the trailing half of a compound gem name, so
+    'Galway & Cliffs of Moher' -> 'Galway', 'Soca Valley (Bovec)' -> 'Soca Valley',
+    'Spis Castle & Levoca' -> 'Spis Castle'."""
+    s = re.sub(r"\s*\(.*?\)\s*", "", (city or "")).strip()
+    s = re.split(r"\s*[/&]\s*|\s+&\s+", s)[0].strip()
+    return s or (city or "")
 
 
 # ---------------------------------------------------------------------------
@@ -469,8 +475,12 @@ def harvest(dests, resume=True):
     key = otm_key()
     if not key:
         cache = load_json(CACHE) if (resume and CACHE.exists()) else {}
+
+        def _needs(i):
+            v = cache.get(i, None)
+            return (i not in cache) or (not v) or (not v.get("items"))
         todo = [(i, d) for i, d in dests.items()
-                if d.get("lat") is not None and (i not in cache or not cache[i])]
+                if d.get("lat") is not None and _needs(i)]
         print(f"Harvesting activities (batched, no key): {len(todo)} to fetch, "
               f"{len(cache)} cached")
         if not todo:

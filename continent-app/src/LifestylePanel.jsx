@@ -26,8 +26,11 @@ const PERIOD_FIELDS = [
   { key: 'self_catered_days_per_week', max: { week: 7,  day: 1 } },
 ];
 
-// Per-person presets, defined in the weekly cadence. Picking one keeps the
-// user's current cadence (values get converted to match).
+// Per-person presets, defined in the weekly cadence. Picking one applies the
+// preset in its native weekly cadence (a weekly rate like 5 dinners/week can't
+// be shown faithfully as a per-day integer, so the panel snaps back to per-week
+// - this keeps the priced spend exactly equal to the preset and lets the active
+// chip highlight correctly).
 const PROFILES = {
   Backpacker:      { cadence: 'week', dinners_per_week: 1, lunches_per_week: 3, fastfood_per_week: 4, drinks_per_week: 4,  club_nights_per_week: 0, coffees_per_day: 1, self_catered_days_per_week: 5 },
   Easygoing:       { ...DEFAULT_LIFESTYLE },
@@ -69,7 +72,7 @@ export function LifestylePanel({ choices, setChoices, previewDest, departDate, r
   const per = cadence === 'day' ? 'per day' : 'per week';
 
   const setLs = (patch) => setChoices({ ...choices, lifestyle: { ...ls, ...patch } });
-  const setProfile = (name) => setChoices({ ...choices, lifestyle: toCadence(PROFILES[name], cadence) });
+  const setProfile = (name) => setChoices({ ...choices, lifestyle: { ...PROFILES[name] } });
   const setCadence = (c) => setChoices({ ...choices, lifestyle: toCadence(ls, c) });
   const active = matchProfile(ls);
 

@@ -4141,10 +4141,20 @@
   ]
  },
  "BZR": {
-  "_voy_spare": [
-   "Béziers Cathedral",
-   "9 Locks of Fonseranes",
-   "Pont Vieux"
+  "source": "wikivoyage",
+  "items": [
+   {
+    "name": "Béziers Cathedral",
+    "kind": "Cathedral"
+   },
+   {
+    "name": "9 Locks of Fonseranes",
+    "kind": "Sight"
+   },
+   {
+    "name": "Pont Vieux",
+    "kind": "Sight"
+   }
   ]
  },
  "NIM": {
@@ -4210,10 +4220,38 @@
   ]
  },
  "BIA": {
-  "_voy_spare": [
-   "Vieux Port",
-   "Cathedral",
-   "Eglise Ste-Marie"
+  "source": "wikipedia_geosearch",
+  "items": [
+   {
+    "name": "Torra di Grisgione",
+    "kind": "Tower",
+    "link": "https://en.wikipedia.org/wiki/Torra_di_Grisgione"
+   },
+   {
+    "name": "Torra di Miomu",
+    "kind": "Tower",
+    "link": "https://en.wikipedia.org/wiki/Torra_di_Miomu"
+   },
+   {
+    "name": "Torra di Petranera",
+    "kind": "Tower",
+    "link": "https://en.wikipedia.org/wiki/Torra_di_Petranera"
+   },
+   {
+    "name": "Torra di Toga",
+    "kind": "Tower",
+    "link": "https://en.wikipedia.org/wiki/Torra_di_Toga"
+   },
+   {
+    "name": "Église Sainte-Croix de Bastia",
+    "kind": "Church",
+    "link": "https://en.wikipedia.org/wiki/%C3%89glise_Sainte-Croix_de_Bastia"
+   },
+   {
+    "name": "Saint-Jean-Baptiste, Bastia",
+    "kind": "Church",
+    "link": "https://en.wikipedia.org/wiki/Saint-Jean-Baptiste,_Bastia"
+   }
   ]
  },
  "AJA": {
@@ -4254,7 +4292,24 @@
   ]
  },
  "CLY": {
-  "_voy_spare": []
+  "source": "wikipedia_geosearch",
+  "items": [
+   {
+    "name": "Calvi Cathedral",
+    "kind": "Church",
+    "link": "https://en.wikipedia.org/wiki/Calvi_Cathedral"
+   },
+   {
+    "name": "Torra di Calvi",
+    "kind": "Tower",
+    "link": "https://en.wikipedia.org/wiki/Torra_di_Calvi"
+   },
+   {
+    "name": "Église Sainte-Marie de Calvi",
+    "kind": "Church",
+    "link": "https://en.wikipedia.org/wiki/%C3%89glise_Sainte-Marie_de_Calvi"
+   }
+  ]
  },
  "RDZ": {
   "source": "wikivoyage",
@@ -4368,43 +4423,285 @@
   ]
  },
  "SNN": {
-  "_voy_spare": [
-   "Shannon Aviation Museum",
-   "Shannon Golf Club",
-   "Shannon Leisure Centre"
+  "source": "wikipedia_geosearch",
+  "items": [
+   {
+    "name": "Shannon (parish)",
+    "kind": "Roman site",
+    "link": "https://en.wikipedia.org/wiki/Shannon_(parish)"
+   }
   ]
  },
- "KIR": {
-  "_voy_spare": []
- },
- "KOW": {
-  "_voy_spare": []
- },
+ "KIR": null,
+ "KOW": null,
  "STN": {
-  "_voy_spare": []
+  "source": "wikipedia_geosearch",
+  "items": [
+   {
+    "name": "Trafalgar Square",
+    "kind": "Square",
+    "link": "https://en.wikipedia.org/wiki/Trafalgar_Square"
+   },
+   {
+    "name": "Nelson's Column",
+    "kind": "Square",
+    "link": "https://en.wikipedia.org/wiki/Nelson%27s_Column"
+   },
+   {
+    "name": "Montagu House, Whitehall",
+    "kind": "Palace",
+    "link": "https://en.wikipedia.org/wiki/Montagu_House,_Whitehall"
+   },
+   {
+    "name": "Trafalgar Theatre",
+    "kind": "Theatre",
+    "link": "https://en.wikipedia.org/wiki/Trafalgar_Theatre"
+   },
+   {
+    "name": "Fourth plinth",
+    "kind": "Square",
+    "link": "https://en.wikipedia.org/wiki/Fourth_plinth"
+   },
+   {
+    "name": "Royal Marines Memorial",
+    "kind": "Memorial",
+    "link": "https://en.wikipedia.org/wiki/Royal_Marines_Memorial"
+   },
+   {
+    "name": "The Mud Soldier",
+    "kind": "Square",
+    "link": "https://en.wikipedia.org/wiki/The_Mud_Soldier"
+   },
+   {
+    "name": "The End (sculpture)",
+    "kind": "Square",
+    "link": "https://en.wikipedia.org/wiki/The_End_(sculpture)"
+   }
+  ]
  },
  "LTN": {
-  "_voy_spare": []
+  "source": "wikipedia_geosearch",
+  "items": [
+   {
+    "name": "Trafalgar Square",
+    "kind": "Square",
+    "link": "https://en.wikipedia.org/wiki/Trafalgar_Square"
+   },
+   {
+    "name": "Nelson's Column",
+    "kind": "Square",
+    "link": "https://en.wikipedia.org/wiki/Nelson%27s_Column"
+   },
+   {
+    "name": "Montagu House, Whitehall",
+    "kind": "Palace",
+    "link": "https://en.wikipedia.org/wiki/Montagu_House,_Whitehall"
+   },
+   {
+    "name": "Trafalgar Theatre",
+    "kind": "Theatre",
+    "link": "https://en.wikipedia.org/wiki/Trafalgar_Theatre"
+   },
+   {
+    "name": "Fourth plinth",
+    "kind": "Square",
+    "link": "https://en.wikipedia.org/wiki/Fourth_plinth"
+   },
+   {
+    "name": "Royal Marines Memorial",
+    "kind": "Memorial",
+    "link": "https://en.wikipedia.org/wiki/Royal_Marines_Memorial"
+   },
+   {
+    "name": "The Mud Soldier",
+    "kind": "Square",
+    "link": "https://en.wikipedia.org/wiki/The_Mud_Soldier"
+   },
+   {
+    "name": "The End (sculpture)",
+    "kind": "Square",
+    "link": "https://en.wikipedia.org/wiki/The_End_(sculpture)"
+   }
+  ]
  },
  "LGW": {
-  "_voy_spare": []
+  "source": "wikipedia_geosearch",
+  "items": [
+   {
+    "name": "Trafalgar Square",
+    "kind": "Square",
+    "link": "https://en.wikipedia.org/wiki/Trafalgar_Square"
+   },
+   {
+    "name": "Nelson's Column",
+    "kind": "Square",
+    "link": "https://en.wikipedia.org/wiki/Nelson%27s_Column"
+   },
+   {
+    "name": "Montagu House, Whitehall",
+    "kind": "Palace",
+    "link": "https://en.wikipedia.org/wiki/Montagu_House,_Whitehall"
+   },
+   {
+    "name": "Trafalgar Theatre",
+    "kind": "Theatre",
+    "link": "https://en.wikipedia.org/wiki/Trafalgar_Theatre"
+   },
+   {
+    "name": "Fourth plinth",
+    "kind": "Square",
+    "link": "https://en.wikipedia.org/wiki/Fourth_plinth"
+   },
+   {
+    "name": "Royal Marines Memorial",
+    "kind": "Memorial",
+    "link": "https://en.wikipedia.org/wiki/Royal_Marines_Memorial"
+   },
+   {
+    "name": "The Mud Soldier",
+    "kind": "Square",
+    "link": "https://en.wikipedia.org/wiki/The_Mud_Soldier"
+   },
+   {
+    "name": "The End (sculpture)",
+    "kind": "Square",
+    "link": "https://en.wikipedia.org/wiki/The_End_(sculpture)"
+   }
+  ]
  },
  "LHR": {
-  "_voy_spare": []
+  "source": "wikipedia_geosearch",
+  "items": [
+   {
+    "name": "Trafalgar Square",
+    "kind": "Square",
+    "link": "https://en.wikipedia.org/wiki/Trafalgar_Square"
+   },
+   {
+    "name": "Nelson's Column",
+    "kind": "Square",
+    "link": "https://en.wikipedia.org/wiki/Nelson%27s_Column"
+   },
+   {
+    "name": "Montagu House, Whitehall",
+    "kind": "Palace",
+    "link": "https://en.wikipedia.org/wiki/Montagu_House,_Whitehall"
+   },
+   {
+    "name": "Trafalgar Theatre",
+    "kind": "Theatre",
+    "link": "https://en.wikipedia.org/wiki/Trafalgar_Theatre"
+   },
+   {
+    "name": "Fourth plinth",
+    "kind": "Square",
+    "link": "https://en.wikipedia.org/wiki/Fourth_plinth"
+   },
+   {
+    "name": "Royal Marines Memorial",
+    "kind": "Memorial",
+    "link": "https://en.wikipedia.org/wiki/Royal_Marines_Memorial"
+   },
+   {
+    "name": "The Mud Soldier",
+    "kind": "Square",
+    "link": "https://en.wikipedia.org/wiki/The_Mud_Soldier"
+   },
+   {
+    "name": "The End (sculpture)",
+    "kind": "Square",
+    "link": "https://en.wikipedia.org/wiki/The_End_(sculpture)"
+   }
+  ]
  },
  "MAN": {
-  "_voy_spare": []
+  "source": "wikipedia_geosearch",
+  "items": [
+   {
+    "name": "John Rylands Research Institute and Library",
+    "kind": "Library",
+    "link": "https://en.wikipedia.org/wiki/John_Rylands_Research_Institute_and_Library"
+   },
+   {
+    "name": "People's History Museum",
+    "kind": "Museum",
+    "link": "https://en.wikipedia.org/wiki/People%27s_History_Museum"
+   },
+   {
+    "name": "St Ann's Church, Manchester",
+    "kind": "Church",
+    "link": "https://en.wikipedia.org/wiki/St_Ann%27s_Church,_Manchester"
+   },
+   {
+    "name": "Manchester Opera House",
+    "kind": "Theatre",
+    "link": "https://en.wikipedia.org/wiki/Manchester_Opera_House"
+   },
+   {
+    "name": "The Hidden Gem",
+    "kind": "Church",
+    "link": "https://en.wikipedia.org/wiki/The_Hidden_Gem"
+   },
+   {
+    "name": "Manchester Library & Information Service",
+    "kind": "Library",
+    "link": "https://en.wikipedia.org/wiki/Manchester_Library_%26_Information_Service"
+   },
+   {
+    "name": "Gaiety Theatre, Manchester",
+    "kind": "Theatre",
+    "link": "https://en.wikipedia.org/wiki/Gaiety_Theatre,_Manchester"
+   },
+   {
+    "name": "Intercontinental Tower, Manchester",
+    "kind": "Tower",
+    "link": "https://en.wikipedia.org/wiki/Intercontinental_Tower,_Manchester"
+   }
+  ]
  },
  "EDI": {
-  "_voy_spare": [
-   "Edinburgh International Festival",
-   "Edinburgh Military Tattoo",
-   "Edinburgh Festival Fringe",
-   "Edinburgh Jazz and Blues Festival",
-   "Edinburgh International Book Festival",
-   "Edinburgh Art Festival",
-   "Edinburgh Mela",
-   "Edinburgh International Television Festival"
+  "source": "wikipedia_geosearch",
+  "items": [
+   {
+    "name": "Scott Monument",
+    "kind": "Monument",
+    "link": "https://en.wikipedia.org/wiki/Scott_Monument"
+   },
+   {
+    "name": "Scottish National Portrait Gallery",
+    "kind": "Museum",
+    "link": "https://en.wikipedia.org/wiki/Scottish_National_Portrait_Gallery"
+   },
+   {
+    "name": "St Mary's Cathedral, Edinburgh (Catholic)",
+    "kind": "Cathedral",
+    "link": "https://en.wikipedia.org/wiki/St_Mary%27s_Cathedral,_Edinburgh_(Catholic)"
+   },
+   {
+    "name": "Museum of Childhood (Edinburgh)",
+    "kind": "Museum",
+    "link": "https://en.wikipedia.org/wiki/Museum_of_Childhood_(Edinburgh)"
+   },
+   {
+    "name": "Tron Kirk",
+    "kind": "Church",
+    "link": "https://en.wikipedia.org/wiki/Tron_Kirk"
+   },
+   {
+    "name": "Regent Bridge",
+    "kind": "Bridge",
+    "link": "https://en.wikipedia.org/wiki/Regent_Bridge"
+   },
+   {
+    "name": "Fruitmarket Gallery",
+    "kind": "Gallery",
+    "link": "https://en.wikipedia.org/wiki/Fruitmarket_Gallery"
+   },
+   {
+    "name": "Carrubbers Christian Centre",
+    "kind": "Church",
+    "link": "https://en.wikipedia.org/wiki/Carrubbers_Christian_Centre"
+   }
   ]
  },
  "GLA": {
@@ -4519,17 +4816,79 @@
   ]
  },
  "LBA": {
-  "_voy_spare": [
-   "The White Rose Way",
-   "Leeds Lights",
-   "Leeds Festival",
-   "Leeds International Pianoforte Competition",
-   "Party in the Park",
-   "Opera in the Park"
+  "source": "wikipedia_geosearch",
+  "items": [
+   {
+    "name": "Tinshill BT Tower",
+    "kind": "Tower",
+    "link": "https://en.wikipedia.org/wiki/Tinshill_BT_Tower"
+   },
+   {
+    "name": "Golden Acre Park",
+    "kind": "Park",
+    "link": "https://en.wikipedia.org/wiki/Golden_Acre_Park"
+   },
+   {
+    "name": "Grove Methodist Church",
+    "kind": "Church",
+    "link": "https://en.wikipedia.org/wiki/Grove_Methodist_Church"
+   },
+   {
+    "name": "St Oswald's Church, Guiseley",
+    "kind": "Church",
+    "link": "https://en.wikipedia.org/wiki/St_Oswald%27s_Church,_Guiseley"
+   },
+   {
+    "name": "Horsforth Hall Park",
+    "kind": "Park",
+    "link": "https://en.wikipedia.org/wiki/Horsforth_Hall_Park"
+   }
   ]
  },
  "NCL": {
-  "_voy_spare": []
+  "source": "wikipedia_geosearch",
+  "items": [
+   {
+    "name": "Kingston Park",
+    "kind": "Castle",
+    "link": "https://en.wikipedia.org/wiki/Kingston_Park"
+   },
+   {
+    "name": "Fawdon",
+    "kind": "Castle",
+    "link": "https://en.wikipedia.org/wiki/Fawdon"
+   },
+   {
+    "name": "Dinnington, Tyne and Wear",
+    "kind": "Castle",
+    "link": "https://en.wikipedia.org/wiki/Dinnington,_Tyne_and_Wear"
+   },
+   {
+    "name": "North Kenton",
+    "kind": "Castle",
+    "link": "https://en.wikipedia.org/wiki/North_Kenton"
+   },
+   {
+    "name": "Coxlodge",
+    "kind": "Castle",
+    "link": "https://en.wikipedia.org/wiki/Coxlodge"
+   },
+   {
+    "name": "McCracken Park",
+    "kind": "Castle",
+    "link": "https://en.wikipedia.org/wiki/McCracken_Park"
+   },
+   {
+    "name": "Bullocksteads Sports Ground",
+    "kind": "Castle",
+    "link": "https://en.wikipedia.org/wiki/Bullocksteads_Sports_Ground"
+   },
+   {
+    "name": "Ponteland Castle",
+    "kind": "Castle",
+    "link": "https://en.wikipedia.org/wiki/Ponteland_Castle"
+   }
+  ]
  },
  "BFS": {
   "source": "wikivoyage",
@@ -4606,10 +4965,48 @@
   ]
  },
  "EMA": {
-  "_voy_spare": [
-   "Peak District National Park",
-   "Lincolnshire Wolds",
-   "The Viking Way"
+  "source": "wikipedia_geosearch",
+  "items": [
+   {
+    "name": "Donington Grand Prix Collection",
+    "kind": "Museum",
+    "link": "https://en.wikipedia.org/wiki/Donington_Grand_Prix_Collection"
+   },
+   {
+    "name": "Cavendish Bridge",
+    "kind": "Bridge",
+    "link": "https://en.wikipedia.org/wiki/Cavendish_Bridge"
+   },
+   {
+    "name": "All Saints Church, Long Whatton",
+    "kind": "Church",
+    "link": "https://en.wikipedia.org/wiki/All_Saints_Church,_Long_Whatton"
+   },
+   {
+    "name": "Holy Trinity Church, Ratcliffe-on-Soar",
+    "kind": "Church",
+    "link": "https://en.wikipedia.org/wiki/Holy_Trinity_Church,_Ratcliffe-on-Soar"
+   },
+   {
+    "name": "Castle Donington Methodist Church",
+    "kind": "Church",
+    "link": "https://en.wikipedia.org/wiki/Castle_Donington_Methodist_Church"
+   },
+   {
+    "name": "St James' Church, Shardlow",
+    "kind": "Church",
+    "link": "https://en.wikipedia.org/wiki/St_James%27_Church,_Shardlow"
+   },
+   {
+    "name": "Wesleyan Chapel, Bishop Street",
+    "kind": "Church",
+    "link": "https://en.wikipedia.org/wiki/Wesleyan_Chapel,_Bishop_Street"
+   },
+   {
+    "name": "St Andrew's Church, Kegworth",
+    "kind": "Church",
+    "link": "https://en.wikipedia.org/wiki/St_Andrew%27s_Church,_Kegworth"
+   }
   ]
  },
  "BOH": {
@@ -4761,39 +5158,130 @@
   ]
  },
  "WAW": {
-  "_voy_spare": [
-   "The Cross-Culture Warsaw Festival",
-   "Jewish Culture Festival – The Singer's Warsaw",
-   "Warsaw Film Festival",
-   "Planete+ Doc Film Festival",
-   "Burn Selector Festival",
-   "Orange Warsaw Festival",
-   "Warsaw Summer Jazz Days",
-   "Warsaw Autumn"
+  "source": "wikipedia_geosearch",
+  "items": [
+   {
+    "name": "Museum of Evolution of Polish Academy of Sciences",
+    "kind": "Museum",
+    "link": "https://en.wikipedia.org/wiki/Museum_of_Evolution_of_Polish_Academy_of_Sciences"
+   },
+   {
+    "name": "Parade Square",
+    "kind": "Square",
+    "link": "https://en.wikipedia.org/wiki/Parade_Square"
+   },
+   {
+    "name": "Museum of Communism, Warsaw",
+    "kind": "Museum",
+    "link": "https://en.wikipedia.org/wiki/Museum_of_Communism,_Warsaw"
+   },
+   {
+    "name": "National Museum of Technology",
+    "kind": "Museum",
+    "link": "https://en.wikipedia.org/wiki/National_Museum_of_Technology"
+   },
+   {
+    "name": "Emperor Napoleon I Memorial",
+    "kind": "Monument",
+    "link": "https://en.wikipedia.org/wiki/Emperor_Napoleon_I_Memorial"
+   },
+   {
+    "name": "Warsaw Fotoplastikon",
+    "kind": "Theatre",
+    "link": "https://en.wikipedia.org/wiki/Warsaw_Fotoplastikon"
+   },
+   {
+    "name": "Holy Cross Park",
+    "kind": "Park",
+    "link": "https://en.wikipedia.org/wiki/Holy_Cross_Park"
+   },
+   {
+    "name": "Five Corners Square (Warsaw)",
+    "kind": "Square",
+    "link": "https://en.wikipedia.org/wiki/Five_Corners_Square_(Warsaw)"
+   }
   ]
  },
  "WMI": {
-  "_voy_spare": [
-   "The Cross-Culture Warsaw Festival",
-   "Jewish Culture Festival – The Singer's Warsaw",
-   "Warsaw Film Festival",
-   "Planete+ Doc Film Festival",
-   "Burn Selector Festival",
-   "Orange Warsaw Festival",
-   "Warsaw Summer Jazz Days",
-   "Warsaw Autumn"
+  "source": "wikipedia_geosearch",
+  "items": [
+   {
+    "name": "Museum of Evolution of Polish Academy of Sciences",
+    "kind": "Museum",
+    "link": "https://en.wikipedia.org/wiki/Museum_of_Evolution_of_Polish_Academy_of_Sciences"
+   },
+   {
+    "name": "Parade Square",
+    "kind": "Square",
+    "link": "https://en.wikipedia.org/wiki/Parade_Square"
+   },
+   {
+    "name": "Museum of Communism, Warsaw",
+    "kind": "Museum",
+    "link": "https://en.wikipedia.org/wiki/Museum_of_Communism,_Warsaw"
+   },
+   {
+    "name": "National Museum of Technology",
+    "kind": "Museum",
+    "link": "https://en.wikipedia.org/wiki/National_Museum_of_Technology"
+   },
+   {
+    "name": "Emperor Napoleon I Memorial",
+    "kind": "Monument",
+    "link": "https://en.wikipedia.org/wiki/Emperor_Napoleon_I_Memorial"
+   },
+   {
+    "name": "Warsaw Fotoplastikon",
+    "kind": "Theatre",
+    "link": "https://en.wikipedia.org/wiki/Warsaw_Fotoplastikon"
+   },
+   {
+    "name": "Holy Cross Park",
+    "kind": "Park",
+    "link": "https://en.wikipedia.org/wiki/Holy_Cross_Park"
+   },
+   {
+    "name": "Five Corners Square (Warsaw)",
+    "kind": "Square",
+    "link": "https://en.wikipedia.org/wiki/Five_Corners_Square_(Warsaw)"
+   }
   ]
  },
  "KRK": {
-  "_voy_spare": [
-   "Jewish Culture Festival",
-   "Bajit Chadasz",
-   "Krakow Film Festival",
-   "Off Camera",
-   "Etiuda and Anima",
-   "Photomonth",
-   "Live Music Festival",
-   "Unsound"
+  "source": "wikivoyage",
+  "items": [
+   {
+    "name": "Jewish Culture Festival",
+    "kind": "Festival"
+   },
+   {
+    "name": "Bajit Chadasz",
+    "kind": "Sight"
+   },
+   {
+    "name": "Krakow Film Festival",
+    "kind": "Festival"
+   },
+   {
+    "name": "Off Camera",
+    "kind": "Sight"
+   },
+   {
+    "name": "Etiuda and Anima",
+    "kind": "Sight"
+   },
+   {
+    "name": "Photomonth",
+    "kind": "Sight"
+   },
+   {
+    "name": "Live Music Festival",
+    "kind": "Festival"
+   },
+   {
+    "name": "Unsound",
+    "kind": "Sight"
+   }
   ]
  },
  "GDN": {
@@ -5130,15 +5618,48 @@
   ]
  },
  "PRG": {
-  "_voy_spare": [
-   "National Gallery Gift Ticket",
-   "Prague Spring",
-   "Prague Advent Choral Meeting",
-   "Signal Festival",
-   "Wine Boat",
-   "Prague Steam Boats",
-   "Cruise Prague",
-   "EVD"
+  "source": "wikipedia_geosearch",
+  "items": [
+   {
+    "name": "Estates Theatre",
+    "kind": "Theatre",
+    "link": "https://en.wikipedia.org/wiki/Estates_Theatre"
+   },
+   {
+    "name": "Clementinum",
+    "kind": "Library",
+    "link": "https://en.wikipedia.org/wiki/Clementinum"
+   },
+   {
+    "name": "Prague Stock Exchange",
+    "kind": "Market",
+    "link": "https://en.wikipedia.org/wiki/Prague_Stock_Exchange"
+   },
+   {
+    "name": "Old Town Square",
+    "kind": "Square",
+    "link": "https://en.wikipedia.org/wiki/Old_Town_Square"
+   },
+   {
+    "name": "Church of Our Lady before Týn",
+    "kind": "Church",
+    "link": "https://en.wikipedia.org/wiki/Church_of_Our_Lady_before_T%C3%BDn"
+   },
+   {
+    "name": "National Library of the Czech Republic",
+    "kind": "Library",
+    "link": "https://en.wikipedia.org/wiki/National_Library_of_the_Czech_Republic"
+   },
+   {
+    "name": "Jewish Museum in Prague",
+    "kind": "Museum",
+    "link": "https://en.wikipedia.org/wiki/Jewish_Museum_in_Prague"
+   },
+   {
+    "name": "Sex Machines Museum",
+    "kind": "Museum",
+    "link": "https://en.wikipedia.org/wiki/Sex_Machines_Museum"
+   }
   ]
  },
  "BRQ": {
@@ -5253,11 +5774,48 @@
   ]
  },
  "BUD": {
-  "_voy_spare": [
-   "Hungaria Koncert",
-   "Budapest Spring Festival",
-   "Firework above Danube River",
-   "Jewish Summer Festival"
+  "source": "wikipedia_geosearch",
+  "items": [
+   {
+    "name": "Liberty Bridge (Budapest)",
+    "kind": "Bridge",
+    "link": "https://en.wikipedia.org/wiki/Liberty_Bridge_(Budapest)"
+   },
+   {
+    "name": "Elisabeth Bridge (Budapest)",
+    "kind": "Bridge",
+    "link": "https://en.wikipedia.org/wiki/Elisabeth_Bridge_(Budapest)"
+   },
+   {
+    "name": "Deák Ferenc tér",
+    "kind": "Square",
+    "link": "https://en.wikipedia.org/wiki/De%C3%A1k_Ferenc_t%C3%A9r"
+   },
+   {
+    "name": "Vörösmarty tér",
+    "kind": "Square",
+    "link": "https://en.wikipedia.org/wiki/V%C3%B6r%C3%B6smarty_t%C3%A9r"
+   },
+   {
+    "name": "Kálvin tér",
+    "kind": "Square",
+    "link": "https://en.wikipedia.org/wiki/K%C3%A1lvin_t%C3%A9r"
+   },
+   {
+    "name": "Ferenciek tere",
+    "kind": "Square",
+    "link": "https://en.wikipedia.org/wiki/Ferenciek_tere"
+   },
+   {
+    "name": "Rudas Baths",
+    "kind": "Sight",
+    "link": "https://en.wikipedia.org/wiki/Rudas_Baths"
+   },
+   {
+    "name": "Great Market Hall",
+    "kind": "Market",
+    "link": "https://en.wikipedia.org/wiki/Great_Market_Hall"
+   }
   ]
  },
  "DEB": {
@@ -5298,7 +5856,49 @@
   ]
  },
  "VIE": {
-  "_voy_spare": []
+  "source": "wikipedia_geosearch",
+  "items": [
+   {
+    "name": "St. Stephen's Cathedral, Vienna",
+    "kind": "Church",
+    "link": "https://en.wikipedia.org/wiki/St._Stephen%27s_Cathedral,_Vienna"
+   },
+   {
+    "name": "Imperial Crypt",
+    "kind": "Church",
+    "link": "https://en.wikipedia.org/wiki/Imperial_Crypt"
+   },
+   {
+    "name": "Jesuit Church, Vienna",
+    "kind": "Church",
+    "link": "https://en.wikipedia.org/wiki/Jesuit_Church,_Vienna"
+   },
+   {
+    "name": "Graben, Vienna",
+    "kind": "Square",
+    "link": "https://en.wikipedia.org/wiki/Graben,_Vienna"
+   },
+   {
+    "name": "Pummerin",
+    "kind": "Cathedral",
+    "link": "https://en.wikipedia.org/wiki/Pummerin"
+   },
+   {
+    "name": "Palais Arnstein",
+    "kind": "Palace",
+    "link": "https://en.wikipedia.org/wiki/Palais_Arnstein"
+   },
+   {
+    "name": "Palais Eskeles",
+    "kind": "Palace",
+    "link": "https://en.wikipedia.org/wiki/Palais_Eskeles"
+   },
+   {
+    "name": "Vindobona",
+    "kind": "Roman site",
+    "link": "https://en.wikipedia.org/wiki/Vindobona"
+   }
+  ]
  },
  "SZG": {
   "source": "wikivoyage",
@@ -5560,15 +6160,48 @@
   ]
  },
  "AMS": {
-  "_voy_spare": [
-   "Amsterdam Boats B.V.",
-   "Amsterdam Jewel Cruises",
-   "Boaty Rent a Boat",
-   "Boatboys Private Boat Tours",
-   "Canal Company",
-   "Lovers Company",
-   "Sloepdelen",
-   "Amsterdam Boat Experience"
+  "source": "wikipedia_geosearch",
+  "items": [
+   {
+    "name": "Dam Square",
+    "kind": "Square",
+    "link": "https://en.wikipedia.org/wiki/Dam_Square"
+   },
+   {
+    "name": "Royal Palace of Amsterdam",
+    "kind": "Palace",
+    "link": "https://en.wikipedia.org/wiki/Royal_Palace_of_Amsterdam"
+   },
+   {
+    "name": "Oude Kerk, Amsterdam",
+    "kind": "Church",
+    "link": "https://en.wikipedia.org/wiki/Oude_Kerk,_Amsterdam"
+   },
+   {
+    "name": "Heilige Stede",
+    "kind": "Church",
+    "link": "https://en.wikipedia.org/wiki/Heilige_Stede"
+   },
+   {
+    "name": "Oudekerksplein",
+    "kind": "Square",
+    "link": "https://en.wikipedia.org/wiki/Oudekerksplein"
+   },
+   {
+    "name": "Hash, Marihuana & Hemp Museum",
+    "kind": "Museum",
+    "link": "https://en.wikipedia.org/wiki/Hash,_Marihuana_%26_Hemp_Museum"
+   },
+   {
+    "name": "Walloon Church, Amsterdam",
+    "kind": "Church",
+    "link": "https://en.wikipedia.org/wiki/Walloon_Church,_Amsterdam"
+   },
+   {
+    "name": "Magna Plaza",
+    "kind": "Monument",
+    "link": "https://en.wikipedia.org/wiki/Magna_Plaza"
+   }
   ]
  },
  "EIN": {
@@ -5683,18 +6316,58 @@
   ]
  },
  "LUX": {
-  "_voy_spare": []
+  "source": "wikipedia_geosearch",
+  "items": [
+   {
+    "name": "Berg Castle",
+    "kind": "Castle",
+    "link": "https://en.wikipedia.org/wiki/Berg_Castle"
+   },
+   {
+    "name": "Birtrange Castle",
+    "kind": "Castle",
+    "link": "https://en.wikipedia.org/wiki/Birtrange_Castle"
+   }
+  ]
  },
  "CPH": {
-  "_voy_spare": [
-   "Crafts Fair",
-   "Copenhagen Fashion Week",
-   "CPH PIX",
-   "International Workers Day",
-   "CPH Distortion",
-   "Zulu Sommerbio",
-   "Copenhagen Jazzfestival",
-   "Grøn Koncert"
+  "source": "wikipedia_geosearch",
+  "items": [
+   {
+    "name": "Tivoli Gardens",
+    "kind": "Garden",
+    "link": "https://en.wikipedia.org/wiki/Tivoli_Gardens"
+   },
+   {
+    "name": "City Hall Square, Copenhagen",
+    "kind": "Square",
+    "link": "https://en.wikipedia.org/wiki/City_Hall_Square,_Copenhagen"
+   },
+   {
+    "name": "Pantomimeteatret",
+    "kind": "Theatre",
+    "link": "https://en.wikipedia.org/wiki/Pantomimeteatret"
+   },
+   {
+    "name": "Axeltorv",
+    "kind": "Square",
+    "link": "https://en.wikipedia.org/wiki/Axeltorv"
+   },
+   {
+    "name": "Dragon Fountain, Copenhagen",
+    "kind": "Fountain",
+    "link": "https://en.wikipedia.org/wiki/Dragon_Fountain,_Copenhagen"
+   },
+   {
+    "name": "Glass Hall (Tivoli Gardens)",
+    "kind": "Theatre",
+    "link": "https://en.wikipedia.org/wiki/Glass_Hall_(Tivoli_Gardens)"
+   },
+   {
+    "name": "Vestergade 3",
+    "kind": "Sight",
+    "link": "https://en.wikipedia.org/wiki/Vestergade_3"
+   }
   ]
  },
  "BLL": {
@@ -5772,36 +6445,138 @@
   ]
  },
  "ARN": {
-  "_voy_spare": [
-   "Hop On - Hop Off Boat",
-   "Under the bridges of Stockholm",
-   "Royal Canal Tour",
-   "Historical Canal Tour",
-   "Stockholm Grand Tour",
-   "Stockholm Panorama",
-   "Talk of the town"
+  "source": "wikipedia_geosearch",
+  "items": [
+   {
+    "name": "Museum of Medieval Stockholm",
+    "kind": "Museum",
+    "link": "https://en.wikipedia.org/wiki/Museum_of_Medieval_Stockholm"
+   },
+   {
+    "name": "Kungsträdgården",
+    "kind": "Park",
+    "link": "https://en.wikipedia.org/wiki/Kungstr%C3%A4dg%C3%A5rden"
+   },
+   {
+    "name": "Tre Kronor (castle)",
+    "kind": "Castle",
+    "link": "https://en.wikipedia.org/wiki/Tre_Kronor_(castle)"
+   },
+   {
+    "name": "Gustav Adolfs torg, Stockholm",
+    "kind": "Square",
+    "link": "https://en.wikipedia.org/wiki/Gustav_Adolfs_torg,_Stockholm"
+   },
+   {
+    "name": "Arvfurstens palats",
+    "kind": "Palace",
+    "link": "https://en.wikipedia.org/wiki/Arvfurstens_palats"
+   },
+   {
+    "name": "Riksbron",
+    "kind": "Bridge",
+    "link": "https://en.wikipedia.org/wiki/Riksbron"
+   },
+   {
+    "name": "Vasabron",
+    "kind": "Bridge",
+    "link": "https://en.wikipedia.org/wiki/Vasabron"
+   },
+   {
+    "name": "Mynttorget",
+    "kind": "Square",
+    "link": "https://en.wikipedia.org/wiki/Mynttorget"
+   }
   ]
  },
  "NYO": {
-  "_voy_spare": [
-   "Hop On - Hop Off Boat",
-   "Under the bridges of Stockholm",
-   "Royal Canal Tour",
-   "Historical Canal Tour",
-   "Stockholm Grand Tour",
-   "Stockholm Panorama",
-   "Talk of the town"
+  "source": "wikipedia_geosearch",
+  "items": [
+   {
+    "name": "Museum of Medieval Stockholm",
+    "kind": "Museum",
+    "link": "https://en.wikipedia.org/wiki/Museum_of_Medieval_Stockholm"
+   },
+   {
+    "name": "Kungsträdgården",
+    "kind": "Park",
+    "link": "https://en.wikipedia.org/wiki/Kungstr%C3%A4dg%C3%A5rden"
+   },
+   {
+    "name": "Tre Kronor (castle)",
+    "kind": "Castle",
+    "link": "https://en.wikipedia.org/wiki/Tre_Kronor_(castle)"
+   },
+   {
+    "name": "Gustav Adolfs torg, Stockholm",
+    "kind": "Square",
+    "link": "https://en.wikipedia.org/wiki/Gustav_Adolfs_torg,_Stockholm"
+   },
+   {
+    "name": "Arvfurstens palats",
+    "kind": "Palace",
+    "link": "https://en.wikipedia.org/wiki/Arvfurstens_palats"
+   },
+   {
+    "name": "Riksbron",
+    "kind": "Bridge",
+    "link": "https://en.wikipedia.org/wiki/Riksbron"
+   },
+   {
+    "name": "Vasabron",
+    "kind": "Bridge",
+    "link": "https://en.wikipedia.org/wiki/Vasabron"
+   },
+   {
+    "name": "Mynttorget",
+    "kind": "Square",
+    "link": "https://en.wikipedia.org/wiki/Mynttorget"
+   }
   ]
  },
  "BMA": {
-  "_voy_spare": [
-   "Hop On - Hop Off Boat",
-   "Under the bridges of Stockholm",
-   "Royal Canal Tour",
-   "Historical Canal Tour",
-   "Stockholm Grand Tour",
-   "Stockholm Panorama",
-   "Talk of the town"
+  "source": "wikipedia_geosearch",
+  "items": [
+   {
+    "name": "Museum of Medieval Stockholm",
+    "kind": "Museum",
+    "link": "https://en.wikipedia.org/wiki/Museum_of_Medieval_Stockholm"
+   },
+   {
+    "name": "Kungsträdgården",
+    "kind": "Park",
+    "link": "https://en.wikipedia.org/wiki/Kungstr%C3%A4dg%C3%A5rden"
+   },
+   {
+    "name": "Tre Kronor (castle)",
+    "kind": "Castle",
+    "link": "https://en.wikipedia.org/wiki/Tre_Kronor_(castle)"
+   },
+   {
+    "name": "Gustav Adolfs torg, Stockholm",
+    "kind": "Square",
+    "link": "https://en.wikipedia.org/wiki/Gustav_Adolfs_torg,_Stockholm"
+   },
+   {
+    "name": "Arvfurstens palats",
+    "kind": "Palace",
+    "link": "https://en.wikipedia.org/wiki/Arvfurstens_palats"
+   },
+   {
+    "name": "Riksbron",
+    "kind": "Bridge",
+    "link": "https://en.wikipedia.org/wiki/Riksbron"
+   },
+   {
+    "name": "Vasabron",
+    "kind": "Bridge",
+    "link": "https://en.wikipedia.org/wiki/Vasabron"
+   },
+   {
+    "name": "Mynttorget",
+    "kind": "Square",
+    "link": "https://en.wikipedia.org/wiki/Mynttorget"
+   }
   ]
  },
  "GOT": {
@@ -5879,27 +6654,93 @@
   ]
  },
  "OSL": {
-  "_voy_spare": [
-   "Viking Ship Museum and Historical Museum",
-   "Øyafestivalen",
-   "by:Larm",
-   "Findings",
-   "Inferno",
-   "Oslo Jazz Festival",
-   "Oslo Chamber Music Festival",
-   "Musikkfest (National Music Day)"
+  "source": "wikipedia_geosearch",
+  "items": [
+   {
+    "name": "National Theatre (Oslo)",
+    "kind": "Theatre",
+    "link": "https://en.wikipedia.org/wiki/National_Theatre_(Oslo)"
+   },
+   {
+    "name": "Det Norske Teatret",
+    "kind": "Theatre",
+    "link": "https://en.wikipedia.org/wiki/Det_Norske_Teatret"
+   },
+   {
+    "name": "Studioteatret",
+    "kind": "Theatre",
+    "link": "https://en.wikipedia.org/wiki/Studioteatret"
+   },
+   {
+    "name": "Stortorvet",
+    "kind": "Square",
+    "link": "https://en.wikipedia.org/wiki/Stortorvet"
+   },
+   {
+    "name": "Eidsvolls plass",
+    "kind": "Square",
+    "link": "https://en.wikipedia.org/wiki/Eidsvolls_plass"
+   },
+   {
+    "name": "Sehesteds plass",
+    "kind": "Square",
+    "link": "https://en.wikipedia.org/wiki/Sehesteds_plass"
+   },
+   {
+    "name": "Chat Noir",
+    "kind": "Theatre",
+    "link": "https://en.wikipedia.org/wiki/Chat_Noir"
+   },
+   {
+    "name": "Egertorget",
+    "kind": "Square",
+    "link": "https://en.wikipedia.org/wiki/Egertorget"
+   }
   ]
  },
  "TRF": {
-  "_voy_spare": [
-   "Viking Ship Museum and Historical Museum",
-   "Øyafestivalen",
-   "by:Larm",
-   "Findings",
-   "Inferno",
-   "Oslo Jazz Festival",
-   "Oslo Chamber Music Festival",
-   "Musikkfest (National Music Day)"
+  "source": "wikipedia_geosearch",
+  "items": [
+   {
+    "name": "National Theatre (Oslo)",
+    "kind": "Theatre",
+    "link": "https://en.wikipedia.org/wiki/National_Theatre_(Oslo)"
+   },
+   {
+    "name": "Det Norske Teatret",
+    "kind": "Theatre",
+    "link": "https://en.wikipedia.org/wiki/Det_Norske_Teatret"
+   },
+   {
+    "name": "Studioteatret",
+    "kind": "Theatre",
+    "link": "https://en.wikipedia.org/wiki/Studioteatret"
+   },
+   {
+    "name": "Stortorvet",
+    "kind": "Square",
+    "link": "https://en.wikipedia.org/wiki/Stortorvet"
+   },
+   {
+    "name": "Eidsvolls plass",
+    "kind": "Square",
+    "link": "https://en.wikipedia.org/wiki/Eidsvolls_plass"
+   },
+   {
+    "name": "Sehesteds plass",
+    "kind": "Square",
+    "link": "https://en.wikipedia.org/wiki/Sehesteds_plass"
+   },
+   {
+    "name": "Chat Noir",
+    "kind": "Theatre",
+    "link": "https://en.wikipedia.org/wiki/Chat_Noir"
+   },
+   {
+    "name": "Egertorget",
+    "kind": "Square",
+    "link": "https://en.wikipedia.org/wiki/Egertorget"
+   }
   ]
  },
  "BGO": {
@@ -6051,15 +6892,48 @@
   ]
  },
  "HEL": {
-  "_voy_spare": [
-   "Helsinki Philharmonic Orchestra",
-   "UMO Jazz Orchestra",
-   "Söderskär Lighthouse",
-   "Skippered Day Sailing",
-   "Lux Helsinki",
-   "Vappu",
-   "World Village Festival",
-   "Helsinki City Run"
+  "source": "wikipedia_geosearch",
+  "items": [
+   {
+    "name": "Kiasma",
+    "kind": "Museum",
+    "link": "https://en.wikipedia.org/wiki/Kiasma"
+   },
+   {
+    "name": "Railway Square, Helsinki",
+    "kind": "Square",
+    "link": "https://en.wikipedia.org/wiki/Railway_Square,_Helsinki"
+   },
+   {
+    "name": "Finnish National Theatre",
+    "kind": "Theatre",
+    "link": "https://en.wikipedia.org/wiki/Finnish_National_Theatre"
+   },
+   {
+    "name": "Ateneum",
+    "kind": "Museum",
+    "link": "https://en.wikipedia.org/wiki/Ateneum"
+   },
+   {
+    "name": "Finnish National Gallery",
+    "kind": "Museum",
+    "link": "https://en.wikipedia.org/wiki/Finnish_National_Gallery"
+   },
+   {
+    "name": "Finnish Museum of Natural History",
+    "kind": "Museum",
+    "link": "https://en.wikipedia.org/wiki/Finnish_Museum_of_Natural_History"
+   },
+   {
+    "name": "Natural History Museum of Helsinki",
+    "kind": "Museum",
+    "link": "https://en.wikipedia.org/wiki/Natural_History_Museum_of_Helsinki"
+   },
+   {
+    "name": "Amos Rex",
+    "kind": "Museum",
+    "link": "https://en.wikipedia.org/wiki/Amos_Rex"
+   }
   ]
  },
  "TMP": {
@@ -6359,22 +7233,65 @@
   ]
  },
  "PLQ": {
-  "_voy_spare": [
-   "Resort Museum",
-   "A. Mončys House-Museum",
-   "Amber Museum"
+  "source": "wikivoyage",
+  "items": [
+   {
+    "name": "Resort Museum",
+    "kind": "Museum"
+   },
+   {
+    "name": "A. Mončys House-Museum",
+    "kind": "Museum"
+   },
+   {
+    "name": "Amber Museum",
+    "kind": "Museum"
+   }
   ]
  },
  "RIX": {
-  "_voy_spare": [
-   "GUNS Funnel",
-   "Wolftrike Drift Hall",
-   "Rīgas Lāzertags",
-   "Easter",
-   "Count of May",
-   "Latviabeerfest",
-   "Jāņi",
-   "Latvian Song and Dance Festival"
+  "source": "wikipedia_geosearch",
+  "items": [
+   {
+    "name": "St. Peter's Church, Riga",
+    "kind": "Church",
+    "link": "https://en.wikipedia.org/wiki/St._Peter%27s_Church,_Riga"
+   },
+   {
+    "name": "Riga Castle",
+    "kind": "Castle",
+    "link": "https://en.wikipedia.org/wiki/Riga_Castle"
+   },
+   {
+    "name": "Riga Cathedral",
+    "kind": "Cathedral",
+    "link": "https://en.wikipedia.org/wiki/Riga_Cathedral"
+   },
+   {
+    "name": "St. James's Cathedral, Riga",
+    "kind": "Church",
+    "link": "https://en.wikipedia.org/wiki/St._James%27s_Cathedral,_Riga"
+   },
+   {
+    "name": "Museum of the Occupation of Latvia",
+    "kind": "Museum",
+    "link": "https://en.wikipedia.org/wiki/Museum_of_the_Occupation_of_Latvia"
+   },
+   {
+    "name": "Museum of the History of Riga and Navigation",
+    "kind": "Museum",
+    "link": "https://en.wikipedia.org/wiki/Museum_of_the_History_of_Riga_and_Navigation"
+   },
+   {
+    "name": "Latvian Museum of Architecture",
+    "kind": "Museum",
+    "link": "https://en.wikipedia.org/wiki/Latvian_Museum_of_Architecture"
+   },
+   {
+    "name": "Art Museum Riga Bourse",
+    "kind": "Museum",
+    "link": "https://en.wikipedia.org/wiki/Art_Museum_Riga_Bourse"
+   }
   ]
  },
  "TLL": {
@@ -7357,9 +8274,13 @@
   ]
  },
  "TZL": {
-  "_voy_spare": [
-   "Museum of Eastern Bosnia",
-   "Pannonica Lakes"
+  "source": "wikipedia_geosearch",
+  "items": [
+   {
+    "name": "Cathedral of the Dormition of the Theotokos, Tuzla",
+    "kind": "Cathedral",
+    "link": "https://en.wikipedia.org/wiki/Cathedral_of_the_Dormition_of_the_Theotokos,_Tuzla"
+   }
   ]
  },
  "BEG": {
@@ -7437,10 +8358,38 @@
   ]
  },
  "TIV": {
-  "_voy_spare": [
-   "Gornja Lastva",
-   "Ostrvo cvijeća",
-   "Župa Park"
+  "source": "wikipedia_geosearch",
+  "items": [
+   {
+    "name": "Kotor Cathedral",
+    "kind": "Church",
+    "link": "https://en.wikipedia.org/wiki/Kotor_Cathedral"
+   },
+   {
+    "name": "Church of Our Lady of Remedy",
+    "kind": "Church",
+    "link": "https://en.wikipedia.org/wiki/Church_of_Our_Lady_of_Remedy"
+   },
+   {
+    "name": "Trg od Oružja",
+    "kind": "Square",
+    "link": "https://en.wikipedia.org/wiki/Trg_od_Oru%C5%BEja"
+   },
+   {
+    "name": "Church of St. Nicholas, Kotor",
+    "kind": "Church",
+    "link": "https://en.wikipedia.org/wiki/Church_of_St._Nicholas,_Kotor"
+   },
+   {
+    "name": "Church of St. Luke (Kotor)",
+    "kind": "Church",
+    "link": "https://en.wikipedia.org/wiki/Church_of_St._Luke_(Kotor)"
+   },
+   {
+    "name": "Aquarium Boka",
+    "kind": "Zoo",
+    "link": "https://en.wikipedia.org/wiki/Aquarium_Boka"
+   }
   ]
  },
  "TGD": {
@@ -7629,18 +8578,82 @@
   ]
  },
  "PFO": {
-  "_voy_spare": [
-   "Paphos Archaeological Park",
-   "The Tombs of the Kings",
-   "Paphos Fort",
-   "Paphos Zoo",
-   "The Odeon",
-   "Aphrodite Water Park",
-   "Cyprus Taste Tours"
+  "source": "wikivoyage",
+  "items": [
+   {
+    "name": "Paphos Archaeological Park",
+    "kind": "Ancient site"
+   },
+   {
+    "name": "The Tombs of the Kings",
+    "kind": "Sight"
+   },
+   {
+    "name": "Paphos Fort",
+    "kind": "Sight"
+   },
+   {
+    "name": "Paphos Zoo",
+    "kind": "Zoo"
+   },
+   {
+    "name": "The Odeon",
+    "kind": "Sight"
+   },
+   {
+    "name": "Aphrodite Water Park",
+    "kind": "Park"
+   },
+   {
+    "name": "Cyprus Taste Tours",
+    "kind": "Tour"
+   }
   ]
  },
  "MLA": {
-  "_voy_spare": []
+  "source": "wikipedia_geosearch",
+  "items": [
+   {
+    "name": "Casa Rocca Piccola",
+    "kind": "Palace",
+    "link": "https://en.wikipedia.org/wiki/Casa_Rocca_Piccola"
+   },
+   {
+    "name": "St John's Co-Cathedral",
+    "kind": "Cathedral",
+    "link": "https://en.wikipedia.org/wiki/St_John%27s_Co-Cathedral"
+   },
+   {
+    "name": "Grandmaster's Palace, Valletta",
+    "kind": "Palace",
+    "link": "https://en.wikipedia.org/wiki/Grandmaster%27s_Palace,_Valletta"
+   },
+   {
+    "name": "Lower Barrakka Gardens",
+    "kind": "Park",
+    "link": "https://en.wikipedia.org/wiki/Lower_Barrakka_Gardens"
+   },
+   {
+    "name": "Christ the Redeemer Church, Valletta",
+    "kind": "Church",
+    "link": "https://en.wikipedia.org/wiki/Christ_the_Redeemer_Church,_Valletta"
+   },
+   {
+    "name": "Church of the Jesuits, Valletta",
+    "kind": "Church",
+    "link": "https://en.wikipedia.org/wiki/Church_of_the_Jesuits,_Valletta"
+   },
+   {
+    "name": "Collegiate Parish Church of St Paul's Shipwreck",
+    "kind": "Church",
+    "link": "https://en.wikipedia.org/wiki/Collegiate_Parish_Church_of_St_Paul%27s_Shipwreck"
+   },
+   {
+    "name": "Franciscan Church of St Mary of Jesus",
+    "kind": "Church",
+    "link": "https://en.wikipedia.org/wiki/Franciscan_Church_of_St_Mary_of_Jesus"
+   }
+  ]
  },
  "PRN": {
   "source": "wikivoyage",
@@ -7816,12 +8829,34 @@
   ]
  },
  "ACI": {
-  "_voy_spare": [
-   "Alderney Museum"
+  "source": "wikipedia_geosearch",
+  "items": [
+   {
+    "name": "Alderney Lighthouse",
+    "kind": "Lighthouse",
+    "link": "https://en.wikipedia.org/wiki/Alderney_Lighthouse"
+   },
+   {
+    "name": "Alderney Society Museum",
+    "kind": "Museum",
+    "link": "https://en.wikipedia.org/wiki/Alderney_Society_Museum"
+   },
+   {
+    "name": "St Anne's Church, Alderney",
+    "kind": "Church",
+    "link": "https://en.wikipedia.org/wiki/St_Anne%27s_Church,_Alderney"
+   }
   ]
  },
  "IOM": {
-  "_voy_spare": []
+  "source": "wikipedia_geosearch",
+  "items": [
+   {
+    "name": "Diocese of Sodor and Man",
+    "kind": "Church",
+    "link": "https://en.wikipedia.org/wiki/Diocese_of_Sodor_and_Man"
+   }
+  ]
  },
  "BRN": {
   "source": "wikivoyage",
@@ -8157,15 +9192,48 @@
   ]
  },
  "gem:rotterdam": {
-  "_voy_spare": [
-   "Six Days of Rotterdam",
-   "IFFR",
-   "Art Rotterdam",
-   "World tennis Tournament",
-   "Motel Mozaique",
-   "Poetry International",
-   "Summer Carnival",
-   "Heerlijk Rotterdam"
+  "source": "wikipedia_geosearch",
+  "items": [
+   {
+    "name": "Museum Boijmans Van Beuningen",
+    "kind": "Museum",
+    "link": "https://en.wikipedia.org/wiki/Museum_Boijmans_Van_Beuningen"
+   },
+   {
+    "name": "De Doelen",
+    "kind": "Convent",
+    "link": "https://en.wikipedia.org/wiki/De_Doelen"
+   },
+   {
+    "name": "Schouwburgplein (Rotterdam)",
+    "kind": "Square",
+    "link": "https://en.wikipedia.org/wiki/Schouwburgplein_(Rotterdam)"
+   },
+   {
+    "name": "Delftse Poort",
+    "kind": "Tower",
+    "link": "https://en.wikipedia.org/wiki/Delftse_Poort"
+   },
+   {
+    "name": "Maritime Museum Rotterdam",
+    "kind": "Museum",
+    "link": "https://en.wikipedia.org/wiki/Maritime_Museum_Rotterdam"
+   },
+   {
+    "name": "Westerkerk (Rotterdam)",
+    "kind": "Church",
+    "link": "https://en.wikipedia.org/wiki/Westerkerk_(Rotterdam)"
+   },
+   {
+    "name": "Scots International Church",
+    "kind": "Church",
+    "link": "https://en.wikipedia.org/wiki/Scots_International_Church"
+   },
+   {
+    "name": "Chabot Museum",
+    "kind": "Museum",
+    "link": "https://en.wikipedia.org/wiki/Chabot_Museum"
+   }
   ]
  },
  "gem:delft": {
@@ -8280,7 +9348,29 @@
   ]
  },
  "gem:rothenburg": {
-  "_voy_spare": []
+  "source": "wikipedia_geosearch",
+  "items": [
+   {
+    "name": "St. James's Church, Rothenburg ob der Tauber",
+    "kind": "Church",
+    "link": "https://en.wikipedia.org/wiki/St._James%27s_Church,_Rothenburg_ob_der_Tauber"
+   },
+   {
+    "name": "St. Peter and St. Paul's Church, Detwang",
+    "kind": "Church",
+    "link": "https://en.wikipedia.org/wiki/St._Peter_and_St._Paul%27s_Church,_Detwang"
+   },
+   {
+    "name": "Franciscan Friary, Rothenburg ob der Tauber",
+    "kind": "Church",
+    "link": "https://en.wikipedia.org/wiki/Franciscan_Friary,_Rothenburg_ob_der_Tauber"
+   },
+   {
+    "name": "Tauber Bridge, Rothenburg ob der Tauber",
+    "kind": "Bridge",
+    "link": "https://en.wikipedia.org/wiki/Tauber_Bridge,_Rothenburg_ob_der_Tauber"
+   }
+  ]
  },
  "gem:heidelberg": {
   "source": "wikivoyage",
@@ -8431,10 +9521,20 @@
   ]
  },
  "gem:garmisch": {
-  "_voy_spare": [
-   "Schachentor",
-   "Hollental-hutte",
-   "Oberreintalhutte"
+  "source": "wikivoyage",
+  "items": [
+   {
+    "name": "Schachentor",
+    "kind": "Sight"
+   },
+   {
+    "name": "Hollental-hutte",
+    "kind": "Sight"
+   },
+   {
+    "name": "Oberreintalhutte",
+    "kind": "Sight"
+   }
   ]
  },
  "gem:neuschwanstein": {
@@ -8512,7 +9612,19 @@
   ]
  },
  "gem:dresden-saxon": {
-  "_voy_spare": []
+  "source": "wikipedia_geosearch",
+  "items": [
+   {
+    "name": "Bad Schandau Elevator",
+    "kind": "Tower",
+    "link": "https://en.wikipedia.org/wiki/Bad_Schandau_Elevator"
+   },
+   {
+    "name": "Pflanzengarten Bad Schandau",
+    "kind": "Garden",
+    "link": "https://en.wikipedia.org/wiki/Pflanzengarten_Bad_Schandau"
+   }
+  ]
  },
  "gem:cesky-krumlov": {
   "source": "wikivoyage",
@@ -8700,29 +9812,44 @@
   ]
  },
  "gem:hallstatt": {
-  "_voy_spare": [
-   "Salzwelten",
-   "Hallstatt Museum",
-   "Ossuary",
-   "Hallstättersee-Schifffahrt Hemetsberger",
-   "Ice caves"
+  "source": "wikipedia_geosearch",
+  "items": [
+   {
+    "name": "Hallstatt Museum",
+    "kind": "Museum",
+    "link": "https://en.wikipedia.org/wiki/Hallstatt_Museum"
+   }
   ]
  },
  "gem:bad-ischl": {
-  "_voy_spare": []
+  "source": "wikipedia_geosearch",
+  "items": [
+   {
+    "name": "Lehartheater",
+    "kind": "Theatre",
+    "link": "https://en.wikipedia.org/wiki/Lehartheater"
+   }
+  ]
  },
- "gem:st-anton": {
-  "_voy_spare": []
- },
+ "gem:st-anton": null,
  "gem:zell-am-see": {
-  "_voy_spare": []
+  "source": "wikipedia_geosearch",
+  "items": [
+   {
+    "name": "Castle Saalhof",
+    "kind": "Castle",
+    "link": "https://en.wikipedia.org/wiki/Castle_Saalhof"
+   }
+  ]
  },
  "gem:durnstein": {
-  "_voy_spare": [
-   "Burgruine Dürnstein",
-   "Stift Dürnstein",
-   "Kunigundenkirche",
-   "Kuenringerbad"
+  "source": "wikipedia_geosearch",
+  "items": [
+   {
+    "name": "Dürnstein Castle",
+    "kind": "Castle",
+    "link": "https://en.wikipedia.org/wiki/D%C3%BCrnstein_Castle"
+   }
   ]
  },
  "gem:bled": {
@@ -8762,9 +9889,7 @@
    }
   ]
  },
- "gem:bohinj": {
-  "_voy_spare": []
- },
+ "gem:bohinj": null,
  "gem:piran": {
   "source": "wikivoyage",
   "items": [
@@ -8803,17 +9928,28 @@
   ]
  },
  "gem:interlaken": {
-  "_voy_spare": [
-   "Take a boat trip",
-   "Night sledding"
+  "source": "wikipedia_geosearch",
+  "items": [
+   {
+    "name": "Jungfrau Park",
+    "kind": "Park",
+    "link": "https://en.wikipedia.org/wiki/Jungfrau_Park"
+   },
+   {
+    "name": "Interlaken Monastery",
+    "kind": "Convent",
+    "link": "https://en.wikipedia.org/wiki/Interlaken_Monastery"
+   }
   ]
  },
  "gem:zermatt": {
-  "_voy_spare": [
-   "Breithorn",
-   "Matterhorn",
-   "Monte Rosa",
-   "Breuil-Cervinia Valtournenche Zermatt ski area"
+  "source": "wikipedia_geosearch",
+  "items": [
+   {
+    "name": "Matterhorn Museum",
+    "kind": "Museum",
+    "link": "https://en.wikipedia.org/wiki/Matterhorn_Museum"
+   }
   ]
  },
  "gem:lucerne": {
@@ -8891,41 +10027,125 @@
   ]
  },
  "gem:grindelwald": {
-  "_voy_spare": [
-   "Heimatmuseum",
-   "Sportszentrum Grindelwald"
+  "source": "wikivoyage",
+  "items": [
+   {
+    "name": "Heimatmuseum",
+    "kind": "Museum"
+   },
+   {
+    "name": "Sportszentrum Grindelwald",
+    "kind": "Sight"
+   }
   ]
  },
  "gem:lauterbrunnen": {
-  "_voy_spare": [
-   "Trümmelbach Falls"
+  "source": "wikipedia_geosearch",
+  "items": [
+   {
+    "name": "Staubbach Falls",
+    "kind": "Waterfall",
+    "link": "https://en.wikipedia.org/wiki/Staubbach_Falls"
+   },
+   {
+    "name": "Trümmelbach Falls",
+    "kind": "Waterfall",
+    "link": "https://en.wikipedia.org/wiki/Tr%C3%BCmmelbach_Falls"
+   },
+   {
+    "name": "Mürrenbach Falls",
+    "kind": "Waterfall",
+    "link": "https://en.wikipedia.org/wiki/M%C3%BCrrenbach_Falls"
+   }
   ]
  },
  "gem:cinque-terre": {
-  "_voy_spare": []
+  "source": "wikipedia_geosearch",
+  "items": [
+   {
+    "name": "Cinque Terre National Park",
+    "kind": "Park",
+    "link": "https://en.wikipedia.org/wiki/Cinque_Terre_National_Park"
+   }
+  ]
  },
  "gem:amalfi-coast": {
-  "_voy_spare": [
-   "Sentiero Degli Dei"
+  "source": "wikipedia_geosearch",
+  "items": [
+   {
+    "name": "Archdiocese of Amalfi-Cava de' Tirreni",
+    "kind": "Roman site",
+    "link": "https://en.wikipedia.org/wiki/Archdiocese_of_Amalfi-Cava_de%27_Tirreni"
+   },
+   {
+    "name": "Amalfi Cathedral",
+    "kind": "Cathedral",
+    "link": "https://en.wikipedia.org/wiki/Amalfi_Cathedral"
+   },
+   {
+    "name": "San Giovanni del Toro",
+    "kind": "Church",
+    "link": "https://en.wikipedia.org/wiki/San_Giovanni_del_Toro"
+   }
   ]
  },
  "gem:portofino": {
-  "_voy_spare": [
-   "Castello Brown",
-   "Church of St. Martin"
+  "source": "wikipedia_geosearch",
+  "items": [
+   {
+    "name": "Castello Brown",
+    "kind": "Museum",
+    "link": "https://en.wikipedia.org/wiki/Castello_Brown"
+   },
+   {
+    "name": "Cervara Abbey",
+    "kind": "Sight",
+    "link": "https://en.wikipedia.org/wiki/Cervara_Abbey"
+   },
+   {
+    "name": "San Fruttuoso Abbey",
+    "kind": "Roman site",
+    "link": "https://en.wikipedia.org/wiki/San_Fruttuoso_Abbey"
+   },
+   {
+    "name": "Portofino Lighthouse",
+    "kind": "Lighthouse",
+    "link": "https://en.wikipedia.org/wiki/Portofino_Lighthouse"
+   },
+   {
+    "name": "Divo Martino, Portofino",
+    "kind": "Church",
+    "link": "https://en.wikipedia.org/wiki/Divo_Martino,_Portofino"
+   },
+   {
+    "name": "San Giorgio, Portofino",
+    "kind": "Church",
+    "link": "https://en.wikipedia.org/wiki/San_Giorgio,_Portofino"
+   }
   ]
  },
  "gem:como": {
-  "_voy_spare": [
-   "Cablecar Argegno - Pigra",
-   "Visit the Roman Stone and Strada Regia",
-   "Beaches",
-   "Mountain ranges"
+  "source": "wikipedia_geosearch",
+  "items": [
+   {
+    "name": "Castello di Vezio",
+    "kind": "Castle",
+    "link": "https://en.wikipedia.org/wiki/Castello_di_Vezio"
+   },
+   {
+    "name": "Church of the Ascension, Griante",
+    "kind": "Church",
+    "link": "https://en.wikipedia.org/wiki/Church_of_the_Ascension,_Griante"
+   }
   ]
  },
  "gem:garda": {
-  "_voy_spare": [
-   "Isola del Garda"
+  "source": "wikivoyage",
+  "items": [
+   {
+    "name": "Isola del Garda",
+    "kind": "Sight"
+   }
   ]
  },
  "gem:dolomites": {
@@ -8962,7 +10182,49 @@
   ]
  },
  "gem:tuscany-siena": {
-  "_voy_spare": []
+  "source": "wikipedia_geosearch",
+  "items": [
+   {
+    "name": "Siena Cathedral",
+    "kind": "Church",
+    "link": "https://en.wikipedia.org/wiki/Siena_Cathedral"
+   },
+   {
+    "name": "Palazzo Pubblico",
+    "kind": "Palace",
+    "link": "https://en.wikipedia.org/wiki/Palazzo_Pubblico"
+   },
+   {
+    "name": "Torre del Mangia",
+    "kind": "Tower",
+    "link": "https://en.wikipedia.org/wiki/Torre_del_Mangia"
+   },
+   {
+    "name": "Piazza del Campo",
+    "kind": "Square",
+    "link": "https://en.wikipedia.org/wiki/Piazza_del_Campo"
+   },
+   {
+    "name": "Archdiocese of Siena–Colle di Val d'Elsa–Montalcino",
+    "kind": "Roman site",
+    "link": "https://en.wikipedia.org/wiki/Archdiocese_of_Siena%E2%80%93Colle_di_Val_d%27Elsa%E2%80%93Montalcino"
+   },
+   {
+    "name": "San Martino, Siena",
+    "kind": "Church",
+    "link": "https://en.wikipedia.org/wiki/San_Martino,_Siena"
+   },
+   {
+    "name": "San Giuseppe, Siena",
+    "kind": "Church",
+    "link": "https://en.wikipedia.org/wiki/San_Giuseppe,_Siena"
+   },
+   {
+    "name": "Basilica of San Domenico, Siena",
+    "kind": "Basilica",
+    "link": "https://en.wikipedia.org/wiki/Basilica_of_San_Domenico,_Siena"
+   }
+  ]
  },
  "gem:matera": {
   "source": "wikivoyage",
@@ -9356,9 +10618,18 @@
   ]
  },
  "gem:etretat": {
-  "_voy_spare": [
-   "Walks",
-   "Etretat Golf Club"
+  "source": "wikipedia_geosearch",
+  "items": [
+   {
+    "name": "Etretat Gardens",
+    "kind": "Garden",
+    "link": "https://en.wikipedia.org/wiki/Etretat_Gardens"
+   },
+   {
+    "name": "Cap d'Antifer Lighthouse",
+    "kind": "Lighthouse",
+    "link": "https://en.wikipedia.org/wiki/Cap_d%27Antifer_Lighthouse"
+   }
   ]
  },
  "gem:mont-saint-michel": {
@@ -9457,18 +10728,129 @@
   ]
  },
  "gem:loire-valley": {
-  "_voy_spare": []
+  "source": "wikipedia_geosearch",
+  "items": [
+   {
+    "name": "Marmoutier Abbey, Tours",
+    "kind": "Monastery",
+    "link": "https://en.wikipedia.org/wiki/Marmoutier_Abbey,_Tours"
+   },
+   {
+    "name": "Château de Plessis-lez-Tours",
+    "kind": "Monument",
+    "link": "https://en.wikipedia.org/wiki/Ch%C3%A2teau_de_Plessis-lez-Tours"
+   },
+   {
+    "name": "Jardin botanique de Tours",
+    "kind": "Garden",
+    "link": "https://en.wikipedia.org/wiki/Jardin_botanique_de_Tours"
+   },
+   {
+    "name": "Basilica of Saint Martin, Tours",
+    "kind": "Basilica",
+    "link": "https://en.wikipedia.org/wiki/Basilica_of_Saint_Martin,_Tours"
+   },
+   {
+    "name": "Oratory of the Holy Face",
+    "kind": "Roman site",
+    "link": "https://en.wikipedia.org/wiki/Oratory_of_the_Holy_Face"
+   },
+   {
+    "name": "Musée des Beaux-Arts de Tours",
+    "kind": "Museum",
+    "link": "https://en.wikipedia.org/wiki/Mus%C3%A9e_des_Beaux-Arts_de_Tours"
+   },
+   {
+    "name": "Château de Tours",
+    "kind": "Castle",
+    "link": "https://en.wikipedia.org/wiki/Ch%C3%A2teau_de_Tours"
+   },
+   {
+    "name": "Tours Amphitheatre",
+    "kind": "Roman site",
+    "link": "https://en.wikipedia.org/wiki/Tours_Amphitheatre"
+   }
+  ]
  },
  "gem:provence-luberon": {
-  "_voy_spare": []
+  "source": "wikipedia_geosearch",
+  "items": [
+   {
+    "name": "Sénanque Abbey",
+    "kind": "Sight",
+    "link": "https://en.wikipedia.org/wiki/S%C3%A9nanque_Abbey"
+   },
+   {
+    "name": "Village des Bories",
+    "kind": "Museum",
+    "link": "https://en.wikipedia.org/wiki/Village_des_Bories"
+   }
+  ]
  },
  "gem:biarritz-coast": {
-  "_voy_spare": [
-   "Église St-Jean Baptiste"
+  "source": "wikipedia_geosearch",
+  "items": [
+   {
+    "name": "Nivelle (river)",
+    "kind": "Sight",
+    "link": "https://en.wikipedia.org/wiki/Nivelle_(river)"
+   },
+   {
+    "name": "Jardin botanique littoral de Saint-Jean-de-Luz",
+    "kind": "Garden",
+    "link": "https://en.wikipedia.org/wiki/Jardin_botanique_littoral_de_Saint-Jean-de-Luz"
+   },
+   {
+    "name": "Église Saint-Jean-Baptiste de Saint-Jean-de-Luz",
+    "kind": "Church",
+    "link": "https://en.wikipedia.org/wiki/%C3%89glise_Saint-Jean-Baptiste_de_Saint-Jean-de-Luz"
+   }
   ]
  },
  "gem:nice-villefranche": {
-  "_voy_spare": []
+  "source": "wikipedia_geosearch",
+  "items": [
+   {
+    "name": "Grotte du Lazaret",
+    "kind": "Ancient site",
+    "link": "https://en.wikipedia.org/wiki/Grotte_du_Lazaret"
+   },
+   {
+    "name": "Terra Amata (archaeological site)",
+    "kind": "Ancient site",
+    "link": "https://en.wikipedia.org/wiki/Terra_Amata_(archaeological_site)"
+   },
+   {
+    "name": "Nice Cathedral",
+    "kind": "Cathedral",
+    "link": "https://en.wikipedia.org/wiki/Nice_Cathedral"
+   },
+   {
+    "name": "Palais des Congrès Acropolis",
+    "kind": "Convent",
+    "link": "https://en.wikipedia.org/wiki/Palais_des_Congr%C3%A8s_Acropolis"
+   },
+   {
+    "name": "Les Cèdres",
+    "kind": "Garden",
+    "link": "https://en.wikipedia.org/wiki/Les_C%C3%A8dres"
+   },
+   {
+    "name": "Opéra de Nice",
+    "kind": "Opera",
+    "link": "https://en.wikipedia.org/wiki/Op%C3%A9ra_de_Nice"
+   },
+   {
+    "name": "Muséum d'histoire naturelle de Nice",
+    "kind": "Museum",
+    "link": "https://en.wikipedia.org/wiki/Mus%C3%A9um_d%27histoire_naturelle_de_Nice"
+   },
+   {
+    "name": "Cimiez Cathedral",
+    "kind": "Church",
+    "link": "https://en.wikipedia.org/wiki/Cimiez_Cathedral"
+   }
+  ]
  },
  "gem:ronda": {
   "source": "wikivoyage",
@@ -9508,7 +10890,49 @@
   ]
  },
  "gem:cordoba": {
-  "_voy_spare": []
+  "source": "wikipedia_geosearch",
+  "items": [
+   {
+    "name": "Córdoba, Spain",
+    "kind": "Sight",
+    "link": "https://en.wikipedia.org/wiki/C%C3%B3rdoba,_Spain"
+   },
+   {
+    "name": "Mosque–Cathedral of Córdoba",
+    "kind": "Cathedral",
+    "link": "https://en.wikipedia.org/wiki/Mosque%E2%80%93Cathedral_of_C%C3%B3rdoba"
+   },
+   {
+    "name": "Alcázar de los Reyes Cristianos",
+    "kind": "Castle",
+    "link": "https://en.wikipedia.org/wiki/Alc%C3%A1zar_de_los_Reyes_Cristianos"
+   },
+   {
+    "name": "Diocese of Córdoba",
+    "kind": "Roman site",
+    "link": "https://en.wikipedia.org/wiki/Diocese_of_C%C3%B3rdoba"
+   },
+   {
+    "name": "Taifa of Córdoba",
+    "kind": "Sight",
+    "link": "https://en.wikipedia.org/wiki/Taifa_of_C%C3%B3rdoba"
+   },
+   {
+    "name": "Córdoba Synagogue",
+    "kind": "Synagogue",
+    "link": "https://en.wikipedia.org/wiki/C%C3%B3rdoba_Synagogue"
+   },
+   {
+    "name": "Calahorra Tower",
+    "kind": "Gate",
+    "link": "https://en.wikipedia.org/wiki/Calahorra_Tower"
+   },
+   {
+    "name": "San Pedro (Córdoba)",
+    "kind": "Church",
+    "link": "https://en.wikipedia.org/wiki/San_Pedro_(C%C3%B3rdoba)"
+   }
+  ]
  },
  "gem:granada": {
   "source": "wikivoyage",
@@ -9659,8 +11083,48 @@
   ]
  },
  "gem:san-sebastian": {
-  "_voy_spare": [
-   "San Telmo Museum"
+  "source": "wikipedia_geosearch",
+  "items": [
+   {
+    "name": "Astigarraga",
+    "kind": "Square",
+    "link": "https://en.wikipedia.org/wiki/Astigarraga"
+   },
+   {
+    "name": "Kursaal Congress Centre and Auditorium",
+    "kind": "Convent",
+    "link": "https://en.wikipedia.org/wiki/Kursaal_Congress_Centre_and_Auditorium"
+   },
+   {
+    "name": "Arzak",
+    "kind": "Sight",
+    "link": "https://en.wikipedia.org/wiki/Arzak"
+   },
+   {
+    "name": "Polideportivo Municipal José Antonio Gasca",
+    "kind": "Sight",
+    "link": "https://en.wikipedia.org/wiki/Polideportivo_Municipal_Jos%C3%A9_Antonio_Gasca"
+   },
+   {
+    "name": "Donostia Arena",
+    "kind": "Sight",
+    "link": "https://en.wikipedia.org/wiki/Donostia_Arena"
+   },
+   {
+    "name": "Diocese of San Sebastián",
+    "kind": "Roman site",
+    "link": "https://en.wikipedia.org/wiki/Diocese_of_San_Sebasti%C3%A1n"
+   },
+   {
+    "name": "Urumea",
+    "kind": "Sight",
+    "link": "https://en.wikipedia.org/wiki/Urumea"
+   },
+   {
+    "name": "Mount Ulia",
+    "kind": "Sight",
+    "link": "https://en.wikipedia.org/wiki/Mount_Ulia"
+   }
   ]
  },
  "gem:sintra": {
@@ -9771,7 +11235,24 @@
   ]
  },
  "gem:douro": {
-  "_voy_spare": []
+  "source": "wikipedia_geosearch",
+  "items": [
+   {
+    "name": "Cathedral of Vila Real",
+    "kind": "Cathedral",
+    "link": "https://en.wikipedia.org/wiki/Cathedral_of_Vila_Real"
+   },
+   {
+    "name": "Vila Real Bridge",
+    "kind": "Bridge",
+    "link": "https://en.wikipedia.org/wiki/Vila_Real_Bridge"
+   },
+   {
+    "name": "Botanical Garden of the University of Trás-os-Montes e Alto Douro",
+    "kind": "Garden",
+    "link": "https://en.wikipedia.org/wiki/Botanical_Garden_of_the_University_of_Tr%C3%A1s-os-Montes_e_Alto_Douro"
+   }
+  ]
  },
  "gem:nazare": {
   "source": "wikivoyage",
@@ -9906,8 +11387,18 @@
   ]
  },
  "gem:paros": {
-  "_voy_spare": [
-   "Archontiko Mary"
+  "source": "wikipedia_geosearch",
+  "items": [
+   {
+    "name": "Panagia Ekatontapiliani",
+    "kind": "Church",
+    "link": "https://en.wikipedia.org/wiki/Panagia_Ekatontapiliani"
+   },
+   {
+    "name": "Archaeological Museum of Paros",
+    "kind": "Museum",
+    "link": "https://en.wikipedia.org/wiki/Archaeological_Museum_of_Paros"
+   }
   ]
  },
  "gem:milos": {
@@ -9948,17 +11439,28 @@
   ]
  },
  "gem:plitvice": {
-  "_voy_spare": [
-   "Veliki Splat",
-   "Šupljara cave",
-   "Ski Center Mukinje"
+  "source": "wikipedia_geosearch",
+  "items": [
+   {
+    "name": "Plitvice Lakes National Park",
+    "kind": "Park",
+    "link": "https://en.wikipedia.org/wiki/Plitvice_Lakes_National_Park"
+   }
   ]
  },
  "gem:hvar": {
-  "_voy_spare": [
-   "Humac",
-   "Grapčeva cave",
-   "Adventure park Hvar Jelsa"
+  "source": "wikipedia_geosearch",
+  "items": [
+   {
+    "name": "Diocese of Hvar-Brač-Vis",
+    "kind": "Roman site",
+    "link": "https://en.wikipedia.org/wiki/Diocese_of_Hvar-Bra%C4%8D-Vis"
+   },
+   {
+    "name": "Hvar Cathedral",
+    "kind": "Cathedral",
+    "link": "https://en.wikipedia.org/wiki/Hvar_Cathedral"
+   }
   ]
  },
  "gem:korcula": {
@@ -10073,7 +11575,19 @@
   ]
  },
  "gem:lofoten": {
-  "_voy_spare": []
+  "source": "wikipedia_geosearch",
+  "items": [
+   {
+    "name": "Hol Church (Nordland)",
+    "kind": "Church",
+    "link": "https://en.wikipedia.org/wiki/Hol_Church_(Nordland)"
+   },
+   {
+    "name": "Stamsund Church",
+    "kind": "Church",
+    "link": "https://en.wikipedia.org/wiki/Stamsund_Church"
+   }
+  ]
  },
  "gem:geiranger": {
   "source": "wikivoyage",
@@ -10113,10 +11627,34 @@
   ]
  },
  "gem:bergen-nearby": {
-  "_voy_spare": []
+  "source": "wikipedia_geosearch",
+  "items": [
+   {
+    "name": "Hopperstad Stave Church",
+    "kind": "Church",
+    "link": "https://en.wikipedia.org/wiki/Hopperstad_Stave_Church"
+   },
+   {
+    "name": "Hove Church",
+    "kind": "Church",
+    "link": "https://en.wikipedia.org/wiki/Hove_Church"
+   },
+   {
+    "name": "Vik Church",
+    "kind": "Church",
+    "link": "https://en.wikipedia.org/wiki/Vik_Church"
+   }
+  ]
  },
  "gem:kiruna": {
-  "_voy_spare": []
+  "source": "wikipedia_geosearch",
+  "items": [
+   {
+    "name": "Kiruna Church",
+    "kind": "Church",
+    "link": "https://en.wikipedia.org/wiki/Kiruna_Church"
+   }
+  ]
  },
  "gem:visby": {
   "source": "wikivoyage",
@@ -10155,17 +11693,71 @@
    }
   ]
  },
- "gem:dalarna": {
-  "_voy_spare": []
- },
+ "gem:dalarna": null,
  "gem:vik": {
-  "_voy_spare": []
+  "source": "wikipedia_geosearch",
+  "items": [
+   {
+    "name": "Reynisfjara",
+    "kind": "Beach",
+    "link": "https://en.wikipedia.org/wiki/Reynisfjara"
+   }
+  ]
  },
  "gem:skaftafell": {
-  "_voy_spare": []
+  "source": "wikipedia_geosearch",
+  "items": [
+   {
+    "name": "Svartifoss",
+    "kind": "Waterfall",
+    "link": "https://en.wikipedia.org/wiki/Svartifoss"
+   }
+  ]
  },
  "gem:brasov": {
-  "_voy_spare": []
+  "source": "wikipedia_geosearch",
+  "items": [
+   {
+    "name": "Brașov",
+    "kind": "Roman site",
+    "link": "https://en.wikipedia.org/wiki/Bra%C8%99ov"
+   },
+   {
+    "name": "Centru (development region)",
+    "kind": "Roman site",
+    "link": "https://en.wikipedia.org/wiki/Centru_(development_region)"
+   },
+   {
+    "name": "Biserica Neagră",
+    "kind": "Cathedral",
+    "link": "https://en.wikipedia.org/wiki/Biserica_Neagr%C4%83"
+   },
+   {
+    "name": "First Romanian School",
+    "kind": "Roman site",
+    "link": "https://en.wikipedia.org/wiki/First_Romanian_School"
+   },
+   {
+    "name": "St. Nicholas Church, Brașov",
+    "kind": "Church",
+    "link": "https://en.wikipedia.org/wiki/St._Nicholas_Church,_Bra%C8%99ov"
+   },
+   {
+    "name": "Canalul Timiș",
+    "kind": "Roman site",
+    "link": "https://en.wikipedia.org/wiki/Canalul_Timi%C8%99"
+   },
+   {
+    "name": "Valea Cetății (Brașov)",
+    "kind": "Roman site",
+    "link": "https://en.wikipedia.org/wiki/Valea_Cet%C4%83%C8%9Bii_(Bra%C8%99ov)"
+   },
+   {
+    "name": "Șcheiu",
+    "kind": "Roman site",
+    "link": "https://en.wikipedia.org/wiki/%C8%98cheiu"
+   }
+  ]
  },
  "gem:sighisoara": {
   "source": "wikivoyage",
@@ -10238,10 +11830,48 @@
   ]
  },
  "gem:veliko-tarnovo": {
-  "_voy_spare": [
-   "Tsarevets",
-   "Bulgarian Lessons",
-   "Free walking tour Veliko Tarnovo"
+  "source": "wikipedia_geosearch",
+  "items": [
+   {
+    "name": "Holy Forty Martyrs Church, Veliko Tarnovo",
+    "kind": "Church",
+    "link": "https://en.wikipedia.org/wiki/Holy_Forty_Martyrs_Church,_Veliko_Tarnovo"
+   },
+   {
+    "name": "Baldwin's Tower",
+    "kind": "Tower",
+    "link": "https://en.wikipedia.org/wiki/Baldwin%27s_Tower"
+   },
+   {
+    "name": "Transfiguration Monastery, Bulgaria",
+    "kind": "Monastery",
+    "link": "https://en.wikipedia.org/wiki/Transfiguration_Monastery,_Bulgaria"
+   },
+   {
+    "name": "Church of Saint Demetrius of Thessaloniki, Veliko Tarnovo",
+    "kind": "Church",
+    "link": "https://en.wikipedia.org/wiki/Church_of_Saint_Demetrius_of_Thessaloniki,_Veliko_Tarnovo"
+   },
+   {
+    "name": "Church of Saints Peter and Paul, Veliko Tarnovo",
+    "kind": "Church",
+    "link": "https://en.wikipedia.org/wiki/Church_of_Saints_Peter_and_Paul,_Veliko_Tarnovo"
+   },
+   {
+    "name": "Ascension Cathedral, Veliko Tarnovo",
+    "kind": "Cathedral",
+    "link": "https://en.wikipedia.org/wiki/Ascension_Cathedral,_Veliko_Tarnovo"
+   },
+   {
+    "name": "Devingrad",
+    "kind": "Fortress",
+    "link": "https://en.wikipedia.org/wiki/Devingrad"
+   },
+   {
+    "name": "Saint George Church, Veliko Tarnovo",
+    "kind": "Church",
+    "link": "https://en.wikipedia.org/wiki/Saint_George_Church,_Veliko_Tarnovo"
+   }
   ]
  },
  "gem:berat": {
@@ -10319,7 +11949,24 @@
   ]
  },
  "gem:ksamil": {
-  "_voy_spare": []
+  "source": "wikipedia_geosearch",
+  "items": [
+   {
+    "name": "Butrint National Park",
+    "kind": "Park",
+    "link": "https://en.wikipedia.org/wiki/Butrint_National_Park"
+   },
+   {
+    "name": "St. George's Monastery, Sarandë",
+    "kind": "Monument",
+    "link": "https://en.wikipedia.org/wiki/St._George%27s_Monastery,_Sarand%C3%AB"
+   },
+   {
+    "name": "Archaeological Museum of Butrint",
+    "kind": "Museum",
+    "link": "https://en.wikipedia.org/wiki/Archaeological_Museum_of_Butrint"
+   }
+  ]
  },
  "gem:kotor": {
   "source": "wikivoyage",
@@ -10573,16 +12220,79 @@
   ]
  },
  "gem:cotswolds": {
-  "_voy_spare": [
-   "Cotswold Water Park",
-   "Classic Motoring"
+  "source": "wikipedia_geosearch",
+  "items": [
+   {
+    "name": "Brimpsfield Priory",
+    "kind": "Monastery",
+    "link": "https://en.wikipedia.org/wiki/Brimpsfield_Priory"
+   },
+   {
+    "name": "Miserden Castle",
+    "kind": "Castle",
+    "link": "https://en.wikipedia.org/wiki/Miserden_Castle"
+   },
+   {
+    "name": "Miserden War Memorial",
+    "kind": "Memorial",
+    "link": "https://en.wikipedia.org/wiki/Miserden_War_Memorial"
+   },
+   {
+    "name": "Church of St Michael, Brimpsfield",
+    "kind": "Church",
+    "link": "https://en.wikipedia.org/wiki/Church_of_St_Michael,_Brimpsfield"
+   },
+   {
+    "name": "Church of St John the Evangelist, Elkstone",
+    "kind": "Church",
+    "link": "https://en.wikipedia.org/wiki/Church_of_St_John_the_Evangelist,_Elkstone"
+   },
+   {
+    "name": "Church of St Peter, Rendcomb",
+    "kind": "Church",
+    "link": "https://en.wikipedia.org/wiki/Church_of_St_Peter,_Rendcomb"
+   },
+   {
+    "name": "Church of St Mary the Virgin, Syde",
+    "kind": "Church",
+    "link": "https://en.wikipedia.org/wiki/Church_of_St_Mary_the_Virgin,_Syde"
+   },
+   {
+    "name": "Church of St Bartholomew, Winstone",
+    "kind": "Church",
+    "link": "https://en.wikipedia.org/wiki/Church_of_St_Bartholomew,_Winstone"
+   }
   ]
  },
  "gem:lake-district": {
-  "_voy_spare": []
+  "source": "wikipedia_geosearch",
+  "items": [
+   {
+    "name": "St Oswald's Church, Grasmere",
+    "kind": "Church",
+    "link": "https://en.wikipedia.org/wiki/St_Oswald%27s_Church,_Grasmere"
+   },
+   {
+    "name": "Ting Mound",
+    "kind": "Monument",
+    "link": "https://en.wikipedia.org/wiki/Ting_Mound"
+   },
+   {
+    "name": "Elterwater Bridge",
+    "kind": "Bridge",
+    "link": "https://en.wikipedia.org/wiki/Elterwater_Bridge"
+   }
+  ]
  },
  "gem:isle-of-skye": {
-  "_voy_spare": []
+  "source": "wikipedia_geosearch",
+  "items": [
+   {
+    "name": "Fairy Pools",
+    "kind": "Waterfall",
+    "link": "https://en.wikipedia.org/wiki/Fairy_Pools"
+   }
+  ]
  },
  "gem:st-ives": {
   "source": "wikivoyage",
@@ -10614,17 +12324,86 @@
   ]
  },
  "gem:galway-cliffs": {
-  "_voy_spare": []
+  "source": "wikivoyage",
+  "items": [
+   {
+    "name": "Galway City Museum",
+    "kind": "Museum"
+   },
+   {
+    "name": "Galway Atlantaquaria",
+    "kind": "Sight"
+   },
+   {
+    "name": "Legend of the Claddagh Ring",
+    "kind": "Sight"
+   },
+   {
+    "name": "University Quad",
+    "kind": "Sight"
+   },
+   {
+    "name": "Hall of the Red Earl",
+    "kind": "Sight"
+   },
+   {
+    "name": "Galway Cathedral",
+    "kind": "Cathedral"
+   },
+   {
+    "name": "Saint Nicholas Collegiate Church",
+    "kind": "Church"
+   },
+   {
+    "name": "Corrib Princess river cruises",
+    "kind": "Sight"
+   }
+  ]
  },
  "gem:dingle": {
-  "_voy_spare": [
-   "Oceanworld Aquarium",
-   "St Mary's Church",
-   "Dunquin"
+  "source": "wikipedia_geosearch",
+  "items": [
+   {
+    "name": "Eask Tower",
+    "kind": "Tower",
+    "link": "https://en.wikipedia.org/wiki/Eask_Tower"
+   },
+   {
+    "name": "Garfinny Bridge",
+    "kind": "Bridge",
+    "link": "https://en.wikipedia.org/wiki/Garfinny_Bridge"
+   },
+   {
+    "name": "St. Manchan's Oratory",
+    "kind": "Church",
+    "link": "https://en.wikipedia.org/wiki/St._Manchan%27s_Oratory"
+   },
+   {
+    "name": "Doonmore",
+    "kind": "Monument",
+    "link": "https://en.wikipedia.org/wiki/Doonmore"
+   },
+   {
+    "name": "Garfinny Church",
+    "kind": "Church",
+    "link": "https://en.wikipedia.org/wiki/Garfinny_Church"
+   }
   ]
  },
  "gem:connemara": {
-  "_voy_spare": []
+  "source": "wikipedia_geosearch",
+  "items": [
+   {
+    "name": "Kylemore Abbey",
+    "kind": "Monastery",
+    "link": "https://en.wikipedia.org/wiki/Kylemore_Abbey"
+   },
+   {
+    "name": "Connemara National Park",
+    "kind": "Park",
+    "link": "https://en.wikipedia.org/wiki/Connemara_National_Park"
+   }
+  ]
  },
  "gem:zakopane": {
   "source": "wikivoyage",
@@ -10664,21 +12443,49 @@
   ]
  },
  "gem:auschwitz": {
-  "_voy_spare": []
+  "source": "wikipedia_geosearch",
+  "items": [
+   {
+    "name": "Oświęcim Synagogue",
+    "kind": "Synagogue",
+    "link": "https://en.wikipedia.org/wiki/O%C5%9Bwi%C4%99cim_Synagogue"
+   },
+   {
+    "name": "Auschwitz-Birkenau State Museum",
+    "kind": "Museum",
+    "link": "https://en.wikipedia.org/wiki/Auschwitz-Birkenau_State_Museum"
+   },
+   {
+    "name": "Auschwitz cross",
+    "kind": "Memorial",
+    "link": "https://en.wikipedia.org/wiki/Auschwitz_cross"
+   },
+   {
+    "name": "International Monument to the Victims of Fascism",
+    "kind": "Memorial",
+    "link": "https://en.wikipedia.org/wiki/International_Monument_to_the_Victims_of_Fascism"
+   }
+  ]
  },
- "gem:masuria": {
-  "_voy_spare": []
- },
+ "gem:masuria": null,
  "gem:high-tatras": {
-  "_voy_spare": [
-   "Popradské pleso",
-   "Lomnický štít peak",
-   "Skok waterfall",
-   "Rysy",
-   "Kriváň",
-   "Veľké Hincovo pleso",
-   "Priečne sedlo",
-   "Poľský hrebeň"
+  "source": "wikipedia_geosearch",
+  "items": [
+   {
+    "name": "Siklawa Falls",
+    "kind": "Park",
+    "link": "https://en.wikipedia.org/wiki/Siklawa_Falls"
+   },
+   {
+    "name": "Mickiewicz Falls",
+    "kind": "Park",
+    "link": "https://en.wikipedia.org/wiki/Mickiewicz_Falls"
+   },
+   {
+    "name": "Black Lake Falls",
+    "kind": "Waterfall",
+    "link": "https://en.wikipedia.org/wiki/Black_Lake_Falls"
+   }
   ]
  },
  "gem:vaduz": {
@@ -10937,9 +12744,16 @@
   ]
  },
  "gem:giethoorn": {
-  "_voy_spare": [
-   "De Oude Aarde",
-   "'t Olde Maat Uus"
+  "source": "wikivoyage",
+  "items": [
+   {
+    "name": "De Oude Aarde",
+    "kind": "Sight"
+   },
+   {
+    "name": "'t Olde Maat Uus",
+    "kind": "Sight"
+   }
   ]
  },
  "gem:kinderdijk": {
@@ -11116,15 +12930,44 @@
   ]
  },
  "gem:doolin": {
-  "_voy_spare": [
-   "Doonagore Castle",
-   "Doolin Cave",
-   "Cliffs of Moher",
-   "Doolin Rent-a-Bike"
+  "source": "wikipedia_geosearch",
+  "items": [
+   {
+    "name": "Doonagore Castle",
+    "kind": "Tower",
+    "link": "https://en.wikipedia.org/wiki/Doonagore_Castle"
+   },
+   {
+    "name": "Ballinalacken Castle",
+    "kind": "Tower",
+    "link": "https://en.wikipedia.org/wiki/Ballinalacken_Castle"
+   },
+   {
+    "name": "Spectacle Bridge",
+    "kind": "Bridge",
+    "link": "https://en.wikipedia.org/wiki/Spectacle_Bridge"
+   }
   ]
  },
  "gem:aran-islands": {
-  "_voy_spare": []
+  "source": "wikipedia_geosearch",
+  "items": [
+   {
+    "name": "Templesaghtmacree",
+    "kind": "Church",
+    "link": "https://en.wikipedia.org/wiki/Templesaghtmacree"
+   },
+   {
+    "name": "Carrownlisheen Wedge Tomb",
+    "kind": "Monument",
+    "link": "https://en.wikipedia.org/wiki/Carrownlisheen_Wedge_Tomb"
+   },
+   {
+    "name": "Straw Island Lighthouse",
+    "kind": "Lighthouse",
+    "link": "https://en.wikipedia.org/wiki/Straw_Island_Lighthouse"
+   }
+  ]
  },
  "gem:telc": {
   "source": "wikivoyage",
@@ -11225,9 +13068,7 @@
    }
   ]
  },
- "gem:st-wolfgang": {
-  "_voy_spare": []
- },
+ "gem:st-wolfgang": null,
  "gem:montreux": {
   "source": "wikivoyage",
   "items": [
@@ -11340,12 +13181,13 @@
   ]
  },
  "gem:appenzell": {
-  "_voy_spare": [
-   "Hauptgasse",
-   "Museum Appenzell",
-   "Schaukäserei Appenzell",
-   "Ride on the Appenzellerbahn",
-   "Landsgemeinde"
+  "source": "wikipedia_geosearch",
+  "items": [
+   {
+    "name": "Wonnenstein Friary",
+    "kind": "Monastery",
+    "link": "https://en.wikipedia.org/wiki/Wonnenstein_Friary"
+   }
   ]
  },
  "gem:coimbra": {
@@ -11386,7 +13228,49 @@
   ]
  },
  "gem:lagos-pt": {
-  "_voy_spare": []
+  "source": "wikipedia_geosearch",
+  "items": [
+   {
+    "name": "Eko Bridge",
+    "kind": "Bridge",
+    "link": "https://en.wikipedia.org/wiki/Eko_Bridge"
+   },
+   {
+    "name": "Carter Bridge",
+    "kind": "Bridge",
+    "link": "https://en.wikipedia.org/wiki/Carter_Bridge"
+   },
+   {
+    "name": "Nigerian National Museum",
+    "kind": "Museum",
+    "link": "https://en.wikipedia.org/wiki/Nigerian_National_Museum"
+   },
+   {
+    "name": "Cathedral Church of Christ, Lagos",
+    "kind": "Church",
+    "link": "https://en.wikipedia.org/wiki/Cathedral_Church_of_Christ,_Lagos"
+   },
+   {
+    "name": "Freedom Park (Lagos)",
+    "kind": "Park",
+    "link": "https://en.wikipedia.org/wiki/Freedom_Park_(Lagos)"
+   },
+   {
+    "name": "Holy Cross Cathedral, Lagos",
+    "kind": "Church",
+    "link": "https://en.wikipedia.org/wiki/Holy_Cross_Cathedral,_Lagos"
+   },
+   {
+    "name": "Apapa Amusement Park",
+    "kind": "Park",
+    "link": "https://en.wikipedia.org/wiki/Apapa_Amusement_Park"
+   },
+   {
+    "name": "Dolphin Estate, Ikoyi",
+    "kind": "Gate",
+    "link": "https://en.wikipedia.org/wiki/Dolphin_Estate,_Ikoyi"
+   }
+  ]
  },
  "gem:tavira": {
   "source": "wikivoyage",
@@ -11463,16 +13347,43 @@
   ]
  },
  "gem:monsaraz": {
-  "_voy_spare": [
-   "Xerez Cromlech",
-   "Menhir of Bulhoa"
+  "source": "wikipedia_geosearch",
+  "items": [
+   {
+    "name": "Castelo de Monsaraz",
+    "kind": "Castle",
+    "link": "https://en.wikipedia.org/wiki/Castelo_de_Monsaraz"
+   }
   ]
  },
  "gem:tomar": {
-  "_voy_spare": [
-   "Convent of Christ and Castle of Tomar",
-   "Church of Santa Maria do Olival",
-   "Synagogue of Tomar"
+  "source": "wikipedia_geosearch",
+  "items": [
+   {
+    "name": "Convent of Christ (Tomar)",
+    "kind": "Convent",
+    "link": "https://en.wikipedia.org/wiki/Convent_of_Christ_(Tomar)"
+   },
+   {
+    "name": "Church of Santa Maria do Olival",
+    "kind": "Church",
+    "link": "https://en.wikipedia.org/wiki/Church_of_Santa_Maria_do_Olival"
+   },
+   {
+    "name": "Synagogue of Tomar",
+    "kind": "Synagogue",
+    "link": "https://en.wikipedia.org/wiki/Synagogue_of_Tomar"
+   },
+   {
+    "name": "Tomar Castle",
+    "kind": "Castle",
+    "link": "https://en.wikipedia.org/wiki/Tomar_Castle"
+   },
+   {
+    "name": "Igreja de São João Baptista (Tomar)",
+    "kind": "Church",
+    "link": "https://en.wikipedia.org/wiki/Igreja_de_S%C3%A3o_Jo%C3%A3o_Baptista_(Tomar)"
+   }
   ]
  },
  "gem:pecs": {
@@ -11550,7 +13461,14 @@
   ]
  },
  "gem:balaton": {
-  "_voy_spare": []
+  "source": "wikipedia_geosearch",
+  "items": [
+   {
+    "name": "Tihany Abbey",
+    "kind": "Monastery",
+    "link": "https://en.wikipedia.org/wiki/Tihany_Abbey"
+   }
+  ]
  },
  "gem:holloko": {
   "source": "wikivoyage",
@@ -11627,7 +13545,29 @@
   ]
  },
  "gem:spis-castle": {
-  "_voy_spare": []
+  "source": "wikivoyage",
+  "items": [
+   {
+    "name": "Spiš Castle",
+    "kind": "Castle"
+   },
+   {
+    "name": "Spišská Kapitula",
+    "kind": "Sight"
+   },
+   {
+    "name": "Kostol Narodenia Panny Márie",
+    "kind": "Sight"
+   },
+   {
+    "name": "Sivá Brada",
+    "kind": "Sight"
+   },
+   {
+    "name": "Rajtopíky",
+    "kind": "Sight"
+   }
+  ]
  },
  "gem:bardejov": {
   "source": "wikivoyage",
@@ -11926,10 +13866,20 @@
   ]
  },
  "gem:jurmala": {
-  "_voy_spare": [
-   "Livu Akvaparks",
-   "Dzintaru Mežaparks",
-   "Ķemeri National Park"
+  "source": "wikivoyage",
+  "items": [
+   {
+    "name": "Livu Akvaparks",
+    "kind": "Park"
+   },
+   {
+    "name": "Dzintaru Mežaparks",
+    "kind": "Park"
+   },
+   {
+    "name": "Ķemeri National Park",
+    "kind": "Park"
+   }
   ]
  },
  "gem:trakai": {
@@ -11990,28 +13940,53 @@
    }
   ]
  },
- "gem:curonian-spit": {
-  "_voy_spare": []
- },
+ "gem:curonian-spit": null,
  "gem:postojna": {
-  "_voy_spare": []
+  "source": "wikipedia_geosearch",
+  "items": [
+   {
+    "name": "Betal Rock Shelter",
+    "kind": "Ancient site",
+    "link": "https://en.wikipedia.org/wiki/Betal_Rock_Shelter"
+   }
+  ]
  },
  "gem:soca-valley": {
-  "_voy_spare": [
-   "Soca Rider",
-   "Dolina Soče d.o.o."
+  "source": "wikivoyage",
+  "items": [
+   {
+    "name": "Soca Rider",
+    "kind": "Sight"
+   },
+   {
+    "name": "Dolina Soče d.o.o.",
+    "kind": "Sight"
+   }
   ]
  },
  "gem:rovinj": {
-  "_voy_spare": [
-   "Rovinj Heritage Museum"
+  "source": "wikipedia_geosearch",
+  "items": [
+   {
+    "name": "Church of St. Euphemia, Rovinj",
+    "kind": "Church",
+    "link": "https://en.wikipedia.org/wiki/Church_of_St._Euphemia,_Rovinj"
+   }
   ]
  },
  "gem:trogir": {
-  "_voy_spare": [
-   "Crkva sv. Lovre",
-   "Knezev dvor",
-   "Kaštel Kamerlengo"
+  "source": "wikipedia_geosearch",
+  "items": [
+   {
+    "name": "Trogir Cathedral",
+    "kind": "Basilica",
+    "link": "https://en.wikipedia.org/wiki/Trogir_Cathedral"
+   },
+   {
+    "name": "Bridge over Foša in Trogir",
+    "kind": "Bridge",
+    "link": "https://en.wikipedia.org/wiki/Bridge_over_Fo%C5%A1a_in_Trogir"
+   }
   ]
  },
  "gem:krka": {
@@ -12052,16 +14027,39 @@
   ]
  },
  "gem:mljet": {
-  "_voy_spare": [
-   "Mljet National Park",
-   "Saplunara beaches",
-   "Abandoned military bunker",
-   "Rappel or Swim to Odysseus/Ulyssey's Cave",
-   "Follow the hiking trail up to Veliki Grad, the highest mountain of Mljet (~500 m)"
+  "source": "wikivoyage",
+  "items": [
+   {
+    "name": "Mljet National Park",
+    "kind": "Park"
+   },
+   {
+    "name": "Saplunara beaches",
+    "kind": "Beach"
+   },
+   {
+    "name": "Abandoned military bunker",
+    "kind": "Sight"
+   },
+   {
+    "name": "Rappel or Swim to Odysseus/Ulyssey's Cave",
+    "kind": "Cave"
+   },
+   {
+    "name": "Follow the hiking trail up to Veliki Grad, the highest mountain of Mljet (~500 m)",
+    "kind": "Sight"
+   }
   ]
  },
  "gem:monemvasia": {
-  "_voy_spare": []
+  "source": "wikipedia_geosearch",
+  "items": [
+   {
+    "name": "Monemvasia Mosque",
+    "kind": "Mosque",
+    "link": "https://en.wikipedia.org/wiki/Monemvasia_Mosque"
+   }
+  ]
  },
  "gem:nafplio": {
   "source": "wikivoyage",
@@ -12101,25 +14099,63 @@
   ]
  },
  "gem:cuenca": {
-  "_voy_spare": []
+  "source": "wikipedia_geosearch",
+  "items": [
+   {
+    "name": "Cuenca Cathedral",
+    "kind": "Cathedral",
+    "link": "https://en.wikipedia.org/wiki/Cuenca_Cathedral"
+   },
+   {
+    "name": "Museo de Arte Abstracto Español",
+    "kind": "Museum",
+    "link": "https://en.wikipedia.org/wiki/Museo_de_Arte_Abstracto_Espa%C3%B1ol"
+   },
+   {
+    "name": "Holy Week in Cuenca",
+    "kind": "Sight",
+    "link": "https://en.wikipedia.org/wiki/Holy_Week_in_Cuenca"
+   },
+   {
+    "name": "Convent of San Pablo (Cuenca)",
+    "kind": "Convent",
+    "link": "https://en.wikipedia.org/wiki/Convent_of_San_Pablo_(Cuenca)"
+   }
+  ]
  },
  "gem:albarracin": {
-  "_voy_spare": [
-   "Albarracín Cathedral",
-   "Muralla",
-   "Casa de Santa María"
+  "source": "wikipedia_geosearch",
+  "items": [
+   {
+    "name": "Battle of Albarracín",
+    "kind": "Sight",
+    "link": "https://en.wikipedia.org/wiki/Battle_of_Albarrac%C3%ADn"
+   },
+   {
+    "name": "Albarracín Cathedral",
+    "kind": "Church",
+    "link": "https://en.wikipedia.org/wiki/Albarrac%C3%ADn_Cathedral"
+   }
   ]
  },
  "gem:cadaques": {
-  "_voy_spare": [
-   "Dali's House",
-   "St. Jaume Castle",
-   "Church of Santa Maria",
-   "Platja de Pius V",
-   "Platja de sa Conca",
-   "Platja des Sortell",
-   "es Llaner Petit",
-   "es Llaner Gros"
+  "source": "wikipedia_geosearch",
+  "items": [
+   {
+    "name": "Cap de Creus",
+    "kind": "Sight",
+    "link": "https://en.wikipedia.org/wiki/Cap_de_Creus"
+   },
+   {
+    "name": "Portlligat",
+    "kind": "Sight",
+    "link": "https://en.wikipedia.org/wiki/Portlligat"
+   },
+   {
+    "name": "Salvador Dalí House Museum",
+    "kind": "Museum",
+    "link": "https://en.wikipedia.org/wiki/Salvador_Dal%C3%AD_House_Museum"
+   }
   ]
  },
  "gem:honfleur": {
@@ -12160,10 +14196,48 @@
   ]
  },
  "gem:eze": {
-  "_voy_spare": [
-   "Medieval village",
-   "Jardin Exotique",
-   "Musée d'Eze"
+  "source": "wikipedia_geosearch",
+  "items": [
+   {
+    "name": "Jardin Exotique de Monaco",
+    "kind": "Garden",
+    "link": "https://en.wikipedia.org/wiki/Jardin_Exotique_de_Monaco"
+   },
+   {
+    "name": "Tropaeum Alpium",
+    "kind": "Monument",
+    "link": "https://en.wikipedia.org/wiki/Tropaeum_Alpium"
+   },
+   {
+    "name": "Napoleon Museum (Monaco)",
+    "kind": "Museum",
+    "link": "https://en.wikipedia.org/wiki/Napoleon_Museum_(Monaco)"
+   },
+   {
+    "name": "Louis Notari Library",
+    "kind": "Library",
+    "link": "https://en.wikipedia.org/wiki/Louis_Notari_Library"
+   },
+   {
+    "name": "Jardin botanique d'Èze",
+    "kind": "Garden",
+    "link": "https://en.wikipedia.org/wiki/Jardin_botanique_d%27%C3%88ze"
+   },
+   {
+    "name": "Fontvieille Park and Princess Grace Rose Garden",
+    "kind": "Park",
+    "link": "https://en.wikipedia.org/wiki/Fontvieille_Park_and_Princess_Grace_Rose_Garden"
+   },
+   {
+    "name": "Zoological Garden of Monaco",
+    "kind": "Zoo",
+    "link": "https://en.wikipedia.org/wiki/Zoological_Garden_of_Monaco"
+   },
+   {
+    "name": "Princess Antoinette Park",
+    "kind": "Park",
+    "link": "https://en.wikipedia.org/wiki/Princess_Antoinette_Park"
+   }
   ]
  },
  "gem:orvieto": {
@@ -12204,7 +14278,49 @@
   ]
  },
  "gem:volterra": {
-  "_voy_spare": []
+  "source": "wikipedia_geosearch",
+  "items": [
+   {
+    "name": "San Francesco, Volterra",
+    "kind": "Church",
+    "link": "https://en.wikipedia.org/wiki/San_Francesco,_Volterra"
+   },
+   {
+    "name": "Church of San Giusto, Volterra",
+    "kind": "Church",
+    "link": "https://en.wikipedia.org/wiki/Church_of_San_Giusto,_Volterra"
+   },
+   {
+    "name": "San Michele Arcangelo, Volterra",
+    "kind": "Church",
+    "link": "https://en.wikipedia.org/wiki/San_Michele_Arcangelo,_Volterra"
+   },
+   {
+    "name": "San Lino, Volterra",
+    "kind": "Church",
+    "link": "https://en.wikipedia.org/wiki/San_Lino,_Volterra"
+   },
+   {
+    "name": "San Pietro in Selci",
+    "kind": "Church",
+    "link": "https://en.wikipedia.org/wiki/San_Pietro_in_Selci"
+   },
+   {
+    "name": "San Girolamo, Volterra",
+    "kind": "Church",
+    "link": "https://en.wikipedia.org/wiki/San_Girolamo,_Volterra"
+   },
+   {
+    "name": "Persio Flacco Theater",
+    "kind": "Theatre",
+    "link": "https://en.wikipedia.org/wiki/Persio_Flacco_Theater"
+   },
+   {
+    "name": "Volterra Cathedral",
+    "kind": "Cathedral",
+    "link": "https://en.wikipedia.org/wiki/Volterra_Cathedral"
+   }
+  ]
  },
  "gem:assisi": {
   "source": "wikivoyage",
@@ -12310,7 +14426,49 @@
   ]
  },
  "gem:rye": {
-  "_voy_spare": []
+  "source": "wikipedia_geosearch",
+  "items": [
+   {
+    "name": "Camber Sands",
+    "kind": "Beach",
+    "link": "https://en.wikipedia.org/wiki/Camber_Sands"
+   },
+   {
+    "name": "Lamb House",
+    "kind": "Museum",
+    "link": "https://en.wikipedia.org/wiki/Lamb_House"
+   },
+   {
+    "name": "Rye Castle",
+    "kind": "Castle",
+    "link": "https://en.wikipedia.org/wiki/Rye_Castle"
+   },
+   {
+    "name": "Rye Particular Baptist Chapel",
+    "kind": "Church",
+    "link": "https://en.wikipedia.org/wiki/Rye_Particular_Baptist_Chapel"
+   },
+   {
+    "name": "Rye Austin Friary",
+    "kind": "Monastery",
+    "link": "https://en.wikipedia.org/wiki/Rye_Austin_Friary"
+   },
+   {
+    "name": "Blackfriars, Winchelsea",
+    "kind": "Monastery",
+    "link": "https://en.wikipedia.org/wiki/Blackfriars,_Winchelsea"
+   },
+   {
+    "name": "St Anthony of Padua Church, Rye",
+    "kind": "Church",
+    "link": "https://en.wikipedia.org/wiki/St_Anthony_of_Padua_Church,_Rye"
+   },
+   {
+    "name": "Monk Bretton Bridge",
+    "kind": "Bridge",
+    "link": "https://en.wikipedia.org/wiki/Monk_Bretton_Bridge"
+   }
+  ]
  },
  "gem:quedlinburg": {
   "source": "wikivoyage",

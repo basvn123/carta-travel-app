@@ -62,7 +62,8 @@ def patch(path: Path) -> None:
     model["gem_cutoffs"] = {k: round(v, 4) for k, v in cutoffs.items()}
     model["unesco_sites_indexed"] = len(beauty_layer.load_unesco())
     meta["beauty_model"] = model
-    meta["schema_version"] = 9
+    # Never downgrade: the images layer (=10) may already have run.
+    meta["schema_version"] = max(meta.get("schema_version", 0), 9)
 
     path.write_text(json.dumps(data, indent=1, ensure_ascii=False), encoding="utf-8")
 

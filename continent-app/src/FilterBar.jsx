@@ -158,7 +158,7 @@ export function FilterBar({
             <div className="filter-control">
               <input type="number" min={1} max={20}
                 value={choices.group_size}
-                onChange={(e) => setChoices({ ...choices, group_size: Math.max(1, +e.target.value || 1) })}
+                onChange={(e) => setChoices({ ...choices, group_size: Math.min(20, Math.max(1, +e.target.value || 1)) })}
               />
             </div>
           </div>

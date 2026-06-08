@@ -126,10 +126,24 @@ def patch(path: Path) -> None:
         v["anchor_estimated"] = True
         anchored += 1
 
+    # 4. Reachability-flag consistency pass (same definition as fix_data.py step E,
+    #    so the two scripts agree): `no_ryanair_route` is True only when a dest has
+    #    NEITHER its own/anchored Ryanair routes NOR a drivable option. Step 1 above
+    #    blanket-resets prior auto-anchors to True; without this pass a dest that was
+    #    anchored last run but is no longer eligible (now drivable, or re-tagged an
+    #    island) would be stranded as True even though it is reachable by car. This
+    #    enforces the invariant for every dest, so re-runs always converge.
+    fixed_flags = 0
+    for v in ds.values():
+        unreachable = (not v.get("routes")) and (not drivable(v))
+        if bool(v.get("no_ryanair_route")) != unreachable:
+            v["no_ryanair_route"] = unreachable
+            fixed_flags += 1
+
     path.write_text(json.dumps(data, indent=1, ensure_ascii=False), encoding="utf-8")
     print(f"  {path.name}: {len(ds)} dests | anchored {anchored} (<= {int(ANCHOR_MAX_STRAIGHT_KM)}km airport) | "
           f"still unreachable {still_unreachable} (shown, flagged no_ryanair_route) | "
-          f"{path.stat().st_size / 1024 / 1024:.2f} MB")
+          f"flag fixes {fixed_flags} | {path.stat().st_size / 1024 / 1024:.2f} MB")
 
 
 def main() -> None:

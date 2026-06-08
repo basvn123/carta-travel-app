@@ -1115,7 +1115,7 @@ def _validate():
         seen_ids.add(d["id"])
         if d["iata"]:
             if d["iata"] in seen_iatas:
-                pass
+                raise ValueError(f"Duplicate IATA: {d['iata']} ({d['id']})")
             seen_iatas.add(d["iata"])
         if d["tier"] == "gem":
             for a_iata, mins, eur in d["nearest_airports"]:

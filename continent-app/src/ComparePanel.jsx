@@ -35,7 +35,7 @@ export function ComparePanel({ data, favorites, departDate, returnDate, choices,
 
   // Each row: a label + a getter that returns a per-column group-total value.
   const rows = [
-    { label: 'Getting there', get: (b) => b && (b.transport_mode === 'car' ? b.driving?.total : (b.flight_total != null ? b.flight_total + (b.rental_total || 0) : null)) },
+    { label: 'Getting there', get: (b) => b && (b.transport_mode === 'car' ? b.driving?.total : (b.flight_total != null ? b.flight_total + (b.transfer_total || 0) + (b.rental_total || 0) : null)) },
     { label: 'Accommodation', get: (b) => b?.accom_total },
     { label: 'On the ground', get: (b) => b?.ground_total },
   ];

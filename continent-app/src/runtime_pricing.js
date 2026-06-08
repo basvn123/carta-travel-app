@@ -488,6 +488,6 @@ export function nearbyTrips(dest, allDests, { maxKm = 160, limit = 4 } = {}) {
   }
   // Closest first, but let a clearly-more-beautiful neighbour edge ahead a little
   // so the suggestions aren't just "the nearest dots" but "the best nearby trips".
-  out.sort((a, b) => (a.km - b.beauty * 6) - (b.km - a.beauty * 6));
+  out.sort((a, b) => (a.km - a.beauty * 6) - (b.km - b.beauty * 6));
   return out.slice(0, limit);
 }

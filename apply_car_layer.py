@@ -36,7 +36,8 @@ def patch(path: Path) -> None:
     meta = data.get("meta", {})
 
     meta["car_model"] = car_layer.CAR_MODEL
-    meta["schema_version"] = 8
+    # Never downgrade: later layers (beauty=9, images=10) may already have run.
+    meta["schema_version"] = max(meta.get("schema_version", 0), 8)
 
     n_needed = 0
     for dest in data.get("destinations", {}).values():
