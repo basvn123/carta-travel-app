@@ -36,6 +36,7 @@ export function ResultsList({
   showFavOnly, setShowFavOnly,
   onOpenCompare,
   reachableCount, totalCount, homeCity = 'Brussels', transportMode = 'plane',
+  onCollapse,
 }) {
   const favSet = favorites || new Set();
   // Direction per sort key; price/beauty can be flipped, the rest stay default.
@@ -76,6 +77,16 @@ export function ResultsList({
         <div className="results-title">
           {showFavOnly ? 'Shortlist' : 'Destinations'}
           <span className="results-count">{rows.length}</span>
+          {onCollapse && (
+            <button
+              className="results-collapse"
+              onClick={onCollapse}
+              title="Hide the list and widen the map"
+              aria-label="Hide the list"
+            >
+              ‹
+            </button>
+          )}
         </div>
         <div className="results-controls">
           <div className="results-sort">

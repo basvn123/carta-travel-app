@@ -70,6 +70,10 @@ export default function App() {
   // show side-by-side, so this is ignored; the CSS only acts on it under 768px.
   const [mobileView, setMobileView] = useState('list');
 
+  // Desktop: let the user collapse the left destinations list to give the map the
+  // full width. (On mobile the bottom Map/List tabs already do this.)
+  const [listCollapsed, setListCollapsed] = useState(false);
+
   // Stable so MapView's marker effect doesn't rebuild every render.
   const openDetail = useCallback((id) => setSelectedId(id), []);
 
@@ -317,7 +321,7 @@ export default function App() {
   }
 
   return (
-    <div className={`app mobile-${mobileView}`} onClick={() => setSelectedId(null)}>
+    <div className={`app mobile-${mobileView} ${listCollapsed ? 'list-collapsed' : ''}`} onClick={() => setSelectedId(null)}>
       <div onClick={(e) => e.stopPropagation()}>
         <FilterBar
           barRef={filterBarRef}
@@ -372,7 +376,21 @@ export default function App() {
           totalCount={Object.keys(data.destinations).length}
           homeCity={data.meta?.home_city || 'Brussels'}
           transportMode={choices.transport_mode || 'plane'}
+          onCollapse={() => setListCollapsed(true)}
         />
+      </div>
+
+      {/* Reopen tab — only visible (via CSS) when the list is collapsed. */}
+      <div onClick={(e) => e.stopPropagation()}>
+        <button
+          className="list-reopen"
+          onClick={() => setListCollapsed(false)}
+          title="Show the destinations list"
+          aria-label="Show the destinations list"
+        >
+          <span className="chev">›</span>
+          <span>Destinations</span>
+        </button>
       </div>
 
       <MapView
