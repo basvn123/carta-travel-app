@@ -53,7 +53,8 @@ export function encodeState({
       (priceRange[0] > priceBounds[0] || priceRange[1] < priceBounds[1])) {
     q.set('pr', `${Math.round(priceRange[0])}.${Math.round(priceRange[1])}`);
   }
-  if (selectedId) q.set('sel', selectedId);
+  // Note: the open destination (selectedId) is deliberately NOT persisted, so
+  // the app always opens on the full map with nothing pre-selected.
   if (favorites && favorites.size) q.set('fav', [...favorites].join('.'));
   if (sortKey && sortKey !== 'price') q.set('sort', sortKey);
   if (showFavOnly) q.set('favonly', '1');
@@ -83,7 +84,7 @@ export function decodeState(search) {
     const [lo, hi] = q.get('pr').split('.').map(Number);
     if (!Number.isNaN(lo) && !Number.isNaN(hi)) out.priceRange = [lo, hi];
   }
-  if (has('sel')) out.selectedId = q.get('sel');
+  // 'sel' is intentionally ignored on load (see encodeState) — open the full map.
   if (has('fav')) out.favorites = q.get('fav').split('.').filter(Boolean);
   if (has('sort')) out.sortKey = q.get('sort');
   if (has('favonly')) out.showFavOnly = q.get('favonly') === '1';
