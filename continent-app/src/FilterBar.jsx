@@ -365,26 +365,13 @@ export function FilterBar({
             </div>
           </div>
 
-          {anyFilterActive && (
-            <button className="reset-filters-btn" onClick={resetAll}>
-              Reset
-            </button>
-          )}
         </div>
       </div>
 
-      {stats && (
-        <div className="filter-stats">
-          <strong>
-            {stats.priced}
-            {stats.total != null && stats.total !== stats.priced && (
-              <span style={{ fontWeight: 400 }}> of {stats.total}</span>
-            )} destinations
-          </strong>
-          <span>
-            cheapest €{stats.min?.toLocaleString() ?? '-'}{priceMode === 'pp' ? '/pp' : ''}
-          </span>
-        </div>
+      {anyFilterActive && (
+        <button className="reset-filters-btn" onClick={resetAll}>
+          Reset
+        </button>
       )}
     </div>
   );

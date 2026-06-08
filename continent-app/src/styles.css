@@ -668,7 +668,9 @@ input, select {
    before; the Filters toggle and bottom nav are hidden until the mobile query
    switches them on. */
 .filter-mobile-header { display: contents; }
-.filter-mobile-toggle { display: none; }
+/* Scoped to .filter-bar so this wins over the later, equal-specificity
+   `.more-btn { display: flex }` rule and stays hidden on desktop. */
+.filter-bar .filter-mobile-toggle { display: none; }
 .filter-mobile-count {
   display: inline-flex;
   align-items: center;
@@ -794,7 +796,8 @@ input, select {
   white-space: nowrap;
   cursor: pointer;
   margin-left: auto;
-  align-self: end;
+  align-self: center;
+  flex-shrink: 0;
   transition: color .15s, background .15s, border-color .15s;
 }
 .reset-filters-btn:hover {
@@ -2654,7 +2657,7 @@ input, select {
     padding: 10px 16px;
     min-height: 58px;
   }
-  .filter-mobile-toggle { display: inline-flex; }
+  .filter-bar .filter-mobile-toggle { display: inline-flex; }
   .brand-divider { display: none; }
   .brand .name { font-size: 19px; }
 
@@ -2668,6 +2671,10 @@ input, select {
     max-height: calc(100dvh - 58px - 60px);
     overflow-y: auto;
   }
+  /* Reset pill lives in the dropdown sheet on mobile, not under the collapsed
+     header. */
+  .filter-bar.mobile-collapsed .reset-filters-btn { display: none; }
+  .filter-bar.mobile-open .reset-filters-btn { margin: 0 16px 16px; align-self: flex-end; }
   .filter-row { gap: 16px 20px; }
   .filter-stats { display: none; }
 

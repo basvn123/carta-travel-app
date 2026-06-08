@@ -38,7 +38,6 @@ export function ResultsList({
   reachableCount, totalCount, homeCity = 'Brussels', transportMode = 'plane',
 }) {
   const favSet = favorites || new Set();
-  const [copied, setCopied] = useState(false);
   // Direction per sort key; price/beauty can be flipped, the rest stay default.
   const [sortDir, setSortDir] = useState(SORT_DEFAULT_DIR);
 
@@ -50,14 +49,6 @@ export function ResultsList({
     } else {
       setSortKey(s.key);
     }
-  };
-
-  const share = async () => {
-    try {
-      await navigator.clipboard.writeText(window.location.href);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 1600);
-    } catch { /* clipboard blocked - the URL bar still holds the shareable link */ }
   };
 
   const rows = useMemo(() => {
@@ -117,16 +108,13 @@ export function ResultsList({
         </div>
       </div>
 
-      <div className="results-actions">
-        {favSet.size >= 2 && (
+      {favSet.size >= 2 && (
+        <div className="results-actions">
           <button className="results-compare" onClick={onOpenCompare}>
             Compare ({favSet.size})
           </button>
-        )}
-        <button className="results-share" onClick={share}>
-          {copied ? 'Link copied' : 'Copy link'}
-        </button>
-      </div>
+        </div>
+      )}
 
       <div className="results-scroll">
         {rows.length === 0 ? (
