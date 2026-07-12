@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { AppHeader } from './AppHeader.jsx';
 import { FilterBar } from './FilterBar.jsx';
+import { BottomNav } from './BottomNav.jsx';
 import { MapView } from './MapView.jsx';
 import { DetailPanel } from './DetailPanel.jsx';
 import { LifestylePanel } from './LifestylePanel.jsx';
@@ -289,8 +290,6 @@ function TravelApp() {
     <div className={`app ${listCollapsed ? 'list-collapsed' : ''}`} onClick={() => setSelectedId(null)}>
       <div className="top-bar" ref={filterBarRef} onClick={(e) => e.stopPropagation()}>
         <AppHeader
-          activeTab={activeTab}
-          onChangeTab={setActiveTab}
           user={user}
           onOpenAccount={() => setAccountOpen(true)}
         />
@@ -451,6 +450,10 @@ function TravelApp() {
         />
       )}
       {activeTab === 'day' && <DayPlannerTab />}
+
+      <div onClick={(e) => e.stopPropagation()}>
+        <BottomNav activeTab={activeTab} onChangeTab={setActiveTab} />
+      </div>
 
       {authConfigured && authModalOpen && (
         <AuthModal initialMode={authModalMode} onClose={() => setAuthModalOpen(false)} />
