@@ -2,10 +2,29 @@ import React, { useMemo, useState } from 'react';
 import { DateField } from './DateField.jsx';
 import { GemIcon } from './GemRating.jsx';
 import { CountryPickerMap } from './CountryPickerMap.jsx';
-import { countriesFromData, cityInsight, cityActivities, flagUrl, isoToFlag } from './tripGuide.js';
+import {
+  countriesFromData, cityInsight, activitiesForInterests, cityImage, flagUrl, isoToFlag,
+} from './tripGuide.js';
 
-const STEPS = ['Where', 'Cities', 'Visit', 'Arrange'];
+const STEPS = ['Where', 'Cities', 'Enjoy', 'Visit', 'Arrange'];
 const CITIES_PER_COUNTRY = 10;
+
+// The "What do you enjoy?" tiles. Picking these tailors the highlights shown on
+// the Visit step (see activitiesForInterests) so the trip fits the traveller.
+const INTERESTS = [
+  { key: 'museums', label: 'Museums', icon: '🏛️' },
+  { key: 'outdoors', label: 'Outdoors', icon: '🌲' },
+  { key: 'food', label: 'Food & Dining', icon: '🍽️' },
+  { key: 'shopping', label: 'Shopping', icon: '🛍️' },
+  { key: 'nightlife', label: 'Nightlife', icon: '🌙' },
+  { key: 'culture', label: 'Local Culture', icon: '🎭' },
+  { key: 'photo', label: 'Photo Spots', icon: '📸' },
+  { key: 'cafes', label: 'Cafés', icon: '☕' },
+  { key: 'architecture', label: 'Architecture', icon: '🏰' },
+  { key: 'beaches', label: 'Beaches', icon: '🏖️' },
+  { key: 'sports', label: 'Sports', icon: '⚽' },
+  { key: 'wellness', label: 'Wellness', icon: '🧘' },
+];
 
 // Real flag artwork (falls back to the emoji/letters if the image can't load).
 function Flag({ iso2, className }) {
@@ -20,6 +39,17 @@ function Flag({ iso2, className }) {
       loading="lazy"
       onError={(e) => { e.currentTarget.style.display = 'none'; }}
     />
+  );
+}
+
+// A city's Wikipedia photo as a rounded thumbnail, with a lettered fallback
+// when there's no image (mirrors the suggestion/nearby cards elsewhere).
+function CityThumb({ dest, className }) {
+  const url = cityImage(dest);
+  return (
+    <div className={className} style={url ? { backgroundImage: `url(${url})` } : undefined}>
+      {!url && <span className="guide-thumb-fallback">{dest?.city?.slice(0, 1) || '?'}</span>}
+    </div>
   );
 }
 
@@ -44,6 +74,7 @@ export function GuidedTripWizard({ data, onCancel, onComplete }) {
   const [countries, setCountries] = useState(() => new Set());
   const [nights, setNights] = useState({});      // { [id]: nights }
   const [order, setOrder] = useState([]);        // ordered included city ids
+  const [interests, setInterests] = useState(() => new Set()); // enjoyed themes
   const [acts, setActs] = useState({});          // { [id]: string[] }
   const [startDate, setStartDate] = useState('');
   const [groupSize, setGroupSize] = useState(2);
@@ -69,6 +100,14 @@ export function GuidedTripWizard({ data, onCancel, onComplete }) {
       if (v > 0 && !has) return [...prev, id];
       if (v === 0 && has) return prev.filter((x) => x !== id);
       return prev;
+    });
+  };
+
+  const toggleInterest = (key) => {
+    setInterests((prev) => {
+      const next = new Set(prev);
+      next.has(key) ? next.delete(key) : next.add(key);
+      return next;
     });
   };
 
@@ -107,8 +146,9 @@ export function GuidedTripWizard({ data, onCancel, onComplete }) {
   const canNext = (
     (step === 1 && countries.size > 0)
     || (step === 2 && includedIds.length > 0)
-    || step === 3
+    || (step === 3 && interests.size > 0)
     || step === 4
+    || step === 5
   );
 
   const finish = () => {

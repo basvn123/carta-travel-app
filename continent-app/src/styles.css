@@ -273,17 +273,11 @@ input, select {
 }
 
 /* Floating trip header */
+/* Trip header — a static bar at the top of the panel (was a floating card) */
 .trip-topcard {
-  position: absolute;
-  top: 14px; left: 14px;
-  max-width: min(70%, 340px);
-  background: rgba(245, 241, 232, 0.94);
-  backdrop-filter: blur(6px);
-  border: 1px solid var(--rule);
-  border-radius: 12px;
-  padding: 10px 14px;
-  box-shadow: var(--shadow-1);
-  z-index: 6;
+  flex-shrink: 0;
+  padding: 6px 20px 12px;
+  border-bottom: 1px solid var(--rule);
 }
 .trip-topcard-name {
   display: block;
@@ -649,7 +643,28 @@ input, select {
   .trip-sheet { max-height: calc(100% - 8px); border-radius: 16px 16px 0 0; }
   .trip-sheet-scroll { padding: 6px 15px 18px; }
   .trip-field { min-width: 104px; }
-  .trip-topcard { max-width: 62%; }
+}
+
+/* Desktop: fixed full-height left panel + map on the right (no bottom-nav
+   overlap, panel scrolls internally rather than the whole sheet being tiny). */
+@media (min-width: 769px) {
+  .trip-map { left: var(--panel-w); }
+  .trip-sheet {
+    left: 0; right: auto;
+    top: 0; bottom: 0;
+    transform: none;
+    width: var(--panel-w);
+    max-width: none;
+    max-height: none;
+    height: auto !important;      /* beat any leftover inline drag height */
+    border: none;
+    border-right: 1px solid var(--rule);
+    border-radius: 0;
+    box-shadow: 4px 0 20px rgba(26, 26, 26, 0.05);
+    transition: none;
+  }
+  .trip-sheet-grip-hit { display: none; }
+  .trip-topcard { padding-top: 16px; }
 }
 
 /* ───────── Guided trip: CTA in the sheet ───────── */

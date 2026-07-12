@@ -80,3 +80,50 @@ export function cityActivities(dest, limit = 14) {
   const items = dest?.activities?.items || [];
   return items.slice(0, limit);
 }
+
+/** The Wikipedia lead-photo URL for a destination (or null). */
+export function cityImage(dest) {
+  return dest?.image?.url || null;
+}
+
+/** The set of "What do you enjoy?" interest keys used by the guided wizard.
+ *  Kept here so the wizard's tiles and the activity filter stay in sync. */
+export const INTEREST_KEYS = [
+  'museums', 'outdoors', 'food', 'shopping', 'nightlife', 'culture',
+  'photo', 'cafes', 'architecture', 'beaches', 'sports', 'wellness',
+];
+
+// Which interests each catalogued activity-kind speaks to. Most sights are
+// culture/architecture/museums, so those are what the interest filter can
+// actually thin down; kinds not listed here are always kept.
+const KIND_INTERESTS = {
+  Museum: ['museums'],
+  Church: ['culture', 'architecture'],
+  Cathedral: ['culture', 'architecture'],
+  Monastery: ['culture'],
+  Synagogue: ['culture'],
+  Mosque: ['culture'],
+  Castle: ['architecture', 'photo'],
+  Palace: ['architecture', 'photo'],
+  Tower: ['architecture', 'photo'],
+  Bridge: ['architecture', 'photo'],
+  Theatre: ['culture'],
+  Square: ['culture', 'photo'],
+};
+
+/** Rank + filter a city's things-to-do by the traveller's chosen interests.
+ *  Items whose kind matches an interest are kept; when interests are set we drop
+ *  the non-matching ones so the picks stay relevant ("someone who doesn't care
+ *  about culture doesn't want that") — unless that would leave the city empty,
+ *  in which case we fall back to the full (capped) list so it's still pickable. */
+export function activitiesForInterests(dest, interests, limit = 14) {
+  const items = dest?.activities?.items || [];
+  if (!interests || interests.size === 0) return items.slice(0, limit);
+  const matches = items.filter((it) => {
+    const tags = KIND_INTERESTS[it.kind];
+    // Unmapped kinds are neutral: keep them so niche sights aren't lost.
+    if (!tags) return true;
+    return tags.some((t) => interests.has(t));
+  });
+  return (matches.length ? matches : items).slice(0, limit);
+}

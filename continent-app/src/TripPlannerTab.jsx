@@ -111,9 +111,23 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth }) {
     return v > 0 ? v : null;
   });
   const [dragging, setDragging] = useState(false);
+  // Below 768px the panel is a draggable bottom sheet; above it's a fixed
+  // full-height left column (so it never overlaps the bottom nav and the map
+  // fills the right). The grip drag/height only applies in the narrow layout.
+  const [isNarrow, setIsNarrow] = useState(
+    () => typeof window !== 'undefined' && window.matchMedia('(max-width: 768px)').matches,
+  );
   const sheetRef = useRef(null);
   const stopRefs = useRef({});
   const dragRef = useRef(null);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return undefined;
+    const mq = window.matchMedia('(max-width: 768px)');
+    const onChange = (e) => setIsNarrow(e.matches);
+    mq.addEventListener('change', onChange);
+    return () => mq.removeEventListener('change', onChange);
+  }, []);
 
   const persistHeight = (h) => {
     try { localStorage.setItem(SHEET_H_KEY, String(Math.round(h))); } catch { /* private mode */ }
@@ -223,33 +237,14 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth }) {
 
   return (
     <div className="trip-planner-screen">
-      <TripMap stops={mapStops} padBottom={sheetH} onSelectStop={setSelectedStop} selectedIndex={selectedStop} />
+      <TripMap stops={mapStops} padBottom={isNarrow ? sheetH : 48} onSelectStop={setSelectedStop} selectedIndex={selectedStop} />
 
-      {/* Floating trip header over the map */}
-      <div className="trip-topcard" onClick={(e) => e.stopPropagation()}>
-        <input
-          className="trip-topcard-name"
-          value={tp.planLabel}
-          onChange={(e) => tp.setPlanLabel(e.target.value)}
-          placeholder="Name your trip"
-          aria-label="Trip name"
-        />
-        <div className="trip-topcard-sub">
-          {hasDates
-            ? `${fmtDate(tp.tripStart)} – ${fmtDate(tp.tripEnd)}`
-            : 'Pick your travel dates below'}
-          {tp.stopDetails.length > 0 && (
-            <span className="trip-topcard-count">{tp.stopDetails.length} {tp.stopDetails.length === 1 ? 'stop' : 'stops'}</span>
-          )}
-        </div>
-      </div>
-
-      {/* Bottom sheet */}
+      {/* Left panel (desktop) / bottom sheet (mobile) */}
       <div
         className={`trip-sheet ${dragging ? 'dragging' : ''}`}
         ref={sheetRef}
         onClick={(e) => e.stopPropagation()}
-        style={sheetHeight != null ? { height: sheetHeight } : undefined}
+        style={isNarrow && sheetHeight != null ? { height: sheetHeight } : undefined}
       >
         <div
           className="trip-sheet-grip-hit"
@@ -263,6 +258,26 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth }) {
         >
           <div className="trip-sheet-grip" />
         </div>
+
+        {/* Trip header */}
+        <div className="trip-topcard">
+          <input
+            className="trip-topcard-name"
+            value={tp.planLabel}
+            onChange={(e) => tp.setPlanLabel(e.target.value)}
+            placeholder="Name your trip"
+            aria-label="Trip name"
+          />
+          <div className="trip-topcard-sub">
+            {hasDates
+              ? `${fmtDate(tp.tripStart)} – ${fmtDate(tp.tripEnd)}`
+              : 'Pick your travel dates below'}
+            {tp.stopDetails.length > 0 && (
+              <span className="trip-topcard-count">{tp.stopDetails.length} {tp.stopDetails.length === 1 ? 'stop' : 'stops'}</span>
+            )}
+          </div>
+        </div>
+
         <div className="trip-sheet-scroll">
           {tp.planned ? (
             <TripItinerary
