@@ -1,5 +1,5 @@
 /* ─────────────────────────────────────────────────────────────────────────
-   Transport mode icons — line glyphs that inherit currentColor so they sit
+   Transport mode icons - line glyphs that inherit currentColor so they sit
    cleanly inside the segmented "Travel by" toggle (plane vs car).
    ───────────────────────────────────────────────────────────────────────── */
 import React from 'react';

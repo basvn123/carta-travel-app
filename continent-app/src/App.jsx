@@ -1,17 +1,25 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { AppHeader } from './AppHeader.jsx';
-import { FilterBar } from './FilterBar.jsx';
-import { BottomNav } from './BottomNav.jsx';
-import { MapView } from './MapView.jsx';
-import { DetailPanel } from './DetailPanel.jsx';
-import { LifestylePanel } from './LifestylePanel.jsx';
-import { ResultsList } from './ResultsList.jsx';
-import { ComparePanel } from './ComparePanel.jsx';
-import { TripPlannerTab } from './TripPlannerTab.jsx';
-import { DayPlannerTab } from './DayPlannerTab.jsx';
-import Logo from './Logo.jsx';
-import { tripDaysBetween, DEFAULT_LIFESTYLE } from './runtime_pricing.js';
-import { loadInitialState, persistState } from './urlState.js';
+import React, { useState, useEffect, useRef, useCallback, Suspense, lazy } from 'react';
+import { AppHeader } from './components/AppHeader.jsx';
+import { FilterBar } from './browse/FilterBar.jsx';
+import { BottomNav } from './components/BottomNav.jsx';
+import { DetailPanel } from './browse/DetailPanel.jsx';
+import { LifestylePanel } from './browse/LifestylePanel.jsx';
+import { ResultsList } from './browse/ResultsList.jsx';
+import { ComparePanel } from './browse/ComparePanel.jsx';
+import Logo from './components/Logo.jsx';
+
+// Code-split the map (maplibre-gl is by far the heaviest dependency) and the
+// two planner tabs, so the first paint only ships the browse UI shell.
+const MapView = lazy(() => import('./map/MapView.jsx').then((m) => ({ default: m.MapView })));
+const TripPlannerTab = lazy(() => import('./planner/TripPlannerTab.jsx').then((m) => ({ default: m.TripPlannerTab })));
+const DayPlannerTab = lazy(() => import('./planner/DayPlannerTab.jsx').then((m) => ({ default: m.DayPlannerTab })));
+
+// A quiet placeholder while a lazy chunk downloads (fast; usually one frame).
+function TabFallback() {
+  return <div className="loading-screen"><div className="pulse" /></div>;
+}
+import { tripDaysBetween, DEFAULT_LIFESTYLE } from './lib/runtime_pricing.js';
+import { loadInitialState, persistState } from './lib/urlState.js';
 import { AuthProvider, useAuth } from './auth/AuthContext.jsx';
 import { AuthModal } from './auth/AuthModal.jsx';
 import { AuthGate } from './auth/AuthGate.jsx';
@@ -112,8 +120,8 @@ function TravelApp() {
     }
   }, [departDate, returnDate]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Free-text location search (city / country). Ephemeral — not persisted in the
-  // URL — and applied to the filtered set so the list AND map narrow together.
+  // Free-text location search (city / country). Ephemeral - not persisted in the
+  // URL - and applied to the filtered set so the list AND map narrow together.
   const [locationQuery, setLocationQuery] = useState('');
   // Debounced for the actual filter/map pipeline so every keystroke doesn't
   // force MapView to reconcile markers; the input itself stays instant since
@@ -354,7 +362,7 @@ function TravelApp() {
             />
           </div>
 
-          {/* Reopen tab — only visible (via CSS) when the list is collapsed. */}
+          {/* Reopen tab - only visible (via CSS) when the list is collapsed. */}
           <div onClick={(e) => e.stopPropagation()}>
             <button
               className="list-reopen"
@@ -367,15 +375,17 @@ function TravelApp() {
             </button>
           </div>
 
-          <MapView
-            priced={priced}
-            unreachable={topPick ? [] : unreachable}
-            priceMode={priceMode}
-            groupSize={choices.group_size}
-            selectedId={selectedId}
-            onSelect={openDetail}
-            dealThreshold={dealThreshold}
-          />
+          <Suspense fallback={null}>
+            <MapView
+              priced={priced}
+              unreachable={topPick ? [] : unreachable}
+              priceMode={priceMode}
+              groupSize={choices.group_size}
+              selectedId={selectedId}
+              onSelect={openDetail}
+              dealThreshold={dealThreshold}
+            />
+          </Suspense>
 
           {data.meta?.is_mock && (
             <div style={{
@@ -443,15 +453,19 @@ function TravelApp() {
       )}
 
       {activeTab === 'trip' && (
-        <TripPlannerTab
-          data={data}
-          user={user}
-          authConfigured={authConfigured}
-          onRequestAuth={() => setAuthModalOpen(true)}
-        />
+        <Suspense fallback={<TabFallback />}>
+          <TripPlannerTab
+            data={data}
+            user={user}
+            authConfigured={authConfigured}
+            onRequestAuth={() => setAuthModalOpen(true)}
+          />
+        </Suspense>
       )}
       {activeTab === 'day' && (
-        <DayPlannerTab data={data} user={user} authConfigured={authConfigured} />
+        <Suspense fallback={<TabFallback />}>
+          <DayPlannerTab data={data} user={user} authConfigured={authConfigured} />
+        </Suspense>
       )}
 
       <div onClick={(e) => e.stopPropagation()}>

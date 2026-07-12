@@ -269,3 +269,18 @@ Eurostat PLI).
   and the cleaning + service fees. Season/discount/fees live in
   `meta.accommodation_model` and are applied at runtime. Refresh the anchors with
   the `compute_anchor_from_csv` helper in `03b_accommodation` on a fresh download.
+
+---
+
+## Served data split (added 2026-07-12)
+
+The master `app_data/app_data.json` is unchanged, but `continent-app/scripts/sync-data.mjs`
+now splits it for the wire at dev/build time:
+
+- `public/app_data.json` — core dataset; `activities.items_full` and `image.hires` removed
+- `public/activities_full.json` — `{ destinationId: items_full }`, lazy-fetched by the Day planner
+- `public/country_insights.json` — copy of `app_data/country_insights.json` (schema v1):
+  `{ generated_at, schema_version, countries: { <Country Name>: { iso2, currency, languages,
+  budget_level, daily_budget_eur:[lo,hi], best_months, best_time_note, rail{operator,url,note},
+  bus{operators,url,note}, driving{side,vignette,tolls,warnings,car_recommended_for,car_not_needed_in},
+  must_see:[{name,region,why}], insights:[..], food:[..], events:[..], sources:[..] } } }`

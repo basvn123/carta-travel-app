@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import maplibregl from 'maplibre-gl';
-import { flagUrl } from './tripGuide.js';
+import 'maplibre-gl/dist/maplibre-gl.css';
+import { flagUrl } from '../lib/tripGuide.js';
 
 const MAP_STYLE = 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json';
 
@@ -47,7 +48,18 @@ export function CountryPickerMap({ countries = [], selected, onToggle }) {
         el.type = 'button';
         el.className = 'cpm-pin';
         const img = flagUrl(c.iso2, 40);
-        el.innerHTML = `${img ? `<img class="cpm-flag" src="${img}" alt="" loading="lazy" />` : ''}<span class="cpm-name">${c.country}</span>`;
+        if (img) {
+          const flag = document.createElement('img');
+          flag.className = 'cpm-flag';
+          flag.src = img;
+          flag.alt = '';
+          flag.loading = 'lazy';
+          el.appendChild(flag);
+        }
+        const name = document.createElement('span');
+        name.className = 'cpm-name';
+        name.textContent = c.country;
+        el.appendChild(name);
         el.addEventListener('click', (e) => { e.stopPropagation(); onToggleRef.current?.(c.country); });
         const marker = new maplibregl.Marker({ element: el, anchor: 'center' })
           .setLngLat([c.centroid.lon, c.centroid.lat])

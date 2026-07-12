@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
-import { GemRating } from './GemRating.jsx';
-import { eur } from './format.js';
+import { GemRating } from '../components/GemRating.jsx';
+import { eur } from '../lib/format.js';
 
 /**
  * Ranked, sortable list of priced destinations - lives in the left gutter the
@@ -44,7 +44,7 @@ export function ResultsList({
   // Direction per sort key; price/beauty can be flipped, the rest stay default.
   const [sortDir, setSortDir] = useState(SORT_DEFAULT_DIR);
 
-  // Click a sort: switch to it, or — if it's already active and directional —
+  // Click a sort: switch to it, or - if it's already active and directional -
   // flip its direction.
   const onSortClick = (s) => {
     if (sortKey === s.key && s.directional) {
@@ -65,7 +65,7 @@ export function ResultsList({
     else if (sortKey === 'beauty') sorted.sort((a, b) => beautyVal(a) - beautyVal(b) || val(a) - val(b));
     else sorted.sort((a, b) => val(a) - val(b));
     // Base sorts above are all ascending; flip to descending on demand. Beauty
-    // defaults to 'desc' (most beautiful first) — see SORTS.
+    // defaults to 'desc' (most beautiful first) - see SORTS.
     const dir = sortDir[sortKey] || SORT_DEFAULT_DIR[sortKey];
     if (dir === 'desc') sorted.reverse();
     return sorted;

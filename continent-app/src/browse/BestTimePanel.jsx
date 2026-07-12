@@ -1,6 +1,6 @@
 import React from 'react';
-import { cheapestWindows, cheapestFlexibleWindows, fareByWeekday } from './runtime_pricing.js';
-import { eur } from './format.js';
+import { cheapestWindows, cheapestFlexibleWindows, fareByWeekday } from '../lib/runtime_pricing.js';
+import { eur } from '../lib/format.js';
 
 const DOW_NAMES = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 

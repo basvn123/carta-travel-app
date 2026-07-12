@@ -1,13 +1,31 @@
 import React, { useMemo, useState } from 'react';
-import { DateField } from './DateField.jsx';
-import { GemIcon } from './GemRating.jsx';
-import { CountryPickerMap } from './CountryPickerMap.jsx';
+import { DateField } from '../components/DateField.jsx';
+import { GemIcon } from '../components/GemRating.jsx';
+import { CountryPickerMap } from '../map/CountryPickerMap.jsx';
 import {
   countriesFromData, cityInsight, activitiesForInterests, cityImage, flagUrl, isoToFlag,
-} from './tripGuide.js';
+} from '../lib/tripGuide.js';
+import { carAdvice } from '../lib/transport.js';
+import { useCountryInsights } from '../hooks/useCountryInsights.js';
 
-const STEPS = ['Where', 'Cities', 'Enjoy', 'Visit', 'Arrange'];
+const STEPS = ['Where', 'Cities', 'Enjoy', 'Visit', 'Travel', 'Arrange'];
 const CITIES_PER_COUNTRY = 10;
+
+// "How do you want to get between your stops?" options (Travel step). The
+// planner prices every leg for the chosen style and stays overridable per leg.
+const TRANSPORT_CHOICES = [
+  { key: 'auto', icon: '✨', label: 'Carta picks', sub: 'Best mode per leg - cheapest sensible option' },
+  { key: 'public', icon: '🚆', label: 'Train & bus', sub: 'No driving; operator links per country' },
+  { key: 'car', icon: '🚗', label: 'Car', sub: 'One rental, fuel + tolls split by the group' },
+];
+
+// "How full should your days feel?" (Travel step) - used to suggest how many
+// highlights to actually schedule per day.
+const PACE_CHOICES = [
+  { key: 'relaxed', icon: '🌿', label: 'Relaxed', sub: '1-2 sights a day, long lunches' },
+  { key: 'balanced', icon: '⚖️', label: 'Balanced', sub: '2-3 sights, room to wander' },
+  { key: 'packed', icon: '⚡', label: 'See it all', sub: '4+ sights, early starts' },
+];
 
 // The "What do you enjoy?" tiles. Picking these tailors the highlights shown on
 // the Visit step (see activitiesForInterests) so the trip fits the traveller.
@@ -54,21 +72,26 @@ function CityThumb({ dest, className }) {
 }
 
 /**
- * "Let us guide you" — a four-step builder that assembles an itinerary:
- *   1. Where are we going?      pick one or more countries (with flags)
+ * "Let us guide you" - a six-step builder that assembles an itinerary:
+ *   1. Where are we going?      pick one or more countries (map or flag list)
  *   2. Which cities to stay?    pick cities + nights, with a line of insight
- *   3. What would you like to visit?  pick things to do in each city
- *   4. Arrange + start date     reorder the stops, choose when you leave
+ *   3. What do you enjoy?       interests that tailor each city's highlights
+ *   4. What would you like to visit?  pick things to do in each city
+ *   5. How do you want to travel?     car vs public transport (with a
+ *      data-driven car recommendation) + how full the days should feel
+ *   6. Arrange + start date     reorder the stops, choose when you leave
  *
- * On finish it hands the parent { startDate, label, stops:[{destinationId,
- * nights, activities}] } — the parent loads it into the planner and offers to
- * let Carta optimise it.
+ * On finish it hands the parent { startDate, groupSize, transport, pace,
+ * label, stops:[{destinationId, nights, activities}] } - the parent loads it
+ * into the planner (all of it still editable) and offers to let Carta
+ * optimise the route.
  */
 export function GuidedTripWizard({ data, onCancel, onComplete }) {
   const destinations = data?.destinations || {};
   const dateMin = data?.meta?.start_date;
   const dateMax = data?.meta?.end_date;
   const allCountries = useMemo(() => countriesFromData(destinations), [destinations]);
+  const countryInsights = useCountryInsights();
 
   const [step, setStep] = useState(1);
   const [countries, setCountries] = useState(() => new Set());
@@ -78,6 +101,8 @@ export function GuidedTripWizard({ data, onCancel, onComplete }) {
   const [acts, setActs] = useState({});          // { [id]: string[] }
   const [startDate, setStartDate] = useState('');
   const [groupSize, setGroupSize] = useState(2);
+  const [transport, setTransport] = useState('auto'); // 'auto' | 'public' | 'car'
+  const [pace, setPace] = useState('balanced');
   const [dragId, setDragId] = useState(null);
 
   const selectedCountries = allCountries.filter((c) => countries.has(c.country));
@@ -147,14 +172,32 @@ export function GuidedTripWizard({ data, onCancel, onComplete }) {
     (step === 1 && countries.size > 0)
     || (step === 2 && includedIds.length > 0)
     || (step === 3 && interests.size > 0)
-    || step === 4
-    || step === 5
+    || step >= 4
   );
+
+  // Data-driven "should this trip have a car?" verdict for the Travel step,
+  // from the chosen cities' own transit data + each country's driving intel.
+  const advice = useMemo(
+    () => carAdvice(includedIds.map((id) => destinations[id]).filter(Boolean), groupSize, countryInsights),
+    [includedIds, destinations, groupSize, countryInsights],
+  );
+  const drivingNotes = useMemo(() => {
+    const notes = [];
+    for (const c of selectedCountries) {
+      const d = countryInsights?.[c.country]?.driving;
+      if (!d) continue;
+      if (d.side === 'left') notes.push(`${c.country} drives on the LEFT.`);
+      if (d.vignette) notes.push(`${c.country}: ${d.vignette}`);
+    }
+    return notes;
+  }, [selectedCountries, countryInsights]);
 
   const finish = () => {
     onComplete({
       startDate,
       groupSize,
+      transport,
+      pace,
       label: selectedCountries.map((c) => c.country).slice(0, 2).join(' & '),
       stops: includedIds.map((id) => ({
         destinationId: id,
@@ -258,7 +301,7 @@ export function GuidedTripWizard({ data, onCancel, onComplete }) {
           {step === 4 && (
             <>
               <h2 className="guide-title">What would you like to visit?</h2>
-              <p className="guide-sub">Tuned to what you enjoy. Tap the highlights you'd like to work in — Carta fits them into your days.</p>
+              <p className="guide-sub">Tuned to what you enjoy. Tap the highlights you'd like to work in - Carta fits them into your days.</p>
               {includedIds.map((id) => {
                 const dest = destinations[id];
                 if (!dest) return null;
@@ -298,6 +341,54 @@ export function GuidedTripWizard({ data, onCancel, onComplete }) {
           )}
 
           {step === 5 && (
+            <>
+              <h2 className="guide-title">How do you want to travel?</h2>
+              <p className="guide-sub">Between your stops, and how full the days should feel. Every leg stays adjustable later.</p>
+
+              {(advice.verdict !== 'no' || drivingNotes.length > 0) && (
+                <div className={`guide-car-advice ${advice.verdict}`}>
+                  <div className="guide-car-advice-head">
+                    {advice.verdict === 'yes' ? '🚗 We’d rent a car for this trip' : advice.verdict === 'maybe' ? '🚗 A car could be worth it here' : '🚆 Public transport covers this trip well'}
+                  </div>
+                  {advice.reasons.map((r, i) => <p key={i}>{r}</p>)}
+                  {drivingNotes.map((n, i) => <p key={`d${i}`} className="guide-car-note">⚠️ {n}</p>)}
+                </div>
+              )}
+
+              <div className="guide-transport-grid">
+                {TRANSPORT_CHOICES.map((t) => (
+                  <button
+                    key={t.key}
+                    className={`guide-transport ${transport === t.key ? 'on' : ''}`}
+                    onClick={() => setTransport(t.key)}
+                    aria-pressed={transport === t.key}
+                  >
+                    <span className="guide-transport-icon">{t.icon}</span>
+                    <span className="guide-transport-label">{t.label}{advice.verdict === 'yes' && t.key === 'car' ? ' ✦' : ''}</span>
+                    <span className="guide-transport-sub">{t.sub}</span>
+                  </button>
+                ))}
+              </div>
+
+              <h3 className="guide-subtitle">Your pace</h3>
+              <div className="guide-transport-grid">
+                {PACE_CHOICES.map((p) => (
+                  <button
+                    key={p.key}
+                    className={`guide-transport ${pace === p.key ? 'on' : ''}`}
+                    onClick={() => setPace(p.key)}
+                    aria-pressed={pace === p.key}
+                  >
+                    <span className="guide-transport-icon">{p.icon}</span>
+                    <span className="guide-transport-label">{p.label}</span>
+                    <span className="guide-transport-sub">{p.sub}</span>
+                  </button>
+                ))}
+              </div>
+            </>
+          )}
+
+          {step === 6 && (
             <>
               <h2 className="guide-title">Arrange your trip</h2>
               <p className="guide-sub">Drag to reorder your stops, then pick when you'll set off.</p>
@@ -362,7 +453,7 @@ export function GuidedTripWizard({ data, onCancel, onComplete }) {
           </div>
           <div className="guide-foot-actions">
             {step > 1 && <button className="guide-back" onClick={() => setStep(step - 1)}>Back</button>}
-            {step < 5 ? (
+            {step < 6 ? (
               <button className="guide-next" onClick={() => setStep(step + 1)} disabled={!canNext}>Next</button>
             ) : (
               <button className="guide-next" onClick={finish} disabled={includedIds.length === 0}>Create trip</button>

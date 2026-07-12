@@ -86,7 +86,7 @@ export function decodeState(search) {
     const [lo, hi] = q.get('pr').split('.').map(Number);
     if (!Number.isNaN(lo) && !Number.isNaN(hi)) out.priceRange = [lo, hi];
   }
-  // 'sel' is intentionally ignored on load (see encodeState) — open the full map.
+  // 'sel' is intentionally ignored on load (see encodeState) - open the full map.
   if (has('fav')) out.favorites = q.get('fav').split('.').filter(Boolean);
   if (has('sort')) out.sortKey = q.get('sort');
   if (has('favonly')) out.showFavOnly = q.get('favonly') === '1';

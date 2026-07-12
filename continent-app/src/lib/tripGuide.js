@@ -1,11 +1,11 @@
 /**
- * tripGuide.js — helpers for the guided ("Let us guide you") trip builder:
+ * tripGuide.js - helpers for the guided ("Let us guide you") trip builder:
  * country/flag grouping and short human "insight" lines for cities.
  */
 import { gemScore } from './trip_planner_pricing.js';
 
 /** ISO-3166 alpha-2 → the corresponding flag emoji (regional indicators).
- *  Note: Windows has no flag glyphs, so these render as the two letters there —
+ *  Note: Windows has no flag glyphs, so these render as the two letters there -
  *  prefer `flagUrl()` for actual flag artwork. */
 export function isoToFlag(iso2) {
   if (!iso2 || iso2.length !== 2) return '🏳️';
@@ -16,7 +16,7 @@ export function isoToFlag(iso2) {
   return String.fromCodePoint(A + cc.charCodeAt(0) - base) + String.fromCodePoint(A + cc.charCodeAt(1) - base);
 }
 
-/** Real flag artwork (PNG) for an ISO-3166 alpha-2 code, via flagcdn.com — the
+/** Real flag artwork (PNG) for an ISO-3166 alpha-2 code, via flagcdn.com - the
  *  same external-image approach the app already uses for Wikipedia photos and
  *  the basemap. `w` is one of flagcdn's supported widths (20/40/80/160/…). */
 export function flagUrl(iso2, w = 40) {
@@ -43,7 +43,7 @@ export function countriesFromData(destinations) {
   }
   for (const c of map.values()) {
     c.cities.sort((a, b) => gemScore(b.dest) - gemScore(a.dest));
-    // Centroid = mean of the country's city coordinates — good enough to drop a
+    // Centroid = mean of the country's city coordinates - good enough to drop a
     // clickable pin roughly where the country sits on the map.
     c.centroid = { lat: c._latSum / c.cities.length, lon: c._lonSum / c.cities.length };
     delete c._latSum; delete c._lonSum;
@@ -114,7 +114,7 @@ const KIND_INTERESTS = {
 /** Rank + filter a city's things-to-do by the traveller's chosen interests.
  *  Items whose kind matches an interest are kept; when interests are set we drop
  *  the non-matching ones so the picks stay relevant ("someone who doesn't care
- *  about culture doesn't want that") — unless that would leave the city empty,
+ *  about culture doesn't want that") - unless that would leave the city empty,
  *  in which case we fall back to the full (capped) list so it's still pickable. */
 export function activitiesForInterests(dest, interests, limit = 14) {
   const items = dest?.activities?.items || [];

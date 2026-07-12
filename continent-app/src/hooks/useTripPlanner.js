@@ -1,22 +1,17 @@
 import { useState, useMemo, useCallback } from 'react';
 import {
   tripDaysBetween, accommodationPerPerson, groundSpendPerPerson, DEFAULT_LIFESTYLE, haversineKm,
-} from '../runtime_pricing.js';
-import { combineTripLegs, interCityGroundEstimate, suggestNextStops } from '../trip_planner_pricing.js';
+} from '../lib/runtime_pricing.js';
+import { combineTripLegs, suggestNextStops } from '../lib/trip_planner_pricing.js';
+import { legTransportOptions, rentalEstimate } from '../lib/transport.js';
+import { cheapestStartDates, reorderSavings } from '../lib/tripCostOptimizer.js';
+import { addDays } from '../lib/dates.js';
 import {
   fetchTripPlans, fetchTripPlanWithStops, createTripPlan, deleteTripPlan, saveTripPlanStops,
 } from '../auth/tripPlanStorage.js';
 
 function round2(v) {
   return v == null ? null : Math.round(v * 100) / 100;
-}
-
-/** Add `n` days to an ISO 'YYYY-MM-DD' date (UTC-safe). */
-function addDays(iso, n) {
-  if (!iso) return '';
-  const d = new Date(iso + 'T00:00:00Z');
-  d.setUTCDate(d.getUTCDate() + n);
-  return d.toISOString().slice(0, 10);
 }
 
 const DEFAULT_STOP_NIGHTS = 2;
@@ -31,13 +26,20 @@ const DEFAULT_STOP_NIGHTS = 2;
  *  (combineTripLegs: fly into the first stop, out of the last) plus an
  *  estimated overland leg between consecutive stops (interCityGroundEstimate).
  */
-export function useTripPlanner(data) {
+export function useTripPlanner(data, countryInsights = null) {
   const destinations = data?.destinations || {};
+  const carModel = data?.meta?.car_model || null;
 
   const [tripStart, setTripStart] = useState('');
   const [tripEnd, setTripEnd] = useState('');
   const [stops, setStops] = useState([]); // [{ destinationId, nights, activities: string[] }]
   const [groupSize, setGroupSize] = useState(2);
+  // How the traveller wants to get between stops: 'auto' lets Carta pick the
+  // best mode per leg, 'car' assumes one rental for the whole trip, 'public'
+  // sticks to trains/buses. Individual legs can still be overridden.
+  const [transportPref, setTransportPref] = useState('auto');
+  const [legModes, setLegModes] = useState({}); // { [legIndex]: 'train'|'bus'|'car' }
+  const [pace, setPace] = useState('balanced'); // 'relaxed' | 'balanced' | 'packed'
   const [planId, setPlanId] = useState(null);
   const [planLabel, setPlanLabel] = useState('');
   const [saveState, setSaveState] = useState('idle'); // idle | saving | saved
@@ -143,8 +145,10 @@ export function useTripPlanner(data) {
   }, []);
 
   // Load a whole itinerary the guided wizard just assembled: a start date, an
-  // ordered list of { destinationId, nights, activities }, and an optional name.
-  const loadFromWizard = useCallback(({ startDate, stops: wizardStops, label, groupSize: gs }) => {
+  // ordered list of { destinationId, nights, activities }, an optional name,
+  // plus how they want to travel (transport) and how full their days should
+  // feel (pace) - everything stays editable in the planner afterwards.
+  const loadFromWizard = useCallback(({ startDate, stops: wizardStops, label, groupSize: gs, transport, pace: wizardPace }) => {
     const total = wizardStops.reduce((sum, s) => sum + Math.max(0, s.nights || 0), 0);
     setTripStart(startDate || '');
     setTripEnd(startDate ? addDays(startDate, total) : '');
@@ -155,6 +159,9 @@ export function useTripPlanner(data) {
     })));
     if (label != null) setPlanLabel(label);
     if (gs != null) setGroupSize(Math.max(1, Math.min(20, gs)));
+    if (transport) setTransportPref(transport);
+    if (wizardPace) setPace(wizardPace);
+    setLegModes({});
     setPlanId(null);
     setPlanned(false);
   }, []);
@@ -177,16 +184,50 @@ export function useTripPlanner(data) {
     return combineTripLegs(first.dest, first.arriveDate, last.dest, last.departDate, groupSize);
   }, [stopDetails, groupSize]);
 
-  // Estimated ground transport between each consecutive pair of stops.
+  // Priced transport options (train / bus / car with booking links) between
+  // each consecutive pair of stops, resolved to a chosen mode: an explicit
+  // per-leg override wins, then the trip-wide preference, then Carta's pick.
   const legs = useMemo(() => {
     const out = [];
     for (let i = 0; i < stopDetails.length - 1; i++) {
       const a = stopDetails[i].dest;
       const b = stopDetails[i + 1].dest;
-      out.push(a && b ? interCityGroundEstimate(a, b, groupSize) : null);
+      const opts = a && b ? legTransportOptions(a, b, groupSize, { carModel, countryInsights }) : null;
+      if (!opts || opts.no_road || !opts.recommended) {
+        out.push(opts);
+        continue;
+      }
+      let mode = legModes[i] || null;
+      if (!mode) {
+        if (transportPref === 'car') mode = 'car';
+        else if (transportPref === 'public') mode = opts.modes.train.eur_pp <= opts.modes.bus.eur_pp ? 'train' : 'bus';
+        else mode = opts.recommended;
+      }
+      const chosen = opts.modes[mode] || opts.modes[opts.recommended];
+      out.push({
+        ...opts,
+        mode,
+        hours: chosen.hours,
+        ground_eur_per_person: chosen.eur_pp,
+        ground_total: chosen.eur_total,
+      });
     }
     return out;
-  }, [stopDetails, groupSize]);
+  }, [stopDetails, groupSize, carModel, countryInsights, transportPref, legModes]);
+
+  const setLegMode = useCallback((index, mode) => {
+    setLegModes((prev) => ({ ...prev, [index]: mode }));
+  }, []);
+
+  // One rental car for the whole trip (only priced into the total when the
+  // traveller chose 'car'; per-leg car choices only pay fuel + tolls since a
+  // trip mixing modes usually means point rentals or rideshares).
+  const carRental = useMemo(() => {
+    if (transportPref !== 'car' || !stopDetails.length) return null;
+    const days = Math.max(1, plannedNights);
+    const iso2 = stopDetails[0].dest?.iso2;
+    return rentalEstimate(carModel, iso2, days, tripStart || stopDetails[0].arriveDate);
+  }, [transportPref, stopDetails, plannedNights, carModel, tripStart]);
 
   // Accommodation + on-the-ground spend per stop (default lifestyle - the full
   // sliders live in the Map tab's Lifestyle panel; a trip spanning several
@@ -203,10 +244,38 @@ export function useTripPlanner(data) {
   const grandTotal = useMemo(() => {
     let total = 0;
     if (flight?.combinable) total += flight.fare_total + flight.ground_total;
-    legs.forEach((l) => { if (l) total += l.ground_total; });
+    legs.forEach((l) => { if (l && l.ground_total) total += l.ground_total; });
     stayCosts.forEach((s) => { if (s) total += s.total; });
+    if (carRental) total += carRental.eur_total;
     return round2(total);
-  }, [flight, legs, stayCosts]);
+  }, [flight, legs, stayCosts, carRental]);
+
+  // "Take this trip cheaper" - the same itinerary on cheaper flight dates
+  // (real stored fares only), and a cheaper stop ORDER when reordering
+  // meaningfully shortens the overland route.
+  const cheaperDates = useMemo(() => {
+    if (stops.length === 0 || plannedNights <= 0) return { candidates: [], current_total: null };
+    return cheapestStartDates(stops, destinations, plannedNights, groupSize, tripStart);
+  }, [stops, destinations, plannedNights, groupSize, tripStart]);
+
+  const cheaperOrder = useMemo(
+    () => reorderSavings(stops, destinations, groupSize),
+    [stops, destinations, groupSize],
+  );
+
+  // Shift the whole trip to a cheaper start date, keeping stops + nights.
+  const applyStartDate = useCallback((startIso) => {
+    setTripStart(startIso);
+    setTripEnd(addDays(startIso, Math.max(1, plannedNights)));
+  }, [plannedNights]);
+
+  // Apply the cheaper stop order suggested by reorderSavings.
+  const applyCheaperOrder = useCallback(() => {
+    if (!cheaperOrder) return;
+    const byId = new Map(stops.map((s) => [s.destinationId, s]));
+    setStops(cheaperOrder.ordered_ids.map((id) => byId.get(id)).filter(Boolean));
+    setLegModes({});
+  }, [cheaperOrder, stops]);
 
   // Continuous day-by-day itinerary: one entry per day on the ground, tagged
   // with the city you're staying in and that day's share of its chosen
@@ -301,6 +370,8 @@ export function useTripPlanner(data) {
     tripStart, setTripStart, tripEnd, setTripEnd,
     stops, stopDetails, plannedNights, windowNights,
     groupSize, setGroupSize,
+    transportPref, setTransportPref, pace, setPace, setLegMode, carRental,
+    cheaperDates, cheaperOrder, applyStartDate, applyCheaperOrder,
     addStop, removeStop, setStopNights, setStopActivities, moveStop, reorderStop,
     optimizeRoute, clearPlan, loadFromWizard,
     nextStopSuggestions, flight, legs, stayCosts, grandTotal, dayPlan,

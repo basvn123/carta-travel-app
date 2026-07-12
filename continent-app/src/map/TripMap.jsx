@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import maplibregl from 'maplibre-gl';
+import 'maplibre-gl/dist/maplibre-gl.css';
 
 // Same clean, key-less Carto Voyager basemap the main map uses.
 const MAP_STYLE = 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json';
@@ -7,14 +8,19 @@ const MAP_STYLE = 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json'
 /**
  * The trip's map backdrop: a full-bleed basemap that draws the itinerary as a
  * flowing dashed line through numbered pins, one per stop, and keeps the whole
- * route framed above the bottom sheet. Purely presentational — clicking a pin
+ * route framed above the bottom sheet. Purely presentational - clicking a pin
  * calls `onSelectStop(index)` so the sheet can scroll/highlight if it wants.
  *
  * `stops` is the ordered list of { lat, lon, city } (stops without a resolved
  * destination are skipped). `padBottom` is how much of the viewport the bottom
  * sheet covers, so the route stays visible in the exposed strip.
+ *
+ * `routeGeometry` (optional) is a real, street-following path as [[lon,lat],...]
+ * - e.g. an OSRM walking route. When given it's drawn as a solid line instead of
+ * the straight dashed hops between pins; without it we fall back to straight
+ * segments through the stops.
  */
-export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedIndex = null }) {
+export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedIndex = null, routeGeometry = null, showRoute = true }) {
   const containerRef = useRef(null);
   const mapRef = useRef(null);
   const markersRef = useRef([]);
@@ -69,19 +75,24 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
     const draw = () => {
       const pts = stops.filter((s) => s && s.lat != null && s.lon != null);
 
-      // Route line through the stops.
+      // Route line: prefer the real street-following geometry when supplied,
+      // otherwise straight hops between the stops. Solid for a real route,
+      // dashed for the straight-line fallback.
       const src = map.getSource('trip-route');
       if (src) {
+        const hasReal = showRoute && Array.isArray(routeGeometry) && routeGeometry.length >= 2;
+        const line = !showRoute ? null
+          : hasReal ? routeGeometry
+          : (pts.length >= 2 ? pts.map((p) => [p.lon, p.lat]) : null);
         src.setData({
           type: 'FeatureCollection',
-          features: pts.length >= 2 ? [{
-            type: 'Feature',
-            geometry: { type: 'LineString', coordinates: pts.map((p) => [p.lon, p.lat]) },
-          }] : [],
+          features: line ? [{ type: 'Feature', geometry: { type: 'LineString', coordinates: line } }] : [],
         });
+        map.setPaintProperty('trip-route-line', 'line-dasharray', hasReal ? [1, 0] : [1.5, 1.6]);
+        map.setPaintProperty('trip-route-line', 'line-width', hasReal ? 4 : 2.5);
       }
 
-      // Numbered pins — reconcile by teardown+rebuild (there are only a handful).
+      // Numbered pins - reconcile by teardown+rebuild (there are only a handful).
       markersRef.current.forEach((m) => m.marker.remove());
       markersRef.current = pts.map((p, i) => {
         const el = document.createElement('div');
@@ -119,7 +130,7 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
     // Store so the load handler can invoke the latest closure once ready.
     map._drawTrip = draw;
     if (readyRef.current) draw();
-  }, [stops, padBottom]);
+  }, [stops, padBottom, routeGeometry, showRoute]);
 
   // Highlight the selected pin and ease it into the visible strip.
   useEffect(() => {

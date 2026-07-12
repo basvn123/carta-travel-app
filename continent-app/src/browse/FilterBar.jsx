@@ -1,11 +1,11 @@
 import React from 'react';
-import { TRIP_KINDS } from './trip_kinds.js';
-import { Dropdown } from './Dropdown.jsx';
-import { DateField } from './DateField.jsx';
-import { GemIcon } from './GemRating.jsx';
-import { PlaneIcon, CarIcon } from './TransportIcons.jsx';
-import { CalendarIcon, FilterIcon } from './Icons.jsx';
-import { eur } from './format.js';
+import { TRIP_KINDS } from '../lib/trip_kinds.js';
+import { Dropdown } from '../components/Dropdown.jsx';
+import { DateField } from '../components/DateField.jsx';
+import { GemIcon } from '../components/GemRating.jsx';
+import { PlaneIcon, CarIcon } from '../components/TransportIcons.jsx';
+import { CalendarIcon, FilterIcon } from '../components/Icons.jsx';
+import { eur } from '../lib/format.js';
 
 export function FilterBar({
   data, choices, setChoices,
@@ -388,7 +388,7 @@ export function FilterBar({
 
           <div className="filter-divider" aria-hidden="true" />
 
-          {/* Trip type — a multi-select dropdown, mirroring the Country filter.
+          {/* Trip type - a multi-select dropdown, mirroring the Country filter.
               A compact trigger keeps the bar to two tidy rows; the choices live
               in a popover instead of wrapping a wide chip block across the row. */}
           <div className="filter filter-triptype">

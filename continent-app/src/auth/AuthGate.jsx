@@ -1,5 +1,5 @@
 import React from 'react';
-import Logo from '../Logo.jsx';
+import Logo from '../components/Logo.jsx';
 
 /**
  * Full-screen entry gate shown on load whenever there's no active session and

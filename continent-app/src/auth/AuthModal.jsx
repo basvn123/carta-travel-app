@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import Logo from '../Logo.jsx';
+import Logo from '../components/Logo.jsx';
 import { useAuth } from './AuthContext.jsx';
 
 /**

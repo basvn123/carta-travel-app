@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
-import { composeTrip } from './runtime_pricing.js';
-import { eur } from './format.js';
+import { composeTrip } from '../lib/runtime_pricing.js';
+import { eur } from '../lib/format.js';
 
 /**
  * Side-by-side comparison of the shortlisted (favorited) destinations. Prices

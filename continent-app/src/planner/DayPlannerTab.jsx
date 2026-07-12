@@ -1,24 +1,17 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { TripMap } from './TripMap.jsx';
-import { Dropdown } from './Dropdown.jsx';
-import { DateField } from './DateField.jsx';
-import { tripDaysBetween, haversineKm } from './runtime_pricing.js';
-import { fetchTripPlans, fetchTripPlanWithStops } from './auth/tripPlanStorage.js';
+import { TripMap } from '../map/TripMap.jsx';
+import { Dropdown } from '../components/Dropdown.jsx';
+import { DateField } from '../components/DateField.jsx';
+import { tripDaysBetween, haversineKm } from '../lib/runtime_pricing.js';
+import { fetchActivitiesFull } from '../lib/appData.js';
+import { fetchTripPlans, fetchTripPlanWithStops } from '../auth/tripPlanStorage.js';
+import { fetchWalkingRoute, googleMapsDirUrl } from '../lib/routing.js';
+import { countriesFromData } from '../lib/tripGuide.js';
+import { CountryIntel } from '../components/CountryIntel.jsx';
+import { useCountryInsights } from '../hooks/useCountryInsights.js';
+import { addDays, todayISO, fmtDate as fmtDateFull } from '../lib/dates.js';
 
-const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-
-function fmtDate(iso) {
-  if (!iso) return '';
-  const [y, m, d] = iso.split('-').map(Number);
-  return `${String(d).padStart(2, '0')} ${MONTHS[m - 1]}`;
-}
-
-/** Add `n` days to an ISO 'YYYY-MM-DD' date (UTC-safe). */
-function addDays(iso, n) {
-  const d = new Date(iso + 'T00:00:00Z');
-  d.setUTCDate(d.getUTCDate() + n);
-  return d.toISOString().slice(0, 10);
-}
+const fmtDate = (iso) => (iso ? fmtDateFull(iso).slice(0, 6) : '');
 
 // Typical time actually spent at a place, by category - a rough default used
 // only to lay out a SUGGESTED schedule (see the disclaimer in the UI); this
@@ -44,7 +37,12 @@ function estimateWalkMinutes(km) {
   return Math.max(1, Math.round((km / WALK_KMH) * 60));
 }
 
-const DAY_START_MIN = 9 * 60; // suggested schedule starts at 9:00 AM
+// Selectable "when does your day start" options for the suggested schedule.
+const DAY_STARTS = [
+  { min: 8 * 60, label: '8 AM · early bird' },
+  { min: 9 * 60, label: '9 AM · classic' },
+  { min: 10 * 60, label: '10 AM · slow morning' },
+];
 function minutesToClock(totalMin) {
   const h24 = Math.floor((totalMin / 60) % 24);
   const m = Math.round(totalMin % 60);
@@ -146,13 +144,9 @@ function buildStandalonePlan(sp) {
   };
 }
 
-function todayISO() {
-  const t = new Date();
-  return `${t.getFullYear()}-${String(t.getMonth() + 1).padStart(2, '0')}-${String(t.getDate()).padStart(2, '0')}`;
-}
-
 export function DayPlannerTab({ data, user, authConfigured }) {
   const destinations = data?.destinations || {};
+  const countryInsights = useCountryInsights();
 
   const [savedPlans, setSavedPlans] = useState([]);
   const [plansLoading, setPlansLoading] = useState(false);
@@ -160,10 +154,13 @@ export function DayPlannerTab({ data, user, authConfigured }) {
   const [stopIdx, setStopIdx] = useState(0);
   const [dayIdx, setDayIdx] = useState(0);
   const [assignments, setAssignments] = useState({}); // { [stopIdx]: { [dayIdx]: [activityIdx,...] } }
+  // When the traveller likes their sightseeing day to start (schedule anchor).
+  const [dayStartMin, setDayStartMin] = useState(9 * 60);
 
   // Locally-stored "plan a day for any city" plans (see STANDALONE_KEY).
   const [standalonePlans, setStandalonePlans] = useState(() => loadStandalonePlans());
-  // Builder inputs for a new standalone plan.
+  // Builder inputs for a new standalone plan (pick a country, then a city).
+  const [newCountry, setNewCountry] = useState('');
   const [newCityId, setNewCityId] = useState('');
   const [newStartDate, setNewStartDate] = useState(() => todayISO());
   const [newDays, setNewDays] = useState(1);
@@ -201,6 +198,7 @@ export function DayPlannerTab({ data, user, authConfigured }) {
     const next = [sp, ...standalonePlans];
     setStandalonePlans(next);
     persistStandalonePlans(next);
+    setNewCountry('');
     setNewCityId('');
     setNewDays(1);
     openStandalone(sp);
@@ -240,14 +238,25 @@ export function DayPlannerTab({ data, user, authConfigured }) {
     return Array.from({ length: stop.nights }, (_, i) => addDays(stop.arrive_date, i));
   }, [stop]);
 
-  // OpenTripMap-sourced destinations get items_full (with coordinates, for
-  // map pins); everything else falls back to the name-only items list.
+  // Full POI lists (with coordinates, for map pins) live in a separate lazily
+  // fetched file so the boot-time dataset stays small. Kicked off on mount;
+  // until it lands (or if it fails) we fall back to the short name-only list.
+  const [actFull, setActFull] = useState(null); // { destId: items_full } | null
+  useEffect(() => {
+    let alive = true;
+    fetchActivitiesFull().then((m) => { if (alive) setActFull(m); });
+    return () => { alive = false; };
+  }, []);
+
   const activities = useMemo(() => {
     const a = stop?.dest?.activities;
     if (!a) return { items: [], limited: true };
-    if (a.items_full && a.items_full.length) return { items: a.items_full, limited: false };
+    const full = (a.items_full && a.items_full.length)
+      ? a.items_full
+      : actFull?.[stop.destination_id];
+    if (full && full.length) return { items: full, limited: false };
     return { items: (a.items || []).map((it) => ({ ...it, lat: null, lon: null })), limited: true };
-  }, [stop]);
+  }, [stop, actFull]);
 
   const dayAssignedIdx = assignments[stopIdx]?.[dayIdx] || [];
   const assignedItems = dayAssignedIdx.map((i) => activities.items[i]).filter(Boolean);
@@ -279,32 +288,73 @@ export function DayPlannerTab({ data, user, authConfigured }) {
     commitDay(nextForDay);
   };
 
-  // A suggested schedule for the day - dwell time by category + walking time
-  // between consecutive stops, chained from a 9:00 AM start. Not real
-  // opening-hours or booking data (see the disclaimer shown with it).
-  const timeline = useMemo(() => {
-    let cursor = DAY_START_MIN;
-    return assignedItems.map((it, i) => {
-      const arrive = cursor;
-      const depart = arrive + estimateDwellMinutes(it.kind);
-      const next = assignedItems[i + 1];
-      let walkKm = null, walkMin = null;
-      if (next && it.lat != null && it.lon != null && next.lat != null && next.lon != null) {
-        walkKm = haversineKm(it.lat, it.lon, next.lat, next.lon);
-        walkMin = estimateWalkMinutes(walkKm);
-      }
-      cursor = depart + (walkMin || 0);
-      return { item: it, arrive, depart, walkKm, walkMin };
-    });
-  }, [assignedItems]);
-
   const mapPins = assignedItems
     .filter((it) => it.lat != null && it.lon != null)
     .map((it) => ({ lat: it.lat, lon: it.lon, city: it.name }));
 
-  const destOptions = Object.entries(destinations)
-    .map(([id, d]) => ({ value: id, label: `${d.city}, ${d.country}` }))
+  // Real street-following walking route + per-leg distance/time from OSRM
+  // (keyless FOSSGIS foot instance, see lib/routing). Re-fetched whenever the
+  // ordered stops change; keyed on the coordinate string so a stale response
+  // for a since-changed day is ignored. Falls back to straight-line estimates
+  // when it's unavailable (offline, too few stops, or the router had no answer).
+  const routeKey = mapPins.map((p) => `${p.lat.toFixed(5)},${p.lon.toFixed(5)}`).join(';');
+  const [route, setRoute] = useState(null); // { key, geometry, legs, km, min }
+  useEffect(() => {
+    if (mapPins.length < 2) { setRoute(null); return; }
+    let alive = true;
+    fetchWalkingRoute(mapPins).then((r) => { if (alive && r) setRoute({ key: routeKey, ...r }); });
+    return () => { alive = false; };
+  }, [routeKey]); // eslint-disable-line react-hooks/exhaustive-deps
+  const routeOk = route && route.key === routeKey;
+
+  // Per-segment legs align to assignedItems only when every stop has coordinates
+  // (then mapPins === assignedItems in order); otherwise we can't map a leg to a
+  // gap and fall back to haversine for that segment.
+  const legsAlign = routeOk
+    && assignedItems.length >= 2
+    && assignedItems.every((it) => it.lat != null && it.lon != null)
+    && route.legs.length === assignedItems.length - 1;
+
+  // A suggested schedule for the day - dwell time by category + walking time
+  // between consecutive stops, chained from a 9:00 AM start. Uses the real OSRM
+  // leg time/distance when available, else a straight-line estimate. Not real
+  // opening-hours or booking data (see the disclaimer shown with it).
+  const timeline = useMemo(() => {
+    let cursor = dayStartMin;
+    return assignedItems.map((it, i) => {
+      const arrive = cursor;
+      const depart = arrive + estimateDwellMinutes(it.kind);
+      const next = assignedItems[i + 1];
+      let walkKm = null, walkMin = null, walkReal = false;
+      if (next && legsAlign) {
+        walkKm = route.legs[i].km;
+        walkMin = route.legs[i].min;
+        walkReal = true;
+      } else if (next && it.lat != null && it.lon != null && next.lat != null && next.lon != null) {
+        walkKm = haversineKm(it.lat, it.lon, next.lat, next.lon);
+        walkMin = estimateWalkMinutes(walkKm);
+      }
+      cursor = depart + (walkMin || 0);
+      return { item: it, arrive, depart, walkKm, walkMin, walkReal };
+    });
+  }, [assignedItems, legsAlign, route, dayStartMin]);
+
+  const gmapsUrl = googleMapsDirUrl(mapPins, 'walking');
+
+  // Country -> city cascading pickers for "plan a day for any city". Countries
+  // (with a rough centroid) come from the shared helper; the map lets you pick
+  // the city visually once a country is chosen.
+  const countryList = useMemo(() => countriesFromData(destinations), [destinations]);
+  const countryOptions = countryList.map((c) => ({ value: c.country, label: c.country }));
+  const activeCountry = countryList.find((c) => c.country === newCountry) || null;
+  const cityOptions = (activeCountry?.cities || [])
+    .map(({ id, dest }) => ({ value: id, label: dest.city }))
     .sort((a, b) => a.label.localeCompare(b.label));
+  // City pins for the picker map (coords only), and which one is selected.
+  const pickerCities = (activeCountry?.cities || [])
+    .filter(({ dest }) => dest.lat != null && dest.lon != null)
+    .map(({ id, dest }) => ({ id, lat: dest.lat, lon: dest.lon, city: dest.city }));
+  const pickerSelectedIdx = pickerCities.findIndex((c) => c.id === newCityId);
 
   // Landing screen: plan a day for any city (no trip required), reopen a saved
   // day plan, or pick one of your saved trips to plan its stops.
@@ -318,18 +368,41 @@ export function DayPlannerTab({ data, user, authConfigured }) {
             and Carta lays them out in a walkable order with a suggested schedule.
           </p>
 
-          {/* Plan a day for any city */}
+          {/* Plan a day for any city: pick the country, then the city (list or map) */}
           <div className="day-build">
             <div className="trip-block-title">Plan a day for any city</div>
-            <div className="trip-add-row">
-              <Dropdown
-                value={newCityId}
-                onChange={setNewCityId}
-                options={destOptions}
-                placeholder="Search a city or country"
-                searchPlaceholder="Search"
-              />
+            <div className="day-build-row">
+              <label className="trip-field">
+                <span className="trip-field-label">Country</span>
+                <Dropdown
+                  value={newCountry}
+                  onChange={(c) => { setNewCountry(c); setNewCityId(''); }}
+                  options={countryOptions}
+                  placeholder="Which country?"
+                  searchPlaceholder="Search countries"
+                />
+              </label>
+              <label className="trip-field">
+                <span className="trip-field-label">City</span>
+                <Dropdown
+                  value={newCityId}
+                  onChange={setNewCityId}
+                  options={cityOptions}
+                  placeholder={newCountry ? 'Which city?' : 'Pick a country first'}
+                  searchPlaceholder="Search cities"
+                />
+              </label>
             </div>
+            {pickerCities.length > 0 && (
+              <div className="day-build-map">
+                <TripMap
+                  stops={pickerCities}
+                  padBottom={12}
+                  onSelectStop={(i) => pickerCities[i] && setNewCityId(pickerCities[i].id)}
+                  selectedIndex={pickerSelectedIdx >= 0 ? pickerSelectedIdx : null}
+                />
+              </div>
+            )}
             <div className="day-build-row">
               <label className="trip-field">
                 <span className="trip-field-label">Start date</span>
@@ -409,7 +482,7 @@ export function DayPlannerTab({ data, user, authConfigured }) {
 
   return (
     <div className="trip-planner-screen">
-      <TripMap stops={mapPins} padBottom={420} />
+      <TripMap stops={mapPins} padBottom={420} routeGeometry={routeOk ? route.geometry : null} />
 
       <div className="trip-topcard" onClick={(e) => e.stopPropagation()}>
         <div className="trip-topcard-name">{plan.label || 'Untitled trip'}</div>
@@ -457,6 +530,17 @@ export function DayPlannerTab({ data, user, authConfigured }) {
                   <button className="day-chip day-chip-add" onClick={addStandaloneDay} title="Add another day">+ Day</button>
                 )}
               </div>
+              <div className="day-chip-row day-start-row">
+                {DAY_STARTS.map((s) => (
+                  <button
+                    key={s.min}
+                    className={`day-chip ${dayStartMin === s.min ? 'active' : ''}`}
+                    onClick={() => setDayStartMin(s.min)}
+                  >
+                    {s.label}
+                  </button>
+                ))}
+              </div>
             </div>
           )}
 
@@ -470,7 +554,11 @@ export function DayPlannerTab({ data, user, authConfigured }) {
               ) : (
                 <>
                   <p className="trip-note day-timeline-note">
-                    Suggested order and times, from a 9:00 AM start - not real opening hours or bookings.
+                    Suggested order and times, from a {minutesToClock(dayStartMin)} start.
+                    {legsAlign
+                      ? ' Walking times follow real streets (OpenStreetMap routing).'
+                      : ' Walking times are straight-line estimates.'}
+                    {' '}Not real opening hours or bookings.
                   </p>
                   <div className="day-timeline">
                     {timeline.map((t, i) => (
@@ -492,15 +580,28 @@ export function DayPlannerTab({ data, user, authConfigured }) {
                         {i < timeline.length - 1 && (
                           <div className="day-timeline-walk">
                             {t.walkMin != null
-                              ? `↓ ${t.walkMin} min walk, ${t.walkKm.toFixed(1)} km`
+                              ? `↓ ${t.walkReal ? '' : '≈'}${t.walkMin} min walk, ${t.walkKm.toFixed(1)} km`
                               : '↓ walking time unknown (no coordinates for one of these stops)'}
                           </div>
                         )}
                       </React.Fragment>
                     ))}
                   </div>
+                  {gmapsUrl && (
+                    <a className="day-gmaps-link" href={gmapsUrl} target="_blank" rel="noreferrer">
+                      Open today's route in Google Maps ↗
+                    </a>
+                  )}
                 </>
               )}
+            </div>
+          )}
+
+          {/* Local intel for the country you're exploring */}
+          {stop?.dest?.country && countryInsights?.[stop.dest.country] && (
+            <div className="trip-block">
+              <div className="trip-block-title">Local tips</div>
+              <CountryIntel country={stop.dest.country} rec={countryInsights[stop.dest.country]} compact />
             </div>
           )}
 

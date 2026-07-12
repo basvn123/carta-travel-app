@@ -1,0 +1,144 @@
+import React, { useState } from 'react';
+import { flagUrl, isoToFlag } from '../lib/tripGuide.js';
+import { fmtMonths } from '../lib/dates.js';
+
+const BUDGET_LABELS = {
+  low: 'Budget-friendly',
+  mid: 'Moderate prices',
+  high: 'Pricey',
+  very_high: 'Very expensive',
+};
+
+function Flag({ iso2, className = 'cintel-flag' }) {
+  const url = flagUrl(iso2, 40);
+  if (!url) return <span className={className}>{isoToFlag(iso2)}</span>;
+  return (
+    <img
+      className={className}
+      src={url}
+      srcSet={`${flagUrl(iso2, 80)} 2x`}
+      alt=""
+      loading="lazy"
+      onError={(e) => { e.currentTarget.style.display = 'none'; }}
+    />
+  );
+}
+
+function LinkOut({ href, children }) {
+  if (!href) return <span>{children}</span>;
+  return <a href={href} target="_blank" rel="noreferrer" className="cintel-link">{children} ↗</a>;
+}
+
+/**
+ * Deep per-country travel intel (from country_insights.json): budget level,
+ * best months, rail/bus operators with booking links, driving rules (vignettes,
+ * tolls, warnings), in-depth must-sees, practical traveler insights, food and
+ * events. Collapsible so it can sit inside the planners without shouting.
+ *
+ * @param rec         the country's insight record (required)
+ * @param country     display name (required)
+ * @param defaultOpen start expanded (default false)
+ * @param compact     hide must-see/food/events, keep transport + warnings
+ */
+export function CountryIntel({ rec, country, defaultOpen = false, compact = false }) {
+  const [open, setOpen] = useState(defaultOpen);
+  const [allSights, setAllSights] = useState(false);
+  if (!rec) return null;
+
+  const sights = allSights ? rec.must_see : (rec.must_see || []).slice(0, 6);
+
+  return (
+    <div className={`cintel ${open ? 'open' : ''}`}>
+      <button className="cintel-head" onClick={() => setOpen(!open)} aria-expanded={open}>
+        <Flag iso2={rec.iso2} />
+        <span className="cintel-country">{country}</span>
+        <span className="cintel-chips">
+          {rec.budget_level && <span className={`cintel-chip budget-${rec.budget_level}`}>{BUDGET_LABELS[rec.budget_level] || rec.budget_level}</span>}
+          {rec.daily_budget_eur && <span className="cintel-chip">€{rec.daily_budget_eur[0]}–{rec.daily_budget_eur[1]}/day</span>}
+          {rec.currency && rec.currency !== 'EUR' && <span className="cintel-chip">{rec.currency}, not €</span>}
+        </span>
+        <span className="cintel-caret">{open ? '−' : '+'}</span>
+      </button>
+
+      {open && (
+        <div className="cintel-body">
+          {rec.best_time_note && (
+            <div className="cintel-row">
+              <span className="cintel-label">Best time</span>
+              <p><strong>{fmtMonths(rec.best_months)}.</strong> {rec.best_time_note}</p>
+            </div>
+          )}
+
+          <div className="cintel-row">
+            <span className="cintel-label">Getting around</span>
+            <div>
+              {rec.rail?.operator && (
+                <p>🚆 <LinkOut href={rec.rail.url}>{rec.rail.operator}</LinkOut>{rec.rail.note ? ` - ${rec.rail.note}` : ''}</p>
+              )}
+              {rec.bus?.operators?.length > 0 && (
+                <p>🚌 <LinkOut href={rec.bus.url}>{rec.bus.operators.join(', ')}</LinkOut>{rec.bus.note ? ` - ${rec.bus.note}` : ''}</p>
+              )}
+            </div>
+          </div>
+
+          {rec.driving && (
+            <div className="cintel-row">
+              <span className="cintel-label">By car</span>
+              <div>
+                {rec.driving.side === 'left' && <p className="cintel-warn">⚠️ Drives on the LEFT.</p>}
+                {rec.driving.vignette && <p className="cintel-warn">🎫 {rec.driving.vignette}</p>}
+                {rec.driving.tolls && <p>🛣️ {rec.driving.tolls}</p>}
+                {(rec.driving.warnings || []).map((w, i) => <p key={i} className="cintel-warn">⚠️ {w}</p>)}
+                {rec.driving.car_recommended_for && <p>👍 Worth a car for: {rec.driving.car_recommended_for}</p>}
+                {rec.driving.car_not_needed_in && <p>👎 Skip the car in: {rec.driving.car_not_needed_in}</p>}
+              </div>
+            </div>
+          )}
+
+          {!compact && (rec.must_see || []).length > 0 && (
+            <div className="cintel-row">
+              <span className="cintel-label">Don't miss</span>
+              <div className="cintel-sights">
+                {sights.map((s, i) => (
+                  <div key={i} className="cintel-sight">
+                    <span className="cintel-sight-name">{s.name}</span>
+                    {s.region && <span className="cintel-sight-region">{s.region}</span>}
+                    {s.why && <span className="cintel-sight-why">{s.why}</span>}
+                  </div>
+                ))}
+                {rec.must_see.length > 6 && (
+                  <button className="cintel-more" onClick={() => setAllSights(!allSights)}>
+                    {allSights ? 'Show fewer' : `Show all ${rec.must_see.length}`}
+                  </button>
+                )}
+              </div>
+            </div>
+          )}
+
+          {(rec.insights || []).length > 0 && (
+            <div className="cintel-row">
+              <span className="cintel-label">Good to know</span>
+              <ul className="cintel-insights">
+                {rec.insights.map((t, i) => <li key={i}>{t}</li>)}
+              </ul>
+            </div>
+          )}
+
+          {!compact && (rec.food || []).length > 0 && (
+            <div className="cintel-row">
+              <span className="cintel-label">Eat &amp; drink</span>
+              <p>{rec.food.join(' · ')}</p>
+            </div>
+          )}
+
+          {!compact && (rec.events || []).length > 0 && (
+            <div className="cintel-row">
+              <span className="cintel-label">Events</span>
+              <p>{rec.events.join(' · ')}</p>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}

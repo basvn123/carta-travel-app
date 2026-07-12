@@ -1,7 +1,8 @@
 import React, { useEffect, useRef } from 'react';
 import maplibregl from 'maplibre-gl';
+import 'maplibre-gl/dist/maplibre-gl.css';
 
-// Carto Voyager — clean, beige, no API key needed
+// Carto Voyager - clean, beige, no API key needed
 const MAP_STYLE = 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json';
 
 export function MapView({ priced, unreachable = [], priceMode = 'total', groupSize = 1, selectedId, onSelect, dealThreshold }) {
@@ -88,7 +89,7 @@ export function MapView({ priced, unreachable = [], priceMode = 'total', groupSi
     }
   }, [priced, unreachable, priceMode, dealThreshold]);
 
-  // Selection styling only — a cheap class toggle on existing marker DOM, with
+  // Selection styling only - a cheap class toggle on existing marker DOM, with
   // NO marker rebuild. Runs on every selection change.
   useEffect(() => {
     const cache = markersRef.current;
@@ -103,7 +104,7 @@ export function MapView({ priced, unreachable = [], priceMode = 'total', groupSi
     }
   }, [selectedId]);
 
-  // Pan to selected destination — ONLY when the selection itself changes.
+  // Pan to selected destination - ONLY when the selection itself changes.
   // We deliberately do NOT depend on priced/unreachable: those arrays get new
   // references on every filter tick (e.g. dragging the Beauty slider), and
   // re-running flyTo on each would keep yanking the map back to the selected pin,
@@ -151,7 +152,7 @@ function createPriced(p, map, onSelectRef) {
     onSelectRef.current(p.id);
   });
 
-  // anchor: 'bottom' — the dot lands exactly on the city, the pill floats above.
+  // anchor: 'bottom' - the dot lands exactly on the city, the pill floats above.
   const marker = new maplibregl.Marker({ element: root, anchor: 'bottom' })
     .setLngLat([p.lon, p.lat])
     .addTo(map);

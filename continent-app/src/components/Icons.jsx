@@ -1,5 +1,5 @@
 /* ─────────────────────────────────────────────────────────────────────────
-   Small UI glyphs — line icons that inherit currentColor, matching the style
+   Small UI glyphs - line icons that inherit currentColor, matching the style
    of TransportIcons.jsx (plane/car).
    ───────────────────────────────────────────────────────────────────────── */
 import React from 'react';

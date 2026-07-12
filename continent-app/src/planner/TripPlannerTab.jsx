@@ -1,25 +1,17 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Dropdown } from './Dropdown.jsx';
-import { DateField } from './DateField.jsx';
-import { GemIcon } from './GemRating.jsx';
-import { TripMap } from './TripMap.jsx';
+import { Dropdown } from '../components/Dropdown.jsx';
+import { DateField } from '../components/DateField.jsx';
+import { GemIcon } from '../components/GemRating.jsx';
+import { CountryIntel } from '../components/CountryIntel.jsx';
+import { TripMap } from '../map/TripMap.jsx';
 import { TripItinerary } from './TripItinerary.jsx';
 import { GuidedTripWizard } from './GuidedTripWizard.jsx';
-import { eur } from './format.js';
-import { useTripPlanner } from './hooks/useTripPlanner.js';
+import { eur } from '../lib/format.js';
+import { fmtDate } from '../lib/dates.js';
+import { useTripPlanner } from '../hooks/useTripPlanner.js';
+import { useCountryInsights } from '../hooks/useCountryInsights.js';
 
-const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 const SHEET_H_KEY = 'carta.tripSheetH.v1';
-
-function fmtDate(iso, withWeekday = false) {
-  if (!iso) return '';
-  const [y, m, d] = iso.split('-').map(Number);
-  const base = `${String(d).padStart(2, '0')} ${MONTHS[m - 1]}`;
-  if (!withWeekday) return `${base} ${y}`;
-  const wd = WEEKDAYS[new Date(Date.UTC(y, m - 1, d)).getUTCDay()];
-  return `${wd} ${base}`;
-}
 
 const REASON_LABELS = {
   no_shared_origin: "These two stops don't share a Ryanair origin airport, so there's no single flight plan connecting them. Try a different first or last stop, or fly home and out again.",
@@ -60,6 +52,55 @@ function Stepper({ value, onChange, min = 0, max = 60, suffix }) {
   );
 }
 
+const MODE_META = {
+  train: { icon: '🚆', label: 'Train' },
+  bus: { icon: '🚌', label: 'Bus' },
+  car: { icon: '🚗', label: 'Car' },
+};
+
+/** One overland leg between two stops: the chosen mode inline, expandable to
+ *  compare all three (train/bus/car), switch mode, and jump to booking links. */
+function LegRow({ leg, onMode }) {
+  const [open, setOpen] = useState(false);
+  if (!leg) return <div className="trip-leg">↳ Route unknown</div>;
+  if (leg.no_road || !leg.mode) return <div className="trip-leg">↳ {leg.note || 'No overland route (sea crossing)'}</div>;
+  const chosen = leg.modes[leg.mode];
+  return (
+    <div className="trip-leg trip-leg-rich">
+      <button className="trip-leg-main" onClick={() => setOpen(!open)} aria-expanded={open}>
+        ↳ {MODE_META[leg.mode].icon} {MODE_META[leg.mode].label}, ~{leg.road_km} km, est. {eur(chosen.eur_pp)}/person, ~{chosen.hours}h
+        {leg.long_haul ? ' · long leg - consider flying' : ''}
+        <span className="trip-leg-caret">{open ? '−' : '+'}</span>
+      </button>
+      {open && (
+        <div className="trip-leg-detail">
+          <div className="trip-leg-modes">
+            {Object.entries(leg.modes).map(([m, o]) => (
+              <button
+                key={m}
+                className={`trip-leg-mode ${leg.mode === m ? 'on' : ''}`}
+                onClick={() => onMode(m)}
+                title={leg.recommended === m ? "Carta's pick for this leg" : undefined}
+              >
+                <span>{MODE_META[m].icon} {MODE_META[m].label}{leg.recommended === m ? ' ✦' : ''}</span>
+                <b>{eur(o.eur_pp)}/p</b>
+                <small>~{o.hours}h</small>
+              </button>
+            ))}
+          </div>
+          {chosen.note && <p className="trip-leg-note">{chosen.note}</p>}
+          <div className="trip-leg-links">
+            {chosen.links.map((l, j) => (
+              <a key={j} href={l.url} target="_blank" rel="noreferrer">{l.label} ↗</a>
+            ))}
+          </div>
+          <p className="trip-leg-disclaimer">Estimates, not live fares - check the links for real times &amp; prices.</p>
+        </div>
+      )}
+    </div>
+  );
+}
+
 function Suggestions({ suggestions, onPick }) {
   if (!suggestions.length) return null;
   return (
@@ -92,7 +133,8 @@ function Suggestions({ suggestions, onPick }) {
 }
 
 export function TripPlannerTab({ data, user, authConfigured, onRequestAuth }) {
-  const tp = useTripPlanner(data);
+  const countryInsights = useCountryInsights();
+  const tp = useTripPlanner(data, countryInsights);
   const destinations = data?.destinations || {};
   const dateMin = data?.meta?.start_date;
   const dateMax = data?.meta?.end_date;
@@ -104,6 +146,10 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth }) {
   const [dragIdx, setDragIdx] = useState(null);
   const [wizardOpen, setWizardOpen] = useState(false);
   const [planPromptOpen, setPlanPromptOpen] = useState(false);
+  // Mobile only: the planner opens from a clean "Plan your trip" launcher rather
+  // than dumping the whole bottom sheet on screen at once. Inert on desktop,
+  // where the sheet is a permanent left column (see isNarrow below).
+  const [sheetOpen, setSheetOpen] = useState(false);
   // Remembered panel height (px). null = auto (content height).
   const [sheetHeight, setSheetHeight] = useState(() => {
     if (typeof window === 'undefined') return null;
@@ -173,12 +219,14 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth }) {
     tp.loadFromWizard(selection);
     setWizardOpen(false);
     setSelectedStop(null);
+    setSheetOpen(true);
     setPlanPromptOpen(true);
   };
 
   const handleCartaPlan = (optimize) => {
     if (optimize) tp.optimizeRoute();
     tp.setPlanned(true);
+    setSheetOpen(true);
     setPlanPromptOpen(false);
   };
 
@@ -237,11 +285,34 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth }) {
 
   return (
     <div className="trip-planner-screen">
-      <TripMap stops={mapStops} padBottom={isNarrow ? sheetH : 48} onSelectStop={setSelectedStop} selectedIndex={selectedStop} />
+      <TripMap stops={mapStops} padBottom={isNarrow ? (sheetOpen ? sheetH : 96) : 48} onSelectStop={setSelectedStop} selectedIndex={selectedStop} />
+
+      {/* Mobile: a clean launcher card over the map until the traveller chooses
+          to start. Tapping "Plan your trip" raises the bottom sheet; "Let Carta
+          guide you" opens the wizard. Never shown on desktop (isNarrow) or once
+          a plan exists. */}
+      {isNarrow && !sheetOpen && !tp.planned && (
+        <div className="trip-launcher" onClick={(e) => e.stopPropagation()}>
+          <div className="trip-launcher-card">
+            <div className="trip-launcher-spark">✦</div>
+            <h2 className="trip-launcher-title">Plan your trip</h2>
+            <p className="trip-launcher-sub">Map a multi-stop European route, price the flights and stays, and let Carta line it all up.</p>
+            <button className="trip-launcher-primary" onClick={() => setSheetOpen(true)}>Plan your trip</button>
+            <button className="trip-launcher-guide" onClick={() => setWizardOpen(true)}>
+              <span className="trip-guide-spark">✦</span>
+              <span className="trip-guide-cta-text">
+                <b>Let Carta guide you</b>
+                <small>Answer a few questions and we'll build it for you</small>
+              </span>
+              <span className="trip-guide-arrow">→</span>
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Left panel (desktop) / bottom sheet (mobile) */}
       <div
-        className={`trip-sheet ${dragging ? 'dragging' : ''}`}
+        className={`trip-sheet ${dragging ? 'dragging' : ''} ${isNarrow && !sheetOpen && !tp.planned ? 'sheet-hidden' : ''}`}
         ref={sheetRef}
         onClick={(e) => e.stopPropagation()}
         style={isNarrow && sheetHeight != null ? { height: sheetHeight } : undefined}
@@ -300,7 +371,7 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth }) {
             <span className="trip-guide-arrow">→</span>
           </button>
 
-          {/* Step 1 — travel window */}
+          {/* Step 1 - travel window */}
           <div className="trip-block">
             <div className="trip-block-title">When are you travelling?</div>
             <div className="trip-dates-row">
@@ -376,14 +447,58 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth }) {
                         </div>
                       </div>
                       {i < tp.legs.length && (
-                        <div className="trip-leg">
-                          {tp.legs[i]
-                            ? `↳ ~${tp.legs[i].road_km} km overland, est. ${eur(tp.legs[i].ground_eur_per_person)}/person, ~${tp.legs[i].hours}h${tp.legs[i].long_haul ? ' (long leg, consider flying)' : ''}`
-                            : '↳ No overland route (sea crossing)'}
-                        </div>
+                        <LegRow leg={tp.legs[i]} onMode={(m) => tp.setLegMode(i, m)} />
                       )}
                     </React.Fragment>
                   ))}
+                </div>
+              )}
+
+              {/* How to travel between the stops */}
+              {tp.stopDetails.length > 1 && (
+                <div className="trip-block">
+                  <div className="trip-block-title">Getting between stops</div>
+                  <div className="trip-transport-seg">
+                    {[['auto', '✨ Carta picks'], ['public', '🚆 Train & bus'], ['car', '🚗 Car']].map(([k, lbl]) => (
+                      <button
+                        key={k}
+                        className={tp.transportPref === k ? 'on' : ''}
+                        onClick={() => tp.setTransportPref(k)}
+                      >{lbl}</button>
+                    ))}
+                  </div>
+                  {tp.transportPref === 'car' && tp.carRental && (
+                    <p className="trip-note">
+                      One rental for the whole trip: ~{eur(tp.carRental.eur_total)} for {tp.carRental.days} days
+                      ({eur(tp.carRental.eur_per_day)}/day, seasonal rate) - split it {tp.groupSize} ways and add fuel + tolls per leg below.
+                    </p>
+                  )}
+                </div>
+              )}
+
+              {/* Cheaper dates / cheaper order */}
+              {tp.stopDetails.length > 0 && (tp.cheaperOrder
+                || tp.cheaperDates.candidates.some((c) => c.saving_vs_current == null || c.saving_vs_current > 5)) && (
+                <div className="trip-block trip-savings">
+                  <div className="trip-block-title">💡 Take it cheaper</div>
+                  {tp.cheaperOrder && (
+                    <div className="trip-saving-row">
+                      <span>Visiting your stops in a smarter order shortens the route - save ~{eur(tp.cheaperOrder.saving_eur)} on ground travel.</span>
+                      <button onClick={tp.applyCheaperOrder}>Reorder</button>
+                    </div>
+                  )}
+                  {tp.cheaperDates.candidates
+                    .filter((c) => c.saving_vs_current == null || c.saving_vs_current > 5)
+                    .map((c) => (
+                      <div className="trip-saving-row" key={c.start}>
+                        <span>
+                          Start <b>{fmtDate(c.start, true)}</b>: flights {eur(c.total)}
+                          {c.saving_vs_current != null && <em className="trip-saving-amount"> - save {eur(c.saving_vs_current)}</em>}
+                        </span>
+                        <button onClick={() => tp.applyStartDate(c.start)}>Use dates</button>
+                      </div>
+                    ))}
+                  <p className="trip-note">Same stops, same nights - only the start date shifts. Flight prices are real stored Ryanair fares; ground costs are estimates.</p>
                 </div>
               )}
 
@@ -426,6 +541,13 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth }) {
                     </div>
                   )}
 
+                  {tp.carRental && (
+                    <div className="trip-total-row">
+                      <span className="lbl">Rental car <small>{tp.carRental.days} days, whole group</small></span>
+                      <span className="val">{eur(tp.carRental.eur_total)}</span>
+                    </div>
+                  )}
+
                   {tp.stopDetails.map((s, i) => tp.stayCosts[i] && (
                     <div className="trip-total-row" key={i}>
                       <span className="lbl">{s.dest?.city} <small>{s.nights} {s.nights === 1 ? 'night' : 'nights'}, stay + on the ground</small></span>
@@ -453,6 +575,21 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth }) {
               )}
             </>
           )}
+
+          {/* Deep country intel for every country on the route */}
+          {countryInsights && tp.stopDetails.length > 0 && (() => {
+            const tripCountries = [...new Set(tp.stopDetails.map((s) => s.dest?.country).filter(Boolean))];
+            const withIntel = tripCountries.filter((c) => countryInsights[c]);
+            if (!withIntel.length) return null;
+            return (
+              <div className="trip-block">
+                <div className="trip-block-title">Know before you go</div>
+                {withIntel.map((c) => (
+                  <CountryIntel key={c} country={c} rec={countryInsights[c]} />
+                ))}
+              </div>
+            );
+          })()}
 
           {/* Saved trips */}
           {authConfigured && user && tp.savedPlans.length > 0 && (

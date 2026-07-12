@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { cheapestTotal } from '../runtime_pricing.js';
-import { matchesAnyKind } from '../trip_kinds.js';
+import { cheapestTotal } from '../lib/runtime_pricing.js';
+import { matchesAnyKind } from '../lib/trip_kinds.js';
 
 // Accent- and case-insensitive text key, so "malaga" matches "Málaga".
 function normalize(s) {

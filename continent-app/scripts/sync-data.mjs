@@ -1,37 +1,66 @@
 /**
- * Copy the real pipeline dataset into the app's served location so `vite dev` and
- * `vite build` always ship the full catalogue (not the 45-dest mock).
+ * Ship the real pipeline dataset into the app's served location, split for the
+ * wire so `vite dev` and `vite build` serve the full catalogue efficiently:
  *
- * Runs automatically via the `predev` / `prebuild` npm hooks. Safe to run by hand:
+ *   app_data/app_data.json  (master, untouched)
+ *     ├─> public/app_data.json          core dataset, with the two heavy,
+ *     │                                 rarely-needed-at-boot parts removed:
+ *     │                                   - activities.items_full  (~40 POIs/dest)
+ *     │                                   - image.hires            (never read)
+ *     └─> public/activities_full.json   { destId: items_full } — lazy-fetched
+ *                                       by the Day planner when it needs pins
+ *
+ *   app_data/country_insights.json ──> public/country_insights.json (verbatim,
+ *   lazy-fetched by the planners/detail panel when a country's intel is shown)
+ *
+ * Runs automatically via the `predev` / `prebuild` npm hooks. Safe by hand:
  *   npm run data
  *
- * Source : <repo>/app_data/app_data.json   (real 447-dest dataset, is_mock=false)
- * Target : <repo>/continent-app/public/app_data.json  (what the app fetches)
- *
- * If the real dataset is missing, this warns and leaves whatever is already in
- * public/ in place (so a fresh clone without the pipeline output still builds).
+ * If the master dataset is missing, this warns and leaves whatever is already
+ * in public/ in place (so a fresh clone without the pipeline output builds).
  */
 import { fileURLToPath } from 'node:url';
 import { dirname, resolve } from 'node:path';
-import { copyFileSync, existsSync, readFileSync } from 'node:fs';
+import { copyFileSync, existsSync, readFileSync, writeFileSync } from 'node:fs';
 
 const scriptDir = dirname(fileURLToPath(import.meta.url));   // continent-app/scripts
 const repoRoot = resolve(scriptDir, '..', '..');             // repo root
+const publicDir = resolve(scriptDir, '..', 'public');
 const src = resolve(repoRoot, 'app_data', 'app_data.json');
-const dest = resolve(scriptDir, '..', 'public', 'app_data.json');
+const insightsSrc = resolve(repoRoot, 'app_data', 'country_insights.json');
+
+const kb = (s) => `${Math.round(s.length / 1024)} KB`;
 
 if (!existsSync(src)) {
   console.warn(`[sync-data] real dataset not found at ${src} - keeping existing public/app_data.json`);
   process.exit(0);
 }
 
-copyFileSync(src, dest);
+const data = JSON.parse(readFileSync(src, 'utf-8'));
 
-// Report what was shipped so a stale/mock copy is obvious in the build log.
-let n = '?', mock = '?';
-try {
-  const j = JSON.parse(readFileSync(dest, 'utf-8'));
-  n = Object.keys(j.destinations || {}).length;
-  mock = String(j.meta?.is_mock);
-} catch { /* still copied; just couldn't summarize */ }
-console.log(`[sync-data] copied real dataset -> public/app_data.json (${n} destinations, is_mock=${mock})`);
+// Split out the heavy parts the app doesn't need at boot.
+const activitiesFull = {};
+for (const [id, d] of Object.entries(data.destinations || {})) {
+  if (d?.activities?.items_full) {
+    activitiesFull[id] = d.activities.items_full;
+    delete d.activities.items_full;
+  }
+  if (d?.image?.hires) delete d.image.hires; // shipped-but-never-read
+}
+
+const core = JSON.stringify(data);
+const acts = JSON.stringify(activitiesFull);
+writeFileSync(resolve(publicDir, 'app_data.json'), core);
+writeFileSync(resolve(publicDir, 'activities_full.json'), acts);
+
+const n = Object.keys(data.destinations || {}).length;
+console.log(`[sync-data] core dataset -> public/app_data.json (${n} destinations, is_mock=${data.meta?.is_mock}, ${kb(core)})`);
+console.log(`[sync-data] full POI lists -> public/activities_full.json (${Object.keys(activitiesFull).length} destinations, ${kb(acts)})`);
+
+if (existsSync(insightsSrc)) {
+  copyFileSync(insightsSrc, resolve(publicDir, 'country_insights.json'));
+  const ins = JSON.parse(readFileSync(insightsSrc, 'utf-8'));
+  console.log(`[sync-data] country insights -> public/country_insights.json (${Object.keys(ins.countries || {}).length} countries)`);
+} else {
+  console.warn('[sync-data] no app_data/country_insights.json found - country intel will be unavailable');
+}

@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { appDataPromise } from '../lib/appData.js';
 
 /** Fetches app_data.json, applies its data-driven defaults (group size,
  *  baggage, lifestyle, home/car/accommodation models) into `choices` the
@@ -11,11 +12,9 @@ export function useAppData(init, setChoices, departDate, setDepartDate, returnDa
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetch('/app_data.json')
-      .then((r) => {
-        if (!r.ok) throw new Error(`HTTP ${r.status}`);
-        return r.json();
-      })
+    // The download itself starts at module-eval time (see lib/appData.js);
+    // here we only consume the shared promise.
+    appDataPromise
       .then((j) => {
         setData(j);
         const def = j.meta?.defaults;

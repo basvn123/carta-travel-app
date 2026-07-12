@@ -1,6 +1,6 @@
 import React from 'react';
-import { composeTrip, DEFAULT_LIFESTYLE } from './runtime_pricing.js';
-import { eur, PRICE_SOURCE_LABELS } from './format.js';
+import { composeTrip, DEFAULT_LIFESTYLE } from '../lib/runtime_pricing.js';
+import { eur, PRICE_SOURCE_LABELS } from '../lib/format.js';
 
 /**
  * Lifestyle settings panel - slides in from the left.

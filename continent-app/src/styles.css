@@ -4,7 +4,7 @@
    ───────────────────────────────────────────────────────────────────────── */
 
 :root {
-  /* Palette — warm paper, deep ink, single rust accent */
+  /* Palette - warm paper, deep ink, single rust accent */
   --paper:        #f5f1e8;
   --paper-dim:    #ebe6d8;
   --ink:          #1a1a1a;
@@ -26,7 +26,7 @@
   /* Layout */
   --filter-h:     132px;
   --panel-w:      440px;
-  --bottom-nav-h: 64px;
+  --bottom-nav-h: 72px;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -134,23 +134,35 @@ input, select {
 }
 
 @media (max-width: 768px) {
-  /* One panel on mobile too: no logo, the filter icon/calendar triggers and the
-     account button share the top row; the filter sheet drops open beneath. */
+  /* One fixed panel on mobile: the calendar/filter triggers sit on the LEFT,
+     the account avatar on the RIGHT, both the same 40px circle at the same
+     height. The filter sheet drops open beneath this row (which stays put). */
   .app-header {
     padding: 0;
     gap: 0;
-    align-items: flex-start;
+    align-items: flex-start;   /* account stays top-aligned when the sheet opens */
   }
   .app-header-brand { display: none; }
   .app-header-name { display: none; }
   .app-header-account {
     align-self: flex-start;
     margin-left: auto;
-    padding: 0 14px;
-    min-height: 48px;
+    display: flex;
+    align-items: center;
+    padding: 0 12px;
+    height: 56px;
+    min-height: 56px;
   }
   .app-header-account .account-avatar-label { display: none; }
-  .app-header-account .account-avatar-btn { padding: 4px; }
+  .app-header-account .account-avatar-btn {
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    justify-content: center;
+    border: none;
+    background: none;
+  }
+  .app-header-account .account-avatar { width: 40px; height: 40px; font-size: 15px; }
 }
 
 /* ───────── Bottom nav: the app's one Map / Trip planner / Day planner switch,
@@ -164,12 +176,14 @@ input, select {
   justify-content: center;
   gap: 4px;
   height: var(--bottom-nav-h);
-  padding: 6px 8px calc(6px + env(safe-area-inset-bottom, 0px));
-  background: rgba(245, 241, 232, 0.94);
-  backdrop-filter: blur(12px) saturate(140%);
-  -webkit-backdrop-filter: blur(12px) saturate(140%);
+  /* Roomier vertical padding so the icon + label sit clear of the map above,
+     and a near-opaque panel so map markers don't bleed through the bar. */
+  padding: 9px 8px calc(9px + env(safe-area-inset-bottom, 0px));
+  background: rgba(245, 241, 232, 0.985);
+  backdrop-filter: blur(14px) saturate(140%);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
   border-top: 1px solid var(--rule);
-  box-shadow: 0 -2px 12px rgba(26, 26, 26, 0.06);
+  box-shadow: 0 -3px 16px rgba(26, 26, 26, 0.08);
 }
 
 .bottom-nav-item {
@@ -177,7 +191,7 @@ input, select {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 3px;
+  gap: 4px;
   flex: 1;
   max-width: 160px;
   border-radius: 10px;
@@ -273,7 +287,7 @@ input, select {
 }
 
 /* Floating trip header */
-/* Trip header — a static bar at the top of the panel (was a floating card) */
+/* Trip header - a static bar at the top of the panel (was a floating card) */
 .trip-topcard {
   flex-shrink: 0;
   padding: 6px 20px 12px;
@@ -696,6 +710,75 @@ input, select {
 .trip-guide-cta-text small { display: block; color: var(--ink-soft); font-size: 11.5px; margin-top: 1px; }
 .trip-guide-arrow { color: var(--accent); font-size: 18px; flex-shrink: 0; }
 
+/* ───────── Trip planner: mobile launcher (before the sheet is raised) ───────── */
+.trip-launcher {
+  position: absolute;
+  left: 0; right: 0; bottom: 0; top: 0;
+  z-index: 8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 20px calc(24px + var(--bottom-nav-h));
+  pointer-events: none;   /* let the map pan around the card */
+}
+.trip-launcher-card {
+  pointer-events: auto;
+  width: min(100%, 420px);
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  border-radius: 20px;
+  box-shadow: 0 12px 40px rgba(26, 26, 26, 0.18);
+  padding: 28px 24px 22px;
+  text-align: center;
+}
+.trip-launcher-spark {
+  width: 48px; height: 48px;
+  margin: 0 auto 14px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px;
+}
+.trip-launcher-title {
+  font-family: var(--display);
+  font-size: 23px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.trip-launcher-sub {
+  font-size: 13px;
+  color: var(--ink-soft);
+  line-height: 1.55;
+  margin: 8px 0 20px;
+}
+.trip-launcher-primary {
+  display: block;
+  width: 100%;
+  padding: 13px;
+  border-radius: 12px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+  border: 1px solid var(--accent);
+  transition: opacity .15s;
+}
+.trip-launcher-primary:hover { opacity: 0.9; }
+.trip-launcher-guide {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  text-align: left;
+  margin-top: 12px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  border: 1px solid var(--accent);
+  background: linear-gradient(100deg, var(--accent-bg), var(--paper));
+}
+.trip-sheet.sheet-hidden { display: none; }
+
 /* Planned view: Edit / Replan buttons over the map */
 .trip-planned-actions {
   position: absolute;
@@ -777,7 +860,7 @@ input, select {
 .guide-title { font-family: var(--display); font-size: 20px; color: var(--ink); font-weight: 600; }
 .guide-sub { color: var(--ink-soft); font-size: 13px; margin: 4px 0 16px; }
 
-/* Step 1 — countries */
+/* Step 1 - countries */
 .guide-country-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
@@ -847,7 +930,7 @@ input, select {
 .guide-country-name { font-family: var(--display); font-size: 14.5px; color: var(--ink); }
 .guide-country-n { font-family: var(--mono); font-size: 10px; color: var(--ink-mute); }
 
-/* Step 2/3 — per-country blocks */
+/* Step 2/3 - per-country blocks */
 .guide-country-block { margin-bottom: 20px; }
 .guide-block-head {
   display: flex; align-items: center; gap: 7px;
@@ -909,7 +992,7 @@ input, select {
 .guide-nights-val b { font-family: var(--mono); color: var(--ink); }
 .guide-nights-zero { font-family: var(--mono); font-size: 11px; color: var(--ink-mute); text-transform: uppercase; letter-spacing: 0.06em; }
 
-/* Step 3 — activity chips */
+/* Step 3 - activity chips */
 .guide-chips { display: flex; flex-wrap: wrap; gap: 7px; }
 .guide-chip {
   display: inline-flex; align-items: center; gap: 6px;
@@ -926,7 +1009,7 @@ input, select {
 .guide-chip-kind { font-family: var(--mono); font-size: 9.5px; color: var(--ink-mute); text-transform: uppercase; letter-spacing: 0.04em; }
 .guide-empty { font-size: 12.5px; color: var(--ink-mute); font-style: italic; }
 
-/* Step 4 — arrange */
+/* Step 4 - arrange */
 .guide-arrange { display: flex; flex-direction: column; gap: 8px; }
 .guide-arrange-item {
   display: flex; align-items: center; gap: 12px;
@@ -1134,7 +1217,7 @@ input, select {
 .guide-thumb-fallback,
 .guide-visit-hero-fallback { font-family: var(--display); color: var(--ink-mute); }
 
-/* Step 2 — city photo thumbnail on each city row */
+/* Step 2 - city photo thumbnail on each city row */
 .guide-city-thumb {
   flex-shrink: 0;
   width: 56px; height: 56px;
@@ -1144,7 +1227,7 @@ input, select {
 }
 .guide-city-thumb .guide-thumb-fallback { font-size: 22px; }
 
-/* Step 3 — "What do you enjoy?" interest tiles */
+/* Step 3 - "What do you enjoy?" interest tiles */
 .guide-interest-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
 .guide-interest {
   position: relative;
@@ -1168,7 +1251,7 @@ input, select {
 .guide-interest-icon { font-size: 24px; line-height: 1; }
 .guide-interest-label { font-size: 11.5px; color: var(--ink); text-align: center; line-height: 1.2; }
 
-/* Step 4 — per-city hero above the highlight chips */
+/* Step 4 - per-city hero above the highlight chips */
 .guide-visit-block { margin-bottom: 20px; }
 .guide-visit-hero {
   position: relative;
@@ -1200,7 +1283,7 @@ input, select {
   padding: 3px 8px; border-radius: 999px;
 }
 
-/* Step 5 — arrange thumbnail */
+/* Step 5 - arrange thumbnail */
 .guide-arrange-thumb {
   flex-shrink: 0;
   width: 44px; height: 44px;
@@ -1297,6 +1380,49 @@ input, select {
 .day-build-row .trip-field { flex: 1; }
 .day-build-btn { width: 100%; margin-top: 2px; }
 .day-landing-section { margin-top: 24px; }
+
+/* Pick-your-city map on the day-planner builder. maplibre needs an explicit
+   height or the container collapses to 0px and nothing shows. */
+.day-build-map {
+  position: relative;
+  height: 260px;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--line, rgba(0, 0, 0, 0.1));
+}
+.day-build-map .trip-map { position: absolute; inset: 0; }
+.day-build-map-hint {
+  position: absolute;
+  left: 10px;
+  bottom: 10px;
+  margin: 0;
+  padding: 4px 10px;
+  font-size: 11px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.9);
+  color: #333;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* "When does your day start" chips reuse .day-chip; just space the row. */
+.day-start-row { margin-top: 8px; }
+
+/* Open-in-Google-Maps export link under the day's timeline. */
+.day-gmaps-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 12px;
+  padding: 9px 14px;
+  border-radius: 10px;
+  background: var(--accent, #c8501e);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+}
+.day-gmaps-link:hover { filter: brightness(1.05); }
 .day-saved-sub {
   font-family: var(--mono);
   font-size: 10px;
@@ -1336,7 +1462,9 @@ input, select {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 9px 11px;
+  /* Tighter on the right so the +/tools sit a comfortable distance from the
+     card edge rather than floating in dead space. */
+  padding: 9px 8px 9px 12px;
   border: 1px solid var(--rule);
   border-radius: 10px;
   background: var(--paper);
@@ -1628,7 +1756,7 @@ input, select {
   z-index: 100;
 }
 
-/* "Deal" — cheapest 25% — gets the rust accent */
+/* "Deal" - cheapest 25% - gets the rust accent */
 .price-pill.is-deal {
   background: var(--accent);
   border-color: var(--accent);
@@ -2557,7 +2685,7 @@ input, select {
 .mobile-dates-pop {
   position: absolute;
   top: calc(100% + 8px);
-  right: 0;
+  left: 0;
   z-index: 40;
   display: flex;
   flex-direction: column;
@@ -2751,7 +2879,7 @@ input, select {
 .weather-section {
   min-width: 0;
 }
-/* ─── Weather filter — cleaner, darker ─── */
+/* ─── Weather filter - cleaner, darker ─── */
 
 .weather-control {
   display: flex;
@@ -3102,7 +3230,7 @@ input, select {
 
 /* ─── Lifestyle panel readability ───
    Shares classes with other panels, so scoped here. Darker text and plain,
-   sentence-case stepper labels instead of faint tiny-caps — less visual fuss,
+   sentence-case stepper labels instead of faint tiny-caps - less visual fuss,
    easier to read. */
 .accom-panel .panel-country { color: var(--ink-soft); }
 .accom-panel .section-title { color: var(--ink-soft); }
@@ -3124,7 +3252,7 @@ input, select {
   color: var(--ink-mute);
 }
 
-/* Type selector — three big buttons */
+/* Type selector - three big buttons */
 
 .accom-types {
   display: flex;
@@ -3263,7 +3391,7 @@ input, select {
    ═══════════════════════════════════════════════════════════════════════ */
 
 
-/* ─── 1. Date fields — custom calendar in the editorial palette ───────────────
+/* ─── 1. Date fields - custom calendar in the editorial palette ───────────────
    The native <input type="date"> popup is rendered by the browser/OS (white
    chrome, blue selection) and can't be styled, so we use a custom DateField
    component. The trigger keeps the same transparent underline treatment as the
@@ -3453,7 +3581,7 @@ input, select {
 }
 
 
-/* ─── 3. Right-panel — tighter, clearer visual rhythm ────────────────── */
+/* ─── 3. Right-panel - tighter, clearer visual rhythm ────────────────── */
 
 /* Section title gets a touch more weight so it reads as a real heading
    instead of sitting at the same level as line items. */
@@ -3529,7 +3657,7 @@ input, select {
   font-style: normal;
 }
 
-/* Trip-type tags in the detail header — the same vocabulary as the filter
+/* Trip-type tags in the detail header - the same vocabulary as the filter
    chips, so what a destination is "good for" is visible, not just filterable. */
 .panel-kinds {
   display: flex;
@@ -3550,7 +3678,7 @@ input, select {
   white-space: nowrap;
 }
 
-/* ─── Gem markers — visually distinct from airport markers ──────────────── */
+/* ─── Gem markers - visually distinct from airport markers ──────────────── */
 /* Rationale: gems aren't airports themselves; they're towns/villages reached
    from a nearby anchor airport. A dashed pill border + slightly smaller dot
    keeps the visual hierarchy honest without making gems feel second-class. */
@@ -3693,7 +3821,7 @@ input, select {
   color: var(--ink-mute);
   font-variant-numeric: tabular-nums;
 }
-/* Location search — live-filters both the list and the map markers. */
+/* Location search - live-filters both the list and the map markers. */
 .results-search {
   position: relative;
   display: flex;
@@ -4129,11 +4257,11 @@ input, select {
 /* ═══════════════════════════════════════════════════════════════════════
    PHONE LAYOUT  (<= 768px)
    The desktop shell is three absolutely-positioned columns (list gutter +
-   map + detail panel), each var(--panel-w)=440px — wider than a phone. Here
+   map + detail panel), each var(--panel-w)=440px - wider than a phone. Here
    we collapse it to a single full-bleed column: the map fills the whole
    screen and the destinations list becomes a full-screen overlay, toggled
    by the same collapse/"Destinations" pill mechanism as desktop (see
-   .list-reopen) — it just starts collapsed so the map opens as big as
+   .list-reopen) - it just starts collapsed so the map opens as big as
    possible. The filter bar folds into a tap-to-open sheet.
    ═══════════════════════════════════════════════════════════════════════ */
 @media (max-width: 768px) {
@@ -4157,10 +4285,11 @@ input, select {
   .filter-mobile-header {
     display: flex;
     align-items: center;
-    justify-content: flex-end;
-    gap: 12px;
-    padding: 10px 16px;
-    min-height: 48px;
+    justify-content: flex-start;   /* calendar + filter triggers pinned to the left */
+    gap: 10px;
+    padding: 0 12px;
+    height: 56px;
+    min-height: 56px;
     position: relative;
   }
   /* Brand and account access now live in the always-visible AppHeader above
@@ -4246,8 +4375,8 @@ input, select {
   }
 
   /* The ranked list overlays the map, above it but below the detail panel.
-     Visibility is driven by .list-collapsed on .app — the same mechanism as
-     desktop's list gutter (see .list-reopen) — it just starts collapsed on
+     Visibility is driven by .list-collapsed on .app - the same mechanism as
+     desktop's list gutter (see .list-reopen) - it just starts collapsed on
      phones so the map opens as big as possible. Re-asserts display:flex to
      override the <=880px hide rule above; .list-collapsed (higher
      specificity) still wins when collapsed. */
@@ -4261,7 +4390,7 @@ input, select {
 
   /* Detail + lifestyle slide over everything; each has its own close button.
      Anchor at top:0 (NOT var(--filter-h)) so an expanded filter sheet can't
-     push them off-screen — this is what made the lifestyle panel unreachable
+     push them off-screen - this is what made the lifestyle panel unreachable
      after opening it from the filter sheet. They scroll internally
      (overflow-y:auto). Bottom stops above the persistent bottom nav, same as
      every other full-bleed panel, rather than covering it. */
@@ -4432,7 +4561,7 @@ input, select {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
-   Accounts — sign-in button, auth modal, account panel
+   Accounts - sign-in button, auth modal, account panel
    ═══════════════════════════════════════════════════════════════════════ */
 
 /* ─── Top-bar account slot ─── */
@@ -4998,3 +5127,221 @@ input, select {
 }
 .dow-val.min { color: #2c6a1f; }
 .nearby-sub .gem { color: var(--accent); }
+
+/* ────────────────────────────────────────────────────────────────────────────
+   Country intel cards (CountryIntel.jsx) - deep per-country travel knowledge
+   ──────────────────────────────────────────────────────────────────────────── */
+.cintel {
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  background: #fff;
+  margin-bottom: 8px;
+  overflow: hidden;
+}
+.cintel-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 10px 12px;
+  background: none;
+  border: 0;
+  cursor: pointer;
+  font-family: var(--ui);
+  text-align: left;
+}
+.cintel-head:hover { background: var(--paper); }
+.cintel-flag { width: 24px; height: auto; border-radius: 3px; box-shadow: var(--shadow-1); flex: none; }
+.cintel-country { font-weight: 600; font-size: 14px; color: var(--ink); }
+.cintel-chips { display: flex; gap: 4px; flex-wrap: wrap; margin-left: auto; }
+.cintel-chip {
+  font-family: var(--mono);
+  font-size: 10px;
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: var(--paper-dim);
+  color: var(--ink-soft);
+  white-space: nowrap;
+}
+.cintel-chip.budget-low { background: #e4edda; color: var(--green); }
+.cintel-chip.budget-high, .cintel-chip.budget-very_high { background: var(--accent-bg); color: var(--accent); }
+.cintel-caret { font-family: var(--mono); color: var(--ink-mute); font-size: 14px; margin-left: 4px; }
+.cintel-body { padding: 4px 12px 12px; border-top: 1px solid var(--paper-dim); }
+.cintel-row { display: flex; gap: 10px; padding: 8px 0; border-bottom: 1px dashed var(--paper-dim); }
+.cintel-row:last-child { border-bottom: 0; }
+.cintel-label {
+  flex: none;
+  width: 86px;
+  font-family: var(--mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-mute);
+  padding-top: 2px;
+}
+.cintel-row p { font-size: 12.5px; line-height: 1.5; color: var(--ink-soft); margin: 0 0 4px; }
+.cintel-row p:last-child { margin-bottom: 0; }
+.cintel-warn { color: var(--ink); }
+.cintel-link { color: var(--accent); text-decoration: none; font-weight: 600; }
+.cintel-link:hover { text-decoration: underline; }
+.cintel-sights { display: flex; flex-direction: column; gap: 6px; }
+.cintel-sight { font-size: 12.5px; line-height: 1.45; }
+.cintel-sight-name { font-weight: 600; color: var(--ink); }
+.cintel-sight-region {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--ink-mute);
+  margin-left: 6px;
+}
+.cintel-sight-why { display: block; color: var(--ink-soft); }
+.cintel-more {
+  align-self: flex-start;
+  background: none;
+  border: 0;
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 2px 0;
+}
+.cintel-insights { margin: 0; padding-left: 16px; }
+.cintel-insights li { font-size: 12.5px; line-height: 1.5; color: var(--ink-soft); margin-bottom: 4px; }
+.panel-cintel { padding: 0 20px 16px; }
+
+/* Trip planner: transport preference + per-leg mode picker */
+.trip-transport-seg { display: flex; gap: 6px; }
+.trip-transport-seg button {
+  flex: 1;
+  padding: 8px 6px;
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  background: #fff;
+  font-family: var(--ui);
+  font-size: 12px;
+  color: var(--ink-soft);
+  cursor: pointer;
+}
+.trip-transport-seg button.on {
+  border-color: var(--accent);
+  background: var(--accent-bg);
+  color: var(--ink);
+  font-weight: 600;
+}
+.trip-leg-rich { padding: 0; }
+.trip-leg-main {
+  display: block;
+  width: 100%;
+  background: none;
+  border: 0;
+  padding: 6px 8px;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink-mute);
+  text-align: left;
+  cursor: pointer;
+}
+.trip-leg-main:hover { color: var(--ink-soft); }
+.trip-leg-caret { float: right; }
+.trip-leg-detail { padding: 4px 8px 10px; }
+.trip-leg-modes { display: flex; gap: 6px; margin-bottom: 6px; }
+.trip-leg-mode {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  align-items: center;
+  padding: 7px 4px;
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  background: #fff;
+  font-family: var(--ui);
+  font-size: 11px;
+  cursor: pointer;
+  color: var(--ink-soft);
+}
+.trip-leg-mode b { font-family: var(--mono); font-size: 12px; color: var(--ink); }
+.trip-leg-mode small { font-family: var(--mono); font-size: 10px; color: var(--ink-mute); }
+.trip-leg-mode.on { border-color: var(--accent); background: var(--accent-bg); }
+.trip-leg-note { font-size: 11.5px; color: var(--ink-soft); line-height: 1.45; margin: 4px 0; }
+.trip-leg-links { display: flex; flex-wrap: wrap; gap: 10px; margin: 4px 0; }
+.trip-leg-links a { font-size: 11.5px; color: var(--accent); font-weight: 600; text-decoration: none; }
+.trip-leg-links a:hover { text-decoration: underline; }
+.trip-leg-disclaimer { font-family: var(--mono); font-size: 9.5px; color: var(--ink-mute); margin: 4px 0 0; }
+
+/* Trip planner: "take it cheaper" savings block */
+.trip-savings { border: 1px solid var(--rule); border-radius: 12px; padding: 10px 12px; background: #fdfbf5; }
+.trip-saving-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 0;
+  border-bottom: 1px dashed var(--paper-dim);
+  font-size: 12.5px;
+  color: var(--ink-soft);
+  line-height: 1.45;
+}
+.trip-saving-row:last-of-type { border-bottom: 0; }
+.trip-saving-row b { color: var(--ink); }
+.trip-saving-amount { color: var(--green); font-style: normal; font-weight: 700; }
+.trip-saving-row button {
+  flex: none;
+  margin-left: auto;
+  padding: 5px 10px;
+  border: 1px solid var(--accent);
+  border-radius: 999px;
+  background: #fff;
+  color: var(--accent);
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.trip-saving-row button:hover { background: var(--accent-bg); }
+
+/* Guided wizard: travel step (car advice + transport/pace tiles) */
+.guide-subtitle { font-family: var(--display); font-size: 17px; margin: 18px 0 10px; color: var(--ink); }
+.guide-car-advice {
+  border: 1px solid var(--rule);
+  border-left: 3px solid var(--ink-mute);
+  border-radius: 10px;
+  background: #fff;
+  padding: 10px 12px;
+  margin-bottom: 14px;
+}
+.guide-car-advice.yes { border-left-color: var(--accent); background: #fdf6f0; }
+.guide-car-advice.maybe { border-left-color: var(--accent-soft); }
+.guide-car-advice-head { font-weight: 700; font-size: 13.5px; color: var(--ink); margin-bottom: 4px; }
+.guide-car-advice p { font-size: 12.5px; color: var(--ink-soft); line-height: 1.5; margin: 3px 0; }
+.guide-car-note { color: var(--ink); }
+.guide-transport-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.guide-transport {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 3px;
+  padding: 12px;
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  background: #fff;
+  cursor: pointer;
+  font-family: var(--ui);
+  text-align: left;
+}
+.guide-transport.on { border-color: var(--accent); background: var(--accent-bg); box-shadow: 0 0 0 2px var(--accent-bg); }
+.guide-transport-icon { font-size: 20px; }
+.guide-transport-label { font-weight: 700; font-size: 13px; color: var(--ink); }
+.guide-transport-sub { font-size: 11px; color: var(--ink-mute); line-height: 1.4; }
+@media (max-width: 560px) { .guide-transport-grid { grid-template-columns: 1fr; } }
+
+/* Day planner: start-time chips, picker map, Google Maps link */
+.day-start-row { margin-top: 8px; }
+.day-build-map { height: 240px; position: relative; border-radius: 12px; overflow: hidden; border: 1px solid var(--rule); margin: 10px 0; }
+.day-build-map .trip-map, .day-build-map > div { position: absolute !important; inset: 0; }
+.day-gmaps-link {
+  display: inline-block;
+  margin-top: 10px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--accent);
+  text-decoration: none;
+}
+.day-gmaps-link:hover { text-decoration: underline; }

@@ -2,11 +2,13 @@ import React from 'react';
 import {
   composeTrip, buildFlightLinks, buildAccommodationLink, buildCarRentalLink,
   buildGuideLink, nearbyTrips, fareCoverageRanges,
-} from './runtime_pricing.js';
-import { GemRating, GemIcon } from './GemRating.jsx';
-import { kindsForDest } from './trip_kinds.js';
+} from '../lib/runtime_pricing.js';
+import { GemRating, GemIcon } from '../components/GemRating.jsx';
+import { CountryIntel } from '../components/CountryIntel.jsx';
+import { kindsForDest } from '../lib/trip_kinds.js';
 import { BestTimePanel } from './BestTimePanel.jsx';
-import { eur, PRICE_SOURCE_LABELS, ACCOM_SOURCE_LABELS } from './format.js';
+import { eur, safeUrl, PRICE_SOURCE_LABELS, ACCOM_SOURCE_LABELS } from '../lib/format.js';
+import { useCountryInsights } from '../hooks/useCountryInsights.js';
 
 const fmtDate = (iso) => new Date(iso + 'T00:00:00Z').toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
 
@@ -21,6 +23,7 @@ function TextLink({ href, onClick, children }) {
 export function DetailPanel({ destination, departDate, returnDate, choices, setChoices, priceMode = 'total', onClose, onOpenLifestyle, onSelect, data, isFavorite, onToggleFavorite, onSaveTrip, onShiftDates }) {
   const [saveState, setSaveState] = React.useState('idle'); // idle | saving | saved
   const [activeTab, setActiveTab] = React.useState('breakdown'); // breakdown | best-time
+  const countryInsights = useCountryInsights();
 
   // Land back on the breakdown whenever the user picks a different destination.
   React.useEffect(() => { setActiveTab('breakdown'); }, [destination?.id]);
@@ -54,8 +57,8 @@ export function DetailPanel({ destination, departDate, returnDate, choices, setC
       {image?.url && (
         <div className="panel-hero" style={{ backgroundImage: `url(${image.url})` }}>
           <div className="panel-hero-shade" />
-          {image.page && (
-            <a className="panel-hero-credit" href={image.page} target="_blank" rel="noreferrer"
+          {safeUrl(image.page) && (
+            <a className="panel-hero-credit" href={safeUrl(image.page)} target="_blank" rel="noreferrer"
                title={image.credit ? `Wikipedia: ${image.credit}` : 'Source: Wikipedia'}>
               Wikipedia
             </a>
@@ -220,8 +223,8 @@ function ExploreSection({ destination, data, onSelect }) {
             );
             return (
               <li key={i} className="todo-item">
-                {it.link
-                  ? <a href={it.link} target="_blank" rel="noreferrer" className="todo-link">{row}</a>
+                {safeUrl(it.link)
+                  ? <a href={safeUrl(it.link)} target="_blank" rel="noreferrer" className="todo-link">{row}</a>
                   : row}
               </li>
             );
@@ -237,6 +240,13 @@ function ExploreSection({ destination, data, onSelect }) {
         <a className="todo-guide" href={guide} target="_blank" rel="noreferrer">
           Explore {destination.city} - what to do, see &amp; eat -&gt;
         </a>
+      )}
+
+      {/* Deep country intel: budget, transport links, driving rules, must-sees */}
+      {countryInsights?.[destination.country] && (
+        <div className="panel-cintel">
+          <CountryIntel country={destination.country} rec={countryInsights[destination.country]} />
+        </div>
       )}
 
       {nearby.length > 0 && (

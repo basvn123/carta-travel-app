@@ -10,7 +10,7 @@
    Bump CACHE_VERSION whenever the shell/precache list changes so old caches are
    cleaned out on activate.
    ───────────────────────────────────────────────────────────────────────── */
-const CACHE_VERSION = 'carta-v1';
+const CACHE_VERSION = 'carta-v2';
 const SHELL = ['/', '/index.html', '/manifest.webmanifest', '/favicon.svg'];
 
 self.addEventListener('install', (event) => {
@@ -72,7 +72,8 @@ self.addEventListener('fetch', (event) => {
     event.respondWith(networkFirst(request).catch(() => caches.match('/index.html')));
     return;
   }
-  if (url.pathname === '/app_data.json') {
+  if (url.pathname === '/app_data.json' || url.pathname === '/activities_full.json'
+      || url.pathname === '/country_insights.json') {
     event.respondWith(networkFirst(request));
     return;
   }
