@@ -246,7 +246,6 @@ export function FilterBar({
                   aria-label="Travel by plane"
                 >
                   <PlaneIcon />
-                  <span>Plane</span>
                 </button>
                 <button
                   className={choices.transport_mode === 'car' ? 'seg-on' : ''}
@@ -255,7 +254,6 @@ export function FilterBar({
                   aria-label="Travel by car"
                 >
                   <CarIcon />
-                  <span>Car</span>
                 </button>
               </div>
             </div>

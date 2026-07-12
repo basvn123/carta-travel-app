@@ -737,16 +737,17 @@ input, select {
   letter-spacing: 0.04em;
 }
 
-/* Icon + label variant (Travel by plane / car). */
+/* Icon-only variant (Travel by plane / car). */
 .segmented.seg-icons button {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  justify-content: center;
+  padding: 6px 12px;
 }
 .segmented.seg-icons svg {
   display: block;
-  width: 16px;
-  height: 16px;
+  width: 18px;
+  height: 18px;
 }
 
 /* ─── Pill toggles (UNESCO / Top beaches highlights) ─── */
