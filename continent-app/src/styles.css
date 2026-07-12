@@ -1128,6 +1128,125 @@ input, select {
 .itin-visit-name { display: block; font-size: 14px; color: var(--ink); }
 .itin-visit-kind { font-family: var(--mono); font-size: 9.5px; color: var(--ink-mute); text-transform: uppercase; letter-spacing: 0.05em; }
 
+/* ───────── Guided wizard: imagery + interests ───────── */
+
+/* Shared lettered fallback for any city thumbnail without a photo. */
+.guide-thumb-fallback,
+.guide-visit-hero-fallback { font-family: var(--display); color: var(--ink-mute); }
+
+/* Step 2 — city photo thumbnail on each city row */
+.guide-city-thumb {
+  flex-shrink: 0;
+  width: 56px; height: 56px;
+  border-radius: 10px;
+  background: var(--paper-dim) center/cover no-repeat;
+  display: flex; align-items: center; justify-content: center;
+}
+.guide-city-thumb .guide-thumb-fallback { font-size: 22px; }
+
+/* Step 3 — "What do you enjoy?" interest tiles */
+.guide-interest-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.guide-interest {
+  position: relative;
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+  padding: 16px 8px;
+  border: 1px solid var(--rule);
+  border-radius: 14px;
+  background: var(--paper);
+  transition: border-color .15s, background .15s;
+}
+.guide-interest:hover { border-color: var(--ink-soft); }
+.guide-interest.on { border-color: var(--accent); background: var(--accent-bg); }
+.guide-interest-check {
+  position: absolute; top: 7px; right: 7px;
+  width: 16px; height: 16px;
+  border-radius: 50%;
+  background: var(--accent); color: #fff;
+  font-size: 10px; line-height: 1;
+  display: flex; align-items: center; justify-content: center;
+}
+.guide-interest-icon { font-size: 24px; line-height: 1; }
+.guide-interest-label { font-size: 11.5px; color: var(--ink); text-align: center; line-height: 1.2; }
+
+/* Step 4 — per-city hero above the highlight chips */
+.guide-visit-block { margin-bottom: 20px; }
+.guide-visit-hero {
+  position: relative;
+  height: 92px;
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 12px;
+  background: var(--paper-dim) center/cover no-repeat;
+  display: flex; align-items: flex-end;
+}
+.guide-visit-hero::after {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(to top, rgba(26, 26, 26, 0.78) 0%, rgba(26, 26, 26, 0) 60%);
+}
+.guide-visit-hero-fallback {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 30px;
+}
+.guide-visit-hero-name {
+  position: relative;
+  padding: 10px 12px;
+  font-family: var(--display); font-size: 17px; color: #fff; font-weight: 600;
+}
+.guide-visit-hero-count {
+  position: absolute; top: 8px; right: 8px;
+  background: rgba(255, 255, 255, 0.92); color: var(--ink);
+  font-family: var(--mono); font-size: 10px;
+  padding: 3px 8px; border-radius: 999px;
+}
+
+/* Step 5 — arrange thumbnail */
+.guide-arrange-thumb {
+  flex-shrink: 0;
+  width: 44px; height: 44px;
+  border-radius: 9px;
+  background: var(--paper-dim) center/cover no-repeat;
+  display: flex; align-items: center; justify-content: center;
+}
+.guide-arrange-thumb .guide-thumb-fallback { font-size: 18px; }
+
+/* Carta-plan prompt: a strip of the trip's city photos */
+.trip-plan-prompt-strip { display: flex; gap: 6px; justify-content: center; margin-bottom: 16px; }
+.trip-plan-prompt-thumb {
+  width: 52px; height: 52px;
+  border-radius: 10px;
+  background: var(--paper-dim) center/cover no-repeat;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--display); font-size: 20px; color: var(--ink-mute);
+}
+
+/* Planned itinerary imagery */
+.itin-stop-thumb {
+  flex-shrink: 0;
+  width: 46px; height: 46px;
+  border-radius: 9px;
+  background: var(--paper-dim) center/cover no-repeat;
+  display: flex; align-items: center; justify-content: center;
+}
+.itin-stop-thumb-fallback { font-family: var(--display); font-size: 18px; color: var(--ink-mute); }
+.itin-day-hero {
+  position: relative;
+  min-height: 116px;
+  border-radius: 14px;
+  overflow: hidden;
+  margin-bottom: 16px;
+  background: var(--paper-dim) center/cover no-repeat;
+  display: flex; align-items: flex-end;
+}
+.itin-day-hero-grad {
+  position: absolute; inset: 0;
+  background: linear-gradient(to top, rgba(26, 26, 26, 0.82) 0%, rgba(26, 26, 26, 0.05) 65%);
+}
+.itin-day-hero .itin-day-head { position: relative; margin-bottom: 0; padding: 12px 14px; width: 100%; }
+.itin-day-hero .itin-day-date { color: rgba(255, 255, 255, 0.82); }
+.itin-day-hero .itin-day-city { color: #fff; }
+.itin-day-hero .itin-day-of { color: #fff; opacity: 0.9; }
+
 @media (max-width: 768px) {
   .guide-overlay { padding: 0; align-items: flex-end; }
   .guide-modal { max-height: 92vh; border-radius: 18px 18px 0 0; width: 100%; }

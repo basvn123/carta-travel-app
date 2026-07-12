@@ -490,6 +490,19 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth }) {
       {planPromptOpen && (
         <div className="trip-plan-prompt-overlay" onClick={() => handleCartaPlan(false)}>
           <div className="trip-plan-prompt" onClick={(e) => e.stopPropagation()}>
+            {tp.stopDetails.some((s) => s.dest?.image?.url) && (
+              <div className="trip-plan-prompt-strip">
+                {tp.stopDetails.slice(0, 5).map((s, i) => (
+                  <div
+                    key={i}
+                    className="trip-plan-prompt-thumb"
+                    style={s.dest?.image?.url ? { backgroundImage: `url(${s.dest.image.url})` } : undefined}
+                  >
+                    {!s.dest?.image?.url && <span>{s.dest?.city?.slice(0, 1) || '?'}</span>}
+                  </div>
+                ))}
+              </div>
+            )}
             <div className="trip-plan-prompt-spark">✦</div>
             <h3>Do you want Carta to plan this trip?</h3>
             <p>We'll arrange your stops into an efficient route and spread your chosen highlights across each day. You can always edit it afterwards.</p>

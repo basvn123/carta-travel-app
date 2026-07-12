@@ -211,6 +211,7 @@ export function GuidedTripWizard({ data, onCancel, onComplete }) {
                   <div className="guide-city-list">
                     {c.cities.slice(0, CITIES_PER_COUNTRY).map(({ id, dest }) => (
                       <div key={id} className={`guide-city ${(nights[id] || 0) > 0 ? 'on' : ''}`}>
+                        <CityThumb dest={dest} className="guide-city-thumb" />
                         <div className="guide-city-info">
                           <div className="guide-city-name">
                             {dest.city}
@@ -235,15 +236,45 @@ export function GuidedTripWizard({ data, onCancel, onComplete }) {
 
           {step === 3 && (
             <>
+              <h2 className="guide-title">What do you enjoy?</h2>
+              <p className="guide-sub">Select all that interest you (at least one). We'll tailor each city's highlights to match.</p>
+              <div className="guide-interest-grid">
+                {INTERESTS.map((it) => (
+                  <button
+                    key={it.key}
+                    className={`guide-interest ${interests.has(it.key) ? 'on' : ''}`}
+                    onClick={() => toggleInterest(it.key)}
+                    aria-pressed={interests.has(it.key)}
+                  >
+                    {interests.has(it.key) && <span className="guide-interest-check">✓</span>}
+                    <span className="guide-interest-icon">{it.icon}</span>
+                    <span className="guide-interest-label">{it.label}</span>
+                  </button>
+                ))}
+              </div>
+            </>
+          )}
+
+          {step === 4 && (
+            <>
               <h2 className="guide-title">What would you like to visit?</h2>
-              <p className="guide-sub">Optional. Tap the highlights you'd like to work in. Carta fits them into your days.</p>
+              <p className="guide-sub">Tuned to what you enjoy. Tap the highlights you'd like to work in — Carta fits them into your days.</p>
               {includedIds.map((id) => {
                 const dest = destinations[id];
-                const items = cityActivities(dest);
                 if (!dest) return null;
+                const items = activitiesForInterests(dest, interests);
+                const heroUrl = cityImage(dest);
+                const picked = (acts[id] || []).length;
                 return (
-                  <div key={id} className="guide-country-block">
-                    <div className="guide-block-head">{dest.city} <span className="guide-visit-count">{(acts[id] || []).length} picked</span></div>
+                  <div key={id} className="guide-visit-block">
+                    <div
+                      className="guide-visit-hero"
+                      style={heroUrl ? { backgroundImage: `url(${heroUrl})` } : undefined}
+                    >
+                      {!heroUrl && <span className="guide-visit-hero-fallback">{dest.city.slice(0, 1)}</span>}
+                      <span className="guide-visit-hero-name">{dest.city}</span>
+                      {picked > 0 && <span className="guide-visit-hero-count">{picked} picked</span>}
+                    </div>
                     {items.length === 0 ? (
                       <p className="guide-empty">No highlights catalogued for {dest.city} yet.</p>
                     ) : (
@@ -266,7 +297,7 @@ export function GuidedTripWizard({ data, onCancel, onComplete }) {
             </>
           )}
 
-          {step === 4 && (
+          {step === 5 && (
             <>
               <h2 className="guide-title">Arrange your trip</h2>
               <p className="guide-sub">Drag to reorder your stops, then pick when you'll set off.</p>
@@ -287,6 +318,7 @@ export function GuidedTripWizard({ data, onCancel, onComplete }) {
                         onDragEnd={() => setDragId(null)}
                         title="Drag to reorder"
                       >{i + 1}</div>
+                      <CityThumb dest={dest} className="guide-arrange-thumb" />
                       <div className="guide-arrange-main">
                         <div className="guide-arrange-city">{dest?.city}, {dest?.country}</div>
                         <div className="guide-arrange-sub">
@@ -330,7 +362,7 @@ export function GuidedTripWizard({ data, onCancel, onComplete }) {
           </div>
           <div className="guide-foot-actions">
             {step > 1 && <button className="guide-back" onClick={() => setStep(step - 1)}>Back</button>}
-            {step < 4 ? (
+            {step < 5 ? (
               <button className="guide-next" onClick={() => setStep(step + 1)} disabled={!canNext}>Next</button>
             ) : (
               <button className="guide-next" onClick={finish} disabled={includedIds.length === 0}>Create trip</button>

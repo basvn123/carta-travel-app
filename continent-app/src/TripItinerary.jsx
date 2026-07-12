@@ -53,6 +53,12 @@ export function TripItinerary({ dayPlan, stopDetails, grandTotal, groupSize, fli
               onClick={() => onSelectStop?.(i)}
             >
               <span className="itin-stop-idx">{i + 1}</span>
+              <span
+                className="itin-stop-thumb"
+                style={s.dest?.image?.url ? { backgroundImage: `url(${s.dest.image.url})` } : undefined}
+              >
+                {!s.dest?.image?.url && <span className="itin-stop-thumb-fallback">{s.dest?.city?.slice(0, 1) || '?'}</span>}
+              </span>
               <span className="itin-stop-main">
                 <span className="itin-stop-city">{s.dest?.city || 'Unknown'}, {s.dest?.country}</span>
                 <span className="itin-stop-sub">
@@ -69,11 +75,17 @@ export function TripItinerary({ dayPlan, stopDetails, grandTotal, groupSize, fli
         </div>
       ) : activeDay ? (
         <div className="itin-day">
-          <div className="itin-day-head">
-            <div className="itin-day-date">{fmtLong(activeDay.date)}</div>
-            <div className="itin-day-city">
-              Staying in {activeDay.stop.dest?.city}
-              <span className="itin-day-of">Day {activeDay.dayOfStay} of {activeDay.staysOfCity}</span>
+          <div
+            className="itin-day-hero"
+            style={activeDay.stop.dest?.image?.url ? { backgroundImage: `url(${activeDay.stop.dest.image.url})` } : undefined}
+          >
+            <div className="itin-day-hero-grad" />
+            <div className="itin-day-head">
+              <div className="itin-day-date">{fmtLong(activeDay.date)}</div>
+              <div className="itin-day-city">
+                Staying in {activeDay.stop.dest?.city}
+                <span className="itin-day-of">Day {activeDay.dayOfStay} of {activeDay.staysOfCity}</span>
+              </div>
             </div>
           </div>
           {activeDay.activities.length === 0 ? (
