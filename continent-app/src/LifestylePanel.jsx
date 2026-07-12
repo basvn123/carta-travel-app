@@ -92,7 +92,7 @@ export function LifestylePanel({ choices, setChoices, previewDest, departDate, r
         <div className="panel-tag">Lifestyle</div>
         <h2 className="panel-city">How you'll spend</h2>
         <div className="panel-country">
-          Per person · real local rates · {choices.group_size} {choices.group_size === 1 ? 'person' : 'people'} · {nights} nights
+          Per person, real local rates, {choices.group_size} {choices.group_size === 1 ? 'person' : 'people'}, {nights} nights
         </div>
       </div>
 
@@ -123,21 +123,21 @@ export function LifestylePanel({ choices, setChoices, previewDest, departDate, r
 
       <div className="panel-section">
         <div className="section-title">Eating</div>
-        <Stepper label="Dinners out" hint={`mid-range · ${per}`} value={ls.dinners_per_week ?? 0}
+        <Stepper label="Dinners out" hint={`mid-range, ${per}`} value={ls.dinners_per_week ?? 0}
           onChange={(v) => setLs({ dinners_per_week: v })} min={0} max={maxFor('dinners_per_week')} />
-        <Stepper label="Casual meals" hint={`cheap restaurant · ${per}`} value={ls.lunches_per_week ?? 0}
+        <Stepper label="Casual meals" hint={`cheap restaurant, ${per}`} value={ls.lunches_per_week ?? 0}
           onChange={(v) => setLs({ lunches_per_week: v })} min={0} max={maxFor('lunches_per_week')} />
         <Stepper label="Fast food / street" hint={per} value={ls.fastfood_per_week ?? 0}
           onChange={(v) => setLs({ fastfood_per_week: v })} min={0} max={maxFor('fastfood_per_week')} />
-        <Stepper label="Cook-at-home days" hint={`groceries · ${per}`} value={ls.self_catered_days_per_week ?? 0}
+        <Stepper label="Cook-at-home days" hint={`groceries, ${per}`} value={ls.self_catered_days_per_week ?? 0}
           onChange={(v) => setLs({ self_catered_days_per_week: v })} min={0} max={maxFor('self_catered_days_per_week')} />
       </div>
 
       <div className="panel-section">
         <div className="section-title">Drinking &amp; nightlife</div>
-        <Stepper label="Drinks at bars" hint={`beers/wine · ${per}`} value={ls.drinks_per_week ?? 0}
+        <Stepper label="Drinks at bars" hint={`beers/wine, ${per}`} value={ls.drinks_per_week ?? 0}
           onChange={(v) => setLs({ drinks_per_week: v })} min={0} max={maxFor('drinks_per_week')} />
-        <Stepper label="Club nights" hint={`cover + 3 drinks · ${per}`} value={ls.club_nights_per_week ?? 0}
+        <Stepper label="Club nights" hint={`cover + 3 drinks, ${per}`} value={ls.club_nights_per_week ?? 0}
           onChange={(v) => setLs({ club_nights_per_week: v })} min={0} max={maxFor('club_nights_per_week')} />
         <Stepper label="Coffees" hint="per day" value={ls.coffees_per_day ?? 0}
           onChange={(v) => setLs({ coffees_per_day: v })} min={0} max={8} />
@@ -146,7 +146,7 @@ export function LifestylePanel({ choices, setChoices, previewDest, departDate, r
       {preview && g ? (
         <div className="panel-section accom-preview">
           <div className="section-title">
-            On-the-ground · {previewDest.city}
+            On-the-ground, {previewDest.city}
             <span className="attr-meta" style={{ marginLeft: 8 }}>{sourceLabel}</span>
           </div>
           <Line label="Dinners out" value={eur(g.dinners)} />
@@ -157,7 +157,7 @@ export function LifestylePanel({ choices, setChoices, previewDest, departDate, r
           <Line label="Coffees" value={eur(g.coffees)} />
           <Line label="Groceries" value={eur(g.groceries)} />
           <div className="line total">
-            <span className="lbl"><strong>Per person · {nights} nights</strong></span>
+            <span className="lbl"><strong>Per person, {nights} nights</strong></span>
             <span className="v"><strong>{eur(preview.ground_per_person)}</strong></span>
           </div>
           <div className="line">

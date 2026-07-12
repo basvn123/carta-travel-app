@@ -233,7 +233,7 @@ export function GuidedTripWizard({ data, onCancel, onComplete }) {
                         <div className="guide-arrange-city">{dest?.city}, {dest?.country}</div>
                         <div className="guide-arrange-sub">
                           {nights[id]} {nights[id] === 1 ? 'night' : 'nights'}
-                          {(acts[id] || []).length > 0 && ` · ${(acts[id] || []).length} to visit`}
+                          {(acts[id] || []).length > 0 && `, ${(acts[id] || []).length} to visit`}
                         </div>
                       </div>
                       <div className="guide-arrange-tools">
@@ -258,7 +258,7 @@ export function GuidedTripWizard({ data, onCancel, onComplete }) {
                   </div>
                 </label>
                 <div className="guide-start-summary">
-                  {includedIds.length} {includedIds.length === 1 ? 'stop' : 'stops'} · {totalNights} nights
+                  {includedIds.length} {includedIds.length === 1 ? 'stop' : 'stops'}, {totalNights} nights
                 </div>
               </div>
             </>
@@ -268,7 +268,7 @@ export function GuidedTripWizard({ data, onCancel, onComplete }) {
         {/* Footer */}
         <div className="guide-foot">
           <div className="guide-foot-summary">
-            {includedIds.length > 0 && `${includedIds.length} ${includedIds.length === 1 ? 'city' : 'cities'} · ${totalNights} nights`}
+            {includedIds.length > 0 && `${includedIds.length} ${includedIds.length === 1 ? 'city' : 'cities'}, ${totalNights} nights`}
           </div>
           <div className="guide-foot-actions">
             {step > 1 && <button className="guide-back" onClick={() => setStep(step - 1)}>Back</button>}

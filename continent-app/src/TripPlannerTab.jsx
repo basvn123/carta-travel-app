@@ -71,7 +71,7 @@ function Suggestions({ suggestions, onPick }) {
             key={s.id}
             className="trip-suggest-card"
             onClick={() => onPick(s)}
-            title={`${s.city}, ${s.country} · ~${s.km} km · from ${s.shared_origin || 'overland'}`}
+            title={`${s.city}, ${s.country} — ~${s.km} km from ${s.shared_origin || 'overland'}`}
           >
             <div className="trip-suggest-thumb" style={s.image ? { backgroundImage: `url(${s.image})` } : undefined}>
               {!s.image && <span className="trip-suggest-fallback">{s.city.slice(0, 1)}</span>}
@@ -81,7 +81,7 @@ function Suggestions({ suggestions, onPick }) {
               <span className="trip-suggest-city">{s.city}</span>
               <span className="trip-suggest-sub">
                 {s.km} km
-                {s.gems ? <> · <GemIcon size={9} /> {s.gems}</> : null}
+                {s.gems ? <>, <GemIcon size={9} /> {s.gems}</> : null}
               </span>
             </div>
           </button>
@@ -316,7 +316,7 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth }) {
                 <NightsRing planned={tp.plannedNights} total={tp.windowNights} />
                 <div className="trip-nights-text">
                   <strong>{tp.plannedNights}/{tp.windowNights}</strong> nights planned
-                  {tp.plannedNights > tp.windowNights && <span className="trip-nights-warn"> · over your window</span>}
+                  {tp.plannedNights > tp.windowNights && <span className="trip-nights-warn"> — over your window</span>}
                 </div>
               </div>
 
@@ -363,7 +363,7 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth }) {
                       {i < tp.legs.length && (
                         <div className="trip-leg">
                           {tp.legs[i]
-                            ? `↳ ~${tp.legs[i].road_km} km overland · est. ${eur(tp.legs[i].ground_eur_per_person)}/person · ~${tp.legs[i].hours}h${tp.legs[i].long_haul ? ' · long leg, consider flying' : ''}`
+                            ? `↳ ~${tp.legs[i].road_km} km overland, est. ${eur(tp.legs[i].ground_eur_per_person)}/person, ~${tp.legs[i].hours}h${tp.legs[i].long_haul ? ' — long leg, consider flying' : ''}`
                             : '↳ No overland route (sea crossing)'}
                         </div>
                       )}
@@ -397,7 +397,7 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth }) {
 
                   {tp.flight?.combinable ? (
                     <div className="trip-total-row">
-                      <span className="lbl">Flights <small>{tp.flight.into_anchor} in · {tp.flight.out_anchor} out, via {tp.flight.origin}</small></span>
+                      <span className="lbl">Flights <small>{tp.flight.into_anchor} in, {tp.flight.out_anchor} out, via {tp.flight.origin}</small></span>
                       <span className="val">{eur(tp.flight.fare_total + tp.flight.ground_total)}</span>
                     </div>
                   ) : tp.flight ? (
@@ -413,7 +413,7 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth }) {
 
                   {tp.stopDetails.map((s, i) => tp.stayCosts[i] && (
                     <div className="trip-total-row" key={i}>
-                      <span className="lbl">{s.dest?.city} <small>{s.nights} {s.nights === 1 ? 'night' : 'nights'} · stay + on the ground</small></span>
+                      <span className="lbl">{s.dest?.city} <small>{s.nights} {s.nights === 1 ? 'night' : 'nights'}, stay + on the ground</small></span>
                       <span className="val">{eur(tp.stayCosts[i].total)}</span>
                     </div>
                   ))}

@@ -1090,6 +1090,43 @@ input, select {
 }
 .day-empty .trip-saved-list { margin-top: 16px; text-align: left; }
 
+/* Day-planner landing: scrollable column, left-aligned (unlike the centered
+   .day-empty message) so the "plan any city" builder + saved lists fit. */
+.day-landing-screen {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  overflow-y: auto;
+}
+.day-landing {
+  width: 100%;
+  max-width: 480px;
+  padding: 28px 24px 40px;
+  color: var(--ink-soft);
+}
+.day-landing .section-title {
+  font-family: var(--display);
+  font-size: 22px;
+  color: var(--ink);
+  margin-bottom: 8px;
+}
+.day-landing-lead { font-size: 13px; line-height: 1.55; margin-bottom: 20px; }
+.day-build { display: flex; flex-direction: column; gap: 12px; }
+.day-build .trip-add-row { display: block; }
+.day-build-row { display: flex; gap: 14px; }
+.day-build-row .trip-field { flex: 1; }
+.day-build-btn { width: 100%; margin-top: 2px; }
+.day-landing-section { margin-top: 24px; }
+.day-saved-sub {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--ink-mute);
+  text-transform: none;
+  letter-spacing: 0;
+}
+.day-chip-add { border-style: dashed; color: var(--accent); }
+.day-chip-add:hover { border-color: var(--accent); }
+
 .day-chip-row {
   display: flex;
   gap: 8px;

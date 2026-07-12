@@ -1,5 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { TripMap } from './TripMap.jsx';
+import { Dropdown } from './Dropdown.jsx';
+import { DateField } from './DateField.jsx';
 import { tripDaysBetween, haversineKm } from './runtime_pricing.js';
 import { fetchTripPlans, fetchTripPlanWithStops } from './auth/tripPlanStorage.js';
 
@@ -106,6 +108,49 @@ function persistAssignments(planId, assignments) {
   } catch { /* ignore */ }
 }
 
+// Standalone day plans - a single city planned day by day, independent of any
+// saved trip. Stored entirely on this device (like the activity assignments
+// above), so they work for guests and don't need a signed-in account or a
+// Supabase round-trip. Each entry is lightweight metadata; the actual per-day
+// activity picks live under the shared assignments key, keyed by the plan id.
+const STANDALONE_KEY = 'carta.dayplans.v1';
+function loadStandalonePlans() {
+  if (typeof window === 'undefined') return [];
+  try {
+    const list = JSON.parse(window.localStorage.getItem(STANDALONE_KEY) || '[]');
+    return Array.isArray(list) ? list : [];
+  } catch {
+    return [];
+  }
+}
+function persistStandalonePlans(list) {
+  if (typeof window === 'undefined') return;
+  try {
+    window.localStorage.setItem(STANDALONE_KEY, JSON.stringify(list));
+  } catch { /* ignore */ }
+}
+
+// Build the same { id, label, stops:[...] } shape the planner renders from a
+// saved trip, so a one-city standalone plan flows through the exact same view.
+function buildStandalonePlan(sp) {
+  const days = Math.max(1, sp.days || 1);
+  return {
+    id: sp.id,
+    label: sp.label || '',
+    standalone: true,
+    stops: [{
+      destination_id: sp.destinationId,
+      arrive_date: sp.startDate,
+      depart_date: addDays(sp.startDate, days),
+    }],
+  };
+}
+
+function todayISO() {
+  const t = new Date();
+  return `${t.getFullYear()}-${String(t.getMonth() + 1).padStart(2, '0')}-${String(t.getDate()).padStart(2, '0')}`;
+}
+
 export function DayPlannerTab({ data, user, authConfigured }) {
   const destinations = data?.destinations || {};
 
@@ -116,8 +161,15 @@ export function DayPlannerTab({ data, user, authConfigured }) {
   const [dayIdx, setDayIdx] = useState(0);
   const [assignments, setAssignments] = useState({}); // { [stopIdx]: { [dayIdx]: [activityIdx,...] } }
 
+  // Locally-stored "plan a day for any city" plans (see STANDALONE_KEY).
+  const [standalonePlans, setStandalonePlans] = useState(() => loadStandalonePlans());
+  // Builder inputs for a new standalone plan.
+  const [newCityId, setNewCityId] = useState('');
+  const [newStartDate, setNewStartDate] = useState(() => todayISO());
+  const [newDays, setNewDays] = useState(1);
+
   useEffect(() => {
-    if (!user) return;
+    if (!user) { setSavedPlans([]); return; }
     setPlansLoading(true);
     fetchTripPlans(user.id).then(setSavedPlans).finally(() => setPlansLoading(false));
   }, [user?.id]);
@@ -128,6 +180,52 @@ export function DayPlannerTab({ data, user, authConfigured }) {
     setStopIdx(0);
     setDayIdx(0);
     setAssignments(loadAssignments(planId));
+  };
+
+  const openStandalone = (sp) => {
+    setPlan(buildStandalonePlan(sp));
+    setStopIdx(0);
+    setDayIdx(0);
+    setAssignments(loadAssignments(sp.id));
+  };
+
+  const startStandalone = () => {
+    if (!newCityId) return;
+    const sp = {
+      id: `local:${Date.now()}`,
+      destinationId: newCityId,
+      label: destinations[newCityId]?.city || 'Day plan',
+      startDate: newStartDate || todayISO(),
+      days: Math.max(1, newDays),
+    };
+    const next = [sp, ...standalonePlans];
+    setStandalonePlans(next);
+    persistStandalonePlans(next);
+    setNewCityId('');
+    setNewDays(1);
+    openStandalone(sp);
+  };
+
+  const deleteStandalone = (id) => {
+    const next = standalonePlans.filter((sp) => sp.id !== id);
+    setStandalonePlans(next);
+    persistStandalonePlans(next);
+    if (typeof window !== 'undefined') {
+      try { window.localStorage.removeItem(assignmentsKey(id)); } catch { /* ignore */ }
+    }
+  };
+
+  // Tack another day onto the current standalone plan (persists to its entry).
+  const addStandaloneDay = () => {
+    if (!plan?.standalone) return;
+    const nextDays = (days.length || 1) + 1;
+    const next = standalonePlans.map((sp) => (sp.id === plan.id ? { ...sp, days: nextDays } : sp));
+    setStandalonePlans(next);
+    persistStandalonePlans(next);
+    setPlan((p) => ({
+      ...p,
+      stops: [{ ...p.stops[0], depart_date: addDays(p.stops[0].arrive_date, nextDays) }],
+    }));
   };
 
   const stops = useMemo(() => (plan?.stops || []).map((s) => ({
@@ -204,43 +302,105 @@ export function DayPlannerTab({ data, user, authConfigured }) {
     .filter((it) => it.lat != null && it.lon != null)
     .map((it) => ({ lat: it.lat, lon: it.lon, city: it.name }));
 
-  if (!authConfigured || !user) {
-    return (
-      <div className="trip-planner-screen day-empty-screen">
-        <div className="day-empty">
-          <div className="section-title">Day planner</div>
-          <p>
-            {authConfigured
-              ? 'Sign in and save a trip in Trip planner first, then come back here to plan each day.'
-              : "Accounts aren't set up for this deployment, so trips can't be saved or planned day by day."}
-          </p>
-        </div>
-      </div>
-    );
-  }
+  const destOptions = Object.entries(destinations)
+    .map(([id, d]) => ({ value: id, label: `${d.city}, ${d.country}` }))
+    .sort((a, b) => a.label.localeCompare(b.label));
 
+  // Landing screen: plan a day for any city (no trip required), reopen a saved
+  // day plan, or pick one of your saved trips to plan its stops.
   if (!plan) {
     return (
-      <div className="trip-planner-screen day-empty-screen">
-        <div className="day-empty">
+      <div className="trip-planner-screen day-landing-screen">
+        <div className="day-landing">
           <div className="section-title">Day planner</div>
-          {plansLoading ? (
-            <p>Loading your saved trips…</p>
-          ) : savedPlans.length === 0 ? (
-            <p>Build and save a trip in Trip planner first, then pick it here to plan each day.</p>
-          ) : (
-            <>
-              <p>Pick a saved trip to plan day by day.</p>
+          <p className="day-landing-lead">
+            Plan any city day by day - pick a place, add the sights you want to see,
+            and Carta lays them out in a walkable order with a suggested schedule.
+          </p>
+
+          {/* Plan a day for any city */}
+          <div className="day-build">
+            <div className="trip-block-title">Plan a day for any city</div>
+            <div className="trip-add-row">
+              <Dropdown
+                value={newCityId}
+                onChange={setNewCityId}
+                options={destOptions}
+                placeholder="Search a city or country"
+                searchPlaceholder="Search"
+              />
+            </div>
+            <div className="day-build-row">
+              <label className="trip-field">
+                <span className="trip-field-label">Start date</span>
+                <DateField value={newStartDate} onChange={setNewStartDate} placeholder="Start date" />
+              </label>
+              <label className="trip-field">
+                <span className="trip-field-label">Days</span>
+                <div className="trip-people">
+                  <button type="button" onClick={() => setNewDays((n) => Math.max(1, n - 1))} disabled={newDays <= 1} aria-label="Fewer days">–</button>
+                  <span>{newDays}</span>
+                  <button type="button" onClick={() => setNewDays((n) => Math.min(30, n + 1))} disabled={newDays >= 30} aria-label="More days">+</button>
+                </div>
+              </label>
+            </div>
+            <button className="trip-save-btn day-build-btn" onClick={startStandalone} disabled={!newCityId}>
+              Start planning
+            </button>
+          </div>
+
+          {/* Your saved day plans (stored on this device) */}
+          {standalonePlans.length > 0 && (
+            <div className="day-landing-section">
+              <div className="trip-block-title">Your day plans</div>
               <div className="trip-saved-list">
-                {savedPlans.map((p) => (
-                  <div className="trip-saved-item" key={p.id}>
-                    <button className="trip-saved-main" onClick={() => openPlan(p.id)}>
-                      {p.label || 'Untitled trip'}
+                {standalonePlans.map((sp) => (
+                  <div className="trip-saved-item" key={sp.id}>
+                    <button className="trip-saved-main" onClick={() => openStandalone(sp)}>
+                      {sp.label || destinations[sp.destinationId]?.city || 'Day plan'}
+                      <small className="day-saved-sub">
+                        {' '}— {fmtDate(sp.startDate)}{sp.days > 1 ? `, ${sp.days} days` : ''}
+                      </small>
                     </button>
+                    <button className="trip-saved-del" onClick={() => deleteStandalone(sp.id)} aria-label="Delete day plan" title="Delete">×</button>
                   </div>
                 ))}
               </div>
-            </>
+            </div>
+          )}
+
+          {/* Or plan a day from a saved trip */}
+          {authConfigured && user && (
+            <div className="day-landing-section">
+              <div className="trip-block-title">Plan a day from a saved trip</div>
+              {plansLoading ? (
+                <p className="trip-note">Loading your saved trips…</p>
+              ) : savedPlans.length === 0 ? (
+                <p className="trip-note">No saved trips yet - build and save one in Trip planner to plan its stops here.</p>
+              ) : (
+                <div className="trip-saved-list">
+                  {savedPlans.map((p) => (
+                    <div className="trip-saved-item" key={p.id}>
+                      <button className="trip-saved-main" onClick={() => openPlan(p.id)}>
+                        {p.label || 'Untitled trip'}
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
+          {authConfigured && !user && (
+            <p className="trip-note">
+              Sign in on the Trip planner tab to also plan days from your saved trips.
+              Day plans you make here are saved on this device.
+            </p>
+          )}
+          {!authConfigured && (
+            <p className="trip-note">
+              Accounts aren't set up for this deployment, but day plans you make here are saved on this device.
+            </p>
           )}
         </div>
       </div>
@@ -255,7 +415,7 @@ export function DayPlannerTab({ data, user, authConfigured }) {
         <div className="trip-topcard-name">{plan.label || 'Untitled trip'}</div>
         <div className="trip-topcard-sub">
           {stop?.dest?.city || 'No stops in this trip'}
-          {days[dayIdx] ? ` · ${fmtDate(days[dayIdx])}` : ''}
+          {days[dayIdx] ? ` — ${fmtDate(days[dayIdx])}` : ''}
         </div>
       </div>
 
@@ -293,6 +453,9 @@ export function DayPlannerTab({ data, user, authConfigured }) {
                     Day {i + 1}
                   </button>
                 ))}
+                {plan.standalone && (
+                  <button className="day-chip day-chip-add" onClick={addStandaloneDay} title="Add another day">+ Day</button>
+                )}
               </div>
             </div>
           )}
@@ -329,7 +492,7 @@ export function DayPlannerTab({ data, user, authConfigured }) {
                         {i < timeline.length - 1 && (
                           <div className="day-timeline-walk">
                             {t.walkMin != null
-                              ? `↓ ${t.walkMin} min walk · ${t.walkKm.toFixed(1)} km`
+                              ? `↓ ${t.walkMin} min walk, ${t.walkKm.toFixed(1)} km`
                               : '↓ walking time unknown (no coordinates for one of these stops)'}
                           </div>
                         )}
@@ -370,7 +533,7 @@ export function DayPlannerTab({ data, user, authConfigured }) {
           )}
 
           <div className="trip-block">
-            <button className="trip-newtrip-btn" onClick={() => setPlan(null)}>← Choose a different trip</button>
+            <button className="trip-newtrip-btn" onClick={() => setPlan(null)}>← Back to all day plans</button>
           </div>
         </div>
       </div>

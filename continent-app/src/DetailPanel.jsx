@@ -66,8 +66,8 @@ export function DetailPanel({ destination, departDate, returnDate, choices, setC
       <div className={`panel-header ${image?.url ? 'has-hero' : ''}`}>
         <div className="panel-tag">
           {destination.tier === 'gem'
-            ? <>GEM · {destination.iso2}</>
-            : <>{destination.iata} · {destination.iso2}</>}
+            ? <>GEM, {destination.iso2}</>
+            : <>{destination.iata}, {destination.iso2}</>}
         </div>
         <div className="panel-action-row">
           {onToggleFavorite && (
@@ -107,8 +107,8 @@ export function DetailPanel({ destination, departDate, returnDate, choices, setC
           {destination.tier === 'gem' && anchor && (
             <span className="panel-via">
               via {anchor}
-              {breakdown?.ground_one_way_eur > 0 && ` · €${breakdown.ground_one_way_eur} ground each way`}
-              {breakdown?.ground_minutes > 0 && ` · ~${breakdown.ground_minutes} min`}
+              {breakdown?.ground_one_way_eur > 0 && `, €${breakdown.ground_one_way_eur} ground each way`}
+              {breakdown?.ground_minutes > 0 && `, ~${breakdown.ground_minutes} min`}
             </span>
           )}
         </div>
@@ -254,7 +254,7 @@ function ExploreSection({ destination, data, onSelect }) {
                   <span className="nearby-city">{n.city}</span>
                   <span className="nearby-sub">
                     {n.km} km
-                    {n.gems ? <> · <GemIcon size={9} /> {n.gems}</> : null}
+                    {n.gems ? <>, <GemIcon size={9} /> {n.gems}</> : null}
                   </span>
                 </div>
               </button>
@@ -285,7 +285,7 @@ function BreakdownTab({ destination, breakdown, departDate, returnDate, choices,
   return (
     <>
       <div className="panel-section">
-        <div className="section-title">Trip total {priceMode === 'pp' ? '· per person' : ''}</div>
+        <div className="section-title">Trip total {priceMode === 'pp' ? '(per person)' : ''}</div>
 
         {/* Getting there: plane vs car comparison (only when drivable) */}
         {breakdown.drivable && setChoices && (
@@ -304,7 +304,7 @@ function BreakdownTab({ destination, breakdown, departDate, returnDate, choices,
               className={`mode-pill ${breakdown.transport_mode === 'car' ? 'on' : ''}`}
               onClick={() => setChoices({ ...choices, transport_mode: 'car' })}
             >
-              <span className="mode-pill-top">Drive · {breakdown.driving.road_km} km</span>
+              <span className="mode-pill-top">Drive, {breakdown.driving.road_km} km</span>
               <span className="mode-pill-val">{eur(show(breakdown.car_grand_total))}</span>
             </button>
           </div>
@@ -317,7 +317,7 @@ function BreakdownTab({ destination, breakdown, departDate, returnDate, choices,
               <span className="label">
                 Drive ({breakdown.driving.cars} {breakdown.driving.cars === 1 ? 'car' : 'cars'})
                 <small>
-                  {breakdown.driving.road_km} km each way · ~{breakdown.driving.drive_hours_one_way}h ·
+                  {breakdown.driving.road_km} km each way, ~{breakdown.driving.drive_hours_one_way}h,
                   {' '}€{breakdown.driving.fuel_price_eur_per_l.toFixed(2)}/L
                 </small>
               </span>
@@ -363,7 +363,7 @@ function BreakdownTab({ destination, breakdown, departDate, returnDate, choices,
                   <small>
                     {`€${breakdown.transfer_one_way_eur.toFixed(0)} × 2 directions`}
                     {priceMode === 'total' && ` × ${group} people`}
-                    {breakdown.ground_minutes > 0 ? ` · ~${breakdown.ground_minutes} min each way` : ''}
+                    {breakdown.ground_minutes > 0 ? `, ~${breakdown.ground_minutes} min each way` : ''}
                   </small>
                 </span>
                 <span className="val">{eur(show(breakdown.transfer_total))}</span>
@@ -376,9 +376,9 @@ function BreakdownTab({ destination, breakdown, departDate, returnDate, choices,
                   Rental car at destination
                   <small>
                     {breakdown.rental.cars} {breakdown.rental.cars === 1 ? 'car' : 'cars'} ×
-                    {' '}{breakdown.rental.days} days · €{breakdown.rental.rate.toFixed(0)}/day
-                    {breakdown.rental.season > 1 ? ' · incl. summer season' : ''}
-                    {breakdown.rental.discount_pct > 0 ? ` · -${breakdown.rental.discount_pct}% weekly` : ''}
+                    {' '}{breakdown.rental.days} days, €{breakdown.rental.rate.toFixed(0)}/day
+                    {breakdown.rental.season > 1 ? ', incl. summer season' : ''}
+                    {breakdown.rental.discount_pct > 0 ? `, -${breakdown.rental.discount_pct}% weekly` : ''}
                   </small>
                 </span>
                 <span className="val">{eur(show(breakdown.rental_total))}</span>
@@ -407,11 +407,11 @@ function BreakdownTab({ destination, breakdown, departDate, returnDate, choices,
           <>
             <div className="total-row" style={{ marginTop: 6 }}>
               <span className="label">
-                Accommodation · {breakdown.nights} {breakdown.nights === 1 ? 'night' : 'nights'}
+                Accommodation, {breakdown.nights} {breakdown.nights === 1 ? 'night' : 'nights'}
                 <small>
-                  Entire home{accomSourceLabel ? ` · ${accomSourceLabel}` : ''}
+                  Entire home{accomSourceLabel ? `, ${accomSourceLabel}` : ''}
                   {breakdown.accom_entire_home_night_eur
-                    ? ` · ~€${Math.round(breakdown.accom_entire_home_night_eur)}/night base`
+                    ? `, ~€${Math.round(breakdown.accom_entire_home_night_eur)}/night base`
                     : ''}
                 </small>
               </span>
@@ -447,9 +447,9 @@ function BreakdownTab({ destination, breakdown, departDate, returnDate, choices,
           <>
             <div className="total-row" style={{ marginTop: 6 }}>
               <span className="label">
-                On the ground · {breakdown.nights} {breakdown.nights === 1 ? 'night' : 'nights'}
+                On the ground, {breakdown.nights} {breakdown.nights === 1 ? 'night' : 'nights'}
                 <small>
-                  Your lifestyle{sourceLabel ? ` · ${sourceLabel}` : ''}
+                  Your lifestyle{sourceLabel ? `, ${sourceLabel}` : ''}
                 </small>
               </span>
               <span className="val">{eur(show(groundGroup(breakdown.ground_per_person)))}</span>
@@ -541,7 +541,7 @@ function FlightBookingSection({ destination, departDate, returnDate, breakdown, 
           <span>
             Search on Skyscanner
             <small style={{ display: 'block', fontSize: 10, opacity: .7, marginTop: 2 }}>
-              {origin} -&gt; {destIata} · {departDate} -&gt; {returnDate}
+              {origin} -&gt; {destIata}, {departDate} -&gt; {returnDate}
             </small>
           </span>
           <span className="arrow">-&gt;</span>
