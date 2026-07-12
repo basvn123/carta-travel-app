@@ -133,60 +133,124 @@ export function interCityGroundEstimate(destA, destB, groupSize = 1) {
   };
 }
 
-/** Candidate next stops for a multi-city itinerary starting from `fromDest`:
- *  destinations that share at least one origin airport with `fromDest` (the
- *  binding constraint for combineTripLegs to find a real combined fare at
- *  all), within `maxKm` straight-line, ranked by distance + beauty - with a
- *  boost for stops that have a confirmed fare on `arriveDate` specifically.
+/** How many activities/things-to-do we've catalogued for a destination. */
+function activityCount(d) {
+  return d?.activities && Array.isArray(d.activities.items) ? d.activities.items.length : 0;
+}
+
+/** A "how special is this place" score in roughly a 0-16 range, tuned to lift
+ *  the genuinely beautiful, characterful spots that a plain beauty.score buries.
  *
- *  Deliberately not a reuse of nearbyTrips() (runtime_pricing.js), which is
- *  tuned for "day trip from a single base" at a 160km cutoff - a next stop on
- *  a multi-city trip can reasonably be much farther, as long as it's
- *  reachable from the same origin airport.
- *
- *  @param fromDest  the current stop's destination record
- *  @param allDests  data.destinations (object id->record)
- *  @param arriveDate ISO date the traveller would arrive at the next stop, or null
- *  @param opts.maxKm  straight-line cutoff (default 400km)
- *  @param opts.limit  how many to return (default 6)
- *  @returns [{ id, city, country, iso2, km, gems, beauty, image, shared_origin, fare_that_day_eur }]
+ *  beauty.score alone is dominated by beach/nature/iconic components, so a
+ *  charming UNESCO village like Alberobello (trulli), Hallstatt or Giethoorn
+ *  scores low even though it's exactly the kind of stop people plan a trip
+ *  around. We add back the signals that make a place a destination in its own
+ *  right: our curated "gem" tier, World Heritage status, a rich things-to-do
+ *  list, and a small-historic-place category bonus. Exported so the map/cards
+ *  can show the same ranking the recommender uses.
  */
-export function suggestNextStops(fromDest, allDests, arriveDate, { maxKm = 400, limit = 6 } = {}) {
+export function gemScore(d) {
+  if (!d) return 0;
+  const b = d.beauty || {};
+  let s = b.score || 0;
+  if (d.tier === 'gem') s += 2.6;                       // hand-curated hidden gem
+  if (b.unesco) s += 1.4;                               // World Heritage pull
+  s += Math.min(activityCount(d), 12) / 12 * 1.6;       // lots to actually do
+  const cats = d.categories || [];
+  if (cats.includes('village')) s += 1.0;               // charming small places
+  else if (cats.includes('oldtown') || cats.includes('town')) s += 0.5;
+  return Math.round(s * 100) / 100;
+}
+
+const EVOCATIVE_CATEGORIES = [
+  'fairytale', 'iconic', 'alps', 'lake', 'coast', 'island', 'medieval',
+  'wine', 'countryside', 'village', 'oldtown', 'beach', 'mountains',
+];
+
+/** A short, human "why go" chip for a suggestion card. */
+function suggestionReason(d) {
+  const cats = d.categories || [];
+  const evocative = EVOCATIVE_CATEGORIES.find((c) => cats.includes(c));
+  if (d.beauty?.unesco && evocative) return `UNESCO ${evocative}`;
+  if (d.beauty?.unesco) return 'UNESCO site';
+  if (evocative) return evocative.charAt(0).toUpperCase() + evocative.slice(1);
+  if (d.tier === 'gem') return 'Hidden gem';
+  return null;
+}
+
+/** Candidate next stops for a multi-city itinerary currently ending at
+ *  `fromDest`, ranked to put the most beautiful, characterful places first.
+ *
+ *  Reachability: a good next stop is either (a) drivable/train-able overland
+ *  from the current stop (a real ground leg), or (b) shares a Ryanair origin
+ *  with the FIRST stop so that, if it becomes the new last stop, the round
+ *  flight still combines. We no longer require sharing an airport with the
+ *  *current* stop specifically - that filtered out most of the beautiful
+ *  villages you reach by ground, which is exactly what this tab is for.
+ *
+ *  Ranking is gemScore-led (see above) with a gentle distance preference and
+ *  small boosts for a confirmed same-day fare and flight-combinability - so
+ *  places like Alberobello, Matera or Hallstatt rise above generic airport
+ *  cities that merely happen to be nearby.
+ *
+ *  @param fromDest   the current (last) stop's destination record
+ *  @param allDests   data.destinations (object id->record)
+ *  @param arriveDate ISO date the traveller would arrive at the next stop, or null
+ *  @param opts.firstDest  the first stop's record (for flight-combinability), optional
+ *  @param opts.maxKm  straight-line cutoff (default 500km)
+ *  @param opts.limit  how many to return (default 6)
+ *  @returns [{ id, city, country, iso2, lat, lon, km, gems, beauty, gem_score,
+ *              image, reason, shared_origin, ground_reachable, fare_that_day_eur }]
+ */
+export function suggestNextStops(fromDest, allDests, arriveDate, { firstDest = null, maxKm = 500, limit = 6 } = {}) {
   if (!fromDest || !allDests || fromDest.lat == null) return [];
-  const fromOrigins = new Set(Object.keys(fromDest.routes || {}));
-  if (!fromOrigins.size) return [];
+  const anchor = firstDest || fromDest;
+  const anchorOrigins = new Set(Object.keys(anchor.routes || {}));
+  const fromRoadConnected = (fromDest.local_transport || {}).road_connected !== false;
 
   const out = [];
   for (const [id, d] of Object.entries(allDests)) {
     if (id === fromDest.id || d.lat == null) continue;
     if (d.city === fromDest.city) continue; // same place, different airport
 
-    const sharedOrigin = Object.keys(d.routes || {}).find((o) => fromOrigins.has(o));
-    if (!sharedOrigin) continue;
-
     const km = haversineKm(fromDest.lat, fromDest.lon, d.lat, d.lon);
     if (km == null || km > maxKm || km < 4) continue;
 
-    const fareThatDay = arriveDate ? d.routes[sharedOrigin].outbound_fare?.[arriveDate] : null;
+    const sharedOrigin = Object.keys(d.routes || {}).find((o) => anchorOrigins.has(o));
+    const dRoadConnected = (d.local_transport || {}).road_connected !== false;
+    // A ground leg only exists when both ends are road-connected (no sea crossing).
+    const groundReachable = fromRoadConnected && dRoadConnected && km <= 450;
+    if (!sharedOrigin && !groundReachable) continue;
+
+    const fareThatDay = (arriveDate && sharedOrigin)
+      ? d.routes[sharedOrigin]?.outbound_fare?.[arriveDate] ?? null
+      : null;
 
     out.push({
       id,
       city: d.city,
       country: d.country,
       iso2: d.iso2,
+      lat: d.lat,
+      lon: d.lon,
       km: Math.round(km),
       gems: d.beauty?.gems ?? null,
       beauty: d.beauty?.score ?? 0,
+      gem_score: gemScore(d),
       image: d.image?.url || null,
-      shared_origin: sharedOrigin,
-      fare_that_day_eur: fareThatDay ?? null,
+      reason: suggestionReason(d),
+      shared_origin: sharedOrigin || null,
+      ground_reachable: groundReachable,
+      fare_that_day_eur: fareThatDay,
     });
   }
 
+  // Higher = better: mostly gemScore, softened by distance, nudged by a real
+  // same-day fare and by staying flight-combinable.
   out.sort((a, b) => {
-    const scoreA = a.km - a.beauty * 6 - (a.fare_that_day_eur != null ? 20 : 0);
-    const scoreB = b.km - b.beauty * 6 - (b.fare_that_day_eur != null ? 20 : 0);
-    return scoreA - scoreB;
+    const rankA = a.gem_score - a.km / 130 + (a.fare_that_day_eur != null ? 1.2 : 0) + (a.shared_origin ? 0.4 : 0);
+    const rankB = b.gem_score - b.km / 130 + (b.fare_that_day_eur != null ? 1.2 : 0) + (b.shared_origin ? 0.4 : 0);
+    return rankB - rankA;
   });
   return out.slice(0, limit);
 }

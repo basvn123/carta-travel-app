@@ -25,8 +25,15 @@ Source tiers (auto-selected, best first):
 All tiers emit the SAME shape so the app never cares which ran:
     dest.activities = {
       "source": "opentripmap" | "wikivoyage" | "wikipedia_geosearch",
-      "items": [ {"name", "kind", "link"?}, ... up to TOP_N ]
+      "items": [ {"name", "kind", "link"?}, ... up to TOP_N ],
+      "items_full": [ {"name", "kind", "lat", "lon"}, ... up to TOP_N_FULL ]  # OpenTripMap only
     }
+
+`items_full` is the Day Planner's data: more POIs, each with coordinates for
+map pins. Only OpenTripMap returns per-item coordinates, so it's absent
+(dest.activities has no "items_full" key) for Wikivoyage/geosearch-sourced
+destinations - the Day Planner falls back to the name-only `items` list for
+those, flagged as limited data.
 
 Phases (idempotent, resumable - mirrors harvest_images.py):
   harvest()  -> cache/activities.json (one entry per dest id)
@@ -64,6 +71,7 @@ TARGETS = [
 PRIMARY = TARGETS[0]
 
 TOP_N = 8
+TOP_N_FULL = 40            # items_full cap (OpenTripMap only) - Day Planner's pool
 MIN_WIKIVOYAGE_SEE = 4     # below this, fall back to city-centre geosearch
 GEO_RADIUS_M = 5000
 OTM_RADIUS_M = 9000
@@ -191,16 +199,26 @@ def otm_items(lat, lon, key):
         s = str(r.get("rate", "0"))
         return int("".join(c for c in s if c.isdigit()) or 0) + (0.5 if "h" in s else 0)
 
-    seen, items = set(), []
+    # One request already returns up to 60 ranked results (fetched above) - keep
+    # the top TOP_N_FULL of them, with coordinates, as items_full (Day Planner's
+    # pool); items stays the existing name/kind-only top TOP_N for DetailPanel.
+    seen, full_items = set(), []
     for p in sorted(data, key=rate_val, reverse=True):
         name = (p.get("name") or "").strip()
         if not name or name.lower() in seen:
             continue
         seen.add(name.lower())
-        items.append({"name": name, "kind": label_from(p.get("kinds"))})
-        if len(items) >= TOP_N:
+        point = p.get("point") or {}
+        full_items.append({
+            "name": name, "kind": label_from(p.get("kinds")),
+            "lat": point.get("lat"), "lon": point.get("lon"),
+        })
+        if len(full_items) >= TOP_N_FULL:
             break
-    return {"source": "opentripmap", "items": items} if items else None
+    if not full_items:
+        return None
+    items = [{"name": i["name"], "kind": i["kind"]} for i in full_items[:TOP_N]]
+    return {"source": "opentripmap", "items": items, "items_full": full_items}
 
 
 # ---------------------------------------------------------------------------
@@ -522,24 +540,30 @@ def patch(cache=None):
             continue
         data = load_json(path)
         dests = data.get("destinations", {})
-        n_act, srcs = 0, {}
+        n_act, n_full, srcs = 0, 0, {}
         for did, d in dests.items():
             rec = cache.get(did)
             if rec and rec.get("items"):
                 d["activities"] = rec
                 n_act += 1
                 srcs[rec["source"]] = srcs.get(rec["source"], 0) + 1
+                if rec.get("items_full"):
+                    n_full += 1
             else:
                 d["activities"] = None
         data.setdefault("meta", {})["activities_model"] = {
-            "providers": srcs, "top_n": TOP_N,
+            "providers": srcs, "top_n": TOP_N, "top_n_full": TOP_N_FULL,
             "note": "OpenTripMap when OPENTRIPMAP_KEY set; "
-                    "else Wikivoyage See/Do + city-centre Wikipedia geosearch",
+                    "else Wikivoyage See/Do + city-centre Wikipedia geosearch. "
+                    "items_full (with coordinates, for Day Planner map pins) is "
+                    "OpenTripMap-only.",
             "coverage": f"{n_act}/{len(dests)}",
+            "items_full_coverage": f"{n_full}/{len(dests)}",
         }
-        data["meta"]["schema_version"] = max(10, data["meta"].get("schema_version", 0))
+        data["meta"]["schema_version"] = max(11, data["meta"].get("schema_version", 0))
         path.write_text(json.dumps(data, indent=1, ensure_ascii=False), encoding="utf-8")
-        print(f"  {path.name}: {n_act}/{len(dests)} have activities (sources: {srcs})")
+        print(f"  {path.name}: {n_act}/{len(dests)} have activities (sources: {srcs}); "
+              f"{n_full}/{len(dests)} have items_full (map pins)")
 
 
 def main():

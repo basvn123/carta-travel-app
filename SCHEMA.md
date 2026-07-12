@@ -1,4 +1,4 @@
-# app_data schema - v8
+# app_data schema - v11
 
 The pipeline and the React app share one contract. A trip is priced three ways,
 all from real data:
@@ -164,6 +164,13 @@ Eurostat PLI).
         "items": [                       // up to 8 real named attractions
           { "name": "Grote Markt", "kind": "Square" },
           { "name": "Groeninge Museum", "kind": "Museum", "link": "https://..." }
+        ],
+        "items_full": [                  // schema v11 - OpenTripMap-sourced dests ONLY;
+                                          // absent otherwise. Up to 40, WITH coordinates -
+                                          // Day Planner's pool for day-by-day assignment
+                                          // and map pins. Falls back to `items` (name-only,
+                                          // no coordinates) when this key is missing.
+          { "name": "Grote Markt", "kind": "Square", "lat": 51.208, "lon": 3.225 }
         ]
       }
     }

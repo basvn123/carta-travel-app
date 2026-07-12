@@ -449,7 +449,9 @@ function TravelApp() {
           onRequestAuth={() => setAuthModalOpen(true)}
         />
       )}
-      {activeTab === 'day' && <DayPlannerTab />}
+      {activeTab === 'day' && (
+        <DayPlannerTab data={data} user={user} authConfigured={authConfigured} />
+      )}
 
       <div onClick={(e) => e.stopPropagation()}>
         <BottomNav activeTab={activeTab} onChangeTab={setActiveTab} />
