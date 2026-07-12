@@ -6,10 +6,24 @@ import {
 import { GemRating, GemIcon } from './GemRating.jsx';
 import { kindsForDest } from './trip_kinds.js';
 
-export function DetailPanel({ destination, departDate, returnDate, choices, setChoices, priceMode = 'total', onClose, onOpenLifestyle, onSelect, data, isFavorite, onToggleFavorite }) {
+export function DetailPanel({ destination, departDate, returnDate, choices, setChoices, priceMode = 'total', onClose, onOpenLifestyle, onSelect, data, isFavorite, onToggleFavorite, onSaveTrip }) {
+  const [saveState, setSaveState] = React.useState('idle'); // idle | saving | saved
+
   if (!destination) {
     return <div className="panel" aria-hidden="true" />;
   }
+
+  const handleSaveTrip = async () => {
+    if (!onSaveTrip || saveState === 'saving') return;
+    setSaveState('saving');
+    try {
+      await onSaveTrip(destination);
+      setSaveState('saved');
+      setTimeout(() => setSaveState('idle'), 2000);
+    } catch {
+      setSaveState('idle');
+    }
+  };
 
   const breakdown = composeTrip(destination, departDate, returnDate, choices);
   const anchor = breakdown?.anchor_airport || destination.iata;
@@ -39,21 +53,38 @@ export function DetailPanel({ destination, departDate, returnDate, choices, setC
             ? <>GEM · {destination.iso2}</>
             : <>{destination.iata} · {destination.iso2}</>}
         </div>
-        {onToggleFavorite && (
-          <button
-            className={`panel-fav ${isFavorite ? 'on' : ''}`}
-            onClick={onToggleFavorite}
-            aria-label={isFavorite ? 'Remove from shortlist' : 'Add to shortlist'}
-            title={isFavorite ? 'Remove from shortlist' : 'Add to shortlist'}
-          >
-            <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"
-              fill={isFavorite ? 'currentColor' : 'none'}
-              stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round">
-              <polygon points="12 2 15.1 8.6 22 9.3 16.8 14 18.3 21 12 17.3 5.7 21 7.2 14 2 9.3 8.9 8.6" />
-            </svg>
-            <span>{isFavorite ? 'Shortlisted' : 'Shortlist'}</span>
-          </button>
-        )}
+        <div className="panel-action-row">
+          {onToggleFavorite && (
+            <button
+              className={`panel-fav ${isFavorite ? 'on' : ''}`}
+              onClick={onToggleFavorite}
+              aria-label={isFavorite ? 'Remove from shortlist' : 'Add to shortlist'}
+              title={isFavorite ? 'Remove from shortlist' : 'Add to shortlist'}
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"
+                fill={isFavorite ? 'currentColor' : 'none'}
+                stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round">
+                <polygon points="12 2 15.1 8.6 22 9.3 16.8 14 18.3 21 12 17.3 5.7 21 7.2 14 2 9.3 8.9 8.6" />
+              </svg>
+              <span>{isFavorite ? 'Shortlisted' : 'Shortlist'}</span>
+            </button>
+          )}
+          {onSaveTrip && (
+            <button
+              className={`panel-fav ${saveState === 'saved' ? 'on' : ''}`}
+              onClick={handleSaveTrip}
+              disabled={saveState === 'saving'}
+              aria-label="Save this trip to your account"
+              title="Save this trip to your account"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"
+                fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M19 21l-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
+              </svg>
+              <span>{saveState === 'saving' ? 'Saving…' : saveState === 'saved' ? 'Saved' : 'Save trip'}</span>
+            </button>
+          )}
+        </div>
         <h2 className="panel-city">{destination.city}</h2>
         <div className="panel-country">
           {destination.country}

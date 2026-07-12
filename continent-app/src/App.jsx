@@ -9,12 +9,26 @@ import Logo from './Logo.jsx';
 import { cheapestTotal, tripDaysBetween, DEFAULT_LIFESTYLE } from './runtime_pricing.js';
 import { matchesAnyKind } from './trip_kinds.js';
 import { loadInitialState, persistState } from './urlState.js';
+import { AuthProvider, useAuth } from './auth/AuthContext.jsx';
+import { AuthModal } from './auth/AuthModal.jsx';
+import { ResetPasswordScreen } from './auth/ResetPasswordScreen.jsx';
+import { AccountPanel } from './auth/AccountPanel.jsx';
+import { saveTrip, fetchUserSettings, saveUserSettings } from './auth/tripStorage.js';
 
 // Accent- and case-insensitive text key, so "malaga" matches "Málaga".
 const normalize = (s) =>
   (s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim();
 
 export default function App() {
+  return (
+    <AuthProvider>
+      <TravelApp />
+    </AuthProvider>
+  );
+}
+
+function TravelApp() {
+  const { configured: authConfigured, user, recoveryMode } = useAuth();
   // State carried in the URL / localStorage (shareable + survives reload).
   const [init] = useState(() => loadInitialState());
 
@@ -41,6 +55,15 @@ export default function App() {
   const [sortKey, setSortKey] = useState(init.sortKey ?? 'price');
   const [showFavOnly, setShowFavOnly] = useState(init.showFavOnly ?? false);
   const [compareOpen, setCompareOpen] = useState(false);
+
+  // Accounts: sign-in modal + account panel visibility.
+  const [authModalOpen, setAuthModalOpen] = useState(false);
+  const [accountOpen, setAccountOpen] = useState(false);
+  // A shared link (URL query present at load) always wins over a signed-in
+  // user's synced settings, so opening someone's link never gets silently
+  // overridden by your own saved preferences.
+  const [cameFromUrl] = useState(() => typeof window !== 'undefined' && !!window.location.search);
+  const settingsAppliedRef = useRef(false);
 
   const toggleFav = (id) => setFavorites((prev) => {
     const next = new Set(prev);
@@ -303,9 +326,61 @@ export default function App() {
       tripKinds, priceRange, priceBounds, selectedId, favorites, sortKey, showFavOnly,
       minBeauty, unescoOnly, topBeachOnly, topPick]);
 
+  // Pull the signed-in user's saved settings once, right after login (never
+  // when a shared link is already driving the view - see cameFromUrl above).
+  useEffect(() => {
+    if (!user || cameFromUrl || settingsAppliedRef.current) return;
+    settingsAppliedRef.current = true;
+    fetchUserSettings(user.id).then((settings) => {
+      if (!settings) return;
+      if (settings.choices) setChoices((prev) => ({ ...prev, ...settings.choices }));
+      if (settings.priceMode) setPriceMode(settings.priceMode);
+      if (settings.countryFilter) setCountryFilter(settings.countryFilter);
+      if (settings.tripKinds) setTripKinds(settings.tripKinds);
+      if (settings.minBeauty) setMinBeauty(settings.minBeauty);
+      if (settings.unescoOnly != null) setUnescoOnly(settings.unescoOnly);
+      if (settings.topBeachOnly != null) setTopBeachOnly(settings.topBeachOnly);
+      if (settings.sortKey) setSortKey(settings.sortKey);
+    }).catch(() => {});
+  }, [user, cameFromUrl]);
+
+  // Keep the signed-in user's settings synced (debounced) so they carry over
+  // to their next visit/device.
+  useEffect(() => {
+    if (!user) return;
+    const t = setTimeout(() => {
+      saveUserSettings(user.id, {
+        choices, priceMode, countryFilter, tripKinds, minBeauty, unescoOnly, topBeachOnly, sortKey,
+      }).catch(() => {});
+    }, 1200);
+    return () => clearTimeout(t);
+  }, [user, choices, priceMode, countryFilter, tripKinds, minBeauty, unescoOnly, topBeachOnly, sortKey]);
+
+  const handleSaveTrip = useCallback(async (destination) => {
+    if (!user) { setAuthModalOpen(true); throw new Error('Sign in to save trips'); }
+    await saveTrip(user.id, {
+      destinationId: selectedId,
+      city: destination.city,
+      country: destination.country,
+      departDate, returnDate, choices,
+    });
+  }, [user, selectedId, departDate, returnDate, choices]);
+
+  const handleLoadTrip = useCallback((trip) => {
+    setSelectedId(trip.destination_id);
+    if (trip.depart_date) setDepartDate(trip.depart_date);
+    if (trip.return_date) setReturnDate(trip.return_date);
+    if (trip.choices) setChoices((prev) => ({ ...prev, ...trip.choices }));
+    setAccountOpen(false);
+  }, []);
+
   const selectedDest = data && selectedId ? data.destinations[selectedId] : null;
   // Destination used for the lifestyle panel's live preview.
   const previewDest = selectedDest || (priced[0] && data.destinations[priced[0].id]) || null;
+
+  if (recoveryMode) {
+    return <ResetPasswordScreen />;
+  }
 
   if (error) {
     return (
@@ -366,6 +441,10 @@ export default function App() {
           setTopPick={setTopPick}
           lifestyleOpen={lifestyleOpen}
           onToggleLifestyle={() => setLifestyleOpen((v) => !v)}
+          authConfigured={authConfigured}
+          user={user}
+          onOpenAuth={() => setAuthModalOpen(true)}
+          onOpenAccount={() => setAccountOpen(true)}
         />
       </div>
 
@@ -459,6 +538,7 @@ export default function App() {
           data={data}
           isFavorite={selectedId ? favorites.has(selectedId) : false}
           onToggleFavorite={selectedId ? () => toggleFav(selectedId) : undefined}
+          onSaveTrip={authConfigured ? handleSaveTrip : undefined}
         />
       </div>
 
@@ -497,6 +577,15 @@ export default function App() {
             onSelect={(id) => { setCompareOpen(false); openDetail(id); }}
             onToggleFav={toggleFav}
           />
+        </div>
+      )}
+
+      {authConfigured && authModalOpen && (
+        <AuthModal onClose={() => setAuthModalOpen(false)} />
+      )}
+      {authConfigured && accountOpen && user && (
+        <div onClick={(e) => e.stopPropagation()}>
+          <AccountPanel onClose={() => setAccountOpen(false)} onLoadTrip={handleLoadTrip} />
         </div>
       )}
     </div>

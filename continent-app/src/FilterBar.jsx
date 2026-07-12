@@ -24,6 +24,7 @@ export function FilterBar({
   topBeachOnly, setTopBeachOnly,
   topPick, setTopPick,
   lifestyleOpen, onToggleLifestyle,
+  authConfigured, user, onOpenAuth, onOpenAccount,
 }) {
   const baggageOpts = data?.meta?.baggage_options || {};
   const eur = (n) => (n == null ? '-' : `€${Math.round(n).toLocaleString('en-GB')}`);
@@ -374,6 +375,21 @@ export function FilterBar({
         <button className="reset-filters-btn" onClick={resetAll}>
           Reset
         </button>
+      )}
+
+      {authConfigured && (
+        <div className="account-slot">
+          {user ? (
+            <button className="account-avatar-btn" onClick={onOpenAccount} title={user.email}>
+              <span className="account-avatar">{(user.email || '?')[0].toUpperCase()}</span>
+              <span className="account-avatar-label">Account</span>
+            </button>
+          ) : (
+            <button className="account-signin-btn" onClick={onOpenAuth}>
+              Sign in
+            </button>
+          )}
+        </div>
       )}
     </div>
   );

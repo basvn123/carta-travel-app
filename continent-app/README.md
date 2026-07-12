@@ -90,10 +90,17 @@ See `../SCHEMA.md` for the full `app_data.json` contract.
 When notebook 04 finishes, copy `app_data/app_data.json` over
 `public/app_data.json`. No code changes needed - both are schema v6.
 
+## Accounts
+
+Sign up, sign in, password reset, and saved trips/settings are backed by
+Supabase (`src/auth/`, `src/lib/supabaseClient.js`). Without
+`VITE_SUPABASE_URL` / `VITE_SUPABASE_ANON_KEY` set (see `.env.example`),
+the app runs guest-only and the account UI stays hidden. To enable it,
+create a free Supabase project, run `../supabase/schema.sql` in its SQL
+editor, and set the two env vars.
+
 ## What's not in this app
 
-- No auth or saved trips
-- No multi-destination comparison
 - No marker clustering (fine for ~45-450 destinations)
 - No live booking - `buildFlightLinks` opens Skyscanner
 - The Ryanair fare is what `ryanair-py` returns from Ryanair's price-calendar API.
