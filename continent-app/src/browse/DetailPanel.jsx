@@ -195,13 +195,13 @@ export function DetailPanel({ destination, departDate, returnDate, choices, setC
       )}
 
       {/* What to do here - shows for every destination, reachable or not. */}
-      <ExploreSection destination={destination} data={data} onSelect={onSelect} />
+      <ExploreSection destination={destination} data={data} onSelect={onSelect} countryInsights={countryInsights} />
     </div>
   );
 }
 
 // "Things to do" + a clean travel-guide link + the best side-trips nearby.
-function ExploreSection({ destination, data, onSelect }) {
+function ExploreSection({ destination, data, onSelect, countryInsights }) {
   const items = destination.activities?.items || [];
   const guide = buildGuideLink({ city: destination.city });
   const nearby = data ? nearbyTrips({ ...destination, id: destination.id }, data.destinations) : [];
