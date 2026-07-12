@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { INTERESTS } from './GuidedTripWizard.jsx';
 import { PACES } from './dayDraft.js';
+import { CheckIcon } from '../components/Icons.jsx';
 
 // Selectable "when does your day start" options, shared with the planner view.
 export const DAY_STARTS = [
-  { min: 8 * 60, label: '8 AM', hint: 'early bird' },
-  { min: 9 * 60, label: '9 AM', hint: 'classic' },
-  { min: 10 * 60, label: '10 AM', hint: 'slow morning' },
+  { min: 8 * 60, label: '8 AM', hint: 'early start' },
+  { min: 9 * 60, label: '9 AM', hint: 'standard' },
+  { min: 10 * 60, label: '10 AM', hint: 'late start' },
 ];
 
 /**
@@ -55,7 +56,7 @@ export function ShapeDayWizard({ city, numDays, initial, onSkip, onDraft }) {
           {step === 1 && (
             <>
               <h2 className="guide-title">What do you enjoy?</h2>
-              <p className="guide-sub">Pick any that apply - the draft leads with must-sees that match. Leave empty for a bit of everything.</p>
+              <p className="guide-sub">Select any that apply. Your picks rank each day's highlights; leave empty for a general mix.</p>
               <div className="guide-interest-grid">
                 {INTERESTS.map((it) => (
                   <button
@@ -64,8 +65,8 @@ export function ShapeDayWizard({ city, numDays, initial, onSkip, onDraft }) {
                     onClick={() => toggleInterest(it.key)}
                     aria-pressed={interests.has(it.key)}
                   >
-                    {interests.has(it.key) && <span className="guide-interest-check">✓</span>}
-                    <span className="guide-interest-icon">{it.icon}</span>
+                    {interests.has(it.key) && <span className="guide-interest-check"><CheckIcon size={11} /></span>}
+                    <span className="guide-interest-icon"><it.Icon size={20} /></span>
                     <span className="guide-interest-label">{it.label}</span>
                   </button>
                 ))}
@@ -75,8 +76,8 @@ export function ShapeDayWizard({ city, numDays, initial, onSkip, onDraft }) {
 
           {step === 2 && (
             <>
-              <h2 className="guide-title">How should your day feel?</h2>
-              <p className="guide-sub">Sets how many stops fit and when the schedule starts.</p>
+              <h2 className="guide-title">Set your pace</h2>
+              <p className="guide-sub">This determines how many stops fit into each day and when the schedule starts.</p>
 
               <div className="shape-field-title">Pace</div>
               <div className="shape-pace-row">
@@ -118,7 +119,7 @@ export function ShapeDayWizard({ city, numDays, initial, onSkip, onDraft }) {
 
         <div className="guide-foot">
           <div className="guide-foot-summary">
-            <button className="shape-skip" onClick={onSkip}>Skip - I'll plan by hand</button>
+            <button className="shape-skip" onClick={onSkip}>Skip and plan manually</button>
           </div>
           <div className="guide-foot-actions">
             {step === 2 && <button className="guide-back" onClick={() => setStep(1)}>Back</button>}
@@ -126,7 +127,7 @@ export function ShapeDayWizard({ city, numDays, initial, onSkip, onDraft }) {
               <button className="guide-next" onClick={() => setStep(2)}>Next</button>
             ) : (
               <button className="guide-next" onClick={finish}>
-                Draft my {numDays > 1 ? 'days' : 'day'} ✨
+                Draft my {numDays > 1 ? 'days' : 'day'}
               </button>
             )}
           </div>

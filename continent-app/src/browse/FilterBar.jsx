@@ -179,7 +179,6 @@ export function FilterBar({
         <div className="filter-row">
           {/* Dates */}
           <div className="filter-group group-dates">
-            <span className="group-label">Dates</span>
             <div className="group-fields">
               <div className="filter row-date-fields">
                 <label className="filter-label">Depart</label>
@@ -223,7 +222,6 @@ export function FilterBar({
 
           {/* Party */}
           <div className="filter-group group-party">
-            <span className="group-label">Party</span>
             <div className="group-fields">
               <div className="filter filter-people">
                 <label className="filter-label">People</label>
@@ -266,7 +264,6 @@ export function FilterBar({
 
           {/* Shortcuts */}
           <div className="filter-group group-shortcuts">
-            <span className="group-label">Shortcuts</span>
             <div className="group-fields">
               {/* Top picks: quick "best of" shortcuts (cheapest / most beautiful) */}
               <div className="filter filter-toppicks">
@@ -288,7 +285,6 @@ export function FilterBar({
         <div className="filter-row">
           {/* Pricing: how the trip is costed + the budget window */}
           <div className="filter-group group-pricing">
-            <span className="group-label">Pricing</span>
             <div className="group-fields">
               <div className="filter filter-show">
                 <label className="filter-label">Show</label>
@@ -357,7 +353,6 @@ export function FilterBar({
 
           {/* Place */}
           <div className="filter-group group-place">
-            <span className="group-label">Place</span>
             <div className="group-fields">
               <div className="filter filter-country">
                 <label className="filter-label">Country</label>
@@ -380,7 +375,6 @@ export function FilterBar({
 
           {/* Quality: the beauty score + independent heritage / coast toggles */}
           <div className="filter-group group-quality">
-            <span className="group-label">Quality</span>
             <div className="group-fields">
               {/* Beauty index: clean minimum-gems button list over the 1-5 gem score
                   (evidence-based: UNESCO heritage + Blue Flag beaches + scenery). */}
@@ -437,7 +431,6 @@ export function FilterBar({
 
           {/* Style */}
           <div className="filter-group group-style">
-            <span className="group-label">Style</span>
             <div className="group-fields">
               {/* Trip type - a multi-select dropdown, mirroring the Country filter.
                   A compact trigger keeps the bar to two tidy rows; the choices live

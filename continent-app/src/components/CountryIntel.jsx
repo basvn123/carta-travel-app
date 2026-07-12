@@ -88,12 +88,12 @@ export function CountryIntel({ rec, country, defaultOpen = false, compact = fals
             <div className="cintel-lines">
               {rec.rail?.operator && (
                 <IntelLine icon={TrainIcon}>
-                  <LinkOut href={rec.rail.url}>{rec.rail.operator}</LinkOut>{rec.rail.note ? ` — ${rec.rail.note}` : ''}
+                  <LinkOut href={rec.rail.url}>{rec.rail.operator}</LinkOut>{rec.rail.note ? `, ${rec.rail.note}` : ''}
                 </IntelLine>
               )}
               {rec.bus?.operators?.length > 0 && (
                 <IntelLine icon={BusIcon}>
-                  <LinkOut href={rec.bus.url}>{rec.bus.operators.join(', ')}</LinkOut>{rec.bus.note ? ` — ${rec.bus.note}` : ''}
+                  <LinkOut href={rec.bus.url}>{rec.bus.operators.join(', ')}</LinkOut>{rec.bus.note ? `, ${rec.bus.note}` : ''}
                 </IntelLine>
               )}
             </div>

@@ -6,6 +6,7 @@ import { DetailPanel } from './browse/DetailPanel.jsx';
 import { LifestylePanel } from './browse/LifestylePanel.jsx';
 import { ResultsList } from './browse/ResultsList.jsx';
 import { ComparePanel } from './browse/ComparePanel.jsx';
+import { InfoIcon } from './components/Icons.jsx';
 import Logo from './components/Logo.jsx';
 
 // Code-split the map (maplibre-gl is by far the heaviest dependency) and the
@@ -160,6 +161,10 @@ function TravelApp() {
     localStorage.setItem(MAP_GUIDE_KEY, '1');
     setMapGuideDismissed(true);
   };
+  // The tip is collapsed to a small pill by default so it never crowds the map;
+  // tapping the pill expands the text in a popover that overlays the map rather
+  // than pushing it down.
+  const [mapGuideOpen, setMapGuideOpen] = useState(false);
 
   // Let the user collapse the destinations list to give the map the full width.
   // On phones (<=768px) it starts collapsed so the map opens as big as possible;
@@ -356,23 +361,33 @@ function TravelApp() {
           )}
         </AppHeader>
 
-        {/* Guidance strip between the top bar and the map: inside .top-bar so
-            the ResizeObserver folds its height into --filter-h and the map,
-            list and panels below all shift down to stay flush beneath it. */}
+        {/* Guidance tip: a small floating pill anchored to the bottom-right of
+            the header. It's absolutely positioned, so its height is NOT folded
+            into --filter-h - the map fills the space right under the header and
+            the expanded text overlays the map instead of pushing it down. */}
         {activeTab === 'map' && !mapGuideDismissed && (
-          <div className="map-guide" role="note">
-            <span className="map-guide-text">
-              <strong>Start here:</strong> pick your travel dates and group size
-              above, then click a destination on the map or in the list to see
-              what the whole trip costs.
-            </span>
+          <div className={`map-guide ${mapGuideOpen ? 'open' : ''}`} role="note">
             <button
-              className="map-guide-close"
-              onClick={dismissMapGuide}
-              aria-label="Dismiss this tip"
+              className="map-guide-toggle"
+              onClick={() => setMapGuideOpen((v) => !v)}
+              aria-expanded={mapGuideOpen}
             >
-              ×
+              <InfoIcon size={13} />
+              <span>Start here</span>
+              <span className="map-guide-caret" aria-hidden="true">▾</span>
             </button>
+            {mapGuideOpen && (
+              <div className="map-guide-pop">
+                <p className="map-guide-text">
+                  Pick your travel dates and group size above, then click a
+                  destination on the map or in the list to see what the whole
+                  trip costs.
+                </p>
+                <button className="map-guide-dismiss" onClick={dismissMapGuide}>
+                  Got it
+                </button>
+              </div>
+            )}
           </div>
         )}
       </div>

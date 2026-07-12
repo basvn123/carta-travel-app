@@ -256,49 +256,78 @@ input, select {
   .header-home-icon { width: 19px; height: 19px; }
 }
 
-/* ───────── Guidance strip: sits inside .top-bar, below the header row and
-   above the map, telling first-time visitors what to do on this page. Its
-   height folds into --filter-h automatically (the ResizeObserver measures the
-   whole .top-bar), so the map and panels stay flush beneath it. ───────── */
+/* ───────── Guidance tip: a compact, collapsible pill for first-time visitors.
+   It floats at the bottom-right of the header (position: absolute inside
+   .top-bar), so - unlike the old full-width strip - its height is NOT folded
+   into --filter-h: the map fills the space right under the header and the
+   expanded text overlays the map instead of shifting everything down. ─────── */
 
 .map-guide {
+  position: absolute;
+  top: 100%;
+  right: 16px;
+  margin-top: 8px;
+  z-index: 24;
   display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 8px 18px;
-  background: var(--accent-bg);
-  border-bottom: 1px solid var(--rule);
-  font-size: 12.5px;
-  line-height: 1.45;
-  color: var(--ink-soft);
+  flex-direction: column;
+  align-items: flex-end;
 }
-.map-guide-text strong {
+.map-guide-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 11px;
+  border-radius: 999px;
+  background: var(--accent-bg);
+  border: 1px solid var(--rule);
+  box-shadow: 0 2px 8px rgba(26, 26, 26, 0.10);
   font-family: var(--mono);
-  font-size: 10.5px;
+  font-size: 10px;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: var(--accent);
-  margin-right: 4px;
+  cursor: pointer;
+  transition: background .15s, box-shadow .15s;
 }
-.map-guide-close {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  margin-left: auto;
-  width: 26px;
-  height: 26px;
-  border-radius: 50%;
-  font-size: 17px;
-  line-height: 1;
-  color: var(--ink-mute);
-  transition: color .15s, background .15s;
+.map-guide-toggle:hover { background: #f6ede0; box-shadow: 0 3px 12px rgba(26, 26, 26, 0.14); }
+.map-guide-caret {
+  font-size: 9px;
+  transition: transform .18s;
 }
-.map-guide-close:hover { color: var(--ink); background: rgba(26, 26, 26, 0.08); }
+.map-guide.open .map-guide-caret { transform: rotate(180deg); }
+
+.map-guide-pop {
+  margin-top: 6px;
+  width: 280px;
+  max-width: min(280px, calc(100vw - 32px));
+  padding: 13px 15px 12px;
+  background: var(--paper, #fbf8f1);
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  box-shadow: 0 10px 28px rgba(26, 26, 26, 0.16);
+}
+.map-guide-text {
+  margin: 0;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--ink-soft);
+}
+.map-guide-dismiss {
+  margin-top: 11px;
+  padding: 5px 12px;
+  border-radius: 8px;
+  background: var(--ink);
+  color: var(--paper, #fbf8f1);
+  font-size: 11.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity .15s;
+}
+.map-guide-dismiss:hover { opacity: 0.85; }
 
 @media (max-width: 768px) {
-  .map-guide { padding: 7px 12px; font-size: 12px; gap: 8px; }
+  .map-guide { right: 10px; margin-top: 6px; }
 }
 
 /* ───────── Bottom nav: the Map / Trip planner / Day planner switch on MOBILE
@@ -1776,8 +1805,40 @@ input, select {
   background: var(--accent-bg);
 }
 
-/* "Shape & draft" chip. */
+/* "Auto-plan" chip. */
 .day-chip-shape { border-style: dashed; }
+
+/* Inline SVG icon alignment: icons that sit inside text lines (block titles,
+   mode labels, chips, badges) hang from the baseline without this. */
+.trip-block-title svg,
+.day-chip svg,
+.day-assigned-name svg,
+.trip-leg-main svg,
+.trip-leg-mode svg,
+.trip-transport-seg svg,
+.guide-car-advice-head svg,
+.guide-car-note svg {
+  vertical-align: -2px;
+}
+.day-tier-badge,
+.guide-reco-mark {
+  display: inline-flex;
+  align-items: center;
+}
+.guide-reco-mark {
+  color: var(--accent);
+  margin-left: 4px;
+  vertical-align: -1px;
+}
+.guide-interest-icon,
+.guide-transport-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink-soft);
+}
+.guide-interest.on .guide-interest-icon,
+.guide-transport.on .guide-transport-icon { color: var(--accent); }
 
 /* --- Shape-your-day wizard (reuses the guided-wizard shell) --- */
 .shape-modal { max-width: 520px; }
@@ -1926,22 +1987,12 @@ input, select {
 .filter-group {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  gap: 7px;
+  justify-content: center;
   min-width: 0;
-  padding: 8px 14px 10px;
+  padding: 6px 13px 7px;
   background: rgba(255, 255, 255, 0.45);
   border: 1px solid rgba(196, 190, 169, 0.55);
-  border-radius: 12px;
-}
-.group-label {
-  font-family: var(--mono);
-  font-size: 9px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.16em;
-  color: var(--ink-mute);
-  padding-left: 1px;
+  border-radius: 11px;
 }
 .group-fields {
   display: flex;
@@ -4690,7 +4741,6 @@ input, select {
      captions collapse so each `.filter` falls straight into the grid above. */
   .filter-bar.mobile-open .filter-group,
   .filter-bar.mobile-open .group-fields { display: contents; }
-  .filter-bar.mobile-open .group-label { display: none; }
   .filter-bar.mobile-open .filter-divider { display: none; }
   .filter-bar.mobile-open .filter-country,
   .filter-bar.mobile-open .filter-triptype,

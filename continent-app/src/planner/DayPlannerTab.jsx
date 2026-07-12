@@ -12,6 +12,7 @@ import { useCountryInsights } from '../hooks/useCountryInsights.js';
 import { addDays, todayISO, fmtDate as fmtDateFull } from '../lib/dates.js';
 import { draftDays, tieredActivities, optimizeOrder } from './dayDraft.js';
 import { ShapeDayWizard, DAY_STARTS } from './ShapeDayWizard.jsx';
+import { SparkIcon, StarIcon, InfoIcon, MountainIcon, DiningIcon } from '../components/Icons.jsx';
 
 const fmtDate = (iso) => (iso ? fmtDateFull(iso).slice(0, 6) : '');
 
@@ -596,8 +597,8 @@ export function DayPlannerTab({ data, user, authConfigured }) {
                     {s.label} · {s.hint}
                   </button>
                 ))}
-                <button className="day-chip day-chip-shape" onClick={() => setShowShape(true)} title="Answer a couple of questions and let Carta draft your days">
-                  ✨ Shape & draft
+                <button className="day-chip day-chip-shape" onClick={() => setShowShape(true)} title="Answer two quick questions and let Carta draft your days">
+                  <SparkIcon size={11} /> Auto-plan
                 </button>
               </div>
             </div>
@@ -609,15 +610,15 @@ export function DayPlannerTab({ data, user, authConfigured }) {
                 Today's plan{assignedItems.length > 0 ? ` (${assignedItems.length})` : ''}
               </div>
               {assignedItems.length === 0 ? (
-                <p className="trip-note">Tap an activity below to add it to this day, and the route auto-orders itself to avoid zigzagging.</p>
+                <p className="trip-note">Tap a place below to add it to this day. The route reorders automatically to minimise backtracking.</p>
               ) : (
                 <>
                   <p className="trip-note day-timeline-note">
-                    Suggested order and times, from a {minutesToClock(dayStartMin)} start.
+                    Suggested schedule from a {minutesToClock(dayStartMin)} start.
                     {legsAlign
-                      ? ' Walking times follow real streets (OpenStreetMap routing).'
+                      ? ' Walking times use OpenStreetMap street routing.'
                       : ' Walking times are straight-line estimates.'}
-                    {' '}Not real opening hours or bookings.
+                    {' '}Opening hours and bookings are not included.
                   </p>
                   <div className="day-timeline">
                     {timeline.map((t, i) => (
@@ -627,8 +628,8 @@ export function DayPlannerTab({ data, user, authConfigured }) {
                             <div className="day-timeline-time">{minutesToClock(t.arrive)}</div>
                             <div className="day-assigned-row">
                               <div className="day-assigned-body">
-                                <span className="day-assigned-name">🍴 Lunch break</span>
-                                <span className="day-assigned-kind">about an hour, wherever looks good</span>
+                                <span className="day-assigned-name"><DiningIcon size={12} /> Lunch break</span>
+                                <span className="day-assigned-kind">around one hour</span>
                               </div>
                             </div>
                           </div>
@@ -690,7 +691,7 @@ export function DayPlannerTab({ data, user, authConfigured }) {
                   {tiers.must.length > 0 && (
                     <ActivitySection
                       title="Must see"
-                      badge="★"
+                      badge={<StarIcon size={11} />}
                       entries={tiers.must}
                       variant="must"
                       assignedIdx={dayAssignedIdx}
@@ -699,7 +700,7 @@ export function DayPlannerTab({ data, user, authConfigured }) {
                   )}
                   {tiers.worth.length > 0 && (
                     <ActivitySection
-                      title="Worth your time"
+                      title="Recommended"
                       entries={tiers.worth}
                       assignedIdx={dayAssignedIdx}
                       onToggle={toggleActivity}
@@ -707,8 +708,8 @@ export function DayPlannerTab({ data, user, authConfigured }) {
                   )}
                   {tiers.active.length > 0 && (
                     <ActivitySection
-                      title="Get active"
-                      badge="⛰"
+                      title="Active & outdoors"
+                      badge={<MountainIcon size={11} />}
                       entries={tiers.active}
                       variant="act"
                       assignedIdx={dayAssignedIdx}
@@ -718,7 +719,7 @@ export function DayPlannerTab({ data, user, authConfigured }) {
                   {tiers.more.length > 0 && (
                     showMore ? (
                       <ActivitySection
-                        title="More to explore"
+                        title="More places"
                         entries={tiers.more}
                         assignedIdx={dayAssignedIdx}
                         onToggle={toggleActivity}
@@ -799,7 +800,7 @@ function ActivityRow({ item, variant, added, onToggle }) {
           rel="noreferrer"
           title={`Read about ${item.name} on Wikipedia`}
           onClick={(e) => e.stopPropagation()}
-        >ⓘ</a>
+        ><InfoIcon size={14} /></a>
       )}
     </div>
   );

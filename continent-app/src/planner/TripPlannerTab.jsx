@@ -464,12 +464,16 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth }) {
                 <div className="trip-block">
                   <div className="trip-block-title">Getting between stops</div>
                   <div className="trip-transport-seg">
-                    {[['auto', '✨ Carta picks'], ['public', '🚆 Train & bus'], ['car', '🚗 Car']].map(([k, lbl]) => (
+                    {[
+                      ['auto', SparkIcon, 'Carta picks'],
+                      ['public', TrainIcon, 'Train & bus'],
+                      ['car', CarIcon, 'Car'],
+                    ].map(([k, I, lbl]) => (
                       <button
                         key={k}
                         className={tp.transportPref === k ? 'on' : ''}
                         onClick={() => tp.setTransportPref(k)}
-                      >{lbl}</button>
+                      ><I size={12} /> {lbl}</button>
                     ))}
                   </div>
                   {tp.transportPref === 'car' && tp.carRental && (
@@ -485,7 +489,7 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth }) {
               {tp.stopDetails.length > 0 && (tp.cheaperOrder
                 || tp.cheaperDates.candidates.some((c) => c.saving_vs_current == null || c.saving_vs_current > 5)) && (
                 <div className="trip-block trip-savings">
-                  <div className="trip-block-title">💡 Take it cheaper</div>
+                  <div className="trip-block-title"><BulbIcon size={13} /> Take it cheaper</div>
                   {tp.cheaperOrder && (
                     <div className="trip-saving-row">
                       <span>Visiting your stops in a smarter order shortens the route - save ~{eur(tp.cheaperOrder.saving_eur)} on ground travel.</span>
