@@ -4201,7 +4201,10 @@
     "kind": "Bridge",
     "lat": 43.266197204589844,
     "lon": -2.928044557571411,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/7/70/Nervion.jpg",
+    "desc": "Footbridge over the Nervion River in Bilbao",
+    "wiki": "https://en.wikipedia.org/wiki/Zubizuri"
    },
    {
     "name": "Puppy",
@@ -4586,7 +4589,10 @@
     "kind": "Square",
     "lat": 38.86851119995117,
     "lon": 1.3347656726837158,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/IB64_The_Cove_of_Sa_Caleta%2C_28_May_2012.JPG/500px-IB64_The_Cove_of_Sa_Caleta%2C_28_May_2012.JPG",
+    "desc": "Beach in Ibiza, Spain",
+    "wiki": "https://en.wikipedia.org/wiki/Sa_Caleta"
    },
    {
     "name": "Sa Caleta Coastal Battery",
@@ -7095,7 +7101,10 @@
     "lat": 41.084999084472656,
     "lon": 1.1579099893569946,
     "rate": 3,
-    "active": true
+    "active": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/PortAventura_Tutuki_Splash.jpg/500px-PortAventura_Tutuki_Splash.jpg",
+    "desc": "Water ride in Spain",
+    "wiki": "https://en.wikipedia.org/wiki/Tutuki_Splash"
    },
    {
     "name": "Ferrocarril Tour",
@@ -14490,7 +14499,10 @@
     "lon": 12.390557289123535,
     "rate": 2,
     "heritage": true,
-    "active": true
+    "active": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Porto_di_Lido-San_Nicol%C3%B2.jpg/500px-Porto_di_Lido-San_Nicol%C3%B2.jpg",
+    "desc": "Enclosed bay in which the city of Venice is situated",
+    "wiki": "https://en.wikipedia.org/wiki/Venetian_Lagoon"
    },
    {
     "name": "Penisola del Cavallino: biotopi litoranei",
@@ -14924,7 +14936,10 @@
     "lon": 12.390557289123535,
     "rate": 2,
     "heritage": true,
-    "active": true
+    "active": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Porto_di_Lido-San_Nicol%C3%B2.jpg/500px-Porto_di_Lido-San_Nicol%C3%B2.jpg",
+    "desc": "Enclosed bay in which the city of Venice is situated",
+    "wiki": "https://en.wikipedia.org/wiki/Venetian_Lagoon"
    },
    {
     "name": "Penisola del Cavallino: biotopi litoranei",
@@ -22435,7 +22450,10 @@
     "kind": "Square",
     "lat": 45.8567008972168,
     "lon": 13.400300025939941,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/27/Italian_Front_1915-1917.jpg/500px-Italian_Front_1915-1917.jpg",
+    "desc": "Battle in 1915 on the Italian Front during the First World War",
+    "wiki": "https://en.wikipedia.org/wiki/Third_Battle_of_the_Isonzo"
    },
    {
     "name": "Riserva naturale dei Laghi di Doberdò e Pietrarossa",
@@ -23739,7 +23757,10 @@
     "lat": 38.7219352722168,
     "lon": -9.156646728515625,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/17/Aqueduto_das_%C3%81guas_Livres2.JPG/500px-Aqueduto_das_%C3%81guas_Livres2.JPG",
+    "desc": "Historic aqueduct in Lisbon, Portugal",
+    "wiki": "https://en.wikipedia.org/wiki/%C3%81guas_Livres_Aqueduct"
    },
    {
     "name": "Tivoli",
@@ -24141,7 +24162,10 @@
     "lat": 41.192874908447266,
     "lon": -8.707783699035645,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Swimmingpool_on_the_Beach_at_Le%C3%A7a_da_Palmeira_by_Christian_G%C3%A4nshirt.JPG/500px-Swimmingpool_on_the_Beach_at_Le%C3%A7a_da_Palmeira_by_Christian_G%C3%A4nshirt.JPG",
+    "desc": "Public swimming pool in Porto, Portugal",
+    "wiki": "https://en.wikipedia.org/wiki/Tidal_pools_of_Le%C3%A7a_de_Palmeira"
    },
    {
     "name": "Igreja Paroquial de Matosinhos",
@@ -27196,7 +27220,10 @@
     "lat": 35.31100082397461,
     "lon": 25.25,
     "rate": 2,
-    "active": true
+    "active": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Watercity_panorama.jpg/500px-Watercity_panorama.jpg",
+    "desc": "Water park in Greece",
+    "wiki": "https://en.wikipedia.org/wiki/Watercity"
    },
    {
     "name": "Argonautes",
@@ -28194,7 +28221,10 @@
     "kind": "Nature reserve",
     "lat": 37.78329849243164,
     "lon": 20.899999618530273,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Marathonisi.jpg/500px-Marathonisi.jpg",
+    "desc": "National park in Greece",
+    "wiki": "https://en.wikipedia.org/wiki/National_Marine_Park_of_Zakynthos"
    },
    {
     "name": "Βυζαντινό Μουσείο Ζακύνθου",
@@ -29403,7 +29433,9 @@
     "kind": "Museum",
     "lat": 38.177635192871094,
     "lon": 20.488182067871094,
-    "rate": 3
+    "rate": 3,
+    "desc": "Museum in Argostoli, Kefalonia, Greece",
+    "wiki": "https://en.wikipedia.org/wiki/Archaeological_Museum_of_Argostoli"
    },
    {
     "name": "1st Middle (or Junior High) School of Argostoli",
@@ -30017,7 +30049,10 @@
     "lat": 37.695735931396484,
     "lon": 26.929338455200195,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Eupalinian_aqueduct.JPG/500px-Eupalinian_aqueduct.JPG",
+    "desc": "UNESCO World Heritage Site in Greece",
+    "wiki": "https://en.wikipedia.org/wiki/Tunnel_of_Eupalinos"
    },
    {
     "name": "Pythagorio",
@@ -30305,7 +30340,10 @@
     "kind": "Square",
     "lat": 39.110496520996094,
     "lon": 26.557083129882812,
-    "rate": 2
+    "rate": 2,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/Mytilini_-_Tsarsi_Hamam01.jpg/500px-Mytilini_-_Tsarsi_Hamam01.jpg",
+    "desc": "Hamam in Mytilene, Greece",
+    "wiki": "https://en.wikipedia.org/wiki/Charshi_Hamam,_Mytilene"
    },
    {
     "name": "Kochilia",
@@ -33719,7 +33757,10 @@
     "lat": 48.78093719482422,
     "lon": 9.194478034973145,
     "rate": 2,
-    "active": true
+    "active": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Wais_1955.2%2C_146.jpg/500px-Wais_1955.2%2C_146.jpg",
+    "desc": "Hill in Baden-Württemberg, Germany",
+    "wiki": "https://en.wikipedia.org/wiki/Uhlandsh%C3%B6he"
    },
    {
     "name": "Gänsheide",
@@ -37268,7 +37309,10 @@
     "lon": 2.3432741165161133,
     "rate": 3,
     "heritage": true,
-    "active": true
+    "active": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e2/CLUNY-Maquette_thermes_2.JPG/500px-CLUNY-Maquette_thermes_2.JPG",
+    "desc": "Parisian ruins of Roman baths",
+    "wiki": "https://en.wikipedia.org/wiki/Thermes_de_Cluny"
    },
    {
     "name": "Canal Saint-Martin",
@@ -37739,7 +37783,10 @@
     "lon": 2.3432741165161133,
     "rate": 3,
     "heritage": true,
-    "active": true
+    "active": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e2/CLUNY-Maquette_thermes_2.JPG/500px-CLUNY-Maquette_thermes_2.JPG",
+    "desc": "Parisian ruins of Roman baths",
+    "wiki": "https://en.wikipedia.org/wiki/Thermes_de_Cluny"
    },
    {
     "name": "Canal Saint-Martin",
@@ -38210,7 +38257,10 @@
     "lon": 2.3432741165161133,
     "rate": 3,
     "heritage": true,
-    "active": true
+    "active": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e2/CLUNY-Maquette_thermes_2.JPG/500px-CLUNY-Maquette_thermes_2.JPG",
+    "desc": "Parisian ruins of Roman baths",
+    "wiki": "https://en.wikipedia.org/wiki/Thermes_de_Cluny"
    },
    {
     "name": "Canal Saint-Martin",
@@ -40040,7 +40090,10 @@
     "lat": 44.83760452270508,
     "lon": -0.5766127109527588,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Bordeaux_-_Tour_Pey-Berland.jpg/500px-Bordeaux_-_Tour_Pey-Berland.jpg",
+    "desc": "Fifteenth century bell tower in Bordeaux next to Cathédrale Saint-André",
+    "wiki": "https://en.wikipedia.org/wiki/Tour_Pey-Berland"
    },
    {
     "name": "Église Notre-Dame de Bordeaux",
@@ -41213,7 +41266,10 @@
     "lat": 43.5466423034668,
     "lon": 3.9225497245788574,
     "rate": 1,
-    "active": true
+    "active": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fc/Sud_Etang_Mejean_15072006.JPG/500px-Sud_Etang_Mejean_15072006.JPG",
+    "desc": "Lagoon in Hérault, southern France",
+    "wiki": "https://en.wikipedia.org/wiki/%C3%89tang_du_M%C3%A9jean"
    },
    {
     "name": "Altissimo",
@@ -42180,7 +42236,9 @@
     "kind": "Square",
     "lat": 43.22760009765625,
     "lon": 2.319999933242798,
-    "rate": 3
+    "rate": 3,
+    "desc": "Botanical garden in Languedoc-Roussillon, France",
+    "wiki": "https://en.wikipedia.org/wiki/%C3%89panchoir_de_Foucaud"
    },
    {
     "name": "setge de Carcassona",
@@ -43417,7 +43475,9 @@
     "lat": 46.162498474121094,
     "lon": -1.1536099910736084,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Ch%C3%A2teau_Vauclair_%28La_Rochelle%29.png/500px-Ch%C3%A2teau_Vauclair_%28La_Rochelle%29.png",
+    "wiki": "https://en.wikipedia.org/wiki/Vauclair_Castle"
    },
    {
     "name": "Hôtel Leclerc, La Rochelle",
@@ -44332,7 +44392,9 @@
     "lat": 48.11349868774414,
     "lon": -1.7063000202178955,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "desc": "French higher education institute",
+    "wiki": "https://en.wikipedia.org/wiki/%C3%89cole_nationale_sup%C3%A9rieure_agronomique_de_Rennes"
    },
    {
     "name": "Couvent des Calvairiennes de Saint-Cyr",
@@ -46081,7 +46143,10 @@
     "lat": 41.464881896972656,
     "lon": 9.058016777038574,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Pianottoli-Caldarello_tour_g%C3%A9noise_de_Caldarello.jpg/500px-Pianottoli-Caldarello_tour_g%C3%A9noise_de_Caldarello.jpg",
+    "desc": "Genoese coastal defence tower in Corsica",
+    "wiki": "https://en.wikipedia.org/wiki/Torra_di_Caldarellu"
    },
    {
     "name": "Chapelle San-Quilico de Montilati",
@@ -46307,7 +46372,10 @@
     "lat": 42.49330139160156,
     "lon": 9.439720153808594,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/37/Vescovato_clocher_%C3%A9glise_San_Martinu.jpg/500px-Vescovato_clocher_%C3%A9glise_San_Martinu.jpg",
+    "desc": "Catholic church in Vescovato, Corsica",
+    "wiki": "https://en.wikipedia.org/wiki/Vescovato_Cathedral"
    },
    {
     "name": "Réserve naturelle de l'étang de Biguglia",
@@ -46331,7 +46399,10 @@
     "lat": 42.599998474121094,
     "lon": 9.48330020904541,
     "rate": 2,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Etang_de_Biguglia1.JPG/500px-Etang_de_Biguglia1.JPG",
+    "desc": "Lagoon in Corsica, France",
+    "wiki": "https://en.wikipedia.org/wiki/%C3%89tang_de_Biguglia"
    },
    {
     "name": "Église Saint-Michel de Lucciana",
@@ -46579,7 +46650,10 @@
     "lat": 41.904273986816406,
     "lon": 8.799083709716797,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fc/Torra_di_Capiteddu.JPG/500px-Torra_di_Capiteddu.JPG",
+    "desc": "Genoese coastal defence tower in Corsica",
+    "wiki": "https://en.wikipedia.org/wiki/Tour_de_Capitello"
    },
    {
     "name": "Fesch Museum",
@@ -46959,7 +47033,9 @@
     "lat": 42.50836181640625,
     "lon": 8.855793952941895,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "desc": "Church in Haute-Corse, France",
+    "wiki": "https://en.wikipedia.org/wiki/%C3%89glise_Saint-Blaise_de_Calenzana"
    },
    {
     "name": "Église Santa-Restituta de Calenzana",
@@ -48041,7 +48117,9 @@
     "lat": 53.347198486328125,
     "lon": -6.22760009765625,
     "rate": 2,
-    "active": true
+    "active": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a3/A_Visit_to_Dublin_Docklands_-_The_O2.jpg/500px-A_Visit_to_Dublin_Docklands_-_The_O2.jpg",
+    "wiki": "https://en.wikipedia.org/wiki/Wheel_of_Dublin"
    },
    {
     "name": "Sean MacDermott Street Swimming Pool",
@@ -48188,7 +48266,10 @@
     "kind": "Square",
     "lat": 51.893001556396484,
     "lon": -8.508000373840332,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/79/Two_Working_Men_in_Cork%2C_Ireland_%2835395471984%29.jpg/500px-Two_Working_Men_in_Cork%2C_Ireland_%2835395471984%29.jpg",
+    "desc": "Public art in Cork, Ireland",
+    "wiki": "https://en.wikipedia.org/wiki/Two_Working_Men"
    },
    {
     "name": "Saint Fin Barre's Cathedral",
@@ -48688,7 +48769,10 @@
     "lat": 51.50656509399414,
     "lon": -0.12763723731040955,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Trafalgar_Theatre_facade.jpg/500px-Trafalgar_Theatre_facade.jpg",
+    "desc": "West End theatre in London",
+    "wiki": "https://en.wikipedia.org/wiki/Trafalgar_Theatre"
    },
    {
     "name": "Statue of Henry Havelock",
@@ -48750,7 +48834,10 @@
     "lat": 51.50803756713867,
     "lon": -0.12804943323135376,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Trafalgar_Square%2C_London_2_-_Jun_2009.jpg/500px-Trafalgar_Square%2C_London_2_-_Jun_2009.jpg",
+    "desc": "Public square in London, England",
+    "wiki": "https://en.wikipedia.org/wiki/Trafalgar_Square"
    },
    {
     "name": "Whitehall House",
@@ -49182,7 +49269,10 @@
     "lat": 51.50656509399414,
     "lon": -0.12763723731040955,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Trafalgar_Theatre_facade.jpg/500px-Trafalgar_Theatre_facade.jpg",
+    "desc": "West End theatre in London",
+    "wiki": "https://en.wikipedia.org/wiki/Trafalgar_Theatre"
    },
    {
     "name": "Statue of Henry Havelock",
@@ -49244,7 +49334,10 @@
     "lat": 51.50803756713867,
     "lon": -0.12804943323135376,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Trafalgar_Square%2C_London_2_-_Jun_2009.jpg/500px-Trafalgar_Square%2C_London_2_-_Jun_2009.jpg",
+    "desc": "Public square in London, England",
+    "wiki": "https://en.wikipedia.org/wiki/Trafalgar_Square"
    },
    {
     "name": "Whitehall House",
@@ -49676,7 +49769,10 @@
     "lat": 51.50656509399414,
     "lon": -0.12763723731040955,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Trafalgar_Theatre_facade.jpg/500px-Trafalgar_Theatre_facade.jpg",
+    "desc": "West End theatre in London",
+    "wiki": "https://en.wikipedia.org/wiki/Trafalgar_Theatre"
    },
    {
     "name": "Statue of Henry Havelock",
@@ -49738,7 +49834,10 @@
     "lat": 51.50803756713867,
     "lon": -0.12804943323135376,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Trafalgar_Square%2C_London_2_-_Jun_2009.jpg/500px-Trafalgar_Square%2C_London_2_-_Jun_2009.jpg",
+    "desc": "Public square in London, England",
+    "wiki": "https://en.wikipedia.org/wiki/Trafalgar_Square"
    },
    {
     "name": "Whitehall House",
@@ -50170,7 +50269,10 @@
     "lat": 51.50656509399414,
     "lon": -0.12763723731040955,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Trafalgar_Theatre_facade.jpg/500px-Trafalgar_Theatre_facade.jpg",
+    "desc": "West End theatre in London",
+    "wiki": "https://en.wikipedia.org/wiki/Trafalgar_Theatre"
    },
    {
     "name": "Statue of Henry Havelock",
@@ -50232,7 +50334,10 @@
     "lat": 51.50803756713867,
     "lon": -0.12804943323135376,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Trafalgar_Square%2C_London_2_-_Jun_2009.jpg/500px-Trafalgar_Square%2C_London_2_-_Jun_2009.jpg",
+    "desc": "Public square in London, England",
+    "wiki": "https://en.wikipedia.org/wiki/Trafalgar_Square"
    },
    {
     "name": "Whitehall House",
@@ -51247,7 +51352,10 @@
     "lat": 55.95277786254883,
     "lon": -3.1861112117767334,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/Trinity_College_Kirk_c.1647.JPG/500px-Trinity_College_Kirk_c.1647.JPG",
+    "desc": "Royal collegiate church in Edinburgh, Scotland",
+    "wiki": "https://en.wikipedia.org/wiki/Trinity_College_Kirk"
    },
    {
     "name": "Political Martyrs' Monument",
@@ -51282,7 +51390,10 @@
     "lat": 55.95155334472656,
     "lon": -3.1916356086730957,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8d/Waverley_Bridge_from_the_Scott_Monument_-_geograph.org.uk_-_1905303.jpg/500px-Waverley_Bridge_from_the_Scott_Monument_-_geograph.org.uk_-_1905303.jpg",
+    "desc": "Road bridge in Edinburgh, Scotland",
+    "wiki": "https://en.wikipedia.org/wiki/Waverley_Bridge"
    },
    {
     "name": "Melville's Monument",
@@ -51755,7 +51866,10 @@
     "lat": 55.897335052490234,
     "lon": -4.408693790435791,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Clydebank_Titan_Crane_-_geograph.org.uk_-_1069892.jpg/500px-Clydebank_Titan_Crane_-_geograph.org.uk_-_1069892.jpg",
+    "desc": "Cantilever crane at Clydebank, West Dunbartonshire, Scotland",
+    "wiki": "https://en.wikipedia.org/wiki/Titan_Clydebank"
    },
    {
     "name": "St Matthew's Church",
@@ -52448,7 +52562,9 @@
     "lat": 52.45828628540039,
     "lon": -1.851305603981018,
     "rate": 2,
-    "active": true
+    "active": true,
+    "desc": "Area of Birmingham, England",
+    "wiki": "https://en.wikipedia.org/wiki/Tyseley"
    },
    {
     "name": "Birmingham Wheels Adventure Park",
@@ -53069,7 +53185,10 @@
     "lat": 53.86722183227539,
     "lon": -1.6833332777023315,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Yeadon_Town_Hall_29_June_2018_02.jpg/500px-Yeadon_Town_Hall_29_June_2018_02.jpg",
+    "desc": "Municipal building in Yeadon, West Yorkshire, England",
+    "wiki": "https://en.wikipedia.org/wiki/Yeadon_Town_Hall"
    },
    {
     "name": "St Oswald's Church",
@@ -53105,7 +53224,10 @@
     "kind": "Tower",
     "lat": 53.8547248840332,
     "lon": -1.6119859218597412,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/TinshillBT1.jpg/500px-TinshillBT1.jpg",
+    "desc": "Telecommunication tower in Leeds, England",
+    "wiki": "https://en.wikipedia.org/wiki/Tinshill_BT_Tower"
    },
    {
     "name": "Dean Grange Farmhouse And Attached Barn",
@@ -53533,7 +53655,10 @@
     "lat": 55.032100677490234,
     "lon": -1.689079999923706,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b0/Woolsington_Hall_-_geograph.org.uk_-_93332.jpg/500px-Woolsington_Hall_-_geograph.org.uk_-_93332.jpg",
+    "desc": "Listed building in Newcastle, England",
+    "wiki": "https://en.wikipedia.org/wiki/Woolsington_Hall"
    },
    {
     "name": "Sacred Heart Church, North Gosforth",
@@ -53921,7 +54046,9 @@
     "lat": 54.99626922607422,
     "lon": -1.706825852394104,
     "rate": 1,
-    "active": true
+    "active": true,
+    "desc": "Ward in England",
+    "wiki": "https://en.wikipedia.org/wiki/Westerhope"
    },
    {
     "name": "Northumbria Wildlife Trust St Nicholas Park Nature Reserve",
@@ -55458,7 +55585,10 @@
     "lat": 50.731998443603516,
     "lon": -1.7899999618530273,
     "rate": 2,
-    "active": true
+    "active": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/a/ab/Tucktonia.jpg",
+    "desc": "Defunct amusement park in Dorset, England",
+    "wiki": "https://en.wikipedia.org/wiki/Tucktonia"
    },
    {
     "name": "Bournemouth Beach",
@@ -56898,7 +57028,10 @@
     "lat": 52.639739990234375,
     "lon": 1.2648634910583496,
     "rate": 2,
-    "active": true
+    "active": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Wensum_Local_Nature_Reserve.JPG/500px-Wensum_Local_Nature_Reserve.JPG",
+    "desc": "Local Nature Reserve in Norwich, England",
+    "wiki": "https://en.wikipedia.org/wiki/Wensum_Local_Nature_Reserve"
    },
    {
     "name": "Norwich Canoe Club",
@@ -57082,7 +57215,10 @@
     "kind": "Square",
     "lat": 52.22999954223633,
     "lon": 21.010799407958984,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Warsaw_Uprising.png/500px-Warsaw_Uprising.png",
+    "desc": "Major World War II operation by the Polish resistance Home Army",
+    "wiki": "https://en.wikipedia.org/wiki/Warsaw_Uprising"
    },
    {
     "name": "Atlantic",
@@ -57534,7 +57670,10 @@
     "kind": "Square",
     "lat": 52.22999954223633,
     "lon": 21.010799407958984,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Warsaw_Uprising.png/500px-Warsaw_Uprising.png",
+    "desc": "Major World War II operation by the Polish resistance Home Army",
+    "wiki": "https://en.wikipedia.org/wiki/Warsaw_Uprising"
    },
    {
     "name": "Atlantic",
@@ -61864,7 +62003,10 @@
     "lat": 53.43649673461914,
     "lon": 14.544771194458008,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/USBudynekRektoratu.jpg/500px-USBudynekRektoratu.jpg",
+    "desc": "Public university in Szczecin, Poland",
+    "wiki": "https://en.wikipedia.org/wiki/University_of_Szczecin"
    },
    {
     "name": "Saint John the Baptist church in Szczecin",
@@ -63081,7 +63223,10 @@
     "lat": 49.17975616455078,
     "lon": 16.73842430114746,
     "rate": 3,
-    "active": true
+    "active": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/03/Zuran.jpg/500px-Zuran.jpg",
+    "desc": "Hill in the Czech Republic",
+    "wiki": "https://en.wikipedia.org/wiki/%C5%BDur%C3%A1%C5%88"
    },
    {
     "name": "Stránská skála",
@@ -63244,7 +63389,10 @@
     "kind": "Square",
     "lat": 48.18576431274414,
     "lon": 17.18756675720215,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f8/Zlatepiesky.jpg/500px-Zlatepiesky.jpg",
+    "desc": "Lake in Slovakia",
+    "wiki": "https://en.wikipedia.org/wiki/Zlat%C3%A9_Piesky"
    },
    {
     "name": "Church Mena Panny Márie",
@@ -63468,7 +63616,9 @@
     "lat": 48.23666763305664,
     "lon": 17.233333587646484,
     "rate": 3,
-    "active": true
+    "active": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/National_Nature_reserve_Sur_in_winter.jpg/500px-National_Nature_reserve_Sur_in_winter.jpg",
+    "wiki": "https://en.wikipedia.org/wiki/%C5%A0%C3%BAr"
    },
    {
     "name": "Hrabiny",
@@ -64173,7 +64323,10 @@
     "kind": "Square",
     "lat": 47.4959716796875,
     "lon": 19.049570083618164,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/Bp-vigado.jpg/500px-Bp-vigado.jpg",
+    "desc": "Concert hall in Pest, Budapest, Hungary",
+    "wiki": "https://en.wikipedia.org/wiki/Vigad%C3%B3_of_Pest"
    },
    {
     "name": "Károly Kamermayer",
@@ -64187,7 +64340,10 @@
     "kind": "Square",
     "lat": 47.49644088745117,
     "lon": 19.050682067871094,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c6/Voeroesmartyter-budapest.jpg/500px-Voeroesmartyter-budapest.jpg",
+    "desc": "Square in Budapest, Hungary",
+    "wiki": "https://en.wikipedia.org/wiki/V%C3%B6r%C3%B6smarty_t%C3%A9r"
    },
    {
     "name": "Little Princess",
@@ -67189,7 +67345,10 @@
     "lat": 47.4114990234375,
     "lon": 8.544150352478027,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/03/Z%C3%BCrich_-_Oerlikon_-_Bahnhof_IMG_3941_ShiftN.jpg/500px-Z%C3%BCrich_-_Oerlikon_-_Bahnhof_IMG_3941_ShiftN.jpg",
+    "desc": "Railway station in Zürich, Switzerland",
+    "wiki": "https://en.wikipedia.org/wiki/Z%C3%BCrich_Oerlikon_railway_station"
    },
    {
     "name": "Gustav-Ammann-Park",
@@ -67266,7 +67425,10 @@
     "kind": "Square",
     "lat": 47.415687561035156,
     "lon": 8.541069030761719,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9d/Z%C3%BCrich_-_Oerlikon_-_Nord_2010-07-29_19-59-26.JPG/500px-Z%C3%BCrich_-_Oerlikon_-_Nord_2010-07-29_19-59-26.JPG",
+    "desc": "Public park in New Oerlikon in Zurich",
+    "wiki": "https://en.wikipedia.org/wiki/Wahlenpark"
    },
    {
     "name": "Aussichtsturm",
@@ -69054,7 +69216,10 @@
     "kind": "Museum",
     "lat": 51.43446350097656,
     "lon": 5.481831073760986,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/a/a1/Eindhovenvanabbe06.jpg",
+    "desc": "Art museum in Eindhoven, Netherlands",
+    "wiki": "https://en.wikipedia.org/wiki/Van_Abbemuseum"
    },
    {
     "name": "Anne Frankplantsoen",
@@ -70215,7 +70380,9 @@
     "lat": 53.127601623535156,
     "lon": 6.694983959197998,
     "rate": 3,
-    "active": true
+    "active": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/df/Zuidlaardermeer3_RA.JPG/500px-Zuidlaardermeer3_RA.JPG",
+    "wiki": "https://en.wikipedia.org/wiki/Zuidlaardermeer"
    },
    {
     "name": "Piccardthofplas",
@@ -70799,7 +70966,10 @@
     "lat": 55.67770004272461,
     "lon": 12.567359924316406,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Vester_Voldgade_19_%28Copenhagen%29_02.jpg/500px-Vester_Voldgade_19_%28Copenhagen%29_02.jpg",
+    "desc": "Building in Copenhagen",
+    "wiki": "https://en.wikipedia.org/wiki/Vester_Voldgade_19"
    },
    {
     "name": "Cirkusbygningen",
@@ -70913,7 +71083,10 @@
     "lat": 55.67955017089844,
     "lon": 12.568949699401855,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Valkendorf_Collegium.jpg/500px-Valkendorf_Collegium.jpg",
+    "desc": "Dormitory in Copenhagen, Denmark",
+    "wiki": "https://en.wikipedia.org/wiki/Valkendorfs_Kollegium"
    },
    {
     "name": "Rådhusstræde 3",
@@ -70957,7 +71130,10 @@
     "kind": "Square",
     "lat": 55.676300048828125,
     "lon": 12.569100379943848,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/Vesterport_Station_%2815911841895%29.jpg/500px-Vesterport_Station_%2815911841895%29.jpg",
+    "desc": "Railway station in Copenhagen, Denmark",
+    "wiki": "https://en.wikipedia.org/wiki/Vesterport_railway_station"
    },
    {
     "name": "Landsoldaten med den lille hornblæser",
@@ -73641,7 +73817,10 @@
     "lat": 57.69990539550781,
     "lon": 11.990628242492676,
     "rate": 3,
-    "active": true
+    "active": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ee/Valhallabadet_September_2012_02.jpg/500px-Valhallabadet_September_2012_02.jpg",
+    "desc": "Swimming venue in Gothenburg, Sweden",
+    "wiki": "https://en.wikipedia.org/wiki/Valhalla_Swimming_Hall"
    },
    {
     "name": "Lisebergshjulet",
@@ -73787,7 +73966,10 @@
     "lat": 55.59402847290039,
     "lon": 13.045211791992188,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/Kapell_p%C3%A5_%C3%96stra_Kyrkog%C3%A5rden_Malm%C3%B6.jpg/500px-Kapell_p%C3%A5_%C3%96stra_Kyrkog%C3%A5rden_Malm%C3%B6.jpg",
+    "desc": "Neighbourhood in Skåne County, Skåne, Sweden",
+    "wiki": "https://en.wikipedia.org/wiki/%C3%96stra_kyrkog%C3%A5rden,_Malm%C3%B6"
    },
    {
     "name": "Sjöbergska palatset",
@@ -75134,7 +75316,10 @@
     "lat": 60.29402160644531,
     "lon": 5.15866231918335,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/50/Tyss%C3%B8ybrua.JPG/500px-Tyss%C3%B8ybrua.JPG",
+    "desc": "Island in Vestland, Norway",
+    "wiki": "https://en.wikipedia.org/wiki/Tyss%C3%B8yna"
    },
    {
     "name": "Siljustøl",
@@ -75297,7 +75482,10 @@
     "kind": "Church",
     "lat": 60.28260040283203,
     "lon": 5.252999782562256,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/Ytrebygda_kirke.jpg/500px-Ytrebygda_kirke.jpg",
+    "desc": "Church in Vestland, Norway",
+    "wiki": "https://en.wikipedia.org/wiki/Ytrebygda_Church"
    },
    {
     "name": "Богоявленская церковь",
@@ -75583,7 +75771,10 @@
     "lat": 63.429386138916016,
     "lon": 10.391478538513184,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Trondelag_Teater.JPG/500px-Trondelag_Teater.JPG",
+    "desc": "Theatre in Trondheim, Norway",
+    "wiki": "https://en.wikipedia.org/wiki/Tr%C3%B8ndelag_Teater"
    },
    {
     "name": "Hornemannsgården",
@@ -75607,7 +75798,10 @@
     "lat": 63.428096771240234,
     "lon": 10.394641876220703,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/81/Trondheim_Katedralskole.jpg/500px-Trondheim_Katedralskole.jpg",
+    "desc": "School",
+    "wiki": "https://en.wikipedia.org/wiki/Trondheim_Cathedral_School"
    },
    {
     "name": "Tordenskjoldparken",
@@ -75623,7 +75817,10 @@
     "lat": 63.43016815185547,
     "lon": 10.398146629333496,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Trondheim_-_V%C3%A5r_Frue_church.jpg/500px-Trondheim_-_V%C3%A5r_Frue_church.jpg",
+    "desc": "Church in Trøndelag, Norway",
+    "wiki": "https://en.wikipedia.org/wiki/V%C3%A5r_Frue_Church"
    },
    {
     "name": "Nidaros Cathedral",
@@ -76557,7 +76754,10 @@
     "lat": 69.65229797363281,
     "lon": 18.973491668701172,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/Troms%C3%B8sund_bridge.jpg/500px-Troms%C3%B8sund_bridge.jpg",
+    "desc": "Road bridge in Tromsø Municipality in Troms county, Norway",
+    "wiki": "https://en.wikipedia.org/wiki/Troms%C3%B8_Bridge"
    },
    {
     "name": "Tromsø Cathedral",
@@ -76565,7 +76765,10 @@
     "lat": 69.64875030517578,
     "lon": 18.956819534301758,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/NOR-2016-Troms%C3%B8-Troms%C3%B8_Cathedral.jpg/500px-NOR-2016-Troms%C3%B8-Troms%C3%B8_Cathedral.jpg",
+    "desc": "Church in Troms, Norway",
+    "wiki": "https://en.wikipedia.org/wiki/Troms%C3%B8_Cathedral"
    },
    {
     "name": "Tromsdalen kirke",
@@ -77016,7 +77219,10 @@
     "lat": 60.17386245727539,
     "lon": 24.9371337890625,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0d/VR_warehouses_1930s.jpg/500px-VR_warehouses_1930s.jpg",
+    "desc": "Logistics complex in central Helsinki",
+    "wiki": "https://en.wikipedia.org/wiki/VR_warehouses"
    },
    {
     "name": "Eduskuntatalo",
@@ -77314,7 +77520,10 @@
     "lat": 60.187416076660156,
     "lon": 24.93899917602539,
     "rate": 3,
-    "active": true
+    "active": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/Vonkaputous_Linnanm%C3%A4ki_Helsinki.JPG/500px-Vonkaputous_Linnanm%C3%A4ki_Helsinki.JPG",
+    "desc": "Water roller coaster at Linnanmäki in Helsinki, Finland",
+    "wiki": "https://en.wikipedia.org/wiki/Vonkaputous"
    },
    {
     "name": "Tulireki",
@@ -77322,7 +77531,10 @@
     "lat": 60.18783950805664,
     "lon": 24.938512802124023,
     "rate": 3,
-    "active": true
+    "active": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/96/Tulireki_Linnanm%C3%A4ki_Helsinki.JPG/500px-Tulireki_Linnanm%C3%A4ki_Helsinki.JPG",
+    "desc": "Roller coaster in Linnanmäki, Helsinki, Finland",
+    "wiki": "https://en.wikipedia.org/wiki/Tulireki"
    },
    {
     "name": "Rinkeli",
@@ -77658,7 +77870,10 @@
     "lat": 60.4522819519043,
     "lon": 22.266006469726562,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/The_Orthodox_Church_of_Saint_Alexandra_in_Turku_03.jpg/500px-The_Orthodox_Church_of_Saint_Alexandra_in_Turku_03.jpg",
+    "desc": "Church in Turku, Finland",
+    "wiki": "https://en.wikipedia.org/wiki/Turku_Orthodox_Church"
    },
    {
     "name": "Åbo Svenska Teater",
@@ -77674,7 +77889,10 @@
     "lat": 60.45109939575195,
     "lon": 22.271699905395508,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e2/Turun_kaupunginkirjaston_p%C3%A4%C3%A4rakennus.jpg/500px-Turun_kaupunginkirjaston_p%C3%A4%C3%A4rakennus.jpg",
+    "desc": "Municipal library service in Turku, Finland",
+    "wiki": "https://en.wikipedia.org/wiki/Turku_City_Library"
    },
    {
     "name": "Turun synagoga",
@@ -77752,7 +77970,10 @@
     "kind": "Museum",
     "lat": 60.4540901184082,
     "lon": 22.261850357055664,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/View_from_Turku_Cathedral_tower.jpg/500px-View_from_Turku_Cathedral_tower.jpg",
+    "desc": "City in southwest Finland",
+    "wiki": "https://en.wikipedia.org/wiki/Turku"
    },
    {
     "name": "Puolalanpuisto",
@@ -78612,7 +78833,10 @@
     "kind": "Nature reserve",
     "lat": 64.13863372802734,
     "lon": -21.943876266479492,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/Reykjavikurtjorn_holminn.jpg/500px-Reykjavikurtjorn_holminn.jpg",
+    "desc": "Protected moorland in Reykjavík, Iceland",
+    "wiki": "https://en.wikipedia.org/wiki/Vatnsm%C3%BDrin_Nature_Reserve"
    },
    {
     "name": "Leifur Ericson",
@@ -78636,7 +78860,10 @@
     "kind": "Museum",
     "lat": 64.15319061279297,
     "lon": -21.948881149291992,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/56/Reykjav%C3%ADk_Maritime_Museum%2C_2020.jpg/500px-Reykjav%C3%ADk_Maritime_Museum%2C_2020.jpg",
+    "desc": "Maritime museum in Reykjavík, Iceland",
+    "wiki": "https://en.wikipedia.org/wiki/Reykjav%C3%ADk_Maritime_Museum"
    },
    {
     "name": "Hallgrímskirkja",
@@ -79798,7 +80025,10 @@
     "kind": "Square",
     "lat": 56.02517318725586,
     "lon": 21.082170486450195,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/19/La_lumturo_de_%C5%A0ventoji.jpg/500px-La_lumturo_de_%C5%A0ventoji.jpg",
+    "desc": "Lighthouse",
+    "wiki": "https://en.wikipedia.org/wiki/%C5%A0ventoji_Lighthouse"
    },
    {
     "name": "Orthodox church in Palanga",
@@ -80580,7 +80810,10 @@
     "lat": 59.43734359741211,
     "lon": 24.74520492553711,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Tallinn_vanalinna_asum.png/500px-Tallinn_vanalinna_asum.png",
+    "desc": "Subdistrict of Tallinn, Estonia",
+    "wiki": "https://en.wikipedia.org/wiki/Vanalinn"
    },
    {
     "name": "Town Hall",
@@ -82035,7 +82268,9 @@
     "kind": "Museum",
     "lat": 45.781585693359375,
     "lon": 21.2678279876709,
-    "rate": 2
+    "rate": 2,
+    "desc": "Zoo in Romania",
+    "wiki": "https://en.wikipedia.org/wiki/Timi%C8%99oara_Zoological_Garden"
    },
    {
     "name": "Arena AquaSport",
@@ -82130,7 +82365,10 @@
     "lat": 47.165435791015625,
     "lon": 27.59233856201172,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/Ia%C8%99i_Pogrom_Monument_1.jpg/500px-Ia%C8%99i_Pogrom_Monument_1.jpg",
+    "desc": "Monument in Iaşi",
+    "wiki": "https://en.wikipedia.org/wiki/Victims_of_Ia%C8%99i_Pogrom_Monument"
    },
    {
     "name": "Great Synagogue",
@@ -84754,7 +84992,10 @@
     "lat": 43.2012939453125,
     "lon": 27.922346115112305,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/61/Aquarium_Varna%2C_Bulgaria.JPG/500px-Aquarium_Varna%2C_Bulgaria.JPG",
+    "desc": "Aquarium in Varna, Bulgaria",
+    "wiki": "https://en.wikipedia.org/wiki/Varna_Aquarium"
    },
    {
     "name": "Vladislav Varnenchik museum",
@@ -84775,7 +85016,10 @@
     "kind": "Square",
     "lat": 43.21305465698242,
     "lon": 27.864444732666016,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Or_de_Varna_-_N%C3%A9cropole.jpg/500px-Or_de_Varna_-_N%C3%A9cropole.jpg",
+    "desc": "Pre-historic burial site in Bulgaria",
+    "wiki": "https://en.wikipedia.org/wiki/Varna_Necropolis"
    },
    {
     "name": "Battle of Varna",
@@ -84827,7 +85071,10 @@
     "kind": "Museum",
     "lat": 43.20760726928711,
     "lon": 27.91450309753418,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/VarnaRoman.JPG/500px-VarnaRoman.JPG",
+    "desc": "Museum in Bulgaria",
+    "wiki": "https://en.wikipedia.org/wiki/Varna_Archaeological_Museum"
    },
    {
     "name": "Revival museum",
@@ -86687,7 +86934,10 @@
     "kind": "Square",
     "lat": 45.1986083984375,
     "lon": 14.658651351928711,
-    "rate": 2
+    "rate": 2,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/64/Kralje%C5%A1ak_slona_8.JPG/500px-Kralje%C5%A1ak_slona_8.JPG",
+    "desc": "Cave in Croatia with remnants of prehistoric animals",
+    "wiki": "https://en.wikipedia.org/wiki/Vrtare_Male"
    },
    {
     "name": "Krivonjin",
@@ -86897,7 +87147,10 @@
     "lat": 46.05111312866211,
     "lon": 14.506214141845703,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/Le_triple_pont_%28Ljubljana%29_%289380933958%29.jpg/500px-Le_triple_pont_%28Ljubljana%29_%289380933958%29.jpg",
+    "desc": "Bridge in Ljubljana, Slovenia",
+    "wiki": "https://en.wikipedia.org/wiki/Triple_Bridge"
    },
    {
     "name": "Tromostovje",
@@ -86905,7 +87158,10 @@
     "lat": 46.0511474609375,
     "lon": 14.50638484954834,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/Le_triple_pont_%28Ljubljana%29_%289380933958%29.jpg/500px-Le_triple_pont_%28Ljubljana%29_%289380933958%29.jpg",
+    "desc": "Bridge in Ljubljana, Slovenia",
+    "wiki": "https://en.wikipedia.org/wiki/Triple_Bridge"
    },
    {
     "name": "Maketa Ljubljane",
@@ -88002,7 +88258,10 @@
     "lat": 43.85533905029297,
     "lon": 18.42087745666504,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d6/Sarajevo_Cobanija-Mosque.jpg/500px-Sarajevo_Cobanija-Mosque.jpg",
+    "desc": "Mosque in Sarajevo, Bosnia and Herzegovina",
+    "wiki": "https://en.wikipedia.org/wiki/%C4%8Cobanija_Mosque"
    },
    {
     "name": "Salom’s Palace",
@@ -88202,7 +88461,10 @@
     "lat": 43.871829986572266,
     "lon": 18.40951919555664,
     "rate": 3,
-    "active": true
+    "active": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Sarajevo_Olympic_Hall_2.jpg/500px-Sarajevo_Olympic_Hall_2.jpg",
+    "desc": "Indoor arena in Sarajevo, Bosnia and Herzegovina",
+    "wiki": "https://en.wikipedia.org/wiki/Juan_Antonio_Samaranch_Olympic_Hall"
    },
    {
     "name": "Kazani",
@@ -88234,7 +88496,10 @@
     "lat": 43.83916473388672,
     "lon": 18.45030403137207,
     "rate": 3,
-    "active": true
+    "active": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Isto%C4%8Dno_Sarajevo%2C_pohled_na_Trebevi%C4%87.jpg/500px-Isto%C4%8Dno_Sarajevo%2C_pohled_na_Trebevi%C4%87.jpg",
+    "desc": "Mountain near Sarajevo",
+    "wiki": "https://en.wikipedia.org/wiki/Trebevi%C4%87"
    },
    {
     "name": "Jaffa klizalište (Park Hastahana)",
@@ -88579,7 +88844,10 @@
     "lat": 44.841453552246094,
     "lon": 20.411001205444336,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f8/Restaurirani_amblem_ZG.png/500px-Restaurirani_amblem_ZG.png",
+    "desc": "Comprehensive high school in Zemun, City of Belgrade, Serbia",
+    "wiki": "https://en.wikipedia.org/wiki/Zemun_Gymnasium"
    },
    {
     "name": "Crkva Rodjenja Presvete Bogorodice",
@@ -89026,7 +89294,10 @@
     "kind": "Peak",
     "lat": 43.365413665771484,
     "lon": 21.942779541015625,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/Nadja_Celic_Cegar_7.jpg/500px-Nadja_Celic_Cegar_7.jpg",
+    "desc": "Moument in Kamenica, Serbia",
+    "wiki": "https://en.wikipedia.org/wiki/%C4%8Cegar"
    },
    {
     "name": "Kamenica Monastery",
@@ -89244,7 +89515,10 @@
     "kind": "Peak",
     "lat": 42.399166107177734,
     "lon": 18.818435668945312,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/34/%C5%A0tirovnik%2C_Montenegro%2C_September_2022_07.jpg/500px-%C5%A0tirovnik%2C_Montenegro%2C_September_2022_07.jpg",
+    "desc": "Peak on Mount Lovćen",
+    "wiki": "https://en.wikipedia.org/wiki/%C5%A0tirovnik"
    },
    {
     "name": "Manastir Svetog Arhangela Mihaila",
@@ -90467,7 +90741,10 @@
     "lat": 41.96527862548828,
     "lon": 21.39444351196289,
     "rate": 3,
-    "active": true
+    "active": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/Millennium_Cross_Vodno_2025_3.jpg/500px-Millennium_Cross_Vodno_2025_3.jpg",
+    "desc": "Mountain in North Macedonia",
+    "wiki": "https://en.wikipedia.org/wiki/Vodno"
    },
    {
     "name": "Orashec",
@@ -90546,7 +90823,10 @@
     "lat": 41.20640182495117,
     "lon": 20.7549991607666,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Trebenishta_mask_Grave_1.JPG/500px-Trebenishta_mask_Grave_1.JPG",
+    "desc": "Archaeological site in North Macedonia",
+    "wiki": "https://en.wikipedia.org/wiki/Trebeni%C5%A1ta"
    },
    {
     "name": "St. Erasmus Cave Church",
@@ -91909,7 +92189,10 @@
     "lat": 35.8427848815918,
     "lon": 14.567398071289062,
     "rate": 3,
-    "active": true
+    "active": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/Malta_-_Marsaxlokk_-_Triq_Xrobb_l-Ghagin_-_Xrobb_l-Ghagin_-_Temple_01_ies.jpg/500px-Malta_-_Marsaxlokk_-_Triq_Xrobb_l-Ghagin_-_Xrobb_l-Ghagin_-_Temple_01_ies.jpg",
+    "desc": "Megalithic temple ruins in Malta",
+    "wiki": "https://en.wikipedia.org/wiki/Xrobb_l-G%C4%A7a%C4%A1in_Temple"
    },
    {
     "name": "Fond Ghadir Beach",
@@ -92284,7 +92567,10 @@
     "kind": "Peak",
     "lat": 62.078712463378906,
     "lon": -7.291072845458984,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/S%C3%B8rv%C3%A1gur_on_V%C3%A1gar_Island%2C_Faroe_Islands%2C_December_2010.JPG/500px-S%C3%B8rv%C3%A1gur_on_V%C3%A1gar_Island%2C_Faroe_Islands%2C_December_2010.JPG",
+    "desc": "Mountain overlooking the village of Sørvágur on the Faroe Islands",
+    "wiki": "https://en.wikipedia.org/wiki/V%C3%B8r%C3%B0ufelli"
    },
    {
     "name": "Bøsdalafossur",
@@ -94065,7 +94351,10 @@
     "lat": 46.92849349975586,
     "lon": 7.4821648597717285,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/19/Muri_Villa_Mettlen_2.jpg/500px-Muri_Villa_Mettlen_2.jpg",
+    "desc": "Country estate in Muri bei Bern, Switzerland",
+    "wiki": "https://en.wikipedia.org/wiki/Villa_Mettlen"
    },
    {
     "name": "Blumenhof",
@@ -95243,7 +95532,10 @@
     "lat": 62.503170013427734,
     "lon": 6.130202293395996,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/Valder%C3%B8y_kirke_fra_RA.jpg/500px-Valder%C3%B8y_kirke_fra_RA.jpg",
+    "desc": "Church in Møre og Romsdal, Norway",
+    "wiki": "https://en.wikipedia.org/wiki/Valder%C3%B8y_Church"
    },
    {
     "name": "Lepsøyrevet fyr",
@@ -97060,7 +97352,10 @@
     "lat": 51.222686767578125,
     "lon": 4.39924955368042,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Het_Vleeshuis.jpg/500px-Het_Vleeshuis.jpg",
+    "desc": "Museum and former guildhall in Antwerp, Belgium",
+    "wiki": "https://en.wikipedia.org/wiki/Vleeshuis"
    },
    {
     "name": "Poppentheater De Poesje",
@@ -99352,7 +99647,10 @@
     "kind": "Museum",
     "lat": 52.47505187988281,
     "lon": 4.817975997924805,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Zaanstad_Zaanse_Schans_22.jpg/500px-Zaanstad_Zaanse_Schans_22.jpg",
+    "desc": "Neighbourhood of Zaandam in Zaanstad, North Holland, Netherlands",
+    "wiki": "https://en.wikipedia.org/wiki/Zaanse_Schans"
    },
    {
     "name": "Het Zwarte Kalf",
@@ -99366,7 +99664,10 @@
     "kind": "Museum",
     "lat": 52.4735221862793,
     "lon": 4.822378158569336,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6a/Zaans_Museum_-_Eingang.jpg/500px-Zaans_Museum_-_Eingang.jpg",
+    "desc": "Industrial heritage museum in Zaandam, Netherlands",
+    "wiki": "https://en.wikipedia.org/wiki/Zaans_Museum"
    },
    {
     "name": "Rijksbeschermd gezicht Zaandijk",
@@ -99589,7 +99890,10 @@
     "lat": 52.516666412353516,
     "lon": 4.833333492279053,
     "rate": 2,
-    "active": true
+    "active": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/76/Wormer_Jisperveld.jpg/500px-Wormer_Jisperveld.jpg",
+    "desc": "Natural area in the Netherlands",
+    "wiki": "https://en.wikipedia.org/wiki/Wormer-_en_Jisperveld"
    },
    {
     "name": "Twiske",
@@ -102839,7 +103143,10 @@
     "lat": 48.761741638183594,
     "lon": 8.236635208129883,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/19/Baden-Baden_10-2015_img41_Pump_house.jpg/500px-Baden-Baden_10-2015_img41_Pump_house.jpg",
+    "desc": "Spa building in Baden-Baden, Germany",
+    "wiki": "https://en.wikipedia.org/wiki/Trinkhalle_(Baden-Baden)"
    },
    {
     "name": "Staatliche Kunsthalle",
@@ -103195,7 +103502,10 @@
     "lat": 48.730369567871094,
     "lon": 8.20139217376709,
     "rate": 3,
-    "active": true
+    "active": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/33/Yburg_von_Fremersberg.jpg/500px-Yburg_von_Fremersberg.jpg",
+    "desc": "Mountain in Germany",
+    "wiki": "https://en.wikipedia.org/wiki/Yberg"
    },
    {
     "name": "Geroldsauer Wasserfall",
@@ -103724,7 +104034,10 @@
     "lat": 48.81082534790039,
     "lon": 14.315348625183105,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/%C4%8Cesk%C3%BD_Krumlov%2C_z%C3%A1mek_cel%C3%BD_z_vyhl%C3%ADdky.jpg/500px-%C4%8Cesk%C3%BD_Krumlov%2C_z%C3%A1mek_cel%C3%BD_z_vyhl%C3%ADdky.jpg",
+    "desc": "Castle in the Czech Republic",
+    "wiki": "https://en.wikipedia.org/wiki/%C4%8Cesk%C3%BD_Krumlov_Castle"
    },
    {
     "name": "Lazebnický most",
@@ -107045,7 +107358,10 @@
     "kind": "Skiing",
     "lat": 47.169254302978516,
     "lon": 10.1649808883667,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/be/Z%C3%BCrs_Ort.jpg/500px-Z%C3%BCrs_Ort.jpg",
+    "desc": "Place in Vorarlberg, Austria",
+    "wiki": "https://en.wikipedia.org/wiki/Z%C3%BCrs"
    },
    {
     "name": "Saumspitze",
@@ -108307,7 +108623,10 @@
     "lat": 46.389305114746094,
     "lon": 14.107559204101562,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/21/Bled_Gmajna_Zasip_01092008_66.jpg/500px-Bled_Gmajna_Zasip_01092008_66.jpg",
+    "desc": "Place in Upper Carniola, Slovenia",
+    "wiki": "https://en.wikipedia.org/wiki/Zasip"
    },
    {
     "name": "Bodešče",
@@ -108410,7 +108729,10 @@
     "lat": 46.38314437866211,
     "lon": 14.070574760437012,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/82/Viselnica.jpg/500px-Viselnica.jpg",
+    "desc": "Place in Upper Carniola, Slovenia",
+    "wiki": "https://en.wikipedia.org/wiki/Vi%C5%A1elnica"
    },
    {
     "name": "Zgornje Gorje",
@@ -108418,7 +108740,10 @@
     "lat": 46.37982177734375,
     "lon": 14.068061828613281,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Zgornje_Gorje.jpg/500px-Zgornje_Gorje.jpg",
+    "desc": "Place in Upper Carniola, Slovenia",
+    "wiki": "https://en.wikipedia.org/wiki/Zgornje_Gorje"
    },
    {
     "name": "Žirovnica",
@@ -108801,7 +109126,10 @@
     "lat": 46.26506805419922,
     "lon": 13.918228149414062,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/26/Zlan_Slovenia_1.jpg/500px-Zlan_Slovenia_1.jpg",
+    "desc": "Settlement in Upper Carniola, Slovenia",
+    "wiki": "https://en.wikipedia.org/wiki/%C5%BDlan"
    },
    {
     "name": "Savica",
@@ -109336,7 +109664,9 @@
     "lat": 45.52750778198242,
     "lon": 13.571582794189453,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Piranobzidje2011mw.JPG/500px-Piranobzidje2011mw.JPG",
+    "wiki": "https://en.wikipedia.org/wiki/Walls_of_Piran"
    },
    {
     "name": "Cerkev Marije Zdravja",
@@ -109698,7 +110028,10 @@
     "lat": 46.687164306640625,
     "lon": 7.849637031555176,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/Unterseen.jpg/500px-Unterseen.jpg",
+    "desc": "Municipality in Bern, Switzerland",
+    "wiki": "https://en.wikipedia.org/wiki/Unterseen"
    },
    {
     "name": "IBI",
@@ -109730,7 +110063,10 @@
     "lat": 46.66638946533203,
     "lon": 7.866666793823242,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/27/Wilderswil.jpg/500px-Wilderswil.jpg",
+    "desc": "Municipality in Bern, Switzerland",
+    "wiki": "https://en.wikipedia.org/wiki/Wilderswil"
    },
    {
     "name": "Kirche Gsteig",
@@ -110142,7 +110478,9 @@
     "kind": "Peak",
     "lat": 46.021484375,
     "lon": 7.797585964202881,
-    "rate": 3
+    "rate": 3,
+    "desc": "Mountain of the Swiss Pennine Alps",
+    "wiki": "https://en.wikipedia.org/wiki/Unterrothorn"
    },
    {
     "name": "Platthorn",
@@ -110169,7 +110507,10 @@
     "kind": "Peak",
     "lat": 46.02619171142578,
     "lon": 7.696781158447266,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/Ober_Gabelhorn%2C_2010_July.JPG/500px-Ober_Gabelhorn%2C_2010_July.JPG",
+    "desc": "Mountain in Switzerland",
+    "wiki": "https://en.wikipedia.org/wiki/Unter_Gabelhorn"
    },
    {
     "name": "Riffelhorn",
@@ -110244,14 +110585,20 @@
     "kind": "Peak",
     "lat": 45.97141647338867,
     "lon": 7.722361087799072,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/60/Trockener_Steg_Nov_2019.jpg/500px-Trockener_Steg_Nov_2019.jpg",
+    "desc": "Minor prominence between the Matterhorn and the Breithorn",
+    "wiki": "https://en.wikipedia.org/wiki/Trockener_Steg"
    },
    {
     "name": "Wellenkuppe",
     "kind": "Peak",
     "lat": 46.04207229614258,
     "lon": 7.678045749664307,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/Wellenkuppe%2C_2010_July.JPG/500px-Wellenkuppe%2C_2010_July.JPG",
+    "desc": "Mountain in Switzerland",
+    "wiki": "https://en.wikipedia.org/wiki/Wellenkuppe"
    },
    {
     "name": "Hohlichtgletscher",
@@ -110275,7 +110622,10 @@
     "kind": "Peak",
     "lat": 46.05219650268555,
     "lon": 7.678241729736328,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/54/Valais_mountains.jpg/500px-Valais_mountains.jpg",
+    "desc": "Mountain in Switzerland",
+    "wiki": "https://en.wikipedia.org/wiki/Trifthorn"
    },
    {
     "name": "Pointe du Mountet",
@@ -110302,7 +110652,10 @@
     "kind": "Peak",
     "lat": 46.064788818359375,
     "lon": 7.690129280090332,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/Zinalrothorn_-_septembre_2022.jpg/500px-Zinalrothorn_-_septembre_2022.jpg",
+    "desc": "Mountain in the Pennine Alps",
+    "wiki": "https://en.wikipedia.org/wiki/Zinalrothorn"
    },
    {
     "name": "Pointe Sud de Moming",
@@ -110503,7 +110856,9 @@
     "lat": 46.060665130615234,
     "lon": 7.707611083984375,
     "rate": 2,
-    "active": true
+    "active": true,
+    "desc": "Mountain in Switzerland",
+    "wiki": "https://en.wikipedia.org/wiki/%C3%84schhorn"
    },
    {
     "name": "Fluehorn",
@@ -111547,7 +111902,10 @@
     "kind": "Glacier",
     "lat": 46.586029052734375,
     "lon": 8.063982963562012,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/UntererGrindelwaldgletscher_01.jpg/500px-UntererGrindelwaldgletscher_01.jpg",
+    "desc": "Glacier in Switzerland",
+    "wiki": "https://en.wikipedia.org/wiki/Lower_Grindelwald_Glacier"
    },
    {
     "name": "Reeti",
@@ -111580,7 +111938,10 @@
     "kind": "Peak",
     "lat": 46.63884735107422,
     "lon": 8.114609718322754,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/19/Wetterhorn_from_Kleine_Scheidegg.jpg/500px-Wetterhorn_from_Kleine_Scheidegg.jpg",
+    "desc": "Mountain in Switzerland",
+    "wiki": "https://en.wikipedia.org/wiki/Wetterhorn"
    },
    {
     "name": "Eiger",
@@ -111701,7 +112062,10 @@
     "kind": "Peak",
     "lat": 46.69276809692383,
     "lon": 8.074362754821777,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/Frayed_Cu_med_above_Oltschiburg.JPG/500px-Frayed_Cu_med_above_Oltschiburg.JPG",
+    "desc": "Mountain of the Bernese Alps",
+    "wiki": "https://en.wikipedia.org/wiki/Wildg%C3%A4rst"
    },
    {
     "name": "Äbeflue",
@@ -112023,7 +112387,10 @@
     "kind": "Square",
     "lat": 46.57001876831055,
     "lon": 7.9131760597229,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Trummelbach.JPG/500px-Trummelbach.JPG",
+    "desc": "Waterfalls in Switzerland",
+    "wiki": "https://en.wikipedia.org/wiki/Tr%C3%BCmmelbach_Falls"
    },
    {
     "name": "Lauberhorn",
@@ -112885,7 +113252,10 @@
     "lat": 40.6441650390625,
     "lon": 14.610833168029785,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/21/Ravello_Villa_Rufolo.JPG/500px-Ravello_Villa_Rufolo.JPG",
+    "desc": "Villa in southern Italy",
+    "wiki": "https://en.wikipedia.org/wiki/Villa_Rufolo"
    },
    {
     "name": "Basilica del Crocifisso - Museo Diocesiano",
@@ -113796,7 +114166,10 @@
     "lat": 45.987667083740234,
     "lon": 9.232511520385742,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Tremezzo_-_Villa_Carlotta.jpg/500px-Tremezzo_-_Villa_Carlotta.jpg",
+    "desc": "Building in Tremezzo, Italy",
+    "wiki": "https://en.wikipedia.org/wiki/Villa_Carlotta"
    },
    {
     "name": "Parco di Villa Monastero",
@@ -114679,14 +115052,20 @@
     "kind": "Square",
     "lat": 46.55689239501953,
     "lon": 12.068364143371582,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/Die_Tofane_im_Herbst_2021.jpg/500px-Die_Tofane_im_Herbst_2021.jpg",
+    "desc": "Mountain in Italy",
+    "wiki": "https://en.wikipedia.org/wiki/Tofane"
    },
    {
     "name": "Tofana di Mezzo",
     "kind": "Peak",
     "lat": 46.5510139465332,
     "lon": 12.065500259399414,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/Die_Tofane_im_Herbst_2021.jpg/500px-Die_Tofane_im_Herbst_2021.jpg",
+    "desc": "Mountain in Italy",
+    "wiki": "https://en.wikipedia.org/wiki/Tofane"
    },
    {
     "name": "Tofana di Dentro",
@@ -115077,7 +115456,10 @@
     "lat": 43.31830596923828,
     "lon": 11.332202911376953,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Siena%2C_Tuscany%2C_Italy-12May2013.jpg/500px-Siena%2C_Tuscany%2C_Italy-12May2013.jpg",
+    "desc": "Tower in Siena, Italy",
+    "wiki": "https://en.wikipedia.org/wiki/Torre_del_Mangia"
    },
    {
     "name": "San Niccolò in Sasso",
@@ -118370,7 +118752,10 @@
     "lat": 48.07661056518555,
     "lon": 7.357481956481934,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/86/Bartoldi-Museum.JPG/500px-Bartoldi-Museum.JPG",
+    "desc": "Art museum in France",
+    "wiki": "https://en.wikipedia.org/wiki/Mus%C3%A9e_Bartholdi"
    },
    {
     "name": "Maison Sandherr",
@@ -122088,7 +122473,10 @@
     "lat": 43.906436920166016,
     "lon": 5.181122303009033,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d5/Village_de_Bories_-1-_14.06.2007.JPG/500px-Village_de_Bories_-1-_14.06.2007.JPG",
+    "desc": "Open-air museum in Vaucluse, France",
+    "wiki": "https://en.wikipedia.org/wiki/Village_des_Bories"
    },
    {
     "name": "Sénanque Abbey",
@@ -122805,7 +123193,10 @@
     "lat": 43.43145751953125,
     "lon": -1.6007503271102905,
     "rate": 3,
-    "active": true
+    "active": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/06/Bidart_Uhabia.jpg/500px-Bidart_Uhabia.jpg",
+    "desc": "Coastal river in Aquitaine, France",
+    "wiki": "https://en.wikipedia.org/wiki/Uhabia"
    },
    {
     "name": "Billabong",
@@ -122996,7 +123387,10 @@
     "lat": 43.70944595336914,
     "lon": 7.32111120223999,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/17/Villa_Leopolda_Villefranche-sur-Mer.JPG/500px-Villa_Leopolda_Villefranche-sur-Mer.JPG",
+    "desc": "French villa",
+    "wiki": "https://en.wikipedia.org/wiki/Villa_La_L%C3%A9opolda"
    },
    {
     "name": "Villa de May",
@@ -123004,7 +123398,10 @@
     "lat": 43.703800201416016,
     "lon": 7.327929973602295,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/22/Beaulieu-sur-Mer_-_Villa_de_May_-1.JPG/500px-Beaulieu-sur-Mer_-_Villa_de_May_-1.JPG",
+    "desc": "House in Beaulieu-sur-Mer, France",
+    "wiki": "https://en.wikipedia.org/wiki/Villa_de_May"
    },
    {
     "name": "Villa Ephrussi de Rothschild",
@@ -123012,7 +123409,10 @@
     "lat": 43.69660186767578,
     "lon": 7.328500270843506,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/af/Villa_Ephrussi_de_Rothschild_BW_2011-06-10_11-24-41.JPG/500px-Villa_Ephrussi_de_Rothschild_BW_2011-06-10_11-24-41.JPG",
+    "desc": "Villa on the French Riviera",
+    "wiki": "https://en.wikipedia.org/wiki/Villa_Ephrussi_de_Rothschild"
    },
    {
     "name": "Saint-Roch Church",
@@ -123055,7 +123455,10 @@
     "lat": 43.703304290771484,
     "lon": 7.333806991577148,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/de/Villa_K%C3%A9rylos.JPG/500px-Villa_K%C3%A9rylos.JPG",
+    "desc": "House in Beaulieu-sur-Mer, France",
+    "wiki": "https://en.wikipedia.org/wiki/Villa_Kerylos"
    },
    {
     "name": "Château de l'Anglais",
@@ -126384,7 +126787,10 @@
     "lat": 43.32494354248047,
     "lon": -1.989736557006836,
     "rate": 3,
-    "active": true
+    "active": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/08.06.05_SanSebastian2.JPG/500px-08.06.05_SanSebastian2.JPG",
+    "desc": "Hill by the ocean in the Basque city of San Sebastián, Gipuzkoa, Spain",
+    "wiki": "https://en.wikipedia.org/wiki/Urgull"
    },
    {
     "name": "Zurriola",
@@ -128500,7 +128906,10 @@
     "lat": 39.682491302490234,
     "lon": 21.681909561157227,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/%CE%A3%CF%80%CE%AE%CE%BB%CE%B1%CE%B9%CE%BF_%CE%98%CE%B5%CF%8C%CF%80%CE%B5%CF%84%CF%81%CE%B1%CF%82.jpg/500px-%CE%A3%CF%80%CE%AE%CE%BB%CE%B1%CE%B9%CE%BF_%CE%98%CE%B5%CF%8C%CF%80%CE%B5%CF%84%CF%81%CE%B1%CF%82.jpg",
+    "desc": "Archaeological site in Greece",
+    "wiki": "https://en.wikipedia.org/wiki/Theopetra_Cave"
    },
    {
     "name": "Ypapantí Monastery",
@@ -130601,7 +131010,10 @@
     "lat": 42.987342834472656,
     "lon": 17.152013778686523,
     "rate": 1,
-    "active": true
+    "active": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/J36_059_Pelje%C5%A1ac.jpg/500px-J36_059_Pelje%C5%A1ac.jpg",
+    "desc": "Peninsula in the Dubrovnik-Neretva County, Croatia",
+    "wiki": "https://en.wikipedia.org/wiki/Pelje%C5%A1ac"
    }
   ]
  },
@@ -132000,7 +132412,10 @@
     "lat": 61.08012390136719,
     "lon": 6.578110218048096,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/Vik_Kirke.JPG/500px-Vik_Kirke.JPG",
+    "desc": "Church in Vestland, Norway",
+    "wiki": "https://en.wikipedia.org/wiki/Vik_Church"
    },
    {
     "name": "Hopperstad stavkyrkje",
@@ -134078,7 +134493,10 @@
     "kind": "Square",
     "lat": 46.2194709777832,
     "lon": 24.792766571044922,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/82/Palowniks_house.JPG/500px-Palowniks_house.JPG",
+    "desc": "Birthplace of Vlad the Impaler",
+    "wiki": "https://en.wikipedia.org/wiki/Vlad_Dracul_House"
    },
    {
     "name": "Tanners' Tower",
@@ -135537,7 +135955,8 @@
     "lat": 40.07484436035156,
     "lon": 20.13234519958496,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "wiki": "https://en.wikipedia.org/wiki/Zekate_House"
    },
    {
     "name": "'Tunnel of cold war'",
@@ -136261,7 +136680,10 @@
     "kind": "Peak",
     "lat": 42.399166107177734,
     "lon": 18.818435668945312,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/34/%C5%A0tirovnik%2C_Montenegro%2C_September_2022_07.jpg/500px-%C5%A0tirovnik%2C_Montenegro%2C_September_2022_07.jpg",
+    "desc": "Peak on Mount Lovćen",
+    "wiki": "https://en.wikipedia.org/wiki/%C5%A0tirovnik"
    },
    {
     "name": "Lovćen",
@@ -137333,7 +137755,10 @@
     "lat": 51.38267517089844,
     "lon": -2.3586363792419434,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Victoria_Art_Gallery%2C_Bath.JPG/500px-Victoria_Art_Gallery%2C_Bath.JPG",
+    "desc": "Art museum in Bath, Somerset, England",
+    "wiki": "https://en.wikipedia.org/wiki/Victoria_Art_Gallery"
    },
    {
     "name": "Royal National Hospital for Rheumatic Diseases",
@@ -137777,7 +138202,10 @@
     "lat": 51.75170135498047,
     "lon": -1.2599769830703735,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/Bonn_Square_and_war_memorial_-_geograph.org.uk_-_1321803.jpg/500px-Bonn_Square_and_war_memorial_-_geograph.org.uk_-_1321803.jpg",
+    "desc": "War memorial in Oxford, England",
+    "wiki": "https://en.wikipedia.org/wiki/Tirah_Memorial"
    },
    {
     "name": "Lincoln College Library",
@@ -137888,7 +138316,10 @@
     "lat": 51.750301361083984,
     "lon": -1.2558300495147705,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/Tom_Quad%2C_Christ_Church%2C_Oxford.jpg/500px-Tom_Quad%2C_Christ_Church%2C_Oxford.jpg",
+    "desc": "One of the quadrangles of Christ Church, Oxford, England",
+    "wiki": "https://en.wikipedia.org/wiki/Tom_Quad"
    },
    {
     "name": "Wesley Memorial Church",
@@ -137896,7 +138327,10 @@
     "lat": 51.75299835205078,
     "lon": -1.2609108686447144,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1c/NewInnHallSt_WesleyMemorialChurch_6058.jpg/500px-NewInnHallSt_WesleyMemorialChurch_6058.jpg",
+    "desc": "Church in Oxford, England",
+    "wiki": "https://en.wikipedia.org/wiki/Wesley_Memorial_Church,_Oxford"
    },
    {
     "name": "Exeter Chapel",
@@ -138826,7 +139260,10 @@
     "lat": 53.96031951904297,
     "lon": -1.0776442289352417,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Unitarian_Chapel_York.jpg/500px-Unitarian_Chapel_York.jpg",
+    "desc": "Grade II* listed chapel in York, England",
+    "wiki": "https://en.wikipedia.org/wiki/York_Unitarian_Chapel"
    },
    {
     "name": "The Anglers Arms And Attached Buildings At Rear",
@@ -139771,7 +140208,10 @@
     "kind": "Peak",
     "lat": 54.462196350097656,
     "lon": -3.112720251083374,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/THUNACAR_KNOTT_FROM_PAVEY_ARK_%282%29.JPG/500px-THUNACAR_KNOTT_FROM_PAVEY_ARK_%282%29.JPG",
+    "desc": "Fell in the Lake District, Cumbria, England",
+    "wiki": "https://en.wikipedia.org/wiki/Thunacar_Knott"
    },
    {
     "name": "Tarn Crag",
@@ -140591,14 +141031,20 @@
     "kind": "Peak",
     "lat": 50.18153762817383,
     "lon": -5.4967193603515625,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/Trencrom-trink-worvas.png/500px-Trencrom-trink-worvas.png",
+    "desc": "Hill in west Cornwall, England",
+    "wiki": "https://en.wikipedia.org/wiki/Trink_Hill"
    },
    {
     "name": "Zennor Quoit",
     "kind": "Square",
     "lat": 50.18794250488281,
     "lon": -5.547422409057617,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/b/b9/Zennor_Quoit_%28small%29_%289612120%29.jpg",
+    "desc": "Dolmen in the Cornwall region, England",
+    "wiki": "https://en.wikipedia.org/wiki/Zennor_Quoit"
    },
    {
     "name": "4, The Terrace",
@@ -140847,7 +141293,10 @@
     "lat": 50.18901443481445,
     "lon": -5.594808578491211,
     "rate": 2,
-    "active": true
+    "active": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/Treen_cove_at_high_tide.jpg/500px-Treen_cove_at_high_tide.jpg",
+    "desc": "Tidal beach in Cornwall, England",
+    "wiki": "https://en.wikipedia.org/wiki/Treen_Cove"
    },
    {
     "name": "East Quay",
@@ -142161,7 +142610,10 @@
     "lat": 49.292396545410156,
     "lon": 19.948482513427734,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/National_Museum_in_Krak%C3%B3w_logo.svg/500px-National_Museum_in_Krak%C3%B3w_logo.svg.png",
+    "desc": "National museum in Zakopane, Poland",
+    "wiki": "https://en.wikipedia.org/wiki/Villa_Atma"
    },
    {
     "name": "Dworzec PKP Zakopane",
@@ -142177,7 +142629,10 @@
     "lat": 49.30079650878906,
     "lon": 19.963075637817383,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/58/Zakopane_T58.jpg/500px-Zakopane_T58.jpg",
+    "desc": "Place in Lesser Poland Voivodeship, Poland",
+    "wiki": "https://en.wikipedia.org/wiki/Zakopane"
    },
    {
     "name": "Villa Czerwony Dwór in Zakopane",
@@ -142401,7 +142856,10 @@
     "lat": 49.27939224243164,
     "lon": 19.968111038208008,
     "rate": 3,
-    "active": true
+    "active": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/96/Zakopane_Wielka_Krokiew_dron_%281%29.jpg/500px-Zakopane_Wielka_Krokiew_dron_%281%29.jpg",
+    "desc": "Ski jumping hill in Zakopane, Poland",
+    "wiki": "https://en.wikipedia.org/wiki/Wielka_Krokiew"
    },
    {
     "name": "Średnia Krokiew",
@@ -142409,7 +142867,10 @@
     "lat": 49.27939987182617,
     "lon": 19.968997955322266,
     "rate": 3,
-    "active": true
+    "active": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/%C5%9Arednia_Krokiew_2021.jpg/500px-%C5%9Arednia_Krokiew_2021.jpg",
+    "desc": "Ski jumping hill complex in Zakopane, Poland",
+    "wiki": "https://en.wikipedia.org/wiki/%C5%9Arednia_Krokiew"
    },
    {
     "name": "Kopa nad Białym",
@@ -143699,7 +144160,10 @@
     "kind": "Castle",
     "lat": 47.14057159423828,
     "lon": 9.524200439453125,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/Liechtenstein_asv2022-10_img22_Vaduz_Schloss.jpg/500px-Liechtenstein_asv2022-10_img22_Vaduz_Schloss.jpg",
+    "desc": "Castle in Liechtenstein",
+    "wiki": "https://en.wikipedia.org/wiki/Vaduz_Castle"
    },
    {
     "name": "Postmuseum",
@@ -146391,7 +146855,10 @@
     "lat": 50.219600677490234,
     "lon": 4.923264980316162,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Walzin_Castle_R04.jpg/500px-Walzin_Castle_R04.jpg",
+    "desc": "Castle in Wallonia, Belgium",
+    "wiki": "https://en.wikipedia.org/wiki/Walzin_Castle"
    },
    {
     "name": "Poilvache Castle",
@@ -148185,7 +148652,9 @@
     "kind": "Church",
     "lat": 52.161033630371094,
     "lon": 4.489557266235352,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fc/Leiden_Vrouwekerk_3.jpg/500px-Leiden_Vrouwekerk_3.jpg",
+    "wiki": "https://en.wikipedia.org/wiki/Vrouwekerk"
    },
    {
     "name": "Witte Steen",
@@ -148638,14 +149107,20 @@
     "kind": "Square",
     "lat": 52.003116607666016,
     "lon": -9.505600929260254,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/63/Torc_waterfall_2025_08_31.jpg/500px-Torc_waterfall_2025_08_31.jpg",
+    "desc": "Waterfall in Killarney, Ireland",
+    "wiki": "https://en.wikipedia.org/wiki/Torc_Waterfall"
    },
    {
     "name": "Torc Mountain",
     "kind": "Peak",
     "lat": 52.0,
     "lon": -9.516670227050781,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/Torc_upper_lake_killarney.jpg/500px-Torc_upper_lake_killarney.jpg",
+    "desc": "Mountain in Killarney, Ireland",
+    "wiki": "https://en.wikipedia.org/wiki/Torc_Mountain"
    },
    {
     "name": "Killarney National Park",
@@ -148761,7 +149236,10 @@
     "lat": 52.02235794067383,
     "lon": -9.610395431518555,
     "rate": 1,
-    "active": true
+    "active": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/93/Purple_Mountain_View%2C_Killarney.jpg/500px-Purple_Mountain_View%2C_Killarney.jpg",
+    "desc": "Mountain in County Kerry, Ireland",
+    "wiki": "https://en.wikipedia.org/wiki/Purple_Mountain_(Kerry)"
    },
    {
     "name": "Shehy Mountain",
@@ -149870,7 +150348,10 @@
     "lat": 49.13104248046875,
     "lon": 15.45516586303711,
     "rate": 3,
-    "active": true
+    "active": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/%C4%8Cern%C3%AD%C4%8D%2C_pohled_p%C5%99es_rybn%C3%ADk_%282013-07-24%3B_01%29.jpg/500px-%C4%8Cern%C3%AD%C4%8D%2C_pohled_p%C5%99es_rybn%C3%ADk_%282013-07-24%3B_01%29.jpg",
+    "desc": "Municipality in Vysočina, Czech Republic",
+    "wiki": "https://en.wikipedia.org/wiki/%C4%8Cern%C3%AD%C4%8D"
    },
    {
     "name": "Doupský a Bažantka",
@@ -151428,7 +151909,10 @@
     "lat": 46.41353988647461,
     "lon": 6.930359840393066,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Viaduc_de_Chillon.JPG/500px-Viaduc_de_Chillon.JPG",
+    "desc": "Road bridge in Veytaux, Switzerland",
+    "wiki": "https://en.wikipedia.org/wiki/Viaduc_de_Chillon"
    },
    {
     "name": "Villa Karma",
@@ -152122,7 +152606,9 @@
     "lat": 46.510986328125,
     "lon": 6.740738868713379,
     "rate": 3,
-    "active": true
+    "active": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Tour_de_Gourze_1.jpg/500px-Tour_de_Gourze_1.jpg",
+    "wiki": "https://en.wikipedia.org/wiki/Tower_of_Gourze"
    },
    {
     "name": "Piscine de Mon-Repos",
@@ -153041,7 +153527,10 @@
     "lon": 9.415031433105469,
     "rate": 3,
     "heritage": true,
-    "active": true
+    "active": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/Wildkirchli.JPG/500px-Wildkirchli.JPG",
+    "desc": "Swiss cultural property of national significance in Schwende",
+    "wiki": "https://en.wikipedia.org/wiki/Wildkirchli"
    },
    {
     "name": "Ebenalp",
@@ -154714,7 +155203,10 @@
     "kind": "Nature reserve",
     "lat": 40.68299865722656,
     "lon": -8.666999816894531,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/94/S%C3%A3o-Pedro-do-Sul_Rio-Vouga2_PT.jpg/500px-S%C3%A3o-Pedro-do-Sul_Rio-Vouga2_PT.jpg",
+    "desc": "River in northern Portugal",
+    "wiki": "https://en.wikipedia.org/wiki/Vouga_River"
    },
    {
     "name": "Site of Community Importance Ria de Aveiro",
@@ -156212,7 +156704,10 @@
     "kind": "Cathedral",
     "lat": 46.248905181884766,
     "lon": 20.149200439453125,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3d/Fogadalmi_templom_%2812498._sz%C3%A1m%C3%BA_m%C5%B1eml%C3%A9k%29_3.jpg/500px-Fogadalmi_templom_%2812498._sz%C3%A1m%C3%BA_m%C5%B1eml%C3%A9k%29_3.jpg",
+    "desc": "Church in Szeged, Hungary",
+    "wiki": "https://en.wikipedia.org/wiki/Votive_Church,_Szeged"
    },
    {
     "name": "Szeged Open Air Festival",
@@ -156527,7 +157022,10 @@
     "kind": "Church",
     "lat": 46.913734436035156,
     "lon": 17.88970375061035,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/63/Tihanycivertanlegi1.jpg/500px-Tihanycivertanlegi1.jpg",
+    "desc": "Benedictine monastery in Hungary",
+    "wiki": "https://en.wikipedia.org/wiki/Tihany_Abbey"
    },
    {
     "name": "Tihanyi Forrás Cave",
@@ -157113,7 +157611,10 @@
     "kind": "Nature reserve",
     "lat": 48.46666717529297,
     "lon": 18.866666793823242,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/98/Sitno_-_hrad.jpg/500px-Sitno_-_hrad.jpg",
+    "desc": "Protected area in Slovakia",
+    "wiki": "https://en.wikipedia.org/wiki/%C5%A0tiavnick%C3%A9_vrchy_Protected_Landscape_Area"
    },
    {
     "name": "Sitno",
@@ -157288,7 +157789,10 @@
     "lat": 48.447776794433594,
     "lon": 18.882726669311523,
     "rate": 1,
-    "active": true
+    "active": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c4/Zarnov.jpg/500px-Zarnov.jpg",
+    "desc": "Mountain range in Slovakia",
+    "wiki": "https://en.wikipedia.org/wiki/Vt%C3%A1%C4%8Dnik_Mountains"
    },
    {
     "name": "Kalvária",
@@ -157717,7 +158221,10 @@
     "kind": "Museum",
     "lat": 49.29264450073242,
     "lon": 21.27574920654297,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/27/Exposition_of_icons_in_%C5%A0ari%C5%A1_Museum_Bardejov_01.jpg/500px-Exposition_of_icons_in_%C5%A0ari%C5%A1_Museum_Bardejov_01.jpg",
+    "desc": "Museum of Šariš region in Bardejov, Slovakia",
+    "wiki": "https://en.wikipedia.org/wiki/%C5%A0ari%C5%A1_Museum_in_Bardejov"
    },
    {
     "name": "Ruky Bardejova",
@@ -158953,7 +159460,10 @@
     "lat": 58.380558013916016,
     "lon": 26.72048568725586,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/37/Tartu_-_%C3%9Clikooli_16.jpg/500px-Tartu_-_%C3%9Clikooli_16.jpg",
+    "desc": "Building in Tartu, Estonia",
+    "wiki": "https://en.wikipedia.org/wiki/Von_Bock_House"
    },
    {
     "name": "Budynek przy ulicy Lutsu 8 w Tartu",
@@ -159076,7 +159586,10 @@
     "lat": 58.383052825927734,
     "lon": 26.718997955322266,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/de/Uppsala_maja_Tartus_Jaani_t%C3%A4naval_esimese_lumega%2C_26._oktoober_2012.jpg/500px-Uppsala_maja_Tartus_Jaani_t%C3%A4naval_esimese_lumega%2C_26._oktoober_2012.jpg",
+    "desc": "Historic wooden building in Tartu, Estonia",
+    "wiki": "https://en.wikipedia.org/wiki/Uppsala_House"
    },
    {
     "name": "Devil's Bridge",
@@ -159548,7 +160061,10 @@
     "lat": 57.18245315551758,
     "lon": 24.85089111328125,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/73/Turaida_Castle.JPG/500px-Turaida_Castle.JPG",
+    "desc": "Building",
+    "wiki": "https://en.wikipedia.org/wiki/Turaida_Castle"
    },
    {
     "name": "Kubeseles pilskalns",
@@ -159984,7 +160500,10 @@
     "lat": 57.251827239990234,
     "lon": 25.282625198364258,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/%C4%80rai%C5%A1u_ezerpils_%281%29.jpg/500px-%C4%80rai%C5%A1u_ezerpils_%281%29.jpg",
+    "desc": "Archaeological site in Cēsis, Latvia",
+    "wiki": "https://en.wikipedia.org/wiki/%C4%80rai%C5%A1i_lake_fortress"
    },
    {
     "name": "Āraiši Castle",
@@ -160429,7 +160948,10 @@
     "lat": 56.95496368408203,
     "lon": 23.668785095214844,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/Vaivari_Start_2016_%2828584465830%29.jpg/500px-Vaivari_Start_2016_%2828584465830%29.jpg",
+    "desc": "Neighbourhood of Jurmala, Latvia",
+    "wiki": "https://en.wikipedia.org/wiki/Vaivari"
    },
    {
     "name": "Priedaine",
@@ -160703,7 +161225,10 @@
     "kind": "Castle",
     "lat": 54.64628982543945,
     "lon": 24.936922073364258,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/%D0%A2%D1%80%D0%B0%D0%BA%D0%B0%D0%B9%D1%81%D0%BA%D1%96%D1%8F_%D0%BA%D1%80%D0%B0%D1%8F%D0%B2%D1%96%D0%B4%D1%8B._%D0%9F%D0%B0%D1%9E%D0%B0%D1%81%D1%82%D1%80%D0%B0%D1%9E%D0%BD%D1%8B_%D0%B7%D0%B0%D0%BC%D0%B0%D0%BA.jpg/500px-%D0%A2%D1%80%D0%B0%D0%BA%D0%B0%D0%B9%D1%81%D0%BA%D1%96%D1%8F_%D0%BA%D1%80%D0%B0%D1%8F%D0%B2%D1%96%D0%B4%D1%8B._%D0%9F%D0%B0%D1%9E%D0%B0%D1%81%D1%82%D1%80%D0%B0%D1%9E%D0%BD%D1%8B_%D0%B7%D0%B0%D0%BC%D0%B0%D0%BA.jpg",
+    "desc": "Castle in Trakai, Lithuania",
+    "wiki": "https://en.wikipedia.org/wiki/Trakai_Peninsula_Castle"
    },
    {
     "name": "Trakai Kenesa",
@@ -160724,7 +161249,10 @@
     "kind": "Castle",
     "lat": 54.65208053588867,
     "lon": 24.93308448791504,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a8/Trakai_castle_2016.jpg/500px-Trakai_castle_2016.jpg",
+    "desc": "Island castle in Trakai, Lithuania",
+    "wiki": "https://en.wikipedia.org/wiki/Trakai_Island_Castle"
    },
    {
     "name": "Užutrakis Manor",
@@ -161484,7 +162012,10 @@
     "lat": 45.79665756225586,
     "lon": 14.120229721069336,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/SmihelPodNanosom1.JPG/500px-SmihelPodNanosom1.JPG",
+    "desc": "Place in Inner Carniola, Slovenia",
+    "wiki": "https://en.wikipedia.org/wiki/%C5%A0mihel_pod_Nanosom"
    },
    {
     "name": "Predjama",
@@ -165031,7 +165562,10 @@
     "lat": 43.703304290771484,
     "lon": 7.333806991577148,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/de/Villa_K%C3%A9rylos.JPG/500px-Villa_K%C3%A9rylos.JPG",
+    "desc": "House in Beaulieu-sur-Mer, France",
+    "wiki": "https://en.wikipedia.org/wiki/Villa_Kerylos"
    },
    {
     "name": "Tropaeum Alpium",
@@ -165047,7 +165581,10 @@
     "lat": 43.703800201416016,
     "lon": 7.327929973602295,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/22/Beaulieu-sur-Mer_-_Villa_de_May_-1.JPG/500px-Beaulieu-sur-Mer_-_Villa_de_May_-1.JPG",
+    "desc": "House in Beaulieu-sur-Mer, France",
+    "wiki": "https://en.wikipedia.org/wiki/Villa_de_May"
    },
    {
     "name": "Villa Leopolda",
@@ -165055,7 +165592,10 @@
     "lat": 43.70944595336914,
     "lon": 7.32111120223999,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/17/Villa_Leopolda_Villefranche-sur-Mer.JPG/500px-Villa_Leopolda_Villefranche-sur-Mer.JPG",
+    "desc": "French villa",
+    "wiki": "https://en.wikipedia.org/wiki/Villa_La_L%C3%A9opolda"
    },
    {
     "name": "Notre-Dame de Laghet",
@@ -165071,7 +165611,10 @@
     "lat": 43.69660186767578,
     "lon": 7.328500270843506,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/af/Villa_Ephrussi_de_Rothschild_BW_2011-06-10_11-24-41.JPG/500px-Villa_Ephrussi_de_Rothschild_BW_2011-06-10_11-24-41.JPG",
+    "desc": "Villa on the French Riviera",
+    "wiki": "https://en.wikipedia.org/wiki/Villa_Ephrussi_de_Rothschild"
    },
    {
     "name": "gibet du Mont Justicier",
@@ -165111,7 +165654,9 @@
     "kind": "Peak",
     "lat": 43.73080062866211,
     "lon": 7.402219772338867,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Vista_de_M%C3%B3naco%2C_2016-06-23%2C_DD_09.jpg/500px-Vista_de_M%C3%B3naco%2C_2016-06-23%2C_DD_09.jpg",
+    "wiki": "https://en.wikipedia.org/wiki/T%C3%AAte_de_Chien"
    },
    {
     "name": "Monaco Cemetery",
@@ -165884,7 +166429,10 @@
     "lat": 43.400001525878906,
     "lon": 10.866666793823242,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Volterra_from_above._June_2024.jpg/500px-Volterra_from_above._June_2024.jpg",
+    "desc": "Comune in Tuscany, Italy",
+    "wiki": "https://en.wikipedia.org/wiki/Volterra"
    },
    {
     "name": "Palazzo Pretorio",
@@ -166879,7 +167427,10 @@
     "kind": "Castle",
     "lat": 43.46784591674805,
     "lon": 11.043472290039062,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/San_Gimignano_-_Torre_rognosa_da_torre_grossa.JPG/500px-San_Gimignano_-_Torre_rognosa_da_torre_grossa.JPG",
+    "desc": "Tower in San Gimignano, Italy",
+    "wiki": "https://en.wikipedia.org/wiki/Torre_Rognosa"
    },
    {
     "name": "Torre dei Becci",
@@ -167922,7 +168473,10 @@
     "lon": 0.7070000171661377,
     "rate": 2,
     "heritage": true,
-    "active": true
+    "active": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ef/Winchelsea_Cutting_%282%29.jpg/500px-Winchelsea_Cutting_%282%29.jpg",
+    "desc": "Scientific site in East Sussex",
+    "wiki": "https://en.wikipedia.org/wiki/Winchelsea_Cutting"
    },
    {
     "name": "Medieval moated site and adjoining fishpond, Moat Farm",
@@ -169427,7 +169981,10 @@
     "kind": "Theatre",
     "lat": 56.1601676940918,
     "lon": 10.209452629089355,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/37/%C3%98st_For_Paradis_%28Aarhus%29.jpg/500px-%C3%98st_For_Paradis_%28Aarhus%29.jpg",
+    "desc": "Art cinema in Denmark",
+    "wiki": "https://en.wikipedia.org/wiki/%C3%98st_for_Paradis"
    },
    {
     "name": "Dokk1",
@@ -169609,7 +170166,10 @@
     "lon": 10.198033332824707,
     "rate": 3,
     "heritage": true,
-    "active": true
+    "active": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/60/Tivoli_friheden.JPG/500px-Tivoli_friheden.JPG",
+    "desc": "Amusement park located in Aarhus, Denmark",
+    "wiki": "https://en.wikipedia.org/wiki/Tivoli_Friheden"
    },
    {
     "name": "Havnebadet",
@@ -170244,7 +170804,10 @@
     "kind": "Museum",
     "lat": 57.718772888183594,
     "lon": 10.577832221984863,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/HOME_OF_HOLGER_DRACHMANN%2C_SKAGEN%2C_DK.jpg/500px-HOME_OF_HOLGER_DRACHMANN%2C_SKAGEN%2C_DK.jpg",
+    "desc": "Museum in Skagen, Denmark",
+    "wiki": "https://en.wikipedia.org/wiki/Drachmanns_Hus"
    },
    {
     "name": "Kystmuseet Skagen",
@@ -172353,7 +172916,10 @@
     "kind": "Nature reserve",
     "lat": 56.96804428100586,
     "lon": 21.979248046875,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Ventas_rumba%2C_13.05.2012.jpg/500px-Ventas_rumba%2C_13.05.2012.jpg",
+    "desc": "Waterfall in Latvia",
+    "wiki": "https://en.wikipedia.org/wiki/Venta_Rapid"
    },
    {
     "name": "Venta waterfall",
@@ -172862,7 +173428,10 @@
     "kind": "Nature reserve",
     "lat": 56.57956314086914,
     "lon": 21.055349349975586,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1d/USSR_map_NO_34-11_-verso-_Liepaja_and_Vicinity.jpg/500px-USSR_map_NO_34-11_-verso-_Liepaja_and_Vicinity.jpg",
+    "desc": "Neighbourhood of Liepaja, Latvia",
+    "wiki": "https://en.wikipedia.org/wiki/Tosmare"
    },
    {
     "name": "Liepājas teātris (celtne)",
@@ -174947,7 +175516,10 @@
     "kind": "Monastery",
     "lat": 34.91288375854492,
     "lon": 32.83831787109375,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/Traditissa_Monastry.jpg/500px-Traditissa_Monastry.jpg",
+    "desc": "Monastery on the Troodos Mountains, Cyprus",
+    "wiki": "https://en.wikipedia.org/wiki/Trooditissa_Monastery"
    },
    {
     "name": "Holy Cross Monastry",
@@ -176667,7 +177239,10 @@
     "kind": "Peak",
     "lat": 62.094783782958984,
     "lon": -7.5524001121521,
-    "rate": 2
+    "rate": 2,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/c/c8/Faroe_stamp_453_gasadalur.jpg",
+    "desc": "Mountain in the Faroe Islands",
+    "wiki": "https://en.wikipedia.org/wiki/%C3%81rnafjall"
    },
    {
     "name": "Heinanøva",
@@ -176909,7 +177484,10 @@
     "lat": 64.27861022949219,
     "lon": -21.081941604614258,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/%C3%9Eingvellir_from_the_information_centre.JPG/500px-%C3%9Eingvellir_from_the_information_centre.JPG",
+    "desc": "Site of Iceland's ancient parliament",
+    "wiki": "https://en.wikipedia.org/wiki/%C3%9Eingvellir"
    },
    {
     "name": "Þingvallakirkja",
@@ -176923,14 +177501,20 @@
     "kind": "Square",
     "lat": 64.25906372070312,
     "lon": -21.121103286743164,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/%C3%9Eingvellir_from_the_information_centre.JPG/500px-%C3%9Eingvellir_from_the_information_centre.JPG",
+    "desc": "Site of Iceland's ancient parliament",
+    "wiki": "https://en.wikipedia.org/wiki/%C3%9Eingvellir"
    },
    {
     "name": "Öxarárfoss",
     "kind": "Square",
     "lat": 64.26582336425781,
     "lon": -21.1180477142334,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/%C3%96xar%C3%A1rfoss%2C_Parque_Nacional_de_%C3%9Eingvellir%2C_Su%C3%B0urland%2C_Islandia%2C_2014-08-16%2C_DD_029.JPG/500px-%C3%96xar%C3%A1rfoss%2C_Parque_Nacional_de_%C3%9Eingvellir%2C_Su%C3%B0urland%2C_Islandia%2C_2014-08-16%2C_DD_029.JPG",
+    "desc": "Waterfall in South of Iceland",
+    "wiki": "https://en.wikipedia.org/wiki/%C3%96xar%C3%A1rfoss"
    },
    {
     "name": "Lögberg",
@@ -177442,7 +178026,10 @@
     "kind": "Square",
     "lat": 43.25724411010742,
     "lon": 17.903518676757812,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e2/Mostar_%2816636279160%29.jpg/500px-Mostar_%2816636279160%29.jpg",
+    "desc": "Spring of Buna river in Bosnia and Herzegovina",
+    "wiki": "https://en.wikipedia.org/wiki/Vrelo_Bune"
    },
    {
     "name": "Residential complex of the Velagić family in Blagaj, the natural and architectural ensemble",
@@ -177675,7 +178262,10 @@
     "kind": "Monastery",
     "lat": 43.18972396850586,
     "lon": 17.780555725097656,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d6/Manastir_Zitomislic.jpg/500px-Manastir_Zitomislic.jpg",
+    "desc": "Serbian Orthodox monastery near Mostar, Bosnia and Herzegovina",
+    "wiki": "https://en.wikipedia.org/wiki/%C5%BDitomisli%C4%87_Monastery"
    },
    {
     "name": "Mitruša",
@@ -177875,7 +178465,10 @@
     "lat": 44.33955001831055,
     "lon": 17.27043342590332,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/Jajce_Total_View.jpg/500px-Jajce_Total_View.jpg",
+    "desc": "Fortified Old town of Jajce",
+    "wiki": "https://en.wikipedia.org/wiki/Walled_city_of_Jajce"
    },
    {
     "name": "Sultanine Esma's Mosque",
@@ -178213,7 +178806,10 @@
     "kind": "Square",
     "lat": 44.840660095214844,
     "lon": 15.772767066955566,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/%C5%BDeljava%2C_Runway_1.jpg/500px-%C5%BDeljava%2C_Runway_1.jpg",
+    "desc": "Former air force base & underground tunnel facility used by former state of Yugoslavia",
+    "wiki": "https://en.wikipedia.org/wiki/%C5%BDeljava_Air_Base"
    },
    {
     "name": "Garavice Memorial park",
@@ -181443,7 +182039,10 @@
     "kind": "Museum",
     "lat": 43.79999923706055,
     "lon": 19.52199935913086,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/%C5%A0argan_Eight_Map-sr.svg/500px-%C5%A0argan_Eight_Map-sr.svg.png",
+    "desc": "Rail line",
+    "wiki": "https://en.wikipedia.org/wiki/%C5%A0argan_Eight"
    },
    {
     "name": "Tara",
@@ -181838,7 +182437,10 @@
     "kind": "Museum",
     "lat": 48.78363800048828,
     "lon": 18.573957443237305,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Lev_Berbersk%C3%BD%2C_Zoo_Bojnice.png/500px-Lev_Berbersk%C3%BD%2C_Zoo_Bojnice.png",
+    "desc": "Zoo in Bojnice, Slovakia",
+    "wiki": "https://en.wikipedia.org/wiki/Bojnice_Zoo"
    },
    {
     "name": "Kaštiel v Diviackej Novej Vsi",
@@ -182371,7 +182973,10 @@
     "lat": 49.039310455322266,
     "lon": 19.27838706970215,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8f/Vlkolinecslovakia001.jpg/500px-Vlkolinecslovakia001.jpg",
+    "desc": "Village in Slovakia",
+    "wiki": "https://en.wikipedia.org/wiki/Vlkol%C3%ADnec"
    },
    {
     "name": "Andrej Hlinka",
@@ -184509,7 +185114,10 @@
     "lat": 48.150001525878906,
     "lon": 21.350000381469727,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Tokaj_-_Hegyalja-06.jpg/500px-Tokaj_-_Hegyalja-06.jpg",
+    "desc": "Wine region in Hungary and Slovakia",
+    "wiki": "https://en.wikipedia.org/wiki/Tokaj_wine_region"
    },
    {
     "name": "Tokaj-Bodrogzugi Tájvédelmi Körzet",
@@ -185284,7 +185892,10 @@
     "lat": 59.858211517333984,
     "lon": 17.646583557128906,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Uppsala_centralstation.jpg/500px-Uppsala_centralstation.jpg",
+    "desc": "Railway station in Uppsala, Sweden",
+    "wiki": "https://en.wikipedia.org/wiki/Uppsala_Central_Station"
    },
    {
     "name": "Televerkets hus, Uppsala",
@@ -185300,7 +185911,10 @@
     "lat": 59.86113357543945,
     "lon": 17.64787483215332,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/Uppsala.jpg/500px-Uppsala.jpg",
+    "desc": "City in Uppland, Sweden",
+    "wiki": "https://en.wikipedia.org/wiki/Uppsala"
    },
    {
     "name": "Kvarteret Munken",
@@ -185348,7 +185962,9 @@
     "lat": 59.858848571777344,
     "lon": 17.634973526000977,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/ba/Upplandsmuseet_September_2012.jpg/500px-Upplandsmuseet_September_2012.jpg",
+    "wiki": "https://en.wikipedia.org/wiki/Upplandsmuseet"
    },
    {
     "name": "Upplands runinskrifter Fv1976;107",
@@ -185452,7 +186068,10 @@
     "lat": 59.858150482177734,
     "lon": 17.63363265991211,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Uppsala_cathedral_from_southwest_02.jpg/500px-Uppsala_cathedral_from_southwest_02.jpg",
+    "desc": "Church in Uppland, Sweden",
+    "wiki": "https://en.wikipedia.org/wiki/Uppsala_Cathedral"
    },
    {
     "name": "Uppsala Town",
@@ -185743,7 +186362,10 @@
     "lat": 59.40330505371094,
     "lon": 18.34749984741211,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/Vaxholms_r%C3%A5dhus_01.jpg/500px-Vaxholms_r%C3%A5dhus_01.jpg",
+    "desc": "Municipality in Stockholm County, Sweden",
+    "wiki": "https://en.wikipedia.org/wiki/Vaxholm_Municipality"
    },
    {
     "name": "Löwenströmska trädgården",
@@ -185759,7 +186381,10 @@
     "lat": 59.403202056884766,
     "lon": 18.358354568481445,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Vaxholmsleden_February_2013_02_%28crop%29.jpg/500px-Vaxholmsleden_February_2013_02_%28crop%29.jpg",
+    "desc": "1544 Swedish fortress",
+    "wiki": "https://en.wikipedia.org/wiki/Vaxholm_Fortress"
    },
    {
     "name": "Rindö Redoubt",
@@ -186773,7 +187398,10 @@
     "kind": "Castle",
     "lat": 49.934879302978516,
     "lon": 6.202804088592529,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Burg_Vianden%2C_Luxemburg.jpg/500px-Burg_Vianden%2C_Luxemburg.jpg",
+    "desc": "Medieval castle in Luxembourg",
+    "wiki": "https://en.wikipedia.org/wiki/Vianden_Castle"
    },
    {
     "name": "Sainte-Gertrude",
@@ -187488,7 +188116,10 @@
     "lat": 36.04640197753906,
     "lon": 14.26488971710205,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d8/Hypog%C3%A9e_de_Xaghra.jpg/500px-Hypog%C3%A9e_de_Xaghra.jpg",
+    "desc": "Archaeological site on Gozo, Malta",
+    "wiki": "https://en.wikipedia.org/wiki/Xag%C4%A7ra_Stone_Circle"
    },
    {
     "name": "Għejzu Cave",
@@ -187515,7 +188146,10 @@
     "lat": 36.04903030395508,
     "lon": 14.267932891845703,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Ggantija_Temple_on_Gozo.jpg/500px-Ggantija_Temple_on_Gozo.jpg",
+    "desc": "Temple in Gozo, Malta",
+    "wiki": "https://en.wikipedia.org/wiki/%C4%A0gantija"
    },
    {
     "name": "Tat-Tmien Kantunieri Windmill",
@@ -187822,7 +188456,10 @@
     "lat": 36.051300048828125,
     "lon": 14.26140022277832,
     "rate": 2,
-    "active": true
+    "active": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1d/Xerri%27s_Grotto%2C_Xag%C4%A7ra_%28Gozo%29.jpg/500px-Xerri%27s_Grotto%2C_Xag%C4%A7ra_%28Gozo%29.jpg",
+    "desc": "Cave in Malta",
+    "wiki": "https://en.wikipedia.org/wiki/Xerri%27s_Grotto"
    },
    {
     "name": "Ta’ Kuljat",
@@ -188285,7 +188922,10 @@
     "lat": 35.81913757324219,
     "lon": 14.449944496154785,
     "rate": 3,
-    "active": true
+    "active": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/99/Partie_arri%C3%A8re_du_Um_El_Faroud.jpg/500px-Partie_arri%C3%A8re_du_Um_El_Faroud.jpg",
+    "desc": "Libyan owned tanker scuttled as dive site off Malta",
+    "wiki": "https://en.wikipedia.org/wiki/Um_El_Faroud"
    },
    {
     "name": "Xaqqa Cliffs",
