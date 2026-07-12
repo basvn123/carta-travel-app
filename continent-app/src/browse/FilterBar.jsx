@@ -167,245 +167,298 @@ export function FilterBar({
         </div>
       </div>
 
+      {/* Desktop layout: two rows, each divided into labelled category groups
+          (a `.filter-group` per category, a `.filter-divider` between them). The
+          row uses `justify-content: space-between` so the groups spread across
+          the full width of the top panel. On mobile every `.filter-group` is
+          `display: contents`, so the individual `.filter` children fall straight
+          into the 2-column grid and the grouping/dividers disappear. */}
       <div className="filter-rows">
-        {/* Row 1: Trip parameters */}
+
+        {/* ── Row 1 · WHEN & WHO ── */}
         <div className="filter-row">
-          <div className="filter row-date-fields">
-            <label className="filter-label">Depart</label>
-            <div className="filter-control">
-              <DateField
-                value={departDate || ''}
-                min={dateBounds?.min}
-                max={dateBounds?.max}
-                onChange={onDepartChange}
-              />
-            </div>
-          </div>
+          {/* Dates */}
+          <div className="filter-group group-dates">
+            <span className="group-label">Dates</span>
+            <div className="group-fields">
+              <div className="filter row-date-fields">
+                <label className="filter-label">Depart</label>
+                <div className="filter-control">
+                  <DateField
+                    value={departDate || ''}
+                    min={dateBounds?.min}
+                    max={dateBounds?.max}
+                    onChange={onDepartChange}
+                  />
+                </div>
+              </div>
 
-          <div className="filter row-date-fields">
-            <label className="filter-label">Return</label>
-            <div className="filter-control">
-              <DateField
-                value={returnDate || ''}
-                min={departDate || dateBounds?.min}
-                max={dateBounds?.max}
-                onChange={(v) => setReturnDate(v)}
-              />
-            </div>
-          </div>
+              <div className="filter row-date-fields">
+                <label className="filter-label">Return</label>
+                <div className="filter-control">
+                  <DateField
+                    value={returnDate || ''}
+                    min={departDate || dateBounds?.min}
+                    max={dateBounds?.max}
+                    onChange={(v) => setReturnDate(v)}
+                  />
+                </div>
+              </div>
 
-          <div className="filter filter-nights">
-            <label className="filter-label">Nights</label>
-            <div className="filter-control">
-              <div
-                className="derived-value"
-                title="Derived from depart and return dates"
-              >
-                {choices.trip_days || 0}
+              <div className="filter filter-nights">
+                <label className="filter-label">Nights</label>
+                <div className="filter-control">
+                  <div
+                    className="derived-value"
+                    title="Derived from depart and return dates"
+                  >
+                    {choices.trip_days || 0}
+                  </div>
+                </div>
               </div>
             </div>
           </div>
 
-          <div className="filter filter-people">
-            <label className="filter-label">People</label>
-            <div className="filter-control">
-              <input type="number" min={1} max={20}
-                value={choices.group_size}
-                onChange={(e) => setChoices({ ...choices, group_size: Math.min(20, Math.max(1, +e.target.value || 1)) })}
-              />
+          <div className="filter-divider" aria-hidden="true" />
+
+          {/* Party */}
+          <div className="filter-group group-party">
+            <span className="group-label">Party</span>
+            <div className="group-fields">
+              <div className="filter filter-people">
+                <label className="filter-label">People</label>
+                <div className="filter-control">
+                  <input type="number" min={1} max={20}
+                    value={choices.group_size}
+                    onChange={(e) => setChoices({ ...choices, group_size: Math.min(20, Math.max(1, +e.target.value || 1)) })}
+                  />
+                </div>
+              </div>
+
+              {/* Baggage only matters when flying: driving has no Ryanair fees to add. */}
+              {(choices.transport_mode || 'plane') !== 'car' && (
+                <div className="filter filter-baggage">
+                  <label className="filter-label">Baggage</label>
+                  <div className="filter-control">
+                    <Dropdown
+                      value={choices.baggage_key}
+                      onChange={(key) => {
+                        const opt = baggageOpts[key];
+                        setChoices({
+                          ...choices,
+                          baggage_key: key,
+                          baggage_per_direction_eur: opt?.per_direction_eur || 0,
+                        });
+                      }}
+                      options={Object.entries(baggageOpts).map(([k, v]) => ({
+                        value: k,
+                        label: v.label,
+                        sublabel: v.per_direction_eur > 0 ? `€${v.per_direction_eur}/direction` : 'free',
+                      }))}
+                    />
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
-          {/* Baggage only matters when flying: driving has no Ryanair fees to add. */}
-          {(choices.transport_mode || 'plane') !== 'car' && (
-            <div className="filter filter-baggage">
-              <label className="filter-label">Baggage</label>
-              <div className="filter-control">
-                <Dropdown
-                  value={choices.baggage_key}
-                  onChange={(key) => {
-                    const opt = baggageOpts[key];
-                    setChoices({
-                      ...choices,
-                      baggage_key: key,
-                      baggage_per_direction_eur: opt?.per_direction_eur || 0,
-                    });
-                  }}
-                  options={Object.entries(baggageOpts).map(([k, v]) => ({
-                    value: k,
-                    label: v.label,
-                    sublabel: v.per_direction_eur > 0 ? `€${v.per_direction_eur}/direction` : 'free',
-                  }))}
-                />
-              </div>
-            </div>
-          )}
+          <div className="filter-divider" aria-hidden="true" />
 
-          {/* Top picks: quick "best of" shortcuts (cheapest / most beautiful) */}
-          <div className="filter filter-toppicks">
-            <label className="filter-label">Top picks</label>
-            <div className="filter-control">
-              <Dropdown
-                value={topPickValue}
-                onChange={onTopPick}
-                options={TOP_PICKS}
-                placeholder="All"
-              />
+          {/* Shortcuts */}
+          <div className="filter-group group-shortcuts">
+            <span className="group-label">Shortcuts</span>
+            <div className="group-fields">
+              {/* Top picks: quick "best of" shortcuts (cheapest / most beautiful) */}
+              <div className="filter filter-toppicks">
+                <label className="filter-label">Top picks</label>
+                <div className="filter-control">
+                  <Dropdown
+                    value={topPickValue}
+                    onChange={onTopPick}
+                    options={TOP_PICKS}
+                    placeholder="All"
+                  />
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Row 2: View filters */}
+        {/* ── Row 2 · REFINE ── */}
         <div className="filter-row">
-          <div className="filter filter-show">
-            <label className="filter-label">Show</label>
-            <div className="filter-control">
-              <div className="segmented compact">
-                <button
-                  className={priceMode === 'total' ? 'seg-on' : ''}
-                  onClick={() => setPriceMode('total')}
-                >
-                  Total
-                </button>
-                <button
-                  className={priceMode === 'pp' ? 'seg-on' : ''}
-                  onClick={() => setPriceMode('pp')}
-                >
-                  Per person
-                </button>
+          {/* Pricing: how the trip is costed + the budget window */}
+          <div className="filter-group group-pricing">
+            <span className="group-label">Pricing</span>
+            <div className="group-fields">
+              <div className="filter filter-show">
+                <label className="filter-label">Show</label>
+                <div className="filter-control">
+                  <div className="segmented compact">
+                    <button
+                      className={priceMode === 'total' ? 'seg-on' : ''}
+                      onClick={() => setPriceMode('total')}
+                    >
+                      Total
+                    </button>
+                    <button
+                      className={priceMode === 'pp' ? 'seg-on' : ''}
+                      onClick={() => setPriceMode('pp')}
+                    >
+                      Per person
+                    </button>
+                  </div>
+                </div>
               </div>
+
+              <div className="filter filter-travelby">
+                <label className="filter-label">Travel by</label>
+                <div className="filter-control">
+                  <div className="segmented compact seg-icons">
+                    <button
+                      className={(choices.transport_mode || 'plane') === 'plane' ? 'seg-on' : ''}
+                      onClick={() => setChoices({ ...choices, transport_mode: 'plane' })}
+                      title="Price every trip by Ryanair flight"
+                      aria-label="Travel by plane"
+                    >
+                      <PlaneIcon />
+                    </button>
+                    <button
+                      className={choices.transport_mode === 'car' ? 'seg-on' : ''}
+                      onClick={() => setChoices({ ...choices, transport_mode: 'car' })}
+                      title="Drive to any road-connected destination in Europe; islands stay priced by flight"
+                      aria-label="Travel by car"
+                    >
+                      <CarIcon />
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {priceBounds && priceRange && (
+                <div className="filter price-range">
+                  <label className="filter-label">
+                    Price {priceMode === 'pp' ? 'per person' : 'total'}
+                  </label>
+                  <div className="filter-control">
+                    <DualRange
+                      min={priceBounds[0]}
+                      max={priceBounds[1]}
+                      value={priceRange}
+                      onChange={setPriceRange}
+                      fmt={eur}
+                    />
+                  </div>
+                </div>
+              )}
             </div>
           </div>
-
-          <div className="filter filter-travelby">
-            <label className="filter-label">Travel by</label>
-            <div className="filter-control">
-              <div className="segmented compact seg-icons">
-                <button
-                  className={(choices.transport_mode || 'plane') === 'plane' ? 'seg-on' : ''}
-                  onClick={() => setChoices({ ...choices, transport_mode: 'plane' })}
-                  title="Price every trip by Ryanair flight"
-                  aria-label="Travel by plane"
-                >
-                  <PlaneIcon />
-                </button>
-                <button
-                  className={choices.transport_mode === 'car' ? 'seg-on' : ''}
-                  onClick={() => setChoices({ ...choices, transport_mode: 'car' })}
-                  title="Drive to any road-connected destination in Europe; islands stay priced by flight"
-                  aria-label="Travel by car"
-                >
-                  <CarIcon />
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <div className="filter filter-country">
-            <label className="filter-label">Country</label>
-            <div className="filter-control">
-              <Dropdown
-                value={countryFilter}
-                onChange={setCountryFilter}
-                options={[
-                  { value: 'all', label: `All countries (${availableCountries.length})` },
-                  ...availableCountries.map(([iso2, name]) => ({ value: iso2, label: name })),
-                ]}
-                searchPlaceholder="Search country..."
-              />
-            </div>
-          </div>
-
-          {priceBounds && priceRange && (
-            <div className="filter price-range">
-              <label className="filter-label">
-                Price {priceMode === 'pp' ? 'per person' : 'total'}
-              </label>
-              <div className="filter-control">
-                <DualRange
-                  min={priceBounds[0]}
-                  max={priceBounds[1]}
-                  value={priceRange}
-                  onChange={setPriceRange}
-                  fmt={eur}
-                />
-              </div>
-            </div>
-          )}
 
           <div className="filter-divider" aria-hidden="true" />
 
-          {/* Beauty index: clean minimum-gems button list over the 1-5 gem score
-              (evidence-based: UNESCO heritage + Blue Flag beaches + scenery). */}
-          <div className="filter filter-beauty">
-            <label className="filter-label">Beauty</label>
-            <div className="filter-control">
-              <div className="segmented compact beauty-steps">
-                {BEAUTY_STEPS.map((s) => (
+          {/* Place */}
+          <div className="filter-group group-place">
+            <span className="group-label">Place</span>
+            <div className="group-fields">
+              <div className="filter filter-country">
+                <label className="filter-label">Country</label>
+                <div className="filter-control">
+                  <Dropdown
+                    value={countryFilter}
+                    onChange={setCountryFilter}
+                    options={[
+                      { value: 'all', label: `All countries (${availableCountries.length})` },
+                      ...availableCountries.map(([iso2, name]) => ({ value: iso2, label: name })),
+                    ]}
+                    searchPlaceholder="Search country..."
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="filter-divider" aria-hidden="true" />
+
+          {/* Quality: the beauty score + independent heritage / coast toggles */}
+          <div className="filter-group group-quality">
+            <span className="group-label">Quality</span>
+            <div className="group-fields">
+              {/* Beauty index: clean minimum-gems button list over the 1-5 gem score
+                  (evidence-based: UNESCO heritage + Blue Flag beaches + scenery). */}
+              <div className="filter filter-beauty">
+                <label className="filter-label">Beauty</label>
+                <div className="filter-control">
+                  <div className="segmented compact beauty-steps">
+                    {BEAUTY_STEPS.map((s) => (
+                      <button
+                        key={s.v}
+                        className={minBeauty === s.v ? 'seg-on' : ''}
+                        onClick={() => setMinBeauty(s.v)}
+                        title={s.v === 1 ? 'Any beauty rating' : `Only ${s.label}-gem destinations`}
+                      >
+                        {s.v === 1 ? s.label : (
+                          <span className="step-gems">
+                            <GemIcon filled size={10} />
+                            {s.label}
+                          </span>
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Highlights: standalone heritage / coast toggles, kept apart from the
+                  beauty rating so each is a clear, independent yes/no filter. */}
+              <div className="filter filter-highlights">
+                <label className="filter-label">Highlights</label>
+                <div className="filter-control pill-row">
                   <button
-                    key={s.v}
-                    className={minBeauty === s.v ? 'seg-on' : ''}
-                    onClick={() => setMinBeauty(s.v)}
-                    title={s.v === 1 ? 'Any beauty rating' : `Only ${s.label}-gem destinations`}
+                    className={`pill-toggle ${unescoOnly ? 'on' : ''}`}
+                    onClick={() => setUnescoOnly(!unescoOnly)}
+                    aria-pressed={unescoOnly}
+                    title="Only destinations with a UNESCO World Heritage Site within ~60 km"
                   >
-                    {s.v === 1 ? s.label : (
-                      <span className="step-gems">
-                        <GemIcon filled size={10} />
-                        {s.label}
-                      </span>
-                    )}
+                    UNESCO
                   </button>
-                ))}
+                  <button
+                    className={`pill-toggle ${topBeachOnly ? 'on' : ''}`}
+                    onClick={() => setTopBeachOnly(!topBeachOnly)}
+                    aria-pressed={topBeachOnly}
+                    title="Only strong beach destinations (high Blue Flag density)"
+                  >
+                    Top beaches
+                  </button>
+                </div>
               </div>
             </div>
           </div>
 
           <div className="filter-divider" aria-hidden="true" />
 
-          {/* Highlights: standalone heritage / coast toggles, kept apart from the
-              beauty rating so each is a clear, independent yes/no filter. */}
-          <div className="filter filter-highlights">
-            <label className="filter-label">Highlights</label>
-            <div className="filter-control pill-row">
-              <button
-                className={`pill-toggle ${unescoOnly ? 'on' : ''}`}
-                onClick={() => setUnescoOnly(!unescoOnly)}
-                aria-pressed={unescoOnly}
-                title="Only destinations with a UNESCO World Heritage Site within ~60 km"
-              >
-                UNESCO
-              </button>
-              <button
-                className={`pill-toggle ${topBeachOnly ? 'on' : ''}`}
-                onClick={() => setTopBeachOnly(!topBeachOnly)}
-                aria-pressed={topBeachOnly}
-                title="Only strong beach destinations (high Blue Flag density)"
-              >
-                Top beaches
-              </button>
-            </div>
-          </div>
-
-          <div className="filter-divider" aria-hidden="true" />
-
-          {/* Trip type - a multi-select dropdown, mirroring the Country filter.
-              A compact trigger keeps the bar to two tidy rows; the choices live
-              in a popover instead of wrapping a wide chip block across the row. */}
-          <div className="filter filter-triptype">
-            <label className="filter-label">Trip type</label>
-            <div className="filter-control">
-              <Dropdown
-                multiple
-                value={tripKinds}
-                onChange={setTripKinds}
-                options={TRIP_KINDS.map((k) => ({ value: k.key, label: k.label }))}
-                placeholder="All types"
-                multiLabel={(vals) =>
-                  vals.length === 1
-                    ? (TRIP_KINDS.find((k) => k.key === vals[0])?.label || '1 type')
-                    : `${vals.length} types`
-                }
-              />
+          {/* Style */}
+          <div className="filter-group group-style">
+            <span className="group-label">Style</span>
+            <div className="group-fields">
+              {/* Trip type - a multi-select dropdown, mirroring the Country filter.
+                  A compact trigger keeps the bar to two tidy rows; the choices live
+                  in a popover instead of wrapping a wide chip block across the row. */}
+              <div className="filter filter-triptype">
+                <label className="filter-label">Trip type</label>
+                <div className="filter-control">
+                  <Dropdown
+                    multiple
+                    value={tripKinds}
+                    onChange={setTripKinds}
+                    options={TRIP_KINDS.map((k) => ({ value: k.key, label: k.label }))}
+                    placeholder="All types"
+                    multiLabel={(vals) =>
+                      vals.length === 1
+                        ? (TRIP_KINDS.find((k) => k.key === vals[0])?.label || '1 type')
+                        : `${vals.length} types`
+                    }
+                  />
+                </div>
+              </div>
             </div>
           </div>
 

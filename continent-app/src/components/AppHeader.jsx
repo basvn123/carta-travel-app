@@ -28,8 +28,7 @@ export function AppHeader({ user, onOpenAccount, children }) {
   return (
     <div className={`app-header ${children ? 'has-filters' : ''}`}>
       <div className="app-header-brand">
-        <Logo size={26} className="brand-mark" />
-        <span className="app-header-name">Carta</span>
+        <Logo size={34} className="brand-mark" />
       </div>
 
       {children && <div className="app-header-filters">{children}</div>}

@@ -364,7 +364,7 @@ export function DayPlannerTab({ data, user, authConfigured }) {
         <div className="day-landing">
           <div className="section-title">Day planner</div>
           <p className="day-landing-lead">
-            Plan any city day by day - pick a place, add the sights you want to see,
+            Plan any city day by day. Pick a place, add the sights you want to see,
             and Carta lays them out in a walkable order with a suggested schedule.
           </p>
 
@@ -398,6 +398,7 @@ export function DayPlannerTab({ data, user, authConfigured }) {
                 <TripMap
                   stops={pickerCities}
                   padBottom={12}
+                  showRoute={false}
                   onSelectStop={(i) => pickerCities[i] && setNewCityId(pickerCities[i].id)}
                   selectedIndex={pickerSelectedIdx >= 0 ? pickerSelectedIdx : null}
                 />
@@ -411,7 +412,7 @@ export function DayPlannerTab({ data, user, authConfigured }) {
               <label className="trip-field">
                 <span className="trip-field-label">Days</span>
                 <div className="trip-people">
-                  <button type="button" onClick={() => setNewDays((n) => Math.max(1, n - 1))} disabled={newDays <= 1} aria-label="Fewer days">–</button>
+                  <button type="button" onClick={() => setNewDays((n) => Math.max(1, n - 1))} disabled={newDays <= 1} aria-label="Fewer days">-</button>
                   <span>{newDays}</span>
                   <button type="button" onClick={() => setNewDays((n) => Math.min(30, n + 1))} disabled={newDays >= 30} aria-label="More days">+</button>
                 </div>
@@ -449,7 +450,7 @@ export function DayPlannerTab({ data, user, authConfigured }) {
               {plansLoading ? (
                 <p className="trip-note">Loading your saved trips…</p>
               ) : savedPlans.length === 0 ? (
-                <p className="trip-note">No saved trips yet - build and save one in Trip planner to plan its stops here.</p>
+                <p className="trip-note">No saved trips yet. Build and save one in Trip planner to plan its stops here.</p>
               ) : (
                 <div className="trip-saved-list">
                   {savedPlans.map((p) => (
@@ -550,7 +551,7 @@ export function DayPlannerTab({ data, user, authConfigured }) {
                 Today's plan{assignedItems.length > 0 ? ` (${assignedItems.length})` : ''}
               </div>
               {assignedItems.length === 0 ? (
-                <p className="trip-note">Tap an activity below to add it to this day - the route auto-orders itself to avoid zigzagging.</p>
+                <p className="trip-note">Tap an activity below to add it to this day, and the route auto-orders itself to avoid zigzagging.</p>
               ) : (
                 <>
                   <p className="trip-note day-timeline-note">
@@ -609,7 +610,7 @@ export function DayPlannerTab({ data, user, authConfigured }) {
             <div className="trip-block">
               <div className="trip-block-title">Things to do in {stop.dest?.city}</div>
               {activities.limited && activities.items.length > 0 && (
-                <p className="trip-note">Limited data for this destination - names only, no map pins.</p>
+                <p className="trip-note">Limited data for this destination, names only, no map pins.</p>
               )}
               {activities.items.length === 0 ? (
                 <p className="trip-note">No activities catalogued for this destination yet.</p>

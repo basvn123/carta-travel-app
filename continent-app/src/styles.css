@@ -99,13 +99,6 @@ input, select {
   gap: 10px;
   flex-shrink: 0;
 }
-.app-header-name {
-  font-family: var(--display);
-  font-weight: 600;
-  font-size: 18px;
-  letter-spacing: -0.02em;
-  color: var(--ink);
-}
 
 /* Middle slot: the Map tab's FilterBar sits inline between brand and account.
    It fills the space and its own bar chrome (background/border/padding) is
@@ -143,7 +136,6 @@ input, select {
     align-items: flex-start;   /* account stays top-aligned when the sheet opens */
   }
   .app-header-brand { display: none; }
-  .app-header-name { display: none; }
   .app-header-account {
     align-self: flex-start;
     margin-left: auto;
@@ -1583,17 +1575,46 @@ input, select {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 6px;
+  gap: 10px;
   flex: 1;
   min-width: 0;
   align-self: stretch;
   padding: 0;
 }
+/* Each row is a set of labelled category groups spread across the full panel
+   width; `space-between` pushes the groups apart and lets the dividers breathe. */
 .filter-row {
   display: flex;
-  align-items: center;
-  gap: 8px;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 6px 20px;
   flex-wrap: wrap;
+  min-width: 0;
+}
+
+/* A category: a small caption over a row of its member filters. On mobile this
+   collapses (`display: contents`, see the mobile block) so the fields drop
+   straight into the 2-column grid. */
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+.group-label {
+  font-family: var(--mono);
+  font-size: 8.5px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--ink-mute);
+  opacity: 0.7;
+  padding-left: 1px;
+}
+.group-fields {
+  display: flex;
+  align-items: flex-end;
+  gap: 18px;
   min-width: 0;
 }
 
@@ -1604,11 +1625,13 @@ input, select {
   min-width: 0;
 }
 
+/* Full-height rule between categories (aligned to the fields, not the caption)
+   so the divide between groups reads clearly. */
 .filter-divider {
   width: 1px;
-  height: 26px;
+  align-self: stretch;
+  margin: 14px 0 2px;
   background: var(--rule);
-  align-self: center;
   flex-shrink: 0;
 }
 
@@ -2255,6 +2278,8 @@ input, select {
   white-space: nowrap;
   cursor: pointer;
   flex-shrink: 0;
+  align-self: flex-end;   /* the row is align-items:stretch; keep the pill its own height */
+  margin-bottom: 2px;
   transition: color .15s, background .15s, border-color .15s;
 }
 .reset-filters-btn:hover {
@@ -4330,6 +4355,11 @@ input, select {
     align-items: end;
     gap: 12px 10px;
   }
+  /* Categories are a desktop-only layout: on mobile the group wrappers and their
+     captions collapse so each `.filter` falls straight into the grid above. */
+  .filter-bar.mobile-open .filter-group,
+  .filter-bar.mobile-open .group-fields { display: contents; }
+  .filter-bar.mobile-open .group-label { display: none; }
   .filter-bar.mobile-open .filter-divider { display: none; }
   .filter-bar.mobile-open .filter-country,
   .filter-bar.mobile-open .filter-triptype,

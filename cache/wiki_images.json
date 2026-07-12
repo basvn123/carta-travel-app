@@ -3127,5 +3127,460 @@
   "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c6/Gro%C5%BEnjan_aerial_view.jpg/960px-Gro%C5%BEnjan_aerial_view.jpg",
   "original": "https://upload.wikimedia.org/wikipedia/commons/c/c6/Gro%C5%BEnjan_aerial_view.jpg",
   "source": "wikipedia"
+ },
+ "gem:aarhus": {
+  "title": "Aarhus",
+  "url": "https://en.wikipedia.org/wiki/Aarhus",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Drone_photo_of_Dokk1_in_Aarhus%2C_Denmark.jpg/960px-Drone_photo_of_Dokk1_in_Aarhus%2C_Denmark.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/0/05/Drone_photo_of_Dokk1_in_Aarhus%2C_Denmark.jpg",
+  "source": "wikipedia"
+ },
+ "gem:odense": {
+  "title": "Odense",
+  "url": "https://en.wikipedia.org/wiki/Odense",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/03/Odense_-_Sankt_Knuds_kirke_2005-07-16.jpeg/960px-Odense_-_Sankt_Knuds_kirke_2005-07-16.jpeg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/0/03/Odense_-_Sankt_Knuds_kirke_2005-07-16.jpeg",
+  "source": "wikipedia"
+ },
+ "gem:skagen": {
+  "title": "Skagen",
+  "url": "https://en.wikipedia.org/wiki/Skagen",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d5/Skagen_rooftops.jpg/960px-Skagen_rooftops.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/d/d5/Skagen_rooftops.jpg",
+  "source": "wikipedia"
+ },
+ "gem:ribe": {
+  "title": "Ribe",
+  "url": "https://en.wikipedia.org/wiki/Ribe",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/RibeVue.jpg/960px-RibeVue.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/6/66/RibeVue.jpg",
+  "source": "wikipedia"
+ },
+ "gem:roskilde": {
+  "title": "Roskilde",
+  "url": "https://en.wikipedia.org/wiki/Roskilde",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/6/6a/RD_fra_bispegaarden.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/6/6a/RD_fra_bispegaarden.jpg",
+  "source": "wikipedia"
+ },
+ "gem:mons-klint": {
+  "title": "Møns Klint",
+  "url": "https://en.wikipedia.org/wiki/M%C3%B8ns_Klint",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/M%C3%B8ns_Klint_7.jpg/960px-M%C3%B8ns_Klint_7.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/2/2d/M%C3%B8ns_Klint_7.jpg",
+  "source": "wikipedia"
+ },
+ "gem:lahemaa": {
+  "title": "Lahemaa National Park",
+  "url": "https://en.wikipedia.org/wiki/Lahemaa_National_Park",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Viru_Bog%2C_Parque_Nacional_Lahemaa%2C_Estonia%2C_2012-08-12%2C_DD_26.JPG/960px-Viru_Bog%2C_Parque_Nacional_Lahemaa%2C_Estonia%2C_2012-08-12%2C_DD_26.JPG",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/1/1b/Viru_Bog%2C_Parque_Nacional_Lahemaa%2C_Estonia%2C_2012-08-12%2C_DD_26.JPG",
+  "source": "wikipedia"
+ },
+ "gem:haapsalu": {
+  "title": "Haapsalu",
+  "url": "https://en.wikipedia.org/wiki/Haapsalu",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/Haapsalu_-_view_from_Castle.jpg/960px-Haapsalu_-_view_from_Castle.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/7/70/Haapsalu_-_view_from_Castle.jpg",
+  "source": "wikipedia"
+ },
+ "gem:kuldiga": {
+  "title": "Kuldīga",
+  "url": "https://en.wikipedia.org/wiki/Kuld%C4%ABga",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/Kuld%C4%ABga%2C_Kurzeme%2C_Latvija%2C_Vecpils%C4%93ta.jpg/960px-Kuld%C4%ABga%2C_Kurzeme%2C_Latvija%2C_Vecpils%C4%93ta.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/7/78/Kuld%C4%ABga%2C_Kurzeme%2C_Latvija%2C_Vecpils%C4%93ta.jpg",
+  "source": "wikipedia"
+ },
+ "gem:rundale": {
+  "title": "Rundāle Palace",
+  "url": "https://en.wikipedia.org/wiki/Rund%C4%81le_Palace",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d2/Rundale_Palace_%286483271573%29.jpg/960px-Rundale_Palace_%286483271573%29.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/d/d2/Rundale_Palace_%286483271573%29.jpg",
+  "source": "wikipedia"
+ },
+ "gem:liepaja": {
+  "title": "Liepāja",
+  "url": "https://en.wikipedia.org/wiki/Liep%C4%81ja",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Liepajas_Sveta_Jazepa_Romas_katolu_katedrale_2.jpg/960px-Liepajas_Sveta_Jazepa_Romas_katolu_katedrale_2.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/1/1a/Liepajas_Sveta_Jazepa_Romas_katolu_katedrale_2.jpg",
+  "source": "wikipedia"
+ },
+ "gem:kernave": {
+  "title": "Kernavė",
+  "url": "https://en.wikipedia.org/wiki/Kernav%C4%97",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Kernave_mounds_20200926.jpg/960px-Kernave_mounds_20200926.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/c/cc/Kernave_mounds_20200926.jpg",
+  "source": "wikipedia"
+ },
+ "gem:druskininkai": {
+  "title": "Druskininkai",
+  "url": "https://en.wikipedia.org/wiki/Druskininkai",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Druskininkai_flowers.jpg/960px-Druskininkai_flowers.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/4/4b/Druskininkai_flowers.jpg",
+  "source": "wikipedia"
+ },
+ "gem:prizren": {
+  "title": "Prizren",
+  "url": "https://en.wikipedia.org/wiki/Prizren",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e5/37_Prizreni_-_Xhamia_e_Sinan_Pash%C3%ABs_-_The_Sinan_Pasha_Moscue.JPG/960px-37_Prizreni_-_Xhamia_e_Sinan_Pash%C3%ABs_-_The_Sinan_Pasha_Moscue.JPG",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/e/e5/37_Prizreni_-_Xhamia_e_Sinan_Pash%C3%ABs_-_The_Sinan_Pasha_Moscue.JPG",
+  "source": "wikipedia"
+ },
+ "gem:peja": {
+  "title": "Rugova Canyon",
+  "url": "https://en.wikipedia.org/wiki/Rugova_Canyon",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/33/Rugova_Canyon.jpg/960px-Rugova_Canyon.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/3/33/Rugova_Canyon.jpg",
+  "source": "wikipedia"
+ },
+ "gem:matka": {
+  "title": "Matka Canyon",
+  "url": "https://en.wikipedia.org/wiki/Matka_Canyon",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/Matka_Canyon_Skopje_3.jpg/960px-Matka_Canyon_Skopje_3.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/8/80/Matka_Canyon_Skopje_3.jpg",
+  "source": "wikipedia"
+ },
+ "gem:bitola": {
+  "title": "Bitola",
+  "url": "https://en.wikipedia.org/wiki/Bitola",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/Ambientalna_ulica_Marsal_Tito-Bitola_%2810%29.jpg/960px-Ambientalna_ulica_Marsal_Tito-Bitola_%2810%29.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/b/b8/Ambientalna_ulica_Marsal_Tito-Bitola_%2810%29.jpg",
+  "source": "wikipedia"
+ },
+ "gem:troodos": {
+  "title": "Troodos Mountains",
+  "url": "https://en.wikipedia.org/wiki/Troodos_Mountains",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Chionistra_winter_1.JPG/960px-Chionistra_winter_1.JPG",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/5/5f/Chionistra_winter_1.JPG",
+  "source": "wikipedia"
+ },
+ "gem:polis-akamas": {
+  "title": "Polis, Cyprus",
+  "url": "https://en.wikipedia.org/wiki/Polis,_Cyprus",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/Apostle_Andreas_Orthodox_Church%2C_Polis%2C_Cyprus_02.jpg/960px-Apostle_Andreas_Orthodox_Church%2C_Polis%2C_Cyprus_02.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/b/b7/Apostle_Andreas_Orthodox_Church%2C_Polis%2C_Cyprus_02.jpg",
+  "source": "wikipedia"
+ },
+ "gem:nicosia": {
+  "title": "Nicosia",
+  "url": "https://en.wikipedia.org/wiki/Nicosia",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a3/Nicosia%27s_skyline_2024.jpg/960px-Nicosia%27s_skyline_2024.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/a/a3/Nicosia%27s_skyline_2024.jpg",
+  "source": "wikipedia"
+ },
+ "gem:ayia-napa": {
+  "title": "Ayia Napa",
+  "url": "https://en.wikipedia.org/wiki/Ayia_Napa",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/View_of_Agia_Napa_beach_located_in_vicinity_of_Nelia_Beach_Hotel.jpg/960px-View_of_Agia_Napa_beach_located_in_vicinity_of_Nelia_Beach_Hotel.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/7/7c/View_of_Agia_Napa_beach_located_in_vicinity_of_Nelia_Beach_Hotel.jpg",
+  "source": "wikipedia"
+ },
+ "gem:limassol": {
+  "title": "Limassol",
+  "url": "https://en.wikipedia.org/wiki/Limassol",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Skyscrapers_in_Limassol.jpg/960px-Skyscrapers_in_Limassol.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/c/cc/Skyscrapers_in_Limassol.jpg",
+  "source": "wikipedia"
+ },
+ "gem:gjogv": {
+  "title": "Gjógv",
+  "url": "https://en.wikipedia.org/wiki/Gj%C3%B3gv",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Faroe_Islands%2C_Eysturoy%2C_Gj%C3%B3gv_%283%29.jpg/960px-Faroe_Islands%2C_Eysturoy%2C_Gj%C3%B3gv_%283%29.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/9/9a/Faroe_Islands%2C_Eysturoy%2C_Gj%C3%B3gv_%283%29.jpg",
+  "source": "wikipedia"
+ },
+ "gem:saksun": {
+  "title": "Saksun",
+  "url": "https://en.wikipedia.org/wiki/Saksun",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d8/Saksun%2C_Faroe_Islands_%282%29.JPG/960px-Saksun%2C_Faroe_Islands_%282%29.JPG",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/d/d8/Saksun%2C_Faroe_Islands_%282%29.JPG",
+  "source": "wikipedia"
+ },
+ "gem:mykines": {
+  "title": "Mykines, Faroe Islands",
+  "url": "https://en.wikipedia.org/wiki/Mykines,_Faroe_Islands",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/Mykinesh%C3%B3lmur_1.jpg/960px-Mykinesh%C3%B3lmur_1.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/f/ff/Mykinesh%C3%B3lmur_1.jpg",
+  "source": "wikipedia"
+ },
+ "gem:snaefellsnes": {
+  "title": "Snæfellsnes",
+  "url": "https://en.wikipedia.org/wiki/Sn%C3%A6fellsnes",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/63/Map_of_the_Sn%C3%A6fellsnes_peninsula.png/960px-Map_of_the_Sn%C3%A6fellsnes_peninsula.png",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/6/63/Map_of_the_Sn%C3%A6fellsnes_peninsula.png",
+  "source": "wikipedia"
+ },
+ "gem:golden-circle": {
+  "title": "Golden Circle (Iceland)",
+  "url": "https://en.wikipedia.org/wiki/Golden_Circle_(Iceland)",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Strokkur.jpg/960px-Strokkur.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/c/cd/Strokkur.jpg",
+  "source": "wikipedia"
+ },
+ "gem:jokulsarlon": {
+  "title": "Jökulsárlón",
+  "url": "https://en.wikipedia.org/wiki/J%C3%B6kuls%C3%A1rl%C3%B3n",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/J%C3%B6kuls%C3%A1rl%C3%B3n_lagoon_in_southeastern_Iceland.jpg/960px-J%C3%B6kuls%C3%A1rl%C3%B3n_lagoon_in_southeastern_Iceland.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/2/2c/J%C3%B6kuls%C3%A1rl%C3%B3n_lagoon_in_southeastern_Iceland.jpg",
+  "source": "wikipedia"
+ },
+ "gem:myvatn": {
+  "title": "Mývatn",
+  "url": "https://en.wikipedia.org/wiki/M%C3%BDvatn",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fe/M%C3%BDvatn-pjt.jpg/960px-M%C3%BDvatn-pjt.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/f/fe/M%C3%BDvatn-pjt.jpg",
+  "source": "wikipedia"
+ },
+ "gem:blagaj": {
+  "title": "Blagaj, Mostar",
+  "url": "https://en.wikipedia.org/wiki/Blagaj,_Mostar",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/Blagaj_Ceilings.jpg/960px-Blagaj_Ceilings.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/d/d0/Blagaj_Ceilings.jpg",
+  "source": "wikipedia"
+ },
+ "gem:pocitelj": {
+  "title": "Počitelj",
+  "url": "https://en.wikipedia.org/wiki/Po%C4%8Ditelj",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/be/BiH_2012_-_Pocitelj_%288144171214%29.jpg/960px-BiH_2012_-_Pocitelj_%288144171214%29.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/b/be/BiH_2012_-_Pocitelj_%288144171214%29.jpg",
+  "source": "wikipedia"
+ },
+ "gem:jajce": {
+  "title": "Jajce",
+  "url": "https://en.wikipedia.org/wiki/Jajce",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/a/a3/Jajce_%28kola%C5%BE%29.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/a/a3/Jajce_%28kola%C5%BE%29.jpg",
+  "source": "wikipedia"
+ },
+ "gem:bihac-una": {
+  "title": "Siege of Bihać (1992–1995)",
+  "url": "https://en.wikipedia.org/wiki/Siege_of_Biha%C4%87_(1992%E2%80%931995)",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/5/50/Western_Bosnia_1994.png",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/5/50/Western_Bosnia_1994.png",
+  "source": "wikipedia"
+ },
+ "gem:durmitor": {
+  "title": "Durmitor",
+  "url": "https://en.wikipedia.org/wiki/Durmitor",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bf/Durmitor.jpg/960px-Durmitor.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/b/bf/Durmitor.jpg",
+  "source": "wikipedia"
+ },
+ "gem:perast": {
+  "title": "Perast",
+  "url": "https://en.wikipedia.org/wiki/Perast",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fb/Perast_100.jpg/960px-Perast_100.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/f/fb/Perast_100.jpg",
+  "source": "wikipedia"
+ },
+ "gem:sveti-stefan": {
+  "title": "Sveti Stefan",
+  "url": "https://en.wikipedia.org/wiki/Sveti_Stefan",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/48/Sveti_Stefan_%2806%29.jpg/960px-Sveti_Stefan_%2806%29.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/4/48/Sveti_Stefan_%2806%29.jpg",
+  "source": "wikipedia"
+ },
+ "gem:ulcinj": {
+  "title": "Ulcinj",
+  "url": "https://en.wikipedia.org/wiki/Ulcinj",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/Ulcinj%2C_Montenegro_-_Sept._2010.jpg/960px-Ulcinj%2C_Montenegro_-_Sept._2010.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/5/5d/Ulcinj%2C_Montenegro_-_Sept._2010.jpg",
+  "source": "wikipedia"
+ },
+ "gem:theth": {
+  "title": "Theth",
+  "url": "https://en.wikipedia.org/wiki/Theth",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Theth_Church_Albania.jpg/960px-Theth_Church_Albania.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/8/87/Theth_Church_Albania.jpg",
+  "source": "wikipedia"
+ },
+ "gem:himara": {
+  "title": "Himarë",
+  "url": "https://en.wikipedia.org/wiki/Himar%C3%AB",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/ALB_20070718_img_1368.jpg/960px-ALB_20070718_img_1368.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/5/52/ALB_20070718_img_1368.jpg",
+  "source": "wikipedia"
+ },
+ "gem:kruje": {
+  "title": "Krujë",
+  "url": "https://en.wikipedia.org/wiki/Kruj%C3%AB",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Kruj%C3%AB-KrujaAlbania_2016.jpg/960px-Kruj%C3%AB-KrujaAlbania_2016.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/4/43/Kruj%C3%AB-KrujaAlbania_2016.jpg",
+  "source": "wikipedia"
+ },
+ "gem:shkoder": {
+  "title": "Shkodër",
+  "url": "https://en.wikipedia.org/wiki/Shkod%C3%ABr",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f8/The_City_and_the_Prokletije_from_the_castle.jpg/960px-The_City_and_the_Prokletije_from_the_castle.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/f/f8/The_City_and_the_Prokletije_from_the_castle.jpg",
+  "source": "wikipedia"
+ },
+ "gem:novi-sad": {
+  "title": "Novi Sad",
+  "url": "https://en.wikipedia.org/wiki/Novi_Sad",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/20230429.Ansichten_in_Novi_Sad.-039.jpg/960px-20230429.Ansichten_in_Novi_Sad.-039.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/a/a0/20230429.Ansichten_in_Novi_Sad.-039.jpg",
+  "source": "wikipedia"
+ },
+ "gem:uvac": {
+  "title": "Uvac",
+  "url": "https://en.wikipedia.org/wiki/Uvac",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/03/Uvac_River_and_Eagle.jpg/960px-Uvac_River_and_Eagle.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/0/03/Uvac_River_and_Eagle.jpg",
+  "source": "wikipedia"
+ },
+ "gem:mokra-gora": {
+  "title": "Tara (mountain)",
+  "url": "https://en.wikipedia.org/wiki/Tara_(mountain)",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/Mitrovac_na_Tari.jpg/960px-Mitrovac_na_Tari.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/5/5d/Mitrovac_na_Tari.jpg",
+  "source": "wikipedia"
+ },
+ "gem:bojnice": {
+  "title": "Bojnice",
+  "url": "https://en.wikipedia.org/wiki/Bojnice",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Slovakia_Bojnice_%28The_photo_is_made_of_a_glider_%22Duo_Discus_xlt%22%29_%288698340484%29.jpg/960px-Slovakia_Bojnice_%28The_photo_is_made_of_a_glider_%22Duo_Discus_xlt%22%29_%288698340484%29.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/f/f2/Slovakia_Bojnice_%28The_photo_is_made_of_a_glider_%22Duo_Discus_xlt%22%29_%288698340484%29.jpg",
+  "source": "wikipedia"
+ },
+ "gem:slovak-paradise": {
+  "title": "Slovak Paradise",
+  "url": "https://en.wikipedia.org/wiki/Slovak_Paradise",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Slovensky_raj-Stratenska_pila.jpg/960px-Slovensky_raj-Stratenska_pila.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/4/45/Slovensky_raj-Stratenska_pila.jpg",
+  "source": "wikipedia"
+ },
+ "gem:vlkolinec": {
+  "title": "Vlkolínec",
+  "url": "https://en.wikipedia.org/wiki/Vlkol%C3%ADnec",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8f/Vlkolinecslovakia001.jpg/960px-Vlkolinecslovakia001.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/8/8f/Vlkolinecslovakia001.jpg",
+  "source": "wikipedia"
+ },
+ "gem:bansko": {
+  "title": "Bansko",
+  "url": "https://en.wikipedia.org/wiki/Bansko",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/Bansko_ski_resort_%2823917454674%29.jpg/960px-Bansko_ski_resort_%2823917454674%29.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/f/f3/Bansko_ski_resort_%2823917454674%29.jpg",
+  "source": "wikipedia"
+ },
+ "gem:koprivshtitsa": {
+  "title": "Koprivshtitsa",
+  "url": "https://en.wikipedia.org/wiki/Koprivshtitsa",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/Bulgaria_Koprivshtica_10.JPG/960px-Bulgaria_Koprivshtica_10.JPG",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/f/ff/Bulgaria_Koprivshtica_10.JPG",
+  "source": "wikipedia"
+ },
+ "gem:melnik": {
+  "title": "Melnik, Bulgaria",
+  "url": "https://en.wikipedia.org/wiki/Melnik,_Bulgaria",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bd/Meleniko.jpg/960px-Meleniko.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/b/bd/Meleniko.jpg",
+  "source": "wikipedia"
+ },
+ "gem:nesebar": {
+  "title": "Nesebar",
+  "url": "https://en.wikipedia.org/wiki/Nesebar",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/Nessebar_lead_collage.jpg/960px-Nessebar_lead_collage.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/1/13/Nessebar_lead_collage.jpg",
+  "source": "wikipedia"
+ },
+ "gem:szentendre": {
+  "title": "Szentendre",
+  "url": "https://en.wikipedia.org/wiki/Szentendre",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Szentendre_montage1.jpg/960px-Szentendre_montage1.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/c/cd/Szentendre_montage1.jpg",
+  "source": "wikipedia"
+ },
+ "gem:tokaj": {
+  "title": "Tokaj",
+  "url": "https://en.wikipedia.org/wiki/Tokaj",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/7/7b/Tokajcivertanlegi1.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/7/7b/Tokajcivertanlegi1.jpg",
+  "source": "wikipedia"
+ },
+ "gem:rauma": {
+  "title": "Rauma, Finland",
+  "url": "https://en.wikipedia.org/wiki/Rauma,_Finland",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Vanha_Rauma_vesitornista.jpg/960px-Vanha_Rauma_vesitornista.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/0/0a/Vanha_Rauma_vesitornista.jpg",
+  "source": "wikipedia"
+ },
+ "gem:aland": {
+  "title": "Åland",
+  "url": "https://en.wikipedia.org/wiki/%C3%85land",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Flag_of_%C3%85land.svg/960px-Flag_of_%C3%85land.svg.png",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/5/52/Flag_of_%C3%85land.svg",
+  "source": "wikipedia"
+ },
+ "gem:uppsala": {
+  "title": "Uppsala",
+  "url": "https://en.wikipedia.org/wiki/Uppsala",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/Uppsala.jpg/960px-Uppsala.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/6/6d/Uppsala.jpg",
+  "source": "wikipedia"
+ },
+ "gem:vaxholm": {
+  "title": "Stockholm Archipelago",
+  "url": "https://en.wikipedia.org/wiki/Stockholm_Archipelago",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/Stockholms_sk%C3%A4rg%C3%A5rd.png/960px-Stockholms_sk%C3%A4rg%C3%A5rd.png",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/8/8b/Stockholms_sk%C3%A4rg%C3%A5rd.png",
+  "source": "wikipedia"
+ },
+ "gem:bohemian-switzerland": {
+  "title": "Bohemian Switzerland",
+  "url": "https://en.wikipedia.org/wiki/Bohemian_Switzerland",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Pravcicka_brana_001.jpg/960px-Pravcicka_brana_001.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/5/5f/Pravcicka_brana_001.jpg",
+  "source": "wikipedia"
+ },
+ "gem:vianden": {
+  "title": "Vianden",
+  "url": "https://en.wikipedia.org/wiki/Vianden",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d9/Vianden_17Jan2021.jpg/960px-Vianden_17Jan2021.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/d/d9/Vianden_17Jan2021.jpg",
+  "source": "wikipedia"
+ },
+ "gem:echternach": {
+  "title": "Mullerthal, Luxembourg",
+  "url": "https://en.wikipedia.org/wiki/Mullerthal,_Luxembourg",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Mullerthal.jpg/960px-Mullerthal.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/8/89/Mullerthal.jpg",
+  "source": "wikipedia"
+ },
+ "gem:gozo": {
+  "title": "Gozo",
+  "url": "https://en.wikipedia.org/wiki/Gozo",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/Gozo_from_space_via_laser_ESA378503_%28cropped%29.jpg/960px-Gozo_from_space_via_laser_ESA378503_%28cropped%29.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/b/b9/Gozo_from_space_via_laser_ESA378503_%28cropped%29.jpg",
+  "source": "wikipedia"
+ },
+ "gem:mdina": {
+  "title": "Mdina",
+  "url": "https://en.wikipedia.org/wiki/Mdina",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a3/Malta_-_Mdina_%28Triq_San_Oswald%29_02_ies.jpg/960px-Malta_-_Mdina_%28Triq_San_Oswald%29_02_ies.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/a/a3/Malta_-_Mdina_%28Triq_San_Oswald%29_02_ies.jpg",
+  "source": "wikipedia"
+ },
+ "gem:ypres": {
+  "title": "Ypres",
+  "url": "https://en.wikipedia.org/wiki/Ypres",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Ieper_Grote_Markt_R04.jpg/960px-Ieper_Grote_Markt_R04.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/a/a6/Ieper_Grote_Markt_R04.jpg",
+  "source": "wikipedia"
+ },
+ "gem:bouillon": {
+  "title": "Bouillon, Belgium",
+  "url": "https://en.wikipedia.org/wiki/Bouillon,_Belgium",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a8/Bouillon_Luxembourg_Belgium_Map.svg/960px-Bouillon_Luxembourg_Belgium_Map.svg.png",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/a/a8/Bouillon_Luxembourg_Belgium_Map.svg",
+  "source": "wikipedia"
+ },
+ "gem:orheiul-vechi": {
+  "title": "Old Orhei",
+  "url": "https://en.wikipedia.org/wiki/Old_Orhei",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/Stanca_deasupra_Rautului_Butuceni.jpg/960px-Stanca_deasupra_Rautului_Butuceni.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/a/a9/Stanca_deasupra_Rautului_Butuceni.jpg",
+  "source": "wikipedia"
  }
 }
