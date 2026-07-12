@@ -29,7 +29,6 @@ export function MapView({ priced, unreachable = [], priceMode = 'total', groupSi
       maxBounds: [[-30, 30], [50, 72]],   // soft Europe bounds
     });
     map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'bottom-right');
-    map.addControl(new maplibregl.AttributionControl({ compact: true }));
     mapRef.current = map;
     return () => {
       map.remove();

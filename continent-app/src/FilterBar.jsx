@@ -6,16 +6,19 @@ import { GemIcon } from './GemRating.jsx';
 import { PlaneIcon, CarIcon } from './TransportIcons.jsx';
 import { CalendarIcon, FilterIcon, PersonIcon } from './Icons.jsx';
 import Logo from './Logo.jsx';
+import { eur } from './format.js';
 
 function AccountButton({ user, onOpenAccount, className = '' }) {
+  const fullName = user?.user_metadata?.full_name?.trim();
+  const initial = (fullName || user?.email || '?')[0].toUpperCase();
   return (
     <button
       className={`account-avatar-btn ${className}`}
       onClick={onOpenAccount}
-      title={user ? user.email : 'Account & preferences'}
+      title={user ? (fullName || user.email) : 'Account & preferences'}
     >
       <span className="account-avatar">
-        {user ? (user.email || '?')[0].toUpperCase() : <PersonIcon size={14} />}
+        {user ? initial : <PersonIcon size={14} />}
       </span>
       <span className="account-avatar-label">Account</span>
     </button>
@@ -42,7 +45,6 @@ export function FilterBar({
   user, onOpenAccount,
 }) {
   const baggageOpts = data?.meta?.baggage_options || {};
-  const eur = (n) => (n == null ? '-' : `€${Math.round(n).toLocaleString('en-GB')}`);
 
   // Mobile-only: the dense filter set collapses behind a filter icon, and the
   // depart/return pickers collapse behind a separate calendar icon. On desktop
@@ -221,7 +223,7 @@ export function FilterBar({
             </div>
           </div>
 
-          <div className="filter">
+          <div className="filter filter-nights">
             <label className="filter-label">Nights</label>
             <div className="filter-control">
               <div
@@ -233,7 +235,7 @@ export function FilterBar({
             </div>
           </div>
 
-          <div className="filter">
+          <div className="filter filter-people">
             <label className="filter-label">People</label>
             <div className="filter-control">
               <input type="number" min={1} max={20}
@@ -243,30 +245,33 @@ export function FilterBar({
             </div>
           </div>
 
-          <div className="filter">
-            <label className="filter-label">Baggage</label>
-            <div className="filter-control">
-              <Dropdown
-                value={choices.baggage_key}
-                onChange={(key) => {
-                  const opt = baggageOpts[key];
-                  setChoices({
-                    ...choices,
-                    baggage_key: key,
-                    baggage_per_direction_eur: opt?.per_direction_eur || 0,
-                  });
-                }}
-                options={Object.entries(baggageOpts).map(([k, v]) => ({
-                  value: k,
-                  label: v.label,
-                  sublabel: v.per_direction_eur > 0 ? `€${v.per_direction_eur}/direction` : 'free',
-                }))}
-              />
+          {/* Baggage only matters when flying: driving has no Ryanair fees to add. */}
+          {(choices.transport_mode || 'plane') !== 'car' && (
+            <div className="filter filter-baggage">
+              <label className="filter-label">Baggage</label>
+              <div className="filter-control">
+                <Dropdown
+                  value={choices.baggage_key}
+                  onChange={(key) => {
+                    const opt = baggageOpts[key];
+                    setChoices({
+                      ...choices,
+                      baggage_key: key,
+                      baggage_per_direction_eur: opt?.per_direction_eur || 0,
+                    });
+                  }}
+                  options={Object.entries(baggageOpts).map(([k, v]) => ({
+                    value: k,
+                    label: v.label,
+                    sublabel: v.per_direction_eur > 0 ? `€${v.per_direction_eur}/direction` : 'free',
+                  }))}
+                />
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Top picks: quick "best of" shortcuts (cheapest / most beautiful) */}
-          <div className="filter">
+          <div className="filter filter-toppicks">
             <label className="filter-label">Top picks</label>
             <div className="filter-control">
               <Dropdown
@@ -281,7 +286,7 @@ export function FilterBar({
 
         {/* Row 2: View filters */}
         <div className="filter-row">
-          <div className="filter">
+          <div className="filter filter-show">
             <label className="filter-label">Show</label>
             <div className="filter-control">
               <div className="segmented compact">
@@ -301,7 +306,7 @@ export function FilterBar({
             </div>
           </div>
 
-          <div className="filter">
+          <div className="filter filter-travelby">
             <label className="filter-label">Travel by</label>
             <div className="filter-control">
               <div className="segmented compact seg-icons">
@@ -325,7 +330,7 @@ export function FilterBar({
             </div>
           </div>
 
-          <div className="filter">
+          <div className="filter filter-country">
             <label className="filter-label">Country</label>
             <div className="filter-control">
               <Dropdown
@@ -361,7 +366,7 @@ export function FilterBar({
 
           {/* Beauty index: clean minimum-gems button list over the 1-5 gem score
               (evidence-based: UNESCO heritage + Blue Flag beaches + scenery). */}
-          <div className="filter">
+          <div className="filter filter-beauty">
             <label className="filter-label">Beauty</label>
             <div className="filter-control">
               <div className="segmented compact beauty-steps">
@@ -388,7 +393,7 @@ export function FilterBar({
 
           {/* Highlights: standalone heritage / coast toggles, kept apart from the
               beauty rating so each is a clear, independent yes/no filter. */}
-          <div className="filter">
+          <div className="filter filter-highlights">
             <label className="filter-label">Highlights</label>
             <div className="filter-control pill-row">
               <button
@@ -415,7 +420,7 @@ export function FilterBar({
           {/* Trip type — a multi-select dropdown, mirroring the Country filter.
               A compact trigger keeps the bar to two tidy rows; the choices live
               in a popover instead of wrapping a wide chip block across the row. */}
-          <div className="filter">
+          <div className="filter filter-triptype">
             <label className="filter-label">Trip type</label>
             <div className="filter-control">
               <Dropdown

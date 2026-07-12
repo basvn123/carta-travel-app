@@ -1,5 +1,6 @@
 import React from 'react';
 import { cheapestWindows, cheapestFlexibleWindows, fareByWeekday } from './runtime_pricing.js';
+import { eur } from './format.js';
 
 const DOW_NAMES = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
@@ -10,7 +11,6 @@ const LENGTH_OPTIONS = [
   { key: 'flexible', label: 'Flexible ±3 days', nights: null },
 ];
 
-const eur = (n) => `€${Math.round(n).toLocaleString('en-GB')}`;
 const fmtDate = (iso) => new Date(iso + 'T00:00:00Z').toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
 
 // Which length chip is closest to the trip the user actually has selected -

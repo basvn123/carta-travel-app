@@ -1,5 +1,6 @@
 import React from 'react';
 import { composeTrip, DEFAULT_LIFESTYLE } from './runtime_pricing.js';
+import { eur, PRICE_SOURCE_LABELS } from './format.js';
 
 /**
  * Lifestyle settings panel - slides in from the left.
@@ -76,16 +77,10 @@ export function LifestylePanel({ choices, setChoices, previewDest, departDate, r
   const setCadence = (c) => setChoices({ ...choices, lifestyle: toCadence(ls, c) });
   const active = matchProfile(ls);
 
-  const eur = (n) => (n == null ? '-' : `€${Math.round(n).toLocaleString('en-GB')}`);
-
   const preview = previewDest ? composeTrip(previewDest, departDate, returnDate, choices) : null;
   const nights = preview?.nights || choices.trip_days || 7;
   const g = preview?.ground || null;
-  const sourceLabel = {
-    numbeo_city: 'city prices',
-    numbeo_direct: 'country prices',
-    pli_scaled: 'estimated prices',
-  }[preview?.price_source] || 'local prices';
+  const sourceLabel = PRICE_SOURCE_LABELS[preview?.price_source] || 'local prices';
 
   const maxFor = (key) => PERIOD_FIELDS.find((f) => f.key === key).max[cadence];
 

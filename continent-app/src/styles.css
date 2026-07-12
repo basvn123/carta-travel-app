@@ -679,7 +679,6 @@ input, select {
    .filter-row, exactly as before); hidden on mobile because the calendar
    icon's popover covers the same two fields instead. */
 .row-date-fields { display: contents; }
-.mobile-nav { display: none; }
 
 @media (max-width: 880px) {
   .filter-bar { flex-wrap: wrap; padding: 12px 16px; height: auto; gap: 12px; }
@@ -2299,6 +2298,21 @@ input, select {
 }
 .mode-pill-val { font-size: 15px; font-weight: 600; }
 
+/* Underlined text-button used for outbound links (Airbnb, KAYAK) and small
+   in-panel actions ("Adjust lifestyle") under a cost breakdown line. */
+.detail-text-link {
+  display: inline-block;
+  margin-top: 8px;
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--accent);
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
 /* --- "Is a car needed here?" advisory --- */
 .car-advisory {
   display: flex;
@@ -2795,16 +2809,17 @@ input, select {
    PHONE LAYOUT  (<= 768px)
    The desktop shell is three absolutely-positioned columns (list gutter +
    map + detail panel), each var(--panel-w)=440px — wider than a phone. Here
-   we collapse it to a single full-bleed column: the map fills the screen, the
-   list/detail/lifestyle become full-screen overlays, the filter bar folds into
-   a tap-to-open sheet, and a bottom tab bar switches between map and list.
+   we collapse it to a single full-bleed column: the map fills the whole
+   screen and the destinations list becomes a full-screen overlay, toggled
+   by the same collapse/"Destinations" pill mechanism as desktop (see
+   .list-reopen) — it just starts collapsed so the map opens as big as
+   possible. The filter bar folds into a tap-to-open sheet.
    ═══════════════════════════════════════════════════════════════════════ */
 @media (max-width: 768px) {
   /* Use the dynamic viewport unit so the iOS/Android URL bar doesn't clip the
      bottom of the app. Falls back to the 100vh rule above on older browsers. */
   html, body, #root { height: 100dvh; }
   .app {
-    --mobile-nav-h: 60px;   /* inherited by the map/list/nav below */
     height: 100dvh;
     width: 100vw;
   }
@@ -2845,8 +2860,9 @@ input, select {
   .filter-bar.mobile-collapsed .filter-rows { display: none; }
   .filter-bar.mobile-open .filter-rows {
     display: flex;
-    padding: 8px 16px 20px;
-    gap: 18px;
+    flex-direction: column;
+    padding: 6px 16px 16px;
+    gap: 14px;
     border-top: 1px solid var(--rule);
     max-height: calc(100dvh - 58px - 60px);
     overflow-y: auto;
@@ -2855,8 +2871,36 @@ input, select {
      header. */
   .filter-bar.mobile-collapsed .reset-filters-btn { display: none; }
   .filter-bar.mobile-open .reset-filters-btn { margin: 0 16px 16px; align-self: flex-end; }
-  .filter-row { gap: 16px 20px; }
   .filter-stats { display: none; }
+
+  /* A tidy 2-column grid instead of left-packed flex-wrap: every control lines
+     up, and dropdowns/segmented toggles are stretched to fill their cell so
+     nothing sits as a small box surrounded by dead space. Wide controls
+     (dropdowns with long option text, the price slider, the beauty scale)
+     span both columns. */
+  .filter-bar.mobile-open .filter-row {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: end;
+    gap: 12px 10px;
+  }
+  .filter-bar.mobile-open .filter-divider { display: none; }
+  .filter-bar.mobile-open .filter-country,
+  .filter-bar.mobile-open .filter-triptype,
+  .filter-bar.mobile-open .filter-beauty,
+  .filter-bar.mobile-open .filter-highlights,
+  .filter-bar.mobile-open .price-range {
+    grid-column: 1 / -1;
+  }
+  .filter-bar.mobile-open .filter-control { width: 100%; }
+  .filter-bar.mobile-open .dropdown { width: 100%; }
+  .filter-bar.mobile-open .dropdown-trigger { width: 100%; max-width: none; }
+  .filter-bar.mobile-open .filter input[type="number"] { width: 100%; }
+  .filter-bar.mobile-open .segmented { width: 100%; }
+  .filter-bar.mobile-open .segmented button { flex: 1; }
+  .filter-bar.mobile-open .segmented.seg-icons button { padding: 7px 12px; }
+  .filter-bar.mobile-open .beauty-steps { width: 100%; }
+  .filter-bar.mobile-open .beauty-steps button { flex: 1; }
 
   /* iOS Safari zooms the viewport when a focused field is < 16px. Bump the
      interactive controls so focusing them doesn't yank the layout around. */
@@ -2871,7 +2915,7 @@ input, select {
   .map-wrap {
     left: 0;
     right: 0;
-    bottom: var(--mobile-nav-h);
+    bottom: 0;
   }
 
   /* ── List / detail / lifestyle become full-width overlays ── */
@@ -2884,30 +2928,27 @@ input, select {
     max-width: 100%;
   }
 
-  /* The ranked list overlays the map, above it but below the detail panel and
-     clear of the bottom nav. Which view is in front is driven by the
-     .mobile-list / .mobile-map class on .app. */
+  /* The ranked list overlays the map, above it but below the detail panel.
+     Visibility is driven by .list-collapsed on .app — the same mechanism as
+     desktop's list gutter (see .list-reopen) — it just starts collapsed on
+     phones so the map opens as big as possible. Re-asserts display:flex to
+     override the <=880px hide rule above; .list-collapsed (higher
+     specificity) still wins when collapsed. */
   .results-list {
+    display: flex;
     z-index: 14;
-    bottom: var(--mobile-nav-h);
+    bottom: 0;
     transform: none;
     box-shadow: var(--shadow-2);
   }
-  .app.mobile-map .results-list { display: none; }
-  .app.mobile-list .results-list { display: flex; }
 
-  /* Detail + lifestyle slide over everything (incl. the nav); each has its own
-     close button, so the nav being covered is fine. Anchor at top:0 (NOT
-     var(--filter-h)) so an expanded filter sheet can't push them off-screen —
-     this is what made the lifestyle panel unreachable after opening it from the
-     filter sheet. They scroll internally (overflow-y:auto). */
+  /* Detail + lifestyle slide over everything; each has its own close button.
+     Anchor at top:0 (NOT var(--filter-h)) so an expanded filter sheet can't
+     push them off-screen — this is what made the lifestyle panel unreachable
+     after opening it from the filter sheet. They scroll internally
+     (overflow-y:auto). */
   .panel { z-index: 40; top: 0; bottom: 0; }
   .accom-panel { z-index: 40; top: 0; bottom: 0; }
-
-  /* The desktop list collapse/reopen controls are replaced by the bottom
-     Map/List tabs on mobile. */
-  .results-collapse,
-  .list-reopen { display: none !important; }
 
   /* The detail panel uses translateX for its open/close transition; keep that
      working at full width. */
@@ -2922,45 +2963,6 @@ input, select {
     max-height: 100dvh;
     height: 100dvh;
     border-radius: 0;
-  }
-
-  /* ── Bottom tab bar ── */
-  .mobile-nav {
-    position: fixed;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    height: var(--mobile-nav-h);
-    z-index: 36;
-    display: flex;
-    background: rgba(245, 241, 232, 0.94);
-    backdrop-filter: blur(12px) saturate(140%);
-    -webkit-backdrop-filter: blur(12px) saturate(140%);
-    border-top: 1px solid var(--rule);
-    padding-bottom: env(safe-area-inset-bottom, 0);
-  }
-  .mobile-nav button {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 2px;
-    color: var(--ink-mute);
-    transition: color .15s;
-  }
-  .mobile-nav button.on { color: var(--accent); }
-  .mobile-nav .mobile-nav-label {
-    font-family: var(--ui);
-    font-size: 13px;
-    font-weight: 600;
-    letter-spacing: 0.01em;
-  }
-  .mobile-nav .mobile-nav-sub {
-    font-family: var(--mono);
-    font-size: 9px;
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
   }
 }
 
@@ -3420,9 +3422,15 @@ input, select {
 
 /* ─── Account panel (side panel: profile, saved trips, change password) ─── */
 
-.account-email {
+.account-heading {
   font-size: 26px;
   word-break: break-word;
+}
+.account-heading-sub {
+  font-size: 13px;
+  color: var(--ink-soft);
+  word-break: break-word;
+  margin-top: 2px;
 }
 
 .saved-trip-list {

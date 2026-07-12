@@ -58,13 +58,16 @@ export function AccountPanel({ onClose, onLoadTrip, onOpenLifestyle, onOpenAuth 
 
   const fmtDate = (s) => s ? new Date(s + 'T00:00:00Z').toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }) : '';
 
+  const fullName = user?.user_metadata?.full_name?.trim();
+
   return (
     <div className="panel open account-panel">
       <button className="panel-close" onClick={onClose} aria-label="Close">x</button>
 
       <div className="panel-header">
         <div className="panel-tag">Account</div>
-        <h2 className="panel-city account-email">{user ? user.email : 'Preferences'}</h2>
+        <h2 className="panel-city account-heading">{user ? (fullName || user.email) : 'Preferences'}</h2>
+        {user && fullName && <div className="account-heading-sub">{user.email}</div>}
       </div>
 
       <div className="panel-section">
@@ -73,7 +76,7 @@ export function AccountPanel({ onClose, onLoadTrip, onOpenLifestyle, onOpenAuth 
           <span>Eating &amp; drinking</span>
           <span className="chev">›</span>
         </button>
-        <div className="footnote">Dinners, drinks, coffees and self-catered days — priced at real local rates.</div>
+        <div className="footnote">Dinners, drinks, coffees and self-catered days, priced at real local rates.</div>
       </div>
 
       {user ? (

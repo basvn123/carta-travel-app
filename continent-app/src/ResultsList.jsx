@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { GemRating } from './GemRating.jsx';
+import { eur } from './format.js';
 
 /**
  * Ranked, sortable list of priced destinations - lives in the left gutter the
@@ -69,8 +70,6 @@ export function ResultsList({
     if (dir === 'desc') sorted.reverse();
     return sorted;
   }, [priced, showFavOnly, sortKey, priceMode, favSet, sortDir]);
-
-  const eur = (n) => (n == null ? '-' : `€${Math.round(n).toLocaleString('en-GB')}`);
 
   return (
     <div className="results-list">

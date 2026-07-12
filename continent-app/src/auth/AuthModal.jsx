@@ -9,6 +9,7 @@ import { useAuth } from './AuthContext.jsx';
 export function AuthModal({ onClose, initialMode = 'signin' }) {
   const { signIn, signUp, sendPasswordReset } = useAuth();
   const [mode, setMode] = useState(initialMode); // signin | signup | forgot
+  const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -20,6 +21,7 @@ export function AuthModal({ onClose, initialMode = 'signin' }) {
 
   const switchMode = (next) => {
     reset();
+    setFullName('');
     setPassword('');
     setConfirmPassword('');
     setMode(next);
@@ -45,6 +47,7 @@ export function AuthModal({ onClose, initialMode = 'signin' }) {
 
     if (!email || !password) { setError('Enter your email and password.'); return; }
     if (mode === 'signup') {
+      if (!fullName.trim()) { setError('Enter your name.'); return; }
       if (password.length < 6) { setError('Password must be at least 6 characters.'); return; }
       if (password !== confirmPassword) { setError("Passwords don't match."); return; }
     }
@@ -52,7 +55,7 @@ export function AuthModal({ onClose, initialMode = 'signin' }) {
     setLoading(true);
     try {
       if (mode === 'signup') {
-        const { needsEmailConfirmation } = await signUp(email, password);
+        const { needsEmailConfirmation } = await signUp(email, password, fullName.trim());
         if (needsEmailConfirmation) {
           setNotice(`Almost there - we sent a confirmation link to ${email}.`);
         } else {
@@ -121,6 +124,20 @@ export function AuthModal({ onClose, initialMode = 'signin' }) {
           </div>
         ) : (
           <form className="auth-form" onSubmit={handleSubmit}>
+            {mode === 'signup' && (
+              <label className="auth-field">
+                <span className="auth-label">Full name</span>
+                <input
+                  type="text"
+                  autoComplete="name"
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                  placeholder="Jane Doe"
+                  autoFocus
+                />
+              </label>
+            )}
+
             <label className="auth-field">
               <span className="auth-label">Email</span>
               <input
@@ -129,7 +146,7 @@ export function AuthModal({ onClose, initialMode = 'signin' }) {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@example.com"
-                autoFocus
+                autoFocus={mode !== 'signup'}
               />
             </label>
 

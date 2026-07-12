@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
 import { composeTrip } from './runtime_pricing.js';
+import { eur } from './format.js';
 
 /**
  * Side-by-side comparison of the shortlisted (favorited) destinations. Prices
@@ -29,7 +30,6 @@ export function ComparePanel({ data, favorites, departDate, returnDate, choices,
 
   const pp = priceMode === 'pp';
   const div = (groupTotal) => (groupTotal == null ? null : pp ? groupTotal / group : groupTotal);
-  const eur = (n) => (n == null ? '-' : `€${Math.round(n).toLocaleString('en-GB')}`);
 
   const cheapest = cols.find((c) => c.b)?.b?.grand_total ?? null;
 

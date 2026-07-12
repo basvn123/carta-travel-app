@@ -6,6 +6,15 @@ import {
 import { GemRating, GemIcon } from './GemRating.jsx';
 import { kindsForDest } from './trip_kinds.js';
 import { BestTimePanel } from './BestTimePanel.jsx';
+import { eur, PRICE_SOURCE_LABELS, ACCOM_SOURCE_LABELS } from './format.js';
+
+// Small underlined text-button, used for the outbound links under each cost
+// line (Airbnb, KAYAK) and the "Adjust lifestyle" action.
+function TextLink({ href, onClick, children }) {
+  const props = href ? { href, target: '_blank', rel: 'noreferrer' } : { onClick, type: 'button' };
+  const Tag = href ? 'a' : 'button';
+  return <Tag className="detail-text-link" {...props}>{children}</Tag>;
+}
 
 export function DetailPanel({ destination, departDate, returnDate, choices, setChoices, priceMode = 'total', onClose, onOpenLifestyle, onSelect, data, isFavorite, onToggleFavorite, onSaveTrip, onShiftDates }) {
   const [saveState, setSaveState] = React.useState('idle'); // idle | saving | saved
@@ -242,7 +251,6 @@ function ExploreSection({ destination, data, onSelect }) {
 
 function BreakdownTab({ destination, breakdown, departDate, returnDate, choices, setChoices, priceMode, onOpenLifestyle, anchor, data }) {
   const group = Math.max(1, choices.group_size || 1);
-  const eur = (n) => (n == null ? '-' : `€${Math.round(n).toLocaleString('en-GB')}`);
 
   // Flight values are group totals; ground values are per-person. Convert ground
   // to group totals so a single show()/divide handles both consistently.
@@ -254,17 +262,8 @@ function BreakdownTab({ destination, breakdown, departDate, returnDate, choices,
   const acc = breakdown.accommodation;
   const groundGroup = (perPerson) => (perPerson == null ? null : perPerson * group);
 
-  const sourceLabel = {
-    numbeo_city: 'city prices',
-    numbeo_direct: 'country prices',
-    pli_scaled: 'estimated prices',
-  }[breakdown.price_source] || null;
-
-  const accomSourceLabel = {
-    inside_airbnb_city: 'Airbnb city rates',
-    inside_airbnb_country: 'Airbnb country rates',
-    airbnb_pli_scaled: 'estimated Airbnb rates',
-  }[breakdown.accom_source] || null;
+  const sourceLabel = PRICE_SOURCE_LABELS[breakdown.price_source] || null;
+  const accomSourceLabel = ACCOM_SOURCE_LABELS[breakdown.accom_source] || null;
 
   return (
     <>
@@ -383,21 +382,7 @@ function BreakdownTab({ destination, breakdown, departDate, returnDate, choices,
             departDate,
             returnDate,
           });
-          return carLink ? (
-            <a
-              href={carLink}
-              target="_blank"
-              rel="noreferrer"
-              style={{
-                display: 'inline-block', marginTop: 8, background: 'none',
-                border: 'none', padding: 0, color: 'var(--accent)',
-                font: 'inherit', fontSize: 12, cursor: 'pointer',
-                textDecoration: 'underline',
-              }}
-            >
-              Compare rental cars on KAYAK
-            </a>
-          ) : null;
+          return carLink ? <TextLink href={carLink}>Compare rental cars on KAYAK</TextLink> : null;
         })()}
 
         {/* Accommodation (Airbnb estimate) */}
@@ -435,21 +420,7 @@ function BreakdownTab({ destination, breakdown, departDate, returnDate, choices,
                 returnDate,
                 groupSize: choices.group_size,
               });
-              return airbnb ? (
-                <a
-                  href={airbnb}
-                  target="_blank"
-                  rel="noreferrer"
-                  style={{
-                    display: 'inline-block', marginTop: 8, background: 'none',
-                    border: 'none', padding: 0, color: 'var(--accent)',
-                    font: 'inherit', fontSize: 12, cursor: 'pointer',
-                    textDecoration: 'underline',
-                  }}
-                >
-                  Find real listings on Airbnb
-                </a>
-              ) : null;
+              return airbnb ? <TextLink href={airbnb}>Find real listings on Airbnb</TextLink> : null;
             })()}
           </>
         )}
@@ -473,16 +444,7 @@ function BreakdownTab({ destination, breakdown, departDate, returnDate, choices,
             {g.clubbing > 0 && <GroundLine label="Club nights" v={show(groundGroup(g.clubbing))} eur={eur} />}
             <GroundLine label="Coffees"            v={show(groundGroup(g.coffees))}  eur={eur} />
             <GroundLine label="Groceries"          v={show(groundGroup(g.groceries))} eur={eur} />
-            <button
-              onClick={onOpenLifestyle}
-              style={{
-                marginTop: 8, background: 'none', border: 'none', padding: 0,
-                color: 'var(--accent)', font: 'inherit', fontSize: 12,
-                cursor: 'pointer', textDecoration: 'underline',
-              }}
-            >
-              Adjust lifestyle
-            </button>
+            <TextLink onClick={onOpenLifestyle}>Adjust lifestyle</TextLink>
           </>
         )}
 

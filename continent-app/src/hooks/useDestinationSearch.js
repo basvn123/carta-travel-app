@@ -1,0 +1,151 @@
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { cheapestTotal } from '../runtime_pricing.js';
+import { matchesAnyKind } from '../trip_kinds.js';
+
+// Accent- and case-insensitive text key, so "malaga" matches "Málaga".
+function normalize(s) {
+  return (s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim();
+}
+
+/** Prices every destination for the chosen dates/choices, then narrows that
+ *  down through the location search, filter bar, and "top picks" shortcut.
+ *  Centralizes the destination search/filter pipeline so App.jsx only wires
+ *  filter state into it and renders the result.
+ */
+export function useDestinationSearch({
+  data, departDate, returnDate, choices,
+  locationQuery, countryFilter, priceMode, tripKinds,
+  minBeauty, unescoOnly, topBeachOnly, topPick,
+  initialPriceRange,
+}) {
+  // Compute, in one pass, the priceable destinations (flight/drive + stay) and the
+  // ones that can't be reached from home (no Ryanair route + not drivable). The
+  // unreachable ones are still surfaced in the UI, just flagged - never silently
+  // dropped.
+  const { pricedAll, unreachableAll } = useMemo(() => {
+    if (!data || !departDate || !returnDate || returnDate <= departDate) {
+      return { pricedAll: [], unreachableAll: [] };
+    }
+    const reach = [], unreach = [];
+    for (const [destId, d] of Object.entries(data.destinations)) {
+      if (d.lat == null || d.lon == null) continue;
+      const row = {
+        id: destId,
+        // Airports use their own IATA; gems fly to their anchor airport.
+        iata: d.iata || d.anchor_airport,
+        tier: d.tier,
+        city: d.city,
+        country: d.country,
+        iso2: d.iso2,
+        lat: d.lat,
+        lon: d.lon,
+        categories: d.categories || [],
+        beauty: d.beauty || null,
+      };
+      const total = cheapestTotal(d, departDate, returnDate, choices);
+      if (total == null) {
+        unreach.push({ ...row, total: null, pp: null, reachable: false });
+      } else {
+        const pp = choices.group_size > 0 ? total / choices.group_size : total;
+        reach.push({ ...row, total, pp, reachable: true });
+      }
+    }
+    reach.sort((a, b) => a.total - b.total);
+    unreach.sort((a, b) => a.city.localeCompare(b.city));
+    return { pricedAll: reach, unreachableAll: unreach };
+  }, [data, departDate, returnDate, choices]);
+
+  const availableCountries = useMemo(() => {
+    const map = new Map();
+    for (const p of [...pricedAll, ...unreachableAll]) {
+      if (!map.has(p.iso2)) map.set(p.iso2, p.country);
+    }
+    return [...map.entries()].sort((a, b) => a[1].localeCompare(b[1]));
+  }, [pricedAll, unreachableAll]);
+
+  const priceBounds = useMemo(() => {
+    if (pricedAll.length === 0) return null;
+    const vals = pricedAll.map((p) => priceMode === 'pp' ? p.pp : p.total);
+    return [Math.floor(Math.min(...vals)), Math.ceil(Math.max(...vals))];
+  }, [pricedAll, priceMode]);
+
+  const [priceRange, setPriceRange] = useState(null);
+
+  // On the first time bounds are known, honor a shared price range; afterwards
+  // (e.g. when the price mode flips) snap back to the full bounds.
+  const initRangeApplied = useRef(false);
+  useEffect(() => {
+    if (!priceBounds) return;
+    if (!initRangeApplied.current && initialPriceRange) {
+      initRangeApplied.current = true;
+      setPriceRange(initialPriceRange);
+    } else {
+      setPriceRange(priceBounds);
+    }
+  }, [priceBounds]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const q = useMemo(() => normalize(locationQuery), [locationQuery]);
+
+  const filtered = useMemo(() => {
+    return pricedAll.filter((p) => {
+      if (q && !(normalize(p.city).includes(q) || normalize(p.country).includes(q))) return false;
+      if (countryFilter !== 'all' && p.iso2 !== countryFilter) return false;
+      if (priceRange) {
+        const v = priceMode === 'pp' ? p.pp : p.total;
+        if (v < priceRange[0] || v > priceRange[1]) return false;
+      }
+      if (tripKinds.length > 0) {
+        if (!matchesAnyKind(p.categories, tripKinds)) return false;
+      }
+      if (minBeauty > 1 && (p.beauty?.gems ?? 0) < minBeauty) return false;
+      if (unescoOnly && !p.beauty?.unesco) return false;
+      if (topBeachOnly && !p.beauty?.top_beach) return false;
+      return true;
+    });
+  }, [pricedAll, q, countryFilter, priceRange, priceMode, tripKinds, minBeauty, unescoOnly, topBeachOnly]);
+
+  // "Top picks" trims the filtered set to the N best by price or beauty. Applied
+  // here (not just in the list) so the map and stats reflect the shortlist too.
+  const priced = useMemo(() => {
+    if (!topPick) return filtered;
+    const score = topPick.by === 'beauty'
+      ? (p) => -(p.beauty?.score ?? 0)                       // most beautiful first
+      : (p) => (priceMode === 'pp' ? p.pp : p.total);        // cheapest first
+    return [...filtered].sort((a, b) => score(a) - score(b)).slice(0, topPick.n);
+  }, [filtered, topPick, priceMode]);
+
+  // Unreachable destinations to still surface (same country / trip-kind filters,
+  // but no price filter - they have no price).
+  const unreachable = useMemo(() => {
+    return unreachableAll.filter((p) => {
+      if (q && !(normalize(p.city).includes(q) || normalize(p.country).includes(q))) return false;
+      if (countryFilter !== 'all' && p.iso2 !== countryFilter) return false;
+      if (tripKinds.length > 0 && !matchesAnyKind(p.categories, tripKinds)) return false;
+      if (minBeauty > 1 && (p.beauty?.gems ?? 0) < minBeauty) return false;
+      if (unescoOnly && !p.beauty?.unesco) return false;
+      if (topBeachOnly && !p.beauty?.top_beach) return false;
+      return true;
+    });
+  }, [unreachableAll, q, countryFilter, tripKinds, minBeauty, unescoOnly, topBeachOnly]);
+
+  const dealThreshold = useMemo(() => {
+    if (priced.length === 0) return null;
+    const idx = Math.floor(priced.length * 0.25);
+    const sorted = [...priced].sort((a, b) => a.total - b.total);
+    return sorted[idx]?.total ?? null;
+  }, [priced]);
+
+  const stats = useMemo(() => {
+    if (priced.length === 0) return { priced: 0, min: null };
+    const minVal = priceMode === 'pp'
+      ? Math.min(...priced.map((p) => p.pp))
+      : Math.min(...priced.map((p) => p.total));
+    return { priced: priced.length, total: pricedAll.length, min: Math.round(minVal) };
+  }, [priced, pricedAll, priceMode]);
+
+  return {
+    pricedAll, unreachableAll, availableCountries, priceBounds,
+    priceRange, setPriceRange,
+    filtered, priced, unreachable, dealThreshold, stats,
+  };
+}
