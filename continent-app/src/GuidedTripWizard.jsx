@@ -1,10 +1,27 @@
 import React, { useMemo, useState } from 'react';
 import { DateField } from './DateField.jsx';
 import { GemIcon } from './GemRating.jsx';
-import { countriesFromData, cityInsight, cityActivities } from './tripGuide.js';
+import { CountryPickerMap } from './CountryPickerMap.jsx';
+import { countriesFromData, cityInsight, cityActivities, flagUrl, isoToFlag } from './tripGuide.js';
 
 const STEPS = ['Where', 'Cities', 'Visit', 'Arrange'];
 const CITIES_PER_COUNTRY = 10;
+
+// Real flag artwork (falls back to the emoji/letters if the image can't load).
+function Flag({ iso2, className }) {
+  const url = flagUrl(iso2, 40);
+  if (!url) return <span className={className}>{isoToFlag(iso2)}</span>;
+  return (
+    <img
+      className={className}
+      src={url}
+      srcSet={`${flagUrl(iso2, 80)} 2x`}
+      alt=""
+      loading="lazy"
+      onError={(e) => { e.currentTarget.style.display = 'none'; }}
+    />
+  );
+}
 
 /**
  * "Let us guide you" — a four-step builder that assembles an itinerary:
@@ -126,7 +143,8 @@ export function GuidedTripWizard({ data, onCancel, onComplete }) {
           {step === 1 && (
             <>
               <h2 className="guide-title">Where are we going?</h2>
-              <p className="guide-sub">Pick one or more countries. You can mix and match.</p>
+              <p className="guide-sub">Tap countries on the map, or pick from the list. You can mix and match.</p>
+              <CountryPickerMap countries={allCountries} selected={countries} onToggle={toggleCountry} />
               <div className="guide-country-grid">
                 {allCountries.map((c) => (
                   <button
@@ -134,7 +152,7 @@ export function GuidedTripWizard({ data, onCancel, onComplete }) {
                     className={`guide-country ${countries.has(c.country) ? 'on' : ''}`}
                     onClick={() => toggleCountry(c.country)}
                   >
-                    <span className="guide-flag">{c.flag}</span>
+                    <Flag iso2={c.iso2} className="guide-flag-img" />
                     <span className="guide-country-name">{c.country}</span>
                     <span className="guide-country-n">{c.cities.length} cities</span>
                   </button>
@@ -149,7 +167,7 @@ export function GuidedTripWizard({ data, onCancel, onComplete }) {
               <p className="guide-sub">Set the nights for each city you want. Skip the rest.</p>
               {selectedCountries.map((c) => (
                 <div key={c.country} className="guide-country-block">
-                  <div className="guide-block-head"><span className="guide-flag">{c.flag}</span> {c.country}</div>
+                  <div className="guide-block-head"><Flag iso2={c.iso2} className="guide-flag-img-sm" /> {c.country}</div>
                   <div className="guide-city-list">
                     {c.cities.slice(0, CITIES_PER_COUNTRY).map(({ id, dest }) => (
                       <div key={id} className={`guide-city ${(nights[id] || 0) > 0 ? 'on' : ''}`}>
@@ -178,7 +196,7 @@ export function GuidedTripWizard({ data, onCancel, onComplete }) {
           {step === 3 && (
             <>
               <h2 className="guide-title">What would you like to visit?</h2>
-              <p className="guide-sub">Optional — tap the highlights you'd like to work in. Carta fits them into your days.</p>
+              <p className="guide-sub">Optional. Tap the highlights you'd like to work in. Carta fits them into your days.</p>
               {includedIds.map((id) => {
                 const dest = destinations[id];
                 const items = cityActivities(dest);

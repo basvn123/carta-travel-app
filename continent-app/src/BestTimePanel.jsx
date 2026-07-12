@@ -201,7 +201,7 @@ function BestTimeChart({ windows, cheapest, yours }) {
           className="bt-tooltip"
           style={{ left: `${(x(hoverI) / W) * 100}%`, top: `${(y(pts[hoverI].total) / H) * 100}%` }}
         >
-          <b>{eur(pts[hoverI].total)}</b> — week of {fmtDate(pts[hoverI].start)}
+          <b>{eur(pts[hoverI].total)}</b>, week of {fmtDate(pts[hoverI].start)}
         </div>
       )}
 

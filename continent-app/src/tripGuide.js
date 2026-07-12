@@ -72,7 +72,7 @@ export function cityInsight(dest) {
   if (dest.beauty?.unesco) extras.push('UNESCO');
   const nAct = (dest.activities && dest.activities.items ? dest.activities.items.length : 0);
   if (nAct) extras.push(`${nAct} things to do`);
-  return extras.length ? `${lead} — ${extras.join(', ')}` : lead;
+  return extras.length ? `${lead}, ${extras.join(', ')}` : lead;
 }
 
 /** The catalogued things-to-do for a city, as [{ name, kind }]. */

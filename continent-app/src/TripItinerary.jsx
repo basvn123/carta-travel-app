@@ -77,7 +77,7 @@ export function TripItinerary({ dayPlan, stopDetails, grandTotal, groupSize, fli
             </div>
           </div>
           {activeDay.activities.length === 0 ? (
-            <p className="itin-day-empty">A free day in {activeDay.stop.dest?.city} — wander, eat well, no plans. Add highlights any time by editing the trip.</p>
+            <p className="itin-day-empty">A free day in {activeDay.stop.dest?.city}: wander, eat well, no plans. Add highlights any time by editing the trip.</p>
           ) : (
             <ol className="itin-visit-list">
               {activeDay.activities.map((name, idx) => {

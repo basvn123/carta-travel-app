@@ -359,7 +359,7 @@ export function DayPlannerTab({ data, user, authConfigured }) {
                     <button className="trip-saved-main" onClick={() => openStandalone(sp)}>
                       {sp.label || destinations[sp.destinationId]?.city || 'Day plan'}
                       <small className="day-saved-sub">
-                        {' '}— {fmtDate(sp.startDate)}{sp.days > 1 ? `, ${sp.days} days` : ''}
+                        {', '}{fmtDate(sp.startDate)}{sp.days > 1 ? `, ${sp.days} days` : ''}
                       </small>
                     </button>
                     <button className="trip-saved-del" onClick={() => deleteStandalone(sp.id)} aria-label="Delete day plan" title="Delete">×</button>
@@ -415,7 +415,7 @@ export function DayPlannerTab({ data, user, authConfigured }) {
         <div className="trip-topcard-name">{plan.label || 'Untitled trip'}</div>
         <div className="trip-topcard-sub">
           {stop?.dest?.city || 'No stops in this trip'}
-          {days[dayIdx] ? ` — ${fmtDate(days[dayIdx])}` : ''}
+          {days[dayIdx] ? `, ${fmtDate(days[dayIdx])}` : ''}
         </div>
       </div>
 

@@ -475,7 +475,7 @@ function TravelApp() {
       {emailConfirmed && (
         <div className="confirm-toast" role="status" onClick={(e) => e.stopPropagation()}>
           <span className="confirm-toast-check">✓</span>
-          Email confirmed — welcome to Carta.
+          Email confirmed. Welcome to Carta.
           <button
             className="confirm-toast-close"
             onClick={dismissEmailConfirmed}

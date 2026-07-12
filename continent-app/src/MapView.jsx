@@ -66,7 +66,7 @@ export function MapView({ priced, unreachable = [], priceMode = 'total', groupSi
       const gem = p.tier === 'gem';
       rec.pill.className = `price-pill ${isDeal ? 'is-deal' : ''} ${isSelected ? 'selected' : ''} ${gem ? 'is-gem' : ''}`;
       rec.dot.className = `pin-dot ${isDeal ? 'is-deal' : ''} ${isSelected ? 'selected' : ''} ${gem ? 'is-gem' : ''}`;
-      rec.pill.title = `${p.city}, ${p.country}${gem ? ' (gem)' : ''}${priceMode === 'pp' ? ' — per person' : ''}`;
+      rec.pill.title = `${p.city}, ${p.country}${gem ? ' (gem)' : ''}${priceMode === 'pp' ? ' (per person)' : ''}`;
     }
 
     // ── Unreachable destinations: a muted, clickable dot (no price) ──
