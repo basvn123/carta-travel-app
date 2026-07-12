@@ -10,6 +10,7 @@ import { useTripPlanner } from './hooks/useTripPlanner.js';
 
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+const SHEET_H_KEY = 'carta.tripSheetH.v1';
 
 function fmtDate(iso, withWeekday = false) {
   if (!iso) return '';
@@ -103,8 +104,56 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth }) {
   const [dragIdx, setDragIdx] = useState(null);
   const [wizardOpen, setWizardOpen] = useState(false);
   const [planPromptOpen, setPlanPromptOpen] = useState(false);
+  // Remembered panel height (px). null = auto (content height).
+  const [sheetHeight, setSheetHeight] = useState(() => {
+    if (typeof window === 'undefined') return null;
+    const v = Number(localStorage.getItem(SHEET_H_KEY));
+    return v > 0 ? v : null;
+  });
+  const [dragging, setDragging] = useState(false);
   const sheetRef = useRef(null);
   const stopRefs = useRef({});
+  const dragRef = useRef(null);
+
+  const persistHeight = (h) => {
+    try { localStorage.setItem(SHEET_H_KEY, String(Math.round(h))); } catch { /* private mode */ }
+  };
+
+  // Drag the grip to raise the sheet clear of the bottom nav (or tuck it away);
+  // a plain tap toggles between a small peek and (nearly) full height.
+  const onGripDown = (e) => {
+    const sheet = sheetRef.current;
+    if (!sheet) return;
+    dragRef.current = { startY: e.clientY, startH: sheet.offsetHeight, moved: false };
+    setDragging(true);
+    try { e.currentTarget.setPointerCapture(e.pointerId); } catch { /* older browsers */ }
+  };
+  const onGripMove = (e) => {
+    if (!dragRef.current) return;
+    const screen = sheetRef.current?.parentElement;
+    if (!screen) return;
+    const dy = dragRef.current.startY - e.clientY; // drag up → taller
+    if (Math.abs(dy) > 4) dragRef.current.moved = true;
+    const maxH = screen.clientHeight - 14;
+    setSheetHeight(Math.max(120, Math.min(maxH, dragRef.current.startH + dy)));
+  };
+  const onGripUp = (e) => {
+    const st = dragRef.current;
+    dragRef.current = null;
+    setDragging(false);
+    try { e.currentTarget.releasePointerCapture(e.pointerId); } catch { /* older browsers */ }
+    const screen = sheetRef.current?.parentElement;
+    if (!st || !screen) return;
+    if (st.moved) {
+      persistHeight(sheetRef.current.offsetHeight);
+    } else {
+      // Tap: toggle peek ↔ expanded around the halfway mark.
+      const maxH = screen.clientHeight - 14;
+      const next = sheetRef.current.offsetHeight > screen.clientHeight * 0.5 ? 150 : maxH;
+      setSheetHeight(next);
+      persistHeight(next);
+    }
+  };
 
   const handleWizardComplete = (selection) => {
     tp.loadFromWizard(selection);
@@ -196,8 +245,24 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth }) {
       </div>
 
       {/* Bottom sheet */}
-      <div className="trip-sheet" ref={sheetRef} onClick={(e) => e.stopPropagation()}>
-        <div className="trip-sheet-grip" />
+      <div
+        className={`trip-sheet ${dragging ? 'dragging' : ''}`}
+        ref={sheetRef}
+        onClick={(e) => e.stopPropagation()}
+        style={sheetHeight != null ? { height: sheetHeight } : undefined}
+      >
+        <div
+          className="trip-sheet-grip-hit"
+          onPointerDown={onGripDown}
+          onPointerMove={onGripMove}
+          onPointerUp={onGripUp}
+          onPointerCancel={onGripUp}
+          role="separator"
+          aria-label="Drag to resize the panel"
+          title="Drag up or down to move this panel"
+        >
+          <div className="trip-sheet-grip" />
+        </div>
         <div className="trip-sheet-scroll">
           {tp.planned ? (
             <TripItinerary
