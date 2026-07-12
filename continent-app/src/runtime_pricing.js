@@ -393,6 +393,78 @@ export function cheapestTotal(dest, departDate, returnDate, choices) {
   return b ? b.grand_total : null;
 }
 
+// ISO date string, `days` later.
+function addDays(iso, days) {
+  const d = new Date(iso + 'T00:00:00Z');
+  d.setUTCDate(d.getUTCDate() + days);
+  return d.toISOString().slice(0, 10);
+}
+
+/** The total trip cost for every bookable start date that keeps a fixed trip
+ *  length, across the whole fare window this destination's routes cover - the
+ *  data "Best time to go" needs to find the cheapest period and chart the rest.
+ *  Reuses composeTrip() per candidate date, so it stays consistent with the
+ *  currently selected plane/car mode and every other pricing input.
+ *
+ *  Candidate start dates come from the union of outbound_fare keys across the
+ *  destination's routes (real, bookable Ryanair days). Car-only destinations
+ *  (no route data at all) have no per-day flight signal, so we fall back to a
+ *  weekly sweep across the app's priced horizon (meta.start_date/end_date) -
+ *  accommodation and rental still vary by month, so the sweep isn't wasted.
+ *
+ *  Returns [{ start, end, total, mode }], sorted by start date, or [] if there
+ *  isn't enough data to say anything.
+ */
+export function cheapestWindows(dest, nights, choices, meta) {
+  if (!dest || !nights || nights < 1) return [];
+
+  const routes = dest.routes || {};
+  const outDates = new Set();
+  for (const r of Object.values(routes)) {
+    for (const d of Object.keys(r.outbound_fare || {})) outDates.add(d);
+  }
+
+  let candidates = [...outDates].sort();
+  if (candidates.length === 0) {
+    const start = meta?.start_date, end = meta?.end_date;
+    if (!start || !end) return [];
+    candidates = [];
+    for (let d = start; d <= end; d = addDays(d, 7)) candidates.push(d);
+  }
+
+  const out = [];
+  for (const start of candidates) {
+    const end = addDays(start, nights);
+    const trip = composeTrip(dest, start, end, choices);
+    if (trip) out.push({ start, end, total: trip.grand_total, mode: trip.transport_mode });
+  }
+  return out;
+}
+
+/** Average outbound Ryanair fare by weekday (Mon..Sun), across every origin
+ *  and every fetched day, cheapest origin per day. Entries with no data are
+ *  null. Surfaces the weekday pattern Ryanair fares reliably have (midweek
+ *  cheaper than weekend) without needing a chart of every single day.
+ */
+export function fareByWeekday(dest) {
+  const routes = dest?.routes || {};
+  const byDate = new Map();
+  for (const r of Object.values(routes)) {
+    for (const [d, fare] of Object.entries(r.outbound_fare || {})) {
+      if (!byDate.has(d) || fare < byDate.get(d)) byDate.set(d, fare);
+    }
+  }
+
+  const sums = [0, 0, 0, 0, 0, 0, 0];
+  const counts = [0, 0, 0, 0, 0, 0, 0];
+  for (const [d, fare] of byDate) {
+    const dow = (new Date(d + 'T00:00:00Z').getUTCDay() + 6) % 7; // Mon=0 .. Sun=6
+    sums[dow] += fare;
+    counts[dow] += 1;
+  }
+  return sums.map((s, i) => (counts[i] ? Math.round(s / counts[i]) : null));
+}
+
 function round2(v) {
   return v == null ? null : Math.round(v * 100) / 100;
 }

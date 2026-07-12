@@ -5,9 +5,14 @@ import {
 } from './runtime_pricing.js';
 import { GemRating, GemIcon } from './GemRating.jsx';
 import { kindsForDest } from './trip_kinds.js';
+import { BestTimePanel } from './BestTimePanel.jsx';
 
-export function DetailPanel({ destination, departDate, returnDate, choices, setChoices, priceMode = 'total', onClose, onOpenLifestyle, onSelect, data, isFavorite, onToggleFavorite, onSaveTrip }) {
+export function DetailPanel({ destination, departDate, returnDate, choices, setChoices, priceMode = 'total', onClose, onOpenLifestyle, onSelect, data, isFavorite, onToggleFavorite, onSaveTrip, onShiftDates }) {
   const [saveState, setSaveState] = React.useState('idle'); // idle | saving | saved
+  const [activeTab, setActiveTab] = React.useState('breakdown'); // breakdown | best-time
+
+  // Land back on the breakdown whenever the user picks a different destination.
+  React.useEffect(() => { setActiveTab('breakdown'); }, [destination?.id]);
 
   if (!destination) {
     return <div className="panel" aria-hidden="true" />;
@@ -117,18 +122,47 @@ export function DetailPanel({ destination, departDate, returnDate, choices, setC
           </p>
         </div>
       ) : (
-        <BreakdownTab
-          destination={destination}
-          breakdown={breakdown}
-          departDate={departDate}
-          returnDate={returnDate}
-          choices={choices}
-          setChoices={setChoices}
-          priceMode={priceMode}
-          onOpenLifestyle={onOpenLifestyle}
-          data={data}
-          anchor={anchor}
-        />
+        <>
+          <div className="tabs panel-tabs">
+            <button
+              className={`tab ${activeTab === 'breakdown' ? 'active' : ''}`}
+              onClick={() => setActiveTab('breakdown')}
+            >
+              Breakdown
+            </button>
+            <button
+              className={`tab ${activeTab === 'best-time' ? 'active' : ''}`}
+              onClick={() => setActiveTab('best-time')}
+            >
+              Best time to go
+            </button>
+          </div>
+
+          {activeTab === 'breakdown' ? (
+            <BreakdownTab
+              destination={destination}
+              breakdown={breakdown}
+              departDate={departDate}
+              returnDate={returnDate}
+              choices={choices}
+              setChoices={setChoices}
+              priceMode={priceMode}
+              onOpenLifestyle={onOpenLifestyle}
+              data={data}
+              anchor={anchor}
+            />
+          ) : (
+            <BestTimePanel
+              destination={destination}
+              departDate={departDate}
+              returnDate={returnDate}
+              breakdown={breakdown}
+              choices={choices}
+              data={data}
+              onShiftDates={onShiftDates}
+            />
+          )}
+        </>
       )}
 
       {/* What to do here - shows for every destination, reachable or not. */}

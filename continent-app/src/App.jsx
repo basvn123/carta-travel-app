@@ -539,6 +539,7 @@ function TravelApp() {
           isFavorite={selectedId ? favorites.has(selectedId) : false}
           onToggleFavorite={selectedId ? () => toggleFav(selectedId) : undefined}
           onSaveTrip={authConfigured ? handleSaveTrip : undefined}
+          onShiftDates={(depart, ret) => { setDepartDate(depart); setReturnDate(ret); }}
         />
       </div>
 
