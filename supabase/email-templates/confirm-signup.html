@@ -1,0 +1,55 @@
+<!--
+  Carta — "Confirm signup" email template.
+
+  Paste this into the Supabase dashboard: Authentication -> Emails ->
+  "Confirm signup" template (subject + this HTML as the body). Not synced
+  automatically - Supabase has no local-file template support, this is just
+  the checked-in source of truth so the dashboard copy isn't the only copy.
+
+  Supabase variables used: {{ .ConfirmationURL }}, {{ .Email }}.
+  Requires Custom SMTP to be configured first (Authentication -> Emails ->
+  SMTP Settings) - otherwise Supabase ignores custom templates' "from" name
+  and keeps sending from its own shared address.
+-->
+<div style="background:#ebe6d8; padding:40px 16px; font-family:Georgia,'Iowan Old Style','Times New Roman',serif;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:420px; margin:0 auto; background:#f5f1e8; border:1px solid #c4bea9; border-radius:12px;">
+    <tr>
+      <td style="padding:36px 34px 30px;">
+
+        <!-- Wordmark (text-only - no hosted image needed, renders everywhere) -->
+        <div style="font-family:Georgia,serif; font-weight:700; font-size:20px; letter-spacing:-0.02em; color:#1a1a1a; margin:0 0 26px;">
+          Carta
+        </div>
+
+        <h1 style="font-family:Georgia,serif; font-weight:500; font-size:23px; letter-spacing:-0.01em; color:#1a1a1a; margin:0 0 10px;">
+          Confirm your email
+        </h1>
+
+        <p style="font-family:Helvetica,Arial,sans-serif; font-size:14px; line-height:1.6; color:#4a4a48; margin:0 0 26px;">
+          Welcome to Carta. Click below to confirm <strong style="color:#1a1a1a;">{{ .Email }}</strong> and start saving trips and syncing your settings across devices.
+        </p>
+
+        <table role="presentation" cellpadding="0" cellspacing="0">
+          <tr>
+            <td style="border-radius:6px; background:#1a1a1a;">
+              <a href="{{ .ConfirmationURL }}"
+                 style="display:inline-block; padding:13px 28px; font-family:Helvetica,Arial,sans-serif; font-size:13.5px; font-weight:bold; color:#f5f1e8; text-decoration:none; letter-spacing:0.01em;">
+                Confirm email address
+              </a>
+            </td>
+          </tr>
+        </table>
+
+        <p style="font-family:Helvetica,Arial,sans-serif; font-size:12px; line-height:1.6; color:#8a8780; margin:26px 0 0;">
+          If you didn't create a Carta account, you can safely ignore this email.
+        </p>
+
+        <p style="font-family:Helvetica,Arial,sans-serif; font-size:11px; line-height:1.6; color:#8a8780; margin:18px 0 0; word-break:break-all;">
+          Button not working? Paste this link into your browser:<br />
+          <a href="{{ .ConfirmationURL }}" style="color:#c8501e;">{{ .ConfirmationURL }}</a>
+        </p>
+
+      </td>
+    </tr>
+  </table>
+</div>

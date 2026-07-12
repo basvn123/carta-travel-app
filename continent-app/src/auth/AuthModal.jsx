@@ -6,9 +6,9 @@ import { useAuth } from './AuthContext.jsx';
  * Sign in / create account / forgot password, in one overlay. Mirrors the
  * ComparePanel overlay+modal pattern so it feels native to the rest of the app.
  */
-export function AuthModal({ onClose }) {
+export function AuthModal({ onClose, initialMode = 'signin' }) {
   const { signIn, signUp, sendPasswordReset } = useAuth();
-  const [mode, setMode] = useState('signin'); // signin | signup | forgot
+  const [mode, setMode] = useState(initialMode); // signin | signup | forgot
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');

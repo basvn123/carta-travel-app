@@ -4,7 +4,23 @@ import { Dropdown } from './Dropdown.jsx';
 import { DateField } from './DateField.jsx';
 import { GemIcon } from './GemRating.jsx';
 import { PlaneIcon, CarIcon } from './TransportIcons.jsx';
+import { CalendarIcon, FilterIcon, PersonIcon } from './Icons.jsx';
 import Logo from './Logo.jsx';
+
+function AccountButton({ user, onOpenAccount, className = '' }) {
+  return (
+    <button
+      className={`account-avatar-btn ${className}`}
+      onClick={onOpenAccount}
+      title={user ? user.email : 'Account & preferences'}
+    >
+      <span className="account-avatar">
+        {user ? (user.email || '?')[0].toUpperCase() : <PersonIcon size={14} />}
+      </span>
+      <span className="account-avatar-label">Account</span>
+    </button>
+  );
+}
 
 export function FilterBar({
   barRef,
@@ -23,16 +39,32 @@ export function FilterBar({
   unescoOnly, setUnescoOnly,
   topBeachOnly, setTopBeachOnly,
   topPick, setTopPick,
-  lifestyleOpen, onToggleLifestyle,
-  authConfigured, user, onOpenAuth, onOpenAccount,
+  user, onOpenAccount,
 }) {
   const baggageOpts = data?.meta?.baggage_options || {};
   const eur = (n) => (n == null ? '-' : `€${Math.round(n).toLocaleString('en-GB')}`);
 
-  // Mobile-only: the dense two-row filter set collapses behind a "Filters"
-  // button. On desktop the CSS keeps the rows always visible and hides the
-  // toggle, so this state is inert there.
-  const [mobileOpen, setMobileOpen] = React.useState(false);
+  // Mobile-only: the dense filter set collapses behind a filter icon, and the
+  // depart/return pickers collapse behind a separate calendar icon. On desktop
+  // the CSS keeps everything always visible and hides these triggers, so this
+  // state is inert there.
+  const [mobileFiltersOpen, setMobileFiltersOpen] = React.useState(false);
+  const [mobileDatesOpen, setMobileDatesOpen] = React.useState(false);
+  const datesAnchorRef = React.useRef(null);
+
+  const openMobileDates = () => { setMobileDatesOpen((v) => !v); setMobileFiltersOpen(false); };
+  const openMobileFilters = () => { setMobileFiltersOpen((v) => !v); setMobileDatesOpen(false); };
+
+  // Close the dates popover on an outside click (the filter sheet stays open
+  // until its own toggle is pressed again, matching its prior behavior).
+  React.useEffect(() => {
+    if (!mobileDatesOpen) return;
+    const onClickOutside = (e) => {
+      if (datesAnchorRef.current && !datesAnchorRef.current.contains(e.target)) setMobileDatesOpen(false);
+    };
+    document.addEventListener('mousedown', onClickOutside);
+    return () => document.removeEventListener('mousedown', onClickOutside);
+  }, [mobileDatesOpen]);
 
   const advancedActiveCount = tripKinds.length > 0 ? 1 : 0;
   const beautyActive = (minBeauty > 1) || unescoOnly || topBeachOnly;
@@ -53,6 +85,17 @@ export function FilterBar({
     setTopBeachOnly(false);
     setTopPick(null);
     if (priceBounds) setPriceRange(priceBounds);
+  };
+
+  const onDepartChange = (v) => {
+    setDepartDate(v);
+    // If return is now <= depart, push it forward by 7 days
+    if (v && returnDate && returnDate <= v) {
+      const d = new Date(v + 'T00:00:00Z');
+      d.setUTCDate(d.getUTCDate() + 7);
+      const next = d.toISOString().slice(0, 10);
+      setReturnDate(dateBounds?.max && next > dateBounds.max ? dateBounds.max : next);
+    }
   };
 
   // "Top picks" quick shortcuts: show only the best N by price or beauty.
@@ -83,10 +126,13 @@ export function FilterBar({
   ];
 
   return (
-    <div className={`filter-bar ${mobileOpen ? 'mobile-open' : 'mobile-collapsed'}`} ref={barRef}>
+    <div className={`filter-bar ${mobileFiltersOpen ? 'mobile-open' : 'mobile-collapsed'}`} ref={barRef}>
       {/* Header wrapper is `display: contents` on desktop (so brand stays a direct
-          flex child) and a real flex row on mobile (brand + Filters toggle). */}
+          flex child) and a real flex row on mobile (account + brand + icon
+          triggers - brand is hidden on mobile via CSS to save space). */}
       <div className="filter-mobile-header">
+        <AccountButton user={user} onOpenAccount={onOpenAccount} className="mobile-account-btn" />
+
         <div className="brand">
           <Logo size={30} className="brand-mark" />
           <div className="brand-text">
@@ -94,43 +140,76 @@ export function FilterBar({
           </div>
         </div>
 
-        <button
-          className={`filter-mobile-toggle more-btn ${mobileOpen ? 'open' : ''} ${anyFilterActive ? 'has-active' : ''}`}
-          onClick={() => setMobileOpen((v) => !v)}
-          aria-expanded={mobileOpen}
-        >
-          <span>Filters</span>
-          {stats && <span className="filter-mobile-count">{stats.priced}</span>}
-          <span className="chev">{mobileOpen ? '^' : 'v'}</span>
-        </button>
+        <div className="mobile-header-actions">
+          <div className="mobile-dates-anchor" ref={datesAnchorRef}>
+            <button
+              className={`icon-btn ${mobileDatesOpen ? 'open' : ''}`}
+              onClick={openMobileDates}
+              aria-expanded={mobileDatesOpen}
+              aria-label="Dates"
+              title="Depart & return dates"
+            >
+              <CalendarIcon size={18} />
+            </button>
+
+            {mobileDatesOpen && (
+              <div className="mobile-dates-pop">
+                <div className="filter">
+                  <label className="filter-label">Depart</label>
+                  <div className="filter-control">
+                    <DateField
+                      value={departDate || ''}
+                      min={dateBounds?.min}
+                      max={dateBounds?.max}
+                      onChange={onDepartChange}
+                    />
+                  </div>
+                </div>
+                <div className="filter">
+                  <label className="filter-label">Return</label>
+                  <div className="filter-control">
+                    <DateField
+                      value={returnDate || ''}
+                      min={departDate || dateBounds?.min}
+                      max={dateBounds?.max}
+                      onChange={(v) => setReturnDate(v)}
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+
+          <button
+            className={`icon-btn ${mobileFiltersOpen ? 'open' : ''} ${anyFilterActive ? 'has-active' : ''}`}
+            onClick={openMobileFilters}
+            aria-expanded={mobileFiltersOpen}
+            aria-label="Filters"
+            title="Filters"
+          >
+            <FilterIcon size={18} />
+            {anyFilterActive && <span className="icon-btn-dot" aria-hidden="true" />}
+          </button>
+        </div>
       </div>
       <div className="brand-divider" />
 
       <div className="filter-rows">
         {/* Row 1: Trip parameters */}
         <div className="filter-row">
-          <div className="filter">
+          <div className="filter row-date-fields">
             <label className="filter-label">Depart</label>
             <div className="filter-control">
               <DateField
                 value={departDate || ''}
                 min={dateBounds?.min}
                 max={dateBounds?.max}
-                onChange={(v) => {
-                  setDepartDate(v);
-                  // If return is now <= depart, push it forward by 7 days
-                  if (v && returnDate && returnDate <= v) {
-                    const d = new Date(v + 'T00:00:00Z');
-                    d.setUTCDate(d.getUTCDate() + 7);
-                    const next = d.toISOString().slice(0, 10);
-                    setReturnDate(dateBounds?.max && next > dateBounds.max ? dateBounds.max : next);
-                  }
-                }}
+                onChange={onDepartChange}
               />
             </div>
           </div>
 
-          <div className="filter">
+          <div className="filter row-date-fields">
             <label className="filter-label">Return</label>
             <div className="filter-control">
               <DateField
@@ -183,20 +262,6 @@ export function FilterBar({
                   sublabel: v.per_direction_eur > 0 ? `€${v.per_direction_eur}/direction` : 'free',
                 }))}
               />
-            </div>
-          </div>
-
-          <div className="filter">
-            <label className="filter-label">Lifestyle</label>
-            <div className="filter-control">
-              <button
-                className={`more-btn ${lifestyleOpen ? 'open' : ''}`}
-                onClick={onToggleLifestyle}
-                title="Set dinners, drinks, coffees and self-catered days"
-              >
-                <span>Eating &amp; drinking</span>
-                <span className="chev">{lifestyleOpen ? '^' : 'v'}</span>
-              </button>
             </div>
           </div>
 
@@ -377,20 +442,9 @@ export function FilterBar({
         </button>
       )}
 
-      {authConfigured && (
-        <div className="account-slot">
-          {user ? (
-            <button className="account-avatar-btn" onClick={onOpenAccount} title={user.email}>
-              <span className="account-avatar">{(user.email || '?')[0].toUpperCase()}</span>
-              <span className="account-avatar-label">Account</span>
-            </button>
-          ) : (
-            <button className="account-signin-btn" onClick={onOpenAuth}>
-              Sign in
-            </button>
-          )}
-        </div>
-      )}
+      <div className="account-slot">
+        <AccountButton user={user} onOpenAccount={onOpenAccount} />
+      </div>
     </div>
   );
 }

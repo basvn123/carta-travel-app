@@ -668,26 +668,17 @@ input, select {
 /* ─── Mobile helpers (inert on desktop) ───
    The header wrapper collapses out of the layout on desktop via `display:
    contents`, so the brand stays a direct flex child of .filter-bar exactly as
-   before; the Filters toggle and bottom nav are hidden until the mobile query
-   switches them on. */
+   before; the account/calendar/filter icon triggers and bottom nav are
+   hidden until the mobile query switches them on. */
 .filter-mobile-header { display: contents; }
-/* Scoped to .filter-bar so this wins over the later, equal-specificity
-   `.more-btn { display: flex }` rule and stays hidden on desktop. */
-.filter-bar .filter-mobile-toggle { display: none; }
-.filter-mobile-count {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 18px;
-  height: 18px;
-  padding: 0 5px;
-  border-radius: 10px;
-  background: var(--ink);
-  color: var(--paper);
-  font-family: var(--mono);
-  font-size: 10px;
-  font-weight: 600;
-}
+/* Scoped to .filter-bar so these win over later, equal-specificity rules and
+   stay hidden on desktop. */
+.filter-bar .mobile-account-btn,
+.filter-bar .mobile-header-actions { display: none; }
+/* Depart/Return stay `display: contents` on desktop (flat children of
+   .filter-row, exactly as before); hidden on mobile because the calendar
+   icon's popover covers the same two fields instead. */
+.row-date-fields { display: contents; }
 .mobile-nav { display: none; }
 
 @media (max-width: 880px) {
@@ -732,8 +723,8 @@ input, select {
   color: var(--paper);
 }
 .segmented.compact button {
-  padding: 4px 9px;
-  font-size: 11px;
+  padding: 6px 12px;
+  font-size: 12px;
   letter-spacing: 0.04em;
 }
 
@@ -761,13 +752,13 @@ input, select {
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  padding: 5px 10px;
+  padding: 6px 12px;
   border: 1px solid var(--rule);
   border-radius: 999px;
   background: var(--paper-dim);
   color: var(--ink-soft);
   font-family: inherit;
-  font-size: 11px;
+  font-size: 12px;
   letter-spacing: 0.04em;
   line-height: 1;
   white-space: nowrap;
@@ -802,13 +793,13 @@ input, select {
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  padding: 5px 14px;
+  padding: 6px 14px;
   border: 1px solid var(--accent);
   border-radius: 999px;
   background: var(--paper-dim);
   color: var(--accent);
   font-family: inherit;
-  font-size: 11px;
+  font-size: 12px;
   letter-spacing: 0.04em;
   line-height: 1;
   white-space: nowrap;
@@ -1205,6 +1196,58 @@ input, select {
 .more-btn .chev {
   font-size: 10px;
   color: var(--ink-mute);
+}
+.account-lifestyle-btn { width: 100%; justify-content: space-between; }
+
+/* ─── Mobile top-bar icon buttons (dates / filters) ─── */
+
+.icon-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  border: 1px solid var(--rule);
+  background: var(--paper);
+  color: var(--ink-soft);
+  flex-shrink: 0;
+  transition: border-color .15s, color .15s, background .15s;
+}
+.icon-btn:hover { border-color: var(--ink); color: var(--ink); }
+.icon-btn.open {
+  background: var(--paper-dim);
+  border-color: var(--ink);
+  color: var(--ink);
+}
+.icon-btn.has-active { border-color: var(--accent); color: var(--accent); }
+.icon-btn-dot {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 1.5px solid var(--paper);
+}
+
+.mobile-dates-anchor { position: relative; }
+.mobile-dates-pop {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 40;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 220px;
+  padding: 14px;
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  box-shadow: var(--shadow-2);
 }
 
 .more-panel {
@@ -2782,10 +2825,21 @@ input, select {
     gap: 12px;
     padding: 10px 16px;
     min-height: 58px;
+    position: relative;
   }
-  .filter-bar .filter-mobile-toggle { display: inline-flex; }
+  /* The desktop brand + far-right account slot are replaced on mobile by the
+     account button (left) and the calendar/filter icons (right), both inside
+     .filter-mobile-header. */
+  .brand { display: none; }
+  .filter-bar .mobile-account-btn,
+  .filter-bar .mobile-header-actions { display: inline-flex; }
+  .mobile-header-actions { align-items: center; gap: 8px; }
+  .mobile-account-btn .account-avatar-label { display: none; }
+  .mobile-account-btn { padding: 5px; }
   .brand-divider { display: none; }
-  .brand .name { font-size: 19px; }
+
+  /* Depart/Return live behind the calendar icon's popover instead. */
+  .row-date-fields { display: none; }
 
   /* Collapsed: just the header row. Open: rows drop down and scroll. */
   .filter-bar.mobile-collapsed .filter-rows { display: none; }
@@ -3078,7 +3132,7 @@ input, select {
   background: var(--ink);
   color: var(--paper);
   font-family: inherit;
-  font-size: 12.5px;
+  font-size: 12px;
   font-weight: 500;
   letter-spacing: 0.01em;
   transition: background .15s, border-color .15s;
@@ -3120,6 +3174,13 @@ input, select {
   .account-slot { width: 100%; justify-content: flex-end; margin: 2px 0 0; }
   .account-avatar-label { display: none; }
   .account-avatar-btn { padding: 4px; }
+}
+/* Below 768px the desktop account slot is replaced by .mobile-account-btn in
+   the filter bar's own header row (see the mobile filter-bar block above);
+   this rule must come after the base .account-slot definition above so it
+   actually wins the cascade at this width. */
+@media (max-width: 768px) {
+  .account-slot { display: none; }
 }
 
 /* ─── Auth overlay + modal (sign in / create account / forgot password) ─── */
@@ -3284,6 +3345,77 @@ input, select {
   background: transparent;
   border: none;
   font-size: 12.5px;
+}
+
+/* ─── Entry gate (sign in / create account / continue as guest) ─── */
+
+.auth-gate {
+  max-width: 400px;
+  padding: 40px 34px 34px;
+  text-align: center;
+}
+.auth-brand-center {
+  justify-content: center;
+  margin-bottom: 26px;
+}
+.auth-gate-title { text-align: center; }
+.auth-gate-sub {
+  text-align: center;
+  margin-bottom: 28px;
+}
+.auth-gate-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.auth-submit-ghost {
+  background: transparent;
+  color: var(--ink);
+  border: 1px solid var(--rule);
+}
+.auth-submit-ghost:hover:not(:disabled) {
+  background: var(--paper-dim);
+  color: var(--ink);
+}
+.auth-gate-guest {
+  align-self: center;
+  margin: 20px auto 0;
+}
+
+/* ─── Email-confirmed toast ─── */
+
+.confirm-toast {
+  position: fixed;
+  left: 50%;
+  bottom: 28px;
+  transform: translateX(-50%);
+  z-index: 80;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  border-radius: 8px;
+  background: var(--ink);
+  color: var(--paper);
+  font-size: 13px;
+  box-shadow: var(--shadow-2);
+  animation: confirm-toast-in .25s ease-out;
+}
+.confirm-toast-check {
+  color: var(--green);
+  font-weight: 700;
+}
+.confirm-toast-close {
+  color: var(--paper);
+  opacity: 0.6;
+  font-size: 16px;
+  line-height: 1;
+  margin-left: 4px;
+}
+.confirm-toast-close:hover { opacity: 1; }
+@keyframes confirm-toast-in {
+  from { opacity: 0; transform: translateX(-50%) translateY(8px); }
+  to { opacity: 1; transform: translateX(-50%) translateY(0); }
 }
 
 /* ─── Account panel (side panel: profile, saved trips, change password) ─── */

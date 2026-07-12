@@ -11,6 +11,7 @@ import { matchesAnyKind } from './trip_kinds.js';
 import { loadInitialState, persistState } from './urlState.js';
 import { AuthProvider, useAuth } from './auth/AuthContext.jsx';
 import { AuthModal } from './auth/AuthModal.jsx';
+import { AuthGate } from './auth/AuthGate.jsx';
 import { ResetPasswordScreen } from './auth/ResetPasswordScreen.jsx';
 import { AccountPanel } from './auth/AccountPanel.jsx';
 import { saveTrip, fetchUserSettings, saveUserSettings } from './auth/tripStorage.js';
@@ -18,6 +19,10 @@ import { saveTrip, fetchUserSettings, saveUserSettings } from './auth/tripStorag
 // Accent- and case-insensitive text key, so "malaga" matches "Málaga".
 const normalize = (s) =>
   (s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim();
+
+// Once someone picks "continue without an account" on the entry gate, don't
+// ask again on this device - only a fresh sign-in should bring accounts back.
+const GUEST_KEY = 'continent.guestMode.v1';
 
 export default function App() {
   return (
@@ -28,9 +33,35 @@ export default function App() {
 }
 
 function TravelApp() {
-  const { configured: authConfigured, user, recoveryMode } = useAuth();
+  const {
+    configured: authConfigured, user, recoveryMode,
+    loading: authLoading, emailConfirmed, dismissEmailConfirmed,
+  } = useAuth();
   // State carried in the URL / localStorage (shareable + survives reload).
   const [init] = useState(() => loadInitialState());
+
+  // Whether this visitor has already dismissed the entry gate as a guest.
+  // Signing in overrides it automatically since `user` then takes priority.
+  const [guestMode, setGuestMode] = useState(
+    () => typeof window !== 'undefined' && localStorage.getItem(GUEST_KEY) === '1'
+  );
+  const [authModalMode, setAuthModalMode] = useState('signin');
+  // Shown before any data/route decisions: sign in, create an account, or
+  // continue as a guest. Skipped entirely when accounts aren't configured,
+  // once already signed in, or once guest mode has been chosen before.
+  const showGate = authConfigured && !authLoading && !user && !recoveryMode && !guestMode;
+
+  // A deliberate sign-out should bring the gate back (they may want to switch
+  // accounts) rather than silently falling through to the guest bypass they
+  // chose before they ever had an account.
+  const prevUserRef = useRef(null);
+  useEffect(() => {
+    if (prevUserRef.current && !user) {
+      localStorage.removeItem(GUEST_KEY);
+      setGuestMode(false);
+    }
+    prevUserRef.current = user;
+  }, [user]);
 
   const [data, setData] = useState(null);
   const [error, setError] = useState(null);
@@ -382,6 +413,38 @@ function TravelApp() {
     return <ResetPasswordScreen />;
   }
 
+  // Resolve whether there's an existing session before deciding whether to
+  // show the entry gate - otherwise a returning signed-in user would flash
+  // the gate for a moment on every load.
+  if (authConfigured && authLoading) {
+    return (
+      <div className="loading-screen">
+        <Logo size={56} />
+        <div className="name">Carta</div>
+        <div className="sub">Charting Europe</div>
+        <div className="pulse" />
+      </div>
+    );
+  }
+
+  if (showGate) {
+    return (
+      <>
+        <AuthGate
+          onSignIn={() => { setAuthModalMode('signin'); setAuthModalOpen(true); }}
+          onSignUp={() => { setAuthModalMode('signup'); setAuthModalOpen(true); }}
+          onGuest={() => {
+            localStorage.setItem(GUEST_KEY, '1');
+            setGuestMode(true);
+          }}
+        />
+        {authModalOpen && (
+          <AuthModal initialMode={authModalMode} onClose={() => setAuthModalOpen(false)} />
+        )}
+      </>
+    );
+  }
+
   if (error) {
     return (
       <div className="loading-screen">
@@ -439,11 +502,7 @@ function TravelApp() {
           setTopBeachOnly={setTopBeachOnly}
           topPick={topPick}
           setTopPick={setTopPick}
-          lifestyleOpen={lifestyleOpen}
-          onToggleLifestyle={() => setLifestyleOpen((v) => !v)}
-          authConfigured={authConfigured}
           user={user}
-          onOpenAuth={() => setAuthModalOpen(true)}
           onOpenAccount={() => setAccountOpen(true)}
         />
       </div>
@@ -582,11 +641,30 @@ function TravelApp() {
       )}
 
       {authConfigured && authModalOpen && (
-        <AuthModal onClose={() => setAuthModalOpen(false)} />
+        <AuthModal initialMode={authModalMode} onClose={() => setAuthModalOpen(false)} />
       )}
-      {authConfigured && accountOpen && user && (
+      {accountOpen && (
         <div onClick={(e) => e.stopPropagation()}>
-          <AccountPanel onClose={() => setAccountOpen(false)} onLoadTrip={handleLoadTrip} />
+          <AccountPanel
+            onClose={() => setAccountOpen(false)}
+            onLoadTrip={handleLoadTrip}
+            onOpenAuth={() => { setAccountOpen(false); setAuthModalMode('signin'); setAuthModalOpen(true); }}
+            onOpenLifestyle={() => { setAccountOpen(false); setLifestyleOpen(true); }}
+          />
+        </div>
+      )}
+
+      {emailConfirmed && (
+        <div className="confirm-toast" role="status" onClick={(e) => e.stopPropagation()}>
+          <span className="confirm-toast-check">✓</span>
+          Email confirmed — welcome to Carta.
+          <button
+            className="confirm-toast-close"
+            onClick={dismissEmailConfirmed}
+            aria-label="Dismiss"
+          >
+            ×
+          </button>
         </div>
       )}
     </div>
