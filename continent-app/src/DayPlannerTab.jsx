@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { TripMap } from './TripMap.jsx';
-import { tripDaysBetween } from './runtime_pricing.js';
+import { tripDaysBetween, haversineKm } from './runtime_pricing.js';
 import { fetchTripPlans, fetchTripPlanWithStops } from './auth/tripPlanStorage.js';
 
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -16,6 +16,72 @@ function addDays(iso, n) {
   const d = new Date(iso + 'T00:00:00Z');
   d.setUTCDate(d.getUTCDate() + n);
   return d.toISOString().slice(0, 10);
+}
+
+// Typical time actually spent at a place, by category - a rough default used
+// only to lay out a SUGGESTED schedule (see the disclaimer in the UI); this
+// is not real opening-hours or visit-duration data.
+const DWELL_MINUTES_BY_KIND = {
+  museum: 120, gallery: 120, zoo: 120, aquarium: 120,
+  castle: 90, palace: 90, fortress: 90, citadel: 90,
+  'ancient site': 90, ruins: 90, 'roman site': 90,
+  park: 75, garden: 75, beach: 75, lake: 75,
+  church: 30, cathedral: 30, basilica: 30, monastery: 30, temple: 30,
+  mosque: 30, synagogue: 30, chapel: 30, convent: 30,
+  square: 20, monument: 20, memorial: 20, statue: 20, fountain: 20,
+  viewpoint: 20, tower: 20, gate: 20, bridge: 20, lighthouse: 20,
+  market: 45, brewery: 45, winery: 45,
+};
+const DEFAULT_DWELL_MIN = 45;
+function estimateDwellMinutes(kind) {
+  return DWELL_MINUTES_BY_KIND[(kind || '').toLowerCase()] ?? DEFAULT_DWELL_MIN;
+}
+
+const WALK_KMH = 4.8; // average walking pace, for a rough time estimate
+function estimateWalkMinutes(km) {
+  return Math.max(1, Math.round((km / WALK_KMH) * 60));
+}
+
+const DAY_START_MIN = 9 * 60; // suggested schedule starts at 9:00 AM
+function minutesToClock(totalMin) {
+  const h24 = Math.floor((totalMin / 60) % 24);
+  const m = Math.round(totalMin % 60);
+  const period = h24 >= 12 ? 'PM' : 'AM';
+  const h12 = h24 % 12 === 0 ? 12 : h24 % 12;
+  return `${h12}:${String(m).padStart(2, '0')} ${period}`;
+}
+
+/** Reorders a day's assigned activity indices to minimize backtracking - a
+ *  simple nearest-neighbour walk starting from the first-added stop with
+ *  coordinates. Activities without coordinates (limited-data destinations)
+ *  can't be routed, so they're kept, appended at the end in add order. */
+function optimizeOrder(idxArray, itemsAll) {
+  const withCoords = [];
+  const withoutCoords = [];
+  for (const idx of idxArray) {
+    const it = itemsAll[idx];
+    (it && it.lat != null && it.lon != null ? withCoords : withoutCoords).push(idx);
+  }
+  if (withCoords.length <= 1) return [...withCoords, ...withoutCoords];
+
+  const remaining = new Set(withCoords);
+  let current = withCoords[0];
+  const ordered = [current];
+  remaining.delete(current);
+  while (remaining.size > 0) {
+    const curItem = itemsAll[current];
+    let best = null, bestDist = Infinity;
+    for (const cand of remaining) {
+      const c = itemsAll[cand];
+      const d = haversineKm(curItem.lat, curItem.lon, c.lat, c.lon);
+      if (d != null && d < bestDist) { bestDist = d; best = cand; }
+    }
+    if (best == null) break;
+    ordered.push(best);
+    remaining.delete(best);
+    current = best;
+  }
+  return [...ordered, ...withoutCoords];
 }
 
 // Day-by-day activity assignments are a browsing/organizing aid, not part of
@@ -88,15 +154,51 @@ export function DayPlannerTab({ data, user, authConfigured }) {
   const dayAssignedIdx = assignments[stopIdx]?.[dayIdx] || [];
   const assignedItems = dayAssignedIdx.map((i) => activities.items[i]).filter(Boolean);
 
-  const toggleActivity = (itemIdx) => {
-    const current = assignments[stopIdx]?.[dayIdx] || [];
-    const nextForDay = current.includes(itemIdx)
-      ? current.filter((i) => i !== itemIdx)
-      : [...current, itemIdx];
+  const commitDay = (nextForDay) => {
     const next = { ...assignments, [stopIdx]: { ...(assignments[stopIdx] || {}), [dayIdx]: nextForDay } };
     setAssignments(next);
     persistAssignments(plan?.id, next);
   };
+
+  // Adding a stop re-optimizes the whole day's route (nearest-neighbour) so
+  // it's never left zigzagging; removing just drops it in place.
+  const toggleActivity = (itemIdx) => {
+    const current = assignments[stopIdx]?.[dayIdx] || [];
+    if (current.includes(itemIdx)) {
+      commitDay(current.filter((i) => i !== itemIdx));
+    } else {
+      commitDay(optimizeOrder([...current, itemIdx], activities.items));
+    }
+  };
+
+  // Manual override of the auto-optimized order.
+  const moveAssigned = (pos, dir) => {
+    const current = assignments[stopIdx]?.[dayIdx] || [];
+    const j = pos + dir;
+    if (j < 0 || j >= current.length) return;
+    const nextForDay = [...current];
+    [nextForDay[pos], nextForDay[j]] = [nextForDay[j], nextForDay[pos]];
+    commitDay(nextForDay);
+  };
+
+  // A suggested schedule for the day - dwell time by category + walking time
+  // between consecutive stops, chained from a 9:00 AM start. Not real
+  // opening-hours or booking data (see the disclaimer shown with it).
+  const timeline = useMemo(() => {
+    let cursor = DAY_START_MIN;
+    return assignedItems.map((it, i) => {
+      const arrive = cursor;
+      const depart = arrive + estimateDwellMinutes(it.kind);
+      const next = assignedItems[i + 1];
+      let walkKm = null, walkMin = null;
+      if (next && it.lat != null && it.lon != null && next.lat != null && next.lon != null) {
+        walkKm = haversineKm(it.lat, it.lon, next.lat, next.lon);
+        walkMin = estimateWalkMinutes(walkKm);
+      }
+      cursor = depart + (walkMin || 0);
+      return { item: it, arrive, depart, walkKm, walkMin };
+    });
+  }, [assignedItems]);
 
   const mapPins = assignedItems
     .filter((it) => it.lat != null && it.lon != null)
@@ -201,25 +303,40 @@ export function DayPlannerTab({ data, user, authConfigured }) {
                 Today's plan{assignedItems.length > 0 ? ` (${assignedItems.length})` : ''}
               </div>
               {assignedItems.length === 0 ? (
-                <p className="trip-note">Tap an activity below to add it to this day.</p>
+                <p className="trip-note">Tap an activity below to add it to this day - the route auto-orders itself to avoid zigzagging.</p>
               ) : (
-                <div className="day-assigned-list">
-                  {assignedItems.map((it, i) => (
-                    <div className="day-assigned-row" key={i}>
-                      <span className="day-assigned-idx">{i + 1}</span>
-                      <div className="day-assigned-body">
-                        <span className="day-assigned-name">{it.name}</span>
-                        <span className="day-assigned-kind">{it.kind}</span>
-                      </div>
-                      <button
-                        className="trip-stop-remove"
-                        onClick={() => toggleActivity(dayAssignedIdx[i])}
-                        aria-label="Remove"
-                        title="Remove"
-                      >×</button>
-                    </div>
-                  ))}
-                </div>
+                <>
+                  <p className="trip-note day-timeline-note">
+                    Suggested order and times, from a 9:00 AM start - not real opening hours or bookings.
+                  </p>
+                  <div className="day-timeline">
+                    {timeline.map((t, i) => (
+                      <React.Fragment key={i}>
+                        <div className="day-timeline-row">
+                          <div className="day-timeline-time">{minutesToClock(t.arrive)}</div>
+                          <div className="day-assigned-row">
+                            <div className="day-assigned-body">
+                              <span className="day-assigned-name">{t.item.name}</span>
+                              <span className="day-assigned-kind">{t.item.kind}</span>
+                            </div>
+                            <div className="day-timeline-tools">
+                              <button className="trip-stop-move" onClick={() => moveAssigned(i, -1)} disabled={i === 0} aria-label="Move earlier" title="Move earlier">↑</button>
+                              <button className="trip-stop-move" onClick={() => moveAssigned(i, 1)} disabled={i === timeline.length - 1} aria-label="Move later" title="Move later">↓</button>
+                              <button className="trip-stop-remove" onClick={() => toggleActivity(dayAssignedIdx[i])} aria-label="Remove" title="Remove">×</button>
+                            </div>
+                          </div>
+                        </div>
+                        {i < timeline.length - 1 && (
+                          <div className="day-timeline-walk">
+                            {t.walkMin != null
+                              ? `↓ ${t.walkMin} min walk · ${t.walkKm.toFixed(1)} km`
+                              : '↓ walking time unknown (no coordinates for one of these stops)'}
+                          </div>
+                        )}
+                      </React.Fragment>
+                    ))}
+                  </div>
+                </>
               )}
             </div>
           )}
