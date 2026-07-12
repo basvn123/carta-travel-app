@@ -400,43 +400,75 @@ function addDays(iso, days) {
   return d.toISOString().slice(0, 10);
 }
 
+/** Candidate trip start dates for "Best time to go": the union of outbound_fare
+ *  keys across the destination's routes (real, bookable Ryanair days). Car-only
+ *  destinations (no route data at all) have no per-day flight signal, so this
+ *  falls back to a weekly sweep across the app's priced horizon
+ *  (meta.start_date/end_date) - accommodation and rental still vary by month,
+ *  so the sweep isn't wasted.
+ */
+function candidateStartDates(dest, meta) {
+  const routes = dest?.routes || {};
+  const outDates = new Set();
+  for (const r of Object.values(routes)) {
+    for (const d of Object.keys(r.outbound_fare || {})) outDates.add(d);
+  }
+
+  const candidates = [...outDates].sort();
+  if (candidates.length > 0) return candidates;
+
+  const start = meta?.start_date, end = meta?.end_date;
+  if (!start || !end) return [];
+  const swept = [];
+  for (let d = start; d <= end; d = addDays(d, 7)) swept.push(d);
+  return swept;
+}
+
 /** The total trip cost for every bookable start date that keeps a fixed trip
  *  length, across the whole fare window this destination's routes cover - the
  *  data "Best time to go" needs to find the cheapest period and chart the rest.
  *  Reuses composeTrip() per candidate date, so it stays consistent with the
  *  currently selected plane/car mode and every other pricing input.
  *
- *  Candidate start dates come from the union of outbound_fare keys across the
- *  destination's routes (real, bookable Ryanair days). Car-only destinations
- *  (no route data at all) have no per-day flight signal, so we fall back to a
- *  weekly sweep across the app's priced horizon (meta.start_date/end_date) -
- *  accommodation and rental still vary by month, so the sweep isn't wasted.
- *
- *  Returns [{ start, end, total, mode }], sorted by start date, or [] if there
- *  isn't enough data to say anything.
+ *  Returns [{ start, end, nights, total, mode }], sorted by start date, or []
+ *  if there isn't enough data to say anything.
  */
 export function cheapestWindows(dest, nights, choices, meta) {
   if (!dest || !nights || nights < 1) return [];
 
-  const routes = dest.routes || {};
-  const outDates = new Set();
-  for (const r of Object.values(routes)) {
-    for (const d of Object.keys(r.outbound_fare || {})) outDates.add(d);
-  }
-
-  let candidates = [...outDates].sort();
-  if (candidates.length === 0) {
-    const start = meta?.start_date, end = meta?.end_date;
-    if (!start || !end) return [];
-    candidates = [];
-    for (let d = start; d <= end; d = addDays(d, 7)) candidates.push(d);
-  }
-
   const out = [];
-  for (const start of candidates) {
+  for (const start of candidateStartDates(dest, meta)) {
     const end = addDays(start, nights);
     const trip = composeTrip(dest, start, end, choices);
-    if (trip) out.push({ start, end, total: trip.grand_total, mode: trip.transport_mode });
+    if (trip) out.push({ start, end, nights, total: trip.grand_total, mode: trip.transport_mode });
+  }
+  return out;
+}
+
+/** Same idea as cheapestWindows(), but for each candidate start date also
+ *  tries every trip length within `flexNights` of `baseNights` and keeps
+ *  whichever is cheapest - the "Flexible" length option, for a user who cares
+ *  more about the total than an exact number of nights.
+ *
+ *  Returns [{ start, end, nights, total, mode }] (nights varies per entry),
+ *  sorted by start date.
+ */
+export function cheapestFlexibleWindows(dest, baseNights, flexNights, choices, meta) {
+  if (!dest || !baseNights || baseNights < 1) return [];
+  const minNights = Math.max(1, baseNights - flexNights);
+  const maxNights = baseNights + flexNights;
+
+  const out = [];
+  for (const start of candidateStartDates(dest, meta)) {
+    let best = null;
+    for (let n = minNights; n <= maxNights; n++) {
+      const end = addDays(start, n);
+      const trip = composeTrip(dest, start, end, choices);
+      if (trip && (!best || trip.grand_total < best.total)) {
+        best = { start, end, nights: n, total: trip.grand_total, mode: trip.transport_mode };
+      }
+    }
+    if (best) out.push(best);
   }
   return out;
 }

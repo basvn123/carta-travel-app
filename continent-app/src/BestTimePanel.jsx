@@ -1,77 +1,118 @@
 import React from 'react';
-import { cheapestWindows, fareByWeekday } from './runtime_pricing.js';
+import { cheapestWindows, cheapestFlexibleWindows, fareByWeekday } from './runtime_pricing.js';
 
 const DOW_NAMES = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+
+const LENGTH_OPTIONS = [
+  { key: 'weekend', label: 'Weekend', nights: 3 },
+  { key: 'week', label: '1 week', nights: 7 },
+  { key: 'twoWeeks', label: '2 weeks', nights: 14 },
+  { key: 'flexible', label: 'Flexible ±3 days', nights: null },
+];
 
 const eur = (n) => `€${Math.round(n).toLocaleString('en-GB')}`;
 const fmtDate = (iso) => new Date(iso + 'T00:00:00Z').toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
 
+// Which length chip is closest to the trip the user actually has selected -
+// the sensible default when the tab first opens.
+function closestLengthKey(nights) {
+  const fixed = LENGTH_OPTIONS.filter((o) => o.nights != null);
+  return fixed.reduce((a, b) => (Math.abs(b.nights - nights) < Math.abs(a.nights - nights) ? b : a)).key;
+}
+
+function windowNoun(lengthKey, foundNights) {
+  if (lengthKey === 'weekend') return 'weekend';
+  if (lengthKey === 'week') return 'week';
+  if (lengthKey === 'twoWeeks') return '2-week trip';
+  return `${foundNights}-night trip`;
+}
+
 // "Best time to go" for the currently selected destination: the cheapest
-// window of the same trip length across the whole fare horizon, a chart of
+// window of a chosen trip length across the whole fare horizon, a chart of
 // how the total moves over that horizon, and the weekday fare pattern.
 export function BestTimePanel({ destination, departDate, returnDate, breakdown, choices, data, onShiftDates }) {
-  const nights = breakdown.nights;
+  const [lengthKey, setLengthKey] = React.useState(() => closestLengthKey(breakdown.nights));
+  const activeOption = LENGTH_OPTIONS.find((o) => o.key === lengthKey);
 
-  const windows = React.useMemo(
-    () => cheapestWindows(destination, nights, choices, data?.meta),
-    [destination, nights, choices, data],
-  );
+  const windows = React.useMemo(() => {
+    if (lengthKey === 'flexible') {
+      return cheapestFlexibleWindows(destination, breakdown.nights, 3, choices, data?.meta);
+    }
+    return cheapestWindows(destination, activeOption.nights, choices, data?.meta);
+  }, [destination, lengthKey, breakdown.nights, activeOption, choices, data]);
+
   const weekday = React.useMemo(() => fareByWeekday(destination), [destination]);
 
-  if (windows.length < 3) {
-    return (
-      <div className="panel-section">
-        <p className="footnote" style={{ marginTop: 0 }}>
-          Not enough fare data yet to compare travel periods for this destination.
-        </p>
-      </div>
-    );
-  }
-
-  const cheapest = windows.reduce((a, b) => (b.total < a.total ? b : a));
+  const cheapest = windows.length > 0 ? windows.reduce((a, b) => (b.total < a.total ? b : a)) : null;
   const yours = { start: departDate, end: returnDate, total: breakdown.grand_total };
-  const savingsPct = Math.round(100 * (1 - cheapest.total / yours.total));
+  const savingsPct = cheapest ? Math.round(100 * (1 - cheapest.total / yours.total)) : 0;
   const hasWeekday = weekday.some((v) => v != null);
 
   return (
     <div className="panel-section">
       <div className="section-title">Best time to go</div>
 
-      <div className="bt-headline">
-        <div className="bt-stat">
-          <div className="bt-label">Cheapest {nights}-night window found</div>
-          <div className="bt-value">{eur(cheapest.total)}</div>
-          <div className="bt-dates">{fmtDate(cheapest.start)} - {fmtDate(cheapest.end)}</div>
-        </div>
-        {savingsPct > 1 && (
-          <div className="bt-headline-actions">
-            <span className="bt-badge">{savingsPct}% cheaper than your dates</span>
-            {onShiftDates && (
-              <button className="bt-cta" onClick={() => onShiftDates(cheapest.start, cheapest.end)}>
-                Shift trip to {fmtDate(cheapest.start)}
-              </button>
-            )}
-          </div>
-        )}
+      <div className="kind-chips bt-length-chips">
+        {LENGTH_OPTIONS.map((o) => (
+          <button
+            key={o.key}
+            type="button"
+            className={`chip ${lengthKey === o.key ? 'on' : ''}`}
+            onClick={() => setLengthKey(o.key)}
+          >
+            {o.label}
+          </button>
+        ))}
       </div>
 
-      <BestTimeChart windows={windows} cheapest={cheapest} yours={yours} nights={nights} />
-
-      {hasWeekday && (
+      {!cheapest || windows.length < 3 ? (
+        <p className="footnote" style={{ marginTop: 0 }}>
+          Not enough fare data yet to compare travel periods for this destination.
+        </p>
+      ) : (
         <>
-          <div className="section-title" style={{ marginTop: 18 }}>Average flight fare by day of week</div>
-          <WeekdayBars values={weekday} />
+          <div className="bt-headline">
+            <div className="bt-stat">
+              <div className="bt-label">Cheapest {windowNoun(lengthKey, cheapest.nights)} found</div>
+              <div className="bt-value">{eur(cheapest.total)}</div>
+              <div className="bt-dates">{fmtDate(cheapest.start)} - {fmtDate(cheapest.end)}</div>
+            </div>
+            {savingsPct > 1 && (
+              <div className="bt-headline-actions">
+                <span className="bt-badge">
+                  <svg className="bt-badge-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+                    <path d="M5 12l5 5L19 7" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                  {savingsPct}% cheaper than your dates
+                </span>
+                {onShiftDates && (
+                  <button className="bt-cta" onClick={() => onShiftDates(cheapest.start, cheapest.end)}>
+                    Shift trip to {fmtDate(cheapest.start)} -&gt;
+                  </button>
+                )}
+              </div>
+            )}
+          </div>
+
+          <BestTimeChart windows={windows} cheapest={cheapest} yours={yours} />
+
+          {hasWeekday && (
+            <>
+              <div className="section-title" style={{ marginTop: 18 }}>Average flight fare by day of week</div>
+              <WeekdayBars values={weekday} />
+            </>
+          )}
         </>
       )}
     </div>
   );
 }
 
-function BestTimeChart({ windows, cheapest, yours, nights }) {
+function BestTimeChart({ windows, cheapest, yours }) {
   const [hoverI, setHoverI] = React.useState(null);
   const svgRef = React.useRef(null);
 
-  const W = 600, H = 180, padL = 42, padR = 8, padT = 14, padB = 22;
+  const W = 600, H = 180, padL = 42, padR = 8, padT = 22, padB = 22;
 
   // Downsample so the line stays legible over a long fare horizon.
   const step = Math.max(1, Math.ceil(windows.length / 60));
@@ -149,11 +190,11 @@ function BestTimeChart({ windows, cheapest, yours, nights }) {
         )}
 
         <circle cx={x(cheapI)} cy={y(pts[cheapI].total)} r={5} className="bt-pt bt-pt-cheap" />
-        <text x={x(cheapI)} y={y(pts[cheapI].total) - 10} className="bt-direct-label g" textAnchor="middle">cheapest</text>
-
         <circle cx={x(yoursI)} cy={y(pts[yoursI].total)} r={5} className="bt-pt bt-pt-you" />
-        <text x={x(yoursI)} y={y(pts[yoursI].total) - 10} className="bt-direct-label k" textAnchor="middle">your dates</text>
       </svg>
+
+      <ChartPin xPct={(x(cheapI) / W) * 100} yPct={(y(pts[cheapI].total) / H) * 100} dotClass="green" label="cheapest" />
+      <ChartPin xPct={(x(yoursI) / W) * 100} yPct={(y(pts[yoursI].total) / H) * 100} dotClass="ink" label="your dates" />
 
       {hoverI != null && (
         <div
@@ -165,10 +206,25 @@ function BestTimeChart({ windows, cheapest, yours, nights }) {
       )}
 
       <div className="bt-legend">
-        <span className="bt-legend-item"><i className="bt-dot bt-dot-accent" /> Total cost, {nights}-night window start</span>
+        <span className="bt-legend-item"><i className="bt-dot bt-dot-accent" /> Total cost by trip start date</span>
         <span className="bt-legend-item"><i className="bt-dot bt-dot-green" /> Cheapest window</span>
         <span className="bt-legend-item"><i className="bt-dot bt-dot-ink" /> Your selected dates</span>
       </div>
+    </div>
+  );
+}
+
+// A small floating label pinned to a chart point. Flips to stay clear of the
+// chart edges instead of overlapping the line or getting clipped: right-
+// anchored near the right edge, left-anchored near the left edge, and pushed
+// below the point instead of above when the point itself is near the top.
+function ChartPin({ xPct, yPct, dotClass, label }) {
+  const h = xPct < 15 ? 'left' : xPct > 85 ? 'right' : 'center';
+  const v = yPct < 24 ? 'below' : 'above';
+  return (
+    <div className={`bt-pin bt-pin-${h} bt-pin-${v}`} style={{ left: `${xPct}%`, top: `${yPct}%` }}>
+      <i className={`bt-pin-dot bt-dot-${dotClass}`} />
+      {label}
     </div>
   );
 }

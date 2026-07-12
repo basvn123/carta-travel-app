@@ -3352,22 +3352,31 @@ input, select {
   padding: 18px 28px 0;
 }
 
+.bt-length-chips {
+  margin-bottom: 16px;
+}
+
 .bt-headline {
   display: flex;
-  align-items: flex-end;
+  align-items: flex-start;
   justify-content: space-between;
   flex-wrap: wrap;
-  gap: 12px;
+  gap: 14px;
+  padding-bottom: 18px;
   margin-bottom: 18px;
+  border-bottom: 1px solid var(--rule);
 }
 .bt-label {
-  font-size: 12px;
+  font-family: var(--mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
   color: var(--ink-mute);
-  margin-bottom: 4px;
+  margin-bottom: 6px;
 }
 .bt-value {
   font-family: var(--display);
-  font-size: 28px;
+  font-size: 30px;
   font-weight: 600;
   letter-spacing: -0.01em;
   line-height: 1.1;
@@ -3375,7 +3384,7 @@ input, select {
 .bt-dates {
   font-size: 12.5px;
   color: var(--ink-soft);
-  margin-top: 3px;
+  margin-top: 4px;
 }
 .bt-headline-actions {
   display: flex;
@@ -3386,14 +3395,20 @@ input, select {
 .bt-badge {
   display: inline-flex;
   align-items: center;
+  gap: 5px;
   font-size: 11.5px;
   font-weight: 700;
-  padding: 5px 10px;
+  padding: 5px 11px 5px 8px;
   border-radius: 100px;
   background: #e8f3e6;
   color: #2c6a1f;
   border: 1px solid #c5dfbe;
   white-space: nowrap;
+}
+.bt-badge-check {
+  width: 11px;
+  height: 11px;
+  flex-shrink: 0;
 }
 .bt-cta {
   font-size: 12px;
@@ -3404,11 +3419,14 @@ input, select {
   padding: 7px 13px;
   border-radius: 8px;
   white-space: nowrap;
+  transition: background .15s, color .15s;
 }
 .bt-cta:hover { background: var(--accent-soft); color: #fff; }
 
 .bt-chart-wrap {
   position: relative;
+  overflow: visible;
+  margin-top: 4px;
 }
 .bt-axis {
   font-family: var(--mono);
@@ -3421,10 +3439,34 @@ input, select {
 .bt-pt { stroke-width: 2; }
 .bt-pt-cheap { fill: #2c6a1f; stroke: var(--paper); }
 .bt-pt-you { fill: var(--ink); stroke: var(--paper); }
-.bt-direct-label { font-family: var(--ui); font-size: 10.5px; font-weight: 700; fill: var(--ink); }
-.bt-direct-label.g { fill: #2c6a1f; }
-.bt-direct-label.k { fill: var(--ink-soft); }
 .bt-crosshair { stroke: var(--ink-mute); stroke-width: 1; opacity: .5; }
+
+/* Floating labels pinned to the cheapest/your-dates points - kept off the
+   line itself (a plain SVG text label there collides with the chart), and
+   flipped near the edges so they never get clipped or sit over the axes. */
+.bt-pin {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  border-radius: 100px;
+  padding: 3px 9px 3px 7px;
+  font-size: 10.5px;
+  font-weight: 700;
+  color: var(--ink);
+  white-space: nowrap;
+  box-shadow: var(--shadow-1);
+  pointer-events: none;
+}
+.bt-pin-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; display: inline-block; }
+.bt-pin-center.bt-pin-above { transform: translate(-50%, -140%); }
+.bt-pin-left.bt-pin-above   { transform: translate(0, -140%); }
+.bt-pin-right.bt-pin-above  { transform: translate(-100%, -140%); }
+.bt-pin-center.bt-pin-below { transform: translate(-50%, 40%); }
+.bt-pin-left.bt-pin-below   { transform: translate(0, 40%); }
+.bt-pin-right.bt-pin-below  { transform: translate(-100%, 40%); }
 
 .bt-tooltip {
   position: absolute;
