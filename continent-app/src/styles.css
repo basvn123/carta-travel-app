@@ -85,8 +85,8 @@ input, select {
 .app-header {
   display: flex;
   align-items: center;
-  gap: 20px;
-  padding: 9px 18px;
+  gap: 18px;
+  padding: 7px 18px;
   background: rgba(245, 241, 232, 0.92);
   backdrop-filter: blur(12px) saturate(140%);
   -webkit-backdrop-filter: blur(12px) saturate(140%);
@@ -107,15 +107,48 @@ input, select {
   color: var(--ink);
 }
 
+/* Middle slot: the Map tab's FilterBar sits inline between brand and account.
+   It fills the space and its own bar chrome (background/border/padding) is
+   stripped since the surrounding .app-header already provides the panel. */
+.app-header-filters {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+}
+.app-header-filters .filter-bar {
+  flex: 1;
+  min-width: 0;
+  padding: 0;
+  background: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border-bottom: none;
+}
+
 .app-header-account {
   display: flex;
   align-items: center;
   flex-shrink: 0;
+  margin-left: auto;
 }
 
 @media (max-width: 768px) {
-  .app-header { padding: 9px 14px; gap: 10px; }
+  /* One panel on mobile too: no logo, the filter icon/calendar triggers and the
+     account button share the top row; the filter sheet drops open beneath. */
+  .app-header {
+    padding: 0;
+    gap: 0;
+    align-items: flex-start;
+  }
+  .app-header-brand { display: none; }
   .app-header-name { display: none; }
+  .app-header-account {
+    align-self: flex-start;
+    margin-left: auto;
+    padding: 0 14px;
+    min-height: 48px;
+  }
   .app-header-account .account-avatar-label { display: none; }
   .app-header-account .account-avatar-btn { padding: 4px; }
 }

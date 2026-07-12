@@ -19,16 +19,20 @@ function AccountButton({ user, onOpenAccount }) {
   );
 }
 
-// Always-mounted top row: brand + account access. The Map/Trip planner/Day
+// Always-mounted top panel: brand (desktop-only) on the left, the Map tab's
+// filters in the middle, and account access on the right - a single row, not a
+// separate header stacked above the filter bar. The Map/Trip planner/Day
 // planner switch lives in BottomNav (a persistent bottom bar, all screen
-// sizes) - this stays a slim header rather than duplicating the tabs here.
-export function AppHeader({ user, onOpenAccount }) {
+// sizes). `children` is the FilterBar, injected only on the Map tab.
+export function AppHeader({ user, onOpenAccount, children }) {
   return (
-    <div className="app-header">
+    <div className={`app-header ${children ? 'has-filters' : ''}`}>
       <div className="app-header-brand">
         <Logo size={26} className="brand-mark" />
         <span className="app-header-name">Carta</span>
       </div>
+
+      {children && <div className="app-header-filters">{children}</div>}
 
       <div className="app-header-account">
         <AccountButton user={user} onOpenAccount={onOpenAccount} />

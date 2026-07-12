@@ -292,38 +292,39 @@ function TravelApp() {
         <AppHeader
           user={user}
           onOpenAccount={() => setAccountOpen(true)}
-        />
-        {activeTab === 'map' && (
-          <FilterBar
-            data={data}
-            choices={choices}
-            setChoices={setChoices}
-            departDate={departDate}
-            setDepartDate={setDepartDate}
-            returnDate={returnDate}
-            setReturnDate={setReturnDate}
-            dateBounds={dateBounds}
-            stats={stats}
-            priceMode={priceMode}
-            setPriceMode={setPriceMode}
-            countryFilter={countryFilter}
-            setCountryFilter={setCountryFilter}
-            availableCountries={availableCountries}
-            priceRange={priceRange}
-            setPriceRange={setPriceRange}
-            priceBounds={priceBounds}
-            tripKinds={tripKinds}
-            setTripKinds={setTripKinds}
-            minBeauty={minBeauty}
-            setMinBeauty={setMinBeauty}
-            unescoOnly={unescoOnly}
-            setUnescoOnly={setUnescoOnly}
-            topBeachOnly={topBeachOnly}
-            setTopBeachOnly={setTopBeachOnly}
-            topPick={topPick}
-            setTopPick={setTopPick}
-          />
-        )}
+        >
+          {activeTab === 'map' && (
+            <FilterBar
+              data={data}
+              choices={choices}
+              setChoices={setChoices}
+              departDate={departDate}
+              setDepartDate={setDepartDate}
+              returnDate={returnDate}
+              setReturnDate={setReturnDate}
+              dateBounds={dateBounds}
+              stats={stats}
+              priceMode={priceMode}
+              setPriceMode={setPriceMode}
+              countryFilter={countryFilter}
+              setCountryFilter={setCountryFilter}
+              availableCountries={availableCountries}
+              priceRange={priceRange}
+              setPriceRange={setPriceRange}
+              priceBounds={priceBounds}
+              tripKinds={tripKinds}
+              setTripKinds={setTripKinds}
+              minBeauty={minBeauty}
+              setMinBeauty={setMinBeauty}
+              unescoOnly={unescoOnly}
+              setUnescoOnly={setUnescoOnly}
+              topBeachOnly={topBeachOnly}
+              setTopBeachOnly={setTopBeachOnly}
+              topPick={topPick}
+              setTopPick={setTopPick}
+            />
+          )}
+        </AppHeader>
       </div>
 
       {activeTab === 'map' && (
