@@ -1,10 +1,13 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { AppHeader } from './AppHeader.jsx';
 import { FilterBar } from './FilterBar.jsx';
 import { MapView } from './MapView.jsx';
 import { DetailPanel } from './DetailPanel.jsx';
 import { LifestylePanel } from './LifestylePanel.jsx';
 import { ResultsList } from './ResultsList.jsx';
 import { ComparePanel } from './ComparePanel.jsx';
+import { TripPlannerTab } from './TripPlannerTab.jsx';
+import { DayPlannerTab } from './DayPlannerTab.jsx';
 import Logo from './Logo.jsx';
 import { tripDaysBetween, DEFAULT_LIFESTYLE } from './runtime_pricing.js';
 import { loadInitialState, persistState } from './urlState.js';
@@ -60,6 +63,10 @@ function TravelApp() {
     prevUserRef.current = user;
   }, [user]);
 
+  // Which top-level section is showing: Map (the browse/search experience),
+  // Trip planner, or Day planner.
+  const [activeTab, setActiveTab] = useState(init.activeTab ?? 'map');
+
   const [selectedId, setSelectedId] = useState(init.selectedId ?? null);
 
   // Pick any depart date and any return date. Trip length (nights) is derived
@@ -78,7 +85,7 @@ function TravelApp() {
 
   // Shortlist (favorites) + list controls - also persisted in the URL.
   const [favorites, setFavorites] = useState(() => new Set(init.favorites || []));
-  const [sortKey, setSortKey] = useState(init.sortKey ?? 'price');
+  const [sortKey, setSortKey] = useState(init.sortKey ?? 'beauty');
   const [showFavOnly, setShowFavOnly] = useState(init.showFavOnly ?? false);
   const [compareOpen, setCompareOpen] = useState(false);
 
@@ -107,6 +114,14 @@ function TravelApp() {
   // Free-text location search (city / country). Ephemeral — not persisted in the
   // URL — and applied to the filtered set so the list AND map narrow together.
   const [locationQuery, setLocationQuery] = useState('');
+  // Debounced for the actual filter/map pipeline so every keystroke doesn't
+  // force MapView to reconcile markers; the input itself stays instant since
+  // it reads `locationQuery`, not this.
+  const [debouncedLocationQuery, setDebouncedLocationQuery] = useState('');
+  useEffect(() => {
+    const t = setTimeout(() => setDebouncedLocationQuery(locationQuery), 180);
+    return () => clearTimeout(t);
+  }, [locationQuery]);
 
   // View toggles
   const [priceMode, setPriceMode] = useState(init.priceMode ?? 'pp');
@@ -168,7 +183,7 @@ function TravelApp() {
     priced, unreachable, dealThreshold, stats,
   } = useDestinationSearch({
     data, departDate, returnDate, choices,
-    locationQuery, countryFilter, priceMode, tripKinds,
+    locationQuery: debouncedLocationQuery, countryFilter, priceMode, tripKinds,
     minBeauty, unescoOnly, topBeachOnly, topPick,
     initialPriceRange: init.priceRange,
   });
@@ -181,11 +196,11 @@ function TravelApp() {
     persistState({
       departDate, returnDate, choices, priceMode, countryFilter,
       tripKinds, priceRange, priceBounds, selectedId, favorites, sortKey, showFavOnly,
-      minBeauty, unescoOnly, topBeachOnly, topPick,
+      minBeauty, unescoOnly, topBeachOnly, topPick, activeTab,
     });
   }, [data, departDate, returnDate, choices, priceMode, countryFilter,
       tripKinds, priceRange, priceBounds, selectedId, favorites, sortKey, showFavOnly,
-      minBeauty, unescoOnly, topBeachOnly, topPick]);
+      minBeauty, unescoOnly, topBeachOnly, topPick, activeTab]);
 
   // Sync a signed-in user's filter/lifestyle preferences with their account,
   // and expose the "save"/"load a saved trip" actions.
@@ -272,151 +287,170 @@ function TravelApp() {
 
   return (
     <div className={`app ${listCollapsed ? 'list-collapsed' : ''}`} onClick={() => setSelectedId(null)}>
-      <div onClick={(e) => e.stopPropagation()}>
-        <FilterBar
-          barRef={filterBarRef}
-          data={data}
-          choices={choices}
-          setChoices={setChoices}
-          departDate={departDate}
-          setDepartDate={setDepartDate}
-          returnDate={returnDate}
-          setReturnDate={setReturnDate}
-          dateBounds={dateBounds}
-          stats={stats}
-          priceMode={priceMode}
-          setPriceMode={setPriceMode}
-          countryFilter={countryFilter}
-          setCountryFilter={setCountryFilter}
-          availableCountries={availableCountries}
-          priceRange={priceRange}
-          setPriceRange={setPriceRange}
-          priceBounds={priceBounds}
-          tripKinds={tripKinds}
-          setTripKinds={setTripKinds}
-          minBeauty={minBeauty}
-          setMinBeauty={setMinBeauty}
-          unescoOnly={unescoOnly}
-          setUnescoOnly={setUnescoOnly}
-          topBeachOnly={topBeachOnly}
-          setTopBeachOnly={setTopBeachOnly}
-          topPick={topPick}
-          setTopPick={setTopPick}
+      <div className="top-bar" ref={filterBarRef} onClick={(e) => e.stopPropagation()}>
+        <AppHeader
+          activeTab={activeTab}
+          onChangeTab={setActiveTab}
           user={user}
           onOpenAccount={() => setAccountOpen(true)}
         />
-      </div>
-
-      <div onClick={(e) => e.stopPropagation()}>
-        <ResultsList
-          priced={priced}
-          unreachable={topPick ? [] : unreachable}
-          locationQuery={locationQuery}
-          setLocationQuery={setLocationQuery}
-          priceMode={priceMode}
-          dealThreshold={dealThreshold}
-          selectedId={selectedId}
-          onSelect={openDetail}
-          favorites={favorites}
-          onToggleFav={toggleFav}
-          sortKey={sortKey}
-          setSortKey={setSortKey}
-          showFavOnly={showFavOnly}
-          setShowFavOnly={setShowFavOnly}
-          onOpenCompare={() => setCompareOpen(true)}
-          reachableCount={pricedAll.length}
-          totalCount={Object.keys(data.destinations).length}
-          homeCity={data.meta?.home_city || 'Brussels'}
-          transportMode={choices.transport_mode || 'plane'}
-          onCollapse={() => setListCollapsed(true)}
-        />
-      </div>
-
-      {/* Reopen tab — only visible (via CSS) when the list is collapsed. */}
-      <div onClick={(e) => e.stopPropagation()}>
-        <button
-          className="list-reopen"
-          onClick={() => setListCollapsed(false)}
-          title="Show the destinations list"
-          aria-label="Show the destinations list"
-        >
-          <span className="chev">›</span>
-          <span>Destinations</span>
-        </button>
-      </div>
-
-      <MapView
-        priced={priced}
-        unreachable={topPick ? [] : unreachable}
-        priceMode={priceMode}
-        groupSize={choices.group_size}
-        selectedId={selectedId}
-        onSelect={openDetail}
-        dealThreshold={dealThreshold}
-      />
-
-      {data.meta?.is_mock && (
-        <div style={{
-          position: 'absolute', top: 'calc(var(--filter-h) + 12px)',
-          left: 'calc(var(--panel-w) + 16px)',
-          fontFamily: 'var(--mono)', fontSize: 10,
-          background: 'var(--accent-bg)', color: 'var(--accent)',
-          padding: '4px 10px', borderRadius: 999,
-          textTransform: 'uppercase', letterSpacing: '0.12em',
-          zIndex: 5, pointerEvents: 'none',
-        }}>
-          Mock data
-        </div>
-      )}
-
-      {lifestyleOpen && (
-        <div onClick={(e) => e.stopPropagation()}>
-          <LifestylePanel
+        {activeTab === 'map' && (
+          <FilterBar
             data={data}
             choices={choices}
             setChoices={setChoices}
-            previewDest={previewDest}
             departDate={departDate}
+            setDepartDate={setDepartDate}
             returnDate={returnDate}
-            onClose={() => setLifestyleOpen(false)}
+            setReturnDate={setReturnDate}
+            dateBounds={dateBounds}
+            stats={stats}
+            priceMode={priceMode}
+            setPriceMode={setPriceMode}
+            countryFilter={countryFilter}
+            setCountryFilter={setCountryFilter}
+            availableCountries={availableCountries}
+            priceRange={priceRange}
+            setPriceRange={setPriceRange}
+            priceBounds={priceBounds}
+            tripKinds={tripKinds}
+            setTripKinds={setTripKinds}
+            minBeauty={minBeauty}
+            setMinBeauty={setMinBeauty}
+            unescoOnly={unescoOnly}
+            setUnescoOnly={setUnescoOnly}
+            topBeachOnly={topBeachOnly}
+            setTopBeachOnly={setTopBeachOnly}
+            topPick={topPick}
+            setTopPick={setTopPick}
           />
-        </div>
-      )}
-
-      <div onClick={(e) => e.stopPropagation()}>
-        <DetailPanel
-          destination={selectedDest}
-          departDate={departDate}
-          returnDate={returnDate}
-          choices={choices}
-          setChoices={setChoices}
-          priceMode={priceMode}
-          onClose={() => setSelectedId(null)}
-          onOpenLifestyle={() => setLifestyleOpen(true)}
-          onSelect={openDetail}
-          data={data}
-          isFavorite={selectedId ? favorites.has(selectedId) : false}
-          onToggleFavorite={selectedId ? () => toggleFav(selectedId) : undefined}
-          onSaveTrip={authConfigured ? handleSaveTrip : undefined}
-          onShiftDates={(depart, ret) => { setDepartDate(depart); setReturnDate(ret); }}
-        />
+        )}
       </div>
 
-      {compareOpen && favorites.size >= 2 && (
-        <div onClick={(e) => e.stopPropagation()}>
-          <ComparePanel
-            data={data}
-            favorites={favorites}
-            departDate={departDate}
-            returnDate={returnDate}
-            choices={choices}
+      {activeTab === 'map' && (
+        <>
+          <div onClick={(e) => e.stopPropagation()}>
+            <ResultsList
+              priced={priced}
+              unreachable={topPick ? [] : unreachable}
+              locationQuery={locationQuery}
+              setLocationQuery={setLocationQuery}
+              priceMode={priceMode}
+              dealThreshold={dealThreshold}
+              selectedId={selectedId}
+              onSelect={openDetail}
+              favorites={favorites}
+              onToggleFav={toggleFav}
+              sortKey={sortKey}
+              setSortKey={setSortKey}
+              showFavOnly={showFavOnly}
+              setShowFavOnly={setShowFavOnly}
+              onOpenCompare={() => setCompareOpen(true)}
+              reachableCount={pricedAll.length}
+              totalCount={Object.keys(data.destinations).length}
+              homeCity={data.meta?.home_city || 'Brussels'}
+              transportMode={choices.transport_mode || 'plane'}
+              onCollapse={() => setListCollapsed(true)}
+            />
+          </div>
+
+          {/* Reopen tab — only visible (via CSS) when the list is collapsed. */}
+          <div onClick={(e) => e.stopPropagation()}>
+            <button
+              className="list-reopen"
+              onClick={() => setListCollapsed(false)}
+              title="Show the destinations list"
+              aria-label="Show the destinations list"
+            >
+              <span className="chev">›</span>
+              <span>Destinations</span>
+            </button>
+          </div>
+
+          <MapView
+            priced={priced}
+            unreachable={topPick ? [] : unreachable}
             priceMode={priceMode}
-            onClose={() => setCompareOpen(false)}
-            onSelect={(id) => { setCompareOpen(false); openDetail(id); }}
-            onToggleFav={toggleFav}
+            groupSize={choices.group_size}
+            selectedId={selectedId}
+            onSelect={openDetail}
+            dealThreshold={dealThreshold}
           />
-        </div>
+
+          {data.meta?.is_mock && (
+            <div style={{
+              position: 'absolute', top: 'calc(var(--filter-h) + 12px)',
+              left: 'calc(var(--panel-w) + 16px)',
+              fontFamily: 'var(--mono)', fontSize: 10,
+              background: 'var(--accent-bg)', color: 'var(--accent)',
+              padding: '4px 10px', borderRadius: 999,
+              textTransform: 'uppercase', letterSpacing: '0.12em',
+              zIndex: 5, pointerEvents: 'none',
+            }}>
+              Mock data
+            </div>
+          )}
+
+          {lifestyleOpen && (
+            <div onClick={(e) => e.stopPropagation()}>
+              <LifestylePanel
+                data={data}
+                choices={choices}
+                setChoices={setChoices}
+                previewDest={previewDest}
+                departDate={departDate}
+                returnDate={returnDate}
+                onClose={() => setLifestyleOpen(false)}
+              />
+            </div>
+          )}
+
+          <div onClick={(e) => e.stopPropagation()}>
+            <DetailPanel
+              destination={selectedDest}
+              departDate={departDate}
+              returnDate={returnDate}
+              choices={choices}
+              setChoices={setChoices}
+              priceMode={priceMode}
+              onClose={() => setSelectedId(null)}
+              onOpenLifestyle={() => setLifestyleOpen(true)}
+              onSelect={openDetail}
+              data={data}
+              isFavorite={selectedId ? favorites.has(selectedId) : false}
+              onToggleFavorite={selectedId ? () => toggleFav(selectedId) : undefined}
+              onSaveTrip={authConfigured ? handleSaveTrip : undefined}
+              onShiftDates={(depart, ret) => { setDepartDate(depart); setReturnDate(ret); }}
+            />
+          </div>
+
+          {compareOpen && favorites.size >= 2 && (
+            <div onClick={(e) => e.stopPropagation()}>
+              <ComparePanel
+                data={data}
+                favorites={favorites}
+                departDate={departDate}
+                returnDate={returnDate}
+                choices={choices}
+                priceMode={priceMode}
+                onClose={() => setCompareOpen(false)}
+                onSelect={(id) => { setCompareOpen(false); openDetail(id); }}
+                onToggleFav={toggleFav}
+              />
+            </div>
+          )}
+        </>
       )}
+
+      {activeTab === 'trip' && (
+        <TripPlannerTab
+          data={data}
+          user={user}
+          authConfigured={authConfigured}
+          onRequestAuth={() => setAuthModalOpen(true)}
+        />
+      )}
+      {activeTab === 'day' && <DayPlannerTab />}
 
       {authConfigured && authModalOpen && (
         <AuthModal initialMode={authModalMode} onClose={() => setAuthModalOpen(false)} />

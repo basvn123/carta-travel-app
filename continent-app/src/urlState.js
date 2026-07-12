@@ -37,9 +37,10 @@ function unpackLifestyle(s) {
 export function encodeState({
   departDate, returnDate, choices, priceMode, countryFilter,
   tripKinds, priceRange, priceBounds, selectedId, favorites, sortKey, showFavOnly,
-  minBeauty, unescoOnly, topBeachOnly, topPick,
+  minBeauty, unescoOnly, topBeachOnly, topPick, activeTab,
 }) {
   const q = new URLSearchParams();
+  if (activeTab && activeTab !== 'map') q.set('tab', activeTab);
   if (departDate) q.set('d', departDate);
   if (returnDate) q.set('r', returnDate);
   if (choices?.group_size) q.set('g', String(choices.group_size));
@@ -72,6 +73,7 @@ export function decodeState(search) {
   const q = new URLSearchParams(search || '');
   const has = (k) => q.has(k);
   const out = {};
+  if (has('tab')) out.activeTab = q.get('tab');
   if (has('d')) out.departDate = q.get('d');
   if (has('r')) out.returnDate = q.get('r');
   if (has('g')) out.group_size = Math.max(1, parseInt(q.get('g'), 10) || 1);

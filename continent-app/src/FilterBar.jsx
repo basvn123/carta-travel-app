@@ -4,29 +4,10 @@ import { Dropdown } from './Dropdown.jsx';
 import { DateField } from './DateField.jsx';
 import { GemIcon } from './GemRating.jsx';
 import { PlaneIcon, CarIcon } from './TransportIcons.jsx';
-import { CalendarIcon, FilterIcon, PersonIcon } from './Icons.jsx';
-import Logo from './Logo.jsx';
+import { CalendarIcon, FilterIcon } from './Icons.jsx';
 import { eur } from './format.js';
 
-function AccountButton({ user, onOpenAccount, className = '' }) {
-  const fullName = user?.user_metadata?.full_name?.trim();
-  const initial = (fullName || user?.email || '?')[0].toUpperCase();
-  return (
-    <button
-      className={`account-avatar-btn ${className}`}
-      onClick={onOpenAccount}
-      title={user ? (fullName || user.email) : 'Account & preferences'}
-    >
-      <span className="account-avatar">
-        {user ? initial : <PersonIcon size={14} />}
-      </span>
-      <span className="account-avatar-label">Account</span>
-    </button>
-  );
-}
-
 export function FilterBar({
-  barRef,
   data, choices, setChoices,
   departDate, setDepartDate,
   returnDate, setReturnDate,
@@ -42,7 +23,6 @@ export function FilterBar({
   unescoOnly, setUnescoOnly,
   topBeachOnly, setTopBeachOnly,
   topPick, setTopPick,
-  user, onOpenAccount,
 }) {
   const baggageOpts = data?.meta?.baggage_options || {};
 
@@ -128,20 +108,12 @@ export function FilterBar({
   ];
 
   return (
-    <div className={`filter-bar ${mobileFiltersOpen ? 'mobile-open' : 'mobile-collapsed'}`} ref={barRef}>
-      {/* Header wrapper is `display: contents` on desktop (so brand stays a direct
-          flex child) and a real flex row on mobile (account + brand + icon
-          triggers - brand is hidden on mobile via CSS to save space). */}
+    <div className={`filter-bar ${mobileFiltersOpen ? 'mobile-open' : 'mobile-collapsed'}`}>
+      {/* Header wrapper is `display: contents` on desktop (so its content stays a
+          direct flex child) and a real flex row on mobile (the calendar/filter
+          icon triggers - brand and account now live in the always-mounted
+          AppHeader above this bar). */}
       <div className="filter-mobile-header">
-        <AccountButton user={user} onOpenAccount={onOpenAccount} className="mobile-account-btn" />
-
-        <div className="brand">
-          <Logo size={30} className="brand-mark" />
-          <div className="brand-text">
-            <span className="name">Carta</span>
-          </div>
-        </div>
-
         <div className="mobile-header-actions">
           <div className="mobile-dates-anchor" ref={datesAnchorRef}>
             <button
@@ -194,7 +166,6 @@ export function FilterBar({
           </button>
         </div>
       </div>
-      <div className="brand-divider" />
 
       <div className="filter-rows">
         {/* Row 1: Trip parameters */}
@@ -446,10 +417,6 @@ export function FilterBar({
           Reset
         </button>
       )}
-
-      <div className="account-slot">
-        <AccountButton user={user} onOpenAccount={onOpenAccount} />
-      </div>
     </div>
   );
 }

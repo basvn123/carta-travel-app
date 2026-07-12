@@ -67,24 +67,251 @@ input, select {
   overflow: hidden;
 }
 
-/* ───────── Filter bar (top) ───────── */
+/* ───────── Top bar: app header (logo, tabs, account) + Map's filter bar ─────────
+   A single positioned wrapper (.top-bar) holds both rows stacked, and a
+   ResizeObserver in App keeps --filter-h synced to its *combined* height so
+   the map/panels/results-list below always sit flush beneath whichever rows
+   are actually showing (FilterBar only renders on the Map tab). */
 
-.filter-bar {
+.top-bar {
   position: absolute;
   top: 0; left: 0; right: 0;
   z-index: 25;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-header {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 9px 18px;
+  background: rgba(245, 241, 232, 0.92);
+  backdrop-filter: blur(12px) saturate(140%);
+  -webkit-backdrop-filter: blur(12px) saturate(140%);
+  border-bottom: 1px solid var(--rule);
+}
+
+.app-header-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+.app-header-name {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: 18px;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+
+.app-tabs {
+  flex: 1;
+  margin-bottom: 0;
+  border-bottom: none;
+}
+.app-tabs .tab {
+  font-size: 11px;
+  padding: 8px 16px 9px;
+}
+
+.app-header-account {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+@media (max-width: 768px) {
+  .app-header { padding: 9px 14px; gap: 10px; }
+  .app-header-name { display: none; }
+  .app-tabs { gap: 0; }
+  .app-tabs .tab { padding: 6px 10px 8px; font-size: 9px; letter-spacing: 0.1em; }
+  .app-header-account .account-avatar-label { display: none; }
+  .app-header-account .account-avatar-btn { padding: 4px; }
+}
+
+/* ───────── Filter bar (Map tab only, sits below the app header) ───────── */
+
+.filter-bar {
   /* min-height, not a fixed height: the bar grows when its controls wrap, and a
-     ResizeObserver in App keeps --filter-h synced so the map/panels below
-     follow it instead of being overlapped or clipped. */
+     ResizeObserver in App (watching .top-bar as a whole) keeps --filter-h
+     synced so the map/panels below follow it instead of being overlapped or
+     clipped. */
   min-height: 0;
   display: flex;
-  align-items: flex-start;
-  gap: 14px;
-  padding: 9px 20px;
+  align-items: center;
+  gap: 12px;
+  padding: 7px 18px;
   background: rgba(245, 241, 232, 0.85);
   backdrop-filter: blur(12px) saturate(140%);
   -webkit-backdrop-filter: blur(12px) saturate(140%);
   border-bottom: 1px solid var(--rule);
+}
+
+/* ───────── Tab panels (Trip planner / Day planner placeholders) ───────── */
+
+.tab-panel {
+  position: absolute;
+  top: var(--filter-h);
+  left: 0; right: 0; bottom: 0;
+  overflow-y: auto;
+}
+.tab-panel-placeholder-inner {
+  max-width: 560px;
+  margin: 64px auto;
+  padding: 0 24px;
+  text-align: center;
+  color: var(--ink-soft);
+}
+.tab-panel-placeholder-inner .section-title {
+  font-family: var(--display);
+  font-size: 22px;
+  color: var(--ink);
+  margin-bottom: 10px;
+}
+
+/* ───────── Trip planner ───────── */
+
+.trip-planner-inner {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 32px 24px 80px;
+}
+.trip-planner-inner .section-title {
+  font-family: var(--display);
+  font-size: 20px;
+  color: var(--ink);
+  margin-bottom: 6px;
+}
+.trip-planner-intro {
+  color: var(--ink-soft);
+  font-size: 13.5px;
+  line-height: 1.6;
+  margin-bottom: 20px;
+  max-width: 560px;
+}
+
+.trip-planner-groupsize {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 90px;
+  margin-bottom: 20px;
+}
+.trip-planner-groupsize input {
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  padding: 6px 8px;
+  font-size: 14px;
+  background: var(--paper);
+}
+
+.trip-stop-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin-bottom: 4px;
+}
+
+.trip-stop-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  background: var(--paper);
+}
+.trip-stop-index {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px; height: 26px;
+  border-radius: 50%;
+  background: var(--accent-bg);
+  color: var(--accent);
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+.trip-stop-main { flex: 1; min-width: 0; }
+.trip-stop-city {
+  font-family: var(--display);
+  font-size: 16px;
+  color: var(--ink);
+}
+.trip-stop-dates {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink-mute);
+  margin-top: 2px;
+}
+.trip-stop-remove {
+  width: 26px; height: 26px;
+  border-radius: 50%;
+  border: 1px solid var(--rule);
+  color: var(--ink-mute);
+  flex-shrink: 0;
+  font-size: 15px;
+  line-height: 1;
+  transition: border-color .15s, color .15s;
+}
+.trip-stop-remove:hover { border-color: var(--accent); color: var(--accent); }
+
+.trip-leg {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink-mute);
+  padding: 8px 14px 8px 42px;
+}
+
+.trip-add-stop {
+  display: flex;
+  align-items: flex-end;
+  gap: 14px;
+  flex-wrap: wrap;
+  padding: 16px;
+  border: 1px dashed var(--rule);
+  border-radius: 8px;
+  margin-top: 6px;
+}
+.trip-add-stop .filter { min-width: 160px; }
+.trip-add-stop-btn {
+  padding: 9px 18px;
+  border-radius: 999px;
+  border: 1px solid var(--ink);
+  background: var(--ink);
+  color: var(--paper);
+  font-size: 12.5px;
+  font-weight: 500;
+  transition: background .15s, opacity .15s;
+}
+.trip-add-stop-btn:hover:not(:disabled) { background: var(--accent); border-color: var(--accent); }
+.trip-add-stop-btn:disabled { opacity: 0.4; cursor: default; }
+
+.trip-save-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+.trip-plan-label-input {
+  flex: 1;
+  min-width: 200px;
+  border: none;
+  border-bottom: 1px solid var(--rule);
+  padding: 6px 2px;
+  font-size: 14px;
+  background: transparent;
+}
+
+@media (max-width: 768px) {
+  .trip-planner-inner { padding: 20px 16px 64px; }
+  .trip-add-stop { flex-direction: column; align-items: stretch; }
+  .trip-add-stop .filter { min-width: 0; }
 }
 
 .brand {
@@ -123,7 +350,7 @@ input, select {
 
 .brand-divider {
   width: 1px;
-  height: 36px;
+  height: 30px;
   background: var(--rule);
 }
 
@@ -139,7 +366,7 @@ input, select {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 9px;
+  gap: 6px;
   flex: 1;
   min-width: 0;
   align-self: stretch;
@@ -148,7 +375,7 @@ input, select {
 .filter-row {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   flex-wrap: wrap;
   min-width: 0;
 }
@@ -156,13 +383,13 @@ input, select {
 .filter {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 3px;
   min-width: 0;
 }
 
 .filter-divider {
   width: 1px;
-  height: 32px;
+  height: 26px;
   background: var(--rule);
   align-self: center;
   flex-shrink: 0;
@@ -170,9 +397,9 @@ input, select {
 
 .filter-label {
   font-family: var(--mono);
-  font-size: 9.5px;
+  font-size: 9px;
   text-transform: uppercase;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.13em;
   color: var(--ink-mute);
 }
 
@@ -708,7 +935,7 @@ input, select {
 .segmented button {
   background: transparent;
   border: none;
-  padding: 6px 14px;
+  padding: 5px 13px;
   font-family: inherit;
   font-size: 12px;
   color: var(--ink-soft);
@@ -722,7 +949,7 @@ input, select {
   color: var(--paper);
 }
 .segmented.compact button {
-  padding: 6px 12px;
+  padding: 5px 11px;
   font-size: 12px;
   letter-spacing: 0.04em;
 }
@@ -732,12 +959,12 @@ input, select {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 6px 12px;
+  padding: 5px 11px;
 }
 .segmented.seg-icons svg {
   display: block;
-  width: 18px;
-  height: 18px;
+  width: 16px;
+  height: 16px;
 }
 
 /* ─── Pill toggles (UNESCO / Top beaches highlights) ─── */
@@ -751,7 +978,7 @@ input, select {
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  padding: 6px 12px;
+  padding: 5px 11px;
   border: 1px solid var(--rule);
   border-radius: 999px;
   background: var(--paper-dim);
@@ -792,7 +1019,7 @@ input, select {
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  padding: 6px 14px;
+  padding: 5px 13px;
   border: 1px solid var(--accent);
   border-radius: 999px;
   background: var(--paper-dim);
@@ -804,7 +1031,7 @@ input, select {
   white-space: nowrap;
   cursor: pointer;
   margin-left: auto;
-  align-self: flex-start;
+  align-self: center;
   flex-shrink: 0;
   transition: color .15s, background .15s, border-color .15s;
 }
@@ -1564,15 +1791,15 @@ input, select {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 10px;
-  min-width: 116px;
-  max-width: 280px;
-  padding: 8px 12px;
+  gap: 8px;
+  min-width: 104px;
+  max-width: 240px;
+  padding: 6px 10px;
   border: 1px solid var(--rule);
   background: var(--paper);
   border-radius: 4px;
   font-family: inherit;
-  font-size: 13px;
+  font-size: 12.5px;
   color: var(--ink);
   cursor: pointer;
   text-align: left;
@@ -2836,22 +3063,16 @@ input, select {
   .filter-mobile-header {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-end;
     gap: 12px;
     padding: 10px 16px;
-    min-height: 58px;
+    min-height: 48px;
     position: relative;
   }
-  /* The desktop brand + far-right account slot are replaced on mobile by the
-     account button (left) and the calendar/filter icons (right), both inside
-     .filter-mobile-header. */
-  .brand { display: none; }
-  .filter-bar .mobile-account-btn,
+  /* Brand and account access now live in the always-visible AppHeader above
+     this bar; only the calendar/filter icon triggers remain here. */
   .filter-bar .mobile-header-actions { display: inline-flex; }
   .mobile-header-actions { align-items: center; gap: 8px; }
-  .mobile-account-btn .account-avatar-label { display: none; }
-  .mobile-account-btn { padding: 5px; }
-  .brand-divider { display: none; }
 
   /* Depart/Return live behind the calendar icon's popover instead. */
   .row-date-fields { display: none; }
@@ -3124,11 +3345,11 @@ input, select {
   align-items: center;
   align-self: center;
   flex-shrink: 0;
-  margin-left: 14px;
+  margin-left: 12px;
 }
 
 .account-signin-btn {
-  padding: 8px 18px;
+  padding: 7px 16px;
   border-radius: 999px;
   border: 1px solid var(--ink);
   background: var(--ink);
@@ -3144,8 +3365,8 @@ input, select {
 .account-avatar-btn {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 5px 14px 5px 5px;
+  gap: 7px;
+  padding: 4px 12px 4px 4px;
   border-radius: 999px;
   border: 1px solid var(--rule);
   background: var(--paper);
@@ -3157,12 +3378,12 @@ input, select {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 26px; height: 26px;
+  width: 24px; height: 24px;
   border-radius: 50%;
   background: var(--accent);
   color: var(--paper);
   font-family: var(--display);
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
   flex-shrink: 0;
 }
