@@ -87,7 +87,7 @@ CAR_MODEL = {
     "toll_eur_per_100km": 2.2,          # motorway toll / vignette allowance
     "avg_speed_kmh": 90,                # for the drive-time estimate
     "car_capacity": 4,                  # seats used per car (fuel & rental split)
-    "max_drive_km": 700,                # only offer the car option within this road distance
+    "max_drive_km": 3500,               # offer the car option to any road-connected European destination
     "rental_eur_per_day_by_iso2": RENTAL_EUR_PER_DAY,
     "rental_eur_per_day_default": RENTAL_EUR_PER_DAY_DEFAULT,
     "rental_weekly_discount_pct": 15.0, # rentals of 7+ days

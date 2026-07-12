@@ -48,7 +48,7 @@ export const DEFAULT_CAR_MODEL = {
   toll_eur_per_100km: 2.2,
   avg_speed_kmh: 90,
   car_capacity: 4,
-  max_drive_km: 700,
+  max_drive_km: 3500,   // reach any road-connected European destination (islands gated by road_connected)
   rental_eur_per_day_by_iso2: {},
   rental_eur_per_day_default: 42,
   rental_weekly_discount_pct: 15.0,

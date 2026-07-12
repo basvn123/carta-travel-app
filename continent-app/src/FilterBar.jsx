@@ -3,6 +3,7 @@ import { TRIP_KINDS } from './trip_kinds.js';
 import { Dropdown } from './Dropdown.jsx';
 import { DateField } from './DateField.jsx';
 import { GemIcon } from './GemRating.jsx';
+import { PlaneIcon, CarIcon } from './TransportIcons.jsx';
 import Logo from './Logo.jsx';
 
 export function FilterBar({
@@ -89,7 +90,6 @@ export function FilterBar({
           <Logo size={30} className="brand-mark" />
           <div className="brand-text">
             <span className="name">Carta</span>
-            <span className="sub">Europe · From Brussels</span>
           </div>
         </div>
 
@@ -238,20 +238,24 @@ export function FilterBar({
           <div className="filter">
             <label className="filter-label">Travel by</label>
             <div className="filter-control">
-              <div className="segmented compact">
+              <div className="segmented compact seg-icons">
                 <button
                   className={(choices.transport_mode || 'plane') === 'plane' ? 'seg-on' : ''}
                   onClick={() => setChoices({ ...choices, transport_mode: 'plane' })}
                   title="Price every trip by Ryanair flight"
+                  aria-label="Travel by plane"
                 >
-                  Plane
+                  <PlaneIcon />
+                  <span>Plane</span>
                 </button>
                 <button
                   className={choices.transport_mode === 'car' ? 'seg-on' : ''}
                   onClick={() => setChoices({ ...choices, transport_mode: 'car' })}
-                  title="Drive for trips within range; the rest stay priced by flight"
+                  title="Drive to any road-connected destination in Europe; islands stay priced by flight"
+                  aria-label="Travel by car"
                 >
-                  Car
+                  <CarIcon />
+                  <span>Car</span>
                 </button>
               </div>
             </div>

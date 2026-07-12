@@ -30,6 +30,7 @@ const SORT_DEFAULT_DIR = Object.fromEntries(SORTS.map((s) => [s.key, s.dir]));
 
 export function ResultsList({
   priced, unreachable = [], priceMode = 'total', dealThreshold,
+  locationQuery = '', setLocationQuery,
   selectedId, onSelect,
   favorites, onToggleFav,
   sortKey, setSortKey,
@@ -88,6 +89,34 @@ export function ResultsList({
             </button>
           )}
         </div>
+        {setLocationQuery && (
+          <div className="results-search">
+            <svg className="results-search-icon" width="15" height="15" viewBox="0 0 24 24"
+              fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
+              <circle cx="11" cy="11" r="7" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg>
+            <input
+              type="text"
+              className="results-search-input"
+              placeholder="Search a city or country…"
+              value={locationQuery}
+              onChange={(e) => setLocationQuery(e.target.value)}
+              aria-label="Search destinations by city or country"
+            />
+            {locationQuery && (
+              <button
+                className="results-search-clear"
+                onClick={() => setLocationQuery('')}
+                aria-label="Clear search"
+                title="Clear search"
+              >
+                ×
+              </button>
+            )}
+          </div>
+        )}
+
         <div className="results-controls">
           <div className="results-sort">
             {SORTS.map((s) => {

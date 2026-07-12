@@ -10,6 +10,10 @@ import { cheapestTotal, tripDaysBetween, DEFAULT_LIFESTYLE } from './runtime_pri
 import { matchesAnyKind } from './trip_kinds.js';
 import { loadInitialState, persistState } from './urlState.js';
 
+// Accent- and case-insensitive text key, so "malaga" matches "Málaga".
+const normalize = (s) =>
+  (s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim();
+
 export default function App() {
   // State carried in the URL / localStorage (shareable + survives reload).
   const [init] = useState(() => loadInitialState());
@@ -51,6 +55,10 @@ export default function App() {
       setChoices((prev) => ({ ...prev, trip_days: days }));
     }
   }, [departDate, returnDate]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Free-text location search (city / country). Ephemeral — not persisted in the
+  // URL — and applied to the filtered set so the list AND map narrow together.
+  const [locationQuery, setLocationQuery] = useState('');
 
   // View toggles
   const [priceMode, setPriceMode] = useState(init.priceMode ?? 'pp');
@@ -222,8 +230,11 @@ export default function App() {
     }
   }, [priceBounds]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  const q = useMemo(() => normalize(locationQuery), [locationQuery]);
+
   const filtered = useMemo(() => {
     return pricedAll.filter((p) => {
+      if (q && !(normalize(p.city).includes(q) || normalize(p.country).includes(q))) return false;
       if (countryFilter !== 'all' && p.iso2 !== countryFilter) return false;
       if (priceRange) {
         const v = priceMode === 'pp' ? p.pp : p.total;
@@ -237,7 +248,7 @@ export default function App() {
       if (topBeachOnly && !p.beauty?.top_beach) return false;
       return true;
     });
-  }, [pricedAll, countryFilter, priceRange, priceMode, tripKinds, minBeauty, unescoOnly, topBeachOnly]);
+  }, [pricedAll, q, countryFilter, priceRange, priceMode, tripKinds, minBeauty, unescoOnly, topBeachOnly]);
 
   // "Top picks" trims the filtered set to the N best by price or beauty. Applied
   // here (not just in the list) so the map and stats reflect the shortlist too.
@@ -253,6 +264,7 @@ export default function App() {
   // but no price filter - they have no price).
   const unreachable = useMemo(() => {
     return unreachableAll.filter((p) => {
+      if (q && !(normalize(p.city).includes(q) || normalize(p.country).includes(q))) return false;
       if (countryFilter !== 'all' && p.iso2 !== countryFilter) return false;
       if (tripKinds.length > 0 && !matchesAnyKind(p.categories, tripKinds)) return false;
       if (minBeauty > 1 && (p.beauty?.gems ?? 0) < minBeauty) return false;
@@ -260,7 +272,7 @@ export default function App() {
       if (topBeachOnly && !p.beauty?.top_beach) return false;
       return true;
     });
-  }, [unreachableAll, countryFilter, tripKinds, minBeauty, unescoOnly, topBeachOnly]);
+  }, [unreachableAll, q, countryFilter, tripKinds, minBeauty, unescoOnly, topBeachOnly]);
 
   const dealThreshold = useMemo(() => {
     if (priced.length === 0) return null;
@@ -361,6 +373,8 @@ export default function App() {
         <ResultsList
           priced={priced}
           unreachable={topPick ? [] : unreachable}
+          locationQuery={locationQuery}
+          setLocationQuery={setLocationQuery}
           priceMode={priceMode}
           dealThreshold={dealThreshold}
           selectedId={selectedId}

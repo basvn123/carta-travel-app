@@ -73,7 +73,7 @@ def patch(path: Path) -> None:
     meta = data.get("meta", {})
     home = meta.get("home") or {"lat": 50.8466, "lon": 4.3528}
     cm = meta.get("car_model", {})
-    max_drive = cm.get("max_drive_km", 700)
+    max_drive = cm.get("max_drive_km", 3500)
     drive_detour = cm.get("road_detour_factor", 1.3)
 
     def drivable(v):

@@ -1,0 +1,27 @@
+{
+  "name": "Carta — Europe Travel",
+  "short_name": "Carta",
+  "description": "Find affordable European getaways ranked by real total trip cost — flights, driving, stay and lifestyle.",
+  "id": "/",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#f5f1e8",
+  "theme_color": "#f5f1e8",
+  "categories": ["travel", "lifestyle", "utilities"],
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "type": "image/svg+xml",
+      "sizes": "any",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-maskable.svg",
+      "type": "image/svg+xml",
+      "sizes": "any",
+      "purpose": "maskable"
+    }
+  ]
+}

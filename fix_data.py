@@ -90,7 +90,7 @@ def main():
     end = date.fromisoformat(meta["end_date"])
     home = meta["home"]
     cm = meta.get("car_model", {})
-    max_km = cm.get("max_drive_km", 700)
+    max_km = cm.get("max_drive_km", 3500)
     detour = cm.get("road_detour_factor", 1.3)
 
     # ---- A. Densify flight calendars + drop past dates ----

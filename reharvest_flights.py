@@ -40,7 +40,7 @@ ENDPOINT = ("https://www.ryanair.com/api/farfnd/v4/oneWayFares/"
 DELAY_S = 1.2          # polite base delay between calls
 BACKOFFS = [30, 60, 120]
 FARE_MODEL = "ryanair_cheapestPerDay_live"
-HORIZON_DAYS = 120     # refresh keeps a rolling [today .. today+HORIZON_DAYS] window
+HORIZON_DAYS = 150     # refresh keeps a rolling [today .. today+HORIZON_DAYS] window (~5 months ahead)
 
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",

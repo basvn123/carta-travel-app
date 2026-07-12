@@ -1,6 +1,6 @@
 @echo off
 REM Double-click to refresh all Ryanair fares with live prices and rebuild the app.
-REM Re-fetches ~1000 fares for a rolling [today .. today+120 days] window (~20 min).
+REM Re-fetches ~1000 fares for a rolling [today .. today+150 days / ~5 months] window (~20 min).
 cd /d "%~dp0"
 
 echo ============================================================
