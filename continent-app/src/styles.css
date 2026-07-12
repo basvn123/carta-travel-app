@@ -26,7 +26,7 @@
   /* Layout */
   --filter-h:     132px;
   --panel-w:      440px;
-  --bottom-nav-h: 72px;
+  --bottom-nav-h: 86px;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -85,8 +85,8 @@ input, select {
 .app-header {
   display: flex;
   align-items: center;
-  gap: 18px;
-  padding: 7px 18px;
+  gap: 16px;
+  padding: 9px 20px;
   background: rgba(245, 241, 232, 0.92);
   backdrop-filter: blur(12px) saturate(140%);
   -webkit-backdrop-filter: blur(12px) saturate(140%);
@@ -96,18 +96,101 @@ input, select {
 .app-header-brand {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   flex-shrink: 0;
 }
+.app-header-brand .brand-name {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: 26px;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  color: var(--ink);
+}
+.app-header-brand .brand-sub {
+  font-family: var(--mono);
+  font-size: 8.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.24em;
+  color: var(--ink-mute);
+  margin-top: 5px;
+}
+.app-header-brand .brand-divider {
+  height: 44px;
+  margin-left: 8px;
+}
 
-/* Middle slot: the Map tab's FilterBar sits inline between brand and account.
-   It fills the space and its own bar chrome (background/border/padding) is
-   stripped since the surrounding .app-header already provides the panel. */
+/* Section tabs next to the brand (Map / Trip planner / Day planner / Saved
+   trips). Desktop-only: below 768px they collapse and BottomNav takes over. */
+.header-nav {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+.header-nav-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+  color: var(--ink-mute);
+  transition: color .15s, background .15s;
+}
+.header-nav-item:hover { color: var(--ink); background: var(--paper-dim); }
+.header-nav-item.active { color: var(--paper); background: var(--ink); }
+.header-nav-icon { flex-shrink: 0; }
+
+/* On a narrow desktop window the labelled tabs would crowd the brand and
+   account button; keep icon-only pills (titles still tooltip). */
+@media (min-width: 769px) and (max-width: 1000px) {
+  .header-nav-label { display: none; }
+  .header-nav-item { padding: 9px; }
+}
+
+/* Home shortcut: mobile-only (the desktop section tabs above replace it).
+   Jumps back to the first page (the map). */
+.header-home-btn {
+  display: none;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-mute);
+  transition: color .15s, background .15s;
+}
+.header-home-btn:hover { color: var(--ink); background: var(--paper-dim); }
+.header-home-btn.active { color: var(--accent); background: var(--accent-bg); }
+
+/* Slot for the Map tab's FilterBar. Its own bar chrome (background/border/
+   padding) is stripped since the surrounding .app-header already provides the
+   panel. On desktop the header wraps into two bands - a slim nav line (brand,
+   tabs, account) with the filter cards on a full-width line beneath a
+   hairline rule; on mobile everything stays a single 56px trigger row. */
 .app-header-filters {
   flex: 1 1 auto;
   min-width: 0;
   display: flex;
   align-items: center;
+}
+@media (min-width: 769px) {
+  .app-header { flex-wrap: wrap; row-gap: 9px; }
+  .app-header-filters {
+    flex: 1 1 100%;
+    order: 10;
+    border-top: 1px solid rgba(196, 190, 169, 0.4);
+    padding-top: 9px;
+  }
 }
 .app-header-filters .filter-bar {
   flex: 1;
@@ -155,10 +238,74 @@ input, select {
     background: none;
   }
   .app-header-account .account-avatar { width: 40px; height: 40px; font-size: 15px; }
+
+  /* The desktop section tabs collapse; BottomNav is the switch on mobile. */
+  .header-nav { display: none; }
+
+  /* Home collapses to an icon-only button, aligned with the 56px trigger row. */
+  .header-home-btn {
+    display: inline-flex;
+    align-self: flex-start;
+    height: 56px;
+    padding: 0 4px 0 14px;
+    border-radius: 0;
+  }
+  .header-home-btn:hover,
+  .header-home-btn.active { background: none; }
+  .header-home-label { display: none; }
+  .header-home-icon { width: 19px; height: 19px; }
 }
 
-/* ───────── Bottom nav: the app's one Map / Trip planner / Day planner switch,
-   persistent on every screen size (Strava-style icon + label tabs) ───────── */
+/* ───────── Guidance strip: sits inside .top-bar, below the header row and
+   above the map, telling first-time visitors what to do on this page. Its
+   height folds into --filter-h automatically (the ResizeObserver measures the
+   whole .top-bar), so the map and panels stay flush beneath it. ───────── */
+
+.map-guide {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 18px;
+  background: var(--accent-bg);
+  border-bottom: 1px solid var(--rule);
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: var(--ink-soft);
+}
+.map-guide-text strong {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--accent);
+  margin-right: 4px;
+}
+.map-guide-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-left: auto;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  font-size: 17px;
+  line-height: 1;
+  color: var(--ink-mute);
+  transition: color .15s, background .15s;
+}
+.map-guide-close:hover { color: var(--ink); background: rgba(26, 26, 26, 0.08); }
+
+@media (max-width: 768px) {
+  .map-guide { padding: 7px 12px; font-size: 12px; gap: 8px; }
+}
+
+/* ───────── Bottom nav: the Map / Trip planner / Day planner switch on MOBILE
+   only (Strava-style icon + label tabs). On desktop the same tabs live in the
+   app header (.header-nav), so the bar hides and its height variable zeroes
+   out - every panel/map offset uses var(--bottom-nav-h), so the layout
+   reclaims the strip automatically. ───────── */
 
 .bottom-nav {
   position: fixed;
@@ -168,9 +315,9 @@ input, select {
   justify-content: center;
   gap: 4px;
   height: var(--bottom-nav-h);
-  /* Roomier vertical padding so the icon + label sit clear of the map above,
-     and a near-opaque panel so map markers don't bleed through the bar. */
-  padding: 9px 8px calc(9px + env(safe-area-inset-bottom, 0px));
+  /* Extra top padding so the icon + label sit well clear of the top border and
+     the map above, and a near-opaque panel so map markers don't bleed through. */
+  padding: 18px 8px calc(10px + env(safe-area-inset-bottom, 0px));
   background: rgba(245, 241, 232, 0.985);
   backdrop-filter: blur(14px) saturate(140%);
   -webkit-backdrop-filter: blur(14px) saturate(140%);
@@ -198,6 +345,13 @@ input, select {
   font-size: 9.5px;
   text-transform: uppercase;
   letter-spacing: 0.08em;
+}
+
+/* Desktop: the header tabs replace the bar entirely. Must come after the base
+   .bottom-nav rule (same specificity) so display:none wins the cascade. */
+@media (min-width: 769px) {
+  :root { --bottom-nav-h: 0px; }
+  .bottom-nav { display: none; }
 }
 
 /* ───────── Filter bar (Map tab only, sits below the app header) ───────── */
@@ -1523,6 +1677,178 @@ input, select {
   padding: 6px 0 6px 68px;
 }
 
+/* --- Gradated "Things to do" tiers (schema v12: rate/heritage/img/desc) --- */
+.day-tier { margin-bottom: 14px; }
+.day-tier-head {
+  display: flex; align-items: center; gap: 6px;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-soft);
+  margin-bottom: 6px;
+}
+.day-tier-badge { color: var(--accent); }
+.day-tier-count {
+  font-weight: 400;
+  color: var(--ink-mute);
+}
+/* Must-sees stand out: accent edge + slightly stronger name. */
+.day-tier-must .day-activity-row { border-left: 3px solid var(--accent); }
+.day-tier-must .day-assigned-name { font-weight: 600; }
+
+/* Rich rows: the outer keeps the card chrome, the inner button does the layout
+   so the wiki ⓘ can sit beside it without nesting buttons. */
+.day-activity-rich { padding: 0; }
+.day-activity-main {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  padding: 8px 4px 8px 8px;
+  background: none;
+  border: 0;
+  cursor: pointer;
+  text-align: left;
+  color: inherit;
+  font: inherit;
+}
+.day-activity-info {
+  flex-shrink: 0;
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+  padding: 0 10px 0 4px;
+  font-size: 13px;
+  color: var(--ink-mute);
+  text-decoration: none;
+}
+.day-activity-info:hover { color: var(--accent); }
+
+/* Thumbnails (activity rows + timeline). */
+.day-thumb {
+  width: 40px; height: 40px;
+  flex-shrink: 0;
+  border-radius: 8px;
+  background-size: cover;
+  background-position: center;
+  background-color: var(--accent-bg);
+}
+.day-thumb-empty {
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--accent);
+}
+.day-timeline-row .day-thumb { width: 34px; height: 34px; }
+
+.day-badge-heritage {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 1px 6px;
+  border-radius: 999px;
+  font-family: var(--mono);
+  font-size: 8.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--accent);
+  background: var(--accent-bg);
+  vertical-align: 2px;
+}
+
+.day-more-btn {
+  width: 100%;
+  padding: 9px;
+  border: 1px dashed var(--rule);
+  border-radius: 10px;
+  background: none;
+  color: var(--ink-soft);
+  font-size: 12.5px;
+  cursor: pointer;
+}
+.day-more-btn:hover { border-color: var(--ink-soft); }
+
+/* Lunch row in the timeline. */
+.day-timeline-lunch .day-assigned-row {
+  border-style: dashed;
+  background: var(--accent-bg);
+}
+
+/* "Shape & draft" chip. */
+.day-chip-shape { border-style: dashed; }
+
+/* --- Shape-your-day wizard (reuses the guided-wizard shell) --- */
+.shape-modal { max-width: 520px; }
+.shape-head-title {
+  flex: 1;
+  font-weight: 600;
+  font-size: 14.5px;
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+.shape-head-step {
+  font-family: var(--mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--ink-mute);
+}
+.shape-field-title {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-soft);
+  margin: 16px 0 8px;
+}
+.shape-pace-row { display: flex; gap: 8px; }
+.shape-pace {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px 8px;
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  background: var(--paper);
+  cursor: pointer;
+  transition: border-color .15s, background .15s;
+}
+.shape-pace:hover { border-color: var(--ink-soft); }
+.shape-pace.on { border-color: var(--accent); background: var(--accent-bg); }
+.shape-pace-label { font-size: 13px; font-weight: 600; color: var(--ink); }
+.shape-pace-hint {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--ink-mute);
+}
+.shape-lunch {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 18px;
+  font-size: 13.5px;
+  color: var(--ink);
+  cursor: pointer;
+}
+.shape-lunch input { accent-color: var(--accent); }
+.shape-skip {
+  background: none;
+  border: 0;
+  padding: 0;
+  font-size: 12.5px;
+  color: var(--ink-mute);
+  text-decoration: underline;
+  cursor: pointer;
+}
+.shape-skip:hover { color: var(--ink); }
+
 .brand {
   display: flex;
   align-items: center;
@@ -1581,34 +1907,40 @@ input, select {
   align-self: stretch;
   padding: 0;
 }
-/* Each row is a set of labelled category groups spread across the full panel
-   width; `space-between` pushes the groups apart and lets the dividers breathe. */
+/* Each row is a set of labelled category cards packed from the left with a
+   consistent gap; `stretch` keeps every card in a row the same height. */
 .filter-row {
   display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 6px 20px;
+  align-items: stretch;
+  justify-content: flex-start;
+  gap: 10px 12px;
   flex-wrap: wrap;
   min-width: 0;
 }
 
-/* A category: a small caption over a row of its member filters. On mobile this
-   collapses (`display: contents`, see the mobile block) so the fields drop
-   straight into the 2-column grid. */
+/* A category card: a small caption over a row of its member filters, wrapped
+   in a subtle panel so each cluster reads as one unit instead of loose
+   controls drifting in whitespace. On mobile this collapses (`display:
+   contents`, see the mobile block) so the fields drop straight into the
+   2-column grid and the card chrome disappears. */
 .filter-group {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  justify-content: space-between;
+  gap: 7px;
   min-width: 0;
+  padding: 8px 14px 10px;
+  background: rgba(255, 255, 255, 0.45);
+  border: 1px solid rgba(196, 190, 169, 0.55);
+  border-radius: 12px;
 }
 .group-label {
   font-family: var(--mono);
-  font-size: 8.5px;
+  font-size: 9px;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.18em;
+  letter-spacing: 0.16em;
   color: var(--ink-mute);
-  opacity: 0.7;
   padding-left: 1px;
 }
 .group-fields {
@@ -1625,14 +1957,10 @@ input, select {
   min-width: 0;
 }
 
-/* Full-height rule between categories (aligned to the fields, not the caption)
-   so the divide between groups reads clearly. */
+/* Rules between categories are obsolete now the group cards carry their own
+   borders; the elements stay in the markup for the mobile grid's sake. */
 .filter-divider {
-  width: 1px;
-  align-self: stretch;
-  margin: 14px 0 2px;
-  background: var(--rule);
-  flex-shrink: 0;
+  display: none;
 }
 
 .filter-label {
@@ -2149,10 +2477,10 @@ input, select {
    stay hidden on desktop. */
 .filter-bar .mobile-account-btn,
 .filter-bar .mobile-header-actions { display: none; }
-/* Depart/Return stay `display: contents` on desktop (flat children of
-   .filter-row, exactly as before); hidden on mobile because the calendar
-   icon's popover covers the same two fields instead. */
-.row-date-fields { display: contents; }
+/* Depart/Return are normal stacked label-over-value fields on desktop, same
+   as every other card field; hidden on mobile because the calendar icon's
+   popover covers the same two fields instead. */
+.row-date-fields { display: flex; }
 
 @media (max-width: 880px) {
   .filter-bar { flex-wrap: wrap; padding: 12px 16px; height: auto; gap: 12px; }
@@ -2278,8 +2606,7 @@ input, select {
   white-space: nowrap;
   cursor: pointer;
   flex-shrink: 0;
-  align-self: flex-end;   /* the row is align-items:stretch; keep the pill its own height */
-  margin-bottom: 2px;
+  align-self: center;   /* the row is align-items:stretch; keep the pill its own height */
   transition: color .15s, background .15s, border-color .15s;
 }
 .reset-filters-btn:hover {
@@ -3044,7 +3371,7 @@ input, select {
   padding: 6px 10px;
   border: 1px solid var(--rule);
   background: var(--paper);
-  border-radius: 4px;
+  border-radius: 8px;
   font-family: inherit;
   font-size: 12.5px;
   color: var(--ink);
@@ -3446,6 +3773,10 @@ input, select {
   transition: border-color .15s;
 }
 .date-field-trigger:hover { border-bottom-color: var(--ink); }
+/* Inside the desktop Dates card the value is 11 mono chars; trim the excess
+   width so the card hugs its fields. (The mobile calendar popover keeps the
+   roomier 130px base width above, since its font bumps to 16px.) */
+.group-dates .date-field-trigger { width: 104px; }
 .date-field-trigger:focus { outline: none; border-bottom-color: var(--accent); }
 .date-field-trigger.open { border-bottom-color: var(--accent); }
 .date-field-trigger.placeholder { color: var(--ink-mute); }
@@ -4621,12 +4952,13 @@ input, select {
 .account-avatar-btn {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
-  padding: 4px 12px 4px 4px;
+  gap: 8px;
+  padding: 5px 14px 5px 5px;
   border-radius: 999px;
   border: 1px solid var(--rule);
   background: var(--paper);
   font-family: inherit;
+  box-shadow: var(--shadow-1);
   transition: border-color .15s, background .15s;
 }
 .account-avatar-btn:hover { border-color: var(--ink); background: var(--paper-dim); }
@@ -4634,12 +4966,12 @@ input, select {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 24px; height: 24px;
+  width: 28px; height: 28px;
   border-radius: 50%;
   background: var(--accent);
   color: var(--paper);
   font-family: var(--display);
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
   flex-shrink: 0;
 }
@@ -5196,22 +5528,44 @@ input, select {
 .cintel-chip.budget-low { background: #e4edda; color: var(--green); }
 .cintel-chip.budget-high, .cintel-chip.budget-very_high { background: var(--accent-bg); color: var(--accent); }
 .cintel-caret { font-family: var(--mono); color: var(--ink-mute); font-size: 14px; margin-left: 4px; }
-.cintel-body { padding: 4px 12px 12px; border-top: 1px solid var(--paper-dim); }
-.cintel-row { display: flex; gap: 10px; padding: 8px 0; border-bottom: 1px dashed var(--paper-dim); }
+.cintel-body { padding: 2px 14px 6px; border-top: 1px solid var(--rule); }
+.cintel-row { display: flex; gap: 14px; padding: 12px 0; border-bottom: 1px solid var(--paper-dim); }
 .cintel-row:last-child { border-bottom: 0; }
 .cintel-label {
   flex: none;
-  width: 86px;
+  width: 82px;
   font-family: var(--mono);
-  font-size: 10px;
+  font-size: 9.5px;
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.09em;
   color: var(--ink-mute);
-  padding-top: 2px;
+  padding-top: 3px;
 }
-.cintel-row p { font-size: 12.5px; line-height: 1.5; color: var(--ink-soft); margin: 0 0 4px; }
+.cintel-row > div { min-width: 0; flex: 1; }
+.cintel-row p { font-size: 12.5px; line-height: 1.55; color: var(--ink-soft); margin: 0 0 4px; }
 .cintel-row p:last-child { margin-bottom: 0; }
 .cintel-warn { color: var(--ink); }
+
+/* Icon-led lines (getting around / by car) */
+.cintel-lines { display: flex; flex-direction: column; gap: 7px; }
+.cintel-line {
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--ink-soft);
+}
+.cintel-ico {
+  flex: none;
+  width: 15px;
+  height: 15px;
+  color: var(--ink-mute);
+  transform: translateY(2px);
+}
+.cintel-line-warn { color: var(--ink); }
+.cintel-line-warn .cintel-ico { color: var(--accent); }
 .cintel-link { color: var(--accent); text-decoration: none; font-weight: 600; }
 .cintel-link:hover { text-decoration: underline; }
 .cintel-sights { display: flex; flex-direction: column; gap: 6px; }

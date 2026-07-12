@@ -1,4 +1,4 @@
-# app_data schema - v11
+# app_data schema - v12
 
 The pipeline and the React app share one contract. A trip is priced three ways,
 all from real data:
@@ -166,11 +166,25 @@ Eurostat PLI).
           { "name": "Groeninge Museum", "kind": "Museum", "link": "https://..." }
         ],
         "items_full": [                  // schema v11 - OpenTripMap-sourced dests ONLY;
-                                          // absent otherwise. Up to 40, WITH coordinates -
-                                          // Day Planner's pool for day-by-day assignment
-                                          // and map pins. Falls back to `items` (name-only,
+                                          // absent otherwise. Up to 40 sights + up to 12
+                                          // "get active" POIs, WITH coordinates - Day
+                                          // Planner's pool for day-by-day assignment and
+                                          // map pins. Falls back to `items` (name-only,
                                           // no coordinates) when this key is missing.
-          { "name": "Grote Markt", "kind": "Square", "lat": 51.208, "lon": 3.225 }
+          {
+            "name": "Grote Markt", "kind": "Square", "lat": 51.208, "lon": 3.225,
+            "rate": 3,                    // v12: OTM importance 0..3 (3 = must-see tier).
+                                          // Drives the Day planner's must-see gradation.
+            "heritage": true,             // v12: on a cultural-heritage register (optional)
+            "active": true,               // v12: "get active" POI (sport/amusements/natural;
+                                          // optional, sights omit it)
+            "img": "https://upload.wikimedia.org/...400px-...jpg",  // v12: Wikipedia thumb
+            "desc": "Central square of Bruges",                      // v12: one-line summary
+            "wiki": "https://en.wikipedia.org/wiki/..."              // v12: article link
+                                          // img/desc/wiki only when the POI name resolves to
+                                          // a Wikipedia article within 30 km (top 24 sights
+                                          // + all actives are attempted; see enrich())
+          }
         ]
       }
     }

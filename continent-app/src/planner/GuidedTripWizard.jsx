@@ -7,6 +7,12 @@ import {
 } from '../lib/tripGuide.js';
 import { carAdvice } from '../lib/transport.js';
 import { useCountryInsights } from '../hooks/useCountryInsights.js';
+import {
+  SparkIcon, CheckIcon, AlertIcon, TrainIcon, CarIcon,
+  MuseumIcon, TreeIcon, DiningIcon, ShoppingIcon, MoonIcon, MasksIcon,
+  CameraIcon, CoffeeIcon, CastleIcon, BeachIcon, BallIcon, LotusIcon,
+  LeafIcon, ScaleIcon, BoltIcon,
+} from '../components/Icons.jsx';
 
 const STEPS = ['Where', 'Cities', 'Enjoy', 'Visit', 'Travel', 'Arrange'];
 const CITIES_PER_COUNTRY = 10;
@@ -14,34 +20,35 @@ const CITIES_PER_COUNTRY = 10;
 // "How do you want to get between your stops?" options (Travel step). The
 // planner prices every leg for the chosen style and stays overridable per leg.
 const TRANSPORT_CHOICES = [
-  { key: 'auto', icon: '✨', label: 'Carta picks', sub: 'Best mode per leg - cheapest sensible option' },
-  { key: 'public', icon: '🚆', label: 'Train & bus', sub: 'No driving; operator links per country' },
-  { key: 'car', icon: '🚗', label: 'Car', sub: 'One rental, fuel + tolls split by the group' },
+  { key: 'auto', Icon: SparkIcon, label: 'Carta picks', sub: 'Best mode per leg - cheapest sensible option' },
+  { key: 'public', Icon: TrainIcon, label: 'Train & bus', sub: 'No driving; operator links per country' },
+  { key: 'car', Icon: CarIcon, label: 'Car', sub: 'One rental, fuel + tolls split by the group' },
 ];
 
 // "How full should your days feel?" (Travel step) - used to suggest how many
 // highlights to actually schedule per day.
 const PACE_CHOICES = [
-  { key: 'relaxed', icon: '🌿', label: 'Relaxed', sub: '1-2 sights a day, long lunches' },
-  { key: 'balanced', icon: '⚖️', label: 'Balanced', sub: '2-3 sights, room to wander' },
-  { key: 'packed', icon: '⚡', label: 'See it all', sub: '4+ sights, early starts' },
+  { key: 'relaxed', Icon: LeafIcon, label: 'Relaxed', sub: '1-2 sights a day, long lunches' },
+  { key: 'balanced', Icon: ScaleIcon, label: 'Balanced', sub: '2-3 sights, room to wander' },
+  { key: 'packed', Icon: BoltIcon, label: 'See it all', sub: '4+ sights, early starts' },
 ];
 
 // The "What do you enjoy?" tiles. Picking these tailors the highlights shown on
 // the Visit step (see activitiesForInterests) so the trip fits the traveller.
-const INTERESTS = [
-  { key: 'museums', label: 'Museums', icon: '🏛️' },
-  { key: 'outdoors', label: 'Outdoors', icon: '🌲' },
-  { key: 'food', label: 'Food & Dining', icon: '🍽️' },
-  { key: 'shopping', label: 'Shopping', icon: '🛍️' },
-  { key: 'nightlife', label: 'Nightlife', icon: '🌙' },
-  { key: 'culture', label: 'Local Culture', icon: '🎭' },
-  { key: 'photo', label: 'Photo Spots', icon: '📸' },
-  { key: 'cafes', label: 'Cafés', icon: '☕' },
-  { key: 'architecture', label: 'Architecture', icon: '🏰' },
-  { key: 'beaches', label: 'Beaches', icon: '🏖️' },
-  { key: 'sports', label: 'Sports', icon: '⚽' },
-  { key: 'wellness', label: 'Wellness', icon: '🧘' },
+// Exported: the Day planner's "Shape your day" wizard shows the same tiles.
+export const INTERESTS = [
+  { key: 'museums', label: 'Museums', Icon: MuseumIcon },
+  { key: 'outdoors', label: 'Outdoors', Icon: TreeIcon },
+  { key: 'food', label: 'Food & Dining', Icon: DiningIcon },
+  { key: 'shopping', label: 'Shopping', Icon: ShoppingIcon },
+  { key: 'nightlife', label: 'Nightlife', Icon: MoonIcon },
+  { key: 'culture', label: 'Local Culture', Icon: MasksIcon },
+  { key: 'photo', label: 'Photo Spots', Icon: CameraIcon },
+  { key: 'cafes', label: 'Cafés', Icon: CoffeeIcon },
+  { key: 'architecture', label: 'Architecture', Icon: CastleIcon },
+  { key: 'beaches', label: 'Beaches', Icon: BeachIcon },
+  { key: 'sports', label: 'Sports', Icon: BallIcon },
+  { key: 'wellness', label: 'Wellness', Icon: LotusIcon },
 ];
 
 // Real flag artwork (falls back to the emoji/letters if the image can't load).
@@ -289,8 +296,8 @@ export function GuidedTripWizard({ data, onCancel, onComplete }) {
                     onClick={() => toggleInterest(it.key)}
                     aria-pressed={interests.has(it.key)}
                   >
-                    {interests.has(it.key) && <span className="guide-interest-check">✓</span>}
-                    <span className="guide-interest-icon">{it.icon}</span>
+                    {interests.has(it.key) && <span className="guide-interest-check"><CheckIcon size={11} /></span>}
+                    <span className="guide-interest-icon"><it.Icon size={20} /></span>
                     <span className="guide-interest-label">{it.label}</span>
                   </button>
                 ))}
@@ -348,10 +355,14 @@ export function GuidedTripWizard({ data, onCancel, onComplete }) {
               {(advice.verdict !== 'no' || drivingNotes.length > 0) && (
                 <div className={`guide-car-advice ${advice.verdict}`}>
                   <div className="guide-car-advice-head">
-                    {advice.verdict === 'yes' ? '🚗 We’d rent a car for this trip' : advice.verdict === 'maybe' ? '🚗 A car could be worth it here' : '🚆 Public transport covers this trip well'}
+                    {advice.verdict === 'no' ? <TrainIcon size={13} /> : <CarIcon size={13} />}
+                    {' '}
+                    {advice.verdict === 'yes' ? 'We recommend renting a car for this trip'
+                      : advice.verdict === 'maybe' ? 'A car could be worth it here'
+                      : 'Public transport covers this trip well'}
                   </div>
                   {advice.reasons.map((r, i) => <p key={i}>{r}</p>)}
-                  {drivingNotes.map((n, i) => <p key={`d${i}`} className="guide-car-note">⚠️ {n}</p>)}
+                  {drivingNotes.map((n, i) => <p key={`d${i}`} className="guide-car-note"><AlertIcon size={11} /> {n}</p>)}
                 </div>
               )}
 
@@ -363,8 +374,11 @@ export function GuidedTripWizard({ data, onCancel, onComplete }) {
                     onClick={() => setTransport(t.key)}
                     aria-pressed={transport === t.key}
                   >
-                    <span className="guide-transport-icon">{t.icon}</span>
-                    <span className="guide-transport-label">{t.label}{advice.verdict === 'yes' && t.key === 'car' ? ' ✦' : ''}</span>
+                    <span className="guide-transport-icon"><t.Icon size={18} /></span>
+                    <span className="guide-transport-label">
+                      {t.label}
+                      {advice.verdict === 'yes' && t.key === 'car' && <span className="guide-reco-mark"><SparkIcon size={11} /></span>}
+                    </span>
                     <span className="guide-transport-sub">{t.sub}</span>
                   </button>
                 ))}
@@ -379,7 +393,7 @@ export function GuidedTripWizard({ data, onCancel, onComplete }) {
                     onClick={() => setPace(p.key)}
                     aria-pressed={pace === p.key}
                   >
-                    <span className="guide-transport-icon">{p.icon}</span>
+                    <span className="guide-transport-icon"><p.Icon size={18} /></span>
                     <span className="guide-transport-label">{p.label}</span>
                     <span className="guide-transport-sub">{p.sub}</span>
                   </button>

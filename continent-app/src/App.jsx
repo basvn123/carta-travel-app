@@ -25,6 +25,7 @@ import { AuthModal } from './auth/AuthModal.jsx';
 import { AuthGate } from './auth/AuthGate.jsx';
 import { ResetPasswordScreen } from './auth/ResetPasswordScreen.jsx';
 import { AccountPanel } from './auth/AccountPanel.jsx';
+import { SavedTripsPanel } from './auth/SavedTripsPanel.jsx';
 import { useAppData } from './hooks/useAppData.js';
 import { useDestinationSearch } from './hooks/useDestinationSearch.js';
 import { useAccountSync } from './hooks/useAccountSync.js';
@@ -32,6 +33,10 @@ import { useAccountSync } from './hooks/useAccountSync.js';
 // Once someone picks "continue without an account" on the entry gate, don't
 // ask again on this device - only a fresh sign-in should bring accounts back.
 const GUEST_KEY = 'continent.guestMode.v1';
+
+// The "how does this page work" hint under the top bar stays gone once
+// dismissed - it's onboarding, not a recurring notice.
+const MAP_GUIDE_KEY = 'continent.mapGuideDismissed.v1';
 
 export default function App() {
   return (
@@ -101,6 +106,8 @@ function TravelApp() {
   // Accounts: sign-in modal + account panel visibility.
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [accountOpen, setAccountOpen] = useState(false);
+  // Saved trips panel, opened from its own bottom-nav button.
+  const [savedTripsOpen, setSavedTripsOpen] = useState(false);
   // A shared link (URL query present at load) always wins over a signed-in
   // user's synced settings, so opening someone's link never gets silently
   // overridden by your own saved preferences.
@@ -144,6 +151,15 @@ function TravelApp() {
   // (already filtered) results down to the N best by that metric, in list + map.
   const [topPick, setTopPick] = useState(init.topPick ?? null);
   const [lifestyleOpen, setLifestyleOpen] = useState(false);
+
+  // First-visit guidance strip between the top bar and the map.
+  const [mapGuideDismissed, setMapGuideDismissed] = useState(
+    () => typeof window !== 'undefined' && localStorage.getItem(MAP_GUIDE_KEY) === '1'
+  );
+  const dismissMapGuide = () => {
+    localStorage.setItem(MAP_GUIDE_KEY, '1');
+    setMapGuideDismissed(true);
+  };
 
   // Let the user collapse the destinations list to give the map the full width.
   // On phones (<=768px) it starts collapsed so the map opens as big as possible;
@@ -300,6 +316,12 @@ function TravelApp() {
         <AppHeader
           user={user}
           onOpenAccount={() => setAccountOpen(true)}
+          isHome={activeTab === 'map'}
+          onGoHome={() => setActiveTab('map')}
+          activeTab={activeTab}
+          onChangeTab={(key) => { setSavedTripsOpen(false); setActiveTab(key); }}
+          savedOpen={savedTripsOpen}
+          onToggleSaved={() => setSavedTripsOpen((v) => !v)}
         >
           {activeTab === 'map' && (
             <FilterBar
@@ -333,6 +355,26 @@ function TravelApp() {
             />
           )}
         </AppHeader>
+
+        {/* Guidance strip between the top bar and the map: inside .top-bar so
+            the ResizeObserver folds its height into --filter-h and the map,
+            list and panels below all shift down to stay flush beneath it. */}
+        {activeTab === 'map' && !mapGuideDismissed && (
+          <div className="map-guide" role="note">
+            <span className="map-guide-text">
+              <strong>Start here:</strong> pick your travel dates and group size
+              above, then click a destination on the map or in the list to see
+              what the whole trip costs.
+            </span>
+            <button
+              className="map-guide-close"
+              onClick={dismissMapGuide}
+              aria-label="Dismiss this tip"
+            >
+              ×
+            </button>
+          </div>
+        )}
       </div>
 
       {activeTab === 'map' && (
@@ -469,11 +511,29 @@ function TravelApp() {
       )}
 
       <div onClick={(e) => e.stopPropagation()}>
-        <BottomNav activeTab={activeTab} onChangeTab={setActiveTab} />
+        <BottomNav
+          activeTab={activeTab}
+          onChangeTab={(key) => { setSavedTripsOpen(false); setActiveTab(key); }}
+          savedOpen={savedTripsOpen}
+          onToggleSaved={() => setSavedTripsOpen((v) => !v)}
+        />
       </div>
 
       {authConfigured && authModalOpen && (
         <AuthModal initialMode={authModalMode} onClose={() => setAuthModalOpen(false)} />
+      )}
+      {savedTripsOpen && (
+        <div onClick={(e) => e.stopPropagation()}>
+          <SavedTripsPanel
+            onClose={() => setSavedTripsOpen(false)}
+            onLoadTrip={(trip) => {
+              handleLoadTrip(trip);
+              setSavedTripsOpen(false);
+              setActiveTab('map'); // the loaded trip opens as a map detail panel
+            }}
+            onOpenAuth={() => { setSavedTripsOpen(false); setAuthModalMode('signin'); setAuthModalOpen(true); }}
+          />
+        </div>
       )}
       {accountOpen && (
         <div onClick={(e) => e.stopPropagation()}>

@@ -10,6 +10,8 @@ import { countriesFromData } from '../lib/tripGuide.js';
 import { CountryIntel } from '../components/CountryIntel.jsx';
 import { useCountryInsights } from '../hooks/useCountryInsights.js';
 import { addDays, todayISO, fmtDate as fmtDateFull } from '../lib/dates.js';
+import { draftDays, tieredActivities, optimizeOrder } from './dayDraft.js';
+import { ShapeDayWizard, DAY_STARTS } from './ShapeDayWizard.jsx';
 
 const fmtDate = (iso) => (iso ? fmtDateFull(iso).slice(0, 6) : '');
 
@@ -37,51 +39,12 @@ function estimateWalkMinutes(km) {
   return Math.max(1, Math.round((km / WALK_KMH) * 60));
 }
 
-// Selectable "when does your day start" options for the suggested schedule.
-const DAY_STARTS = [
-  { min: 8 * 60, label: '8 AM · early bird' },
-  { min: 9 * 60, label: '9 AM · classic' },
-  { min: 10 * 60, label: '10 AM · slow morning' },
-];
 function minutesToClock(totalMin) {
   const h24 = Math.floor((totalMin / 60) % 24);
   const m = Math.round(totalMin % 60);
   const period = h24 >= 12 ? 'PM' : 'AM';
   const h12 = h24 % 12 === 0 ? 12 : h24 % 12;
   return `${h12}:${String(m).padStart(2, '0')} ${period}`;
-}
-
-/** Reorders a day's assigned activity indices to minimize backtracking - a
- *  simple nearest-neighbour walk starting from the first-added stop with
- *  coordinates. Activities without coordinates (limited-data destinations)
- *  can't be routed, so they're kept, appended at the end in add order. */
-function optimizeOrder(idxArray, itemsAll) {
-  const withCoords = [];
-  const withoutCoords = [];
-  for (const idx of idxArray) {
-    const it = itemsAll[idx];
-    (it && it.lat != null && it.lon != null ? withCoords : withoutCoords).push(idx);
-  }
-  if (withCoords.length <= 1) return [...withCoords, ...withoutCoords];
-
-  const remaining = new Set(withCoords);
-  let current = withCoords[0];
-  const ordered = [current];
-  remaining.delete(current);
-  while (remaining.size > 0) {
-    const curItem = itemsAll[current];
-    let best = null, bestDist = Infinity;
-    for (const cand of remaining) {
-      const c = itemsAll[cand];
-      const d = haversineKm(curItem.lat, curItem.lon, c.lat, c.lon);
-      if (d != null && d < bestDist) { bestDist = d; best = cand; }
-    }
-    if (best == null) break;
-    ordered.push(best);
-    remaining.delete(best);
-    current = best;
-  }
-  return [...ordered, ...withoutCoords];
 }
 
 // Day-by-day activity assignments are a browsing/organizing aid, not part of
@@ -103,6 +66,26 @@ function persistAssignments(planId, assignments) {
   if (!planId || typeof window === 'undefined') return;
   try {
     window.localStorage.setItem(assignmentsKey(planId), JSON.stringify(assignments));
+  } catch { /* ignore */ }
+}
+
+// "Shape your day" answers (interests / pace / start / lunch), kept per plan
+// alongside the assignments so a re-opened plan drafts and schedules the same.
+function prefsKey(planId) {
+  return `carta.dayprefs.${planId}`;
+}
+function loadPrefs(planId) {
+  if (!planId || typeof window === 'undefined') return null;
+  try {
+    return JSON.parse(window.localStorage.getItem(prefsKey(planId)) || 'null');
+  } catch {
+    return null;
+  }
+}
+function persistPrefs(planId, prefs) {
+  if (!planId || typeof window === 'undefined') return;
+  try {
+    window.localStorage.setItem(prefsKey(planId), JSON.stringify(prefs));
   } catch { /* ignore */ }
 }
 
@@ -156,6 +139,9 @@ export function DayPlannerTab({ data, user, authConfigured }) {
   const [assignments, setAssignments] = useState({}); // { [stopIdx]: { [dayIdx]: [activityIdx,...] } }
   // When the traveller likes their sightseeing day to start (schedule anchor).
   const [dayStartMin, setDayStartMin] = useState(9 * 60);
+  // "Shape your day" answers (null until asked) + whether the wizard is open.
+  const [prefs, setPrefs] = useState(null);
+  const [showShape, setShowShape] = useState(false);
 
   // Locally-stored "plan a day for any city" plans (see STANDALONE_KEY).
   const [standalonePlans, setStandalonePlans] = useState(() => loadStandalonePlans());
@@ -171,19 +157,28 @@ export function DayPlannerTab({ data, user, authConfigured }) {
     fetchTripPlans(user.id).then(setSavedPlans).finally(() => setPlansLoading(false));
   }, [user?.id]);
 
+  // Shared open-plan bootstrap: restore assignments + shape-your-day answers,
+  // and lead with the wizard when nothing is planned yet.
+  const bootPlan = (planId) => {
+    setStopIdx(0);
+    setDayIdx(0);
+    const a = loadAssignments(planId);
+    setAssignments(a);
+    const p = loadPrefs(planId);
+    setPrefs(p);
+    if (p?.startMin) setDayStartMin(p.startMin);
+    setShowShape(Object.keys(a).length === 0);
+  };
+
   const openPlan = async (planId) => {
     const full = await fetchTripPlanWithStops(planId);
     setPlan(full);
-    setStopIdx(0);
-    setDayIdx(0);
-    setAssignments(loadAssignments(planId));
+    bootPlan(planId);
   };
 
   const openStandalone = (sp) => {
     setPlan(buildStandalonePlan(sp));
-    setStopIdx(0);
-    setDayIdx(0);
-    setAssignments(loadAssignments(sp.id));
+    bootPlan(sp.id);
   };
 
   const startStandalone = () => {
@@ -209,7 +204,10 @@ export function DayPlannerTab({ data, user, authConfigured }) {
     setStandalonePlans(next);
     persistStandalonePlans(next);
     if (typeof window !== 'undefined') {
-      try { window.localStorage.removeItem(assignmentsKey(id)); } catch { /* ignore */ }
+      try {
+        window.localStorage.removeItem(assignmentsKey(id));
+        window.localStorage.removeItem(prefsKey(id));
+      } catch { /* ignore */ }
     }
   };
 
@@ -248,15 +246,52 @@ export function DayPlannerTab({ data, user, authConfigured }) {
     return () => { alive = false; };
   }, []);
 
-  const activities = useMemo(() => {
-    const a = stop?.dest?.activities;
+  // The activity list for any stop: full POI list (with coordinates) when
+  // available, else the short name-only list. `fullMap` lets the auto-draft
+  // pass a freshly awaited copy before the actFull state has landed.
+  const itemsForStop = (s, fullMap = actFull) => {
+    const a = s?.dest?.activities;
     if (!a) return { items: [], limited: true };
     const full = (a.items_full && a.items_full.length)
       ? a.items_full
-      : actFull?.[stop.destination_id];
+      : fullMap?.[s.destination_id];
     if (full && full.length) return { items: full, limited: false };
     return { items: (a.items || []).map((it) => ({ ...it, lat: null, lon: null })), limited: true };
-  }, [stop, actFull]);
+  };
+
+  const activities = useMemo(() => itemsForStop(stop), [stop, actFull]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Must-see / worth-it / more / get-active tiers for the current stop's list.
+  const tiers = useMemo(() => tieredActivities(activities.items), [activities]);
+  const [showMore, setShowMore] = useState(false);
+
+  // Auto-draft every stop's days from the traveller's answers, then persist
+  // both the resulting plan and the answers. Awaits the full POI file so a
+  // draft made seconds after opening still gets coordinates + ratings.
+  const applyDraft = async (p) => {
+    const fullMap = actFull ?? await fetchActivitiesFull();
+    if (!actFull && fullMap) setActFull(fullMap);
+    const interests = new Set(p.interests);
+    const next = {};
+    stops.forEach((s, si) => {
+      const { items } = itemsForStop(s, fullMap);
+      const lists = draftDays({
+        items,
+        numDays: s.nights,
+        interests,
+        paceKey: p.pace,
+        dwellFn: estimateDwellMinutes,
+      });
+      next[si] = {};
+      lists.forEach((lst, di) => { if (lst.length) next[si][di] = lst; });
+    });
+    setAssignments(next);
+    persistAssignments(plan?.id, next);
+    setPrefs(p);
+    persistPrefs(plan?.id, p);
+    setDayStartMin(p.startMin);
+    setShowShape(false);
+  };
 
   const dayAssignedIdx = assignments[stopIdx]?.[dayIdx] || [];
   const assignedItems = dayAssignedIdx.map((i) => activities.items[i]).filter(Boolean);
@@ -316,12 +351,22 @@ export function DayPlannerTab({ data, user, authConfigured }) {
     && route.legs.length === assignedItems.length - 1;
 
   // A suggested schedule for the day - dwell time by category + walking time
-  // between consecutive stops, chained from a 9:00 AM start. Uses the real OSRM
-  // leg time/distance when available, else a straight-line estimate. Not real
-  // opening-hours or booking data (see the disclaimer shown with it).
+  // between consecutive stops, chained from the chosen start. Uses the real
+  // OSRM leg time/distance when available, else a straight-line estimate. A
+  // one-hour lunch row slots in at the first arrival after 12:15 when the
+  // traveller asked for one. Not real opening-hours or booking data (see the
+  // disclaimer shown with it).
+  const lunchOn = prefs ? prefs.lunch !== false : true;
   const timeline = useMemo(() => {
     let cursor = dayStartMin;
-    return assignedItems.map((it, i) => {
+    let lunchDone = !lunchOn;
+    const rows = [];
+    assignedItems.forEach((it, i) => {
+      if (!lunchDone && cursor >= 12 * 60 + 15) {
+        rows.push({ type: 'lunch', arrive: cursor, depart: cursor + 60 });
+        cursor += 60;
+        lunchDone = true;
+      }
       const arrive = cursor;
       const depart = arrive + estimateDwellMinutes(it.kind);
       const next = assignedItems[i + 1];
@@ -335,9 +380,10 @@ export function DayPlannerTab({ data, user, authConfigured }) {
         walkMin = estimateWalkMinutes(walkKm);
       }
       cursor = depart + (walkMin || 0);
-      return { item: it, arrive, depart, walkKm, walkMin, walkReal };
+      rows.push({ type: 'stop', item: it, stopPos: i, arrive, depart, walkKm, walkMin, walkReal });
     });
-  }, [assignedItems, legsAlign, route, dayStartMin]);
+    return rows;
+  }, [assignedItems, legsAlign, route, dayStartMin, lunchOn]);
 
   const gmapsUrl = googleMapsDirUrl(mapPins, 'walking');
 
@@ -483,6 +529,15 @@ export function DayPlannerTab({ data, user, authConfigured }) {
 
   return (
     <div className="trip-planner-screen">
+      {showShape && stop && (
+        <ShapeDayWizard
+          city={stop.dest?.city || 'this city'}
+          numDays={days.length}
+          initial={prefs}
+          onSkip={() => setShowShape(false)}
+          onDraft={applyDraft}
+        />
+      )}
       <TripMap stops={mapPins} padBottom={420} routeGeometry={routeOk ? route.geometry : null} />
 
       <div className="trip-topcard" onClick={(e) => e.stopPropagation()}>
@@ -538,9 +593,12 @@ export function DayPlannerTab({ data, user, authConfigured }) {
                     className={`day-chip ${dayStartMin === s.min ? 'active' : ''}`}
                     onClick={() => setDayStartMin(s.min)}
                   >
-                    {s.label}
+                    {s.label} · {s.hint}
                   </button>
                 ))}
+                <button className="day-chip day-chip-shape" onClick={() => setShowShape(true)} title="Answer a couple of questions and let Carta draft your days">
+                  ✨ Shape & draft
+                </button>
               </div>
             </div>
           )}
@@ -564,21 +622,34 @@ export function DayPlannerTab({ data, user, authConfigured }) {
                   <div className="day-timeline">
                     {timeline.map((t, i) => (
                       <React.Fragment key={i}>
-                        <div className="day-timeline-row">
-                          <div className="day-timeline-time">{minutesToClock(t.arrive)}</div>
-                          <div className="day-assigned-row">
-                            <div className="day-assigned-body">
-                              <span className="day-assigned-name">{t.item.name}</span>
-                              <span className="day-assigned-kind">{t.item.kind}</span>
-                            </div>
-                            <div className="day-timeline-tools">
-                              <button className="trip-stop-move" onClick={() => moveAssigned(i, -1)} disabled={i === 0} aria-label="Move earlier" title="Move earlier">↑</button>
-                              <button className="trip-stop-move" onClick={() => moveAssigned(i, 1)} disabled={i === timeline.length - 1} aria-label="Move later" title="Move later">↓</button>
-                              <button className="trip-stop-remove" onClick={() => toggleActivity(dayAssignedIdx[i])} aria-label="Remove" title="Remove">×</button>
+                        {t.type === 'lunch' ? (
+                          <div className="day-timeline-row day-timeline-lunch">
+                            <div className="day-timeline-time">{minutesToClock(t.arrive)}</div>
+                            <div className="day-assigned-row">
+                              <div className="day-assigned-body">
+                                <span className="day-assigned-name">🍴 Lunch break</span>
+                                <span className="day-assigned-kind">about an hour, wherever looks good</span>
+                              </div>
                             </div>
                           </div>
-                        </div>
-                        {i < timeline.length - 1 && (
+                        ) : (
+                          <div className="day-timeline-row">
+                            <div className="day-timeline-time">{minutesToClock(t.arrive)}</div>
+                            <div className="day-assigned-row">
+                              {t.item.img && <span className="day-thumb" style={{ backgroundImage: `url(${t.item.img})` }} />}
+                              <div className="day-assigned-body">
+                                <span className="day-assigned-name">{t.item.name}</span>
+                                <span className="day-assigned-kind">{t.item.kind}</span>
+                              </div>
+                              <div className="day-timeline-tools">
+                                <button className="trip-stop-move" onClick={() => moveAssigned(t.stopPos, -1)} disabled={t.stopPos === 0} aria-label="Move earlier" title="Move earlier">↑</button>
+                                <button className="trip-stop-move" onClick={() => moveAssigned(t.stopPos, 1)} disabled={t.stopPos === assignedItems.length - 1} aria-label="Move later" title="Move later">↓</button>
+                                <button className="trip-stop-remove" onClick={() => toggleActivity(dayAssignedIdx[t.stopPos])} aria-label="Remove" title="Remove">×</button>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+                        {t.type === 'stop' && t.stopPos < assignedItems.length - 1 && (
                           <div className="day-timeline-walk">
                             {t.walkMin != null
                               ? `↓ ${t.walkReal ? '' : '≈'}${t.walkMin} min walk, ${t.walkKm.toFixed(1)} km`
@@ -615,21 +686,50 @@ export function DayPlannerTab({ data, user, authConfigured }) {
               {activities.items.length === 0 ? (
                 <p className="trip-note">No activities catalogued for this destination yet.</p>
               ) : (
-                <div className="day-activity-list">
-                  {activities.items.map((it, i) => (
-                    <button
-                      key={i}
-                      className={`day-activity-row ${dayAssignedIdx.includes(i) ? 'added' : ''}`}
-                      onClick={() => toggleActivity(i)}
-                    >
-                      <div className="day-assigned-body">
-                        <span className="day-assigned-name">{it.name}</span>
-                        <span className="day-assigned-kind">{it.kind}</span>
-                      </div>
-                      <span className="day-activity-add">{dayAssignedIdx.includes(i) ? '✓' : '+'}</span>
-                    </button>
-                  ))}
-                </div>
+                <>
+                  {tiers.must.length > 0 && (
+                    <ActivitySection
+                      title="Must see"
+                      badge="★"
+                      entries={tiers.must}
+                      variant="must"
+                      assignedIdx={dayAssignedIdx}
+                      onToggle={toggleActivity}
+                    />
+                  )}
+                  {tiers.worth.length > 0 && (
+                    <ActivitySection
+                      title="Worth your time"
+                      entries={tiers.worth}
+                      assignedIdx={dayAssignedIdx}
+                      onToggle={toggleActivity}
+                    />
+                  )}
+                  {tiers.active.length > 0 && (
+                    <ActivitySection
+                      title="Get active"
+                      badge="⛰"
+                      entries={tiers.active}
+                      variant="act"
+                      assignedIdx={dayAssignedIdx}
+                      onToggle={toggleActivity}
+                    />
+                  )}
+                  {tiers.more.length > 0 && (
+                    showMore ? (
+                      <ActivitySection
+                        title="More to explore"
+                        entries={tiers.more}
+                        assignedIdx={dayAssignedIdx}
+                        onToggle={toggleActivity}
+                      />
+                    ) : (
+                      <button className="day-more-btn" onClick={() => setShowMore(true)}>
+                        Show {tiers.more.length} more places
+                      </button>
+                    )
+                  )}
+                </>
               )}
             </div>
           )}
@@ -639,6 +739,68 @@ export function DayPlannerTab({ data, user, authConfigured }) {
           </div>
         </div>
       </div>
+    </div>
+  );
+}
+
+/** One gradation tier of the "Things to do" list: a small header plus its
+ *  rows. `entries` is [{ item, idx }] with idx = the item's ORIGINAL index in
+ *  activities.items (what assignments and toggleActivity speak). */
+function ActivitySection({ title, badge, entries, variant = '', assignedIdx, onToggle }) {
+  return (
+    <div className={`day-tier day-tier-${variant}`}>
+      <div className="day-tier-head">
+        {badge && <span className="day-tier-badge">{badge}</span>}
+        {title}
+        <span className="day-tier-count">{entries.length}</span>
+      </div>
+      <div className="day-activity-list">
+        {entries.map(({ item, idx }) => (
+          <ActivityRow
+            key={idx}
+            item={item}
+            variant={variant}
+            added={assignedIdx.includes(idx)}
+            onToggle={() => onToggle(idx)}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/** A pickable place: thumbnail (when Wikipedia had one), name + kind + one-line
+ *  description, heritage tag, and a wiki link. The row toggles the place into
+ *  the day; the ⓘ opens Wikipedia without toggling. */
+function ActivityRow({ item, variant, added, onToggle }) {
+  return (
+    <div className={`day-activity-row day-activity-rich ${variant} ${added ? 'added' : ''}`}>
+      <button className="day-activity-main" onClick={onToggle}>
+        {item.img
+          ? <span className="day-thumb" style={{ backgroundImage: `url(${item.img})` }} />
+          : <span className="day-thumb day-thumb-empty" aria-hidden="true">{(item.kind || '·').slice(0, 1)}</span>}
+        <span className="day-assigned-body">
+          <span className="day-assigned-name">
+            {item.name}
+            {item.heritage && <span className="day-badge-heritage" title="On a cultural-heritage register">heritage</span>}
+          </span>
+          <span className="day-assigned-kind">
+            {item.kind}
+            {item.desc ? ` · ${item.desc}` : ''}
+          </span>
+        </span>
+        <span className="day-activity-add">{added ? '✓' : '+'}</span>
+      </button>
+      {item.wiki && (
+        <a
+          className="day-activity-info"
+          href={item.wiki}
+          target="_blank"
+          rel="noreferrer"
+          title={`Read about ${item.name} on Wikipedia`}
+          onClick={(e) => e.stopPropagation()}
+        >ⓘ</a>
+      )}
     </div>
   );
 }

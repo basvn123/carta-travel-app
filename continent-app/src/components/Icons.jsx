@@ -113,6 +113,48 @@ export function ListDayIcon({ size = 20, className = '' }) {
   );
 }
 
+export function BookmarkIcon({ size = 20, className = '' }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.7"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      role="img"
+      aria-label="Saved trips"
+    >
+      <path d="M6.5 3.5h11a1 1 0 0 1 1 1V21l-6.5-4.4L5.5 21V4.5a1 1 0 0 1 1-1Z" />
+    </svg>
+  );
+}
+
+export function HomeIcon({ size = 16, className = '' }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.7"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      role="img"
+      aria-label="Home"
+    >
+      <path d="M3.5 10.5 12 3.5l8.5 7" />
+      <path d="M5.5 9v10.5a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1V9" />
+      <path d="M9.5 20.5v-6h5v6" />
+    </svg>
+  );
+}
+
 export function PersonIcon({ size = 14, className = '' }) {
   return (
     <svg
@@ -131,5 +173,293 @@ export function PersonIcon({ size = 14, className = '' }) {
       <circle cx="12" cy="8" r="4" />
       <path d="M4.5 20c1.4-4 4-6 7.5-6s6.1 2 7.5 6" />
     </svg>
+  );
+}
+
+/* ─── Country-intel glyphs: line icons, 1.6 stroke, inherit currentColor ─── */
+
+function Glyph({ size, className, label, children }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.6"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      role="img"
+      aria-label={label}
+    >
+      {children}
+    </svg>
+  );
+}
+
+export function TrainIcon({ size = 15, className = '' }) {
+  return (
+    <Glyph size={size} className={className} label="Rail">
+      <rect x="5.5" y="3.5" width="13" height="13" rx="3.5" />
+      <path d="M5.5 11h13" />
+      <path d="M8.5 20l-2 2M15.5 20l2 2" />
+      <circle cx="9" cy="13.7" r="0.6" fill="currentColor" stroke="none" />
+      <circle cx="15" cy="13.7" r="0.6" fill="currentColor" stroke="none" />
+    </Glyph>
+  );
+}
+
+export function BusIcon({ size = 15, className = '' }) {
+  return (
+    <Glyph size={size} className={className} label="Bus">
+      <rect x="3.5" y="4.5" width="17" height="12.5" rx="2.5" />
+      <path d="M3.5 10.5h17" />
+      <path d="M8 4.5v6M13 4.5v6M18 4.5v6" />
+      <circle cx="7.5" cy="19" r="1.6" />
+      <circle cx="16.5" cy="19" r="1.6" />
+    </Glyph>
+  );
+}
+
+export function CarIcon({ size = 15, className = '' }) {
+  return (
+    <Glyph size={size} className={className} label="Car">
+      <path d="M4 16v-2.2a2 2 0 0 1 .5-1.3l2.2-2.6A3 3 0 0 1 9 8.7h6a3 3 0 0 1 2.3 1.1l2.2 2.6a2 2 0 0 1 .5 1.3V16" />
+      <path d="M2.5 16h19" />
+      <circle cx="7.5" cy="17.5" r="1.8" />
+      <circle cx="16.5" cy="17.5" r="1.8" />
+    </Glyph>
+  );
+}
+
+export function AlertIcon({ size = 15, className = '' }) {
+  return (
+    <Glyph size={size} className={className} label="Warning">
+      <path d="M12 4.5 21 19.5H3L12 4.5Z" />
+      <path d="M12 10v4" />
+      <circle cx="12" cy="16.8" r="0.5" fill="currentColor" stroke="none" />
+    </Glyph>
+  );
+}
+
+export function TicketIcon({ size = 15, className = '' }) {
+  return (
+    <Glyph size={size} className={className} label="Vignette">
+      <path d="M4 8.5a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v1a2 2 0 0 0 0 4v1a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-1a2 2 0 0 0 0-4v-1Z" />
+      <path d="M12 8v1M12 11.5v1M12 15v1" />
+    </Glyph>
+  );
+}
+
+export function RoadIcon({ size = 15, className = '' }) {
+  return (
+    <Glyph size={size} className={className} label="Tolls">
+      <path d="M6.5 21 5 3M17.5 21 19 3" />
+      <path d="M12 4v3M12 10.5v3M12 17v3" />
+    </Glyph>
+  );
+}
+
+export function CheckIcon({ size = 15, className = '' }) {
+  return (
+    <Glyph size={size} className={className} label="Recommended">
+      <path d="M5 12.5 10 17.5 19 6.5" />
+    </Glyph>
+  );
+}
+
+/* ─── Planner glyphs: interests, pace, gradation - same line style ─── */
+
+export function SparkIcon({ size = 14, className = '' }) {
+  return (
+    <Glyph size={size} className={className} label="Suggestion">
+      <path d="M12 3.5c.7 3.6 2.6 5.7 6.5 6.5-3.9.8-5.8 2.9-6.5 6.5-.7-3.6-2.6-5.7-6.5-6.5 3.9-.8 5.8-2.9 6.5-6.5Z" />
+      <path d="M18.5 15.5c.3 1.6 1.1 2.5 2.8 2.8-1.7.3-2.5 1.2-2.8 2.8-.3-1.6-1.1-2.5-2.8-2.8 1.7-.3 2.5-1.2 2.8-2.8Z" />
+    </Glyph>
+  );
+}
+
+export function StarIcon({ size = 14, className = '' }) {
+  return (
+    <Glyph size={size} className={className} label="Must see">
+      <path d="m12 3.8 2.5 5.2 5.7.7-4.2 3.9 1.1 5.6L12 16.4l-5.1 2.8 1.1-5.6-4.2-3.9 5.7-.7L12 3.8Z" />
+    </Glyph>
+  );
+}
+
+export function InfoIcon({ size = 15, className = '' }) {
+  return (
+    <Glyph size={size} className={className} label="More information">
+      <circle cx="12" cy="12" r="8.5" />
+      <path d="M12 11v5" />
+      <circle cx="12" cy="8" r="0.6" fill="currentColor" stroke="none" />
+    </Glyph>
+  );
+}
+
+export function MountainIcon({ size = 15, className = '' }) {
+  return (
+    <Glyph size={size} className={className} label="Active">
+      <path d="m3 19 6-11 4 7 2.5-4L21 19H3Z" />
+    </Glyph>
+  );
+}
+
+export function BulbIcon({ size = 15, className = '' }) {
+  return (
+    <Glyph size={size} className={className} label="Tip">
+      <path d="M9 18h6M10 21h4" />
+      <path d="M12 3.5a6 6 0 0 1 3.5 10.8c-.8.6-1 1.3-1 2.2h-5c0-.9-.2-1.6-1-2.2A6 6 0 0 1 12 3.5Z" />
+    </Glyph>
+  );
+}
+
+export function DiningIcon({ size = 15, className = '' }) {
+  return (
+    <Glyph size={size} className={className} label="Food and dining">
+      <path d="M7 3.5v6a2 2 0 0 0 2 2v9M9 3.5v5M11 3.5v5" />
+      <path d="M17 3.5c-1.7 1-2.5 3-2.5 5.5 0 1.7.8 2.5 2.5 2.5v9" />
+    </Glyph>
+  );
+}
+
+export function MuseumIcon({ size = 15, className = '' }) {
+  return (
+    <Glyph size={size} className={className} label="Museums">
+      <path d="M4 9.5 12 4l8 5.5" />
+      <path d="M5.5 9.5v8M9.8 9.5v8M14.2 9.5v8M18.5 9.5v8" />
+      <path d="M4 20.5h16M4 17.5h16" />
+    </Glyph>
+  );
+}
+
+export function TreeIcon({ size = 15, className = '' }) {
+  return (
+    <Glyph size={size} className={className} label="Outdoors">
+      <path d="M12 3 6.5 10.5h2.2L5 16h6v4.5h2V16h6l-3.7-5.5h2.2L12 3Z" />
+    </Glyph>
+  );
+}
+
+export function ShoppingIcon({ size = 15, className = '' }) {
+  return (
+    <Glyph size={size} className={className} label="Shopping">
+      <path d="M5.5 8h13l-1 12.5h-11L5.5 8Z" />
+      <path d="M9 10.5V6.8a3 3 0 0 1 6 0v3.7" />
+    </Glyph>
+  );
+}
+
+export function MoonIcon({ size = 15, className = '' }) {
+  return (
+    <Glyph size={size} className={className} label="Nightlife">
+      <path d="M19.5 14.5A8 8 0 0 1 9.5 4.5a8 8 0 1 0 10 10Z" />
+    </Glyph>
+  );
+}
+
+export function MasksIcon({ size = 15, className = '' }) {
+  return (
+    <Glyph size={size} className={className} label="Local culture">
+      <path d="M5 4.5h14v6a7 7 0 0 1-14 0v-6Z" />
+      <path d="M8.5 9h.8M14.7 9h.8" />
+      <path d="M9 13.5c.9 1 1.9 1.5 3 1.5s2.1-.5 3-1.5" />
+    </Glyph>
+  );
+}
+
+export function CameraIcon({ size = 15, className = '' }) {
+  return (
+    <Glyph size={size} className={className} label="Photo spots">
+      <path d="M4.5 7.5h3l1.5-2h6l1.5 2h3a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1h-15a1 1 0 0 1-1-1v-10a1 1 0 0 1 1-1Z" />
+      <circle cx="12" cy="13" r="3.5" />
+    </Glyph>
+  );
+}
+
+export function CoffeeIcon({ size = 15, className = '' }) {
+  return (
+    <Glyph size={size} className={className} label="Cafes">
+      <path d="M5 8.5h11v7a4 4 0 0 1-4 4H9a4 4 0 0 1-4-4v-7Z" />
+      <path d="M16 10h1.5a2.5 2.5 0 0 1 0 5H16" />
+      <path d="M8 3.5v2.5M11 3.5v2.5M14 3.5v2.5" />
+    </Glyph>
+  );
+}
+
+export function CastleIcon({ size = 15, className = '' }) {
+  return (
+    <Glyph size={size} className={className} label="Architecture">
+      <path d="M5 20.5V8l2-1.5V4h2v2h2V4h2v2h2V4h2v2.5L19 8v12.5" />
+      <path d="M3.5 20.5h17" />
+      <path d="M10 20.5v-4.5a2 2 0 0 1 4 0v4.5" />
+    </Glyph>
+  );
+}
+
+export function BeachIcon({ size = 15, className = '' }) {
+  return (
+    <Glyph size={size} className={className} label="Beaches">
+      <path d="M13.5 6.5a6 6 0 0 0-8.4 1.3l9.7 7" />
+      <path d="M9.3 4.9c2.4-.4 4.7.4 6.4 2.4M13.5 6.5 11 20" />
+      <path d="M3.5 20.5c2-1.4 4-1.4 6 0s4 1.4 6 0 4-1.4 5 0" />
+    </Glyph>
+  );
+}
+
+export function BallIcon({ size = 15, className = '' }) {
+  return (
+    <Glyph size={size} className={className} label="Sports">
+      <circle cx="12" cy="12" r="8.5" />
+      <path d="M12 3.5v17M3.5 12h17" />
+      <path d="M6 5.5c3.5 3.5 8.5 3.5 12 0M6 18.5c3.5-3.5 8.5-3.5 12 0" />
+    </Glyph>
+  );
+}
+
+export function LotusIcon({ size = 15, className = '' }) {
+  return (
+    <Glyph size={size} className={className} label="Wellness">
+      <path d="M12 5c1.8 2 2.6 4 2.6 6.2 0 2.7-1.1 4.6-2.6 5.8-1.5-1.2-2.6-3.1-2.6-5.8C9.4 9 10.2 7 12 5Z" />
+      <path d="M4.5 10c3 .5 5 2.2 6 5.5M19.5 10c-3 .5-5 2.2-6 5.5" />
+      <path d="M6 18.5c4 1.4 8 1.4 12 0" />
+    </Glyph>
+  );
+}
+
+export function LeafIcon({ size = 15, className = '' }) {
+  return (
+    <Glyph size={size} className={className} label="Relaxed">
+      <path d="M19 5c-9 0-13.5 4-13.5 10.5V19" />
+      <path d="M19 5c.5 8-3 12.5-9.5 12.5-1.5 0-2.9-.4-4-1.2" />
+    </Glyph>
+  );
+}
+
+export function ScaleIcon({ size = 15, className = '' }) {
+  return (
+    <Glyph size={size} className={className} label="Balanced">
+      <path d="M12 5v13.5M7.5 18.5h9" />
+      <path d="M6 7.5h12" />
+      <path d="m6 7.5-2 5a2.6 2.6 0 0 0 4 0l-2-5ZM18 7.5l-2 5a2.6 2.6 0 0 0 4 0l-2-5Z" />
+    </Glyph>
+  );
+}
+
+export function BoltIcon({ size = 15, className = '' }) {
+  return (
+    <Glyph size={size} className={className} label="Packed">
+      <path d="M13 3.5 5.5 13.5H11L10 20.5l7.5-10H12l1-7Z" />
+    </Glyph>
+  );
+}
+
+export function BanIcon({ size = 15, className = '' }) {
+  return (
+    <Glyph size={size} className={className} label="Not needed">
+      <circle cx="12" cy="12" r="8" />
+      <path d="M6.3 6.3 17.7 17.7" />
+    </Glyph>
   );
 }

@@ -1,6 +1,10 @@
 import React, { useState } from 'react';
 import { flagUrl, isoToFlag } from '../lib/tripGuide.js';
 import { fmtMonths } from '../lib/dates.js';
+import {
+  TrainIcon, BusIcon, CarIcon, AlertIcon,
+  TicketIcon, RoadIcon, CheckIcon, BanIcon,
+} from './Icons.jsx';
 
 const BUDGET_LABELS = {
   low: 'Budget-friendly',
@@ -27,6 +31,16 @@ function Flag({ iso2, className = 'cintel-flag' }) {
 function LinkOut({ href, children }) {
   if (!href) return <span>{children}</span>;
   return <a href={href} target="_blank" rel="noreferrer" className="cintel-link">{children} ↗</a>;
+}
+
+/** One icon-led line inside an intel row. `tone` = 'warn' tints the icon rust. */
+function IntelLine({ icon: Icon, tone, children }) {
+  return (
+    <div className={`cintel-line${tone ? ` cintel-line-${tone}` : ''}`}>
+      <Icon className="cintel-ico" />
+      <span>{children}</span>
+    </div>
+  );
 }
 
 /**
@@ -71,12 +85,16 @@ export function CountryIntel({ rec, country, defaultOpen = false, compact = fals
 
           <div className="cintel-row">
             <span className="cintel-label">Getting around</span>
-            <div>
+            <div className="cintel-lines">
               {rec.rail?.operator && (
-                <p>🚆 <LinkOut href={rec.rail.url}>{rec.rail.operator}</LinkOut>{rec.rail.note ? ` - ${rec.rail.note}` : ''}</p>
+                <IntelLine icon={TrainIcon}>
+                  <LinkOut href={rec.rail.url}>{rec.rail.operator}</LinkOut>{rec.rail.note ? ` — ${rec.rail.note}` : ''}
+                </IntelLine>
               )}
               {rec.bus?.operators?.length > 0 && (
-                <p>🚌 <LinkOut href={rec.bus.url}>{rec.bus.operators.join(', ')}</LinkOut>{rec.bus.note ? ` - ${rec.bus.note}` : ''}</p>
+                <IntelLine icon={BusIcon}>
+                  <LinkOut href={rec.bus.url}>{rec.bus.operators.join(', ')}</LinkOut>{rec.bus.note ? ` — ${rec.bus.note}` : ''}
+                </IntelLine>
               )}
             </div>
           </div>
@@ -84,13 +102,13 @@ export function CountryIntel({ rec, country, defaultOpen = false, compact = fals
           {rec.driving && (
             <div className="cintel-row">
               <span className="cintel-label">By car</span>
-              <div>
-                {rec.driving.side === 'left' && <p className="cintel-warn">⚠️ Drives on the LEFT.</p>}
-                {rec.driving.vignette && <p className="cintel-warn">🎫 {rec.driving.vignette}</p>}
-                {rec.driving.tolls && <p>🛣️ {rec.driving.tolls}</p>}
-                {(rec.driving.warnings || []).map((w, i) => <p key={i} className="cintel-warn">⚠️ {w}</p>)}
-                {rec.driving.car_recommended_for && <p>👍 Worth a car for: {rec.driving.car_recommended_for}</p>}
-                {rec.driving.car_not_needed_in && <p>👎 Skip the car in: {rec.driving.car_not_needed_in}</p>}
+              <div className="cintel-lines">
+                {rec.driving.side === 'left' && <IntelLine icon={AlertIcon} tone="warn">Drives on the left.</IntelLine>}
+                {rec.driving.vignette && <IntelLine icon={TicketIcon} tone="warn">{rec.driving.vignette}</IntelLine>}
+                {rec.driving.tolls && <IntelLine icon={RoadIcon}>{rec.driving.tolls}</IntelLine>}
+                {(rec.driving.warnings || []).map((w, i) => <IntelLine key={i} icon={AlertIcon} tone="warn">{w}</IntelLine>)}
+                {rec.driving.car_recommended_for && <IntelLine icon={CheckIcon}>Worth a car for {rec.driving.car_recommended_for}</IntelLine>}
+                {rec.driving.car_not_needed_in && <IntelLine icon={BanIcon}>Skip the car in {rec.driving.car_not_needed_in}</IntelLine>}
               </div>
             </div>
           )}

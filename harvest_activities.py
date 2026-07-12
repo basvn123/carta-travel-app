@@ -26,8 +26,23 @@ All tiers emit the SAME shape so the app never cares which ran:
     dest.activities = {
       "source": "opentripmap" | "wikivoyage" | "wikipedia_geosearch",
       "items": [ {"name", "kind", "link"?}, ... up to TOP_N ],
-      "items_full": [ {"name", "kind", "lat", "lon"}, ... up to TOP_N_FULL ]  # OpenTripMap only
+      "items_full": [ {"name", "kind", "lat", "lon", "rate",     # OpenTripMap only
+                       "active"?, "img"?, "desc"?, "wiki"?}, ... up to TOP_N_FULL + actives ]
     }
+
+items_full extras (schema v12):
+  rate      OpenTripMap popularity, normalized to 0..3 (3 = must-see tier,
+            2 = very interesting, 1 = notable). The app's must-see gradation
+            is driven by this, with `heritage` as the tie-break.
+  heritage  True when the place is on a cultural-heritage register (OTM's
+            "h"-rates / numeric 5..7).
+  active  True for "get active" POIs (sport / amusements / natural kinds) fetched
+          in a second, lower-rate query - beaches, trails, water parks, climbing...
+  img     Wikipedia lead-image thumbnail URL, when the POI name resolves to an
+          article whose coordinates sit within WIKI_MATCH_KM of the POI (guards
+          against same-name places in other cities).
+  desc    The article's one-line description, same validation.
+  wiki    The article URL.
 
 `items_full` is the Day Planner's data: more POIs, each with coordinates for
 map pins. Only OpenTripMap returns per-item coordinates, so it's absent
@@ -39,10 +54,11 @@ Phases (idempotent, resumable - mirrors harvest_images.py):
   harvest()  -> cache/activities.json (one entry per dest id)
   patch()    -> writes dest.activities into both app_data.json files
 
-Run:  python harvest_activities.py            # harvest then patch
+Run:  python harvest_activities.py            # harvest, enrich, then patch
       python harvest_activities.py harvest    # harvest only
+      python harvest_activities.py enrich     # Wikipedia cards for cached POIs, then patch
       python harvest_activities.py patch      # patch only (from cache)
-      python harvest_activities.py refresh    # drop cache, re-fetch all, patch
+      python harvest_activities.py refresh    # drop cache, re-fetch all, enrich, patch
 
 ASCII-clean (no emoji/dingbats) per project convention.
 """
@@ -72,10 +88,14 @@ PRIMARY = TARGETS[0]
 
 TOP_N = 8
 TOP_N_FULL = 40            # items_full cap (OpenTripMap only) - Day Planner's pool
+TOP_N_ACTIVE = 12          # extra "get active" POIs appended to items_full
 MIN_WIKIVOYAGE_SEE = 4     # below this, fall back to city-centre geosearch
 GEO_RADIUS_M = 5000
 OTM_RADIUS_M = 9000
 DELAY_S = 1.1              # Wikimedia rate-limits hard; stay well under ~1 req/s
+OTM_DELAY_S = 0.15         # OpenTripMap free tier allows ~10 req/s
+WIKI_MATCH_KM = 30         # max POI<->article distance for name-match enrichment
+ACTIVE_KINDS = "sport,amusements,natural"  # OTM kind groups for "get active"
 BACKOFFS = [20, 45, 90]   # 429 cool-downs
 HEADERS = {"User-Agent": "CartaTravelApp/1.0 (portfolio project)",
            "Accept": "application/json"}
@@ -85,7 +105,20 @@ WIKI_API = "https://en.wikipedia.org/w/api.php"
 VOY_API = "https://en.wikivoyage.org/w/api.php"
 
 # A friendly single-word category from any free text (name/kinds/description).
+# Active/experience needles come first so e.g. "dive_centers" doesn't fall
+# through to a generic label.
 KIND_LABEL = [
+    ("sauna", "Sauna & baths"), ("baths", "Thermal baths"),
+    ("pool", "Swimming"), ("ferris", "Ferris wheel"),
+    ("water_park", "Water park"),
+    ("amusement", "Theme park"), ("theme_park", "Theme park"),
+    ("climb", "Climbing"), ("dive", "Diving"),
+    ("snorkel", "Snorkeling"), ("surf", "Surfing"), ("kayak", "Kayaking"),
+    ("raft", "Rafting"), ("skiing", "Skiing"), ("winter_sport", "Skiing"),
+    ("golf", "Golf"), ("horse", "Horse riding"), ("cycling", "Cycling"),
+    ("hiking", "Hiking"), ("trail", "Trail"), ("geyser", "Geyser"),
+    ("canyon", "Canyon"), ("dune", "Dunes"), ("nature_reserve", "Nature reserve"),
+    ("mountain_peak", "Peak"), ("glacier", "Glacier"),
     ("cathedral", "Cathedral"), ("basilica", "Basilica"), ("church", "Church"),
     ("monaster", "Monastery"), ("convent", "Convent"), ("chapel", "Chapel"),
     ("mosque", "Mosque"), ("synagogue", "Synagogue"), ("castle", "Castle"),
@@ -148,12 +181,21 @@ def get_json(url, base_headers=HEADERS):
     return None
 
 
-def label_from(text):
+def label_from(text, default="Sight"):
     s = (text or "").lower()
     for needle, label in KIND_LABEL:
         if needle in s:
             return label
-    return "Sight"
+    return default
+
+
+def haversine_km(lat1, lon1, lat2, lon2):
+    import math
+    r = 6371.0
+    p1, p2 = math.radians(lat1), math.radians(lat2)
+    dp, dl = math.radians(lat2 - lat1), math.radians(lon2 - lon1)
+    a = math.sin(dp / 2) ** 2 + math.cos(p1) * math.cos(p2) * math.sin(dl / 2) ** 2
+    return 2 * r * math.asin(math.sqrt(a))
 
 
 def clean_city(city):
@@ -185,38 +227,82 @@ def city_center(city, country):
 # ---------------------------------------------------------------------------
 # Tier 1: OpenTripMap
 # ---------------------------------------------------------------------------
-def otm_items(lat, lon, key):
+def _rate_parts(r):
+    """Normalize OTM's importance rate. The radius API returns 1..3 for plain
+    popularity and 5..7 for the heritage variants (5=1h, 6=2h, 7=3h). String
+    forms ('3h') from other endpoints are handled too. Returns (base, heritage)
+    with base 0..3 - base is the popularity, heritage a boolean flag."""
+    s = str(r.get("rate", "0"))
+    v = int("".join(c for c in s if c.isdigit()) or 0)
+    heritage = "h" in s or v >= 4
+    base = v - 4 if v >= 4 else v
+    return max(0, min(3, base)), heritage
+
+
+# 'sport' includes venues that aren't traveller activities; skip them.
+ACTIVE_DROP_KINDS = ("stadiums", "fitness", "gyms")
+
+
+def otm_radius(lat, lon, key, kinds, rate_min, limit):
     url = OTM_BASE + "?" + urllib.parse.urlencode({
         "radius": OTM_RADIUS_M, "lon": lon, "lat": lat,
-        "kinds": "interesting_places", "rate": "2", "format": "json",
-        "limit": 60, "apikey": key,
+        "kinds": kinds, "rate": rate_min, "format": "json",
+        "limit": limit, "apikey": key,
     })
     data = get_json(url)
-    if not isinstance(data, list):
-        return None
+    return data if isinstance(data, list) else None
 
-    def rate_val(r):
-        s = str(r.get("rate", "0"))
-        return int("".join(c for c in s if c.isdigit()) or 0) + (0.5 if "h" in s else 0)
 
-    # One request already returns up to 60 ranked results (fetched above) - keep
-    # the top TOP_N_FULL of them, with coordinates, as items_full (Day Planner's
-    # pool); items stays the existing name/kind-only top TOP_N for DetailPanel.
-    seen, full_items = set(), []
-    for p in sorted(data, key=rate_val, reverse=True):
+def _otm_pick(data, cap, seen, extra=None, default_kind="Sight", drop_kinds=()):
+    """Ranked, de-duplicated {name, kind, lat, lon, rate, heritage?, ...} list.
+    Order: popularity base desc, heritage flag as tie-break (3h > 3 > 2h > 2),
+    then the API's own order (distance from the centre - a sane final tie-break
+    for a walking day)."""
+    def sort_key(p):
+        base, her = _rate_parts(p)
+        return (base, her)
+    out = []
+    for p in sorted(data or [], key=sort_key, reverse=True):
         name = (p.get("name") or "").strip()
+        kinds = p.get("kinds") or ""
         if not name or name.lower() in seen:
+            continue
+        if any(k in kinds for k in drop_kinds):
             continue
         seen.add(name.lower())
         point = p.get("point") or {}
-        full_items.append({
-            "name": name, "kind": label_from(p.get("kinds")),
+        base, heritage = _rate_parts(p)
+        it = {
+            "name": name, "kind": label_from(kinds, default_kind),
             "lat": point.get("lat"), "lon": point.get("lon"),
-        })
-        if len(full_items) >= TOP_N_FULL:
+            "rate": base,
+        }
+        if heritage:
+            it["heritage"] = True
+        if extra:
+            it.update(extra)
+        out.append(it)
+        if len(out) >= cap:
             break
+    return out
+
+
+def otm_items(lat, lon, key):
+    """Sights (interesting_places, rate>=2) + a second, lower-bar query for
+    "get active" POIs (sport / amusements / natural). Both keep the importance
+    rate - it drives the app's must-see gradation."""
+    sights_raw = otm_radius(lat, lon, key, "interesting_places", "2", 60)
+    if sights_raw is None:
+        return None
+    seen = set()
+    full_items = _otm_pick(sights_raw, TOP_N_FULL, seen)
     if not full_items:
         return None
+    time.sleep(OTM_DELAY_S)
+    active_raw = otm_radius(lat, lon, key, ACTIVE_KINDS, "1", 40)
+    full_items += _otm_pick(active_raw, TOP_N_ACTIVE, seen,
+                            extra={"active": True}, default_kind="Activity",
+                            drop_kinds=ACTIVE_DROP_KINDS)
     items = [{"name": i["name"], "kind": i["kind"]} for i in full_items[:TOP_N]]
     return {"source": "opentripmap", "items": items, "items_full": full_items}
 
@@ -417,6 +503,93 @@ def batch_coords(titles):
     return out
 
 
+def batch_wiki_cards(titles):
+    """{requested title -> {img?, desc?, wiki?, lat?, lon?}} for many Wikipedia
+    articles in one 50-per-request query (lead thumbnail + one-line description
+    + coordinates + canonical URL)."""
+    out = {}
+    for chunk in _chunks(list(titles), 50):
+        d = get_json(WIKI_API + "?" + urllib.parse.urlencode({
+            "action": "query", "format": "json", "formatversion": "2",
+            "prop": "pageimages|description|coordinates|info", "inprop": "url",
+            "piprop": "thumbnail", "pithumbsize": "400",
+            "redirects": "1", "titles": "|".join(chunk),
+        }))
+        q = (d or {}).get("query", {})
+        rmap = _resolve_map(chunk, q.get("normalized"), q.get("redirects"))
+        final = {}
+        for p in q.get("pages", []):
+            if p.get("missing"):
+                continue
+            card = {}
+            thumb = (p.get("thumbnail") or {}).get("source")
+            if thumb:
+                card["img"] = thumb
+            if p.get("description"):
+                card["desc"] = p["description"]
+            if p.get("fullurl"):
+                card["wiki"] = p["fullurl"]
+            c = (p.get("coordinates") or [{}])[0]
+            if c.get("lat") is not None:
+                card["lat"], card["lon"] = c["lat"], c["lon"]
+            if card:
+                final[p.get("title")] = card
+        for t in chunk:
+            card = final.get(rmap.get(t, t))
+            if card:
+                out[t] = card
+        time.sleep(DELAY_S)
+    return out
+
+
+def enrich(cache):
+    """Attach Wikipedia img/desc/wiki to every items_full POI whose name
+    resolves to an article with coordinates within WIKI_MATCH_KM of the POI
+    (rejects same-name places elsewhere and coordinate-less disambiguation
+    pages). Skips items already enriched, so a resumed run only fetches the
+    remainder. Saves the cache periodically."""
+    # name -> [item dicts] that still want a card (an item shows up once per
+    # occurrence; the same title can legitimately serve several cities). Only
+    # the POIs the UI leads with get a card: the top ENRICH_TOP sights plus
+    # every "get active" item - halves the Wikipedia traffic and the payload.
+    ENRICH_TOP = 24
+    wanted = {}
+    for rec in cache.values():
+        if not rec:
+            continue
+        sights_seen = 0
+        for it in rec.get("items_full") or []:
+            is_active = bool(it.get("active"))
+            if not is_active:
+                sights_seen += 1
+                if sights_seen > ENRICH_TOP:
+                    continue
+            if it.get("wiki") or it.get("lat") is None:
+                continue
+            wanted.setdefault(it["name"], []).append(it)
+    names = sorted(wanted)
+    print(f"Enriching {len(names)} unique POI names from Wikipedia "
+          f"(~{(len(names) + 49) // 50} batched calls)...")
+    hits = 0
+    for gi, group in enumerate(_chunks(names, 50 * 20), 1):  # checkpoint block
+        cards = batch_wiki_cards(group)
+        for name, card in cards.items():
+            if card.get("lat") is None:
+                continue  # no coords -> can't validate the match
+            for it in wanted[name]:
+                if haversine_km(it["lat"], it["lon"], card["lat"], card["lon"]) > WIKI_MATCH_KM:
+                    continue
+                for k in ("img", "desc", "wiki"):
+                    if card.get(k):
+                        it[k] = card[k]
+                hits += 1
+        CACHE.write_text(json.dumps(cache, ensure_ascii=False, indent=1), encoding="utf-8")
+        done = min(gi * 50 * 20, len(names))
+        print(f"  enriched block {gi}: {done}/{len(names)} names, {hits} matches so far")
+    print(f"Enrich done: {hits} POI occurrences got a Wikipedia card.")
+    return cache
+
+
 def _voy_from_wikitext(w):
     sees, dos = [], []
     for t in _templates(w or ""):
@@ -504,18 +677,27 @@ def harvest(dests, resume=True):
         if not todo:
             return cache
         return harvest_batched(dests, todo)
-    # --- keyed (OpenTripMap) path: per-destination ---
-    print("Activities tier-1:",
-          "OpenTripMap (key found)" if key else
-          "OFF (no OPENTRIPMAP_KEY) - using Wikivoyage + city-centre geosearch")
+    # --- keyed (OpenTripMap) path ---
+    print("Activities tier-1: OpenTripMap (key found)")
     cache = {}
     if resume and CACHE.exists():
         cache = load_json(CACHE)
     todo = [(i, d) for i, d in dests.items()
             if d.get("lat") is not None and (i not in cache or not cache[i])]
     print(f"Harvesting activities: {len(todo)} to fetch, {len(cache)} cached")
+    if not todo:
+        return cache
+    # City-centre coords for every city in one batched pass (~1 call per 50
+    # cities) instead of two Wikipedia calls per destination.
+    cities = {did: clean_city(d.get("city")) for did, d in todo}
+    centers = batch_coords(sorted(set(cities.values())))
     for n, (did, d) in enumerate(todo, 1):
-        res = activities_for(d, key)
+        clat, clon = centers.get(cities[did]) or (d.get("lat"), d.get("lon"))
+        res = otm_items(clat, clon, key) if clat is not None else None
+        if not res:
+            # OTM had nothing here - fall back to the keyless tiers (Wikivoyage
+            # See/Do, then city-centre geosearch), same as a no-key run.
+            res = activities_for(d, None)
         cache[did] = res
         cnt = len(res["items"]) if res else 0
         print(f"  [{n}/{len(todo)}] {d.get('city')}, {d.get('country')}: "
@@ -523,7 +705,7 @@ def harvest(dests, resume=True):
         if n % 25 == 0:
             CACHE.parent.mkdir(exist_ok=True)
             CACHE.write_text(json.dumps(cache, ensure_ascii=False, indent=1), encoding="utf-8")
-        time.sleep(DELAY_S)
+        time.sleep(OTM_DELAY_S)
     CACHE.parent.mkdir(exist_ok=True)
     CACHE.write_text(json.dumps(cache, ensure_ascii=False, indent=1), encoding="utf-8")
     hits = sum(1 for v in cache.values() if v)
@@ -553,14 +735,18 @@ def patch(cache=None):
                 d["activities"] = None
         data.setdefault("meta", {})["activities_model"] = {
             "providers": srcs, "top_n": TOP_N, "top_n_full": TOP_N_FULL,
+            "top_n_active": TOP_N_ACTIVE,
             "note": "OpenTripMap when OPENTRIPMAP_KEY set; "
                     "else Wikivoyage See/Do + city-centre Wikipedia geosearch. "
                     "items_full (with coordinates, for Day Planner map pins) is "
-                    "OpenTripMap-only.",
+                    "OpenTripMap-only and carries: rate 0..3 (3=must-see tier) "
+                    "+ heritage flag, active=true for sport/amusements/natural "
+                    "POIs, and img/desc/wiki from coordinate-validated "
+                    "Wikipedia name matches.",
             "coverage": f"{n_act}/{len(dests)}",
             "items_full_coverage": f"{n_full}/{len(dests)}",
         }
-        data["meta"]["schema_version"] = max(11, data["meta"].get("schema_version", 0))
+        data["meta"]["schema_version"] = max(12, data["meta"].get("schema_version", 0))
         path.write_text(json.dumps(data, indent=1, ensure_ascii=False), encoding="utf-8")
         print(f"  {path.name}: {n_act}/{len(dests)} have activities (sources: {srcs}); "
               f"{n_full}/{len(dests)} have items_full (map pins)")
@@ -575,7 +761,11 @@ def main():
     cache = None
     if cmd in ("all", "harvest", "refresh"):
         cache = harvest(dests, resume=(cmd != "refresh"))
-    if cmd in ("all", "patch", "refresh"):
+    if cmd in ("all", "enrich", "refresh"):
+        if cache is None:
+            cache = load_json(CACHE) if CACHE.exists() else {}
+        cache = enrich(cache)
+    if cmd in ("all", "patch", "enrich", "refresh"):
         patch(cache)
 
 

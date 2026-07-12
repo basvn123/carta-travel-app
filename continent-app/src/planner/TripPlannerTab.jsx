@@ -10,6 +10,7 @@ import { eur } from '../lib/format.js';
 import { fmtDate } from '../lib/dates.js';
 import { useTripPlanner } from '../hooks/useTripPlanner.js';
 import { useCountryInsights } from '../hooks/useCountryInsights.js';
+import { SparkIcon, TrainIcon, BusIcon, CarIcon, BulbIcon } from '../components/Icons.jsx';
 
 const SHEET_H_KEY = 'carta.tripSheetH.v1';
 
@@ -53,9 +54,13 @@ function Stepper({ value, onChange, min = 0, max = 60, suffix }) {
 }
 
 const MODE_META = {
-  train: { icon: '🚆', label: 'Train' },
-  bus: { icon: '🚌', label: 'Bus' },
-  car: { icon: '🚗', label: 'Car' },
+  train: { Icon: TrainIcon, label: 'Train' },
+  bus: { Icon: BusIcon, label: 'Bus' },
+  car: { Icon: CarIcon, label: 'Car' },
+};
+const ModeIcon = ({ mode, size = 13 }) => {
+  const I = MODE_META[mode]?.Icon;
+  return I ? <I size={size} className="trip-mode-icon" /> : null;
 };
 
 /** One overland leg between two stops: the chosen mode inline, expandable to
@@ -68,7 +73,7 @@ function LegRow({ leg, onMode }) {
   return (
     <div className="trip-leg trip-leg-rich">
       <button className="trip-leg-main" onClick={() => setOpen(!open)} aria-expanded={open}>
-        ↳ {MODE_META[leg.mode].icon} {MODE_META[leg.mode].label}, ~{leg.road_km} km, est. {eur(chosen.eur_pp)}/person, ~{chosen.hours}h
+        ↳ <ModeIcon mode={leg.mode} /> {MODE_META[leg.mode].label}, ~{leg.road_km} km, est. {eur(chosen.eur_pp)}/person, ~{chosen.hours}h
         {leg.long_haul ? ' · long leg - consider flying' : ''}
         <span className="trip-leg-caret">{open ? '−' : '+'}</span>
       </button>
@@ -82,7 +87,7 @@ function LegRow({ leg, onMode }) {
                 onClick={() => onMode(m)}
                 title={leg.recommended === m ? "Carta's pick for this leg" : undefined}
               >
-                <span>{MODE_META[m].icon} {MODE_META[m].label}{leg.recommended === m ? ' ✦' : ''}</span>
+                <span><ModeIcon mode={m} /> {MODE_META[m].label}{leg.recommended === m && <span className="guide-reco-mark"><SparkIcon size={10} /></span>}</span>
                 <b>{eur(o.eur_pp)}/p</b>
                 <small>~{o.hours}h</small>
               </button>
@@ -294,12 +299,12 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth }) {
       {isNarrow && !sheetOpen && !tp.planned && (
         <div className="trip-launcher" onClick={(e) => e.stopPropagation()}>
           <div className="trip-launcher-card">
-            <div className="trip-launcher-spark">✦</div>
+            <div className="trip-launcher-spark"><SparkIcon size={20} /></div>
             <h2 className="trip-launcher-title">Plan your trip</h2>
             <p className="trip-launcher-sub">Map a multi-stop European route, price the flights and stays, and let Carta line it all up.</p>
             <button className="trip-launcher-primary" onClick={() => setSheetOpen(true)}>Plan your trip</button>
             <button className="trip-launcher-guide" onClick={() => setWizardOpen(true)}>
-              <span className="trip-guide-spark">✦</span>
+              <span className="trip-guide-spark"><SparkIcon size={15} /></span>
               <span className="trip-guide-cta-text">
                 <b>Let Carta guide you</b>
                 <small>Answer a few questions and we'll build it for you</small>
@@ -363,7 +368,7 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth }) {
           ) : (
           <>
           <button className="trip-guide-cta" onClick={() => setWizardOpen(true)}>
-            <span className="trip-guide-spark">✦</span>
+            <span className="trip-guide-spark"><SparkIcon size={15} /></span>
             <span className="trip-guide-cta-text">
               <b>Let Carta guide you</b>
               <small>Answer a few questions and we'll build the trip for you</small>
@@ -640,7 +645,7 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth }) {
                 ))}
               </div>
             )}
-            <div className="trip-plan-prompt-spark">✦</div>
+            <div className="trip-plan-prompt-spark"><SparkIcon size={20} /></div>
             <h3>Do you want Carta to plan this trip?</h3>
             <p>We'll arrange your stops into an efficient route and spread your chosen highlights across each day. You can always edit it afterwards.</p>
             <div className="trip-plan-prompt-actions">
