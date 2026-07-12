@@ -409,14 +409,20 @@ export function FilterBar({
             </div>
           </div>
 
+          {/* Kept inline with the filters it clears (rather than pinned to the
+              bar's outer edge) so it doesn't crowd the account button, which
+              sits in the same top-right corner one row up. */}
+          {anyFilterActive && (
+            <>
+              <div className="filter-divider" aria-hidden="true" />
+              <button className="reset-filters-btn" onClick={resetAll}>
+                Reset
+              </button>
+            </>
+          )}
+
         </div>
       </div>
-
-      {anyFilterActive && (
-        <button className="reset-filters-btn" onClick={resetAll}>
-          Reset
-        </button>
-      )}
     </div>
   );
 }

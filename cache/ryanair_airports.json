@@ -1,0 +1,1794 @@
+{
+"AAR": {
+"name": "Aarhus",
+"city": "Aarhus",
+"country": "Denmark",
+"lat": 56.3,
+"lon": 10.619,
+"base": false
+},
+"ABZ": {
+"name": "Aberdeen",
+"city": "Aberdeen",
+"country": "United Kingdom",
+"lat": 57.2019,
+"lon": -2.19778,
+"base": false
+},
+"ACE": {
+"name": "Lanzarote",
+"city": "Lanzarote",
+"country": "Spain",
+"lat": 28.9455,
+"lon": -13.6052,
+"base": true
+},
+"AGA": {
+"name": "Agadir",
+"city": "Agadir",
+"country": "Morocco",
+"lat": 30.325,
+"lon": -9.41307,
+"base": true
+},
+"AGP": {
+"name": "Malaga",
+"city": "Malaga",
+"country": "Spain",
+"lat": 36.6749,
+"lon": -4.49911,
+"base": true
+},
+"AHO": {
+"name": "Alghero",
+"city": "Alghero",
+"country": "Italy",
+"lat": 40.6321,
+"lon": 8.29077,
+"base": true
+},
+"ALC": {
+"name": "Alicante",
+"city": "Alicante",
+"country": "Spain",
+"lat": 38.2822,
+"lon": -0.558156,
+"base": true
+},
+"AMM": {
+"name": "Amman Jordan",
+"city": "Amman",
+"country": "Jordan",
+"lat": 31.5659,
+"lon": 35.5558,
+"base": false
+},
+"AMS": {
+"name": "Amsterdam",
+"city": "Amsterdam",
+"country": "Netherlands",
+"lat": 52.3105,
+"lon": 4.76827,
+"base": false
+},
+"AOI": {
+"name": "Ancona",
+"city": "Ancona",
+"country": "Italy",
+"lat": 43.6163,
+"lon": 13.3623,
+"base": false
+},
+"ARN": {
+"name": "Stockholm Arlanda",
+"city": "Stockholm",
+"country": "Sweden",
+"lat": 59.6498,
+"lon": 17.9239,
+"base": true
+},
+"ATH": {
+"name": "Athens",
+"city": "Athens",
+"country": "Greece",
+"lat": 37.9364,
+"lon": 23.9445,
+"base": true
+},
+"BBU": {
+"name": "Bucharest Baneasa ",
+"city": "Bucharest",
+"country": "Romania",
+"lat": 44.502164658,
+"lon": 26.102166258,
+"base": false
+},
+"BCN": {
+"name": "Barcelona",
+"city": "Barcelona",
+"country": "Spain",
+"lat": 41.2971,
+"lon": 2.07846,
+"base": true
+},
+"BDS": {
+"name": "Brindisi",
+"city": "Brindisi",
+"country": "Italy",
+"lat": 40.6576,
+"lon": 17.947,
+"base": true
+},
+"BEM": {
+"name": "Beni Mellal",
+"city": "Beni Mellal",
+"country": "Morocco",
+"lat": 32.2022,
+"lon": 6.2139,
+"base": false
+},
+"BER": {
+"name": "Berlin Brandenburg",
+"city": "Berlin",
+"country": "Germany",
+"lat": 52.3667,
+"lon": 13.5033,
+"base": true
+},
+"BFS": {
+"name": "Belfast International",
+"city": "Belfast",
+"country": "United Kingdom",
+"lat": 54.6575,
+"lon": -6.2158,
+"base": true
+},
+"BGY": {
+"name": "Milan Bergamo",
+"city": "Bergamo",
+"country": "Italy",
+"lat": 45.6739,
+"lon": 9.70417,
+"base": true
+},
+"BHX": {
+"name": "Birmingham",
+"city": "Birmingham",
+"country": "United Kingdom",
+"lat": 52.4539,
+"lon": -1.74803,
+"base": true
+},
+"BIQ": {
+"name": "Biarritz",
+"city": "Biarritz",
+"country": "France",
+"lat": 43.4684,
+"lon": -1.52332,
+"base": false
+},
+"BJV": {
+"name": "Bodrum",
+"city": "Bodrum",
+"country": "Turkey",
+"lat": 37.2506,
+"lon": 27.6642,
+"base": false
+},
+"BLQ": {
+"name": "Bologna",
+"city": "Bologna",
+"country": "Italy",
+"lat": 44.5354,
+"lon": 11.2887,
+"base": true
+},
+"BNX": {
+"name": "Banja Luka",
+"city": "Banja Luka",
+"country": "Bosnia & Herzegovina",
+"lat": 44.4621,
+"lon": 17.1133,
+"base": false
+},
+"BOH": {
+"name": "Bournemouth",
+"city": "Bournemouth",
+"country": "United Kingdom",
+"lat": 50.78,
+"lon": -1.8425,
+"base": true
+},
+"BOJ": {
+"name": "Burgas",
+"city": "Burgas",
+"country": "Bulgaria",
+"lat": 42.301,
+"lon": 27.2812,
+"base": true
+},
+"BRE": {
+"name": "Bremen",
+"city": "Bremen",
+"country": "Germany",
+"lat": 53.0475,
+"lon": 8.78667,
+"base": true
+},
+"BRI": {
+"name": "Bari",
+"city": "Bari",
+"country": "Italy",
+"lat": 41.1389,
+"lon": 16.7606,
+"base": true
+},
+"BRQ": {
+"name": "Brno",
+"city": "Brno",
+"country": "Czech Republic",
+"lat": 49.1513,
+"lon": 16.6944,
+"base": false
+},
+"BRS": {
+"name": "Bristol",
+"city": "Bristol",
+"country": "United Kingdom",
+"lat": 51.3827,
+"lon": -2.71909,
+"base": true
+},
+"BRU": {
+"name": "Brussels",
+"city": "Brussels",
+"country": "Belgium",
+"lat": 50.9014,
+"lon": 4.48444,
+"base": true
+},
+"BSL": {
+"name": "Basel",
+"city": "Basel",
+"country": "Switzerland",
+"lat": 47.5896,
+"lon": 7.52991,
+"base": false
+},
+"BTS": {
+"name": "Bratislava",
+"city": "Bratislava",
+"country": "Slovakia",
+"lat": 48.1702,
+"lon": 17.2127,
+"base": true
+},
+"BUD": {
+"name": "Budapest",
+"city": "Budapest",
+"country": "Hungary",
+"lat": 47.4369,
+"lon": 19.2556,
+"base": true
+},
+"BVA": {
+"name": "Paris Beauvais",
+"city": "Paris",
+"country": "France",
+"lat": 49.4544,
+"lon": 2.11278,
+"base": false
+},
+"BVE": {
+"name": "Brive",
+"city": "Brive",
+"country": "France",
+"lat": 45.0223,
+"lon": 1.2908,
+"base": false
+},
+"BZG": {
+"name": "Bydgoszcz",
+"city": "Bydgoszcz",
+"country": "Poland",
+"lat": 53.0968,
+"lon": 17.9777,
+"base": false
+},
+"BZR": {
+"name": "Beziers Cap d'Agde",
+"city": "Beziers",
+"country": "France",
+"lat": 43.3235,
+"lon": 3.3539,
+"base": false
+},
+"CAG": {
+"name": "Cagliari",
+"city": "Cagliari",
+"country": "Italy",
+"lat": 39.2515,
+"lon": 9.05428,
+"base": true
+},
+"CCF": {
+"name": "Carcassonne",
+"city": "Carcassonne",
+"country": "France",
+"lat": 43.216,
+"lon": 2.30632,
+"base": false
+},
+"CDT": {
+"name": "Castellon (Valencia)",
+"city": "Castellon",
+"country": "Spain",
+"lat": 39.999,
+"lon": 0.026,
+"base": false
+},
+"CFU": {
+"name": "Corfu",
+"city": "Corfu",
+"country": "Greece",
+"lat": 39.6019,
+"lon": 19.9117,
+"base": true
+},
+"CGN": {
+"name": "Cologne",
+"city": "Cologne",
+"country": "Germany",
+"lat": 50.8659,
+"lon": 7.14274,
+"base": true
+},
+"CHQ": {
+"name": "Chania",
+"city": "Chania",
+"country": "Greece",
+"lat": 35.5317,
+"lon": 24.1497,
+"base": true
+},
+"CIA": {
+"name": "Rome Ciampino",
+"city": "Rome",
+"country": "Italy",
+"lat": 41.7994,
+"lon": 12.5949,
+"base": true
+},
+"CLJ": {
+"name": "Cluj",
+"city": "Cluj",
+"country": "Romania",
+"lat": 46.785,
+"lon": 23.6861,
+"base": false
+},
+"CPH": {
+"name": "Copenhagen",
+"city": "Copenhagen",
+"country": "Denmark",
+"lat": 55.6181,
+"lon": 12.6561,
+"base": false
+},
+"CRL": {
+"name": "Brussels Charleroi",
+"city": "Charleroi",
+"country": "Belgium",
+"lat": 50.4592,
+"lon": 4.45382,
+"base": true
+},
+"CRV": {
+"name": "Crotone",
+"city": "Crotone",
+"country": "Italy",
+"lat": 38.99722,
+"lon": 17.08028,
+"base": false
+},
+"CTA": {
+"name": "Catania",
+"city": "Catania",
+"country": "Italy",
+"lat": 37.4668,
+"lon": 15.0664,
+"base": true
+},
+"CUF": {
+"name": "Cuneo",
+"city": "Cuneo",
+"country": "Italy",
+"lat": 44.547,
+"lon": 7.62322,
+"base": false
+},
+"CWL": {
+"name": "Cardiff",
+"city": "Cardiff",
+"country": "United Kingdom",
+"lat": 51.3967,
+"lon": -3.34333,
+"base": false
+},
+"DBV": {
+"name": "Dubrovnik",
+"city": "Dubrovnik",
+"country": "Croatia",
+"lat": 42.5614,
+"lon": 18.2683,
+"base": false
+},
+"DLE": {
+"name": "Dole",
+"city": "Dole",
+"country": "France",
+"lat": 47.039,
+"lon": 5.42725,
+"base": false
+},
+"DLM": {
+"name": "Dalaman",
+"city": "Dalaman",
+"country": "Turkey",
+"lat": 36.7147,
+"lon": 28.7928,
+"base": false
+},
+"DUB": {
+"name": "Dublin",
+"city": "Dublin",
+"country": "Ireland",
+"lat": 53.4213,
+"lon": -6.27007,
+"base": true
+},
+"EDI": {
+"name": "Edinburgh",
+"city": "Edinburgh",
+"country": "United Kingdom",
+"lat": 55.95,
+"lon": -3.3725,
+"base": true
+},
+"EFL": {
+"name": "Kefalonia",
+"city": "Kefalonia",
+"country": "Greece",
+"lat": 38.1201,
+"lon": 20.5005,
+"base": false
+},
+"EGC": {
+"name": "Bergerac",
+"city": "Bergerac",
+"country": "France",
+"lat": 44.8253,
+"lon": 0.518611,
+"base": false
+},
+"EIN": {
+"name": "Eindhoven",
+"city": "Eindhoven",
+"country": "Netherlands",
+"lat": 51.4501,
+"lon": 5.37453,
+"base": true
+},
+"EMA": {
+"name": "East Midlands",
+"city": "East Midlands",
+"country": "United Kingdom",
+"lat": 52.8311,
+"lon": -1.32806,
+"base": true
+},
+"ERH": {
+"name": "Errachidia",
+"city": "Errachidia",
+"country": "Morocco",
+"lat": 31.5555,
+"lon": 4.2528,
+"base": false
+},
+"ESU": {
+"name": "Essaouira",
+"city": "Essaouira",
+"country": "Morocco",
+"lat": 31.3918,
+"lon": -9.6757,
+"base": false
+},
+"EXT": {
+"name": "Exeter",
+"city": "Exeter",
+"country": "United Kingdom",
+"lat": 50.7344,
+"lon": -3.4139,
+"base": false
+},
+"FAO": {
+"name": "Faro",
+"city": "Faro",
+"country": "Portugal",
+"lat": 37.0144,
+"lon": -7.96591,
+"base": true
+},
+"FCO": {
+"name": "Rome Fiumicino",
+"city": "Rome",
+"country": "Italy",
+"lat": 41.8045,
+"lon": 12.2508,
+"base": true
+},
+"FDH": {
+"name": "Friedrichshafen",
+"city": "Friedrichshafen",
+"country": "Germany",
+"lat": 47.6714,
+"lon": 9.5114,
+"base": false
+},
+"FEZ": {
+"name": "Fez",
+"city": "Fez",
+"country": "Morocco",
+"lat": 33.9273,
+"lon": -4.97796,
+"base": true
+},
+"FKB": {
+"name": "Karlsruhe / Baden-Baden",
+"city": "Karlsruhe",
+"country": "Germany",
+"lat": 48.7794,
+"lon": 8.0805,
+"base": true
+},
+"FMM": {
+"name": "Memmingen",
+"city": "Memmingen",
+"country": "Germany",
+"lat": 47.9888,
+"lon": 10.2395,
+"base": true
+},
+"FMO": {
+"name": "Münster",
+"city": "Münster",
+"country": "Germany",
+"lat": 52.1346,
+"lon": 7.68483,
+"base": false
+},
+"FNC": {
+"name": "Madeira Funchal",
+"city": "Funchal",
+"country": "Portugal",
+"lat": 32.6942,
+"lon": -16.7781,
+"base": false
+},
+"FNI": {
+"name": "Nimes",
+"city": "Nimes",
+"country": "France",
+"lat": 43.7574,
+"lon": 4.41635,
+"base": false
+},
+"FRL": {
+"name": "Bologna Forlí-Ravenna",
+"city": "Bologna",
+"country": "Italy",
+"lat": 44.1948,
+"lon": 12.0701,
+"base": false
+},
+"FSC": {
+"name": "Figari-Corsica",
+"city": "Figari",
+"country": "France",
+"lat": 41.5006,
+"lon": 9.09778,
+"base": false
+},
+"FUE": {
+"name": "Fuerteventura",
+"city": "Fuerteventura",
+"country": "Spain",
+"lat": 28.4527,
+"lon": -13.8638,
+"base": false
+},
+"GDN": {
+"name": "Gdansk",
+"city": "Gdansk",
+"country": "Poland",
+"lat": 54.3776,
+"lon": 18.4662,
+"base": true
+},
+"GLA": {
+"name": "Glasgow",
+"city": "Glasgow",
+"country": "United Kingdom",
+"lat": 55.87194,
+"lon": -4.43306,
+"base": true
+},
+"GNB": {
+"name": "Grenoble",
+"city": "Grenoble",
+"country": "France",
+"lat": 45.3629,
+"lon": 5.32937,
+"base": false
+},
+"GOA": {
+"name": "Genoa",
+"city": "Genoa",
+"country": "Italy",
+"lat": 44.4133,
+"lon": 8.8375,
+"base": false
+},
+"GOT": {
+"name": "Göteborg Landvetter",
+"city": "Gothenburg",
+"country": "Sweden",
+"lat": 57.6741,
+"lon": 12.2925,
+"base": true
+},
+"GRO": {
+"name": "Barcelona Girona",
+"city": "Girona",
+"country": "Spain",
+"lat": 41.901,
+"lon": 2.76055,
+"base": true
+},
+"HAM": {
+"name": "Hamburg",
+"city": "Hamburg",
+"country": "Germany",
+"lat": 53.63028,
+"lon": 9.99111,
+"base": true
+},
+"HEL": {
+"name": "Helsinki",
+"city": "Helsinki",
+"country": "Finland",
+"lat": 60.3172,
+"lon": 24.9633,
+"base": false
+},
+"HER": {
+"name": "Heraklion Crete",
+"city": "Heraklion",
+"country": "Greece",
+"lat": 35.3397,
+"lon": 25.1803,
+"base": false
+},
+"HHN": {
+"name": "Frankfurt Hahn",
+"city": "Frankfurt",
+"country": "Germany",
+"lat": 49.9487,
+"lon": 7.26389,
+"base": true
+},
+"IAS": {
+"name": "Iasi",
+"city": "IASI",
+"country": "Romania",
+"lat": 47.17889,
+"lon": 27.617,
+"base": false
+},
+"IBZ": {
+"name": "Ibiza",
+"city": "Ibiza",
+"country": "Spain",
+"lat": 38.8729,
+"lon": 1.37312,
+"base": true
+},
+"INI": {
+"name": "Nis",
+"city": "Nis",
+"country": "Serbia",
+"lat": 43.3372,
+"lon": 21.8536,
+"base": false
+},
+"JMK": {
+"name": "Mykonos",
+"city": "Mykonos",
+"country": "Greece",
+"lat": 37.4351,
+"lon": 25.3481,
+"base": false
+},
+"JSI": {
+"name": "Skiathos",
+"city": "Skiathos",
+"country": "Greece",
+"lat": 39.1775,
+"lon": 23.5036,
+"base": false
+},
+"JTR": {
+"name": "Santorini",
+"city": "Santorini",
+"country": "Greece",
+"lat": 36.3992,
+"lon": 25.4793,
+"base": false
+},
+"KGS": {
+"name": "Kos",
+"city": "Kos",
+"country": "Greece",
+"lat": 36.7933,
+"lon": 27.0917,
+"base": false
+},
+"KIR": {
+"name": "Kerry",
+"city": "Kerry",
+"country": "Ireland",
+"lat": 52.1809,
+"lon": -9.52378,
+"base": false
+},
+"KLU": {
+"name": "Klagenfurt",
+"city": "Klagenfurt",
+"country": "Austria",
+"lat": 46.6425,
+"lon": 14.3377,
+"base": false
+},
+"KLX": {
+"name": "Kalamata",
+"city": "Kalamata",
+"country": "Greece",
+"lat": 37.0683,
+"lon": 22.0255,
+"base": false
+},
+"KRK": {
+"name": "Krakow",
+"city": "Krakow",
+"country": "Poland",
+"lat": 50.0777,
+"lon": 19.7848,
+"base": true
+},
+"KSC": {
+"name": "Kosice",
+"city": "Kosice",
+"country": "Slovakia",
+"lat": 48.6631,
+"lon": 21.2411,
+"base": false
+},
+"KTW": {
+"name": "Katowice",
+"city": "Katowice",
+"country": "Poland",
+"lat": 50.4743,
+"lon": 19.08,
+"base": true
+},
+"KUN": {
+"name": "Kaunas",
+"city": "Kaunas",
+"country": "Lithuania",
+"lat": 54.9639,
+"lon": 24.0848,
+"base": true
+},
+"LBA": {
+"name": "Leeds Bradford",
+"city": "Leeds",
+"country": "United Kingdom",
+"lat": 53.8659,
+"lon": -1.66057,
+"base": true
+},
+"LBC": {
+"name": "Lubeck",
+"city": "Hamburg",
+"country": "Germany",
+"lat": 53.8054,
+"lon": 10.7192,
+"base": false
+},
+"LCA": {
+"name": "Larnaca",
+"city": "Larnaca",
+"country": "Cyprus",
+"lat": 34.8751,
+"lon": 33.6249,
+"base": false
+},
+"LCJ": {
+"name": "Lodz",
+"city": "Lodz",
+"country": "Poland",
+"lat": 51.7219,
+"lon": 19.3981,
+"base": false
+},
+"LDE": {
+"name": "Lourdes–Pyrenees",
+"city": "Lourdes",
+"country": "France",
+"lat": 43.1787,
+"lon": -0.006439,
+"base": false
+},
+"LDY": {
+"name": "Derry",
+"city": "Derry",
+"country": "United Kingdom",
+"lat": 55.0428,
+"lon": -7.16111,
+"base": false
+},
+"LEI": {
+"name": "Almeria",
+"city": "Almeria",
+"country": "Spain",
+"lat": 36.8439,
+"lon": -2.3701,
+"base": false
+},
+"LGW": {
+"name": "London Gatwick",
+"city": "London",
+"country": "United Kingdom",
+"lat": 51.1481,
+"lon": -0.190278,
+"base": false
+},
+"LIG": {
+"name": "Limoges",
+"city": "Limoges",
+"country": "France",
+"lat": 45.8628,
+"lon": 1.17944,
+"base": false
+},
+"LIL": {
+"name": "Lille",
+"city": "Lille",
+"country": "France",
+"lat": 50.5619,
+"lon": 3.08944,
+"base": false
+},
+"LIS": {
+"name": "Lisbon",
+"city": "Lisbon",
+"country": "Portugal",
+"lat": 38.7813,
+"lon": -9.13592,
+"base": true
+},
+"LNZ": {
+"name": "Linz",
+"city": "Linz",
+"country": "Austria",
+"lat": 48.2332,
+"lon": 14.1875,
+"base": false
+},
+"LPA": {
+"name": "Gran Canaria",
+"city": "Gran Canaria",
+"country": "Spain",
+"lat": 27.9319,
+"lon": -15.3866,
+"base": true
+},
+"LPL": {
+"name": "Liverpool",
+"city": "Liverpool",
+"country": "United Kingdom",
+"lat": 53.3336,
+"lon": -2.84972,
+"base": true
+},
+"LRH": {
+"name": "La Rochelle",
+"city": "La Rochelle",
+"country": "France",
+"lat": 46.1792,
+"lon": -1.19528,
+"base": false
+},
+"LTN": {
+"name": "London Luton",
+"city": "London",
+"country": "United Kingdom",
+"lat": 51.8747,
+"lon": -0.368333,
+"base": true
+},
+"LUX": {
+"name": "Luxembourg",
+"city": "Luxembourg",
+"country": "Luxembourg",
+"lat": 49.6233,
+"lon": 6.2044,
+"base": false
+},
+"LUZ": {
+"name": "Lublin",
+"city": "Lublin",
+"country": "Poland",
+"lat": 51.2319,
+"lon": 22.6903,
+"base": false
+},
+"LXS": {
+"name": "Lemnos",
+"city": "Lemnos",
+"country": "Greece",
+"lat": 39.5501,
+"lon": 25.1411,
+"base": false
+},
+"MAD": {
+"name": "Madrid",
+"city": "Madrid",
+"country": "Spain",
+"lat": 40.4936,
+"lon": -3.56676,
+"base": true
+},
+"MAH": {
+"name": "Menorca",
+"city": "Menorca",
+"country": "Spain",
+"lat": 39.8626,
+"lon": 4.21865,
+"base": false
+},
+"MAN": {
+"name": "Manchester",
+"city": "Manchester",
+"country": "United Kingdom",
+"lat": 53.3537,
+"lon": -2.27495,
+"base": true
+},
+"MLA": {
+"name": "Malta",
+"city": "Malta",
+"country": "Malta",
+"lat": 35.8575,
+"lon": 14.4775,
+"base": true
+},
+"MME": {
+"name": "Teesside",
+"city": "Newcastle",
+"country": "United Kingdom",
+"lat": 54.5092,
+"lon": -1.42941,
+"base": false
+},
+"MMX": {
+"name": "Malmo",
+"city": "Malmo",
+"country": "Sweden",
+"lat": 55.5363,
+"lon": 13.3762,
+"base": false
+},
+"MRS": {
+"name": "Marseille",
+"city": "Marseille",
+"country": "France",
+"lat": 43.4393,
+"lon": 5.22142,
+"base": true
+},
+"MXP": {
+"name": "Milan Malpensa",
+"city": "Milan",
+"country": "Italy",
+"lat": 45.63,
+"lon": 8.7231,
+"base": true
+},
+"NAP": {
+"name": "Naples",
+"city": "Naples",
+"country": "Italy",
+"lat": 40.5009,
+"lon": 14.1455,
+"base": true
+},
+"NCE": {
+"name": "Nice",
+"city": "Nice",
+"country": "France",
+"lat": 43.6584,
+"lon": 7.21587,
+"base": false
+},
+"NCL": {
+"name": "Newcastle",
+"city": "Newcastle",
+"country": "United Kingdom",
+"lat": 55.0375,
+"lon": -1.69167,
+"base": false
+},
+"NDR": {
+"name": "Nador",
+"city": "Nador",
+"country": "Morocco",
+"lat": 34.9888,
+"lon": -3.02821,
+"base": false
+},
+"NOC": {
+"name": "Knock",
+"city": "Knock",
+"country": "Ireland",
+"lat": 53.9103,
+"lon": -8.81849,
+"base": false
+},
+"NQY": {
+"name": "Newquay Cornwall",
+"city": "Newquay",
+"country": "United Kingdom",
+"lat": 50.4406,
+"lon": -4.99541,
+"base": false
+},
+"NRN": {
+"name": "Dusseldorf Weeze",
+"city": "Dusseldorf",
+"country": "Germany",
+"lat": 51.6024,
+"lon": 6.14217,
+"base": true
+},
+"NTE": {
+"name": "Nantes",
+"city": "Nantes",
+"country": "France",
+"lat": 47.1532,
+"lon": -1.61073,
+"base": false
+},
+"NUE": {
+"name": "Nuremberg",
+"city": "Nuremberg",
+"country": "Germany",
+"lat": 49.4987,
+"lon": 11.0669,
+"base": true
+},
+"NWI": {
+"name": "Norwich",
+"city": "Norwich",
+"country": "United Kingdom",
+"lat": 52.672163978,
+"lon": 1.276332228,
+"base": false
+},
+"OLB": {
+"name": "Olbia",
+"city": "Olbia",
+"country": "Italy",
+"lat": 40.8987,
+"lon": 9.51763,
+"base": false
+},
+"OPO": {
+"name": "Porto",
+"city": "Porto",
+"country": "Portugal",
+"lat": 41.2481,
+"lon": -8.68139,
+"base": true
+},
+"ORK": {
+"name": "Cork",
+"city": "Cork",
+"country": "Ireland",
+"lat": 51.8413,
+"lon": -8.49111,
+"base": true
+},
+"OSI": {
+"name": "Osijek",
+"city": "Osijek",
+"country": "Croatia",
+"lat": 45.4627,
+"lon": 18.8102,
+"base": false
+},
+"OSL": {
+"name": "Oslo",
+"city": "Oslo",
+"country": "Norway",
+"lat": 60.2028,
+"lon": 11.0839,
+"base": false
+},
+"OSR": {
+"name": "Ostrava",
+"city": "Ostrava",
+"country": "Czech Republic",
+"lat": 49.6963,
+"lon": 18.1111,
+"base": false
+},
+"OTP": {
+"name": "Bucharest Otopeni",
+"city": "Bucharest",
+"country": "Romania",
+"lat": 44.5722,
+"lon": 26.1022,
+"base": true
+},
+"OUD": {
+"name": "Oujda",
+"city": "Oujda",
+"country": "Morocco",
+"lat": 34.7872,
+"lon": -1.92399,
+"base": false
+},
+"OZZ": {
+"name": "Ouarzazate",
+"city": "Ouarzazate",
+"country": "Morocco",
+"lat": 30.9392,
+"lon": -6.9094,
+"base": false
+},
+"PAD": {
+"name": "Paderborn",
+"city": "Paderborn",
+"country": "Germany",
+"lat": 51.4305,
+"lon": 8.4515,
+"base": false
+},
+"PDV": {
+"name": "Plovdiv",
+"city": "Plovdiv",
+"country": "Bulgaria",
+"lat": 42.0678,
+"lon": 24.8508,
+"base": false
+},
+"PED": {
+"name": "Pardubice",
+"city": "Pardubice",
+"country": "Czech Republic",
+"lat": 50.0048,
+"lon": 15.4419,
+"base": false
+},
+"PEG": {
+"name": "Perugia",
+"city": "Perugia",
+"country": "Italy",
+"lat": 43.0959,
+"lon": 12.5132,
+"base": false
+},
+"PFO": {
+"name": "Paphos",
+"city": "Paphos",
+"country": "Cyprus",
+"lat": 34.718,
+"lon": 32.4857,
+"base": true
+},
+"PGF": {
+"name": "Perpignan",
+"city": "Perpignan",
+"country": "France",
+"lat": 42.7404,
+"lon": 2.87067,
+"base": false
+},
+"PIK": {
+"name": "Glasgow Prestwick",
+"city": "Glasgow",
+"country": "United Kingdom",
+"lat": 55.5094,
+"lon": -4.58667,
+"base": true
+},
+"PIS": {
+"name": "Poitiers",
+"city": "Poitiers",
+"country": "France",
+"lat": 46.5877,
+"lon": 0.306666,
+"base": false
+},
+"PLQ": {
+"name": "Palanga",
+"city": "Palanga",
+"country": "Lithuania",
+"lat": 55.9733,
+"lon": 21.0939,
+"base": false
+},
+"PMF": {
+"name": "Parma",
+"city": "Parma",
+"country": "Italy",
+"lat": 44.8245,
+"lon": 10.2964,
+"base": false
+},
+"PMI": {
+"name": "Palma de Mallorca",
+"city": "Palma",
+"country": "Spain",
+"lat": 39.5517,
+"lon": 2.73881,
+"base": true
+},
+"PMO": {
+"name": "Palermo",
+"city": "Palermo",
+"country": "Italy",
+"lat": 38.176,
+"lon": 13.091,
+"base": true
+},
+"POZ": {
+"name": "Poznan",
+"city": "Poznan",
+"country": "Poland",
+"lat": 52.421,
+"lon": 16.8263,
+"base": true
+},
+"PRG": {
+"name": "Prague",
+"city": "Prague",
+"country": "Czech Republic",
+"lat": 50.1008,
+"lon": 14.26,
+"base": true
+},
+"PSA": {
+"name": "Pisa",
+"city": "Pisa",
+"country": "Italy",
+"lat": 43.6839,
+"lon": 10.3927,
+"base": true
+},
+"PSR": {
+"name": "Pescara",
+"city": "Pescara",
+"country": "Italy",
+"lat": 42.4317,
+"lon": 14.1811,
+"base": true
+},
+"PUY": {
+"name": "Pula",
+"city": "Pula",
+"country": "Croatia",
+"lat": 44.8935,
+"lon": 13.9222,
+"base": false
+},
+"PVK": {
+"name": "Preveza - Aktion",
+"city": "Preveza",
+"country": "Greece",
+"lat": 38.9256,
+"lon": 20.7653,
+"base": false
+},
+"QSR": {
+"name": "Salerno Costa d'Amalfi",
+"city": "Salerno ",
+"country": "Italy",
+"lat": 40.405,
+"lon": 14.4534,
+"base": false
+},
+"RAK": {
+"name": "Marrakesh",
+"city": "Marrakesh",
+"country": "Morocco",
+"lat": 31.6069,
+"lon": -8.0363,
+"base": true
+},
+"RBA": {
+"name": "Rabat",
+"city": "Rabat",
+"country": "Morocco",
+"lat": 34.0515,
+"lon": -6.75152,
+"base": false
+},
+"RDZ": {
+"name": "Rodez",
+"city": "Rodez",
+"country": "France",
+"lat": 44.4079,
+"lon": 2.48267,
+"base": false
+},
+"REG": {
+"name": "Reggio Calabria",
+"city": "Reggio Calabria",
+"country": "Italy",
+"lat": 38.0641,
+"lon": 15.3943,
+"base": false
+},
+"REU": {
+"name": "Barcelona Reus",
+"city": "Reus",
+"country": "Spain",
+"lat": 41.1474,
+"lon": 1.16717,
+"base": false
+},
+"RHO": {
+"name": "Rhodes",
+"city": "Rhodes",
+"country": "Greece",
+"lat": 36.4054,
+"lon": 28.0862,
+"base": true
+},
+"RIX": {
+"name": "Riga",
+"city": "Riga",
+"country": "Latvia",
+"lat": 56.9236,
+"lon": 23.9711,
+"base": true
+},
+"RJK": {
+"name": "Rijeka",
+"city": "Rijeka",
+"country": "Croatia",
+"lat": 45.2169,
+"lon": 14.5703,
+"base": false
+},
+"RMI": {
+"name": "Rimini",
+"city": "Rimini",
+"country": "Italy",
+"lat": 44.0203,
+"lon": 12.6117,
+"base": false
+},
+"RMU": {
+"name": "Murcia International",
+"city": "Murcia",
+"country": "Spain",
+"lat": 37.7903,
+"lon": -1.1418,
+"base": false
+},
+"RVN": {
+"name": "Lapland Rovaniemi",
+"city": "Rovaniemi",
+"country": "Finland",
+"lat": 66.5631,
+"lon": 25.8301,
+"base": false
+},
+"RZE": {
+"name": "Rzeszow",
+"city": "Rzeszow",
+"country": "Poland",
+"lat": 50.11,
+"lon": 22.019,
+"base": false
+},
+"SCN": {
+"name": "Saarbrücken",
+"city": "Saarbrücken",
+"country": "Germany",
+"lat": 49.2161,
+"lon": 7.1103,
+"base": false
+},
+"SCQ": {
+"name": "Santiago",
+"city": "Santiago",
+"country": "Spain",
+"lat": 42.8963,
+"lon": -8.41514,
+"base": true
+},
+"SDR": {
+"name": "Santander",
+"city": "Santander",
+"country": "Spain",
+"lat": 43.4271,
+"lon": -3.82001,
+"base": false
+},
+"SFT": {
+"name": "Skelleftea",
+"city": "Skelleftea",
+"country": "Sweden",
+"lat": 64.6248,
+"lon": 21.0769,
+"base": false
+},
+"SJJ": {
+"name": "Sarajevo",
+"city": "Sarajevo",
+"country": "Bosnia & Herzegovina",
+"lat": 43.5123,
+"lon": 18.2447,
+"base": false
+},
+"SKG": {
+"name": "Thessaloniki",
+"city": "Thessaloniki",
+"country": "Greece",
+"lat": 40.5197,
+"lon": 22.9709,
+"base": true
+},
+"SNN": {
+"name": "Shannon",
+"city": "Shannon",
+"country": "Ireland",
+"lat": 52.702,
+"lon": -8.92482,
+"base": true
+},
+"SOF": {
+"name": "Sofia",
+"city": "Sofia",
+"country": "Bulgaria",
+"lat": 42.42,
+"lon": 23.2,
+"base": true
+},
+"SPU": {
+"name": "Split",
+"city": "Split",
+"country": "Croatia",
+"lat": 43.5389,
+"lon": 16.2981,
+"base": false
+},
+"STN": {
+"name": "London Stansted",
+"city": "London",
+"country": "United Kingdom",
+"lat": 51.885,
+"lon": 0.235,
+"base": true
+},
+"SUF": {
+"name": "Lamezia",
+"city": "Lamezia",
+"country": "Italy",
+"lat": 38.9054,
+"lon": 16.2423,
+"base": true
+},
+"SVQ": {
+"name": "Seville",
+"city": "Seville",
+"country": "Spain",
+"lat": 37.418,
+"lon": -5.89311,
+"base": true
+},
+"SZG": {
+"name": "Salzburg",
+"city": "Salzburg",
+"country": "Austria",
+"lat": 47.7933,
+"lon": 13.0043,
+"base": false
+},
+"SZY": {
+"name": "Olsztyn - Mazury",
+"city": "Olsztyn",
+"country": "Poland",
+"lat": 53.4819,
+"lon": 20.9378,
+"base": false
+},
+"SZZ": {
+"name": "Szczecin",
+"city": "Szczecin",
+"country": "Poland",
+"lat": 53.5847,
+"lon": 14.9022,
+"base": false
+},
+"TFS": {
+"name": "Tenerife South",
+"city": "Tenerife",
+"country": "Spain",
+"lat": 28.0445,
+"lon": -16.5725,
+"base": true
+},
+"TGD": {
+"name": "Podgorica",
+"city": "Podgorica",
+"country": "Montenegro",
+"lat": 42.3594,
+"lon": 19.2519,
+"base": false
+},
+"TIA": {
+"name": "Tirana",
+"city": "Tirana",
+"country": "Albania",
+"lat": 41.4147,
+"lon": 19.7206,
+"base": false
+},
+"TLL": {
+"name": "Tallinn",
+"city": "Tallinn",
+"country": "Estonia",
+"lat": 59.4133,
+"lon": 24.8328,
+"base": false
+},
+"TLS": {
+"name": "Toulouse",
+"city": "Toulouse",
+"country": "France",
+"lat": 43.3616,
+"lon": 1.2638,
+"base": true
+},
+"TNG": {
+"name": "Tangier",
+"city": "Tangier",
+"country": "Morocco",
+"lat": 35.7269,
+"lon": -5.91689,
+"base": false
+},
+"TPS": {
+"name": "Trapani-Marsala",
+"city": "Trapani",
+"country": "Italy",
+"lat": 37.9114,
+"lon": 12.488,
+"base": true
+},
+"TRF": {
+"name": "Oslo Torp",
+"city": "Sandefjord",
+"country": "Norway",
+"lat": 59.1867,
+"lon": 10.2586,
+"base": false
+},
+"TRN": {
+"name": "Turin",
+"city": "Turin",
+"country": "Italy",
+"lat": 45.2008,
+"lon": 7.64963,
+"base": true
+},
+"TRS": {
+"name": "Trieste",
+"city": "Trieste",
+"country": "Italy",
+"lat": 45.8275,
+"lon": 13.4722,
+"base": false
+},
+"TSF": {
+"name": "Venice Treviso",
+"city": "Venice",
+"country": "Italy",
+"lat": 45.6484,
+"lon": 12.1944,
+"base": false
+},
+"TTU": {
+"name": "Tétouan",
+"city": "Tétouan",
+"country": "Morocco",
+"lat": 35.5944,
+"lon": -5.32,
+"base": false
+},
+"TUF": {
+"name": "Tours Loire Valley",
+"city": "Tours",
+"country": "France",
+"lat": 47.4322,
+"lon": 0.727606,
+"base": false
+},
+"VAR": {
+"name": "Varna",
+"city": "Varna",
+"country": "Bulgaria",
+"lat": 43.13,
+"lon": 27.55,
+"base": false
+},
+"VCE": {
+"name": "Venice M.Polo",
+"city": "Venice",
+"country": "Italy",
+"lat": 45.5053,
+"lon": 12.3519,
+"base": false
+},
+"VIE": {
+"name": "Vienna",
+"city": "Vienna",
+"country": "Austria",
+"lat": 48.123,
+"lon": 16.2221,
+"base": true
+},
+"VIL": {
+"name": "Dakhla ",
+"city": "Dakhla",
+"country": "Morocco",
+"lat": 23.7182999,
+"lon": -15.9320002,
+"base": false
+},
+"VIT": {
+"name": "Vitoria (Basque Country)",
+"city": "Vitoria-Gasteiz",
+"country": "Spain",
+"lat": 42.8828,
+"lon": -2.7244,
+"base": false
+},
+"VLC": {
+"name": "Valencia",
+"city": "Valencia",
+"country": "Spain",
+"lat": 39.4893,
+"lon": -0.481625,
+"base": true
+},
+"VNO": {
+"name": "Vilnius",
+"city": "Vilnius",
+"country": "Lithuania",
+"lat": 54.6341,
+"lon": 25.2858,
+"base": true
+},
+"VOL": {
+"name": "Volos",
+"city": "Volos",
+"country": "Greece",
+"lat": 39.2196,
+"lon": 22.7943,
+"base": false
+},
+"VRN": {
+"name": "Verona",
+"city": "Verona",
+"country": "Italy",
+"lat": 45.3957,
+"lon": 10.8885,
+"base": false
+},
+"VST": {
+"name": "Stockholm Västerås",
+"city": "Stockholm",
+"country": "Sweden",
+"lat": 59.5894,
+"lon": 16.6336,
+"base": false
+},
+"VXO": {
+"name": "Växjö Småland",
+"city": "Växjö",
+"country": "Sweden",
+"lat": 56.9291,
+"lon": 14.728,
+"base": false
+},
+"WAW": {
+"name": "Warsaw Chopin",
+"city": "Warsaw",
+"country": "Poland",
+"lat": 52.1657,
+"lon": 20.9671,
+"base": true
+},
+"WMI": {
+"name": "Warsaw Modlin",
+"city": "Warsaw",
+"country": "Poland",
+"lat": 52.4511,
+"lon": 20.6517,
+"base": true
+},
+"WRO": {
+"name": "Wroclaw",
+"city": "Wroclaw",
+"country": "Poland",
+"lat": 51.1027,
+"lon": 16.8858,
+"base": true
+},
+"XCR": {
+"name": "Paris Vatry",
+"city": "Paris",
+"country": "France",
+"lat": 48.7761,
+"lon": 4.18449,
+"base": false
+},
+"ZAD": {
+"name": "Zadar",
+"city": "Zadar",
+"country": "Croatia",
+"lat": 44.1083,
+"lon": 15.3467,
+"base": true
+},
+"ZAG": {
+"name": "Zagreb",
+"city": "Zagreb",
+"country": "Croatia",
+"lat": 45.7431,
+"lon": 16.0689,
+"base": true
+},
+"ZAZ": {
+"name": "Zaragoza",
+"city": "Zaragoza",
+"country": "Spain",
+"lat": 41.6662,
+"lon": -1.04155,
+"base": false
+},
+"ZTH": {
+"name": "Zakynthos",
+"city": "Zakynthos",
+"country": "Greece",
+"lat": 37.7509,
+"lon": 20.8843,
+"base": false
+}
+}

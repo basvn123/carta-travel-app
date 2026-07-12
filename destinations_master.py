@@ -916,6 +916,12 @@ NON_AIRPORT_GEMS = [
     ("mljet",        "Mljet",                  "Croatia",        "HR", 42.7333, 17.5333,
      [("DBV", 90, 30)],
      "island,national-park,remote,quiet", "Forested Adriatic island, saltwater lakes, off-the-beaten-track"),
+    ("motovun",      "Motovun",                "Croatia",        "HR", 45.3325, 13.8322,
+     [("PUY", 55, 15), ("TRS", 80, 20)],
+     "village,medieval,valley,fairytale,wine,quiet", "Istria's iconic hilltop village above a vineyard-striped valley, truffle country"),
+    ("groznjan",     "Grožnjan",               "Croatia",        "HR", 45.3796, 13.7186,
+     [("PUY", 70, 18), ("TRS", 65, 18)],
+     "village,medieval,valley,fairytale,art,quiet", "Tiny stone hill-town of artists' studios and panoramic Istrian views"),
 
     # ─── Greece (extras) ───
     ("monemvasia",   "Monemvasia",             "Greece",         "GR", 36.6878, 23.0537,

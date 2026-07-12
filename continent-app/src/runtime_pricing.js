@@ -228,6 +228,42 @@ export function pickFareForDates(dest, departDate, returnDate, originPref = 'aut
   return best;
 }
 
+/** Contiguous windows of dates (union of outbound_fare across this
+ *  destination's routes) that actually have a fare - so when the selected
+ *  dates come back with nothing, the UI can tell the traveller which periods
+ *  do have data instead of just saying no. Ryanair skips days even on routes
+ *  it otherwise serves, so fare dates within `mergeGapDays` of each other are
+ *  merged into one window rather than reported as separate gaps; a longer
+ *  gap (an off-season pause) starts a new window.
+ *  Returns [{ start, end }], sorted by start date, or [] if there's no fare
+ *  data for this destination at all.
+ */
+export function fareCoverageRanges(dest, mergeGapDays = 10) {
+  const routes = dest?.routes || {};
+  const dates = new Set();
+  for (const r of Object.values(routes)) {
+    for (const d of Object.keys(r.outbound_fare || {})) dates.add(d);
+  }
+  const sorted = [...dates].sort();
+  if (sorted.length === 0) return [];
+
+  const ranges = [];
+  let start = sorted[0], end = sorted[0];
+  for (let i = 1; i < sorted.length; i++) {
+    const d = sorted[i];
+    const gapDays = (new Date(d + 'T00:00:00Z') - new Date(end + 'T00:00:00Z')) / 86400000;
+    if (gapDays <= mergeGapDays) {
+      end = d;
+    } else {
+      ranges.push({ start, end });
+      start = d;
+      end = d;
+    }
+  }
+  ranges.push({ start, end });
+  return ranges;
+}
+
 /** Per-person on-the-ground spend for the trip, broken down by activity.
  *  Returns null if the destination has no cost basket.
  */

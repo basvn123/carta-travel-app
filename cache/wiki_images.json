@@ -3113,5 +3113,19 @@
   "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/75/L%C3%BCbeck_-_panoramio.jpg/960px-L%C3%BCbeck_-_panoramio.jpg",
   "original": "https://upload.wikimedia.org/wikipedia/commons/7/75/L%C3%BCbeck_-_panoramio.jpg",
   "source": "wikipedia"
+ },
+ "gem:motovun": {
+  "title": "Motovun",
+  "url": "https://en.wikipedia.org/wiki/Motovun",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d7/Aerial_view_to_Motovun.jpg/960px-Aerial_view_to_Motovun.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/d/d7/Aerial_view_to_Motovun.jpg",
+  "source": "wikipedia"
+ },
+ "gem:groznjan": {
+  "title": "Grožnjan",
+  "url": "https://en.wikipedia.org/wiki/Gro%C5%BEnjan",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c6/Gro%C5%BEnjan_aerial_view.jpg/960px-Gro%C5%BEnjan_aerial_view.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/c/c6/Gro%C5%BEnjan_aerial_view.jpg",
+  "source": "wikipedia"
  }
 }

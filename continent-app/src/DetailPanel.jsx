@@ -1,12 +1,14 @@
 import React from 'react';
 import {
   composeTrip, buildFlightLinks, buildAccommodationLink, buildCarRentalLink,
-  buildGuideLink, nearbyTrips,
+  buildGuideLink, nearbyTrips, fareCoverageRanges,
 } from './runtime_pricing.js';
 import { GemRating, GemIcon } from './GemRating.jsx';
 import { kindsForDest } from './trip_kinds.js';
 import { BestTimePanel } from './BestTimePanel.jsx';
 import { eur, PRICE_SOURCE_LABELS, ACCOM_SOURCE_LABELS } from './format.js';
+
+const fmtDate = (iso) => new Date(iso + 'T00:00:00Z').toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
 
 // Small underlined text-button, used for the outbound links under each cost
 // line (Airbnb, KAYAK) and the "Adjust lifestyle" action.
@@ -129,6 +131,21 @@ export function DetailPanel({ destination, departDate, returnDate, choices, setC
               ? 'No Ryanair route to this destination.'
               : 'No fare data for these dates.'}
           </p>
+          {!destination.no_ryanair_route && (() => {
+            const ranges = fareCoverageRanges(destination);
+            if (ranges.length === 0) return null;
+            return (
+              <p className="panel-fare-coverage">
+                Fare data is available {ranges.length === 1 ? 'for' : 'in these periods'}:{' '}
+                {ranges.map((r, i) => (
+                  <span key={r.start}>
+                    {i > 0 && ', '}
+                    {fmtDate(r.start)} – {fmtDate(r.end)}
+                  </span>
+                ))}
+              </p>
+            );
+          })()}
         </div>
       ) : (
         <>

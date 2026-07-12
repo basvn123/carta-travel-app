@@ -3,6 +3,8 @@ import { Dropdown } from './Dropdown.jsx';
 import { DateField } from './DateField.jsx';
 import { GemIcon } from './GemRating.jsx';
 import { TripMap } from './TripMap.jsx';
+import { TripItinerary } from './TripItinerary.jsx';
+import { GuidedTripWizard } from './GuidedTripWizard.jsx';
 import { eur } from './format.js';
 import { useTripPlanner } from './hooks/useTripPlanner.js';
 
@@ -99,8 +101,23 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth }) {
   const [sheetH, setSheetH] = useState(340);
   const [selectedStop, setSelectedStop] = useState(null);
   const [dragIdx, setDragIdx] = useState(null);
+  const [wizardOpen, setWizardOpen] = useState(false);
+  const [planPromptOpen, setPlanPromptOpen] = useState(false);
   const sheetRef = useRef(null);
   const stopRefs = useRef({});
+
+  const handleWizardComplete = (selection) => {
+    tp.loadFromWizard(selection);
+    setWizardOpen(false);
+    setSelectedStop(null);
+    setPlanPromptOpen(true);
+  };
+
+  const handleCartaPlan = (optimize) => {
+    if (optimize) tp.optimizeRoute();
+    tp.setPlanned(true);
+    setPlanPromptOpen(false);
+  };
 
   useEffect(() => {
     if (user) tp.loadSavedPlans(user.id);
@@ -182,6 +199,26 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth }) {
       <div className="trip-sheet" ref={sheetRef} onClick={(e) => e.stopPropagation()}>
         <div className="trip-sheet-grip" />
         <div className="trip-sheet-scroll">
+          {tp.planned ? (
+            <TripItinerary
+              dayPlan={tp.dayPlan}
+              stopDetails={tp.stopDetails}
+              grandTotal={tp.grandTotal}
+              groupSize={tp.groupSize}
+              flight={tp.flight}
+              activeStopIndex={selectedStop}
+              onSelectStop={setSelectedStop}
+            />
+          ) : (
+          <>
+          <button className="trip-guide-cta" onClick={() => setWizardOpen(true)}>
+            <span className="trip-guide-spark">✦</span>
+            <span className="trip-guide-cta-text">
+              <b>Let Carta guide you</b>
+              <small>Answer a few questions and we'll build the trip for you</small>
+            </span>
+            <span className="trip-guide-arrow">→</span>
+          </button>
 
           {/* Step 1 — travel window */}
           <div className="trip-block">
@@ -353,8 +390,36 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth }) {
               </div>
             </div>
           )}
+          </>
+          )}
         </div>
       </div>
+
+      {/* Planned itinerary: quick way back to editing */}
+      {tp.planned && (
+        <div className="trip-planned-actions" onClick={(e) => e.stopPropagation()}>
+          <button className="trip-edit-btn" onClick={() => tp.setPlanned(false)}>Edit</button>
+          <button className="trip-plan-again-btn" onClick={() => tp.optimizeRoute()} title="Re-run Carta's routing">↻ Replan</button>
+        </div>
+      )}
+
+      {wizardOpen && (
+        <GuidedTripWizard data={data} onCancel={() => setWizardOpen(false)} onComplete={handleWizardComplete} />
+      )}
+
+      {planPromptOpen && (
+        <div className="trip-plan-prompt-overlay" onClick={() => handleCartaPlan(false)}>
+          <div className="trip-plan-prompt" onClick={(e) => e.stopPropagation()}>
+            <div className="trip-plan-prompt-spark">✦</div>
+            <h3>Do you want Carta to plan this trip?</h3>
+            <p>We'll arrange your stops into an efficient route and spread your chosen highlights across each day. You can always edit it afterwards.</p>
+            <div className="trip-plan-prompt-actions">
+              <button className="trip-plan-prompt-no" onClick={() => handleCartaPlan(false)}>No, I'll arrange it</button>
+              <button className="trip-plan-prompt-yes" onClick={() => handleCartaPlan(true)}>Yes, plan it for me</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

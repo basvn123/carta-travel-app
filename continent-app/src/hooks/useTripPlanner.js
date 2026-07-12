@@ -144,7 +144,7 @@ export function useTripPlanner(data) {
 
   // Load a whole itinerary the guided wizard just assembled: a start date, an
   // ordered list of { destinationId, nights, activities }, and an optional name.
-  const loadFromWizard = useCallback(({ startDate, stops: wizardStops, label }) => {
+  const loadFromWizard = useCallback(({ startDate, stops: wizardStops, label, groupSize: gs }) => {
     const total = wizardStops.reduce((sum, s) => sum + Math.max(0, s.nights || 0), 0);
     setTripStart(startDate || '');
     setTripEnd(startDate ? addDays(startDate, total) : '');
@@ -154,6 +154,7 @@ export function useTripPlanner(data) {
       activities: s.activities || [],
     })));
     if (label != null) setPlanLabel(label);
+    if (gs != null) setGroupSize(Math.max(1, Math.min(20, gs)));
     setPlanId(null);
     setPlanned(false);
   }, []);
