@@ -101,7 +101,7 @@ export function AccountPanel({ onClose, onLoadTrip, onOpenLifestyle, onOpenAuth 
                     >
                       <span className="saved-trip-city">{t.city}</span>
                       <span className="saved-trip-meta">
-                        {t.country}{t.depart_date && ` · ${fmtDate(t.depart_date)} - ${fmtDate(t.return_date)}`}
+                        {t.country}{t.depart_date && ` — ${fmtDate(t.depart_date)} - ${fmtDate(t.return_date)}`}
                       </span>
                     </button>
                     <button

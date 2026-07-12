@@ -48,7 +48,7 @@ export function ComparePanel({ data, favorites, departDate, returnDate, choices,
             <div className="panel-tag">Shortlist</div>
             <h2 className="compare-title">Compare {cols.length} destinations</h2>
             <div className="compare-sub">
-              {departDate} -&gt; {returnDate} · {group} {group === 1 ? 'person' : 'people'} · {pp ? 'per person' : 'total'}
+              {departDate} -&gt; {returnDate}, {group} {group === 1 ? 'person' : 'people'}, {pp ? 'per person' : 'total'}
             </div>
           </div>
           <button className="panel-close" onClick={onClose} aria-label="Close">x</button>

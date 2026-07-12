@@ -4,7 +4,9 @@
  */
 import { gemScore } from './trip_planner_pricing.js';
 
-/** ISO-3166 alpha-2 → the corresponding flag emoji (regional indicators). */
+/** ISO-3166 alpha-2 → the corresponding flag emoji (regional indicators).
+ *  Note: Windows has no flag glyphs, so these render as the two letters there —
+ *  prefer `flagUrl()` for actual flag artwork. */
 export function isoToFlag(iso2) {
   if (!iso2 || iso2.length !== 2) return '🏳️';
   const cc = iso2.toUpperCase();
@@ -14,6 +16,14 @@ export function isoToFlag(iso2) {
   return String.fromCodePoint(A + cc.charCodeAt(0) - base) + String.fromCodePoint(A + cc.charCodeAt(1) - base);
 }
 
+/** Real flag artwork (PNG) for an ISO-3166 alpha-2 code, via flagcdn.com — the
+ *  same external-image approach the app already uses for Wikipedia photos and
+ *  the basemap. `w` is one of flagcdn's supported widths (20/40/80/160/…). */
+export function flagUrl(iso2, w = 40) {
+  if (!iso2 || !/^[A-Za-z]{2}$/.test(iso2)) return null;
+  return `https://flagcdn.com/w${w}/${iso2.toLowerCase()}.png`;
+}
+
 /** Group destinations into countries, each with a flag and its cities ranked
  *  by how special they are (gemScore). Countries sorted alphabetically. */
 export function countriesFromData(destinations) {
@@ -21,12 +31,22 @@ export function countriesFromData(destinations) {
   for (const [id, d] of Object.entries(destinations || {})) {
     if (!d || d.lat == null) continue;
     if (!map.has(d.country)) {
-      map.set(d.country, { country: d.country, iso2: d.iso2, flag: isoToFlag(d.iso2), cities: [] });
+      map.set(d.country, {
+        country: d.country, iso2: d.iso2, flag: isoToFlag(d.iso2),
+        flagImg: flagUrl(d.iso2), cities: [], _latSum: 0, _lonSum: 0,
+      });
     }
-    map.get(d.country).cities.push({ id, dest: d });
+    const c = map.get(d.country);
+    c.cities.push({ id, dest: d });
+    c._latSum += d.lat;
+    c._lonSum += d.lon;
   }
   for (const c of map.values()) {
     c.cities.sort((a, b) => gemScore(b.dest) - gemScore(a.dest));
+    // Centroid = mean of the country's city coordinates — good enough to drop a
+    // clickable pin roughly where the country sits on the map.
+    c.centroid = { lat: c._latSum / c.cities.length, lon: c._lonSum / c.cities.length };
+    delete c._latSum; delete c._lonSum;
   }
   return [...map.values()].sort((a, b) => a.country.localeCompare(b.country));
 }
@@ -52,7 +72,7 @@ export function cityInsight(dest) {
   if (dest.beauty?.unesco) extras.push('UNESCO');
   const nAct = (dest.activities && dest.activities.items ? dest.activities.items.length : 0);
   if (nAct) extras.push(`${nAct} things to do`);
-  return extras.length ? `${lead} · ${extras.join(' · ')}` : lead;
+  return extras.length ? `${lead} — ${extras.join(', ')}` : lead;
 }
 
 /** The catalogued things-to-do for a city, as [{ name, kind }]. */
