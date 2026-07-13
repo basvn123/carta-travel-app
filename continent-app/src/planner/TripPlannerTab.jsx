@@ -342,10 +342,14 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
       <button className="trip-save-planned-btn" onClick={handleSave} disabled={tp.saveState === 'saving'}>
         {tp.saveState === 'saving' ? 'Saving…' : tp.saveState === 'saved' ? 'Saved ✓' : tp.planId ? 'Update trip' : 'Save trip'}
       </button>
-      <button className="trip-edit-btn" onClick={() => { tp.setPlanned(false); setSheetOpen(true); }}>Edit</button>
-      {tp.stopDetails.length >= 3 && (
-        <button className="trip-plan-again-btn" onClick={() => tp.optimizeRoute()} title="Re-run Carta's routing from your first stop">↻ Replan</button>
-      )}
+      {/* Edit + Replan share one pill: Edit is the primary tap, Replan an
+          attached segment (only when a reorder is meaningful, 3+ stops). */}
+      <div className="trip-edit-split">
+        <button className="trip-edit-btn" onClick={() => { tp.setPlanned(false); setSheetOpen(true); }}>Edit</button>
+        {tp.stopDetails.length >= 3 && (
+          <button className="trip-plan-again-btn" onClick={() => tp.optimizeRoute()} title="Re-run Carta's routing from your first stop">↻ Replan</button>
+        )}
+      </div>
       <button className="trip-startover-btn" onClick={handleStartOver} title="Delete this trip and begin again">Start over</button>
     </>
   );

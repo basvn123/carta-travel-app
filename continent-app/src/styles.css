@@ -1107,6 +1107,36 @@ input, select {
 .trip-plan-again-btn, .trip-startover-btn { background: rgba(245,241,232,0.94); border: 1px solid var(--rule); color: var(--ink-soft); }
 .trip-plan-again-btn:hover { border-color: var(--accent); color: var(--accent); }
 
+/* Edit + Replan merged into one split pill. The container carries the pill
+   shape + shadow; the two segments sit flush inside it, split by a divider,
+   and drop their own radius/shadow. Collapses to a plain Edit pill when
+   Replan is absent (fewer than 3 stops). */
+.trip-edit-split {
+  display: inline-flex;
+  align-items: stretch;
+  border-radius: 999px;
+  box-shadow: var(--shadow-1);
+  overflow: hidden;
+}
+.trip-edit-split .trip-edit-btn,
+.trip-edit-split .trip-plan-again-btn {
+  border-radius: 0;
+  box-shadow: none;
+}
+/* Replan segment shares Edit's dark fill so the pair reads as one control;
+   a hairline divider separates them, and it warms to the accent on hover. */
+.trip-edit-split .trip-plan-again-btn {
+  background: var(--ink);
+  color: var(--paper);
+  border: none;
+  border-left: 1px solid rgba(245, 241, 232, 0.22);
+  white-space: nowrap;
+}
+.trip-edit-split .trip-plan-again-btn:hover {
+  background: var(--accent);
+  color: #fff;
+}
+
 /* Day planner: base-city + day-trip transport recommendation. */
 .daytrip-base .trip-block-title { display: flex; align-items: center; gap: 6px; }
 .daytrip-base .trip-block-title svg { color: var(--accent); }
