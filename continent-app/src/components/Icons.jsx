@@ -463,3 +463,47 @@ export function BanIcon({ size = 15, className = '' }) {
     </Glyph>
   );
 }
+
+/* ─── Detail-panel / planner glyphs added for the cost + day-plan redesign ─── */
+
+export function ReceiptIcon({ size = 15, className = '' }) {
+  return (
+    <Glyph size={size} className={className} label="Cost breakdown">
+      <path d="M6 3.5h12v17l-2-1.4-2 1.4-2-1.4-2 1.4-2-1.4-2 1.4v-17Z" />
+      <path d="M9 8h6M9 11.5h6M9 15h3.5" />
+    </Glyph>
+  );
+}
+
+export function BedIcon({ size = 15, className = '' }) {
+  return (
+    <Glyph size={size} className={className} label="Accommodation">
+      <path d="M3.5 18.5v-11" />
+      <path d="M3.5 15.5h17v3" />
+      <path d="M3.5 12.5h17a0 0 0 0 1 0 0v3" />
+      <path d="M10 12.5V9.5a1.5 1.5 0 0 1 1.5-1.5h6a3 3 0 0 1 3 3v1.5" />
+      <circle cx="6.8" cy="10.3" r="1.6" />
+    </Glyph>
+  );
+}
+
+export function ShareIcon({ size = 15, className = '' }) {
+  return (
+    <Glyph size={size} className={className} label="Share">
+      <circle cx="6" cy="12" r="2.6" />
+      <circle cx="17.5" cy="5.5" r="2.6" />
+      <circle cx="17.5" cy="18.5" r="2.6" />
+      <path d="m8.4 10.8 6.8-4M8.4 13.2l6.8 4" />
+    </Glyph>
+  );
+}
+
+export function SlidersIcon({ size = 15, className = '' }) {
+  return (
+    <Glyph size={size} className={className} label="Lifestyle settings">
+      <path d="M4 7.5h9M17 7.5h3M4 16.5h3M11 16.5h9" />
+      <circle cx="15" cy="7.5" r="2.2" />
+      <circle cx="9" cy="16.5" r="2.2" />
+    </Glyph>
+  );
+}

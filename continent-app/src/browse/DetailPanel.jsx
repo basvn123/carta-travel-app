@@ -1,19 +1,18 @@
 import React from 'react';
 import {
   composeTrip, buildFlightLinks, buildAccommodationLink, buildCarRentalLink,
-  buildGuideLink, nearbyTrips, fareCoverageRanges,
+  fareCoverageRanges,
 } from '../lib/runtime_pricing.js';
-import { GemRating, GemIcon } from '../components/GemRating.jsx';
-import { CountryIntel } from '../components/CountryIntel.jsx';
 import { kindsForDest } from '../lib/trip_kinds.js';
 import { BestTimePanel } from './BestTimePanel.jsx';
 import { eur, safeUrl, PRICE_SOURCE_LABELS, ACCOM_SOURCE_LABELS } from '../lib/format.js';
-import { useCountryInsights } from '../hooks/useCountryInsights.js';
+import { ReceiptIcon, CalendarIcon, BedIcon, DiningIcon, CarIcon } from '../components/Icons.jsx';
+import { PlaneIcon } from '../components/TransportIcons.jsx';
 
 const fmtDate = (iso) => new Date(iso + 'T00:00:00Z').toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
 
 // Small underlined text-button, used for the outbound links under each cost
-// line (Airbnb, KAYAK) and the "Adjust lifestyle" action.
+// line (Airbnb, KAYAK, Skyscanner) and the "Adjust lifestyle" action.
 function TextLink({ href, onClick, children }) {
   const props = href ? { href, target: '_blank', rel: 'noreferrer' } : { onClick, type: 'button' };
   const Tag = href ? 'a' : 'button';
@@ -23,7 +22,6 @@ function TextLink({ href, onClick, children }) {
 export function DetailPanel({ destination, departDate, returnDate, choices, setChoices, priceMode = 'total', onClose, onOpenLifestyle, onSelect, data, isFavorite, onToggleFavorite, onSaveTrip, onShiftDates }) {
   const [saveState, setSaveState] = React.useState('idle'); // idle | saving | saved
   const [activeTab, setActiveTab] = React.useState('breakdown'); // breakdown | best-time
-  const countryInsights = useCountryInsights();
 
   // Land back on the breakdown whenever the user picks a different destination.
   React.useEffect(() => { setActiveTab('breakdown'); }, [destination?.id]);
@@ -143,7 +141,7 @@ export function DetailPanel({ destination, departDate, returnDate, choices, setC
                 {ranges.map((r, i) => (
                   <span key={r.start}>
                     {i > 0 && ', '}
-                    {fmtDate(r.start)} – {fmtDate(r.end)}
+                    {fmtDate(r.start)} - {fmtDate(r.end)}
                   </span>
                 ))}
               </p>
@@ -154,16 +152,16 @@ export function DetailPanel({ destination, departDate, returnDate, choices, setC
         <>
           <div className="tabs panel-tabs">
             <button
-              className={`tab ${activeTab === 'breakdown' ? 'active' : ''}`}
+              className={`tab tab-iconed ${activeTab === 'breakdown' ? 'active' : ''}`}
               onClick={() => setActiveTab('breakdown')}
             >
-              Breakdown
+              <ReceiptIcon size={12} /> Breakdown
             </button>
             <button
-              className={`tab ${activeTab === 'best-time' ? 'active' : ''}`}
+              className={`tab tab-iconed ${activeTab === 'best-time' ? 'active' : ''}`}
               onClick={() => setActiveTab('best-time')}
             >
-              Best time to go
+              <CalendarIcon size={12} /> Best time to go
             </button>
           </div>
 
@@ -193,85 +191,25 @@ export function DetailPanel({ destination, departDate, returnDate, choices, setC
           )}
         </>
       )}
-
-      {/* What to do here - shows for every destination, reachable or not. */}
-      <ExploreSection destination={destination} data={data} onSelect={onSelect} countryInsights={countryInsights} />
     </div>
   );
 }
 
-// "Things to do" + a clean travel-guide link + the best side-trips nearby.
-function ExploreSection({ destination, data, onSelect, countryInsights }) {
-  const items = destination.activities?.items || [];
-  const guide = buildGuideLink({ city: destination.city });
-  const nearby = data ? nearbyTrips({ ...destination, id: destination.id }, data.destinations) : [];
-
-  if (items.length === 0 && !guide && nearby.length === 0) return null;
-
+/** A grouped block of cost rows: icon-led header with the group subtotal on
+ *  the right, rows inside. Mirrors the lifestyle panel's card treatment so
+ *  transport / stay / on-the-ground read as three clearly distinct buckets. */
+function CostGroup({ icon, title, subtitle, subtotal, children }) {
   return (
-    <div className="panel-section">
-      <div className="section-title">Things to do in {destination.city}</div>
-
-      {items.length > 0 ? (
-        <ul className="todo-list">
-          {items.map((it, i) => {
-            const row = (
-              <>
-                <span className="todo-name">{it.name}</span>
-                {it.kind && <span className="todo-kind">{it.kind}</span>}
-              </>
-            );
-            return (
-              <li key={i} className="todo-item">
-                {safeUrl(it.link)
-                  ? <a href={safeUrl(it.link)} target="_blank" rel="noreferrer" className="todo-link">{row}</a>
-                  : row}
-              </li>
-            );
-          })}
-        </ul>
-      ) : (
-        <p className="footnote" style={{ marginTop: 0 }}>
-          See the full guide for sights and activities.
-        </p>
-      )}
-
-      {guide && (
-        <a className="todo-guide" href={guide} target="_blank" rel="noreferrer">
-          Explore {destination.city} - what to do, see &amp; eat -&gt;
-        </a>
-      )}
-
-      {/* Deep country intel: budget, transport links, driving rules, must-sees */}
-      {countryInsights?.[destination.country] && (
-        <div className="panel-cintel">
-          <CountryIntel country={destination.country} rec={countryInsights[destination.country]} />
-        </div>
-      )}
-
-      {nearby.length > 0 && (
-        <>
-          <div className="section-title" style={{ marginTop: 18 }}>Best trips from here</div>
-          <div className="nearby-grid">
-            {nearby.map((n) => (
-              <button key={n.id} className="nearby-card" onClick={() => onSelect && onSelect(n.id)}
-                      title={`${n.city}, ${n.country} - ~${n.km} km away`}>
-                <div className="nearby-thumb"
-                     style={n.image ? { backgroundImage: `url(${n.image})` } : undefined}>
-                  {!n.image && <span className="nearby-thumb-fallback">{n.city.slice(0, 1)}</span>}
-                </div>
-                <div className="nearby-meta">
-                  <span className="nearby-city">{n.city}</span>
-                  <span className="nearby-sub">
-                    {n.km} km
-                    {n.gems ? <>, <GemIcon size={9} /> {n.gems}</> : null}
-                  </span>
-                </div>
-              </button>
-            ))}
-          </div>
-        </>
-      )}
+    <div className="cost-group">
+      <div className="cost-group-head">
+        <span className="cost-group-icon">{icon}</span>
+        <span className="cost-group-title">
+          {title}
+          {subtitle && <small>{subtitle}</small>}
+        </span>
+        {subtotal != null && <span className="cost-group-val">{eur(subtotal)}</span>}
+      </div>
+      <div className="cost-group-body">{children}</div>
     </div>
   );
 }
@@ -292,208 +230,241 @@ function BreakdownTab({ destination, breakdown, departDate, returnDate, choices,
   const sourceLabel = PRICE_SOURCE_LABELS[breakdown.price_source] || null;
   const accomSourceLabel = ACCOM_SOURCE_LABELS[breakdown.accom_source] || null;
 
+  // Group subtotals for the three buckets, in the active price mode.
+  const transportSubtotal = breakdown.transport_mode === 'car'
+    ? show(breakdown.driving?.total)
+    : show((breakdown.fare_total || 0)
+        + (breakdown.baggage_total || 0)
+        + (breakdown.transfer_total || 0)
+        + (breakdown.rental_total || 0));
+  const staySubtotal = acc ? show(breakdown.accom_total) : null;
+  const groundSubtotal = g ? show(groundGroup(breakdown.ground_per_person)) : null;
+
+  // Skyscanner verification link, kept inside the Getting-there group.
+  const flightLink = (() => {
+    if (breakdown.transport_mode !== 'plane' || breakdown.fare_total == null) return null;
+    const origin = breakdown.origin;
+    const destIata = destination.iata || anchor;
+    if (!origin || !destIata || !departDate || !returnDate) return null;
+    return buildFlightLinks({ origin, destIata, departDate, returnDate }).skyscanner || null;
+  })();
+
+  // Local unit rates: what everyday things actually cost here. Surfaced so the
+  // on-the-ground estimate is as inspectable as the Airbnb nightly base rate.
+  const unitRates = destination.costs ? [
+    ['Dinner out', destination.costs.meal_mid_eur],
+    ['Casual meal', destination.costs.meal_cheap_eur],
+    ['Beer / wine out', destination.costs.drink_out_eur],
+    ['Coffee', destination.costs.coffee_eur],
+    ['Groceries / day', destination.costs.grocery_day_eur],
+  ].filter(([, v]) => v > 0) : [];
+
   return (
     <>
       <div className="panel-section">
-        <div className="section-title">Trip total {priceMode === 'pp' ? '(per person)' : ''}</div>
+        <div className="section-title section-title-iconed">
+          <ReceiptIcon size={12} /> Trip total {priceMode === 'pp' ? '(per person)' : ''}
+        </div>
 
-        {/* Getting there: plane vs car comparison (only when drivable) */}
-        {breakdown.drivable && setChoices && (
-          <div className="mode-toggle">
-            <button
-              className={`mode-pill ${breakdown.transport_mode === 'plane' ? 'on' : ''}`}
-              disabled={breakdown.plane_grand_total == null}
-              onClick={() => setChoices({ ...choices, transport_mode: 'plane' })}
-            >
-              <span className="mode-pill-top">Fly</span>
-              <span className="mode-pill-val">
-                {breakdown.plane_grand_total != null ? eur(show(breakdown.plane_grand_total)) : 'no route'}
-              </span>
-            </button>
-            <button
-              className={`mode-pill ${breakdown.transport_mode === 'car' ? 'on' : ''}`}
-              onClick={() => setChoices({ ...choices, transport_mode: 'car' })}
-            >
-              <span className="mode-pill-top">Drive, {breakdown.driving.road_km} km</span>
-              <span className="mode-pill-val">{eur(show(breakdown.car_grand_total))}</span>
-            </button>
+        {/* ── Getting there ── */}
+        <CostGroup
+          icon={breakdown.transport_mode === 'car' ? <CarIcon size={15} /> : <PlaneIcon size={15} />}
+          title="Getting there"
+          subtitle={breakdown.transport_mode === 'car' ? 'Drive from home' : 'Ryanair round-trip'}
+          subtotal={transportSubtotal}
+        >
+          {/* Plane vs car comparison (only when drivable) */}
+          {breakdown.drivable && setChoices && (
+            <div className="mode-toggle">
+              <button
+                className={`mode-pill ${breakdown.transport_mode === 'plane' ? 'on' : ''}`}
+                disabled={breakdown.plane_grand_total == null}
+                onClick={() => setChoices({ ...choices, transport_mode: 'plane' })}
+              >
+                <span className="mode-pill-top">Fly</span>
+                <span className="mode-pill-val">
+                  {breakdown.plane_grand_total != null ? eur(show(breakdown.plane_grand_total)) : 'no route'}
+                </span>
+              </button>
+              <button
+                className={`mode-pill ${breakdown.transport_mode === 'car' ? 'on' : ''}`}
+                onClick={() => setChoices({ ...choices, transport_mode: 'car' })}
+              >
+                <span className="mode-pill-top">Drive, {breakdown.driving.road_km} km</span>
+                <span className="mode-pill-val">{eur(show(breakdown.car_grand_total))}</span>
+              </button>
+            </div>
+          )}
+
+          {breakdown.transport_mode === 'car' ? (
+            <>
+              <div className="total-row">
+                <span className="label">
+                  Drive ({breakdown.driving.cars} {breakdown.driving.cars === 1 ? 'car' : 'cars'})
+                  <small>
+                    {breakdown.driving.road_km} km each way, ~{breakdown.driving.drive_hours_one_way}h,
+                    {' '}€{breakdown.driving.fuel_price_eur_per_l.toFixed(2)}/L
+                  </small>
+                </span>
+                <span className="val">{eur(show(breakdown.driving.total))}</span>
+              </div>
+              <GroundLine label="Fuel" v={show(breakdown.driving.fuel_total)} eur={eur} />
+              {breakdown.driving.toll_total > 0 && (
+                <GroundLine label="Tolls / vignette" v={show(breakdown.driving.toll_total)} eur={eur} />
+              )}
+            </>
+          ) : (
+            <>
+              <div className="total-row">
+                <span className="label">
+                  Flight ({destination.iata || anchor || '?'})
+                  <small>
+                    {destination.tier === 'gem' && anchor
+                      ? `Round-trip via ${anchor}`
+                      : 'Round-trip Ryanair fare'}
+                  </small>
+                </span>
+                <span className="val">{eur(show(breakdown.fare_total))}</span>
+              </div>
+              {breakdown.baggage_per_person > 0 && (
+                <div className="total-row sub-row">
+                  <span className="label">
+                    + {data?.meta?.baggage_options?.[choices.baggage_key]?.label || 'Baggage'}
+                    <small>
+                      {`€${(choices.baggage_per_direction_eur || 0).toFixed(0)} × 2 directions`}
+                      {priceMode === 'total' && ` × ${group} people`}
+                    </small>
+                  </span>
+                  <span className="val">{eur(show(breakdown.baggage_total))}</span>
+                </div>
+              )}
+              {breakdown.transfer_total > 0 && (
+                <div className="total-row sub-row">
+                  <span className="label">
+                    + Airport transfer{anchor ? ` from ${anchor}` : ''}
+                    <small>
+                      {`€${breakdown.transfer_one_way_eur.toFixed(0)} × 2 directions`}
+                      {priceMode === 'total' && ` × ${group} people`}
+                      {breakdown.ground_minutes > 0 ? `, ~${breakdown.ground_minutes} min each way` : ''}
+                    </small>
+                  </span>
+                  <span className="val">{eur(show(breakdown.transfer_total))}</span>
+                </div>
+              )}
+              {breakdown.rental && (
+                <div className="total-row">
+                  <span className="label">
+                    Rental car at destination
+                    <small>
+                      {breakdown.rental.cars} {breakdown.rental.cars === 1 ? 'car' : 'cars'} ×
+                      {' '}{breakdown.rental.days} days, €{breakdown.rental.rate.toFixed(0)}/day
+                      {breakdown.rental.season > 1 ? ', incl. summer season' : ''}
+                      {breakdown.rental.discount_pct > 0 ? `, -${breakdown.rental.discount_pct}% weekly` : ''}
+                    </small>
+                  </span>
+                  <span className="val">{eur(show(breakdown.rental_total))}</span>
+                </div>
+              )}
+            </>
+          )}
+
+          <CarAdvisory lt={breakdown.local_transport} mode={breakdown.transport_mode} />
+
+          <div className="cost-group-links">
+            {flightLink && <TextLink href={flightLink}>Check this fare on Skyscanner</TextLink>}
+            {(() => {
+              const carLink = buildCarRentalLink({
+                city: destination.city,
+                iata: destination.iata,
+                departDate,
+                returnDate,
+              });
+              return carLink ? <TextLink href={carLink}>Compare rental cars on KAYAK</TextLink> : null;
+            })()}
           </div>
-        )}
+        </CostGroup>
 
-        {/* Transport line - depends on the chosen mode */}
-        {breakdown.transport_mode === 'car' ? (
-          <>
-            <div className="total-row">
-              <span className="label">
-                Drive ({breakdown.driving.cars} {breakdown.driving.cars === 1 ? 'car' : 'cars'})
-                <small>
-                  {breakdown.driving.road_km} km each way, ~{breakdown.driving.drive_hours_one_way}h,
-                  {' '}€{breakdown.driving.fuel_price_eur_per_l.toFixed(2)}/L
-                </small>
-              </span>
-              <span className="val">{eur(show(breakdown.driving.total))}</span>
-            </div>
-            <GroundLine label="Fuel" v={show(breakdown.driving.fuel_total)} eur={eur} />
-            {breakdown.driving.toll_total > 0 && (
-              <GroundLine label="Tolls / vignette" v={show(breakdown.driving.toll_total)} eur={eur} />
-            )}
-          </>
-        ) : (
-          <>
-            {/* Flights */}
-            <div className="total-row">
-              <span className="label">
-                Flight ({destination.iata || anchor || '?'})
-                <small>
-                  {destination.tier === 'gem' && anchor
-                    ? `Round-trip via ${anchor}`
-                    : 'Round-trip Ryanair fare'}
-                </small>
-              </span>
-              <span className="val">{eur(show(breakdown.fare_total))}</span>
-            </div>
-            {breakdown.baggage_per_person > 0 && (
-              <div className="total-row sub-row">
-                <span className="label">
-                  + {data?.meta?.baggage_options?.[choices.baggage_key]?.label || 'Baggage'}
-                  <small>
-                    {`€${(choices.baggage_per_direction_eur || 0).toFixed(0)} × 2 directions`}
-                    {priceMode === 'total' && ` × ${group} people`}
-                  </small>
-                </span>
-                <span className="val">{eur(show(breakdown.baggage_total))}</span>
-              </div>
-            )}
-            {/* Airport -> destination transfer (bus/shuttle), when the flight lands
-                at an anchor airport rather than the destination itself. */}
-            {breakdown.transfer_total > 0 && (
-              <div className="total-row sub-row">
-                <span className="label">
-                  + Airport transfer{anchor ? ` from ${anchor}` : ''}
-                  <small>
-                    {`€${breakdown.transfer_one_way_eur.toFixed(0)} × 2 directions`}
-                    {priceMode === 'total' && ` × ${group} people`}
-                    {breakdown.ground_minutes > 0 ? `, ~${breakdown.ground_minutes} min each way` : ''}
-                  </small>
-                </span>
-                <span className="val">{eur(show(breakdown.transfer_total))}</span>
-              </div>
-            )}
-            {/* Rental car at the destination (only when flying + a car is needed there) */}
-            {breakdown.rental && (
-              <div className="total-row" style={{ marginTop: 6 }}>
-                <span className="label">
-                  Rental car at destination
-                  <small>
-                    {breakdown.rental.cars} {breakdown.rental.cars === 1 ? 'car' : 'cars'} ×
-                    {' '}{breakdown.rental.days} days, €{breakdown.rental.rate.toFixed(0)}/day
-                    {breakdown.rental.season > 1 ? ', incl. summer season' : ''}
-                    {breakdown.rental.discount_pct > 0 ? `, -${breakdown.rental.discount_pct}% weekly` : ''}
-                  </small>
-                </span>
-                <span className="val">{eur(show(breakdown.rental_total))}</span>
-              </div>
-            )}
-          </>
-        )}
-
-        {/* Is a car needed at the destination? */}
-        <CarAdvisory lt={breakdown.local_transport} mode={breakdown.transport_mode} />
-
-        {/* Car-rental booking link - offered for every destination, whether or not a
-            car is needed there (the rental cost line above only shows when it is). */}
-        {(() => {
-          const carLink = buildCarRentalLink({
-            city: destination.city,
-            iata: destination.iata,
-            departDate,
-            returnDate,
-          });
-          return carLink ? <TextLink href={carLink}>Compare rental cars on KAYAK</TextLink> : null;
-        })()}
-
-        {/* Accommodation (Airbnb estimate) */}
+        {/* ── Your stay ── */}
         {acc && (
-          <>
-            <div className="total-row" style={{ marginTop: 6 }}>
-              <span className="label">
-                Accommodation, {breakdown.nights} {breakdown.nights === 1 ? 'night' : 'nights'}
-                <small>
-                  Entire home{accomSourceLabel ? `, ${accomSourceLabel}` : ''}
-                  {breakdown.accom_entire_home_night_eur
-                    ? `, ~€${Math.round(breakdown.accom_entire_home_night_eur)}/night base`
-                    : ''}
-                </small>
-              </span>
-              <span className="val">{eur(show(breakdown.accom_total))}</span>
-            </div>
-            <GroundLine label="Lodging"     v={show(groundGroup(acc.lodging))}  eur={eur} />
+          <CostGroup
+            icon={<BedIcon size={15} />}
+            title={`Your stay, ${breakdown.nights} ${breakdown.nights === 1 ? 'night' : 'nights'}`}
+            subtitle={`Entire home${accomSourceLabel ? `, ${accomSourceLabel}` : ''}${breakdown.accom_entire_home_night_eur ? `, ~€${Math.round(breakdown.accom_entire_home_night_eur)}/night base` : ''}`}
+            subtotal={staySubtotal}
+          >
+            <GroundLine label="Lodging"      v={show(groundGroup(acc.lodging))}  eur={eur} />
             <GroundLine label="Cleaning fee" v={show(groundGroup(acc.cleaning))} eur={eur} />
             <GroundLine label="Service fee"  v={show(groundGroup(acc.service))}  eur={eur} />
             {acc.season !== 1 && (
               <div className="total-row sub-row">
                 <span className="label" style={{ fontWeight: 400, fontStyle: 'italic' }}>
                   {acc.season > 1 ? 'incl. summer season' : 'incl. off-season'}
-                  {acc.los < 1 ? ` & weekly discount` : ''}
+                  {acc.los < 1 ? ' & weekly discount' : ''}
                 </span>
                 <span className="val" />
               </div>
             )}
-            {(() => {
-              const airbnb = buildAccommodationLink({
-                city: destination.city,
-                country: destination.country,
-                departDate,
-                returnDate,
-                groupSize: choices.group_size,
-              });
-              return airbnb ? <TextLink href={airbnb}>Find real listings on Airbnb</TextLink> : null;
-            })()}
-          </>
-        )}
-
-        {/* On the ground */}
-        {g && (
-          <>
-            <div className="total-row" style={{ marginTop: 6 }}>
-              <span className="label">
-                On the ground, {breakdown.nights} {breakdown.nights === 1 ? 'night' : 'nights'}
-                <small>
-                  Your lifestyle{sourceLabel ? `, ${sourceLabel}` : ''}
-                </small>
-              </span>
-              <span className="val">{eur(show(groundGroup(breakdown.ground_per_person)))}</span>
+            <div className="cost-group-links">
+              {(() => {
+                const airbnb = buildAccommodationLink({
+                  city: destination.city,
+                  country: destination.country,
+                  departDate,
+                  returnDate,
+                  groupSize: choices.group_size,
+                });
+                return airbnb ? <TextLink href={airbnb}>Find real listings on Airbnb</TextLink> : null;
+              })()}
             </div>
-            <GroundLine label="Dinners out"        v={show(groundGroup(g.dinners))}  eur={eur} />
-            <GroundLine label="Casual meals"       v={show(groundGroup(g.lunches))}  eur={eur} />
-            {g.fastfood > 0 && <GroundLine label="Fast food / street" v={show(groundGroup(g.fastfood))} eur={eur} />}
-            <GroundLine label="Bar drinks"         v={show(groundGroup(g.drinks))}   eur={eur} />
-            {g.clubbing > 0 && <GroundLine label="Club nights" v={show(groundGroup(g.clubbing))} eur={eur} />}
-            <GroundLine label="Coffees"            v={show(groundGroup(g.coffees))}  eur={eur} />
-            <GroundLine label="Groceries"          v={show(groundGroup(g.groceries))} eur={eur} />
-            <TextLink onClick={onOpenLifestyle}>Adjust lifestyle</TextLink>
-          </>
+          </CostGroup>
         )}
 
-        <div className="total-row grand">
-          <span className="label">
-            Total
-            {priceMode === 'pp' && <small>per person</small>}
-          </span>
-          <span className="val">{eur(show(breakdown.grand_total))}</span>
+        {/* ── On the ground ── */}
+        {g && (
+          <CostGroup
+            icon={<DiningIcon size={15} />}
+            title={`On the ground, ${breakdown.nights} ${breakdown.nights === 1 ? 'night' : 'nights'}`}
+            subtitle={`Your lifestyle${sourceLabel ? `, ${sourceLabel}` : ''}`}
+            subtotal={groundSubtotal}
+          >
+            <GroundLine label="Dinners out"  v={show(groundGroup(g.dinners))}  eur={eur} rate={destination.costs?.meal_mid_eur} />
+            <GroundLine label="Casual meals" v={show(groundGroup(g.lunches))}  eur={eur} rate={destination.costs?.meal_cheap_eur} />
+            {g.fastfood > 0 && <GroundLine label="Fast food / street" v={show(groundGroup(g.fastfood))} eur={eur} rate={destination.costs?.fastfood_eur} />}
+            <GroundLine label="Bar drinks"   v={show(groundGroup(g.drinks))}   eur={eur} rate={destination.costs?.drink_out_eur} />
+            {g.clubbing > 0 && <GroundLine label="Club nights" v={show(groundGroup(g.clubbing))} eur={eur} />}
+            <GroundLine label="Coffees"      v={show(groundGroup(g.coffees))}  eur={eur} rate={destination.costs?.coffee_eur} />
+            <GroundLine label="Groceries"    v={show(groundGroup(g.groceries))} eur={eur} />
+            {unitRates.length > 0 && (
+              <p className="cost-local-rates">
+                Local rates: {unitRates.map(([lbl, v], i) => (
+                  <span key={lbl}>{i > 0 && ' · '}{lbl} €{v}</span>
+                ))}
+              </p>
+            )}
+            <div className="cost-group-links">
+              <TextLink onClick={onOpenLifestyle}>Adjust lifestyle</TextLink>
+            </div>
+          </CostGroup>
+        )}
+
+        {/* ── Grand total: styled like the lifestyle panel's summary card, with
+              the per-person figure always visible and emphasised. ── */}
+        <div className="cost-total-card">
+          <div className="cost-total-main">
+            <span className="cost-total-label">
+              Total per person
+              <small>{breakdown.nights} {breakdown.nights === 1 ? 'night' : 'nights'}, everything in</small>
+            </span>
+            <span className="cost-total-val">{eur(breakdown.grand_total / group)}</span>
+          </div>
+          {group > 1 && (
+            <div className="cost-total-sub">
+              <span>Whole group ({group} people)</span>
+              <span>{eur(breakdown.grand_total)}</span>
+            </div>
+          )}
         </div>
       </div>
-
-      {departDate && returnDate && breakdown.transport_mode === 'plane' && breakdown.fare_total != null && (
-        <FlightBookingSection
-          destination={destination}
-          departDate={departDate}
-          returnDate={returnDate}
-          breakdown={breakdown}
-          choices={choices}
-          anchor={anchor}
-        />
-      )}
     </>
   );
 }
@@ -518,45 +489,14 @@ function CarAdvisory({ lt, mode }) {
   );
 }
 
-function GroundLine({ label, v, eur }) {
+function GroundLine({ label, v, eur, rate }) {
   return (
     <div className="total-row sub-row">
-      <span className="label" style={{ fontWeight: 400 }}>{label}</span>
+      <span className="label" style={{ fontWeight: 400 }}>
+        {label}
+        {rate > 0 && <small>€{rate} each, local rate</small>}
+      </span>
       <span className="val">{eur(v)}</span>
-    </div>
-  );
-}
-
-function FlightBookingSection({ destination, departDate, returnDate, breakdown, choices, anchor }) {
-  // Use the airport the priced fare actually departs from (CRL or BRU) so the
-  // Skyscanner search matches the price we show - no hard-coded Brussels default.
-  const origin = breakdown?.origin;
-  const destIata = destination.iata || anchor;
-  if (!origin || !destIata) return null;
-
-  const links = buildFlightLinks({ origin, destIata, departDate, returnDate });
-  if (!links.skyscanner) return null;
-
-  return (
-    <div className="panel-section">
-      <div className="section-title">Verify the flight price</div>
-      <p className="footnote" style={{ marginTop: 0, marginBottom: 12 }}>
-        The cheapest Ryanair fare we found, per person. Open Skyscanner below to check the same dates yourself.
-        {destination.tier === 'gem' && anchor && (
-          <> You'll fly into <strong>{destIata}</strong>, around {breakdown.ground_minutes || '?'} min from {destination.city}.</>
-        )}
-      </p>
-      <div className="book-row">
-        <a className="book-btn" href={links.skyscanner} target="_blank" rel="noreferrer">
-          <span>
-            Search on Skyscanner
-            <small style={{ display: 'block', fontSize: 10, opacity: .7, marginTop: 2 }}>
-              {origin} -&gt; {destIata}, {departDate} -&gt; {returnDate}
-            </small>
-          </span>
-          <span className="arrow">-&gt;</span>
-        </a>
-      </div>
     </div>
   );
 }

@@ -5959,3 +5959,593 @@ input, select {
   text-decoration: none;
 }
 .day-gmaps-link:hover { text-decoration: underline; }
+
+/* ═══════════════════════════════════════════════════════════════════════
+   2026-07 polish pass: icon-led sections, grouped cost breakdown, guided
+   day-shaping deck, day-plan actions, mobile filter grid.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* ─── Icon-led section titles + tabs ─── */
+.section-title-iconed {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.section-title-iconed svg { flex: none; color: var(--accent); }
+.tab-iconed {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.tab-iconed svg { flex: none; }
+.tab-iconed.active svg { color: var(--accent); }
+
+/* ─── Detail panel: grouped cost breakdown ───
+   Three clearly separated buckets (getting there / your stay / on the
+   ground), each an icon-led card in the same visual language as the
+   lifestyle panel's preview table. */
+.cost-group {
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  background: var(--paper);
+  margin-bottom: 12px;
+  overflow: hidden;
+}
+.cost-group-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  background: var(--paper-dim);
+  border-bottom: 1px solid var(--rule);
+}
+.cost-group-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px; height: 28px;
+  flex-shrink: 0;
+  border-radius: 8px;
+  background: var(--accent-bg);
+  color: var(--accent);
+}
+.cost-group-title {
+  flex: 1;
+  min-width: 0;
+  font-weight: 600;
+  font-size: 13.5px;
+  color: var(--ink);
+  line-height: 1.25;
+}
+.cost-group-title small {
+  display: block;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 400;
+  color: var(--ink-mute);
+  margin-top: 1px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.cost-group-val {
+  font-family: var(--mono);
+  font-size: 14px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+  white-space: nowrap;
+}
+.cost-group-body { padding: 4px 14px 12px; }
+.cost-group-body .total-row:first-child { border-top: none; }
+.cost-group-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+}
+.cost-local-rates {
+  margin: 8px 0 0;
+  font-family: var(--mono);
+  font-size: 10px;
+  line-height: 1.7;
+  color: var(--ink-mute);
+}
+
+/* The grand total: one emphatic card, per-person figure leading. */
+.cost-total-card {
+  margin-top: 14px;
+  border: 1px solid var(--accent);
+  border-radius: 12px;
+  background: linear-gradient(100deg, var(--accent-bg), var(--paper));
+  padding: 14px 16px 12px;
+}
+.cost-total-main {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+.cost-total-label {
+  font-family: var(--display);
+  font-size: 17px;
+  font-weight: 500;
+  color: var(--ink);
+}
+.cost-total-label small {
+  display: block;
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--ink-soft);
+  margin-top: 2px;
+}
+.cost-total-val {
+  font-family: var(--mono);
+  font-size: 26px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--accent);
+  white-space: nowrap;
+}
+.cost-total-sub {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px dotted var(--accent-soft);
+  font-size: 12.5px;
+  color: var(--ink-soft);
+}
+.cost-total-sub span:last-child {
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+  font-weight: 600;
+}
+
+/* ─── Best-time chart: measured-width SVG, mobile-safe headline ─── */
+.bt-chart-wrap svg { display: block; max-width: 100%; }
+@media (max-width: 768px) {
+  .bt-headline { flex-direction: column; align-items: stretch; gap: 10px; }
+  .bt-headline-actions {
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .bt-badge, .bt-cta { white-space: normal; text-align: left; }
+}
+
+/* ─── Lifestyle: filter-bar entry point + unit rates ─── */
+.lifestyle-pill {
+  gap: 6px;
+  padding: 6px 12px;
+}
+.lifestyle-pill svg { flex: none; }
+.line .lbl small {
+  display: block;
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--ink-mute);
+  margin-top: 1px;
+}
+
+/* ─── Sign-in buttons inside panels: clear air between text and button ─── */
+.account-signin-spaced {
+  display: block;
+  margin-top: 18px;
+}
+
+/* ─── Bigger Home shortcut on mobile (overrides the 19px rule above) ─── */
+@media (max-width: 768px) {
+  .header-home-icon { width: 22px; height: 22px; }
+}
+
+/* ─── Day planner: landing "Days" stepper fills its field cleanly ─── */
+.day-days-stepper {
+  width: 100%;
+  justify-content: space-between;
+}
+
+/* ─── Day planner: route mode + ordered plan ─── */
+.day-route-mode {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+.day-route-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--ink-mute);
+}
+.day-route-status.auto { color: var(--accent); }
+.day-route-optimize {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 11px;
+  border: 1px solid var(--accent);
+  border-radius: 999px;
+  color: var(--accent);
+  font-size: 11.5px;
+  font-weight: 600;
+  transition: background .15s, color .15s;
+}
+.day-route-optimize:hover { background: var(--accent-bg); }
+.day-timeline-num {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px; height: 24px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--accent-bg);
+  color: var(--accent);
+  font-family: var(--mono);
+  font-size: 11.5px;
+  font-weight: 700;
+}
+.day-timeline-row { padding: 3px 0; }
+.day-timeline-walk { padding-left: 34px; }
+.day-route-total {
+  margin-top: 10px;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  color: var(--ink-soft);
+  line-height: 1.5;
+}
+
+/* Labeled action buttons under the day plan (export + share). */
+.day-actions-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 14px;
+}
+.day-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 10px 16px;
+  border-radius: 10px;
+  border: 1px solid var(--rule);
+  background: var(--paper);
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: border-color .15s, background .15s, color .15s;
+}
+.day-action-btn:hover { border-color: var(--ink-soft); }
+.day-action-btn.day-action-primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+.day-action-btn.day-action-primary:hover { opacity: 0.92; }
+.day-action-btn svg { flex: none; }
+
+/* Multi-city chips: city + its own remove control. */
+.day-city-chip {
+  display: inline-flex;
+  align-items: stretch;
+  padding: 0;
+  overflow: hidden;
+}
+.day-city-chip-main {
+  padding: 7px 10px 7px 14px;
+  font: inherit;
+  color: inherit;
+}
+.day-city-chip-del {
+  padding: 0 10px 0 4px;
+  font-size: 14px;
+  color: var(--ink-mute);
+}
+.day-city-chip-del:hover { color: var(--accent); }
+
+/* Collapsible activity tiers: the header is now a full-width toggle. */
+.day-tier-head {
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  padding: 8px 2px;
+  border-radius: 8px;
+}
+.day-tier-head:hover { background: var(--paper-dim); }
+.day-tier-caret {
+  margin-left: auto;
+  font-family: var(--mono);
+  font-size: 14px;
+  color: var(--ink-mute);
+}
+.day-tier { margin-bottom: 8px; }
+.day-tier.open { margin-bottom: 16px; }
+
+/* Must-see star on individual rows. */
+.day-badge-must {
+  display: inline-flex;
+  align-items: center;
+  margin-left: 6px;
+  color: var(--accent);
+  vertical-align: -1px;
+}
+
+/* Activity rows: the info glyph is a toggle now, and the expanded detail
+   wraps below the row. */
+.day-activity-row { flex-wrap: wrap; }
+.day-activity-info {
+  cursor: pointer;
+  background: none;
+  border: 0;
+}
+.day-activity-info.open { color: var(--accent); }
+.day-activity-detail {
+  flex-basis: 100%;
+  padding: 0 12px 10px 12px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--ink-soft);
+}
+.day-activity-detail p { margin: 0 0 4px; }
+.day-activity-detail a {
+  color: var(--accent);
+  font-weight: 600;
+  text-decoration: none;
+  font-size: 11.5px;
+}
+.day-activity-detail a:hover { text-decoration: underline; }
+
+/* ─── Shape-your-day: style cards ─── */
+.shape-style-list {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+.shape-style {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  text-align: left;
+  padding: 12px 14px;
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  background: var(--paper);
+  transition: border-color .15s, background .15s, transform .15s;
+}
+.shape-style:hover { border-color: var(--accent); transform: translateY(-1px); }
+.shape-style.on { border-color: var(--accent); background: var(--accent-bg); }
+.shape-style-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px; height: 36px;
+  flex-shrink: 0;
+  border-radius: 10px;
+  background: var(--accent-bg);
+  color: var(--accent);
+}
+.shape-style-text { flex: 1; min-width: 0; }
+.shape-style-text b {
+  display: block;
+  font-family: var(--display);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.shape-style-text small {
+  display: block;
+  font-size: 11.5px;
+  color: var(--ink-soft);
+  line-height: 1.4;
+  margin-top: 1px;
+}
+.shape-style-arrow { color: var(--ink-mute); font-size: 18px; flex-shrink: 0; }
+
+/* ─── Shape-your-day: swipe deck ─── */
+.shape-deck-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 10px;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-mute);
+}
+.shape-deck-added { color: var(--accent); font-weight: 700; }
+.shape-card {
+  border: 1px solid var(--rule);
+  border-radius: 16px;
+  overflow: hidden;
+  background: var(--paper);
+  box-shadow: var(--shadow-2);
+  touch-action: pan-y;
+  user-select: none;
+  -webkit-user-select: none;
+  cursor: grab;
+}
+.shape-card:active { cursor: grabbing; }
+.shape-card-photo {
+  position: relative;
+  height: 190px;
+  background: var(--paper-dim) center/cover no-repeat;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.shape-card-fallback { font-family: var(--display); font-size: 44px; color: var(--ink-mute); }
+.shape-card-must {
+  position: absolute;
+  top: 10px; left: 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: #fff;
+  font-family: var(--mono);
+  font-size: 9.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.shape-card-stamp {
+  position: absolute;
+  top: 14px;
+  padding: 6px 16px;
+  border-radius: 8px;
+  font-family: var(--mono);
+  font-size: 15px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  transform: rotate(-8deg);
+  border: 2.5px solid currentColor;
+  background: rgba(245, 241, 232, 0.85);
+}
+.shape-card-stamp.add { right: 14px; color: #2c6a1f; }
+.shape-card-stamp.skip { left: 14px; color: #b3402a; transform: rotate(8deg); }
+.shape-card-body { padding: 14px 16px 16px; }
+.shape-card-name {
+  font-family: var(--display);
+  font-size: 19px;
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1.15;
+}
+.shape-card-kind {
+  font-family: var(--mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-mute);
+  margin-top: 3px;
+}
+.shape-card-desc {
+  margin: 8px 0 0;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--ink-soft);
+}
+.shape-card-pair {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  margin: 10px 0 0;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: var(--accent-bg);
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--ink-soft);
+}
+.shape-card-pair svg { flex: none; color: var(--accent); transform: translateY(1px); }
+.shape-card-pair b { color: var(--ink); }
+.shape-deck-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 14px;
+}
+.shape-deck-btn {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 12px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 700;
+  transition: opacity .15s, background .15s;
+}
+.shape-deck-btn.skip {
+  border: 1px solid var(--rule);
+  background: var(--paper);
+  color: var(--ink-soft);
+}
+.shape-deck-btn.skip:hover { border-color: #b3402a; color: #b3402a; }
+.shape-deck-btn.add {
+  border: 1px solid var(--accent);
+  background: var(--accent);
+  color: #fff;
+}
+.shape-deck-btn.add:hover { opacity: 0.92; }
+.shape-deck-hint {
+  margin: 10px 0 0;
+  text-align: center;
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--ink-mute);
+}
+
+/* Mobile: lift the wizard clear of the bottom edge (home-indicator space)
+   and keep rounded corners since it now floats. */
+@media (max-width: 768px) {
+  .guide-overlay {
+    padding: 12px 10px calc(26px + env(safe-area-inset-bottom, 0px));
+    align-items: flex-end;
+  }
+  .guide-modal { border-radius: 18px; max-height: 88vh; }
+  .guide-foot { padding-bottom: 16px; }
+}
+
+/* ─── Mobile filter sheet: one tidy 2-column grid across BOTH rows so the
+   pairs the eye expects sit side by side (Show + Travel by, Top picks +
+   Trip type). The .filter-row wrappers collapse (display: contents) and
+   `order` lays the fields out. ─── */
+@media (max-width: 768px) {
+  .filter-bar.mobile-open .filter-rows {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px 10px;
+    align-items: end;
+    padding: 12px 16px 18px;
+    border-top: 1px solid var(--rule);
+    max-height: calc(100dvh - 58px - 60px);
+    overflow-y: auto;
+  }
+  .filter-bar.mobile-open .filter-row { display: contents; }
+
+  .filter-bar.mobile-open .filter-show      { order: 1; grid-column: auto; }
+  .filter-bar.mobile-open .filter-travelby  { order: 2; grid-column: auto; }
+  .filter-bar.mobile-open .filter-toppicks  { order: 3; grid-column: auto; }
+  .filter-bar.mobile-open .filter-triptype  { order: 4; grid-column: auto; }
+  .filter-bar.mobile-open .filter-people    { order: 5; }
+  .filter-bar.mobile-open .filter-nights    { order: 6; }
+  .filter-bar.mobile-open .filter-baggage   { order: 7; grid-column: 1 / -1; }
+  .filter-bar.mobile-open .filter-country   { order: 8; grid-column: 1 / -1; }
+  .filter-bar.mobile-open .filter-beauty    { order: 9; grid-column: 1 / -1; }
+  .filter-bar.mobile-open .filter-highlights{ order: 10; grid-column: 1 / -1; }
+  .filter-bar.mobile-open .price-range      { order: 11; grid-column: 1 / -1; }
+  .filter-bar.mobile-open .reset-filters-btn{ order: 99; }
+
+  /* The lifestyle entry point on mobile is the sliders icon in the header
+     row; the in-sheet pill would be a duplicate. */
+  .filter-bar .filter-lifestyle { display: none; }
+}
+
+/* ─── Date pickers: never off-screen on phones. The popover anchors to its
+   trigger on desktop; on mobile it becomes a centered dialog. ─── */
+@media (max-width: 768px) {
+  .cal {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: min(300px, calc(100vw - 32px));
+    z-index: 90;
+    box-shadow: 0 18px 48px rgba(26, 26, 26, 0.28);
+  }
+}

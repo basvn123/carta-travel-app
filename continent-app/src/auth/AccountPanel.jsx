@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useAuth } from './AuthContext.jsx';
 import { fetchSavedTrips, deleteTrip } from './tripStorage.js';
 
-export function AccountPanel({ onClose, onLoadTrip, onOpenLifestyle, onOpenAuth }) {
+export function AccountPanel({ onClose, onLoadTrip, onOpenAuth }) {
   const { user, signOut, updatePassword, configured } = useAuth();
 
   const [trips, setTrips] = useState([]);
@@ -68,15 +68,6 @@ export function AccountPanel({ onClose, onLoadTrip, onOpenLifestyle, onOpenAuth 
         <div className="panel-tag">Account</div>
         <h2 className="panel-city account-heading">{user ? (fullName || user.email) : 'Preferences'}</h2>
         {user && fullName && <div className="account-heading-sub">{user.email}</div>}
-      </div>
-
-      <div className="panel-section">
-        <div className="section-title">Lifestyle</div>
-        <button className="more-btn account-lifestyle-btn" onClick={onOpenLifestyle}>
-          <span>Eating &amp; drinking</span>
-          <span className="chev">›</span>
-        </button>
-        <div className="footnote">Dinners, drinks, coffees and self-catered days, priced at real local rates.</div>
       </div>
 
       {user ? (
@@ -159,7 +150,7 @@ export function AccountPanel({ onClose, onLoadTrip, onOpenLifestyle, onOpenAuth 
         <div className="panel-section">
           <div className="section-title">Account</div>
           <div className="footnote">Sign in to save trips and sync your settings across devices.</div>
-          <button className="account-signin-btn" onClick={onOpenAuth}>Sign in</button>
+          <button className="account-signin-btn account-signin-spaced" onClick={onOpenAuth}>Sign in</button>
         </div>
       ) : null}
     </div>

@@ -142,6 +142,139 @@ export const PACES = [
   { key: 'packed', label: 'Packed', hint: '7-8 stops', stops: 8, budgetMin: 8.5 * 60 },
 ];
 
+/**
+ * "What kind of day?" styles for the guided picker. Tourists don't know a
+ * city's geography or its 40 POI kinds - they know whether they feel like
+ * walking landmarks, museums, being active, or eating their way around.
+ * Each style maps to the interest keys the ranking logic already speaks.
+ */
+export const DAY_STYLES = [
+  {
+    key: 'classic',
+    label: 'Classic sightseeing',
+    desc: 'The famous squares, landmarks and views. The city greatest-hits day.',
+    interests: ['culture', 'architecture', 'photo'],
+  },
+  {
+    key: 'culture',
+    label: 'Museums & culture',
+    desc: 'Museums, galleries, churches and history, at an indoor pace.',
+    interests: ['museums', 'culture'],
+  },
+  {
+    key: 'active',
+    label: 'Active & outdoors',
+    desc: 'Parks, trails, beaches and anything that gets you moving.',
+    interests: ['outdoors', 'sports', 'beaches'],
+  },
+  {
+    key: 'foodie',
+    label: 'Food & local life',
+    desc: 'Markets, cafes, breweries and the streets where locals actually go.',
+    interests: ['food', 'cafes', 'shopping'],
+  },
+  {
+    key: 'mix',
+    label: 'Surprise mix',
+    desc: 'A bit of everything: Carta leads with the true must-sees.',
+    interests: [],
+  },
+];
+
+/**
+ * Ranked candidate deck for the guided picker: the stops Carta would stand
+ * behind for this style, best first. Only worthwhile places make the deck -
+ * rate-2+ sights, heritage sites, and (for active styles) matching outdoor
+ * kinds - so the traveller is never asked to judge filler.
+ */
+export function candidateDeck(items, interests, limit = 16) {
+  const iset = interests instanceof Set ? interests : new Set(interests || []);
+  const all = (items || []).map((item, idx) => ({ item, idx }))
+    .filter(({ item }) => item.lat != null && item.lon != null);
+  const score = ({ item }) => {
+    const base = item.active
+      ? (kindDirectMatch(item.kind, iset) ? 2.5 : -1)
+      : (item.rate ?? 1.5);
+    return base + (kindDirectMatch(item.kind, iset) ? 0.75 : 0) + (item.heritage ? 0.25 : 0);
+  };
+  return all
+    .filter((c) => score(c) > 0.5 && kindMatchesInterests(c.item.kind, iset))
+    .sort((a, b) => score(b) - score(a))
+    .slice(0, limit);
+}
+
+/** 1-2 strong nearby companions for a candidate ("pairs well with X, 6 min
+ *  walk") so tourists get the geography they don't have in their heads. */
+export function nearbyCompanions(item, items, { maxKm = 0.9, limit = 2 } = {}) {
+  if (item.lat == null || item.lon == null) return [];
+  return (items || [])
+    .filter((o) => o !== item && o.lat != null && o.lon != null && !o.active && (o.rate ?? 0) >= 2)
+    .map((o) => ({ item: o, km: haversineKm(item.lat, item.lon, o.lat, o.lon) }))
+    .filter((c) => c.km != null && c.km <= maxKm)
+    .sort((a, b) => (b.item.rate ?? 0) - (a.item.rate ?? 0) || a.km - b.km)
+    .slice(0, limit)
+    .map((c) => ({ name: c.item.name, walkMin: Math.max(1, Math.round((c.km / 4.8) * 60)) }));
+}
+
+/**
+ * Spread a set of HAND-PICKED activity indices over `numDays` days, keeping
+ * each day geographically tight, then route-optimize each day. Used when the
+ * traveller chose their own stops in the guided deck (vs draftDays, which
+ * picks for them). Picks without coordinates land on the first day.
+ */
+export function clusterIntoDays(pickIdx, items, numDays) {
+  const days = Array.from({ length: Math.max(1, numDays) }, () => []);
+  if (!pickIdx || pickIdx.length === 0) return days;
+  const withCoords = pickIdx.filter((i) => items[i] && items[i].lat != null && items[i].lon != null);
+  const withoutCoords = pickIdx.filter((i) => !withCoords.includes(i));
+
+  if (numDays <= 1 || withCoords.length <= numDays) {
+    // Not enough material to cluster: fill days one pick at a time.
+    [...withCoords, ...withoutCoords].forEach((idx, i) => {
+      days[Math.min(days.length - 1, Math.floor(i / Math.max(1, Math.ceil(pickIdx.length / numDays))))].push(idx);
+    });
+    return days.map((d) => optimizeOrder(d, items));
+  }
+
+  // Seeds: farthest-point spread so days anchor in different areas.
+  const seeds = [withCoords[0]];
+  while (seeds.length < numDays) {
+    let best = null, bestDist = -1;
+    for (const cand of withCoords) {
+      if (seeds.includes(cand)) continue;
+      const dMin = Math.min(...seeds.map((s) =>
+        haversineKm(items[s].lat, items[s].lon, items[cand].lat, items[cand].lon) ?? 0));
+      if (dMin > bestDist) { bestDist = dMin; best = cand; }
+    }
+    if (best == null) break;
+    seeds.push(best);
+  }
+  seeds.forEach((s, d) => days[d].push(s));
+
+  // Assign the rest to the nearest day-centroid, keeping counts balanced.
+  const centroid = (d) => {
+    const pts = d.map((idx) => items[idx]);
+    return {
+      lat: pts.reduce((s, p) => s + p.lat, 0) / pts.length,
+      lon: pts.reduce((s, p) => s + p.lon, 0) / pts.length,
+    };
+  };
+  const cap = Math.ceil(withCoords.length / numDays);
+  for (const idx of withCoords) {
+    if (seeds.includes(idx)) continue;
+    let bestDay = 0, bestDist = Infinity;
+    for (let d = 0; d < numDays; d++) {
+      if (days[d].length >= cap && days.some((x, j) => j !== d && x.length < cap)) continue;
+      const c = centroid(days[d]);
+      const dist = haversineKm(c.lat, c.lon, items[idx].lat, items[idx].lon) ?? Infinity;
+      if (dist < bestDist) { bestDist = dist; bestDay = d; }
+    }
+    days[bestDay].push(idx);
+  }
+  withoutCoords.forEach((idx, i) => days[i % numDays].push(idx));
+  return days.map((d) => optimizeOrder(d, items));
+}
+
 const WALK_EST_MIN = 15; // rough inter-stop walking allowance while drafting
 
 /**

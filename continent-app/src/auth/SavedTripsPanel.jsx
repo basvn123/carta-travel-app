@@ -1,15 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from './AuthContext.jsx';
 import { fetchSavedTrips, deleteTrip } from './tripStorage.js';
+import { loadStandalonePlans, deleteStandalonePlan } from '../planner/dayPlanStore.js';
 
 // Standalone Saved trips panel, opened from the bottom nav (the same list also
 // lives inside AccountPanel; this gives it a one-tap home of its own).
-export function SavedTripsPanel({ onClose, onLoadTrip, onOpenAuth }) {
+export function SavedTripsPanel({ onClose, onLoadTrip, onOpenAuth, onOpenDayPlan }) {
   const { user, configured } = useAuth();
 
   const [trips, setTrips] = useState([]);
   const [loading, setLoading] = useState(!!user);
   const [error, setError] = useState('');
+  // Device-local day plans, shown alongside the account trips so everything
+  // saved lives in one overview.
+  const [dayPlans, setDayPlans] = useState(() => loadStandalonePlans());
 
   const loadTrips = () => {
     setLoading(true);
@@ -84,11 +88,46 @@ export function SavedTripsPanel({ onClose, onLoadTrip, onOpenAuth }) {
       ) : configured ? (
         <div className="panel-section">
           <div className="footnote">Sign in to save trips and find them back here on any device.</div>
-          <button className="account-signin-btn" onClick={onOpenAuth}>Sign in</button>
+          <button className="account-signin-btn account-signin-spaced" onClick={onOpenAuth}>Sign in</button>
         </div>
       ) : (
         <div className="panel-section">
           <div className="footnote">Accounts aren't set up for this deployment, so trips can't be saved yet.</div>
+        </div>
+      )}
+
+      {/* Day plans live on this device (they work without an account), but the
+          overview of everything saved belongs here too. */}
+      {dayPlans.length > 0 && (
+        <div className="panel-section">
+          <div className="section-title">Your day plans</div>
+          <div className="saved-trip-list">
+            {dayPlans.map((sp) => (
+              <div className="saved-trip-item" key={sp.id}>
+                <button
+                  className="saved-trip-main"
+                  onClick={() => onOpenDayPlan && onOpenDayPlan(sp.id)}
+                  title="Open this day plan"
+                >
+                  <span className="saved-trip-city">{sp.label || 'Day plan'}</span>
+                  <span className="saved-trip-meta">
+                    {fmtDate(sp.startDate)}
+                    {(sp.stops?.length || 1) > 1 && `, ${sp.stops.length} cities`}
+                    {`, ${sp.stops?.reduce((n, s) => n + (s.days || 1), 0) || 1} ${(sp.stops?.reduce((n, s) => n + (s.days || 1), 0) || 1) === 1 ? 'day' : 'days'}`}
+                  </span>
+                </button>
+                <button
+                  className="saved-trip-delete"
+                  onClick={() => setDayPlans(deleteStandalonePlan(sp.id))}
+                  aria-label={`Remove ${sp.label || 'day plan'}`}
+                  title="Remove"
+                >
+                  ×
+                </button>
+              </div>
+            ))}
+          </div>
+          <div className="footnote">Saved on this device. Open one to keep planning in the Day planner.</div>
         </div>
       )}
     </div>

@@ -1,6 +1,7 @@
 import React from 'react';
 import { cheapestWindows, cheapestFlexibleWindows, fareByWeekday } from '../lib/runtime_pricing.js';
 import { eur } from '../lib/format.js';
+import { CalendarIcon } from '../components/Icons.jsx';
 
 const DOW_NAMES = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
@@ -50,7 +51,7 @@ export function BestTimePanel({ destination, departDate, returnDate, breakdown, 
 
   return (
     <div className="panel-section">
-      <div className="section-title">Best time to go</div>
+      <div className="section-title section-title-iconed"><CalendarIcon size={12} /> Best time to go</div>
 
       <div className="kind-chips bt-length-chips">
         {LENGTH_OPTIONS.map((o) => (
@@ -110,9 +111,24 @@ export function BestTimePanel({ destination, departDate, returnDate, breakdown, 
 
 function BestTimeChart({ windows, cheapest, yours }) {
   const [hoverI, setHoverI] = React.useState(null);
+  const wrapRef = React.useRef(null);
   const svgRef = React.useRef(null);
 
-  const W = 600, H = 180, padL = 42, padR = 8, padT = 22, padB = 22;
+  // Render at the wrapper's REAL pixel width instead of stretching a fixed
+  // 600px viewBox (preserveAspectRatio="none" distorted every label on
+  // phones - the "overlapping / squished labels" problem).
+  const [W, setW] = React.useState(600);
+  React.useEffect(() => {
+    const el = wrapRef.current;
+    if (!el || typeof ResizeObserver === 'undefined') return undefined;
+    const apply = () => { if (el.clientWidth > 40) setW(el.clientWidth); };
+    apply();
+    const ro = new ResizeObserver(apply);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
+  const H = 190, padL = 46, padR = 10, padT = 26, padB = 24;
 
   // Downsample so the line stays legible over a long fare horizon.
   const step = Math.max(1, Math.ceil(windows.length / 60));
@@ -138,11 +154,13 @@ function BestTimeChart({ windows, cheapest, yours }) {
   const cheapI = closestIdx(cheapest.start);
   const yoursI = closestIdx(yours.start);
 
-  const pathD = pts.map((w, i) => `${i === 0 ? 'M' : 'L'}${x(i)},${y(w.total)}`).join(' ');
-  const areaD = `${pathD} L${x(pts.length - 1)},${H - padB} L${x(0)},${H - padB} Z`;
+  const pathD = pts.map((w, i) => `${i === 0 ? 'M' : 'L'}${x(i).toFixed(1)},${y(w.total).toFixed(1)}`).join(' ');
+  const areaD = `${pathD} L${x(pts.length - 1).toFixed(1)},${H - padB} L${x(0).toFixed(1)},${H - padB} Z`;
 
+  // One tick per month change, then thinned so labels never crowd: at ~44px
+  // per label the available width caps how many we can show.
   let lastMonth = null;
-  const monthTicks = [];
+  let monthTicks = [];
   pts.forEach((w, i) => {
     const m = new Date(w.start + 'T00:00:00Z').getUTCMonth();
     if (m !== lastMonth) {
@@ -150,25 +168,40 @@ function BestTimeChart({ windows, cheapest, yours }) {
       monthTicks.push({ i, label: new Date(w.start + 'T00:00:00Z').toLocaleDateString('en-GB', { month: 'short' }) });
     }
   });
+  const maxTicks = Math.max(2, Math.floor((W - padL - padR) / 44));
+  if (monthTicks.length > maxTicks) {
+    const keepEvery = Math.ceil(monthTicks.length / maxTicks);
+    monthTicks = monthTicks.filter((_, i) => i % keepEvery === 0);
+  }
   const yTicks = [minV, Math.round((minV + maxV) / 2), maxV];
 
   const handleMove = (e) => {
     if (!svgRef.current) return;
     const rect = svgRef.current.getBoundingClientRect();
-    const relX = ((e.clientX - rect.left) / rect.width) * W;
+    const relX = e.clientX - rect.left;
     let idx = Math.round(((relX - padL) / (W - padL - padR)) * (pts.length - 1));
     idx = Math.max(0, Math.min(pts.length - 1, idx));
     setHoverI(idx);
   };
 
+  // Pin placement with collision handling: when the two markers sit close
+  // together, keep "cheapest" above its point and push "your dates" below so
+  // the labels can never overlap each other.
+  const pinPos = (i) => ({ xPct: (x(i) / W) * 100, yPct: (y(pts[i].total) / H) * 100 });
+  const cheapPos = pinPos(cheapI);
+  const yoursPos = pinPos(yoursI);
+  const tooClose = Math.abs(cheapPos.xPct - yoursPos.xPct) < 30;
+  const cheapSide = cheapPos.yPct < 26 ? 'below' : 'above';
+  let yoursSide = yoursPos.yPct < 26 ? 'below' : 'above';
+  if (tooClose && yoursSide === cheapSide) yoursSide = cheapSide === 'above' ? 'below' : 'above';
+
   return (
-    <div className="bt-chart-wrap">
+    <div className="bt-chart-wrap" ref={wrapRef}>
       <svg
         ref={svgRef}
-        viewBox={`0 0 ${W} ${H}`}
-        width="100%"
+        width={W}
         height={H}
-        preserveAspectRatio="none"
+        viewBox={`0 0 ${W} ${H}`}
         onMouseMove={handleMove}
         onMouseLeave={() => setHoverI(null)}
       >
@@ -193,8 +226,8 @@ function BestTimeChart({ windows, cheapest, yours }) {
         <circle cx={x(yoursI)} cy={y(pts[yoursI].total)} r={5} className="bt-pt bt-pt-you" />
       </svg>
 
-      <ChartPin xPct={(x(cheapI) / W) * 100} yPct={(y(pts[cheapI].total) / H) * 100} dotClass="green" label="cheapest" />
-      <ChartPin xPct={(x(yoursI) / W) * 100} yPct={(y(pts[yoursI].total) / H) * 100} dotClass="ink" label="your dates" />
+      <ChartPin pos={cheapPos} side={cheapSide} dotClass="green" label="cheapest" />
+      <ChartPin pos={yoursPos} side={yoursSide} dotClass="ink" label="your dates" />
 
       {hoverI != null && (
         <div
@@ -217,12 +250,11 @@ function BestTimeChart({ windows, cheapest, yours }) {
 // A small floating label pinned to a chart point. Flips to stay clear of the
 // chart edges instead of overlapping the line or getting clipped: right-
 // anchored near the right edge, left-anchored near the left edge, and pushed
-// below the point instead of above when the point itself is near the top.
-function ChartPin({ xPct, yPct, dotClass, label }) {
-  const h = xPct < 15 ? 'left' : xPct > 85 ? 'right' : 'center';
-  const v = yPct < 24 ? 'below' : 'above';
+// below the point instead of above when told to (collision handling above).
+function ChartPin({ pos, side, dotClass, label }) {
+  const h = pos.xPct < 15 ? 'left' : pos.xPct > 85 ? 'right' : 'center';
   return (
-    <div className={`bt-pin bt-pin-${h} bt-pin-${v}`} style={{ left: `${xPct}%`, top: `${yPct}%` }}>
+    <div className={`bt-pin bt-pin-${h} bt-pin-${side}`} style={{ left: `${pos.xPct}%`, top: `${pos.yPct}%` }}>
       <i className={`bt-pin-dot bt-dot-${dotClass}`} />
       {label}
     </div>

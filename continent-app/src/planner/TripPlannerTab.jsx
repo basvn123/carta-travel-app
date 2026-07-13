@@ -413,14 +413,6 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth }) {
                 <span className="trip-field-label">End</span>
                 <DateField value={tp.tripEnd} min={tp.tripStart || dateMin} max={dateMax} onChange={tp.setTripEnd} placeholder="End date" />
               </label>
-              <label className="trip-field trip-field-people">
-                <span className="trip-field-label">People</span>
-                <div className="trip-people">
-                  <button type="button" onClick={() => tp.setGroupSize(Math.max(1, tp.groupSize - 1))} disabled={tp.groupSize <= 1} aria-label="Fewer people">–</button>
-                  <span>{tp.groupSize}</span>
-                  <button type="button" onClick={() => tp.setGroupSize(Math.min(20, tp.groupSize + 1))} disabled={tp.groupSize >= 20} aria-label="More people">+</button>
-                </div>
-              </label>
             </div>
           </div>
 

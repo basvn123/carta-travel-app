@@ -81,7 +81,7 @@ export function AppHeader({
         aria-current={isHome ? 'page' : undefined}
         title="Home - explore the map"
       >
-        <HomeIcon size={15} className="header-home-icon" />
+        <HomeIcon size={18} className="header-home-icon" />
         <span className="header-home-label">Home</span>
       </button>
 

@@ -4,7 +4,7 @@ import { Dropdown } from '../components/Dropdown.jsx';
 import { DateField } from '../components/DateField.jsx';
 import { GemIcon } from '../components/GemRating.jsx';
 import { PlaneIcon, CarIcon } from '../components/TransportIcons.jsx';
-import { CalendarIcon, FilterIcon } from '../components/Icons.jsx';
+import { CalendarIcon, FilterIcon, SlidersIcon } from '../components/Icons.jsx';
 import { eur } from '../lib/format.js';
 
 export function FilterBar({
@@ -23,6 +23,7 @@ export function FilterBar({
   unescoOnly, setUnescoOnly,
   topBeachOnly, setTopBeachOnly,
   topPick, setTopPick,
+  onOpenLifestyle,
 }) {
   const baggageOpts = data?.meta?.baggage_options || {};
 
@@ -164,6 +165,17 @@ export function FilterBar({
             <FilterIcon size={18} />
             {anyFilterActive && <span className="icon-btn-dot" aria-hidden="true" />}
           </button>
+
+          {onOpenLifestyle && (
+            <button
+              className="icon-btn"
+              onClick={() => { setMobileFiltersOpen(false); setMobileDatesOpen(false); onOpenLifestyle(); }}
+              aria-label="Lifestyle settings"
+              title="Lifestyle: how you'll eat, drink and spend"
+            >
+              <SlidersIcon size={18} />
+            </button>
+          )}
         </div>
       </div>
 
@@ -277,6 +289,24 @@ export function FilterBar({
                   />
                 </div>
               </div>
+
+              {/* Lifestyle: how the on-the-ground spend is modelled. Lives here,
+                  next to the filters, so it's settable without opening a
+                  destination (it used to hide inside the Account panel). */}
+              {onOpenLifestyle && (
+                <div className="filter filter-lifestyle">
+                  <label className="filter-label">Lifestyle</label>
+                  <div className="filter-control">
+                    <button
+                      className="pill-toggle lifestyle-pill"
+                      onClick={onOpenLifestyle}
+                      title="How you'll eat, drink and spend, priced at local rates"
+                    >
+                      <SlidersIcon size={13} /> Set lifestyle
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>

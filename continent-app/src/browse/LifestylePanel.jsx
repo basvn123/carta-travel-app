@@ -1,6 +1,7 @@
 import React from 'react';
 import { composeTrip, DEFAULT_LIFESTYLE } from '../lib/runtime_pricing.js';
 import { eur, PRICE_SOURCE_LABELS } from '../lib/format.js';
+import { DiningIcon, MoonIcon, SlidersIcon } from '../components/Icons.jsx';
 
 /**
  * Lifestyle settings panel - slides in from the left.
@@ -97,7 +98,7 @@ export function LifestylePanel({ choices, setChoices, previewDest, departDate, r
       </div>
 
       <div className="panel-section">
-        <div className="section-title">Profile</div>
+        <div className="section-title section-title-iconed"><SlidersIcon size={12} /> Profile</div>
         <div className="kind-chips">
           {Object.keys(PROFILES).map((name) => (
             <button
@@ -109,7 +110,7 @@ export function LifestylePanel({ choices, setChoices, previewDest, departDate, r
             </button>
           ))}
         </div>
-        <div className="footnote">Sets the sliders below - tweak any from there.</div>
+        <div className="footnote">Pick a profile to set everything at once, then fine-tune below.</div>
       </div>
 
       <div className="panel-section">
@@ -118,11 +119,11 @@ export function LifestylePanel({ choices, setChoices, previewDest, departDate, r
           <button className={cadence === 'week' ? 'seg-on' : ''} onClick={() => setCadence('week')}>Per week</button>
           <button className={cadence === 'day' ? 'seg-on' : ''} onClick={() => setCadence('day')}>Per day</button>
         </div>
-        <div className="footnote">Per day is handy for short city breaks; per week for longer trips.</div>
+        <div className="footnote">Per day suits short city breaks. Per week suits longer trips.</div>
       </div>
 
       <div className="panel-section">
-        <div className="section-title">Eating</div>
+        <div className="section-title section-title-iconed"><DiningIcon size={12} /> Eating</div>
         <Stepper label="Dinners out" hint={`mid-range, ${per}`} value={ls.dinners_per_week ?? 0}
           onChange={(v) => setLs({ dinners_per_week: v })} min={0} max={maxFor('dinners_per_week')} />
         <Stepper label="Casual meals" hint={`cheap restaurant, ${per}`} value={ls.lunches_per_week ?? 0}
@@ -134,7 +135,7 @@ export function LifestylePanel({ choices, setChoices, previewDest, departDate, r
       </div>
 
       <div className="panel-section">
-        <div className="section-title">Drinking &amp; nightlife</div>
+        <div className="section-title section-title-iconed"><MoonIcon size={12} /> Drinking &amp; nightlife</div>
         <Stepper label="Drinks at bars" hint={`beers/wine, ${per}`} value={ls.drinks_per_week ?? 0}
           onChange={(v) => setLs({ drinks_per_week: v })} min={0} max={maxFor('drinks_per_week')} />
         <Stepper label="Club nights" hint={`cover + 3 drinks, ${per}`} value={ls.club_nights_per_week ?? 0}
@@ -149,13 +150,13 @@ export function LifestylePanel({ choices, setChoices, previewDest, departDate, r
             On-the-ground, {previewDest.city}
             <span className="attr-meta" style={{ marginLeft: 8 }}>{sourceLabel}</span>
           </div>
-          <Line label="Dinners out" value={eur(g.dinners)} />
-          <Line label="Casual meals" value={eur(g.lunches)} />
-          <Line label="Fast food / street" value={eur(g.fastfood)} />
-          <Line label="Bar drinks" value={eur(g.drinks)} />
+          <Line label="Dinners out" rate={previewDest.costs?.meal_mid_eur} value={eur(g.dinners)} />
+          <Line label="Casual meals" rate={previewDest.costs?.meal_cheap_eur} value={eur(g.lunches)} />
+          <Line label="Fast food / street" rate={previewDest.costs?.fastfood_eur} value={eur(g.fastfood)} />
+          <Line label="Bar drinks" rate={previewDest.costs?.drink_out_eur} value={eur(g.drinks)} />
           <Line label="Club nights" value={eur(g.clubbing)} />
-          <Line label="Coffees" value={eur(g.coffees)} />
-          <Line label="Groceries" value={eur(g.groceries)} />
+          <Line label="Coffees" rate={previewDest.costs?.coffee_eur} value={eur(g.coffees)} />
+          <Line label="Groceries" rate={previewDest.costs?.grocery_day_eur} rateUnit="/day" value={eur(g.groceries)} />
           <div className="line total">
             <span className="lbl"><strong>Per person, {nights} nights</strong></span>
             <span className="v"><strong>{eur(preview.ground_per_person)}</strong></span>
@@ -165,7 +166,8 @@ export function LifestylePanel({ choices, setChoices, previewDest, departDate, r
             <span className="v">{eur(preview.ground_total)}</span>
           </div>
           <div className="footnote">
-            Flights and accommodation are added separately. Open a destination for the full trip total.
+            Rates are what these things actually cost in {previewDest.city}. Flights and
+            accommodation are added separately. Open a destination for the full trip total.
           </div>
         </div>
       ) : (
@@ -179,10 +181,13 @@ export function LifestylePanel({ choices, setChoices, previewDest, departDate, r
   );
 }
 
-function Line({ label, value }) {
+function Line({ label, value, rate, rateUnit = ' each' }) {
   return (
     <div className="line">
-      <span className="lbl">{label}</span>
+      <span className="lbl">
+        {label}
+        {rate > 0 && <small>€{rate}{rateUnit}</small>}
+      </span>
       <span className="v">{value}</span>
     </div>
   );

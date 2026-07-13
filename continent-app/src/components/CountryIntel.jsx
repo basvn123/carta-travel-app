@@ -13,6 +13,15 @@ const BUDGET_LABELS = {
   very_high: 'Very expensive',
 };
 
+// House style: no em/en dashes anywhere in the intel copy. Number ranges keep
+// a plain hyphen; prose dashes become a comma pause.
+function cleanDash(s) {
+  if (typeof s !== 'string') return s;
+  return s
+    .replace(/(\d)\s*[—–]\s*(\d)/g, '$1-$2')
+    .replace(/\s*[—–]\s*/g, ', ');
+}
+
 function Flag({ iso2, className = 'cintel-flag' }) {
   const url = flagUrl(iso2, 40);
   if (!url) return <span className={className}>{isoToFlag(iso2)}</span>;
@@ -68,7 +77,7 @@ export function CountryIntel({ rec, country, defaultOpen = false, compact = fals
         <span className="cintel-country">{country}</span>
         <span className="cintel-chips">
           {rec.budget_level && <span className={`cintel-chip budget-${rec.budget_level}`}>{BUDGET_LABELS[rec.budget_level] || rec.budget_level}</span>}
-          {rec.daily_budget_eur && <span className="cintel-chip">€{rec.daily_budget_eur[0]}–{rec.daily_budget_eur[1]}/day</span>}
+          {rec.daily_budget_eur && <span className="cintel-chip">€{rec.daily_budget_eur[0]}-{rec.daily_budget_eur[1]}/day</span>}
           {rec.currency && rec.currency !== 'EUR' && <span className="cintel-chip">{rec.currency}, not €</span>}
         </span>
         <span className="cintel-caret">{open ? '−' : '+'}</span>
@@ -79,7 +88,7 @@ export function CountryIntel({ rec, country, defaultOpen = false, compact = fals
           {rec.best_time_note && (
             <div className="cintel-row">
               <span className="cintel-label">Best time</span>
-              <p><strong>{fmtMonths(rec.best_months)}.</strong> {rec.best_time_note}</p>
+              <p><strong>{fmtMonths(rec.best_months)}.</strong> {cleanDash(rec.best_time_note)}</p>
             </div>
           )}
 
@@ -88,12 +97,12 @@ export function CountryIntel({ rec, country, defaultOpen = false, compact = fals
             <div className="cintel-lines">
               {rec.rail?.operator && (
                 <IntelLine icon={TrainIcon}>
-                  <LinkOut href={rec.rail.url}>{rec.rail.operator}</LinkOut>{rec.rail.note ? `, ${rec.rail.note}` : ''}
+                  <LinkOut href={rec.rail.url}>{rec.rail.operator}</LinkOut>{rec.rail.note ? `, ${cleanDash(rec.rail.note)}` : ''}
                 </IntelLine>
               )}
               {rec.bus?.operators?.length > 0 && (
                 <IntelLine icon={BusIcon}>
-                  <LinkOut href={rec.bus.url}>{rec.bus.operators.join(', ')}</LinkOut>{rec.bus.note ? `, ${rec.bus.note}` : ''}
+                  <LinkOut href={rec.bus.url}>{rec.bus.operators.join(', ')}</LinkOut>{rec.bus.note ? `, ${cleanDash(rec.bus.note)}` : ''}
                 </IntelLine>
               )}
             </div>
@@ -104,11 +113,11 @@ export function CountryIntel({ rec, country, defaultOpen = false, compact = fals
               <span className="cintel-label">By car</span>
               <div className="cintel-lines">
                 {rec.driving.side === 'left' && <IntelLine icon={AlertIcon} tone="warn">Drives on the left.</IntelLine>}
-                {rec.driving.vignette && <IntelLine icon={TicketIcon} tone="warn">{rec.driving.vignette}</IntelLine>}
-                {rec.driving.tolls && <IntelLine icon={RoadIcon}>{rec.driving.tolls}</IntelLine>}
-                {(rec.driving.warnings || []).map((w, i) => <IntelLine key={i} icon={AlertIcon} tone="warn">{w}</IntelLine>)}
-                {rec.driving.car_recommended_for && <IntelLine icon={CheckIcon}>Worth a car for {rec.driving.car_recommended_for}</IntelLine>}
-                {rec.driving.car_not_needed_in && <IntelLine icon={BanIcon}>Skip the car in {rec.driving.car_not_needed_in}</IntelLine>}
+                {rec.driving.vignette && <IntelLine icon={TicketIcon} tone="warn">{cleanDash(rec.driving.vignette)}</IntelLine>}
+                {rec.driving.tolls && <IntelLine icon={RoadIcon}>{cleanDash(rec.driving.tolls)}</IntelLine>}
+                {(rec.driving.warnings || []).map((w, i) => <IntelLine key={i} icon={AlertIcon} tone="warn">{cleanDash(w)}</IntelLine>)}
+                {rec.driving.car_recommended_for && <IntelLine icon={CheckIcon}>Worth a car for {cleanDash(rec.driving.car_recommended_for)}</IntelLine>}
+                {rec.driving.car_not_needed_in && <IntelLine icon={BanIcon}>Skip the car in {cleanDash(rec.driving.car_not_needed_in)}</IntelLine>}
               </div>
             </div>
           )}
@@ -121,7 +130,7 @@ export function CountryIntel({ rec, country, defaultOpen = false, compact = fals
                   <div key={i} className="cintel-sight">
                     <span className="cintel-sight-name">{s.name}</span>
                     {s.region && <span className="cintel-sight-region">{s.region}</span>}
-                    {s.why && <span className="cintel-sight-why">{s.why}</span>}
+                    {s.why && <span className="cintel-sight-why">{cleanDash(s.why)}</span>}
                   </div>
                 ))}
                 {rec.must_see.length > 6 && (
@@ -137,7 +146,7 @@ export function CountryIntel({ rec, country, defaultOpen = false, compact = fals
             <div className="cintel-row">
               <span className="cintel-label">Good to know</span>
               <ul className="cintel-insights">
-                {rec.insights.map((t, i) => <li key={i}>{t}</li>)}
+                {rec.insights.map((t, i) => <li key={i}>{cleanDash(t)}</li>)}
               </ul>
             </div>
           )}
@@ -145,14 +154,18 @@ export function CountryIntel({ rec, country, defaultOpen = false, compact = fals
           {!compact && (rec.food || []).length > 0 && (
             <div className="cintel-row">
               <span className="cintel-label">Eat &amp; drink</span>
-              <p>{rec.food.join(' · ')}</p>
+              <ul className="cintel-insights">
+                {rec.food.map((f, i) => <li key={i}>{cleanDash(f)}</li>)}
+              </ul>
             </div>
           )}
 
           {!compact && (rec.events || []).length > 0 && (
             <div className="cintel-row">
               <span className="cintel-label">Events</span>
-              <p>{rec.events.join(' · ')}</p>
+              <ul className="cintel-insights">
+                {rec.events.map((e, i) => <li key={i}>{cleanDash(e)}</li>)}
+              </ul>
             </div>
           )}
         </div>

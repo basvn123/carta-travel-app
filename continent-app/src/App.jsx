@@ -109,6 +109,9 @@ function TravelApp() {
   const [accountOpen, setAccountOpen] = useState(false);
   // Saved trips panel, opened from its own bottom-nav button.
   const [savedTripsOpen, setSavedTripsOpen] = useState(false);
+  // A day plan chosen from the Saved-trips overview: handed to DayPlannerTab,
+  // which opens it and then clears this again.
+  const [pendingDayPlanId, setPendingDayPlanId] = useState(null);
   // A shared link (URL query present at load) always wins over a signed-in
   // user's synced settings, so opening someone's link never gets silently
   // overridden by your own saved preferences.
@@ -357,6 +360,7 @@ function TravelApp() {
               setTopBeachOnly={setTopBeachOnly}
               topPick={topPick}
               setTopPick={setTopPick}
+              onOpenLifestyle={() => setLifestyleOpen(true)}
             />
           )}
         </AppHeader>
@@ -521,7 +525,13 @@ function TravelApp() {
       )}
       {activeTab === 'day' && (
         <Suspense fallback={<TabFallback />}>
-          <DayPlannerTab data={data} user={user} authConfigured={authConfigured} />
+          <DayPlannerTab
+            data={data}
+            user={user}
+            authConfigured={authConfigured}
+            openPlanId={pendingDayPlanId}
+            onOpenPlanConsumed={() => setPendingDayPlanId(null)}
+          />
         </Suspense>
       )}
 
@@ -547,6 +557,11 @@ function TravelApp() {
               setActiveTab('map'); // the loaded trip opens as a map detail panel
             }}
             onOpenAuth={() => { setSavedTripsOpen(false); setAuthModalMode('signin'); setAuthModalOpen(true); }}
+            onOpenDayPlan={(id) => {
+              setSavedTripsOpen(false);
+              setPendingDayPlanId(id);
+              setActiveTab('day');
+            }}
           />
         </div>
       )}
@@ -556,7 +571,6 @@ function TravelApp() {
             onClose={() => setAccountOpen(false)}
             onLoadTrip={handleLoadTrip}
             onOpenAuth={() => { setAccountOpen(false); setAuthModalMode('signin'); setAuthModalOpen(true); }}
-            onOpenLifestyle={() => { setAccountOpen(false); setLifestyleOpen(true); }}
           />
         </div>
       )}

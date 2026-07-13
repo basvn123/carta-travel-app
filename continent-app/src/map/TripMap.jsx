@@ -20,7 +20,7 @@ const MAP_STYLE = 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json'
  * the straight dashed hops between pins; without it we fall back to straight
  * segments through the stops.
  */
-export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedIndex = null, routeGeometry = null, showRoute = true }) {
+export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedIndex = null, routeGeometry = null, showRoute = true, focus = null }) {
   const containerRef = useRef(null);
   const mapRef = useRef(null);
   const markersRef = useRef([]);
@@ -127,8 +127,17 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
         return { marker, el };
       });
 
-      // Frame the whole route in the strip above the sheet.
-      if (pts.length === 1) {
+      // Frame the whole route in the strip above the sheet. With no stops yet,
+      // settle on the plan's own city (focus) instead of the whole continent -
+      // a freshly opened saved day plan should show its city, not Europe.
+      if (pts.length === 0 && focus && focus.lat != null && focus.lon != null) {
+        map.easeTo({
+          center: [focus.lon, focus.lat],
+          zoom: focus.zoom ?? 11,
+          duration: 700,
+          padding: { bottom: padBottom },
+        });
+      } else if (pts.length === 1) {
         map.easeTo({ center: [pts[0].lon, pts[0].lat], zoom: 6, duration: 700, padding: { bottom: padBottom } });
       } else if (pts.length >= 2) {
         const bounds = pts.reduce(
@@ -146,7 +155,7 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
     // Store so the load handler can invoke the latest closure once ready.
     map._drawTrip = draw;
     if (readyRef.current) draw();
-  }, [stops, padBottom, routeGeometry, showRoute]);
+  }, [stops, padBottom, routeGeometry, showRoute, focus?.lat, focus?.lon]);
 
   // Highlight the selected pin and ease it into the visible strip.
   useEffect(() => {
