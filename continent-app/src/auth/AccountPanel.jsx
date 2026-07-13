@@ -1,41 +1,18 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useAuth } from './AuthContext.jsx';
-import { fetchSavedTrips, deleteTrip } from './tripStorage.js';
+import { LockIcon, PersonIcon } from '../components/Icons.jsx';
 
-export function AccountPanel({ onClose, onLoadTrip, onOpenAuth }) {
+// Account & preferences. Saved trips deliberately do NOT live here - they have
+// their own panel (SavedTripsPanel, opened from the nav) so this stays a clean
+// account-management surface: who is signed in, password, sign out.
+export function AccountPanel({ onClose, onOpenAuth }) {
   const { user, signOut, updatePassword, configured } = useAuth();
-
-  const [trips, setTrips] = useState([]);
-  const [tripsLoading, setTripsLoading] = useState(!!user);
-  const [tripsError, setTripsError] = useState('');
 
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [pwError, setPwError] = useState('');
   const [pwNotice, setPwNotice] = useState('');
   const [pwLoading, setPwLoading] = useState(false);
-
-  const loadTrips = () => {
-    setTripsLoading(true);
-    fetchSavedTrips(user.id)
-      .then(setTrips)
-      .catch((e) => setTripsError(e.message || 'Could not load saved trips.'))
-      .finally(() => setTripsLoading(false));
-  };
-
-  useEffect(() => {
-    if (!user) { setTripsLoading(false); return; }
-    loadTrips();
-  }, [user?.id]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  const handleDelete = async (id) => {
-    setTrips((prev) => prev.filter((t) => t.id !== id));
-    try {
-      await deleteTrip(id);
-    } catch {
-      loadTrips(); // roll back the optimistic removal on failure
-    }
-  };
 
   const handlePasswordChange = async (e) => {
     e.preventDefault();
@@ -56,8 +33,6 @@ export function AccountPanel({ onClose, onLoadTrip, onOpenAuth }) {
     }
   };
 
-  const fmtDate = (s) => s ? new Date(s + 'T00:00:00Z').toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }) : '';
-
   const fullName = user?.user_metadata?.full_name?.trim();
 
   return (
@@ -73,44 +48,19 @@ export function AccountPanel({ onClose, onLoadTrip, onOpenAuth }) {
       {user ? (
         <>
           <div className="panel-section">
-            <div className="section-title">Saved trips</div>
-            {tripsLoading && <div className="footnote">Loading…</div>}
-            {tripsError && <div className="auth-error">{tripsError}</div>}
-            {!tripsLoading && !tripsError && trips.length === 0 && (
-              <div className="footnote">
-                No saved trips yet. Open a destination and use "Save trip" to keep it here.
-              </div>
-            )}
-            {!tripsLoading && trips.length > 0 && (
-              <div className="saved-trip-list">
-                {trips.map((t) => (
-                  <div className="saved-trip-item" key={t.id}>
-                    <button
-                      className="saved-trip-main"
-                      onClick={() => onLoadTrip(t)}
-                      title="Open this trip"
-                    >
-                      <span className="saved-trip-city">{t.city}</span>
-                      <span className="saved-trip-meta">
-                        {t.country}{t.depart_date && `, ${fmtDate(t.depart_date)} - ${fmtDate(t.return_date)}`}
-                      </span>
-                    </button>
-                    <button
-                      className="saved-trip-delete"
-                      onClick={() => handleDelete(t.id)}
-                      aria-label={`Remove ${t.city}`}
-                      title="Remove"
-                    >
-                      ×
-                    </button>
-                  </div>
-                ))}
-              </div>
-            )}
+            <div className="section-title section-title-iconed"><PersonIcon size={12} /> Signed in as</div>
+            <div className="account-identity">
+              <span className="account-identity-avatar">{(fullName || user.email || '?')[0].toUpperCase()}</span>
+              <span className="account-identity-text">
+                <b>{fullName || user.email}</b>
+                {fullName && <small>{user.email}</small>}
+              </span>
+            </div>
+            <p className="footnote">Your saved trips live under the Saved trips tab in the navigation.</p>
           </div>
 
           <div className="panel-section">
-            <div className="section-title">Change password</div>
+            <div className="section-title section-title-iconed"><LockIcon size={12} /> Change password</div>
             <form className="auth-form auth-form-inline" onSubmit={handlePasswordChange}>
               <label className="auth-field">
                 <span className="auth-label">New password</span>
@@ -119,7 +69,7 @@ export function AccountPanel({ onClose, onLoadTrip, onOpenAuth }) {
                   autoComplete="new-password"
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
-                  placeholder="••••••••"
+                  placeholder="At least 6 characters"
                 />
               </label>
               <label className="auth-field">
@@ -129,7 +79,7 @@ export function AccountPanel({ onClose, onLoadTrip, onOpenAuth }) {
                   autoComplete="new-password"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  placeholder="••••••••"
+                  placeholder="Repeat the new password"
                 />
               </label>
               {pwError && <div className="auth-error">{pwError}</div>}

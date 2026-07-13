@@ -200673,5 +200673,4264 @@
     "active": true
    }
   ]
+ },
+ "gem:makarska": {
+  "source": "opentripmap",
+  "items": [
+   {
+    "name": "Nugal",
+    "kind": "Square"
+   },
+   {
+    "name": "Park prirode Biokovo",
+    "kind": "Nature reserve"
+   },
+   {
+    "name": "Sveti Jure",
+    "kind": "Peak"
+   },
+   {
+    "name": "Sveti Ilija Tunnel",
+    "kind": "Church"
+   },
+   {
+    "name": "Spomenik revolucije",
+    "kind": "Square"
+   },
+   {
+    "name": "Svetište Majke Božje Lurdske",
+    "kind": "Church"
+   },
+   {
+    "name": "Biokovo",
+    "kind": "Tower"
+   },
+   {
+    "name": "Amfora Pit",
+    "kind": "Square"
+   }
+  ],
+  "items_full": [
+   {
+    "name": "Nugal",
+    "kind": "Square",
+    "lat": 43.27925109863281,
+    "lon": 17.034038543701172,
+    "rate": 3
+   },
+   {
+    "name": "Park prirode Biokovo",
+    "kind": "Nature reserve",
+    "lat": 43.32770919799805,
+    "lon": 17.063953399658203,
+    "rate": 3
+   },
+   {
+    "name": "Sveti Jure",
+    "kind": "Peak",
+    "lat": 43.34200668334961,
+    "lon": 17.053834915161133,
+    "rate": 3
+   },
+   {
+    "name": "Sveti Ilija Tunnel",
+    "kind": "Church",
+    "lat": 43.36000061035156,
+    "lon": 16.979999542236328,
+    "rate": 3
+   },
+   {
+    "name": "Spomenik revolucije",
+    "kind": "Square",
+    "lat": 43.29597091674805,
+    "lon": 17.016393661499023,
+    "rate": 2,
+    "heritage": true
+   },
+   {
+    "name": "Svetište Majke Božje Lurdske",
+    "kind": "Church",
+    "lat": 43.31538772583008,
+    "lon": 17.004711151123047,
+    "rate": 2
+   },
+   {
+    "name": "Biokovo",
+    "kind": "Tower",
+    "lat": 43.341949462890625,
+    "lon": 17.053918838500977,
+    "rate": 2
+   },
+   {
+    "name": "Amfora Pit",
+    "kind": "Square",
+    "lat": 43.346805572509766,
+    "lon": 17.046667098999023,
+    "rate": 2,
+    "wiki": "https://en.wikipedia.org/wiki/Amfora_Pit"
+   },
+   {
+    "name": "Kimet",
+    "kind": "Peak",
+    "lat": 43.287044525146484,
+    "lon": 17.112060546875,
+    "rate": 2
+   },
+   {
+    "name": "Seagull Wings",
+    "kind": "Square",
+    "lat": 43.245704650878906,
+    "lon": 17.07059097290039,
+    "rate": 2
+   },
+   {
+    "name": "Grad",
+    "kind": "Peak",
+    "lat": 43.318824768066406,
+    "lon": 17.115394592285156,
+    "rate": 2
+   },
+   {
+    "name": "Unišća",
+    "kind": "Peak",
+    "lat": 43.27204895019531,
+    "lon": 17.114891052246094,
+    "rate": 2
+   },
+   {
+    "name": "Glogovik",
+    "kind": "Peak",
+    "lat": 43.264564514160156,
+    "lon": 17.11229133605957,
+    "rate": 2
+   },
+   {
+    "name": "Kozjak",
+    "kind": "Peak",
+    "lat": 43.29502868652344,
+    "lon": 17.13285255432129,
+    "rate": 2
+   },
+   {
+    "name": "Velika Mačka",
+    "kind": "Peak",
+    "lat": 43.27653884887695,
+    "lon": 17.129682540893555,
+    "rate": 2
+   },
+   {
+    "name": "Supin",
+    "kind": "Peak",
+    "lat": 43.25162124633789,
+    "lon": 17.11097526550293,
+    "rate": 2
+   },
+   {
+    "name": "Sveti Ilija",
+    "kind": "Peak",
+    "lat": 43.3714714050293,
+    "lon": 16.997119903564453,
+    "rate": 2
+   },
+   {
+    "name": "Mala Mačka",
+    "kind": "Peak",
+    "lat": 43.27265930175781,
+    "lon": 17.13384437561035,
+    "rate": 2
+   },
+   {
+    "name": "Vikovica",
+    "kind": "Peak",
+    "lat": 43.265323638916016,
+    "lon": 17.132183074951172,
+    "rate": 2
+   },
+   {
+    "name": "Križić",
+    "kind": "Peak",
+    "lat": 43.25896453857422,
+    "lon": 17.12783432006836,
+    "rate": 2
+   },
+   {
+    "name": "Biokovo Botanical Garden",
+    "kind": "Nature reserve",
+    "lat": 43.29119110107422,
+    "lon": 17.047527313232422,
+    "rate": 1,
+    "active": true
+   },
+   {
+    "name": "Vosac",
+    "kind": "Peak",
+    "lat": 43.31082534790039,
+    "lon": 17.046180725097656,
+    "rate": 1,
+    "active": true
+   },
+   {
+    "name": "Štrbina",
+    "kind": "Peak",
+    "lat": 43.3090705871582,
+    "lon": 17.04871940612793,
+    "rate": 1,
+    "active": true
+   },
+   {
+    "name": "Perčin",
+    "kind": "Peak",
+    "lat": 43.30716323852539,
+    "lon": 17.050579071044922,
+    "rate": 1,
+    "active": true
+   },
+   {
+    "name": "Papillon",
+    "kind": "Theme park",
+    "lat": 43.29487991333008,
+    "lon": 17.01333236694336,
+    "rate": 1,
+    "active": true
+   },
+   {
+    "name": "More Sub",
+    "kind": "Diving",
+    "lat": 43.30248260498047,
+    "lon": 17.01000213623047,
+    "rate": 1,
+    "active": true
+   },
+   {
+    "name": "St. Peter Lighthouse",
+    "kind": "Square",
+    "lat": 43.29432678222656,
+    "lon": 17.009336471557617,
+    "rate": 1,
+    "active": true
+   },
+   {
+    "name": "Gradac",
+    "kind": "Peak",
+    "lat": 43.280487060546875,
+    "lon": 17.03179931640625,
+    "rate": 1,
+    "active": true
+   },
+   {
+    "name": "Prženovac",
+    "kind": "Peak",
+    "lat": 43.304527282714844,
+    "lon": 17.059484481811523,
+    "rate": 1,
+    "active": true
+   },
+   {
+    "name": "Kalvarija",
+    "kind": "Peak",
+    "lat": 43.31330871582031,
+    "lon": 17.008710861206055,
+    "rate": 1,
+    "active": true
+   },
+   {
+    "name": "Sinjal",
+    "kind": "Peak",
+    "lat": 43.2963981628418,
+    "lon": 17.06390953063965,
+    "rate": 1,
+    "active": true
+   },
+   {
+    "name": "Kadulja",
+    "kind": "Peak",
+    "lat": 43.31908416748047,
+    "lon": 17.053279876708984,
+    "rate": 1,
+    "active": true
+   }
+  ]
+ },
+ "gem:sibenik": {
+  "source": "opentripmap",
+  "items": [
+   {
+    "name": "Katedrala svetog Jakova",
+    "kind": "Cathedral"
+   },
+   {
+    "name": "Saint Nicolaus fortres",
+    "kind": "Castle"
+   },
+   {
+    "name": "Church of the Holy Spirit",
+    "kind": "Church"
+   },
+   {
+    "name": "Church of Saint Chrysogonus",
+    "kind": "Church"
+   },
+   {
+    "name": "Saint Barbara's Church",
+    "kind": "Church"
+   },
+   {
+    "name": "Šibenik town hall",
+    "kind": "Museum"
+   },
+   {
+    "name": "Saint Michael's Fortress",
+    "kind": "Castle"
+   },
+   {
+    "name": "Battle of Šibenik",
+    "kind": "Square"
+   }
+  ],
+  "items_full": [
+   {
+    "name": "Katedrala svetog Jakova",
+    "kind": "Cathedral",
+    "lat": 43.735660552978516,
+    "lon": 15.889092445373535,
+    "rate": 3,
+    "heritage": true
+   },
+   {
+    "name": "Saint Nicolaus fortres",
+    "kind": "Castle",
+    "lat": 43.72150802612305,
+    "lon": 15.854826927185059,
+    "rate": 3,
+    "heritage": true
+   },
+   {
+    "name": "Church of the Holy Spirit",
+    "kind": "Church",
+    "lat": 43.73550033569336,
+    "lon": 15.891814231872559,
+    "rate": 3
+   },
+   {
+    "name": "Church of Saint Chrysogonus",
+    "kind": "Church",
+    "lat": 43.73575973510742,
+    "lon": 15.890545845031738,
+    "rate": 3
+   },
+   {
+    "name": "Saint Barbara's Church",
+    "kind": "Church",
+    "lat": 43.73527526855469,
+    "lon": 15.889633178710938,
+    "rate": 3
+   },
+   {
+    "name": "Šibenik town hall",
+    "kind": "Museum",
+    "lat": 43.735374450683594,
+    "lon": 15.88912582397461,
+    "rate": 3
+   },
+   {
+    "name": "Saint Michael's Fortress",
+    "kind": "Castle",
+    "lat": 43.73756790161133,
+    "lon": 15.889615058898926,
+    "rate": 3
+   },
+   {
+    "name": "Battle of Šibenik",
+    "kind": "Square",
+    "lat": 43.72999954223633,
+    "lon": 15.890000343322754,
+    "rate": 3,
+    "desc": "Battle of the Croatian War of Independence",
+    "wiki": "https://en.wikipedia.org/wiki/Battle_of_%C5%A0ibenik"
+   },
+   {
+    "name": "Banj",
+    "kind": "Square",
+    "lat": 43.74142837524414,
+    "lon": 15.883767127990723,
+    "rate": 3
+   },
+   {
+    "name": "Šibenik bridge",
+    "kind": "Bridge",
+    "lat": 43.762691497802734,
+    "lon": 15.849199295043945,
+    "rate": 3
+   },
+   {
+    "name": "Most Krka",
+    "kind": "Bridge",
+    "lat": 43.80854034423828,
+    "lon": 15.915687561035156,
+    "rate": 3
+   },
+   {
+    "name": "Bishop's Palace",
+    "kind": "Palace",
+    "lat": 43.73552322387695,
+    "lon": 15.888946533203125,
+    "rate": 2,
+    "heritage": true
+   },
+   {
+    "name": "Croatian National Theatre in Šibenik",
+    "kind": "Theatre",
+    "lat": 43.73490905761719,
+    "lon": 15.892969131469727,
+    "rate": 2
+   },
+   {
+    "name": "St. Basil of Ostrog Monastery",
+    "kind": "Monastery",
+    "lat": 43.7364616394043,
+    "lon": 15.893166542053223,
+    "rate": 2
+   },
+   {
+    "name": "Barone Fortress",
+    "kind": "Castle",
+    "lat": 43.737281799316406,
+    "lon": 15.8963623046875,
+    "rate": 2,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Aerial_image_of_Barone_Fortress%2C_%C5%A0ibenik_%28view_from_the_southwest%29.jpg/500px-Aerial_image_of_Barone_Fortress%2C_%C5%A0ibenik_%28view_from_the_southwest%29.jpg",
+    "desc": "Fortress in Šibenik, Croatia",
+    "wiki": "https://en.wikipedia.org/wiki/Barone_Fortress"
+   },
+   {
+    "name": "The Duke's palace",
+    "kind": "Palace",
+    "lat": 43.7352294921875,
+    "lon": 15.889211654663086,
+    "rate": 2
+   },
+   {
+    "name": "St. John's Fortress",
+    "kind": "Castle",
+    "lat": 43.73976135253906,
+    "lon": 15.893837928771973,
+    "rate": 2
+   },
+   {
+    "name": "Spomen-park Šubićevac",
+    "kind": "Square",
+    "lat": 43.742435455322266,
+    "lon": 15.897050857543945,
+    "rate": 2
+   },
+   {
+    "name": "Kupalište Jadrija",
+    "kind": "Square",
+    "lat": 43.723243713378906,
+    "lon": 15.847382545471191,
+    "rate": 1,
+    "heritage": true,
+    "active": true
+   },
+   {
+    "name": "Bazeni Crnica",
+    "kind": "Swimming",
+    "lat": 43.74186325073242,
+    "lon": 15.885064125061035,
+    "rate": 1,
+    "active": true
+   },
+   {
+    "name": "Luguša",
+    "kind": "Peak",
+    "lat": 43.741607666015625,
+    "lon": 15.909366607666016,
+    "rate": 1,
+    "active": true
+   },
+   {
+    "name": "Slizel",
+    "kind": "Peak",
+    "lat": 43.747711181640625,
+    "lon": 15.89920711517334,
+    "rate": 1,
+    "active": true
+   },
+   {
+    "name": "Lobor",
+    "kind": "Peak",
+    "lat": 43.725669860839844,
+    "lon": 15.877718925476074,
+    "rate": 1,
+    "active": true
+   },
+   {
+    "name": "Oštra glava",
+    "kind": "Peak",
+    "lat": 43.730934143066406,
+    "lon": 15.87433910369873,
+    "rate": 1,
+    "active": true
+   },
+   {
+    "name": "Kamenar",
+    "kind": "Peak",
+    "lat": 43.736541748046875,
+    "lon": 15.915862083435059,
+    "rate": 1,
+    "active": true
+   },
+   {
+    "name": "Kita",
+    "kind": "Peak",
+    "lat": 43.719608306884766,
+    "lon": 15.87982177734375,
+    "rate": 1,
+    "active": true
+   },
+   {
+    "name": "Glavica",
+    "kind": "Peak",
+    "lat": 43.723819732666016,
+    "lon": 15.871901512145996,
+    "rate": 1,
+    "active": true
+   },
+   {
+    "name": "Smričnjak",
+    "kind": "Peak",
+    "lat": 43.750667572021484,
+    "lon": 15.879069328308105,
+    "rate": 1,
+    "active": true
+   },
+   {
+    "name": "Sveti Križ",
+    "kind": "Peak",
+    "lat": 43.71417236328125,
+    "lon": 15.889270782470703,
+    "rate": 1,
+    "active": true
+   },
+   {
+    "name": "Gatarićka",
+    "kind": "Peak",
+    "lat": 43.75700378417969,
+    "lon": 15.89322566986084,
+    "rate": 1,
+    "active": true
+   }
+  ]
+ },
+ "gem:lago-maggiore": {
+  "source": "opentripmap",
+  "items": [
+   {
+    "name": "Madonna di Ponte",
+    "kind": "Church"
+   },
+   {
+    "name": "Brissago Ponte",
+    "kind": "Church"
+   },
+   {
+    "name": "Pino sulla Sponda del Lago Maggiore",
+    "kind": "Square"
+   },
+   {
+    "name": "Tronzano Lago Maggiore",
+    "kind": "Square"
+   },
+   {
+    "name": "Sacro Monte di Brissago",
+    "kind": "Church"
+   },
+   {
+    "name": "Isole di Brissago",
+    "kind": "Square"
+   },
+   {
+    "name": "San Martino",
+    "kind": "Church"
+   },
+   {
+    "name": "Maccagno",
+    "kind": "Square"
+   }
+  ],
+  "items_full": [
+   {
+    "name": "Madonna di Ponte",
+    "kind": "Church",
+    "lat": 46.11198043823242,
+    "lon": 8.70523738861084,
+    "rate": 3,
+    "heritage": true
+   },
+   {
+    "name": "Brissago Ponte",
+    "kind": "Church",
+    "lat": 46.11335754394531,
+    "lon": 8.704553604125977,
+    "rate": 3,
+    "heritage": true
+   },
+   {
+    "name": "Pino sulla Sponda del Lago Maggiore",
+    "kind": "Square",
+    "lat": 46.10139083862305,
+    "lon": 8.739449501037598,
+    "rate": 3,
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/af/Map_of_comune_of_Pino_sulla_Sponda_del_Lago_Maggiore_%28province_of_Varese%2C_region_Lombardy%2C_Italy%29.svg/500px-Map_of_comune_of_Pino_sulla_Sponda_del_Lago_Maggiore_%28province_of_Varese%2C_region_Lombardy%2C_Italy%29.svg.png",
+    "desc": "Comune in Lombardy, Italy",
+    "wiki": "https://en.wikipedia.org/wiki/Pino_sulla_Sponda_del_Lago_Maggiore"
+   },
+   {
+    "name": "Tronzano Lago Maggiore",
+    "kind": "Square",
+    "lat": 46.08333206176758,
+    "lon": 8.733333587646484,
+    "rate": 3,
+    "heritage": true
+   },
+   {
+    "name": "Sacro Monte di Brissago",
+    "kind": "Church",
+    "lat": 46.12102127075195,
+    "lon": 8.705581665039062,
+    "rate": 3,
+    "heritage": true
+   },
+   {
+    "name": "Isole di Brissago",
+    "kind": "Square",
+    "lat": 46.132041931152344,
+    "lon": 8.735182762145996,
+    "rate": 3,
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/Isoledibrissago.jpg/500px-Isoledibrissago.jpg",
+    "desc": "Swiss islands on Lake Maggiore",
+    "wiki": "https://en.wikipedia.org/wiki/Brissago_Islands"
+   },
+   {
+    "name": "San Martino",
+    "kind": "Church",
+    "lat": 46.143516540527344,
+    "lon": 8.72745132446289,
+    "rate": 3,
+    "heritage": true
+   },
+   {
+    "name": "Maccagno",
+    "kind": "Square",
+    "lat": 46.04999923706055,
+    "lon": 8.733333587646484,
+    "rate": 3,
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/5_Maccagno_D80_210418.jpg/500px-5_Maccagno_D80_210418.jpg",
+    "desc": "Comune in Lombardy, Italy",
+    "wiki": "https://en.wikipedia.org/wiki/Maccagno"
+   },
+   {
+    "name": "Graglio",
+    "kind": "Square",
+    "lat": 46.06563186645508,
+    "lon": 8.78271484375,
+    "rate": 3,
+    "heritage": true
+   },
+   {
+    "name": "Cadero",
+    "kind": "Square",
+    "lat": 46.056819915771484,
+    "lon": 8.773735046386719,
+    "rate": 3,
+    "heritage": true
+   },
+   {
+    "name": "Museo Epper",
+    "kind": "Museum",
+    "lat": 46.15093994140625,
+    "lon": 8.773466110229492,
+    "rate": 3,
+    "heritage": true
+   },
+   {
+    "name": "casa Serodine",
+    "kind": "Square",
+    "lat": 46.15473937988281,
+    "lon": 8.767820358276367,
+    "rate": 3,
+    "heritage": true
+   },
+   {
+    "name": "Chiesa dei Santi Quirico e Giulitta",
+    "kind": "Church",
+    "lat": 46.10039138793945,
+    "lon": 8.73942756652832,
+    "rate": 3
+   },
+   {
+    "name": "Chiesa dei Santi Pietro e Paolo",
+    "kind": "Church",
+    "lat": 46.118526458740234,
+    "lon": 8.710733413696289,
+    "rate": 3
+   },
+   {
+    "name": "Collegiata di San Vittore",
+    "kind": "Church",
+    "lat": 46.06170654296875,
+    "lon": 8.697341918945312,
+    "rate": 3
+   },
+   {
+    "name": "Chiesa della Madonna di Loreto e di Sant'Anna",
+    "kind": "Church",
+    "lat": 46.06133270263672,
+    "lon": 8.668642044067383,
+    "rate": 3
+   },
+   {
+    "name": "Madonna della Neve",
+    "kind": "Church",
+    "lat": 46.0753288269043,
+    "lon": 8.777259826660156,
+    "rate": 3
+   },
+   {
+    "name": "Chiesa di San Rocco",
+    "kind": "Church",
+    "lat": 46.052406311035156,
+    "lon": 8.741822242736816,
+    "rate": 3
+   },
+   {
+    "name": "Pizzo Leone",
+    "kind": "Peak",
+    "lat": 46.140865325927734,
+    "lon": 8.67709732055664,
+    "rate": 3
+   },
+   {
+    "name": "Chiesa di San Sebastiano",
+    "kind": "Church",
+    "lat": 46.05100631713867,
+    "lon": 8.746557235717773,
+    "rate": 3
+   },
+   {
+    "name": "Monte Limidario",
+    "kind": "Peak",
+    "lat": 46.123382568359375,
+    "lon": 8.648076057434082,
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Gridonegipfel.jpg/500px-Gridonegipfel.jpg",
+    "desc": "Mountain in Switzerland",
+    "wiki": "https://en.wikipedia.org/wiki/Gridone"
+   },
+   {
+    "name": "Chiesa della Madonna Addolorata",
+    "kind": "Church",
+    "lat": 46.0523567199707,
+    "lon": 8.754059791564941,
+    "rate": 3
+   },
+   {
+    "name": "Chiesa dei Santi Gervaso e Protaso",
+    "kind": "Church",
+    "lat": 46.06414031982422,
+    "lon": 8.780153274536133,
+    "rate": 3
+   },
+   {
+    "name": "Santi Stefano e Materno",
+    "kind": "Church",
+    "lat": 46.04368591308594,
+    "lon": 8.738678932189941,
+    "rate": 3
+   },
+   {
+    "name": "Chiesa di San Giuseppe",
+    "kind": "Church",
+    "lat": 46.06291580200195,
+    "lon": 8.779891967773438,
+    "rate": 3
+   },
+   {
+    "name": "Chiesa di San Silvestro",
+    "kind": "Church",
+    "lat": 46.056190490722656,
+    "lon": 8.77371597290039,
+    "rate": 3
+   },
+   {
+    "name": "Monte Carza",
+    "kind": "Peak",
+    "lat": 46.04243850708008,
+    "lon": 8.680460929870605,
+    "rate": 3
+   },
+   {
+    "name": "chiesa parrocchiale dei SS. Pietro e Paolo",
+    "kind": "Church",
+    "lat": 46.1185302734375,
+    "lon": 8.710619926452637,
+    "rate": 2,
+    "heritage": true
+   },
+   {
+    "name": "Museo Ruggiero Leoncavallo",
+    "kind": "Museum",
+    "lat": 46.11930465698242,
+    "lon": 8.711612701416016,
+    "rate": 2,
+    "heritage": true
+   },
+   {
+    "name": "Casa Baccalà e museo Leoncavallo",
+    "kind": "Square",
+    "lat": 46.11930847167969,
+    "lon": 8.711620330810547,
+    "rate": 2,
+    "heritage": true
+   },
+   {
+    "name": "Brissago botanical park",
+    "kind": "Square",
+    "lat": 46.13246154785156,
+    "lon": 8.735289573669434,
+    "rate": 2,
+    "heritage": true
+   },
+   {
+    "name": "Musignano",
+    "kind": "Square",
+    "lat": 46.066734313964844,
+    "lon": 8.744539260864258,
+    "rate": 2,
+    "heritage": true
+   },
+   {
+    "name": "Casa Ciseri in Ronco sopra Ascona",
+    "kind": "Square",
+    "lat": 46.14360046386719,
+    "lon": 8.726949691772461,
+    "rate": 2,
+    "heritage": true
+   },
+   {
+    "name": "Campagnano",
+    "kind": "Square",
+    "lat": 46.05112075805664,
+    "lon": 8.745240211486816,
+    "rate": 2,
+    "heritage": true
+   },
+   {
+    "name": "Garabiolo",
+    "kind": "Square",
+    "lat": 46.0531120300293,
+    "lon": 8.764497756958008,
+    "rate": 2,
+    "heritage": true
+   },
+   {
+    "name": "Maccagno Inferiore",
+    "kind": "Square",
+    "lat": 46.037235260009766,
+    "lon": 8.740680694580078,
+    "rate": 2,
+    "heritage": true
+   },
+   {
+    "name": "Armio",
+    "kind": "Square",
+    "lat": 46.07058334350586,
+    "lon": 8.798727035522461,
+    "rate": 2,
+    "heritage": true
+   },
+   {
+    "name": "Chiesa di S. Michele con rovine del castello medievale",
+    "kind": "Square",
+    "lat": 46.15391159057617,
+    "lon": 8.763640403747559,
+    "rate": 2,
+    "heritage": true
+   },
+   {
+    "name": "Chiesa di Santa Maria Assunta",
+    "kind": "Church",
+    "lat": 46.09016799926758,
+    "lon": 8.739514350891113,
+    "rate": 2
+   },
+   {
+    "name": "Santissima Pietà",
+    "kind": "Church",
+    "lat": 46.06397247314453,
+    "lon": 8.700271606445312,
+    "rate": 2
+   },
+   {
+    "name": "Cruit",
+    "kind": "Peak",
+    "lat": 46.11603927612305,
+    "lon": 8.656327247619629,
+    "rate": 2,
+    "active": true
+   },
+   {
+    "name": "Mottone",
+    "kind": "Peak",
+    "lat": 46.12574768066406,
+    "lon": 8.659523963928223,
+    "rate": 2,
+    "active": true
+   },
+   {
+    "name": "Pizzo Fedora",
+    "kind": "Peak",
+    "lat": 46.12862014770508,
+    "lon": 8.662206649780273,
+    "rate": 2,
+    "active": true
+   },
+   {
+    "name": "Forcora",
+    "kind": "Skiing",
+    "lat": 46.07321548461914,
+    "lon": 8.77444839477539,
+    "rate": 2,
+    "active": true
+   },
+   {
+    "name": "Pizzo Ometto",
+    "kind": "Peak",
+    "lat": 46.13376998901367,
+    "lon": 8.666248321533203,
+    "rate": 2,
+    "active": true
+   },
+   {
+    "name": "Corona di Pinz",
+    "kind": "Peak",
+    "lat": 46.15489959716797,
+    "lon": 8.716389656066895,
+    "rate": 2,
+    "active": true
+   },
+   {
+    "name": "Lido di Brissago",
+    "kind": "Swimming",
+    "lat": 46.112037658691406,
+    "lon": 8.706072807312012,
+    "rate": 1,
+    "active": true
+   },
+   {
+    "name": "Maggiore diving",
+    "kind": "Diving",
+    "lat": 46.09282684326172,
+    "lon": 8.6910400390625,
+    "rate": 1,
+    "active": true
+   },
+   {
+    "name": "Porto",
+    "kind": "Diving",
+    "lat": 46.117919921875,
+    "lon": 8.71010971069336,
+    "rate": 1,
+    "active": true
+   },
+   {
+    "name": "Porto alla Ressiga",
+    "kind": "Diving",
+    "lat": 46.12049865722656,
+    "lon": 8.71399974822998,
+    "rate": 1,
+    "active": true
+   },
+   {
+    "name": "Monte Borgna",
+    "kind": "Peak",
+    "lat": 46.07803726196289,
+    "lon": 8.746537208557129,
+    "rate": 1,
+    "active": true
+   },
+   {
+    "name": "Porto Ronco Beach Club",
+    "kind": "Diving",
+    "lat": 46.1331901550293,
+    "lon": 8.71935749053955,
+    "rate": 1,
+    "active": true
+   }
+  ]
+ },
+ "gem:taormina": {
+  "source": "opentripmap",
+  "items": [
+   {
+    "name": "Greek theatre",
+    "kind": "Theatre"
+   },
+   {
+    "name": "Palazzo Corvaja",
+    "kind": "Palace"
+   },
+   {
+    "name": "Chiesa di Santa Caterina di Alessandria",
+    "kind": "Church"
+   },
+   {
+    "name": "San Pancrazio",
+    "kind": "Church"
+   },
+   {
+    "name": "Church of Saint Augustine",
+    "kind": "Church"
+   },
+   {
+    "name": "Chiesa di San Giuseppe",
+    "kind": "Church"
+   },
+   {
+    "name": "Castello di Monte Tauro",
+    "kind": "Castle"
+   },
+   {
+    "name": "Duomo",
+    "kind": "Cathedral"
+   }
+  ],
+  "items_full": [
+   {
+    "name": "Greek theatre",
+    "kind": "Theatre",
+    "lat": 37.85237121582031,
+    "lon": 15.29227066040039,
+    "rate": 3,
+    "heritage": true
+   },
+   {
+    "name": "Palazzo Corvaja",
+    "kind": "Palace",
+    "lat": 37.853946685791016,
+    "lon": 15.288512229919434,
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/Palazzo_Corvaja.jpg/500px-Palazzo_Corvaja.jpg",
+    "desc": "Medieval palace in Taormina, Sicily",
+    "wiki": "https://en.wikipedia.org/wiki/Palazzo_Corvaja"
+   },
+   {
+    "name": "Chiesa di Santa Caterina di Alessandria",
+    "kind": "Church",
+    "lat": 37.85387420654297,
+    "lon": 15.28820514678955,
+    "rate": 3
+   },
+   {
+    "name": "San Pancrazio",
+    "kind": "Church",
+    "lat": 37.85560607910156,
+    "lon": 15.289621353149414,
+    "rate": 3
+   },
+   {
+    "name": "Church of Saint Augustine",
+    "kind": "Church",
+    "lat": 37.85166549682617,
+    "lon": 15.286161422729492,
+    "rate": 3
+   },
+   {
+    "name": "Chiesa di San Giuseppe",
+    "kind": "Church",
+    "lat": 37.85174560546875,
+    "lon": 15.285540580749512,
+    "rate": 3
+   },
+   {
+    "name": "Castello di Monte Tauro",
+    "kind": "Castle",
+    "lat": 37.85444259643555,
+    "lon": 15.284444808959961,
+    "rate": 3
+   },
+   {
+    "name": "Duomo",
+    "kind": "Cathedral",
+    "lat": 37.851016998291016,
+    "lon": 15.283012390136719,
+    "rate": 3
+   },
+   {
+    "name": "Isola Bella",
+    "kind": "Peak",
+    "lat": 37.850154876708984,
+    "lon": 15.300690650939941,
+    "rate": 3
+   },
+   {
+    "name": "Palazzo Duchi di Santo Stefano",
+    "kind": "Palace",
+    "lat": 37.850830078125,
+    "lon": 15.281709671020508,
+    "rate": 3
+   },
+   {
+    "name": "Castello di Castelmola",
+    "kind": "Castle",
+    "lat": 37.85935974121094,
+    "lon": 15.277350425720215,
+    "rate": 3
+   },
+   {
+    "name": "Museo Archeologico di Giardini Naxos",
+    "kind": "Museum",
+    "lat": 37.82426452636719,
+    "lon": 15.274401664733887,
+    "rate": 3
+   },
+   {
+    "name": "La Porta di Naxos",
+    "kind": "Square",
+    "lat": 37.82251739501953,
+    "lon": 15.275858879089355,
+    "rate": 3
+   },
+   {
+    "name": "Schisò Castle",
+    "kind": "Castle",
+    "lat": 37.82352066040039,
+    "lon": 15.271709442138672,
+    "rate": 3
+   },
+   {
+    "name": "Naxos",
+    "kind": "Square",
+    "lat": 37.824073791503906,
+    "lon": 15.269400596618652,
+    "rate": 3
+   },
+   {
+    "name": "Alcantara Park",
+    "kind": "Nature reserve",
+    "lat": 37.854896545410156,
+    "lon": 15.212841033935547,
+    "rate": 3
+   },
+   {
+    "name": "Chiesa della Santissima Annunziata",
+    "kind": "Church",
+    "lat": 37.914676666259766,
+    "lon": 15.334247589111328,
+    "rate": 3
+   },
+   {
+    "name": "Castle in Forza d'Agrò",
+    "kind": "Castle",
+    "lat": 37.916778564453125,
+    "lon": 15.331515312194824,
+    "rate": 3
+   },
+   {
+    "name": "Riserva naturale Fiume Fiumefreddo",
+    "kind": "Nature reserve",
+    "lat": 37.78694152832031,
+    "lon": 15.234530448913574,
+    "rate": 3
+   },
+   {
+    "name": "Taormina and Isola Bella",
+    "kind": "Square",
+    "lat": 37.84920120239258,
+    "lon": 15.2878999710083,
+    "rate": 2,
+    "heritage": true
+   },
+   {
+    "name": "Lady Florence Trevelyan Park",
+    "kind": "Square",
+    "lat": 37.850948333740234,
+    "lon": 15.28998851776123,
+    "rate": 2
+   },
+   {
+    "name": "Roman Odeum of Taormina",
+    "kind": "Theatre",
+    "lat": 37.85394287109375,
+    "lon": 15.28808307647705,
+    "rate": 2
+   },
+   {
+    "name": "Riserva naturale orientata Isola Bella",
+    "kind": "Nature reserve",
+    "lat": 37.850807189941406,
+    "lon": 15.302578926086426,
+    "rate": 2
+   },
+   {
+    "name": "Casa Cuseni",
+    "kind": "Museum",
+    "lat": 37.85282516479492,
+    "lon": 15.280205726623535,
+    "rate": 2
+   },
+   {
+    "name": "Grotta Azzurra",
+    "kind": "Square",
+    "lat": 37.851802825927734,
+    "lon": 15.304916381835938,
+    "rate": 2
+   },
+   {
+    "name": "Villagonia",
+    "kind": "Castle",
+    "lat": 37.84383773803711,
+    "lon": 15.281285285949707,
+    "rate": 2
+   },
+   {
+    "name": "Piazza Gesù e Maria",
+    "kind": "Church",
+    "lat": 37.82388687133789,
+    "lon": 15.227136611938477,
+    "rate": 2
+   },
+   {
+    "name": "Chiesa di Gesù e Maria",
+    "kind": "Church",
+    "lat": 37.82394790649414,
+    "lon": 15.226958274841309,
+    "rate": 2
+   },
+   {
+    "name": "Castello di Sant'Alessio",
+    "kind": "Castle",
+    "lat": 37.91360092163086,
+    "lon": 15.346518516540527,
+    "rate": 2
+   },
+   {
+    "name": "Capo Taormina",
+    "kind": "Nature reserve",
+    "lat": 37.851905822753906,
+    "lon": 15.299516677856445,
+    "rate": 1,
+    "heritage": true,
+    "active": true
+   },
+   {
+    "name": "Fondali di Taormina - Isola Bella",
+    "kind": "Nature reserve",
+    "lat": 37.84759521484375,
+    "lon": 15.30147933959961,
+    "rate": 1,
+    "heritage": true,
+    "active": true
+   },
+   {
+    "name": "Rupi di Taormina e Monte Veneretta",
+    "kind": "Nature reserve",
+    "lat": 37.863887786865234,
+    "lon": 15.263333320617676,
+    "rate": 1,
+    "heritage": true,
+    "active": true
+   },
+   {
+    "name": "Bacino del Torrente Letojanni",
+    "kind": "Nature reserve",
+    "lat": 37.89179611206055,
+    "lon": 15.264571189880371,
+    "rate": 1,
+    "heritage": true,
+    "active": true
+   },
+   {
+    "name": "Tombe Bizantine",
+    "kind": "Square",
+    "lat": 37.85105514526367,
+    "lon": 15.294371604919434,
+    "rate": 1,
+    "active": true
+   },
+   {
+    "name": "Piscina Comunale di Taormina",
+    "kind": "Swimming",
+    "lat": 37.85395431518555,
+    "lon": 15.296128273010254,
+    "rate": 1,
+    "active": true
+   },
+   {
+    "name": "Monte Tauro",
+    "kind": "Peak",
+    "lat": 37.85456466674805,
+    "lon": 15.284551620483398,
+    "rate": 1,
+    "active": true
+   },
+   {
+    "name": "Grotta del Giorno",
+    "kind": "Square",
+    "lat": 37.846038818359375,
+    "lon": 15.29525089263916,
+    "rate": 1,
+    "active": true
+   },
+   {
+    "name": "Grotta Bunker",
+    "kind": "Square",
+    "lat": 37.84579849243164,
+    "lon": 15.295443534851074,
+    "rate": 1,
+    "active": true
+   },
+   {
+    "name": "Grotta la Conchiglia",
+    "kind": "Square",
+    "lat": 37.84672927856445,
+    "lon": 15.297483444213867,
+    "rate": 1,
+    "active": true
+   },
+   {
+    "name": "Lido Conchiglie",
+    "kind": "Square",
+    "lat": 37.846214294433594,
+    "lon": 15.297287940979004,
+    "rate": 1,
+    "active": true
+   },
+   {
+    "name": "Grotta la Bolla (scuba)",
+    "kind": "Square",
+    "lat": 37.845516204833984,
+    "lon": 15.296101570129395,
+    "rate": 1,
+    "active": true
+   }
+  ]
+ },
+ "gem:capri": {
+  "source": "opentripmap",
+  "items": [
+   {
+    "name": "Scala Fenicia",
+    "kind": "Square"
+   },
+   {
+    "name": "Via Vittorio Emanuele terzo",
+    "kind": "Square"
+   },
+   {
+    "name": "Via Vittorio Emanuele III",
+    "kind": "Square"
+   },
+   {
+    "name": "Certosa di San Giacomo",
+    "kind": "Church"
+   },
+   {
+    "name": "Blue Grotto",
+    "kind": "Square"
+   },
+   {
+    "name": "Villa Jovis",
+    "kind": "Museum"
+   },
+   {
+    "name": "Belvedere del Sognatore",
+    "kind": "Square"
+   },
+   {
+    "name": "Cimitero Acattolico",
+    "kind": "Square"
+   }
+  ],
+  "items_full": [
+   {
+    "name": "Scala Fenicia",
+    "kind": "Square",
+    "lat": 40.55622863769531,
+    "lon": 14.22917366027832,
+    "rate": 3,
+    "heritage": true
+   },
+   {
+    "name": "Via Vittorio Emanuele terzo",
+    "kind": "Square",
+    "lat": 40.55084228515625,
+    "lon": 14.243132591247559,
+    "rate": 3,
+    "heritage": true
+   },
+   {
+    "name": "Via Vittorio Emanuele III",
+    "kind": "Square",
+    "lat": 40.55082321166992,
+    "lon": 14.243230819702148,
+    "rate": 3,
+    "heritage": true
+   },
+   {
+    "name": "Certosa di San Giacomo",
+    "kind": "Church",
+    "lat": 40.54747772216797,
+    "lon": 14.244863510131836,
+    "rate": 3,
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/df/Certosa_di_San_Giacomo%2C_Capri.jpg/500px-Certosa_di_San_Giacomo%2C_Capri.jpg",
+    "desc": "Museum and former monastery in Capri, Italy",
+    "wiki": "https://en.wikipedia.org/wiki/Certosa_di_San_Giacomo"
+   },
+   {
+    "name": "Blue Grotto",
+    "kind": "Square",
+    "lat": 40.56093978881836,
+    "lon": 14.20573616027832,
+    "rate": 3,
+    "heritage": true
+   },
+   {
+    "name": "Villa Jovis",
+    "kind": "Museum",
+    "lat": 40.55827331542969,
+    "lon": 14.263368606567383,
+    "rate": 3,
+    "heritage": true
+   },
+   {
+    "name": "Belvedere del Sognatore",
+    "kind": "Square",
+    "lat": 40.536373138427734,
+    "lon": 14.199807167053223,
+    "rate": 3,
+    "heritage": true
+   },
+   {
+    "name": "Cimitero Acattolico",
+    "kind": "Square",
+    "lat": 40.55137634277344,
+    "lon": 14.235231399536133,
+    "rate": 3
+   },
+   {
+    "name": "Grotta delle Felci",
+    "kind": "Square",
+    "lat": 40.54722213745117,
+    "lon": 14.23277759552002,
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Grotta_delle_Felci_ITA.jpg/500px-Grotta_delle_Felci_ITA.jpg",
+    "desc": "Cave and archaeological site in Italy",
+    "wiki": "https://en.wikipedia.org/wiki/Grotta_delle_Felci"
+   },
+   {
+    "name": "Eremo di Santa Maria a Cetrella",
+    "kind": "Church",
+    "lat": 40.54732131958008,
+    "lon": 14.229116439819336,
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/5/52/Eremo_cetrella.jpg",
+    "wiki": "https://en.wikipedia.org/wiki/Santa_Maria_a_Cetrella"
+   },
+   {
+    "name": "Chiesa di San Costanzo",
+    "kind": "Church",
+    "lat": 40.55642318725586,
+    "lon": 14.23503589630127,
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/Capri_-_Chiesa_di_S._Costanzo_1973.jpg/500px-Capri_-_Chiesa_di_S._Costanzo_1973.jpg",
+    "desc": "Monumental church of Capri, Italy",
+    "wiki": "https://en.wikipedia.org/wiki/San_Costanzo,_Capri"
+   },
+   {
+    "name": "Castello di Barbarossa",
+    "kind": "Castle",
+    "lat": 40.555606842041016,
+    "lon": 14.22712230682373,
+    "rate": 3
+   },
+   {
+    "name": "Chiesa di Santo Stefano",
+    "kind": "Church",
+    "lat": 40.550498962402344,
+    "lon": 14.24317741394043,
+    "rate": 3
+   },
+   {
+    "name": "Giardini di Augusto",
+    "kind": "Square",
+    "lat": 40.547019958496094,
+    "lon": 14.243205070495605,
+    "rate": 3,
+    "desc": "Botanical garden in Campania, Italy",
+    "wiki": "https://en.wikipedia.org/wiki/Gardens_of_Augustus"
+   },
+   {
+    "name": "Monte Solaro",
+    "kind": "Peak",
+    "lat": 40.545127868652344,
+    "lon": 14.223735809326172,
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dc/I08_366_Monte_Salaro.jpg/500px-I08_366_Monte_Salaro.jpg",
+    "desc": "Mountain in Italy",
+    "wiki": "https://en.wikipedia.org/wiki/Monte_Solaro"
+   },
+   {
+    "name": "Parco Villa San Michele",
+    "kind": "Museum",
+    "lat": 40.5572395324707,
+    "lon": 14.225512504577637,
+    "rate": 3
+   },
+   {
+    "name": "Villa San Michele",
+    "kind": "Museum",
+    "lat": 40.5572624206543,
+    "lon": 14.225067138671875,
+    "rate": 3
+   },
+   {
+    "name": "Casa Rossa",
+    "kind": "Museum",
+    "lat": 40.555110931396484,
+    "lon": 14.218912124633789,
+    "rate": 3
+   },
+   {
+    "name": "Chiesa di San Michele Arcangelo",
+    "kind": "Church",
+    "lat": 40.554718017578125,
+    "lon": 14.217308044433594,
+    "rate": 3
+   },
+   {
+    "name": "Chiesa di Santa Sofia",
+    "kind": "Church",
+    "lat": 40.55418395996094,
+    "lon": 14.216974258422852,
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/DSCN3871_Anacapri.JPG/500px-DSCN3871_Anacapri.JPG",
+    "desc": "Roman Catholic church in Anacapri, Italy",
+    "wiki": "https://en.wikipedia.org/wiki/Santa_Sofia,_Capri"
+   },
+   {
+    "name": "Arco Naturale",
+    "kind": "Square",
+    "lat": 40.54944610595703,
+    "lon": 14.255833625793457,
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f1/Arco_Naturale.jpg/500px-Arco_Naturale.jpg",
+    "desc": "Rock gate on the island of Capri, Italy",
+    "wiki": "https://en.wikipedia.org/wiki/Arco_Naturale"
+   },
+   {
+    "name": "Grotta di Matermania",
+    "kind": "Square",
+    "lat": 40.54945755004883,
+    "lon": 14.255843162536621,
+    "rate": 3
+   },
+   {
+    "name": "Villa Lysis/Fersen",
+    "kind": "Square",
+    "lat": 40.559242248535156,
+    "lon": 14.259830474853516,
+    "rate": 3
+   },
+   {
+    "name": "Faro di Punta Carena",
+    "kind": "Square",
+    "lat": 40.53628921508789,
+    "lon": 14.198822975158691,
+    "rate": 3
+   },
+   {
+    "name": "Punta Campanella Marine Reserve",
+    "kind": "Nature reserve",
+    "lat": 40.569000244140625,
+    "lon": 14.324722290039062,
+    "rate": 3
+   },
+   {
+    "name": "Corpo centrale e rupi costiere occidentali dell'Isola di Capri",
+    "kind": "Nature reserve",
+    "lat": 40.54833221435547,
+    "lon": 14.223889350891113,
+    "rate": 2,
+    "heritage": true
+   },
+   {
+    "name": "Villa Damecuta",
+    "kind": "Square",
+    "lat": 40.55283737182617,
+    "lon": 14.213813781738281,
+    "rate": 2,
+    "heritage": true
+   },
+   {
+    "name": "Santa Maria a Cetrella",
+    "kind": "Church",
+    "lat": 40.54734802246094,
+    "lon": 14.229256629943848,
+    "rate": 2
+   },
+   {
+    "name": "Chiesa di Sant'Andrea",
+    "kind": "Church",
+    "lat": 40.54534912109375,
+    "lon": 14.23514461517334,
+    "rate": 2
+   },
+   {
+    "name": "Museo Ignazio Cerio",
+    "kind": "Museum",
+    "lat": 40.55052947998047,
+    "lon": 14.242781639099121,
+    "rate": 2
+   },
+   {
+    "name": "Grotta del Pisco",
+    "kind": "Square",
+    "lat": 40.54876708984375,
+    "lon": 14.223089218139648,
+    "rate": 2,
+    "wiki": "https://en.wikipedia.org/wiki/Grotta_del_Pisco"
+   },
+   {
+    "name": "Palazzo a Mare",
+    "kind": "Square",
+    "lat": 40.55839920043945,
+    "lon": 14.234891891479492,
+    "rate": 2,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8f/Simboli_della_dea_Cerere_-_Villa_di_Palazzo_a_Mare_%28Capri%29_-_Museo_archeologico_di_Capri_WLM25_001.jpg/500px-Simboli_della_dea_Cerere_-_Villa_di_Palazzo_a_Mare_%28Capri%29_-_Museo_archeologico_di_Capri_WLM25_001.jpg",
+    "desc": "Archaeological site in Capri, Italy",
+    "wiki": "https://en.wikipedia.org/wiki/Palazzo_a_Mare"
+   },
+   {
+    "name": "Chiesa Costantinopoli",
+    "kind": "Church",
+    "lat": 40.55302810668945,
+    "lon": 14.220223426818848,
+    "rate": 2
+   },
+   {
+    "name": "Grotta Verde",
+    "kind": "Square",
+    "lat": 40.539039611816406,
+    "lon": 14.221570014953613,
+    "rate": 2,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ee/Grotta_Verde_a_Capri.jpg/500px-Grotta_Verde_a_Capri.jpg",
+    "wiki": "https://en.wikipedia.org/wiki/Grotta_Verde"
+   },
+   {
+    "name": "Monte Tuoro",
+    "kind": "Peak",
+    "lat": 40.547027587890625,
+    "lon": 14.252595901489258,
+    "rate": 2
+   },
+   {
+    "name": "Parco Filosofico",
+    "kind": "Square",
+    "lat": 40.540321350097656,
+    "lon": 14.210389137268066,
+    "rate": 2
+   },
+   {
+    "name": "Grotta Bianca",
+    "kind": "Square",
+    "lat": 40.5528678894043,
+    "lon": 14.261554718017578,
+    "rate": 2,
+    "desc": "Cave in Italy",
+    "wiki": "https://en.wikipedia.org/wiki/Grotta_Bianca"
+   },
+   {
+    "name": "Chiesa Santa Maria del Soccorso",
+    "kind": "Church",
+    "lat": 40.55846405029297,
+    "lon": 14.263625144958496,
+    "rate": 2
+   },
+   {
+    "name": "Punta Campanella",
+    "kind": "Diving",
+    "lat": 40.56922149658203,
+    "lon": 14.325491905212402,
+    "rate": 3,
+    "active": true
+   },
+   {
+    "name": "Settore e rupi costiere orientali dell'Isola di Capri",
+    "kind": "Nature reserve",
+    "lat": 40.55416488647461,
+    "lon": 14.259166717529297,
+    "rate": 1,
+    "heritage": true,
+    "active": true
+   },
+   {
+    "name": "Marina Piccola",
+    "kind": "Square",
+    "lat": 40.54520797729492,
+    "lon": 14.234404563903809,
+    "rate": 1,
+    "active": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Capri-marina_piccola.jpg/500px-Capri-marina_piccola.jpg",
+    "wiki": "https://en.wikipedia.org/wiki/Marina_Piccola"
+   },
+   {
+    "name": "Spiaggia Libera di Marina Grande",
+    "kind": "Square",
+    "lat": 40.55756378173828,
+    "lon": 14.235952377319336,
+    "rate": 1,
+    "active": true
+   },
+   {
+    "name": "Via Krupp",
+    "kind": "Square",
+    "lat": 40.54610061645508,
+    "lon": 14.2431001663208,
+    "rate": 1,
+    "active": true
+   },
+   {
+    "name": "La Fontelina",
+    "kind": "Water park",
+    "lat": 40.54376983642578,
+    "lon": 14.25082015991211,
+    "rate": 1,
+    "active": true
+   },
+   {
+    "name": "Da Luigi Ai Faraglioni",
+    "kind": "Square",
+    "lat": 40.54340744018555,
+    "lon": 14.252922058105469,
+    "rate": 1,
+    "active": true
+   },
+   {
+    "name": "Scoglio del Monacone",
+    "kind": "Square",
+    "lat": 40.5432014465332,
+    "lon": 14.253399848937988,
+    "rate": 1,
+    "active": true
+   },
+   {
+    "name": "Faraglione di Terra",
+    "kind": "Square",
+    "lat": 40.54248046875,
+    "lon": 14.253252029418945,
+    "rate": 1,
+    "active": true
+   },
+   {
+    "name": "Da Gelosmina",
+    "kind": "Water park",
+    "lat": 40.54118728637695,
+    "lon": 14.210545539855957,
+    "rate": 1,
+    "active": true
+   },
+   {
+    "name": "Grotta Azzurra",
+    "kind": "Square",
+    "lat": 40.56119918823242,
+    "lon": 14.204000473022461,
+    "rate": 1,
+    "active": true
+   },
+   {
+    "name": "Lido del Faro",
+    "kind": "Water park",
+    "lat": 40.537193298339844,
+    "lon": 14.198921203613281,
+    "rate": 1,
+    "active": true
+   }
+  ]
+ },
+ "gem:tropea": {
+  "source": "opentripmap",
+  "items": [
+   {
+    "name": "Tropea",
+    "kind": "Square"
+   },
+   {
+    "name": "Cattedrale di Maria Santissima di Romania",
+    "kind": "Cathedral"
+   },
+   {
+    "name": "Civico Museo del Mare di Tropea",
+    "kind": "Museum"
+   },
+   {
+    "name": "chiesa dell’annunziata",
+    "kind": "Church"
+   },
+   {
+    "name": "Spiaggia di Tropea",
+    "kind": "Square"
+   },
+   {
+    "name": "Museo Diocesano di Tropea",
+    "kind": "Museum"
+   },
+   {
+    "name": "Zona costiera fra Briatico e Nicotera",
+    "kind": "Nature reserve"
+   },
+   {
+    "name": "Monte Poro",
+    "kind": "Peak"
+   }
+  ],
+  "items_full": [
+   {
+    "name": "Tropea",
+    "kind": "Square",
+    "lat": 38.67805480957031,
+    "lon": 15.896944046020508,
+    "rate": 3,
+    "heritage": true
+   },
+   {
+    "name": "Cattedrale di Maria Santissima di Romania",
+    "kind": "Cathedral",
+    "lat": 38.67788314819336,
+    "lon": 15.898688316345215,
+    "rate": 3,
+    "heritage": true
+   },
+   {
+    "name": "Civico Museo del Mare di Tropea",
+    "kind": "Museum",
+    "lat": 38.679378509521484,
+    "lon": 15.89653491973877,
+    "rate": 3
+   },
+   {
+    "name": "chiesa dell’annunziata",
+    "kind": "Church",
+    "lat": 38.67256164550781,
+    "lon": 15.889012336730957,
+    "rate": 3
+   },
+   {
+    "name": "Spiaggia di Tropea",
+    "kind": "Square",
+    "lat": 38.68022155761719,
+    "lon": 15.898200035095215,
+    "rate": 3
+   },
+   {
+    "name": "Museo Diocesano di Tropea",
+    "kind": "Museum",
+    "lat": 38.67813491821289,
+    "lon": 15.898344993591309,
+    "rate": 2,
+    "heritage": true
+   },
+   {
+    "name": "Zona costiera fra Briatico e Nicotera",
+    "kind": "Nature reserve",
+    "lat": 38.62083435058594,
+    "lon": 15.828055381774902,
+    "rate": 2,
+    "heritage": true
+   },
+   {
+    "name": "Monte Poro",
+    "kind": "Peak",
+    "lat": 38.604164123535156,
+    "lon": 15.907793998718262,
+    "rate": 2
+   },
+   {
+    "name": "Aquapark di Zambrone",
+    "kind": "Water park",
+    "lat": 38.71080017089844,
+    "lon": 15.971099853515625,
+    "rate": 3,
+    "active": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/Panoramica_AQUAPARK_di_Zambrone.JPG/500px-Panoramica_AQUAPARK_di_Zambrone.JPG",
+    "desc": "Water park in Zambrone, Italy",
+    "wiki": "https://en.wikipedia.org/wiki/Aquapark_di_Zambrone"
+   },
+   {
+    "name": "Fiumara di Brattirò (Valle Ruffa)",
+    "kind": "Nature reserve",
+    "lat": 38.63666534423828,
+    "lon": 15.90250015258789,
+    "rate": 1,
+    "heritage": true,
+    "active": true
+   },
+   {
+    "name": "Fondali di Capo Vaticano",
+    "kind": "Nature reserve",
+    "lat": 38.620277404785156,
+    "lon": 15.821666717529297,
+    "rate": 1,
+    "heritage": true,
+    "active": true
+   },
+   {
+    "name": "Spiaggia del Convento",
+    "kind": "Square",
+    "lat": 38.67677688598633,
+    "lon": 15.890562057495117,
+    "rate": 1,
+    "active": true
+   },
+   {
+    "name": "Mare Piccolo;Spiaggia della Rotonda",
+    "kind": "Square",
+    "lat": 38.679805755615234,
+    "lon": 15.896835327148438,
+    "rate": 1,
+    "active": true
+   },
+   {
+    "name": "Grotta del Palombaro",
+    "kind": "Square",
+    "lat": 38.6805419921875,
+    "lon": 15.8958158493042,
+    "rate": 1,
+    "active": true
+   },
+   {
+    "name": "Spiaggia Santa Maria dell'Isola",
+    "kind": "Square",
+    "lat": 38.68058395385742,
+    "lon": 15.895454406738281,
+    "rate": 1,
+    "active": true
+   },
+   {
+    "name": "Spiaggia del Cannone",
+    "kind": "Square",
+    "lat": 38.680702209472656,
+    "lon": 15.900847434997559,
+    "rate": 1,
+    "active": true
+   },
+   {
+    "name": "Baia di Riaci",
+    "kind": "Square",
+    "lat": 38.67182922363281,
+    "lon": 15.871230125427246,
+    "rate": 1,
+    "active": true
+   },
+   {
+    "name": "Torre marino",
+    "kind": "Square",
+    "lat": 38.65196228027344,
+    "lon": 15.84276008605957,
+    "rate": 1,
+    "active": true
+   },
+   {
+    "name": "Beach La Conchiglia",
+    "kind": "Square",
+    "lat": 38.633018493652344,
+    "lon": 15.831988334655762,
+    "rate": 1,
+    "active": true
+   },
+   {
+    "name": "Grotticelle",
+    "kind": "Square",
+    "lat": 38.615684509277344,
+    "lon": 15.837904930114746,
+    "rate": 1,
+    "active": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7d/Ricadi01.jpg/500px-Ricadi01.jpg",
+    "desc": "Comune in Calabria, Italy",
+    "wiki": "https://en.wikipedia.org/wiki/Ricadi"
+   }
+  ]
+ },
+ "gem:cassis": {
+  "source": "opentripmap",
+  "items": [
+   {
+    "name": "Bastide Marin",
+    "kind": "Square"
+   },
+   {
+    "name": "Palais Lumière",
+    "kind": "Palace"
+   },
+   {
+    "name": "Chapelle des Pénitents bleus de la Ciotat",
+    "kind": "Church"
+   },
+   {
+    "name": "Éden Théâtre",
+    "kind": "Theatre"
+   },
+   {
+    "name": "Cosquer",
+    "kind": "Climbing"
+   },
+   {
+    "name": "Hôtel de Grimaldi-Régusse",
+    "kind": "Square"
+   },
+   {
+    "name": "Grottes Cosquer",
+    "kind": "Square"
+   },
+   {
+    "name": "Monument aux Morts de la Légion étrangère",
+    "kind": "Square"
+   }
+  ],
+  "items_full": [
+   {
+    "name": "Bastide Marin",
+    "kind": "Square",
+    "lat": 43.20090103149414,
+    "lon": 5.618199825286865,
+    "rate": 3,
+    "heritage": true
+   },
+   {
+    "name": "Palais Lumière",
+    "kind": "Palace",
+    "lat": 43.18785858154297,
+    "lon": 5.616886615753174,
+    "rate": 3,
+    "heritage": true
+   },
+   {
+    "name": "Chapelle des Pénitents bleus de la Ciotat",
+    "kind": "Church",
+    "lat": 43.17707061767578,
+    "lon": 5.609865188598633,
+    "rate": 3,
+    "heritage": true
+   },
+   {
+    "name": "Éden Théâtre",
+    "kind": "Theatre",
+    "lat": 43.177406311035156,
+    "lon": 5.6104888916015625,
+    "rate": 3,
+    "heritage": true
+   },
+   {
+    "name": "Cosquer",
+    "kind": "Climbing",
+    "lat": 43.203128814697266,
+    "lon": 5.4502458572387695,
+    "rate": 3,
+    "heritage": true
+   },
+   {
+    "name": "Hôtel de Grimaldi-Régusse",
+    "kind": "Square",
+    "lat": 43.174076080322266,
+    "lon": 5.609266757965088,
+    "rate": 3,
+    "heritage": true
+   },
+   {
+    "name": "Grottes Cosquer",
+    "kind": "Square",
+    "lat": 43.20276641845703,
+    "lon": 5.4489359855651855,
+    "rate": 3,
+    "heritage": true
+   },
+   {
+    "name": "Monument aux Morts de la Légion étrangère",
+    "kind": "Square",
+    "lat": 43.28900146484375,
+    "lon": 5.553100109100342,
+    "rate": 3,
+    "heritage": true
+   },
+   {
+    "name": "Château de la Reynarde",
+    "kind": "Castle",
+    "lat": 43.289669036865234,
+    "lon": 5.505527019500732,
+    "rate": 3,
+    "heritage": true
+   },
+   {
+    "name": "Château Régis",
+    "kind": "Castle",
+    "lat": 43.28984832763672,
+    "lon": 5.500267028808594,
+    "rate": 3,
+    "heritage": true
+   },
+   {
+    "name": "Chapelle des Pénitents gris d'Aubagne",
+    "kind": "Church",
+    "lat": 43.292633056640625,
+    "lon": 5.570760726928711,
+    "rate": 3,
+    "heritage": true
+   },
+   {
+    "name": "Chapelle des Pénitents noirs d'Aubagne",
+    "kind": "Church",
+    "lat": 43.292781829833984,
+    "lon": 5.572467803955078,
+    "rate": 3,
+    "heritage": true
+   },
+   {
+    "name": "Chapelle des Pénitents blancs d'Aubagne",
+    "kind": "Church",
+    "lat": 43.29330062866211,
+    "lon": 5.571489334106445,
+    "rate": 3,
+    "heritage": true
+   },
+   {
+    "name": "Cassis",
+    "kind": "Castle",
+    "lat": 43.21403503417969,
+    "lon": 5.5396318435668945,
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Cassis_%28cropped%29.jpg/500px-Cassis_%28cropped%29.jpg",
+    "desc": "Administrative division in Provence-Alpes-Côte d'Azur, France",
+    "wiki": "https://en.wikipedia.org/wiki/Cassis"
+   },
+   {
+    "name": "Château de Cassis",
+    "kind": "Castle",
+    "lat": 43.212684631347656,
+    "lon": 5.539429664611816,
+    "rate": 3
+   },
+   {
+    "name": "Exsurgence de Port-Miou",
+    "kind": "Diving",
+    "lat": 43.20517349243164,
+    "lon": 5.512911796569824,
+    "rate": 3
+   },
+   {
+    "name": "Cap Canaille",
+    "kind": "Peak",
+    "lat": 43.19469451904297,
+    "lon": 5.549426078796387,
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Cap_Canaille_depuis_la_Gardiole.JPG/500px-Cap_Canaille_depuis_la_Gardiole.JPG",
+    "desc": "Highest sea cliff of France, on the Mediterranean southeast of Marseille",
+    "wiki": "https://en.wikipedia.org/wiki/Cap_Canaille"
+   },
+   {
+    "name": "Mont Puget",
+    "kind": "Peak",
+    "lat": 43.22224044799805,
+    "lon": 5.458561897277832,
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/Mont_puget.jpg/500px-Mont_puget.jpg",
+    "wiki": "https://en.wikipedia.org/wiki/Mont_Puget"
+   },
+   {
+    "name": "Mont Carpiagne",
+    "kind": "Peak",
+    "lat": 43.25370407104492,
+    "lon": 5.470517158508301,
+    "rate": 3
+   },
+   {
+    "name": "Figuerolles",
+    "kind": "Square",
+    "lat": 43.16436004638672,
+    "lon": 5.59564208984375,
+    "rate": 3
+   },
+   {
+    "name": "Jardin botanique du Mugel",
+    "kind": "Square",
+    "lat": 43.16376876831055,
+    "lon": 5.605243682861328,
+    "rate": 3
+   },
+   {
+    "name": "Bec de l'Aigle",
+    "kind": "Peak",
+    "lat": 43.16121292114258,
+    "lon": 5.606629371643066,
+    "rate": 3
+   },
+   {
+    "name": "French Foreign Legion Museum",
+    "kind": "Museum",
+    "lat": 43.293418884277344,
+    "lon": 5.553138256072998,
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/Musee_legion.JPG/500px-Musee_legion.JPG",
+    "desc": "Military museum in Aubagne, France",
+    "wiki": "https://en.wikipedia.org/wiki/Foreign_Legion_Museum"
+   },
+   {
+    "name": "église Saint-Sauveur d'Aubagne",
+    "kind": "Church",
+    "lat": 43.293212890625,
+    "lon": 5.570521354675293,
+    "rate": 3
+   },
+   {
+    "name": "Château Saint-Antoine",
+    "kind": "Castle",
+    "lat": 43.287750244140625,
+    "lon": 5.4885454177856445,
+    "rate": 3
+   },
+   {
+    "name": "La fontaine du 18s",
+    "kind": "Square",
+    "lat": 43.21455383300781,
+    "lon": 5.539519786834717,
+    "rate": 2,
+    "heritage": true
+   },
+   {
+    "name": "Town hall of Cassis",
+    "kind": "Square",
+    "lat": 43.21418762207031,
+    "lon": 5.539666652679443,
+    "rate": 2,
+    "heritage": true
+   },
+   {
+    "name": "château de Port-Miou",
+    "kind": "Square",
+    "lat": 43.2083854675293,
+    "lon": 5.517882823944092,
+    "rate": 2,
+    "heritage": true
+   },
+   {
+    "name": "Grotte du Figuier",
+    "kind": "Square",
+    "lat": 43.220401763916016,
+    "lon": 5.4527082443237305,
+    "rate": 2,
+    "heritage": true
+   },
+   {
+    "name": "Grotte de la Triperie",
+    "kind": "Diving",
+    "lat": 43.2032470703125,
+    "lon": 5.451608657836914,
+    "rate": 2,
+    "heritage": true
+   },
+   {
+    "name": "villa des Frères Lumière",
+    "kind": "Square",
+    "lat": 43.185546875,
+    "lon": 5.6198201179504395,
+    "rate": 2,
+    "heritage": true
+   },
+   {
+    "name": "Pyramide La Pennelle",
+    "kind": "Square",
+    "lat": 43.28129196166992,
+    "lon": 5.514400005340576,
+    "rate": 2,
+    "heritage": true
+   },
+   {
+    "name": "Grotte du Renard",
+    "kind": "Square",
+    "lat": 43.2061767578125,
+    "lon": 5.446227550506592,
+    "rate": 2,
+    "heritage": true
+   },
+   {
+    "name": "Monument aux morts d'Aubagne",
+    "kind": "Square",
+    "lat": 43.29380798339844,
+    "lon": 5.5675740242004395,
+    "rate": 2,
+    "heritage": true
+   },
+   {
+    "name": "Église Saint-Michel de Cassis",
+    "kind": "Church",
+    "lat": 43.2158317565918,
+    "lon": 5.537886619567871,
+    "rate": 2
+   },
+   {
+    "name": "Plage du Bestouan",
+    "kind": "Square",
+    "lat": 43.212974548339844,
+    "lon": 5.531031131744385,
+    "rate": 2
+   },
+   {
+    "name": "grotte des Trémies",
+    "kind": "Square",
+    "lat": 43.20073699951172,
+    "lon": 5.512118816375732,
+    "rate": 2
+   },
+   {
+    "name": "Camp de Carpiagne",
+    "kind": "Square",
+    "lat": 43.24940872192383,
+    "lon": 5.50963020324707,
+    "rate": 2
+   },
+   {
+    "name": "Église Sainte-Roselyne de Roquefort-la-Bédoule",
+    "kind": "Church",
+    "lat": 43.24739456176758,
+    "lon": 5.588594436645508,
+    "rate": 2
+   },
+   {
+    "name": "Calanque de Sugiton",
+    "kind": "Square",
+    "lat": 43.21102523803711,
+    "lon": 5.455074310302734,
+    "rate": 2,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/Sugiton_-_panoramio_%281%29.jpg/500px-Sugiton_-_panoramio_%281%29.jpg",
+    "desc": "Inlet in France",
+    "wiki": "https://en.wikipedia.org/wiki/Calanque_de_Sugiton"
+   },
+   {
+    "name": "Plage La Grande Mer",
+    "kind": "Square",
+    "lat": 43.21281051635742,
+    "lon": 5.5378241539001465,
+    "rate": 1,
+    "active": true
+   },
+   {
+    "name": "Émergence du Bestouan",
+    "kind": "Diving",
+    "lat": 43.21358108520508,
+    "lon": 5.532900333404541,
+    "rate": 1,
+    "active": true
+   },
+   {
+    "name": "Plage du Corton",
+    "kind": "Square",
+    "lat": 43.21065902709961,
+    "lon": 5.544508934020996,
+    "rate": 1,
+    "active": true
+   },
+   {
+    "name": "Plage Cap Canaille",
+    "kind": "Square",
+    "lat": 43.20860290527344,
+    "lon": 5.549193859100342,
+    "rate": 1,
+    "active": true
+   },
+   {
+    "name": "Piscine Cap Provence",
+    "kind": "Swimming",
+    "lat": 43.230899810791016,
+    "lon": 5.53818941116333,
+    "rate": 1,
+    "active": true
+   },
+   {
+    "name": "Bau de la Saoupe",
+    "kind": "Peak",
+    "lat": 43.209835052490234,
+    "lon": 5.560907363891602,
+    "rate": 1,
+    "active": true
+   },
+   {
+    "name": "Grotte des Espagnols",
+    "kind": "Square",
+    "lat": 43.20157241821289,
+    "lon": 5.554220199584961,
+    "rate": 1,
+    "active": true
+   },
+   {
+    "name": "Grotte des Janots",
+    "kind": "Square",
+    "lat": 43.23046112060547,
+    "lon": 5.565320014953613,
+    "rate": 1,
+    "active": true
+   },
+   {
+    "name": "Plage de Port Pin",
+    "kind": "Square",
+    "lat": 43.20397186279297,
+    "lon": 5.510673522949219,
+    "rate": 1,
+    "active": true
+   },
+   {
+    "name": "Couronne de Charlemagne ou Bau Redon",
+    "kind": "Peak",
+    "lat": 43.219642639160156,
+    "lon": 5.572408676147461,
+    "rate": 1,
+    "active": true
+   },
+   {
+    "name": "Aven de la Gorguette",
+    "kind": "Square",
+    "lat": 43.24127197265625,
+    "lon": 5.543033123016357,
+    "rate": 1,
+    "active": true
+   },
+   {
+    "name": "Faille du Relais de la Route de Cassis",
+    "kind": "Square",
+    "lat": 43.23636245727539,
+    "lon": 5.507601737976074,
+    "rate": 1,
+    "active": true
+   }
+  ]
+ },
+ "gem:menton": {
+  "source": "opentripmap",
+  "items": [
+   {
+    "name": "Maison de la rue Loredan-Larchey",
+    "kind": "Square"
+   },
+   {
+    "name": "Immeuble Glena",
+    "kind": "Square"
+   },
+   {
+    "name": "Villa les Mouettes",
+    "kind": "Square"
+   },
+   {
+    "name": "Hôtel d'Adhémar de Lantagnac",
+    "kind": "Square"
+   },
+   {
+    "name": "chapelle de l'Immaculée-Conception de Menton",
+    "kind": "Church"
+   },
+   {
+    "name": "Basilique Saint-Michel-Archange",
+    "kind": "Church"
+   },
+   {
+    "name": "Hôtel Pretti, Menton",
+    "kind": "Square"
+   },
+   {
+    "name": "Hôtel Winter Palace",
+    "kind": "Square"
+   }
+  ],
+  "items_full": [
+   {
+    "name": "Maison de la rue Loredan-Larchey",
+    "kind": "Square",
+    "lat": 43.77671813964844,
+    "lon": 7.5032806396484375,
+    "rate": 3,
+    "heritage": true
+   },
+   {
+    "name": "Immeuble Glena",
+    "kind": "Square",
+    "lat": 43.77608871459961,
+    "lon": 7.504857063293457,
+    "rate": 3,
+    "heritage": true
+   },
+   {
+    "name": "Villa les Mouettes",
+    "kind": "Square",
+    "lat": 43.77674865722656,
+    "lon": 7.504645347595215,
+    "rate": 3,
+    "heritage": true
+   },
+   {
+    "name": "Hôtel d'Adhémar de Lantagnac",
+    "kind": "Square",
+    "lat": 43.775604248046875,
+    "lon": 7.506431579589844,
+    "rate": 3,
+    "heritage": true
+   },
+   {
+    "name": "chapelle de l'Immaculée-Conception de Menton",
+    "kind": "Church",
+    "lat": 43.777137756347656,
+    "lon": 7.506435871124268,
+    "rate": 3,
+    "heritage": true
+   },
+   {
+    "name": "Basilique Saint-Michel-Archange",
+    "kind": "Church",
+    "lat": 43.776912689208984,
+    "lon": 7.507108688354492,
+    "rate": 3,
+    "heritage": true
+   },
+   {
+    "name": "Hôtel Pretti, Menton",
+    "kind": "Square",
+    "lat": 43.777400970458984,
+    "lon": 7.507430076599121,
+    "rate": 3,
+    "heritage": true
+   },
+   {
+    "name": "Hôtel Winter Palace",
+    "kind": "Square",
+    "lat": 43.77738571166992,
+    "lon": 7.491574764251709,
+    "rate": 3,
+    "heritage": true
+   },
+   {
+    "name": "Riviera Palace",
+    "kind": "Square",
+    "lat": 43.777618408203125,
+    "lon": 7.490060329437256,
+    "rate": 3,
+    "heritage": true
+   },
+   {
+    "name": "Chapelle Saint-Jacques",
+    "kind": "Church",
+    "lat": 43.78280258178711,
+    "lon": 7.512260437011719,
+    "rate": 3,
+    "heritage": true
+   },
+   {
+    "name": "Palais Carnoles",
+    "kind": "Palace",
+    "lat": 43.766632080078125,
+    "lon": 7.487974643707275,
+    "rate": 3,
+    "heritage": true
+   },
+   {
+    "name": "Fontana Rosa",
+    "kind": "Square",
+    "lat": 43.78559112548828,
+    "lon": 7.516140937805176,
+    "rate": 3,
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/Fontana_Rosa.jpg/500px-Fontana_Rosa.jpg",
+    "wiki": "https://en.wikipedia.org/wiki/Fontana_Rosa"
+   },
+   {
+    "name": "Villa Tempe a Pailla",
+    "kind": "Square",
+    "lat": 43.79143142700195,
+    "lon": 7.4999284744262695,
+    "rate": 3,
+    "heritage": true
+   },
+   {
+    "name": "Domaine des Colombières",
+    "kind": "Castle",
+    "lat": 43.787635803222656,
+    "lon": 7.516909599304199,
+    "rate": 3,
+    "heritage": true
+   },
+   {
+    "name": "Serre de la Madone",
+    "kind": "Square",
+    "lat": 43.77560043334961,
+    "lon": 7.475362300872803,
+    "rate": 3,
+    "heritage": true
+   },
+   {
+    "name": "Tombeau romain de Lumone, Roquebrune-Cap-Martin",
+    "kind": "Square",
+    "lat": 43.758399963378906,
+    "lon": 7.473529815673828,
+    "rate": 3,
+    "heritage": true
+   },
+   {
+    "name": "Villa Cypris",
+    "kind": "Square",
+    "lat": 43.75170135498047,
+    "lon": 7.477910041809082,
+    "rate": 3,
+    "heritage": true
+   },
+   {
+    "name": "Villa Torre Clementina",
+    "kind": "Square",
+    "lat": 43.75320053100586,
+    "lon": 7.473700046539307,
+    "rate": 3,
+    "heritage": true
+   },
+   {
+    "name": "Cabanon de vacances",
+    "kind": "Square",
+    "lat": 43.759918212890625,
+    "lon": 7.4633331298828125,
+    "rate": 3,
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d5/Cabanon_Le_Corbusier.jpg/500px-Cabanon_Le_Corbusier.jpg",
+    "desc": "Building in Roquebrune-Cap-Martin, France",
+    "wiki": "https://en.wikipedia.org/wiki/Cabanon_de_vacances"
+   },
+   {
+    "name": "E-1027",
+    "kind": "Square",
+    "lat": 43.7598762512207,
+    "lon": 7.463186264038086,
+    "rate": 3,
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/Sea_shore_at_Roquebrune.jpg/500px-Sea_shore_at_Roquebrune.jpg",
+    "desc": "Modernist villa in France designed by Eileen Gray",
+    "wiki": "https://en.wikipedia.org/wiki/E-1027"
+   },
+   {
+    "name": "Chateau de Roquebrune",
+    "kind": "Castle",
+    "lat": 43.765438079833984,
+    "lon": 7.459349632263184,
+    "rate": 3,
+    "heritage": true
+   },
+   {
+    "name": "La Roquebrunoise",
+    "kind": "Castle",
+    "lat": 43.765838623046875,
+    "lon": 7.458237648010254,
+    "rate": 3,
+    "heritage": true
+   },
+   {
+    "name": "Chapelle Saint-Sébastien de Castellar",
+    "kind": "Church",
+    "lat": 43.806793212890625,
+    "lon": 7.4986796379089355,
+    "rate": 3,
+    "heritage": true
+   },
+   {
+    "name": "Jean Cocteau Museum",
+    "kind": "Museum",
+    "lat": 43.77473449707031,
+    "lon": 7.50579309463501,
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b1/Vieille_ville_de_Menton.jpg/500px-Vieille_ville_de_Menton.jpg",
+    "desc": "France dedicated to artist Jean Cocteau",
+    "wiki": "https://en.wikipedia.org/wiki/Jean_Cocteau_Museum"
+   },
+   {
+    "name": "Cimetière du Vieux Château",
+    "kind": "Square",
+    "lat": 43.77827072143555,
+    "lon": 7.505646228790283,
+    "rate": 3
+   },
+   {
+    "name": "Russian Chapel",
+    "kind": "Church",
+    "lat": 43.77792739868164,
+    "lon": 7.5060343742370605,
+    "rate": 3
+   },
+   {
+    "name": "Bastion Museum",
+    "kind": "Castle",
+    "lat": 43.77477264404297,
+    "lon": 7.50846004486084,
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Menton_Citadelle.jpg/500px-Menton_Citadelle.jpg",
+    "wiki": "https://en.wikipedia.org/wiki/Bastion_Museum"
+   },
+   {
+    "name": "Jardin d'agrumes du Palais Carnolès",
+    "kind": "Square",
+    "lat": 43.76720428466797,
+    "lon": 7.488435745239258,
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/25/Jardin_du_Palais_Carnol%C3%A8s_-_DSC04232.JPG/500px-Jardin_du_Palais_Carnol%C3%A8s_-_DSC04232.JPG",
+    "desc": "Botanical garden in France",
+    "wiki": "https://en.wikipedia.org/wiki/Jardin_d%27agrumes_du_Palais_Carnol%C3%A8s"
+   },
+   {
+    "name": "Monastère de l'Annonciade",
+    "kind": "Monastery",
+    "lat": 43.78364181518555,
+    "lon": 7.489176273345947,
+    "rate": 3
+   },
+   {
+    "name": "Chapelle de l'Annonciade",
+    "kind": "Church",
+    "lat": 43.783729553222656,
+    "lon": 7.48927640914917,
+    "rate": 3
+   },
+   {
+    "name": "Musée des Beaux-Arts de Menton",
+    "kind": "Museum",
+    "lat": 43.766666412353516,
+    "lon": 7.48805570602417,
+    "rate": 3
+   },
+   {
+    "name": "Jardin botanique du Val Rahmeh",
+    "kind": "Square",
+    "lat": 43.78483963012695,
+    "lon": 7.511085033416748,
+    "rate": 3
+   },
+   {
+    "name": "Arboretum du Sarroudier",
+    "kind": "Square",
+    "lat": 43.7755012512207,
+    "lon": 7.475500106811523,
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/40/Vue_du_village_du_Mas_%28Alpes-Maritimes%29.jpg/500px-Vue_du_village_du_Mas_%28Alpes-Maritimes%29.jpg",
+    "desc": "Arboretum in Provence-Alpes-Côte d'Azur, France",
+    "wiki": "https://en.wikipedia.org/wiki/Arboretum_du_Sarroudier"
+   },
+   {
+    "name": "Ponte San Ludovico",
+    "kind": "Bridge",
+    "lat": 43.784488677978516,
+    "lon": 7.529942989349365,
+    "rate": 3
+   },
+   {
+    "name": "Ouvrage Cap Martin",
+    "kind": "Museum",
+    "lat": 43.75583267211914,
+    "lon": 7.480833053588867,
+    "rate": 3
+   },
+   {
+    "name": "Balzi Rossi",
+    "kind": "Square",
+    "lat": 43.78333282470703,
+    "lon": 7.535555362701416,
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/Le_caverne.jpg/500px-Le_caverne.jpg",
+    "desc": "Caves and archaeological site in Italy",
+    "wiki": "https://en.wikipedia.org/wiki/Balzi_Rossi"
+   },
+   {
+    "name": "Olivier Millénaire de Roquebrune-Cap-Martin",
+    "kind": "Square",
+    "lat": 43.76432800292969,
+    "lon": 7.463304042816162,
+    "rate": 3
+   },
+   {
+    "name": "Les Colombières",
+    "kind": "Square",
+    "lat": 43.78739929199219,
+    "lon": 7.51662015914917,
+    "rate": 2,
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f7/Remote_view_of_domaine_des_Colombi%C3%A8res.jpg/500px-Remote_view_of_domaine_des_Colombi%C3%A8res.jpg",
+    "desc": "Villa in Menton, Alpes-Maritimes, France",
+    "wiki": "https://en.wikipedia.org/wiki/Les_Colombi%C3%A8res"
+   },
+   {
+    "name": "Le Clos du Peyronnet",
+    "kind": "Square",
+    "lat": 43.785545349121094,
+    "lon": 7.523221015930176,
+    "rate": 2,
+    "heritage": true,
+    "desc": "Garden in Menton, France",
+    "wiki": "https://en.wikipedia.org/wiki/Le_Clos_du_Peyronnet"
+   },
+   {
+    "name": "Grotte du Vallonnet",
+    "kind": "Square",
+    "lat": 43.76430130004883,
+    "lon": 7.469799995422363,
+    "rate": 2,
+    "heritage": true,
+    "desc": "Cave and archaeological site in France",
+    "wiki": "https://en.wikipedia.org/wiki/Grotte_du_Vallonnet"
+   },
+   {
+    "name": "Plage du Buse",
+    "kind": "Square",
+    "lat": 43.760135650634766,
+    "lon": 7.459653854370117,
+    "rate": 3,
+    "active": true
+   },
+   {
+    "name": "Mont Gros",
+    "kind": "Peak",
+    "lat": 43.7657470703125,
+    "lon": 7.442513942718506,
+    "rate": 3,
+    "active": true
+   },
+   {
+    "name": "Capo Mortola",
+    "kind": "Nature reserve",
+    "lat": 43.78361129760742,
+    "lon": 7.551111221313477,
+    "rate": 1,
+    "heritage": true,
+    "active": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/27/Ventimiglia_082005.jpg/500px-Ventimiglia_082005.jpg",
+    "desc": "Town in Liguria, Italy",
+    "wiki": "https://en.wikipedia.org/wiki/Ventimiglia"
+   },
+   {
+    "name": "Fondali Capo Mortola - San Gaetano",
+    "kind": "Nature reserve",
+    "lat": 43.78138732910156,
+    "lon": 7.561666488647461,
+    "rate": 1,
+    "heritage": true,
+    "active": true
+   },
+   {
+    "name": "Plage du Marché",
+    "kind": "Square",
+    "lat": 43.773406982421875,
+    "lon": 7.501434326171875,
+    "rate": 1,
+    "active": true
+   },
+   {
+    "name": "Plage du Casino",
+    "kind": "Square",
+    "lat": 43.77122497558594,
+    "lon": 7.496607780456543,
+    "rate": 1,
+    "active": true
+   },
+   {
+    "name": "Plage des Sablettes",
+    "kind": "Square",
+    "lat": 43.778541564941406,
+    "lon": 7.508015155792236,
+    "rate": 1,
+    "active": true
+   },
+   {
+    "name": "Plage Rondelli",
+    "kind": "Square",
+    "lat": 43.78089141845703,
+    "lon": 7.510011196136475,
+    "rate": 1,
+    "active": true
+   },
+   {
+    "name": "Festival Plage",
+    "kind": "Square",
+    "lat": 43.78120803833008,
+    "lon": 7.510245323181152,
+    "rate": 1,
+    "active": true
+   },
+   {
+    "name": "Le Panama Plage",
+    "kind": "Square",
+    "lat": 43.7813835144043,
+    "lon": 7.510713577270508,
+    "rate": 1,
+    "active": true
+   },
+   {
+    "name": "Koaland",
+    "kind": "Theme park",
+    "lat": 43.76832580566406,
+    "lon": 7.489309787750244,
+    "rate": 1,
+    "active": true
+   },
+   {
+    "name": "La Dolce Vita",
+    "kind": "Square",
+    "lat": 43.78158950805664,
+    "lon": 7.511198997497559,
+    "rate": 1,
+    "active": true
+   }
+  ]
+ },
+ "gem:bonifacio": {
+  "source": "opentripmap",
+  "items": [
+   {
+    "name": "King Aragon's steps.",
+    "kind": "Square"
+   },
+   {
+    "name": "Église Saint-Dominique de Bonifacio",
+    "kind": "Church"
+   },
+   {
+    "name": "Sainte-Marie Majeure",
+    "kind": "Church"
+   },
+   {
+    "name": "Citadel of Bonifacio",
+    "kind": "Square"
+   },
+   {
+    "name": "Couvent Saint-François de Bonifacio",
+    "kind": "Church"
+   },
+   {
+    "name": "Phare de Pertusato",
+    "kind": "Tower"
+   },
+   {
+    "name": "Site archéologique antique de Piantarella",
+    "kind": "Square"
+   },
+   {
+    "name": "Monument de la Légion Etrangère",
+    "kind": "Square"
+   }
+  ],
+  "items_full": [
+   {
+    "name": "King Aragon's steps.",
+    "kind": "Square",
+    "lat": 41.38623809814453,
+    "lon": 9.156206130981445,
+    "rate": 3,
+    "heritage": true
+   },
+   {
+    "name": "Église Saint-Dominique de Bonifacio",
+    "kind": "Church",
+    "lat": 41.387020111083984,
+    "lon": 9.155707359313965,
+    "rate": 3,
+    "heritage": true
+   },
+   {
+    "name": "Sainte-Marie Majeure",
+    "kind": "Church",
+    "lat": 41.38717269897461,
+    "lon": 9.159347534179688,
+    "rate": 3,
+    "heritage": true
+   },
+   {
+    "name": "Citadel of Bonifacio",
+    "kind": "Square",
+    "lat": 41.387779235839844,
+    "lon": 9.159460067749023,
+    "rate": 3,
+    "heritage": true
+   },
+   {
+    "name": "Couvent Saint-François de Bonifacio",
+    "kind": "Church",
+    "lat": 41.38634490966797,
+    "lon": 9.150409698486328,
+    "rate": 3,
+    "heritage": true
+   },
+   {
+    "name": "Phare de Pertusato",
+    "kind": "Tower",
+    "lat": 41.367515563964844,
+    "lon": 9.184427261352539,
+    "rate": 3,
+    "heritage": true
+   },
+   {
+    "name": "Site archéologique antique de Piantarella",
+    "kind": "Square",
+    "lat": 41.371456146240234,
+    "lon": 9.221685409545898,
+    "rate": 3,
+    "heritage": true
+   },
+   {
+    "name": "Monument de la Légion Etrangère",
+    "kind": "Square",
+    "lat": 41.387306213378906,
+    "lon": 9.156586647033691,
+    "rate": 3
+   },
+   {
+    "name": "Le Grain de sable",
+    "kind": "Square",
+    "lat": 41.38552474975586,
+    "lon": 9.162945747375488,
+    "rate": 3
+   },
+   {
+    "name": "Bonifacio cemetery",
+    "kind": "Square",
+    "lat": 41.38690185546875,
+    "lon": 9.150279998779297,
+    "rate": 3
+   },
+   {
+    "name": "Madonetta",
+    "kind": "Square",
+    "lat": 41.38697052001953,
+    "lon": 9.144359588623047,
+    "rate": 3
+   },
+   {
+    "name": "Chapelle Sainte-Réparata, Bonifacio",
+    "kind": "Church",
+    "lat": 41.414306640625,
+    "lon": 9.161110877990723,
+    "rate": 3
+   },
+   {
+    "name": "Église Saint-Jacques de Bonifacio",
+    "kind": "Church",
+    "lat": 41.38688659667969,
+    "lon": 9.156535148620605,
+    "rate": 2,
+    "heritage": true
+   },
+   {
+    "name": "Maison de Charles Quint",
+    "kind": "Square",
+    "lat": 41.386993408203125,
+    "lon": 9.157570838928223,
+    "rate": 2,
+    "heritage": true
+   },
+   {
+    "name": "Ancien couvent Saint-Dominique",
+    "kind": "Monastery",
+    "lat": 41.38726043701172,
+    "lon": 9.155659675598145,
+    "rate": 2,
+    "heritage": true
+   },
+   {
+    "name": "Maison Doria",
+    "kind": "Square",
+    "lat": 41.3867073059082,
+    "lon": 9.158609390258789,
+    "rate": 2,
+    "heritage": true
+   },
+   {
+    "name": "remparts de Bonifacio",
+    "kind": "Square",
+    "lat": 41.38753128051758,
+    "lon": 9.155067443847656,
+    "rate": 2,
+    "heritage": true
+   },
+   {
+    "name": "Caserne génoise de Bonifacio",
+    "kind": "Square",
+    "lat": 41.38671875,
+    "lon": 9.154820442199707,
+    "rate": 2,
+    "heritage": true
+   },
+   {
+    "name": "Maison du Podestat",
+    "kind": "Square",
+    "lat": 41.387203216552734,
+    "lon": 9.158947944641113,
+    "rate": 2,
+    "heritage": true
+   },
+   {
+    "name": "Napoleon Bonaparte house",
+    "kind": "Square",
+    "lat": 41.387420654296875,
+    "lon": 9.159829139709473,
+    "rate": 2,
+    "heritage": true
+   },
+   {
+    "name": "Église Sainte-Marie-Madeleine de Bonifacio",
+    "kind": "Church",
+    "lat": 41.387428283691406,
+    "lon": 9.153829574584961,
+    "rate": 2,
+    "heritage": true
+   },
+   {
+    "name": "Puits Saint-Barthélemy",
+    "kind": "Square",
+    "lat": 41.386619567871094,
+    "lon": 9.153400421142578,
+    "rate": 2,
+    "heritage": true
+   },
+   {
+    "name": "Église Saint-Barthélemy de Bonifacio",
+    "kind": "Church",
+    "lat": 41.38707733154297,
+    "lon": 9.153207778930664,
+    "rate": 2,
+    "heritage": true
+   },
+   {
+    "name": "Abri préhistorique d'Araguina-Sennola",
+    "kind": "Square",
+    "lat": 41.39213180541992,
+    "lon": 9.165714263916016,
+    "rate": 2,
+    "heritage": true
+   },
+   {
+    "name": "Église Saint-Érasme de Bonifacio",
+    "kind": "Church",
+    "lat": 41.41484069824219,
+    "lon": 9.167759895324707,
+    "rate": 2,
+    "heritage": true
+   },
+   {
+    "name": "Ermitage de la Trinité",
+    "kind": "Church",
+    "lat": 41.405540466308594,
+    "lon": 9.123565673828125,
+    "rate": 2,
+    "heritage": true
+   },
+   {
+    "name": "Chapelle Saint-Jean le Baptiste de Bonifacio",
+    "kind": "Church",
+    "lat": 41.38679504394531,
+    "lon": 9.158270835876465,
+    "rate": 2
+   },
+   {
+    "name": "Chapelle Saint-Roch",
+    "kind": "Church",
+    "lat": 41.38697052001953,
+    "lon": 9.16043472290039,
+    "rate": 2
+   },
+   {
+    "name": "Cimetière Marin",
+    "kind": "Square",
+    "lat": 41.38671112060547,
+    "lon": 9.150337219238281,
+    "rate": 2
+   },
+   {
+    "name": "Le Gouvernail",
+    "kind": "Square",
+    "lat": 41.385108947753906,
+    "lon": 9.149080276489258,
+    "rate": 2
+   },
+   {
+    "name": "La Sdragonato",
+    "kind": "Square",
+    "lat": 41.388404846191406,
+    "lon": 9.142833709716797,
+    "rate": 2
+   },
+   {
+    "name": "Araguina-Sennola",
+    "kind": "Square",
+    "lat": 41.38850021362305,
+    "lon": 9.19320011138916,
+    "rate": 2,
+    "wiki": "https://en.wikipedia.org/wiki/Araguina-Sennola"
+   },
+   {
+    "name": "Mares temporaires du terrain militaire de Frasselli/Bonifacio",
+    "kind": "Nature reserve",
+    "lat": 41.45000076293945,
+    "lon": 9.149999618530273,
+    "rate": 2
+   },
+   {
+    "name": "Grotte du Puits Saint Barthélémy",
+    "kind": "Square",
+    "lat": 41.38664627075195,
+    "lon": 9.153420448303223,
+    "rate": 1,
+    "active": true
+   },
+   {
+    "name": "Sutta Rocca",
+    "kind": "Square",
+    "lat": 41.38671112060547,
+    "lon": 9.160970687866211,
+    "rate": 1,
+    "active": true
+   },
+   {
+    "name": "Grotte de Saint-Antoine",
+    "kind": "Square",
+    "lat": 41.3856086730957,
+    "lon": 9.148799896240234,
+    "rate": 1,
+    "active": true
+   },
+   {
+    "name": "Barakouda Diving Centre",
+    "kind": "Diving",
+    "lat": 41.398292541503906,
+    "lon": 9.163411140441895,
+    "rate": 1,
+    "active": true
+   },
+   {
+    "name": "Plage de la Lune",
+    "kind": "Square",
+    "lat": 41.378021240234375,
+    "lon": 9.17386531829834,
+    "rate": 1,
+    "active": true
+   },
+   {
+    "name": "Fazzio",
+    "kind": "Square",
+    "lat": 41.39336395263672,
+    "lon": 9.137369155883789,
+    "rate": 1,
+    "active": true
+   },
+   {
+    "name": "Plage de Paragan",
+    "kind": "Square",
+    "lat": 41.399234771728516,
+    "lon": 9.133702278137207,
+    "rate": 1,
+    "active": true
+   },
+   {
+    "name": "Plage Saint Antoine (Pertusato)",
+    "kind": "Square",
+    "lat": 41.36676788330078,
+    "lon": 9.182317733764648,
+    "rate": 1,
+    "active": true
+   },
+   {
+    "name": "Lezardos Club",
+    "kind": "Climbing",
+    "lat": 41.405067443847656,
+    "lon": 9.123449325561523,
+    "rate": 1,
+    "active": true
+   },
+   {
+    "name": "Mont de la Trinité",
+    "kind": "Climbing",
+    "lat": 41.405860900878906,
+    "lon": 9.122519493103027,
+    "rate": 1,
+    "active": true
+   },
+   {
+    "name": "Punta di Curugnola",
+    "kind": "Peak",
+    "lat": 41.42414855957031,
+    "lon": 9.155440330505371,
+    "rate": 1,
+    "active": true
+   },
+   {
+    "name": "Plage du Grand Sperone",
+    "kind": "Square",
+    "lat": 41.368370056152344,
+    "lon": 9.215099334716797,
+    "rate": 1,
+    "active": true
+   }
+  ]
+ },
+ "gem:hydra": {
+  "source": "opentripmap",
+  "items": [
+   {
+    "name": "Իդրայի պատմական արխիվ և թանգարան",
+    "kind": "Museum"
+   },
+   {
+    "name": "Seltsou Monastery",
+    "kind": "Church"
+   },
+   {
+    "name": "Vráchos Palamidás",
+    "kind": "Square"
+   },
+   {
+    "name": "Pavlos Kountouriotis Mansion",
+    "kind": "Museum"
+   },
+   {
+    "name": "Museum of Hydra",
+    "kind": "Museum"
+   },
+   {
+    "name": "Eros",
+    "kind": "Peak"
+   },
+   {
+    "name": "Kamínia",
+    "kind": "Square"
+   },
+   {
+    "name": "Avlaki",
+    "kind": "Square"
+   }
+  ],
+  "items_full": [
+   {
+    "name": "Իդրայի պատմական արխիվ և թանգարան",
+    "kind": "Museum",
+    "lat": 37.34916687011719,
+    "lon": 23.46527862548828,
+    "rate": 3
+   },
+   {
+    "name": "Seltsou Monastery",
+    "kind": "Church",
+    "lat": 37.34931945800781,
+    "lon": 23.465364456176758,
+    "rate": 3
+   },
+   {
+    "name": "Vráchos Palamidás",
+    "kind": "Square",
+    "lat": 37.335079193115234,
+    "lon": 23.426410675048828,
+    "rate": 3
+   },
+   {
+    "name": "Pavlos Kountouriotis Mansion",
+    "kind": "Museum",
+    "lat": 37.35093307495117,
+    "lon": 23.463504791259766,
+    "rate": 2,
+    "heritage": true
+   },
+   {
+    "name": "Museum of Hydra",
+    "kind": "Museum",
+    "lat": 37.35172653198242,
+    "lon": 23.46697425842285,
+    "rate": 2
+   },
+   {
+    "name": "Eros",
+    "kind": "Peak",
+    "lat": 37.3282470703125,
+    "lon": 23.459074020385742,
+    "rate": 1,
+    "active": true
+   },
+   {
+    "name": "Kamínia",
+    "kind": "Square",
+    "lat": 37.347679138183594,
+    "lon": 23.457494735717773,
+    "rate": 1,
+    "active": true
+   },
+   {
+    "name": "Avlaki",
+    "kind": "Square",
+    "lat": 37.35047912597656,
+    "lon": 23.461713790893555,
+    "rate": 1,
+    "active": true
+   },
+   {
+    "name": "Σπηλιά",
+    "kind": "Square",
+    "lat": 37.35187911987305,
+    "lon": 23.463590621948242,
+    "rate": 1,
+    "active": true
+   },
+   {
+    "name": "Plakes",
+    "kind": "Square",
+    "lat": 37.33707809448242,
+    "lon": 23.43939971923828,
+    "rate": 1,
+    "active": true
+   },
+   {
+    "name": "Kaoumithi",
+    "kind": "Square",
+    "lat": 37.31973648071289,
+    "lon": 23.397069931030273,
+    "rate": 1,
+    "active": true
+   }
+  ]
+ },
+ "gem:nerja": {
+  "source": "opentripmap",
+  "items": [
+   {
+    "name": "La Torrecilla",
+    "kind": "Tower"
+   },
+   {
+    "name": "Torre de Macaca",
+    "kind": "Tower"
+   },
+   {
+    "name": "Cueva de Nerja",
+    "kind": "Square"
+   },
+   {
+    "name": "Torre de Calaceite",
+    "kind": "Tower"
+   },
+   {
+    "name": "Torre de Maro",
+    "kind": "Tower"
+   },
+   {
+    "name": "Centro Histórico de Frigiliana",
+    "kind": "Square"
+   },
+   {
+    "name": "Castillo de Frigiliana",
+    "kind": "Castle"
+   },
+   {
+    "name": "Torre del río de la Miel",
+    "kind": "Tower"
+   }
+  ],
+  "items_full": [
+   {
+    "name": "La Torrecilla",
+    "kind": "Tower",
+    "lat": 36.7410774230957,
+    "lon": -3.8842852115631104,
+    "rate": 3,
+    "heritage": true
+   },
+   {
+    "name": "Torre de Macaca",
+    "kind": "Tower",
+    "lat": 36.74363327026367,
+    "lon": -3.905149221420288,
+    "rate": 3,
+    "heritage": true
+   },
+   {
+    "name": "Cueva de Nerja",
+    "kind": "Square",
+    "lat": 36.761898040771484,
+    "lon": -3.845604658126831,
+    "rate": 3,
+    "heritage": true
+   },
+   {
+    "name": "Torre de Calaceite",
+    "kind": "Tower",
+    "lat": 36.73781204223633,
+    "lon": -3.926628351211548,
+    "rate": 3,
+    "heritage": true
+   },
+   {
+    "name": "Torre de Maro",
+    "kind": "Tower",
+    "lat": 36.7535514831543,
+    "lon": -3.829991102218628,
+    "rate": 3,
+    "heritage": true
+   },
+   {
+    "name": "Centro Histórico de Frigiliana",
+    "kind": "Square",
+    "lat": 36.7923583984375,
+    "lon": -3.897125005722046,
+    "rate": 3,
+    "heritage": true
+   },
+   {
+    "name": "Castillo de Frigiliana",
+    "kind": "Castle",
+    "lat": 36.793914794921875,
+    "lon": -3.896267890930176,
+    "rate": 3,
+    "heritage": true
+   },
+   {
+    "name": "Torre del río de la Miel",
+    "kind": "Tower",
+    "lat": 36.75025177001953,
+    "lon": -3.8118631839752197,
+    "rate": 3,
+    "heritage": true
+   },
+   {
+    "name": "Antiguo Convento de Nuestra Señora de las Nieves (Torrox)",
+    "kind": "Monastery",
+    "lat": 36.7537956237793,
+    "lon": -3.9507832527160645,
+    "rate": 3,
+    "heritage": true
+   },
+   {
+    "name": "Torre del Pino",
+    "kind": "Tower",
+    "lat": 36.74662780761719,
+    "lon": -3.798131227493286,
+    "rate": 3,
+    "heritage": true
+   },
+   {
+    "name": "roman baths",
+    "kind": "Square",
+    "lat": 36.72807312011719,
+    "lon": -3.957738161087036,
+    "rate": 3,
+    "heritage": true
+   },
+   {
+    "name": "Torre de Caleta",
+    "kind": "Tower",
+    "lat": 36.74025344848633,
+    "lon": -3.784834146499634,
+    "rate": 3,
+    "heritage": true
+   },
+   {
+    "name": "Torre Caleta",
+    "kind": "Tower",
+    "lat": 36.74022674560547,
+    "lon": -3.7848293781280518,
+    "rate": 3,
+    "heritage": true
+   },
+   {
+    "name": "Acueducto del Águila",
+    "kind": "Bridge",
+    "lat": 36.75698471069336,
+    "lon": -3.8502302169799805,
+    "rate": 3
+   },
+   {
+    "name": "Viaduct",
+    "kind": "Bridge",
+    "lat": 36.75810623168945,
+    "lon": -3.8504269123077393,
+    "rate": 3
+   },
+   {
+    "name": "Palacio de los Condes de Frigiliana",
+    "kind": "Palace",
+    "lat": 36.791385650634766,
+    "lon": -3.8947269916534424,
+    "rate": 3
+   },
+   {
+    "name": "Faro de Torrox",
+    "kind": "Square",
+    "lat": 36.7265625,
+    "lon": -3.9573416709899902,
+    "rate": 3
+   },
+   {
+    "name": "Cala del Cañuelo",
+    "kind": "Square",
+    "lat": 36.74496841430664,
+    "lon": -3.789471387863159,
+    "rate": 3
+   },
+   {
+    "name": "Pico del Cielo",
+    "kind": "Peak",
+    "lat": 36.8047981262207,
+    "lon": -3.8150999546051025,
+    "rate": 3
+   },
+   {
+    "name": "Acantilados de Maro-Cerro Gordo",
+    "kind": "Nature reserve",
+    "lat": 36.74630355834961,
+    "lon": -3.781554937362671,
+    "rate": 3
+   },
+   {
+    "name": "Casa Rudofsky",
+    "kind": "Square",
+    "lat": 36.7689208984375,
+    "lon": -3.89487886428833,
+    "rate": 2,
+    "heritage": true
+   },
+   {
+    "name": "Alrededores de Maro-Cueva de Nerja",
+    "kind": "Square",
+    "lat": 36.75361633300781,
+    "lon": -3.8444700241088867,
+    "rate": 2,
+    "heritage": true
+   },
+   {
+    "name": "Iglesia San Antonio",
+    "kind": "Church",
+    "lat": 36.79313659667969,
+    "lon": -3.898615837097168,
+    "rate": 2,
+    "heritage": true
+   },
+   {
+    "name": "Menace",
+    "kind": "Square",
+    "lat": 36.74501037597656,
+    "lon": -3.8760581016540527,
+    "rate": 2
+   },
+   {
+    "name": "Balcón de Europa",
+    "kind": "Square",
+    "lat": 36.74468231201172,
+    "lon": -3.8757355213165283,
+    "rate": 2
+   },
+   {
+    "name": "Playa Calahonda",
+    "kind": "Square",
+    "lat": 36.74533462524414,
+    "lon": -3.8746299743652344,
+    "rate": 2
+   },
+   {
+    "name": "Alfonso XII",
+    "kind": "Square",
+    "lat": 36.744346618652344,
+    "lon": -3.875305414199829,
+    "rate": 2
+   },
+   {
+    "name": "Rapto de Europa",
+    "kind": "Square",
+    "lat": 36.74784851074219,
+    "lon": -3.885002851486206,
+    "rate": 2
+   },
+   {
+    "name": "Playa La Torrecilla",
+    "kind": "Square",
+    "lat": 36.74164581298828,
+    "lon": -3.883258581161499,
+    "rate": 2
+   },
+   {
+    "name": "Playa Burriana",
+    "kind": "Square",
+    "lat": 36.7500114440918,
+    "lon": -3.8674182891845703,
+    "rate": 2
+   },
+   {
+    "name": "Fábrica Las Mercedes o San Joaquín",
+    "kind": "Square",
+    "lat": 36.759239196777344,
+    "lon": -3.8546340465545654,
+    "rate": 2
+   },
+   {
+    "name": "Cerro Cabeza del Caballo",
+    "kind": "Peak",
+    "lat": 36.79569625854492,
+    "lon": -3.8051276206970215,
+    "rate": 2
+   },
+   {
+    "name": "Playa El Salón",
+    "kind": "Square",
+    "lat": 36.743797302246094,
+    "lon": -3.8782005310058594,
+    "rate": 1,
+    "active": true
+   },
+   {
+    "name": "Playa La Caletilla",
+    "kind": "Square",
+    "lat": 36.74410629272461,
+    "lon": -3.8760130405426025,
+    "rate": 1,
+    "active": true
+   },
+   {
+    "name": "Playa Carabeo",
+    "kind": "Square",
+    "lat": 36.74644088745117,
+    "lon": -3.8727641105651855,
+    "rate": 1,
+    "active": true
+   },
+   {
+    "name": "Playa Carabeillo",
+    "kind": "Square",
+    "lat": 36.74784469604492,
+    "lon": -3.87103533744812,
+    "rate": 1,
+    "active": true
+   },
+   {
+    "name": "Playa El Chucho",
+    "kind": "Square",
+    "lat": 36.74153518676758,
+    "lon": -3.885680913925171,
+    "rate": 1,
+    "active": true
+   },
+   {
+    "name": "Buceo Costa Nerja",
+    "kind": "Diving",
+    "lat": 36.75151062011719,
+    "lon": -3.8660531044006348,
+    "rate": 1,
+    "active": true
+   },
+   {
+    "name": "Playa El Playazo",
+    "kind": "Square",
+    "lat": 36.74270248413086,
+    "lon": -3.8919107913970947,
+    "rate": 1,
+    "active": true
+   },
+   {
+    "name": "Playa Piedra de Tarzán",
+    "kind": "Square",
+    "lat": 36.75182342529297,
+    "lon": -3.8621935844421387,
+    "rate": 1,
+    "active": true
+   },
+   {
+    "name": "Piscina y Pabellon Cubierto",
+    "kind": "Swimming",
+    "lat": 36.760589599609375,
+    "lon": -3.8705220222473145,
+    "rate": 1,
+    "active": true
+   },
+   {
+    "name": "Cueva del Lobo Marino",
+    "kind": "Square",
+    "lat": 36.751625061035156,
+    "lon": -3.860694169998169,
+    "rate": 1,
+    "active": true
+   },
+   {
+    "name": "Cala Barranco de Maro",
+    "kind": "Square",
+    "lat": 36.75105285644531,
+    "lon": -3.851224899291992,
+    "rate": 1,
+    "active": true
+   },
+   {
+    "name": "Corridor tracing the course of the Chillar River",
+    "kind": "Square",
+    "lat": 36.77170181274414,
+    "lon": -3.879351854324341,
+    "rate": 1,
+    "active": true
+   }
+  ]
+ },
+ "gem:besalu": {
+  "source": "opentripmap",
+  "items": [
+   {
+    "name": "Plaça de la Llibertat",
+    "kind": "Square"
+   },
+   {
+    "name": "Casa de la Vila",
+    "kind": "Square"
+   },
+   {
+    "name": "Can Figueres",
+    "kind": "Square"
+   },
+   {
+    "name": "Carrer del Portalet",
+    "kind": "Square"
+   },
+   {
+    "name": "Cúria Reial",
+    "kind": "Square"
+   },
+   {
+    "name": "Carrer Bernat Tallaferro",
+    "kind": "Square"
+   },
+   {
+    "name": "Castell Comtal de Besalú",
+    "kind": "Square"
+   },
+   {
+    "name": "House in carrer Major",
+    "kind": "Square"
+   }
+  ],
+  "items_full": [
+   {
+    "name": "Plaça de la Llibertat",
+    "kind": "Square",
+    "lat": 42.198951721191406,
+    "lon": 2.6995139122009277,
+    "rate": 3,
+    "heritage": true
+   },
+   {
+    "name": "Casa de la Vila",
+    "kind": "Square",
+    "lat": 42.19889831542969,
+    "lon": 2.699320077896118,
+    "rate": 3,
+    "heritage": true
+   },
+   {
+    "name": "Can Figueres",
+    "kind": "Square",
+    "lat": 42.19915008544922,
+    "lon": 2.6998300552368164,
+    "rate": 3,
+    "heritage": true
+   },
+   {
+    "name": "Carrer del Portalet",
+    "kind": "Square",
+    "lat": 42.198612213134766,
+    "lon": 2.6998839378356934,
+    "rate": 3,
+    "heritage": true
+   },
+   {
+    "name": "Cúria Reial",
+    "kind": "Square",
+    "lat": 42.198524475097656,
+    "lon": 2.6999354362487793,
+    "rate": 3,
+    "heritage": true
+   },
+   {
+    "name": "Carrer Bernat Tallaferro",
+    "kind": "Square",
+    "lat": 42.19932556152344,
+    "lon": 2.699932098388672,
+    "rate": 3,
+    "heritage": true
+   },
+   {
+    "name": "Castell Comtal de Besalú",
+    "kind": "Square",
+    "lat": 42.19940185546875,
+    "lon": 2.6994400024414062,
+    "rate": 3,
+    "heritage": true
+   },
+   {
+    "name": "House in carrer Major",
+    "kind": "Square",
+    "lat": 42.19926071166992,
+    "lon": 2.699083089828491,
+    "rate": 3,
+    "heritage": true
+   },
+   {
+    "name": "Can Ribera",
+    "kind": "Square",
+    "lat": 42.19922637939453,
+    "lon": 2.699009895324707,
+    "rate": 3,
+    "heritage": true
+   },
+   {
+    "name": "Sinagoga de Besalú",
+    "kind": "Square",
+    "lat": 42.199100494384766,
+    "lon": 2.7004199028015137,
+    "rate": 3,
+    "heritage": true
+   },
+   {
+    "name": "Casa dels Sant Romà",
+    "kind": "Square",
+    "lat": 42.19932174682617,
+    "lon": 2.6989190578460693,
+    "rate": 3,
+    "heritage": true
+   },
+   {
+    "name": "Sant Julià de Besalú",
+    "kind": "Church",
+    "lat": 42.19824981689453,
+    "lon": 2.6992735862731934,
+    "rate": 3,
+    "heritage": true
+   },
+   {
+    "name": "Recinte emmurallat de Besalú",
+    "kind": "Square",
+    "lat": 42.19900131225586,
+    "lon": 2.7006800174713135,
+    "rate": 3,
+    "heritage": true
+   },
+   {
+    "name": "Sant Pere",
+    "kind": "Monastery",
+    "lat": 42.19820785522461,
+    "lon": 2.6989572048187256,
+    "rate": 3,
+    "heritage": true
+   },
+   {
+    "name": "Jardí històric de Santa Anna",
+    "kind": "Square",
+    "lat": 42.199851989746094,
+    "lon": 2.699460983276367,
+    "rate": 3,
+    "heritage": true
+   },
+   {
+    "name": "Sant Vicenç de Besalú",
+    "kind": "Square",
+    "lat": 42.19940185546875,
+    "lon": 2.6983299255371094,
+    "rate": 3,
+    "heritage": true
+   },
+   {
+    "name": "Prat de Sant Pere",
+    "kind": "Square",
+    "lat": 42.19820022583008,
+    "lon": 2.698470115661621,
+    "rate": 3,
+    "heritage": true
+   },
+   {
+    "name": "Santa Maria",
+    "kind": "Church",
+    "lat": 42.20002365112305,
+    "lon": 2.699782133102417,
+    "rate": 3,
+    "heritage": true
+   },
+   {
+    "name": "Casa Llaudes",
+    "kind": "Square",
+    "lat": 42.198612213134766,
+    "lon": 2.6980559825897217,
+    "rate": 3,
+    "heritage": true
+   },
+   {
+    "name": "Santa Fe de Besalú",
+    "kind": "Church",
+    "lat": 42.198265075683594,
+    "lon": 2.698105573654175,
+    "rate": 3,
+    "heritage": true
+   },
+   {
+    "name": "Casa de l'Abat Sa Font",
+    "kind": "Square",
+    "lat": 42.20000076293945,
+    "lon": 2.698270082473755,
+    "rate": 3,
+    "heritage": true
+   },
+   {
+    "name": "Besalú",
+    "kind": "Square",
+    "lat": 42.200347900390625,
+    "lon": 2.698141574859619,
+    "rate": 3,
+    "heritage": true
+   },
+   {
+    "name": "Can Bonet",
+    "kind": "Square",
+    "lat": 42.19860076904297,
+    "lon": 2.7022900581359863,
+    "rate": 3,
+    "heritage": true
+   },
+   {
+    "name": "Institut Escola Salvador Vilarrasa",
+    "kind": "Square",
+    "lat": 42.19938659667969,
+    "lon": 2.6962039470672607,
+    "rate": 3,
+    "heritage": true
+   },
+   {
+    "name": "Sant Martí de Capellada",
+    "kind": "Church",
+    "lat": 42.200870513916016,
+    "lon": 2.701857566833496,
+    "rate": 3,
+    "heritage": true
+   },
+   {
+    "name": "Sagrat Cor",
+    "kind": "Church",
+    "lat": 42.19026184082031,
+    "lon": 2.6847870349884033,
+    "rate": 3,
+    "heritage": true
+   },
+   {
+    "name": "el Sagrat Cor",
+    "kind": "Church",
+    "lat": 42.19026184082031,
+    "lon": 2.684785842895508,
+    "rate": 3,
+    "heritage": true
+   },
+   {
+    "name": "Church of Saint Fructuosus of Ossinyà",
+    "kind": "Church",
+    "lat": 42.181644439697266,
+    "lon": 2.6886980533599854,
+    "rate": 3,
+    "heritage": true
+   },
+   {
+    "name": "Sant Pere de Lligordà",
+    "kind": "Church",
+    "lat": 42.21925354003906,
+    "lon": 2.7075142860412598,
+    "rate": 3,
+    "heritage": true
+   },
+   {
+    "name": "Santa Maria de Palera",
+    "kind": "Church",
+    "lat": 42.22159957885742,
+    "lon": 2.6978602409362793,
+    "rate": 3,
+    "heritage": true
+   },
+   {
+    "name": "Sant Ferriol",
+    "kind": "Square",
+    "lat": 42.19778060913086,
+    "lon": 2.668485641479492,
+    "rate": 3,
+    "heritage": true
+   },
+   {
+    "name": "Can Traver (Maià de Montcal)",
+    "kind": "Square",
+    "lat": 42.21030044555664,
+    "lon": 2.7273900508880615,
+    "rate": 3,
+    "heritage": true
+   },
+   {
+    "name": "Sant Sepulcre de Palera",
+    "kind": "Monastery",
+    "lat": 42.22389602661133,
+    "lon": 2.698729991912842,
+    "rate": 3,
+    "heritage": true
+   },
+   {
+    "name": "Sant Prim i Sant Felicià de Maià de Montcal",
+    "kind": "Church",
+    "lat": 42.2099609375,
+    "lon": 2.7337899208068848,
+    "rate": 3,
+    "heritage": true
+   },
+   {
+    "name": "Santa Maria de Fares",
+    "kind": "Church",
+    "lat": 42.186553955078125,
+    "lon": 2.7356245517730713,
+    "rate": 3,
+    "heritage": true
+   },
+   {
+    "name": "Museu de Miniatures i Microminiatures de Besalú",
+    "kind": "Museum",
+    "lat": 42.19999313354492,
+    "lon": 2.6922309398651123,
+    "rate": 3
+   },
+   {
+    "name": "Casa dels Cartellà",
+    "kind": "Square",
+    "lat": 42.19860076904297,
+    "lon": 2.6984000205993652,
+    "rate": 2,
+    "heritage": true
+   },
+   {
+    "name": "Can Cambó",
+    "kind": "Square",
+    "lat": 42.199100494384766,
+    "lon": 2.6980600357055664,
+    "rate": 2,
+    "heritage": true
+   },
+   {
+    "name": "Casa Ferrer",
+    "kind": "Square",
+    "lat": 42.197872161865234,
+    "lon": 2.6981899738311768,
+    "rate": 2,
+    "heritage": true
+   },
+   {
+    "name": "Mas Bellsolà",
+    "kind": "Square",
+    "lat": 42.20414352416992,
+    "lon": 2.7100281715393066,
+    "rate": 2,
+    "heritage": true
+   },
+   {
+    "name": "Castell de Falgars",
+    "kind": "Peak",
+    "lat": 42.25575637817383,
+    "lon": 2.7299656867980957,
+    "rate": 3,
+    "heritage": true,
+    "active": true
+   },
+   {
+    "name": "Castellot de Falgars",
+    "kind": "Peak",
+    "lat": 42.25581359863281,
+    "lon": 2.7306487560272217,
+    "rate": 3,
+    "heritage": true,
+    "active": true
+   },
+   {
+    "name": "Puig de Santa Magdalena",
+    "kind": "Peak",
+    "lat": 42.22010040283203,
+    "lon": 2.767930030822754,
+    "rate": 3,
+    "active": true
+   },
+   {
+    "name": "el Mont",
+    "kind": "Peak",
+    "lat": 42.25881576538086,
+    "lon": 2.7062840461730957,
+    "rate": 3,
+    "active": true
+   },
+   {
+    "name": "Castellets",
+    "kind": "Peak",
+    "lat": 42.25762176513672,
+    "lon": 2.6805121898651123,
+    "rate": 3,
+    "active": true
+   },
+   {
+    "name": "Arbreda Cave",
+    "kind": "Square",
+    "lat": 42.16069030761719,
+    "lon": 2.7466838359832764,
+    "rate": 2,
+    "heritage": true,
+    "active": true
+   },
+   {
+    "name": "Puig Cornador",
+    "kind": "Peak",
+    "lat": 42.19019317626953,
+    "lon": 2.6847124099731445,
+    "rate": 2,
+    "active": true
+   },
+   {
+    "name": "La Creu Blanca",
+    "kind": "Peak",
+    "lat": 42.17789840698242,
+    "lon": 2.7088301181793213,
+    "rate": 2,
+    "active": true
+   },
+   {
+    "name": "Turó de Can Felip",
+    "kind": "Peak",
+    "lat": 42.222923278808594,
+    "lon": 2.690418004989624,
+    "rate": 2,
+    "active": true
+   },
+   {
+    "name": "el Pi de Sant Josep",
+    "kind": "Peak",
+    "lat": 42.17399215698242,
+    "lon": 2.695842742919922,
+    "rate": 2,
+    "active": true
+   },
+   {
+    "name": "La Creu de Puig Hortós",
+    "kind": "Peak",
+    "lat": 42.17485046386719,
+    "lon": 2.709584951400757,
+    "rate": 2,
+    "active": true
+   },
+   {
+    "name": "Turó de les Ofrenes",
+    "kind": "Peak",
+    "lat": 42.188934326171875,
+    "lon": 2.661953926086426,
+    "rate": 2,
+    "active": true
+   }
+  ]
  }
 }

@@ -507,3 +507,22 @@ export function SlidersIcon({ size = 15, className = '' }) {
     </Glyph>
   );
 }
+
+export function LockIcon({ size = 15, className = '' }) {
+  return (
+    <Glyph size={size} className={className} label="Password">
+      <rect x="5" y="11" width="14" height="9" rx="2" />
+      <path d="M8 11V7.5a4 4 0 0 1 8 0V11" />
+      <path d="M12 14.5v2" />
+    </Glyph>
+  );
+}
+
+export function DownloadIcon({ size = 15, className = '' }) {
+  return (
+    <Glyph size={size} className={className} label="Download">
+      <path d="M12 4v10M7.5 10.5 12 15l4.5-4.5" />
+      <path d="M4.5 18.5h15" />
+    </Glyph>
+  );
+}

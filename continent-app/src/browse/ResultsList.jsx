@@ -210,7 +210,7 @@ export function ResultsList({
               <span className="results-count">{unreachable.length}</span>
             </div>
             <div className="results-subnote">
-              No Ryanair route from {homeCity} and too far to drive - shown for reference.
+              No Ryanair route from {homeCity} and too far to drive. Shown for reference.
             </div>
             {unreachable.map((p) => {
               const isSel = p.id === selectedId;

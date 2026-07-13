@@ -167,6 +167,49 @@ export const PACES = [
   { key: 'packed', label: 'Packed', hint: '7-8 stops', stops: 8, budgetMin: 8.5 * 60 },
 ];
 
+/** "How long is your day?" answers for the feasibility questions. */
+export const DAY_LENGTHS = [
+  { key: 'half', label: 'Half a day', desc: 'Morning or afternoon, back early', budgetMin: 4 * 60, stops: 3 },
+  { key: 'full', label: 'A full day', desc: 'Out from morning to dinner', budgetMin: 7 * 60, stops: 6 },
+  { key: 'long', label: 'Morning to night', desc: 'Early start, evening included', budgetMin: 9 * 60, stops: 8 },
+];
+
+/** "How much walking?" answers. maxKm caps how far a day may sprawl from its
+ *  own centre, so a light walker never gets stops an hour apart. */
+export const WALK_LEVELS = [
+  { key: 'light', label: 'Not too much', desc: 'Short hops, everything close together', maxKm: 1.2, stopsDelta: -1 },
+  { key: 'moderate', label: 'A fair bit', desc: 'Comfortable walking between sights', maxKm: 2.5, stopsDelta: 0 },
+  { key: 'lots', label: 'Happy to walk a lot', desc: 'Long walks are part of the fun', maxKm: 4.5, stopsDelta: 1 },
+];
+
+/** Turn the feasibility answers into concrete drafting limits. Falls back to
+ *  the balanced pace when the traveller skipped the questions. */
+export function feasibilityLimits({ dayLen, walk } = {}) {
+  const d = DAY_LENGTHS.find((x) => x.key === dayLen) || DAY_LENGTHS[1];
+  const w = WALK_LEVELS.find((x) => x.key === walk) || WALK_LEVELS[1];
+  return {
+    stopsMax: Math.max(2, d.stops + w.stopsDelta),
+    budgetMin: d.budgetMin,
+    maxKmFromCentroid: w.maxKm,
+  };
+}
+
+// Anything farther than this from the city's own centre is data noise for a
+// walkable day plan (e.g. a POI across a strait on another island) - it can
+// only produce impossible "walk over the sea" days.
+export const MAX_POI_KM_FROM_CITY = 20;
+
+/** Drop activity items that are unrealistically far from the city centre.
+ *  Keeps items without coordinates (they can't mislead the router). */
+export function saneItemsForCity(items, cityDest) {
+  if (!cityDest || cityDest.lat == null) return items || [];
+  return (items || []).filter((it) => {
+    if (it.lat == null || it.lon == null) return true;
+    const km = haversineKm(cityDest.lat, cityDest.lon, it.lat, it.lon);
+    return km == null || km <= MAX_POI_KM_FROM_CITY;
+  });
+}
+
 /**
  * "What kind of day?" styles for the guided picker. Tourists don't know a
  * city's geography or its 40 POI kinds - they know whether they feel like
@@ -316,8 +359,14 @@ const WALK_EST_MIN = 15; // rough inter-stop walking allowance while drafting
  * Days beyond the available material come back empty rather than padded with
  * filler - better an honest half-empty day 3 than three mediocre days.
  */
-export function draftDays({ items, numDays, interests, paceKey, dwellFn }) {
-  const pace = PACES.find((p) => p.key === paceKey) || PACES[1];
+export function draftDays({ items, numDays, interests, paceKey, dwellFn, stopsMax, budgetMin, maxKmFromCentroid }) {
+  const paceBase = PACES.find((p) => p.key === paceKey) || PACES[1];
+  // Feasibility overrides (day length, walking appetite) win over the pace.
+  const pace = {
+    stops: stopsMax || paceBase.stops,
+    budgetMin: budgetMin || paceBase.budgetMin,
+  };
+  const maxKm = maxKmFromCentroid || 3.5;
   const all = (items || []).map((item, idx) => ({ item, idx }))
     .filter(({ item }) => item.lat != null && item.lon != null);
 
@@ -370,7 +419,9 @@ export function draftDays({ items, numDays, interests, paceKey, dwellFn }) {
   };
 
   // Greedily place the remaining candidates, best-ranked first, each on the
-  // nearest day that still has room (count + time budget).
+  // nearest day that still has room (count + time budget). A candidate farther
+  // than maxKm from every day's centre is skipped entirely: better a shorter
+  // day than a plan that "walks" across a bay or motorway sprawl.
   for (const cand of usable) {
     if (used.has(cand.idx)) continue;
     let bestDay = -1, bestDist = Infinity;
@@ -381,6 +432,7 @@ export function draftDays({ items, numDays, interests, paceKey, dwellFn }) {
       if (dayLoad[d] + cost > pace.budgetMin) continue;
       const c = centroid(days[d]);
       const dist = haversineKm(c.lat, c.lon, cand.item.lat, cand.item.lon) ?? Infinity;
+      if (dist > maxKm) continue;
       if (dist < bestDist) { bestDist = dist; bestDay = d; }
     }
     if (bestDay < 0) continue;

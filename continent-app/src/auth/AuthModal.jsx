@@ -57,7 +57,7 @@ export function AuthModal({ onClose, initialMode = 'signin' }) {
       if (mode === 'signup') {
         const { needsEmailConfirmation } = await signUp(email, password, fullName.trim());
         if (needsEmailConfirmation) {
-          setNotice(`Almost there - we sent a confirmation link to ${email}.`);
+          setNotice(`Almost there. We sent a confirmation link to ${email}.`);
         } else {
           onClose();
         }

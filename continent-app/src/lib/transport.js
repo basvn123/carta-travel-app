@@ -55,7 +55,7 @@ export function legTransportOptions(destA, destB, groupSize = 1, { carModel = nu
       long_haul: false,
       modes: {},
       recommended: null,
-      note: 'No overland route (sea crossing) - look at ferries or a flight.',
+      note: 'No overland route (sea crossing). Look at ferries or a flight.',
       estimated: true,
     };
   }

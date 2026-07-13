@@ -7,6 +7,8 @@ import {
   countriesFromData, cityInsight, activitiesForInterests, cityImage, flagUrl, isoToFlag,
   interestFitScore, cityTier, cityCompanions, designStays,
 } from '../lib/tripGuide.js';
+import { knownForFacts } from '../lib/knownFor.js';
+import { gemScore } from '../lib/trip_planner_pricing.js';
 import {
   flyInOptions, monthOptions, orderStaysFromAnchor, flightMeta, fmtFlightDuration, flightBadges,
 } from '../lib/wizardFlights.js';
@@ -17,7 +19,7 @@ import { eur } from '../lib/format.js';
 import { fmtDate } from '../lib/dates.js';
 import { useCountryInsights } from '../hooks/useCountryInsights.js';
 import {
-  SparkIcon, CheckIcon, AlertIcon, TrainIcon, CarIcon,
+  SparkIcon, CheckIcon, AlertIcon, TrainIcon, CarIcon, InfoIcon,
   MuseumIcon, TreeIcon, DiningIcon, ShoppingIcon, MoonIcon, MasksIcon,
   CameraIcon, CoffeeIcon, CastleIcon, BeachIcon, BallIcon, LotusIcon,
   LeafIcon, ScaleIcon, BoltIcon, StarIcon,
@@ -35,9 +37,9 @@ const PACE_PER_DAY = { relaxed: 1, balanced: 2, packed: 4 };
 // "How do you want to get between your stops?" options (Travel step). The
 // planner prices every leg for the chosen style and stays overridable per leg.
 const TRANSPORT_CHOICES = [
-  { key: 'auto', Icon: SparkIcon, label: 'Carta picks', sub: 'Best mode per leg - cheapest sensible option' },
-  { key: 'public', Icon: TrainIcon, label: 'Train & bus', sub: 'No driving; operator links per country' },
-  { key: 'car', Icon: CarIcon, label: 'Car', sub: 'One rental, fuel + tolls split by the group' },
+  { key: 'auto', Icon: SparkIcon, label: 'Carta picks', sub: 'The cheapest sensible option for each leg' },
+  { key: 'public', Icon: TrainIcon, label: 'Train & bus', sub: 'No driving, with operator links per country' },
+  { key: 'car', Icon: CarIcon, label: 'Car', sub: 'One rental, fuel and tolls split by the group' },
 ];
 
 // "How full should your days feel?" (Travel step) - used to decide how many
@@ -112,9 +114,10 @@ function TierChip({ dest }) {
   );
 }
 
-/** One stay-city row: photo, name + tier + insight + smart-combo hint, nights
- *  stepper. */
+/** One stay-city row: photo, name + tier + what it's known for, an info
+ *  toggle with structured facts, and the nights stepper. */
 function StayRow({ id, dest, nights, onNights, anchorDest, isAnchor, companions }) {
+  const [infoOpen, setInfoOpen] = useState(false);
   const km = anchorDest && anchorDest.lat != null && dest.lat != null && !isAnchor
     ? Math.round(haversineKm(anchorDest.lat, anchorDest.lon, dest.lat, dest.lon))
     : null;
@@ -128,10 +131,26 @@ function StayRow({ id, dest, nights, onNights, anchorDest, isAnchor, companions 
           {isAnchor && <span className="guide-anchor-badge"><PlaneIcon size={9} /> you land here</span>}
           <TierChip dest={dest} />
           {dest.beauty?.gems ? <span className="guide-city-gems"><GemIcon size={9} /> {dest.beauty.gems}</span> : null}
+          <button
+            className={`guide-city-info-btn ${infoOpen ? 'open' : ''}`}
+            onClick={() => setInfoOpen(!infoOpen)}
+            aria-expanded={infoOpen}
+            title={`About ${dest.city}`}
+          ><InfoIcon size={12} /></button>
         </div>
         <div className="guide-city-insight">
           {km != null ? `${km} km from arrival, ` : ''}{cityInsight(dest)}
         </div>
+        {infoOpen && (
+          <div className="guide-city-facts">
+            {knownForFacts(dest).map(([label, value]) => (
+              <div className="guide-city-fact" key={label}>
+                <span className="guide-city-fact-label">{label}</span>
+                <span className="guide-city-fact-value">{value}</span>
+              </div>
+            ))}
+          </div>
+        )}
         {n > 0 && companions && companions.length > 0 && (
           <div className="guide-city-combo">
             Pairs well with {companions.map((c, i) => (
@@ -191,7 +210,9 @@ export function GuidedTripWizard({ data, onCancel, onComplete }) {
   const [flexNights, setFlexNights] = useState(7);
   const [flexMonth, setFlexMonth] = useState(''); // '' = any month
   const [interests, setInterests] = useState(() => new Set()); // enjoyed themes
-  const [arriveMode, setArriveMode] = useState('fly'); // 'fly' | 'car'
+  // 'fly' = Ryanair route pick, 'car' = drive, 'other' = the traveller books
+  // their own flight with another airline (Carta plans stays + ground only).
+  const [arriveMode, setArriveMode] = useState('fly');
   const [flyInId, setFlyInId] = useState('');
   const [showAllRoutes, setShowAllRoutes] = useState(false);
   const [nights, setNights] = useState({});      // { [id]: nights }
@@ -200,6 +221,10 @@ export function GuidedTripWizard({ data, onCancel, onComplete }) {
   const [stayView, setStayView] = useState('map'); // 'map' | 'list'
   const [expandedGroups, setExpandedGroups] = useState(() => new Set());
   const [designedNote, setDesignedNote] = useState(false);
+  // "Let Carta pick my cities" mini-questionnaire (open + its three answers).
+  const [designQuizOpen, setDesignQuizOpen] = useState(false);
+  const [quizStops, setQuizStops] = useState(0); // 0 = Carta decides
+  const [quizMust, setQuizMust] = useState(() => new Set()); // must-include ids
   const [groupSize, setGroupSize] = useState(2);
   const [transport, setTransport] = useState('auto'); // 'auto' | 'public' | 'car'
   const [pace, setPace] = useState('balanced');
@@ -265,7 +290,9 @@ export function GuidedTripWizard({ data, onCancel, onComplete }) {
     else setCityNights(id, destinations[id]?.tier === 'gem' ? 1 : 2);
   };
 
-  // One tap: Carta designs the stays from the interests + arrival + window.
+  // Carta designs the stays from the interests + arrival + window, steered by
+  // the questionnaire: how busy the days should feel, how many stays, and any
+  // must-include cities.
   const applyDesign = () => {
     const picks = designStays({
       destinations,
@@ -274,6 +301,8 @@ export function GuidedTripWizard({ data, onCancel, onComplete }) {
       anchorDest,
       anchorId: arriveMode === 'fly' ? flyInId : null,
       totalNights: windowNights || 5,
+      maxStops: quizStops || null,
+      mustIncludeIds: [...quizMust],
     });
     if (!picks.length) return;
     const nextNights = {};
@@ -281,6 +310,26 @@ export function GuidedTripWizard({ data, onCancel, onComplete }) {
     setNights(nextNights);
     setOrder(picks.map((p) => p.id));
     setDesignedNote(true);
+    setDesignQuizOpen(false);
+  };
+
+  // The strongest candidate cities in the chosen countries, for the
+  // "which cities do you really want?" chips.
+  const mustChoices = useMemo(() => {
+    if (!designQuizOpen) return [];
+    return selectedCountries
+      .flatMap((c) => c.cities)
+      .map(({ id, dest }) => ({ id, dest, s: gemScore(dest) }))
+      .sort((a, b) => b.s - a.s)
+      .slice(0, 10);
+  }, [designQuizOpen, selectedCountries]);
+
+  const toggleQuizMust = (id) => {
+    setQuizMust((prev) => {
+      const next = new Set(prev);
+      next.has(id) ? next.delete(id) : next.add(id);
+      return next;
+    });
   };
 
   const toggleInterest = (key) => {
@@ -316,7 +365,7 @@ export function GuidedTripWizard({ data, onCancel, onComplete }) {
       ? flexNights >= 1
       : Boolean(startDate && endDate && windowNights > 0)))
     || (step === 3 && interests.size > 0)
-    || (step === 4 && (arriveMode === 'car' || flyIn != null))
+    || (step === 4 && (arriveMode === 'car' || arriveMode === 'other' || flyIn != null))
     || (step === 5 && includedIds.length > 0)
     || step >= 6
   );
@@ -352,6 +401,9 @@ export function GuidedTripWizard({ data, onCancel, onComplete }) {
     setStayView('map');
     setExpandedGroups(new Set());
     setDesignedNote(false);
+    setDesignQuizOpen(false);
+    setQuizStops(0);
+    setQuizMust(new Set());
     setGroupSize(2);
     setTransport('auto');
     setPace('balanced');
@@ -557,7 +609,7 @@ export function GuidedTripWizard({ data, onCancel, onComplete }) {
           {step === 1 && (
             <>
               <h2 className="guide-title">Where are we going?</h2>
-              <p className="guide-sub">Tap countries on the map, or pick from the list. You can mix and match - Carta can design the whole trip inside them for you.</p>
+              <p className="guide-sub">Tap countries on the map, or pick from the list. You can mix and match, and Carta can design the whole trip inside them for you.</p>
               <CountryPickerMap countries={allCountries} selected={countries} onToggle={toggleCountry} />
               <div className="guide-country-grid">
                 {allCountries.map((c) => (
@@ -578,7 +630,7 @@ export function GuidedTripWizard({ data, onCancel, onComplete }) {
           {step === 2 && (
             <>
               <h2 className="guide-title">When are you travelling?</h2>
-              <p className="guide-sub">Pick your dates - or stay flexible and Carta will find the cheapest real fares for you.</p>
+              <p className="guide-sub">Pick your dates, or stay flexible and Carta will find the cheapest real fares for you.</p>
               <div className="guide-datemode">
                 <button className={dateMode === 'exact' ? 'on' : ''} onClick={() => setDateMode('exact')}>
                   I know my dates
@@ -631,7 +683,7 @@ export function GuidedTripWizard({ data, onCancel, onComplete }) {
           {step === 3 && (
             <>
               <h2 className="guide-title">What do you enjoy?</h2>
-              <p className="guide-sub">Select all that interest you (at least one). Everything from here on - recommended cities, day plans - is tuned to these.</p>
+              <p className="guide-sub">Select all that interest you (at least one). Recommended cities and day plans are tuned to these.</p>
               <div className="guide-interest-grid">
                 {INTERESTS.map((it) => (
                   <button
@@ -653,7 +705,7 @@ export function GuidedTripWizard({ data, onCancel, onComplete }) {
             <>
               <h2 className="guide-title">How do you get there?</h2>
               <p className="guide-sub">
-                Fly with Ryanair from {originCity}, or drive there - both start from the same place.
+                Fly with Ryanair from {originCity}, or drive there. Both start from the same place.
               </p>
 
               <div className="guide-datemode guide-arrive-mode">
@@ -665,7 +717,18 @@ export function GuidedTripWizard({ data, onCancel, onComplete }) {
                 </button>
               </div>
 
-              {arriveMode === 'car' ? (
+              {arriveMode === 'other' ? (
+                <div className="guide-noflight">
+                  <p className="guide-sub">
+                    <CheckIcon size={12} /> You'll book your own flight with another airline.
+                    Carta still plans your cities, stays, days and ground travel; only the
+                    airfare stays out of the estimate.
+                  </p>
+                  <button className="guide-back guide-noflight-back" onClick={() => setArriveMode('fly')}>
+                    ← Look at Ryanair routes instead
+                  </button>
+                </div>
+              ) : arriveMode === 'car' ? (
                 <>
                   <p className="guide-sub">
                     Your own car from {originCity}. Rough one-way reach into your {selectedCountries.length === 1 ? 'country' : 'countries'}:
@@ -690,7 +753,9 @@ export function GuidedTripWizard({ data, onCancel, onComplete }) {
                     {dateMode === 'exact' && startDate ? ` on ${fmtDate(startDate)}` : ' for this period'}.
                   </p>
                   <p className="guide-sub">
-                    To fly, go back and change your dates or add a neighbouring country - or switch to the car option above.
+                    You can change your dates, add a neighbouring country, switch to the car
+                    option above, or simply book a flight with another airline and let Carta
+                    plan everything on the ground.
                   </p>
                   <button className="guide-back guide-noflight-back" onClick={() => setStep(2)}>← Change my dates</button>
                 </div>
@@ -724,7 +789,7 @@ export function GuidedTripWizard({ data, onCancel, onComplete }) {
                             </span>
                             {!o.has_exact && dateMode === 'exact' && o.cheapest && (
                               <span className="guide-route-warn">
-                                <AlertIcon size={10} /> No fare stored for {fmtDate(startDate, true)} - cheapest is {fmtDate(o.cheapest.date, true)}
+                                <AlertIcon size={10} /> No fare stored for {fmtDate(startDate, true)}, cheapest is {fmtDate(o.cheapest.date, true)}
                               </span>
                             )}
                           </span>
@@ -757,12 +822,56 @@ export function GuidedTripWizard({ data, onCancel, onComplete }) {
                 Or let Carta design the whole route.
               </p>
 
-              <button className="guide-design-btn" onClick={applyDesign}>
+              <button className="guide-design-btn" onClick={() => setDesignQuizOpen((v) => !v)}>
                 <SparkIcon size={13} /> Let Carta pick my cities
                 <small>{windowNights || flexNights} nights, tuned to your interests</small>
               </button>
+
+              {designQuizOpen && (
+                <div className="guide-design-quiz">
+                  <div className="guide-quiz-q">
+                    <span className="trip-field-label">How busy should your days feel?</span>
+                    <div className="guide-months">
+                      {PACE_CHOICES.map((p) => (
+                        <button
+                          key={p.key}
+                          className={`guide-chip ${pace === p.key ? 'on' : ''}`}
+                          onClick={() => setPace(p.key)}
+                        >{p.label}</button>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="guide-quiz-q">
+                    <span className="trip-field-label">How many different stays?</span>
+                    <div className="guide-months">
+                      <button className={`guide-chip ${quizStops === 0 ? 'on' : ''}`} onClick={() => setQuizStops(0)}>Carta decides</button>
+                      {[2, 3, 4, 5].map((n) => (
+                        <button key={n} className={`guide-chip ${quizStops === n ? 'on' : ''}`} onClick={() => setQuizStops(n)}>{n}</button>
+                      ))}
+                    </div>
+                  </div>
+                  {mustChoices.length > 0 && (
+                    <div className="guide-quiz-q">
+                      <span className="trip-field-label">Any cities you really want in the route?</span>
+                      <div className="guide-months">
+                        {mustChoices.map(({ id, dest }) => (
+                          <button
+                            key={id}
+                            className={`guide-chip ${quizMust.has(id) ? 'on' : ''}`}
+                            onClick={() => toggleQuizMust(id)}
+                          >{dest.city}</button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  <button className="guide-next guide-quiz-go" onClick={applyDesign}>
+                    <SparkIcon size={12} /> Design my route
+                  </button>
+                </div>
+              )}
+
               {designedNote && includedIds.length > 0 && (
-                <p className="guide-note"><CheckIcon size={11} /> Done - Carta lined up {includedIds.length} {includedIds.length === 1 ? 'stop' : 'stops'} below. Adjust anything you like.</p>
+                <p className="guide-note"><CheckIcon size={11} /> Done: Carta lined up {includedIds.length} {includedIds.length === 1 ? 'stop' : 'stops'} below. Adjust anything you like.</p>
               )}
 
               <div className="guide-datemode guide-stay-view">
@@ -921,7 +1030,9 @@ export function GuidedTripWizard({ data, onCancel, onComplete }) {
                   {dateMode === 'exact' && startDate
                     ? `, leaving ${fmtDate(startDate)}`
                     : `, ${flexMonth ? months.find((m) => m.key === flexMonth)?.label : 'any month'}, Carta picks the cheapest dates`}
-                  {anchorDest ? `, landing in ${anchorDest.city}` : arriveMode === 'car' ? `, driving from ${originCity}` : ''}
+                  {anchorDest ? `, landing in ${anchorDest.city}`
+                    : arriveMode === 'car' ? `, driving from ${originCity}`
+                    : arriveMode === 'other' ? ', flying with your own airline' : ''}
                 </div>
               </div>
             </>
@@ -938,7 +1049,15 @@ export function GuidedTripWizard({ data, onCancel, onComplete }) {
           </div>
           <div className="guide-foot-actions">
             {step > 1 && <button className="guide-back" onClick={() => setStep(step - 1)}>Back</button>}
-            {step < 6 ? (
+            {step === 4 && arriveMode === 'fly' && routeOptions.length === 0 ? (
+              // No Ryanair route: the way forward is booking your own flight.
+              <button
+                className="guide-next"
+                onClick={() => { setArriveMode('other'); setStep(5); }}
+              >
+                I fly with another airline →
+              </button>
+            ) : step < 6 ? (
               <button className="guide-next" onClick={() => setStep(step + 1)} disabled={!canNext}>Next</button>
             ) : (
               <button className="guide-next" onClick={finish} disabled={includedIds.length === 0}>

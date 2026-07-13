@@ -81,7 +81,7 @@ export function AppHeader({
         className={`header-home-btn ${isHome ? 'active' : ''}`}
         onClick={onGoHome}
         aria-current={isHome ? 'page' : undefined}
-        title="Home - explore the map"
+        title="Home: explore the map"
       >
         <HomeIcon size={18} className="header-home-icon" />
         <span className="header-home-label">Home</span>
@@ -90,7 +90,12 @@ export function AppHeader({
       {children && <div className="app-header-filters">{children}</div>}
 
       <div className="app-header-account">
-        <OriginPicker data={data} origin={origin} onChangeOrigin={onChangeOrigin} />
+        {/* The From picker only belongs on the Map tab: the Trip planner asks
+            "where are you travelling from?" inside its own flow, and the Day
+            planner doesn't price flights at all. */}
+        {activeTab === 'map' && (
+          <OriginPicker data={data} origin={origin} onChangeOrigin={onChangeOrigin} />
+        )}
         <AccountButton user={user} onOpenAccount={onOpenAccount} />
       </div>
     </div>

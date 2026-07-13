@@ -30,7 +30,7 @@ export const DEFAULT_LIFESTYLE = {
   fastfood_per_week: 2,
   drinks_per_week: 7,
   club_nights_per_week: 1,
-  coffees_per_day: 1,
+  coffees_per_day: 0,
   self_catered_days_per_week: 2,
 };
 

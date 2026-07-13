@@ -3,7 +3,7 @@ import {
   composeTrip, buildFlightLinks, buildAccommodationLink, buildCarRentalLink,
   fareCoverageRanges, viaNearestAirport,
 } from '../lib/runtime_pricing.js';
-import { kindsForDest } from '../lib/trip_kinds.js';
+import { knownFor } from '../lib/knownFor.js';
 import { BestTimePanel } from './BestTimePanel.jsx';
 import { eur, safeUrl, PRICE_SOURCE_LABELS, ACCOM_SOURCE_LABELS } from '../lib/format.js';
 import { ReceiptIcon, CalendarIcon, BedIcon, DiningIcon, CarIcon, InfoIcon } from '../components/Icons.jsx';
@@ -44,7 +44,8 @@ export function DetailPanel({ destination, departDate, returnDate, choices, setC
 
   const breakdown = composeTrip(destination, departDate, returnDate, choices);
   const anchor = breakdown?.anchor_airport || destination.iata;
-  const kinds = kindsForDest(destination.categories);
+  // Show the anchor airport as a city name, not an IATA code.
+  const anchorCity = anchor ? (data?.destinations?.[anchor]?.city || anchor) : null;
   const image = destination.image;
 
   return (
@@ -66,10 +67,22 @@ export function DetailPanel({ destination, departDate, returnDate, choices, setC
 
       <div className={`panel-header ${image?.url ? 'has-hero' : ''}`}>
         <div className="panel-tag">
-          {destination.tier === 'gem'
-            ? <>GEM, {destination.iso2}</>
-            : <>{destination.iata}, {destination.iso2}</>}
+          {destination.tier === 'gem' ? 'Hidden gem' : 'Destination'}
         </div>
+        <h2 className="panel-city">{destination.city}</h2>
+        <div className="panel-country">
+          {destination.country}
+          {destination.tier === 'gem' && anchorCity && (
+            <span className="panel-via">
+              via {anchorCity}
+              {breakdown?.ground_one_way_eur > 0 && `, €${breakdown.ground_one_way_eur} ground each way`}
+              {breakdown?.ground_minutes > 0 && `, ~${breakdown.ground_minutes} min`}
+            </span>
+          )}
+        </div>
+        {knownFor(destination) && (
+          <div className="panel-knownfor">{knownFor(destination)}</div>
+        )}
         <div className="panel-action-row">
           {onToggleFavorite && (
             <button
@@ -102,27 +115,6 @@ export function DetailPanel({ destination, departDate, returnDate, choices, setC
             </button>
           )}
         </div>
-        <h2 className="panel-city">{destination.city}</h2>
-        <div className="panel-country">
-          {destination.country}
-          {destination.tier === 'gem' && anchor && (
-            <span className="panel-via">
-              via {anchor}
-              {breakdown?.ground_one_way_eur > 0 && `, €${breakdown.ground_one_way_eur} ground each way`}
-              {breakdown?.ground_minutes > 0 && `, ~${breakdown.ground_minutes} min`}
-            </span>
-          )}
-        </div>
-        {destination.blurb && destination.tier === 'gem' && (
-          <div className="panel-blurb">{destination.blurb}</div>
-        )}
-        {kinds.length > 0 && (
-          <div className="panel-kinds">
-            {kinds.map((k) => (
-              <span key={k.key} className="panel-kind">{k.label}</span>
-            ))}
-          </div>
-        )}
       </div>
 
       {!breakdown ? (
@@ -190,6 +182,7 @@ export function DetailPanel({ destination, departDate, returnDate, choices, setC
               onOpenLifestyle={onOpenLifestyle}
               data={data}
               anchor={anchor}
+              anchorCity={anchorCity}
               onSelect={onSelect}
             />
           ) : (
@@ -240,6 +233,21 @@ function CostGroup({ icon, title, subtitle, subtotal, open, onToggle, infoButton
   );
 }
 
+/** Structured label/value rows for the info popovers, so "how is this
+ *  calculated" reads as a small table instead of one dense paragraph. */
+function InfoFacts({ rows }) {
+  return (
+    <div className="cost-info-facts">
+      {rows.filter(([, v]) => v != null && v !== '').map(([label, value]) => (
+        <div className="cost-info-fact" key={label}>
+          <span className="cost-info-fact-label">{label}</span>
+          <span className="cost-info-fact-value">{value}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 // Small toggle button + text popover, used for "how is this calculated"
 // asides that would otherwise clutter the (now-collapsed-by-default) group
 // header. Stops propagation so it doesn't also toggle the group open/closed.
@@ -258,7 +266,7 @@ function InfoButton({ open, onClick, label = 'How this is calculated' }) {
   );
 }
 
-function BreakdownTab({ destination, breakdown, departDate, returnDate, choices, setChoices, priceMode, onOpenLifestyle, anchor, data, onSelect }) {
+function BreakdownTab({ destination, breakdown, departDate, returnDate, choices, setChoices, priceMode, onOpenLifestyle, anchor, anchorCity, data, onSelect }) {
   const group = Math.max(1, choices.group_size || 1);
   const originCity = data?.meta?.origins?.[data?.meta?.selected_origin]?.city || 'your airport';
   // The traveller asked to fly but no fare exists for these dates, so the
@@ -270,7 +278,7 @@ function BreakdownTab({ destination, breakdown, departDate, returnDate, choices,
   // stays visible on the header either way. "info" popovers (calc logic,
   // local rates) are independent of open/closed so they're reachable without
   // expanding a whole section.
-  const [openGroups, setOpenGroups] = React.useState({ transport: false, stay: false, ground: false });
+  const [openGroups, setOpenGroups] = React.useState({ transport: false, rental: false, stay: false, ground: false });
   const toggleGroup = (key) => setOpenGroups((o) => ({ ...o, [key]: !o[key] }));
   const [infoOpen, setInfoOpen] = React.useState(null); // 'stay' | 'ground' | 'rates' | null
   const toggleInfo = (key) => setInfoOpen((v) => (v === key ? null : key));
@@ -288,13 +296,17 @@ function BreakdownTab({ destination, breakdown, departDate, returnDate, choices,
   const sourceLabel = PRICE_SOURCE_LABELS[breakdown.price_source] || null;
   const accomSourceLabel = ACCOM_SOURCE_LABELS[breakdown.accom_source] || null;
 
-  // Group subtotals for the three buckets, in the active price mode.
+  // Group subtotals, in the active price mode. "Getting there" holds ONLY the
+  // journey itself: the drive cost in car mode, the flight stack in plane mode.
+  // A rental car at the destination is a whole-stay cost, so it gets its own
+  // group below instead of inflating the getting-there figure.
   const transportSubtotal = breakdown.transport_mode === 'car'
     ? show(breakdown.driving?.total)
     : show((breakdown.fare_total || 0)
         + (breakdown.baggage_total || 0)
-        + (breakdown.transfer_total || 0)
-        + (breakdown.rental_total || 0));
+        + (breakdown.transfer_total || 0));
+  const rentalSubtotal = breakdown.transport_mode === 'plane' && breakdown.rental
+    ? show(breakdown.rental_total) : null;
   const staySubtotal = acc ? show(breakdown.accom_total) : null;
   const groundSubtotal = g ? show(groundGroup(breakdown.ground_per_person)) : null;
 
@@ -329,7 +341,7 @@ function BreakdownTab({ destination, breakdown, departDate, returnDate, choices,
           icon={breakdown.transport_mode === 'car' ? <CarIcon size={15} /> : <PlaneIcon size={15} />}
           title="Getting there"
           subtitle={breakdown.transport_mode === 'car'
-            ? (flyFellBack ? `No flight these dates - drive from ${originCity}` : `Drive from ${originCity}`)
+            ? (flyFellBack ? `No flight these dates, drive from ${originCity}` : `Drive from ${originCity}`)
             : 'Ryanair round-trip'}
           subtotal={transportSubtotal}
           open={openGroups.transport}
@@ -395,10 +407,10 @@ function BreakdownTab({ destination, breakdown, departDate, returnDate, choices,
             <>
               <div className="total-row">
                 <span className="label">
-                  Flight ({destination.iata || anchor || '?'})
+                  Flight
                   <small>
-                    {destination.tier === 'gem' && anchor
-                      ? `Round-trip via ${anchor}`
+                    {destination.tier === 'gem' && anchorCity
+                      ? `Round-trip Ryanair fare via ${anchorCity}`
                       : 'Round-trip Ryanair fare'}
                   </small>
                 </span>
@@ -419,7 +431,7 @@ function BreakdownTab({ destination, breakdown, departDate, returnDate, choices,
               {breakdown.transfer_total > 0 && (
                 <div className="total-row sub-row">
                   <span className="label">
-                    + Airport transfer{anchor ? ` from ${anchor}` : ''}
+                    + Airport transfer{anchorCity ? ` from ${anchorCity}` : ''}
                     <small>
                       {`€${breakdown.transfer_one_way_eur.toFixed(0)} × 2 directions`}
                       {priceMode === 'total' && ` × ${group} people`}
@@ -429,20 +441,6 @@ function BreakdownTab({ destination, breakdown, departDate, returnDate, choices,
                   <span className="val">{eur(show(breakdown.transfer_total))}</span>
                 </div>
               )}
-              {breakdown.rental && (
-                <div className="total-row">
-                  <span className="label">
-                    Rental car at destination
-                    <small>
-                      {breakdown.rental.cars} {breakdown.rental.cars === 1 ? 'car' : 'cars'} ×
-                      {' '}{breakdown.rental.days} days, €{breakdown.rental.rate.toFixed(0)}/day
-                      {breakdown.rental.season > 1 ? ', incl. summer season' : ''}
-                      {breakdown.rental.discount_pct > 0 ? `, -${breakdown.rental.discount_pct}% weekly` : ''}
-                    </small>
-                  </span>
-                  <span className="val">{eur(show(breakdown.rental_total))}</span>
-                </div>
-              )}
             </>
           )}
 
@@ -450,17 +448,45 @@ function BreakdownTab({ destination, breakdown, departDate, returnDate, choices,
 
           <div className="cost-group-links">
             {flightLink && <TextLink href={flightLink}>Check this fare on Skyscanner</TextLink>}
-            {(() => {
-              const carLink = buildCarRentalLink({
-                city: destination.city,
-                iata: destination.iata,
-                departDate,
-                returnDate,
-              });
-              return carLink ? <TextLink href={carLink}>Compare rental cars on KAYAK</TextLink> : null;
-            })()}
           </div>
         </CostGroup>
+
+        {/* ── Rental car at the destination (own group: it's a whole-stay cost,
+              not part of the journey there) ── */}
+        {rentalSubtotal != null && (
+          <CostGroup
+            icon={<CarIcon size={15} />}
+            title="Rental car at destination"
+            subtitle={`${breakdown.rental.cars} ${breakdown.rental.cars === 1 ? 'car' : 'cars'}, ${breakdown.rental.days} days`}
+            subtotal={rentalSubtotal}
+            open={openGroups.rental}
+            onToggle={() => toggleGroup('rental')}
+          >
+            <div className="total-row">
+              <span className="label">
+                Rental
+                <small>
+                  {breakdown.rental.cars} {breakdown.rental.cars === 1 ? 'car' : 'cars'} ×
+                  {' '}{breakdown.rental.days} days, €{breakdown.rental.rate.toFixed(0)}/day
+                  {breakdown.rental.season > 1 ? ', incl. summer season' : ''}
+                  {breakdown.rental.discount_pct > 0 ? `, -${breakdown.rental.discount_pct}% weekly` : ''}
+                </small>
+              </span>
+              <span className="val">{eur(show(breakdown.rental_total))}</span>
+            </div>
+            <div className="cost-group-links">
+              {(() => {
+                const carLink = buildCarRentalLink({
+                  city: destination.city,
+                  iata: destination.iata,
+                  departDate,
+                  returnDate,
+                });
+                return carLink ? <TextLink href={carLink}>Compare rental cars on KAYAK</TextLink> : null;
+              })()}
+            </div>
+          </CostGroup>
+        )}
 
         {/* ── Your stay ── */}
         {acc && (
@@ -472,10 +498,14 @@ function BreakdownTab({ destination, breakdown, departDate, returnDate, choices,
             onToggle={() => toggleGroup('stay')}
             infoButton={<InfoButton open={infoOpen === 'stay'} onClick={() => toggleInfo('stay')} />}
             infoPanel={infoOpen === 'stay' && (
-              <p className="cost-info-pop">
-                Entire home{accomSourceLabel ? `, ${accomSourceLabel}` : ''}{breakdown.accom_entire_home_night_eur ? `, ~€${Math.round(breakdown.accom_entire_home_night_eur)}/night base` : ''}.
-                {' '}Nightly rate × nights, plus cleaning and service fees, adjusted for season and weekly length of stay.
-              </p>
+              <InfoFacts rows={[
+                ['Type', 'Entire home'],
+                ['Base rate', breakdown.accom_entire_home_night_eur ? `~€${Math.round(breakdown.accom_entire_home_night_eur)} per night` : null],
+                ['Nights', String(breakdown.nights)],
+                ['Fees', 'Cleaning and service fees included'],
+                ['Adjusted for', 'Season and length of stay'],
+                ['Source', accomSourceLabel],
+              ]} />
             )}
           >
             <GroundLine label="Lodging"      v={show(groundGroup(acc.lodging))}  eur={eur} />
@@ -515,10 +545,12 @@ function BreakdownTab({ destination, breakdown, departDate, returnDate, choices,
             onToggle={() => toggleGroup('ground')}
             infoButton={<InfoButton open={infoOpen === 'ground'} onClick={() => toggleInfo('ground')} />}
             infoPanel={infoOpen === 'ground' && (
-              <p className="cost-info-pop">
-                Your lifestyle{sourceLabel ? `, ${sourceLabel}` : ''}.
-                {' '}Each category (dinners, casual meals, drinks, coffee, groceries) is priced at real local rates for this destination, then multiplied by how often you picked it for the trip.
-              </p>
+              <InfoFacts rows={[
+                ['Based on', 'Your lifestyle settings'],
+                ['Method', 'Local unit price × how often you picked it'],
+                ['Covers', 'Meals, drinks, nights out, groceries'],
+                ['Rates', sourceLabel],
+              ]} />
             )}
           >
             <GroundLine label="Dinners out"  v={show(groundGroup(g.dinners))}  eur={eur} rate={destination.costs?.meal_mid_eur} />
@@ -526,7 +558,7 @@ function BreakdownTab({ destination, breakdown, departDate, returnDate, choices,
             {g.fastfood > 0 && <GroundLine label="Fast food / street" v={show(groundGroup(g.fastfood))} eur={eur} rate={destination.costs?.fastfood_eur} />}
             <GroundLine label="Bar drinks"   v={show(groundGroup(g.drinks))}   eur={eur} rate={destination.costs?.drink_out_eur} />
             {g.clubbing > 0 && <GroundLine label="Club nights" v={show(groundGroup(g.clubbing))} eur={eur} />}
-            <GroundLine label="Coffees"      v={show(groundGroup(g.coffees))}  eur={eur} rate={destination.costs?.coffee_eur} />
+            {g.coffees > 0 && <GroundLine label="Coffees" v={show(groundGroup(g.coffees))} eur={eur} rate={destination.costs?.coffee_eur} />}
             <GroundLine label="Groceries"    v={show(groundGroup(g.groceries))} eur={eur} />
             {unitRates.length > 0 && (
               <div className="cost-local-rates-row">
@@ -537,11 +569,7 @@ function BreakdownTab({ destination, breakdown, departDate, returnDate, choices,
                 />
                 <span className="cost-local-rates-label">Local rates</span>
                 {infoOpen === 'rates' && (
-                  <p className="cost-info-pop cost-local-rates">
-                    {unitRates.map(([lbl, v], i) => (
-                      <span key={lbl}>{i > 0 && ', '}{lbl} €{v}</span>
-                    ))}
-                  </p>
+                  <InfoFacts rows={unitRates.map(([lbl, v]) => [lbl, `€${v}`])} />
                 )}
               </div>
             )}
@@ -605,7 +633,7 @@ function ViaAirportOptions({ destination, data, departDate, returnDate, choices,
       {options.map((o) => (
         <div className="via-airport-row" key={o.id}>
           <span className="via-airport-main">
-            <b>{o.city} ({o.iata})</b>
+            <b>{o.city}</b>
             <small>
               flight {eur(o.fare_per_person)}/p, then {o.road_km} km
               (~{o.drive_hours_one_way}h, ~{eur(o.leg_eur_pp_one_way)}/p each way)

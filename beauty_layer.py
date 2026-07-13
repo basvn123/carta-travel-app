@@ -220,19 +220,45 @@ def _heritage_component(lat, lon, categories):
     if full == 0 and "unesco" in categories:
         full, raw = 1, max(raw, 1.0)
     comp = _saturate(raw, 3.0)  # raw 3 -> .63, 6 -> .86, 10 -> .96
-    has = full >= 1 or "unesco" in categories
+    # The UNESCO filter flag is STRICTER than the scoring radius: a site must
+    # sit within ~35 km (roughly "in or beside this destination") or the
+    # destination itself must be tagged. The old 60 km ring flagged two thirds
+    # of the catalogue, which made the filter meaningless.
+    strict, _ = unesco_near(lat, lon, near_km=35.0, mid_km=35.0)
+    has = strict >= 1 or "unesco" in categories
     return comp, full, has
 
 
-def _beach_component(iso2, categories):
+# Famous beach destinations that the country-level Blue Flag density under-
+# rates: Croatia/Montenegro/Albania/Bulgaria have world-class beach towns but
+# few national flags (rocky coves are rarely flagged), so comp never crosses
+# the 0.6 top-beach line. Matched case-insensitively by city-name substring,
+# same mechanism as ICONIC_CURATED.
+TOP_BEACH_CURATED = {
+    "ksamil", "himara",                                   # Albanian Riviera
+    "makarska", "hvar", "korcula", "korčula", "dubrovnik", "zadar", "mljet",  # Croatia
+    "budva", "ulcinj", "sveti stefan",                    # Montenegro
+    "nesebar", "varna", "burgas",                         # Bulgarian Black Sea
+    "curonian spit", "nida", "palanga",                   # Lithuania
+    "jurmala", "jūrmala",                            # Latvia
+    "texel",                                              # Netherlands
+    "tropea",                                             # Calabria
+}
+
+
+def _beach_component(iso2, categories, city=None):
     coastal = 1.0 if "beach" in categories else (
         0.7 if "island" in categories else (0.45 if "coast" in categories else 0.0))
-    if coastal == 0.0:
+    key = (city or "").strip().lower()
+    curated = any(n in key for n in TOP_BEACH_CURATED) if len(key) >= 4 else False
+    if coastal == 0.0 and not curated:
         return 0.0, 0, False
     count = BLUE_FLAG_BEACHES.get(iso2, 0)
     bf_norm = min(1.0, count / 300.0)  # ~300 flags saturates the country density
-    comp = coastal * (0.45 + 0.55 * bf_norm)
-    top = comp >= 0.6  # strong, well-flagged beach destination
+    comp = max(1.0, coastal) * (0.45 + 0.55 * bf_norm) if curated else coastal * (0.45 + 0.55 * bf_norm)
+    if curated:
+        comp = max(comp, 0.72)  # a curated beach town is a strong beach signal
+    top = curated or comp >= 0.6  # strong, well-flagged beach destination
     return comp, count, top
 
 
@@ -265,7 +291,7 @@ def compute_beauty(dest):
     city = dest.get("city")
 
     heritage, unesco_count, has_unesco = _heritage_component(lat, lon, cats)
-    beach, bf_count, top_beach = _beach_component(iso2, cats)
+    beach, bf_count, top_beach = _beach_component(iso2, cats, city)
     nature = _nature_component(cats)
     iconic = _iconic_component(city, cats)
 

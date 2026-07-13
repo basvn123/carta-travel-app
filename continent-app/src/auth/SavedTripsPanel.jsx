@@ -169,7 +169,7 @@ export function SavedTripsPanel({ onClose, onLoadTrip, onLoadTripPlan, onOpenAut
                     title="Plan this trip's days in the Day planner"
                   >
                     {plannedDays > 0
-                      ? `${plannedDays} ${plannedDays === 1 ? 'day' : 'days'} planned - keep planning →`
+                      ? `${plannedDays} ${plannedDays === 1 ? 'day' : 'days'} planned, keep planning →`
                       : 'Plan its days in the Day planner →'}
                   </button>
                 </div>

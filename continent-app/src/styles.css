@@ -937,12 +937,15 @@ input, select {
   overflow: hidden;
 }
 .trip-saved-item.active { border-color: var(--accent); }
+/* Same type treatment as the Saved-trips panel's rows (.saved-trip-city /
+   .saved-trip-meta), so saved things read identically everywhere. */
 .trip-saved-main {
   flex: 1;
   text-align: left;
   padding: 10px 12px;
-  font-family: var(--display);
-  font-size: 14px;
+  font-family: var(--ui);
+  font-size: 13.5px;
+  font-weight: 500;
   color: var(--ink);
 }
 .trip-saved-main:hover { background: var(--paper-dim); }
@@ -2165,10 +2168,11 @@ input, select {
 .day-gmaps-link:hover { filter: brightness(1.05); }
 .day-saved-sub {
   font-family: var(--mono);
-  font-size: 10px;
+  font-size: 10.5px; /* matches .saved-trip-meta */
   color: var(--ink-mute);
   text-transform: none;
   letter-spacing: 0;
+  font-weight: 400;
 }
 .day-chip-add { border-style: dashed; color: var(--accent); }
 .day-chip-add:hover { border-color: var(--accent); }
@@ -2369,9 +2373,6 @@ input, select {
   border-style: dashed;
   background: var(--accent-bg);
 }
-
-/* "Auto-plan" chip. */
-.day-chip-shape { border-style: dashed; }
 
 /* Inline SVG icon alignment: icons that sit inside text lines (block titles,
    mode labels, chips, badges) hang from the baseline without this. */
@@ -5066,13 +5067,15 @@ input, select {
   white-space: nowrap;
 }
 
-/* Favorite / save-trip toggles in the detail panel header */
+/* Favorite / save-trip toggles in the detail panel header. In normal flow
+   (not absolute) so the pills can never overlap each other, the close button
+   or the city name - they wrap onto their own line instead. */
 .panel-action-row {
-  position: absolute;
-  top: 18px; right: 54px;
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 8px;
+  margin: 2px 0 8px;
 }
 .panel-fav {
   display: inline-flex;
@@ -7018,3 +7021,250 @@ input, select {
     box-shadow: 0 18px 48px rgba(26, 26, 26, 0.28);
   }
 }
+
+/* ═══════════════════════════════════════════════════════════════════════
+   2026-07 UX pass: known-for lines, structured info facts, lifestyle panel
+   simplification, day-planner start flow, PDF/save actions, design quiz
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* What the destination is known for, under the country line in the detail
+   panel. Replaces the generic category chips. */
+.panel-knownfor {
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--ink-soft);
+  margin: 6px 0 10px;
+  font-style: italic;
+}
+
+/* Structured label/value rows inside the ⓘ popovers (stay, on the ground,
+   local rates). One fact per line, label column fixed, easy to scan. */
+.cost-info-facts {
+  margin: 8px 0 10px;
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  background: var(--paper-dim);
+  padding: 4px 0;
+}
+.cost-info-fact {
+  display: flex;
+  gap: 12px;
+  padding: 5px 12px;
+  font-size: 12px;
+  line-height: 1.45;
+}
+.cost-info-fact + .cost-info-fact { border-top: 1px dashed var(--rule); }
+.cost-info-fact-label {
+  flex: none;
+  width: 92px;
+  font-family: var(--mono);
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--ink-mute);
+  padding-top: 2px;
+}
+.cost-info-fact-value { color: var(--ink-soft); }
+
+/* Lifestyle panel: one merged Eating & drinking section with the cadence
+   toggle in its header row; consistent section rhythm. */
+.lifestyle-section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 4px;
+}
+.lifestyle-section-head .section-title { margin-bottom: 0; border-bottom: none; padding-bottom: 0; }
+.lifestyle-cadence { margin: 0; }
+.accom-panel .panel-section { padding: 18px 26px; }
+
+/* Account panel: identity card */
+.account-identity {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  background: var(--paper-dim);
+  margin-bottom: 10px;
+}
+.account-identity-avatar {
+  flex: none;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: var(--ink);
+  color: var(--paper);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  font-weight: 600;
+}
+.account-identity-text { display: flex; flex-direction: column; min-width: 0; }
+.account-identity-text b { font-size: 13.5px; font-weight: 600; color: var(--ink); overflow: hidden; text-overflow: ellipsis; }
+.account-identity-text small { font-size: 11.5px; color: var(--ink-mute); }
+
+/* Wizard stay rows: the ⓘ button + expandable facts */
+.guide-city-info-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  color: var(--ink-mute);
+  flex: none;
+}
+.guide-city-info-btn:hover, .guide-city-info-btn.open { color: var(--accent); background: var(--accent-bg); }
+.guide-city-facts {
+  margin: 7px 0 4px;
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  background: var(--paper-dim);
+  padding: 2px 0;
+}
+.guide-city-fact {
+  display: flex;
+  gap: 10px;
+  padding: 5px 11px;
+  font-size: 11.5px;
+  line-height: 1.45;
+}
+.guide-city-fact + .guide-city-fact { border-top: 1px dashed var(--rule); }
+.guide-city-fact-label {
+  flex: none;
+  width: 84px;
+  font-family: var(--mono);
+  font-size: 8.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--ink-mute);
+  padding-top: 2px;
+}
+.guide-city-fact-value { color: var(--ink-soft); }
+
+/* Wizard: "Let Carta pick my cities" questionnaire */
+.guide-design-quiz {
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  background: var(--paper-dim);
+  padding: 14px 16px;
+  margin: 10px 0 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 13px;
+}
+.guide-quiz-q .trip-field-label { display: block; margin-bottom: 7px; }
+.guide-quiz-go { align-self: flex-start; }
+
+/* Day planner start flow: multi-city list, address search */
+.day-build-field { display: block; margin-bottom: 2px; }
+.day-build-cities { display: flex; flex-direction: column; gap: 8px; }
+.day-build-city {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  background: var(--paper);
+  padding: 8px 10px;
+}
+.day-build-city-name {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--ink);
+}
+.day-build-city-name small {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--ink-mute);
+  font-weight: 400;
+}
+.day-stay-search { display: flex; gap: 8px; }
+.day-stay-input {
+  flex: 1;
+  min-width: 0;
+  padding: 9px 12px;
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  background: var(--paper);
+  font-size: 13px;
+  color: var(--ink);
+}
+.day-stay-input:focus { outline: none; border-color: var(--ink-soft); }
+.day-stay-results {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  overflow: hidden;
+  margin-top: 8px;
+}
+.day-stay-result {
+  text-align: left;
+  padding: 9px 12px;
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--ink-soft);
+  background: var(--paper);
+}
+.day-stay-result + .day-stay-result { border-top: 1px solid var(--rule); }
+.day-stay-result:hover { background: var(--paper-dim); color: var(--ink); }
+.day-stay-chosen {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid var(--rule);
+  border-left: 3px solid var(--accent);
+  border-radius: 8px;
+  background: var(--paper);
+  padding: 8px 6px 8px 12px;
+}
+.day-stay-chosen-label {
+  flex: 1;
+  min-width: 0;
+  font-size: 12.5px;
+  color: var(--ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* "Let Carta plan this city" (replaces the ambiguous Shape-my-day chip) */
+.day-carta-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 10px;
+  padding: 9px 15px;
+  border-radius: 999px;
+  background: var(--ink);
+  color: var(--paper);
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity .15s;
+}
+.day-carta-btn:hover { opacity: 0.85; }
+.day-carta-btn svg { color: var(--accent-bg); }
+
+/* Timeline rows now carry an ⓘ; the expanded detail spans the full row */
+.day-assigned-with-info { flex-wrap: wrap; }
+.day-timeline-detail { flex-basis: 100%; }
+
+/* Things-to-do tiers: Recommended gets its own accent, must-see rows pop */
+.day-tier-worth .day-tier-badge { color: var(--accent); }
+.day-tier-must .day-tier-head { font-weight: 700; }
+.day-tier-must .day-activity-row .day-assigned-name { font-weight: 600; }
+
+/* Shape-day wizard: feasibility step groups */
+.shape-feas-group { margin-bottom: 14px; }
+.shape-feas-group .trip-field-label { display: block; margin-bottom: 7px; }
+.shape-feas-group .shape-style { padding: 10px 14px; }

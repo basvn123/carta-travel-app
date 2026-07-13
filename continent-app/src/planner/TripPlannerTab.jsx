@@ -12,7 +12,8 @@ import { fmtDate } from '../lib/dates.js';
 import { fetchDrivingRoute } from '../lib/routing.js';
 import { useTripPlanner } from '../hooks/useTripPlanner.js';
 import { useCountryInsights } from '../hooks/useCountryInsights.js';
-import { SparkIcon, TrainIcon, BusIcon, CarIcon, BulbIcon } from '../components/Icons.jsx';
+import { SparkIcon, TrainIcon, BusIcon, CarIcon, BulbIcon, InfoIcon } from '../components/Icons.jsx';
+import { knownForFacts } from '../lib/knownFor.js';
 
 const SHEET_H_KEY = 'carta.tripSheetH.v1';
 
@@ -101,7 +102,7 @@ function LegRow({ leg, onMode }) {
               <a key={j} href={l.url} target="_blank" rel="noreferrer">{l.label} ↗</a>
             ))}
           </div>
-          <p className="trip-leg-disclaimer">Estimates, not live fares - check the links for real times &amp; prices.</p>
+          <p className="trip-leg-disclaimer">Estimates, not live fares. Check the links for real times &amp; prices.</p>
         </div>
       )}
     </div>
@@ -148,6 +149,8 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
 
   const [pendingCountry, setPendingCountry] = useState('');
   const [pendingDestId, setPendingDestId] = useState('');
+  // Which stop's "what is this city known for" facts are expanded (index|null).
+  const [stopInfoIdx, setStopInfoIdx] = useState(null);
   const [saveError, setSaveError] = useState('');
   const [sheetH, setSheetH] = useState(340);
   const [selectedStop, setSelectedStop] = useState(null);
@@ -512,10 +515,30 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
                           title="Drag to reorder"
                         >{i + 1}</div>
                         <div className="trip-stop-body">
-                          <div className="trip-stop-city">{s.dest ? s.dest.city : 'Unknown'}</div>
+                          <div className="trip-stop-city">
+                            {s.dest ? s.dest.city : 'Unknown'}
+                            {s.dest && (
+                              <button
+                                className={`guide-city-info-btn ${stopInfoIdx === i ? 'open' : ''}`}
+                                onClick={(e) => { e.stopPropagation(); setStopInfoIdx(stopInfoIdx === i ? null : i); }}
+                                aria-expanded={stopInfoIdx === i}
+                                title={`About ${s.dest.city}`}
+                              ><InfoIcon size={12} /></button>
+                            )}
+                          </div>
                           <div className="trip-stop-when">
                             {s.arriveDate ? `${fmtDate(s.arriveDate, true)} → ${fmtDate(s.departDate, true)}` : 'Set trip dates'}
                           </div>
+                          {stopInfoIdx === i && s.dest && (
+                            <div className="guide-city-facts" onClick={(e) => e.stopPropagation()}>
+                              {knownForFacts(s.dest).map(([label, value]) => (
+                                <div className="guide-city-fact" key={label}>
+                                  <span className="guide-city-fact-label">{label}</span>
+                                  <span className="guide-city-fact-value">{value}</span>
+                                </div>
+                              ))}
+                            </div>
+                          )}
                         </div>
                         <Stepper
                           value={s.nights}
@@ -556,7 +579,7 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
                   {tp.transportPref === 'car' && tp.carRental && (
                     <p className="trip-note">
                       One rental for the whole trip: ~{eur(tp.carRental.eur_total)} for {tp.carRental.days} days
-                      ({eur(tp.carRental.eur_per_day)}/day, seasonal rate) - split it {tp.groupSize} ways and add fuel + tolls per leg below.
+                      ({eur(tp.carRental.eur_per_day)}/day, seasonal rate). Split it {tp.groupSize} ways and add fuel + tolls per leg below.
                     </p>
                   )}
                 </div>
@@ -569,7 +592,7 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
                   <div className="trip-block-title"><BulbIcon size={13} /> Take it cheaper</div>
                   {tp.cheaperOrder && (
                     <div className="trip-saving-row">
-                      <span>Visiting your stops in a smarter order shortens the route - save ~{eur(tp.cheaperOrder.saving_eur)} on ground travel.</span>
+                      <span>Visiting your stops in a smarter order shortens the route and saves ~{eur(tp.cheaperOrder.saving_eur)} on ground travel.</span>
                       <button onClick={tp.applyCheaperOrder}>Reorder</button>
                     </div>
                   )}
@@ -584,7 +607,7 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
                         <button onClick={() => tp.applyStartDate(c.start)}>Use dates</button>
                       </div>
                     ))}
-                  <p className="trip-note">Same stops, same nights - only the start date shifts. Flight prices are real stored Ryanair fares; ground costs are estimates.</p>
+                  <p className="trip-note">Same stops, same nights. Only the start date shifts. Flight prices are real stored Ryanair fares; ground costs are estimates.</p>
                 </div>
               )}
 

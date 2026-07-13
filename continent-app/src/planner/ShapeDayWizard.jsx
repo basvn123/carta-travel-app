@@ -1,5 +1,5 @@
 import React, { useMemo, useRef, useState } from 'react';
-import { DAY_STYLES, candidateDeck, nearbyCompanions } from './dayDraft.js';
+import { DAY_STYLES, DAY_LENGTHS, WALK_LEVELS, candidateDeck, nearbyCompanions } from './dayDraft.js';
 import { SparkIcon, StarIcon, CheckIcon, MuseumIcon, TreeIcon, DiningIcon, CameraIcon, CastleIcon } from '../components/Icons.jsx';
 
 const STYLE_ICONS = {
@@ -33,6 +33,11 @@ const STYLE_ICONS = {
 export function ShapeDayWizard({ city, numDays, items, initial, onSkip, onDraft }) {
   const [step, setStep] = useState(1);
   const [styleKey, setStyleKey] = useState(initial?.style || null);
+  // Feasibility answers: how long the day runs and how much walking is okay.
+  // These keep Carta's drafts realistic (no four-hour marches for a light
+  // walker, no half-empty evenings for an early-start crowd).
+  const [dayLen, setDayLen] = useState(initial?.dayLen || 'full');
+  const [walk, setWalk] = useState(initial?.walk || 'moderate');
   const style = DAY_STYLES.find((s) => s.key === styleKey) || null;
 
   // Deck state: position + accepted original-indices.
@@ -61,12 +66,13 @@ export function ShapeDayWizard({ city, numDays, items, initial, onSkip, onDraft 
     setStep(2);
   };
 
+  const feasibility = { dayLen, walk };
   const finishAuto = () => {
-    onDraft({ mode: 'auto', style: styleKey, interests: style ? style.interests : [] });
+    onDraft({ mode: 'auto', style: styleKey, interests: style ? style.interests : [], ...feasibility });
   };
   const finishPicks = (picks) => {
     if (!picks.length) { finishAuto(); return; }
-    onDraft({ mode: 'picks', style: styleKey, interests: style ? style.interests : [], pickIdx: picks });
+    onDraft({ mode: 'picks', style: styleKey, interests: style ? style.interests : [], pickIdx: picks, ...feasibility });
   };
 
   const advance = (dir) => {
@@ -116,7 +122,7 @@ export function ShapeDayWizard({ city, numDays, items, initial, onSkip, onDraft 
           <button className="guide-close" onClick={onSkip} aria-label="Close">×</button>
           <div className="shape-head-title">
             Shape your {numDays > 1 ? `${numDays} days` : 'day'} in {city}
-            <span className="shape-head-step">step {step} of 2</span>
+            <span className="shape-head-step">step {step} of 3</span>
           </div>
         </div>
 
@@ -151,6 +157,50 @@ export function ShapeDayWizard({ city, numDays, items, initial, onSkip, onDraft 
           )}
 
           {step === 2 && (
+            <>
+              <h2 className="guide-title">How does the day itself look?</h2>
+              <p className="guide-sub">
+                So Carta only suggests what actually fits: nothing too far apart,
+                nothing that keeps you out longer than you want.
+              </p>
+              <div className="shape-feas-group">
+                <span className="trip-field-label">How long are you out?</span>
+                <div className="shape-style-list">
+                  {DAY_LENGTHS.map((d) => (
+                    <button
+                      key={d.key}
+                      className={`shape-style ${dayLen === d.key ? 'on' : ''}`}
+                      onClick={() => setDayLen(d.key)}
+                    >
+                      <span className="shape-style-text">
+                        <b>{d.label}</b>
+                        <small>{d.desc}</small>
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div className="shape-feas-group">
+                <span className="trip-field-label">How much walking is okay?</span>
+                <div className="shape-style-list">
+                  {WALK_LEVELS.map((w) => (
+                    <button
+                      key={w.key}
+                      className={`shape-style ${walk === w.key ? 'on' : ''}`}
+                      onClick={() => setWalk(w.key)}
+                    >
+                      <span className="shape-style-text">
+                        <b>{w.label}</b>
+                        <small>{w.desc}</small>
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </>
+          )}
+
+          {step === 3 && (
             deck.length === 0 ? (
               <>
                 <h2 className="guide-title">Not much catalogued for that mood here</h2>
@@ -218,15 +268,22 @@ export function ShapeDayWizard({ city, numDays, items, initial, onSkip, onDraft 
             <button className="shape-skip" onClick={onSkip}>Skip and plan manually</button>
           </div>
           <div className="guide-foot-actions">
-            {step === 2 && <button className="guide-back" onClick={() => setStep(1)}>Back</button>}
-            {step === 2 && accepted.length > 0 && (
+            {step > 1 && <button className="guide-back" onClick={() => setStep(step - 1)}>Back</button>}
+            {step === 2 && (
+              <button className="guide-next" onClick={() => { setDeckPos(0); setAccepted([]); setStep(3); }}>
+                Next
+              </button>
+            )}
+            {step === 3 && accepted.length > 0 && (
               <button className="guide-next" onClick={() => finishPicks(accepted)}>
                 Build my {numDays > 1 ? 'days' : 'day'} ({accepted.length})
               </button>
             )}
-            <button className={step === 1 ? 'guide-next' : 'guide-back'} onClick={finishAuto}>
-              <SparkIcon size={12} /> Let Carta pick everything
-            </button>
+            {step !== 2 && (
+              <button className={step === 1 ? 'guide-next' : 'guide-back'} onClick={finishAuto}>
+                <SparkIcon size={12} /> Let Carta pick everything
+              </button>
+            )}
           </div>
         </div>
       </div>

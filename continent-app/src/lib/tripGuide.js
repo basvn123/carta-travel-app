@@ -5,6 +5,7 @@
  */
 import { gemScore } from './trip_planner_pricing.js';
 import { haversineKm } from './runtime_pricing.js';
+import { knownFor } from './knownFor.js';
 
 /** ISO-3166 alpha-2 → the corresponding flag emoji (regional indicators).
  *  Note: Windows has no flag glyphs, so these render as the two letters there -
@@ -53,28 +54,11 @@ export function countriesFromData(destinations) {
   return [...map.values()].sort((a, b) => a.country.localeCompare(b.country));
 }
 
-const CAT_WORDS = {
-  village: 'charming village', oldtown: 'historic old town', medieval: 'medieval town',
-  fairytale: 'fairytale town', coast: 'coastal escape', beach: 'beach town',
-  island: 'island getaway', alps: 'alpine base', mountains: 'mountain town',
-  lake: 'lakeside town', valley: 'mountain valley', wine: 'wine country',
-  countryside: 'countryside retreat', nightlife: 'nightlife hub', party: 'party town',
-  luxury: 'luxury escape', city: 'city break', capital: 'capital city',
-};
-
-/** A short, human tagline for a city card. Prefers the curated blurb; otherwise
- *  composes one from category + heritage/beauty/things-to-do signals. */
+/** A short, human tagline for a city card: what the place is known for.
+ *  Curated per-city lines (knownFor) first, then the gem blurb, then a modest
+ *  category-based fallback. */
 export function cityInsight(dest) {
-  if (!dest) return '';
-  if (dest.blurb && dest.blurb.trim()) return dest.blurb.trim();
-  const cats = dest.categories || [];
-  const word = cats.map((c) => CAT_WORDS[c]).find(Boolean);
-  const lead = word ? word.charAt(0).toUpperCase() + word.slice(1) : 'Worth a stop';
-  const extras = [];
-  if (dest.beauty?.unesco) extras.push('UNESCO');
-  const nAct = (dest.activities && dest.activities.items ? dest.activities.items.length : 0);
-  if (nAct) extras.push(`${nAct} things to do`);
-  return extras.length ? `${lead}, ${extras.join(', ')}` : lead;
+  return knownFor(dest);
 }
 
 /** The catalogued things-to-do for a city, as [{ name, kind }]. */
@@ -165,14 +149,16 @@ export function cityCompanions(id, dest, destinations, { maxKm = 170, limit = 2 
  *
  * Returns [{ id, nights }] - only real catalogued places, never invented data.
  */
-export function designStays({ destinations, countries, interests, anchorDest, anchorId, totalNights }) {
+export function designStays({ destinations, countries, interests, anchorDest, anchorId, totalNights, maxStops: maxStopsWanted, mustIncludeIds }) {
   const nights = Math.max(1, totalNights || 5);
   const pool = Object.entries(destinations || {})
     .filter(([, d]) => d && d.lat != null && countries.has(d.country))
     .map(([id, d]) => ({ id, dest: d, score: gemScore(d) + interestFitScore(d, interests) * 2.5 }));
   if (!pool.length) return [];
 
-  const maxStops = Math.min(5, Math.max(1, Math.round(nights / 2)));
+  const maxStops = maxStopsWanted
+    ? Math.max(1, Math.min(6, maxStopsWanted))
+    : Math.min(5, Math.max(1, Math.round(nights / 2)));
   const wantsFor = (d, left) => (d.tier === 'gem' ? (left >= 6 ? 2 : 1) : (left >= 5 ? 3 : 2));
 
   const picks = [];
@@ -189,6 +175,26 @@ export function designStays({ destinations, countries, interests, anchorDest, an
       remaining -= n;
       cursor = a.dest;
     }
+  }
+
+  // Cities the traveller insists on come next, nearest-to-cursor first, before
+  // Carta spends nights on its own suggestions.
+  const must = (mustIncludeIds || []).filter((id) => id !== anchorId);
+  while (remaining > 0 && must.length && picks.length < maxStops) {
+    must.sort((a, b) => {
+      const da = cursor ? (haversineKm(cursor.lat, cursor.lon, destinations[a]?.lat, destinations[a]?.lon) ?? 0) : 0;
+      const db = cursor ? (haversineKm(cursor.lat, cursor.lon, destinations[b]?.lat, destinations[b]?.lon) ?? 0) : 0;
+      return da - db;
+    });
+    const id = must.shift();
+    const dest = destinations[id];
+    if (!dest || picks.some((p) => p.id === id)) continue;
+    const i = pool.findIndex((p) => p.id === id);
+    if (i >= 0) pool.splice(i, 1);
+    const n = Math.min(wantsFor(dest, remaining), remaining);
+    picks.push({ id, nights: n });
+    remaining -= n;
+    cursor = dest;
   }
 
   while (remaining > 0 && pool.length && picks.length < maxStops) {

@@ -3582,5 +3582,89 @@
   "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/Stanca_deasupra_Rautului_Butuceni.jpg/960px-Stanca_deasupra_Rautului_Butuceni.jpg",
   "original": "https://upload.wikimedia.org/wikipedia/commons/a/a9/Stanca_deasupra_Rautului_Butuceni.jpg",
   "source": "wikipedia"
+ },
+ "gem:makarska": {
+  "title": "Makarska",
+  "url": "https://en.wikipedia.org/wiki/Makarska",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d5/Urbanisti%C4%8Dka_cjelina_Makarske.jpg/960px-Urbanisti%C4%8Dka_cjelina_Makarske.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/d/d5/Urbanisti%C4%8Dka_cjelina_Makarske.jpg",
+  "source": "wikipedia"
+ },
+ "gem:sibenik": {
+  "title": "Šibenik",
+  "url": "https://en.wikipedia.org/wiki/%C5%A0ibenik",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Barone_izgradnja-43.jpg/960px-Barone_izgradnja-43.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/e/ec/Barone_izgradnja-43.jpg",
+  "source": "wikipedia"
+ },
+ "gem:lago-maggiore": {
+  "title": "Lake Maggiore",
+  "url": "https://en.wikipedia.org/wiki/Lake_Maggiore",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/3/39/LagoMaggiore.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/3/39/LagoMaggiore.jpg",
+  "source": "wikipedia"
+ },
+ "gem:taormina": {
+  "title": "Taormina",
+  "url": "https://en.wikipedia.org/wiki/Taormina",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/Aerial_image_of_the_coast_of_Taormina_%28view_from_the_southeast%29.jpg/960px-Aerial_image_of_the_coast_of_Taormina_%28view_from_the_southeast%29.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/5/5b/Aerial_image_of_the_coast_of_Taormina_%28view_from_the_southeast%29.jpg",
+  "source": "wikipedia"
+ },
+ "gem:capri": {
+  "title": "Capri",
+  "url": "https://en.wikipedia.org/wiki/Capri",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7d/Capri_in_Cartolina_-_Vista_da_Termini_%28Massa_Lubrense%29.jpg/960px-Capri_in_Cartolina_-_Vista_da_Termini_%28Massa_Lubrense%29.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/7/7d/Capri_in_Cartolina_-_Vista_da_Termini_%28Massa_Lubrense%29.jpg",
+  "source": "wikipedia"
+ },
+ "gem:tropea": {
+  "title": "Tropea",
+  "url": "https://en.wikipedia.org/wiki/Tropea",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Tropea_-_Veduta_da_Via_Carmine_-_3.jpg/960px-Tropea_-_Veduta_da_Via_Carmine_-_3.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/e/e7/Tropea_-_Veduta_da_Via_Carmine_-_3.jpg",
+  "source": "wikipedia"
+ },
+ "gem:cassis": {
+  "title": "Cassis",
+  "url": "https://en.wikipedia.org/wiki/Cassis",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Cassis_%28cropped%29.jpg/960px-Cassis_%28cropped%29.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/6/68/Cassis_%28cropped%29.jpg",
+  "source": "wikipedia"
+ },
+ "gem:menton": {
+  "title": "Menton",
+  "url": "https://en.wikipedia.org/wiki/Menton",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/2/26/Menton_february_13.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/2/26/Menton_february_13.jpg",
+  "source": "wikipedia"
+ },
+ "gem:bonifacio": {
+  "title": "Bonifacio, Corse-du-Sud",
+  "url": "https://en.wikipedia.org/wiki/Bonifacio,_Corse-du-Sud",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/Aerial_image_of_Bonifacio_%28view_from_the_southwest%29.jpg/960px-Aerial_image_of_Bonifacio_%28view_from_the_southwest%29.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/1/11/Aerial_image_of_Bonifacio_%28view_from_the_southwest%29.jpg",
+  "source": "wikipedia"
+ },
+ "gem:hydra": {
+  "title": "Hydra (island)",
+  "url": "https://en.wikipedia.org/wiki/Hydra_(island)",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/32/Hydra_town_01.jpg/960px-Hydra_town_01.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/3/32/Hydra_town_01.jpg",
+  "source": "wikipedia"
+ },
+ "gem:nerja": {
+  "title": "Nerja",
+  "url": "https://en.wikipedia.org/wiki/Nerja",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/96/Nerja.jpg/960px-Nerja.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/9/96/Nerja.jpg",
+  "source": "wikipedia"
+ },
+ "gem:besalu": {
+  "title": "Besalú",
+  "url": "https://en.wikipedia.org/wiki/Besal%C3%BA",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Pont_Besal%C3%BA_1.jpg/960px-Pont_Besal%C3%BA_1.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/f/f6/Pont_Besal%C3%BA_1.jpg",
+  "source": "wikipedia"
  }
 }

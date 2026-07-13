@@ -43,7 +43,7 @@ export function ResetPasswordScreen() {
         {done ? (
           <>
             <h2 className="auth-title">Password updated</h2>
-            <p className="auth-sub">You're all set - continue into the app.</p>
+            <p className="auth-sub">You're all set. Continue into the app.</p>
             <button className="auth-submit" onClick={exitRecoveryMode}>Continue</button>
           </>
         ) : (

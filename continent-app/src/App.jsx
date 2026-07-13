@@ -281,8 +281,6 @@ function TravelApp() {
   });
 
   const selectedDest = data && selectedId ? data.destinations[selectedId] : null;
-  // Destination used for the lifestyle panel's live preview.
-  const previewDest = selectedDest || (priced[0] && data.destinations[priced[0].id]) || null;
 
   if (recoveryMode) {
     return <ResetPasswordScreen />;
@@ -433,7 +431,7 @@ function TravelApp() {
             <h2 className="guide-title">Ryanair fares only</h2>
             <p className="fare-notice-text">
               Every flight price in Carta is a real stored <b>Ryanair</b> fare from your
-              chosen departure airport - no other airlines are included. Accommodation
+              chosen departure airport. No other airlines are included. Accommodation
               and daily costs are honest estimates from real local data.
             </p>
             <p className="fare-notice-text">
@@ -514,12 +512,8 @@ function TravelApp() {
           {lifestyleOpen && (
             <div onClick={(e) => e.stopPropagation()}>
               <LifestylePanel
-                data={data}
                 choices={choices}
                 setChoices={setChoices}
-                previewDest={previewDest}
-                departDate={departDate}
-                returnDate={returnDate}
                 onClose={() => setLifestyleOpen(false)}
               />
             </div>
@@ -631,7 +625,6 @@ function TravelApp() {
         <div onClick={(e) => e.stopPropagation()}>
           <AccountPanel
             onClose={() => setAccountOpen(false)}
-            onLoadTrip={handleLoadTrip}
             onOpenAuth={() => { setAccountOpen(false); setAuthModalMode('signin'); setAuthModalOpen(true); }}
           />
         </div>

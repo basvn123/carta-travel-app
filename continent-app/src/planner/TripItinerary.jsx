@@ -218,7 +218,7 @@ export function TripItinerary({
           {activeDay.overflowCount > 0 && (
             <p className="itin-day-overflow">
               {activeDay.overflowCount} more {activeDay.overflowCount === 1 ? 'pick doesn’t' : 'picks don’t'} fit
-              a day at this pace - shape the day to choose what stays.
+              a day at this pace. Shape the day to choose what stays.
             </p>
           )}
           {onPlanDay && (
