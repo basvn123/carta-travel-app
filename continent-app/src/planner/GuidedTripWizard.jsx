@@ -109,7 +109,7 @@ function StayRow({ id, dest, nights, onNights, anchorDest, isAnchor }) {
         </div>
       </div>
       <div className="guide-nights">
-        <button onClick={() => onNights(id, n - 1)} disabled={n <= 0} aria-label="Fewer nights">–</button>
+        <button onClick={() => onNights(id, n - 1)} disabled={n <= 0} aria-label="Fewer nights">-</button>
         <span className="guide-nights-val">
           {n === 0 ? <span className="guide-nights-zero">add</span> : <><b>{n}</b> {n === 1 ? 'night' : 'nights'}</>}
         </span>
@@ -141,6 +141,10 @@ export function GuidedTripWizard({ data, onCancel, onComplete }) {
   const destinations = data?.destinations || {};
   const dateMin = data?.meta?.start_date;
   const dateMax = data?.meta?.end_date;
+  // The departure airport the fares are currently priced from (set globally in
+  // the header); its city names the fly-in step so the copy follows the origin.
+  const originCode = data?.meta?.selected_origin;
+  const originCity = data?.meta?.origins?.[originCode]?.city || 'your airport';
   const allCountries = useMemo(() => countriesFromData(destinations), [destinations]);
   const countryInsights = useCountryInsights();
 
@@ -453,7 +457,7 @@ export function GuidedTripWizard({ data, onCancel, onComplete }) {
                   <div className="guide-flex-nights">
                     <span className="trip-field-label">How long, roughly?</span>
                     <div className="guide-people">
-                      <button type="button" onClick={() => setFlexNights(Math.max(1, flexNights - 1))} disabled={flexNights <= 1} aria-label="Fewer nights">–</button>
+                      <button type="button" onClick={() => setFlexNights(Math.max(1, flexNights - 1))} disabled={flexNights <= 1} aria-label="Fewer nights">-</button>
                       <span>{flexNights} {flexNights === 1 ? 'night' : 'nights'}</span>
                       <button type="button" onClick={() => setFlexNights(Math.min(21, flexNights + 1))} disabled={flexNights >= 21} aria-label="More nights">+</button>
                     </div>
@@ -477,7 +481,7 @@ export function GuidedTripWizard({ data, onCancel, onComplete }) {
             <>
               <h2 className="guide-title">Which flight gets you there?</h2>
               <p className="guide-sub">
-                Real Ryanair routes from Brussels into {selectedCountries.map((c) => c.country).join(' & ') || 'your countries'}
+                Real Ryanair routes from {originCity} into {selectedCountries.map((c) => c.country).join(' & ') || 'your countries'}
                 {dateMode === 'exact' && startDate ? ` on ${fmtDate(startDate)}` : ''}, cheapest first. Pick one - it becomes your arrival point.
               </p>
               {routeOptions.length === 0 ? (
@@ -658,7 +662,7 @@ export function GuidedTripWizard({ data, onCancel, onComplete }) {
                 <label className="trip-field">
                   <span className="trip-field-label">People</span>
                   <div className="guide-people">
-                    <button type="button" onClick={() => setGroupSize(Math.max(1, groupSize - 1))} disabled={groupSize <= 1} aria-label="Fewer people">–</button>
+                    <button type="button" onClick={() => setGroupSize(Math.max(1, groupSize - 1))} disabled={groupSize <= 1} aria-label="Fewer people">-</button>
                     <span>{groupSize}</span>
                     <button type="button" onClick={() => setGroupSize(Math.min(20, groupSize + 1))} disabled={groupSize >= 20} aria-label="More people">+</button>
                   </div>

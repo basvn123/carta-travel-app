@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { flagUrl, isoToFlag } from '../lib/tripGuide.js';
 import { fmtMonths } from '../lib/dates.js';
+import { stripDashes as cleanDash } from '../lib/format.js';
 import {
   TrainIcon, BusIcon, CarIcon, AlertIcon,
   TicketIcon, RoadIcon, CheckIcon, BanIcon,
@@ -12,15 +13,6 @@ const BUDGET_LABELS = {
   high: 'Pricey',
   very_high: 'Very expensive',
 };
-
-// House style: no em/en dashes anywhere in the intel copy. Number ranges keep
-// a plain hyphen; prose dashes become a comma pause.
-function cleanDash(s) {
-  if (typeof s !== 'string') return s;
-  return s
-    .replace(/(\d)\s*[—–]\s*(\d)/g, '$1-$2')
-    .replace(/\s*[—–]\s*/g, ', ');
-}
 
 function Flag({ iso2, className = 'cintel-flag' }) {
   const url = flagUrl(iso2, 40);

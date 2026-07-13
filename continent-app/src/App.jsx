@@ -95,8 +95,11 @@ function TravelApp() {
     baggage_key: init.baggage_key ?? 'priority_10kg',
     baggage_per_direction_eur: 25,
     transport_mode: init.transport_mode ?? 'plane',  // 'plane' | 'car' (car only for trips <= max_drive_km)
+    origin: init.origin ?? null,   // departure airport IATA; defaulted from data on load
     lifestyle: { ...DEFAULT_LIFESTYLE, ...(init.lifestyle || {}) },
   });
+  // Change the departure airport - reprices the whole app from the new origin.
+  const setOrigin = useCallback((code) => setChoices((prev) => ({ ...prev, origin: code })), []);
 
   // Shortlist (favorites) + list controls - also persisted in the URL.
   const [favorites, setFavorites] = useState(() => new Set(init.favorites || []));
@@ -112,6 +115,9 @@ function TravelApp() {
   // A day plan chosen from the Saved-trips overview: handed to DayPlannerTab,
   // which opens it and then clears this again.
   const [pendingDayPlanId, setPendingDayPlanId] = useState(null);
+  // Same idea for a multi-stop trip plan chosen from the Saved-trips overview,
+  // handed to TripPlannerTab.
+  const [pendingTripPlanId, setPendingTripPlanId] = useState(null);
   // A shared link (URL query present at load) always wins over a signed-in
   // user's synced settings, so opening someone's link never gets silently
   // overridden by your own saved preferences.
@@ -182,7 +188,7 @@ function TravelApp() {
 
   // Fetch app_data.json, apply its defaults into `choices`, and derive the
   // fare-date bounds used to default/clamp the depart & return pickers.
-  const { data, error, dateBounds } = useAppData(init, setChoices, departDate, setDepartDate, returnDate, setReturnDate);
+  const { data, error, dateBounds } = useAppData(init, setChoices, departDate, setDepartDate, returnDate, setReturnDate, choices.origin);
 
   // Keep --filter-h in sync with the filter bar's real height. The bar uses
   // min-height + wraps its controls; everything below it is positioned at
@@ -330,6 +336,9 @@ function TravelApp() {
           onChangeTab={(key) => { setSavedTripsOpen(false); setActiveTab(key); }}
           savedOpen={savedTripsOpen}
           onToggleSaved={() => setSavedTripsOpen((v) => !v)}
+          data={data}
+          origin={choices.origin}
+          onChangeOrigin={setOrigin}
         >
           {activeTab === 'map' && (
             <FilterBar
@@ -417,7 +426,7 @@ function TravelApp() {
               onOpenCompare={() => setCompareOpen(true)}
               reachableCount={pricedAll.length}
               totalCount={Object.keys(data.destinations).length}
-              homeCity={data.meta?.home_city || 'Brussels'}
+              homeCity={data.meta?.origins?.[data.meta?.selected_origin]?.city || data.meta?.home_city || 'your airport'}
               transportMode={choices.transport_mode || 'plane'}
               onCollapse={() => setListCollapsed(true)}
             />
@@ -520,6 +529,8 @@ function TravelApp() {
             user={user}
             authConfigured={authConfigured}
             onRequestAuth={() => setAuthModalOpen(true)}
+            openPlanId={pendingTripPlanId}
+            onOpenPlanConsumed={() => setPendingTripPlanId(null)}
           />
         </Suspense>
       )}
@@ -561,6 +572,11 @@ function TravelApp() {
               setSavedTripsOpen(false);
               setPendingDayPlanId(id);
               setActiveTab('day');
+            }}
+            onLoadTripPlan={(id) => {
+              setSavedTripsOpen(false);
+              setPendingTripPlanId(id);
+              setActiveTab('trip');
             }}
           />
         </div>

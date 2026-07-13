@@ -330,6 +330,126 @@ input, select {
   .map-guide { right: 10px; margin-top: 6px; }
 }
 
+/* ───────── Origin picker: the "flying from" control in the header. A compact
+   pill that opens a searchable, country-grouped list of departure airports;
+   choosing one reprices the whole app. ───────── */
+.origin-picker { position: relative; }
+.origin-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  max-width: 200px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: var(--paper-dim);
+  border: 1px solid var(--rule);
+  color: var(--ink-soft);
+  cursor: pointer;
+  transition: background .15s, border-color .15s, color .15s;
+}
+.origin-btn:hover { background: #efe9db; color: var(--ink); }
+.origin-btn > svg { color: var(--accent); flex: none; }
+.origin-btn-label {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  line-height: 1.1;
+  min-width: 0;
+}
+.origin-btn-from {
+  font-family: var(--mono);
+  font-size: 8.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--ink-mute);
+}
+.origin-btn-label b {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--ink);
+  max-width: 140px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.origin-btn-caret { font-size: 9px; color: var(--ink-mute); flex: none; }
+
+.origin-pop {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  width: 320px;
+  max-width: min(320px, calc(100vw - 24px));
+  max-height: min(60vh, 460px);
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  background: var(--paper, #fbf8f1);
+  border: 1px solid var(--rule);
+  border-radius: 14px;
+  box-shadow: var(--shadow-2);
+  z-index: 60;
+}
+.origin-search {
+  width: 100%;
+  padding: 9px 12px;
+  border: 1px solid var(--rule);
+  border-radius: 9px;
+  background: var(--paper-dim);
+  font-family: var(--ui);
+  font-size: 13px;
+  color: var(--ink);
+  outline: none;
+}
+.origin-search:focus { border-color: var(--accent-soft); background: var(--paper); }
+.origin-list { margin-top: 8px; overflow-y: auto; }
+.origin-empty { padding: 14px 6px; font-size: 12.5px; color: var(--ink-mute); }
+.origin-group + .origin-group { margin-top: 4px; }
+.origin-group-head {
+  position: sticky;
+  top: 0;
+  padding: 6px 8px 3px;
+  background: var(--paper, #fbf8f1);
+  font-family: var(--mono);
+  font-size: 9.5px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  color: var(--ink-mute);
+}
+.origin-opt {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  color: var(--ink-soft);
+  transition: background .12s, color .12s;
+}
+.origin-opt:hover { background: var(--paper-dim); color: var(--ink); }
+.origin-opt.on { background: var(--accent-bg); color: var(--accent); }
+.origin-opt-city { font-size: 13px; font-weight: 500; }
+.origin-opt-code {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.04em;
+  color: var(--ink-mute);
+  flex: none;
+}
+.origin-opt.on .origin-opt-code { color: var(--accent); }
+
+@media (max-width: 768px) {
+  .origin-btn-from { display: none; }
+  .origin-btn-label b { max-width: 96px; }
+  .origin-pop { right: -8px; }
+}
+
 /* ───────── Bottom nav: the Map / Trip planner / Day planner switch on MOBILE
    only (Strava-style icon + label tabs). On desktop the same tabs live in the
    app header (.header-nav), so the bar hides and its height variable zeroes
@@ -749,6 +869,8 @@ input, select {
 /* Add stop */
 .trip-add-row { display: flex; gap: 10px; align-items: stretch; }
 .trip-add-row .dropdown { flex: 1; }
+.trip-add-row .dropdown.trip-add-country { flex: 0 0 34%; }
+.dropdown-trigger.disabled { opacity: 0.45; cursor: default; }
 .trip-add-btn {
   padding: 0 20px;
   border-radius: 10px;

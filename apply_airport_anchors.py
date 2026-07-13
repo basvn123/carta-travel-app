@@ -11,13 +11,20 @@ calendar plus an estimated airport->destination transfer, exactly like the curat
 Rules
   - Served airport = a destination that has its own `routes` AND an `iata`
     (real Ryanair airports; curated gems have routes but no iata, so are skipped).
-  - Candidate = a destination with no routes, not drivable from home, not an
-    island (a bus can't cross the sea), with coordinates.
+  - Candidate = a destination with no routes, not an island (a bus can't cross
+    the sea), with coordinates. Anchoring no longer requires the place to be
+    unreachable by direct long-haul drive from home - a place can be BOTH a
+    (long) direct drive AND a short hop from a nearby airport (e.g. Lake Como:
+    ~13h direct from Brussels, or fly into Milan Bergamo and rent a car for the
+    last 50km). runtime_pricing.composeTrip already prices plane and car as two
+    independent options and lets the traveller compare, so gating anchoring on
+    "is it already drivable" only hid the better option for places near a hub.
   - Anchor only if the nearest served airport is within ANCHOR_MAX_STRAIGHT_KM of
     the destination - i.e. that airport basically *is* the city's airport (Venice
-    Marco Polo <-> Treviso, Rome Ciampino <-> Fiumicino). Anything farther is a
-    real onward journey, not an airport transfer, so we do NOT anchor it; the app
-    still shows the place, flagged unreachable via Ryanair.
+    Marco Polo <-> Treviso, Rome Ciampino <-> Fiumicino, Milan Bergamo <-> Lake
+    Como). Anything farther is a real onward journey, not an airport transfer,
+    so we do NOT anchor it; the app still shows the place, flagged unreachable
+    via Ryanair (unless it's separately reachable by direct drive).
 
 Cost model (researched June 2026; bus/shuttle tier, well below taxi rates)
   - road_km   = haversine(dest, airport) * detour 1.3
@@ -48,7 +55,7 @@ DEFAULT_TARGETS = [
     ROOT / "continent-app" / "public" / "app_data.json",
 ]
 
-ANCHOR_MAX_STRAIGHT_KM = 50.0  # only anchor when the airport basically serves the city
+ANCHOR_MAX_STRAIGHT_KM = 60.0  # only anchor when the airport basically serves the city
 DETOUR = 1.3
 EUR_PER_ROAD_KM = 0.15
 GROUND_FLOOR_EUR = 10
@@ -100,15 +107,15 @@ def patch(path: Path) -> None:
     for v in ds.values():
         if v.get("routes") or v.get("lat") is None:
             continue
-        if drivable(v):
-            continue
         if "island" in (v.get("categories") or []):
-            still_unreachable += 1
+            if not drivable(v):
+                still_unreachable += 1
             continue
         nearest = min(served, key=lambda a: haversine(v["lat"], v["lon"], a["lat"], a["lon"]))
         straight_km = haversine(v["lat"], v["lon"], nearest["lat"], nearest["lon"])
         if straight_km > ANCHOR_MAX_STRAIGHT_KM:
-            still_unreachable += 1
+            if not drivable(v):
+                still_unreachable += 1
             continue
 
         road_km = straight_km * DETOUR

@@ -69,7 +69,7 @@ export function TripItinerary({ dayPlan, stopDetails, grandTotal, groupSize, fli
               <span className="itin-stop-main">
                 <span className="itin-stop-city">{s.dest?.city || 'Unknown'}, {s.dest?.country}</span>
                 <span className="itin-stop-sub">
-                  {fmtLong(s.arriveDate)} – {fmtLong(s.departDate)}, {s.nights} {s.nights === 1 ? 'night' : 'nights'}
+                  {fmtLong(s.arriveDate)} → {fmtLong(s.departDate)}, {s.nights} {s.nights === 1 ? 'night' : 'nights'}
                   {(s.activities?.length || 0) > 0 && `, ${s.activities.length} to visit`}
                 </span>
               </span>

@@ -44,7 +44,7 @@ function NightsRing({ planned, total }) {
 function Stepper({ value, onChange, min = 0, max = 60, suffix }) {
   return (
     <div className="trip-stepper">
-      <button type="button" className="trip-step-btn" onClick={() => onChange(Math.max(min, value - 1))} disabled={value <= min} aria-label="Fewer">–</button>
+      <button type="button" className="trip-step-btn" onClick={() => onChange(Math.max(min, value - 1))} disabled={value <= min} aria-label="Fewer">-</button>
       <div className="trip-step-val">
         <span className="trip-step-num">{value}</span>
         {suffix && <span className="trip-step-suffix">{suffix(value)}</span>}
@@ -138,13 +138,14 @@ function Suggestions({ suggestions, onPick }) {
   );
 }
 
-export function TripPlannerTab({ data, user, authConfigured, onRequestAuth }) {
+export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, openPlanId, onOpenPlanConsumed }) {
   const countryInsights = useCountryInsights();
   const tp = useTripPlanner(data, countryInsights);
   const destinations = data?.destinations || {};
   const dateMin = data?.meta?.start_date;
   const dateMax = data?.meta?.end_date;
 
+  const [pendingCountry, setPendingCountry] = useState('');
   const [pendingDestId, setPendingDestId] = useState('');
   const [saveError, setSaveError] = useState('');
   const [sheetH, setSheetH] = useState(340);
@@ -239,9 +240,17 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth }) {
     if (isNarrow) setSheetOpen(false);
   };
 
+  // A trip plan chosen from the Saved-trips overview: load it and switch
+  // straight to its planned view.
   useEffect(() => {
-    if (user) tp.loadSavedPlans(user.id);
-  }, [user?.id]); // eslint-disable-line react-hooks/exhaustive-deps
+    if (!openPlanId) return;
+    tp.loadPlan(openPlanId).then(() => {
+      tp.setPlanned(true);
+      setSelectedStop(null);
+      setSheetOpen(true);
+    });
+    onOpenPlanConsumed && onOpenPlanConsumed();
+  }, [openPlanId]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Selecting a stop (via pin or card) scrolls its card into view.
   useEffect(() => {
@@ -264,9 +273,18 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth }) {
     return () => ro.disconnect();
   }, []);
 
-  const destOptions = Object.entries(destinations)
-    .map(([id, d]) => ({ value: id, label: `${d.city}, ${d.country}` }))
-    .sort((a, b) => a.label.localeCompare(b.label));
+  // Manual "Add stop": country first, then city within it - picking both at once
+  // made the combined list noisy, and country-first mirrors how travellers
+  // actually think about where to go next.
+  const countryOptions = [...new Set(Object.values(destinations).map((d) => d.country).filter(Boolean))]
+    .sort((a, b) => a.localeCompare(b))
+    .map((c) => ({ value: c, label: c }));
+  const cityOptions = pendingCountry
+    ? Object.entries(destinations)
+        .filter(([, d]) => d.country === pendingCountry)
+        .map(([id, d]) => ({ value: id, label: d.city }))
+        .sort((a, b) => a.label.localeCompare(b.label))
+    : [];
 
   const hasDates = tp.tripStart && tp.tripEnd && tp.windowNights > 0;
   const mapStops = tp.stopDetails
@@ -293,12 +311,16 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth }) {
     setPendingDestId('');
   };
 
+  const handlePendingCountry = (c) => {
+    setPendingCountry(c);
+    setPendingDestId(''); // city choice no longer valid once the country changes
+  };
+
   const handleSave = async () => {
     setSaveError('');
     if (!user) { onRequestAuth && onRequestAuth(); return; }
     try {
       await tp.savePlan(user.id);
-      tp.loadSavedPlans(user.id);
     } catch (e) {
       setSaveError(e?.message || 'Could not save this trip.');
     }
@@ -370,7 +392,7 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth }) {
           />
           <div className="trip-topcard-sub">
             {hasDates
-              ? `${fmtDate(tp.tripStart)} – ${fmtDate(tp.tripEnd)}`
+              ? `${fmtDate(tp.tripStart)} → ${fmtDate(tp.tripEnd)}`
               : 'Pick your travel dates below'}
             {tp.stopDetails.length > 0 && (
               <span className="trip-topcard-count">{tp.stopDetails.length} {tp.stopDetails.length === 1 ? 'stop' : 'stops'}</span>
@@ -453,7 +475,7 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth }) {
                         <div className="trip-stop-body">
                           <div className="trip-stop-city">{s.dest ? s.dest.city : 'Unknown'}</div>
                           <div className="trip-stop-when">
-                            {s.arriveDate ? `${fmtDate(s.arriveDate, true)} – ${fmtDate(s.departDate, true)}` : 'Set trip dates'}
+                            {s.arriveDate ? `${fmtDate(s.arriveDate, true)} → ${fmtDate(s.departDate, true)}` : 'Set trip dates'}
                           </div>
                         </div>
                         <Stepper
@@ -535,11 +557,21 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth }) {
                 <div className="trip-block-title">{tp.stopDetails.length === 0 ? 'Add your first stop' : 'Add another stop'}</div>
                 <div className="trip-add-row">
                   <Dropdown
+                    className="trip-add-country"
+                    value={pendingCountry}
+                    onChange={handlePendingCountry}
+                    options={countryOptions}
+                    placeholder="Country"
+                    searchPlaceholder="Search countries"
+                  />
+                  <Dropdown
+                    className="trip-add-city"
                     value={pendingDestId}
                     onChange={setPendingDestId}
-                    options={destOptions}
-                    placeholder="Search a city or country"
-                    searchPlaceholder="Search"
+                    options={cityOptions}
+                    placeholder={pendingCountry ? 'City' : 'Pick a country first'}
+                    searchPlaceholder="Search cities"
+                    disabled={!pendingCountry}
                   />
                   <button className="trip-add-btn" onClick={addPending} disabled={!pendingDestId}>Add</button>
                 </div>
@@ -614,22 +646,6 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth }) {
             );
           })()}
 
-          {/* Saved trips */}
-          {authConfigured && user && tp.savedPlans.length > 0 && (
-            <div className="trip-block">
-              <div className="trip-block-title">Your saved trips</div>
-              <div className="trip-saved-list">
-                {tp.savedPlans.map((p) => (
-                  <div className={`trip-saved-item ${p.id === tp.planId ? 'active' : ''}`} key={p.id}>
-                    <button className="trip-saved-main" onClick={() => tp.loadPlan(p.id)} title="Open this trip">
-                      {p.label || 'Untitled trip'}
-                    </button>
-                    <button className="trip-saved-del" onClick={() => tp.removeSavedPlan(p.id)} aria-label="Delete trip" title="Delete">×</button>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
           </>
           )}
         </div>

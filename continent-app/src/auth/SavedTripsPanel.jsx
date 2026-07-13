@@ -1,16 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from './AuthContext.jsx';
 import { fetchSavedTrips, deleteTrip } from './tripStorage.js';
+import { fetchTripPlans, deleteTripPlan } from './tripPlanStorage.js';
 import { loadStandalonePlans, deleteStandalonePlan } from '../planner/dayPlanStore.js';
 
 // Standalone Saved trips panel, opened from the bottom nav (the same list also
-// lives inside AccountPanel; this gives it a one-tap home of its own).
-export function SavedTripsPanel({ onClose, onLoadTrip, onOpenAuth, onOpenDayPlan }) {
+// lives inside AccountPanel; this gives it a one-tap home of its own). Every
+// kind of "saved" trip lands here - single destinations saved from the map,
+// multi-stop trips built in the Trip planner, and device-local day plans -
+// rather than each flow keeping its own separate saved list.
+export function SavedTripsPanel({ onClose, onLoadTrip, onLoadTripPlan, onOpenAuth, onOpenDayPlan }) {
   const { user, configured } = useAuth();
 
   const [trips, setTrips] = useState([]);
   const [loading, setLoading] = useState(!!user);
   const [error, setError] = useState('');
+  const [tripPlans, setTripPlans] = useState([]);
+  const [tripPlansLoading, setTripPlansLoading] = useState(!!user);
   // Device-local day plans, shown alongside the account trips so everything
   // saved lives in one overview.
   const [dayPlans, setDayPlans] = useState(() => loadStandalonePlans());
@@ -24,9 +30,18 @@ export function SavedTripsPanel({ onClose, onLoadTrip, onOpenAuth, onOpenDayPlan
       .finally(() => setLoading(false));
   };
 
+  const loadTripPlans = () => {
+    setTripPlansLoading(true);
+    fetchTripPlans(user.id)
+      .then(setTripPlans)
+      .catch(() => {})
+      .finally(() => setTripPlansLoading(false));
+  };
+
   useEffect(() => {
-    if (!user) { setLoading(false); return; }
+    if (!user) { setLoading(false); setTripPlansLoading(false); return; }
     loadTrips();
+    loadTripPlans();
   }, [user?.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleDelete = async (id) => {
@@ -35,6 +50,15 @@ export function SavedTripsPanel({ onClose, onLoadTrip, onOpenAuth, onOpenDayPlan
       await deleteTrip(id);
     } catch {
       loadTrips(); // roll back the optimistic removal on failure
+    }
+  };
+
+  const handleDeleteTripPlan = async (id) => {
+    setTripPlans((prev) => prev.filter((p) => p.id !== id));
+    try {
+      await deleteTripPlan(id);
+    } catch {
+      loadTripPlans(); // roll back the optimistic removal on failure
     }
   };
 
@@ -93,6 +117,39 @@ export function SavedTripsPanel({ onClose, onLoadTrip, onOpenAuth, onOpenDayPlan
       ) : (
         <div className="panel-section">
           <div className="footnote">Accounts aren't set up for this deployment, so trips can't be saved yet.</div>
+        </div>
+      )}
+
+      {/* Multi-stop trips built in the Trip planner. Kept here instead of on the
+          Trip planner tab itself, so every saved trip - single destination or
+          multi-stop - lives in one place. */}
+      {user && !tripPlansLoading && tripPlans.length > 0 && (
+        <div className="panel-section">
+          <div className="section-title">Your trip plans</div>
+          <div className="saved-trip-list">
+            {tripPlans.map((p) => (
+              <div className="saved-trip-item" key={p.id}>
+                <button
+                  className="saved-trip-main"
+                  onClick={() => onLoadTripPlan && onLoadTripPlan(p.id)}
+                  title="Open this trip"
+                >
+                  <span className="saved-trip-city">{p.label || 'Untitled trip'}</span>
+                  {p.updated_at && (
+                    <span className="saved-trip-meta">Updated {fmtDate(p.updated_at.slice(0, 10))}</span>
+                  )}
+                </button>
+                <button
+                  className="saved-trip-delete"
+                  onClick={() => handleDeleteTripPlan(p.id)}
+                  aria-label={`Remove ${p.label || 'trip'}`}
+                  title="Remove"
+                >
+                  ×
+                </button>
+              </div>
+            ))}
+          </div>
         </div>
       )}
 

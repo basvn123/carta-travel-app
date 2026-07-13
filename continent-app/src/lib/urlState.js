@@ -46,6 +46,7 @@ export function encodeState({
   if (choices?.group_size) q.set('g', String(choices.group_size));
   if (choices?.baggage_key) q.set('b', choices.baggage_key);
   if (choices?.transport_mode && choices.transport_mode !== 'plane') q.set('t', choices.transport_mode);
+  if (choices?.origin) q.set('o', choices.origin);
   if (priceMode && priceMode !== 'total') q.set('pm', priceMode);
   if (countryFilter && countryFilter !== 'all') q.set('cf', countryFilter);
   if (tripKinds && tripKinds.length) q.set('tk', tripKinds.join('.'));
@@ -79,6 +80,7 @@ export function decodeState(search) {
   if (has('g')) out.group_size = Math.max(1, parseInt(q.get('g'), 10) || 1);
   if (has('b')) out.baggage_key = q.get('b');
   if (has('t')) out.transport_mode = q.get('t');
+  if (has('o')) out.origin = q.get('o');
   if (has('pm')) out.priceMode = q.get('pm');
   if (has('cf')) out.countryFilter = q.get('cf');
   if (has('tk')) out.tripKinds = q.get('tk').split('.').filter(Boolean);

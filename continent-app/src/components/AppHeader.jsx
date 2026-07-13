@@ -1,5 +1,6 @@
 import React from 'react';
 import Logo from './Logo.jsx';
+import { OriginPicker } from './OriginPicker.jsx';
 import { PersonIcon, HomeIcon, MapPinIcon, RouteIcon, ListDayIcon, BookmarkIcon } from './Icons.jsx';
 
 const NAV_ITEMS = [
@@ -36,6 +37,7 @@ export function AppHeader({
   isHome, onGoHome,
   activeTab, onChangeTab,
   savedOpen, onToggleSaved,
+  data, origin, onChangeOrigin,
   children,
 }) {
   return (
@@ -88,6 +90,7 @@ export function AppHeader({
       {children && <div className="app-header-filters">{children}</div>}
 
       <div className="app-header-account">
+        <OriginPicker data={data} origin={origin} onChangeOrigin={onChangeOrigin} />
         <AccountButton user={user} onOpenAccount={onOpenAccount} />
       </div>
     </div>

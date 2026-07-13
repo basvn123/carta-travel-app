@@ -25,6 +25,8 @@ export function Dropdown({
   searchThreshold = 8,
   multiple = false,
   multiLabel,
+  className = '',
+  disabled = false,
 }) {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState('');
@@ -100,10 +102,11 @@ export function Dropdown({
     : options;
 
   return (
-    <div className="dropdown" ref={wrapperRef}>
+    <div className={`dropdown ${className}`.trim()} ref={wrapperRef}>
       <button
-        className={`dropdown-trigger ${open ? 'open' : ''}`}
-        onClick={() => setOpen(!open)}
+        className={`dropdown-trigger ${open ? 'open' : ''} ${disabled ? 'disabled' : ''}`}
+        onClick={() => !disabled && setOpen(!open)}
+        disabled={disabled}
         type="button"
       >
         <span className="dropdown-label">

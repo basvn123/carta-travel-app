@@ -1,14 +1,21 @@
 import { useEffect, useMemo, useState } from 'react';
 import { appDataPromise } from '../lib/appData.js';
+import { hydrateForOrigin, defaultOrigin } from '../lib/origins.js';
 
 /** Fetches app_data.json, applies its data-driven defaults (group size,
- *  baggage, lifestyle, home/car/accommodation models) into `choices` the
- *  first time it loads, computes the fare-date bounds across every
- *  destination's routes, and defaults depart/return dates from them.
- *  URL/localStorage values (`init`) always win over the data's own defaults.
+ *  baggage, lifestyle, home/car/accommodation models, departure origin) into
+ *  `choices` the first time it loads, rehydrates every destination's fares for
+ *  the chosen origin, computes the fare-date bounds, and defaults depart/return
+ *  dates from them. URL/localStorage values (`init`) always win over the data's
+ *  own defaults.
+ *
+ *  `origin` is the currently selected departure airport (choices.origin); the
+ *  returned `data` is always priced from it. Until choices.origin is set (first
+ *  paint), we fall back to the data's own default origin so the app never renders
+ *  with empty fares.
  */
-export function useAppData(init, setChoices, departDate, setDepartDate, returnDate, setReturnDate) {
-  const [data, setData] = useState(null);
+export function useAppData(init, setChoices, departDate, setDepartDate, returnDate, setReturnDate, origin) {
+  const [raw, setRaw] = useState(null);
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -16,32 +23,43 @@ export function useAppData(init, setChoices, departDate, setDepartDate, returnDa
     // here we only consume the shared promise.
     appDataPromise
       .then((j) => {
-        setData(j);
+        setRaw(j);
         const def = j.meta?.defaults;
-        if (def) {
-          setChoices((prev) => {
-            // URL/stored values (held in `init`) win over the data defaults.
-            const baggageKey = init.baggage_key ?? def.baggage ?? prev.baggage_key;
-            return {
-              ...prev,
-              group_size: init.group_size ?? def.group_size ?? prev.group_size,
-              trip_days: def.trip_length_days ?? prev.trip_days,
-              baggage_key: baggageKey,
-              baggage_per_direction_eur:
-                j.meta.baggage_options?.[baggageKey]?.per_direction_eur ?? prev.baggage_per_direction_eur,
-              transport_mode: init.transport_mode ?? prev.transport_mode,
-              lifestyle: { ...prev.lifestyle, ...(def.lifestyle || {}), ...(init.lifestyle || {}) },
-              accommodation_model: j.meta.accommodation_model ?? prev.accommodation_model,
-              car_model: j.meta.car_model ?? prev.car_model,
-              home: j.meta.home ?? prev.home,
-            };
-          });
-        }
+        const originDefault = init.origin ?? defaultOrigin(j);
+        setChoices((prev) => {
+          // URL/stored values (held in `init`) win over the data defaults.
+          const baggageKey = init.baggage_key ?? def?.baggage ?? prev.baggage_key;
+          return {
+            ...prev,
+            origin: prev.origin ?? originDefault,
+            group_size: init.group_size ?? def?.group_size ?? prev.group_size,
+            trip_days: def?.trip_length_days ?? prev.trip_days,
+            baggage_key: baggageKey,
+            baggage_per_direction_eur:
+              j.meta.baggage_options?.[baggageKey]?.per_direction_eur ?? prev.baggage_per_direction_eur,
+            transport_mode: init.transport_mode ?? prev.transport_mode,
+            lifestyle: { ...prev.lifestyle, ...(def?.lifestyle || {}), ...(init.lifestyle || {}) },
+            accommodation_model: j.meta.accommodation_model ?? prev.accommodation_model,
+            car_model: j.meta.car_model ?? prev.car_model,
+            home: j.meta.home ?? prev.home,
+          };
+        });
       })
       .catch((e) => setError(e.message));
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Earliest outbound + latest return date found in any destination's routes.
+  // The effective origin: the user's choice once known, else the data's default.
+  const effectiveOrigin = origin || (raw ? defaultOrigin(raw) : null);
+
+  // Every destination's fares rebuilt for the chosen origin. Re-derives (and so
+  // reprices the whole app) whenever the origin changes.
+  const data = useMemo(
+    () => (raw && effectiveOrigin ? hydrateForOrigin(raw, effectiveOrigin) : null),
+    [raw, effectiveOrigin],
+  );
+
+  // Earliest outbound + latest return date found in any destination's (hydrated)
+  // routes - i.e. the fare window reachable from the chosen origin.
   const dateBounds = useMemo(() => {
     if (!data) return null;
     let minOut = null;

@@ -154,6 +154,28 @@ VOY_DROP = ("tourist office", "tourist information", "airport", "railway",
             "train station", "bus station", "metro station", "card", "pass",
             "tour operator", "consulate", "embassy", "rental", "car hire")
 
+# Local-language Wikipedia(s) to try, in order, once en.wikipedia has no
+# match - most of this dataset's minor sights (small palazzi, parish
+# churches...) only ever got written up in their own country's Wikipedia.
+# Empty list = English-speaking, no second pass needed.
+COUNTRY_LANG = {
+    "Albania": ["sq"], "Andorra": ["ca"], "Austria": ["de"],
+    "Belgium": ["nl", "fr"], "Bosnia and Herzegovina": ["bs", "hr", "sr"],
+    "Bulgaria": ["bg"], "Croatia": ["hr"], "Cyprus": ["el"],
+    "Czechia": ["cs"], "Denmark": ["da"], "Estonia": ["et"],
+    "Faroe Islands": ["fo", "da"], "Finland": ["fi"], "France": ["fr"],
+    "Germany": ["de"], "Greece": ["el"], "Hungary": ["hu"],
+    "Iceland": ["is"], "Ireland": [], "Italy": ["it"],
+    "Kosovo": ["sq", "sr"], "Latvia": ["lv"], "Liechtenstein": ["de"],
+    "Lithuania": ["lt"], "Luxembourg": ["fr", "de"], "Malta": ["mt"],
+    "Moldova": ["ro"], "Monaco": ["fr"], "Montenegro": ["sr", "hr"],
+    "Netherlands": ["nl"], "North Macedonia": ["mk"], "Norway": ["no"],
+    "Poland": ["pl"], "Portugal": ["pt"], "Romania": ["ro"],
+    "San Marino": ["it"], "Serbia": ["sr"], "Slovakia": ["sk"],
+    "Slovenia": ["sl"], "Spain": ["es", "ca"], "Sweden": ["sv"],
+    "Switzerland": ["de", "fr", "it"], "United Kingdom": [],
+}
+
 
 def load_json(path):
     return json.loads(path.read_text(encoding="utf-8"))
@@ -503,13 +525,16 @@ def batch_coords(titles):
     return out
 
 
-def batch_wiki_cards(titles):
+def batch_wiki_cards(titles, lang="en"):
     """{requested title -> {img?, desc?, wiki?, lat?, lon?}} for many Wikipedia
     articles in one 50-per-request query (lead thumbnail + one-line description
-    + coordinates + canonical URL)."""
+    + coordinates + canonical URL). `lang` picks the Wikipedia edition (e.g.
+    "it" for Italian) so local-only sights can be found once en.wikipedia has
+    no article for them."""
+    api = f"https://{lang}.wikipedia.org/w/api.php"
     out = {}
     for chunk in _chunks(list(titles), 50):
-        d = get_json(WIKI_API + "?" + urllib.parse.urlencode({
+        d = get_json(api + "?" + urllib.parse.urlencode({
             "action": "query", "format": "json", "formatversion": "2",
             "prop": "pageimages|description|coordinates|info", "inprop": "url",
             "piprop": "thumbnail", "pithumbsize": "400",
@@ -542,37 +567,39 @@ def batch_wiki_cards(titles):
     return out
 
 
-def enrich(cache):
-    """Attach Wikipedia img/desc/wiki to every items_full POI whose name
-    resolves to an article with coordinates within WIKI_MATCH_KM of the POI
-    (rejects same-name places elsewhere and coordinate-less disambiguation
-    pages). Skips items already enriched, so a resumed run only fetches the
-    remainder. Saves the cache periodically."""
-    # name -> [item dicts] that still want a card (an item shows up once per
-    # occurrence; the same title can legitimately serve several cities). Only
-    # the POIs the UI leads with get a card: the top ENRICH_TOP sights plus
-    # every "get active" item - halves the Wikipedia traffic and the payload.
-    ENRICH_TOP = 24
-    wanted = {}
-    for rec in cache.values():
+def _missing_cards(cache, dests, lang_round=None):
+    """Yield (dest_id, item) for every items_full POI still lacking a
+    Wikipedia card. `lang_round` is None for the en.wikipedia pass (every
+    destination), or an int N for the Nth local-language fallback pass
+    (only destinations whose country has an (N+1)th candidate language)."""
+    for did, rec in cache.items():
         if not rec:
             continue
-        sights_seen = 0
+        if lang_round is not None:
+            langs = COUNTRY_LANG.get((dests.get(did) or {}).get("country"), [])
+            if lang_round >= len(langs):
+                continue
         for it in rec.get("items_full") or []:
-            is_active = bool(it.get("active"))
-            if not is_active:
-                sights_seen += 1
-                if sights_seen > ENRICH_TOP:
-                    continue
             if it.get("wiki") or it.get("lat") is None:
                 continue
-            wanted.setdefault(it["name"], []).append(it)
+            yield did, it
+
+
+def _run_enrich_pass(cache, lang, items):
+    """Batch-fetch `lang`.wikipedia cards for the given (dest_id, item) pairs
+    and merge matches (coordinate-validated) straight into the cache's item
+    dicts. Returns the number of matches."""
+    wanted = {}
+    for _did, it in items:
+        wanted.setdefault(it["name"], []).append(it)
     names = sorted(wanted)
-    print(f"Enriching {len(names)} unique POI names from Wikipedia "
+    if not names:
+        return 0
+    print(f"Enriching {len(names)} unique POI names from {lang}.wikipedia "
           f"(~{(len(names) + 49) // 50} batched calls)...")
     hits = 0
     for gi, group in enumerate(_chunks(names, 50 * 20), 1):  # checkpoint block
-        cards = batch_wiki_cards(group)
+        cards = batch_wiki_cards(group, lang)
         for name, card in cards.items():
             if card.get("lat") is None:
                 continue  # no coords -> can't validate the match
@@ -585,8 +612,29 @@ def enrich(cache):
                 hits += 1
         CACHE.write_text(json.dumps(cache, ensure_ascii=False, indent=1), encoding="utf-8")
         done = min(gi * 50 * 20, len(names))
-        print(f"  enriched block {gi}: {done}/{len(names)} names, {hits} matches so far")
-    print(f"Enrich done: {hits} POI occurrences got a Wikipedia card.")
+        print(f"  {lang}: block {gi}: {done}/{len(names)} names, {hits} matches so far")
+    return hits
+
+
+def enrich(cache, dests):
+    """Attach Wikipedia img/desc/wiki to every items_full POI whose name
+    resolves to an article with coordinates within WIKI_MATCH_KM of the POI
+    (rejects same-name places elsewhere and coordinate-less disambiguation
+    pages). Tries en.wikipedia first for every POI, then falls back to each
+    destination's own country's Wikipedia edition(s) (COUNTRY_LANG) for
+    whatever's still missing - most minor local sights (small palazzi, parish
+    churches...) were only ever written up in their own language. Skips items
+    already enriched, so a resumed run only fetches the remainder."""
+    total = _run_enrich_pass(cache, "en", list(_missing_cards(cache, dests)))
+    max_rounds = max((len(v) for v in COUNTRY_LANG.values()), default=0)
+    for round_idx in range(max_rounds):
+        by_lang = {}
+        for did, it in _missing_cards(cache, dests, lang_round=round_idx):
+            lang = COUNTRY_LANG[dests[did]["country"]][round_idx]
+            by_lang.setdefault(lang, []).append((did, it))
+        for lang, items in by_lang.items():
+            total += _run_enrich_pass(cache, lang, items)
+    print(f"Enrich done: {total} POI occurrences got a Wikipedia card.")
     return cache
 
 
@@ -764,7 +812,7 @@ def main():
     if cmd in ("all", "enrich", "refresh"):
         if cache is None:
             cache = load_json(CACHE) if CACHE.exists() else {}
-        cache = enrich(cache)
+        cache = enrich(cache, dests)
     if cmd in ("all", "patch", "enrich", "refresh"):
         patch(cache)
 

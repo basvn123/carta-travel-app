@@ -7,7 +7,7 @@ import { legTransportOptions, rentalEstimate } from '../lib/transport.js';
 import { cheapestStartDates, reorderSavings } from '../lib/tripCostOptimizer.js';
 import { addDays } from '../lib/dates.js';
 import {
-  fetchTripPlans, fetchTripPlanWithStops, createTripPlan, deleteTripPlan, saveTripPlanStops,
+  fetchTripPlanWithStops, createTripPlan, saveTripPlanStops,
 } from '../auth/tripPlanStorage.js';
 
 function round2(v) {
@@ -47,8 +47,6 @@ export function useTripPlanner(data, countryInsights = null) {
   const [planId, setPlanId] = useState(null);
   const [planLabel, setPlanLabel] = useState('');
   const [saveState, setSaveState] = useState('idle'); // idle | saving | saved
-  const [savedPlans, setSavedPlans] = useState([]);
-  const [plansLoading, setPlansLoading] = useState(false);
   const [planned, setPlanned] = useState(false); // true = show the day-by-day itinerary view
 
   // Chain each stop's arrive/depart dates from the trip start. A stop with no
@@ -322,16 +320,6 @@ export function useTripPlanner(data, countryInsights = null) {
     return days;
   }, [stopDetails]);
 
-  const loadSavedPlans = useCallback(async (userId) => {
-    if (!userId) return;
-    setPlansLoading(true);
-    try {
-      setSavedPlans(await fetchTripPlans(userId));
-    } finally {
-      setPlansLoading(false);
-    }
-  }, []);
-
   const loadPlan = useCallback(async (tripPlanId) => {
     const plan = await fetchTripPlanWithStops(tripPlanId);
     const sorted = (plan.stops || []).slice();
@@ -351,12 +339,6 @@ export function useTripPlanner(data, countryInsights = null) {
     setLegModes({});
     setPlanned(false);
   }, []);
-
-  const removeSavedPlan = useCallback(async (tripPlanId) => {
-    await deleteTripPlan(tripPlanId);
-    setSavedPlans((prev) => prev.filter((p) => p.id !== tripPlanId));
-    if (planId === tripPlanId) clearPlan();
-  }, [planId, clearPlan]);
 
   const savePlan = useCallback(async (userId) => {
     if (!userId || stops.length < 1) return null;
@@ -401,7 +383,6 @@ export function useTripPlanner(data, countryInsights = null) {
     optimizeRoute, clearPlan, loadFromWizard,
     nextStopSuggestions, flight, legs, stayCosts, grandTotal, dayPlan,
     planned, setPlanned,
-    planId, planLabel, setPlanLabel, saveState, savePlan,
-    savedPlans, plansLoading, loadSavedPlans, loadPlan, removeSavedPlan,
+    planId, planLabel, setPlanLabel, saveState, savePlan, loadPlan,
   };
 }
