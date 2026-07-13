@@ -105,7 +105,7 @@ function StayRow({ id, dest, nights, onNights, anchorDest, isAnchor }) {
           {dest.beauty?.gems ? <span className="guide-city-gems"><GemIcon size={9} /> {dest.beauty.gems}</span> : null}
         </div>
         <div className="guide-city-insight">
-          {km != null ? `${km} km from arrival · ` : ''}{cityInsight(dest)}
+          {km != null ? `${km} km from arrival, ` : ''}{cityInsight(dest)}
         </div>
       </div>
       <div className="guide-nights">
@@ -506,7 +506,7 @@ export function GuidedTripWizard({ data, onCancel, onComplete }) {
                         </span>
                         <span className="guide-route-sub">
                           <PlaneIcon size={10} /> {o.origin} → {o.anchor}
-                          {o.dest.beauty?.gems ? <> · <GemIcon size={9} /> {o.dest.beauty.gems}</> : null}
+                          {o.dest.beauty?.gems ? <>, <GemIcon size={9} /> {o.dest.beauty.gems}</> : null}
                         </span>
                         {!o.has_exact && dateMode === 'exact' && o.cheapest && (
                           <span className="guide-route-warn">
@@ -670,9 +670,9 @@ export function GuidedTripWizard({ data, onCancel, onComplete }) {
                 <div className="guide-start-summary">
                   {includedIds.length} {includedIds.length === 1 ? 'stop' : 'stops'}, {totalNights} nights
                   {dateMode === 'exact' && startDate
-                    ? ` · leaving ${fmtDate(startDate)}`
-                    : ` · ${flexMonth ? months.find((m) => m.key === flexMonth)?.label : 'any month'}, Carta picks the cheapest dates`}
-                  {anchorDest ? ` · landing in ${anchorDest.city}` : ''}
+                    ? `, leaving ${fmtDate(startDate)}`
+                    : `, ${flexMonth ? months.find((m) => m.key === flexMonth)?.label : 'any month'}, Carta picks the cheapest dates`}
+                  {anchorDest ? `, landing in ${anchorDest.city}` : ''}
                 </div>
               </div>
             </>

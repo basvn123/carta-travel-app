@@ -27,6 +27,7 @@ import { AuthGate } from './auth/AuthGate.jsx';
 import { ResetPasswordScreen } from './auth/ResetPasswordScreen.jsx';
 import { AccountPanel } from './auth/AccountPanel.jsx';
 import { SavedTripsPanel } from './auth/SavedTripsPanel.jsx';
+import { originHome } from './lib/origins.js';
 import { useAppData } from './hooks/useAppData.js';
 import { useDestinationSearch } from './hooks/useDestinationSearch.js';
 import { useAccountSync } from './hooks/useAccountSync.js';
@@ -98,8 +99,6 @@ function TravelApp() {
     origin: init.origin ?? null,   // departure airport IATA; defaulted from data on load
     lifestyle: { ...DEFAULT_LIFESTYLE, ...(init.lifestyle || {}) },
   });
-  // Change the departure airport - reprices the whole app from the new origin.
-  const setOrigin = useCallback((code) => setChoices((prev) => ({ ...prev, origin: code })), []);
 
   // Shortlist (favorites) + list controls - also persisted in the URL.
   const [favorites, setFavorites] = useState(() => new Set(init.favorites || []));
@@ -189,6 +188,16 @@ function TravelApp() {
   // Fetch app_data.json, apply its defaults into `choices`, and derive the
   // fare-date bounds used to default/clamp the depart & return pickers.
   const { data, error, dateBounds } = useAppData(init, setChoices, departDate, setDepartDate, returnDate, setReturnDate, choices.origin);
+
+  // Change the departure airport - reprices the whole app from the new origin,
+  // and moves the drive-comparison's home to that airport so plane and car both
+  // depart from the same place (no stale "fly from X but drive from Brussels").
+  // Declared after `data` is available so the callback can read meta.origins.
+  const setOrigin = useCallback((code) => setChoices((prev) => ({
+    ...prev,
+    origin: code,
+    home: originHome(data, code) ?? prev.home,
+  })), [data]);
 
   // Keep --filter-h in sync with the filter bar's real height. The bar uses
   // min-height + wraps its controls; everything below it is positioned at

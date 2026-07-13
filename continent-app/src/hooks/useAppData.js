@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { appDataPromise } from '../lib/appData.js';
-import { hydrateForOrigin, defaultOrigin } from '../lib/origins.js';
+import { hydrateForOrigin, defaultOrigin, originHome } from '../lib/origins.js';
 
 /** Fetches app_data.json, applies its data-driven defaults (group size,
  *  baggage, lifestyle, home/car/accommodation models, departure origin) into
@@ -29,9 +29,10 @@ export function useAppData(init, setChoices, departDate, setDepartDate, returnDa
         setChoices((prev) => {
           // URL/stored values (held in `init`) win over the data defaults.
           const baggageKey = init.baggage_key ?? def?.baggage ?? prev.baggage_key;
+          const chosenOrigin = prev.origin ?? originDefault;
           return {
             ...prev,
-            origin: prev.origin ?? originDefault,
+            origin: chosenOrigin,
             group_size: init.group_size ?? def?.group_size ?? prev.group_size,
             trip_days: def?.trip_length_days ?? prev.trip_days,
             baggage_key: baggageKey,
@@ -41,7 +42,9 @@ export function useAppData(init, setChoices, departDate, setDepartDate, returnDa
             lifestyle: { ...prev.lifestyle, ...(def?.lifestyle || {}), ...(init.lifestyle || {}) },
             accommodation_model: j.meta.accommodation_model ?? prev.accommodation_model,
             car_model: j.meta.car_model ?? prev.car_model,
-            home: j.meta.home ?? prev.home,
+            // Drive-comparison departs from the chosen origin airport (falls back
+            // to the data's configured home when the origin has no coordinates).
+            home: originHome(j, chosenOrigin) ?? j.meta.home ?? prev.home,
           };
         });
       })

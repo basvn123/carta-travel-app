@@ -186,7 +186,7 @@ export function ShapeDayWizard({ city, numDays, items, initial, onSkip, onDraft 
                     <div className="shape-card-name">{current.item.name}</div>
                     <div className="shape-card-kind">
                       {current.item.kind}
-                      {current.item.heritage ? ' · heritage site' : ''}
+                      {current.item.heritage ? ', heritage site' : ''}
                     </div>
                     {current.item.desc && <p className="shape-card-desc">{current.item.desc}</p>}
                     {companions.length > 0 && (

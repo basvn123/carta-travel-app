@@ -120,7 +120,7 @@ export function legTransportOptions(destA, destB, groupSize = 1, { carModel = nu
     hours: round2(roadKm / CAR.kmh),
     links: [{ label: 'Google Maps (drive)', url: gmapsDir(destA, destB, 'driving') }],
     vignettes,
-    note: vignettes.length ? `Vignette: ${vignettes.join(' · ')}` : null,
+    note: vignettes.length ? `Vignette: ${vignettes.join(', ')}` : null,
   };
 
   // Recommendation: cheapest per person, with a small value-of-time nudge so

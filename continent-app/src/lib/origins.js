@@ -93,6 +93,14 @@ export function defaultOrigin(data) {
   return codes.includes('CRL') ? 'CRL' : codes[0];
 }
 
+/** The origin airport's coordinates, for use as the driving home so the car
+ *  comparison departs from the same place as the flight (never a stale, mixed
+ *  "fly from Athens but drive from Brussels" estimate). Null when unknown. */
+export function originHome(data, code) {
+  const o = data?.meta?.origins?.[code];
+  return o && o.lat != null && o.lon != null ? { lat: o.lat, lon: o.lon } : null;
+}
+
 /** "Charleroi (CRL)" style label for a chosen origin code. */
 export function originLabel(data, code) {
   if (!code) return '';

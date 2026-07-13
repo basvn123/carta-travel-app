@@ -75,7 +75,7 @@ function LegRow({ leg, onMode }) {
     <div className="trip-leg trip-leg-rich">
       <button className="trip-leg-main" onClick={() => setOpen(!open)} aria-expanded={open}>
         ↳ <ModeIcon mode={leg.mode} /> {MODE_META[leg.mode].label}, ~{leg.road_km} km, est. {eur(chosen.eur_pp)}/person, ~{chosen.hours}h
-        {leg.long_haul ? ' · long leg - consider flying' : ''}
+        {leg.long_haul ? ', long leg, consider flying' : ''}
         <span className="trip-leg-caret">{open ? '−' : '+'}</span>
       </button>
       {open && (

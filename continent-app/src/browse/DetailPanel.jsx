@@ -6,7 +6,7 @@ import {
 import { kindsForDest } from '../lib/trip_kinds.js';
 import { BestTimePanel } from './BestTimePanel.jsx';
 import { eur, safeUrl, PRICE_SOURCE_LABELS, ACCOM_SOURCE_LABELS } from '../lib/format.js';
-import { ReceiptIcon, CalendarIcon, BedIcon, DiningIcon, CarIcon } from '../components/Icons.jsx';
+import { ReceiptIcon, CalendarIcon, BedIcon, DiningIcon, CarIcon, InfoIcon } from '../components/Icons.jsx';
 import { PlaneIcon } from '../components/TransportIcons.jsx';
 
 const fmtDate = (iso) => new Date(iso + 'T00:00:00Z').toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
@@ -128,11 +128,15 @@ export function DetailPanel({ destination, departDate, returnDate, choices, setC
       {!breakdown ? (
         <div className="panel-section">
           <p style={{ fontStyle: 'italic', color: 'var(--ink-mute)' }}>
-            {destination.no_ryanair_route
-              ? 'No Ryanair route to this destination.'
-              : 'No fare data for these dates.'}
+            {(() => {
+              const originCity = data?.meta?.origins?.[data?.meta?.selected_origin]?.city || 'your airport';
+              const flyable = Object.keys(destination.routes || {}).length > 0;
+              return flyable
+                ? `No fare for these dates flying from ${originCity}.`
+                : `No Ryanair flights from ${originCity} to ${destination.city}, and too far to drive.`;
+            })()}
           </p>
-          {!destination.no_ryanair_route && (() => {
+          {Object.keys(destination.routes || {}).length > 0 && (() => {
             const ranges = fareCoverageRanges(destination);
             if (ranges.length === 0) return null;
             return (
@@ -167,6 +171,7 @@ export function DetailPanel({ destination, departDate, returnDate, choices, setC
 
           {activeTab === 'breakdown' ? (
             <BreakdownTab
+              key={destination.id}
               destination={destination}
               breakdown={breakdown}
               departDate={departDate}
@@ -198,24 +203,63 @@ export function DetailPanel({ destination, departDate, returnDate, choices, setC
 /** A grouped block of cost rows: icon-led header with the group subtotal on
  *  the right, rows inside. Mirrors the lifestyle panel's card treatment so
  *  transport / stay / on-the-ground read as three clearly distinct buckets. */
-function CostGroup({ icon, title, subtitle, subtotal, children }) {
+function CostGroup({ icon, title, subtitle, subtotal, open, onToggle, infoButton, infoPanel, children }) {
   return (
     <div className="cost-group">
-      <div className="cost-group-head">
+      <div
+        className="cost-group-head"
+        role="button"
+        tabIndex={0}
+        aria-expanded={open}
+        onClick={onToggle}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onToggle(); }
+        }}
+      >
         <span className="cost-group-icon">{icon}</span>
         <span className="cost-group-title">
           {title}
           {subtitle && <small>{subtitle}</small>}
         </span>
+        {infoButton}
         {subtotal != null && <span className="cost-group-val">{eur(subtotal)}</span>}
+        <span className="cost-group-caret" aria-hidden="true">{open ? '−' : '+'}</span>
       </div>
-      <div className="cost-group-body">{children}</div>
+      {infoPanel}
+      {open && <div className="cost-group-body">{children}</div>}
     </div>
+  );
+}
+
+// Small toggle button + text popover, used for "how is this calculated"
+// asides that would otherwise clutter the (now-collapsed-by-default) group
+// header. Stops propagation so it doesn't also toggle the group open/closed.
+function InfoButton({ open, onClick, label = 'How this is calculated' }) {
+  return (
+    <button
+      type="button"
+      className={`cost-info-btn ${open ? 'open' : ''}`}
+      aria-expanded={open}
+      aria-label={label}
+      title={label}
+      onClick={(e) => { e.stopPropagation(); onClick(); }}
+    >
+      <InfoIcon size={12} />
+    </button>
   );
 }
 
 function BreakdownTab({ destination, breakdown, departDate, returnDate, choices, setChoices, priceMode, onOpenLifestyle, anchor, data }) {
   const group = Math.max(1, choices.group_size || 1);
+
+  // Groups are collapsed by default to keep the panel scannable; the subtotal
+  // stays visible on the header either way. "info" popovers (calc logic,
+  // local rates) are independent of open/closed so they're reachable without
+  // expanding a whole section.
+  const [openGroups, setOpenGroups] = React.useState({ transport: false, stay: false, ground: false });
+  const toggleGroup = (key) => setOpenGroups((o) => ({ ...o, [key]: !o[key] }));
+  const [infoOpen, setInfoOpen] = React.useState(null); // 'stay' | 'ground' | 'rates' | null
+  const toggleInfo = (key) => setInfoOpen((v) => (v === key ? null : key));
 
   // Flight values are group totals; ground values are per-person. Convert ground
   // to group totals so a single show()/divide handles both consistently.
@@ -272,6 +316,8 @@ function BreakdownTab({ destination, breakdown, departDate, returnDate, choices,
           title="Getting there"
           subtitle={breakdown.transport_mode === 'car' ? 'Drive from home' : 'Ryanair round-trip'}
           subtotal={transportSubtotal}
+          open={openGroups.transport}
+          onToggle={() => toggleGroup('transport')}
         >
           {/* Plane vs car comparison (only when drivable) */}
           {breakdown.drivable && setChoices && (
@@ -389,8 +435,16 @@ function BreakdownTab({ destination, breakdown, departDate, returnDate, choices,
           <CostGroup
             icon={<BedIcon size={15} />}
             title={`Your stay, ${breakdown.nights} ${breakdown.nights === 1 ? 'night' : 'nights'}`}
-            subtitle={`Entire home${accomSourceLabel ? `, ${accomSourceLabel}` : ''}${breakdown.accom_entire_home_night_eur ? `, ~€${Math.round(breakdown.accom_entire_home_night_eur)}/night base` : ''}`}
             subtotal={staySubtotal}
+            open={openGroups.stay}
+            onToggle={() => toggleGroup('stay')}
+            infoButton={<InfoButton open={infoOpen === 'stay'} onClick={() => toggleInfo('stay')} />}
+            infoPanel={infoOpen === 'stay' && (
+              <p className="cost-info-pop">
+                Entire home{accomSourceLabel ? `, ${accomSourceLabel}` : ''}{breakdown.accom_entire_home_night_eur ? `, ~€${Math.round(breakdown.accom_entire_home_night_eur)}/night base` : ''}.
+                {' '}Nightly rate × nights, plus cleaning and service fees, adjusted for season and weekly length of stay.
+              </p>
+            )}
           >
             <GroundLine label="Lodging"      v={show(groundGroup(acc.lodging))}  eur={eur} />
             <GroundLine label="Cleaning fee" v={show(groundGroup(acc.cleaning))} eur={eur} />
@@ -424,8 +478,16 @@ function BreakdownTab({ destination, breakdown, departDate, returnDate, choices,
           <CostGroup
             icon={<DiningIcon size={15} />}
             title={`On the ground, ${breakdown.nights} ${breakdown.nights === 1 ? 'night' : 'nights'}`}
-            subtitle={`Your lifestyle${sourceLabel ? `, ${sourceLabel}` : ''}`}
             subtotal={groundSubtotal}
+            open={openGroups.ground}
+            onToggle={() => toggleGroup('ground')}
+            infoButton={<InfoButton open={infoOpen === 'ground'} onClick={() => toggleInfo('ground')} />}
+            infoPanel={infoOpen === 'ground' && (
+              <p className="cost-info-pop">
+                Your lifestyle{sourceLabel ? `, ${sourceLabel}` : ''}.
+                {' '}Each category (dinners, casual meals, drinks, coffee, groceries) is priced at real local rates for this destination, then multiplied by how often you picked it for the trip.
+              </p>
+            )}
           >
             <GroundLine label="Dinners out"  v={show(groundGroup(g.dinners))}  eur={eur} rate={destination.costs?.meal_mid_eur} />
             <GroundLine label="Casual meals" v={show(groundGroup(g.lunches))}  eur={eur} rate={destination.costs?.meal_cheap_eur} />
@@ -435,11 +497,21 @@ function BreakdownTab({ destination, breakdown, departDate, returnDate, choices,
             <GroundLine label="Coffees"      v={show(groundGroup(g.coffees))}  eur={eur} rate={destination.costs?.coffee_eur} />
             <GroundLine label="Groceries"    v={show(groundGroup(g.groceries))} eur={eur} />
             {unitRates.length > 0 && (
-              <p className="cost-local-rates">
-                Local rates: {unitRates.map(([lbl, v], i) => (
-                  <span key={lbl}>{i > 0 && ' · '}{lbl} €{v}</span>
-                ))}
-              </p>
+              <div className="cost-local-rates-row">
+                <InfoButton
+                  open={infoOpen === 'rates'}
+                  onClick={() => toggleInfo('rates')}
+                  label="Local rates used for this estimate"
+                />
+                <span className="cost-local-rates-label">Local rates</span>
+                {infoOpen === 'rates' && (
+                  <p className="cost-info-pop cost-local-rates">
+                    {unitRates.map(([lbl, v], i) => (
+                      <span key={lbl}>{i > 0 && ', '}{lbl} €{v}</span>
+                    ))}
+                  </p>
+                )}
+              </div>
             )}
             <div className="cost-group-links">
               <TextLink onClick={onOpenLifestyle}>Adjust lifestyle</TextLink>
@@ -476,8 +548,8 @@ function CarAdvisory({ lt, mode }) {
   let text;
   if (lt.car_needed) {
     text = mode === 'car'
-      ? `Car recommended here - and you'll have your own. ${lt.reason}`
-      : `Car recommended here - a rental is included above. ${lt.reason}`;
+      ? `Car recommended here, and you'll have your own. ${lt.reason}`
+      : `Car recommended here, a rental is included above. ${lt.reason}`;
   } else {
     text = `No car needed. ${lt.reason}`;
   }
