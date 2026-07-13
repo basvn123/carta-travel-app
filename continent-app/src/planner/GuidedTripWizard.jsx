@@ -482,7 +482,7 @@ export function GuidedTripWizard({ data, onCancel, onComplete }) {
               <h2 className="guide-title">Which flight gets you there?</h2>
               <p className="guide-sub">
                 Real Ryanair routes from {originCity} into {selectedCountries.map((c) => c.country).join(' & ') || 'your countries'}
-                {dateMode === 'exact' && startDate ? ` on ${fmtDate(startDate)}` : ''}, cheapest first. Pick one - it becomes your arrival point.
+                {dateMode === 'exact' && startDate ? ` on ${fmtDate(startDate)}` : ''}, cheapest first. Pick one, it becomes your arrival point.
               </p>
               {routeOptions.length === 0 ? (
                 <p className="guide-empty">
