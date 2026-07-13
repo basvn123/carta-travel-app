@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { TripMap } from '../map/TripMap.jsx';
 import { Dropdown } from '../components/Dropdown.jsx';
 import { DateField } from '../components/DateField.jsx';
-import { tripDaysBetween, haversineKm } from '../lib/runtime_pricing.js';
+import { tripDaysBetween, haversineKm, cityCoords, withCityCoords } from '../lib/runtime_pricing.js';
 import { legTransportOptions } from '../lib/transport.js';
 import { eur } from '../lib/format.js';
 import { fetchActivitiesFull } from '../lib/appData.js';
@@ -71,10 +71,23 @@ const MODE_META = {
  */
 function DayTripTransport({ fromDest, toDest, carModel, countryInsights }) {
   const [open, setOpen] = useState(false);
-  if (!fromDest || !toDest || fromDest.city === toDest.city) return null;
-  // Staying (nearly) in the day-trip city itself: no transport advice needed.
+  if (!fromDest || !toDest) return null;
+  // Staying in - or right next to - the day-trip city itself: there's no
+  // inter-city hop to recommend, but say so plainly rather than showing
+  // nothing (a blank space reads as "the feature is broken").
   const kmAway = haversineKm(fromDest.lat, fromDest.lon, toDest.lat, toDest.lon);
-  if (kmAway != null && kmAway < 8) return null;
+  if (fromDest.city === toDest.city || (kmAway != null && kmAway < 8)) {
+    return (
+      <div className="trip-block daytrip-transport">
+        <div className="trip-block-title">Getting to {toDest.city}</div>
+        <p className="trip-note daytrip-here">
+          <SparkIcon size={11} /> You're staying right by {toDest.city} - no
+          inter-city travel needed. Start your day on foot or hop on local
+          transit; Carta lays your stops out in a walkable order below.
+        </p>
+      </div>
+    );
+  }
   const opts = legTransportOptions(fromDest, toDest, 1, { carModel, countryInsights });
   if (!opts) return null;
   if (opts.no_road) {
@@ -161,6 +174,7 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
   // Europe (no country filter), days per city, a start date, and optionally
   // the address where the traveller is staying.
   const [newStops, setNewStops] = useState([]); // [{ destinationId, days }]
+  const [newCountry, setNewCountry] = useState(''); // country chosen before its cities
   const [newStartDate, setNewStartDate] = useState(() => todayISO());
   const [stayQuery, setStayQuery] = useState('');
   const [stayResults, setStayResults] = useState(null); // null = not searched
@@ -280,6 +294,7 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
     setStandalonePlans(next);
     persistStandalonePlans(next);
     setNewStops([]);
+    setNewCountry('');
     setStayQuery('');
     setStayResults(null);
     setNewStayPoint(null);
@@ -522,86 +537,208 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
     setDaySaveState('saved');
   };
 
-  // A clean, printable one-pager (or few) of this city's planned days. Opens
-  // the browser's print dialog, where "Save as PDF" produces the shareable
-  // file - no libraries, no external services, and it matches the app's look.
+  // A clean, printable booklet of every planned day across the whole trip.
+  // Opens the browser's print dialog, where "Save as PDF" produces the
+  // shareable file - no libraries, no external services, and it wears the
+  // app's own palette (warm paper, deep ink, one rust accent). Every place
+  // gets an explanation, and each place + each day carries a Google Maps link.
   const downloadPdf = () => {
     if (!stop) return;
     const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => (
       { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]
     ));
-    const cityName = stop.dest?.city || 'Your city';
-    const sections = days.map((date, di) => {
-      const idxs = assignments[stopIdx]?.[di] || [];
-      const items = idxs.map((i) => activities.items[i]).filter(Boolean);
-      if (!items.length) return '';
-      const pins = items.filter((it) => it.lat != null && it.lon != null)
-        .map((it) => ({ lat: it.lat, lon: it.lon }));
-      const gurl = googleMapsDirUrl(pins, 'walking');
-      const rows = items.map((it, i) => {
-        const next = items[i + 1];
-        let walk = '';
-        if (next && it.lat != null && it.lon != null && next.lat != null && next.lon != null) {
-          const km = haversineKm(it.lat, it.lon, next.lat, next.lon);
-          if (km != null) walk = `<div class="walk">walk about ${estimateWalkMinutes(km)} min (${km.toFixed(1)} km)</div>`;
+
+    // Every place earns an explanation. Prefer the harvested Wikipedia summary;
+    // otherwise compose an honest one-liner from what we do know (kind, whether
+    // it's heritage-listed). A short accolade adds the "why go" for the best.
+    const blurb = (it, city) => {
+      const d = (it.desc || '').trim();
+      if (d) return /[.!?]$/.test(d) ? d : `${d}.`;
+      const kind = (it.kind || 'place').toLowerCase();
+      const article = /^[aeiou]/.test(kind) ? 'An' : 'A';
+      let s = `${article} ${kind} in ${city}`;
+      if (it.heritage) s += ', on the cultural-heritage register';
+      return `${s}.`;
+    };
+    const accolade = (it) => {
+      if ((it.rate ?? 0) >= 3) return "One of the city's essential sights.";
+      if ((it.rate ?? 0) >= 2) return 'A well-loved stop, worth the time.';
+      if (it.active) return 'A good pick for an active, outdoors stretch.';
+      return '';
+    };
+    const placeUrl = (it) => (it.lat != null && it.lon != null)
+      ? `https://www.google.com/maps/search/?api=1&query=${it.lat},${it.lon}` : null;
+
+    // Walk everything so a multi-city plan prints as one complete booklet.
+    let totalPlaces = 0;
+    let plannedDays = 0;
+    const cityBlocks = stops.map((s, si) => {
+      const { items } = itemsForStop(s);
+      const cityName = s.dest?.city || 'This city';
+      const cityDays = Array.from({ length: s.nights }, (_, i) => addDays(s.arrive_date, i));
+      const daySections = cityDays.map((date, di) => {
+        const dayItems = (assignments[si]?.[di] || []).map((i) => items[i]).filter(Boolean);
+        if (!dayItems.length) return '';
+        plannedDays += 1;
+        totalPlaces += dayItems.length;
+        const pins = dayItems.filter((it) => it.lat != null && it.lon != null)
+          .map((it) => ({ lat: it.lat, lon: it.lon }));
+        const gurl = googleMapsDirUrl(pins, 'walking');
+        // Straight-line walking estimate for the whole day (consistent offline).
+        let dayKm = 0;
+        for (let i = 0; i < dayItems.length - 1; i += 1) {
+          const a = dayItems[i]; const b = dayItems[i + 1];
+          if (a.lat != null && a.lon != null && b.lat != null && b.lon != null) {
+            const km = haversineKm(a.lat, a.lon, b.lat, b.lon);
+            if (km != null) dayKm += km;
+          }
         }
-        return `<li>
-          <div class="poi">
-            <span class="num">${i + 1}</span>
-            <div class="poi-body">
-              <b>${esc(it.name)}</b>
-              <span class="kind">${esc(it.kind || '')}</span>
-              ${it.desc ? `<p>${esc(it.desc)}</p>` : ''}
+        const meta = [
+          `${dayItems.length} ${dayItems.length === 1 ? 'stop' : 'stops'}`,
+          dayKm > 0.05 ? `~${dayKm.toFixed(1)} km · ~${estimateWalkMinutes(dayKm)} min on foot` : '',
+        ].filter(Boolean).join(' &middot; ');
+
+        const rows = dayItems.map((it, i) => {
+          const next = dayItems[i + 1];
+          let walk = '';
+          if (next && it.lat != null && it.lon != null && next.lat != null && next.lon != null) {
+            const km = haversineKm(it.lat, it.lon, next.lat, next.lon);
+            if (km != null) walk = `<div class="walk">&darr;&ensp;~${estimateWalkMinutes(km)} min walk &middot; ${km.toFixed(1)} km</div>`;
+          }
+          const acc = accolade(it);
+          const purl = placeUrl(it);
+          const links = [
+            purl ? `<a href="${purl}">Open in Maps</a>` : '',
+            it.wiki ? `<a href="${esc(it.wiki)}">Read more</a>` : '',
+          ].filter(Boolean).join('');
+          return `<li class="stop">
+            <div class="stop-row">
+              <span class="num">${i + 1}</span>
+              <div class="stop-body">
+                <div class="stop-head">
+                  <span class="stop-name">${esc(it.name)}</span>
+                  ${it.kind ? `<span class="tag">${esc(it.kind)}</span>` : ''}
+                  ${(it.rate ?? 0) >= 3 ? '<span class="chip must">Must see</span>' : ''}
+                  ${it.heritage ? '<span class="chip heritage">Heritage</span>' : ''}
+                </div>
+                <p class="blurb">${esc(blurb(it, cityName))}${acc ? ` <span class="accolade">${esc(acc)}</span>` : ''}</p>
+                ${links ? `<div class="stop-links">${links}</div>` : ''}
+              </div>
             </div>
-          </div>${walk}</li>`;
-      }).join('');
-      return `<section>
-        <h2>Day ${di + 1} <span>${esc(fmtDateFull(date))}</span></h2>
-        <ol>${rows}</ol>
-        ${gurl ? `<p class="maps"><a href="${gurl}">Open this route in Google Maps</a></p>` : ''}
-      </section>`;
+            ${walk}
+          </li>`;
+        }).join('');
+
+        return `<section class="day">
+          <div class="day-head">
+            <div class="day-title">Day ${di + 1}<span class="date">${esc(fmtDateFull(date, true))}</span></div>
+            <div class="day-meta">${meta}</div>
+          </div>
+          <ol>${rows}</ol>
+          ${gurl ? `<div class="day-route"><a href="${gurl}">Open the whole day in Google Maps &rarr;</a></div>` : ''}
+        </section>`;
+      }).filter(Boolean).join('');
+      if (!daySections) return '';
+      const multi = stops.length > 1;
+      return multi
+        ? `<div class="city"><h2 class="city-head">${esc(cityName)}<span>${esc(s.dest?.country || '')}</span></h2>${daySections}</div>`
+        : daySections;
     }).filter(Boolean).join('');
-    if (!sections) return;
+    if (!totalPlaces) return;
+
+    const title = plan.label || stop.dest?.city || 'Your day plan';
+    const citiesWithPlans = stops.filter((s, si) => {
+      const { items } = itemsForStop(s);
+      return Array.from({ length: s.nights }).some((_, di) => (
+        (assignments[si]?.[di] || []).some((i) => items[i])
+      ));
+    }).length;
+    const subParts = [
+      days[0] ? `From ${esc(fmtDateFull(stops[0]?.arrive_date || days[0], true))}` : '',
+      `${plannedDays} planned ${plannedDays === 1 ? 'day' : 'days'}`,
+      `${totalPlaces} ${totalPlaces === 1 ? 'place' : 'places'}`,
+      citiesWithPlans > 1 ? `${citiesWithPlans} cities` : '',
+    ].filter(Boolean).join(' &middot; ');
 
     const html = `<!doctype html><html><head><meta charset="utf-8">
-      <title>${esc(cityName)}, day plan</title>
+      <title>${esc(title)} &middot; day plan</title>
       <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: Georgia, 'Times New Roman', serif; color: #1a1a1a; background: #fff; padding: 44px 52px; }
-        header { border-bottom: 2px solid #1a1a1a; padding-bottom: 14px; margin-bottom: 8px; }
-        .brand { font-size: 11px; letter-spacing: .22em; text-transform: uppercase; color: #8a8577; }
-        h1 { font-size: 30px; font-weight: 600; margin-top: 6px; }
-        .sub { font-family: Helvetica, Arial, sans-serif; font-size: 12px; color: #6b6659; margin-top: 4px; }
-        section { margin-top: 26px; page-break-inside: avoid; }
-        h2 { font-size: 17px; border-bottom: 1px solid #d9d2bf; padding-bottom: 6px; margin-bottom: 12px; }
-        h2 span { font-family: Helvetica, Arial, sans-serif; font-size: 11px; font-weight: 400; color: #8a8577; margin-left: 10px; }
-        ol { list-style: none; }
-        li { margin-bottom: 4px; }
-        .poi { display: flex; gap: 12px; padding: 7px 0; }
-        .num { flex: none; width: 22px; height: 22px; border: 1px solid #1a1a1a; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: Helvetica, Arial, sans-serif; font-size: 11px; }
-        .poi-body b { font-size: 14px; }
-        .kind { font-family: Helvetica, Arial, sans-serif; font-size: 10px; text-transform: uppercase; letter-spacing: .12em; color: #8a8577; margin-left: 8px; }
-        .poi-body p { font-family: Helvetica, Arial, sans-serif; font-size: 11.5px; color: #55503f; line-height: 1.5; margin-top: 3px; max-width: 540px; }
-        .walk { font-family: Helvetica, Arial, sans-serif; font-size: 10.5px; color: #8a8577; padding-left: 34px; }
-        .maps { font-family: Helvetica, Arial, sans-serif; font-size: 11px; margin-top: 8px; }
-        .maps a { color: #b3402a; }
-        footer { margin-top: 34px; padding-top: 10px; border-top: 1px solid #d9d2bf; font-family: Helvetica, Arial, sans-serif; font-size: 10px; color: #8a8577; }
-        @media print { body { padding: 24px 28px; } }
+        :root {
+          --paper:#f5f1e8; --paper-dim:#ebe6d8; --ink:#1a1a1a; --ink-soft:#4a4a48;
+          --ink-mute:#8a8780; --rule:#c4bea9; --accent:#c8501e; --accent-bg:#f3d9c8;
+          --display:'Fraunces','Iowan Old Style',Georgia,'Times New Roman',serif;
+          --ui:'Inter Tight',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+        }
+        * { box-sizing:border-box; margin:0; padding:0; }
+        html { -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+        body { font-family:var(--ui); color:var(--ink); background:var(--paper); padding:48px 54px; line-height:1.5; }
+        a { color:inherit; }
+
+        .cover { border-bottom:2px solid var(--ink); padding-bottom:20px; }
+        .kicker { font-size:11px; letter-spacing:.26em; text-transform:uppercase; color:var(--accent); font-weight:600; }
+        h1 { font-family:var(--display); font-size:38px; font-weight:600; line-height:1.05; letter-spacing:-.01em; margin-top:11px; }
+        .cover-sub { font-size:12.5px; color:var(--ink-soft); margin-top:11px; }
+        .cover-note { font-size:11px; color:var(--ink-mute); margin-top:14px; max-width:560px; line-height:1.55; }
+
+        .city-head { font-family:var(--display); font-size:25px; font-weight:600; margin:40px 0 2px; }
+        .city-head span { font-family:var(--ui); font-size:11px; font-weight:500; text-transform:uppercase; letter-spacing:.14em; color:var(--ink-mute); margin-left:12px; vertical-align:middle; }
+
+        .day { margin-top:28px; page-break-inside:auto; }
+        .day-head { display:flex; align-items:baseline; justify-content:space-between; gap:14px; border-bottom:1.5px solid var(--rule); padding-bottom:8px; margin-bottom:6px; }
+        .day-title { font-family:var(--display); font-size:19px; font-weight:600; }
+        .day-title .date { font-family:var(--ui); font-size:11.5px; font-weight:400; color:var(--ink-mute); margin-left:12px; letter-spacing:.02em; }
+        .day-meta { font-size:10px; color:var(--ink-mute); text-transform:uppercase; letter-spacing:.09em; white-space:nowrap; }
+
+        ol { list-style:none; }
+        li.stop { padding:11px 0; break-inside:avoid; border-bottom:1px solid rgba(196,190,169,.45); }
+        li.stop:last-child { border-bottom:none; }
+        .stop-row { display:flex; gap:14px; }
+        .num { flex:none; width:26px; height:26px; border-radius:50%; background:var(--ink); color:var(--paper); font-family:var(--ui); font-size:12px; font-weight:600; display:flex; align-items:center; justify-content:center; margin-top:1px; }
+        .stop-body { flex:1; min-width:0; }
+        .stop-head { display:flex; align-items:baseline; flex-wrap:wrap; gap:2px 0; }
+        .stop-name { font-family:var(--display); font-size:15.5px; font-weight:600; }
+        .tag { font-size:9px; text-transform:uppercase; letter-spacing:.12em; color:var(--ink-mute); margin-left:9px; }
+        .chip { font-size:8.5px; font-weight:600; text-transform:uppercase; letter-spacing:.08em; padding:2px 7px; border-radius:3px; margin-left:7px; }
+        .chip.must { background:var(--accent-bg); color:var(--accent); }
+        .chip.heritage { background:var(--paper-dim); color:var(--ink-soft); border:1px solid var(--rule); }
+        .blurb { font-size:11.5px; color:var(--ink-soft); line-height:1.55; margin-top:4px; max-width:580px; }
+        .accolade { color:var(--accent); }
+        .stop-links { margin-top:6px; font-size:10.5px; }
+        .stop-links a { color:var(--accent); text-decoration:none; font-weight:500; margin-right:16px; }
+        .walk { font-size:10px; color:var(--ink-mute); padding:6px 0 1px 40px; letter-spacing:.02em; }
+
+        .day-route { margin-top:13px; }
+        .day-route a { display:inline-block; font-family:var(--ui); font-size:11px; font-weight:600; color:var(--paper); background:var(--accent); padding:8px 15px; border-radius:6px; text-decoration:none; letter-spacing:.02em; }
+
+        footer { margin-top:44px; padding-top:12px; border-top:1px solid var(--rule); font-size:10px; color:var(--ink-mute); display:flex; justify-content:space-between; gap:12px; }
+
+        @page { margin:15mm; }
+        @media print { body { padding:0; background:var(--paper); } .day-route a { border:1px solid var(--accent); } }
       </style></head><body>
-      <header>
-        <div class="brand">Carta, Europe Travel</div>
-        <h1>${esc(cityName)}</h1>
-        <div class="sub">${esc(plan.label || '')}${days[0] ? ` · starting ${esc(fmtDateFull(days[0]))}` : ''} · ${days.length} ${days.length === 1 ? 'day' : 'days'}</div>
+      <header class="cover">
+        <div class="kicker">Carta &middot; Europe Travel</div>
+        <h1>${esc(title)}</h1>
+        <div class="cover-sub">${subParts}</div>
+        <p class="cover-note">Your day-by-day plan, in walking order. Every place has a short note on what it is, a link to open it in Google Maps, and each day closes with a link to the whole route. Walking times are straight-line estimates.</p>
       </header>
-      ${sections}
-      <footer>Planned with Carta. Walking times are estimates.</footer>
+      ${cityBlocks}
+      <footer><span>Planned with Carta &middot; Europe Travel</span><span>carta.travel</span></footer>
       </body></html>`;
 
     const w = window.open('', '_blank');
     if (!w) return;
     w.document.write(html);
     w.document.close();
-    setTimeout(() => { try { w.focus(); w.print(); } catch { /* window closed */ } }, 350);
+    const fire = () => { try { w.focus(); w.print(); } catch { /* window closed */ } };
+    // Wait for fonts to settle so headings print in the right face; fall back
+    // on a timeout if the fonts API isn't available or is slow.
+    if (w.document.fonts && w.document.fonts.ready) {
+      let done = false;
+      w.document.fonts.ready.then(() => { if (!done) { done = true; fire(); } });
+      setTimeout(() => { if (!done) { done = true; fire(); } }, 700);
+    } else {
+      setTimeout(fire, 400);
+    }
   };
 
   const shareDay = async () => {
@@ -629,11 +766,26 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
     .map(([id, d]) => ({ value: id, label: `${d.city}, ${d.country}` }))
     .sort((a, b) => a.label.localeCompare(b.label)), [destinations]);
 
-  // Map preview of the cities picked on the landing screen.
+  // The landing picker chooses a country first, then a city within it. Every
+  // distinct country in the dataset, then the towns that belong to the one
+  // currently selected (minus any already added), labelled by city alone since
+  // the country is already known.
+  const countryOptions = useMemo(() => Array.from(
+    new Set(Object.values(destinations).map((d) => d.country).filter(Boolean)),
+  ).sort((a, b) => a.localeCompare(b)).map((c) => ({ value: c, label: c })), [destinations]);
+
+  const cityOptionsForCountry = useMemo(() => Object.entries(destinations)
+    .filter(([id, d]) => d.country === newCountry && !newStops.some((s) => s.destinationId === id))
+    .map(([id, d]) => ({ value: id, label: d.city }))
+    .sort((a, b) => a.label.localeCompare(b.label)), [destinations, newCountry, newStops]);
+
+  // Map preview of the cities picked on the landing screen - pinned at the
+  // city centre (not the airport) so a picked "Stockholm" doesn't drop 90 km
+  // out at Skavsta.
   const landingCities = newStops
     .map((s) => destinations[s.destinationId])
     .filter((d) => d && d.lat != null)
-    .map((d) => ({ lat: d.lat, lon: d.lon, city: d.city }));
+    .map((d) => ({ ...cityCoords(d), city: d.city }));
 
   // Landing screen: plan a day for any city (no trip required), reopen a saved
   // day plan, or pick one of your saved trips to plan its stops.
@@ -650,55 +802,11 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
           <div className="day-build">
             <div className="trip-block-title">Plan your days</div>
 
-            {/* 1. Which cities - any number, anywhere in Europe. */}
+            {/* 1. Where are you staying - comes first because it anchors every
+                  route: once Carta knows your door, it works out the smartest
+                  way to reach each place you plan below. Free-text, geocoded. */}
             <label className="trip-field day-build-field">
-              <span className="trip-field-label">Cities to plan</span>
-              <Dropdown
-                value=""
-                onChange={addLandingCity}
-                options={allCityOptions.filter((o) => !newStops.some((s) => s.destinationId === o.value))}
-                placeholder="Search any city or town in Europe"
-                searchPlaceholder="Search cities"
-              />
-            </label>
-
-            {newStops.length > 0 && (
-              <div className="day-build-cities">
-                {newStops.map((s) => {
-                  const d = destinations[s.destinationId];
-                  return (
-                    <div className="day-build-city" key={s.destinationId}>
-                      <span className="day-build-city-name">
-                        {d?.city || 'Unknown'}
-                        <small>{d?.country}</small>
-                      </span>
-                      <div className="trip-people day-days-stepper">
-                        <button type="button" onClick={() => setLandingDays(s.destinationId, s.days - 1)} disabled={s.days <= 1} aria-label="Fewer days">-</button>
-                        <span>{s.days} {s.days === 1 ? 'day' : 'days'}</span>
-                        <button type="button" onClick={() => setLandingDays(s.destinationId, s.days + 1)} aria-label="More days">+</button>
-                      </div>
-                      <button
-                        className="trip-stop-remove"
-                        onClick={() => removeLandingCity(s.destinationId)}
-                        aria-label={`Remove ${d?.city || 'city'}`}
-                        title="Remove"
-                      >×</button>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-
-            {landingCities.length > 0 && (
-              <div className="day-build-map">
-                <TripMap stops={landingCities} padBottom={12} showRoute={false} />
-              </div>
-            )}
-
-            {/* 2. Where are you staying - a free-text address, so travel advice
-                  and routes can start from the actual door. Optional. */}
-            <label className="trip-field day-build-field">
-              <span className="trip-field-label">Where are you staying? (optional)</span>
+              <span className="trip-field-label">Where are you staying?</span>
               {newStayPoint ? (
                 <div className="day-stay-chosen">
                   <span className="day-stay-chosen-label">{newStayPoint.shortLabel || newStayPoint.label}</span>
@@ -733,6 +841,72 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
               ) : (
                 <p className="trip-note">No match for that address. Try adding the city name.</p>
               )
+            )}
+            {!newStayPoint && (
+              <p className="trip-note day-build-hint">
+                Tell Carta where you sleep and it recommends the smartest, most
+                efficient way to reach each place you plan below - it's optional,
+                but it's what makes getting there effortless.
+              </p>
+            )}
+
+            {/* 2. Which cities - pick a country first, then a city within it.
+                  Any number of cities, anywhere in Europe. */}
+            <div className="day-build-row day-build-place-row">
+              <label className="trip-field">
+                <span className="trip-field-label">Country</span>
+                <Dropdown
+                  value={newCountry}
+                  onChange={(c) => setNewCountry(c)}
+                  options={countryOptions}
+                  placeholder="Pick a country"
+                  searchPlaceholder="Search countries"
+                />
+              </label>
+              <label className="trip-field">
+                <span className="trip-field-label">City</span>
+                <Dropdown
+                  value=""
+                  onChange={addLandingCity}
+                  options={cityOptionsForCountry}
+                  placeholder={newCountry ? 'Pick a city' : 'Choose a country first'}
+                  searchPlaceholder="Search cities"
+                  disabled={!newCountry}
+                />
+              </label>
+            </div>
+
+            {newStops.length > 0 && (
+              <div className="day-build-cities">
+                {newStops.map((s) => {
+                  const d = destinations[s.destinationId];
+                  return (
+                    <div className="day-build-city" key={s.destinationId}>
+                      <span className="day-build-city-name">
+                        {d?.city || 'Unknown'}
+                        <small>{d?.country}</small>
+                      </span>
+                      <div className="trip-people day-days-stepper">
+                        <button type="button" onClick={() => setLandingDays(s.destinationId, s.days - 1)} disabled={s.days <= 1} aria-label="Fewer days">-</button>
+                        <span>{s.days} {s.days === 1 ? 'day' : 'days'}</span>
+                        <button type="button" onClick={() => setLandingDays(s.destinationId, s.days + 1)} aria-label="More days">+</button>
+                      </div>
+                      <button
+                        className="trip-stop-remove"
+                        onClick={() => removeLandingCity(s.destinationId)}
+                        aria-label={`Remove ${d?.city || 'city'}`}
+                        title="Remove"
+                      >×</button>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+
+            {landingCities.length > 0 && (
+              <div className="day-build-map">
+                <TripMap stops={landingCities} padBottom={12} showRoute={false} />
+              </div>
             )}
 
             {/* 3. When. */}
@@ -826,7 +1000,7 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
         stops={mapPins}
         padBottom={420}
         routeGeometry={routeOk ? route.geometry : null}
-        focus={stop?.dest?.lat != null ? { lat: stop.dest.lat, lon: stop.dest.lon, zoom: 11.5 } : null}
+        focus={stop?.dest?.lat != null ? { ...cityCoords(stop.dest), zoom: 11.5 } : null}
       />
 
       <div className="trip-topcard" onClick={(e) => e.stopPropagation()}>
@@ -901,7 +1075,10 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
 
           {plan.standalone && stop && (() => {
             // Travel advice starts at the stay address when one is set;
-            // otherwise the legacy base-city choice still works.
+            // otherwise the legacy base-city choice still works. Both ends are
+            // measured to the CITY centre, never the airport: for airport-tier
+            // destinations dest.lat/lon is the runway, so a stay downtown would
+            // otherwise read as a needless inter-city hop.
             const fromDest = plan.stayPoint
               ? {
                   city: plan.stayPoint.shortLabel || 'your stay',
@@ -909,11 +1086,11 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
                   lon: plan.stayPoint.lon,
                   country: stop.dest?.country,
                 }
-              : (destinations[plan.stayCityId] || null);
+              : withCityCoords(destinations[plan.stayCityId] || null);
             return (
               <DayTripTransport
                 fromDest={fromDest}
-                toDest={stop.dest}
+                toDest={withCityCoords(stop.dest)}
                 carModel={data?.meta?.car_model || null}
                 countryInsights={countryInsights}
               />
@@ -964,6 +1141,59 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
                   <button className="day-chip day-chip-add" onClick={addStandaloneDay} title="Add another day">+ Day</button>
                 )}
               </div>
+            </div>
+          )}
+
+          {stop && (
+            <div className="trip-block">
+              <div className="trip-block-title">Add to your trip{stop.dest?.city ? ` in ${stop.dest.city}` : ''}</div>
+              {activities.limited && activities.items.length > 0 && (
+                <p className="trip-note">Limited data for this destination, names only, no map pins.</p>
+              )}
+              {activities.items.length === 0 ? (
+                <p className="trip-note">No activities catalogued for this destination yet.</p>
+              ) : (
+                <>
+                  {tiers.must.length > 0 && (
+                    <ActivitySection
+                      title="Must see"
+                      badge={<StarIcon size={11} />}
+                      entries={tiers.must}
+                      variant="must"
+                      assignedIdx={dayAssignedIdx}
+                      onToggle={toggleActivity}
+                    />
+                  )}
+                  {tiers.worth.length > 0 && (
+                    <ActivitySection
+                      title="Recommended"
+                      badge={<SparkIcon size={11} />}
+                      entries={tiers.worth}
+                      variant="worth"
+                      assignedIdx={dayAssignedIdx}
+                      onToggle={toggleActivity}
+                    />
+                  )}
+                  {tiers.active.length > 0 && (
+                    <ActivitySection
+                      title="Active & outdoors"
+                      badge={<MountainIcon size={11} />}
+                      entries={tiers.active}
+                      variant="act"
+                      assignedIdx={dayAssignedIdx}
+                      onToggle={toggleActivity}
+                    />
+                  )}
+                  {tiers.more.length > 0 && (
+                    <ActivitySection
+                      title="More places"
+                      entries={tiers.more}
+                      assignedIdx={dayAssignedIdx}
+                      onToggle={toggleActivity}
+                    />
+                  )}
+                </>
+              )}
             </div>
           )}
 
@@ -1039,7 +1269,7 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
                       <BookmarkIcon size={14} />
                       {plan.standalone || daySaveState === 'saved' ? 'In Saved trips' : 'Save to Saved trips'}
                     </button>
-                    <button className="day-action-btn" onClick={downloadPdf} title="A clean, printable PDF of this city's days">
+                    <button className="day-action-btn" onClick={downloadPdf} title="A clean, printable PDF of your planned days">
                       <DownloadIcon size={14} /> Download PDF
                     </button>
                     <button className="day-action-btn" onClick={shareDay}>
@@ -1074,59 +1304,6 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
             <div className="trip-block">
               <div className="trip-block-title">Local tips</div>
               <CountryIntel country={stop.dest.country} rec={countryInsights[stop.dest.country]} compact />
-            </div>
-          )}
-
-          {stop && (
-            <div className="trip-block">
-              <div className="trip-block-title">Things to do in {stop.dest?.city}</div>
-              {activities.limited && activities.items.length > 0 && (
-                <p className="trip-note">Limited data for this destination, names only, no map pins.</p>
-              )}
-              {activities.items.length === 0 ? (
-                <p className="trip-note">No activities catalogued for this destination yet.</p>
-              ) : (
-                <>
-                  {tiers.must.length > 0 && (
-                    <ActivitySection
-                      title="Must see"
-                      badge={<StarIcon size={11} />}
-                      entries={tiers.must}
-                      variant="must"
-                      assignedIdx={dayAssignedIdx}
-                      onToggle={toggleActivity}
-                    />
-                  )}
-                  {tiers.worth.length > 0 && (
-                    <ActivitySection
-                      title="Recommended"
-                      badge={<SparkIcon size={11} />}
-                      entries={tiers.worth}
-                      variant="worth"
-                      assignedIdx={dayAssignedIdx}
-                      onToggle={toggleActivity}
-                    />
-                  )}
-                  {tiers.active.length > 0 && (
-                    <ActivitySection
-                      title="Active & outdoors"
-                      badge={<MountainIcon size={11} />}
-                      entries={tiers.active}
-                      variant="act"
-                      assignedIdx={dayAssignedIdx}
-                      onToggle={toggleActivity}
-                    />
-                  )}
-                  {tiers.more.length > 0 && (
-                    <ActivitySection
-                      title="More places"
-                      entries={tiers.more}
-                      assignedIdx={dayAssignedIdx}
-                      onToggle={toggleActivity}
-                    />
-                  )}
-                </>
-              )}
             </div>
           )}
 
