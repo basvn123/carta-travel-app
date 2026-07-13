@@ -1510,6 +1510,17 @@ input, select {
 /* Getting-there: fly/car switch + the car option's reach notes. */
 .guide-arrive-mode { margin-bottom: 14px; }
 .guide-arrive-mode button { display: inline-flex; align-items: center; gap: 6px; }
+.guide-origin-row {
+  display: flex; align-items: center; gap: 10px;
+  margin: 0 0 14px;
+}
+.guide-origin-label {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 12px; color: var(--ink-mute); flex: none;
+}
+.guide-origin-label > svg { color: var(--accent); }
+.guide-origin-row .origin-picker { position: relative; }
+.guide-origin-row .origin-btn-from { display: inline; }
 .guide-drive-notes { display: flex; flex-direction: column; gap: 8px; margin: 10px 0 14px; }
 .guide-drive-note {
   display: flex; align-items: center; gap: 9px;

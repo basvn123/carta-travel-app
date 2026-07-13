@@ -25,6 +25,7 @@ import {
   LeafIcon, ScaleIcon, BoltIcon, StarIcon,
 } from '../components/Icons.jsx';
 import { PlaneIcon } from '../components/TransportIcons.jsx';
+import { OriginPicker } from '../components/OriginPicker.jsx';
 
 const STEPS = ['Where', 'When', 'Enjoy', 'Getting there', 'Stay', 'Travel'];
 const ROUTES_PREVIEW = 14;
@@ -190,7 +191,7 @@ function StayRow({ id, dest, nights, onNights, anchorDest, isAnchor, companions 
  * stops:[{destinationId, nights, activities}] } and shows the planned trip
  * on the map - still fully editable, and cancellable at any point here.
  */
-export function GuidedTripWizard({ data, onCancel, onComplete }) {
+export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onComplete }) {
   const destinations = data?.destinations || {};
   const dateMin = data?.meta?.start_date;
   const dateMax = data?.meta?.end_date;
@@ -717,6 +718,13 @@ export function GuidedTripWizard({ data, onCancel, onComplete }) {
                 </button>
               </div>
 
+              {arriveMode === 'fly' && onChangeOrigin && data?.meta?.origins && Object.keys(data.meta.origins).length > 0 && (
+                <div className="guide-origin-row">
+                  <span className="guide-origin-label"><PlaneIcon size={11} /> Flying from</span>
+                  <OriginPicker data={data} origin={origin ?? originCode} onChangeOrigin={onChangeOrigin} />
+                </div>
+              )}
+
               {arriveMode === 'other' ? (
                 <div className="guide-noflight">
                   <p className="guide-sub">
@@ -753,9 +761,9 @@ export function GuidedTripWizard({ data, onCancel, onComplete }) {
                     {dateMode === 'exact' && startDate ? ` on ${fmtDate(startDate)}` : ' for this period'}.
                   </p>
                   <p className="guide-sub">
-                    You can change your dates, add a neighbouring country, switch to the car
-                    option above, or simply book a flight with another airline and let Carta
-                    plan everything on the ground.
+                    Try another departure airport above, change your dates, add a neighbouring
+                    country, switch to the car option, or simply book a flight with another
+                    airline and let Carta plan everything on the ground.
                   </p>
                   <button className="guide-back guide-noflight-back" onClick={() => setStep(2)}>← Change my dates</button>
                 </div>
