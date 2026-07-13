@@ -13,18 +13,21 @@
  *     real turn-by-turn route on the traveller's phone.
  */
 
-// FOSSGIS public OSRM foot profile (no key). Path segment after v1 is always
-// "foot" here; the instance is the pedestrian one.
-const OSRM_FOOT = 'https://routing.openstreetmap.de/routed-foot/route/v1/foot';
+// FOSSGIS public OSRM instances (no key): one per travel profile.
+const OSRM_PROFILES = {
+  foot: 'https://routing.openstreetmap.de/routed-foot/route/v1/foot',
+  driving: 'https://routing.openstreetmap.de/routed-car/route/v1/driving',
+};
 
 /** points: [{ lat, lon }, ...] in visiting order (needs >= 2 with coordinates).
  *  Resolves to { geometry: [[lon,lat],...], legs: [{ km, min }], km, min } or
  *  null (fetch failed, too few points, or the router had no answer). */
-export async function fetchWalkingRoute(points) {
+export async function fetchRoute(points, profile = 'foot') {
+  const base = OSRM_PROFILES[profile] || OSRM_PROFILES.foot;
   const pts = (points || []).filter((p) => p && p.lat != null && p.lon != null);
   if (pts.length < 2) return null;
   const coords = pts.map((p) => `${p.lon},${p.lat}`).join(';');
-  const url = `${OSRM_FOOT}/${coords}?overview=full&geometries=geojson&steps=false`;
+  const url = `${base}/${coords}?overview=full&geometries=geojson&steps=false`;
   try {
     const r = await fetch(url);
     if (!r.ok) return null;
@@ -43,6 +46,16 @@ export async function fetchWalkingRoute(points) {
   } catch {
     return null;
   }
+}
+
+/** The street-following walking route through the points (day planner). */
+export function fetchWalkingRoute(points) {
+  return fetchRoute(points, 'foot');
+}
+
+/** The road route through the points (trip planner's city-to-city itinerary). */
+export function fetchDrivingRoute(points) {
+  return fetchRoute(points, 'driving');
 }
 
 // Google's non-API directions link accepts a bounded number of waypoints; keep

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { eur } from '../lib/format.js';
+import { googleMapsDirUrl } from '../lib/routing.js';
 
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
@@ -26,6 +27,12 @@ export function TripItinerary({ dayPlan, stopDetails, grandTotal, groupSize, fli
   };
 
   const activeDay = typeof tab === 'number' ? dayPlan.find((d) => d.dayNum === tab) : null;
+
+  // The whole trip as a Google Maps driving route (city to city, in order).
+  const gmapsUrl = googleMapsDirUrl(
+    stopDetails.filter((s) => s.dest?.lat != null).map((s) => ({ lat: s.dest.lat, lon: s.dest.lon })),
+    'driving',
+  );
 
   return (
     <div className="itin">
@@ -72,6 +79,11 @@ export function TripItinerary({ dayPlan, stopDetails, grandTotal, groupSize, fli
             <span>Estimated total <small>{groupSize} {groupSize === 1 ? 'person' : 'people'}</small></span>
             <strong>{eur(grandTotal)}</strong>
           </div>
+          {gmapsUrl && (
+            <a className="itin-gmaps" href={gmapsUrl} target="_blank" rel="noreferrer">
+              Open the route in Google Maps ↗
+            </a>
+          )}
         </div>
       ) : activeDay ? (
         <div className="itin-day">

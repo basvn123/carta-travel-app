@@ -56,11 +56,27 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
           'line-opacity': 0.85,
         },
       });
+      // The container's final size settles a frame after this tab mounts (its
+      // layout is driven by --panel-w / --filter-h). MapLibre sizes its canvas
+      // once at construction, so without this it can bake in a 0x0 canvas and
+      // render blank forever. Resize now, and keep observing for later changes.
+      map.resize();
       readyRef.current = true;
       mapRef.current._drawTrip?.();
     });
     mapRef.current = map;
+
+    // Re-sync the canvas to the container whenever it changes size (tab mount,
+    // window resize, sheet width changes). This is what keeps the map from
+    // staying blank when the container wasn't fully laid out at construction.
+    let ro = null;
+    if (typeof ResizeObserver !== 'undefined' && containerRef.current) {
+      ro = new ResizeObserver(() => map.resize());
+      ro.observe(containerRef.current);
+    }
+
     return () => {
+      ro?.disconnect();
       map.remove();
       mapRef.current = null;
       readyRef.current = false;

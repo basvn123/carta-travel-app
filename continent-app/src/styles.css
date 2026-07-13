@@ -431,7 +431,11 @@ input, select {
   left: 0; right: 0; bottom: var(--bottom-nav-h);
   overflow: hidden;
 }
-.trip-map { position: absolute; inset: 0; }
+/* !important: maplibre stamps its own .maplibregl-map { position: relative }
+   on the container, and its stylesheet loads after ours (lazy-loaded tab
+   chunk), which used to collapse the map to 0px height. Same fight as
+   .day-build-map further down. */
+.trip-map { position: absolute !important; inset: 0; }
 
 /* Numbered stop pins on the map */
 .trip-pin {
@@ -954,23 +958,42 @@ input, select {
 }
 .trip-sheet.sheet-hidden { display: none; }
 
-/* Planned view: Edit / Replan buttons over the map */
+/* Planned view: Save / Edit / Replan / Start over buttons over the map */
 .trip-planned-actions {
   position: absolute;
   top: 14px; right: 14px;
   display: flex; gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
   z-index: 6;
 }
-.trip-edit-btn, .trip-plan-again-btn {
+.trip-edit-btn, .trip-plan-again-btn, .trip-save-planned-btn, .trip-startover-btn {
   border-radius: 999px;
   padding: 8px 16px;
   font-size: 13px;
   font-weight: 600;
   box-shadow: var(--shadow-1);
 }
+.trip-save-planned-btn { background: var(--accent); color: #fff; }
+.trip-save-planned-btn:hover:not(:disabled) { opacity: 0.9; }
+.trip-save-planned-btn:disabled { opacity: 0.6; cursor: default; }
 .trip-edit-btn { background: var(--ink); color: var(--paper); }
-.trip-plan-again-btn { background: rgba(245,241,232,0.94); border: 1px solid var(--rule); color: var(--ink-soft); }
+.trip-plan-again-btn, .trip-startover-btn { background: rgba(245,241,232,0.94); border: 1px solid var(--rule); color: var(--ink-soft); }
 .trip-plan-again-btn:hover { border-color: var(--accent); color: var(--accent); }
+.trip-startover-btn:hover { border-color: #b3402a; color: #b3402a; }
+.trip-planned-error {
+  position: absolute;
+  top: 58px; right: 14px;
+  z-index: 6;
+  max-width: 300px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: rgba(245,241,232,0.97);
+  border: 1px solid #b3402a;
+  color: #b3402a;
+  font-size: 12px;
+  box-shadow: var(--shadow-1);
+}
 
 /* ───────── Guided trip: wizard modal ───────── */
 
@@ -1167,6 +1190,149 @@ input, select {
 .guide-nights-val b { font-family: var(--mono); color: var(--ink); }
 .guide-nights-zero { font-family: var(--mono); font-size: 11px; color: var(--ink-mute); text-transform: uppercase; letter-spacing: 0.06em; }
 
+/* Step 2 - when (exact dates vs flexible) */
+.guide-datemode {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 16px;
+  padding: 4px;
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  background: var(--paper-dim);
+}
+.guide-datemode button {
+  flex: 1;
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  padding: 9px 10px;
+  border-radius: 9px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  transition: background .15s, color .15s;
+}
+.guide-datemode button.on { background: var(--paper); color: var(--accent); box-shadow: var(--shadow-1); }
+.guide-when-dates {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.guide-when-nights {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--accent);
+  padding-bottom: 10px;
+  white-space: nowrap;
+}
+.guide-flex-nights { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+.guide-months { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 6px; }
+.guide-note {
+  display: flex; align-items: center; gap: 6px;
+  margin-top: 16px;
+  font-size: 12.5px;
+  color: var(--ink-soft);
+}
+
+/* Step 3 - pick your Ryanair route */
+.guide-route-list { display: flex; flex-direction: column; gap: 8px; }
+.guide-route {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  background: var(--paper);
+  text-align: left;
+  width: 100%;
+  transition: border-color .15s, background .15s;
+}
+.guide-route:hover { border-color: var(--ink-soft); }
+.guide-route.on { border-color: var(--accent); background: var(--accent-bg); }
+.guide-route-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.guide-route-city {
+  display: flex; align-items: center; gap: 8px;
+  font-family: var(--display);
+  font-size: 15px;
+  color: var(--ink);
+}
+.guide-route-sub {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  color: var(--ink-mute);
+}
+.guide-route-warn {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 11px;
+  color: #b3402a;
+}
+.guide-route-fare { text-align: right; flex-shrink: 0; display: flex; flex-direction: column; }
+.guide-route-fare b { font-family: var(--mono); font-size: 15px; color: var(--ink); }
+.guide-route-fare small { font-family: var(--mono); font-size: 9.5px; color: var(--ink-mute); }
+.guide-route.on .guide-route-fare b { color: var(--accent); }
+
+/* Step 4 - stays: search, groups, budget */
+.guide-search {
+  width: 100%;
+  padding: 10px 14px;
+  margin-bottom: 12px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: var(--paper);
+  font-size: 13.5px;
+  color: var(--ink);
+}
+.guide-search:focus { outline: none; border-color: var(--accent); }
+.guide-nights-budget {
+  font-family: var(--mono);
+  font-size: 11.5px;
+  color: var(--ink-soft);
+  margin-bottom: 14px;
+}
+.guide-nights-budget b { color: var(--accent); }
+.guide-nights-budget.over, .guide-nights-budget.over b { color: #b3402a; }
+.guide-stay-group { margin-bottom: 14px; }
+.guide-stay-group-title {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--ink-mute);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin: 10px 0 7px;
+}
+.guide-show-more {
+  margin-top: 8px;
+  padding: 7px 14px;
+  border: 1px dashed var(--rule);
+  border-radius: 999px;
+  font-size: 12px;
+  color: var(--ink-soft);
+  width: 100%;
+}
+.guide-show-more:hover { border-color: var(--accent); color: var(--accent); }
+.guide-anchor-badge {
+  display: inline-flex; align-items: center; gap: 3px;
+  margin-left: 8px;
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: #fff;
+  font-family: var(--mono);
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+}
+.guide-startover {
+  margin-right: 10px;
+  font-size: 12px;
+  color: var(--ink-mute);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.guide-startover:hover { color: #b3402a; }
+
 /* Step 3 - activity chips */
 .guide-chips { display: flex; flex-wrap: wrap; gap: 7px; }
 .guide-chip {
@@ -1357,6 +1523,20 @@ input, select {
 }
 .itin-overview-total small { display: block; font-family: var(--mono); font-size: 10.5px; color: var(--ink-mute); }
 .itin-overview-total strong { font-size: 18px; }
+.itin-gmaps {
+  display: block;
+  margin-top: 12px;
+  padding: 10px 14px;
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  text-decoration: none;
+  transition: border-color .15s, color .15s;
+}
+.itin-gmaps:hover { border-color: var(--accent); color: var(--accent); }
 
 .itin-day { padding-top: 14px; }
 .itin-day-head { margin-bottom: 14px; }

@@ -40,6 +40,10 @@ export function useTripPlanner(data, countryInsights = null) {
   const [transportPref, setTransportPref] = useState('auto');
   const [legModes, setLegModes] = useState({}); // { [legIndex]: 'train'|'bus'|'car' }
   const [pace, setPace] = useState('balanced'); // 'relaxed' | 'balanced' | 'packed'
+  // The wizard's chosen fly-in destination. When the first/last stop is a
+  // ground-only gem (no routes of its own), flights are priced via this anchor
+  // instead - "fly into Bergamo, sleep at Lake Como".
+  const [anchorId, setAnchorId] = useState(null);
   const [planId, setPlanId] = useState(null);
   const [planLabel, setPlanLabel] = useState('');
   const [saveState, setSaveState] = useState('idle'); // idle | saving | saved
@@ -135,10 +139,17 @@ export function useTripPlanner(data, countryInsights = null) {
       }
       return ordered.map((n) => n.s);
     });
+    // A new order invalidates per-leg mode overrides (leg N is a new pair).
+    setLegModes({});
   }, [destinations]);
 
+  // Wipe the whole draft so the traveller can start over from scratch.
   const clearPlan = useCallback(() => {
     setStops([]);
+    setTripStart('');
+    setTripEnd('');
+    setLegModes({});
+    setAnchorId(null);
     setPlanId(null);
     setPlanLabel('');
     setPlanned(false);
@@ -148,7 +159,7 @@ export function useTripPlanner(data, countryInsights = null) {
   // ordered list of { destinationId, nights, activities }, an optional name,
   // plus how they want to travel (transport) and how full their days should
   // feel (pace) - everything stays editable in the planner afterwards.
-  const loadFromWizard = useCallback(({ startDate, stops: wizardStops, label, groupSize: gs, transport, pace: wizardPace }) => {
+  const loadFromWizard = useCallback(({ startDate, stops: wizardStops, label, groupSize: gs, transport, pace: wizardPace, anchorId: wizardAnchor }) => {
     const total = wizardStops.reduce((sum, s) => sum + Math.max(0, s.nights || 0), 0);
     setTripStart(startDate || '');
     setTripEnd(startDate ? addDays(startDate, total) : '');
@@ -161,6 +172,7 @@ export function useTripPlanner(data, countryInsights = null) {
     if (gs != null) setGroupSize(Math.max(1, Math.min(20, gs)));
     if (transport) setTransportPref(transport);
     if (wizardPace) setPace(wizardPace);
+    setAnchorId(wizardAnchor || null);
     setLegModes({});
     setPlanId(null);
     setPlanned(false);
@@ -177,12 +189,18 @@ export function useTripPlanner(data, countryInsights = null) {
   }, [stopDetails, destinations]);
 
   // Real combined flight fare: into the first stop, out of the last stop.
+  // Stops with no fares of their own (ground-only gems) price via the wizard's
+  // fly-in anchor when one is set.
   const flight = useMemo(() => {
     const first = stopDetails[0];
     const last = stopDetails[stopDetails.length - 1];
     if (!first?.dest || !last?.dest) return null;
-    return combineTripLegs(first.dest, first.arriveDate, last.dest, last.departDate, groupSize);
-  }, [stopDetails, groupSize]);
+    const anchorDest = anchorId ? destinations[anchorId] : null;
+    const flyable = (d) => (
+      d && Object.keys(d.routes || {}).length > 0 ? d : (anchorDest || d)
+    );
+    return combineTripLegs(flyable(first.dest), first.arriveDate, flyable(last.dest), last.departDate, groupSize);
+  }, [stopDetails, groupSize, anchorId, destinations]);
 
   // Priced transport options (train / bus / car with booking links) between
   // each consecutive pair of stops, resolved to a chosen mode: an explicit
@@ -329,6 +347,8 @@ export function useTripPlanner(data, countryInsights = null) {
       nights: tripDaysBetween(s.arrive_date, s.depart_date) || DEFAULT_STOP_NIGHTS,
       activities: Array.isArray(s.choices?.activities) ? s.choices.activities : [],
     })));
+    setAnchorId(sorted[0]?.choices?.anchorId || null);
+    setLegModes({});
     setPlanned(false);
   }, []);
 
@@ -353,7 +373,12 @@ export function useTripPlanner(data, countryInsights = null) {
           departDate: s.departDate,
           transportMode: isLast ? 'flight' : 'ground_estimate',
           transportNotes: isLast ? flight : legs[i],
-          choices: { nights: s.nights, groupSize, activities: s.activities || [] },
+          choices: {
+            nights: s.nights,
+            groupSize,
+            activities: s.activities || [],
+            ...(i === 0 && anchorId ? { anchorId } : {}),
+          },
         };
       }));
       setPlanId(id);
@@ -364,13 +389,13 @@ export function useTripPlanner(data, countryInsights = null) {
       setSaveState('idle');
       throw e;
     }
-  }, [planId, planLabel, stops, stopDetails, groupSize, legs, flight]);
+  }, [planId, planLabel, stops, stopDetails, groupSize, legs, flight, anchorId]);
 
   return {
     tripStart, setTripStart, tripEnd, setTripEnd,
     stops, stopDetails, plannedNights, windowNights,
     groupSize, setGroupSize,
-    transportPref, setTransportPref, pace, setPace, setLegMode, carRental,
+    transportPref, setTransportPref, pace, setPace, setLegMode, carRental, anchorId,
     cheaperDates, cheaperOrder, applyStartDate, applyCheaperOrder,
     addStop, removeStop, setStopNights, setStopActivities, moveStop, reorderStop,
     optimizeRoute, clearPlan, loadFromWizard,
