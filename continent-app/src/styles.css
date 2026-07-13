@@ -1125,6 +1125,9 @@ input, select {
 .daytrip-reco-main small { font-size: 11.5px; color: var(--ink-soft); line-height: 1.45; }
 .daytrip-hint { color: #2c7d54; }
 .daytrip-hint.warn { color: #b3402a; }
+/* "You're already in the city" note - icon aligned to the first line. */
+.daytrip-here { display: flex; gap: 6px; align-items: baseline; }
+.daytrip-here svg { flex: none; color: var(--accent); position: relative; top: 1px; }
 .daytrip-more {
   align-self: center;
   padding: 5px 12px;
@@ -1379,12 +1382,11 @@ input, select {
 .guide-city.on { border-color: var(--accent); background: var(--accent-bg); }
 .guide-city-info { flex: 1; min-width: 0; }
 .guide-city-name {
-  display: flex; align-items: center;
+  display: flex; align-items: center; flex-wrap: wrap; gap: 8px;
   font-family: var(--display);
   font-size: 15px;
   color: var(--ink);
 }
-.guide-city-gems { margin-left: 8px; }
 .guide-city-insight {
   font-size: 11.5px;
   color: var(--ink-soft);
@@ -1639,7 +1641,6 @@ input, select {
 .guide-show-more:hover { border-color: var(--accent); color: var(--accent); }
 .guide-anchor-badge {
   display: inline-flex; align-items: center; gap: 3px;
-  margin-left: 8px;
   padding: 2px 7px;
   border-radius: 999px;
   background: var(--accent);
@@ -2132,6 +2133,10 @@ input, select {
 .day-build .trip-add-row { display: block; }
 .day-build-row { display: flex; gap: 14px; }
 .day-build-row .trip-field { flex: 1; }
+/* Country + city pickers share a row but stack when there isn't room. */
+.day-build-place-row { flex-wrap: wrap; }
+.day-build-place-row .trip-field { flex: 1 1 140px; min-width: 0; }
+.day-build-hint { margin-top: 6px; }
 .day-build-btn { width: 100%; margin-top: 2px; }
 .day-landing-section { margin-top: 24px; }
 
@@ -6611,11 +6616,15 @@ input, select {
   .header-home-icon { width: 22px; height: 22px; }
 }
 
-/* ─── Day planner: landing "Days" stepper fills its field cleanly ─── */
+/* ─── Day planner: landing "Days" stepper sits inline in its city row ───
+   It shares a flex row with the city name (flex:1) and the × remove button,
+   so it must size to its own content - a full-width stepper overlaps them. */
 .day-days-stepper {
-  width: 100%;
-  justify-content: space-between;
+  flex: none;
+  width: auto;
+  white-space: nowrap;
 }
+.day-days-stepper > span { white-space: nowrap; }
 
 /* ─── Day planner: route mode + ordered plan ─── */
 .day-route-mode {
@@ -7279,3 +7288,31 @@ input, select {
 .shape-feas-group { margin-bottom: 14px; }
 .shape-feas-group .trip-field-label { display: block; margin-bottom: 7px; }
 .shape-feas-group .shape-style { padding: 10px 14px; }
+
+/* ───────── Crash guard (ErrorBoundary fallback) ───────── */
+.crash-screen {
+  position: fixed; inset: 0; z-index: 9999;
+  display: flex; align-items: center; justify-content: center;
+  padding: 24px; background: var(--paper);
+}
+.crash-card {
+  max-width: 460px; width: 100%;
+  background: var(--paper-dim);
+  border: 1px solid var(--rule); border-radius: 16px;
+  padding: 26px 24px; box-shadow: var(--shadow-2);
+}
+.crash-title { font-family: var(--display); font-size: 22px; color: var(--ink); margin: 0 0 8px; }
+.crash-lead { font-size: 14px; color: var(--ink-soft); margin: 0 0 14px; line-height: 1.5; }
+.crash-detail {
+  font-family: var(--mono); font-size: 12px; color: var(--accent);
+  background: rgba(200, 80, 30, 0.08); border-radius: 8px;
+  padding: 10px 12px; margin: 0 0 18px;
+  white-space: pre-wrap; word-break: break-word; max-height: 160px; overflow: auto;
+}
+.crash-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+.crash-btn {
+  padding: 10px 16px; border-radius: 999px; cursor: pointer;
+  border: 1px solid var(--rule); background: var(--paper); color: var(--ink);
+  font-size: 14px;
+}
+.crash-btn.primary { background: var(--accent); color: #fff; border-color: var(--accent); }

@@ -750,9 +750,6 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
                       </div>
                     ))}
                   </div>
-                  <p className="guide-note">
-                    <CarIcon size={11} /> Fuel + tolls get priced per leg once your stops are set; no Ryanair fare is needed for this trip.
-                  </p>
                 </>
               ) : routeOptions.length === 0 ? (
                 <div className="guide-noflight">
@@ -1033,15 +1030,6 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
                     <button type="button" onClick={() => setGroupSize(Math.min(20, groupSize + 1))} disabled={groupSize >= 20} aria-label="More people">+</button>
                   </div>
                 </label>
-                <div className="guide-start-summary">
-                  {includedIds.length} {includedIds.length === 1 ? 'stop' : 'stops'}, {totalNights} nights
-                  {dateMode === 'exact' && startDate
-                    ? `, leaving ${fmtDate(startDate)}`
-                    : `, ${flexMonth ? months.find((m) => m.key === flexMonth)?.label : 'any month'}, Carta picks the cheapest dates`}
-                  {anchorDest ? `, landing in ${anchorDest.city}`
-                    : arriveMode === 'car' ? `, driving from ${originCity}`
-                    : arriveMode === 'other' ? ', flying with your own airline' : ''}
-                </div>
               </div>
             </>
           )}

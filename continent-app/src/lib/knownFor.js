@@ -330,7 +330,10 @@ export function knownForFacts(dest) {
   const nAct = dest.activities?.items?.length || 0;
   if (nAct) rows.push(['Things to do', `${nAct} catalogued places`]);
   if (dest.local_transport?.reason) {
-    rows.push(['Getting around', dest.local_transport.reason]);
+    // Scrub dashes used as punctuation (em/en/spaced-hyphen) to keep the app
+    // dash-free, since this line comes straight from the dataset.
+    const reason = dest.local_transport.reason.replace(/\s*[–—]\s*|\s+-\s+/g, ', ');
+    rows.push(['Getting around', reason]);
   }
   return rows;
 }

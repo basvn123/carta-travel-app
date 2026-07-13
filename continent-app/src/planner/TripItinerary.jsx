@@ -145,7 +145,6 @@ export function TripItinerary({
                     <span className="val">{eur(stayCosts[i].total)}</span>
                   </div>
                 ))}
-                <p className="trip-note">Flights are real stored Ryanair fares; ground and stay figures are estimates.</p>
               </div>
             )}
           </div>
