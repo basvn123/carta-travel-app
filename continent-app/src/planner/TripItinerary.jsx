@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { eur } from '../lib/format.js';
 import { googleMapsDirUrl } from '../lib/routing.js';
+import { SparkIcon, TrainIcon, BusIcon, CarIcon, BedIcon, ReceiptIcon } from '../components/Icons.jsx';
+import { PlaneIcon } from '../components/TransportIcons.jsx';
 
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
@@ -12,14 +14,23 @@ function fmtLong(iso) {
   return `${wd} ${String(d).padStart(2, '0')} ${MONTHS[m - 1]}`;
 }
 
+const LEG_ICONS = { train: TrainIcon, bus: BusIcon, car: CarIcon };
+
 /**
- * The planned itinerary: Overview + one tab per day, mirroring the reference's
- * day-by-day breakdown. Since catalogued attractions have no coordinates we
- * show them as an ordered checklist per day (not map pins with walk times), but
- * the stays themselves are the numbered pins on the map above.
+ * The planned itinerary: Overview + one tab per day.
+ *
+ * The Overview mirrors the Map tab's grouped receipt (flights / ground / stays,
+ * then the grand total) so "Estimated total" is inspectable here too, and lists
+ * every day with a jump into that day's tab. Each day keeps a light highlight
+ * list (the pace cap) and hands fine-tuning to the Day planner via onPlanDay.
  */
-export function TripItinerary({ dayPlan, stopDetails, grandTotal, groupSize, flight, activeStopIndex, onSelectStop }) {
+export function TripItinerary({
+  dayPlan, stopDetails, grandTotal, groupSize, flight,
+  legs = [], stayCosts = [], carRental = null,
+  activeStopIndex, onSelectStop, onPlanDay,
+}) {
   const [tab, setTab] = useState('overview');
+  const [breakdownOpen, setBreakdownOpen] = useState(false);
 
   const pickDay = (day) => {
     setTab(day.dayNum);
@@ -33,6 +44,8 @@ export function TripItinerary({ dayPlan, stopDetails, grandTotal, groupSize, fli
     stopDetails.filter((s) => s.dest?.lat != null).map((s) => ({ lat: s.dest.lat, lon: s.dest.lon })),
     'driving',
   );
+
+  const groundTotal = legs.reduce((sum, l) => sum + (l && l.ground_total ? l.ground_total : 0), 0);
 
   return (
     <div className="itin">
@@ -75,10 +88,94 @@ export function TripItinerary({ dayPlan, stopDetails, grandTotal, groupSize, fli
               </span>
             </button>
           ))}
-          <div className="itin-overview-total">
-            <span>Estimated total <small>{groupSize} {groupSize === 1 ? 'person' : 'people'}</small></span>
-            <strong>{eur(grandTotal)}</strong>
+
+          {/* Estimated total, expandable into the same grouped receipt the Map
+              tab shows: flights, ground legs, rental, stay per city. */}
+          <div className={`itin-breakdown ${breakdownOpen ? 'open' : ''}`}>
+            <button
+              className="itin-overview-total itin-breakdown-toggle"
+              onClick={() => setBreakdownOpen((v) => !v)}
+              aria-expanded={breakdownOpen}
+            >
+              <span>
+                <ReceiptIcon size={12} /> Estimated total <small>{groupSize} {groupSize === 1 ? 'person' : 'people'}</small>
+              </span>
+              <strong>{eur(grandTotal)}</strong>
+              <span className="itin-breakdown-caret" aria-hidden="true">{breakdownOpen ? '−' : '+'}</span>
+            </button>
+
+            {breakdownOpen && (
+              <div className="itin-breakdown-body">
+                {flight?.combinable && (
+                  <div className="trip-total-row">
+                    <span className="lbl">
+                      <PlaneIcon size={11} /> Flights
+                      <small>{flight.into_anchor} in, {flight.out_anchor} out, via {flight.origin}</small>
+                    </span>
+                    <span className="val">{eur(flight.fare_total + flight.ground_total)}</span>
+                  </div>
+                )}
+                {legs.map((l, i) => {
+                  if (!l || !l.ground_total) return null;
+                  const Icon = LEG_ICONS[l.mode] || TrainIcon;
+                  const a = stopDetails[i]?.dest?.city;
+                  const b = stopDetails[i + 1]?.dest?.city;
+                  return (
+                    <div className="trip-total-row" key={`leg-${i}`}>
+                      <span className="lbl">
+                        <Icon size={11} /> {a} → {b}
+                        <small>{l.road_km} km, ~{l.hours}h, estimate</small>
+                      </span>
+                      <span className="val">{eur(l.ground_total)}</span>
+                    </div>
+                  );
+                })}
+                {carRental && (
+                  <div className="trip-total-row">
+                    <span className="lbl"><CarIcon size={11} /> Rental car <small>{carRental.days} days, whole group</small></span>
+                    <span className="val">{eur(carRental.eur_total)}</span>
+                  </div>
+                )}
+                {stopDetails.map((s, i) => stayCosts[i] && (
+                  <div className="trip-total-row" key={`stay-${i}`}>
+                    <span className="lbl">
+                      <BedIcon size={11} /> {s.dest?.city}
+                      <small>{s.nights} {s.nights === 1 ? 'night' : 'nights'}, stay + on the ground</small>
+                    </span>
+                    <span className="val">{eur(stayCosts[i].total)}</span>
+                  </div>
+                ))}
+                <p className="trip-note">Flights are real stored Ryanair fares; ground and stay figures are estimates.</p>
+              </div>
+            )}
           </div>
+
+          {/* Every day, one tap from its plan - and one more into the Day
+              planner to properly shape it. */}
+          <div className="itin-days-list">
+            <div className="trip-block-title">Your days</div>
+            {dayPlan.map((d) => (
+              <div className="itin-day-row" key={d.dayNum}>
+                <button className="itin-day-row-main" onClick={() => pickDay(d)}>
+                  <span className="itin-day-row-num">Day {d.dayNum}</span>
+                  <span className="itin-day-row-meta">
+                    {d.stop.dest?.city}{d.date ? `, ${fmtLong(d.date)}` : ''}
+                    {d.activities.length > 0 && `, ${d.activities.length} planned`}
+                  </span>
+                </button>
+                {onPlanDay && (
+                  <button
+                    className="itin-day-plan-btn"
+                    onClick={() => onPlanDay(d)}
+                    title={`Shape day ${d.dayNum} in the Day planner`}
+                  >
+                    <SparkIcon size={11} /> Plan
+                  </button>
+                )}
+              </div>
+            ))}
+          </div>
+
           {gmapsUrl && (
             <a className="itin-gmaps" href={gmapsUrl} target="_blank" rel="noreferrer">
               Open the route in Google Maps ↗
@@ -101,7 +198,7 @@ export function TripItinerary({ dayPlan, stopDetails, grandTotal, groupSize, fli
             </div>
           </div>
           {activeDay.activities.length === 0 ? (
-            <p className="itin-day-empty">A free day in {activeDay.stop.dest?.city}: wander, eat well, no plans. Add highlights any time by editing the trip.</p>
+            <p className="itin-day-empty">A free day in {activeDay.stop.dest?.city}: wander, eat well, no plans. Shape it in the Day planner any time.</p>
           ) : (
             <ol className="itin-visit-list">
               {activeDay.activities.map((name, idx) => {
@@ -117,6 +214,17 @@ export function TripItinerary({ dayPlan, stopDetails, grandTotal, groupSize, fli
                 );
               })}
             </ol>
+          )}
+          {activeDay.overflowCount > 0 && (
+            <p className="itin-day-overflow">
+              {activeDay.overflowCount} more {activeDay.overflowCount === 1 ? 'pick doesn’t' : 'picks don’t'} fit
+              a day at this pace - shape the day to choose what stays.
+            </p>
+          )}
+          {onPlanDay && (
+            <button className="itin-day-planner-btn" onClick={() => onPlanDay(activeDay)}>
+              <SparkIcon size={12} /> Plan this day in the Day planner
+            </button>
           )}
         </div>
       ) : null}

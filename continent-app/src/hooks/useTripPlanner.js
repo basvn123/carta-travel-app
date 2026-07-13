@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback, useEffect } from 'react';
 import {
   tripDaysBetween, accommodationPerPerson, groundSpendPerPerson, DEFAULT_LIFESTYLE, haversineKm,
 } from '../lib/runtime_pricing.js';
@@ -9,6 +9,8 @@ import { addDays } from '../lib/dates.js';
 import {
   fetchTripPlanWithStops, createTripPlan, saveTripPlanStops,
 } from '../auth/tripPlanStorage.js';
+import { assignmentsKey, prefsKey, TRIP_DRAFT_PLAN_ID } from '../planner/dayPlanStore.js';
+import { loadRestorableDraft, persistTripDraft, clearTripDraft } from '../planner/tripDraftStore.js';
 
 function round2(v) {
   return v == null ? null : Math.round(v * 100) / 100;
@@ -30,24 +32,43 @@ export function useTripPlanner(data, countryInsights = null) {
   const destinations = data?.destinations || {};
   const carModel = data?.meta?.car_model || null;
 
-  const [tripStart, setTripStart] = useState('');
-  const [tripEnd, setTripEnd] = useState('');
-  const [stops, setStops] = useState([]); // [{ destinationId, nights, activities: string[] }]
-  const [groupSize, setGroupSize] = useState(2);
+  // Restore an unsaved draft (if any) so switching to the Day planner and back
+  // never wipes a trip mid-planning.
+  const [draft] = useState(() => loadRestorableDraft());
+
+  const [tripStart, setTripStart] = useState(draft?.tripStart || '');
+  const [tripEnd, setTripEnd] = useState(draft?.tripEnd || '');
+  const [stops, setStops] = useState(draft?.stops || []); // [{ destinationId, nights, activities: string[] }]
+  const [groupSize, setGroupSize] = useState(draft?.groupSize || 2);
   // How the traveller wants to get between stops: 'auto' lets Carta pick the
   // best mode per leg, 'car' assumes one rental for the whole trip, 'public'
   // sticks to trains/buses. Individual legs can still be overridden.
-  const [transportPref, setTransportPref] = useState('auto');
-  const [legModes, setLegModes] = useState({}); // { [legIndex]: 'train'|'bus'|'car' }
-  const [pace, setPace] = useState('balanced'); // 'relaxed' | 'balanced' | 'packed'
+  const [transportPref, setTransportPref] = useState(draft?.transportPref || 'auto');
+  const [legModes, setLegModes] = useState(draft?.legModes || {}); // { [legIndex]: 'train'|'bus'|'car' }
+  const [pace, setPace] = useState(draft?.pace || 'balanced'); // 'relaxed' | 'balanced' | 'packed'
   // The wizard's chosen fly-in destination. When the first/last stop is a
   // ground-only gem (no routes of its own), flights are priced via this anchor
   // instead - "fly into Bergamo, sleep at Lake Como".
-  const [anchorId, setAnchorId] = useState(null);
+  const [anchorId, setAnchorId] = useState(draft?.anchorId || null);
   const [planId, setPlanId] = useState(null);
-  const [planLabel, setPlanLabel] = useState('');
+  const [planLabel, setPlanLabel] = useState(draft?.planLabel || '');
   const [saveState, setSaveState] = useState('idle'); // idle | saving | saved
-  const [planned, setPlanned] = useState(false); // true = show the day-by-day itinerary view
+  const [planned, setPlanned] = useState(draft?.planned || false); // true = show the day-by-day itinerary view
+
+  // Keep the draft stored while planning; drop it once it's empty. Saved plans
+  // carry their planId so the next visit knows not to restore them (see
+  // loadDraft) - the trip itself is safe in the account by then.
+  useEffect(() => {
+    if (!stops.length && !tripStart && !tripEnd) {
+      clearTripDraft();
+      return;
+    }
+    persistTripDraft({
+      tripStart, tripEnd, stops, groupSize, transportPref, legModes, pace,
+      anchorId, planId, planLabel, planned,
+    });
+  }, [tripStart, tripEnd, stops, groupSize, transportPref, legModes, pace,
+      anchorId, planId, planLabel, planned]);
 
   // Chain each stop's arrive/depart dates from the trip start. A stop with no
   // trip start yet still carries its nights so the UI can show "2 nights".
@@ -298,6 +319,10 @@ export function useTripPlanner(data, countryInsights = null) {
   // attractions (spread round-robin across the stay). Powers the Overview /
   // Day 1 / Day 2 ... view once the trip is "planned".
   const dayPlan = useMemo(() => {
+    // A day can only honestly hold so many highlights - keep each day light
+    // (by pace) and hand the fine-tuning to the Day planner instead of
+    // cramming five sights into every date.
+    const perDayCap = { relaxed: 2, balanced: 3, packed: 4 }[pace] || 3;
     const days = [];
     let dayNum = 1;
     stopDetails.forEach((s, stopIndex) => {
@@ -313,12 +338,13 @@ export function useTripPlanner(data, countryInsights = null) {
           date: s.arriveDate ? addDays(s.arriveDate, di) : '',
           stop: s,
           stopIndex,
-          activities: buckets[di],
+          activities: buckets[di].slice(0, perDayCap),
+          overflowCount: Math.max(0, buckets[di].length - perDayCap),
         });
       }
     });
     return days;
-  }, [stopDetails]);
+  }, [stopDetails, pace]);
 
   const loadPlan = useCallback(async (tripPlanId) => {
     const plan = await fetchTripPlanWithStops(tripPlanId);
@@ -363,6 +389,19 @@ export function useTripPlanner(data, countryInsights = null) {
           },
         };
       }));
+      // Day-planner work done against the unsaved draft moves with the trip:
+      // re-key its picks/preferences from the draft id to the real plan id.
+      if (!planId && typeof window !== 'undefined') {
+        try {
+          for (const keyFn of [assignmentsKey, prefsKey]) {
+            const v = window.localStorage.getItem(keyFn(TRIP_DRAFT_PLAN_ID));
+            if (v != null) {
+              window.localStorage.setItem(keyFn(id), v);
+              window.localStorage.removeItem(keyFn(TRIP_DRAFT_PLAN_ID));
+            }
+          }
+        } catch { /* private mode */ }
+      }
       setPlanId(id);
       setSaveState('saved');
       setTimeout(() => setSaveState('idle'), 2000);

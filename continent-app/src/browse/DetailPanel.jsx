@@ -1,7 +1,7 @@
 import React from 'react';
 import {
   composeTrip, buildFlightLinks, buildAccommodationLink, buildCarRentalLink,
-  fareCoverageRanges,
+  fareCoverageRanges, viaNearestAirport,
 } from '../lib/runtime_pricing.js';
 import { kindsForDest } from '../lib/trip_kinds.js';
 import { BestTimePanel } from './BestTimePanel.jsx';
@@ -151,6 +151,14 @@ export function DetailPanel({ destination, departDate, returnDate, choices, setC
               </p>
             );
           })()}
+          <ViaAirportOptions
+            destination={destination}
+            data={data}
+            departDate={departDate}
+            returnDate={returnDate}
+            choices={choices}
+            onSelect={onSelect}
+          />
         </div>
       ) : (
         <>
@@ -182,6 +190,7 @@ export function DetailPanel({ destination, departDate, returnDate, choices, setC
               onOpenLifestyle={onOpenLifestyle}
               data={data}
               anchor={anchor}
+              onSelect={onSelect}
             />
           ) : (
             <BestTimePanel
@@ -249,8 +258,13 @@ function InfoButton({ open, onClick, label = 'How this is calculated' }) {
   );
 }
 
-function BreakdownTab({ destination, breakdown, departDate, returnDate, choices, setChoices, priceMode, onOpenLifestyle, anchor, data }) {
+function BreakdownTab({ destination, breakdown, departDate, returnDate, choices, setChoices, priceMode, onOpenLifestyle, anchor, data, onSelect }) {
   const group = Math.max(1, choices.group_size || 1);
+  const originCity = data?.meta?.origins?.[data?.meta?.selected_origin]?.city || 'your airport';
+  // The traveller asked to fly but no fare exists for these dates, so the
+  // price shown is a DRIVE - say so loudly instead of a quiet "drive from
+  // home", and offer real fly-via-nearby-airport alternatives.
+  const flyFellBack = breakdown.requested_mode === 'plane' && breakdown.transport_mode === 'car';
 
   // Groups are collapsed by default to keep the panel scannable; the subtotal
   // stays visible on the header either way. "info" popovers (calc logic,
@@ -314,11 +328,29 @@ function BreakdownTab({ destination, breakdown, departDate, returnDate, choices,
         <CostGroup
           icon={breakdown.transport_mode === 'car' ? <CarIcon size={15} /> : <PlaneIcon size={15} />}
           title="Getting there"
-          subtitle={breakdown.transport_mode === 'car' ? 'Drive from home' : 'Ryanair round-trip'}
+          subtitle={breakdown.transport_mode === 'car'
+            ? (flyFellBack ? `No flight these dates - drive from ${originCity}` : `Drive from ${originCity}`)
+            : 'Ryanair round-trip'}
           subtotal={transportSubtotal}
           open={openGroups.transport}
           onToggle={() => toggleGroup('transport')}
         >
+          {flyFellBack && (
+            <>
+              <p className="cost-info-pop cost-fallback-note">
+                There's no Ryanair fare from {originCity} to {destination.city} for these dates,
+                so this price is for driving. To still fly, try the nearby airports below or shift your dates.
+              </p>
+              <ViaAirportOptions
+                destination={destination}
+                data={data}
+                departDate={departDate}
+                returnDate={returnDate}
+                choices={choices}
+                onSelect={onSelect}
+              />
+            </>
+          )}
           {/* Plane vs car comparison (only when drivable) */}
           {breakdown.drivable && setChoices && (
             <div className="mode-toggle">
@@ -557,6 +589,35 @@ function CarAdvisory({ lt, mode }) {
     <div className="car-advisory">
       <span className="car-advisory-dot" style={{ background: dot }} />
       <span>{text}</span>
+    </div>
+  );
+}
+
+/** "Fly to the nearest airport instead": real-fare alternatives for a
+ *  destination with no direct flight on these dates - fly into a nearby
+ *  airport we DO have a fare for, then drive/taxi the last stretch. */
+function ViaAirportOptions({ destination, data, departDate, returnDate, choices, onSelect }) {
+  const options = viaNearestAirport(destination, data?.destinations, departDate, returnDate, choices);
+  if (!options.length) return null;
+  return (
+    <div className="via-airport">
+      <div className="via-airport-title"><PlaneIcon size={11} /> Fly to a nearby airport instead</div>
+      {options.map((o) => (
+        <div className="via-airport-row" key={o.id}>
+          <span className="via-airport-main">
+            <b>{o.city} ({o.iata})</b>
+            <small>
+              flight {eur(o.fare_per_person)}/p, then {o.road_km} km
+              (~{o.drive_hours_one_way}h, ~{eur(o.leg_eur_pp_one_way)}/p each way)
+            </small>
+          </span>
+          <span className="via-airport-est">~{eur(o.total_pp_est)}/p</span>
+          {onSelect && (
+            <button className="via-airport-open" onClick={() => onSelect(o.id)} title={`Open ${o.city}`}>View</button>
+          )}
+        </div>
+      ))}
+      <p className="via-airport-note">Flight fares are real stored Ryanair prices; the last stretch is a road estimate.</p>
     </div>
   );
 }

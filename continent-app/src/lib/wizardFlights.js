@@ -84,6 +84,51 @@ export function flyInOptions(destinations, countries, { startDate = '', flexMont
   return out;
 }
 
+/** Rough flight distance/duration for a fly-in option: great-circle km from
+ *  the origin airport to the destination, at ~780 km/h cruise plus a fixed
+ *  taxi/climb/descent overhead. An honest "about 2h05" signal, not a schedule. */
+export function flightMeta(option, origins) {
+  const o = origins?.[option.origin];
+  const d = option.dest;
+  if (!o || o.lat == null || !d || d.lat == null) return null;
+  const km = haversineKm(o.lat, o.lon, d.lat, d.lon);
+  if (km == null) return null;
+  return { km: Math.round(km), min: Math.round(30 + km / 13) };
+}
+
+/** 125 -> "2h05", 45 -> "45 min". */
+export function fmtFlightDuration(min) {
+  if (!min || min <= 0) return '';
+  const h = Math.floor(min / 60);
+  const m = min % 60;
+  return h ? `${h}h${String(m).padStart(2, '0')}` : `${m} min`;
+}
+
+/** Which options deserve a quality chip: the cheapest fare, the shortest
+ *  flight, and Carta's pick (price + duration + how special the place is).
+ *  Returns { [optionId]: 'cheapest' | 'fastest' | 'pick' } - a route earns at
+ *  most one chip, best label wins in that order of usefulness to a scanner. */
+export function flightBadges(options, origins) {
+  const out = {};
+  if (!options || options.length < 2) return out;
+  const metas = new Map(options.map((o) => [o.id, flightMeta(o, origins)]));
+
+  let cheapest = null;
+  let fastest = null; // { option, min }
+  let pick = null;    // { option, rank }
+  for (const o of options) {
+    if (!cheapest || o.sort_eur < cheapest.sort_eur) cheapest = o;
+    const m = metas.get(o.id);
+    if (m && (!fastest || m.min < fastest.min)) fastest = { option: o, min: m.min };
+    const rank = o.gem_score * 1.2 - o.sort_eur / 18 - (m ? m.min / 90 : 0) + (o.has_exact ? 0.8 : 0);
+    if (!pick || rank > pick.rank) pick = { option: o, rank };
+  }
+  if (pick) out[pick.option.id] = 'pick';
+  if (cheapest && !out[cheapest.id]) out[cheapest.id] = 'cheapest';
+  if (fastest && !out[fastest.option.id]) out[fastest.option.id] = 'fastest';
+  return out;
+}
+
 /** Nearest-neighbour ordering of stay ids, starting from the stay closest to
  *  the fly-in destination (or the first id when there's no anchor/coords). */
 export function orderStaysFromAnchor(ids, destinations, anchorDest) {

@@ -1,8 +1,10 @@
 /**
  * tripGuide.js - helpers for the guided ("Let us guide you") trip builder:
- * country/flag grouping and short human "insight" lines for cities.
+ * country/flag grouping, short human "insight" lines for cities, worth-a-visit
+ * tiers, city pairings, and Carta's own stay designer.
  */
 import { gemScore } from './trip_planner_pricing.js';
+import { haversineKm } from './runtime_pricing.js';
 
 /** ISO-3166 alpha-2 → the corresponding flag emoji (regional indicators).
  *  Note: Windows has no flag glyphs, so these render as the two letters there -
@@ -110,6 +112,102 @@ const KIND_INTERESTS = {
   Theatre: ['culture'],
   Square: ['culture', 'photo'],
 };
+
+/** How well a city's catalogued activities match the traveller's interests,
+ *  0..1. Unlike activitiesForInterests (which falls back to everything so a
+ *  city is never unpickable), this is an honest fit measure for RANKING. */
+export function interestFitScore(dest, interests) {
+  if (!interests || interests.size === 0) return 0;
+  const items = dest?.activities?.items || [];
+  if (!items.length) return 0;
+  let direct = 0;
+  for (const it of items) {
+    const tags = KIND_INTERESTS[it.kind];
+    if (tags && tags.some((t) => interests.has(t))) direct += 1;
+  }
+  return Math.min(1, direct / 6);
+}
+
+/** Worth-a-visit tier for a city, from the same gemScore the recommenders use.
+ *  Gives travellers the "is this a headline stop or a maybe" signal at a
+ *  glance instead of an opaque number. */
+export function cityTier(dest) {
+  const s = gemScore(dest);
+  if (s >= 7) return { key: 'top', label: 'Must-visit', score: s };
+  if (s >= 5) return { key: 'great', label: 'Great stop', score: s };
+  if (s >= 3) return { key: 'good', label: 'Worth a look', score: s };
+  return { key: 'ok', label: 'If nearby', score: s };
+}
+
+/** Cities that combine well with this one: close enough for an easy hop
+ *  (<= maxKm) and genuinely worth the detour (gemScore-led). Powers the
+ *  "pairs well with X" guidance in the stay picker. */
+export function cityCompanions(id, dest, destinations, { maxKm = 170, limit = 2 } = {}) {
+  if (!dest || dest.lat == null) return [];
+  const out = [];
+  for (const [oid, d] of Object.entries(destinations || {})) {
+    if (oid === id || !d || d.lat == null || d.city === dest.city) continue;
+    const km = haversineKm(dest.lat, dest.lon, d.lat, d.lon);
+    if (km == null || km > maxKm || km < 4) continue;
+    const s = gemScore(d);
+    if (s < 5) continue;
+    out.push({ id: oid, dest: d, km: Math.round(km), rank: s - km / 60 });
+  }
+  out.sort((a, b) => b.rank - a.rank);
+  return out.slice(0, limit);
+}
+
+/**
+ * Carta designs the stays itself: picks the strongest cities in the chosen
+ * countries for THIS traveller (gemScore + interest fit), chains them into a
+ * geographically sensible route from the arrival anchor, and splits the
+ * available nights (cities get 2-3, small gems 1-2).
+ *
+ * Returns [{ id, nights }] - only real catalogued places, never invented data.
+ */
+export function designStays({ destinations, countries, interests, anchorDest, anchorId, totalNights }) {
+  const nights = Math.max(1, totalNights || 5);
+  const pool = Object.entries(destinations || {})
+    .filter(([, d]) => d && d.lat != null && countries.has(d.country))
+    .map(([id, d]) => ({ id, dest: d, score: gemScore(d) + interestFitScore(d, interests) * 2.5 }));
+  if (!pool.length) return [];
+
+  const maxStops = Math.min(5, Math.max(1, Math.round(nights / 2)));
+  const wantsFor = (d, left) => (d.tier === 'gem' ? (left >= 6 ? 2 : 1) : (left >= 5 ? 3 : 2));
+
+  const picks = [];
+  let remaining = nights;
+  let cursor = anchorDest && anchorDest.lat != null ? anchorDest : null;
+
+  // You land at the anchor - it opens the trip when it's one of the choices.
+  if (anchorId) {
+    const i = pool.findIndex((p) => p.id === anchorId);
+    if (i >= 0) {
+      const [a] = pool.splice(i, 1);
+      const n = Math.min(wantsFor(a.dest, remaining), remaining);
+      picks.push({ id: a.id, nights: n });
+      remaining -= n;
+      cursor = a.dest;
+    }
+  }
+
+  while (remaining > 0 && pool.length && picks.length < maxStops) {
+    pool.sort((a, b) => {
+      const da = cursor ? (haversineKm(cursor.lat, cursor.lon, a.dest.lat, a.dest.lon) ?? 0) : 0;
+      const db = cursor ? (haversineKm(cursor.lat, cursor.lon, b.dest.lat, b.dest.lon) ?? 0) : 0;
+      return (b.score - db / 120) - (a.score - da / 120);
+    });
+    const pick = pool.shift();
+    const n = Math.min(wantsFor(pick.dest, remaining), remaining);
+    picks.push({ id: pick.id, nights: n });
+    remaining -= n;
+    cursor = pick.dest;
+  }
+
+  // Any nights left over deepen the first (usually biggest) stop.
+  if (remaining > 0 && picks.length) picks[0].nights += remaining;
+  return picks;
+}
 
 /** Rank + filter a city's things-to-do by the traveller's chosen interests.
  *  Items whose kind matches an interest are kept; when interests are set we drop

@@ -13,6 +13,11 @@
 
 const STANDALONE_KEY = 'carta.dayplans.v1';
 
+// The Day planner can plan days for the Trip planner's UNSAVED draft too; its
+// picks live under this well-known plan id until the trip is saved, at which
+// point useTripPlanner re-keys them to the real Supabase plan id.
+export const TRIP_DRAFT_PLAN_ID = 'tripdraft';
+
 // Per-plan sidecar keys: the day-by-day activity picks and the shape-your-day
 // answers, both keyed by plan id.
 export function assignmentsKey(planId) {

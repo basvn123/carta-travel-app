@@ -205,6 +205,7 @@ input, select {
 .app-header-account {
   display: flex;
   align-items: center;
+  gap: 16px; /* breathing room between the From picker and the account button */
   flex-shrink: 0;
   margin-left: auto;
 }
@@ -1102,6 +1103,100 @@ input, select {
 .trip-edit-btn { background: var(--ink); color: var(--paper); }
 .trip-plan-again-btn, .trip-startover-btn { background: rgba(245,241,232,0.94); border: 1px solid var(--rule); color: var(--ink-soft); }
 .trip-plan-again-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+/* Day planner: base-city + day-trip transport recommendation. */
+.daytrip-base .trip-block-title { display: flex; align-items: center; gap: 6px; }
+.daytrip-base .trip-block-title svg { color: var(--accent); }
+.daytrip-reco {
+  display: flex; align-items: flex-start; gap: 11px;
+  padding: 11px 13px;
+  border: 1px solid var(--rule);
+  border-left: 3px solid var(--accent);
+  border-radius: 10px;
+  background: rgba(200, 80, 30, 0.04);
+}
+.daytrip-reco-icon { color: var(--accent); margin-top: 2px; }
+.daytrip-reco-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.daytrip-reco-main b { display: inline-flex; align-items: center; gap: 5px; font-size: 13px; color: var(--ink); }
+.daytrip-reco-main b svg { color: var(--accent); }
+.daytrip-reco-main small { font-size: 11.5px; color: var(--ink-soft); line-height: 1.45; }
+.daytrip-hint { color: #2c7d54; }
+.daytrip-hint.warn { color: #b3402a; }
+.daytrip-more {
+  align-self: center;
+  padding: 5px 12px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: var(--paper);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  cursor: pointer;
+  white-space: nowrap;
+}
+.daytrip-more:hover { border-color: var(--accent); color: var(--accent); }
+.daytrip-modes { margin-top: 10px; }
+.daytrip-modes .trip-leg-mode { cursor: default; }
+
+/* "Fly to a nearby airport instead" alternatives (no direct fare). */
+.via-airport { margin-top: 10px; }
+.via-airport-title {
+  display: flex; align-items: center; gap: 6px;
+  font-family: var(--mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--ink-mute);
+  margin-bottom: 7px;
+}
+.via-airport-row {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 10px;
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  margin-bottom: 6px;
+}
+.via-airport-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+.via-airport-main b { font-size: 12.5px; color: var(--ink); }
+.via-airport-main small { font-size: 10.5px; color: var(--ink-soft); line-height: 1.4; }
+.via-airport-est { font-family: var(--mono); font-size: 12px; color: var(--ink); white-space: nowrap; }
+.via-airport-open {
+  padding: 4px 10px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: none;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  cursor: pointer;
+}
+.via-airport-open:hover { border-color: var(--accent); color: var(--accent); }
+.via-airport-note { font-size: 10.5px; color: var(--ink-mute); font-style: italic; margin-top: 2px; }
+.cost-fallback-note { margin-bottom: 8px; }
+
+/* First-visit "Ryanair fares only" notice. */
+.fare-notice { max-width: 420px; padding: 26px 26px 22px; }
+.fare-notice-text { font-size: 13.5px; line-height: 1.6; color: var(--ink-soft); margin: 10px 0 0; }
+.fare-notice-text b { color: var(--ink); }
+.fare-notice-btn { margin-top: 18px; width: 100%; }
+
+/* Desktop: planned-trip actions pinned at the bottom of the left panel. */
+.trip-sheet-footer {
+  flex: none;
+  padding: 10px 14px 12px;
+  border-top: 1px solid var(--rule);
+  background: var(--paper);
+}
+.trip-sheet-footer-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.trip-sheet-footer-row > button { flex: 1 1 auto; box-shadow: none; }
+.trip-footer-error { margin: 0 0 8px; }
+
+.trip-origin-row { display: flex; }
+.trip-origin-row .origin-picker { position: relative; }
 .trip-startover-btn:hover { border-color: #b3402a; color: #b3402a; }
 .trip-planned-error {
   position: absolute;
@@ -1394,6 +1489,101 @@ input, select {
 .guide-route-fare small { font-family: var(--mono); font-size: 9.5px; color: var(--ink-mute); }
 .guide-route.on .guide-route-fare b { color: var(--accent); }
 
+/* Flight quality chips: Carta's pick / Cheapest / Fastest. */
+.guide-route-badge {
+  display: inline-flex; align-items: center; gap: 3px;
+  padding: 2px 7px;
+  border-radius: 999px;
+  font-family: var(--mono);
+  font-size: 8.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+}
+.guide-route-badge.pick { background: var(--accent); color: #fff; }
+.guide-route-badge.cheap { background: rgba(58, 157, 107, 0.14); color: #2c7d54; }
+.guide-route-badge.fast { background: rgba(43, 108, 176, 0.12); color: #2b6cb0; }
+
+/* Getting-there: fly/car switch + the car option's reach notes. */
+.guide-arrive-mode { margin-bottom: 14px; }
+.guide-arrive-mode button { display: inline-flex; align-items: center; gap: 6px; }
+.guide-drive-notes { display: flex; flex-direction: column; gap: 8px; margin: 10px 0 14px; }
+.guide-drive-note {
+  display: flex; align-items: center; gap: 9px;
+  padding: 9px 12px;
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  font-size: 12.5px;
+  color: var(--ink-soft);
+}
+.guide-drive-note b { color: var(--ink); }
+.guide-noflight { padding: 4px 0 8px; }
+.guide-noflight .guide-empty { display: flex; align-items: baseline; gap: 6px; color: #b3402a; }
+.guide-noflight-back { margin-top: 10px; }
+
+/* Stay step: Carta-designs-it CTA, map/list switch, tier chips + legend. */
+.guide-design-btn {
+  display: flex; flex-direction: column; align-items: flex-start; gap: 2px;
+  width: 100%;
+  margin-bottom: 12px;
+  padding: 12px 16px;
+  border: none;
+  border-radius: 12px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: left;
+}
+.guide-design-btn:hover { opacity: 0.93; }
+.guide-design-btn small { font-weight: 400; font-size: 11px; opacity: 0.85; }
+.guide-design-btn > svg { display: inline; vertical-align: -1px; }
+.guide-stay-view { margin-bottom: 10px; }
+.guide-tier {
+  display: inline-flex; align-items: center; gap: 3px;
+  padding: 1.5px 7px;
+  border-radius: 999px;
+  font-family: var(--mono);
+  font-size: 8.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  white-space: nowrap;
+}
+.guide-tier-top { background: var(--accent); color: #fff; }
+.guide-tier-great { background: rgba(58, 157, 107, 0.14); color: #2c7d54; }
+.guide-tier-good { background: rgba(122, 111, 90, 0.14); color: var(--ink-soft); }
+.guide-tier-legend {
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  margin: -8px 0 14px;
+  font-size: 11px;
+}
+.guide-tier-legend-note { color: var(--ink-mute); font-size: 10.5px; }
+.guide-city-combo { font-size: 11px; color: var(--accent); margin-top: 3px; }
+.guide-city-combo b { font-weight: 600; }
+
+/* City-picker map pills: the browse map's price-pill language, city names +
+   worth-a-visit tint. */
+.citypick-map { height: 340px; }
+.citypick-pin {
+  padding: 3px 10px;
+  background: rgba(245, 241, 232, 0.95);
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  box-shadow: 0 1px 5px rgba(26, 26, 26, 0.18);
+  cursor: pointer;
+  transition: border-color .12s, background .12s, transform .12s;
+}
+.citypick-pin:hover { transform: translateY(-1px); border-color: var(--ink-soft); }
+.citypick-pin.tier-top { border-color: var(--accent); }
+.citypick-pin.tier-great { border-color: #3a9d6b; }
+.citypick-pin.on { background: var(--accent); border-color: var(--accent); }
+.citypick-pin.anchor { box-shadow: 0 0 0 2px rgba(200, 80, 30, 0.35), 0 1px 5px rgba(26, 26, 26, 0.18); }
+.citypick-name { font-size: 11px; font-weight: 600; color: var(--ink); white-space: nowrap; }
+.citypick-pin.on .citypick-name { color: #fff; }
+.citypick-pin.tier-ok .citypick-name { font-weight: 400; color: var(--ink-soft); }
+.citypick-pin.on.tier-ok .citypick-name { color: #fff; }
+
 /* Step 4 - stays: search, groups, budget */
 .guide-search {
   width: 100%;
@@ -1659,6 +1849,79 @@ input, select {
   transition: border-color .15s, color .15s;
 }
 .itin-gmaps:hover { border-color: var(--accent); color: var(--accent); }
+
+/* ── Overview: expandable cost breakdown (mirrors the Map tab's receipt) ── */
+.itin-breakdown-toggle {
+  width: 100%;
+  gap: 8px;
+  cursor: pointer;
+  background: none;
+  border: none;
+  border-top: 1px solid var(--rule);
+  text-align: left;
+}
+.itin-breakdown-toggle > span:first-child { display: inline-flex; align-items: baseline; gap: 6px; }
+.itin-breakdown-toggle svg { align-self: center; color: var(--accent); }
+.itin-breakdown-caret { font-family: var(--mono); font-size: 13px; color: var(--ink-mute); }
+.itin-breakdown-body { padding: 4px 2px 2px; }
+.itin-breakdown-body .trip-total-row .lbl svg { color: var(--ink-mute); margin-right: 4px; vertical-align: -1px; }
+
+/* ── Overview: the day list, each with a jump into the Day planner ── */
+.itin-days-list { margin-top: 16px; }
+.itin-day-row { display: flex; align-items: stretch; gap: 8px; margin-bottom: 6px; }
+.itin-day-row-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 9px 12px;
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color .15s;
+}
+.itin-day-row-main:hover { border-color: var(--accent); }
+.itin-day-row-num { font-family: var(--mono); font-size: 10.5px; color: var(--accent); text-transform: uppercase; letter-spacing: 0.08em; white-space: nowrap; }
+.itin-day-row-meta { font-size: 12.5px; color: var(--ink-soft); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.itin-day-plan-btn {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 0 14px;
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  background: var(--accent-bg);
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.itin-day-plan-btn:hover { border-color: var(--accent); }
+
+/* ── Day tab: overflow note + Day-planner handoff ── */
+.itin-day-overflow {
+  margin-top: 10px;
+  font-size: 12px;
+  color: var(--ink-mute);
+  font-style: italic;
+  line-height: 1.5;
+}
+.itin-day-planner-btn {
+  display: flex; align-items: center; justify-content: center; gap: 7px;
+  width: 100%;
+  margin-top: 12px;
+  padding: 11px 14px;
+  border: none;
+  border-radius: 12px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.itin-day-planner-btn:hover { opacity: 0.92; }
 
 .itin-day { padding-top: 14px; }
 .itin-day-head { margin-bottom: 14px; }
@@ -2296,9 +2559,12 @@ input, select {
   border: 1px solid rgba(196, 190, 169, 0.55);
   border-radius: 11px;
 }
+/* Stretch (not flex-end) so every filter's grey caption sits on the SAME top
+   line regardless of how tall its control is (the price slider's value row
+   used to push "Show" / "Travel by" out of line with "Price per person"). */
 .group-fields {
   display: flex;
-  align-items: flex-end;
+  align-items: stretch;
   gap: 18px;
   min-width: 0;
 }
@@ -2306,6 +2572,7 @@ input, select {
 .filter {
   display: flex;
   flex-direction: column;
+  justify-content: flex-start;
   gap: 3px;
   min-width: 0;
 }
@@ -2319,6 +2586,9 @@ input, select {
 .filter-label {
   font-family: var(--mono);
   font-size: 9px;
+  line-height: 12px;
+  min-height: 12px;
+  white-space: nowrap;
   text-transform: uppercase;
   letter-spacing: 0.13em;
   color: var(--ink-mute);
@@ -5604,6 +5874,22 @@ input, select {
   align-items: center;
   gap: 8px;
 }
+/* A trip plan + its own day-planner days, grouped as one card. */
+.saved-trip-group { display: flex; flex-direction: column; gap: 4px; }
+.saved-trip-days {
+  align-self: flex-start;
+  margin: 0 0 4px 14px;
+  padding: 4px 10px;
+  border: none;
+  border-left: 2px solid var(--rule);
+  border-radius: 0;
+  background: none;
+  font-size: 11.5px;
+  color: var(--ink-mute);
+  cursor: pointer;
+  text-align: left;
+}
+.saved-trip-days:hover { color: var(--accent); border-left-color: var(--accent); }
 .saved-trip-main {
   flex: 1;
   min-width: 0;
@@ -6677,11 +6963,23 @@ input, select {
    Trip type). The .filter-row wrappers collapse (display: contents) and
    `order` lays the fields out. ─── */
 @media (max-width: 768px) {
+  /* The sheet escapes its half-width slot in the header flex row and overlays
+     the map full-bleed, anchored to the bottom of the (absolute) .top-bar -
+     without this it inherits the narrow app-header-filters band and every
+     control clips. */
   .filter-bar.mobile-open .filter-rows {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 100%;
+    z-index: 30;
+    background: var(--paper);
+    border-bottom: 1px solid var(--rule);
+    box-shadow: 0 14px 28px rgba(26, 26, 26, 0.16);
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 14px 10px;
-    align-items: end;
+    align-items: start; /* captions of side-by-side pairs share one top line */
     padding: 12px 16px 18px;
     border-top: 1px solid var(--rule);
     max-height: calc(100dvh - 58px - 60px);

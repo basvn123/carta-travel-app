@@ -180,10 +180,15 @@ Eurostat PLI).
                                           // optional, sights omit it)
             "img": "https://upload.wikimedia.org/...400px-...jpg",  // v12: Wikipedia thumb
             "desc": "Central square of Bruges",                      // v12: one-line summary
-            "wiki": "https://en.wikipedia.org/wiki/..."              // v12: article link
+            "wiki": "https://en.wikipedia.org/wiki/...",             // v12: article link
                                           // img/desc/wiki only when the POI name resolves to
                                           // a Wikipedia article within 30 km (top 24 sights
                                           // + all actives are attempted; see enrich())
+            "pop": 1370                   // v12.1: avg daily Wikipedia pageviews over the
+                                          // last 12 months (int, enrich_activities.py).
+                                          // Only on items with a resolved article. The Day
+                                          // planner orders same-rate sights by this fame
+                                          // signal (must-see tier, deck ranking).
           }
         ]
       }

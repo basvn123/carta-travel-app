@@ -51,14 +51,24 @@ export function optimizeOrder(idxArray, itemsAll) {
 
 const MUST_CAP = 8; // heritage capitals rate 30+ places "3" - keep Must see scannable
 
+/** Real-world fame signal: average daily Wikipedia pageviews (`pop`, added by
+ *  enrich_activities.py). Missing = -1 so enriched items always outrank
+ *  unenriched ones when fame is what's being compared. */
+function popOf(item) {
+  return typeof item.pop === 'number' ? item.pop : -1;
+}
+
 /**
  * Tier a city's activity list for display. Returns { must, worth, more, active },
  * each an array of { item, idx } (idx = original index into `items`).
  *
  * With rate data (schema v12): must = rate-3 sights (capped, overflow spills
- * into worth), worth = rate 2+, more = the rest. Without rates (older data /
- * Wikivoyage-sourced cities) the list order is already importance-sorted, so
- * we fall back to positional tiers.
+ * into worth), worth = rate 2+, more = the rest. When popularity data is
+ * present (Wikipedia pageviews), the rate-3 pool is ordered by real-world fame
+ * first, so the cap keeps the genuinely famous places and demotes the
+ * technically-rated-3-but-obscure ones - a much sharper "must do vs alright"
+ * line. Without rates (older data / Wikivoyage-sourced cities) the list order
+ * is already importance-sorted, so we fall back to positional tiers.
  */
 export function tieredActivities(items) {
   const sights = [];
@@ -67,13 +77,21 @@ export function tieredActivities(items) {
     (item.active ? active : sights).push({ item, idx });
   });
   const hasRates = sights.some(({ item }) => item.rate != null);
+  const hasPop = sights.some(({ item }) => typeof item.pop === 'number');
   let must, worth, more;
   if (hasRates) {
-    const must3 = sights.filter(({ item }) => (item.rate ?? 0) >= 3);
+    let must3 = sights.filter(({ item }) => (item.rate ?? 0) >= 3);
+    if (hasPop) {
+      must3 = [...must3].sort((a, b) => (
+        popOf(b.item) - popOf(a.item)
+        || (b.item.heritage === true) - (a.item.heritage === true)
+      ));
+    }
     must = must3.slice(0, MUST_CAP);
+    const worth2 = sights.filter(({ item }) => (item.rate ?? 0) === 2);
     worth = [
       ...must3.slice(MUST_CAP),
-      ...sights.filter(({ item }) => (item.rate ?? 0) === 2),
+      ...(hasPop ? [...worth2].sort((a, b) => popOf(b.item) - popOf(a.item)) : worth2),
     ];
     more = sights.filter(({ item }) => (item.rate ?? 0) < 2);
   } else {
@@ -131,6 +149,13 @@ export function kindMatchesInterests(kind, interests) {
 function kindDirectMatch(kind, interests) {
   const tags = KIND_INTERESTS[kind];
   return !!tags && !!interests && tags.some((t) => interests.has(t));
+}
+
+/** 0..0.8 fame boost from Wikipedia pageviews - enough to lift a world-famous
+ *  sight over a same-rate peer, never enough to outrank a whole rate tier. */
+function popBoost(item) {
+  const p = typeof item.pop === 'number' ? item.pop : 0;
+  return Math.min(p / 4000, 1) * 0.8;
 }
 
 // How full a drafted day may get, by pace: max stop count and a rough on-foot
@@ -195,7 +220,7 @@ export function candidateDeck(items, interests, limit = 16) {
     const base = item.active
       ? (kindDirectMatch(item.kind, iset) ? 2.5 : -1)
       : (item.rate ?? 1.5);
-    return base + (kindDirectMatch(item.kind, iset) ? 0.75 : 0) + (item.heritage ? 0.25 : 0);
+    return base + (kindDirectMatch(item.kind, iset) ? 0.75 : 0) + (item.heritage ? 0.25 : 0) + popBoost(item);
   };
   return all
     .filter((c) => score(c) > 0.5 && kindMatchesInterests(c.item.kind, iset))
@@ -305,7 +330,7 @@ export function draftDays({ items, numDays, interests, paceKey, dwellFn }) {
   if (pool.length < pace.stops * numDays) pool = all;
   const score = ({ item }) => {
     const base = item.active ? (kindDirectMatch(item.kind, interests) ? 2.5 : -1) : (item.rate ?? 1.5);
-    return base + (kindDirectMatch(item.kind, interests) ? 0.75 : 0) + (item.heritage ? 0.25 : 0);
+    return base + (kindDirectMatch(item.kind, interests) ? 0.75 : 0) + (item.heritage ? 0.25 : 0) + popBoost(item);
   };
   const ranked = [...pool].sort((a, b) => score(b) - score(a));
   // Interest-less actives score below every sight; drop them from drafts.

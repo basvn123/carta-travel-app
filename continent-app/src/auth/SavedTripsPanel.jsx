@@ -2,7 +2,17 @@ import React, { useEffect, useState } from 'react';
 import { useAuth } from './AuthContext.jsx';
 import { fetchSavedTrips, deleteTrip } from './tripStorage.js';
 import { fetchTripPlans, deleteTripPlan } from './tripPlanStorage.js';
-import { loadStandalonePlans, deleteStandalonePlan } from '../planner/dayPlanStore.js';
+import { loadStandalonePlans, deleteStandalonePlan, loadAssignments } from '../planner/dayPlanStore.js';
+
+// How many individual days of a trip plan have Day-planner picks on this
+// device (assignments = { stopIdx: { dayIdx: [activityIdx...] } }).
+function countPlannedDays(planId) {
+  const a = loadAssignments(planId);
+  return Object.values(a || {}).reduce(
+    (n, days) => n + Object.values(days || {}).filter((l) => Array.isArray(l) && l.length).length,
+    0,
+  );
+}
 
 // Standalone Saved trips panel, opened from the bottom nav (the same list also
 // lives inside AccountPanel; this gives it a one-tap home of its own). Every
@@ -127,28 +137,44 @@ export function SavedTripsPanel({ onClose, onLoadTrip, onLoadTripPlan, onOpenAut
         <div className="panel-section">
           <div className="section-title">Your trip plans</div>
           <div className="saved-trip-list">
-            {tripPlans.map((p) => (
-              <div className="saved-trip-item" key={p.id}>
-                <button
-                  className="saved-trip-main"
-                  onClick={() => onLoadTripPlan && onLoadTripPlan(p.id)}
-                  title="Open this trip"
-                >
-                  <span className="saved-trip-city">{p.label || 'Untitled trip'}</span>
-                  {p.updated_at && (
-                    <span className="saved-trip-meta">Updated {fmtDate(p.updated_at.slice(0, 10))}</span>
-                  )}
-                </button>
-                <button
-                  className="saved-trip-delete"
-                  onClick={() => handleDeleteTripPlan(p.id)}
-                  aria-label={`Remove ${p.label || 'trip'}`}
-                  title="Remove"
-                >
-                  ×
-                </button>
-              </div>
-            ))}
+            {tripPlans.map((p) => {
+              const plannedDays = countPlannedDays(p.id);
+              return (
+                <div className="saved-trip-group" key={p.id}>
+                  <div className="saved-trip-item">
+                    <button
+                      className="saved-trip-main"
+                      onClick={() => onLoadTripPlan && onLoadTripPlan(p.id)}
+                      title="Open this trip"
+                    >
+                      <span className="saved-trip-city">{p.label || 'Untitled trip'}</span>
+                      {p.updated_at && (
+                        <span className="saved-trip-meta">Updated {fmtDate(p.updated_at.slice(0, 10))}</span>
+                      )}
+                    </button>
+                    <button
+                      className="saved-trip-delete"
+                      onClick={() => handleDeleteTripPlan(p.id)}
+                      aria-label={`Remove ${p.label || 'trip'}`}
+                      title="Remove"
+                    >
+                      ×
+                    </button>
+                  </div>
+                  {/* This trip's own day-by-day plans, made in the Day planner
+                      (stored on this device, keyed by the trip). */}
+                  <button
+                    className="saved-trip-days"
+                    onClick={() => onOpenDayPlan && onOpenDayPlan({ planId: p.id, stopIndex: 0, dayIndex: 0 })}
+                    title="Plan this trip's days in the Day planner"
+                  >
+                    {plannedDays > 0
+                      ? `${plannedDays} ${plannedDays === 1 ? 'day' : 'days'} planned - keep planning →`
+                      : 'Plan its days in the Day planner →'}
+                  </button>
+                </div>
+              );
+            })}
           </div>
         </div>
       )}

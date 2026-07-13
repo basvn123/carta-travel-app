@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Dropdown } from '../components/Dropdown.jsx';
 import { DateField } from '../components/DateField.jsx';
+import { OriginPicker } from '../components/OriginPicker.jsx';
 import { GemIcon } from '../components/GemRating.jsx';
 import { CountryIntel } from '../components/CountryIntel.jsx';
 import { TripMap } from '../map/TripMap.jsx';
@@ -138,7 +139,7 @@ function Suggestions({ suggestions, onPick }) {
   );
 }
 
-export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, openPlanId, onOpenPlanConsumed }) {
+export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, openPlanId, onOpenPlanConsumed, origin, onChangeOrigin, onPlanDay }) {
   const countryInsights = useCountryInsights();
   const tp = useTripPlanner(data, countryInsights);
   const destinations = data?.destinations || {};
@@ -291,18 +292,20 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
     .filter((s) => s.dest)
     .map((s) => ({ lat: s.dest.lat, lon: s.dest.lon, city: s.dest.city }));
 
-  // Once the trip is planned, draw the real road route through the stops
-  // (keyless OSRM, same as the day planner's walking route). Keyed on the
-  // coordinates so a stale response for a since-changed route is ignored;
-  // falls back to the dashed straight-line hops when unavailable.
+  // Draw the real road route through the stops whenever there are two or more
+  // (keyless OSRM, same as the day planner's walking route) - while editing
+  // AND once planned, so the line never cuts across water when a road exists.
+  // Keyed on the coordinates so a stale response for a since-changed route is
+  // ignored; falls back to the dashed straight-line hops when the router has
+  // no answer (a genuine sea crossing).
   const routeKey = mapStops.map((p) => `${p.lat.toFixed(4)},${p.lon.toFixed(4)}`).join(';');
   const [tripRoute, setTripRoute] = useState(null);
   useEffect(() => {
-    if (!tp.planned || mapStops.length < 2) { setTripRoute(null); return undefined; }
+    if (mapStops.length < 2) { setTripRoute(null); return undefined; }
     let alive = true;
     fetchDrivingRoute(mapStops).then((r) => { if (alive && r) setTripRoute({ key: routeKey, ...r }); });
     return () => { alive = false; };
-  }, [tp.planned, routeKey]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [routeKey]); // eslint-disable-line react-hooks/exhaustive-deps
   const tripRouteOk = tripRoute && tripRoute.key === routeKey;
 
   const addPending = () => {
@@ -328,6 +331,22 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
 
   const groundTotal = tp.legs.reduce((sum, l) => sum + (l ? l.ground_total : 0), 0);
 
+  // Planned-view actions (Save / Edit / Replan / Start over). On desktop they
+  // sit pinned at the BOTTOM of the left panel; on mobile they stay a floating
+  // bar over the map so they're reachable above the bottom sheet.
+  const plannedActionButtons = (
+    <>
+      <button className="trip-save-planned-btn" onClick={handleSave} disabled={tp.saveState === 'saving'}>
+        {tp.saveState === 'saving' ? 'Saving…' : tp.saveState === 'saved' ? 'Saved ✓' : tp.planId ? 'Update trip' : 'Save trip'}
+      </button>
+      <button className="trip-edit-btn" onClick={() => { tp.setPlanned(false); setSheetOpen(true); }}>Edit</button>
+      {tp.stopDetails.length >= 3 && (
+        <button className="trip-plan-again-btn" onClick={() => tp.optimizeRoute()} title="Re-run Carta's routing from your first stop">↻ Replan</button>
+      )}
+      <button className="trip-startover-btn" onClick={handleStartOver} title="Delete this trip and begin again">Start over</button>
+    </>
+  );
+
   return (
     <div className="trip-planner-screen">
       <TripMap
@@ -335,7 +354,7 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
         padBottom={isNarrow ? (sheetOpen ? sheetH : 96) : 48}
         onSelectStop={setSelectedStop}
         selectedIndex={selectedStop}
-        routeGeometry={tp.planned && tripRouteOk ? tripRoute.geometry : null}
+        routeGeometry={tripRouteOk ? tripRoute.geometry : null}
       />
 
       {/* Mobile: a clean launcher card over the map until the traveller chooses
@@ -408,8 +427,16 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
               grandTotal={tp.grandTotal}
               groupSize={tp.groupSize}
               flight={tp.flight}
+              legs={tp.legs}
+              stayCosts={tp.stayCosts}
+              carRental={tp.carRental}
               activeStopIndex={selectedStop}
               onSelectStop={setSelectedStop}
+              onPlanDay={onPlanDay ? (day) => onPlanDay({
+                planId: tp.planId,
+                stopIndex: day.stopIndex,
+                dayIndex: day.dayOfStay - 1,
+              }) : null}
             />
           ) : (
           <>
@@ -437,6 +464,18 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
               </label>
             </div>
           </div>
+
+          {/* Step 2 - where the trip starts from. Dates first, then this, then
+              the stops - the same order a traveller actually decides things. */}
+          {hasDates && onChangeOrigin && (
+            <div className="trip-block">
+              <div className="trip-block-title">Where are you travelling from?</div>
+              <div className="trip-origin-row">
+                <OriginPicker data={data} origin={origin} onChangeOrigin={onChangeOrigin} />
+              </div>
+              <p className="trip-note">Flights are priced from this airport, and a car trip starts here too.</p>
+            </div>
+          )}
 
           {hasDates && (
             <>
@@ -649,23 +688,24 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
           </>
           )}
         </div>
+
+        {/* Desktop: the planned trip's actions live at the bottom of this
+            panel, always visible under the itinerary. */}
+        {tp.planned && !isNarrow && (
+          <div className="trip-sheet-footer">
+            {saveError && <p className="trip-note trip-note-error trip-footer-error">{saveError}</p>}
+            <div className="trip-sheet-footer-row">{plannedActionButtons}</div>
+          </div>
+        )}
       </div>
 
-      {/* Planned itinerary: save it, go back to editing, re-run the routing,
-          or throw it away and start over. */}
-      {tp.planned && (
+      {/* Mobile: the same actions float above the bottom sheet. */}
+      {tp.planned && isNarrow && (
         <div className="trip-planned-actions" onClick={(e) => e.stopPropagation()}>
-          <button className="trip-save-planned-btn" onClick={handleSave} disabled={tp.saveState === 'saving'}>
-            {tp.saveState === 'saving' ? 'Saving…' : tp.saveState === 'saved' ? 'Saved ✓' : tp.planId ? 'Update trip' : 'Save trip'}
-          </button>
-          <button className="trip-edit-btn" onClick={() => { tp.setPlanned(false); setSheetOpen(true); }}>Edit</button>
-          {tp.stopDetails.length >= 3 && (
-            <button className="trip-plan-again-btn" onClick={() => tp.optimizeRoute()} title="Re-run Carta's routing from your first stop">↻ Replan</button>
-          )}
-          <button className="trip-startover-btn" onClick={handleStartOver} title="Delete this trip and begin again">Start over</button>
+          {plannedActionButtons}
         </div>
       )}
-      {tp.planned && saveError && (
+      {tp.planned && isNarrow && saveError && (
         <div className="trip-planned-error" onClick={(e) => e.stopPropagation()}>{saveError}</div>
       )}
 

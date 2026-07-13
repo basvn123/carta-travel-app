@@ -3,6 +3,8 @@ import { TripMap } from '../map/TripMap.jsx';
 import { Dropdown } from '../components/Dropdown.jsx';
 import { DateField } from '../components/DateField.jsx';
 import { tripDaysBetween, haversineKm } from '../lib/runtime_pricing.js';
+import { legTransportOptions } from '../lib/transport.js';
+import { eur } from '../lib/format.js';
 import { fetchActivitiesFull } from '../lib/appData.js';
 import { fetchTripPlans, fetchTripPlanWithStops } from '../auth/tripPlanStorage.js';
 import { fetchWalkingRoute, googleMapsDirUrl } from '../lib/routing.js';
@@ -15,8 +17,10 @@ import { ShapeDayWizard } from './ShapeDayWizard.jsx';
 import {
   loadStandalonePlans, persistStandalonePlans, deleteStandalonePlan,
   loadAssignments, persistAssignments, loadPrefs, persistPrefs,
+  TRIP_DRAFT_PLAN_ID,
 } from './dayPlanStore.js';
-import { SparkIcon, StarIcon, InfoIcon, MountainIcon, ShareIcon, MapPinIcon } from '../components/Icons.jsx';
+import { loadTripDraft } from './tripDraftStore.js';
+import { SparkIcon, StarIcon, InfoIcon, MountainIcon, ShareIcon, MapPinIcon, TrainIcon, BusIcon, CarIcon, BedIcon } from '../components/Icons.jsx';
 
 const fmtDate = (iso) => (iso ? fmtDateFull(iso).slice(0, 6) : '');
 
@@ -36,7 +40,85 @@ function buildStandalonePlan(sp) {
     cursor = addDays(cursor, days);
     return { destination_id: st.destinationId, arrive_date: arrive, depart_date: cursor };
   });
-  return { id: sp.id, label: sp.label || '', standalone: true, stops };
+  return { id: sp.id, label: sp.label || '', standalone: true, stayCityId: sp.stayCityId || '', stops };
+}
+
+const MODE_META = {
+  train: { Icon: TrainIcon, label: 'Train' },
+  bus: { Icon: BusIcon, label: 'Bus' },
+  car: { Icon: CarIcon, label: 'Car' },
+};
+
+/**
+ * "How do you get there for the day?" - the most efficient way from the
+ * traveller's base (their stay city) to the day-trip destination, using the
+ * same per-leg transport engine the Trip planner prices with: train / bus /
+ * car, honest distance-based estimates, national-operator booking links, and
+ * a day-return framing (costs shown both ways).
+ */
+function DayTripTransport({ fromDest, toDest, carModel, countryInsights }) {
+  const [open, setOpen] = useState(false);
+  if (!fromDest || !toDest || fromDest.city === toDest.city) return null;
+  const opts = legTransportOptions(fromDest, toDest, 1, { carModel, countryInsights });
+  if (!opts) return null;
+  if (opts.no_road) {
+    return (
+      <div className="trip-block">
+        <div className="trip-block-title">Getting there from {fromDest.city}</div>
+        <p className="trip-note">{opts.note || 'No overland route - look at ferries or a flight.'}</p>
+      </div>
+    );
+  }
+  const rec = opts.modes[opts.recommended];
+  const RecIcon = MODE_META[opts.recommended].Icon;
+  // A day trip only works if you can be there by mid-morning and back for
+  // dinner: flag long rides and suggest when to set off.
+  const oneWayH = rec.hours;
+  const feasible = oneWayH <= 3;
+  const departHint = oneWayH <= 1 ? 'an easy start around 9:00'
+    : oneWayH <= 2 ? 'set off by 8:30 to get a full day'
+    : oneWayH <= 3 ? 'leave by 8:00 - it\'s a long ride, but doable'
+    : 'honestly too far for a day trip - consider staying overnight';
+
+  return (
+    <div className="trip-block daytrip-transport">
+      <div className="trip-block-title">Getting there from {fromDest.city}</div>
+      <div className="daytrip-reco">
+        <span className="daytrip-reco-icon"><RecIcon size={15} /></span>
+        <span className="daytrip-reco-main">
+          <b><SparkIcon size={10} /> {MODE_META[opts.recommended].label} is your best bet</b>
+          <small>
+            ~{opts.road_km} km, about {rec.hours}h each way, est. {eur(rec.eur_pp)}/person one way
+            ({eur(rec.eur_pp * 2)} day return)
+          </small>
+          <small className={feasible ? 'daytrip-hint' : 'daytrip-hint warn'}>{departHint}</small>
+        </span>
+        <button className="daytrip-more" onClick={() => setOpen(!open)} aria-expanded={open}>
+          {open ? 'Less' : 'Compare'}
+        </button>
+      </div>
+      {open && (
+        <>
+          <div className="trip-leg-modes daytrip-modes">
+            {Object.entries(opts.modes).map(([m, o]) => (
+              <div key={m} className={`trip-leg-mode ${opts.recommended === m ? 'on' : ''}`}>
+                <span>{React.createElement(MODE_META[m].Icon, { size: 12 })} {MODE_META[m].label}</span>
+                <b>{eur(o.eur_pp)}{m === 'car' ? '/car' : '/p'}</b>
+                <small>~{o.hours}h each way</small>
+              </div>
+            ))}
+          </div>
+          <div className="trip-leg-links">
+            {rec.links.map((l, j) => (
+              <a key={j} href={l.url} target="_blank" rel="noreferrer">{l.label} ↗</a>
+            ))}
+          </div>
+          {rec.note && <p className="trip-leg-note">{rec.note}</p>}
+          <p className="trip-leg-disclaimer">Estimates, not live fares - check the links for real times &amp; prices.</p>
+        </>
+      )}
+    </div>
+  );
 }
 
 export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPlanConsumed }) {
@@ -97,12 +179,48 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
     bootPlan(sp.id);
   };
 
-  // Deep-link from the Saved-trips overview: open that day plan directly.
+  // The Trip planner's UNSAVED draft, opened as a plannable trip: same shape a
+  // saved plan has, with dates chained from the draft's start date. Picks made
+  // here persist under TRIP_DRAFT_PLAN_ID and move with the trip when saved.
+  const openTripDraft = (draft) => {
+    let cursor = draft.tripStart || todayISO();
+    const stops = (draft.stops || []).map((st) => {
+      const nights = Math.max(1, st.nights || 1);
+      const arrive = cursor;
+      cursor = addDays(cursor, nights);
+      return { destination_id: st.destinationId, arrive_date: arrive, depart_date: cursor };
+    });
+    setPlan({ id: TRIP_DRAFT_PLAN_ID, label: draft.planLabel || 'Your trip', tripDraft: true, stops });
+    bootPlan(TRIP_DRAFT_PLAN_ID);
+  };
+
+  // Deep-link into the planner: a plain id opens a saved day plan from the
+  // Saved-trips overview; an object is the Trip planner's "plan this day"
+  // handoff ({ planId|null, stopIndex, dayIndex }) - null planId means the
+  // still-unsaved draft.
   useEffect(() => {
     if (!openPlanId) return;
-    const sp = standalonePlans.find((x) => x.id === openPlanId);
-    if (sp) openStandalone(sp);
-    onOpenPlanConsumed && onOpenPlanConsumed();
+    (async () => {
+      if (typeof openPlanId === 'object') {
+        const { planId: targetPlanId, stopIndex, dayIndex } = openPlanId;
+        let opened = false;
+        if (targetPlanId) {
+          try { await openPlan(targetPlanId); opened = true; } catch { /* plan gone */ }
+        } else {
+          const draft = loadTripDraft();
+          if (draft) { openTripDraft(draft); opened = true; }
+        }
+        if (opened) {
+          if (stopIndex != null) setStopIdx(Math.max(0, stopIndex));
+          if (dayIndex != null) setDayIdx(Math.max(0, dayIndex));
+        }
+      } else {
+        const sp = standalonePlans.find((x) => x.id === openPlanId);
+        if (sp) openStandalone(sp);
+        else { try { await openPlan(openPlanId); } catch { /* not found */ } }
+      }
+      onOpenPlanConsumed && onOpenPlanConsumed();
+    })();
   }, [openPlanId]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const startStandalone = () => {
@@ -524,6 +642,43 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
       <div className="trip-sheet" onClick={(e) => e.stopPropagation()}>
         <div className="trip-sheet-grip" />
         <div className="trip-sheet-scroll">
+
+          {/* Day trips: where is the traveller based? Filling this in unlocks
+              the door-to-door "how do you get there" recommendation below. */}
+          {plan.standalone && (
+            <div className="trip-block daytrip-base">
+              <div className="trip-block-title"><BedIcon size={13} /> Where are you staying?</div>
+              <div className="trip-add-row">
+                <Dropdown
+                  value={plan.stayCityId || ''}
+                  onChange={(id) => patchStandalone((sp) => { sp.stayCityId = id; return sp; })}
+                  options={allCityOptions}
+                  placeholder="Your base city (for travel advice)"
+                  searchPlaceholder="Search cities"
+                />
+                {plan.stayCityId && (
+                  <button
+                    className="trip-stop-remove"
+                    onClick={() => patchStandalone((sp) => { sp.stayCityId = ''; return sp; })}
+                    aria-label="Clear stay city"
+                    title="Clear"
+                  >×</button>
+                )}
+              </div>
+              {!plan.stayCityId && (
+                <p className="trip-note">Tell Carta your base and it recommends the smartest way to get to each day-trip city.</p>
+              )}
+            </div>
+          )}
+
+          {plan.standalone && plan.stayCityId && stop && (
+            <DayTripTransport
+              fromDest={destinations[plan.stayCityId] || null}
+              toDest={stop.dest}
+              carModel={data?.meta?.car_model || null}
+              countryInsights={countryInsights}
+            />
+          )}
 
           {stops.length > 1 && (
             <div className="trip-block">

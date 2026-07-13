@@ -1,6 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { originGroups, originLabel } from '../lib/origins.js';
-import { PlaneIcon } from './TransportIcons.jsx';
 
 /**
  * "Where are you flying from?" - the global departure-airport control that
@@ -53,9 +52,8 @@ export function OriginPicker({ data, origin, onChangeOrigin }) {
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
         aria-haspopup="listbox"
-        title="Change your departure airport"
+        title="Where are you travelling from? Flights and drives both start here"
       >
-        <PlaneIcon size={13} />
         <span className="origin-btn-label">
           <span className="origin-btn-from">From</span>
           <b>{label}</b>

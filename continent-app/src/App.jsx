@@ -40,6 +40,9 @@ const GUEST_KEY = 'continent.guestMode.v1';
 // dismissed - it's onboarding, not a recurring notice.
 const MAP_GUIDE_KEY = 'continent.mapGuideDismissed.v1';
 
+// One-time notice that every flight price in the app is a Ryanair fare.
+const FARE_NOTICE_KEY = 'carta.fareNotice.v1';
+
 export default function App() {
   return (
     <AuthProvider>
@@ -173,6 +176,15 @@ function TravelApp() {
   // tapping the pill expands the text in a popover that overlays the map rather
   // than pushing it down.
   const [mapGuideOpen, setMapGuideOpen] = useState(false);
+
+  // First visit: make it unmissable that flight prices are Ryanair fares only.
+  const [fareNoticeDismissed, setFareNoticeDismissed] = useState(
+    () => typeof window !== 'undefined' && localStorage.getItem(FARE_NOTICE_KEY) === '1'
+  );
+  const dismissFareNotice = () => {
+    localStorage.setItem(FARE_NOTICE_KEY, '1');
+    setFareNoticeDismissed(true);
+  };
 
   // Let the user collapse the destinations list to give the map the full width.
   // On phones (<=768px) it starts collapsed so the map opens as big as possible;
@@ -414,6 +426,25 @@ function TravelApp() {
         )}
       </div>
 
+      {/* First visit: the fares-source notice, front and centre over the map. */}
+      {activeTab === 'map' && !fareNoticeDismissed && (
+        <div className="guide-overlay fare-notice-overlay" onClick={dismissFareNotice}>
+          <div className="guide-modal fare-notice" onClick={(e) => e.stopPropagation()}>
+            <h2 className="guide-title">Ryanair fares only</h2>
+            <p className="fare-notice-text">
+              Every flight price in Carta is a real stored <b>Ryanair</b> fare from your
+              chosen departure airport - no other airlines are included. Accommodation
+              and daily costs are honest estimates from real local data.
+            </p>
+            <p className="fare-notice-text">
+              Change the departure airport any time with the <b>From</b> picker in the top bar -
+              anyone in Europe can plan from their own airport.
+            </p>
+            <button className="guide-next fare-notice-btn" onClick={dismissFareNotice}>Got it</button>
+          </div>
+        </div>
+      )}
+
       {activeTab === 'map' && (
         <>
           <div onClick={(e) => e.stopPropagation()}>
@@ -540,6 +571,12 @@ function TravelApp() {
             onRequestAuth={() => setAuthModalOpen(true)}
             openPlanId={pendingTripPlanId}
             onOpenPlanConsumed={() => setPendingTripPlanId(null)}
+            origin={choices.origin}
+            onChangeOrigin={setOrigin}
+            onPlanDay={(target) => {
+              setPendingDayPlanId(target); // { planId|null, stopIndex, dayIndex }
+              setActiveTab('day');
+            }}
           />
         </Suspense>
       )}

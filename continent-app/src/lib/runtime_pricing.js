@@ -423,6 +423,45 @@ export function composeTrip(dest, departDate, returnDate, choices) {
   };
 }
 
+/**
+ * "Fly to the nearest airport, then drive/taxi the last stretch" - the honest
+ * alternative when a destination has no direct fare from the chosen origin for
+ * these dates. Scans the catalogue for nearby airport destinations that DO
+ * have a real fare, and prices the ground last leg per road km (shared
+ * taxi/bus/rental scale, floor €8 - same family as the pipeline's anchor
+ * transfers). Returns the best few, cheapest door-to-door first.
+ */
+export function viaNearestAirport(dest, allDests, departDate, returnDate, choices, { maxKm = 320, limit = 3 } = {}) {
+  if (!dest || dest.lat == null || !allDests) return [];
+  const destRoad = (dest.local_transport || {}).road_connected !== false;
+  if (!destRoad) return [];
+  const out = [];
+  for (const [id, d] of Object.entries(allDests)) {
+    if (id === dest.id || d.lat == null || d.city === dest.city) continue;
+    if (!d.iata) continue; // needs to be a real airport you can fly into
+    if ((d.local_transport || {}).road_connected === false) continue;
+    const km = haversineKm(dest.lat, dest.lon, d.lat, d.lon);
+    if (km == null || km > maxKm || km < 8) continue;
+    const fare = pickFareForDates(d, departDate, returnDate, choices.origin_pref);
+    if (!fare) continue;
+    const roadKm = Math.round(km * 1.3);
+    const legPp = Math.max(8, roadKm * 0.12); // per person, one way
+    out.push({
+      id,
+      city: d.city,
+      country: d.country,
+      iata: d.iata,
+      fare_per_person: round2(fare.fare),
+      road_km: roadKm,
+      drive_hours_one_way: Math.round((roadKm / 80) * 10) / 10,
+      leg_eur_pp_one_way: round2(legPp),
+      total_pp_est: round2(fare.fare + legPp * 2),
+    });
+  }
+  out.sort((a, b) => a.total_pp_est - b.total_pp_est);
+  return out.slice(0, limit);
+}
+
 /** Cheapest bookable total for these dates, or null. */
 export function cheapestTotal(dest, departDate, returnDate, choices) {
   const b = composeTrip(dest, departDate, returnDate, choices);
