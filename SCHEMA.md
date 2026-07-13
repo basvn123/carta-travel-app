@@ -1,4 +1,4 @@
-# app_data schema - v12
+# app_data schema - v13
 
 The pipeline and the React app share one contract. A trip is priced three ways,
 all from real data:
@@ -101,8 +101,13 @@ Eurostat PLI).
       "city": "Madrid",
       "country": "Spain",
       "iso2": "ES",
-      "lat": 40.4168,
+      "lat": 40.4168,              // for airport tier this is the AIRPORT
       "lon": -3.7038,
+      "city_lat": 40.4165,          // v13: actual city centre. For gems == lat/lon;
+      "city_lon": -3.7026,          //   for airport tier the median of its POIs (the
+                                    //   airport can be 90 km out, e.g. Stockholm/Skavsta).
+                                    //   Use for "distance to the town" (day-trip advice,
+                                    //   day-planner map centring, POI radii), not fares.
       "categories": ["city", "art"],
       "tags": [],
       "blurb": null,

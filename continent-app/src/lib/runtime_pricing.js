@@ -73,6 +73,28 @@ export function haversineKm(lat1, lon1, lat2, lon2) {
   return 2 * R * Math.asin(Math.sqrt(a));
 }
 
+// The city-centre coordinate of a destination. Airport-tier rows store their
+// AIRPORT lat/lon (where Ryanair lands); city_lat/city_lon (schema v13) is the
+// actual centre. Use this whenever the question is "how far is X from the town
+// itself" - day-trip travel advice, day-planner map centring, POI radii - not
+// "how far did the plane fly" (that legitimately measures to the airport).
+// Falls back to the stored coordinate when no city centre is set.
+export function cityCoords(dest) {
+  if (!dest) return { lat: null, lon: null };
+  return {
+    lat: dest.city_lat != null ? dest.city_lat : dest.lat,
+    lon: dest.city_lon != null ? dest.city_lon : dest.lon,
+  };
+}
+
+// A shallow copy of a destination with lat/lon swapped for its city centre, so
+// existing helpers that read dest.lat/lon measure from the town, not the runway.
+export function withCityCoords(dest) {
+  if (!dest) return dest;
+  const { lat, lon } = cityCoords(dest);
+  return { ...dest, lat, lon };
+}
+
 // How many cars a group needs (split by seats used per car).
 export function carsForGroup(groupSize, capacity) {
   return Math.max(1, Math.ceil(Math.max(1, groupSize) / Math.max(1, capacity || 4)));

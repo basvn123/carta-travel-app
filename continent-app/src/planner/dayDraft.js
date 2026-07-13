@@ -14,7 +14,7 @@
  * speak in ORIGINAL INDICES into that array - the same indices the planner's
  * saved assignments use.
  */
-import { haversineKm } from '../lib/runtime_pricing.js';
+import { haversineKm, cityCoords } from '../lib/runtime_pricing.js';
 
 /** Reorders a day's assigned activity indices to minimize backtracking - a
  *  simple nearest-neighbour walk starting from the first-added stop with
@@ -200,12 +200,16 @@ export function feasibilityLimits({ dayLen, walk } = {}) {
 export const MAX_POI_KM_FROM_CITY = 20;
 
 /** Drop activity items that are unrealistically far from the city centre.
- *  Keeps items without coordinates (they can't mislead the router). */
+ *  Keeps items without coordinates (they can't mislead the router).
+ *  Measures from the city centre, not the stored coordinate: an airport-tier
+ *  destination's lat/lon is the runway (e.g. Stockholm's is 90 km out at
+ *  Skavsta), which would drop every genuine city-centre POI. */
 export function saneItemsForCity(items, cityDest) {
-  if (!cityDest || cityDest.lat == null) return items || [];
+  const centre = cityCoords(cityDest);
+  if (centre.lat == null) return items || [];
   return (items || []).filter((it) => {
     if (it.lat == null || it.lon == null) return true;
-    const km = haversineKm(cityDest.lat, cityDest.lon, it.lat, it.lon);
+    const km = haversineKm(centre.lat, centre.lon, it.lat, it.lon);
     return km == null || km <= MAX_POI_KM_FROM_CITY;
   });
 }

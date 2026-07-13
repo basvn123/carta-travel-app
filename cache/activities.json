@@ -4457,7 +4457,10 @@
     "lat": 43.28701400756836,
     "lon": -2.873115062713623,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Zamudio_-_Cadalso_baserria_1.jpg/500px-Zamudio_-_Cadalso_baserria_1.jpg",
+    "desc": "patrimonio construído vasco destacado en Zamudio",
+    "wiki": "https://es.wikipedia.org/wiki/Caser%C3%ADo_Cadalso"
    },
    {
     "name": "Torre Zamudio",
@@ -5986,7 +5989,10 @@
     "lat": 42.879722595214844,
     "lon": -8.544082641601562,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a1/Casa_del_De%C3%A1n-porras.jpg/500px-Casa_del_De%C3%A1n-porras.jpg",
+    "desc": "edificio en Santiago de Compostela",
+    "wiki": "https://es.wikipedia.org/wiki/Casa_do_De%C3%A1n"
    },
    {
     "name": "Museo das Peregrinacións e de Santiago",
@@ -9137,7 +9143,10 @@
     "lat": 28.9564266204834,
     "lon": -13.547590255737305,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Arrecife._Lanzarote-33.jpg/500px-Arrecife._Lanzarote-33.jpg",
+    "desc": "bien de interés cultural",
+    "wiki": "https://es.wikipedia.org/wiki/Castillo_de_San_Gabriel"
    },
    {
     "name": "San Ginés, Arrecife",
@@ -9815,7 +9824,10 @@
     "kind": "Square",
     "lat": 27.987213134765625,
     "lon": -15.37564754486084,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/Gran_Canaria%2C_Telde%2C_Playa_de_Melenara.jpg/500px-Gran_Canaria%2C_Telde%2C_Playa_de_Melenara.jpg",
+    "desc": "localidad y playa española",
+    "wiki": "https://es.wikipedia.org/wiki/Melenara"
    },
    {
     "name": "Montaña de Agüimes",
@@ -16572,7 +16584,10 @@
     "lat": 44.531585693359375,
     "lon": 11.278427124023438,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/c/cd/Villa-Gina.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "desc": "villa di Borgo Panigale, Bologna",
+    "wiki": "https://it.wikipedia.org/wiki/Villa_Gina"
    },
    {
     "name": "Chiesa di Santa Maria Assunta",
@@ -21146,7 +21161,10 @@
     "kind": "Castle",
     "lat": 40.59367370605469,
     "lon": 8.204344749450684,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Alghero_-_Torre_di_Porto_Conte_%2802%29.JPG/500px-Alghero_-_Torre_di_Porto_Conte_%2802%29.JPG?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "desc": "torre di Alghero",
+    "wiki": "https://it.wikipedia.org/wiki/Torre_di_Porto_Conte"
    },
    {
     "name": "Chiesa di San Michele",
@@ -22827,7 +22845,9 @@
     "kind": "Palace",
     "lat": 42.45854568481445,
     "lon": 14.214265823364258,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fd/Palazzo_perenich.jpg/500px-Palazzo_perenich.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "wiki": "https://it.wikipedia.org/wiki/Palazzo_Perenich"
    },
    {
     "name": "Largo Madonna dei Sette Dolori",
@@ -23656,7 +23676,10 @@
     "kind": "Square",
     "lat": 44.4166145324707,
     "lon": 8.872516632080078,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/Villa_Gentile_Bickley_%28Cornigliano%2C_Genova%29_01.jpg/500px-Villa_Gentile_Bickley_%28Cornigliano%2C_Genova%29_01.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "desc": "villa di Cornigliano, Genova",
+    "wiki": "https://it.wikipedia.org/wiki/Villa_Gentile_Bickley"
    },
    {
     "name": "Villa Spinola Canepa",
@@ -38272,7 +38295,10 @@
     "lat": 48.01643371582031,
     "lon": 10.2096529006958,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/SchlossEisenburg01.jpg/500px-SchlossEisenburg01.jpg",
+    "desc": "Bauwerk in Deutschland",
+    "wiki": "https://de.wikipedia.org/wiki/Schloss_Eisenburg"
    },
    {
     "name": "MEWO Kunsthalle",
@@ -38492,7 +38518,10 @@
     "lat": 48.02225875854492,
     "lon": 10.259862899780273,
     "rate": 2,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/51/Schloss_Holzg%C3%BCnz_12.JPG/500px-Schloss_Holzg%C3%BCnz_12.JPG",
+    "desc": "Baudenkmal in Holzgünz",
+    "wiki": "https://de.wikipedia.org/wiki/Schloss_Holzg%C3%BCnz"
    },
    {
     "name": "Stadtmauer",
@@ -42547,7 +42576,10 @@
     "lat": 43.62091064453125,
     "lon": 1.396806001663208,
     "rate": 2,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Pont_d%27Ancely_01.jpg/500px-Pont_d%27Ancely_01.jpg",
+    "desc": "pont à Blagnac (Haute-Garonne)",
+    "wiki": "https://fr.wikipedia.org/wiki/Pont_sur_le_Touch_de_Blagnac"
    },
    {
     "name": "Route de Bayonne",
@@ -42993,7 +43025,10 @@
     "lat": 44.842044830322266,
     "lon": -0.5743529796600342,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/54_Chapeau_rouge.jpg/500px-54_Chapeau_rouge.jpg",
+    "desc": "hôtel particulier à Bordeaux",
+    "wiki": "https://fr.wikipedia.org/wiki/H%C3%B4tel_Bonnaff%C3%A9"
    },
    {
     "name": "La Table Bordelaise",
@@ -45644,7 +45679,10 @@
     "lat": 42.698333740234375,
     "lon": 2.8963890075683594,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/H%C3%B4tel_de_Senesterra_portail2.jpg/500px-H%C3%B4tel_de_Senesterra_portail2.jpg",
+    "desc": "hôtel particulier à Perpignan (Pyrénées-Orientales)",
+    "wiki": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_Senesterra"
    },
    {
     "name": "Hôtel de ville de Perpignan",
@@ -45652,7 +45690,10 @@
     "lat": 42.699462890625,
     "lon": 2.894706964492798,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/de/HOTEL_DE_VILLE_DE_PERPIGNAN_-_PMM_8841bis14x21.jpg/500px-HOTEL_DE_VILLE_DE_PERPIGNAN_-_PMM_8841bis14x21.jpg",
+    "desc": "hôtel de ville à Perpignan (Pyrénées-Orientales)",
+    "wiki": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Perpignan"
    },
    {
     "name": "Loge de Mer",
@@ -46334,7 +46375,10 @@
     "lat": 44.88185501098633,
     "lon": 0.5589011311531067,
     "rate": 2,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/48/Le_chateau_de_Grateloup%2C_commune_de_Saint-Sauveur%2C_Dordogne%2C_France.jpg/500px-Le_chateau_de_Grateloup%2C_commune_de_Saint-Sauveur%2C_Dordogne%2C_France.jpg",
+    "desc": "château à Saint-Sauveur (Dordogne)",
+    "wiki": "https://fr.wikipedia.org/wiki/Ch%C3%A2teau_de_Grateloup"
    },
    {
     "name": "Presbytère de Bouniagues",
@@ -46989,7 +47033,10 @@
     "lat": 48.43815231323242,
     "lon": -4.456482887268066,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Gouesnou_Ruines_du_ch%C3%A2teau_de_Mesl%C3%A9an_%28dessin_de_Louis_Le_Guennec%29.jpg/500px-Gouesnou_Ruines_du_ch%C3%A2teau_de_Mesl%C3%A9an_%28dessin_de_Louis_Le_Guennec%29.jpg",
+    "desc": "château à Gouesnou (Finistère)",
+    "wiki": "https://fr.wikipedia.org/wiki/Ch%C3%A2teau_de_Mesl%C3%A9an"
    },
    {
     "name": "Le Fournil de Gouesnou",
@@ -48496,7 +48543,10 @@
     "lat": 45.830780029296875,
     "lon": 1.256719946861267,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/57/Ancien_presidial_de_la_generailte_du_limousin.JPG/500px-Ancien_presidial_de_la_generailte_du_limousin.JPG",
+    "desc": "monument à Limoges (Haute-Vienne)",
+    "wiki": "https://fr.wikipedia.org/wiki/Pr%C3%A9sidial_de_la_g%C3%A9n%C3%A9ralit%C3%A9_du_Limousin"
    },
    {
     "name": "Église Saint-Michel-des-Lions à Limoges",
@@ -48512,7 +48562,10 @@
     "lat": 45.8309440612793,
     "lon": 1.2573447227478027,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/39/H%C3%B4tel_Estienne_de_la_Rivi%C3%A8re%2C_Limoges.jpg/500px-H%C3%B4tel_Estienne_de_la_Rivi%C3%A8re%2C_Limoges.jpg",
+    "desc": "hôtel particulier à Limoges (Haute-Vienne)",
+    "wiki": "https://fr.wikipedia.org/wiki/H%C3%B4tel_Estienne_de_la_Rivi%C3%A8re"
    },
    {
     "name": "Hôtel Maledent de Savignac de Feytiat",
@@ -48561,7 +48614,10 @@
     "lat": 45.830223083496094,
     "lon": 1.2590137720108032,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/11_rue_du_Temple_-_Limoges.jpg/500px-11_rue_du_Temple_-_Limoges.jpg",
+    "desc": "hôtel particulier à Limoges (Haute-Vienne)",
+    "wiki": "https://fr.wikipedia.org/wiki/H%C3%B4tel_Muret"
    },
    {
     "name": "parc de la Borie",
@@ -48953,7 +49009,10 @@
     "lat": 43.3135986328125,
     "lon": 3.4189000129699707,
     "rate": 2,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7a/Vias_maison_ancienne.JPG/500px-Vias_maison_ancienne.JPG",
+    "desc": "maison à Vias (Hérault)",
+    "wiki": "https://fr.wikipedia.org/wiki/Maison_Benezis"
    },
    {
     "name": "Monument de la République",
@@ -50967,7 +51026,10 @@
     "kind": "Monastery",
     "lat": 44.35240173339844,
     "lon": 2.5623199939727783,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/Rodez_haras_b%C3%A2timent_entr%C3%A9e_%282%29.jpg/500px-Rodez_haras_b%C3%A2timent_entr%C3%A9e_%282%29.jpg",
+    "desc": "chartreuse située dans l'Aveyron, en France",
+    "wiki": "https://fr.wikipedia.org/wiki/Chartreuse_de_Rodez"
    },
    {
     "name": "Dolmen de Seveyrac",
@@ -71568,7 +71630,10 @@
     "kind": "Castle",
     "lat": 47.44585037231445,
     "lon": 8.552980422973633,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Wasserhaus_Rohr_bei_R%C3%BCmlang.jpg/500px-Wasserhaus_Rohr_bei_R%C3%BCmlang.jpg",
+    "desc": "Burgstelle im Bereich des Flughafen Zürichs in der Schweiz",
+    "wiki": "https://de.wikipedia.org/wiki/Burgstelle_Alt-Rohr"
    },
    {
     "name": "Mettmenhasler See",
@@ -75712,7 +75777,10 @@
     "lat": 55.67330551147461,
     "lon": 12.570727348327637,
     "rate": 3,
-    "active": true
+    "active": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0d/Tivoli_-_Det_Gyldne_T%C3%A5rn.jpg/500px-Tivoli_-_Det_Gyldne_T%C3%A5rn.jpg",
+    "desc": "forlystelse i Tivoli i København",
+    "wiki": "https://da.wikipedia.org/wiki/Det_Gyldne_T%C3%A5rn"
    },
    {
     "name": "The Ferris wheel",
@@ -75870,7 +75938,10 @@
     "kind": "Square",
     "lat": 55.73067092895508,
     "lon": 9.114960670471191,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b1/Lego_House_-_Tree_Of_Creativity.jpg/500px-Lego_House_-_Tree_Of_Creativity.jpg",
+    "desc": "bygning i Billund",
+    "wiki": "https://da.wikipedia.org/wiki/LEGO_House"
    },
    {
     "name": "Grene Kirke",
@@ -76403,7 +76474,10 @@
     "kind": "Square",
     "lat": 57.041900634765625,
     "lon": 9.91388988494873,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/De_Syngende_Tr%C3%A6er_4.jpg/500px-De_Syngende_Tr%C3%A6er_4.jpg",
+    "desc": "oplevelses installation",
+    "wiki": "https://da.wikipedia.org/wiki/De_Syngende_Tr%C3%A6er"
    },
    {
     "name": "Aalborg Zoo",
@@ -76464,7 +76538,9 @@
     "lat": 57.05851364135742,
     "lon": 9.89332103729248,
     "rate": 3,
-    "active": true
+    "active": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ef/Miniaturebygninger%2C_2006%2C_Aalborg_Marinemuseum_ubt.jpeg/500px-Miniaturebygninger%2C_2006%2C_Aalborg_Marinemuseum_ubt.jpeg",
+    "wiki": "https://da.wikipedia.org/wiki/Aalborg_Miniby"
    },
    {
     "name": "Aalborg Sportsdykkerklub",
@@ -78228,7 +78304,10 @@
     "lat": 57.70595169067383,
     "lon": 11.96708869934082,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/Frimurarlogen_i_G%C3%B6teborg_01.jpg/500px-Frimurarlogen_i_G%C3%B6teborg_01.jpg",
+    "desc": "byggnad i Göteborg",
+    "wiki": "https://sv.wikipedia.org/wiki/Frimurarehuset,_G%C3%B6teborg"
    },
    {
     "name": "Tyska kyrkan",
@@ -78255,7 +78334,10 @@
     "lat": 57.706600189208984,
     "lon": 11.964249610900879,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Sahlgrenska_huset_september_2010.jpg/500px-Sahlgrenska_huset_september_2010.jpg",
+    "desc": "byggnad i stadsdelen Nordstaden i Göteborg",
+    "wiki": "https://sv.wikipedia.org/wiki/Sahlgrenska_huset"
    },
    {
     "name": "Kronhuset",
@@ -78469,7 +78551,9 @@
     "kind": "Square",
     "lat": 57.706878662109375,
     "lon": 11.965655326843262,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/16/Skulptur_Sittande.JPG/500px-Skulptur_Sittande.JPG",
+    "wiki": "https://sv.wikipedia.org/wiki/Sittande_flicka"
    },
    {
     "name": "Fredsbron",
@@ -78564,7 +78648,9 @@
     "lat": 57.71717834472656,
     "lon": 11.959692001342773,
     "rate": 3,
-    "active": true
+    "active": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Allm%C3%A4nna_bastun1.jpg/500px-Allm%C3%A4nna_bastun1.jpg",
+    "wiki": "https://sv.wikipedia.org/wiki/Allm%C3%A4nna_bastun"
    },
    {
     "name": "Valhallabadet",
@@ -78787,7 +78873,9 @@
     "lat": 55.5908317565918,
     "lon": 13.021111488342285,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/c/c8/Staty_nobeltorget.jpg",
+    "wiki": "https://sv.wikipedia.org/wiki/Folkets_hus,_Malm%C3%B6"
    },
    {
     "name": "Djäknegatshusen",
@@ -79119,7 +79207,10 @@
     "lat": 55.65803146362305,
     "lon": 13.037416458129883,
     "rate": 3,
-    "active": true
+    "active": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/Strandhusens_revlar_2020-1.jpg/500px-Strandhusens_revlar_2020-1.jpg",
+    "desc": "naturreservat i Skåne län",
+    "wiki": "https://sv.wikipedia.org/wiki/Strandhusens_revlar"
    },
    {
     "name": "Öresundsparkens naturreservat",
@@ -79146,7 +79237,10 @@
     "lat": 55.57727813720703,
     "lon": 12.910694122314453,
     "rate": 3,
-    "active": true
+    "active": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/Sibbarps_kallbadhus.jpg/500px-Sibbarps_kallbadhus.jpg",
+    "desc": "kallbadhus i Malmö",
+    "wiki": "https://sv.wikipedia.org/wiki/Sibbarps_kallbadhus"
    },
    {
     "name": "Slättängsdammarna",
@@ -79154,7 +79248,10 @@
     "lat": 55.6828498840332,
     "lon": 13.074395179748535,
     "rate": 3,
-    "active": true
+    "active": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/06/Sl%C3%A4tt%C3%A4ngsdammarna.jpg/500px-Sl%C3%A4tt%C3%A4ngsdammarna.jpg",
+    "desc": "naturreservat i Skåne län",
+    "wiki": "https://sv.wikipedia.org/wiki/Sl%C3%A4tt%C3%A4ngsdammarna"
    },
    {
     "name": "Pråmlyckans naturreservat",
@@ -79636,7 +79733,10 @@
     "lat": 59.8804931640625,
     "lon": 10.764678001403809,
     "rate": 3,
-    "active": true
+    "active": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ee/Bekkelagsbadet_%2822._august_2021_bilde0%29.jpg/500px-Bekkelagsbadet_%2822._august_2021_bilde0%29.jpg",
+    "desc": "kommunalt badeanlegg i Oslo",
+    "wiki": "https://no.wikipedia.org/wiki/Bekkelagsbadet"
    },
    {
     "name": "Dronningberget naturreservat",
@@ -80174,7 +80274,10 @@
     "lat": 59.8804931640625,
     "lon": 10.764678001403809,
     "rate": 3,
-    "active": true
+    "active": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ee/Bekkelagsbadet_%2822._august_2021_bilde0%29.jpg/500px-Bekkelagsbadet_%2822._august_2021_bilde0%29.jpg",
+    "desc": "kommunalt badeanlegg i Oslo",
+    "wiki": "https://no.wikipedia.org/wiki/Bekkelagsbadet"
    },
    {
     "name": "Dronningberget naturreservat",
@@ -80939,7 +81042,10 @@
     "lat": 63.43058776855469,
     "lon": 10.384105682373047,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/Trondhjems_Hospital_p%C3%A5_Hospitalsl%C3%B8kkan_%281984%29_%2849693974037%29.jpg/500px-Trondhjems_Hospital_p%C3%A5_Hospitalsl%C3%B8kkan_%281984%29_%2849693974037%29.jpg",
+    "desc": "park i Trondheim",
+    "wiki": "https://no.wikipedia.org/wiki/Hospitalsparken"
    },
    {
     "name": "Trondhjems hospital",
@@ -81805,7 +81911,10 @@
     "lat": 69.65597534179688,
     "lon": 18.959125518798828,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a8/Troms%C3%B8_Fogd_Dreyers_gate_16.jpg/500px-Troms%C3%B8_Fogd_Dreyers_gate_16.jpg",
+    "desc": "vei i Tromsø",
+    "wiki": "https://no.wikipedia.org/wiki/Fogd_Drejers_gate_(Troms%C3%B8)"
    },
    {
     "name": "Kjeldsethgården",
@@ -84976,7 +85085,9 @@
     "lat": 54.69444274902344,
     "lon": 25.322221755981445,
     "rate": 3,
-    "active": true
+    "active": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/Lyglauki%C5%B3_draustinis.JPG/500px-Lyglauki%C5%B3_draustinis.JPG",
+    "wiki": "https://lt.wikipedia.org/wiki/Lyglauki%C5%B3_geomorfologinis_draustinis"
    },
    {
     "name": "Karoliniškės landscape nature reserve",
@@ -85185,7 +85296,10 @@
     "kind": "Church",
     "lat": 54.91025161743164,
     "lon": 24.110816955566406,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Kar%C4%8Diupio_koply%C4%8Dia.JPG/500px-Kar%C4%8Diupio_koply%C4%8Dia.JPG",
+    "desc": "koplyčia Lietuvoje",
+    "wiki": "https://lt.wikipedia.org/wiki/Kar%C4%8Diupio_%C5%A0v%C4%8D._Mergel%C4%97s_Marijos_Krik%C5%A1%C4%8Dioni%C5%B3_Pagalbos_koply%C4%8Dia"
    },
    {
     "name": "Orthodox church in Užusaliai",
@@ -85233,21 +85347,27 @@
     "kind": "Church",
     "lat": 54.924129486083984,
     "lon": 23.98302459716797,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/56/Kauno_Naujoji_apa%C5%A1tal%C5%B3_ba%C5%BEny%C4%8Dia.JPG/500px-Kauno_Naujoji_apa%C5%A1tal%C5%B3_ba%C5%BEny%C4%8Dia.JPG",
+    "wiki": "https://lt.wikipedia.org/wiki/Kauno_Naujoji_apa%C5%A1tal%C5%B3_ba%C5%BEny%C4%8Dia"
    },
    {
     "name": "Kauno Pastarųjų dienų šventųjų Jėzaus Kristaus bažnyčia",
     "kind": "Church",
     "lat": 54.91185760498047,
     "lon": 23.977807998657227,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/81/2026%2C_Kaunas%2C_mormonai.jpg/500px-2026%2C_Kaunas%2C_mormonai.jpg",
+    "wiki": "https://lt.wikipedia.org/wiki/Kauno_Pastar%C5%B3j%C5%B3_dien%C5%B3_%C5%A1vent%C5%B3j%C5%B3_J%C4%97zaus_Kristaus_ba%C5%BEny%C4%8Dia"
    },
    {
     "name": "Karmėlavos kapinės",
     "kind": "Square",
     "lat": 54.97312927246094,
     "lon": 24.04627799987793,
-    "rate": 2
+    "rate": 2,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cf/Administracija._Karm%C4%97lavos_kapin%C4%97s.JPG/500px-Administracija._Karm%C4%97lavos_kapin%C4%97s.JPG",
+    "wiki": "https://lt.wikipedia.org/wiki/Karm%C4%97lavos_kapin%C4%97s"
    },
    {
     "name": "Pirmojo pasaulinio karo kapinės Ramučiuose",
@@ -96825,7 +96945,9 @@
     "kind": "Square",
     "lat": 41.1613883972168,
     "lon": 20.77666664123535,
-    "rate": 2
+    "rate": 2,
+    "desc": "археолошко наоѓалиште во Македонија",
+    "wiki": "https://mk.wikipedia.org/wiki/%D0%93%D1%80%D0%B0%D0%B4%D0%B8%D1%88%D1%82%D0%B5_(%D0%94%D0%BE%D0%BB%D0%BD%D0%BE_%D0%9B%D0%B0%D0%BA%D0%BE%D1%87%D0%B5%D1%80%D0%B5%D1%98)"
    },
    {
     "name": "Света Богородица",
@@ -101242,7 +101364,10 @@
     "kind": "Church",
     "lat": 67.28233337402344,
     "lon": 14.541534423828125,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/Korparti_Hunstad.jpg/500px-Korparti_Hunstad.jpg",
+    "desc": "kirke i Bodø",
+    "wiki": "https://no.wikipedia.org/wiki/Hunstad_kirke"
    },
    {
     "name": "Solparken",
@@ -101258,7 +101383,9 @@
     "kind": "Theatre",
     "lat": 67.28351593017578,
     "lon": 14.378732681274414,
-    "rate": 2
+    "rate": 2,
+    "desc": "norsk kino",
+    "wiki": "https://no.wikipedia.org/wiki/Fram_kino"
    },
    {
     "name": "Rådhusparken",
@@ -101317,7 +101444,9 @@
     "lat": 67.2793960571289,
     "lon": 14.465137481689453,
     "rate": 1,
-    "active": true
+    "active": true,
+    "desc": "bydel i Bodø",
+    "wiki": "https://no.wikipedia.org/wiki/Gr%C3%B8nn%C3%A5sen_bydel"
    },
    {
     "name": "Rønvikfjellet",
@@ -101652,7 +101781,8 @@
     "lat": 62.58536911010742,
     "lon": 6.09489107131958,
     "rate": 1,
-    "active": true
+    "active": true,
+    "wiki": "https://no.wikipedia.org/wiki/Molnesfjellet"
    },
    {
     "name": "Storehornet",
@@ -101700,7 +101830,9 @@
     "lat": 62.543190002441406,
     "lon": 6.191394329071045,
     "rate": 1,
-    "active": true
+    "active": true,
+    "desc": "naturreservat i Møre og Romsdal",
+    "wiki": "https://no.wikipedia.org/wiki/Gj%C3%B8sundholmen_naturreservat"
    },
    {
     "name": "Sætredalen naturreservat",
@@ -118270,7 +118402,10 @@
     "lat": 46.458518981933594,
     "lon": 9.80376148223877,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Silvaplana-003a.jpg/500px-Silvaplana-003a.jpg",
+    "desc": "Bauwerk in der Schweiz",
+    "wiki": "https://de.wikipedia.org/wiki/Schloss_Crap_da_Sass"
    },
    {
     "name": "St. Moritz-Dorf",
@@ -120115,7 +120250,10 @@
     "kind": "Castle",
     "lat": 40.63593673706055,
     "lon": 14.605637550354004,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Torre_dello_Ziro.jpg/500px-Torre_dello_Ziro.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "desc": "torre di Scala, tra Amalfi e Atrani",
+    "wiki": "https://it.wikipedia.org/wiki/Torre_dello_Ziro"
    },
    {
     "name": "Terrazza dell'Infinito",
@@ -121099,7 +121237,10 @@
     "lat": 46.00766372680664,
     "lon": 9.288003921508789,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/Villa_monastero.jpg/500px-Villa_monastero.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "desc": "villa di Varenna",
+    "wiki": "https://it.wikipedia.org/wiki/Villa_Monastero"
    },
    {
     "name": "Chapel of the Villa Melzi",
@@ -122947,7 +123088,10 @@
     "lat": 40.66581726074219,
     "lon": 16.609939575195312,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Palazzo_bronzini.jpg/500px-Palazzo_bronzini.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "desc": "palazzo di Matera",
+    "wiki": "https://it.wikipedia.org/wiki/Palazzo_Bronzini"
    },
    {
     "name": "Palazzo Ridola",
@@ -122955,7 +123099,10 @@
     "lat": 40.6660270690918,
     "lon": 16.610111236572266,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/49/Palazzo_ridola.jpg/500px-Palazzo_ridola.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "desc": "palazzo di Matera",
+    "wiki": "https://it.wikipedia.org/wiki/Palazzo_Ridola"
    },
    {
     "name": "Museo Nazionale d'arte medievale e moderna della Basilicata",
@@ -123063,14 +123210,20 @@
     "kind": "Palace",
     "lat": 40.66538619995117,
     "lon": 16.61048126220703,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Matera_from_Piazzetta_Pascoli-2930.jpg/500px-Matera_from_Piazzetta_Pascoli-2930.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "desc": "palazzo storico",
+    "wiki": "https://it.wikipedia.org/wiki/Palazzo_Bernardini_(Matera)"
    },
    {
     "name": "Palazzo Malvinni-Malvezzi",
     "kind": "Palace",
     "lat": 40.66645812988281,
     "lon": 16.6112117767334,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Palazzo_Malvinni_Malvezzi_%28Matera%29.jpg/500px-Palazzo_Malvinni_Malvezzi_%28Matera%29.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "desc": "Palazzo ducale",
+    "wiki": "https://it.wikipedia.org/wiki/Palazzo_Malvinni-Malvezzi"
    },
    {
     "name": "Cattedrale della Madonna della Bruna e di Sant'Eustachio",
@@ -125044,7 +125197,10 @@
     "kind": "Palace",
     "lat": 43.72443389892578,
     "lon": 12.638263702392578,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/Palazzo_Passionei_-_cortile_interno_%28Large%29.tif/lossy-page1-500px-Palazzo_Passionei_-_cortile_interno_%28Large%29.tif.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "desc": "palazzo di Urbino",
+    "wiki": "https://it.wikipedia.org/wiki/Palazzo_Passionei_Paciotti"
    },
    {
     "name": "Monastero di Santa Chiara",
@@ -126876,7 +127032,10 @@
     "lat": 43.95035171508789,
     "lon": 4.806250095367432,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/Avignon%2C_France_-_panoramio_%281%29.jpg/500px-Avignon%2C_France_-_panoramio_%281%29.jpg",
+    "desc": "maison à Avignon (Vaucluse)",
+    "wiki": "https://fr.wikipedia.org/wiki/H%C3%B4tel_Calvet_de_la_Palun"
    },
    {
     "name": "Hôtel de Monery",
@@ -126938,7 +127097,10 @@
     "lat": 43.94789123535156,
     "lon": 4.804490089416504,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/ce/Avignon_-_Plan_de_Lunel.JPG/500px-Avignon_-_Plan_de_Lunel.JPG",
+    "desc": "maison à Avignon (Vaucluse)",
+    "wiki": "https://fr.wikipedia.org/wiki/H%C3%B4tel_des_Laurens"
    },
    {
     "name": "Hotel Peilhon de Faret",
@@ -126997,7 +127159,10 @@
     "lat": 43.94770812988281,
     "lon": 4.804599761962891,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0d/Avignon_-_H%C3%B4tel_Charavin.JPG/500px-Avignon_-_H%C3%B4tel_Charavin.JPG",
+    "desc": "maison à Avignon (Vaucluse)",
+    "wiki": "https://fr.wikipedia.org/wiki/H%C3%B4tel_Charavin"
    },
    {
     "name": "Maisons et tour de Mirault",
@@ -127016,7 +127181,10 @@
     "lat": 43.947994232177734,
     "lon": 4.8070759773254395,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9f/Avignon_-_Hotel_de_verclos.JPG/500px-Avignon_-_Hotel_de_verclos.JPG",
+    "desc": "maison à Avignon (Vaucluse)",
+    "wiki": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_Joannis_de_Verclos"
    },
    {
     "name": "Ancienne Comédie d'Avignon",
@@ -127051,7 +127219,10 @@
     "lat": 43.948577880859375,
     "lon": 4.808102130889893,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/92/Avignon_-_H%C3%B4tel_Bernard_de_Rascas_1.jpg/500px-Avignon_-_H%C3%B4tel_Bernard_de_Rascas_1.jpg",
+    "desc": "maison à Avignon (Vaucluse)",
+    "wiki": "https://fr.wikipedia.org/wiki/H%C3%B4tel_Bernard_de_Rascas"
    },
    {
     "name": "Notre-Dame la Principale church in Avignon",
@@ -127378,7 +127549,10 @@
     "lat": 43.52817153930664,
     "lon": 5.4482951164245605,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Aix-Place_d%27Albertas-bjs180814-02.jpg/500px-Aix-Place_d%27Albertas-bjs180814-02.jpg",
+    "desc": "hôtel particulier à Aix-en-Provence (Bouches-du-Rhône)",
+    "wiki": "https://fr.wikipedia.org/wiki/H%C3%B4tel_d%27Albertas"
    },
    {
     "name": "Hôtel Adanson",
@@ -127386,7 +127560,10 @@
     "lat": 43.531349182128906,
     "lon": 5.447784900665283,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fe/H%C3%B4teladansonaix.png/500px-H%C3%B4teladansonaix.png",
+    "desc": "maison à Aix-en-Provence (Bouches-du-Rhône)",
+    "wiki": "https://fr.wikipedia.org/wiki/H%C3%B4tel_Adanson"
    },
    {
     "name": "Hôtel Maynier d'Oppède",
@@ -127394,7 +127571,10 @@
     "lat": 43.53135681152344,
     "lon": 5.446981906890869,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f1/Aix-H%C3%B4tel_Maynier_d%27Opp%C3%A8de-bjs180804-01.jpg/500px-Aix-H%C3%B4tel_Maynier_d%27Opp%C3%A8de-bjs180804-01.jpg",
+    "desc": "hôtel particulier à Aix-en-Provence (Bouches-du-Rhône)",
+    "wiki": "https://fr.wikipedia.org/wiki/H%C3%B4tel_Maynier_d%27Opp%C3%A8de"
    },
    {
     "name": "Hôtel de Boyer d'Éguilles",
@@ -127402,7 +127582,10 @@
     "lat": 43.5281867980957,
     "lon": 5.448819160461426,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/84/H%C3%B4tel_Boyer_d%27Eguilles.JPG/500px-H%C3%B4tel_Boyer_d%27Eguilles.JPG",
+    "desc": "hôtel particulier à Aix-en-Provence (Bouches-du-Rhône)",
+    "wiki": "https://fr.wikipedia.org/wiki/H%C3%B4tel_Boyer_d%27%C3%89guilles"
    },
    {
     "name": "Faculté de droit d'Aix-en-Provence",
@@ -127562,7 +127745,10 @@
     "kind": "Square",
     "lat": 43.528907775878906,
     "lon": 5.447220325469971,
-    "rate": 2
+    "rate": 2,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/56/Bouches-du-Rh%C3%B4ne_department_location_map.svg/500px-Bouches-du-Rh%C3%B4ne_department_location_map.svg.png",
+    "desc": "hôtel particulier à Aix-en-Provence",
+    "wiki": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_Gaillard-Longjumeau"
    },
    {
     "name": "Hôtel de Michaelis",
@@ -127729,7 +127915,10 @@
     "lat": 49.70502471923828,
     "lon": 0.21363238990306854,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/Etretat_ch%C3%A2teau_des_Aygues_001.jpg/500px-Etretat_ch%C3%A2teau_des_Aygues_001.jpg",
+    "desc": "château à Étretat (Seine-Maritime)",
+    "wiki": "https://fr.wikipedia.org/wiki/Ch%C3%A2teau_des_Aygues"
    },
    {
     "name": "Phare d'Antifer",
@@ -127748,7 +127937,10 @@
     "lat": 49.65901565551758,
     "lon": 0.273150771856308,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/Cuverville76_-_Ch%C3%A2teau_02.JPG/500px-Cuverville76_-_Ch%C3%A2teau_02.JPG",
+    "desc": "château à Cuverville (Seine-Maritime)",
+    "wiki": "https://fr.wikipedia.org/wiki/Ch%C3%A2teau_de_Cuverville"
    },
    {
     "name": "Maison Maurice Leblanc",
@@ -128237,7 +128429,10 @@
     "lat": 48.63532638549805,
     "lon": -1.5101799964904785,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/Fa%C3%A7ade_de_l%27h%C3%B4tellerie_de_la_Sir%C3%A8ne_%28Le_Mont-Saint-Michel%2C_Manche%2C_France%29.jpg/500px-Fa%C3%A7ade_de_l%27h%C3%B4tellerie_de_la_Sir%C3%A8ne_%28Le_Mont-Saint-Michel%2C_Manche%2C_France%29.jpg",
+    "desc": "ancien hôtel au Mont-Saint-Michel (Manche)",
+    "wiki": "https://fr.wikipedia.org/wiki/H%C3%B4tellerie_de_la_Sir%C3%A8ne"
    },
    {
     "name": "le mouton blanc",
@@ -129554,7 +129749,10 @@
     "lat": 47.39524459838867,
     "lon": 0.6835005283355713,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/H%C3%B4tel_Binet%2C_cour_interieure_08.jpg/500px-H%C3%B4tel_Binet%2C_cour_interieure_08.jpg",
+    "desc": "hôtel particulier à Tours (Indre-et-Loire)",
+    "wiki": "https://fr.wikipedia.org/wiki/H%C3%B4tel_Binet"
    },
    {
     "name": "Chancellerie de la collégiale Saint-Martin de Tours",
@@ -129809,7 +130007,10 @@
     "lat": 47.39611053466797,
     "lon": 0.6828309893608093,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Tours_-_couvent_des_Carmes_Cl%C3%A9rambault.jpg/500px-Tours_-_couvent_des_Carmes_Cl%C3%A9rambault.jpg",
+    "desc": "couvent à Tours (Indre-et-Loire)",
+    "wiki": "https://fr.wikipedia.org/wiki/Couvent_des_Carmes_de_Tours"
    },
    {
     "name": "Hôtel Princé",
@@ -130043,7 +130244,10 @@
     "lat": 43.92086410522461,
     "lon": 5.1295671463012695,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Fontaine-de-Vaucluse_%283%29.jpg/500px-Fontaine-de-Vaucluse_%283%29.jpg",
+    "desc": "château à Fontaine-de-Vaucluse (Vaucluse)",
+    "wiki": "https://fr.wikipedia.org/wiki/Ch%C3%A2teau_de_Vaucluse"
    },
    {
     "name": "Pont-aqueduc de Galas",
@@ -130129,7 +130333,10 @@
     "lat": 43.920841217041016,
     "lon": 5.1295599937438965,
     "rate": 2,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Fontaine-de-Vaucluse_%283%29.jpg/500px-Fontaine-de-Vaucluse_%283%29.jpg",
+    "desc": "château à Fontaine-de-Vaucluse (Vaucluse)",
+    "wiki": "https://fr.wikipedia.org/wiki/Ch%C3%A2teau_de_Vaucluse"
    },
    {
     "name": "Église de Fontaine-de-Vaucluse",
@@ -132528,7 +132735,10 @@
     "lat": 37.171878814697266,
     "lon": -3.597414970397949,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Castillo_de_Bibataubin%2CGranada..JPG/500px-Castillo_de_Bibataubin%2CGranada..JPG",
+    "desc": "bien de interés cultural",
+    "wiki": "https://es.wikipedia.org/wiki/Castillo_de_Bibataub%C3%ADn"
    },
    {
     "name": "Royal Chancellery of Granada Palace",
@@ -132685,7 +132895,10 @@
     "kind": "Square",
     "lat": 37.17305374145508,
     "lon": -3.6011111736297607,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Logo_CEC.jpg/500px-Logo_CEC.jpg",
+    "desc": "Centro cultural sobre Semana Santa de Granada",
+    "wiki": "https://es.wikipedia.org/wiki/Centro_de_Estudios_Cofrades"
    },
    {
     "name": "Battle of Granada",
@@ -133970,7 +134183,10 @@
     "lat": 40.94961166381836,
     "lon": -4.116910457611084,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/Casa_del_Mayorazgo_de_los_C%C3%A1ceres_o_del_Marqu%C3%A9s_de_Lozoya_-_01.jpg/500px-Casa_del_Mayorazgo_de_los_C%C3%A1ceres_o_del_Marqu%C3%A9s_de_Lozoya_-_01.jpg",
+    "desc": "edificio en Segovia",
+    "wiki": "https://es.wikipedia.org/wiki/Casa_del_Mayorazgo_de_los_C%C3%A1ceres"
    },
    {
     "name": "Palacio de Enrique IV, Segovia",
@@ -140091,7 +140307,10 @@
     "lat": 62.119537353515625,
     "lon": 7.182724475860596,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/%C3%98rnevegen_med_M%C3%B8ll.jpg/500px-%C3%98rnevegen_med_M%C3%B8ll.jpg",
+    "desc": "Fredet klyngetun i Geiranger",
+    "wiki": "https://no.wikipedia.org/wiki/M%C3%B8lltunet"
    },
    {
     "name": "Skageflå",
@@ -140326,7 +140545,9 @@
     "lat": 62.1234016418457,
     "lon": 7.16294002532959,
     "rate": 1,
-    "active": true
+    "active": true,
+    "desc": "naturreservat for edelløvskog/rike løvskoger i Møre og Romsdal",
+    "wiki": "https://no.wikipedia.org/wiki/Hyskjet_naturreservat"
    },
    {
     "name": "Kvandalsfossen",
@@ -140653,7 +140874,9 @@
     "lat": 67.8550033569336,
     "lon": 20.21555519104004,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/KirunaC.JPG/500px-KirunaC.JPG",
+    "wiki": "https://sv.wikipedia.org/wiki/Kirunas_gamla_centralstation"
    },
    {
     "name": "Kiruna kyrka",
@@ -140861,7 +141084,10 @@
     "kind": "Square",
     "lat": 57.634803771972656,
     "lon": 18.29483413696289,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/Fat_cat%2C_asleep_%28319313958%29.jpg/500px-Fat_cat%2C_asleep_%28319313958%29.jpg",
+    "desc": "välkänd katt och staty i Visby innerstad.",
+    "wiki": "https://sv.wikipedia.org/wiki/Kn%C3%A4cken"
    },
    {
     "name": "Östra kyrkogården, Visby",
@@ -140920,7 +141146,10 @@
     "lat": 57.633541107177734,
     "lon": 18.297019958496094,
     "rate": 2,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Gotlands_tingsr%C3%A4tt_Visby_Sweden_1.jpg/500px-Gotlands_tingsr%C3%A4tt_Visby_Sweden_1.jpg",
+    "desc": "kontorsbyggnad i Visby",
+    "wiki": "https://sv.wikipedia.org/wiki/Tingshuset_i_Visby"
    },
    {
     "name": "Kajserportsförrådet i Visby, f.d. Tygstationens tyghus",
@@ -141173,7 +141402,10 @@
     "lat": 57.61663055419922,
     "lon": 18.260967254638672,
     "rate": 3,
-    "active": true
+    "active": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/S%C3%B6dra_H%C3%A4llarna_20150703_174014.jpg/500px-S%C3%B6dra_H%C3%A4llarna_20150703_174014.jpg",
+    "desc": "naturreservat i Gotlands län",
+    "wiki": "https://sv.wikipedia.org/wiki/S%C3%B6dra_h%C3%A4llarna"
    },
    {
     "name": "Bergbetningen",
@@ -141181,7 +141413,10 @@
     "lat": 57.663150787353516,
     "lon": 18.3265380859375,
     "rate": 3,
-    "active": true
+    "active": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/92/Bergbetningen_20170610_02.jpg/500px-Bergbetningen_20170610_02.jpg",
+    "desc": "naturreservat i Gotlands län",
+    "wiki": "https://sv.wikipedia.org/wiki/Bergbetningen"
    },
    {
     "name": "Ölbäck",
@@ -141205,7 +141440,10 @@
     "lat": 57.611141204833984,
     "lon": 18.42859649658203,
     "rate": 3,
-    "active": true
+    "active": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Allkvie_%C3%A4nge_01.jpg/500px-Allkvie_%C3%A4nge_01.jpg",
+    "desc": "naturreservat i Gotlands län",
+    "wiki": "https://sv.wikipedia.org/wiki/Allkvie_%C3%A4nge"
    },
    {
     "name": "Gustavsviksbadet",
@@ -141304,7 +141542,10 @@
     "lat": 60.61029815673828,
     "lon": 15.627300262451172,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Residenset%2CFalun.JPG/500px-Residenset%2CFalun.JPG",
+    "desc": "residens för landshövdingen i Dalarnas län",
+    "wiki": "https://sv.wikipedia.org/wiki/L%C3%A4nsresidenset_i_Falun"
    },
    {
     "name": "Thunströms köpmansgård",
@@ -141372,7 +141613,10 @@
     "lat": 60.58982849121094,
     "lon": 15.639260292053223,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Sankt_%C3%96rjans_kapell.jpg/500px-Sankt_%C3%96rjans_kapell.jpg",
+    "desc": "kyrkobyggnad i Falu kommun",
+    "wiki": "https://sv.wikipedia.org/wiki/Sankt_%C3%96rjans_kapell"
    },
    {
     "name": "Svedens gård",
@@ -141470,7 +141714,10 @@
     "kind": "Nature reserve",
     "lat": 60.59709548950195,
     "lon": 15.714641571044922,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/Rottnebyskogen_2019-05-23_05.jpg/500px-Rottnebyskogen_2019-05-23_05.jpg",
+    "desc": "naturreservat i Dalarnas län",
+    "wiki": "https://sv.wikipedia.org/wiki/Rottnebyskogen"
    },
    {
     "name": "Runns norra öar",
@@ -141512,7 +141759,10 @@
     "kind": "Nature reserve",
     "lat": 60.61410903930664,
     "lon": 15.780186653137207,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/17/St%C3%A4msh%C3%B6jen_2020-03-23_01.jpg/500px-St%C3%A4msh%C3%B6jen_2020-03-23_01.jpg",
+    "desc": "naturreservat i Dalarnas län",
+    "wiki": "https://sv.wikipedia.org/wiki/St%C3%A4msh%C3%B6jen"
    },
    {
     "name": "Munktellska huset",
@@ -168319,7 +168569,10 @@
     "lat": 58.38400650024414,
     "lon": 24.500391006469727,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/P%C3%A4rnu._Kuninga_tn_24.JPG/500px-P%C3%A4rnu._Kuninga_tn_24.JPG",
+    "desc": "hoone Pärnus",
+    "wiki": "https://et.wikipedia.org/wiki/Kuninga_24"
    },
    {
     "name": "Tallinn Gate",
@@ -168346,7 +168599,10 @@
     "lat": 58.38404083251953,
     "lon": 24.50168800354004,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Kuninga_30%2C_P%C3%A4rnu.jpg/500px-Kuninga_30%2C_P%C3%A4rnu.jpg",
+    "desc": "hoone Pärnus",
+    "wiki": "https://et.wikipedia.org/wiki/Kuninga_30"
    },
    {
     "name": "Punane torn",
@@ -168395,7 +168651,10 @@
     "lat": 58.3832893371582,
     "lon": 24.503576278686523,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/Koidula_park_2024_%281%29.jpg/500px-Koidula_park_2024_%281%29.jpg",
+    "desc": "park Pärnu kesklinnas",
+    "wiki": "https://et.wikipedia.org/wiki/Koidula_park"
    },
    {
     "name": "building of Pärnu Gymnasium for Boys",
@@ -168542,7 +168801,10 @@
     "lat": 58.38237380981445,
     "lon": 24.496030807495117,
     "rate": 2,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Karussell_Munam%C3%A4e_pargis.jpg/500px-Karussell_Munam%C3%A4e_pargis.jpg",
+    "desc": "park Pärnus",
+    "wiki": "https://et.wikipedia.org/wiki/Munam%C3%A4e_park"
    },
    {
     "name": "Pärnu Tütarlaste Gümnaasiumi hoone",
@@ -169110,7 +169372,9 @@
     "lat": 58.42096710205078,
     "lon": 26.76525115966797,
     "rate": 2,
-    "active": true
+    "active": true,
+    "desc": "järv Tartu maakonnas",
+    "wiki": "https://et.wikipedia.org/wiki/K%C3%B5rvek%C3%BCla_paisj%C3%A4rv"
    },
    {
     "name": "Toome Hill Park",
@@ -180072,7 +180336,10 @@
     "kind": "Square",
     "lat": 56.152488708496094,
     "lon": 10.200614929199219,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ae/Musikhusparken_%28juni_02%29.jpg/500px-Musikhusparken_%28juni_02%29.jpg",
+    "desc": "offentligt areal i Århus",
+    "wiki": "https://da.wikipedia.org/wiki/Musikhusparken"
    },
    {
     "name": "Musikhuset Aarhus",
@@ -180574,7 +180841,10 @@
     "kind": "Bridge",
     "lat": 55.40169906616211,
     "lon": 10.382652282714844,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e9/Odense-Byens_Bro-towards_south.jpg/500px-Odense-Byens_Bro-towards_south.jpg",
+    "desc": "stibro over banegården i Odense",
+    "wiki": "https://da.wikipedia.org/wiki/Byens_Bro"
    },
    {
     "name": "The Danish Railway Museum",
@@ -180683,7 +180953,8 @@
     "lat": 55.336666107177734,
     "lon": 10.332221984863281,
     "rate": 2,
-    "active": true
+    "active": true,
+    "wiki": "https://da.wikipedia.org/wiki/Natura_2000-omr%C3%A5de_nr._114_Odense_%C3%85_med_H%C3%A5gerup_%C3%85,_Sallinge_%C3%85_og_Lindved_%C3%85"
    },
    {
     "name": "Hole Kilde",
@@ -181849,7 +182120,9 @@
     "lat": 55.66666793823242,
     "lon": 12.116666793823242,
     "rate": 2,
-    "active": true
+    "active": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cf/Eskilso_pazdziora.jpg/500px-Eskilso_pazdziora.jpg",
+    "wiki": "https://da.wikipedia.org/wiki/Natura_2000-omr%C3%A5de_nr._136_Roskilde_Fjord_og_J%C3%A6gerspris_Nordskov"
    },
    {
     "name": "Bognæs",
@@ -181857,7 +182130,10 @@
     "lat": 55.69251251220703,
     "lon": 12.022640228271484,
     "rate": 2,
-    "active": true
+    "active": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Bognaes_pazdziora.jpg/500px-Bognaes_pazdziora.jpg",
+    "desc": "halvø i Roskilde Fjord",
+    "wiki": "https://da.wikipedia.org/wiki/Bogn%C3%A6s"
    },
    {
     "name": "Hedeland Skicenter",
@@ -183978,7 +184254,10 @@
     "kind": "Church",
     "lat": 54.88456726074219,
     "lon": 24.85283088684082,
-    "rate": 2
+    "rate": 2,
+    "img": "https://upload.wikimedia.org/wikipedia/lt/e/e7/Kernaves_kulturinis_rezervatas.png",
+    "desc": "koplyčia Lietuvoje",
+    "wiki": "https://lt.wikipedia.org/wiki/Kernav%C4%97s_mauzoliejin%C4%97_koply%C4%8Dia"
    },
    {
     "name": "Kernavės gyvenvietės",
@@ -184075,7 +184354,9 @@
     "kind": "Square",
     "lat": 54.839500427246094,
     "lon": 24.863080978393555,
-    "rate": 2
+    "rate": 2,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/94/LT_Elektr%C4%97n%C5%B3_savivaldyb%C4%97_outline.svg/500px-LT_Elektr%C4%97n%C5%B3_savivaldyb%C4%97_outline.svg.png",
+    "wiki": "https://lt.wikipedia.org/wiki/Grabijol%C5%B3_piliakalnis"
    },
    {
     "name": "Dailidžių-Ardiškio pilkapynai",
@@ -184130,7 +184411,9 @@
     "kind": "Square",
     "lat": 54.81985855102539,
     "lon": 24.93198013305664,
-    "rate": 2
+    "rate": 2,
+    "img": "https://upload.wikimedia.org/wikipedia/lt/9/99/Neries_regioninis_parkas.png",
+    "wiki": "https://lt.wikipedia.org/wiki/Karmazin%C5%B3_atodanga"
    },
    {
     "name": "Bradeliškiai hillfort",
@@ -185267,21 +185550,27 @@
     "kind": "Square",
     "lat": 41.959720611572266,
     "lon": 21.322778701782227,
-    "rate": 2
+    "rate": 2,
+    "desc": "археолошко наоѓалиште во Македонија",
+    "wiki": "https://mk.wikipedia.org/wiki/%D0%93%D1%80%D0%B0%D0%B4%D0%B8%D1%88%D1%82%D0%B5_(%D0%91%D0%B0%D1%80%D0%BE%D0%B2%D0%BE)"
    },
    {
     "name": "Катуниште (Матка)",
     "kind": "Square",
     "lat": 41.96666717529297,
     "lon": 21.29111099243164,
-    "rate": 2
+    "rate": 2,
+    "desc": "археолошко наоѓалиште во Македонија",
+    "wiki": "https://mk.wikipedia.org/wiki/%D0%9A%D0%B0%D1%82%D1%83%D0%BD%D0%B8%D1%88%D1%82%D0%B5_(%D0%9C%D0%B0%D1%82%D0%BA%D0%B0)"
    },
    {
     "name": "Стара Чешма (Горно Соње)",
     "kind": "Square",
     "lat": 41.95000076293945,
     "lon": 21.384166717529297,
-    "rate": 2
+    "rate": 2,
+    "desc": "археолошко наоѓалиште во Македонија",
+    "wiki": "https://mk.wikipedia.org/wiki/%D0%A1%D1%82%D0%B0%D1%80%D0%B0_%D0%A7%D0%B5%D1%88%D0%BC%D0%B0_(%D0%93%D0%BE%D1%80%D0%BD%D0%BE_%D0%A1%D0%BE%D1%9A%D0%B5)"
    },
    {
     "name": "Abedishte",
@@ -185295,7 +185584,9 @@
     "kind": "Square",
     "lat": 41.975833892822266,
     "lon": 21.221389770507812,
-    "rate": 2
+    "rate": 2,
+    "desc": "археолошко наоѓалиште во Македонија",
+    "wiki": "https://mk.wikipedia.org/wiki/%D0%91%D0%B0%D0%B4%D0%B5%D0%BC%D0%B8_(%D0%9B%D0%B0%D1%81%D0%BA%D0%B0%D1%80%D1%86%D0%B8)"
    },
    {
     "name": "Остреш",
@@ -196579,7 +196870,9 @@
     "lat": 59.858333587646484,
     "lon": 17.635278701782227,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0d/Domtrapphuset.jpg/500px-Domtrapphuset.jpg",
+    "wiki": "https://sv.wikipedia.org/wiki/Domtrapphuset"
    },
    {
     "name": "Upplands runinskrifter Fv1972;271",
@@ -196800,7 +197093,9 @@
     "kind": "Square",
     "lat": 59.858123779296875,
     "lon": 17.65093421936035,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ef/Frodeparken20201211_2.jpg/500px-Frodeparken20201211_2.jpg",
+    "wiki": "https://sv.wikipedia.org/wiki/Frodeparken"
    },
    {
     "name": "Uppsala Konsert & Kongress",
@@ -196817,7 +197112,10 @@
     "kind": "Church",
     "lat": 59.85623550415039,
     "lon": 17.639080047607422,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/Sankt_Lars_katolska_kyrka%2C_Uppsala_2025.jpg/500px-Sankt_Lars_katolska_kyrka%2C_Uppsala_2025.jpg",
+    "desc": "kyrkobyggnad i Uppsala kommun",
+    "wiki": "https://sv.wikipedia.org/wiki/Sankt_Lars_katolska_kyrka,_Uppsala"
    },
    {
     "name": "Samariterhemmets kyrka",
@@ -196904,7 +197202,10 @@
     "lat": 59.83678436279297,
     "lon": 17.641361236572266,
     "rate": 3,
-    "active": true
+    "active": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cf/Kronparken2001.jpg/500px-Kronparken2001.jpg",
+    "desc": "naturreservat i Uppsala län",
+    "wiki": "https://sv.wikipedia.org/wiki/Kronparkens_naturreservat"
    },
    {
     "name": "Stadsskogen",
@@ -196939,7 +197240,10 @@
     "lat": 59.81678771972656,
     "lon": 17.676469802856445,
     "rate": 3,
-    "active": true
+    "active": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/Vitsippor_i_gr%C3%B6nskan.jpg/500px-Vitsippor_i_gr%C3%B6nskan.jpg",
+    "desc": "naturreservat i Uppsala län",
+    "wiki": "https://sv.wikipedia.org/wiki/N%C3%A5ntuna_lunds_naturreservat"
    },
    {
     "name": "Hågadalen-Nåsten",
@@ -196977,7 +197281,10 @@
     "lat": 59.936302185058594,
     "lon": 17.640100479125977,
     "rate": 3,
-    "active": true
+    "active": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Fuller%C3%B6_Backar_Backsippor.jpg/500px-Fuller%C3%B6_Backar_Backsippor.jpg",
+    "desc": "naturreservat i Uppsala län",
+    "wiki": "https://sv.wikipedia.org/wiki/Fuller%C3%B6_backars_naturreservat"
    },
    {
     "name": "Nåntuna Elljusspår",
@@ -197122,7 +197429,10 @@
     "lat": 59.428749084472656,
     "lon": 18.334054946899414,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4d/Resar%C3%B6_kapell_fr%C3%A5n_infart.jpg/500px-Resar%C3%B6_kapell_fr%C3%A5n_infart.jpg",
+    "desc": "kyrkobyggnad i Vaxholms kommun",
+    "wiki": "https://sv.wikipedia.org/wiki/Resar%C3%B6_kapell"
    },
    {
     "name": "Oskar-Fredriksborg Fortress",
@@ -197236,7 +197546,9 @@
     "kind": "Square",
     "lat": 59.401729583740234,
     "lon": 18.344078063964844,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f8/Vaxholm_Frank_Olsson_Diva_02.JPG/500px-Vaxholm_Frank_Olsson_Diva_02.JPG",
+    "wiki": "https://sv.wikipedia.org/wiki/Ekuddsparken"
    },
    {
     "name": "Vaxholms  church parish",
@@ -200723,21 +201035,30 @@
     "kind": "Nature reserve",
     "lat": 43.32770919799805,
     "lon": 17.063953399658203,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/be/Vyhled_ze_Sv._Jure_na_SZ%2C_podel_pobrezi_a_hlavniho_hrebene.jpg/500px-Vyhled_ze_Sv._Jure_na_SZ%2C_podel_pobrezi_a_hlavniho_hrebene.jpg",
+    "desc": "park prirode u Hrvatskoj",
+    "wiki": "https://hr.wikipedia.org/wiki/Park_prirode_Biokovo"
    },
    {
     "name": "Sveti Jure",
     "kind": "Peak",
     "lat": 43.34200668334961,
     "lon": 17.053834915161133,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/The_highest_peak_Sv_Jure_%281762_m%29_in_Biokovo_Nature_Park.jpg/500px-The_highest_peak_Sv_Jure_%281762_m%29_in_Biokovo_Nature_Park.jpg",
+    "desc": "Mountain of the Dinaric Alps in Croatia",
+    "wiki": "https://en.wikipedia.org/wiki/Sveti_Jure"
    },
    {
     "name": "Sveti Ilija Tunnel",
     "kind": "Church",
     "lat": 43.36000061035156,
     "lon": 16.979999542236328,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/84/Sveti_Ilija_Tunnel_-_Southern_Portal_002.jpg/500px-Sveti_Ilija_Tunnel_-_Southern_Portal_002.jpg",
+    "desc": "Road tunnel in Croatia",
+    "wiki": "https://en.wikipedia.org/wiki/Sveti_Ilija_Tunnel"
    },
    {
     "name": "Spomenik revolucije",
@@ -201067,7 +201388,9 @@
     "kind": "Bridge",
     "lat": 43.80854034423828,
     "lon": 15.915687561035156,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Krka_bridge.jpg/500px-Krka_bridge.jpg",
+    "wiki": "https://hr.wikipedia.org/wiki/Most_Krka"
    },
    {
     "name": "Bishop's Palace",
@@ -201089,7 +201412,9 @@
     "kind": "Monastery",
     "lat": 43.7364616394043,
     "lon": 15.893166542053223,
-    "rate": 2
+    "rate": 2,
+    "desc": "Serbian Orthodox monastery",
+    "wiki": "https://en.wikipedia.org/wiki/St._Basil_of_Ostrog_Monastery"
    },
    {
     "name": "Barone Fortress",
@@ -201120,7 +201445,9 @@
     "kind": "Square",
     "lat": 43.742435455322266,
     "lon": 15.897050857543945,
-    "rate": 2
+    "rate": 2,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/33/Sibenik_-_Spomen_park_Subicevac_1.jpg/500px-Sibenik_-_Spomen_park_Subicevac_1.jpg",
+    "wiki": "https://hr.wikipedia.org/wiki/Spomen-park_%C5%A0ubi%C4%87evac"
    },
    {
     "name": "Kupalište Jadrija",
@@ -201291,7 +201618,10 @@
     "lat": 46.08333206176758,
     "lon": 8.733333587646484,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Pino_sulla_Sponda_del_Lago_Maggiore_and_train_station_Pino-Tronzano.JPG/500px-Pino_sulla_Sponda_del_Lago_Maggiore_and_train_station_Pino-Tronzano.JPG",
+    "desc": "Comune in Lombardy, Italy",
+    "wiki": "https://en.wikipedia.org/wiki/Tronzano_Lago_Maggiore"
    },
    {
     "name": "Sacro Monte di Brissago",
@@ -201299,7 +201629,10 @@
     "lat": 46.12102127075195,
     "lon": 8.705581665039062,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/48/Brissago_Sacro_Monte_002.jpg/500px-Brissago_Sacro_Monte_002.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "desc": "santuario di Brissago",
+    "wiki": "https://it.wikipedia.org/wiki/Sacro_Monte_di_Brissago"
    },
    {
     "name": "Isole di Brissago",
@@ -201337,7 +201670,10 @@
     "lat": 46.06563186645508,
     "lon": 8.78271484375,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7d/Graglio_-_Panorama_%282%29.jpg/500px-Graglio_-_Panorama_%282%29.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "desc": "località del comune italiano di Maccagno con Veddasca, in provincia di Varese",
+    "wiki": "https://it.wikipedia.org/wiki/Graglio"
    },
    {
     "name": "Cadero",
@@ -201345,7 +201681,10 @@
     "lat": 46.056819915771484,
     "lon": 8.773735046386719,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/22/C%C3%A0dero_-_Panorama_%282%29.jpg/500px-C%C3%A0dero_-_Panorama_%282%29.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "desc": "frazione di Maccagno con Pino e Veddasca",
+    "wiki": "https://it.wikipedia.org/wiki/Cadero"
    },
    {
     "name": "Museo Epper",
@@ -201382,7 +201721,10 @@
     "kind": "Church",
     "lat": 46.06170654296875,
     "lon": 8.697341918945312,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ae/SanVittore.JPG/500px-SanVittore.JPG?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "desc": "chiesa di Muralto TI",
+    "wiki": "https://it.wikipedia.org/wiki/Collegiata_di_San_Vittore"
    },
    {
     "name": "Chiesa della Madonna di Loreto e di Sant'Anna",
@@ -201509,7 +201851,10 @@
     "lat": 46.066734313964844,
     "lon": 8.744539260864258,
     "rate": 2,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/16/Italy_provincial_location_map_2016.svg/500px-Italy_provincial_location_map_2016.svg.png?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "desc": "frazione del comune italiano di Maccagno con Pino e Veddasca",
+    "wiki": "https://it.wikipedia.org/wiki/Musignano"
    },
    {
     "name": "Casa Ciseri in Ronco sopra Ascona",
@@ -201533,7 +201878,10 @@
     "lat": 46.0531120300293,
     "lon": 8.764497756958008,
     "rate": 2,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Chiesa_della_Madonna_Annunciata_e_San_Carlo_-_Exterior_%281%29.jpg/500px-Chiesa_della_Madonna_Annunciata_e_San_Carlo_-_Exterior_%281%29.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "desc": "frazione di Maccagno con Pino e Veddasca",
+    "wiki": "https://it.wikipedia.org/wiki/Garabiolo"
    },
    {
     "name": "Maccagno Inferiore",
@@ -201541,7 +201889,10 @@
     "lat": 46.037235260009766,
     "lon": 8.740680694580078,
     "rate": 2,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/57/Het_haventje_van_het_dorp_Cadlollo_aan_het_Lago_Maggiore%2C_Bestanddeelnr_254-4773.jpg/500px-Het_haventje_van_het_dorp_Cadlollo_aan_het_Lago_Maggiore%2C_Bestanddeelnr_254-4773.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "desc": "frazione del comune italiano di Maccagno con Pino e Veddasca",
+    "wiki": "https://it.wikipedia.org/wiki/Maccagno_Inferiore"
    },
    {
     "name": "Armio",
@@ -201549,7 +201900,10 @@
     "lat": 46.07058334350586,
     "lon": 8.798727035522461,
     "rate": 2,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9c/Val_Veddasca_-_Panorama_%281%29.jpg/500px-Val_Veddasca_-_Panorama_%281%29.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "desc": "frazione del comune italiano di Maccagno con Pino e Veddasca",
+    "wiki": "https://it.wikipedia.org/wiki/Armio"
    },
    {
     "name": "Chiesa di S. Michele con rovine del castello medievale",
@@ -201659,7 +202013,10 @@
     "lat": 46.07803726196289,
     "lon": 8.746537208557129,
     "rate": 1,
-    "active": true
+    "active": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Monte_Borgna_seen_from_the_summit_of_Monte_della_Colonna.jpg/500px-Monte_Borgna_seen_from_the_summit_of_Monte_della_Colonna.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "desc": "montagna delle prealpi varesine",
+    "wiki": "https://it.wikipedia.org/wiki/Monte_Borgna"
    },
    {
     "name": "Porto Ronco Beach Club",
@@ -201759,7 +202116,10 @@
     "kind": "Castle",
     "lat": 37.85444259643555,
     "lon": 15.284444808959961,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/20/Taormina_-_Jan_2014_-_073.jpg/500px-Taormina_-_Jan_2014_-_073.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "desc": "castello nel comune italiano di Taormina (ME)",
+    "wiki": "https://it.wikipedia.org/wiki/Castello_di_Monte_Tauro"
    },
    {
     "name": "Duomo",
@@ -201780,7 +202140,10 @@
     "kind": "Palace",
     "lat": 37.850830078125,
     "lon": 15.281709671020508,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/61/Taormina_Palazzo_Duchi_San_Stefano_01.jpg/500px-Taormina_Palazzo_Duchi_San_Stefano_01.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "desc": "palazzo di Taormina",
+    "wiki": "https://it.wikipedia.org/wiki/Palazzo_Duchi_di_Santo_Stefano"
    },
    {
     "name": "Castello di Castelmola",
@@ -201808,7 +202171,9 @@
     "kind": "Castle",
     "lat": 37.82352066040039,
     "lon": 15.271709442138672,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/Schis%C3%B2_Castle.jpg/500px-Schis%C3%B2_Castle.jpg",
+    "wiki": "https://en.wikipedia.org/wiki/Schis%C3%B2_Castle"
    },
    {
     "name": "Naxos",
@@ -201843,7 +202208,10 @@
     "kind": "Nature reserve",
     "lat": 37.78694152832031,
     "lon": 15.234530448913574,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Ingresso_riserva_Fiumefreddo.jpg/500px-Ingresso_riserva_Fiumefreddo.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "desc": "Riserva naturale regionale/provinciale (EUAP0374)",
+    "wiki": "https://it.wikipedia.org/wiki/Riserva_naturale_Fiume_Fiumefreddo"
    },
    {
     "name": "Taormina and Isola Bella",
@@ -201872,14 +202240,20 @@
     "kind": "Nature reserve",
     "lat": 37.850807189941406,
     "lon": 15.302578926086426,
-    "rate": 2
+    "rate": 2,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/Sicilia_Isola_Bella-Beach_View2.jpg/500px-Sicilia_Isola_Bella-Beach_View2.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "desc": "riserva regionale della Sicilia",
+    "wiki": "https://it.wikipedia.org/wiki/Riserva_naturale_orientata_Isola_Bella"
    },
    {
     "name": "Casa Cuseni",
     "kind": "Museum",
     "lat": 37.85282516479492,
     "lon": 15.280205726623535,
-    "rate": 2
+    "rate": 2,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/Biblioteca%2C_particolare.jpg/500px-Biblioteca%2C_particolare.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "desc": "museo a Taormina, Italia",
+    "wiki": "https://it.wikipedia.org/wiki/Casa_Cuseni"
    },
    {
     "name": "Grotta Azzurra",
@@ -202061,7 +202435,10 @@
     "lat": 40.55622863769531,
     "lon": 14.22917366027832,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Phoenician_Steps_Capri.jpg/500px-Phoenician_Steps_Capri.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "desc": "scalinata storica di Anacapri e Capri",
+    "wiki": "https://it.wikipedia.org/wiki/Scala_Fenicia"
    },
    {
     "name": "Via Vittorio Emanuele terzo",
@@ -202077,7 +202454,10 @@
     "lat": 40.55082321166992,
     "lon": 14.243230819702148,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/it/6/66/Vittorioemanuele.PNG?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "desc": "strada principale di Capri",
+    "wiki": "https://it.wikipedia.org/wiki/Via_Vittorio_Emanuele_III"
    },
    {
     "name": "Certosa di San Giacomo",
@@ -202104,7 +202484,10 @@
     "lat": 40.55827331542969,
     "lon": 14.263368606567383,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/Villa_Jovis_%28Capri%29_%283%29.jpg/500px-Villa_Jovis_%28Capri%29_%283%29.jpg",
+    "desc": "Roman palace on Capri, Italy",
+    "wiki": "https://en.wikipedia.org/wiki/Villa_Jovis"
    },
    {
     "name": "Belvedere del Sognatore",
@@ -202195,7 +202578,10 @@
     "kind": "Museum",
     "lat": 40.5572624206543,
     "lon": 14.225067138671875,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/Overlooking_Capri_harbour_from_the_rotunda_in_Villa_San_Michele_Anacapri_BW_2013-05-14_13-55-21.jpg/500px-Overlooking_Capri_harbour_from_the_rotunda_in_Villa_San_Michele_Anacapri_BW_2013-05-14_13-55-21.jpg",
+    "desc": "House in Capri, Italy",
+    "wiki": "https://en.wikipedia.org/wiki/Villa_San_Michele"
    },
    {
     "name": "Casa Rossa",
@@ -202236,7 +202622,9 @@
     "kind": "Square",
     "lat": 40.54945755004883,
     "lon": 14.255843162536621,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/4/43/Grotta_matermania_paesaggio.JPG?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "wiki": "https://it.wikipedia.org/wiki/Grotta_di_Matermania"
    },
    {
     "name": "Villa Lysis/Fersen",
@@ -202250,7 +202638,9 @@
     "kind": "Square",
     "lat": 40.53628921508789,
     "lon": 14.198822975158691,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1d/Punta_Carena_Lighthouse.jpg/500px-Punta_Carena_Lighthouse.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "wiki": "https://it.wikipedia.org/wiki/Faro_di_Punta_Carena"
    },
    {
     "name": "Punta Campanella Marine Reserve",
@@ -202280,7 +202670,9 @@
     "kind": "Church",
     "lat": 40.54734802246094,
     "lon": 14.229256629943848,
-    "rate": 2
+    "rate": 2,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/5/52/Eremo_cetrella.jpg",
+    "wiki": "https://en.wikipedia.org/wiki/Santa_Maria_a_Cetrella"
    },
    {
     "name": "Chiesa di Sant'Andrea",
@@ -202366,7 +202758,10 @@
     "lat": 40.56922149658203,
     "lon": 14.325491905212402,
     "rate": 3,
-    "active": true
+    "active": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/Punta_Campanella.jpg/500px-Punta_Campanella.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "desc": "Area protetta in Campania",
+    "wiki": "https://it.wikipedia.org/wiki/Punta_Campanella"
    },
    {
     "name": "Settore e rupi costiere orientali dell'Isola di Capri",
@@ -202401,7 +202796,10 @@
     "lat": 40.54610061645508,
     "lon": 14.2431001663208,
     "rate": 1,
-    "active": true
+    "active": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/Capri_Via_Krupp_BW_2013-05-14_15-33-40_DxO.jpg/500px-Capri_Via_Krupp_BW_2013-05-14_15-33-40_DxO.jpg",
+    "desc": "Walking path in Capri",
+    "wiki": "https://en.wikipedia.org/wiki/Via_Krupp"
    },
    {
     "name": "La Fontelina",
@@ -202425,7 +202823,9 @@
     "lat": 40.5432014465332,
     "lon": 14.253399848937988,
     "rate": 1,
-    "active": true
+    "active": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/Faraglioni%2C_Capri%2C_Italy.jpg/500px-Faraglioni%2C_Capri%2C_Italy.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "wiki": "https://it.wikipedia.org/wiki/Scoglio_del_Monacone"
    },
    {
     "name": "Faraglione di Terra",
@@ -202449,7 +202849,10 @@
     "lat": 40.56119918823242,
     "lon": 14.204000473022461,
     "rate": 1,
-    "active": true
+    "active": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d7/Blue_Grotto%2C_Capri%2C_IT.jpg/500px-Blue_Grotto%2C_Capri%2C_IT.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "desc": "cavità carsica dell'isola di Capri",
+    "wiki": "https://it.wikipedia.org/wiki/Grotta_Azzurra"
    },
    {
     "name": "Lido del Faro",
@@ -202504,7 +202907,10 @@
     "lat": 38.67805480957031,
     "lon": 15.896944046020508,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Tropea_-_Veduta_da_Via_Carmine_-_3.jpg/500px-Tropea_-_Veduta_da_Via_Carmine_-_3.jpg",
+    "desc": "Municipality in Calabria, Italy",
+    "wiki": "https://en.wikipedia.org/wiki/Tropea"
    },
    {
     "name": "Cattedrale di Maria Santissima di Romania",
@@ -202512,7 +202918,10 @@
     "lat": 38.67788314819336,
     "lon": 15.898688316345215,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Tropea_-_Concattedrale_di_Maria_Santissima_di_Romania_-_01.jpg/500px-Tropea_-_Concattedrale_di_Maria_Santissima_di_Romania_-_01.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "desc": "concattedrale di Tropea",
+    "wiki": "https://it.wikipedia.org/wiki/Concattedrale_di_Maria_Santissima_di_Romania"
    },
    {
     "name": "Civico Museo del Mare di Tropea",
@@ -202556,7 +202965,9 @@
     "kind": "Peak",
     "lat": 38.604164123535156,
     "lon": 15.907793998718262,
-    "rate": 2
+    "rate": 2,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/Monte_Poro06.jpg/500px-Monte_Poro06.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "wiki": "https://it.wikipedia.org/wiki/Monte_Poro"
    },
    {
     "name": "Aquapark di Zambrone",
@@ -202707,7 +203118,10 @@
     "lat": 43.20090103149414,
     "lon": 5.618199825286865,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Fa%C3%A7ade_sud_de_la_bastide_Marin.JPG/500px-Fa%C3%A7ade_sud_de_la_bastide_Marin.JPG",
+    "desc": "bastide à La Ciotat (Bouches-du-Rhône)",
+    "wiki": "https://fr.wikipedia.org/wiki/Bastide_Marin"
    },
    {
     "name": "Palais Lumière",
@@ -202723,7 +203137,10 @@
     "lat": 43.17707061767578,
     "lon": 5.609865188598633,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Chapelle_des_P%C3%A9nitents_bleus_de_La_Ciotat.jpg/500px-Chapelle_des_P%C3%A9nitents_bleus_de_La_Ciotat.jpg",
+    "desc": "chapelle située dans les Bouches-du-Rhône, en France",
+    "wiki": "https://fr.wikipedia.org/wiki/Chapelle_des_P%C3%A9nitents_bleus_de_La_Ciotat"
    },
    {
     "name": "Éden Théâtre",
@@ -202771,7 +203188,10 @@
     "lat": 43.289669036865234,
     "lon": 5.505527019500732,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Ch%C3%A2teau-de-la-Reynarde.jpg/500px-Ch%C3%A2teau-de-la-Reynarde.jpg",
+    "desc": "château fort français situé à Marseille",
+    "wiki": "https://fr.wikipedia.org/wiki/Ch%C3%A2teau_de_la_Reynarde"
    },
    {
     "name": "Château Régis",
@@ -202779,7 +203199,10 @@
     "lat": 43.28984832763672,
     "lon": 5.500267028808594,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/96/Ch%C3%A2teau_R%C3%A9gis2.jpg/500px-Ch%C3%A2teau_R%C3%A9gis2.jpg",
+    "desc": "château XIXe siècle",
+    "wiki": "https://fr.wikipedia.org/wiki/Ch%C3%A2teau_R%C3%A9gis"
    },
    {
     "name": "Chapelle des Pénitents gris d'Aubagne",
@@ -202787,7 +203210,10 @@
     "lat": 43.292633056640625,
     "lon": 5.570760726928711,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c0/Chapel_of_Grey_Penitents_Aubagne_%28northward%29.jpg/500px-Chapel_of_Grey_Penitents_Aubagne_%28northward%29.jpg",
+    "desc": "chapelle située dans les Bouches-du-Rhône, en France",
+    "wiki": "https://fr.wikipedia.org/wiki/Chapelle_des_P%C3%A9nitents_gris_d%27Aubagne"
    },
    {
     "name": "Chapelle des Pénitents noirs d'Aubagne",
@@ -202795,7 +203221,10 @@
     "lat": 43.292781829833984,
     "lon": 5.572467803955078,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Chapelle_des_p%C3%A9nitents_noirs_Aubagne_%28vue_sud%29_5689b.jpg/500px-Chapelle_des_p%C3%A9nitents_noirs_Aubagne_%28vue_sud%29_5689b.jpg",
+    "desc": "chapelle située dans les Bouches-du-Rhône, en France",
+    "wiki": "https://fr.wikipedia.org/wiki/Chapelle_des_P%C3%A9nitents_noirs_d%27Aubagne"
    },
    {
     "name": "Chapelle des Pénitents blancs d'Aubagne",
@@ -202803,7 +203232,10 @@
     "lat": 43.29330062866211,
     "lon": 5.571489334106445,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cf/Chapelle_des_p%C3%A9nitents_blancs_Aubagne.jpg/500px-Chapelle_des_p%C3%A9nitents_blancs_Aubagne.jpg",
+    "desc": "chapelle située dans les Bouches-du-Rhône, en France",
+    "wiki": "https://fr.wikipedia.org/wiki/Chapelle_des_P%C3%A9nitents_blancs_d%27Aubagne"
    },
    {
     "name": "Cassis",
@@ -202820,14 +203252,19 @@
     "kind": "Castle",
     "lat": 43.212684631347656,
     "lon": 5.539429664611816,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Cassis_chateau_2016-08.jpg/500px-Cassis_chateau_2016-08.jpg",
+    "wiki": "https://fr.wikipedia.org/wiki/Ch%C3%A2teau_de_Cassis"
    },
    {
     "name": "Exsurgence de Port-Miou",
     "kind": "Diving",
     "lat": 43.20517349243164,
     "lon": 5.512911796569824,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Port-miou.jpg/500px-Port-miou.jpg",
+    "desc": "grotte sous-marine dans les Bouches-du-Rhône, France",
+    "wiki": "https://fr.wikipedia.org/wiki/Exsurgence_de_Port-Miou"
    },
    {
     "name": "Cap Canaille",
@@ -202853,7 +203290,10 @@
     "kind": "Peak",
     "lat": 43.25370407104492,
     "lon": 5.470517158508301,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Mont-Carpiagne-et-Muraille-de-Chine.jpg/500px-Mont-Carpiagne-et-Muraille-de-Chine.jpg",
+    "desc": "montagne en France",
+    "wiki": "https://fr.wikipedia.org/wiki/Mont_Carpiagne"
    },
    {
     "name": "Figuerolles",
@@ -202891,14 +203331,19 @@
     "kind": "Church",
     "lat": 43.293212890625,
     "lon": 5.570521354675293,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/93/Aubagne_-_%C3%89glise_Saint-Sauveur-01.jpg/500px-Aubagne_-_%C3%89glise_Saint-Sauveur-01.jpg",
+    "desc": "église située dans les Bouches-du-Rhône, en France",
+    "wiki": "https://fr.wikipedia.org/wiki/%C3%89glise_Saint-Sauveur_d%27Aubagne"
    },
    {
     "name": "Château Saint-Antoine",
     "kind": "Castle",
     "lat": 43.287750244140625,
     "lon": 5.4885454177856445,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c6/Ch%C3%A2teau_Saint-Antoine_6b.jpg/500px-Ch%C3%A2teau_Saint-Antoine_6b.jpg",
+    "wiki": "https://fr.wikipedia.org/wiki/Ch%C3%A2teau_Saint-Antoine"
    },
    {
     "name": "La fontaine du 18s",
@@ -202938,7 +203383,10 @@
     "lat": 43.2032470703125,
     "lon": 5.451608657836914,
     "rate": 2,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f7/France_relief_location_map.jpg/500px-France_relief_location_map.jpg",
+    "desc": "grotte dans les Bouches-du-Rhône, France",
+    "wiki": "https://fr.wikipedia.org/wiki/Grotte_de_la_Triperie"
    },
    {
     "name": "villa des Frères Lumière",
@@ -202962,7 +203410,10 @@
     "lat": 43.2061767578125,
     "lon": 5.446227550506592,
     "rate": 2,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f7/France_relief_location_map.jpg/500px-France_relief_location_map.jpg",
+    "desc": "grotte dans les Bouches-du-Rhône, France",
+    "wiki": "https://fr.wikipedia.org/wiki/Grotte_du_Renard"
    },
    {
     "name": "Monument aux morts d'Aubagne",
@@ -202991,14 +203442,20 @@
     "kind": "Square",
     "lat": 43.20073699951172,
     "lon": 5.512118816375732,
-    "rate": 2
+    "rate": 2,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Calanque_de_Port_Miou%2C_Cassis_-_panoramio_%286%29.jpg/500px-Calanque_de_Port_Miou%2C_Cassis_-_panoramio_%286%29.jpg",
+    "desc": "grotte dans les Bouches-du-Rhône, France",
+    "wiki": "https://fr.wikipedia.org/wiki/Grotte_des_Tr%C3%A9mies"
    },
    {
     "name": "Camp de Carpiagne",
     "kind": "Square",
     "lat": 43.24940872192383,
     "lon": 5.50963020324707,
-    "rate": 2
+    "rate": 2,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Camp_de_Carpiagne_aujourd%27hui.jpg/500px-Camp_de_Carpiagne_aujourd%27hui.jpg",
+    "desc": "camp militaire français",
+    "wiki": "https://fr.wikipedia.org/wiki/Camp_de_Carpiagne"
    },
    {
     "name": "Église Sainte-Roselyne de Roquefort-la-Bédoule",
@@ -203158,7 +203615,10 @@
     "lat": 43.77671813964844,
     "lon": 7.5032806396484375,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/MENTON_rue_Loredan_Larchey_15_%281%29.jpg/500px-MENTON_rue_Loredan_Larchey_15_%281%29.jpg",
+    "desc": "maison à Menton (Alpes-Maritimes)",
+    "wiki": "https://fr.wikipedia.org/wiki/Maison_de_la_rue_Loredan-Larchey"
    },
    {
     "name": "Immeuble Glena",
@@ -203190,7 +203650,10 @@
     "lat": 43.777137756347656,
     "lon": 7.506435871124268,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/58/Chapelle_des_P%C3%A9nitents_Blancs_%28Menton%29_facade.jpg/500px-Chapelle_des_P%C3%A9nitents_Blancs_%28Menton%29_facade.jpg",
+    "desc": "chapelle située dans les Alpes-Maritimes, en France",
+    "wiki": "https://fr.wikipedia.org/wiki/Chapelle_de_l%27Immacul%C3%A9e-Conception_de_Menton"
    },
    {
     "name": "Basilique Saint-Michel-Archange",
@@ -203238,7 +203701,10 @@
     "lat": 43.766632080078125,
     "lon": 7.487974643707275,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1f/Palais_Carnoles_7.jpg/500px-Palais_Carnoles_7.jpg",
+    "desc": "palais à Menton (Alpes-Maritimes)",
+    "wiki": "https://fr.wikipedia.org/wiki/Palais_Carnol%C3%A8s"
    },
    {
     "name": "Fontana Rosa",
@@ -203272,7 +203738,10 @@
     "lat": 43.77560043334961,
     "lon": 7.475362300872803,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/02/Madone3.jpg/500px-Madone3.jpg",
+    "desc": "Garden in France",
+    "wiki": "https://en.wikipedia.org/wiki/Serre_de_la_Madone"
    },
    {
     "name": "Tombeau romain de Lumone, Roquebrune-Cap-Martin",
@@ -203288,7 +203757,9 @@
     "lat": 43.75170135498047,
     "lon": 7.477910041809082,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/Roquebrune_Villa.jpg/500px-Roquebrune_Villa.jpg",
+    "wiki": "https://en.wikipedia.org/wiki/Villa_Cypris"
    },
    {
     "name": "Villa Torre Clementina",
@@ -203296,7 +203767,10 @@
     "lat": 43.75320053100586,
     "lon": 7.473700046539307,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/D6098_capmartin_torrentina.jpg/500px-D6098_capmartin_torrentina.jpg",
+    "desc": "House in Roquebrune-Cap-Martin, France",
+    "wiki": "https://en.wikipedia.org/wiki/Villa_Torre_Clementina"
    },
    {
     "name": "Cabanon de vacances",
@@ -203342,7 +203816,10 @@
     "lat": 43.806793212890625,
     "lon": 7.4986796379089355,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Chapelle_St_S%C3%A9bastien.JPG/500px-Chapelle_St_S%C3%A9bastien.JPG",
+    "desc": "chapelle située dans les Alpes-Maritimes, en France",
+    "wiki": "https://fr.wikipedia.org/wiki/Chapelle_Saint-S%C3%A9bastien_de_Castellar"
    },
    {
     "name": "Jean Cocteau Museum",
@@ -203406,14 +203883,20 @@
     "kind": "Museum",
     "lat": 43.766666412353516,
     "lon": 7.48805570602417,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1f/Palais_Carnoles_7.jpg/500px-Palais_Carnoles_7.jpg",
+    "desc": "palais à Menton (Alpes-Maritimes)",
+    "wiki": "https://fr.wikipedia.org/wiki/Palais_Carnol%C3%A8s"
    },
    {
     "name": "Jardin botanique du Val Rahmeh",
     "kind": "Square",
     "lat": 43.78483963012695,
     "lon": 7.511085033416748,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c4/MNHN-Val_Rahmeh.png/500px-MNHN-Val_Rahmeh.png",
+    "desc": "jardin botanique français",
+    "wiki": "https://fr.wikipedia.org/wiki/Jardin_botanique_du_Val_Rahmeh"
    },
    {
     "name": "Arboretum du Sarroudier",
@@ -203641,7 +204124,10 @@
     "lat": 41.387020111083984,
     "lon": 9.155707359313965,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1d/Bonifacio%2C_san_domenico_02.jpg/500px-Bonifacio%2C_san_domenico_02.jpg",
+    "desc": "Church in Bonifacio, France",
+    "wiki": "https://en.wikipedia.org/wiki/%C3%89glise_Saint-Dominique_de_Bonifacio"
    },
    {
     "name": "Sainte-Marie Majeure",
@@ -203665,7 +204151,10 @@
     "lat": 41.38634490966797,
     "lon": 9.150409698486328,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/Bonifacio_Music_school.jpg/500px-Bonifacio_Music_school.jpg",
+    "desc": "couvent à Bonifacio (Corse-du-Sud)",
+    "wiki": "https://fr.wikipedia.org/wiki/Couvent_Saint-Fran%C3%A7ois_de_Bonifacio"
    },
    {
     "name": "Phare de Pertusato",
@@ -203673,7 +204162,10 @@
     "lat": 41.367515563964844,
     "lon": 9.184427261352539,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/Phare_de_Pertusato.JPG/500px-Phare_de_Pertusato.JPG",
+    "desc": "phare français",
+    "wiki": "https://fr.wikipedia.org/wiki/Phare_de_Pertusato"
    },
    {
     "name": "Site archéologique antique de Piantarella",
@@ -203812,7 +204304,10 @@
     "lat": 41.39213180541992,
     "lon": 9.165714263916016,
     "rate": 2,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cf/Abri_de_l%27Araguina-Sennola.jpg/500px-Abri_de_l%27Araguina-Sennola.jpg",
+    "desc": "site archéologique à Bonifacio (Corse-du-Sud)",
+    "wiki": "https://fr.wikipedia.org/wiki/Araguina-Sennola"
    },
    {
     "name": "Église Saint-Érasme de Bonifacio",
@@ -203878,7 +204373,8 @@
     "kind": "Nature reserve",
     "lat": 41.45000076293945,
     "lon": 9.149999618530273,
-    "rate": 2
+    "rate": 2,
+    "wiki": "https://fr.wikipedia.org/wiki/Mares_temporaires_du_terrain_militaire_de_Frasselli/Bonifacio"
    },
    {
     "name": "Grotte du Puits Saint Barthélémy",
@@ -204152,7 +204648,10 @@
     "lat": 36.74363327026367,
     "lon": -3.905149221420288,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/Torre_de_Macaca_%283%29.jpg/500px-Torre_de_Macaca_%283%29.jpg",
+    "desc": "bien de interés cultural",
+    "wiki": "https://es.wikipedia.org/wiki/Torre_de_Macaca"
    },
    {
     "name": "Cueva de Nerja",
@@ -204160,7 +204659,10 @@
     "lat": 36.761898040771484,
     "lon": -3.845604658126831,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/Cueva_de_Nerja_2020.jpg/500px-Cueva_de_Nerja_2020.jpg",
+    "desc": "cueva de riqueza geológica",
+    "wiki": "https://es.wikipedia.org/wiki/Cueva_de_Nerja"
    },
    {
     "name": "Torre de Calaceite",
@@ -204168,7 +204670,10 @@
     "lat": 36.73781204223633,
     "lon": -3.926628351211548,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/62/Torre_de_Calaceite_%281%29.jpg/500px-Torre_de_Calaceite_%281%29.jpg",
+    "desc": "bien de interés cultural",
+    "wiki": "https://es.wikipedia.org/wiki/Torre_de_Calaceite"
    },
    {
     "name": "Torre de Maro",
@@ -204176,7 +204681,10 @@
     "lat": 36.7535514831543,
     "lon": -3.829991102218628,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d2/023._Torre_de_Maro%2C_Nerja_y_Torrox.jpg/500px-023._Torre_de_Maro%2C_Nerja_y_Torrox.jpg",
+    "desc": "Coastal watchtower in Andalusia, Spain",
+    "wiki": "https://en.wikipedia.org/wiki/Torre_de_Maro"
    },
    {
     "name": "Centro Histórico de Frigiliana",
@@ -204192,7 +204700,10 @@
     "lat": 36.793914794921875,
     "lon": -3.896267890930176,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Castillo_de_Frigiliana.jpg/500px-Castillo_de_Frigiliana.jpg",
+    "desc": "castillo en Frigiliana (España)",
+    "wiki": "https://es.wikipedia.org/wiki/Castillo_de_Frigiliana"
    },
    {
     "name": "Torre del río de la Miel",
@@ -204200,7 +204711,10 @@
     "lat": 36.75025177001953,
     "lon": -3.8118631839752197,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/053._Torre_del_R%C3%ADo_de_la_Miel.jpg/500px-053._Torre_del_R%C3%ADo_de_la_Miel.jpg",
+    "desc": "ruinas de atalaya costera troncocónica construida en el siglo XVIII, situada en el término municipal de Nerja, España. Declarada Bien de Interés Cultural",
+    "wiki": "https://es.wikipedia.org/wiki/Torre_del_R%C3%ADo_de_la_Miel"
    },
    {
     "name": "Antiguo Convento de Nuestra Señora de las Nieves (Torrox)",
@@ -204216,7 +204730,10 @@
     "lat": 36.74662780761719,
     "lon": -3.798131227493286,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ed/Torre_del_Pino%2C_Nerja_01.jpg/500px-Torre_del_Pino%2C_Nerja_01.jpg",
+    "desc": "atalaya costera troncocónica construida entre finales del siglo xv y principios del xvi situada en el término municipal de Nerja, España. Declarada Bien de Interés Cultural",
+    "wiki": "https://es.wikipedia.org/wiki/Torre_del_Pino"
    },
    {
     "name": "roman baths",
@@ -204240,14 +204757,20 @@
     "lat": 36.74022674560547,
     "lon": -3.7848293781280518,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/33/022._Torre_de_Cerro_Caleta_%2812932215154%29.jpg/500px-022._Torre_de_Cerro_Caleta_%2812932215154%29.jpg",
+    "desc": "atalaya costera troncocónica construida a principios del xvi situada en el término municipal de Nerja, España. Declarada Bien de Interés Cultural",
+    "wiki": "https://es.wikipedia.org/wiki/Torre_Caleta"
    },
    {
     "name": "Acueducto del Águila",
     "kind": "Bridge",
     "lat": 36.75698471069336,
     "lon": -3.8502302169799805,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/Aquaduct_Nerja_%287007988881%29.jpg/500px-Aquaduct_Nerja_%287007988881%29.jpg",
+    "desc": "acueducto, patrimonio histórico de Andalucía de importancia arquitectónica en Nerja, España",
+    "wiki": "https://es.wikipedia.org/wiki/Acueducto_del_%C3%81guila"
    },
    {
     "name": "Viaduct",
@@ -204261,21 +204784,28 @@
     "kind": "Palace",
     "lat": 36.791385650634766,
     "lon": -3.8947269916534424,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Ingenio_Frigiliana.jpg/500px-Ingenio_Frigiliana.jpg",
+    "wiki": "https://es.wikipedia.org/wiki/Palacio_de_los_Condes_de_Frigiliana"
    },
    {
     "name": "Faro de Torrox",
     "kind": "Square",
     "lat": 36.7265625,
     "lon": -3.9573416709899902,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/ba/FaroTorrox.jpg/500px-FaroTorrox.jpg",
+    "desc": "bien de interés cultural",
+    "wiki": "https://es.wikipedia.org/wiki/Faro_de_Torrox"
    },
    {
     "name": "Cala del Cañuelo",
     "kind": "Square",
     "lat": 36.74496841430664,
     "lon": -3.789471387863159,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/03/Cala_del_Ca%C3%B1uelo%2C_Nerja%2C_1.jpg/500px-Cala_del_Ca%C3%B1uelo%2C_Nerja%2C_1.jpg",
+    "wiki": "https://es.wikipedia.org/wiki/Cala_del_Ca%C3%B1uelo"
    },
    {
     "name": "Pico del Cielo",
@@ -204289,7 +204819,10 @@
     "kind": "Nature reserve",
     "lat": 36.74630355834961,
     "lon": -3.781554937362671,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/Acantilados_de_Maro.jpg/500px-Acantilados_de_Maro.jpg",
+    "desc": "espacio protegido de España",
+    "wiki": "https://es.wikipedia.org/wiki/Acantilados_de_Maro-Cerro_Gordo"
    },
    {
     "name": "Casa Rudofsky",
@@ -204297,7 +204830,10 @@
     "lat": 36.7689208984375,
     "lon": -3.89487886428833,
     "rate": 2,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/16/M%C3%A1laga-loc.svg/500px-M%C3%A1laga-loc.svg.png",
+    "desc": "vivienda, patrimonio histórico de Andalucía de importancia arquitectónica en Frigiliana, España",
+    "wiki": "https://es.wikipedia.org/wiki/Casa_Rudofsky"
    },
    {
     "name": "Alrededores de Maro-Cueva de Nerja",
@@ -204543,7 +205079,10 @@
     "lat": 42.198612213134766,
     "lon": 2.6998839378356934,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/Carrer_del_Portalet_-_20200802_145549.jpg/500px-Carrer_del_Portalet_-_20200802_145549.jpg?utm_source=ca.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "desc": "carrer de Besalú",
+    "wiki": "https://ca.wikipedia.org/wiki/Carrer_del_Portalet"
    },
    {
     "name": "Cúria Reial",
@@ -204551,7 +205090,9 @@
     "lat": 42.198524475097656,
     "lon": 2.6999354362487793,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/33/C%C3%BAria_Reial_%28Besal%C3%BA%29.JPG/500px-C%C3%BAria_Reial_%28Besal%C3%BA%29.JPG?utm_source=ca.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "wiki": "https://ca.wikipedia.org/wiki/C%C3%BAria_Reial"
    },
    {
     "name": "Carrer Bernat Tallaferro",
@@ -204559,7 +205100,10 @@
     "lat": 42.19932556152344,
     "lon": 2.699932098388672,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/Carrer_Bernat_Tallaferro.jpg/500px-Carrer_Bernat_Tallaferro.jpg?utm_source=ca.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "desc": "edifici a Besalú",
+    "wiki": "https://ca.wikipedia.org/wiki/Carrer_Bernat_Tallaferro"
    },
    {
     "name": "Castell Comtal de Besalú",
@@ -204567,7 +205111,9 @@
     "lat": 42.19940185546875,
     "lon": 2.6994400024414062,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/Besal%C3%BA%2C_Esgl%C3%A9sia_de_Santa_Maria.JPG/500px-Besal%C3%BA%2C_Esgl%C3%A9sia_de_Santa_Maria.JPG?utm_source=ca.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "wiki": "https://ca.wikipedia.org/wiki/Castell_Comtal_de_Besal%C3%BA"
    },
    {
     "name": "House in carrer Major",
@@ -204591,7 +205137,9 @@
     "lat": 42.199100494384766,
     "lon": 2.7004199028015137,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/01/Miqv%C3%A9_de_Besal%C3%BA.JPG/500px-Miqv%C3%A9_de_Besal%C3%BA.JPG?utm_source=ca.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "wiki": "https://ca.wikipedia.org/wiki/Sinagoga_de_Besal%C3%BA"
    },
    {
     "name": "Casa dels Sant Romà",
@@ -204607,7 +205155,10 @@
     "lat": 42.19824981689453,
     "lon": 2.6992735862731934,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/WLM14ES_-_16072008_182816_31745_-_.jpg/500px-WLM14ES_-_16072008_182816_31745_-_.jpg?utm_source=ca.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "desc": "església de Besalú",
+    "wiki": "https://ca.wikipedia.org/wiki/Sant_Juli%C3%A0_de_Besal%C3%BA"
    },
    {
     "name": "Recinte emmurallat de Besalú",
@@ -204615,7 +205166,9 @@
     "lat": 42.19900131225586,
     "lon": 2.7006800174713135,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Portal_de_Besal%C3%BA.jpg/500px-Portal_de_Besal%C3%BA.jpg?utm_source=ca.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "wiki": "https://ca.wikipedia.org/wiki/Recinte_emmurallat_de_Besal%C3%BA"
    },
    {
     "name": "Sant Pere",
@@ -204631,7 +205184,10 @@
     "lat": 42.199851989746094,
     "lon": 2.699460983276367,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/Besal%C3%BA%2C_kastelo_de_oriento%2C_4.jpeg/500px-Besal%C3%BA%2C_kastelo_de_oriento%2C_4.jpeg?utm_source=ca.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "desc": "edifici a Besalú",
+    "wiki": "https://ca.wikipedia.org/wiki/Jard%C3%AD_hist%C3%B2ric_de_Santa_Anna"
    },
    {
     "name": "Sant Vicenç de Besalú",
@@ -204639,7 +205195,10 @@
     "lat": 42.19940185546875,
     "lon": 2.6983299255371094,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/ce/Esgl%C3%A9sia_de_Sant_Vicen%C3%A7_-_Besal%C3%BA.jpg/500px-Esgl%C3%A9sia_de_Sant_Vicen%C3%A7_-_Besal%C3%BA.jpg?utm_source=ca.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "desc": "església de Besalú",
+    "wiki": "https://ca.wikipedia.org/wiki/Sant_Vicen%C3%A7_de_Besal%C3%BA"
    },
    {
     "name": "Prat de Sant Pere",
@@ -204647,7 +205206,9 @@
     "lat": 42.19820022583008,
     "lon": 2.698470115661621,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Prat_de_Sant_Pere_i_monestir.JPG/500px-Prat_de_Sant_Pere_i_monestir.JPG?utm_source=ca.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "wiki": "https://ca.wikipedia.org/wiki/Prat_de_Sant_Pere"
    },
    {
     "name": "Santa Maria",
@@ -204663,7 +205224,10 @@
     "lat": 42.198612213134766,
     "lon": 2.6980559825897217,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/IPA-9897.JPG/500px-IPA-9897.JPG?utm_source=ca.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "desc": "edifici de Besalú",
+    "wiki": "https://ca.wikipedia.org/wiki/Casa_Llaudes"
    },
    {
     "name": "Santa Fe de Besalú",
@@ -204679,7 +205243,10 @@
     "lat": 42.20000076293945,
     "lon": 2.698270082473755,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/054_Ca_l%27Abat_Safont%2C_amb_l%27absis_de_Sant_Vicen%C3%A7_al_fons.jpg/500px-054_Ca_l%27Abat_Safont%2C_amb_l%27absis_de_Sant_Vicen%C3%A7_al_fons.jpg?utm_source=ca.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "desc": "casa de Besalú",
+    "wiki": "https://ca.wikipedia.org/wiki/Casa_de_l%27Abat_Sa_Font"
    },
    {
     "name": "Besalú",
@@ -204687,7 +205254,10 @@
     "lat": 42.200347900390625,
     "lon": 2.698141574859619,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/Bandera_de_Besal%C3%BA.svg/500px-Bandera_de_Besal%C3%BA.svg.png",
+    "desc": "municipio de la provincia de Gerona, España",
+    "wiki": "https://es.wikipedia.org/wiki/Besal%C3%BA"
    },
    {
     "name": "Can Bonet",
@@ -204711,7 +205281,9 @@
     "lat": 42.200870513916016,
     "lon": 2.701857566833496,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Besalu_sant_marti.jpg/500px-Besalu_sant_marti.jpg",
+    "wiki": "https://es.wikipedia.org/wiki/Sant_Mart%C3%AD_de_Capellada"
    },
    {
     "name": "Sagrat Cor",
@@ -204743,7 +205315,9 @@
     "lat": 42.21925354003906,
     "lon": 2.7075142860412598,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/Beuda_stPere_Lligord%C3%A0_IPA9934_5013_resize.JPG/500px-Beuda_stPere_Lligord%C3%A0_IPA9934_5013_resize.JPG?utm_source=ca.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "wiki": "https://ca.wikipedia.org/wiki/Sant_Pere_de_Lligord%C3%A0"
    },
    {
     "name": "Santa Maria de Palera",
@@ -204751,7 +205325,9 @@
     "lat": 42.22159957885742,
     "lon": 2.6978602409362793,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/Beuda_staMaria_Paler%C3%A0_IPA9922_5024.JPG/500px-Beuda_staMaria_Paler%C3%A0_IPA9922_5024.JPG?utm_source=ca.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "wiki": "https://ca.wikipedia.org/wiki/Santa_Maria_de_Palera"
    },
    {
     "name": "Sant Ferriol",
@@ -204759,7 +205335,10 @@
     "lat": 42.19778060913086,
     "lon": 2.668485641479492,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/86/Sant_Ferriol%2C_Garrotxa_-_El_Torn.jpg/500px-Sant_Ferriol%2C_Garrotxa_-_El_Torn.jpg",
+    "desc": "Municipality in Catalonia, Spain",
+    "wiki": "https://en.wikipedia.org/wiki/Sant_Ferriol"
    },
    {
     "name": "Can Traver (Maià de Montcal)",
@@ -204767,7 +205346,10 @@
     "lat": 42.21030044555664,
     "lon": 2.7273900508880615,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/da/Can_Traver_%28Mai%C3%A0_de_Montcal%2C_La_Garrotxa%2C_Catalunya%29.jpg/500px-Can_Traver_%28Mai%C3%A0_de_Montcal%2C_La_Garrotxa%2C_Catalunya%29.jpg?utm_source=ca.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "desc": "masia de Maià de Montcal (la Garrotxa)",
+    "wiki": "https://ca.wikipedia.org/wiki/Can_Traver_(Mai%C3%A0_de_Montcal)"
    },
    {
     "name": "Sant Sepulcre de Palera",
@@ -204775,7 +205357,10 @@
     "lat": 42.22389602661133,
     "lon": 2.698729991912842,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/Palera-5036.jpg/500px-Palera-5036.jpg",
+    "desc": "Monastery in Beuda, Spain",
+    "wiki": "https://en.wikipedia.org/wiki/Sant_Sepulcre_de_Palera"
    },
    {
     "name": "Sant Prim i Sant Felicià de Maià de Montcal",
@@ -204783,7 +205368,9 @@
     "lat": 42.2099609375,
     "lon": 2.7337899208068848,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bd/Sant_Prim_i_sant_Felici%C3%A0_de_Mai%C3%A0_de_Montcal_%281%29.jpg/500px-Sant_Prim_i_sant_Felici%C3%A0_de_Mai%C3%A0_de_Montcal_%281%29.jpg?utm_source=ca.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "wiki": "https://ca.wikipedia.org/wiki/Sant_Prim_i_Sant_Felici%C3%A0_de_Mai%C3%A0_de_Montcal"
    },
    {
     "name": "Santa Maria de Fares",
@@ -204806,7 +205393,9 @@
     "lat": 42.19860076904297,
     "lon": 2.6984000205993652,
     "rate": 2,
-    "heritage": true
+    "heritage": true,
+    "desc": "casal a Besalú (la Garrotxa)",
+    "wiki": "https://ca.wikipedia.org/wiki/Casa_dels_Cartell%C3%A0"
    },
    {
     "name": "Can Cambó",
@@ -204830,7 +205419,9 @@
     "lat": 42.20414352416992,
     "lon": 2.7100281715393066,
     "rate": 2,
-    "heritage": true
+    "heritage": true,
+    "desc": "masia de Besalú",
+    "wiki": "https://ca.wikipedia.org/wiki/Mas_Bellsol%C3%A0"
    },
    {
     "name": "Castell de Falgars",
@@ -204839,7 +205430,10 @@
     "lon": 2.7299656867980957,
     "rate": 3,
     "heritage": true,
-    "active": true
+    "active": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Castellot_de_Falgars_%28maig_2011%29_-_panoramio_%281%29.jpg/500px-Castellot_de_Falgars_%28maig_2011%29_-_panoramio_%281%29.jpg?utm_source=ca.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "desc": "a Beuda",
+    "wiki": "https://ca.wikipedia.org/wiki/Castell_de_Falgars"
    },
    {
     "name": "Castellot de Falgars",
@@ -204856,7 +205450,9 @@
     "lat": 42.22010040283203,
     "lon": 2.767930030822754,
     "rate": 3,
-    "active": true
+    "active": true,
+    "desc": "muntanya de Maià de Montcal (Garrotxa)",
+    "wiki": "https://ca.wikipedia.org/wiki/Puig_de_Santa_Magdalena"
    },
    {
     "name": "el Mont",
@@ -204864,7 +205460,9 @@
     "lat": 42.25881576538086,
     "lon": 2.7062840461730957,
     "rate": 3,
-    "active": true
+    "active": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/06/Mare_de_D%C3%A9u_del_Mont_1.jpg/500px-Mare_de_D%C3%A9u_del_Mont_1.jpg",
+    "wiki": "https://en.wikipedia.org/wiki/Mare_de_D%C3%A9u_del_Mont"
    },
    {
     "name": "Castellets",
@@ -204905,7 +205503,9 @@
     "lat": 42.222923278808594,
     "lon": 2.690418004989624,
     "rate": 2,
-    "active": true
+    "active": true,
+    "desc": "muntanya de Beuda (Garrotxa)",
+    "wiki": "https://ca.wikipedia.org/wiki/Tur%C3%B3_de_Can_Felip"
    },
    {
     "name": "el Pi de Sant Josep",
@@ -204913,7 +205513,9 @@
     "lat": 42.17399215698242,
     "lon": 2.695842742919922,
     "rate": 2,
-    "active": true
+    "active": true,
+    "desc": "muntanya de Sant Miquel de Campmajor i Sant Ferriol (Pla de l'Estany i Garrotxa)",
+    "wiki": "https://ca.wikipedia.org/wiki/El_Pi_de_Sant_Josep"
    },
    {
     "name": "La Creu de Puig Hortós",
@@ -204921,7 +205523,9 @@
     "lat": 42.17485046386719,
     "lon": 2.709584951400757,
     "rate": 2,
-    "active": true
+    "active": true,
+    "desc": "muntanya de Serinyà (Pla de l'Estany)",
+    "wiki": "https://ca.wikipedia.org/wiki/La_Creu_de_Puig_Hort%C3%B3s"
    },
    {
     "name": "Turó de les Ofrenes",
@@ -204929,7 +205533,9 @@
     "lat": 42.188934326171875,
     "lon": 2.661953926086426,
     "rate": 2,
-    "active": true
+    "active": true,
+    "desc": "muntanya de Sant Ferriol (Garrotxa)",
+    "wiki": "https://ca.wikipedia.org/wiki/Tur%C3%B3_de_les_Ofrenes"
    }
   ]
  }
