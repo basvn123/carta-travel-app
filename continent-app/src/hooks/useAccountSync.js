@@ -14,7 +14,7 @@ export function useAccountSync({
   priceMode, setPriceMode,
   countryFilter, setCountryFilter,
   tripKinds, setTripKinds,
-  minBeauty, setMinBeauty,
+  minTier, setMinTier,
   unescoOnly, setUnescoOnly,
   topBeachOnly, setTopBeachOnly,
   sortKey, setSortKey,
@@ -46,7 +46,13 @@ export function useAccountSync({
       if (settings.priceMode) setPriceMode(settings.priceMode);
       if (settings.countryFilter) setCountryFilter(settings.countryFilter);
       if (settings.tripKinds) setTripKinds(settings.tripKinds);
-      if (settings.minBeauty) setMinBeauty(settings.minBeauty);
+      if (settings.minTier != null) setMinTier(settings.minTier);
+      // Legacy accounts synced a min-gems (1-5) beauty floor; map it onto the
+      // closest rating tier once, until the next save overwrites it.
+      else if (settings.minBeauty) {
+        const mb = settings.minBeauty;
+        setMinTier(mb >= 5 ? 3 : mb >= 4 ? 2 : mb >= 2 ? 1 : 0);
+      }
       if (settings.unescoOnly != null) setUnescoOnly(settings.unescoOnly);
       if (settings.topBeachOnly != null) setTopBeachOnly(settings.topBeachOnly);
       if (settings.sortKey) setSortKey(settings.sortKey);
@@ -59,11 +65,11 @@ export function useAccountSync({
     if (!user) return;
     const t = setTimeout(() => {
       saveUserSettings(user.id, {
-        choices, priceMode, countryFilter, tripKinds, minBeauty, unescoOnly, topBeachOnly, sortKey,
+        choices, priceMode, countryFilter, tripKinds, minTier, unescoOnly, topBeachOnly, sortKey,
       }).catch(() => {});
     }, 1200);
     return () => clearTimeout(t);
-  }, [user, choices, priceMode, countryFilter, tripKinds, minBeauty, unescoOnly, topBeachOnly, sortKey]);
+  }, [user, choices, priceMode, countryFilter, tripKinds, minTier, unescoOnly, topBeachOnly, sortKey]);
 
   const handleSaveTrip = useCallback(async (destination) => {
     if (!user) { setAuthModalOpen(true); throw new Error('Sign in to save trips'); }

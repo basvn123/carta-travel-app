@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { DateField } from '../components/DateField.jsx';
-import { GemIcon } from '../components/GemRating.jsx';
+import { ScoreChip, HiddenGemTag } from '../components/RatingBadge.jsx';
 import { CountryPickerMap } from '../map/CountryPickerMap.jsx';
 import { CityPickerMap } from '../map/CityPickerMap.jsx';
 import {
@@ -127,7 +127,8 @@ function StayRow({ id, dest, nights, onNights, anchorDest, isAnchor, companions 
           {dest.city}
           {isAnchor && <span className="guide-anchor-badge"><PlaneIcon size={9} /> you land here</span>}
           <TierChip dest={dest} />
-          {dest.beauty?.gems ? <span className="guide-city-gems"><GemIcon size={9} /> {dest.beauty.gems}</span> : null}
+          {dest.rating?.score != null && <ScoreChip rating={dest.rating} size="xs" />}
+          {dest.rating?.hidden_gem && <HiddenGemTag />}
           <button
             className={`guide-city-info-btn ${infoOpen ? 'open' : ''}`}
             onClick={() => setInfoOpen(!infoOpen)}
@@ -524,8 +525,8 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
       .map(({ id, dest }) => ({
         id,
         dest,
-        rankBase: (dest.beauty?.score || 0)
-          + (dest.tier === 'gem' ? 2 : 0)
+        rankBase: (dest.rating?.score ?? dest.beauty?.score ?? 0)
+          + (dest.rating?.hidden_gem ? 1.5 : 0)
           + interestFitScore(dest, interests) * 2.5,
       }))
       .filter((cd) => matchesQ(cd.dest))

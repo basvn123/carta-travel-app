@@ -152,8 +152,11 @@ function activityCount(d) {
 export function gemScore(d) {
   if (!d) return 0;
   const b = d.beauty || {};
-  let s = b.score || 0;
-  if (d.tier === 'gem') s += 2.6;                       // hand-curated hidden gem
+  // The v14 traveller rating already blends beauty, POI depth and fame - use
+  // it as the base when present (beauty score as the pre-v14 fallback).
+  let s = d.rating?.score ?? b.score ?? 0;
+  if (d.rating?.hidden_gem) s += 1.6;                   // underrated - surface it
+  else if (!d.rating && d.tier === 'gem') s += 2.6;     // pre-v14 fallback
   if (b.unesco) s += 1.4;                               // World Heritage pull
   s += Math.min(activityCount(d), 12) / 12 * 1.6;       // lots to actually do
   const cats = d.categories || [];
@@ -171,10 +174,11 @@ const EVOCATIVE_CATEGORIES = [
 function suggestionReason(d) {
   const cats = d.categories || [];
   const evocative = EVOCATIVE_CATEGORIES.find((c) => cats.includes(c));
+  if (d.rating?.hidden_gem) return 'Hidden gem';
+  if (d.rating?.tier === 3) return 'Worth the journey';
   if (d.beauty?.unesco && evocative) return `UNESCO ${evocative}`;
   if (d.beauty?.unesco) return 'UNESCO site';
   if (evocative) return evocative.charAt(0).toUpperCase() + evocative.slice(1);
-  if (d.tier === 'gem') return 'Hidden gem';
   return null;
 }
 
@@ -202,7 +206,7 @@ function suggestionReason(d) {
  *  @param opts.excludeIds        destination ids already on the itinerary
  *  @param opts.excludeCountries  countries already on the itinerary - suggest
  *                                somewhere NEW, not more of the same country
- *  @returns [{ id, city, country, iso2, lat, lon, km, gems, beauty, gem_score,
+ *  @returns [{ id, city, country, iso2, lat, lon, km, gems, rating, beauty, gem_score,
  *              image, reason, shared_origin, ground_reachable, fare_that_day_eur }]
  */
 export function suggestNextStops(fromDest, allDests, arriveDate, {
@@ -242,6 +246,7 @@ export function suggestNextStops(fromDest, allDests, arriveDate, {
       lon: d.lon,
       km: Math.round(km),
       gems: d.beauty?.gems ?? null,
+      rating: d.rating ?? null,
       beauty: d.beauty?.score ?? 0,
       gem_score: gemScore(d),
       image: d.image?.url || null,

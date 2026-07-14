@@ -4,6 +4,7 @@ import {
   fareCoverageRanges, viaNearestAirport,
 } from '../lib/runtime_pricing.js';
 import { knownFor } from '../lib/knownFor.js';
+import { ScoreChip, TierDiamonds, HiddenGemTag, tierClass } from '../components/RatingBadge.jsx';
 import { BestTimePanel } from './BestTimePanel.jsx';
 import { eur, safeUrl, PRICE_SOURCE_LABELS, ACCOM_SOURCE_LABELS } from '../lib/format.js';
 import { ReceiptIcon, CalendarIcon, BedIcon, DiningIcon, CarIcon, InfoIcon } from '../components/Icons.jsx';
@@ -42,7 +43,7 @@ export function DetailPanel({ destination, departDate, returnDate, choices, setC
     }
   };
 
-  const breakdown = composeTrip(destination, departDate, returnDate, choices);
+  const breakdown = composeTrip(destination, departDate, returnDate, choices, data?.destinations);
   const anchor = breakdown?.anchor_airport || destination.iata;
   // Show the anchor airport as a city name, not an IATA code.
   const anchorCity = anchor ? (data?.destinations?.[anchor]?.city || anchor) : null;
@@ -66,10 +67,20 @@ export function DetailPanel({ destination, departDate, returnDate, choices, setC
       )}
 
       <div className={`panel-header ${image?.url ? 'has-hero' : ''}`}>
-        <div className="panel-tag">
-          {destination.tier === 'gem' ? 'Hidden gem' : 'Destination'}
-        </div>
+        <div className="panel-tag">Destination</div>
         <h2 className="panel-city">{destination.city}</h2>
+        {destination.rating?.score != null && (
+          <div className="panel-rating-row">
+            <ScoreChip rating={destination.rating} size="lg" />
+            <TierDiamonds tier={destination.rating.tier} size={12} />
+            {destination.rating.label && (
+              <span className={`rating-label ${tierClass(destination.rating)}`}>
+                {destination.rating.label}
+              </span>
+            )}
+            {destination.rating.hidden_gem && <HiddenGemTag size="lg" />}
+          </div>
+        )}
         <div className="panel-country">
           {destination.country}
           {destination.tier === 'gem' && anchorCity && (
@@ -368,6 +379,11 @@ function BreakdownTab({ destination, breakdown, departDate, returnDate, choices,
               <GroundLine label="Fuel" v={show(breakdown.driving.fuel_total)} eur={eur} />
               {breakdown.driving.toll_total > 0 && (
                 <GroundLine label="Tolls / vignette" v={show(breakdown.driving.toll_total)} eur={eur} />
+              )}
+              {breakdown.driving.toll_notes?.length > 0 && (
+                <p className="cost-info-pop">
+                  Includes {breakdown.driving.toll_notes.join(', ')}, per car, priced per country crossed.
+                </p>
               )}
             </>
           ) : (

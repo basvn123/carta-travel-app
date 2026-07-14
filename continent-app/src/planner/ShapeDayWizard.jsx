@@ -1,5 +1,5 @@
 import React, { useMemo, useRef, useState } from 'react';
-import { DAY_STYLES, DAY_LENGTHS, WALK_LEVELS, candidateDeck, nearbyCompanions } from './dayDraft.js';
+import { DAY_STYLES, DAY_LENGTHS, WALK_LEVELS, candidateDeck, nearbyCompanions, isMustSee } from './dayDraft.js';
 import { SparkIcon, StarIcon, CheckIcon, MuseumIcon, TreeIcon, DiningIcon, CameraIcon, CastleIcon } from '../components/Icons.jsx';
 
 const STYLE_ICONS = {
@@ -226,7 +226,7 @@ export function ShapeDayWizard({ city, numDays, items, initial, onSkip, onDraft 
                     style={current.item.img ? { backgroundImage: `url(${current.item.img})` } : undefined}
                   >
                     {!current.item.img && <span className="shape-card-fallback">{(current.item.kind || '?').slice(0, 1)}</span>}
-                    {(current.item.rate ?? 0) >= 3 && (
+                    {isMustSee(current.item) && (
                       <span className="shape-card-must"><StarIcon size={10} /> Must see</span>
                     )}
                     {drag && drag.dx > 40 && <span className="shape-card-stamp add">Add</span>}

@@ -19,7 +19,7 @@ export function FilterBar({
   priceRange, setPriceRange,
   priceBounds,
   tripKinds, setTripKinds,
-  minBeauty, setMinBeauty,
+  minTier, setMinTier,
   unescoOnly, setUnescoOnly,
   topBeachOnly, setTopBeachOnly,
   topPick, setTopPick,
@@ -50,7 +50,7 @@ export function FilterBar({
   }, [mobileDatesOpen]);
 
   const advancedActiveCount = tripKinds.length > 0 ? 1 : 0;
-  const beautyActive = (minBeauty > 1) || unescoOnly || topBeachOnly;
+  const beautyActive = (minTier > 0) || unescoOnly || topBeachOnly;
 
   const anyFilterActive =
     countryFilter !== 'all' ||
@@ -63,7 +63,7 @@ export function FilterBar({
   const resetAll = () => {
     setCountryFilter('all');
     setTripKinds([]);
-    setMinBeauty(1);
+    setMinTier(0);
     setUnescoOnly(false);
     setTopBeachOnly(false);
     setTopPick(null);
@@ -101,8 +101,8 @@ export function FilterBar({
     { value: 'all', label: 'All' },
     { value: 'price.10', label: '10 cheapest' },
     { value: 'price.25', label: '25 cheapest' },
-    { value: 'beauty.10', label: '10 prettiest' },
-    { value: 'beauty.25', label: '25 prettiest' },
+    { value: 'beauty.10', label: '10 best rated' },
+    { value: 'beauty.25', label: '25 best rated' },
   ];
   const topPickValue = topPick ? `${topPick.by}.${topPick.n}` : 'all';
   const onTopPick = (v) => {
@@ -111,15 +111,14 @@ export function FilterBar({
     setTopPick({ by, n: parseInt(n, 10) });
   };
 
-  // Minimum-gems steps for the Beauty filter (1 = Any/off). Gem tiers are
-  // assigned by dataset quantile (beauty_layer.assign_gems) for a balanced
-  // spread, so each step keeps a useful number of destinations.
-  const BEAUTY_STEPS = [
-    { v: 1, label: 'Any' },
-    { v: 2, label: '2+' },
-    { v: 3, label: '3+' },
-    { v: 4, label: '4+' },
-    { v: 5, label: '5' },
+  // Minimum rating tier (0 = Any/off). Tiers follow the Michelin Green Guide
+  // idiom (rating_layer.py): 1 = worth a visit, 2 = worth a detour,
+  // 3 = worth the journey - so each step reads as advice, not a number.
+  const RATING_STEPS = [
+    { v: 0, label: 'Any', title: 'Any rating' },
+    { v: 1, label: 'Visit', title: 'Worth a visit or better (rated 5.5+)' },
+    { v: 2, label: 'Detour', title: 'Worth a detour or better (rated 7+)' },
+    { v: 3, label: 'Journey', title: 'Worth the journey (rated 8.5+)' },
   ];
 
   return (
@@ -425,22 +424,24 @@ export function FilterBar({
           {/* Quality: the beauty score + independent heritage / coast toggles */}
           <div className="filter-group group-quality">
             <div className="group-fields">
-              {/* Beauty index: clean minimum-gems button list over the 1-5 gem score
-                  (evidence-based: UNESCO heritage + Blue Flag beaches + scenery). */}
+              {/* Traveller rating: a minimum-tier button list over the 0-10 score
+                  (evidence-based: beauty index + POI depth + Wikipedia fame). */}
               <div className="filter filter-beauty">
-                <label className="filter-label">Beauty</label>
+                <label className="filter-label">Rating</label>
                 <div className="filter-control">
                   <div className="segmented compact beauty-steps">
-                    {BEAUTY_STEPS.map((s) => (
+                    {RATING_STEPS.map((s) => (
                       <button
                         key={s.v}
-                        className={minBeauty === s.v ? 'seg-on' : ''}
-                        onClick={() => setMinBeauty(s.v)}
-                        title={s.v === 1 ? 'Any beauty rating' : `Only ${s.label}-gem destinations`}
+                        className={minTier === s.v ? 'seg-on' : ''}
+                        onClick={() => setMinTier(s.v)}
+                        title={s.title}
                       >
-                        {s.v === 1 ? s.label : (
+                        {s.v === 0 ? s.label : (
                           <span className="step-gems">
-                            <GemIcon filled size={10} />
+                            <span className="step-tier-gems">
+                              {Array.from({ length: s.v }, (_, i) => <GemIcon key={i} filled size={9} />)}
+                            </span>
                             {s.label}
                           </span>
                         )}

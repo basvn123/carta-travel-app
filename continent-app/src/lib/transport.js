@@ -104,8 +104,17 @@ export function legTransportOptions(destA, destB, groupSize = 1, { carModel = nu
   const petrolB = fuelByIso[destB.iso2] ?? cm.fuel_price_eur_per_l ?? 1.8;
   const petrol = (petrolA + petrolB) / 2;
   const lPer100 = cm.consumption_l_per_100km ?? 6.5;
-  const fuelEur = (roadKm / 100) * lPer100 * petrol;
-  const tollEur = (roadKm / 100) * (cm.toll_eur_per_100km ?? 2.2);
+  // Big groups fill more than one car - fuel and tolls scale with car count
+  // (previously this leg quietly assumed a single car for any group size).
+  const cars = Math.max(1, Math.ceil(group / Math.max(1, cm.car_capacity || 4)));
+  const fuelEur = cars * (roadKm / 100) * lPer100 * petrol;
+  // Per-leg tolls: the leg's endpoint countries priced at the toll layer's
+  // real per-country rates (avg of both ends), not the old flat 2.2/100 km.
+  const tollRates = cm.toll_model?.distance_rates_eur_per_100km;
+  const tollRate = tollRates
+    ? ((tollRates[destA.iso2] ?? 0) + (tollRates[destB.iso2] ?? 0)) / 2
+    : (cm.toll_eur_per_100km ?? 2.2);
+  const tollEur = cars * (roadKm / 100) * tollRate;
   const carTotal = fuelEur + tollEur;
   const vignettes = [];
   for (const ins of crossBorder ? [insA, insB] : [insA]) {

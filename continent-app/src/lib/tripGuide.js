@@ -117,6 +117,15 @@ export function interestFitScore(dest, interests) {
  *  glance instead of an opaque number. */
 export function cityTier(dest) {
   const s = gemScore(dest);
+  // Mirror the official v14 rating tiers so the wizard speaks the same
+  // language as the map/list (gemScore still drives the ranking).
+  const t = dest?.rating?.tier;
+  if (t != null) {
+    if (t === 3) return { key: 'top', label: 'Worth the journey', score: s };
+    if (t === 2) return { key: 'great', label: 'Worth a detour', score: s };
+    if (t === 1) return { key: 'good', label: 'Worth a visit', score: s };
+    return { key: 'ok', label: 'If nearby', score: s };
+  }
   if (s >= 7) return { key: 'top', label: 'Must-visit', score: s };
   if (s >= 5) return { key: 'great', label: 'Great stop', score: s };
   if (s >= 3) return { key: 'good', label: 'Worth a look', score: s };

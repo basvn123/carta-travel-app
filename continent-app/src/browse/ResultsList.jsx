@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { GemRating } from '../components/GemRating.jsx';
+import { RatingBadge, HiddenGemTag } from '../components/RatingBadge.jsx';
 import { eur } from '../lib/format.js';
 
 /**
@@ -23,7 +23,7 @@ function Star({ filled }) {
 // click (directional: true) so you can read the list either way.
 const SORTS = [
   { key: 'price', label: 'Price', dir: 'asc', directional: true },
-  { key: 'beauty', label: 'Beauty', dir: 'desc', directional: true },
+  { key: 'beauty', label: 'Rating', dir: 'desc', directional: true },
   { key: 'name', label: 'A-Z', dir: 'asc' },
   { key: 'country', label: 'Country', dir: 'asc' },
 ];
@@ -58,7 +58,7 @@ export function ResultsList({
     let list = priced;
     if (showFavOnly) list = list.filter((p) => favSet.has(p.id));
     const val = (p) => (priceMode === 'pp' ? p.pp : p.total);
-    const beautyVal = (p) => (p.beauty?.score ?? 0);
+    const beautyVal = (p) => (p.rating?.score ?? p.beauty?.score ?? 0);
     const sorted = [...list];
     if (sortKey === 'name') sorted.sort((a, b) => a.city.localeCompare(b.city));
     else if (sortKey === 'country') sorted.sort((a, b) => a.country.localeCompare(b.country) || val(a) - val(b));
@@ -177,13 +177,11 @@ export function ResultsList({
                 <span className="result-main">
                   <span className="result-city">
                     {p.city}
-                    {p.tier === 'gem' && <span className="result-gem">gem</span>}
+                    {p.rating?.hidden_gem && <HiddenGemTag />}
                   </span>
                   <span className="result-sub">
                     <span className="result-country">{p.country}</span>
-                    {p.beauty?.gems > 0 && (
-                      <GemRating value={p.beauty.gems} score={p.beauty.score} size="xs" />
-                    )}
+                    <RatingBadge rating={p.rating} size="xs" showGem={false} />
                   </span>
                 </span>
                 <span className={`result-price ${isDeal ? 'is-deal' : ''}`}>
@@ -224,7 +222,7 @@ export function ResultsList({
                   <span className="result-main">
                     <span className="result-city">
                       {p.city}
-                      {p.tier === 'gem' && <span className="result-gem">gem</span>}
+                      {p.rating?.hidden_gem && <HiddenGemTag />}
                     </span>
                     <span className="result-country">{p.country}</span>
                   </span>

@@ -37,7 +37,7 @@ function unpackLifestyle(s) {
 export function encodeState({
   departDate, returnDate, choices, priceMode, countryFilter,
   tripKinds, priceRange, priceBounds, selectedId, favorites, sortKey, showFavOnly,
-  minBeauty, unescoOnly, topBeachOnly, topPick, activeTab,
+  minTier, unescoOnly, topBeachOnly, topPick, activeTab,
 }) {
   const q = new URLSearchParams();
   if (activeTab && activeTab !== 'map') q.set('tab', activeTab);
@@ -60,7 +60,7 @@ export function encodeState({
   if (favorites && favorites.size) q.set('fav', [...favorites].join('.'));
   if (sortKey && sortKey !== 'price') q.set('sort', sortKey);
   if (showFavOnly) q.set('favonly', '1');
-  if (minBeauty && minBeauty > 1) q.set('mb', String(minBeauty));
+  if (minTier && minTier > 0) q.set('mt', String(minTier));
   if (unescoOnly) q.set('un', '1');
   if (topBeachOnly) q.set('tb', '1');
   if (topPick && topPick.by && topPick.n) q.set('top', `${topPick.by}.${topPick.n}`);
@@ -92,7 +92,13 @@ export function decodeState(search) {
   if (has('fav')) out.favorites = q.get('fav').split('.').filter(Boolean);
   if (has('sort')) out.sortKey = q.get('sort');
   if (has('favonly')) out.showFavOnly = q.get('favonly') === '1';
-  if (has('mb')) out.minBeauty = Math.max(1, Math.min(5, parseInt(q.get('mb'), 10) || 1));
+  if (has('mt')) out.minTier = Math.max(0, Math.min(3, parseInt(q.get('mt'), 10) || 0));
+  // Legacy links: 'mb' was the min-gems (1-5) beauty filter; map it onto the
+  // closest rating tier so old shared URLs still narrow sensibly.
+  else if (has('mb')) {
+    const mb = parseInt(q.get('mb'), 10) || 1;
+    out.minTier = mb >= 5 ? 3 : mb >= 4 ? 2 : mb >= 2 ? 1 : 0;
+  }
   if (has('un')) out.unescoOnly = q.get('un') === '1';
   if (has('tb')) out.topBeachOnly = q.get('tb') === '1';
   if (has('top')) {

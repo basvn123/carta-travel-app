@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Dropdown } from '../components/Dropdown.jsx';
 import { DateField } from '../components/DateField.jsx';
 import { OriginPicker } from '../components/OriginPicker.jsx';
-import { GemIcon } from '../components/GemRating.jsx';
+import { ScoreChip } from '../components/RatingBadge.jsx';
 import { CountryIntel } from '../components/CountryIntel.jsx';
 import { TripMap } from '../map/TripMap.jsx';
 import { TripItinerary } from './TripItinerary.jsx';
@@ -131,7 +131,7 @@ function Suggestions({ suggestions, onPick }) {
               <span className="trip-suggest-city">{s.city}</span>
               <span className="trip-suggest-sub">
                 {s.km} km
-                {s.gems ? <>, <GemIcon size={9} /> {s.gems}</> : null}
+                {s.rating?.score != null && <ScoreChip rating={s.rating} size="xs" />}
               </span>
             </div>
           </button>

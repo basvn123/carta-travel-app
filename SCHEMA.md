@@ -1,4 +1,4 @@
-# app_data schema - v13
+# app_data schema - v14
 
 The pipeline and the React app share one contract. A trip is priced three ways,
 all from real data:
@@ -295,6 +295,88 @@ Eurostat PLI).
   the `compute_anchor_from_csv` helper in `03b_accommodation` on a fresh download.
 
 ---
+
+## Schema v14 (added 2026-07-14)
+
+Four layers on top of v13; every one has an `apply_*.py` and is idempotent.
+
+### 1. Traveller rating - `dest.rating` (rating_layer.py + apply_rating_layer.py)
+
+```jsonc
+"rating": {
+  "score": 9.5,                  // 0-10, one decimal - the headline number
+  "tier": 3,                     // 3 "Worth the journey" (~top 8%) | 2 "Worth a
+                                 // detour" (~22%) | 1 "Worth a visit" (~35%) | 0
+  "label": "Worth the journey",  // Michelin Green Guide idiom
+  "hidden_gem": false,           // highly rated + low fame (earned, not a record type)
+  "fame": 4029,                  // avg daily Wikipedia pageviews, last 12 months
+  "components": { "beauty": 0.73, "things_to_do": 0.94, "fame": 1.0 },
+  "source": "rating_v1"
+}
+```
+
+Blend: beauty 45% (the v9 Beauty Index) + things-to-do 20% (rate-weighted
+saturating POI count) + fame 35% (log-scaled pageviews from
+`cache/dest_pageviews.json`, harvest_pageviews.py). The blended 0..1 score is
+display-calibrated through a fixed percentile curve; tier cutoffs 8.5/7.0/5.5.
+Multi-airport cities are unified and hold ONE slot in the distribution.
+`meta.rating_model` documents everything. The UI (RatingBadge.jsx) shows the
+score chip + 1-3 tier diamonds everywhere the old 1-5 gem row lived; the
+FilterBar's Beauty filter became a min-tier Rating filter (`mt` URL param, old
+`mb` links map across).
+
+### 2. Per-country tolls - `dest.driving_toll` (toll_layer.py + apply_toll_layer.py)
+
+Replaces the flat 2.2 EUR/100 km: the home->destination corridor is sampled
+along the great circle, classified per country (Natural Earth 50m polygons in
+`cache/ne_50m_admin0.geojson`), and priced with real 2026 rates - France ~8,
+Italy ~6.5 EUR/100 km, vignettes (AT/CH/SI/CZ/SK/HU/RO/BG) once per trip, plus
+fixed crossings (Brenner, Tauern, Storebaelt, Oresund). Stored round-trip PER
+CAR: `{ toll_rt_eur, vignettes_eur, crossings_eur, total_rt_eur, countries,
+vignettes[], crossings[], source }`. `runtime_pricing.drivingEstimate()`
+prefers it (exposes `toll_notes` for the detail panel) and falls back to the
+flat rate when absent; `transport.js` per-leg car costs use the per-country
+rates of the leg's endpoints and now multiply by cars needed.
+`meta.car_model.toll_model` holds the tables.
+
+### 3. Tourist premium - `costs.tourist_premium` / `accommodation.tourist_premium`
+(apply_tourist_premium.py)
+
+~57 curated honeypots (Santorini, Amalfi, Venice, Zermatt, Ibiza, Hallstatt...)
+get a three-tier markup over their country basket - extreme +40% dining /
++45% lodging, high +25%, mild +12% (groceries move half as much) - applied
+ONLY while the block still carries `level: "country"`; real city data wins and
+strips it. Originals live under `premium_base`, so reruns recompute cleanly.
+`meta.tourist_premium_model` documents tiers and sources.
+
+### 4. Real city anchors + occupancy (harvest_accommodation.py +
+apply_accommodation_anchors.py)
+
+18 destinations re-anchored from fresh Inside Airbnb June-2026 snapshots
+(CC BY 4.0): Santorini 191, Mykonos/Venice/Paros 238, Naxos 208, Rhodes 157,
+Kos 152, Milos, Chania 148, Heraklion 111, Vienna 122, Prague 100, Munich 182,
+Malaga 172, Sevilla 109, Valencia 163, Porto 120 EUR/night whole-home medians
+(multi-island regions sliced per destination by listing lat/lon radius).
+Booking.com was evaluated and rejected as a source: no public API, ToS forbid
+scraping, Cloudflare/AWS-WAF enforcement - Inside Airbnb covers the same need
+legitimately. `accommodation.n_listings`/`captured` record provenance.
+
+`meta.accommodation_model` also gains `occupancy_exponent: 0.55` +
+`occupancy_ref_capacity: 4`: whole-home prices grow ~capacity^0.55, so the
+runtime rescales the stored 4-sleeper per-person nightly to the real group
+(x1.37 for a couple, x0.78 for seven) - fixes couples paying for half a house.
+
+Day planner (client-side, dayDraft.js): `poiScore()` = rate + heritage +
+Wikipedia presence + log-scaled `pop` (now filled on 6,294 POIs); the
+"Must see" shelf keeps only the top ~18% (max 8) of rate-3 sights, and every
+"Must see" badge uses `isMustSee()` (rate 3 AND corroborating evidence)
+instead of the old rate>=3, which had badged 57% of all POIs.
+
+Pipeline order (updated):
+    apply_car_layer -> apply_airport_anchors -> apply_airport_categories
+    -> apply_beauty_layer -> harvest_pageviews -> apply_rating_layer
+    -> apply_toll_layer -> harvest_accommodation -> apply_accommodation_anchors
+    -> apply_tourist_premium -> enrich_activities apply -> sync-data (build)
 
 ## Served data split (added 2026-07-12)
 

@@ -49,26 +49,44 @@ export function optimizeOrder(idxArray, itemsAll) {
   return [...ordered, ...withoutCoords];
 }
 
-const MUST_CAP = 8; // heritage capitals rate 30+ places "3" - keep Must see scannable
+const MUST_CAP = 8;    // heritage capitals rate 30+ places "3" - keep Must see scannable
+const WORTH_CAP = 16;  // "worth adding" stays a browsable shelf, not a dump
 
-/** Real-world fame signal: average daily Wikipedia pageviews (`pop`, added by
- *  enrich_activities.py). Missing = -1 so enriched items always outrank
- *  unenriched ones when fame is what's being compared. */
-function popOf(item) {
-  return typeof item.pop === 'number' ? item.pop : -1;
+/**
+ * Composite per-POI strength, 0..~5. OpenTripMap's importance rate (1-3) is
+ * the backbone, but 57% of harvested POIs carry the top rate, so the rate
+ * alone can't separate the Colosseum from a rated-3 neighbourhood church.
+ * Extra evidence sharpens it: a heritage-register listing, whether the name
+ * resolves to a real Wikipedia article (with photo), and that article's
+ * average daily pageviews (log-scaled fame: ~2000+ views/day = +1.0).
+ */
+export function poiScore(item) {
+  let s = item.rate ?? 0;
+  if (item.heritage) s += 0.6;
+  if (item.wiki) s += 0.35;
+  if (item.img) s += 0.15;
+  const p = typeof item.pop === 'number' ? item.pop : 0;
+  if (p > 0) s += Math.min(1, Math.log10(p + 1) / 3.3);
+  return s;
+}
+
+/** A single, self-contained "genuine must-see" test for badges: top-rated AND
+ *  independently corroborated (heritage listing, Wikipedia presence or fame).
+ *  Bare rate-3 with no other evidence doesn't earn the badge. */
+export function isMustSee(item) {
+  return (item.rate ?? 0) >= 3 && poiScore(item) >= 3.5;
 }
 
 /**
  * Tier a city's activity list for display. Returns { must, worth, more, active },
  * each an array of { item, idx } (idx = original index into `items`).
  *
- * With rate data (schema v12): must = rate-3 sights (capped, overflow spills
- * into worth), worth = rate 2+, more = the rest. When popularity data is
- * present (Wikipedia pageviews), the rate-3 pool is ordered by real-world fame
- * first, so the cap keeps the genuinely famous places and demotes the
- * technically-rated-3-but-obscure ones - a much sharper "must do vs alright"
- * line. Without rates (older data / Wikivoyage-sourced cities) the list order
- * is already importance-sorted, so we fall back to positional tiers.
+ * With rate data (schema v12): every sight is ranked by poiScore, and the
+ * "must" shelf keeps only the top slice (proportional to catalogue size,
+ * capped at MUST_CAP) of rate-3 sights - so the genuinely famous places rise
+ * and the technically-rated-3-but-obscure ones demote to "worth". Without
+ * rates (older data / Wikivoyage-sourced cities) the list order is already
+ * importance-sorted, so we fall back to positional tiers.
  */
 export function tieredActivities(items) {
   const sights = [];
@@ -77,23 +95,17 @@ export function tieredActivities(items) {
     (item.active ? active : sights).push({ item, idx });
   });
   const hasRates = sights.some(({ item }) => item.rate != null);
-  const hasPop = sights.some(({ item }) => typeof item.pop === 'number');
   let must, worth, more;
   if (hasRates) {
-    let must3 = sights.filter(({ item }) => (item.rate ?? 0) >= 3);
-    if (hasPop) {
-      must3 = [...must3].sort((a, b) => (
-        popOf(b.item) - popOf(a.item)
-        || (b.item.heritage === true) - (a.item.heritage === true)
-      ));
-    }
-    must = must3.slice(0, MUST_CAP);
-    const worth2 = sights.filter(({ item }) => (item.rate ?? 0) === 2);
-    worth = [
-      ...must3.slice(MUST_CAP),
-      ...(hasPop ? [...worth2].sort((a, b) => popOf(b.item) - popOf(a.item)) : worth2),
-    ];
-    more = sights.filter(({ item }) => (item.rate ?? 0) < 2);
+    // Stable sort: score ties keep the harvest's importance order.
+    const ranked = [...sights].sort((a, b) => poiScore(b.item) - poiScore(a.item));
+    const mustN = Math.min(MUST_CAP, Math.max(3, Math.round(sights.length * 0.18)));
+    must = ranked.filter(({ item }) => (item.rate ?? 0) >= 3).slice(0, mustN);
+    const inMust = new Set(must);
+    const rest = ranked.filter((e) => !inMust.has(e));
+    worth = rest.filter(({ item }) => (item.rate ?? 0) >= 2).slice(0, WORTH_CAP);
+    const inWorth = new Set(worth);
+    more = rest.filter((e) => !inWorth.has(e));
   } else {
     must = sights.slice(0, 6);
     worth = sights.slice(6, 16);
@@ -264,10 +276,12 @@ export function candidateDeck(items, interests, limit = 16) {
   const all = (items || []).map((item, idx) => ({ item, idx }))
     .filter(({ item }) => item.lat != null && item.lon != null);
   const score = ({ item }) => {
+    // Sights ride the composite poiScore (rate + heritage + Wikipedia
+    // presence/fame); actives are interest-gated as before.
     const base = item.active
-      ? (kindDirectMatch(item.kind, iset) ? 2.5 : -1)
-      : (item.rate ?? 1.5);
-    return base + (kindDirectMatch(item.kind, iset) ? 0.75 : 0) + (item.heritage ? 0.25 : 0) + popBoost(item);
+      ? (kindDirectMatch(item.kind, iset) ? 2.5 : -1) + (item.heritage ? 0.25 : 0) + popBoost(item)
+      : poiScore(item);
+    return base + (kindDirectMatch(item.kind, iset) ? 0.75 : 0);
   };
   return all
     .filter((c) => score(c) > 0.5 && kindMatchesInterests(c.item.kind, iset))
@@ -382,8 +396,10 @@ export function draftDays({ items, numDays, interests, paceKey, dwellFn, stopsMa
   let pool = all.filter(({ item }) => kindMatchesInterests(item.kind, interests));
   if (pool.length < pace.stops * numDays) pool = all;
   const score = ({ item }) => {
-    const base = item.active ? (kindDirectMatch(item.kind, interests) ? 2.5 : -1) : (item.rate ?? 1.5);
-    return base + (kindDirectMatch(item.kind, interests) ? 0.75 : 0) + (item.heritage ? 0.25 : 0) + popBoost(item);
+    const base = item.active
+      ? (kindDirectMatch(item.kind, interests) ? 2.5 : -1) + (item.heritage ? 0.25 : 0) + popBoost(item)
+      : poiScore(item);
+    return base + (kindDirectMatch(item.kind, interests) ? 0.75 : 0);
   };
   const ranked = [...pool].sort((a, b) => score(b) - score(a));
   // Interest-less actives score below every sight; drop them from drafts.

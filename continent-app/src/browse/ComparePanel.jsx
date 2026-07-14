@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import { composeTrip } from '../lib/runtime_pricing.js';
 import { eur } from '../lib/format.js';
+import { RatingBadge } from '../components/RatingBadge.jsx';
 
 /**
  * Side-by-side comparison of the shortlisted (favorited) destinations. Prices
@@ -16,7 +17,7 @@ export function ComparePanel({ data, favorites, departDate, returnDate, choices,
     for (const id of ids) {
       const dest = data?.destinations?.[id];
       if (!dest) continue;
-      const b = composeTrip(dest, departDate, returnDate, choices);
+      const b = composeTrip(dest, departDate, returnDate, choices, data?.destinations);
       out.push({ id, dest, b });
     }
     // Cheapest priced first; unpriced last.
@@ -73,6 +74,16 @@ export function ComparePanel({ data, favorites, departDate, returnDate, choices,
               </tr>
             </thead>
             <tbody>
+              <tr>
+                <td className="compare-rowlabel">Rating</td>
+                {cols.map((c) => (
+                  <td key={c.id}>
+                    {c.dest.rating?.score != null
+                      ? <RatingBadge rating={c.dest.rating} size="xs" />
+                      : '-'}
+                  </td>
+                ))}
+              </tr>
               {rows.map((r) => (
                 <tr key={r.label}>
                   <td className="compare-rowlabel">{r.label}</td>

@@ -14,7 +14,7 @@ import { useCountryInsights } from '../hooks/useCountryInsights.js';
 import { addDays, todayISO, fmtDate as fmtDateFull } from '../lib/dates.js';
 import {
   draftDays, tieredActivities, optimizeOrder, clusterIntoDays,
-  saneItemsForCity, feasibilityLimits,
+  saneItemsForCity, feasibilityLimits, isMustSee,
 } from './dayDraft.js';
 import { ShapeDayWizard } from './ShapeDayWizard.jsx';
 import {
@@ -561,7 +561,7 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
       return `${s}.`;
     };
     const accolade = (it) => {
-      if ((it.rate ?? 0) >= 3) return "One of the city's essential sights.";
+      if (isMustSee(it)) return "One of the city's essential sights.";
       if ((it.rate ?? 0) >= 2) return 'A well-loved stop, worth the time.';
       if (it.active) return 'A good pick for an active, outdoors stretch.';
       return '';
@@ -618,7 +618,7 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
                 <div class="stop-head">
                   <span class="stop-name">${esc(it.name)}</span>
                   ${it.kind ? `<span class="tag">${esc(it.kind)}</span>` : ''}
-                  ${(it.rate ?? 0) >= 3 ? '<span class="chip must">Must see</span>' : ''}
+                  ${isMustSee(it) ? '<span class="chip must">Must see</span>' : ''}
                   ${it.heritage ? '<span class="chip heritage">Heritage</span>' : ''}
                 </div>
                 <p class="blurb">${esc(blurb(it, cityName))}${acc ? ` <span class="accolade">${esc(acc)}</span>` : ''}</p>
@@ -1422,7 +1422,7 @@ function ActivityRow({ item, variant, added, onToggle }) {
         <span className="day-assigned-body">
           <span className="day-assigned-name">
             {item.name}
-            {(item.rate ?? 0) >= 3 && <span className="day-badge-must" title="A true must-see here"><StarIcon size={9} /></span>}
+            {(variant === 'must' || isMustSee(item)) && <span className="day-badge-must" title="A true must-see here"><StarIcon size={9} /></span>}
             {item.heritage && <span className="day-badge-heritage" title="On a cultural-heritage register">heritage</span>}
           </span>
           <span className="day-assigned-kind">{item.kind}</span>

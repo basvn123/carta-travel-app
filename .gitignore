@@ -22,3 +22,6 @@ Thumbs.db
 # Runtime logs (fare-refresh output)
 logs/
 *.log
+
+# Inside Airbnb raw downloads (harvest_accommodation.py re-fetches them)
+cache/iab/

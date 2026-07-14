@@ -155,8 +155,8 @@ function TravelApp() {
   const [priceMode, setPriceMode] = useState(init.priceMode ?? 'pp');
   const [countryFilter, setCountryFilter] = useState(init.countryFilter ?? 'all');
   const [tripKinds, setTripKinds] = useState(init.tripKinds ?? []);
-  // Beauty-index filters
-  const [minBeauty, setMinBeauty] = useState(init.minBeauty ?? 1);   // min gems 1-5; 1 = off (Any)
+  // Rating filters (min tier 0-3; 0 = off/Any - see rating_layer.py tiers)
+  const [minTier, setMinTier] = useState(init.minTier ?? 0);
   const [unescoOnly, setUnescoOnly] = useState(init.unescoOnly ?? false);
   const [topBeachOnly, setTopBeachOnly] = useState(init.topBeachOnly ?? false);
   // Quick "best of" shortcut: { by: 'price' | 'beauty', n } or null. Trims the
@@ -244,7 +244,7 @@ function TravelApp() {
   } = useDestinationSearch({
     data, departDate, returnDate, choices,
     locationQuery: debouncedLocationQuery, countryFilter, priceMode, tripKinds,
-    minBeauty, unescoOnly, topBeachOnly, topPick,
+    minTier, unescoOnly, topBeachOnly, topPick,
     initialPriceRange: init.priceRange,
   });
 
@@ -256,11 +256,11 @@ function TravelApp() {
     persistState({
       departDate, returnDate, choices, priceMode, countryFilter,
       tripKinds, priceRange, priceBounds, selectedId, favorites, sortKey, showFavOnly,
-      minBeauty, unescoOnly, topBeachOnly, topPick, activeTab,
+      minTier, unescoOnly, topBeachOnly, topPick, activeTab,
     });
   }, [data, departDate, returnDate, choices, priceMode, countryFilter,
       tripKinds, priceRange, priceBounds, selectedId, favorites, sortKey, showFavOnly,
-      minBeauty, unescoOnly, topBeachOnly, topPick, activeTab]);
+      minTier, unescoOnly, topBeachOnly, topPick, activeTab]);
 
   // Sync a signed-in user's filter/lifestyle preferences with their account,
   // and expose the "save"/"load a saved trip" actions.
@@ -273,7 +273,7 @@ function TravelApp() {
     priceMode, setPriceMode,
     countryFilter, setCountryFilter,
     tripKinds, setTripKinds,
-    minBeauty, setMinBeauty,
+    minTier, setMinTier,
     unescoOnly, setUnescoOnly,
     topBeachOnly, setTopBeachOnly,
     sortKey, setSortKey,
@@ -383,8 +383,8 @@ function TravelApp() {
               priceBounds={priceBounds}
               tripKinds={tripKinds}
               setTripKinds={setTripKinds}
-              minBeauty={minBeauty}
-              setMinBeauty={setMinBeauty}
+              minTier={minTier}
+              setMinTier={setMinTier}
               unescoOnly={unescoOnly}
               setUnescoOnly={setUnescoOnly}
               topBeachOnly={topBeachOnly}
@@ -494,6 +494,7 @@ function TravelApp() {
               selectedId={selectedId}
               onSelect={openDetail}
               dealThreshold={dealThreshold}
+              transportMode={choices.transport_mode || 'plane'}
             />
           </Suspense>
 

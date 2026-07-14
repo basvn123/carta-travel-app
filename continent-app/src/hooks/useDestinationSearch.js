@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { cheapestTotal } from '../lib/runtime_pricing.js';
+import { composeTrip } from '../lib/runtime_pricing.js';
 import { matchesAnyKind } from '../lib/trip_kinds.js';
 
 // Accent- and case-insensitive text key, so "malaga" matches "Málaga".
@@ -15,7 +15,7 @@ function normalize(s) {
 export function useDestinationSearch({
   data, departDate, returnDate, choices,
   locationQuery, countryFilter, priceMode, tripKinds,
-  minBeauty, unescoOnly, topBeachOnly, topPick,
+  minTier, unescoOnly, topBeachOnly, topPick,
   initialPriceRange,
 }) {
   // Compute, in one pass, the priceable destinations (flight/drive + stay) and the
@@ -41,13 +41,24 @@ export function useDestinationSearch({
         lon: d.lon,
         categories: d.categories || [],
         beauty: d.beauty || null,
+        rating: d.rating || null,
       };
-      const total = cheapestTotal(d, departDate, returnDate, choices);
-      if (total == null) {
+      const b = composeTrip(d, departDate, returnDate, choices, data.destinations);
+      if (b == null) {
         unreach.push({ ...row, total: null, pp: null, reachable: false });
       } else {
+        const total = b.grand_total;
         const pp = choices.group_size > 0 ? total / choices.group_size : total;
-        reach.push({ ...row, total, pp, reachable: true });
+        reach.push({
+          ...row, total, pp, reachable: true,
+          // Keep the mode the engine actually priced. In plane mode a destination
+          // with no flight is silently priced as a drive, and without these flags
+          // the map and list would label that car price as if you could fly to it.
+          mode: b.transport_mode,          // 'plane' | 'car' - what this price is
+          planeOk: b.plane_reachable,      // is there a flight at all for these dates
+          drivable: b.drivable,
+          viaAirport: b.via_airport,       // set when flying into a nearby airport
+        });
       }
     }
     reach.sort((a, b) => a.total - b.total);
@@ -97,19 +108,19 @@ export function useDestinationSearch({
       if (tripKinds.length > 0) {
         if (!matchesAnyKind(p.categories, tripKinds)) return false;
       }
-      if (minBeauty > 1 && (p.beauty?.gems ?? 0) < minBeauty) return false;
+      if (minTier > 0 && (p.rating?.tier ?? 0) < minTier) return false;
       if (unescoOnly && !p.beauty?.unesco) return false;
       if (topBeachOnly && !p.beauty?.top_beach) return false;
       return true;
     });
-  }, [pricedAll, q, countryFilter, priceRange, priceMode, tripKinds, minBeauty, unescoOnly, topBeachOnly]);
+  }, [pricedAll, q, countryFilter, priceRange, priceMode, tripKinds, minTier, unescoOnly, topBeachOnly]);
 
   // "Top picks" trims the filtered set to the N best by price or beauty. Applied
   // here (not just in the list) so the map and stats reflect the shortlist too.
   const priced = useMemo(() => {
     if (!topPick) return filtered;
     const score = topPick.by === 'beauty'
-      ? (p) => -(p.beauty?.score ?? 0)                       // most beautiful first
+      ? (p) => -(p.rating?.score ?? p.beauty?.score ?? 0)    // best rated first
       : (p) => (priceMode === 'pp' ? p.pp : p.total);        // cheapest first
     return [...filtered].sort((a, b) => score(a) - score(b)).slice(0, topPick.n);
   }, [filtered, topPick, priceMode]);
@@ -121,12 +132,12 @@ export function useDestinationSearch({
       if (q && !(normalize(p.city).includes(q) || normalize(p.country).includes(q))) return false;
       if (countryFilter !== 'all' && p.iso2 !== countryFilter) return false;
       if (tripKinds.length > 0 && !matchesAnyKind(p.categories, tripKinds)) return false;
-      if (minBeauty > 1 && (p.beauty?.gems ?? 0) < minBeauty) return false;
+      if (minTier > 0 && (p.rating?.tier ?? 0) < minTier) return false;
       if (unescoOnly && !p.beauty?.unesco) return false;
       if (topBeachOnly && !p.beauty?.top_beach) return false;
       return true;
     });
-  }, [unreachableAll, q, countryFilter, tripKinds, minBeauty, unescoOnly, topBeachOnly]);
+  }, [unreachableAll, q, countryFilter, tripKinds, minTier, unescoOnly, topBeachOnly]);
 
   const dealThreshold = useMemo(() => {
     if (priced.length === 0) return null;

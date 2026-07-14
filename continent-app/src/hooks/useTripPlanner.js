@@ -275,7 +275,7 @@ export function useTripPlanner(data, countryInsights = null) {
   // destinations isn't the place to re-tune per-stop dining habits in v1).
   const stayCosts = useMemo(() => stopDetails.map((s) => {
     if (!s.dest) return null;
-    const accom = accommodationPerPerson(s.dest, s.nights, s.arriveDate);
+    const accom = accommodationPerPerson(s.dest, s.nights, s.arriveDate, null, groupSize);
     const ground = groundSpendPerPerson(s.dest, s.nights, DEFAULT_LIFESTYLE);
     const accomTotal = round2((accom ? accom.total : 0) * groupSize);
     const groundTotal = round2((ground ? ground.total : 0) * groupSize);

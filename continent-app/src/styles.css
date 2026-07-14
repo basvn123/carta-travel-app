@@ -7683,3 +7683,75 @@ input, select {
   font-size: 14px;
 }
 .crash-btn.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+/* ─── Traveller rating (schema v14): score chip + tier diamonds + gem tag ───
+   One visual language for destination quality. Tiers follow the Michelin
+   Green Guide idiom (3 = worth the journey, 2 = worth a detour, 1 = worth a
+   visit); colour stays inside the paper/rust palette - the accent is earned
+   by the top tier only, so a three-diamond place reads instantly. */
+.rating-badge { display: inline-flex; align-items: center; gap: 5px; min-width: 0; }
+.score-chip {
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  border-radius: 4px;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  flex: none;
+}
+.score-chip.xs { font-size: 9.5px; padding: 2px 4px; }
+.score-chip.sm { font-size: 11px; padding: 3px 5px; }
+.score-chip.lg { font-size: 15px; padding: 5px 8px; border-radius: 6px; }
+.score-chip.rt-3 { background: var(--accent); color: var(--paper); }
+.score-chip.rt-2 { background: var(--accent-bg); color: var(--accent); }
+.score-chip.rt-1 { background: var(--paper-dim); color: var(--ink-soft); border: 1px solid var(--rule); }
+.score-chip.rt-0 { background: transparent; color: var(--ink-mute); border: 1px solid var(--rule); }
+.tier-diamonds { display: inline-flex; align-items: center; gap: 1px; flex: none; }
+.tier-diamonds.rt-3 { color: var(--accent); }
+.tier-diamonds.rt-2 { color: var(--accent-soft); }
+.tier-diamonds.rt-1 { color: var(--ink-mute); }
+.rating-label {
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.rating-label.rt-3 { color: var(--accent); }
+.rating-label.rt-2 { color: var(--accent-soft); }
+.rating-label.rt-1, .rating-label.rt-0 { color: var(--ink-mute); }
+.hidden-gem-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-family: var(--mono);
+  font-size: 8.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--green);
+  border: 1px solid color-mix(in srgb, var(--green) 45%, transparent);
+  border-radius: 3px;
+  padding: 1px 5px;
+  white-space: nowrap;
+}
+.hidden-gem-tag.lg { font-size: 10px; padding: 2px 7px; }
+.hidden-gem-tag .gem { color: var(--green); }
+
+/* Detail panel: the rating hero row under the city name */
+.panel-rating-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 6px 0 2px;
+  flex-wrap: wrap;
+}
+
+/* Map: three-diamond destinations get a ring so the continent's icons pop
+   even at low zoom; hidden gems keep the dashed-green treatment previously
+   tied to the record tier. */
+.pin-dot.is-top {
+  box-shadow: 0 0 0 2px var(--paper), 0 0 0 4px var(--accent);
+}
+.price-pill.is-top { border-color: var(--accent); }
+.step-tier-gems { display: inline-flex; align-items: center; gap: 0; }
