@@ -1,6 +1,14 @@
 import { useEffect, useMemo, useState } from 'react';
 import { appDataPromise } from '../lib/appData.js';
 import { hydrateForOrigin, defaultOrigin, originHome } from '../lib/origins.js';
+import { bestFareWindow } from '../lib/runtime_pricing.js';
+
+// ISO date string, `days` later.
+function addDays(iso, days) {
+  const d = new Date(iso + 'T00:00:00Z');
+  d.setUTCDate(d.getUTCDate() + days);
+  return d.toISOString().slice(0, 10);
+}
 
 /** Fetches app_data.json, applies its data-driven defaults (group size,
  *  baggage, lifestyle, home/car/accommodation models, departure origin) into
@@ -87,17 +95,29 @@ export function useAppData(init, setChoices, departDate, setDepartDate, returnDa
     return minOut && maxRet ? { min: minOut, max: maxRet } : null;
   }, [data]);
 
-  // Default depart/return when data first loads
+  const defaultNights = data?.meta?.defaults?.trip_length_days ?? 7;
+
+  // The date pair to open on. Ryanair flies specific weekdays, so fares are sparse
+  // per date and the earliest date in the window - the old default - was bookable
+  // for only a couple of destinations, leaving the map looking broken. Pick the
+  // depart date that actually resolves the most round trips instead.
+  const defaultWindow = useMemo(
+    () => (data ? bestFareWindow(data.destinations, defaultNights) : null),
+    [data, defaultNights],
+  );
+
+  // Default depart/return when data first loads (a restored URL/stored date wins).
   useEffect(() => {
     if (!dateBounds) return;
-    if (!departDate) setDepartDate(dateBounds.min);
-    if (!returnDate && dateBounds.min) {
-      const d = new Date(dateBounds.min + 'T00:00:00Z');
-      d.setUTCDate(d.getUTCDate() + 7);
-      const candidate = d.toISOString().slice(0, 10);
-      setReturnDate(candidate <= dateBounds.max ? candidate : dateBounds.max);
+    const start = departDate || defaultWindow?.start || dateBounds.min;
+    if (!departDate) setDepartDate(start);
+    if (!returnDate && start) {
+      const end = (defaultWindow && start === defaultWindow.start)
+        ? defaultWindow.end
+        : addDays(start, defaultNights);
+      setReturnDate(end <= dateBounds.max ? end : dateBounds.max);
     }
-  }, [dateBounds]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [dateBounds, defaultWindow]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return { data, error, dateBounds };
 }

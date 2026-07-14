@@ -4745,6 +4745,176 @@ input, select {
   transform: scale(1.5);
   box-shadow: 0 0 0 2px var(--paper), 0 0 0 4px var(--ink);
 }
+
+/* ─── Map markers: how you'd get there ────────────────────────────────────────
+   Colour is already spoken for (rust = deal) and the border style too (dashed =
+   gem), so the transport mode rides in on a glyph instead: plane or car, inside
+   the pill, inheriting currentColor so it stays legible on every pill state. */
+
+.price-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.pill-ico {
+  display: inline-flex;
+  align-items: center;
+  opacity: 0.75;
+  flex: none;
+}
+.price-pill.is-deal .pill-ico,
+.price-pill.selected .pill-ico { opacity: 0.95; }
+
+/* Drivable, but no flight from home - only ever shown in plane mode, where a
+   price pill would be read as a fare you could actually book. Hollow ring, so it
+   reads as "there, but not by plane" rather than "broken". */
+.pin-dot.is-caronly {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--paper);
+  border: 1.5px solid rgba(120, 120, 120, 0.75);
+  box-shadow: none;
+}
+.pin-dot.is-caronly.selected {
+  transform: scale(1.6);
+  background: var(--ink);
+  border-color: var(--ink);
+  box-shadow: 0 0 0 2px var(--paper), 0 0 0 4px var(--ink);
+}
+
+/* No flight and too far to drive. Filled grey - a dead end, not a choice. */
+.pin-dot.is-unreach {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(120, 120, 120, 0.45);
+  border: 1px solid rgba(90, 90, 90, 0.6);
+  box-shadow: none;
+}
+.pin-dot.is-unreach.selected {
+  width: 11px;
+  height: 11px;
+  box-shadow: 0 0 0 3px rgba(120, 120, 120, 0.25);
+}
+
+/* ─── Map legend ──────────────────────────────────────────────────────────── */
+
+/* Bottom-left: the one free corner of the map. Top-right is the "Start here"
+   pill, bottom-right the zoom + attribution controls. */
+.map-legend {
+  position: absolute;
+  bottom: 12px;
+  left: 12px;
+  z-index: 6;
+  width: 250px;
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  box-shadow: 0 1px 2px rgba(26, 26, 26, 0.08), 0 6px 18px rgba(26, 26, 26, 0.10);
+  overflow: hidden;
+}
+.map-legend.is-collapsed { width: auto; }
+
+.legend-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  padding: 7px 10px;
+  background: none;
+  border: 0;
+  cursor: pointer;
+  font-family: var(--mono);
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-soft, #666);
+}
+.legend-head:hover { color: var(--ink); }
+.legend-chev { font-size: 13px; line-height: 1; }
+
+.legend-body {
+  padding: 2px 10px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.legend-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+}
+
+/* A miniature of the real marker, so the legend and the map can't drift apart. */
+.legend-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  flex: none;
+  margin-top: 1px;
+  padding: 2px 5px;
+  border: 1px solid var(--ink);
+  border-radius: 4px;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--mono);
+  font-size: 9px;
+  font-style: normal;
+}
+.legend-pill i { font-style: normal; }
+.legend-pill.is-deal {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--paper);
+}
+.legend-pill.is-gem {
+  border-style: dashed;
+  font-style: italic;
+}
+
+.legend-swatch {
+  flex: none;
+  width: 30px;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 6px;
+}
+
+.legend-text {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+.legend-text b {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.legend-text em {
+  font-style: normal;
+  font-size: 10.5px;
+  line-height: 1.35;
+  color: var(--ink-soft, #777);
+}
+
+.legend-sep {
+  height: 1px;
+  background: var(--rule);
+  margin: 1px 0;
+}
+
+@media (max-width: 880px) {
+  .map-legend { bottom: 8px; left: 8px; width: 216px; }
+  .legend-text em { font-size: 10px; }
+}
+
 /* --- Plane/Car comparison toggle (detail panel) --- */
 .mode-toggle {
   display: flex;
@@ -6718,51 +6888,55 @@ input, select {
 .cost-total-card {
   margin-top: 14px;
   border: 1px solid var(--accent);
-  border-radius: 12px;
+  border-radius: 14px;
   background: linear-gradient(100deg, var(--accent-bg), var(--paper));
-  padding: 14px 16px 12px;
+  box-shadow: 0 2px 10px -4px rgba(200, 80, 30, 0.28);
+  padding: 16px 18px 14px;
 }
 .cost-total-main {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
-  gap: 12px;
+  gap: 14px;
 }
 .cost-total-label {
   font-family: var(--display);
   font-size: 17px;
-  font-weight: 500;
+  font-weight: 600;
   color: var(--ink);
 }
 .cost-total-label small {
   display: block;
   font-family: var(--mono);
   font-size: 10px;
+  letter-spacing: 0.02em;
   color: var(--ink-soft);
-  margin-top: 2px;
+  margin-top: 3px;
 }
 .cost-total-val {
   font-family: var(--mono);
-  font-size: 26px;
+  font-size: 28px;
   font-weight: 700;
   font-variant-numeric: tabular-nums;
   color: var(--accent);
   white-space: nowrap;
+  letter-spacing: -0.01em;
 }
 .cost-total-sub {
   display: flex;
   justify-content: space-between;
   align-items: baseline;
-  margin-top: 8px;
-  padding-top: 8px;
-  border-top: 1px dotted var(--accent-soft);
-  font-size: 12.5px;
+  margin-top: 10px;
+  padding-top: 9px;
+  border-top: 1px solid rgba(200, 80, 30, 0.22);
+  font-size: 12px;
   color: var(--ink-soft);
 }
 .cost-total-sub span:last-child {
   font-family: var(--mono);
+  font-size: 13px;
   font-variant-numeric: tabular-nums;
-  color: var(--ink);
+  color: var(--ink-soft);
   font-weight: 600;
 }
 

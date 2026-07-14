@@ -37,9 +37,9 @@ export function BestTimePanel({ destination, departDate, returnDate, breakdown, 
 
   const windows = React.useMemo(() => {
     if (lengthKey === 'flexible') {
-      return cheapestFlexibleWindows(destination, breakdown.nights, 3, choices, data?.meta);
+      return cheapestFlexibleWindows(destination, breakdown.nights, 3, choices, data?.meta, data?.destinations);
     }
-    return cheapestWindows(destination, activeOption.nights, choices, data?.meta);
+    return cheapestWindows(destination, activeOption.nights, choices, data?.meta, data?.destinations);
   }, [destination, lengthKey, breakdown.nights, activeOption, choices, data]);
 
   const weekday = React.useMemo(() => fareByWeekday(destination), [destination]);

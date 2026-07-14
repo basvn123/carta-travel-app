@@ -72,23 +72,46 @@ export function hydrateForOrigin(data, origin) {
   return { ...data, destinations, meta: { ...data.meta, selected_origin: origin } };
 }
 
-/** The origin airport closest to the app's configured home point, so a first-time
- *  visitor lands on a sensible departure without choosing. Falls back to the first
- *  listed origin (then 'CRL') when there's no home / no coordinates. */
+// How far from home we'll look for a departure airport. Ryanair concentrates on
+// secondary airports, so the *nearest* airport is often the one that barely flies
+// anywhere - and a traveller will happily drive an hour to the one that does.
+const ORIGIN_SEARCH_KM = 120;
+
+/** How many anchor airports this origin actually has fares to. */
+export function originCoverage(data, code) {
+  let n = 0;
+  for (const byOrigin of Object.values(data?.fares || {})) {
+    const rec = byOrigin?.[code];
+    if (rec?.out && Object.keys(rec.out).length > 0) n++;
+  }
+  return n;
+}
+
+/** The departure airport a first-time visitor should land on: of the origins
+ *  within reach of home, the one with the richest route network (ties to the
+ *  closer one). Picking purely by distance is what put Brussels-Zaventem, which
+ *  reaches 10 destinations, ahead of Charleroi, which reaches 100 - and left the
+ *  map with almost nothing you could actually fly to. Falls back to the nearest
+ *  origin, then the first listed (then 'CRL'), when there's no home / no fares. */
 export function defaultOrigin(data) {
   const origins = data?.meta?.origins || {};
   const codes = Object.keys(origins);
   if (codes.length === 0) return 'CRL';
   const home = data?.meta?.home;
   if (home && home.lat != null) {
-    let best = null;
+    const near = [];
+    let nearest = null;
     for (const code of codes) {
       const o = origins[code];
       if (o.lat == null) continue;
       const km = haversineKm(home.lat, home.lon, o.lat, o.lon);
-      if (km != null && (best == null || km < best.km)) best = { code, km };
+      if (km == null) continue;
+      if (nearest == null || km < nearest.km) nearest = { code, km };
+      if (km <= ORIGIN_SEARCH_KM) near.push({ code, km, coverage: originCoverage(data, code) });
     }
-    if (best) return best.code;
+    near.sort((a, b) => (b.coverage - a.coverage) || (a.km - b.km));
+    if (near.length > 0 && near[0].coverage > 0) return near[0].code;
+    if (nearest) return nearest.code;
   }
   return codes.includes('CRL') ? 'CRL' : codes[0];
 }
