@@ -319,16 +319,6 @@ function BreakdownTab({ destination, breakdown, departDate, returnDate, choices,
     return buildFlightLinks({ origin, destIata, departDate, returnDate }).skyscanner || null;
   })();
 
-  // Local unit rates: what everyday things actually cost here. Surfaced so the
-  // on-the-ground estimate is as inspectable as the Airbnb nightly base rate.
-  const unitRates = destination.costs ? [
-    ['Dinner out', destination.costs.meal_mid_eur],
-    ['Casual meal', destination.costs.meal_cheap_eur],
-    ['Beer / wine out', destination.costs.drink_out_eur],
-    ['Coffee', destination.costs.coffee_eur],
-    ['Groceries / day', destination.costs.grocery_day_eur],
-  ].filter(([, v]) => v > 0) : [];
-
   return (
     <>
       <div className="panel-section">
@@ -363,29 +353,6 @@ function BreakdownTab({ destination, breakdown, departDate, returnDate, choices,
               />
             </>
           )}
-          {/* Plane vs car comparison (only when drivable) */}
-          {breakdown.drivable && setChoices && (
-            <div className="mode-toggle">
-              <button
-                className={`mode-pill ${breakdown.transport_mode === 'plane' ? 'on' : ''}`}
-                disabled={breakdown.plane_grand_total == null}
-                onClick={() => setChoices({ ...choices, transport_mode: 'plane' })}
-              >
-                <span className="mode-pill-top">Fly</span>
-                <span className="mode-pill-val">
-                  {breakdown.plane_grand_total != null ? eur(show(breakdown.plane_grand_total)) : 'no route'}
-                </span>
-              </button>
-              <button
-                className={`mode-pill ${breakdown.transport_mode === 'car' ? 'on' : ''}`}
-                onClick={() => setChoices({ ...choices, transport_mode: 'car' })}
-              >
-                <span className="mode-pill-top">Drive, {breakdown.driving.road_km} km</span>
-                <span className="mode-pill-val">{eur(show(breakdown.car_grand_total))}</span>
-              </button>
-            </div>
-          )}
-
           {breakdown.transport_mode === 'car' ? (
             <>
               <div className="total-row">
@@ -547,7 +514,6 @@ function BreakdownTab({ destination, breakdown, departDate, returnDate, choices,
             infoPanel={infoOpen === 'ground' && (
               <InfoFacts rows={[
                 ['Based on', 'Your lifestyle settings'],
-                ['Method', 'Local unit price × how often you picked it'],
                 ['Covers', 'Meals, drinks, nights out, groceries'],
                 ['Rates', sourceLabel],
               ]} />
@@ -560,19 +526,6 @@ function BreakdownTab({ destination, breakdown, departDate, returnDate, choices,
             {g.clubbing > 0 && <GroundLine label="Club nights" v={show(groundGroup(g.clubbing))} eur={eur} />}
             {g.coffees > 0 && <GroundLine label="Coffees" v={show(groundGroup(g.coffees))} eur={eur} rate={destination.costs?.coffee_eur} />}
             <GroundLine label="Groceries"    v={show(groundGroup(g.groceries))} eur={eur} />
-            {unitRates.length > 0 && (
-              <div className="cost-local-rates-row">
-                <InfoButton
-                  open={infoOpen === 'rates'}
-                  onClick={() => toggleInfo('rates')}
-                  label="Local rates used for this estimate"
-                />
-                <span className="cost-local-rates-label">Local rates</span>
-                {infoOpen === 'rates' && (
-                  <InfoFacts rows={unitRates.map(([lbl, v]) => [lbl, `€${v}`])} />
-                )}
-              </div>
-            )}
             <div className="cost-group-links">
               <TextLink onClick={onOpenLifestyle}>Adjust lifestyle</TextLink>
             </div>
@@ -602,16 +555,23 @@ function BreakdownTab({ destination, breakdown, departDate, returnDate, choices,
 }
 
 // "Is a car needed here?" advisory - the second car layer.
+// The stored reasons join clauses with a bare dash ("… public transport -
+// skip the car"); rewrite that as two sentences for display.
+function cleanReason(s) {
+  return String(s || '').replace(/\s+[-–—]\s+(\w)/g, (m, c) => `. ${c.toUpperCase()}`);
+}
+
 function CarAdvisory({ lt, mode }) {
   if (!lt) return null;
   const dot = lt.car_needed ? '#d98324' : '#3a9d6b';
+  const reason = cleanReason(lt.reason);
   let text;
   if (lt.car_needed) {
     text = mode === 'car'
-      ? `Car recommended here, and you'll have your own. ${lt.reason}`
-      : `Car recommended here, a rental is included above. ${lt.reason}`;
+      ? `Car recommended here, and you'll have your own. ${reason}`
+      : `Car recommended here, a rental is included above. ${reason}`;
   } else {
-    text = `No car needed. ${lt.reason}`;
+    text = `No car needed. ${reason}`;
   }
   return (
     <div className="car-advisory">

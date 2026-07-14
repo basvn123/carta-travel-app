@@ -9,7 +9,7 @@ import { saveTrip, fetchUserSettings, saveUserSettings } from '../auth/tripStora
  *  and account panel.
  */
 export function useAccountSync({
-  user, cameFromUrl,
+  user, cameFromUrl, hasLocalOrigin,
   choices, setChoices,
   priceMode, setPriceMode,
   countryFilter, setCountryFilter,
@@ -32,7 +32,17 @@ export function useAccountSync({
     settingsAppliedRef.current = true;
     fetchUserSettings(user.id).then((settings) => {
       if (!settings) return;
-      if (settings.choices) setChoices((prev) => ({ ...prev, ...settings.choices }));
+      if (settings.choices) {
+        // The departure airport chosen on THIS device wins over the one in the
+        // account snapshot - otherwise changing "flying from" didn't survive a
+        // fresh open (the older synced origin silently clobbered it).
+        const incoming = { ...settings.choices };
+        if (hasLocalOrigin) {
+          delete incoming.origin;
+          delete incoming.home;
+        }
+        setChoices((prev) => ({ ...prev, ...incoming }));
+      }
       if (settings.priceMode) setPriceMode(settings.priceMode);
       if (settings.countryFilter) setCountryFilter(settings.countryFilter);
       if (settings.tripKinds) setTripKinds(settings.tripKinds);
@@ -41,7 +51,7 @@ export function useAccountSync({
       if (settings.topBeachOnly != null) setTopBeachOnly(settings.topBeachOnly);
       if (settings.sortKey) setSortKey(settings.sortKey);
     }).catch(() => {});
-  }, [user, cameFromUrl]);
+  }, [user, cameFromUrl, hasLocalOrigin]);
 
   // Keep the signed-in user's settings synced (debounced) so they carry over
   // to their next visit/device.

@@ -266,6 +266,9 @@ function TravelApp() {
   // and expose the "save"/"load a saved trip" actions.
   const { handleSaveTrip, handleLoadTrip } = useAccountSync({
     user, cameFromUrl,
+    // A departure airport restored from the URL/local mirror must survive the
+    // account-settings pull, so a changed "flying from" stays put app-wide.
+    hasLocalOrigin: !!init.origin,
     choices, setChoices,
     priceMode, setPriceMode,
     countryFilter, setCountryFilter,

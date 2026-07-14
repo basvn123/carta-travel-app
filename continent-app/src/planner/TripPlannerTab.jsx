@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Dropdown } from '../components/Dropdown.jsx';
 import { DateField } from '../components/DateField.jsx';
 import { OriginPicker } from '../components/OriginPicker.jsx';
@@ -12,6 +12,7 @@ import { fmtDate } from '../lib/dates.js';
 import { fetchDrivingRoute } from '../lib/routing.js';
 import { useTripPlanner } from '../hooks/useTripPlanner.js';
 import { useCountryInsights } from '../hooks/useCountryInsights.js';
+import { loadAssignments, TRIP_DRAFT_PLAN_ID } from './dayPlanStore.js';
 import { SparkIcon, TrainIcon, BusIcon, CarIcon, BulbIcon, InfoIcon } from '../components/Icons.jsx';
 import { knownForFacts } from '../lib/knownFor.js';
 
@@ -334,23 +335,38 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
 
   const groundTotal = tp.legs.reduce((sum, l) => sum + (l ? l.ground_total : 0), 0);
 
-  // Planned-view actions (Save / Edit / Replan / Start over). On desktop they
-  // sit pinned at the BOTTOM of the left panel; on mobile they stay a floating
-  // bar over the map so they're reachable above the bottom sheet.
+  // Which itinerary days already have Day-planner picks on this device, so the
+  // per-day button can honestly read "Modify" instead of "Plan". Re-read when
+  // the planned view (re)opens - picks are made over in the Day planner tab.
+  const dayAssignments = useMemo(
+    () => (tp.planned ? loadAssignments(tp.planId || TRIP_DRAFT_PLAN_ID) : {}),
+    [tp.planned, tp.planId],
+  );
+  const isDayPlanned = (stopIndex, dayOfStay) => {
+    const picks = dayAssignments?.[stopIndex]?.[dayOfStay - 1];
+    return Array.isArray(picks) && picks.length > 0;
+  };
+
+  // Planned-view actions, pinned at the BOTTOM of the sheet on every layout:
+  // one primary Save/Update, then the plainly-labelled secondary actions.
   const plannedActionButtons = (
     <>
       <button className="trip-save-planned-btn" onClick={handleSave} disabled={tp.saveState === 'saving'}>
         {tp.saveState === 'saving' ? 'Saving…' : tp.saveState === 'saved' ? 'Saved ✓' : tp.planId ? 'Update trip' : 'Save trip'}
       </button>
-      {/* Edit + Replan share one pill: Edit is the primary tap, Replan an
-          attached segment (only when a reorder is meaningful, 3+ stops). */}
-      <div className="trip-edit-split">
-        <button className="trip-edit-btn" onClick={() => { tp.setPlanned(false); setSheetOpen(true); }}>Edit</button>
+      <div className="trip-planned-secondary">
+        <button
+          className="trip-edit-btn"
+          onClick={() => { tp.setPlanned(false); setSheetOpen(true); }}
+          title="Back to the stop list: add, remove or re-order stops and nights"
+        >
+          Edit stops
+        </button>
         {tp.stopDetails.length >= 3 && (
-          <button className="trip-plan-again-btn" onClick={() => tp.optimizeRoute()} title="Re-run Carta's routing from your first stop">↻ Replan</button>
+          <button className="trip-plan-again-btn" onClick={() => tp.optimizeRoute()} title="Re-run Carta's routing from your first stop">↻ Replan route</button>
         )}
+        <button className="trip-startover-btn" onClick={handleStartOver} title="Delete this trip and begin again">Start over</button>
       </div>
-      <button className="trip-startover-btn" onClick={handleStartOver} title="Delete this trip and begin again">Start over</button>
     </>
   );
 
@@ -407,8 +423,18 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
           <div className="trip-sheet-grip" />
         </div>
 
-        {/* Trip header */}
-        <div className="trip-topcard">
+        {/* Trip header. On phones the whole card doubles as a drag handle
+            (the bare grip strip was too small a target to discover), so the
+            sheet can be swiped down to reveal the map and back up again.
+            The name input opts out - typing must not start a drag. */}
+        <div
+          className="trip-topcard"
+          onPointerDown={isNarrow ? (e) => { if (!e.target.closest('input')) onGripDown(e); } : undefined}
+          onPointerMove={isNarrow ? onGripMove : undefined}
+          onPointerUp={isNarrow ? onGripUp : undefined}
+          onPointerCancel={isNarrow ? onGripUp : undefined}
+          style={isNarrow ? { touchAction: 'none' } : undefined}
+        >
           <input
             className="trip-topcard-name"
             value={tp.planLabel}
@@ -439,6 +465,7 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
               carRental={tp.carRental}
               activeStopIndex={selectedStop}
               onSelectStop={setSelectedStop}
+              isDayPlanned={isDayPlanned}
               onPlanDay={onPlanDay ? (day) => onPlanDay({
                 planId: tp.planId,
                 stopIndex: day.stopIndex,
@@ -716,25 +743,15 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
           )}
         </div>
 
-        {/* Desktop: the planned trip's actions live at the bottom of this
-            panel, always visible under the itinerary. */}
-        {tp.planned && !isNarrow && (
+        {/* The planned trip's actions live at the bottom of this panel on
+            every layout, always visible under the itinerary. */}
+        {tp.planned && (
           <div className="trip-sheet-footer">
             {saveError && <p className="trip-note trip-note-error trip-footer-error">{saveError}</p>}
             <div className="trip-sheet-footer-row">{plannedActionButtons}</div>
           </div>
         )}
       </div>
-
-      {/* Mobile: the same actions float above the bottom sheet. */}
-      {tp.planned && isNarrow && (
-        <div className="trip-planned-actions" onClick={(e) => e.stopPropagation()}>
-          {plannedActionButtons}
-        </div>
-      )}
-      {tp.planned && isNarrow && saveError && (
-        <div className="trip-planned-error" onClick={(e) => e.stopPropagation()}>{saveError}</div>
-      )}
 
       {wizardOpen && (
         <GuidedTripWizard data={data} origin={origin} onChangeOrigin={onChangeOrigin} onCancel={() => setWizardOpen(false)} onComplete={handleWizardComplete} />

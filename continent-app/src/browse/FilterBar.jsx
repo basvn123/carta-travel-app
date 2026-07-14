@@ -81,6 +81,20 @@ export function FilterBar({
     }
   };
 
+  // Typing a number of nights moves the return date: nights stays an honest
+  // derivative of the dates (pricing reads the dates), but is now editable
+  // directly instead of only via two calendar taps.
+  const onNightsCommit = (n) => {
+    const base = departDate || dateBounds?.min;
+    if (!base) return;
+    const d = new Date(base + 'T00:00:00Z');
+    d.setUTCDate(d.getUTCDate() + n);
+    let next = d.toISOString().slice(0, 10);
+    if (dateBounds?.max && next > dateBounds.max) next = dateBounds.max;
+    if (!departDate) setDepartDate(base);
+    setReturnDate(next);
+  };
+
   // "Top picks" quick shortcuts: show only the best N by price or beauty.
   // Short labels keep the trigger narrow so the filter bar stays two tidy rows.
   const TOP_PICKS = [
@@ -219,12 +233,14 @@ export function FilterBar({
               <div className="filter filter-nights">
                 <label className="filter-label">Nights</label>
                 <div className="filter-control">
-                  <div
-                    className="derived-value"
-                    title="Derived from depart and return dates"
-                  >
-                    {choices.trip_days || 0}
-                  </div>
+                  <NumberField
+                    value={choices.trip_days || 0}
+                    min={1}
+                    max={60}
+                    onCommit={onNightsCommit}
+                    ariaLabel="Nights"
+                    title="Trip length; changing it moves the return date"
+                  />
                 </div>
               </div>
             </div>
@@ -238,9 +254,12 @@ export function FilterBar({
               <div className="filter filter-people">
                 <label className="filter-label">People</label>
                 <div className="filter-control">
-                  <input type="number" min={1} max={20}
+                  <NumberField
                     value={choices.group_size}
-                    onChange={(e) => setChoices({ ...choices, group_size: Math.min(20, Math.max(1, +e.target.value || 1)) })}
+                    min={1}
+                    max={20}
+                    onCommit={(v) => setChoices({ ...choices, group_size: v })}
+                    ariaLabel="People"
                   />
                 </div>
               </div>
@@ -500,6 +519,32 @@ export function FilterBar({
         </div>
       </div>
     </div>
+  );
+}
+
+// A number input that can be emptied while typing a replacement. Clamping on
+// every keystroke made "clear the field, type 3" produce 13 (the cleared
+// field snapped back to 1); instead the draft is committed only when it
+// parses, and blur restores the last committed value if left empty.
+function NumberField({ value, min, max, onCommit, ariaLabel, title }) {
+  const [draft, setDraft] = React.useState(null); // null = mirror `value`
+  return (
+    <input
+      type="number"
+      inputMode="numeric"
+      min={min}
+      max={max}
+      value={draft ?? String(value ?? '')}
+      aria-label={ariaLabel}
+      title={title}
+      onChange={(e) => {
+        const raw = e.target.value;
+        setDraft(raw);
+        const n = parseInt(raw, 10);
+        if (!Number.isNaN(n)) onCommit(Math.min(max, Math.max(min, n)));
+      }}
+      onBlur={() => setDraft(null)}
+    />
   );
 }
 

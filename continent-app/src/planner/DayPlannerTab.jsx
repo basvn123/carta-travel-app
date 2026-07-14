@@ -1004,10 +1004,31 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
       />
 
       <div className="trip-topcard" onClick={(e) => e.stopPropagation()}>
-        <div className="trip-topcard-name">{plan.label || 'Untitled trip'}</div>
-        <div className="trip-topcard-sub">
-          {stop?.dest?.city || 'No stops in this trip'}
-          {days[dayIdx] ? `, ${fmtDate(days[dayIdx])}` : ''}
+        <div className="day-topcard-row">
+          <div>
+            <div className="trip-topcard-name">{plan.label || 'Untitled trip'}</div>
+            <div className="trip-topcard-sub">
+              {stop?.dest?.city || 'No stops in this trip'}
+              {days[dayIdx] ? `, ${fmtDate(days[dayIdx])}` : ''}
+            </div>
+          </div>
+          {/* Always-visible save state: standalone plans (and their picks)
+              persist on this device automatically; trip-based plans get an
+              explicit one-tap save into Saved trips. */}
+          {plan.standalone ? (
+            <span className="day-save-btn saved" title="Every change to this day plan is saved on this device automatically">
+              ✓ Saved
+            </span>
+          ) : (
+            <button
+              className={`day-save-btn ${daySaveState === 'saved' ? 'saved' : ''}`}
+              onClick={saveToSavedTrips}
+              disabled={daySaveState === 'saved'}
+              title="Keep this day plan in your Saved trips"
+            >
+              <BookmarkIcon size={12} /> {daySaveState === 'saved' ? 'Saved ✓' : 'Save day plan'}
+            </button>
+          )}
         </div>
       </div>
 

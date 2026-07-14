@@ -3,6 +3,7 @@ import { useAuth } from './AuthContext.jsx';
 import { fetchSavedTrips, deleteTrip } from './tripStorage.js';
 import { fetchTripPlans, deleteTripPlan } from './tripPlanStorage.js';
 import { loadStandalonePlans, deleteStandalonePlan, loadAssignments } from '../planner/dayPlanStore.js';
+import { MapPinIcon, RouteIcon, ListDayIcon } from '../components/Icons.jsx';
 
 // How many individual days of a trip plan have Day-planner picks on this
 // device (assignments = { stopIdx: { dayIdx: [activityIdx...] } }).
@@ -14,11 +15,52 @@ function countPlannedDays(planId) {
   );
 }
 
+/** One labelled shelf of the overview: icon + name + count, an explainer of
+ *  what lands here, then its cards. Three of these make the whole panel
+ *  self-describing - no guessing which tab produced which entry. */
+function SavedSection({ Icon, title, sub, count, children }) {
+  return (
+    <div className="panel-section saved-section">
+      <div className="saved-section-head">
+        <Icon size={14} />
+        <span className="saved-section-title">{title}</span>
+        {count != null && <span className="saved-section-count">{count}</span>}
+      </div>
+      {sub && <p className="saved-section-sub">{sub}</p>}
+      {children}
+    </div>
+  );
+}
+
+/** One saved entry: icon tile, title + meta, chevron, delete. */
+function SavedCard({ Icon, title, meta, onOpen, openTitle, onDelete, deleteLabel }) {
+  return (
+    <div className="saved-card">
+      <button className="saved-card-main" onClick={onOpen} title={openTitle}>
+        <span className="saved-card-icon"><Icon size={15} /></span>
+        <span className="saved-card-text">
+          <span className="saved-card-title">{title}</span>
+          {meta && <span className="saved-card-meta">{meta}</span>}
+        </span>
+        <span className="saved-card-open" aria-hidden="true">›</span>
+      </button>
+      <button
+        className="saved-trip-delete"
+        onClick={onDelete}
+        aria-label={deleteLabel}
+        title="Remove"
+      >
+        ×
+      </button>
+    </div>
+  );
+}
+
 // Standalone Saved trips panel, opened from the bottom nav (the same list also
 // lives inside AccountPanel; this gives it a one-tap home of its own). Every
 // kind of "saved" trip lands here - single destinations saved from the map,
 // multi-stop trips built in the Trip planner, and device-local day plans -
-// rather than each flow keeping its own separate saved list.
+// each in its own clearly-labelled section.
 export function SavedTripsPanel({ onClose, onLoadTrip, onLoadTripPlan, onOpenAuth, onOpenDayPlan }) {
   const { user, configured } = useAuth();
 
@@ -79,140 +121,135 @@ export function SavedTripsPanel({ onClose, onLoadTrip, onLoadTripPlan, onOpenAut
       <button className="panel-close" onClick={onClose} aria-label="Close">x</button>
 
       <div className="panel-header">
-        <div className="panel-tag">Your shortlist</div>
+        <div className="panel-tag">Everything you kept</div>
         <h2 className="panel-city account-heading">Saved trips</h2>
       </div>
 
-      {user ? (
-        <div className="panel-section">
-          {loading && <div className="footnote">Loading…</div>}
-          {error && <div className="auth-error">{error}</div>}
-          {!loading && !error && trips.length === 0 && (
-            <div className="footnote">
-              No saved trips yet. Open a destination and use "Save trip" to keep it here.
-            </div>
-          )}
-          {!loading && trips.length > 0 && (
-            <div className="saved-trip-list">
-              {trips.map((t) => (
-                <div className="saved-trip-item" key={t.id}>
-                  <button
-                    className="saved-trip-main"
-                    onClick={() => onLoadTrip(t)}
-                    title="Open this trip"
-                  >
-                    <span className="saved-trip-city">{t.city}</span>
-                    <span className="saved-trip-meta">
-                      {t.country}{t.depart_date && `, ${fmtDate(t.depart_date)} - ${fmtDate(t.return_date)}`}
-                    </span>
-                  </button>
-                  <button
-                    className="saved-trip-delete"
-                    onClick={() => handleDelete(t.id)}
-                    aria-label={`Remove ${t.city}`}
-                    title="Remove"
-                  >
-                    ×
-                  </button>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      ) : configured ? (
-        <div className="panel-section">
-          <div className="footnote">Sign in to save trips and find them back here on any device.</div>
-          <button className="account-signin-btn account-signin-spaced" onClick={onOpenAuth}>Sign in</button>
-        </div>
-      ) : (
-        <div className="panel-section">
-          <div className="footnote">Accounts aren't set up for this deployment, so trips can't be saved yet.</div>
-        </div>
-      )}
+      {/* ── Destinations saved from the Map tab ── */}
+      <SavedSection
+        Icon={MapPinIcon}
+        title="Destinations"
+        sub="Single places saved from the map with their dates and prices."
+        count={user ? trips.length : null}
+      >
+        {!user ? (
+          configured ? (
+            <>
+              <div className="footnote">Sign in to save trips and find them back here on any device.</div>
+              <button className="account-signin-btn account-signin-spaced" onClick={onOpenAuth}>Sign in</button>
+            </>
+          ) : (
+            <div className="footnote">Accounts aren't set up for this deployment, so trips can't be saved yet.</div>
+          )
+        ) : loading ? (
+          <div className="footnote">Loading…</div>
+        ) : error ? (
+          <div className="auth-error">{error}</div>
+        ) : trips.length === 0 ? (
+          <div className="saved-empty">
+            Nothing here yet. Open a destination on the map and tap "Save trip".
+          </div>
+        ) : (
+          <div className="saved-card-stack">
+            {trips.map((t) => (
+              <SavedCard
+                key={t.id}
+                Icon={MapPinIcon}
+                title={t.city}
+                meta={`${t.country || ''}${t.depart_date ? `, ${fmtDate(t.depart_date)} - ${fmtDate(t.return_date)}` : ''}`}
+                onOpen={() => onLoadTrip(t)}
+                openTitle="Open this destination on the map"
+                onDelete={() => handleDelete(t.id)}
+                deleteLabel={`Remove ${t.city}`}
+              />
+            ))}
+          </div>
+        )}
+      </SavedSection>
 
-      {/* Multi-stop trips built in the Trip planner. Kept here instead of on the
-          Trip planner tab itself, so every saved trip - single destination or
-          multi-stop - lives in one place. */}
-      {user && !tripPlansLoading && tripPlans.length > 0 && (
-        <div className="panel-section">
-          <div className="section-title">Your trip plans</div>
-          <div className="saved-trip-list">
-            {tripPlans.map((p) => {
-              const plannedDays = countPlannedDays(p.id);
-              return (
-                <div className="saved-trip-group" key={p.id}>
-                  <div className="saved-trip-item">
+      {/* ── Multi-stop routes built in the Trip planner ── */}
+      {user && (
+        <SavedSection
+          Icon={RouteIcon}
+          title="Trip plans"
+          sub="Multi-stop routes built in the Trip planner, flights and stays priced."
+          count={tripPlansLoading ? null : tripPlans.length}
+        >
+          {tripPlansLoading ? (
+            <div className="footnote">Loading…</div>
+          ) : tripPlans.length === 0 ? (
+            <div className="saved-empty">
+              No trip plans yet. Build one on the Trip planner tab and tap "Save trip".
+            </div>
+          ) : (
+            <div className="saved-card-stack">
+              {tripPlans.map((p) => {
+                const plannedDays = countPlannedDays(p.id);
+                return (
+                  <div className="saved-card-stack" key={p.id}>
+                    <SavedCard
+                      Icon={RouteIcon}
+                      title={p.label || 'Untitled trip'}
+                      meta={p.updated_at ? `Updated ${fmtDate(p.updated_at.slice(0, 10))}` : ''}
+                      onOpen={() => onLoadTripPlan && onLoadTripPlan(p.id)}
+                      openTitle="Open this trip in the Trip planner"
+                      onDelete={() => handleDeleteTripPlan(p.id)}
+                      deleteLabel={`Remove ${p.label || 'trip'}`}
+                    />
+                    {/* This trip's own day-by-day plans, made in the Day
+                        planner (stored on this device, keyed by the trip). */}
                     <button
-                      className="saved-trip-main"
-                      onClick={() => onLoadTripPlan && onLoadTripPlan(p.id)}
-                      title="Open this trip"
+                      className="saved-card-footer"
+                      onClick={() => onOpenDayPlan && onOpenDayPlan({ planId: p.id, stopIndex: 0, dayIndex: 0 })}
+                      title="Plan this trip's days in the Day planner"
                     >
-                      <span className="saved-trip-city">{p.label || 'Untitled trip'}</span>
-                      {p.updated_at && (
-                        <span className="saved-trip-meta">Updated {fmtDate(p.updated_at.slice(0, 10))}</span>
-                      )}
-                    </button>
-                    <button
-                      className="saved-trip-delete"
-                      onClick={() => handleDeleteTripPlan(p.id)}
-                      aria-label={`Remove ${p.label || 'trip'}`}
-                      title="Remove"
-                    >
-                      ×
+                      {plannedDays > 0
+                        ? `${plannedDays} ${plannedDays === 1 ? 'day' : 'days'} planned, keep planning →`
+                        : 'Plan its days in the Day planner →'}
                     </button>
                   </div>
-                  {/* This trip's own day-by-day plans, made in the Day planner
-                      (stored on this device, keyed by the trip). */}
-                  <button
-                    className="saved-trip-days"
-                    onClick={() => onOpenDayPlan && onOpenDayPlan({ planId: p.id, stopIndex: 0, dayIndex: 0 })}
-                    title="Plan this trip's days in the Day planner"
-                  >
-                    {plannedDays > 0
-                      ? `${plannedDays} ${plannedDays === 1 ? 'day' : 'days'} planned, keep planning →`
-                      : 'Plan its days in the Day planner →'}
-                  </button>
-                </div>
+                );
+              })}
+            </div>
+          )}
+        </SavedSection>
+      )}
+
+      {/* ── Day-by-day plans (device-local; they work without an account) ── */}
+      <SavedSection
+        Icon={ListDayIcon}
+        title="Day plans"
+        sub="Day-by-day sightseeing routes from the Day planner. Saved on this device."
+        count={dayPlans.length}
+      >
+        {dayPlans.length === 0 ? (
+          <div className="saved-empty">
+            No day plans yet. Pick a city on the Day planner tab to start one.
+          </div>
+        ) : (
+          <div className="saved-card-stack">
+            {dayPlans.map((sp) => {
+              const totalDays = sp.stops?.reduce((n, s) => n + (s.days || 1), 0) || 1;
+              return (
+                <SavedCard
+                  key={sp.id}
+                  Icon={ListDayIcon}
+                  title={sp.label || 'Day plan'}
+                  meta={[
+                    fmtDate(sp.startDate),
+                    (sp.stops?.length || 1) > 1 ? `${sp.stops.length} cities` : '',
+                    `${totalDays} ${totalDays === 1 ? 'day' : 'days'}`,
+                  ].filter(Boolean).join(', ')}
+                  onOpen={() => onOpenDayPlan && onOpenDayPlan(sp.id)}
+                  openTitle="Open this day plan"
+                  onDelete={() => setDayPlans(deleteStandalonePlan(sp.id))}
+                  deleteLabel={`Remove ${sp.label || 'day plan'}`}
+                />
               );
             })}
           </div>
-        </div>
-      )}
-
-      {/* Day plans live on this device (they work without an account), but the
-          overview of everything saved belongs here too. */}
-      {dayPlans.length > 0 && (
-        <div className="panel-section">
-          <div className="section-title">Your day plans</div>
-          <div className="saved-trip-list">
-            {dayPlans.map((sp) => (
-              <div className="saved-trip-item" key={sp.id}>
-                <button
-                  className="saved-trip-main"
-                  onClick={() => onOpenDayPlan && onOpenDayPlan(sp.id)}
-                  title="Open this day plan"
-                >
-                  <span className="saved-trip-city">{sp.label || 'Day plan'}</span>
-                  <span className="saved-trip-meta">
-                    {fmtDate(sp.startDate)}
-                    {(sp.stops?.length || 1) > 1 && `, ${sp.stops.length} cities`}
-                    {`, ${sp.stops?.reduce((n, s) => n + (s.days || 1), 0) || 1} ${(sp.stops?.reduce((n, s) => n + (s.days || 1), 0) || 1) === 1 ? 'day' : 'days'}`}
-                  </span>
-                </button>
-                <button
-                  className="saved-trip-delete"
-                  onClick={() => setDayPlans(deleteStandalonePlan(sp.id))}
-                  aria-label={`Remove ${sp.label || 'day plan'}`}
-                  title="Remove"
-                >
-                  ×
-                </button>
-              </div>
-            ))}
-          </div>
-          <div className="footnote">Saved on this device. Open one to keep planning in the Day planner.</div>
-        </div>
-      )}
+        )}
+      </SavedSection>
     </div>
   );
 }

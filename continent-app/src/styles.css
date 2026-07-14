@@ -218,6 +218,13 @@ input, select {
     padding: 0;
     gap: 0;
     align-items: flex-start;   /* account stays top-aligned when the sheet opens */
+    /* No blur here: backdrop-filter turns this header into the containing
+       block for position: fixed children, which pinned the centered calendar
+       dialog to the 56px bar (half of it off-screen). The background is 92%
+       opaque, so losing the blur is invisible. */
+    background: rgba(245, 241, 232, 0.97);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
   }
   .app-header-brand { display: none; }
   .app-header-account {
@@ -448,7 +455,19 @@ input, select {
 @media (max-width: 768px) {
   .origin-btn-from { display: none; }
   .origin-btn-label b { max-width: 96px; }
-  .origin-pop { right: -8px; }
+  /* Phones: the anchored popover overflowed the screen when its trigger sat
+     mid-layout (e.g. the wizard's "Flying from" row). Pin it to the viewport
+     instead so the full search + list is always on screen. */
+  .origin-pop {
+    position: fixed;
+    left: 12px;
+    right: 12px;
+    top: 76px;
+    width: auto;
+    max-width: none;
+    max-height: min(65vh, calc(100vh - 140px));
+    z-index: 90;
+  }
 }
 
 /* ───────── Bottom nav: the Map / Trip planner / Day planner switch on MOBILE
@@ -620,8 +639,12 @@ input, select {
 /* Bottom sheet */
 .trip-sheet {
   position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
+  /* Centered with auto margins, NOT translateX(-50%): a transform would make
+     this sheet the containing block for position: fixed descendants, pinning
+     the mobile calendar / origin popovers to the sheet instead of the screen. */
+  left: 0;
+  right: 0;
+  margin: 0 auto;
   bottom: 0;
   width: min(100%, 660px);
   max-height: calc(100% - 12px);
@@ -636,10 +659,11 @@ input, select {
   transition: height .28s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .trip-sheet.dragging { transition: none; }
-/* Generous, draggable hit-area around the grip */
+/* Generous, draggable hit-area around the grip (the trip header card below it
+   drags too - see TripPlannerTab - so the whole top of the sheet is a handle) */
 .trip-sheet-grip-hit {
   flex-shrink: 0;
-  padding: 8px 0 4px;
+  padding: 12px 0 8px;
   cursor: ns-resize;
   touch-action: none;
   user-select: none;
@@ -871,6 +895,15 @@ input, select {
 .trip-add-row { display: flex; gap: 10px; align-items: stretch; }
 .trip-add-row .dropdown { flex: 1; }
 .trip-add-row .dropdown.trip-add-country { flex: 0 0 34%; }
+/* Phones: country + city as an even pair, Add on its own full-width row -
+   three unequal controls squeezed side by side read as clutter. */
+@media (max-width: 768px) {
+  .trip-add-row { display: grid; grid-template-columns: 1fr 1fr; }
+  .trip-add-row .dropdown,
+  .trip-add-row .dropdown.trip-add-country,
+  .trip-add-row .dropdown.trip-add-city { width: 100%; min-width: 0; }
+  .trip-add-row .trip-add-btn { grid-column: 1 / -1; padding: 11px 16px; }
+}
 .dropdown-trigger.disabled { opacity: 0.45; cursor: default; }
 .trip-add-btn {
   padding: 0 20px;
@@ -970,8 +1003,8 @@ input, select {
   .trip-map { left: var(--panel-w); }
   .trip-sheet {
     left: 0; right: auto;
+    margin: 0;
     top: 0; bottom: 0;
-    transform: none;
     width: var(--panel-w);
     max-width: none;
     max-height: none;
@@ -1084,58 +1117,29 @@ input, select {
 }
 .trip-sheet.sheet-hidden { display: none; }
 
-/* Planned view: Save / Edit / Replan / Start over buttons over the map */
-.trip-planned-actions {
-  position: absolute;
-  top: 14px; right: 14px;
-  display: flex; gap: 8px;
-  flex-wrap: wrap;
-  justify-content: flex-end;
-  z-index: 6;
-}
+/* Planned view: the Save / Edit / Replan / Start over actions live in one
+   footer pinned at the BOTTOM of the sheet (mobile and desktop alike):
+   a full-width primary Save/Update on top, the secondary actions - each
+   plainly labelled - in a row beneath it. */
 .trip-edit-btn, .trip-plan-again-btn, .trip-save-planned-btn, .trip-startover-btn {
-  border-radius: 999px;
-  padding: 8px 16px;
+  border-radius: 10px;
+  padding: 9px 14px;
   font-size: 13px;
   font-weight: 600;
-  box-shadow: var(--shadow-1);
+  white-space: nowrap;
 }
-.trip-save-planned-btn { background: var(--accent); color: #fff; }
+.trip-save-planned-btn { width: 100%; padding: 12px 16px; background: var(--accent); color: #fff; }
 .trip-save-planned-btn:hover:not(:disabled) { opacity: 0.9; }
 .trip-save-planned-btn:disabled { opacity: 0.6; cursor: default; }
 .trip-edit-btn { background: var(--ink); color: var(--paper); }
-.trip-plan-again-btn, .trip-startover-btn { background: rgba(245,241,232,0.94); border: 1px solid var(--rule); color: var(--ink-soft); }
+.trip-edit-btn:hover { opacity: 0.88; }
+.trip-plan-again-btn, .trip-startover-btn { background: var(--paper); border: 1px solid var(--rule); color: var(--ink-soft); }
 .trip-plan-again-btn:hover { border-color: var(--accent); color: var(--accent); }
-
-/* Edit + Replan merged into one split pill. The container carries the pill
-   shape + shadow; the two segments sit flush inside it, split by a divider,
-   and drop their own radius/shadow. Collapses to a plain Edit pill when
-   Replan is absent (fewer than 3 stops). */
-.trip-edit-split {
-  display: inline-flex;
-  align-items: stretch;
-  border-radius: 999px;
-  box-shadow: var(--shadow-1);
-  overflow: hidden;
+.trip-planned-secondary {
+  display: flex;
+  gap: 8px;
 }
-.trip-edit-split .trip-edit-btn,
-.trip-edit-split .trip-plan-again-btn {
-  border-radius: 0;
-  box-shadow: none;
-}
-/* Replan segment shares Edit's dark fill so the pair reads as one control;
-   a hairline divider separates them, and it warms to the accent on hover. */
-.trip-edit-split .trip-plan-again-btn {
-  background: var(--ink);
-  color: var(--paper);
-  border: none;
-  border-left: 1px solid rgba(245, 241, 232, 0.22);
-  white-space: nowrap;
-}
-.trip-edit-split .trip-plan-again-btn:hover {
-  background: var(--accent);
-  color: #fff;
-}
+.trip-planned-secondary > button { flex: 1 1 0; min-width: 0; }
 
 /* Day planner: base-city + day-trip transport recommendation. */
 .daytrip-base .trip-block-title { display: flex; align-items: center; gap: 6px; }
@@ -1216,7 +1220,7 @@ input, select {
 .fare-notice-text b { color: var(--ink); }
 .fare-notice-btn { margin-top: 18px; width: 100%; }
 
-/* Desktop: planned-trip actions pinned at the bottom of the left panel. */
+/* Planned-trip actions pinned at the bottom of the sheet (both layouts). */
 .trip-sheet-footer {
   flex: none;
   padding: 10px 14px 12px;
@@ -1225,10 +1229,9 @@ input, select {
 }
 .trip-sheet-footer-row {
   display: flex;
+  flex-direction: column;
   gap: 8px;
-  flex-wrap: wrap;
 }
-.trip-sheet-footer-row > button { flex: 1 1 auto; box-shadow: none; }
 .trip-footer-error { margin: 0 0 8px; }
 
 .trip-origin-row { display: flex; }
@@ -2459,8 +2462,11 @@ input, select {
   font-weight: 600;
   font-size: 14.5px;
   display: flex;
+  flex-wrap: wrap;
   align-items: baseline;
-  gap: 10px;
+  gap: 2px 10px;
+  /* Clear of the absolute-positioned close (×) in the top-right corner. */
+  padding-right: 36px;
 }
 .shape-head-step {
   font-family: var(--mono);
@@ -2468,6 +2474,7 @@ input, select {
   text-transform: uppercase;
   letter-spacing: 0.07em;
   color: var(--ink-mute);
+  white-space: nowrap;
 }
 .shape-field-title {
   font-family: var(--mono);
@@ -5976,6 +5983,158 @@ input, select {
 }
 .saved-trip-delete:hover { border-color: var(--accent); color: var(--accent); }
 
+/* ─── Saved trips overview: three clearly-labelled sections (destinations,
+   trip plans, day plans), each an icon-led card so what-belongs-where reads
+   at a glance. ─── */
+.saved-section { margin-bottom: 6px; }
+.saved-section-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 2px;
+}
+.saved-section-head svg { color: var(--accent); flex: none; }
+.saved-section-title {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--ink-soft);
+}
+.saved-section-count {
+  margin-left: auto;
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--ink-mute);
+  background: var(--paper-dim);
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  padding: 2px 8px;
+}
+.saved-section-sub {
+  font-size: 11.5px;
+  color: var(--ink-mute);
+  margin: 0 0 10px;
+  line-height: 1.45;
+}
+.saved-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  background: var(--paper);
+  padding: 4px 6px 4px 0;
+  transition: border-color .15s, box-shadow .15s;
+}
+.saved-card:hover { border-color: var(--ink-soft); box-shadow: var(--shadow-1); }
+.saved-card-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0 10px 12px;
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+}
+.saved-card-icon {
+  flex: none;
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  background: var(--accent-bg);
+  color: var(--accent);
+}
+.saved-card-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+.saved-card-title {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.saved-card-meta {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  color: var(--ink-mute);
+}
+.saved-card-open { color: var(--ink-mute); font-size: 16px; flex: none; }
+.saved-card-stack { display: flex; flex-direction: column; gap: 8px; }
+/* The trip plan's own day-planning shortcut, attached under its card. */
+.saved-card-footer {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: -4px 0 0 18px;
+  padding: 8px 12px 6px;
+  border-left: 2px solid var(--rule);
+  background: none;
+  border-top: none; border-right: none; border-bottom: none;
+  font-size: 11.5px;
+  color: var(--ink-mute);
+  cursor: pointer;
+  text-align: left;
+}
+.saved-card-footer:hover { color: var(--accent); border-left-color: var(--accent); }
+.saved-empty {
+  font-size: 12px;
+  color: var(--ink-mute);
+  border: 1px dashed var(--rule);
+  border-radius: 10px;
+  padding: 12px 14px;
+  line-height: 1.5;
+}
+
+/* Day planner: save state, top-right of the plan header card. */
+.day-topcard-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+.day-save-btn {
+  flex: none;
+  margin-top: 2px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--rule);
+  background: var(--paper);
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  cursor: pointer;
+  white-space: nowrap;
+}
+.day-save-btn:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+.day-save-btn.saved, .day-save-btn:disabled { color: #2c7d54; border-color: rgba(44, 125, 84, 0.4); cursor: default; }
+
+/* Itinerary overview: the arrival/return flight rows around the stops list. */
+.itin-flight-row {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 7px 10px;
+  border: 1px dashed var(--rule);
+  border-radius: 10px;
+  font-size: 11.5px;
+  color: var(--ink-soft);
+  background: var(--paper-dim);
+}
+.itin-flight-row svg { color: var(--accent); flex: none; }
+.itin-flight-row b { color: var(--ink); font-weight: 600; }
+.itin-flight-row small { margin-left: auto; font-family: var(--mono); font-size: 10px; color: var(--ink-mute); white-space: nowrap; }
+
 .account-signout {
   width: 100%;
   text-align: center;
@@ -7008,7 +7167,11 @@ input, select {
     align-items: flex-end;
   }
   .guide-modal { border-radius: 18px; max-height: 88vh; }
-  .guide-foot { padding-bottom: 16px; }
+  .guide-foot { padding-bottom: 16px; flex-wrap: wrap; }
+  /* The footer's action buttons ("Next", "Let Carta arrange it") take the
+     full row on phones instead of squeezing into a tall skinny pill. */
+  .guide-foot-actions { flex: 1 1 100%; }
+  .guide-foot-actions .guide-next { flex: 1; }
 }
 
 /* ─── Mobile filter sheet: one tidy 2-column grid across BOTH rows so the

@@ -199,10 +199,15 @@ function suggestionReason(d) {
  *  @param opts.firstDest  the first stop's record (for flight-combinability), optional
  *  @param opts.maxKm  straight-line cutoff (default 500km)
  *  @param opts.limit  how many to return (default 6)
+ *  @param opts.excludeIds        destination ids already on the itinerary
+ *  @param opts.excludeCountries  countries already on the itinerary - suggest
+ *                                somewhere NEW, not more of the same country
  *  @returns [{ id, city, country, iso2, lat, lon, km, gems, beauty, gem_score,
  *              image, reason, shared_origin, ground_reachable, fare_that_day_eur }]
  */
-export function suggestNextStops(fromDest, allDests, arriveDate, { firstDest = null, maxKm = 500, limit = 6 } = {}) {
+export function suggestNextStops(fromDest, allDests, arriveDate, {
+  firstDest = null, maxKm = 500, limit = 6, excludeIds = null, excludeCountries = null,
+} = {}) {
   if (!fromDest || !allDests || fromDest.lat == null) return [];
   const anchor = firstDest || fromDest;
   const anchorOrigins = new Set(Object.keys(anchor.routes || {}));
@@ -212,6 +217,8 @@ export function suggestNextStops(fromDest, allDests, arriveDate, { firstDest = n
   for (const [id, d] of Object.entries(allDests)) {
     if (id === fromDest.id || d.lat == null) continue;
     if (d.city === fromDest.city) continue; // same place, different airport
+    if (excludeIds && excludeIds.has(id)) continue;
+    if (excludeCountries && excludeCountries.has(d.country)) continue;
 
     const km = haversineKm(fromDest.lat, fromDest.lon, d.lat, d.lon);
     if (km == null || km > maxKm || km < 4) continue;

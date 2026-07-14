@@ -34,7 +34,13 @@ export function useAppData(init, setChoices, departDate, setDepartDate, returnDa
             ...prev,
             origin: chosenOrigin,
             group_size: init.group_size ?? def?.group_size ?? prev.group_size,
-            trip_days: def?.trip_length_days ?? prev.trip_days,
+            // Restored dates already drove trip_days (the sync effect in App
+            // runs before this fetch resolves); overriding it with the data's
+            // default here left "Nights" stuck on the configured default until
+            // a date was touched.
+            trip_days: (init.departDate && init.returnDate)
+              ? prev.trip_days
+              : (def?.trip_length_days ?? prev.trip_days),
             baggage_key: baggageKey,
             baggage_per_direction_eur:
               j.meta.baggage_options?.[baggageKey]?.per_direction_eur ?? prev.baggage_per_direction_eur,

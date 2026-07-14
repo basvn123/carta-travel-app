@@ -199,11 +199,15 @@ export function useTripPlanner(data, countryInsights = null) {
 
   // Candidate next stops from wherever the itinerary currently ends, ranked to
   // surface the most beautiful/characterful places (see suggestNextStops).
+  // Never re-suggests a stop already on the route, nor its country - "next"
+  // should open somewhere new.
   const nextStopSuggestions = useMemo(() => {
     const last = stopDetails[stopDetails.length - 1];
     if (!last || !last.dest) return [];
     return suggestNextStops(last.dest, destinations, last.departDate, {
       firstDest: stopDetails[0]?.dest || null,
+      excludeIds: new Set(stopDetails.map((s) => s.destinationId)),
+      excludeCountries: new Set(stopDetails.map((s) => s.dest?.country).filter(Boolean)),
     });
   }, [stopDetails, destinations]);
 

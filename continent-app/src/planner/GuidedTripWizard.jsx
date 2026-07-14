@@ -4,7 +4,7 @@ import { GemIcon } from '../components/GemRating.jsx';
 import { CountryPickerMap } from '../map/CountryPickerMap.jsx';
 import { CityPickerMap } from '../map/CityPickerMap.jsx';
 import {
-  countriesFromData, cityInsight, activitiesForInterests, cityImage, flagUrl, isoToFlag,
+  countriesFromData, cityInsight, cityImage, flagUrl, isoToFlag,
   interestFitScore, cityTier, cityCompanions, designStays,
 } from '../lib/tripGuide.js';
 import { knownForFacts } from '../lib/knownFor.js';
@@ -30,10 +30,6 @@ import { OriginPicker } from '../components/OriginPicker.jsx';
 const STEPS = ['Where', 'When', 'Enjoy', 'Getting there', 'Stay', 'Travel'];
 const ROUTES_PREVIEW = 14;
 const CITIES_PREVIEW = 8;
-
-// How many highlights Carta schedules per day for each pace when it arranges
-// the trip (the traveller can still edit every day afterwards).
-const PACE_PER_DAY = { relaxed: 1, balanced: 2, packed: 4 };
 
 // "How do you want to get between your stops?" options (Travel step). The
 // planner prices every leg for the chosen style and stays overridable per leg.
@@ -273,8 +269,18 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
     });
   };
 
+  // Stops whose nights Carta is allowed to keep rebalancing (added by a map
+  // tap and never touched by hand). A stepper touch makes a stop "manual".
+  const [autoNightIds, setAutoNightIds] = useState(() => new Set());
+
   const setCityNights = (id, n) => {
     const v = Math.max(0, Math.min(21, n));
+    setAutoNightIds((prev) => {
+      if (!prev.has(id)) return prev;
+      const next = new Set(prev);
+      next.delete(id);
+      return next;
+    });
     setNights((prev) => ({ ...prev, [id]: v }));
     setOrder((prev) => {
       const has = prev.includes(id);
@@ -284,11 +290,45 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
     });
   };
 
-  // Map pill tap: in = default nights (gems 1, cities 2), out = zero.
+  // Split the trip window across the auto-added stops (hand-set stops keep
+  // their nights and only the remainder is divided). So tapping three cities
+  // on a 6-night trip reads 2/2/2 instead of assuming 1 night each.
+  const rebalanceAuto = (nightsMap, orderArr, autoSet) => {
+    const autoIds = orderArr.filter((x) => autoSet.has(x));
+    if (!autoIds.length) return nightsMap;
+    const manualTotal = orderArr
+      .filter((x) => !autoSet.has(x))
+      .reduce((sum, x) => sum + (nightsMap[x] || 0), 0);
+    const pool = Math.max(autoIds.length, (windowNights || 0) - manualTotal);
+    const base = Math.floor(pool / autoIds.length);
+    let extra = pool - base * autoIds.length;
+    const next = { ...nightsMap };
+    for (const x of autoIds) {
+      next[x] = Math.max(1, Math.min(21, base + (extra > 0 ? 1 : 0)));
+      if (extra > 0) extra -= 1;
+    }
+    return next;
+  };
+
+  // Map pill tap: in = share of the trip window, out = zero (and the
+  // remaining auto stops re-split the freed nights).
   const toggleCity = (id) => {
     const cur = nights[id] || 0;
-    if (cur > 0) setCityNights(id, 0);
-    else setCityNights(id, destinations[id]?.tier === 'gem' ? 1 : 2);
+    if (cur > 0) {
+      const nextAuto = new Set(autoNightIds);
+      nextAuto.delete(id);
+      const nextOrder = order.filter((x) => x !== id);
+      setAutoNightIds(nextAuto);
+      setOrder(nextOrder);
+      setNights((prev) => rebalanceAuto({ ...prev, [id]: 0 }, nextOrder, nextAuto));
+    } else {
+      const nextAuto = new Set(autoNightIds);
+      nextAuto.add(id);
+      const nextOrder = order.includes(id) ? order : [...order, id];
+      setAutoNightIds(nextAuto);
+      setOrder(nextOrder);
+      setNights((prev) => rebalanceAuto({ ...prev, [id]: 1 }, nextOrder, nextAuto));
+    }
   };
 
   // Carta designs the stays from the interests + arrival + window, steered by
@@ -310,6 +350,7 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
     picks.forEach((p) => { nextNights[p.id] = p.nights; });
     setNights(nextNights);
     setOrder(picks.map((p) => p.id));
+    setAutoNightIds(new Set()); // designed nights are deliberate - don't rebalance them
     setDesignedNote(true);
     setDesignQuizOpen(false);
   };
@@ -398,6 +439,7 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
     setShowAllRoutes(false);
     setNights({});
     setOrder([]);
+    setAutoNightIds(new Set());
     setStaySearch('');
     setStayView('map');
     setExpandedGroups(new Set());
@@ -432,13 +474,14 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
   // the cheapest start date with real stored fares.
   const finish = () => {
     const orderedIds = orderStaysFromAnchor(includedIds, destinations, anchorDest);
-    const perDay = PACE_PER_DAY[pace] || 2;
-    const stops = orderedIds.map((id) => {
-      const dest = destinations[id];
-      const n = Math.max(1, nights[id] || 1);
-      const picks = activitiesForInterests(dest, interests, Math.min(14, n * perDay));
-      return { destinationId: id, nights: n, activities: picks.map((a) => a.name) };
-    });
+    // Days start EMPTY on purpose: sights are chosen in the Day planner
+    // ("Plan this day"), not pre-stuffed here - a pre-filled "2 to visit" on
+    // every date read as a commitment nobody made.
+    const stops = orderedIds.map((id) => ({
+      destinationId: id,
+      nights: Math.max(1, nights[id] || 1),
+      activities: [],
+    }));
 
     let start = dateMode === 'exact' ? startDate : '';
     if (!start && stops.length && arriveMode === 'fly') {
@@ -788,9 +831,8 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
                               {badge && <span className={`guide-route-badge ${badge.cls}`}>{badge.cls === 'pick' && <SparkIcon size={9} />}{badge.label}</span>}
                             </span>
                             <span className="guide-route-sub">
-                              <PlaneIcon size={10} /> {o.origin} → {o.anchor}
-                              {meta ? `, ~${fmtFlightDuration(meta.min)} in the air` : ''}
-                              {o.dest.beauty?.gems ? <>, <GemIcon size={9} /> {o.dest.beauty.gems}</> : null}
+                              <PlaneIcon size={10} /> Fly into {o.anchor}
+                              {meta ? `, ${fmtFlightDuration(meta.min)} flight` : ''}
                             </span>
                             {!o.has_exact && dateMode === 'exact' && o.cheapest && (
                               <span className="guide-route-warn">
@@ -801,7 +843,7 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
                           <span className="guide-route-fare">
                             <b>{eur(o.has_exact ? o.exact_eur : o.cheapest.eur)}</b>
                             <small>
-                              {o.has_exact ? 'that day' : `${fmtDate(o.cheapest.date, true)}`} / person
+                              {o.has_exact ? 'per person' : `${fmtDate(o.cheapest.date, true)}, per person`}
                             </small>
                           </span>
                         </button>

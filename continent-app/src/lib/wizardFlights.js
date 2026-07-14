@@ -77,7 +77,13 @@ export function flyInOptions(destinations, countries, { startDate = '', flexMont
     if (!best) continue;
     out.push({ id, dest: d, ...best, gem_score: gemScore(d) });
   }
+  // Actual airport cities lead the list: a gem is reached VIA one of these
+  // airports anyway, so showing "Pisa" before five places served by PSA keeps
+  // the arrival choice honest. Within each band: priced-on-the-day first,
+  // then cheapest, then the most special place.
+  const isAirport = (o) => (o.dest.tier !== 'gem' ? 1 : 0);
   out.sort((a, b) => {
+    if (isAirport(a) !== isAirport(b)) return isAirport(b) - isAirport(a);
     if (a.has_exact !== b.has_exact) return a.has_exact ? -1 : 1;
     return a.sort_eur - b.sort_eur || b.gem_score - a.gem_score;
   });

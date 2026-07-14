@@ -27,8 +27,10 @@ const LEG_ICONS = { train: TrainIcon, bus: BusIcon, car: CarIcon };
 export function TripItinerary({
   dayPlan, stopDetails, grandTotal, groupSize, flight,
   legs = [], stayCosts = [], carRental = null,
-  activeStopIndex, onSelectStop, onPlanDay,
+  activeStopIndex, onSelectStop, onPlanDay, isDayPlanned = null,
 }) {
+  // Whether a day already has Day-planner picks (drives "Plan" vs "Modify").
+  const dayPlanned = (d) => Boolean(isDayPlanned && isDayPlanned(d.stopIndex, d.dayOfStay));
   const [tab, setTab] = useState('overview');
   const [breakdownOpen, setBreakdownOpen] = useState(false);
 
@@ -66,6 +68,15 @@ export function TripItinerary({
 
       {tab === 'overview' ? (
         <div className="itin-overview">
+          {/* The journey starts with a flight - show it as part of the route,
+              not only as a cost line in the breakdown. */}
+          {flight?.combinable && (
+            <div className="itin-flight-row">
+              <PlaneIcon size={12} />
+              <span>Fly <b>{flight.origin} → {flight.into_anchor}</b></span>
+              <small>{fmtLong(stopDetails[0]?.arriveDate)}</small>
+            </div>
+          )}
           {stopDetails.map((s, i) => (
             <button
               key={i}
@@ -83,11 +94,18 @@ export function TripItinerary({
                 <span className="itin-stop-city">{s.dest?.city || 'Unknown'}, {s.dest?.country}</span>
                 <span className="itin-stop-sub">
                   {fmtLong(s.arriveDate)} → {fmtLong(s.departDate)}, {s.nights} {s.nights === 1 ? 'night' : 'nights'}
-                  {(s.activities?.length || 0) > 0 && `, ${s.activities.length} to visit`}
                 </span>
               </span>
             </button>
           ))}
+
+          {flight?.combinable && (
+            <div className="itin-flight-row">
+              <PlaneIcon size={12} />
+              <span>Fly home <b>{flight.out_anchor} → {flight.origin}</b></span>
+              <small>{fmtLong(stopDetails[stopDetails.length - 1]?.departDate)}</small>
+            </div>
+          )}
 
           {/* Estimated total, expandable into the same grouped receipt the Map
               tab shows: flights, ground legs, rental, stay per city. */}
@@ -159,16 +177,16 @@ export function TripItinerary({
                   <span className="itin-day-row-num">Day {d.dayNum}</span>
                   <span className="itin-day-row-meta">
                     {d.stop.dest?.city}{d.date ? `, ${fmtLong(d.date)}` : ''}
-                    {d.activities.length > 0 && `, ${d.activities.length} planned`}
+                    {dayPlanned(d) && ', planned'}
                   </span>
                 </button>
                 {onPlanDay && (
                   <button
                     className="itin-day-plan-btn"
                     onClick={() => onPlanDay(d)}
-                    title={`Shape day ${d.dayNum} in the Day planner`}
+                    title={`${dayPlanned(d) ? 'Change' : 'Shape'} day ${d.dayNum} in the Day planner`}
                   >
-                    <SparkIcon size={11} /> Plan
+                    <SparkIcon size={11} /> {dayPlanned(d) ? 'Modify' : 'Plan'}
                   </button>
                 )}
               </div>
@@ -197,7 +215,11 @@ export function TripItinerary({
             </div>
           </div>
           {activeDay.activities.length === 0 ? (
-            <p className="itin-day-empty">A free day in {activeDay.stop.dest?.city}: wander, eat well, no plans. Shape it in the Day planner any time.</p>
+            <p className="itin-day-empty">
+              {dayPlanned(activeDay)
+                ? `This day is planned in the Day planner - open it below to see the route or change it.`
+                : `A free day in ${activeDay.stop.dest?.city}: wander, eat well, no plans. Shape it in the Day planner any time.`}
+            </p>
           ) : (
             <ol className="itin-visit-list">
               {activeDay.activities.map((name, idx) => {
@@ -222,7 +244,7 @@ export function TripItinerary({
           )}
           {onPlanDay && (
             <button className="itin-day-planner-btn" onClick={() => onPlanDay(activeDay)}>
-              <SparkIcon size={12} /> Plan this day in the Day planner
+              <SparkIcon size={12} /> {dayPlanned(activeDay) ? 'Modify this day in the Day planner' : 'Plan this day in the Day planner'}
             </button>
           )}
         </div>
