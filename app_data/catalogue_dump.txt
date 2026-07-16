@@ -1,0 +1,789 @@
+EXISTING DESTINATIONS (id|city|country):
+gem:berat|Berat|Albania
+gem:gjirokaster|Gjirokastër|Albania
+gem:himara|Himara|Albania
+gem:kruje|Krujë|Albania
+gem:ksamil|Ksamil|Albania
+gem:shkoder|Shkodër|Albania
+gem:theth|Theth & Albanian Alps|Albania
+TIA|Tirana|Albania
+gem:andorra-la-vella|Andorra la Vella|Andorra
+gem:bad-ischl|Bad Ischl|Austria
+gem:durnstein|Dürnstein|Austria
+GRZ|Graz|Austria
+gem:hallstatt|Hallstatt|Austria
+INN|Innsbruck|Austria
+KLU|Klagenfurt|Austria
+LNZ|Linz|Austria
+gem:melk|Melk|Austria
+SZG|Salzburg|Austria
+gem:st-anton|St. Anton am Arlberg|Austria
+gem:st-wolfgang|St. Wolfgang|Austria
+VIE|Vienna|Austria
+gem:zell-am-see|Zell am See|Austria
+gem:antwerp|Antwerp|Belgium
+gem:bouillon|Bouillon|Belgium
+gem:bruges|Bruges|Belgium
+BRU|Brussels|Belgium
+CRL|Charleroi|Belgium
+gem:dinant|Dinant|Belgium
+gem:ghent|Ghent|Belgium
+gem:leuven|Leuven|Belgium
+gem:mechelen|Mechelen|Belgium
+gem:ypres|Ypres|Belgium
+BNX|Banja Luka|Bosnia and Herzegovina
+gem:bihac-una|Bihać & Una Falls|Bosnia and Herzegovina
+gem:blagaj|Blagaj|Bosnia and Herzegovina
+gem:jajce|Jajce|Bosnia and Herzegovina
+gem:mostar-ba|Mostar|Bosnia and Herzegovina
+gem:pocitelj|Počitelj|Bosnia and Herzegovina
+SJJ|Sarajevo|Bosnia and Herzegovina
+TZL|Tuzla|Bosnia and Herzegovina
+gem:bansko|Bansko|Bulgaria
+BOJ|Burgas|Bulgaria
+gem:koprivshtitsa|Koprivshtitsa|Bulgaria
+gem:melnik|Melnik|Bulgaria
+gem:nesebar|Nesebar|Bulgaria
+PDV|Plovdiv|Bulgaria
+gem:rila|Rila Monastery|Bulgaria
+SOF|Sofia|Bulgaria
+VAR|Varna|Bulgaria
+gem:veliko-tarnovo|Veliko Tarnovo|Bulgaria
+DBV|Dubrovnik|Croatia
+gem:groznjan|Grožnjan|Croatia
+gem:hvar|Hvar|Croatia
+gem:korcula|Korčula|Croatia
+gem:krka|Krka National Park|Croatia
+gem:makarska|Makarska|Croatia
+gem:mljet|Mljet|Croatia
+gem:motovun|Motovun|Croatia
+OSI|Osijek|Croatia
+gem:plitvice|Plitvice Lakes|Croatia
+PUY|Pula|Croatia
+RJK|Rijeka|Croatia
+gem:rovinj|Rovinj|Croatia
+SPU|Split|Croatia
+gem:trogir|Trogir|Croatia
+ZAD|Zadar|Croatia
+ZAG|Zagreb|Croatia
+gem:sibenik|Šibenik|Croatia
+gem:ayia-napa|Ayia Napa & Cape Greco|Cyprus
+LCA|Larnaca|Cyprus
+gem:limassol|Limassol|Cyprus
+gem:nicosia|Nicosia|Cyprus
+PFO|Paphos|Cyprus
+gem:polis-akamas|Polis & Akamas|Cyprus
+gem:troodos|Troodos Mountains|Cyprus
+gem:bohemian-switzerland|Bohemian Switzerland|Czechia
+BRQ|Brno|Czechia
+gem:karlovy-vary|Karlovy Vary|Czechia
+gem:kutna-hora|Kutná Hora|Czechia
+gem:mikulov|Mikulov|Czechia
+gem:olomouc|Olomouc|Czechia
+gem:plzen|Pilsen|Czechia
+PRG|Prague|Czechia
+gem:telc|Telč|Czechia
+gem:cesky-krumlov|Český Krumlov|Czechia
+AAL|Aalborg|Denmark
+gem:aarhus|Aarhus|Denmark
+BLL|Billund|Denmark
+CPH|Copenhagen|Denmark
+gem:mons-klint|Møns Klint|Denmark
+gem:odense|Odense|Denmark
+gem:ribe|Ribe|Denmark
+gem:roskilde|Roskilde|Denmark
+gem:skagen|Skagen|Denmark
+gem:haapsalu|Haapsalu|Estonia
+gem:lahemaa|Lahemaa National Park|Estonia
+gem:parnu|Pärnu|Estonia
+gem:saaremaa|Saaremaa|Estonia
+TLL|Tallinn|Estonia
+gem:tartu|Tartu|Estonia
+gem:gjogv|Gjógv|Faroe Islands
+gem:mykines|Mykines|Faroe Islands
+gem:saksun|Saksun|Faroe Islands
+gem:torshavn|Tórshavn|Faroe Islands
+FAE|Vágar (Faroe Islands)|Faroe Islands
+HEL|Helsinki|Finland
+OUL|Oulu|Finland
+gem:porvoo|Porvoo|Finland
+gem:rauma|Rauma|Finland
+RVN|Rovaniemi|Finland
+gem:savonlinna|Savonlinna|Finland
+TMP|Tampere|Finland
+TKU|Turku|Finland
+gem:aland|Åland (Mariehamn)|Finland
+gem:aix|Aix-en-Provence|France
+AJA|Ajaccio (Corsica)|France
+gem:annecy|Annecy|France
+gem:avignon|Avignon|France
+BIA|Bastia (Corsica)|France
+EGC|Bergerac|France
+BIQ|Biarritz|France
+gem:bonifacio|Bonifacio|France
+BOD|Bordeaux|France
+BES|Brest|France
+BVE|Brive|France
+BZR|Béziers|France
+CLY|Calvi (Corsica)|France
+CCF|Carcassonne|France
+gem:cassis|Cassis|France
+gem:chamonix|Chamonix|France
+gem:colmar|Colmar|France
+FSC|Figari (Corsica)|France
+gem:honfleur|Honfleur|France
+LRH|La Rochelle|France
+LIG|Limoges|France
+gem:loire-valley|Loire Valley (Tours)|France
+LDE|Lourdes|France
+gem:provence-luberon|Luberon (Gordes)|France
+LYS|Lyon|France
+MRS|Marseille|France
+gem:menton|Menton|France
+gem:mont-saint-michel|Mont-Saint-Michel|France
+MPL|Montpellier|France
+NTE|Nantes|France
+NCE|Nice|France
+NIM|Nîmes|France
+BVA|Paris (Beauvais)|France
+CDG|Paris (CDG)|France
+ORY|Paris (Orly)|France
+PGF|Perpignan|France
+RNS|Rennes|France
+RDZ|Rodez|France
+gem:biarritz-coast|Saint-Jean-de-Luz|France
+gem:saint-malo|Saint-Malo|France
+gem:strasbourg|Strasbourg|France
+TLS|Toulouse|France
+gem:nice-villefranche|Villefranche-sur-Mer|France
+gem:eze|Èze|France
+gem:etretat|Étretat|France
+gem:baden-baden|Baden-Baden|Germany
+gem:bamberg|Bamberg|Germany
+BER|Berlin|Germany
+BRE|Bremen|Germany
+CGN|Cologne-Bonn|Germany
+DRS|Dresden|Germany
+DUS|Düsseldorf|Germany
+FRA|Frankfurt|Germany
+HHN|Frankfurt-Hahn|Germany
+FDH|Friedrichshafen|Germany
+gem:garmisch|Garmisch-Partenkirchen|Germany
+HAM|Hamburg|Germany
+gem:heidelberg|Heidelberg|Germany
+FKB|Karlsruhe-Baden|Germany
+LEJ|Leipzig|Germany
+gem:lubeck|Lübeck|Germany
+FMM|Memmingen|Germany
+MUC|Munich|Germany
+gem:neuschwanstein|Neuschwanstein|Germany
+NUE|Nuremberg|Germany
+gem:quedlinburg|Quedlinburg|Germany
+gem:regensburg|Regensburg|Germany
+gem:rothenburg|Rothenburg ob der Tauber|Germany
+gem:dresden-saxon|Saxon Switzerland|Germany
+STR|Stuttgart|Germany
+gem:wurzburg|Würzburg|Germany
+ATH|Athens|Greece
+CHQ|Chania (Crete)|Greece
+CFU|Corfu|Greece
+gem:delphi|Delphi|Greece
+HER|Heraklion (Crete)|Greece
+gem:hydra|Hydra|Greece
+KLX|Kalamata|Greece
+KVA|Kavala|Greece
+EFL|Kefalonia|Greece
+KGS|Kos|Greece
+gem:meteora|Meteora|Greece
+gem:milos|Milos|Greece
+gem:monemvasia|Monemvasia|Greece
+JMK|Mykonos|Greece
+MJT|Mytilene (Lesbos)|Greece
+gem:nafplio|Nafplio|Greece
+gem:naxos|Naxos|Greece
+gem:paros|Paros|Greece
+PVK|Preveza|Greece
+RHO|Rhodes|Greece
+SMI|Samos|Greece
+JTR|Santorini|Greece
+SKG|Thessaloniki|Greece
+VOL|Volos|Greece
+ZTH|Zakynthos|Greece
+BUD|Budapest|Hungary
+DEB|Debrecen|Hungary
+gem:eger|Eger|Hungary
+gem:holloko|Hollókő|Hungary
+gem:pecs|Pécs|Hungary
+gem:szeged|Szeged|Hungary
+gem:szentendre|Szentendre|Hungary
+gem:balaton|Tihany & Lake Balaton|Hungary
+gem:tokaj|Tokaj|Hungary
+AEY|Akureyri|Iceland
+gem:golden-circle|Golden Circle (Þingvellir)|Iceland
+gem:jokulsarlon|Jökulsárlón|Iceland
+gem:myvatn|Lake Mývatn|Iceland
+KEF|Reykjavik (Keflavik)|Iceland
+gem:skaftafell|Skaftafell / Vatnajökull|Iceland
+gem:snaefellsnes|Snæfellsnes|Iceland
+gem:vik|Vík & South Coast|Iceland
+gem:aran-islands|Aran Islands (Inishmore)|Ireland
+gem:connemara|Connemara|Ireland
+ORK|Cork|Ireland
+gem:dingle|Dingle|Ireland
+gem:doolin|Doolin|Ireland
+DUB|Dublin|Ireland
+gem:galway-cliffs|Galway & Cliffs of Moher|Ireland
+KIR|Kerry|Ireland
+gem:kilkenny|Kilkenny|Ireland
+gem:killarney|Killarney|Ireland
+KOW|Knock|Ireland
+SNN|Shannon|Ireland
+gem:alberobello|Alberobello|Italy
+AHO|Alghero|Italy
+gem:amalfi-coast|Amalfi Coast|Italy
+AOI|Ancona|Italy
+gem:assisi|Assisi|Italy
+BRI|Bari|Italy
+BLQ|Bologna|Italy
+BDS|Brindisi|Italy
+CAG|Cagliari|Italy
+gem:capri|Capri|Italy
+CTA|Catania|Italy
+gem:cinque-terre|Cinque Terre|Italy
+CRV|Crotone|Italy
+CUF|Cuneo|Italy
+gem:dolomites|Dolomites (Cortina)|Italy
+FLR|Florence|Italy
+GOA|Genoa|Italy
+gem:lago-maggiore|Lago Maggiore (Stresa)|Italy
+gem:como|Lake Como|Italy
+gem:garda|Lake Garda|Italy
+LMZ|Lamezia Terme|Italy
+LMP|Lampedusa|Italy
+gem:lecce|Lecce|Italy
+gem:matera|Matera|Italy
+BGY|Milan (Bergamo)|Italy
+LIN|Milan (Linate)|Italy
+MXP|Milan (Malpensa)|Italy
+NAP|Naples|Italy
+OLB|Olbia (Costa Smeralda)|Italy
+gem:orvieto|Orvieto|Italy
+PMO|Palermo|Italy
+PNL|Pantelleria|Italy
+PEG|Perugia|Italy
+PSR|Pescara|Italy
+PSA|Pisa|Italy
+gem:polignano|Polignano a Mare|Italy
+gem:portofino|Portofino|Italy
+gem:ravenna|Ravenna|Italy
+REG|Reggio Calabria|Italy
+RMI|Rimini|Italy
+CIA|Rome (Ciampino)|Italy
+FCO|Rome (Fiumicino)|Italy
+QSR|Salerno|Italy
+gem:san-gimignano|San Gimignano|Italy
+gem:tuscany-siena|Siena & Val d'Orcia|Italy
+gem:taormina|Taormina|Italy
+TPS|Trapani|Italy
+TRS|Trieste|Italy
+gem:tropea|Tropea|Italy
+TRN|Turin|Italy
+gem:urbino|Urbino|Italy
+VCE|Venice (Marco Polo)|Italy
+TSF|Venice (Treviso)|Italy
+VRN|Verona|Italy
+gem:volterra|Volterra|Italy
+gem:peja|Peja & Rugova Canyon|Kosovo
+PRN|Pristina|Kosovo
+gem:prizren|Prizren|Kosovo
+gem:cesis|Cēsis|Latvia
+gem:jurmala|Jūrmala|Latvia
+gem:kuldiga|Kuldīga|Latvia
+gem:liepaja|Liepāja|Latvia
+RIX|Riga|Latvia
+gem:rundale|Rundāle Palace|Latvia
+gem:sigulda|Sigulda|Latvia
+gem:vaduz|Vaduz|Liechtenstein
+gem:curonian-spit|Curonian Spit (Nida)|Lithuania
+gem:druskininkai|Druskininkai|Lithuania
+gem:hill-of-crosses|Hill of Crosses|Lithuania
+KUN|Kaunas|Lithuania
+gem:kernave|Kernavė|Lithuania
+PLQ|Palanga|Lithuania
+gem:trakai|Trakai|Lithuania
+VNO|Vilnius|Lithuania
+gem:echternach|Echternach & Mullerthal|Luxembourg
+LUX|Luxembourg|Luxembourg
+gem:vianden|Vianden|Luxembourg
+gem:gozo|Gozo|Malta
+MLA|Malta|Malta
+gem:mdina|Mdina|Malta
+KIV|Chișinău|Moldova
+gem:orheiul-vechi|Orheiul Vechi|Moldova
+gem:monaco-mc|Monaco|Monaco
+gem:budva|Budva|Montenegro
+gem:durmitor|Durmitor (Žabljak)|Montenegro
+gem:kotor|Kotor|Montenegro
+gem:perast|Perast|Montenegro
+TGD|Podgorica|Montenegro
+gem:sveti-stefan|Sveti Stefan|Montenegro
+TIV|Tivat|Montenegro
+gem:ulcinj|Ulcinj|Montenegro
+AMS|Amsterdam|Netherlands
+gem:delft|Delft|Netherlands
+EIN|Eindhoven|Netherlands
+gem:giethoorn|Giethoorn|Netherlands
+GRQ|Groningen|Netherlands
+gem:haarlem|Haarlem|Netherlands
+gem:kinderdijk|Kinderdijk|Netherlands
+gem:leiden|Leiden|Netherlands
+MST|Maastricht|Netherlands
+gem:rotterdam|Rotterdam|Netherlands
+gem:texel|Texel|Netherlands
+gem:utrecht|Utrecht|Netherlands
+gem:zaanse-schans|Zaanse Schans|Netherlands
+gem:bitola|Bitola|North Macedonia
+gem:matka|Matka Canyon|North Macedonia
+OHD|Ohrid|North Macedonia
+SKP|Skopje|North Macedonia
+BGO|Bergen|Norway
+BOO|Bodø|Norway
+gem:geiranger|Geirangerfjord|Norway
+gem:lofoten|Lofoten Islands|Norway
+OSL|Oslo (Gardermoen)|Norway
+TRF|Oslo (Torp)|Norway
+gem:bergen-nearby|Sognefjord|Norway
+SVG|Stavanger|Norway
+TOS|Tromsø|Norway
+TRD|Trondheim|Norway
+AES|Ålesund|Norway
+gem:auschwitz|Auschwitz / Wieliczka|Poland
+BZG|Bydgoszcz|Poland
+GDN|Gdansk|Poland
+KTW|Katowice|Poland
+KRK|Krakow|Poland
+LCJ|Lodz|Poland
+LUZ|Lublin|Poland
+gem:masuria|Masurian Lakes|Poland
+POZ|Poznan|Poland
+RZE|Rzeszow|Poland
+SZZ|Szczecin|Poland
+WAW|Warsaw (Chopin)|Poland
+WMI|Warsaw (Modlin)|Poland
+WRO|Wroclaw|Poland
+gem:zakopane|Zakopane|Poland
+gem:aveiro|Aveiro|Portugal
+gem:coimbra|Coimbra|Portugal
+gem:douro|Douro Valley (Pinhão)|Portugal
+FAO|Faro|Portugal
+FNC|Funchal (Madeira)|Portugal
+gem:lagos-pt|Lagos|Portugal
+LIS|Lisbon|Portugal
+gem:monsaraz|Monsaraz|Portugal
+gem:nazare|Nazaré|Portugal
+PDL|Ponta Delgada (Azores)|Portugal
+OPO|Porto|Portugal
+gem:sintra|Sintra|Portugal
+gem:tavira|Tavira|Portugal
+TER|Terceira (Azores)|Portugal
+gem:tomar|Tomar|Portugal
+gem:evora|Évora|Portugal
+gem:obidos|Óbidos|Portugal
+BCM|Bacau|Romania
+gem:brasov|Brașov & Bran|Romania
+OTP|Bucharest (Otopeni)|Romania
+CLJ|Cluj-Napoca|Romania
+CND|Constanta|Romania
+CRA|Craiova|Romania
+IAS|Iasi|Romania
+OMR|Oradea|Romania
+SBZ|Sibiu|Romania
+gem:sighisoara|Sighișoara|Romania
+SUJ|Suceava|Romania
+TGM|Targu Mures|Romania
+TSR|Timisoara|Romania
+gem:san-marino|San Marino|San Marino
+BEG|Belgrade|Serbia
+gem:mokra-gora|Mokra Gora & Tara|Serbia
+INI|Nis|Serbia
+gem:novi-sad|Novi Sad|Serbia
+gem:uvac|Uvac Canyon|Serbia
+gem:banska-stiavnica|Banská Štiavnica|Slovakia
+gem:bardejov|Bardejov|Slovakia
+gem:bojnice|Bojnice|Slovakia
+BTS|Bratislava|Slovakia
+gem:high-tatras|High Tatras|Slovakia
+KSC|Kosice|Slovakia
+gem:slovak-paradise|Slovak Paradise|Slovakia
+gem:spis-castle|Spiš Castle & Levoča|Slovakia
+gem:vlkolinec|Vlkolínec|Slovakia
+gem:bled|Lake Bled|Slovenia
+gem:bohinj|Lake Bohinj|Slovenia
+LJU|Ljubljana|Slovenia
+MBX|Maribor|Slovenia
+gem:piran|Piran|Slovenia
+gem:postojna|Postojna Cave & Predjama|Slovenia
+gem:soca-valley|Soča Valley (Bovec)|Slovenia
+LCG|A Coruna|Spain
+gem:albarracin|Albarracín|Spain
+ALC|Alicante|Spain
+OVD|Asturias (Oviedo)|Spain
+BJZ|Badajoz|Spain
+BCN|Barcelona|Spain
+gem:besalu|Besalú|Spain
+BIO|Bilbao|Spain
+gem:cadaques|Cadaqués|Spain
+gem:cuenca|Cuenca|Spain
+gem:cordoba|Córdoba|Spain
+VDE|El Hierro|Spain
+FUE|Fuerteventura|Spain
+GRO|Girona|Spain
+LPA|Gran Canaria|Spain
+gem:granada|Granada|Spain
+IBZ|Ibiza|Spain
+XRY|Jerez|Spain
+SPC|La Palma|Spain
+ACE|Lanzarote|Spain
+MAD|Madrid|Spain
+AGP|Malaga|Spain
+MAH|Menorca|Spain
+MJV|Murcia|Spain
+gem:nerja|Nerja|Spain
+PMI|Palma de Mallorca|Spain
+PNA|Pamplona|Spain
+REU|Reus (Costa Daurada)|Spain
+gem:ronda|Ronda|Spain
+gem:salamanca|Salamanca|Spain
+gem:san-sebastian|San Sebastián|Spain
+SDR|Santander|Spain
+SCQ|Santiago de Compostela|Spain
+gem:segovia|Segovia|Spain
+SVQ|Seville|Spain
+TFN|Tenerife North|Spain
+TFS|Tenerife South|Spain
+gem:toledo|Toledo|Spain
+VLC|Valencia|Spain
+VLL|Valladolid|Spain
+VIT|Vitoria-Gasteiz|Spain
+ZAZ|Zaragoza|Spain
+gem:dalarna|Dalarna|Sweden
+GOT|Gothenburg|Sweden
+gem:kiruna|Kiruna / Abisko|Sweden
+MMX|Malmö|Sweden
+ARN|Stockholm (Arlanda)|Sweden
+BMA|Stockholm (Bromma)|Sweden
+NYO|Stockholm (Skavsta)|Sweden
+gem:vaxholm|Stockholm Archipelago (Vaxholm)|Sweden
+gem:uppsala|Uppsala|Sweden
+gem:visby|Visby (Gotland)|Sweden
+gem:appenzell|Appenzell|Switzerland
+BSL|Basel|Switzerland
+BRN|Bern|Switzerland
+GVA|Geneva|Switzerland
+gem:grindelwald|Grindelwald|Switzerland
+gem:interlaken|Interlaken|Switzerland
+gem:lausanne|Lausanne|Switzerland
+gem:lauterbrunnen|Lauterbrunnen|Switzerland
+gem:lucerne|Lucerne|Switzerland
+gem:lugano|Lugano|Switzerland
+gem:montreux|Montreux|Switzerland
+gem:st-moritz|St. Moritz|Switzerland
+gem:zermatt|Zermatt|Switzerland
+ZRH|Zurich|Switzerland
+ACI|Alderney|United Kingdom
+gem:bath|Bath|United Kingdom
+BFS|Belfast|United Kingdom
+BHX|Birmingham|United Kingdom
+BOH|Bournemouth|United Kingdom
+BRS|Bristol|United Kingdom
+gem:cambridge|Cambridge|United Kingdom
+CWL|Cardiff|United Kingdom
+gem:cotswolds|Cotswolds|United Kingdom
+EMA|East Midlands|United Kingdom
+EDI|Edinburgh|United Kingdom
+EXT|Exeter|United Kingdom
+GLA|Glasgow|United Kingdom
+GCI|Guernsey|United Kingdom
+INV|Inverness|United Kingdom
+IOM|Isle of Man|United Kingdom
+gem:isle-of-skye|Isle of Skye|United Kingdom
+JER|Jersey|United Kingdom
+gem:lake-district|Lake District|United Kingdom
+LBA|Leeds Bradford|United Kingdom
+LPL|Liverpool|United Kingdom
+LGW|London (Gatwick)|United Kingdom
+LHR|London (Heathrow)|United Kingdom
+LTN|London (Luton)|United Kingdom
+STN|London (Stansted)|United Kingdom
+MAN|Manchester|United Kingdom
+NCL|Newcastle|United Kingdom
+NWI|Norwich|United Kingdom
+gem:oxford|Oxford|United Kingdom
+gem:rye|Rye|United Kingdom
+gem:st-ives|St Ives|United Kingdom
+gem:stratford|Stratford-upon-Avon|United Kingdom
+gem:york|York|United Kingdom
+
+CATEGORIES VOCAB: abbey, adventure, affordable, alps, alsace, andalusia, arctic, art, baroque, basque, beach, beer, bridge, brittany, byzantine, carpathians, castle, cathedral, city, coast, cornwall, cote-azur, country, countryside, diving, fairytale, fall-foliage, family, fjord, fjords, food, fortress, gothic, hiking, historic, iconic, island, islands, lake, lakes, lavender, luxury, medieval, memorial, modern, monastery, mountains, music, national-park, nature, nightlife, normandy, northern-lights, ottoman, party, provence, puglia, quiet, religion, remote, renaissance, roman, romantic, ruins, sailing, salzkammergut, scotland, skiing, spa, summer-only, surf, thermal, town, tuscany, unesco, university, valley, village, volcanic, wachau, wilderness, windmills, wine, winter
+
+AIRPORT-TIER ANCHOR CANDIDATES (iata|city|country):
+TIA|Tirana|Albania
+GRZ|Graz|Austria
+INN|Innsbruck|Austria
+KLU|Klagenfurt|Austria
+LNZ|Linz|Austria
+SZG|Salzburg|Austria
+VIE|Vienna|Austria
+BRU|Brussels|Belgium
+CRL|Charleroi|Belgium
+BNX|Banja Luka|Bosnia and Herzegovina
+SJJ|Sarajevo|Bosnia and Herzegovina
+TZL|Tuzla|Bosnia and Herzegovina
+BOJ|Burgas|Bulgaria
+PDV|Plovdiv|Bulgaria
+SOF|Sofia|Bulgaria
+VAR|Varna|Bulgaria
+DBV|Dubrovnik|Croatia
+OSI|Osijek|Croatia
+PUY|Pula|Croatia
+RJK|Rijeka|Croatia
+SPU|Split|Croatia
+ZAD|Zadar|Croatia
+ZAG|Zagreb|Croatia
+LCA|Larnaca|Cyprus
+PFO|Paphos|Cyprus
+BRQ|Brno|Czechia
+PRG|Prague|Czechia
+AAL|Aalborg|Denmark
+BLL|Billund|Denmark
+CPH|Copenhagen|Denmark
+TLL|Tallinn|Estonia
+FAE|Vágar (Faroe Islands)|Faroe Islands
+HEL|Helsinki|Finland
+OUL|Oulu|Finland
+RVN|Rovaniemi|Finland
+TMP|Tampere|Finland
+TKU|Turku|Finland
+AJA|Ajaccio (Corsica)|France
+BIA|Bastia (Corsica)|France
+EGC|Bergerac|France
+BIQ|Biarritz|France
+BOD|Bordeaux|France
+BES|Brest|France
+BVE|Brive|France
+BZR|Béziers|France
+CLY|Calvi (Corsica)|France
+CCF|Carcassonne|France
+FSC|Figari (Corsica)|France
+LRH|La Rochelle|France
+LIG|Limoges|France
+LDE|Lourdes|France
+LYS|Lyon|France
+MRS|Marseille|France
+MPL|Montpellier|France
+NTE|Nantes|France
+NCE|Nice|France
+NIM|Nîmes|France
+BVA|Paris (Beauvais)|France
+CDG|Paris (CDG)|France
+ORY|Paris (Orly)|France
+PGF|Perpignan|France
+RNS|Rennes|France
+RDZ|Rodez|France
+TLS|Toulouse|France
+BER|Berlin|Germany
+BRE|Bremen|Germany
+CGN|Cologne-Bonn|Germany
+DRS|Dresden|Germany
+DUS|Düsseldorf|Germany
+FRA|Frankfurt|Germany
+HHN|Frankfurt-Hahn|Germany
+FDH|Friedrichshafen|Germany
+HAM|Hamburg|Germany
+FKB|Karlsruhe-Baden|Germany
+LEJ|Leipzig|Germany
+FMM|Memmingen|Germany
+MUC|Munich|Germany
+NUE|Nuremberg|Germany
+STR|Stuttgart|Germany
+ATH|Athens|Greece
+CHQ|Chania (Crete)|Greece
+CFU|Corfu|Greece
+HER|Heraklion (Crete)|Greece
+KLX|Kalamata|Greece
+KVA|Kavala|Greece
+EFL|Kefalonia|Greece
+KGS|Kos|Greece
+JMK|Mykonos|Greece
+MJT|Mytilene (Lesbos)|Greece
+PVK|Preveza|Greece
+RHO|Rhodes|Greece
+SMI|Samos|Greece
+JTR|Santorini|Greece
+SKG|Thessaloniki|Greece
+VOL|Volos|Greece
+ZTH|Zakynthos|Greece
+BUD|Budapest|Hungary
+DEB|Debrecen|Hungary
+AEY|Akureyri|Iceland
+KEF|Reykjavik (Keflavik)|Iceland
+ORK|Cork|Ireland
+DUB|Dublin|Ireland
+KIR|Kerry|Ireland
+KOW|Knock|Ireland
+SNN|Shannon|Ireland
+AHO|Alghero|Italy
+AOI|Ancona|Italy
+BRI|Bari|Italy
+BLQ|Bologna|Italy
+BDS|Brindisi|Italy
+CAG|Cagliari|Italy
+CTA|Catania|Italy
+CRV|Crotone|Italy
+CUF|Cuneo|Italy
+FLR|Florence|Italy
+GOA|Genoa|Italy
+LMZ|Lamezia Terme|Italy
+LMP|Lampedusa|Italy
+BGY|Milan (Bergamo)|Italy
+LIN|Milan (Linate)|Italy
+MXP|Milan (Malpensa)|Italy
+NAP|Naples|Italy
+OLB|Olbia (Costa Smeralda)|Italy
+PMO|Palermo|Italy
+PNL|Pantelleria|Italy
+PEG|Perugia|Italy
+PSR|Pescara|Italy
+PSA|Pisa|Italy
+REG|Reggio Calabria|Italy
+RMI|Rimini|Italy
+CIA|Rome (Ciampino)|Italy
+FCO|Rome (Fiumicino)|Italy
+QSR|Salerno|Italy
+TPS|Trapani|Italy
+TRS|Trieste|Italy
+TRN|Turin|Italy
+VCE|Venice (Marco Polo)|Italy
+TSF|Venice (Treviso)|Italy
+VRN|Verona|Italy
+PRN|Pristina|Kosovo
+RIX|Riga|Latvia
+KUN|Kaunas|Lithuania
+PLQ|Palanga|Lithuania
+VNO|Vilnius|Lithuania
+LUX|Luxembourg|Luxembourg
+MLA|Malta|Malta
+KIV|Chișinău|Moldova
+TGD|Podgorica|Montenegro
+TIV|Tivat|Montenegro
+AMS|Amsterdam|Netherlands
+EIN|Eindhoven|Netherlands
+GRQ|Groningen|Netherlands
+MST|Maastricht|Netherlands
+OHD|Ohrid|North Macedonia
+SKP|Skopje|North Macedonia
+BGO|Bergen|Norway
+BOO|Bodø|Norway
+OSL|Oslo (Gardermoen)|Norway
+TRF|Oslo (Torp)|Norway
+SVG|Stavanger|Norway
+TOS|Tromsø|Norway
+TRD|Trondheim|Norway
+AES|Ålesund|Norway
+BZG|Bydgoszcz|Poland
+GDN|Gdansk|Poland
+KTW|Katowice|Poland
+KRK|Krakow|Poland
+LCJ|Lodz|Poland
+LUZ|Lublin|Poland
+POZ|Poznan|Poland
+RZE|Rzeszow|Poland
+SZZ|Szczecin|Poland
+WAW|Warsaw (Chopin)|Poland
+WMI|Warsaw (Modlin)|Poland
+WRO|Wroclaw|Poland
+FAO|Faro|Portugal
+FNC|Funchal (Madeira)|Portugal
+LIS|Lisbon|Portugal
+PDL|Ponta Delgada (Azores)|Portugal
+OPO|Porto|Portugal
+TER|Terceira (Azores)|Portugal
+BCM|Bacau|Romania
+OTP|Bucharest (Otopeni)|Romania
+CLJ|Cluj-Napoca|Romania
+CND|Constanta|Romania
+CRA|Craiova|Romania
+IAS|Iasi|Romania
+OMR|Oradea|Romania
+SBZ|Sibiu|Romania
+SUJ|Suceava|Romania
+TGM|Targu Mures|Romania
+TSR|Timisoara|Romania
+BEG|Belgrade|Serbia
+INI|Nis|Serbia
+BTS|Bratislava|Slovakia
+KSC|Kosice|Slovakia
+LJU|Ljubljana|Slovenia
+MBX|Maribor|Slovenia
+LCG|A Coruna|Spain
+ALC|Alicante|Spain
+OVD|Asturias (Oviedo)|Spain
+BJZ|Badajoz|Spain
+BCN|Barcelona|Spain
+BIO|Bilbao|Spain
+VDE|El Hierro|Spain
+FUE|Fuerteventura|Spain
+GRO|Girona|Spain
+LPA|Gran Canaria|Spain
+IBZ|Ibiza|Spain
+XRY|Jerez|Spain
+SPC|La Palma|Spain
+ACE|Lanzarote|Spain
+MAD|Madrid|Spain
+AGP|Malaga|Spain
+MAH|Menorca|Spain
+MJV|Murcia|Spain
+PMI|Palma de Mallorca|Spain
+PNA|Pamplona|Spain
+REU|Reus (Costa Daurada)|Spain
+SDR|Santander|Spain
+SCQ|Santiago de Compostela|Spain
+SVQ|Seville|Spain
+TFN|Tenerife North|Spain
+TFS|Tenerife South|Spain
+VLC|Valencia|Spain
+VLL|Valladolid|Spain
+VIT|Vitoria-Gasteiz|Spain
+ZAZ|Zaragoza|Spain
+GOT|Gothenburg|Sweden
+MMX|Malmö|Sweden
+ARN|Stockholm (Arlanda)|Sweden
+BMA|Stockholm (Bromma)|Sweden
+NYO|Stockholm (Skavsta)|Sweden
+BSL|Basel|Switzerland
+BRN|Bern|Switzerland
+GVA|Geneva|Switzerland
+ZRH|Zurich|Switzerland
+ACI|Alderney|United Kingdom
+BFS|Belfast|United Kingdom
+BHX|Birmingham|United Kingdom
+BOH|Bournemouth|United Kingdom
+BRS|Bristol|United Kingdom
+CWL|Cardiff|United Kingdom
+EMA|East Midlands|United Kingdom
+EDI|Edinburgh|United Kingdom
+EXT|Exeter|United Kingdom
+GLA|Glasgow|United Kingdom
+GCI|Guernsey|United Kingdom
+INV|Inverness|United Kingdom
+IOM|Isle of Man|United Kingdom
+JER|Jersey|United Kingdom
+LBA|Leeds Bradford|United Kingdom
+LPL|Liverpool|United Kingdom
+LGW|London (Gatwick)|United Kingdom
+LHR|London (Heathrow)|United Kingdom
+LTN|London (Luton)|United Kingdom
+STN|London (Stansted)|United Kingdom
+MAN|Manchester|United Kingdom
+NCL|Newcastle|United Kingdom
+NWI|Norwich|United Kingdom
