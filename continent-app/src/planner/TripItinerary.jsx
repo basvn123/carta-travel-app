@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { eur } from '../lib/format.js';
-import { flightReasonLabel } from '../lib/trip_planner_pricing.js';
+import { flightReasonLabel, baggageLabel } from '../lib/trip_planner_pricing.js';
 import { googleMapsDirUrl } from '../lib/routing.js';
 import { shareTrip, downloadTripPdf } from '../lib/tripExport.js';
-import { SparkIcon, TrainIcon, BusIcon, CarIcon, BedIcon, ReceiptIcon, ShareIcon, DownloadIcon } from '../components/Icons.jsx';
+import { SparkIcon, TrainIcon, BusIcon, CarIcon, BedIcon, ReceiptIcon, ShareIcon, DownloadIcon, LuggageIcon } from '../components/Icons.jsx';
 import { PlaneIcon } from '../components/TransportIcons.jsx';
 
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -151,6 +151,15 @@ export function TripItinerary({
                       </span>
                       <span className="val">{eur(flight.out_of_fare_eur * groupSize)}</span>
                     </div>
+                    {flight.bag_total > 0 && (
+                      <div className="trip-total-row">
+                        <span className="lbl">
+                          <LuggageIcon size={11} /> Baggage
+                          <small>{baggageLabel(flight.baggage)}, out + home, {groupSize} {groupSize === 1 ? 'person' : 'people'}</small>
+                        </span>
+                        <span className="val">{eur(flight.bag_total)}</span>
+                      </div>
+                    )}
                     {flight.ground_total > 0 && (
                       <div className="trip-total-row">
                         <span className="lbl">

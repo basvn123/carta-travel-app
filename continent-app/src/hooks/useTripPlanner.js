@@ -46,6 +46,10 @@ export function useTripPlanner(data, countryInsights = null) {
   const [transportPref, setTransportPref] = useState(draft?.transportPref || 'auto');
   const [legModes, setLegModes] = useState(draft?.legModes || {}); // { [legIndex]: 'train'|'bus'|'car' }
   const [pace, setPace] = useState(draft?.pace || 'balanced'); // 'relaxed' | 'balanced' | 'packed'
+  // Ryanair baggage the traveller expects to book: 'cabin' (free small bag),
+  // 'priority' (10 kg cabin bag) or 'checked' (20 kg hold bag). Priced per
+  // person per flight leg on top of the seat fare.
+  const [baggage, setBaggage] = useState(draft?.baggage || 'cabin');
   // The wizard's chosen fly-in destination. When the first/last stop is a
   // ground-only gem (no routes of its own), flights are priced via this anchor
   // instead - "fly into Bergamo, sleep at Lake Como".
@@ -65,10 +69,10 @@ export function useTripPlanner(data, countryInsights = null) {
     }
     persistTripDraft({
       tripStart, tripEnd, stops, groupSize, transportPref, legModes, pace,
-      anchorId, planId, planLabel, planned,
+      baggage, anchorId, planId, planLabel, planned,
     });
   }, [tripStart, tripEnd, stops, groupSize, transportPref, legModes, pace,
-      anchorId, planId, planLabel, planned]);
+      baggage, anchorId, planId, planLabel, planned]);
 
   // Chain each stop's arrive/depart dates from the trip start. A stop with no
   // trip start yet still carries its nights so the UI can show "2 nights".
@@ -178,7 +182,7 @@ export function useTripPlanner(data, countryInsights = null) {
   // ordered list of { destinationId, nights, activities }, an optional name,
   // plus how they want to travel (transport) and how full their days should
   // feel (pace) - everything stays editable in the planner afterwards.
-  const loadFromWizard = useCallback(({ startDate, stops: wizardStops, label, groupSize: gs, transport, pace: wizardPace, anchorId: wizardAnchor }) => {
+  const loadFromWizard = useCallback(({ startDate, stops: wizardStops, label, groupSize: gs, transport, pace: wizardPace, baggage: wizardBaggage, anchorId: wizardAnchor }) => {
     const total = wizardStops.reduce((sum, s) => sum + Math.max(0, s.nights || 0), 0);
     setTripStart(startDate || '');
     setTripEnd(startDate ? addDays(startDate, total) : '');
@@ -193,6 +197,7 @@ export function useTripPlanner(data, countryInsights = null) {
     if (gs != null) setGroupSize(Math.max(1, Math.min(20, gs)));
     if (transport) setTransportPref(transport);
     if (wizardPace) setPace(wizardPace);
+    if (wizardBaggage) setBaggage(wizardBaggage);
     setAnchorId(wizardAnchor || null);
     setLegModes({});
     setPlanId(null);
@@ -224,8 +229,8 @@ export function useTripPlanner(data, countryInsights = null) {
     const flyable = (d) => (
       d && Object.keys(d.routes || {}).length > 0 ? d : (anchorDest || d)
     );
-    return combineTripLegs(flyable(first.dest), first.arriveDate, flyable(last.dest), last.departDate, groupSize);
-  }, [stopDetails, groupSize, anchorId, destinations]);
+    return combineTripLegs(flyable(first.dest), first.arriveDate, flyable(last.dest), last.departDate, groupSize, baggage);
+  }, [stopDetails, groupSize, anchorId, destinations, baggage]);
 
   // Priced transport options (train / bus / car with booking links) between
   // each consecutive pair of stops, resolved to a chosen mode: an explicit
@@ -286,7 +291,7 @@ export function useTripPlanner(data, countryInsights = null) {
 
   const grandTotal = useMemo(() => {
     let total = 0;
-    if (flight?.combinable) total += flight.fare_total + flight.ground_total;
+    if (flight?.combinable) total += flight.fare_total + flight.ground_total + (flight.bag_total || 0);
     legs.forEach((l) => { if (l && l.ground_total) total += l.ground_total; });
     stayCosts.forEach((s) => { if (s) total += s.total; });
     if (carRental) total += carRental.eur_total;
@@ -368,6 +373,7 @@ export function useTripPlanner(data, countryInsights = null) {
       activities: Array.isArray(s.choices?.activities) ? s.choices.activities : [],
     })));
     setAnchorId(sorted[0]?.choices?.anchorId || null);
+    setBaggage(sorted[0]?.choices?.baggage || 'cabin');
     setLegModes({});
     setPlanned(false);
   }, []);
@@ -393,7 +399,7 @@ export function useTripPlanner(data, countryInsights = null) {
             nights: s.nights,
             groupSize,
             activities: s.activities || [],
-            ...(i === 0 && anchorId ? { anchorId } : {}),
+            ...(i === 0 ? { baggage, ...(anchorId ? { anchorId } : {}) } : {}),
           },
         };
       }));
@@ -418,7 +424,7 @@ export function useTripPlanner(data, countryInsights = null) {
       setSaveState('idle');
       throw e;
     }
-  }, [planId, planLabel, stops, stopDetails, groupSize, legs, flight, anchorId]);
+  }, [planId, planLabel, stops, stopDetails, groupSize, legs, flight, anchorId, baggage]);
 
   return {
     tripStart, setTripStart, tripEnd, setTripEnd,
@@ -429,6 +435,7 @@ export function useTripPlanner(data, countryInsights = null) {
     addStop, removeStop, setStopNights, setStopActivities, moveStop, reorderStop,
     optimizeRoute, clearPlan, loadFromWizard,
     nextStopSuggestions, flight, legs, stayCosts, grandTotal, dayPlan,
+    baggage, setBaggage,
     planned, setPlanned,
     planId, planLabel, setPlanLabel, saveState, savePlan, loadPlan,
   };

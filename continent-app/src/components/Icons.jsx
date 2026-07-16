@@ -564,3 +564,14 @@ export function DotIcon({ size = 8, className = '' }) {
       <circle cx="12" cy="12" r="6.5" fill="currentColor" />
     </svg>
   );
+}
+
+export function LuggageIcon({ size = 16, className = '' }) {
+  return (
+    <Glyph size={size} className={className} label="Baggage">
+      <rect x="6" y="7.5" width="12" height="12.5" rx="2" />
+      <path d="M9.5 7.5V5.5a1.5 1.5 0 0 1 1.5-1.5h2a1.5 1.5 0 0 1 1.5 1.5v2" />
+      <path d="M10 11v6M14 11v6" />
+    </Glyph>
+  );
+}

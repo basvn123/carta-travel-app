@@ -9,7 +9,7 @@
  */
 
 import { eur } from './format.js';
-import { flightReasonLabel } from './trip_planner_pricing.js';
+import { flightReasonLabel, baggageLabel } from './trip_planner_pricing.js';
 
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
@@ -81,6 +81,7 @@ function tripPrintHtml({ label, stopDetails, dayPlan = [], flight, legs = [], st
   if (flight?.combinable) {
     rows.push(`<tr><td>Flight out: ${esc(flight.origin)} &rarr; ${esc(flight.into_anchor)}</td><td>${esc(eur(flight.into_fare_eur * groupSize))}</td></tr>`);
     rows.push(`<tr><td>Flight home: ${esc(flight.out_anchor)} &rarr; ${esc(flight.origin)}</td><td>${esc(eur(flight.out_of_fare_eur * groupSize))}</td></tr>`);
+    if (flight.bag_total > 0) rows.push(`<tr><td>Baggage: ${esc(baggageLabel(flight.baggage))} (out + home, ${groupSize} ${groupSize === 1 ? 'person' : 'people'})</td><td>${esc(eur(flight.bag_total))}</td></tr>`);
     if (flight.ground_total > 0) rows.push(`<tr><td>Airport transfers</td><td>${esc(eur(flight.ground_total))}</td></tr>`);
   } else if (flight) {
     rows.push(`<tr><td colspan="2" class="note">Flights: ${esc(flightReasonLabel(flight.reason))}</td></tr>`);

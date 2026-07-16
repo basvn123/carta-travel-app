@@ -10,7 +10,7 @@ import {
   interestFitScore, cityTier, cityCompanions, designStays,
 } from '../lib/tripGuide.js';
 import { knownForFacts } from '../lib/knownFor.js';
-import { gemScore } from '../lib/trip_planner_pricing.js';
+import { gemScore, BAGGAGE_OPTIONS } from '../lib/trip_planner_pricing.js';
 import {
   flyInOptions, monthOptions, orderStaysFromAnchor, flightMeta, fmtFlightDuration, flightBadges,
 } from '../lib/wizardFlights.js';
@@ -25,7 +25,7 @@ import {
   MuseumIcon, TreeIcon, DiningIcon, ShoppingIcon, MoonIcon, MasksIcon,
   CameraIcon, CoffeeIcon, CastleIcon, BeachIcon, BallIcon, LotusIcon,
   LeafIcon, ScaleIcon, BoltIcon, StarIcon, RouteIcon, BedIcon, MapPinIcon,
-  CalendarIcon, PersonIcon, DiamondIcon, DotIcon,
+  CalendarIcon, PersonIcon, DiamondIcon, DotIcon, LuggageIcon,
 } from '../components/Icons.jsx';
 import { PlaneIcon } from '../components/TransportIcons.jsx';
 import { OriginPicker } from '../components/OriginPicker.jsx';
@@ -284,6 +284,7 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
   const [quizMust, setQuizMust] = useState(() => new Set()); // must-include ids
   const [groupSize, setGroupSize] = useState(2);
   const [pace, setPace] = useState('balanced');
+  const [baggage, setBaggage] = useState('cabin'); // Ryanair bag add-on per person per flight
 
   // ---- "Travel is booked" path: where and when do you arrive? ----
   const [arrivalQuery, setArrivalQuery] = useState('');
@@ -698,6 +699,7 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
       groupSize,
       transport: (arriveMode === 'car' || landedMode === 'car') ? 'car' : 'auto',
       pace,
+      baggage,
       anchorId: path === 'landed' ? (landedMode === 'car' ? null : arrivalId) : (arriveMode === 'fly' && flyIn ? flyIn.id : null),
       label,
       stops,
@@ -713,6 +715,7 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
       groupSize,
       transport: 'auto',
       pace: 'balanced',
+      baggage,
       anchorId: null,
       label: [...new Set(bookedStops.map((s) => destinations[s.destinationId]?.country).filter(Boolean))]
         .slice(0, 2).join(' & '),
@@ -1747,6 +1750,31 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
                   </div>
                 </label>
               </div>
+
+              {/* Ryanair baggage - the seat fares are seat-only, so ask what each
+                  traveller carries and add it to the flight cost. Only relevant
+                  when Carta is booking the flights. */}
+              {((path === 'full' && arriveMode === 'fly') || (path === 'landed' && landedMode !== 'car')) && (
+                <>
+                  <h3 className="guide-subtitle"><LuggageIcon size={13} /> Baggage per person</h3>
+                  <p className="guide-sub">Ryanair seat fares don't include hold or cabin bags. Pick what each traveller brings - it's added to every flight. Fees are estimates.</p>
+                  <div className="guide-transport-grid">
+                    {BAGGAGE_OPTIONS.map((opt) => (
+                      <button
+                        key={opt.key}
+                        className={`guide-transport ${baggage === opt.key ? 'on' : ''}`}
+                        onClick={() => setBaggage(opt.key)}
+                        aria-pressed={baggage === opt.key}
+                        title={opt.hint}
+                      >
+                        <span className="guide-transport-icon"><LuggageIcon size={18} /></span>
+                        <span className="guide-transport-label">{opt.label}</span>
+                        <span className="guide-transport-sub">{opt.per_leg_eur === 0 ? 'Included free' : `~${eur(opt.per_leg_eur)} / flight`}</span>
+                      </button>
+                    ))}
+                  </div>
+                </>
+              )}
 
               {/* What Carta will arrange - the full recap before committing. */}
               <div className="guide-final-summary">

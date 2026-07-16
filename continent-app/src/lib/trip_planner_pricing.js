@@ -21,6 +21,31 @@ function round2(v) {
   return v == null ? null : Math.round(v * 100) / 100;
 }
 
+/** Ryanair-style hold/cabin baggage add-ons, priced PER PERSON, PER ONE-WAY
+ *  flight (a round trip pays each fee twice). The stored seat fares are the
+ *  bare "seat only" price, so without this a two-bag family looks ~€140
+ *  cheaper than it really books. Fees swing wildly by route and date, so these
+ *  are deliberately round mid-estimates, always flagged as such in the UI.
+ */
+export const BAGGAGE_OPTIONS = [
+  { key: 'cabin', label: 'Cabin bag only', per_leg_eur: 0, hint: 'One small bag under the seat - included free' },
+  { key: 'priority', label: 'Priority + 10 kg', per_leg_eur: 20, hint: 'Priority boarding and a 10 kg cabin bag' },
+  { key: 'checked', label: 'Checked 20 kg bag', per_leg_eur: 35, hint: 'A 20 kg bag in the hold' },
+];
+
+const BAGGAGE_BY_KEY = Object.fromEntries(BAGGAGE_OPTIONS.map((o) => [o.key, o]));
+
+/** Per-person, per-one-way baggage fee for a chosen option (0 for cabin-only
+ *  or an unknown key). */
+export function baggageFeePerLeg(key) {
+  return BAGGAGE_BY_KEY[key]?.per_leg_eur ?? 0;
+}
+
+/** Traveller-facing name for a baggage option, for receipts and the export. */
+export function baggageLabel(key) {
+  return BAGGAGE_BY_KEY[key]?.label ?? 'Cabin bag only';
+}
+
 /** Real fares for flying into `destA` and out of `destB`, combined from each
  *  destination's own routes data - not a new open-jaw fare lookup. Both legs
  *  must resolve from the SAME origin airport (BRU or CRL); picks whichever
@@ -31,7 +56,7 @@ function round2(v) {
  *    - 'no_fare_for_date': a shared origin exists, but one leg has no fare
  *      stored for the requested date.
  */
-export function combineTripLegs(destA, arriveDate, destB, departDate, groupSize = 1) {
+export function combineTripLegs(destA, arriveDate, destB, departDate, groupSize = 1, baggage = 'cabin') {
   if (!destA || !destB || !arriveDate || !departDate) {
     return { combinable: false, reason: 'missing_input' };
   }
@@ -72,6 +97,9 @@ export function combineTripLegs(destA, arriveDate, destB, departDate, groupSize 
 
   const group = Math.max(1, groupSize || 1);
   const groundPerPerson = best.into_ground_eur + best.out_ground_eur;
+  // Baggage is paid on each one-way leg (into + out of) for every traveller.
+  const bagPerLeg = baggageFeePerLeg(baggage);
+  const bagPerPerson = bagPerLeg * 2;
 
   return {
     combinable: true,
@@ -88,7 +116,11 @@ export function combineTripLegs(destA, arriveDate, destB, departDate, groupSize 
     out_ground_minutes: best.out_ground_minutes,
     ground_per_person: round2(groundPerPerson),
     ground_total: round2(groundPerPerson * group),
-    grand_total: round2(best.combined_fare * group + groundPerPerson * group),
+    baggage,
+    bag_per_leg_eur: round2(bagPerLeg),
+    bag_per_person: round2(bagPerPerson),
+    bag_total: round2(bagPerPerson * group),
+    grand_total: round2(best.combined_fare * group + groundPerPerson * group + bagPerPerson * group),
   };
 }
 
