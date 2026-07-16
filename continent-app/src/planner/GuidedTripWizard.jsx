@@ -25,7 +25,7 @@ import {
   MuseumIcon, TreeIcon, DiningIcon, ShoppingIcon, MoonIcon, MasksIcon,
   CameraIcon, CoffeeIcon, CastleIcon, BeachIcon, BallIcon, LotusIcon,
   LeafIcon, ScaleIcon, BoltIcon, StarIcon, RouteIcon, BedIcon, MapPinIcon,
-  CalendarIcon, PersonIcon,
+  CalendarIcon, PersonIcon, DiamondIcon, DotIcon,
 } from '../components/Icons.jsx';
 import { PlaneIcon } from '../components/TransportIcons.jsx';
 import { OriginPicker } from '../components/OriginPicker.jsx';
@@ -150,7 +150,9 @@ function TierChip({ dest }) {
   if (t.key === 'ok') return null;
   return (
     <span className={`guide-tier guide-tier-${t.key}`}>
-      {t.key === 'top' && <StarIcon size={8} />}
+      {t.key === 'top' && <StarIcon size={9} />}
+      {t.key === 'great' && <DiamondIcon size={9} />}
+      {t.key === 'good' && <DotIcon size={8} />}
       {t.label}
     </span>
   );
@@ -764,6 +766,7 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
           lat: dest.lat,
           lon: dest.lon,
           tierKey: cityTier(dest).key,
+          score: dest.rating?.score ?? null,
           selected: (nights[id] || 0) > 0,
           nights: nights[id] || 0,
           isAnchor: id === anchorId,
@@ -777,7 +780,8 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
       if (!dest || dest.lat == null) continue;
       out.push({
         id, city: dest.city, lat: dest.lat, lon: dest.lon,
-        tierKey: cityTier(dest).key, selected: true, nights: nights[id] || 0,
+        tierKey: cityTier(dest).key, score: dest.rating?.score ?? null,
+        selected: true, nights: nights[id] || 0,
         isAnchor: id === anchorId, focused: id === focusedId,
       });
     }
@@ -1617,10 +1621,10 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
                     </div>
                   </div>
                   <div className="guide-tier-legend">
-                    <span className="guide-tier guide-tier-top"><StarIcon size={8} /> Must-visit</span>
-                    <span className="guide-tier guide-tier-great">Great stop</span>
-                    <span className="guide-tier guide-tier-good">Worth a look</span>
-                    <span className="guide-tier-legend-note">Tap a city to read about it.</span>
+                    <span className="guide-tier guide-tier-top"><StarIcon size={9} /> Must-visit</span>
+                    <span className="guide-tier guide-tier-great"><DiamondIcon size={9} /> Great stop</span>
+                    <span className="guide-tier guide-tier-good"><DotIcon size={8} /> Worth a look</span>
+                    <span className="guide-tier-legend-note">Number = rating out of 10. Tap a city to read about it.</span>
                   </div>
                 </>
               )}

@@ -547,3 +547,20 @@ export function PencilIcon({ size = 15, className = '' }) {
     </Glyph>
   );
 }
+
+/* Filled tier marks - paired with StarIcon to show the stay-map's rating tiers
+   as glyphs rather than a colour code. */
+export function DiamondIcon({ size = 9, className = '' }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" className={className} role="img" aria-label="Great stop">
+      <path d="M12 2.5 21.5 12 12 21.5 2.5 12Z" fill="currentColor" />
+    </svg>
+  );
+}
+
+export function DotIcon({ size = 8, className = '' }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" className={className} role="img" aria-label="Worth a look">
+      <circle cx="12" cy="12" r="6.5" fill="currentColor" />
+    </svg>
+  );

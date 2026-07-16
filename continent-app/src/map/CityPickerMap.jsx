@@ -4,6 +4,16 @@ import 'maplibre-gl/dist/maplibre-gl.css';
 
 const MAP_STYLE = 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json';
 
+/* Tier glyphs, matching the app's line-icon language (24x24, currentColor).
+   The icon - not colour alone - tells the traveller what kind of stop each
+   pill is: a headline must-visit, a solid detour, or a quieter option. */
+const TIER_ICON = {
+  top: '<svg viewBox="0 0 24 24" width="10" height="10" aria-hidden="true"><path d="m12 3.8 2.5 5.2 5.7.7-4.2 3.9 1.1 5.6L12 16.4l-5.1 2.8 1.1-5.6-4.2-3.9 5.7-.7L12 3.8Z" fill="currentColor"/></svg>',
+  great: '<svg viewBox="0 0 24 24" width="9" height="9" aria-hidden="true"><path d="M12 2.5 21.5 12 12 21.5 2.5 12Z" fill="currentColor"/></svg>',
+  good: '<svg viewBox="0 0 24 24" width="8" height="8" aria-hidden="true"><circle cx="12" cy="12" r="6.5" fill="currentColor"/></svg>',
+  ok: '<svg viewBox="0 0 24 24" width="7" height="7" aria-hidden="true"><circle cx="12" cy="12" r="5" fill="none" stroke="currentColor" stroke-width="2.4"/></svg>',
+};
+
 /**
  * The Stay step's map: every city of the chosen countries as a clickable
  * name-pill (the same visual language as the browse map's price pills), tinted
@@ -62,10 +72,15 @@ export function CityPickerMap({ cities = [], onToggle, onFocus, anchor = null })
         const el = document.createElement('button');
         el.type = 'button';
         el.className = `citypick-pin tier-${c.tierKey || 'ok'}`;
+        const icon = document.createElement('span');
+        icon.className = 'citypick-ic';
+        icon.innerHTML = TIER_ICON[c.tierKey] || TIER_ICON.ok;
         const label = document.createElement('span');
         label.className = 'citypick-name';
         label.textContent = c.city;
-        el.appendChild(label);
+        const meta = document.createElement('span');
+        meta.className = 'citypick-meta';
+        el.append(icon, label, meta);
         el.addEventListener('click', (e) => {
           e.stopPropagation();
           if (onFocusRef.current) onFocusRef.current(c.id);
@@ -74,7 +89,7 @@ export function CityPickerMap({ cities = [], onToggle, onFocus, anchor = null })
         const marker = new maplibregl.Marker({ element: el, anchor: 'center' })
           .setLngLat([c.lon, c.lat])
           .addTo(map);
-        pinsRef.current.set(c.id, { marker, el, label });
+        pinsRef.current.set(c.id, { marker, el, label, meta });
       });
       if (anchor && anchor.lat != null) {
         // Land the conversation where the traveller lands: open on the
@@ -111,9 +126,19 @@ export function CityPickerMap({ cities = [], onToggle, onFocus, anchor = null })
       p.el.classList.toggle('on', !!c.selected);
       p.el.classList.toggle('anchor', !!c.isAnchor);
       p.el.classList.toggle('focused', !!c.focused);
-      p.label.textContent = c.selected && c.nights
-        ? `${c.city} · ${c.nights}n`
-        : c.city;
+      p.label.textContent = c.city;
+      // Once a city is in the trip its nights matter most; before that, its
+      // rating helps the traveller weigh it. One number per pill, never both.
+      if (c.selected && c.nights) {
+        p.meta.textContent = `${c.nights}n`;
+        p.meta.className = 'citypick-meta is-nights';
+      } else if (c.score != null) {
+        p.meta.textContent = c.score.toFixed(1);
+        p.meta.className = 'citypick-meta is-score';
+      } else {
+        p.meta.textContent = '';
+        p.meta.className = 'citypick-meta';
+      }
     });
   };
   useEffect(sync, [cities]); // eslint-disable-line react-hooks/exhaustive-deps

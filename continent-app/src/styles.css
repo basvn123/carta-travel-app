@@ -1613,18 +1613,22 @@ input, select {
 .guide-design-btn small { font-weight: 400; font-size: 11px; opacity: 0.85; }
 .guide-stay-view { margin-bottom: 10px; }
 .guide-tier {
-  display: inline-flex; align-items: center; gap: 3px;
-  padding: 1.5px 7px;
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 1.5px 8px 1.5px 6px;
   border-radius: 999px;
+  border: 1px solid var(--rule);
+  background: var(--paper);
+  color: var(--ink-soft);
   font-family: var(--mono);
   font-size: 8.5px;
   text-transform: uppercase;
   letter-spacing: 0.07em;
   white-space: nowrap;
 }
-.guide-tier-top { background: var(--accent); color: #fff; }
-.guide-tier-great { background: rgba(58, 157, 107, 0.14); color: #2c7d54; }
-.guide-tier-good { background: rgba(122, 111, 90, 0.14); color: var(--ink-soft); }
+/* Neutral chip, coloured glyph - the icon reads the tier, not a colour block. */
+.guide-tier-top svg { color: var(--accent); }
+.guide-tier-great svg { color: #3a9d6b; }
+.guide-tier-good svg { color: var(--ink-mute); }
 .guide-tier-legend {
   display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
   margin: -8px 0 14px;
@@ -1638,23 +1642,41 @@ input, select {
    worth-a-visit tint. */
 .citypick-map { height: 340px; }
 .citypick-pin {
-  padding: 3px 10px;
-  background: rgba(245, 241, 232, 0.95);
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 3px 7px 3px 6px;
+  background: #fff;
   border: 1px solid var(--rule);
   border-radius: 999px;
   box-shadow: 0 1px 5px rgba(26, 26, 26, 0.18);
   cursor: pointer;
-  transition: border-color .12s, background .12s, transform .12s;
+  transition: border-color .12s, background .12s, transform .12s, box-shadow .12s;
 }
-.citypick-pin:hover { transform: translateY(-1px); border-color: var(--ink-soft); }
-.citypick-pin.tier-top { border-color: var(--accent); }
-.citypick-pin.tier-great { border-color: #3a9d6b; }
-.citypick-pin.on { background: var(--accent); border-color: var(--accent); }
-.citypick-pin.anchor { box-shadow: 0 0 0 2px rgba(200, 80, 30, 0.35), 0 1px 5px rgba(26, 26, 26, 0.18); }
+.citypick-pin:hover { transform: translateY(-1px); border-color: var(--ink-soft); box-shadow: 0 2px 8px rgba(26, 26, 26, 0.22); }
+/* The tier icon - not the pill colour - carries "what kind of stop" this is. */
+.citypick-ic { display: inline-flex; align-items: center; justify-content: center; flex: none; }
+.citypick-pin.tier-top .citypick-ic { color: var(--accent); }
+.citypick-pin.tier-great .citypick-ic { color: #3a9d6b; }
+.citypick-pin.tier-good .citypick-ic { color: var(--ink-soft); }
+.citypick-pin.tier-ok .citypick-ic { color: var(--ink-mute); }
 .citypick-name { font-size: 11px; font-weight: 600; color: var(--ink); white-space: nowrap; }
-.citypick-pin.on .citypick-name { color: #fff; }
-.citypick-pin.tier-ok .citypick-name { font-weight: 400; color: var(--ink-soft); }
-.citypick-pin.on.tier-ok .citypick-name { color: #fff; }
+.citypick-pin.tier-ok .citypick-name { font-weight: 500; color: var(--ink-soft); }
+/* Rating / nights read as a quiet mono chip - the number, not a colour block. */
+.citypick-meta {
+  font-family: var(--mono); font-size: 9px; font-weight: 600;
+  color: var(--ink-soft);
+  background: var(--paper-dim);
+  padding: 0.5px 4px; border-radius: 5px;
+  white-space: nowrap;
+}
+.citypick-meta:empty { display: none; }
+.citypick-meta.is-nights { color: var(--accent); background: var(--accent-bg); }
+.citypick-pin.on {
+  background: var(--accent); border-color: var(--accent);
+}
+.citypick-pin.on .citypick-name,
+.citypick-pin.on .citypick-ic { color: #fff; }
+.citypick-pin.on .citypick-meta { color: #fff; background: rgba(255, 255, 255, 0.22); }
+.citypick-pin.anchor { box-shadow: 0 0 0 2px rgba(200, 80, 30, 0.35), 0 1px 5px rgba(26, 26, 26, 0.18); }
 
 /* Step 4 - stays: search, groups, budget */
 .guide-search {
