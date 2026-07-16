@@ -1195,7 +1195,13 @@ input, select {
 }
 .daytrip-more:hover { border-color: var(--accent); color: var(--accent); }
 .daytrip-modes { margin-top: 10px; }
-.daytrip-modes .trip-leg-mode { cursor: default; }
+/* The three modes are BUTTONS: pick one and the whole day plans around it. */
+.daytrip-mode-btn { font: inherit; transition: border-color 0.12s ease, box-shadow 0.12s ease; }
+.daytrip-mode-btn span { display: inline-flex; align-items: center; gap: 4px; }
+.daytrip-mode-btn span svg:last-child:not(:first-child) { color: var(--accent); }
+.daytrip-mode-btn:hover { border-color: var(--accent); }
+.daytrip-mode-btn.on { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+.daytrip-pick-note { font-family: var(--mono); font-size: 9.5px; color: var(--ink-mute); }
 
 /* "Fly to a nearby airport instead" alternatives (no direct fare). */
 .via-airport { margin-top: 10px; }
@@ -2423,6 +2429,42 @@ input, select {
   display: flex;
   align-items: center;
   gap: 6px;
+}
+
+/* The door -> first sight RIDE (stay beyond walking range): the chosen
+   day-trip mode's icon, its own directions link, and a hand-off note - so a
+   14 km hop never reads as a three-hour "walk from your stay". */
+.day-timeline-ride {
+  color: var(--accent);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  padding-top: 8px;
+  padding-bottom: 8px;
+}
+.day-timeline-ride svg { flex: none; }
+.day-timeline-ride-dir { color: var(--accent); font-weight: 700; text-decoration: none; }
+.day-timeline-ride-dir:hover { text-decoration: underline; }
+.day-timeline-ride-note {
+  flex-basis: 100%;
+  font-size: 9.5px;
+  color: var(--ink-mute);
+}
+
+/* Rated-but-not-must places: quiet guidance next to the name. */
+.day-badge-rated {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 1px 6px;
+  border-radius: 999px;
+  font-family: var(--mono);
+  font-size: 8.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #2c7d54;
+  background: rgba(44, 125, 84, 0.12);
+  vertical-align: 2px;
 }
 
 /* --- Gradated "Things to do" tiers (schema v12: rate/heritage/img/desc) --- */
@@ -8437,6 +8479,7 @@ input, select {
 .day-explore-search-dot.cat-active { background: #3a9d6b; }
 .day-explore-search-text { display: flex; flex-direction: column; min-width: 0; }
 .day-explore-search-text b { font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.day-explore-search-text b .score-chip { margin-left: 6px; vertical-align: 1px; }
 .day-explore-search-text small { font-size: 11px; color: var(--ink-mute); }
 .day-explore-search-empty { padding: 11px 12px; font-size: 12px; color: var(--ink-mute); }
 
@@ -8750,10 +8793,107 @@ input, select {
 .dem-pin.focused { border-color: var(--cat); box-shadow: 0 0 0 3px var(--accent-bg), 0 2px 10px rgba(0, 0, 0, 0.2); z-index: 3; }
 .dem-pin.on.focused { box-shadow: 0 0 0 2px #16794f, 0 0 0 5px var(--accent-bg), 0 2px 10px rgba(0, 0, 0, 0.2); }
 
+/* Towns wear their 0-10 traveller rating on the pin (tier colours match the
+   ScoreChip language); must-see places wear a star. Guidance at a glance. */
+.dem-pin-rate {
+  flex: 0 0 auto;
+  margin-left: -3px;
+  padding: 1px 5px;
+  border-radius: 999px;
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 700;
+}
+.dem-pin-rate.rt-3 { background: var(--accent); color: var(--paper); }
+.dem-pin-rate.rt-2 { background: var(--accent-bg); color: var(--accent); }
+.dem-pin-rate.rt-1 { background: var(--paper-dim); color: var(--ink-soft); }
+.dem-pin-rate.rt-0 { background: var(--paper-dim); color: var(--ink-mute); }
+.dem-pin-star {
+  flex: 0 0 auto;
+  display: inline-flex;
+  margin-left: -3px;
+  color: var(--accent);
+}
+.dem-pin-star svg { width: 10px; height: 10px; }
+
 /* Filter chips wear their category tint when active */
 .guide-chip.dem-chip-beach.on { background: #2a8fbd; border-color: #2a8fbd; }
 .guide-chip.dem-chip-sight.on { background: var(--accent); border-color: var(--accent); }
 .guide-chip.dem-chip-active.on { background: #3a9d6b; border-color: #3a9d6b; }
+
+/* Each chip shows how many places it holds, on or off. */
+.dem-chip-count {
+  display: inline-block;
+  margin-left: 5px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.08);
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 700;
+}
+.guide-chip.on .dem-chip-count { background: rgba(255, 255, 255, 0.25); }
+
+/* Briefing panel: what KIND of thing is focused, and what happens on add.
+   A town is a chapter (pick its sights later); a place is already specific. */
+.day-explore-type-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  align-self: flex-start;
+  margin: 2px 0 4px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: #fff;
+  background: var(--ink-soft);
+}
+.day-explore-type-tag.type-town { background: #5b6472; }
+.day-explore-type-tag.type-beach { background: #2a8fbd; }
+.day-explore-type-tag.type-sight { background: var(--accent); }
+.day-explore-type-tag.type-active { background: #3a9d6b; }
+.day-explore-topsights {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin: 2px 0 6px;
+  padding: 8px 10px;
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  background: var(--paper-dim);
+}
+.day-explore-topsights-title {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-mute);
+  margin-bottom: 2px;
+}
+.day-explore-topsight {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  color: var(--ink-soft);
+}
+.day-explore-topsight svg { flex: none; color: var(--accent); }
+.day-explore-depth-note {
+  display: flex;
+  gap: 6px;
+  align-items: baseline;
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--ink-mute);
+  margin: 2px 0 0;
+}
+.day-explore-depth-note svg { flex: none; position: relative; top: 1px; color: var(--accent); }
+.guide-city-side-photo-empty { color: var(--ink-mute); }
 
 @media (max-width: 700px) {
   .day-explore-wrap { flex-direction: column; }

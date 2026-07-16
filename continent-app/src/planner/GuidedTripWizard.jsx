@@ -17,7 +17,7 @@ import {
 import { cheapestStartDates } from '../lib/tripCostOptimizer.js';
 import { carAdvice } from '../lib/transport.js';
 import { haversineKm, tripDaysBetween } from '../lib/runtime_pricing.js';
-import { eur } from '../lib/format.js';
+import { eur, fmtHours } from '../lib/format.js';
 import { fmtDate, addDays } from '../lib/dates.js';
 import { useCountryInsights } from '../hooks/useCountryInsights.js';
 import {
@@ -1303,7 +1303,7 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
                       <div className="guide-drive-note" key={n.country}>
                         <Flag iso2={n.iso2} className="guide-flag-img-sm" />
                         <b>{n.country}</b>
-                        <span>~{n.km} km, about {n.hours}h of driving</span>
+                        <span>~{n.km} km, about {fmtHours(n.hours)} of driving</span>
                       </div>
                     ))}
                   </div>

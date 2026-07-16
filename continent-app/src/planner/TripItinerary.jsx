@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { eur } from '../lib/format.js';
+import { eur, fmtHours } from '../lib/format.js';
 import { flightReasonLabel, baggageLabel } from '../lib/trip_planner_pricing.js';
 import { googleMapsDirUrl } from '../lib/routing.js';
 import { shareTrip, downloadTripPdf } from '../lib/tripExport.js';
@@ -180,7 +180,7 @@ export function TripItinerary({
                     <div className="trip-total-row" key={`leg-${i}`}>
                       <span className="lbl">
                         <Icon size={11} /> {a} → {b}
-                        <small>{l.road_km} km, ~{l.hours}h, estimate</small>
+                        <small>{l.road_km} km, ~{fmtHours(l.hours)}, estimate</small>
                       </span>
                       <span className="val">{eur(l.ground_total)}</span>
                     </div>

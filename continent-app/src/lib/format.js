@@ -5,6 +5,16 @@ export function eur(n) {
   return n == null ? '-' : `€${Math.round(n).toLocaleString('en-GB')}`;
 }
 
+/** Decimal hours in human units: 0.17 -> "10 min", 2.5 -> "2 h 30 min".
+ *  Nobody reads "0.17h each way" as ten minutes. */
+export function fmtHours(h) {
+  if (h == null) return '-';
+  const m = Math.max(1, Math.round(h * 60));
+  if (m < 60) return `${m} min`;
+  const rest = m % 60;
+  return rest ? `${Math.floor(m / 60)} h ${rest} min` : `${Math.floor(m / 60)} h`;
+}
+
 /** House style: no em/en dashes in shipped copy (see the memory note and
  *  CountryIntel's original cleanDash). Numeric ranges and tight word joins
  *  become a plain hyphen; spaced prose dashes become a comma pause. Applied at

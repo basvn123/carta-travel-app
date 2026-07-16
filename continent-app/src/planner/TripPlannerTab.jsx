@@ -7,7 +7,7 @@ import { CountryIntel } from '../components/CountryIntel.jsx';
 import { TripMap } from '../map/TripMap.jsx';
 import { TripItinerary } from './TripItinerary.jsx';
 import { GuidedTripWizard } from './GuidedTripWizard.jsx';
-import { eur } from '../lib/format.js';
+import { eur, fmtHours } from '../lib/format.js';
 import { fmtDate } from '../lib/dates.js';
 import { fetchDrivingRoute } from '../lib/routing.js';
 import { useTripPlanner } from '../hooks/useTripPlanner.js';
@@ -73,7 +73,7 @@ function LegRow({ leg, onMode }) {
   return (
     <div className="trip-leg trip-leg-rich">
       <button className="trip-leg-main" onClick={() => setOpen(!open)} aria-expanded={open}>
-        ↳ <ModeIcon mode={leg.mode} /> {MODE_META[leg.mode].label}, ~{leg.road_km} km, est. {eur(chosen.eur_pp)}/person, ~{chosen.hours}h
+        ↳ <ModeIcon mode={leg.mode} /> {MODE_META[leg.mode].label}, ~{leg.road_km} km, est. {eur(chosen.eur_pp)}/person, ~{fmtHours(chosen.hours)}
         {leg.long_haul ? ', long leg, consider flying' : ''}
         <span className="trip-leg-caret">{open ? '−' : '+'}</span>
       </button>
@@ -89,7 +89,7 @@ function LegRow({ leg, onMode }) {
               >
                 <span><ModeIcon mode={m} /> {MODE_META[m].label}{leg.recommended === m && <span className="guide-reco-mark"><SparkIcon size={10} /></span>}</span>
                 <b>{eur(o.eur_pp)}/p</b>
-                <small>~{o.hours}h</small>
+                <small>~{fmtHours(o.hours)}</small>
               </button>
             ))}
           </div>

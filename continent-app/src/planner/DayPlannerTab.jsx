@@ -94,21 +94,32 @@ const MODE_META = {
   car: { Icon: CarIcon, label: 'Car' },
 };
 
+// Trains and buses only make sense once there's real intercity distance to
+// cover; under this, a "train" estimate is often a line that doesn't exist.
+const SHORT_HOP_KM = 25;
+
 /**
- * "How do you get there for the day?" - the most efficient way from the
- * traveller's base (their stay city) to the day-trip destination, using the
- * same per-leg transport engine the Trip planner prices with: train / bus /
- * car, honest distance-based estimates, national-operator booking links, and
- * a day-return framing (costs shown both ways).
+ * "How do you get there for the day?" - from the traveller's base (their stay)
+ * to the day-trip destination, using the same per-leg transport engine the
+ * Trip planner prices with: train / bus / car, honest distance-based
+ * estimates, national-operator booking links, and a day-return framing.
+ *
+ * The three modes are BUTTONS: the traveller can overrule Carta's pick, and
+ * the chosen mode is what the day's timeline and Google Maps handoff use -
+ * one decision, spoken everywhere.
+ *
+ *   opts        legTransportOptions result (parent computes it once), or
+ *               { local: true } when the stay is already in/next to the city
+ *   mode        the active mode key ('train'|'bus'|'car')
+ *   onPickMode  choose a different mode (persisted with the plan)
  */
-function DayTripTransport({ fromDest, toDest, carModel, countryInsights }) {
+function DayTripTransport({ fromDest, toDest, opts, mode, onPickMode }) {
   const [open, setOpen] = useState(false);
-  if (!fromDest || !toDest) return null;
+  if (!fromDest || !toDest || !opts) return null;
   // Staying in - or right next to - the day-trip city itself: there's no
   // inter-city hop to recommend, but say so plainly rather than showing
   // nothing (a blank space reads as "the feature is broken").
-  const kmAway = haversineKm(fromDest.lat, fromDest.lon, toDest.lat, toDest.lon);
-  if (fromDest.city === toDest.city || (kmAway != null && kmAway < 8)) {
+  if (opts.local) {
     return (
       <div className="trip-block daytrip-transport">
         <div className="trip-block-title">Getting to {toDest.city}</div>
@@ -120,8 +131,6 @@ function DayTripTransport({ fromDest, toDest, carModel, countryInsights }) {
       </div>
     );
   }
-  const opts = legTransportOptions(fromDest, toDest, 1, { carModel, countryInsights });
-  if (!opts) return null;
   if (opts.no_road) {
     return (
       <div className="trip-block">
@@ -130,29 +139,42 @@ function DayTripTransport({ fromDest, toDest, carModel, countryInsights }) {
       </div>
     );
   }
-  const rec = opts.modes[opts.recommended];
-  const RecIcon = MODE_META[opts.recommended].Icon;
+  const active = opts.modes[mode] ? mode : opts.recommended;
+  const cur = opts.modes[active];
+  const CurIcon = MODE_META[active].Icon;
+  const isRec = active === opts.recommended;
+  const shortHop = (opts.road_km || 0) <= SHORT_HOP_KM;
   // A day trip only works if you can be there by mid-morning and back for
   // dinner: flag long rides and suggest when to set off.
-  const oneWayH = rec.hours;
+  const oneWayH = cur.hours;
   const feasible = oneWayH <= 3;
   const departHint = oneWayH <= 1 ? 'an easy start around 9:00'
     : oneWayH <= 2 ? 'set off by 8:30 to get a full day'
     : oneWayH <= 3 ? 'leave by 8:00, it\'s a long ride but doable'
     : 'honestly too far for a day trip, consider staying overnight';
+  const perLabel = active === 'car' ? ' per car' : '/person';
 
   return (
     <div className="trip-block daytrip-transport">
       <div className="trip-block-title">Getting there from {fromDest.city}</div>
       <div className="daytrip-reco">
-        <span className="daytrip-reco-icon"><RecIcon size={15} /></span>
+        <span className="daytrip-reco-icon"><CurIcon size={15} /></span>
         <span className="daytrip-reco-main">
-          <b><SparkIcon size={10} /> {MODE_META[opts.recommended].label} is your best bet</b>
+          <b>
+            {isRec
+              ? <><SparkIcon size={10} /> {MODE_META[active].label} is your best bet</>
+              : <>{MODE_META[active].label}, your pick</>}
+          </b>
           <small>
-            ~{opts.road_km} km, about {rec.hours}h each way, est. {eur(rec.eur_pp)}/person one way
-            ({eur(rec.eur_pp * 2)} day return)
+            ~{opts.road_km} km, about {fmtDur(cur.hours * 60)} each way, est. {eur(cur.eur_pp)}{perLabel} one way
+            ({eur(cur.eur_pp * 2)} day return{active === 'car' ? ', split it with your group' : ''})
           </small>
           <small className={feasible ? 'daytrip-hint' : 'daytrip-hint warn'}>{departHint}</small>
+          {!isRec && (
+            <small className="daytrip-hint">
+              Carta's pick would be the {MODE_META[opts.recommended].label.toLowerCase()}.
+            </small>
+          )}
         </span>
         <button className="daytrip-more" onClick={() => setOpen(!open)} aria-expanded={open}>
           {open ? 'Less' : 'Compare'}
@@ -162,19 +184,36 @@ function DayTripTransport({ fromDest, toDest, carModel, countryInsights }) {
         <>
           <div className="trip-leg-modes daytrip-modes">
             {Object.entries(opts.modes).map(([m, o]) => (
-              <div key={m} className={`trip-leg-mode ${opts.recommended === m ? 'on' : ''}`}>
-                <span>{React.createElement(MODE_META[m].Icon, { size: 12 })} {MODE_META[m].label}</span>
+              <button
+                key={m}
+                type="button"
+                className={`trip-leg-mode daytrip-mode-btn ${active === m ? 'on' : ''}`}
+                onClick={() => onPickMode?.(m)}
+                aria-pressed={active === m}
+                title={`Plan the day around the ${MODE_META[m].label.toLowerCase()}`}
+              >
+                <span>
+                  {React.createElement(MODE_META[m].Icon, { size: 12 })} {MODE_META[m].label}
+                  {opts.recommended === m && <SparkIcon size={9} />}
+                </span>
                 <b>{eur(o.eur_pp)}{m === 'car' ? '/car' : '/p'}</b>
-                <small>~{o.hours}h each way</small>
-              </div>
+                <small>~{fmtDur(o.hours * 60)} each way</small>
+              </button>
             ))}
           </div>
+          <p className="trip-leg-note daytrip-pick-note">Tap a mode to plan the day around it.</p>
+          {shortHop && active !== 'car' && (
+            <p className="trip-leg-note">
+              Short hop: a direct {MODE_META[active].label.toLowerCase()} may not exist here.
+              Local buses or ferries often cover it; check the transit link below before counting on it.
+            </p>
+          )}
           <div className="trip-leg-links">
-            {rec.links.map((l, j) => (
+            {cur.links.map((l, j) => (
               <a key={j} href={l.url} target="_blank" rel="noreferrer">{l.label} ↗</a>
             ))}
           </div>
-          {rec.note && <p className="trip-leg-note">{rec.note}</p>}
+          {cur.note && <p className="trip-leg-note">{cur.note}</p>}
           <p className="trip-leg-disclaimer">Estimates, not live fares. Check the links for real times &amp; prices.</p>
         </>
       )}
@@ -531,7 +570,7 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
     }
     setAssignments(next);
     persistAssignments(plan?.id, next);
-    const savedPrefs = { style: p.style, interests: p.interests, dayLen: p.dayLen, walk: p.walk, fill: p.fill, visit: p.visit, routeMode };
+    const savedPrefs = { style: p.style, interests: p.interests, dayLen: p.dayLen, walk: p.walk, fill: p.fill, visit: p.visit, routeMode, tripModes: prefs?.tripModes };
     setPrefs(savedPrefs);
     persistPrefs(plan?.id, savedPrefs);
     setShowShape(false);
@@ -552,6 +591,54 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
     const km = haversineKm(p.lat, p.lon, c.lat, c.lon);
     return km != null && km <= 12 ? p : null;
   }, [plan, stop]);
+
+  // ---- Day-trip transport: stay -> this city, ONE source of truth ----
+  // The "Getting there" card, the timeline's first leg and the Google Maps
+  // handoff all speak the same chosen mode, so "car is your best bet" never
+  // sits above a three-hour "walk from your stay".
+  const dayTripFrom = useMemo(() => {
+    if (!plan?.standalone || !stop) return null;
+    // Both ends are measured to the CITY centre, never the airport: for
+    // airport-tier destinations dest.lat/lon is the runway, so a stay downtown
+    // would otherwise read as a needless inter-city hop.
+    return plan.stayPoint
+      ? {
+          city: plan.stayPoint.shortLabel || 'your stay',
+          lat: plan.stayPoint.lat,
+          lon: plan.stayPoint.lon,
+          country: stop.dest?.country,
+        }
+      : withCityCoords(destinations[plan.stayCityId] || null);
+  }, [plan, stop, destinations]);
+
+  const dayTrip = useMemo(() => {
+    if (!dayTripFrom || dayTripFrom.lat == null || !stop?.dest) return null;
+    const toDest = withCityCoords(stop.dest);
+    if (!toDest || toDest.lat == null) return null;
+    const kmAway = haversineKm(dayTripFrom.lat, dayTripFrom.lon, toDest.lat, toDest.lon);
+    if (dayTripFrom.city === toDest.city || (kmAway != null && kmAway < 8)) {
+      return { local: true, toDest };
+    }
+    const opts = legTransportOptions(dayTripFrom, toDest, 1, {
+      carModel: data?.meta?.car_model || null,
+      countryInsights,
+    });
+    return opts ? { ...opts, toDest } : null;
+  }, [dayTripFrom, stop, data, countryInsights]);
+
+  // The traveller's chosen way there (persisted per city); Carta's
+  // recommendation until they tap a different mode in the compare panel.
+  const tripMode = useMemo(() => {
+    const saved = prefs?.tripModes?.[stopIdx];
+    if (saved && dayTrip?.modes?.[saved]) return saved;
+    return dayTrip?.recommended || null;
+  }, [prefs, stopIdx, dayTrip]);
+
+  const setTripMode = (m) => {
+    const savedPrefs = { ...(prefs || {}), tripModes: { ...(prefs?.tripModes || {}), [stopIdx]: m } };
+    setPrefs(savedPrefs);
+    persistPrefs(plan?.id, savedPrefs);
+  };
 
   // "How long at each stop" answer scales the visit-time estimates shown on
   // the timeline and in the day total.
@@ -605,25 +692,39 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
     .filter((it) => it.lat != null && it.lon != null)
     .map((it) => ({ lat: it.lat, lon: it.lon, city: it.name }));
 
-  // When the stay is in this city it leads the route: door -> first sight.
+  // Door -> first sight distance decides how the day STARTS: on foot when the
+  // first stop is genuinely walkable from the stay, otherwise as a ride in the
+  // chosen day-trip mode. Nobody walks three hours to their first sight.
+  const STAY_WALK_MAX_KM = 2.5;
+  const stayGapKm = (() => {
+    if (!stayAnchor || !assignedItems.length) return null;
+    const first = assignedItems[0];
+    if (first.lat == null || first.lon == null) return null;
+    return haversineKm(stayAnchor.lat, stayAnchor.lon, first.lat, first.lon);
+  })();
+  const stayLegRide = stayGapKm != null && stayGapKm > STAY_WALK_MAX_KM;
+
+  // The map always shows the stay pin; the WALKING route only starts there
+  // when the door-to-first-sight leg is actually a walk.
   const routePins = stayAnchor
     ? [{ lat: stayAnchor.lat, lon: stayAnchor.lon, city: 'Your stay', stay: true }, ...mapPins]
     : mapPins;
+  const walkPins = stayAnchor && !stayLegRide ? routePins : mapPins;
 
   // Real street-following walking route + per-leg distance/time from OSRM.
-  const routeKey = routePins.map((p) => `${p.lat.toFixed(5)},${p.lon.toFixed(5)}`).join(';');
+  const routeKey = walkPins.map((p) => `${p.lat.toFixed(5)},${p.lon.toFixed(5)}`).join(';');
   const [route, setRouteGeom] = useState(null); // { key, geometry, legs, km, min }
   useEffect(() => {
-    if (routePins.length < 2) { setRouteGeom(null); return; }
+    if (walkPins.length < 2) { setRouteGeom(null); return; }
     let alive = true;
-    fetchWalkingRoute(routePins).then((r) => { if (alive && r) setRouteGeom({ key: routeKey, ...r }); });
+    fetchWalkingRoute(walkPins).then((r) => { if (alive && r) setRouteGeom({ key: routeKey, ...r }); });
     return () => { alive = false; };
   }, [routeKey]); // eslint-disable-line react-hooks/exhaustive-deps
   const routeOk = route && route.key === routeKey;
 
   // Per-segment legs align to assignedItems only when every stop has
-  // coordinates; with a stay anchor, leg 0 is door -> first sight.
-  const stayLegOffset = stayAnchor ? 1 : 0;
+  // coordinates; with a walkable stay anchor, leg 0 is door -> first sight.
+  const stayLegOffset = stayAnchor && !stayLegRide ? 1 : 0;
   const legsAlign = routeOk
     && assignedItems.length >= 2
     && assignedItems.every((it) => it.lat != null && it.lon != null)
@@ -649,9 +750,36 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
     return null;
   };
 
-  // Door -> first sight leg, shown at the top of the timeline.
+  // Local-hop speeds for the ride from the door to the day's first sight -
+  // deliberately slower than transport.js's intercity cruise speeds (lakeside
+  // and mountain roads, stops, parking), plus a wait overhead for transit.
+  const RIDE = {
+    car: { kmh: 55, overheadMin: 5 },
+    bus: { kmh: 40, overheadMin: 12 },
+    train: { kmh: 65, overheadMin: 12 },
+  };
+
+  // Door -> first sight leg, shown at the top of the timeline. Beyond walking
+  // range it becomes a ride in the traveller's chosen day-trip mode, with its
+  // own directions link - never a fantasy three-hour walk.
   const stayLeg = (() => {
     if (!stayAnchor || !assignedItems.length) return null;
+    if (stayLegRide) {
+      const first = assignedItems[0];
+      const mode = dayTrip?.modes?.[tripMode] ? tripMode : 'car';
+      const roadKm = stayGapKm * 1.3; // straight-line -> road, as transport.js
+      const r = RIDE[mode] || RIDE.car;
+      return {
+        ride: true,
+        mode,
+        km: roadKm,
+        min: Math.max(5, Math.round((roadKm / r.kmh) * 60 + r.overheadMin)),
+        dirUrl: googleMapsDirUrl(
+          [stayAnchor, first],
+          mode === 'car' ? 'driving' : 'transit',
+        ),
+      };
+    }
     if (legsAlign) return legFrom(route.legs[0]);
     const first = assignedItems[0];
     if (first.lat == null || first.lon == null) return null;
@@ -659,14 +787,29 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
     return km == null ? null : { km, min: estimateWalkMinutes(km), real: false };
   })();
 
-  const gmapsUrl = googleMapsDirUrl(routePins, 'walking');
+  const gmapsUrl = googleMapsDirUrl(walkPins, 'walking');
 
   // One timeline connector's label. A ferry leg (a lake/sea crossing OSRM
   // routes over) is called out as a ferry with its own icon - never presented
-  // as a walk across the water.
+  // as a walk across the water. A ride leg (stay beyond walking range) wears
+  // the chosen mode's icon and carries its own directions link.
   const legContent = (leg, stay = false) => {
     if (!leg) return <>↓ walking time unknown (no coordinates for one of these stops)</>;
     const prefix = stay ? 'From your stay: ' : '';
+    if (leg.ride) {
+      const M = MODE_META[leg.mode] || MODE_META.car;
+      return (
+        <>
+          <M.Icon size={11} /> {prefix}≈{leg.min} min by {M.label.toLowerCase()}, ~{leg.km.toFixed(1)} km
+          {leg.dirUrl && (
+            <>
+              {' · '}
+              <a className="day-timeline-ride-dir" href={leg.dirUrl} target="_blank" rel="noreferrer">Directions ↗</a>
+            </>
+          )}
+        </>
+      );
+    }
     if (leg.ferry) {
       const walkTail = leg.walkKm >= 0.15 ? `, then ${leg.walkMin} min walk` : '';
       return <><FerryIcon size={11} /> {prefix}ferry {leg.ferryMin} min{walkTail}, {leg.km.toFixed(1)} km</>;
@@ -977,8 +1120,12 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
   // Towns within day-trip reach, and (from the full POI catalogue) beaches &
   // nature, must-see sights and active outings - each behind its own filter
   // chip so the map never opens as a wall of pins.
-  const EXPLORE_TOWN_KM = 85;
+  const EXPLORE_TOWN_KM = 110;
   const EXPLORE_POI_KM = 60;
+  // Every town this close is a realistic outing regardless of its rating, so
+  // nearby ones are guaranteed a pin before the wider circle competes.
+  const EXPLORE_NEAR_KM = 30;
+  const EXPLORE_TOWN_CAP = 34;
   // A catalogue town this close to the stay IS the stay: the red stay pin
   // stands in for it, so we don't draw a duplicate town label on top of it.
   const STAY_TOWN_KM = 3;
@@ -986,16 +1133,30 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
 
   const exploreTowns = useMemo(() => {
     if (!newStayPoint || newStayPoint.lat == null) return [];
-    return Object.entries(destinations)
+    const all = Object.entries(destinations)
       .map(([id, d]) => {
         const c = cityCoords(d);
         if (c.lat == null) return null;
         const km = haversineKm(newStayPoint.lat, newStayPoint.lon, c.lat, c.lon);
         return km != null && km <= EXPLORE_TOWN_KM ? { id, dest: d, km: Math.round(km), ...c } : null;
       })
-      .filter(Boolean)
-      .sort((a, b) => (b.dest.rating?.score || 0) - (a.dest.rating?.score || 0))
-      .slice(0, 22);
+      .filter(Boolean);
+    // Multi-airport cities ("Milan (Malpensa)" / "(Linate)" / "(Bergamo)") all
+    // share the same city-centre pin: keep one per base city name so the map
+    // never stacks three identical Milans.
+    const byBaseCity = new Map();
+    for (const t of all) {
+      const key = `${(t.dest.city || '').replace(/\s*\(.*\)\s*$/, '')}|${t.dest.country}`;
+      const cur = byBaseCity.get(key);
+      if (!cur || t.km < cur.km) byBaseCity.set(key, t);
+    }
+    const deduped = [...byBaseCity.values()];
+    // Close-by towns first (they're the realistic day trips), each set ranked
+    // by rating, then the best of the wider circle fills the remaining pins.
+    const byScore = (a, b) => (b.dest.rating?.score || 0) - (a.dest.rating?.score || 0);
+    const near = deduped.filter((t) => t.km <= EXPLORE_NEAR_KM).sort(byScore);
+    const far = deduped.filter((t) => t.km > EXPLORE_NEAR_KM).sort(byScore);
+    return [...near, ...far].slice(0, EXPLORE_TOWN_CAP);
   }, [newStayPoint, destinations]);
 
   // The catalogue town the stay sits in (if any). Its pin is folded into the
@@ -1053,10 +1214,13 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
         if (t.id === stayTownId) return; // folded into the red stay pin
         ms.push({
         id: `t:${t.id}`,
-        label: t.dest.city,
+        // The airport suffix is flight-speak; the day map talks about towns.
+        label: (t.dest.city || '').replace(/\s*\(.*\)\s*$/, ''),
         lat: t.lat,
         lon: t.lon,
         cat: 'town',
+        score: t.dest.rating?.score ?? null,
+        tier: t.dest.rating?.tier ?? null,
         selected: newStops.some((s) => s.destinationId === t.id),
         focused: exploreFocus === `t:${t.id}`,
         });
@@ -1070,12 +1234,21 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
         lat: p.lat,
         lon: p.lon,
         cat: p.cat,
+        must: isMustSee(p.item),
         selected: selPois.some((x) => x.key === p.key),
         focused: exploreFocus === p.key,
       });
     });
     return ms;
   }, [exploreCats, exploreTowns, explorePois, newStops, selPois, exploreFocus, stayTownId]);
+
+  // How many places each filter chip is holding back, shown on the chip so
+  // an off category never reads as "there's nothing here".
+  const exploreCounts = useMemo(() => {
+    const c = { town: exploreTowns.filter((t) => t.id !== stayTownId).length, beach: 0, sight: 0, active: 0 };
+    explorePois.forEach((p) => { c[p.cat] += 1; });
+    return c;
+  }, [exploreTowns, explorePois, stayTownId]);
 
   const toggleExploreCat = (cat) => {
     setExploreCats((prev) => {
@@ -1095,6 +1268,22 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
     const p = explorePois.find((x) => x.key === exploreFocus);
     return p ? { type: 'poi', ...p } : null;
   }, [exploreFocus, exploreTowns, explorePois]);
+
+  // A focused town's three strongest sights - a taste of what "going in depth
+  // later" will offer, right in the briefing panel.
+  const focusedTownSights = useMemo(() => {
+    if (focusedExplore?.type !== 'town') return [];
+    const t = focusedExplore;
+    const items = (t.dest.activities?.items_full?.length
+      ? t.dest.activities.items_full
+      : actFull?.[t.id]) || [];
+    const suppressed = duplicatePoiIndices(items);
+    return items
+      .map((item, idx) => ({ item, idx }))
+      .filter(({ item, idx }) => !suppressed.has(idx) && item.name && !isTransportInfraPoi(item))
+      .sort((a, b) => poiScore(b.item) - poiScore(a.item))
+      .slice(0, 3);
+  }, [focusedExplore, actFull]);
 
   const togglePoiPick = (p) => {
     setSelPois((prev) => (prev.some((x) => x.key === p.key)
@@ -1116,6 +1305,7 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
         out.push({
           id: `t:${t.id}`, cat: 'town', label: t.dest.city,
           sub: `${EXPLORE_CAT_LABEL.town} · ${t.km} km from your stay`,
+          rating: t.dest.rating || null,
           lat: t.lat, lon: t.lon,
           score: (t.dest.rating?.score || 0) + 6,
         });
@@ -1123,9 +1313,12 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
     }
     for (const p of explorePois) {
       if (`${p.item.name || ''} ${p.item.kind || ''}`.toLowerCase().includes(query)) {
+        const flag = isMustSee(p.item) ? 'must see'
+          : (p.item.rate ?? 0) >= 2 ? 'top rated'
+          : p.item.heritage ? 'heritage' : '';
         out.push({
           id: p.key, cat: p.cat, label: p.item.name,
-          sub: `${p.item.kind || EXPLORE_CAT_LABEL[p.cat]} · ${p.km} km away`,
+          sub: `${p.item.kind || EXPLORE_CAT_LABEL[p.cat]} · ${p.km} km away${flag ? ` · ${flag}` : ''}`,
           lat: p.lat, lon: p.lon,
           score: poiScore(p.item),
         });
@@ -1389,7 +1582,7 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
                           <button key={r.id} className="day-explore-search-result" onClick={() => pickExploreSearch(r)}>
                             <span className={`day-explore-search-dot cat-${r.cat}`} />
                             <span className="day-explore-search-text">
-                              <b>{r.label}</b>
+                              <b>{r.label}{r.rating?.score != null && <ScoreChip rating={r.rating} size="xs" />}</b>
                               <small>{r.sub}</small>
                             </span>
                           </button>
@@ -1434,7 +1627,7 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
                       className={`guide-chip dem-chip-${cat} ${exploreCats.has(cat) ? 'on' : ''}`}
                       onClick={() => toggleExploreCat(cat)}
                       aria-pressed={exploreCats.has(cat)}
-                    >{label}</button>
+                    >{label}{exploreCounts[cat] > 0 && <span className="dem-chip-count">{exploreCounts[cat]}</span>}</button>
                   ))}
                 </div>
                 <div className="day-explore-wrap">
@@ -1454,16 +1647,36 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
                       </div>
                     ) : focusedExplore.type === 'town' ? (
                       <>
-                        {focusedExplore.dest.image?.url && (
+                        {focusedExplore.dest.image?.url ? (
                           <div className="guide-city-side-photo" style={{ backgroundImage: `url(${focusedExplore.dest.image.url})` }} />
+                        ) : (
+                          <div className="guide-city-side-photo guide-city-side-photo-empty" aria-hidden="true">
+                            <HomeIcon size={22} />
+                          </div>
                         )}
                         <div className="guide-city-side-title">
                           <b>{focusedExplore.dest.city}</b>
                           {focusedExplore.dest.rating?.score != null && <ScoreChip rating={focusedExplore.dest.rating} size="xs" />}
                           {focusedExplore.dest.rating?.hidden_gem && <HiddenGemTag />}
                         </div>
+                        <span className="day-explore-type-tag type-town"><HomeIcon size={10} /> Whole town</span>
                         <p className="guide-city-side-insight">
                           {focusedExplore.km} km from your stay. {cityInsight(focusedExplore.dest)}
+                        </p>
+                        {focusedTownSights.length > 0 && (
+                          <div className="day-explore-topsights">
+                            <span className="day-explore-topsights-title">Its strongest sights</span>
+                            {focusedTownSights.map(({ item, idx }) => (
+                              <span className="day-explore-topsight" key={idx}>
+                                {isMustSee(item) && <StarIcon size={9} />}
+                                {item.name}
+                              </span>
+                            ))}
+                          </div>
+                        )}
+                        <p className="day-explore-depth-note">
+                          <InfoIcon size={11} /> Add the town now; you'll pick what to
+                          see there, day by day, on the next screen.
                         </p>
                         {newStops.some((s) => s.destinationId === focusedExplore.id) ? (
                           <div className="guide-city-side-actions">
@@ -1482,19 +1695,32 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
                       </>
                     ) : (
                       <>
-                        {focusedExplore.item.img && (
+                        {focusedExplore.item.img ? (
                           <div className="guide-city-side-photo" style={{ backgroundImage: `url(${focusedExplore.item.img})` }} />
+                        ) : (
+                          <div className="guide-city-side-photo guide-city-side-photo-empty" aria-hidden="true">
+                            <MapPinIcon size={22} />
+                          </div>
                         )}
                         <div className="guide-city-side-title">
                           <b>{focusedExplore.item.name}</b>
-                          {isMustSee(focusedExplore.item) && <span className="day-badge-must" title="A true must-see"><StarIcon size={9} /></span>}
+                          {isMustSee(focusedExplore.item) && <span className="day-guide-badge must"><StarIcon size={9} /> Must see</span>}
+                          {!isMustSee(focusedExplore.item) && (focusedExplore.item.rate ?? 0) >= 2 && <span className="day-guide-badge rated">Highly rated</span>}
+                          {focusedExplore.item.heritage && <span className="day-guide-badge heritage">Heritage</span>}
                         </div>
+                        <span className={`day-explore-type-tag type-${focusedExplore.cat}`}>
+                          <MapPinIcon size={10} /> {EXPLORE_CAT_LABEL[focusedExplore.cat] || 'Place'}
+                        </span>
                         <p className="guide-city-side-insight">
                           {focusedExplore.item.kind ? `${focusedExplore.item.kind}, ` : ''}
                           {focusedExplore.km} km from your stay, near {destinations[focusedExplore.destId]?.city}.
                           {' '}{focusedExplore.item.desc || ''}
                         </p>
                         <p className="trip-note">Plan ~{fmtDur(dwellMinutes(focusedExplore.item.kind))} for a visit.</p>
+                        <p className="day-explore-depth-note">
+                          <InfoIcon size={11} /> A specific place: it drops straight
+                          into a day of your plan, nothing more to configure.
+                        </p>
                         {selPois.some((x) => x.key === focusedExplore.key) ? (
                           <button className="guide-back guide-city-side-add" onClick={() => togglePoiPick(focusedExplore)}>Remove from my days</button>
                         ) : (
@@ -1793,29 +2019,15 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
             </div>
           )}
 
-          {plan.standalone && stop && (() => {
-            // Travel advice starts at the stay address when one is set;
-            // otherwise the legacy base-city choice still works. Both ends are
-            // measured to the CITY centre, never the airport: for airport-tier
-            // destinations dest.lat/lon is the runway, so a stay downtown would
-            // otherwise read as a needless inter-city hop.
-            const fromDest = plan.stayPoint
-              ? {
-                  city: plan.stayPoint.shortLabel || 'your stay',
-                  lat: plan.stayPoint.lat,
-                  lon: plan.stayPoint.lon,
-                  country: stop.dest?.country,
-                }
-              : withCityCoords(destinations[plan.stayCityId] || null);
-            return (
-              <DayTripTransport
-                fromDest={fromDest}
-                toDest={withCityCoords(stop.dest)}
-                carModel={data?.meta?.car_model || null}
-                countryInsights={countryInsights}
-              />
-            );
-          })()}
+          {plan.standalone && stop && dayTrip && (
+            <DayTripTransport
+              fromDest={dayTripFrom}
+              toDest={dayTrip.toDest}
+              opts={dayTrip}
+              mode={tripMode}
+              onPickMode={setTripMode}
+            />
+          )}
 
           {stops.length > 1 && (
             <div className="trip-block">
@@ -1985,7 +2197,13 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
                   <div className="day-route-mode">
                     <span className={`day-route-status ${routeMode}`}>
                       {routeMode === 'auto'
-                        ? <><SparkIcon size={11} /> Carta picks the best {routeOk && route.hasFerry ? 'route (walk + ferry)' : 'walking route'}</>
+                        ? <><SparkIcon size={11} /> Carta picks the best {(() => {
+                            const parts = [];
+                            if (stayLeg?.ride) parts.push((MODE_META[stayLeg.mode] || MODE_META.car).label.toLowerCase());
+                            parts.push('walk');
+                            if (routeOk && route.hasFerry) parts.push('ferry');
+                            return parts.length > 1 ? `route (${parts.join(' + ')})` : 'walking route';
+                          })()}</>
                         : 'Manual order'}
                     </span>
                     {routeMode === 'manual' && (
@@ -1997,8 +2215,13 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
 
                   <div className="day-timeline">
                     {stayLeg && (
-                      <div className={`day-timeline-walk day-timeline-stay${stayLeg.ferry ? ' day-timeline-ferry' : ''}`}>
+                      <div className={`day-timeline-walk day-timeline-stay${stayLeg.ferry ? ' day-timeline-ferry' : ''}${stayLeg.ride ? ' day-timeline-ride' : ''}`}>
                         {legContent(stayLeg, true)}
+                        {stayLeg.ride && (
+                          <small className="day-timeline-ride-note">
+                            Park up or hop off; from here today's route is on foot.
+                          </small>
+                        )}
                       </div>
                     )}
                     {assignedItems.map((it, i) => (
@@ -2407,6 +2630,7 @@ function ActivityRow({ item, variant, added, onToggle, note }) {
           <span className="day-assigned-name">
             {item.name}
             {(variant === 'must' || isMustSee(item)) && <span className="day-badge-must" title="A true must-see here"><StarIcon size={9} /></span>}
+            {!isMustSee(item) && variant !== 'must' && (item.rate ?? 0) >= 2 && <span className="day-badge-rated" title="Among the best-rated places here">top rated</span>}
             {item.heritage && <span className="day-badge-heritage" title="On a cultural-heritage register">heritage</span>}
           </span>
           <span className="day-assigned-kind">{item.kind}</span>

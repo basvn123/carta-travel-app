@@ -14,6 +14,7 @@ const CAT_ICONS = {
   active: S('<circle cx="13" cy="4.5" r="1.9"/><path d="M11 21l2-5-2.5-2.5.5-4 3.5 2 3 .8"/><path d="M13 16l-3.5.5L7 21"/>'),
 };
 const CHECK_ICON = S('<path d="M5 12.5l4.5 4.5L19 6.5"/>');
+const STAR_ICON = '<svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 3l2.4 5.9 6.1.5-4.7 4 1.5 6L12 16.1 6.6 19.4l1.5-6-4.7-4 6.1-.5z"/></svg>';
 
 /**
  * The Day planner's explore map: opens zoomed in on the traveller's stay (a
@@ -121,6 +122,20 @@ export function DayExploreMap({ stay, markers = [], onFocus, onStayClick, stayFo
         lbl.className = 'dem-pin-lbl';
         lbl.textContent = m.label;
         el.append(ico, chk, lbl);
+        // Guidance at a glance: towns wear their 0-10 traveller rating
+        // (tier-coloured like every ScoreChip), must-see places a star.
+        if (m.score != null) {
+          const rate = document.createElement('span');
+          rate.className = `dem-pin-rate rt-${m.tier ?? 0}`;
+          rate.textContent = m.score.toFixed(1);
+          el.append(rate);
+        } else if (m.must) {
+          const star = document.createElement('span');
+          star.className = 'dem-pin-star';
+          star.innerHTML = STAR_ICON;
+          star.title = 'A true must-see';
+          el.append(star);
+        }
         el.title = m.label;
         el.addEventListener('click', (e) => { e.stopPropagation(); onFocusRef.current?.(m.id); });
         const marker = new maplibregl.Marker({ element: el, anchor: 'center' })
