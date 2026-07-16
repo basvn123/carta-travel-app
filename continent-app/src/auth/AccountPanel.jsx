@@ -56,7 +56,6 @@ export function AccountPanel({ onClose, onOpenAuth }) {
                 {fullName && <small>{user.email}</small>}
               </span>
             </div>
-            <p className="footnote">Your saved trips live under the Saved trips tab in the navigation.</p>
           </div>
 
           <div className="panel-section">

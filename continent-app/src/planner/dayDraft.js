@@ -18,9 +18,11 @@ import { haversineKm, cityCoords } from '../lib/runtime_pricing.js';
 
 /** Reorders a day's assigned activity indices to minimize backtracking - a
  *  simple nearest-neighbour walk starting from the first-added stop with
- *  coordinates. Activities without coordinates (limited-data destinations)
- *  can't be routed, so they're kept, appended at the end in add order. */
-export function optimizeOrder(idxArray, itemsAll) {
+ *  coordinates, or from `anchor` ({lat,lon}, e.g. the traveller's stay) when
+ *  one is given, so the day starts at the sight nearest their door.
+ *  Activities without coordinates (limited-data destinations) can't be
+ *  routed, so they're kept, appended at the end in add order. */
+export function optimizeOrder(idxArray, itemsAll, anchor = null) {
   const withCoords = [];
   const withoutCoords = [];
   for (const idx of idxArray) {
@@ -31,6 +33,15 @@ export function optimizeOrder(idxArray, itemsAll) {
 
   const remaining = new Set(withCoords);
   let current = withCoords[0];
+  if (anchor && anchor.lat != null && anchor.lon != null) {
+    let best = null, bestDist = Infinity;
+    for (const cand of remaining) {
+      const c = itemsAll[cand];
+      const d = haversineKm(anchor.lat, anchor.lon, c.lat, c.lon);
+      if (d != null && d < bestDist) { bestDist = d; best = cand; }
+    }
+    if (best != null) current = best;
+  }
   const ordered = [current];
   remaining.delete(current);
   while (remaining.size > 0) {
@@ -60,6 +71,19 @@ const WORTH_CAP = 16;  // "worth adding" stays a browsable shelf, not a dump
  * resolves to a real Wikipedia article (with photo), and that article's
  * average daily pageviews (log-scaled fame: ~2000+ views/day = +1.0).
  */
+// Transport infrastructure is never a sight: the harvest occasionally rates
+// an airport or suburban railway station as a top POI ("Marseille Provence
+// Airport, rate 3"), which would be absurd to recommend for a day out. Grand
+// heritage-listed stations (Antwerpen-Centraal) are the one honest exception.
+const AIRPORT_RE = /airport|aerodrome|airfield|heliport|air base/i;
+const STATION_RE = /railway station|train station|bus station|bus stop|tram stop|metro station|ferry terminal|park[- ]and[- ]ride|parking/i;
+export function isTransportInfraPoi(item) {
+  const t = `${item.kind || ''} ${item.name || ''}`;
+  if (AIRPORT_RE.test(t)) return true;
+  if (STATION_RE.test(t)) return !item.heritage;
+  return false;
+}
+
 export function poiScore(item) {
   let s = item.rate ?? 0;
   if (item.heritage) s += 0.6;
@@ -88,10 +112,12 @@ export function isMustSee(item) {
  * rates (older data / Wikivoyage-sourced cities) the list order is already
  * importance-sorted, so we fall back to positional tiers.
  */
-export function tieredActivities(items) {
+export function tieredActivities(items, eligibleIdx = null) {
   const sights = [];
   const active = [];
   (items || []).forEach((item, idx) => {
+    if (eligibleIdx && !eligibleIdx.has(idx)) return;
+    if (isTransportInfraPoi(item)) return;
     (item.active ? active : sights).push({ item, idx });
   });
   const hasRates = sights.some(({ item }) => item.rate != null);
@@ -179,6 +205,49 @@ export const PACES = [
   { key: 'packed', label: 'Packed', hint: '7-8 stops', stops: 8, budgetMin: 8.5 * 60 },
 ];
 
+// Honest per-kind visit durations (minutes at an unhurried-but-normal pace):
+// a cathedral is not a fountain, and a museum is not a photo stop. Used both
+// to budget drafted days and to show "~1 h visit" on every planned stop, so
+// an "8 min walk" day never reads as an 8-minute day.
+const KIND_DWELL = {
+  Museum: 90, Gallery: 60, Aquarium: 75, Zoo: 120,
+  Castle: 75, Palace: 80, Fortress: 60, Citadel: 60,
+  Church: 25, Cathedral: 40, Basilica: 35, Chapel: 15,
+  Monastery: 45, Convent: 30, Synagogue: 30, Mosque: 30, Temple: 30,
+  Theatre: 25, Opera: 25,
+  Square: 25, Monument: 15, Memorial: 15, Statue: 10, Fountain: 10,
+  Gate: 10, Bridge: 15, Tower: 45, Lighthouse: 25, Viewpoint: 25,
+  'Ancient site': 60, Ruins: 50, 'Roman site': 60,
+  Market: 45, Brewery: 60, Winery: 75,
+  Park: 45, Garden: 40, Lake: 45, Beach: 90, 'Nature reserve': 90,
+  Cave: 60, Waterfall: 30, Peak: 75, Canyon: 75, Dunes: 60, Glacier: 90,
+  Trail: 120, Hiking: 150, Cycling: 120, Climbing: 120,
+  Diving: 150, Snorkeling: 90, Surfing: 120, Kayaking: 120, Rafting: 150,
+  Skiing: 180, Golf: 180, 'Horse riding': 90, Swimming: 75,
+  'Water park': 180, 'Theme park': 240, 'Ferris wheel': 30,
+  'Sauna & baths': 120, 'Thermal baths': 120,
+};
+
+/** Estimated time at a stop, scaled by the traveller's visit style. */
+export function dwellMinutes(kind, factor = 1) {
+  return Math.max(10, Math.round((KIND_DWELL[kind] ?? 40) * factor));
+}
+
+/** "How long do you like at each stop?" - scales every dwell estimate. */
+export const VISIT_PACES = [
+  { key: 'quick', label: 'Quick looks', desc: 'Pop in, take it in, move on. You see more places', factor: 0.7 },
+  { key: 'standard', label: 'A good look around', desc: 'Enough time to properly take each place in', factor: 1 },
+  { key: 'deep', label: 'Take my time', desc: 'Linger and sit down. Fewer stops, deeper visits', factor: 1.45 },
+];
+
+/** "How much do you want to do that day?" - the traveller sets the ambition,
+ *  Carta acts on it: it shifts how many stops a drafted day may hold. */
+export const FILL_LEVELS = [
+  { key: 'light', label: 'Keep it light', desc: 'A few highlights with plenty of breathing room', stopsDelta: -2 },
+  { key: 'balanced', label: 'A good balance', desc: 'The essentials at a comfortable rhythm', stopsDelta: 0 },
+  { key: 'packed', label: 'Pack it in', desc: 'See as much as one day allows', stopsDelta: 2 },
+];
+
 /** "How long is your day?" answers for the feasibility questions. */
 export const DAY_LENGTHS = [
   { key: 'half', label: 'Half a day', desc: 'Morning or afternoon, back early', budgetMin: 4 * 60, stops: 3 },
@@ -195,14 +264,19 @@ export const WALK_LEVELS = [
 ];
 
 /** Turn the feasibility answers into concrete drafting limits. Falls back to
- *  the balanced pace when the traveller skipped the questions. */
-export function feasibilityLimits({ dayLen, walk } = {}) {
+ *  the balanced pace when the traveller skipped the questions. `fill` (how
+ *  much to do) shifts the stop count; `visit` (how long per stop) scales the
+ *  dwell estimates, so "take my time" days naturally hold fewer places. */
+export function feasibilityLimits({ dayLen, walk, fill, visit } = {}) {
   const d = DAY_LENGTHS.find((x) => x.key === dayLen) || DAY_LENGTHS[1];
   const w = WALK_LEVELS.find((x) => x.key === walk) || WALK_LEVELS[1];
+  const f = FILL_LEVELS.find((x) => x.key === fill) || FILL_LEVELS[1];
+  const v = VISIT_PACES.find((x) => x.key === visit) || VISIT_PACES[1];
   return {
-    stopsMax: Math.max(2, d.stops + w.stopsDelta),
+    stopsMax: Math.max(2, d.stops + w.stopsDelta + f.stopsDelta),
     budgetMin: d.budgetMin,
     maxKmFromCentroid: w.maxKm,
+    dwellFactor: v.factor,
   };
 }
 
@@ -210,6 +284,83 @@ export function feasibilityLimits({ dayLen, walk } = {}) {
 // walkable day plan (e.g. a POI across a strait on another island) - it can
 // only produce impossible "walk over the sea" days.
 export const MAX_POI_KM_FROM_CITY = 20;
+
+// ...but a truly great sight beyond walking range (Mont-Saint-Michel from
+// Saint-Malo, Versailles from Paris) is still worth surfacing as its own
+// excursion, as long as it's a realistic day-trip distance away.
+export const FAR_POI_MAX_KM = 90;
+
+/**
+ * Genuinely worth-the-detour sights OUTSIDE the walkable radius: strong
+ * evidence only (top rate plus heritage/Wikipedia corroboration), sorted by
+ * strength, with the distance so the traveller can judge the trek.
+ * Returns [{ item, idx, km }], idx = original index into `items`.
+ */
+export function farWorthySights(items, cityDest, { limit = 6 } = {}) {
+  const centre = cityCoords(cityDest);
+  if (centre.lat == null) return [];
+  return (items || [])
+    .map((item, idx) => ({
+      item, idx,
+      km: item.lat != null && item.lon != null
+        ? haversineKm(centre.lat, centre.lon, item.lat, item.lon)
+        : null,
+    }))
+    .filter(({ item }) => !isTransportInfraPoi(item))
+    .filter(({ item, km }) => km != null && km > MAX_POI_KM_FROM_CITY && km <= FAR_POI_MAX_KM
+      && !item.active && poiScore(item) >= 3.4)
+    .sort((a, b) => poiScore(b.item) - poiScore(a.item))
+    .slice(0, limit);
+}
+
+// Kinds that make a walk between two sights genuinely nicer to pass by.
+const SCENIC_KINDS = new Set([
+  'Viewpoint', 'Bridge', 'Square', 'Fountain', 'Garden', 'Park', 'Gate',
+  'Beach', 'Lighthouse', 'Waterfall', 'Lake', 'Statue', 'Monument',
+]);
+
+/**
+ * "Make the walk itself beautiful": scan the planned day's legs for photogenic
+ * places (viewpoints, bridges, squares, gardens...) that sit almost ON the
+ * path - a tiny detour, not a new destination - and suggest the best ones.
+ * Returns [{ idx, item, afterPos, extraMin, km }] sorted by quality;
+ * afterPos = insert after this position in the current order.
+ */
+export function scenicSuggestions(orderIdx, items, { maxDetourKm = 0.5, limit = 2 } = {}) {
+  // Positions in the day's order, keeping only routable stops.
+  const seq = orderIdx
+    .map((i, pos) => ({ pos, it: items[i] }))
+    .filter((e) => e.it && e.it.lat != null && e.it.lon != null);
+  if (seq.length < 2) return [];
+  const inPlan = new Set(orderIdx);
+  const out = [];
+  items.forEach((item, idx) => {
+    if (inPlan.has(idx) || item.active || item.lat == null || item.lon == null) return;
+    if (!SCENIC_KINDS.has(item.kind)) return;
+    if ((item.rate ?? 0) < 2 && !item.heritage) return;
+    let best = null;
+    for (let i = 0; i < seq.length - 1; i += 1) {
+      const a = seq[i].it; const b = seq[i + 1].it;
+      const direct = haversineKm(a.lat, a.lon, b.lat, b.lon);
+      const viaA = haversineKm(a.lat, a.lon, item.lat, item.lon);
+      const viaB = haversineKm(item.lat, item.lon, b.lat, b.lon);
+      if (direct == null || viaA == null || viaB == null) continue;
+      const detour = viaA + viaB - direct;
+      if (detour <= maxDetourKm && (!best || detour < best.detour)) {
+        best = { detour, afterPos: seq[i].pos };
+      }
+    }
+    if (best) {
+      out.push({
+        idx, item,
+        afterPos: best.afterPos,
+        extraMin: Math.max(1, Math.round((best.detour / 4.8) * 60)),
+        km: best.detour,
+      });
+    }
+  });
+  return out.sort((a, b) => poiScore(b.item) - poiScore(a.item)).slice(0, limit);
+}
 
 /** Drop activity items that are unrealistically far from the city centre.
  *  Keeps items without coordinates (they can't mislead the router).
@@ -224,6 +375,21 @@ export function saneItemsForCity(items, cityDest) {
     const km = haversineKm(centre.lat, centre.lon, it.lat, it.lon);
     return km == null || km <= MAX_POI_KM_FROM_CITY;
   });
+}
+
+/** Same sanity cut as saneItemsForCity, but as a Set of ORIGINAL indices, so
+ *  the planner can keep the full list (stable indices, searchable, far sights
+ *  included) while tiers and drafts stay within walkable range. */
+export function walkableIdxSet(items, cityDest) {
+  const centre = cityCoords(cityDest);
+  const set = new Set();
+  (items || []).forEach((it, idx) => {
+    if (isTransportInfraPoi(it)) return;
+    if (it.lat == null || it.lon == null || centre.lat == null) { set.add(idx); return; }
+    const km = haversineKm(centre.lat, centre.lon, it.lat, it.lon);
+    if (km == null || km <= MAX_POI_KM_FROM_CITY) set.add(idx);
+  });
+  return set;
 }
 
 /**
@@ -271,16 +437,18 @@ export const DAY_STYLES = [
  * rate-2+ sights, heritage sites, and (for active styles) matching outdoor
  * kinds - so the traveller is never asked to judge filler.
  */
-export function candidateDeck(items, interests, limit = 16) {
+export function candidateDeck(items, interests, limit = 16, eligibleIdx = null) {
   const iset = interests instanceof Set ? interests : new Set(interests || []);
   const all = (items || []).map((item, idx) => ({ item, idx }))
-    .filter(({ item }) => item.lat != null && item.lon != null);
+    .filter(({ item, idx }) => item.lat != null && item.lon != null
+      && (!eligibleIdx || eligibleIdx.has(idx)));
   const score = ({ item }) => {
     // Sights ride the composite poiScore (rate + heritage + Wikipedia
-    // presence/fame); actives are interest-gated as before.
+    // presence/fame) with a must-see bonus, so the deck leads with the
+    // places genuinely worth the day; actives are interest-gated as before.
     const base = item.active
       ? (kindDirectMatch(item.kind, iset) ? 2.5 : -1) + (item.heritage ? 0.25 : 0) + popBoost(item)
-      : poiScore(item);
+      : poiScore(item) + (isMustSee(item) ? 0.6 : 0);
     return base + (kindDirectMatch(item.kind, iset) ? 0.75 : 0);
   };
   return all
@@ -377,7 +545,7 @@ const WALK_EST_MIN = 15; // rough inter-stop walking allowance while drafting
  * Days beyond the available material come back empty rather than padded with
  * filler - better an honest half-empty day 3 than three mediocre days.
  */
-export function draftDays({ items, numDays, interests, paceKey, dwellFn, stopsMax, budgetMin, maxKmFromCentroid }) {
+export function draftDays({ items, numDays, interests, paceKey, dwellFn, stopsMax, budgetMin, maxKmFromCentroid, eligibleIdx }) {
   const paceBase = PACES.find((p) => p.key === paceKey) || PACES[1];
   // Feasibility overrides (day length, walking appetite) win over the pace.
   const pace = {
@@ -386,19 +554,21 @@ export function draftDays({ items, numDays, interests, paceKey, dwellFn, stopsMa
   };
   const maxKm = maxKmFromCentroid || 3.5;
   const all = (items || []).map((item, idx) => ({ item, idx }))
-    .filter(({ item }) => item.lat != null && item.lon != null);
+    .filter(({ item, idx }) => item.lat != null && item.lon != null
+      && (!eligibleIdx || eligibleIdx.has(idx)));
 
   // Rank: interest-matching actives join the sights; direct interest matches
-  // get a boost so a beach person's draft actually contains the beach. If the
-  // interest filter can't fill the asked-for days, relax it to everything -
-  // the score boost still leads with what they love, topped up with the
-  // city's best of the rest.
+  // get a boost so a beach person's draft actually contains the beach. Genuine
+  // must-sees get their own bonus, so Carta's drafts always lead with the most
+  // beautiful, highest-rated places. If the interest filter can't fill the
+  // asked-for days, relax it to everything - the score boost still leads with
+  // what they love, topped up with the city's best of the rest.
   let pool = all.filter(({ item }) => kindMatchesInterests(item.kind, interests));
   if (pool.length < pace.stops * numDays) pool = all;
   const score = ({ item }) => {
     const base = item.active
       ? (kindDirectMatch(item.kind, interests) ? 2.5 : -1) + (item.heritage ? 0.25 : 0) + popBoost(item)
-      : poiScore(item);
+      : poiScore(item) + (isMustSee(item) ? 0.6 : 0);
     return base + (kindDirectMatch(item.kind, interests) ? 0.75 : 0);
   };
   const ranked = [...pool].sort((a, b) => score(b) - score(a));

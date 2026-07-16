@@ -498,12 +498,14 @@ export function ShareIcon({ size = 15, className = '' }) {
   );
 }
 
-export function SlidersIcon({ size = 15, className = '' }) {
+/* Apple with a pulse line - deliberately unlike the filter/sliders glyphs,
+   which it used to be mistaken for in the mobile toolbar. */
+export function LifestyleIcon({ size = 15, className = '' }) {
   return (
     <Glyph size={size} className={className} label="Lifestyle settings">
-      <path d="M4 7.5h9M17 7.5h3M4 16.5h3M11 16.5h9" />
-      <circle cx="15" cy="7.5" r="2.2" />
-      <circle cx="9" cy="16.5" r="2.2" />
+      <path d="M15.1 7c2.4 0 4.2 2 4.2 4.8 0 3.9-2.8 8.4-5.3 8.4-.9 0-1.3-.55-2-.55s-1.1.55-2 .55c-2.5 0-5.3-4.5-5.3-8.4C4.7 9 6.5 7 8.9 7c1.3 0 2.1.7 3.1.7S13.8 7 15.1 7Z" />
+      <path d="M12 6.6c0-1.9 1.3-3.2 3.1-3.4 0 1.9-1.3 3.2-3.1 3.4Z" />
+      <path d="M7.4 13.6h1.9l1.2-2.4 1.8 4.6 1.3-2.2h2.9" />
     </Glyph>
   );
 }
@@ -523,6 +525,15 @@ export function DownloadIcon({ size = 15, className = '' }) {
     <Glyph size={size} className={className} label="Download">
       <path d="M12 4v10M7.5 10.5 12 15l4.5-4.5" />
       <path d="M4.5 18.5h15" />
+    </Glyph>
+  );
+}
+
+export function PencilIcon({ size = 15, className = '' }) {
+  return (
+    <Glyph size={size} className={className} label="Edit">
+      <path d="M4.5 19.5 5.3 16 16 5.3a1.8 1.8 0 0 1 2.6 0l.1.1a1.8 1.8 0 0 1 0 2.6L8 18.7l-3.5.8Z" />
+      <path d="M14.2 7.1l2.7 2.7" />
     </Glyph>
   );
 }

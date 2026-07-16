@@ -40,8 +40,6 @@ const GUEST_KEY = 'continent.guestMode.v1';
 // dismissed - it's onboarding, not a recurring notice.
 const MAP_GUIDE_KEY = 'continent.mapGuideDismissed.v1';
 
-// One-time notice that every flight price in the app is a Ryanair fare.
-const FARE_NOTICE_KEY = 'carta.fareNotice.v1';
 
 export default function App() {
   return (
@@ -177,14 +175,11 @@ function TravelApp() {
   // than pushing it down.
   const [mapGuideOpen, setMapGuideOpen] = useState(false);
 
-  // First visit: make it unmissable that flight prices are Ryanair fares only.
-  const [fareNoticeDismissed, setFareNoticeDismissed] = useState(
-    () => typeof window !== 'undefined' && localStorage.getItem(FARE_NOTICE_KEY) === '1'
-  );
-  const dismissFareNotice = () => {
-    localStorage.setItem(FARE_NOTICE_KEY, '1');
-    setFareNoticeDismissed(true);
-  };
+  // Every open: make it unmissable that Carta is built for budget travellers
+  // flying Ryanair, and that other airlines aren't in the data yet. Deliberately
+  // not persisted - it should greet every visit, not just the first.
+  const [fareNoticeDismissed, setFareNoticeDismissed] = useState(false);
+  const dismissFareNotice = () => setFareNoticeDismissed(true);
 
   // Let the user collapse the destinations list to give the map the full width.
   // On phones (<=768px) it starts collapsed so the map opens as big as possible;
@@ -427,18 +422,18 @@ function TravelApp() {
         )}
       </div>
 
-      {/* First visit: the fares-source notice, front and centre over the map. */}
+      {/* Every open: the fares-source notice, front and centre over the map. */}
       {activeTab === 'map' && !fareNoticeDismissed && (
         <div className="guide-overlay fare-notice-overlay" onClick={dismissFareNotice}>
           <div className="guide-modal fare-notice" onClick={(e) => e.stopPropagation()}>
-            <h2 className="guide-title">Ryanair fares only</h2>
+            <h2 className="guide-title">Built for budget travel on Ryanair</h2>
             <p className="fare-notice-text">
-              Every flight price in Carta is a real stored <b>Ryanair</b> fare from your
-              chosen departure airport. No other airlines are included.
+              Carta is made for budget travellers flying <b>Ryanair</b>: every flight
+              price is a real stored Ryanair fare from your chosen departure airport.
             </p>
             <p className="fare-notice-text">
-              Change the departure airport any time with the <b>From</b> picker in the top bar.
-              Anyone in Europe can plan from their own airport.
+              There is no data for other airlines yet, so places without a Ryanair
+              route show as drive-only or unreachable.
             </p>
             <button className="guide-next fare-notice-btn" onClick={dismissFareNotice}>Got it</button>
           </div>
@@ -604,6 +599,7 @@ function TravelApp() {
       {savedTripsOpen && (
         <div onClick={(e) => e.stopPropagation()}>
           <SavedTripsPanel
+            data={data}
             onClose={() => setSavedTripsOpen(false)}
             onLoadTrip={(trip) => {
               handleLoadTrip(trip);

@@ -3666,5 +3666,1114 @@
   "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Pont_Besal%C3%BA_1.jpg/960px-Pont_Besal%C3%BA_1.jpg",
   "original": "https://upload.wikimedia.org/wikipedia/commons/f/f6/Pont_Besal%C3%BA_1.jpg",
   "source": "wikipedia"
- }
+ },
+ "gem:cadiz": {
+  "title": "Cádiz",
+  "url": "https://en.wikipedia.org/wiki/C%C3%A1diz",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/3/35/Cadiz_aerea.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/3/35/Cadiz_aerea.jpg",
+  "source": "wikipedia"
+ },
+ "gem:guimaraes": {
+  "title": "Guimarães",
+  "url": "https://en.wikipedia.org/wiki/Guimar%C3%A3es",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/54/Guimaraes-Portugal.jpg/960px-Guimaraes-Portugal.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/5/54/Guimaraes-Portugal.jpg",
+  "source": "wikipedia"
+ },
+ "gem:avila": {
+  "title": "Ávila",
+  "url": "https://en.wikipedia.org/wiki/%C3%81vila",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/32/Avila_001.jpg/960px-Avila_001.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/3/32/Avila_001.jpg",
+  "source": "wikipedia"
+ },
+ "gem:caceres": {
+  "title": "Cáceres, Spain",
+  "url": "https://en.wikipedia.org/wiki/C%C3%A1ceres,_Spain",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Caceres_13_1_%286624238327%29.jpg/960px-Caceres_13_1_%286624238327%29.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/e/e7/Caceres_13_1_%286624238327%29.jpg",
+  "source": "wikipedia"
+ },
+ "gem:tarragona": {
+  "title": "Tarragona",
+  "url": "https://en.wikipedia.org/wiki/Tarragona",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Roman_circus_of_Tarraco_01.jpg/960px-Roman_circus_of_Tarraco_01.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/f/f2/Roman_circus_of_Tarraco_01.jpg",
+  "source": "wikipedia"
+ },
+ "gem:braga": {
+  "title": "Braga",
+  "url": "https://en.wikipedia.org/wiki/Braga",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/Braga_Panorama.jpg/960px-Braga_Panorama.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/d/d1/Braga_Panorama.jpg",
+  "source": "wikipedia"
+ },
+ "gem:cudillero": {
+  "title": "Cudillero",
+  "url": "https://en.wikipedia.org/wiki/Cudillero",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Cudillero_Asturias.jpg/960px-Cudillero_Asturias.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/c/cd/Cudillero_Asturias.jpg",
+  "source": "wikipedia"
+ },
+ "gem:soller": {
+  "title": "Sóller",
+  "url": "https://en.wikipedia.org/wiki/S%C3%B3ller",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/06/Vall_de_Soller.jpg/960px-Vall_de_Soller.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/0/06/Vall_de_Soller.jpg",
+  "source": "wikipedia"
+ },
+ "gem:hondarribia": {
+  "title": "Hondarribia",
+  "url": "https://en.wikipedia.org/wiki/Hondarribia",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/75/Fontarrabie_depuis_Hendaye_2012.jpg/960px-Fontarrabie_depuis_Hendaye_2012.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/7/75/Fontarrabie_depuis_Hendaye_2012.jpg",
+  "source": "wikipedia"
+ },
+ "gem:merida": {
+  "title": "Mérida, Spain",
+  "url": "https://en.wikipedia.org/wiki/M%C3%A9rida,_Spain",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/25/Temple_of_Diana_in_M%C3%A9rida.jpg/960px-Temple_of_Diana_in_M%C3%A9rida.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/2/25/Temple_of_Diana_in_M%C3%A9rida.jpg",
+  "source": "wikipedia"
+ },
+ "gem:santillana-del-mar": {
+  "title": "Santillana del Mar",
+  "url": "https://en.wikipedia.org/wiki/Santillana_del_Mar",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/a/a9/ColegiataSantillana-1.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/a/a9/ColegiataSantillana-1.jpg",
+  "source": "wikipedia"
+ },
+ "gem:vejer-de-la-frontera": {
+  "title": "Vejer de la Frontera",
+  "url": "https://en.wikipedia.org/wiki/Vejer_de_la_Frontera",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/5/56/Map_of_Vejer_de_la_Frontera_%28C%C3%A1diz%29.png",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/5/56/Map_of_Vejer_de_la_Frontera_%28C%C3%A1diz%29.png",
+  "source": "wikipedia"
+ },
+ "gem:cangas-de-onis": {
+  "title": "Cangas de Onís",
+  "url": "https://en.wikipedia.org/wiki/Cangas_de_On%C3%ADs",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Roman_bridge_at_Cangas_1_com.jpg/960px-Roman_bridge_at_Cangas_1_com.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/0/00/Roman_bridge_at_Cangas_1_com.jpg",
+  "source": "wikipedia"
+ },
+ "gem:monsanto": {
+  "title": "Monsanto (Idanha-a-Nova)",
+  "url": "https://en.wikipedia.org/wiki/Monsanto_(Idanha-a-Nova)",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Monsanto_April_2015-7.jpg/960px-Monsanto_April_2015-7.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/c/c7/Monsanto_April_2015-7.jpg",
+  "source": "wikipedia"
+ },
+ "gem:ericeira": {
+  "title": "Ericeira",
+  "url": "https://en.wikipedia.org/wiki/Ericeira",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Vista_da_Ericeira.jpg/960px-Vista_da_Ericeira.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/c/cc/Vista_da_Ericeira.jpg",
+  "source": "wikipedia"
+ },
+ "gem:setenil-de-las-bodegas": {
+  "title": "Setenil de las Bodegas",
+  "url": "https://en.wikipedia.org/wiki/Setenil_de_las_Bodegas",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/Setenil_de_las_Bodegas_-_Wallpaper.jpg/960px-Setenil_de_las_Bodegas_-_Wallpaper.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/6/6d/Setenil_de_las_Bodegas_-_Wallpaper.jpg",
+  "source": "wikipedia"
+ },
+ "gem:sitges": {
+  "title": "Sitges",
+  "url": "https://en.wikipedia.org/wiki/Sitges",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/19/Sitges_-_Ansicht_4.jpg/960px-Sitges_-_Ansicht_4.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/1/19/Sitges_-_Ansicht_4.jpg",
+  "source": "wikipedia"
+ },
+ "gem:cartagena": {
+  "title": "Cartagena, Spain",
+  "url": "https://en.wikipedia.org/wiki/Cartagena,_Spain",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/a/ab/Cartagena_palacio_consistorial5.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/a/ab/Cartagena_palacio_consistorial5.jpg",
+  "source": "wikipedia"
+ },
+ "gem:cambados": {
+  "title": "Cambados",
+  "url": "https://en.wikipedia.org/wiki/Cambados",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/8/8a/Situacion_Cambados.PNG",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/8/8a/Situacion_Cambados.PNG",
+  "source": "wikipedia"
+ },
+ "gem:elvas": {
+  "title": "Elvas",
+  "url": "https://en.wikipedia.org/wiki/Elvas",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/31202-Elvas_%2848749062731%29.jpg/960px-31202-Elvas_%2848749062731%29.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/1/1b/31202-Elvas_%2848749062731%29.jpg",
+  "source": "wikipedia"
+ },
+ "gem:viana-do-castelo": {
+  "title": "Viana do Castelo",
+  "url": "https://en.wikipedia.org/wiki/Viana_do_Castelo",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Viana_do_Castelo_%2815727153460%29.jpg/960px-Viana_do_Castelo_%2815727153460%29.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/5/5a/Viana_do_Castelo_%2815727153460%29.jpg",
+  "source": "wikipedia"
+ },
+ "gem:riquewihr": {
+  "title": "Riquewihr",
+  "url": "https://en.wikipedia.org/wiki/Riquewihr",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/0_Riquewihr_%281%29.jpg/960px-0_Riquewihr_%281%29.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/f/f2/0_Riquewihr_%281%29.jpg",
+  "source": "wikipedia"
+ },
+ "gem:saint-paul-de-vence": {
+  "title": "Saint-Paul-de-Vence",
+  "url": "https://en.wikipedia.org/wiki/Saint-Paul-de-Vence",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a1/France-002626B_-_Saint-Paul-de-Vence_%2815745144948%29.jpg/960px-France-002626B_-_Saint-Paul-de-Vence_%2815745144948%29.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/a/a1/France-002626B_-_Saint-Paul-de-Vence_%2815745144948%29.jpg",
+  "source": "wikipedia"
+ },
+ "gem:rocamadour": {
+  "title": "Rocamadour",
+  "url": "https://en.wikipedia.org/wiki/Rocamadour",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Rocamadour%2C_Lot%2C_Midi-Pyr%C3%A9n%C3%A9es%2C_france.jpg/960px-Rocamadour%2C_Lot%2C_Midi-Pyr%C3%A9n%C3%A9es%2C_france.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/a/a2/Rocamadour%2C_Lot%2C_Midi-Pyr%C3%A9n%C3%A9es%2C_france.jpg",
+  "source": "wikipedia"
+ },
+ "gem:saint-emilion": {
+  "title": "Saint-Émilion",
+  "url": "https://en.wikipedia.org/wiki/Saint-%C3%89milion",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/1_Saint-%C3%89milion_aerial_pano_2016.jpg/960px-1_Saint-%C3%89milion_aerial_pano_2016.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/e/ec/1_Saint-%C3%89milion_aerial_pano_2016.jpg",
+  "source": "wikipedia"
+ },
+ "gem:sarlat-la-caneda": {
+  "title": "Sarlat-la-Canéda",
+  "url": "https://en.wikipedia.org/wiki/Sarlat-la-Can%C3%A9da",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/1_sarlat_la_caneda_2016.jpg/960px-1_sarlat_la_caneda_2016.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/4/4c/1_sarlat_la_caneda_2016.jpg",
+  "source": "wikipedia"
+ },
+ "gem:the-hague": {
+  "title": "The Hague",
+  "url": "https://en.wikipedia.org/wiki/The_Hague",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/ce/Den_Haag_Skyline_1.jpg/960px-Den_Haag_Skyline_1.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/c/ce/Den_Haag_Skyline_1.jpg",
+  "source": "wikipedia"
+ },
+ "gem:collioure": {
+  "title": "Collioure",
+  "url": "https://en.wikipedia.org/wiki/Collioure",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/Collioure_002.jpg/960px-Collioure_002.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/1/14/Collioure_002.jpg",
+  "source": "wikipedia"
+ },
+ "gem:eguisheim": {
+  "title": "Eguisheim",
+  "url": "https://en.wikipedia.org/wiki/Eguisheim",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/33/Street-in-Eguisheim.jpg/960px-Street-in-Eguisheim.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/3/33/Street-in-Eguisheim.jpg",
+  "source": "wikipedia"
+ },
+ "gem:arles": {
+  "title": "Arles",
+  "url": "https://en.wikipedia.org/wiki/Arles",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/1_arles_france_2016.jpg/960px-1_arles_france_2016.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/3/3c/1_arles_france_2016.jpg",
+  "source": "wikipedia"
+ },
+ "gem:beaune": {
+  "title": "Beaune",
+  "url": "https://en.wikipedia.org/wiki/Beaune",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/34/Beaune_-_H%C3%B4tel-Dieu_-_Cour_-_02.jpg/960px-Beaune_-_H%C3%B4tel-Dieu_-_Cour_-_02.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/3/34/Beaune_-_H%C3%B4tel-Dieu_-_Cour_-_02.jpg",
+  "source": "wikipedia"
+ },
+ "gem:dinan": {
+  "title": "Dinan",
+  "url": "https://en.wikipedia.org/wiki/Dinan",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Dinan_on_the_banks_of_the_Rance.jpg/960px-Dinan_on_the_banks_of_the_Rance.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/e/e4/Dinan_on_the_banks_of_the_Rance.jpg",
+  "source": "wikipedia"
+ },
+ "gem:ile-de-re": {
+  "title": "Île de Ré",
+  "url": "https://en.wikipedia.org/wiki/%C3%8Ele_de_R%C3%A9",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/d/d8/Ile-de-Re_vue_du_ciel.JPG",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/d/d8/Ile-de-Re_vue_du_ciel.JPG",
+  "source": "wikipedia"
+ },
+ "gem:albi": {
+  "title": "Albi",
+  "url": "https://en.wikipedia.org/wiki/Albi",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d2/%28Albi%29_North_views_of_the_Ste_C%C3%A9cile_Cathedral_and_the_Old_Bridge.jpg/960px-%28Albi%29_North_views_of_the_Ste_C%C3%A9cile_Cathedral_and_the_Old_Bridge.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/d/d2/%28Albi%29_North_views_of_the_Ste_C%C3%A9cile_Cathedral_and_the_Old_Bridge.jpg",
+  "source": "wikipedia"
+ },
+ "gem:moustiers-sainte-marie": {
+  "title": "Moustiers-Sainte-Marie",
+  "url": "https://en.wikipedia.org/wiki/Moustiers-Sainte-Marie",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/Moustiers_Sainte_Marie_1.jpg/960px-Moustiers_Sainte_Marie_1.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/8/80/Moustiers_Sainte_Marie_1.jpg",
+  "source": "wikipedia"
+ },
+ "gem:durbuy": {
+  "title": "Durbuy",
+  "url": "https://en.wikipedia.org/wiki/Durbuy",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/Durbuy_vu_du_jardin_de_l%27anticlinal.jpg/960px-Durbuy_vu_du_jardin_de_l%27anticlinal.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/1/12/Durbuy_vu_du_jardin_de_l%27anticlinal.jpg",
+  "source": "wikipedia"
+ },
+ "gem:s-hertogenbosch": {
+  "title": "'s-Hertogenbosch",
+  "url": "https://en.wikipedia.org/wiki/%27s-Hertogenbosch",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f1/St._Jans_cathedral_%27s-Hertogenbosch.jpg/960px-St._Jans_cathedral_%27s-Hertogenbosch.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/f/f1/St._Jans_cathedral_%27s-Hertogenbosch.jpg",
+  "source": "wikipedia"
+ },
+ "gem:conques": {
+  "title": "Conques",
+  "url": "https://en.wikipedia.org/wiki/Conques",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Abbatiale_de_Conques_et_la_ville.JPG/960px-Abbatiale_de_Conques_et_la_ville.JPG",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/9/9b/Abbatiale_de_Conques_et_la_ville.JPG",
+  "source": "wikipedia"
+ },
+ "gem:arcachon": {
+  "title": "Arcachon",
+  "url": "https://en.wikipedia.org/wiki/Arcachon",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/ArcachonPlage.JPG/960px-ArcachonPlage.JPG",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/9/95/ArcachonPlage.JPG",
+  "source": "wikipedia"
+ },
+ "gem:namur": {
+  "title": "Namur",
+  "url": "https://en.wikipedia.org/wiki/Namur",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1d/Namur_Belgium_Old-town-01.jpg/960px-Namur_Belgium_Old-town-01.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/1/1d/Namur_Belgium_Old-town-01.jpg",
+  "source": "wikipedia"
+ },
+ "gem:valkenburg": {
+  "title": "Valkenburg aan de Geul",
+  "url": "https://en.wikipedia.org/wiki/Valkenburg_aan_de_Geul",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Valkenburg%2C_Grotestraat08.jpg/960px-Valkenburg%2C_Grotestraat08.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/0/0a/Valkenburg%2C_Grotestraat08.jpg",
+  "source": "wikipedia"
+ },
+ "gem:gouda": {
+  "title": "Gouda, South Holland",
+  "url": "https://en.wikipedia.org/wiki/Gouda,_South_Holland",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/76/13-06-27-gouda-by-RalfR-054.jpg/960px-13-06-27-gouda-by-RalfR-054.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/7/76/13-06-27-gouda-by-RalfR-054.jpg",
+  "source": "wikipedia"
+ },
+ "gem:esch-sur-sure": {
+  "title": "Esch-sur-Sûre",
+  "url": "https://en.wikipedia.org/wiki/Esch-sur-S%C3%BBre",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/LUX_Esch-Sauer_052_2016.jpg/960px-LUX_Esch-Sauer_052_2016.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/6/68/LUX_Esch-Sauer_052_2016.jpg",
+  "source": "wikipedia"
+ },
+ "gem:lucca": {
+  "title": "Lucca",
+  "url": "https://en.wikipedia.org/wiki/Lucca",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Italy_-_Lucca_-_2.jpg/960px-Italy_-_Lucca_-_2.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/7/7e/Italy_-_Lucca_-_2.jpg",
+  "source": "wikipedia"
+ },
+ "gem:syracuse": {
+  "title": "Syracuse, Sicily",
+  "url": "https://en.wikipedia.org/wiki/Syracuse,_Sicily",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/34/Veduta_aerea_di_Siracusa_e_con_l%27Etna_sullo_sfondo_%28Foto_di_Angelo_Bonomo%29.jpg/960px-Veduta_aerea_di_Siracusa_e_con_l%27Etna_sullo_sfondo_%28Foto_di_Angelo_Bonomo%29.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/3/34/Veduta_aerea_di_Siracusa_e_con_l%27Etna_sullo_sfondo_%28Foto_di_Angelo_Bonomo%29.jpg",
+  "source": "wikipedia"
+ },
+ "gem:freiburg": {
+  "title": "Freiburg im Breisgau",
+  "url": "https://en.wikipedia.org/wiki/Freiburg_im_Breisgau",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Freiburg_im_Breisgau_M%C3%BCnster.jpg/960px-Freiburg_im_Breisgau_M%C3%BCnster.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/5/53/Freiburg_im_Breisgau_M%C3%BCnster.jpg",
+  "source": "wikipedia"
+ },
+ "gem:berchtesgaden": {
+  "title": "Berchtesgaden",
+  "url": "https://en.wikipedia.org/wiki/Berchtesgaden",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/b/b2/The_Watzman_8-15-2010.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/b/b2/The_Watzman_8-15-2010.jpg",
+  "source": "wikipedia"
+ },
+ "gem:cefalu": {
+  "title": "Cefalù",
+  "url": "https://en.wikipedia.org/wiki/Cefal%C3%B9",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Cefalu_View_0832.jpg/960px-Cefalu_View_0832.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/e/ea/Cefalu_View_0832.jpg",
+  "source": "wikipedia"
+ },
+ "gem:noto": {
+  "title": "Noto",
+  "url": "https://en.wikipedia.org/wiki/Noto",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Noto_BW_2025-04-26_10-12-43_%28cropped%29.jpg/960px-Noto_BW_2025-04-26_10-12-43_%28cropped%29.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/8/8c/Noto_BW_2025-04-26_10-12-43_%28cropped%29.jpg",
+  "source": "wikipedia"
+ },
+ "gem:ostuni": {
+  "title": "Ostuni",
+  "url": "https://en.wikipedia.org/wiki/Ostuni",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/Ostuni_col_drone.jpg/960px-Ostuni_col_drone.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/5/5d/Ostuni_col_drone.jpg",
+  "source": "wikipedia"
+ },
+ "gem:trier": {
+  "title": "Trier",
+  "url": "https://en.wikipedia.org/wiki/Trier",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b1/Trier-Blick-vom_Weishaus.JPG/960px-Trier-Blick-vom_Weishaus.JPG",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/b/b1/Trier-Blick-vom_Weishaus.JPG",
+  "source": "wikipedia"
+ },
+ "gem:gruyeres": {
+  "title": "Gruyères",
+  "url": "https://en.wikipedia.org/wiki/Gruy%C3%A8res",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/60/Gruy%C3%A8res_et_sa_cit%C3%A9_m%C3%A9di%C3%A9vale.jpg/960px-Gruy%C3%A8res_et_sa_cit%C3%A9_m%C3%A9di%C3%A9vale.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/6/60/Gruy%C3%A8res_et_sa_cit%C3%A9_m%C3%A9di%C3%A9vale.jpg",
+  "source": "wikipedia"
+ },
+ "gem:procida": {
+  "title": "Procida",
+  "url": "https://en.wikipedia.org/wiki/Procida",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/Corricella_2016%2C_Procida_%282%29.jpg/960px-Corricella_2016%2C_Procida_%282%29.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/a/ad/Corricella_2016%2C_Procida_%282%29.jpg",
+  "source": "wikipedia"
+ },
+ "gem:gorlitz": {
+  "title": "Görlitz",
+  "url": "https://en.wikipedia.org/wiki/G%C3%B6rlitz",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/99/MKr361484_St._Peter_und_Paul_%28G%C3%B6rlitz%29.jpg/960px-MKr361484_St._Peter_und_Paul_%28G%C3%B6rlitz%29.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/9/99/MKr361484_St._Peter_und_Paul_%28G%C3%B6rlitz%29.jpg",
+  "source": "wikipedia"
+ },
+ "gem:modena": {
+  "title": "Modena",
+  "url": "https://en.wikipedia.org/wiki/Modena",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/8/8d/Modena_Motor_Valley_Fest.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/8/8d/Modena_Motor_Valley_Fest.jpg",
+  "source": "wikipedia"
+ },
+ "gem:kitzbuhel": {
+  "title": "Kitzbühel",
+  "url": "https://en.wikipedia.org/wiki/Kitzb%C3%BChel",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/06/Kitzbuehel03.JPG/960px-Kitzbuehel03.JPG",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/0/06/Kitzbuehel03.JPG",
+  "source": "wikipedia"
+ },
+ "gem:cochem": {
+  "title": "Cochem",
+  "url": "https://en.wikipedia.org/wiki/Cochem",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/42/Cochem_and_Reichsburg.jpg/960px-Cochem_and_Reichsburg.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/4/42/Cochem_and_Reichsburg.jpg",
+  "source": "wikipedia"
+ },
+ "gem:stein-am-rhein": {
+  "title": "Stein am Rhein",
+  "url": "https://en.wikipedia.org/wiki/Stein_am_Rhein",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/84/Stein_am_Rhein_mit_Kloster_St._Georgen_und_Burg_Hohenklingen-20111009.jpg/960px-Stein_am_Rhein_mit_Kloster_St._Georgen_und_Burg_Hohenklingen-20111009.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/8/84/Stein_am_Rhein_mit_Kloster_St._Georgen_und_Burg_Hohenklingen-20111009.jpg",
+  "source": "wikipedia"
+ },
+ "gem:kandersteg": {
+  "title": "Kandersteg",
+  "url": "https://en.wikipedia.org/wiki/Kandersteg",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/Kandersteg_Church.jpg/960px-Kandersteg_Church.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/2/2b/Kandersteg_Church.jpg",
+  "source": "wikipedia"
+ },
+ "gem:ragusa": {
+  "title": "Ragusa, Sicily",
+  "url": "https://en.wikipedia.org/wiki/Ragusa,_Sicily",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dc/Ragusa_Ibla%2C_Sicily.jpg/960px-Ragusa_Ibla%2C_Sicily.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/d/dc/Ragusa_Ibla%2C_Sicily.jpg",
+  "source": "wikipedia"
+ },
+ "gem:mantua": {
+  "title": "Mantua",
+  "url": "https://en.wikipedia.org/wiki/Mantua",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/Dsc_1150_Mantua.jpg/960px-Dsc_1150_Mantua.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/c/c8/Dsc_1150_Mantua.jpg",
+  "source": "wikipedia"
+ },
+ "gem:lindau": {
+  "title": "Lindau",
+  "url": "https://en.wikipedia.org/wiki/Lindau",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Lindau_Insel_Luftbild3.jpg/960px-Lindau_Insel_Luftbild3.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/f/f2/Lindau_Insel_Luftbild3.jpg",
+  "source": "wikipedia"
+ },
+ "gem:bad-gastein": {
+  "title": "Bad Gastein",
+  "url": "https://en.wikipedia.org/wiki/Bad_Gastein",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/37/Bad_Gastein_Centre_1997-02-01.jpg/960px-Bad_Gastein_Centre_1997-02-01.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/3/37/Bad_Gastein_Centre_1997-02-01.jpg",
+  "source": "wikipedia"
+ },
+ "gem:dinkelsbuhl": {
+  "title": "Dinkelsbühl",
+  "url": "https://en.wikipedia.org/wiki/Dinkelsb%C3%BChl",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/Dinkelsbuehl_Kirchturm_West.jpg/960px-Dinkelsbuehl_Kirchturm_West.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/5/5b/Dinkelsbuehl_Kirchturm_West.jpg",
+  "source": "wikipedia"
+ },
+ "gem:erice": {
+  "title": "Erice",
+  "url": "https://en.wikipedia.org/wiki/Erice",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/c/cd/Erice_-_Stefano_Pannucci.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/c/cd/Erice_-_Stefano_Pannucci.jpg",
+  "source": "wikipedia"
+ },
+ "gem:civita-di-bagnoregio": {
+  "title": "Civita di Bagnoregio",
+  "url": "https://en.wikipedia.org/wiki/Civita_di_Bagnoregio",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/Civita_%28Bagnoregio%29_-_Panorama.jpg/960px-Civita_%28Bagnoregio%29_-_Panorama.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/4/4a/Civita_%28Bagnoregio%29_-_Panorama.jpg",
+  "source": "wikipedia"
+ },
+ "gem:camogli": {
+  "title": "Camogli",
+  "url": "https://en.wikipedia.org/wiki/Camogli",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a3/Seafront_of_Camogli%2C_Liguria%2C_Italy.jpg/960px-Seafront_of_Camogli%2C_Liguria%2C_Italy.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/a/a3/Seafront_of_Camogli%2C_Liguria%2C_Italy.jpg",
+  "source": "wikipedia"
+ },
+ "gem:ascona": {
+  "title": "Ascona",
+  "url": "https://en.wikipedia.org/wiki/Ascona",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e9/Ascona_IMG_1646.jpg/960px-Ascona_IMG_1646.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/e/e9/Ascona_IMG_1646.jpg",
+  "source": "wikipedia"
+ },
+ "gem:tubingen": {
+  "title": "Tübingen",
+  "url": "https://en.wikipedia.org/wiki/T%C3%BCbingen",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/20/Altstadt-tuebingen-1.jpg/960px-Altstadt-tuebingen-1.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/2/20/Altstadt-tuebingen-1.jpg",
+  "source": "wikipedia"
+ },
+ "gem:alpbach": {
+  "title": "Alpbach",
+  "url": "https://en.wikipedia.org/wiki/Alpbach",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/9/90/Alpbach_sommer.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/9/90/Alpbach_sommer.jpg",
+  "source": "wikipedia"
+ },
+ "gem:ortisei": {
+  "title": "Urtijëi",
+  "url": "https://en.wikipedia.org/wiki/Urtij%C3%ABi",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/02/Urtij%C3%ABi_cun_l_Sela_Y_Saslonch_da_Tlesura.jpg/960px-Urtij%C3%ABi_cun_l_Sela_Y_Saslonch_da_Tlesura.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/0/02/Urtij%C3%ABi_cun_l_Sela_Y_Saslonch_da_Tlesura.jpg",
+  "source": "wikipedia"
+ },
+ "gem:marsaxlokk": {
+  "title": "Marsaxlokk",
+  "url": "https://en.wikipedia.org/wiki/Marsaxlokk",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Marsaxlokk_montage.png/960px-Marsaxlokk_montage.png",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/3/3a/Marsaxlokk_montage.png",
+  "source": "wikipedia"
+ },
+ "gem:flam": {
+  "title": "Flåm",
+  "url": "https://en.wikipedia.org/wiki/Fl%C3%A5m",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/Aurlandsfjorden_fr%C3%A5_Sn%C3%B8vegen.jpg/960px-Aurlandsfjorden_fr%C3%A5_Sn%C3%B8vegen.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/a/a9/Aurlandsfjorden_fr%C3%A5_Sn%C3%B8vegen.jpg",
+  "source": "wikipedia"
+ },
+ "gem:gudhjem": {
+  "title": "Gudhjem",
+  "url": "https://en.wikipedia.org/wiki/Gudhjem",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f1/Gudhjem_view_asv2024-07_img4.jpg/960px-Gudhjem_view_asv2024-07_img4.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/f/f1/Gudhjem_view_asv2024-07_img4.jpg",
+  "source": "wikipedia"
+ },
+ "gem:aeroskobing": {
+  "title": "Ærøskøbing",
+  "url": "https://en.wikipedia.org/wiki/%C3%86r%C3%B8sk%C3%B8bing",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/61/DNK_Aeroskobing_Gyden_01.jpg/960px-DNK_Aeroskobing_Gyden_01.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/6/61/DNK_Aeroskobing_Gyden_01.jpg",
+  "source": "wikipedia"
+ },
+ "gem:roros": null,
+ "gem:senja": {
+  "title": "Senja",
+  "url": "https://en.wikipedia.org/wiki/Senja",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/S%C3%B6rreisa_Lenvik_IMG_4917_senja_solbergfjorden_reisfjorden.JPG/960px-S%C3%B6rreisa_Lenvik_IMG_4917_senja_solbergfjorden_reisfjorden.JPG",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/b/b9/S%C3%B6rreisa_Lenvik_IMG_4917_senja_solbergfjorden_reisfjorden.JPG",
+  "source": "wikipedia"
+ },
+ "gem:husavik": {
+  "title": "Húsavík",
+  "url": "https://en.wikipedia.org/wiki/H%C3%BAsav%C3%ADk",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/b/be/Nordurthing_map.png",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/b/be/Nordurthing_map.png",
+  "source": "wikipedia"
+ },
+ "gem:vestmannaeyjar": {
+  "title": "Vestmannaeyjar",
+  "url": "https://en.wikipedia.org/wiki/Vestmannaeyjar",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/Vestmannaeyjar018.JPG/960px-Vestmannaeyjar018.JPG",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/6/66/Vestmannaeyjar018.JPG",
+  "source": "wikipedia"
+ },
+ "gem:fjallbacka": {
+  "title": "Fjällbacka",
+  "url": "https://en.wikipedia.org/wiki/Fj%C3%A4llbacka",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Fj%C3%A4llbacka_von_oben.jpg/960px-Fj%C3%A4llbacka_von_oben.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/2/2e/Fj%C3%A4llbacka_von_oben.jpg",
+  "source": "wikipedia"
+ },
+ "gem:ystad": {
+  "title": "Ystad",
+  "url": "https://en.wikipedia.org/wiki/Ystad",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/Ystad_stortorget.jpg/960px-Ystad_stortorget.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/d/d1/Ystad_stortorget.jpg",
+  "source": "wikipedia"
+ },
+ "gem:klaipeda": {
+  "title": "Klaipėda",
+  "url": "https://en.wikipedia.org/wiki/Klaip%C4%97da",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/03/Quite_summer_evening_in_the_port_city_Klaipeda.jpg/960px-Quite_summer_evening_in_the_port_city_Klaipeda.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/0/03/Quite_summer_evening_in_the_port_city_Klaipeda.jpg",
+  "source": "wikipedia"
+ },
+ "gem:naantali": {
+  "title": "Naantali",
+  "url": "https://en.wikipedia.org/wiki/Naantali",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c6/Kuvakollaasi_Naantalista.jpg/960px-Kuvakollaasi_Naantalista.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/c/c6/Kuvakollaasi_Naantalista.jpg",
+  "source": "wikipedia"
+ },
+ "gem:klaksvik": {
+  "title": "Klaksvík",
+  "url": "https://en.wikipedia.org/wiki/Klaksv%C3%ADk",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Faroe_Islands_F%C3%B8royar_F%C3%A6r%C3%B8erne_Wyspy_Owcze_2019_%281%29.jpg/960px-Faroe_Islands_F%C3%B8royar_F%C3%A6r%C3%B8erne_Wyspy_Owcze_2019_%281%29.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/1/15/Faroe_Islands_F%C3%B8royar_F%C3%A6r%C3%B8erne_Wyspy_Owcze_2019_%281%29.jpg",
+  "source": "wikipedia"
+ },
+ "gem:odda": {
+  "title": "Odda (town)",
+  "url": "https://en.wikipedia.org/wiki/Odda_(town)",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/ODDA.JPG/960px-ODDA.JPG",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/b/b7/ODDA.JPG",
+  "source": "wikipedia"
+ },
+ "gem:viljandi": {
+  "title": "Viljandi",
+  "url": "https://en.wikipedia.org/wiki/Viljandi",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c4/Viljandi_raekoda_2014.jpg/960px-Viljandi_raekoda_2014.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/c/c4/Viljandi_raekoda_2014.jpg",
+  "source": "wikipedia"
+ },
+ "gem:hanko": {
+  "title": "Hanko, Finland",
+  "url": "https://en.wikipedia.org/wiki/Hanko,_Finland",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/07/Eastern_Harbour_coastline_Hanko.jpg/960px-Eastern_Harbour_coastline_Hanko.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/0/07/Eastern_Harbour_coastline_Hanko.jpg",
+  "source": "wikipedia"
+ },
+ "gem:marstrand": {
+  "title": "Marstrand",
+  "url": "https://en.wikipedia.org/wiki/Marstrand",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f1/Marstrand_Grand_Hotel_Festung.JPG/960px-Marstrand_Grand_Hotel_Festung.JPG",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/f/f1/Marstrand_Grand_Hotel_Festung.JPG",
+  "source": "wikipedia"
+ },
+ "gem:dragor": {
+  "title": "Dragør",
+  "url": "https://en.wikipedia.org/wiki/Drag%C3%B8r",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/Drag%C3%B8r_strandhotel.jpg/960px-Drag%C3%B8r_strandhotel.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/4/4f/Drag%C3%B8r_strandhotel.jpg",
+  "source": "wikipedia"
+ },
+ "gem:ventspils": {
+  "title": "Ventspils",
+  "url": "https://en.wikipedia.org/wiki/Ventspils",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Ventspils_viduslaiku_pils_2.jpg/960px-Ventspils_viduslaiku_pils_2.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/4/4c/Ventspils_viduslaiku_pils_2.jpg",
+  "source": "wikipedia"
+ },
+ "gem:torun": {
+  "title": "Toruń",
+  "url": "https://en.wikipedia.org/wiki/Toru%C5%84",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fc/Stare_Miasto%2C_Ratusz_Staromiejski_w_Toruniu.jpg/960px-Stare_Miasto%2C_Ratusz_Staromiejski_w_Toruniu.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/f/fc/Stare_Miasto%2C_Ratusz_Staromiejski_w_Toruniu.jpg",
+  "source": "wikipedia"
+ },
+ "gem:sinaia": {
+  "title": "Sinaia",
+  "url": "https://en.wikipedia.org/wiki/Sinaia",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Camil_Iamandescu-Castelul_Peles.jpg/960px-Camil_Iamandescu-Castelul_Peles.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/1/1b/Camil_Iamandescu-Castelul_Peles.jpg",
+  "source": "wikipedia"
+ },
+ "gem:sozopol": {
+  "title": "Sozopol",
+  "url": "https://en.wikipedia.org/wiki/Sozopol",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/Sozopol2.jpg/960px-Sozopol2.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/6/6c/Sozopol2.jpg",
+  "source": "wikipedia"
+ },
+ "gem:loket": {
+  "title": "Loket",
+  "url": "https://en.wikipedia.org/wiki/Loket",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/Loket_m%C4%9Bsto_s_hradem_%283%29.jpg/960px-Loket_m%C4%9Bsto_s_hradem_%283%29.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/4/4a/Loket_m%C4%9Bsto_s_hradem_%283%29.jpg",
+  "source": "wikipedia"
+ },
+ "gem:viscri": {
+  "title": "Bunești, Brașov",
+  "url": "https://en.wikipedia.org/wiki/Bune%C8%99ti,_Bra%C8%99ov",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Biserica_evanghelic%C4%83_din_Bune%C8%99ti.jpg/960px-Biserica_evanghelic%C4%83_din_Bune%C8%99ti.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/6/68/Biserica_evanghelic%C4%83_din_Bune%C8%99ti.jpg",
+  "source": "wikipedia"
+ },
+ "gem:zamosc": {
+  "title": "Zamość",
+  "url": "https://en.wikipedia.org/wiki/Zamo%C5%9B%C4%87",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/Zamojski_ratusz_2.jpg/960px-Zamojski_ratusz_2.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/b/b7/Zamojski_ratusz_2.jpg",
+  "source": "wikipedia"
+ },
+ "gem:sopron": {
+  "title": "Sopron",
+  "url": "https://en.wikipedia.org/wiki/Sopron",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/50/Storno-h%C3%A1z_T%C5%B1ztorony_%C3%A9s_V%C3%A1rosh%C3%A1za.jpg/960px-Storno-h%C3%A1z_T%C5%B1ztorony_%C3%A9s_V%C3%A1rosh%C3%A1za.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/5/50/Storno-h%C3%A1z_T%C5%B1ztorony_%C3%A9s_V%C3%A1rosh%C3%A1za.jpg",
+  "source": "wikipedia"
+ },
+ "gem:gura-humorului": {
+  "title": "Gura Humorului",
+  "url": "https://en.wikipedia.org/wiki/Gura_Humorului",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/92/Gura_Humorului_-_panoramio_%283%29.jpg/960px-Gura_Humorului_-_panoramio_%283%29.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/9/92/Gura_Humorului_-_panoramio_%283%29.jpg",
+  "source": "wikipedia"
+ },
+ "gem:kazimierz-dolny": {
+  "title": "Kazimierz Dolny",
+  "url": "https://en.wikipedia.org/wiki/Kazimierz_Dolny",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/96/Kazimierz_Dolny_20150518_6333.jpg/960px-Kazimierz_Dolny_20150518_6333.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/9/96/Kazimierz_Dolny_20150518_6333.jpg",
+  "source": "wikipedia"
+ },
+ "gem:litomysl": {
+  "title": "Litomyšl",
+  "url": "https://en.wikipedia.org/wiki/Litomy%C5%A1l",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d7/Zlat%C3%A1_Hv%C4%9Bzda_Litomy%C5%A1l_%2814%29.jpg/960px-Zlat%C3%A1_Hv%C4%9Bzda_Litomy%C5%A1l_%2814%29.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/d/d7/Zlat%C3%A1_Hv%C4%9Bzda_Litomy%C5%A1l_%2814%29.jpg",
+  "source": "wikipedia"
+ },
+ "gem:belogradchik": {
+  "title": "Belogradchik",
+  "url": "https://en.wikipedia.org/wiki/Belogradchik",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Belogradchik_E1.jpg/960px-Belogradchik_E1.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/2/29/Belogradchik_E1.jpg",
+  "source": "wikipedia"
+ },
+ "gem:esztergom": {
+  "title": "Esztergom",
+  "url": "https://en.wikipedia.org/wiki/Esztergom",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/EsztergomMontage2.JPG/960px-EsztergomMontage2.JPG",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/c/ca/EsztergomMontage2.JPG",
+  "source": "wikipedia"
+ },
+ "gem:alba-iulia": {
+  "title": "Alba Iulia",
+  "url": "https://en.wikipedia.org/wiki/Alba_Iulia",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Cetatea_Alba_Carolina_Ansamblul_fortifica%C8%9Biei_%E2%80%9ECetatea_Alba_Iulia_14.jpg/960px-Cetatea_Alba_Carolina_Ansamblul_fortifica%C8%9Biei_%E2%80%9ECetatea_Alba_Iulia_14.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/5/5c/Cetatea_Alba_Carolina_Ansamblul_fortifica%C8%9Biei_%E2%80%9ECetatea_Alba_Iulia_14.jpg",
+  "source": "wikipedia"
+ },
+ "gem:balchik": {
+  "title": "Balchik",
+  "url": "https://en.wikipedia.org/wiki/Balchik",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/Balchik_Bulgaria_aerial_photo_from_the_Black_Sea.jpg/960px-Balchik_Bulgaria_aerial_photo_from_the_Black_Sea.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/7/72/Balchik_Bulgaria_aerial_photo_from_the_Black_Sea.jpg",
+  "source": "wikipedia"
+ },
+ "gem:heviz": {
+  "title": "Hévíz",
+  "url": "https://en.wikipedia.org/wiki/H%C3%A9v%C3%ADz",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/2/2b/H%C3%A9v%C3%ADz.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/2/2b/H%C3%A9v%C3%ADz.jpg",
+  "source": "wikipedia"
+ },
+ "gem:kromeriz": {
+  "title": "Kroměříž",
+  "url": "https://en.wikipedia.org/wiki/Krom%C4%9B%C5%99%C3%AD%C5%BE",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Krom%C4%9B%C5%99%C3%AD%C5%BE._Ausblick_vom_Schlossturm_%2825007770188%29.jpg/960px-Krom%C4%9B%C5%99%C3%AD%C5%BE._Ausblick_vom_Schlossturm_%2825007770188%29.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/8/8a/Krom%C4%9B%C5%99%C3%AD%C5%BE._Ausblick_vom_Schlossturm_%2825007770188%29.jpg",
+  "source": "wikipedia"
+ },
+ "gem:trencin": {
+  "title": "Trenčín",
+  "url": "https://en.wikipedia.org/wiki/Tren%C4%8D%C3%ADn",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/d/d5/Trencin_hdr_001.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/d/d5/Trencin_hdr_001.jpg",
+  "source": "wikipedia"
+ },
+ "gem:sandomierz": {
+  "title": "Sandomierz",
+  "url": "https://en.wikipedia.org/wiki/Sandomierz",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8f/Sandomierz-Rathaus-4.jpg/960px-Sandomierz-Rathaus-4.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/8/8f/Sandomierz-Rathaus-4.jpg",
+  "source": "wikipedia"
+ },
+ "gem:sighetu-marmatiei": {
+  "title": "Sighetu Marmației",
+  "url": "https://en.wikipedia.org/wiki/Sighetu_Marma%C8%9Biei",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d6/Prim%C4%83ria_%C8%99i_Judec%C4%83toria_municipiului_Sighetu_Marma%C8%9Biei_%282023%29_-_img_01.jpg/960px-Prim%C4%83ria_%C8%99i_Judec%C4%83toria_municipiului_Sighetu_Marma%C8%9Biei_%282023%29_-_img_01.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/d/d6/Prim%C4%83ria_%C8%99i_Judec%C4%83toria_municipiului_Sighetu_Marma%C8%9Biei_%282023%29_-_img_01.jpg",
+  "source": "wikipedia"
+ },
+ "gem:cricova": {
+  "title": "Cricova",
+  "url": "https://en.wikipedia.org/wiki/Cricova",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e9/R4%2C_Moldova_-_panoramio_%284%29.jpg/960px-R4%2C_Moldova_-_panoramio_%284%29.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/e/e9/R4%2C_Moldova_-_panoramio_%284%29.jpg",
+  "source": "wikipedia"
+ },
+ "gem:trebinje": {
+  "title": "Trebinje",
+  "url": "https://en.wikipedia.org/wiki/Trebinje",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/5/56/Trebinje_Altstadt.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/5/56/Trebinje_Altstadt.jpg",
+  "source": "wikipedia"
+ },
+ "gem:symi": {
+  "title": "Symi",
+  "url": "https://en.wikipedia.org/wiki/Symi",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/Colorful_houses_symi.jpg/960px-Colorful_houses_symi.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/9/90/Colorful_houses_symi.jpg",
+  "source": "wikipedia"
+ },
+ "gem:vis": {
+  "title": "Vis (island)",
+  "url": "https://en.wikipedia.org/wiki/Vis_(island)",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/86/Marine_traffic_around_Vis_Island%2C_Croatia_%28Copernicus_2024-08-05%29.png/960px-Marine_traffic_around_Vis_Island%2C_Croatia_%28Copernicus_2024-08-05%29.png",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/8/86/Marine_traffic_around_Vis_Island%2C_Croatia_%28Copernicus_2024-08-05%29.png",
+  "source": "wikipedia"
+ },
+ "gem:folegandros": {
+  "title": "Folegandros",
+  "url": "https://en.wikipedia.org/wiki/Folegandros",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e2/Chora%2C_Folegandros%2C_Greece.jpg/960px-Chora%2C_Folegandros%2C_Greece.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/e/e2/Chora%2C_Folegandros%2C_Greece.jpg",
+  "source": "wikipedia"
+ },
+ "gem:parga": {
+  "title": "Parga",
+  "url": "https://en.wikipedia.org/wiki/Parga",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/50/Pargapanorama.jpg/960px-Pargapanorama.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/5/50/Pargapanorama.jpg",
+  "source": "wikipedia"
+ },
+ "gem:kardamyli": {
+  "title": "Kardamyli",
+  "url": "https://en.wikipedia.org/wiki/Kardamyli",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a8/Kadamyli_from_Proastio.jpg/960px-Kadamyli_from_Proastio.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/a/a8/Kadamyli_from_Proastio.jpg",
+  "source": "wikipedia"
+ },
+ "gem:papingo": {
+  "title": "Papingo",
+  "url": "https://en.wikipedia.org/wiki/Papingo",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Papigko%2CZagorochoria.jpg/960px-Papigko%2CZagorochoria.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/7/7e/Papigko%2CZagorochoria.jpg",
+  "source": "wikipedia"
+ },
+ "gem:ostrog-monastery": {
+  "title": "Ostrog Monastery",
+  "url": "https://en.wikipedia.org/wiki/Ostrog_Monastery",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/54/Monasterio_de_Ostrog%2C_Montenegro%2C_2014-04-14%2C_DD_14.JPG/960px-Monasterio_de_Ostrog%2C_Montenegro%2C_2014-04-14%2C_DD_14.JPG",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/5/54/Monasterio_de_Ostrog%2C_Montenegro%2C_2014-04-14%2C_DD_14.JPG",
+  "source": "wikipedia"
+ },
+ "gem:ston": {
+  "title": "Ston",
+  "url": "https://en.wikipedia.org/wiki/Ston",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/6/62/Ston_1.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/6/62/Ston_1.jpg",
+  "source": "wikipedia"
+ },
+ "gem:ptuj": {
+  "title": "Ptuj",
+  "url": "https://en.wikipedia.org/wiki/Ptuj",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/63/Ptuj_Town_Hall.jpg/960px-Ptuj_Town_Hall.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/6/63/Ptuj_Town_Hall.jpg",
+  "source": "wikipedia"
+ },
+ "gem:virpazar": {
+  "title": "Virpazar",
+  "url": "https://en.wikipedia.org/wiki/Virpazar",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Virpazar.jpg/960px-Virpazar.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/5/53/Virpazar.jpg",
+  "source": "wikipedia"
+ },
+ "gem:makrinitsa": {
+  "title": "Makrinitsa",
+  "url": "https://en.wikipedia.org/wiki/Makrinitsa",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/%CE%9C%CE%B1%CE%BA%CF%81%CF%85%CE%BD%CE%AF%CF%84%CF%83%CE%B1.jpg/960px-%CE%9C%CE%B1%CE%BA%CF%81%CF%85%CE%BD%CE%AF%CF%84%CF%83%CE%B1.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/a/a9/%CE%9C%CE%B1%CE%BA%CF%81%CF%85%CE%BD%CE%AF%CF%84%CF%83%CE%B1.jpg",
+  "source": "wikipedia"
+ },
+ "gem:golubac": {
+  "title": "Golubac",
+  "url": "https://en.wikipedia.org/wiki/Golubac",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Wiki.%C4%90erdap_II_Golubac_290.jpg/960px-Wiki.%C4%90erdap_II_Golubac_290.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/b/bc/Wiki.%C4%90erdap_II_Golubac_290.jpg",
+  "source": "wikipedia"
+ },
+ "gem:subotica": {
+  "title": "Subotica",
+  "url": "https://en.wikipedia.org/wiki/Subotica",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/View_of_Subotica_%282024%29.jpg/960px-View_of_Subotica_%282024%29.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/b/b9/View_of_Subotica_%282024%29.jpg",
+  "source": "wikipedia"
+ },
+ "gem:skocjan-caves": {
+  "title": "Škocjan Caves",
+  "url": "https://en.wikipedia.org/wiki/%C5%A0kocjan_Caves",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/SkocjanskeJame_2013jpg.jpg/960px-SkocjanskeJame_2013jpg.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/7/70/SkocjanskeJame_2013jpg.jpg",
+  "source": "wikipedia"
+ },
+ "gem:visegrad": {
+  "title": "Višegrad",
+  "url": "https://en.wikipedia.org/wiki/Vi%C5%A1egrad",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/a/ab/Vi%C5%A1egrad.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/a/ab/Vi%C5%A1egrad.jpg",
+  "source": "wikipedia"
+ },
+ "gem:krusevo": {
+  "title": "Kruševo",
+  "url": "https://en.wikipedia.org/wiki/Kru%C5%A1evo",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Kru%C5%A1evo_northern_view.jpg/960px-Kru%C5%A1evo_northern_view.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/e/ea/Kru%C5%A1evo_northern_view.jpg",
+  "source": "wikipedia"
+ },
+ "gem:lefkara": {
+  "title": "Lefkara lace",
+  "url": "https://en.wikipedia.org/wiki/Lefkara_lace",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/9/9e/Lefkaritiko.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/9/9e/Lefkaritiko.jpg",
+  "source": "wikipedia"
+ },
+ "gem:gjakova": {
+  "title": "Gjakova",
+  "url": "https://en.wikipedia.org/wiki/Gjakova",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/07_Gjakova_Naten_Gjakova_at_Night.jpg/960px-07_Gjakova_Naten_Gjakova_at_Night.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/e/e8/07_Gjakova_Naten_Gjakova_at_Night.jpg",
+  "source": "wikipedia"
+ },
+ "gem:dhermi": {
+  "title": "Dhërmi",
+  "url": "https://en.wikipedia.org/wiki/Dh%C3%ABrmi",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Dh%C3%ABrmi_Beach_Panorama_%282008%29.jpg/960px-Dh%C3%ABrmi_Beach_Panorama_%282008%29.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/a/a4/Dh%C3%ABrmi_Beach_Panorama_%282008%29.jpg",
+  "source": "wikipedia"
+ },
+ "gem:fort-william": null,
+ "gem:portrush": {
+  "title": "Portrush",
+  "url": "https://en.wikipedia.org/wiki/Portrush",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/9/94/On_the_beach_-_geograph.org.uk_-_53193.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/9/94/On_the_beach_-_geograph.org.uk_-_53193.jpg",
+  "source": "wikipedia"
+ },
+ "gem:conwy": {
+  "title": "Conwy",
+  "url": "https://en.wikipedia.org/wiki/Conwy",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/Conwy_Castle%2C_water_view1.jpg/960px-Conwy_Castle%2C_water_view1.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/4/4a/Conwy_Castle%2C_water_view1.jpg",
+  "source": "wikipedia"
+ },
+ "gem:kinsale": {
+  "title": "Kinsale",
+  "url": "https://en.wikipedia.org/wiki/Kinsale",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Kinsale_%284693044621%29.jpg/960px-Kinsale_%284693044621%29.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/2/2a/Kinsale_%284693044621%29.jpg",
+  "source": "wikipedia"
+ },
+ "gem:oban": {
+  "title": "Oban",
+  "url": "https://en.wikipedia.org/wiki/Oban",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/Oban_Harbour_Promenade_-_geograph.org.uk_-_7609707.jpg/960px-Oban_Harbour_Promenade_-_geograph.org.uk_-_7609707.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/5/59/Oban_Harbour_Promenade_-_geograph.org.uk_-_7609707.jpg",
+  "source": "wikipedia"
+ },
+ "gem:whitby": {
+  "title": "Whitby",
+  "url": "https://en.wikipedia.org/wiki/Whitby",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Whitby_Abbey_%28geograph_7249897%29.jpg/960px-Whitby_Abbey_%28geograph_7249897%29.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/b/bc/Whitby_Abbey_%28geograph_7249897%29.jpg",
+  "source": "wikipedia"
+ },
+ "gem:st-andrews": {
+  "title": "St Andrews",
+  "url": "https://en.wikipedia.org/wiki/St_Andrews",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/6/69/St_Andrews_from_Regulus_tower_-_geograph.org.uk_-_254003.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/6/69/St_Andrews_from_Regulus_tower_-_geograph.org.uk_-_254003.jpg",
+  "source": "wikipedia"
+ },
+ "gem:durham": {
+  "title": "Durham, England",
+  "url": "https://en.wikipedia.org/wiki/Durham,_England",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1d/Durham_Castle_Bergfried.jpg/960px-Durham_Castle_Bergfried.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/1/1d/Durham_Castle_Bergfried.jpg",
+  "source": "wikipedia"
+ },
+ "gem:tenby": {
+  "title": "Tenby",
+  "url": "https://en.wikipedia.org/wiki/Tenby",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/7/7d/The_harbour%2C_Tenby_-_geograph.org.uk_-_1016019.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/7/7d/The_harbour%2C_Tenby_-_geograph.org.uk_-_1016019.jpg",
+  "source": "wikipedia"
+ },
+ "gem:glendalough": {
+  "title": "Glendalough",
+  "url": "https://en.wikipedia.org/wiki/Glendalough",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/St._Kevin%27s_Kitchen%2C_Glendalough%2C_Co._Wicklow_%282023%29.jpg/960px-St._Kevin%27s_Kitchen%2C_Glendalough%2C_Co._Wicklow_%282023%29.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/3/3a/St._Kevin%27s_Kitchen%2C_Glendalough%2C_Co._Wicklow_%282023%29.jpg",
+  "source": "wikipedia"
+ },
+ "gem:westport": {
+  "title": "Westport, County Mayo",
+  "url": "https://en.wikipedia.org/wiki/Westport,_County_Mayo",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/County_Mayo_-_St_Mary%27s_Church_-_.jpg/960px-County_Mayo_-_St_Mary%27s_Church_-_.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/2/2c/County_Mayo_-_St_Mary%27s_Church_-_.jpg",
+  "source": "wikipedia"
+ },
+ "gem:ullapool": {
+  "title": "Ullapool",
+  "url": "https://en.wikipedia.org/wiki/Ullapool",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Ullapool_sun.jpg/960px-Ullapool_sun.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/c/cd/Ullapool_sun.jpg",
+  "source": "wikipedia"
+ },
+ "gem:st-davids": {
+  "title": "St Davids",
+  "url": "https://en.wikipedia.org/wiki/St_Davids",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cf/StDavidsCathedral.jpg/960px-StDavidsCathedral.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/c/cf/StDavidsCathedral.jpg",
+  "source": "wikipedia"
+ },
+ "gem:canterbury": {
+  "title": "Canterbury",
+  "url": "https://en.wikipedia.org/wiki/Canterbury",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1f/Canterbury-cathedral-wyrdlight.jpg/960px-Canterbury-cathedral-wyrdlight.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/1/1f/Canterbury-cathedral-wyrdlight.jpg",
+  "source": "wikipedia"
+ },
+ "gem:derry": {
+  "title": "Derry",
+  "url": "https://en.wikipedia.org/wiki/Derry",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/e/e4/DerryMontage3.JPG",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/e/e4/DerryMontage3.JPG",
+  "source": "wikipedia"
+ },
+ "gem:stirling": {
+  "title": "Stirling",
+  "url": "https://en.wikipedia.org/wiki/Stirling",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/Stirling_Castle_%285455709703%29.jpg/960px-Stirling_Castle_%285455709703%29.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/2/28/Stirling_Castle_%285455709703%29.jpg",
+  "source": "wikipedia"
+ },
+ "gem:salisbury": {
+  "title": "Salisbury",
+  "url": "https://en.wikipedia.org/wiki/Salisbury",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d5/The_Wardrobe%2C_Salisbury.jpg/960px-The_Wardrobe%2C_Salisbury.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/d/d5/The_Wardrobe%2C_Salisbury.jpg",
+  "source": "wikipedia"
+ },
+ "gem:cobh": {
+  "title": "Cobh",
+  "url": "https://en.wikipedia.org/wiki/Cobh",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Cobhgallery.jpg/960px-Cobhgallery.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/3/36/Cobhgallery.jpg",
+  "source": "wikipedia"
+ },
+ "gem:marbella": {
+  "title": "Marbella",
+  "url": "https://en.wikipedia.org/wiki/Marbella",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b1/Captivating_Views_of_Old_Town_Marbella.jpg/960px-Captivating_Views_of_Old_Town_Marbella.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/b/b1/Captivating_Views_of_Old_Town_Marbella.jpg",
+  "source": "wikipedia"
+ },
+ "gem:formentera": {
+  "title": "Formentera",
+  "url": "https://en.wikipedia.org/wiki/Formentera",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6a/Bandera_de_Formentera.svg/960px-Bandera_de_Formentera.svg.png",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/6/6a/Bandera_de_Formentera.svg",
+  "source": "wikipedia"
+ },
+ "gem:rouen": {
+  "title": "Rouen",
+  "url": "https://en.wikipedia.org/wiki/Rouen",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Rouen_%2837903223574%29.jpg/960px-Rouen_%2837903223574%29.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/9/91/Rouen_%2837903223574%29.jpg",
+  "source": "wikipedia"
+ },
+ "gem:bayeux": {
+  "title": "Bayeux",
+  "url": "https://en.wikipedia.org/wiki/Bayeux",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Bayeux_centre.jpg/960px-Bayeux_centre.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/9/9b/Bayeux_centre.jpg",
+  "source": "wikipedia"
+ },
+ "gem:reims": {
+  "title": "Reims",
+  "url": "https://en.wikipedia.org/wiki/Reims",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fd/Sub%C3%A9_Fountain%2C_Reims%2C_France.jpg/960px-Sub%C3%A9_Fountain%2C_Reims%2C_France.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/f/fd/Sub%C3%A9_Fountain%2C_Reims%2C_France.jpg",
+  "source": "wikipedia"
+ },
+ "gem:passau": {
+  "title": "Passau",
+  "url": "https://en.wikipedia.org/wiki/Passau",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4d/PassauCollection2025.jpg/960px-PassauCollection2025.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/4/4d/PassauCollection2025.jpg",
+  "source": "wikipedia"
+ },
+ "gem:weimar": {
+  "title": "Weimar",
+  "url": "https://en.wikipedia.org/wiki/Weimar",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f5/Weimar_stadtschloss_front_2025.jpg/960px-Weimar_stadtschloss_front_2025.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/f/f5/Weimar_stadtschloss_front_2025.jpg",
+  "source": "wikipedia"
+ },
+ "gem:bolzano": {
+  "title": "Bolzano",
+  "url": "https://en.wikipedia.org/wiki/Bolzano",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/Bozen-Bolzano_from_the_Oswaldpromenade.jpg/960px-Bozen-Bolzano_from_the_Oswaldpromenade.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/1/14/Bozen-Bolzano_from_the_Oswaldpromenade.jpg",
+  "source": "wikipedia"
+ },
+ "gem:ferrara": {
+  "title": "Ferrara",
+  "url": "https://en.wikipedia.org/wiki/Ferrara",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/de/Castello_dall%27alto.jpg/960px-Castello_dall%27alto.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/d/de/Castello_dall%27alto.jpg",
+  "source": "wikipedia"
+ },
+ "gem:sorrento": {
+  "title": "Sorrento",
+  "url": "https://en.wikipedia.org/wiki/Sorrento",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f7/View_of_Sorrento.jpg/960px-View_of_Sorrento.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/f/f7/View_of_Sorrento.jpg",
+  "source": "wikipedia"
+ },
+ "gem:chester": {
+  "title": "Chester",
+  "url": "https://en.wikipedia.org/wiki/Chester",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/Chester_-_Shops_in_city_centre_-_2005-10-09.jpg/960px-Chester_-_Shops_in_city_centre_-_2005-10-09.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/b/b9/Chester_-_Shops_in_city_centre_-_2005-10-09.jpg",
+  "source": "wikipedia"
+ },
+ "gem:giants-causeway": {
+  "title": "Giant's Causeway",
+  "url": "https://en.wikipedia.org/wiki/Giant%27s_Causeway",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c0/Causeway-code_poet-4.jpg/960px-Causeway-code_poet-4.jpg",
+  "original": "https://upload.wikimedia.org/wikipedia/commons/c/c0/Causeway-code_poet-4.jpg",
+  "source": "wikipedia"
+ },
+ "gem:glencoe": null
 }

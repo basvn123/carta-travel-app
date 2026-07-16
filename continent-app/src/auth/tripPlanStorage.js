@@ -7,7 +7,27 @@ export async function fetchTripPlans(userId) {
     .eq('user_id', userId)
     .order('created_at', { ascending: false });
   if (error) throw error;
-  return data;
+  const plans = data || [];
+  if (!plans.length) return plans;
+  // Summarize each plan's CURRENT stops (dates + route) so lists show the
+  // real, up-to-date trip window - including any date changes saved later.
+  const { data: stops } = await supabase
+    .from('trip_plan_stops')
+    .select('trip_plan_id, arrive_date, depart_date, city, country, position')
+    .in('trip_plan_id', plans.map((p) => p.id))
+    .order('position', { ascending: true });
+  const byPlan = {};
+  (stops || []).forEach((s) => { (byPlan[s.trip_plan_id] = byPlan[s.trip_plan_id] || []).push(s); });
+  return plans.map((p) => {
+    const ss = byPlan[p.id] || [];
+    return {
+      ...p,
+      start_date: ss[0]?.arrive_date || null,
+      end_date: ss.length ? ss[ss.length - 1].depart_date : null,
+      cities: ss.map((s) => s.city).filter(Boolean),
+      countries: [...new Set(ss.map((s) => s.country).filter(Boolean))],
+    };
+  });
 }
 
 export async function fetchTripPlanWithStops(tripPlanId) {

@@ -1,0 +1,842 @@
+[
+ {
+  "name": "Navagio Beach",
+  "kind": "Beach",
+  "lat": 37.8598,
+  "lon": 20.624,
+  "heritage": false
+ },
+ {
+  "name": "Elafonissi Beach",
+  "kind": "Beach",
+  "lat": 35.27,
+  "lon": 23.532,
+  "heritage": false
+ },
+ {
+  "name": "Balos Lagoon",
+  "kind": "Beach",
+  "lat": 35.5809,
+  "lon": 23.5912,
+  "heritage": false
+ },
+ {
+  "name": "Falassarna Beach",
+  "kind": "Beach",
+  "lat": 35.5037,
+  "lon": 23.5772,
+  "heritage": false
+ },
+ {
+  "name": "Vai Palm Beach",
+  "kind": "Beach",
+  "lat": 35.2544,
+  "lon": 26.2608,
+  "heritage": false
+ },
+ {
+  "name": "Preveli Beach",
+  "kind": "Beach",
+  "lat": 35.1525,
+  "lon": 24.4738,
+  "heritage": false
+ },
+ {
+  "name": "Myrtos Beach",
+  "kind": "Beach",
+  "lat": 38.3429,
+  "lon": 20.5362,
+  "heritage": false
+ },
+ {
+  "name": "Porto Katsiki",
+  "kind": "Beach",
+  "lat": 38.6025,
+  "lon": 20.5494,
+  "heritage": false
+ },
+ {
+  "name": "Sarakiniko Beach",
+  "kind": "Beach",
+  "lat": 36.7428,
+  "lon": 24.4583,
+  "heritage": false
+ },
+ {
+  "name": "Red Beach (Santorini)",
+  "kind": "Beach",
+  "lat": 36.3473,
+  "lon": 25.3946,
+  "heritage": false
+ },
+ {
+  "name": "Paleokastritsa",
+  "kind": "Beach",
+  "lat": 39.6713,
+  "lon": 19.7093,
+  "heritage": false
+ },
+ {
+  "name": "Zlatni Rat",
+  "kind": "Beach",
+  "lat": 43.2558,
+  "lon": 16.6338,
+  "heritage": false
+ },
+ {
+  "name": "Sakarun Beach",
+  "kind": "Beach",
+  "lat": 44.1339,
+  "lon": 14.8718,
+  "heritage": false
+ },
+ {
+  "name": "Sveti Stefan Beach",
+  "kind": "Beach",
+  "lat": 42.2558,
+  "lon": 18.8911,
+  "heritage": false
+ },
+ {
+  "name": "Ksamil Beach",
+  "kind": "Beach",
+  "lat": 39.7674,
+  "lon": 19.9942,
+  "heritage": false
+ },
+ {
+  "name": "Praia da Marinha",
+  "kind": "Beach",
+  "lat": 37.0901,
+  "lon": -8.4125,
+  "heritage": false
+ },
+ {
+  "name": "Praia da Falesia",
+  "kind": "Beach",
+  "lat": 37.0867,
+  "lon": -8.17,
+  "heritage": false
+ },
+ {
+  "name": "Praia do Camilo",
+  "kind": "Beach",
+  "lat": 37.0878,
+  "lon": -8.6687,
+  "heritage": false
+ },
+ {
+  "name": "Praia do Norte (Nazare)",
+  "kind": "Beach",
+  "lat": 39.6119,
+  "lon": -9.0856,
+  "heritage": false
+ },
+ {
+  "name": "Playa de las Catedrales",
+  "kind": "Beach",
+  "lat": 43.5539,
+  "lon": -7.1572,
+  "heritage": false
+ },
+ {
+  "name": "La Concha Beach",
+  "kind": "Beach",
+  "lat": 43.3152,
+  "lon": -1.9915,
+  "heritage": false
+ },
+ {
+  "name": "Playa de Rodas (Cies)",
+  "kind": "Beach",
+  "lat": 42.2252,
+  "lon": -8.9026,
+  "heritage": false
+ },
+ {
+  "name": "Playa de Gulpiyuri",
+  "kind": "Beach",
+  "lat": 43.4476,
+  "lon": -4.8861,
+  "heritage": false
+ },
+ {
+  "name": "Bolonia Beach",
+  "kind": "Beach",
+  "lat": 36.0874,
+  "lon": -5.7748,
+  "heritage": false
+ },
+ {
+  "name": "Es Trenc",
+  "kind": "Beach",
+  "lat": 39.3456,
+  "lon": 2.9833,
+  "heritage": false
+ },
+ {
+  "name": "Cala Macarella",
+  "kind": "Beach",
+  "lat": 39.9386,
+  "lon": 3.9371,
+  "heritage": false
+ },
+ {
+  "name": "Cala en Turqueta",
+  "kind": "Beach",
+  "lat": 39.934,
+  "lon": 3.9145,
+  "heritage": false
+ },
+ {
+  "name": "Playa de Ses Illetes",
+  "kind": "Beach",
+  "lat": 38.7537,
+  "lon": 1.4321,
+  "heritage": false
+ },
+ {
+  "name": "Cala Comte",
+  "kind": "Beach",
+  "lat": 38.9625,
+  "lon": 1.2203,
+  "heritage": false
+ },
+ {
+  "name": "Playa de las Teresitas",
+  "kind": "Beach",
+  "lat": 28.5086,
+  "lon": -16.1858,
+  "heritage": false
+ },
+ {
+  "name": "Playa de Cofete",
+  "kind": "Beach",
+  "lat": 28.1167,
+  "lon": -14.3833,
+  "heritage": false
+ },
+ {
+  "name": "Dunas de Maspalomas",
+  "kind": "Dunes",
+  "lat": 27.7439,
+  "lon": -15.5829,
+  "heritage": false
+ },
+ {
+  "name": "Cala Goloritze",
+  "kind": "Beach",
+  "lat": 40.1086,
+  "lon": 9.6889,
+  "heritage": false
+ },
+ {
+  "name": "La Pelosa Beach",
+  "kind": "Beach",
+  "lat": 40.9653,
+  "lon": 8.2097,
+  "heritage": false
+ },
+ {
+  "name": "San Vito Lo Capo Beach",
+  "kind": "Beach",
+  "lat": 38.1755,
+  "lon": 12.741,
+  "heritage": false
+ },
+ {
+  "name": "Scala dei Turchi",
+  "kind": "Beach",
+  "lat": 37.29,
+  "lon": 13.4728,
+  "heritage": false
+ },
+ {
+  "name": "Punta Prosciutto",
+  "kind": "Beach",
+  "lat": 40.2966,
+  "lon": 17.7785,
+  "heritage": false
+ },
+ {
+  "name": "Tropea Beach",
+  "kind": "Beach",
+  "lat": 38.6754,
+  "lon": 15.8948,
+  "heritage": false
+ },
+ {
+  "name": "Lama Monachile (Polignano)",
+  "kind": "Beach",
+  "lat": 40.9961,
+  "lon": 17.2189,
+  "heritage": false
+ },
+ {
+  "name": "Palombaggia Beach",
+  "kind": "Beach",
+  "lat": 41.5561,
+  "lon": 9.3218,
+  "heritage": false
+ },
+ {
+  "name": "Calanque d'En-Vau",
+  "kind": "Beach",
+  "lat": 43.2005,
+  "lon": 5.5022,
+  "heritage": false
+ },
+ {
+  "name": "Omaha Beach",
+  "kind": "Beach",
+  "lat": 49.3689,
+  "lon": -0.8686,
+  "heritage": false
+ },
+ {
+  "name": "Reynisfjara",
+  "kind": "Beach",
+  "lat": 63.4035,
+  "lon": -19.0474,
+  "heritage": false
+ },
+ {
+  "name": "Durdle Door",
+  "kind": "Beach",
+  "lat": 50.6211,
+  "lon": -2.277,
+  "heritage": true
+ },
+ {
+  "name": "Portstewart Strand",
+  "kind": "Beach",
+  "lat": 55.168,
+  "lon": -6.745,
+  "heritage": false
+ },
+ {
+  "name": "Keem Bay",
+  "kind": "Beach",
+  "lat": 53.968,
+  "lon": -10.1939,
+  "heritage": false
+ },
+ {
+  "name": "Porthcurno Beach",
+  "kind": "Beach",
+  "lat": 50.043,
+  "lon": -5.654,
+  "heritage": false
+ },
+ {
+  "name": "Grenen (Skagen)",
+  "kind": "Beach",
+  "lat": 57.7439,
+  "lon": 10.6475,
+  "heritage": false
+ },
+ {
+  "name": "Blue Lagoon (Comino)",
+  "kind": "Beach",
+  "lat": 36.014,
+  "lon": 14.3234,
+  "heritage": false
+ },
+ {
+  "name": "Nissi Beach",
+  "kind": "Beach",
+  "lat": 34.9875,
+  "lon": 33.9678,
+  "heritage": false
+ },
+ {
+  "name": "Seven Sisters Cliffs",
+  "kind": "Viewpoint",
+  "lat": 50.76,
+  "lon": 0.16,
+  "heritage": false
+ },
+ {
+  "name": "Roman Baths (Bath)",
+  "kind": "Roman site",
+  "lat": 51.3809,
+  "lon": -2.3595,
+  "heritage": true
+ },
+ {
+  "name": "Canterbury Cathedral",
+  "kind": "Church",
+  "lat": 51.2797,
+  "lon": 1.0831,
+  "heritage": true
+ },
+ {
+  "name": "Glenfinnan Viaduct",
+  "kind": "Bridge",
+  "lat": 56.8763,
+  "lon": -5.4319,
+  "heritage": false
+ },
+ {
+  "name": "Old Man of Storr",
+  "kind": "Viewpoint",
+  "lat": 57.5067,
+  "lon": -6.1837,
+  "heritage": false
+ },
+ {
+  "name": "Rocamadour",
+  "kind": "Church",
+  "lat": 44.8003,
+  "lon": 1.6186,
+  "heritage": true
+ },
+ {
+  "name": "Chateau de Chenonceau",
+  "kind": "Castle",
+  "lat": 47.3247,
+  "lon": 1.0704,
+  "heritage": true
+ },
+ {
+  "name": "San Juan de Gaztelugatxe",
+  "kind": "Viewpoint",
+  "lat": 43.447,
+  "lon": -2.785,
+  "heritage": false
+ },
+ {
+  "name": "Hanging Houses of Cuenca",
+  "kind": "Viewpoint",
+  "lat": 40.0778,
+  "lon": -2.1283,
+  "heritage": true
+ },
+ {
+  "name": "Setenil de las Bodegas",
+  "kind": "Viewpoint",
+  "lat": 36.8625,
+  "lon": -5.1814,
+  "heritage": false
+ },
+ {
+  "name": "Ordesa Valley",
+  "kind": "Canyon",
+  "lat": 42.6546,
+  "lon": -0.0969,
+  "heritage": true
+ },
+ {
+  "name": "Lakes of Covadonga",
+  "kind": "Lake",
+  "lat": 43.2753,
+  "lon": -4.9853,
+  "heritage": false
+ },
+ {
+  "name": "Nerja Caves",
+  "kind": "Cave",
+  "lat": 36.7617,
+  "lon": -3.8458,
+  "heritage": false
+ },
+ {
+  "name": "Mount Teide",
+  "kind": "Peak",
+  "lat": 28.2731,
+  "lon": -16.6394,
+  "heritage": true
+ },
+ {
+  "name": "Sao Leonardo de Galafura Viewpoint",
+  "kind": "Viewpoint",
+  "lat": 41.1727,
+  "lon": -7.6722,
+  "heritage": true
+ },
+ {
+  "name": "Obidos Castle",
+  "kind": "Castle",
+  "lat": 39.3633,
+  "lon": -9.1569,
+  "heritage": false
+ },
+ {
+  "name": "Monsaraz",
+  "kind": "Castle",
+  "lat": 38.444,
+  "lon": -7.381,
+  "heritage": false
+ },
+ {
+  "name": "Benagil Cave",
+  "kind": "Cave",
+  "lat": 37.0875,
+  "lon": -8.4258,
+  "heritage": false
+ },
+ {
+  "name": "Pico do Arieiro",
+  "kind": "Peak",
+  "lat": 32.7356,
+  "lon": -16.9289,
+  "heritage": false
+ },
+ {
+  "name": "Sete Cidades Lakes",
+  "kind": "Lake",
+  "lat": 37.855,
+  "lon": -25.7864,
+  "heritage": false
+ },
+ {
+  "name": "Mount Etna",
+  "kind": "Peak",
+  "lat": 37.755,
+  "lon": 14.995,
+  "heritage": true
+ },
+ {
+  "name": "Alberobello Trulli",
+  "kind": "Viewpoint",
+  "lat": 40.7833,
+  "lon": 17.2333,
+  "heritage": true
+ },
+ {
+  "name": "Sassi di Matera",
+  "kind": "Viewpoint",
+  "lat": 40.6667,
+  "lon": 16.6083,
+  "heritage": true
+ },
+ {
+  "name": "Civita di Bagnoregio",
+  "kind": "Viewpoint",
+  "lat": 42.6278,
+  "lon": 12.1139,
+  "heritage": false
+ },
+ {
+  "name": "Lake Orta",
+  "kind": "Lake",
+  "lat": 45.8172,
+  "lon": 8.4067,
+  "heritage": false
+ },
+ {
+  "name": "Alp Grum (Bernina Railway)",
+  "kind": "Viewpoint",
+  "lat": 46.3747,
+  "lon": 10.0311,
+  "heritage": true
+ },
+ {
+  "name": "Staubbach Falls",
+  "kind": "Waterfall",
+  "lat": 46.5896,
+  "lon": 7.9055,
+  "heritage": false
+ },
+ {
+  "name": "Triberg Waterfalls",
+  "kind": "Waterfall",
+  "lat": 48.1261,
+  "lon": 8.2275,
+  "heritage": false
+ },
+ {
+  "name": "Bastei Bridge",
+  "kind": "Bridge",
+  "lat": 50.9622,
+  "lon": 14.0714,
+  "heritage": false
+ },
+ {
+  "name": "Spreewald (Lubbenau)",
+  "kind": "Nature reserve",
+  "lat": 51.8667,
+  "lon": 13.9667,
+  "heritage": false
+ },
+ {
+  "name": "Heidelberg Castle",
+  "kind": "Castle",
+  "lat": 49.4106,
+  "lon": 8.7153,
+  "heritage": false
+ },
+ {
+  "name": "Sanssouci Palace",
+  "kind": "Palace",
+  "lat": 52.4033,
+  "lon": 13.0386,
+  "heritage": true
+ },
+ {
+  "name": "Konigssee",
+  "kind": "Lake",
+  "lat": 47.55,
+  "lon": 12.9667,
+  "heritage": false
+ },
+ {
+  "name": "Visegrad Castle (Danube Bend)",
+  "kind": "Castle",
+  "lat": 47.7937,
+  "lon": 18.9803,
+  "heritage": false
+ },
+ {
+  "name": "Tihany Abbey",
+  "kind": "Monastery",
+  "lat": 46.9139,
+  "lon": 17.8894,
+  "heritage": false
+ },
+ {
+  "name": "Lake Bohinj",
+  "kind": "Lake",
+  "lat": 46.2823,
+  "lon": 13.8582,
+  "heritage": false
+ },
+ {
+  "name": "Vintgar Gorge",
+  "kind": "Canyon",
+  "lat": 46.39,
+  "lon": 14.083,
+  "heritage": false
+ },
+ {
+  "name": "Skocjan Caves",
+  "kind": "Cave",
+  "lat": 45.6621,
+  "lon": 13.9845,
+  "heritage": true
+ },
+ {
+  "name": "Pravcicka Gate",
+  "kind": "Viewpoint",
+  "lat": 50.8838,
+  "lon": 14.2815,
+  "heritage": false
+ },
+ {
+  "name": "Spis Castle",
+  "kind": "Castle",
+  "lat": 49.0006,
+  "lon": 20.7683,
+  "heritage": true
+ },
+ {
+  "name": "Bialowieza Forest",
+  "kind": "Nature reserve",
+  "lat": 52.7521,
+  "lon": 23.8791,
+  "heritage": true
+ },
+ {
+  "name": "Morskie Oko",
+  "kind": "Lake",
+  "lat": 49.1972,
+  "lon": 20.0708,
+  "heritage": false
+ },
+ {
+  "name": "Tara Bridge (Durmitor)",
+  "kind": "Bridge",
+  "lat": 43.1504,
+  "lon": 19.2952,
+  "heritage": false
+ },
+ {
+  "name": "Our Lady of the Rocks (Perast)",
+  "kind": "Church",
+  "lat": 42.4867,
+  "lon": 18.6889,
+  "heritage": false
+ },
+ {
+  "name": "Kravica Waterfalls",
+  "kind": "Waterfall",
+  "lat": 43.1541,
+  "lon": 17.6037,
+  "heritage": false
+ },
+ {
+  "name": "Blagaj Tekke",
+  "kind": "Monastery",
+  "lat": 43.2573,
+  "lon": 17.9036,
+  "heritage": false
+ },
+ {
+  "name": "Theth National Park",
+  "kind": "Nature reserve",
+  "lat": 42.4,
+  "lon": 19.7667,
+  "heritage": false
+ },
+ {
+  "name": "Blue Eye Spring",
+  "kind": "Lake",
+  "lat": 39.9236,
+  "lon": 20.1928,
+  "heritage": false
+ },
+ {
+  "name": "Golubac Fortress",
+  "kind": "Castle",
+  "lat": 44.6612,
+  "lon": 21.6785,
+  "heritage": false
+ },
+ {
+  "name": "Vergina Royal Tombs",
+  "kind": "Ancient site",
+  "lat": 40.4833,
+  "lon": 22.3167,
+  "heritage": true
+ },
+ {
+  "name": "Palamidi Fortress (Nafplio)",
+  "kind": "Castle",
+  "lat": 37.5639,
+  "lon": 22.7953,
+  "heritage": false
+ },
+ {
+  "name": "Samaria Gorge",
+  "kind": "Canyon",
+  "lat": 35.2711,
+  "lon": 23.9614,
+  "heritage": false
+ },
+ {
+  "name": "Melissani Cave",
+  "kind": "Cave",
+  "lat": 38.257,
+  "lon": 20.6236,
+  "heritage": false
+ },
+ {
+  "name": "Spinalonga",
+  "kind": "Castle",
+  "lat": 35.2975,
+  "lon": 25.7381,
+  "heritage": false
+ },
+ {
+  "name": "Acropolis of Lindos",
+  "kind": "Ancient site",
+  "lat": 36.0833,
+  "lon": 28.0833,
+  "heritage": false
+ },
+ {
+  "name": "Delos",
+  "kind": "Ancient site",
+  "lat": 37.3933,
+  "lon": 25.2711,
+  "heritage": true
+ },
+ {
+  "name": "Turda Salt Mine",
+  "kind": "Cave",
+  "lat": 46.5877,
+  "lon": 23.7874,
+  "heritage": false
+ },
+ {
+  "name": "Corvin Castle",
+  "kind": "Castle",
+  "lat": 45.7492,
+  "lon": 22.8883,
+  "heritage": false
+ },
+ {
+  "name": "Balea Lake (Transfagarasan)",
+  "kind": "Lake",
+  "lat": 45.602,
+  "lon": 24.617,
+  "heritage": false
+ },
+ {
+  "name": "Belogradchik Rocks",
+  "kind": "Viewpoint",
+  "lat": 43.6208,
+  "lon": 22.685,
+  "heritage": false
+ },
+ {
+  "name": "Nessebar Old Town",
+  "kind": "Viewpoint",
+  "lat": 42.65,
+  "lon": 27.7333,
+  "heritage": true
+ },
+ {
+  "name": "Cape Kaliakra",
+  "kind": "Viewpoint",
+  "lat": 43.3667,
+  "lon": 28.4667,
+  "heritage": false
+ },
+ {
+  "name": "Hill of Crosses",
+  "kind": "Church",
+  "lat": 56.0153,
+  "lon": 23.4167,
+  "heritage": false
+ },
+ {
+  "name": "Turaida Castle",
+  "kind": "Castle",
+  "lat": 57.1822,
+  "lon": 24.8503,
+  "heritage": false
+ },
+ {
+  "name": "Ggantija Temples",
+  "kind": "Ancient site",
+  "lat": 36.0472,
+  "lon": 14.2692,
+  "heritage": true
+ },
+ {
+  "name": "Aphrodite's Rock",
+  "kind": "Viewpoint",
+  "lat": 34.6635,
+  "lon": 32.627,
+  "heritage": false
+ },
+ {
+  "name": "Trolltunga",
+  "kind": "Viewpoint",
+  "lat": 60.1332,
+  "lon": 6.7547,
+  "heritage": false
+ },
+ {
+  "name": "Seljalandsfoss",
+  "kind": "Waterfall",
+  "lat": 63.6158,
+  "lon": -19.9928,
+  "heritage": false
+ },
+ {
+  "name": "Skogafoss",
+  "kind": "Waterfall",
+  "lat": 63.5321,
+  "lon": -19.5111,
+  "heritage": false
+ },
+ {
+  "name": "Jokulsarlon",
+  "kind": "Lake",
+  "lat": 64.0703,
+  "lon": -16.2117,
+  "heritage": true
+ }
+]

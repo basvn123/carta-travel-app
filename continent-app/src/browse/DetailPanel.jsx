@@ -4,7 +4,7 @@ import {
   fareCoverageRanges, viaNearestAirport,
 } from '../lib/runtime_pricing.js';
 import { knownFor } from '../lib/knownFor.js';
-import { ScoreChip, TierDiamonds, HiddenGemTag, tierClass } from '../components/RatingBadge.jsx';
+import { ScoreChip, HiddenGemTag, tierClass } from '../components/RatingBadge.jsx';
 import { BestTimePanel } from './BestTimePanel.jsx';
 import { eur, safeUrl, PRICE_SOURCE_LABELS, ACCOM_SOURCE_LABELS } from '../lib/format.js';
 import { ReceiptIcon, CalendarIcon, BedIcon, DiningIcon, CarIcon, InfoIcon } from '../components/Icons.jsx';
@@ -72,7 +72,6 @@ export function DetailPanel({ destination, departDate, returnDate, choices, setC
         {destination.rating?.score != null && (
           <div className="panel-rating-row">
             <ScoreChip rating={destination.rating} size="lg" />
-            <TierDiamonds tier={destination.rating.tier} size={12} />
             {destination.rating.label && (
               <span className={`rating-label ${tierClass(destination.rating)}`}>
                 {destination.rating.label}

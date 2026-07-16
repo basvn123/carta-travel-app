@@ -1,5 +1,5 @@
 import React, { useMemo, useRef, useState } from 'react';
-import { DAY_STYLES, DAY_LENGTHS, WALK_LEVELS, candidateDeck, nearbyCompanions, isMustSee } from './dayDraft.js';
+import { DAY_STYLES, DAY_LENGTHS, WALK_LEVELS, FILL_LEVELS, VISIT_PACES, candidateDeck, nearbyCompanions, isMustSee } from './dayDraft.js';
 import { SparkIcon, StarIcon, CheckIcon, MuseumIcon, TreeIcon, DiningIcon, CameraIcon, CastleIcon } from '../components/Icons.jsx';
 
 const STYLE_ICONS = {
@@ -30,14 +30,18 @@ const STYLE_ICONS = {
  *   city     city name, numDays  day count - copy only
  *   onSkip() close without drafting; onDraft(prefs) as above
  */
-export function ShapeDayWizard({ city, numDays, items, initial, onSkip, onDraft }) {
-  const [step, setStep] = useState(1);
+export function ShapeDayWizard({ city, numDays, items, eligibleIdx, initial, onSkip, onDraft }) {
+  // Step 0 is the honest fork: explore on your own, or let Carta guide you.
+  const [step, setStep] = useState(0);
   const [styleKey, setStyleKey] = useState(initial?.style || null);
   // Feasibility answers: how long the day runs and how much walking is okay.
   // These keep Carta's drafts realistic (no four-hour marches for a light
   // walker, no half-empty evenings for an early-start crowd).
   const [dayLen, setDayLen] = useState(initial?.dayLen || 'full');
   const [walk, setWalk] = useState(initial?.walk || 'moderate');
+  // Ambition answers: how much to fit in, and how long to spend per stop.
+  const [fill, setFill] = useState(initial?.fill || 'balanced');
+  const [visit, setVisit] = useState(initial?.visit || 'standard');
   const style = DAY_STYLES.find((s) => s.key === styleKey) || null;
 
   // Deck state: position + accepted original-indices.
@@ -50,8 +54,8 @@ export function ShapeDayWizard({ city, numDays, items, initial, onSkip, onDraft 
 
   const deck = useMemo(() => {
     if (!style) return [];
-    return candidateDeck(items, style.interests, Math.max(10, Math.min(16, numDays * 6)));
-  }, [items, style, numDays]);
+    return candidateDeck(items, style.interests, Math.max(10, Math.min(16, numDays * 6)), eligibleIdx);
+  }, [items, style, numDays, eligibleIdx]);
 
   const current = deck[deckPos] || null;
   const companions = useMemo(
@@ -66,7 +70,7 @@ export function ShapeDayWizard({ city, numDays, items, initial, onSkip, onDraft 
     setStep(2);
   };
 
-  const feasibility = { dayLen, walk };
+  const feasibility = { dayLen, walk, fill, visit };
   const finishAuto = () => {
     onDraft({ mode: 'auto', style: styleKey, interests: style ? style.interests : [], ...feasibility });
   };
@@ -122,11 +126,36 @@ export function ShapeDayWizard({ city, numDays, items, initial, onSkip, onDraft 
           <button className="guide-close" onClick={onSkip} aria-label="Close">×</button>
           <div className="shape-head-title">
             Shape your {numDays > 1 ? `${numDays} days` : 'day'} in {city}
-            <span className="shape-head-step">step {step} of 3</span>
+            {step >= 1 && <span className="shape-head-step">step {step} of 3</span>}
           </div>
         </div>
 
         <div className="guide-body">
+          {step === 0 && (
+            <>
+              <h2 className="guide-title">How do you want to do {city}?</h2>
+              <p className="guide-sub">Wander it on your own terms, or have Carta line the days up with you.</p>
+              <div className="guide-path-list">
+                <button className="guide-path" onClick={onSkip}>
+                  <span className="guide-path-icon"><CameraIcon size={18} /></span>
+                  <span className="guide-path-text">
+                    <b>I'll explore it myself</b>
+                    <small>Browse every sight below and build your own days, at your pace</small>
+                  </span>
+                  <span className="guide-arrow">→</span>
+                </button>
+                <button className="guide-path" onClick={() => setStep(1)}>
+                  <span className="guide-path-icon"><SparkIcon size={18} /></span>
+                  <span className="guide-path-text">
+                    <b>Let Carta guide us</b>
+                    <small>Three quick questions, then a hand-picked plan for {numDays > 1 ? 'each day' : 'the day'}</small>
+                  </span>
+                  <span className="guide-arrow">→</span>
+                </button>
+              </div>
+            </>
+          )}
+
           {step === 1 && (
             <>
               <h2 className="guide-title">What kind of day do you feel like?</h2>
@@ -192,6 +221,40 @@ export function ShapeDayWizard({ city, numDays, items, initial, onSkip, onDraft 
                       <span className="shape-style-text">
                         <b>{w.label}</b>
                         <small>{w.desc}</small>
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div className="shape-feas-group">
+                <span className="trip-field-label">How much do you want to do?</span>
+                <div className="shape-style-list">
+                  {FILL_LEVELS.map((f) => (
+                    <button
+                      key={f.key}
+                      className={`shape-style ${fill === f.key ? 'on' : ''}`}
+                      onClick={() => setFill(f.key)}
+                    >
+                      <span className="shape-style-text">
+                        <b>{f.label}</b>
+                        <small>{f.desc}</small>
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div className="shape-feas-group">
+                <span className="trip-field-label">How long do you like at each stop?</span>
+                <div className="shape-style-list">
+                  {VISIT_PACES.map((v) => (
+                    <button
+                      key={v.key}
+                      className={`shape-style ${visit === v.key ? 'on' : ''}`}
+                      onClick={() => setVisit(v.key)}
+                    >
+                      <span className="shape-style-text">
+                        <b>{v.label}</b>
+                        <small>{v.desc}</small>
                       </span>
                     </button>
                   ))}
@@ -265,7 +328,7 @@ export function ShapeDayWizard({ city, numDays, items, initial, onSkip, onDraft 
 
         <div className="guide-foot">
           <div className="guide-foot-summary">
-            <button className="shape-skip" onClick={onSkip}>Skip and plan manually</button>
+            {step >= 1 && <button className="shape-skip" onClick={onSkip}>Skip and plan manually</button>}
           </div>
           <div className="guide-foot-actions">
             {step > 1 && <button className="guide-back" onClick={() => setStep(step - 1)}>Back</button>}
@@ -279,7 +342,7 @@ export function ShapeDayWizard({ city, numDays, items, initial, onSkip, onDraft 
                 Build my {numDays > 1 ? 'days' : 'day'} ({accepted.length})
               </button>
             )}
-            {step !== 2 && (
+            {step >= 1 && step !== 2 && (
               <button className={step === 1 ? 'guide-next' : 'guide-back'} onClick={finishAuto}>
                 <SparkIcon size={12} /> Let Carta pick everything
               </button>

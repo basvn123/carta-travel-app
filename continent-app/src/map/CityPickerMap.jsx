@@ -7,20 +7,32 @@ const MAP_STYLE = 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json'
 /**
  * The Stay step's map: every city of the chosen countries as a clickable
  * name-pill (the same visual language as the browse map's price pills), tinted
- * by its worth-a-visit tier. Tapping a pill toggles the city in/out of the
- * trip via `onToggle(id)`; picked cities render highlighted so the traveller
+ * by its worth-a-visit tier. Picked cities render highlighted so the traveller
  * always sees their route taking shape geographically.
  *
+ * Two interaction modes:
+ *   - `onFocus` given: tapping a pill FOCUSES the city (the wizard shows its
+ *     info panel with an explicit Add button) - considered choices over
+ *     accidental taps.
+ *   - only `onToggle`: tapping toggles the city in/out directly (legacy).
+ *
+ * When the traveller lands somewhere (`anchor` = { lat, lon }), the map opens
+ * zoomed in on that region instead of framing the whole country - the stays
+ * conversation starts around where they arrive, and they can zoom out for
+ * further cities.
+ *
  * `cities`: [{ id, city, lat, lon, tierKey ('top'|'great'|'good'|'ok'),
- *             selected, isAnchor, nights }]
+ *             selected, isAnchor, focused, nights }]
  */
-export function CityPickerMap({ cities = [], onToggle }) {
+export function CityPickerMap({ cities = [], onToggle, onFocus, anchor = null }) {
   const containerRef = useRef(null);
   const mapRef = useRef(null);
   const readyRef = useRef(false);
   const pinsRef = useRef(new Map()); // id -> { marker, el, label }
   const onToggleRef = useRef(onToggle);
   onToggleRef.current = onToggle;
+  const onFocusRef = useRef(onFocus);
+  onFocusRef.current = onFocus;
 
   useEffect(() => {
     if (mapRef.current) return;
@@ -54,13 +66,21 @@ export function CityPickerMap({ cities = [], onToggle }) {
         label.className = 'citypick-name';
         label.textContent = c.city;
         el.appendChild(label);
-        el.addEventListener('click', (e) => { e.stopPropagation(); onToggleRef.current?.(c.id); });
+        el.addEventListener('click', (e) => {
+          e.stopPropagation();
+          if (onFocusRef.current) onFocusRef.current(c.id);
+          else onToggleRef.current?.(c.id);
+        });
         const marker = new maplibregl.Marker({ element: el, anchor: 'center' })
           .setLngLat([c.lon, c.lat])
           .addTo(map);
         pinsRef.current.set(c.id, { marker, el, label });
       });
-      if (pts.length >= 2) {
+      if (anchor && anchor.lat != null) {
+        // Land the conversation where the traveller lands: open on the
+        // arrival region, zoomed in enough that its neighbours read clearly.
+        map.jumpTo({ center: [anchor.lon, anchor.lat], zoom: 7 });
+      } else if (pts.length >= 2) {
         const b = pts.reduce(
           (acc, c) => acc.extend([c.lon, c.lat]),
           new maplibregl.LngLatBounds([pts[0].lon, pts[0].lat], [pts[0].lon, pts[0].lat]),
@@ -75,6 +95,13 @@ export function CityPickerMap({ cities = [], onToggle }) {
     if (readyRef.current) build();
   }, [cityKey]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // A new arrival point (changed flight) recentres the view without a rebuild.
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !readyRef.current || !anchor || anchor.lat == null) return;
+    map.flyTo({ center: [anchor.lon, anchor.lat], zoom: 7, duration: 600 });
+  }, [anchor?.lat, anchor?.lon]); // eslint-disable-line react-hooks/exhaustive-deps
+
   // Selection / nights / anchor states change often - restyle in place.
   const sync = () => {
     const byId = new Map(cities.map((c) => [c.id, c]));
@@ -83,6 +110,7 @@ export function CityPickerMap({ cities = [], onToggle }) {
       if (!c) return;
       p.el.classList.toggle('on', !!c.selected);
       p.el.classList.toggle('anchor', !!c.isAnchor);
+      p.el.classList.toggle('focused', !!c.focused);
       p.label.textContent = c.selected && c.nights
         ? `${c.city} · ${c.nights}n`
         : c.city;

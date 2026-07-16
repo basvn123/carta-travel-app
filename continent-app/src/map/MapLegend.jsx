@@ -46,7 +46,7 @@ export function MapLegend({ transportMode = 'plane', counts = {} }) {
               <span className="legend-swatch"><i className="pin-dot is-caronly" /></span>
               <span className="legend-text">
                 <b>No flight{counts.carOnly ? ` (${counts.carOnly})` : ''}</b>
-                <em>Drivable, but no airport near it - switch to Travel by car to price it</em>
+                <em>Drivable, but no Ryanair airport near it. Switch to Travel by car to price it</em>
               </span>
             </div>
           ) : (
@@ -63,7 +63,7 @@ export function MapLegend({ transportMode = 'plane', counts = {} }) {
             <span className="legend-swatch"><i className="pin-dot is-unreach" /></span>
             <span className="legend-text">
               <b>Unreachable{counts.unreachable ? ` (${counts.unreachable})` : ''}</b>
-              <em>No flight and too far to drive</em>
+              <em>No Ryanair flight and too far to drive</em>
             </span>
           </div>
 

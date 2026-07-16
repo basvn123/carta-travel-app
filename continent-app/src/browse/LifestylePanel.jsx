@@ -1,6 +1,6 @@
 import React from 'react';
 import { DEFAULT_LIFESTYLE } from '../lib/runtime_pricing.js';
-import { DiningIcon, SlidersIcon } from '../components/Icons.jsx';
+import { DiningIcon, LifestyleIcon } from '../components/Icons.jsx';
 
 /**
  * Lifestyle settings panel - slides in from the left.
@@ -88,7 +88,7 @@ export function LifestylePanel({ choices, setChoices, onClose }) {
       </div>
 
       <div className="panel-section">
-        <div className="section-title section-title-iconed"><SlidersIcon size={12} /> Profile</div>
+        <div className="section-title section-title-iconed"><LifestyleIcon size={12} /> Profile</div>
         <div className="kind-chips">
           {Object.keys(PROFILES).map((name) => (
             <button
@@ -102,7 +102,7 @@ export function LifestylePanel({ choices, setChoices, onClose }) {
         </div>
       </div>
 
-      <div className="panel-section">
+      <div className="panel-section lifestyle-food">
         <div className="lifestyle-section-head">
           <div className="section-title section-title-iconed"><DiningIcon size={12} /> Eating &amp; drinking</div>
           <div className="panel-segment lifestyle-cadence">

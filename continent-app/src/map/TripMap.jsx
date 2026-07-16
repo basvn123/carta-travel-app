@@ -110,12 +110,15 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
 
       // Numbered pins - reconcile by teardown+rebuild (there are only a handful).
       markersRef.current.forEach((m) => m.marker.remove());
+      // A `stay` point (the traveller's own address) gets its own quiet pin
+      // and doesn't consume a stop number.
+      let stopNo = 0;
       markersRef.current = pts.map((p, i) => {
         const el = document.createElement('div');
-        el.className = 'trip-pin';
-        el.title = p.city || `Stop ${i + 1}`;
+        el.className = p.stay ? 'trip-pin trip-pin-stay' : 'trip-pin';
+        el.title = p.stay ? 'Your stay' : (p.city || `Stop ${i + 1}`);
         const num = document.createElement('span');
-        num.textContent = String(i + 1);
+        num.textContent = p.stay ? '' : String((stopNo += 1));
         el.appendChild(num);
         el.addEventListener('click', (e) => {
           e.stopPropagation();

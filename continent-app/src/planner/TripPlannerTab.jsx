@@ -13,7 +13,8 @@ import { fetchDrivingRoute } from '../lib/routing.js';
 import { useTripPlanner } from '../hooks/useTripPlanner.js';
 import { useCountryInsights } from '../hooks/useCountryInsights.js';
 import { loadAssignments, TRIP_DRAFT_PLAN_ID } from './dayPlanStore.js';
-import { SparkIcon, TrainIcon, BusIcon, CarIcon, BulbIcon, InfoIcon } from '../components/Icons.jsx';
+import { SparkIcon, TrainIcon, BusIcon, CarIcon, BulbIcon, InfoIcon, ReceiptIcon, BedIcon } from '../components/Icons.jsx';
+import { PlaneIcon } from '../components/TransportIcons.jsx';
 import { knownForFacts } from '../lib/knownFor.js';
 
 const SHEET_H_KEY = 'carta.tripSheetH.v1';
@@ -153,6 +154,7 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
   // Which stop's "what is this city known for" facts are expanded (index|null).
   const [stopInfoIdx, setStopInfoIdx] = useState(null);
   const [saveError, setSaveError] = useState('');
+  const [saveNotice, setSaveNotice] = useState('');
   const [sheetH, setSheetH] = useState(340);
   const [selectedStop, setSelectedStop] = useState(null);
   const [dragIdx, setDragIdx] = useState(null);
@@ -246,11 +248,14 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
   };
 
   // A trip plan chosen from the Saved-trips overview: load it and switch
-  // straight to its planned view.
+  // straight to its planned view - or, for { id, edit: true }, into the
+  // editable stop list so dates/stops can be changed right away.
   useEffect(() => {
     if (!openPlanId) return;
-    tp.loadPlan(openPlanId).then(() => {
-      tp.setPlanned(true);
+    const planId = typeof openPlanId === 'object' ? openPlanId.id : openPlanId;
+    const editMode = typeof openPlanId === 'object' && openPlanId.edit;
+    tp.loadPlan(planId).then(() => {
+      tp.setPlanned(!editMode);
       setSelectedStop(null);
       setSheetOpen(true);
     });
@@ -326,8 +331,19 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
   const handleSave = async () => {
     setSaveError('');
     if (!user) { onRequestAuth && onRequestAuth(); return; }
+    const wasUpdate = Boolean(tp.planId);
+    const fromEdit = !tp.planned;
     try {
       await tp.savePlan(user.id);
+      setSaveNotice(wasUpdate ? 'Trip updated in Saved trips.' : 'Trip saved to Saved trips.');
+      window.setTimeout(() => setSaveNotice(''), 3500);
+      if (fromEdit && wasUpdate) {
+        // Done editing an existing trip: hand the traveller back to the Trip
+        // planner's start page (the trip itself is safe under Saved trips).
+        tp.clearPlan();
+        setSelectedStop(null);
+        if (isNarrow) setSheetOpen(false);
+      }
     } catch (e) {
       setSaveError(e?.message || 'Could not save this trip.');
     }
@@ -456,6 +472,7 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
           {tp.planned ? (
             <TripItinerary
               dayPlan={tp.dayPlan}
+              label={tp.planLabel}
               stopDetails={tp.stopDetails}
               grandTotal={tp.grandTotal}
               groupSize={tp.groupSize}
@@ -563,7 +580,7 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
                           {stopInfoIdx === i && s.dest && (
                             <div className="guide-city-facts" onClick={(e) => e.stopPropagation()}>
                               {knownForFacts(s.dest).map(([label, value]) => (
-                                <div className="guide-city-fact" key={label}>
+                                <div className={`guide-city-fact ${label === 'Known for' ? 'guide-city-fact-known' : ''}`} key={label}>
                                   <span className="guide-city-fact-label">{label}</span>
                                   <span className="guide-city-fact-value">{value}</span>
                                 </div>
@@ -673,36 +690,63 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
               {/* Totals */}
               {tp.stopDetails.length > 0 && (
                 <div className="trip-block">
-                  <div className="trip-block-title">Trip total</div>
+                  <div className="trip-block-title"><ReceiptIcon size={13} /> Trip total</div>
 
                   {tp.flight?.combinable ? (
-                    <div className="trip-total-row">
-                      <span className="lbl">Flights <small>{tp.flight.into_anchor} in, {tp.flight.out_anchor} out, via {tp.flight.origin}</small></span>
-                      <span className="val">{eur(tp.flight.fare_total + tp.flight.ground_total)}</span>
-                    </div>
+                    <>
+                      <div className="trip-total-row">
+                        <span className="lbl">
+                          <PlaneIcon size={11} /> Flight out
+                          <small>{tp.flight.origin} → {tp.flight.into_anchor}, {tp.groupSize} {tp.groupSize === 1 ? 'seat' : 'seats'}</small>
+                        </span>
+                        <span className="val">{eur(tp.flight.into_fare_eur * tp.groupSize)}</span>
+                      </div>
+                      <div className="trip-total-row">
+                        <span className="lbl">
+                          <PlaneIcon size={11} /> Flight home
+                          <small>{tp.flight.out_anchor} → {tp.flight.origin}, {tp.groupSize} {tp.groupSize === 1 ? 'seat' : 'seats'}</small>
+                        </span>
+                        <span className="val">{eur(tp.flight.out_of_fare_eur * tp.groupSize)}</span>
+                      </div>
+                      {tp.flight.ground_total > 0 && (
+                        <div className="trip-total-row">
+                          <span className="lbl">
+                            <PlaneIcon size={11} /> Airport transfers
+                            <small>to and from the airports, whole group</small>
+                          </span>
+                          <span className="val">{eur(tp.flight.ground_total)}</span>
+                        </div>
+                      )}
+                    </>
                   ) : tp.flight ? (
                     <p className="trip-note">{REASON_LABELS[tp.flight.reason] || 'Flights for this trip could not be priced.'}</p>
                   ) : null}
 
                   {groundTotal > 0 && (
                     <div className="trip-total-row">
-                      <span className="lbl">Ground between stops <small>estimated, not a live fare</small></span>
+                      <span className="lbl"><TrainIcon size={11} /> Ground between stops <small>estimated, not a live fare</small></span>
                       <span className="val">{eur(groundTotal)}</span>
                     </div>
                   )}
 
                   {tp.carRental && (
                     <div className="trip-total-row">
-                      <span className="lbl">Rental car <small>{tp.carRental.days} days, whole group</small></span>
+                      <span className="lbl"><CarIcon size={11} /> Rental car <small>{tp.carRental.days} days, whole group</small></span>
                       <span className="val">{eur(tp.carRental.eur_total)}</span>
                     </div>
                   )}
 
                   {tp.stopDetails.map((s, i) => tp.stayCosts[i] && (
-                    <div className="trip-total-row" key={i}>
-                      <span className="lbl">{s.dest?.city} <small>{s.nights} {s.nights === 1 ? 'night' : 'nights'}, stay + on the ground</small></span>
-                      <span className="val">{eur(tp.stayCosts[i].total)}</span>
-                    </div>
+                    <React.Fragment key={i}>
+                      <div className="trip-total-row">
+                        <span className="lbl"><BedIcon size={11} /> {s.dest?.city} <small>{s.nights} {s.nights === 1 ? 'night' : 'nights'} accommodation</small></span>
+                        <span className="val">{eur(tp.stayCosts[i].accomTotal)}</span>
+                      </div>
+                      <div className="trip-total-row">
+                        <span className="lbl"><ReceiptIcon size={11} /> {s.dest?.city} <small>on the ground: food, transport, fun</small></span>
+                        <span className="val">{eur(tp.stayCosts[i].groundTotal)}</span>
+                      </div>
+                    </React.Fragment>
                   ))}
 
                   <div className="trip-total-row grand">
@@ -752,6 +796,10 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
           </div>
         )}
       </div>
+
+      {saveNotice && (
+        <div className="trip-save-toast" role="status">{saveNotice}</div>
+      )}
 
       {wizardOpen && (
         <GuidedTripWizard data={data} origin={origin} onChangeOrigin={onChangeOrigin} onCancel={() => setWizardOpen(false)} onComplete={handleWizardComplete} />

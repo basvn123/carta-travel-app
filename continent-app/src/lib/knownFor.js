@@ -327,8 +327,6 @@ export function knownForFacts(dest) {
     rows.push(['UNESCO', `${dest.beauty.unesco_count} listed ${dest.beauty.unesco_count === 1 ? 'site' : 'sites'} in the area`]);
   }
   if (dest.beauty?.top_beach) rows.push(['Beaches', 'Among Europe’s best beach destinations']);
-  const nAct = dest.activities?.items?.length || 0;
-  if (nAct) rows.push(['Things to do', `${nAct} catalogued places`]);
   if (dest.local_transport?.reason) {
     // Scrub dashes used as punctuation (em/en/spaced-hyphen) to keep the app
     // dash-free, since this line comes straight from the dataset.

@@ -3,7 +3,8 @@ import { useAuth } from './AuthContext.jsx';
 import { fetchSavedTrips, deleteTrip } from './tripStorage.js';
 import { fetchTripPlans, deleteTripPlan } from './tripPlanStorage.js';
 import { loadStandalonePlans, deleteStandalonePlan, loadAssignments } from '../planner/dayPlanStore.js';
-import { MapPinIcon, RouteIcon, ListDayIcon } from '../components/Icons.jsx';
+import { MapPinIcon, RouteIcon, ListDayIcon, PencilIcon } from '../components/Icons.jsx';
+import { CountryFlagStack } from '../components/CountryFlag.jsx';
 
 // How many individual days of a trip plan have Day-planner picks on this
 // device (assignments = { stopIdx: { dayIdx: [activityIdx...] } }).
@@ -32,18 +33,29 @@ function SavedSection({ Icon, title, sub, count, children }) {
   );
 }
 
-/** One saved entry: icon tile, title + meta, chevron, delete. */
-function SavedCard({ Icon, title, meta, onOpen, openTitle, onDelete, deleteLabel }) {
+/** One saved entry: visual tile (country flags / city photo / icon), title +
+ *  meta, chevron, optional edit, delete. */
+function SavedCard({ Icon, visual, title, meta, onOpen, openTitle, onEdit, editTitle, onDelete, deleteLabel }) {
   return (
     <div className="saved-card">
       <button className="saved-card-main" onClick={onOpen} title={openTitle}>
-        <span className="saved-card-icon"><Icon size={15} /></span>
+        <span className="saved-card-icon">{visual || <Icon size={15} />}</span>
         <span className="saved-card-text">
           <span className="saved-card-title">{title}</span>
           {meta && <span className="saved-card-meta">{meta}</span>}
         </span>
         <span className="saved-card-open" aria-hidden="true">›</span>
       </button>
+      {onEdit && (
+        <button
+          className="saved-trip-edit"
+          onClick={onEdit}
+          aria-label={editTitle || 'Edit'}
+          title={editTitle || 'Edit'}
+        >
+          <PencilIcon size={13} />
+        </button>
+      )}
       <button
         className="saved-trip-delete"
         onClick={onDelete}
@@ -61,8 +73,18 @@ function SavedCard({ Icon, title, meta, onOpen, openTitle, onDelete, deleteLabel
 // kind of "saved" trip lands here - single destinations saved from the map,
 // multi-stop trips built in the Trip planner, and device-local day plans -
 // each in its own clearly-labelled section.
-export function SavedTripsPanel({ onClose, onLoadTrip, onLoadTripPlan, onOpenAuth, onOpenDayPlan }) {
+export function SavedTripsPanel({ data, onClose, onLoadTrip, onLoadTripPlan, onOpenAuth, onOpenDayPlan }) {
   const { user, configured } = useAuth();
+  const destinations = data?.destinations || {};
+
+  // A day plan's card shows the city it plans, not a generic agenda icon -
+  // "Bruges" deserves a photo of Bruges. First stop's destination photo wins.
+  const dayPlanVisual = (sp) => {
+    const dest = destinations[sp.stops?.[0]?.destinationId];
+    const url = dest?.image?.url;
+    if (!url) return null;
+    return <span className="saved-card-photo" style={{ backgroundImage: `url(${url})` }} aria-hidden="true" />;
+  };
 
   const [trips, setTrips] = useState([]);
   const [loading, setLoading] = useState(!!user);
@@ -117,7 +139,7 @@ export function SavedTripsPanel({ onClose, onLoadTrip, onLoadTripPlan, onOpenAut
   const fmtDate = (s) => s ? new Date(s + 'T00:00:00Z').toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }) : '';
 
   return (
-    <div className="panel open account-panel">
+    <div className="panel open account-panel saved-trips-panel">
       <button className="panel-close" onClick={onClose} aria-label="Close">x</button>
 
       <div className="panel-header">
@@ -189,10 +211,16 @@ export function SavedTripsPanel({ onClose, onLoadTrip, onLoadTripPlan, onOpenAut
                   <div className="saved-card-stack" key={p.id}>
                     <SavedCard
                       Icon={RouteIcon}
+                      visual={p.countries?.length ? <CountryFlagStack countries={p.countries} /> : null}
                       title={p.label || 'Untitled trip'}
-                      meta={p.updated_at ? `Updated ${fmtDate(p.updated_at.slice(0, 10))}` : ''}
+                      meta={[
+                        p.start_date ? `${fmtDate(p.start_date)} → ${fmtDate(p.end_date)}` : '',
+                        p.cities?.length ? `${p.cities.length} ${p.cities.length === 1 ? 'stop' : 'stops'}` : '',
+                      ].filter(Boolean).join(', ')}
                       onOpen={() => onLoadTripPlan && onLoadTripPlan(p.id)}
                       openTitle="Open this trip in the Trip planner"
+                      onEdit={() => onLoadTripPlan && onLoadTripPlan({ id: p.id, edit: true })}
+                      editTitle="Edit this trip's stops and dates"
                       onDelete={() => handleDeleteTripPlan(p.id)}
                       deleteLabel={`Remove ${p.label || 'trip'}`}
                     />
@@ -234,6 +262,7 @@ export function SavedTripsPanel({ onClose, onLoadTrip, onLoadTripPlan, onOpenAut
                 <SavedCard
                   key={sp.id}
                   Icon={ListDayIcon}
+                  visual={dayPlanVisual(sp)}
                   title={sp.label || 'Day plan'}
                   meta={[
                     fmtDate(sp.startDate),

@@ -7,7 +7,7 @@ import { legTransportOptions, rentalEstimate } from '../lib/transport.js';
 import { cheapestStartDates, reorderSavings } from '../lib/tripCostOptimizer.js';
 import { addDays } from '../lib/dates.js';
 import {
-  fetchTripPlanWithStops, createTripPlan, saveTripPlanStops,
+  fetchTripPlanWithStops, createTripPlan, renameTripPlan, saveTripPlanStops,
 } from '../auth/tripPlanStorage.js';
 import { assignmentsKey, prefsKey, TRIP_DRAFT_PLAN_ID } from '../planner/dayPlanStore.js';
 import { loadRestorableDraft, persistTripDraft, clearTripDraft } from '../planner/tripDraftStore.js';
@@ -187,7 +187,9 @@ export function useTripPlanner(data, countryInsights = null) {
       nights: Math.max(1, s.nights || 1),
       activities: s.activities || [],
     })));
-    if (label != null) setPlanLabel(label);
+    // Never clobber a name the traveller already typed ("Bas en Noa" must
+    // survive picking France in the wizard) - the wizard label is a fallback.
+    if (label != null) setPlanLabel((prev) => (prev && prev.trim() ? prev : label));
     if (gs != null) setGroupSize(Math.max(1, Math.min(20, gs)));
     if (transport) setTransportPref(transport);
     if (wizardPace) setPace(wizardPace);
@@ -375,6 +377,8 @@ export function useTripPlanner(data, countryInsights = null) {
     setSaveState('saving');
     try {
       const id = planId || await createTripPlan(userId, planLabel || null);
+      // Renames of an already-saved trip must stick too, not just first saves.
+      if (planId) await renameTripPlan(id, planLabel || null);
       await saveTripPlanStops(id, userId, stopDetails.map((s, i) => {
         const isLast = i === stopDetails.length - 1;
         return {

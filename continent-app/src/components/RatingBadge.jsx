@@ -5,13 +5,9 @@ import { GemIcon } from './GemRating.jsx';
  * Traveller rating (schema v14 dest.rating) - the one visual language for
  * "how strong is this destination":
  *
- *   score  0-10 chip, colour-coded by tier
- *   tier   1-3 diamonds, Michelin Green Guide idiom:
- *            3 = Worth the journey, 2 = Worth a detour, 1 = Worth a visit
+ *   score  0-10 chip, colour-coded by tier (the tier shows only as colour;
+ *          no separate diamond glyphs - the number is the rating)
  *   hidden_gem  a separate "Hidden gem" tag - highly rated, hardly famous
- *
- * Diamonds (not stars) on purpose: stars mean "shortlist" in this app, and
- * the diamond keeps continuity with the old gem look users already know.
  */
 
 export function tierClass(rating) {
@@ -30,15 +26,6 @@ export function ScoreChip({ rating, size = 'sm' }) {
   );
 }
 
-export function TierDiamonds({ tier = 0, size = 9 }) {
-  if (!tier) return null;
-  return (
-    <span className={`tier-diamonds rt-${tier}`} aria-hidden="true">
-      {Array.from({ length: tier }, (_, i) => <GemIcon key={i} filled size={size} />)}
-    </span>
-  );
-}
-
 export function HiddenGemTag({ size = 'sm' }) {
   return (
     <span className={`hidden-gem-tag ${size}`} title="Highly rated, still under the radar">
@@ -48,13 +35,12 @@ export function HiddenGemTag({ size = 'sm' }) {
   );
 }
 
-/** Compact inline badge: score chip + tier diamonds (+ optional gem tag). */
+/** Compact inline badge: score chip (+ optional gem tag). */
 export function RatingBadge({ rating, size = 'sm', showGem = true, showLabel = false }) {
   if (!rating || rating.score == null) return null;
   return (
     <span className={`rating-badge ${size}`}>
       <ScoreChip rating={rating} size={size} />
-      <TierDiamonds tier={rating.tier} size={size === 'lg' ? 12 : 9} />
       {showLabel && rating.label && (
         <span className={`rating-label ${tierClass(rating)}`}>{rating.label}</span>
       )}

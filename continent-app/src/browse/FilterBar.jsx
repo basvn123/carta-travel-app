@@ -4,7 +4,7 @@ import { Dropdown } from '../components/Dropdown.jsx';
 import { DateField } from '../components/DateField.jsx';
 import { GemIcon } from '../components/GemRating.jsx';
 import { PlaneIcon, CarIcon } from '../components/TransportIcons.jsx';
-import { CalendarIcon, FilterIcon, SlidersIcon } from '../components/Icons.jsx';
+import { CalendarIcon, FilterIcon, LifestyleIcon } from '../components/Icons.jsx';
 import { eur } from '../lib/format.js';
 
 export function FilterBar({
@@ -186,7 +186,7 @@ export function FilterBar({
               aria-label="Lifestyle settings"
               title="Lifestyle: how you'll eat, drink and spend"
             >
-              <SlidersIcon size={18} />
+              <LifestyleIcon size={18} />
             </button>
           )}
         </div>
@@ -320,7 +320,7 @@ export function FilterBar({
                       onClick={onOpenLifestyle}
                       title="How you'll eat, drink and spend, priced at local rates"
                     >
-                      <SlidersIcon size={13} /> Set lifestyle
+                      <LifestyleIcon size={13} /> Set lifestyle
                     </button>
                   </div>
                 </div>

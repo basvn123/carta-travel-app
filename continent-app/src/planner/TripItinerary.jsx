@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { eur } from '../lib/format.js';
 import { googleMapsDirUrl } from '../lib/routing.js';
-import { SparkIcon, TrainIcon, BusIcon, CarIcon, BedIcon, ReceiptIcon } from '../components/Icons.jsx';
+import { shareTrip, downloadTripPdf } from '../lib/tripExport.js';
+import { SparkIcon, TrainIcon, BusIcon, CarIcon, BedIcon, ReceiptIcon, ShareIcon, DownloadIcon } from '../components/Icons.jsx';
 import { PlaneIcon } from '../components/TransportIcons.jsx';
 
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -25,7 +26,7 @@ const LEG_ICONS = { train: TrainIcon, bus: BusIcon, car: CarIcon };
  * list (the pace cap) and hands fine-tuning to the Day planner via onPlanDay.
  */
 export function TripItinerary({
-  dayPlan, stopDetails, grandTotal, groupSize, flight,
+  dayPlan, stopDetails, grandTotal, groupSize, flight, label = '',
   legs = [], stayCosts = [], carRental = null,
   activeStopIndex, onSelectStop, onPlanDay, isDayPlanned = null,
 }) {
@@ -33,6 +34,12 @@ export function TripItinerary({
   const dayPlanned = (d) => Boolean(isDayPlanned && isDayPlanned(d.stopIndex, d.dayOfStay));
   const [tab, setTab] = useState('overview');
   const [breakdownOpen, setBreakdownOpen] = useState(false);
+  const [shareState, setShareState] = useState('');
+
+  // Everything the share text / printable PDF needs, in one bag.
+  const exportPayload = {
+    label, stopDetails, dayPlan, flight, legs, stayCosts, carRental, grandTotal, groupSize,
+  };
 
   const pickDay = (day) => {
     setTab(day.dayNum);
@@ -125,13 +132,31 @@ export function TripItinerary({
             {breakdownOpen && (
               <div className="itin-breakdown-body">
                 {flight?.combinable && (
-                  <div className="trip-total-row">
-                    <span className="lbl">
-                      <PlaneIcon size={11} /> Flights
-                      <small>{flight.into_anchor} in, {flight.out_anchor} out, via {flight.origin}</small>
-                    </span>
-                    <span className="val">{eur(flight.fare_total + flight.ground_total)}</span>
-                  </div>
+                  <>
+                    <div className="trip-total-row">
+                      <span className="lbl">
+                        <PlaneIcon size={11} /> Flight out
+                        <small>{flight.origin} → {flight.into_anchor}, {groupSize} {groupSize === 1 ? 'seat' : 'seats'}</small>
+                      </span>
+                      <span className="val">{eur(flight.into_fare_eur * groupSize)}</span>
+                    </div>
+                    <div className="trip-total-row">
+                      <span className="lbl">
+                        <PlaneIcon size={11} /> Flight home
+                        <small>{flight.out_anchor} → {flight.origin}, {groupSize} {groupSize === 1 ? 'seat' : 'seats'}</small>
+                      </span>
+                      <span className="val">{eur(flight.out_of_fare_eur * groupSize)}</span>
+                    </div>
+                    {flight.ground_total > 0 && (
+                      <div className="trip-total-row">
+                        <span className="lbl">
+                          <PlaneIcon size={11} /> Airport transfers
+                          <small>to and from the airports, whole group</small>
+                        </span>
+                        <span className="val">{eur(flight.ground_total)}</span>
+                      </div>
+                    )}
+                  </>
                 )}
                 {legs.map((l, i) => {
                   if (!l || !l.ground_total) return null;
@@ -155,13 +180,22 @@ export function TripItinerary({
                   </div>
                 )}
                 {stopDetails.map((s, i) => stayCosts[i] && (
-                  <div className="trip-total-row" key={`stay-${i}`}>
-                    <span className="lbl">
-                      <BedIcon size={11} /> {s.dest?.city}
-                      <small>{s.nights} {s.nights === 1 ? 'night' : 'nights'}, stay + on the ground</small>
-                    </span>
-                    <span className="val">{eur(stayCosts[i].total)}</span>
-                  </div>
+                  <React.Fragment key={`stay-${i}`}>
+                    <div className="trip-total-row">
+                      <span className="lbl">
+                        <BedIcon size={11} /> {s.dest?.city}
+                        <small>{s.nights} {s.nights === 1 ? 'night' : 'nights'} accommodation</small>
+                      </span>
+                      <span className="val">{eur(stayCosts[i].accomTotal)}</span>
+                    </div>
+                    <div className="trip-total-row">
+                      <span className="lbl">
+                        <ReceiptIcon size={11} /> {s.dest?.city}
+                        <small>on the ground: food, transport, fun</small>
+                      </span>
+                      <span className="val">{eur(stayCosts[i].groundTotal)}</span>
+                    </div>
+                  </React.Fragment>
                 ))}
               </div>
             )}
@@ -186,7 +220,7 @@ export function TripItinerary({
                     onClick={() => onPlanDay(d)}
                     title={`${dayPlanned(d) ? 'Change' : 'Shape'} day ${d.dayNum} in the Day planner`}
                   >
-                    <SparkIcon size={11} /> {dayPlanned(d) ? 'Modify' : 'Plan'}
+                    <SparkIcon size={11} /> {dayPlanned(d) ? 'Edit plan' : 'Plan'}
                   </button>
                 )}
               </div>
@@ -198,6 +232,29 @@ export function TripItinerary({
               Open the route in Google Maps ↗
             </a>
           )}
+
+          {/* Take the trip with you: share it or keep a PDF copy. */}
+          <div className="itin-export-row">
+            <button
+              className="itin-export-btn"
+              onClick={async () => {
+                const r = await shareTrip(exportPayload);
+                setShareState(r === 'copied' ? 'Copied to your clipboard.' : '');
+                if (r === 'copied') window.setTimeout(() => setShareState(''), 2500);
+              }}
+              title="Share this trip"
+            >
+              <ShareIcon size={12} /> Share trip
+            </button>
+            <button
+              className="itin-export-btn"
+              onClick={() => downloadTripPdf(exportPayload)}
+              title="Open a printable copy - choose Save as PDF"
+            >
+              <DownloadIcon size={12} /> Download as PDF
+            </button>
+          </div>
+          {shareState && <p className="itin-export-note">{shareState}</p>}
         </div>
       ) : activeDay ? (
         <div className="itin-day">
@@ -244,7 +301,7 @@ export function TripItinerary({
           )}
           {onPlanDay && (
             <button className="itin-day-planner-btn" onClick={() => onPlanDay(activeDay)}>
-              <SparkIcon size={12} /> {dayPlanned(activeDay) ? 'Modify this day in the Day planner' : 'Plan this day in the Day planner'}
+              <SparkIcon size={12} /> {dayPlanned(activeDay) ? 'Edit this day\'s plan in the Day planner' : 'Plan this day in the Day planner'}
             </button>
           )}
         </div>

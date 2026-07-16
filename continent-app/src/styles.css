@@ -604,6 +604,12 @@ input, select {
   font-size: 12px;
   font-weight: 700;
 }
+/* The traveller's own stay: a quiet ink pin without a stop number */
+.trip-pin-stay {
+  width: 18px; height: 18px;
+  background: var(--ink);
+  cursor: default;
+}
 
 /* Floating trip header */
 /* Trip header - a static bar at the top of the panel (was a floating card) */
@@ -4280,6 +4286,9 @@ input, select {
   opacity: 1;
   color: var(--ink-mute);
 }
+/* Breathing room between the eating & drinking steppers - they read as one
+   dense block without it. */
+.lifestyle-food .stepper + .stepper { margin-top: 14px; }
 
 /* Type selector - three big buttons */
 
@@ -5215,6 +5224,38 @@ input, select {
   border-radius: 3px;
   padding: 0 4px;
   font-style: normal;
+}
+.result-sub {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-width: 0;
+}
+/* Breathing room between the country name and the rating chip */
+.result-sub .rating-badge { margin-left: 6px; }
+
+/* Confirmation toast after saving/updating a trip */
+.trip-save-toast {
+  position: fixed;
+  left: 50%;
+  bottom: 84px;
+  transform: translateX(-50%);
+  z-index: 60;
+  background: var(--ink);
+  color: var(--paper);
+  font-size: 12.5px;
+  font-weight: 600;
+  padding: 9px 16px;
+  border-radius: 999px;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.22);
+  animation: toast-in 0.18s ease-out;
+  pointer-events: none;
+  max-width: min(88vw, 420px);
+  text-align: center;
+}
+@keyframes toast-in {
+  from { opacity: 0; transform: translateX(-50%) translateY(6px); }
+  to { opacity: 1; transform: translateX(-50%) translateY(0); }
 }
 .result-country {
   font-size: 11.5px;
@@ -6152,6 +6193,19 @@ input, select {
   transition: border-color .15s, color .15s;
 }
 .saved-trip-delete:hover { border-color: var(--accent); color: var(--accent); }
+/* Pencil next to the delete: jump straight into editing a saved trip. */
+.saved-trip-edit {
+  flex-shrink: 0;
+  width: 28px; height: 28px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 50%;
+  border: 1px solid var(--rule);
+  background: var(--paper);
+  color: var(--ink-mute);
+  cursor: pointer;
+  transition: border-color .15s, color .15s;
+}
+.saved-trip-edit:hover { border-color: var(--accent); color: var(--accent); }
 
 /* ─── Saved trips overview: three clearly-labelled sections (destinations,
    trip plans, day plans), each an icon-led card so what-belongs-where reads
@@ -6221,7 +6275,44 @@ input, select {
   border-radius: 10px;
   background: var(--accent-bg);
   color: var(--accent);
+  overflow: hidden;
 }
+/* Country flag tiles on saved trip cards */
+.country-flag { border-radius: 2px; box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.14); display: block; }
+.country-flag-stack { display: flex; align-items: center; justify-content: center; }
+/* Two or three countries: overlap the flags like a fanned hand */
+.country-flag-stack.n2 .country-flag + .country-flag,
+.country-flag-stack.n3 .country-flag + .country-flag { margin-left: -8px; }
+.country-flag-stack.n2 .country-flag,
+.country-flag-stack.n3 .country-flag { box-shadow: 0 0 0 1.5px var(--paper); }
+/* A saved day plan wears a photo of its city */
+.saved-card-photo {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+}
+
+/* Share / download actions under the trip overview */
+.itin-export-row { display: flex; gap: 8px; margin-top: 8px; }
+.itin-export-btn {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 9px 10px;
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  background: var(--paper);
+  color: var(--ink-soft);
+  cursor: pointer;
+}
+.itin-export-btn:hover { border-color: var(--ink-mute); color: var(--ink); }
+.itin-export-note { font-size: 11.5px; color: var(--ink-mute); margin: 6px 2px 0; text-align: center; }
 .saved-card-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
 .saved-card-title {
   font-size: 13.5px;
@@ -6254,6 +6345,23 @@ input, select {
   text-align: left;
 }
 .saved-card-footer:hover { color: var(--accent); border-left-color: var(--accent); }
+/* Desktop: the Saved-trips overview gets the same modern, roomy treatment as
+   mobile - a wider sheet, breathing space between sections, larger cards -
+   instead of being squeezed into the narrow docked column. */
+@media (min-width: 881px) {
+  .panel.saved-trips-panel {
+    width: min(560px, 46vw);
+    padding-left: 28px;
+    padding-right: 28px;
+  }
+  .saved-trips-panel .saved-section { margin-bottom: 14px; }
+  .saved-trips-panel .saved-card-stack { gap: 10px; }
+  .saved-trips-panel .saved-card-main { padding: 12px 0 12px 14px; }
+  .saved-trips-panel .saved-card-title { font-size: 14.5px; }
+  .saved-trips-panel .saved-card-meta { font-size: 11px; }
+  .saved-trips-panel .saved-card-icon { width: 38px; height: 38px; }
+}
+
 .saved-empty {
   font-size: 12px;
   color: var(--ink-mute);
@@ -7532,6 +7640,13 @@ input, select {
   padding-top: 2px;
 }
 .guide-city-fact-value { color: var(--ink-soft); }
+/* "Known for" leads the card: bigger, ink-dark, serif accent */
+.guide-city-fact-known .guide-city-fact-value {
+  font-family: var(--display);
+  font-size: 14.5px;
+  line-height: 1.35;
+  color: var(--ink);
+}
 
 /* Wizard: "Let Carta pick my cities" questionnaire */
 .guide-design-quiz {
@@ -7656,6 +7771,74 @@ input, select {
 .shape-feas-group .trip-field-label { display: block; margin-bottom: 7px; }
 .shape-feas-group .shape-style { padding: 10px 14px; }
 
+/* Sight search inside "Add to your trip" + distance notes on far sights */
+.day-poi-search { margin-bottom: 10px; }
+.day-search-results { margin-bottom: 12px; }
+.day-poi-note {
+  display: block;
+  font-size: 11px;
+  color: var(--accent);
+  margin-top: 2px;
+}
+.day-tier-far .day-tier-badge { color: var(--accent); }
+
+/* Door-to-first-sight leg at the top of the timeline */
+.day-timeline-stay {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding-left: 0;
+  color: var(--ink-soft);
+}
+
+/* "Make the walk itself beautiful": near-zero scenic detours on the route */
+.day-scenic {
+  margin-top: 12px;
+  border: 1px dashed var(--rule);
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+.day-scenic-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 6px;
+}
+.day-scenic-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 7px 4px;
+  cursor: pointer;
+  text-align: left;
+  border-radius: 8px;
+}
+.day-scenic-row:hover { background: var(--paper-dim); }
+.day-scenic-text { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.day-scenic-text b { font-size: 12.5px; color: var(--ink); }
+.day-scenic-text small { font-size: 11px; color: var(--ink-soft); }
+
+/* Researched "most beautiful walk" cards per city */
+.day-walk {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  border: 1px solid var(--rule);
+  border-left: 3px solid var(--accent);
+  border-radius: 8px;
+  background: var(--paper);
+  padding: 10px 12px;
+}
+.day-walk + .day-walk { margin-top: 8px; }
+.day-walk b { font-size: 13px; color: var(--ink); }
+.day-walk small { font-size: 11.5px; line-height: 1.5; color: var(--ink-soft); }
+
 /* ───────── Crash guard (ErrorBoundary fallback) ───────── */
 .crash-screen {
   position: fixed; inset: 0; z-index: 9999;
@@ -7707,10 +7890,6 @@ input, select {
 .score-chip.rt-2 { background: var(--accent-bg); color: var(--accent); }
 .score-chip.rt-1 { background: var(--paper-dim); color: var(--ink-soft); border: 1px solid var(--rule); }
 .score-chip.rt-0 { background: transparent; color: var(--ink-mute); border: 1px solid var(--rule); }
-.tier-diamonds { display: inline-flex; align-items: center; gap: 1px; flex: none; }
-.tier-diamonds.rt-3 { color: var(--accent); }
-.tier-diamonds.rt-2 { color: var(--accent-soft); }
-.tier-diamonds.rt-1 { color: var(--ink-mute); }
 .rating-label {
   font-size: 10.5px;
   text-transform: uppercase;
@@ -7755,3 +7934,340 @@ input, select {
 }
 .price-pill.is-top { border-color: var(--accent); }
 .step-tier-gems { display: inline-flex; align-items: center; gap: 0; }
+
+/* ============================================================
+   Guided wizard v2: entry paths, recap strip, flight map,
+   city briefing panel, country suggestions
+   ============================================================ */
+
+/* -- Step 0: what are you looking for? -- */
+.guide-path-list { display: flex; flex-direction: column; gap: 10px; margin-top: 6px; }
+.guide-path {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-align: left;
+  padding: 14px 14px;
+  border: 1px solid var(--rule);
+  border-radius: 14px;
+  background: var(--paper);
+  cursor: pointer;
+}
+.guide-path:hover { border-color: var(--accent); }
+.guide-path-icon {
+  flex: none;
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  background: var(--accent-bg);
+  color: var(--accent);
+}
+.guide-path-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.guide-path-text b { font-size: 14px; }
+.guide-path-text small { font-size: 11.5px; color: var(--ink-mute); line-height: 1.45; }
+.guide-path .guide-arrow { margin-left: auto; color: var(--ink-mute); }
+
+/* -- The "planning around" recap strip -- */
+.guide-recap {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 5px;
+  padding: 7px 16px;
+  border-bottom: 1px solid var(--rule);
+  background: var(--paper-dim);
+}
+.guide-recap-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--mono);
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-mute);
+}
+.guide-recap-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10.5px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  padding: 3px 8px;
+  white-space: nowrap;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* -- Country quiz + suggestions -- */
+.guide-vibe-grid { grid-template-columns: repeat(3, 1fr); margin: 8px 0 10px; }
+.guide-country-suggest-list { display: flex; flex-direction: column; gap: 7px; margin-top: 7px; }
+.guide-country-suggest {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-align: left;
+  padding: 9px 11px;
+  border: 1px solid var(--rule);
+  border-radius: 11px;
+  background: var(--paper);
+  cursor: pointer;
+}
+.guide-country-suggest:hover { border-color: var(--ink-soft); }
+.guide-country-suggest.on { border-color: var(--accent); background: var(--accent-bg); }
+.guide-country-suggest-text { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+.guide-country-suggest-text b { font-size: 13px; }
+.guide-country-suggest-text small { font-size: 11px; color: var(--ink-mute); }
+.guide-country-suggest > svg { margin-left: auto; color: var(--accent); flex: none; }
+
+/* -- Plus-minus-2-days chip -- */
+.guide-flexpad { margin-top: 10px; }
+
+/* -- Getting there: the flight map + its side panel -- */
+.guide-flight-wrap { display: flex; gap: 12px; align-items: stretch; }
+.guide-flight-wrap .fpm-map { flex: 1.35; min-width: 0; height: 380px; border-radius: 12px; overflow: hidden; border: 1px solid var(--rule); }
+.guide-flight-side {
+  flex: 1;
+  min-width: 0;
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  padding: 12px;
+  overflow-y: auto;
+  max-height: 380px;
+  background: var(--paper);
+}
+.guide-flight-side-empty {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: var(--ink-mute);
+  text-align: center;
+  font-size: 12px;
+  line-height: 1.5;
+  padding: 12px;
+}
+.guide-flight-side-head { display: flex; gap: 10px; align-items: center; margin-bottom: 8px; }
+.guide-flight-side-title { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.guide-flight-side-title b { font-size: 14px; display: inline-flex; align-items: center; gap: 6px; }
+.guide-flight-side-title small { font-size: 11px; color: var(--ink-mute); display: inline-flex; align-items: center; gap: 4px; flex-wrap: wrap; }
+.guide-flight-side-rating { display: flex; align-items: center; gap: 6px; font-size: 11.5px; color: var(--ink-soft); margin: 6px 0; flex-wrap: wrap; }
+.guide-flight-side-car {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11.5px;
+  color: var(--ink-soft);
+  background: var(--paper-dim);
+  border-radius: 8px;
+  padding: 7px 9px;
+  margin: 6px 0;
+}
+.guide-nearby-list { display: flex; flex-direction: column; gap: 8px; }
+.guide-nearby { display: flex; gap: 9px; align-items: flex-start; }
+.guide-nearby-thumb {
+  flex: none;
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  background-size: cover;
+  background-position: center;
+  background-color: var(--paper-dim);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.guide-nearby-info { min-width: 0; }
+.guide-nearby-name { display: inline-flex; align-items: center; gap: 5px; font-size: 12.5px; font-weight: 600; flex-wrap: wrap; }
+.guide-nearby-sub { font-size: 11px; color: var(--ink-mute); line-height: 1.45; }
+
+/* Flight map pins */
+.fpm-pin {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  border: 1.5px solid var(--rule);
+  border-radius: 999px;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--mono);
+  font-size: 10.5px;
+  font-weight: 700;
+  padding: 3px 8px;
+  cursor: pointer;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.12);
+  white-space: nowrap;
+}
+.fpm-pin:hover { transform: translateY(-1px); border-color: var(--ink-soft); }
+.fpm-pin.on { background: var(--accent); border-color: var(--accent); color: var(--paper); }
+.fpm-pin .fpm-city {
+  display: none;
+  font-family: inherit;
+  font-weight: 600;
+}
+.fpm-pin.on .fpm-city { display: inline; }
+.fpm-origin { display: flex; flex-direction: column; align-items: center; gap: 2px; pointer-events: none; }
+.fpm-origin-dot {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: var(--ink);
+  border: 2.5px solid var(--paper);
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.3);
+}
+.fpm-origin-name {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--ink);
+  background: var(--paper);
+  border-radius: 4px;
+  padding: 1px 4px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+}
+
+/* -- Stay step: map + city briefing panel -- */
+.guide-stay-wrap { display: flex; gap: 12px; align-items: stretch; }
+.guide-stay-wrap .citypick-map { flex: 1.35; min-width: 0; height: 400px; }
+.guide-city-side {
+  flex: 1;
+  min-width: 0;
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  padding: 12px;
+  overflow-y: auto;
+  max-height: 400px;
+  background: var(--paper);
+}
+.guide-city-side-photo {
+  width: 100%;
+  height: 110px;
+  border-radius: 10px;
+  background-size: cover;
+  background-position: center;
+  background-color: var(--paper-dim);
+  margin-bottom: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.guide-city-side-title { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-bottom: 4px; }
+.guide-city-side-title b { font-size: 15px; }
+.guide-city-side-insight { font-size: 12px; color: var(--ink-soft); line-height: 1.55; margin: 4px 0 8px; }
+.guide-city-side-actions { display: flex; align-items: center; gap: 8px; margin-top: 10px; }
+.guide-city-side-add { width: 100%; margin-top: 10px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
+.citypick-pin.focused { box-shadow: 0 0 0 3px var(--accent-bg), 0 1px 6px rgba(0, 0, 0, 0.18); border-color: var(--accent); }
+
+/* -- Stay style + final summary -- */
+.guide-staystyle { margin-bottom: 10px; }
+.guide-staystyle .trip-field-label { display: block; margin-bottom: 6px; }
+.guide-final-summary { margin-top: 14px; border-top: 1px solid var(--rule); padding-top: 10px; }
+.guide-final-stop { display: flex; align-items: center; gap: 7px; font-size: 12.5px; padding: 4px 0; color: var(--ink-soft); }
+.guide-final-stop b { color: var(--ink); }
+.guide-arrival-when { margin-top: 12px; }
+.guide-city-btn { cursor: pointer; text-align: left; width: 100%; }
+.guide-arrival-picked .guide-back { margin-left: auto; flex: none; }
+
+/* Narrow screens: the side panels stack under their maps */
+@media (max-width: 700px) {
+  .guide-flight-wrap, .guide-stay-wrap { flex-direction: column; }
+  .guide-flight-wrap .fpm-map { height: 300px; }
+  .guide-stay-wrap .citypick-map { height: 300px; }
+  .guide-flight-side, .guide-city-side { max-height: 300px; }
+  .guide-vibe-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* ============================================================
+   Day planner explore map: the stay pin, category pins, filters
+   ============================================================ */
+.day-explore { margin: 12px 0; }
+.day-explore-filters { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+.day-explore-wrap { display: flex; gap: 12px; align-items: stretch; }
+.day-explore-wrap .dem-map { flex: 1.35; min-width: 0; height: 380px; border-radius: 12px; overflow: hidden; border: 1px solid var(--rule); }
+.day-explore-side { flex: 1; max-height: 380px; }
+
+/* The traveller's stay: a pulsing home dot that cannot be missed */
+.dem-stay { display: flex; flex-direction: column; align-items: center; pointer-events: none; position: relative; }
+.dem-stay-pulse {
+  position: absolute;
+  top: -7px;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--accent);
+  opacity: 0.25;
+  animation: dem-pulse 1.8s ease-out infinite;
+}
+.dem-stay-dot {
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 3px solid var(--paper);
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.35);
+}
+.dem-stay-name {
+  margin-top: 3px;
+  font-family: var(--mono);
+  font-size: 9.5px;
+  font-weight: 700;
+  color: var(--accent);
+  background: var(--paper);
+  border-radius: 4px;
+  padding: 1px 5px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.18);
+  max-width: 140px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+@keyframes dem-pulse {
+  0% { transform: scale(0.5); opacity: 0.45; }
+  80% { transform: scale(1.5); opacity: 0; }
+  100% { opacity: 0; }
+}
+
+/* Category pins: same pill language as the city picker, tinted per category */
+.dem-pin {
+  border: 1.5px solid var(--rule);
+  border-radius: 999px;
+  background: var(--paper);
+  color: var(--ink);
+  font-size: 10.5px;
+  font-weight: 600;
+  padding: 3px 8px;
+  cursor: pointer;
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.12);
+  white-space: nowrap;
+  max-width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.dem-pin:hover { transform: translateY(-1px); }
+.dem-pin.cat-town { border-color: var(--ink-soft); }
+.dem-pin.cat-beach { border-color: #2a8fbd; color: #1d6c91; }
+.dem-pin.cat-sight { border-color: var(--accent); color: var(--accent); }
+.dem-pin.cat-active { border-color: #3a9d6b; color: #2c7a52; }
+.dem-pin.on { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+.dem-pin.focused { box-shadow: 0 0 0 3px var(--accent-bg), 0 1px 6px rgba(0, 0, 0, 0.2); }
+
+/* Filter chips wear their category tint when active */
+.guide-chip.dem-chip-beach.on { background: #2a8fbd; border-color: #2a8fbd; }
+.guide-chip.dem-chip-sight.on { background: var(--accent); border-color: var(--accent); }
+.guide-chip.dem-chip-active.on { background: #3a9d6b; border-color: #3a9d6b; }
+
+@media (max-width: 700px) {
+  .day-explore-wrap { flex-direction: column; }
+  .day-explore-wrap .dem-map { height: 290px; }
+  .day-explore-side { max-height: 290px; }
+}
