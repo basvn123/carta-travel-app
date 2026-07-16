@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { DateField } from '../components/DateField.jsx';
 import { Dropdown } from '../components/Dropdown.jsx';
 import { ScoreChip, HiddenGemTag } from '../components/RatingBadge.jsx';
@@ -953,6 +953,24 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
 
   const focusedDest = focusedId ? destinations[focusedId] : null;
 
+  // On phones the map fills the screen, so the briefing panel that a pin tap
+  // populates sits below the fold - it reads as "nothing happened". Nudge the
+  // panel into view on selection (narrow screens only; desktop shows both).
+  const flightSideRef = useRef(null);
+  const citySideRef = useRef(null);
+  const scrollPanelIntoView = (el) => {
+    if (!el || typeof window === 'undefined') return;
+    if (!window.matchMedia?.('(max-width: 700px)').matches) return;
+    // Wait for the panel's picked-state content to render before scrolling.
+    requestAnimationFrame(() => el.scrollIntoView({ behavior: 'smooth', block: 'nearest' }));
+  };
+  useEffect(() => {
+    if (stepName === 'Getting there' && flyInId) scrollPanelIntoView(flightSideRef.current);
+  }, [flyInId, stepName]);
+  useEffect(() => {
+    if (stepName === 'Stay' && focusedId) scrollPanelIntoView(citySideRef.current);
+  }, [focusedId, stepName]);
+
   // ---------------------------------------------------------------- render --
   return (
     <div className="guide-overlay" onClick={handleCancel}>
@@ -1342,7 +1360,7 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
                         origin={originRec && originRec.lat != null ? { lat: originRec.lat, lon: originRec.lon, city: originRec.city } : null}
                         onPick={(id) => setFlyInId(flyInId === id ? '' : id)}
                       />
-                      <div className="guide-flight-side">
+                      <div className="guide-flight-side" ref={flightSideRef}>
                         {!flyIn ? (
                           <div className="guide-flight-side-empty">
                             <PlaneIcon size={16} />
@@ -1559,7 +1577,7 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
                       onFocus={(id) => setFocusedId((cur) => (cur === id ? '' : id))}
                       anchor={anchorDest && anchorDest.lat != null ? { lat: anchorDest.lat, lon: anchorDest.lon } : null}
                     />
-                    <div className="guide-city-side">
+                    <div className="guide-city-side" ref={citySideRef}>
                       {!focusedDest ? (
                         <div className="guide-flight-side-empty">
                           <MapPinIcon size={16} />
