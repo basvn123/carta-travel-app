@@ -474,7 +474,7 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
           <div className="trip-topcard-sub">
             {hasDates
               ? `${fmtDate(tp.tripStart)} → ${fmtDate(tp.tripEnd)}`
-              : 'Pick your travel dates below'}
+              : ''}
             {tp.stopDetails.length > 0 && (
               <span className="trip-topcard-count">{tp.stopDetails.length} {tp.stopDetails.length === 1 ? 'stop' : 'stops'}</span>
             )}
