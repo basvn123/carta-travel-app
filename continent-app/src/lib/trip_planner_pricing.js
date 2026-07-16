@@ -92,6 +92,22 @@ export function combineTripLegs(destA, arriveDate, destB, departDate, groupSize 
   };
 }
 
+// Why a trip's round flight couldn't be priced, in plain traveller language.
+// Shared so every surface that shows a trip (the planner's Trip total, the
+// planned Overview, the export) explains a missing flight plan identically -
+// never a message in one place and a silent gap in another.
+const FLIGHT_REASON_LABELS = {
+  no_shared_origin: "These two stops don't share a Ryanair origin airport, so there's no single flight plan connecting them. Try a different first or last stop, or fly home and out again.",
+  no_fare_for_date: 'No fare is stored for one of these exact dates yet. Try nudging the trip dates.',
+  missing_input: 'Pick your travel dates and at least one stop to price the flights.',
+};
+
+/** The traveller-facing explanation for a non-combinable flight result, or a
+ *  sensible default. Pass `flight.reason` from combineTripLegs. */
+export function flightReasonLabel(reason) {
+  return FLIGHT_REASON_LABELS[reason] || 'Flights for this trip could not be priced.';
+}
+
 const GROUND_DETOUR_FACTOR = 1.3;   // road km vs straight-line km (mirrors car_layer.py / apply_airport_anchors.py)
 const GROUND_EUR_PER_KM = 0.15;     // rough European train/bus fare per road km
 const GROUND_FLOOR_EUR = 10;        // no realistic intercity fare is cheaper than this

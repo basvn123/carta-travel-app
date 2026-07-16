@@ -16,14 +16,9 @@ import { loadAssignments, TRIP_DRAFT_PLAN_ID } from './dayPlanStore.js';
 import { SparkIcon, TrainIcon, BusIcon, CarIcon, BulbIcon, InfoIcon, ReceiptIcon, BedIcon } from '../components/Icons.jsx';
 import { PlaneIcon } from '../components/TransportIcons.jsx';
 import { knownForFacts } from '../lib/knownFor.js';
+import { flightReasonLabel } from '../lib/trip_planner_pricing.js';
 
 const SHEET_H_KEY = 'carta.tripSheetH.v1';
-
-const REASON_LABELS = {
-  no_shared_origin: "These two stops don't share a Ryanair origin airport, so there's no single flight plan connecting them. Try a different first or last stop, or fly home and out again.",
-  no_fare_for_date: 'No fare is stored for one of these exact dates yet. Try nudging the trip dates.',
-  missing_input: 'Pick your travel dates and at least one stop to price the flights.',
-};
 
 // Small circular progress ring for "planned vs available nights".
 function NightsRing({ planned, total }) {
@@ -247,6 +242,17 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
     if (isNarrow) setSheetOpen(false);
   };
 
+  // Leave the planned overview without touching the trip: drop back to the
+  // standard planner (the launcher on mobile, the map on desktop). Nothing is
+  // saved, deleted or edited - it's just an escape hatch off this screen.
+  const handleExitOverview = () => {
+    tp.clearPlan();
+    tp.setPlanned(false);
+    setSelectedStop(null);
+    setSaveError('');
+    if (isNarrow) setSheetOpen(false);
+  };
+
   // A trip plan chosen from the Saved-trips overview: load it and switch
   // straight to its planned view - or, for { id, edit: true }, into the
   // editable stop list so dates/stops can be changed right away.
@@ -297,6 +303,10 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
     : [];
 
   const hasDates = tp.tripStart && tp.tripEnd && tp.windowNights > 0;
+  // The inline builder is now only an editor for a trip that already exists -
+  // opened from Saved trips' "Edit", or "Edit stops" on a planned trip. A fresh
+  // trip planner shows only the guide launcher; new trips are built by the wizard.
+  const hasTrip = tp.stopDetails.length > 0;
   const mapStops = tp.stopDetails
     .filter((s) => s.dest)
     .map((s) => ({ lat: s.dest.lat, lon: s.dest.lon, city: s.dest.city }));
@@ -394,27 +404,20 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
         onSelectStop={setSelectedStop}
         selectedIndex={selectedStop}
         routeGeometry={tripRouteOk ? tripRoute.geometry : null}
+        routeSegments={tripRouteOk ? tripRoute.segments : null}
       />
 
       {/* Mobile: a clean launcher card over the map until the traveller chooses
-          to start. Tapping "Plan your trip" raises the bottom sheet; "Let Carta
-          guide you" opens the wizard. Never shown on desktop (isNarrow) or once
-          a plan exists. */}
+          to start. Trips are built through the guide, so "Plan your trip" opens
+          the wizard straight away. Never shown on desktop (isNarrow) or once a
+          plan exists. */}
       {isNarrow && !sheetOpen && !tp.planned && (
         <div className="trip-launcher" onClick={(e) => e.stopPropagation()}>
           <div className="trip-launcher-card">
             <div className="trip-launcher-spark"><SparkIcon size={20} /></div>
             <h2 className="trip-launcher-title">Plan your trip</h2>
-            <p className="trip-launcher-sub">Map a multi-stop European route, price the flights and stays, and let Carta line it all up.</p>
-            <button className="trip-launcher-primary" onClick={() => setSheetOpen(true)}>Plan your trip</button>
-            <button className="trip-launcher-guide" onClick={() => setWizardOpen(true)}>
-              <span className="trip-guide-spark"><SparkIcon size={15} /></span>
-              <span className="trip-guide-cta-text">
-                <b>Let Carta guide you</b>
-                <small>Answer a few questions and we'll build it for you</small>
-              </span>
-              <span className="trip-guide-arrow">→</span>
-            </button>
+            <p className="trip-launcher-sub">Answer a few questions and Carta maps the route, prices the flights and stays, and lines it all up.</p>
+            <button className="trip-launcher-primary" onClick={() => setWizardOpen(true)}>Plan your trip</button>
           </div>
         </div>
       )}
@@ -445,12 +448,22 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
             The name input opts out - typing must not start a drag. */}
         <div
           className="trip-topcard"
-          onPointerDown={isNarrow ? (e) => { if (!e.target.closest('input')) onGripDown(e); } : undefined}
+          onPointerDown={isNarrow ? (e) => { if (!e.target.closest('input, button')) onGripDown(e); } : undefined}
           onPointerMove={isNarrow ? onGripMove : undefined}
           onPointerUp={isNarrow ? onGripUp : undefined}
           onPointerCancel={isNarrow ? onGripUp : undefined}
           style={isNarrow ? { touchAction: 'none' } : undefined}
         >
+          {tp.planned && (
+            <button
+              className="trip-topcard-close"
+              onClick={handleExitOverview}
+              aria-label="Close trip overview"
+              title="Leave this trip and return to the planner"
+            >
+              ×
+            </button>
+          )}
           <input
             className="trip-topcard-name"
             value={tp.planLabel}
@@ -489,17 +502,8 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
                 dayIndex: day.dayOfStay - 1,
               }) : null}
             />
-          ) : (
+          ) : hasTrip ? (
           <>
-          <button className="trip-guide-cta" onClick={() => setWizardOpen(true)}>
-            <span className="trip-guide-spark"><SparkIcon size={15} /></span>
-            <span className="trip-guide-cta-text">
-              <b>Let Carta guide you</b>
-              <small>Answer a few questions and we'll build the trip for you</small>
-            </span>
-            <span className="trip-guide-arrow">→</span>
-          </button>
-
           {/* Step 1 - travel window */}
           <div className="trip-block">
             <div className="trip-block-title">When are you travelling?</div>
@@ -524,7 +528,6 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
               <div className="trip-origin-row">
                 <OriginPicker data={data} origin={origin} onChangeOrigin={onChangeOrigin} />
               </div>
-              <p className="trip-note">Flights are priced from this airport, and a car trip starts here too.</p>
             </div>
           )}
 
@@ -650,12 +653,13 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
                       <div className="trip-saving-row" key={c.start}>
                         <span>
                           Start <b>{fmtDate(c.start, true)}</b>: flights {eur(c.total)}
-                          {c.saving_vs_current != null && <em className="trip-saving-amount"> - save {eur(c.saving_vs_current)}</em>}
+                          {c.saving_vs_current != null && c.saving_vs_current > 0 && (
+                            <em className="trip-saving-amount"> - {eur(c.saving_vs_current)} cheaper than your current trip</em>
+                          )}
                         </span>
                         <button onClick={() => tp.applyStartDate(c.start)}>Use dates</button>
                       </div>
                     ))}
-                  <p className="trip-note">Same stops, same nights. Only the start date shifts. Flight prices are real stored Ryanair fares; ground costs are estimates.</p>
                 </div>
               )}
 
@@ -719,7 +723,7 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
                       )}
                     </>
                   ) : tp.flight ? (
-                    <p className="trip-note">{REASON_LABELS[tp.flight.reason] || 'Flights for this trip could not be priced.'}</p>
+                    <p className="trip-note">{flightReasonLabel(tp.flight.reason)}</p>
                   ) : null}
 
                   {groundTotal > 0 && (
@@ -768,7 +772,21 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
             </>
           )}
 
-          {/* Deep country intel for every country on the route */}
+          </>
+          ) : (
+          <button className="trip-guide-cta" onClick={() => setWizardOpen(true)}>
+            <span className="trip-guide-spark"><SparkIcon size={15} /></span>
+            <span className="trip-guide-cta-text">
+              <b>Let Carta guide you</b>
+              <small>Answer a few questions and we'll build the trip for you</small>
+            </span>
+            <span className="trip-guide-arrow">→</span>
+          </button>
+          )}
+
+          {/* Deep country intel for every country on the route. Sits outside the
+              planned/edit branches so the briefing shows on both the overview tab
+              and the edit-stops view; the stop-count guard hides it pre-trip. */}
           {countryInsights && tp.stopDetails.length > 0 && (() => {
             const tripCountries = [...new Set(tp.stopDetails.map((s) => s.dest?.country).filter(Boolean))];
             const withIntel = tripCountries.filter((c) => countryInsights[c]);
@@ -782,9 +800,6 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
               </div>
             );
           })()}
-
-          </>
-          )}
         </div>
 
         {/* The planned trip's actions live at the bottom of this panel on

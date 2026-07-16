@@ -19,30 +19,77 @@ const OSRM_PROFILES = {
   driving: 'https://routing.openstreetmap.de/routed-car/route/v1/driving',
 };
 
+// OSRM's foot/driving profiles route over ferries (a lake or sea crossing is a
+// legitimate leg of the journey), and it returns those segments as straight
+// lines across the water. Drawn and timed like the rest of the path, they read
+// as "walk across the lake" - which is impossible. We split the route by travel
+// mode so the map can draw ferry legs as a distinct over-water line and the
+// itinerary can call them ferries, not walks.
+const isFerryStep = (s) => s?.mode === 'ferry';
+
+/** Fold OSRM's steps into (a) contiguous drawing segments tagged by mode and
+ *  (b) per-leg walk/ferry breakdowns, so callers never present a ferry hop as
+ *  a walk. */
+function summarizeRoute(route) {
+  const segments = [];
+  let cur = null; // { mode: 'walk'|'ferry', coordinates: [[lon,lat],...] }
+  const pushCoord = (mode, c) => {
+    if (!cur || cur.mode !== mode) {
+      // Start each new segment at the previous one's last point so the drawn
+      // line stays visually continuous across a mode change.
+      const bridge = cur && cur.coordinates.length ? [cur.coordinates[cur.coordinates.length - 1]] : [];
+      cur = { mode, coordinates: bridge };
+      segments.push(cur);
+    }
+    cur.coordinates.push(c);
+  };
+
+  const legs = (route.legs || []).map((l) => {
+    let ferryKm = 0, ferryMin = 0, walkKm = 0, walkMin = 0;
+    (l.steps || []).forEach((s) => {
+      const mode = isFerryStep(s) ? 'ferry' : 'walk';
+      if (mode === 'ferry') { ferryKm += (s.distance || 0) / 1000; ferryMin += (s.duration || 0) / 60; }
+      else { walkKm += (s.distance || 0) / 1000; walkMin += (s.duration || 0) / 60; }
+      (s.geometry?.coordinates || []).forEach((c) => pushCoord(mode, c));
+    });
+    return {
+      km: (l.distance || 0) / 1000,
+      min: Math.max(1, Math.round((l.duration || 0) / 60)),
+      ferry: ferryKm > 0,
+      ferryKm, walkKm,
+      ferryMin: ferryKm > 0 ? Math.max(1, Math.round(ferryMin)) : 0,
+      walkMin: walkKm > 0 ? Math.max(1, Math.round(walkMin)) : 0,
+    };
+  });
+
+  return {
+    geometry: route.geometry.coordinates, // [[lon,lat], ...] - full path (fallback)
+    segments: segments.filter((s) => s.coordinates.length >= 2),
+    legs,
+    km: (route.distance || 0) / 1000,
+    min: Math.max(1, Math.round((route.duration || 0) / 60)),
+    hasFerry: legs.some((l) => l.ferry),
+  };
+}
+
 /** points: [{ lat, lon }, ...] in visiting order (needs >= 2 with coordinates).
- *  Resolves to { geometry: [[lon,lat],...], legs: [{ km, min }], km, min } or
- *  null (fetch failed, too few points, or the router had no answer). */
+ *  Resolves to { geometry, segments: [{ mode, coordinates }], legs: [{ km, min,
+ *  ferry, walkKm, walkMin, ferryKm, ferryMin }], km, min, hasFerry } or null
+ *  (fetch failed, too few points, or the router had no answer). */
 export async function fetchRoute(points, profile = 'foot') {
   const base = OSRM_PROFILES[profile] || OSRM_PROFILES.foot;
   const pts = (points || []).filter((p) => p && p.lat != null && p.lon != null);
   if (pts.length < 2) return null;
   const coords = pts.map((p) => `${p.lon},${p.lat}`).join(';');
-  const url = `${base}/${coords}?overview=full&geometries=geojson&steps=false`;
+  // steps=true so we can tell walking apart from ferry crossings within a leg.
+  const url = `${base}/${coords}?overview=full&geometries=geojson&steps=true`;
   try {
     const r = await fetch(url);
     if (!r.ok) return null;
     const j = await r.json();
     const route = j?.routes?.[0];
     if (!route?.geometry?.coordinates?.length) return null;
-    return {
-      geometry: route.geometry.coordinates, // [[lon,lat], ...]
-      legs: (route.legs || []).map((l) => ({
-        km: (l.distance || 0) / 1000,
-        min: Math.max(1, Math.round((l.duration || 0) / 60)),
-      })),
-      km: (route.distance || 0) / 1000,
-      min: Math.max(1, Math.round((route.duration || 0) / 60)),
-    };
+    return summarizeRoute(route);
   } catch {
     return null;
   }

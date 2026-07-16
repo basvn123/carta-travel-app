@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { eur } from '../lib/format.js';
+import { flightReasonLabel } from '../lib/trip_planner_pricing.js';
 import { googleMapsDirUrl } from '../lib/routing.js';
 import { shareTrip, downloadTripPdf } from '../lib/tripExport.js';
 import { SparkIcon, TrainIcon, BusIcon, CarIcon, BedIcon, ReceiptIcon, ShareIcon, DownloadIcon } from '../components/Icons.jsx';
@@ -131,6 +132,9 @@ export function TripItinerary({
 
             {breakdownOpen && (
               <div className="itin-breakdown-body">
+                {flight && !flight.combinable && (
+                  <p className="trip-note">{flightReasonLabel(flight.reason)}</p>
+                )}
                 {flight?.combinable && (
                   <>
                     <div className="trip-total-row">

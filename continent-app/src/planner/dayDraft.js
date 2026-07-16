@@ -101,6 +101,107 @@ export function isMustSee(item) {
   return (item.rate ?? 0) >= 3 && poiScore(item) >= 3.5;
 }
 
+// Strip a POI name down to a language-neutral core so the same place under
+// different names collapses together: lowercase, drop accents, remove the
+// generic kind words and connectors that vary by language ("Castello di Vezio"
+// / "Castle of Vezio" both -> "vezio"). What's left is usually the proper name.
+const NAME_STOPWORDS = new Set([
+  // connectors / articles across the catalogue's languages
+  'di', 'da', 'de', 'del', 'della', 'dei', 'delle', 'des', 'du', 'the', 'of',
+  'a', 'la', 'le', 'il', 'lo', 'los', 'las', 'el',
+  'and', 'et', 'e', 'y', 'van', 'der', 'den', 'am', 'im', 'zur',
+  // generic place kinds that translate but denote the same thing
+  'castle', 'castello', 'castel', 'chateau', 'schloss', 'burg', 'castillo',
+  'church', 'chiesa', 'iglesia', 'eglise', 'kirche', 'kerk',
+  'cathedral', 'cattedrale', 'catedral', 'cathedrale', 'dom', 'duomo',
+  'basilica', 'chapel', 'cappella', 'chapelle', 'kapelle',
+  'museum', 'museo', 'musee', 'muzeum',
+  'palace', 'palazzo', 'palais', 'palast', 'palacio',
+  'tower', 'torre', 'tour', 'turm', 'toren',
+  'bridge', 'ponte', 'pont', 'brucke', 'brug',
+  'square', 'piazza', 'place', 'platz', 'plein', 'plaza',
+  'garden', 'gardens', 'giardino', 'jardin', 'garten',
+  'park', 'parco', 'parc',
+  'abbey', 'abbazia', 'abbaye',
+  'fort', 'fortress', 'fortezza', 'forteresse', 'festung',
+  'saint', 'santa', 'santo', 'san', 'sant', 'st',
+]);
+function nameCore(name) {
+  return (name || '')
+    .normalize('NFD').replace(/[̀-ͯ]/g, '') // strip diacritics
+    .toLowerCase()
+    .replace(/[^a-z0-9\s]/g, ' ')
+    .split(/\s+/)
+    .filter((w) => w && !NAME_STOPWORDS.has(w))
+    .join(' ')
+    .trim();
+}
+
+/**
+ * The strong identity keys for a POI - the same real place under a translated
+ * or alternate name shares at least one: its thumbnail image, its proper-name
+ * core paired with its kind ("castle::vezio"), or its kind within ~120m
+ * ("castle@46.010,9.283"). A proper-name core only counts alongside its kind,
+ * so "Palazzo Reale" and "Teatro Reale" (same adjective, different places)
+ * stay separate while "Castle of Vezio" / "Castello di Vezio" collapse.
+ */
+export function poiIdentityKeys(item) {
+  const keys = [];
+  if (!item) return keys;
+  const kind = (item.kind || '').toLowerCase();
+  if (item.img) keys.push(`img:${item.img}`);
+  const core = nameCore(item.name);
+  if (core && core.length >= 3) keys.push(`core:${kind}::${core}`);
+  const round = (n) => (typeof n === 'number' ? Math.round(n * 1000) / 1000 : null);
+  const lat = round(item.lat), lon = round(item.lon);
+  if (lat != null && lon != null) keys.push(`geo:${kind}@${lat},${lon}`);
+  return keys;
+}
+
+// Prefer the richer, more useful entry as the survivor of a duplicate group.
+function dupeRank(item) {
+  let r = poiScore(item);
+  if (item.wiki) r += 0.05;
+  if (item.desc) r += 0.03;
+  if (item.img) r += 0.02;
+  return r;
+}
+
+/**
+ * Detect near-duplicate POIs in a city's harvested list - the same real place
+ * appearing twice under a translated or alternate name (e.g. "Castello di
+ * Vezio" and "Castle of Vezio"). Entries that share any identity key (see
+ * poiIdentityKeys) collapse into one group; the strongest entry survives and
+ * the rest come back in a Set of SUPPRESSED indices so callers can hide them
+ * WITHOUT reindexing the array - saved assignments and toggles keep speaking
+ * in the original, stable indices.
+ */
+export function duplicatePoiIndices(items) {
+  const suppressed = new Set();
+  const list = items || [];
+  if (list.length < 2) return suppressed;
+
+  const groups = [];
+  const byKey = new Map();
+  list.forEach((item, idx) => {
+    const keys = poiIdentityKeys(item);
+    let g = null;
+    for (const k of keys) { if (byKey.has(k)) { g = byKey.get(k); break; } }
+    if (!g) { g = { idxs: [] }; groups.push(g); }
+    g.idxs.push(idx);
+    for (const k of keys) byKey.set(k, g);
+  });
+
+  for (const g of groups) {
+    if (g.idxs.length < 2) continue;
+    // Keep the strongest; suppress the rest (stable: ties keep lowest index).
+    const winner = g.idxs.reduce((best, idx) =>
+      (dupeRank(list[idx]) > dupeRank(list[best]) ? idx : best), g.idxs[0]);
+    for (const idx of g.idxs) if (idx !== winner) suppressed.add(idx);
+  }
+  return suppressed;
+}
+
 /**
  * Tier a city's activity list for display. Returns { must, worth, more, active },
  * each an array of { item, idx } (idx = original index into `items`).

@@ -20,7 +20,7 @@ const MAP_STYLE = 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json'
  * the straight dashed hops between pins; without it we fall back to straight
  * segments through the stops.
  */
-export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedIndex = null, routeGeometry = null, showRoute = true, focus = null }) {
+export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedIndex = null, routeGeometry = null, routeSegments = null, showRoute = true, focus = null }) {
   const containerRef = useRef(null);
   const mapRef = useRef(null);
   const markersRef = useRef([]);
@@ -54,6 +54,24 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
           'line-width': 2.5,
           'line-dasharray': [1.5, 1.6],
           'line-opacity': 0.85,
+        },
+      });
+      // Ferry legs of a route get their own over-water styling (dashed blue) so
+      // a lake or sea crossing never reads as a walk in a straight line.
+      map.addSource('trip-ferry', {
+        type: 'geojson',
+        data: { type: 'FeatureCollection', features: [] },
+      });
+      map.addLayer({
+        id: 'trip-ferry-line',
+        type: 'line',
+        source: 'trip-ferry',
+        layout: { 'line-cap': 'round', 'line-join': 'round' },
+        paint: {
+          'line-color': '#2b6f9e',
+          'line-width': 3,
+          'line-dasharray': [1, 1.4],
+          'line-opacity': 0.9,
         },
       });
       // The container's final size settles a frame after this tab mounts (its
@@ -91,21 +109,34 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
     const draw = () => {
       const pts = stops.filter((s) => s && s.lat != null && s.lon != null);
 
-      // Route line: prefer the real street-following geometry when supplied,
-      // otherwise straight hops between the stops. Solid for a real route,
-      // dashed for the straight-line fallback.
+      // Route line: prefer mode-tagged segments (walk drawn solid, ferry drawn
+      // as its own over-water line), then the flat street-following geometry,
+      // and finally straight hops between the stops - dashed, as an estimate.
       const src = map.getSource('trip-route');
+      const fsrc = map.getSource('trip-ferry');
+      const asFeature = (coords) => ({ type: 'Feature', geometry: { type: 'LineString', coordinates: coords } });
       if (src) {
-        const hasReal = showRoute && Array.isArray(routeGeometry) && routeGeometry.length >= 2;
-        const line = !showRoute ? null
-          : hasReal ? routeGeometry
-          : (pts.length >= 2 ? pts.map((p) => [p.lon, p.lat]) : null);
-        src.setData({
-          type: 'FeatureCollection',
-          features: line ? [{ type: 'Feature', geometry: { type: 'LineString', coordinates: line } }] : [],
-        });
-        map.setPaintProperty('trip-route-line', 'line-dasharray', hasReal ? [1, 0] : [1.5, 1.6]);
-        map.setPaintProperty('trip-route-line', 'line-width', hasReal ? 4 : 2.5);
+        const segs = showRoute && Array.isArray(routeSegments) ? routeSegments : null;
+        if (segs && segs.length) {
+          const walk = segs.filter((s) => s.mode !== 'ferry' && s.coordinates?.length >= 2);
+          const ferry = segs.filter((s) => s.mode === 'ferry' && s.coordinates?.length >= 2);
+          src.setData({ type: 'FeatureCollection', features: walk.map((s) => asFeature(s.coordinates)) });
+          fsrc?.setData({ type: 'FeatureCollection', features: ferry.map((s) => asFeature(s.coordinates)) });
+          map.setPaintProperty('trip-route-line', 'line-dasharray', [1, 0]);
+          map.setPaintProperty('trip-route-line', 'line-width', 4);
+        } else {
+          const hasReal = showRoute && Array.isArray(routeGeometry) && routeGeometry.length >= 2;
+          const line = !showRoute ? null
+            : hasReal ? routeGeometry
+            : (pts.length >= 2 ? pts.map((p) => [p.lon, p.lat]) : null);
+          src.setData({
+            type: 'FeatureCollection',
+            features: line ? [asFeature(line)] : [],
+          });
+          fsrc?.setData({ type: 'FeatureCollection', features: [] });
+          map.setPaintProperty('trip-route-line', 'line-dasharray', hasReal ? [1, 0] : [1.5, 1.6]);
+          map.setPaintProperty('trip-route-line', 'line-width', hasReal ? 4 : 2.5);
+        }
       }
 
       // Numbered pins - reconcile by teardown+rebuild (there are only a handful).
@@ -158,7 +189,7 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
     // Store so the load handler can invoke the latest closure once ready.
     map._drawTrip = draw;
     if (readyRef.current) draw();
-  }, [stops, padBottom, routeGeometry, showRoute, focus?.lat, focus?.lon]);
+  }, [stops, padBottom, routeGeometry, routeSegments, showRoute, focus?.lat, focus?.lon]);
 
   // Highlight the selected pin and ease it into the visible strip.
   useEffect(() => {

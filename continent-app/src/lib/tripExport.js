@@ -9,6 +9,7 @@
  */
 
 import { eur } from './format.js';
+import { flightReasonLabel } from './trip_planner_pricing.js';
 
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
@@ -40,6 +41,7 @@ export function tripSummaryText({ label, stopDetails, flight, grandTotal, groupS
     lines.push(`${i + 1}. ${s.dest.city}, ${s.dest.country} - ${s.nights} ${s.nights === 1 ? 'night' : 'nights'} (${fmtLong(s.arriveDate)})`);
   });
   if (flight?.combinable) lines.push(`Fly home ${flight.out_anchor} to ${flight.origin}`);
+  if (flight && !flight.combinable) lines.push(`Flights: ${flightReasonLabel(flight.reason)}`);
   if (grandTotal != null) {
     lines.push('');
     lines.push(`Estimated total for ${groupSize} ${groupSize === 1 ? 'person' : 'people'}: ${eur(grandTotal)}`);
@@ -80,6 +82,8 @@ function tripPrintHtml({ label, stopDetails, dayPlan = [], flight, legs = [], st
     rows.push(`<tr><td>Flight out: ${esc(flight.origin)} &rarr; ${esc(flight.into_anchor)}</td><td>${esc(eur(flight.into_fare_eur * groupSize))}</td></tr>`);
     rows.push(`<tr><td>Flight home: ${esc(flight.out_anchor)} &rarr; ${esc(flight.origin)}</td><td>${esc(eur(flight.out_of_fare_eur * groupSize))}</td></tr>`);
     if (flight.ground_total > 0) rows.push(`<tr><td>Airport transfers</td><td>${esc(eur(flight.ground_total))}</td></tr>`);
+  } else if (flight) {
+    rows.push(`<tr><td colspan="2" class="note">Flights: ${esc(flightReasonLabel(flight.reason))}</td></tr>`);
   }
   legs.forEach((l, i) => {
     if (!l || !l.ground_total) return;
@@ -115,6 +119,7 @@ function tripPrintHtml({ label, stopDetails, dayPlan = [], flight, legs = [], st
   td { padding: 5px 0; border-bottom: 1px solid #eee7db; }
   td:last-child { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
   tr.total td { font-weight: bold; border-top: 2px solid #1d1a16; border-bottom: none; font-size: 15px; }
+  td.note { text-align: left; color: #6b6257; font-style: italic; white-space: normal; }
   .day { margin: 10px 0; font-size: 13.5px; }
   .day-head { margin-bottom: 3px; }
   .day ol { margin: 2px 0 0 18px; padding: 0; }
@@ -145,7 +150,9 @@ function tripPrintHtml({ label, stopDetails, dayPlan = [], flight, legs = [], st
 
 /** Open the print dialog on a clean document; "Save as PDF" does the rest. */
 export function downloadTripPdf(trip) {
-  const w = window.open('', '_blank', 'noopener,width=760,height=900');
+  // NB: no `noopener` here - it makes window.open() return null, and we need
+  // the reference to write the printable document into the new window.
+  const w = window.open('', '_blank', 'width=760,height=900');
   if (!w) return false;
   w.document.write(tripPrintHtml(trip));
   w.document.close();

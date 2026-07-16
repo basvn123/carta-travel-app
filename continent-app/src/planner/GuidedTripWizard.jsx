@@ -41,13 +41,13 @@ const PATHS = [
     key: 'full',
     Icon: SparkIcon,
     label: 'Carta plans it start to end',
-    sub: 'Countries, flights, stays, days - we design the whole trip together',
+    sub: 'Countries, flights, stays, days. We design the whole trip together',
   },
   {
     key: 'landed',
     Icon: PlaneIcon,
     label: 'My travel there is booked',
-    sub: 'Flights (any airline) or car sorted - Carta plans the stays and days',
+    sub: 'Flights (any airline) or car sorted. Carta plans the stays and days',
   },
   {
     key: 'booked',
@@ -306,14 +306,20 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
   const stepName = path ? steps[step - 1] : null;
 
   // Every Ryanair route into the chosen countries for the chosen period,
-  // cheapest first. The pick anchors the whole trip.
+  // cheapest first. The pick anchors the whole trip - so this must stay
+  // resolvable AFTER the Getting-there step too (the Stay and Finish steps read
+  // the chosen fly-in for the arrival anchor, the route ordering and the
+  // flexible-date repricing). Gating it to only 'Getting there' silently
+  // dropped `flyIn` to null everywhere else, which handed the planner a null
+  // anchor and left ground-only first/last stops (gems like Toledo) with no
+  // priceable flight - the "no single flight plan" dead end.
   const routeOptions = useMemo(() => {
-    if (path !== 'full' || stepName !== 'Getting there' || countries.size === 0) return [];
+    if (path !== 'full' || arriveMode !== 'fly' || countries.size === 0) return [];
     return flyInOptions(destinations, countries, {
       startDate: dateMode === 'exact' ? startDate : '',
       flexMonth: dateMode === 'flex' ? flexMonth : '',
     });
-  }, [path, stepName, destinations, countries, dateMode, startDate, flexMonth]);
+  }, [path, arriveMode, destinations, countries, dateMode, startDate, flexMonth]);
   const flyIn = routeOptions.find((o) => o.id === flyInId) || null;
   const arrivalDest = arrivalId ? destinations[arrivalId] : null;
   const anchorDest = path === 'landed'
@@ -359,22 +365,50 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
   // it holds for the selected vacation types (curated ratings + tags).
   const countrySuggestions = useMemo(() => {
     if (!countryQuizOpen || vibes.size === 0) return [];
+    // Each vacation type reads the real catalogue signals - the `categories`
+    // tags a city carries plus its beauty-component intensities - so beaches,
+    // food and nightlife genuinely count. (The old code scored those three off
+    // an activity-kind fit that only knew museums/churches, so they were always
+    // zero and any beach/food/nightlife pick returned nothing.)
+    const has = (cats, ...keys) => keys.some((k) => cats.has(k));
     const vibeFit = (dest) => {
-      let s = 0;
+      const cats = new Set(dest.categories || []);
+      const comp = dest.beauty?.components || {};
       const score = dest.rating?.score ?? dest.beauty?.score ?? 0;
-      if (vibes.has('beaches')) s += interestFitScore(dest, new Set(['beaches'])) * 2;
-      if (vibes.has('nature')) s += (dest.beauty?.components?.nature || 0) * 2;
-      if (vibes.has('cities')) s += (dest.tier === 'airport' && score >= 7.5 ? 1.5 : 0);
-      if (vibes.has('food')) s += interestFitScore(dest, new Set(['food'])) * 1.5;
-      if (vibes.has('nightlife')) s += interestFitScore(dest, new Set(['nightlife'])) * 1.5;
-      if (vibes.has('hidden')) s += (dest.rating?.hidden_gem ? 1.5 : 0);
-      return s * (0.5 + score / 12); // a strong match in a strong place counts double
+      let s = 0;
+      if (vibes.has('beaches')) {
+        s += (cats.has('beach') ? 1 : 0)
+           + (has(cats, 'coast', 'island') ? 0.5 : 0)
+           + (has(cats, 'surf', 'diving', 'sailing') ? 0.3 : 0)
+           + (comp.beach || 0)
+           + (dest.beauty?.top_beach ? 0.4 : 0);
+      }
+      if (vibes.has('nature')) {
+        s += (has(cats, 'nature', 'mountains', 'national-park', 'wilderness') ? 1 : 0)
+           + (has(cats, 'alps', 'hiking', 'lake', 'lakes', 'fjord', 'fjords', 'valley', 'volcanic', 'countryside', 'arctic', 'carpathians') ? 0.5 : 0)
+           + (comp.nature || 0) * 1.2;
+      }
+      if (vibes.has('cities')) {
+        s += (cats.has('city') ? 0.8 : 0)
+           + (has(cats, 'historic', 'unesco', 'art', 'iconic', 'medieval', 'baroque', 'renaissance', 'gothic', 'roman', 'cathedral', 'architecture') ? 0.6 : 0)
+           + (comp.iconic || 0) * 0.5 + (comp.heritage || 0) * 0.5;
+      }
+      if (vibes.has('food')) {
+        s += (cats.has('food') ? 1.2 : 0) + (cats.has('wine') ? 0.9 : 0) + (cats.has('beer') ? 0.5 : 0);
+      }
+      if (vibes.has('nightlife')) {
+        s += (cats.has('nightlife') ? 1.2 : 0) + (cats.has('party') ? 0.8 : 0) + (cats.has('music') ? 0.4 : 0);
+      }
+      if (vibes.has('hidden')) {
+        s += (dest.rating?.hidden_gem ? 1 : 0) + (has(cats, 'quiet', 'remote', 'village') ? 0.6 : 0);
+      }
+      return s * (0.6 + score / 14); // a strong match in a strong place counts for more
     };
     return allCountries
       .map((c) => {
         const fits = c.cities
           .map(({ dest }) => ({ dest, s: vibeFit(dest) }))
-          .filter((x) => x.s > 0.8)
+          .filter((x) => x.s > 0.6)
           .sort((a, b) => b.s - a.s);
         const top = fits[0]?.dest;
         return {
@@ -383,11 +417,11 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
           n: fits.length,
           score: fits.slice(0, 6).reduce((sum, x) => sum + x.s, 0),
           reason: top
-            ? `${fits.length} strong ${fits.length === 1 ? 'match' : 'matches'}, led by ${top.city}`
+            ? `${fits.length} great ${fits.length === 1 ? 'match' : 'matches'}, led by ${top.city}`
             : '',
         };
       })
-      .filter((c) => c.n >= 2)
+      .filter((c) => c.n >= 1 && c.score > 0.9)
       .sort((a, b) => b.score - a.score)
       .slice(0, 6);
   }, [countryQuizOpen, vibes, allCountries]);
@@ -763,19 +797,58 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
   }, [includedIds, destinations]);
 
   // The interesting places around a picked flight: the sell for choosing it.
+  // Ranked to surface a genuine MIX - the small cozy villages and hidden gems
+  // close by, not only the big famous cities an hour or two away. Proximity and
+  // character (gem/hidden-gem) count heavily so nearby charm isn't buried under
+  // a distant metropolis's raw rating.
   const nearbyForFlight = useMemo(() => {
     if (!flyIn || !flyIn.dest || flyIn.dest.lat == null) return [];
+    const a = flyIn.dest;
     return Object.entries(destinations)
-      .filter(([id, d]) => id !== flyIn.id && d.lat != null)
-      .map(([id, d]) => ({ id, dest: d, km: Math.round(haversineKm(flyIn.dest.lat, flyIn.dest.lon, d.lat, d.lon)) }))
+      .filter(([id, d]) => id !== flyIn.id && d.lat != null && d.city !== a.city)
+      .map(([id, d]) => ({ id, dest: d, km: Math.round(haversineKm(a.lat, a.lon, d.lat, d.lon)) }))
       .filter((x) => x.km != null && x.km <= NEARBY_KM)
-      .sort((a, b) => (b.dest.rating?.score || 0) - (a.dest.rating?.score || 0))
-      .slice(0, 6);
+      .map((x) => {
+        const d = x.dest;
+        const appeal = d.rating?.score ?? d.beauty?.score ?? 0;
+        const proximity = 1 - x.km / NEARBY_KM; // 1 right next door, 0 at the edge
+        const score = appeal
+          + proximity * 3.5                    // strongly prefer what's actually close
+          + (d.tier === 'gem' ? 1.2 : 0)       // small towns and villages, not just airports
+          + (d.rating?.hidden_gem ? 1.1 : 0);  // pull the cozy hidden gems up the list
+        return { ...x, score };
+      })
+      .sort((a2, b2) => b2.score - a2.score)
+      .slice(0, 8);
   }, [flyIn, destinations]);
   const nearbyAdvice = useMemo(() => {
     if (!nearbyForFlight.length) return null;
     return carAdvice(nearbyForFlight.map((x) => x.dest), groupSize, countryInsights);
   }, [nearbyForFlight, groupSize, countryInsights]);
+
+  // A fuller, data-driven "what's in this region" line for the arrival panel -
+  // the texture the one-line blurb can't carry: how much small-town character
+  // and heritage sits within a short drive of where you land.
+  const flightRegion = useMemo(() => {
+    if (!flyIn?.dest || !nearbyForFlight.length) return null;
+    const d = flyIn.dest;
+    const gemN = nearbyForFlight.filter((x) => x.dest.tier === 'gem').length;
+    const hiddenN = nearbyForFlight.filter((x) => x.dest.rating?.hidden_gem).length;
+    const cityN = nearbyForFlight.length - gemN;
+    const unescoN = nearbyForFlight.filter((x) => x.dest.beauty?.unesco).length
+      + (d.beauty?.unesco ? 1 : 0);
+    const pieces = [];
+    if (gemN) {
+      pieces.push(`${gemN} small ${gemN === 1 ? 'town or village' : 'towns and villages'}`
+        + (hiddenN ? `, ${hiddenN === 1 ? 'one a hidden gem' : `${hiddenN} of them hidden gems`}` : ''));
+    }
+    if (cityN) pieces.push(`${cityN} larger ${cityN === 1 ? 'city' : 'cities'}`);
+    if (!pieces.length) return null;
+    const list = pieces.length === 2 ? `${pieces[0]} plus ${pieces[1]}` : pieces[0];
+    let s = `Within about a two-hour drive of ${d.city}: ${list}.`;
+    if (unescoN) s += ` ${unescoN} of ${unescoN === 1 ? 'them is' : 'these spots are'} UNESCO-listed.`;
+    return s;
+  }, [flyIn, nearbyForFlight]);
 
   // Arrival-city matches for the "travel is booked" path.
   const arrivalMatches = useMemo(() => {
@@ -931,8 +1004,11 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
               <p className="guide-sub">Tap countries on the map or in the list - mix and match as many as you like. Not sure? Let Carta recommend some.</p>
 
               <button className="guide-design-btn" onClick={() => setCountryQuizOpen((v) => !v)}>
-                <SparkIcon size={13} /> Let Carta pick the countries
-                <small>Say what kind of vacation you're after</small>
+                <span className="guide-design-spark"><SparkIcon size={14} /></span>
+                <span className="guide-design-text">
+                  Let Carta pick the countries
+                  <small>Say what kind of vacation you're after</small>
+                </span>
               </button>
 
               {countryQuizOpen && (
@@ -973,8 +1049,11 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
                       </div>
                     </>
                   )}
+                  {vibes.size === 0 && (
+                    <p className="guide-empty">Pick a vacation type above and Carta will suggest countries.</p>
+                  )}
                   {vibes.size > 0 && countrySuggestions.length === 0 && (
-                    <p className="guide-empty">Pick at least one vacation type above.</p>
+                    <p className="guide-empty">No standout matches for that mix - try another combination, or pick countries on the map below.</p>
                   )}
                 </div>
               )}
@@ -1237,11 +1316,6 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
                 </div>
               ) : (
                 <>
-                  <p className="guide-sub">
-                    Every plane is a real route{dateMode === 'exact' && startDate ? ` on ${fmtDate(startDate)}` : ''} with its
-                    per-person fare. Tap one to see what's around it - your pick becomes the arrival point of the whole trip.
-                  </p>
-
                   <div className="guide-datemode guide-stay-view">
                     <button className={flightView === 'map' ? 'on' : ''} onClick={() => setFlightView('map')}>Map</button>
                     <button className={flightView === 'list' ? 'on' : ''} onClick={() => setFlightView('list')}>List</button>
@@ -1289,8 +1363,11 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
                               <div className="guide-flight-side-rating">
                                 <ScoreChip rating={flyIn.dest.rating} size="xs" />
                                 {flyIn.dest.rating.hidden_gem && <HiddenGemTag />}
-                                <span>{cityInsight(flyIn.dest)}</span>
                               </div>
+                            )}
+                            <p className="guide-flight-side-desc">{cityInsight(flyIn.dest)}</p>
+                            {flightRegion && (
+                              <p className="guide-flight-side-region"><MapPinIcon size={11} /> {flightRegion}</p>
                             )}
                             {nearbyAdvice && nearbyAdvice.verdict !== 'no' && (
                               <p className="guide-flight-side-car">

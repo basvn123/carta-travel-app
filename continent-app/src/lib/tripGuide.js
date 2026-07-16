@@ -97,19 +97,70 @@ const KIND_INTERESTS = {
   Square: ['culture', 'photo'],
 };
 
-/** How well a city's catalogued activities match the traveller's interests,
- *  0..1. Unlike activitiesForInterests (which falls back to everything so a
- *  city is never unpickable), this is an honest fit measure for RANKING. */
+// The activity-kind vocabulary above only covers sightseeing (museums,
+// churches, castles...). Beaches, food, nightlife, outdoors, wellness and
+// sports never show up as an activity "kind" - they live in a city's own
+// `categories` tags and its beauty-component intensities. These maps let
+// interestFitScore read those, so every interest tile actually tunes the
+// ranking instead of silently scoring zero.
+const INTEREST_CATS = {
+  museums: ['art', 'unesco'],
+  outdoors: ['nature', 'mountains', 'hiking', 'national-park', 'wilderness', 'lake', 'lakes', 'alps', 'countryside', 'fjord', 'fjords', 'valley', 'volcanic', 'carpathians', 'adventure'],
+  food: ['food', 'wine', 'beer'],
+  shopping: ['luxury', 'fashion', 'modern', 'city'],
+  nightlife: ['nightlife', 'party', 'music'],
+  culture: ['historic', 'unesco', 'medieval', 'roman', 'ottoman', 'baroque', 'renaissance', 'gothic', 'religion', 'art'],
+  photo: ['iconic', 'fairytale', 'island', 'fjord', 'volcanic', 'lake'],
+  cafes: ['city', 'university', 'romantic'],
+  architecture: ['architecture', 'baroque', 'gothic', 'renaissance', 'medieval', 'modern', 'castle', 'fortress', 'roman', 'iconic'],
+  beaches: ['beach', 'coast', 'island', 'surf', 'diving', 'sailing'],
+  sports: ['skiing', 'hiking', 'surf', 'diving', 'sailing', 'adventure', 'winter'],
+  wellness: ['spa', 'thermal', 'wellness'],
+};
+// Which beauty component (0..1) reinforces each interest, when one applies.
+const INTEREST_COMP = {
+  outdoors: 'nature', beaches: 'beach', photo: 'iconic',
+  architecture: 'iconic', culture: 'heritage', museums: 'heritage',
+};
+
+/** How well a city matches the traveller's interests, 0..1 - an honest fit
+ *  measure for RANKING (unlike activitiesForInterests, which falls back to
+ *  everything so a city is never unpickable). Reads three signals per interest:
+ *  the city's `categories` tags (strongest), the relevant beauty component, and
+ *  how much of its actual sightseeing speaks to that interest. */
 export function interestFitScore(dest, interests) {
   if (!interests || interests.size === 0) return 0;
+  const cats = new Set(dest?.categories || []);
+  const comp = dest?.beauty?.components || {};
   const items = dest?.activities?.items || [];
-  if (!items.length) return 0;
-  let direct = 0;
-  for (const it of items) {
-    const tags = KIND_INTERESTS[it.kind];
-    if (tags && tags.some((t) => interests.has(t))) direct += 1;
+  let best = 0, sum = 0, n = 0;
+  for (const key of interests) {
+    let s = 0;
+    // Direct category tag: the most honest, discriminating signal.
+    const catList = INTEREST_CATS[key];
+    if (catList && catList.some((c) => cats.has(c))) s += 0.6;
+    // Beauty-component intensity reinforces it (e.g. a truly beachy coast).
+    const compKey = INTEREST_COMP[key];
+    if (compKey) s += (comp[compKey] || 0) * 0.4;
+    if (key === 'beaches' && dest?.beauty?.top_beach) s += 0.2;
+    // How much of the city's catalogued sightseeing fits this interest.
+    if (items.length) {
+      let hits = 0;
+      for (const it of items) {
+        const tags = KIND_INTERESTS[it.kind];
+        if (tags && tags.includes(key)) hits += 1;
+      }
+      s += Math.min(0.4, hits / 6);
+    }
+    sum += Math.min(1, s);
+    n += 1;
+    if (s > best) best = Math.min(1, s);
   }
-  return Math.min(1, direct / 6);
+  if (!n) return 0;
+  // Blend the single strongest interest with the average across all picked
+  // ones: one perfect match still ranks a city well, matching several ranks it
+  // higher - without letting a long interest list dilute a great fit to zero.
+  return Math.min(1, 0.65 * best + 0.35 * (sum / n));
 }
 
 /** Worth-a-visit tier for a city, from the same gemScore the recommenders use.

@@ -40,50 +40,65 @@ function minFare(fares, monthPrefix) {
 }
 
 /**
- * Ryanair fly-in options for the wizard: destinations in the chosen countries
- * that have real stored outbound fares for the chosen period.
+ * Ryanair fly-in options for the wizard: the real ARRIVAL AIRPORTS you can
+ * actually fly into to reach the chosen countries, priced for the chosen
+ * period.
+ *
+ * You never fly "to" a gem like Cuenca - you fly to Madrid (MAD) and drive.
+ * So every bookable (origin -> arrival-airport) fare that lands you in the
+ * chosen countries is grouped by the airport it lands at, and each airport is
+ * emitted once, placed at the airport city itself. The gems and towns reached
+ * from that airport are surfaced separately as "interesting places around" it.
+ * This keeps the map honest: one plane pin per city you genuinely fly to.
  *
  * @param destinations data.destinations
  * @param countries    Set of country names the traveller picked
  * @param startDate    exact ISO departure date, or '' when flexible
  * @param flexMonth    'YYYY-MM' to constrain a flexible search, or '' for any
  * @returns [{ id, dest, origin, anchor, exact_eur, cheapest: {date, eur}|null,
- *             gem_score }] sorted cheapest-first (exact-date fares before
- *             options with no fare stored on that date)
+ *             gem_score }] one per arrival airport, sorted cheapest-first
+ *             (exact-date fares before options with no fare stored on that date)
  */
 export function flyInOptions(destinations, countries, { startDate = '', flexMonth = '' } = {}) {
-  const out = [];
-  for (const [id, d] of Object.entries(destinations || {})) {
+  // anchor IATA -> the cheapest way in (across the airport's own routes and any
+  // gem/town that routes through it).
+  const airports = new Map();
+  for (const [, d] of Object.entries(destinations || {})) {
     if (!d || !countries.has(d.country)) continue;
-    let best = null;
     for (const [origin, r] of Object.entries(d.routes || {})) {
+      const anchor = r.anchor_airport || d.iata;
+      if (!anchor) continue;
       const exact = startDate ? (r.outbound_fare?.[startDate] ?? null) : null;
       const cheapest = minFare(r.outbound_fare, startDate ? '' : flexMonth);
       if (exact == null && !cheapest) continue;
-      const sortEur = exact != null ? exact : cheapest.eur;
       const cand = {
         origin,
-        anchor: r.anchor_airport || d.iata || '',
         exact_eur: exact,
         cheapest,
-        sort_eur: sortEur,
+        sort_eur: exact != null ? exact : cheapest.eur,
         has_exact: exact != null,
       };
-      // Prefer a route that actually has a fare on the exact date; then price.
-      if (!best
-        || (cand.has_exact && !best.has_exact)
-        || (cand.has_exact === best.has_exact && cand.sort_eur < best.sort_eur)) best = cand;
+      const cur = airports.get(anchor);
+      // Prefer a route with a fare on the exact date; then the cheapest fare.
+      if (!cur
+        || (cand.has_exact && !cur.has_exact)
+        || (cand.has_exact === cur.has_exact && cand.sort_eur < cur.sort_eur)) {
+        airports.set(anchor, cand);
+      }
     }
-    if (!best) continue;
-    out.push({ id, dest: d, ...best, gem_score: gemScore(d) });
   }
-  // Actual airport cities lead the list: a gem is reached VIA one of these
-  // airports anyway, so showing "Pisa" before five places served by PSA keeps
-  // the arrival choice honest. Within each band: priced-on-the-day first,
-  // then cheapest, then the most special place.
-  const isAirport = (o) => (o.dest.tier !== 'gem' ? 1 : 0);
+
+  // Resolve each arrival airport to its catalogue destination (airports are
+  // keyed by their IATA) so the pin has real coords, a name and a rating.
+  const out = [];
+  for (const [anchor, best] of airports) {
+    const airportDest = destinations[anchor]
+      || Object.values(destinations).find((x) => x.iata === anchor);
+    if (!airportDest || airportDest.lat == null) continue; // can't place a pin
+    out.push({ id: airportDest.id, dest: airportDest, anchor, ...best, gem_score: gemScore(airportDest) });
+  }
+  // Priced-on-the-day first, then cheapest, then the most appealing airport city.
   out.sort((a, b) => {
-    if (isAirport(a) !== isAirport(b)) return isAirport(b) - isAirport(a);
     if (a.has_exact !== b.has_exact) return a.has_exact ? -1 : 1;
     return a.sort_eur - b.sort_eur || b.gem_score - a.gem_score;
   });

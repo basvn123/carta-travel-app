@@ -222,6 +222,16 @@ export function BusIcon({ size = 15, className = '' }) {
   );
 }
 
+export function FerryIcon({ size = 15, className = '' }) {
+  return (
+    <Glyph size={size} className={className} label="Ferry">
+      <path d="M3.5 14h17l-1.4 4.3a1.7 1.7 0 0 1-1.6 1.2H6.5a1.7 1.7 0 0 1-1.6-1.2L3.5 14Z" />
+      <path d="M6 14v-3.3h8.2a1.5 1.5 0 0 1 1.1.5l2.4 2.8" />
+      <path d="M9 10.7V8h3" />
+    </Glyph>
+  );
+}
+
 export function CarIcon({ size = 15, className = '' }) {
   return (
     <Glyph size={size} className={className} label="Car">
