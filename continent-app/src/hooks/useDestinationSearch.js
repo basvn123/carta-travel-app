@@ -7,6 +7,39 @@ function normalize(s) {
   return (s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim();
 }
 
+// City name without the airport parenthetical: "Rome (Fiumicino)" -> "Rome".
+function baseCity(name) {
+  return (name || '').replace(/\s*\([^)]*\)\s*$/, '').trim();
+}
+
+// Some cities have several airport-tier entries (Rome Fiumicino/Ciampino, Paris
+// CDG/Orly/Beauvais, London's four, ...). They're the same destination reached
+// via different gateways, so collapse each group to its cheapest fare - keeping
+// the same city in the ranked list several times over is just noise. Non-airport
+// destinations are never merged (keyed by their unique id). The winning row is
+// relabelled to the plain city ("Rome (Fiumicino)" -> "Rome") so the list reads
+// cleanly; the detail panel still shows the specific airport (it reads by id).
+function dedupeGateways(rows) {
+  const winners = new Map();
+  const order = [];
+  for (const p of rows) {
+    if (p.tier !== 'airport') {
+      winners.set(p.id, p);
+      order.push(p.id);
+      continue;
+    }
+    const key = `${baseCity(p.city)}|${p.iso2}`;
+    const seen = winners.get(key);
+    if (!seen) {
+      winners.set(key, { ...p, city: baseCity(p.city) });
+      order.push(key);
+    } else if (p.total < seen.total) {
+      winners.set(key, { ...p, city: baseCity(p.city) });
+    }
+  }
+  return order.map((k) => winners.get(k));
+}
+
 /** Prices every destination for the chosen dates/choices, then narrows that
  *  down through the location search, filter bar, and "top picks" shortcut.
  *  Centralizes the destination search/filter pipeline so App.jsx only wires
@@ -61,9 +94,13 @@ export function useDestinationSearch({
         });
       }
     }
-    reach.sort((a, b) => a.total - b.total);
-    unreach.sort((a, b) => a.city.localeCompare(b.city));
-    return { pricedAll: reach, unreachableAll: unreach };
+    const dedupedReach = dedupeGateways(reach);
+    dedupedReach.sort((a, b) => a.total - b.total);
+    // Unreachable cities (e.g. London's four airports with no Ryanair route from
+    // home) collapse the same way - they have no price, so the first gateway wins.
+    const dedupedUnreach = dedupeGateways(unreach);
+    dedupedUnreach.sort((a, b) => a.city.localeCompare(b.city));
+    return { pricedAll: dedupedReach, unreachableAll: dedupedUnreach };
   }, [data, departDate, returnDate, choices]);
 
   const availableCountries = useMemo(() => {
