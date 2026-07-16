@@ -548,6 +548,15 @@ export function PencilIcon({ size = 15, className = '' }) {
   );
 }
 
+export function SearchIcon({ size = 15, className = '' }) {
+  return (
+    <Glyph size={size} className={className} label="Search">
+      <circle cx="10.5" cy="10.5" r="6.5" />
+      <path d="M20 20l-4.6-4.6" />
+    </Glyph>
+  );
+}
+
 /* Filled tier marks - paired with StarIcon to show the stay-map's rating tiers
    as glyphs rather than a colour code. */
 export function DiamondIcon({ size = 9, className = '' }) {

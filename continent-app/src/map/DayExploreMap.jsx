@@ -26,7 +26,7 @@ const CHECK_ICON = S('<path d="M5 12.5l4.5 4.5L19 6.5"/>');
  *              selected, focused }]
  * `onFocus(id)`
  */
-export function DayExploreMap({ stay, markers = [], onFocus, onStayClick, stayFocused }) {
+export function DayExploreMap({ stay, markers = [], onFocus, onStayClick, stayFocused, flyTo }) {
   const containerRef = useRef(null);
   const mapRef = useRef(null);
   const readyRef = useRef(false);
@@ -78,6 +78,18 @@ export function DayExploreMap({ stay, markers = [], onFocus, onStayClick, stayFo
       .addTo(map);
     map.jumpTo({ center: [stay.lon, stay.lat], zoom: 10.3 });
   }, [stay?.lat, stay?.lon]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Glide to a searched/suggested pin (each request bumps flyTo.k), keeping the
+  // stay in view by never zooming further out than we already are.
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !flyTo || flyTo.lat == null) return;
+    map.easeTo({
+      center: [flyTo.lon, flyTo.lat],
+      zoom: Math.max(map.getZoom(), 11.5),
+      duration: 700,
+    });
+  }, [flyTo?.k]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // The pin only behaves as a button when there's a town to brief.
   useEffect(() => {
