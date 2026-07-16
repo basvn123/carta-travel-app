@@ -7891,6 +7891,89 @@ input, select {
 }
 .day-changeplaces-btn:hover { border-color: var(--accent); color: var(--accent); }
 .day-changeplaces-btn svg { color: var(--accent); }
+/* Two ways back to the map: adjust by hand, or with Carta's guide open. */
+.day-stay-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.day-stay-actions .day-changeplaces-btn { margin-top: 10px; }
+.day-guide-again-btn { border-color: var(--accent); color: var(--accent); }
+
+/* Re-enter the shape-your-day questions after a day is already planned. */
+.day-carta-reshape {
+  margin-top: 12px;
+  background: none;
+  border: 1px dashed var(--rule);
+  color: var(--ink-soft);
+}
+.day-carta-reshape:hover { border-color: var(--accent); color: var(--accent); opacity: 1; }
+.day-carta-reshape svg { color: var(--accent); }
+
+/* A leg that demands over an hour on foot gets an honest warning. */
+.day-timeline-longwalk { color: #b3402a; font-size: 9.5px; }
+
+/* -- Carta's local intel: hand-curated area guide with one-tap adds -- */
+.day-intel {
+  border: 1px solid var(--rule);
+  border-left: 3px solid var(--accent);
+  border-radius: 10px;
+  padding: 11px 13px;
+  background: rgba(200, 80, 30, 0.03);
+}
+.day-intel .trip-block-title { display: flex; align-items: center; gap: 6px; }
+.day-intel .trip-block-title svg { color: var(--accent); }
+.day-intel-intro { font-size: 12.5px; line-height: 1.55; color: var(--ink-soft); margin: 2px 0 10px; }
+.day-intel-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 0;
+  border-top: 1px solid var(--rule);
+}
+.day-intel-row.added .day-intel-name { color: #16794f; }
+.day-intel-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.day-intel-name {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 2px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.day-intel-tag {
+  margin-left: 6px;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: var(--accent-bg);
+  color: var(--accent);
+  font-family: var(--mono);
+  font-size: 8.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.day-intel-note { font-size: 11.5px; line-height: 1.5; color: var(--ink-soft); }
+.day-intel-add {
+  flex: 0 0 auto;
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  border: 1px solid var(--rule);
+  background: var(--paper);
+  font-size: 15px;
+  cursor: pointer;
+  color: var(--accent);
+}
+.day-intel-add:hover { border-color: var(--accent); }
+.day-intel-row.added .day-intel-add { background: #16794f; border-color: #16794f; color: #fff; }
+.day-intel-tip {
+  display: flex;
+  gap: 6px;
+  align-items: baseline;
+  margin: 9px 0 0;
+  font-size: 11.5px;
+  line-height: 1.5;
+  color: var(--ink-soft);
+}
+.day-intel-tip svg { flex: none; color: var(--accent); position: relative; top: 1px; }
 
 /* Edit-mode banner on the explore/build screen when changing an existing plan */
 .day-edit-banner {
@@ -8391,12 +8474,23 @@ input, select {
 .guide-city-btn { cursor: pointer; text-align: left; width: 100%; }
 .guide-arrival-picked .guide-back { margin-left: auto; flex: none; }
 
-/* Narrow screens: the side panels stack under their maps */
+/* Narrow screens: the side panels stack under their maps.
+   The wrap flips to a column here, which turns the map's `flex: 1.35`
+   into a VERTICAL grow with a `flex-basis: 0%` - that basis overrides the
+   explicit height and, with no defined wrap height, collapses the map to
+   nothing (it vanished entirely on phones). `flex: none` cancels the flex
+   sizing so the map's own height is honoured again. */
 @media (max-width: 700px) {
   .guide-flight-wrap, .guide-stay-wrap { flex-direction: column; }
-  .guide-flight-wrap .fpm-map { height: 300px; }
-  .guide-stay-wrap .citypick-map { height: 300px; }
-  .guide-flight-side, .guide-city-side { max-height: 300px; }
+  .guide-flight-wrap .fpm-map,
+  .guide-stay-wrap .citypick-map {
+    flex: none;
+    width: 100%;
+    height: 58vh;
+    min-height: 320px;
+    max-height: 440px;
+  }
+  .guide-flight-side, .guide-city-side { flex: none; max-height: 340px; }
   .guide-vibe-grid { grid-template-columns: repeat(2, 1fr); }
 }
 
@@ -8551,12 +8645,6 @@ input, select {
 .day-guide-mood svg { flex: 0 0 auto; color: var(--ink-soft); }
 .day-guide-mood.on { border-color: var(--accent); background: var(--accent-bg); color: var(--accent); }
 .day-guide-mood.on svg { color: var(--accent); }
-.day-guide-mood-check {
-  position: absolute; top: 5px; right: 5px;
-  display: inline-flex; align-items: center; justify-content: center;
-  width: 15px; height: 15px; border-radius: 50%;
-  background: var(--accent); color: #fff;
-}
 .day-guide-range { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
 .day-guide-range-opt {
   display: flex; flex-direction: column; gap: 1px;
@@ -8816,6 +8904,10 @@ input, select {
 }
 .dem-pin-star svg { width: 10px; height: 10px; }
 
+/* A planner tab that's mounted but not active: fully hidden, zero layout.
+   MapLibre v4 re-measures via ResizeObserver when it comes back. */
+.tab-keep-hidden { display: none; }
+
 /* Filter chips wear their category tint when active */
 .guide-chip.dem-chip-beach.on { background: #2a8fbd; border-color: #2a8fbd; }
 .guide-chip.dem-chip-sight.on { background: var(--accent); border-color: var(--accent); }
@@ -8897,8 +8989,17 @@ input, select {
 
 @media (max-width: 700px) {
   .day-explore-wrap { flex-direction: column; }
-  .day-explore-wrap .dem-map { height: 360px; }
-  .day-explore-side { max-height: 360px; }
+  /* Column layout turns the map's `flex: 1.7` into a vertical grow whose
+     `flex-basis: 0%` overrides the height and collapses the map to nothing;
+     `flex: none` restores its own height (same fix as the wizard maps). */
+  .day-explore-wrap .dem-map {
+    flex: none;
+    width: 100%;
+    height: 58vh;
+    min-height: 320px;
+    max-height: 440px;
+  }
+  .day-explore-side { flex: none; max-height: 360px; }
   .day-explore-tools { flex-direction: column; }
   .day-guide-btn { align-self: stretch; justify-content: center; }
 }

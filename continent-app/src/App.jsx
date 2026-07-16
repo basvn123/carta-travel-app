@@ -112,6 +112,12 @@ function TravelApp() {
   const [accountOpen, setAccountOpen] = useState(false);
   // Saved trips panel, opened from its own bottom-nav button.
   const [savedTripsOpen, setSavedTripsOpen] = useState(false);
+  // Planner tabs mount on first visit and then stay alive (hidden) so a quick
+  // look at another tab never wipes an in-progress plan.
+  const [visitedTabs, setVisitedTabs] = useState(() => new Set([init.activeTab ?? 'map']));
+  useEffect(() => {
+    setVisitedTabs((prev) => (prev.has(activeTab) ? prev : new Set([...prev, activeTab])));
+  }, [activeTab]);
   // A day plan chosen from the Saved-trips overview: handed to DayPlannerTab,
   // which opens it and then clears this again.
   const [pendingDayPlanId, setPendingDayPlanId] = useState(null);
@@ -554,34 +560,41 @@ function TravelApp() {
         </>
       )}
 
-      {activeTab === 'trip' && (
-        <Suspense fallback={<TabFallback />}>
-          <TripPlannerTab
-            data={data}
-            user={user}
-            authConfigured={authConfigured}
-            onRequestAuth={() => setAuthModalOpen(true)}
-            openPlanId={pendingTripPlanId}
-            onOpenPlanConsumed={() => setPendingTripPlanId(null)}
-            origin={choices.origin}
-            onChangeOrigin={setOrigin}
-            onPlanDay={(target) => {
-              setPendingDayPlanId(target); // { planId|null, stopIndex, dayIndex }
-              setActiveTab('day');
-            }}
-          />
-        </Suspense>
+      {/* Planner tabs stay MOUNTED once visited and just hide: a quick hop to
+          another tab and back keeps the open plan, picks and scroll intact.
+          MapLibre (v4, ResizeObserver) resizes itself when shown again. */}
+      {visitedTabs.has('trip') && (
+        <div className={activeTab === 'trip' ? undefined : 'tab-keep-hidden'}>
+          <Suspense fallback={<TabFallback />}>
+            <TripPlannerTab
+              data={data}
+              user={user}
+              authConfigured={authConfigured}
+              onRequestAuth={() => setAuthModalOpen(true)}
+              openPlanId={pendingTripPlanId}
+              onOpenPlanConsumed={() => setPendingTripPlanId(null)}
+              origin={choices.origin}
+              onChangeOrigin={setOrigin}
+              onPlanDay={(target) => {
+                setPendingDayPlanId(target); // { planId|null, stopIndex, dayIndex }
+                setActiveTab('day');
+              }}
+            />
+          </Suspense>
+        </div>
       )}
-      {activeTab === 'day' && (
-        <Suspense fallback={<TabFallback />}>
-          <DayPlannerTab
-            data={data}
-            user={user}
-            authConfigured={authConfigured}
-            openPlanId={pendingDayPlanId}
-            onOpenPlanConsumed={() => setPendingDayPlanId(null)}
-          />
-        </Suspense>
+      {visitedTabs.has('day') && (
+        <div className={activeTab === 'day' ? undefined : 'tab-keep-hidden'}>
+          <Suspense fallback={<TabFallback />}>
+            <DayPlannerTab
+              data={data}
+              user={user}
+              authConfigured={authConfigured}
+              openPlanId={pendingDayPlanId}
+              onOpenPlanConsumed={() => setPendingDayPlanId(null)}
+            />
+          </Suspense>
+        </div>
       )}
 
       <div onClick={(e) => e.stopPropagation()}>

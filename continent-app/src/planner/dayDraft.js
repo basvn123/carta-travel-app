@@ -84,6 +84,17 @@ export function isTransportInfraPoi(item) {
   return false;
 }
 
+// The harvest files whole villages under kind "Square" (Bellagio, Varenna...):
+// their Wikipedia summaries say "comune"/"municipality"/"village". Relabel so
+// the planner never suggests "Bellagio - Square, ~25 min visit".
+const MUNICIPALITY_RE = /\b(comune|municipality|municipio|gemeente|commune)\b|\bis a (village|hamlet|small town|town|frazione)\b|small (community|town|village)/i;
+export function poiKind(item) {
+  if (!item) return '';
+  const kind = item.kind || '';
+  if ((kind === 'Square' || kind === '') && MUNICIPALITY_RE.test(item.desc || '')) return 'Village';
+  return kind;
+}
+
 export function poiScore(item) {
   let s = item.rate ?? 0;
   if (item.heritage) s += 0.6;
@@ -316,7 +327,7 @@ const KIND_DWELL = {
   Church: 25, Cathedral: 40, Basilica: 35, Chapel: 15,
   Monastery: 45, Convent: 30, Synagogue: 30, Mosque: 30, Temple: 30,
   Theatre: 25, Opera: 25,
-  Square: 25, Monument: 15, Memorial: 15, Statue: 10, Fountain: 10,
+  Square: 25, Village: 90, Town: 90, Monument: 15, Memorial: 15, Statue: 10, Fountain: 10,
   Gate: 10, Bridge: 15, Tower: 45, Lighthouse: 25, Viewpoint: 25,
   'Ancient site': 60, Ruins: 50, 'Roman site': 60,
   Market: 45, Brewery: 60, Winery: 75,
@@ -700,7 +711,7 @@ export function draftDays({ items, numDays, interests, paceKey, dwellFn, stopsMa
     days[d].push(best.idx);
   }
 
-  const dayLoad = days.map((d, i) => (d.length ? dwellFn(items[d[0]].kind) : 0));
+  const dayLoad = days.map((d, i) => (d.length ? dwellFn(poiKind(items[d[0]])) : 0));
   const centroid = (d) => {
     const pts = d.map((idx) => items[idx]);
     return {
@@ -719,7 +730,7 @@ export function draftDays({ items, numDays, interests, paceKey, dwellFn, stopsMa
     for (let d = 0; d < numDays; d++) {
       if (!days[d].length) { if (bestDay < 0) { bestDay = d; bestDist = 0; } continue; }
       if (days[d].length >= pace.stops) continue;
-      const cost = dwellFn(cand.item.kind) + WALK_EST_MIN;
+      const cost = dwellFn(poiKind(cand.item)) + WALK_EST_MIN;
       if (dayLoad[d] + cost > pace.budgetMin) continue;
       const c = centroid(days[d]);
       const dist = haversineKm(c.lat, c.lon, cand.item.lat, cand.item.lon) ?? Infinity;
@@ -728,7 +739,7 @@ export function draftDays({ items, numDays, interests, paceKey, dwellFn, stopsMa
     }
     if (bestDay < 0) continue;
     days[bestDay].push(cand.idx);
-    dayLoad[bestDay] += dwellFn(cand.item.kind) + WALK_EST_MIN;
+    dayLoad[bestDay] += dwellFn(poiKind(cand.item)) + WALK_EST_MIN;
     used.add(cand.idx);
   }
 
