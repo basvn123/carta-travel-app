@@ -2315,24 +2315,47 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
           </div>
         </div>
       )}
-      {showShape && stop && (
-        <ShapeDayWizard
-          city={stop.dest?.city || 'this city'}
-          numDays={days.length}
-          items={activities.items}
-          eligibleIdx={activities.walkable}
-          initial={prefs}
-          onSkip={() => setShowShape(false)}
-          onDraft={applyDraft}
-        />
-      )}
       <TripMap
         stops={routePins}
         padBottom={420}
         routeGeometry={routeOk ? route.geometry : null}
         routeSegments={routeOk ? route.segments : null}
-        focus={stop?.dest?.lat != null ? { ...cityCoords(stop.dest), zoom: 11.5 } : null}
+        focus={stop?.dest?.lat != null ? { ...cityCoords(stop.dest), zoom: 12.2 } : null}
+        pois={mapPois}
+        onPoiClick={(id) => toggleActivity(Number(id))}
+        fitMaxZoom={13}
       />
+
+      {/* Floating map tools: category chips filter the pickable pins, and the
+          hint says what tapping one does. Sits over the map, never over the
+          rail, and collapses to a scrollable row on phones. */}
+      {stop && mapDeck.length > 0 && (
+        <div className="day-map-tools" onClick={(e) => e.stopPropagation()}>
+          <div className="day-map-chips">
+            {[
+              ['all', 'All'],
+              ['sight', 'Sights'],
+              ['nature', 'Nature'],
+              ['active', 'Active'],
+              ['food', 'Food'],
+            ].filter(([k]) => k === 'all' || mapCatCounts[k] > 0).map(([k, label]) => (
+              <button
+                key={k}
+                type="button"
+                className={`shape-cat-chip day-map-chip ${mapCat === k ? 'on' : ''}`}
+                onClick={() => setMapCat(k)}
+                aria-pressed={mapCat === k}
+              >
+                {label}
+                <span className="shape-cat-count">{mapCatCounts[k]}</span>
+              </button>
+            ))}
+          </div>
+          <span className="day-map-hint">
+            Tap a pin to add it to day {dayOffset + dayIdx + 1}
+          </span>
+        </div>
+      )}
 
       <div className="trip-topcard" onClick={(e) => e.stopPropagation()}>
         <div className="day-topcard-row">
@@ -2472,16 +2495,35 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
             </div>
           )}
 
-          {/* 3. Today's plan. Empty: a plain card with the plan-for-me CTA and
-              a place browser. Planned: a collapsed card that names where you'll
-              go; expand for the route, tools and place-adding. */}
-          {stop && assignedItems.length === 0 && (
+          {/* 3. Today's plan. The Carta-plan panel (when open) takes this
+              spot: one compact screen of pre-answered questions that drafts
+              the SELECTED day right here in the rail - the big map and its
+              pins stay in view the whole time. Otherwise: empty days get the
+              CTA + place browser, planned days the collapsible plan card. */}
+          {stop && showShape && (
+            <CartaPlanPanel
+              city={stop.dest?.city || 'this city'}
+              cityDest={stop.dest}
+              dayNumber={dayOffset + dayIdx + 1}
+              numDays={days.length}
+              items={activities.items}
+              walkable={activities.walkable}
+              stayPoint={stayAnchor}
+              initial={prefs}
+              onDraft={applyDraft}
+              onClose={() => setShowShape(false)}
+            />
+          )}
+          {stop && !showShape && assignedItems.length === 0 && (
             <div className="trip-block day-plan-block">
               <div className="trip-block-title">Today's plan</div>
               <button className="day-carta-btn" onClick={() => setShowShape(true)}>
-                <SparkIcon size={12} /> Let Carta plan this city for me
+                <SparkIcon size={12} /> Let Carta plan day {dayOffset + dayIdx + 1} for me
               </button>
-              <p className="trip-note">Or add a place yourself below. Carta keeps the walking order optimal as you add.</p>
+              <p className="trip-note">
+                Or build it yourself: tap the pins on the map, or add places
+                below. Carta keeps the walking order optimal as you add.
+              </p>
               <Collapsible
                 className="day-nested"
                 title={`Add places${stop.dest?.city ? ` in ${stop.dest.city}` : ''}`}
@@ -2492,7 +2534,7 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
             </div>
           )}
 
-          {stop && assignedItems.length > 0 && (
+          {stop && !showShape && assignedItems.length > 0 && (
             <Collapsible
               className="day-plan-block day-plan-collapse"
               title="Today's plan"
@@ -2598,9 +2640,9 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
               <button
                 className="day-carta-btn day-carta-reshape"
                 onClick={() => setShowShape(true)}
-                title="Answer the shape-your-day questions again and let Carta redraft"
+                title="Answer the quick questions again and let Carta redraft this day"
               >
-                <SparkIcon size={12} /> Not happy with this day? Let Carta reshape it
+                <SparkIcon size={12} /> Not happy? Let Carta reshape day {dayOffset + dayIdx + 1}
               </button>
 
               {/* Add more places / another city, tucked inside the plan card so
