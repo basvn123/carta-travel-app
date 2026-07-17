@@ -209213,7 +209213,10 @@
     "lat": 41.44186782836914,
     "lon": -8.295629501342773,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/80976-Guimaraes_%2848687163117%29.jpg/500px-80976-Guimaraes_%2848687163117%29.jpg",
+    "desc": "Main town square of Guimarães, Portugal",
+    "wiki": "https://en.wikipedia.org/wiki/Toural"
    },
    {
     "name": "Sociedade Martins Sarmento",
@@ -210875,7 +210878,10 @@
     "lat": 41.550376892089844,
     "lon": -8.42701530456543,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c0/Misericordia_Church.JPG/500px-Misericordia_Church.JPG",
+    "desc": "Church in Sé, Braga, Portugal",
+    "wiki": "https://en.wikipedia.org/wiki/Igreja_da_Miseric%C3%B3rdia_(Braga)"
    },
    {
     "name": "Episcopal Palace, Braga",
@@ -213461,7 +213467,10 @@
     "kind": "Square",
     "lat": 36.18489074707031,
     "lon": -6.009739875793457,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/Ca%C3%B1os_de_Meca_La_Bre%C3%B1a_y_Marismas_del_Barbate.jpg/500px-Ca%C3%B1os_de_Meca_La_Bre%C3%B1a_y_Marismas_del_Barbate.jpg",
+    "desc": "Village in the Province of Cádiz, Spain",
+    "wiki": "https://en.wikipedia.org/wiki/Los_Ca%C3%B1os_de_Meca"
    },
    {
     "name": "Playa de Barbate de Franco",
@@ -226581,7 +226590,10 @@
     "lat": 43.84053039550781,
     "lon": 10.50599193572998,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Lucca_-_Cattedrale_di_San_Martino_01-260.jpg/500px-Lucca_-_Cattedrale_di_San_Martino_01-260.jpg",
+    "desc": "Cathedral of Lucca, Tuscany, Italy",
+    "wiki": "https://en.wikipedia.org/wiki/Lucca_Cathedral"
    },
    {
     "name": "State Archives of Lucca",
@@ -228036,7 +228048,10 @@
     "lon": 13.00047779083252,
     "rate": 3,
     "heritage": true,
-    "active": true
+    "active": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/K%C3%B6nigssee_Wehr_%28retuschiert%29.jpg/500px-K%C3%B6nigssee_Wehr_%28retuschiert%29.jpg",
+    "desc": "River in Germany",
+    "wiki": "https://en.wikipedia.org/wiki/K%C3%B6nigsseer_Ache"
    },
    {
     "name": "Salzbergwerk Berchtesgaden",
@@ -230073,7 +230088,9 @@
     "kind": "Square",
     "lat": 40.7863883972168,
     "lon": 14.08638858795166,
-    "rate": 2
+    "rate": 2,
+    "desc": "Place on the north shore of the Bay of Naples, of Italy",
+    "wiki": "https://en.wikipedia.org/wiki/Miseno"
    },
    {
     "name": "Parco regionale dei Campi Flegrei",
@@ -230583,7 +230600,10 @@
     "lon": 14.932635307312012,
     "rate": 3,
     "heritage": true,
-    "active": true
+    "active": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Landeskrone.jpg/500px-Landeskrone.jpg",
+    "desc": "Hill in Görlitz, Germany",
+    "wiki": "https://en.wikipedia.org/wiki/Landeskrone"
    },
    {
     "name": "Weinberg",
@@ -231649,7 +231669,9 @@
     "lat": 50.142601013183594,
     "lon": 7.168169975280762,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Martins_Tor.JPG/500px-Martins_Tor.JPG",
+    "wiki": "https://en.wikipedia.org/wiki/Martin_city_gate"
    },
    {
     "name": "Cochem Castle",
@@ -233400,7 +233422,10 @@
     "lat": 45.15638732910156,
     "lon": 10.79111099243164,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/Dsc_1150_Mantua.jpg/500px-Dsc_1150_Mantua.jpg",
+    "desc": "City in Lombardy, Italy",
+    "wiki": "https://en.wikipedia.org/wiki/Mantua"
    },
    {
     "name": "Galleria arte e arti della Camera di commercio di Mantova",
@@ -235102,7 +235127,10 @@
     "kind": "Church",
     "lat": 38.01908874511719,
     "lon": 12.54171085357666,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/79/Trapani_BW_2012-10-10_11-31-55_1.JPG/500px-Trapani_BW_2012-10-10_11-31-55_1.JPG",
+    "desc": "Church and minor basilica in Trapani, Sicily, Italy",
+    "wiki": "https://en.wikipedia.org/wiki/Madonna_of_Trapani"
    },
    {
     "name": "Drepana",
@@ -236042,7 +236070,10 @@
     "lat": 46.16638946533203,
     "lon": 8.799722671508789,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f5/Locarno_porto_-_panoramio.jpg/500px-Locarno_porto_-_panoramio.jpg",
+    "desc": "Municipality in Ticino, Switzerland",
+    "wiki": "https://en.wikipedia.org/wiki/Locarno"
    },
    {
     "name": "Madonna del Sasso",
@@ -236122,7 +236153,10 @@
     "kind": "Theatre",
     "lat": 46.16962432861328,
     "lon": 8.796010971069336,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Piazza_Grande_Locarno.jpg/500px-Piazza_Grande_Locarno.jpg",
+    "desc": "Annual film festival in Switzerland",
+    "wiki": "https://en.wikipedia.org/wiki/Locarno_Film_Festival"
    },
    {
     "name": "Palazzo Morettini",
@@ -236637,7 +236671,10 @@
     "kind": "Theatre",
     "lat": 48.51490020751953,
     "lon": 9.0634126663208,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/Landestheater-T%C3%BCbingen_2008.jpg/500px-Landestheater-T%C3%BCbingen_2008.jpg",
+    "desc": "Building in Tübingen, Baden-Württemberg, Germany",
+    "wiki": "https://en.wikipedia.org/wiki/Landestheater_T%C3%BCbingen"
    },
    {
     "name": "Edith-Stein-Karmel Tübingen",
@@ -238446,7 +238483,10 @@
     "kind": "Museum",
     "lat": 55.20236587524414,
     "lon": 14.979388236999512,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Melsted%2C_Bornholm_%282012-07-12%29%2C_by_Klugschnacker_in_Wikipedia_%281%29.JPG/500px-Melsted%2C_Bornholm_%282012-07-12%29%2C_by_Klugschnacker_in_Wikipedia_%281%29.JPG",
+    "desc": "Old farm on the Danish island of Bornholm",
+    "wiki": "https://en.wikipedia.org/wiki/Melstedg%C3%A5rd"
    },
    {
     "name": "Bornholms Middelaldercenter",
@@ -238902,7 +238942,10 @@
     "kind": "Square",
     "lat": 54.85492706298828,
     "lon": 10.516944885253906,
-    "rate": 2
+    "rate": 2,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/Nordenskirker_Marstal01.jpg/500px-Nordenskirker_Marstal01.jpg",
+    "desc": "Parish in Ærø Municipality, Denmark",
+    "wiki": "https://en.wikipedia.org/wiki/Marstal_Parish"
    },
    {
     "name": "Drejø Parish",
@@ -242345,7 +242388,10 @@
     "lat": 57.88629913330078,
     "lon": 11.582889556884766,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bf/Marstrands_kyrka_2.jpg/500px-Marstrands_kyrka_2.jpg",
+    "desc": "Church in Marstrand, Sweden",
+    "wiki": "https://en.wikipedia.org/wiki/Marstrand_Church"
    },
    {
     "name": "Carlsten Fortress",
@@ -243506,7 +243552,10 @@
     "lat": 53.029998779296875,
     "lon": 18.6200008392334,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/Torun_rynek_staromiejski_%282%29.jpg/500px-Torun_rynek_staromiejski_%282%29.jpg",
+    "desc": "UNESCO World Heritage Site in Kuyavian-Pomeranian Voivodeship, Poland",
+    "wiki": "https://en.wikipedia.org/wiki/Medieval_Town_of_Toru%C5%84"
    },
    {
     "name": "St. Stephan church in Toruń",
@@ -244534,7 +244583,10 @@
     "lat": 50.186336517333984,
     "lon": 12.752896308898926,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/92/071107-Loket-Castle-Hrad.jpg/500px-071107-Loket-Castle-Hrad.jpg",
+    "desc": "12th-century Gothic castle",
+    "wiki": "https://en.wikipedia.org/wiki/Loket_Castle"
    },
    {
     "name": "Goethe",
@@ -246507,7 +246559,10 @@
     "lat": 49.87206268310547,
     "lon": 16.310577392578125,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d7/Zlat%C3%A1_Hv%C4%9Bzda_Litomy%C5%A1l_%2814%29.jpg/500px-Zlat%C3%A1_Hv%C4%9Bzda_Litomy%C5%A1l_%2814%29.jpg",
+    "desc": "Town in Pardubice, Czech Republic",
+    "wiki": "https://en.wikipedia.org/wiki/Litomy%C5%A1l"
    },
    {
     "name": "Regionální muzeum v Litomyšli",
@@ -248016,7 +248071,10 @@
     "kind": "Square",
     "lat": 46.78708267211914,
     "lon": 17.192745208740234,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/H%C3%A9v%C3%ADz.jpg/500px-H%C3%A9v%C3%ADz.jpg",
+    "desc": "Lake in Hévíz, Zala County, Hungary",
+    "wiki": "https://en.wikipedia.org/wiki/Lake_H%C3%A9v%C3%ADz"
    },
    {
     "name": "Szent Kereszt felmagasztalása templom",
@@ -248750,7 +248808,10 @@
     "kind": "Square",
     "lat": 48.895809173583984,
     "lon": 18.044574737548828,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d5/Trencin_hdr_001.jpg/500px-Trencin_hdr_001.jpg",
+    "desc": "City in Slovakia",
+    "wiki": "https://en.wikipedia.org/wiki/Tren%C4%8D%C3%ADn"
    },
    {
     "name": "John Jiskra of Brandýs",
@@ -249585,7 +249646,9 @@
     "kind": "Museum",
     "lat": 47.92682647705078,
     "lon": 23.891067504882812,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/2023-APR_-_Memorialul_Sighet_%28Exterior%29_IMG_09.jpg/500px-2023-APR_-_Memorialul_Sighet_%28Exterior%29_IMG_09.jpg",
+    "wiki": "https://en.wikipedia.org/wiki/Memorial_of_the_Victims_of_Communism_and_of_the_Resistance"
    },
    {
     "name": "Sinagoga Hasidică",
@@ -251022,7 +251085,9 @@
     "kind": "Square",
     "lat": 39.9808349609375,
     "lon": 20.66722297668457,
-    "rate": 2
+    "rate": 2,
+    "desc": "Cave and archaeological site in Greece",
+    "wiki": "https://en.wikipedia.org/wiki/Megalakkos"
    },
    {
     "name": "Grambala",
@@ -251330,7 +251395,10 @@
     "lat": 42.846370697021484,
     "lon": 17.70403480529785,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Toljevac_Tower%2C_Mali_Ston.jpg/500px-Toljevac_Tower%2C_Mali_Ston.jpg",
+    "desc": "Settlement in Dubrovnik-Neretva County, Croatia",
+    "wiki": "https://en.wikipedia.org/wiki/Mali_Ston"
    },
    {
     "name": "Ensemble historique de Ston avec Mali Ston, les murs connecteurs, la réserve naturelle de la baie de Mali Ston, Stonsko Polje et les marais salants",
@@ -252074,7 +252142,10 @@
     "kind": "Castle",
     "lat": 42.27159881591797,
     "lon": 19.119699478149414,
-    "rate": 2
+    "rate": 2,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9f/Belgrad-BarLineCrossingSkutariLake.jpg/500px-Belgrad-BarLineCrossingSkutariLake.jpg",
+    "desc": "Island and fortress in Lake Skadar, Montenegro",
+    "wiki": "https://en.wikipedia.org/wiki/Lesendro"
    },
    {
     "name": "Orahovo Monastery",
@@ -252279,7 +252350,9 @@
     "kind": "Monastery",
     "lat": 39.40277862548828,
     "lon": 22.989999771118164,
-    "rate": 3
+    "rate": 3,
+    "desc": "Former monastery in Thessaly, Greece",
+    "wiki": "https://en.wikipedia.org/wiki/Makrinitissa_Monastery"
    },
    {
     "name": "Thessaly Railway Museum",
@@ -252938,7 +253011,10 @@
     "lat": 45.662872314453125,
     "lon": 13.990196228027344,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Matavun%2C_by_the_%C5%A0kocjan_Caves_%288965208004%29.jpg/500px-Matavun%2C_by_the_%C5%A0kocjan_Caves_%288965208004%29.jpg",
+    "desc": "Place in Littoral, Slovenia",
+    "wiki": "https://en.wikipedia.org/wiki/Matavun"
    },
    {
     "name": "Gradišče pri Divači",
@@ -253023,7 +253099,10 @@
     "lat": 45.66087341308594,
     "lon": 13.928956985473633,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Lokev%2CSlovenija.jpg/500px-Lokev%2CSlovenija.jpg",
+    "desc": "Place in Littoral, Slovenia",
+    "wiki": "https://en.wikipedia.org/wiki/Lokev,_Se%C5%BEana"
    },
    {
     "name": "Slope",
@@ -253039,7 +253118,10 @@
     "lat": 45.62328338623047,
     "lon": 14.045487403869629,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/Na_podori_peljejo_drvo_domov%2C_Misli%C4%8De_1955.jpg/500px-Na_podori_peljejo_drvo_domov%2C_Misli%C4%8De_1955.jpg",
+    "desc": "Village in Littoral, Slovenia",
+    "wiki": "https://en.wikipedia.org/wiki/Misli%C4%8De"
    },
    {
     "name": "Senadole",
@@ -253601,7 +253683,10 @@
     "lat": 41.377349853515625,
     "lon": 21.248329162597656,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fe/%D0%9C%D0%B0%D0%BA%D0%B5%D0%B4%D0%BE%D0%BD%D0%B8%D1%83%D0%BC_-_%D0%9A%D1%80%D1%83%D1%88%D0%B5%D0%B2%D0%BE.jpg/500px-%D0%9C%D0%B0%D0%BA%D0%B5%D0%B4%D0%BE%D0%BD%D0%B8%D1%83%D0%BC_-_%D0%9A%D1%80%D1%83%D1%88%D0%B5%D0%B2%D0%BE.jpg",
+    "desc": "Monument complex in Kruševo, North Macedonia",
+    "wiki": "https://en.wikipedia.org/wiki/Ilinden_(memorial)"
    },
    {
     "name": "Assumption of the Most Holy Mother of God",
@@ -253895,7 +253980,10 @@
     "lat": 41.34004592895508,
     "lon": 21.256013870239258,
     "rate": 1,
-    "active": true
+    "active": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/a/a0/M_KAMEN.jpg",
+    "desc": "1903 Ottoman victory over the Ilinden-Preobrazhenie revolt",
+    "wiki": "https://en.wikipedia.org/wiki/Battle_of_Me%C4%8Dkin_Kamen"
    }
   ]
  },
@@ -254142,7 +254230,10 @@
     "kind": "Nature reserve",
     "lat": 40.21338653564453,
     "lon": 19.57561683654785,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Parku_Komb%C3%ABtar_Llogara.svg/500px-Parku_Komb%C3%ABtar_Llogara.svg.png",
+    "desc": "National park and a tourist attraction in Albania",
+    "wiki": "https://en.wikipedia.org/wiki/Llogara_National_Park"
    },
    {
     "name": "Church of all Saints",
@@ -254409,7 +254500,10 @@
     "kind": "Peak",
     "lat": 56.81013488769531,
     "lon": -5.050878524780273,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/Meall_an_t-Suidhe_from_Claggan.png/500px-Meall_an_t-Suidhe_from_Claggan.png",
+    "desc": "Mountain in Scotland",
+    "wiki": "https://en.wikipedia.org/wiki/Meall_an_t-Suidhe"
    },
    {
     "name": "Ben Nevis",
@@ -255603,7 +255697,10 @@
     "lat": 56.415618896484375,
     "lon": -5.469124794006348,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/McCaig%27s_Tower.jpg/500px-McCaig%27s_Tower.jpg",
+    "desc": "Folly in Argyll and Bute, Scotland",
+    "wiki": "https://en.wikipedia.org/wiki/McCaig%27s_Tower"
    },
    {
     "name": "St John's Cathedral",
@@ -255712,7 +255809,10 @@
     "kind": "Nature reserve",
     "lat": 56.43333435058594,
     "lon": -5.566666603088379,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Loch_Sunart_to_the_Sound_of_Jura_MPA.png/500px-Loch_Sunart_to_the_Sound_of_Jura_MPA.png",
+    "desc": "Protected area of sea off Scotland",
+    "wiki": "https://en.wikipedia.org/wiki/Loch_Sunart_to_the_Sound_of_Jura_Marine_Protected_Area"
    },
    {
     "name": "Falls of Lora",
@@ -256014,7 +256114,10 @@
     "lat": 54.47431182861328,
     "lon": -0.618527889251709,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ed/Larpool_Viaduct%2C_Whitby.jpg/500px-Larpool_Viaduct%2C_Whitby.jpg",
+    "desc": "Railway viaduct in North Yorkshire, England",
+    "wiki": "https://en.wikipedia.org/wiki/Larpool_Viaduct"
    },
    {
     "name": "Ruswarp",
@@ -257880,7 +257983,10 @@
     "kind": "Peak",
     "lat": 52.99868392944336,
     "lon": -6.403787612915039,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Lugduff_from_Camenabologue.jpg/500px-Lugduff_from_Camenabologue.jpg",
+    "desc": "Mountain in County Wicklow, Ireland",
+    "wiki": "https://en.wikipedia.org/wiki/Lugduff"
    },
    {
     "name": "Glenmacnass Waterfall",
@@ -259086,7 +259192,10 @@
     "kind": "Theatre",
     "lat": 51.281097412109375,
     "lon": 1.078605055809021,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/Marlowe_Logo.tif/lossless-page1-330px-Marlowe_Logo.tif.png",
+    "desc": "Theatre in Canterbury, England",
+    "wiki": "https://en.wikipedia.org/wiki/Marlowe_Theatre"
    },
    {
     "name": "Canterbury Roman Museum",
@@ -259467,7 +259576,10 @@
     "kind": "Theatre",
     "lat": 54.99700164794922,
     "lon": -7.320000171661377,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/Millennium_Forum%2C_Derry.jpg/500px-Millennium_Forum%2C_Derry.jpg",
+    "desc": "Theatre and conference centre in Derry, Northern Ireland",
+    "wiki": "https://en.wikipedia.org/wiki/Millennium_Forum"
    },
    {
     "name": "Derry War Memorial",
@@ -259890,7 +260002,10 @@
     "lat": 56.12117004394531,
     "lon": -3.9442191123962402,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/96/Mar%27s_Wark.jpg/500px-Mar%27s_Wark.jpg",
+    "desc": "Ruined former residence of Scottish noble",
+    "wiki": "https://en.wikipedia.org/wiki/Mar%27s_Wark"
    },
    {
     "name": "Argyll's Lodging",
@@ -260753,7 +260868,10 @@
     "kind": "Square",
     "lat": 51.850364685058594,
     "lon": -8.295112609863281,
-    "rate": 2
+    "rate": 2,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/Cobh_-_Lusitania_Memorial_-_.jpg/500px-Cobh_-_Lusitania_Memorial_-_.jpg",
+    "desc": "Monument in Cobh, County Cork, Ireland",
+    "wiki": "https://en.wikipedia.org/wiki/Lusitania_Peace_Memorial"
    },
    {
     "name": "Cobh Museum",
@@ -266170,7 +266288,10 @@
     "kind": "Peak",
     "lat": 56.61058044433594,
     "lon": -5.0561933517456055,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/7/77/Meall_a%27_bhuiridh.jpg",
+    "desc": "Mountain in Scotland",
+    "wiki": "https://en.wikipedia.org/wiki/Meall_a%27_Bh%C3%B9iridh"
    },
    {
     "name": "Sgùrr na h-Ulaidh",
@@ -266184,14 +266305,18 @@
     "kind": "Peak",
     "lat": 56.716583251953125,
     "lon": -5.080697059631348,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/9/9a/Mam_na_Gualainn_-_geograph.org.uk_-_270193.jpg",
+    "wiki": "https://en.wikipedia.org/wiki/Mam_na_Gualainn"
    },
    {
     "name": "Meeting of Three Waters",
     "kind": "Square",
     "lat": 56.663150787353516,
     "lon": -4.980809211730957,
-    "rate": 2
+    "rate": 2,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/56_The_Meeting_of_Three_Waters_%28el_riu_Coe_i_els_torrents_de_Doire-bheith_i_Coire_Gabhail%29.jpg/500px-56_The_Meeting_of_Three_Waters_%28el_riu_Coe_i_els_torrents_de_Doire-bheith_i_Coire_Gabhail%29.jpg",
+    "wiki": "https://en.wikipedia.org/wiki/Meeting_of_Three_Waters"
    },
    {
     "name": "Am Bodach",
@@ -266449,7 +266574,10 @@
     "kind": "Square",
     "lat": 38.70686721801758,
     "lon": 20.642053604125977,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Lefkada-2007.JPG/500px-Lefkada-2007.JPG",
+    "desc": "Greek island in the Ionian Sea",
+    "wiki": "https://en.wikipedia.org/wiki/Lefkada"
    },
    {
     "name": "Δ.Δ Καρυάς, Εξάνθειας, Αγ.Ηλία, Νικολή Δήμου Καρυάς, Σφακιωτών, Απολλωνίων και Ελλομένου",
@@ -267870,7 +267998,10 @@
     "lat": 37.02316665649414,
     "lon": -8.996137619018555,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/32/Leuchtturm_-_Sagres_20060422.JPG/500px-Leuchtturm_-_Sagres_20060422.JPG",
+    "desc": "Lighthouse in Portugal",
+    "wiki": "https://en.wikipedia.org/wiki/Lighthouse_of_Cabo_de_S%C3%A3o_Vicente"
    },
    {
     "name": "Conjunto de menires de Milrei e do Padrão",
@@ -269330,7 +269461,10 @@
     "kind": "Square",
     "lat": 52.94020080566406,
     "lon": -3.944499969482422,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/51/Maentwrog_Road_former_station_geograph-3784025-by-Ben-Brooksbank.jpg/500px-Maentwrog_Road_former_station_geograph-3784025-by-Ben-Brooksbank.jpg",
+    "desc": "Disused railway station in Gwynedd, Wales",
+    "wiki": "https://en.wikipedia.org/wiki/Maentwrog_Road_railway_station"
    },
    {
     "name": "White Lion Inn",
@@ -270491,7 +270625,10 @@
     "lat": 53.34925842285156,
     "lon": -1.8096424341201782,
     "rate": 3,
-    "active": true
+    "active": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Mam_Tor_Castleton.jpg/500px-Mam_Tor_Castleton.jpg",
+    "desc": "Hill near Castleton in the High Peak of Derbyshire, England",
+    "wiki": "https://en.wikipedia.org/wiki/Mam_Tor"
    },
    {
     "name": "Lantern Pike",
@@ -270499,7 +270636,8 @@
     "lat": 53.39026641845703,
     "lon": -1.9621912240982056,
     "rate": 3,
-    "active": true
+    "active": true,
+    "wiki": "https://en.wikipedia.org/wiki/Lantern_Pike"
    },
    {
     "name": "Blue John Cavern",
@@ -271836,7 +271974,10 @@
     "lat": 56.100379943847656,
     "lon": -4.6365861892700195,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ae/Luss_church_%28front_view%29.JPG/500px-Luss_church_%28front_view%29.JPG",
+    "desc": "Church in Luss, Argyll and Bute, Scotland",
+    "wiki": "https://en.wikipedia.org/wiki/Luss_Parish_Church"
    },
    {
     "name": "Shore Cottage, Luss",
@@ -271951,7 +272092,10 @@
     "kind": "Nature reserve",
     "lat": 56.082000732421875,
     "lon": -4.55210018157959,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fc/Innisnacailleach.jpg/500px-Innisnacailleach.jpg",
+    "desc": "Nature reserve in Scotland",
+    "wiki": "https://en.wikipedia.org/wiki/Loch_Lomond_National_Nature_Reserve"
    },
    {
     "name": "Conic Hill",
@@ -272011,7 +272155,9 @@
     "lat": 56.101131439208984,
     "lon": -4.638050079345703,
     "rate": 2,
-    "heritage": true
+    "heritage": true,
+    "desc": "Historic site in Argyll and Bute, Scotland",
+    "wiki": "https://en.wikipedia.org/wiki/Laurel_Cottage_and_Ravenslea"
    },
    {
     "name": "Luss General Store, Pier Road, Luss",
@@ -272787,7 +272933,9 @@
     "lat": 46.485450744628906,
     "lon": 13.787718772888184,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "desc": "Museum in Kranjska Gora, Slovenia",
+    "wiki": "https://en.wikipedia.org/wiki/Liznjek_Farm"
    },
    {
     "name": "Železniška postaja Kranjska Gora",
@@ -274597,7 +274745,10 @@
     "kind": "Bridge",
     "lat": 58.92524337768555,
     "lon": 6.095506191253662,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/LysebotnViewFromAbovePreikestolen.jpg/500px-LysebotnViewFromAbovePreikestolen.jpg",
+    "desc": "Fjord in Rogaland, Norway",
+    "wiki": "https://en.wikipedia.org/wiki/Lysefjord"
    },
    {
     "name": "Pulpit Rock",
@@ -274854,7 +275005,10 @@
     "lat": 44.096412658691406,
     "lon": 3.092623472213745,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3d/Graugresenque_-_sigillata.JPG/500px-Graugresenque_-_sigillata.JPG",
+    "desc": "Archaeological site in France",
+    "wiki": "https://en.wikipedia.org/wiki/La_Graufesenque"
    },
    {
     "name": "Millau Viaduct",
@@ -274862,7 +275016,10 @@
     "lat": 44.086090087890625,
     "lon": 3.0215706825256348,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/en/thumb/a/a6/ViaducdeMillau.jpg/500px-ViaducdeMillau.jpg",
+    "desc": "Cable-stayed bridge in Occitanie, France",
+    "wiki": "https://en.wikipedia.org/wiki/Millau_Viaduct"
    },
    {
     "name": "Ferme de Bel-Air",
@@ -275285,7 +275442,10 @@
     "lat": 54.0399169921875,
     "lon": 19.02770233154297,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Zesp%C3%B3%C5%82_Zamku_Krzy%C5%BCackiego_MALBORK_01.jpg/500px-Zesp%C3%B3%C5%82_Zamku_Krzy%C5%BCackiego_MALBORK_01.jpg",
+    "desc": "Teutonic castle in Poland",
+    "wiki": "https://en.wikipedia.org/wiki/Malbork_Castle"
    },
    {
     "name": "Upper Mill in Malbork",
@@ -279653,7 +279813,10 @@
     "kind": "Palace",
     "lat": 44.10565185546875,
     "lon": 9.828385353088379,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Spezia.jpg/500px-Spezia.jpg",
+    "desc": "Comune in Liguria, Italy",
+    "wiki": "https://en.wikipedia.org/wiki/La_Spezia"
    },
    {
     "name": "Palazzo Castagnola",
@@ -279871,7 +280034,10 @@
     "lat": 44.60860061645508,
     "lon": 7.9636101722717285,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/Langhe.jpg/500px-Langhe.jpg",
+    "desc": "UNESCO World Heritage Site in Piedmont, Italy",
+    "wiki": "https://en.wikipedia.org/wiki/Langhe"
    },
    {
     "name": "WI. MU. Museo del Vino",
@@ -280344,7 +280510,9 @@
     "lat": 45.72861099243164,
     "lon": 9.668055534362793,
     "rate": 3,
-    "active": true
+    "active": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/Chiesa_Maresana.JPG/500px-Chiesa_Maresana.JPG",
+    "wiki": "https://en.wikipedia.org/wiki/Maresana_Hill"
    },
    {
     "name": "Parco dei Colli di Bergamo",
@@ -280749,7 +280917,10 @@
     "kind": "Museum",
     "lat": 50.97858428955078,
     "lon": 11.023308753967285,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b1/Stasi_Memorial_Andreasstra%C3%9Fe_Erfurt.JPG/500px-Stasi_Memorial_Andreasstra%C3%9Fe_Erfurt.JPG",
+    "desc": "Former Stasi prison and now museum in Erfurt, Germany",
+    "wiki": "https://en.wikipedia.org/wiki/Memorial_and_Education_Centre_Andreasstra%C3%9Fe"
    },
    {
     "name": "Sankt Wigbert",
@@ -281128,7 +281299,9 @@
     "lat": 52.395790100097656,
     "lon": 13.054450988769531,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/df/Potsdam_Langer_Stall_Fassade.jpg/500px-Potsdam_Langer_Stall_Fassade.jpg",
+    "wiki": "https://en.wikipedia.org/wiki/Langer_Stall"
    },
    {
     "name": "Landgericht Potsdam",
@@ -283597,7 +283770,10 @@
     "kind": "Square",
     "lat": 50.678436279296875,
     "lon": 4.404813289642334,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/Domaine_du_champ_de_bataille_de_Waterloo_13_02.jpg/500px-Domaine_du_champ_de_bataille_de_Waterloo_13_02.jpg",
+    "desc": "War memorial for the Battle of Waterloo in Braine-l'Alleud, Wallonia, Belgium",
+    "wiki": "https://en.wikipedia.org/wiki/Lion%27s_Mound"
    },
    {
     "name": "Mémorial 1815",
@@ -283946,7 +284122,10 @@
     "kind": "Museum",
     "lat": 55.96935272216797,
     "lon": 12.543157577514648,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Outside_Louisiana_Museum_of_Modern_Art.jpg/500px-Outside_Louisiana_Museum_of_Modern_Art.jpg",
+    "desc": "Art museum in Humlebæk, Denmark",
+    "wiki": "https://en.wikipedia.org/wiki/Louisiana_Museum_of_Modern_Art"
    },
    {
     "name": "Louisiana Cafe",
@@ -287469,7 +287648,10 @@
     "kind": "Church",
     "lat": 51.50027847290039,
     "lon": 3.6155600547790527,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/54/Middelburg_Abtei_1.jpg/500px-Middelburg_Abtei_1.jpg",
+    "desc": "Building in Middelburg, Netherlands",
+    "wiki": "https://en.wikipedia.org/wiki/Middelburg_Abbey"
    },
    {
     "name": "Huis met door lijst afgeknotte trapgevel, overkragend op de pui",
@@ -290087,7 +290269,10 @@
     "kind": "Museum",
     "lat": 52.46045684814453,
     "lon": 5.106339454650879,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1c/Kerkbuurt_44_Museum_28224.jpg/500px-Kerkbuurt_44_Museum_28224.jpg",
+    "desc": "Local history museum in Marken, Netherlands",
+    "wiki": "https://en.wikipedia.org/wiki/Marker_Museum"
    },
    {
     "name": "Kerkbuurt 171, Marken",
@@ -295686,7 +295871,10 @@
     "lat": 50.456321716308594,
     "lon": 3.954078197479248,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Maison_Losseau.JPG/500px-Maison_Losseau.JPG",
+    "desc": "Private house in Mons, Belgium",
+    "wiki": "https://en.wikipedia.org/wiki/Maison_Losseau"
    },
    {
     "name": "Mundaneum",
@@ -295812,7 +296000,10 @@
     "kind": "Museum",
     "lat": 50.44184494018555,
     "lon": 3.9254648685455322,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Cuesmes_Mu1aJPG.jpg/500px-Cuesmes_Mu1aJPG.jpg",
+    "desc": "Museum near Mons, Belgium",
+    "wiki": "https://en.wikipedia.org/wiki/Maison_Van_Gogh"
    },
    {
     "name": "Cuesmes Communal Cemetery",
@@ -297579,7 +297770,10 @@
     "kind": "Square",
     "lat": 50.09443664550781,
     "lon": 6.025932788848877,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Maulusmuhle_railway_station.jpg/500px-Maulusmuhle_railway_station.jpg",
+    "desc": "Former railway station in Luxembourg",
+    "wiki": "https://en.wikipedia.org/wiki/Maulusmuhle_railway_station"
    },
    {
     "name": "Saint-Jean-Baptiste",
@@ -298744,7 +298938,10 @@
     "lat": 56.04201126098633,
     "lon": 12.601981163024902,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/Marienlyst_Slot.jpg/500px-Marienlyst_Slot.jpg",
+    "desc": "Palace building in Helsingør, Denmark",
+    "wiki": "https://en.wikipedia.org/wiki/Marienlyst_Castle"
    },
    {
     "name": "Kronborg Castle",
@@ -299427,7 +299624,9 @@
     "kind": "Church",
     "lat": 55.87345504760742,
     "lon": 12.346024513244629,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Liller%C3%B8d_Kirke_21-09-06_01.jpg/500px-Liller%C3%B8d_Kirke_21-09-06_01.jpg",
+    "wiki": "https://en.wikipedia.org/wiki/Liller%C3%B8d_Church"
    },
    {
     "name": "Nordmandsdalen",
@@ -299898,7 +300097,10 @@
     "kind": "Nature reserve",
     "lat": 56.255680084228516,
     "lon": 10.691773414611816,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/Stubbe_s%C3%B8_fra_Fuglereservat.jpg/500px-Stubbe_s%C3%B8_fra_Fuglereservat.jpg",
+    "desc": "Lake in Syddjurs municipality, Denmark",
+    "wiki": "https://en.wikipedia.org/wiki/Lake_Stubbe"
    },
    {
     "name": "Nationalpark Mols Bjerge",
@@ -300631,7 +300833,10 @@
     "kind": "Square",
     "lat": 55.124698638916016,
     "lon": 10.449199676513672,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dc/Denmark-Old_Langeskov_Station.JPG/500px-Denmark-Old_Langeskov_Station.JPG",
+    "desc": "Town in Southern Denmark, Denmark",
+    "wiki": "https://en.wikipedia.org/wiki/Langeskov"
    },
    {
     "name": "Nazarethkirken",
@@ -301114,7 +301319,10 @@
     "kind": "Square",
     "lat": 55.487789154052734,
     "lon": 8.41114616394043,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/79/Men_at_sea%2C_Esbjerg.JPG/500px-Men_at_sea%2C_Esbjerg.JPG",
+    "desc": "Monumental sculpture in Denmark",
+    "wiki": "https://en.wikipedia.org/wiki/Men_at_Sea"
    },
    {
     "name": "Fanø Kunstmuseum",
@@ -305635,7 +305843,10 @@
     "kind": "Nature reserve",
     "lat": 49.13978958129883,
     "lon": 18.507474899291992,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/93/Man%C3%ADnsk%C3%A1_ties%C5%88ava.jpg/500px-Man%C3%ADnsk%C3%A1_ties%C5%88ava.jpg",
+    "desc": "Nature reserve in Slovakia",
+    "wiki": "https://en.wikipedia.org/wiki/Man%C3%ADnska_Gorge"
    },
    {
     "name": "Partizánska jaskyňa",
@@ -305649,14 +305860,20 @@
     "kind": "Castle",
     "lat": 49.160423278808594,
     "lon": 18.684057235717773,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Lietavsk%C3%BD_hrad-v%C3%BDchodn%C3%A1_strana.jpg/500px-Lietavsk%C3%BD_hrad-v%C3%BDchodn%C3%A1_strana.jpg",
+    "desc": "Castle in Slovakia",
+    "wiki": "https://en.wikipedia.org/wiki/Lietava_Castle"
    },
    {
     "name": "Lietava",
     "kind": "Castle",
     "lat": 49.16073989868164,
     "lon": 18.685035705566406,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Hrad_Lietava_z_cesty_do_osady_Majer.jpg/500px-Hrad_Lietava_z_cesty_do_osady_Majer.jpg",
+    "desc": "Municipality in Žilina Region, Slovakia",
+    "wiki": "https://en.wikipedia.org/wiki/Lietava,_Slovakia"
    },
    {
     "name": "Veľký Manín",
@@ -305720,7 +305937,10 @@
     "kind": "Square",
     "lat": 49.13671875,
     "lon": 18.50185775756836,
-    "rate": 2
+    "rate": 2,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/93/Man%C3%ADnsk%C3%A1_ties%C5%88ava.jpg/500px-Man%C3%ADnsk%C3%A1_ties%C5%88ava.jpg",
+    "desc": "Nature reserve in Slovakia",
+    "wiki": "https://en.wikipedia.org/wiki/Man%C3%ADnska_Gorge"
    },
    {
     "name": "Rajecký hrad",
@@ -306364,7 +306584,10 @@
     "lat": 45.66794967651367,
     "lon": 13.885489463806152,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/98/Lipica_%2865%29_%283992793160%29.jpg/500px-Lipica_%2865%29_%283992793160%29.jpg",
+    "desc": "Village in Littoral, Slovenia",
+    "wiki": "https://en.wikipedia.org/wiki/Lipica,_Se%C5%BEana"
    },
    {
     "name": "Kras",
@@ -306391,7 +306614,10 @@
     "lat": 45.66087341308594,
     "lon": 13.928956985473633,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Lokev%2CSlovenija.jpg/500px-Lokev%2CSlovenija.jpg",
+    "desc": "Place in Littoral, Slovenia",
+    "wiki": "https://en.wikipedia.org/wiki/Lokev,_Se%C5%BEana"
    },
    {
     "name": "Merče",
@@ -306399,7 +306625,9 @@
     "lat": 45.70196533203125,
     "lon": 13.900317192077637,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "desc": "Place in Littoral, Slovenia",
+    "wiki": "https://en.wikipedia.org/wiki/Mer%C4%8De"
    },
    {
     "name": "Sežana",
@@ -306442,7 +306670,10 @@
     "lat": 45.61444091796875,
     "lon": 13.907266616821289,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9c/SlovenianVillage_%2823244082655%29.jpg/500px-SlovenianVillage_%2823244082655%29.jpg",
+    "desc": "Place in Littoral, Slovenia",
+    "wiki": "https://en.wikipedia.org/wiki/Mihele"
    },
    {
     "name": "Šmarje pri Sežani",
@@ -306839,7 +307070,10 @@
     "lat": 46.45809555053711,
     "lon": 16.214887619018555,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f8/MiklavzpriOrmozu.jpg/500px-MiklavzpriOrmozu.jpg",
+    "desc": "Place in Styria, Slovenia",
+    "wiki": "https://en.wikipedia.org/wiki/Miklav%C5%BE_pri_Ormo%C5%BEu"
    },
    {
     "name": "Ljutomer",
@@ -306847,7 +307081,10 @@
     "lat": 46.5178337097168,
     "lon": 16.195201873779297,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/db/20100819-Ljutomer-Hauptplatz-Slovenija.jpg/500px-20100819-Ljutomer-Hauptplatz-Slovenija.jpg",
+    "desc": "Town in Styria, Slovenia",
+    "wiki": "https://en.wikipedia.org/wiki/Ljutomer"
    },
    {
     "name": "St. John the Baptist church",
@@ -309318,7 +309555,10 @@
     "lat": 48.77579879760742,
     "lon": 16.774999618530273,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Lednice%E2%80%93Valtice_Cultural_Landscape_Montage_II.jpg/500px-Lednice%E2%80%93Valtice_Cultural_Landscape_Montage_II.jpg",
+    "desc": "UNESCO World Heritage Site in Lednice and Valtice, Czech Republic",
+    "wiki": "https://en.wikipedia.org/wiki/Lednice%E2%80%93Valtice_Cultural_Landscape"
    },
    {
     "name": "Lednické rybníky",
@@ -309414,7 +309654,10 @@
     "lat": 48.80068588256836,
     "lon": 16.80408477783203,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Lednice%E2%80%93Valtice_Cultural_Landscape_Montage_II.jpg/500px-Lednice%E2%80%93Valtice_Cultural_Landscape_Montage_II.jpg",
+    "desc": "UNESCO World Heritage Site in Lednice and Valtice, Czech Republic",
+    "wiki": "https://en.wikipedia.org/wiki/Lednice%E2%80%93Valtice_Cultural_Landscape"
    },
    {
     "name": "svatý Jakub Starší",
@@ -310219,7 +310462,10 @@
     "lat": 49.96470260620117,
     "lon": 12.701250076293945,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bb/Kolon%C3%A1da_M.Gork%C3%A9ho.JPG/500px-Kolon%C3%A1da_M.Gork%C3%A9ho.JPG",
+    "desc": "Town in Karlovy Vary, Czech Republic",
+    "wiki": "https://en.wikipedia.org/wiki/Mari%C3%A1nsk%C3%A9_L%C3%A1zn%C4%9B"
    },
    {
     "name": "Municipal library in Mariánské Lázně",
@@ -314110,7 +314356,10 @@
     "kind": "Nature reserve",
     "lat": 49.19117736816406,
     "lon": 19.04184913635254,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/20/Velky_Rozsutec.jpg/500px-Velky_Rozsutec.jpg",
+    "desc": "National park in Slovakia",
+    "wiki": "https://en.wikipedia.org/wiki/Mal%C3%A1_Fatra_National_Park"
    },
    {
     "name": "Chleb",
@@ -314891,7 +315140,10 @@
     "kind": "Nature reserve",
     "lat": 48.93964767456055,
     "lon": 19.563121795654297,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/Derese2.jpg/500px-Derese2.jpg",
+    "desc": "National park in Central Slovakia",
+    "wiki": "https://en.wikipedia.org/wiki/Low_Tatras_National_Park"
    },
    {
     "name": "Zámostská hoľa",
@@ -317700,7 +317952,10 @@
     "kind": "Museum",
     "lat": 48.12398147583008,
     "lon": 20.65631675720215,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bf/Miskolci_Vadaspark_f%C5%91bej%C3%A1rat.jpg/500px-Miskolci_Vadaspark_f%C5%91bej%C3%A1rat.jpg",
+    "desc": "Zoo in Miskolc, Hungary",
+    "wiki": "https://en.wikipedia.org/wiki/Miskolc_Zoo"
    },
    {
     "name": "Tuskós Cave",
@@ -319165,7 +319420,10 @@
     "lat": 46.3991813659668,
     "lon": 14.632709503173828,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/8/87/%D0%A1%D0%BB%D0%BE%D0%B2%D0%B5%D0%BD%D0%B8%D1%8F_%D0%B0%D1%83%D1%8B%D0%BB%D1%8B.jpg",
+    "desc": "Protected area in Slovenia",
+    "wiki": "https://en.wikipedia.org/wiki/Logar_Valley_(Slovenia)"
    },
    {
     "name": "Matk Combe",
@@ -319173,7 +319431,10 @@
     "lat": 46.405799865722656,
     "lon": 14.611700057983398,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/aa/Kroficka_od_Matkove_kmetije_julij_2009.jpg/500px-Kroficka_od_Matkove_kmetije_julij_2009.jpg",
+    "desc": "Glacial valley in Slovenia",
+    "wiki": "https://en.wikipedia.org/wiki/Matk_Cirque"
    },
    {
     "name": "Podolševa",
@@ -319220,7 +319481,10 @@
     "kind": "Nature reserve",
     "lat": 46.38362121582031,
     "lon": 14.621644020080566,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/8/87/%D0%A1%D0%BB%D0%BE%D0%B2%D0%B5%D0%BD%D0%B8%D1%8F_%D0%B0%D1%83%D1%8B%D0%BB%D1%8B.jpg",
+    "desc": "Protected area in Slovenia",
+    "wiki": "https://en.wikipedia.org/wiki/Logar_Valley_(Slovenia)"
    },
    {
     "name": "Krofička",
@@ -319361,7 +319625,10 @@
     "kind": "Glacier",
     "lat": 46.36530685424805,
     "lon": 14.560199737548828,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/Skuta_Glacier_3.JPG/500px-Skuta_Glacier_3.JPG",
+    "desc": "Glacier in Slovenia",
+    "wiki": "https://en.wikipedia.org/wiki/Skuta_Glacier"
    },
    {
     "name": "Skuta",
@@ -319682,7 +319949,10 @@
     "lat": 46.22462463378906,
     "lon": 14.611741065979004,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Mali_grad_full_from_southeast.JPG/500px-Mali_grad_full_from_southeast.JPG",
+    "desc": "Castle in Kamnik, Slovenia",
+    "wiki": "https://en.wikipedia.org/wiki/Little_Castle"
    },
    {
     "name": "Small Castle",
@@ -319799,7 +320069,10 @@
     "lat": 46.285884857177734,
     "lon": 14.661623001098633,
     "rate": 2,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/Velika_planina_4.JPG/500px-Velika_planina_4.JPG",
+    "desc": "Mountain plateau in the Kamnik-Savinja Alps, Slovenia",
+    "wiki": "https://en.wikipedia.org/wiki/Big_Pasture_Plateau"
    },
    {
     "name": "Kapelica pri Sv. Primožu, Črna pri Kamniku",
@@ -320220,7 +320493,10 @@
     "lat": 45.82927322387695,
     "lon": 13.934747695922852,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/Leutemberg_Castle_Slovenia_1.jpg/500px-Leutemberg_Castle_Slovenia_1.jpg",
+    "desc": "Castle in Lože, Vipava, Slovenia",
+    "wiki": "https://en.wikipedia.org/wiki/Leitenburg_Castle"
    },
    {
     "name": "Lože",
@@ -320284,7 +320560,10 @@
     "lat": 45.84059524536133,
     "lon": 13.828306198120117,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Lisjaki_Slovenia.jpg/500px-Lisjaki_Slovenia.jpg",
+    "desc": "Place in Slovene Littoral, Slovenia",
+    "wiki": "https://en.wikipedia.org/wiki/Lisjaki"
    },
    {
     "name": "Trebižani",
@@ -320523,7 +320802,10 @@
     "lat": 45.9850959777832,
     "lon": 13.522067070007324,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0d/Medana_Slovenia_4.jpg/500px-Medana_Slovenia_4.jpg",
+    "desc": "Village in Slovenian Littoral, Slovenia",
+    "wiki": "https://en.wikipedia.org/wiki/Medana"
    },
    {
     "name": "Dobrovo Castle",
@@ -321819,7 +322101,10 @@
     "lat": 45.74589920043945,
     "lon": 14.395025253295898,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/SlikaCerkniskoJezeroPolno.jpg/500px-SlikaCerkniskoJezeroPolno.jpg",
+    "desc": "Intermittent lake in Slovenia",
+    "wiki": "https://en.wikipedia.org/wiki/Lake_Cerknica"
    },
    {
     "name": "Otok",
@@ -321943,7 +322228,10 @@
     "lat": 45.72444534301758,
     "lon": 14.471944808959961,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Loz_Castle_Slovenia.jpg/500px-Loz_Castle_Slovenia.jpg",
+    "desc": "Castle ruin in central Slovenia",
+    "wiki": "https://en.wikipedia.org/wiki/Lo%C5%BE_Castle"
    },
    {
     "name": "Stari trg pri Ložu",
@@ -322513,7 +322801,10 @@
     "lat": 46.23009490966797,
     "lon": 15.264851570129395,
     "rate": 2,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f0/Celjski_dom_in_Celje.jpg/500px-Celjski_dom_in_Celje.jpg",
+    "desc": "Town in Styria, Slovenia",
+    "wiki": "https://en.wikipedia.org/wiki/Celje"
    },
    {
     "name": "Palača Krekov trg 6, 7, 8",
@@ -323345,7 +323636,10 @@
     "kind": "Peak",
     "lat": 51.8392448425293,
     "lon": 8.95565128326416,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Velmerstot_lip.jpg/500px-Velmerstot_lip.jpg",
+    "desc": "Hill in North Rhine-Westphalia, Germany",
+    "wiki": "https://en.wikipedia.org/wiki/Velmerstot"
    },
    {
     "name": "Zu allen Heiligen",
@@ -325676,7 +325970,10 @@
     "lat": 51.1631965637207,
     "lon": 13.481809616088867,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/92/Mei%C3%9Fen_%28DerHexer%29_2010-10-17_104.jpg/500px-Mei%C3%9Fen_%28DerHexer%29_2010-10-17_104.jpg",
+    "desc": "Railway station in Meißen, Germany",
+    "wiki": "https://en.wikipedia.org/wiki/Mei%C3%9Fen_station"
    },
    {
     "name": "Eisenbahnbrücke Meißen",
@@ -325708,7 +326005,10 @@
     "lat": 51.166255950927734,
     "lon": 13.47146987915039,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/Meissen_-_Dom_-_Frontansicht_-_2017.jpg/500px-Meissen_-_Dom_-_Frontansicht_-_2017.jpg",
+    "desc": "Church in Saxony, Germany",
+    "wiki": "https://en.wikipedia.org/wiki/Meissen_Cathedral"
    },
    {
     "name": "St. Peter und Paul",
@@ -325871,7 +326171,10 @@
     "lat": 51.15239715576172,
     "lon": 13.462350845336914,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Bahnhof-Mei%C3%9Fen-Triebischtal-2.JPG/500px-Bahnhof-Mei%C3%9Fen-Triebischtal-2.JPG",
+    "desc": "Railway station in Meissen, Germany",
+    "wiki": "https://en.wikipedia.org/wiki/Mei%C3%9Fen_Triebischtal_station"
    },
    {
     "name": "Franziskaneum",
@@ -326608,7 +326911,10 @@
     "lat": 54.373355865478516,
     "lon": 8.639901161193848,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/02/Leuchtturm_in_Westerheversand_crop.jpg/500px-Leuchtturm_in_Westerheversand_crop.jpg",
+    "desc": "Lighthouse in Schleswig-Holstein, Germany",
+    "wiki": "https://en.wikipedia.org/wiki/Westerheversand_Lighthouse"
    },
    {
     "name": "Stockenstieg, Schutzstation Wattenmeer",
@@ -326871,7 +327177,10 @@
     "kind": "Canyon",
     "lat": 47.31079864501953,
     "lon": 13.190799713134766,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Liechtensteinklamm_14.JPG/500px-Liechtensteinklamm_14.JPG",
+    "desc": "Ravine of Großarler Ache in Salzburg",
+    "wiki": "https://en.wikipedia.org/wiki/Liechtensteinklamm"
    },
    {
     "name": "Tennkogel",
@@ -327429,7 +327738,9 @@
     "kind": "Peak",
     "lat": 47.1728630065918,
     "lon": 11.308537483215332,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Axamer_Lizum_-_Ampferstein_-_Marchreisenspitze.JPG/500px-Axamer_Lizum_-_Ampferstein_-_Marchreisenspitze.JPG",
+    "wiki": "https://en.wikipedia.org/wiki/Marchreisenspitze"
    },
    {
     "name": "Kalkwand",
@@ -328126,7 +328437,10 @@
     "kind": "Peak",
     "lat": 46.6916389465332,
     "lon": 8.398839950561523,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c0/Hintertierberg.jpg/500px-Hintertierberg.jpg",
+    "desc": "Mountain in Switzerland",
+    "wiki": "https://en.wikipedia.org/wiki/Hinter_Tierberg"
    },
    {
     "name": "Hinter Tierberg",
@@ -329880,7 +330194,10 @@
     "lat": 46.491943359375,
     "lon": 6.746110916137695,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/da/Lavaux_Switzerland.jpg/500px-Lavaux_Switzerland.jpg",
+    "desc": "UNESCO World Heritage Site in Canton of Vaud, Switzerland",
+    "wiki": "https://en.wikipedia.org/wiki/Lavaux"
    },
    {
     "name": "Epesses",
@@ -329982,7 +330299,10 @@
     "lat": 46.50313186645508,
     "lon": 6.686844825744629,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1f/Ch%C3%A2teau_des_R%C3%B4deurs_%C3%A0_Lutry%2C_nuit_ter.jpg/500px-Ch%C3%A2teau_des_R%C3%B4deurs_%C3%A0_Lutry%2C_nuit_ter.jpg",
+    "desc": "Castle in Lutry, Switzerland",
+    "wiki": "https://en.wikipedia.org/wiki/Lutry_Castle"
    },
    {
     "name": "Temple de Lutry",
@@ -330707,7 +331027,10 @@
     "lat": 46.791568756103516,
     "lon": 7.1655192375183105,
     "rate": 1,
-    "active": true
+    "active": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Lac_de_P%C3%A9rolles12.jpg/500px-Lac_de_P%C3%A9rolles12.jpg",
+    "desc": "Reservoir in Fribourg, Canton of Fribourg",
+    "wiki": "https://en.wikipedia.org/wiki/Lac_de_P%C3%A9rolles"
    },
    {
     "name": "Bloczone",
@@ -330886,7 +331209,10 @@
     "kind": "Peak",
     "lat": 46.2073974609375,
     "lon": 7.650047302246094,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f0/Le_To%C3%BBno.jpg/500px-Le_To%C3%BBno.jpg",
+    "desc": "Mountain in Switzerland",
+    "wiki": "https://en.wikipedia.org/wiki/Le_To%C3%BBno"
    },
    {
     "name": "Crêt-du-Midi",
@@ -330931,7 +331257,10 @@
     "kind": "Peak",
     "lat": 46.14247131347656,
     "lon": 7.670938491821289,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d7/Les_Diablons_depuis_Sorebois.jpg/500px-Les_Diablons_depuis_Sorebois.jpg",
+    "desc": "Mountain in Switzerland",
+    "wiki": "https://en.wikipedia.org/wiki/Les_Diablons"
    },
    {
     "name": "Bella Tola",
@@ -331247,7 +331576,9 @@
     "lat": 46.08014678955078,
     "lon": 7.212502479553223,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Le_Ch%C3%A2ble.jpg/500px-Le_Ch%C3%A2ble.jpg",
+    "wiki": "https://en.wikipedia.org/wiki/Le_Ch%C3%A2ble"
    },
    {
     "name": "Vollèges",
@@ -331310,7 +331641,10 @@
     "kind": "Peak",
     "lat": 46.09280014038086,
     "lon": 7.136533737182617,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Kanton_Wallis_01.jpg/500px-Kanton_Wallis_01.jpg",
+    "desc": "Mountain in Switzerland",
+    "wiki": "https://en.wikipedia.org/wiki/La_Crevasse"
    },
    {
     "name": "International Seminary of Saint Pius X",
@@ -331586,7 +331920,10 @@
     "lat": 46.050655364990234,
     "lon": 7.268426418304443,
     "rate": 2,
-    "active": true
+    "active": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Cotterg.jpg/500px-Cotterg.jpg",
+    "desc": "Former municipality in Valais, Switzerland",
+    "wiki": "https://en.wikipedia.org/wiki/Bagnes"
    },
    {
     "name": "Tête de la Payanne",
@@ -333400,7 +333737,10 @@
     "kind": "Nature reserve",
     "lat": 54.1881217956543,
     "lon": 7.869706630706787,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/22/Klippen_von_Helgoland_mit_Langer_Anna.jpg/500px-Klippen_von_Helgoland_mit_Langer_Anna.jpg",
+    "desc": "Sea stack in Heligoland, Germany",
+    "wiki": "https://en.wikipedia.org/wiki/Lange_Anna"
    },
    {
     "name": "Heligoland Düne Lighthouse",
@@ -334310,7 +334650,9 @@
     "lat": 53.62712860107422,
     "lon": 11.417206764221191,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/16/Schwerin_Mecklenburgisches_Staatstheater_Schwerin_Mecklenburg_State_Theatre_Mecklenburg_Staatstheater.jpg/500px-Schwerin_Mecklenburgisches_Staatstheater_Schwerin_Mecklenburg_State_Theatre_Mecklenburg_Staatstheater.jpg",
+    "wiki": "https://en.wikipedia.org/wiki/Mecklenburg_State_Theatre"
    },
    {
     "name": "Schweriner Marstall",
@@ -337965,7 +338307,10 @@
     "kind": "Peak",
     "lat": 50.13928985595703,
     "lon": 7.728689193725586,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/27/Loreley%2C_Rhine%2C_Castle_Katz.jpg/500px-Loreley%2C_Rhine%2C_Castle_Katz.jpg",
+    "desc": "Rock formation in Germany",
+    "wiki": "https://en.wikipedia.org/wiki/Lorelei"
    },
    {
     "name": "Spitzenstein",
@@ -338241,7 +338586,10 @@
     "kind": "Church",
     "lat": 48.131710052490234,
     "lon": 8.225383758544922,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/Maria_in_der_Tanne_jm2033.jpg/500px-Maria_in_der_Tanne_jm2033.jpg",
+    "desc": "Church in Triberg im Schwarzwald, Germany",
+    "wiki": "https://en.wikipedia.org/wiki/Maria_in_der_Tanne"
    },
    {
     "name": "Triberg Waterfalls",
@@ -338493,7 +338841,10 @@
     "lat": 48.135398864746094,
     "lon": 8.202309608459473,
     "rate": 3,
-    "active": true
+    "active": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Schonach_Langenwaldschanze12.JPG/500px-Schonach_Langenwaldschanze12.JPG",
+    "desc": "Ski jump in Schonach im Schwarzwald, Germany",
+    "wiki": "https://en.wikipedia.org/wiki/Langenwaldschanze"
    },
    {
     "name": "Adlerschanze",
@@ -339237,7 +339588,10 @@
     "kind": "Square",
     "lat": 47.705291748046875,
     "lon": 9.194512367248535,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/Aus_dem_Zeppelin_fotografiert%2C_Insel_Mainau%2C_Bodensee._10.jpg/500px-Aus_dem_Zeppelin_fotografiert%2C_Insel_Mainau%2C_Bodensee._10.jpg",
+    "desc": "Inland island in Germany",
+    "wiki": "https://en.wikipedia.org/wiki/Mainau"
    },
    {
     "name": "Blumeninsel Mainau",
@@ -339408,7 +339762,10 @@
     "lat": 47.69583511352539,
     "lon": 9.263333320617676,
     "rate": 1,
-    "active": true
+    "active": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/42/Meersburg_in_FN.svg/500px-Meersburg_in_FN.svg.png",
+    "desc": "Town in Baden-Württemberg, Germany",
+    "wiki": "https://en.wikipedia.org/wiki/Meersburg"
    },
    {
     "name": "Friedrichshöhe",
@@ -339927,7 +340284,10 @@
     "kind": "Bridge",
     "lat": 47.43427276611328,
     "lon": 11.262993812561035,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/LandkarteZugspitzbahn.jpg/500px-LandkarteZugspitzbahn.jpg",
+    "desc": "Railway line in Austria and Germany",
+    "wiki": "https://en.wikipedia.org/wiki/Mittenwald_Railway"
    },
    {
     "name": "Grünkopf",
@@ -339958,7 +340318,9 @@
     "lat": 47.4254035949707,
     "lon": 11.231005668640137,
     "rate": 2,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bb/PortaClaudiaReste01.jpg/500px-PortaClaudiaReste01.jpg",
+    "wiki": "https://en.wikipedia.org/wiki/Porta_Claudia"
    },
    {
     "name": "Villa Krause",
@@ -340200,7 +340562,9 @@
     "lat": 47.42302703857422,
     "lon": 11.290441513061523,
     "rate": 3,
-    "active": true
+    "active": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fc/Suedliche_Linderspitze.JPG/500px-Suedliche_Linderspitze.JPG",
+    "wiki": "https://en.wikipedia.org/wiki/Linderspitzen"
    },
    {
     "name": "Mittlere Linderspitze",
@@ -340767,7 +341131,10 @@
     "lat": 47.881134033203125,
     "lon": 12.474472999572754,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/50/LakeChiemsee.jpg/500px-LakeChiemsee.jpg",
+    "desc": "Freshwater lake in Bavaria, Germany",
+    "wiki": "https://en.wikipedia.org/wiki/Chiemsee"
    },
    {
     "name": "Frauenchiemsee convent",
@@ -347849,7 +348216,10 @@
     "kind": "Peak",
     "lat": 47.55982208251953,
     "lon": 15.08541202545166,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fe/Gr%C3%BCner_See%2C_spiegelt_seine_Umgebung.jpg/500px-Gr%C3%BCner_See%2C_spiegelt_seine_Umgebung.jpg",
+    "desc": "Mountain in Austria",
+    "wiki": "https://en.wikipedia.org/wiki/Messnerin"
    },
    {
     "name": "Edelweißboden",
@@ -348362,7 +348732,9 @@
     "kind": "Peak",
     "lat": 46.738529205322266,
     "lon": 13.39600944519043,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Latschur-Goldeck_Mirnock.jpg/500px-Latschur-Goldeck_Mirnock.jpg",
+    "wiki": "https://en.wikipedia.org/wiki/Latschur"
    },
    {
     "name": "Eckwand",
@@ -349373,7 +349745,9 @@
     "kind": "Peak",
     "lat": 46.268028259277344,
     "lon": 8.776032447814941,
-    "rate": 2
+    "rate": 2,
+    "desc": "Mountain in Switzerland",
+    "wiki": "https://en.wikipedia.org/wiki/Madom_da_Sgi%C3%B3f"
    },
    {
     "name": "Cima della Trosa",
@@ -350146,7 +350520,10 @@
     "lat": 45.8905029296875,
     "lon": 8.9534330368042,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/17/Camino_Spinirola_CIMG0557.jpg/500px-Camino_Spinirola_CIMG0557.jpg",
+    "desc": "Former municipality in Ticino, Switzerland",
+    "wiki": "https://en.wikipedia.org/wiki/Meride"
    },
    {
     "name": "Casa Bianchi",
@@ -350332,7 +350709,10 @@
     "lat": 45.93333435058594,
     "lon": 8.866666793823242,
     "rate": 2,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/ce/Marzio-chiesa-municipio.jpg/500px-Marzio-chiesa-municipio.jpg",
+    "desc": "Comune in Lombardy, Italy",
+    "wiki": "https://en.wikipedia.org/wiki/Marzio"
    },
    {
     "name": "Swissminiatur",
@@ -350575,7 +350955,10 @@
     "kind": "Glacier",
     "lat": 46.459625244140625,
     "lon": 8.013010025024414,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/Aletschhorn_3137.JPG/500px-Aletschhorn_3137.JPG",
+    "desc": "Glacier in Switzerland",
+    "wiki": "https://en.wikipedia.org/wiki/Mittelaletsch_Glacier"
    },
    {
     "name": "Geisshorn",
@@ -350856,7 +351239,10 @@
     "lat": 46.397796630859375,
     "lon": 8.085701942443848,
     "rate": 2,
-    "active": true
+    "active": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c9/Martisberg.jpg/500px-Martisberg.jpg",
+    "desc": "Former municipality in Valais, Switzerland",
+    "wiki": "https://en.wikipedia.org/wiki/Martisberg"
    },
    {
     "name": "Kleines Wannenhorn",
@@ -351058,7 +351444,10 @@
     "kind": "Peak",
     "lat": 46.92858123779297,
     "lon": 6.724786281585693,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/50/Paysage_printanier_au_Creux-du-Van.jpg/500px-Paysage_printanier_au_Creux-du-Van.jpg",
+    "desc": "Mountain in Switzerland",
+    "wiki": "https://en.wikipedia.org/wiki/Le_Soliat"
    },
    {
     "name": "Creux du Van",
@@ -351463,7 +351852,10 @@
     "kind": "Peak",
     "lat": 46.08452606201172,
     "lon": 7.895666599273682,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/5/51/Feegletscher.jpg",
+    "desc": "Mountain in Switzerland",
+    "wiki": "https://en.wikipedia.org/wiki/L%C3%A4ngfluh"
    },
    {
     "name": "Egginer",
@@ -351487,7 +351879,10 @@
     "kind": "Peak",
     "lat": 46.104549407958984,
     "lon": 7.868656635284424,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Lenzspitze01.jpg/500px-Lenzspitze01.jpg",
+    "desc": "Mountain in Switzerland",
+    "wiki": "https://en.wikipedia.org/wiki/Lenzspitze"
    },
    {
     "name": "Felskinn",
@@ -351613,7 +352008,10 @@
     "kind": "Peak",
     "lat": 46.05754470825195,
     "lon": 7.904877185821533,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d7/Allalin.jpg/500px-Allalin.jpg",
+    "desc": "Summit below the Allalinhorn in Switzerland",
+    "wiki": "https://en.wikipedia.org/wiki/Mittelallalin"
    },
    {
     "name": "Täschhorn",
@@ -357221,7 +357619,9 @@
     "lat": 43.457698822021484,
     "lon": 6.726990222930908,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Mosquee-missiri-frejus-1.jpg/500px-Mosquee-missiri-frejus-1.jpg",
+    "wiki": "https://en.wikipedia.org/wiki/Missiri_Mosque"
    },
    {
     "name": "Mont Vinaigre",
@@ -359826,7 +360226,9 @@
     "lat": 43.440982818603516,
     "lon": 3.614529609680176,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/60/Loupian_Villa_1.JPG/500px-Loupian_Villa_1.JPG",
+    "wiki": "https://en.wikipedia.org/wiki/Loupian_Roman_villa"
    },
    {
     "name": "Église de Sainte Cécile de Loupian",
@@ -361880,7 +362282,10 @@
     "lat": 42.88684844970703,
     "lon": -0.06872449815273285,
     "rate": 3,
-    "active": true
+    "active": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Luz_Ardiden.jpg/500px-Luz_Ardiden.jpg",
+    "desc": "Ski resort in France",
+    "wiki": "https://en.wikipedia.org/wiki/Luz_Ardiden"
    },
    {
     "name": "Cauterets Cirque du Lys",
@@ -362865,7 +363270,10 @@
     "kind": "Peak",
     "lat": 43.30903625488281,
     "lon": -1.6355080604553223,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bf/Larrun_-BT-_01.jpg/500px-Larrun_-BT-_01.jpg",
+    "desc": "Mountain in Navarre / France border",
+    "wiki": "https://en.wikipedia.org/wiki/Larrun"
    },
    {
     "name": "Le Train de la Rhune",
@@ -364383,7 +364791,10 @@
     "lat": 44.475059509277344,
     "lon": 1.7782080173492432,
     "rate": 2,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Larnagol.jpg/500px-Larnagol.jpg",
+    "desc": "Commune in Occitania, France",
+    "wiki": "https://en.wikipedia.org/wiki/Larnagol"
    },
    {
     "name": "Church of Saint-Pierre-aux-Liens of Larnagol",
@@ -365865,7 +366276,10 @@
     "lat": 45.356388092041016,
     "lon": 0.6466666460037231,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/64/Brant%C3%B4me_Chatenet_cour.JPG/500px-Brant%C3%B4me_Chatenet_cour.JPG",
+    "desc": "Manor house in Dordogne, Aquitaine, France",
+    "wiki": "https://en.wikipedia.org/wiki/Manoir_du_Chatenet"
    },
    {
     "name": "Château de Puymarteau",
@@ -365924,7 +366338,10 @@
     "lat": 45.32194519042969,
     "lon": 0.6941666603088379,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/56/Sencenac_Borie_Fricart_6.JPG/500px-Sencenac_Borie_Fricart_6.JPG",
+    "desc": "Château in Aquitaine, France",
+    "wiki": "https://en.wikipedia.org/wiki/Manoir_de_la_Borie-Fricart"
    },
    {
     "name": "Réseau hydrographique et coteaux du Boulou aval",
@@ -366344,7 +366761,9 @@
     "lat": 45.02971267700195,
     "lon": 1.0955060720443726,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/4/42/La-Vermondie.jpg",
+    "wiki": "https://en.wikipedia.org/wiki/Manoir_de_la_Vermondie"
    },
    {
     "name": "Château de la Faye",
@@ -366702,7 +367121,10 @@
     "lat": 45.04560089111328,
     "lon": 3.884810209274292,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/Le_Puy-en-Velay_Fa%C3%A7ade_occidentale1.JPG/500px-Le_Puy-en-Velay_Fa%C3%A7ade_occidentale1.JPG",
+    "desc": "Cathedral in Haute-Loire, in France",
+    "wiki": "https://en.wikipedia.org/wiki/Le_Puy_Cathedral"
    },
    {
     "name": "Hôtel de La Roche Négly",
@@ -367748,7 +368170,10 @@
     "lat": 45.07904815673828,
     "lon": 2.751466989517212,
     "rate": 3,
-    "active": true
+    "active": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/75/Le_lioran.jpg/500px-Le_lioran.jpg",
+    "desc": "Winter sports resort in France",
+    "wiki": "https://en.wikipedia.org/wiki/Le_Lioran"
    },
    {
     "name": "Prairie des Sagnes",
@@ -369878,7 +370303,10 @@
     "lat": 46.68079376220703,
     "lon": 5.725749969482422,
     "rate": 1,
-    "active": true
+    "active": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Mirebel_%28Jura%29.jpg/500px-Mirebel_%28Jura%29.jpg",
+    "desc": "Part of Hauteroche in Bourgogne-Franche-Comté, France",
+    "wiki": "https://en.wikipedia.org/wiki/Mirebel"
    },
    {
     "name": "Centre nautique Aqua'Rel",
@@ -369997,7 +370425,10 @@
     "lat": 46.3615837097168,
     "lon": 6.393667221069336,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Lake_Geneva_by_Sentinel-2.jpg/500px-Lake_Geneva_by_Sentinel-2.jpg",
+    "desc": "Lake in Switzerland and France",
+    "wiki": "https://en.wikipedia.org/wiki/Lake_Geneva"
    },
    {
     "name": "La Rajada",
@@ -371088,7 +371519,10 @@
     "lat": 45.85670852661133,
     "lon": 6.617931842803955,
     "rate": 3,
-    "active": true
+    "active": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Village_%40_Rochebrune_%40_Meg%C3%A8ve_%2851037436052%29.jpg/500px-Village_%40_Rochebrune_%40_Meg%C3%A8ve_%2851037436052%29.jpg",
+    "desc": "Commune in Auvergne-Rhône-Alpes, France",
+    "wiki": "https://en.wikipedia.org/wiki/Meg%C3%A8ve"
    },
    {
     "name": "Praz-sur-Arly",
@@ -371836,7 +372270,10 @@
     "kind": "Peak",
     "lat": 44.90241622924805,
     "lon": 6.740498065948486,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/Chenaillet_w_face.png/500px-Chenaillet_w_face.png",
+    "desc": "Mountain in France",
+    "wiki": "https://en.wikipedia.org/wiki/Mount_Chenaillet"
    },
    {
     "name": "Ouvrage Janus",
@@ -374257,7 +374694,10 @@
     "lat": 49.12021255493164,
     "lon": 6.175693511962891,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/31/Metz_%28Moselle%29_-_Cath%C3%A9drale_Saint-%C3%89tienne_%2832283913217%29.jpg/500px-Metz_%28Moselle%29_-_Cath%C3%A9drale_Saint-%C3%89tienne_%2832283913217%29.jpg",
+    "desc": "Catholic cathedral in Metz, France",
+    "wiki": "https://en.wikipedia.org/wiki/Metz_Cathedral"
    },
    {
     "name": "Grange de Chèvremont",
@@ -375953,7 +376393,10 @@
     "lat": 50.26507568359375,
     "lon": 1.6774935722351074,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/54/Rue_%28Somme%29%2C_France%2C_Ch%C3%A2teau_du_Broutel.JPG/500px-Rue_%28Somme%29%2C_France%2C_Ch%C3%A2teau_du_Broutel.JPG",
+    "desc": "18th-century château in Hauts-de-France, France",
+    "wiki": "https://en.wikipedia.org/wiki/Ch%C3%A2teau_du_Broutel"
    },
    {
     "name": "Cayeux-sur-Mer lighthouse",
@@ -376883,7 +377326,9 @@
     "kind": "Theatre",
     "lat": 50.6229248046875,
     "lon": 3.0681545734405518,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Lille_Maison_Folie_Moulins_HDR.jpg/500px-Lille_Maison_Folie_Moulins_HDR.jpg",
+    "wiki": "https://en.wikipedia.org/wiki/Maison_Folie_Moulins"
    },
    {
     "name": "Fontaine Place Rihour",
@@ -379018,7 +379463,10 @@
     "lat": 48.09831619262695,
     "lon": -4.207895755767822,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/98/Map_commune_FR_insee_code_29134.png/500px-Map_commune_FR_insee_code_29134.png",
+    "desc": "Church located in Finistère, in France",
+    "wiki": "https://en.wikipedia.org/wiki/Locronan_Parish_close"
    },
    {
     "name": "Puits communal de Locronan",
@@ -379577,7 +380025,9 @@
     "kind": "Square",
     "lat": 47.88138961791992,
     "lon": -3.902222156524658,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/Manoir_Stang-al-lin_18.06.2006.jpg/500px-Manoir_Stang-al-lin_18.06.2006.jpg",
+    "wiki": "https://en.wikipedia.org/wiki/Manoir_de_Stang-al-lin"
    },
    {
     "name": "Église Saint-Budoc de Beuzec-Conq",
@@ -382691,7 +383141,10 @@
     "lat": 46.33333206176758,
     "lon": -0.6666666865348816,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/MaraisPoitevin.jpg/500px-MaraisPoitevin.jpg",
+    "desc": "Marshland in western France",
+    "wiki": "https://en.wikipedia.org/wiki/Marais_Poitevin"
    },
    {
     "name": "Église Notre-Dame-de-l'Assomption de Liez",
@@ -382739,7 +383192,10 @@
     "lat": 46.373558044433594,
     "lon": -0.7475376725196838,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/64/Maillezais_-_Cathedrale_Saint-Pierre_01.jpg/500px-Maillezais_-_Cathedrale_Saint-Pierre_01.jpg",
+    "desc": "Ruined cathedral in the Vendée, France",
+    "wiki": "https://en.wikipedia.org/wiki/Maillezais_Cathedral"
    },
    {
     "name": "Champ Durand",
@@ -383001,7 +383457,10 @@
     "kind": "Square",
     "lat": 46.86357116699219,
     "lon": -1.009762167930603,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Les_Herbiers_-_Mairie_01.jpg/500px-Les_Herbiers_-_Mairie_01.jpg",
+    "desc": "Commune in Pays de la Loire, France",
+    "wiki": "https://en.wikipedia.org/wiki/Les_Herbiers"
    },
    {
     "name": "Basilique Saint-Louis-Marie Grignion de Montfort",
@@ -383464,7 +383923,8 @@
     "kind": "Square",
     "lat": 37.971824645996094,
     "lon": 22.112018585205078,
-    "rate": 2
+    "rate": 2,
+    "wiki": "https://en.wikipedia.org/wiki/Lusi_(Arcadia)"
    },
    {
     "name": "Skepasto",
@@ -383878,7 +384338,10 @@
     "kind": "Square",
     "lat": 37.73080062866211,
     "lon": 22.75651741027832,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/37/Lion_Gate_-_Mycenae_by_Joy_of_Museums.jpg/500px-Lion_Gate_-_Mycenae_by_Joy_of_Museums.jpg",
+    "desc": "Main entrance of the Bronze Age citadel of Mycenae",
+    "wiki": "https://en.wikipedia.org/wiki/Lion_Gate"
    },
    {
     "name": "Tomb of Aegisthus",
@@ -384913,7 +385376,10 @@
     "kind": "Square",
     "lat": 37.149452209472656,
     "lon": 26.84636116027832,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/Leros%2C_Greece_-_panoramio.jpg/500px-Leros%2C_Greece_-_panoramio.jpg",
+    "desc": "Greek island in the Aegean Sea",
+    "wiki": "https://en.wikipedia.org/wiki/Leros"
    },
    {
     "name": "Battle of Leros",
@@ -386005,7 +386471,9 @@
     "kind": "Square",
     "lat": 34.93986129760742,
     "lon": 24.8215274810791,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/8/80/Stela_Lasaia.jpg",
+    "wiki": "https://en.wikipedia.org/wiki/Lasaea"
    },
    {
     "name": "Agia Triada",
@@ -386197,7 +386665,10 @@
     "lat": 36.81675338745117,
     "lon": 21.704797744750977,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0d/Modon1770.jpg/500px-Modon1770.jpg",
+    "desc": "Medieval fortification in Messenia, Greece",
+    "wiki": "https://en.wikipedia.org/wiki/Methoni_Castle"
    },
    {
     "name": "Methoni",
@@ -386606,7 +387077,10 @@
     "kind": "Museum",
     "lat": 40.58416748046875,
     "lon": 21.49222183227539,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Macedonian_Museums-7-Laografiko_Lexovou-31.jpg/500px-Macedonian_Museums-7-Laografiko_Lexovou-31.jpg",
+    "desc": "Museum in Lechovo, Greece",
+    "wiki": "https://en.wikipedia.org/wiki/Lechovo_Folklore_Museum"
    },
    {
     "name": "Saint Demetrius Church, Sklithro",
@@ -392902,7 +393376,10 @@
     "lat": 40.88602066040039,
     "lon": 21.035194396972656,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Liqeni_Prespes._Ishulli_Mali_Gradit._Korce._Albania.jpg/500px-Liqeni_Prespes._Ishulli_Mali_Gradit._Korce._Albania.jpg",
+    "desc": "Lake in South-eastern Europe",
+    "wiki": "https://en.wikipedia.org/wiki/Lake_Prespa"
    },
    {
     "name": "Konjsko",
@@ -393784,7 +394261,10 @@
     "lat": 40.518367767333984,
     "lon": 21.298765182495117,
     "rate": 1,
-    "active": true
+    "active": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/Kastoria2_200704.JPG/500px-Kastoria2_200704.JPG",
+    "desc": "Lake in Macedonia, Greece",
+    "wiki": "https://en.wikipedia.org/wiki/Lake_Orestiada"
    },
    {
     "name": "Λίμνη-Βουνό Καστοριάς",
@@ -394084,7 +394564,10 @@
     "lat": 37.06574249267578,
     "lon": 22.453481674194336,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Therapne%2C_Menelaion_from_NE_%281988%29_01.jpg/500px-Therapne%2C_Menelaion_from_NE_%281988%29_01.jpg",
+    "desc": "Archaeological site in Laconia, Greece",
+    "wiki": "https://en.wikipedia.org/wiki/Menelaion"
    },
    {
     "name": "Villehardouin Castle",
@@ -394460,7 +394943,9 @@
     "lat": 37.63706588745117,
     "lon": 21.629533767700195,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/06/Plan_Olympia_sanctuary.svg/500px-Plan_Olympia_sanctuary.svg.png",
+    "wiki": "https://en.wikipedia.org/wiki/Leonidaion"
    },
    {
     "name": "Νότια Στοά",
@@ -395399,7 +395884,10 @@
     "kind": "Peak",
     "lat": 37.71611022949219,
     "lon": 24.066389083862305,
-    "rate": 2
+    "rate": 2,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/82/LavrioPort.jpg/500px-LavrioPort.jpg",
+    "desc": "Town in southeastern Attica, Greece",
+    "wiki": "https://en.wikipedia.org/wiki/Lavrio"
    },
    {
     "name": "Sounion Beach",
@@ -395447,7 +395935,9 @@
     "lat": 37.661216735839844,
     "lon": 23.983259201049805,
     "rate": 1,
-    "active": true
+    "active": true,
+    "desc": "Settlement in Greece",
+    "wiki": "https://en.wikipedia.org/wiki/Legrena"
    },
    {
     "name": "΄Πασά",
@@ -396095,7 +396585,10 @@
     "kind": "Peak",
     "lat": 39.71345520019531,
     "lon": 20.904281616210938,
-    "rate": 2
+    "rate": 2,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/Lake-Ioannina.jpg/500px-Lake-Ioannina.jpg",
+    "desc": "Mountain range in Greece",
+    "wiki": "https://en.wikipedia.org/wiki/Mitsikeli"
    },
    {
     "name": "Limni Ioanninon",
@@ -396704,7 +397197,10 @@
     "kind": "Church",
     "lat": 39.32841110229492,
     "lon": 23.14983367919922,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Milies_-_2.JPG/500px-Milies_-_2.JPG",
+    "desc": "Municipal unit in Greece",
+    "wiki": "https://en.wikipedia.org/wiki/Milies"
    },
    {
     "name": "Agias Marinas",
@@ -398651,7 +399147,10 @@
     "lat": 46.58333206176758,
     "lon": 12.259721755981445,
     "rate": 2,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/Lago_di_misurina.jpg/500px-Lago_di_misurina.jpg",
+    "desc": "Lake in Belluno, Veneto, Italy",
+    "wiki": "https://en.wikipedia.org/wiki/Lake_Misurina"
    },
    {
     "name": "Chapel in Landro",
@@ -399737,7 +400236,10 @@
     "lat": 46.42444610595703,
     "lon": 11.850000381469727,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/06/Marmolata%2C_3343m.jpg/500px-Marmolata%2C_3343m.jpg",
+    "desc": "Mountain in the Dolomites, Italy",
+    "wiki": "https://en.wikipedia.org/wiki/Marmolada"
    },
    {
     "name": "Assumption of Mary",
@@ -399940,7 +400442,10 @@
     "kind": "Glacier",
     "lat": 46.4383430480957,
     "lon": 11.870927810668945,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e9/Marmolada_glacier.jpg/500px-Marmolada_glacier.jpg",
+    "desc": "Glacier in Trentino-Alto Adige, Italy",
+    "wiki": "https://en.wikipedia.org/wiki/Marmolada_Glacier"
    },
    {
     "name": "Via Crucis della Chiesa dei Santi Filippo e Giacomo",
@@ -400347,7 +400852,10 @@
     "lat": 46.2367057800293,
     "lon": 10.835722923278809,
     "rate": 2,
-    "active": true
+    "active": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/Madonna_di_Campiglio.JPG/500px-Madonna_di_Campiglio.JPG",
+    "desc": "Village and skiing resort in Italy",
+    "wiki": "https://en.wikipedia.org/wiki/Madonna_di_Campiglio"
    },
    {
     "name": "Campiglio Dolomiti di Brenta",
@@ -402372,7 +402880,10 @@
     "kind": "Peak",
     "lat": 45.9764404296875,
     "lon": 7.658573150634766,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/60/Matterhorn_from_Domh%C3%BCtte_-_2.jpg/500px-Matterhorn_from_Domh%C3%BCtte_-_2.jpg",
+    "desc": "Mountain in the Swiss and Italian Alps",
+    "wiki": "https://en.wikipedia.org/wiki/Matterhorn"
    },
    {
     "name": "Furgghorn",
@@ -402431,7 +402942,10 @@
     "kind": "Glacier",
     "lat": 45.986000061035156,
     "lon": 7.660181999206543,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/63/Il_ghiacciao_del_Cervino.JPG/500px-Il_ghiacciao_del_Cervino.JPG",
+    "desc": "Glacier of the Pennine Alps",
+    "wiki": "https://en.wikipedia.org/wiki/Matterhorn_Glacier"
    },
    {
     "name": "Plateau Rosa",
@@ -403070,7 +403584,10 @@
     "lat": 45.733333587646484,
     "lon": 10.100000381469727,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Marone_-_panoramio.jpg/500px-Marone_-_panoramio.jpg",
+    "desc": "Comune in Lombardy, Italy",
+    "wiki": "https://en.wikipedia.org/wiki/Marone"
    },
    {
     "name": "Tavernola Bergamasca",
@@ -407973,7 +408490,10 @@
     "lat": 42.61166763305664,
     "lon": 11.769721984863281,
     "rate": 2,
-    "active": true
+    "active": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/be/Lago_di_Mezzano.jpg/500px-Lago_di_Mezzano.jpg",
+    "desc": "Crater lake in Valentano, Viterbo",
+    "wiki": "https://en.wikipedia.org/wiki/Lake_Mezzano"
    },
    {
     "name": "alto corso del fiume Fiora",
@@ -408000,7 +408520,10 @@
     "lon": 11.770277976989746,
     "rate": 1,
     "heritage": true,
-    "active": true
+    "active": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/be/Lago_di_Mezzano.jpg/500px-Lago_di_Mezzano.jpg",
+    "desc": "Crater lake in Valentano, Viterbo",
+    "wiki": "https://en.wikipedia.org/wiki/Lake_Mezzano"
    },
    {
     "name": "Cascata del Londini",
@@ -410154,7 +410677,10 @@
     "lat": 42.52894592285156,
     "lon": 12.765464782714844,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Lago_di_Piediluco_con_il_paese.jpg/500px-Lago_di_Piediluco_con_il_paese.jpg",
+    "desc": "Lake in Lazio, Italy",
+    "wiki": "https://en.wikipedia.org/wiki/Lago_di_Piediluco"
    },
    {
     "name": "Palazzo Spada",
@@ -417579,7 +418105,10 @@
     "kind": "Cathedral",
     "lat": 38.23659896850586,
     "lon": 16.26099967956543,
-    "rate": 2
+    "rate": 2,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Locri_-_Duomo_-_2.jpg/500px-Locri_-_Duomo_-_2.jpg",
+    "desc": "Roman Catholic cathedral in Calabria, Italy",
+    "wiki": "https://en.wikipedia.org/wiki/Locri_Cathedral"
    },
    {
     "name": "Teatro romano di Locri",
@@ -417663,7 +418192,10 @@
     "lat": 38.91656494140625,
     "lon": 17.02483558654785,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ee/Le_Castella_-_Castello_Aragonese_-_01.jpg/500px-Le_Castella_-_Castello_Aragonese_-_01.jpg",
+    "desc": "Frazione in Calabria, Italy",
+    "wiki": "https://en.wikipedia.org/wiki/Le_Castella"
    },
    {
     "name": "batalla de Le Castella",
@@ -423922,7 +424454,8 @@
     "kind": "Square",
     "lat": 36.016666412353516,
     "lon": 14.350000381469727,
-    "rate": 2
+    "rate": 2,
+    "wiki": "https://en.wikipedia.org/wiki/Malta%E2%80%93Gozo_Channel_Important_Bird_Area"
    },
    {
     "name": "Ħondoq ir-Rummien",
@@ -423937,7 +424470,10 @@
     "lat": 35.98777770996094,
     "lon": 14.328611373901367,
     "rate": 3,
-    "active": true
+    "active": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e2/MV_Rozi_01.jpg/500px-MV_Rozi_01.jpg",
+    "desc": "Tugboat scuttled as a dive site off Malta",
+    "wiki": "https://en.wikipedia.org/wiki/MV_Rozi"
    },
    {
     "name": "Ghadira Nature Reserve",
@@ -424277,7 +424813,10 @@
     "kind": "Peak",
     "lat": 62.45650100708008,
     "lon": 7.768700122833252,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/Marstein_stasjon.jpeg/500px-Marstein_stasjon.jpeg",
+    "desc": "Mountain in Møre og Romsdal, Norway",
+    "wiki": "https://en.wikipedia.org/wiki/Mannen"
    },
    {
     "name": "Romsdalshornet",
@@ -424510,7 +425049,10 @@
     "kind": "Peak",
     "lat": 61.59130859375,
     "lon": 8.467060089111328,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/Leirh%C3%B8e.JPG/500px-Leirh%C3%B8e.JPG",
+    "desc": "Mountain in Innlandet, Norway",
+    "wiki": "https://en.wikipedia.org/wiki/Leirh%C3%B8e"
    },
    {
     "name": "Store Memurutinden",
@@ -424524,7 +425066,10 @@
     "kind": "Peak",
     "lat": 61.56666564941406,
     "lon": 8.483333587646484,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/86/Memurutindane.jpg/500px-Memurutindane.jpg",
+    "desc": "Mountain ridge in Lom, Norway",
+    "wiki": "https://en.wikipedia.org/wiki/Memurutindan"
    },
    {
     "name": "Veotind",
@@ -424545,7 +425090,10 @@
     "kind": "Peak",
     "lat": 61.551822662353516,
     "lon": 8.424938201904297,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e9/Midtre_Hellstugutinden_1983.jpg/500px-Midtre_Hellstugutinden_1983.jpg",
+    "desc": "Mountain in Innlandet, Norway",
+    "wiki": "https://en.wikipedia.org/wiki/Midtre_Hellstugutinden"
    },
    {
     "name": "Glittertinden",
@@ -424781,7 +425329,9 @@
     "kind": "Peak",
     "lat": 61.61457061767578,
     "lon": 8.315274238586426,
-    "rate": 2
+    "rate": 2,
+    "desc": "Mountain in Innlandet, Norway",
+    "wiki": "https://en.wikipedia.org/wiki/Midtre_Tverr%C3%A5tinden"
    },
    {
     "name": "Trollsteinrundhøe",
@@ -426828,7 +427378,10 @@
     "lat": 61.11474609375,
     "lon": 10.46130657196045,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Lillehammer_City.jpg/500px-Lillehammer_City.jpg",
+    "desc": "Municipality in Innlandet, Norway",
+    "wiki": "https://en.wikipedia.org/wiki/Lillehammer"
    },
    {
     "name": "Lillehammer station",
@@ -426964,7 +427517,10 @@
     "kind": "Museum",
     "lat": 61.11557388305664,
     "lon": 10.464376449584961,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/39/Lillehammer_kunstmuseum.jpg/500px-Lillehammer_kunstmuseum.jpg",
+    "desc": "Art gallery located in Lillehammer, Norway",
+    "wiki": "https://en.wikipedia.org/wiki/Lillehammer_Art_Museum"
    },
    {
     "name": "Lillehammer Kino",
@@ -429129,7 +429685,10 @@
     "kind": "Nature reserve",
     "lat": 63.04053497314453,
     "lon": 18.521209716796875,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/Mj%C3%A4lt%C3%B6n_flygfoto.tif/lossy-page1-500px-Mj%C3%A4lt%C3%B6n_flygfoto.tif.jpg",
+    "desc": "Island in the High Coast, Sweden",
+    "wiki": "https://en.wikipedia.org/wiki/Mj%C3%A4lt%C3%B6n"
    },
    {
     "name": "Ulvö kapell",
@@ -429721,7 +430280,10 @@
     "kind": "Square",
     "lat": 58.33928680419922,
     "lon": 11.321568489074707,
-    "rate": 2
+    "rate": 2,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9c/B%C3%A4sta_badstranden.JPG/500px-B%C3%A4sta_badstranden.JPG",
+    "desc": "Place in Bohuslän, Sweden",
+    "wiki": "https://en.wikipedia.org/wiki/Bohus-Malm%C3%B6n"
    },
    {
     "name": "Slätten",
@@ -430363,7 +430925,10 @@
     "kind": "Nature reserve",
     "lat": 57.98192596435547,
     "lon": 19.16114616394043,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/Rauks_%283881539849%29.jpg/500px-Rauks_%283881539849%29.jpg",
+    "desc": "Island in the Baltic Sea",
+    "wiki": "https://en.wikipedia.org/wiki/F%C3%A5r%C3%B6"
    },
    {
     "name": "Gamla hamn",
@@ -430657,7 +431222,10 @@
     "lat": 55.704063415527344,
     "lon": 13.193593978881836,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/aa/Lunds_domkyrka_augusti_2012.jpg/500px-Lunds_domkyrka_augusti_2012.jpg",
+    "desc": "Swedish cathedral",
+    "wiki": "https://en.wikipedia.org/wiki/Lund_Cathedral"
    },
    {
     "name": "Lunds stad",
@@ -431799,7 +432367,10 @@
     "kind": "Museum",
     "lat": 56.161521911621094,
     "lon": 15.59969425201416,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/19/Marinmuseum_karlskrona_dag.jpg/500px-Marinmuseum_karlskrona_dag.jpg",
+    "desc": "Military history museum in Sweden",
+    "wiki": "https://en.wikipedia.org/wiki/Marinmuseum"
    },
    {
     "name": "Jarramas",
@@ -433334,7 +433905,10 @@
     "lat": 65.58274841308594,
     "lon": 22.149051666259766,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/aa/Lulea_Kirche%2C_modified.jpg/500px-Lulea_Kirche%2C_modified.jpg",
+    "desc": "Church in Luleå, Sweden",
+    "wiki": "https://en.wikipedia.org/wiki/Lule%C3%A5_Cathedral"
    },
    {
     "name": "Nederluleå parish",
@@ -434685,7 +435259,10 @@
     "kind": "Square",
     "lat": 63.988609313964844,
     "lon": -19.063888549804688,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Landmannalaugar_Campsite.jpg/500px-Landmannalaugar_Campsite.jpg",
+    "desc": "Location in Iceland",
+    "wiki": "https://en.wikipedia.org/wiki/Landmannalaugar"
    },
    {
     "name": "Bláhnjúkur",
@@ -435169,7 +435746,10 @@
     "kind": "Peak",
     "lat": 64.65023040771484,
     "lon": -19.209020614624023,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/03/Kerlingarfj%C3%B6ll_peaks_zoom.jpg/500px-Kerlingarfj%C3%B6ll_peaks_zoom.jpg",
+    "desc": "Mountain in Iceland",
+    "wiki": "https://en.wikipedia.org/wiki/Lo%C3%B0mundur"
    },
    {
     "name": "Ögmundur",
@@ -438865,7 +439445,9 @@
     "kind": "Nature reserve",
     "lat": 53.20830154418945,
     "lon": 14.40250015258789,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/6/61/Internationalpark.png",
+    "wiki": "https://en.wikipedia.org/wiki/Lower_Oder_Valley_International_Park"
    },
    {
     "name": "Parafia Niepokalanego Serca Najświętszej Maryi Panny w Gryfinie",
@@ -444328,7 +444910,10 @@
     "kind": "Square",
     "lat": 50.242897033691406,
     "lon": 19.78298568725586,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cf/Ojc%C3%B3w-Maczuga-Herkulesa-front.jpg/500px-Ojc%C3%B3w-Maczuga-Herkulesa-front.jpg",
+    "desc": "Limestone stack in Poland",
+    "wiki": "https://en.wikipedia.org/wiki/Maczuga_Herkulesa"
    },
    {
     "name": "Rezerwat Dolina Kluczwody",
@@ -447703,7 +448288,10 @@
     "lat": 57.003055572509766,
     "lon": 23.469165802001953,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/Ka%C5%86iera_ezers_pie_Lapme%C5%BEciema.jpg/500px-Ka%C5%86iera_ezers_pie_Lapme%C5%BEciema.jpg",
+    "desc": "Lake in Ķemeri National Park, Latvia",
+    "wiki": "https://en.wikipedia.org/wiki/Lake_Ka%C5%86ieris"
    },
    {
     "name": "Ķemeri National Park",
@@ -447890,7 +448478,10 @@
     "lat": 55.870697021484375,
     "lon": 26.540868759155273,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Daugavpils_Evangelical_Lutheran_church_of_Martin_Luther12.JPG/500px-Daugavpils_Evangelical_Lutheran_church_of_Martin_Luther12.JPG",
+    "desc": "Church building in Daugavpils, Latvia",
+    "wiki": "https://en.wikipedia.org/wiki/Martin_Luther_Cathedral,_Daugavpils"
    },
    {
     "name": "Church of the Immaculate Conception of Blessed Virgin Mary in Daugavpils",
@@ -448312,7 +448903,9 @@
     "lat": 58.89360046386719,
     "lon": 22.579700469970703,
     "rate": 2,
-    "heritage": true
+    "heritage": true,
+    "desc": "Protected area in Estonia",
+    "wiki": "https://en.wikipedia.org/wiki/Leigri_Nature_Reserve"
    },
    {
     "name": "Küüru tuulik",
@@ -452004,7 +452597,10 @@
     "lat": 37.71445083618164,
     "lon": -25.369874954223633,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Farol_de_Ponta_Gar%C3%A7a.jpg/500px-Farol_de_Ponta_Gar%C3%A7a.jpg",
+    "desc": "Lighthouse",
+    "wiki": "https://en.wikipedia.org/wiki/Lighthouse_of_Ponta_Gar%C3%A7a"
    },
    {
     "name": "Lagoa do Ilhéu de Vila Franca do Campo",
@@ -452557,7 +453153,10 @@
     "kind": "Bridge",
     "lat": 32.76499938964844,
     "lon": -17.126388549804688,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Levada_Madeira.jpg/500px-Levada_Madeira.jpg",
+    "desc": "Levada in Rabaçal, Madeira, Portugal",
+    "wiki": "https://en.wikipedia.org/wiki/Levada_das_25_Fontes"
    },
    {
     "name": "Rabaçal",
@@ -452592,7 +453191,10 @@
     "kind": "Nature reserve",
     "lat": 32.760501861572266,
     "lon": -17.03520393371582,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/50/Levada_do_Caldeir%C3%A3o_Verde%2C_Madeira_%2809611%29.jpg/500px-Levada_do_Caldeir%C3%A3o_Verde%2C_Madeira_%2809611%29.jpg",
+    "desc": "Protected area in Portugal",
+    "wiki": "https://en.wikipedia.org/wiki/Madeira_Natural_Park"
    },
    {
     "name": "Porto Moniz",
@@ -460267,7 +460869,10 @@
     "lat": 39.39692687988281,
     "lon": -7.379972457885742,
     "rate": 1,
-    "active": true
+    "active": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/Marv%C3%A3o_27.jpg/500px-Marv%C3%A3o_27.jpg",
+    "desc": "Municipality in Alentejo, Portugal",
+    "wiki": "https://en.wikipedia.org/wiki/Marv%C3%A3o"
    },
    {
     "name": "Cabeço do Leão",
@@ -462439,7 +463044,10 @@
     "lat": 40.099998474121094,
     "lon": -8.333333015441895,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/19/Miranda_do_Corvo_vista_do_Calv%C3%A1rio.JPG/500px-Miranda_do_Corvo_vista_do_Calv%C3%A1rio.JPG",
+    "desc": "Municipality in Centro, Portugal",
+    "wiki": "https://en.wikipedia.org/wiki/Miranda_do_Corvo"
    },
    {
     "name": "Capela de Santo António da Neve",
@@ -464422,7 +465030,10 @@
     "kind": "Nature reserve",
     "lat": 41.76729965209961,
     "lon": -8.637399673461914,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Rio_Lima_2.JPG/500px-Rio_Lima_2.JPG",
+    "desc": "River arising in Spain and flowing through Portugal",
+    "wiki": "https://en.wikipedia.org/wiki/Lima_River"
    },
    {
     "name": "Igreja de São João da Ribeira incluindo o património móvel integrado e adro",
@@ -465782,7 +466393,10 @@
     "kind": "Square",
     "lat": 37.85527801513672,
     "lon": -25.786388397216797,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Lagoa_das_Sete_Cidades3.jpg/500px-Lagoa_das_Sete_Cidades3.jpg",
+    "desc": "Crater lake in Azores, Portugal",
+    "wiki": "https://en.wikipedia.org/wiki/Lagoa_das_Sete_Cidades"
    },
    {
     "name": "Santiago Lake",
@@ -466066,7 +466680,10 @@
     "lat": 37.71445083618164,
     "lon": -25.369874954223633,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Farol_de_Ponta_Gar%C3%A7a.jpg/500px-Farol_de_Ponta_Gar%C3%A7a.jpg",
+    "desc": "Lighthouse",
+    "wiki": "https://en.wikipedia.org/wiki/Lighthouse_of_Ponta_Gar%C3%A7a"
    },
    {
     "name": "Parque Terra Nostra",
@@ -467658,7 +468275,10 @@
     "kind": "Bridge",
     "lat": 32.76499938964844,
     "lon": -17.126388549804688,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Levada_Madeira.jpg/500px-Levada_Madeira.jpg",
+    "desc": "Levada in Rabaçal, Madeira, Portugal",
+    "wiki": "https://en.wikipedia.org/wiki/Levada_das_25_Fontes"
    },
    {
     "name": "Rabaçal",
@@ -468306,7 +468926,10 @@
     "lat": 32.709999084472656,
     "lon": -16.76219940185547,
     "rate": 1,
-    "active": true
+    "active": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/39/Machico_and_the_nearby_airport_on_Madeira.JPG/500px-Machico_and_the_nearby_airport_on_Madeira.JPG",
+    "desc": "Municipality in Madeira, Portugal",
+    "wiki": "https://en.wikipedia.org/wiki/Machico,_Madeira"
    },
    {
     "name": "climbing wall",
@@ -469280,7 +469903,10 @@
     "kind": "Nature reserve",
     "lat": 32.760501861572266,
     "lon": -17.03520393371582,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/50/Levada_do_Caldeir%C3%A3o_Verde%2C_Madeira_%2809611%29.jpg/500px-Levada_do_Caldeir%C3%A3o_Verde%2C_Madeira_%2809611%29.jpg",
+    "desc": "Protected area in Portugal",
+    "wiki": "https://en.wikipedia.org/wiki/Madeira_Natural_Park"
    },
    {
     "name": "Quinta Jardins do Imperador",
@@ -470157,7 +470783,10 @@
     "kind": "Bridge",
     "lat": 32.76499938964844,
     "lon": -17.126388549804688,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Levada_Madeira.jpg/500px-Levada_Madeira.jpg",
+    "desc": "Levada in Rabaçal, Madeira, Portugal",
+    "wiki": "https://en.wikipedia.org/wiki/Levada_das_25_Fontes"
    },
    {
     "name": "25 Fontes",
@@ -470852,7 +471481,10 @@
     "lat": 42.489646911621094,
     "lon": 1.6029452085494995,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c9/Refuge_perafita_andorra.jpg/500px-Refuge_perafita_andorra.jpg",
+    "desc": "UNESCO World Heritage Site in Andorra",
+    "wiki": "https://en.wikipedia.org/wiki/Madriu-Perafita-Claror_Valley"
    },
    {
     "name": "Esglesia de Sant Miquel d'Engolasters",
@@ -471766,7 +472398,10 @@
     "lat": 47.97136306762695,
     "lon": 23.694721221923828,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Cimitirul_Vesel%2C_S%C4%83p%C3%A2n%C8%9Ba%2C_Maramure%C8%99_-_%282023%29_-_IMG_18.jpg/500px-Cimitirul_Vesel%2C_S%C4%83p%C3%A2n%C8%9Ba%2C_Maramure%C8%99_-_%282023%29_-_IMG_18.jpg",
+    "desc": "Cemetery in Romania",
+    "wiki": "https://en.wikipedia.org/wiki/Merry_Cemetery"
    },
    {
     "name": "Sapanta Peri Monastery",
@@ -477746,7 +478381,8 @@
     "kind": "Square",
     "lat": 41.819000244140625,
     "lon": 24.58099937438965,
-    "rate": 3
+    "rate": 3,
+    "wiki": "https://en.wikipedia.org/wiki/Marvelous_Bridges"
    },
    {
     "name": "Малък Персенк",
@@ -480124,7 +480760,10 @@
     "lat": 43.277374267578125,
     "lon": 27.118894577026367,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/JE%C5%B9DZIEC_Z_MADARY.JPG/500px-JE%C5%B9DZIEC_Z_MADARY.JPG",
+    "desc": "Medieval rock-cut relief in Bulgaria",
+    "wiki": "https://en.wikipedia.org/wiki/Madara_Rider"
    },
    {
     "name": "Battle of Kulevicha",
@@ -490615,7 +491254,10 @@
     "lat": 43.00914764404297,
     "lon": -7.558220386505127,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Lugo_Cathedral_2023_-_West_Fa%C3%A7ade.jpg/500px-Lugo_Cathedral_2023_-_West_Fa%C3%A7ade.jpg",
+    "desc": "Cultural property in Lugo, Spain",
+    "wiki": "https://en.wikipedia.org/wiki/Lugo_Cathedral"
    },
    {
     "name": "Roman Walls of Lugo",
@@ -490961,7 +491603,10 @@
     "lat": 42.461666107177734,
     "lon": -6.762499809265137,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Panor%C3%A1mica_de_Las_M%C3%A9dulas.jpg/500px-Panor%C3%A1mica_de_Las_M%C3%A9dulas.jpg",
+    "desc": "Historic gold-mining site in León, Spain",
+    "wiki": "https://en.wikipedia.org/wiki/Las_M%C3%A9dulas"
    },
    {
     "name": "Castro Peña del Hombre",
@@ -491696,7 +492341,10 @@
     "lat": 42.59946060180664,
     "lon": -5.566680908203125,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1d/Catedral_G%C3%B3tica_de_Le%C3%B3n.jpg/500px-Catedral_G%C3%B3tica_de_Le%C3%B3n.jpg",
+    "desc": "Church in Spain",
+    "wiki": "https://en.wikipedia.org/wiki/Le%C3%B3n_Cathedral"
    },
    {
     "name": "French Way",
@@ -493383,7 +494031,10 @@
     "lat": 40.48893737792969,
     "lon": -6.11048698425293,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Plaza_Mayor_de_La_Alberca_%28Salamanca%29.JPG/500px-Plaza_Mayor_de_La_Alberca_%28Salamanca%29.JPG",
+    "desc": "Municipality in Castile and León, Spain",
+    "wiki": "https://en.wikipedia.org/wiki/La_Alberca"
    },
    {
     "name": "Las Batuecas",
@@ -493391,7 +494042,10 @@
     "lat": 40.453033447265625,
     "lon": -6.120070934295654,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/R%C3%ADo_Batuecas_%2814_de_abril_de_2017%2C_Parque_Natural_de_las_Batuecas_y_Sierra_de_Francia%29.jpg/500px-R%C3%ADo_Batuecas_%2814_de_abril_de_2017%2C_Parque_Natural_de_las_Batuecas_y_Sierra_de_Francia%29.jpg",
+    "desc": "Historic site in Sierra de Francia, Salamanca",
+    "wiki": "https://en.wikipedia.org/wiki/Las_Batuecas"
    },
    {
     "name": "Santuario de Nuestra Señora de la Peña de Francia, El Cabaco",
@@ -500521,7 +501175,10 @@
     "kind": "Monastery",
     "lat": 39.82291793823242,
     "lon": 2.884808301925659,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Basilica_of_Santuari_de_Lluc_-_Facade.JPG/500px-Basilica_of_Santuari_de_Lluc_-_Facade.JPG",
+    "desc": "Monastery in Spain",
+    "wiki": "https://en.wikipedia.org/wiki/Santuari_de_Lluc"
    },
    {
     "name": "Mirador de ses Barques",
@@ -501571,7 +502228,10 @@
     "kind": "Square",
     "lat": 28.11924171447754,
     "lon": -17.22564125061035,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/%28Isla_de_la_Gomera%29_La_Palma_%26_La_Gomera_Islands%2C_Canary_Islands_%28cropped%29.jpg/500px-%28Isla_de_la_Gomera%29_La_Palma_%26_La_Gomera_Islands%2C_Canary_Islands_%28cropped%29.jpg",
+    "desc": "Canary Island",
+    "wiki": "https://en.wikipedia.org/wiki/La_Gomera"
    },
    {
     "name": "Roque de Agando",
@@ -501772,7 +502432,9 @@
     "kind": "Square",
     "lat": 29.214359283447266,
     "lon": -13.481159210205078,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/Lanzarote-Mirador_del_Rio-a.jpg/500px-Lanzarote-Mirador_del_Rio-a.jpg",
+    "wiki": "https://en.wikipedia.org/wiki/Mirador_del_R%C3%ADo"
    },
    {
     "name": "Stonework Beach",
@@ -501985,7 +502647,10 @@
     "kind": "Peak",
     "lat": 57.564327239990234,
     "lon": -5.462122440338135,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/Liathach_from_Loch_Clair_May_2006_-_geograph.org.uk_-_282854.jpg/500px-Liathach_from_Loch_Clair_May_2006_-_geograph.org.uk_-_282854.jpg",
+    "desc": "Mountain in Highland, Scotland",
+    "wiki": "https://en.wikipedia.org/wiki/Liathach"
    },
    {
     "name": "Beinn Dearg",
@@ -502070,7 +502735,10 @@
     "kind": "Peak",
     "lat": 57.49188232421875,
     "lon": -5.465569496154785,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Maol_Chean_dearg_from_Beinn_Liath_Mhor.jpg/500px-Maol_Chean_dearg_from_Beinn_Liath_Mhor.jpg",
+    "desc": "Mountain in Scotland",
+    "wiki": "https://en.wikipedia.org/wiki/Maol_Cheann-dearg"
    },
    {
     "name": "Beinn Eighe",
@@ -503565,7 +504233,9 @@
     "lat": 56.738285064697266,
     "lon": -3.775845527648926,
     "rate": 2,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/21/Linn_of_Tummel.jpg/500px-Linn_of_Tummel.jpg",
+    "wiki": "https://en.wikipedia.org/wiki/Linn_of_Tummel"
    },
    {
     "name": "Balavoulin",
@@ -504719,7 +505389,10 @@
     "lat": 52.367183685302734,
     "lon": -2.7230141162872314,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/54/Ludlow_Castle_from_Whitcliffe%2C_2011.jpg/500px-Ludlow_Castle_from_Whitcliffe%2C_2011.jpg",
+    "desc": "Medieval castle in Shropshire, England",
+    "wiki": "https://en.wikipedia.org/wiki/Ludlow_Castle"
    },
    {
     "name": "Oakley Park",
@@ -504897,7 +505570,10 @@
     "lat": 52.36311340332031,
     "lon": -2.717432975769043,
     "rate": 2,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/A_splendid_view_from_Ludford_Churchyard_-_geograph.org.uk_-_1465967.jpg/500px-A_splendid_view_from_Ludford_Churchyard_-_geograph.org.uk_-_1465967.jpg",
+    "desc": "Village in Shropshire, England",
+    "wiki": "https://en.wikipedia.org/wiki/Ludford,_Shropshire"
    },
    {
     "name": "Location of old Dinham Bridge",
@@ -505322,7 +505998,9 @@
     "kind": "Peak",
     "lat": 50.97669982910156,
     "lon": -2.181999921798706,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bd/View_from_Melbury_Beacon_-_geograph.org.uk_-_358553.jpg/500px-View_from_Melbury_Beacon_-_geograph.org.uk_-_358553.jpg",
+    "wiki": "https://en.wikipedia.org/wiki/Melbury_Hill"
    },
    {
     "name": "Duncliffe Hill",
@@ -506184,7 +506862,10 @@
     "kind": "Monastery",
     "lat": 50.33689880371094,
     "lon": -4.4491400718688965,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/St_Michael_chapel%2C_Lammana_-_geograph.org.uk_-_1106426.jpg/500px-St_Michael_chapel%2C_Lammana_-_geograph.org.uk_-_1106426.jpg",
+    "desc": "Priory in Looe, Cornwall, England",
+    "wiki": "https://en.wikipedia.org/wiki/Lammana_Priory"
    },
    {
     "name": "Banjo Pier",
@@ -507219,7 +507900,10 @@
     "kind": "Nature reserve",
     "lat": 51.8272705078125,
     "lon": -2.6601693630218506,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/a/a6/Winter_silhouettes_-_geograph.org.uk_-_1614094.jpg",
+    "desc": "Nature reserve in England and Wales",
+    "wiki": "https://en.wikipedia.org/wiki/Lady_Park_Wood_National_Nature_Reserve"
    },
    {
     "name": "English Bicknor Castle",
@@ -507255,7 +507939,9 @@
     "kind": "Bridge",
     "lat": 51.8380012512207,
     "lon": -2.5769999027252197,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/Viaduct_I._Lydbrook_%28Lower%29_England.jpg/500px-Viaduct_I._Lydbrook_%28Lower%29_England.jpg",
+    "wiki": "https://en.wikipedia.org/wiki/Lower_Lydbrook_Viaduct"
    },
    {
     "name": "Monmouth Cemetery",
@@ -508436,7 +509122,9 @@
     "lat": 51.66600036621094,
     "lon": -2.6659998893737793,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "desc": "Protected area in Gloucestershire, England",
+    "wiki": "https://en.wikipedia.org/wiki/Lower_Wye_Gorge_SSSI"
    },
    {
     "name": "Caerwood and Ashberry Goose House",
@@ -508559,7 +509247,10 @@
     "kind": "Square",
     "lat": 51.69729995727539,
     "lon": -2.6662399768829346,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/5/51/Footpath_through_woodland_to_Tintern_-_geograph.org.uk_-_803692.jpg",
+    "desc": "Nature reserve in Gloucestershire, England",
+    "wiki": "https://en.wikipedia.org/wiki/Lippets_Grove"
    },
    {
     "name": "East Wood, Tidenham",
@@ -509687,7 +510378,10 @@
     "lat": 52.31842803955078,
     "lon": -3.775893211364746,
     "rate": 3,
-    "active": true
+    "active": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e2/Llan_Ddu_Fawr_summit_-_geograph.org.uk_-_130185.jpg/500px-Llan_Ddu_Fawr_summit_-_geograph.org.uk_-_130185.jpg",
+    "desc": "Hill (594m) in Ceredigion, Wales",
+    "wiki": "https://en.wikipedia.org/wiki/Llan_Ddu_Fawr"
    },
    {
     "name": "Domen Milwyn",
@@ -509982,14 +510676,20 @@
     "kind": "Nature reserve",
     "lat": 54.258399963378906,
     "lon": -7.814310073852539,
-    "rate": 2
+    "rate": 2,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0d/Clifftop_path_at_the_Cliffs_of_Magho_-_geograph.org.uk_-_1392627.jpg/500px-Clifftop_path_at_the_Cliffs_of_Magho_-_geograph.org.uk_-_1392627.jpg",
+    "desc": "Lies on the Fermanagh-Cavan border, Ireland",
+    "wiki": "https://en.wikipedia.org/wiki/Marble_Arch_Caves_Global_Geopark"
    },
    {
     "name": "Marble Arch Caves",
     "kind": "Square",
     "lat": 54.258426666259766,
     "lon": -7.814313888549805,
-    "rate": 2
+    "rate": 2,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/19/Marble_Arch_Caves_-_gour_pools_and_flowstone.jpg/500px-Marble_Arch_Caves_-_gour_pools_and_flowstone.jpg",
+    "desc": "Limestone caves in Northern Ireland",
+    "wiki": "https://en.wikipedia.org/wiki/Marble_Arch_Caves"
    },
    {
     "name": "Florence Court Irish Yew",
@@ -511781,7 +512481,10 @@
     "lat": 57.320556640625,
     "lon": -4.311209201812744,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/Loch_Ruthven_from_N.E.%2C_Tullich_-_geograph.org.uk_-_908082.jpg/500px-Loch_Ruthven_from_N.E.%2C_Tullich_-_geograph.org.uk_-_908082.jpg",
+    "desc": "Lake in the United Kingdom",
+    "wiki": "https://en.wikipedia.org/wiki/Loch_Ruthven"
    },
    {
     "name": "Falls of Divach",
@@ -511812,7 +512515,9 @@
     "kind": "Peak",
     "lat": 57.264408111572266,
     "lon": -4.560041427612305,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/Meall_Fuar-mhonaidh_from_the_Bunloit_road_-_geograph.org.uk_-_46917.jpg/500px-Meall_Fuar-mhonaidh_from_the_Bunloit_road_-_geograph.org.uk_-_46917.jpg",
+    "wiki": "https://en.wikipedia.org/wiki/Meall_Fuar-mhonaidh"
    },
    {
     "name": "Dunmaglass, Scotland",
@@ -512170,7 +512875,9 @@
     "kind": "Square",
     "lat": 57.00529861450195,
     "lon": -2.2897400856018066,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/4/4b/Lang_Stane_of_Auquhollie.jpg",
+    "wiki": "https://en.wikipedia.org/wiki/Lang_Stane_of_Auquhollie"
    },
    {
     "name": "Stonehaven Derailment",
@@ -515063,7 +515770,10 @@
     "kind": "Peak",
     "lat": 57.280128479003906,
     "lon": -5.120495319366455,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/View_along_the_ridge_towards_M%C3%A0m_Sodhail_-_geograph.org.uk_-_1128056.jpg/500px-View_along_the_ridge_towards_M%C3%A0m_Sodhail_-_geograph.org.uk_-_1128056.jpg",
+    "desc": "Mountain in Scotland",
+    "wiki": "https://en.wikipedia.org/wiki/Mam_Sodhail"
    },
    {
     "name": "Mullach na Dheiragain",
@@ -515680,7 +516390,10 @@
     "kind": "Square",
     "lat": 50.66844177246094,
     "lon": -4.759512424468994,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Sleeping_Merlin.jpg/500px-Sleeping_Merlin.jpg",
+    "desc": "Sea cave in Cornwall, England",
+    "wiki": "https://en.wikipedia.org/wiki/Merlin%27s_Cave"
    },
    {
     "name": "St. Nectan's Glen",
@@ -516564,7 +517277,10 @@
     "lat": 50.11879348754883,
     "lon": -5.536730766296387,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/The_Market_House%2C_Penzance_-_geograph.org.uk_-_107115.jpg/500px-The_Market_House%2C_Penzance_-_geograph.org.uk_-_107115.jpg",
+    "desc": "Building in Penzance, Cornwall",
+    "wiki": "https://en.wikipedia.org/wiki/Market_Building,_Penzance"
    },
    {
     "name": "Morrab Library",
@@ -516987,7 +517703,10 @@
     "lat": 50.072715759277344,
     "lon": -5.708035469055176,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/6/60/Entrance_to_Maen_Castle_-_geograph.org.uk_-_943043.jpg",
+    "desc": "Iron Age promontory fort in Cornwall, England",
+    "wiki": "https://en.wikipedia.org/wiki/Maen_Castle"
    },
    {
     "name": "Boleigh Fogou",
@@ -517012,7 +517731,10 @@
     "kind": "Theatre",
     "lat": 50.04099655151367,
     "lon": -5.651270866394043,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d7/Minack_Panorama.jpg/500px-Minack_Panorama.jpg",
+    "desc": "Open-air theatre in Cornwall, England",
+    "wiki": "https://en.wikipedia.org/wiki/Minack_Theatre"
    },
    {
     "name": "Porthcurno Telegraph Museum",
@@ -517054,7 +517776,10 @@
     "kind": "Square",
     "lat": 50.04090881347656,
     "lon": -5.6368913650512695,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/Logan_Rock_Treen_closeup.jpg/500px-Logan_Rock_Treen_closeup.jpg",
+    "desc": "Large boulder in Cornwall, United Kingdom",
+    "wiki": "https://en.wikipedia.org/wiki/Logan_Rock"
    },
    {
     "name": "Porthgwarra",
@@ -517082,7 +517807,10 @@
     "kind": "Square",
     "lat": 50.06626510620117,
     "lon": -5.714822292327881,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/20210529_Lands_End-9.jpg/500px-20210529_Lands_End-9.jpg",
+    "desc": "Headland and tourist attraction in Cornwall, England",
+    "wiki": "https://en.wikipedia.org/wiki/Land%27s_End"
    },
    {
     "name": "The Merry Maidens Stone Circle",
@@ -520045,7 +520773,9 @@
     "lat": 49.91267776489258,
     "lon": -6.279582977294922,
     "rate": 3,
-    "active": true
+    "active": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/0/04/MV_Cita_wrecked_on_the_Isles_of_Scilly.jpg",
+    "wiki": "https://en.wikipedia.org/wiki/MV_Cita"
    },
    {
     "name": "Porthcressa Beach",
@@ -522045,7 +522775,10 @@
     "lat": 51.282344818115234,
     "lon": -2.680070638656616,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dc/Crook_Peak_towards_Compton_Hill.jpg/500px-Crook_Peak_towards_Compton_Hill.jpg",
+    "desc": "Range of limestone hills to the south of Bristol and Bath in Somerset, England",
+    "wiki": "https://en.wikipedia.org/wiki/Mendip_Hills"
    },
    {
     "name": "Chancellor's Farm",
@@ -522265,7 +522998,10 @@
     "lat": 51.297908782958984,
     "lon": -2.7211320400238037,
     "rate": 2,
-    "active": true
+    "active": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Entrance_to_Manor_Farm_swallet_-_geograph.org.uk_-_1236454.jpg/500px-Entrance_to_Manor_Farm_swallet_-_geograph.org.uk_-_1236454.jpg",
+    "desc": "Cave in Somerset, England",
+    "wiki": "https://en.wikipedia.org/wiki/Manor_Farm_Swallet"
    },
    {
     "name": "Upper Flood Swallet",
@@ -523047,7 +523783,10 @@
     "kind": "Peak",
     "lat": 51.37664031982422,
     "lon": -1.8517389297485352,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Downland_West_of_Milk_Hill._-_geograph.org.uk_-_185577.jpg/500px-Downland_West_of_Milk_Hill._-_geograph.org.uk_-_185577.jpg",
+    "desc": "Hill in Wiltshire, England",
+    "wiki": "https://en.wikipedia.org/wiki/Milk_Hill"
    },
    {
     "name": "Alton Barnes White Horse",
@@ -524069,7 +524808,9 @@
     "lat": 51.463401794433594,
     "lon": -0.6504356265068054,
     "rate": 3,
-    "active": true
+    "active": true,
+    "desc": "Lego theme park in Windsor, Berkshire, England",
+    "wiki": "https://en.wikipedia.org/wiki/Legoland_Windsor_Resort"
    },
    {
     "name": "Haymill Valley",
@@ -524234,7 +524975,10 @@
     "lat": 50.821998596191406,
     "lon": -0.13860000669956207,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/Marlborough_House%2C_54_Old_Steine%2C_Brighton_%28NHLE_Code_1380671%29_%28September_2018%29_%282%29.jpg/500px-Marlborough_House%2C_54_Old_Steine%2C_Brighton_%28NHLE_Code_1380671%29_%28September_2018%29_%282%29.jpg",
+    "desc": "Grade I listed building in the United Kingdom",
+    "wiki": "https://en.wikipedia.org/wiki/Marlborough_House,_Brighton"
    },
    {
     "name": "Royal Pavilion",
@@ -524393,7 +525137,10 @@
     "lat": 50.82120895385742,
     "lon": -0.1429435759782791,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Brighton_middle_street_synagogue.jpg/500px-Brighton_middle_street_synagogue.jpg",
+    "desc": "Synagogue in Brighton, England",
+    "wiki": "https://en.wikipedia.org/wiki/Middle_Street_Synagogue"
    },
    {
     "name": "Brighton Hippodrome",
@@ -524758,7 +525505,10 @@
     "lat": 50.80964279174805,
     "lon": 0.18793413043022156,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/Long_Man_of_Wilmington.jpg/500px-Long_Man_of_Wilmington.jpg",
+    "desc": "Hill figure on Windover Hill near Wilmington, East Sussex, England",
+    "wiki": "https://en.wikipedia.org/wiki/Long_Man_of_Wilmington"
    },
    {
     "name": "Bishopstone",
@@ -525623,7 +526373,10 @@
     "lat": 50.80595016479492,
     "lon": -1.324491262435913,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/Luttrell%27s_Tower_from_the_beach.JPG/500px-Luttrell%27s_Tower_from_the_beach.JPG",
+    "desc": "Folly in Fawley",
+    "wiki": "https://en.wikipedia.org/wiki/Luttrell%27s_Tower"
    },
    {
     "name": "Calshot Castle",
@@ -525971,7 +526724,9 @@
     "lat": 50.85100173950195,
     "lon": -1.309999942779541,
     "rate": 2,
-    "active": true
+    "active": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b1/The_beach_at_Titchfield_Haven_-_geograph.org.uk_-_1418098.jpg/500px-The_beach_at_Titchfield_Haven_-_geograph.org.uk_-_1418098.jpg",
+    "wiki": "https://en.wikipedia.org/wiki/Lee-on-The_Solent_to_Itchen_Estuary"
    },
    {
     "name": "Hythe to Calshot Marshes",
@@ -526017,7 +526772,10 @@
     "lat": 50.875999450683594,
     "lon": -1.309000015258789,
     "rate": 2,
-    "active": true
+    "active": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Tree_near_River_Hamble_%28geograph_6265453%29.jpg/500px-Tree_near_River_Hamble_%28geograph_6265453%29.jpg",
+    "desc": "Protected area in Hampshire, England",
+    "wiki": "https://en.wikipedia.org/wiki/Lincegrove_and_Hackett%27s_Marshes"
    },
    {
     "name": "Holbury Manor",
@@ -526592,7 +527350,10 @@
     "lat": 55.669132232666016,
     "lon": -1.8008977174758911,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8d/Holy_Island_Sunrise_%28again%29_%2815064111624%29.jpg/500px-Holy_Island_Sunrise_%28again%29_%2815064111624%29.jpg",
+    "desc": "Tidal island in northeast England",
+    "wiki": "https://en.wikipedia.org/wiki/Lindisfarne"
    },
    {
     "name": "Cenotaph",
@@ -526608,7 +527369,10 @@
     "lat": 55.669063568115234,
     "lon": -1.7848553657531738,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/LindisfarneCastleHolyIsland.jpg/500px-LindisfarneCastleHolyIsland.jpg",
+    "desc": "16th-century castle on Holy Island, England",
+    "wiki": "https://en.wikipedia.org/wiki/Lindisfarne_Castle"
    },
    {
     "name": "Middleton Hall",
@@ -526634,7 +527398,10 @@
     "kind": "Nature reserve",
     "lat": 55.676998138427734,
     "lon": -1.7949999570846558,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/A_Lindisfarne_National_Nature_Reserve_sign_-_geograph.org.uk_-_1513477.jpg/500px-A_Lindisfarne_National_Nature_Reserve_sign_-_geograph.org.uk_-_1513477.jpg",
+    "desc": "Nature reserve in Northnumberland, England",
+    "wiki": "https://en.wikipedia.org/wiki/Lindisfarne_National_Nature_Reserve"
    },
    {
     "name": "Fenham Castle",
@@ -527330,7 +528097,8 @@
     "lat": 55.4306640625,
     "lon": -1.6366472244262695,
     "rate": 2,
-    "active": true
+    "active": true,
+    "wiki": "https://en.wikipedia.org/wiki/Longhoughton_Quarry"
    },
    {
     "name": "Aln Estuary Marine Conservation Zone",
@@ -527490,7 +528258,10 @@
     "lat": 54.95708084106445,
     "lon": -2.258760929107666,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ee/Langley_Castle.jpg/500px-Langley_Castle.jpg",
+    "desc": "Grade I listed castle in Langley, Northumberland, United Kingdom",
+    "wiki": "https://en.wikipedia.org/wiki/Langley_Castle"
    },
    {
     "name": "Walwick Grange Farm",
@@ -527512,7 +528283,10 @@
     "kind": "Castle",
     "lat": 55.02870559692383,
     "lon": -2.287714958190918,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/%28The_site_of%29_Milecastle_34_-_geograph.org.uk_-_592694.jpg/500px-%28The_site_of%29_Milecastle_34_-_geograph.org.uk_-_592694.jpg",
+    "desc": "Milecastle on Hadrian's Wall in Northumberland, England",
+    "wiki": "https://en.wikipedia.org/wiki/Milecastle_34"
    },
    {
     "name": "Sewingsheilds Mile Castle 35 Hadrian's Wall",
@@ -527526,7 +528300,9 @@
     "kind": "Castle",
     "lat": 55.03086853027344,
     "lon": -2.2661099433898926,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/%28All_that_remains_of%29_Milecastle_33_-_geograph.org.uk_-_592666.jpg/500px-%28All_that_remains_of%29_Milecastle_33_-_geograph.org.uk_-_592666.jpg",
+    "wiki": "https://en.wikipedia.org/wiki/Milecastle_33"
    },
    {
     "name": "Knag Burn Gateway",
@@ -527563,14 +528339,20 @@
     "kind": "Castle",
     "lat": 55.033206939697266,
     "lon": -2.243001937866211,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d8/%28The_site_of%29_Milecastle_32_-_geograph.org.uk_-_592657.jpg/500px-%28The_site_of%29_Milecastle_32_-_geograph.org.uk_-_592657.jpg",
+    "desc": "Milecastle on Hadrian's Wall in Northumberland, England",
+    "wiki": "https://en.wikipedia.org/wiki/Milecastle_32"
    },
    {
     "name": "Milecastle 31",
     "kind": "Castle",
     "lat": 55.0349006652832,
     "lon": -2.2279140949249268,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/60/%28The_site_of%29_Milecastle_31_just_east_of_Brocolitia_-_geograph.org.uk_-_1075156.jpg/500px-%28The_site_of%29_Milecastle_31_just_east_of_Brocolitia_-_geograph.org.uk_-_1075156.jpg",
+    "desc": "Milecastle on Hadrian's Wall in Northumberland, England",
+    "wiki": "https://en.wikipedia.org/wiki/Milecastle_31"
    },
    {
     "name": "Robin Hood Tree",
@@ -527584,21 +528366,28 @@
     "kind": "Castle",
     "lat": 55.03850173950195,
     "lon": -2.1965620517730713,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Site_of_Milecastle_30_-_geograph.org.uk_-_1583846.jpg/500px-Site_of_Milecastle_30_-_geograph.org.uk_-_1583846.jpg",
+    "wiki": "https://en.wikipedia.org/wiki/Milecastle_30"
    },
    {
     "name": "Milecastle 29",
     "kind": "Castle",
     "lat": 55.03426742553711,
     "lon": -2.1754350662231445,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/%28The_site_of_%29_Milecastle_29_-_Tower_Tye_-_geograph.org.uk_-_1129286.jpg/500px-%28The_site_of_%29_Milecastle_29_-_Tower_Tye_-_geograph.org.uk_-_1129286.jpg",
+    "wiki": "https://en.wikipedia.org/wiki/Milecastle_29"
    },
    {
     "name": "Milecastle 28",
     "kind": "Castle",
     "lat": 55.029205322265625,
     "lon": -2.1530098915100098,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Heading_east_out_of_Walwick_-_geograph.org.uk_-_2890667.jpg/500px-Heading_east_out_of_Walwick_-_geograph.org.uk_-_2890667.jpg",
+    "desc": "Milecastle on Hadrian's Wall in England",
+    "wiki": "https://en.wikipedia.org/wiki/Milecastle_28"
    },
    {
     "name": "Hadrians Wall, Milcastles And Turrets",
@@ -527989,7 +528778,10 @@
     "lat": 52.25600051879883,
     "lon": 1.6169999837875366,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e2/Dingle_marsh_and_Dunwich_Forest_-_geograph.org.uk_-_274585.jpg/500px-Dingle_marsh_and_Dunwich_Forest_-_geograph.org.uk_-_274585.jpg",
+    "desc": "Protected area in Suffolk, England",
+    "wiki": "https://en.wikipedia.org/wiki/Minsmere%E2%80%93Walberswick_Heaths_and_Marshes"
    },
    {
     "name": "Dingle Marshes",
@@ -528304,7 +529096,9 @@
     "kind": "Square",
     "lat": 51.57898712158203,
     "lon": -4.22379732131958,
-    "rate": 3
+    "rate": 3,
+    "desc": "Settlements on the Gower Peninsula, Wales",
+    "wiki": "https://en.wikipedia.org/wiki/List_of_villages_in_Gower"
    },
    {
     "name": "St David's Church, Llandewi",
@@ -528335,7 +529129,9 @@
     "kind": "Square",
     "lat": 51.617889404296875,
     "lon": -4.250208377838135,
-    "rate": 3
+    "rate": 3,
+    "desc": "Settlements on the Gower Peninsula, Wales",
+    "wiki": "https://en.wikipedia.org/wiki/List_of_villages_in_Gower"
    },
    {
     "name": "Horton Beach",
@@ -528542,7 +529338,9 @@
     "kind": "Square",
     "lat": 51.54304504394531,
     "lon": -4.234897136688232,
-    "rate": 2
+    "rate": 2,
+    "desc": "Cave and archaeological site in the United Kingdom",
+    "wiki": "https://en.wikipedia.org/wiki/Long_Hole_Cave"
    },
    {
     "name": "Black Wall",
@@ -528800,7 +529598,10 @@
     "lat": 51.64547348022461,
     "lon": -4.799258708953857,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Manorbier_Castle.jpg/500px-Manorbier_Castle.jpg",
+    "desc": "Castle in Pembrokeshire, Wales",
+    "wiki": "https://en.wikipedia.org/wiki/Manorbier_Castle"
    },
    {
     "name": "St James' Church",
@@ -529166,7 +529967,10 @@
     "lat": 52.92601776123047,
     "lon": -4.084964275360107,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/71/Minffordd_-_Ffestiniog_Railway_Station.JPG/500px-Minffordd_-_Ffestiniog_Railway_Station.JPG",
+    "desc": "Human settlement in Wales",
+    "wiki": "https://en.wikipedia.org/wiki/Minffordd"
    },
    {
     "name": "The Cob",
@@ -529811,7 +530615,10 @@
     "kind": "Square",
     "lat": 53.285400390625,
     "lon": -4.3471999168396,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Llangwyllog_railway_station_2005.jpg/500px-Llangwyllog_railway_station_2005.jpg",
+    "desc": "Disused railway station in Anglesey, Wales",
+    "wiki": "https://en.wikipedia.org/wiki/Llangwyllog_railway_station"
    },
    {
     "name": "Oriel Môn",
@@ -529947,7 +530754,10 @@
     "lon": -4.333000183105469,
     "rate": 3,
     "heritage": true,
-    "active": true
+    "active": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/The_Malltraeth_Marsh_flatlands_-_geograph.org.uk_-_877749.jpg/500px-The_Malltraeth_Marsh_flatlands_-_geograph.org.uk_-_877749.jpg",
+    "desc": "Marshland in Anglesey, Wales",
+    "wiki": "https://en.wikipedia.org/wiki/Malltraeth_Marsh"
    },
    {
     "name": "Mynydd Bodafon",
@@ -530129,7 +530939,10 @@
     "lat": 52.0621223449707,
     "lon": -3.2024295330047607,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/Capel_Maesyronnen.jpg/500px-Capel_Maesyronnen.jpg",
+    "desc": "Historic site in Powys, Wales",
+    "wiki": "https://en.wikipedia.org/wiki/Maesyronnen_Chapel"
    },
    {
     "name": "Whitney-on-Wye toll bridge",
@@ -530366,7 +531179,10 @@
     "lat": 52.055049896240234,
     "lon": -3.2075018882751465,
     "rate": 2,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0d/Wales_Powys_Community_Glasbury_map.svg/500px-Wales_Powys_Community_Glasbury_map.svg.png",
+    "desc": "Village near Hay-on-Wye, Wales",
+    "wiki": "https://en.wikipedia.org/wiki/Glasbury"
    },
    {
     "name": "Chapel on the Green",
@@ -530666,7 +531482,10 @@
     "kind": "Museum",
     "lat": 52.970001220703125,
     "lon": -3.191999912261963,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Llangollen_Railway_Station_-_geograph.org.uk_-_289803.jpg/500px-Llangollen_Railway_Station_-_geograph.org.uk_-_289803.jpg",
+    "desc": "Heritage steam railway in North Wales",
+    "wiki": "https://en.wikipedia.org/wiki/Llangollen_Railway"
    },
    {
     "name": "Llangollen Motor Museum",
@@ -531490,7 +532309,10 @@
     "kind": "Nature reserve",
     "lat": 51.78160858154297,
     "lon": -10.5090913772583,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/ISLA_DE_SKELLIG_-_panoramio.jpg/500px-ISLA_DE_SKELLIG_-_panoramio.jpg",
+    "desc": "Island in the Atlantic Ocean",
+    "wiki": "https://en.wikipedia.org/wiki/Little_Skellig"
    },
    {
     "name": "Sceilig Bheag",
@@ -531810,7 +532632,10 @@
     "kind": "Peak",
     "lat": 55.04056930541992,
     "lon": -8.094388961791992,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/The_summit_of_Mackoght%2C_with_Errigal_behind_-_geograph.org.uk_-_1052967.jpg/500px-The_summit_of_Mackoght%2C_with_Errigal_behind_-_geograph.org.uk_-_1052967.jpg",
+    "desc": "Mountain in Ireland",
+    "wiki": "https://en.wikipedia.org/wiki/Mackoght"
    },
    {
     "name": "Aghla Beg (South)",
@@ -532283,7 +533108,10 @@
     "kind": "Bridge",
     "lat": 53.932762145996094,
     "lon": -9.921730995178223,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/31/Michael_Davitt_Bridge%2C_Achill_Island%2C_Co_Mayo.jpg/500px-Michael_Davitt_Bridge%2C_Achill_Island%2C_Co_Mayo.jpg",
+    "desc": "Swing bridge in County Mayo, Ireland",
+    "wiki": "https://en.wikipedia.org/wiki/Michael_Davitt_Bridge"
    },
    {
     "name": "Achill Henge",
@@ -532746,7 +533574,10 @@
     "kind": "Square",
     "lat": 51.450096130371094,
     "lon": -9.819754600524902,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Mizen_Head.JPG/500px-Mizen_Head.JPG",
+    "desc": "Point in southwest Ireland",
+    "wiki": "https://en.wikipedia.org/wiki/Mizen_Head"
    },
    {
     "name": "Dunlough Castle",
@@ -533171,7 +534002,10 @@
     "lat": 53.74200439453125,
     "lon": -6.466531276702881,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/34/Mellifont_Abbey_lavabo_County_Louth_Ireland.JPG/500px-Mellifont_Abbey_lavabo_County_Louth_Ireland.JPG",
+    "desc": "First Cistercian abbey built in Ireland",
+    "wiki": "https://en.wikipedia.org/wiki/Mellifont_Abbey"
    },
    {
     "name": "St. Patrick's Church",
@@ -533209,7 +534043,10 @@
     "lat": 53.71590042114258,
     "lon": -6.347079277038574,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/Drogheda_-_St._Laurences_Gate_%285638818100%29.jpg/500px-Drogheda_-_St._Laurences_Gate_%285638818100%29.jpg",
+    "desc": "Barbican in Drogheda, Ireland",
+    "wiki": "https://en.wikipedia.org/wiki/Saint_Laurence_Gate"
    },
    {
     "name": "Battle of the Boyne",
@@ -534173,7 +535010,10 @@
     "kind": "Square",
     "lat": 44.76689910888672,
     "lon": 15.026399612426758,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/16/Lukina_Jama_-_Trojama_cave.jpg/500px-Lukina_Jama_-_Trojama_cave.jpg",
+    "desc": "Caves in Croatia",
+    "wiki": "https://en.wikipedia.org/wiki/Velebit_Caves"
    },
    {
     "name": "Vučjak",
@@ -535962,7 +536802,10 @@
     "lat": 44.10049057006836,
     "lon": 21.468936920166016,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/DJI_0259-12.jpg/500px-DJI_0259-12.jpg",
+    "desc": "Monastery in Serbia",
+    "wiki": "https://en.wikipedia.org/wiki/Manasija"
    },
    {
     "name": "Црква Рођења Богородице у Бељајки",
@@ -536101,7 +536944,10 @@
     "lat": 44.55683135986328,
     "lon": 22.026412963867188,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/51/Lepenski_Vir_%282%29.JPG/500px-Lepenski_Vir_%282%29.JPG",
+    "desc": "Archaeological site of Mesolithic and Proto-Neolithic culture in the Balkans",
+    "wiki": "https://en.wikipedia.org/wiki/Lepenski_Vir"
    },
    {
     "name": "National Park Djerdap",
@@ -536575,7 +537421,10 @@
     "kind": "Square",
     "lat": 42.522972106933594,
     "lon": 20.602779388427734,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d5/KosovoMirusha.jpg/500px-KosovoMirusha.jpg",
+    "desc": "Series of waterfalls in Mirusha Park, Kosovo",
+    "wiki": "https://en.wikipedia.org/wiki/Mirusha_waterfalls"
    },
    {
     "name": "Çifllak",
@@ -541504,7 +542353,10 @@
     "lat": 43.639163970947266,
     "lon": 18.1840877532959,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Lukomir%2C_celkovy_pohled_na_nejvyse_polozenou_ves_BaH_%281460_m%29.jpg/500px-Lukomir%2C_celkovy_pohled_na_nejvyse_polozenou_ves_BaH_%281460_m%29.jpg",
+    "desc": "Village in Bosnia and Herzegovina",
+    "wiki": "https://en.wikipedia.org/wiki/Lukomir"
    },
    {
     "name": "Nekropola Umoljani",
@@ -541541,7 +542393,9 @@
     "kind": "Peak",
     "lat": 43.650001525878906,
     "lon": 18.16666603088379,
-    "rate": 2
+    "rate": 2,
+    "desc": "Mountain in Konjic, Bosnia and Herzegovina",
+    "wiki": "https://en.wikipedia.org/wiki/Lovnica"
    },
    {
     "name": "Šabići, Trnovo",
@@ -542840,14 +543694,20 @@
     "kind": "Nature reserve",
     "lat": 42.371368408203125,
     "lon": 18.855712890625,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Lovcen-008-p1010045.jpg/500px-Lovcen-008-p1010045.jpg",
+    "desc": "Mountain and national park in southwestern Montenegro",
+    "wiki": "https://en.wikipedia.org/wiki/Lov%C4%87en"
    },
    {
     "name": "Mausoleum of Njegoš",
     "kind": "Square",
     "lat": 42.399723052978516,
     "lon": 18.837499618530273,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/Njego%C5%A1ev_mauzolej.JPG/500px-Njego%C5%A1ev_mauzolej.JPG",
+    "desc": "Mausoleum of Petar II Petrović-Njegoš in Montenegro",
+    "wiki": "https://en.wikipedia.org/wiki/Mausoleum_of_Njego%C5%A1"
    },
    {
     "name": "Jezerski Vrh",
@@ -542861,7 +543721,10 @@
     "kind": "Peak",
     "lat": 42.400001525878906,
     "lon": 18.83333396911621,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Lovcen-008-p1010045.jpg/500px-Lovcen-008-p1010045.jpg",
+    "desc": "Mountain and national park in southwestern Montenegro",
+    "wiki": "https://en.wikipedia.org/wiki/Lov%C4%87en"
    },
    {
     "name": "Štirovnik",
@@ -543108,7 +543971,10 @@
     "kind": "Peak",
     "lat": 42.400001525878906,
     "lon": 18.83333396911621,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Lovcen-008-p1010045.jpg/500px-Lovcen-008-p1010045.jpg",
+    "desc": "Mountain and national park in southwestern Montenegro",
+    "wiki": "https://en.wikipedia.org/wiki/Lov%C4%87en"
    },
    {
     "name": "Jezerski Vrh",
@@ -543122,14 +543988,20 @@
     "kind": "Square",
     "lat": 42.399723052978516,
     "lon": 18.837499618530273,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/Njego%C5%A1ev_mauzolej.JPG/500px-Njego%C5%A1ev_mauzolej.JPG",
+    "desc": "Mausoleum of Petar II Petrović-Njegoš in Montenegro",
+    "wiki": "https://en.wikipedia.org/wiki/Mausoleum_of_Njego%C5%A1"
    },
    {
     "name": "Lovćen National Park",
     "kind": "Nature reserve",
     "lat": 42.371368408203125,
     "lon": 18.855712890625,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Lovcen-008-p1010045.jpg/500px-Lovcen-008-p1010045.jpg",
+    "desc": "Mountain and national park in southwestern Montenegro",
+    "wiki": "https://en.wikipedia.org/wiki/Lov%C4%87en"
    },
    {
     "name": "Fort Gorazda",
@@ -544375,14 +545247,20 @@
     "kind": "Peak",
     "lat": 42.44209289550781,
     "lon": 19.812829971313477,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fb/Jezerski_Vrh_%282694%29_sa_Karanfila_%282480%29.jpg/500px-Jezerski_Vrh_%282694%29_sa_Karanfila_%282480%29.jpg",
+    "desc": "Mountain in Albania",
+    "wiki": "https://en.wikipedia.org/wiki/Jezerc%C3%AB"
    },
    {
     "name": "Maja Kokervhake",
     "kind": "Peak",
     "lat": 42.44990158081055,
     "lon": 19.816200256347656,
-    "rate": 2
+    "rate": 2,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fb/Jezerski_Vrh_%282694%29_sa_Karanfila_%282480%29.jpg/500px-Jezerski_Vrh_%282694%29_sa_Karanfila_%282480%29.jpg",
+    "desc": "Mountain range in Southeast Europe",
+    "wiki": "https://en.wikipedia.org/wiki/Accursed_Mountains"
    },
    {
     "name": "Maja Bojs",
@@ -544758,7 +545636,10 @@
     "kind": "Castle",
     "lat": 39.86589813232422,
     "lon": 20.02580451965332,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/64/L%C3%ABkur%C3%ABsi_Castle%2C_Saranda%2C_Albania_2015-09-25_01.jpg/500px-L%C3%ABkur%C3%ABsi_Castle%2C_Saranda%2C_Albania_2015-09-25_01.jpg",
+    "desc": "Ruined castle in Vlorë County, Albania",
+    "wiki": "https://en.wikipedia.org/wiki/L%C3%ABkur%C3%ABsi_Castle"
    },
    {
     "name": "Butrint",
@@ -547187,7 +548068,10 @@
     "kind": "Nature reserve",
     "lat": 42.18558883666992,
     "lon": 20.962629318237305,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/Suharek.jpg/500px-Suharek.jpg",
+    "desc": "Nature reserve in Southeastern Kosovo",
+    "wiki": "https://en.wikipedia.org/wiki/Maja_e_Arnenit_Strict_Nature_Reserve"
    },
    {
     "name": "Arneni Peak",
@@ -547228,7 +548112,10 @@
     "kind": "Peak",
     "lat": 42.148956298828125,
     "lon": 20.99567222595215,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/%D0%9B%D0%B8%D0%B2%D0%B0%D0%B4%D0%B8%D1%86%D0%B0_%28%D0%A8%D0%B0%D1%80_%D0%9F%D0%BB%D0%B0%D0%BD%D0%B8%D0%BD%D0%B0%29.jpg/500px-%D0%9B%D0%B8%D0%B2%D0%B0%D0%B4%D0%B8%D1%86%D0%B0_%28%D0%A8%D0%B0%D1%80_%D0%9F%D0%BB%D0%B0%D0%BD%D0%B8%D0%BD%D0%B0%29.jpg",
+    "desc": "Mountain peak in Kosovo and North Macedonia",
+    "wiki": "https://en.wikipedia.org/wiki/Maja_Livadh"
    },
    {
     "name": "Црква Светог Теодора Тирона у Доњој Битињи",
@@ -547565,7 +548452,10 @@
     "kind": "Nature reserve",
     "lat": 41.6849365234375,
     "lon": 20.677433013916016,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/%D0%9C%D0%B0%D0%B2%D1%80%D0%BE%D0%B2%D1%81%D0%BA%D0%BE_%D0%B5%D0%B7%D0%B5%D1%80%D0%BE.jpg/500px-%D0%9C%D0%B0%D0%B2%D1%80%D0%BE%D0%B2%D1%81%D0%BA%D0%BE_%D0%B5%D0%B7%D0%B5%D1%80%D0%BE.jpg",
+    "desc": "National park in North Macedonia",
+    "wiki": "https://en.wikipedia.org/wiki/Mavrovo_National_Park"
    },
    {
     "name": "St. Nicholas Church",
@@ -547904,7 +548794,10 @@
     "lat": 42.01325225830078,
     "lon": 22.228294372558594,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/98/%D0%A1%D0%B2.%D0%90%D1%80%D1%85%D0%B0%D0%BD%D0%B3%D0%B5%D0%BB_%D0%9C%D0%B8%D1%85%D0%B0%D0%B8%D0%BB.JPG/500px-%D0%A1%D0%B2.%D0%90%D1%80%D1%85%D0%B0%D0%BD%D0%B3%D0%B5%D0%BB_%D0%9C%D0%B8%D1%85%D0%B0%D0%B8%D0%BB.JPG",
+    "desc": "Monastery in North Macedonia",
+    "wiki": "https://en.wikipedia.org/wiki/Lesnovo_Monastery"
    },
    {
     "name": "St. John the Baptist",
