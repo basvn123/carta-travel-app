@@ -2254,6 +2254,23 @@ input, select {
   padding: 28px 24px 40px;
   color: var(--ink-soft);
 }
+/* Stay address + first day share the top row; the date keeps a sane width. */
+.day-build-top { flex-wrap: wrap; align-items: flex-end; }
+.day-build-top .day-build-field { flex: 1 1 300px; min-width: 0; }
+.day-build-top .day-build-date { flex: 0 1 200px; min-width: 160px; }
+/* Desktop: the builder goes full width so the explore map can be the hero;
+   the form-like pieces stay capped at a readable column. */
+@media (min-width: 1000px) {
+  .day-landing { max-width: 1360px; padding: 32px 40px 48px; }
+  .day-landing-lead,
+  .day-landing-section,
+  .day-edit-banner,
+  .day-build-top,
+  .day-stay-results,
+  .day-build-cities,
+  .day-build-hint,
+  .trip-save-btn.day-build-btn { max-width: 680px; }
+}
 .day-landing .section-title {
   font-family: var(--display);
   font-size: 22px;
@@ -8560,9 +8577,10 @@ input, select {
    ============================================================ */
 .day-explore { margin: 12px 0; }
 
-/* Search + "Let Carta guide you" toolbar above the explore map */
-.day-explore-tools { display: flex; gap: 8px; align-items: flex-start; margin-bottom: 8px; }
-.day-explore-search { position: relative; flex: 1; min-width: 0; }
+/* One toolbar row above the explore map: search, category chips, and the
+   "Let Carta guide you" button. Wraps on narrower screens. */
+.day-explore-tools { display: flex; flex-wrap: wrap; gap: 8px 10px; align-items: center; margin-bottom: 10px; }
+.day-explore-search { position: relative; flex: 1 1 260px; min-width: 220px; }
 .day-explore-search-ico {
   position: absolute;
   left: 10px;
@@ -8830,17 +8848,22 @@ input, select {
   .day-guide-moods { grid-template-columns: 1fr; }
 }
 
-.day-explore-filters { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
-.day-explore-wrap { display: flex; gap: 14px; align-items: stretch; }
-.day-explore-wrap .dem-map { flex: 2.6; min-width: 0; height: min(72vh, 640px); border-radius: 12px; overflow: hidden; border: 1px solid var(--rule); }
-.day-explore-side { flex: 1; min-width: 300px; max-height: min(72vh, 640px); display: flex; flex-direction: column; }
+/* Chips share the toolbar row with the search and the guide button. */
+.day-explore-filters { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.day-explore-wrap { display: flex; gap: 16px; align-items: stretch; }
+/* The map is the hero: it takes every pixel the side rail doesn't need. */
+.day-explore-wrap .dem-map { flex: 1; min-width: 0; height: clamp(480px, 68vh, 760px); border-radius: 14px; overflow: hidden; border: 1px solid var(--rule); box-shadow: 0 8px 24px -18px rgba(26, 26, 26, 0.5); }
+.day-explore-side { flex: 0 0 400px; min-width: 0; max-height: clamp(480px, 68vh, 760px); display: flex; flex-direction: column; }
 /* The place-detail card and the Carta guide panel each become the right-hand
-   column beside the big map: both fill its height and scroll inside themselves,
-   so the map is never pushed off-screen. */
-.day-explore-side > .guide-city-side { flex: 1; min-height: 0; }
-.day-explore-side > .day-guide-panel { flex: 1; min-height: 0; margin-bottom: 0; display: flex; flex-direction: column; }
-.day-explore-side > .day-guide-panel .day-guide-results { flex: 1; min-height: 0; max-height: none; }
-.day-explore-side > .day-guide-panel .day-guide-ask { flex: 1; min-height: 0; overflow-y: auto; }
+   rail beside the big map: both fill its height and scroll inside themselves,
+   so the map is never pushed off-screen. (Descendant selectors: the guide sits
+   in a display:contents wrapper that keeps it mounted while a briefing shows.) */
+.day-explore-side .guide-city-side { flex: 1; min-height: 0; }
+.day-explore-side .day-guide-panel { flex: 1; min-height: 0; margin-bottom: 0; display: flex; flex-direction: column; }
+.day-explore-side .day-guide-panel .day-guide-results { flex: 1; min-height: 0; max-height: none; }
+.day-explore-side .day-guide-panel .day-guide-ask { flex: 1; min-height: 0; overflow-y: auto; }
+/* "← Back to suggestions" atop a briefing opened from the guide */
+.day-explore-back { display: block; padding: 0 0 8px; border: none; background: none; cursor: pointer; font: inherit; font-size: 12px; font-weight: 600; color: var(--accent); text-align: left; }
 
 /* The traveller's stay: a pulsing home dot that cannot be missed */
 .dem-stay { display: flex; flex-direction: column; align-items: center; pointer-events: none; position: relative; }
@@ -9055,9 +9078,11 @@ input, select {
 .day-explore-depth-note svg { flex: none; position: relative; top: 1px; color: var(--accent); }
 .guide-city-side-photo-empty { color: var(--ink-mute); }
 
-@media (max-width: 700px) {
+/* Below the wide-desktop breakpoint the landing column is narrow (480px),
+   so the map and its side rail stack instead of splitting the row. */
+@media (max-width: 999px) {
   .day-explore-wrap { flex-direction: column; }
-  /* Column layout turns the map's `flex: 1.7` into a vertical grow whose
+  /* Column layout turns the map's `flex: 1` into a vertical grow whose
      `flex-basis: 0%` overrides the height and collapses the map to nothing;
      `flex: none` restores its own height (same fix as the wizard maps). */
   .day-explore-wrap .dem-map {
@@ -9068,7 +9093,7 @@ input, select {
     max-height: 440px;
   }
   .day-explore-side { flex: none; max-height: 62vh; min-height: 340px; }
-  .day-explore-tools { flex-direction: column; }
+  .day-explore-tools { flex-direction: column; align-items: stretch; }
   .day-guide-btn { align-self: stretch; justify-content: center; }
 }
 

@@ -629,6 +629,9 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
     return plan.stayPoint
       ? {
           city: plan.stayPoint.shortLabel || 'your stay',
+          // The real address geocodes in Google Maps; '' forces the lat,lon
+          // fallback rather than letting "your stay, Italy" become a query.
+          gmapsName: plan.stayPoint.label || plan.stayPoint.shortLabel || '',
           lat: plan.stayPoint.lat,
           lon: plan.stayPoint.lon,
           country: stop.dest?.country,
@@ -787,7 +790,12 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
 
   const mapPins = assignedItems
     .filter((it) => it.lat != null && it.lon != null)
-    .map((it) => ({ lat: it.lat, lon: it.lon, city: it.name }));
+    // name feeds the Google Maps export: "<sight>, <city>" geocodes to the
+    // real listing instead of a nameless "Dropped pin" at the coordinates.
+    .map((it) => ({
+      lat: it.lat, lon: it.lon, city: it.name,
+      name: [it.name, stop?.dest?.city].filter(Boolean).join(', '),
+    }));
 
   // Door -> first sight distance decides how the day STARTS: on foot when the
   // first stop is genuinely walkable from the stay, otherwise as a ride in the
@@ -818,7 +826,10 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
   // The map always shows the stay pin; the WALKING route only starts there
   // when the door-to-first-sight leg is actually a walk.
   const routePins = stayAnchor
-    ? [{ lat: stayAnchor.lat, lon: stayAnchor.lon, city: 'Your stay', stay: true }, ...mapPins]
+    ? [{
+        lat: stayAnchor.lat, lon: stayAnchor.lon, city: 'Your stay', stay: true,
+        name: stayAnchor.label || stayAnchor.shortLabel || '',
+      }, ...mapPins]
     : mapPins;
   const walkPins = stayAnchor && !stayLegRide ? routePins : mapPins;
 
@@ -880,7 +891,10 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
         km: roadKm,
         min: rideMinutes(mode, roadKm, drivingMin),
         dirUrl: googleMapsDirUrl(
-          [stayAnchor, first],
+          [
+            { ...stayAnchor, name: stayAnchor.label || stayAnchor.shortLabel || '' },
+            { lat: first.lat, lon: first.lon, name: [first.name, stop?.dest?.city].filter(Boolean).join(', ') },
+          ],
           mode === 'car' ? 'driving' : 'transit',
         ),
       };
@@ -1002,8 +1016,13 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
       if (it.active) return 'A good pick for an active, outdoors stretch.';
       return '';
     };
-    const placeUrl = (it) => (it.lat != null && it.lon != null)
-      ? `https://www.google.com/maps/search/?api=1&query=${it.lat},${it.lon}` : null;
+    // Search by "<sight>, <city>" so Google opens the real listing (name,
+    // photos, hours) rather than a nameless "Dropped pin" at the coordinates.
+    const placeUrl = (it, city) => {
+      if (it.lat == null || it.lon == null) return null;
+      const q = it.name ? [it.name, city].filter(Boolean).join(', ') : `${it.lat},${it.lon}`;
+      return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q)}`;
+    };
 
     // Walk everything so a multi-city plan prints as one complete booklet.
     let totalPlaces = 0;
@@ -1020,7 +1039,7 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
         plannedDays += 1;
         totalPlaces += dayItems.length;
         const pins = dayItems.filter((it) => it.lat != null && it.lon != null)
-          .map((it) => ({ lat: it.lat, lon: it.lon }));
+          .map((it) => ({ lat: it.lat, lon: it.lon, name: [it.name, s.dest?.city].filter(Boolean).join(', ') }));
         const gurl = googleMapsDirUrl(pins, 'walking');
         // Straight-line walking estimate for the whole day (consistent offline).
         let dayKm = 0;
@@ -1046,7 +1065,7 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
             if (km != null) walk = `<div class="walk">&darr;&ensp;~${estimateWalkMinutes(km)} min walk &middot; ${km.toFixed(1)} km</div>`;
           }
           const acc = accolade(it);
-          const purl = placeUrl(it);
+          const purl = placeUrl(it, s.dest?.city);
           const links = [
             purl ? `<a href="${purl}">Open in Maps</a>` : '',
             it.wiki ? `<a href="${esc(it.wiki)}">Read more</a>` : '',
@@ -1633,30 +1652,36 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
             {/* 1. Where are you staying - town, street, hotel or apartment
                   address. It anchors everything: the map, the routes, the
                   getting-there advice. */}
-            <label className="trip-field day-build-field">
-              <span className="trip-field-label"><span className="day-step-num">1</span> Where are you staying?</span>
-              {newStayPoint ? (
-                <div className="day-stay-chosen">
-                  <span className="day-stay-chosen-label">{newStayPoint.shortLabel || newStayPoint.label}</span>
-                  <button className="trip-stop-remove" onClick={() => { setNewStayPoint(null); setStayResults(null); setExploreFocus(''); }} aria-label="Clear address" title="Clear">×</button>
-                </div>
-              ) : (
-                <div className="day-stay-search">
-                  <input
-                    className="day-stay-input"
-                    type="text"
-                    value={stayQuery}
-                    onChange={(e) => setStayQuery(e.target.value)}
-                    onKeyDown={(e) => { if (e.key === 'Enter') searchStay(); }}
-                    placeholder="Town, street, hotel or apartment address"
-                    aria-label="Address of your stay"
-                  />
-                  <button className="trip-add-btn" onClick={searchStay} disabled={staySearching || stayQuery.trim().length < 3}>
-                    {staySearching ? '…' : 'Find'}
-                  </button>
-                </div>
-              )}
-            </label>
+            <div className="day-build-row day-build-top">
+              <label className="trip-field day-build-field">
+                <span className="trip-field-label"><span className="day-step-num">1</span> Where are you staying?</span>
+                {newStayPoint ? (
+                  <div className="day-stay-chosen">
+                    <span className="day-stay-chosen-label">{newStayPoint.shortLabel || newStayPoint.label}</span>
+                    <button className="trip-stop-remove" onClick={() => { setNewStayPoint(null); setStayResults(null); setExploreFocus(''); }} aria-label="Clear address" title="Clear">×</button>
+                  </div>
+                ) : (
+                  <div className="day-stay-search">
+                    <input
+                      className="day-stay-input"
+                      type="text"
+                      value={stayQuery}
+                      onChange={(e) => setStayQuery(e.target.value)}
+                      onKeyDown={(e) => { if (e.key === 'Enter') searchStay(); }}
+                      placeholder="Town, street, hotel or apartment address"
+                      aria-label="Address of your stay"
+                    />
+                    <button className="trip-add-btn" onClick={searchStay} disabled={staySearching || stayQuery.trim().length < 3}>
+                      {staySearching ? '…' : 'Find'}
+                    </button>
+                  </div>
+                )}
+              </label>
+              <label className="trip-field day-build-date">
+                <span className="trip-field-label">First day</span>
+                <DateField value={newStartDate} onChange={setNewStartDate} placeholder="Start date" />
+              </label>
+            </div>
             {!newStayPoint && stayResults && (
               stayResults.length ? (
                 <div className="day-stay-results">
@@ -1670,13 +1695,6 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
                 <p className="trip-note">No match for that address. Try adding the town name.</p>
               )
             )}
-
-            <div className="day-build-row">
-              <label className="trip-field">
-                <span className="trip-field-label">First day</span>
-                <DateField value={newStartDate} onChange={setNewStartDate} placeholder="Start date" />
-              </label>
-            </div>
 
             {/* 2. Explore what's around the stay: a zoomed-in map with filter
                   chips (towns by default so it never opens overloaded), a
@@ -1743,6 +1761,21 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
                       </div>
                     )}
                   </div>
+                  <div className="day-explore-filters">
+                    {[
+                      ['town', 'Towns & cities'],
+                      ['beach', 'Beaches & nature'],
+                      ['sight', 'Sights'],
+                      ['active', 'Activities'],
+                    ].map(([cat, label]) => (
+                      <button
+                        key={cat}
+                        className={`guide-chip dem-chip-${cat} ${exploreCats.has(cat) ? 'on' : ''}`}
+                        onClick={() => toggleExploreCat(cat)}
+                        aria-pressed={exploreCats.has(cat)}
+                      >{label}{exploreCounts[cat] > 0 && <span className="dem-chip-count">{exploreCounts[cat]}</span>}</button>
+                    ))}
+                  </div>
                   <button
                     className={`day-guide-btn ${guideOpen ? 'on' : ''}`}
                     onClick={() => setGuideOpen((v) => !v)}
@@ -1751,21 +1784,6 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
                   >
                     <SparkIcon size={13} /> Let Carta guide you
                   </button>
-                </div>
-                <div className="day-explore-filters">
-                  {[
-                    ['town', 'Towns & cities'],
-                    ['beach', 'Beaches & nature'],
-                    ['sight', 'Sights'],
-                    ['active', 'Activities'],
-                  ].map(([cat, label]) => (
-                    <button
-                      key={cat}
-                      className={`guide-chip dem-chip-${cat} ${exploreCats.has(cat) ? 'on' : ''}`}
-                      onClick={() => toggleExploreCat(cat)}
-                      aria-pressed={exploreCats.has(cat)}
-                    >{label}{exploreCounts[cat] > 0 && <span className="dem-chip-count">{exploreCounts[cat]}</span>}</button>
-                  ))}
                 </div>
                 <div className="day-explore-wrap">
                   <DayExploreMap
@@ -1777,21 +1795,32 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
                     stayFocused={!!stayTownId && exploreFocus === `t:${stayTownId}`}
                   />
                   <div className="day-explore-side" ref={exploreSideRef}>
-                    {guideOpen ? (
-                      <CartaGuidePanel
-                        towns={exploreTowns}
-                        pois={explorePois}
-                        stayTownId={stayTownId}
-                        pickedTownIds={new Set(newStops.map((s) => s.destinationId))}
-                        pickedPoiKeys={new Set(selPois.map((s) => s.key))}
-                        onToggleTown={(t) => (newStops.some((s) => s.destinationId === t.id)
-                          ? removeLandingCity(t.id) : addLandingCity(t.id))}
-                        onTogglePoi={togglePoiPick}
-                        onPreview={previewExplore}
-                        onClose={() => setGuideOpen(false)}
-                      />
-                    ) : (
+                    {/* The guide stays MOUNTED (its answers survive) but steps
+                        aside whenever a pin is tapped: the tapped place's
+                        briefing takes the panel, with a way back. */}
+                    {guideOpen && (
+                      <div className="day-explore-side-guide" style={{ display: focusedExplore ? 'none' : 'contents' }}>
+                        <CartaGuidePanel
+                          towns={exploreTowns}
+                          pois={explorePois}
+                          stayTownId={stayTownId}
+                          pickedTownIds={new Set(newStops.map((s) => s.destinationId))}
+                          pickedPoiKeys={new Set(selPois.map((s) => s.key))}
+                          onToggleTown={(t) => (newStops.some((s) => s.destinationId === t.id)
+                            ? removeLandingCity(t.id) : addLandingCity(t.id))}
+                          onTogglePoi={togglePoiPick}
+                          onPreview={previewExplore}
+                          onClose={() => setGuideOpen(false)}
+                        />
+                      </div>
+                    )}
+                    {(!guideOpen || focusedExplore) && (
                     <div className="guide-city-side">
+                    {guideOpen && focusedExplore && (
+                      <button className="day-guide-back day-explore-back" onClick={() => setExploreFocus('')}>
+                        ← Back to suggestions
+                      </button>
+                    )}
                     {!focusedExplore ? (
                       <div className="guide-flight-side-empty">
                         <MapPinIcon size={16} />

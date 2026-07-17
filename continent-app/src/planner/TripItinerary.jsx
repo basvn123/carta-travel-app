@@ -51,7 +51,14 @@ export function TripItinerary({
 
   // The whole trip as a Google Maps driving route (city to city, in order).
   const gmapsUrl = googleMapsDirUrl(
-    stopDetails.filter((s) => s.dest?.lat != null).map((s) => ({ lat: s.dest.lat, lon: s.dest.lon })),
+    stopDetails.filter((s) => s.dest?.lat != null).map((s) => ({
+      lat: s.dest.lat,
+      lon: s.dest.lon,
+      // "City, Country" makes Google label the stop instead of dropping a
+      // nameless pin at the coordinates (which are the runway for
+      // airport-tier destinations anyway).
+      name: [s.dest.city, s.dest.country].filter(Boolean).join(', '),
+    })),
     'driving',
   );
 

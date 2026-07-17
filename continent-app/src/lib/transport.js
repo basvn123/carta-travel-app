@@ -21,8 +21,17 @@ function round2(v) {
   return v == null ? null : Math.round(v * 100) / 100;
 }
 
+// A bare "lat,lng" endpoint shows up in Google Maps as a nameless "Dropped
+// pin"; a "City, Country" query geocodes to the real place. gmapsName (an
+// exact stay address, say) overrides the city pair; when it's present but
+// empty the point deliberately falls back to coordinates.
+function gmapsPoint(p) {
+  const name = p.gmapsName ?? (p.city && p.country ? `${p.city}, ${p.country}` : '');
+  return name ? encodeURIComponent(name) : `${p.lat},${p.lon}`;
+}
+
 function gmapsDir(a, b, mode) {
-  return `https://www.google.com/maps/dir/?api=1&origin=${a.lat},${a.lon}&destination=${b.lat},${b.lon}&travelmode=${mode}`;
+  return `https://www.google.com/maps/dir/?api=1&origin=${gmapsPoint(a)}&destination=${gmapsPoint(b)}&travelmode=${mode}`;
 }
 
 /** The insight record for a destination's country (or null). */
