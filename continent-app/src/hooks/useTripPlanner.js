@@ -248,7 +248,7 @@ export function useTripPlanner(data, countryInsights = null) {
       let mode = legModes[i] || null;
       if (!mode) {
         if (transportPref === 'car') mode = 'car';
-        else if (transportPref === 'public') mode = opts.modes.train.eur_pp <= opts.modes.bus.eur_pp ? 'train' : 'bus';
+        else if (transportPref === 'public') mode = (opts.modes.train && opts.modes.train.eur_pp <= opts.modes.bus.eur_pp) ? 'train' : 'bus';
         else mode = opts.recommended;
       }
       const chosen = opts.modes[mode] || opts.modes[opts.recommended];

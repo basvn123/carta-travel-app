@@ -282,6 +282,11 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
   const [exploreFly, setExploreFly] = useState(null); // { lat, lon, k } - map glide target
   // Whether the "Let Carta guide you" question -> recommendations panel is open.
   const [guideOpen, setGuideOpen] = useState(false);
+  // The landing screen's step 2 fork: null until the traveller picks how to
+  // choose places ('guide' = Carta recommends, 'map' = browse the map). Keeps
+  // the screen to one decision at a time instead of map + search + filters +
+  // guide all at once.
+  const [explorePath, setExplorePath] = useState(null);
 
   const searchStay = async () => {
     if (staySearching || stayQuery.trim().length < 3) return;
@@ -692,11 +697,13 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
         hours: r2(rideMinutes('bus', road.km, road.min) / 60),
         eur_pp: r2(Math.max(5, 0.075 * road.km)),
       };
-      v.modes.train = {
-        ...v.modes.train,
-        hours: r2(rideMinutes('train', road.km, road.min) / 60),
-        eur_pp: r2(Math.max(8, 0.15 * road.km)),
-      };
+      if (v.modes.train) {
+        v.modes.train = {
+          ...v.modes.train,
+          hours: r2(rideMinutes('train', road.km, road.min) / 60),
+          eur_pp: r2(Math.max(8, 0.15 * road.km)),
+        };
+      }
     }
     // Only offer what's actually there: the pipeline's per-destination
     // transit_quality knows Lake Como's shore has no rail line.
@@ -1459,10 +1466,14 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
     if (guideAfterEditRef.current) {
       guideAfterEditRef.current = false;
       setGuideOpen(true);
+      setExplorePath('guide');
     } else {
       setGuideOpen(false);
+      // Editing an existing plan reopens straight on the map (the traveller
+      // has been here before); a fresh stay starts at the how-to-pick fork.
+      setExplorePath(editingPlanId ? 'map' : null);
     }
-  }, [newStayPoint]);
+  }, [newStayPoint]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const editPlanOnMap = () => {
     const sp = standalonePlans.find((p) => p.id === plan?.id);
@@ -1621,7 +1632,7 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
                   address. It anchors everything: the map, the routes, the
                   getting-there advice. */}
             <label className="trip-field day-build-field">
-              <span className="trip-field-label">Where are you staying?</span>
+              <span className="trip-field-label"><span className="day-step-num">1</span> Where are you staying?</span>
               {newStayPoint ? (
                 <div className="day-stay-chosen">
                   <span className="day-stay-chosen-label">{newStayPoint.shortLabel || newStayPoint.label}</span>
@@ -1670,6 +1681,34 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
                   briefing panel for whatever gets tapped, and multi-select. */}
             {newStayPoint && (
               <div className="day-explore">
+                <span className="trip-field-label day-explore-steplabel">
+                  <span className="day-step-num">2</span> Pick places for your days
+                </span>
+                {/* One decision at a time: first choose HOW to pick (Carta
+                    recommends, or browse the map yourself); only then show
+                    the map with its search and filters. */}
+                {!explorePath && (
+                  <div className="guide-path-list day-path-list">
+                    <button className="guide-path" onClick={() => { setExplorePath('guide'); setGuideOpen(true); }}>
+                      <span className="guide-path-icon"><SparkIcon size={18} /></span>
+                      <span className="guide-path-text">
+                        <b>Let Carta suggest places</b>
+                        <small>Two quick questions, then the best towns, sights and beaches around your stay</small>
+                      </span>
+                      <span className="guide-arrow">→</span>
+                    </button>
+                    <button className="guide-path" onClick={() => setExplorePath('map')}>
+                      <span className="guide-path-icon"><MapPinIcon size={18} /></span>
+                      <span className="guide-path-text">
+                        <b>I'll explore the map myself</b>
+                        <small>Browse what's around your stay and tap whatever looks good</small>
+                      </span>
+                      <span className="guide-arrow">→</span>
+                    </button>
+                  </div>
+                )}
+                {explorePath && (
+                <>
                 {/* Two ways in: search the map by name, or answer a couple of
                     quick questions and let Carta recommend places to you. */}
                 <div className="day-explore-tools">
@@ -1842,12 +1881,17 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
                     )}
                   </div>
                 </div>
+                </>
+                )}
               </div>
             )}
 
             {/* 3. Everything picked so far. */}
             {(newStops.length > 0 || selPois.length > 0) && (
               <div className="day-build-cities">
+                <span className="trip-field-label day-explore-steplabel day-picks-steplabel">
+                  <span className="day-step-num">3</span> Your picks
+                </span>
                 {newStops.map((s) => {
                   const d = destinations[s.destinationId];
                   return (
@@ -2069,6 +2113,174 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
         <div className="trip-sheet-grip" />
         <div className="trip-sheet-scroll">
 
+          {/* One compact strip: which city, which day. Sticky at the top of
+              the sheet so switching days never means scrolling back up. */}
+          {stop && (
+            <div className="trip-block day-strip">
+              {stops.length > 1 && (
+                <div className="day-chip-row day-strip-cities">
+                  {stops.map((s, i) => (
+                    <span key={i} className={`day-chip day-city-chip ${i === stopIdx ? 'active' : ''}`}>
+                      <button
+                        className="day-city-chip-main"
+                        onClick={() => { setStopIdx(i); setDayIdx(0); }}
+                      >
+                        {s.dest?.city || 'Unknown'}
+                      </button>
+                      {plan.standalone && stops.length > 1 && (
+                        <button
+                          className="day-city-chip-del"
+                          onClick={() => removeStandaloneCity(i)}
+                          aria-label={`Remove ${s.dest?.city || 'city'}`}
+                          title="Remove this city"
+                        >×</button>
+                      )}
+                    </span>
+                  ))}
+                </div>
+              )}
+              <div className="day-chip-row">
+                {/* Day numbers run through the WHOLE trip: if Makarska ends on
+                    day 2, Sibenik starts on day 3, not back at day 1. */}
+                {days.map((d, i) => (
+                  <button
+                    key={i}
+                    className={`day-chip ${i === dayIdx ? 'active' : ''}`}
+                    onClick={() => setDayIdx(i)}
+                  >
+                    Day {dayOffset + i + 1}
+                  </button>
+                ))}
+                {plan.standalone && (
+                  <button className="day-chip day-chip-add" onClick={addStandaloneDay} title="Add another day">+ Day</button>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* ORDER: the day's plan leads; browsing, transport and plan tools
+              follow. The traveller's own day is never below the fold. */}
+          {stop && (
+            <div className="trip-block day-plan-block">
+              <div className="trip-block-title">
+                Today's plan{assignedItems.length > 0 ? ` (${assignedItems.length})` : ''}
+              </div>
+              {assignedItems.length === 0 ? (
+                <>
+                  <button className="day-carta-btn" onClick={() => setShowShape(true)}>
+                    <SparkIcon size={12} /> Let Carta plan this city for me
+                  </button>
+                  <p className="trip-note">Or tap a place below to add it yourself. Carta keeps the walking order optimal as you add.</p>
+                </>
+              ) : (
+                <>
+                  <div className="day-route-mode">
+                    <span className={`day-route-status ${routeMode}`}>
+                      {routeMode === 'auto'
+                        ? <><SparkIcon size={11} /> Carta picks the best {(() => {
+                            const parts = [];
+                            if (stayLeg?.ride) parts.push((MODE_META[stayLeg.mode] || MODE_META.car).label.toLowerCase());
+                            parts.push('walk');
+                            if (routeOk && route.hasFerry) parts.push('ferry');
+                            return parts.length > 1 ? `route (${parts.join(' + ')})` : 'walking route';
+                          })()}</>
+                        : 'Manual order'}
+                    </span>
+                    {routeMode === 'manual' && (
+                      <button className="day-route-optimize" onClick={optimizeNow}>
+                        <SparkIcon size={11} /> Let Carta reorder
+                      </button>
+                    )}
+                  </div>
+
+                  <div className="day-timeline">
+                    {stayLeg && (
+                      <div className={`day-timeline-walk day-timeline-stay${stayLeg.ferry ? ' day-timeline-ferry' : ''}${stayLeg.ride ? ' day-timeline-ride' : ''}`}>
+                        {legContent(stayLeg, true)}
+                        {stayLeg.ride && (
+                          <small className="day-timeline-ride-note">
+                            Park up or hop off; from here today's route is on foot.
+                          </small>
+                        )}
+                      </div>
+                    )}
+                    {assignedItems.map((it, i) => (
+                      <React.Fragment key={`${dayAssignedIdx[i]}`}>
+                        <AssignedRow
+                          item={it}
+                          index={i}
+                          last={i === assignedItems.length - 1}
+                          dwellMin={dwellFor(it)}
+                          onMoveUp={() => moveAssigned(i, -1)}
+                          onMoveDown={() => moveAssigned(i, 1)}
+                          onRemove={() => toggleActivity(dayAssignedIdx[i])}
+                        />
+                        {i < assignedItems.length - 1 && (() => {
+                          const leg = walkLeg(i);
+                          return (
+                            <div className={`day-timeline-walk${leg?.ferry ? ' day-timeline-ferry' : ''}`}>
+                              {legContent(leg)}
+                            </div>
+                          );
+                        })()}
+                      </React.Fragment>
+                    ))}
+                  </div>
+                  {legsAlign && routeOk && (
+                    <p className="day-route-total">
+                      Full route: {route.km.toFixed(1)} km, about {route.min} min {route.hasFerry ? 'of walking and ferry rides' : 'of walking'}.
+                      {dwellTotal > 0 && ` With time at each place, count on ~${fmtDur(dwellTotal + route.min)} out.`}
+                    </p>
+                  )}
+
+                  {scenic.length > 0 && (
+                    <div className="day-scenic">
+                      <div className="day-scenic-title"><SparkIcon size={11} /> Make the walk itself beautiful</div>
+                      {scenic.map((sug) => (
+                        <button key={sug.idx} className="day-scenic-row" onClick={() => addScenic(sug)} title="Add it to today's route">
+                          <span className="day-scenic-text">
+                            <b>{sug.item.name}</b>
+                            <small>{sug.item.kind}, only +{sug.extraMin} min off your route</small>
+                          </span>
+                          <span className="day-activity-add">+</span>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+
+                  <div className="day-actions-row">
+                    {gmapsUrl && (
+                      <a className="day-action-btn day-action-primary" href={gmapsUrl} target="_blank" rel="noreferrer">
+                        <MapPinIcon size={14} /> Open in Google Maps
+                      </a>
+                    )}
+                    <button
+                      className="day-action-btn"
+                      onClick={handleSavedTripsClick}
+                      title={plan.standalone || daySaveState === 'saved' ? 'This day plan is in your Saved trips' : 'Keep this day plan in your Saved trips'}
+                    >
+                      <BookmarkIcon size={14} />
+                      {plan.standalone || daySaveState === 'saved' ? 'In Saved trips' : 'Save to Saved trips'}
+                    </button>
+                    <button className="day-action-btn" onClick={downloadPdf} title="A clean, printable PDF of your planned days">
+                      <DownloadIcon size={14} /> Download PDF
+                    </button>
+                    <button className="day-action-btn" onClick={shareDay}>
+                      <ShareIcon size={14} /> {shareState === 'copied' ? 'Copied!' : 'Share'}
+                    </button>
+                  </div>
+                  <button
+                    className="day-carta-btn day-carta-reshape"
+                    onClick={() => setShowShape(true)}
+                    title="Answer the shape-your-day questions again and let Carta redraft"
+                  >
+                    <SparkIcon size={12} /> Not happy with this day? Let Carta reshape it
+                  </button>
+                </>
+              )}
+            </div>
+          )}
+
           {/* Day trips: where is the traveller based? Filling this in unlocks
               the door-to-door "how do you get there" recommendation below. */}
           {plan.standalone && (
@@ -2183,58 +2395,9 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
             </div>
           )}
 
-          {stops.length > 1 && (
-            <div className="trip-block">
-              <div className="trip-block-title">City</div>
-              <div className="day-chip-row">
-                {stops.map((s, i) => (
-                  <span key={i} className={`day-chip day-city-chip ${i === stopIdx ? 'active' : ''}`}>
-                    <button
-                      className="day-city-chip-main"
-                      onClick={() => { setStopIdx(i); setDayIdx(0); }}
-                    >
-                      {s.dest?.city || 'Unknown'}
-                    </button>
-                    {plan.standalone && stops.length > 1 && (
-                      <button
-                        className="day-city-chip-del"
-                        onClick={() => removeStandaloneCity(i)}
-                        aria-label={`Remove ${s.dest?.city || 'city'}`}
-                        title="Remove this city"
-                      >×</button>
-                    )}
-                  </span>
-                ))}
-              </div>
-              <p className="trip-note">Each city has its own days and its own picks below.</p>
-            </div>
-          )}
-
           {stop && (
             <div className="trip-block">
-              <div className="trip-block-title">Day</div>
-              <div className="day-chip-row">
-                {/* Day numbers run through the WHOLE trip: if Makarska ends on
-                    day 2, Sibenik starts on day 3, not back at day 1. */}
-                {days.map((d, i) => (
-                  <button
-                    key={i}
-                    className={`day-chip ${i === dayIdx ? 'active' : ''}`}
-                    onClick={() => setDayIdx(i)}
-                  >
-                    Day {dayOffset + i + 1}
-                  </button>
-                ))}
-                {plan.standalone && (
-                  <button className="day-chip day-chip-add" onClick={addStandaloneDay} title="Add another day">+ Day</button>
-                )}
-              </div>
-            </div>
-          )}
-
-          {stop && (
-            <div className="trip-block">
-              <div className="trip-block-title">Add to your trip{stop.dest?.city ? ` in ${stop.dest.city}` : ''}</div>
+              <div className="trip-block-title">Add places{stop.dest?.city ? ` in ${stop.dest.city}` : ''}</div>
               {activities.limited && activities.items.length > 0 && (
                 <p className="trip-note">Limited data for this destination, names only, no map pins.</p>
               )}
@@ -2329,127 +2492,6 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
                       onToggle={toggleActivity}
                     />
                   )}
-                </>
-              )}
-            </div>
-          )}
-
-          {stop && (
-            <div className="trip-block">
-              <div className="trip-block-title">
-                Today's plan{assignedItems.length > 0 ? ` (${assignedItems.length})` : ''}
-              </div>
-              {assignedItems.length === 0 ? (
-                <>
-                  <p className="trip-note">Tap a place below to add it to this day. Carta keeps the walking order optimal as you add.</p>
-                  <button className="day-carta-btn" onClick={() => setShowShape(true)}>
-                    <SparkIcon size={12} /> Let Carta plan this city for me
-                  </button>
-                </>
-              ) : (
-                <>
-                  <div className="day-route-mode">
-                    <span className={`day-route-status ${routeMode}`}>
-                      {routeMode === 'auto'
-                        ? <><SparkIcon size={11} /> Carta picks the best {(() => {
-                            const parts = [];
-                            if (stayLeg?.ride) parts.push((MODE_META[stayLeg.mode] || MODE_META.car).label.toLowerCase());
-                            parts.push('walk');
-                            if (routeOk && route.hasFerry) parts.push('ferry');
-                            return parts.length > 1 ? `route (${parts.join(' + ')})` : 'walking route';
-                          })()}</>
-                        : 'Manual order'}
-                    </span>
-                    {routeMode === 'manual' && (
-                      <button className="day-route-optimize" onClick={optimizeNow}>
-                        <SparkIcon size={11} /> Let Carta reorder
-                      </button>
-                    )}
-                  </div>
-
-                  <div className="day-timeline">
-                    {stayLeg && (
-                      <div className={`day-timeline-walk day-timeline-stay${stayLeg.ferry ? ' day-timeline-ferry' : ''}${stayLeg.ride ? ' day-timeline-ride' : ''}`}>
-                        {legContent(stayLeg, true)}
-                        {stayLeg.ride && (
-                          <small className="day-timeline-ride-note">
-                            Park up or hop off; from here today's route is on foot.
-                          </small>
-                        )}
-                      </div>
-                    )}
-                    {assignedItems.map((it, i) => (
-                      <React.Fragment key={`${dayAssignedIdx[i]}`}>
-                        <AssignedRow
-                          item={it}
-                          index={i}
-                          last={i === assignedItems.length - 1}
-                          dwellMin={dwellFor(it)}
-                          onMoveUp={() => moveAssigned(i, -1)}
-                          onMoveDown={() => moveAssigned(i, 1)}
-                          onRemove={() => toggleActivity(dayAssignedIdx[i])}
-                        />
-                        {i < assignedItems.length - 1 && (() => {
-                          const leg = walkLeg(i);
-                          return (
-                            <div className={`day-timeline-walk${leg?.ferry ? ' day-timeline-ferry' : ''}`}>
-                              {legContent(leg)}
-                            </div>
-                          );
-                        })()}
-                      </React.Fragment>
-                    ))}
-                  </div>
-                  {legsAlign && routeOk && (
-                    <p className="day-route-total">
-                      Full route: {route.km.toFixed(1)} km, about {route.min} min {route.hasFerry ? 'of walking and ferry rides' : 'of walking'}.
-                      {dwellTotal > 0 && ` With time at each place, count on ~${fmtDur(dwellTotal + route.min)} out.`}
-                    </p>
-                  )}
-
-                  {scenic.length > 0 && (
-                    <div className="day-scenic">
-                      <div className="day-scenic-title"><SparkIcon size={11} /> Make the walk itself beautiful</div>
-                      {scenic.map((sug) => (
-                        <button key={sug.idx} className="day-scenic-row" onClick={() => addScenic(sug)} title="Add it to today's route">
-                          <span className="day-scenic-text">
-                            <b>{sug.item.name}</b>
-                            <small>{sug.item.kind}, only +{sug.extraMin} min off your route</small>
-                          </span>
-                          <span className="day-activity-add">+</span>
-                        </button>
-                      ))}
-                    </div>
-                  )}
-
-                  <div className="day-actions-row">
-                    {gmapsUrl && (
-                      <a className="day-action-btn day-action-primary" href={gmapsUrl} target="_blank" rel="noreferrer">
-                        <MapPinIcon size={14} /> Open in Google Maps
-                      </a>
-                    )}
-                    <button
-                      className="day-action-btn"
-                      onClick={handleSavedTripsClick}
-                      title={plan.standalone || daySaveState === 'saved' ? 'This day plan is in your Saved trips' : 'Keep this day plan in your Saved trips'}
-                    >
-                      <BookmarkIcon size={14} />
-                      {plan.standalone || daySaveState === 'saved' ? 'In Saved trips' : 'Save to Saved trips'}
-                    </button>
-                    <button className="day-action-btn" onClick={downloadPdf} title="A clean, printable PDF of your planned days">
-                      <DownloadIcon size={14} /> Download PDF
-                    </button>
-                    <button className="day-action-btn" onClick={shareDay}>
-                      <ShareIcon size={14} /> {shareState === 'copied' ? 'Copied!' : 'Share'}
-                    </button>
-                  </div>
-                  <button
-                    className="day-carta-btn day-carta-reshape"
-                    onClick={() => setShowShape(true)}
-                    title="Answer the shape-your-day questions again and let Carta redraft"
-                  >
-                    <SparkIcon size={12} /> Not happy with this day? Let Carta reshape it
-                  </button>
                 </>
               )}
             </div>

@@ -1,0 +1,4212 @@
+{
+ "gem:bourtange": [
+  6.5,
+  true,
+  "Atlas Obscura star fort, fully restored"
+ ],
+ "gem:vlieland": [
+  6.4,
+  true,
+  "Car-free island calm, empty beaches"
+ ],
+ "gem:villers-abbey": [
+  6.3,
+  true,
+  "Among Europe's great abbey ruins"
+ ],
+ "gem:hallerbos": [
+  6.3,
+  false,
+  "World-famous spring bluebell bloom"
+ ],
+ "gem:ninglinspo": [
+  6.2,
+  true,
+  "Komoot favourite, unique gorge hike"
+ ],
+ "gem:waterloo-lions-mound": [
+  6.2,
+  false,
+  "Napoleonic battlefield pilgrimage"
+ ],
+ "gem:humlebaek-louisiana": [
+  7.0,
+  false,
+  "World-class art in a seaside park"
+ ],
+ "gem:camp-adventure-tower": [
+  6.4,
+  false,
+  "Striking treetop walk and tower"
+ ],
+ "gem:rabjerg-mile": [
+  6.5,
+  false,
+  "Surreal walkable desert dune"
+ ],
+ "gem:svendborg": [
+  6.3,
+  true,
+  "Archipelago hub with harbour life"
+ ],
+ "gem:fur-island": [
+  6.2,
+  true,
+  "Fossil cliffs, offbeat island idyll"
+ ],
+ "gem:tisvildeleje": [
+  6.2,
+  true,
+  "Stylish Danish riviera beach town"
+ ],
+ "gem:terschelling": [
+  6.8,
+  true,
+  "Big beaches, UNESCO Wadden Sea nature"
+ ],
+ "gem:ameland": [
+  6.6,
+  true,
+  "Scenic island, dune cycling, lighthouse"
+ ],
+ "gem:schiermonnikoog": [
+  6.7,
+  true,
+  "Car-free national park, huge beach"
+ ],
+ "gem:veere": [
+  6.8,
+  true,
+  "Perfectly preserved harbour townscape"
+ ],
+ "gem:middelburg": [
+  6.7,
+  false,
+  "Rich monumental centre, abbey tower"
+ ],
+ "gem:domburg": [
+  6.5,
+  false,
+  "Best Dutch beach resort, artist light"
+ ],
+ "gem:zierikzee": [
+  6.3,
+  true,
+  "Medieval gates, untouristed Zeeland port"
+ ],
+ "gem:hoge-veluwe": [
+  7.2,
+  false,
+  "Van Gogh trove inside a wild park"
+ ],
+ "gem:keukenhof": [
+  7.4,
+  false,
+  "World-famous spring tulip spectacle"
+ ],
+ "gem:edam-volendam": [
+  6.5,
+  false,
+  "Classic cheese town and harbour combo"
+ ],
+ "gem:marken": [
+  6.4,
+  false,
+  "Photogenic stilt village, lighthouse walk"
+ ],
+ "gem:enkhuizen": [
+  6.5,
+  true,
+  "Golden Age port plus Zuiderzee Museum"
+ ],
+ "gem:alkmaar": [
+  6.5,
+  false,
+  "Iconic cheese market, fine old centre"
+ ],
+ "gem:naarden": [
+  6.4,
+  true,
+  "Europe's best preserved star fort"
+ ],
+ "gem:thorn-nl": [
+  6.4,
+  true,
+  "Unique whitewashed abbey village"
+ ],
+ "gem:heusden": [
+  6.3,
+  true,
+  "Restored fortress town on the Maas"
+ ],
+ "gem:deventer": [
+  6.3,
+  true,
+  "Atmospheric Hanseatic riverfront city"
+ ],
+ "gem:efteling": [
+  7.0,
+  false,
+  "Top European park, unique fairytale forest"
+ ],
+ "gem:la-roche-en-ardenne": [
+  6.8,
+  false,
+  "Castle, river loop, Ardennes scenery"
+ ],
+ "gem:han-sur-lesse": [
+  7.0,
+  false,
+  "Michelin 3-star caves, wildlife park"
+ ],
+ "gem:spa-belgium": [
+  6.8,
+  false,
+  "UNESCO great spa town, thermal baths"
+ ],
+ "gem:stavelot": [
+  6.3,
+  true,
+  "Grand abbey, oldest Belgian carnival"
+ ],
+ "gem:high-fens": [
+  6.8,
+  true,
+  "Unique bog wilderness, boardwalk hikes"
+ ],
+ "gem:tournai": [
+  6.8,
+  false,
+  "UNESCO cathedral and belfry, old city"
+ ],
+ "gem:mons-belgium": [
+  6.5,
+  false,
+  "UNESCO belfry, lively Grand-Place"
+ ],
+ "gem:ostend": [
+  6.5,
+  false,
+  "Lively beach city with real culture"
+ ],
+ "gem:de-haan": [
+  6.3,
+  true,
+  "Old-world elegance on unspoilt sands"
+ ],
+ "gem:lier": [
+  6.3,
+  true,
+  "Beguinage and Zimmer tower, no crowds"
+ ],
+ "gem:clervaux": [
+  6.5,
+  true,
+  "Castle, abbey, landmark photo exhibit"
+ ],
+ "gem:bourscheid": [
+  6.3,
+  true,
+  "Country's biggest castle, valley views"
+ ],
+ "gem:remich": [
+  6.2,
+  true,
+  "Moselle wine capital, river promenade"
+ ],
+ "gem:helsingor": [
+  7.2,
+  false,
+  "Kronborg, Shakespeare fame, old town"
+ ],
+ "gem:hillerod": [
+  7.0,
+  false,
+  "Grandest Nordic Renaissance castle"
+ ],
+ "gem:stevns-klint": [
+  7.0,
+  false,
+  "UNESCO cliff, asteroid layer, cliff church"
+ ],
+ "gem:ebeltoft": [
+  6.7,
+  false,
+  "Prettiest Jutland town plus Mols Bjerge"
+ ],
+ "gem:faaborg": [
+  6.4,
+  true,
+  "Idyllic port, archipelago gateway"
+ ],
+ "gem:egeskov": [
+  7.0,
+  false,
+  "Storybook moated castle and gardens"
+ ],
+ "gem:fano": [
+  6.6,
+  true,
+  "Thatched villages, huge Wadden beaches"
+ ],
+ "gem:romo": [
+  6.4,
+  true,
+  "Drive-on mega beach, Wadden nature"
+ ],
+ "gem:mogeltonder": [
+  6.2,
+  true,
+  "Denmark's most beautiful village street"
+ ],
+ "gem:klitmoller": [
+  6.6,
+  true,
+  "North Sea surf mecca, Thy wilderness"
+ ],
+ "gem:lonstrup": [
+  6.8,
+  false,
+  "Dune-cliff drama, famous lighthouse"
+ ],
+ "gem:christiansfeld": [
+  6.3,
+  true,
+  "UNESCO Moravian town, perfectly intact"
+ ],
+ "gem:jelling": [
+  6.3,
+  false,
+  "UNESCO Viking rune stones and mounds"
+ ],
+ "gem:silkeborg": [
+  6.5,
+  true,
+  "Lakeland cruises, hills, bog bodies"
+ ],
+ "gem:samso": [
+  6.3,
+  true,
+  "Green island idyll, cycling and beaches"
+ ],
+ "gem:jested": [
+  6.3,
+  true,
+  "Iconic architecture summit, Atlas Obscura favourite"
+ ],
+ "gem:pernstejn": [
+  6.3,
+  true,
+  "Best-preserved Gothic castle in Moravia"
+ ],
+ "gem:zatec": [
+  6.1,
+  true,
+  "UNESCO 2023 hops town, beer heritage"
+ ],
+ "gem:cachtice": [
+  6.1,
+  true,
+  "Legend-laden ruin with sweeping views"
+ ],
+ "gem:kezmarok": [
+  6.2,
+  true,
+  "UNESCO wooden church, Tatra-view old town"
+ ],
+ "gem:sulov-rocks": [
+  6.2,
+  true,
+  "Striking rock town, near-zero foreign tourists"
+ ],
+ "gem:tapolca": [
+  6.2,
+  true,
+  "Unique lake-cave boat ride under a town"
+ ],
+ "gem:villany": [
+  6.2,
+  true,
+  "Top Hungarian red wine village"
+ ],
+ "gem:sarospatak": [
+  6.2,
+  true,
+  "Finest Renaissance castle in Hungary"
+ ],
+ "gem:lipica": [
+  6.3,
+  true,
+  "Original Lipizzaner stud, 445 years old"
+ ],
+ "gem:jeruzalem": [
+  6.2,
+  true,
+  "Idyllic wine ridge, untouristed east"
+ ],
+ "gem:adrspach-teplice-rocks": [
+  7.5,
+  false,
+  "Spectacular rock labyrinth, unique in Central Europe"
+ ],
+ "gem:bohemian-paradise": [
+  7.2,
+  false,
+  "Rock cities and castle ruins, classic Czech hiking"
+ ],
+ "gem:moravian-karst": [
+  7.0,
+  false,
+  "Underground river boat and huge sinkhole"
+ ],
+ "gem:krkonose": [
+  7.0,
+  false,
+  "Highest Czech peaks, year-round resort range"
+ ],
+ "gem:znojmo": [
+  6.6,
+  true,
+  "Gorge-top wine town with vast underground"
+ ],
+ "gem:lednice-valtice": [
+  7.1,
+  false,
+  "UNESCO chateau landscape, Europe's largest designed park"
+ ],
+ "gem:trebic": [
+  6.5,
+  true,
+  "Best-preserved Jewish quarter in Europe, UNESCO"
+ ],
+ "gem:marianske-lazne": [
+  6.8,
+  false,
+  "Great Spa Towns UNESCO, grand colonnades"
+ ],
+ "gem:trebon": [
+  6.3,
+  true,
+  "Renaissance pond-land town, Rick Steves pick"
+ ],
+ "gem:slavonice": [
+  6.3,
+  true,
+  "Sgraffito Renaissance squares, no crowds"
+ ],
+ "gem:karlstejn": [
+  7.0,
+  false,
+  "Czechia's most iconic Gothic castle"
+ ],
+ "gem:hluboka-castle": [
+  6.8,
+  false,
+  "Czechia's prettiest romantic chateau"
+ ],
+ "gem:ceske-budejovice": [
+  6.2,
+  false,
+  "Grand square and Budvar, South Bohemia base"
+ ],
+ "gem:sumava": [
+  6.5,
+  true,
+  "Green roof of Europe, quiet forest wilderness"
+ ],
+ "gem:stramberk": [
+  6.2,
+  true,
+  "Moravian Bethlehem, timbered hill village"
+ ],
+ "gem:orava-castle": [
+  7.2,
+  true,
+  "Slovakia's most dramatic clifftop castle"
+ ],
+ "gem:mala-fatra": [
+  6.9,
+  true,
+  "Ridge hikes and waterfall gorges, few tourists"
+ ],
+ "gem:dunajec-gorge": [
+  6.8,
+  true,
+  "Classic timber-raft canyon float"
+ ],
+ "gem:low-tatras": [
+  6.8,
+  false,
+  "Big ski-hike range with famous show caves"
+ ],
+ "gem:cicmany": [
+  6.2,
+  true,
+  "Painted log village, folk-art one-off"
+ ],
+ "gem:kremnica": [
+  6.2,
+  true,
+  "Medieval gold town, oldest mint on earth"
+ ],
+ "gem:banska-bystrica": [
+  6.2,
+  true,
+  "Handsome mining city, mountain gateway"
+ ],
+ "gem:visegrad-hu": [
+  6.8,
+  false,
+  "Danube Bend citadel panorama"
+ ],
+ "gem:gyor": [
+  6.5,
+  false,
+  "Hungary's baroque second old town"
+ ],
+ "gem:pannonhalma": [
+  6.7,
+  true,
+  "1000-year UNESCO abbey with vineyards"
+ ],
+ "gem:hortobagy": [
+  6.6,
+  true,
+  "UNESCO steppe, living herding culture"
+ ],
+ "gem:aggtelek": [
+  6.6,
+  true,
+  "UNESCO cave system, concert hall underground"
+ ],
+ "gem:lillafured": [
+  6.4,
+  true,
+  "Fairy-tale palace resort in the Bukk"
+ ],
+ "gem:koszeg": [
+  6.5,
+  true,
+  "Best-kept small medieval town in Hungary"
+ ],
+ "gem:veszprem": [
+  6.4,
+  true,
+  "Castle-quarter city, 2023 Capital of Culture"
+ ],
+ "gem:eszterhaza": [
+  6.4,
+  true,
+  "Hungary's grandest rococo palace, Haydn's home"
+ ],
+ "gem:godollo": [
+  6.2,
+  false,
+  "Sisi's palace, easy Budapest day trip"
+ ],
+ "gem:logar-valley": [
+  7.4,
+  true,
+  "Slovenia's most beautiful alpine valley"
+ ],
+ "gem:velika-planina": [
+  7.2,
+  true,
+  "Living herders' plateau, unique hut village"
+ ],
+ "gem:vipava-valley": [
+  6.6,
+  true,
+  "Rising wine region, unspoilt villages"
+ ],
+ "gem:goriska-brda": [
+  6.8,
+  true,
+  "Tuscan-style wine hills without crowds"
+ ],
+ "gem:skofja-loka": [
+  6.5,
+  true,
+  "Perfect medieval town minutes from LJU"
+ ],
+ "gem:idrija": [
+  6.3,
+  true,
+  "UNESCO mine town with lace and food heritage"
+ ],
+ "gem:lake-cerknica": [
+  6.3,
+  true,
+  "Europe's famous vanishing lake, birdlife haven"
+ ],
+ "gem:celje": [
+  6.2,
+  true,
+  "Biggest castle in Slovenia, zero crowds"
+ ],
+ "gem:rakotzbrucke": [
+  6.2,
+  true,
+  "Atlas Obscura icon, surreal photo spot"
+ ],
+ "gem:externsteine": [
+  6.3,
+  true,
+  "Mystical rock pillars, ancient cult site"
+ ],
+ "gem:maulbronn": [
+  6.4,
+  true,
+  "Complete UNESCO Cistercian complex"
+ ],
+ "gem:fischland-darss": [
+  6.4,
+  true,
+  "Wild national-park beach, no resorts"
+ ],
+ "gem:hohenzollern-castle": [
+  7.2,
+  false,
+  "Germany's other fairytale castle"
+ ],
+ "gem:lichtenstein-castle": [
+  6.4,
+  true,
+  "Cliff-edge storybook castle"
+ ],
+ "gem:walchensee": [
+  6.5,
+  true,
+  "Turquoise water, Herzogstand ridge"
+ ],
+ "gem:meissen": [
+  6.4,
+  false,
+  "Porcelain cradle, castle skyline"
+ ],
+ "gem:boppard": [
+  6.4,
+  false,
+  "Best Rhine bend panorama"
+ ],
+ "gem:sankt-peter-ording": [
+  6.2,
+  true,
+  "Endless beach, stilt pubs, kitesurf hub"
+ ],
+ "gem:liechtensteinklamm": [
+  6.3,
+  true,
+  "Dramatic slot gorge, easy boardwalks"
+ ],
+ "gem:stubaital-neustift": [
+  6.5,
+  false,
+  "Glacier ski and summit platform"
+ ],
+ "gem:lunersee": [
+  6.4,
+  true,
+  "Komoot-favourite lake circuit"
+ ],
+ "gem:trift-bridge": [
+  6.6,
+  true,
+  "Epic bridge over glacier lake"
+ ],
+ "gem:klontalersee": [
+  6.3,
+  true,
+  "Dramatic hidden lake near Zurich"
+ ],
+ "gem:soglio": [
+  6.5,
+  true,
+  "Village of the year, Segantini views"
+ ],
+ "gem:stoos": [
+  6.6,
+  true,
+  "Steepest funicular, ridge panorama"
+ ],
+ "gem:lavaux": [
+  6.6,
+  false,
+  "UNESCO terraces above Lake Geneva"
+ ],
+ "gem:fribourg": [
+  6.4,
+  false,
+  "Underrated medieval riverscape"
+ ],
+ "gem:grimentz": [
+  6.4,
+  true,
+  "Prettiest Valais timber village"
+ ],
+ "gem:verbier": [
+  6.5,
+  false,
+  "World-class ski area, summit views"
+ ],
+ "gem:ruinaulta": [
+  6.7,
+  true,
+  "Swiss Grand Canyon, raftable river"
+ ],
+ "gem:ruegen-jasmund": [
+  7.4,
+  false,
+  "Germany's most famous coastal scenery"
+ ],
+ "gem:usedom": [
+  6.4,
+  false,
+  "Long beaches, imperial resort charm"
+ ],
+ "gem:sylt": [
+  7.0,
+  false,
+  "Iconic German island, huge dune beaches"
+ ],
+ "gem:heligoland": [
+  6.6,
+  true,
+  "Unique offshore rock, seal beaches"
+ ],
+ "gem:stralsund": [
+  6.7,
+  false,
+  "UNESCO brick Gothic, Rugen gateway"
+ ],
+ "gem:schwerin": [
+  7.0,
+  false,
+  "One of Europe's prettiest water castles"
+ ],
+ "gem:spreewald-lubbenau": [
+  6.8,
+  true,
+  "One-of-a-kind canal landscape near Berlin"
+ ],
+ "gem:goslar": [
+  6.8,
+  false,
+  "UNESCO old town, imperial history"
+ ],
+ "gem:wernigerode": [
+  6.7,
+  true,
+  "Castle, steam railway, fachwerk core"
+ ],
+ "gem:monschau": [
+  6.8,
+  false,
+  "Perfectly preserved gorge village"
+ ],
+ "gem:burg-eltz": [
+  7.6,
+  false,
+  "Germany's most fairytale castle"
+ ],
+ "gem:bernkastel-kues": [
+  6.8,
+  false,
+  "Mosel wine town at its most scenic"
+ ],
+ "gem:rudesheim": [
+  6.8,
+  false,
+  "Famous Rhine wine town, gorge views"
+ ],
+ "gem:sankt-goar": [
+  6.6,
+  false,
+  "Loreley legend plus biggest Rhine ruin"
+ ],
+ "gem:triberg": [
+  6.4,
+  false,
+  "Waterfalls and Black Forest kitsch"
+ ],
+ "gem:schiltach": [
+  6.2,
+  true,
+  "Postcard fachwerk, no crowds"
+ ],
+ "gem:meersburg": [
+  6.6,
+  false,
+  "Lake terraces, ancient castle"
+ ],
+ "gem:oberstdorf": [
+  7.0,
+  false,
+  "Best Allgau base, gorge and peaks"
+ ],
+ "gem:mittenwald": [
+  6.6,
+  true,
+  "Painted houses under Karwendel crags"
+ ],
+ "gem:oberammergau": [
+  6.5,
+  false,
+  "Painted village, palace nearby"
+ ],
+ "gem:chiemsee": [
+  7.0,
+  false,
+  "Alpine lake with a Versailles copy"
+ ],
+ "gem:nordlingen": [
+  6.6,
+  true,
+  "Intact walls, meteor crater setting"
+ ],
+ "gem:ulm": [
+  6.5,
+  false,
+  "Tallest spire, charming old quarter"
+ ],
+ "gem:blautopf": [
+  6.3,
+  true,
+  "Surreal blue spring, monastery"
+ ],
+ "gem:grossglockner-road": [
+  8.0,
+  false,
+  "Europe's great alpine drive"
+ ],
+ "gem:werfen-eisriesenwelt": [
+  7.0,
+  false,
+  "World's biggest ice cave plus fortress"
+ ],
+ "gem:krimml-waterfalls": [
+  7.2,
+  false,
+  "Tallest falls in Europe, epic trail"
+ ],
+ "gem:gosau": [
+  6.8,
+  true,
+  "Dachstein mirror lake, no crowds"
+ ],
+ "gem:altaussee": [
+  6.6,
+  true,
+  "Idyllic lake, Monuments Men mine"
+ ],
+ "gem:gmunden": [
+  6.5,
+  false,
+  "Lake castle, dramatic Traunstein"
+ ],
+ "gem:mayrhofen": [
+  6.6,
+  false,
+  "Classic Tyrol valley base"
+ ],
+ "gem:solden": [
+  6.6,
+  false,
+  "Glacier skiing, Bond-film summit"
+ ],
+ "gem:achensee": [
+  6.6,
+  true,
+  "Fjord scenery an hour from Innsbruck"
+ ],
+ "gem:hall-in-tirol": [
+  6.3,
+  true,
+  "Intact medieval core, zero tourists"
+ ],
+ "gem:bregenz": [
+  6.7,
+  false,
+  "Floating stage, lake-and-alps combo"
+ ],
+ "gem:lech-am-arlberg": [
+  6.5,
+  false,
+  "Legendary ski village, refined charm"
+ ],
+ "gem:gruner-see": [
+  6.6,
+  true,
+  "Surreal seasonal underwater park"
+ ],
+ "gem:weissensee-carinthia": [
+  6.3,
+  true,
+  "Untouched turquoise alpine lake"
+ ],
+ "gem:rhine-falls": [
+  7.2,
+  false,
+  "Europe's biggest falls, easy from Zurich"
+ ],
+ "gem:verzasca-lavertezzo": [
+  7.2,
+  false,
+  "Emerald river, iconic Roman bridge"
+ ],
+ "gem:bellinzona": [
+  6.8,
+  false,
+  "Triple UNESCO castles"
+ ],
+ "gem:morcote": [
+  6.4,
+  true,
+  "Lakefront village of the year fame"
+ ],
+ "gem:aletsch-glacier": [
+  7.8,
+  false,
+  "Longest glacier in the Alps, UNESCO"
+ ],
+ "gem:creux-du-van": [
+  7.0,
+  true,
+  "Switzerland's Grand Canyon rim walk"
+ ],
+ "gem:saas-fee": [
+  7.0,
+  false,
+  "Glacier amphitheatre, car-free charm"
+ ],
+ "gem:engelberg": [
+  6.8,
+  false,
+  "Titlis glacier trip, monastery town"
+ ],
+ "gem:st-gallen": [
+  6.8,
+  false,
+  "UNESCO abbey library masterpiece"
+ ],
+ "gem:calanques-de-piana": [
+  8.2,
+  false,
+  "UNESCO red calanche, Corsica's scenic pinnacle"
+ ],
+ "gem:porto-vecchio-palombaggia": [
+  7.8,
+  false,
+  "Corsica's best beaches plus citadel town"
+ ],
+ "gem:corte-restonica": [
+  7.2,
+  true,
+  "Citadel town plus Restonica gorge lakes"
+ ],
+ "gem:aiguilles-de-bavella": [
+  7.6,
+  true,
+  "Corsica's most dramatic granite peaks"
+ ],
+ "gem:cap-corse": [
+  7.2,
+  true,
+  "Wild corniche loop, Nonza black beach"
+ ],
+ "gem:saint-florent-corsica": [
+  7.0,
+  true,
+  "Boat-only Saleccia sands, Patrimonio wine"
+ ],
+ "gem:gorges-du-verdon": [
+  8.2,
+  false,
+  "Europe's deepest, most scenic canyon"
+ ],
+ "gem:les-baux-de-provence": [
+  7.6,
+  false,
+  "Iconic crag village plus immersive art quarry"
+ ],
+ "gem:saint-tropez": [
+  7.5,
+  false,
+  "Legendary Riviera port plus Pampelonne"
+ ],
+ "gem:cannes": [
+  7.2,
+  false,
+  "Croisette glamour plus Lerins islands"
+ ],
+ "gem:antibes": [
+  7.2,
+  false,
+  "Walled old town, Picasso, sandy bays"
+ ],
+ "gem:grasse": [
+  6.8,
+  false,
+  "Perfume capital with hill-town charm"
+ ],
+ "gem:massif-esterel": [
+  6.9,
+  true,
+  "Red rock versus blue sea coastal drive"
+ ],
+ "gem:porquerolles": [
+  7.6,
+  false,
+  "Car-free island, France's finest beaches"
+ ],
+ "gem:mont-ventoux": [
+  7.0,
+  false,
+  "Provence's iconic lunar summit"
+ ],
+ "gem:vaison-la-romaine": [
+  6.7,
+  true,
+  "France's largest Roman site in Provence"
+ ],
+ "gem:orange-vaucluse": [
+  6.8,
+  false,
+  "Europe's best-kept Roman theatre"
+ ],
+ "gem:pont-du-gard": [
+  7.8,
+  false,
+  "Rome's mightiest aqueduct, swimmable river"
+ ],
+ "gem:uzes": [
+  6.8,
+  true,
+  "Provence-perfect ducal town, few crowds"
+ ],
+ "gem:sete": [
+  6.8,
+  true,
+  "Canal-port character plus lagoon oysters"
+ ],
+ "gem:saint-guilhem-le-desert": [
+  7.0,
+  true,
+  "Abbey village in a swimmable gorge"
+ ],
+ "gem:minerve-herault": [
+  6.5,
+  true,
+  "Cathar village on a gorge-cut rock"
+ ],
+ "gem:peyrepertuse": [
+  7.2,
+  true,
+  "Most dramatic of the Cathar sky-castles"
+ ],
+ "gem:cirque-de-gavarnie": [
+  8.0,
+  false,
+  "The Pyrenees' UNESCO rock amphitheatre"
+ ],
+ "gem:cauterets": [
+  7.2,
+  true,
+  "Waterfall gateway to the high Pyrenees"
+ ],
+ "gem:pic-du-midi": [
+  7.4,
+  false,
+  "Summit observatory, 360 Pyrenees view"
+ ],
+ "gem:saint-jean-pied-de-port": [
+  6.8,
+  false,
+  "The Camino's storybook Basque start"
+ ],
+ "gem:la-rhune": [
+  6.8,
+  false,
+  "Rack-rail summit over the Basque coast"
+ ],
+ "gem:hossegor": [
+  6.8,
+  false,
+  "Europe's surfing headquarters"
+ ],
+ "gem:cordes-sur-ciel": [
+  7.2,
+  false,
+  "Sky-high Gothic bastide"
+ ],
+ "gem:najac": [
+  6.8,
+  true,
+  "Ridge village with a fortress finale"
+ ],
+ "gem:saint-cirq-lapopie": [
+  7.4,
+  false,
+  "France's favourite cliff village"
+ ],
+ "gem:cahors": [
+  6.6,
+  false,
+  "Pont Valentre plus Malbec cellars"
+ ],
+ "gem:collonges-la-rouge": [
+  7.0,
+  true,
+  "All-red founding Plus Beau Village"
+ ],
+ "gem:la-roque-gageac": [
+  7.4,
+  false,
+  "The Dordogne's postcard cliff village"
+ ],
+ "gem:brantome": [
+  6.8,
+  true,
+  "Island abbey town on the Dronne"
+ ],
+ "gem:montignac-lascaux": [
+  7.2,
+  false,
+  "The world's most famous cave art"
+ ],
+ "gem:le-puy-en-velay": [
+  7.4,
+  false,
+  "Chapel-topped volcanic spires"
+ ],
+ "gem:puy-de-dome": [
+  7.2,
+  false,
+  "UNESCO volcano chain centrepiece"
+ ],
+ "gem:puy-mary": [
+  6.8,
+  true,
+  "Grand Site summit of the Cantal"
+ ],
+ "gem:salers": [
+  6.8,
+  true,
+  "Turreted lava-stone cheese village"
+ ],
+ "gem:vichy": [
+  6.4,
+  true,
+  "UNESCO grand spa town"
+ ],
+ "gem:gorges-de-lardeche": [
+  7.6,
+  false,
+  "Pont d'Arc canoe canyon"
+ ],
+ "gem:perouges": [
+  6.8,
+  true,
+  "Film-set medieval circle village"
+ ],
+ "gem:baume-les-messieurs": [
+  6.8,
+  true,
+  "The Jura's amphitheatre abbey valley"
+ ],
+ "gem:yvoire": [
+  7.0,
+  true,
+  "Lake Geneva's medieval flower village"
+ ],
+ "gem:evian-les-bains": [
+  6.5,
+  false,
+  "Belle-epoque water town on Lake Geneva"
+ ],
+ "gem:megeve": [
+  7.0,
+  false,
+  "Mont Blanc's most elegant village"
+ ],
+ "gem:sixt-fer-a-cheval": [
+  7.2,
+  true,
+  "Waterfall cirque at the end of the world"
+ ],
+ "gem:briancon": [
+  7.0,
+  true,
+  "Highest town, UNESCO Vauban walls"
+ ],
+ "gem:vezelay": [
+  7.0,
+  false,
+  "UNESCO hill basilica of Burgundy"
+ ],
+ "gem:dijon": [
+  7.0,
+  false,
+  "Burgundy's ducal food capital"
+ ],
+ "gem:troyes": [
+  6.8,
+  true,
+  "Half-timbered champagne-cork old town"
+ ],
+ "gem:epernay": [
+  6.6,
+  false,
+  "Champagne's grand cellar avenue"
+ ],
+ "gem:nancy": [
+  7.0,
+  false,
+  "Europe's finest gilded royal square"
+ ],
+ "gem:metz": [
+  6.7,
+  false,
+  "Stained-glass Gothic plus Pompidou"
+ ],
+ "gem:haut-koenigsbourg": [
+  7.2,
+  false,
+  "Alsace's great sky castle"
+ ],
+ "gem:giverny": [
+  7.2,
+  false,
+  "Monet's garden in full bloom"
+ ],
+ "gem:deauville": [
+  6.7,
+  false,
+  "Classic Normandy beach glamour"
+ ],
+ "gem:baie-de-somme": [
+  6.8,
+  true,
+  "Seal-dotted tidal bay plus steam rail"
+ ],
+ "gem:amiens": [
+  7.0,
+  false,
+  "Largest Gothic cathedral plus canals"
+ ],
+ "gem:lille": [
+  6.8,
+  false,
+  "Flemish charm with French flair"
+ ],
+ "gem:fontainebleau": [
+  7.2,
+  false,
+  "Kings' palace plus climbing forest"
+ ],
+ "gem:provins": [
+  6.6,
+  true,
+  "Intact medieval trade-fair town"
+ ],
+ "gem:ploumanach": [
+  7.4,
+  true,
+  "Pink granite wonder coast"
+ ],
+ "gem:crozon": [
+  7.2,
+  true,
+  "Brittany's wildest turquoise coves"
+ ],
+ "gem:pointe-du-raz": [
+  7.0,
+  true,
+  "France's dramatic Land's End"
+ ],
+ "gem:locronan": [
+  6.8,
+  true,
+  "Granite film-set village"
+ ],
+ "gem:concarneau": [
+  6.6,
+  true,
+  "Island-walled fishing town"
+ ],
+ "gem:quiberon": [
+  6.8,
+  false,
+  "Wild coast plus beach peninsula"
+ ],
+ "gem:belle-ile": [
+  7.3,
+  true,
+  "Monet-painted island wilds"
+ ],
+ "gem:carnac": [
+  7.0,
+  false,
+  "World's largest megalith field"
+ ],
+ "gem:vannes": [
+  6.9,
+  false,
+  "Medieval port on island-strewn gulf"
+ ],
+ "gem:rochefort-en-terre": [
+  6.8,
+  true,
+  "Brittany's flower-box favourite"
+ ],
+ "gem:cap-frehel": [
+  6.9,
+  true,
+  "Cliff moorland plus storybook sea fort"
+ ],
+ "gem:guerande": [
+  6.6,
+  true,
+  "Walled town of the salt marshes"
+ ],
+ "gem:marais-poitevin": [
+  6.6,
+  true,
+  "Green Venice punting maze"
+ ],
+ "gem:puy-du-fou": [
+  7.2,
+  false,
+  "World-best historical spectacles"
+ ],
+ "gem:dimitsana": [
+  6.9,
+  true,
+  "Best village base for Lousios gorge and Menalon Trail"
+ ],
+ "gem:kalavryta": [
+  6.8,
+  true,
+  "One of Europe's great little mountain train rides"
+ ],
+ "gem:epidaurus": [
+  7.2,
+  false,
+  "Finest surviving Greek theatre, UNESCO"
+ ],
+ "gem:mycenae": [
+  7.1,
+  false,
+  "Homeric citadel, cornerstone of European prehistory"
+ ],
+ "gem:diros-caves": [
+  7.0,
+  true,
+  "Boat ride through one of Europe's finest caves"
+ ],
+ "gem:lake-kerkini": [
+  6.6,
+  true,
+  "Greece's top birdwatching lake, buffalo herds"
+ ],
+ "gem:edessa": [
+  6.4,
+  true,
+  "Urban waterfalls and old Varosi quarter"
+ ],
+ "gem:acheron-springs": [
+  6.6,
+  true,
+  "Mythic river wading, easy family adventure"
+ ],
+ "gem:skyros": [
+  6.6,
+  true,
+  "Untouristed Chora and its own pony breed"
+ ],
+ "gem:leros": [
+  6.4,
+  true,
+  "Unique 1930s architecture, genuine island life"
+ ],
+ "gem:antiparos": [
+  6.6,
+  true,
+  "Great cave, mellow vibe, celebrity-quiet beaches"
+ ],
+ "gem:kea": [
+  6.4,
+  true,
+  "Trail network and Britannic wreck, weekender secret"
+ ],
+ "gem:kythnos": [
+  6.4,
+  true,
+  "Kolona sandbar and thermal springs, few tourists"
+ ],
+ "gem:gavdos": [
+  6.5,
+  true,
+  "Southernmost point of Europe, true escape"
+ ],
+ "gem:falasarna": [
+  6.8,
+  false,
+  "Top-rated Cretan sunset beach plus ruins"
+ ],
+ "gem:matala": [
+  6.6,
+  false,
+  "Cave cliff, counterculture lore, easy beach day"
+ ],
+ "gem:methoni": [
+  6.7,
+  true,
+  "One of the Mediterranean's great sea castles"
+ ],
+ "gem:kourion": [
+  6.8,
+  false,
+  "Cyprus' best ancient site, dramatic sea setting"
+ ],
+ "gem:karpas-peninsula": [
+  6.7,
+  true,
+  "Golden Beach and wild donkeys, empty horizons"
+ ],
+ "gem:nymfaio": [
+  6.3,
+  true,
+  "Bear sanctuary and one of Greece's prettiest villages"
+ ],
+ "gem:lake-plastiras": [
+  6.4,
+  true,
+  "Serene mountain lake scenery, local secret"
+ ],
+ "gem:sifnos": [
+  7.3,
+  false,
+  "Gastronomy capital of the Cyclades, gorgeous villages"
+ ],
+ "gem:serifos": [
+  6.9,
+  true,
+  "Dramatic Chora, unspoilt beaches, no crowds"
+ ],
+ "gem:amorgos": [
+  7.5,
+  false,
+  "Hozoviotissa cliff monastery is unforgettable"
+ ],
+ "gem:koufonisia": [
+  7.2,
+  true,
+  "Pori and Fanos coves rival any Greek beach"
+ ],
+ "gem:syros-ermoupoli": [
+  7.2,
+  true,
+  "Grandest town in the Cyclades, year-round life"
+ ],
+ "gem:tinos": [
+  7.0,
+  true,
+  "Volax and Pyrgos villages, superb food, few foreigners"
+ ],
+ "gem:andros": [
+  6.9,
+  true,
+  "Best hiking network in the Cyclades"
+ ],
+ "gem:anafi": [
+  6.6,
+  true,
+  "Kalamos rock and total escape an hour from Santorini"
+ ],
+ "gem:karpathos": [
+  7.3,
+  true,
+  "Apella beach and time-capsule Olympos village"
+ ],
+ "gem:patmos": [
+  7.3,
+  false,
+  "UNESCO monastery, chic yet spiritual island"
+ ],
+ "gem:kalymnos": [
+  7.0,
+  true,
+  "Europe's top sport-climbing island, easy hop from Kos"
+ ],
+ "gem:nisyros": [
+  7.0,
+  true,
+  "Stefanos crater is a surreal, easy day from Kos"
+ ],
+ "gem:astypalaia": [
+  7.2,
+  true,
+  "Postcard Chora, zero mass tourism"
+ ],
+ "gem:halki": [
+  6.8,
+  true,
+  "Perfect harbour village, an hour from Rhodes"
+ ],
+ "gem:kastellorizo": [
+  7.0,
+  true,
+  "Blue Grotto and end-of-the-line romance"
+ ],
+ "gem:skiathos": [
+  7.1,
+  false,
+  "Lalaria and Koukounaries, easiest Sporades access"
+ ],
+ "gem:skopelos": [
+  7.3,
+  false,
+  "Film-famous chapel, greenest island in Greece"
+ ],
+ "gem:alonissos": [
+  6.8,
+  true,
+  "Marine-park snorkelling and real seclusion"
+ ],
+ "gem:paxos-antipaxos": [
+  7.4,
+  false,
+  "Voutoumi water and Gaios harbour charm"
+ ],
+ "gem:ithaca": [
+  7.0,
+  true,
+  "Mythic pedigree, unspoilt Ionian harbours"
+ ],
+ "gem:kythira": [
+  6.9,
+  true,
+  "Untouristed island with castles, coves, waterfalls"
+ ],
+ "gem:ikaria": [
+  7.0,
+  true,
+  "Blue-zone culture and Seychelles beach"
+ ],
+ "gem:chios-mastic": [
+  7.0,
+  true,
+  "Unique medieval mastic villages, no crowds"
+ ],
+ "gem:thasos": [
+  7.0,
+  false,
+  "Giola lagoon and marble beach, easy airport link"
+ ],
+ "gem:samothrace": [
+  6.9,
+  true,
+  "Waterfall pools and ancient sanctuary, adventurers only"
+ ],
+ "gem:rethymno": [
+  7.4,
+  false,
+  "Best-preserved Venetian-Ottoman town on Crete"
+ ],
+ "gem:balos-lagoon": [
+  8.0,
+  false,
+  "One of Europe's most photographed lagoons"
+ ],
+ "gem:elafonisi-crete": [
+  7.9,
+  false,
+  "Pink sand and lagoon wading, world-famous"
+ ],
+ "gem:loutro": [
+  6.9,
+  true,
+  "Boat-only serenity on Crete's south coast"
+ ],
+ "gem:elounda-spinalonga": [
+  7.3,
+  false,
+  "Haunting fortress islet plus glamorous bay"
+ ],
+ "gem:preveli": [
+  7.0,
+  true,
+  "Palm river-mouth beach below a historic monastery"
+ ],
+ "gem:vai-palm-beach": [
+  6.8,
+  false,
+  "Only palm-forest beach in Europe"
+ ],
+ "gem:mount-olympus": [
+  7.8,
+  false,
+  "Mythic summit, superb marked trail network"
+ ],
+ "gem:prespa-lakes": [
+  6.9,
+  true,
+  "Dalmatian pelicans and cliff hermitages, far off-track"
+ ],
+ "gem:sithonia": [
+  7.3,
+  false,
+  "Mainland Greece's best beach peninsula"
+ ],
+ "gem:kastoria": [
+  6.7,
+  true,
+  "Atmospheric lake setting and Byzantine churches"
+ ],
+ "gem:vergina": [
+  6.6,
+  true,
+  "UNESCO royal Macedonian tombs, stunning museum"
+ ],
+ "gem:mystras": [
+  7.6,
+  false,
+  "Best Byzantine site in Greece, UNESCO"
+ ],
+ "gem:ancient-olympia": [
+  7.3,
+  false,
+  "Birthplace of the Olympics, UNESCO sanctuary"
+ ],
+ "gem:voidokilia": [
+  7.4,
+  false,
+  "Geometrically perfect bay, regularly rated Greece's best"
+ ],
+ "gem:elafonisos-simos": [
+  7.2,
+  true,
+  "Simos dunes and water rival the tropics"
+ ],
+ "gem:vatheia-mani": [
+  7.0,
+  true,
+  "Iconic tower-house village, edge-of-Europe feel"
+ ],
+ "gem:cape-sounion": [
+  7.2,
+  false,
+  "Poseidon's temple at sunset, an Attica classic"
+ ],
+ "gem:aegina": [
+  6.7,
+  false,
+  "Temple of Aphaia and easiest island escape"
+ ],
+ "gem:spetses": [
+  6.8,
+  true,
+  "Elegant car-free harbour town, Greek high-society feel"
+ ],
+ "gem:ioannina": [
+  6.9,
+  true,
+  "Lake island, Ali Pasha history, Zagori gateway"
+ ],
+ "gem:metsovo": [
+  6.6,
+  true,
+  "Alpine Greece with its own cheese and wine"
+ ],
+ "gem:nafpaktos": [
+  6.6,
+  true,
+  "Storybook fortified harbour, Lepanto history"
+ ],
+ "gem:galaxidi": [
+  6.5,
+  true,
+  "Handsomest harbour town on the Corinthian Gulf"
+ ],
+ "gem:tsagkarada-pelion": [
+  6.9,
+  true,
+  "Forest village plus Mylopotamos beach combo"
+ ],
+ "gem:syvota-epirus": [
+  6.6,
+  true,
+  "Islet-dotted bays and sandbar beach"
+ ],
+ "gem:kyrenia": [
+  7.2,
+  true,
+  "Loveliest harbour on Cyprus, castle and abbey"
+ ],
+ "gem:famagusta": [
+  6.8,
+  true,
+  "Walled Gothic city, Salamis ruins, eerie Varosha"
+ ],
+ "gem:petra-tou-romiou": [
+  6.6,
+  false,
+  "Mythological birthplace of Aphrodite"
+ ],
+ "gem:alpe-di-siusi": [
+  8.0,
+  false,
+  "Iconic Dolomites plateau, classic hiking"
+ ],
+ "gem:val-di-funes": [
+  7.5,
+  false,
+  "Postcard valley under the Odle group"
+ ],
+ "gem:tre-cime-di-lavaredo": [
+  8.5,
+  false,
+  "World-class Dolomites icon"
+ ],
+ "gem:lago-di-braies": [
+  8.0,
+  false,
+  "Most photogenic lake in the Alps"
+ ],
+ "gem:corvara-alta-badia": [
+  7.5,
+  false,
+  "Prime Alta Badia hiking and ski hub"
+ ],
+ "gem:canazei": [
+  7.0,
+  false,
+  "Gateway to Marmolada and Sella passes"
+ ],
+ "gem:madonna-di-campiglio": [
+  7.0,
+  false,
+  "Brenta Dolomites base, top ski resort"
+ ],
+ "gem:san-martino-di-castrozza": [
+  7.0,
+  true,
+  "Quieter Dolomites under the Pale group"
+ ],
+ "gem:merano": [
+  7.5,
+  false,
+  "Elegant alpine spa town"
+ ],
+ "gem:courmayeur": [
+  7.5,
+  false,
+  "Mont Blanc's Italian side, Skyway"
+ ],
+ "gem:cogne-gran-paradiso": [
+  7.0,
+  true,
+  "Gran Paradiso base, wildlife and calm"
+ ],
+ "gem:breuil-cervinia": [
+  7.0,
+  false,
+  "Matterhorn views without Swiss prices"
+ ],
+ "gem:orta-san-giulio": [
+  7.5,
+  false,
+  "Most romantic small Italian lake"
+ ],
+ "gem:monte-isola": [
+  6.5,
+  true,
+  "Car-free island idyll near Franciacorta"
+ ],
+ "gem:sacra-di-san-michele": [
+  7.0,
+  true,
+  "Dramatic clifftop abbey, Name of the Rose"
+ ],
+ "gem:asolo": [
+  6.5,
+  true,
+  "Poets' hill village near Venice"
+ ],
+ "gem:bassano-del-grappa": [
+  6.5,
+  false,
+  "Palladian bridge and grappa heritage"
+ ],
+ "gem:cividale-del-friuli": [
+  6.5,
+  true,
+  "UNESCO Lombard town, Devil's Bridge"
+ ],
+ "gem:brisighella": [
+  6.5,
+  true,
+  "Three-crag borgo, olive oil country"
+ ],
+ "gem:san-leo": [
+  6.5,
+  true,
+  "Spectacular crag fortress near Rimini"
+ ],
+ "gem:sirolo-conero": [
+  7.0,
+  false,
+  "Best Adriatic coves north of Gargano"
+ ],
+ "gem:ascoli-piceno": [
+  7.0,
+  true,
+  "Piazza del Popolo, zero crowds"
+ ],
+ "gem:frasassi-caves": [
+  6.5,
+  false,
+  "Italy's grandest show caves"
+ ],
+ "gem:elba-portoferraio": [
+  7.5,
+  false,
+  "Tuscany's big beach island"
+ ],
+ "gem:saturnia": [
+  7.0,
+  false,
+  "Italy's most famous free hot springs"
+ ],
+ "gem:pitigliano": [
+  7.0,
+  true,
+  "Tufa-cliff town, Etruscan sunken roads"
+ ],
+ "gem:cortona": [
+  7.0,
+  false,
+  "Classic Tuscan hill town with real art"
+ ],
+ "gem:arezzo": [
+  6.5,
+  false,
+  "Piero frescoes, uncrowded Tuscany"
+ ],
+ "gem:gubbio": [
+  7.0,
+  false,
+  "Umbria's most dramatic medieval town"
+ ],
+ "gem:spello": [
+  6.5,
+  false,
+  "Umbria's prettiest flower village"
+ ],
+ "gem:spoleto": [
+  7.0,
+  false,
+  "Ponte delle Torri, festival town"
+ ],
+ "gem:cascata-delle-marmore": [
+  6.5,
+  false,
+  "Tallest man-made waterfall in Europe"
+ ],
+ "gem:castelluccio-di-norcia": [
+  7.5,
+  true,
+  "Fiorita bloom, Sibillini plateau"
+ ],
+ "gem:tivoli": [
+  7.5,
+  false,
+  "Two UNESCO villas beside Rome"
+ ],
+ "gem:sperlonga": [
+  7.0,
+  false,
+  "Lazio's best beach village"
+ ],
+ "gem:ponza": [
+  7.0,
+  true,
+  "Italians-only island escape"
+ ],
+ "gem:pompeii": [
+  8.5,
+  false,
+  "World's greatest Roman site"
+ ],
+ "gem:ischia": [
+  7.5,
+  false,
+  "Thermal island, calmer than Capri"
+ ],
+ "gem:paestum": [
+  7.5,
+  false,
+  "Greek temples without Athens crowds"
+ ],
+ "gem:reggia-di-caserta": [
+  7.5,
+  false,
+  "Largest royal palace in the world"
+ ],
+ "gem:palinuro": [
+  7.0,
+  true,
+  "Cilento's best coast, sea caves"
+ ],
+ "gem:rocca-calascio": [
+  7.0,
+  true,
+  "Ladyhawke castle, epic setting"
+ ],
+ "gem:campo-imperatore": [
+  7.5,
+  true,
+  "Vast highland steppe, Corno Grande"
+ ],
+ "gem:scanno": [
+  6.5,
+  true,
+  "Heart-shaped lake, borgo charm"
+ ],
+ "gem:sulmona": [
+  6.5,
+  true,
+  "Handsome base for Majella and Gran Sasso"
+ ],
+ "gem:monopoli": [
+  7.0,
+  false,
+  "Authentic port town beside Polignano"
+ ],
+ "gem:locorotondo": [
+  6.5,
+  false,
+  "Valle d'Itria's whitest borgo"
+ ],
+ "gem:trani": [
+  6.5,
+  false,
+  "Cathedral-on-the-sea, lively port"
+ ],
+ "gem:castel-del-monte": [
+  7.0,
+  false,
+  "UNESCO octagon, Puglia's landmark"
+ ],
+ "gem:santa-maria-di-leuca": [
+  6.5,
+  false,
+  "Finibus terrae cape and grottoes"
+ ],
+ "gem:tremiti-islands": [
+  6.5,
+  true,
+  "Adriatic's clearest water"
+ ],
+ "gem:maratea": [
+  7.0,
+  true,
+  "Amalfi drama minus the crowds"
+ ],
+ "gem:castelmezzano": [
+  7.0,
+  true,
+  "Volo dell'Angelo, rock-spire borgo"
+ ],
+ "gem:craco": [
+  6.5,
+  true,
+  "Italy's most striking ghost town"
+ ],
+ "gem:scilla": [
+  7.5,
+  false,
+  "Chianalea, Calabria's Venice"
+ ],
+ "gem:gerace": [
+  6.5,
+  true,
+  "Calabria's best medieval borgo"
+ ],
+ "gem:le-castella": [
+  6.5,
+  true,
+  "Castle-in-the-sea photo icon"
+ ],
+ "gem:agrigento-valle-dei-templi": [
+  8.0,
+  false,
+  "Best Greek ruins in Italy"
+ ],
+ "gem:scala-dei-turchi": [
+  7.5,
+  false,
+  "Sicily's signature white cliff"
+ ],
+ "gem:favignana": [
+  7.0,
+  false,
+  "Cala Rossa, easy island escape"
+ ],
+ "gem:lipari-aeolian": [
+  7.5,
+  false,
+  "UNESCO Aeolian archipelago hub"
+ ],
+ "gem:stromboli": [
+  8.0,
+  false,
+  "Live volcano show at sea"
+ ],
+ "gem:modica": [
+  7.0,
+  false,
+  "Baroque canyon city, chocolate"
+ ],
+ "gem:marzamemi": [
+  6.5,
+  true,
+  "Sicily's prettiest fishing hamlet"
+ ],
+ "gem:san-vito-lo-capo": [
+  7.5,
+  false,
+  "Sicily's best sand beach"
+ ],
+ "gem:piazza-armerina": [
+  7.5,
+  false,
+  "World's finest Roman mosaics"
+ ],
+ "gem:mount-etna": [
+  8.5,
+  false,
+  "Europe's great active volcano"
+ ],
+ "gem:caltagirone": [
+  6.5,
+  false,
+  "Maiolica staircase, UNESCO baroque"
+ ],
+ "gem:cala-gonone": [
+  8.0,
+  false,
+  "Gateway to Sardinia's wildest coast"
+ ],
+ "gem:su-nuraxi": [
+  6.5,
+  true,
+  "UNESCO Bronze Age fortress"
+ ],
+ "gem:castelsardo": [
+  6.5,
+  true,
+  "Sardinia's best clifftop borgo"
+ ],
+ "gem:bosa": [
+  6.5,
+  true,
+  "Sardinia's most colourful town"
+ ],
+ "gem:stintino-la-pelosa": [
+  7.5,
+  false,
+  "One of Europe's finest beaches"
+ ],
+ "gem:chia": [
+  7.0,
+  false,
+  "South Sardinia's dream beaches"
+ ],
+ "gem:carloforte": [
+  6.5,
+  true,
+  "Unique Genoese island culture"
+ ],
+ "gem:sestri-levante": [
+  7.0,
+  false,
+  "Baia del Silenzio, Riviera charm"
+ ],
+ "gem:finale-ligure": [
+  6.5,
+  true,
+  "Borgo, beaches and famous climbing"
+ ],
+ "gem:dolceacqua": [
+  6.5,
+  true,
+  "Monet's bridge, Rossese wine"
+ ],
+ "gem:comino": [
+  7.0,
+  false,
+  "Blue Lagoon, Malta's clearest water"
+ ],
+ "gem:atlantic-ocean-road": [
+  7.6,
+  false,
+  "Iconic engineering drive over the ocean"
+ ],
+ "gem:trollstigen": [
+  7.9,
+  false,
+  "Norway's most dramatic serpentine road"
+ ],
+ "gem:jotunheimen": [
+  8.0,
+  false,
+  "Scandinavia's highest peaks, Besseggen"
+ ],
+ "gem:kjerag": [
+  7.8,
+  false,
+  "Kjeragbolten boulder above Lysefjord"
+ ],
+ "gem:voringsfossen": [
+  7.4,
+  false,
+  "182 m falls, dramatic canyon walkways"
+ ],
+ "gem:loen-nordfjord": [
+  7.5,
+  false,
+  "Skylift, Lovatnet, glacier scenery"
+ ],
+ "gem:briksdalsbreen": [
+  7.2,
+  false,
+  "Most accessible glacier arm walk"
+ ],
+ "gem:runde": [
+  6.4,
+  true,
+  "Puffin cliffs an easy hop from Alesund"
+ ],
+ "gem:saltstraumen": [
+  6.4,
+  true,
+  "World's strongest maelstrom"
+ ],
+ "gem:lyngen-alps": [
+  7.1,
+  true,
+  "Fjord-to-summit Arctic alpine scenery"
+ ],
+ "gem:sommaroy": [
+  6.4,
+  true,
+  "Caribbean-look beaches above the circle"
+ ],
+ "gem:nordkapp": [
+  7.4,
+  false,
+  "Europe's iconic northernmost point"
+ ],
+ "gem:vesteralen-andenes": [
+  7.0,
+  true,
+  "Norway's best whale watching"
+ ],
+ "gem:lillehammer": [
+  6.5,
+  false,
+  "Olympic heritage plus Maihaugen"
+ ],
+ "gem:fredrikstad": [
+  6.4,
+  true,
+  "Intact 17th-century fortified old town"
+ ],
+ "gem:rjukan": [
+  6.6,
+  true,
+  "UNESCO heritage and Gaustatoppen views"
+ ],
+ "gem:risor": [
+  6.2,
+  true,
+  "Best-preserved white wooden town"
+ ],
+ "gem:kristiansand": [
+  6.4,
+  false,
+  "Family-friendly capital of the south"
+ ],
+ "gem:hoddevik": [
+  6.5,
+  true,
+  "Norway's poster surf beach"
+ ],
+ "gem:oland": [
+  6.6,
+  true,
+  "UNESCO alvar plain and beach coast"
+ ],
+ "gem:high-coast": [
+  7.0,
+  true,
+  "UNESCO uplift coast, Skuleskogen park"
+ ],
+ "gem:are-sweden": [
+  6.8,
+  false,
+  "Scandinavia's top ski resort"
+ ],
+ "gem:smogen": [
+  6.6,
+  true,
+  "Iconic boardwalk and fresh seafood"
+ ],
+ "gem:koster-islands": [
+  6.5,
+  true,
+  "Marine national park island idyll"
+ ],
+ "gem:sandhamn": [
+  6.5,
+  true,
+  "Classic outer-archipelago island"
+ ],
+ "gem:faro-gotland": [
+  6.6,
+  true,
+  "Rauk sea stacks and Bergman lore"
+ ],
+ "gem:lund": [
+  6.8,
+  false,
+  "Great cathedral, historic university"
+ ],
+ "gem:kalmar": [
+  6.7,
+  false,
+  "One of Sweden's finest castles"
+ ],
+ "gem:karlskrona": [
+  6.5,
+  true,
+  "UNESCO naval city on islands"
+ ],
+ "gem:molle-kullaberg": [
+  6.5,
+  true,
+  "Kullaberg cliffs and sea baths"
+ ],
+ "gem:sigtuna": [
+  6.3,
+  true,
+  "Oldest town, minutes from Arlanda"
+ ],
+ "gem:vadstena": [
+  6.3,
+  true,
+  "Castle-and-abbey lakeside gem"
+ ],
+ "gem:gammelstad": [
+  6.1,
+  true,
+  "Unique UNESCO church town"
+ ],
+ "gem:nagu-archipelago": [
+  6.6,
+  true,
+  "Archipelago Sea ring-road hub"
+ ],
+ "gem:koli": [
+  7.0,
+  true,
+  "The classic Finnish lake panorama"
+ ],
+ "gem:oulanka": [
+  6.8,
+  true,
+  "Finland's top wilderness trail"
+ ],
+ "gem:levi": [
+  6.5,
+  false,
+  "Top Lapland ski and aurora base"
+ ],
+ "gem:inari": [
+  6.6,
+  true,
+  "Sami heritage on wild Lake Inari"
+ ],
+ "gem:nuuksio": [
+  6.1,
+  true,
+  "Easy wilderness escape from Helsinki"
+ ],
+ "gem:blue-lagoon": [
+  7.5,
+  false,
+  "World-famous geothermal spa"
+ ],
+ "gem:landmannalaugar": [
+  8.0,
+  false,
+  "Iceland's painted Highlands"
+ ],
+ "gem:thorsmork": [
+  7.4,
+  true,
+  "Hidden glacier valley, epic hikes"
+ ],
+ "gem:kerlingarfjoll": [
+  7.3,
+  true,
+  "Geothermal valleys without crowds"
+ ],
+ "gem:westfjords": [
+  7.6,
+  true,
+  "Dynjandi and Latrabjarg, no crowds"
+ ],
+ "gem:seydisfjordur": [
+  7.0,
+  true,
+  "Prettiest town in East Iceland"
+ ],
+ "gem:studlagil": [
+  7.0,
+  true,
+  "Basalt canyon only revealed in 2009"
+ ],
+ "gem:dettifoss": [
+  7.6,
+  false,
+  "Most powerful falls in Europe"
+ ],
+ "gem:asbyrgi": [
+  6.6,
+  true,
+  "Mythic forested horseshoe canyon"
+ ],
+ "gem:hraunfossar": [
+  6.5,
+  true,
+  "Lava falls plus Barnafoss rapids"
+ ],
+ "gem:kalsoy": [
+  7.0,
+  true,
+  "Kallur lighthouse cliff hike"
+ ],
+ "gem:suduroy": [
+  6.4,
+  true,
+  "Dramatic cliffs, almost no tourists"
+ ],
+ "gem:vestmanna": [
+  6.3,
+  true,
+  "Classic bird-cliff boat tour"
+ ],
+ "gem:babia-gora": [
+  6.5,
+  true,
+  "Top Beskid summit, huge panoramas"
+ ],
+ "gem:frombork": [
+  6.2,
+  true,
+  "Copernicus cathedral on the lagoon"
+ ],
+ "gem:chelmno": [
+  6.0,
+  true,
+  "Poland's most complete town walls"
+ ],
+ "gem:tarnow": [
+  6.0,
+  true,
+  "Renaissance square without crowds"
+ ],
+ "gem:wigry": [
+  6.2,
+  true,
+  "Lakeside monastery, clear lakes"
+ ],
+ "gem:crooked-forest": [
+  6.0,
+  true,
+  "Famous unexplained bent pines"
+ ],
+ "gem:rumsiskes": [
+  6.0,
+  true,
+  "Huge open-air village museum"
+ ],
+ "gem:pavilosta": [
+  6.1,
+  true,
+  "Latvia's laid-back surf harbour"
+ ],
+ "gem:rummu-quarry": [
+  6.0,
+  true,
+  "Swim over a sunken prison"
+ ],
+ "gem:otepaa": [
+  6.0,
+  true,
+  "Hilly lake and ski country"
+ ],
+ "gem:morskie-oko": [
+  8.0,
+  false,
+  "Iconic Tatra lake, Poland's top mountain sight"
+ ],
+ "gem:bieszczady": [
+  6.9,
+  true,
+  "Wildest Polish mountains, crowd-free ridges"
+ ],
+ "gem:hel-peninsula": [
+  6.8,
+  false,
+  "Famous spit, beaches plus kitesurfing"
+ ],
+ "gem:slowinski-dunes": [
+  7.2,
+  false,
+  "Unique shifting desert dunes by the sea"
+ ],
+ "gem:sopot": [
+  7.0,
+  false,
+  "Classic resort, grand pier and nightlife"
+ ],
+ "gem:swinoujscie": [
+  6.4,
+  false,
+  "Huge beach, spa town, island forts"
+ ],
+ "gem:kolobrzeg": [
+  6.1,
+  false,
+  "Major spa resort, wide beaches"
+ ],
+ "gem:karpacz": [
+  7.0,
+  false,
+  "Sniezka summit and Karkonosze trails"
+ ],
+ "gem:szczeliniec-wielki": [
+  7.0,
+  true,
+  "Rock labyrinth with sweeping views"
+ ],
+ "gem:ksiaz-castle": [
+  6.7,
+  true,
+  "Monumental castle above a gorge"
+ ],
+ "gem:bialowieza": [
+  7.3,
+  false,
+  "Primeval UNESCO forest with bison"
+ ],
+ "gem:ojcow": [
+  6.6,
+  true,
+  "Cliffs, caves, castles near Krakow"
+ ],
+ "gem:ogrodzieniec": [
+  6.4,
+  true,
+  "Most dramatic Eagles' Nests ruin"
+ ],
+ "gem:lancut": [
+  6.3,
+  true,
+  "Top Polish palace interiors"
+ ],
+ "gem:zalipie": [
+  6.2,
+  true,
+  "Unique painted folk village"
+ ],
+ "gem:czestochowa": [
+  6.2,
+  false,
+  "National shrine of the Black Madonna"
+ ],
+ "gem:przemysl": [
+  6.0,
+  true,
+  "Fortress ring and old-town charm"
+ ],
+ "gem:elblag-canal": [
+  6.1,
+  true,
+  "Ships travel overland on rails"
+ ],
+ "gem:aukstaitija": [
+  6.5,
+  true,
+  "Lake-dotted heartland, canoe country"
+ ],
+ "gem:anyksciai": [
+  6.0,
+  true,
+  "Treetop walk and river valley"
+ ],
+ "gem:zemaitija": [
+  6.0,
+  true,
+  "Lake, forest and missile silo museum"
+ ],
+ "gem:cape-kolka": [
+  6.4,
+  true,
+  "Two seas meet at a wild cape"
+ ],
+ "gem:kemeri": [
+  6.3,
+  true,
+  "Best bog boardwalk near Riga"
+ ],
+ "gem:daugavpils": [
+  6.0,
+  true,
+  "Rothko centre in a huge fortress"
+ ],
+ "gem:hiiumaa": [
+  6.4,
+  true,
+  "Lighthouses and empty island calm"
+ ],
+ "gem:muhu": [
+  6.3,
+  true,
+  "Best-kept village, island idyll"
+ ],
+ "gem:soomaa": [
+  6.4,
+  true,
+  "Fifth-season canoe floods"
+ ],
+ "gem:kihnu": [
+  6.2,
+  true,
+  "UNESCO living island culture"
+ ],
+ "gem:narva": [
+  6.1,
+  true,
+  "Castle face-off on EU's edge"
+ ],
+ "gem:bucaco": [
+  6.7,
+  true,
+  "Enchanted forest, palace folly"
+ ],
+ "gem:conimbriga": [
+  6.5,
+  true,
+  "Finest Roman mosaics in Portugal"
+ ],
+ "gem:almourol": [
+  6.4,
+  true,
+  "Storybook castle on a river isle"
+ ],
+ "gem:trancoso": [
+  6.2,
+  true,
+  "Complete walls, medieval streets"
+ ],
+ "gem:castelo-rodrigo": [
+  6.3,
+  true,
+  "Hilltop village, endless views"
+ ],
+ "gem:alvao-fisgas": [
+  6.3,
+  true,
+  "One of Europe's tallest waterfalls"
+ ],
+ "gem:miranda-do-douro": [
+  6.3,
+  true,
+  "Douro canyon, unique culture"
+ ],
+ "gem:chaves": [
+  6.2,
+  true,
+  "Roman bridge, hot springs, N2 start"
+ ],
+ "gem:alcoutim": [
+  6.2,
+  true,
+  "Border river idyll, zipline to Spain"
+ ],
+ "gem:setubal": [
+  6.3,
+  false,
+  "Dolphins, market, real Portugal"
+ ],
+ "gem:vila-franca-islet": [
+  6.5,
+  true,
+  "Swim inside a sunken crater"
+ ],
+ "gem:graciosa-azores": [
+  6.3,
+  true,
+  "Volcanic cave lake, zero crowds"
+ ],
+ "gem:fanal-madeira": [
+  6.8,
+  true,
+  "Mist-forest straight from a myth"
+ ],
+ "gem:cascais": [
+  7.0,
+  false,
+  "Riviera polish, beaches and Guincho surf"
+ ],
+ "gem:arrabida": [
+  7.5,
+  false,
+  "Turquoise coves rival the Med"
+ ],
+ "gem:sesimbra": [
+  6.8,
+  false,
+  "Castle, calm bay, superb seafood"
+ ],
+ "gem:azenhas-do-mar": [
+  6.6,
+  true,
+  "Clifftop village postcard"
+ ],
+ "gem:mafra": [
+  6.9,
+  false,
+  "UNESCO palace, epic library"
+ ],
+ "gem:peniche": [
+  6.6,
+  false,
+  "World-class surf plus Berlengas boats"
+ ],
+ "gem:berlengas": [
+  7.0,
+  true,
+  "Sea-fort islet, pristine reserve"
+ ],
+ "gem:sao-martinho-do-porto": [
+  6.2,
+  true,
+  "Sheltered scallop bay, family calm"
+ ],
+ "gem:batalha": [
+  7.2,
+  false,
+  "UNESCO Gothic masterpiece"
+ ],
+ "gem:alcobaca": [
+  7.0,
+  false,
+  "UNESCO abbey, tragic royal tombs"
+ ],
+ "gem:fatima": [
+  6.4,
+  false,
+  "World pilgrimage site"
+ ],
+ "gem:silves": [
+  6.5,
+  false,
+  "Algarve's grandest Moorish castle"
+ ],
+ "gem:praia-da-falesia": [
+  6.8,
+  false,
+  "Red-cliff beach, ranked Europe's best"
+ ],
+ "gem:albufeira": [
+  6.2,
+  false,
+  "Big beaches, big energy"
+ ],
+ "gem:cacela-velha": [
+  6.5,
+  true,
+  "Lagoon view worth the trip alone"
+ ],
+ "gem:monchique": [
+  6.2,
+  true,
+  "Spa springs and summit panoramas"
+ ],
+ "gem:aljezur": [
+  6.6,
+  true,
+  "Castle village, wild surf coast"
+ ],
+ "gem:carrapateira": [
+  6.6,
+  true,
+  "Untamed dune beaches, no crowds"
+ ],
+ "gem:odeceixe": [
+  6.8,
+  true,
+  "River-meets-ocean wonder beach"
+ ],
+ "gem:zambujeira-do-mar": [
+  6.6,
+  true,
+  "Clifftop village, dramatic coast"
+ ],
+ "gem:vila-nova-de-milfontes": [
+  6.8,
+  true,
+  "Estuary beaches, laid-back charm"
+ ],
+ "gem:porto-covo": [
+  6.3,
+  true,
+  "Pocket coves and island fort"
+ ],
+ "gem:mertola": [
+  6.8,
+  true,
+  "Living museum of Islamic Portugal"
+ ],
+ "gem:marvao": [
+  7.2,
+  true,
+  "Portugal's ultimate eyrie village"
+ ],
+ "gem:castelo-de-vide": [
+  6.7,
+  true,
+  "Jewish quarter, mountain springs"
+ ],
+ "gem:estremoz": [
+  6.4,
+  false,
+  "Marble town, legendary market"
+ ],
+ "gem:vila-vicosa": [
+  6.4,
+  true,
+  "Ducal palace in a marble town"
+ ],
+ "gem:sortelha": [
+  6.8,
+  true,
+  "Best-preserved medieval village"
+ ],
+ "gem:almeida": [
+  6.4,
+  true,
+  "Star-fort geometry from above"
+ ],
+ "gem:belmonte": [
+  6.2,
+  true,
+  "Crypto-Jewish heritage, castle"
+ ],
+ "gem:serra-da-estrela": [
+  7.3,
+  false,
+  "Glacial valleys, highest peaks"
+ ],
+ "gem:lousa": [
+  6.3,
+  true,
+  "Schist hamlets in mountain woods"
+ ],
+ "gem:arouca": [
+  7.2,
+  false,
+  "Gorge walkways, record footbridge"
+ ],
+ "gem:amarante": [
+  6.7,
+  false,
+  "Riverside baroque beauty"
+ ],
+ "gem:lamego": [
+  6.8,
+  false,
+  "Iconic stairway, Douro wines"
+ ],
+ "gem:foz-coa": [
+  6.8,
+  true,
+  "UNESCO Paleolithic rock art"
+ ],
+ "gem:ponte-de-lima": [
+  6.8,
+  true,
+  "Roman bridge, oldest town charm"
+ ],
+ "gem:valenca": [
+  6.5,
+  true,
+  "Twin ramparts over the Minho"
+ ],
+ "gem:peneda-geres": [
+  7.8,
+  false,
+  "Wild peaks, lagoons, waterfalls"
+ ],
+ "gem:braganca": [
+  6.4,
+  true,
+  "Intact citadel, wildest corner"
+ ],
+ "gem:sete-cidades": [
+  8.3,
+  false,
+  "Twin crater lakes, wonder of PT"
+ ],
+ "gem:furnas": [
+  7.6,
+  false,
+  "Geothermal pools, cozido, gardens"
+ ],
+ "gem:pico-azores": [
+  7.8,
+  false,
+  "Volcano summit, lava vineyards"
+ ],
+ "gem:faial-azores": [
+  7.2,
+  false,
+  "Capelinhos moonscape, sailors' hub"
+ ],
+ "gem:sao-jorge-azores": [
+  7.4,
+  true,
+  "Faja cliffs, Azores' best hikes"
+ ],
+ "gem:flores-azores": [
+  8.0,
+  true,
+  "Waterfall island at Europe's end"
+ ],
+ "gem:santa-maria-azores": [
+  6.5,
+  true,
+  "Azorean sun and real beaches"
+ ],
+ "gem:porto-moniz": [
+  7.2,
+  false,
+  "Lava pools in the open ocean"
+ ],
+ "gem:ponta-de-sao-lourenco": [
+  7.5,
+  false,
+  "Painted cliffs, best coastal hike"
+ ],
+ "gem:pico-do-arieiro": [
+  8.0,
+  false,
+  "Above-cloud ridge to Pico Ruivo"
+ ],
+ "gem:santana-madeira": [
+  6.7,
+  false,
+  "Thatched houses, laurisilva walks"
+ ],
+ "gem:curral-das-freiras": [
+  6.7,
+  true,
+  "Village in a mountain cauldron"
+ ],
+ "gem:camara-de-lobos": [
+  6.4,
+  false,
+  "Fishing bay plus Cabo Girao cliff"
+ ],
+ "gem:rabacal-25-fontes": [
+  7.4,
+  false,
+  "Definitive levada experience"
+ ],
+ "gem:porto-santo": [
+  7.0,
+  false,
+  "One of Iberia's great beaches"
+ ],
+ "gem:madriu-valley": [
+  6.6,
+  true,
+  "UNESCO valley without roads"
+ ],
+ "gem:soldeu": [
+  6.3,
+  false,
+  "Best ski base, prettiest valley"
+ ],
+ "gem:sapanta-merry-cemetery": [
+  7.0,
+  true,
+  "World-famous folk-art cemetery"
+ ],
+ "gem:lake-sfanta-ana": [
+  6.5,
+  true,
+  "Unique crater lake, serene setting"
+ ],
+ "gem:densus-church": [
+  6.0,
+  true,
+  "Strange ancient church of Roman spolia"
+ ],
+ "gem:prohodna": [
+  6.5,
+  true,
+  "Surreal Eyes of God skylights"
+ ],
+ "gem:devils-bridge-ardino": [
+  6.0,
+  true,
+  "Legend-laden bridge in wild gorge"
+ ],
+ "gem:pobiti-kamani": [
+  6.0,
+  true,
+  "Rare natural stone-pillar desert"
+ ],
+ "gem:kovachevitsa": [
+  6.0,
+  true,
+  "Best-preserved Rhodope stone village"
+ ],
+ "gem:central-balkan": [
+  6.5,
+  true,
+  "UNESCO-listed forests, top waterfall hike"
+ ],
+ "gem:tipova": [
+  6.0,
+  true,
+  "Dramatic cliff monastery, few visitors"
+ ],
+ "gem:tiraspol": [
+  6.5,
+  true,
+  "One-of-a-kind Soviet time-capsule state"
+ ],
+ "gem:biertan": [
+  7.5,
+  false,
+  "Most famous Saxon fortified church, UNESCO"
+ ],
+ "gem:turda-salt-mine": [
+  7.5,
+  false,
+  "World-famous salt mine plus Turda Gorge"
+ ],
+ "gem:rimetea": [
+  6.5,
+  true,
+  "Storybook village, dramatic crag backdrop"
+ ],
+ "gem:corvin-castle": [
+  7.5,
+  false,
+  "One of Europe's great Gothic castles"
+ ],
+ "gem:sarmizegetusa-regia": [
+  6.5,
+  true,
+  "UNESCO Dacian capital, atmospheric ruins"
+ ],
+ "gem:retezat": [
+  7.5,
+  true,
+  "Spectacular glacial lakes, few foreign visitors"
+ ],
+ "gem:apuseni-scarisoara": [
+  7.0,
+  true,
+  "Underground glacier, unspoilt karst range"
+ ],
+ "gem:baile-herculane": [
+  6.5,
+  true,
+  "Grand decaying spa, superb gorge setting"
+ ],
+ "gem:iron-gates": [
+  7.0,
+  true,
+  "Europe's mightiest river gorge, Decebalus"
+ ],
+ "gem:danube-delta": [
+  8.0,
+  false,
+  "Continent-scale wilderness, UNESCO biosphere"
+ ],
+ "gem:vama-veche": [
+  6.5,
+  true,
+  "Cult free-spirit beach scene, unknown abroad"
+ ],
+ "gem:sucevita": [
+  7.5,
+  false,
+  "Finest painted monastery, UNESCO"
+ ],
+ "gem:breb": [
+  6.5,
+  true,
+  "Living rural time capsule loved by insiders"
+ ],
+ "gem:barsana": [
+  6.5,
+  true,
+  "Iconic wooden monastery, UNESCO church"
+ ],
+ "gem:viseu-de-sus": [
+  7.0,
+  true,
+  "Unique working steam forestry railway"
+ ],
+ "gem:bicaz-gorge": [
+  7.0,
+  true,
+  "Romania's most dramatic drivable gorge"
+ ],
+ "gem:piatra-craiului": [
+  7.0,
+  true,
+  "Signature limestone ridge, wild gorges"
+ ],
+ "gem:targu-jiu": [
+  6.5,
+  true,
+  "World-class Brancusi ensemble, UNESCO"
+ ],
+ "gem:horezu": [
+  6.0,
+  true,
+  "UNESCO monastery plus craft-pottery town"
+ ],
+ "gem:berca-mud-volcanoes": [
+  6.0,
+  true,
+  "Rare lunar landscape, easy detour"
+ ],
+ "gem:cheile-nerei": [
+  6.5,
+  true,
+  "Pristine turquoise lake and gorges"
+ ],
+ "gem:seven-rila-lakes": [
+  8.0,
+  false,
+  "Bulgaria's most spectacular alpine hike"
+ ],
+ "gem:shiroka-laka": [
+  6.5,
+  true,
+  "Preserved architecture and folk reserve"
+ ],
+ "gem:trigrad": [
+  7.0,
+  true,
+  "Marble canyon, underground waterfall"
+ ],
+ "gem:wonderful-bridges": [
+  6.5,
+  true,
+  "Huge natural rock arches at 1450 m"
+ ],
+ "gem:krushuna-falls": [
+  6.5,
+  true,
+  "Bulgaria's prettiest waterfall cascade"
+ ],
+ "gem:buzludzha": [
+  7.0,
+  true,
+  "Europe's most surreal abandoned monument"
+ ],
+ "gem:kazanlak": [
+  6.5,
+  true,
+  "UNESCO Thracian tomb, rose festival"
+ ],
+ "gem:tryavna": [
+  6.5,
+  true,
+  "Intact National Revival townscape"
+ ],
+ "gem:ruse": [
+  6.5,
+  true,
+  "Grand Danube architecture, rock churches"
+ ],
+ "gem:kaliakra": [
+  7.0,
+  false,
+  "Dramatic sea cliffs, medieval legend"
+ ],
+ "gem:sinemorets": [
+  7.0,
+  true,
+  "Bulgaria's most beautiful wild beaches"
+ ],
+ "gem:tyulenovo": [
+  6.5,
+  true,
+  "Sea arches and cliff jumping, uncrowded"
+ ],
+ "gem:perperikon": [
+  7.0,
+  true,
+  "Vast ancient rock city, few tourists"
+ ],
+ "gem:bachkovo": [
+  6.5,
+  false,
+  "Major historic monastery near Plovdiv"
+ ],
+ "gem:madara-rider": [
+  6.0,
+  true,
+  "Unique UNESCO rock relief"
+ ],
+ "gem:milestii-mici": [
+  6.5,
+  true,
+  "World-record underground wine city"
+ ],
+ "gem:soroca": [
+  6.0,
+  true,
+  "Moldova's best medieval fortress"
+ ],
+ "gem:saharna": [
+  6.0,
+  true,
+  "Monastery, waterfalls, Dniester scenery"
+ ],
+ "gem:tossa-de-mar": [
+  7.4,
+  false,
+  "Only fortified medieval town on the Catalan coast"
+ ],
+ "gem:calella-de-palafrugell": [
+  7.2,
+  false,
+  "Costa Brava's prettiest cove village"
+ ],
+ "gem:begur": [
+  7.0,
+  false,
+  "Castle views plus turquoise coves"
+ ],
+ "gem:peratallada": [
+  6.8,
+  true,
+  "Perfectly preserved carved-stone village"
+ ],
+ "gem:montserrat": [
+  8.0,
+  false,
+  "Iconic monastery amid surreal rock spires"
+ ],
+ "gem:aiguestortes": [
+  7.8,
+  false,
+  "Alpine lakeland of the Pyrenees"
+ ],
+ "gem:vall-de-boi": [
+  7.0,
+  true,
+  "UNESCO Romanesque valley by Aiguestortes"
+ ],
+ "gem:siurana": [
+  6.8,
+  true,
+  "Clifftop village, world-class crag"
+ ],
+ "gem:ainsa": [
+  7.2,
+  true,
+  "The Pyrenees' best medieval square"
+ ],
+ "gem:alquezar": [
+  7.3,
+  true,
+  "Canyon village, top canyoning in Spain"
+ ],
+ "gem:teruel": [
+  6.9,
+  true,
+  "UNESCO Mudejar ensemble, no crowds"
+ ],
+ "gem:monasterio-de-piedra": [
+  7.0,
+  true,
+  "Waterfall garden around a monastery"
+ ],
+ "gem:bardenas-reales": [
+  7.5,
+  true,
+  "Europe's most striking desert badlands"
+ ],
+ "gem:olite": [
+  6.8,
+  true,
+  "Fairy-tale royal castle of Navarre"
+ ],
+ "gem:laguardia": [
+  7.0,
+  true,
+  "Rioja's prettiest walled wine town"
+ ],
+ "gem:gaztelugatxe": [
+  8.0,
+  false,
+  "Iconic islet stairway, GoT Dragonstone"
+ ],
+ "gem:zumaia": [
+  7.4,
+  false,
+  "Unique flysch cliffs, filmed for GoT"
+ ],
+ "gem:getaria": [
+  6.8,
+  true,
+  "Best fish grills on the Basque coast"
+ ],
+ "gem:picos-de-europa": [
+  8.2,
+  false,
+  "Spain's most dramatic mountain park"
+ ],
+ "gem:comillas": [
+  6.9,
+  false,
+  "Gaudi by the sea, handsome old town"
+ ],
+ "gem:san-vicente-de-la-barquera": [
+  6.7,
+  false,
+  "Postcard harbour with Picos backdrop"
+ ],
+ "gem:llanes": [
+  7.1,
+  false,
+  "Best cove coastline in Asturias"
+ ],
+ "gem:ribadesella": [
+  6.8,
+  false,
+  "Lively river-mouth beach town"
+ ],
+ "gem:luarca": [
+  6.6,
+  true,
+  "Unspoilt white port town"
+ ],
+ "gem:cies-islands": [
+  8.2,
+  false,
+  "Rodas: often ranked world's best beach"
+ ],
+ "gem:as-catedrais": [
+  7.8,
+  false,
+  "Spain's most spectacular sea arches"
+ ],
+ "gem:fisterra": [
+  7.0,
+  false,
+  "Land's-end cape of the Camino"
+ ],
+ "gem:ribeira-sacra": [
+  7.3,
+  true,
+  "Vineyard canyon, monastic Galicia"
+ ],
+ "gem:lugo": [
+  6.8,
+  true,
+  "Only intact Roman city wall"
+ ],
+ "gem:las-medulas": [
+  7.2,
+  true,
+  "Surreal red Roman mining landscape"
+ ],
+ "gem:burgos": [
+  7.3,
+  false,
+  "Gothic cathedral masterpiece, UNESCO"
+ ],
+ "gem:leon": [
+  7.2,
+  false,
+  "Finest stained glass in Europe"
+ ],
+ "gem:el-escorial": [
+  7.5,
+  false,
+  "Spain's grandest royal complex"
+ ],
+ "gem:consuegra": [
+  6.8,
+  false,
+  "The definitive Quixote windmill ridge"
+ ],
+ "gem:pedraza": [
+  7.0,
+  true,
+  "Castile's most flawless village"
+ ],
+ "gem:siguenza": [
+  6.7,
+  true,
+  "Sleeping medieval hill town"
+ ],
+ "gem:trujillo": [
+  7.3,
+  false,
+  "Best plaza in Extremadura"
+ ],
+ "gem:guadalupe": [
+  7.0,
+  true,
+  "UNESCO monastery village"
+ ],
+ "gem:monfrague": [
+  7.2,
+  true,
+  "Europe's top vulture spectacle"
+ ],
+ "gem:la-alberca": [
+  6.8,
+  true,
+  "Storybook mountain village"
+ ],
+ "gem:arcos-de-la-frontera": [
+  7.2,
+  false,
+  "Gateway pueblo blanco on a cliff"
+ ],
+ "gem:grazalema": [
+  7.0,
+  true,
+  "Prettiest base in the white sierras"
+ ],
+ "gem:zahara-de-la-sierra": [
+  6.9,
+  true,
+  "Most scenic pueblo blanco setting"
+ ],
+ "gem:carmona": [
+  6.6,
+  true,
+  "Ancient town 30 min from Seville"
+ ],
+ "gem:el-rocio": [
+  6.8,
+  true,
+  "Wild-west village, flamingo marshes"
+ ],
+ "gem:aracena": [
+  6.5,
+  true,
+  "Best show cave plus iberico ham"
+ ],
+ "gem:antequera": [
+  7.2,
+  false,
+  "UNESCO dolmens plus El Torcal karst"
+ ],
+ "gem:caminito-del-rey": [
+  7.8,
+  false,
+  "Spain's most thrilling gorge walk"
+ ],
+ "gem:alpujarras-pampaneira": [
+  7.2,
+  true,
+  "Moorish mountain villages, big hikes"
+ ],
+ "gem:ubeda": [
+  7.2,
+  true,
+  "Renaissance UNESCO showpiece"
+ ],
+ "gem:cazorla": [
+  7.0,
+  true,
+  "Gateway to Spain's biggest wild park"
+ ],
+ "gem:mojacar": [
+  6.7,
+  false,
+  "Hilltop pueblo above desert coast"
+ ],
+ "gem:cabo-de-gata": [
+  7.8,
+  false,
+  "Spain's wildest mainland beaches"
+ ],
+ "gem:morella": [
+  7.2,
+  true,
+  "Spectacular walled fortress town"
+ ],
+ "gem:altea": [
+  7.0,
+  false,
+  "Prettiest old town on Costa Blanca"
+ ],
+ "gem:calpe": [
+  7.2,
+  false,
+  "Iconic sea rock, twin beaches"
+ ],
+ "gem:guadalest": [
+  7.0,
+  false,
+  "Improbable castle village, jade lake"
+ ],
+ "gem:xativa": [
+  6.7,
+  true,
+  "Vast castle ridge, Borgia history"
+ ],
+ "gem:valldemossa": [
+  7.4,
+  false,
+  "Mallorca's loveliest mountain town"
+ ],
+ "gem:deia": [
+  7.2,
+  false,
+  "Artists' village on Tramuntana coast"
+ ],
+ "gem:cap-de-formentor": [
+  7.5,
+  false,
+  "Mallorca's most dramatic viewpoint"
+ ],
+ "gem:sa-calobra": [
+  7.5,
+  false,
+  "Canyon-mouth cove, epic road"
+ ],
+ "gem:alcudia": [
+  6.9,
+  false,
+  "History plus Mallorca's best beach"
+ ],
+ "gem:es-trenc": [
+  7.0,
+  false,
+  "The island's best natural beach"
+ ],
+ "gem:la-gomera": [
+  7.8,
+  false,
+  "UNESCO laurisilva, unspoilt island"
+ ],
+ "gem:la-graciosa": [
+  7.0,
+  true,
+  "Car-free island idyll"
+ ],
+ "gem:torridon": [
+  7.0,
+  true,
+  "Scotland's grandest hill scenery"
+ ],
+ "gem:north-berwick": [
+  6.5,
+  true,
+  "Bass Rock + beaches near Edinburgh"
+ ],
+ "gem:culross": [
+  6.0,
+  true,
+  "Time-capsule Fife burgh"
+ ],
+ "gem:pitlochry": [
+  6.0,
+  false,
+  "Classic Highland resort base"
+ ],
+ "gem:st-abbs": [
+  6.0,
+  true,
+  "Seabird cliffs + top UK diving"
+ ],
+ "gem:sandwood-bay": [
+  7.0,
+  true,
+  "Wildest beach in Britain"
+ ],
+ "gem:wells-next-the-sea": [
+  6.5,
+  true,
+  "Norfolk's finest sands"
+ ],
+ "gem:ludlow": [
+  6.5,
+  true,
+  "Foodie medieval market town"
+ ],
+ "gem:shaftesbury": [
+  6.0,
+  true,
+  "Iconic Gold Hill view"
+ ],
+ "gem:wells-somerset": [
+  6.5,
+  false,
+  "Stunning cathedral ensemble"
+ ],
+ "gem:polperro": [
+  6.5,
+  true,
+  "Postcard smugglers' harbour"
+ ],
+ "gem:woolacombe": [
+  6.5,
+  false,
+  "Multi-award-winning surf beach"
+ ],
+ "gem:symonds-yat": [
+  6.5,
+  true,
+  "Wye Valley's iconic viewpoint"
+ ],
+ "gem:ironbridge": [
+  6.0,
+  false,
+  "UNESCO industrial cradle"
+ ],
+ "gem:flamborough-head": [
+  6.5,
+  true,
+  "Puffin-packed chalk cliffs"
+ ],
+ "gem:tintern-abbey": [
+  6.5,
+  false,
+  "Britain's most romantic ruin"
+ ],
+ "gem:elan-valley": [
+  6.0,
+  true,
+  "Wales' lake district of dams"
+ ],
+ "gem:devils-bridge-wales": [
+  6.0,
+  true,
+  "Stacked bridges over falls"
+ ],
+ "gem:the-gobbins": [
+  6.5,
+  true,
+  "Europe's wildest cliff path"
+ ],
+ "gem:cuilcagh": [
+  6.5,
+  true,
+  "Famous stairway-to-heaven hike"
+ ],
+ "gem:rathlin-island": [
+  6.0,
+  true,
+  "Puffin island escape"
+ ],
+ "gem:fanad-head": [
+  6.5,
+  true,
+  "World-famous lighthouse setting"
+ ],
+ "gem:hook-head": [
+  6.5,
+  true,
+  "World's oldest lighthouse"
+ ],
+ "gem:clonmacnoise": [
+  6.5,
+  true,
+  "Ireland's great monastic site"
+ ],
+ "gem:lough-hyne": [
+  6.0,
+  true,
+  "Bioluminescent sea lough"
+ ],
+ "gem:inishbofin": [
+  6.0,
+  true,
+  "Unspoilt island idyll"
+ ],
+ "gem:downpatrick-head": [
+  6.5,
+  true,
+  "Dramatic lone sea stack"
+ ],
+ "gem:glenfinnan": [
+  7.5,
+  false,
+  "Harry Potter viaduct + Loch Shiel"
+ ],
+ "gem:eilean-donan": [
+  7.5,
+  false,
+  "Most photographed Scottish castle"
+ ],
+ "gem:loch-ness": [
+  7.0,
+  false,
+  "World-famous loch, Urquhart ruins"
+ ],
+ "gem:dunnottar-castle": [
+  7.0,
+  false,
+  "Spectacular clifftop fortress ruin"
+ ],
+ "gem:isle-of-mull": [
+  7.5,
+  false,
+  "Tobermory + Staffa boat trips"
+ ],
+ "gem:islay": [
+  6.5,
+  true,
+  "Nine famous whisky distilleries"
+ ],
+ "gem:isle-of-arran": [
+  6.5,
+  true,
+  "Scotland in miniature, easy reach"
+ ],
+ "gem:harris-luskentyre": [
+  8.0,
+  true,
+  "UK's most spectacular beach"
+ ],
+ "gem:orkney": [
+  7.5,
+  true,
+  "UNESCO Neolithic heartland"
+ ],
+ "gem:durness": [
+  7.0,
+  true,
+  "Smoo Cave + Sango Sands, NC500"
+ ],
+ "gem:applecross": [
+  7.0,
+  true,
+  "Bealach na Ba pass drama"
+ ],
+ "gem:plockton": [
+  6.5,
+  true,
+  "Prettiest Highland village"
+ ],
+ "gem:achmelvich": [
+  7.0,
+  true,
+  "World-50 beach under Suilven"
+ ],
+ "gem:glen-affric": [
+  6.5,
+  true,
+  "Scotland's most beautiful glen"
+ ],
+ "gem:mourne-mountains": [
+  6.5,
+  true,
+  "Highest NI peaks meet the sea"
+ ],
+ "gem:tintagel": [
+  7.0,
+  false,
+  "Arthurian clifftop castle"
+ ],
+ "gem:kynance-cove": [
+  7.5,
+  false,
+  "Cornwall's postcard cove"
+ ],
+ "gem:st-michaels-mount": [
+  7.5,
+  false,
+  "Castle-topped tidal island"
+ ],
+ "gem:porthcurno": [
+  7.0,
+  true,
+  "Minack Theatre + white cove"
+ ],
+ "gem:padstow": [
+  6.5,
+  false,
+  "Foodie harbour, estuary beaches"
+ ],
+ "gem:port-isaac": [
+  6.5,
+  true,
+  "Iconic Cornish fishing village"
+ ],
+ "gem:fowey": [
+  6.5,
+  true,
+  "Beautiful estuary town"
+ ],
+ "gem:falmouth": [
+  6.5,
+  false,
+  "Maritime town, castle, beaches"
+ ],
+ "gem:newquay": [
+  6.5,
+  false,
+  "UK surf capital"
+ ],
+ "gem:isles-of-scilly": [
+  7.5,
+  true,
+  "Subtropical island paradise"
+ ],
+ "gem:salcombe": [
+  6.5,
+  false,
+  "Chic estuary + clear coves"
+ ],
+ "gem:dartmouth-devon": [
+  6.5,
+  false,
+  "Historic estuary town"
+ ],
+ "gem:clovelly": [
+  6.5,
+  true,
+  "Unique car-free cliff village"
+ ],
+ "gem:lynmouth-exmoor": [
+  6.5,
+  true,
+  "Exmoor coast + cliff railway"
+ ],
+ "gem:cheddar-gorge": [
+  6.5,
+  false,
+  "England's biggest gorge"
+ ],
+ "gem:glastonbury": [
+  6.5,
+  false,
+  "Tor, abbey and Avalon myth"
+ ],
+ "gem:avebury": [
+  6.5,
+  true,
+  "World's largest stone circle"
+ ],
+ "gem:winchester": [
+  6.5,
+  false,
+  "Ancient capital, great cathedral"
+ ],
+ "gem:windsor": [
+  7.0,
+  false,
+  "World's oldest lived-in castle"
+ ],
+ "gem:brighton": [
+  7.0,
+  false,
+  "Liveliest UK seaside city"
+ ],
+ "gem:seven-sisters": [
+  7.5,
+  false,
+  "Classic white chalk cliffs"
+ ],
+ "gem:white-cliffs-dover": [
+  6.5,
+  false,
+  "Iconic chalk cliffs"
+ ],
+ "gem:isle-of-wight": [
+  6.5,
+  false,
+  "Needles + varied family coast"
+ ],
+ "gem:bamburgh": [
+  7.0,
+  false,
+  "Epic castle-on-beach scene"
+ ],
+ "gem:lindisfarne": [
+  7.0,
+  true,
+  "Tidal holy island, deep history"
+ ],
+ "gem:alnwick": [
+  6.5,
+  false,
+  "Hogwarts castle + grand garden"
+ ],
+ "gem:hadrians-wall": [
+  7.5,
+  false,
+  "UNESCO Roman frontier"
+ ],
+ "gem:southwold": [
+  6.0,
+  true,
+  "Quintessential genteel resort"
+ ],
+ "gem:rhossili": [
+  7.5,
+  false,
+  "One of Europe's best beaches"
+ ],
+ "gem:barafundle-bay": [
+  7.0,
+  true,
+  "Britain's best walk-in beach"
+ ],
+ "gem:portmeirion": [
+  7.0,
+  false,
+  "Unique Italianate fantasy"
+ ],
+ "gem:anglesey": [
+  6.5,
+  true,
+  "Lighthouse islets + big sands"
+ ],
+ "gem:hay-on-wye": [
+  6.5,
+  true,
+  "World-famous book town"
+ ],
+ "gem:llangollen": [
+  6.5,
+  true,
+  "UNESCO aqueduct + Dee valley"
+ ],
+ "gem:llyn-peninsula": [
+  6.5,
+  true,
+  "Unspoilt Welsh land's end"
+ ],
+ "gem:skellig-michael": [
+  8.0,
+  false,
+  "UNESCO monastic sea crag"
+ ],
+ "gem:slieve-league": [
+  7.5,
+  true,
+  "Among Europe's highest sea cliffs"
+ ],
+ "gem:glenveagh": [
+  6.5,
+  true,
+  "Castle, loch and wild park"
+ ],
+ "gem:dunfanaghy": [
+  6.5,
+  true,
+  "Best Donegal base, huge beaches"
+ ],
+ "gem:malin-head": [
+  6.5,
+  true,
+  "Ireland's wild northern tip"
+ ],
+ "gem:achill-island": [
+  7.5,
+  true,
+  "Keem Bay world-class beach"
+ ],
+ "gem:rock-of-cashel": [
+  7.0,
+  false,
+  "Ireland's iconic medieval rock"
+ ],
+ "gem:beara-peninsula": [
+  6.5,
+  true,
+  "Ring of Kerry without crowds"
+ ],
+ "gem:mizen-head": [
+  6.5,
+  true,
+  "Dramatic footbridge headland"
+ ],
+ "gem:loop-head": [
+  6.5,
+  true,
+  "Crowd-free Moher-grade cliffs"
+ ],
+ "gem:benbulbin-sligo": [
+  6.5,
+  true,
+  "Striking table mountain, Yeats"
+ ],
+ "gem:bru-na-boinne": [
+  7.5,
+  false,
+  "Older than the pyramids"
+ ],
+ "gem:adare": [
+  6.0,
+  false,
+  "Ireland's prettiest village"
+ ],
+ "gem:clonakilty": [
+  6.5,
+  true,
+  "Top-ranked Inchydoney beach"
+ ],
+ "gem:waterford": [
+  6.0,
+  false,
+  "Ireland's oldest Viking city"
+ ],
+ "gem:cres-lubenice": [
+  6.8,
+  true,
+  "Clifftop village, griffon vultures"
+ ],
+ "gem:northern-velebit": [
+  6.9,
+  true,
+  "Karst wilderness, epic trail"
+ ],
+ "gem:zrmanja": [
+  6.5,
+  true,
+  "Emerald canyon rafting"
+ ],
+ "gem:trakoscan": [
+  6.5,
+  true,
+  "Fairytale castle and lake"
+ ],
+ "gem:kopacki-rit": [
+  6.2,
+  true,
+  "Premier Danube wetland safari"
+ ],
+ "gem:prokosko-lake": [
+  6.2,
+  true,
+  "Idyllic mountain tarn"
+ ],
+ "gem:lake-piva": [
+  6.7,
+  true,
+  "Canyon lake, vertigo drives"
+ ],
+ "gem:blue-eye-saranda": [
+  6.8,
+  false,
+  "Albania's famous azure spring"
+ ],
+ "gem:apollonia": [
+  6.4,
+  true,
+  "Great ancient site, no crowds"
+ ],
+ "gem:voskopoja": [
+  6.2,
+  true,
+  "Frescoed churches, lost city"
+ ],
+ "gem:manasija": [
+  6.3,
+  true,
+  "Fortress monastery, frescoes"
+ ],
+ "gem:lepenski-vir": [
+  6.2,
+  true,
+  "Unique Mesolithic site"
+ ],
+ "gem:gracanica": [
+  6.4,
+  true,
+  "UNESCO Byzantine gem near city"
+ ],
+ "gem:mirusha": [
+  6.1,
+  true,
+  "Terraced falls, wild swimming"
+ ],
+ "gem:pelister": [
+  6.4,
+  true,
+  "Glacial lakes above Bitola"
+ ],
+ "gem:lastovo": [
+  6.8,
+  true,
+  "Remote unspoiled island, dark-sky park"
+ ],
+ "gem:pag-island": [
+  7.0,
+  false,
+  "Famous party beach + lunar karst island"
+ ],
+ "gem:rab": [
+  7.2,
+  true,
+  "Medieval skyline, rare sandy beaches"
+ ],
+ "gem:mali-losinj": [
+  6.8,
+  true,
+  "Elegant bay, healing climate, dolphins"
+ ],
+ "gem:krk-baska": [
+  6.8,
+  false,
+  "Easy island: walled town, top beach"
+ ],
+ "gem:paklenica": [
+  7.2,
+  false,
+  "Velebit canyons, premier climbing"
+ ],
+ "gem:dugi-otok": [
+  7.0,
+  true,
+  "White-sand bay + cliff-edge nature park"
+ ],
+ "gem:kornati": [
+  7.2,
+  false,
+  "Iconic bare-island sailing archipelago"
+ ],
+ "gem:opatija": [
+  7.0,
+  false,
+  "Grand Austro-Hungarian riviera"
+ ],
+ "gem:varazdin": [
+  6.8,
+  true,
+  "Finest baroque town in Croatia"
+ ],
+ "gem:rastoke": [
+  6.5,
+  true,
+  "Waterfall watermill hamlet"
+ ],
+ "gem:nin": [
+  6.3,
+  true,
+  "Historic royal town, lagoon beaches"
+ ],
+ "gem:primosten": [
+  6.7,
+  false,
+  "Postcard islet town, vineyards"
+ ],
+ "gem:omis": [
+  7.0,
+  false,
+  "Canyon meets sea, adventure hub"
+ ],
+ "gem:labin": [
+  6.4,
+  true,
+  "Colorful hill town over Kvarner"
+ ],
+ "gem:hum-istria": [
+  6.3,
+  true,
+  "World's smallest town novelty"
+ ],
+ "gem:porec": [
+  7.0,
+  false,
+  "UNESCO Byzantine basilica"
+ ],
+ "gem:brijuni": [
+  6.7,
+  true,
+  "NP islands, Roman ruins, safari"
+ ],
+ "gem:imotski": [
+  6.8,
+  true,
+  "Two dramatic sinkhole lakes"
+ ],
+ "gem:kravice-falls": [
+  7.4,
+  false,
+  "Herzegovina's showpiece waterfall"
+ ],
+ "gem:sutjeska": [
+  7.3,
+  true,
+  "Primeval forest, highest peaks"
+ ],
+ "gem:travnik": [
+  6.7,
+  true,
+  "Ottoman vizier town, fortress"
+ ],
+ "gem:konjic": [
+  6.6,
+  true,
+  "Rafting, bridge, Tito's bunker"
+ ],
+ "gem:lukomir": [
+  6.5,
+  true,
+  "Highest village, canyon rim"
+ ],
+ "gem:stolac": [
+  6.2,
+  true,
+  "UNESCO stecci, Ottoman lanes"
+ ],
+ "gem:plav-prokletije": [
+  7.0,
+  true,
+  "Wild alps, glacial lake"
+ ],
+ "gem:biogradska-gora": [
+  6.8,
+  true,
+  "Virgin forest around a lake"
+ ],
+ "gem:cetinje": [
+  6.6,
+  false,
+  "Royal capital heritage"
+ ],
+ "gem:lovcen": [
+  7.4,
+  false,
+  "Mausoleum with epic panorama"
+ ],
+ "gem:herceg-novi": [
+  6.8,
+  false,
+  "Fortress town at bay mouth"
+ ],
+ "gem:stari-bar": [
+  6.6,
+  true,
+  "Evocative ruined citadel"
+ ],
+ "gem:rijeka-crnojevica": [
+  6.7,
+  true,
+  "Iconic river bend viewpoint"
+ ],
+ "gem:valbona": [
+  7.8,
+  false,
+  "Spectacular Albanian Alps valley"
+ ],
+ "gem:lake-koman": [
+  7.4,
+  true,
+  "Fjord-like ferry journey"
+ ],
+ "gem:saranda": [
+  6.6,
+  false,
+  "Riviera hub, Corfu ferry"
+ ],
+ "gem:borsh": [
+  6.5,
+  true,
+  "Longest wildest riviera beach"
+ ],
+ "gem:permet": [
+  6.7,
+  true,
+  "Thermal pools, slow food, Vjosa"
+ ],
+ "gem:osum-canyon": [
+  7.0,
+  true,
+  "Dramatic slot canyon"
+ ],
+ "gem:korca": [
+  6.5,
+  true,
+  "Cultured 'little Paris', bazaar"
+ ],
+ "gem:djavolja-varos": [
+  6.8,
+  true,
+  "Unique earth-pyramid badlands"
+ ],
+ "gem:studenica": [
+  7.0,
+  true,
+  "Top UNESCO medieval monastery"
+ ],
+ "gem:zlatibor": [
+  6.8,
+  true,
+  "Classic highland resort"
+ ],
+ "gem:kopaonik": [
+  6.6,
+  true,
+  "Serbia's biggest mountain resort"
+ ],
+ "gem:sremski-karlovci": [
+  6.5,
+  true,
+  "Baroque wine town near Novi Sad"
+ ],
+ "gem:brezovica": [
+  6.2,
+  true,
+  "Sar Mountains ski + hike base"
+ ],
+ "gem:visoki-decani": [
+  6.8,
+  true,
+  "UNESCO frescoed monastery"
+ ],
+ "gem:mavrovo": [
+  6.9,
+  true,
+  "Korab peaks, submerged church"
+ ],
+ "gem:kratovo": [
+  6.4,
+  true,
+  "Volcano-crater bridge town"
+ ],
+ "gem:berovo": [
+  6.0,
+  true,
+  "Cleanest air, pine lake town"
+ ]
+}

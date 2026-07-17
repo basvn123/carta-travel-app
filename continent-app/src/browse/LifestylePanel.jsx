@@ -12,7 +12,8 @@ import { DiningIcon, LifestyleIcon } from '../components/Icons.jsx';
  *
  * Frequencies can be read per-week or per-day via the cadence toggle. The six
  * period-counts are stored in whatever cadence is active; switching cadence
- * re-scales them (x7 / div 7) so the trip total stays roughly stable.
+ * re-scales them (x7 / div 7, one decimal in the day view) so the priced
+ * total survives the toggle.
  */
 
 // The six frequencies that follow the week/day cadence. `max` differs per
@@ -42,16 +43,19 @@ const PROFILES = {
 
 const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
 
-// Re-express a lifestyle object in the target cadence, scaling the six
-// period-counts (x7 going week->day inverse, div 7 the other way) and clamping
-// to each field's max for that cadence.
+// Re-express a lifestyle object in the target cadence. Week -> day keeps one
+// decimal (3 dinners/week is honestly 0.4/day, not 0) so no category the
+// traveller set is silently zeroed and the priced total survives the toggle;
+// day -> week rounds back to whole numbers.
 function toCadence(ls, target) {
   const from = ls.cadence || 'week';
   if (from === target) return { ...ls, cadence: target };
   const out = { ...ls, cadence: target };
   for (const f of PERIOD_FIELDS) {
     const v = ls[f.key] || 0;
-    const scaled = target === 'day' ? Math.round(v / 7) : v * 7;
+    const scaled = target === 'day'
+      ? (v > 0 ? Math.max(0.1, Math.round((v / 7) * 10) / 10) : 0)
+      : Math.round(v * 7);
     out[f.key] = clamp(scaled, 0, f.max[target]);
   }
   return out;
@@ -134,8 +138,10 @@ export function LifestylePanel({ choices, setChoices, onClose }) {
 }
 
 function Stepper({ label, value, onChange, min, max, hint }) {
-  const dec = () => onChange(Math.max(min, value - 1));
-  const inc = () => onChange(Math.min(max, value + 1));
+  // Values can be fractional right after a week -> day cadence switch
+  // (0.4 dinners/day); the first tap lands back on a whole number.
+  const dec = () => onChange(Math.max(min, Math.ceil(value) - 1));
+  const inc = () => onChange(Math.min(max, Math.floor(value) + 1));
   return (
     <div className="stepper">
       <div className="stepper-label">

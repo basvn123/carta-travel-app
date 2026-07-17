@@ -15,7 +15,7 @@
  *      combineTripLegs to work at all), ranked by distance + beauty.
  */
 
-import { haversineKm } from './runtime_pricing.js';
+import { haversineKm, cityCoords } from './runtime_pricing.js';
 
 function round2(v) {
   return v == null ? null : Math.round(v * 100) / 100;
@@ -161,7 +161,12 @@ export function interCityGroundEstimate(destA, destB, groupSize = 1) {
   const ltB = destB.local_transport || {};
   if (ltA.road_connected === false || ltB.road_connected === false) return null;
 
-  const straightKm = haversineKm(destA.lat, destA.lon, destB.lat, destB.lon);
+  // City-to-city ground legs run between town centres: airport-tier stops
+  // keep the runway in lat/lon (Skavsta sits 90 km from Stockholm), which
+  // would skew every distance here.
+  const a = cityCoords(destA);
+  const b = cityCoords(destB);
+  const straightKm = haversineKm(a.lat, a.lon, b.lat, b.lon);
   if (straightKm == null) return null;
   const roadKm = straightKm * GROUND_DETOUR_FACTOR;
   const group = Math.max(1, groupSize || 1);
@@ -272,7 +277,11 @@ export function suggestNextStops(fromDest, allDests, arriveDate, {
     if (excludeIds && excludeIds.has(id)) continue;
     if (excludeCountries && excludeCountries.has(d.country)) continue;
 
-    const km = haversineKm(fromDest.lat, fromDest.lon, d.lat, d.lon);
+    // Town-to-town distance (and pin), not runway-to-runway: airport-tier
+    // rows keep the airport in lat/lon and the centre in city_lat/city_lon.
+    const fromC = cityCoords(fromDest);
+    const dC = cityCoords(d);
+    const km = haversineKm(fromC.lat, fromC.lon, dC.lat, dC.lon);
     if (km == null || km > maxKm || km < 4) continue;
 
     const sharedOrigin = Object.keys(d.routes || {}).find((o) => anchorOrigins.has(o));
@@ -290,8 +299,8 @@ export function suggestNextStops(fromDest, allDests, arriveDate, {
       city: d.city,
       country: d.country,
       iso2: d.iso2,
-      lat: d.lat,
-      lon: d.lon,
+      lat: dC.lat,
+      lon: dC.lon,
       km: Math.round(km),
       gems: d.beauty?.gems ?? null,
       rating: d.rating ?? null,

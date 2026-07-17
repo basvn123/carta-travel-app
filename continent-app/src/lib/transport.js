@@ -9,7 +9,7 @@
  * (per-country petrol prices, EUR/100km tolls), split across the group - which
  * is exactly why a car often wins for 3-4 people and loses for solo travellers.
  */
-import { haversineKm } from './runtime_pricing.js';
+import { haversineKm, withCityCoords } from './runtime_pricing.js';
 
 const DETOUR = 1.3;             // road km vs straight-line (matches car_layer.py)
 const TRAIN = { kmh: 95, eurPerKm: 0.15, floor: 8, overheadH: 0.4 };
@@ -39,6 +39,11 @@ export function insightFor(dest, countryInsights) {
  *          shape (modes: {}) when there's no road link (sea crossing).
  */
 export function legTransportOptions(destA, destB, groupSize = 1, { carModel = null, countryInsights = null } = {}) {
+  // Ground legs run town to town: for airport-tier stops the raw lat/lon is
+  // the runway (Skavsta is 90 km from Stockholm), so measure from the city
+  // centre instead - the flight is the only leg that belongs at the airport.
+  destA = withCityCoords(destA);
+  destB = withCityCoords(destB);
   if (!destA || !destB || destA.lat == null || destB.lat == null) return null;
   const group = Math.max(1, groupSize || 1);
 
@@ -137,6 +142,10 @@ export function legTransportOptions(destA, destB, groupSize = 1, { carModel = nu
   // economics can win for full cars.
   const score = (m) => m.eur_pp + m.hours * 3;
   const modes = { train, bus, car };
+  // Same honesty rule the day planner applies: where either end has no real
+  // rail (transit_quality 'poor'), don't offer - let alone recommend - a train.
+  const trainDropped = ltA.transit_quality === 'poor' || ltB.transit_quality === 'poor';
+  if (trainDropped) delete modes.train;
   const recommended = Object.entries(modes).sort((a, b) => score(a[1]) - score(b[1]))[0][0];
 
   return {
@@ -145,6 +154,7 @@ export function legTransportOptions(destA, destB, groupSize = 1, { carModel = nu
     no_road: false,
     long_haul: roadKm > LONG_HAUL_KM,
     modes,
+    train_dropped: trainDropped,
     recommended,
     note: null,
     estimated: true,

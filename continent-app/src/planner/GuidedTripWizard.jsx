@@ -974,20 +974,30 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
   // ---------------------------------------------------------------- render --
   return (
     <div className="guide-overlay" onClick={handleCancel}>
-      <div className="guide-modal" onClick={(e) => e.stopPropagation()}>
-        {/* Header + progress */}
+      <div className="guide-modal trip-wizard-modal" onClick={(e) => e.stopPropagation()}>
+        {/* Header + progress: same one-step-at-a-time header the day planner's
+            wizard wears - current step name, "step X of N", thin segments. */}
         <div className="guide-head">
           <button className="guide-close" onClick={handleCancel} aria-label="Close">×</button>
           {path ? (
-            <div className="guide-steps">
-              {steps.map((label, i) => (
-                <div key={label} className={`guide-step-dot ${step === i + 1 ? 'active' : ''} ${step > i + 1 ? 'done' : ''}`}>
-                  <span>{i + 1}</span>{label}
+            <>
+              <div className="shape-head-title">
+                {steps[step - 1] || 'Plan your trip'}
+                {steps.length > 1 && <span className="shape-head-step">step {step} of {steps.length}</span>}
+              </div>
+              {steps.length > 1 && (
+                <div className="shape-progress" aria-hidden="true">
+                  {steps.map((label, i) => (
+                    <span
+                      key={label}
+                      className={`shape-progress-dot ${i + 1 < step ? 'done' : ''} ${i + 1 === step ? 'now' : ''}`}
+                    />
+                  ))}
                 </div>
-              ))}
-            </div>
+              )}
+            </>
           ) : (
-            <div className="guide-steps"><div className="guide-step-dot active"><SparkIcon size={11} /> Let Carta guide you</div></div>
+            <div className="shape-head-title"><SparkIcon size={13} /> Let Carta guide you</div>
           )}
         </div>
 

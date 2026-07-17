@@ -172,6 +172,13 @@ TITLE_OVERRIDES = {
     "Auschwitz / Wieliczka": "Wieliczka Salt Mine",
     "Spis Castle & Levoca": "Levoca",
     "Spiš Castle & Levoča": "Levoča",
+    # Nordic / parenthetical names whose plain string hits a disambiguation page
+    # or an article with no API-exposed lead image; point at the real one.
+    "Roros": "Røros (town)",
+    "Fort William (Glencoe)": "Ben Nevis",
+    "Glen Coe": "Glencoe, Highland",
+    "Tarifa": "Baelo Claudia",                 # town article has no API lead image
+    "Camargue": "Saintes-Maries-de-la-Mer",    # park article has no lead image
 }
 
 

@@ -1,0 +1,491 @@
+{
+ "osm": {
+  "KIR": [
+   {
+    "name": "Currow Hill",
+    "kind": "Peak",
+    "lat": 52.16224,
+    "lon": -9.49135,
+    "rate": 2,
+    "active": true,
+    "src": "osm"
+   },
+   {
+    "name": "Kilfelim Church",
+    "kind": "Archaeological site",
+    "lat": 52.19467,
+    "lon": -9.51642,
+    "rate": 2,
+    "active": false,
+    "src": "osm"
+   },
+   {
+    "name": "Proclomation of the Republic",
+    "kind": "Monument",
+    "lat": 52.17271,
+    "lon": -9.55095,
+    "rate": 1,
+    "active": false,
+    "src": "osm"
+   }
+  ],
+  "gem:lefkara": [],
+  "gem:gallipoli-puglia": [
+   {
+    "name": "Museo Civico \"Emanuele Barba\"",
+    "kind": "Museum",
+    "lat": 40.05465,
+    "lon": 17.97526,
+    "rate": 2,
+    "active": false,
+    "src": "osm"
+   },
+   {
+    "name": "Sailor Fly Salento",
+    "kind": "Attraction",
+    "lat": 40.05725,
+    "lon": 17.98491,
+    "rate": 2,
+    "active": false,
+    "src": "osm"
+   },
+   {
+    "name": "Betlemme",
+    "kind": "Attraction",
+    "lat": 40.05509,
+    "lon": 17.97716,
+    "rate": 2,
+    "active": false,
+    "src": "osm"
+   },
+   {
+    "name": "Palazzo Pirelli",
+    "kind": "Attraction",
+    "lat": 40.05448,
+    "lon": 17.97626,
+    "rate": 2,
+    "active": false,
+    "src": "osm"
+   },
+   {
+    "name": "Museo Diocesano",
+    "kind": "Museum",
+    "lat": 40.05499,
+    "lon": 17.9769,
+    "rate": 1,
+    "active": false,
+    "src": "osm"
+   },
+   {
+    "name": "Frantoio Ipogeo",
+    "kind": "Museum",
+    "lat": 40.05456,
+    "lon": 17.97522,
+    "rate": 1,
+    "active": false,
+    "src": "osm"
+   },
+   {
+    "name": "MudE Museo delle Esperienze",
+    "kind": "Museum",
+    "lat": 40.06664,
+    "lon": 18.00234,
+    "rate": 1,
+    "active": false,
+    "src": "osm"
+   },
+   {
+    "name": "Castello di Gallipoli",
+    "kind": "Museum",
+    "lat": 40.05539,
+    "lon": 17.97866,
+    "rate": 1,
+    "active": false,
+    "src": "osm"
+   },
+   {
+    "name": "Museo del Mare",
+    "kind": "Museum",
+    "lat": 40.05491,
+    "lon": 17.9758,
+    "rate": 1,
+    "active": false,
+    "src": "osm"
+   },
+   {
+    "name": "Maria",
+    "kind": "Artwork",
+    "lat": 40.05428,
+    "lon": 17.97588,
+    "rate": 1,
+    "active": false,
+    "src": "osm"
+   },
+   {
+    "name": "View on beautiful balcony",
+    "kind": "Viewpoint",
+    "lat": 40.05488,
+    "lon": 17.9784,
+    "rate": 1,
+    "active": true,
+    "src": "osm"
+   },
+   {
+    "name": "Spiaggia di Rivabella",
+    "kind": "Beach",
+    "lat": 40.08849,
+    "lon": 18.01212,
+    "rate": 1,
+    "active": true,
+    "src": "osm"
+   }
+  ],
+  "KOW": []
+ },
+ "wikidata": {
+  "gem:lefkada": {
+   "qid": "Q190138",
+   "sitelinks": 60,
+   "heritage": false,
+   "protected": false,
+   "image_p18": "LefkadaWW.jpg",
+   "source": "wikidata"
+  },
+  "gem:bol-brac": {
+   "qid": "Q833865",
+   "sitelinks": 38,
+   "heritage": false,
+   "protected": false,
+   "image_p18": "BOL BRAC.JPG",
+   "source": "wikidata"
+  },
+  "gem:tarifa": {
+   "qid": "Q43174653",
+   "sitelinks": 17,
+   "heritage": true,
+   "protected": true,
+   "image_p18": "Basílica Baelo 001.jpg",
+   "source": "wikidata"
+  },
+  "gem:vieste": {
+   "qid": "Q51967",
+   "sitelinks": 56,
+   "heritage": false,
+   "protected": false,
+   "image_p18": "Gargano0004.jpg",
+   "source": "wikidata"
+  },
+  "gem:villasimius": {
+   "qid": "Q285590",
+   "sitelinks": 63,
+   "heritage": false,
+   "protected": false,
+   "image_p18": "Villasimius 5 bordercropped.jpg",
+   "source": "wikidata"
+  },
+  "gem:la-maddalena": {
+   "qid": "Q340757",
+   "sitelinks": 72,
+   "heritage": false,
+   "protected": false,
+   "image_p18": "La Maddalena Panorama 2.jpg",
+   "source": "wikidata"
+  },
+  "gem:sagres": {
+   "qid": "Q926672",
+   "sitelinks": 37,
+   "heritage": false,
+   "protected": false,
+   "image_p18": "Sagres23.jpg",
+   "source": "wikidata"
+  },
+  "gem:comporta": {
+   "qid": "Q104851136",
+   "sitelinks": 3,
+   "heritage": false,
+   "protected": false,
+   "image_p18": null,
+   "source": "wikidata"
+  },
+  "gem:carvoeiro": {
+   "qid": "Q1046217",
+   "sitelinks": 23,
+   "heritage": false,
+   "protected": false,
+   "image_p18": "Carvoeiro 20050729.jpg",
+   "source": "wikidata"
+  },
+  "gem:gallipoli-puglia": {
+   "qid": "Q192860",
+   "sitelinks": 63,
+   "heritage": false,
+   "protected": false,
+   "image_p18": "Dardanelles carte.png",
+   "source": "wikidata"
+  },
+  "gem:otranto": {
+   "qid": "Q52174",
+   "sitelinks": 72,
+   "heritage": false,
+   "protected": false,
+   "image_p18": "Otranto dal bastione dei Pelasgi.jpg",
+   "source": "wikidata"
+  },
+  "gem:snowdonia": {
+   "qid": "Q867913",
+   "sitelinks": 44,
+   "heritage": true,
+   "protected": true,
+   "image_p18": "Gaeaf yr Wyddfa.jpg",
+   "source": "wikidata"
+  },
+  "gem:brecon-beacons": {
+   "qid": "Q904522",
+   "sitelinks": 28,
+   "heritage": true,
+   "protected": true,
+   "image_p18": "Brecon beacons arp.jpg",
+   "source": "wikidata"
+  },
+  "gem:yorkshire-dales": {
+   "qid": "Q977613",
+   "sitelinks": 22,
+   "heritage": false,
+   "protected": true,
+   "image_p18": "The Western Edge of the Yorkshire Dales.jpg",
+   "source": "wikidata"
+  },
+  "gem:dartmoor": {
+   "qid": "Q214823",
+   "sitelinks": 44,
+   "heritage": false,
+   "protected": true,
+   "image_p18": "Dartmoor Prison.jpg",
+   "source": "wikidata"
+  },
+  "gem:cairngorms": {
+   "qid": "Q747064",
+   "sitelinks": 22,
+   "heritage": false,
+   "protected": true,
+   "image_p18": "The-cairngorms-from-geal-charn.jpg",
+   "source": "wikidata"
+  },
+  "gem:loch-lomond": {
+   "qid": "Q208926",
+   "sitelinks": 54,
+   "heritage": false,
+   "protected": true,
+   "image_p18": "View of loch lomond.JPG",
+   "source": "wikidata"
+  },
+  "gem:ordesa": {
+   "qid": "Q215662",
+   "sitelinks": 42,
+   "heritage": false,
+   "protected": true,
+   "image_p18": "Cirque de Soaso et massif du Mont-Perdu.jpg",
+   "source": "wikidata"
+  },
+  "gem:camargue": {
+   "qid": "Q330920",
+   "sitelinks": 53,
+   "heritage": false,
+   "protected": false,
+   "image_p18": "Vue aériene des Saintes Maries de la Mer.jpg",
+   "source": "wikidata"
+  },
+  "gem:kranjska-gora": {
+   "qid": "Q2139428",
+   "sitelinks": 35,
+   "heritage": true,
+   "protected": true,
+   "image_p18": "Kranjska Gora 2.jpg",
+   "source": "wikidata"
+  },
+  "gem:titisee": {
+   "qid": "Q700097",
+   "sitelinks": 20,
+   "heritage": false,
+   "protected": false,
+   "image_p18": "Titisee-blick von hochfirst.jpg",
+   "source": "wikidata"
+  },
+  "gem:transfagarasan": {
+   "qid": "Q934803",
+   "sitelinks": 35,
+   "heritage": false,
+   "protected": false,
+   "image_p18": "Wide view over the northern Transfagarasan.jpg",
+   "source": "wikidata"
+  },
+  "gem:jurassic-coast": {
+   "qid": "Q575976",
+   "sitelinks": 44,
+   "heritage": true,
+   "protected": true,
+   "image_p18": "Gad cliff dorset.jpg",
+   "source": "wikidata"
+  },
+  "gem:samaria-gorge": {
+   "qid": "Q1128366",
+   "sitelinks": 35,
+   "heritage": true,
+   "protected": true,
+   "image_p18": "Samari3.jpg",
+   "source": "wikidata"
+  },
+  "gem:pulpit-rock": {
+   "qid": "Q746223",
+   "sitelinks": 39,
+   "heritage": false,
+   "protected": false,
+   "image_p18": "Preikestolen Norge.jpg",
+   "source": "wikidata"
+  },
+  "gem:millau": {
+   "qid": "Q203278",
+   "sitelinks": 67,
+   "heritage": false,
+   "protected": true,
+   "image_p18": "00 0237 Millau - Département Aveyron.jpg",
+   "source": "wikidata"
+  },
+  "gem:malbork": {
+   "qid": "Q146820",
+   "sitelinks": 75,
+   "heritage": false,
+   "protected": false,
+   "image_p18": "Panorama of Malbork Castle, part 4.jpg",
+   "source": "wikidata"
+  },
+  "gem:bacharach": {
+   "qid": "Q523273",
+   "sitelinks": 49,
+   "heritage": false,
+   "protected": false,
+   "image_p18": "Bacharach1.jpg",
+   "source": "wikidata"
+  },
+  "gem:aachen": {
+   "qid": "Q1017",
+   "sitelinks": 143,
+   "heritage": false,
+   "protected": false,
+   "image_p18": "Aachen Germany Imperial-Cathedral-01.jpg",
+   "source": "wikidata"
+  },
+  "gem:vicenza": {
+   "qid": "Q6537",
+   "sitelinks": 112,
+   "heritage": false,
+   "protected": false,
+   "image_p18": "Collage Vicenza.jpg",
+   "source": "wikidata"
+  },
+  "gem:padua": {
+   "qid": "Q617",
+   "sitelinks": 133,
+   "heritage": false,
+   "protected": false,
+   "image_p18": "Padua - Prato della Valle.jpg",
+   "source": "wikidata"
+  },
+  "gem:parma": {
+   "qid": "Q2683",
+   "sitelinks": 123,
+   "heritage": false,
+   "protected": false,
+   "image_p18": "Parma dal Duomo, settembre 2014-1 (15481932581).jpg",
+   "source": "wikidata"
+  },
+  "gem:chartres": {
+   "qid": "Q130272",
+   "sitelinks": 103,
+   "heritage": false,
+   "protected": false,
+   "image_p18": "France Eure et Loir Chartres Cathedrale nuit 02.jpg",
+   "source": "wikidata"
+  },
+  "gem:figueres": {
+   "qid": "Q6839",
+   "sitelinks": 76,
+   "heritage": false,
+   "protected": false,
+   "image_p18": "20061227-Figueres Sant Pere MQ.jpg",
+   "source": "wikidata"
+  },
+  "gem:peniscola": {
+   "qid": "Q845424",
+   "sitelinks": 47,
+   "heritage": false,
+   "protected": false,
+   "image_p18": "Peniscola plages.JPG",
+   "source": "wikidata"
+  },
+  "gem:trento": {
+   "qid": "Q3376",
+   "sitelinks": 114,
+   "heritage": false,
+   "protected": false,
+   "image_p18": "Paganella Brenta Trento.jpg",
+   "source": "wikidata"
+  },
+  "gem:portovenere": {
+   "qid": "Q188315",
+   "sitelinks": 73,
+   "heritage": false,
+   "protected": false,
+   "image_p18": "Porto Venere from Lerici.jpg",
+   "source": "wikidata"
+  },
+  "gem:langhe": {
+   "qid": "Q19865",
+   "sitelinks": 25,
+   "heritage": true,
+   "protected": true,
+   "image_p18": "Langhe.jpg",
+   "source": "wikidata"
+  },
+  "gem:bergamo-alta": {
+   "qid": "Q628",
+   "sitelinks": 131,
+   "heritage": true,
+   "protected": true,
+   "image_p18": "The Upper City of Bergamo. View from Via al Castello. Italy.jpg",
+   "source": "wikidata"
+  },
+  "gem:erfurt": {
+   "qid": "Q1729",
+   "sitelinks": 144,
+   "heritage": false,
+   "protected": false,
+   "image_p18": "2021-09-16 Erfurt bei Nacht 1DX 3974 by Stepro.jpg",
+   "source": "wikidata"
+  },
+  "gem:potsdam": {
+   "qid": "Q1711",
+   "sitelinks": 151,
+   "heritage": false,
+   "protected": false,
+   "image_p18": "2018-08-10 DE Potsdam, Havel, Potsdamer Stadtschloss, Charlottenhof 05609390 (49952695592).jpg",
+   "source": "wikidata"
+  },
+  "gem:ios": {
+   "qid": "Q216993",
+   "sitelinks": 53,
+   "heritage": false,
+   "protected": false,
+   "image_p18": "Íos aerial.jpg",
+   "source": "wikidata"
+  },
+  "gem:peak-district": {
+   "qid": "Q1330811",
+   "sitelinks": 34,
+   "heritage": false,
+   "protected": false,
+   "image_p18": "Mam Tor.jpg",
+   "source": "wikidata"
+  }
+ }
+}

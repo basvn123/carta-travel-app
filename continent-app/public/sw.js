@@ -1,5 +1,5 @@
 /* ─────────────────────────────────────────────────────────────────────────
-   Carta service worker — makes the app installable and usable offline.
+   Carta service worker: makes the app installable and usable offline.
 
    Strategy (same-origin GET only; cross-origin requests pass straight through):
      • navigations      → network-first, fall back to the cached app shell

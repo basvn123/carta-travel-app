@@ -12,6 +12,7 @@
  */
 import { addDays } from './dates.js';
 import { combineTripLegs, interCityGroundEstimate } from './trip_planner_pricing.js';
+import { haversineKm, cityCoords } from './runtime_pricing.js';
 
 /**
  * Cheapest start dates for this itinerary, keeping the same stop order and
@@ -76,8 +77,11 @@ function groundCost(ids, destinations, groupSize) {
  *  (it's the flight-arrival anchor). Same approach as the planner's optimise. */
 function nnOrder(ids, destinations) {
   if (ids.length < 3) return ids;
-  const nodes = ids.map((id) => ({ id, dest: destinations[id] }));
-  if (nodes.some((n) => !n.dest || n.dest.lat == null)) return ids;
+  // True town-centre distances: raw degree deltas over-weight east-west gaps
+  // ~2x at European latitudes, and airport-tier rows keep the runway in
+  // lat/lon - both can propose a genuinely worse order.
+  const nodes = ids.map((id) => ({ id, c: cityCoords(destinations[id] || null) }));
+  if (nodes.some((n) => n.c.lat == null)) return ids;
   const ordered = [nodes[0]];
   const remaining = nodes.slice(1);
   let cur = nodes[0];
@@ -85,10 +89,8 @@ function nnOrder(ids, destinations) {
     let bi = 0;
     let bd = Infinity;
     remaining.forEach((n, idx) => {
-      const dLat = cur.dest.lat - n.dest.lat;
-      const dLon = cur.dest.lon - n.dest.lon;
-      const approx = dLat * dLat + dLon * dLon;
-      if (approx < bd) { bd = approx; bi = idx; }
+      const km = haversineKm(cur.c.lat, cur.c.lon, n.c.lat, n.c.lon);
+      if (km != null && km < bd) { bd = km; bi = idx; }
     });
     cur = remaining[bi];
     ordered.push(cur);
@@ -99,6 +101,10 @@ function nnOrder(ids, destinations) {
 
 /**
  * Would reordering the stops save money on ground transport?
+ * GROUND-ONLY: the first stop stays fixed (the flight-arrival anchor) but the
+ * last stop can change, which can move the return-flight airport - the flight
+ * delta is NOT netted into `saving_eur`. Keep the figure labelled as a ground
+ * saving wherever it's surfaced.
  * @returns { saving_eur, ordered_ids, current_eur } or null when the current
  *          order is already (near-)optimal / too short to matter.
  */

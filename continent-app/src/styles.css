@@ -2599,7 +2599,13 @@ input, select {
 .guide-transport.on .guide-transport-icon { color: var(--accent); }
 
 /* --- Shape-your-day wizard (reuses the guided-wizard shell) --- */
-.shape-modal { max-width: 520px; }
+/* Roomier than the trip wizard: one question per screen, so the modal can
+   afford to be large and nothing ever needs scrolling. */
+.shape-modal {
+  max-width: 640px;
+  max-height: min(92vh, 830px);
+  min-height: min(540px, 86vh);
+}
 .shape-head-title {
   flex: 1;
   font-weight: 600;
@@ -9003,3 +9009,129 @@ input, select {
   .day-explore-tools { flex-direction: column; }
   .day-guide-btn { align-self: stretch; justify-content: center; }
 }
+
+/* ================================================================== */
+/* Day planner refresh: one step at a time, the plan first, modern    */
+/* cards for everything pickable.                                     */
+/* ================================================================== */
+
+/* Wizard progress: four thin segments, one per question. */
+.shape-progress { display: flex; gap: 6px; margin-top: 12px; }
+.shape-progress-dot {
+  height: 4px;
+  flex: 1;
+  border-radius: 999px;
+  background: var(--paper-dim);
+  transition: background .25s;
+}
+.shape-progress-dot.done { background: var(--accent); opacity: 0.4; }
+.shape-progress-dot.now { background: var(--accent); }
+
+/* One-question screens: bigger, calmer touch targets. */
+.shape-question-list { gap: 11px; }
+.shape-question-list .shape-style { padding: 15px 18px; border-radius: 14px; }
+.shape-question-list .shape-style-text b { font-size: 15px; }
+.shape-question-list .shape-style-text small { font-size: 12.5px; }
+.shape-modal .guide-title { font-size: 22px; }
+.shape-modal .guide-sub { font-size: 13.5px; }
+.shape-modal .guide-body { display: flex; flex-direction: column; }
+.shape-modal .shape-card { margin-top: 4px; }
+
+/* Landing steps: numbered badges so the flow reads 1-2-3. */
+.day-step-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #fff;
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 700;
+  margin-right: 7px;
+}
+.day-explore-steplabel { display: flex; align-items: center; margin-bottom: 10px; }
+.day-picks-steplabel { width: 100%; margin-bottom: 4px; }
+.day-path-list { margin-bottom: 6px; }
+
+/* In-plan day strip: city + day chips in one sticky bar, so switching a day
+   or city never needs a scroll back to the top. */
+.trip-block.day-strip {
+  position: sticky;
+  top: -6px;
+  z-index: 6;
+  margin: 0 -20px;
+  padding: 12px 20px 10px;
+  background: var(--paper);
+  border-bottom: 1px solid var(--rule);
+  box-shadow: 0 6px 12px -10px rgba(26, 26, 26, 0.25);
+}
+.day-strip .day-strip-cities { margin-bottom: 8px; }
+
+/* "Things to do" tiers as modern cards: contained, rounded, calm. */
+.day-tier {
+  border: 1px solid var(--rule);
+  border-radius: 14px;
+  background: var(--paper);
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+.day-tier.open { margin-bottom: 12px; }
+.day-tier-head {
+  padding: 12px 14px;
+  margin-bottom: 0;
+  border-radius: 0;
+}
+.day-tier.open .day-tier-head { border-bottom: 1px solid var(--rule); }
+.day-tier-count {
+  margin-left: 2px;
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: var(--paper-dim);
+  color: var(--ink-soft);
+}
+.day-tier .day-activity-list { padding: 10px; gap: 8px; }
+.day-tier .day-activity-row { border-radius: 10px; }
+.day-tier-must .day-activity-row { border-left-width: 3px; }
+
+/* Pickable rows: larger imagery, clearer hover, softer chrome. */
+.day-thumb { width: 46px; height: 46px; border-radius: 10px; }
+.day-activity-row { transition: border-color .15s, background .15s, box-shadow .15s; }
+.day-activity-row:hover { box-shadow: 0 2px 10px rgba(26, 26, 26, 0.08); }
+.day-assigned-name { font-size: 14px; }
+
+/* Today's plan timeline: stops joined by a hairline so the day reads as one
+   route, not a stack of cards. */
+.day-plan-block .day-timeline { position: relative; }
+.day-plan-block .day-timeline::before {
+  content: '';
+  position: absolute;
+  top: 14px;
+  bottom: 14px;
+  left: 11px;
+  width: 2px;
+  background: var(--rule);
+}
+.day-plan-block .day-timeline-row,
+.day-plan-block .day-timeline-walk { position: relative; }
+.day-plan-block .day-timeline-num { box-shadow: 0 0 0 3px var(--paper); }
+.day-plan-block .day-timeline-row .day-assigned-row { border-radius: 12px; }
+.day-plan-block .day-timeline-walk {
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
+/* Trip wizard: the same shell language as the day planner's wizard - a large,
+   calm modal with thin progress segments and one clear question per screen.
+   The question logic is untouched; only the clothes changed. */
+.trip-wizard-modal {
+  max-width: 680px;
+  max-height: min(92vh, 860px);
+  min-height: min(560px, 86vh);
+}
+.trip-wizard-modal .guide-title { font-size: 22px; }
+.trip-wizard-modal .guide-sub { font-size: 13.5px; }
+.trip-wizard-modal .guide-path { padding: 15px 18px; border-radius: 14px; }
+.trip-wizard-modal .guide-path-text b { font-size: 15px; }
+.trip-wizard-modal .guide-path-text small { font-size: 12.5px; }

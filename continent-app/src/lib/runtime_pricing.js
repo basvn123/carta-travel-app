@@ -110,7 +110,10 @@ export function drivingEstimate(dest, home, choices, model) {
   const lt = dest.local_transport || {};
   if (lt.road_connected === false) return null;      // islands / sea-separated
 
-  const straight = haversineKm(home.lat, home.lon, dest.lat, dest.lon);
+  // Drive to the town, not the runway: airport-tier rows keep the airport in
+  // lat/lon, but nobody road-trips to Skavsta when the stay is in Stockholm.
+  const dc = cityCoords(dest);
+  const straight = haversineKm(home.lat, home.lon, dc.lat, dc.lon);
   if (straight == null) return null;
   const roadKm = straight * (m.road_detour_factor || 1.3);
   if (roadKm > (m.max_drive_km || 700)) return null;
@@ -237,7 +240,13 @@ export function accommodationPerPerson(dest, nights, departDate, model, groupSiz
 
   const nightlyPp = (a.per_person_night_eur || 0) * season * occ;
   const lodging   = nightlyPp * n * los;
-  const cleaning  = a.cleaning_per_person_eur || 0;   // once per booking, per person
+  // Cleaning is charged once per BOOKING; the stored per-person figure is the
+  // reference 4-sleeper's share. Rebuild the booking fee and split it across
+  // the real group, so a couple isn't quietly charged half a fee too little
+  // and seven friends almost double.
+  const ref = m.occupancy_ref_capacity ?? DEFAULT_ACCOM_MODEL.occupancy_ref_capacity;
+  const cleaning = (a.cleaning_per_person_eur || 0)
+    * (groupSize ? ref / Math.max(1, groupSize) : 1);
   const subtotal  = lodging + cleaning;
   const withFees  = subtotal * (1 + (m.service_fee_pct || 0) / 100);
 
@@ -419,16 +428,28 @@ export function planeReachIndex(allDests) {
  *    - otherwise  -> the place works without a car, so bus/train/shuttle in,
  *      priced per person each way.
  */
-export function airportLastLeg(dest, straightKm) {
+/** The shared airport->town ground-leg scale: ONE model for both the
+ *  auto-resolved plane fare (airportLastLeg) and the "fly nearby + drive in"
+ *  alternatives list (viaNearestAirport), so the same journey never shows two
+ *  different prices depending on which surface computed it. */
+export function lastLegEstimate(straightKm) {
   const roadKm = straightKm * LEG_DETOUR;
+  return {
+    road_km: Math.round(roadKm),
+    minutes: Math.round((roadKm / LEG_KMH) * 60),
+    eur_pp_one_way: Math.round(Math.min(LEG_CAP_EUR, Math.max(LEG_FLOOR_EUR, LEG_EUR_PER_KM * roadKm))),
+  };
+}
+
+export function airportLastLeg(dest, straightKm) {
+  const leg = lastLegEstimate(straightKm);
   const needsCar = !!(dest.local_transport || {}).car_needed;
   return {
     kind: needsCar ? 'rental' : 'shuttle',
-    road_km: Math.round(roadKm),
-    minutes: Math.round((roadKm / LEG_KMH) * 60),
-    eur_pp_one_way: needsCar
-      ? 0
-      : Math.round(Math.min(LEG_CAP_EUR, Math.max(LEG_FLOOR_EUR, LEG_EUR_PER_KM * roadKm))),
+    ...leg,
+    // car_needed -> the rental (already priced by rentalEstimate) drives this
+    // leg; billing a shuttle on top would charge the same journey twice.
+    eur_pp_one_way: needsCar ? 0 : leg.eur_pp_one_way,
   };
 }
 
@@ -613,26 +634,29 @@ export function viaNearestAirport(dest, allDests, departDate, returnDate, choice
   const destRoad = (dest.local_transport || {}).road_connected !== false;
   if (!destRoad) return [];
   const out = [];
+  // Measure town -> runway (like planeReachIndex): the traveller starts the
+  // ground leg at the airport and ends in the town, not at another runway.
+  const dc = cityCoords(dest);
   for (const [id, d] of Object.entries(allDests)) {
     if (id === dest.id || d.lat == null || d.city === dest.city) continue;
     if (!d.iata) continue; // needs to be a real airport you can fly into
     if ((d.local_transport || {}).road_connected === false) continue;
-    const km = haversineKm(dest.lat, dest.lon, d.lat, d.lon);
+    const km = haversineKm(dc.lat, dc.lon, d.lat, d.lon);
     if (km == null || km > maxKm || km < 8) continue;
     const fare = pickFareForDates(d, departDate, returnDate, choices.origin_pref);
     if (!fare) continue;
-    const roadKm = Math.round(km * 1.3);
-    const legPp = Math.max(8, roadKm * 0.12); // per person, one way
+    // Same scale planeFare charges when it auto-resolves this exact journey.
+    const leg = lastLegEstimate(km);
     out.push({
       id,
       city: d.city,
       country: d.country,
       iata: d.iata,
       fare_per_person: round2(fare.fare),
-      road_km: roadKm,
-      drive_hours_one_way: Math.round((roadKm / 80) * 10) / 10,
-      leg_eur_pp_one_way: round2(legPp),
-      total_pp_est: round2(fare.fare + legPp * 2),
+      road_km: leg.road_km,
+      drive_hours_one_way: Math.round((leg.minutes / 60) * 10) / 10,
+      leg_eur_pp_one_way: round2(leg.eur_pp_one_way),
+      total_pp_est: round2(fare.fare + leg.eur_pp_one_way * 2),
     });
   }
   out.sort((a, b) => a.total_pp_est - b.total_pp_est);

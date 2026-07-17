@@ -361,6 +361,43 @@ Booking.com was evaluated and rejected as a source: no public API, ToS forbid
 scraping, Cloudflare/AWS-WAF enforcement - Inside Airbnb covers the same need
 legitimately. `accommodation.n_listings`/`captured` record provenance.
 
+## Schema v15 - non-Wikipedia data sources (added 2026-07-16)
+
+Two independent open datasets now sit alongside the Wikipedia / Wikivoyage /
+OpenTripMap pipeline (`harvest_osm_wikidata.py`, idempotent + resumable via
+`cache/osm_wikidata.json`). `meta.data_sources` records provenance/licence.
+
+### 1. OpenStreetMap (Overpass API) - thin-POI top-up
+Destinations whose `activities.items_full` had `< 6` POIs (OpenTripMap/Wikivoyage
+covered them barely, e.g. Gallipoli 0, Kerry 0) are topped up with real OSM POIs
+(tourism=attraction|viewpoint|museum, historic=castle|monument|ruins|
+archaeological_site, natural=beach|peak|cave, waterway=waterfall, leisure=
+nature_reserve). Each added item carries `lat`/`lon` and `src: "osm"`, `rate`
+capped at 2 (never the OTM-only rate-3 "must see" tier); a POI OSM has linked to
+Wikidata/Wikipedia is ranked first. `activities.osm_filled` counts the top-up.
+Licence: ODbL 1.0, (c) OpenStreetMap contributors.
+
+### 2. Wikidata (Special:EntityData) - independent notability signal
+`dest.wikidata = { qid, sitelinks, heritage, protected, image_p18, source }`
+(added to the 2026-07c gem batch). `sitelinks` (count of language Wikipedias) is
+a fame proxy that does NOT depend on pageviews - a cross-check for the rating
+layer's fame component; `heritage` (P1435) / `protected` (P3018) validate the
+beauty layer's UNESCO/heritage signals; `image_p18` is an independent image
+backstop. Licence: CC0 1.0.
+
+### v15 catalogue additions
+43 new gems (2026-07c batch, `new_gems_2026_07c.json` + `add_appeal_2026_07c.py`)
+took the catalogue from 685 -> 728: 12 beaches/coast (Lefkada, Bol/Zlatni Rat,
+Tarifa, Vieste, Villasimius, La Maddalena, Sagres, Comporta, Ios, Carvoeiro,
+Gallipoli, Otranto), 15 nature/walks (Snowdonia, Brecon Beacons, Peak District,
+Yorkshire Dales, Dartmoor, Cairngorms, Loch Lomond, Ordesa, Camargue, Kranjska
+Gora, Titisee, Transfagarasan, Jurassic Coast, Samaria Gorge, Preikestolen,
+Millau) and 16 towns (Malbork, Bacharach, Aachen, Vicenza, Padua, Parma,
+Chartres, Figueres, Peniscola, Trento, Portovenere, Langhe, Bergamo Alta,
+Erfurt, Potsdam). All carry image, activities, beauty, rating, tolls, costs.
+
+---
+
 `meta.accommodation_model` also gains `occupancy_exponent: 0.55` +
 `occupancy_ref_capacity: 4`: whole-home prices grow ~capacity^0.55, so the
 runtime rescales the stored 4-sleeper per-person nightly to the real group
