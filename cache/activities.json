@@ -214690,7 +214690,9 @@
     "lat": 38.88945388793945,
     "lon": -9.371725082397461,
     "rate": 2,
-    "heritage": true
+    "heritage": true,
+    "desc": "Civil parish in Lisbon, Portugal",
+    "wiki": "https://en.wikipedia.org/wiki/S%C3%A3o_Jo%C3%A3o_das_Lampas"
    },
    {
     "name": "Sta. Marta's Chapel",
@@ -226548,7 +226550,10 @@
     "lat": 43.84040069580078,
     "lon": 10.503067016601562,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/Lucca-teatro_del_Giglio-complesso1.jpg/500px-Lucca-teatro_del_Giglio-complesso1.jpg",
+    "desc": "Theatre in Lucca, Italy",
+    "wiki": "https://en.wikipedia.org/wiki/Teatro_del_Giglio"
    },
    {
     "name": "Battistero e Chiesa Dei Santi Giovanni e Reparata",
@@ -234426,7 +234431,10 @@
     "kind": "Bridge",
     "lat": 47.148048400878906,
     "lon": 13.103372573852539,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/aa/Railjet_793_bei_Bad_Hofgastein.jpg/500px-Railjet_793_bei_Bad_Hofgastein.jpg",
+    "desc": "Railway line in Austria",
+    "wiki": "https://en.wikipedia.org/wiki/Tauern_Railway"
    },
    {
     "name": "Gamskarkogel",
@@ -237964,7 +237972,10 @@
     "lat": 35.84445571899414,
     "lon": 14.552408218383789,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/Malta_-_Tas-Silg_-_072.jpg/500px-Malta_-_Tas-Silg_-_072.jpg",
+    "desc": "Multi-period sanctuary and archaeological site",
+    "wiki": "https://en.wikipedia.org/wiki/Tas-Sil%C4%A1"
    },
    {
     "name": "Tas-Silġ",
@@ -237972,7 +237983,10 @@
     "lat": 35.84585952758789,
     "lon": 14.551898956298828,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/Malta_-_Tas-Silg_-_072.jpg/500px-Malta_-_Tas-Silg_-_072.jpg",
+    "desc": "Multi-period sanctuary and archaeological site",
+    "wiki": "https://en.wikipedia.org/wiki/Tas-Sil%C4%A1"
    },
    {
     "name": "Fort San Lucian",
@@ -238693,7 +238707,10 @@
     "kind": "Square",
     "lat": 55.20216751098633,
     "lon": 14.976580619812012,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/Melsted_M%C3%B8lle_%28Bornholm%29.jpg/500px-Melsted_M%C3%B8lle_%28Bornholm%29.jpg",
+    "desc": "Post mill on the Danish island of Bornholm",
+    "wiki": "https://en.wikipedia.org/wiki/Tejn_M%C3%B8lle"
    },
    {
     "name": "Melstedgård",
@@ -239757,7 +239774,10 @@
     "kind": "Peak",
     "lat": 63.399818420410156,
     "lon": -20.287630081176758,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/St%C3%B3rh%C3%B6f%C3%B0i_%287469276784%29.jpg/500px-St%C3%B3rh%C3%B6f%C3%B0i_%287469276784%29.jpg",
+    "desc": "Peninsula in Iceland",
+    "wiki": "https://en.wikipedia.org/wiki/St%C3%B3rh%C3%B6f%C3%B0i"
    },
    {
     "name": "Eldfell",
@@ -250487,7 +250507,10 @@
     "kind": "Square",
     "lat": 36.5988883972168,
     "lon": 27.83416748046875,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/Colorful_houses_symi.jpg/500px-Colorful_houses_symi.jpg",
+    "desc": "Greek island in the Aegean Sea",
+    "wiki": "https://en.wikipedia.org/wiki/Symi"
    },
    {
     "name": "Nimos",
@@ -253055,7 +253078,10 @@
     "lat": 46.10140609741211,
     "lon": 19.661333084106445,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Pogled_na_Suboti%C4%8Dku_sinagogu_iz_dvori%C5%A1ta.jpg/500px-Pogled_na_Suboti%C4%8Dku_sinagogu_iz_dvori%C5%A1ta.jpg",
+    "desc": "Former synagogue in Subotica, Serbia",
+    "wiki": "https://en.wikipedia.org/wiki/Subotica_Synagogue"
    },
    {
     "name": "Srpska pravoslavna crkva",
@@ -255804,7 +255830,10 @@
     "lon": -3.878791093826294,
     "rate": 2,
     "heritage": true,
-    "active": true
+    "active": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/20/Sychnant-P1140907X.JPG/500px-Sychnant-P1140907X.JPG",
+    "desc": "Mountain pass in North Wales",
+    "wiki": "https://en.wikipedia.org/wiki/Sychnant_Pass"
    },
    {
     "name": "Coed Ffordd-las",
@@ -257861,7 +257890,10 @@
     "lat": 51.67110061645508,
     "lon": -4.70080041885376,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Cropped_image_of_the_Tenby_town_walls_%28August_2017%29.JPG/500px-Cropped_image_of_the_Tenby_town_walls_%28August_2017%29.JPG",
+    "desc": "Medieval walls in Pembrokeshire, Wales",
+    "wiki": "https://en.wikipedia.org/wiki/Tenby_town_walls"
    },
    {
     "name": "St. Mary's Church",
@@ -257901,7 +257933,10 @@
     "lat": 51.67255401611328,
     "lon": -4.694584369659424,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/db/Tenby_Castle_-_geograph.org.uk_-_3694238.jpg/500px-Tenby_Castle_-_geograph.org.uk_-_3694238.jpg",
+    "desc": "Castle ruins in Pembrokeshire, Wales",
+    "wiki": "https://en.wikipedia.org/wiki/Tenby_Castle"
    },
    {
     "name": "St Catherine's Fort",
@@ -277342,7 +277377,10 @@
     "lat": 45.55015563964844,
     "lon": 11.549250602722168,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c6/Interior_of_Teatro_Olimpico_%28Vicenza%29_scena_.jpg/500px-Interior_of_Teatro_Olimpico_%28Vicenza%29_scena_.jpg",
+    "desc": "Historic 16th-century theatre in Vicenza, Italy",
+    "wiki": "https://en.wikipedia.org/wiki/Teatro_Olimpico"
    },
    {
     "name": "historic center of Vicenza",
@@ -280466,7 +280504,10 @@
     "kind": "Museum",
     "lat": 44.099998474121094,
     "lon": 9.816666603088379,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ed/La_Spezia_-_Ingresso_Arsenale.JPG/500px-La_Spezia_-_Ingresso_Arsenale.JPG",
+    "desc": "Naval base in La Spezia, Italy",
+    "wiki": "https://en.wikipedia.org/wiki/La_Spezia_Naval_Base"
    },
    {
     "name": "Garibaldi",
@@ -280934,7 +280975,10 @@
     "lat": 45.695091247558594,
     "lon": 9.671106338500977,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Bergamo_Teatro_Donizetti.JPG/500px-Bergamo_Teatro_Donizetti.JPG",
+    "desc": "Theatre and opera house in Bergamo, Italy",
+    "wiki": "https://en.wikipedia.org/wiki/Teatro_Donizetti"
    },
    {
     "name": "Palazzo di Giustizia",
@@ -282166,7 +282210,10 @@
     "lat": 52.380638122558594,
     "lon": 13.06420612335205,
     "rate": 3,
-    "active": true
+    "active": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/Potsdam_Telegrafenberg_asv2023-09_img4.jpg/500px-Potsdam_Telegrafenberg_asv2023-09_img4.jpg",
+    "desc": "Observatory",
+    "wiki": "https://en.wikipedia.org/wiki/Einstein_Tower"
    },
    {
     "name": "Böttcherberg",
@@ -304918,7 +304965,10 @@
     "kind": "Square",
     "lat": 50.71138381958008,
     "lon": 14.98538589477539,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d6/Sv%C4%9Btl%C3%A1_pod_Je%C5%A1t%C4%9Bdem%2C_Dolen%C3%AD_Paseky%2C_main_road.jpg/500px-Sv%C4%9Btl%C3%A1_pod_Je%C5%A1t%C4%9Bdem%2C_Dolen%C3%AD_Paseky%2C_main_road.jpg",
+    "desc": "Municipality in Liberec, Czech Republic",
+    "wiki": "https://en.wikipedia.org/wiki/Sv%C4%9Btl%C3%A1_pod_Je%C5%A1t%C4%9Bdem"
    },
    {
     "name": "Hlubocký hřeben",
@@ -306616,7 +306666,9 @@
     "kind": "Nature reserve",
     "lat": 49.17396545410156,
     "lon": 18.582868576049805,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fb/Sulovske_skaly_big.jpg/500px-Sulovske_skaly_big.jpg",
+    "wiki": "https://en.wikipedia.org/wiki/S%C3%BA%C4%BEov_Rocks"
    },
    {
     "name": "Šarkania diera",
@@ -306787,7 +306839,9 @@
     "kind": "Square",
     "lat": 49.18253707885742,
     "lon": 18.59511947631836,
-    "rate": 2
+    "rate": 2,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fb/Sulovske_skaly_big.jpg/500px-Sulovske_skaly_big.jpg",
+    "wiki": "https://en.wikipedia.org/wiki/S%C3%BA%C4%BEov_Rocks"
    },
    {
     "name": "Roháč",
@@ -307009,7 +307063,10 @@
     "kind": "Castle",
     "lat": 46.80467987060547,
     "lon": 17.436359405517578,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fd/V%C3%A1rrom_%2810376._sz%C3%A1m%C3%BA_m%C5%B1eml%C3%A9k%29.jpg/500px-V%C3%A1rrom_%2810376._sz%C3%A1m%C3%BA_m%C5%B1eml%C3%A9k%29.jpg",
+    "desc": "Place in Veszprém, Hungary",
+    "wiki": "https://en.wikipedia.org/wiki/Szigliget"
    },
    {
     "name": "Szent Imre herceg-templom",
@@ -307278,7 +307335,10 @@
     "kind": "Museum",
     "lat": 48.3192024230957,
     "lon": 21.566619873046875,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/26/S%C3%A1rospatak_-_Castle.jpg/500px-S%C3%A1rospatak_-_Castle.jpg",
+    "desc": "Town in Northern Hungary, Hungary",
+    "wiki": "https://en.wikipedia.org/wiki/S%C3%A1rospatak"
    },
    {
     "name": "Sárospataki Képtár",
@@ -307954,7 +308014,10 @@
     "lat": 46.46227264404297,
     "lon": 16.169763565063477,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/Svetinje2.jpg/500px-Svetinje2.jpg",
+    "desc": "Place in Styria, Slovenia",
+    "wiki": "https://en.wikipedia.org/wiki/Svetinje"
    },
    {
     "name": "Miklavž pri Ormožu",
@@ -316691,7 +316754,9 @@
     "kind": "Peak",
     "lat": 48.738311767578125,
     "lon": 18.996444702148438,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/20170108_Transmitter_Such%C3%A1_Hora.jpg/500px-20170108_Transmitter_Such%C3%A1_Hora.jpg",
+    "wiki": "https://en.wikipedia.org/wiki/Such%C3%A1_Hora_transmitter"
    },
    {
     "name": "Skalka",
@@ -323709,7 +323774,9 @@
     "lat": 46.22962188720703,
     "lon": 15.301992416381836,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "desc": "Place in Styria, Slovenia",
+    "wiki": "https://en.wikipedia.org/wiki/Teharje"
    },
    {
     "name": "Teharje memorial park",
@@ -323760,7 +323827,10 @@
     "lat": 46.18657684326172,
     "lon": 15.303557395935059,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/22/Svetina%2C_%C5%A0tore.jpg/500px-Svetina%2C_%C5%A0tore.jpg",
+    "desc": "Place in Styria, Slovenia",
+    "wiki": "https://en.wikipedia.org/wiki/Svetina"
    },
    {
     "name": "Petrovče",
@@ -327142,7 +327212,10 @@
     "lat": 51.16340637207031,
     "lon": 13.467748641967773,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/en/thumb/a/af/St.Afra_Main_Building.jpg/500px-St.Afra_Main_Building.jpg",
+    "desc": "Boarding school in Meissen, Saxony",
+    "wiki": "https://en.wikipedia.org/wiki/S%C3%A4chsisches_Landesgymnasium_Sankt_Afra_zu_Mei%C3%9Fen"
    },
    {
     "name": "Nikolaikirche",
@@ -329311,7 +329384,10 @@
     "kind": "Peak",
     "lat": 47.012672424316406,
     "lon": 9.839693069458008,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Sulzfluh_1.JPG/500px-Sulzfluh_1.JPG",
+    "desc": "Mountain in Switzerland",
+    "wiki": "https://en.wikipedia.org/wiki/Sulzfluh"
    },
    {
     "name": "Taleu",
@@ -329604,7 +329680,10 @@
     "kind": "Peak",
     "lat": 46.69892120361328,
     "lon": 8.455199241638184,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e9/Sustenhorn_E-Grat.jpg/500px-Sustenhorn_E-Grat.jpg",
+    "desc": "Mountain in the Uri Alps, Switzerland",
+    "wiki": "https://en.wikipedia.org/wiki/Sustenhorn"
    },
    {
     "name": "Gross Wendenstock",
@@ -336877,7 +336956,9 @@
     "kind": "Peak",
     "lat": 51.915000915527344,
     "lon": 10.46815013885498,
-    "rate": 3
+    "rate": 3,
+    "desc": "Stadtteil of Goslar in Lower Saxony, Germany",
+    "wiki": "https://en.wikipedia.org/wiki/Sudmerberg"
    },
    {
     "name": "Steinberg-Tower",
@@ -339884,7 +339965,9 @@
     "kind": "Peak",
     "lat": 48.09170150756836,
     "lon": 8.253890037536621,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/St%C3%B6cklewald_nahe_St%C3%B6cklewaldturm.jpg/500px-St%C3%B6cklewald_nahe_St%C3%B6cklewaldturm.jpg",
+    "wiki": "https://en.wikipedia.org/wiki/St%C3%B6cklewald"
    },
    {
     "name": "Stöcklewald Tower",
@@ -389685,7 +389768,10 @@
     "kind": "Square",
     "lat": 37.43851089477539,
     "lon": 24.912376403808594,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/37/Syros_Ano_Syros_u_Ermoupolis140707.jpg/500px-Syros_Ano_Syros_u_Ermoupolis140707.jpg",
+    "desc": "Greek island",
+    "wiki": "https://en.wikipedia.org/wiki/Syros"
    },
    {
     "name": "Industrial Museum",
@@ -392422,7 +392508,9 @@
     "kind": "Square",
     "lat": 36.23160934448242,
     "lon": 23.023916244506836,
-    "rate": 2
+    "rate": 2,
+    "desc": "Temple in Greece",
+    "wiki": "https://en.wikipedia.org/wiki/Temple_of_Aphrodite,_Kythira"
    },
    {
     "name": "Kato Chora",
@@ -396398,7 +396486,10 @@
     "kind": "Square",
     "lat": 37.082637786865234,
     "lon": 22.42361068725586,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/db/Spartan_Territory_Before_371_BC.png/500px-Spartan_Territory_Before_371_BC.png",
+    "desc": "City-state in ancient Greece",
+    "wiki": "https://en.wikipedia.org/wiki/Sparta"
    },
    {
     "name": "Sparta",
@@ -396665,7 +396756,10 @@
     "lat": 37.63795471191406,
     "lon": 21.62864875793457,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Olympia_-_Temple_of_Hera_3.jpg/500px-Olympia_-_Temple_of_Hera_3.jpg",
+    "desc": "Temple in Greece",
+    "wiki": "https://en.wikipedia.org/wiki/Temple_of_Hera,_Olympia"
    },
    {
     "name": "Bouleuterion",
@@ -397813,7 +397907,10 @@
     "lat": 37.75435256958008,
     "lon": 23.533267974853516,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/Aegina_-_Temple_of_Aphaia_03.jpg/500px-Aegina_-_Temple_of_Aphaia_03.jpg",
+    "desc": "Ancient Greek temple on Aegina",
+    "wiki": "https://en.wikipedia.org/wiki/Temple_of_Aphaia"
    },
    {
     "name": "Kolona",
@@ -404669,7 +404766,10 @@
     "kind": "Peak",
     "lat": 45.971309661865234,
     "lon": 7.643659591674805,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/Cervin_Breuil.JPG/500px-Cervin_Breuil.JPG",
+    "desc": "Mountain in Switzerland",
+    "wiki": "https://en.wikipedia.org/wiki/Testa_del_Leone"
    },
    {
     "name": "Punta Carrel",
@@ -404750,7 +404850,10 @@
     "kind": "Peak",
     "lat": 45.93413543701172,
     "lon": 7.708073139190674,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Rif-theodulo.jpg/500px-Rif-theodulo.jpg",
+    "desc": "Rocky prominence above the Theodul Pass, between Italy and Switzerland",
+    "wiki": "https://en.wikipedia.org/wiki/Testa_Grigia"
    },
    {
     "name": "Mont Roisetta",
@@ -405455,7 +405558,10 @@
     "lat": 45.71666717529297,
     "lon": 10.050000190734863,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c0/Tavernola_panorama_01.JPG/500px-Tavernola_panorama_01.JPG",
+    "desc": "Comune in Lombardy, Italy",
+    "wiki": "https://en.wikipedia.org/wiki/Tavernola_Bergamasca"
    },
    {
     "name": "Peschiera Maraglio",
@@ -405490,7 +405596,10 @@
     "lat": 45.68333435058594,
     "lon": 10.100000381469727,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/Municipio_-_Sulzano_%28Foto_Luca_Giarelli%29.jpg/500px-Municipio_-_Sulzano_%28Foto_Luca_Giarelli%29.jpg",
+    "desc": "Comune in Lombardy, Italy",
+    "wiki": "https://en.wikipedia.org/wiki/Sulzano"
    },
    {
     "name": "chiesa dei Santi Ippolito e Cassiano (Zone)",
@@ -408566,7 +408675,9 @@
     "lat": 42.85567855834961,
     "lon": 13.57449722290039,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/476AscoliPTeatroVentidioBasso.JPG/500px-476AscoliPTeatroVentidioBasso.JPG",
+    "wiki": "https://en.wikipedia.org/wiki/Teatro_Ventidio_Basso"
    },
    {
     "name": "Chiesa di Santa Maria Intervineas",
@@ -409742,7 +409853,10 @@
     "kind": "Square",
     "lat": 42.65810012817383,
     "lon": 11.516200065612793,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/02/Terme_di_Saturnia_-_Cascate_del_Mulino-0518.jpg/500px-Terme_di_Saturnia_-_Cascate_del_Mulino-0518.jpg",
+    "desc": "Group of thermal springs located in Manciano, Italy",
+    "wiki": "https://en.wikipedia.org/wiki/Terme_di_Saturnia"
    },
    {
     "name": "Chiesa della Visitazione di Maria",
@@ -412159,7 +412273,10 @@
     "lat": 42.73513412475586,
     "lon": 12.73941421508789,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/16/Teatro_Caio_Melisso_di_Spoleto.JPG/500px-Teatro_Caio_Melisso_di_Spoleto.JPG",
+    "desc": "Opera house located in Spoleto, Italy",
+    "wiki": "https://en.wikipedia.org/wiki/Teatro_Caio_Melisso"
    },
    {
     "name": "Santa Maria della Manna d'Oro, Spoleto",
@@ -420462,7 +420579,10 @@
     "kind": "Square",
     "lat": 37.28965759277344,
     "lon": 13.592072486877441,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/51/Agrigent_BW_2012-10-07_12-52-27.JPG/500px-Agrigent_BW_2012-10-07_12-52-27.JPG",
+    "desc": "Ancient temple in Agrigento, Italy",
+    "wiki": "https://en.wikipedia.org/wiki/Temple_of_Concordia,_Agrigento"
    },
    {
     "name": "Olivo del Tempio di Giunone",
@@ -423328,7 +423448,10 @@
     "lat": 39.705810546875,
     "lon": 8.990911483764648,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Nuraghe_Su_Nuraxi_-_Barumini_-_Sardinia_-_Italy_-_30.jpg/500px-Nuraghe_Su_Nuraxi_-_Barumini_-_Sardinia_-_Italy_-_30.jpg",
+    "desc": "Archaeological site in Sardinia, Italy",
+    "wiki": "https://en.wikipedia.org/wiki/Su_Nuraxi_(Barumini)"
    },
    {
     "name": "Polo museale casa Zapata",
@@ -426258,7 +426381,10 @@
     "lat": 36.03594970703125,
     "lon": 14.260259628295898,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/Xewkija_Windmill_-_Antennas.jpg/500px-Xewkija_Windmill_-_Antennas.jpg",
+    "desc": "Windmill in Gozo, Malta",
+    "wiki": "https://en.wikipedia.org/wiki/Tat-Tmien_Kantunieri_Windmill"
    },
    {
     "name": "Għejzu Cave",
@@ -427341,7 +427467,9 @@
     "kind": "Peak",
     "lat": 61.544151306152344,
     "lon": 8.556640625,
-    "rate": 2
+    "rate": 2,
+    "desc": "Mountain in Innlandet, Norway",
+    "wiki": "https://en.wikipedia.org/wiki/S%C3%B8re_Bl%C3%A5breah%C3%B8e"
    },
    {
     "name": "Vestre Memurubreen",
@@ -429499,7 +429627,10 @@
     "lat": 61.090049743652344,
     "lon": 10.474783897399902,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/S%C3%B8re_%C3%85l_kirke_Lillehammer.jpg/500px-S%C3%B8re_%C3%85l_kirke_Lillehammer.jpg",
+    "desc": "Church in Innlandet, Norway",
+    "wiki": "https://en.wikipedia.org/wiki/S%C3%B8re_%C3%85l_Church"
    },
    {
     "name": "Vingrom kirke",
@@ -430541,7 +430672,10 @@
     "lat": 58.76313781738281,
     "lon": 9.079815864562988,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/S%C3%B8ndeled_kirke.JPG/500px-S%C3%B8ndeled_kirke.JPG",
+    "desc": "Church in Agder, Norway",
+    "wiki": "https://en.wikipedia.org/wiki/S%C3%B8ndeled_Church"
    },
    {
     "name": "Konvoibyen i Risør",
@@ -430842,7 +430976,10 @@
     "kind": "Museum",
     "lat": 58.146759033203125,
     "lon": 7.993701457977295,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Sorlandets_kunstmuseum.jpg/500px-Sorlandets_kunstmuseum.jpg",
+    "desc": "Museum in Kristiansand, Norway",
+    "wiki": "https://en.wikipedia.org/wiki/Southern_Norway_Art_Museum"
    },
    {
     "name": "Agder Kunstsenter",
@@ -430980,7 +431117,10 @@
     "kind": "Church",
     "lat": 58.151248931884766,
     "lon": 8.075973510742188,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/03/Som-kirke.JPG/500px-Som-kirke.JPG",
+    "desc": "Church in Agder, Norway",
+    "wiki": "https://en.wikipedia.org/wiki/S%C3%B8m_Church"
    },
    {
     "name": "Justvik kirke",
@@ -433060,7 +433200,10 @@
     "kind": "Square",
     "lat": 57.95212936401367,
     "lon": 19.254430770874023,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/Rauks_%283881539849%29.jpg/500px-Rauks_%283881539849%29.jpg",
+    "desc": "Island in the Baltic Sea",
+    "wiki": "https://en.wikipedia.org/wiki/F%C3%A5r%C3%B6"
    },
    {
     "name": "Ullahau",
@@ -435325,7 +435468,10 @@
     "kind": "Square",
     "lat": 59.619564056396484,
     "lon": 17.8008975982666,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Sassanider.jpg/500px-Sassanider.jpg",
+    "desc": "Viking Age hoard of 482 silver coins",
+    "wiki": "https://en.wikipedia.org/wiki/Sundveda_Hoard"
    },
    {
     "name": "Upplands runinskrifter 392",
@@ -437185,7 +437331,10 @@
     "kind": "Peak",
     "lat": 63.87765884399414,
     "lon": -22.44816017150879,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/17-08-04-Arnarseturshraun-RalfR-DSC_2394.jpg/500px-17-08-04-Arnarseturshraun-RalfR-DSC_2394.jpg",
+    "desc": "Volcanic system in Iceland",
+    "wiki": "https://en.wikipedia.org/wiki/Eldv%C3%B6rp%E2%80%93Svartsengi"
    },
    {
     "name": "Þorbjarnarfell",
@@ -443806,7 +443955,10 @@
     "lat": 54.71102523803711,
     "lon": 17.401308059692383,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b0/SlowinskiNationalParkPL.jpg/500px-SlowinskiNationalParkPL.jpg",
+    "desc": "National park in Poland",
+    "wiki": "https://en.wikipedia.org/wiki/Slovincian_National_Park"
    },
    {
     "name": "Holy Trinity church in Smołdzino",
@@ -445775,7 +445927,10 @@
     "kind": "Nature reserve",
     "lat": 50.48390579223633,
     "lon": 16.34196662902832,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/2015_Szczeliniec_Wielki_02.JPG/500px-2015_Szczeliniec_Wielki_02.JPG",
+    "desc": "Highest peak of the Stołowe Mountains (Table Mountains) in Poland",
+    "wiki": "https://en.wikipedia.org/wiki/Szczeliniec_Wielki"
    },
    {
     "name": "Szczeliniec Mały",
@@ -445796,7 +445951,10 @@
     "kind": "Nature reserve",
     "lat": 50.46751403808594,
     "lon": 16.35205078125,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Widoczek_10062005_2.jpg/500px-Widoczek_10062005_2.jpg",
+    "desc": "National park in Poland",
+    "wiki": "https://en.wikipedia.org/wiki/Sto%C5%82owe_Mountains_National_Park"
    },
    {
     "name": "Skalniak",
@@ -451350,7 +451508,9 @@
     "lat": 58.54999923706055,
     "lon": 23.233333587646484,
     "rate": 2,
-    "heritage": true
+    "heritage": true,
+    "desc": "Protected area in Estonia",
+    "wiki": "https://en.wikipedia.org/wiki/Suurem%C3%B5isa_Bay_Nature_Reserve"
    },
    {
     "name": "Võlla tamm",
@@ -457321,7 +457481,10 @@
     "lat": 38.952735900878906,
     "lon": -9.292901039123535,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fc/Tapada_de_Mafra_Porta_do_Code%C3%A7al.jpg/500px-Tapada_de_Mafra_Porta_do_Code%C3%A7al.jpg",
+    "desc": "Park in Mafra, Portugal",
+    "wiki": "https://en.wikipedia.org/wiki/Tapada_Nacional_de_Mafra"
    },
    {
     "name": "Fort of Zambujal",
@@ -457541,7 +457704,9 @@
     "lat": 38.88945388793945,
     "lon": -9.371725082397461,
     "rate": 2,
-    "heritage": true
+    "heritage": true,
+    "desc": "Civil parish in Lisbon, Portugal",
+    "wiki": "https://en.wikipedia.org/wiki/S%C3%A3o_Jo%C3%A3o_das_Lampas"
    },
    {
     "name": "Ermida de São Julião, com o seu recheio artístico de azulejos, e o cruzeiro que lhe fica anexo",
@@ -461835,7 +462000,10 @@
     "lat": 37.45248794555664,
     "lon": -8.791887283325195,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/ba/Praia_da_Costa_Vicentina.jpg/500px-Praia_da_Costa_Vicentina.jpg",
+    "desc": "Protected area in southwest Portugal",
+    "wiki": "https://en.wikipedia.org/wiki/Southwest_Alentejo_and_Vicentine_Coast_Natural_Park"
    },
    {
     "name": "Igreja Matriz de Odeceixe",
@@ -462034,7 +462202,10 @@
     "lat": 37.45248794555664,
     "lon": -8.791887283325195,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/ba/Praia_da_Costa_Vicentina.jpg/500px-Praia_da_Costa_Vicentina.jpg",
+    "desc": "Protected area in southwest Portugal",
+    "wiki": "https://en.wikipedia.org/wiki/Southwest_Alentejo_and_Vicentine_Coast_Natural_Park"
    },
    {
     "name": "Cabo Sardão Lighthouse",
@@ -463386,7 +463557,10 @@
     "lat": 39.291099548339844,
     "lon": -7.4337077140808105,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/da/S%C3%A9_Catedral_de_Portalegre.jpg/500px-S%C3%A9_Catedral_de_Portalegre.jpg",
+    "desc": "Church building in Portalegre, Portugal",
+    "wiki": "https://en.wikipedia.org/wiki/S%C3%A9_de_Portalegre"
    },
    {
     "name": "Capela do Calvário",
@@ -467389,7 +467563,10 @@
     "kind": "Theatre",
     "lat": 41.764991760253906,
     "lon": -8.586610794067383,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Teatro_Diogo_Bernardes_-_Ponte_de_Lima_-_Portugal_%285047735722%29.jpg/500px-Teatro_Diogo_Bernardes_-_Ponte_de_Lima_-_Portugal_%285047735722%29.jpg",
+    "desc": "Theatre in Ponte de Lima, Portugal",
+    "wiki": "https://en.wikipedia.org/wiki/Diogo_Bernardes_Theatre"
    },
    {
     "name": "Museu do Brinquedo Português",
@@ -467739,7 +467916,9 @@
     "kind": "Church",
     "lat": 41.98991012573242,
     "lon": -8.667085647583008,
-    "rate": 3
+    "rate": 3,
+    "desc": "Civil parish in Norte, Portugal",
+    "wiki": "https://en.wikipedia.org/wiki/S%C3%A3o_Pedro_da_Torre"
    },
    {
     "name": "Igreja Matriz de Fontoura",
@@ -469927,7 +470106,9 @@
     "kind": "Peak",
     "lat": 38.601593017578125,
     "lon": -28.650850296020508,
-    "rate": 2
+    "rate": 2,
+    "desc": "Mountain peak on Faial, Azores",
+    "wiki": "https://en.wikipedia.org/wiki/Tambroso"
    },
    {
     "name": "Beaches of Praia do Norte",
@@ -471513,7 +471694,9 @@
     "kind": "Square",
     "lat": 32.685123443603516,
     "lon": -16.900978088378906,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f0/B%C3%A9ke_Sz%C3%BCz%C3%A9nek_szobra%2C_Terreiro_da_Luta.jpg/500px-B%C3%A9ke_Sz%C3%BCz%C3%A9nek_szobra%2C_Terreiro_da_Luta.jpg",
+    "wiki": "https://en.wikipedia.org/wiki/Terreiro_da_Luta"
    },
    {
     "name": "Capela Nossa Senhora da Paz",
@@ -472351,7 +472534,9 @@
     "kind": "Square",
     "lat": 32.685123443603516,
     "lon": -16.900978088378906,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f0/B%C3%A9ke_Sz%C3%BCz%C3%A9nek_szobra%2C_Terreiro_da_Luta.jpg/500px-B%C3%A9ke_Sz%C3%BCz%C3%A9nek_szobra%2C_Terreiro_da_Luta.jpg",
+    "wiki": "https://en.wikipedia.org/wiki/Terreiro_da_Luta"
    },
    {
     "name": "Madeira Natural Park",
@@ -472820,7 +473005,9 @@
     "kind": "Square",
     "lat": 32.685123443603516,
     "lon": -16.900978088378906,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f0/B%C3%A9ke_Sz%C3%BCz%C3%A9nek_szobra%2C_Terreiro_da_Luta.jpg/500px-B%C3%A9ke_Sz%C3%BCz%C3%A9nek_szobra%2C_Terreiro_da_Luta.jpg",
+    "wiki": "https://en.wikipedia.org/wiki/Terreiro_da_Luta"
    },
    {
     "name": "Igreja de Nossa Senhora do Livramento",
@@ -477356,7 +477543,10 @@
     "kind": "Theatre",
     "lat": 45.7180290222168,
     "lon": 22.887306213378906,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a1/Preparation_plant_teliucu.jpg/500px-Preparation_plant_teliucu.jpg",
+    "desc": "Commune in Hunedoara, Romania",
+    "wiki": "https://en.wikipedia.org/wiki/Teliucu_Inferior"
    },
    {
     "name": "Băcia",
@@ -478732,7 +478922,10 @@
     "lat": 47.77812957763672,
     "lon": 25.711214065551758,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Biserica_si_curtea_manastirii_Sucevita.jpg/500px-Biserica_si_curtea_manastirii_Sucevita.jpg",
+    "desc": "Monastery located in Sucevita",
+    "wiki": "https://en.wikipedia.org/wiki/Sucevi%C8%9Ba_Monastery"
    },
    {
     "name": "Sucevita Monastery Museum Collection",
@@ -478818,7 +479011,10 @@
     "lat": 47.750694274902344,
     "lon": 23.93630599975586,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Sarbi_Susani.jpg/500px-Sarbi_Susani.jpg",
+    "desc": "Heritage site in Maramureș County, Romania",
+    "wiki": "https://en.wikipedia.org/wiki/S%C3%A2rbi_Susani_church"
    },
    {
     "name": "Wooden churches in Hoteni",
@@ -487653,7 +487849,10 @@
     "lat": 40.343841552734375,
     "lon": -1.1072616577148438,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/Teruel_Cathedral_2024_-_South_fa%C3%A7ade.jpg/500px-Teruel_Cathedral_2024_-_South_fa%C3%A7ade.jpg",
+    "desc": "UNESCO World Heritage Site",
+    "wiki": "https://en.wikipedia.org/wiki/Teruel_Cathedral"
    },
    {
     "name": "Torre de la Catedral",
@@ -510876,7 +511075,10 @@
     "lon": -2.6662099361419678,
     "rate": 3,
     "heritage": true,
-    "active": true
+    "active": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/4/47/Greater_Butterfly_Orchid_%28Platanthera_chlorantha%29_-_geograph.org.uk_-_847133.jpg",
+    "desc": "Forest in England",
+    "wiki": "https://en.wikipedia.org/wiki/Swanpool_Wood_and_Furnace_Grove"
    },
    {
     "name": "Astridge Wood",
@@ -511373,7 +511575,10 @@
     "lat": 52.67300033569336,
     "lon": -2.447000026702881,
     "rate": 2,
-    "active": true
+    "active": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/Withy_Pool_2.jpg/500px-Withy_Pool_2.jpg",
+    "desc": "Park located in Telford, Shropshire",
+    "wiki": "https://en.wikipedia.org/wiki/Telford_Town_Park"
    },
    {
     "name": "Moated site at Whitwell",
@@ -511940,7 +512145,10 @@
     "lat": 51.717899322509766,
     "lon": -2.675230026245117,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/a/a6/Kleine_Hufeisennase_cropped.jpg",
+    "desc": "Barn in Gloucestershire, England",
+    "wiki": "https://en.wikipedia.org/wiki/Sylvan_House_Barn"
    },
    {
     "name": "Poor's Allotment",
@@ -520848,7 +521056,10 @@
     "kind": "Square",
     "lat": 50.05237579345703,
     "lon": -5.577419281005859,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/Tater-du_Lighthouse_%289336281426%29.jpg/500px-Tater-du_Lighthouse_%289336281426%29.jpg",
+    "desc": "Lighthouse",
+    "wiki": "https://en.wikipedia.org/wiki/Tater_Du_Lighthouse"
    },
    {
     "name": "The Pipers",
@@ -522987,7 +523198,10 @@
     "lat": 50.14051818847656,
     "lon": -5.076451778411865,
     "rate": 2,
-    "active": true
+    "active": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/63/The_Swanpool%2C_Falmouth%2C_Cornwall_-_geograph.org.uk_-_798000.jpg/500px-The_Swanpool%2C_Falmouth%2C_Cornwall_-_geograph.org.uk_-_798000.jpg",
+    "desc": "Small coastal saline lagoon on the south coast of Cornwall, England",
+    "wiki": "https://en.wikipedia.org/wiki/Swanpool,_Cornwall"
    },
    {
     "name": "Great Molunan",
@@ -529197,7 +529411,10 @@
     "lat": 51.13779830932617,
     "lon": 1.3358299732208252,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/d/dc/Swingate_military_telecommunication_station_-_geograph.org.uk_-_1633769.jpg",
+    "desc": "Transmitter station in Kent, England",
+    "wiki": "https://en.wikipedia.org/wiki/Swingate_transmitting_station"
    },
    {
     "name": "Swingate Mill, Guston",
@@ -529205,7 +529422,10 @@
     "lat": 51.15079879760742,
     "lon": 1.3345799446105957,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Guston_Windmill_1913.jpg/500px-Guston_Windmill_1913.jpg",
+    "desc": "Windmill in Guston, Kent, England",
+    "wiki": "https://en.wikipedia.org/wiki/Swingate_Mill,_Guston"
    },
    {
     "name": "Folkestone Lighthouse",
@@ -533979,7 +534199,10 @@
     "lat": 53.269466400146484,
     "lon": -4.270149230957031,
     "rate": 2,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Houses_near_the_crossroads_at_Talwrn_-_geograph.org.uk_-_515888.jpg/500px-Houses_near_the_crossroads_at_Talwrn_-_geograph.org.uk_-_515888.jpg",
+    "desc": "Village in Anglesey, Wales",
+    "wiki": "https://en.wikipedia.org/wiki/Talwrn"
    },
    {
     "name": "Craig Wen a Chors Castell",
@@ -537802,7 +538025,10 @@
     "kind": "Square",
     "lat": 51.64314270019531,
     "lon": -8.883376121520996,
-    "rate": 2
+    "rate": 2,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/Templebryan_1.jpg/500px-Templebryan_1.jpg",
+    "desc": "Stone circle in County Cork, Ireland",
+    "wiki": "https://en.wikipedia.org/wiki/Templebryan_Stone_Circle"
    },
    {
     "name": "Templebryan North Ogham Stone",
@@ -545149,7 +545375,10 @@
     "kind": "Nature reserve",
     "lat": 43.312339782714844,
     "lon": 18.700218200683594,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d7/NP001_nacionalni_park_sutjeska_perucica.jpg/500px-NP001_nacionalni_park_sutjeska_perucica.jpg",
+    "desc": "National park in Bosnia and Herzegovina",
+    "wiki": "https://en.wikipedia.org/wiki/Sutjeska_National_Park"
    },
    {
     "name": "Skakavac",
@@ -550928,7 +551157,10 @@
     "kind": "Peak",
     "lat": 43.2721061706543,
     "lon": 20.819499969482422,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f9/Hoteli_na_Kopaoniku.jpg/500px-Hoteli_na_Kopaoniku.jpg",
+    "desc": "Mountain in Serbia",
+    "wiki": "https://en.wikipedia.org/wiki/Suvo_Rudi%C5%A1te"
    },
    {
     "name": "Црквина - Небеске столице",
