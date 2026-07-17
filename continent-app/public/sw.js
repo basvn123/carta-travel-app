@@ -10,7 +10,7 @@
    Bump CACHE_VERSION whenever the shell/precache list changes so old caches are
    cleaned out on activate.
    ───────────────────────────────────────────────────────────────────────── */
-const CACHE_VERSION = 'carta-v2';
+const CACHE_VERSION = 'carta-v3';
 const SHELL = ['/', '/index.html', '/manifest.webmanifest', '/favicon.svg'];
 
 self.addEventListener('install', (event) => {
@@ -73,8 +73,12 @@ self.addEventListener('fetch', (event) => {
     return;
   }
   if (url.pathname === '/app_data.json' || url.pathname === '/activities_full.json'
-      || url.pathname === '/country_insights.json') {
-    event.respondWith(networkFirst(request));
+      || url.pathname === '/country_insights.json' || url.pathname.startsWith('/fares/')) {
+    // Stale-while-revalidate: repeat visits render instantly from cache while
+    // a fresh copy downloads in the background (network-first made every
+    // return visit wait out the multi-MB download again). Data one harvest
+    // stale for one visit is a fine trade for an instant open.
+    event.respondWith(staleWhileRevalidate(request));
     return;
   }
   if (url.pathname.startsWith('/assets/')) {

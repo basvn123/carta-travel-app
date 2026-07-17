@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useState } from 'react';
-import { appDataPromise } from '../lib/appData.js';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { appDataPromise, fetchFares } from '../lib/appData.js';
 import { hydrateForOrigin, defaultOrigin, originHome } from '../lib/origins.js';
 import { bestFareWindow } from '../lib/runtime_pricing.js';
 
@@ -68,12 +68,37 @@ export function useAppData(init, setChoices, departDate, setDepartDate, returnDa
   // The effective origin: the user's choice once known, else the data's default.
   const effectiveOrigin = origin || (raw ? defaultOrigin(raw) : null);
 
+  // Since the wire split (scripts/sync-data.mjs) the fares table isn't in
+  // app_data.json any more: each origin's slice lives at /fares/{IATA}.json
+  // (~tens of KB) and is fetched when that origin is first used. Legacy
+  // datasets that still ship an inline data.fares table skip the fetch.
+  const [faresSlices, setFaresSlices] = useState({}); // origin -> { anchor: rec }
+  useEffect(() => {
+    if (!raw || raw.fares || !effectiveOrigin || faresSlices[effectiveOrigin]) return undefined;
+    let cancelled = false;
+    fetchFares(effectiveOrigin).then((slice) => {
+      if (cancelled) return;
+      // A missing/failed slice degrades to "no fares from this origin" ({}),
+      // the same shape an unserved origin has always had.
+      setFaresSlices((prev) => (prev[effectiveOrigin] ? prev : { ...prev, [effectiveOrigin]: slice || {} }));
+    });
+    return () => { cancelled = true; };
+  }, [raw, effectiveOrigin, faresSlices]);
+
   // Every destination's fares rebuilt for the chosen origin. Re-derives (and so
   // reprices the whole app) whenever the origin changes.
-  const data = useMemo(
-    () => (raw && effectiveOrigin ? hydrateForOrigin(raw, effectiveOrigin) : null),
-    [raw, effectiveOrigin],
-  );
+  const hydrated = useMemo(() => {
+    if (!raw || !effectiveOrigin) return null;
+    if (raw.fares) return hydrateForOrigin(raw, effectiveOrigin);
+    const slice = faresSlices[effectiveOrigin];
+    return slice ? hydrateForOrigin(raw, effectiveOrigin, slice) : null;
+  }, [raw, effectiveOrigin, faresSlices]);
+
+  // While a newly-picked origin's slice downloads, keep showing the previous
+  // origin's data instead of dropping the whole app back to the loading screen.
+  const lastDataRef = useRef(null);
+  if (hydrated) lastDataRef.current = hydrated;
+  const data = hydrated || lastDataRef.current;
 
   // Earliest outbound + latest return date found in any destination's (hydrated)
   // routes - i.e. the fare window reachable from the chosen origin.

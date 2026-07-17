@@ -227194,7 +227194,10 @@
     "kind": "Square",
     "lat": 43.84284210205078,
     "lon": 10.502866744995117,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/21/Via_Clodia_Nova.jpg/500px-Via_Clodia_Nova.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "desc": "strada romana",
+    "wiki": "https://it.wikipedia.org/wiki/Via_Clodia_Nova"
    },
    {
     "name": "Palazzo Brancoli Pantera",
@@ -227566,7 +227569,10 @@
     "kind": "Square",
     "lat": 37.069091796875,
     "lon": 15.289541244506836,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Terme_di_Dafne.jpg/500px-Terme_di_Dafne.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "desc": "complesso termale romano-bizantino di Siracusa",
+    "wiki": "https://it.wikipedia.org/wiki/Terme_di_Dafne"
    },
    {
     "name": "San Tommaso al Pantheon",
@@ -227729,7 +227735,10 @@
     "kind": "Square",
     "lat": 37.07830047607422,
     "lon": 15.281119346618652,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/25/Presunta_Tomba_di_Archimede_%28Siracusa%29.jpg/500px-Presunta_Tomba_di_Archimede_%28Siracusa%29.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "desc": "tomba del matematico Archimede di Siracusa, identificata con un sito archeologico a Siracusa",
+    "wiki": "https://it.wikipedia.org/wiki/Tomba_di_Archimede"
    },
    {
     "name": "Temple of Athena",
@@ -229269,7 +229278,10 @@
     "kind": "Square",
     "lat": 36.8243293762207,
     "lon": 15.105616569519043,
-    "rate": 2
+    "rate": 2,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/Spiaggia_di_Calamosche_%28SICILIA%29.jpg/500px-Spiaggia_di_Calamosche_%28SICILIA%29.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "desc": "spiaggia della riserva di Vendicari",
+    "wiki": "https://it.wikipedia.org/wiki/Spiaggia_di_Calamosche"
    },
    {
     "name": "Acquitrinio di Calamosche",
@@ -231552,7 +231564,10 @@
     "lat": 44.64688491821289,
     "lon": 10.93004322052002,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/Paolo_Monti_-_Servizio_fotografico_%28Modena%2C_1973%29_-_BEIC_6348647.jpg/500px-Paolo_Monti_-_Servizio_fotografico_%28Modena%2C_1973%29_-_BEIC_6348647.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "desc": "teatro comunale a Modena",
+    "wiki": "https://it.wikipedia.org/wiki/Teatro_comunale_Pavarotti-Freni"
    },
    {
     "name": "Galleria Estense",
@@ -234226,7 +234241,10 @@
     "lat": 45.15787124633789,
     "lon": 10.798116683959961,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f0/Mantova%2C_teatro_bibiena%2C_interno_01%2C0.jpg/500px-Mantova%2C_teatro_bibiena%2C_interno_01%2C0.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "desc": "teatro di Mantova, Italia",
+    "wiki": "https://it.wikipedia.org/wiki/Teatro_Bibiena"
    },
    {
     "name": "List of artworks in the Gonzaga collection",
@@ -234513,7 +234531,10 @@
     "lon": 10.746191024780273,
     "rate": 1,
     "heritage": true,
-    "active": true
+    "active": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/Rivalta_sul_Mincio_panorama.jpg/500px-Rivalta_sul_Mincio_panorama.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "desc": "Riserva naturale regionale/provinciale (EUAP0339)",
+    "wiki": "https://it.wikipedia.org/wiki/Riserva_naturale_Valli_del_Mincio"
    },
    {
     "name": "Ansa e Valli del Mincio",
@@ -236684,7 +236705,10 @@
     "lon": 9.181666374206543,
     "rate": 1,
     "heritage": true,
-    "active": true
+    "active": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/Vista_dal_sent%C3%ACero.jpg/500px-Vista_dal_sent%C3%ACero.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "desc": "area naturale protetta nell'area geografica del golfo Paradiso orientale e del Tigullio occidentale",
+    "wiki": "https://it.wikipedia.org/wiki/Parco_naturale_regionale_di_Portofino"
    },
    {
     "name": "Bagni Miramare",
@@ -266271,7 +266295,10 @@
     "kind": "Square",
     "lat": 44.837059020996094,
     "lon": 11.619315147399902,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/Via_Coperta%2C_Ferrara_17.jpg/500px-Via_Coperta%2C_Ferrara_17.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "desc": "camminamento protetto che unisce l'ala nord dell'edificio del Palazzo Municipale (ex palazzo Ducale) con il Castello Estense a Ferrara",
+    "wiki": "https://it.wikipedia.org/wiki/Via_Coperta"
    },
    {
     "name": "Palazzo delle Assicurazioni Generali",
@@ -266448,7 +266475,10 @@
     "kind": "Museum",
     "lat": 40.63798522949219,
     "lon": 14.402117729187012,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/Villa_Fondi_De_Sangro_1.JPG/500px-Villa_Fondi_De_Sangro_1.JPG?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "desc": "villa nel comune italiano di Piano di Sorrento",
+    "wiki": "https://it.wikipedia.org/wiki/Villa_Fondi_De_Sangro"
    },
    {
     "name": "Museo archeologico territoriale della penisola sorrentina Georges Vallet",
@@ -268566,7 +268596,9 @@
     "kind": "Square",
     "lat": 41.82757568359375,
     "lon": 16.194190979003906,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/03/Torre_San_Felice.jpg/500px-Torre_San_Felice.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "wiki": "https://it.wikipedia.org/wiki/Torre_San_Felice"
    },
    {
     "name": "Trabucco San Lorenzo",
@@ -268580,7 +268612,8 @@
     "kind": "Square",
     "lat": 41.83704376220703,
     "lon": 16.18990135192871,
-    "rate": 2
+    "rate": 2,
+    "wiki": "https://it.wikipedia.org/wiki/Torre_Gattarella"
    },
    {
     "name": "Testa del Gargano",
@@ -270572,7 +270605,10 @@
     "kind": "Tower",
     "lat": 40.141876220703125,
     "lon": 18.5052490234375,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/Otranto_-_Torre_del_Serpe_-_2.jpg/500px-Otranto_-_Torre_del_Serpe_-_2.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "desc": "torre di Otranto",
+    "wiki": "https://it.wikipedia.org/wiki/Torre_del_Serpe"
    },
    {
     "name": "Grotta del Vento",
@@ -270603,7 +270639,9 @@
     "kind": "Tower",
     "lat": 40.09067153930664,
     "lon": 18.49634552001953,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/Torre_Sant%27Emiliano_%28Otranto%2C_LE%29.JPG/500px-Torre_Sant%27Emiliano_%28Otranto%2C_LE%29.JPG?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "wiki": "https://it.wikipedia.org/wiki/Torre_Sant%27Emiliano"
    },
    {
     "name": "Osteria Grotta dei Cervi",
@@ -270640,7 +270678,10 @@
     "kind": "Tower",
     "lat": 40.13772201538086,
     "lon": 18.509490966796875,
-    "rate": 2
+    "rate": 2,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d5/Torre_dell%27Orte.jpg/500px-Torre_dell%27Orte.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "desc": "torre",
+    "wiki": "https://it.wikipedia.org/wiki/Torre_dell%27Orte"
    },
    {
     "name": "Abbazia di San Nicola di Casole",
@@ -270654,7 +270695,10 @@
     "kind": "Tower",
     "lat": 40.183319091796875,
     "lon": 18.473140716552734,
-    "rate": 2
+    "rate": 2,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bb/13A_-_Torre_Santo_Stefano_%28Otranto%29.jpg/500px-13A_-_Torre_Santo_Stefano_%28Otranto%29.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "desc": "torre",
+    "wiki": "https://it.wikipedia.org/wiki/Torre_Santo_Stefano"
    },
    {
     "name": "Castle of Casamassella",
@@ -270675,7 +270719,8 @@
     "kind": "Tower",
     "lat": 40.22489929199219,
     "lon": 18.46436882019043,
-    "rate": 2
+    "rate": 2,
+    "wiki": "https://it.wikipedia.org/wiki/Torre_Fiumicelli"
    },
    {
     "name": "Bosco di Otranto",
@@ -278601,7 +278646,10 @@
     "kind": "Tower",
     "lat": 45.546871185302734,
     "lon": 11.547128677368164,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/20/Tormento-2.jpg/500px-Tormento-2.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "desc": "edificio storico di Vicenza, Italia",
+    "wiki": "https://it.wikipedia.org/wiki/Torre_del_Girone"
    },
    {
     "name": "Palazzo Alidosio Conti",
@@ -281184,7 +281232,10 @@
     "lat": 46.06515121459961,
     "lon": 11.123032569885254,
     "rate": 2,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9c/Torrione_madruzziano_%281%29.jpg/500px-Torrione_madruzziano_%281%29.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "desc": "torre di Trento",
+    "wiki": "https://it.wikipedia.org/wiki/Torrione_Madruzziano"
    },
    {
     "name": "Giovanni Canestrini",
@@ -281368,7 +281419,10 @@
     "lat": 44.06380081176758,
     "lon": 9.841116905212402,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/Villa_romana_del_Varignano.jpg/500px-Villa_romana_del_Varignano.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "desc": "sito archeologico nel comune italiano di Portovenere (SP)",
+    "wiki": "https://it.wikipedia.org/wiki/Villa_romana_del_Varignano"
    },
    {
     "name": "Isola del Tino",
@@ -281477,7 +281531,10 @@
     "kind": "Square",
     "lat": 44.050716400146484,
     "lon": 9.833555221557617,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Santuario_della_Madonna_Bianca.jpg/500px-Santuario_della_Madonna_Bianca.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "desc": "edificio religioso di Porto Venere",
+    "wiki": "https://it.wikipedia.org/wiki/Santuario_della_Madonna_Bianca"
    },
    {
     "name": "Castello Doria",
@@ -281630,7 +281687,10 @@
     "kind": "Church",
     "lat": 44.10560989379883,
     "lon": 9.82191276550293,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/02/Chiesa_SS_Giovanni_e_Agostino_SP.jpg/500px-Chiesa_SS_Giovanni_e_Agostino_SP.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "desc": "edificio religioso di La Spezia",
+    "wiki": "https://it.wikipedia.org/wiki/Chiesa_dei_Santi_Giovanni_e_Agostino"
    },
    {
     "name": "Palazzo delle Poste",
@@ -281701,7 +281761,9 @@
     "lat": 44.0810661315918,
     "lon": 9.907245635986328,
     "rate": 2,
-    "active": true
+    "active": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f9/Venere_Azzurra_%28Lerici%29-spiaggia3.jpg/500px-Venere_Azzurra_%28Lerici%29-spiaggia3.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "wiki": "https://it.wikipedia.org/wiki/Venere_Azzurra"
    },
    {
     "name": "Eco del mare",
@@ -282023,7 +282085,10 @@
     "lat": 45.69535446166992,
     "lon": 9.66914176940918,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/GiorcesCadutiBG1a.JPG/500px-GiorcesCadutiBG1a.JPG?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "desc": "torre di Bergamo",
+    "wiki": "https://it.wikipedia.org/wiki/Torre_dei_Caduti"
    },
    {
     "name": "Teatro Donizetti",
@@ -282268,7 +282333,10 @@
     "kind": "Church",
     "lat": 45.70046615600586,
     "lon": 9.67236042022705,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/37/Santa_Maria_Elisanetta_-_Bergamo_1.jpg/500px-Santa_Maria_Elisanetta_-_Bergamo_1.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "desc": "edificio a Bergamo, Italia",
+    "wiki": "https://it.wikipedia.org/wiki/Chiesa_di_Santa_Maria_Elisabetta_(Bergamo)"
    },
    {
     "name": "San Rocco",
@@ -282352,7 +282420,10 @@
     "lat": 45.702999114990234,
     "lon": 9.723099708557129,
     "rate": 2,
-    "active": true
+    "active": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/Pannelo_Parco_del_Serio_Nord.jpg/500px-Pannelo_Parco_del_Serio_Nord.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "desc": "parco locale di interesse sovracomunale della Lombardia",
+    "wiki": "https://it.wikipedia.org/wiki/Parco_del_Serio_Nord"
    },
    {
     "name": "Parco del Morla",
@@ -402306,7 +402377,10 @@
     "lon": 11.669166564941406,
     "rate": 2,
     "heritage": true,
-    "active": true
+    "active": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/ValDuron.jpg/500px-ValDuron.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "desc": "valle dolomitica",
+    "wiki": "https://it.wikipedia.org/wiki/Val_Duron"
    },
    {
     "name": "Seiser Alm",
@@ -404470,7 +404544,10 @@
     "lat": 46.420555114746094,
     "lon": 11.78833293914795,
     "rate": 2,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f9/Valle_San_Nicol%C3%B2_01.jpg/500px-Valle_San_Nicol%C3%B2_01.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "desc": "valle del Trentino",
+    "wiki": "https://it.wikipedia.org/wiki/Val_San_Nicol%C3%B2"
    },
    {
     "name": "Ghiacciaio Marmolada",
@@ -404494,7 +404571,10 @@
     "lat": 46.49250030517578,
     "lon": 11.669166564941406,
     "rate": 2,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/ValDuron.jpg/500px-ValDuron.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "desc": "valle dolomitica",
+    "wiki": "https://it.wikipedia.org/wiki/Val_Duron"
    },
    {
     "name": "Wolkensteinschlössl",
@@ -405935,7 +406015,9 @@
     "kind": "Peak",
     "lat": 45.79730987548828,
     "lon": 7.018914222717285,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/TestaDiLiconiAug082024.jpg/500px-TestaDiLiconiAug082024.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "wiki": "https://it.wikipedia.org/wiki/Testa_di_Liconi"
    },
    {
     "name": "Fortificazioni del Colle San Carlo",
@@ -405962,7 +406044,10 @@
     "kind": "Castle",
     "lat": 45.75,
     "lon": 7.0333333015441895,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/16/Tour_de_l%27Archet_panorama.jpg/500px-Tour_de_l%27Archet_panorama.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "desc": "castello nel comune italiano di Morgex (AO)",
+    "wiki": "https://it.wikipedia.org/wiki/Tour_de_l%27Archet"
    },
    {
     "name": "Casaforte Bozel",
@@ -406537,7 +406622,9 @@
     "kind": "Glacier",
     "lat": 45.622520446777344,
     "lon": 7.467870235443115,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/60/Glacier_de_la_Pointe_Tersiva_025.jpg/500px-Glacier_de_la_Pointe_Tersiva_025.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "wiki": "https://it.wikipedia.org/wiki/Ghiacciaio_della_Punta_Tersiva"
    },
    {
     "name": "Torre di Sant'Andrea Nord",
@@ -406593,7 +406680,9 @@
     "lat": 45.605491638183594,
     "lon": 7.441593170166016,
     "rate": 2,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bf/Goilles_dessous_Urtier-Cogne-AO.JPG/500px-Goilles_dessous_Urtier-Cogne-AO.JPG?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "wiki": "https://it.wikipedia.org/wiki/Vallone_dell%27Urtier"
    },
    {
     "name": "Wrought iron fountain dedicated to Dr. Grappein",
@@ -407866,7 +407955,10 @@
     "lat": 45.766666412353516,
     "lon": 10.116666793823242,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/16/Italy_provincial_location_map_2016.svg/500px-Italy_provincial_location_map_2016.svg.png?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "desc": "comune italiano",
+    "wiki": "https://it.wikipedia.org/wiki/Zone"
    },
    {
     "name": "Riva di Solto",
@@ -408074,7 +408166,10 @@
     "kind": "Church",
     "lat": 45.77425003051758,
     "lon": 10.040071487426758,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/Chiesa_di_San_Nicola_in_Riva_di_Solto.jpg/500px-Chiesa_di_San_Nicola_in_Riva_di_Solto.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "desc": "chiesa di Riva di Solto",
+    "wiki": "https://it.wikipedia.org/wiki/Chiesa_di_San_Nicola_(Riva_di_Solto)"
    },
    {
     "name": "Chiesa di san Silvestro",
@@ -408743,7 +408838,9 @@
     "kind": "Square",
     "lat": 45.80300521850586,
     "lon": 11.91440200805664,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/86/VillaScottiPasini.jpg/500px-VillaScottiPasini.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "wiki": "https://it.wikipedia.org/wiki/Villa_Scotti-Pasini"
    },
    {
     "name": "Casa Longobarda",
@@ -408784,7 +408881,10 @@
     "kind": "Square",
     "lat": 45.75135803222656,
     "lon": 11.913406372070312,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/06_Tomba_Brion_-_San_Vito_d%27Altivole%2C_Treviso%2C_Italy_-_Carlo_Scarpa-FPPL2915.jpg/500px-06_Tomba_Brion_-_San_Vito_d%27Altivole%2C_Treviso%2C_Italy_-_Carlo_Scarpa-FPPL2915.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "desc": "complesso funerario monumentale a San Vito, Altivole, Italia",
+    "wiki": "https://it.wikipedia.org/wiki/Memoriale_Brion"
    },
    {
     "name": "chiesa dell'Annunciazione della Beata Vergine Maria",
@@ -409243,7 +409343,10 @@
     "kind": "Church",
     "lat": 45.7242431640625,
     "lon": 11.763216972351074,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bd/Duomo_di_Ros%C3%A0_Vicenza.jpg/500px-Duomo_di_Ros%C3%A0_Vicenza.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "desc": "chiesa italiana di Rosà",
+    "wiki": "https://it.wikipedia.org/wiki/Duomo_di_Ros%C3%A0"
    },
    {
     "name": "Museo Cappeller",
@@ -409277,7 +409380,9 @@
     "kind": "Castle",
     "lat": 45.747222900390625,
     "lon": 11.654444694519043,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Marostica1.jpg/500px-Marostica1.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "wiki": "https://it.wikipedia.org/wiki/Castello_di_Marostica"
    },
    {
     "name": "Piazza degli Scacchi (Piazza Castello)",
@@ -409390,14 +409495,18 @@
     "kind": "Square",
     "lat": 45.72153854370117,
     "lon": 11.746866226196289,
-    "rate": 2
+    "rate": 2,
+    "desc": "villa veneta in provincia di Vicenza",
+    "wiki": "https://it.wikipedia.org/wiki/Villa_Dolfin_Bold%C3%B9"
    },
    {
     "name": "Villa Morosini Cappello",
     "kind": "Square",
     "lat": 45.713897705078125,
     "lon": 11.693828582763672,
-    "rate": 2
+    "rate": 2,
+    "desc": "villa veneta in provincia di Vicenza",
+    "wiki": "https://it.wikipedia.org/wiki/Villa_Morosini_Cappello"
    },
    {
     "name": "Col di Grado",
@@ -409551,7 +409660,10 @@
     "lat": 46.093570709228516,
     "lon": 13.43330192565918,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/Cividale_0904_Tempietto_Longobardo.jpg/500px-Cividale_0904_Tempietto_Longobardo.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "desc": "oratorio a Cividale del Friuli, Italia",
+    "wiki": "https://it.wikipedia.org/wiki/Tempietto_longobardo"
    },
    {
     "name": "Museo archeologico nazionale di Cividale",
@@ -410191,7 +410303,9 @@
     "kind": "Church",
     "lat": 44.240272521972656,
     "lon": 11.831798553466797,
-    "rate": 2
+    "rate": 2,
+    "desc": "pieve di Faenza",
+    "wiki": "https://it.wikipedia.org/wiki/Pieve_di_Sarna"
    },
    {
     "name": "Zona B",
@@ -410375,7 +410489,10 @@
     "kind": "Castle",
     "lat": 43.842681884765625,
     "lon": 12.367989540100098,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Castello_di_Montecopiolo.jpg/500px-Castello_di_Montecopiolo.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "desc": "castello nel comune italiano di Montecopiolo (PU)",
+    "wiki": "https://it.wikipedia.org/wiki/Castello_di_Montecopiolo"
    },
    {
     "name": "Monte Aquilone",
@@ -410711,7 +410828,10 @@
     "kind": "Theatre",
     "lat": 43.52150344848633,
     "lon": 13.620108604431152,
-    "rate": 2
+    "rate": 2,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/Sirolo_teatro_2.jpg/500px-Sirolo_teatro_2.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "desc": "teatro di Sirolo, Italia",
+    "wiki": "https://it.wikipedia.org/wiki/Teatro_Cortesi"
    },
    {
     "name": "Monte Larciano",
@@ -411377,7 +411497,10 @@
     "lat": 43.336063385009766,
     "lon": 12.904335021972656,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/20/Fabriano%2C_Sturinalto_02.jpg/500px-Fabriano%2C_Sturinalto_02.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "desc": "fontana monumentale del XII secolo di Fabriano",
+    "wiki": "https://it.wikipedia.org/wiki/Sturinalto"
    },
    {
     "name": "Pinacoteca civica Bruno Molajoli",
@@ -411487,7 +411610,10 @@
     "kind": "Theatre",
     "lat": 43.336524963378906,
     "lon": 12.905147552490234,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/16/Fabriano_Teatro_e_Fontana.jpg/500px-Fabriano_Teatro_e_Fontana.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "desc": "teatro di Fabriano",
+    "wiki": "https://it.wikipedia.org/wiki/Teatro_Gentile_da_Fabriano"
    },
    {
     "name": "Palazzo del Podestà",
@@ -411825,7 +411951,10 @@
     "lat": 42.81184387207031,
     "lon": 10.329902648925781,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/02/Linguella_Tower_-_Portoferraio_01.jpg/500px-Linguella_Tower_-_Portoferraio_01.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "desc": "torre di Portoferraio",
+    "wiki": "https://it.wikipedia.org/wiki/Torre_della_Linguella"
    },
    {
     "name": "Natività di Maria",
@@ -411863,7 +411992,10 @@
     "kind": "Museum",
     "lat": 42.785640716552734,
     "lon": 10.28054141998291,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/50/Villa_di_San_Martino_01.jpg/500px-Villa_di_San_Martino_01.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "desc": "villa nel comune italiano di Portoferraio (LI)",
+    "wiki": "https://it.wikipedia.org/wiki/Villa_di_San_Martino"
    },
    {
     "name": "santuario della Madonna della Neve",
@@ -411941,7 +412073,10 @@
     "kind": "Square",
     "lat": 42.811920166015625,
     "lon": 10.33032512664795,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d7/Villa_romana_della_Linguella.JPG/500px-Villa_romana_della_Linguella.JPG?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "desc": "sito archeologico nel comune italiano di Portoferraio (LI)",
+    "wiki": "https://it.wikipedia.org/wiki/Villa_romana_della_Linguella"
    },
    {
     "name": "Fortezze Medicee - Forte Falcone",
@@ -412003,7 +412138,10 @@
     "kind": "Square",
     "lat": 42.76237487792969,
     "lon": 10.200690269470215,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/Campo_nell%27Elba_Tour_de_Marina_de_Campo_1.jpg/500px-Campo_nell%27Elba_Tour_de_Marina_de_Campo_1.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "desc": "torre di Campo nell'Elba",
+    "wiki": "https://it.wikipedia.org/wiki/Torre_di_San_Giovanni"
    },
    {
     "name": "Monte Puccio",
@@ -412469,7 +412607,8 @@
     "kind": "Castle",
     "lat": 42.70111083984375,
     "lon": 11.564971923828125,
-    "rate": 2
+    "rate": 2,
+    "wiki": "https://it.wikipedia.org/wiki/Castello_di_Catabbio"
    },
    {
     "name": "Chiesa di San Martino",
@@ -412743,7 +412882,10 @@
     "kind": "Theatre",
     "lat": 42.635040283203125,
     "lon": 11.66913890838623,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/db/Teatro_e_Municipio_Pitigliano.jpg/500px-Teatro_e_Municipio_Pitigliano.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "desc": "teatro di Pitigliano, Italia",
+    "wiki": "https://it.wikipedia.org/wiki/Teatro_Salvini"
    },
    {
     "name": "Cimitero ebraico di Pitigliano",
@@ -412760,7 +412902,9 @@
     "kind": "Church",
     "lat": 42.63055419921875,
     "lon": 11.668055534362793,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/Cappella_dei_Santi_Apostoli_Giacomo_e_Filippo_Pitigliano.jpg/500px-Cappella_dei_Santi_Apostoli_Giacomo_e_Filippo_Pitigliano.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "wiki": "https://it.wikipedia.org/wiki/Cappella_dei_Santi_Apostoli_Giacomo_e_Filippo"
    },
    {
     "name": "chiesa di Santa Maria Assunta",
@@ -412860,7 +413004,9 @@
     "kind": "Church",
     "lat": 42.66179275512695,
     "lon": 11.720483779907227,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c0/Pieve_di_Santa_Maria_dell%27Aquila_-_Sorano_-_agosto_2018.JPG/500px-Pieve_di_Santa_Maria_dell%27Aquila_-_Sorano_-_agosto_2018.JPG?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "wiki": "https://it.wikipedia.org/wiki/Pieve_di_Santa_Maria_dell%27Aquila"
    },
    {
     "name": "Necropoli di San Rocco",
@@ -413212,7 +413358,10 @@
     "kind": "Square",
     "lat": 43.275474548339844,
     "lon": 11.984674453735352,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/Cortona_Tablet.jpg/500px-Cortona_Tablet.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "desc": "antica iscrizione etrusca",
+    "wiki": "https://it.wikipedia.org/wiki/Tabula_Cortonensis"
    },
    {
     "name": "Chiesa San Filippo Neri",
@@ -413289,7 +413438,10 @@
     "kind": "Square",
     "lat": 43.25986862182617,
     "lon": 11.974117279052734,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/27/Melone_di_Camucia_1.JPG/500px-Melone_di_Camucia_1.JPG?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "desc": "sito archeologico nel comune italiano di Cortona (AR)",
+    "wiki": "https://it.wikipedia.org/wiki/Tumulo_di_Camucia"
    },
    {
     "name": "Pieve di San Michele Arcangelo",
@@ -413596,7 +413748,10 @@
     "kind": "Theatre",
     "lat": 43.4647331237793,
     "lon": 11.880066871643066,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/94/Teatro_Petrarca_Arezzo.jpg/500px-Teatro_Petrarca_Arezzo.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "desc": "teatro d'Arezzo, Italia",
+    "wiki": "https://it.wikipedia.org/wiki/Teatro_Petrarca"
    },
    {
     "name": "Badia delle Sante Flora e Lucilla",
@@ -413641,7 +413796,10 @@
     "kind": "Church",
     "lat": 43.46635818481445,
     "lon": 11.879433631896973,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/ba/Arezzo_Chiesa_di_San_Giuseppe.jpg/500px-Arezzo_Chiesa_di_San_Giuseppe.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "desc": "edificio religioso di Arezzo",
+    "wiki": "https://it.wikipedia.org/wiki/Chiesa_di_San_Giuseppe_del_Chiavello"
    },
    {
     "name": "Chiesa di Sant'Ignazio",
@@ -414318,7 +414476,10 @@
     "lat": 42.999324798583984,
     "lon": 12.663753509521484,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/Spello_%28Hispellum%29%2C_Italy_%2830606152607%29.jpg/500px-Spello_%28Hispellum%29%2C_Italy_%2830606152607%29.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "desc": "edificio storico",
+    "wiki": "https://it.wikipedia.org/wiki/Villa_Fidelia"
    },
    {
     "name": "San Girolamo",
@@ -414620,7 +414781,9 @@
     "kind": "Church",
     "lat": 42.95814514160156,
     "lon": 12.708073616027832,
-    "rate": 2
+    "rate": 2,
+    "desc": "ex edificio religioso di Foligno",
+    "wiki": "https://it.wikipedia.org/wiki/Chiesa_della_Santissima_Trinit%C3%A0_in_Annunziata"
    },
    {
     "name": "Teatro Piermarini",
@@ -416097,7 +416260,10 @@
     "kind": "Square",
     "lat": 41.962860107421875,
     "lon": 12.78979778289795,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Tempio_della_Tosse_6.JPG/500px-Tempio_della_Tosse_6.JPG?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "desc": "antico edificio romano sito nel comune italiano di Tivoli (RM)",
+    "wiki": "https://it.wikipedia.org/wiki/Tempio_della_Tosse"
    },
    {
     "name": "Tempo di Vesta",
@@ -416111,7 +416277,10 @@
     "kind": "Square",
     "lat": 41.96674728393555,
     "lon": 12.800975799560547,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/Tempio_della_Sibilla_10.JPG/500px-Tempio_della_Sibilla_10.JPG?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "desc": "antico tempio romano sito nel comune italiano di Tivoli (RM)",
+    "wiki": "https://it.wikipedia.org/wiki/Tempio_della_Sibilla"
    },
    {
     "name": "Parco di Villa Gregoriana",
@@ -416285,7 +416454,9 @@
     "kind": "Castle",
     "lat": 41.91435623168945,
     "lon": 12.762330055236816,
-    "rate": 2
+    "rate": 2,
+    "desc": "castello a Roma, Italia",
+    "wiki": "https://it.wikipedia.org/wiki/Castello_di_Corcolle"
    },
    {
     "name": "Corniculum",
@@ -416485,7 +416656,10 @@
     "kind": "Square",
     "lat": 41.25138473510742,
     "lon": 13.449516296386719,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/94/SperlongaVillaTiberio.jpg/500px-SperlongaVillaTiberio.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "desc": "sito archeologico nel comune italiano di Sperlonga (LT)",
+    "wiki": "https://it.wikipedia.org/wiki/Villa_di_Tiberio"
    },
    {
     "name": "Oasi blu di Villa Tiberio",
@@ -416924,7 +417098,10 @@
     "lat": 40.7499885559082,
     "lon": 14.487598419189453,
     "rate": 3,
-    "heritage": true
+    "heritage": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Pauly-Wissowa_II2_2751-Stabianer-Thermen-Pompeii.png/500px-Pauly-Wissowa_II2_2751-Stabianer-Thermen-Pompeii.png?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "desc": "terme romane di Pompei",
+    "wiki": "https://it.wikipedia.org/wiki/Terme_Stabiane"
    },
    {
     "name": "Foro di Pompei",
@@ -419363,7 +419540,10 @@
     "lon": 13.571999549865723,
     "rate": 1,
     "heritage": true,
-    "active": true
+    "active": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/af/Gransasso_dal_cefalone.jpg/500px-Gransasso_dal_cefalone.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "desc": "parco nazionale italiano",
+    "wiki": "https://it.wikipedia.org/wiki/Parco_nazionale_del_Gran_Sasso_e_Monti_della_Laga"
    },
    {
     "name": "Monte San Gregorio di Paganica",
@@ -421265,7 +421445,9 @@
     "kind": "Square",
     "lat": 41.266666412353516,
     "lon": 16.41666603088379,
-    "rate": 2
+    "rate": 2,
+    "desc": "duello tra 13 cavalieri spagnoli e 13 cavalieri francesi combattuto presso Barletta (13 settembre 1503)",
+    "wiki": "https://it.wikipedia.org/wiki/Disfida_di_Barletta_del_13_settembre_1503"
    },
    {
     "name": "Santa Geffa",
@@ -421580,7 +421762,10 @@
     "kind": "Tower",
     "lat": 39.79389572143555,
     "lon": 18.3512020111084,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Leuca_-_panoramio.jpg/500px-Leuca_-_panoramio.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "desc": "torre",
+    "wiki": "https://it.wikipedia.org/wiki/Torre_dell%27Omomorto"
    },
    {
     "name": "Santa Maria de Finibus Terrae",
@@ -421656,21 +421841,30 @@
     "kind": "Square",
     "lat": 39.79594039916992,
     "lon": 18.334335327148438,
-    "rate": 2
+    "rate": 2,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/42/37B_-_Torre_Marchiello.jpg/500px-37B_-_Torre_Marchiello.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "desc": "torre",
+    "wiki": "https://it.wikipedia.org/wiki/Torre_Marchiello"
    },
    {
     "name": "Torre Vado",
     "kind": "Tower",
     "lat": 39.83041763305664,
     "lon": 18.276798248291016,
-    "rate": 2
+    "rate": 2,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/Torre_Vado.jpg/500px-Torre_Vado.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "desc": "frazione del comune italiano di Morciano di Leuca",
+    "wiki": "https://it.wikipedia.org/wiki/Torre_Vado"
    },
    {
     "name": "Torre del Ricco",
     "kind": "Tower",
     "lat": 39.86745834350586,
     "lon": 18.39382553100586,
-    "rate": 2
+    "rate": 2,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/31B_-_Torre_del_Ricco.jpg/500px-31B_-_Torre_del_Ricco.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "desc": "torre",
+    "wiki": "https://it.wikipedia.org/wiki/Torre_del_Ricco"
    },
    {
     "name": "Castello di Montesardo",
@@ -422101,7 +422295,9 @@
     "kind": "Square",
     "lat": 40.00703430175781,
     "lon": 15.681256294250488,
-    "rate": 2
+    "rate": 2,
+    "desc": "torre di Maratea",
+    "wiki": "https://it.wikipedia.org/wiki/Torre_Apprezzami_l%27Asino"
    },
    {
     "name": "Serra di Castrocucco",
@@ -422117,7 +422313,10 @@
     "kind": "Square",
     "lat": 39.94335174560547,
     "lon": 15.735928535461426,
-    "rate": 2
+    "rate": 2,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/TorreCaina.jpg/500px-TorreCaina.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "desc": "torre di Maratea",
+    "wiki": "https://it.wikipedia.org/wiki/Torre_Caina"
    },
    {
     "name": "Monte Coccovello",
@@ -422170,7 +422369,9 @@
     "lon": 15.796299934387207,
     "rate": 1,
     "heritage": true,
-    "active": true
+    "active": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/79/Italy_relief_location_map.jpg/500px-Italy_relief_location_map.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "wiki": "https://it.wikipedia.org/wiki/Valle_del_Noce"
    },
    {
     "name": "Grotta di San Michele o del Angelo",
@@ -422988,7 +423189,10 @@
     "kind": "Theatre",
     "lat": 38.215858459472656,
     "lon": 16.228954315185547,
-    "rate": 2
+    "rate": 2,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fb/Locri_Epizefiri_Teatro_Greco_02.jpg/500px-Locri_Epizefiri_Teatro_Greco_02.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "desc": "museo italiano",
+    "wiki": "https://it.wikipedia.org/wiki/Teatro_romano_di_Locri"
    },
    {
     "name": "Monte Tre Pizzi",
@@ -423012,7 +423216,8 @@
     "kind": "Square",
     "lat": 38.2047233581543,
     "lon": 16.169166564941406,
-    "rate": 2
+    "rate": 2,
+    "wiki": "https://it.wikipedia.org/wiki/Santuario_della_Madonna_della_Grotta_di_Bombile"
    },
    {
     "name": "Vallata del Novito e Monte Mutolo",
@@ -423322,7 +423527,10 @@
     "kind": "Square",
     "lat": 37.29280471801758,
     "lon": 13.57947063446045,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/01/Tempio_di_Efesto_%28Agrigento%29.png/500px-Tempio_di_Efesto_%28Agrigento%29.png?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "desc": "antico tempio greco nella Valle dei Templi di Agrigento",
+    "wiki": "https://it.wikipedia.org/wiki/Tempio_di_Efesto_(Agrigento)"
    },
    {
     "name": "Giardino della Kolymbetra",
@@ -423477,7 +423685,10 @@
     "kind": "Castle",
     "lat": 37.38665771484375,
     "lon": 13.553792953491211,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/ba/Castello-ducale-colonna.jpg/500px-Castello-ducale-colonna.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "desc": "castello nel comune italiano di Joppolo Giancaxio (AG)",
+    "wiki": "https://it.wikipedia.org/wiki/Castello_ducale_di_Joppolo"
    },
    {
     "name": "Chiesa della Madonna delle Grazie",
@@ -424164,7 +424375,10 @@
     "lat": 38.47787857055664,
     "lon": 14.909820556640625,
     "rate": 3,
-    "active": true
+    "active": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/26/Bagni_Termali_San_Calogero.JPG/500px-Bagni_Termali_San_Calogero.JPG?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "desc": "Stabilimento termale",
+    "wiki": "https://it.wikipedia.org/wiki/Terme_di_San_Calogero"
    },
    {
     "name": "Arcipelago delle Eolie - area marina e terrestre",
@@ -425034,7 +425248,10 @@
     "lon": 15.08666706085205,
     "rate": 1,
     "heritage": true,
-    "active": true
+    "active": true,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/Vendicari.JPG/500px-Vendicari.JPG?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "desc": "riserva naturale della Sicilia",
+    "wiki": "https://it.wikipedia.org/wiki/Riserva_naturale_orientata_Oasi_Faunistica_di_Vendicari"
    },
    {
     "name": "Pantani della Sicilia sud-orientale, Morghella, di Marzamemi, di Punta Pilieri e Vendicari",
@@ -426448,7 +426665,8 @@
     "kind": "Square",
     "lat": 39.71498489379883,
     "lon": 8.960714340209961,
-    "rate": 2
+    "rate": 2,
+    "wiki": "https://it.wikipedia.org/wiki/Villa_Pitzalis"
    },
    {
     "name": "Las Plassas railway station",
@@ -426923,7 +427141,10 @@
     "kind": "Tower",
     "lat": 40.287391662597656,
     "lon": 8.474335670471191,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/31/Immagine_048bosa_marina.png/500px-Immagine_048bosa_marina.png?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "desc": "torre del comune di Bosa",
+    "wiki": "https://it.wikipedia.org/wiki/Torre_di_Bosa"
    },
    {
     "name": "Monte Mattanieddu",
@@ -427178,7 +427399,10 @@
     "kind": "Square",
     "lat": 40.965999603271484,
     "lon": 8.209440231323242,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Stintino_-_Panorama_%2803%29.jpg/500px-Stintino_-_Panorama_%2803%29.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "desc": "comune italiano in Sardegna",
+    "wiki": "https://it.wikipedia.org/wiki/Stintino"
    },
    {
     "name": "Torre della Pelosa",
@@ -427444,7 +427668,10 @@
     "kind": "Square",
     "lat": 38.8948974609375,
     "lon": 8.814055442810059,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f1/Tuaredda.jpg/500px-Tuaredda.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "desc": "isola in Sardegna sudoccidentale",
+    "wiki": "https://it.wikipedia.org/wiki/Isola_Tuerredda"
    },
    {
     "name": "Torre di Capo d'Ostia",
@@ -428161,14 +428388,20 @@
     "kind": "Church",
     "lat": 44.33003234863281,
     "lon": 9.412480354309082,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/27/Sambuceto_%28Ne%29-chiesa_san_cipriano-complesso.jpg/500px-Sambuceto_%28Ne%29-chiesa_san_cipriano-complesso.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "desc": "edificio religioso di Sambuceto nel comune di Ne",
+    "wiki": "https://it.wikipedia.org/wiki/Chiesa_dei_Santi_Cipriano_e_Giustina"
    },
    {
     "name": "santuario di Nostra Signora del Ponte",
     "kind": "Square",
     "lat": 44.31695556640625,
     "lon": 9.346183776855469,
-    "rate": 3
+    "rate": 3,
+    "img": "https://upload.wikimedia.org/wikipedia/commons/f/f9/Lavagna-santuario_ns_del_ponte-complesso_%282023%29.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "desc": "chiesa di Lavagna",
+    "wiki": "https://it.wikipedia.org/wiki/Santuario_di_Nostra_Signora_del_Ponte"
    },
    {
     "name": "oratorio di San Martino",

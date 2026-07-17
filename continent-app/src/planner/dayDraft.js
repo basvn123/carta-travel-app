@@ -334,9 +334,17 @@ function poiDupeGroups(list) {
   };
   const union = (a, b) => { a = find(a); b = find(b); if (a !== b) parent[b] = a; };
 
+  // An image URL attached to 3+ entries is a harvester fallback photo (Berlin
+  // has five unrelated POIs wearing one Museumsinsel shot), not identity - it
+  // would weld a whole neighbourhood into one "duplicate" group.
+  const imgCount = new Map();
+  list.forEach((item) => {
+    if (item?.img) imgCount.set(item.img, (imgCount.get(item.img) || 0) + 1);
+  });
   const byKey = new Map();
   list.forEach((item, idx) => {
     for (const k of poiIdentityKeys(item)) {
+      if (k.startsWith('img:') && (imgCount.get(item.img) || 0) >= 3) continue;
       if (byKey.has(k)) union(byKey.get(k), idx); else byKey.set(k, idx);
     }
   });
