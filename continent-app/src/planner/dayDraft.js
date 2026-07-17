@@ -112,6 +112,57 @@ export function isMustSee(item) {
   return (item.rate ?? 0) >= 3 && poiScore(item) >= 3.5;
 }
 
+// The plain-language buckets a traveller actually filters by - not the 40
+// harvested POI kinds. Nature covers beaches, lakes, parks, gardens, views and
+// the like (whether you visit them or do something active there); food covers
+// markets, breweries and wineries; everything else is a "sight".
+const NATURE_RE = /beach|lido|spiaggia|strand|plage|playa|lake|lago|\bsee\b|meer|park|garden|giardino|jardin|garten|trail|falls|cascat|gorge|cliff|island|isola|\bisle\b|nature|riserva|reserve|\bbay\b|mountain|monte|\bpeak\b|viewpoint|panoram|waterfall|dune|glacier|\bcave\b|grotto|grotta|forest|foresta|valley|valle|meadow|hill/i;
+const FOOD_RE = /market|mercato|marche|markt|brewery|birrificio|winery|vineyard|vigneto|cantina|distillery/i;
+
+/** Which plain-language category a POI belongs to: 'sight' | 'nature' |
+ *  'active' | 'food'. Drives the picker's filter chips. Parenthetical
+ *  disambiguators are dropped first, so a villa named "... (Lake Como)" isn't
+ *  miscounted as nature on the strength of its location suffix. */
+export function poiCategory(item) {
+  const name = (item.name || '').replace(/\([^)]*\)/g, ' ');
+  const t = `${item.kind || ''} ${name}`;
+  if (NATURE_RE.test(t)) return 'nature';
+  if (item.active) return 'active';
+  if (FOOD_RE.test(t)) return 'food';
+  return 'sight';
+}
+
+/** Which glyph a POI wears on the explore map (the map speaks town/beach/
+ *  sight/active): villages and towns get the town roofline, nature gets the
+ *  beach/nature mark, food folds into the sight star. */
+export function poiMapCat(item) {
+  const cat = poiCategory(item);
+  if (cat === 'nature') return 'beach';
+  if (cat === 'active') return 'active';
+  if (cat === 'sight') {
+    const k = poiKind(item);
+    return (k === 'Village' || k === 'Town') ? 'town' : 'sight';
+  }
+  return 'sight'; // food
+}
+
+/**
+ * A display rating (0-10) for a single POI, read off the SAME composite quality
+ * signal the planner ranks by (poiScore: importance rate + heritage listing +
+ * Wikipedia presence + real-world fame) - just rescaled so the tiers read
+ * naturally: a genuine must-see lands ~8.5-9.5, a solid rated place ~7, a
+ * modest one ~5.5. Returns { score, tier (1-3), label } - tier drives the same
+ * rt-1/2/3 chip colours the rest of the app uses.
+ */
+export function poiRating(item) {
+  const s = poiScore(item);
+  const score = Math.max(4.5, Math.min(9.6, 4.8 + s * 0.95));
+  const must = isMustSee(item);
+  const tier = must ? 3 : ((item.rate ?? 0) >= 2 || s >= 2.6) ? 2 : 1;
+  const label = must ? 'Must-see' : tier === 2 ? 'Highly rated' : 'Worth a look';
+  return { score: Math.round(score * 10) / 10, tier, label };
+}
+
 // Strip a POI name down to a language-neutral core so the same place under
 // different names collapses together: lowercase, drop accents, remove the
 // generic kind words and connectors that vary by language ("Castello di Vezio"
@@ -121,26 +172,56 @@ const NAME_STOPWORDS = new Set([
   'di', 'da', 'de', 'del', 'della', 'dei', 'delle', 'des', 'du', 'the', 'of',
   'a', 'la', 'le', 'il', 'lo', 'los', 'las', 'el',
   'and', 'et', 'e', 'y', 'van', 'der', 'den', 'am', 'im', 'zur',
+  'w', 'na', 'i', 'z', 'ze', 'przy', 'v', 'u', 'nad', 'pod', 'pri', 'ob',
+  'in', 'ul', 'ulica', 'ulicy',
+  // dedication phrasing: "pw." (pod wezwaniem), "im." (imienia), "św."...
+  'pw', 'im', 'imienia', 'wezwaniem',
   // generic place kinds that translate but denote the same thing
   'castle', 'castello', 'castel', 'chateau', 'schloss', 'burg', 'castillo',
+  'zamek', 'hrad', 'kasteel', 'castelo', 'castelul', 'dvorac', 'grad',
+  'var', 'kastely', 'slott', 'slot', 'linna', 'pilis', 'pils', 'loss',
   'church', 'chiesa', 'iglesia', 'eglise', 'kirche', 'kerk',
+  'kosciol', 'parafia', 'cerkiew', 'kostel', 'kostol', 'chram', 'crkva',
+  'cerkev', 'biserica', 'igreja', 'templom', 'kirke', 'kyrka', 'kyrkja',
+  'kirkko', 'kirik', 'baznica', 'baznycia', 'pfarrkirche', 'parroquia',
+  'parrocchia', 'paroisse', 'parish', 'parochie',
   'cathedral', 'cattedrale', 'catedral', 'cathedrale', 'dom', 'duomo',
-  'basilica', 'chapel', 'cappella', 'chapelle', 'kapelle',
-  'museum', 'museo', 'musee', 'muzeum',
-  'palace', 'palazzo', 'palais', 'palast', 'palacio',
-  'tower', 'torre', 'tour', 'turm', 'toren',
-  'bridge', 'ponte', 'pont', 'brucke', 'brug',
-  'square', 'piazza', 'place', 'platz', 'plein', 'plaza',
-  'garden', 'gardens', 'giardino', 'jardin', 'garten',
+  'katedra', 'katedrala', 'catedrala', 'kathedraal', 'domkirke', 'domkyrka',
+  'szekesegyhaz', 'se',
+  'basilica', 'bazylika', 'bazilika', 'basiliek',
+  'chapel', 'cappella', 'chapelle', 'kapelle', 'kaplica', 'kaple',
+  'kaplnka', 'kapolna', 'capela', 'kapel', 'ermita',
+  'monastery', 'monastero', 'monasterio', 'monastere', 'kloster', 'klooster',
+  'klasztor', 'klaster', 'klastor', 'kolostor', 'samostan', 'manastir',
+  'manastire', 'manastirea', 'mosteiro', 'convento', 'couvent', 'convent',
+  'sanktuarium', 'santuario', 'priory', 'minster', 'munster',
+  'museum', 'museo', 'musee', 'muzeum', 'museu', 'muzeul', 'muziejus',
+  'palace', 'palazzo', 'palais', 'palast', 'palacio', 'palac', 'palota',
+  'paleis', 'palatul',
+  'tower', 'torre', 'tour', 'turm', 'toren', 'wieza', 'vez', 'torony',
+  'toranj', 'turnul', 'torn', 'bokstas',
+  'bridge', 'ponte', 'pont', 'brucke', 'brug', 'most', 'hid', 'podul', 'bro',
+  'square', 'piazza', 'place', 'platz', 'plein', 'plaza', 'plac', 'rynek',
+  'namesti', 'namestie', 'ter', 'trg', 'piata', 'praca', 'markt',
+  'garden', 'gardens', 'giardino', 'jardin', 'garten', 'ogrod', 'zahrada',
+  'kert', 'jardim', 'tuin',
   'park', 'parco', 'parc',
-  'abbey', 'abbazia', 'abbaye',
+  'abbey', 'abbazia', 'abbaye', 'abdij', 'opactwo',
   'fort', 'fortress', 'fortezza', 'forteresse', 'festung',
-  'saint', 'santa', 'santo', 'san', 'sant', 'st',
+  'saint', 'santa', 'santo', 'san', 'sant', 'st', 'sainte', 'santi',
+  'sw', 'swietego', 'swietej', 'swietych', 'sv', 'svateho', 'svaty', 'svata',
+  'svate', 'sveti', 'sveta', 'svete', 'svetog', 'svetega', 'szent', 'sankt',
+  'sao', 'sint', 'sfantul', 'sfanta', 'heilige', 'heiligen',
+  'ratusz', 'radnice', 'radnica', 'rathaus',
 ]);
 function nameCore(name) {
   return (name || '')
     .normalize('NFD').replace(/[̀-ͯ]/g, '') // strip diacritics
     .toLowerCase()
+    // letters NFD can't decompose ("Kościół" must become "kosciol", not "koscio")
+    .replace(/ł/g, 'l').replace(/ø/g, 'o').replace(/[đð]/g, 'd')
+    .replace(/æ/g, 'ae').replace(/œ/g, 'oe').replace(/ß/g, 'ss')
+    .replace(/þ/g, 'th').replace(/ħ/g, 'h')
     .replace(/[^a-z0-9\s]/g, ' ')
     .split(/\s+/)
     .filter((w) => w && !NAME_STOPWORDS.has(w))
@@ -148,21 +229,47 @@ function nameCore(name) {
     .trim();
 }
 
+// Sibling kinds the harvesters use interchangeably for the same real place
+// (Wikipedia says "Basilica", OSM says "Church") - identity keys speak in the
+// family so the kind wobble alone never splits a duplicate pair.
+const KIND_FAMILIES = {
+  church: 'worship', cathedral: 'worship', basilica: 'worship',
+  chapel: 'worship', monastery: 'worship', convent: 'worship',
+  abbey: 'worship', synagogue: 'worship', mosque: 'worship',
+  temple: 'worship', shrine: 'worship',
+  castle: 'castle', fortress: 'castle', citadel: 'castle', fort: 'castle',
+  'ancient site': 'ruins', ruins: 'ruins', 'roman site': 'ruins',
+  museum: 'museum', gallery: 'museum',
+};
+function kindFamily(kind) {
+  const k = (kind || '').toLowerCase();
+  return KIND_FAMILIES[k] || k;
+}
+
 /**
  * The strong identity keys for a POI - the same real place under a translated
  * or alternate name shares at least one: its thumbnail image, its proper-name
- * core paired with its kind ("castle::vezio"), or its kind within ~120m
- * ("castle@46.010,9.283"). A proper-name core only counts alongside its kind,
- * so "Palazzo Reale" and "Teatro Reale" (same adjective, different places)
- * stay separate while "Castle of Vezio" / "Castello di Vezio" collapse.
+ * core paired with its kind family ("castle::vezio"), or its kind family
+ * within ~120m ("castle@46.010,9.283"). A proper-name core only counts
+ * alongside its kind family, so "Palazzo Reale" and "Teatro Reale" (same
+ * adjective, different places) stay separate while "Castle of Vezio" /
+ * "Castello di Vezio" collapse.
  */
 export function poiIdentityKeys(item) {
   const keys = [];
   if (!item) return keys;
   const kind = (item.kind || '').toLowerCase();
+  // EXACT image match only: normalizing away the thumbnail size looks
+  // tempting, but Wikipedia's city articles reuse landmark lead photos at
+  // another size ("Milan" carries the Galleria's photo), which would weld a
+  // city entry to its landmark. True twins share name+coords and are caught
+  // by the pairwise pass regardless.
   if (item.img) keys.push(`img:${item.img}`);
   const core = nameCore(item.name);
-  if (core && core.length >= 3) keys.push(`core:${kind}::${core}`);
+  // The core pairs with the kind FAMILY ("Church of X" / "Basilica of X" is
+  // one place), but the geo cell keeps the RAW kind: old-town churches sit
+  // shoulder to shoulder, and a family-wide 110m cell would weld neighbours.
+  if (core && core.length >= 3) keys.push(`core:${kindFamily(item.kind)}::${core}`);
   const round = (n) => (typeof n === 'number' ? Math.round(n * 1000) / 1000 : null);
   const lat = round(item.lat), lon = round(item.lon);
   if (lat != null && lon != null) keys.push(`geo:${kind}@${lat},${lon}`);
@@ -178,39 +285,135 @@ function dupeRank(item) {
   return r;
 }
 
+// Tokens match tolerant of Slavic/Romance inflection: identical, or sharing a
+// stem of >=5 characters that reaches to within 3 of the longer token's end
+// ("wawel"/"wawelu", "mariacki"/"mariackiego" match; "marina"/"marittima"
+// doesn't).
+function tokensAlike(a, b) {
+  if (a === b) return true;
+  const n = Math.min(a.length, b.length);
+  if (n < 5) return false;
+  let p = 0;
+  while (p < n && a[p] === b[p]) p += 1;
+  return p >= 5 && p >= Math.max(a.length, b.length) - 3;
+}
+
+// Does the shorter name's core essentially live inside the longer one's?
+// ("matki bozej nieustajacej pomocy" inside "parafia matki bozej nieustajacej
+// pomocy" once kind words strip away). Every token of the smaller side must
+// match; returns how many did (0 = no containment), so the caller can demand
+// stronger evidence for riskier merges.
+function coreContainment(tokensA, tokensB) {
+  const [small, big] = tokensA.length <= tokensB.length
+    ? [tokensA, tokensB] : [tokensB, tokensA];
+  if (!small.length) return 0;
+  let chars = 0;
+  for (const t of small) {
+    if (!big.some((o) => tokensAlike(t, o))) return 0;
+    chars += t.length;
+  }
+  // A lone short leftover ("reale") is noise, never identity.
+  return (small.length >= 2 || chars >= 6) ? small.length : 0;
+}
+
+// Two entries this close with essentially the same name are one real place.
+const DUPE_RADIUS_KM = 0.25;
+
+// Group a list's near-duplicates with a union-find: entries sharing any exact
+// identity key (image / core+kind-family / geo-cell+kind) merge, and a second
+// pairwise pass catches the harvest's ugliest twins - the same church under
+// two names AND two kinds ("Parafia ..." filed as Square next to "Kosciol
+// pw. ..." filed as Church), which share no kind-qualified key but sit 40m
+// apart with the same proper-name core.
+function poiDupeGroups(list) {
+  const n = list.length;
+  const parent = Array.from({ length: n }, (_, i) => i);
+  const find = (i) => {
+    while (parent[i] !== i) { parent[i] = parent[parent[i]]; i = parent[i]; }
+    return i;
+  };
+  const union = (a, b) => { a = find(a); b = find(b); if (a !== b) parent[b] = a; };
+
+  const byKey = new Map();
+  list.forEach((item, idx) => {
+    for (const k of poiIdentityKeys(item)) {
+      if (byKey.has(k)) union(byKey.get(k), idx); else byKey.set(k, idx);
+    }
+  });
+
+  // Tokens shared across a large slice of THIS list - the city's own name,
+  // mostly ("... w Krakowie", "... de Santander") - carry no identity signal:
+  // without this, "Berlin Cathedral" (core: just "berlin") would swallow every
+  // Berlin-named neighbour. Drop them before the pairwise comparison.
+  const rawTokens = list.map((item) => nameCore(item?.name).split(' ').filter(Boolean));
+  const df = new Map();
+  rawTokens.forEach((ts) => new Set(ts).forEach((t) => df.set(t, (df.get(t) || 0) + 1)));
+  const maxDf = Math.max(3, Math.ceil(n * 0.08));
+  const meta = list.map((item, i) => ({
+    tokens: rawTokens[i].filter((t) => (df.get(t) || 0) < maxDf),
+    fam: kindFamily(item?.kind),
+    lat: item?.lat ?? null,
+    lon: item?.lon ?? null,
+  }));
+  for (let i = 0; i < n; i += 1) {
+    const a = meta[i];
+    if (!a.tokens.length) continue;
+    for (let j = i + 1; j < n; j += 1) {
+      if (find(i) === find(j)) continue;
+      const b = meta[j];
+      if (!b.tokens.length) continue;
+      const matched = coreContainment(a.tokens, b.tokens);
+      if (!matched) continue;
+      // Across kind families a single shared token is weak evidence (a church
+      // and the square it stands on often share a name) - demand two.
+      if (matched < 2 && a.fam !== b.fam) continue;
+      if (a.lat != null && b.lat != null) {
+        const km = haversineKm(a.lat, a.lon, b.lat, b.lon);
+        if (km != null && km <= DUPE_RADIUS_KM) union(i, j);
+      } else if (a.lat == null && b.lat == null && matched >= 2) {
+        // Limited-data lists carry no coordinates to corroborate; only an
+        // essentially identical multi-word core is safe evidence there.
+        union(i, j);
+      }
+    }
+  }
+
+  const groups = new Map();
+  for (let i = 0; i < n; i += 1) {
+    const r = find(i);
+    if (!groups.has(r)) groups.set(r, []);
+    groups.get(r).push(i);
+  }
+  return [...groups.values()];
+}
+
 /**
  * Detect near-duplicate POIs in a city's harvested list - the same real place
  * appearing twice under a translated or alternate name (e.g. "Castello di
- * Vezio" and "Castle of Vezio"). Entries that share any identity key (see
- * poiIdentityKeys) collapse into one group; the strongest entry survives and
- * the rest come back in a Set of SUPPRESSED indices so callers can hide them
- * WITHOUT reindexing the array - saved assignments and toggles keep speaking
- * in the original, stable indices.
+ * Vezio" and "Castle of Vezio"). Duplicates collapse into one group (see
+ * poiDupeGroups); the strongest entry survives and the rest come back as
+ * `suppressed` (a Set of indices) so callers can hide them WITHOUT reindexing
+ * the array - saved assignments and toggles keep speaking in the original,
+ * stable indices. `canon` maps each suppressed index to its surviving twin,
+ * so already-saved plans that reference a duplicate can be repaired in place.
  */
-export function duplicatePoiIndices(items) {
+export function canonicalPoiIndices(items) {
   const suppressed = new Set();
+  const canon = new Map();
   const list = items || [];
-  if (list.length < 2) return suppressed;
-
-  const groups = [];
-  const byKey = new Map();
-  list.forEach((item, idx) => {
-    const keys = poiIdentityKeys(item);
-    let g = null;
-    for (const k of keys) { if (byKey.has(k)) { g = byKey.get(k); break; } }
-    if (!g) { g = { idxs: [] }; groups.push(g); }
-    g.idxs.push(idx);
-    for (const k of keys) byKey.set(k, g);
-  });
-
-  for (const g of groups) {
-    if (g.idxs.length < 2) continue;
+  if (list.length < 2) return { suppressed, canon };
+  for (const g of poiDupeGroups(list)) {
+    if (g.length < 2) continue;
     // Keep the strongest; suppress the rest (stable: ties keep lowest index).
-    const winner = g.idxs.reduce((best, idx) =>
-      (dupeRank(list[idx]) > dupeRank(list[best]) ? idx : best), g.idxs[0]);
-    for (const idx of g.idxs) if (idx !== winner) suppressed.add(idx);
+    const winner = g.reduce((best, idx) =>
+      (dupeRank(list[idx]) > dupeRank(list[best]) ? idx : best), g[0]);
+    for (const idx of g) if (idx !== winner) { suppressed.add(idx); canon.set(idx, winner); }
   }
-  return suppressed;
+  return { suppressed, canon };
+}
+
+export function duplicatePoiIndices(items) {
+  return canonicalPoiIndices(items).suppressed;
 }
 
 /**
@@ -504,6 +707,93 @@ export function walkableIdxSet(items, cityDest) {
   return set;
 }
 
+// How tight "the city centre / around my stay" is for the area question. Big
+// enough to hold a whole historic core, small enough to exclude the suburbs
+// a 20 km walkable radius lets in.
+export const AREA_KM = 3.5;
+
+/**
+ * "Where should Carta focus this day?" - the guidance step for LARGE cities,
+ * whose 20 km walkable radius spans far more than a day can cover. Without it
+ * an auto-draft can legally anchor a day in the outskirts (technically the
+ * highest-scoring cluster) when the traveller obviously meant the centre.
+ *
+ * Builds the choosable areas from the data itself:
+ *   centre  POIs within AREA_KM of the city's own centre (always offered
+ *           when it holds enough material)
+ *   stay    POIs within AREA_KM of the traveller's stay - only when the stay
+ *           is meaningfully outside the centre (otherwise it IS the centre)
+ *   all     everything walkable (the old behaviour, explicitly chosen)
+ *
+ * Returns [{ key, label, sub, count, idx: Set }] - `idx` are ORIGINAL item
+ * indices, ready to intersect with the draft's eligible set. When the whole
+ * catalogue already sits in the centre there is nothing to guide, so only
+ * 'all' comes back and the UI can skip the question entirely.
+ */
+export function cityAreaOptions(items, cityDest, stayPoint, eligibleIdx) {
+  const centre = cityCoords(cityDest);
+  const all = new Set();
+  const centreSet = new Set();
+  const staySet = new Set();
+  const stayOk = stayPoint && stayPoint.lat != null && stayPoint.lon != null;
+  (items || []).forEach((it, idx) => {
+    if (eligibleIdx && !eligibleIdx.has(idx)) return;
+    all.add(idx);
+    if (it.lat == null || it.lon == null) {
+      // No coordinates: can't place it in an area, but it stays draftable.
+      centreSet.add(idx);
+      staySet.add(idx);
+      return;
+    }
+    if (centre.lat != null) {
+      const km = haversineKm(centre.lat, centre.lon, it.lat, it.lon);
+      if (km != null && km <= AREA_KM) centreSet.add(idx);
+    }
+    if (stayOk) {
+      const km = haversineKm(stayPoint.lat, stayPoint.lon, it.lat, it.lon);
+      if (km != null && km <= AREA_KM) staySet.add(idx);
+    }
+  });
+
+  const options = [];
+  const cityName = cityDest?.city || 'town';
+  const MIN_AREA_POIS = 5; // fewer than this can't fill a day - not worth offering
+  if (centre.lat != null && centreSet.size >= MIN_AREA_POIS) {
+    options.push({
+      key: 'centre',
+      label: `${cityName} centre`,
+      sub: 'The historic core and everything close to it',
+      count: centreSet.size,
+      idx: centreSet,
+    });
+  }
+  // The stay area only earns a chip when it's genuinely its own neighbourhood.
+  const stayFarFromCentre = stayOk && centre.lat != null
+    && (haversineKm(stayPoint.lat, stayPoint.lon, centre.lat, centre.lon) ?? 0) > 2;
+  if (stayFarFromCentre && staySet.size >= MIN_AREA_POIS) {
+    options.push({
+      key: 'stay',
+      label: 'Around my stay',
+      sub: 'Places you can reach from your door',
+      count: staySet.size,
+      idx: staySet,
+    });
+  }
+  options.push({
+    key: 'all',
+    label: 'Anywhere in reach',
+    sub: 'Let Carta roam the whole area',
+    count: all.size,
+    idx: all,
+  });
+  // Nothing meaningfully outside the centre? Then there is nothing to ask.
+  const centreOpt = options.find((o) => o.key === 'centre');
+  if (options.length === 2 && centreOpt && all.size - centreOpt.count < 6) {
+    return [options[options.length - 1]];
+  }
+  return options;
+}
+
 /**
  * "What kind of day?" styles for the guided picker. Tourists don't know a
  * city's geography or its 40 POI kinds - they know whether they feel like
@@ -571,6 +861,32 @@ export function candidateDeck(items, interests, limit = 16, eligibleIdx = null) 
   const seen = new Set(onMood.map((c) => c.idx));
   const backfill = worthwhile.filter((c) => !seen.has(c.idx));
   return [...onMood, ...backfill].slice(0, limit);
+}
+
+/**
+ * The picks-step deck: every genuinely worthwhile place in town, across ALL
+ * categories (sights, nature & beaches, active, food), best-first with a gentle
+ * nudge toward the chosen mood. Unlike candidateDeck - which narrows hard to
+ * the mood so an auto-draft stays on-theme - this stays deliberately broad, so
+ * the traveller can filter it by category and actually discover the lake's
+ * beaches and viewpoints, not just its towns. Near-duplicate entries (the same
+ * place under two names) are folded out.
+ */
+export function pickerDeck(items, interests, limit = 32, eligibleIdx = null) {
+  const iset = interests instanceof Set ? interests : new Set(interests || []);
+  const suppressed = duplicatePoiIndices(items || []);
+  const all = (items || []).map((item, idx) => ({ item, idx }))
+    .filter(({ item, idx }) => item.lat != null && item.lon != null
+      && !isTransportInfraPoi(item) && !suppressed.has(idx)
+      && (!eligibleIdx || eligibleIdx.has(idx)));
+  // Category-agnostic quality on an absolute scale: sights and nature/active
+  // spots alike ride poiScore, so a famous beach can outrank a minor church.
+  const quality = ({ item }) => poiScore(item) + (isMustSee(item) ? 0.6 : 0);
+  const score = (c) => quality(c) + (kindDirectMatch(c.item.kind, iset) ? 0.7 : 0);
+  return all
+    .filter((c) => quality(c) > 0.7)
+    .sort((a, b) => score(b) - score(a))
+    .slice(0, limit);
 }
 
 /** 1-2 strong nearby companions for a candidate ("pairs well with X, 6 min

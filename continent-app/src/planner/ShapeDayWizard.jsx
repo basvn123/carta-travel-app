@@ -1,7 +1,13 @@
 import React, { useMemo, useState } from 'react';
-import { DAY_STYLES, DAY_LENGTHS, WALK_LEVELS, candidateDeck, isMustSee } from './dayDraft.js';
+import {
+  DAY_STYLES, DAY_LENGTHS, WALK_LEVELS, pickerDeck, isMustSee,
+  poiCategory, poiMapCat, poiRating, poiKind,
+} from './dayDraft.js';
 import { DayExploreMap } from '../map/DayExploreMap.jsx';
-import { SparkIcon, StarIcon, CheckIcon, MapPinIcon, MuseumIcon, TreeIcon, DiningIcon, CameraIcon, CastleIcon } from '../components/Icons.jsx';
+import {
+  SparkIcon, StarIcon, CheckIcon, MapPinIcon, MuseumIcon, TreeIcon, DiningIcon,
+  CameraIcon, CastleIcon, InfoIcon, BeachIcon, BallIcon,
+} from '../components/Icons.jsx';
 
 const STYLE_ICONS = {
   classic: CastleIcon,
@@ -10,6 +16,17 @@ const STYLE_ICONS = {
   foodie: DiningIcon,
   mix: CameraIcon,
 };
+
+// The picks-step filter chips: plain-language categories a traveller sorts by,
+// each matching poiCategory(). "All" is always shown; the rest appear only when
+// the town actually has places in them (with a live count).
+const PICK_CATS = [
+  { key: 'all', label: 'All', Icon: SparkIcon },
+  { key: 'sight', label: 'Sights & towns', Icon: CastleIcon },
+  { key: 'nature', label: 'Nature & beaches', Icon: BeachIcon },
+  { key: 'active', label: 'Active', Icon: BallIcon },
+  { key: 'food', label: 'Food & local', Icon: DiningIcon },
+];
 
 // One "pace" answer instead of two separate questions (how much to do + how
 // long per stop): each choice sets both underlying knobs so travellers make
@@ -24,13 +41,6 @@ const paceFromPrefs = (initial) => {
   if (initial?.fill === 'packed') return 'packed';
   return 'balanced';
 };
-
-// Nature-ish kinds get the beach/nature pin; everything else that isn't an
-// activity reads as a sight. Only affects which glyph a map pin wears.
-const NATURE_RE = /beach|lido|spiaggia|strand|plage|playa|lake|lago|\bsee\b|meer|park|garden|giardino|trail|falls|cascat|gorge|cliff|island|isola|nature|riserva|\bbay\b|mountain|monte/i;
-const catForItem = (item) => (item.active ? 'active'
-  : NATURE_RE.test(`${item.kind || ''} ${item.name || ''}`) ? 'beach'
-  : 'sight');
 
 /**
  * "Shape your day" - the guided planner shown when a day plan opens with
@@ -68,11 +78,28 @@ export function ShapeDayWizard({ city, numDays, items, eligibleIdx, initial, onS
 
   // Which picks the traveller has toggled on (original activity indices).
   const [selected, setSelected] = useState(() => new Set());
+  // Which category chip is active, and which row's info panel is open.
+  const [cat, setCat] = useState('all');
+  const [openInfo, setOpenInfo] = useState(null);
 
+  // The full picks deck: broad, all categories, mood-sorted. Chips filter it.
   const deck = useMemo(() => {
     if (!style) return [];
-    return candidateDeck(items, style.interests, Math.max(10, Math.min(16, numDays * 6)), eligibleIdx);
+    return pickerDeck(items, style.interests, Math.max(18, Math.min(32, numDays * 12)), eligibleIdx);
   }, [items, style, numDays, eligibleIdx]);
+
+  // How many places sit behind each chip, so a chip never reads as empty and
+  // the traveller can see at a glance that yes, there are beaches here too.
+  const catCounts = useMemo(() => {
+    const c = { all: deck.length, sight: 0, nature: 0, active: 0, food: 0 };
+    deck.forEach(({ item }) => { c[poiCategory(item)] += 1; });
+    return c;
+  }, [deck]);
+
+  const visibleDeck = useMemo(
+    () => (cat === 'all' ? deck : deck.filter(({ item }) => poiCategory(item) === cat)),
+    [deck, cat],
+  );
 
   // A stable centre for the map: the average of the picks around town.
   const center = useMemo(() => {
@@ -82,15 +109,26 @@ export function ShapeDayWizard({ city, numDays, items, eligibleIdx, initial, onS
     return { lat: la, lon: lo, label: city };
   }, [deck, city]);
 
-  const markers = useMemo(() => deck.map(({ item, idx }) => ({
-    id: String(idx),
-    label: item.name,
-    lat: item.lat,
-    lon: item.lon,
-    cat: catForItem(item),
-    selected: selected.has(idx),
-    must: isMustSee(item),
-  })), [deck, selected]);
+  // Map mirrors the filtered list, but keeps any already-picked place pinned so
+  // a chosen beach doesn't vanish when you switch to the Sights chip.
+  const markers = useMemo(() => {
+    const shown = new Map(visibleDeck.map((e) => [e.idx, e]));
+    deck.forEach((e) => { if (selected.has(e.idx)) shown.set(e.idx, e); });
+    return [...shown.values()].map(({ item, idx }) => {
+      const r = poiRating(item);
+      return {
+        id: String(idx),
+        label: item.name,
+        lat: item.lat,
+        lon: item.lon,
+        cat: poiMapCat(item),
+        selected: selected.has(idx),
+        must: isMustSee(item),
+        score: r.score,
+        tier: r.tier,
+      };
+    });
+  }, [deck, visibleDeck, selected]);
 
   const toggle = (idx) => setSelected((prev) => {
     const n = new Set(prev);
@@ -108,7 +146,7 @@ export function ShapeDayWizard({ city, numDays, items, eligibleIdx, initial, onS
   };
 
   // Selecting a mood resets the picks (a different mood = a different shortlist).
-  const pickStyle = (key) => { setStyleKey(key); setSelected(new Set()); };
+  const pickStyle = (key) => { setStyleKey(key); setSelected(new Set()); setCat('all'); setOpenInfo(null); };
 
   const questionStep = step >= 1 && step <= 4;
   const stepValue = step === 1 ? styleKey : step === 2 ? dayLen : step === 3 ? walk : step === 4 ? pace : null;
@@ -228,29 +266,102 @@ export function ShapeDayWizard({ city, numDays, items, eligibleIdx, initial, onS
                     <span>Tap a place to add it, watch it drop onto the map</span>
                     <span className="shape-deck-added">{selected.size} added</span>
                   </div>
-                  {deck.map(({ item, idx }) => {
-                    const on = selected.has(idx);
-                    return (
-                      <button
-                        key={idx}
-                        className={`shape-pick-row ${on ? 'on' : ''}`}
-                        onClick={() => toggle(idx)}
-                        aria-pressed={on}
-                      >
-                        <span
-                          className="shape-pick-thumb"
-                          style={item.img ? { backgroundImage: `url(${item.img})` } : undefined}
+
+                  {/* What kind of place do you feel like? */}
+                  <div className="shape-cat-filter" role="tablist" aria-label="Filter places">
+                    {PICK_CATS.filter((c) => c.key === 'all' || catCounts[c.key] > 0).map((c) => {
+                      const on = cat === c.key;
+                      return (
+                        <button
+                          key={c.key}
+                          role="tab"
+                          aria-selected={on}
+                          className={`shape-cat-chip ${on ? 'on' : ''}`}
+                          onClick={() => { setCat(c.key); setOpenInfo(null); }}
                         >
-                          {!item.img && <MapPinIcon size={14} />}
-                        </span>
-                        <span className="shape-pick-text">
-                          <b>{item.name}{isMustSee(item) && <StarIcon size={10} />}</b>
-                          <small>{item.kind}{item.heritage ? ', heritage site' : ''}</small>
-                        </span>
-                        <span className={`shape-pick-toggle ${on ? 'on' : ''}`} aria-hidden="true">
-                          {on ? <CheckIcon size={14} /> : '+'}
-                        </span>
-                      </button>
+                          <c.Icon size={13} />
+                          <span>{c.label}</span>
+                          <span className="shape-cat-count">{catCounts[c.key]}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  {/* How to read a row: what the star and the number mean. */}
+                  <p className="shape-pick-legend">
+                    <span className="shape-pick-legend-must"><StarIcon size={9} /> a genuine must-see</span>
+                    <span className="shape-pick-legend-score">the number rates each place out of 10</span>
+                    <span className="shape-pick-legend-info"><InfoIcon size={10} /> tap for more</span>
+                  </p>
+
+                  {visibleDeck.map(({ item, idx }) => {
+                    const on = selected.has(idx);
+                    const must = isMustSee(item);
+                    const r = poiRating(item);
+                    const open = openInfo === idx;
+                    const kind = poiKind(item) || 'Place';
+                    return (
+                      <div key={idx} className={`shape-pick-item ${open ? 'open' : ''}`}>
+                        <div className={`shape-pick-row ${on ? 'on' : ''}`}>
+                          <button
+                            className="shape-pick-body"
+                            onClick={() => toggle(idx)}
+                            aria-pressed={on}
+                          >
+                            <span
+                              className="shape-pick-thumb"
+                              style={item.img ? { backgroundImage: `url(${item.img})` } : undefined}
+                            >
+                              {!item.img && <MapPinIcon size={14} />}
+                            </span>
+                            <span className="shape-pick-text">
+                              <b>{item.name}</b>
+                              <span className="shape-pick-meta">
+                                <span className={`score-chip xs rt-${r.tier}`} title={`${r.label} - Carta's quality read`}>
+                                  {r.score.toFixed(1)}
+                                </span>
+                                {must
+                                  ? <span className="shape-pick-tag must"><StarIcon size={9} /> Must-see</span>
+                                  : <span className="shape-pick-tag">{r.label}</span>}
+                                <small>{kind}{item.heritage ? ', heritage' : ''}</small>
+                              </span>
+                            </span>
+                          </button>
+                          <button
+                            className={`shape-pick-info ${open ? 'on' : ''}`}
+                            onClick={() => setOpenInfo(open ? null : idx)}
+                            aria-label={open ? `Hide details for ${item.name}` : `More about ${item.name}`}
+                            aria-expanded={open}
+                          >
+                            <InfoIcon size={15} />
+                          </button>
+                          <button
+                            className={`shape-pick-toggle ${on ? 'on' : ''}`}
+                            onClick={() => toggle(idx)}
+                            aria-label={on ? `Remove ${item.name}` : `Add ${item.name}`}
+                          >
+                            {on ? <CheckIcon size={14} /> : '+'}
+                          </button>
+                        </div>
+                        {open && (
+                          <div className="shape-pick-desc">
+                            <p>
+                              {item.desc
+                                || (must
+                                  ? 'One of the essential places here - among the highest-rated sights in town.'
+                                  : `${kind}${item.heritage ? ', a heritage-listed site' : ''} worth a look while you’re nearby.`)}
+                            </p>
+                            <p className="shape-pick-desc-why">
+                              <b>{r.score.toFixed(1)}/10 - {r.label}.</b>{' '}
+                              {must
+                                ? 'Top importance rating, backed by heritage listing or real-world fame.'
+                                : r.tier === 2
+                                  ? 'A well-rated, corroborated place - solid, if not a headline sight.'
+                                  : 'Catalogued and worth a look, without the strong evidence of a top sight.'}
+                            </p>
+                          </div>
+                        )}
+                      </div>
                     );
                   })}
                 </div>

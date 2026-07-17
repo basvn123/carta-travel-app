@@ -47,7 +47,9 @@ export function encodeState({
   if (choices?.baggage_key) q.set('b', choices.baggage_key);
   if (choices?.transport_mode && choices.transport_mode !== 'plane') q.set('t', choices.transport_mode);
   if (choices?.origin) q.set('o', choices.origin);
-  if (priceMode && priceMode !== 'total') q.set('pm', priceMode);
+  // Store anything that differs from the APP default ('pp' - see App.jsx),
+  // else "Total" silently flips back to per-person on reload.
+  if (priceMode && priceMode !== 'pp') q.set('pm', priceMode);
   if (countryFilter && countryFilter !== 'all') q.set('cf', countryFilter);
   if (tripKinds && tripKinds.length) q.set('tk', tripKinds.join('.'));
   // Only store a price range if it's actually a narrowing of the full bounds.
@@ -58,7 +60,8 @@ export function encodeState({
   // Note: the open destination (selectedId) is deliberately NOT persisted, so
   // the app always opens on the full map with nothing pre-selected.
   if (favorites && favorites.size) q.set('fav', [...favorites].join('.'));
-  if (sortKey && sortKey !== 'price') q.set('sort', sortKey);
+  // App default is 'beauty' (App.jsx), so a price sort must be stored too.
+  if (sortKey && sortKey !== 'beauty') q.set('sort', sortKey);
   if (showFavOnly) q.set('favonly', '1');
   if (minTier && minTier > 0) q.set('mt', String(minTier));
   if (unescoOnly) q.set('un', '1');

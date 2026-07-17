@@ -205,17 +205,20 @@ export function carAdvice(dests, groupSize = 1, countryInsights = null) {
 }
 
 /** Rental-car cost for the whole trip (group total), from the pipeline's
- *  car_model: per-country day rate x seasonality x weekly discount. */
-export function rentalEstimate(carModel, iso2, days, startDate) {
+ *  car_model: per-country day rate x seasonality x weekly discount. Groups
+ *  bigger than one car's capacity pay for as many cars as they fill - the
+ *  same carsForGroup rule the Map tab's pricing applies. */
+export function rentalEstimate(carModel, iso2, days, startDate, groupSize = 1) {
   if (!carModel || !days || days <= 0) return null;
   const byIso = carModel.rental_eur_per_day_by_iso2 || {};
   let rate = byIso[iso2] ?? carModel.rental_eur_per_day_default ?? 40;
   const month = startDate ? Number(startDate.slice(5, 7)) : null;
   const season = month ? (carModel.rental_seasonality?.[String(month)] ?? 1) : 1;
   rate *= season;
-  let total = rate * days;
+  const cars = Math.max(1, Math.ceil((groupSize || 1) / Math.max(1, carModel.car_capacity || 4)));
+  let total = rate * days * cars;
   if (days >= 7 && carModel.rental_weekly_discount_pct) {
     total *= 1 - carModel.rental_weekly_discount_pct / 100;
   }
-  return { eur_total: round2(total), eur_per_day: round2(total / days), days };
+  return { eur_total: round2(total), eur_per_day: round2(total / days), days, cars };
 }

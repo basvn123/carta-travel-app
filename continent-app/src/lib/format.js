@@ -1,8 +1,11 @@
 // Shared display formatting used across the panels/list/map.
 
-/** Rounded euro amount, e.g. "€1,234". Returns '-' for null/undefined. */
+import { activeLocale } from './localeState.js';
+
+/** Rounded euro amount, e.g. "€1,234" (grouping follows the app language).
+ *  Returns '-' for null/undefined. */
 export function eur(n) {
-  return n == null ? '-' : `€${Math.round(n).toLocaleString('en-GB')}`;
+  return n == null ? '-' : `€${Math.round(n).toLocaleString(activeLocale())}`;
 }
 
 /** Decimal hours in human units: 0.17 -> "10 min", 2.5 -> "2 h 30 min".
@@ -13,6 +16,15 @@ export function fmtHours(h) {
   if (m < 60) return `${m} min`;
   const rest = m % 60;
   return rest ? `${Math.floor(m / 60)} h ${rest} min` : `${Math.floor(m / 60)} h`;
+}
+
+/** Stored flight times ('HH:MM/HH:MM', dep/arr local, from
+ *  harvest_flight_times.py) -> { dep, arr } for display, or null when the
+ *  times harvest doesn't cover this leg yet (arr may be null too). */
+export function flightTimes(t) {
+  if (typeof t !== 'string' || !t) return null;
+  const [dep, arr] = t.split('/');
+  return dep ? { dep, arr: arr || null } : null;
 }
 
 /** House style: no em/en dashes in shipped copy (see the memory note and

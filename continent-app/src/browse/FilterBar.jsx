@@ -6,6 +6,7 @@ import { GemIcon } from '../components/GemRating.jsx';
 import { PlaneIcon, CarIcon } from '../components/TransportIcons.jsx';
 import { CalendarIcon, FilterIcon, LifestyleIcon } from '../components/Icons.jsx';
 import { eur } from '../lib/format.js';
+import { useI18n } from '../i18n/index.jsx';
 
 export function FilterBar({
   data, choices, setChoices,
@@ -25,6 +26,7 @@ export function FilterBar({
   topPick, setTopPick,
   onOpenLifestyle,
 }) {
+  const { t } = useI18n();
   const baggageOpts = data?.meta?.baggage_options || {};
 
   // Mobile-only: the dense filter set collapses behind a filter icon, and the
@@ -98,11 +100,11 @@ export function FilterBar({
   // "Top picks" quick shortcuts: show only the best N by price or beauty.
   // Short labels keep the trigger narrow so the filter bar stays two tidy rows.
   const TOP_PICKS = [
-    { value: 'all', label: 'All' },
-    { value: 'price.10', label: '10 cheapest' },
-    { value: 'price.25', label: '25 cheapest' },
-    { value: 'beauty.10', label: '10 best rated' },
-    { value: 'beauty.25', label: '25 best rated' },
+    { value: 'all', label: t('filter.all') },
+    { value: 'price.10', label: t('filter.cheapestN', { n: 10 }) },
+    { value: 'price.25', label: t('filter.cheapestN', { n: 25 }) },
+    { value: 'beauty.10', label: t('filter.bestRatedN', { n: 10 }) },
+    { value: 'beauty.25', label: t('filter.bestRatedN', { n: 25 }) },
   ];
   const topPickValue = topPick ? `${topPick.by}.${topPick.n}` : 'all';
   const onTopPick = (v) => {
@@ -115,10 +117,10 @@ export function FilterBar({
   // idiom (rating_layer.py): 1 = worth a visit, 2 = worth a detour,
   // 3 = worth the journey - so each step reads as advice, not a number.
   const RATING_STEPS = [
-    { v: 0, label: 'Any', title: 'Any rating' },
-    { v: 1, label: 'Visit', title: 'Worth a visit or better (rated 5.5+)' },
-    { v: 2, label: 'Detour', title: 'Worth a detour or better (rated 7+)' },
-    { v: 3, label: 'Journey', title: 'Worth the journey (rated 8.5+)' },
+    { v: 0, label: t('rating.any'), title: t('rating.anyTitle') },
+    { v: 1, label: t('rating.visit'), title: t('rating.visitTitle') },
+    { v: 2, label: t('rating.detour'), title: t('rating.detourTitle') },
+    { v: 3, label: t('rating.journey'), title: t('rating.journeyTitle') },
   ];
 
   return (
@@ -134,8 +136,8 @@ export function FilterBar({
               className={`icon-btn ${mobileDatesOpen ? 'open' : ''}`}
               onClick={openMobileDates}
               aria-expanded={mobileDatesOpen}
-              aria-label="Dates"
-              title="Depart & return dates"
+              aria-label={t('filter.datesAria')}
+              title={t('filter.datesTitle')}
             >
               <CalendarIcon size={18} />
             </button>
@@ -143,7 +145,7 @@ export function FilterBar({
             {mobileDatesOpen && (
               <div className="mobile-dates-pop">
                 <div className="filter">
-                  <label className="filter-label">Depart</label>
+                  <label className="filter-label">{t('filter.depart')}</label>
                   <div className="filter-control">
                     <DateField
                       value={departDate || ''}
@@ -154,7 +156,7 @@ export function FilterBar({
                   </div>
                 </div>
                 <div className="filter">
-                  <label className="filter-label">Return</label>
+                  <label className="filter-label">{t('filter.return')}</label>
                   <div className="filter-control">
                     <DateField
                       value={returnDate || ''}
@@ -172,8 +174,8 @@ export function FilterBar({
             className={`icon-btn ${mobileFiltersOpen ? 'open' : ''} ${anyFilterActive ? 'has-active' : ''}`}
             onClick={openMobileFilters}
             aria-expanded={mobileFiltersOpen}
-            aria-label="Filters"
-            title="Filters"
+            aria-label={t('filter.filters')}
+            title={t('filter.filters')}
           >
             <FilterIcon size={18} />
             {anyFilterActive && <span className="icon-btn-dot" aria-hidden="true" />}
@@ -183,8 +185,8 @@ export function FilterBar({
             <button
               className="icon-btn"
               onClick={() => { setMobileFiltersOpen(false); setMobileDatesOpen(false); onOpenLifestyle(); }}
-              aria-label="Lifestyle settings"
-              title="Lifestyle: how you'll eat, drink and spend"
+              aria-label={t('filter.lifestyleAria')}
+              title={t('filter.lifestyleTitle')}
             >
               <LifestyleIcon size={18} />
             </button>
@@ -206,7 +208,7 @@ export function FilterBar({
           <div className="filter-group group-dates">
             <div className="group-fields">
               <div className="filter row-date-fields">
-                <label className="filter-label">Depart</label>
+                <label className="filter-label">{t('filter.depart')}</label>
                 <div className="filter-control">
                   <DateField
                     value={departDate || ''}
@@ -218,7 +220,7 @@ export function FilterBar({
               </div>
 
               <div className="filter row-date-fields">
-                <label className="filter-label">Return</label>
+                <label className="filter-label">{t('filter.return')}</label>
                 <div className="filter-control">
                   <DateField
                     value={returnDate || ''}
@@ -230,15 +232,15 @@ export function FilterBar({
               </div>
 
               <div className="filter filter-nights">
-                <label className="filter-label">Nights</label>
+                <label className="filter-label">{t('filter.nights')}</label>
                 <div className="filter-control">
                   <NumberField
                     value={choices.trip_days || 0}
                     min={1}
                     max={60}
                     onCommit={onNightsCommit}
-                    ariaLabel="Nights"
-                    title="Trip length; changing it moves the return date"
+                    ariaLabel={t('filter.nights')}
+                    title={t('filter.nightsTitle')}
                   />
                 </div>
               </div>
@@ -251,14 +253,14 @@ export function FilterBar({
           <div className="filter-group group-party">
             <div className="group-fields">
               <div className="filter filter-people">
-                <label className="filter-label">People</label>
+                <label className="filter-label">{t('filter.people')}</label>
                 <div className="filter-control">
                   <NumberField
                     value={choices.group_size}
                     min={1}
                     max={20}
                     onCommit={(v) => setChoices({ ...choices, group_size: v })}
-                    ariaLabel="People"
+                    ariaLabel={t('filter.people')}
                   />
                 </div>
               </div>
@@ -266,7 +268,7 @@ export function FilterBar({
               {/* Baggage only matters when flying: driving has no Ryanair fees to add. */}
               {(choices.transport_mode || 'plane') !== 'car' && (
                 <div className="filter filter-baggage">
-                  <label className="filter-label">Baggage</label>
+                  <label className="filter-label">{t('filter.baggage')}</label>
                   <div className="filter-control">
                     <Dropdown
                       value={choices.baggage_key}
@@ -281,7 +283,7 @@ export function FilterBar({
                       options={Object.entries(baggageOpts).map(([k, v]) => ({
                         value: k,
                         label: v.label,
-                        sublabel: v.per_direction_eur > 0 ? `€${v.per_direction_eur}/direction` : 'free',
+                        sublabel: v.per_direction_eur > 0 ? t('filter.perDirection', { n: v.per_direction_eur }) : t('filter.freeBag'),
                       }))}
                     />
                   </div>
@@ -297,13 +299,13 @@ export function FilterBar({
             <div className="group-fields">
               {/* Top picks: quick "best of" shortcuts (cheapest / most beautiful) */}
               <div className="filter filter-toppicks">
-                <label className="filter-label">Top picks</label>
+                <label className="filter-label">{t('filter.topPicks')}</label>
                 <div className="filter-control">
                   <Dropdown
                     value={topPickValue}
                     onChange={onTopPick}
                     options={TOP_PICKS}
-                    placeholder="All"
+                    placeholder={t('filter.all')}
                   />
                 </div>
               </div>
@@ -313,14 +315,14 @@ export function FilterBar({
                   destination (it used to hide inside the Account panel). */}
               {onOpenLifestyle && (
                 <div className="filter filter-lifestyle">
-                  <label className="filter-label">Lifestyle</label>
+                  <label className="filter-label">{t('filter.lifestyle')}</label>
                   <div className="filter-control">
                     <button
                       className="pill-toggle lifestyle-pill"
                       onClick={onOpenLifestyle}
-                      title="How you'll eat, drink and spend, priced at local rates"
+                      title={t('filter.setLifestyleTitle')}
                     >
-                      <LifestyleIcon size={13} /> Set lifestyle
+                      <LifestyleIcon size={13} /> {t('filter.setLifestyle')}
                     </button>
                   </div>
                 </div>
@@ -335,42 +337,42 @@ export function FilterBar({
           <div className="filter-group group-pricing">
             <div className="group-fields">
               <div className="filter filter-show">
-                <label className="filter-label">Show</label>
+                <label className="filter-label">{t('filter.show')}</label>
                 <div className="filter-control">
                   <div className="segmented compact">
                     <button
                       className={priceMode === 'total' ? 'seg-on' : ''}
                       onClick={() => setPriceMode('total')}
                     >
-                      Total
+                      {t('filter.total')}
                     </button>
                     <button
                       className={priceMode === 'pp' ? 'seg-on' : ''}
                       onClick={() => setPriceMode('pp')}
                     >
-                      Per person
+                      {t('filter.perPerson')}
                     </button>
                   </div>
                 </div>
               </div>
 
               <div className="filter filter-travelby">
-                <label className="filter-label">Travel by</label>
+                <label className="filter-label">{t('filter.travelBy')}</label>
                 <div className="filter-control">
                   <div className="segmented compact seg-icons">
                     <button
                       className={(choices.transport_mode || 'plane') === 'plane' ? 'seg-on' : ''}
                       onClick={() => setChoices({ ...choices, transport_mode: 'plane' })}
-                      title="Price every trip by Ryanair flight"
-                      aria-label="Travel by plane"
+                      title={t('filter.byPlaneTitle')}
+                      aria-label={t('filter.byPlaneAria')}
                     >
                       <PlaneIcon />
                     </button>
                     <button
                       className={choices.transport_mode === 'car' ? 'seg-on' : ''}
                       onClick={() => setChoices({ ...choices, transport_mode: 'car' })}
-                      title="Drive to any road-connected destination in Europe; islands stay priced by flight"
-                      aria-label="Travel by car"
+                      title={t('filter.byCarTitle')}
+                      aria-label={t('filter.byCarAria')}
                     >
                       <CarIcon />
                     </button>
@@ -381,7 +383,7 @@ export function FilterBar({
               {priceBounds && priceRange && (
                 <div className="filter price-range">
                   <label className="filter-label">
-                    Price {priceMode === 'pp' ? 'per person' : 'total'}
+                    {priceMode === 'pp' ? t('filter.pricePP') : t('filter.priceTotal')}
                   </label>
                   <div className="filter-control">
                     <DualRange
@@ -403,16 +405,16 @@ export function FilterBar({
           <div className="filter-group group-place">
             <div className="group-fields">
               <div className="filter filter-country">
-                <label className="filter-label">Country</label>
+                <label className="filter-label">{t('filter.country')}</label>
                 <div className="filter-control">
                   <Dropdown
                     value={countryFilter}
                     onChange={setCountryFilter}
                     options={[
-                      { value: 'all', label: `All countries (${availableCountries.length})` },
+                      { value: 'all', label: t('filter.allCountries', { n: availableCountries.length }) },
                       ...availableCountries.map(([iso2, name]) => ({ value: iso2, label: name })),
                     ]}
-                    searchPlaceholder="Search country..."
+                    searchPlaceholder={t('filter.searchCountry')}
                   />
                 </div>
               </div>
@@ -427,7 +429,7 @@ export function FilterBar({
               {/* Traveller rating: a minimum-tier button list over the 0-10 score
                   (evidence-based: beauty index + POI depth + Wikipedia fame). */}
               <div className="filter filter-beauty">
-                <label className="filter-label">Rating</label>
+                <label className="filter-label">{t('filter.rating')}</label>
                 <div className="filter-control">
                   <div className="segmented compact beauty-steps">
                     {RATING_STEPS.map((s) => (
@@ -454,13 +456,13 @@ export function FilterBar({
               {/* Highlights: standalone heritage / coast toggles, kept apart from the
                   beauty rating so each is a clear, independent yes/no filter. */}
               <div className="filter filter-highlights">
-                <label className="filter-label">Highlights</label>
+                <label className="filter-label">{t('filter.highlights')}</label>
                 <div className="filter-control pill-row">
                   <button
                     className={`pill-toggle ${unescoOnly ? 'on' : ''}`}
                     onClick={() => setUnescoOnly(!unescoOnly)}
                     aria-pressed={unescoOnly}
-                    title="Only destinations with a UNESCO World Heritage Site within ~60 km"
+                    title={t('filter.unescoTitle')}
                   >
                     UNESCO
                   </button>
@@ -468,9 +470,9 @@ export function FilterBar({
                     className={`pill-toggle ${topBeachOnly ? 'on' : ''}`}
                     onClick={() => setTopBeachOnly(!topBeachOnly)}
                     aria-pressed={topBeachOnly}
-                    title="Only strong beach destinations (high Blue Flag density)"
+                    title={t('filter.topBeachesTitle')}
                   >
-                    Top beaches
+                    {t('filter.topBeaches')}
                   </button>
                 </div>
               </div>
@@ -486,18 +488,18 @@ export function FilterBar({
                   A compact trigger keeps the bar to two tidy rows; the choices live
                   in a popover instead of wrapping a wide chip block across the row. */}
               <div className="filter filter-triptype">
-                <label className="filter-label">Trip type</label>
+                <label className="filter-label">{t('filter.tripType')}</label>
                 <div className="filter-control">
                   <Dropdown
                     multiple
                     value={tripKinds}
                     onChange={setTripKinds}
                     options={TRIP_KINDS.map((k) => ({ value: k.key, label: k.label }))}
-                    placeholder="All types"
+                    placeholder={t('filter.allTypes')}
                     multiLabel={(vals) =>
                       vals.length === 1
-                        ? (TRIP_KINDS.find((k) => k.key === vals[0])?.label || '1 type')
-                        : `${vals.length} types`
+                        ? (TRIP_KINDS.find((k) => k.key === vals[0])?.label || t('filter.oneType'))
+                        : t('filter.nTypes', { n: vals.length })
                     }
                   />
                 </div>
@@ -512,7 +514,7 @@ export function FilterBar({
             <>
               <div className="filter-divider" aria-hidden="true" />
               <button className="reset-filters-btn" onClick={resetAll}>
-                Reset
+                {t('filter.reset')}
               </button>
             </>
           )}

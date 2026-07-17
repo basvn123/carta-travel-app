@@ -7,7 +7,7 @@ import { CountryIntel } from '../components/CountryIntel.jsx';
 import { TripMap } from '../map/TripMap.jsx';
 import { TripItinerary } from './TripItinerary.jsx';
 import { GuidedTripWizard } from './GuidedTripWizard.jsx';
-import { eur, fmtHours } from '../lib/format.js';
+import { eur, fmtHours, flightTimes } from '../lib/format.js';
 import { fmtDate } from '../lib/dates.js';
 import { fetchDrivingRoute } from '../lib/routing.js';
 import { useTripPlanner } from '../hooks/useTripPlanner.js';
@@ -701,14 +701,14 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
                       <div className="trip-total-row">
                         <span className="lbl">
                           <PlaneIcon size={11} /> Flight out
-                          <small>{tp.flight.origin} → {tp.flight.into_anchor}, {tp.groupSize} {tp.groupSize === 1 ? 'seat' : 'seats'}</small>
+                          <small>{tp.flight.origin} → {tp.flight.into_anchor}{flightTimes(tp.flight.into_time) ? `, departs ${flightTimes(tp.flight.into_time).dep}` : ''}, {tp.groupSize} {tp.groupSize === 1 ? 'seat' : 'seats'}</small>
                         </span>
                         <span className="val">{eur(tp.flight.into_fare_eur * tp.groupSize)}</span>
                       </div>
                       <div className="trip-total-row">
                         <span className="lbl">
                           <PlaneIcon size={11} /> Flight home
-                          <small>{tp.flight.out_anchor} → {tp.flight.origin}, {tp.groupSize} {tp.groupSize === 1 ? 'seat' : 'seats'}</small>
+                          <small>{tp.flight.out_anchor} → {tp.flight.origin}{flightTimes(tp.flight.out_of_time) ? `, departs ${flightTimes(tp.flight.out_of_time).dep}` : ''}, {tp.groupSize} {tp.groupSize === 1 ? 'seat' : 'seats'}</small>
                         </span>
                         <span className="val">{eur(tp.flight.out_of_fare_eur * tp.groupSize)}</span>
                       </div>

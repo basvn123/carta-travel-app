@@ -50,6 +50,7 @@ function TabFallback() {
 import { tripDaysBetween, DEFAULT_LIFESTYLE } from './lib/runtime_pricing.js';
 import { loadInitialState, persistState } from './lib/urlState.js';
 import { AuthProvider, useAuth } from './auth/AuthContext.jsx';
+import { I18nProvider, useI18n } from './i18n/index.jsx';
 import { AuthModal } from './auth/AuthModal.jsx';
 import { AuthGate } from './auth/AuthGate.jsx';
 import { ResetPasswordScreen } from './auth/ResetPasswordScreen.jsx';
@@ -71,13 +72,16 @@ const MAP_GUIDE_KEY = 'continent.mapGuideDismissed.v1';
 
 export default function App() {
   return (
-    <AuthProvider>
-      <TravelApp />
-    </AuthProvider>
+    <I18nProvider>
+      <AuthProvider>
+        <TravelApp />
+      </AuthProvider>
+    </I18nProvider>
   );
 }
 
 function TravelApp() {
+  const { t } = useI18n();
   const {
     configured: authConfigured, user, recoveryMode,
     loading: authLoading, emailConfirmed, dismissEmailConfirmed,
@@ -157,11 +161,13 @@ function TravelApp() {
   // overridden by your own saved preferences.
   const [cameFromUrl] = useState(() => typeof window !== 'undefined' && !!window.location.search);
 
-  const toggleFav = (id) => setFavorites((prev) => {
+  // Stable identity: this lands on every ResultsList row, so a fresh function
+  // per render would defeat the list's React.memo.
+  const toggleFav = useCallback((id) => setFavorites((prev) => {
     const next = new Set(prev);
     if (next.has(id)) next.delete(id); else next.add(id);
     return next;
-  });
+  }), []);
 
   // Sync trip_days into choices whenever the dates change
   useEffect(() => {
@@ -225,6 +231,11 @@ function TravelApp() {
 
   // Stable so MapView's marker effect doesn't rebuild every render.
   const openDetail = useCallback((id) => setSelectedId(id), []);
+  const collapseList = useCallback(() => setListCollapsed(true), []);
+  const openCompare = useCallback(() => setCompareOpen(true), []);
+  // "Top picks" hides the unreachable set; a fresh [] every render would
+  // re-render the memoized list/map for nothing, so keep one empty constant.
+  const noUnreachable = useRef([]).current;
 
   // Fetch app_data.json, apply its defaults into `choices`, and derive the
   // fare-date bounds used to default/clamp the depart & return pickers.
@@ -279,14 +290,17 @@ function TravelApp() {
 
   // Keep the URL + localStorage in sync so the view is shareable and survives a
   // reload. Only after data has loaded (so we don't clobber the shared link with
-  // half-initialized state).
+  // half-initialized state). Debounced: this fires on ~17 state values, and
+  // Safari rate-limits history.replaceState (100 calls / 30s) - rapid slider
+  // drags or favorite-toggling could hit that ceiling unthrottled.
   useEffect(() => {
-    if (!data) return;
-    persistState({
+    if (!data) return undefined;
+    const timer = setTimeout(() => persistState({
       departDate, returnDate, choices, priceMode, countryFilter,
       tripKinds, priceRange, priceBounds, selectedId, favorites, sortKey, showFavOnly,
       minTier, unescoOnly, topBeachOnly, topPick, activeTab,
-    });
+    }), 300);
+    return () => clearTimeout(timer);
   }, [data, departDate, returnDate, choices, priceMode, countryFilter,
       tripKinds, priceRange, priceBounds, selectedId, favorites, sortKey, showFavOnly,
       minTier, unescoOnly, topBeachOnly, topPick, activeTab]);
@@ -326,7 +340,7 @@ function TravelApp() {
       <div className="loading-screen">
         <Logo size={56} />
         <div className="name">Carta</div>
-        <div className="sub">Charting Europe</div>
+        <div className="sub">{t('shell.tagline')}</div>
         <div className="pulse" />
       </div>
     );
@@ -355,7 +369,7 @@ function TravelApp() {
       <div className="loading-screen">
         <Logo size={56} />
         <div className="name">Carta</div>
-        <div className="sub" style={{ color: 'var(--accent)' }}>Failed to load: {error}</div>
+        <div className="sub" style={{ color: 'var(--accent)' }}>{t('shell.failedToLoad', { error })}</div>
         <div style={{ fontSize: 12, color: 'var(--ink-mute)', maxWidth: 420, textAlign: 'center', lineHeight: 1.5 }}>
           The app expects <code>/app_data.json</code> at the site root.
           Run notebook 05 to regenerate it from your pipeline cache.
@@ -369,7 +383,7 @@ function TravelApp() {
       <div className="loading-screen">
         <Logo size={56} />
         <div className="name">Carta</div>
-        <div className="sub">Charting Europe</div>
+        <div className="sub">{t('shell.tagline')}</div>
         <div className="pulse" />
       </div>
     );
@@ -437,18 +451,16 @@ function TravelApp() {
               aria-expanded={mapGuideOpen}
             >
               <InfoIcon size={13} />
-              <span>Start here</span>
+              <span>{t('guide.startHere')}</span>
               <span className="map-guide-caret" aria-hidden="true">▾</span>
             </button>
             {mapGuideOpen && (
               <div className="map-guide-pop">
                 <p className="map-guide-text">
-                  Pick your travel dates and group size above, then click a
-                  destination on the map or in the list to see what the whole
-                  trip costs.
+                  {t('guide.text')}
                 </p>
                 <button className="map-guide-dismiss" onClick={dismissMapGuide}>
-                  Got it
+                  {t('common.gotIt')}
                 </button>
               </div>
             )}
@@ -460,26 +472,29 @@ function TravelApp() {
       {activeTab === 'map' && !fareNoticeDismissed && (
         <div className="guide-overlay fare-notice-overlay" onClick={dismissFareNotice}>
           <div className="guide-modal fare-notice" onClick={(e) => e.stopPropagation()}>
-            <h2 className="guide-title">Built for budget travel on Ryanair</h2>
+            <h2 className="guide-title">{t('fareNotice.title')}</h2>
             <p className="fare-notice-text">
-              Carta is made for budget travellers flying <b>Ryanair</b>: every flight
-              price is a real stored Ryanair fare from your chosen departure airport.
+              {t('fareNotice.body1')}
             </p>
             <p className="fare-notice-text">
-              There is no data for other airlines yet, so places without a Ryanair
-              route show as drive-only or unreachable.
+              {t('fareNotice.body2')}
             </p>
-            <button className="guide-next fare-notice-btn" onClick={dismissFareNotice}>Got it</button>
+            <button className="guide-next fare-notice-btn" onClick={dismissFareNotice}>{t('common.gotIt')}</button>
           </div>
         </div>
       )}
 
-      {activeTab === 'map' && (
-        <>
+      {/* The map tab gets the same keep-alive as the planners: destroying it
+          on every tab hop meant a full MapLibre teardown + rebuild (style,
+          tiles, WebGL context, ~1500 markers) on every return to Home. The
+          wrapper div is unpositioned, so the absolutely-placed panels inside
+          keep anchoring to .app exactly as before. */}
+      {visitedTabs.has('map') && (
+        <div className={activeTab === 'map' ? undefined : 'tab-keep-hidden'}>
           <div onClick={(e) => e.stopPropagation()}>
             <ResultsList
               priced={priced}
-              unreachable={topPick ? [] : unreachable}
+              unreachable={topPick ? noUnreachable : unreachable}
               locationQuery={locationQuery}
               setLocationQuery={setLocationQuery}
               priceMode={priceMode}
@@ -492,12 +507,12 @@ function TravelApp() {
               setSortKey={setSortKey}
               showFavOnly={showFavOnly}
               setShowFavOnly={setShowFavOnly}
-              onOpenCompare={() => setCompareOpen(true)}
+              onOpenCompare={openCompare}
               reachableCount={pricedAll.length}
               totalCount={Object.keys(data.destinations).length}
               homeCity={data.meta?.origins?.[data.meta?.selected_origin]?.city || data.meta?.home_city || 'your airport'}
               transportMode={choices.transport_mode || 'plane'}
-              onCollapse={() => setListCollapsed(true)}
+              onCollapse={collapseList}
             />
           </div>
 
@@ -506,18 +521,18 @@ function TravelApp() {
             <button
               className="list-reopen"
               onClick={() => setListCollapsed(false)}
-              title="Show the destinations list"
-              aria-label="Show the destinations list"
+              title={t('results.showListTitle')}
+              aria-label={t('results.showListTitle')}
             >
               <span className="chev">›</span>
-              <span>Destinations</span>
+              <span>{t('results.destinations')}</span>
             </button>
           </div>
 
           <Suspense fallback={null}>
             <MapView
               priced={priced}
-              unreachable={topPick ? [] : unreachable}
+              unreachable={topPick ? noUnreachable : unreachable}
               priceMode={priceMode}
               groupSize={choices.group_size}
               selectedId={selectedId}
@@ -585,7 +600,7 @@ function TravelApp() {
               />
             </div>
           )}
-        </>
+        </div>
       )}
 
       {/* Planner tabs stay MOUNTED once visited and just hide: a quick hop to
@@ -673,11 +688,11 @@ function TravelApp() {
       {emailConfirmed && (
         <div className="confirm-toast" role="status" onClick={(e) => e.stopPropagation()}>
           <span className="confirm-toast-check">✓</span>
-          Email confirmed. Welcome to Carta.
+          {t('toast.emailConfirmed')}
           <button
             className="confirm-toast-close"
             onClick={dismissEmailConfirmed}
-            aria-label="Dismiss"
+            aria-label={t('a11y.dismiss')}
           >
             ×
           </button>

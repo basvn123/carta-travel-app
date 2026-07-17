@@ -89,6 +89,10 @@ export function combineTripLegs(destA, arriveDate, destB, departDate, groupSize 
         into_ground_minutes: rA.ground_transport_minutes || 0,
         out_ground_eur: rB.ground_transport_one_way_eur || 0,
         out_ground_minutes: rB.ground_transport_minutes || 0,
+        // Dep/arr local times of the exact flights priced above ('HH:MM/HH:MM'),
+        // when the times harvest covers this origin. Display-only.
+        into_time: rA.outbound_time?.[arriveDate] || null,
+        out_of_time: rB.return_time?.[departDate] || null,
       };
     }
   }
@@ -108,6 +112,8 @@ export function combineTripLegs(destA, arriveDate, destB, departDate, groupSize 
     out_anchor: best.out_anchor,
     into_fare_eur: round2(best.into_fare),
     out_of_fare_eur: round2(best.out_of_fare),
+    into_time: best.into_time,
+    out_of_time: best.out_of_time,
     fare_per_person: round2(best.combined_fare),
     fare_total: round2(best.combined_fare * group),
     into_ground_eur: round2(best.into_ground_eur),

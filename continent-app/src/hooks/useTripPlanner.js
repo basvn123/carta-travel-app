@@ -248,8 +248,19 @@ export function useTripPlanner(data, countryInsights = null) {
       let mode = legModes[i] || null;
       if (!mode) {
         if (transportPref === 'car') mode = 'car';
-        else if (transportPref === 'public') mode = (opts.modes.train && opts.modes.train.eur_pp <= opts.modes.bus.eur_pp) ? 'train' : 'bus';
-        else mode = opts.recommended;
+        else if (transportPref === 'public') {
+          // Train vs bus: with the estimate model's rates the train is never
+          // outright cheaper (raw eur_pp compare was a dead branch that always
+          // said bus). Choose by what an hour saved costs instead: the train
+          // wins when its price premium is under ~€12 per hour it saves -
+          // short hops go by rail, long budget hauls stay on the bus.
+          const train = opts.modes.train;
+          const bus = opts.modes.bus;
+          const hoursSaved = train && bus ? bus.hours - train.hours : 0;
+          mode = train && bus && hoursSaved > 0
+            && (train.eur_pp - bus.eur_pp) / hoursSaved <= 12
+            ? 'train' : (bus ? 'bus' : 'train');
+        } else mode = opts.recommended;
       }
       const chosen = opts.modes[mode] || opts.modes[opts.recommended];
       out.push({
@@ -274,15 +285,19 @@ export function useTripPlanner(data, countryInsights = null) {
     if (transportPref !== 'car' || !stopDetails.length) return null;
     const days = Math.max(1, plannedNights);
     const iso2 = stopDetails[0].dest?.iso2;
-    return rentalEstimate(carModel, iso2, days, tripStart || stopDetails[0].arriveDate);
-  }, [transportPref, stopDetails, plannedNights, carModel, tripStart]);
+    // groupSize matters: 7 people need 2 cars, and the "whole group" label on
+    // this line must actually cover the whole group.
+    return rentalEstimate(carModel, iso2, days, tripStart || stopDetails[0].arriveDate, groupSize);
+  }, [transportPref, stopDetails, plannedNights, carModel, tripStart, groupSize]);
 
   // Accommodation + on-the-ground spend per stop (default lifestyle - the full
   // sliders live in the Map tab's Lifestyle panel; a trip spanning several
   // destinations isn't the place to re-tune per-stop dining habits in v1).
   const stayCosts = useMemo(() => stopDetails.map((s) => {
     if (!s.dest) return null;
-    const accom = accommodationPerPerson(s.dest, s.nights, s.arriveDate, null, groupSize);
+    // A 0-night pass-through stop books nothing - without this gate the
+    // accommodation model still charges its cleaning + service fee.
+    const accom = s.nights > 0 ? accommodationPerPerson(s.dest, s.nights, s.arriveDate, null, groupSize) : null;
     const ground = groundSpendPerPerson(s.dest, s.nights, DEFAULT_LIFESTYLE);
     const accomTotal = round2((accom ? accom.total : 0) * groupSize);
     const groundTotal = round2((ground ? ground.total : 0) * groupSize);

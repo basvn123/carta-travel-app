@@ -59,7 +59,16 @@ export function FlightPickerMap({ options = [], origin = null, onPick }) {
         el.type = 'button';
         el.className = 'fpm-pin';
         el.title = `${o.city}: fly for ${o.eurLabel || ''}`;
-        el.innerHTML = `${PLANE_SVG}<span class="fpm-price">${o.eurLabel}</span><span class="fpm-city">${o.city}</span>`;
+        // The plane glyph is a static SVG constant; the price/city labels are
+        // dataset strings, so they go in via textContent, never innerHTML.
+        el.innerHTML = PLANE_SVG;
+        const priceEl = document.createElement('span');
+        priceEl.className = 'fpm-price';
+        priceEl.textContent = o.eurLabel ?? '';
+        const cityEl = document.createElement('span');
+        cityEl.className = 'fpm-city';
+        cityEl.textContent = o.city ?? '';
+        el.append(priceEl, cityEl);
         el.addEventListener('click', (e) => { e.stopPropagation(); onPickRef.current?.(o.id); });
         const marker = new maplibregl.Marker({ element: el, anchor: 'center' })
           .setLngLat([o.lon, o.lat])
@@ -70,7 +79,11 @@ export function FlightPickerMap({ options = [], origin = null, onPick }) {
       if (origin && origin.lat != null) {
         const el = document.createElement('div');
         el.className = 'fpm-origin';
-        el.innerHTML = `<span class="fpm-origin-dot"></span><span class="fpm-origin-name">${origin.city || 'Home'}</span>`;
+        el.innerHTML = '<span class="fpm-origin-dot"></span>';
+        const nameEl = document.createElement('span');
+        nameEl.className = 'fpm-origin-name';
+        nameEl.textContent = origin.city || 'Home';
+        el.appendChild(nameEl);
         originRef.current = new maplibregl.Marker({ element: el, anchor: 'center' })
           .setLngLat([origin.lon, origin.lat])
           .addTo(map);

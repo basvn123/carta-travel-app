@@ -22,6 +22,18 @@ export const appDataPromise = fetchJson('/app_data.json');
 // the real error from their own .then/.catch chains.
 appDataPromise.catch(() => {});
 
+// Per-origin fare slices (public/fares/{IATA}.json, written by sync-data.mjs).
+// Cached per origin; resolves null on failure so useAppData can tell "no such
+// file / offline" apart from "empty but valid" and fall back gracefully.
+const faresPromises = new Map();
+export function fetchFares(origin) {
+  if (!origin || !/^[A-Z0-9]{3,4}$/.test(origin)) return Promise.resolve(null);
+  if (!faresPromises.has(origin)) {
+    faresPromises.set(origin, fetchJson(`/fares/${origin}.json`).catch(() => null));
+  }
+  return faresPromises.get(origin);
+}
+
 let activitiesFullPromise = null;
 /** Full per-destination POI lists (id -> items_full). Cached after first call;
  *  resolves to {} on failure so callers can fall back to the short lists. */

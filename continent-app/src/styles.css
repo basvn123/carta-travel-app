@@ -338,6 +338,66 @@ input, select {
   .map-guide { right: 10px; margin-top: 6px; }
 }
 
+/* ───────── Language picker: a compact flag pill in the header that switches
+   the UI language. Same manners and palette as the origin picker beside it. */
+.lang-picker { position: relative; }
+.lang-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 9px;
+  border-radius: 999px;
+  background: var(--paper-dim);
+  border: 1px solid var(--rule);
+  color: var(--ink-soft);
+  cursor: pointer;
+  transition: background .15s, border-color .15s, color .15s;
+}
+.lang-btn:hover { background: #efe9db; color: var(--ink); }
+.lang-btn .country-flag { border-radius: 2px; flex: none; }
+.lang-btn-code {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+}
+.lang-btn-caret { font-size: 9px; color: var(--ink-mute); flex: none; }
+.lang-pop {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  width: 180px;
+  padding: 6px;
+  background: var(--paper, #fbf8f1);
+  border: 1px solid var(--rule);
+  border-radius: 14px;
+  box-shadow: var(--shadow-2);
+  z-index: 60;
+}
+.lang-opt {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  color: var(--ink-soft);
+  transition: background .12s, color .12s;
+}
+.lang-opt:hover { background: var(--paper-dim); color: var(--ink); }
+.lang-opt.on { background: var(--accent-bg); color: var(--accent); }
+.lang-opt .country-flag { border-radius: 2px; flex: none; }
+.lang-opt-label { font-size: 13px; font-weight: 500; flex: 1; }
+.lang-opt-check { font-size: 11px; }
+@media (max-width: 768px) {
+  /* Keep the header row tight on phones: flag only, no code. */
+  .lang-btn-code { display: none; }
+}
+
 /* ───────── Origin picker: the "flying from" control in the header. A compact
    pill that opens a searchable, country-grouped list of departure airports;
    choosing one reprices the whole app. ───────── */
@@ -2250,27 +2310,30 @@ input, select {
 }
 .day-landing {
   width: 100%;
-  max-width: 480px;
-  padding: 28px 24px 40px;
+  max-width: 560px;
+  padding: 32px 24px 48px;
   color: var(--ink-soft);
 }
 /* Stay address + first day share the top row; the date keeps a sane width. */
 .day-build-top { flex-wrap: wrap; align-items: flex-end; }
 .day-build-top .day-build-field { flex: 1 1 300px; min-width: 0; }
 .day-build-top .day-build-date { flex: 0 1 200px; min-width: 160px; }
-/* Desktop: the builder goes full width so the explore map can be the hero;
-   the form-like pieces stay capped at a readable column. No max-width on the
-   landing itself: on ultrawide monitors the map row spans the whole window. */
+/* Desktop: before a stay is chosen the landing is a centered, readable card.
+   Once the explore map appears (.day-landing-wide) the page goes full width
+   so the map can be the hero - but every form-like piece keeps a capped,
+   CENTERED column, so nothing hugs the left edge of an ultrawide window. */
 @media (min-width: 1000px) {
-  .day-landing { max-width: none; padding: 32px clamp(28px, 3.5vw, 72px) 48px; }
-  .day-landing-lead,
-  .day-landing-section,
-  .day-edit-banner,
-  .day-build-top,
-  .day-stay-results,
-  .day-build-cities,
-  .day-build-hint,
-  .trip-save-btn.day-build-btn { max-width: 680px; }
+  .day-landing.day-landing-wide { max-width: none; padding: 32px clamp(28px, 3.5vw, 72px) 48px; }
+  .day-landing-wide .section-title,
+  .day-landing-wide .day-landing-lead,
+  .day-landing-wide .day-landing-section,
+  .day-landing-wide .day-edit-banner,
+  .day-landing-wide .day-build-top,
+  .day-landing-wide .day-stay-results,
+  .day-landing-wide .day-build-cities,
+  .day-landing-wide .day-build-hint,
+  .day-landing-wide .trip-save-btn.day-build-btn { width: 100%; max-width: 680px; margin-inline: auto; }
+  .day-landing-wide .day-explore-steplabel { display: block; width: 100%; max-width: 680px; margin-inline: auto; }
 }
 .day-landing .section-title {
   font-family: var(--display);
@@ -7614,15 +7677,49 @@ input, select {
   margin: 0 2px 10px; font-size: 12px; color: var(--ink-soft);
 }
 .shape-pick-list-head .shape-deck-added { color: var(--accent); font-weight: 700; white-space: nowrap; }
+
+/* Category filter chips: pick a kind of place (all / sights / nature / …). */
+.shape-cat-filter {
+  display: flex; flex-wrap: wrap; gap: 6px; margin: 0 2px 8px;
+}
+.shape-cat-chip {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 5px 9px; border-radius: 999px;
+  border: 1px solid var(--rule); background: var(--paper);
+  font-size: 11.5px; font-weight: 600; color: var(--ink-soft);
+  cursor: pointer; transition: border-color .14s, background .14s, color .14s;
+}
+.shape-cat-chip svg { color: var(--ink-mute); flex: none; }
+.shape-cat-chip:hover { border-color: var(--accent); color: var(--ink); }
+.shape-cat-chip.on { background: var(--accent); border-color: var(--accent); color: #fff; }
+.shape-cat-chip.on svg { color: #fff; }
+.shape-cat-count {
+  font-family: var(--mono); font-size: 10px; opacity: .8;
+  padding-left: 2px;
+}
+
+/* Legend: teaches the star + the 0-10 number + the info affordance in one line. */
+.shape-pick-legend {
+  display: flex; flex-wrap: wrap; gap: 4px 12px; margin: 0 2px 10px;
+  font-size: 10.5px; color: var(--ink-mute);
+}
+.shape-pick-legend > span { display: inline-flex; align-items: center; gap: 4px; }
+.shape-pick-legend-must svg { color: var(--accent); }
+
+.shape-pick-item { margin-bottom: 7px; }
 .shape-pick-row {
-  display: flex; align-items: center; gap: 11px; width: 100%;
-  padding: 8px 10px 8px 8px; margin-bottom: 7px;
-  border: 1px solid var(--rule); border-radius: 12px;
-  background: var(--paper); text-align: left; cursor: pointer;
+  display: flex; align-items: stretch; gap: 6px; width: 100%;
+  padding: 6px 8px; border: 1px solid var(--rule); border-radius: 12px;
+  background: var(--paper);
   transition: border-color .14s, background .14s, transform .1s;
 }
 .shape-pick-row:hover { border-color: var(--accent); transform: translateY(-1px); }
 .shape-pick-row.on { border-color: var(--accent); background: var(--accent-bg); }
+.shape-pick-item.open .shape-pick-row { border-bottom-left-radius: 0; border-bottom-right-radius: 0; }
+.shape-pick-body {
+  display: flex; align-items: center; gap: 11px; flex: 1; min-width: 0;
+  padding: 2px; background: none; border: none; text-align: left; cursor: pointer;
+}
 .shape-pick-thumb {
   flex: none; width: 46px; height: 46px; border-radius: 9px;
   background: var(--paper-dim) center/cover no-repeat;
@@ -7630,23 +7727,45 @@ input, select {
 }
 .shape-pick-text { flex: 1; min-width: 0; }
 .shape-pick-text b {
-  display: flex; align-items: center; gap: 5px;
+  display: block;
   font-family: var(--display); font-size: 14px; font-weight: 600; color: var(--ink);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
-.shape-pick-text b svg { color: var(--accent); flex: none; }
-.shape-pick-text small {
-  display: block; margin-top: 1px;
+.shape-pick-meta {
+  display: flex; align-items: center; gap: 6px; margin-top: 3px; min-width: 0;
+}
+.shape-pick-tag {
+  display: inline-flex; align-items: center; gap: 3px; flex: none;
+  font-size: 10.5px; font-weight: 600; color: var(--ink-soft);
+}
+.shape-pick-tag.must { color: var(--accent); }
+.shape-pick-tag.must svg { color: var(--accent); }
+.shape-pick-meta small {
   font-size: 11px; color: var(--ink-soft);
   text-transform: capitalize; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
-.shape-pick-toggle {
-  flex: none; width: 26px; height: 26px; border-radius: 50%;
+.shape-pick-info, .shape-pick-toggle {
+  flex: none; align-self: center; width: 30px; height: 30px; border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
-  border: 1px solid var(--rule); color: var(--ink-mute);
-  font-size: 17px; line-height: 1;
+  border: 1px solid var(--rule); background: var(--paper); color: var(--ink-mute);
+  cursor: pointer; transition: border-color .14s, background .14s, color .14s;
 }
+.shape-pick-info:hover, .shape-pick-info.on { border-color: var(--accent); color: var(--accent); }
+.shape-pick-info.on { background: var(--accent-bg); }
+.shape-pick-toggle { font-size: 17px; line-height: 1; }
 .shape-pick-row:hover .shape-pick-toggle { border-color: var(--accent); color: var(--accent); }
 .shape-pick-toggle.on { background: var(--accent); border-color: var(--accent); color: #fff; }
+.shape-pick-desc {
+  padding: 9px 12px 11px; border: 1px solid var(--rule); border-top: none;
+  border-bottom-left-radius: 12px; border-bottom-right-radius: 12px;
+  background: var(--paper-dim);
+}
+.shape-pick-desc p { margin: 0; font-size: 12px; line-height: 1.5; color: var(--ink-soft); }
+.shape-pick-desc-why { margin-top: 6px !important; font-size: 11px !important; color: var(--ink-mute) !important; }
+.shape-pick-desc-why b { color: var(--ink-soft); font-weight: 700; }
+/* The pick-row score chip reuses the shared .score-chip.xs sizing; just give
+   it a steady min-width so the numbers line up down the column. */
+.shape-pick-meta .score-chip { min-width: 24px; justify-content: center; }
 .shape-pick-map {
   height: 460px; border-radius: 12px; overflow: hidden; border: 1px solid var(--rule);
 }
@@ -8579,10 +8698,11 @@ input, select {
    ============================================================ */
 .day-explore { margin: 12px 0; }
 
-/* One toolbar row above the explore map: search, category chips, and the
-   "Let Carta guide you" button. Wraps on narrower screens. */
-.day-explore-tools { display: flex; flex-wrap: wrap; gap: 8px 10px; align-items: center; margin-bottom: 10px; }
-.day-explore-search { position: relative; flex: 1 1 260px; min-width: 220px; }
+/* One toolbar row above the explore map: a compact search plus the category
+   chips. It shares a column with the map, so it is exactly as wide as the
+   map - the chips end where the map ends. Wraps on narrower screens. */
+.day-explore-tools { display: flex; flex-wrap: wrap; gap: 8px 10px; align-items: center; }
+.day-explore-search { position: relative; flex: 0 1 340px; min-width: 220px; }
 .day-explore-search-ico {
   position: absolute;
   left: 10px;
@@ -8850,22 +8970,27 @@ input, select {
   .day-guide-moods { grid-template-columns: 1fr; }
 }
 
-/* Chips share the toolbar row with the search and the guide button. */
-.day-explore-filters { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+/* Chips share the toolbar row with the search, pushed to its right edge. */
+.day-explore-filters { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-left: auto; }
 .day-explore-wrap { display: flex; gap: 16px; align-items: stretch; }
-/* The map is the hero: it takes every pixel the side rail doesn't need. */
-.day-explore-wrap .dem-map { flex: 1; min-width: 0; height: clamp(480px, 68vh, 760px); border-radius: 14px; overflow: hidden; border: 1px solid var(--rule); box-shadow: 0 8px 24px -18px rgba(26, 26, 26, 0.5); }
-.day-explore-side { flex: 0 0 400px; min-width: 0; max-height: clamp(480px, 68vh, 760px); display: flex; flex-direction: column; }
+/* Toolbar + map stacked in one column: the map is the hero and takes every
+   pixel the side rail doesn't need; the toolbar ends where the map ends. */
+.day-explore-main { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 10px; }
+.day-explore-wrap .dem-map { flex: none; width: 100%; height: clamp(480px, 68vh, 760px); border-radius: 14px; overflow: hidden; border: 1px solid var(--rule); box-shadow: 0 8px 24px -18px rgba(26, 26, 26, 0.5); }
+/* The rail stretches to the toolbar+map column's full height; the guide
+   button sits on top of it (level with the search) when the guide is shut. */
+.day-explore-side { flex: 0 0 400px; min-width: 0; display: flex; flex-direction: column; gap: 10px; }
+.day-explore-side .day-guide-btn { justify-content: center; }
 /* Ultrawide: a taller map and a slightly roomier rail beside it. */
 @media (min-width: 1800px) {
   .day-explore-wrap .dem-map { height: clamp(560px, 74vh, 980px); }
-  .day-explore-side { flex-basis: 460px; max-height: clamp(560px, 74vh, 980px); }
+  .day-explore-side { flex-basis: 460px; }
 }
 /* The place-detail card and the Carta guide panel each become the right-hand
    rail beside the big map: both fill its height and scroll inside themselves,
    so the map is never pushed off-screen. (Descendant selectors: the guide sits
    in a display:contents wrapper that keeps it mounted while a briefing shows.) */
-.day-explore-side .guide-city-side { flex: 1; min-height: 0; }
+.day-explore-side .guide-city-side { flex: 1; min-height: 0; max-height: none; }
 .day-explore-side .day-guide-panel { flex: 1; min-height: 0; margin-bottom: 0; display: flex; flex-direction: column; }
 .day-explore-side .day-guide-panel .day-guide-results { flex: 1; min-height: 0; max-height: none; }
 .day-explore-side .day-guide-panel .day-guide-ask { flex: 1; min-height: 0; overflow-y: auto; }
@@ -9101,6 +9226,8 @@ input, select {
   }
   .day-explore-side { flex: none; max-height: 62vh; min-height: 340px; }
   .day-explore-tools { flex-direction: column; align-items: stretch; }
+  .day-explore-search { flex: none; }
+  .day-explore-filters { margin-left: 0; }
   .day-guide-btn { align-self: stretch; justify-content: center; }
 }
 
@@ -9147,7 +9274,6 @@ input, select {
 }
 .day-explore-steplabel { display: flex; align-items: center; margin-bottom: 10px; }
 .day-picks-steplabel { width: 100%; margin-bottom: 4px; }
-.day-path-list { margin-bottom: 6px; }
 
 /* In-plan day strip: city + day chips in one sticky bar, so switching a day
    or city never needs a scroll back to the top. */

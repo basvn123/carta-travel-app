@@ -62,14 +62,19 @@ export function DayExploreMap({ stay, markers = [], onFocus, onStayClick, stayFo
     const el = document.createElement('div');
     el.className = 'dem-stay';
     // A proper teardrop map pin whose tip lands on the coordinate, with a home
-    // glyph inside the head (this is "your stay") and the label above it.
-    el.innerHTML =
-      `<span class="dem-stay-name">${stay.label || 'Your stay'}</span>`
-      + '<span class="dem-stay-pin"><span class="dem-stay-pulse"></span>'
+    // glyph inside the head (this is "your stay") and the label above it. The
+    // pin artwork is a static SVG string; the label is third-party data (a
+    // Nominatim display name), so it goes in via textContent, never innerHTML.
+    const nameEl = document.createElement('span');
+    nameEl.className = 'dem-stay-name';
+    nameEl.textContent = stay.label || 'Your stay';
+    el.appendChild(nameEl);
+    el.insertAdjacentHTML('beforeend',
+      '<span class="dem-stay-pin"><span class="dem-stay-pulse"></span>'
       + '<svg class="dem-stay-svg" viewBox="0 0 26 36" width="26" height="36" aria-hidden="true">'
       + '<path class="dem-stay-body" d="M13 1C6.4 1 1 6.3 1 12.9 1 21.6 13 35 13 35s12-13.4 12-22.1C25 6.3 19.6 1 13 1z"/>'
       + '<path class="dem-stay-glyph" d="M8.4 13.4 13 9.4l4.6 4M9.6 12.4V17.2h6.8V12.4"/>'
-      + '</svg></span>';
+      + '</svg></span>');
     // When the stay sits in a catalogue town, the red pin is the way in to it:
     // clicking briefs that town and everything around it.
     el.addEventListener('click', (e) => { e.stopPropagation(); onStayClickRef.current?.(); });
@@ -105,6 +110,25 @@ export function DayExploreMap({ stay, markers = [], onFocus, onStayClick, stayFo
   useEffect(() => {
     const map = mapRef.current;
     if (!map) return;
+    // Frame the whole picture: every visible pin plus the stay, so nothing
+    // worth tapping sits outside the map. Top padding leaves room for the
+    // pin labels; maxZoom keeps a tight cluster from zooming in to street level.
+    const fitAll = () => {
+      const pts = markers
+        .filter((m) => m.lat != null && m.lon != null)
+        .map((m) => [m.lon, m.lat]);
+      if (stay && stay.lat != null) pts.push([stay.lon, stay.lat]);
+      if (pts.length < 2) return;
+      const bounds = pts.reduce(
+        (b, p) => b.extend(p),
+        new maplibregl.LngLatBounds(pts[0], pts[0]),
+      );
+      map.fitBounds(bounds, {
+        padding: { top: 72, right: 60, bottom: 48, left: 60 },
+        maxZoom: 12.5,
+        duration: 650,
+      });
+    };
     const build = () => {
       pinsRef.current.forEach((p) => p.marker.remove());
       pinsRef.current.clear();
@@ -144,6 +168,7 @@ export function DayExploreMap({ stay, markers = [], onFocus, onStayClick, stayFo
         pinsRef.current.set(m.id, { marker, el });
       });
       sync();
+      fitAll();
     };
     map._build = build;
     if (readyRef.current) build();

@@ -5,6 +5,18 @@ import 'maplibre-gl/dist/maplibre-gl.css';
 // Same clean, key-less Carto Voyager basemap the main map uses.
 const MAP_STYLE = 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json';
 
+// Category glyphs for the pickable POI pins - the same visual language as the
+// explore map's pins (dem-pin), so "tappable place" reads the same everywhere.
+const S = (d) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">${d}</svg>`;
+const POI_CAT_ICONS = {
+  town: S('<path d="M4 21V8l7-4 7 4v13"/><path d="M9 21v-5h4v5"/><path d="M8 10h.5M14 10h.5M8 13.5h.5M14 13.5h.5"/>'),
+  beach: S('<path d="M3 20h18"/><path d="m4 20 5-8 3.5 5 2.5-3.5L20 20"/><path d="M9 12l1.5-2"/>'),
+  sight: S('<path d="M12 3l2.4 5.9 6.1.5-4.7 4 1.5 6L12 16.1 6.6 19.4l1.5-6-4.7-4 6.1-.5z"/>'),
+  active: S('<circle cx="13" cy="4.5" r="1.9"/><path d="M11 21l2-5-2.5-2.5.5-4 3.5 2 3 .8"/><path d="M13 16l-3.5.5L7 21"/>'),
+};
+const POI_STAR_ICON = '<svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 3l2.4 5.9 6.1.5-4.7 4 1.5 6L12 16.1 6.6 19.4l1.5-6-4.7-4 6.1-.5z"/></svg>';
+const POI_PLUS_ICON = S('<path d="M12 5v14M5 12h14"/>');
+
 /**
  * The trip's map backdrop: a full-bleed basemap that draws the itinerary as a
  * flowing dashed line through numbered pins, one per stop, and keeps the whole
@@ -19,14 +31,25 @@ const MAP_STYLE = 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json'
  * - e.g. an OSRM walking route. When given it's drawn as a solid line instead of
  * the straight dashed hops between pins; without it we fall back to straight
  * segments through the stops.
+ *
+ * `pois` (optional) are PICKABLE candidate places drawn as labelled explore
+ * pins alongside the numbered route: [{ id, label, lat, lon,
+ * cat ('town'|'beach'|'sight'|'active'), must }]. Tapping one calls
+ * `onPoiClick(id)` - the Day planner adds it to the day, the pin becomes a
+ * numbered stop, and the route redraws. Purely additive: without `pois` the
+ * map behaves exactly as before.
  */
-export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedIndex = null, routeGeometry = null, routeSegments = null, showRoute = true, focus = null }) {
+export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedIndex = null, routeGeometry = null, routeSegments = null, showRoute = true, focus = null, pois = null, onPoiClick = null, fitMaxZoom = 7.5 }) {
   const containerRef = useRef(null);
   const mapRef = useRef(null);
   const markersRef = useRef([]);
+  const poiMarkersRef = useRef([]);
+  const lastFrameKeyRef = useRef(null);
   const readyRef = useRef(false);
   const onSelectRef = useRef(onSelectStop);
   onSelectRef.current = onSelectStop;
+  const onPoiClickRef = useRef(onPoiClick);
+  onPoiClickRef.current = onPoiClick;
 
   // Initialise once.
   useEffect(() => {
@@ -164,6 +187,13 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
       // Frame the whole route in the strip above the sheet. With no stops yet,
       // settle on the plan's own city (focus) instead of the whole continent -
       // a freshly opened saved day plan should show its city, not Europe.
+      //
+      // In pickable-pin mode (pois given) frame only once per focus: while the
+      // traveller taps pins to build the day, every add changes `stops`, and
+      // re-fitting each time would yank the viewport out from under them.
+      const frameKey = focus ? `${focus.lat},${focus.lon}` : null;
+      if (pois != null && frameKey && lastFrameKeyRef.current === frameKey) return;
+      lastFrameKeyRef.current = frameKey;
       if (pts.length === 0 && focus && focus.lat != null && focus.lon != null) {
         map.easeTo({
           center: [focus.lon, focus.lat],
@@ -180,7 +210,7 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
         );
         map.fitBounds(bounds, {
           padding: { top: 70, left: 60, right: 60, bottom: padBottom + 20 },
-          maxZoom: 7.5,
+          maxZoom: fitMaxZoom,
           duration: 700,
         });
       }
@@ -189,7 +219,51 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
     // Store so the load handler can invoke the latest closure once ready.
     map._drawTrip = draw;
     if (readyRef.current) draw();
-  }, [stops, padBottom, routeGeometry, routeSegments, showRoute, focus?.lat, focus?.lon]);
+  }, [stops, padBottom, routeGeometry, routeSegments, showRoute, focus?.lat, focus?.lon, pois != null, fitMaxZoom]);
+
+  // Pickable candidate pins (Day planner): rebuild when the visible set
+  // changes - a tapped pin leaves this list (it becomes a numbered stop), so
+  // teardown+rebuild keeps the map honest with zero reconciliation logic.
+  const poisKey = (pois || []).map((p) => p.id).join(';');
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map) return;
+    poiMarkersRef.current.forEach((m) => m.remove());
+    poiMarkersRef.current = [];
+    (pois || []).filter((p) => p.lat != null && p.lon != null).forEach((p) => {
+      const el = document.createElement('button');
+      el.type = 'button';
+      el.className = `dem-pin trip-poi-pin cat-${p.cat || 'sight'}`;
+      const ico = document.createElement('span');
+      ico.className = 'dem-pin-ico';
+      ico.innerHTML = POI_CAT_ICONS[p.cat] || POI_CAT_ICONS.sight;
+      const add = document.createElement('span');
+      add.className = 'trip-poi-pin-add';
+      add.innerHTML = POI_PLUS_ICON;
+      const lbl = document.createElement('span');
+      lbl.className = 'dem-pin-lbl';
+      lbl.textContent = p.label;
+      el.append(ico, add, lbl);
+      if (p.must) {
+        const star = document.createElement('span');
+        star.className = 'dem-pin-star';
+        star.innerHTML = POI_STAR_ICON;
+        star.title = 'A true must-see';
+        el.append(star);
+      }
+      el.title = `Add ${p.label} to this day`;
+      el.addEventListener('click', (e) => { e.stopPropagation(); onPoiClickRef.current?.(p.id); });
+      poiMarkersRef.current.push(
+        new maplibregl.Marker({ element: el, anchor: 'center' })
+          .setLngLat([p.lon, p.lat])
+          .addTo(map),
+      );
+    });
+    return () => {
+      poiMarkersRef.current.forEach((m) => m.remove());
+      poiMarkersRef.current = [];
+    };
+  }, [poisKey]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Highlight the selected pin and ease it into the visible strip.
   useEffect(() => {

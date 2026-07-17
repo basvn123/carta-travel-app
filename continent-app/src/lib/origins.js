@@ -2,7 +2,8 @@
  * origins.js - the "where are you flying from?" layer.
  *
  * The dataset ships a deduplicated top-level fares table (harvest_all_origins.py):
- *   data.fares[anchor_iata][origin_iata] = { out: {date: eur}, ret: {date: eur} }
+ *   data.fares[anchor_iata][origin_iata] = { out: {date: eur}, ret: {date: eur},
+ *     out_t/ret_t: {date: 'HH:MM/HH:MM'} }   (times optional, harvest_flight_times.py)
  * covering every European Ryanair origin (data.meta.all_origins), keyed by the
  * airport a destination is reached through - NOT per destination. Ground transport
  * (the airport->town last leg) is origin-independent and still lives per
@@ -36,12 +37,13 @@ function lastLeg(d) {
   return null; // ground-only gem: no honest door-to-door price from a flight
 }
 
-/** Build a destination's `routes` for a single origin from the fares table.
- *  Returns {} when this origin can't reach the destination by air (no stored
- *  fare, or an unpriceable last leg) - exactly how a non-served route reads today. */
-function routesForOrigin(fares, d, origin) {
+/** Build a destination's `routes` for a single origin from that origin's fare
+ *  slice ({ anchor: rec }). Returns {} when this origin can't reach the
+ *  destination by air (no stored fare, or an unpriceable last leg) - exactly
+ *  how a non-served route reads today. */
+function routesForOrigin(faresForOrigin, d, origin) {
   const anchor = destAnchor(d);
-  const rec = anchor ? fares?.[anchor]?.[origin] : null;
+  const rec = anchor ? faresForOrigin?.[anchor] : null;
   if (!rec || !rec.out || Object.keys(rec.out).length === 0) return {};
   const leg = lastLeg(d);
   if (!leg) return {};
@@ -52,22 +54,41 @@ function routesForOrigin(fares, d, origin) {
       ground_transport_minutes: leg.minutes,
       outbound_fare: rec.out,
       return_fare: rec.ret || {},
+      // Dep/arr local times of each day's cheapest flight ('HH:MM/HH:MM',
+      // harvest_flight_times.py). Partial coverage - absent days show no hour.
+      outbound_time: rec.out_t || {},
+      return_time: rec.ret_t || {},
       fare_model: 'ryanair_all_origins',
     },
   };
 }
 
+/** This origin's column of a legacy inline fares table
+ *  (data.fares[anchor][origin] -> { anchor: rec }). */
+export function sliceFaresForOrigin(fares, origin) {
+  const out = {};
+  for (const [anchor, byOrigin] of Object.entries(fares || {})) {
+    const rec = byOrigin?.[origin];
+    if (rec) out[anchor] = rec;
+  }
+  return out;
+}
+
 /** A copy of `data` whose destinations are priced from `origin`. Every dest gets
  *  a rebuilt `routes` (single-origin) and `meta.selected_origin` is stamped so UI
  *  can label the trip's departure without prop-drilling. Cheap enough to run on
- *  every origin change (a shallow clone per destination + a tiny routes object). */
-export function hydrateForOrigin(data, origin) {
+ *  every origin change (a shallow clone per destination + a tiny routes object).
+ *
+ *  `faresForOrigin` is this origin's slice ({ anchor: rec }), fetched from
+ *  /fares/{origin}.json since the wire split; older datasets that still ship
+ *  the inline data.fares table are sliced here as a fallback. */
+export function hydrateForOrigin(data, origin, faresForOrigin = null) {
   if (!data || !origin) return data;
-  const fares = data.fares || {};
+  const slice = faresForOrigin || sliceFaresForOrigin(data.fares, origin);
   const src = data.destinations || {};
   const destinations = {};
   for (const [id, d] of Object.entries(src)) {
-    destinations[id] = { ...d, routes: routesForOrigin(fares, d, origin) };
+    destinations[id] = { ...d, routes: routesForOrigin(slice, d, origin) };
   }
   return { ...data, destinations, meta: { ...data.meta, selected_origin: origin } };
 }
@@ -77,8 +98,13 @@ export function hydrateForOrigin(data, origin) {
 // anywhere - and a traveller will happily drive an hour to the one that does.
 const ORIGIN_SEARCH_KM = 120;
 
-/** How many anchor airports this origin actually has fares to. */
+/** How many anchor airports this origin actually has fares to. Since the wire
+ *  split the counts are precomputed at build time (meta.origin_coverage, see
+ *  scripts/sync-data.mjs); the table walk remains for legacy datasets that
+ *  still ship data.fares inline. */
 export function originCoverage(data, code) {
+  const pre = data?.meta?.origin_coverage;
+  if (pre) return pre[code] || 0;
   let n = 0;
   for (const byOrigin of Object.values(data?.fares || {})) {
     const rec = byOrigin?.[code];

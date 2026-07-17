@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
-import { eur, fmtHours } from '../lib/format.js';
+import { eur, fmtHours, flightTimes } from '../lib/format.js';
 import { flightReasonLabel, baggageLabel } from '../lib/trip_planner_pricing.js';
 import { googleMapsDirUrl } from '../lib/routing.js';
 import { shareTrip, downloadTripPdf } from '../lib/tripExport.js';
+import { tripKml, downloadKml } from '../lib/kmlExport.js';
+import { useI18n } from '../i18n/index.jsx';
 import { SparkIcon, TrainIcon, BusIcon, CarIcon, BedIcon, ReceiptIcon, ShareIcon, DownloadIcon, LuggageIcon } from '../components/Icons.jsx';
 import { PlaneIcon } from '../components/TransportIcons.jsx';
 
@@ -14,6 +16,14 @@ function fmtLong(iso) {
   const [y, m, d] = iso.split('-').map(Number);
   const wd = WEEKDAYS[new Date(Date.UTC(y, m - 1, d)).getUTCDay()];
   return `${wd} ${String(d).padStart(2, '0')} ${MONTHS[m - 1]}`;
+}
+
+/** "Fri 18 Sep, 19:45-21:45" - the date plus the priced flight's local dep/arr
+ *  hours, when the times harvest covers this leg (just the date otherwise). */
+function fmtFlightWhen(iso, time) {
+  const ft = flightTimes(time);
+  if (!ft) return fmtLong(iso);
+  return `${fmtLong(iso)}, ${ft.dep}${ft.arr ? `-${ft.arr}` : ''}`;
 }
 
 const LEG_ICONS = { train: TrainIcon, bus: BusIcon, car: CarIcon };
@@ -33,6 +43,7 @@ export function TripItinerary({
 }) {
   // Whether a day already has Day-planner picks (drives "Plan" vs "Modify").
   const dayPlanned = (d) => Boolean(isDayPlanned && isDayPlanned(d.stopIndex, d.dayOfStay));
+  const { t } = useI18n();
   const [tab, setTab] = useState('overview');
   const [breakdownOpen, setBreakdownOpen] = useState(false);
   const [shareState, setShareState] = useState('');
@@ -89,7 +100,7 @@ export function TripItinerary({
             <div className="itin-flight-row">
               <PlaneIcon size={12} />
               <span>Fly <b>{flight.origin} → {flight.into_anchor}</b></span>
-              <small>{fmtLong(stopDetails[0]?.arriveDate)}</small>
+              <small>{fmtFlightWhen(stopDetails[0]?.arriveDate, flight.into_time)}</small>
             </div>
           )}
           {stopDetails.map((s, i) => (
@@ -118,7 +129,7 @@ export function TripItinerary({
             <div className="itin-flight-row">
               <PlaneIcon size={12} />
               <span>Fly home <b>{flight.out_anchor} → {flight.origin}</b></span>
-              <small>{fmtLong(stopDetails[stopDetails.length - 1]?.departDate)}</small>
+              <small>{fmtFlightWhen(stopDetails[stopDetails.length - 1]?.departDate, flight.out_of_time)}</small>
             </div>
           )}
 
@@ -147,14 +158,14 @@ export function TripItinerary({
                     <div className="trip-total-row">
                       <span className="lbl">
                         <PlaneIcon size={11} /> Flight out
-                        <small>{flight.origin} → {flight.into_anchor}, {groupSize} {groupSize === 1 ? 'seat' : 'seats'}</small>
+                        <small>{flight.origin} → {flight.into_anchor}{flightTimes(flight.into_time) ? `, departs ${flightTimes(flight.into_time).dep}` : ''}, {groupSize} {groupSize === 1 ? 'seat' : 'seats'}</small>
                       </span>
                       <span className="val">{eur(flight.into_fare_eur * groupSize)}</span>
                     </div>
                     <div className="trip-total-row">
                       <span className="lbl">
                         <PlaneIcon size={11} /> Flight home
-                        <small>{flight.out_anchor} → {flight.origin}, {groupSize} {groupSize === 1 ? 'seat' : 'seats'}</small>
+                        <small>{flight.out_anchor} → {flight.origin}{flightTimes(flight.out_of_time) ? `, departs ${flightTimes(flight.out_of_time).dep}` : ''}, {groupSize} {groupSize === 1 ? 'seat' : 'seats'}</small>
                       </span>
                       <span className="val">{eur(flight.out_of_fare_eur * groupSize)}</span>
                     </div>
@@ -195,7 +206,7 @@ export function TripItinerary({
                 })}
                 {carRental && (
                   <div className="trip-total-row">
-                    <span className="lbl"><CarIcon size={11} /> Rental car <small>{carRental.days} days, whole group</small></span>
+                    <span className="lbl"><CarIcon size={11} /> Rental car <small>{carRental.days} days{carRental.cars > 1 ? `, ${carRental.cars} cars` : ''}, whole group</small></span>
                     <span className="val">{eur(carRental.eur_total)}</span>
                   </div>
                 )}
@@ -249,29 +260,42 @@ export function TripItinerary({
 
           {gmapsUrl && (
             <a className="itin-gmaps" href={gmapsUrl} target="_blank" rel="noreferrer">
-              Open the route in Google Maps ↗
+              {t('export.openRoute')} ↗
             </a>
           )}
 
-          {/* Take the trip with you: share it or keep a PDF copy. */}
+          {/* Take the trip with you: share it, keep a PDF copy, or download
+              the full-information KML for Google My Maps (a share link tops
+              out at 9 nameless waypoints; the KML carries everything). */}
           <div className="itin-export-row">
             <button
               className="itin-export-btn"
               onClick={async () => {
                 const r = await shareTrip(exportPayload);
-                setShareState(r === 'copied' ? 'Copied to your clipboard.' : '');
+                setShareState(r === 'copied' ? t('export.copied') : '');
                 if (r === 'copied') window.setTimeout(() => setShareState(''), 2500);
               }}
-              title="Share this trip"
+              title={t('export.shareTripTitle')}
             >
-              <ShareIcon size={12} /> Share trip
+              <ShareIcon size={12} /> {t('export.shareTrip')}
             </button>
             <button
               className="itin-export-btn"
               onClick={() => downloadTripPdf(exportPayload)}
-              title="Open a printable copy - choose Save as PDF"
+              title={t('export.downloadPdfTitle')}
             >
-              <DownloadIcon size={12} /> Download as PDF
+              <DownloadIcon size={12} /> {t('export.downloadPdf')}
+            </button>
+            <button
+              className="itin-export-btn"
+              onClick={() => {
+                downloadKml(label || 'trip', tripKml({ label, stopDetails, dayPlan, fmtDate: fmtLong }));
+                setShareState(t('export.myMapsHint'));
+                window.setTimeout(() => setShareState(''), 9000);
+              }}
+              title={t('export.myMapsTitle')}
+            >
+              <DownloadIcon size={12} /> {t('export.myMaps')}
             </button>
           </div>
           {shareState && <p className="itin-export-note">{shareState}</p>}

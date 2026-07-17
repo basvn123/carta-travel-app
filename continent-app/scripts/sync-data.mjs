@@ -21,7 +21,7 @@
  */
 import { fileURLToPath } from 'node:url';
 import { dirname, resolve } from 'node:path';
-import { existsSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, readFileSync, writeFileSync, rmSync, mkdirSync } from 'node:fs';
 import { stripDashes } from '../src/lib/format.js';
 
 const scriptDir = dirname(fileURLToPath(import.meta.url));   // continent-app/scripts
@@ -83,6 +83,45 @@ if (data.meta?.all_origins && existsSync(airportsCache)) {
   console.log(`[sync-data] origin airports -> meta.origins (${Object.keys(origins).length} of ${data.meta.all_origins.length})`);
 } else if (data.meta?.all_origins) {
   console.warn('[sync-data] meta.all_origins present but no airports cache - origin picker will show bare IATA codes');
+}
+
+// The fares table is ~70% of the core payload, and a session only ever reads
+// ONE origin's column of it (lib/origins.js hydrateForOrigin). Invert it into
+// per-origin slices - public/fares/CRL.json = { anchor: {out, ret, ...} } -
+// fetched lazily when the origin is chosen/changed, and drop the table (plus
+// each destination's baked `routes`, which hydration always rebuilds anyway)
+// from the boot payload. meta.origin_coverage keeps defaultOrigin() working
+// without the table. Older datasets without `fares` ship unchanged.
+if (data.fares && Object.keys(data.fares).length) {
+  const faresDir = resolve(publicDir, 'fares');
+  rmSync(faresDir, { recursive: true, force: true });
+  mkdirSync(faresDir, { recursive: true });
+
+  const byOrigin = {}; // origin -> { anchor: rec }
+  for (const [anchor, origins] of Object.entries(data.fares)) {
+    for (const [origin, rec] of Object.entries(origins || {})) {
+      if (!rec) continue;
+      (byOrigin[origin] ||= {})[anchor] = rec;
+    }
+  }
+  const coverage = {};
+  let faresBytes = 0;
+  for (const [origin, slice] of Object.entries(byOrigin)) {
+    // Same coverage rule as the old originCoverage(): anchors with real
+    // outbound fares stored.
+    coverage[origin] = Object.values(slice)
+      .filter((rec) => rec?.out && Object.keys(rec.out).length > 0).length;
+    // Origin codes are harvested IATA (A-Z only), but never trust that for a
+    // file path.
+    if (!/^[A-Z0-9]{3,4}$/.test(origin)) continue;
+    const out = JSON.stringify(sanitizeDeep(slice));
+    faresBytes += out.length;
+    writeFileSync(resolve(faresDir, `${origin}.json`), out);
+  }
+  data.meta.origin_coverage = coverage;
+  delete data.fares;
+  for (const d of Object.values(data.destinations || {})) delete d.routes;
+  console.log(`[sync-data] fares table -> public/fares/ (${Object.keys(byOrigin).length} origins, ${Math.round(faresBytes / 1024)} KB total; core slimmed)`);
 }
 
 // Scrub em/en dashes from every shipped string (see sanitizeDeep above).

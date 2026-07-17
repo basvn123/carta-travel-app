@@ -8,7 +8,7 @@
  * "Save as PDF" in the dialog.
  */
 
-import { eur } from './format.js';
+import { eur, flightTimes } from './format.js';
 import { flightReasonLabel, baggageLabel } from './trip_planner_pricing.js';
 
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -19,6 +19,13 @@ function fmtLong(iso) {
   const [y, m, d] = iso.split('-').map(Number);
   const wd = WEEKDAYS[new Date(Date.UTC(y, m - 1, d)).getUTCDay()];
   return `${wd} ${String(d).padStart(2, '0')} ${MONTHS[m - 1]} ${y}`;
+}
+
+/** ", 19:45-21:45" - the priced flight's local dep/arr hours, when stored. */
+function timesSuffix(time) {
+  const ft = flightTimes(time);
+  if (!ft) return '';
+  return `, ${ft.dep}${ft.arr ? `-${ft.arr}` : ''}`;
 }
 
 function esc(s) {
@@ -35,12 +42,12 @@ export function tripSummaryText({ label, stopDetails, flight, grandTotal, groupS
   const last = stopDetails[stopDetails.length - 1];
   if (first?.arriveDate) lines.push(`${fmtLong(first.arriveDate)} to ${fmtLong(last?.departDate)}`);
   lines.push('');
-  if (flight?.combinable) lines.push(`Fly ${flight.origin} to ${flight.into_anchor}`);
+  if (flight?.combinable) lines.push(`Fly ${flight.origin} to ${flight.into_anchor}${timesSuffix(flight.into_time)}`);
   stopDetails.forEach((s, i) => {
     if (!s.dest) return;
     lines.push(`${i + 1}. ${s.dest.city}, ${s.dest.country} - ${s.nights} ${s.nights === 1 ? 'night' : 'nights'} (${fmtLong(s.arriveDate)})`);
   });
-  if (flight?.combinable) lines.push(`Fly home ${flight.out_anchor} to ${flight.origin}`);
+  if (flight?.combinable) lines.push(`Fly home ${flight.out_anchor} to ${flight.origin}${timesSuffix(flight.out_of_time)}`);
   if (flight && !flight.combinable) lines.push(`Flights: ${flightReasonLabel(flight.reason)}`);
   if (grandTotal != null) {
     lines.push('');
@@ -90,7 +97,7 @@ function tripPrintHtml({ label, stopDetails, dayPlan = [], flight, legs = [], st
     if (!l || !l.ground_total) return;
     rows.push(`<tr><td>${esc(stopDetails[i]?.dest?.city)} &rarr; ${esc(stopDetails[i + 1]?.dest?.city)} (${esc(l.mode)}, estimate)</td><td>${esc(eur(l.ground_total))}</td></tr>`);
   });
-  if (carRental) rows.push(`<tr><td>Rental car, ${carRental.days} days</td><td>${esc(eur(carRental.eur_total))}</td></tr>`);
+  if (carRental) rows.push(`<tr><td>Rental car, ${carRental.days} days${carRental.cars > 1 ? `, ${carRental.cars} cars` : ''}</td><td>${esc(eur(carRental.eur_total))}</td></tr>`);
   stopDetails.forEach((s, i) => {
     const c = stayCosts[i];
     if (!c) return;
@@ -132,11 +139,11 @@ function tripPrintHtml({ label, stopDetails, dayPlan = [], flight, legs = [], st
   <p class="dates">${esc(fmtLong(first?.arriveDate))} &rarr; ${esc(fmtLong(last?.departDate))} &middot; ${groupSize} ${groupSize === 1 ? 'person' : 'people'}</p>
 
   <h2>Route</h2>
-  ${flight?.combinable ? `<div class="stop">Fly <b>${esc(flight.origin)} &rarr; ${esc(flight.into_anchor)}</b> <span class="when">${esc(fmtLong(first?.arriveDate))}</span></div>` : ''}
+  ${flight?.combinable ? `<div class="stop">Fly <b>${esc(flight.origin)} &rarr; ${esc(flight.into_anchor)}</b> <span class="when">${esc(fmtLong(first?.arriveDate) + timesSuffix(flight.into_time))}</span></div>` : ''}
   ${stopDetails.map((s, i) => `
     <div class="stop">${i + 1}. <b>${esc(s.dest?.city)}, ${esc(s.dest?.country)}</b>
     <span class="when">${esc(fmtLong(s.arriveDate))} &rarr; ${esc(fmtLong(s.departDate))}, ${s.nights} ${s.nights === 1 ? 'night' : 'nights'}</span></div>`).join('')}
-  ${flight?.combinable ? `<div class="stop">Fly home <b>${esc(flight.out_anchor)} &rarr; ${esc(flight.origin)}</b> <span class="when">${esc(fmtLong(last?.departDate))}</span></div>` : ''}
+  ${flight?.combinable ? `<div class="stop">Fly home <b>${esc(flight.out_anchor)} &rarr; ${esc(flight.origin)}</b> <span class="when">${esc(fmtLong(last?.departDate) + timesSuffix(flight.out_of_time))}</span></div>` : ''}
 
   ${rows.length ? `<h2>Estimated costs</h2>
   <table>${rows.join('')}
