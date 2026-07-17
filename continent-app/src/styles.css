@@ -7584,6 +7584,56 @@ input, select {
   color: var(--ink-mute);
 }
 
+/* ─── Shape-your-day: pick overview + live map ───
+   Step 5 widens the modal and splits it: a tappable overview list on the left,
+   a live map on the right. Adding a place lights up its pin, so the traveller
+   watches the day take shape in real time. */
+.shape-modal.shape-modal-wide { max-width: 940px; }
+.shape-pick { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr); gap: 16px; }
+.shape-pick-list { max-height: 460px; overflow-y: auto; padding-right: 4px; }
+.shape-pick-list-head {
+  display: flex; align-items: baseline; justify-content: space-between; gap: 10px;
+  margin: 0 2px 10px; font-size: 12px; color: var(--ink-soft);
+}
+.shape-pick-list-head .shape-deck-added { color: var(--accent); font-weight: 700; white-space: nowrap; }
+.shape-pick-row {
+  display: flex; align-items: center; gap: 11px; width: 100%;
+  padding: 8px 10px 8px 8px; margin-bottom: 7px;
+  border: 1px solid var(--rule); border-radius: 12px;
+  background: var(--paper); text-align: left; cursor: pointer;
+  transition: border-color .14s, background .14s, transform .1s;
+}
+.shape-pick-row:hover { border-color: var(--accent); transform: translateY(-1px); }
+.shape-pick-row.on { border-color: var(--accent); background: var(--accent-bg); }
+.shape-pick-thumb {
+  flex: none; width: 46px; height: 46px; border-radius: 9px;
+  background: var(--paper-dim) center/cover no-repeat;
+  display: flex; align-items: center; justify-content: center; color: var(--ink-mute);
+}
+.shape-pick-text { flex: 1; min-width: 0; }
+.shape-pick-text b {
+  display: flex; align-items: center; gap: 5px;
+  font-family: var(--display); font-size: 14px; font-weight: 600; color: var(--ink);
+}
+.shape-pick-text b svg { color: var(--accent); flex: none; }
+.shape-pick-text small {
+  display: block; margin-top: 1px;
+  font-size: 11px; color: var(--ink-soft);
+  text-transform: capitalize; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.shape-pick-toggle {
+  flex: none; width: 26px; height: 26px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  border: 1px solid var(--rule); color: var(--ink-mute);
+  font-size: 17px; line-height: 1;
+}
+.shape-pick-row:hover .shape-pick-toggle { border-color: var(--accent); color: var(--accent); }
+.shape-pick-toggle.on { background: var(--accent); border-color: var(--accent); color: #fff; }
+.shape-pick-map {
+  height: 460px; border-radius: 12px; overflow: hidden; border: 1px solid var(--rule);
+}
+.shape-pick-map .dem-map, .shape-pick-map .cpm { height: 100%; }
+
 /* Mobile: lift the wizard clear of the bottom edge (home-indicator space)
    and keep rounded corners since it now floats. */
 @media (max-width: 768px) {
@@ -7597,6 +7647,11 @@ input, select {
      full row on phones instead of squeezing into a tall skinny pill. */
   .guide-foot-actions { flex: 1 1 100%; }
   .guide-foot-actions .guide-next { flex: 1; }
+  /* Step 5 on phones: map on top, the tappable list under it, each stacked. */
+  .shape-modal.shape-modal-wide { max-width: 100%; }
+  .shape-pick { grid-template-columns: 1fr; gap: 12px; }
+  .shape-pick-map { order: -1; height: 40vh; min-height: 240px; }
+  .shape-pick-list { max-height: 42vh; }
 }
 
 /* ─── Mobile filter sheet: one tidy 2-column grid across BOTH rows so the
@@ -8776,9 +8831,16 @@ input, select {
 }
 
 .day-explore-filters { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
-.day-explore-wrap { display: flex; gap: 12px; align-items: stretch; }
-.day-explore-wrap .dem-map { flex: 1.7; min-width: 0; height: 460px; border-radius: 12px; overflow: hidden; border: 1px solid var(--rule); }
-.day-explore-side { flex: 1; max-height: 460px; }
+.day-explore-wrap { display: flex; gap: 14px; align-items: stretch; }
+.day-explore-wrap .dem-map { flex: 2.6; min-width: 0; height: min(72vh, 640px); border-radius: 12px; overflow: hidden; border: 1px solid var(--rule); }
+.day-explore-side { flex: 1; min-width: 300px; max-height: min(72vh, 640px); display: flex; flex-direction: column; }
+/* The place-detail card and the Carta guide panel each become the right-hand
+   column beside the big map: both fill its height and scroll inside themselves,
+   so the map is never pushed off-screen. */
+.day-explore-side > .guide-city-side { flex: 1; min-height: 0; }
+.day-explore-side > .day-guide-panel { flex: 1; min-height: 0; margin-bottom: 0; display: flex; flex-direction: column; }
+.day-explore-side > .day-guide-panel .day-guide-results { flex: 1; min-height: 0; max-height: none; }
+.day-explore-side > .day-guide-panel .day-guide-ask { flex: 1; min-height: 0; overflow-y: auto; }
 
 /* The traveller's stay: a pulsing home dot that cannot be missed */
 .dem-stay { display: flex; flex-direction: column; align-items: center; pointer-events: none; position: relative; }
@@ -9005,7 +9067,7 @@ input, select {
     min-height: 320px;
     max-height: 440px;
   }
-  .day-explore-side { flex: none; max-height: 360px; }
+  .day-explore-side { flex: none; max-height: 62vh; min-height: 340px; }
   .day-explore-tools { flex-direction: column; }
   .day-guide-btn { align-self: stretch; justify-content: center; }
 }
@@ -9049,7 +9111,7 @@ input, select {
   font-family: var(--mono);
   font-size: 11px;
   font-weight: 700;
-  margin-right: 7px;
+  margin-right: 11px;
 }
 .day-explore-steplabel { display: flex; align-items: center; margin-bottom: 10px; }
 .day-picks-steplabel { width: 100%; margin-bottom: 4px; }
@@ -9068,6 +9130,131 @@ input, select {
   box-shadow: 0 6px 12px -10px rgba(26, 26, 26, 0.25);
 }
 .day-strip .day-strip-cities { margin-bottom: 8px; }
+
+/* ---------------------------------------------------------------------------
+   Collapsible cards (Today's plan, local intel, walk, tips): calm by default,
+   the whole header a single tap target, and a summary line so a shut card is
+   never a mystery box.
+--------------------------------------------------------------------------- */
+.day-collapse {
+  border: 1px solid var(--rule);
+  border-radius: 14px;
+  background: var(--paper);
+  overflow: hidden;
+}
+.day-collapse-head {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+  text-align: left;
+  padding: 14px 16px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: background .15s;
+}
+.day-collapse-head:hover { background: var(--paper-dim); }
+.day-collapse.open .day-collapse-head { border-bottom: 1px solid var(--rule); }
+.day-collapse.open .day-collapse-head:hover { background: none; }
+.day-collapse-headline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.day-collapse-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--display);
+  font-size: 15px;
+  color: var(--ink);
+}
+.day-collapse-title svg { color: var(--accent); flex: none; }
+.day-collapse-count {
+  min-width: 20px;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: var(--accent-bg);
+  color: var(--accent);
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 700;
+  text-align: center;
+}
+.day-collapse-caret {
+  flex: none;
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: var(--paper-dim);
+  color: var(--ink-soft);
+  font-size: 17px;
+  line-height: 1;
+}
+.day-collapse.open .day-collapse-caret { background: var(--accent-bg); color: var(--accent); }
+.day-collapse-summary {
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--ink-soft);
+}
+.day-collapse-body { padding: 14px 16px 16px; }
+
+/* The collapsed plan's "where you'll go" line: plain names, no mono, no
+   middots - kept to two lines so long days don't push the card open. */
+.day-plan-summary-text {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Nested collapsibles inside the plan card read as sub-shelves, not new cards:
+   softer surround, tighter padding. */
+.day-nested {
+  margin-top: 12px;
+  border-radius: 12px;
+  background: var(--paper-dim);
+}
+.day-nested .day-collapse-head { padding: 11px 13px; }
+.day-nested .day-collapse-head:hover { background: rgba(26, 26, 26, 0.03); }
+.day-nested .day-collapse-title { font-size: 13.5px; }
+.day-nested .day-collapse-body { padding: 12px 13px 13px; background: var(--paper); }
+
+/* "How Carta routed this": the route explanation lives behind an info icon
+   instead of a mono-uppercase banner over the timeline. */
+.day-route-info-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 11px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: var(--paper);
+  color: var(--ink-soft);
+  font-size: 11.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color .15s, color .15s;
+}
+.day-route-info-btn:hover,
+.day-route-info-btn.open { border-color: var(--accent); color: var(--accent); }
+.day-route-info-btn svg { flex: none; }
+.day-route-info-note {
+  margin: -2px 0 12px;
+  font-size: 12px;
+  line-height: 1.55;
+  color: var(--ink-soft);
+}
+
+/* Stay bar sits at the very top of the sheet; the map-editor link that used to
+   hang below it now lives inside the plan card. */
+.day-stay-top { margin-top: 6px; }
+.day-changeplaces-inline { margin-top: 14px; }
 
 /* "Things to do" tiers as modern cards: contained, rounded, calm. */
 .day-tier {

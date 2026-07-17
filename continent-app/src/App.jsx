@@ -9,11 +9,39 @@ import { ComparePanel } from './browse/ComparePanel.jsx';
 import { InfoIcon } from './components/Icons.jsx';
 import Logo from './components/Logo.jsx';
 
+// A failed dynamic import is almost always a stale bundle: the client is still
+// running an old index.html whose chunk hashes no longer exist on the server
+// (common on mobile Safari / installed PWAs after a redeploy). Safari reports
+// this as "Importing a module script failed." Rather than surface that as a
+// crash, force one hard reload to fetch the fresh manifest, guarding against a
+// reload loop so a genuinely-broken chunk still eventually shows the error.
+const CHUNK_RELOAD_KEY = 'continent.chunkReloaded.v1';
+function lazyWithReload(factory) {
+  return lazy(async () => {
+    try {
+      const mod = await factory();
+      try { window.sessionStorage.removeItem(CHUNK_RELOAD_KEY); } catch {}
+      return mod;
+    } catch (err) {
+      let alreadyReloaded = false;
+      try { alreadyReloaded = !!window.sessionStorage.getItem(CHUNK_RELOAD_KEY); } catch {}
+      if (!alreadyReloaded) {
+        try { window.sessionStorage.setItem(CHUNK_RELOAD_KEY, '1'); } catch {}
+        window.location.reload();
+        // Never resolve: keep the Suspense fallback up until the reload lands,
+        // so React doesn't render the error state in the meantime.
+        return new Promise(() => {});
+      }
+      throw err;
+    }
+  });
+}
+
 // Code-split the map (maplibre-gl is by far the heaviest dependency) and the
 // two planner tabs, so the first paint only ships the browse UI shell.
-const MapView = lazy(() => import('./map/MapView.jsx').then((m) => ({ default: m.MapView })));
-const TripPlannerTab = lazy(() => import('./planner/TripPlannerTab.jsx').then((m) => ({ default: m.TripPlannerTab })));
-const DayPlannerTab = lazy(() => import('./planner/DayPlannerTab.jsx').then((m) => ({ default: m.DayPlannerTab })));
+const MapView = lazyWithReload(() => import('./map/MapView.jsx').then((m) => ({ default: m.MapView })));
+const TripPlannerTab = lazyWithReload(() => import('./planner/TripPlannerTab.jsx').then((m) => ({ default: m.TripPlannerTab })));
+const DayPlannerTab = lazyWithReload(() => import('./planner/DayPlannerTab.jsx').then((m) => ({ default: m.DayPlannerTab })));
 
 // A quiet placeholder while a lazy chunk downloads (fast; usually one frame).
 function TabFallback() {

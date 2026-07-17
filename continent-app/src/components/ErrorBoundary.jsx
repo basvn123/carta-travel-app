@@ -1,5 +1,16 @@
 import React from 'react';
 
+// Signatures browsers use when a dynamically-imported chunk can't be fetched -
+// almost always a stale bundle after a redeploy. Safari: "Importing a module
+// script failed."; Chrome: "Failed to fetch dynamically imported module";
+// Firefox: "error loading dynamically imported module".
+const CHUNK_ERROR_RE = /importing a module script failed|failed to fetch dynamically imported module|error loading dynamically imported module/i;
+const CHUNK_RELOAD_KEY = 'continent.chunkReloaded.v1';
+
+function isChunkLoadError(error) {
+  return CHUNK_ERROR_RE.test(String(error?.message || error || ''));
+}
+
 /**
  * Top-level crash guard. A render error anywhere below here would otherwise
  * blank the whole app (React unmounts the tree on an uncaught error); instead
@@ -10,7 +21,7 @@ import React from 'react';
 export class ErrorBoundary extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { error: null };
+    this.state = { error: null, reloading: false };
   }
 
   static getDerivedStateFromError(error) {
@@ -20,11 +31,32 @@ export class ErrorBoundary extends React.Component {
   componentDidCatch(error, info) {
     // Keep the details in the console for reporting/debugging.
     console.error('App crashed:', error, info?.componentStack);
+
+    // A stale-bundle chunk failure is recoverable by loading the fresh build.
+    // Auto-reload once (guarded against a loop) so the user never has to tap
+    // through the crash panel for what is really just an out-of-date tab.
+    if (isChunkLoadError(error)) {
+      let alreadyReloaded = false;
+      try { alreadyReloaded = !!window.sessionStorage.getItem(CHUNK_RELOAD_KEY); } catch {}
+      if (!alreadyReloaded) {
+        try { window.sessionStorage.setItem(CHUNK_RELOAD_KEY, '1'); } catch {}
+        this.setState({ reloading: true });
+        window.location.reload();
+      }
+      // If we already reloaded once and it still failed, the chunk is genuinely
+      // broken - fall through to the crash panel below instead of looping.
+    }
   }
 
   render() {
-    const { error } = this.state;
+    const { error, reloading } = this.state;
     if (!error) return this.props.children;
+
+    // Mid-reload for a stale chunk: keep the fallback quiet until the fresh
+    // build takes over, rather than flashing the crash panel for a frame.
+    if (reloading) {
+      return <div className="loading-screen"><div className="pulse" /></div>;
+    }
     return (
       <div className="crash-screen" role="alert">
         <div className="crash-card">

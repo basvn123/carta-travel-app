@@ -554,19 +554,23 @@ export function candidateDeck(items, interests, limit = 16, eligibleIdx = null) 
   const all = (items || []).map((item, idx) => ({ item, idx }))
     .filter(({ item, idx }) => item.lat != null && item.lon != null
       && (!eligibleIdx || eligibleIdx.has(idx)));
-  const score = ({ item }) => {
-    // Sights ride the composite poiScore (rate + heritage + Wikipedia
-    // presence/fame) with a must-see bonus, so the deck leads with the
-    // places genuinely worth the day; actives are interest-gated as before.
-    const base = item.active
-      ? (kindDirectMatch(item.kind, iset) ? 2.5 : -1) + (item.heritage ? 0.25 : 0) + popBoost(item)
-      : poiScore(item) + (isMustSee(item) ? 0.6 : 0);
-    return base + (kindDirectMatch(item.kind, iset) ? 0.75 : 0);
-  };
-  return all
-    .filter((c) => score(c) > 0.5 && kindMatchesInterests(c.item.kind, iset))
-    .sort((a, b) => score(b) - score(a))
-    .slice(0, limit);
+  // Worth-the-day score, independent of the chosen mood: sights ride the
+  // composite poiScore (rate + heritage + Wikipedia presence/fame) with a
+  // must-see bonus; actives only count when their kind matches the mood.
+  const base = ({ item }) => (item.active
+    ? (kindDirectMatch(item.kind, iset) ? 2.5 : -1) + (item.heritage ? 0.25 : 0) + popBoost(item)
+    : poiScore(item) + (isMustSee(item) ? 0.6 : 0));
+  const score = (c) => base(c) + (kindDirectMatch(c.item.kind, iset) ? 0.75 : 0);
+
+  // Every genuinely worthwhile place in town, best first.
+  const worthwhile = all.filter((c) => base(c) > 0.5).sort((a, b) => score(b) - score(a));
+  // Lead with the ones that fit the chosen mood...
+  const onMood = worthwhile.filter((c) => kindMatchesInterests(c.item.kind, iset));
+  // ...then, if the mood is thin here, backfill with the town's other strongest
+  // spots so the picker is never near-empty. A single filter never dead-ends.
+  const seen = new Set(onMood.map((c) => c.idx));
+  const backfill = worthwhile.filter((c) => !seen.has(c.idx));
+  return [...onMood, ...backfill].slice(0, limit);
 }
 
 /** 1-2 strong nearby companions for a candidate ("pairs well with X, 6 min

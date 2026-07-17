@@ -1,6 +1,7 @@
-import React, { useMemo, useRef, useState } from 'react';
-import { DAY_STYLES, DAY_LENGTHS, WALK_LEVELS, candidateDeck, nearbyCompanions, isMustSee } from './dayDraft.js';
-import { SparkIcon, StarIcon, CheckIcon, MuseumIcon, TreeIcon, DiningIcon, CameraIcon, CastleIcon } from '../components/Icons.jsx';
+import React, { useMemo, useState } from 'react';
+import { DAY_STYLES, DAY_LENGTHS, WALK_LEVELS, candidateDeck, isMustSee } from './dayDraft.js';
+import { DayExploreMap } from '../map/DayExploreMap.jsx';
+import { SparkIcon, StarIcon, CheckIcon, MapPinIcon, MuseumIcon, TreeIcon, DiningIcon, CameraIcon, CastleIcon } from '../components/Icons.jsx';
 
 const STYLE_ICONS = {
   classic: CastleIcon,
@@ -24,18 +25,26 @@ const paceFromPrefs = (initial) => {
   return 'balanced';
 };
 
+// Nature-ish kinds get the beach/nature pin; everything else that isn't an
+// activity reads as a sight. Only affects which glyph a map pin wears.
+const NATURE_RE = /beach|lido|spiaggia|strand|plage|playa|lake|lago|\bsee\b|meer|park|garden|giardino|trail|falls|cascat|gorge|cliff|island|isola|nature|riserva|\bbay\b|mountain|monte/i;
+const catForItem = (item) => (item.active ? 'active'
+  : NATURE_RE.test(`${item.kind || ''} ${item.name || ''}`) ? 'beach'
+  : 'sight');
+
 /**
  * "Shape your day" - the guided planner shown when a day plan opens with
  * nothing planned yet.
  *
- * One question per screen, one tap per question, no scrolling:
+ * One question per screen, with an explicit Next (nothing pre-selected, so
+ * every answer is a deliberate tap):
  *   Step 0  the honest fork: explore on your own, or let Carta guide you
- *   Step 1  what kind of day (mood)          - tap advances
- *   Step 2  how long the day runs            - tap advances
- *   Step 3  how much walking is okay         - tap advances
- *   Step 4  the pace (how much / how deep)   - tap advances
- *   Step 5  a swipeable card deck of Carta's picks for that mood: photo,
- *           what it is, why it's worth it. Add or skip, one card at a time.
+ *   Step 1  what kind of day (mood)
+ *   Step 2  how long the day runs
+ *   Step 3  how much walking is okay
+ *   Step 4  the pace (how much / how deep)
+ *   Step 5  the picks: an overview list beside a live map. Tap a place to add
+ *           it; it lights up on the map so you watch the day take shape.
  * "Let Carta pick everything" stays one tap away on every step.
  *
  * Hands back { style, interests, mode: 'auto' | 'picks', pickIdx? } - the
@@ -48,36 +57,48 @@ const paceFromPrefs = (initial) => {
  */
 export function ShapeDayWizard({ city, numDays, items, eligibleIdx, initial, onSkip, onDraft }) {
   const [step, setStep] = useState(0);
+  // Nothing is pre-selected on a fresh start: each answer is a deliberate tap.
+  // (When editing an existing plan, `initial` seeds the prior answers.)
   const [styleKey, setStyleKey] = useState(initial?.style || null);
-  // Feasibility answers: how long the day runs and how much walking is okay.
-  // These keep Carta's drafts realistic (no four-hour marches for a light
-  // walker, no half-empty evenings for an early-start crowd).
-  const [dayLen, setDayLen] = useState(initial?.dayLen || 'full');
-  const [walk, setWalk] = useState(initial?.walk || 'moderate');
-  const [pace, setPace] = useState(() => paceFromPrefs(initial));
+  const [dayLen, setDayLen] = useState(initial?.dayLen || null);
+  const [walk, setWalk] = useState(initial?.walk || null);
+  const [pace, setPace] = useState(() => (initial ? paceFromPrefs(initial) : null));
   const style = DAY_STYLES.find((s) => s.key === styleKey) || null;
   const paceChoice = PACE_CHOICES.find((p) => p.key === pace) || PACE_CHOICES[1];
 
-  // Deck state: position + accepted original-indices.
-  const [deckPos, setDeckPos] = useState(0);
-  const [accepted, setAccepted] = useState([]);
-  // Swipe animation: 'add' | 'skip' | null while the top card flies out.
-  const [flying, setFlying] = useState(null);
-  const [drag, setDrag] = useState(null); // { dx } while dragging
-  const dragRef = useRef(null);
+  // Which picks the traveller has toggled on (original activity indices).
+  const [selected, setSelected] = useState(() => new Set());
 
   const deck = useMemo(() => {
     if (!style) return [];
     return candidateDeck(items, style.interests, Math.max(10, Math.min(16, numDays * 6)), eligibleIdx);
   }, [items, style, numDays, eligibleIdx]);
 
-  const current = deck[deckPos] || null;
-  const companions = useMemo(
-    () => (current ? nearbyCompanions(current.item, items) : []),
-    [current, items],
-  );
+  // A stable centre for the map: the average of the picks around town.
+  const center = useMemo(() => {
+    if (!deck.length) return null;
+    const la = deck.reduce((s, { item }) => s + item.lat, 0) / deck.length;
+    const lo = deck.reduce((s, { item }) => s + item.lon, 0) / deck.length;
+    return { lat: la, lon: lo, label: city };
+  }, [deck, city]);
 
-  const feasibility = { dayLen, walk, fill: paceChoice.fill, visit: paceChoice.visit };
+  const markers = useMemo(() => deck.map(({ item, idx }) => ({
+    id: String(idx),
+    label: item.name,
+    lat: item.lat,
+    lon: item.lon,
+    cat: catForItem(item),
+    selected: selected.has(idx),
+    must: isMustSee(item),
+  })), [deck, selected]);
+
+  const toggle = (idx) => setSelected((prev) => {
+    const n = new Set(prev);
+    n.has(idx) ? n.delete(idx) : n.add(idx);
+    return n;
+  });
+
+  const feasibility = { dayLen: dayLen || 'full', walk: walk || 'moderate', fill: paceChoice.fill, visit: paceChoice.visit };
   const finishAuto = () => {
     onDraft({ mode: 'auto', style: styleKey, interests: style ? style.interests : [], ...feasibility });
   };
@@ -86,58 +107,15 @@ export function ShapeDayWizard({ city, numDays, items, eligibleIdx, initial, onS
     onDraft({ mode: 'picks', style: styleKey, interests: style ? style.interests : [], pickIdx: picks, ...feasibility });
   };
 
-  // Every question is a single tap: choose and move on.
-  const pickStyle = (key) => { setStyleKey(key); setStep(2); };
-  const pickDayLen = (key) => { setDayLen(key); setStep(3); };
-  const pickWalk = (key) => { setWalk(key); setStep(4); };
-  const pickPace = (key) => {
-    setPace(key);
-    setDeckPos(0);
-    setAccepted([]);
-    setStep(5);
-  };
+  // Selecting a mood resets the picks (a different mood = a different shortlist).
+  const pickStyle = (key) => { setStyleKey(key); setSelected(new Set()); };
 
-  const advance = (dir) => {
-    if (!current || flying) return;
-    setFlying(dir);
-    setTimeout(() => {
-      const nextAccepted = dir === 'add' ? [...accepted, current.idx] : accepted;
-      if (dir === 'add') setAccepted(nextAccepted);
-      setFlying(null);
-      setDrag(null);
-      if (deckPos + 1 >= deck.length) {
-        finishPicks(nextAccepted);
-      } else {
-        setDeckPos(deckPos + 1);
-      }
-    }, 240);
-  };
+  const questionStep = step >= 1 && step <= 4;
+  const stepValue = step === 1 ? styleKey : step === 2 ? dayLen : step === 3 ? walk : step === 4 ? pace : null;
+  const goNext = () => setStep(step + 1);
 
-  // Pointer swipe on the top card: drag past ±90px to add (right) or skip (left).
-  const onCardDown = (e) => {
-    if (flying) return;
-    dragRef.current = { startX: e.clientX };
-    try { e.currentTarget.setPointerCapture(e.pointerId); } catch { /* older browsers */ }
-  };
-  const onCardMove = (e) => {
-    if (!dragRef.current) return;
-    setDrag({ dx: e.clientX - dragRef.current.startX });
-  };
-  const onCardUp = () => {
-    const dx = drag?.dx || 0;
-    dragRef.current = null;
-    if (dx > 90) advance('add');
-    else if (dx < -90) advance('skip');
-    else setDrag(null);
-  };
-
-  const cardStyle = flying
-    ? { transform: `translateX(${flying === 'add' ? 480 : -480}px) rotate(${flying === 'add' ? 14 : -14}deg)`, opacity: 0, transition: 'transform .24s ease-in, opacity .24s ease-in' }
-    : drag
-      ? { transform: `translateX(${drag.dx}px) rotate(${drag.dx / 24}deg)`, transition: 'none' }
-      : undefined;
-
-  // A reusable one-question screen: title, short line, one tap per option.
+  // A reusable one-question screen: title, short line, tap to choose (it stays
+  // highlighted), then Next in the footer moves on.
   const question = (title, sub, options, activeKey, onPick, withIcons = false) => (
     <>
       <h2 className="guide-title">{title}</h2>
@@ -145,18 +123,22 @@ export function ShapeDayWizard({ city, numDays, items, eligibleIdx, initial, onS
       <div className="shape-style-list shape-question-list">
         {options.map((o) => {
           const Icon = withIcons ? (STYLE_ICONS[o.key] || SparkIcon) : null;
+          const on = activeKey === o.key;
           return (
             <button
               key={o.key}
-              className={`shape-style ${activeKey === o.key ? 'on' : ''}`}
+              className={`shape-style ${on ? 'on' : ''}`}
               onClick={() => onPick(o.key)}
+              aria-pressed={on}
             >
               {Icon && <span className="shape-style-icon"><Icon size={18} /></span>}
               <span className="shape-style-text">
                 <b>{o.label}</b>
                 <small>{o.desc}</small>
               </span>
-              <span className="shape-style-arrow">›</span>
+              <span className={`shape-style-arrow ${on ? 'on' : ''}`}>
+                {on ? <CheckIcon size={16} /> : '›'}
+              </span>
             </button>
           );
         })}
@@ -164,11 +146,9 @@ export function ShapeDayWizard({ city, numDays, items, eligibleIdx, initial, onS
     </>
   );
 
-  const questionStep = step >= 1 && step <= 4;
-
   return (
     <div className="guide-overlay" onClick={onSkip}>
-      <div className="guide-modal shape-modal" onClick={(e) => e.stopPropagation()}>
+      <div className={`guide-modal shape-modal ${step === 5 ? 'shape-modal-wide' : ''}`} onClick={(e) => e.stopPropagation()}>
         <div className="guide-head">
           <button className="guide-close" onClick={onSkip} aria-label="Close">×</button>
           <div className="shape-head-title">
@@ -213,88 +193,76 @@ export function ShapeDayWizard({ city, numDays, items, eligibleIdx, initial, onS
 
           {step === 1 && question(
             'What kind of day do you feel like?',
-            'Tap a mood; Carta only suggests places that fit it.',
+            'Tap a mood; Carta leads with places that fit it.',
             DAY_STYLES, styleKey, pickStyle, true,
           )}
 
           {step === 2 && question(
             'How long are you out?',
             'So a drafted day never runs longer than you want to be.',
-            DAY_LENGTHS, dayLen, pickDayLen,
+            DAY_LENGTHS, dayLen, setDayLen,
           )}
 
           {step === 3 && question(
             'How much walking is okay?',
             'Carta keeps every stop within comfortable reach of the next.',
-            WALK_LEVELS, walk, pickWalk,
+            WALK_LEVELS, walk, setWalk,
           )}
 
           {step === 4 && question(
             'What pace suits you?',
-            'One last tap: how full should each day be?',
-            PACE_CHOICES, pace, pickPace,
+            'One last answer: how full should each day be?',
+            PACE_CHOICES, pace, setPace,
           )}
 
           {step === 5 && (
             deck.length === 0 ? (
               <>
-                <h2 className="guide-title">Not much catalogued for that mood here</h2>
+                <h2 className="guide-title">Not much catalogued here yet</h2>
                 <p className="guide-sub">Let Carta build a general best-of instead, or go back and pick another style.</p>
               </>
-            ) : current ? (
-              <>
-                <div className="shape-deck-meta">
-                  <span className="shape-deck-count">{deckPos + 1} of {deck.length}</span>
-                  <span className="shape-deck-added">{accepted.length} added</span>
-                </div>
-
-                <div
-                  className="shape-card"
-                  style={cardStyle}
-                  onPointerDown={onCardDown}
-                  onPointerMove={onCardMove}
-                  onPointerUp={onCardUp}
-                  onPointerCancel={onCardUp}
-                >
-                  <div
-                    className="shape-card-photo"
-                    style={current.item.img ? { backgroundImage: `url(${current.item.img})` } : undefined}
-                  >
-                    {!current.item.img && <span className="shape-card-fallback">{(current.item.kind || '?').slice(0, 1)}</span>}
-                    {isMustSee(current.item) && (
-                      <span className="shape-card-must"><StarIcon size={10} /> Must see</span>
-                    )}
-                    {drag && drag.dx > 40 && <span className="shape-card-stamp add">Add</span>}
-                    {drag && drag.dx < -40 && <span className="shape-card-stamp skip">Skip</span>}
+            ) : (
+              <div className="shape-pick">
+                <div className="shape-pick-list">
+                  <div className="shape-pick-list-head">
+                    <span>Tap a place to add it &mdash; watch it drop onto the map</span>
+                    <span className="shape-deck-added">{selected.size} added</span>
                   </div>
-                  <div className="shape-card-body">
-                    <div className="shape-card-name">{current.item.name}</div>
-                    <div className="shape-card-kind">
-                      {current.item.kind}
-                      {current.item.heritage ? ', heritage site' : ''}
-                    </div>
-                    {current.item.desc && <p className="shape-card-desc">{current.item.desc}</p>}
-                    {companions.length > 0 && (
-                      <p className="shape-card-pair">
-                        <SparkIcon size={11} /> Pairs well with {companions.map((c, i) => (
-                          <span key={c.name}>{i > 0 && ' and '}<b>{c.name}</b> ({c.walkMin} min walk)</span>
-                        ))}
-                      </p>
-                    )}
-                  </div>
+                  {deck.map(({ item, idx }) => {
+                    const on = selected.has(idx);
+                    return (
+                      <button
+                        key={idx}
+                        className={`shape-pick-row ${on ? 'on' : ''}`}
+                        onClick={() => toggle(idx)}
+                        aria-pressed={on}
+                      >
+                        <span
+                          className="shape-pick-thumb"
+                          style={item.img ? { backgroundImage: `url(${item.img})` } : undefined}
+                        >
+                          {!item.img && <MapPinIcon size={14} />}
+                        </span>
+                        <span className="shape-pick-text">
+                          <b>{item.name}{isMustSee(item) && <StarIcon size={10} />}</b>
+                          <small>{item.kind}{item.heritage ? ', heritage site' : ''}</small>
+                        </span>
+                        <span className={`shape-pick-toggle ${on ? 'on' : ''}`} aria-hidden="true">
+                          {on ? <CheckIcon size={14} /> : '+'}
+                        </span>
+                      </button>
+                    );
+                  })}
                 </div>
-
-                <div className="shape-deck-actions">
-                  <button className="shape-deck-btn skip" onClick={() => advance('skip')} aria-label="Skip this place">
-                    × Skip
-                  </button>
-                  <button className="shape-deck-btn add" onClick={() => advance('add')} aria-label="Add this place">
-                    <CheckIcon size={13} /> Add
-                  </button>
+                <div className="shape-pick-map">
+                  <DayExploreMap
+                    stay={center}
+                    markers={markers}
+                    onFocus={(id) => toggle(Number(id))}
+                  />
                 </div>
-                <p className="shape-deck-hint">Swipe the card right to add it, left to pass.</p>
-              </>
-            ) : null
+              </div>
+            )
           )}
         </div>
 
@@ -304,13 +272,16 @@ export function ShapeDayWizard({ city, numDays, items, eligibleIdx, initial, onS
           </div>
           <div className="guide-foot-actions">
             {step > 0 && <button className="guide-back" onClick={() => setStep(step - 1)}>Back</button>}
-            {step === 5 && accepted.length > 0 && (
-              <button className="guide-next" onClick={() => finishPicks(accepted)}>
-                Build my {numDays > 1 ? 'days' : 'day'} ({accepted.length})
+            {questionStep && (
+              <button className="guide-next" onClick={goNext} disabled={!stepValue}>Next</button>
+            )}
+            {step === 5 && selected.size > 0 && (
+              <button className="guide-next" onClick={() => finishPicks([...selected])}>
+                Build my {numDays > 1 ? 'days' : 'day'} ({selected.size})
               </button>
             )}
-            {(questionStep || (step === 5 && accepted.length === 0)) && (
-              <button className={step === 1 ? 'guide-next' : 'guide-back'} onClick={finishAuto}>
+            {(questionStep || (step === 5 && selected.size === 0)) && (
+              <button className="guide-back" onClick={finishAuto}>
                 <SparkIcon size={12} /> Let Carta pick everything
               </button>
             )}
