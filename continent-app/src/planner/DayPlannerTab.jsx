@@ -1496,22 +1496,6 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
     }
   }, [newStayPoint]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const editPlanOnMap = () => {
-    const sp = standalonePlans.find((p) => p.id === plan?.id);
-    if (!sp) return;
-    setEditingPlanId(sp.id);
-    setNewStayPoint(sp.stayPoint || null);
-    setNewStops((sp.stops || []).map((s) => ({ destinationId: s.destinationId, days: s.days || 1 })));
-    setNewStartDate(sp.startDate || todayISO());
-    setSelPois([]);
-    setNewCountry('');
-    setStayQuery('');
-    setStayResults(null);
-    setExploreFocus('');
-    setExploreCats(new Set(['town']));
-    setPlan(null);
-  };
-
   const cancelEditOnMap = () => {
     const id = editingPlanId;
     setEditingPlanId(null);
@@ -2293,8 +2277,9 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
                   <button
                     className="trip-stop-remove"
                     onClick={() => {
-                      if (stayQuery !== '') { setStayQuery(''); setStayResults(null); }
-                      else if (plan.stayPoint) { patchStandalone((sp) => { sp.stayPoint = null; return sp; }); }
+                      setStayQuery('');
+                      setStayResults(null);
+                      if (plan.stayPoint) patchStandalone((sp) => { sp.stayPoint = null; return sp; });
                     }}
                     aria-label="Clear stay"
                     title="Clear"
@@ -2523,11 +2508,6 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
                   </div>
                   <p className="trip-note">Turns this into a multi-city day trip: each city gets its own days and picks.</p>
                 </Collapsible>
-              )}
-              {plan.standalone && (
-                <button className="day-changeplaces-btn day-changeplaces-inline" onClick={editPlanOnMap}>
-                  <PencilIcon size={13} /> Change places on the map
-                </button>
               )}
             </Collapsible>
           )}

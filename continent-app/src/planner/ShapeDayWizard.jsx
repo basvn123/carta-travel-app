@@ -225,7 +225,7 @@ export function ShapeDayWizard({ city, numDays, items, eligibleIdx, initial, onS
               <div className="shape-pick">
                 <div className="shape-pick-list">
                   <div className="shape-pick-list-head">
-                    <span>Tap a place to add it &mdash; watch it drop onto the map</span>
+                    <span>Tap a place to add it, watch it drop onto the map</span>
                     <span className="shape-deck-added">{selected.size} added</span>
                   </div>
                   {deck.map(({ item, idx }) => {

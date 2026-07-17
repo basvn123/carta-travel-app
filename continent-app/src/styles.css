@@ -2259,9 +2259,10 @@ input, select {
 .day-build-top .day-build-field { flex: 1 1 300px; min-width: 0; }
 .day-build-top .day-build-date { flex: 0 1 200px; min-width: 160px; }
 /* Desktop: the builder goes full width so the explore map can be the hero;
-   the form-like pieces stay capped at a readable column. */
+   the form-like pieces stay capped at a readable column. No max-width on the
+   landing itself: on ultrawide monitors the map row spans the whole window. */
 @media (min-width: 1000px) {
-  .day-landing { max-width: 1360px; padding: 32px 40px 48px; }
+  .day-landing { max-width: none; padding: 32px clamp(28px, 3.5vw, 72px) 48px; }
   .day-landing-lead,
   .day-landing-section,
   .day-edit-banner,
@@ -7875,6 +7876,7 @@ input, select {
 
 /* Day planner start flow: multi-city list, address search */
 .day-build-field { display: block; margin-bottom: 2px; }
+.day-build-field .trip-field-label { display: block; margin-bottom: 9px; }
 .day-build-cities { display: flex; flex-direction: column; gap: 8px; }
 .day-build-city {
   display: flex;
@@ -7900,7 +7902,7 @@ input, select {
   color: var(--ink-mute);
   font-weight: 400;
 }
-.day-stay-search { display: flex; gap: 8px; }
+.day-stay-search { display: flex; align-items: center; gap: 8px; }
 .day-stay-input {
   flex: 1;
   min-width: 0;
@@ -8854,6 +8856,11 @@ input, select {
 /* The map is the hero: it takes every pixel the side rail doesn't need. */
 .day-explore-wrap .dem-map { flex: 1; min-width: 0; height: clamp(480px, 68vh, 760px); border-radius: 14px; overflow: hidden; border: 1px solid var(--rule); box-shadow: 0 8px 24px -18px rgba(26, 26, 26, 0.5); }
 .day-explore-side { flex: 0 0 400px; min-width: 0; max-height: clamp(480px, 68vh, 760px); display: flex; flex-direction: column; }
+/* Ultrawide: a taller map and a slightly roomier rail beside it. */
+@media (min-width: 1800px) {
+  .day-explore-wrap .dem-map { height: clamp(560px, 74vh, 980px); }
+  .day-explore-side { flex-basis: 460px; max-height: clamp(560px, 74vh, 980px); }
+}
 /* The place-detail card and the Carta guide panel each become the right-hand
    rail beside the big map: both fill its height and scroll inside themselves,
    so the map is never pushed off-screen. (Descendant selectors: the guide sits
