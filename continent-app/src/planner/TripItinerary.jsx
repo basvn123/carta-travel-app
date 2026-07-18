@@ -3,9 +3,8 @@ import { eur, fmtHours, flightTimes } from '../lib/format.js';
 import { flightReasonLabel, baggageLabel } from '../lib/trip_planner_pricing.js';
 import { googleMapsDirUrl } from '../lib/routing.js';
 import { shareTrip, downloadTripPdf } from '../lib/tripExport.js';
-import { tripKml, downloadKml } from '../lib/kmlExport.js';
 import { useI18n } from '../i18n/index.jsx';
-import { SparkIcon, TrainIcon, BusIcon, CarIcon, BedIcon, ReceiptIcon, ShareIcon, DownloadIcon, LuggageIcon } from '../components/Icons.jsx';
+import { SparkIcon, TrainIcon, BusIcon, CarIcon, BedIcon, ReceiptIcon, ShareIcon, DownloadIcon, LuggageIcon, MapPinIcon } from '../components/Icons.jsx';
 import { PlaneIcon } from '../components/TransportIcons.jsx';
 
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -18,7 +17,7 @@ function fmtLong(iso) {
   return `${wd} ${String(d).padStart(2, '0')} ${MONTHS[m - 1]}`;
 }
 
-/** "Fri 18 Sep, 19:45-21:45" - the date plus the priced flight's local dep/arr
+/** "Fri 18 Sep, 19:45-21:45", the date plus the priced flight's local dep/arr
  *  hours, when the times harvest covers this leg (just the date otherwise). */
 function fmtFlightWhen(iso, time) {
   const ft = flightTimes(time);
@@ -38,7 +37,7 @@ const LEG_ICONS = { train: TrainIcon, bus: BusIcon, car: CarIcon };
  */
 export function TripItinerary({
   dayPlan, stopDetails, grandTotal, groupSize, flight, label = '',
-  legs = [], stayCosts = [], carRental = null,
+  legs = [], anchorLegs = null, stayCosts = [], carRental = null,
   activeStopIndex, onSelectStop, onPlanDay, isDayPlanned = null,
 }) {
   // Whether a day already has Day-planner picks (drives "Plan" vs "Modify").
@@ -50,8 +49,16 @@ export function TripItinerary({
 
   // Everything the share text / printable PDF needs, in one bag.
   const exportPayload = {
-    label, stopDetails, dayPlan, flight, legs, stayCosts, carRental, grandTotal, groupSize,
+    label, stopDetails, dayPlan, flight, legs, anchorLegs, stayCosts, carRental, grandTotal, groupSize,
   };
+
+  // Anchor-city connections ("fly into Bergamo, then on to Como"): shown as
+  // route rows around the stops and as receipt rows around the flights.
+  const anchorIn = anchorLegs?.in && anchorLegs.in.ground_total ? anchorLegs.in : null;
+  const anchorOut = anchorLegs?.out && anchorLegs.out.ground_total ? anchorLegs.out : null;
+  const anchorCity = anchorLegs?.anchor?.city;
+  const AnchorInIcon = anchorIn ? (LEG_ICONS[anchorIn.mode] || TrainIcon) : null;
+  const AnchorOutIcon = anchorOut ? (LEG_ICONS[anchorOut.mode] || TrainIcon) : null;
 
   const pickDay = (day) => {
     setTab(day.dayNum);
@@ -103,6 +110,13 @@ export function TripItinerary({
               <small>{fmtFlightWhen(stopDetails[0]?.arriveDate, flight.into_time)}</small>
             </div>
           )}
+          {anchorIn && (
+            <div className="itin-flight-row">
+              <AnchorInIcon size={12} />
+              <span>Then <b>{anchorCity} → {stopDetails[0]?.dest?.city}</b></span>
+              <small>~{fmtHours(anchorIn.hours)} by {anchorIn.mode}</small>
+            </div>
+          )}
           {stopDetails.map((s, i) => (
             <button
               key={i}
@@ -125,6 +139,13 @@ export function TripItinerary({
             </button>
           ))}
 
+          {anchorOut && (
+            <div className="itin-flight-row">
+              <AnchorOutIcon size={12} />
+              <span>Then <b>{stopDetails[stopDetails.length - 1]?.dest?.city} → {anchorCity}</b></span>
+              <small>~{fmtHours(anchorOut.hours)} by {anchorOut.mode}</small>
+            </div>
+          )}
           {flight?.combinable && (
             <div className="itin-flight-row">
               <PlaneIcon size={12} />
@@ -188,6 +209,24 @@ export function TripItinerary({
                       </div>
                     )}
                   </>
+                )}
+                {anchorIn && (
+                  <div className="trip-total-row">
+                    <span className="lbl">
+                      <AnchorInIcon size={11} /> {anchorCity} → {stopDetails[0]?.dest?.city}
+                      <small>{anchorIn.road_km} km, ~{fmtHours(anchorIn.hours)}, estimate</small>
+                    </span>
+                    <span className="val">{eur(anchorIn.ground_total)}</span>
+                  </div>
+                )}
+                {anchorOut && (
+                  <div className="trip-total-row">
+                    <span className="lbl">
+                      <AnchorOutIcon size={11} /> {stopDetails[stopDetails.length - 1]?.dest?.city} → {anchorCity}
+                      <small>{anchorOut.road_km} km, ~{fmtHours(anchorOut.hours)}, estimate</small>
+                    </span>
+                    <span className="val">{eur(anchorOut.ground_total)}</span>
+                  </div>
                 )}
                 {legs.map((l, i) => {
                   if (!l || !l.ground_total) return null;
@@ -258,15 +297,10 @@ export function TripItinerary({
             ))}
           </div>
 
-          {gmapsUrl && (
-            <a className="itin-gmaps" href={gmapsUrl} target="_blank" rel="noreferrer">
-              {t('export.openRoute')} ↗
-            </a>
-          )}
-
-          {/* Take the trip with you: share it, keep a PDF copy, or download
-              the full-information KML for Google My Maps (a share link tops
-              out at 9 nameless waypoints; the KML carries everything). */}
+          {/* Take the trip with you: share it, keep a PDF copy, or open the
+              route straight in Google Maps. The Maps link is built from place
+              names ("City, Country"), so Google shows the real listings rather
+              than dropping nameless pins at the coordinates. */}
           <div className="itin-export-row">
             <button
               className="itin-export-btn"
@@ -286,17 +320,17 @@ export function TripItinerary({
             >
               <DownloadIcon size={12} /> {t('export.downloadPdf')}
             </button>
-            <button
-              className="itin-export-btn"
-              onClick={() => {
-                downloadKml(label || 'trip', tripKml({ label, stopDetails, dayPlan, fmtDate: fmtLong }));
-                setShareState(t('export.myMapsHint'));
-                window.setTimeout(() => setShareState(''), 9000);
-              }}
-              title={t('export.myMapsTitle')}
-            >
-              <DownloadIcon size={12} /> {t('export.myMaps')}
-            </button>
+            {gmapsUrl && (
+              <a
+                className="itin-export-btn"
+                href={gmapsUrl}
+                target="_blank"
+                rel="noreferrer"
+                title={t('export.openRoute')}
+              >
+                <MapPinIcon size={12} /> {t('export.openInGmaps')}
+              </a>
+            )}
           </div>
           {shareState && <p className="itin-export-note">{shareState}</p>}
         </div>

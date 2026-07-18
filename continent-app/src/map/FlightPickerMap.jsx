@@ -12,7 +12,7 @@ const PLANE_SVG = '<svg width="11" height="11" viewBox="0 0 24 24" fill="current
 /**
  * The "how do you get there?" map: every bookable Ryanair route into the
  * chosen countries as a plane+price pill at its destination. People plan trips
- * spatially - seeing WHERE the cheap flights land beats scanning a list.
+ * spatially, seeing WHERE the cheap flights land beats scanning a list.
  *
  * `options`: [{ id, city, lat, lon, eur, selected }]
  * `origin`:  { lat, lon, city } of the departure airport (home pin + a faint
@@ -105,7 +105,7 @@ export function FlightPickerMap({ options = [], origin = null, onPick }) {
     if (readyRef.current) build();
   }, [optKey]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Selection changes restyle in place - no rebuild.
+  // Selection changes restyle in place, no rebuild.
   const sync = () => {
     const byId = new Map(options.map((o) => [o.id, o]));
     pinsRef.current.forEach((p, id) => {

@@ -1,4 +1,4 @@
-# Carta — Europe Travel App
+# Carta, Europe Travel App
 
 Find affordable European getaways by **total trip cost** (real Ryanair fares +
 Airbnb-based stays + on-the-ground spend), then plan the trip city by city and
@@ -47,10 +47,10 @@ day by day. 447 destinations across 43 European countries.
 1. Python pipeline writes `app_data/app_data.json` (master, everything inline).
 2. `continent-app/scripts/sync-data.mjs` (runs on `npm run dev/build`) splits it
    for the wire:
-   - `public/app_data.json` — core dataset (~1.5 MB), heavy fields stripped
-   - `public/activities_full.json` — full POI lists (~1.5 MB), lazy-fetched by
+   - `public/app_data.json`, core dataset (~1.5 MB), heavy fields stripped
+   - `public/activities_full.json`, full POI lists (~1.5 MB), lazy-fetched by
      the Day planner only
-   - `public/country_insights.json` — copied verbatim, lazy-fetched when
+   - `public/country_insights.json`, copied verbatim, lazy-fetched when
      country intel is shown
 3. The app fetches the core file at boot (kicked off at module-eval time) and
    the other two on demand.

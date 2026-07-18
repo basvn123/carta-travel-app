@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Logo from '../components/Logo.jsx';
 import { useAuth } from './AuthContext.jsx';
+import { useI18n } from '../i18n/index.jsx';
 
 /**
  * Full-screen takeover shown when the app loads from a password-recovery
@@ -9,6 +10,7 @@ import { useAuth } from './AuthContext.jsx';
  */
 export function ResetPasswordScreen() {
   const { updatePassword, exitRecoveryMode } = useAuth();
+  const { t } = useI18n();
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
@@ -18,15 +20,15 @@ export function ResetPasswordScreen() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-    if (password.length < 6) { setError('Password must be at least 6 characters.'); return; }
-    if (password !== confirmPassword) { setError("Passwords don't match."); return; }
+    if (password.length < 6) { setError(t('auth.errPasswordShort')); return; }
+    if (password !== confirmPassword) { setError(t('auth.errPasswordMismatch')); return; }
 
     setLoading(true);
     try {
       await updatePassword(password);
       setDone(true);
     } catch (err) {
-      setError(err.message || 'Something went wrong. Try again.');
+      setError(err.message || t('auth.errGeneric'));
     } finally {
       setLoading(false);
     }
@@ -42,17 +44,17 @@ export function ResetPasswordScreen() {
 
         {done ? (
           <>
-            <h2 className="auth-title">Password updated</h2>
-            <p className="auth-sub">You're all set. Continue into the app.</p>
-            <button className="auth-submit" onClick={exitRecoveryMode}>Continue</button>
+            <h2 className="auth-title">{t('auth.passwordUpdatedTitle')}</h2>
+            <p className="auth-sub">{t('auth.passwordUpdatedSub')}</p>
+            <button className="auth-submit" onClick={exitRecoveryMode}>{t('auth.continue')}</button>
           </>
         ) : (
           <>
-            <h2 className="auth-title">Set a new password</h2>
-            <p className="auth-sub">Choose a new password for your account.</p>
+            <h2 className="auth-title">{t('auth.setNewPasswordTitle')}</h2>
+            <p className="auth-sub">{t('auth.setNewPasswordSub')}</p>
             <form className="auth-form" onSubmit={handleSubmit}>
               <label className="auth-field">
-                <span className="auth-label">New password</span>
+                <span className="auth-label">{t('auth.newPassword')}</span>
                 <input
                   type="password"
                   autoComplete="new-password"
@@ -63,7 +65,7 @@ export function ResetPasswordScreen() {
                 />
               </label>
               <label className="auth-field">
-                <span className="auth-label">Confirm new password</span>
+                <span className="auth-label">{t('auth.confirmNewPassword')}</span>
                 <input
                   type="password"
                   autoComplete="new-password"
@@ -74,10 +76,10 @@ export function ResetPasswordScreen() {
               </label>
               {error && <div className="auth-error">{error}</div>}
               <button type="submit" className="auth-submit" disabled={loading}>
-                {loading ? 'Please wait…' : 'Update password'}
+                {loading ? t('auth.pleaseWait') : t('auth.updatePassword')}
               </button>
               <button type="button" className="auth-link auth-back" onClick={exitRecoveryMode}>
-                Cancel
+                {t('auth.cancel')}
               </button>
             </form>
           </>

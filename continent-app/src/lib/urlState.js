@@ -3,7 +3,7 @@
  * mirror so a plain reload restores everything even without a shared link).
  *
  * Kept deliberately compact: short keys, lifestyle packed as a fixed-order CSV.
- * Everything is optional - missing keys fall back to the app defaults.
+ * Everything is optional, missing keys fall back to the app defaults.
  */
 
 const LS_ORDER = [
@@ -47,7 +47,7 @@ export function encodeState({
   if (choices?.baggage_key) q.set('b', choices.baggage_key);
   if (choices?.transport_mode && choices.transport_mode !== 'plane') q.set('t', choices.transport_mode);
   if (choices?.origin) q.set('o', choices.origin);
-  // Store anything that differs from the APP default ('pp' - see App.jsx),
+  // Store anything that differs from the APP default ('pp', see App.jsx),
   // else "Total" silently flips back to per-person on reload.
   if (priceMode && priceMode !== 'pp') q.set('pm', priceMode);
   if (countryFilter && countryFilter !== 'all') q.set('cf', countryFilter);
@@ -91,7 +91,7 @@ export function decodeState(search) {
     const [lo, hi] = q.get('pr').split('.').map(Number);
     if (!Number.isNaN(lo) && !Number.isNaN(hi)) out.priceRange = [lo, hi];
   }
-  // 'sel' is intentionally ignored on load (see encodeState) - open the full map.
+  // 'sel' is intentionally ignored on load (see encodeState), open the full map.
   if (has('fav')) out.favorites = q.get('fav').split('.').filter(Boolean);
   if (has('sort')) out.sortKey = q.get('sort');
   if (has('favonly')) out.showFavOnly = q.get('favonly') === '1';

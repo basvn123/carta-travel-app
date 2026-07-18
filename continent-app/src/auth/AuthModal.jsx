@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Logo from '../components/Logo.jsx';
 import { useAuth } from './AuthContext.jsx';
+import { useI18n } from '../i18n/index.jsx';
 
 /**
  * Sign in / create account / forgot password, in one overlay. Mirrors the
@@ -8,6 +9,7 @@ import { useAuth } from './AuthContext.jsx';
  */
 export function AuthModal({ onClose, initialMode = 'signin' }) {
   const { signIn, signUp, sendPasswordReset } = useAuth();
+  const { t } = useI18n();
   const [mode, setMode] = useState(initialMode); // signin | signup | forgot
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
@@ -32,24 +34,24 @@ export function AuthModal({ onClose, initialMode = 'signin' }) {
     reset();
 
     if (mode === 'forgot') {
-      if (!email) { setError('Enter your email address.'); return; }
+      if (!email) { setError(t('auth.errEnterEmail')); return; }
       setLoading(true);
       try {
         await sendPasswordReset(email);
-        setNotice(`If an account exists for ${email}, a reset link is on its way.`);
+        setNotice(t('auth.noticeResetSent', { email }));
       } catch (err) {
-        setError(err.message || 'Something went wrong. Try again.');
+        setError(err.message || t('auth.errGeneric'));
       } finally {
         setLoading(false);
       }
       return;
     }
 
-    if (!email || !password) { setError('Enter your email and password.'); return; }
+    if (!email || !password) { setError(t('auth.errEnterEmailPassword')); return; }
     if (mode === 'signup') {
-      if (!fullName.trim()) { setError('Enter your name.'); return; }
-      if (password.length < 6) { setError('Password must be at least 6 characters.'); return; }
-      if (password !== confirmPassword) { setError("Passwords don't match."); return; }
+      if (!fullName.trim()) { setError(t('auth.errEnterName')); return; }
+      if (password.length < 6) { setError(t('auth.errPasswordShort')); return; }
+      if (password !== confirmPassword) { setError(t('auth.errPasswordMismatch')); return; }
     }
 
     setLoading(true);
@@ -57,7 +59,7 @@ export function AuthModal({ onClose, initialMode = 'signin' }) {
       if (mode === 'signup') {
         const { needsEmailConfirmation } = await signUp(email, password, fullName.trim());
         if (needsEmailConfirmation) {
-          setNotice(`Almost there. We sent a confirmation link to ${email}.`);
+          setNotice(t('auth.noticeConfirmSent', { email }));
         } else {
           onClose();
         }
@@ -66,27 +68,27 @@ export function AuthModal({ onClose, initialMode = 'signin' }) {
         onClose();
       }
     } catch (err) {
-      setError(err.message || 'Something went wrong. Try again.');
+      setError(err.message || t('auth.errGeneric'));
     } finally {
       setLoading(false);
     }
   };
 
   const titles = {
-    signin: 'Welcome back',
-    signup: 'Create your account',
-    forgot: 'Reset your password',
+    signin: t('auth.titleSignin'),
+    signup: t('auth.titleSignup'),
+    forgot: t('auth.titleForgot'),
   };
   const subs = {
-    signin: 'Sign in to save trips and sync your settings.',
-    signup: 'Save trips, keep your preferences, pick up where you left off.',
-    forgot: "We'll email you a link to set a new password.",
+    signin: t('auth.subSignin'),
+    signup: t('auth.subSignup'),
+    forgot: t('auth.subForgot'),
   };
 
   return (
     <div className="auth-overlay" onClick={onClose}>
       <div className="auth-modal" onClick={(e) => e.stopPropagation()}>
-        <button className="panel-close auth-close" onClick={onClose} aria-label="Close">x</button>
+        <button className="panel-close auth-close" onClick={onClose} aria-label={t('auth.close')}>x</button>
 
         <div className="auth-brand">
           <Logo size={26} />
@@ -100,14 +102,14 @@ export function AuthModal({ onClose, initialMode = 'signin' }) {
               onClick={() => switchMode('signin')}
               type="button"
             >
-              Sign in
+              {t('auth.signIn')}
             </button>
             <button
               className={mode === 'signup' ? 'seg-on' : ''}
               onClick={() => switchMode('signup')}
               type="button"
             >
-              Create account
+              {t('auth.createAccount')}
             </button>
           </div>
         )}
@@ -119,27 +121,27 @@ export function AuthModal({ onClose, initialMode = 'signin' }) {
           <div className="auth-notice">
             {notice}
             <button type="button" className="auth-link" onClick={() => switchMode('signin')}>
-              Back to sign in
+              {t('auth.backToSignIn')}
             </button>
           </div>
         ) : (
           <form className="auth-form" onSubmit={handleSubmit}>
             {mode === 'signup' && (
               <label className="auth-field">
-                <span className="auth-label">Full name</span>
+                <span className="auth-label">{t('auth.fullName')}</span>
                 <input
                   type="text"
                   autoComplete="name"
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
-                  placeholder="Jane Doe"
+                  placeholder={t('auth.fullNamePlaceholder')}
                   autoFocus
                 />
               </label>
             )}
 
             <label className="auth-field">
-              <span className="auth-label">Email</span>
+              <span className="auth-label">{t('auth.email')}</span>
               <input
                 type="email"
                 autoComplete="email"
@@ -152,7 +154,7 @@ export function AuthModal({ onClose, initialMode = 'signin' }) {
 
             {mode !== 'forgot' && (
               <label className="auth-field">
-                <span className="auth-label">Password</span>
+                <span className="auth-label">{t('auth.password')}</span>
                 <input
                   type="password"
                   autoComplete={mode === 'signup' ? 'new-password' : 'current-password'}
@@ -165,7 +167,7 @@ export function AuthModal({ onClose, initialMode = 'signin' }) {
 
             {mode === 'signup' && (
               <label className="auth-field">
-                <span className="auth-label">Confirm password</span>
+                <span className="auth-label">{t('auth.confirmPassword')}</span>
                 <input
                   type="password"
                   autoComplete="new-password"
@@ -182,7 +184,7 @@ export function AuthModal({ onClose, initialMode = 'signin' }) {
                 className="auth-link auth-forgot"
                 onClick={() => switchMode('forgot')}
               >
-                Forgot password?
+                {t('auth.forgotPassword')}
               </button>
             )}
 
@@ -190,13 +192,13 @@ export function AuthModal({ onClose, initialMode = 'signin' }) {
 
             <button type="submit" className="auth-submit" disabled={loading}>
               {loading
-                ? 'Please wait…'
-                : mode === 'signin' ? 'Sign in' : mode === 'signup' ? 'Create account' : 'Send reset link'}
+                ? t('auth.pleaseWait')
+                : mode === 'signin' ? t('auth.signIn') : mode === 'signup' ? t('auth.createAccount') : t('auth.sendResetLink')}
             </button>
 
             {mode === 'forgot' && (
               <button type="button" className="auth-link auth-back" onClick={() => switchMode('signin')}>
-                Back to sign in
+                {t('auth.backToSignIn')}
               </button>
             )}
           </form>

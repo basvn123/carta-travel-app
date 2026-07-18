@@ -1,5 +1,5 @@
 /**
- * geocode.js - free-text address search via Nominatim (OpenStreetMap's
+ * geocode.js, free-text address search via Nominatim (OpenStreetMap's
  * geocoder). Keyless and free, like the rest of the app's services (OSRM,
  * Wikipedia, Carto). Used by the Day planner so travellers can type the
  * address of their stay instead of hunting through dropdowns.

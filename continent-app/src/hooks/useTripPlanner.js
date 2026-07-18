@@ -20,8 +20,7 @@ const DEFAULT_STOP_NIGHTS = 2;
 
 /** Draft-plan state + pricing for the Trip Planner tab.
  *
- *  The traveller first picks the window they want to travel (tripStart -
- *  tripEnd), then adds an ordered list of stops, each with a number of nights.
+ *  The traveller first picks the window they want to travel (tripStart,  *  tripEnd), then adds an ordered list of stops, each with a number of nights.
  *  Arrival/departure dates chain automatically from the trip start, so there's
  *  no per-stop date juggling: bumping a stop's nights just shifts everything
  *  after it. Pricing then reuses each destination's own real fare data
@@ -52,7 +51,7 @@ export function useTripPlanner(data, countryInsights = null) {
   const [baggage, setBaggage] = useState(draft?.baggage || 'cabin');
   // The wizard's chosen fly-in destination. When the first/last stop is a
   // ground-only gem (no routes of its own), flights are priced via this anchor
-  // instead - "fly into Bergamo, sleep at Lake Como".
+  // instead, "fly into Bergamo, sleep at Lake Como".
   const [anchorId, setAnchorId] = useState(draft?.anchorId || null);
   const [planId, setPlanId] = useState(null);
   const [planLabel, setPlanLabel] = useState(draft?.planLabel || '');
@@ -61,7 +60,7 @@ export function useTripPlanner(data, countryInsights = null) {
 
   // Keep the draft stored while planning; drop it once it's empty. Saved plans
   // carry their planId so the next visit knows not to restore them (see
-  // loadDraft) - the trip itself is safe in the account by then.
+  // loadDraft), the trip itself is safe in the account by then.
   useEffect(() => {
     if (!stops.length && !tripStart && !tripEnd) {
       clearTripDraft();
@@ -181,7 +180,7 @@ export function useTripPlanner(data, countryInsights = null) {
   // Load a whole itinerary the guided wizard just assembled: a start date, an
   // ordered list of { destinationId, nights, activities }, an optional name,
   // plus how they want to travel (transport) and how full their days should
-  // feel (pace) - everything stays editable in the planner afterwards.
+  // feel (pace), everything stays editable in the planner afterwards.
   const loadFromWizard = useCallback(({ startDate, stops: wizardStops, label, groupSize: gs, transport, pace: wizardPace, baggage: wizardBaggage, anchorId: wizardAnchor }) => {
     const total = wizardStops.reduce((sum, s) => sum + Math.max(0, s.nights || 0), 0);
     setTripStart(startDate || '');
@@ -192,7 +191,7 @@ export function useTripPlanner(data, countryInsights = null) {
       activities: s.activities || [],
     })));
     // Never clobber a name the traveller already typed ("Bas en Noa" must
-    // survive picking France in the wizard) - the wizard label is a fallback.
+    // survive picking France in the wizard), the wizard label is a fallback.
     if (label != null) setPlanLabel((prev) => (prev && prev.trim() ? prev : label));
     if (gs != null) setGroupSize(Math.max(1, Math.min(20, gs)));
     if (transport) setTransportPref(transport);
@@ -206,7 +205,7 @@ export function useTripPlanner(data, countryInsights = null) {
 
   // Candidate next stops from wherever the itinerary currently ends, ranked to
   // surface the most beautiful/characterful places (see suggestNextStops).
-  // Never re-suggests a stop already on the route, nor its country - "next"
+  // Never re-suggests a stop already on the route, nor its country, "next"
   // should open somewhere new.
   const nextStopSuggestions = useMemo(() => {
     const last = stopDetails[stopDetails.length - 1];
@@ -252,8 +251,7 @@ export function useTripPlanner(data, countryInsights = null) {
           // Train vs bus: with the estimate model's rates the train is never
           // outright cheaper (raw eur_pp compare was a dead branch that always
           // said bus). Choose by what an hour saved costs instead: the train
-          // wins when its price premium is under ~€12 per hour it saves -
-          // short hops go by rail, long budget hauls stay on the bus.
+          // wins when its price premium is under ~€12 per hour it saves,           // short hops go by rail, long budget hauls stay on the bus.
           const train = opts.modes.train;
           const bus = opts.modes.bus;
           const hoursSaved = train && bus ? bus.hours - train.hours : 0;
@@ -278,6 +276,34 @@ export function useTripPlanner(data, countryInsights = null) {
     setLegModes((prev) => ({ ...prev, [index]: mode }));
   }, []);
 
+  // The wizard's anchor prices the FLIGHT when the first/last stop has no
+  // fares of its own ("fly into Bergamo, sleep at Lake Como"), but getting
+  // from that airport city to the first stop (and back at the end) is a real
+  // overland journey that used to be silently absent from both the itinerary
+  // and the total. Price it like any other leg.
+  const anchorLegs = useMemo(() => {
+    const none = { in: null, out: null, anchor: null };
+    if (!anchorId || !flight?.combinable) return none;
+    const anchorDest = destinations[anchorId];
+    if (!anchorDest) return none;
+    const legFor = (a, b) => {
+      const opts = legTransportOptions(a, b, groupSize, { carModel, countryInsights });
+      if (!opts || opts.no_road || !opts.recommended) return null;
+      const mode = transportPref === 'car' && opts.modes.car ? 'car' : opts.recommended;
+      const chosen = opts.modes[mode] || opts.modes[opts.recommended];
+      return { ...opts, mode, hours: chosen.hours, ground_eur_per_person: chosen.eur_pp, ground_total: chosen.eur_total };
+    };
+    const viaAnchor = (s) => s?.dest && s.destinationId !== anchorId
+      && Object.keys(s.dest.routes || {}).length === 0;
+    const first = stopDetails[0];
+    const last = stopDetails[stopDetails.length - 1];
+    return {
+      in: viaAnchor(first) ? legFor(anchorDest, first.dest) : null,
+      out: viaAnchor(last) ? legFor(last.dest, anchorDest) : null,
+      anchor: anchorDest,
+    };
+  }, [anchorId, flight, destinations, stopDetails, groupSize, carModel, countryInsights, transportPref]);
+
   // One rental car for the whole trip (only priced into the total when the
   // traveller chose 'car'; per-leg car choices only pay fuel + tolls since a
   // trip mixing modes usually means point rentals or rideshares).
@@ -290,12 +316,12 @@ export function useTripPlanner(data, countryInsights = null) {
     return rentalEstimate(carModel, iso2, days, tripStart || stopDetails[0].arriveDate, groupSize);
   }, [transportPref, stopDetails, plannedNights, carModel, tripStart, groupSize]);
 
-  // Accommodation + on-the-ground spend per stop (default lifestyle - the full
+  // Accommodation + on-the-ground spend per stop (default lifestyle, the full
   // sliders live in the Map tab's Lifestyle panel; a trip spanning several
   // destinations isn't the place to re-tune per-stop dining habits in v1).
   const stayCosts = useMemo(() => stopDetails.map((s) => {
     if (!s.dest) return null;
-    // A 0-night pass-through stop books nothing - without this gate the
+    // A 0-night pass-through stop books nothing, without this gate the
     // accommodation model still charges its cleaning + service fee.
     const accom = s.nights > 0 ? accommodationPerPerson(s.dest, s.nights, s.arriveDate, null, groupSize) : null;
     const ground = groundSpendPerPerson(s.dest, s.nights, DEFAULT_LIFESTYLE);
@@ -308,12 +334,14 @@ export function useTripPlanner(data, countryInsights = null) {
     let total = 0;
     if (flight?.combinable) total += flight.fare_total + flight.ground_total + (flight.bag_total || 0);
     legs.forEach((l) => { if (l && l.ground_total) total += l.ground_total; });
+    if (anchorLegs.in?.ground_total) total += anchorLegs.in.ground_total;
+    if (anchorLegs.out?.ground_total) total += anchorLegs.out.ground_total;
     stayCosts.forEach((s) => { if (s) total += s.total; });
     if (carRental) total += carRental.eur_total;
     return round2(total);
-  }, [flight, legs, stayCosts, carRental]);
+  }, [flight, legs, anchorLegs, stayCosts, carRental]);
 
-  // "Take this trip cheaper" - the same itinerary on cheaper flight dates
+  // "Take this trip cheaper", the same itinerary on cheaper flight dates
   // (real stored fares only), and a cheaper stop ORDER when reordering
   // meaningfully shortens the overland route.
   const cheaperDates = useMemo(() => {
@@ -345,7 +373,7 @@ export function useTripPlanner(data, countryInsights = null) {
   // attractions (spread round-robin across the stay). Powers the Overview /
   // Day 1 / Day 2 ... view once the trip is "planned".
   const dayPlan = useMemo(() => {
-    // A day can only honestly hold so many highlights - keep each day light
+    // A day can only honestly hold so many highlights, keep each day light
     // (by pace) and hand the fine-tuning to the Day planner instead of
     // cramming five sights into every date.
     const perDayCap = { relaxed: 2, balanced: 3, packed: 4 }[pace] || 3;
@@ -449,7 +477,7 @@ export function useTripPlanner(data, countryInsights = null) {
     cheaperDates, cheaperOrder, applyStartDate, applyCheaperOrder,
     addStop, removeStop, setStopNights, setStopActivities, moveStop, reorderStop,
     optimizeRoute, clearPlan, loadFromWizard,
-    nextStopSuggestions, flight, legs, stayCosts, grandTotal, dayPlan,
+    nextStopSuggestions, flight, legs, anchorLegs, stayCosts, grandTotal, dayPlan,
     baggage, setBaggage,
     planned, setPlanned,
     planId, planLabel, setPlanLabel, saveState, savePlan, loadPlan,

@@ -1,5 +1,5 @@
 /**
- * tripDraftStore.js - device-local persistence for the Trip planner's
+ * tripDraftStore.js, device-local persistence for the Trip planner's
  * in-progress (unsaved) draft.
  *
  * The draft survives tab switches and reloads, so hopping to the Day planner

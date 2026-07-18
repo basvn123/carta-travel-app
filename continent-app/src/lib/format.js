@@ -41,7 +41,7 @@ export function stripDashes(s) {
 }
 
 /** Only allow http(s) URLs for links that come from harvested/remote data
- *  (activity links, image credit pages) - anything else (javascript:, data:,
+ *  (activity links, image credit pages), anything else (javascript:, data:,
  *  vbscript:) is dropped so it can never become a stored-XSS click target. */
 export function safeUrl(url) {
   if (typeof url !== 'string') return null;

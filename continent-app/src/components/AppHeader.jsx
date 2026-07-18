@@ -30,7 +30,7 @@ function AccountButton({ user, onOpenAccount }) {
 }
 
 // Always-mounted top panel: brand + section tabs on the left, the Map tab's
-// filters in the middle, and account access on the right - a single row, not
+// filters in the middle, and account access on the right, a single row, not
 // a separate header stacked above the filter bar. The tabs here are
 // desktop-only; on mobile they collapse (CSS) and BottomNav takes over as the
 // Map/Trip planner/Day planner switch, with a Home icon shortcut remaining in

@@ -10,7 +10,7 @@ export async function fetchTripPlans(userId) {
   const plans = data || [];
   if (!plans.length) return plans;
   // Summarize each plan's CURRENT stops (dates + route) so lists show the
-  // real, up-to-date trip window - including any date changes saved later.
+  // real, up-to-date trip window, including any date changes saved later.
   const { data: stops } = await supabase
     .from('trip_plan_stops')
     .select('trip_plan_id, arrive_date, depart_date, city, country, position')
@@ -64,7 +64,7 @@ export async function deleteTripPlan(id) {
 }
 
 // Replaces the full stop list for a trip plan. Trip plans have only a
-// handful of stops, so delete-and-reinsert is simpler and cheap - no need
+// handful of stops, so delete-and-reinsert is simpler and cheap, no need
 // for granular per-stop update plumbing.
 export async function saveTripPlanStops(tripPlanId, userId, stops) {
   const { error: deleteError } = await supabase

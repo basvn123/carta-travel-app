@@ -62,11 +62,11 @@ import { useDestinationSearch } from './hooks/useDestinationSearch.js';
 import { useAccountSync } from './hooks/useAccountSync.js';
 
 // Once someone picks "continue without an account" on the entry gate, don't
-// ask again on this device - only a fresh sign-in should bring accounts back.
+// ask again on this device, only a fresh sign-in should bring accounts back.
 const GUEST_KEY = 'continent.guestMode.v1';
 
 // The "how does this page work" hint under the top bar stays gone once
-// dismissed - it's onboarding, not a recurring notice.
+// dismissed, it's onboarding, not a recurring notice.
 const MAP_GUIDE_KEY = 'continent.mapGuideDismissed.v1';
 
 
@@ -113,8 +113,9 @@ function TravelApp() {
   }, [user]);
 
   // Which top-level section is showing: Map (the browse/search experience),
-  // Trip planner, or Day planner.
-  const [activeTab, setActiveTab] = useState(init.activeTab ?? 'map');
+  // Trip planner, or Day planner. Always open on the map, regardless of which
+  // tab was showing on the last visit.
+  const [activeTab, setActiveTab] = useState('map');
 
   const [selectedId, setSelectedId] = useState(init.selectedId ?? null);
 
@@ -133,7 +134,7 @@ function TravelApp() {
     lifestyle: { ...DEFAULT_LIFESTYLE, ...(init.lifestyle || {}) },
   });
 
-  // Shortlist (favorites) + list controls - also persisted in the URL.
+  // Shortlist (favorites) + list controls, also persisted in the URL.
   const [favorites, setFavorites] = useState(() => new Set(init.favorites || []));
   const [sortKey, setSortKey] = useState(init.sortKey ?? 'beauty');
   const [showFavOnly, setShowFavOnly] = useState(init.showFavOnly ?? false);
@@ -146,7 +147,7 @@ function TravelApp() {
   const [savedTripsOpen, setSavedTripsOpen] = useState(false);
   // Planner tabs mount on first visit and then stay alive (hidden) so a quick
   // look at another tab never wipes an in-progress plan.
-  const [visitedTabs, setVisitedTabs] = useState(() => new Set([init.activeTab ?? 'map']));
+  const [visitedTabs, setVisitedTabs] = useState(() => new Set(['map']));
   useEffect(() => {
     setVisitedTabs((prev) => (prev.has(activeTab) ? prev : new Set([...prev, activeTab])));
   }, [activeTab]);
@@ -177,8 +178,8 @@ function TravelApp() {
     }
   }, [departDate, returnDate]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Free-text location search (city / country). Ephemeral - not persisted in the
-  // URL - and applied to the filtered set so the list AND map narrow together.
+  // Free-text location search (city / country). Ephemeral, not persisted in the
+  // URL, and applied to the filtered set so the list AND map narrow together.
   const [locationQuery, setLocationQuery] = useState('');
   // Debounced for the actual filter/map pipeline so every keystroke doesn't
   // force MapView to reconcile markers; the input itself stays instant since
@@ -193,7 +194,7 @@ function TravelApp() {
   const [priceMode, setPriceMode] = useState(init.priceMode ?? 'pp');
   const [countryFilter, setCountryFilter] = useState(init.countryFilter ?? 'all');
   const [tripKinds, setTripKinds] = useState(init.tripKinds ?? []);
-  // Rating filters (min tier 0-3; 0 = off/Any - see rating_layer.py tiers)
+  // Rating filters (min tier 0-3; 0 = off/Any, see rating_layer.py tiers)
   const [minTier, setMinTier] = useState(init.minTier ?? 0);
   const [unescoOnly, setUnescoOnly] = useState(init.unescoOnly ?? false);
   const [topBeachOnly, setTopBeachOnly] = useState(init.topBeachOnly ?? false);
@@ -217,7 +218,7 @@ function TravelApp() {
 
   // Every open: make it unmissable that Carta is built for budget travellers
   // flying Ryanair, and that other airlines aren't in the data yet. Deliberately
-  // not persisted - it should greet every visit, not just the first.
+  // not persisted, it should greet every visit, not just the first.
   const [fareNoticeDismissed, setFareNoticeDismissed] = useState(false);
   const dismissFareNotice = () => setFareNoticeDismissed(true);
 
@@ -241,7 +242,7 @@ function TravelApp() {
   // fare-date bounds used to default/clamp the depart & return pickers.
   const { data, error, dateBounds } = useAppData(init, setChoices, departDate, setDepartDate, returnDate, setReturnDate, choices.origin);
 
-  // Change the departure airport - reprices the whole app from the new origin,
+  // Change the departure airport, reprices the whole app from the new origin,
   // and moves the drive-comparison's home to that airport so plane and car both
   // depart from the same place (no stale "fly from X but drive from Brussels").
   // Declared after `data` is available so the callback can read meta.origins.
@@ -256,7 +257,7 @@ function TravelApp() {
   // top: var(--filter-h), so measuring the bar keeps the map/panels flush no
   // matter how many rows the filters wrap into. A callback ref (rather than an
   // effect keyed on some other state) so it attaches the instant the node
-  // mounts - the loading/gate/data branches above can each be the one that
+  // mounts, the loading/gate/data branches above can each be the one that
   // first renders the real filter bar, and only the ref attaching is a
   // reliable signal for that.
   const filterBarRoRef = useRef(null);
@@ -291,7 +292,7 @@ function TravelApp() {
   // Keep the URL + localStorage in sync so the view is shareable and survives a
   // reload. Only after data has loaded (so we don't clobber the shared link with
   // half-initialized state). Debounced: this fires on ~17 state values, and
-  // Safari rate-limits history.replaceState (100 calls / 30s) - rapid slider
+  // Safari rate-limits history.replaceState (100 calls / 30s), rapid slider
   // drags or favorite-toggling could hit that ceiling unthrottled.
   useEffect(() => {
     if (!data) return undefined;
@@ -333,7 +334,7 @@ function TravelApp() {
   }
 
   // Resolve whether there's an existing session before deciding whether to
-  // show the entry gate - otherwise a returning signed-in user would flash
+  // show the entry gate, otherwise a returning signed-in user would flash
   // the gate for a moment on every load.
   if (authConfigured && authLoading) {
     return (

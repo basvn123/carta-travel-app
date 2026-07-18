@@ -5,13 +5,13 @@ import React, { useState, useRef, useEffect } from 'react';
  *
  * Props:
  *   value           - single mode: selected value (string). multi mode: array of values.
- *   onChange(value) - single mode: receives the picked value. multi mode: receives the new array.
+ *   onChange(value), single mode: receives the picked value. multi mode: receives the new array.
  *   options         - Array<{ value, label, sublabel? }>
  *   placeholder     - text shown on the trigger when nothing selected
- *   searchPlaceholder - text in the search input (only shown when options ≥ searchThreshold)
- *   searchThreshold - minimum # options to show search box (default 8)
+ *   searchPlaceholder, text in the search input (only shown when options ≥ searchThreshold)
+ *   searchThreshold, minimum # options to show search box (default 8)
  *   multiple        - when true, value is an array and the menu stays open while picking
- *   multiLabel(arr) - multi mode: format the trigger label from the selected array
+ *   multiLabel(arr), multi mode: format the trigger label from the selected array
  *
  * Renders a button matching native <select> styling (filter-bar friendly), with a
  * popover list that can be search-filtered. Click outside to close. Escape closes.

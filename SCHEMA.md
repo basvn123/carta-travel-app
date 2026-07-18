@@ -1,16 +1,16 @@
-# app_data schema - v14
+# app_data schema, v14
 
 The pipeline and the React app share one contract. A trip is priced three ways,
 all from real data:
 
-1. **Getting there** - either the cheapest Ryanair round-trip for the chosen
+1. **Getting there**, either the cheapest Ryanair round-trip for the chosen
    dates, OR (for destinations within `max_drive_km` road km of home and road-
    reachable) the fuel + tolls to drive there and back. The app lets you switch
    between the two; the map can be re-priced for either mode.
-2. **Accommodation** - an Airbnb entire-home nightly estimate, adjusted for
+2. **Accommodation**, an Airbnb entire-home nightly estimate, adjusted for
    season, length-of-stay discount, and the cleaning + service fees a traveller
    actually pays.
-3. **On-the-ground** - the user's lifestyle (dinners, casual meals, fast food,
+3. **On-the-ground**, the user's lifestyle (dinners, casual meals, fast food,
    bar drinks, club nights, coffees, self-catered days) priced at the
    destination's real local rates.
 
@@ -146,7 +146,7 @@ Eurostat PLI).
       "local_transport": {          // "do I need a car here?" (category estimate)
         "car_needed": false,             // true -> a rental is added when you fly in
         "transit_quality": "excellent",  // excellent | good | limited | poor
-        "reason": "Compact and well served by public transport - skip the car.",
+        "reason": "Compact and well served by public transport, skip the car.",
         "rental_eur_per_day": 48,        // economy rental/day for this country
         "road_connected": true           // false for islands / sea-separated (no drive option)
       },
@@ -157,22 +157,22 @@ Eurostat PLI).
         "top_beach": false,              // strong, well-flagged beach (Top-beaches filter)
         "components": { "heritage": 0.96, "nature": 0.0, "iconic": 0.12, "beach": 0.0 }
       },
-      "image": {                    // schema v10 (harvest_images.py) - null if none
+      "image": {                    // schema v10 (harvest_images.py), null if none
         "url": "https://upload.wikimedia.org/.../900px-...jpg",  // sized hero (~900px)
         "hires": "https://upload.wikimedia.org/.../...jpg",      // full-res original
         "credit": "Bruges",              // Wikipedia article title
         "page": "https://en.wikipedia.org/wiki/Bruges",          // attribution link
         "source": "wikipedia"
       },
-      "activities": {               // schema v10 (harvest_activities.py) - null if none
+      "activities": {               // schema v10 (harvest_activities.py), null if none
         "source": "wikivoyage",          // opentripmap | wikivoyage | wikipedia_geosearch
         "items": [                       // up to 8 real named attractions
           { "name": "Grote Markt", "kind": "Square" },
           { "name": "Groeninge Museum", "kind": "Museum", "link": "https://..." }
         ],
-        "items_full": [                  // schema v11 - OpenTripMap-sourced dests ONLY;
+        "items_full": [                  // schema v11, OpenTripMap-sourced dests ONLY;
                                           // absent otherwise. Up to 40 sights + up to 12
-                                          // "get active" POIs, WITH coordinates - Day
+                                          // "get active" POIs, WITH coordinates, Day
                                           // Planner's pool for day-by-day assignment and
                                           // map pins. Falls back to `items` (name-only,
                                           // no coordinates) when this key is missing.
@@ -208,7 +208,7 @@ Eurostat PLI).
   `return_fare[returnDate]` for the cheapest origin, add round-trip baggage,
   multiply by group size.
 - **Airport transfer:** when the flight lands at an `anchor_airport` rather than
-  the destination itself (curated gems, and auto-anchored places - see below),
+  the destination itself (curated gems, and auto-anchored places, see below),
   `ground_transport_one_way_eur` is a per-person one-way bus/shuttle fare. The app
   counts it **round-trip, per person** and includes it in the plane total
   (`transfer_total`). It is 0 for destinations you fly straight into, and skipped
@@ -217,7 +217,7 @@ Eurostat PLI).
   (`haversine(home, dest) * road_detour_factor`) is `<= max_drive_km`. Number of
   cars = `ceil(group / car_capacity)`. Cost = `cars * 2*road_km *
   (consumption/100) * fuel_price[iso2]` (fuel) `+ cars * 2*road_km/100 *
-  toll_per_100km` (tolls). No baggage, no per-person multiply - it is already a
+  toll_per_100km` (tolls). No baggage, no per-person multiply, it is already a
   group total. Drive time = `road_km / avg_speed_kmh`.
 - **Rental at the destination:** added only in plane mode when
   `local_transport.car_needed`. Cost = `cars * nights * rental_eur_per_day[iso2]`,
@@ -252,13 +252,13 @@ Eurostat PLI).
   Ryanair flight **nor** a drive (road_connected and within `max_drive_km`).
 - **Auto-anchored destinations (`apply_airport_anchors.py`):** places with no
   Ryanair route that are not drivable but sit within 50 km of a served airport
-  (and are not islands) - i.e. that airport basically *is* the city's airport
-  (Venice Marco Polo/Treviso, Rome Ciampino/Fiumicino) - are given that airport's
+  (and are not islands), i.e. that airport basically *is* the city's airport
+  (Venice Marco Polo/Treviso, Rome Ciampino/Fiumicino), are given that airport's
   fare calendar plus an estimated transfer (`anchor_airport`,
   `ground_transport_one_way_eur` from ~0.15 EUR/road-km, floored 10 / capped 60).
   Such dests are flagged `anchor_estimated: true` and `no_ryanair_route: false`.
   Idempotent: a re-run resets prior auto-anchors first. Everything farther stays
-  `no_ryanair_route: true` - the app still shows those, flagged unreachable via
+  `no_ryanair_route: true`, the app still shows those, flagged unreachable via
   Ryanair (muted map dot + a separate list section), it just doesn't price them.
 
 ## Cost data provenance (notebook 03_costs)
@@ -266,7 +266,7 @@ Eurostat PLI).
 - Real **Numbeo** euro prices for **23 anchor countries + 22 cities** (June 2026,
   cached in `cache/numbeo_raw.json`), covering 6 dining/drink items per location.
 - `cocktail_eur` (= imported beer x 2.4) and `club_entry_eur` (Belgium-anchored,
-  PLI-scaled) are estimates - Numbeo has no direct item; see `meta.estimated_items`.
+  PLI-scaled) are estimates, Numbeo has no direct item; see `meta.estimated_items`.
 - Long-tail countries are scaled from the Belgium baseline by **Eurostat 2024
   Price Level Indices** (restaurants & hotels for dining/drinks, food for
   groceries). The notebook validates the scaling against the Numbeo anchors and
@@ -300,11 +300,11 @@ Eurostat PLI).
 
 Four layers on top of v13; every one has an `apply_*.py` and is idempotent.
 
-### 1. Traveller rating - `dest.rating` (rating_layer.py + apply_rating_layer.py)
+### 1. Traveller rating, `dest.rating` (rating_layer.py + apply_rating_layer.py)
 
 ```jsonc
 "rating": {
-  "score": 9.5,                  // 0-10, one decimal - the headline number
+  "score": 9.5,                  // 0-10, one decimal, the headline number
   "tier": 3,                     // 3 "Worth the journey" (~top 8%) | 2 "Worth a
                                  // detour" (~22%) | 1 "Worth a visit" (~35%) | 0
   "label": "Worth the journey",  // Michelin Green Guide idiom
@@ -325,11 +325,11 @@ score chip + 1-3 tier diamonds everywhere the old 1-5 gem row lived; the
 FilterBar's Beauty filter became a min-tier Rating filter (`mt` URL param, old
 `mb` links map across).
 
-### 2. Per-country tolls - `dest.driving_toll` (toll_layer.py + apply_toll_layer.py)
+### 2. Per-country tolls, `dest.driving_toll` (toll_layer.py + apply_toll_layer.py)
 
 Replaces the flat 2.2 EUR/100 km: the home->destination corridor is sampled
 along the great circle, classified per country (Natural Earth 50m polygons in
-`cache/ne_50m_admin0.geojson`), and priced with real 2026 rates - France ~8,
+`cache/ne_50m_admin0.geojson`), and priced with real 2026 rates, France ~8,
 Italy ~6.5 EUR/100 km, vignettes (AT/CH/SI/CZ/SK/HU/RO/BG) once per trip, plus
 fixed crossings (Brenner, Tauern, Storebaelt, Oresund). Stored round-trip PER
 CAR: `{ toll_rt_eur, vignettes_eur, crossings_eur, total_rt_eur, countries,
@@ -339,12 +339,12 @@ flat rate when absent; `transport.js` per-leg car costs use the per-country
 rates of the leg's endpoints and now multiply by cars needed.
 `meta.car_model.toll_model` holds the tables.
 
-### 3. Tourist premium - `costs.tourist_premium` / `accommodation.tourist_premium`
+### 3. Tourist premium, `costs.tourist_premium` / `accommodation.tourist_premium`
 (apply_tourist_premium.py)
 
 ~57 curated honeypots (Santorini, Amalfi, Venice, Zermatt, Ibiza, Hallstatt...)
-get a three-tier markup over their country basket - extreme +40% dining /
-+45% lodging, high +25%, mild +12% (groceries move half as much) - applied
+get a three-tier markup over their country basket, extreme +40% dining /
++45% lodging, high +25%, mild +12% (groceries move half as much), applied
 ONLY while the block still carries `level: "country"`; real city data wins and
 strips it. Originals live under `premium_base`, so reruns recompute cleanly.
 `meta.tourist_premium_model` documents tiers and sources.
@@ -358,16 +358,16 @@ Kos 152, Milos, Chania 148, Heraklion 111, Vienna 122, Prague 100, Munich 182,
 Malaga 172, Sevilla 109, Valencia 163, Porto 120 EUR/night whole-home medians
 (multi-island regions sliced per destination by listing lat/lon radius).
 Booking.com was evaluated and rejected as a source: no public API, ToS forbid
-scraping, Cloudflare/AWS-WAF enforcement - Inside Airbnb covers the same need
+scraping, Cloudflare/AWS-WAF enforcement, Inside Airbnb covers the same need
 legitimately. `accommodation.n_listings`/`captured` record provenance.
 
-## Schema v15 - non-Wikipedia data sources (added 2026-07-16)
+## Schema v15, non-Wikipedia data sources (added 2026-07-16)
 
 Two independent open datasets now sit alongside the Wikipedia / Wikivoyage /
 OpenTripMap pipeline (`harvest_osm_wikidata.py`, idempotent + resumable via
 `cache/osm_wikidata.json`). `meta.data_sources` records provenance/licence.
 
-### 1. OpenStreetMap (Overpass API) - thin-POI top-up
+### 1. OpenStreetMap (Overpass API), thin-POI top-up
 Destinations whose `activities.items_full` had `< 6` POIs (OpenTripMap/Wikivoyage
 covered them barely, e.g. Gallipoli 0, Kerry 0) are topped up with real OSM POIs
 (tourism=attraction|viewpoint|museum, historic=castle|monument|ruins|
@@ -377,10 +377,10 @@ capped at 2 (never the OTM-only rate-3 "must see" tier); a POI OSM has linked to
 Wikidata/Wikipedia is ranked first. `activities.osm_filled` counts the top-up.
 Licence: ODbL 1.0, (c) OpenStreetMap contributors.
 
-### 2. Wikidata (Special:EntityData) - independent notability signal
+### 2. Wikidata (Special:EntityData), independent notability signal
 `dest.wikidata = { qid, sitelinks, heritage, protected, image_p18, source }`
 (added to the 2026-07c gem batch). `sitelinks` (count of language Wikipedias) is
-a fame proxy that does NOT depend on pageviews - a cross-check for the rating
+a fame proxy that does NOT depend on pageviews, a cross-check for the rating
 layer's fame component; `heritage` (P1435) / `protected` (P3018) validate the
 beauty layer's UNESCO/heritage signals; `image_p18` is an independent image
 backstop. Licence: CC0 1.0.
@@ -401,7 +401,7 @@ Erfurt, Potsdam). All carry image, activities, beauty, rating, tolls, costs.
 `meta.accommodation_model` also gains `occupancy_exponent: 0.55` +
 `occupancy_ref_capacity: 4`: whole-home prices grow ~capacity^0.55, so the
 runtime rescales the stored 4-sleeper per-person nightly to the real group
-(x1.37 for a couple, x0.78 for seven) - fixes couples paying for half a house.
+(x1.37 for a couple, x0.78 for seven), fixes couples paying for half a house.
 
 Day planner (client-side, dayDraft.js): `poiScore()` = rate + heritage +
 Wikipedia presence + log-scaled `pop` (now filled on 6,294 POIs); the
@@ -415,14 +415,127 @@ Pipeline order (updated):
     -> apply_toll_layer -> harvest_accommodation -> apply_accommodation_anchors
     -> apply_tourist_premium -> enrich_activities apply -> sync-data (build)
 
+## Schema v16, bathing-water quality (added 2026-07-18)
+
+A third independent open data layer (`harvest_bathing_water.py`), from the
+European Environment Agency's WISE Bathing Water Quality database (Bathing
+Water Directive 2006/7/EC), the official Excellent/Good/Sufficient/Poor
+classification of ~22,000 EU + EEA bathing sites (coastal, lake and river),
+pulled from the EEA discomap ArcGIS REST service (2025 season, cached in
+`cache/eea_bathing_water.json`). Idempotent + resumable; re-download with
+`--refresh`. `meta.data_sources.eea_bathing_water` records provenance.
+
+For every destination within `radius_km` (15 km) of one or more official sites:
+
+```jsonc
+"bathing_water": {
+  "rating": "Excellent",        // median Directive class of the nearby sites (headline)
+  "excellent_pct": 89,          // share of nearby sites rated Excellent (latest season)
+  "n_sites": 19,                // classified bathing sites inside the radius
+  "counts": { "Excellent": 17, "Good": 2 },   // per-class tallies (zeros dropped)
+  "water_types": ["Coastal"],   // any of Coastal / Lake / River / Transitional
+  "nearest": {                  // closest classified site (a "which beach" hint)
+    "name": "PLAYA DE LA BARCELONETA PM1",   // EEA name, ALL CAPS, title-cased in the UI
+    "class": "Good", "dist_km": 1.0, "type": "Coastal",
+    "profile": "https://..."    // national bathing-water profile deep link (may be null)
+  },
+  "trend": "improving",         // vs three seasons earlier: improving | stable | declining
+  "radius_km": 15, "year": 2025, "source": "eea_wise_2025"
+}
+```
+
+898 destinations carry a block (inland cities near no official site get none).
+The data is attached to all of them, but the UI only SHOWS it for swim-relevant
+places (`swimRelevant()` in `components/WaterQualityBadge.jsx`, categories
+beach/coast/island/lake/surf/diving/sailing/fjord), so an inland city near a
+new river bathing site (e.g. the Seine at Paris) does not get a scary pill.
+`WaterQualityBadge` renders the colour-coded pill in the DetailPanel rating row
+(labelled) and the ResultsList sub-row (icon-only); `knownForFacts` adds a
+"Water quality" fact row. Class words use the official Directive translations
+(`water.*` i18n keys, 6 languages). `useDestinationSearch` copies
+`bathing_water` onto the priced row so the list badge can read it.
+
+Pipeline: run `harvest_bathing_water.py` any time after the catalogue is built
+(it only reads coords), then `npm run data` / dev / build ships it.
+
+## Schema v17, regional crowding / tourism density (added 2026-07-18)
+
+The JRC European Tourism Dashboard's Tourism Density indicator
+(`harvest_tourism_density.py`), from two official Eurostat open sources:
+
+- `tour_occ_nin3`, nights spent at tourist accommodation per NUTS 3 region
+  (Eurostat JSON API; latest available year per region, cached in
+  `cache/eurostat_nights_nuts3.json`).
+- GISCO NUTS 3 2021 boundaries (1:10M GeoJSON, `cache/nuts3_2021.geojson`) -
+  used for point-in-polygon (shapely STRtree) AND to compute each region's land
+  area with a spherical-polygon formula (no projection dependency).
+
+density = nights / area_km2; regions ranked into four tiers by the log-density
+distribution (25/50/75 percentiles). Each destination is placed in its NUTS 3
+region by point-in-polygon (with a small nearest-region fallback for coastal
+points just outside the generalised boundary):
+
+```jsonc
+"crowding": {
+  "nights_per_km2": 5343,       // regional tourism density (int)
+  "tier": 3,                    // 0 quiet | 1 moderate | 2 busy | 3 crowded
+  "label": "Crowded",
+  "nuts3": "ES511",             // region code
+  "region": "Barcelona",        // region name
+  "year": 2024,                 // reference year of the nights figure
+  "source": "jrc_eurostat_nuts3"
+}
+```
+
+1389 destinations carry a block. `meta.crowding_model` holds the tier cutoffs.
+**UK destinations get no block**, the UK stopped reporting tourism nights to
+Eurostat post-Brexit (honest gap, not faked). NUTS 3 is province-level, so a
+famous village in a large rural province can read lower than it feels (e.g.
+Hallstatt = Busy, not Crowded), inherent to regional data.
+
+UI: `components/CrowdingBadge.jsx`. To keep the DetailPanel header uncluttered
+the pill shows only the actionable extremes, Quiet (dodge the crowds) and
+Crowded (a heads-up) via `crowdBadgeWorthShowing()`; all four tiers appear in
+the `knownForFacts` "Crowds" row. i18n `crowd.*` keys, 6 languages.
+`useDestinationSearch` copies `crowding` onto the priced row.
+
+Pairs with (but is independent of) `rating.hidden_gem` (fame-based) and the
+curated `tourist_premium` honeypots: crowding is an objective regional measure.
+
+## POI expansion, lifting the 52-cap (built 2026-07-18, apply pending)
+
+`activities.items_full` is capped at 52 (40 OpenTripMap sights + 12 active).
+Measured, that truncates a real 3-9x of available sightseeing POIs (Barcelona
+52 -> 465 net-new named OSM POIs, Rome 475). Two harvesters were built to lift
+it; both keep the sightseeing taxonomy only (no restaurants/shops), cap OSM/
+Overture rate at 2 (never the rate-3 must-see tier), and dedup vs existing
+items_full by folded name. No UI work needed, existing items_full consumers
+(day-planner pins, DetailPanel) just get more entries.
+
+- `harvest_pois_osm.py`, per-destination Overpass (node-only, explicit historic
+  values; the catch-all `[historic]` + ways times out in cities). Fine for a few
+  hundred dests; does NOT scale to the full 24k catalogue (ban risk).
+- `harvest_pois_overture.py`, THE scalable path. `extract` runs one DuckDB
+  query over the Overture Maps places GeoParquet (release 2026-06-17.0) for the
+  Europe bbox, sightseeing categories + named + confidence>=0.5, to
+  `cache/overture_pois_eu.parquet` (807,130 POIs, 26 MB, done). `assign` KD-tree
+  matches every dest to POIs within 5 km, merges to a 150 cap. Adds
+  `items_full[].src: "overture"` and `activities.overture_added`. Needs
+  duckdb + scipy.
+
+APPLY IS DEFERRED: a concurrent session expanded the catalogue (1570 -> 24803
+GeoNames dests) mid-session and re-patches app_data.json. Run the real
+`python harvest_pois_overture.py assign` + `npm run data` only once that
+harvest is finished, or it will be clobbered.
+
 ## Served data split (added 2026-07-12)
 
 The master `app_data/app_data.json` is unchanged, but `continent-app/scripts/sync-data.mjs`
 now splits it for the wire at dev/build time:
 
-- `public/app_data.json` — core dataset; `activities.items_full` and `image.hires` removed
-- `public/activities_full.json` — `{ destinationId: items_full }`, lazy-fetched by the Day planner
-- `public/country_insights.json` — copy of `app_data/country_insights.json` (schema v1):
+- `public/app_data.json`: core dataset; `activities.items_full` and `image.hires` removed
+- `public/activities_full.json`: `{ destinationId: items_full }`, lazy-fetched by the Day planner
+- `public/country_insights.json`: copy of `app_data/country_insights.json` (schema v1):
   `{ generated_at, schema_version, countries: { <Country Name>: { iso2, currency, languages,
   budget_level, daily_budget_eur:[lo,hi], best_months, best_time_note, rail{operator,url,note},
   bus{operators,url,note}, driving{side,vignette,tolls,warnings,car_recommended_for,car_not_needed_in},

@@ -25,3 +25,4 @@ logs/
 
 # Inside Airbnb raw downloads (harvest_accommodation.py re-fetches them)
 cache/iab/
+cache/worldclim/

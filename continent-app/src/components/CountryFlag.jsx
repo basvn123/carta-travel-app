@@ -1,10 +1,10 @@
 import React from 'react';
 
 /**
- * Simplified inline-SVG country flags (3:2), sized for tiny UI tiles - saved
+ * Simplified inline-SVG country flags (3:2), sized for tiny UI tiles, saved
  * trip cards, wizard chips. Deliberately reduced: at 15 px a coat of arms is
  * noise, so complex emblems become their dominant shapes. SVG (not emoji
- * flags) per the app's icon rules - and emoji flags don't render on Windows.
+ * flags) per the app's icon rules, and emoji flags don't render on Windows.
  */
 
 // Horizontal stripes, top to bottom. h = relative heights (default equal).

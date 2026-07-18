@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from 'react';
+import { useI18n } from '../i18n/index.jsx';
 import { DAY_STYLES, DAY_LENGTHS, WALK_LEVELS, cityAreaOptions } from './dayDraft.js';
 import {
   SparkIcon, CastleIcon, MuseumIcon, TreeIcon, DiningIcon, CameraIcon,
@@ -15,9 +16,9 @@ const STYLE_ICONS = {
 // One "pace" answer instead of two separate knobs (how much to do + how long
 // per stop): each choice sets both, so it stays a single intuitive decision.
 const PACE_CHOICES = [
-  { key: 'relaxed', label: 'Take it easy', fill: 'light', visit: 'deep' },
-  { key: 'balanced', label: 'A good balance', fill: 'balanced', visit: 'standard' },
-  { key: 'packed', label: 'See a lot', fill: 'packed', visit: 'quick' },
+  { key: 'relaxed', labelKey: 'shape.paceRelaxed', label: 'Take it easy', fill: 'light', visit: 'deep' },
+  { key: 'balanced', labelKey: 'shape.paceBalanced', label: 'A good balance', fill: 'balanced', visit: 'standard' },
+  { key: 'packed', labelKey: 'shape.pacePacked', label: 'See a lot', fill: 'packed', visit: 'quick' },
 ];
 const paceFromPrefs = (initial) => {
   if (initial?.fill === 'light') return 'relaxed';
@@ -26,17 +27,17 @@ const paceFromPrefs = (initial) => {
 };
 
 /**
- * "Let Carta plan" - the inline replacement for the old Shape-your-day modal
+ * "Let Carta plan", the inline replacement for the old Shape-your-day modal
  * wizard. One compact screen in the planner's own rail (no overlay, the big
  * map stays visible), every answer pre-selected to a sensible default, so a
  * single tap on Draft is already a good plan.
  *
  * It drafts the SELECTED day ("Shape day 3"), or every day of this city when
- * the traveller flips the scope chip - never other cities of the plan.
+ * the traveller flips the scope chip, never other cities of the plan.
  *
  * For large cities it adds the one question that keeps a draft honest: WHERE
  * the day should focus. The options come from the data itself (city centre /
- * around the stay / anywhere in reach - see cityAreaOptions); when everything
+ * around the stay / anywhere in reach, see cityAreaOptions); when everything
  * already sits in the centre the question simply doesn't appear.
  *
  *   city        city name (copy only), cityDest  the destination record
@@ -53,6 +54,7 @@ export function CartaPlanPanel({
   city, cityDest, dayNumber, numDays, items, walkable, stayPoint,
   initial, onDraft, onClose,
 }) {
+  const { t } = useI18n();
   const [scope, setScope] = useState('day');
   const [styleKey, setStyleKey] = useState(initial?.style || 'mix');
   const [dayLen, setDayLen] = useState(initial?.dayLen || 'full');
@@ -88,7 +90,7 @@ export function CartaPlanPanel({
     });
   };
 
-  // A labelled row of small chips - every question reads the same way.
+  // A labelled row of small chips, every question reads the same way.
   const chipRow = (label, options, activeKey, onPick) => (
     <div className="carta-plan-row">
       <span className="carta-plan-q">{label}</span>
@@ -102,7 +104,7 @@ export function CartaPlanPanel({
             aria-pressed={activeKey === o.key}
             title={o.desc || undefined}
           >
-            {o.label}
+            {o.labelKey ? t(o.labelKey) : o.label}
           </button>
         ))}
       </div>
@@ -113,22 +115,21 @@ export function CartaPlanPanel({
     <div className="trip-block carta-plan-panel">
       <div className="carta-plan-head">
         <span className="carta-plan-title">
-          <SparkIcon size={13} /> Shape day {dayNumber} in {city}
+          <SparkIcon size={13} /> {t('shape.title', { n: dayNumber, city })}
         </span>
-        <button className="carta-plan-close" onClick={onClose} aria-label="Close" title="Close">×</button>
+        <button className="carta-plan-close" onClick={onClose} aria-label={t('shape.close')} title={t('shape.close')}>×</button>
       </div>
       <p className="carta-plan-lead">
-        Everything below is already set to a sensible default - change what you
-        like and tap Draft. You can still add, remove or reorder afterwards.
+        {t('shape.lead')}
       </p>
 
-      {numDays > 1 && chipRow('Plan', [
-        { key: 'day', label: `Just day ${dayNumber}` },
-        { key: 'stay', label: `All ${numDays} days here` },
+      {numDays > 1 && chipRow(t('shape.plan'), [
+        { key: 'day', label: t('shape.justDay', { n: dayNumber }) },
+        { key: 'stay', label: t('shape.allDaysHere', { n: numDays }) },
       ], scope, setScope)}
 
       <div className="carta-plan-row">
-        <span className="carta-plan-q">What kind of day?</span>
+        <span className="carta-plan-q">{t('shape.kindOfDay')}</span>
         <div className="day-guide-moods carta-plan-moods">
           {DAY_STYLES.map((s) => {
             const Icon = STYLE_ICONS[s.key] || SparkIcon;
@@ -153,7 +154,7 @@ export function CartaPlanPanel({
           the catalogue genuinely sprawls beyond the centre. */}
       {areaOptions.length > 1 && (
         <div className="carta-plan-row">
-          <span className="carta-plan-q">Which part of {city}?</span>
+          <span className="carta-plan-q">{t('shape.whichPart', { city })}</span>
           <div className="carta-area-list">
             {areaOptions.map((o) => (
               <button
@@ -167,20 +168,20 @@ export function CartaPlanPanel({
                   <b>{o.label}</b>
                   <small>{o.sub}</small>
                 </span>
-                <span className="carta-area-count">{o.count} places</span>
+                <span className="carta-area-count">{t('shape.nPlaces', { n: o.count })}</span>
               </button>
             ))}
           </div>
         </div>
       )}
 
-      {chipRow('How long are you out?', DAY_LENGTHS, dayLen, setDayLen)}
-      {chipRow('How much walking?', WALK_LEVELS, walk, setWalk)}
-      {chipRow('The pace?', PACE_CHOICES, pace, setPace)}
+      {chipRow(t('shape.howLong'), DAY_LENGTHS, dayLen, setDayLen)}
+      {chipRow(t('shape.howMuchWalking'), WALK_LEVELS, walk, setWalk)}
+      {chipRow(t('shape.pace'), PACE_CHOICES, pace, setPace)}
 
       <button className="day-carta-btn carta-plan-go" onClick={draft}>
         <SparkIcon size={12} />
-        {scope === 'stay' ? `Draft all ${numDays} days` : `Draft day ${dayNumber}`}
+        {scope === 'stay' ? t('shape.draftAllDays', { n: numDays }) : t('shape.draftDay', { n: dayNumber })}
       </button>
     </div>
   );

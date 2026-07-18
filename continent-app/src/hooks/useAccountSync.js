@@ -26,7 +26,7 @@ export function useAccountSync({
   const settingsAppliedRef = useRef(false);
 
   // Pull the signed-in user's saved settings once, right after login (never
-  // when a shared link is already driving the view - see cameFromUrl above).
+  // when a shared link is already driving the view, see cameFromUrl above).
   useEffect(() => {
     if (!user || cameFromUrl || settingsAppliedRef.current) return;
     settingsAppliedRef.current = true;
@@ -34,7 +34,7 @@ export function useAccountSync({
       if (!settings) return;
       if (settings.choices) {
         // The departure airport chosen on THIS device wins over the one in the
-        // account snapshot - otherwise changing "flying from" didn't survive a
+        // account snapshot, otherwise changing "flying from" didn't survive a
         // fresh open (the older synced origin silently clobbered it).
         const incoming = { ...settings.choices };
         if (hasLocalOrigin) {

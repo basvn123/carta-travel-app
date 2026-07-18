@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect, useMemo } from 'react';
 
 /**
- * Custom calendar date field - matches the editorial paper/ink/rust palette.
+ * Custom calendar date field, matches the editorial paper/ink/rust palette.
  *
  * Replaces the native <input type="date">, whose popup calendar is rendered by
  * the browser/OS (white chrome, blue selection) and cannot be styled with CSS.
@@ -67,7 +67,7 @@ export function DateField({ value, onChange, min, max, placeholder = 'Select…'
     if (open && sel) setView({ y: sel.y, m: sel.m });
   }, [open]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Close on outside click / Escape - same convention as Dropdown.
+  // Close on outside click / Escape, same convention as Dropdown.
   useEffect(() => {
     if (!open) return;
     const onClickOutside = (e) => {

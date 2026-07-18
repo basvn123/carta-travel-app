@@ -1,12 +1,12 @@
 /**
- * wizardFlights.js - helpers for the guided wizard's period-first flow:
+ * wizardFlights.js, helpers for the guided wizard's period-first flow:
  *   1. monthOptions()        - the months covered by the fare data window, for
  *      the "I'm flexible" month chips.
  *   2. flyInOptions()        - every Ryanair route into the chosen countries,
  *      priced for the chosen period (exact start date, or cheapest date in the
  *      flexible window), sorted cheapest-first. The traveller picks ONE as the
  *      trip's arrival anchor.
- *   3. orderStaysFromAnchor() - nearest-neighbour ordering of the chosen stay
+ *   3. orderStaysFromAnchor(), nearest-neighbour ordering of the chosen stay
  *      cities, starting from the fly-in airport's city, so Carta hands the
  *      planner a route that already flows sensibly from arrival.
  */
@@ -44,7 +44,7 @@ function minFare(fares, monthPrefix) {
  * actually fly into to reach the chosen countries, priced for the chosen
  * period.
  *
- * You never fly "to" a gem like Cuenca - you fly to Madrid (MAD) and drive.
+ * You never fly "to" a gem like Cuenca, you fly to Madrid (MAD) and drive.
  * So every bookable (origin -> arrival-airport) fare that lands you in the
  * chosen countries is grouped by the airport it lands at, and each airport is
  * emitted once, placed at the airport city itself. The gems and towns reached

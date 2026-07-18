@@ -115,7 +115,7 @@ export function FilterBar({
 
   // Minimum rating tier (0 = Any/off). Tiers follow the Michelin Green Guide
   // idiom (rating_layer.py): 1 = worth a visit, 2 = worth a detour,
-  // 3 = worth the journey - so each step reads as advice, not a number.
+  // 3 = worth the journey, so each step reads as advice, not a number.
   const RATING_STEPS = [
     { v: 0, label: t('rating.any'), title: t('rating.anyTitle') },
     { v: 1, label: t('rating.visit'), title: t('rating.visitTitle') },

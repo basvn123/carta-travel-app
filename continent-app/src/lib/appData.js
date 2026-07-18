@@ -1,5 +1,5 @@
 /**
- * appData.js - data-file loading, shared across the app.
+ * appData.js, data-file loading, shared across the app.
  *
  * The main dataset download starts the moment the bundle is evaluated (module
  * scope), so it runs in parallel with React booting instead of waiting for the

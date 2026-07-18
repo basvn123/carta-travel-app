@@ -1,13 +1,13 @@
 /**
- * kmlExport.js - hand a whole trip to Google Maps with everything we know.
+ * kmlExport.js, hand a whole trip to Google Maps with everything we know.
  *
  * A plain Google Maps directions link can only carry 9 waypoints (3 on mobile
  * browsers) and no names, notes or days. A KML file has no such limits: every
  * stop keeps its name, photo, description, visit time and links, days become
  * folders, and the walking route is drawn as a line. The traveller imports it
  * once at Google My Maps (mymaps.google.com > Create a new map > Import) and
- * then has the full trip - openable in the Google Maps app under
- * Saved > Maps - with far more information than any share link can carry.
+ * then has the full trip, openable in the Google Maps app under
+ * Saved > Maps, with far more information than any share link can carry.
  *
  * Composers take plain data (no component helpers), so both planners can use
  * them: tripKml() for the multi-city itinerary, dayPlanKml() for planned days.
@@ -160,7 +160,7 @@ export function tripKml({ label, stopDetails = [], dayPlan = [], fmtDate = (d) =
  * OSRM geometry when available, else pin-to-pin) drawn as a coloured line.
  *
  * days: [{
- *   label,                     e.g. 'Day 3 - Como (Mon 04 Aug)'
+ *   label,                     e.g. 'Day 3, Como (Mon 04 Aug)'
  *   city,
  *   stay: { lat, lon, label } | null,
  *   items: [{ name, lat, lon, kind, desc, wiki, img, dwellMin, mustSee }],

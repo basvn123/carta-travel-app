@@ -1,5 +1,5 @@
 /**
- * routing.js - turn an ordered list of day-plan stops into (a) a real walking
+ * routing.js, turn an ordered list of day-plan stops into (a) a real walking
  * route we can draw on our own map, and (b) a Google Maps link the traveller
  * can open and navigate.
  *
@@ -22,7 +22,7 @@ const OSRM_PROFILES = {
 // OSRM's foot/driving profiles route over ferries (a lake or sea crossing is a
 // legitimate leg of the journey), and it returns those segments as straight
 // lines across the water. Drawn and timed like the rest of the path, they read
-// as "walk across the lake" - which is impossible. We split the route by travel
+// as "walk across the lake", which is impossible. We split the route by travel
 // mode so the map can draw ferry legs as a distinct over-water line and the
 // itinerary can call them ferries, not walks.
 const isFerryStep = (s) => s?.mode === 'ferry';
@@ -113,7 +113,7 @@ const MAX_GMAPS_WAYPOINTS = 9;
 /** Build a Google Maps directions URL through the ordered points.
  *  Each point is { lat, lon, name? }. Google renders a bare "lat,lng" stop as a
  *  nameless "Dropped pin", while a place name geocodes to the real listing
- *  (name, photos, hours) - so pass name whenever one is known, disambiguated
+ *  (name, photos, hours), so pass name whenever one is known, disambiguated
  *  with its city ("Duomo di Como, Como"). Coordinates stay the fallback.
  *  mode: 'walking' | 'driving' | 'bicycling' | 'transit'. Returns null if there
  *  aren't at least two points with coordinates. */

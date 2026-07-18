@@ -1,12 +1,12 @@
 /**
- * transport.js - per-leg overland transport options between two stops.
+ * transport.js, per-leg overland transport options between two stops.
  *
  * For every consecutive pair of stops the planner offers THREE priced ways to
  * travel (train / bus / car), each an honest distance-based ESTIMATE (there is
  * no free live intercity fare API), plus deep links to check & book the real
  * thing: the departure country's rail operator (from country_insights), FlixBus,
  * and Google Maps directions. Car costs come from the pipeline's car_model
- * (per-country petrol prices, EUR/100km tolls), split across the group - which
+ * (per-country petrol prices, EUR/100km tolls), split across the group, which
  * is exactly why a car often wins for 3-4 people and loses for solo travellers.
  */
 import { haversineKm, withCityCoords } from './runtime_pricing.js';
@@ -50,7 +50,7 @@ export function insightFor(dest, countryInsights) {
 export function legTransportOptions(destA, destB, groupSize = 1, { carModel = null, countryInsights = null } = {}) {
   // Ground legs run town to town: for airport-tier stops the raw lat/lon is
   // the runway (Skavsta is 90 km from Stockholm), so measure from the city
-  // centre instead - the flight is the only leg that belongs at the airport.
+  // centre instead, the flight is the only leg that belongs at the airport.
   destA = withCityCoords(destA);
   destB = withCityCoords(destB);
   if (!destA || !destB || destA.lat == null || destB.lat == null) return null;
@@ -118,7 +118,7 @@ export function legTransportOptions(destA, destB, groupSize = 1, { carModel = nu
   const petrolB = fuelByIso[destB.iso2] ?? cm.fuel_price_eur_per_l ?? 1.8;
   const petrol = (petrolA + petrolB) / 2;
   const lPer100 = cm.consumption_l_per_100km ?? 6.5;
-  // Big groups fill more than one car - fuel and tolls scale with car count
+  // Big groups fill more than one car, fuel and tolls scale with car count
   // (previously this leg quietly assumed a single car for any group size).
   const cars = Math.max(1, Math.ceil(group / Math.max(1, cm.car_capacity || 4)));
   const fuelEur = cars * (roadKm / 100) * lPer100 * petrol;
@@ -152,7 +152,7 @@ export function legTransportOptions(destA, destB, groupSize = 1, { carModel = nu
   const score = (m) => m.eur_pp + m.hours * 3;
   const modes = { train, bus, car };
   // Same honesty rule the day planner applies: where either end has no real
-  // rail (transit_quality 'poor'), don't offer - let alone recommend - a train.
+  // rail (transit_quality 'poor'), don't offer, let alone recommend, a train.
   const trainDropped = ltA.transit_quality === 'poor' || ltB.transit_quality === 'poor';
   if (trainDropped) delete modes.train;
   const recommended = Object.entries(modes).sort((a, b) => score(a[1]) - score(b[1]))[0][0];
@@ -173,7 +173,7 @@ export function legTransportOptions(destA, destB, groupSize = 1, { carModel = nu
 /**
  * Should this trip have a car? Looks at how many stops are genuinely hard
  * without one (local_transport.car_needed) and at the group size, and returns
- * a recommendation the wizard/planner can show - with the reasons.
+ * a recommendation the wizard/planner can show, with the reasons.
  *
  * @param dests array of destination records (the trip's stops, in order)
  * @returns { verdict: 'yes'|'maybe'|'no', carStops: [city], reasons: [..] }
@@ -206,7 +206,7 @@ export function carAdvice(dests, groupSize = 1, countryInsights = null) {
 
 /** Rental-car cost for the whole trip (group total), from the pipeline's
  *  car_model: per-country day rate x seasonality x weekly discount. Groups
- *  bigger than one car's capacity pay for as many cars as they fill - the
+ *  bigger than one car's capacity pay for as many cars as they fill, the
  *  same carsForGroup rule the Map tab's pricing applies. */
 export function rentalEstimate(carModel, iso2, days, startDate, groupSize = 1) {
   if (!carModel || !days || days <= 0) return null;

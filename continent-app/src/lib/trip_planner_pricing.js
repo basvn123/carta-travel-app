@@ -5,12 +5,12 @@
  * data rather than any new fare source:
  *   1. combineTripLegs   - fly into one destination, out of another, using each
  *      destination's own real (already-fetched) one-way-equivalent Ryanair fares.
- *      No open-jaw fare fetching - both legs must share a common origin airport.
- *   2. interCityGroundEstimate - a distance-based cost/time estimate for getting
+ *      No open-jaw fare fetching, both legs must share a common origin airport.
+ *   2. interCityGroundEstimate, a distance-based cost/time estimate for getting
  *      between two stops overland (train/bus/rideshare). No free live pricing API
  *      for intercity ground transport exists, so this is always clearly flagged
  *      as an estimate, never presented as a bookable fare.
- *   3. suggestNextStops - candidate next stops for an itinerary: destinations that
+ *   3. suggestNextStops, candidate next stops for an itinerary: destinations that
  *      share an origin airport with the current stop (the binding constraint for
  *      combineTripLegs to work at all), ranked by distance + beauty.
  */
@@ -47,7 +47,7 @@ export function baggageLabel(key) {
 }
 
 /** Real fares for flying into `destA` and out of `destB`, combined from each
- *  destination's own routes data - not a new open-jaw fare lookup. Both legs
+ *  destination's own routes data, not a new open-jaw fare lookup. Both legs
  *  must resolve from the SAME origin airport (BRU or CRL); picks whichever
  *  shared origin is cheaper when both work.
  *
@@ -132,8 +132,7 @@ export function combineTripLegs(destA, arriveDate, destB, departDate, groupSize 
 
 // Why a trip's round flight couldn't be priced, in plain traveller language.
 // Shared so every surface that shows a trip (the planner's Trip total, the
-// planned Overview, the export) explains a missing flight plan identically -
-// never a message in one place and a silent gap in another.
+// planned Overview, the export) explains a missing flight plan identically, // never a message in one place and a silent gap in another.
 const FLIGHT_REASON_LABELS = {
   no_shared_origin: "These two stops don't share a Ryanair origin airport, so there's no single flight plan connecting them. Try a different first or last stop, or fly home and out again.",
   no_fare_for_date: 'No fare is stored for one of these exact dates yet. Try nudging the trip dates.',
@@ -153,13 +152,13 @@ const GROUND_KMH = 65;              // average effective speed including stops/t
 const GROUND_LONG_HAUL_KM = 800;    // beyond this, ground transport stops being a realistic recommendation
 
 /** Estimated cost/time to get from `destA` to `destB` overland (train/bus/
- *  rideshare) - not a live fare, since no free universal pricing API for
+ *  rideshare), not a live fare, since no free universal pricing API for
  *  intercity ground transport exists. Uses the same road-detour-factor
  *  approach as the app's existing airport-transfer and driving estimates, but
  *  WITHOUT their short-transfer EUR cap (that cap is tuned for ~city<->airport
  *  distances, not city-to-city legs that can run into the hundreds of km).
  *  Returns null when either endpoint isn't road-connected (islands / sea
- *  crossings - same signal `drivingEstimate()` uses).
+ *  crossings, same signal `drivingEstimate()` uses).
  */
 export function interCityGroundEstimate(destA, destB, groupSize = 1) {
   if (!destA || !destB || destA.lat == null || destB.lat == null) return null;
@@ -211,7 +210,7 @@ function activityCount(d) {
 export function gemScore(d) {
   if (!d) return 0;
   const b = d.beauty || {};
-  // The v14 traveller rating already blends beauty, POI depth and fame - use
+  // The v14 traveller rating already blends beauty, POI depth and fame, use
   // it as the base when present (beauty score as the pre-v14 fallback).
   let s = d.rating?.score ?? b.score ?? 0;
   if (d.rating?.hidden_gem) s += 1.6;                   // underrated - surface it
@@ -248,11 +247,11 @@ function suggestionReason(d) {
  *  from the current stop (a real ground leg), or (b) shares a Ryanair origin
  *  with the FIRST stop so that, if it becomes the new last stop, the round
  *  flight still combines. We no longer require sharing an airport with the
- *  *current* stop specifically - that filtered out most of the beautiful
+ *  *current* stop specifically, that filtered out most of the beautiful
  *  villages you reach by ground, which is exactly what this tab is for.
  *
  *  Ranking is gemScore-led (see above) with a gentle distance preference and
- *  small boosts for a confirmed same-day fare and flight-combinability - so
+ *  small boosts for a confirmed same-day fare and flight-combinability, so
  *  places like Alberobello, Matera or Hallstatt rise above generic airport
  *  cities that merely happen to be nearby.
  *
@@ -263,7 +262,7 @@ function suggestionReason(d) {
  *  @param opts.maxKm  straight-line cutoff (default 500km)
  *  @param opts.limit  how many to return (default 6)
  *  @param opts.excludeIds        destination ids already on the itinerary
- *  @param opts.excludeCountries  countries already on the itinerary - suggest
+ *  @param opts.excludeCountries  countries already on the itinerary, suggest
  *                                somewhere NEW, not more of the same country
  *  @returns [{ id, city, country, iso2, lat, lon, km, gems, rating, beauty, gem_score,
  *              image, reason, shared_origin, ground_reachable, fare_that_day_eur }]

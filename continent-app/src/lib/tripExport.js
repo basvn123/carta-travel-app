@@ -1,10 +1,10 @@
 /**
- * tripExport.js - share a planned trip and download it as a PDF.
+ * tripExport.js, share a planned trip and download it as a PDF.
  *
  * Share uses the Web Share API where it exists (phones), and falls back to
  * copying the summary to the clipboard (desktop). The PDF goes through the
  * browser's print-to-PDF pipeline: we open a clean printable document and
- * call print() - no PDF library, works offline, and the traveller can pick
+ * call print(), no PDF library, works offline, and the traveller can pick
  * "Save as PDF" in the dialog.
  */
 
@@ -21,7 +21,7 @@ function fmtLong(iso) {
   return `${wd} ${String(d).padStart(2, '0')} ${MONTHS[m - 1]} ${y}`;
 }
 
-/** ", 19:45-21:45" - the priced flight's local dep/arr hours, when stored. */
+/** ", 19:45-21:45", the priced flight's local dep/arr hours, when stored. */
 function timesSuffix(time) {
   const ft = flightTimes(time);
   if (!ft) return '';
@@ -35,7 +35,7 @@ function esc(s) {
 }
 
 /** Plain-text itinerary, used for sharing. */
-export function tripSummaryText({ label, stopDetails, flight, grandTotal, groupSize }) {
+export function tripSummaryText({ label, stopDetails, flight, anchorLegs, grandTotal, groupSize }) {
   const lines = [];
   lines.push(label || 'My trip');
   const first = stopDetails[0];
@@ -43,10 +43,12 @@ export function tripSummaryText({ label, stopDetails, flight, grandTotal, groupS
   if (first?.arriveDate) lines.push(`${fmtLong(first.arriveDate)} to ${fmtLong(last?.departDate)}`);
   lines.push('');
   if (flight?.combinable) lines.push(`Fly ${flight.origin} to ${flight.into_anchor}${timesSuffix(flight.into_time)}`);
+  if (anchorLegs?.in?.ground_total) lines.push(`Then ${anchorLegs.anchor?.city} to ${first?.dest?.city} by ${anchorLegs.in.mode}`);
   stopDetails.forEach((s, i) => {
     if (!s.dest) return;
     lines.push(`${i + 1}. ${s.dest.city}, ${s.dest.country} - ${s.nights} ${s.nights === 1 ? 'night' : 'nights'} (${fmtLong(s.arriveDate)})`);
   });
+  if (anchorLegs?.out?.ground_total) lines.push(`Then ${last?.dest?.city} to ${anchorLegs.anchor?.city} by ${anchorLegs.out.mode}`);
   if (flight?.combinable) lines.push(`Fly home ${flight.out_anchor} to ${flight.origin}${timesSuffix(flight.out_of_time)}`);
   if (flight && !flight.combinable) lines.push(`Flights: ${flightReasonLabel(flight.reason)}`);
   if (grandTotal != null) {
@@ -79,8 +81,8 @@ export async function shareTrip(trip) {
   }
 }
 
-/** Printable HTML for the trip - opened in a new window for print-to-PDF. */
-function tripPrintHtml({ label, stopDetails, dayPlan = [], flight, legs = [], stayCosts = [], carRental, grandTotal, groupSize }) {
+/** Printable HTML for the trip, opened in a new window for print-to-PDF. */
+function tripPrintHtml({ label, stopDetails, dayPlan = [], flight, legs = [], anchorLegs = null, stayCosts = [], carRental, grandTotal, groupSize }) {
   const first = stopDetails[0];
   const last = stopDetails[stopDetails.length - 1];
   const rows = [];
@@ -92,6 +94,12 @@ function tripPrintHtml({ label, stopDetails, dayPlan = [], flight, legs = [], st
     if (flight.ground_total > 0) rows.push(`<tr><td>Airport transfers</td><td>${esc(eur(flight.ground_total))}</td></tr>`);
   } else if (flight) {
     rows.push(`<tr><td colspan="2" class="note">Flights: ${esc(flightReasonLabel(flight.reason))}</td></tr>`);
+  }
+  if (anchorLegs?.in?.ground_total) {
+    rows.push(`<tr><td>${esc(anchorLegs.anchor?.city)} &rarr; ${esc(first?.dest?.city)} (${esc(anchorLegs.in.mode)}, estimate)</td><td>${esc(eur(anchorLegs.in.ground_total))}</td></tr>`);
+  }
+  if (anchorLegs?.out?.ground_total) {
+    rows.push(`<tr><td>${esc(last?.dest?.city)} &rarr; ${esc(anchorLegs.anchor?.city)} (${esc(anchorLegs.out.mode)}, estimate)</td><td>${esc(eur(anchorLegs.out.ground_total))}</td></tr>`);
   }
   legs.forEach((l, i) => {
     if (!l || !l.ground_total) return;
@@ -158,7 +166,7 @@ function tripPrintHtml({ label, stopDetails, dayPlan = [], flight, legs = [], st
 
 /** Open the print dialog on a clean document; "Save as PDF" does the rest. */
 export function downloadTripPdf(trip) {
-  // NB: no `noopener` here - it makes window.open() return null, and we need
+  // NB: no `noopener` here, it makes window.open() return null, and we need
   // the reference to write the printable document into the new window.
   const w = window.open('', '_blank', 'width=760,height=900');
   if (!w) return false;

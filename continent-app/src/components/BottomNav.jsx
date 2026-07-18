@@ -9,7 +9,7 @@ const ITEMS = [
 ];
 
 // Bottom navigation (Strava-style icon + label tabs), the Map/Trip planner/
-// Day planner switch on MOBILE - on desktop it's hidden by CSS and the same
+// Day planner switch on MOBILE, on desktop it's hidden by CSS and the same
 // tabs render in the AppHeader instead (.header-nav). Includes a Saved trips
 // button that opens the saved-trips panel over the current tab.
 export function BottomNav({ activeTab, onChangeTab, savedOpen, onToggleSaved }) {

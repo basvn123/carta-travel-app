@@ -1,12 +1,12 @@
 /**
- * runtime_pricing.js - schema v7
+ * runtime_pricing.js, schema v7
  *
  * Three layers, all from real data:
- *   1. Flights - cheapest Ryanair round-trip for the chosen dates (dest.routes).
- *   2. Accommodation - an Airbnb entire-home nightly estimate (dest.accommodation),
+ *   1. Flights, cheapest Ryanair round-trip for the chosen dates (dest.routes).
+ *   2. Accommodation, an Airbnb entire-home nightly estimate (dest.accommodation),
  *      adjusted for season, length-of-stay discount, cleaning + service fees so it
  *      matches what a traveller actually pays. Params: meta.accommodation_model.
- *   3. On-the-ground - the user's lifestyle (dinners/lunches/drinks/coffees/
+ *   3. On-the-ground, the user's lifestyle (dinners/lunches/drinks/coffees/
  *      self-catered days) priced at the destination's real local rates
  *      (dest.costs). See SCHEMA.md for the contract.
  */
@@ -76,7 +76,7 @@ export function haversineKm(lat1, lon1, lat2, lon2) {
 // The city-centre coordinate of a destination. Airport-tier rows store their
 // AIRPORT lat/lon (where Ryanair lands); city_lat/city_lon (schema v13) is the
 // actual centre. Use this whenever the question is "how far is X from the town
-// itself" - day-trip travel advice, day-planner map centring, POI radii - not
+// itself", day-trip travel advice, day-planner map centring, POI radii, not
 // "how far did the plane fly" (that legitimately measures to the airport).
 // Falls back to the stored coordinate when no city centre is set.
 export function cityCoords(dest) {
@@ -162,7 +162,7 @@ export function rentalEstimate(dest, nights, choices, model, departDate) {
   const cars = carsForGroup(group, m.car_capacity);
   const baseRate = (m.rental_eur_per_day_by_iso2 && m.rental_eur_per_day_by_iso2[dest.iso2])
     || lt.rental_eur_per_day || m.rental_eur_per_day_default;
-  // Summer rentals cost more - lift the annual-midpoint day-rate by depart month.
+  // Summer rentals cost more, lift the annual-midpoint day-rate by depart month.
   const month = departDate ? Number(departDate.slice(5, 7)) : null;
   const season = (month && m.rental_seasonality && m.rental_seasonality[month] != null)
     ? m.rental_seasonality[month] : 1;
@@ -217,7 +217,7 @@ export function occupancyFactor(groupSize, model) {
  *  destination has no accommodation anchor.
  *  Applies, in order: summer seasonality on the nightly, a weekly discount for
  *  stays >= the threshold, then the (per-booking) cleaning fee, then the service
- *  fee on the whole subtotal - the same order Airbnb shows at checkout.
+ *  fee on the whole subtotal, the same order Airbnb shows at checkout.
  */
 export function accommodationPerPerson(dest, nights, departDate, model, groupSize) {
   const a = dest.accommodation;
@@ -290,7 +290,7 @@ export function pickFareForDates(dest, departDate, returnDate, originPref = 'aut
 }
 
 /** Contiguous windows of dates (union of outbound_fare across this
- *  destination's routes) that actually have a fare - so when the selected
+ *  destination's routes) that actually have a fare, so when the selected
  *  dates come back with nothing, the UI can tell the traveller which periods
  *  do have data instead of just saying no. Ryanair skips days even on routes
  *  it otherwise serves, so fare dates within `mergeGapDays` of each other are
@@ -361,14 +361,14 @@ export function groundSpendPerPerson(dest, nights, lifestyle) {
 }
 
 /* ── Plane reach ───────────────────────────────────────────────────────────
- * A destination counts as reachable by plane when a *served* airport - one with
- * real fares for the chosen dates - sits within PLANE_REACH_KM of it. You land
+ * A destination counts as reachable by plane when a *served* airport, one with
+ * real fares for the chosen dates, sits within PLANE_REACH_KM of it. You land
  * there and finish the last leg from arrivals.
  *
  * The build pipeline (apply_airport_anchors.py) already bakes a nearby airport's
  * fare calendar straight into dest.routes, but only within 60 km. Everything
  * from 60 km out to PLANE_REACH_KM is resolved here, at runtime, against the
- * live catalogue - so widening the radius needs no data rebuild.
+ * live catalogue, so widening the radius needs no data rebuild.
  */
 export const PLANE_REACH_KM = 100;
 
@@ -380,14 +380,14 @@ const LEG_FLOOR_EUR  = 10;
 const LEG_CAP_EUR    = 60;
 const LEG_KMH        = 65;
 
-// Built once per catalogue object - coordinates never change, so the index is
+// Built once per catalogue object, coordinates never change, so the index is
 // pure. Keyed weakly so reloading the catalogue drops the old index with it.
 const reachCache = new WeakMap();
 
 /** destId -> { id, airport, straight_km } for the nearest served airport within
  *  PLANE_REACH_KM. Only destinations that carry no fares of their own are
  *  indexed: everything else already flies in directly, or was anchored at build
- *  time. Islands are skipped - there is no road leg from the mainland.
+ *  time. Islands are skipped, there is no road leg from the mainland.
  */
 export function planeReachIndex(allDests) {
   if (!allDests) return null;
@@ -453,7 +453,7 @@ export function airportLastLeg(dest, straightKm) {
   };
 }
 
-/** The fare to fly to this destination: its own, or - when it has none - the
+/** The fare to fly to this destination: its own, or, when it has none, the
  *  fare into a served airport within PLANE_REACH_KM, with the last leg priced
  *  in. Returns { fare, via }, either of which may be null.
  */
@@ -490,7 +490,7 @@ function planeFare(dest, departDate, returnDate, choices, allDests) {
  *      airport within PLANE_REACH_KM of it; plus the last leg in (shuttle or a
  *      rental car) and a rental at the destination when one is needed there.
  *    - car  : fuel + tolls to drive there and back (only if road-reachable and
- *      within max_drive_km); no rental - you brought your own car.
+ *      within max_drive_km); no rental, you brought your own car.
  *  Accommodation + on-the-ground are added the same way for both. Always exposes
  *  plane_grand_total and car_grand_total so the UI can compare. Returns null if
  *  the destination cannot be reached either way for these dates.
@@ -622,11 +622,11 @@ export function composeTrip(dest, departDate, returnDate, choices, allDests = nu
 }
 
 /**
- * "Fly to the nearest airport, then drive/taxi the last stretch" - the honest
+ * "Fly to the nearest airport, then drive/taxi the last stretch", the honest
  * alternative when a destination has no direct fare from the chosen origin for
  * these dates. Scans the catalogue for nearby airport destinations that DO
  * have a real fare, and prices the ground last leg per road km (shared
- * taxi/bus/rental scale, floor €8 - same family as the pipeline's anchor
+ * taxi/bus/rental scale, floor €8, same family as the pipeline's anchor
  * transfers). Returns the best few, cheapest door-to-door first.
  */
 export function viaNearestAirport(dest, allDests, departDate, returnDate, choices, { maxKm = 320, limit = 3 } = {}) {
@@ -665,7 +665,7 @@ export function viaNearestAirport(dest, allDests, departDate, returnDate, choice
 
 /** The depart date whose round trip actually resolves for the most destinations,
  *  at a fixed trip length. Ryanair flies specific weekdays, so fares are sparse
- *  per date: the earliest date we hold a fare for - the obvious default - can be
+ *  per date: the earliest date we hold a fare for, the obvious default, can be
  *  bookable for barely a handful of places, which makes the whole map look empty.
  *  Earlier dates win ties, so the default stays as early as it sensibly can.
  *  Returns { start, end, count }, or null when there are no fares at all.
@@ -713,12 +713,12 @@ function addDays(iso, days) {
  *  keys across the destination's routes (real, bookable Ryanair days). Car-only
  *  destinations (no route data at all) have no per-day flight signal, so this
  *  falls back to a weekly sweep across the app's priced horizon
- *  (meta.start_date/end_date) - accommodation and rental still vary by month,
+ *  (meta.start_date/end_date), accommodation and rental still vary by month,
  *  so the sweep isn't wasted.
  */
 function candidateStartDates(dest, meta, allDests = null) {
   // A destination reached through a nearby airport has no fare calendar of its
-  // own, so borrow that airport's - otherwise the only candidates left are the
+  // own, so borrow that airport's, otherwise the only candidates left are the
   // coarse weekly sweep below, and the chart disagrees with the price.
   const routes = (dest?.routes && Object.keys(dest.routes).length > 0)
     ? dest.routes
@@ -739,7 +739,7 @@ function candidateStartDates(dest, meta, allDests = null) {
 }
 
 /** The total trip cost for every bookable start date that keeps a fixed trip
- *  length, across the whole fare window this destination's routes cover - the
+ *  length, across the whole fare window this destination's routes cover, the
  *  data "Best time to go" needs to find the cheapest period and chart the rest.
  *  Reuses composeTrip() per candidate date, so it stays consistent with the
  *  currently selected plane/car mode and every other pricing input.
@@ -761,7 +761,7 @@ export function cheapestWindows(dest, nights, choices, meta, allDests = null) {
 
 /** Same idea as cheapestWindows(), but for each candidate start date also
  *  tries every trip length within `flexNights` of `baseNights` and keeps
- *  whichever is cheapest - the "Flexible" length option, for a user who cares
+ *  whichever is cheapest, the "Flexible" length option, for a user who cares
  *  more about the total than an exact number of nights.
  *
  *  Returns [{ start, end, nights, total, mode }] (nights varies per entry),
@@ -815,10 +815,10 @@ function round2(v) {
   return v == null ? null : Math.round(v * 100) / 100;
 }
 
-// Flight booking deeplink (Skyscanner) - the one external service the app links to.
+// Flight booking deeplink (Skyscanner), the one external service the app links to.
 // `origin` must be the SAME airport the displayed fare departs from (e.g. CRL for
 // a Charleroi/Ryanair fare, not Brussels BRU) so the Skyscanner search matches the
-// price we show. The search is always per-person (adultsv2=1) - the app shows a
+// price we show. The search is always per-person (adultsv2=1), the app shows a
 // per-person fare, and Skyscanner otherwise reports a group total that won't line up.
 export function buildFlightLinks({ origin, destIata, departDate, returnDate }) {
   if (!origin || !destIata || !departDate || !returnDate) {
@@ -847,10 +847,10 @@ export function buildAccommodationLink({ city, country, departDate, returnDate, 
 }
 
 /** Car-rental search deeplink (KAYAK) for the destination, prefilled with pickup
- *  and drop-off dates. Prefers the destination's airport IATA (unambiguous - e.g.
+ *  and drop-off dates. Prefers the destination's airport IATA (unambiguous, e.g.
  *  BCN) and falls back to the city name for gems with no airport of their own.
  *  (KAYAK mis-geocodes a "City, Country" string, so never pass the country.)
- *  Lets the user verify/book a real rental - the figure in the breakdown is an
+ *  Lets the user verify/book a real rental, the figure in the breakdown is an
  *  estimate. Offered for every destination, not only the ones a car is needed at.
  */
 export function buildCarRentalLink({ city, iata, departDate, returnDate }) {
@@ -861,8 +861,8 @@ export function buildCarRentalLink({ city, iata, departDate, returnDate }) {
 }
 
 /** Link to a smart Google search that surfaces everything a traveller needs to
- *  know about the destination - top attractions, food, neighbourhoods, itinerary
- *  and first-timer tips - rather than a single fixed guide page. The airport
+ *  know about the destination, top attractions, food, neighbourhoods, itinerary
+ *  and first-timer tips, rather than a single fixed guide page. The airport
  *  qualifier in some city names ("Warsaw (Chopin)") is stripped so the search
  *  lands on the city, not the airport. Used for the "What to do in X" link.
  */
@@ -875,9 +875,9 @@ export function buildGuideLink({ city }) {
 }
 
 /** "Best trips from here": the closest OTHER destinations in the catalogue that
- *  are realistically reachable as a side-trip - within `maxKm` straight-line of
+ *  are realistically reachable as a side-trip, within `maxKm` straight-line of
  *  the selected place. Pure computation over the loaded dataset (no new source),
- *  so each suggestion is already priced and imaged - click to switch to it.
+ *  so each suggestion is already priced and imaged, click to switch to it.
  *
  *  @param dest      the selected destination record
  *  @param allDests  data.destinations (object id->record)

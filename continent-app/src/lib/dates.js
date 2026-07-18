@@ -1,4 +1,4 @@
-// Shared date helpers (UTC-safe, ISO 'YYYY-MM-DD' in/out) - used by the
+// Shared date helpers (UTC-safe, ISO 'YYYY-MM-DD' in/out), used by the
 // planners so each tab doesn't re-implement its own copy.
 
 export const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];

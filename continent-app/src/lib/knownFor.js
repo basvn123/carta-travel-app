@@ -1,12 +1,14 @@
 /**
- * knownFor.js - one short, human line per destination: what the place is
+ * knownFor.js, one short, human line per destination: what the place is
  * actually known for. Replaces the generic category chips (nature, romantic)
  * with something a traveller can act on.
  *
+ * (swimRelevant gates the bathing-water fact to coast/beach/lake places.)
  * Airport-tier cities are curated here by id (IATA). Gems fall back to their
  * pipeline blurb. Anything else gets a modest category-based line so no
  * destination ever shows an empty space. No em dashes anywhere.
  */
+import { swimRelevant } from '../components/WaterQualityBadge.jsx';
 
 const KNOWN_FOR = {
   // Belgium
@@ -327,6 +329,20 @@ export function knownForFacts(dest) {
     rows.push(['UNESCO', `${dest.beauty.unesco_count} listed ${dest.beauty.unesco_count === 1 ? 'site' : 'sites'} in the area`]);
   }
   if (dest.beauty?.top_beach) rows.push(['Beaches', 'Among Europe’s best beach destinations']);
+  if (swimRelevant(dest)) {
+    const bw = dest.bathing_water;
+    const trend = bw.trend === 'improving' ? ', improving'
+      : bw.trend === 'declining' ? ', declining' : '';
+    rows.push(['Water quality',
+      `${bw.rating}: ${bw.excellent_pct}% of ${bw.n_sites} nearby bathing `
+      + `${bw.n_sites === 1 ? 'site' : 'sites'} rated Excellent (EEA ${bw.year}${trend})`]);
+  }
+  if (dest.crowding) {
+    const c = dest.crowding;
+    rows.push(['Crowds',
+      `${c.label} tourism area: ${c.nights_per_km2.toLocaleString('en-GB')} `
+      + `overnight stays per km² in ${c.region} (Eurostat ${c.year})`]);
+  }
   if (dest.local_transport?.reason) {
     // Scrub dashes used as punctuation (em/en/spaced-hyphen) to keep the app
     // dash-free, since this line comes straight from the dataset.

@@ -1,15 +1,16 @@
 import React, { useMemo, useState } from 'react';
 import { RatingBadge, HiddenGemTag } from '../components/RatingBadge.jsx';
+import { WaterQualityBadge, swimRelevant } from '../components/WaterQualityBadge.jsx';
 import { eur } from '../lib/format.js';
 import { useI18n } from '../i18n/index.jsx';
 
 /**
- * Ranked, sortable list of priced destinations - lives in the left gutter the
+ * Ranked, sortable list of priced destinations, lives in the left gutter the
  * map layout already reserves. Click an item to open its detail panel; star it
  * to add it to the shortlist (favorites), which can then be compared.
  */
 
-// Inline star (SVG, not an emoji - keeps rendering consistent and ASCII source).
+// Inline star (SVG, not an emoji, keeps rendering consistent and ASCII source).
 function Star({ filled }) {
   return (
     <svg width="15" height="15" viewBox="0 0 24 24" aria-hidden="true"
@@ -50,8 +51,7 @@ export const ResultsList = React.memo(function ResultsList({
   // Direction per sort key; price/beauty can be flipped, the rest stay default.
   const [sortDir, setSortDir] = useState(SORT_DEFAULT_DIR);
 
-  // Click a sort: switch to it, or - if it's already active and directional -
-  // flip its direction.
+  // Click a sort: switch to it, or, if it's already active and directional,   // flip its direction.
   const onSortClick = (s) => {
     if (sortKey === s.key && s.directional) {
       setSortDir((d) => ({ ...d, [s.key]: d[s.key] === 'asc' ? 'desc' : 'asc' }));
@@ -71,7 +71,7 @@ export const ResultsList = React.memo(function ResultsList({
     else if (sortKey === 'beauty') sorted.sort((a, b) => beautyVal(a) - beautyVal(b) || val(a) - val(b));
     else sorted.sort((a, b) => val(a) - val(b));
     // Base sorts above are all ascending; flip to descending on demand. Beauty
-    // defaults to 'desc' (most beautiful first) - see SORTS.
+    // defaults to 'desc' (most beautiful first), see SORTS.
     const dir = sortDir[sortKey] || SORT_DEFAULT_DIR[sortKey];
     if (dir === 'desc') sorted.reverse();
     return sorted;
@@ -186,6 +186,9 @@ export const ResultsList = React.memo(function ResultsList({
                   <span className="result-sub">
                     <span className="result-country">{p.country}</span>
                     <RatingBadge rating={p.rating} size="xs" showGem={false} />
+                    {swimRelevant(p) && (
+                      <WaterQualityBadge bathing={p.bathing_water} t={t} showLabel={false} />
+                    )}
                   </span>
                 </span>
                 <span className={`result-price ${isDeal ? 'is-deal' : ''}`}>

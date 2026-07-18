@@ -247,6 +247,19 @@ input, select {
   }
   .app-header-account .account-avatar { width: 40px; height: 40px; font-size: 15px; }
 
+  /* The From/airport picker no longer competes for space in the crowded 56px
+     top row. It's pulled out of the account flow and floated just below the
+     header, level with the DESTINATIONS reopen pill (.list-reopen, top:
+     var(--filter-h) + 12px). The containing block is .top-bar (position:
+     absolute, top:0, height == --filter-h), so top: 100% lands flush beneath
+     the header and +12px matches the pill's offset exactly. */
+  .app-header-account .origin-picker {
+    position: absolute;
+    top: calc(100% + 12px);
+    right: 12px;
+    z-index: 24;
+  }
+
   /* The desktop section tabs collapse; BottomNav is the switch on mobile. */
   .header-nav { display: none; }
 
@@ -335,7 +348,11 @@ input, select {
 .map-guide-dismiss:hover { opacity: 0.85; }
 
 @media (max-width: 768px) {
-  .map-guide { right: 10px; margin-top: 6px; }
+  /* The From/airport pill now floats top-right just below the header (see the
+     .origin-picker rule above). Drop the first-visit guide tip beneath it so
+     the two share the right edge stacked, rather than overlapping. Once the
+     guide is dismissed the pill has the corner to itself. */
+  .map-guide { right: 10px; margin-top: 46px; }
 }
 
 /* ───────── Language picker: a compact flag pill in the header that switches
@@ -1557,6 +1574,13 @@ input, select {
   gap: 10px;
   flex-wrap: wrap;
 }
+/* Let the date triggers grow to fit their placeholder ("Departure date")
+   on a single line instead of wrapping inside the fixed 130px width. */
+.guide-when-dates .date-field-trigger {
+  width: auto;
+  min-width: 130px;
+  white-space: nowrap;
+}
 .guide-when-nights {
   font-family: var(--mono);
   font-size: 12px;
@@ -1742,7 +1766,52 @@ input, select {
 .citypick-pin.on .citypick-name,
 .citypick-pin.on .citypick-ic { color: #fff; }
 .citypick-pin.on .citypick-meta { color: #fff; background: rgba(255, 255, 255, 0.22); }
-.citypick-pin.anchor { box-shadow: 0 0 0 2px rgba(200, 80, 30, 0.35), 0 1px 5px rgba(26, 26, 26, 0.18); }
+/* Arrival city ("fly into ..."): a bigger, cleaner sign so the traveller
+   instantly sees where they land. The "Fly here" flag floats above the pill. */
+.citypick-pin { position: relative; }
+.citypick-fly { display: none; }
+.citypick-pin.anchor {
+  padding: 5px 11px 5px 10px;
+  background: var(--accent);
+  border-color: var(--accent);
+  box-shadow: 0 3px 12px rgba(200, 80, 30, 0.4), 0 1px 4px rgba(26, 26, 26, 0.2);
+  z-index: 5;
+}
+.citypick-pin.anchor .citypick-name { color: #fff; font-size: 12.5px; font-weight: 700; }
+.citypick-pin.anchor .citypick-ic { display: none; }
+.citypick-pin.anchor .citypick-meta { color: #fff; background: rgba(255, 255, 255, 0.22); }
+.citypick-pin.anchor .citypick-fly {
+  position: absolute;
+  bottom: calc(100% + 5px);
+  left: 50%;
+  transform: translateX(-50%);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  background: var(--accent);
+  color: #fff;
+  border-radius: 999px;
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+  box-shadow: 0 2px 7px rgba(200, 80, 30, 0.4);
+}
+/* Little downward stem so the flag reads as a sign pinned to the pill. */
+.citypick-pin.anchor .citypick-fly::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 4px solid transparent;
+  border-top-color: var(--accent);
+}
+/* Keep the flag on top even when the pill is also selected. */
+.citypick-pin.anchor.on { background: var(--accent); border-color: var(--accent); }
 
 /* Step 4 - stays: search, groups, budget */
 .guide-search {
@@ -2042,20 +2111,6 @@ input, select {
 }
 .itin-overview-total small { display: block; font-family: var(--mono); font-size: 10.5px; color: var(--ink-mute); }
 .itin-overview-total strong { font-size: 18px; }
-.itin-gmaps {
-  display: block;
-  margin-top: 12px;
-  padding: 10px 14px;
-  border: 1px solid var(--rule);
-  border-radius: 12px;
-  text-align: center;
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--ink-soft);
-  text-decoration: none;
-  transition: border-color .15s, color .15s;
-}
-.itin-gmaps:hover { border-color: var(--accent); color: var(--accent); }
 
 /* ── Overview: expandable cost breakdown (mirrors the Map tab's receipt) ── */
 .itin-breakdown-toggle {
@@ -6533,6 +6588,7 @@ input, select {
   border-radius: 10px;
   background: var(--paper);
   color: var(--ink-soft);
+  text-decoration: none; /* the Google Maps action is an <a>, keep it button-like */
   cursor: pointer;
 }
 .itin-export-btn:hover { border-color: var(--ink-mute); color: var(--ink); }
@@ -6837,6 +6893,82 @@ input, select {
 }
 .dow-val.min { color: #2c6a1f; }
 .nearby-sub .gem { color: var(--accent); }
+
+/* Climate strip (BestTimePanel ClimateStrip) - 12-month comfort normals */
+.climate-best {
+  margin: 2px 0 10px;
+  font-size: 12px;
+  color: var(--ink-soft);
+}
+.climate-best b { color: var(--ink); font-weight: 700; }
+.climate-chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 5px;
+  height: 108px;
+}
+.climate-col {
+  position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  height: 100%;
+  justify-content: flex-end;
+  cursor: default;
+}
+.climate-temp {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--ink-soft);
+  font-family: var(--mono);
+}
+.climate-bar-track {
+  width: 100%;
+  display: flex;
+  align-items: flex-end;
+  flex: 1;
+}
+.climate-bar {
+  width: 100%;
+  border-radius: 4px 4px 2px 2px;
+  transition: filter 0.12s;
+}
+.climate-col.is-best .climate-bar { box-shadow: 0 0 0 2px var(--paper), 0 0 0 3px currentColor; }
+.climate-col:hover .climate-bar { filter: brightness(1.08); }
+.climate-great { background: #2c6a1f; color: #2c6a1f; }
+.climate-good  { background: #6b9e3f; color: #6b9e3f; }
+.climate-mixed { background: var(--accent-soft); color: var(--accent-soft); }
+.climate-poor  { background: #9bb0bd; color: #9bb0bd; }
+.climate-name {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--ink-mute);
+}
+.climate-col.is-best .climate-name { color: var(--ink); font-weight: 700; }
+.climate-dot-great { background: #2c6a1f; }
+.climate-dot-good  { background: #6b9e3f; }
+.climate-dot-mixed { background: var(--accent-soft); }
+.climate-dot-poor  { background: #9bb0bd; }
+.climate-legend { margin-top: 10px; }
+.climate-source { margin-top: 6px; opacity: 0.75; }
+.climate-tip {
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--ink);
+  color: var(--paper);
+  padding: 5px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  white-space: nowrap;
+  z-index: 5;
+  pointer-events: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
+}
+.climate-tip b { font-weight: 700; }
 
 /* ────────────────────────────────────────────────────────────────────────────
    Country intel cards (CountryIntel.jsx) - deep per-country travel knowledge
@@ -7995,7 +8127,14 @@ input, select {
 
 /* Day planner start flow: multi-city list, address search */
 .day-build-field { display: block; margin-bottom: 2px; }
-.day-build-field .trip-field-label { display: block; margin-bottom: 9px; }
+/* Keep the step label ("1 Where are you staying?") on a single line - the
+   step-number chip + text would otherwise wrap on a narrow field column. */
+.day-build-field .trip-field-label {
+  display: flex;
+  align-items: center;
+  margin-bottom: 9px;
+  white-space: nowrap;
+}
 .day-build-cities { display: flex; flex-direction: column; gap: 8px; }
 .day-build-city {
   display: flex;
@@ -8021,18 +8160,47 @@ input, select {
   color: var(--ink-mute);
   font-weight: 400;
 }
-.day-stay-search { display: flex; align-items: center; gap: 8px; }
+/* Address search reads as one control: the text field and the accent Find
+   button share a single rounded, bordered pill (input flush left, button flush
+   right) instead of two detached elements. */
+.day-stay-search {
+  display: flex;
+  align-items: stretch;
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  background: var(--paper);
+  overflow: hidden;
+  transition: border-color .15s, box-shadow .15s;
+}
+.day-stay-search:focus-within {
+  border-color: var(--ink-soft);
+  box-shadow: 0 0 0 3px rgba(200, 80, 30, 0.10);
+}
 .day-stay-input {
   flex: 1;
   min-width: 0;
-  padding: 9px 12px;
-  border: 1px solid var(--rule);
-  border-radius: 8px;
-  background: var(--paper);
-  font-size: 13px;
+  padding: 11px 14px;
+  border: none;
+  background: transparent;
+  font-size: 13.5px;
   color: var(--ink);
 }
-.day-stay-input:focus { outline: none; border-color: var(--ink-soft); }
+.day-stay-input:focus { outline: none; }
+.day-stay-input::placeholder { color: var(--ink-mute); }
+.day-stay-search .trip-add-btn {
+  flex: none;
+  border: none;
+  border-radius: 0;
+  padding: 0 22px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+}
+.day-stay-search .trip-add-btn:hover:not(:disabled) { background: #b3491b; }
+.day-stay-search .trip-add-btn:disabled { background: var(--rule); color: var(--paper); cursor: default; opacity: 1; }
 .day-stay-results {
   display: flex;
   flex-direction: column;
@@ -8385,6 +8553,54 @@ input, select {
 }
 .hidden-gem-tag.lg { font-size: 10px; padding: 2px 7px; }
 .hidden-gem-tag .gem { color: var(--green); }
+
+/* Bathing-water quality pill (dest.bathing_water, EEA WISE). Same mono/uppercase
+   language as the hidden-gem tag; colour carries the Directive class. */
+.water-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--mono);
+  font-size: 8.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  border-radius: 3px;
+  padding: 1px 5px 1px 4px;
+  white-space: nowrap;
+  color: var(--bw-ink);
+  border: 1px solid color-mix(in srgb, var(--bw-ink) 42%, transparent);
+  background: color-mix(in srgb, var(--bw-ink) 9%, transparent);
+}
+.water-badge.lg { font-size: 10px; padding: 2px 7px 2px 6px; }
+.water-badge svg { flex: none; }
+.water-badge.bw-excellent { --bw-ink: #1f8fb0; }   /* clear sea blue */
+.water-badge.bw-good      { --bw-ink: #2e9e5b; }   /* green */
+.water-badge.bw-sufficient{ --bw-ink: #c68a12; }   /* amber */
+.water-badge.bw-poor      { --bw-ink: #cc4433; }   /* red */
+
+/* Regional crowding pill (dest.crowding, JRC Tourism Density). Same language as
+   the water badge; only the Quiet/Crowded extremes surface in the header. */
+.crowd-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--mono);
+  font-size: 8.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  border-radius: 3px;
+  padding: 1px 5px 1px 4px;
+  white-space: nowrap;
+  color: var(--cr-ink);
+  border: 1px solid color-mix(in srgb, var(--cr-ink) 42%, transparent);
+  background: color-mix(in srgb, var(--cr-ink) 9%, transparent);
+}
+.crowd-badge.lg { font-size: 10px; padding: 2px 7px 2px 6px; }
+.crowd-badge svg { flex: none; }
+.crowd-badge.cr-quiet    { --cr-ink: #2e9e5b; }    /* calm green - avoid the crowds */
+.crowd-badge.cr-moderate { --cr-ink: #6b7280; }    /* neutral grey */
+.crowd-badge.cr-busy     { --cr-ink: #c68a12; }    /* amber */
+.crowd-badge.cr-crowded  { --cr-ink: #d06a2a; }    /* warning orange */
 
 /* Detail panel: the rating hero row under the city name */
 .panel-rating-row {
@@ -9480,3 +9696,185 @@ input, select {
 .trip-wizard-modal .guide-path { padding: 15px 18px; border-radius: 14px; }
 .trip-wizard-modal .guide-path-text b { font-size: 15px; }
 .trip-wizard-modal .guide-path-text small { font-size: 12.5px; }
+
+/* ───────── Day planner: pickable pins on the big map ───────── */
+
+/* A candidate place on the day map: same pill language as the explore pins,
+   plus a little + that says exactly what a tap does. Tapping adds it to the
+   selected day and the pin turns into a numbered stop of the route. */
+.trip-poi-pin { padding-right: 5px; }
+.trip-poi-pin-add {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 15px;
+  height: 15px;
+  margin-left: 1px;
+  border-radius: 999px;
+  background: var(--paper-dim);
+  color: var(--ink-soft);
+}
+.trip-poi-pin-add svg { width: 10px; height: 10px; }
+.trip-poi-pin:hover .trip-poi-pin-add { background: #16794f; color: #fff; }
+
+/* Floating tools over the map: category chips + the tap-to-add hint. Sits
+   below the top card, never over the rail; chips scroll sideways on phones
+   instead of stacking over the map. */
+.day-map-tools {
+  position: absolute;
+  top: 64px;
+  left: 12px;
+  right: 12px;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  pointer-events: none;
+}
+.day-map-tools > * { pointer-events: auto; }
+.day-map-chips {
+  display: flex;
+  gap: 6px;
+  max-width: 100%;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding: 2px;
+}
+.day-map-chips::-webkit-scrollbar { display: none; }
+.day-map-chip {
+  flex: none;
+  box-shadow: 0 1px 4px rgba(26, 26, 26, 0.14);
+}
+.day-map-hint {
+  font-size: 10.5px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  padding: 3px 10px;
+  box-shadow: 0 1px 4px rgba(26, 26, 26, 0.12);
+}
+@media (min-width: 769px) {
+  .day-map-tools {
+    top: 60px;
+    left: calc(var(--panel-w) + 14px);
+    right: auto;
+    max-width: calc(100% - var(--panel-w) - 28px);
+  }
+}
+
+/* ───────── "Shape day N" - the inline Carta-plan panel in the rail ───────── */
+
+.carta-plan-panel {
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  padding: 13px 14px 14px;
+  background: var(--paper);
+  box-shadow: 0 1px 6px rgba(26, 26, 26, 0.06);
+}
+.carta-plan-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.carta-plan-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-family: var(--display);
+  font-size: 15.5px;
+  color: var(--ink);
+}
+.carta-plan-title svg { color: var(--accent); }
+.carta-plan-close {
+  border: none;
+  background: none;
+  font-size: 19px;
+  line-height: 1;
+  color: var(--ink-mute);
+  cursor: pointer;
+  padding: 2px 6px;
+}
+.carta-plan-close:hover { color: var(--ink); }
+.carta-plan-lead {
+  font-size: 11.5px;
+  line-height: 1.5;
+  color: var(--ink-mute);
+  margin: 6px 0 0;
+}
+.carta-plan-row { margin-top: 13px; }
+.carta-plan-q {
+  display: block;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  margin-bottom: 6px;
+}
+.carta-plan-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.carta-plan-chip {
+  padding: 6px 11px;
+  border-radius: 999px;
+  border: 1px solid var(--rule);
+  background: var(--paper);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  cursor: pointer;
+  transition: border-color 0.14s, background 0.14s, color 0.14s;
+}
+.carta-plan-chip:hover { border-color: var(--accent); color: var(--ink); }
+.carta-plan-chip.on { background: var(--accent); border-color: var(--accent); color: #fff; }
+.carta-plan-moods .day-guide-mood { font-size: 12px; }
+
+/* The which-part-of-town answer: honest options built from the data, each
+   with how many catalogued places it holds. */
+.carta-area-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.carta-area {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  text-align: left;
+  padding: 8px 11px;
+  border-radius: 10px;
+  border: 1px solid var(--rule);
+  background: var(--paper);
+  cursor: pointer;
+  transition: border-color 0.14s, background 0.14s;
+}
+.carta-area:hover { border-color: var(--accent); }
+.carta-area.on { border-color: var(--accent); background: var(--accent-bg); }
+.carta-area-text b { display: block; font-size: 12.5px; color: var(--ink); }
+.carta-area-text small { display: block; font-size: 11px; color: var(--ink-mute); margin-top: 1px; }
+.carta-area-count {
+  flex: none;
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--ink-soft);
+  background: var(--paper-dim);
+  border-radius: 999px;
+  padding: 2px 8px;
+  white-space: nowrap;
+}
+.carta-area.on .carta-area-count { background: var(--paper); color: var(--accent); }
+
+.carta-plan-go {
+  width: 100%;
+  justify-content: center;
+  margin-top: 15px;
+}

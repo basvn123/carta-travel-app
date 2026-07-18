@@ -1,5 +1,5 @@
 /**
- * localIntel.js - hand-curated "where it's actually nicest" guides for
+ * localIntel.js, hand-curated "where it's actually nicest" guides for
  * destinations whose geography a POI list alone can't explain. A rating tells
  * you Bellagio is good; it doesn't tell you the whole lake clusters around
  * the mid-lake "Golden Triangle" and that the ferry IS the sight.
@@ -7,7 +7,7 @@
  * Keyed by lowercase city name (same convention as scenicWalks.js). Each area
  * row carries a `match` string that the Day planner resolves against the
  * city's own POI catalogue, so a row becomes one-tap addable when the place
- * exists there - and stays honest, plain intel when it doesn't.
+ * exists there, and stays honest, plain intel when it doesn't.
  *
  * Shape:
  *   { intro, areas: [{ name, tag, note, match? }], tip }

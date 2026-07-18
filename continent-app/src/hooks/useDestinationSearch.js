@@ -14,7 +14,7 @@ function baseCity(name) {
 
 // Some cities have several airport-tier entries (Rome Fiumicino/Ciampino, Paris
 // CDG/Orly/Beauvais, London's four, ...). They're the same destination reached
-// via different gateways, so collapse each group to its cheapest fare - keeping
+// via different gateways, so collapse each group to its cheapest fare, keeping
 // the same city in the ranked list several times over is just noise. Non-airport
 // destinations are never merged (keyed by their unique id). The winning row is
 // relabelled to the plain city ("Rome (Fiumicino)" -> "Rome") so the list reads
@@ -53,7 +53,7 @@ export function useDestinationSearch({
 }) {
   // Compute, in one pass, the priceable destinations (flight/drive + stay) and the
   // ones that can't be reached from home (no Ryanair route + not drivable). The
-  // unreachable ones are still surfaced in the UI, just flagged - never silently
+  // unreachable ones are still surfaced in the UI, just flagged, never silently
   // dropped.
   const { pricedAll, unreachableAll } = useMemo(() => {
     if (!data || !departDate || !returnDate || returnDate <= departDate) {
@@ -75,6 +75,8 @@ export function useDestinationSearch({
         categories: d.categories || [],
         beauty: d.beauty || null,
         rating: d.rating || null,
+        bathing_water: d.bathing_water || null,
+        crowding: d.crowding || null,
       };
       const b = composeTrip(d, departDate, returnDate, choices, data.destinations);
       if (b == null) {
@@ -97,7 +99,7 @@ export function useDestinationSearch({
     const dedupedReach = dedupeGateways(reach);
     dedupedReach.sort((a, b) => a.total - b.total);
     // Unreachable cities (e.g. London's four airports with no Ryanair route from
-    // home) collapse the same way - they have no price, so the first gateway wins.
+    // home) collapse the same way, they have no price, so the first gateway wins.
     const dedupedUnreach = dedupeGateways(unreach);
     dedupedUnreach.sort((a, b) => a.city.localeCompare(b.city));
     return { pricedAll: dedupedReach, unreachableAll: dedupedUnreach };
@@ -163,7 +165,7 @@ export function useDestinationSearch({
   }, [filtered, topPick, priceMode]);
 
   // Unreachable destinations to still surface (same country / trip-kind filters,
-  // but no price filter - they have no price).
+  // but no price filter, they have no price).
   const unreachable = useMemo(() => {
     return unreachableAll.filter((p) => {
       if (q && !(normalize(p.city).includes(q) || normalize(p.country).includes(q))) return false;

@@ -1,5 +1,5 @@
 /**
- * i18n - the app's language layer.
+ * i18n, the app's language layer.
  *
  * What translates and what deliberately does NOT:
  *   - UI chrome (buttons, labels, wizard questions, notices) -> t() catalogs.
@@ -8,7 +8,7 @@
  *     can't find the place. ("Maison du Cygne" is findable; a translated
  *     "Swan House" is not.)
  *   - Sight DESCRIPTIONS, city taglines and area guides are English editorial
- *     data from the pipeline - they follow the data, not the UI language.
+ *     data from the pipeline, they follow the data, not the UI language.
  *   - City/country names stay in their English/anglicized data form (they are
  *     also lookup keys throughout the dataset).
  *
@@ -28,7 +28,7 @@ import { it } from './it.js';
 const CATALOGS = { en, nl, de, fr, es, it };
 
 /** Languages offered in the picker. `flag` is an ISO2 country code for
- *  CountryFlag (the app's SVG flags - no emoji). Labels are endonyms so
+ *  CountryFlag (the app's SVG flags, no emoji). Labels are endonyms so
  *  everyone can find their own language regardless of the active one. */
 export const LANGUAGES = [
   { code: 'en', flag: 'GB', label: 'English', bcp47: 'en-GB' },
@@ -81,7 +81,7 @@ export function I18nProvider({ children }) {
   return <I18nContext.Provider value={value}>{children}</I18nContext.Provider>;
 }
 
-/** { lang, setLang, t, languages } - t(key, vars) with {var} interpolation. */
+/** { lang, setLang, t, languages }, t(key, vars) with {var} interpolation. */
 export function useI18n() {
   const ctx = useContext(I18nContext);
   if (!ctx) {

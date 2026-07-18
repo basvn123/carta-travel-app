@@ -279,7 +279,7 @@ export function CheckIcon({ size = 15, className = '' }) {
   );
 }
 
-/* ─── Planner glyphs: interests, pace, gradation - same line style ─── */
+/* ─── Planner glyphs: interests, pace, gradation, same line style ─── */
 
 export function SparkIcon({ size = 14, className = '' }) {
   return (
@@ -508,7 +508,7 @@ export function ShareIcon({ size = 15, className = '' }) {
   );
 }
 
-/* Apple with a pulse line - deliberately unlike the filter/sliders glyphs,
+/* Apple with a pulse line, deliberately unlike the filter/sliders glyphs,
    which it used to be mistaken for in the mobile toolbar. */
 export function LifestyleIcon({ size = 15, className = '' }) {
   return (
@@ -557,7 +557,7 @@ export function SearchIcon({ size = 15, className = '' }) {
   );
 }
 
-/* Filled tier marks - paired with StarIcon to show the stay-map's rating tiers
+/* Filled tier marks, paired with StarIcon to show the stay-map's rating tiers
    as glyphs rather than a colour code. */
 export function DiamondIcon({ size = 9, className = '' }) {
   return (

@@ -1,11 +1,11 @@
 /**
- * origins.js - the "where are you flying from?" layer.
+ * origins.js, the "where are you flying from?" layer.
  *
  * The dataset ships a deduplicated top-level fares table (harvest_all_origins.py):
  *   data.fares[anchor_iata][origin_iata] = { out: {date: eur}, ret: {date: eur},
  *     out_t/ret_t: {date: 'HH:MM/HH:MM'} }   (times optional, harvest_flight_times.py)
  * covering every European Ryanair origin (data.meta.all_origins), keyed by the
- * airport a destination is reached through - NOT per destination. Ground transport
+ * airport a destination is reached through, NOT per destination. Ground transport
  * (the airport->town last leg) is origin-independent and still lives per
  * destination (airport-tier dests fly straight in; gems carry `transfer`).
  *
@@ -13,7 +13,7 @@
  * destination's `routes` for the one chosen origin, back into the exact shape the
  * app already reads (`d.routes[origin] = { outbound_fare, return_fare, anchor_airport,
  * ground_transport_one_way_eur, ground_transport_minutes }`). So runtime_pricing,
- * the wizard, the cost optimizer and the planners all keep working unchanged - they
+ * the wizard, the cost optimizer and the planners all keep working unchanged, they
  * simply see fares from the selected origin. Changing origin re-derives and reprices.
  */
 import { haversineKm } from './runtime_pricing.js';
@@ -39,7 +39,7 @@ function lastLeg(d) {
 
 /** Build a destination's `routes` for a single origin from that origin's fare
  *  slice ({ anchor: rec }). Returns {} when this origin can't reach the
- *  destination by air (no stored fare, or an unpriceable last leg) - exactly
+ *  destination by air (no stored fare, or an unpriceable last leg), exactly
  *  how a non-served route reads today. */
 function routesForOrigin(faresForOrigin, d, origin) {
   const anchor = destAnchor(d);
@@ -55,7 +55,7 @@ function routesForOrigin(faresForOrigin, d, origin) {
       outbound_fare: rec.out,
       return_fare: rec.ret || {},
       // Dep/arr local times of each day's cheapest flight ('HH:MM/HH:MM',
-      // harvest_flight_times.py). Partial coverage - absent days show no hour.
+      // harvest_flight_times.py). Partial coverage, absent days show no hour.
       outbound_time: rec.out_t || {},
       return_time: rec.ret_t || {},
       fare_model: 'ryanair_all_origins',
@@ -95,7 +95,7 @@ export function hydrateForOrigin(data, origin, faresForOrigin = null) {
 
 // How far from home we'll look for a departure airport. Ryanair concentrates on
 // secondary airports, so the *nearest* airport is often the one that barely flies
-// anywhere - and a traveller will happily drive an hour to the one that does.
+// anywhere, and a traveller will happily drive an hour to the one that does.
 const ORIGIN_SEARCH_KM = 120;
 
 /** How many anchor airports this origin actually has fares to. Since the wire
@@ -116,7 +116,7 @@ export function originCoverage(data, code) {
 /** The departure airport a first-time visitor should land on: of the origins
  *  within reach of home, the one with the richest route network (ties to the
  *  closer one). Picking purely by distance is what put Brussels-Zaventem, which
- *  reaches 10 destinations, ahead of Charleroi, which reaches 100 - and left the
+ *  reaches 10 destinations, ahead of Charleroi, which reaches 100, and left the
  *  map with almost nothing you could actually fly to. Falls back to the nearest
  *  origin, then the first listed (then 'CRL'), when there's no home / no fares. */
 export function defaultOrigin(data) {

@@ -1,9 +1,10 @@
 import React from 'react';
 import { DEFAULT_LIFESTYLE } from '../lib/runtime_pricing.js';
 import { DiningIcon, LifestyleIcon } from '../components/Icons.jsx';
+import { useI18n } from '../i18n/index.jsx';
 
 /**
- * Lifestyle settings panel - slides in from the left.
+ * Lifestyle settings panel, slides in from the left.
  *
  * The user describes how their vacation looks (dinners, casual meals, fast food,
  * bar drinks, club nights, self-catered days). Each is priced at the chosen
@@ -41,6 +42,17 @@ const PROFILES = {
   Family:          { cadence: 'week', dinners_per_week: 2, lunches_per_week: 4, fastfood_per_week: 3, drinks_per_week: 2,  club_nights_per_week: 0, coffees_per_day: 0, self_catered_days_per_week: 5 },
 };
 
+// Display keys for the profile names above; the PROFILES keys stay as logic
+// keys (matchProfile / setProfile) and are resolved to text at render time.
+const PROFILE_LABEL_KEYS = {
+  Backpacker: 'lifestyle.profileBackpacker',
+  Easygoing: 'lifestyle.profileEasygoing',
+  Foodie: 'lifestyle.profileFoodie',
+  'Cafe & culture': 'lifestyle.profileCafeCulture',
+  Nightlife: 'lifestyle.profileNightlife',
+  Family: 'lifestyle.profileFamily',
+};
+
 const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
 
 // Re-express a lifestyle object in the target cadence. Week -> day keeps one
@@ -71,9 +83,10 @@ function matchProfile(ls) {
 }
 
 export function LifestylePanel({ choices, setChoices, onClose }) {
+  const { t } = useI18n();
   const ls = choices.lifestyle || {};
   const cadence = ls.cadence || 'week';
-  const per = cadence === 'day' ? 'per day' : 'per week';
+  const per = cadence === 'day' ? t('lifestyle.hintPerDay') : t('lifestyle.hintPerWeek');
 
   const setLs = (patch) => setChoices({ ...choices, lifestyle: { ...ls, ...patch } });
   const setProfile = (name) => setChoices({ ...choices, lifestyle: { ...PROFILES[name] } });
@@ -84,15 +97,15 @@ export function LifestylePanel({ choices, setChoices, onClose }) {
 
   return (
     <div className="accom-panel open">
-      <button className="panel-close" onClick={onClose} aria-label="Close">x</button>
+      <button className="panel-close" onClick={onClose} aria-label={t('lifestyle.close')}>x</button>
 
       <div className="panel-header">
-        <div className="panel-tag">Lifestyle</div>
-        <h2 className="panel-city">How you'll spend</h2>
+        <div className="panel-tag">{t('lifestyle.tag')}</div>
+        <h2 className="panel-city">{t('lifestyle.title')}</h2>
       </div>
 
       <div className="panel-section">
-        <div className="section-title section-title-iconed"><LifestyleIcon size={12} /> Profile</div>
+        <div className="section-title section-title-iconed"><LifestyleIcon size={12} /> {t('lifestyle.profile')}</div>
         <div className="kind-chips">
           {Object.keys(PROFILES).map((name) => (
             <button
@@ -100,7 +113,7 @@ export function LifestylePanel({ choices, setChoices, onClose }) {
               className={`chip ${active === name ? 'on' : ''}`}
               onClick={() => setProfile(name)}
             >
-              {name}
+              {t(PROFILE_LABEL_KEYS[name] || name)}
             </button>
           ))}
         </div>
@@ -108,29 +121,29 @@ export function LifestylePanel({ choices, setChoices, onClose }) {
 
       <div className="panel-section lifestyle-food">
         <div className="lifestyle-section-head">
-          <div className="section-title section-title-iconed"><DiningIcon size={12} /> Eating &amp; drinking</div>
+          <div className="section-title section-title-iconed"><DiningIcon size={12} /> {t('lifestyle.eatingDrinking')}</div>
           <div className="panel-segment lifestyle-cadence">
-            <button className={cadence === 'week' ? 'seg-on' : ''} onClick={() => setCadence('week')}>Per week</button>
-            <button className={cadence === 'day' ? 'seg-on' : ''} onClick={() => setCadence('day')}>Per day</button>
+            <button className={cadence === 'week' ? 'seg-on' : ''} onClick={() => setCadence('week')}>{t('lifestyle.perWeek')}</button>
+            <button className={cadence === 'day' ? 'seg-on' : ''} onClick={() => setCadence('day')}>{t('lifestyle.perDay')}</button>
           </div>
         </div>
-        <Stepper label="Dinners out" hint={per} value={ls.dinners_per_week ?? 0}
+        <Stepper label={t('lifestyle.dinnersOut')} hint={per} value={ls.dinners_per_week ?? 0}
           onChange={(v) => setLs({ dinners_per_week: v })} min={0} max={maxFor('dinners_per_week')} />
-        <Stepper label="Casual meals" hint={per} value={ls.lunches_per_week ?? 0}
+        <Stepper label={t('lifestyle.casualMeals')} hint={per} value={ls.lunches_per_week ?? 0}
           onChange={(v) => setLs({ lunches_per_week: v })} min={0} max={maxFor('lunches_per_week')} />
-        <Stepper label="Fast food" hint={per} value={ls.fastfood_per_week ?? 0}
+        <Stepper label={t('lifestyle.fastFood')} hint={per} value={ls.fastfood_per_week ?? 0}
           onChange={(v) => setLs({ fastfood_per_week: v })} min={0} max={maxFor('fastfood_per_week')} />
-        <Stepper label="Cook-at-home days" hint={per} value={ls.self_catered_days_per_week ?? 0}
+        <Stepper label={t('lifestyle.cookAtHome')} hint={per} value={ls.self_catered_days_per_week ?? 0}
           onChange={(v) => setLs({ self_catered_days_per_week: v })} min={0} max={maxFor('self_catered_days_per_week')} />
-        <Stepper label="Drinks at bars" hint={per} value={ls.drinks_per_week ?? 0}
+        <Stepper label={t('lifestyle.drinksAtBars')} hint={per} value={ls.drinks_per_week ?? 0}
           onChange={(v) => setLs({ drinks_per_week: v })} min={0} max={maxFor('drinks_per_week')} />
-        <Stepper label="Club nights" hint={per} value={ls.club_nights_per_week ?? 0}
+        <Stepper label={t('lifestyle.clubNights')} hint={per} value={ls.club_nights_per_week ?? 0}
           onChange={(v) => setLs({ club_nights_per_week: v })} min={0} max={maxFor('club_nights_per_week')} />
       </div>
 
       <div className="panel-section">
         <p className="footnote">
-          Open a destination to see this priced at its local rates.
+          {t('lifestyle.footnote')}
         </p>
       </div>
     </div>
@@ -138,6 +151,7 @@ export function LifestylePanel({ choices, setChoices, onClose }) {
 }
 
 function Stepper({ label, value, onChange, min, max, hint }) {
+  const { t } = useI18n();
   // Values can be fractional right after a week -> day cadence switch
   // (0.4 dinners/day); the first tap lands back on a whole number.
   const dec = () => onChange(Math.max(min, Math.ceil(value) - 1));
@@ -149,9 +163,9 @@ function Stepper({ label, value, onChange, min, max, hint }) {
         {hint && <small className="stepper-hint">{hint}</small>}
       </div>
       <div className="stepper-controls">
-        <button onClick={dec} disabled={value <= min} aria-label={`decrease ${label}`}>-</button>
+        <button onClick={dec} disabled={value <= min} aria-label={t('lifestyle.decrease', { label })}>-</button>
         <span className="stepper-value">{value}</span>
-        <button onClick={inc} disabled={value >= max} aria-label={`increase ${label}`}>+</button>
+        <button onClick={inc} disabled={value >= max} aria-label={t('lifestyle.increase', { label })}>+</button>
       </div>
     </div>
   );

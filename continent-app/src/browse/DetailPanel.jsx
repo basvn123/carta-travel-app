@@ -5,10 +5,13 @@ import {
 } from '../lib/runtime_pricing.js';
 import { knownFor } from '../lib/knownFor.js';
 import { ScoreChip, HiddenGemTag, tierClass } from '../components/RatingBadge.jsx';
+import { WaterQualityBadge, swimRelevant } from '../components/WaterQualityBadge.jsx';
+import { CrowdingBadge, crowdBadgeWorthShowing } from '../components/CrowdingBadge.jsx';
 import { BestTimePanel } from './BestTimePanel.jsx';
 import { eur, safeUrl, PRICE_SOURCE_LABELS, ACCOM_SOURCE_LABELS } from '../lib/format.js';
 import { ReceiptIcon, CalendarIcon, BedIcon, DiningIcon, CarIcon, InfoIcon } from '../components/Icons.jsx';
 import { PlaneIcon } from '../components/TransportIcons.jsx';
+import { useI18n } from '../i18n/index.jsx';
 
 const fmtDate = (iso) => new Date(iso + 'T00:00:00Z').toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
 
@@ -21,6 +24,7 @@ function TextLink({ href, onClick, children }) {
 }
 
 export function DetailPanel({ destination, departDate, returnDate, choices, setChoices, priceMode = 'total', onClose, onOpenLifestyle, onSelect, data, isFavorite, onToggleFavorite, onSaveTrip, onShiftDates }) {
+  const { t } = useI18n();
   const [saveState, setSaveState] = React.useState('idle'); // idle | saving | saved
   const [activeTab, setActiveTab] = React.useState('breakdown'); // breakdown | best-time
 
@@ -51,7 +55,7 @@ export function DetailPanel({ destination, departDate, returnDate, choices, setC
 
   return (
     <div className="panel open">
-      <button className="panel-close" onClick={onClose} aria-label="Close">x</button>
+      <button className="panel-close" onClick={onClose} aria-label={t('detail.close')}>x</button>
 
       {/* The most impressive image of the region (Wikipedia lead photo). */}
       {image?.url && (
@@ -59,7 +63,7 @@ export function DetailPanel({ destination, departDate, returnDate, choices, setC
           <div className="panel-hero-shade" />
           {safeUrl(image.page) && (
             <a className="panel-hero-credit" href={safeUrl(image.page)} target="_blank" rel="noreferrer"
-               title={image.credit ? `Wikipedia: ${image.credit}` : 'Source: Wikipedia'}>
+               title={image.credit ? t('detail.wikipediaCredit', { credit: image.credit }) : t('detail.wikipediaSource')}>
               Wikipedia
             </a>
           )}
@@ -67,7 +71,7 @@ export function DetailPanel({ destination, departDate, returnDate, choices, setC
       )}
 
       <div className={`panel-header ${image?.url ? 'has-hero' : ''}`}>
-        <div className="panel-tag">Destination</div>
+        <div className="panel-tag">{t('detail.tag')}</div>
         <h2 className="panel-city">{destination.city}</h2>
         {destination.rating?.score != null && (
           <div className="panel-rating-row">
@@ -78,15 +82,21 @@ export function DetailPanel({ destination, departDate, returnDate, choices, setC
               </span>
             )}
             {destination.rating.hidden_gem && <HiddenGemTag size="lg" />}
+            {swimRelevant(destination) && (
+              <WaterQualityBadge bathing={destination.bathing_water} t={t} size="lg" />
+            )}
+            {crowdBadgeWorthShowing(destination) && (
+              <CrowdingBadge crowding={destination.crowding} t={t} size="lg" />
+            )}
           </div>
         )}
         <div className="panel-country">
           {destination.country}
           {destination.tier === 'gem' && anchorCity && (
             <span className="panel-via">
-              via {anchorCity}
-              {breakdown?.ground_one_way_eur > 0 && `, €${breakdown.ground_one_way_eur} ground each way`}
-              {breakdown?.ground_minutes > 0 && `, ~${breakdown.ground_minutes} min`}
+              {t('detail.via', { city: anchorCity })}
+              {breakdown?.ground_one_way_eur > 0 && t('detail.viaGround', { n: breakdown.ground_one_way_eur })}
+              {breakdown?.ground_minutes > 0 && t('detail.viaMinutes', { n: breakdown.ground_minutes })}
             </span>
           )}
         </div>
@@ -98,15 +108,15 @@ export function DetailPanel({ destination, departDate, returnDate, choices, setC
             <button
               className={`panel-fav ${isFavorite ? 'on' : ''}`}
               onClick={onToggleFavorite}
-              aria-label={isFavorite ? 'Remove from shortlist' : 'Add to shortlist'}
-              title={isFavorite ? 'Remove from shortlist' : 'Add to shortlist'}
+              aria-label={isFavorite ? t('detail.removeShortlist') : t('detail.addShortlist')}
+              title={isFavorite ? t('detail.removeShortlist') : t('detail.addShortlist')}
             >
               <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"
                 fill={isFavorite ? 'currentColor' : 'none'}
                 stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round">
                 <polygon points="12 2 15.1 8.6 22 9.3 16.8 14 18.3 21 12 17.3 5.7 21 7.2 14 2 9.3 8.9 8.6" />
               </svg>
-              <span>{isFavorite ? 'Shortlisted' : 'Shortlist'}</span>
+              <span>{isFavorite ? t('detail.shortlisted') : t('detail.shortlist')}</span>
             </button>
           )}
           {onSaveTrip && (
@@ -114,14 +124,14 @@ export function DetailPanel({ destination, departDate, returnDate, choices, setC
               className={`panel-fav ${saveState === 'saved' ? 'on' : ''}`}
               onClick={handleSaveTrip}
               disabled={saveState === 'saving'}
-              aria-label="Save this trip to your account"
-              title="Save this trip to your account"
+              aria-label={t('detail.saveTripTitle')}
+              title={t('detail.saveTripTitle')}
             >
               <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"
                 fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M19 21l-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
               </svg>
-              <span>{saveState === 'saving' ? 'Saving…' : saveState === 'saved' ? 'Saved' : 'Save trip'}</span>
+              <span>{saveState === 'saving' ? t('detail.saving') : saveState === 'saved' ? t('detail.saved') : t('detail.saveTrip')}</span>
             </button>
           )}
         </div>
@@ -131,11 +141,11 @@ export function DetailPanel({ destination, departDate, returnDate, choices, setC
         <div className="panel-section">
           <p style={{ fontStyle: 'italic', color: 'var(--ink-mute)' }}>
             {(() => {
-              const originCity = data?.meta?.origins?.[data?.meta?.selected_origin]?.city || 'your airport';
+              const originCity = data?.meta?.origins?.[data?.meta?.selected_origin]?.city || t('detail.yourAirport');
               const flyable = Object.keys(destination.routes || {}).length > 0;
               return flyable
-                ? `No fare for these dates flying from ${originCity}.`
-                : `No Ryanair flights from ${originCity} to ${destination.city}, and too far to drive.`;
+                ? t('detail.noFareFrom', { origin: originCity })
+                : t('detail.noFlightsTooFar', { origin: originCity, city: destination.city });
             })()}
           </p>
           {Object.keys(destination.routes || {}).length > 0 && (() => {
@@ -143,7 +153,7 @@ export function DetailPanel({ destination, departDate, returnDate, choices, setC
             if (ranges.length === 0) return null;
             return (
               <p className="panel-fare-coverage">
-                Fare data is available {ranges.length === 1 ? 'for' : 'in these periods'}:{' '}
+                {ranges.length === 1 ? t('detail.fareCoverageOne') : t('detail.fareCoverageMany')}{' '}
                 {ranges.map((r, i) => (
                   <span key={r.start}>
                     {i > 0 && ', '}
@@ -169,13 +179,13 @@ export function DetailPanel({ destination, departDate, returnDate, choices, setC
               className={`tab tab-iconed ${activeTab === 'breakdown' ? 'active' : ''}`}
               onClick={() => setActiveTab('breakdown')}
             >
-              <ReceiptIcon size={12} /> Breakdown
+              <ReceiptIcon size={12} /> {t('detail.tabBreakdown')}
             </button>
             <button
               className={`tab tab-iconed ${activeTab === 'best-time' ? 'active' : ''}`}
               onClick={() => setActiveTab('best-time')}
             >
-              <CalendarIcon size={12} /> Best time to go
+              <CalendarIcon size={12} /> {t('detail.tabBestTime')}
             </button>
           </div>
 
@@ -261,14 +271,16 @@ function InfoFacts({ rows }) {
 // Small toggle button + text popover, used for "how is this calculated"
 // asides that would otherwise clutter the (now-collapsed-by-default) group
 // header. Stops propagation so it doesn't also toggle the group open/closed.
-function InfoButton({ open, onClick, label = 'How this is calculated' }) {
+function InfoButton({ open, onClick, label }) {
+  const { t } = useI18n();
+  const lbl = label || t('detail.howCalculated');
   return (
     <button
       type="button"
       className={`cost-info-btn ${open ? 'open' : ''}`}
       aria-expanded={open}
-      aria-label={label}
-      title={label}
+      aria-label={lbl}
+      title={lbl}
       onClick={(e) => { e.stopPropagation(); onClick(); }}
     >
       <InfoIcon size={12} />
@@ -277,10 +289,11 @@ function InfoButton({ open, onClick, label = 'How this is calculated' }) {
 }
 
 function BreakdownTab({ destination, breakdown, departDate, returnDate, choices, setChoices, priceMode, onOpenLifestyle, anchor, anchorCity, data, onSelect }) {
+  const { t } = useI18n();
   const group = Math.max(1, choices.group_size || 1);
-  const originCity = data?.meta?.origins?.[data?.meta?.selected_origin]?.city || 'your airport';
+  const originCity = data?.meta?.origins?.[data?.meta?.selected_origin]?.city || t('detail.yourAirport');
   // The traveller asked to fly but no fare exists for these dates, so the
-  // price shown is a DRIVE - say so loudly instead of a quiet "drive from
+  // price shown is a DRIVE, say so loudly instead of a quiet "drive from
   // home", and offer real fly-via-nearby-airport alternatives.
   const flyFellBack = breakdown.requested_mode === 'plane' && breakdown.transport_mode === 'car';
 
@@ -333,16 +346,16 @@ function BreakdownTab({ destination, breakdown, departDate, returnDate, choices,
     <>
       <div className="panel-section">
         <div className="section-title section-title-iconed">
-          <ReceiptIcon size={12} /> Trip total {priceMode === 'pp' ? '(per person)' : ''}
+          <ReceiptIcon size={12} /> {t('detail.tripTotal')} {priceMode === 'pp' ? t('detail.perPersonSuffix') : ''}
         </div>
 
         {/* ── Getting there ── */}
         <CostGroup
           icon={breakdown.transport_mode === 'car' ? <CarIcon size={15} /> : <PlaneIcon size={15} />}
-          title="Getting there"
+          title={t('detail.gettingThere')}
           subtitle={breakdown.transport_mode === 'car'
-            ? (flyFellBack ? `No flight these dates, drive from ${originCity}` : `Drive from ${originCity}`)
-            : 'Ryanair round-trip'}
+            ? (flyFellBack ? t('detail.noFlightDriveFrom', { origin: originCity }) : t('detail.driveFrom', { origin: originCity }))
+            : t('detail.ryanairRoundTrip')}
           subtotal={transportSubtotal}
           open={openGroups.transport}
           onToggle={() => toggleGroup('transport')}
@@ -350,8 +363,7 @@ function BreakdownTab({ destination, breakdown, departDate, returnDate, choices,
           {flyFellBack && (
             <>
               <p className="cost-info-pop cost-fallback-note">
-                There's no Ryanair fare from {originCity} to {destination.city} for these dates,
-                so this price is for driving. To still fly, try the nearby airports below or shift your dates.
+                {t('detail.flyFallbackNote', { origin: originCity, city: destination.city })}
               </p>
               <ViaAirportOptions
                 destination={destination}
@@ -367,21 +379,26 @@ function BreakdownTab({ destination, breakdown, departDate, returnDate, choices,
             <>
               <div className="total-row">
                 <span className="label">
-                  Drive ({breakdown.driving.cars} {breakdown.driving.cars === 1 ? 'car' : 'cars'})
+                  {breakdown.driving.cars === 1
+                    ? t('detail.driveCarsOne', { n: breakdown.driving.cars })
+                    : t('detail.driveCarsMany', { n: breakdown.driving.cars })}
                   <small>
-                    {breakdown.driving.road_km} km each way, ~{breakdown.driving.drive_hours_one_way}h,
-                    {' '}€{breakdown.driving.fuel_price_eur_per_l.toFixed(2)}/L
+                    {t('detail.driveMeta', {
+                      km: breakdown.driving.road_km,
+                      h: breakdown.driving.drive_hours_one_way,
+                      price: breakdown.driving.fuel_price_eur_per_l.toFixed(2),
+                    })}
                   </small>
                 </span>
                 <span className="val">{eur(show(breakdown.driving.total))}</span>
               </div>
-              <GroundLine label="Fuel" v={show(breakdown.driving.fuel_total)} eur={eur} />
+              <GroundLine label={t('detail.fuel')} v={show(breakdown.driving.fuel_total)} eur={eur} />
               {breakdown.driving.toll_total > 0 && (
-                <GroundLine label="Tolls / vignette" v={show(breakdown.driving.toll_total)} eur={eur} />
+                <GroundLine label={t('detail.tolls')} v={show(breakdown.driving.toll_total)} eur={eur} />
               )}
               {breakdown.driving.toll_notes?.length > 0 && (
                 <p className="cost-info-pop">
-                  Includes {breakdown.driving.toll_notes.join(', ')}, per car, priced per country crossed.
+                  {t('detail.tollNotes', { notes: breakdown.driving.toll_notes.join(', ') })}
                 </p>
               )}
             </>
@@ -389,11 +406,11 @@ function BreakdownTab({ destination, breakdown, departDate, returnDate, choices,
             <>
               <div className="total-row">
                 <span className="label">
-                  Flight
+                  {t('detail.flight')}
                   <small>
                     {destination.tier === 'gem' && anchorCity
-                      ? `Round-trip Ryanair fare via ${anchorCity}`
-                      : 'Round-trip Ryanair fare'}
+                      ? t('detail.fareViaAnchor', { city: anchorCity })
+                      : t('detail.fareRoundTrip')}
                   </small>
                 </span>
                 <span className="val">{eur(show(breakdown.fare_total))}</span>
@@ -401,10 +418,10 @@ function BreakdownTab({ destination, breakdown, departDate, returnDate, choices,
               {breakdown.baggage_per_person > 0 && (
                 <div className="total-row sub-row">
                   <span className="label">
-                    + {data?.meta?.baggage_options?.[choices.baggage_key]?.label || 'Baggage'}
+                    + {data?.meta?.baggage_options?.[choices.baggage_key]?.label || t('detail.baggage')}
                     <small>
-                      {`€${(choices.baggage_per_direction_eur || 0).toFixed(0)} × 2 directions`}
-                      {priceMode === 'total' && ` × ${group} people`}
+                      {t('detail.perTwoDirections', { n: (choices.baggage_per_direction_eur || 0).toFixed(0) })}
+                      {priceMode === 'total' && t('detail.timesPeople', { n: group })}
                     </small>
                   </span>
                   <span className="val">{eur(show(breakdown.baggage_total))}</span>
@@ -413,11 +430,11 @@ function BreakdownTab({ destination, breakdown, departDate, returnDate, choices,
               {breakdown.transfer_total > 0 && (
                 <div className="total-row sub-row">
                   <span className="label">
-                    + Airport transfer{anchorCity ? ` from ${anchorCity}` : ''}
+                    {anchorCity ? t('detail.transferFrom', { city: anchorCity }) : t('detail.transfer')}
                     <small>
-                      {`€${breakdown.transfer_one_way_eur.toFixed(0)} × 2 directions`}
-                      {priceMode === 'total' && ` × ${group} people`}
-                      {breakdown.ground_minutes > 0 ? `, ~${breakdown.ground_minutes} min each way` : ''}
+                      {t('detail.perTwoDirections', { n: breakdown.transfer_one_way_eur.toFixed(0) })}
+                      {priceMode === 'total' && t('detail.timesPeople', { n: group })}
+                      {breakdown.ground_minutes > 0 ? t('detail.minEachWay', { n: breakdown.ground_minutes }) : ''}
                     </small>
                   </span>
                   <span className="val">{eur(show(breakdown.transfer_total))}</span>
@@ -429,7 +446,7 @@ function BreakdownTab({ destination, breakdown, departDate, returnDate, choices,
           <CarAdvisory lt={breakdown.local_transport} mode={breakdown.transport_mode} />
 
           <div className="cost-group-links">
-            {flightLink && <TextLink href={flightLink}>Check this fare on Skyscanner</TextLink>}
+            {flightLink && <TextLink href={flightLink}>{t('detail.checkSkyscanner')}</TextLink>}
           </div>
         </CostGroup>
 
@@ -438,20 +455,23 @@ function BreakdownTab({ destination, breakdown, departDate, returnDate, choices,
         {rentalSubtotal != null && (
           <CostGroup
             icon={<CarIcon size={15} />}
-            title="Rental car at destination"
-            subtitle={`${breakdown.rental.cars} ${breakdown.rental.cars === 1 ? 'car' : 'cars'}, ${breakdown.rental.days} days`}
+            title={t('detail.rentalTitle')}
+            subtitle={breakdown.rental.cars === 1
+              ? t('detail.rentalSubOne', { cars: breakdown.rental.cars, days: breakdown.rental.days })
+              : t('detail.rentalSubMany', { cars: breakdown.rental.cars, days: breakdown.rental.days })}
             subtotal={rentalSubtotal}
             open={openGroups.rental}
             onToggle={() => toggleGroup('rental')}
           >
             <div className="total-row">
               <span className="label">
-                Rental
+                {t('detail.rental')}
                 <small>
-                  {breakdown.rental.cars} {breakdown.rental.cars === 1 ? 'car' : 'cars'} ×
-                  {' '}{breakdown.rental.days} days, €{breakdown.rental.rate.toFixed(0)}/day
-                  {breakdown.rental.season > 1 ? ', incl. summer season' : ''}
-                  {breakdown.rental.discount_pct > 0 ? `, -${breakdown.rental.discount_pct}% weekly` : ''}
+                  {breakdown.rental.cars === 1
+                    ? t('detail.rentalMetaOne', { cars: breakdown.rental.cars, days: breakdown.rental.days, rate: breakdown.rental.rate.toFixed(0) })
+                    : t('detail.rentalMetaMany', { cars: breakdown.rental.cars, days: breakdown.rental.days, rate: breakdown.rental.rate.toFixed(0) })}
+                  {breakdown.rental.season > 1 ? t('detail.inclSummer') : ''}
+                  {breakdown.rental.discount_pct > 0 ? t('detail.weeklyDiscount', { pct: breakdown.rental.discount_pct }) : ''}
                 </small>
               </span>
               <span className="val">{eur(show(breakdown.rental_total))}</span>
@@ -464,7 +484,7 @@ function BreakdownTab({ destination, breakdown, departDate, returnDate, choices,
                   departDate,
                   returnDate,
                 });
-                return carLink ? <TextLink href={carLink}>Compare rental cars on KAYAK</TextLink> : null;
+                return carLink ? <TextLink href={carLink}>{t('detail.compareKayak')}</TextLink> : null;
               })()}
             </div>
           </CostGroup>
@@ -474,30 +494,32 @@ function BreakdownTab({ destination, breakdown, departDate, returnDate, choices,
         {acc && (
           <CostGroup
             icon={<BedIcon size={15} />}
-            title={`Your stay, ${breakdown.nights} ${breakdown.nights === 1 ? 'night' : 'nights'}`}
+            title={breakdown.nights === 1
+              ? t('detail.stayTitleOne', { n: breakdown.nights })
+              : t('detail.stayTitleMany', { n: breakdown.nights })}
             subtotal={staySubtotal}
             open={openGroups.stay}
             onToggle={() => toggleGroup('stay')}
             infoButton={<InfoButton open={infoOpen === 'stay'} onClick={() => toggleInfo('stay')} />}
             infoPanel={infoOpen === 'stay' && (
               <InfoFacts rows={[
-                ['Type', 'Entire home'],
-                ['Base rate', breakdown.accom_entire_home_night_eur ? `~€${Math.round(breakdown.accom_entire_home_night_eur)} per night` : null],
-                ['Nights', String(breakdown.nights)],
-                ['Fees', 'Cleaning and service fees included'],
-                ['Adjusted for', 'Season and length of stay'],
-                ['Source', accomSourceLabel],
+                [t('detail.infoType'), t('detail.entireHome')],
+                [t('detail.infoBaseRate'), breakdown.accom_entire_home_night_eur ? t('detail.perNightApprox', { n: Math.round(breakdown.accom_entire_home_night_eur) }) : null],
+                [t('detail.infoNights'), String(breakdown.nights)],
+                [t('detail.infoFees'), t('detail.feesIncluded')],
+                [t('detail.infoAdjustedFor'), t('detail.seasonLos')],
+                [t('detail.infoSource'), accomSourceLabel],
               ]} />
             )}
           >
-            <GroundLine label="Lodging"      v={show(groundGroup(acc.lodging))}  eur={eur} />
-            <GroundLine label="Cleaning fee" v={show(groundGroup(acc.cleaning))} eur={eur} />
-            <GroundLine label="Service fee"  v={show(groundGroup(acc.service))}  eur={eur} />
+            <GroundLine label={t('detail.lodging')}     v={show(groundGroup(acc.lodging))}  eur={eur} />
+            <GroundLine label={t('detail.cleaningFee')} v={show(groundGroup(acc.cleaning))} eur={eur} />
+            <GroundLine label={t('detail.serviceFee')}  v={show(groundGroup(acc.service))}  eur={eur} />
             {acc.season !== 1 && (
               <div className="total-row sub-row">
                 <span className="label" style={{ fontWeight: 400, fontStyle: 'italic' }}>
-                  {acc.season > 1 ? 'incl. summer season' : 'incl. off-season'}
-                  {acc.los < 1 ? ' & weekly discount' : ''}
+                  {acc.season > 1 ? t('detail.inclSummerStay') : t('detail.inclOffSeason')}
+                  {acc.los < 1 ? t('detail.weeklyDiscountSuffix') : ''}
                 </span>
                 <span className="val" />
               </div>
@@ -511,7 +533,7 @@ function BreakdownTab({ destination, breakdown, departDate, returnDate, choices,
                   returnDate,
                   groupSize: choices.group_size,
                 });
-                return airbnb ? <TextLink href={airbnb}>Find real listings on Airbnb</TextLink> : null;
+                return airbnb ? <TextLink href={airbnb}>{t('detail.findAirbnb')}</TextLink> : null;
               })()}
             </div>
           </CostGroup>
@@ -521,28 +543,30 @@ function BreakdownTab({ destination, breakdown, departDate, returnDate, choices,
         {g && (
           <CostGroup
             icon={<DiningIcon size={15} />}
-            title={`On the ground, ${breakdown.nights} ${breakdown.nights === 1 ? 'night' : 'nights'}`}
+            title={breakdown.nights === 1
+              ? t('detail.groundTitleOne', { n: breakdown.nights })
+              : t('detail.groundTitleMany', { n: breakdown.nights })}
             subtotal={groundSubtotal}
             open={openGroups.ground}
             onToggle={() => toggleGroup('ground')}
             infoButton={<InfoButton open={infoOpen === 'ground'} onClick={() => toggleInfo('ground')} />}
             infoPanel={infoOpen === 'ground' && (
               <InfoFacts rows={[
-                ['Based on', 'Your lifestyle settings'],
-                ['Covers', 'Meals, drinks, nights out, groceries'],
-                ['Rates', sourceLabel],
+                [t('detail.infoBasedOn'), t('detail.lifestyleSettings')],
+                [t('detail.infoCovers'), t('detail.coversList')],
+                [t('detail.infoRates'), sourceLabel],
               ]} />
             )}
           >
-            <GroundLine label="Dinners out"  v={show(groundGroup(g.dinners))}  eur={eur} rate={destination.costs?.meal_mid_eur} />
-            <GroundLine label="Casual meals" v={show(groundGroup(g.lunches))}  eur={eur} rate={destination.costs?.meal_cheap_eur} />
-            {g.fastfood > 0 && <GroundLine label="Fast food / street" v={show(groundGroup(g.fastfood))} eur={eur} rate={destination.costs?.fastfood_eur} />}
-            <GroundLine label="Bar drinks"   v={show(groundGroup(g.drinks))}   eur={eur} rate={destination.costs?.drink_out_eur} />
-            {g.clubbing > 0 && <GroundLine label="Club nights" v={show(groundGroup(g.clubbing))} eur={eur} />}
-            {g.coffees > 0 && <GroundLine label="Coffees" v={show(groundGroup(g.coffees))} eur={eur} rate={destination.costs?.coffee_eur} />}
-            <GroundLine label="Groceries"    v={show(groundGroup(g.groceries))} eur={eur} />
+            <GroundLine label={t('detail.dinnersOut')}  v={show(groundGroup(g.dinners))}  eur={eur} rate={destination.costs?.meal_mid_eur} />
+            <GroundLine label={t('detail.casualMeals')} v={show(groundGroup(g.lunches))}  eur={eur} rate={destination.costs?.meal_cheap_eur} />
+            {g.fastfood > 0 && <GroundLine label={t('detail.fastFood')} v={show(groundGroup(g.fastfood))} eur={eur} rate={destination.costs?.fastfood_eur} />}
+            <GroundLine label={t('detail.barDrinks')}   v={show(groundGroup(g.drinks))}   eur={eur} rate={destination.costs?.drink_out_eur} />
+            {g.clubbing > 0 && <GroundLine label={t('detail.clubNights')} v={show(groundGroup(g.clubbing))} eur={eur} />}
+            {g.coffees > 0 && <GroundLine label={t('detail.coffees')} v={show(groundGroup(g.coffees))} eur={eur} rate={destination.costs?.coffee_eur} />}
+            <GroundLine label={t('detail.groceries')}   v={show(groundGroup(g.groceries))} eur={eur} />
             <div className="cost-group-links">
-              <TextLink onClick={onOpenLifestyle}>Adjust lifestyle</TextLink>
+              <TextLink onClick={onOpenLifestyle}>{t('detail.adjustLifestyle')}</TextLink>
             </div>
           </CostGroup>
         )}
@@ -552,14 +576,16 @@ function BreakdownTab({ destination, breakdown, departDate, returnDate, choices,
         <div className="cost-total-card">
           <div className="cost-total-main">
             <span className="cost-total-label">
-              Total per person
-              <small>{breakdown.nights} {breakdown.nights === 1 ? 'night' : 'nights'}, everything in</small>
+              {t('detail.totalPerPerson')}
+              <small>{breakdown.nights === 1
+                ? t('detail.nightsEverythingOne', { n: breakdown.nights })
+                : t('detail.nightsEverythingMany', { n: breakdown.nights })}</small>
             </span>
             <span className="cost-total-val">{eur(breakdown.grand_total / group)}</span>
           </div>
           {group > 1 && (
             <div className="cost-total-sub">
-              <span>Whole group ({group} people)</span>
+              <span>{t('detail.wholeGroup', { n: group })}</span>
               <span>{eur(breakdown.grand_total)}</span>
             </div>
           )}
@@ -569,24 +595,24 @@ function BreakdownTab({ destination, breakdown, departDate, returnDate, choices,
   );
 }
 
-// "Is a car needed here?" advisory - the second car layer.
-// The stored reasons join clauses with a bare dash ("… public transport -
-// skip the car"); rewrite that as two sentences for display.
+// "Is a car needed here?" advisory, the second car layer.
+// The stored reasons join clauses with a bare dash ("… public transport, // skip the car"); rewrite that as two sentences for display.
 function cleanReason(s) {
   return String(s || '').replace(/\s+[-–—]\s+(\w)/g, (m, c) => `. ${c.toUpperCase()}`);
 }
 
 function CarAdvisory({ lt, mode }) {
+  const { t } = useI18n();
   if (!lt) return null;
   const dot = lt.car_needed ? '#d98324' : '#3a9d6b';
   const reason = cleanReason(lt.reason);
   let text;
   if (lt.car_needed) {
     text = mode === 'car'
-      ? `Car recommended here, and you'll have your own. ${reason}`
-      : `Car recommended here, a rental is included above. ${reason}`;
+      ? t('detail.carRecOwn', { reason })
+      : t('detail.carRecRental', { reason });
   } else {
-    text = `No car needed. ${reason}`;
+    text = t('detail.noCarNeeded', { reason });
   }
   return (
     <div className="car-advisory">
@@ -597,40 +623,46 @@ function CarAdvisory({ lt, mode }) {
 }
 
 /** "Fly to the nearest airport instead": real-fare alternatives for a
- *  destination with no direct flight on these dates - fly into a nearby
+ *  destination with no direct flight on these dates, fly into a nearby
  *  airport we DO have a fare for, then drive/taxi the last stretch. */
 function ViaAirportOptions({ destination, data, departDate, returnDate, choices, onSelect }) {
+  const { t } = useI18n();
   const options = viaNearestAirport(destination, data?.destinations, departDate, returnDate, choices);
   if (!options.length) return null;
   return (
     <div className="via-airport">
-      <div className="via-airport-title"><PlaneIcon size={11} /> Fly to a nearby airport instead</div>
+      <div className="via-airport-title"><PlaneIcon size={11} /> {t('detail.viaTitle')}</div>
       {options.map((o) => (
         <div className="via-airport-row" key={o.id}>
           <span className="via-airport-main">
             <b>{o.city}</b>
             <small>
-              flight {eur(o.fare_per_person)}/p, then {o.road_km} km
-              (~{o.drive_hours_one_way}h, ~{eur(o.leg_eur_pp_one_way)}/p each way)
+              {t('detail.viaMeta', {
+                fare: eur(o.fare_per_person),
+                km: o.road_km,
+                h: o.drive_hours_one_way,
+                leg: eur(o.leg_eur_pp_one_way),
+              })}
             </small>
           </span>
-          <span className="via-airport-est">~{eur(o.total_pp_est)}/p</span>
+          <span className="via-airport-est">{t('detail.viaEst', { total: eur(o.total_pp_est) })}</span>
           {onSelect && (
-            <button className="via-airport-open" onClick={() => onSelect(o.id)} title={`Open ${o.city}`}>View</button>
+            <button className="via-airport-open" onClick={() => onSelect(o.id)} title={t('detail.openCity', { city: o.city })}>{t('detail.view')}</button>
           )}
         </div>
       ))}
-      <p className="via-airport-note">Flight fares are real stored Ryanair prices; the last stretch is a road estimate.</p>
+      <p className="via-airport-note">{t('detail.viaNote')}</p>
     </div>
   );
 }
 
 function GroundLine({ label, v, eur, rate }) {
+  const { t } = useI18n();
   return (
     <div className="total-row sub-row">
       <span className="label" style={{ fontWeight: 400 }}>
         {label}
-        {rate > 0 && <small>€{rate} each, local rate</small>}
+        {rate > 0 && <small>{t('detail.eachLocalRate', { rate })}</small>}
       </span>
       <span className="val">{eur(v)}</span>
     </div>

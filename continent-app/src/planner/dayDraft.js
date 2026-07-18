@@ -1,5 +1,5 @@
 /**
- * dayDraft.js - pure logic for the Day planner's guided planning:
+ * dayDraft.js, pure logic for the Day planner's guided planning:
  *
  *   tieredActivities()  split a city's POI list into must-see / worth-it /
  *                       more / get-active tiers, driven by the OpenTripMap
@@ -11,12 +11,12 @@
  *                       doesn't zigzag (moved here from DayPlannerTab).
  *
  * All functions work on `activities.items` (items_full merged at runtime) and
- * speak in ORIGINAL INDICES into that array - the same indices the planner's
+ * speak in ORIGINAL INDICES into that array, the same indices the planner's
  * saved assignments use.
  */
 import { haversineKm, cityCoords } from '../lib/runtime_pricing.js';
 
-/** Reorders a day's assigned activity indices to minimize backtracking - a
+/** Reorders a day's assigned activity indices to minimize backtracking, a
  *  simple nearest-neighbour walk starting from the first-added stop with
  *  coordinates, or from `anchor` ({lat,lon}, e.g. the traveller's stay) when
  *  one is given, so the day starts at the sight nearest their door.
@@ -86,7 +86,7 @@ export function isTransportInfraPoi(item) {
 
 // The harvest files whole villages under kind "Square" (Bellagio, Varenna...):
 // their Wikipedia summaries say "comune"/"municipality"/"village". Relabel so
-// the planner never suggests "Bellagio - Square, ~25 min visit".
+// the planner never suggests "Bellagio, Square, ~25 min visit".
 const MUNICIPALITY_RE = /\b(comune|municipality|municipio|gemeente|commune)\b|\bis a (village|hamlet|small town|town|frazione)\b|small (community|town|village)/i;
 export function poiKind(item) {
   if (!item) return '';
@@ -112,7 +112,7 @@ export function isMustSee(item) {
   return (item.rate ?? 0) >= 3 && poiScore(item) >= 3.5;
 }
 
-// The plain-language buckets a traveller actually filters by - not the 40
+// The plain-language buckets a traveller actually filters by, not the 40
 // harvested POI kinds. Nature covers beaches, lakes, parks, gardens, views and
 // the like (whether you visit them or do something active there); food covers
 // markets, breweries and wineries; everything else is a "sight".
@@ -149,7 +149,7 @@ export function poiMapCat(item) {
 /**
  * A display rating (0-10) for a single POI, read off the SAME composite quality
  * signal the planner ranks by (poiScore: importance rate + heritage listing +
- * Wikipedia presence + real-world fame) - just rescaled so the tiers read
+ * Wikipedia presence + real-world fame), just rescaled so the tiers read
  * naturally: a genuine must-see lands ~8.5-9.5, a solid rated place ~7, a
  * modest one ~5.5. Returns { score, tier (1-3), label } - tier drives the same
  * rt-1/2/3 chip colours the rest of the app uses.
@@ -216,6 +216,9 @@ const NAME_STOPWORDS = new Set([
 ]);
 function nameCore(name) {
   return (name || '')
+    // parenthetical disambiguators are location, not identity: "Villa
+    // Cipressi (Varenna)" must not inherit the town's name as evidence.
+    .replace(/\([^)]*\)/g, ' ')
     .normalize('NFD').replace(/[̀-ͯ]/g, '') // strip diacritics
     .toLowerCase()
     // letters NFD can't decompose ("Kościół" must become "kosciol", not "koscio")
@@ -230,7 +233,7 @@ function nameCore(name) {
 }
 
 // Sibling kinds the harvesters use interchangeably for the same real place
-// (Wikipedia says "Basilica", OSM says "Church") - identity keys speak in the
+// (Wikipedia says "Basilica", OSM says "Church"), identity keys speak in the
 // family so the kind wobble alone never splits a duplicate pair.
 const KIND_FAMILIES = {
   church: 'worship', cathedral: 'worship', basilica: 'worship',
@@ -247,7 +250,7 @@ function kindFamily(kind) {
 }
 
 /**
- * The strong identity keys for a POI - the same real place under a translated
+ * The strong identity keys for a POI, the same real place under a translated
  * or alternate name shares at least one: its thumbnail image, its proper-name
  * core paired with its kind family ("castle::vezio"), or its kind family
  * within ~120m ("castle@46.010,9.283"). A proper-name core only counts
@@ -288,14 +291,16 @@ function dupeRank(item) {
 // Tokens match tolerant of Slavic/Romance inflection: identical, or sharing a
 // stem of >=5 characters that reaches to within 3 of the longer token's end
 // ("wawel"/"wawelu", "mariacki"/"mariackiego" match; "marina"/"marittima"
-// doesn't).
+// doesn't). A whole-prefix relation of >=6 chars also counts, because German
+// and Nordic names fuse the kind word into the token ("theodul" must match
+// "theodulgletscher").
 function tokensAlike(a, b) {
   if (a === b) return true;
   const n = Math.min(a.length, b.length);
   if (n < 5) return false;
   let p = 0;
   while (p < n && a[p] === b[p]) p += 1;
-  return p >= 5 && p >= Math.max(a.length, b.length) - 3;
+  return (p >= 5 && p >= Math.max(a.length, b.length) - 3) || (p === n && p >= 6);
 }
 
 // Does the shorter name's core essentially live inside the longer one's?
@@ -321,7 +326,7 @@ const DUPE_RADIUS_KM = 0.25;
 
 // Group a list's near-duplicates with a union-find: entries sharing any exact
 // identity key (image / core+kind-family / geo-cell+kind) merge, and a second
-// pairwise pass catches the harvest's ugliest twins - the same church under
+// pairwise pass catches the harvest's ugliest twins, the same church under
 // two names AND two kinds ("Parafia ..." filed as Square next to "Kosciol
 // pw. ..." filed as Church), which share no kind-qualified key but sit 40m
 // apart with the same proper-name core.
@@ -335,7 +340,7 @@ function poiDupeGroups(list) {
   const union = (a, b) => { a = find(a); b = find(b); if (a !== b) parent[b] = a; };
 
   // An image URL attached to 3+ entries is a harvester fallback photo (Berlin
-  // has five unrelated POIs wearing one Museumsinsel shot), not identity - it
+  // has five unrelated POIs wearing one Museumsinsel shot), not identity, it
   // would weld a whole neighbourhood into one "duplicate" group.
   const imgCount = new Map();
   list.forEach((item) => {
@@ -349,8 +354,8 @@ function poiDupeGroups(list) {
     }
   });
 
-  // Tokens shared across a large slice of THIS list - the city's own name,
-  // mostly ("... w Krakowie", "... de Santander") - carry no identity signal:
+  // Tokens shared across a large slice of THIS list, the city's own name,
+  // mostly ("... w Krakowie", "... de Santander"), carry no identity signal:
   // without this, "Berlin Cathedral" (core: just "berlin") would swallow every
   // Berlin-named neighbour. Drop them before the pairwise comparison.
   const rawTokens = list.map((item) => nameCore(item?.name).split(' ').filter(Boolean));
@@ -373,7 +378,7 @@ function poiDupeGroups(list) {
       const matched = coreContainment(a.tokens, b.tokens);
       if (!matched) continue;
       // Across kind families a single shared token is weak evidence (a church
-      // and the square it stands on often share a name) - demand two.
+      // and the square it stands on often share a name), demand two.
       if (matched < 2 && a.fam !== b.fam) continue;
       if (a.lat != null && b.lat != null) {
         const km = haversineKm(a.lat, a.lon, b.lat, b.lon);
@@ -396,12 +401,12 @@ function poiDupeGroups(list) {
 }
 
 /**
- * Detect near-duplicate POIs in a city's harvested list - the same real place
+ * Detect near-duplicate POIs in a city's harvested list, the same real place
  * appearing twice under a translated or alternate name (e.g. "Castello di
  * Vezio" and "Castle of Vezio"). Duplicates collapse into one group (see
  * poiDupeGroups); the strongest entry survives and the rest come back as
  * `suppressed` (a Set of indices) so callers can hide them WITHOUT reindexing
- * the array - saved assignments and toggles keep speaking in the original,
+ * the array, saved assignments and toggles keep speaking in the original,
  * stable indices. `canon` maps each suppressed index to its surviving twin,
  * so already-saved plans that reference a duplicate can be repaired in place.
  */
@@ -430,7 +435,7 @@ export function duplicatePoiIndices(items) {
  *
  * With rate data (schema v12): every sight is ranked by poiScore, and the
  * "must" shelf keeps only the top slice (proportional to catalogue size,
- * capped at MUST_CAP) of rate-3 sights - so the genuinely famous places rise
+ * capped at MUST_CAP) of rate-3 sights, so the genuinely famous places rise
  * and the technically-rated-3-but-obscure ones demote to "worth". Without
  * rates (older data / Wikivoyage-sourced cities) the list order is already
  * importance-sorted, so we fall back to positional tiers.
@@ -463,7 +468,7 @@ export function tieredActivities(items, eligibleIdx = null) {
   return { must, worth, more, active };
 }
 
-// Which interests each catalogued kind speaks to - the Day planner's superset
+// Which interests each catalogued kind speaks to, the Day planner's superset
 // of the trip wizard's mapping, covering the active/outdoor kinds harvested in
 // schema v12. Kinds not listed are neutral (never filtered out).
 const KIND_INTERESTS = {
@@ -512,7 +517,7 @@ function kindDirectMatch(kind, interests) {
   return !!tags && !!interests && tags.some((t) => interests.has(t));
 }
 
-/** 0..0.8 fame boost from Wikipedia pageviews - enough to lift a world-famous
+/** 0..0.8 fame boost from Wikipedia pageviews, enough to lift a world-famous
  *  sight over a same-rate peer, never enough to outrank a whole rate tier. */
 function popBoost(item) {
   const p = typeof item.pop === 'number' ? item.pop : 0;
@@ -556,14 +561,14 @@ export function dwellMinutes(kind, factor = 1) {
   return Math.max(10, Math.round((KIND_DWELL[kind] ?? 40) * factor));
 }
 
-/** "How long do you like at each stop?" - scales every dwell estimate. */
+/** "How long do you like at each stop?", scales every dwell estimate. */
 export const VISIT_PACES = [
   { key: 'quick', label: 'Quick looks', desc: 'Pop in, take it in, move on. You see more places', factor: 0.7 },
   { key: 'standard', label: 'A good look around', desc: 'Enough time to properly take each place in', factor: 1 },
   { key: 'deep', label: 'Take my time', desc: 'Linger and sit down. Fewer stops, deeper visits', factor: 1.45 },
 ];
 
-/** "How much do you want to do that day?" - the traveller sets the ambition,
+/** "How much do you want to do that day?", the traveller sets the ambition,
  *  Carta acts on it: it shifts how many stops a drafted day may hold. */
 export const FILL_LEVELS = [
   { key: 'light', label: 'Keep it light', desc: 'A few highlights with plenty of breathing room', stopsDelta: -2 },
@@ -604,7 +609,7 @@ export function feasibilityLimits({ dayLen, walk, fill, visit } = {}) {
 }
 
 // Anything farther than this from the city's own centre is data noise for a
-// walkable day plan (e.g. a POI across a strait on another island) - it can
+// walkable day plan (e.g. a POI across a strait on another island), it can
 // only produce impossible "walk over the sea" days.
 export const MAX_POI_KM_FROM_CITY = 20;
 
@@ -645,7 +650,7 @@ const SCENIC_KINDS = new Set([
 /**
  * "Make the walk itself beautiful": scan the planned day's legs for photogenic
  * places (viewpoints, bridges, squares, gardens...) that sit almost ON the
- * path - a tiny detour, not a new destination - and suggest the best ones.
+ * path, a tiny detour, not a new destination, and suggest the best ones.
  * Returns [{ idx, item, afterPos, extraMin, km }] sorted by quality;
  * afterPos = insert after this position in the current order.
  */
@@ -721,7 +726,7 @@ export function walkableIdxSet(items, cityDest) {
 export const AREA_KM = 3.5;
 
 /**
- * "Where should Carta focus this day?" - the guidance step for LARGE cities,
+ * "Where should Carta focus this day?", the guidance step for LARGE cities,
  * whose 20 km walkable radius spans far more than a day can cover. Without it
  * an auto-draft can legally anchor a day in the outskirts (technically the
  * highest-scoring cluster) when the traveller obviously meant the centre.
@@ -729,11 +734,11 @@ export const AREA_KM = 3.5;
  * Builds the choosable areas from the data itself:
  *   centre  POIs within AREA_KM of the city's own centre (always offered
  *           when it holds enough material)
- *   stay    POIs within AREA_KM of the traveller's stay - only when the stay
+ *   stay    POIs within AREA_KM of the traveller's stay, only when the stay
  *           is meaningfully outside the centre (otherwise it IS the centre)
  *   all     everything walkable (the old behaviour, explicitly chosen)
  *
- * Returns [{ key, label, sub, count, idx: Set }] - `idx` are ORIGINAL item
+ * Returns [{ key, label, sub, count, idx: Set }], `idx` are ORIGINAL item
  * indices, ready to intersect with the draft's eligible set. When the whole
  * catalogue already sits in the centre there is nothing to guide, so only
  * 'all' comes back and the UI can skip the question entirely.
@@ -804,7 +809,7 @@ export function cityAreaOptions(items, cityDest, stayPoint, eligibleIdx) {
 
 /**
  * "What kind of day?" styles for the guided picker. Tourists don't know a
- * city's geography or its 40 POI kinds - they know whether they feel like
+ * city's geography or its 40 POI kinds, they know whether they feel like
  * walking landmarks, museums, being active, or eating their way around.
  * Each style maps to the interest keys the ranking logic already speaks.
  */
@@ -843,9 +848,8 @@ export const DAY_STYLES = [
 
 /**
  * Ranked candidate deck for the guided picker: the stops Carta would stand
- * behind for this style, best first. Only worthwhile places make the deck -
- * rate-2+ sights, heritage sites, and (for active styles) matching outdoor
- * kinds - so the traveller is never asked to judge filler.
+ * behind for this style, best first. Only worthwhile places make the deck,  * rate-2+ sights, heritage sites, and (for active styles) matching outdoor
+ * kinds, so the traveller is never asked to judge filler.
  */
 export function candidateDeck(items, interests, limit = 16, eligibleIdx = null) {
   const iset = interests instanceof Set ? interests : new Set(interests || []);
@@ -874,8 +878,8 @@ export function candidateDeck(items, interests, limit = 16, eligibleIdx = null) 
 /**
  * The picks-step deck: every genuinely worthwhile place in town, across ALL
  * categories (sights, nature & beaches, active, food), best-first with a gentle
- * nudge toward the chosen mood. Unlike candidateDeck - which narrows hard to
- * the mood so an auto-draft stays on-theme - this stays deliberately broad, so
+ * nudge toward the chosen mood. Unlike candidateDeck, which narrows hard to
+ * the mood so an auto-draft stays on-theme, this stays deliberately broad, so
  * the traveller can filter it by category and actually discover the lake's
  * beaches and viewpoints, not just its towns. Near-duplicate entries (the same
  * place under two names) are folded out.
@@ -983,7 +987,7 @@ const WALK_EST_MIN = 15; // rough inter-stop walking allowance while drafting
  *
  * Returns an array of `numDays` arrays of item indices, each route-optimized.
  * Days beyond the available material come back empty rather than padded with
- * filler - better an honest half-empty day 3 than three mediocre days.
+ * filler, better an honest half-empty day 3 than three mediocre days.
  */
 export function draftDays({ items, numDays, interests, paceKey, dwellFn, stopsMax, budgetMin, maxKmFromCentroid, eligibleIdx }) {
   const paceBase = PACES.find((p) => p.key === paceKey) || PACES[1];
@@ -1001,7 +1005,7 @@ export function draftDays({ items, numDays, interests, paceKey, dwellFn, stopsMa
   // get a boost so a beach person's draft actually contains the beach. Genuine
   // must-sees get their own bonus, so Carta's drafts always lead with the most
   // beautiful, highest-rated places. If the interest filter can't fill the
-  // asked-for days, relax it to everything - the score boost still leads with
+  // asked-for days, relax it to everything, the score boost still leads with
   // what they love, topped up with the city's best of the rest.
   let pool = all.filter(({ item }) => kindMatchesInterests(item.kind, interests));
   if (pool.length < pace.stops * numDays) pool = all;

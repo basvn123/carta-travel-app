@@ -1,5 +1,5 @@
 /**
- * tripCostOptimizer.js - "take this trip cheaper" intelligence.
+ * tripCostOptimizer.js, "take this trip cheaper" intelligence.
  *
  * Two independent levers, both computed from data the client already has:
  *   1. WHEN: sweep every start date that has a real stored fare for the first
@@ -17,7 +17,7 @@ import { haversineKm, cityCoords } from './runtime_pricing.js';
 /**
  * Cheapest start dates for this itinerary, keeping the same stop order and
  * per-stop nights. Only dates with REAL stored fares for both the inbound and
- * outbound leg qualify - so every candidate here is actually bookable.
+ * outbound leg qualify, so every candidate here is actually bookable.
  *
  * @param stops        [{ destinationId, nights }]
  * @param destinations data.destinations
@@ -79,7 +79,7 @@ function nnOrder(ids, destinations) {
   if (ids.length < 3) return ids;
   // True town-centre distances: raw degree deltas over-weight east-west gaps
   // ~2x at European latitudes, and airport-tier rows keep the runway in
-  // lat/lon - both can propose a genuinely worse order.
+  // lat/lon, both can propose a genuinely worse order.
   const nodes = ids.map((id) => ({ id, c: cityCoords(destinations[id] || null) }));
   if (nodes.some((n) => n.c.lat == null)) return ids;
   const ordered = [nodes[0]];
@@ -102,7 +102,7 @@ function nnOrder(ids, destinations) {
 /**
  * Would reordering the stops save money on ground transport?
  * GROUND-ONLY: the first stop stays fixed (the flight-arrival anchor) but the
- * last stop can change, which can move the return-flight airport - the flight
+ * last stop can change, which can move the return-flight airport, the flight
  * delta is NOT netted into `saving_eur`. Keep the figure labelled as a ground
  * saving wherever it's surfaced.
  * @returns { saving_eur, ordered_ids, current_eur } or null when the current

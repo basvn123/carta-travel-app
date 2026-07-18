@@ -1,5 +1,5 @@
 /**
- * dayPlanStore.js - device-local storage for standalone day plans.
+ * dayPlanStore.js, device-local storage for standalone day plans.
  *
  * Day plans work for guests (no account, no Supabase round-trip), so they live
  * in localStorage. Split out of DayPlannerTab so the Saved-trips panel can show

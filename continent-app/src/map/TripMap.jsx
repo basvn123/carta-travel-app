@@ -5,7 +5,7 @@ import 'maplibre-gl/dist/maplibre-gl.css';
 // Same clean, key-less Carto Voyager basemap the main map uses.
 const MAP_STYLE = 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json';
 
-// Category glyphs for the pickable POI pins - the same visual language as the
+// Category glyphs for the pickable POI pins, the same visual language as the
 // explore map's pins (dem-pin), so "tappable place" reads the same everywhere.
 const S = (d) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">${d}</svg>`;
 const POI_CAT_ICONS = {
@@ -20,7 +20,7 @@ const POI_PLUS_ICON = S('<path d="M12 5v14M5 12h14"/>');
 /**
  * The trip's map backdrop: a full-bleed basemap that draws the itinerary as a
  * flowing dashed line through numbered pins, one per stop, and keeps the whole
- * route framed above the bottom sheet. Purely presentational - clicking a pin
+ * route framed above the bottom sheet. Purely presentational, clicking a pin
  * calls `onSelectStop(index)` so the sheet can scroll/highlight if it wants.
  *
  * `stops` is the ordered list of { lat, lon, city } (stops without a resolved
@@ -134,7 +134,7 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
 
       // Route line: prefer mode-tagged segments (walk drawn solid, ferry drawn
       // as its own over-water line), then the flat street-following geometry,
-      // and finally straight hops between the stops - dashed, as an estimate.
+      // and finally straight hops between the stops, dashed, as an estimate.
       const src = map.getSource('trip-route');
       const fsrc = map.getSource('trip-ferry');
       const asFeature = (coords) => ({ type: 'Feature', geometry: { type: 'LineString', coordinates: coords } });
@@ -162,7 +162,7 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
         }
       }
 
-      // Numbered pins - reconcile by teardown+rebuild (there are only a handful).
+      // Numbered pins, reconcile by teardown+rebuild (there are only a handful).
       markersRef.current.forEach((m) => m.marker.remove());
       // A `stay` point (the traveller's own address) gets its own quiet pin
       // and doesn't consume a stop number.
@@ -185,8 +185,7 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
       });
 
       // Frame the whole route in the strip above the sheet. With no stops yet,
-      // settle on the plan's own city (focus) instead of the whole continent -
-      // a freshly opened saved day plan should show its city, not Europe.
+      // settle on the plan's own city (focus) instead of the whole continent,       // a freshly opened saved day plan should show its city, not Europe.
       //
       // In pickable-pin mode (pois given) frame only once per focus: while the
       // traveller taps pins to build the day, every add changes `stops`, and
@@ -222,7 +221,7 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
   }, [stops, padBottom, routeGeometry, routeSegments, showRoute, focus?.lat, focus?.lon, pois != null, fitMaxZoom]);
 
   // Pickable candidate pins (Day planner): rebuild when the visible set
-  // changes - a tapped pin leaves this list (it becomes a numbered stop), so
+  // changes, a tapped pin leaves this list (it becomes a numbered stop), so
   // teardown+rebuild keeps the map honest with zero reconciliation logic.
   const poisKey = (pois || []).map((p) => p.id).join(';');
   useEffect(() => {
@@ -243,7 +242,7 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
       const lbl = document.createElement('span');
       lbl.className = 'dem-pin-lbl';
       lbl.textContent = p.label;
-      el.append(ico, add, lbl);
+      el.append(ico, lbl);
       if (p.must) {
         const star = document.createElement('span');
         star.className = 'dem-pin-star';
@@ -251,6 +250,7 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
         star.title = 'A true must-see';
         el.append(star);
       }
+      el.append(add);
       el.title = `Add ${p.label} to this day`;
       el.addEventListener('click', (e) => { e.stopPropagation(); onPoiClickRef.current?.(p.id); });
       poiMarkersRef.current.push(

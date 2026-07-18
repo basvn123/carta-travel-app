@@ -224,7 +224,7 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
   };
 
   // The wizard hands over a trip Carta already arranged (routed from the
-  // fly-in, days filled from the interests) - show it planned right away, with
+  // fly-in, days filled from the interests), show it planned right away, with
   // the route on the map. Edit / Replan / Start over stay one tap away.
   const handleWizardComplete = (selection) => {
     tp.loadFromWizard(selection);
@@ -244,7 +244,7 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
 
   // Leave the planned overview without touching the trip: drop back to the
   // standard planner (the launcher on mobile, the map on desktop). Nothing is
-  // saved, deleted or edited - it's just an escape hatch off this screen.
+  // saved, deleted or edited, it's just an escape hatch off this screen.
   const handleExitOverview = () => {
     tp.clearPlan();
     tp.setPlanned(false);
@@ -254,7 +254,7 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
   };
 
   // A trip plan chosen from the Saved-trips overview: load it and switch
-  // straight to its planned view - or, for { id, edit: true }, into the
+  // straight to its planned view, or, for { id, edit: true }, into the
   // editable stop list so dates/stops can be changed right away.
   useEffect(() => {
     if (!openPlanId) return;
@@ -289,7 +289,7 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
     return () => ro.disconnect();
   }, []);
 
-  // Manual "Add stop": country first, then city within it - picking both at once
+  // Manual "Add stop": country first, then city within it, picking both at once
   // made the combined list noisy, and country-first mirrors how travellers
   // actually think about where to go next.
   const countryOptions = [...new Set(Object.values(destinations).map((d) => d.country).filter(Boolean))]
@@ -303,8 +303,7 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
     : [];
 
   const hasDates = tp.tripStart && tp.tripEnd && tp.windowNights > 0;
-  // The inline builder is now only an editor for a trip that already exists -
-  // opened from Saved trips' "Edit", or "Edit stops" on a planned trip. A fresh
+  // The inline builder is now only an editor for a trip that already exists,   // opened from Saved trips' "Edit", or "Edit stops" on a planned trip. A fresh
   // trip planner shows only the guide launcher; new trips are built by the wizard.
   const hasTrip = tp.stopDetails.length > 0;
   const mapStops = tp.stopDetails
@@ -312,7 +311,7 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
     .map((s) => ({ lat: s.dest.lat, lon: s.dest.lon, city: s.dest.city }));
 
   // Draw the real road route through the stops whenever there are two or more
-  // (keyless OSRM, same as the day planner's walking route) - while editing
+  // (keyless OSRM, same as the day planner's walking route), while editing
   // AND once planned, so the line never cuts across water when a road exists.
   // Keyed on the coordinates so a stale response for a since-changed route is
   // ignored; falls back to the dashed straight-line hops when the router has
@@ -360,10 +359,25 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
   };
 
   const groundTotal = tp.legs.reduce((sum, l) => sum + (l ? l.ground_total : 0), 0);
+  // Anchor-city connection legs ("fly into Bergamo, then get to Como"), real
+  // journeys that belong in the receipt next to the flights they bracket.
+  const AnchorLegRow = ({ leg, from, to }) => {
+    if (!leg || !leg.ground_total) return null;
+    const Icon = leg.mode === 'car' ? CarIcon : leg.mode === 'bus' ? BusIcon : TrainIcon;
+    return (
+      <div className="trip-total-row">
+        <span className="lbl">
+          <Icon size={11} /> {from} → {to}
+          <small>{leg.road_km} km, ~{fmtHours(leg.hours)}, estimate</small>
+        </span>
+        <span className="val">{eur(leg.ground_total)}</span>
+      </div>
+    );
+  };
 
   // Which itinerary days already have Day-planner picks on this device, so the
   // per-day button can honestly read "Modify" instead of "Plan". Re-read when
-  // the planned view (re)opens - picks are made over in the Day planner tab.
+  // the planned view (re)opens, picks are made over in the Day planner tab.
   const dayAssignments = useMemo(
     () => (tp.planned ? loadAssignments(tp.planId || TRIP_DRAFT_PLAN_ID) : {}),
     [tp.planned, tp.planId],
@@ -491,6 +505,7 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
               groupSize={tp.groupSize}
               flight={tp.flight}
               legs={tp.legs}
+              anchorLegs={tp.anchorLegs}
               stayCosts={tp.stayCosts}
               carRental={tp.carRental}
               activeStopIndex={selectedStop}
@@ -725,6 +740,17 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
                   ) : tp.flight ? (
                     <p className="trip-note">{flightReasonLabel(tp.flight.reason)}</p>
                   ) : null}
+
+                  <AnchorLegRow
+                    leg={tp.anchorLegs?.in}
+                    from={tp.anchorLegs?.anchor?.city}
+                    to={tp.stopDetails[0]?.dest?.city}
+                  />
+                  <AnchorLegRow
+                    leg={tp.anchorLegs?.out}
+                    from={tp.stopDetails[tp.stopDetails.length - 1]?.dest?.city}
+                    to={tp.anchorLegs?.anchor?.city}
+                  />
 
                   {groundTotal > 0 && (
                     <div className="trip-total-row">

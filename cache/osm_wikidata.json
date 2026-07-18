@@ -140,7 +140,637 @@
     "src": "osm"
    }
   ],
-  "KOW": []
+  "KOW": [],
+  "gem:hortobagy": [
+   {
+    "name": "Hortobágy-halastavi tanösvény",
+    "kind": "Attraction",
+    "lat": 47.60544,
+    "lon": 21.06937,
+    "rate": 2,
+    "active": false,
+    "src": "osm"
+   },
+   {
+    "name": "Nagy Bivalyhalom régészeti terület",
+    "kind": "Archaeological site",
+    "lat": 47.5868,
+    "lon": 21.16009,
+    "rate": 2,
+    "active": false,
+    "src": "osm"
+   },
+   {
+    "name": "Csónakázás a Hortobágy folyón",
+    "kind": "Attraction",
+    "lat": 47.58149,
+    "lon": 21.14839,
+    "rate": 2,
+    "active": false,
+    "src": "osm"
+   },
+   {
+    "name": "140 CFF APO",
+    "kind": "Attraction",
+    "lat": 47.59429,
+    "lon": 21.14425,
+    "rate": 2,
+    "active": false,
+    "src": "osm"
+   },
+   {
+    "name": "Függőcinege torony",
+    "kind": "Viewpoint",
+    "lat": 47.61356,
+    "lon": 21.0722,
+    "rate": 1,
+    "active": true,
+    "src": "osm"
+   },
+   {
+    "name": "Három pásztor szobor",
+    "kind": "Artwork",
+    "lat": 47.58177,
+    "lon": 21.1503,
+    "rate": 1,
+    "active": false,
+    "src": "osm"
+   },
+   {
+    "name": "madárles",
+    "kind": "Viewpoint",
+    "lat": 47.6424,
+    "lon": 21.08629,
+    "rate": 1,
+    "active": true,
+    "src": "osm"
+   },
+   {
+    "name": "Fattyúszerkő torony",
+    "kind": "Viewpoint",
+    "lat": 47.63816,
+    "lon": 21.08442,
+    "rate": 1,
+    "active": true,
+    "src": "osm"
+   },
+   {
+    "name": "Lovashintói kiállítás",
+    "kind": "Museum",
+    "lat": 47.59454,
+    "lon": 21.15391,
+    "rate": 1,
+    "active": false,
+    "src": "osm"
+   },
+   {
+    "name": "Csárda Múzeum",
+    "kind": "Museum",
+    "lat": 47.58209,
+    "lon": 21.14918,
+    "rate": 1,
+    "active": false,
+    "src": "osm"
+   },
+   {
+    "name": "XI-es torony",
+    "kind": "Viewpoint",
+    "lat": 47.60551,
+    "lon": 21.08463,
+    "rate": 1,
+    "active": true,
+    "src": "osm"
+   },
+   {
+    "name": "Darvak tánca",
+    "kind": "Artwork",
+    "lat": 47.58225,
+    "lon": 21.15097,
+    "rate": 1,
+    "active": false,
+    "src": "osm"
+   },
+   {
+    "name": "Csontváry Kosztka Tivadar",
+    "kind": "Artwork",
+    "lat": 47.58177,
+    "lon": 21.14852,
+    "rate": 1,
+    "active": false,
+    "src": "osm"
+   },
+   {
+    "name": "Petőfi Sándor domborműves emléktábla",
+    "kind": "Artwork",
+    "lat": 47.58213,
+    "lon": 21.1498,
+    "rate": 1,
+    "active": false,
+    "src": "osm"
+   }
+  ],
+  "gem:halki": [
+   {
+    "name": "Μεροβίγλι",
+    "kind": "Peak",
+    "lat": 36.23485,
+    "lon": 27.58867,
+    "rate": 2,
+    "active": true,
+    "src": "osm"
+   },
+   {
+    "name": "Τραχειά",
+    "kind": "Peak",
+    "lat": 36.21241,
+    "lon": 27.58312,
+    "rate": 1,
+    "active": true,
+    "src": "osm"
+   },
+   {
+    "name": "Prophet Ilias",
+    "kind": "Peak",
+    "lat": 36.22566,
+    "lon": 27.56466,
+    "rate": 1,
+    "active": true,
+    "src": "osm"
+   },
+   {
+    "name": "Vounia",
+    "kind": "Peak",
+    "lat": 36.22571,
+    "lon": 27.54346,
+    "rate": 1,
+    "active": true,
+    "src": "osm"
+   },
+   {
+    "name": "Κεφαλές",
+    "kind": "Ruins",
+    "lat": 36.23457,
+    "lon": 27.52386,
+    "rate": 1,
+    "active": false,
+    "src": "osm"
+   },
+   {
+    "name": "Agia Pelagia",
+    "kind": "Ruins",
+    "lat": 36.23487,
+    "lon": 27.52449,
+    "rate": 1,
+    "active": false,
+    "src": "osm"
+   },
+   {
+    "name": "Kapari",
+    "kind": "Ruins",
+    "lat": 36.22889,
+    "lon": 27.52588,
+    "rate": 1,
+    "active": false,
+    "src": "osm"
+   },
+   {
+    "name": "Chrousoi",
+    "kind": "Ruins",
+    "lat": 36.22782,
+    "lon": 27.52969,
+    "rate": 1,
+    "active": false,
+    "src": "osm"
+   },
+   {
+    "name": "Vokolia",
+    "kind": "Ruins",
+    "lat": 36.22161,
+    "lon": 27.5313,
+    "rate": 1,
+    "active": false,
+    "src": "osm"
+   },
+   {
+    "name": "Κάνια",
+    "kind": "Beach",
+    "lat": 36.23423,
+    "lon": 27.6186,
+    "rate": 1,
+    "active": true,
+    "src": "osm"
+   }
+  ],
+  "gem:balos-lagoon": [],
+  "gem:petra-tou-romiou": [
+   {
+    "name": "Πέτρα του Ρωμιού",
+    "kind": "Attraction",
+    "lat": 34.66409,
+    "lon": 32.62707,
+    "rate": 2,
+    "active": false,
+    "src": "osm"
+   },
+   {
+    "name": "Ligrin tou Digeni",
+    "kind": "Archaeological site",
+    "lat": 34.69047,
+    "lon": 32.62403,
+    "rate": 2,
+    "active": false,
+    "src": "osm"
+   },
+   {
+    "name": "Saracens rock",
+    "kind": "Attraction",
+    "lat": 34.6631,
+    "lon": 32.63454,
+    "rate": 2,
+    "active": false,
+    "src": "osm"
+   },
+   {
+    "name": "Aphrodite’s Rock",
+    "kind": "Viewpoint",
+    "lat": 34.66415,
+    "lon": 32.62728,
+    "rate": 1,
+    "active": true,
+    "src": "osm"
+   },
+   {
+    "name": "Εθνικό Δασικό Πάρκο Πέτρα του Ρωμιού",
+    "kind": "Nature reserve",
+    "lat": 34.6727,
+    "lon": 32.62,
+    "rate": 1,
+    "active": true,
+    "src": "osm"
+   }
+  ],
+  "gem:westfjords": [],
+  "gem:cape-kolka": [
+   {
+    "name": "Kolkas rags",
+    "kind": "Viewpoint",
+    "lat": 57.75902,
+    "lon": 22.60478,
+    "rate": 2,
+    "active": true,
+    "src": "osm"
+   },
+   {
+    "name": "SIA Baltijas zivs drupas",
+    "kind": "Ruins",
+    "lat": 57.74168,
+    "lon": 22.59091,
+    "rate": 1,
+    "active": false,
+    "src": "osm"
+   },
+   {
+    "name": "Skatu tornis",
+    "kind": "Viewpoint",
+    "lat": 57.75738,
+    "lon": 22.59193,
+    "rate": 1,
+    "active": true,
+    "src": "osm"
+   }
+  ],
+  "gem:soomaa": [],
+  "gem:kihnu": [
+   {
+    "name": "Kihnu Muuseum",
+    "kind": "Museum",
+    "lat": 58.13315,
+    "lon": 23.98264,
+    "rate": 2,
+    "active": false,
+    "src": "osm"
+   },
+   {
+    "name": "Linaküla supelrand",
+    "kind": "Beach",
+    "lat": 58.13111,
+    "lon": 23.95824,
+    "rate": 1,
+    "active": true,
+    "src": "osm"
+   }
+  ],
+  "gem:flores-azores": [
+   {
+    "name": "Morro Alto",
+    "kind": "Peak",
+    "lat": 39.4636,
+    "lon": -31.22062,
+    "rate": 2,
+    "active": true,
+    "src": "osm"
+   },
+   {
+    "name": "Moinho de água",
+    "kind": "Attraction",
+    "lat": 39.43463,
+    "lon": -31.24567,
+    "rate": 2,
+    "active": false,
+    "src": "osm"
+   },
+   {
+    "name": "Boca da Baleia",
+    "kind": "Peak",
+    "lat": 39.39972,
+    "lon": -31.21103,
+    "rate": 1,
+    "active": true,
+    "src": "osm"
+   },
+   {
+    "name": "Boca da Vereda",
+    "kind": "Peak",
+    "lat": 39.42064,
+    "lon": -31.18033,
+    "rate": 1,
+    "active": true,
+    "src": "osm"
+   },
+   {
+    "name": "Burreiro",
+    "kind": "Peak",
+    "lat": 39.41323,
+    "lon": -31.24212,
+    "rate": 1,
+    "active": true,
+    "src": "osm"
+   },
+   {
+    "name": "Miradouro da Caldeira Rasa e Caldeira Funda",
+    "kind": "Viewpoint",
+    "lat": 39.40722,
+    "lon": -31.2242,
+    "rate": 1,
+    "active": true,
+    "src": "osm"
+   },
+   {
+    "name": "Miradouro Craveiro Lopes",
+    "kind": "Viewpoint",
+    "lat": 39.42681,
+    "lon": -31.23843,
+    "rate": 1,
+    "active": true,
+    "src": "osm"
+   },
+   {
+    "name": "Miradouro das Lagoas",
+    "kind": "Viewpoint",
+    "lat": 39.44022,
+    "lon": -31.22369,
+    "rate": 1,
+    "active": true,
+    "src": "osm"
+   },
+   {
+    "name": "Miradouro pico da Casinha",
+    "kind": "Viewpoint",
+    "lat": 39.45015,
+    "lon": -31.16137,
+    "rate": 1,
+    "active": true,
+    "src": "osm"
+   },
+   {
+    "name": "Miradouro da Fajãzinha",
+    "kind": "Viewpoint",
+    "lat": 39.43243,
+    "lon": -31.24815,
+    "rate": 1,
+    "active": true,
+    "src": "osm"
+   },
+   {
+    "name": "Miradouro Arcos Ribeira da Cruz",
+    "kind": "Viewpoint",
+    "lat": 39.44593,
+    "lon": -31.16998,
+    "rate": 1,
+    "active": true,
+    "src": "osm"
+   },
+   {
+    "name": "Miradouro da Caveira",
+    "kind": "Viewpoint",
+    "lat": 39.43227,
+    "lon": -31.14797,
+    "rate": 1,
+    "active": true,
+    "src": "osm"
+   },
+   {
+    "name": "Miradouro da Fajã do Conde",
+    "kind": "Viewpoint",
+    "lat": 39.43988,
+    "lon": -31.14677,
+    "rate": 1,
+    "active": true,
+    "src": "osm"
+   },
+   {
+    "name": "Espigão",
+    "kind": "Peak",
+    "lat": 39.43225,
+    "lon": -31.15248,
+    "rate": 1,
+    "active": true,
+    "src": "osm"
+   },
+   {
+    "name": "Miradouro da Lagoa Seca",
+    "kind": "Viewpoint",
+    "lat": 39.44552,
+    "lon": -31.21787,
+    "rate": 1,
+    "active": true,
+    "src": "osm"
+   },
+   {
+    "name": "Alto da Cova",
+    "kind": "Peak",
+    "lat": 39.48575,
+    "lon": -31.18086,
+    "rate": 1,
+    "active": true,
+    "src": "osm"
+   },
+   {
+    "name": "Pico da Casinha",
+    "kind": "Peak",
+    "lat": 39.44755,
+    "lon": -31.16171,
+    "rate": 1,
+    "active": true,
+    "src": "osm"
+   },
+   {
+    "name": "Ribeira Grande",
+    "kind": "Waterfall",
+    "lat": 39.43412,
+    "lon": -31.23459,
+    "rate": 1,
+    "active": true,
+    "src": "osm"
+   },
+   {
+    "name": "Pico dos Sete Pés",
+    "kind": "Peak",
+    "lat": 39.45328,
+    "lon": -31.20942,
+    "rate": 1,
+    "active": true,
+    "src": "osm"
+   },
+   {
+    "name": "Miradouro Lagoas Rasa e Funda",
+    "kind": "Viewpoint",
+    "lat": 39.4135,
+    "lon": -31.2033,
+    "rate": 1,
+    "active": true,
+    "src": "osm"
+   }
+  ],
+  "gem:sapanta-merry-cemetery": [
+   {
+    "name": "Valtoare",
+    "kind": "Attraction",
+    "lat": 47.96868,
+    "lon": 23.69998,
+    "rate": 2,
+    "active": false,
+    "src": "osm"
+   },
+   {
+    "name": "Casa Memorială \"Stan Ioan Pătraș\"",
+    "kind": "Museum",
+    "lat": 47.97119,
+    "lon": 23.69109,
+    "rate": 1,
+    "active": false,
+    "src": "osm"
+   }
+  ],
+  "gem:danube-delta": [],
+  "gem:sucevita": [
+   {
+    "name": "Obelisk of Rudolf of Hapsburg",
+    "kind": "Monument",
+    "lat": 47.79118,
+    "lon": 25.76366,
+    "rate": 1,
+    "active": false,
+    "src": "osm"
+   },
+   {
+    "name": "Colecția Muzeală a Mănăstirii Sucevita",
+    "kind": "Museum",
+    "lat": 47.77864,
+    "lon": 25.71146,
+    "rate": 1,
+    "active": false,
+    "src": "osm"
+   }
+  ],
+  "gem:milestii-mici": [
+   {
+    "name": "Vinăria Agrici",
+    "kind": "Attraction",
+    "lat": 46.915,
+    "lon": 28.81189,
+    "rate": 2,
+    "active": false,
+    "src": "osm"
+   },
+   {
+    "name": "Ialoveni",
+    "kind": "Attraction",
+    "lat": 46.92436,
+    "lon": 28.782,
+    "rate": 2,
+    "active": false,
+    "src": "osm"
+   },
+   {
+    "name": "Costești",
+    "kind": "Attraction",
+    "lat": 46.90335,
+    "lon": 28.77567,
+    "rate": 2,
+    "active": false,
+    "src": "osm"
+   },
+   {
+    "name": "Ștefan cel Mare și Sfânt",
+    "kind": "Artwork",
+    "lat": 46.9077,
+    "lon": 28.80836,
+    "rate": 1,
+    "active": false,
+    "src": "osm"
+   }
+  ],
+  "gem:el-rocio": [],
+  "gem:inishbofin": [
+   {
+    "name": "Inishbofin Signal Tower",
+    "kind": "Ruins",
+    "lat": 53.60972,
+    "lon": -10.22052,
+    "rate": 1,
+    "active": false,
+    "src": "osm"
+   },
+   {
+    "name": "Inishlyon",
+    "kind": "Peak",
+    "lat": 53.61273,
+    "lon": -10.16981,
+    "rate": 1,
+    "active": true,
+    "src": "osm"
+   },
+   {
+    "name": "Pollnatulla",
+    "kind": "Cave",
+    "lat": 53.62843,
+    "lon": -10.24545,
+    "rate": 1,
+    "active": true,
+    "src": "osm"
+   },
+   {
+    "name": "Pollatlooa",
+    "kind": "Cave",
+    "lat": 53.62941,
+    "lon": -10.24545,
+    "rate": 1,
+    "active": true,
+    "src": "osm"
+   },
+   {
+    "name": "Pollnalecka",
+    "kind": "Cave",
+    "lat": 53.63114,
+    "lon": -10.22324,
+    "rate": 1,
+    "active": true,
+    "src": "osm"
+   }
+  ],
+  "gem:loop-head": [],
+  "gem:kopacki-rit": []
  },
  "wikidata": {
   "gem:lefkada": {

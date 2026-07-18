@@ -1,7 +1,6 @@
 import React from 'react';
 
-// Signatures browsers use when a dynamically-imported chunk can't be fetched -
-// almost always a stale bundle after a redeploy. Safari: "Importing a module
+// Signatures browsers use when a dynamically-imported chunk can't be fetched, // almost always a stale bundle after a redeploy. Safari: "Importing a module
 // script failed."; Chrome: "Failed to fetch dynamically imported module";
 // Firefox: "error loading dynamically imported module".
 const CHUNK_ERROR_RE = /importing a module script failed|failed to fetch dynamically imported module|error loading dynamically imported module/i;
@@ -44,7 +43,7 @@ export class ErrorBoundary extends React.Component {
         window.location.reload();
       }
       // If we already reloaded once and it still failed, the chunk is genuinely
-      // broken - fall through to the crash panel below instead of looping.
+      // broken, fall through to the crash panel below instead of looping.
     }
   }
 

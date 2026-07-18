@@ -1,8 +1,9 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { originGroups, originLabel } from '../lib/origins.js';
+import { useI18n } from '../i18n/index.jsx';
 
 /**
- * "Where are you flying from?" - the global departure-airport control that
+ * "Where are you flying from?", the global departure-airport control that
  * reprices the whole app. Shows the current origin as a compact pill; opening it
  * reveals a searchable list of every European Ryanair origin we priced, grouped
  * by country. Selecting one calls `onChangeOrigin(code)`; the fares table is
@@ -12,6 +13,7 @@ import { originGroups, originLabel } from '../lib/origins.js';
  * so the app degrades gracefully on an older dataset.
  */
 export function OriginPicker({ data, origin, onChangeOrigin }) {
+  const { t } = useI18n();
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState('');
   const rootRef = useRef(null);
@@ -42,7 +44,7 @@ export function OriginPicker({ data, origin, onChangeOrigin }) {
 
   if (!hasOrigins) return null;
 
-  const label = origin ? originLabel(data, origin) : 'Pick airport';
+  const label = origin ? originLabel(data, origin) : t('origin.pickAirport');
   const pick = (code) => { onChangeOrigin(code); setOpen(false); setQuery(''); };
 
   return (
@@ -52,10 +54,10 @@ export function OriginPicker({ data, origin, onChangeOrigin }) {
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
         aria-haspopup="listbox"
-        title="Where are you travelling from? Flights and drives both start here"
+        title={t('origin.btnTitle')}
       >
         <span className="origin-btn-label">
-          <span className="origin-btn-from">From</span>
+          <span className="origin-btn-from">{t('origin.from')}</span>
           <b>{label}</b>
         </span>
         <span className="origin-btn-caret" aria-hidden="true">▾</span>
@@ -69,12 +71,12 @@ export function OriginPicker({ data, origin, onChangeOrigin }) {
             type="search"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search city, country or airport code…"
-            aria-label="Search departure airports"
+            placeholder={t('origin.searchPlaceholder')}
+            aria-label={t('origin.searchAria')}
           />
           <div className="origin-list">
             {groups.length === 0 && (
-              <p className="origin-empty">No airport matches “{query}”.</p>
+              <p className="origin-empty">{t('origin.noMatch', { query })}</p>
             )}
             {groups.map((g) => (
               <div className="origin-group" key={g.country}>

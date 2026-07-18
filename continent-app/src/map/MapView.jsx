@@ -3,29 +3,48 @@ import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { MapLegend } from './MapLegend.jsx';
 
-// Carto Voyager - clean, beige, no API key needed
+// Carto Voyager, clean, beige, no API key needed
 const MAP_STYLE = 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json';
 
 // The same glyphs as the "Travel by" toggle (TransportIcons.jsx), inlined as
-// markup because markers are hand-built DOM, not React. currentColor keeps them
-// legible on every pill state - default, deal (white on rust), selected.
+// markup for the single selected-destination DOM marker.
 const SVG_OPEN = '<svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">';
 const PLANE_SVG = `${SVG_OPEN}<path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/></svg>`;
 const CAR_SVG = `${SVG_OPEN}<path d="M4 13l1.4-4.1A2 2 0 0 1 7.3 7.5h9.4a2 2 0 0 1 1.9 1.4L20 13"/><path d="M3 13h18v3.5a1 1 0 0 1-1 1h-1.5"/><path d="M5.5 17.5H4a1 1 0 0 1-1-1V13"/><path d="M8.5 17.5h7"/><circle cx="7" cy="17.5" r="1.6"/><circle cx="17" cy="17.5" r="1.6"/></svg>`;
 
+// The app palette, mirrored for the WebGL layers (CSS vars can't reach them).
+const INK = '#1a1a1a';
+const PAPER = '#f5f1e8';
+const ACCENT = '#c8501e';
+
+const SRC_PRICED = 'carta-priced';
+const SRC_DOTS = 'carta-dots';
+const LYR_PRICED_DOT = 'carta-priced-dot';
+const LYR_PRICED_LABEL = 'carta-priced-label';
+const LYR_DOTS = 'carta-dots-layer';
+// Carto Voyager ships Montserrat glyphs; the fallbacks cover style changes.
+const LABEL_FONT = ['Montserrat Medium', 'Open Sans Regular', 'Noto Sans Regular'];
+
+const EMPTY_FC = { type: 'FeatureCollection', features: [] };
+
+/**
+ * The browse map. Up to ~1,600 destinations are visible at once, so everything
+ * except the SELECTED destination renders as WebGL layers (a circle per city,
+ * a collision-managed €-price symbol above it) instead of per-destination DOM
+ * markers, DOM markers cost a style recalculation per marker per frame while
+ * panning, which is exactly the "map feels heavy" cliff. The selected
+ * destination alone gets the full DOM pill (transport glyph, tooltip, hover),
+ * floated above the layers. A welcome side effect of symbol collision: the map
+ * self-declutters at low zoom and reveals more prices as you zoom in.
+ */
 export function MapView({
   priced, unreachable = [], priceMode = 'total', groupSize = 1,
   selectedId, onSelect, dealThreshold, transportMode = 'plane',
 }) {
   const containerRef = useRef(null);
   const mapRef = useRef(null);
-  // id -> { marker, root, pill, dot, kind } so we can reconcile (reuse DOM)
-  // instead of tearing every marker down on each filter/search keystroke.
-  const markersRef = useRef(new Map());
-  const selectedRef = useRef(selectedId);
-  selectedRef.current = selectedId;
-  // onSelect is stable in App (useCallback), but read via ref so reused marker
-  // click handlers never capture a stale reference.
+  const selectedMarkerRef = useRef(null); // the one DOM marker (selected dest)
+  const dataRef = useRef({ pricedFC: EMPTY_FC, dotsFC: EMPTY_FC });
   const onSelectRef = useRef(onSelect);
   onSelectRef.current = onSelect;
 
@@ -41,110 +60,156 @@ export function MapView({
       maxBounds: [[-30, 30], [50, 72]],   // soft Europe bounds
     });
     map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'bottom-right');
+
+    map.on('load', () => {
+      ensureLayers(map);
+      map.getSource(SRC_PRICED)?.setData(dataRef.current.pricedFC);
+      map.getSource(SRC_DOTS)?.setData(dataRef.current.dotsFC);
+    });
+
+    // Feature interactions. stopPropagation on the ORIGINAL event: the app
+    // root's click handler clears the selection, and without it a tap that
+    // selects a pin would bubble up and instantly deselect it again.
+    const pick = (e) => {
+      const f = e.features?.[0];
+      if (!f) return;
+      e.originalEvent?.stopPropagation();
+      onSelectRef.current(f.properties.id);
+    };
+    const tipEl = document.createElement('div');
+    const tip = new maplibregl.Popup({
+      closeButton: false, closeOnClick: false, offset: 14, className: 'map-tip',
+    }).setDOMContent(tipEl);
+    for (const layer of [LYR_PRICED_LABEL, LYR_PRICED_DOT, LYR_DOTS]) {
+      map.on('click', layer, pick);
+      map.on('mouseenter', layer, () => { map.getCanvas().style.cursor = 'pointer'; });
+      map.on('mouseleave', layer, () => { map.getCanvas().style.cursor = ''; tip.remove(); });
+      map.on('mousemove', layer, (e) => {
+        const f = e.features?.[0];
+        if (!f?.properties?.tip) return;
+        // Third-party-ish data goes in as text, never markup.
+        tipEl.textContent = f.properties.tip;
+        tip.setLngLat(f.geometry.coordinates).addTo(map);
+      });
+    }
+
     mapRef.current = map;
     return () => {
+      tip.remove();
+      selectedMarkerRef.current?.marker.remove();
+      selectedMarkerRef.current = null;
       map.remove();
       mapRef.current = null;
-      markersRef.current.clear();
     };
   }, []);
 
-  // Reconcile markers whenever the visible set / price display changes.
-  // Existing markers are updated in place; only genuinely new ids create DOM and
-  // only removed ids tear it down. This is what keeps searching/filtering smooth.
+  // Rebuild the GeoJSON whenever the visible set / price display changes.
+  // setData on ~1,600 points is a couple of milliseconds, the expensive
+  // "reconcile 1,600 DOM nodes" path this replaces is gone entirely.
   useEffect(() => {
-    const map = mapRef.current;
-    if (!map) return;
-
-    const cache = markersRef.current;
-    const seen = new Set();
-
-    // ── Priced destinations: price pill + dot ──
+    const pricedFeatures = [];
+    const dotFeatures = [];
     for (const p of priced) {
-      seen.add(p.id);
-
-      // Travelling by plane, but this one has no flight? The engine still prices
-      // it - quietly, as a drive - and a €-pill would read as a flight fare. So
-      // it drops to a hollow dot: still on the map, still clickable, just never
-      // labelled with a price you can't actually fly for.
+      if (p.lon == null || p.lat == null) continue;
+      // Travelling by plane, but this one has no flight? The engine still
+      // prices it, quietly, as a drive, and a €-label would read as a fare.
+      // It drops to a hollow dot: still there, still clickable.
       const carOnly = transportMode === 'plane' && !p.planeOk;
       if (carOnly) {
-        let rec = cache.get(p.id);
-        if (!rec || rec.kind !== 'caronly') {
-          if (rec) { rec.marker.remove(); cache.delete(p.id); }
-          rec = createDot(p, map, onSelectRef, 'caronly',
-            `${p.city}, ${p.country} - no flight from your airport; drivable`);
-          cache.set(p.id, rec);
-        }
-        rec.dot.className = `pin-dot is-caronly ${p.id === selectedRef.current ? 'selected' : ''}`;
+        dotFeatures.push({
+          type: 'Feature',
+          geometry: { type: 'Point', coordinates: [p.lon, p.lat] },
+          properties: {
+            id: p.id, kind: 'caronly',
+            tip: `${p.city}, ${p.country} - no flight from your airport; drivable`,
+          },
+        });
         continue;
       }
-
       const isDeal = dealThreshold != null && p.total <= dealThreshold;
-      const isSelected = p.id === selectedRef.current;
       const displayVal = priceMode === 'pp' ? p.pp : p.total;
-      const label = `€${formatPrice(displayVal)}`;
-      const byCar = p.mode === 'car';
-
-      let rec = cache.get(p.id);
-      if (!rec || rec.kind !== 'priced') {
-        if (rec) { rec.marker.remove(); cache.delete(p.id); }
-        rec = createPriced(p, map, onSelectRef);
-        cache.set(p.id, rec);
-      }
-      // Cheap in-place updates (text + classes only). The icon is only rewritten
-      // when the mode actually flips, so it isn't re-parsed on every keystroke.
-      if (rec.val.textContent !== label) rec.val.textContent = label;
-      if (rec.mode !== p.mode) {
-        rec.icon.innerHTML = byCar ? CAR_SVG : PLANE_SVG;
-        rec.mode = p.mode;
-      }
-      const gem = !!p.rating?.hidden_gem;
-      const top = (p.rating?.tier ?? 0) === 3;
-      rec.pill.className = `price-pill ${isDeal ? 'is-deal' : ''} ${isSelected ? 'selected' : ''} ${gem ? 'is-gem' : ''} ${top ? 'is-top' : ''}`;
-      rec.dot.className = `pin-dot ${isDeal ? 'is-deal' : ''} ${isSelected ? 'selected' : ''} ${gem ? 'is-gem' : ''} ${top ? 'is-top' : ''}`;
-      rec.pill.title = tooltip(p, byCar, priceMode);
+      pricedFeatures.push({
+        type: 'Feature',
+        geometry: { type: 'Point', coordinates: [p.lon, p.lat] },
+        properties: {
+          id: p.id,
+          label: `€${formatPrice(displayVal)}`,
+          deal: isDeal ? 1 : 0,
+          gem: p.rating?.hidden_gem ? 1 : 0,
+          top: (p.rating?.tier ?? 0) === 3 ? 1 : 0,
+          // Cheaper wins the collision fight, so the decluttered far-out view
+          // is "the best deals across Europe", not an arbitrary subset.
+          sort: displayVal ?? 99999,
+          tip: tooltip(p, p.mode === 'car', priceMode),
+        },
+      });
     }
-
-    // ── Unreachable destinations: a muted, clickable dot (no price) ──
     for (const p of unreachable) {
-      seen.add(p.id);
-      let rec = cache.get(p.id);
-      if (!rec || rec.kind !== 'unreachable') {
-        if (rec) { rec.marker.remove(); cache.delete(p.id); }
-        rec = createDot(p, map, onSelectRef, 'unreachable',
-          `${p.city}, ${p.country} - no flight and too far to drive`);
-        cache.set(p.id, rec);
-      }
-      rec.dot.className = `pin-dot is-unreach ${p.id === selectedRef.current ? 'selected' : ''}`;
+      if (p.lon == null || p.lat == null) continue;
+      dotFeatures.push({
+        type: 'Feature',
+        geometry: { type: 'Point', coordinates: [p.lon, p.lat] },
+        properties: {
+          id: p.id, kind: 'unreach',
+          tip: `${p.city}, ${p.country} - no flight and too far to drive`,
+        },
+      });
     }
+    const pricedFC = { type: 'FeatureCollection', features: pricedFeatures };
+    const dotsFC = { type: 'FeatureCollection', features: dotFeatures };
+    dataRef.current = { pricedFC, dotsFC };
 
-    // ── Drop markers no longer in the visible set ──
-    for (const [id, rec] of cache) {
-      if (!seen.has(id)) { rec.marker.remove(); cache.delete(id); }
+    const map = mapRef.current;
+    if (map && map.getSource(SRC_PRICED)) {
+      map.getSource(SRC_PRICED).setData(pricedFC);
+      map.getSource(SRC_DOTS).setData(dotsFC);
     }
   }, [priced, unreachable, priceMode, dealThreshold, transportMode]);
 
-  // Selection styling only - a cheap class toggle on existing marker DOM, with
-  // NO marker rebuild. Runs on every selection change.
-  useEffect(() => {
-    const cache = markersRef.current;
-    for (const [id, rec] of cache) {
-      const on = id === selectedId;
-      rec.dot.classList.toggle('selected', on);
-      if (rec.pill) rec.pill.classList.toggle('selected', on);
-    }
-  }, [selectedId]);
-
-  // Pan to selected destination - ONLY when the selection itself changes.
-  // We deliberately do NOT depend on priced/unreachable: those arrays get new
-  // references on every filter tick (e.g. dragging the Beauty slider), and
-  // re-running flyTo on each would keep yanking the map back to the selected pin,
-  // making it impossible to pan/zoom by hand. Latest lists are read via refs.
+  // Latest lists via refs for the selection effects below (the arrays get new
+  // identities on every filter tick; the effects must not re-run on those).
   const pricedRef = useRef(priced);
   const unreachableRef = useRef(unreachable);
   pricedRef.current = priced;
   unreachableRef.current = unreachable;
+  const displayCtxRef = useRef({ priceMode, dealThreshold, transportMode });
+  displayCtxRef.current = { priceMode, dealThreshold, transportMode };
+
+  // Selection: hide the selected feature from the layers and float a single
+  // full DOM pill (glyph, hover, tooltip) in its place.
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map) return;
+
+    const apply = () => {
+      if (!map.getLayer(LYR_PRICED_LABEL)) return;
+      const keep = ['!=', ['get', 'id'], selectedId ?? '___none___'];
+      map.setFilter(LYR_PRICED_LABEL, keep);
+      map.setFilter(LYR_PRICED_DOT, keep);
+      map.setFilter(LYR_DOTS, keep);
+    };
+    if (map.isStyleLoaded()) apply(); else map.once('load', apply);
+
+    selectedMarkerRef.current?.marker.remove();
+    selectedMarkerRef.current = null;
+    if (!selectedId) return;
+
+    const { priceMode: pm, dealThreshold: deal, transportMode: tm } = displayCtxRef.current;
+    const p = pricedRef.current.find((x) => x.id === selectedId);
+    if (p && p.lon != null) {
+      const carOnly = tm === 'plane' && !p.planeOk;
+      selectedMarkerRef.current = carOnly
+        ? createDot(p, map, onSelectRef, 'caronly', `${p.city}, ${p.country} - no flight from your airport; drivable`, true)
+        : createPriced(p, map, onSelectRef, pm, deal);
+      return;
+    }
+    const u = unreachableRef.current.find((x) => x.id === selectedId);
+    if (u && u.lon != null) {
+      selectedMarkerRef.current = createDot(u, map, onSelectRef, 'unreachable', `${u.city}, ${u.country} - no flight and too far to drive`, true);
+    }
+  }, [selectedId, priced, unreachable, priceMode, dealThreshold, transportMode]);
+
+  // Pan to selected destination, ONLY when the selection itself changes.
   useEffect(() => {
     const map = mapRef.current;
     if (!map || !selectedId) return;
@@ -160,7 +225,7 @@ export function MapView({
     });
   }, [selectedId]);
 
-  // Only meaningful in plane mode - see the carOnly branch above.
+  // Only meaningful in plane mode, see the carOnly branch above.
   const carOnlyCount = useMemo(
     () => (transportMode === 'plane' ? priced.filter((p) => !p.planeOk).length : 0),
     [priced, transportMode],
@@ -177,23 +242,97 @@ export function MapView({
   );
 }
 
-// Build a priced marker (price pill + dot). Position is fixed for the id, so the
-// marker is created once and only its classes/text are updated afterwards.
-function createPriced(p, map, onSelectRef) {
+// Sources + layers, idempotent (guarded by getSource). Order matters: dots
+// under priced dots under labels.
+function ensureLayers(map) {
+  if (map.getSource(SRC_PRICED)) return;
+  map.addSource(SRC_PRICED, { type: 'geojson', data: EMPTY_FC });
+  map.addSource(SRC_DOTS, { type: 'geojson', data: EMPTY_FC });
+
+  // Muted dots: hollow ring = drivable-but-no-flight, filled grey = unreachable
+  // (mirrors .pin-dot.is-caronly / .is-unreach).
+  map.addLayer({
+    id: LYR_DOTS,
+    type: 'circle',
+    source: SRC_DOTS,
+    paint: {
+      'circle-radius': 3.5,
+      'circle-color': ['case', ['==', ['get', 'kind'], 'caronly'], PAPER, 'rgba(120,120,120,0.45)'],
+      'circle-stroke-width': ['case', ['==', ['get', 'kind'], 'caronly'], 1.5, 1],
+      'circle-stroke-color': ['case', ['==', ['get', 'kind'], 'caronly'], 'rgba(120,120,120,0.75)', 'rgba(90,90,90,0.6)'],
+    },
+  });
+
+  // The city dot under each price (mirrors .pin-dot: ink, rust for deals,
+  // hollow for hidden gems).
+  map.addLayer({
+    id: LYR_PRICED_DOT,
+    type: 'circle',
+    source: SRC_PRICED,
+    paint: {
+      'circle-radius': ['case', ['==', ['get', 'gem'], 1], 2.5, 3],
+      'circle-color': ['case',
+        ['==', ['get', 'gem'], 1], PAPER,
+        ['==', ['get', 'deal'], 1], ACCENT,
+        INK],
+      'circle-stroke-width': ['case', ['==', ['get', 'gem'], 1], 1.5, 1.5],
+      'circle-stroke-color': ['case',
+        ['==', ['get', 'gem'], 1], ['case', ['==', ['get', 'deal'], 1], ACCENT, INK],
+        PAPER],
+    },
+  });
+
+  // The €-price, floating above its dot (mirrors .price-pill: ink on paper,
+  // rust for deals; gems italic). Symbol collision keeps the view legible.
+  map.addLayer({
+    id: LYR_PRICED_LABEL,
+    type: 'symbol',
+    source: SRC_PRICED,
+    layout: {
+      'text-field': ['get', 'label'],
+      'text-font': LABEL_FONT,
+      'text-size': 11.5,
+      'text-offset': [0, -1.05],
+      'text-anchor': 'bottom',
+      'symbol-sort-key': ['get', 'sort'],
+      'text-padding': 1,
+    },
+    paint: {
+      'text-color': ['case',
+        ['==', ['get', 'deal'], 1], ACCENT,
+        ['==', ['get', 'top'], 1], INK,
+        INK],
+      'text-halo-color': PAPER,
+      'text-halo-width': 1.6,
+    },
+  });
+}
+
+// The selected destination's full DOM pill (price + transport glyph + dot),
+// identical to the old per-destination markers, now built exactly once.
+function createPriced(p, map, onSelectRef, priceMode, dealThreshold) {
+  const isDeal = dealThreshold != null && p.total <= dealThreshold;
+  const gem = !!p.rating?.hidden_gem;
+  const top = (p.rating?.tier ?? 0) === 3;
+  const byCar = p.mode === 'car';
+  const displayVal = priceMode === 'pp' ? p.pp : p.total;
+
   const root = document.createElement('div');
   root.className = `marker-root ${p.tier === 'gem' ? 'is-gem' : 'is-airport'}`;
 
   const pill = document.createElement('div');
-  // The transport glyph rides inside the pill, so how you'd get there is legible
-  // at a glance without spending the colour axis (already taken by "deal").
+  pill.className = `price-pill selected ${isDeal ? 'is-deal' : ''} ${gem ? 'is-gem' : ''} ${top ? 'is-top' : ''}`;
+  pill.title = tooltip(p, byCar, priceMode);
   const icon = document.createElement('span');
   icon.className = 'pill-ico';
+  icon.innerHTML = byCar ? CAR_SVG : PLANE_SVG;
   const val = document.createElement('span');
-  pill.appendChild(icon);
-  pill.appendChild(val);
+  val.textContent = `€${formatPrice(displayVal)}`;
+  pill.append(icon, val);
   root.appendChild(pill);
 
   const dot = document.createElement('div');
+  dot.className = `pin-dot selected ${isDeal ? 'is-deal' : ''} ${gem ? 'is-gem' : ''} ${top ? 'is-top' : ''}`;
   root.appendChild(dot);
 
   root.addEventListener('click', (e) => {
@@ -201,22 +340,22 @@ function createPriced(p, map, onSelectRef) {
     onSelectRef.current(p.id);
   });
 
-  // anchor: 'bottom' - the dot lands exactly on the city, the pill floats above.
+  // anchor: 'bottom', the dot lands exactly on the city, the pill floats above.
   const marker = new maplibregl.Marker({ element: root, anchor: 'bottom' })
     .setLngLat([p.lon, p.lat])
     .addTo(map);
-  return { marker, root, pill, icon, val, dot, mode: null, kind: 'priced' };
+  return { marker };
 }
 
-// A bare clickable dot, no price: either "drivable but no flight" (plane mode) or
-// "can't get there at all". Styling lives in CSS, keyed off the dot's class.
-function createDot(p, map, onSelectRef, kind, title) {
+// A bare clickable dot for a selected car-only/unreachable destination.
+function createDot(p, map, onSelectRef, kind, title, selected = false) {
   const root = document.createElement('div');
   root.className = `marker-root is-${kind}`;
   root.style.cursor = 'pointer';
   root.title = title;
 
   const dot = document.createElement('div');
+  dot.className = `pin-dot ${kind === 'caronly' ? 'is-caronly' : 'is-unreach'} ${selected ? 'selected' : ''}`;
   root.appendChild(dot);
 
   root.addEventListener('click', (e) => {
@@ -227,10 +366,10 @@ function createDot(p, map, onSelectRef, kind, title) {
   const marker = new maplibregl.Marker({ element: root, anchor: 'center' })
     .setLngLat([p.lon, p.lat])
     .addTo(map);
-  return { marker, root, dot, kind };
+  return { marker };
 }
 
-// Say how the price is made up, so a pill is never ambiguous on hover.
+// Say how the price is made up, so a label is never ambiguous on hover.
 function tooltip(p, byCar, priceMode) {
   const bits = [`${p.city}, ${p.country}`];
   if (p.rating?.score != null) {

@@ -1,5 +1,5 @@
 /**
- * tripGuide.js - helpers for the guided ("Let us guide you") trip builder:
+ * tripGuide.js, helpers for the guided ("Let us guide you") trip builder:
  * country/flag grouping, short human "insight" lines for cities, worth-a-visit
  * tiers, city pairings, and Carta's own stay designer.
  */
@@ -8,8 +8,7 @@ import { haversineKm } from './runtime_pricing.js';
 import { knownFor } from './knownFor.js';
 
 /** ISO-3166 alpha-2 → the corresponding flag emoji (regional indicators).
- *  Note: Windows has no flag glyphs, so these render as the two letters there -
- *  prefer `flagUrl()` for actual flag artwork. */
+ *  Note: Windows has no flag glyphs, so these render as the two letters there,  *  prefer `flagUrl()` for actual flag artwork. */
 export function isoToFlag(iso2) {
   if (!iso2 || iso2.length !== 2) return '🏳️';
   const cc = iso2.toUpperCase();
@@ -19,7 +18,7 @@ export function isoToFlag(iso2) {
   return String.fromCodePoint(A + cc.charCodeAt(0) - base) + String.fromCodePoint(A + cc.charCodeAt(1) - base);
 }
 
-/** Real flag artwork (PNG) for an ISO-3166 alpha-2 code, via flagcdn.com - the
+/** Real flag artwork (PNG) for an ISO-3166 alpha-2 code, via flagcdn.com, the
  *  same external-image approach the app already uses for Wikipedia photos and
  *  the basemap. `w` is one of flagcdn's supported widths (20/40/80/160/…). */
 export function flagUrl(iso2, w = 40) {
@@ -46,7 +45,7 @@ export function countriesFromData(destinations) {
   }
   for (const c of map.values()) {
     c.cities.sort((a, b) => gemScore(b.dest) - gemScore(a.dest));
-    // Centroid = mean of the country's city coordinates - good enough to drop a
+    // Centroid = mean of the country's city coordinates, good enough to drop a
     // clickable pin roughly where the country sits on the map.
     c.centroid = { lat: c._latSum / c.cities.length, lon: c._lonSum / c.cities.length };
     delete c._latSum; delete c._lonSum;
@@ -99,7 +98,7 @@ const KIND_INTERESTS = {
 
 // The activity-kind vocabulary above only covers sightseeing (museums,
 // churches, castles...). Beaches, food, nightlife, outdoors, wellness and
-// sports never show up as an activity "kind" - they live in a city's own
+// sports never show up as an activity "kind", they live in a city's own
 // `categories` tags and its beauty-component intensities. These maps let
 // interestFitScore read those, so every interest tile actually tunes the
 // ranking instead of silently scoring zero.
@@ -123,7 +122,7 @@ const INTEREST_COMP = {
   architecture: 'iconic', culture: 'heritage', museums: 'heritage',
 };
 
-/** How well a city matches the traveller's interests, 0..1 - an honest fit
+/** How well a city matches the traveller's interests, 0..1, an honest fit
  *  measure for RANKING (unlike activitiesForInterests, which falls back to
  *  everything so a city is never unpickable). Reads three signals per interest:
  *  the city's `categories` tags (strongest), the relevant beauty component, and
@@ -159,7 +158,7 @@ export function interestFitScore(dest, interests) {
   if (!n) return 0;
   // Blend the single strongest interest with the average across all picked
   // ones: one perfect match still ranks a city well, matching several ranks it
-  // higher - without letting a long interest list dilute a great fit to zero.
+  // higher, without letting a long interest list dilute a great fit to zero.
   return Math.min(1, 0.65 * best + 0.35 * (sum / n));
 }
 
@@ -207,7 +206,7 @@ export function cityCompanions(id, dest, destinations, { maxKm = 170, limit = 2 
  * geographically sensible route from the arrival anchor, and splits the
  * available nights (cities get 2-3, small gems 1-2).
  *
- * Returns [{ id, nights }] - only real catalogued places, never invented data.
+ * Returns [{ id, nights }], only real catalogued places, never invented data.
  */
 export function designStays({ destinations, countries, interests, anchorDest, anchorId, totalNights, maxStops: maxStopsWanted, mustIncludeIds }) {
   const nights = Math.max(1, totalNights || 5);
@@ -225,7 +224,7 @@ export function designStays({ destinations, countries, interests, anchorDest, an
   let remaining = nights;
   let cursor = anchorDest && anchorDest.lat != null ? anchorDest : null;
 
-  // You land at the anchor - it opens the trip when it's one of the choices.
+  // You land at the anchor, it opens the trip when it's one of the choices.
   if (anchorId) {
     const i = pool.findIndex((p) => p.id === anchorId);
     if (i >= 0) {
@@ -278,7 +277,7 @@ export function designStays({ destinations, countries, interests, anchorDest, an
 /** Rank + filter a city's things-to-do by the traveller's chosen interests.
  *  Items whose kind matches an interest are kept; when interests are set we drop
  *  the non-matching ones so the picks stay relevant ("someone who doesn't care
- *  about culture doesn't want that") - unless that would leave the city empty,
+ *  about culture doesn't want that"), unless that would leave the city empty,
  *  in which case we fall back to the full (capped) list so it's still pickable. */
 export function activitiesForInterests(dest, interests, limit = 14) {
   const items = dest?.activities?.items || [];

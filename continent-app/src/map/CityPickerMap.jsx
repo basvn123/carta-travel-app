@@ -14,6 +14,10 @@ const TIER_ICON = {
   ok: '<svg viewBox="0 0 24 24" width="7" height="7" aria-hidden="true"><circle cx="12" cy="12" r="5" fill="none" stroke="currentColor" stroke-width="2.4"/></svg>',
 };
 
+// Plane glyph for the "Fly here" sign on the arrival city.
+const PLANE_SVG = '<svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor" aria-hidden="true">'
+  + '<path d="M21.5 15.5 L13.5 11 L13.5 4.5 C13.5 3.4 12.8 2.5 12 2.5 C11.2 2.5 10.5 3.4 10.5 4.5 L10.5 11 L2.5 15.5 L2.5 17.5 L10.5 15 L10.5 19.5 L8 21.2 L8 22.5 L12 21.5 L16 22.5 L16 21.2 L13.5 19.5 L13.5 15 L21.5 17.5 Z"/></svg>';
+
 /**
  * The Stay step's map: every city of the chosen countries as a clickable
  * name-pill (the same visual language as the browse map's price pills), tinted
@@ -22,12 +26,12 @@ const TIER_ICON = {
  *
  * Two interaction modes:
  *   - `onFocus` given: tapping a pill FOCUSES the city (the wizard shows its
- *     info panel with an explicit Add button) - considered choices over
+ *     info panel with an explicit Add button), considered choices over
  *     accidental taps.
  *   - only `onToggle`: tapping toggles the city in/out directly (legacy).
  *
  * When the traveller lands somewhere (`anchor` = { lat, lon }), the map opens
- * zoomed in on that region instead of framing the whole country - the stays
+ * zoomed in on that region instead of framing the whole country, the stays
  * conversation starts around where they arrive, and they can zoom out for
  * further cities.
  *
@@ -59,7 +63,7 @@ export function CityPickerMap({ cities = [], onToggle, onFocus, anchor = null })
     return () => { map.remove(); mapRef.current = null; readyRef.current = false; pinsRef.current.clear(); };
   }, []);
 
-  // The set of cities only changes with the chosen countries - rebuild then.
+  // The set of cities only changes with the chosen countries, rebuild then.
   const cityKey = cities.map((c) => c.id).join(';');
   useEffect(() => {
     const map = mapRef.current;
@@ -80,7 +84,12 @@ export function CityPickerMap({ cities = [], onToggle, onFocus, anchor = null })
         label.textContent = c.city;
         const meta = document.createElement('span');
         meta.className = 'citypick-meta';
-        el.append(icon, label, meta);
+        // "Fly here" flag sits above the pill; CSS reveals it only on the
+        // arrival city, so the traveller sees exactly where they land.
+        const fly = document.createElement('span');
+        fly.className = 'citypick-fly';
+        fly.innerHTML = PLANE_SVG + '<span>Fly here</span>';
+        el.append(fly, icon, label, meta);
         el.addEventListener('click', (e) => {
           e.stopPropagation();
           if (onFocusRef.current) onFocusRef.current(c.id);
@@ -117,7 +126,7 @@ export function CityPickerMap({ cities = [], onToggle, onFocus, anchor = null })
     map.flyTo({ center: [anchor.lon, anchor.lat], zoom: 7, duration: 600 });
   }, [anchor?.lat, anchor?.lon]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Selection / nights / anchor states change often - restyle in place.
+  // Selection / nights / anchor states change often, restyle in place.
   const sync = () => {
     const byId = new Map(cities.map((c) => [c.id, c]));
     pinsRef.current.forEach((p, id) => {

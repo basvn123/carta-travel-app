@@ -2,12 +2,12 @@ import React from 'react';
 import { GemIcon } from './GemRating.jsx';
 
 /**
- * Traveller rating (schema v14 dest.rating) - the one visual language for
+ * Traveller rating (schema v14 dest.rating), the one visual language for
  * "how strong is this destination":
  *
  *   score  0-10 chip, colour-coded by tier (the tier shows only as colour;
- *          no separate diamond glyphs - the number is the rating)
- *   hidden_gem  a separate "Hidden gem" tag - highly rated, hardly famous
+ *          no separate diamond glyphs, the number is the rating)
+ *   hidden_gem  a separate "Hidden gem" tag, highly rated, hardly famous
  */
 
 export function tierClass(rating) {

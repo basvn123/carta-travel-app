@@ -6,7 +6,7 @@ const AuthContext = createContext(null);
 // Supabase's email links land back on the app with `#...&type=signup` (or
 // `type=recovery`, handled separately below) in the URL hash. Read it once,
 // synchronously, before supabase-js's async session hydration has a chance
-// to strip the hash - that's how we tell "just clicked the confirmation
+// to strip the hash, that's how we tell "just clicked the confirmation
 // link" apart from an ordinary reload with an existing session.
 function initialUrlAuthType() {
   if (typeof window === 'undefined') return null;
@@ -17,14 +17,14 @@ function initialUrlAuthType() {
 /**
  * Wraps the whole app. Tracks the Supabase session and exposes the handful
  * of auth actions the UI needs. When Supabase isn't configured (no env vars),
- * `configured` is false and everything else is inert - the app just runs
+ * `configured` is false and everything else is inert, the app just runs
  * guest-only, as it always has.
  */
 export function AuthProvider({ children }) {
   const [session, setSession] = useState(null);
   const [loading, setLoading] = useState(authConfigured);
   // True while the URL carries a password-recovery link, until the user sets
-  // a new password - the app shows the "set new password" screen instead of
+  // a new password, the app shows the "set new password" screen instead of
   // the normal UI during this window.
   const [recoveryMode, setRecoveryMode] = useState(false);
   // True right after landing here from an email-confirmation link, until the

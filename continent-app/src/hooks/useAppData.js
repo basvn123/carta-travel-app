@@ -101,7 +101,7 @@ export function useAppData(init, setChoices, departDate, setDepartDate, returnDa
   const data = hydrated || lastDataRef.current;
 
   // Earliest outbound + latest return date found in any destination's (hydrated)
-  // routes - i.e. the fare window reachable from the chosen origin.
+  // routes, i.e. the fare window reachable from the chosen origin.
   const dateBounds = useMemo(() => {
     if (!data) return null;
     let minOut = null;
@@ -123,7 +123,7 @@ export function useAppData(init, setChoices, departDate, setDepartDate, returnDa
   const defaultNights = data?.meta?.defaults?.trip_length_days ?? 7;
 
   // The date pair to open on. Ryanair flies specific weekdays, so fares are sparse
-  // per date and the earliest date in the window - the old default - was bookable
+  // per date and the earliest date in the window, the old default, was bookable
   // for only a couple of destinations, leaving the map looking broken. Pick the
   // depart date that actually resolves the most round trips instead.
   const defaultWindow = useMemo(
