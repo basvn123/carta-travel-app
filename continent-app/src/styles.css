@@ -259,6 +259,11 @@ input, select {
     right: 12px;
     z-index: 24;
   }
+  /* ...but only while the list is collapsed (the map is showing). When the
+     Destinations panel is open it fills this spot, so the floated picker would
+     sit on top of the panel header - hide it there, mirroring how the
+     .list-reopen pill only appears when the list is collapsed. */
+  .app:not(.list-collapsed) .app-header-account .origin-picker { display: none; }
 
   /* The desktop section tabs collapse; BottomNav is the switch on mobile. */
   .header-nav { display: none; }
