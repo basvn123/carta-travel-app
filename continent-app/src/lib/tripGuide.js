@@ -206,14 +206,27 @@ export function cityCompanions(id, dest, destinations, { maxKm = 170, limit = 2 
  * geographically sensible route from the arrival anchor, and splits the
  * available nights (cities get 2-3, small gems 1-2).
  *
+ * `transport` = 'car' means the traveller is driving the whole trip, so Carta
+ * won't auto-suggest islands with no fixed road link to the mainland (you can't
+ * drive there without a ferry) unless nothing else is available.
+ *
  * Returns [{ id, nights }], only real catalogued places, never invented data.
  */
-export function designStays({ destinations, countries, interests, anchorDest, anchorId, totalNights, maxStops: maxStopsWanted, mustIncludeIds }) {
+export function designStays({ destinations, countries, interests, anchorDest, anchorId, totalNights, maxStops: maxStopsWanted, mustIncludeIds, transport }) {
   const nights = Math.max(1, totalNights || 5);
-  const pool = Object.entries(destinations || {})
+  let pool = Object.entries(destinations || {})
     .filter(([, d]) => d && d.lat != null && countries.has(d.country))
     .map(([id, d]) => ({ id, dest: d, score: gemScore(d) + interestFitScore(d, interests) * 2.5 }));
   if (!pool.length) return [];
+
+  // On a car trip, drop islands Carta can't route to overland (road_connected
+  // === false = a sea crossing, same signal legTransportOptions uses). Keep the
+  // full pool if that leaves nothing, so a deliberately all-island region (e.g.
+  // only Sicily selected) is still designed rather than coming back empty.
+  if (transport === 'car') {
+    const roadOnly = pool.filter((p) => (p.dest.local_transport || {}).road_connected !== false);
+    if (roadOnly.length) pool = roadOnly;
+  }
 
   const maxStops = maxStopsWanted
     ? Math.max(1, Math.min(6, maxStopsWanted))

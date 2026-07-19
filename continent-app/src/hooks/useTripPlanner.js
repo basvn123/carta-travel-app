@@ -53,6 +53,10 @@ export function useTripPlanner(data, countryInsights = null) {
   // ground-only gem (no routes of its own), flights are priced via this anchor
   // instead, "fly into Bergamo, sleep at Lake Como".
   const [anchorId, setAnchorId] = useState(draft?.anchorId || null);
+  // The departure airport (origin IATA) the traveller picked for their fly-in
+  // in the wizard. Kept so the overview prices the SAME inbound flight they
+  // chose rather than re-deriving a possibly-different origin.
+  const [anchorOrigin, setAnchorOrigin] = useState(draft?.anchorOrigin || null);
   const [planId, setPlanId] = useState(null);
   const [planLabel, setPlanLabel] = useState(draft?.planLabel || '');
   const [saveState, setSaveState] = useState('idle'); // idle | saving | saved
@@ -68,10 +72,10 @@ export function useTripPlanner(data, countryInsights = null) {
     }
     persistTripDraft({
       tripStart, tripEnd, stops, groupSize, transportPref, legModes, pace,
-      baggage, anchorId, planId, planLabel, planned,
+      baggage, anchorId, anchorOrigin, planId, planLabel, planned,
     });
   }, [tripStart, tripEnd, stops, groupSize, transportPref, legModes, pace,
-      baggage, anchorId, planId, planLabel, planned]);
+      baggage, anchorId, anchorOrigin, planId, planLabel, planned]);
 
   // Chain each stop's arrive/depart dates from the trip start. A stop with no
   // trip start yet still carries its nights so the UI can show "2 nights".
@@ -172,6 +176,7 @@ export function useTripPlanner(data, countryInsights = null) {
     setTripEnd('');
     setLegModes({});
     setAnchorId(null);
+    setAnchorOrigin(null);
     setPlanId(null);
     setPlanLabel('');
     setPlanned(false);
@@ -181,7 +186,7 @@ export function useTripPlanner(data, countryInsights = null) {
   // ordered list of { destinationId, nights, activities }, an optional name,
   // plus how they want to travel (transport) and how full their days should
   // feel (pace), everything stays editable in the planner afterwards.
-  const loadFromWizard = useCallback(({ startDate, stops: wizardStops, label, groupSize: gs, transport, pace: wizardPace, baggage: wizardBaggage, anchorId: wizardAnchor }) => {
+  const loadFromWizard = useCallback(({ startDate, stops: wizardStops, label, groupSize: gs, transport, pace: wizardPace, baggage: wizardBaggage, anchorId: wizardAnchor, anchorOrigin: wizardAnchorOrigin }) => {
     const total = wizardStops.reduce((sum, s) => sum + Math.max(0, s.nights || 0), 0);
     setTripStart(startDate || '');
     setTripEnd(startDate ? addDays(startDate, total) : '');
@@ -198,6 +203,7 @@ export function useTripPlanner(data, countryInsights = null) {
     if (wizardPace) setPace(wizardPace);
     if (wizardBaggage) setBaggage(wizardBaggage);
     setAnchorId(wizardAnchor || null);
+    setAnchorOrigin(wizardAnchorOrigin || null);
     setLegModes({});
     setPlanId(null);
     setPlanned(false);
@@ -214,8 +220,9 @@ export function useTripPlanner(data, countryInsights = null) {
       firstDest: stopDetails[0]?.dest || null,
       excludeIds: new Set(stopDetails.map((s) => s.destinationId)),
       excludeCountries: new Set(stopDetails.map((s) => s.dest?.country).filter(Boolean)),
+      transport: transportPref,
     });
-  }, [stopDetails, destinations]);
+  }, [stopDetails, destinations, transportPref]);
 
   // Real combined flight fare: into the first stop, out of the last stop.
   // Stops with no fares of their own (ground-only gems) price via the wizard's
@@ -225,11 +232,23 @@ export function useTripPlanner(data, countryInsights = null) {
     const last = stopDetails[stopDetails.length - 1];
     if (!first?.dest || !last?.dest) return null;
     const anchorDest = anchorId ? destinations[anchorId] : null;
-    const flyable = (d) => (
-      d && Object.keys(d.routes || {}).length > 0 ? d : (anchorDest || d)
-    );
-    return combineTripLegs(flyable(first.dest), first.arriveDate, flyable(last.dest), last.departDate, groupSize, baggage);
-  }, [stopDetails, groupSize, anchorId, destinations, baggage]);
+    const hasRoutes = (d) => d && Object.keys(d.routes || {}).length > 0;
+    // Home leg: out of the last stop's own airport, or the anchor for a
+    // ground-only final gem.
+    const outDest = hasRoutes(last.dest) ? last.dest : (anchorDest || last.dest);
+    // Inbound: honour the exact fly-in the traveller picked in the wizard, price
+    // into the SAME airport (anchorDest) from the SAME origin (anchorOrigin) so
+    // the overview shows the flight they chose, not a re-derived one. Fall back
+    // to the first stop's own airport only when the anchor can't be combined
+    // with the home leg (keeps otherwise-unpriceable trips priced).
+    if (anchorDest) {
+      const viaAnchor = combineTripLegs(anchorDest, first.arriveDate, outDest, last.departDate, groupSize, baggage, anchorOrigin);
+      if (viaAnchor.combinable) return { ...viaAnchor, in_via_anchor: first.destinationId !== anchorId };
+    }
+    const inDest = hasRoutes(first.dest) ? first.dest : (anchorDest || first.dest);
+    const priced = combineTripLegs(inDest, first.arriveDate, outDest, last.departDate, groupSize, baggage, anchorOrigin);
+    return { ...priced, in_via_anchor: Boolean(anchorDest) && inDest === anchorDest && first.destinationId !== anchorId };
+  }, [stopDetails, groupSize, anchorId, anchorOrigin, destinations, baggage]);
 
   // Priced transport options (train / bus / car with booking links) between
   // each consecutive pair of stops, resolved to a chosen mode: an explicit
@@ -298,7 +317,10 @@ export function useTripPlanner(data, countryInsights = null) {
     const first = stopDetails[0];
     const last = stopDetails[stopDetails.length - 1];
     return {
-      in: viaAnchor(first) ? legFor(anchorDest, first.dest) : null,
+      // Fly into the anchor, then reach the first stop overland: priced whenever
+      // the inbound was actually flown into the anchor (a ground-only first gem,
+      // OR a routed first stop we deliberately skipped to honour the fly-in pick).
+      in: flight.in_via_anchor ? legFor(anchorDest, first.dest) : null,
       out: viaAnchor(last) ? legFor(last.dest, anchorDest) : null,
       anchor: anchorDest,
     };
@@ -416,6 +438,7 @@ export function useTripPlanner(data, countryInsights = null) {
       activities: Array.isArray(s.choices?.activities) ? s.choices.activities : [],
     })));
     setAnchorId(sorted[0]?.choices?.anchorId || null);
+    setAnchorOrigin(sorted[0]?.choices?.anchorOrigin || null);
     setBaggage(sorted[0]?.choices?.baggage || 'cabin');
     setLegModes({});
     setPlanned(false);
@@ -442,7 +465,7 @@ export function useTripPlanner(data, countryInsights = null) {
             nights: s.nights,
             groupSize,
             activities: s.activities || [],
-            ...(i === 0 ? { baggage, ...(anchorId ? { anchorId } : {}) } : {}),
+            ...(i === 0 ? { baggage, ...(anchorId ? { anchorId } : {}), ...(anchorOrigin ? { anchorOrigin } : {}) } : {}),
           },
         };
       }));
@@ -467,7 +490,7 @@ export function useTripPlanner(data, countryInsights = null) {
       setSaveState('idle');
       throw e;
     }
-  }, [planId, planLabel, stops, stopDetails, groupSize, legs, flight, anchorId, baggage]);
+  }, [planId, planLabel, stops, stopDetails, groupSize, legs, flight, anchorId, anchorOrigin, baggage]);
 
   return {
     tripStart, setTripStart, tripEnd, setTripEnd,

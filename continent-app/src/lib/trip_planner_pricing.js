@@ -55,8 +55,15 @@ export function baggageLabel(key) {
  *    - 'no_shared_origin': destA and destB don't fly from any common origin.
  *    - 'no_fare_for_date': a shared origin exists, but one leg has no fare
  *      stored for the requested date.
+ *
+ *  `preferOrigin` is the departure airport the traveller already picked in the
+ *  guided wizard. When it yields a valid combo it WINS over a marginally
+ *  cheaper alternative, so the overview prices the very flight they chose
+ *  instead of silently swapping BRU for CRL (or vice versa). It's only a
+ *  preference: an origin that has no fare on these dates falls back to the
+ *  cheapest shared origin.
  */
-export function combineTripLegs(destA, arriveDate, destB, departDate, groupSize = 1, baggage = 'cabin') {
+export function combineTripLegs(destA, arriveDate, destB, departDate, groupSize = 1, baggage = 'cabin', preferOrigin = null) {
   if (!destA || !destB || !arriveDate || !departDate) {
     return { combinable: false, reason: 'missing_input' };
   }
@@ -68,7 +75,8 @@ export function combineTripLegs(destA, arriveDate, destB, departDate, groupSize 
     return { combinable: false, reason: 'no_shared_origin' };
   }
 
-  let best = null;
+  let best = null;      // cheapest combo across all shared origins
+  let preferred = null; // the wizard-picked origin's combo, if it prices out
   for (const origin of sharedOrigins) {
     const rA = routesA[origin];
     const rB = routesB[origin];
@@ -77,26 +85,28 @@ export function combineTripLegs(destA, arriveDate, destB, departDate, groupSize 
     if (intoFare == null || outOfFare == null) continue;
 
     const combinedFare = intoFare + outOfFare;
-    if (best == null || combinedFare < best.combined_fare) {
-      best = {
-        origin,
-        combined_fare: combinedFare,
-        into_fare: intoFare,
-        out_of_fare: outOfFare,
-        into_anchor: rA.anchor_airport || destA.iata,
-        out_anchor: rB.anchor_airport || destB.iata,
-        into_ground_eur: rA.ground_transport_one_way_eur || 0,
-        into_ground_minutes: rA.ground_transport_minutes || 0,
-        out_ground_eur: rB.ground_transport_one_way_eur || 0,
-        out_ground_minutes: rB.ground_transport_minutes || 0,
-        // Dep/arr local times of the exact flights priced above ('HH:MM/HH:MM'),
-        // when the times harvest covers this origin. Display-only.
-        into_time: rA.outbound_time?.[arriveDate] || null,
-        out_of_time: rB.return_time?.[departDate] || null,
-      };
-    }
+    const cand = {
+      origin,
+      combined_fare: combinedFare,
+      into_fare: intoFare,
+      out_of_fare: outOfFare,
+      into_anchor: rA.anchor_airport || destA.iata,
+      out_anchor: rB.anchor_airport || destB.iata,
+      into_ground_eur: rA.ground_transport_one_way_eur || 0,
+      into_ground_minutes: rA.ground_transport_minutes || 0,
+      out_ground_eur: rB.ground_transport_one_way_eur || 0,
+      out_ground_minutes: rB.ground_transport_minutes || 0,
+      // Dep/arr local times of the exact flights priced above ('HH:MM/HH:MM'),
+      // when the times harvest covers this origin. Display-only.
+      into_time: rA.outbound_time?.[arriveDate] || null,
+      out_of_time: rB.return_time?.[departDate] || null,
+    };
+    if (origin === preferOrigin) preferred = cand;
+    if (best == null || combinedFare < best.combined_fare) best = cand;
   }
 
+  // Honour the traveller's picked origin when it genuinely prices out.
+  best = preferred || best;
   if (!best) return { combinable: false, reason: 'no_fare_for_date' };
 
   const group = Math.max(1, groupSize || 1);
@@ -269,6 +279,7 @@ function suggestionReason(d) {
  */
 export function suggestNextStops(fromDest, allDests, arriveDate, {
   firstDest = null, maxKm = 500, limit = 6, excludeIds = null, excludeCountries = null,
+  transport = null,
 } = {}) {
   if (!fromDest || !allDests || fromDest.lat == null) return [];
   const anchor = firstDest || fromDest;
@@ -293,7 +304,13 @@ export function suggestNextStops(fromDest, allDests, arriveDate, {
     const dRoadConnected = (d.local_transport || {}).road_connected !== false;
     // A ground leg only exists when both ends are road-connected (no sea crossing).
     const groundReachable = fromRoadConnected && dRoadConnected && km <= 450;
-    if (!sharedOrigin && !groundReachable) continue;
+    // On a car trip, the next stop must be one you can actually drive to, a
+    // shared flight origin is no help when there's no fixed road link (islands).
+    if (transport === 'car') {
+      if (!groundReachable) continue;
+    } else if (!sharedOrigin && !groundReachable) {
+      continue;
+    }
 
     const fareThatDay = (arriveDate && sharedOrigin)
       ? d.routes[sharedOrigin]?.outbound_fare?.[arriveDate] ?? null

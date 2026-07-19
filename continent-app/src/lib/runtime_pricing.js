@@ -213,32 +213,67 @@ export function occupancyFactor(groupSize, model) {
   return Math.pow(g / ref, exp) * (ref / g);
 }
 
+/** Whole-home nightly (in EUR) for a group of `g`, read from OBSERVED capacity
+ *  buckets when the anchor carries them: pick the smallest home that still sleeps
+ *  the group, or the largest bucket when the group is bigger than any measured
+ *  home. Returns { night, cap } or null when there are no usable buckets. */
+export function capacityBucketNightly(buckets, groupSize) {
+  if (!buckets) return null;
+  const entries = Object.entries(buckets)
+    .map(([c, night]) => [Number(c), Number(night)])
+    .filter(([c, night]) => Number.isFinite(c) && Number.isFinite(night))
+    .sort((a, b) => a[0] - b[0]);
+  if (entries.length === 0) return null;
+  const g = Math.max(1, groupSize || 1);
+  const fit = entries.find(([c]) => c >= g) || entries[entries.length - 1];
+  return { night: fit[1], cap: fit[0] };
+}
+
 /** Per-person accommodation cost for the trip, broken down. Returns null if the
  *  destination has no accommodation anchor.
  *  Applies, in order: summer seasonality on the nightly, a weekly discount for
  *  stays >= the threshold, then the (per-booking) cleaning fee, then the service
  *  fee on the whole subtotal, the same order Airbnb shows at checkout.
+ *
+ *  Specificity, when the anchor carries it (Inside Airbnb harvest v2):
+ *    - a.seasonality  : that CITY's own 12-month curve (from its calendar.csv)
+ *                       overrides the one global summer curve.
+ *    - a.capacity_buckets : OBSERVED whole-home nightly per group size replaces
+ *                       the modelled occupancy^0.55 extrapolation.
  */
 export function accommodationPerPerson(dest, nights, departDate, model, groupSize) {
   const a = dest.accommodation;
   if (!a || a.per_person_night_eur == null) return null;
   const m = { ...DEFAULT_ACCOM_MODEL, ...(model || {}) };
   const n = Math.max(0, nights);
+  const g = Math.max(1, groupSize || 1);
 
-  // Seasonality keyed by the depart month (string or number keys both work).
+  // Seasonality: prefer this city's own calendar-derived curve (12 values,
+  // index 0 = Jan), fall back to the one global summer curve.
   const month = departDate ? Number(departDate.slice(5, 7)) : null;
-  const season = (month && m.seasonality && m.seasonality[month] != null)
-    ? m.seasonality[month] : 1;
+  const cityCurve = Array.isArray(a.seasonality) && a.seasonality.length === 12
+    ? a.seasonality : null;
+  const seasonBasis = cityCurve ? 'city_calendar' : 'global_curve';
+  const season = month
+    ? (cityCurve
+        ? (cityCurve[month - 1] != null ? cityCurve[month - 1] : 1)
+        : (m.seasonality && m.seasonality[month] != null ? m.seasonality[month] : 1))
+    : 1;
 
   // Length-of-stay (weekly) discount.
   const los = n >= (m.min_nights_for_weekly || 7)
     ? 1 - (m.weekly_discount_pct || 0) / 100 : 1;
 
-  // Group-size correction: the stored per-person nightly divides a 4-sleeper
-  // home by 4, which used to make a couple pay for literally half a house.
-  const occ = groupSize ? occupancyFactor(groupSize, m) : 1;
+  // Per-person nightly BEFORE season: prefer an observed capacity bucket (a
+  // real home sized for the group, split across the real heads); else fall back
+  // to the stored 4-sleeper per-person figure re-fitted by the occupancy curve.
+  const bucket = groupSize ? capacityBucketNightly(a.capacity_buckets, g) : null;
+  const nightlyBasis = bucket ? 'capacity_bucket' : 'occupancy_curve';
+  const baseNightlyPp = bucket
+    ? bucket.night / g
+    : (a.per_person_night_eur || 0) * (groupSize ? occupancyFactor(g, m) : 1);
 
-  const nightlyPp = (a.per_person_night_eur || 0) * season * occ;
+  const nightlyPp = baseNightlyPp * season;
   const lodging   = nightlyPp * n * los;
   // Cleaning is charged once per BOOKING; the stored per-person figure is the
   // reference 4-sleeper's share. Rebuild the booking fee and split it across
@@ -250,12 +285,24 @@ export function accommodationPerPerson(dest, nights, departDate, model, groupSiz
   const subtotal  = lodging + cleaning;
   const withFees  = subtotal * (1 + (m.service_fee_pct || 0) / 100);
 
+  // Neighbourhood spread (measured/city matches only): the whole-home nightly
+  // range across a city's neighbourhoods, so the UI can say "€90-€180 depending
+  // on where in town you stay" instead of implying one flat price.
+  let hoodRange = null;
+  if (Array.isArray(a.neighbourhoods) && a.neighbourhoods.length >= 2) {
+    const nis = a.neighbourhoods.map((h) => h.night_eur).filter((v) => v > 0);
+    if (nis.length >= 2) hoodRange = { min: Math.min(...nis), max: Math.max(...nis) };
+  }
+
   return {
     nightly_pp: round2(nightlyPp),     // effective per-person nightly after season
     lodging: round2(lodging),
     cleaning: round2(cleaning),
     service: round2(withFees - subtotal),
     season,
+    season_basis: seasonBasis,         // 'city_calendar' | 'global_curve'
+    nightly_basis: nightlyBasis,       // 'capacity_bucket' | 'occupancy_curve'
+    neighbourhood_range: hoodRange,    // { min, max } whole-home nightly, or null
     los,
     total: round2(withFees),
   };

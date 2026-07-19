@@ -335,9 +335,11 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
     if (path !== 'full' || arriveMode !== 'fly' || countries.size === 0) return [];
     return flyInOptions(destinations, countries, {
       startDate: dateMode === 'exact' ? startDate : '',
+      endDate: dateMode === 'exact' ? endDate : '',
+      nights: dateMode === 'flex' ? flexNights : 0,
       flexMonth: dateMode === 'flex' ? flexMonth : '',
     });
-  }, [path, arriveMode, destinations, countries, dateMode, startDate, flexMonth]);
+  }, [path, arriveMode, destinations, countries, dateMode, startDate, endDate, flexNights, flexMonth]);
   const flyIn = routeOptions.find((o) => o.id === flyInId) || null;
   const arrivalDest = arrivalId ? destinations[arrivalId] : null;
   const anchorDest = path === 'landed'
@@ -519,6 +521,7 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
       totalNights: windowNights || 5,
       maxStops: stayStyle === 'single' ? 1 : (quizStops || null),
       mustIncludeIds: [...quizMust],
+      transport: (arriveMode === 'car' || landedMode === 'car') ? 'car' : 'auto',
     });
     if (!picks.length) return;
     const nextNights = {};
@@ -716,6 +719,9 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
       pace,
       baggage,
       anchorId: path === 'landed' ? (landedMode === 'car' ? null : arrivalId) : (arriveMode === 'fly' && flyIn ? flyIn.id : null),
+      // The exact departure airport the traveller picked for their fly-in, so
+      // the overview prices the same inbound flight (same origin) they saw here.
+      anchorOrigin: arriveMode === 'fly' && flyIn ? flyIn.origin : null,
       label,
       stops,
     });
@@ -1372,7 +1378,7 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
                           city: o.dest.city,
                           lat: o.dest.lat,
                           lon: o.dest.lon,
-                          eurLabel: eur(o.has_exact ? o.exact_eur : o.cheapest.eur),
+                          eurLabel: eur(o.has_round ? o.round_eur : (o.has_exact ? o.exact_eur : o.cheapest.eur)),
                           selected: o.id === flyInId,
                         }))}
                         origin={originRec && originRec.lat != null ? { lat: originRec.lat, lon: originRec.lon, city: originRec.city } : null}
@@ -1393,8 +1399,19 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
                                 <small>
                                   <PlaneIcon size={9} /> {t('wizard.intoAnchor', { anchor: flyIn.anchor })}
                                   {(() => { const m = flightMeta(flyIn, data?.meta?.origins); return m ? t('wizard.flightDur', { dur: fmtFlightDuration(m.min) }) : ''; })()}
-                                  {t('wizard.farePP', { fare: eur(flyIn.has_exact ? flyIn.exact_eur : flyIn.cheapest.eur) })}
+                                  {flyIn.has_round
+                                    ? t('wizard.fareRoundPP', { fare: eur(flyIn.round_eur) })
+                                    : t('wizard.farePP', { fare: eur(flyIn.has_exact ? flyIn.exact_eur : flyIn.cheapest.eur) })}
                                 </small>
+                                {flyIn.has_round && (
+                                  <small className="guide-flight-side-breakdown">
+                                    {t('wizard.roundBreakdown', {
+                                      out: eur(flyIn.has_exact ? flyIn.exact_eur : flyIn.cheapest.eur),
+                                      back: eur(flyIn.ret_eur),
+                                    })}
+                                    {!flyIn.has_exact ? ` ${t('wizard.estimated')}` : ''}
+                                  </small>
+                                )}
                                 {!flyIn.has_exact && dateMode === 'exact' && flyIn.cheapest && (
                                   <small className="guide-route-warn">
                                     <AlertIcon size={9} /> {t('wizard.noFareForDate', { date: fmtDate(startDate, true), date2: fmtDate(flyIn.cheapest.date, true) })}
@@ -1474,10 +1491,20 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
                                 )}
                               </span>
                               <span className="guide-route-fare">
-                                <b>{eur(o.has_exact ? o.exact_eur : o.cheapest.eur)}</b>
+                                <b>{eur(o.has_round ? o.round_eur : (o.has_exact ? o.exact_eur : o.cheapest.eur))}</b>
                                 <small>
-                                  {o.has_exact ? t('wizard.perPerson') : t('wizard.datePerPerson', { date: fmtDate(o.cheapest.date, true) })}
+                                  {o.has_round
+                                    ? t(o.has_exact ? 'wizard.returnPerPerson' : 'wizard.returnEstPerPerson')
+                                    : (o.has_exact ? t('wizard.perPerson') : t('wizard.datePerPerson', { date: fmtDate(o.cheapest.date, true) }))}
                                 </small>
+                                {o.has_round && (
+                                  <small className="guide-route-breakdown">
+                                    {t('wizard.roundBreakdown', {
+                                      out: eur(o.has_exact ? o.exact_eur : o.cheapest.eur),
+                                      back: eur(o.ret_eur),
+                                    })}
+                                  </small>
+                                )}
                               </span>
                             </button>
                           );

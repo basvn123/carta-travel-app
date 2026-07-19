@@ -385,8 +385,7 @@ function BreakdownTab({ destination, breakdown, departDate, returnDate, choices,
                   <small>
                     {t('detail.driveMeta', {
                       km: breakdown.driving.road_km,
-                      h: breakdown.driving.drive_hours_one_way,
-                      price: breakdown.driving.fuel_price_eur_per_l.toFixed(2),
+                      hours: breakdown.driving.drive_hours_one_way,
                     })}
                   </small>
                 </span>
