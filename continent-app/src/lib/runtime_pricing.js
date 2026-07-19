@@ -699,6 +699,27 @@ export function bestFareWindow(allDests, nights, minStart = null) {
   return { start: best.start, end: addDays(best.start, nights), count: best.count };
 }
 
+/** How many destinations have a bookable round-trip flight for this exact date
+ *  pair (a fare on both the depart and the return day, on the same route).
+ *  Ryanair flies specific weekdays, so a date pair restored from a previous
+ *  session can land entirely off the fare calendar after a fares refresh; this
+ *  cheap probe tells "the map is legitimately empty" apart from "the selected
+ *  dates just miss the flying days", so useAppData can re-snap to a real
+ *  window instead of pricing every destination as a drive. */
+export function countBookableRoundTrips(allDests, departDate, returnDate) {
+  if (!allDests || !departDate || !returnDate) return 0;
+  let n = 0;
+  for (const d of Object.values(allDests)) {
+    for (const r of Object.values(d.routes || {})) {
+      if (r.outbound_fare?.[departDate] != null && r.return_fare?.[returnDate] != null) {
+        n += 1;
+        break; // this destination is bookable; don't count its other routes
+      }
+    }
+  }
+  return n;
+}
+
 /** Cheapest bookable total for these dates, or null. */
 export function cheapestTotal(dest, departDate, returnDate, choices, allDests = null) {
   const b = composeTrip(dest, departDate, returnDate, choices, allDests);

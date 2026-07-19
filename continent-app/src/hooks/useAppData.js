@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { appDataPromise, fetchFares } from '../lib/appData.js';
 import { hydrateForOrigin, defaultOrigin, originHome } from '../lib/origins.js';
-import { bestFareWindow } from '../lib/runtime_pricing.js';
+import { bestFareWindow, countBookableRoundTrips } from '../lib/runtime_pricing.js';
 
 // ISO date string, `days` later.
 function addDays(iso, days) {
@@ -151,21 +151,42 @@ export function useAppData(init, setChoices, departDate, setDepartDate, returnDa
   // wins - unless it is now in the past (before dateBounds.min, which is
   // floored at today), in which case it is bumped forward to a valid day.
   useEffect(() => {
-    if (!dateBounds) return;
+    if (!dateBounds || !data) return;
+
+    // Repair a missing / past depart date.
     let start = departDate;
     if (!start || start < dateBounds.min) {
       start = (defaultWindow?.start && defaultWindow.start >= dateBounds.min)
         ? defaultWindow.start
         : dateBounds.min;
-      setDepartDate(start);
     }
-    if (start && (!returnDate || returnDate <= start)) {
-      let end = (defaultWindow && start === defaultWindow.start)
+
+    // Repair a missing / inverted return date.
+    let end = returnDate;
+    if (!end || end <= start) {
+      end = (defaultWindow && start === defaultWindow.start)
         ? defaultWindow.end
         : addDays(start, defaultNights);
       if (end <= start) end = addDays(start, defaultNights);
-      setReturnDate(end <= dateBounds.max ? end : dateBounds.max);
+      if (end > dateBounds.max) end = dateBounds.max;
     }
+
+    // The pair now looks valid (future, well-ordered), but Ryanair flies
+    // specific weekdays and a fares refresh can leave a restored pair landing
+    // entirely off the fare calendar. Then nothing prices as a flight, every
+    // destination silently falls back to a drive, and the map shows only dots
+    // with no prices. When the chosen pair books zero round trips but a
+    // populated window exists, snap to it so the map is never mysteriously
+    // priceless. (This effect only re-runs on data / origin change, never on a
+    // manual date pick, so a deliberate off-calendar choice is left alone.)
+    if (defaultWindow?.count > 0
+        && countBookableRoundTrips(data.destinations, start, end) === 0) {
+      start = defaultWindow.start;
+      end = defaultWindow.end;
+    }
+
+    if (start !== departDate) setDepartDate(start);
+    if (end !== returnDate) setReturnDate(end);
   }, [dateBounds, defaultWindow]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return { data, error, dateBounds };
