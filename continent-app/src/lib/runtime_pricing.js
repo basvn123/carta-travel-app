@@ -668,9 +668,11 @@ export function viaNearestAirport(dest, allDests, departDate, returnDate, choice
  *  per date: the earliest date we hold a fare for, the obvious default, can be
  *  bookable for barely a handful of places, which makes the whole map look empty.
  *  Earlier dates win ties, so the default stays as early as it sensibly can.
+ *  `minStart` (optional ISO date) excludes any depart date before it, so the
+ *  default never lands on a past day.
  *  Returns { start, end, count }, or null when there are no fares at all.
  */
-export function bestFareWindow(allDests, nights) {
+export function bestFareWindow(allDests, nights, minStart = null) {
   if (!allDests || !nights || nights < 1) return null;
 
   const perStart = new Map();   // depart date -> destinations bookable round-trip
@@ -680,6 +682,7 @@ export function bestFareWindow(allDests, nights) {
       const out = r.outbound_fare || {};
       const ret = r.return_fare || {};
       for (const start of Object.keys(out)) {
+        if (minStart && start < minStart) continue;
         if (out[start] != null && ret[addDays(start, nights)] != null) starts.add(start);
       }
     }

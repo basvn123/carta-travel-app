@@ -10,6 +10,13 @@ function addDays(iso, days) {
   return d.toISOString().slice(0, 10);
 }
 
+// Today's local date as ISO 'YYYY-MM-DD'.
+function todayISO() {
+  const t = new Date();
+  const p = (n) => String(n).padStart(2, '0');
+  return `${t.getFullYear()}-${p(t.getMonth() + 1)}-${p(t.getDate())}`;
+}
+
 /** Fetches app_data.json, applies its data-driven defaults (group size,
  *  baggage, lifestyle, home/car/accommodation models, departure origin) into
  *  `choices` the first time it loads, rehydrates every destination's fares for
@@ -117,7 +124,14 @@ export function useAppData(init, setChoices, departDate, setDepartDate, returnDa
         }
       }
     }
-    return minOut && maxRet ? { min: minOut, max: maxRet } : null;
+    if (!(minOut && maxRet)) return null;
+    // Never expose a past date as bookable: floor the window at today. (Its
+    // only consumers are the date-picker bounds and the default depart date,
+    // so flooring here fixes both.) Guard against an all-past dataset that
+    // would otherwise invert the bounds.
+    const today = todayISO();
+    const min = minOut > today ? minOut : (today <= maxRet ? today : maxRet);
+    return { min, max: maxRet };
   }, [data]);
 
   const defaultNights = data?.meta?.defaults?.trip_length_days ?? 7;
@@ -126,20 +140,30 @@ export function useAppData(init, setChoices, departDate, setDepartDate, returnDa
   // per date and the earliest date in the window, the old default, was bookable
   // for only a couple of destinations, leaving the map looking broken. Pick the
   // depart date that actually resolves the most round trips instead.
+  // Only consider today-or-later depart dates, so the default never lands in
+  // the past even when the fare data still holds earlier days.
   const defaultWindow = useMemo(
-    () => (data ? bestFareWindow(data.destinations, defaultNights) : null),
-    [data, defaultNights],
+    () => (data ? bestFareWindow(data.destinations, defaultNights, dateBounds?.min) : null),
+    [data, defaultNights, dateBounds],
   );
 
-  // Default depart/return when data first loads (a restored URL/stored date wins).
+  // Default depart/return when data first loads. A restored URL/stored date
+  // wins - unless it is now in the past (before dateBounds.min, which is
+  // floored at today), in which case it is bumped forward to a valid day.
   useEffect(() => {
     if (!dateBounds) return;
-    const start = departDate || defaultWindow?.start || dateBounds.min;
-    if (!departDate) setDepartDate(start);
-    if (!returnDate && start) {
-      const end = (defaultWindow && start === defaultWindow.start)
+    let start = departDate;
+    if (!start || start < dateBounds.min) {
+      start = (defaultWindow?.start && defaultWindow.start >= dateBounds.min)
+        ? defaultWindow.start
+        : dateBounds.min;
+      setDepartDate(start);
+    }
+    if (start && (!returnDate || returnDate <= start)) {
+      let end = (defaultWindow && start === defaultWindow.start)
         ? defaultWindow.end
         : addDays(start, defaultNights);
+      if (end <= start) end = addDays(start, defaultNights);
       setReturnDate(end <= dateBounds.max ? end : dateBounds.max);
     }
   }, [dateBounds, defaultWindow]); // eslint-disable-line react-hooks/exhaustive-deps
