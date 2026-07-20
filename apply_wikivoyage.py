@@ -21,6 +21,8 @@ import json
 import sys
 from pathlib import Path
 
+from pipeline_io import atomic_write_json
+
 ROOT = Path(__file__).resolve().parent
 CACHE = ROOT / "cache" / "wikivoyage.json"
 DEFAULT_TARGETS = [ROOT / "app_data" / "app_data.json"]
@@ -51,8 +53,10 @@ def patch(path, cache):
     applied = 0
     for did, dest in dests.items():
         rec = cache.get(did)
-        if not rec or rec.get("miss") or not rec.get("extract"):
-            dest.pop("guide", None)          # keep re-runs clean
+        if rec is None:
+            continue                         # not in this cache run: leave existing guide
+        if rec.get("miss") or not rec.get("extract"):
+            dest.pop("guide", None)          # confirmed no guide: clear it (idempotent)
             continue
         dest["guide"] = {
             "text": rec["extract"],
@@ -63,7 +67,7 @@ def patch(path, cache):
         applied += 1
 
     data.setdefault("meta", {}).setdefault("data_sources", {})["wikivoyage"] = DATA_SOURCE
-    path.write_text(json.dumps(data, ensure_ascii=False), encoding="utf-8")
+    atomic_write_json(path, data)
     print(f"  {path.name}: guide blurb on {applied}/{len(dests)} dests")
 
 

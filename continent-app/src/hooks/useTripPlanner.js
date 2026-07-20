@@ -464,6 +464,12 @@ export function useTripPlanner(data, countryInsights = null) {
     setAnchorOrigin(sorted[0]?.choices?.anchorOrigin || null);
     setReturnAnchorId(sorted[0]?.choices?.returnAnchorId || null);
     setBaggage(sorted[0]?.choices?.baggage || 'cabin');
+    // Pricing inputs must round-trip too, otherwise a reopened trip is repriced
+    // with whatever the hook currently holds (default 2 travellers) instead of
+    // the saved party size/pace, and the headline total comes out wrong.
+    setGroupSize(sorted[0]?.choices?.groupSize || 2);
+    setTransportPref(sorted[0]?.choices?.transportPref || 'auto');
+    setPace(sorted[0]?.choices?.pace || 'balanced');
     setLegModes({});
     setPlanned(false);
   }, []);
@@ -489,7 +495,7 @@ export function useTripPlanner(data, countryInsights = null) {
             nights: s.nights,
             groupSize,
             activities: s.activities || [],
-            ...(i === 0 ? { baggage, ...(anchorId ? { anchorId } : {}), ...(anchorOrigin ? { anchorOrigin } : {}), ...(returnAnchorId ? { returnAnchorId } : {}) } : {}),
+            ...(i === 0 ? { baggage, transportPref, pace, ...(anchorId ? { anchorId } : {}), ...(anchorOrigin ? { anchorOrigin } : {}), ...(returnAnchorId ? { returnAnchorId } : {}) } : {}),
           },
         };
       }));
@@ -514,7 +520,7 @@ export function useTripPlanner(data, countryInsights = null) {
       setSaveState('idle');
       throw e;
     }
-  }, [planId, planLabel, stops, stopDetails, groupSize, legs, flight, anchorId, anchorOrigin, returnAnchorId, baggage]);
+  }, [planId, planLabel, stops, stopDetails, groupSize, legs, flight, anchorId, anchorOrigin, returnAnchorId, baggage, transportPref, pace]);
 
   return {
     tripStart, setTripStart, tripEnd, setTripEnd,

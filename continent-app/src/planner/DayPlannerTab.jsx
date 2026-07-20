@@ -43,16 +43,19 @@ const EXPLORE_CAT_KEY = { town: 'day.catTown', beach: 'day.catBeach', sight: 'da
 
 // "Let Carta guide you" questionnaire options (labelKey/subKey -> t()).
 const GUIDE_MOODS = [
-  { key: 'sight', labelKey: 'day.moodSights', Icon: CastleIcon },
-  { key: 'beach', labelKey: 'day.moodBeaches', Icon: TreeIcon },
-  { key: 'town', labelKey: 'day.moodTowns', Icon: HomeIcon },
-  { key: 'active', labelKey: 'day.moodActive', Icon: MountainIcon },
+  { key: 'sight', labelKey: 'day.moodSights', label: 'Sights', Icon: CastleIcon },
+  { key: 'beach', labelKey: 'day.moodBeaches', label: 'Beaches & nature', Icon: TreeIcon },
+  { key: 'town', labelKey: 'day.moodTowns', label: 'Towns', Icon: HomeIcon },
+  { key: 'active', labelKey: 'day.moodActive', label: 'Active', Icon: MountainIcon },
 ];
 const GUIDE_RANGES = [
   { key: 'near', labelKey: 'day.rangeNear', subKey: 'day.rangeNearSub', km: 25 },
   { key: 'far', labelKey: 'day.rangeFar', subKey: 'day.rangeFarSub', km: 1e9 },
 ];
-const GUIDE_GROUP_KEY = { town: 'day.moodTowns', sight: 'day.moodSights', beach: 'day.moodBeaches', active: 'day.moodActive' };
+// Section headings shown in the "Let Carta guide you" recommendation list. This
+// panel is not internationalized (its prompts are hardcoded English), so the
+// labels are plain strings rather than i18n keys.
+const GUIDE_GROUP_LABEL = { town: 'Towns', sight: 'Sights', beach: 'Beaches & nature', active: 'Active' };
 
 const fmtDate = (iso) => (iso ? fmtDateFull(iso).slice(0, 6) : '');
 

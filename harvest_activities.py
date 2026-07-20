@@ -72,6 +72,8 @@ import urllib.request
 import urllib.error
 from pathlib import Path
 
+from pipeline_io import atomic_write_json
+
 try:
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 except Exception:
@@ -779,8 +781,14 @@ def patch(cache=None):
                 srcs[rec["source"]] = srcs.get(rec["source"], 0) + 1
                 if rec.get("items_full"):
                     n_full += 1
-            else:
+            elif rec is not None:
+                # In the cache but genuinely empty (checked, none found): reflect
+                # the empty result so re-runs stay idempotent.
                 d["activities"] = None
+            # else: not in this cache at all (e.g. a partial/resumed harvest).
+            # Leave whatever is already there - do NOT wipe it to None, or a
+            # `patch` with a cache that covers fewer dests than the master
+            # silently destroys activities for every dest it doesn't mention.
         data.setdefault("meta", {})["activities_model"] = {
             "providers": srcs, "top_n": TOP_N, "top_n_full": TOP_N_FULL,
             "top_n_active": TOP_N_ACTIVE,
@@ -795,7 +803,7 @@ def patch(cache=None):
             "items_full_coverage": f"{n_full}/{len(dests)}",
         }
         data["meta"]["schema_version"] = max(12, data["meta"].get("schema_version", 0))
-        path.write_text(json.dumps(data, indent=1, ensure_ascii=False), encoding="utf-8")
+        atomic_write_json(path, data)
         print(f"  {path.name}: {n_act}/{len(dests)} have activities (sources: {srcs}); "
               f"{n_full}/{len(dests)} have items_full (map pins)")
 

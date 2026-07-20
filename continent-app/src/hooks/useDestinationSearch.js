@@ -115,8 +115,15 @@ export function useDestinationSearch({
 
   const priceBounds = useMemo(() => {
     if (pricedAll.length === 0) return null;
-    const vals = pricedAll.map((p) => priceMode === 'pp' ? p.pp : p.total);
-    return [Math.floor(Math.min(...vals)), Math.ceil(Math.max(...vals))];
+    // Single pass, not Math.min(...vals): spreading tens of thousands of values
+    // as call arguments can overflow the argument limit and throw a RangeError.
+    let mn = Infinity, mx = -Infinity;
+    for (const p of pricedAll) {
+      const v = priceMode === 'pp' ? p.pp : p.total;
+      if (v < mn) mn = v;
+      if (v > mx) mx = v;
+    }
+    return [Math.floor(mn), Math.ceil(mx)];
   }, [pricedAll, priceMode]);
 
   const [priceRange, setPriceRange] = useState(null);
