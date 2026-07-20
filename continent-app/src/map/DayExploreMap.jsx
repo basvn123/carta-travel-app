@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
+import { hasLngLat, finitePts } from './coords.js';
 
 const MAP_STYLE = 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json';
 
@@ -44,8 +45,8 @@ export function DayExploreMap({ stay, markers = [], onFocus, onStayClick, stayFo
     const map = new maplibregl.Map({
       container: containerRef.current,
       style: MAP_STYLE,
-      center: stay ? [stay.lon, stay.lat] : [10, 48],
-      zoom: stay ? 10.3 : 4,
+      center: hasLngLat(stay) ? [stay.lon, stay.lat] : [10, 48],
+      zoom: hasLngLat(stay) ? 10.3 : 4,
       attributionControl: { compact: true },
     });
     map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'top-right');
@@ -57,7 +58,7 @@ export function DayExploreMap({ stay, markers = [], onFocus, onStayClick, stayFo
   // Stay pin + recenter when the address changes.
   useEffect(() => {
     const map = mapRef.current;
-    if (!map || !stay || stay.lat == null) return;
+    if (!map || !hasLngLat(stay)) return;
     if (stayRef.current) { stayRef.current.remove(); stayRef.current = null; }
     const el = document.createElement('div');
     el.className = 'dem-stay';
@@ -89,7 +90,7 @@ export function DayExploreMap({ stay, markers = [], onFocus, onStayClick, stayFo
   // stay in view by never zooming further out than we already are.
   useEffect(() => {
     const map = mapRef.current;
-    if (!map || !flyTo || flyTo.lat == null) return;
+    if (!map || !hasLngLat(flyTo)) return;
     map.easeTo({
       center: [flyTo.lon, flyTo.lat],
       zoom: Math.max(map.getZoom(), 11.5),
@@ -114,10 +115,8 @@ export function DayExploreMap({ stay, markers = [], onFocus, onStayClick, stayFo
     // worth tapping sits outside the map. Top padding leaves room for the
     // pin labels; maxZoom keeps a tight cluster from zooming in to street level.
     const fitAll = () => {
-      const pts = markers
-        .filter((m) => m.lat != null && m.lon != null)
-        .map((m) => [m.lon, m.lat]);
-      if (stay && stay.lat != null) pts.push([stay.lon, stay.lat]);
+      const pts = finitePts(markers).map((m) => [m.lon, m.lat]);
+      if (hasLngLat(stay)) pts.push([stay.lon, stay.lat]);
       if (pts.length < 2) return;
       const bounds = pts.reduce(
         (b, p) => b.extend(p),
@@ -132,7 +131,7 @@ export function DayExploreMap({ stay, markers = [], onFocus, onStayClick, stayFo
     const build = () => {
       pinsRef.current.forEach((p) => p.marker.remove());
       pinsRef.current.clear();
-      markers.filter((m) => m.lat != null && m.lon != null).forEach((m) => {
+      finitePts(markers).forEach((m) => {
         const el = document.createElement('button');
         el.type = 'button';
         el.className = `dem-pin cat-${m.cat}`;

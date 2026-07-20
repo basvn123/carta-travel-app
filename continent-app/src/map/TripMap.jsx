@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
+import { hasLngLat } from './coords.js';
 
 // Same clean, key-less Carto Voyager basemap the main map uses.
 const MAP_STYLE = 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json';
@@ -130,7 +131,7 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
     if (!map) return;
 
     const draw = () => {
-      const pts = stops.filter((s) => s && s.lat != null && s.lon != null);
+      const pts = stops.filter(hasLngLat);
 
       // Route line: prefer mode-tagged segments (walk drawn solid, ferry drawn
       // as its own over-water line), then the flat street-following geometry,
@@ -193,7 +194,7 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
       const frameKey = focus ? `${focus.lat},${focus.lon}` : null;
       if (pois != null && frameKey && lastFrameKeyRef.current === frameKey) return;
       lastFrameKeyRef.current = frameKey;
-      if (pts.length === 0 && focus && focus.lat != null && focus.lon != null) {
+      if (pts.length === 0 && hasLngLat(focus)) {
         map.easeTo({
           center: [focus.lon, focus.lat],
           zoom: focus.zoom ?? 11,
@@ -229,7 +230,7 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
     if (!map) return;
     poiMarkersRef.current.forEach((m) => m.remove());
     poiMarkersRef.current = [];
-    (pois || []).filter((p) => p.lat != null && p.lon != null).forEach((p) => {
+    (pois || []).filter(hasLngLat).forEach((p) => {
       const el = document.createElement('button');
       el.type = 'button';
       el.className = `dem-pin trip-poi-pin cat-${p.cat || 'sight'}`;
@@ -270,7 +271,7 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
     const map = mapRef.current;
     markersRef.current.forEach((m, i) => m.el.classList.toggle('active', i === selectedIndex));
     if (map && selectedIndex != null) {
-      const p = stops.filter((s) => s && s.lat != null && s.lon != null)[selectedIndex];
+      const p = stops.filter(hasLngLat)[selectedIndex];
       if (p) map.easeTo({ center: [p.lon, p.lat], padding: { bottom: padBottom }, duration: 500 });
     }
   }, [selectedIndex, stops, padBottom]);

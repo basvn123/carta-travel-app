@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useRef } from 'react';
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { MapLegend } from './MapLegend.jsx';
+import { hasLngLat } from './coords.js';
 
 // Carto Voyager, clean, beige, no API key needed
 const MAP_STYLE = 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json';
@@ -87,9 +88,11 @@ export function MapView({
       map.on('mousemove', layer, (e) => {
         const f = e.features?.[0];
         if (!f?.properties?.tip) return;
+        const [lon, lat] = f.geometry?.coordinates || [];
+        if (!Number.isFinite(lon) || !Number.isFinite(lat)) return;
         // Third-party-ish data goes in as text, never markup.
         tipEl.textContent = f.properties.tip;
-        tip.setLngLat(f.geometry.coordinates).addTo(map);
+        tip.setLngLat([lon, lat]).addTo(map);
       });
     }
 
@@ -110,7 +113,7 @@ export function MapView({
     const pricedFeatures = [];
     const dotFeatures = [];
     for (const p of priced) {
-      if (p.lon == null || p.lat == null) continue;
+      if (!hasLngLat(p)) continue;
       // Travelling by plane, but this one has no flight? The engine still
       // prices it, quietly, as a drive, and a €-label would read as a fare.
       // It drops to a hollow dot: still there, still clickable.
@@ -145,7 +148,7 @@ export function MapView({
       });
     }
     for (const p of unreachable) {
-      if (p.lon == null || p.lat == null) continue;
+      if (!hasLngLat(p)) continue;
       dotFeatures.push({
         type: 'Feature',
         geometry: { type: 'Point', coordinates: [p.lon, p.lat] },
@@ -196,7 +199,7 @@ export function MapView({
 
     const { priceMode: pm, dealThreshold: deal, transportMode: tm } = displayCtxRef.current;
     const p = pricedRef.current.find((x) => x.id === selectedId);
-    if (p && p.lon != null) {
+    if (p && hasLngLat(p)) {
       const carOnly = tm === 'plane' && !p.planeOk;
       selectedMarkerRef.current = carOnly
         ? createDot(p, map, onSelectRef, 'caronly', `${p.city}, ${p.country} - no flight from your airport; drivable`, true)
@@ -204,7 +207,7 @@ export function MapView({
       return;
     }
     const u = unreachableRef.current.find((x) => x.id === selectedId);
-    if (u && u.lon != null) {
+    if (u && hasLngLat(u)) {
       selectedMarkerRef.current = createDot(u, map, onSelectRef, 'unreachable', `${u.city}, ${u.country} - no flight and too far to drive`, true);
     }
   }, [selectedId, priced, unreachable, priceMode, dealThreshold, transportMode]);
@@ -215,7 +218,7 @@ export function MapView({
     if (!map || !selectedId) return;
     const sel = pricedRef.current.find((p) => p.id === selectedId)
       || unreachableRef.current.find((p) => p.id === selectedId);
-    if (!sel) return;
+    if (!sel || !hasLngLat(sel)) return;
     map.flyTo({
       center: [sel.lon, sel.lat],
       zoom: Math.max(map.getZoom(), 5.2),

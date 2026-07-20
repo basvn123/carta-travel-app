@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { flagUrl } from '../lib/tripGuide.js';
+import { hasLngLat } from './coords.js';
 
 const MAP_STYLE = 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json';
 
@@ -42,7 +43,7 @@ export function CountryPickerMap({ countries = [], selected, onToggle }) {
     const build = () => {
       pinsRef.current.forEach((p) => p.marker.remove());
       pinsRef.current.clear();
-      const pts = countries.filter((c) => c.centroid);
+      const pts = countries.filter((c) => hasLngLat(c.centroid));
       pts.forEach((c) => {
         const el = document.createElement('button');
         el.type = 'button';

@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
+import { hasLngLat } from './coords.js';
 
 const MAP_STYLE = 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json';
 
@@ -71,7 +72,7 @@ export function CityPickerMap({ cities = [], onToggle, onFocus, anchor = null })
     const build = () => {
       pinsRef.current.forEach((p) => p.marker.remove());
       pinsRef.current.clear();
-      const pts = cities.filter((c) => c.lat != null && c.lon != null);
+      const pts = cities.filter(hasLngLat);
       pts.forEach((c) => {
         const el = document.createElement('button');
         el.type = 'button';
@@ -100,7 +101,7 @@ export function CityPickerMap({ cities = [], onToggle, onFocus, anchor = null })
           .addTo(map);
         pinsRef.current.set(c.id, { marker, el, label, meta });
       });
-      if (anchor && anchor.lat != null) {
+      if (hasLngLat(anchor)) {
         // Land the conversation where the traveller lands: open on the
         // arrival region, zoomed in enough that its neighbours read clearly.
         map.jumpTo({ center: [anchor.lon, anchor.lat], zoom: 7 });
@@ -122,7 +123,7 @@ export function CityPickerMap({ cities = [], onToggle, onFocus, anchor = null })
   // A new arrival point (changed flight) recentres the view without a rebuild.
   useEffect(() => {
     const map = mapRef.current;
-    if (!map || !readyRef.current || !anchor || anchor.lat == null) return;
+    if (!map || !readyRef.current || !hasLngLat(anchor)) return;
     map.flyTo({ center: [anchor.lon, anchor.lat], zoom: 7, duration: 600 });
   }, [anchor?.lat, anchor?.lon]); // eslint-disable-line react-hooks/exhaustive-deps
 

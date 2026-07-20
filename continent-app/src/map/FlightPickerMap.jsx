@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
+import { hasLngLat } from './coords.js';
 
 const MAP_STYLE = 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json';
 
@@ -53,7 +54,7 @@ export function FlightPickerMap({ options = [], origin = null, onPick }) {
       pinsRef.current.clear();
       if (originRef.current) { originRef.current.remove(); originRef.current = null; }
 
-      const pts = options.filter((o) => o.lat != null && o.lon != null);
+      const pts = options.filter(hasLngLat);
       pts.forEach((o) => {
         const el = document.createElement('button');
         el.type = 'button';
@@ -76,7 +77,7 @@ export function FlightPickerMap({ options = [], origin = null, onPick }) {
         pinsRef.current.set(o.id, { marker, el });
       });
 
-      if (origin && origin.lat != null) {
+      if (hasLngLat(origin)) {
         const el = document.createElement('div');
         el.className = 'fpm-origin';
         el.innerHTML = '<span class="fpm-origin-dot"></span>';
@@ -89,7 +90,7 @@ export function FlightPickerMap({ options = [], origin = null, onPick }) {
           .addTo(map);
       }
 
-      const all = [...pts, ...(origin && origin.lat != null ? [origin] : [])];
+      const all = [...pts, ...(hasLngLat(origin) ? [origin] : [])];
       if (all.length >= 2) {
         const b = all.reduce(
           (acc, c) => acc.extend([c.lon, c.lat]),
