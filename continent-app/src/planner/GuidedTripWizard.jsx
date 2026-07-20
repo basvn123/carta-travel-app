@@ -316,9 +316,22 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
   const [bookedCountry, setBookedCountry] = useState('');
   const [bookedCity, setBookedCity] = useState('');
 
-  const selectedCountries = allCountries.filter((c) => countries.has(c.country));
-  const includedIds = order.filter((id) => (nights[id] || 0) > 0);
-  const totalNights = includedIds.reduce((sum, id) => sum + (nights[id] || 0), 0);
+  // Memoized: these three feed downstream memos (companionsFor, mapCities, which
+  // each scan the whole destinations map). Recreating them as fresh arrays every
+  // render gave those memos new deps every render, so a Stay-step re-render
+  // (typing, +/- nights) re-ran N x all-destinations haversine work each time.
+  const selectedCountries = useMemo(
+    () => allCountries.filter((c) => countries.has(c.country)),
+    [allCountries, countries],
+  );
+  const includedIds = useMemo(
+    () => order.filter((id) => (nights[id] || 0) > 0),
+    [order, nights],
+  );
+  const totalNights = useMemo(
+    () => includedIds.reduce((sum, id) => sum + (nights[id] || 0), 0),
+    [includedIds, nights],
+  );
   const windowNights = path === 'landed'
     ? flexNights
     : (dateMode === 'exact' ? tripDaysBetween(startDate, endDate) : flexNights);

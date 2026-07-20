@@ -603,14 +603,24 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
   // surviving twin and drop the repeats within each day. Only runs against
   // the full coordinate-bearing list (the one assignments were made against);
   // the repaired plan is persisted, so this is a one-time migration per plan.
+  // Guard so this genuinely runs once per plan. itemsForStop() runs the O(n^2)
+  // canonical-POI dedupe, and this effect calls it for every stop; without the
+  // guard it re-ran that whole pass on every add/remove/reorder (each edit
+  // changes `assignments`, a dependency). We only mark a plan repaired once the
+  // full coordinate list (actFull) was actually available for the pass.
+  const repairedRef = useRef(new Set());
   useEffect(() => {
+    const pid = plan?.id ?? '__draft__';
     if (!stops.length || !Object.keys(assignments).length) return;
+    if (repairedRef.current.has(pid)) return;
     let changed = false;
+    let hadFull = false;
     const next = {};
     Object.entries(assignments).forEach(([si, days]) => {
       const s = stops[Number(si)];
       const info = s ? itemsForStop(s) : null;
       if (!info || info.limited || !info.canon.size) { next[si] = days; return; }
+      hadFull = true;
       const nd = {};
       Object.entries(days || {}).forEach(([di, idxs]) => {
         const seen = new Set();
@@ -630,7 +640,10 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
       setAssignments(next);
       persistAssignments(plan?.id, next);
     }
-  }, [assignments, stops, actFull]); // eslint-disable-line react-hooks/exhaustive-deps
+    // Only consider the plan migrated once the real (coordinate-bearing) list
+    // was loaded; before actFull arrives the pass can't dedupe anything.
+    if (hadFull) repairedRef.current.add(pid);
+  }, [assignments, stops, actFull, plan?.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Must-see / recommended / more / active tiers for the current stop's list.
   const tiers = useMemo(() => tieredActivities(activities.items, activities.walkable), [activities]);

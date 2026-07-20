@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback, Suspense, lazy } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useMemo, Suspense, lazy } from 'react';
 import { AppHeader } from './components/AppHeader.jsx';
 import { FilterBar } from './browse/FilterBar.jsx';
 import { BottomNav } from './components/BottomNav.jsx';
@@ -192,7 +192,12 @@ function TravelApp() {
 
   // View toggles
   const [priceMode, setPriceMode] = useState(init.priceMode ?? 'pp');
-  const [countryFilter, setCountryFilter] = useState(init.countryFilter ?? 'all');
+  // Multi-select country filter: an array of iso2 codes ([] = every country).
+  // Migrate a legacy single value ('all' or one iso2) from an older URL/account.
+  const [countryFilter, setCountryFilter] = useState(() =>
+    Array.isArray(init.countryFilter)
+      ? init.countryFilter
+      : (init.countryFilter && init.countryFilter !== 'all' ? [init.countryFilter] : []));
   const [tripKinds, setTripKinds] = useState(init.tripKinds ?? []);
   // Rating filters (min tier 0-3; 0 = off/Any, see rating_layer.py tiers)
   const [minTier, setMinTier] = useState(init.minTier ?? 0);
@@ -276,6 +281,19 @@ function TravelApp() {
     filterBarRoRef.current = ro;
   }, []);
 
+  // A reference-stable view of `choices` for pricing: it only changes identity
+  // when a field composeTrip actually reads changes. trip_days is display-only
+  // (derived from the dates and synced back into choices), so excluding it stops
+  // that write from triggering a SECOND full reprice of ~24,800 destinations on
+  // every date change, on top of the one the date change itself already causes.
+  const pricingChoices = useMemo(
+    () => choices,
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [choices.group_size, choices.baggage_key, choices.baggage_per_direction_eur,
+      choices.transport_mode, choices.origin, choices.home, choices.lifestyle,
+      choices.origin_pref, choices.car_model, choices.accommodation_model],
+  );
+
   // Price every destination for the current dates/choices, then narrow that
   // down through the location search, filter bar, and "top picks" shortcut.
   const {
@@ -283,7 +301,7 @@ function TravelApp() {
     priceRange, setPriceRange,
     priced, unreachable, dealThreshold, stats,
   } = useDestinationSearch({
-    data, departDate, returnDate, choices,
+    data, departDate, returnDate, choices: pricingChoices,
     locationQuery: debouncedLocationQuery, countryFilter, priceMode, tripKinds,
     minTier, unescoOnly, topBeachOnly, topPick,
     initialPriceRange: init.priceRange,

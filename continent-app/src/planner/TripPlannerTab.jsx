@@ -295,15 +295,23 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
   // Manual "Add stop": country first, then city within it, picking both at once
   // made the combined list noisy, and country-first mirrors how travellers
   // actually think about where to go next.
-  const countryOptions = [...new Set(Object.values(destinations).map((d) => d.country).filter(Boolean))]
-    .sort((a, b) => a.localeCompare(b))
-    .map((c) => ({ value: c, label: c }));
-  const cityOptions = pendingCountry
-    ? Object.entries(destinations)
-        .filter(([, d]) => d.country === pendingCountry)
-        .map(([id, d]) => ({ value: id, label: d.city }))
-        .sort((a, b) => a.label.localeCompare(b.label))
-    : [];
+  // Both scan the whole destinations map; memoize so a sheet-drag or stop-select
+  // re-render doesn't re-dedupe/re-sort ~24,800 rows every time.
+  const countryOptions = useMemo(
+    () => [...new Set(Object.values(destinations).map((d) => d.country).filter(Boolean))]
+      .sort((a, b) => a.localeCompare(b))
+      .map((c) => ({ value: c, label: c })),
+    [destinations],
+  );
+  const cityOptions = useMemo(
+    () => (pendingCountry
+      ? Object.entries(destinations)
+          .filter(([, d]) => d.country === pendingCountry)
+          .map(([id, d]) => ({ value: id, label: d.city }))
+          .sort((a, b) => a.label.localeCompare(b.label))
+      : []),
+    [destinations, pendingCountry],
+  );
 
   const hasDates = tp.tripStart && tp.tripEnd && tp.windowNights > 0;
   // The inline builder is now only an editor for a trip that already exists,   // opened from Saved trips' "Edit", or "Edit stops" on a planned trip. A fresh
