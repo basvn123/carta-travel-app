@@ -16,10 +16,8 @@
  */
 
 import { haversineKm, cityCoords } from './runtime_pricing.js';
+import { round2 } from './math.js';
 
-function round2(v) {
-  return v == null ? null : Math.round(v * 100) / 100;
-}
 
 /** Ryanair-style hold/cabin baggage add-ons, priced PER PERSON, PER ONE-WAY
  *  flight (a round trip pays each fee twice). The stored seat fares are the

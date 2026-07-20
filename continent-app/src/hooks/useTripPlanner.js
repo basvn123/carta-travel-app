@@ -6,15 +6,13 @@ import { combineTripLegs, suggestNextStops } from '../lib/trip_planner_pricing.j
 import { legTransportOptions, rentalEstimate } from '../lib/transport.js';
 import { cheapestStartDates, reorderSavings } from '../lib/tripCostOptimizer.js';
 import { addDays } from '../lib/dates.js';
+import { round2 } from '../lib/math.js';
 import {
   fetchTripPlanWithStops, createTripPlan, renameTripPlan, saveTripPlanStops,
 } from '../auth/tripPlanStorage.js';
 import { assignmentsKey, prefsKey, TRIP_DRAFT_PLAN_ID } from '../planner/dayPlanStore.js';
 import { loadRestorableDraft, persistTripDraft, clearTripDraft } from '../planner/tripDraftStore.js';
 
-function round2(v) {
-  return v == null ? null : Math.round(v * 100) / 100;
-}
 
 const DEFAULT_STOP_NIGHTS = 2;
 

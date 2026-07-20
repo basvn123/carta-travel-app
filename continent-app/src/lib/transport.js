@@ -10,6 +10,7 @@
  * is exactly why a car often wins for 3-4 people and loses for solo travellers.
  */
 import { haversineKm, withCityCoords } from './runtime_pricing.js';
+import { round2 } from './math.js';
 
 const DETOUR = 1.3;             // road km vs straight-line (matches car_layer.py)
 const TRAIN = { kmh: 95, eurPerKm: 0.15, floor: 8, overheadH: 0.4 };
@@ -17,9 +18,6 @@ const BUS = { kmh: 68, eurPerKm: 0.075, floor: 5, overheadH: 0.5 };
 const CAR = { kmh: 82 };
 const LONG_HAUL_KM = 800;       // beyond this, overland stops being sensible
 
-function round2(v) {
-  return v == null ? null : Math.round(v * 100) / 100;
-}
 
 // A bare "lat,lng" endpoint shows up in Google Maps as a nameless "Dropped
 // pin"; a "City, Country" query geocodes to the real place. gmapsName (an

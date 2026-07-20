@@ -2,20 +2,9 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { appDataPromise, fetchFares } from '../lib/appData.js';
 import { hydrateForOrigin, defaultOrigin, originHome } from '../lib/origins.js';
 import { bestFareWindow, countBookableRoundTrips } from '../lib/runtime_pricing.js';
+import { addDays, todayISO } from '../lib/dates.js';
 
-// ISO date string, `days` later.
-function addDays(iso, days) {
-  const d = new Date(iso + 'T00:00:00Z');
-  d.setUTCDate(d.getUTCDate() + days);
-  return d.toISOString().slice(0, 10);
-}
 
-// Today's local date as ISO 'YYYY-MM-DD'.
-function todayISO() {
-  const t = new Date();
-  const p = (n) => String(n).padStart(2, '0');
-  return `${t.getFullYear()}-${p(t.getMonth() + 1)}-${p(t.getDate())}`;
-}
 
 /** Fetches app_data.json, applies its data-driven defaults (group size,
  *  baggage, lifestyle, home/car/accommodation models, departure origin) into
