@@ -11,6 +11,9 @@
  *      (dest.costs). See SCHEMA.md for the contract.
  */
 
+import { round2 } from './math.js';
+import { addDays } from './dates.js';
+
 // Nights between two ISO date strings (return must be >= depart).
 export function tripDaysBetween(departDate, returnDate) {
   if (!departDate || !returnDate) return 0;
@@ -773,12 +776,6 @@ export function cheapestTotal(dest, departDate, returnDate, choices, allDests = 
   return b ? b.grand_total : null;
 }
 
-// ISO date string, `days` later.
-function addDays(iso, days) {
-  const d = new Date(iso + 'T00:00:00Z');
-  d.setUTCDate(d.getUTCDate() + days);
-  return d.toISOString().slice(0, 10);
-}
 
 /** Candidate trip start dates for "Best time to go": the union of outbound_fare
  *  keys across the destination's routes (real, bookable Ryanair days). Car-only
@@ -882,9 +879,6 @@ export function fareByWeekday(dest) {
   return sums.map((s, i) => (counts[i] ? Math.round(s / counts[i]) : null));
 }
 
-function round2(v) {
-  return v == null ? null : Math.round(v * 100) / 100;
-}
 
 // Flight booking deeplink (Skyscanner), the one external service the app links to.
 // `origin` must be the SAME airport the displayed fare departs from (e.g. CRL for
