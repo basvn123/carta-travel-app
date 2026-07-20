@@ -392,7 +392,7 @@ export const en = {
   "day.startPlanning": "Start planning",
   "day.stayAria": "Address of your stay",
   "day.stayLocalNote": "You're staying right by {city}, so no long transfers today.",
-  "day.stayPlaceholder": "Town, street, hotel or apartment address",
+  "day.stayPlaceholder": "Town, hotel or address",
   "day.strongestSights": "Its strongest sights",
   "day.tapMode": "Tap a mode to plan the day around it.",
   "day.thenWalk": ", then {min} min walk",
