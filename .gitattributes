@@ -1,0 +1,15 @@
+# Git LFS - large generated data + harvest caches (forward-only migration).
+#
+# The runtime-served payload under continent-app/public/ is deliberately NOT
+# tracked by LFS: it must stay as regular git blobs so static hosting serves the
+# real JSON, not an LFS pointer file. Those files are also under the size limits.
+#
+# NOTE: app_data/app_data.json (and country_insights.json) are read by the build
+# step (continent-app/scripts/sync-data.mjs). If this repo is deployed via CI,
+# ensure the checkout fetches LFS objects (e.g. actions/checkout with lfs: true,
+# or the host's LFS support) so the pipeline reads real data, not pointers.
+app_data/*.json    filter=lfs diff=lfs merge=lfs -text
+cache/*.json       filter=lfs diff=lfs merge=lfs -text
+cache/*.txt        filter=lfs diff=lfs merge=lfs -text
+cache/*.parquet    filter=lfs diff=lfs merge=lfs -text
+cache/*.geojson    filter=lfs diff=lfs merge=lfs -text
