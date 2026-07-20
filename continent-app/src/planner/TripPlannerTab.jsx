@@ -743,13 +743,13 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
 
                   <AnchorLegRow
                     leg={tp.anchorLegs?.in}
-                    from={tp.anchorLegs?.anchor?.city}
+                    from={tp.anchorLegs?.inCity || tp.anchorLegs?.anchor?.city}
                     to={tp.stopDetails[0]?.dest?.city}
                   />
                   <AnchorLegRow
                     leg={tp.anchorLegs?.out}
                     from={tp.stopDetails[tp.stopDetails.length - 1]?.dest?.city}
-                    to={tp.anchorLegs?.anchor?.city}
+                    to={tp.anchorLegs?.outCity || tp.anchorLegs?.anchor?.city}
                   />
 
                   {groundTotal > 0 && (

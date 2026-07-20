@@ -52,25 +52,19 @@ function minFare(fares, monthPrefix) {
  * from that airport are surfaced separately as "interesting places around" it.
  * This keeps the map honest: one plane pin per city you genuinely fly to.
  *
- * The fare is a real ROUND TRIP whenever the return leg can be priced: out on
- * the chosen date, home from the SAME anchor on the return date (the exact
- * end date, or the outbound date + nights when flexible). A trip is a return
- * trip, so pricing only the outbound understated the flight by ~half; this
- * surfaces the whole cost up front. `round_eur` is null when no return fare is
- * stored, and the caller then falls back to showing the one-way out.
+ * The fare shown is the ONE-WAY fare in: this step is about where you arrive.
+ * The return home is chosen later (flyHomeOptions), once the stays are pinned,
+ * so the traveller flies out of the airport that suits where their trip ends.
  *
  * @param destinations data.destinations
  * @param countries    Set of country names the traveller picked
  * @param startDate    exact ISO departure date, or '' when flexible
- * @param endDate      exact ISO return date, or '' when flexible
- * @param nights       trip length, to estimate a flexible return date
  * @param flexMonth    'YYYY-MM' to constrain a flexible search, or '' for any
  * @returns [{ id, dest, origin, anchor, exact_eur, cheapest: {date, eur}|null,
- *             ret_eur, ret_date, round_eur, has_round, gem_score }] one per
- *             arrival airport, sorted cheapest-first (exact-date fares before
- *             options with no fare stored on that date)
+ *             gem_score }] one per arrival airport, sorted cheapest-first
+ *             (exact-date fares before options with no fare stored on that date)
  */
-export function flyInOptions(destinations, countries, { startDate = '', endDate = '', nights = 0, flexMonth = '' } = {}) {
+export function flyInOptions(destinations, countries, { startDate = '', flexMonth = '' } = {}) {
   // anchor IATA -> the cheapest way in (across the airport's own routes and any
   // gem/town that routes through it).
   const airports = new Map();
@@ -82,35 +76,18 @@ export function flyInOptions(destinations, countries, { startDate = '', endDate 
       const exact = startDate ? (r.outbound_fare?.[startDate] ?? null) : null;
       const cheapest = minFare(r.outbound_fare, startDate ? '' : flexMonth);
       if (exact == null && !cheapest) continue;
-      // The outbound leg we're actually pricing the return against (the exact
-      // date's fare when we have one, else the cheapest date's).
-      const outEur = exact != null ? exact : cheapest.eur;
-      const outDate = exact != null ? startDate : cheapest.date;
-      // Home from the same anchor: the exact end date, or the outbound date +
-      // trip length when the traveller is flexible. Only a real stored fare
-      // counts, so an unpriced return simply leaves round_eur null.
-      const retDate = endDate || (outDate && nights ? addDays(outDate, nights) : '');
-      const retEur = retDate ? (r.return_fare?.[retDate] ?? null) : null;
-      const roundEur = retEur != null ? outEur + retEur : null;
       const cand = {
         origin,
         exact_eur: exact,
         cheapest,
-        ret_eur: retEur,
-        ret_date: retDate || null,
-        round_eur: roundEur,
-        has_round: roundEur != null,
         sort_eur: exact != null ? exact : cheapest.eur,
         has_exact: exact != null,
       };
       const cur = airports.get(anchor);
-      // Prefer a route we can price a full return on, then one with a fare on
-      // the exact date, then the cheapest fare, so each airport shows the most
-      // complete, honest price we have.
+      // Prefer a route with a fare on the exact date; then the cheapest fare.
       if (!cur
-        || (cand.has_round && !cur.has_round)
-        || (cand.has_round === cur.has_round && cand.has_exact && !cur.has_exact)
-        || (cand.has_round === cur.has_round && cand.has_exact === cur.has_exact && cand.sort_eur < cur.sort_eur)) {
+        || (cand.has_exact && !cur.has_exact)
+        || (cand.has_exact === cur.has_exact && cand.sort_eur < cur.sort_eur)) {
         airports.set(anchor, cand);
       }
     }
@@ -129,6 +106,80 @@ export function flyInOptions(destinations, countries, { startDate = '', endDate 
   out.sort((a, b) => {
     if (a.has_exact !== b.has_exact) return a.has_exact ? -1 : 1;
     return a.sort_eur - b.sort_eur || b.gem_score - a.gem_score;
+  });
+  return out;
+}
+
+/**
+ * Ryanair fly-HOME options for the wizard's return step, chosen AFTER the stays
+ * are pinned so the traveller flies out of the airport that actually suits
+ * where their trip ends.
+ *
+ * A round trip shares one home airport, so only airports reachable from the
+ * SAME `origin` they flew out from are eligible, and each must have a real
+ * stored return fare. Options are ranked by how close the airport sits to the
+ * LAST stop (you drive/train there to fly home), with the fare shown so a
+ * slightly farther but cheaper airport is an easy call. The outbound anchor is
+ * always kept as an option (a true there-and-back), even if it's farther.
+ *
+ * @param destinations data.destinations
+ * @param origin       the departure airport IATA they flew out from
+ * @param lastDest     the trip's final stop, for proximity ranking
+ * @param returnDate   exact ISO return date, or '' when flexible
+ * @param flexMonth    'YYYY-MM' to constrain a flexible search, or ''
+ * @param maxKm        only surface airports within this reach of the last stop
+ * @param outAnchorId  the outbound anchor id, always retained as an option
+ * @returns [{ id, dest, origin, anchor, km, is_out_anchor, ret_exact_eur,
+ *             ret_cheapest: {date, eur}|null, sort_eur, has_exact, gem_score }]
+ *           nearest-first (priced-on-the-day before options with no fare stored)
+ */
+export function flyHomeOptions(destinations, {
+  origin, lastDest = null, returnDate = '', flexMonth = '', maxKm = 320, outAnchorId = '',
+} = {}) {
+  if (!origin) return [];
+  const airports = new Map();
+  for (const [, d] of Object.entries(destinations || {})) {
+    const r = d?.routes?.[origin];
+    if (!r) continue;
+    const anchor = r.anchor_airport || d.iata;
+    if (!anchor) continue;
+    const exact = returnDate ? (r.return_fare?.[returnDate] ?? null) : null;
+    const cheapest = minFare(r.return_fare, returnDate ? '' : flexMonth);
+    if (exact == null && !cheapest) continue;
+    const cand = {
+      origin,
+      ret_exact_eur: exact,
+      ret_cheapest: cheapest,
+      sort_eur: exact != null ? exact : cheapest.eur,
+      has_exact: exact != null,
+    };
+    const cur = airports.get(anchor);
+    if (!cur
+      || (cand.has_exact && !cur.has_exact)
+      || (cand.has_exact === cur.has_exact && cand.sort_eur < cur.sort_eur)) {
+      airports.set(anchor, cand);
+    }
+  }
+
+  const out = [];
+  for (const [anchor, best] of airports) {
+    const airportDest = destinations[anchor]
+      || Object.values(destinations).find((x) => x.iata === anchor);
+    if (!airportDest || airportDest.lat == null) continue;
+    const km = lastDest && lastDest.lat != null
+      ? Math.round(haversineKm(lastDest.lat, lastDest.lon, airportDest.lat, airportDest.lon))
+      : null;
+    const isOutAnchor = airportDest.id === outAnchorId;
+    if (!isOutAnchor && km != null && km > maxKm) continue; // too far to be a sensible home airport
+    out.push({ id: airportDest.id, dest: airportDest, anchor, km, is_out_anchor: isOutAnchor, gem_score: gemScore(airportDest), ...best });
+  }
+  // Nearest home airport first (that's the sell), priced-on-the-day ahead of
+  // no-fare options, cheapest as the final tiebreak.
+  out.sort((a, b) => {
+    if (a.has_exact !== b.has_exact) return a.has_exact ? -1 : 1;
+    const ka = a.km == null ? 1e9 : a.km;
+    const kb = b.km == null ? 1e9 : b.km;
+    return ka - kb || a.sort_eur - b.sort_eur;
   });
   return out;
 }
@@ -162,17 +213,14 @@ export function flightBadges(options, origins) {
   if (!options || options.length < 2) return out;
   const metas = new Map(options.map((o) => [o.id, flightMeta(o, origins)]));
 
-  // Compare on the price the traveller actually sees: the round trip when we
-  // could price it, otherwise the one-way out.
-  const price = (o) => o.round_eur ?? o.sort_eur;
   let cheapest = null;
   let fastest = null; // { option, min }
   let pick = null;    // { option, rank }
   for (const o of options) {
-    if (!cheapest || price(o) < price(cheapest)) cheapest = o;
+    if (!cheapest || o.sort_eur < cheapest.sort_eur) cheapest = o;
     const m = metas.get(o.id);
     if (m && (!fastest || m.min < fastest.min)) fastest = { option: o, min: m.min };
-    const rank = o.gem_score * 1.2 - price(o) / 30 - (m ? m.min / 90 : 0) + (o.has_exact ? 0.8 : 0);
+    const rank = o.gem_score * 1.2 - o.sort_eur / 18 - (m ? m.min / 90 : 0) + (o.has_exact ? 0.8 : 0);
     if (!pick || rank > pick.rank) pick = { option: o, rank };
   }
   if (pick) out[pick.option.id] = 'pick';

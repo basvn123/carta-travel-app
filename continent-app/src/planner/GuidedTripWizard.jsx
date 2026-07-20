@@ -12,7 +12,7 @@ import {
 import { knownForFacts } from '../lib/knownFor.js';
 import { gemScore, BAGGAGE_OPTIONS } from '../lib/trip_planner_pricing.js';
 import {
-  flyInOptions, monthOptions, orderStaysFromAnchor, flightMeta, fmtFlightDuration, flightBadges,
+  flyInOptions, flyHomeOptions, monthOptions, orderStaysFromAnchor, flightMeta, fmtFlightDuration, flightBadges,
 } from '../lib/wizardFlights.js';
 import { cheapestStartDates } from '../lib/tripCostOptimizer.js';
 import { carAdvice } from '../lib/transport.js';
@@ -62,7 +62,7 @@ const PATHS = [
 // The values are logic keys (the render switches on them); STEP_LABEL_KEYS
 // maps each to its translated display label.
 const PATH_STEPS = {
-  full: ['Where', 'When', 'Enjoy', 'Getting there', 'Stay', 'Finish'],
+  full: ['Where', 'When', 'Enjoy', 'Getting there', 'Stay', 'Getting home', 'Finish'],
   landed: ['Arrival', 'Enjoy', 'Stay', 'Finish'],
   booked: ['Your trip'],
 };
@@ -72,6 +72,7 @@ const STEP_LABEL_KEYS = {
   'Enjoy': 'wizard.stepEnjoy',
   'Getting there': 'wizard.stepGettingThere',
   'Stay': 'wizard.stepStay',
+  'Getting home': 'wizard.stepGettingHome',
   'Finish': 'wizard.stepFinish',
   'Arrival': 'wizard.stepArrival',
   'Your trip': 'wizard.stepYourTrip',
@@ -267,7 +268,6 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
   // ---- Wizard flow state ----
   const [path, setPath] = useState(null); // null = the "what are you looking for?" screen
   const [step, setStep] = useState(1);
-  const steps = path ? PATH_STEPS[path] : [];
 
   const [countries, setCountries] = useState(() => new Set());
   const [countryQuizOpen, setCountryQuizOpen] = useState(false);
@@ -285,6 +285,10 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
   const [flyInId, setFlyInId] = useState('');
   const [flightView, setFlightView] = useState('map'); // 'map' | 'list'
   const [showAllRoutes, setShowAllRoutes] = useState(false);
+  // The return flight home, picked AFTER the stays are pinned (its own step),
+  // so the traveller flies out of the airport that suits where their trip ends.
+  const [returnFlyId, setReturnFlyId] = useState('');
+  const [returnFlightView, setReturnFlightView] = useState('map'); // 'map' | 'list'
   const [nights, setNights] = useState({});      // { [id]: nights }
   const [order, setOrder] = useState([]);        // included city ids, pick order
   const [staySearch, setStaySearch] = useState('');
@@ -320,6 +324,14 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
     : (dateMode === 'exact' ? tripDaysBetween(startDate, endDate) : flexNights);
   const months = useMemo(() => monthOptions(dateMin, dateMax), [dateMin, dateMax]);
 
+  // The steps for this path. "Getting home" (the return-flight pick) only
+  // applies when the traveller is actually flying, so it's dropped for a
+  // drive/own-flight trip, no empty step to click through.
+  const steps = useMemo(() => {
+    const s = path ? PATH_STEPS[path] : [];
+    return s.filter((x) => x !== 'Getting home' || arriveMode === 'fly');
+  }, [path, arriveMode]);
+
   // Which step is which, per path (so the render below reads by NAME).
   const stepName = path ? steps[step - 1] : null;
 
@@ -335,11 +347,9 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
     if (path !== 'full' || arriveMode !== 'fly' || countries.size === 0) return [];
     return flyInOptions(destinations, countries, {
       startDate: dateMode === 'exact' ? startDate : '',
-      endDate: dateMode === 'exact' ? endDate : '',
-      nights: dateMode === 'flex' ? flexNights : 0,
       flexMonth: dateMode === 'flex' ? flexMonth : '',
     });
-  }, [path, arriveMode, destinations, countries, dateMode, startDate, endDate, flexNights, flexMonth]);
+  }, [path, arriveMode, destinations, countries, dateMode, startDate, flexMonth]);
   const flyIn = routeOptions.find((o) => o.id === flyInId) || null;
   const arrivalDest = arrivalId ? destinations[arrivalId] : null;
   const anchorDest = path === 'landed'
@@ -350,6 +360,34 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
     () => flightBadges(routeOptions.slice(0, 40), data?.meta?.origins),
     [routeOptions, data],
   );
+
+  // ---- The return flight home (its own step, after the stays are pinned) ----
+  // Route the pinned stays out from the arrival anchor so we know the genuine
+  // LAST stop, then offer the airports you can fly home from near it. The exact
+  // return date is the start plus the nights actually planned; when flexible we
+  // fall back to the cheapest stored return.
+  const orderedIncludedIds = useMemo(
+    () => orderStaysFromAnchor(includedIds, destinations, anchorDest),
+    [includedIds, destinations, anchorDest],
+  );
+  const lastStopDest = orderedIncludedIds.length
+    ? destinations[orderedIncludedIds[orderedIncludedIds.length - 1]] : null;
+  const returnDate = dateMode === 'exact' && startDate && totalNights
+    ? addDays(startDate, totalNights) : '';
+  const homeOptions = useMemo(() => {
+    if (stepName !== 'Getting home' || arriveMode !== 'fly' || !flyIn) return [];
+    return flyHomeOptions(destinations, {
+      origin: flyIn.origin,
+      lastDest: lastStopDest,
+      returnDate,
+      flexMonth: dateMode === 'flex' ? flexMonth : '',
+      outAnchorId: flyIn.id,
+    });
+  }, [stepName, arriveMode, flyIn, destinations, lastStopDest, returnDate, dateMode, flexMonth]);
+  const flyHome = homeOptions.find((o) => o.id === returnFlyId) || null;
+  // The chosen home airport as a plain destination, resolvable on ANY step
+  // (homeOptions only exists on the return step); used by the recap + finish.
+  const flyHomeDest = arriveMode === 'fly' && returnFlyId ? destinations[returnFlyId] : null;
 
   // Rough driving reach per selected country, for the car option: straight-line
   // to the country's centroid with the app's road-detour factor, a scale
@@ -588,6 +626,7 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
     || (stepName === 'Getting there' && (arriveMode === 'car' || arriveMode === 'other' || flyIn != null))
     || (stepName === 'Arrival' && Boolean(arrivalId && startDate && flexNights >= 1))
     || (stepName === 'Stay' && includedIds.length > 0)
+    || (stepName === 'Getting home' && (flyHome != null || homeOptions.length === 0))
     || stepName === 'Finish'
   );
 
@@ -621,6 +660,8 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
     setFlyInId('');
     setFlightView('map');
     setShowAllRoutes(false);
+    setReturnFlyId('');
+    setReturnFlightView('map');
     setNights({});
     setOrder([]);
     setAutoNightIds(new Set());
@@ -722,6 +763,9 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
       // The exact departure airport the traveller picked for their fly-in, so
       // the overview prices the same inbound flight (same origin) they saw here.
       anchorOrigin: arriveMode === 'fly' && flyIn ? flyIn.origin : null,
+      // The airport they chose to fly HOME from (its own "Getting home" step,
+      // after the stays were pinned), so the return leg matches too.
+      returnAnchorId: flyHomeDest ? returnFlyId : null,
       label,
       stops,
     });
@@ -929,6 +973,18 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
     }
   }, [routeOptions, flyInId, stepName]);
 
+  // Default the return flight to the nearest home airport (top of the list) the
+  // moment the step opens, and drop a pick that no longer fits after the stays
+  // or dates changed, so the step is never blank and never stale.
+  useEffect(() => {
+    if (stepName !== 'Getting home') return;
+    if (homeOptions.length && (!returnFlyId || !homeOptions.some((o) => o.id === returnFlyId))) {
+      setReturnFlyId(homeOptions[0].id);
+    } else if (!homeOptions.length && returnFlyId) {
+      setReturnFlyId('');
+    }
+  }, [stepName, homeOptions, returnFlyId]);
+
   // Landing somewhere pins that country onto the trip, so the Stay step has a
   // region to talk about (more countries can still be added by search).
   useEffect(() => {
@@ -963,6 +1019,9 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
       if (arriveMode === 'car') recapChips.push({ Icon: CarIcon, text: t('wizard.goingByCar') });
       if (arriveMode === 'other') recapChips.push({ Icon: PlaneIcon, text: t('wizard.ownFlight') });
     }
+    if (path === 'full' && stepName === 'Finish' && flyHomeDest) {
+      recapChips.push({ Icon: PlaneIcon, text: t('wizard.flyHomeRecap', { city: flyHomeDest.city }) });
+    }
     if ((stepName === 'Stay' || stepName === 'Finish') && stayStyle === 'single') {
       recapChips.push({ Icon: BedIcon, text: t('wizard.oneHomeBaseChip') });
     }
@@ -977,6 +1036,7 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
   // populates sits below the fold, it reads as "nothing happened". Nudge the
   // panel into view on selection (narrow screens only; desktop shows both).
   const flightSideRef = useRef(null);
+  const returnSideRef = useRef(null);
   const citySideRef = useRef(null);
   const scrollPanelIntoView = (el) => {
     if (!el || typeof window === 'undefined') return;
@@ -990,6 +1050,9 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
   useEffect(() => {
     if (stepName === 'Stay' && focusedId) scrollPanelIntoView(citySideRef.current);
   }, [focusedId, stepName]);
+  useEffect(() => {
+    if (stepName === 'Getting home' && returnFlyId) scrollPanelIntoView(returnSideRef.current);
+  }, [returnFlyId, stepName]);
 
   // ---------------------------------------------------------------- render --
   return (
@@ -1378,7 +1441,7 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
                           city: o.dest.city,
                           lat: o.dest.lat,
                           lon: o.dest.lon,
-                          eurLabel: eur(o.has_round ? o.round_eur : (o.has_exact ? o.exact_eur : o.cheapest.eur)),
+                          eurLabel: eur(o.has_exact ? o.exact_eur : o.cheapest.eur),
                           selected: o.id === flyInId,
                         }))}
                         origin={originRec && originRec.lat != null ? { lat: originRec.lat, lon: originRec.lon, city: originRec.city } : null}
@@ -1399,19 +1462,8 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
                                 <small>
                                   <PlaneIcon size={9} /> {t('wizard.intoAnchor', { anchor: flyIn.anchor })}
                                   {(() => { const m = flightMeta(flyIn, data?.meta?.origins); return m ? t('wizard.flightDur', { dur: fmtFlightDuration(m.min) }) : ''; })()}
-                                  {flyIn.has_round
-                                    ? t('wizard.fareRoundPP', { fare: eur(flyIn.round_eur) })
-                                    : t('wizard.farePP', { fare: eur(flyIn.has_exact ? flyIn.exact_eur : flyIn.cheapest.eur) })}
+                                  {t('wizard.farePP', { fare: eur(flyIn.has_exact ? flyIn.exact_eur : flyIn.cheapest.eur) })}
                                 </small>
-                                {flyIn.has_round && (
-                                  <small className="guide-flight-side-breakdown">
-                                    {t('wizard.roundBreakdown', {
-                                      out: eur(flyIn.has_exact ? flyIn.exact_eur : flyIn.cheapest.eur),
-                                      back: eur(flyIn.ret_eur),
-                                    })}
-                                    {!flyIn.has_exact ? ` ${t('wizard.estimated')}` : ''}
-                                  </small>
-                                )}
                                 {!flyIn.has_exact && dateMode === 'exact' && flyIn.cheapest && (
                                   <small className="guide-route-warn">
                                     <AlertIcon size={9} /> {t('wizard.noFareForDate', { date: fmtDate(startDate, true), date2: fmtDate(flyIn.cheapest.date, true) })}
@@ -1491,20 +1543,10 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
                                 )}
                               </span>
                               <span className="guide-route-fare">
-                                <b>{eur(o.has_round ? o.round_eur : (o.has_exact ? o.exact_eur : o.cheapest.eur))}</b>
+                                <b>{eur(o.has_exact ? o.exact_eur : o.cheapest.eur)}</b>
                                 <small>
-                                  {o.has_round
-                                    ? t(o.has_exact ? 'wizard.returnPerPerson' : 'wizard.returnEstPerPerson')
-                                    : (o.has_exact ? t('wizard.perPerson') : t('wizard.datePerPerson', { date: fmtDate(o.cheapest.date, true) }))}
+                                  {o.has_exact ? t('wizard.perPerson') : t('wizard.datePerPerson', { date: fmtDate(o.cheapest.date, true) })}
                                 </small>
-                                {o.has_round && (
-                                  <small className="guide-route-breakdown">
-                                    {t('wizard.roundBreakdown', {
-                                      out: eur(o.has_exact ? o.exact_eur : o.cheapest.eur),
-                                      back: eur(o.ret_eur),
-                                    })}
-                                  </small>
-                                )}
                               </span>
                             </button>
                           );
@@ -1763,6 +1805,125 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
                     ))}
                   </div>
                 </div>
+              )}
+            </>
+          )}
+
+          {/* ---- FULL PATH: Getting home (return flight, after the stays) ---- */}
+          {stepName === 'Getting home' && (
+            <>
+              <h2 className="guide-title">{t('wizard.gettingHomeTitle')}</h2>
+              <p className="guide-sub">
+                {lastStopDest
+                  ? t('wizard.gettingHomeSub', { last: lastStopDest.city, city: originCity })
+                  : t('wizard.gettingHomeSubFree', { city: originCity })}
+              </p>
+
+              {homeOptions.length === 0 ? (
+                <div className="guide-noflight">
+                  <p className="guide-empty">
+                    <AlertIcon size={12} /> {t('wizard.noReturnFrom', { city: originCity })}
+                  </p>
+                  <p className="guide-sub">{t('wizard.noReturnAdvice')}</p>
+                </div>
+              ) : (
+                <>
+                  <div className="guide-datemode guide-stay-view">
+                    <button className={returnFlightView === 'map' ? 'on' : ''} onClick={() => setReturnFlightView('map')}>{t('wizard.map')}</button>
+                    <button className={returnFlightView === 'list' ? 'on' : ''} onClick={() => setReturnFlightView('list')}>{t('wizard.list')}</button>
+                  </div>
+
+                  {returnFlightView === 'map' ? (
+                    <div className="guide-flight-wrap">
+                      <FlightPickerMap
+                        options={homeOptions.map((o) => ({
+                          id: o.id,
+                          city: o.dest.city,
+                          lat: o.dest.lat,
+                          lon: o.dest.lon,
+                          eurLabel: eur(o.has_exact ? o.ret_exact_eur : o.ret_cheapest.eur),
+                          selected: o.id === returnFlyId,
+                        }))}
+                        origin={lastStopDest && lastStopDest.lat != null ? { lat: lastStopDest.lat, lon: lastStopDest.lon, city: lastStopDest.city } : null}
+                        onPick={(id) => setReturnFlyId(id)}
+                      />
+                      <div className="guide-flight-side" ref={returnSideRef}>
+                        {!flyHome ? (
+                          <div className="guide-flight-side-empty">
+                            <PlaneIcon size={16} />
+                            <p>{t('wizard.tapHomeHint')}</p>
+                          </div>
+                        ) : (
+                          <>
+                            <div className="guide-flight-side-head">
+                              <CityThumb dest={flyHome.dest} className="guide-city-thumb" />
+                              <div className="guide-flight-side-title">
+                                <b>{flyHome.dest.city} <Flag iso2={flyHome.dest.iso2} className="guide-flag-img-sm" /></b>
+                                <small>
+                                  <PlaneIcon size={9} /> {t('wizard.homeFromTo', { anchor: flyHome.anchor, city: originCity })}
+                                  {t('wizard.farePP', { fare: eur(flyHome.has_exact ? flyHome.ret_exact_eur : flyHome.ret_cheapest.eur) })}
+                                </small>
+                                {flyHome.km != null && lastStopDest && (
+                                  <small className="guide-flight-side-breakdown">
+                                    {t('wizard.kmFromLast', { km: flyHome.km, last: lastStopDest.city })}
+                                    {flyHome.is_out_anchor ? ` ${t('wizard.roundTripNote')}` : ''}
+                                  </small>
+                                )}
+                                {!flyHome.has_exact && dateMode === 'exact' && flyHome.ret_cheapest && (
+                                  <small className="guide-route-warn">
+                                    <AlertIcon size={9} /> {t('wizard.noFareForDate', { date: fmtDate(returnDate, true), date2: fmtDate(flyHome.ret_cheapest.date, true) })}
+                                  </small>
+                                )}
+                              </div>
+                            </div>
+                            {flyHome.dest.rating?.score != null && (
+                              <div className="guide-flight-side-rating">
+                                <ScoreChip rating={flyHome.dest.rating} size="xs" />
+                                {flyHome.dest.rating.hidden_gem && <HiddenGemTag />}
+                              </div>
+                            )}
+                            <p className="guide-flight-side-desc">{cityInsight(flyHome.dest)}</p>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="guide-route-list">
+                      {homeOptions.map((o) => (
+                        <button
+                          key={o.id}
+                          className={`guide-route ${returnFlyId === o.id ? 'on' : ''}`}
+                          onClick={() => setReturnFlyId(o.id)}
+                          aria-pressed={returnFlyId === o.id}
+                        >
+                          <CityThumb dest={o.dest} className="guide-city-thumb" />
+                          <span className="guide-route-main">
+                            <span className="guide-route-city">
+                              {o.dest.city}
+                              <Flag iso2={o.dest.iso2} className="guide-flag-img-sm" />
+                              {o.is_out_anchor && <span className="guide-route-badge pick">{t('wizard.roundTripBadge')}</span>}
+                            </span>
+                            <span className="guide-route-sub">
+                              <PlaneIcon size={10} /> {t('wizard.homeFromList', { anchor: o.anchor })}
+                              {o.km != null ? t('wizard.kmAway', { km: o.km }) : ''}
+                            </span>
+                            {!o.has_exact && dateMode === 'exact' && o.ret_cheapest && (
+                              <span className="guide-route-warn">
+                                <AlertIcon size={10} /> {t('wizard.noFareStored', { date: fmtDate(returnDate, true), date2: fmtDate(o.ret_cheapest.date, true) })}
+                              </span>
+                            )}
+                          </span>
+                          <span className="guide-route-fare">
+                            <b>{eur(o.has_exact ? o.ret_exact_eur : o.ret_cheapest.eur)}</b>
+                            <small>
+                              {o.has_exact ? t('wizard.perPerson') : t('wizard.datePerPerson', { date: fmtDate(o.ret_cheapest.date, true) })}
+                            </small>
+                          </span>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </>
               )}
             </>
           )}

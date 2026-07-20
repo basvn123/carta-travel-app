@@ -57,6 +57,11 @@ export function useTripPlanner(data, countryInsights = null) {
   // in the wizard. Kept so the overview prices the SAME inbound flight they
   // chose rather than re-deriving a possibly-different origin.
   const [anchorOrigin, setAnchorOrigin] = useState(draft?.anchorOrigin || null);
+  // The airport the traveller chose to fly HOME from (the wizard's "Getting
+  // home" step, picked after the stays are pinned). When set, the return leg is
+  // priced out of this airport instead of the last stop's own airport, and the
+  // last-stop -> airport transfer is priced like any other ground leg.
+  const [returnAnchorId, setReturnAnchorId] = useState(draft?.returnAnchorId || null);
   const [planId, setPlanId] = useState(null);
   const [planLabel, setPlanLabel] = useState(draft?.planLabel || '');
   const [saveState, setSaveState] = useState('idle'); // idle | saving | saved
@@ -72,10 +77,10 @@ export function useTripPlanner(data, countryInsights = null) {
     }
     persistTripDraft({
       tripStart, tripEnd, stops, groupSize, transportPref, legModes, pace,
-      baggage, anchorId, anchorOrigin, planId, planLabel, planned,
+      baggage, anchorId, anchorOrigin, returnAnchorId, planId, planLabel, planned,
     });
   }, [tripStart, tripEnd, stops, groupSize, transportPref, legModes, pace,
-      baggage, anchorId, anchorOrigin, planId, planLabel, planned]);
+      baggage, anchorId, anchorOrigin, returnAnchorId, planId, planLabel, planned]);
 
   // Chain each stop's arrive/depart dates from the trip start. A stop with no
   // trip start yet still carries its nights so the UI can show "2 nights".
@@ -177,6 +182,7 @@ export function useTripPlanner(data, countryInsights = null) {
     setLegModes({});
     setAnchorId(null);
     setAnchorOrigin(null);
+    setReturnAnchorId(null);
     setPlanId(null);
     setPlanLabel('');
     setPlanned(false);
@@ -186,7 +192,7 @@ export function useTripPlanner(data, countryInsights = null) {
   // ordered list of { destinationId, nights, activities }, an optional name,
   // plus how they want to travel (transport) and how full their days should
   // feel (pace), everything stays editable in the planner afterwards.
-  const loadFromWizard = useCallback(({ startDate, stops: wizardStops, label, groupSize: gs, transport, pace: wizardPace, baggage: wizardBaggage, anchorId: wizardAnchor, anchorOrigin: wizardAnchorOrigin }) => {
+  const loadFromWizard = useCallback(({ startDate, stops: wizardStops, label, groupSize: gs, transport, pace: wizardPace, baggage: wizardBaggage, anchorId: wizardAnchor, anchorOrigin: wizardAnchorOrigin, returnAnchorId: wizardReturnAnchor }) => {
     const total = wizardStops.reduce((sum, s) => sum + Math.max(0, s.nights || 0), 0);
     setTripStart(startDate || '');
     setTripEnd(startDate ? addDays(startDate, total) : '');
@@ -204,6 +210,7 @@ export function useTripPlanner(data, countryInsights = null) {
     if (wizardBaggage) setBaggage(wizardBaggage);
     setAnchorId(wizardAnchor || null);
     setAnchorOrigin(wizardAnchorOrigin || null);
+    setReturnAnchorId(wizardReturnAnchor || null);
     setLegModes({});
     setPlanId(null);
     setPlanned(false);
@@ -232,10 +239,21 @@ export function useTripPlanner(data, countryInsights = null) {
     const last = stopDetails[stopDetails.length - 1];
     if (!first?.dest || !last?.dest) return null;
     const anchorDest = anchorId ? destinations[anchorId] : null;
+    const returnDest = returnAnchorId ? destinations[returnAnchorId] : null;
     const hasRoutes = (d) => d && Object.keys(d.routes || {}).length > 0;
-    // Home leg: out of the last stop's own airport, or the anchor for a
+    // Home leg: out of the airport the traveller PICKED for the return (its own
+    // step), else the last stop's own airport, else the arrival anchor for a
     // ground-only final gem.
-    const outDest = hasRoutes(last.dest) ? last.dest : (anchorDest || last.dest);
+    const outDest = hasRoutes(returnDest)
+      ? returnDest
+      : (hasRoutes(last.dest) ? last.dest : (anchorDest || last.dest));
+    // Tag the resolved fly-from / fly-into airports so the ground transfers to
+    // reach them (anchorLegs) are priced whenever they differ from the stop.
+    const withIds = (priced, inDest) => ({
+      ...priced,
+      in_from_id: inDest?.id ?? null,
+      out_from_id: outDest?.id ?? null,
+    });
     // Inbound: honour the exact fly-in the traveller picked in the wizard, price
     // into the SAME airport (anchorDest) from the SAME origin (anchorOrigin) so
     // the overview shows the flight they chose, not a re-derived one. Fall back
@@ -243,12 +261,11 @@ export function useTripPlanner(data, countryInsights = null) {
     // with the home leg (keeps otherwise-unpriceable trips priced).
     if (anchorDest) {
       const viaAnchor = combineTripLegs(anchorDest, first.arriveDate, outDest, last.departDate, groupSize, baggage, anchorOrigin);
-      if (viaAnchor.combinable) return { ...viaAnchor, in_via_anchor: first.destinationId !== anchorId };
+      if (viaAnchor.combinable) return withIds(viaAnchor, anchorDest);
     }
     const inDest = hasRoutes(first.dest) ? first.dest : (anchorDest || first.dest);
-    const priced = combineTripLegs(inDest, first.arriveDate, outDest, last.departDate, groupSize, baggage, anchorOrigin);
-    return { ...priced, in_via_anchor: Boolean(anchorDest) && inDest === anchorDest && first.destinationId !== anchorId };
-  }, [stopDetails, groupSize, anchorId, anchorOrigin, destinations, baggage]);
+    return withIds(combineTripLegs(inDest, first.arriveDate, outDest, last.departDate, groupSize, baggage, anchorOrigin), inDest);
+  }, [stopDetails, groupSize, anchorId, anchorOrigin, returnAnchorId, destinations, baggage]);
 
   // Priced transport options (train / bus / car with booking links) between
   // each consecutive pair of stops, resolved to a chosen mode: an explicit
@@ -302,29 +319,35 @@ export function useTripPlanner(data, countryInsights = null) {
   // and the total. Price it like any other leg.
   const anchorLegs = useMemo(() => {
     const none = { in: null, out: null, anchor: null };
-    if (!anchorId || !flight?.combinable) return none;
-    const anchorDest = destinations[anchorId];
-    if (!anchorDest) return none;
+    if (!flight?.combinable) return none;
     const legFor = (a, b) => {
+      if (!a || !b) return null;
       const opts = legTransportOptions(a, b, groupSize, { carModel, countryInsights });
       if (!opts || opts.no_road || !opts.recommended) return null;
       const mode = transportPref === 'car' && opts.modes.car ? 'car' : opts.recommended;
       const chosen = opts.modes[mode] || opts.modes[opts.recommended];
       return { ...opts, mode, hours: chosen.hours, ground_eur_per_person: chosen.eur_pp, ground_total: chosen.eur_total };
     };
-    const viaAnchor = (s) => s?.dest && s.destinationId !== anchorId
-      && Object.keys(s.dest.routes || {}).length === 0;
     const first = stopDetails[0];
     const last = stopDetails[stopDetails.length - 1];
+    // The airports the round flight actually uses (from the flight pricing).
+    // When either differs from the stop it serves, the airport<->stop transfer
+    // is a real overland journey - price it like any other leg so it shows up
+    // in the itinerary and the total. Covers "fly into Bergamo, sleep at Como"
+    // AND "fly home from a different airport near your last stop".
+    const inFrom = flight.in_from_id ? destinations[flight.in_from_id] : null;
+    const outFrom = flight.out_from_id ? destinations[flight.out_from_id] : null;
     return {
-      // Fly into the anchor, then reach the first stop overland: priced whenever
-      // the inbound was actually flown into the anchor (a ground-only first gem,
-      // OR a routed first stop we deliberately skipped to honour the fly-in pick).
-      in: flight.in_via_anchor ? legFor(anchorDest, first.dest) : null,
-      out: viaAnchor(last) ? legFor(last.dest, anchorDest) : null,
-      anchor: anchorDest,
+      in: (inFrom && flight.in_from_id !== first.destinationId) ? legFor(inFrom, first.dest) : null,
+      out: (outFrom && flight.out_from_id !== last.destinationId) ? legFor(last.dest, outFrom) : null,
+      anchor: inFrom || null,
+      // The airport cities each transfer connects to. The fly-in and fly-home
+      // airports can differ (you fly home from near your last stop), so the
+      // itinerary labels each transfer with its own airport, not a shared one.
+      inCity: inFrom?.city || null,
+      outCity: outFrom?.city || null,
     };
-  }, [anchorId, flight, destinations, stopDetails, groupSize, carModel, countryInsights, transportPref]);
+  }, [flight, destinations, stopDetails, groupSize, carModel, countryInsights, transportPref]);
 
   // One rental car for the whole trip (only priced into the total when the
   // traveller chose 'car'; per-leg car choices only pay fuel + tolls since a
@@ -439,6 +462,7 @@ export function useTripPlanner(data, countryInsights = null) {
     })));
     setAnchorId(sorted[0]?.choices?.anchorId || null);
     setAnchorOrigin(sorted[0]?.choices?.anchorOrigin || null);
+    setReturnAnchorId(sorted[0]?.choices?.returnAnchorId || null);
     setBaggage(sorted[0]?.choices?.baggage || 'cabin');
     setLegModes({});
     setPlanned(false);
@@ -465,7 +489,7 @@ export function useTripPlanner(data, countryInsights = null) {
             nights: s.nights,
             groupSize,
             activities: s.activities || [],
-            ...(i === 0 ? { baggage, ...(anchorId ? { anchorId } : {}), ...(anchorOrigin ? { anchorOrigin } : {}) } : {}),
+            ...(i === 0 ? { baggage, ...(anchorId ? { anchorId } : {}), ...(anchorOrigin ? { anchorOrigin } : {}), ...(returnAnchorId ? { returnAnchorId } : {}) } : {}),
           },
         };
       }));
@@ -490,7 +514,7 @@ export function useTripPlanner(data, countryInsights = null) {
       setSaveState('idle');
       throw e;
     }
-  }, [planId, planLabel, stops, stopDetails, groupSize, legs, flight, anchorId, anchorOrigin, baggage]);
+  }, [planId, planLabel, stops, stopDetails, groupSize, legs, flight, anchorId, anchorOrigin, returnAnchorId, baggage]);
 
   return {
     tripStart, setTripStart, tripEnd, setTripEnd,

@@ -56,7 +56,10 @@ export function TripItinerary({
   // route rows around the stops and as receipt rows around the flights.
   const anchorIn = anchorLegs?.in && anchorLegs.in.ground_total ? anchorLegs.in : null;
   const anchorOut = anchorLegs?.out && anchorLegs.out.ground_total ? anchorLegs.out : null;
-  const anchorCity = anchorLegs?.anchor?.city;
+  // The fly-in and fly-home airports can be different cities, so label each
+  // transfer with its own (falling back to the shared anchor for older data).
+  const anchorInCity = anchorLegs?.inCity || anchorLegs?.anchor?.city;
+  const anchorOutCity = anchorLegs?.outCity || anchorLegs?.anchor?.city;
   const AnchorInIcon = anchorIn ? (LEG_ICONS[anchorIn.mode] || TrainIcon) : null;
   const AnchorOutIcon = anchorOut ? (LEG_ICONS[anchorOut.mode] || TrainIcon) : null;
 
@@ -113,7 +116,7 @@ export function TripItinerary({
           {anchorIn && (
             <div className="itin-flight-row">
               <AnchorInIcon size={12} />
-              <span>Then <b>{anchorCity} → {stopDetails[0]?.dest?.city}</b></span>
+              <span>Then <b>{anchorInCity} → {stopDetails[0]?.dest?.city}</b></span>
               <small>~{fmtHours(anchorIn.hours)} by {anchorIn.mode}</small>
             </div>
           )}
@@ -142,7 +145,7 @@ export function TripItinerary({
           {anchorOut && (
             <div className="itin-flight-row">
               <AnchorOutIcon size={12} />
-              <span>Then <b>{stopDetails[stopDetails.length - 1]?.dest?.city} → {anchorCity}</b></span>
+              <span>Then <b>{stopDetails[stopDetails.length - 1]?.dest?.city} → {anchorOutCity}</b></span>
               <small>~{fmtHours(anchorOut.hours)} by {anchorOut.mode}</small>
             </div>
           )}
@@ -213,7 +216,7 @@ export function TripItinerary({
                 {anchorIn && (
                   <div className="trip-total-row">
                     <span className="lbl">
-                      <AnchorInIcon size={11} /> {anchorCity} → {stopDetails[0]?.dest?.city}
+                      <AnchorInIcon size={11} /> {anchorInCity} → {stopDetails[0]?.dest?.city}
                       <small>{anchorIn.road_km} km, ~{fmtHours(anchorIn.hours)}, estimate</small>
                     </span>
                     <span className="val">{eur(anchorIn.ground_total)}</span>
@@ -222,7 +225,7 @@ export function TripItinerary({
                 {anchorOut && (
                   <div className="trip-total-row">
                     <span className="lbl">
-                      <AnchorOutIcon size={11} /> {stopDetails[stopDetails.length - 1]?.dest?.city} → {anchorCity}
+                      <AnchorOutIcon size={11} /> {stopDetails[stopDetails.length - 1]?.dest?.city} → {anchorOutCity}
                       <small>{anchorOut.road_km} km, ~{fmtHours(anchorOut.hours)}, estimate</small>
                     </span>
                     <span className="val">{eur(anchorOut.ground_total)}</span>
