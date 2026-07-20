@@ -63,6 +63,7 @@ export const de = {
   'filter.country': 'Land',
   'filter.allCountries': 'Alle Länder ({n})',
   'filter.searchCountry': 'Land suchen...',
+  'filter.nCountries': '{n} Länder',
   'filter.rating': 'Bewertung',
   'rating.any': 'Alle',
   'rating.anyTitle': 'Jede Bewertung',

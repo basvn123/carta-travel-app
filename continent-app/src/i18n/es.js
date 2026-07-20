@@ -63,6 +63,7 @@ export const es = {
   'filter.country': 'País',
   'filter.allCountries': 'Todos los países ({n})',
   'filter.searchCountry': 'Buscar un país...',
+  'filter.nCountries': '{n} países',
   'filter.rating': 'Nota',
   'rating.any': 'Todas',
   'rating.anyTitle': 'Cualquier nota',

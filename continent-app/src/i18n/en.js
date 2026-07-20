@@ -73,6 +73,7 @@ export const en = {
   'filter.country': 'Country',
   'filter.allCountries': 'All countries ({n})',
   'filter.searchCountry': 'Search country...',
+  'filter.nCountries': '{n} countries',
   'filter.rating': 'Rating',
   'rating.any': 'Any',
   'rating.anyTitle': 'Any rating',

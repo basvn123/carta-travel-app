@@ -146,7 +146,7 @@ export function useDestinationSearch({
   const filtered = useMemo(() => {
     return pricedAll.filter((p) => {
       if (q && !(normalize(p.city).includes(q) || normalize(p.country).includes(q))) return false;
-      if (countryFilter !== 'all' && p.iso2 !== countryFilter) return false;
+      if (countryFilter.length && !countryFilter.includes(p.iso2)) return false;
       if (priceRange) {
         const v = priceMode === 'pp' ? p.pp : p.total;
         if (v < priceRange[0] || v > priceRange[1]) return false;
@@ -176,7 +176,7 @@ export function useDestinationSearch({
   const unreachable = useMemo(() => {
     return unreachableAll.filter((p) => {
       if (q && !(normalize(p.city).includes(q) || normalize(p.country).includes(q))) return false;
-      if (countryFilter !== 'all' && p.iso2 !== countryFilter) return false;
+      if (countryFilter.length && !countryFilter.includes(p.iso2)) return false;
       if (tripKinds.length > 0 && !matchesAnyKind(p.categories, tripKinds)) return false;
       if (minTier > 0 && (p.rating?.tier ?? 0) < minTier) return false;
       if (unescoOnly && !p.beauty?.unesco) return false;
