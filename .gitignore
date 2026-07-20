@@ -26,3 +26,17 @@ logs/
 # Inside Airbnb raw downloads (harvest_accommodation.py re-fetches them)
 cache/iab/
 cache/worldclim/
+
+# Pipeline orchestrator: timestamped master backups + run state/lock
+app_data/backups/
+logs/pipeline_state.json
+logs/pipeline.lock
+
+# Large local pipeline master + backups - NOT committed, to stay off the Git LFS
+# quota treadmill (a ~50 MB file committed often would exhaust the 1 GB LFS quota
+# in ~20 revisions). The app runs from the committed continent-app/public/*.json
+# payload; sync-data.mjs falls back to that when the master is absent. Rebuild the
+# master locally from the tracked scripts + caches (run_pipeline.py).
+app_data/app_data.json
+app_data/app_data.backup.json
+app_data/*.pre_*.json
