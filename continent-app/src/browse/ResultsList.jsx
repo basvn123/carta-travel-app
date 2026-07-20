@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { RatingBadge, HiddenGemTag } from '../components/RatingBadge.jsx';
 import { WaterQualityBadge, swimRelevant } from '../components/WaterQualityBadge.jsx';
 import { eur } from '../lib/format.js';
@@ -9,6 +9,12 @@ import { useI18n } from '../i18n/index.jsx';
  * map layout already reserves. Click an item to open its detail panel; star it
  * to add it to the shortlist (favorites), which can then be compared.
  */
+
+// How many rows to reveal per page. The dataset is ~24,800 destinations, so the
+// scroll body is windowed (only `visible` rows are in the DOM) and grows a page
+// at a time as the user scrolls, instead of mounting tens of thousands of row
+// subtrees up front and reconciling them on every keystroke/sort/slider tick.
+const PAGE = 60;
 
 // Inline star (SVG, not an emoji, keeps rendering consistent and ASCII source).
 function Star({ filled }) {
@@ -31,10 +37,128 @@ const SORTS = [
 ];
 const SORT_DEFAULT_DIR = Object.fromEntries(SORTS.map((s) => [s.key, s.dir]));
 
-// Memoized: with ~1,400 rows this is the most expensive plain-DOM subtree in
-// the app, and most TravelApp state changes (popovers, toasts, tab hops)
-// don't touch its props. The parent keeps every callback prop referentially
-// stable so the memo actually holds.
+// The scroll body, split out and memoized so it does NOT re-render when the
+// parent re-renders for something it doesn't care about, above all the search
+// input's per-keystroke state (which lives in the header, not here). Combined
+// with the windowing below, typing/sorting no longer touches thousands of rows.
+const ResultRows = React.memo(function ResultRows({
+  rows, unreachable, priceMode, dealThreshold, selectedId, favSet,
+  onSelect, onToggleFav, showFavOnly, homeCity, t,
+}) {
+  const scrollRef = useRef(null);
+  const sentinelRef = useRef(null);
+  const [visible, setVisible] = useState(PAGE);
+
+  const showUnreach = !showFavOnly && unreachable.length > 0;
+  const total = rows.length + (showUnreach ? unreachable.length : 0);
+
+  // New filter/sort result -> collapse the window back to one page and jump to
+  // the top. (rows only gets a new identity on a real filter/sort change now,
+  // not on a fav toggle - see the favDep note in the parent.)
+  useEffect(() => {
+    setVisible(PAGE);
+    scrollRef.current?.scrollTo?.(0, 0);
+  }, [rows, unreachable]);
+
+  // Reveal another page whenever the bottom sentinel scrolls into view.
+  useEffect(() => {
+    const el = sentinelRef.current;
+    if (!el) return undefined;
+    const io = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting) setVisible((v) => (v < total ? v + PAGE : v));
+    }, { root: scrollRef.current, rootMargin: '800px' });
+    io.observe(el);
+    return () => io.disconnect();
+  }, [total]);
+
+  const shownRows = rows.slice(0, visible);
+  const shownUnreach = showUnreach ? unreachable.slice(0, Math.max(0, visible - rows.length)) : [];
+
+  return (
+    <div className="results-scroll" ref={scrollRef}>
+      {rows.length === 0 ? (
+        <div className="results-empty">
+          {showFavOnly ? t('results.emptyFav') : t('results.empty')}
+        </div>
+      ) : (
+        shownRows.map((p, i) => {
+          const isDeal = dealThreshold != null && p.total <= dealThreshold;
+          const isSel = p.id === selectedId;
+          const fav = favSet.has(p.id);
+          return (
+            <div
+              key={p.id}
+              className={`result-row ${isSel ? 'selected' : ''}`}
+              onClick={() => onSelect(p.id)}
+            >
+              <span className="result-rank">{i + 1}</span>
+              <span className="result-main">
+                <span className="result-city">
+                  {p.city}
+                  {p.rating?.hidden_gem && <HiddenGemTag />}
+                </span>
+                <span className="result-sub">
+                  <span className="result-country">{p.country}</span>
+                  <RatingBadge rating={p.rating} size="xs" showGem={false} />
+                  {swimRelevant(p) && (
+                    <WaterQualityBadge bathing={p.bathing_water} t={t} showLabel={false} />
+                  )}
+                </span>
+              </span>
+              <span className={`result-price ${isDeal ? 'is-deal' : ''}`}>
+                {eur(priceMode === 'pp' ? p.pp : p.total)}
+                {priceMode === 'pp' && <small>/pp</small>}
+              </span>
+              <button
+                className={`result-star ${fav ? 'on' : ''}`}
+                onClick={(e) => { e.stopPropagation(); onToggleFav(p.id); }}
+                aria-label={fav ? t('results.removeShortlist') : t('results.addShortlist')}
+                title={fav ? t('results.removeShortlist') : t('results.addShortlist')}
+              >
+                <Star filled={fav} />
+              </button>
+            </div>
+          );
+        })
+      )}
+
+      {showUnreach && visible >= rows.length && (
+        <div className="results-unreachable">
+          <div className="results-subhead">
+            {t('results.unreachable')}
+            <span className="results-count">{unreachable.length}</span>
+          </div>
+          <div className="results-subnote">
+            {t('results.unreachableNote', { city: homeCity })}
+          </div>
+          {shownUnreach.map((p) => {
+            const isSel = p.id === selectedId;
+            return (
+              <div
+                key={p.id}
+                className={`result-row is-unreachable ${isSel ? 'selected' : ''}`}
+                onClick={() => onSelect(p.id)}
+              >
+                <span className="result-rank" aria-hidden="true" />
+                <span className="result-main">
+                  <span className="result-city">
+                    {p.city}
+                    {p.rating?.hidden_gem && <HiddenGemTag />}
+                  </span>
+                  <span className="result-country">{p.country}</span>
+                </span>
+                <span className="result-noroute">{t('results.noRoute')}</span>
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      {visible < total && <div ref={sentinelRef} className="results-sentinel" aria-hidden="true" style={{ height: 1 }} />}
+    </div>
+  );
+});
+
 export const ResultsList = React.memo(function ResultsList({
   priced, unreachable = [], priceMode = 'total', dealThreshold,
   locationQuery = '', setLocationQuery,
@@ -47,7 +171,7 @@ export const ResultsList = React.memo(function ResultsList({
   onCollapse,
 }) {
   const { t } = useI18n();
-  const favSet = favorites || new Set();
+  const favSet = useMemo(() => favorites || new Set(), [favorites]);
   // Direction per sort key; price/beauty can be flipped, the rest stay default.
   const [sortDir, setSortDir] = useState(SORT_DEFAULT_DIR);
 
@@ -60,6 +184,10 @@ export const ResultsList = React.memo(function ResultsList({
     }
   };
 
+  // Only depend on favSet when it actually filters the list (fav-only view).
+  // Otherwise a star toggle mints a new favSet and would needlessly recompute
+  // rows (and reset the scroll window) on every click.
+  const favDep = showFavOnly ? favSet : null;
   const rows = useMemo(() => {
     let list = priced;
     if (showFavOnly) list = list.filter((p) => favSet.has(p.id));
@@ -75,7 +203,9 @@ export const ResultsList = React.memo(function ResultsList({
     const dir = sortDir[sortKey] || SORT_DEFAULT_DIR[sortKey];
     if (dir === 'desc') sorted.reverse();
     return sorted;
-  }, [priced, showFavOnly, sortKey, priceMode, favSet, sortDir]);
+    // favSet is read only when showFavOnly is true, and favDep carries it then;
+    // depending on favSet directly would recompute on every star toggle.
+  }, [priced, showFavOnly, sortKey, priceMode, favDep, sortDir]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div className="results-list">
@@ -161,85 +291,19 @@ export const ResultsList = React.memo(function ResultsList({
         </div>
       )}
 
-      <div className="results-scroll">
-        {rows.length === 0 ? (
-          <div className="results-empty">
-            {showFavOnly ? t('results.emptyFav') : t('results.empty')}
-          </div>
-        ) : (
-          rows.map((p, i) => {
-            const isDeal = dealThreshold != null && p.total <= dealThreshold;
-            const isSel = p.id === selectedId;
-            const fav = favSet.has(p.id);
-            return (
-              <div
-                key={p.id}
-                className={`result-row ${isSel ? 'selected' : ''}`}
-                onClick={() => onSelect(p.id)}
-              >
-                <span className="result-rank">{i + 1}</span>
-                <span className="result-main">
-                  <span className="result-city">
-                    {p.city}
-                    {p.rating?.hidden_gem && <HiddenGemTag />}
-                  </span>
-                  <span className="result-sub">
-                    <span className="result-country">{p.country}</span>
-                    <RatingBadge rating={p.rating} size="xs" showGem={false} />
-                    {swimRelevant(p) && (
-                      <WaterQualityBadge bathing={p.bathing_water} t={t} showLabel={false} />
-                    )}
-                  </span>
-                </span>
-                <span className={`result-price ${isDeal ? 'is-deal' : ''}`}>
-                  {eur(priceMode === 'pp' ? p.pp : p.total)}
-                  {priceMode === 'pp' && <small>/pp</small>}
-                </span>
-                <button
-                  className={`result-star ${fav ? 'on' : ''}`}
-                  onClick={(e) => { e.stopPropagation(); onToggleFav(p.id); }}
-                  aria-label={fav ? t('results.removeShortlist') : t('results.addShortlist')}
-                  title={fav ? t('results.removeShortlist') : t('results.addShortlist')}
-                >
-                  <Star filled={fav} />
-                </button>
-              </div>
-            );
-          })
-        )}
-
-        {!showFavOnly && unreachable.length > 0 && (
-          <div className="results-unreachable">
-            <div className="results-subhead">
-              {t('results.unreachable')}
-              <span className="results-count">{unreachable.length}</span>
-            </div>
-            <div className="results-subnote">
-              {t('results.unreachableNote', { city: homeCity })}
-            </div>
-            {unreachable.map((p) => {
-              const isSel = p.id === selectedId;
-              return (
-                <div
-                  key={p.id}
-                  className={`result-row is-unreachable ${isSel ? 'selected' : ''}`}
-                  onClick={() => onSelect(p.id)}
-                >
-                  <span className="result-rank" aria-hidden="true" />
-                  <span className="result-main">
-                    <span className="result-city">
-                      {p.city}
-                      {p.rating?.hidden_gem && <HiddenGemTag />}
-                    </span>
-                    <span className="result-country">{p.country}</span>
-                  </span>
-                  <span className="result-noroute">{t('results.noRoute')}</span>
-                </div>
-              );
-            })}
-          </div>
-        )}
-      </div>
+      <ResultRows
+        rows={rows}
+        unreachable={unreachable}
+        priceMode={priceMode}
+        dealThreshold={dealThreshold}
+        selectedId={selectedId}
+        favSet={favSet}
+        onSelect={onSelect}
+        onToggleFav={onToggleFav}
+        showFavOnly={showFavOnly}
+        homeCity={homeCity}
+        t={t}
+      />
     </div>
   );
 });

@@ -33,6 +33,8 @@ import urllib.request
 import urllib.error
 from pathlib import Path
 
+from pipeline_io import atomic_write_json
+
 # The Windows console is cp1252; city names (Krakow, Malmo...) carry accents.
 try:
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
@@ -252,8 +254,9 @@ def patch(cache=None):
                     "source": "wikipedia",
                 }
                 n_img += 1
-            else:
-                d["image"] = None
+            # else: not in this cache run (e.g. a partial/resumed harvest).
+            # Leave any existing image untouched - wiping it to None here would
+            # destroy images for every dest a partial cache doesn't cover.
         data.setdefault("meta", {})["image_model"] = {
             "source": IMAGE_MODEL,
             "provider": "Wikipedia REST/action API (pageimages)",
@@ -262,7 +265,7 @@ def patch(cache=None):
             "coverage": f"{n_img}/{len(dests)}",
         }
         data["meta"]["schema_version"] = max(10, data["meta"].get("schema_version", 0))
-        path.write_text(json.dumps(data, indent=1, ensure_ascii=False), encoding="utf-8")
+        atomic_write_json(path, data)
         print(f"  {path.name}: {n_img}/{len(dests)} dests have an image "
               f"({path.stat().st_size / 1024 / 1024:.2f} MB)")
 

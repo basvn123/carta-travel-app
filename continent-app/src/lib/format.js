@@ -3,15 +3,16 @@
 import { activeLocale } from './localeState.js';
 
 /** Rounded euro amount, e.g. "€1,234" (grouping follows the app language).
- *  Returns '-' for null/undefined. */
+ *  Returns '-' for null/undefined or any non-finite value, so a single upstream
+ *  NaN can't leak "€NaN" into the UI/PDF. */
 export function eur(n) {
-  return n == null ? '-' : `€${Math.round(n).toLocaleString(activeLocale())}`;
+  return Number.isFinite(n) ? `€${Math.round(n).toLocaleString(activeLocale())}` : '-';
 }
 
 /** Decimal hours in human units: 0.17 -> "10 min", 2.5 -> "2 h 30 min".
  *  Nobody reads "0.17h each way" as ten minutes. */
 export function fmtHours(h) {
-  if (h == null) return '-';
+  if (!Number.isFinite(h)) return '-';
   const m = Math.max(1, Math.round(h * 60));
   if (m < 60) return `${m} min`;
   const rest = m % 60;

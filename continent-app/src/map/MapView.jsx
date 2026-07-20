@@ -178,8 +178,22 @@ export function MapView({
   const displayCtxRef = useRef({ priceMode, dealThreshold, transportMode });
   displayCtxRef.current = { priceMode, dealThreshold, transportMode };
 
+  // The selected destination's own price (value, not array identity). Used as a
+  // dependency below so the pill refreshes when THIS dest is repriced (date /
+  // group-size change) but NOT on every filter tick, where priced gets a new
+  // array identity yet the selected dest's price is unchanged.
+  const selPrice = useMemo(() => {
+    if (!selectedId) return null;
+    const p = priced.find((x) => x.id === selectedId) || unreachable.find((x) => x.id === selectedId);
+    if (!p) return null;
+    return priceMode === 'pp' ? p.pp : p.total;
+  }, [selectedId, priced, unreachable, priceMode]);
+
   // Selection: hide the selected feature from the layers and float a single
-  // full DOM pill (glyph, hover, tooltip) in its place.
+  // full DOM pill (glyph, hover, tooltip) in its place. Keyed on what actually
+  // changes the pill (selection, price mode, transport mode, this dest's price),
+  // NOT on priced/unreachable/dealThreshold identity, which churn every filter
+  // tick and used to tear down + rebuild the pill mid-slider-drag (flicker).
   useEffect(() => {
     const map = mapRef.current;
     if (!map) return;
@@ -210,7 +224,8 @@ export function MapView({
     if (u && hasLngLat(u)) {
       selectedMarkerRef.current = createDot(u, map, onSelectRef, 'unreachable', `${u.city}, ${u.country} - no flight and too far to drive`, true);
     }
-  }, [selectedId, priced, unreachable, priceMode, dealThreshold, transportMode]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedId, priceMode, transportMode, selPrice]);
 
   // Pan to selected destination, ONLY when the selection itself changes.
   useEffect(() => {

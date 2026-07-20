@@ -43,6 +43,10 @@ export function AuthProvider({ children }) {
     supabase.auth.getSession().then(({ data }) => {
       setSession(data.session);
       setLoading(false);
+    }).catch(() => {
+      // Network/config failure: fall back to guest mode rather than hanging
+      // forever behind the full-screen loading gate.
+      setLoading(false);
     });
 
     const { data: sub } = supabase.auth.onAuthStateChange((event, next) => {

@@ -55,7 +55,7 @@ export function FilterBar({
   const beautyActive = (minTier > 0) || unescoOnly || topBeachOnly;
 
   const anyFilterActive =
-    countryFilter !== 'all' ||
+    countryFilter.length > 0 ||
     advancedActiveCount > 0 ||
     beautyActive ||
     !!topPick ||
@@ -63,7 +63,7 @@ export function FilterBar({
       (priceRange[0] > priceBounds[0] || priceRange[1] < priceBounds[1]));
 
   const resetAll = () => {
-    setCountryFilter('all');
+    setCountryFilter([]);
     setTripKinds([]);
     setMinTier(0);
     setUnescoOnly(false);
@@ -408,13 +408,19 @@ export function FilterBar({
                 <label className="filter-label">{t('filter.country')}</label>
                 <div className="filter-control">
                   <Dropdown
+                    multiple
                     value={countryFilter}
                     onChange={setCountryFilter}
-                    options={[
-                      { value: 'all', label: t('filter.allCountries', { n: availableCountries.length }) },
-                      ...availableCountries.map(([iso2, name]) => ({ value: iso2, label: name })),
-                    ]}
+                    options={availableCountries.map(([iso2, name]) => ({ value: iso2, label: name }))}
+                    placeholder={t('filter.allCountries', { n: availableCountries.length })}
                     searchPlaceholder={t('filter.searchCountry')}
+                    multiLabel={(vals) => {
+                      if (vals.length === 1) {
+                        const hit = availableCountries.find(([iso2]) => iso2 === vals[0]);
+                        return hit ? hit[1] : vals[0];
+                      }
+                      return t('filter.nCountries', { n: vals.length });
+                    }}
                   />
                 </div>
               </div>
@@ -531,6 +537,15 @@ export function FilterBar({
 // parses, and blur restores the last committed value if left empty.
 function NumberField({ value, min, max, onCommit, ariaLabel, title }) {
   const [draft, setDraft] = React.useState(null); // null = mirror `value`
+  // Commit once, on blur/Enter, not on every keystroke: each commit reprices
+  // the whole filtered set, so live-committing while typing "12" fired a reprice
+  // for "1" then "12". The draft stays live so editing still feels immediate.
+  const commit = () => {
+    if (draft == null) return;
+    const n = parseInt(draft, 10);
+    if (!Number.isNaN(n)) onCommit(Math.min(max, Math.max(min, n)));
+    setDraft(null);
+  };
   return (
     <input
       type="number"
@@ -540,32 +555,54 @@ function NumberField({ value, min, max, onCommit, ariaLabel, title }) {
       value={draft ?? String(value ?? '')}
       aria-label={ariaLabel}
       title={title}
-      onChange={(e) => {
-        const raw = e.target.value;
-        setDraft(raw);
-        const n = parseInt(raw, 10);
-        if (!Number.isNaN(n)) onCommit(Math.min(max, Math.max(min, n)));
-      }}
-      onBlur={() => setDraft(null)}
+      onChange={(e) => setDraft(e.target.value)}
+      onKeyDown={(e) => { if (e.key === 'Enter') { commit(); e.currentTarget.blur(); } }}
+      onBlur={commit}
     />
   );
 }
 
-// Dual-handle range slider
+// Dual-handle range slider. The handle position is local state so dragging is
+// instant, but the value is only pushed to the parent (which reprices the whole
+// filtered set) debounced during the drag and immediately on release, instead
+// of once per pixel of movement.
 function DualRange({ min, max, value, onChange, fmt, hideValueRow }) {
-  const [lo, hi] = value;
+  const [local, setLocal] = React.useState(value);
+  const localRef = React.useRef(value);
+  const draggingRef = React.useRef(false);
+  const timerRef = React.useRef(null);
+
+  // Adopt external changes (price-mode flip, reset) unless mid-drag. The
+  // functional updater returns the same array when unchanged so React bails out
+  // and we never loop even if the parent hands us a fresh array identity.
+  React.useEffect(() => {
+    if (draggingRef.current) return;
+    localRef.current = value;
+    setLocal((prev) => (prev[0] === value[0] && prev[1] === value[1] ? prev : value));
+  }, [value]);
+  React.useEffect(() => () => { if (timerRef.current) clearTimeout(timerRef.current); }, []);
+
+  const push = (next) => {
+    setLocal(next);
+    localRef.current = next;
+    draggingRef.current = true;
+    if (timerRef.current) clearTimeout(timerRef.current);
+    timerRef.current = setTimeout(() => onChange(next), 150);
+  };
+  const flush = () => {
+    if (!draggingRef.current) return;
+    draggingRef.current = false;
+    if (timerRef.current) { clearTimeout(timerRef.current); timerRef.current = null; }
+    onChange(localRef.current);
+  };
+
+  const [lo, hi] = local;
   const span = max - min;
   const loPct = span > 0 ? ((lo - min) / span) * 100 : 0;
   const hiPct = span > 0 ? ((hi - min) / span) * 100 : 100;
 
-  const onLo = (e) => {
-    const v = Math.min(+e.target.value, hi - 1);
-    onChange([v, hi]);
-  };
-  const onHi = (e) => {
-    const v = Math.max(+e.target.value, lo + 1);
-    onChange([lo, v]);
-  };
+  const onLo = (e) => push([Math.min(+e.target.value, hi - 1), hi]);
+  const onHi = (e) => push([lo, Math.max(+e.target.value, lo + 1)]);
 
   return (
     <div className="dual-range">
@@ -574,8 +611,10 @@ function DualRange({ min, max, value, onChange, fmt, hideValueRow }) {
           className="dual-range-fill"
           style={{ left: `${loPct}%`, right: `${100 - hiPct}%` }}
         />
-        <input type="range" min={min} max={max} value={lo} onChange={onLo} className="dual-range-input" />
-        <input type="range" min={min} max={max} value={hi} onChange={onHi} className="dual-range-input" />
+        <input type="range" min={min} max={max} value={lo} onChange={onLo}
+          onPointerUp={flush} onKeyUp={flush} className="dual-range-input" />
+        <input type="range" min={min} max={max} value={hi} onChange={onHi}
+          onPointerUp={flush} onKeyUp={flush} className="dual-range-input" />
       </div>
       {!hideValueRow && (
         <div className="dual-range-vals">

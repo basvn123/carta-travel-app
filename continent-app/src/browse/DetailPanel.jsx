@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import {
   composeTrip, buildFlightLinks, buildAccommodationLink, buildCarRentalLink,
   fareCoverageRanges, viaNearestAirport,
@@ -626,7 +626,13 @@ function CarAdvisory({ lt, mode }) {
  *  airport we DO have a fare for, then drive/taxi the last stretch. */
 function ViaAirportOptions({ destination, data, departDate, returnDate, choices, onSelect }) {
   const { t } = useI18n();
-  const options = viaNearestAirport(destination, data?.destinations, departDate, returnDate, choices);
+  // viaNearestAirport scans every one of the ~24,800 destinations (haversine +
+  // fare lookup each), so memoize it: DetailPanel re-renders on unrelated app
+  // state (search keystrokes, slider drags) and this result never changes then.
+  const options = useMemo(
+    () => viaNearestAirport(destination, data?.destinations, departDate, returnDate, choices),
+    [destination, data, departDate, returnDate, choices],
+  );
   if (!options.length) return null;
   return (
     <div className="via-airport">

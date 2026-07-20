@@ -43,16 +43,19 @@ const EXPLORE_CAT_KEY = { town: 'day.catTown', beach: 'day.catBeach', sight: 'da
 
 // "Let Carta guide you" questionnaire options (labelKey/subKey -> t()).
 const GUIDE_MOODS = [
-  { key: 'sight', labelKey: 'day.moodSights', Icon: CastleIcon },
-  { key: 'beach', labelKey: 'day.moodBeaches', Icon: TreeIcon },
-  { key: 'town', labelKey: 'day.moodTowns', Icon: HomeIcon },
-  { key: 'active', labelKey: 'day.moodActive', Icon: MountainIcon },
+  { key: 'sight', labelKey: 'day.moodSights', label: 'Sights', Icon: CastleIcon },
+  { key: 'beach', labelKey: 'day.moodBeaches', label: 'Beaches & nature', Icon: TreeIcon },
+  { key: 'town', labelKey: 'day.moodTowns', label: 'Towns', Icon: HomeIcon },
+  { key: 'active', labelKey: 'day.moodActive', label: 'Active', Icon: MountainIcon },
 ];
 const GUIDE_RANGES = [
   { key: 'near', labelKey: 'day.rangeNear', subKey: 'day.rangeNearSub', km: 25 },
   { key: 'far', labelKey: 'day.rangeFar', subKey: 'day.rangeFarSub', km: 1e9 },
 ];
-const GUIDE_GROUP_KEY = { town: 'day.moodTowns', sight: 'day.moodSights', beach: 'day.moodBeaches', active: 'day.moodActive' };
+// Section headings shown in the "Let Carta guide you" recommendation list. This
+// panel is not internationalized (its prompts are hardcoded English), so the
+// labels are plain strings rather than i18n keys.
+const GUIDE_GROUP_LABEL = { town: 'Towns', sight: 'Sights', beach: 'Beaches & nature', active: 'Active' };
 
 const fmtDate = (iso) => (iso ? fmtDateFull(iso).slice(0, 6) : '');
 
@@ -600,14 +603,24 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
   // surviving twin and drop the repeats within each day. Only runs against
   // the full coordinate-bearing list (the one assignments were made against);
   // the repaired plan is persisted, so this is a one-time migration per plan.
+  // Guard so this genuinely runs once per plan. itemsForStop() runs the O(n^2)
+  // canonical-POI dedupe, and this effect calls it for every stop; without the
+  // guard it re-ran that whole pass on every add/remove/reorder (each edit
+  // changes `assignments`, a dependency). We only mark a plan repaired once the
+  // full coordinate list (actFull) was actually available for the pass.
+  const repairedRef = useRef(new Set());
   useEffect(() => {
+    const pid = plan?.id ?? '__draft__';
     if (!stops.length || !Object.keys(assignments).length) return;
+    if (repairedRef.current.has(pid)) return;
     let changed = false;
+    let hadFull = false;
     const next = {};
     Object.entries(assignments).forEach(([si, days]) => {
       const s = stops[Number(si)];
       const info = s ? itemsForStop(s) : null;
       if (!info || info.limited || !info.canon.size) { next[si] = days; return; }
+      hadFull = true;
       const nd = {};
       Object.entries(days || {}).forEach(([di, idxs]) => {
         const seen = new Set();
@@ -627,7 +640,10 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
       setAssignments(next);
       persistAssignments(plan?.id, next);
     }
-  }, [assignments, stops, actFull]); // eslint-disable-line react-hooks/exhaustive-deps
+    // Only consider the plan migrated once the real (coordinate-bearing) list
+    // was loaded; before actFull arrives the pass can't dedupe anything.
+    if (hadFull) repairedRef.current.add(pid);
+  }, [assignments, stops, actFull, plan?.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Must-see / recommended / more / active tiers for the current stop's list.
   const tiers = useMemo(() => tieredActivities(activities.items, activities.walkable), [activities]);

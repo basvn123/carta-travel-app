@@ -23,13 +23,32 @@ export function useAccountSync({
   returnDate, setReturnDate,
   setAccountOpen, setAuthModalOpen,
 }) {
-  const settingsAppliedRef = useRef(false);
+  // The account id we've already pulled settings for (keyed by id, not a bare
+  // boolean, so a second sign-in in the same page session re-hydrates for the
+  // new account instead of being short-circuited by the first pull).
+  const appliedForRef = useRef(null);
+  // Whether the initial pull for the current account has finished. The push
+  // effect must NOT fire before this, or a debounced save races the pull and
+  // overwrites the account's saved preferences with local defaults.
+  const hydratedRef = useRef(false);
 
   // Pull the signed-in user's saved settings once, right after login (never
   // when a shared link is already driving the view, see cameFromUrl above).
   useEffect(() => {
-    if (!user || cameFromUrl || settingsAppliedRef.current) return;
-    settingsAppliedRef.current = true;
+    if (!user) {
+      // Signed out: reset so the next sign-in hydrates from that account.
+      appliedForRef.current = null;
+      hydratedRef.current = false;
+      return;
+    }
+    if (appliedForRef.current === user.id) return;
+    appliedForRef.current = user.id;
+    if (cameFromUrl) {
+      // A shared link is driving the view; skip the pull (it would fight the
+      // link) but treat the account as hydrated so deliberate later edits save.
+      hydratedRef.current = true;
+      return;
+    }
     fetchUserSettings(user.id).then((settings) => {
       if (!settings) return;
       if (settings.choices) {
@@ -56,13 +75,14 @@ export function useAccountSync({
       if (settings.unescoOnly != null) setUnescoOnly(settings.unescoOnly);
       if (settings.topBeachOnly != null) setTopBeachOnly(settings.topBeachOnly);
       if (settings.sortKey) setSortKey(settings.sortKey);
-    }).catch(() => {});
+    }).catch(() => {}).finally(() => { hydratedRef.current = true; });
   }, [user, cameFromUrl, hasLocalOrigin]);
 
   // Keep the signed-in user's settings synced (debounced) so they carry over
-  // to their next visit/device.
+  // to their next visit/device. Gated on hydratedRef so it never runs before
+  // the initial pull, which would clobber the account's saved preferences.
   useEffect(() => {
-    if (!user) return;
+    if (!user || !hydratedRef.current) return;
     const t = setTimeout(() => {
       saveUserSettings(user.id, {
         choices, priceMode, countryFilter, tripKinds, minTier, unescoOnly, topBeachOnly, sortKey,

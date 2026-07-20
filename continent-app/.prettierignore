@@ -1,0 +1,7 @@
+dist/
+node_modules/
+public/
+*.log
+*.png
+package-lock.json
+src/styles.css
