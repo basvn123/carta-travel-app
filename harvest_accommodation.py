@@ -8,9 +8,14 @@ accommodation layer to be as specific as the open data allows, on three axes:
   WHERE  every Inside Airbnb city/region snapshot currently published
          (insideairbnb.com/get-the-data, CC BY 4.0) - a real listing-level
          median per city/island, not a country blur.
-  WHEN   a per-CITY seasonality curve derived from that city's calendar.csv
-         (365 days of real forward prices), so Santorini's steep summer peak
-         and Berlin's flat one are each their own, not one shared curve.
+  WHEN   a per-CITY seasonality curve derived from that city's review history
+         (reviews.csv: a review lands after a real stay, so monthly review
+         counts trace real demand seasonality - and, unlike the forward
+         calendar, are not biased by the booking curve). Inside Airbnb dropped
+         forward prices from calendar.csv, so this is the honest signal left:
+         the SHAPE (which months peak) is real and city-specific; the amplitude
+         is damped (demand swings harder than price) into a price-like curve.
+         So Santorini's steep summer peak and Berlin's flat one each differ.
   WHAT   per-CAPACITY medians (2/4/6/8 sleepers) and per-NEIGHBOURHOOD medians
          from listings.csv, so a couple vs a group of seven, and the centro
          storico vs the periphery, each get an OBSERVED price.
@@ -152,7 +157,6 @@ DATASETS = [
 MIN_LISTINGS = 30          # minimum to trust a median
 MIN_BUCKET   = 12          # minimum listings for a per-capacity bucket
 MIN_HOOD     = 25          # minimum listings for a neighbourhood median
-CAL_SAMPLE_CAP = 150_000   # per-month price sample cap (median stays accurate)
 UA = {"User-Agent": "CartaTravelApp-accom/2.0 (contact: bas.vannieuwenhuyse123@gmail.com)"}
 
 
@@ -165,14 +169,24 @@ def haversine_km(lat1, lon1, lat2, lon2):
     return 2 * r * math.asin(math.sqrt(a))
 
 
+# kind -> (cache suffix, url path, gzipped). 'reviews' uses the small
+# visualisations summary (dates only, no comment text) - far smaller than the
+# detailed data/reviews.csv.gz, and all we need for a monthly review histogram.
+KINDS = {
+    "listings": (".csv.gz", "data/listings.csv.gz", True),
+    "reviews":  (".rev.csv", "visualisations/reviews.csv", False),
+}
+
+
 def download(kind, region, path):
-    """kind is 'listings' or 'calendar'. Cached by region+kind, skipped if present."""
+    """Cached by region+kind, skipped if already present."""
     CACHE_DIR.mkdir(parents=True, exist_ok=True)
-    fp = CACHE_DIR / f"{region}{'' if kind == 'listings' else '.cal'}.csv.gz"
-    if fp.exists() and fp.stat().st_size > 80_000:
+    suffix, rel, _ = KINDS[kind]
+    fp = CACHE_DIR / f"{region}{suffix}"
+    if fp.exists() and fp.stat().st_size > 40_000:
         print(f"  [{region}/{kind}] cached ({fp.stat().st_size/1e6:.1f} MB)")
         return fp
-    url = f"{BASE}/{path}/data/{kind}.csv.gz"
+    url = f"{BASE}/{path}/{rel}"
     print(f"  [{region}/{kind}] downloading {url}")
     req = urllib.request.Request(url, headers=UA)
     with urllib.request.urlopen(req, timeout=300) as r:
@@ -211,37 +225,48 @@ def parse_listings(path):
     return out
 
 
-def parse_calendar_seasonality(path, per_eur):
-    """12 monthly multipliers (index 0=Jan..11=Dec) from a calendar.csv.gz, or None.
-    Median forward price per calendar month, normalised so the 12 values average 1.0.
-    Bounded memory: keep at most CAL_SAMPLE_CAP prices per month."""
-    months = defaultdict(list)
+SEASON_GAMMA = 0.4     # damps demand (review) amplitude toward price amplitude
+SEASON_CLAMP = (0.6, 1.85)
+SEASON_MIN_REVIEWS = 800
+
+
+def parse_reviews_seasonality(path):
+    """12 monthly price multipliers (index 0=Jan..11=Dec) from a reviews file, or
+    None. A review follows a real stay, so the monthly review histogram traces
+    demand seasonality (the reviews.csv summary is dates only). Demand swings far
+    harder than price, so the raw month share is damped by SEASON_GAMMA, then
+    normalised so the 12 values average 1.0 and clamped."""
+    counts = [0] * 12
+    total = 0
     try:
-        with gzip.open(path, "rt", encoding="utf-8", newline="") as f:
+        with open(path, "rt", encoding="utf-8", newline="") as f:
             for row in csv.DictReader(f):
-                if (row.get("available") or "").strip().lower() == "f":
-                    continue                      # booked days don't quote a live price
                 d = row.get("date") or ""
-                if len(d) < 7:
+                if len(d) < 7 or d[4] != "-":
                     continue
-                price = clean_price(row.get("price"))
-                if price is None or price <= 0:
+                try:
+                    m = int(d[5:7])
+                except ValueError:
                     continue
-                m = int(d[5:7])
-                bucket = months[m]
-                if len(bucket) < CAL_SAMPLE_CAP:
-                    bucket.append(price)
+                if 1 <= m <= 12:
+                    counts[m - 1] += 1
+                    total += 1
     except OSError:
         return None
-    med = {m: statistics.median(v) for m, v in months.items() if len(v) >= 200}
-    if len(med) < 6:                              # too sparse to trust a curve
+    present = sum(1 for c in counts if c > 0)
+    if total < SEASON_MIN_REVIEWS or present < 8:
         return None
-    base = statistics.median(med.values())
-    if base <= 0:
-        return None
-    # Fill any missing month with the neutral 1.0 so the curve is always length-12.
-    curve = [round(med[m] / base, 3) if m in med else 1.0 for m in range(1, 13)]
-    return curve
+    mean = total / 12.0
+    lo, hi = SEASON_CLAMP
+    # (share / mean_share) ** gamma, with a small floor so a zero month isn't 0.
+    raw = [max(counts[i], mean * 0.05) / mean for i in range(12)]
+    damped = [r ** SEASON_GAMMA for r in raw]
+    g = sum(damped) / 12.0
+    clamped = [min(hi, max(lo, x / g)) for x in damped]
+    # Re-normalise so the 12 values average exactly 1.0 - the stored nightly is
+    # an annual median, and the runtime multiplies it by this curve.
+    mc = sum(clamped) / 12.0
+    return [round(x / mc, 3) for x in clamped]
 
 
 def median_or_none(vals):
@@ -262,7 +287,22 @@ def anchor_for_place(listings, place, per_eur, region, captured, seasonality):
     hi = prices[min(len(prices) - 1, int(len(prices) * 0.99))]
     kept = [(a, p, h) for _, _, a, p, h in subset if lo <= p <= hi]
 
-    night = median_or_none([p for _, p, _ in kept]) / per_eur
+    # Deflate the snapshot to an ANNUAL-median basis. listings.csv `price` is a
+    # near-scrape-date (here late-June) nightly; the stored value must be the
+    # annual median so the runtime can re-apply the month curve without
+    # double-counting summer. Dividing by this city's own capture-month
+    # multiplier makes it round-trip exactly: price(June) == the snapshot.
+    defl = 1.0
+    if seasonality:
+        try:
+            cm = int(captured[5:7])
+            if 1 <= cm <= 12 and seasonality[cm - 1]:
+                defl = seasonality[cm - 1]
+        except (ValueError, IndexError):
+            defl = 1.0
+    unit = per_eur * defl                     # local->EUR and summer->annual in one
+
+    night = median_or_none([p for _, p, _ in kept]) / unit
     cap = int(round(median_or_none([a for a, _, _ in kept])))
 
     # Capacity buckets: observed median whole-home nightly for each group size.
@@ -273,7 +313,7 @@ def anchor_for_place(listings, place, per_eur, region, captured, seasonality):
     for c in (2, 3, 4, 5, 6, 7, 8):
         vals = by_cap.get(c, [])
         if len(vals) >= MIN_BUCKET:
-            buckets[str(c)] = round(statistics.median(vals) / per_eur)
+            buckets[str(c)] = round(statistics.median(vals) / unit)
 
     # Neighbourhood medians (only meaningful for a whole-city dataset).
     hoods = []
@@ -287,7 +327,7 @@ def anchor_for_place(listings, place, per_eur, region, captured, seasonality):
                 continue
             hoods.append({
                 "name": h,
-                "night_eur": round(statistics.median(p for _, p in rows) / per_eur),
+                "night_eur": round(statistics.median(p for _, p in rows) / unit),
                 "cap": int(round(statistics.median(a for a, _ in rows))),
                 "n": len(rows),
             })
@@ -310,10 +350,10 @@ def anchor_for_place(listings, place, per_eur, region, captured, seasonality):
 
 
 def main():
-    want_calendar = "--no-calendar" not in sys.argv
+    want_season = "--no-seasonality" not in sys.argv
     anchors = []
     print(f"Harvesting Inside Airbnb anchors ({len(DATASETS)} datasets, "
-          f"calendar={'on' if want_calendar else 'off'}):")
+          f"seasonality={'on' if want_season else 'off'}):")
     for ds in DATASETS:
         region, path, cur = ds["region"], ds["path"], ds["cur"]
         captured = path.rstrip("/").split("/")[-1]
@@ -326,14 +366,14 @@ def main():
             continue
 
         seasonality = None
-        if want_calendar:
+        if want_season:
             try:
-                cp = download("calendar", region, path)
-                seasonality = parse_calendar_seasonality(cp, per_eur)
+                rp = download("reviews", region, path)
+                seasonality = parse_reviews_seasonality(rp)
                 tag = "curve" if seasonality else "flat/sparse"
                 print(f"  [{region}] seasonality {tag}")
             except Exception as e:
-                print(f"  [{region}] calendar skipped: {e}")
+                print(f"  [{region}] reviews skipped: {e}")
 
         for place in ds["places"]:
             rec = anchor_for_place(listings, place, per_eur, region, captured, seasonality)

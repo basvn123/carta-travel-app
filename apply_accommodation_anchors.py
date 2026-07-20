@@ -1,27 +1,31 @@
-"""Apply rich Inside Airbnb anchors to app_data.json - proximity + honest labels.
+"""Apply rich Inside Airbnb anchors to app_data.json - measured cities only.
 
 Reads cache/accommodation_city_anchors.json (harvest_accommodation.py v2, a list
-of rich per-city/island anchor records) and assigns each destination the NEAREST
-anchor, measured from the town centre (city_lat/city_lon), with an honest label:
+of rich per-city/island anchor records) and overwrites the accommodation block of
+every destination that sits ON a covered city (within NEAR_KM of its centre,
+measured from city_lat/city_lon) with that city's real listing-level data:
 
-  <= NEAR_KM  of an anchor            -> "inside_airbnb_city"     (level "city")
-  <= REGION_KM of a same-country one  -> "inside_airbnb_regional" (level "regional")
-  otherwise                           -> left untouched (keeps the country / PLI
-                                         block the notebook assigned).
+  <= NEAR_KM of an anchor -> "inside_airbnb_city" (level "city")
+  otherwise               -> left untouched (keeps the country / PLI block the
+                             notebook assigned; the long-tail + premium layers
+                             refine those).
 
-This replaces the old behaviour where one city's median was silently copied onto
-its neighbours and still labelled "city". A regional match now SAYS it borrowed a
-nearby city's rate, and carries source_place + source_km so the UI can be honest.
+Deliberately does NOT borrow a nearby city's rate for towns that merely sit near
+one: a 48 km "regional" inheritance made cheap Charleroi read as expensive
+Brussels, the same fake-specificity as silently copying one city's median onto
+its neighbours. Real local data or the honest modelled estimate - nothing
+borrowed.
 
-Each assigned block also carries the new specificity fields the runtime reads:
-  - seasonality       12 monthly multipliers from that city's calendar.csv
+Each assigned block also carries the specificity fields the runtime reads:
+  - seasonality       this city's 12-month curve (from its reviews history)
   - capacity_buckets  observed whole-home nightly per group size (2..8)
-  - neighbourhoods    per-neighbourhood medians (measured/city matches only)
+  - neighbourhoods    per-neighbourhood medians
 
 Pipeline order:
-    (notebook 03b country/PLI) -> apply_accommodation_anchors -> apply_tourist_premium
-apply_tourist_premium only bumps level=="country" blocks, so measured/regional
-real data is left alone (it already reflects the local market).
+    (notebook 03b country/PLI) -> apply_accommodation_anchors
+        -> apply_longtail_granularity -> apply_tourist_premium
+The later layers only touch level=="country" blocks, so measured city data is
+left alone (it already reflects the local market).
 
 Usage:
     python apply_accommodation_anchors.py             # default targets
@@ -40,8 +44,7 @@ DEFAULT_TARGETS = [
     ROOT / "continent-app" / "public" / "app_data.json",
 ]
 
-NEAR_KM = 20.0      # on the city -> measured
-REGION_KM = 75.0    # near the city (same country) -> regional inheritance
+NEAR_KM = 20.0      # on the city -> measured (real local data)
 
 
 def haversine_km(lat1, lon1, lat2, lon2):
@@ -57,19 +60,6 @@ def haversine_km(lat1, lon1, lat2, lon2):
 
 def city_coords(d):
     return (d.get("city_lat", d.get("lat")), d.get("city_lon", d.get("lon")))
-
-
-def anchor_iso2(anchor, dests):
-    """Country of an anchor = iso2 of the catalogue destination closest to it."""
-    best, best_km = None, None
-    for d in dests.values():
-        clat, clon = city_coords(d)
-        km = haversine_km(anchor["lat"], anchor["lon"], clat, clon)
-        if km is None:
-            continue
-        if best_km is None or km < best_km:
-            best, best_km = d.get("iso2"), km
-    return best
 
 
 def build_block(anchor, dist_km, level):
@@ -99,31 +89,22 @@ def build_block(anchor, dist_km, level):
 
 
 def assign(dests, anchors):
-    isos = {i: anchor_iso2(a, dests) for i, a in enumerate(anchors)}
-    counts = {"city": 0, "regional": 0}
+    n = 0
     for d in dests.values():
         clat, clon = city_coords(d)
         if clat is None:
             continue
-        # nearest anchor overall, and nearest same-country anchor
-        near = (None, None)          # (dist, idx)
-        near_same = (None, None)
+        near = (None, None)          # (dist, idx) of the nearest anchor
         for i, a in enumerate(anchors):
             km = haversine_km(clat, clon, a["lat"], a["lon"])
             if km is None:
                 continue
             if near[0] is None or km < near[0]:
                 near = (km, i)
-            if isos[i] == d.get("iso2") and (near_same[0] is None or km < near_same[0]):
-                near_same = (km, i)
-
         if near[0] is not None and near[0] <= NEAR_KM:
             d["accommodation"] = build_block(anchors[near[1]], near[0], "city")
-            counts["city"] += 1
-        elif near_same[0] is not None and near_same[0] <= REGION_KM:
-            d["accommodation"] = build_block(anchors[near_same[1]], near_same[0], "regional")
-            counts["regional"] += 1
-    return counts
+            n += 1
+    return n
 
 
 def patch(path, anchors):
@@ -132,10 +113,9 @@ def patch(path, anchors):
         return
     data = json.loads(path.read_text(encoding="utf-8"))
     dests = data.get("destinations", {})
-    counts = assign(dests, anchors)
+    n = assign(dests, anchors)
     path.write_text(json.dumps(data, indent=1, ensure_ascii=False), encoding="utf-8")
-    print(f"  {path.name}: {counts['city']} measured (city) + "
-          f"{counts['regional']} regional from Inside Airbnb")
+    print(f"  {path.name}: {n} destinations measured from Inside Airbnb (city-level)")
 
 
 def main():

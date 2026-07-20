@@ -73,6 +73,11 @@ def process(dests):
         a = v.get("accommodation")
         if not a or a.get("level") != "country":
             continue
+        # Curated honeypots are owned by the tourist-premium layer; leave them so
+        # the two multipliers never stack. The sets are near-disjoint anyway (few
+        # premium dests sit in the no-Airbnb long-tail countries).
+        if a.get("premium_base") is not None or a.get("tourist_premium"):
+            continue
         src = a.get("price_source", "")
         base_src = src.split("+")[0]
         if base_src not in TOUCHES:

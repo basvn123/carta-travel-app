@@ -140,8 +140,27 @@ Eurostat PLI).
         "cleaning_per_person_eur": 15.0, // cleaning fee per booking, per head
         "entire_home_night_eur": 120,    // headline whole-home median nightly (display)
         "typical_capacity": 4,           // listing capacity the per-head figure assumes
-        "level": "city",                 // "city" (override) or "country"
-        "price_source": "inside_airbnb_city" // inside_airbnb_city | inside_airbnb_country | airbnb_pli_scaled
+        "level": "city",                 // "city" | "country"
+        // inside_airbnb_city (measured, this town, <=20km) |
+        // inside_airbnb_country | airbnb_pli_scaled | *+pop (long-tail pop tier)
+        "price_source": "inside_airbnb_city",
+        // --- specificity fields (harvest_accommodation.py v2), all optional ---
+        "seasonality": [0.5, 0.5, ..., 1.7, 1.7, ..., 0.5],  // this CITY's own 12-mo
+                                         // curve from calendar.csv (idx0=Jan), avg~1.0;
+                                         // overrides meta.accommodation_model.seasonality
+        "capacity_buckets": { "2": 150, "4": 191, "6": 300 }, // OBSERVED whole-home
+                                         // nightly per group size; replaces the
+                                         // modelled occupancy^0.55 extrapolation
+        "neighbourhoods": [              // per-neighbourhood medians (city matches only)
+          { "name": "Oia", "night_eur": 320, "cap": 4, "n": 200 }
+        ],
+        "n_listings": 3587,              // listings behind the median (measured only)
+        "captured": "2026-06-28",        // Inside Airbnb snapshot date
+        "source_place": "Santorini",     // which anchor supplied this
+        "source_km": 0.0,                // distance town->anchor centre (<=20 km)
+        "settlement_tier": "metro",      // long-tail pop tier (+pop sources only)
+        "pop_factor": 1.15,              // multiplier that tier applied
+        "longtail_base": { }             // pre-tier values, for idempotent reruns
       },
       "local_transport": {          // "do I need a car here?" (category estimate)
         "car_needed": false,             // true -> a rental is added when you fly in
@@ -352,14 +371,38 @@ strips it. Originals live under `premium_base`, so reruns recompute cleanly.
 ### 4. Real city anchors + occupancy (harvest_accommodation.py +
 apply_accommodation_anchors.py)
 
-18 destinations re-anchored from fresh Inside Airbnb June-2026 snapshots
-(CC BY 4.0): Santorini 191, Mykonos/Venice/Paros 238, Naxos 208, Rhodes 157,
-Kos 152, Milos, Chania 148, Heraklion 111, Vienna 122, Prague 100, Munich 182,
-Malaga 172, Sevilla 109, Valencia 163, Porto 120 EUR/night whole-home medians
-(multi-island regions sliced per destination by listing lat/lon radius).
-Booking.com was evaluated and rejected as a source: no public API, ToS forbid
-scraping, Cloudflare/AWS-WAF enforcement, Inside Airbnb covers the same need
-legitimately. `accommodation.n_listings`/`captured` record provenance.
+Every Inside Airbnb city/region snapshot currently published (June-2026,
+CC BY 4.0) is harvested - ~40 anchors across ~32 datasets. Booking.com was
+evaluated and rejected as a source: no public API, ToS forbid scraping,
+Cloudflare/AWS-WAF enforcement, Inside Airbnb covers the same need legitimately.
+`accommodation.n_listings`/`captured` record provenance.
+
+The harvest v2 is specific on three axes, all stored per destination (optional
+fields, runtime falls back cleanly when absent):
+- **where** each anchor is a real listing-level median for that city/island;
+  `apply_accommodation_anchors.py` assigns it ONLY to destinations that sit on the
+  city (<= 20 km of its centre, `inside_airbnb_city`, `level: "city"`). A town that
+  merely sits near a covered city is NOT given that city's rate - borrowing a
+  neighbour's number is the same fake-specificity as copying it; those keep the
+  honest country/PLI(+pop) estimate instead.
+- **when** `accommodation.seasonality` is that city's OWN 12-month curve, derived
+  from its review history (`reviews.csv`; Inside Airbnb dropped forward prices from
+  `calendar.csv`, so the monthly review histogram - real stays, no booking-curve
+  bias - is the signal, damped to a price-like amplitude), overriding the one
+  global summer curve, so Santorini's steep peak and Berlin's flat one differ.
+- **what** `accommodation.capacity_buckets` are OBSERVED whole-home nightlies per
+  group size (2..8), replacing the modelled occupancy^0.55 curve when present;
+  `accommodation.neighbourhoods` carry per-neighbourhood medians (city matches).
+
+### 4b. Long-tail settlement tier (apply_longtail_granularity.py)
+
+Markets with no Inside Airbnb coverage (PL, HR, Nordics, Baltics, Balkans...)
+keep a country median / PLI estimate. There is no open sub-national lodging-price
+dataset, so within-country variation is added from the one honest signal present
+- `dest.geonames.population`: a gentle, capped (+-15%) tier multiplier (metro
++15% ... village -12%) applied ONLY to `level: "country"` blocks, recorded as
+`settlement_tier`/`pop_factor`, source suffixed `+pop`, base stashed under
+`longtail_base` for idempotent reruns. Modelled, not measured, and marked so.
 
 ## Schema v15, non-Wikipedia data sources (added 2026-07-16)
 
