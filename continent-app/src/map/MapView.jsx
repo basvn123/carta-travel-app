@@ -7,11 +7,20 @@ import { hasLngLat } from './coords.js';
 // Carto Voyager, clean, beige, no API key needed
 const MAP_STYLE = 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json';
 
-// The same glyphs as the "Travel by" toggle (TransportIcons.jsx), inlined as
-// markup for the single selected-destination DOM marker.
+// The same glyphs as the "Travel by" toggle (TransportIcons.jsx). The path
+// bodies are shared between the DOM markup (selected pin, hover card) and the
+// rasterised map images used by the WebGL price labels (addTransportIcons).
+const PLANE_PATH = '<path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/>';
+const CAR_PATH = '<path d="M4 13l1.4-4.1A2 2 0 0 1 7.3 7.5h9.4a2 2 0 0 1 1.9 1.4L20 13"/><path d="M3 13h18v3.5a1 1 0 0 1-1 1h-1.5"/><path d="M5.5 17.5H4a1 1 0 0 1-1-1V13"/><path d="M8.5 17.5h7"/><circle cx="7" cy="17.5" r="1.6"/><circle cx="17" cy="17.5" r="1.6"/>';
 const SVG_OPEN = '<svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">';
-const PLANE_SVG = `${SVG_OPEN}<path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/></svg>`;
-const CAR_SVG = `${SVG_OPEN}<path d="M4 13l1.4-4.1A2 2 0 0 1 7.3 7.5h9.4a2 2 0 0 1 1.9 1.4L20 13"/><path d="M3 13h18v3.5a1 1 0 0 1-1 1h-1.5"/><path d="M5.5 17.5H4a1 1 0 0 1-1-1V13"/><path d="M8.5 17.5h7"/><circle cx="7" cy="17.5" r="1.6"/><circle cx="17" cy="17.5" r="1.6"/></svg>`;
+const PLANE_SVG = `${SVG_OPEN}${PLANE_PATH}</svg>`;
+const CAR_SVG = `${SVG_OPEN}${CAR_PATH}</svg>`;
+// Map-image variants: bigger viewport-filling render, solid stroke. sdf:true
+// tints via icon-color, so the stroke colour here is only the alpha mask.
+const ICON_PX = 26;   // 2x the ~13px on-screen size (addImage pixelRatio 2)
+const iconSvg = (inner) => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="${ICON_PX}" height="${ICON_PX}" fill="none" stroke="#000" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">${inner}</svg>`;
+const IMG_PLANE = 'carta-plane';
+const IMG_CAR = 'carta-car';
 // Faceted diamond, matching GemRating.jsx, for the hover card's hidden-gem tag.
 const GEM_SVG = '<svg viewBox="0 0 24 24" width="9" height="9" fill="currentColor" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 L19 9 L12 21 L5 9 Z"/></svg>';
 
@@ -64,7 +73,8 @@ export function MapView({
     });
     map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'bottom-right');
 
-    map.on('load', () => {
+    map.on('load', async () => {
+      await addTransportIcons(map);   // must exist before the label layer references them
       ensureLayers(map);
       map.getSource(SRC_PRICED)?.setData(dataRef.current.pricedFC);
       map.getSource(SRC_DOTS)?.setData(dataRef.current.dotsFC);
@@ -311,8 +321,9 @@ function ensureLayers(map) {
     },
   });
 
-  // The €-price, floating above its dot (mirrors .price-pill: ink on paper,
-  // rust for deals; gems italic). Symbol collision keeps the view legible.
+  // The €-price with its transport glyph, floating above the dot (mirrors
+  // .price-pill: [plane|car] €price, ink on paper, rust for deals). Icon and
+  // price collide as one unit, so the glyph shows exactly when the price does.
   map.addLayer({
     id: LYR_PRICED_LABEL,
     type: 'symbol',
@@ -321,8 +332,13 @@ function ensureLayers(map) {
       'text-field': ['get', 'label'],
       'text-font': LABEL_FONT,
       'text-size': 11.5,
-      'text-offset': [0, -1.05],
-      'text-anchor': 'bottom',
+      // Price grows rightward from the point; the glyph sits to its left. This
+      // keeps the icon-to-price gap constant no matter how wide the price is.
+      'text-anchor': 'left',
+      'text-offset': [0.28, -0.95],
+      'icon-image': ['case', ['==', ['get', 'tMode'], 'car'], IMG_CAR, IMG_PLANE],
+      'icon-anchor': 'right',
+      'icon-offset': [-1, -11],
       'symbol-sort-key': ['get', 'sort'],
       'text-padding': 1,
     },
@@ -333,7 +349,38 @@ function ensureLayers(map) {
         INK],
       'text-halo-color': PAPER,
       'text-halo-width': 1.6,
+      'icon-color': ['case', ['==', ['get', 'deal'], 1], ACCENT, INK],
+      'icon-halo-color': PAPER,
+      'icon-halo-width': 1.5,
     },
+  });
+}
+
+// Rasterise the plane/car glyphs into SDF map images so the WebGL price labels
+// can carry a transport icon that icon-color tints (rust for deals, ink else).
+async function addTransportIcons(map) {
+  const defs = [[IMG_PLANE, PLANE_PATH], [IMG_CAR, CAR_PATH]];
+  await Promise.all(defs.map(async ([name, path]) => {
+    if (map.hasImage(name)) return;
+    const data = await rasterizeIcon(iconSvg(path), ICON_PX);
+    if (data && !map.hasImage(name)) map.addImage(name, data, { pixelRatio: 2, sdf: true });
+  }));
+}
+
+// SVG markup -> ImageData at size x size (device pixels). Resolves null if the
+// browser can't decode the SVG, in which case the label just renders icon-less.
+function rasterizeIcon(svg, size) {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.onload = () => {
+      const cv = document.createElement('canvas');
+      cv.width = size; cv.height = size;
+      const ctx = cv.getContext('2d');
+      ctx.drawImage(img, 0, 0, size, size);
+      resolve(ctx.getImageData(0, 0, size, size));
+    };
+    img.onerror = () => resolve(null);
+    img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
   });
 }
 
