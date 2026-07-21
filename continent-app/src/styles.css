@@ -3554,6 +3554,15 @@ input, select {
 /* ─── Rating slicer: 0-10 band slider + hidden-gems toggle ─── */
 .rating-control {
   display: flex;
+  flex-direction: row;
+  align-items: flex-start;   /* toggle lines up with the slider row (and the
+                                highlights pills), not the taller block's centre */
+  gap: 14px;
+}
+/* Slider + its band caption stack together; the gem toggle sits to their right
+   (at the same height as the rest of the bar), not stacked below. */
+.rating-slider {
+  display: flex;
   flex-direction: column;
   align-items: flex-start;
   gap: 6px;
@@ -3585,7 +3594,6 @@ input, select {
 }
 .rating-band-dash { margin: 0 1px; opacity: 0.7; }
 .rating-band-any { font-style: italic; opacity: 0.85; }
-.gem-toggle { align-self: flex-start; }
 
 .reset-filters-btn {
   display: inline-flex;
@@ -6105,7 +6113,8 @@ input, select {
   .filter-bar.mobile-open .segmented { width: 100%; }
   .filter-bar.mobile-open .segmented button { flex: 1; }
   .filter-bar.mobile-open .segmented.seg-icons button { padding: 7px 12px; }
-  .filter-bar.mobile-open .rating-control { width: 100%; }
+  .filter-bar.mobile-open .rating-control { width: 100%; flex-direction: column; align-items: flex-start; }
+  .filter-bar.mobile-open .rating-slider { width: 100%; }
   .filter-bar.mobile-open .rating-control .dual-range { width: 100%; }
 
   /* iOS Safari zooms the viewport when a focused field is < 16px. Bump the

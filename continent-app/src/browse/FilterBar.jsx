@@ -447,24 +447,26 @@ export function FilterBar({
               <div className="filter filter-beauty">
                 <label className="filter-label">{t('filter.rating')}</label>
                 <div className="filter-control rating-control">
-                  <DualRange
-                    min={0}
-                    max={RATING_MAX * 10}
-                    value={[Math.round(rLo * 10), Math.round(rHi * 10)]}
-                    onChange={([a, b]) => setRatingRange([a / 10, b / 10])}
-                    fmt={(v) => (v / 10).toFixed(1)}
-                    axis={ratingAxis}
-                    ariaLabel={t('filter.rating')}
-                    hideValueRow
-                  />
-                  <div className="rating-band-caption">
-                    {ratingNarrowed ? (
-                      <span className="rating-band-nums">
-                        {rLo.toFixed(1)}<span className="rating-band-dash">–</span>{rHi.toFixed(1)}
-                      </span>
-                    ) : (
-                      <span className="rating-band-any">{t('rating.anyTitle')}</span>
-                    )}
+                  <div className="rating-slider">
+                    <DualRange
+                      min={0}
+                      max={RATING_MAX * 10}
+                      value={[Math.round(rLo * 10), Math.round(rHi * 10)]}
+                      onChange={([a, b]) => setRatingRange([a / 10, b / 10])}
+                      fmt={(v) => (v / 10).toFixed(1)}
+                      axis={ratingAxis}
+                      ariaLabel={t('filter.rating')}
+                      hideValueRow
+                    />
+                    <div className="rating-band-caption">
+                      {ratingNarrowed ? (
+                        <span className="rating-band-nums">
+                          {rLo.toFixed(1)}<span className="rating-band-dash">–</span>{rHi.toFixed(1)}
+                        </span>
+                      ) : (
+                        <span className="rating-band-any">{t('rating.anyTitle')}</span>
+                      )}
+                    </div>
                   </div>
                   <button
                     type="button"
