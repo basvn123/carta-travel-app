@@ -43,6 +43,7 @@ export function tripSummaryText({ label, stopDetails, flight, anchorLegs, grandT
   if (first?.arriveDate) lines.push(`${fmtLong(first.arriveDate)} to ${fmtLong(last?.departDate)}`);
   lines.push('');
   if (flight?.combinable) lines.push(`Fly ${flight.origin} to ${flight.into_anchor}${timesSuffix(flight.into_time)}`);
+  if (flight?.own) lines.push(flight.airline ? `Flight with ${flight.airline}${flight.cost_total ? ` (${eur(flight.cost_total)})` : ''}` : 'Your own flight (another airline)');
   if (anchorLegs?.in?.ground_total) lines.push(`Then ${anchorLegs.anchor?.city} to ${first?.dest?.city} by ${anchorLegs.in.mode}`);
   stopDetails.forEach((s, i) => {
     if (!s.dest) return;
@@ -50,7 +51,7 @@ export function tripSummaryText({ label, stopDetails, flight, anchorLegs, grandT
   });
   if (anchorLegs?.out?.ground_total) lines.push(`Then ${last?.dest?.city} to ${anchorLegs.anchor?.city} by ${anchorLegs.out.mode}`);
   if (flight?.combinable) lines.push(`Fly home ${flight.out_anchor} to ${flight.origin}${timesSuffix(flight.out_of_time)}`);
-  if (flight && !flight.combinable) lines.push(`Flights: ${flightReasonLabel(flight.reason)}`);
+  if (flight && !flight.combinable && !flight.own) lines.push(`Flights: ${flightReasonLabel(flight.reason)}`);
   if (grandTotal != null) {
     lines.push('');
     lines.push(`Estimated total for ${groupSize} ${groupSize === 1 ? 'person' : 'people'}: ${eur(grandTotal)}`);
@@ -92,6 +93,9 @@ function tripPrintHtml({ label, stopDetails, dayPlan = [], flight, legs = [], an
     rows.push(`<tr><td>Flight home: ${esc(flight.out_anchor)} &rarr; ${esc(flight.origin)}</td><td>${esc(eur(flight.out_of_fare_eur * groupSize))}</td></tr>`);
     if (flight.bag_total > 0) rows.push(`<tr><td>Baggage: ${esc(baggageLabel(flight.baggage))} (out + home, ${groupSize} ${groupSize === 1 ? 'person' : 'people'})</td><td>${esc(eur(flight.bag_total))}</td></tr>`);
     if (flight.ground_total > 0) rows.push(`<tr><td>Airport transfers</td><td>${esc(eur(flight.ground_total))}</td></tr>`);
+  } else if (flight?.own) {
+    const airlineLbl = flight.airline ? ` (${esc(flight.airline)})` : '';
+    rows.push(`<tr><td>Flight${airlineLbl}: booked with another airline</td><td>${flight.cost_total ? esc(eur(flight.cost_total)) : '&mdash;'}</td></tr>`);
   } else if (flight) {
     rows.push(`<tr><td colspan="2" class="note">Flights: ${esc(flightReasonLabel(flight.reason))}</td></tr>`);
   }
@@ -148,6 +152,7 @@ function tripPrintHtml({ label, stopDetails, dayPlan = [], flight, legs = [], an
 
   <h2>Route</h2>
   ${flight?.combinable ? `<div class="stop">Fly <b>${esc(flight.origin)} &rarr; ${esc(flight.into_anchor)}</b> <span class="when">${esc(fmtLong(first?.arriveDate) + timesSuffix(flight.into_time))}</span></div>` : ''}
+  ${flight?.own ? `<div class="stop">${flight.airline ? `Fly in with <b>${esc(flight.airline)}</b>` : '<b>Your own flight in</b>'} <span class="when">${esc(fmtLong(first?.arriveDate))}</span></div>` : ''}
   ${stopDetails.map((s, i) => `
     <div class="stop">${i + 1}. <b>${esc(s.dest?.city)}, ${esc(s.dest?.country)}</b>
     <span class="when">${esc(fmtLong(s.arriveDate))} &rarr; ${esc(fmtLong(s.departDate))}, ${s.nights} ${s.nights === 1 ? 'night' : 'nights'}</span></div>`).join('')}

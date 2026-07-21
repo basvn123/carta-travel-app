@@ -748,6 +748,36 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
                         </div>
                       )}
                     </>
+                  ) : tp.flight?.own ? (
+                    <div className="trip-ownflight">
+                      <div className="trip-total-row">
+                        <span className="lbl">
+                          <PlaneIcon size={11} /> Your flight
+                          <small>booked with another airline, whole group</small>
+                        </span>
+                        <span className="val">{tp.flight.cost_total ? eur(tp.flight.cost_total) : '—'}</span>
+                      </div>
+                      <div className="trip-ownflight-fields">
+                        <input
+                          className="trip-ownflight-input"
+                          type="text"
+                          placeholder="Airline (e.g. easyJet)"
+                          aria-label="Airline you fly with"
+                          value={tp.ownFlight?.airline || ''}
+                          onChange={(e) => tp.setOwnFlight({ airline: e.target.value, costTotal: tp.ownFlight?.costTotal || 0 })}
+                        />
+                        <input
+                          className="trip-ownflight-input trip-ownflight-cost"
+                          type="number"
+                          min="0"
+                          inputMode="numeric"
+                          placeholder="Total €"
+                          aria-label="Total flight cost for everyone"
+                          value={tp.ownFlight?.costTotal || ''}
+                          onChange={(e) => tp.setOwnFlight({ airline: tp.ownFlight?.airline || '', costTotal: Math.max(0, Math.round(Number(e.target.value) || 0)) })}
+                        />
+                      </div>
+                    </div>
                   ) : tp.flight ? (
                     <p className="trip-note">{flightReasonLabel(tp.flight.reason)}</p>
                   ) : null}

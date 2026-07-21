@@ -113,6 +113,13 @@ export function TripItinerary({
               <small>{fmtFlightWhen(stopDetails[0]?.arriveDate, flight.into_time)}</small>
             </div>
           )}
+          {flight?.own && (
+            <div className="itin-flight-row">
+              <PlaneIcon size={12} />
+              <span>{flight.airline ? <>Fly in with <b>{flight.airline}</b></> : <b>Your own flight in</b>}</span>
+              <small>{fmtLong(stopDetails[0]?.arriveDate)}</small>
+            </div>
+          )}
           {anchorIn && (
             <div className="itin-flight-row">
               <AnchorInIcon size={12} />
@@ -174,7 +181,16 @@ export function TripItinerary({
 
             {breakdownOpen && (
               <div className="itin-breakdown-body">
-                {flight && !flight.combinable && (
+                {flight?.own && (
+                  <div className="trip-total-row">
+                    <span className="lbl">
+                      <PlaneIcon size={11} /> Flight{flight.airline ? ` (${flight.airline})` : ''}
+                      <small>booked with another airline{flight.cost_total ? ', whole group' : ', fare not added'}</small>
+                    </span>
+                    <span className="val">{flight.cost_total ? eur(flight.cost_total) : '—'}</span>
+                  </div>
+                )}
+                {flight && !flight.combinable && !flight.own && (
                   <p className="trip-note">{flightReasonLabel(flight.reason)}</p>
                 )}
                 {flight?.combinable && (

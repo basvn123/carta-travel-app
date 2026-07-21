@@ -176,6 +176,12 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
   // their own flight with another airline (Carta plans stays + ground only).
   const [arriveMode, setArriveMode] = useState('fly');
   const [flyInId, setFlyInId] = useState('');
+  // When the traveller flies with another airline (arriveMode/landedMode ==
+  // 'other'), they tell Carta which airline and what the fare cost so the
+  // overview can include it instead of pricing a Ryanair flight they aren't
+  // taking. Cost is the total return fare for the whole party, in EUR.
+  const [ownAirline, setOwnAirline] = useState('');
+  const [ownFlightCost, setOwnFlightCost] = useState('');
   const [flightView, setFlightView] = useState('map'); // 'map' | 'list'
   const [showAllRoutes, setShowAllRoutes] = useState(false);
   // The return flight home, picked AFTER the stays are pinned (its own step),
@@ -564,6 +570,8 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
     setInterests(new Set());
     setArriveMode('fly');
     setFlyInId('');
+    setOwnAirline('');
+    setOwnFlightCost('');
     setFlightView('map');
     setShowAllRoutes(false);
     setReturnFlyId('');
@@ -672,6 +680,13 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
       // The airport they chose to fly HOME from (its own "Getting home" step,
       // after the stays were pinned), so the return leg matches too.
       returnAnchorId: flyHomeDest ? returnFlyId : null,
+      // Flying with another airline (not Ryanair): carry the airline name and
+      // the fare the traveller entered so the overview shows their real flight
+      // instead of a Ryanair fare. Present whenever they chose "other", even
+      // with blank fields, that's the signal to skip Ryanair pricing.
+      ownFlight: (path === 'landed' ? landedMode === 'other' : arriveMode === 'other')
+        ? { airline: ownAirline.trim(), costTotal: Math.max(0, Math.round(Number(ownFlightCost) || 0)) }
+        : null,
       label,
       stops,
     });
@@ -960,6 +975,42 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
     if (stepName === 'Getting home' && returnFlyId) scrollPanelIntoView(returnSideRef.current);
   }, [returnFlyId, stepName]);
 
+  // Airline + fare inputs shown whenever the traveller flies with an airline
+  // other than Ryanair (both the full-path and landed-path "other" branches).
+  // The fare is the whole party's total return cost; leaving it blank simply
+  // keeps the flight out of the estimated total (as before).
+  const ownFlightFields = (
+    <div className="guide-ownflight">
+      <div className="guide-when-dates">
+        <label className="trip-field">
+          <span className="trip-field-label">{t('wizard.ownAirlineLabel')}</span>
+          <input
+            className="guide-search"
+            type="text"
+            value={ownAirline}
+            onChange={(e) => setOwnAirline(e.target.value)}
+            placeholder={t('wizard.ownAirlinePlaceholder')}
+            aria-label={t('wizard.ownAirlineLabel')}
+          />
+        </label>
+        <label className="trip-field">
+          <span className="trip-field-label">{t('wizard.ownFlightCostLabel')}</span>
+          <input
+            className="guide-search"
+            type="number"
+            min="0"
+            inputMode="numeric"
+            value={ownFlightCost}
+            onChange={(e) => setOwnFlightCost(e.target.value)}
+            placeholder={t('wizard.ownFlightCostPlaceholder')}
+            aria-label={t('wizard.ownFlightCostLabel')}
+          />
+        </label>
+      </div>
+      <p className="guide-note"><InfoIcon size={11} /> {t('wizard.ownFlightCostHint')}</p>
+    </div>
+  );
+
   // ---------------------------------------------------------------- render --
   return (
     <div className="guide-overlay" onClick={handleCancel}>
@@ -1244,9 +1295,12 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
                 </label>
               </div>
               {landedMode === 'other' && (
-                <p className="guide-note">
-                  <InfoIcon size={11} /> {t('wizard.airfareLeftOut', { place: arrivalDest ? arrivalDest.city : t('wizard.yourArrival') })}
-                </p>
+                <>
+                  <p className="guide-sub guide-ownflight-lead">
+                    <PlaneIcon size={12} /> {t('wizard.ownFlightAskCost')}
+                  </p>
+                  {ownFlightFields}
+                </>
               )}
             </>
           )}
@@ -1302,6 +1356,7 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
                   <p className="guide-sub">
                     <CheckIcon size={12} /> {t('wizard.ownFlightNote')}
                   </p>
+                  {ownFlightFields}
                   <button className="guide-back guide-noflight-back" onClick={() => setArriveMode('fly')}>
                     ← {t('wizard.lookAtRyanair')}
                   </button>
@@ -2038,9 +2093,11 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
               </button>
             ) : stepName === 'Getting there' && arriveMode === 'fly' && routeOptions.length === 0 ? (
               // No Ryanair route: the way forward is booking your own flight.
+              // Switch the step to the "own flight" view in place (don't skip
+              // ahead) so the traveller can name their airline and fare first.
               <button
                 className="guide-next"
-                onClick={() => { setArriveMode('other'); setStep(step + 1); }}
+                onClick={() => setArriveMode('other')}
               >
                 I fly with another airline →
               </button>

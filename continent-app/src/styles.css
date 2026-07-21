@@ -1057,6 +1057,24 @@ input, select {
 .trip-note { font-size: 12px; color: var(--ink-soft); line-height: 1.55; margin-top: 8px; }
 .trip-note-error { color: var(--accent); }
 
+/* Own-flight (another airline) editable fields in the Trip total block: the
+   traveller names the airline and enters the total fare so the estimate can
+   include a flight Carta doesn't price itself. */
+.trip-ownflight-fields { display: flex; gap: 8px; margin-top: 8px; }
+.trip-ownflight-input {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: 9px 12px;
+  border: 1px solid var(--rule);
+  border-radius: 9px;
+  background: var(--paper);
+  color: var(--ink);
+  font-size: 13px;
+  font-family: inherit;
+}
+.trip-ownflight-input:focus { outline: none; border-color: var(--accent); }
+.trip-ownflight-cost { flex: 0 0 108px; font-family: var(--mono); }
+
 .trip-save-row { display: flex; gap: 10px; margin-top: 16px; }
 .trip-save-btn {
   flex: 1;
@@ -1691,6 +1709,14 @@ input, select {
 .guide-noflight { padding: 4px 0 8px; }
 .guide-noflight .guide-empty { display: flex; align-items: baseline; gap: 6px; color: #b3402a; }
 .guide-noflight-back { margin-top: 10px; }
+
+/* Own flight (another airline): airline + total-fare inputs shown on the
+   "I fly with another airline" branch of the wizard's arrival step. Reuses
+   .guide-when-dates so the two fields sit side by side and wrap on phones. */
+.guide-ownflight { margin-top: 10px; }
+.guide-ownflight .trip-field { flex: 1 1 140px; min-width: 0; }
+.guide-ownflight .guide-search { margin-bottom: 0; }
+.guide-ownflight-lead { display: flex; align-items: baseline; gap: 6px; }
 
 /* Stay step: Carta-designs-it CTA, map/list switch, tier chips + legend. */
 .guide-design-btn {
