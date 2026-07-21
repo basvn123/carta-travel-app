@@ -1370,6 +1370,11 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
                                   {(() => { const m = flightMeta(flyIn, data?.meta?.origins); return m ? t('wizard.flightDur', { dur: fmtFlightDuration(m.min) }) : ''; })()}
                                   {t('wizard.farePP', { fare: eur(flyIn.has_exact ? flyIn.exact_eur : flyIn.cheapest.eur) })}
                                 </small>
+                                {dateMode === 'flex' && flyIn.cheapest && (
+                                  <small className="guide-flight-side-date">
+                                    <CalendarIcon size={9} /> {t('wizard.flexDepartDate', { date: fmtDate(flyIn.cheapest.date, true) })}
+                                  </small>
+                                )}
                                 {!flyIn.has_exact && dateMode === 'exact' && flyIn.cheapest && (
                                   <small className="guide-route-warn">
                                     <AlertIcon size={9} /> {t('wizard.noFareForDate', { date: fmtDate(startDate, true), date2: fmtDate(flyIn.cheapest.date, true) })}
@@ -1773,6 +1778,11 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
                                   <small className="guide-flight-side-breakdown">
                                     {t('wizard.kmFromLast', { km: flyHome.km, last: lastStopDest.city })}
                                     {flyHome.is_out_anchor ? ` ${t('wizard.roundTripNote')}` : ''}
+                                  </small>
+                                )}
+                                {dateMode === 'flex' && flyHome.ret_cheapest && (
+                                  <small className="guide-flight-side-date">
+                                    <CalendarIcon size={9} /> {t('wizard.flexReturnDate', { date: fmtDate(flyHome.ret_cheapest.date, true) })}
                                   </small>
                                 )}
                                 {!flyHome.has_exact && dateMode === 'exact' && flyHome.ret_cheapest && (
