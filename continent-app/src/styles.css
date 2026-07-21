@@ -358,6 +358,13 @@ input, select {
      the two share the right edge stacked, rather than overlapping. Once the
      guide is dismissed the pill has the corner to itself. */
   .map-guide { right: 10px; margin-top: 46px; }
+
+  /* When the destinations list is open it becomes a full-width overlay (see
+     .results-list below), so the guide pill would float on top of the list.
+     Hide it while the list is open; it returns once the list is collapsed and
+     the map is visible again. Desktop keeps the pill (list is a side gutter
+     there, not an overlay, so there's nothing to cover). */
+  .app:not(.list-collapsed) .map-guide { display: none; }
 }
 
 /* ───────── Language picker: a compact flag pill in the header that switches
