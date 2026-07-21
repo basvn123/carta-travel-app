@@ -44,6 +44,15 @@ ROOT = Path(__file__).parent
 DATA = ROOT / "app_data" / "app_data.json"
 CACHE = ROOT / "app_data" / "web_img_cache.json"
 
+
+def _atomic_write(path, text):
+    """Write via temp + Path.replace so a concurrent read / AV scan / crash can't
+    truncate or corrupt the file mid-write (the OSError 22 that killed the full
+    image sweep). Path.replace is an atomic rename on the same filesystem."""
+    tmp = path.with_suffix(path.suffix + ".tmp")
+    tmp.write_text(text, encoding="utf-8")
+    tmp.replace(path)
+
 UA = ("CartaTravelApp-enrich/1.0 "
       "(https://github.com/basvn123; contact: bas.vannieuwenhuyse123@gmail.com)")
 HEADERS = {"User-Agent": UA, "Accept": "application/json"}
@@ -272,13 +281,12 @@ def main():
                     _dirty += 1
                     done += 1
                     if _dirty >= SAVE_EVERY:
-                        CACHE.write_text(json.dumps(cache, ensure_ascii=False),
-                                         encoding="utf-8")
+                        _atomic_write(CACHE, json.dumps(cache, ensure_ascii=False))
                         _dirty = 0
                 if done % 500 == 0:
                     hits = sum(1 for v in cache.values() if v.get("img"))
                     print(f"  {done}/{len(todo)}  (cache hits: {hits})")
-        CACHE.write_text(json.dumps(cache, ensure_ascii=False), encoding="utf-8")
+        _atomic_write(CACHE, json.dumps(cache, ensure_ascii=False))
 
     # re-read fresh: a concurrent harvest may have rewritten app_data.json
     # during the (long) fetch phase, so never apply onto a stale in-memory copy.
@@ -290,7 +298,7 @@ def main():
         if card and card.get("img"):
             it["img"] = card["img"]
             filled += 1
-    DATA.write_text(json.dumps(data, ensure_ascii=False), encoding="utf-8")
+    _atomic_write(DATA, json.dumps(data, ensure_ascii=False))
     rate = 100 * filled // max(1, len(todo_all))
     print(f"applied: {filled} images filled ({rate}% of still-missing)")
 
