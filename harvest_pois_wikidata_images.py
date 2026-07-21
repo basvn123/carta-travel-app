@@ -43,7 +43,7 @@ WDQS = "https://query.wikidata.org/sparql"
 UA = "CartaTravelApp-wikidata-images/1.0 (bas.vannieuwenhuyse123@gmail.com)"
 BOX_DEG = 0.08          # +-0.08 deg box (~9 km lat) around each city centre
 QLIMIT = 6000           # cap rows so a dense-city box can't overflow the WDQS response
-MATCH_M = 180.0         # a POI accepts a Wikidata image within this distance if names overlap
+MATCH_M = 120.0         # a POI accepts a Wikidata image within this distance if names overlap
 TIGHT_M = 55.0          # ...or this distance even without a name-token overlap
 THUMB_PX = 640
 DELAY_S = 1.1           # polite base delay between WDQS queries
@@ -74,7 +74,8 @@ def load(p):
 
 
 def fold(s):
-    s = (s or "").translate(str.maketrans({"l": "l", "o": "o", "ss": "ss"}))
+    s = (s or "").translate(str.maketrans({"ł": "l", "Ł": "l",
+                                            "ø": "o", "ß": "ss"}))
     s = unicodedata.normalize("NFKD", s).encode("ascii", "ignore").decode()
     return s.lower()
 
@@ -113,26 +114,37 @@ def dest_center(d):
 
 
 # --------------------------------------------------------------------------- #
-def query_box(lat, lon, lang):
-    """Return [(qid, lat, lon, thumb_url, label)] for imaged Wikidata items in the
-    box around (lat, lon). Raises on transport errors so the caller can back off."""
-    w, s = lon - BOX_DEG, lat - BOX_DEG
-    e, n = lon + BOX_DEG, lat + BOX_DEG
-    langs = f"{lang},en" if lang != "en" else "en"
+def img_name_tokens(thumb):
+    """Name tokens from a Commons FilePath thumb URL - the filename is usually
+    descriptive (Grand_Place_Brussels.jpg), giving a free name signal without the
+    (too-slow) WDQS label service."""
+    if "Special:FilePath/" not in thumb:
+        return set()
+    fn = urllib.parse.unquote(thumb.split("Special:FilePath/", 1)[1].split("?", 1)[0])
+    return tokens(fn.rsplit(".", 1)[0])
+
+
+def query_box(lat, lon, deg=BOX_DEG):
+    """Return [(qid, lat, lon, thumb_url)] for imaged Wikidata items in the +-deg
+    box around (lat, lon). LABEL-FREE on purpose: the wikibase:label service makes
+    dense-metro boxes exceed the WDQS stream/timeout and truncates the response;
+    we name-match on the Commons filename in assign instead. Raises on transport
+    errors (incl. timeout on a too-dense box) so the caller can shrink the box."""
+    w, s = lon - deg, lat - deg
+    e, n = lon + deg, lat + deg
     q = f"""
-SELECT ?item ?loc ?img ?itemLabel WHERE {{
+SELECT ?item ?loc ?img WHERE {{
   SERVICE wikibase:box {{
     ?item wdt:P625 ?loc .
     bd:serviceParam wikibase:cornerWest "Point({w} {s})"^^geo:wktLiteral .
     bd:serviceParam wikibase:cornerEast "Point({e} {n})"^^geo:wktLiteral .
   }}
   ?item wdt:P18 ?img .
-  SERVICE wikibase:label {{ bd:serviceParam wikibase:language "{langs}". }}
 }}
 LIMIT {QLIMIT}"""
     url = WDQS + "?format=json&query=" + urllib.parse.quote(q)
     req = urllib.request.Request(url, headers={"User-Agent": UA, "Accept": "application/sparql-results+json"})
-    with urllib.request.urlopen(req, timeout=75) as r:
+    with urllib.request.urlopen(req, timeout=65) as r:
         body = r.read()            # read fully, then parse (a streamed json.load can tear on a big/slow response)
     data = json.loads(body)
     out = []
@@ -147,10 +159,9 @@ LIMIT {QLIMIT}"""
         img = b.get("img", {}).get("value")               # commons FilePath URL
         if not img:
             continue
-        thumb = img + (("&" if "?" in img else "?") + f"width={THUMB_PX}")
+        thumb = img + ("&" if "?" in img else "?") + f"width={THUMB_PX}"
         qid = b.get("item", {}).get("value", "").rsplit("/", 1)[-1]
-        label = b.get("itemLabel", {}).get("value", "")
-        out.append((qid, plat, plon, thumb, label))
+        out.append((qid, plat, plon, thumb))
     return out
 
 
@@ -168,24 +179,23 @@ def harvest(limit=None):
     done = 0
     for i, d in todo:
         lat, lon = dest_center(d)
-        lang = COUNTRY_LANG.get((d.get("iso2") or "").upper(), "en")
-        attempt = 0
-        while True:
-            try:
-                cache[i] = query_box(lat, lon, lang)
+        result, got = [], False
+        # Try the full box; on a timeout (too-dense metro) shrink and retry so we
+        # still capture the centre cluster instead of losing the dest entirely.
+        for deg in (BOX_DEG, BOX_DEG / 2, BOX_DEG / 4):
+            for attempt in range(len(BACKOFFS) + 1):
+                try:
+                    result = query_box(lat, lon, deg); got = True; break
+                except urllib.error.HTTPError as e:
+                    if e.code == 429 and attempt < len(BACKOFFS):
+                        time.sleep(BACKOFFS[attempt]); continue
+                    got = e.code in (400, 404)     # bad query -> accept empty, stop
+                    break
+                except Exception:
+                    break                          # timeout/URL error -> shrink the box
+            if got:
                 break
-            except urllib.error.HTTPError as e:
-                if e.code == 429 and attempt < len(BACKOFFS):
-                    time.sleep(BACKOFFS[attempt]); attempt += 1; continue
-                if e.code in (400, 404):
-                    cache[i] = []; break
-                if attempt < len(BACKOFFS):
-                    time.sleep(BACKOFFS[attempt]); attempt += 1; continue
-                print(f"  HTTP {e.code} on {i}; skip"); cache[i] = []; break
-            except Exception as e:
-                if attempt < len(BACKOFFS):
-                    time.sleep(BACKOFFS[attempt]); attempt += 1; continue
-                print(f"  {type(e).__name__} on {i}; skip"); cache[i] = []; break
+        cache[i] = result
         done += 1
         if done % 25 == 0:
             _atomic_write(CACHE, json.dumps(cache, ensure_ascii=False))
@@ -215,21 +225,27 @@ def assign(dry_run=False):
         if not pois:
             continue
         items_full = d["activities"]["items_full"]
+        etoks = [img_name_tokens(e[3]) for e in ents]     # filename tokens per entity
+        used = set()                                       # one entity image -> one POI
         local = 0
         for name, plat, plon, idx in pois:
             ptoks = tokens(name)
-            best = None  # (dist, thumb)
-            for qid, elat, elon, thumb, label in ents:
+            best = None  # (rank_key, ent_idx, thumb)
+            for j, (qid, elat, elon, thumb) in enumerate(ents):
+                if j in used:
+                    continue
                 dm = haversine_m(plat, plon, elat, elon)
                 if dm > MATCH_M:
                     continue
-                overlap = ptoks & tokens(label)
+                overlap = bool(ptoks & etoks[j])
                 if dm <= TIGHT_M or overlap:
-                    if best is None or dm < best[0]:
-                        best = (dm, thumb)
+                    key = (0 if overlap else 1, dm)        # name-confirmed first, then nearest
+                    if best is None or key < best[0]:
+                        best = (key, j, thumb)
             if best:
-                items_full[idx]["img"] = best[1]
+                items_full[idx]["img"] = best[2]
                 items_full[idx]["img_src"] = "wikidata"
+                used.add(best[1])
                 local += 1
         if local:
             d["activities"]["wikidata_img_added"] = local
