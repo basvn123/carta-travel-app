@@ -424,6 +424,17 @@ TASKS = [
                  "high-value image/description gap filled."),
     },
     {
+        "key": "poi_images_wikidata",
+        "title": "Bulk POI images via Wikidata P18 (fast)",
+        "cadence": "backfill",
+        "writes_app_data": True,
+        "cmds": [[PY, "harvest_pois_wikidata_images.py", "all"]],
+        "note": ("one WDQS box query per dest (~1,500) then match image-less POIs "
+                 "to nearby imaged Wikidata entities by distance + Commons filename. "
+                 "FAR faster than the per-POI Commons sweep - run this FIRST, then "
+                 "poi_images mops up the remainder. Additive (never nulls)."),
+    },
+    {
         "key": "poi_images",
         "title": "All-POI image sweep (Commons + Wikipedia, best-effort)",
         "cadence": "backfill",
