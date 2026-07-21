@@ -424,6 +424,21 @@ TASKS = [
                  "high-value image/description gap filled."),
     },
     {
+        "key": "poi_images",
+        "title": "All-POI image sweep (Commons + Wikipedia, best-effort)",
+        "cadence": "backfill",
+        "writes_app_data": True,
+        "retries": 12,
+        "cmds": [
+            [PY, "enrich_images_commons.py"],
+            [PY, "enrich_images_web.py"],
+        ],
+        "note": ("gathers images for the FULL image-less POI set (long tail incl.), "
+                 "not just must-see. Resumable + atomic writes + auto-retry, but "
+                 "multi-hour and Wikimedia-rate-limited - run when no other session "
+                 "hits Wikipedia/Commons. Additive (never nulls)."),
+    },
+    {
         "key": "poi_enrich",
         "title": "POI images + rich descriptions (additive)",
         "cadence": "backfill",
@@ -558,7 +573,22 @@ def main():
             if t.get("run"):
                 ok = bool(t["run"](ctx))
             else:
-                ok = all(run_cmd(c) == 0 for c in t["cmds"])
+                # Each cmd may retry: resumable harvesters pick up from their cache,
+                # so a transient failure (rate-limit, a flaky file write) just resumes.
+                retries = t.get("retries", 0)
+                ok = True
+                for c in t["cmds"]:
+                    attempt = 0
+                    while (rc := run_cmd(c)) != 0:
+                        attempt += 1
+                        if attempt > retries:
+                            ok = False
+                            break
+                        log(f"  cmd failed (rc={rc}); retry {attempt}/{retries} "
+                            f"in 30s (resumes from cache)")
+                        time.sleep(30)
+                    if not ok:
+                        break
             dt = int(time.time() - t0)
 
             if ok:
