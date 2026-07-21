@@ -36,7 +36,7 @@ export function MapLegend({ transportMode = 'plane', counts = {} }) {
       {open && (
         <div className="legend-body">
           <div className="legend-row">
-            <span className="legend-pill"><PlaneIcon size={10} /><i>€000</i></span>
+            <span className="legend-pill"><PlaneIcon size={13} /><i>€000</i></span>
             <span className="legend-text">
               <b>{t('legend.flight')}</b>
               <em>{t('legend.flightDesc', { km: PLANE_REACH_KM })}</em>
@@ -53,7 +53,7 @@ export function MapLegend({ transportMode = 'plane', counts = {} }) {
             </div>
           ) : (
             <div className="legend-row">
-              <span className="legend-pill"><CarIcon size={10} /><i>€000</i></span>
+              <span className="legend-pill"><CarIcon size={13} /><i>€000</i></span>
               <span className="legend-text">
                 <b>{t('legend.drive')}</b>
                 <em>{t('legend.driveDesc')}</em>

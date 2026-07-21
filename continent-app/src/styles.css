@@ -5167,6 +5167,9 @@ input, select {
   font-style: normal;
 }
 .legend-pill i { font-style: normal; }
+/* The plane/car glyphs sit at ~13px; a heavier stroke keeps them legible on
+   standard-DPI screens, where the toggle's 1.7 stroke washes out to a faint line. */
+.legend-pill svg { stroke-width: 2.1px; flex: none; }
 .legend-pill.is-deal {
   background: var(--accent);
   border-color: var(--accent);
