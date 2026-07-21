@@ -48,7 +48,7 @@ function TabFallback() {
   return <div className="loading-screen"><div className="pulse" /></div>;
 }
 import { tripDaysBetween, DEFAULT_LIFESTYLE } from './lib/runtime_pricing.js';
-import { loadInitialState, persistState } from './lib/urlState.js';
+import { loadInitialState } from './lib/urlState.js';
 import { AuthProvider, useAuth } from './auth/AuthContext.jsx';
 import { I18nProvider, useI18n } from './i18n/index.jsx';
 import { AuthModal } from './auth/AuthModal.jsx';
@@ -60,6 +60,7 @@ import { originHome } from './lib/origins.js';
 import { useAppData } from './hooks/useAppData.js';
 import { useDestinationSearch } from './hooks/useDestinationSearch.js';
 import { useAccountSync } from './hooks/useAccountSync.js';
+import { useUrlSync } from './hooks/useUrlSync.js';
 
 // Once someone picks "continue without an account" on the entry gate, don't
 // ask again on this device, only a fresh sign-in should bring accounts back.
@@ -308,21 +309,12 @@ function TravelApp() {
   });
 
   // Keep the URL + localStorage in sync so the view is shareable and survives a
-  // reload. Only after data has loaded (so we don't clobber the shared link with
-  // half-initialized state). Debounced: this fires on ~17 state values, and
-  // Safari rate-limits history.replaceState (100 calls / 30s), rapid slider
-  // drags or favorite-toggling could hit that ceiling unthrottled.
-  useEffect(() => {
-    if (!data) return undefined;
-    const timer = setTimeout(() => persistState({
-      departDate, returnDate, choices, priceMode, countryFilter,
-      tripKinds, priceRange, priceBounds, selectedId, favorites, sortKey, showFavOnly,
-      minTier, unescoOnly, topBeachOnly, topPick, activeTab,
-    }), 300);
-    return () => clearTimeout(timer);
-  }, [data, departDate, returnDate, choices, priceMode, countryFilter,
-      tripKinds, priceRange, priceBounds, selectedId, favorites, sortKey, showFavOnly,
-      minTier, unescoOnly, topBeachOnly, topPick, activeTab]);
+  // reload (debounced; runs only once data has loaded). See useUrlSync.
+  useUrlSync(!!data, {
+    departDate, returnDate, choices, priceMode, countryFilter,
+    tripKinds, priceRange, priceBounds, selectedId, favorites, sortKey, showFavOnly,
+    minTier, unescoOnly, topBeachOnly, topPick, activeTab,
+  });
 
   // Sync a signed-in user's filter/lifestyle preferences with their account,
   // and expose the "save"/"load a saved trip" actions.
