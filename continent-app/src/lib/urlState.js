@@ -50,7 +50,7 @@ export function encodeState({
   // Store anything that differs from the APP default ('pp', see App.jsx),
   // else "Total" silently flips back to per-person on reload.
   if (priceMode && priceMode !== 'pp') q.set('pm', priceMode);
-  if (countryFilter && countryFilter !== 'all') q.set('cf', countryFilter);
+  if (countryFilter && countryFilter.length) q.set('cf', countryFilter.join('.'));
   if (tripKinds && tripKinds.length) q.set('tk', tripKinds.join('.'));
   // Only store a price range if it's actually a narrowing of the full bounds.
   if (priceRange && priceBounds &&
@@ -85,7 +85,8 @@ export function decodeState(search) {
   if (has('t')) out.transport_mode = q.get('t');
   if (has('o')) out.origin = q.get('o');
   if (has('pm')) out.priceMode = q.get('pm');
-  if (has('cf')) out.countryFilter = q.get('cf');
+  // iso2 codes joined by '.', legacy links stored a single code (still parses).
+  if (has('cf')) out.countryFilter = q.get('cf').split('.').filter((c) => c && c !== 'all');
   if (has('tk')) out.tripKinds = q.get('tk').split('.').filter(Boolean);
   if (has('pr')) {
     const [lo, hi] = q.get('pr').split('.').map(Number);

@@ -124,7 +124,7 @@ export function MapView({
           geometry: { type: 'Point', coordinates: [p.lon, p.lat] },
           properties: {
             id: p.id, kind: 'caronly',
-            tip: `${p.city}, ${p.country} - no flight from your airport; drivable`,
+            tip: `${p.city}, ${p.country}: no flight from your airport; drivable`,
           },
         });
         continue;
@@ -216,7 +216,7 @@ export function MapView({
     if (p && hasLngLat(p)) {
       const carOnly = tm === 'plane' && !p.planeOk;
       selectedMarkerRef.current = carOnly
-        ? createDot(p, map, onSelectRef, 'caronly', `${p.city}, ${p.country} - no flight from your airport; drivable`, true)
+        ? createDot(p, map, onSelectRef, 'caronly', `${p.city}, ${p.country}: no flight from your airport; drivable`, true)
         : createPriced(p, map, onSelectRef, pm, deal);
       return;
     }

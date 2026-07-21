@@ -2375,10 +2375,16 @@ input, select {
   padding: 32px 24px 48px;
   color: var(--ink-soft);
 }
-/* Stay address + first day share the top row; the date keeps a sane width. */
+/* Stay address + first day share the top row. The address input needs the
+   room (its placeholder is long), so give it the flex space and let the date
+   column hug its fixed 130px DateField instead of reserving a fat 200px slot.
+   These selectors are deliberately more specific than the generic
+   `.day-build-row .trip-field { flex: 1 }` rule below so they win the cascade.
+   On a narrow container the address keeps a min-width so the date wraps
+   beneath it at full width rather than starving the input. */
 .day-build-top { flex-wrap: wrap; align-items: flex-end; }
-.day-build-top .day-build-field { flex: 1 1 300px; min-width: 0; }
-.day-build-top .day-build-date { flex: 0 1 200px; min-width: 160px; }
+.day-build-row.day-build-top .day-build-field { flex: 1 1 320px; min-width: 240px; }
+.day-build-row.day-build-top .day-build-date { flex: 0 0 auto; min-width: 0; }
 /* Desktop: before a stay is chosen the landing is a centered, readable card.
    Once the explore map appears (.day-landing-wide) the page goes full width
    so the map can be the hero - but every form-like piece keeps a capped,

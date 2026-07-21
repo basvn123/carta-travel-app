@@ -63,7 +63,12 @@ export function useAccountSync({
         setChoices((prev) => ({ ...prev, ...incoming }));
       }
       if (settings.priceMode) setPriceMode(settings.priceMode);
-      if (settings.countryFilter) setCountryFilter(settings.countryFilter);
+      // Older accounts synced a single country string; normalize to the array shape.
+      if (settings.countryFilter != null) {
+        setCountryFilter(Array.isArray(settings.countryFilter)
+          ? settings.countryFilter
+          : (settings.countryFilter !== 'all' ? [settings.countryFilter] : []));
+      }
       if (settings.tripKinds) setTripKinds(settings.tripKinds);
       if (settings.minTier != null) setMinTier(settings.minTier);
       // Legacy accounts synced a min-gems (1-5) beauty floor; map it onto the

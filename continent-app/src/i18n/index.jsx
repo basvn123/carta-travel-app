@@ -46,9 +46,11 @@ function initialLang() {
     const stored = localStorage.getItem(LANG_KEY);
     if (stored && CATALOGS[stored]) return stored;
   } catch { /* storage unavailable */ }
-  // First visit: match the browser language if we have it, else English.
-  const nav = (typeof navigator !== 'undefined' && navigator.language || 'en').slice(0, 2).toLowerCase();
-  return CATALOGS[nav] ? nav : 'en';
+  // First visit: default to English. (We used to auto-match the browser
+  // language, but the app's editorial data is English-first, so English is the
+  // intended default; a visitor can still switch via the language picker, and
+  // that choice is honored above on the next visit.)
+  return 'en';
 }
 
 const interpolate = (msg, vars) => (vars

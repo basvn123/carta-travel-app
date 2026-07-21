@@ -135,7 +135,21 @@ export function useDestinationSearch({
     if (!priceBounds) return;
     if (!initRangeApplied.current && initialPriceRange) {
       initRangeApplied.current = true;
-      setPriceRange(initialPriceRange);
+      // Clamp the restored range to the CURRENT bounds. A price range persisted
+      // in the URL/localStorage is a snapshot of some earlier session's prices;
+      // a fares/data refresh (or a group-size/mode change baked into the link)
+      // shifts every total, and a stored range that now sits entirely outside
+      // the new bounds silently filters out every destination, leaving the map
+      // and list empty with no visible filter to explain it, and it never
+      // recovers because this init runs once. So: keep the overlap when the
+      // ranges still intersect, otherwise fall back to the full bounds (show
+      // everything) rather than latch a window that matches nothing.
+      const [lo, hi] = initialPriceRange;
+      const [bLo, bHi] = priceBounds;
+      const overlaps = Number.isFinite(lo) && Number.isFinite(hi) && lo <= bHi && hi >= bLo;
+      setPriceRange(overlaps
+        ? [Math.max(bLo, Math.min(lo, bHi)), Math.min(bHi, Math.max(hi, bLo))]
+        : priceBounds);
     } else {
       setPriceRange(priceBounds);
     }
@@ -146,7 +160,7 @@ export function useDestinationSearch({
   const filtered = useMemo(() => {
     return pricedAll.filter((p) => {
       if (q && !(normalize(p.city).includes(q) || normalize(p.country).includes(q))) return false;
-      if (countryFilter !== 'all' && p.iso2 !== countryFilter) return false;
+      if (countryFilter.length && !countryFilter.includes(p.iso2)) return false;
       if (priceRange) {
         const v = priceMode === 'pp' ? p.pp : p.total;
         if (v < priceRange[0] || v > priceRange[1]) return false;
@@ -176,7 +190,7 @@ export function useDestinationSearch({
   const unreachable = useMemo(() => {
     return unreachableAll.filter((p) => {
       if (q && !(normalize(p.city).includes(q) || normalize(p.country).includes(q))) return false;
-      if (countryFilter !== 'all' && p.iso2 !== countryFilter) return false;
+      if (countryFilter.length && !countryFilter.includes(p.iso2)) return false;
       if (tripKinds.length > 0 && !matchesAnyKind(p.categories, tripKinds)) return false;
       if (minTier > 0 && (p.rating?.tier ?? 0) < minTier) return false;
       if (unescoOnly && !p.beauty?.unesco) return false;

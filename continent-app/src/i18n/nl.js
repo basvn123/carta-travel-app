@@ -63,6 +63,7 @@ export const nl = {
   'filter.country': 'Land',
   'filter.allCountries': 'Alle landen ({n})',
   'filter.searchCountry': 'Zoek een land...',
+  'filter.nCountries': '{n} landen',
   'filter.rating': 'Score',
   'rating.any': 'Alles',
   'rating.anyTitle': 'Elke score',
