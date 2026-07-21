@@ -77,6 +77,7 @@ export function useDestinationSearch({
         rating: d.rating || null,
         bathing_water: d.bathing_water || null,
         crowding: d.crowding || null,
+        image: d.image?.url || null,     // hero thumbnail for the map hover card
       };
       const b = composeTrip(d, departDate, returnDate, choices, data.destinations);
       if (b == null) {
