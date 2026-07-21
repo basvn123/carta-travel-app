@@ -15,14 +15,16 @@ const CAR_PATH = '<path d="M4 13l1.4-4.1A2 2 0 0 1 7.3 7.5h9.4a2 2 0 0 1 1.9 1.4
 const SVG_OPEN = '<svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">';
 const PLANE_SVG = `${SVG_OPEN}${PLANE_PATH}</svg>`;
 const CAR_SVG = `${SVG_OPEN}${CAR_PATH}</svg>`;
-// Glyph SVG for baking into the price pills. Solid black stroke, used only as
-// an alpha mask - tintGlyph() recolours it per pill state.
-const GLYPH_PX = 26;
-const iconSvg = (inner) => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="${GLYPH_PX}" height="${GLYPH_PX}" fill="none" stroke="#000" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">${inner}</svg>`;
-// A baked pill per (mode, deal): rounded border + transport glyph on the left,
-// with a 9-slice stretch band so icon-text-fit sizes it to the €-price. Mirrors
-// .price-pill (paper/ink, rust for deals). Device px; ÷2 (pixelRatio) = logical.
-const PILL = { PR: 2, H: 36, R: 8, B: 2, padL: 9, glyph: 22, gap: 6, padR: 15 };
+// Glyph SVG for baking into the price pills. Matches the legend's line glyphs
+// (TransportIcons.jsx): 1.7 stroke on the 24 viewBox, rendered at its exact
+// device size so the browser rasterises the vector 1:1 (no upscaling blur).
+// Solid black stroke is only the alpha mask - tintGlyph() recolours it.
+const iconSvg = (inner, px) => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="${px}" height="${px}" fill="none" stroke="#000" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">${inner}</svg>`;
+// A baked pill per (mode, deal): rounded border + a legend-matched transport
+// glyph on the left, with a 9-slice stretch band so icon-text-fit sizes it to
+// the €-price. Mirrors .price-pill (paper/ink, rust for deals). Dims are LOGICAL
+// px; PR supersamples the bitmap so the glyph stays crisp on hi-dpi screens.
+const PILL = { PR: 3, h: 18, r: 4, b: 1, padL: 6, glyph: 13, gap: 4, padR: 8 };
 const pillName = (mode, deal) => `pill-${mode}${deal ? '-deal' : ''}`;
 // Faceted diamond, matching GemRating.jsx, for the hover card's hidden-gem tag.
 const GEM_SVG = '<svg viewBox="0 0 24 24" width="9" height="9" fill="currentColor" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 L19 9 L12 21 L5 9 Z"/></svg>';
@@ -357,17 +359,20 @@ function ensureLayers(map) {
 // Bake one stretchable pill image per (mode, deal) and register it. Full-colour
 // (not SDF) so the border, paper/rust fill and tinted glyph all coexist.
 async function addPricePills(map) {
-  const { PR, H, R, B, padL, glyph, gap, padR } = PILL;
-  const leftFixed = padL + glyph + gap;   // device px reserved for the glyph
-  const band = 12;                         // min stretchable content width
+  const S = PILL.PR;                       // logical -> device supersample
+  const H = PILL.h * S, R = PILL.r * S, B = PILL.b * S;
+  const padL = PILL.padL * S, glyph = PILL.glyph * S, gap = PILL.gap * S, padR = PILL.padR * S;
+  const leftFixed = padL + glyph + gap;    // device px reserved for the glyph
+  const band = 8 * S;                      // min stretchable content width
   const W = leftFixed + band + padR;
-  const content = [leftFixed, 6, leftFixed + band, H - 6];
-  const stretchX = [[leftFixed + 2, leftFixed + band - 2]];
-  const stretchY = [[H / 2 - 5, H / 2 + 5]];
-  const opts = { pixelRatio: PR, content, stretchX, stretchY };
+  const content = [leftFixed, B, leftFixed + band, H - B];
+  const stretchX = [[leftFixed + S, leftFixed + band - S]];
+  const stretchY = [[Math.round(H / 2 - 3 * S), Math.round(H / 2 + 3 * S)]];
+  const opts = { pixelRatio: S, content, stretchX, stretchY };
 
   for (const mode of ['plane', 'car']) {
-    const raw = await loadSvgImage(iconSvg(mode === 'car' ? CAR_PATH : PLANE_PATH));
+    // Render the glyph at its exact device size -> crisp 1:1 vector raster.
+    const raw = await loadSvgImage(iconSvg(mode === 'car' ? CAR_PATH : PLANE_PATH, glyph));
     if (!raw) continue;
     for (const deal of [false, true]) {
       const name = pillName(mode, deal);
@@ -381,10 +386,9 @@ async function addPricePills(map) {
       ctx.lineWidth = B;
       ctx.strokeStyle = deal ? ACCENT : INK;
       ctx.stroke();
+      // Full-strength glyph, like the legend (no opacity knock-down).
       const g = tintGlyph(raw, glyph, deal ? PAPER : INK);
-      ctx.globalAlpha = deal ? 0.95 : 0.72;
-      ctx.drawImage(g, padL, (H - glyph) / 2, glyph, glyph);
-      ctx.globalAlpha = 1;
+      ctx.drawImage(g, padL, Math.round((H - glyph) / 2), glyph, glyph);
       map.addImage(name, ctx.getImageData(0, 0, W, H), opts);
     }
   }
