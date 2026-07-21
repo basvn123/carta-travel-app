@@ -413,6 +413,17 @@ TASKS = [
                  "newer Overture release (edit RELEASE). Run BEFORE poi_enrich."),
     },
     {
+        "key": "must_descs",
+        "title": "Must-see POI images + descriptions (high-value subset only)",
+        "cadence": "backfill",
+        "writes_app_data": True,
+        "cmds": [[PY, "enrich_must_descs.py"]],
+        "note": ("enriches ONLY the day-planner-surfaced must-see + worth-the-detour "
+                 "POIs (a few thousand), not the 87k long tail; cheap, additive, "
+                 "resumable. Prefer this over poi_enrich when you only want the "
+                 "high-value image/description gap filled."),
+    },
+    {
         "key": "poi_enrich",
         "title": "POI images + rich descriptions (additive)",
         "cadence": "backfill",
