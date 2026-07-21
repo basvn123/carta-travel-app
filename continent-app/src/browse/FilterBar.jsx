@@ -9,7 +9,7 @@ import { eur } from '../lib/format.js';
 import { useI18n } from '../i18n/index.jsx';
 import { NumberField, DualRange } from '../components/FilterControls.jsx';
 import {
-  tierCutoffs, tierForScore, isFullRatingRange, FULL_RATING_RANGE, RATING_MAX,
+  isFullRatingRange, FULL_RATING_RANGE, RATING_MAX,
 } from '../lib/rating.js';
 
 export function FilterBar({
@@ -121,15 +121,15 @@ export function FilterBar({
 
   // Rating slicer: a dual-handle band over the 0-10 traveller score. The slider
   // works in a 0-100 integer domain (so each step is 0.1 of a point); state is
-  // kept in real 0-10 units. Tier cutoffs (Michelin idiom, rating_layer.py) come
-  // from the live scoring model and are drawn on the rail as guide ticks, with a
-  // caption that translates the current band into plain "worth a detour" advice.
-  const cuts = tierCutoffs(data?.meta);
-  const ratingMarks = [1, 2, 3].map((tier) => ({ value: cuts[tier] * 10 }));
+  // kept in real 0-10 units. A plain 0/5/10 scale sits under the rail; the
+  // caption echoes the chosen band as numbers.
+  const ratingAxis = [
+    { value: 0, label: '0' },
+    { value: RATING_MAX * 5, label: '5' },
+    { value: RATING_MAX * 10, label: '10' },
+  ];
   const [rLo, rHi] = ratingRange;
   const ratingNarrowed = !isFullRatingRange(ratingRange);
-  const loTier = tierForScore(rLo, cuts);
-  const TIER_WORD = { 1: t('rating.visit'), 2: t('rating.detour'), 3: t('rating.journey') };
 
   return (
     <div className={`filter-bar ${mobileFiltersOpen ? 'mobile-open' : 'mobile-collapsed'}`}>
@@ -453,23 +453,15 @@ export function FilterBar({
                     value={[Math.round(rLo * 10), Math.round(rHi * 10)]}
                     onChange={([a, b]) => setRatingRange([a / 10, b / 10])}
                     fmt={(v) => (v / 10).toFixed(1)}
-                    marks={ratingMarks}
+                    axis={ratingAxis}
                     ariaLabel={t('filter.rating')}
                     hideValueRow
                   />
                   <div className="rating-band-caption">
                     {ratingNarrowed ? (
-                      <>
-                        <span className="rating-band-nums">
-                          {rLo.toFixed(1)}<span className="rating-band-dash">–</span>{rHi.toFixed(1)}
-                        </span>
-                        {loTier > 0 && (
-                          <span className={`rating-band-tier rt-${loTier}`} title={TIER_WORD[loTier]}>
-                            {Array.from({ length: loTier }, (_, i) => <GemIcon key={i} filled size={8} />)}
-                            <span className="rating-band-word">{TIER_WORD[loTier]}</span>
-                          </span>
-                        )}
-                      </>
+                      <span className="rating-band-nums">
+                        {rLo.toFixed(1)}<span className="rating-band-dash">–</span>{rHi.toFixed(1)}
+                      </span>
                     ) : (
                       <span className="rating-band-any">{t('rating.anyTitle')}</span>
                     )}

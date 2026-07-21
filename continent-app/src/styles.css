@@ -3584,14 +3584,6 @@ input, select {
   letter-spacing: 0.02em;
 }
 .rating-band-dash { margin: 0 1px; opacity: 0.7; }
-.rating-band-tier {
-  display: inline-flex;
-  align-items: center;
-  gap: 3px;
-  font-weight: 600;
-}
-.rating-band-tier .gem { flex: none; }
-.rating-band-word { text-transform: lowercase; }
 .rating-band-any { font-style: italic; opacity: 0.85; }
 .gem-toggle { align-self: flex-start; }
 
@@ -3774,6 +3766,27 @@ input, select {
   margin-top: 2px;
   font-variant-numeric: tabular-nums;
 }
+
+/* Static 0/5/10 scale under the rating rail: a plain reference, positioned by
+   value so the endpoints sit flush with the track ends. */
+.dual-range-axis {
+  position: relative;
+  height: 12px;
+  margin-top: 3px;
+}
+.dual-range-axis-tick {
+  position: absolute;
+  top: 0;
+  transform: translateX(-50%);
+  font-family: var(--mono);
+  font-size: 9.5px;
+  line-height: 1;
+  color: var(--ink-mute);
+  font-variant-numeric: tabular-nums;
+  pointer-events: none;
+}
+.dual-range-axis-tick:first-child { transform: none; }
+.dual-range-axis-tick:last-child { transform: translateX(-100%); }
 
 /* ─── Stepper (cars / drivers) ─── */
 
@@ -8740,9 +8753,11 @@ input, select {
   align-items: center;
   flex: none;
 }
-.score-chip.xs { font-size: 9.5px; padding: 2px 4px; }
-.score-chip.sm { font-size: 11px; padding: 3px 5px; }
-.score-chip.lg { font-size: 15px; padding: 5px 8px; border-radius: 6px; }
+/* Heavier top padding optically centres the digits: JetBrains Mono sits high
+   in a line-height:1 box, which otherwise leaves a gap under the number. */
+.score-chip.xs { font-size: 9.5px; padding: 3px 4px 2px; }
+.score-chip.sm { font-size: 11px; padding: 4px 5px 3px; }
+.score-chip.lg { font-size: 15px; padding: 6px 8px 4px; border-radius: 6px; }
 .score-chip.rt-3 { background: var(--accent); color: var(--paper); }
 .score-chip.rt-2 { background: var(--accent-bg); color: var(--accent); }
 .score-chip.rt-1 { background: var(--paper-dim); color: var(--ink-soft); border: 1px solid var(--rule); }

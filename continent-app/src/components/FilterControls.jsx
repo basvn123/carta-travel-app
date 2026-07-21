@@ -38,7 +38,7 @@ export function NumberField({ value, min, max, onCommit, ariaLabel, title }) {
 // instant, but the value is only pushed to the parent (which reprices the whole
 // filtered set) debounced during the drag and immediately on release, instead
 // of once per pixel of movement.
-export function DualRange({ min, max, value, onChange, fmt, hideValueRow, marks, ariaLabel }) {
+export function DualRange({ min, max, value, onChange, fmt, hideValueRow, marks, axis, ariaLabel }) {
   const [local, setLocal] = React.useState(value);
   const localRef = React.useRef(value);
   const draggingRef = React.useRef(false);
@@ -99,6 +99,19 @@ export function DualRange({ min, max, value, onChange, fmt, hideValueRow, marks,
           onPointerUp={flush} onKeyUp={flush} className="dual-range-input"
           aria-label={ariaLabel ? `${ariaLabel} maximum` : undefined} />
       </div>
+      {axis && (
+        <div className="dual-range-axis" aria-hidden="true">
+          {axis.map((a) => (
+            <span
+              key={a.value}
+              className="dual-range-axis-tick"
+              style={{ left: `${span > 0 ? ((a.value - min) / span) * 100 : 0}%` }}
+            >
+              {a.label}
+            </span>
+          ))}
+        </div>
+      )}
       {!hideValueRow && (
         <div className="dual-range-vals">
           <span>{fmt(lo)}</span>
