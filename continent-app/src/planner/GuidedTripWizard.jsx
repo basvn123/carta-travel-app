@@ -1864,8 +1864,8 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
                     aria-pressed={pace === p.key}
                   >
                     <span className="guide-transport-icon"><p.Icon size={18} /></span>
-                    <span className="guide-transport-label">{p.label}</span>
-                    <span className="guide-transport-sub">{p.sub}</span>
+                    <span className="guide-transport-label">{t(p.labelKey)}</span>
+                    <span className="guide-transport-sub">{t(p.subKey)}</span>
                   </button>
                 ))}
               </div>

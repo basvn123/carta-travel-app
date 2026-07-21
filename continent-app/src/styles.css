@@ -3551,18 +3551,49 @@ input, select {
 }
 .pill-toggle.on .gem { opacity: 1; }
 
-/* ─── Beauty: minimum-gems button list ─── */
-.beauty-steps .step-gems {
+/* ─── Rating slicer: 0-10 band slider + hidden-gems toggle ─── */
+.rating-control {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+}
+/* Tier-cutoff guide ticks drawn on the slider rail. */
+.dual-range-mark {
+  position: absolute;
+  top: 50%;
+  width: 2px;
+  height: 9px;
+  background: var(--ink-mute);
+  opacity: 0.4;
+  border-radius: 1px;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+.rating-band-caption {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 15px;
+  font-size: 11px;
+  color: var(--ink-mute);
+}
+.rating-band-nums {
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+}
+.rating-band-dash { margin: 0 1px; opacity: 0.7; }
+.rating-band-tier {
   display: inline-flex;
   align-items: center;
   gap: 3px;
-  line-height: 1;
+  font-weight: 600;
 }
-.beauty-steps .step-gems .gem {
-  flex: none;
-  opacity: 0.8;
-}
-.beauty-steps button.seg-on .step-gems .gem { opacity: 1; }
+.rating-band-tier .gem { flex: none; }
+.rating-band-word { text-transform: lowercase; }
+.rating-band-any { font-style: italic; opacity: 0.85; }
+.gem-toggle { align-self: flex-start; }
 
 .reset-filters-btn {
   display: inline-flex;
@@ -6061,8 +6092,8 @@ input, select {
   .filter-bar.mobile-open .segmented { width: 100%; }
   .filter-bar.mobile-open .segmented button { flex: 1; }
   .filter-bar.mobile-open .segmented.seg-icons button { padding: 7px 12px; }
-  .filter-bar.mobile-open .beauty-steps { width: 100%; }
-  .filter-bar.mobile-open .beauty-steps button { flex: 1; }
+  .filter-bar.mobile-open .rating-control { width: 100%; }
+  .filter-bar.mobile-open .rating-control .dual-range { width: 100%; }
 
   /* iOS Safari zooms the viewport when a focused field is < 16px. Bump the
      interactive controls so focusing them doesn't yank the layout around. */
@@ -8807,7 +8838,6 @@ input, select {
   box-shadow: 0 0 0 2px var(--paper), 0 0 0 4px var(--accent);
 }
 .price-pill.is-top { border-color: var(--accent); }
-.step-tier-gems { display: inline-flex; align-items: center; gap: 0; }
 
 /* ============================================================
    Guided wizard v2: entry paths, recap strip, flight map,

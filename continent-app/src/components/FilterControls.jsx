@@ -38,7 +38,7 @@ export function NumberField({ value, min, max, onCommit, ariaLabel, title }) {
 // instant, but the value is only pushed to the parent (which reprices the whole
 // filtered set) debounced during the drag and immediately on release, instead
 // of once per pixel of movement.
-export function DualRange({ min, max, value, onChange, fmt, hideValueRow }) {
+export function DualRange({ min, max, value, onChange, fmt, hideValueRow, marks, ariaLabel }) {
   const [local, setLocal] = React.useState(value);
   const localRef = React.useRef(value);
   const draggingRef = React.useRef(false);
@@ -83,10 +83,21 @@ export function DualRange({ min, max, value, onChange, fmt, hideValueRow }) {
           className="dual-range-fill"
           style={{ left: `${loPct}%`, right: `${100 - hiPct}%` }}
         />
+        {/* Static guide ticks (e.g. rating tier cutoffs) drawn on the rail so
+            the band's meaning is legible without cluttering it with text. */}
+        {marks && marks.map((m) => (
+          <span
+            key={m.value}
+            className="dual-range-mark"
+            style={{ left: `${span > 0 ? ((m.value - min) / span) * 100 : 0}%` }}
+          />
+        ))}
         <input type="range" min={min} max={max} value={lo} onChange={onLo}
-          onPointerUp={flush} onKeyUp={flush} className="dual-range-input" />
+          onPointerUp={flush} onKeyUp={flush} className="dual-range-input"
+          aria-label={ariaLabel ? `${ariaLabel} minimum` : undefined} />
         <input type="range" min={min} max={max} value={hi} onChange={onHi}
-          onPointerUp={flush} onKeyUp={flush} className="dual-range-input" />
+          onPointerUp={flush} onKeyUp={flush} className="dual-range-input"
+          aria-label={ariaLabel ? `${ariaLabel} maximum` : undefined} />
       </div>
       {!hideValueRow && (
         <div className="dual-range-vals">

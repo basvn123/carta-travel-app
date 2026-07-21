@@ -8,6 +8,9 @@ import { CalendarIcon, FilterIcon, LifestyleIcon } from '../components/Icons.jsx
 import { eur } from '../lib/format.js';
 import { useI18n } from '../i18n/index.jsx';
 import { NumberField, DualRange } from '../components/FilterControls.jsx';
+import {
+  tierCutoffs, tierForScore, isFullRatingRange, FULL_RATING_RANGE, RATING_MAX,
+} from '../lib/rating.js';
 
 export function FilterBar({
   data, choices, setChoices,
@@ -21,7 +24,8 @@ export function FilterBar({
   priceRange, setPriceRange,
   priceBounds,
   tripKinds, setTripKinds,
-  minTier, setMinTier,
+  ratingRange, setRatingRange,
+  gemOnly, setGemOnly,
   unescoOnly, setUnescoOnly,
   topBeachOnly, setTopBeachOnly,
   topPick, setTopPick,
@@ -53,7 +57,7 @@ export function FilterBar({
   }, [mobileDatesOpen]);
 
   const advancedActiveCount = tripKinds.length > 0 ? 1 : 0;
-  const beautyActive = (minTier > 0) || unescoOnly || topBeachOnly;
+  const beautyActive = !isFullRatingRange(ratingRange) || gemOnly || unescoOnly || topBeachOnly;
 
   const anyFilterActive =
     countryFilter.length > 0 ||
@@ -66,7 +70,8 @@ export function FilterBar({
   const resetAll = () => {
     setCountryFilter([]);
     setTripKinds([]);
-    setMinTier(0);
+    setRatingRange([...FULL_RATING_RANGE]);
+    setGemOnly(false);
     setUnescoOnly(false);
     setTopBeachOnly(false);
     setTopPick(null);
@@ -114,15 +119,17 @@ export function FilterBar({
     setTopPick({ by, n: parseInt(n, 10) });
   };
 
-  // Minimum rating tier (0 = Any/off). Tiers follow the Michelin Green Guide
-  // idiom (rating_layer.py): 1 = worth a visit, 2 = worth a detour,
-  // 3 = worth the journey, so each step reads as advice, not a number.
-  const RATING_STEPS = [
-    { v: 0, label: t('rating.any'), title: t('rating.anyTitle') },
-    { v: 1, label: t('rating.visit'), title: t('rating.visitTitle') },
-    { v: 2, label: t('rating.detour'), title: t('rating.detourTitle') },
-    { v: 3, label: t('rating.journey'), title: t('rating.journeyTitle') },
-  ];
+  // Rating slicer: a dual-handle band over the 0-10 traveller score. The slider
+  // works in a 0-100 integer domain (so each step is 0.1 of a point); state is
+  // kept in real 0-10 units. Tier cutoffs (Michelin idiom, rating_layer.py) come
+  // from the live scoring model and are drawn on the rail as guide ticks, with a
+  // caption that translates the current band into plain "worth a detour" advice.
+  const cuts = tierCutoffs(data?.meta);
+  const ratingMarks = [1, 2, 3].map((tier) => ({ value: cuts[tier] * 10 }));
+  const [rLo, rHi] = ratingRange;
+  const ratingNarrowed = !isFullRatingRange(ratingRange);
+  const loTier = tierForScore(rLo, cuts);
+  const TIER_WORD = { 1: t('rating.visit'), 2: t('rating.detour'), 3: t('rating.journey') };
 
   return (
     <div className={`filter-bar ${mobileFiltersOpen ? 'mobile-open' : 'mobile-collapsed'}`}>
@@ -433,30 +440,49 @@ export function FilterBar({
           {/* Quality: the beauty score + independent heritage / coast toggles */}
           <div className="filter-group group-quality">
             <div className="group-fields">
-              {/* Traveller rating: a minimum-tier button list over the 0-10 score
-                  (evidence-based: beauty index + POI depth + Wikipedia fame). */}
+              {/* Traveller rating: a dual-handle band slicer over the 0-10 score
+                  (curated appeal + beauty index + POI depth; fame only flags
+                  hidden gems). Drag either handle to isolate any band, or flip
+                  the hidden-gems toggle to keep only the under-the-radar picks. */}
               <div className="filter filter-beauty">
                 <label className="filter-label">{t('filter.rating')}</label>
-                <div className="filter-control">
-                  <div className="segmented compact beauty-steps">
-                    {RATING_STEPS.map((s) => (
-                      <button
-                        key={s.v}
-                        className={minTier === s.v ? 'seg-on' : ''}
-                        onClick={() => setMinTier(s.v)}
-                        title={s.title}
-                      >
-                        {s.v === 0 ? s.label : (
-                          <span className="step-gems">
-                            <span className="step-tier-gems">
-                              {Array.from({ length: s.v }, (_, i) => <GemIcon key={i} filled size={9} />)}
-                            </span>
-                            {s.label}
+                <div className="filter-control rating-control">
+                  <DualRange
+                    min={0}
+                    max={RATING_MAX * 10}
+                    value={[Math.round(rLo * 10), Math.round(rHi * 10)]}
+                    onChange={([a, b]) => setRatingRange([a / 10, b / 10])}
+                    fmt={(v) => (v / 10).toFixed(1)}
+                    marks={ratingMarks}
+                    ariaLabel={t('filter.rating')}
+                    hideValueRow
+                  />
+                  <div className="rating-band-caption">
+                    {ratingNarrowed ? (
+                      <>
+                        <span className="rating-band-nums">
+                          {rLo.toFixed(1)}<span className="rating-band-dash">–</span>{rHi.toFixed(1)}
+                        </span>
+                        {loTier > 0 && (
+                          <span className={`rating-band-tier rt-${loTier}`} title={TIER_WORD[loTier]}>
+                            {Array.from({ length: loTier }, (_, i) => <GemIcon key={i} filled size={8} />)}
+                            <span className="rating-band-word">{TIER_WORD[loTier]}</span>
                           </span>
                         )}
-                      </button>
-                    ))}
+                      </>
+                    ) : (
+                      <span className="rating-band-any">{t('rating.anyTitle')}</span>
+                    )}
                   </div>
+                  <button
+                    type="button"
+                    className={`pill-toggle gem-toggle ${gemOnly ? 'on' : ''}`}
+                    onClick={() => setGemOnly(!gemOnly)}
+                    aria-pressed={gemOnly}
+                    title={t('rating.gemsTitle')}
+                  >
+                    <GemIcon filled size={9} /> {t('rating.hiddenGemsOnly')}
+                  </button>
                 </div>
               </div>
 

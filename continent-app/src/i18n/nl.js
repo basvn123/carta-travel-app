@@ -73,6 +73,8 @@ export const nl = {
   'rating.detourTitle': 'Een omweg waard of beter (score 7+)',
   'rating.journey': 'Reis',
   'rating.journeyTitle': 'De reis waard (score 8,5+)',
+  'rating.hiddenGemsOnly': 'Alleen verborgen parels',
+  'rating.gemsTitle': 'Alleen hoog gewaardeerde plekken die nog onontdekt zijn',
   'filter.highlights': 'Hoogtepunten',
   'filter.unescoTitle': 'Alleen bestemmingen met UNESCO-werelderfgoed binnen ~60 km',
   'filter.topBeaches': 'Topstranden',

@@ -6,6 +6,8 @@
  * Everything is optional, missing keys fall back to the app defaults.
  */
 
+import { isFullRatingRange, clampRatingRange, rangeFromMinTier } from './rating.js';
+
 const LS_ORDER = [
   'dinners_per_week', 'lunches_per_week', 'fastfood_per_week', 'drinks_per_week',
   'club_nights_per_week', 'coffees_per_day', 'self_catered_days_per_week',
@@ -37,7 +39,7 @@ function unpackLifestyle(s) {
 export function encodeState({
   departDate, returnDate, choices, priceMode, countryFilter,
   tripKinds, priceRange, priceBounds, selectedId, favorites, sortKey, showFavOnly,
-  minTier, unescoOnly, topBeachOnly, topPick, activeTab,
+  ratingRange, gemOnly, unescoOnly, topBeachOnly, topPick, activeTab,
 }) {
   const q = new URLSearchParams();
   if (activeTab && activeTab !== 'map') q.set('tab', activeTab);
@@ -63,7 +65,12 @@ export function encodeState({
   // App default is 'beauty' (App.jsx), so a price sort must be stored too.
   if (sortKey && sortKey !== 'beauty') q.set('sort', sortKey);
   if (showFavOnly) q.set('favonly', '1');
-  if (minTier && minTier > 0) q.set('mt', String(minTier));
+  // Rating band, stored as tenths ("68.100" = 6.8-10.0) so the '.' separator
+  // stays integer-safe, and only when it actually narrows the full 0-10 scale.
+  if (ratingRange && !isFullRatingRange(ratingRange)) {
+    q.set('rr', `${Math.round(ratingRange[0] * 10)}.${Math.round(ratingRange[1] * 10)}`);
+  }
+  if (gemOnly) q.set('gem', '1');
   if (unescoOnly) q.set('un', '1');
   if (topBeachOnly) q.set('tb', '1');
   if (topPick && topPick.by && topPick.n) q.set('top', `${topPick.by}.${topPick.n}`);
@@ -96,13 +103,19 @@ export function decodeState(search) {
   if (has('fav')) out.favorites = q.get('fav').split('.').filter(Boolean);
   if (has('sort')) out.sortKey = q.get('sort');
   if (has('favonly')) out.showFavOnly = q.get('favonly') === '1';
-  if (has('mt')) out.minTier = Math.max(0, Math.min(3, parseInt(q.get('mt'), 10) || 0));
-  // Legacy links: 'mb' was the min-gems (1-5) beauty filter; map it onto the
-  // closest rating tier so old shared URLs still narrow sensibly.
-  else if (has('mb')) {
+  // Rating band ("rr", tenths). Older links carried a minimum-tier ('mt', 1-3)
+  // or an even older min-gems beauty floor ('mb', 1-5); both migrate onto the
+  // equivalent [cutoff, 10] band so shared URLs still narrow sensibly.
+  if (has('rr')) {
+    const [lo, hi] = q.get('rr').split('.').map((n) => Number(n) / 10);
+    out.ratingRange = clampRatingRange([lo, hi]);
+  } else if (has('mt')) {
+    out.ratingRange = rangeFromMinTier(parseInt(q.get('mt'), 10));
+  } else if (has('mb')) {
     const mb = parseInt(q.get('mb'), 10) || 1;
-    out.minTier = mb >= 5 ? 3 : mb >= 4 ? 2 : mb >= 2 ? 1 : 0;
+    out.ratingRange = rangeFromMinTier(mb >= 5 ? 3 : mb >= 4 ? 2 : mb >= 2 ? 1 : 0);
   }
+  if (has('gem')) out.gemOnly = q.get('gem') === '1';
   if (has('un')) out.unescoOnly = q.get('un') === '1';
   if (has('tb')) out.topBeachOnly = q.get('tb') === '1';
   if (has('top')) {

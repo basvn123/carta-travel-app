@@ -73,6 +73,8 @@ export const it = {
   'rating.detourTitle': 'Merita una deviazione o meglio (voto 7+)',
   'rating.journey': 'Viaggio',
   'rating.journeyTitle': 'Merita il viaggio (voto 8,5+)',
+  'rating.hiddenGemsOnly': 'Solo gemme nascoste',
+  'rating.gemsTitle': 'Solo luoghi molto apprezzati ancora poco conosciuti',
   'filter.highlights': 'In evidenza',
   'filter.unescoTitle': 'Solo destinazioni con un sito UNESCO entro ~60 km',
   'filter.topBeaches': 'Spiagge top',

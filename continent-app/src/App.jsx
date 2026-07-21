@@ -100,7 +100,7 @@ function TravelApp() {
   } = usePanelState();
   const {
     priceMode, setPriceMode, countryFilter, setCountryFilter,
-    tripKinds, setTripKinds, minTier, setMinTier,
+    tripKinds, setTripKinds, ratingRange, setRatingRange, gemOnly, setGemOnly,
     unescoOnly, setUnescoOnly, topBeachOnly, setTopBeachOnly,
     topPick, setTopPick, sortKey, setSortKey, showFavOnly, setShowFavOnly,
   } = useFilterState(init);
@@ -293,7 +293,7 @@ function TravelApp() {
   } = useDestinationSearch({
     data, departDate, returnDate, choices: pricingChoices,
     locationQuery: debouncedLocationQuery, countryFilter, priceMode, tripKinds,
-    minTier, unescoOnly, topBeachOnly, topPick,
+    ratingRange, gemOnly, unescoOnly, topBeachOnly, topPick,
     initialPriceRange: init.priceRange,
   });
 
@@ -302,7 +302,7 @@ function TravelApp() {
   useUrlSync(!!data, {
     departDate, returnDate, choices, priceMode, countryFilter,
     tripKinds, priceRange, priceBounds, selectedId, favorites, sortKey, showFavOnly,
-    minTier, unescoOnly, topBeachOnly, topPick, activeTab,
+    ratingRange, gemOnly, unescoOnly, topBeachOnly, topPick, activeTab,
   });
 
   // Sync a signed-in user's filter/lifestyle preferences with their account,
@@ -316,7 +316,8 @@ function TravelApp() {
     priceMode, setPriceMode,
     countryFilter, setCountryFilter,
     tripKinds, setTripKinds,
-    minTier, setMinTier,
+    ratingRange, setRatingRange,
+    gemOnly, setGemOnly,
     unescoOnly, setUnescoOnly,
     topBeachOnly, setTopBeachOnly,
     sortKey, setSortKey,
@@ -426,8 +427,10 @@ function TravelApp() {
               priceBounds={priceBounds}
               tripKinds={tripKinds}
               setTripKinds={setTripKinds}
-              minTier={minTier}
-              setMinTier={setMinTier}
+              ratingRange={ratingRange}
+              setRatingRange={setRatingRange}
+              gemOnly={gemOnly}
+              setGemOnly={setGemOnly}
               unescoOnly={unescoOnly}
               setUnescoOnly={setUnescoOnly}
               topBeachOnly={topBeachOnly}
