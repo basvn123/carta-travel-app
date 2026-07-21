@@ -48,7 +48,7 @@ function TabFallback() {
   return <div className="loading-screen"><div className="pulse" /></div>;
 }
 import { tripDaysBetween, DEFAULT_LIFESTYLE } from './lib/runtime_pricing.js';
-import { loadInitialState, persistState } from './lib/urlState.js';
+import { loadInitialState } from './lib/urlState.js';
 import { AuthProvider, useAuth } from './auth/AuthContext.jsx';
 import { I18nProvider, useI18n } from './i18n/index.jsx';
 import { AuthModal } from './auth/AuthModal.jsx';
@@ -60,6 +60,9 @@ import { originHome } from './lib/origins.js';
 import { useAppData } from './hooks/useAppData.js';
 import { useDestinationSearch } from './hooks/useDestinationSearch.js';
 import { useAccountSync } from './hooks/useAccountSync.js';
+import { useUrlSync } from './hooks/useUrlSync.js';
+import { usePanelState } from './hooks/usePanelState.js';
+import { useFilterState } from './hooks/useFilterState.js';
 
 // Once someone picks "continue without an account" on the entry gate, don't
 // ask again on this device, only a fresh sign-in should bring accounts back.
@@ -89,12 +92,24 @@ function TravelApp() {
   // State carried in the URL / localStorage (shareable + survives reload).
   const [init] = useState(() => loadInitialState());
 
+  // Grouped UI state (see usePanelState / useFilterState).
+  const {
+    compareOpen, setCompareOpen, authModalOpen, setAuthModalOpen,
+    authModalMode, setAuthModalMode, accountOpen, setAccountOpen,
+    savedTripsOpen, setSavedTripsOpen, lifestyleOpen, setLifestyleOpen,
+  } = usePanelState();
+  const {
+    priceMode, setPriceMode, countryFilter, setCountryFilter,
+    tripKinds, setTripKinds, minTier, setMinTier,
+    unescoOnly, setUnescoOnly, topBeachOnly, setTopBeachOnly,
+    topPick, setTopPick, sortKey, setSortKey, showFavOnly, setShowFavOnly,
+  } = useFilterState(init);
+
   // Whether this visitor has already dismissed the entry gate as a guest.
   // Signing in overrides it automatically since `user` then takes priority.
   const [guestMode, setGuestMode] = useState(
     () => typeof window !== 'undefined' && localStorage.getItem(GUEST_KEY) === '1'
   );
-  const [authModalMode, setAuthModalMode] = useState('signin');
   // Shown before any data/route decisions: sign in, create an account, or
   // continue as a guest. Skipped entirely when accounts aren't configured,
   // once already signed in, or once guest mode has been chosen before.
@@ -136,15 +151,7 @@ function TravelApp() {
 
   // Shortlist (favorites) + list controls, also persisted in the URL.
   const [favorites, setFavorites] = useState(() => new Set(init.favorites || []));
-  const [sortKey, setSortKey] = useState(init.sortKey ?? 'beauty');
-  const [showFavOnly, setShowFavOnly] = useState(init.showFavOnly ?? false);
-  const [compareOpen, setCompareOpen] = useState(false);
 
-  // Accounts: sign-in modal + account panel visibility.
-  const [authModalOpen, setAuthModalOpen] = useState(false);
-  const [accountOpen, setAccountOpen] = useState(false);
-  // Saved trips panel, opened from its own bottom-nav button.
-  const [savedTripsOpen, setSavedTripsOpen] = useState(false);
   // Planner tabs mount on first visit and then stay alive (hidden) so a quick
   // look at another tab never wipes an in-progress plan.
   const [visitedTabs, setVisitedTabs] = useState(() => new Set(['map']));
@@ -190,23 +197,6 @@ function TravelApp() {
     return () => clearTimeout(t);
   }, [locationQuery]);
 
-  // View toggles
-  const [priceMode, setPriceMode] = useState(init.priceMode ?? 'pp');
-  // Multi-select country filter: an array of iso2 codes ([] = every country).
-  // Migrate a legacy single value ('all' or one iso2) from an older URL/account.
-  const [countryFilter, setCountryFilter] = useState(() =>
-    Array.isArray(init.countryFilter)
-      ? init.countryFilter
-      : (init.countryFilter && init.countryFilter !== 'all' ? [init.countryFilter] : []));
-  const [tripKinds, setTripKinds] = useState(init.tripKinds ?? []);
-  // Rating filters (min tier 0-3; 0 = off/Any, see rating_layer.py tiers)
-  const [minTier, setMinTier] = useState(init.minTier ?? 0);
-  const [unescoOnly, setUnescoOnly] = useState(init.unescoOnly ?? false);
-  const [topBeachOnly, setTopBeachOnly] = useState(init.topBeachOnly ?? false);
-  // Quick "best of" shortcut: { by: 'price' | 'beauty', n } or null. Trims the
-  // (already filtered) results down to the N best by that metric, in list + map.
-  const [topPick, setTopPick] = useState(init.topPick ?? null);
-  const [lifestyleOpen, setLifestyleOpen] = useState(false);
 
   // First-visit guidance strip between the top bar and the map.
   const [mapGuideDismissed, setMapGuideDismissed] = useState(
@@ -308,21 +298,12 @@ function TravelApp() {
   });
 
   // Keep the URL + localStorage in sync so the view is shareable and survives a
-  // reload. Only after data has loaded (so we don't clobber the shared link with
-  // half-initialized state). Debounced: this fires on ~17 state values, and
-  // Safari rate-limits history.replaceState (100 calls / 30s), rapid slider
-  // drags or favorite-toggling could hit that ceiling unthrottled.
-  useEffect(() => {
-    if (!data) return undefined;
-    const timer = setTimeout(() => persistState({
-      departDate, returnDate, choices, priceMode, countryFilter,
-      tripKinds, priceRange, priceBounds, selectedId, favorites, sortKey, showFavOnly,
-      minTier, unescoOnly, topBeachOnly, topPick, activeTab,
-    }), 300);
-    return () => clearTimeout(timer);
-  }, [data, departDate, returnDate, choices, priceMode, countryFilter,
-      tripKinds, priceRange, priceBounds, selectedId, favorites, sortKey, showFavOnly,
-      minTier, unescoOnly, topBeachOnly, topPick, activeTab]);
+  // reload (debounced; runs only once data has loaded). See useUrlSync.
+  useUrlSync(!!data, {
+    departDate, returnDate, choices, priceMode, countryFilter,
+    tripKinds, priceRange, priceBounds, selectedId, favorites, sortKey, showFavOnly,
+    minTier, unescoOnly, topBeachOnly, topPick, activeTab,
+  });
 
   // Sync a signed-in user's filter/lifestyle preferences with their account,
   // and expose the "save"/"load a saved trip" actions.
