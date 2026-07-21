@@ -12,6 +12,8 @@ const MAP_STYLE = 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json'
 const SVG_OPEN = '<svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">';
 const PLANE_SVG = `${SVG_OPEN}<path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/></svg>`;
 const CAR_SVG = `${SVG_OPEN}<path d="M4 13l1.4-4.1A2 2 0 0 1 7.3 7.5h9.4a2 2 0 0 1 1.9 1.4L20 13"/><path d="M3 13h18v3.5a1 1 0 0 1-1 1h-1.5"/><path d="M5.5 17.5H4a1 1 0 0 1-1-1V13"/><path d="M8.5 17.5h7"/><circle cx="7" cy="17.5" r="1.6"/><circle cx="17" cy="17.5" r="1.6"/></svg>`;
+// Faceted diamond, matching GemRating.jsx, for the hover card's hidden-gem tag.
+const GEM_SVG = '<svg viewBox="0 0 24 24" width="9" height="9" fill="currentColor" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 L19 9 L12 21 L5 9 Z"/></svg>';
 
 // The app palette, mirrored for the WebGL layers (CSS vars can't reach them).
 const INK = '#1a1a1a';
@@ -87,11 +89,12 @@ export function MapView({
       map.on('mouseleave', layer, () => { map.getCanvas().style.cursor = ''; tip.remove(); });
       map.on('mousemove', layer, (e) => {
         const f = e.features?.[0];
-        if (!f?.properties?.tip) return;
+        if (!f?.properties?.tCity) return;
         const [lon, lat] = f.geometry?.coordinates || [];
         if (!Number.isFinite(lon) || !Number.isFinite(lat)) return;
-        // Third-party-ish data goes in as text, never markup.
-        tipEl.textContent = f.properties.tip;
+        // renderTip builds the card from DOM nodes + textContent - data never
+        // reaches the page as markup, so third-party place names stay inert.
+        renderTip(tipEl, f.properties);
         tip.setLngLat([lon, lat]).addTo(map);
       });
     }
@@ -124,7 +127,10 @@ export function MapView({
           geometry: { type: 'Point', coordinates: [p.lon, p.lat] },
           properties: {
             id: p.id, kind: 'caronly',
-            tip: `${p.city}, ${p.country}: no flight from your airport; drivable`,
+            ...tipProps(p, {
+              transport: 'No flight from your airport · drivable',
+              mode: 'car',
+            }),
           },
         });
         continue;
@@ -143,7 +149,12 @@ export function MapView({
           // Cheaper wins the collision fight, so the decluttered far-out view
           // is "the best deals across Europe", not an arbitrary subset.
           sort: displayVal ?? 99999,
-          tip: tooltip(p, p.mode === 'car', priceMode),
+          ...tipProps(p, {
+            transport: transportLine(p, p.mode === 'car'),
+            mode: p.mode === 'car' ? 'car' : 'plane',
+            price: `€${formatPrice(displayVal)}`,
+            priceNote: priceMode === 'pp' ? 'per person' : 'total',
+          }),
         },
       });
     }
@@ -154,7 +165,7 @@ export function MapView({
         geometry: { type: 'Point', coordinates: [p.lon, p.lat] },
         properties: {
           id: p.id, kind: 'unreach',
-          tip: `${p.city}, ${p.country} - no flight and too far to drive`,
+          ...tipProps(p, { transport: 'No flight · too far to drive', dim: 1 }),
         },
       });
     }
@@ -406,6 +417,139 @@ function tooltip(p, byCar, priceMode) {
   }
   if (priceMode === 'pp') bits.push('per person');
   return `${bits[0]} (${bits.slice(1).join(', ')})`;
+}
+
+// One-line "how you'd get there", for the hover card's transport row.
+function transportLine(p, byCar) {
+  if (byCar) return 'Drive';
+  if (p.viaAirport) {
+    const leg = p.viaAirport.kind === 'rental' ? 'rental car' : 'shuttle';
+    return `Fly to ${p.viaAirport.city} (${p.viaAirport.iata}) · ${p.viaAirport.road_km} km by ${leg}`;
+  }
+  return 'Fly';
+}
+
+// Flat, primitive-only bag of everything renderTip() reads back on hover.
+// MapLibre round-trips feature properties through the GeoJSON source, so these
+// stay scalars (no nested objects). Every hoverable feature carries them.
+function tipProps(p, { transport, price = '', priceNote = '', mode = '', dim = 0 }) {
+  const r = p.rating || {};
+  return {
+    tCity: p.city || '',
+    tCountry: p.country || '',
+    tImg: p.image || '',
+    tScore: r.score ?? 0,
+    tLabel: r.label || '',
+    tTier: r.tier ?? 0,
+    tGem: r.hidden_gem ? 1 : 0,
+    tTransport: transport || '',
+    tMode: mode,
+    tPrice: price,
+    tPriceNote: priceNote,
+    tDim: dim,
+  };
+}
+
+// Build the hover card from DOM nodes - place names go in via textContent, so
+// third-party data never reaches the page as markup. Mirrors the app's card
+// language: hero image, serif city name, the rating score-chip, a muted
+// transport line.
+function renderTip(el, pr) {
+  el.className = `tip-card${pr.tDim ? ' is-dim' : ''}${pr.tImg ? '' : ' no-img'}`;
+  el.replaceChildren();
+
+  if (pr.tImg) {
+    const media = document.createElement('div');
+    media.className = 'tip-media';
+    const img = document.createElement('img');
+    img.className = 'tip-img';
+    img.decoding = 'async';
+    img.alt = '';
+    img.referrerPolicy = 'no-referrer';
+    // A dead thumbnail shouldn't leave an empty band: drop to text-only.
+    img.onerror = () => { media.remove(); el.classList.add('no-img'); };
+    img.src = pr.tImg;
+    media.appendChild(img);
+    if (pr.tPrice) media.appendChild(priceChip(pr, true));
+    el.appendChild(media);
+  }
+
+  const body = document.createElement('div');
+  body.className = 'tip-body';
+
+  const head = document.createElement('div');
+  head.className = 'tip-head';
+  const city = document.createElement('div');
+  city.className = 'tip-city';
+  city.textContent = pr.tCity;
+  head.appendChild(city);
+  if (pr.tPrice && !pr.tImg) head.appendChild(priceChip(pr, false));
+  body.appendChild(head);
+
+  if (pr.tCountry) {
+    const country = document.createElement('div');
+    country.className = 'tip-country';
+    country.textContent = pr.tCountry;
+    body.appendChild(country);
+  }
+
+  if (pr.tScore || pr.tGem) {
+    const meta = document.createElement('div');
+    meta.className = 'tip-meta';
+    if (pr.tScore) {
+      const chip = document.createElement('span');
+      chip.className = `tip-score rt-${pr.tTier || 0}`;
+      chip.textContent = `${pr.tScore}/10`;
+      meta.appendChild(chip);
+      if (pr.tLabel) {
+        const lab = document.createElement('span');
+        lab.className = `tip-rlabel rt-${pr.tTier || 0}`;
+        lab.textContent = pr.tLabel;
+        meta.appendChild(lab);
+      }
+    }
+    if (pr.tGem) {
+      const gem = document.createElement('span');
+      gem.className = 'tip-gem';
+      gem.innerHTML = GEM_SVG;
+      const gt = document.createElement('span');
+      gt.textContent = 'Hidden gem';
+      gem.appendChild(gt);
+      meta.appendChild(gem);
+    }
+    body.appendChild(meta);
+  }
+
+  if (pr.tTransport) {
+    const row = document.createElement('div');
+    row.className = 'tip-transport';
+    if (pr.tMode) {
+      const ic = document.createElement('span');
+      ic.className = 'tip-tico';
+      ic.innerHTML = pr.tMode === 'car' ? CAR_SVG : PLANE_SVG;
+      row.appendChild(ic);
+    }
+    const txt = document.createElement('span');
+    txt.textContent = pr.tTransport;
+    row.appendChild(txt);
+    body.appendChild(row);
+  }
+
+  el.appendChild(body);
+}
+
+// The €-price, as an overlay chip on the image or an inline chip in the header.
+function priceChip(pr, overlay) {
+  const chip = document.createElement('div');
+  chip.className = `tip-price${overlay ? ' is-overlay' : ' is-inline'}`;
+  chip.appendChild(document.createTextNode(pr.tPrice));
+  if (pr.tPriceNote === 'per person') {
+    const note = document.createElement('span');
+    note.className = 'tip-price-note';
+    note.textContent = 'pp';
+    chip.appendChild(note);
+  }
+  return chip;
 }
 
 function formatPrice(n) {
