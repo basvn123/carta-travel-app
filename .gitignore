@@ -23,9 +23,14 @@ Thumbs.db
 # (a misfired `/dev/null` redirect); they belong in .git/hooks, not the repo.
 dev/
 
-# Runtime logs (fare-refresh output)
+# Runtime logs + harvester stderr dumps
 logs/
 *.log
+*.err
+
+# Dev screenshots taken at the app root (Playwright verify runs etc.);
+# real image assets live in continent-app/public/ and stay tracked.
+continent-app/*.png
 
 # Inside Airbnb raw downloads (harvest_accommodation.py re-fetches them)
 cache/iab/

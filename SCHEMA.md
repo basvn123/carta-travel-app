@@ -1,4 +1,8 @@
-# app_data schema, v14
+# app_data schema
+
+Live master: `meta.schema_version` = 15. The `Schema vN` sections further down
+are the additive changelog of layers (their numbering ran ahead of the meta
+field; treat the sections as history, `meta.schema_version` as the contract).
 
 The pipeline and the React app share one contract. A trip is priced three ways,
 all from real data:
@@ -19,10 +23,13 @@ one (`local_transport.car_needed`) AND you arrive by plane: an economy rental,
 scaled by nights and group size. If you drove there, you already have a car, so
 no rental is added.
 
-Notebook `05_export_app` writes `app_data.json`; the app reads it via
-`runtime_pricing.js`. Cost data comes from `03_costs` (Numbeo anchors + Eurostat
-PLI). Accommodation data comes from `03b_accommodation` (Inside Airbnb anchors +
-Eurostat PLI).
+`run_pipeline.py` (the orchestrator, driving the scripts in `pipeline/`) writes
+`app_data.json`; `continent-app/scripts/sync-data.mjs` splits it for the wire and
+the app reads it via `runtime_pricing.js`. Cost data originally came from
+notebook `03_costs` (Numbeo anchors + Eurostat PLI) and accommodation from
+`03b_accommodation` (Inside Airbnb anchors + Eurostat PLI); those v1 notebooks
+are archived in `archive/notebooks/`, and the live accommodation path is
+`pipeline/harvest_accommodation.py` + its apply scripts.
 
 ## app_data.json
 
@@ -257,7 +264,7 @@ Eurostat PLI).
 - **Total** = flights + accommodation + on-the-ground. The map shows this; the
   detail panel breaks it down; Skyscanner verifies the flight.
 
-## Flight data provenance (notebook 02_flights + fix_data.py)
+## Flight data provenance (legacy notebook 02_flights, now archive/notebooks/, + fix_data.py)
 
 - The Ryanair harvest (`02_flights`) stored the **cheapest fare per calendar
   month** per route (~4 anchor dates). `fix_data.py` then **densifies** this into
@@ -280,7 +287,7 @@ Eurostat PLI).
   `no_ryanair_route: true`, the app still shows those, flagged unreachable via
   Ryanair (muted map dot + a separate list section), it just doesn't price them.
 
-## Cost data provenance (notebook 03_costs)
+## Cost data provenance (legacy notebook 03_costs, now archive/notebooks/)
 
 - Real **Numbeo** euro prices for **23 anchor countries + 22 cities** (June 2026,
   cached in `cache/numbeo_raw.json`), covering 6 dining/drink items per location.
@@ -299,7 +306,7 @@ Eurostat PLI).
   them from `pli_scaled` to `numbeo_direct`. Czechia had been the most off (cheap
   meal +49%, beer +35%). 37 long-tail locations remain `pli_scaled`.
 
-## Accommodation provenance (notebook 03b_accommodation)
+## Accommodation provenance (legacy notebook 03b_accommodation, now archive/notebooks/)
 
 - Real **Inside Airbnb** listing-level medians (CC-BY 4.0, captured June 2026) for
   ~30 European cities, filtered to entire homes and capacity-matched, then divided
@@ -407,7 +414,8 @@ dataset, so within-country variation is added from the one honest signal present
 ## Schema v15, non-Wikipedia data sources (added 2026-07-16)
 
 Two independent open datasets now sit alongside the Wikipedia / Wikivoyage /
-OpenTripMap pipeline (`harvest_osm_wikidata.py`, idempotent + resumable via
+OpenTripMap pipeline (`harvest_osm_wikidata.py`, since superseded and moved to
+`archive/`; idempotent + resumable via
 `cache/osm_wikidata.json`). `meta.data_sources` records provenance/licence.
 
 ### 1. OpenStreetMap (Overpass API), thin-POI top-up
@@ -452,7 +460,8 @@ Wikipedia presence + log-scaled `pop` (now filled on 6,294 POIs); the
 "Must see" badge uses `isMustSee()` (rate 3 AND corroborating evidence)
 instead of the old rate>=3, which had badged 57% of all POIs.
 
-Pipeline order (updated):
+Pipeline order (updated; scripts live in `pipeline/`, run from the repo root -
+`run_pipeline.py` automates the scheduled subset):
     apply_car_layer -> apply_airport_anchors -> apply_airport_categories
     -> apply_beauty_layer -> harvest_pageviews -> apply_rating_layer
     -> apply_toll_layer -> harvest_accommodation -> apply_accommodation_anchors
@@ -555,7 +564,8 @@ Overture rate at 2 (never the rate-3 must-see tier), and dedup vs existing
 items_full by folded name. No UI work needed, existing items_full consumers
 (day-planner pins, DetailPanel) just get more entries.
 
-- `harvest_pois_osm.py`, per-destination Overpass (node-only, explicit historic
+- `harvest_pois_osm.py` (superseded by the Overture path, moved to `archive/`),
+  per-destination Overpass (node-only, explicit historic
   values; the catch-all `[historic]` + ways times out in cities). Fine for a few
   hundred dests; does NOT scale to the full 24k catalogue (ban risk).
 - `harvest_pois_overture.py`, THE scalable path. `extract` runs one DuckDB

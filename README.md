@@ -2,7 +2,8 @@
 
 Find affordable European getaways by **total trip cost** (real Ryanair fares +
 Airbnb-based stays + on-the-ground spend), then plan the trip city by city and
-day by day. 447 destinations across 43 European countries.
+day by day. 1,570 destinations across 43 European countries (master schema v15,
+see [SCHEMA.md](SCHEMA.md)).
 
 ## Repository layout
 
@@ -15,41 +16,71 @@ day by day. 447 destinations across 43 European countries.
 │   │   ├── map/            MapLibre views (MapView, TripMap, CountryPickerMap)
 │   │   ├── planner/        Trip planner + Day planner + Guided wizard
 │   │   ├── hooks/          Data/search/planner state hooks
+│   │   ├── i18n/           6-language UI strings
 │   │   ├── lib/            Pure logic: pricing, transport options, cost
 │   │   │                   optimizer, dates, routing, data loading
 │   │   └── auth/           Optional Supabase accounts (saved trips/plans)
 │   ├── scripts/sync-data.mjs   Splits the master dataset for the wire (see below)
-│   └── public/             app_data.json + activities_full.json +
+│   └── public/             app_data.json + activities_full.json + fares/ +
 │                           country_insights.json (all generated; do not edit)
 │
 ├── app_data/               MASTER datasets (source of truth for the app)
-│   ├── app_data.json           447 destinations, schema v11 (see SCHEMA.md)
-│   └── country_insights.json   Deep per-country travel intel, 43 countries:
-│                               rail/bus operators + booking links, driving
-│                               rules (vignettes/tolls/left-side), must-sees,
-│                               traveler warnings, budgets, food, events
+│   ├── app_data.json           1,570 destinations, schema v15 (gitignored,
+│   │                           rebuilt by the pipeline; see SCHEMA.md)
+│   └── country_insights.json   Deep per-country travel intel, 43 countries
 │
-├── 0*.ipynb                Pipeline notebooks (config → destinations → flights
-│                           → costs → accommodation → combined → export)
-├── destinations_master.py  Hand-curated catalogue (airports + hidden gems)
-├── harvest_*.py            Data harvesters (Ryanair fares, Wikipedia images,
-│                           OpenTripMap/Wikivoyage activities)
-├── beauty_layer.py         Beauty index (UNESCO / Blue Flag / nature / iconic)
-├── car_layer.py            Car cost model (per-country fuel, rentals, tolls)
-├── apply_*.py / fix_data.py  Idempotent patchers that write into app_data/
-├── refresh_fares.bat       Scheduled fare refresh (reharvest_flights.py)
-├── cache/                  Harvest caches (gitignored where sensitive)
+├── run_pipeline.py         THE pipeline entry point: cadence-aware orchestrator
+│                           (weekly fares, monthly fame/rating, quarterly
+│                           open-data, manual backfills). `--list` shows tasks.
+├── run_pipeline.bat        Windows Scheduled Task wrapper (CartaDataPipeline)
+│
+├── pipeline/               All live data-pipeline code (run from the repo root)
+│   ├── harvest_*.py            Fetch external sources -> cache/ and/or master
+│   │                           (Ryanair fares, Wikipedia, Inside Airbnb,
+│   │                           Overture POIs, Eurostat, EEA, WorldClim, …)
+│   ├── apply_*.py              Idempotent patchers: fold a cache/layer into the
+│   │                           master (beauty, rating, climate, lodging, tolls…)
+│   ├── enrich_*.py             Additive POI image/description enrichment sweeps
+│   ├── *_layer.py, *_io.py     Shared engines/libs imported by the above
+│   └── oneoff/                 Historical one-time backfills + catalogue
+│                               curation scripts (kept for provenance/reuse)
+│
+├── archive/                Superseded code kept for reference (legacy fares
+│   │                       path, pre-Overture/pre-WorldClim harvesters)
+│   └── notebooks/          The original v1 notebook pipeline (schema v7 era)
+│
+├── cache/                  Harvest caches (LFS-tracked; secrets gitignored)
+├── logs/                   Pipeline logs + run state (gitignored)
 └── supabase/               SQL schema + migrations (RLS on every table)
 ```
 
+## Data pipeline
+
+One command drives everything:
+
+```
+python run_pipeline.py           # run every task that is due (safe to re-run)
+python run_pipeline.py --list    # show tasks, cadences, last run
+python run_pipeline.py --only fares --ship data   # force one task, sync only
+```
+
+The orchestrator backs up the master before every write, refuses to run two
+writers at once, and coverage-guards the patch steps that could null data.
+Individual scripts in `pipeline/` can still be run by hand **from the repo
+root** (e.g. `python pipeline/audit_gaps.py`).
+
+The legacy fare refresher (`reharvest_flights.py` + `refresh_fares*.bat`) is in
+`archive/` - the live fare system is `pipeline/harvest_all_origins.py`, driven
+by the weekly `fares` task, which ships `continent-app/public/fares/`.
+
 ## Data flow
 
-1. Python pipeline writes `app_data/app_data.json` (master, everything inline).
-2. `continent-app/scripts/sync-data.mjs` (runs on `npm run dev/build`) splits it
-   for the wire:
-   - `public/app_data.json`, core dataset (~1.5 MB), heavy fields stripped
-   - `public/activities_full.json`, full POI lists (~1.5 MB), lazy-fetched by
-     the Day planner only
+1. The pipeline writes `app_data/app_data.json` (master, everything inline).
+2. `continent-app/scripts/sync-data.mjs` (runs on `npm run dev/build/data`)
+   splits it for the wire:
+   - `public/app_data.json`, core dataset, heavy fields stripped
+   - `public/activities_full.json`, full POI lists, lazy-fetched by the Day
+     planner only
    - `public/country_insights.json`, copied verbatim, lazy-fetched when
      country intel is shown
 3. The app fetches the core file at boot (kicked off at module-eval time) and

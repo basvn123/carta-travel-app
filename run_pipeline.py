@@ -1,6 +1,6 @@
 """run_pipeline.py - one orchestrator for the whole Carta data pipeline.
 
-Wraps the existing harvest_* / enrich_* / apply_* scripts in a single safe,
+Wraps the pipeline/harvest_* / enrich_* / apply_* scripts in a single safe,
 resumable, cadence-aware driver so the data can be refreshed on a schedule
 (e.g. a weekly Windows Scheduled Task) without hand-running a dozen commands
 and without the known footguns firing.
@@ -238,17 +238,17 @@ def fares_step(ctx):
 
     graph = CACHE / "ryanair_route_graph.json"
     if not graph.exists():
-        if run_cmd([PY, "harvest_all_origins.py", "graph"]) != 0:
+        if run_cmd([PY, "pipeline/harvest_all_origins.py", "graph"]) != 0:
             return False
 
     if window_is_current and fares_cache.exists():
         log("  window already rolled to today with a partial cache -> RESUME (harvest+patch)")
-        if run_cmd([PY, "harvest_all_origins.py", "harvest"]) != 0:
+        if run_cmd([PY, "pipeline/harvest_all_origins.py", "harvest"]) != 0:
             return False
-        return run_cmd([PY, "harvest_all_origins.py", "patch"]) == 0
+        return run_cmd([PY, "pipeline/harvest_all_origins.py", "patch"]) == 0
 
     log("  rolling fare window forward and re-fetching live (refresh)")
-    return run_cmd([PY, "harvest_all_origins.py", "refresh"]) == 0
+    return run_cmd([PY, "pipeline/harvest_all_origins.py", "refresh"]) == 0
 
 
 def fame_step(ctx):
@@ -262,11 +262,11 @@ def fame_step(ctx):
             log("  cleared cache/dest_pageviews.json to force fresh fame")
         except OSError as e:
             log(f"  (could not clear pageviews cache: {e})")
-    if run_cmd([PY, "harvest_pageviews.py", "dests"]) != 0:
+    if run_cmd([PY, "pipeline/harvest_pageviews.py", "dests"]) != 0:
         return False
-    if run_cmd([PY, "apply_beauty_layer.py"]) != 0:
+    if run_cmd([PY, "pipeline/apply_beauty_layer.py"]) != 0:
         return False
-    return run_cmd([PY, "apply_rating_layer.py"]) == 0
+    return run_cmd([PY, "pipeline/apply_rating_layer.py"]) == 0
 
 
 # --------------------------------------------------------------------------- #
@@ -301,7 +301,7 @@ TASKS = [
         "title": "Departure/arrival times for already-covered origins",
         "cadence": "monthly",
         "writes_app_data": True,
-        "cmds": [[PY, "harvest_flight_times.py", "all", "CRL,BRU"]],
+        "cmds": [[PY, "pipeline/harvest_flight_times.py", "all", "CRL,BRU"]],
         "note": ("keeps times in sync with refreshed fares for CRL,BRU only. "
                  "A full all-origins sweep is ~16h - run manually if you want it."),
     },
@@ -310,7 +310,7 @@ TASKS = [
         "title": "Regional crowding (Eurostat tourism density)",
         "cadence": "quarterly",
         "writes_app_data": True,
-        "cmds": [[PY, "harvest_tourism_density.py"]],
+        "cmds": [[PY, "pipeline/harvest_tourism_density.py"]],
         "note": "Eurostat updates ~annually; pass --refresh in the script to re-download.",
     },
     {
@@ -318,7 +318,7 @@ TASKS = [
         "title": "Bathing-water quality (EEA WISE)",
         "cadence": "quarterly",
         "writes_app_data": True,
-        "cmds": [[PY, "harvest_bathing_water.py"]],
+        "cmds": [[PY, "pipeline/harvest_bathing_water.py"]],
         "note": "YEAR is pinned in the script (2025). Bump it + --refresh for a new season.",
     },
     {
@@ -327,10 +327,10 @@ TASKS = [
         "cadence": "quarterly",
         "writes_app_data": True,
         "cmds": [
-            [PY, "harvest_accommodation.py"],
-            [PY, "apply_accommodation_anchors.py"],
-            [PY, "apply_longtail_granularity.py"],
-            [PY, "apply_tourist_premium.py"],
+            [PY, "pipeline/harvest_accommodation.py"],
+            [PY, "pipeline/apply_accommodation_anchors.py"],
+            [PY, "pipeline/apply_longtail_granularity.py"],
+            [PY, "pipeline/apply_tourist_premium.py"],
         ],
         "note": ("snapshot dates are pinned in harvest_accommodation.py (2026-06). "
                  "Bump DATASETS + purge cache/iab to actually get newer prices."),
@@ -342,7 +342,7 @@ TASKS = [
         "title": "GeoNames population/settlement (new dests)",
         "cadence": "backfill",
         "writes_app_data": True,
-        "cmds": [[PY, "harvest_geonames.py"]],
+        "cmds": [[PY, "pipeline/harvest_geonames.py"]],
         "note": "static gazetteer; only worth it after the catalogue grows.",
     },
     {
@@ -350,7 +350,7 @@ TASKS = [
         "title": "Protected areas / national parks (OSM)",
         "cadence": "backfill",
         "writes_app_data": True,
-        "cmds": [[PY, "harvest_protected_areas_osm.py"]],
+        "cmds": [[PY, "pipeline/harvest_protected_areas_osm.py"]],
         "note": "static geography; heavy Overpass sweep on a cold cache.",
     },
     {
@@ -359,8 +359,8 @@ TASKS = [
         "cadence": "backfill",
         "writes_app_data": True,
         "cmds": [
-            [PY, "harvest_climate_worldclim.py"],
-            [PY, "apply_climate.py"],
+            [PY, "pipeline/harvest_climate_worldclim.py"],
+            [PY, "pipeline/apply_climate.py"],
         ],
         "note": "needs cache/worldclim/*.tif + rasterio; fixed 1970-2000 normals (static).",
     },
@@ -370,8 +370,8 @@ TASKS = [
         "cadence": "backfill",
         "writes_app_data": True,
         "cmds": [
-            [PY, "harvest_wikivoyage.py"],
-            [PY, "apply_wikivoyage.py"],
+            [PY, "pipeline/harvest_wikivoyage.py"],
+            [PY, "pipeline/apply_wikivoyage.py"],
         ],
         # apply_wikivoyage pops guide for dests missing from the cache:
         "guard": guard_cache_covers("cache/wikivoyage.json", 0.90),
@@ -383,8 +383,8 @@ TASKS = [
         "cadence": "backfill",
         "writes_app_data": True,
         "cmds": [
-            [PY, "harvest_images.py", "harvest"],
-            [PY, "harvest_images.py", "patch"],
+            [PY, "pipeline/harvest_images.py", "harvest"],
+            [PY, "pipeline/harvest_images.py", "patch"],
         ],
         "guard": guard_cache_covers("cache/wiki_images.json", 0.95),
         "note": "NULL-RISK: patch nulls images for dests absent from the cache - guarded.",
@@ -395,8 +395,8 @@ TASKS = [
         "cadence": "backfill",
         "writes_app_data": True,
         "cmds": [
-            [PY, "harvest_activities.py", "harvest"],
-            [PY, "harvest_activities.py", "patch"],
+            [PY, "pipeline/harvest_activities.py", "harvest"],
+            [PY, "pipeline/harvest_activities.py", "patch"],
         ],
         "guard": guard_cache_covers("cache/activities.json", 0.95),
         "note": "NULL-RISK: patch nulls activities for dests absent from the cache - guarded.",
@@ -406,7 +406,7 @@ TASKS = [
         "title": "Overture Maps sightseeing POIs -> items_full (additive)",
         "cadence": "backfill",
         "writes_app_data": True,
-        "cmds": [[PY, "harvest_pois_overture.py", "assign"]],
+        "cmds": [[PY, "pipeline/harvest_pois_overture.py", "assign"]],
         "note": ("merges the cached Overture parquet (cache/overture_pois_eu.parquet) "
                  "into items_full, cap 150/dest, rate<=2; additive (never nulls). "
                  "Re-run `harvest_pois_overture.py extract` first only to pull a "
@@ -417,7 +417,7 @@ TASKS = [
         "title": "Must-see POI images + descriptions (high-value subset only)",
         "cadence": "backfill",
         "writes_app_data": True,
-        "cmds": [[PY, "enrich_must_descs.py"]],
+        "cmds": [[PY, "pipeline/enrich_must_descs.py"]],
         "note": ("enriches ONLY the day-planner-surfaced must-see + worth-the-detour "
                  "POIs (a few thousand), not the 87k long tail; cheap, additive, "
                  "resumable. Prefer this over poi_enrich when you only want the "
@@ -428,7 +428,7 @@ TASKS = [
         "title": "Bulk POI images via Wikidata P18 (fast)",
         "cadence": "backfill",
         "writes_app_data": True,
-        "cmds": [[PY, "harvest_pois_wikidata_images.py", "all"]],
+        "cmds": [[PY, "pipeline/harvest_pois_wikidata_images.py", "all"]],
         "note": ("one WDQS box query per dest (~1,500) then match image-less POIs "
                  "to nearby imaged Wikidata entities by distance + Commons filename. "
                  "FAR faster than the per-POI Commons sweep - run this FIRST, then "
@@ -441,8 +441,8 @@ TASKS = [
         "writes_app_data": True,
         "retries": 12,
         "cmds": [
-            [PY, "enrich_images_commons.py"],
-            [PY, "enrich_images_web.py"],
+            [PY, "pipeline/enrich_images_commons.py"],
+            [PY, "pipeline/enrich_images_web.py"],
         ],
         "note": ("gathers images for the FULL image-less POI set (long tail incl.), "
                  "not just must-see. Resumable + atomic writes + auto-retry, but "
@@ -455,9 +455,9 @@ TASKS = [
         "cadence": "backfill",
         "writes_app_data": True,
         "cmds": [
-            [PY, "enrich_images_commons.py"],
-            [PY, "enrich_images_web.py"],
-            [PY, "enrich_must_descs.py"],
+            [PY, "pipeline/enrich_images_commons.py"],
+            [PY, "pipeline/enrich_images_web.py"],
+            [PY, "pipeline/enrich_must_descs.py"],
         ],
         "note": "all additive (never null); heavy Wikipedia sweeps - run after activities.",
     },
