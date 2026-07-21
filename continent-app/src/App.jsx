@@ -68,10 +68,6 @@ import { useFilterState } from './hooks/useFilterState.js';
 // ask again on this device, only a fresh sign-in should bring accounts back.
 const GUEST_KEY = 'continent.guestMode.v1';
 
-// The "how does this page work" hint under the top bar stays gone once
-// dismissed, it's onboarding, not a recurring notice.
-const MAP_GUIDE_KEY = 'continent.mapGuideDismissed.v1';
-
 
 export default function App() {
   return (
@@ -198,14 +194,8 @@ function TravelApp() {
   }, [locationQuery]);
 
 
-  // First-visit guidance strip between the top bar and the map.
-  const [mapGuideDismissed, setMapGuideDismissed] = useState(
-    () => typeof window !== 'undefined' && localStorage.getItem(MAP_GUIDE_KEY) === '1'
-  );
-  const dismissMapGuide = () => {
-    localStorage.setItem(MAP_GUIDE_KEY, '1');
-    setMapGuideDismissed(true);
-  };
+  // Persistent guidance pill anchored to the top bar. It's always available on
+  // the map tab so first-timers can re-open the "how this works" tip any time.
   // The tip is collapsed to a small pill by default so it never crowds the map;
   // tapping the pill expands the text in a popover that overlays the map rather
   // than pushing it down.
@@ -446,7 +436,7 @@ function TravelApp() {
             the header. It's absolutely positioned, so its height is NOT folded
             into --filter-h - the map fills the space right under the header and
             the expanded text overlays the map instead of pushing it down. */}
-        {activeTab === 'map' && !mapGuideDismissed && (
+        {activeTab === 'map' && (
           <div className={`map-guide ${mapGuideOpen ? 'open' : ''}`} role="note">
             <button
               className="map-guide-toggle"
@@ -462,7 +452,7 @@ function TravelApp() {
                 <p className="map-guide-text">
                   {t('guide.text')}
                 </p>
-                <button className="map-guide-dismiss" onClick={dismissMapGuide}>
+                <button className="map-guide-dismiss" onClick={() => setMapGuideOpen(false)}>
                   {t('common.gotIt')}
                 </button>
               </div>

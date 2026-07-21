@@ -15,12 +15,17 @@ const CAR_PATH = '<path d="M4 13l1.4-4.1A2 2 0 0 1 7.3 7.5h9.4a2 2 0 0 1 1.9 1.4
 const SVG_OPEN = '<svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">';
 const PLANE_SVG = `${SVG_OPEN}${PLANE_PATH}</svg>`;
 const CAR_SVG = `${SVG_OPEN}${CAR_PATH}</svg>`;
-// Map-image variants: bigger viewport-filling render, solid stroke. sdf:true
-// tints via icon-color, so the stroke colour here is only the alpha mask.
-const ICON_PX = 26;   // 2x the ~13px on-screen size (addImage pixelRatio 2)
-const iconSvg = (inner) => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="${ICON_PX}" height="${ICON_PX}" fill="none" stroke="#000" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">${inner}</svg>`;
-const IMG_PLANE = 'carta-plane';
-const IMG_CAR = 'carta-car';
+// Glyph SVG for baking into the price pills. Matches the legend's line glyphs
+// (TransportIcons.jsx): 1.7 stroke on the 24 viewBox, rendered at its exact
+// device size so the browser rasterises the vector 1:1 (no upscaling blur).
+// Solid black stroke is only the alpha mask - tintGlyph() recolours it.
+const iconSvg = (inner, px) => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="${px}" height="${px}" fill="none" stroke="#000" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">${inner}</svg>`;
+// A baked pill per (mode, deal): rounded border + a legend-matched transport
+// glyph on the left, with a 9-slice stretch band so icon-text-fit sizes it to
+// the €-price. Mirrors .price-pill (paper/ink, rust for deals). Dims are LOGICAL
+// px; PR supersamples the bitmap so the glyph stays crisp on hi-dpi screens.
+const PILL = { PR: 3, h: 18, r: 4, b: 1, padL: 6, glyph: 13, gap: 4, padR: 8 };
+const pillName = (mode, deal) => `pill-${mode}${deal ? '-deal' : ''}`;
 // Faceted diamond, matching GemRating.jsx, for the hover card's hidden-gem tag.
 const GEM_SVG = '<svg viewBox="0 0 24 24" width="9" height="9" fill="currentColor" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 L19 9 L12 21 L5 9 Z"/></svg>';
 
@@ -74,7 +79,7 @@ export function MapView({
     map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'bottom-right');
 
     map.on('load', async () => {
-      await addTransportIcons(map);   // must exist before the label layer references them
+      await addPricePills(map);   // must exist before the label layer references them
       ensureLayers(map);
       map.getSource(SRC_PRICED)?.setData(dataRef.current.pricedFC);
       map.getSource(SRC_DOTS)?.setData(dataRef.current.dotsFC);
@@ -321,9 +326,10 @@ function ensureLayers(map) {
     },
   });
 
-  // The €-price with its transport glyph, floating above the dot (mirrors
-  // .price-pill: [plane|car] €price, ink on paper, rust for deals). Icon and
-  // price collide as one unit, so the glyph shows exactly when the price does.
+  // The €-price inside a bordered pill (mirrors .price-pill: [plane|car] €price,
+  // ink on paper, rust for deals). The pill background is a 9-slice image that
+  // icon-text-fit sizes to the price; the glyph is baked into its left edge, so
+  // the whole thing is one collision unit and one big click target.
   map.addLayer({
     id: LYR_PRICED_LABEL,
     type: 'symbol',
@@ -332,56 +338,93 @@ function ensureLayers(map) {
       'text-field': ['get', 'label'],
       'text-font': LABEL_FONT,
       'text-size': 11.5,
-      // Price grows rightward from the point; the glyph sits to its left. This
-      // keeps the icon-to-price gap constant no matter how wide the price is.
-      'text-anchor': 'left',
-      'text-offset': [0.28, -0.95],
-      'icon-image': ['case', ['==', ['get', 'tMode'], 'car'], IMG_CAR, IMG_PLANE],
-      'icon-anchor': 'right',
-      'icon-offset': [-1, -11],
+      'icon-image': ['case',
+        ['==', ['get', 'tMode'], 'car'],
+          ['case', ['==', ['get', 'deal'], 1], pillName('car', true), pillName('car', false)],
+          ['case', ['==', ['get', 'deal'], 1], pillName('plane', true), pillName('plane', false)]],
+      'icon-text-fit': 'width',      // pill height stays native; width grows to the price
+      'icon-text-fit-padding': [0, 0, 0, 0],
+      // Raise the pill above its dot; the baked glyph offsets the text-fit box
+      // leftward so the price still reads centred over the point.
+      'text-offset': [0.5, -1.35],
       'symbol-sort-key': ['get', 'sort'],
       'text-padding': 1,
     },
     paint: {
-      'text-color': ['case',
-        ['==', ['get', 'deal'], 1], ACCENT,
-        ['==', ['get', 'top'], 1], INK,
-        INK],
-      'text-halo-color': PAPER,
-      'text-halo-width': 1.6,
-      'icon-color': ['case', ['==', ['get', 'deal'], 1], ACCENT, INK],
-      'icon-halo-color': PAPER,
-      'icon-halo-width': 1.5,
+      'text-color': ['case', ['==', ['get', 'deal'], 1], PAPER, INK],
     },
   });
 }
 
-// Rasterise the plane/car glyphs into SDF map images so the WebGL price labels
-// can carry a transport icon that icon-color tints (rust for deals, ink else).
-async function addTransportIcons(map) {
-  const defs = [[IMG_PLANE, PLANE_PATH], [IMG_CAR, CAR_PATH]];
-  await Promise.all(defs.map(async ([name, path]) => {
-    if (map.hasImage(name)) return;
-    const data = await rasterizeIcon(iconSvg(path), ICON_PX);
-    if (data && !map.hasImage(name)) map.addImage(name, data, { pixelRatio: 2, sdf: true });
-  }));
+// Bake one stretchable pill image per (mode, deal) and register it. Full-colour
+// (not SDF) so the border, paper/rust fill and tinted glyph all coexist.
+async function addPricePills(map) {
+  const S = PILL.PR;                       // logical -> device supersample
+  const H = PILL.h * S, R = PILL.r * S, B = PILL.b * S;
+  const padL = PILL.padL * S, glyph = PILL.glyph * S, gap = PILL.gap * S, padR = PILL.padR * S;
+  const leftFixed = padL + glyph + gap;    // device px reserved for the glyph
+  const band = 8 * S;                      // min stretchable content width
+  const W = leftFixed + band + padR;
+  const content = [leftFixed, B, leftFixed + band, H - B];
+  const stretchX = [[leftFixed + S, leftFixed + band - S]];
+  const stretchY = [[Math.round(H / 2 - 3 * S), Math.round(H / 2 + 3 * S)]];
+  const opts = { pixelRatio: S, content, stretchX, stretchY };
+
+  for (const mode of ['plane', 'car']) {
+    // Render the glyph at its exact device size -> crisp 1:1 vector raster.
+    const raw = await loadSvgImage(iconSvg(mode === 'car' ? CAR_PATH : PLANE_PATH, glyph));
+    if (!raw) continue;
+    for (const deal of [false, true]) {
+      const name = pillName(mode, deal);
+      if (map.hasImage(name)) continue;
+      const cv = document.createElement('canvas');
+      cv.width = W; cv.height = H;
+      const ctx = cv.getContext('2d');
+      roundRectPath(ctx, B / 2, B / 2, W - B, H - B, R);
+      ctx.fillStyle = deal ? ACCENT : PAPER;
+      ctx.fill();
+      ctx.lineWidth = B;
+      ctx.strokeStyle = deal ? ACCENT : INK;
+      ctx.stroke();
+      // Full-strength glyph, like the legend (no opacity knock-down).
+      const g = tintGlyph(raw, glyph, deal ? PAPER : INK);
+      ctx.drawImage(g, padL, Math.round((H - glyph) / 2), glyph, glyph);
+      map.addImage(name, ctx.getImageData(0, 0, W, H), opts);
+    }
+  }
 }
 
-// SVG markup -> ImageData at size x size (device pixels). Resolves null if the
-// browser can't decode the SVG, in which case the label just renders icon-less.
-function rasterizeIcon(svg, size) {
+// SVG markup -> loaded HTMLImageElement (null if the browser can't decode it).
+function loadSvgImage(svg) {
   return new Promise((resolve) => {
     const img = new Image();
-    img.onload = () => {
-      const cv = document.createElement('canvas');
-      cv.width = size; cv.height = size;
-      const ctx = cv.getContext('2d');
-      ctx.drawImage(img, 0, 0, size, size);
-      resolve(ctx.getImageData(0, 0, size, size));
-    };
+    img.onload = () => resolve(img);
     img.onerror = () => resolve(null);
     img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
   });
+}
+
+// Recolour a rasterised glyph to `color` on its own canvas (source-in keeps the
+// alpha shape, repaints it solid).
+function tintGlyph(img, size, color) {
+  const cv = document.createElement('canvas');
+  cv.width = size; cv.height = size;
+  const ctx = cv.getContext('2d');
+  ctx.drawImage(img, 0, 0, size, size);
+  ctx.globalCompositeOperation = 'source-in';
+  ctx.fillStyle = color;
+  ctx.fillRect(0, 0, size, size);
+  return cv;
+}
+
+function roundRectPath(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(x + w, y, x + w, y + h, r);
+  ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r);
+  ctx.arcTo(x, y, x + w, y, r);
+  ctx.closePath();
 }
 
 // The selected destination's full DOM pill (price + transport glyph + dot),

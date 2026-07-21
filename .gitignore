@@ -19,6 +19,10 @@ cache/otm_key.txt
 .DS_Store
 Thumbs.db
 
+# Stray Git LFS hooks accidentally written to a literal `dev/null/` path
+# (a misfired `/dev/null` redirect); they belong in .git/hooks, not the repo.
+dev/
+
 # Runtime logs (fare-refresh output)
 logs/
 *.log

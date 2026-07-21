@@ -707,6 +707,8 @@ export const en = {
   "wizard.flexPadBtn": "My dates can shift ±2 days if it's cheaper",
   "wizard.flexPadNote": "Carta keeps your dates unless a real fare within two days beats them.",
   "wizard.flightDur": ", {dur} flight",
+  "wizard.flexDepartDate": "Cheapest fare departs {date}",
+  "wizard.flexReturnDate": "Cheapest fare returns {date}",
   "wizard.fly": "Fly",
   "wizard.flyingFrom": "Flying from",
   "wizard.flyIntoList": "Fly into {anchor}",

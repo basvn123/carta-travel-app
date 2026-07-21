@@ -358,6 +358,13 @@ input, select {
      the two share the right edge stacked, rather than overlapping. Once the
      guide is dismissed the pill has the corner to itself. */
   .map-guide { right: 10px; margin-top: 46px; }
+
+  /* When the destinations list is open it becomes a full-width overlay (see
+     .results-list below), so the guide pill would float on top of the list.
+     Hide it while the list is open; it returns once the list is collapsed and
+     the map is visible again. Desktop keeps the pill (list is a side gutter
+     there, not an overlay, so there's nothing to cover). */
+  .app:not(.list-collapsed) .map-guide { display: none; }
 }
 
 /* ───────── Language picker: a compact flag pill in the header that switches
@@ -3554,6 +3561,15 @@ input, select {
 /* ─── Rating slicer: 0-10 band slider + hidden-gems toggle ─── */
 .rating-control {
   display: flex;
+  flex-direction: row;
+  align-items: flex-start;   /* toggle lines up with the slider row (and the
+                                highlights pills), not the taller block's centre */
+  gap: 14px;
+}
+/* Slider + its band caption stack together; the gem toggle sits to their right
+   (at the same height as the rest of the bar), not stacked below. */
+.rating-slider {
+  display: flex;
   flex-direction: column;
   align-items: flex-start;
   gap: 6px;
@@ -3584,16 +3600,7 @@ input, select {
   letter-spacing: 0.02em;
 }
 .rating-band-dash { margin: 0 1px; opacity: 0.7; }
-.rating-band-tier {
-  display: inline-flex;
-  align-items: center;
-  gap: 3px;
-  font-weight: 600;
-}
-.rating-band-tier .gem { flex: none; }
-.rating-band-word { text-transform: lowercase; }
 .rating-band-any { font-style: italic; opacity: 0.85; }
-.gem-toggle { align-self: flex-start; }
 
 .reset-filters-btn {
   display: inline-flex;
@@ -3774,6 +3781,27 @@ input, select {
   margin-top: 2px;
   font-variant-numeric: tabular-nums;
 }
+
+/* Static 0/5/10 scale under the rating rail: a plain reference, positioned by
+   value so the endpoints sit flush with the track ends. */
+.dual-range-axis {
+  position: relative;
+  height: 12px;
+  margin-top: 3px;
+}
+.dual-range-axis-tick {
+  position: absolute;
+  top: 0;
+  transform: translateX(-50%);
+  font-family: var(--mono);
+  font-size: 9.5px;
+  line-height: 1;
+  color: var(--ink-mute);
+  font-variant-numeric: tabular-nums;
+  pointer-events: none;
+}
+.dual-range-axis-tick:first-child { transform: none; }
+.dual-range-axis-tick:last-child { transform: translateX(-100%); }
 
 /* ─── Stepper (cars / drivers) ─── */
 
@@ -5704,12 +5732,17 @@ input, select {
   font-size: 14px;
   color: var(--ink);
   font-weight: 500;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
   display: flex;
   align-items: center;
   gap: 6px;
+  min-width: 0;
+}
+/* Only the name truncates; the hidden-gem tag stays fully visible (below). */
+.result-city-name {
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .result-gem {
   font-family: var(--mono);
@@ -6092,7 +6125,8 @@ input, select {
   .filter-bar.mobile-open .segmented { width: 100%; }
   .filter-bar.mobile-open .segmented button { flex: 1; }
   .filter-bar.mobile-open .segmented.seg-icons button { padding: 7px 12px; }
-  .filter-bar.mobile-open .rating-control { width: 100%; }
+  .filter-bar.mobile-open .rating-control { width: 100%; flex-direction: column; align-items: flex-start; }
+  .filter-bar.mobile-open .rating-slider { width: 100%; }
   .filter-bar.mobile-open .rating-control .dual-range { width: 100%; }
 
   /* iOS Safari zooms the viewport when a focused field is < 16px. Bump the
@@ -8740,9 +8774,11 @@ input, select {
   align-items: center;
   flex: none;
 }
-.score-chip.xs { font-size: 9.5px; padding: 2px 4px; }
-.score-chip.sm { font-size: 11px; padding: 3px 5px; }
-.score-chip.lg { font-size: 15px; padding: 5px 8px; border-radius: 6px; }
+/* Heavier top padding optically centres the digits: JetBrains Mono sits high
+   in a line-height:1 box, which otherwise leaves a gap under the number. */
+.score-chip.xs { font-size: 9.5px; padding: 3px 4px 2px; }
+.score-chip.sm { font-size: 11px; padding: 4px 5px 3px; }
+.score-chip.lg { font-size: 15px; padding: 6px 8px 4px; border-radius: 6px; }
 .score-chip.rt-3 { background: var(--accent); color: var(--paper); }
 .score-chip.rt-2 { background: var(--accent-bg); color: var(--accent); }
 .score-chip.rt-1 { background: var(--paper-dim); color: var(--ink-soft); border: 1px solid var(--rule); }
@@ -8770,6 +8806,7 @@ input, select {
   border-radius: 3px;
   padding: 1px 5px;
   white-space: nowrap;
+  flex-shrink: 0;
 }
 .hidden-gem-tag.lg { font-size: 10px; padding: 2px 7px; }
 .hidden-gem-tag .gem { color: var(--green); }
@@ -8966,6 +9003,9 @@ input, select {
 .guide-flight-side-title b { font-size: 14px; display: inline-flex; align-items: center; gap: 6px; }
 .guide-flight-side-title small { font-size: 11px; color: var(--ink-mute); display: inline-flex; align-items: center; gap: 4px; flex-wrap: wrap; }
 .guide-flight-side-breakdown { font-family: var(--mono); font-size: 10.5px; opacity: 0.8; }
+/* The concrete date a flexible fare falls on, so "I'm flexible" travellers still
+   see exactly when the flight they picked departs/returns. */
+.guide-flight-side-date { font-size: 11px; font-weight: 600; color: var(--accent); display: inline-flex; align-items: center; gap: 4px; }
 .guide-flight-side-rating { display: flex; align-items: center; gap: 6px; font-size: 11.5px; color: var(--ink-soft); margin: 6px 0; flex-wrap: wrap; }
 /* The in-depth "what is this place / region" copy: given room to breathe so the
    character of where you land actually reads. */
