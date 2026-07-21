@@ -61,6 +61,8 @@ import { useAppData } from './hooks/useAppData.js';
 import { useDestinationSearch } from './hooks/useDestinationSearch.js';
 import { useAccountSync } from './hooks/useAccountSync.js';
 import { useUrlSync } from './hooks/useUrlSync.js';
+import { usePanelState } from './hooks/usePanelState.js';
+import { useFilterState } from './hooks/useFilterState.js';
 
 // Once someone picks "continue without an account" on the entry gate, don't
 // ask again on this device, only a fresh sign-in should bring accounts back.
@@ -90,12 +92,24 @@ function TravelApp() {
   // State carried in the URL / localStorage (shareable + survives reload).
   const [init] = useState(() => loadInitialState());
 
+  // Grouped UI state (see usePanelState / useFilterState).
+  const {
+    compareOpen, setCompareOpen, authModalOpen, setAuthModalOpen,
+    authModalMode, setAuthModalMode, accountOpen, setAccountOpen,
+    savedTripsOpen, setSavedTripsOpen, lifestyleOpen, setLifestyleOpen,
+  } = usePanelState();
+  const {
+    priceMode, setPriceMode, countryFilter, setCountryFilter,
+    tripKinds, setTripKinds, minTier, setMinTier,
+    unescoOnly, setUnescoOnly, topBeachOnly, setTopBeachOnly,
+    topPick, setTopPick, sortKey, setSortKey, showFavOnly, setShowFavOnly,
+  } = useFilterState(init);
+
   // Whether this visitor has already dismissed the entry gate as a guest.
   // Signing in overrides it automatically since `user` then takes priority.
   const [guestMode, setGuestMode] = useState(
     () => typeof window !== 'undefined' && localStorage.getItem(GUEST_KEY) === '1'
   );
-  const [authModalMode, setAuthModalMode] = useState('signin');
   // Shown before any data/route decisions: sign in, create an account, or
   // continue as a guest. Skipped entirely when accounts aren't configured,
   // once already signed in, or once guest mode has been chosen before.
@@ -137,15 +151,7 @@ function TravelApp() {
 
   // Shortlist (favorites) + list controls, also persisted in the URL.
   const [favorites, setFavorites] = useState(() => new Set(init.favorites || []));
-  const [sortKey, setSortKey] = useState(init.sortKey ?? 'beauty');
-  const [showFavOnly, setShowFavOnly] = useState(init.showFavOnly ?? false);
-  const [compareOpen, setCompareOpen] = useState(false);
 
-  // Accounts: sign-in modal + account panel visibility.
-  const [authModalOpen, setAuthModalOpen] = useState(false);
-  const [accountOpen, setAccountOpen] = useState(false);
-  // Saved trips panel, opened from its own bottom-nav button.
-  const [savedTripsOpen, setSavedTripsOpen] = useState(false);
   // Planner tabs mount on first visit and then stay alive (hidden) so a quick
   // look at another tab never wipes an in-progress plan.
   const [visitedTabs, setVisitedTabs] = useState(() => new Set(['map']));
@@ -191,23 +197,6 @@ function TravelApp() {
     return () => clearTimeout(t);
   }, [locationQuery]);
 
-  // View toggles
-  const [priceMode, setPriceMode] = useState(init.priceMode ?? 'pp');
-  // Multi-select country filter: an array of iso2 codes ([] = every country).
-  // Migrate a legacy single value ('all' or one iso2) from an older URL/account.
-  const [countryFilter, setCountryFilter] = useState(() =>
-    Array.isArray(init.countryFilter)
-      ? init.countryFilter
-      : (init.countryFilter && init.countryFilter !== 'all' ? [init.countryFilter] : []));
-  const [tripKinds, setTripKinds] = useState(init.tripKinds ?? []);
-  // Rating filters (min tier 0-3; 0 = off/Any, see rating_layer.py tiers)
-  const [minTier, setMinTier] = useState(init.minTier ?? 0);
-  const [unescoOnly, setUnescoOnly] = useState(init.unescoOnly ?? false);
-  const [topBeachOnly, setTopBeachOnly] = useState(init.topBeachOnly ?? false);
-  // Quick "best of" shortcut: { by: 'price' | 'beauty', n } or null. Trims the
-  // (already filtered) results down to the N best by that metric, in list + map.
-  const [topPick, setTopPick] = useState(init.topPick ?? null);
-  const [lifestyleOpen, setLifestyleOpen] = useState(false);
 
   // First-visit guidance strip between the top bar and the map.
   const [mapGuideDismissed, setMapGuideDismissed] = useState(
