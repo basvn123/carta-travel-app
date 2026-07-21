@@ -73,6 +73,8 @@ export const de = {
   'rating.detourTitle': 'Einen Umweg wert oder besser (Bewertung 7+)',
   'rating.journey': 'Reise',
   'rating.journeyTitle': 'Die Reise wert (Bewertung 8,5+)',
+  'rating.hiddenGemsOnly': 'Nur Geheimtipps',
+  'rating.gemsTitle': 'Nur hoch bewertete Orte, die noch kaum jemand kennt',
   'filter.highlights': 'Highlights',
   'filter.unescoTitle': 'Nur Ziele mit UNESCO-Welterbe im Umkreis von ~60 km',
   'filter.topBeaches': 'Top-Strände',

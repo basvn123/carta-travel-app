@@ -1,10 +1,12 @@
 import { useState } from 'react';
+import { clampRatingRange, FULL_RATING_RANGE } from '../lib/rating.js';
 
 /**
  * The browse-tab filter + sort controls: price mode, the country multi-select,
- * trip kinds, the rating tier, the UNESCO / top-beach flags, the "best of"
- * shortcut, the sort key and favourites-only. Seeded from the restored
- * URL/localStorage `init`. Grouped out of App so the filter surface is one unit.
+ * trip kinds, the rating band + hidden-gems slicer, the UNESCO / top-beach
+ * flags, the "best of" shortcut, the sort key and favourites-only. Seeded from
+ * the restored URL/localStorage `init`. Grouped out of App so the filter surface
+ * is one unit.
  */
 export function useFilterState(init) {
   const [priceMode, setPriceMode] = useState(init.priceMode ?? 'pp');
@@ -15,8 +17,13 @@ export function useFilterState(init) {
       ? init.countryFilter
       : (init.countryFilter && init.countryFilter !== 'all' ? [init.countryFilter] : []));
   const [tripKinds, setTripKinds] = useState(init.tripKinds ?? []);
-  // Rating filters (min tier 0-3; 0 = off/Any, see rating_layer.py tiers)
-  const [minTier, setMinTier] = useState(init.minTier ?? 0);
+  // Rating slicer: a [min, max] band over the 0-10 score ([0,10] = off/Any) plus
+  // a hidden-gems-only toggle. Replaces the old minimum-tier button list; a
+  // legacy `minTier` is migrated to the equivalent band upstream (urlState /
+  // useAccountSync), so `init.ratingRange` is the only thing read here.
+  const [ratingRange, setRatingRange] = useState(() =>
+    clampRatingRange(init.ratingRange ?? FULL_RATING_RANGE));
+  const [gemOnly, setGemOnly] = useState(init.gemOnly ?? false);
   const [unescoOnly, setUnescoOnly] = useState(init.unescoOnly ?? false);
   const [topBeachOnly, setTopBeachOnly] = useState(init.topBeachOnly ?? false);
   // Quick "best of" shortcut: { by: 'price' | 'beauty', n } or null. Trims the
@@ -28,7 +35,8 @@ export function useFilterState(init) {
     priceMode, setPriceMode,
     countryFilter, setCountryFilter,
     tripKinds, setTripKinds,
-    minTier, setMinTier,
+    ratingRange, setRatingRange,
+    gemOnly, setGemOnly,
     unescoOnly, setUnescoOnly,
     topBeachOnly, setTopBeachOnly,
     topPick, setTopPick,

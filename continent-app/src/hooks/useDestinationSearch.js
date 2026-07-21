@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { composeTrip } from '../lib/runtime_pricing.js';
 import { matchesAnyKind } from '../lib/trip_kinds.js';
+import { isFullRatingRange } from '../lib/rating.js';
 
 // Accent- and case-insensitive text key, so "malaga" matches "Málaga".
 function normalize(s) {
@@ -48,9 +49,13 @@ function dedupeGateways(rows) {
 export function useDestinationSearch({
   data, departDate, returnDate, choices,
   locationQuery, countryFilter, priceMode, tripKinds,
-  minTier, unescoOnly, topBeachOnly, topPick,
+  ratingRange, gemOnly, unescoOnly, topBeachOnly, topPick,
   initialPriceRange,
 }) {
+  // Rating band as a stable [lo, hi] tuple, and whether it constrains anything.
+  const rLo = ratingRange?.[0] ?? 0;
+  const rHi = ratingRange?.[1] ?? 10;
+  const ratingActive = !isFullRatingRange(ratingRange);
   // Compute, in one pass, the priceable destinations (flight/drive + stay) and the
   // ones that can't be reached from home (no Ryanair route + not drivable). The
   // unreachable ones are still surfaced in the UI, just flagged, never silently
@@ -169,12 +174,16 @@ export function useDestinationSearch({
       if (tripKinds.length > 0) {
         if (!matchesAnyKind(p.categories, tripKinds)) return false;
       }
-      if (minTier > 0 && (p.rating?.tier ?? 0) < minTier) return false;
+      if (ratingActive) {
+        const s = p.rating?.score;
+        if (s == null || s < rLo || s > rHi) return false;
+      }
+      if (gemOnly && !p.rating?.hidden_gem) return false;
       if (unescoOnly && !p.beauty?.unesco) return false;
       if (topBeachOnly && !p.beauty?.top_beach) return false;
       return true;
     });
-  }, [pricedAll, q, countryFilter, priceRange, priceMode, tripKinds, minTier, unescoOnly, topBeachOnly]);
+  }, [pricedAll, q, countryFilter, priceRange, priceMode, tripKinds, ratingActive, rLo, rHi, gemOnly, unescoOnly, topBeachOnly]);
 
   // "Top picks" trims the filtered set to the N best by price or beauty. Applied
   // here (not just in the list) so the map and stats reflect the shortlist too.
@@ -193,12 +202,16 @@ export function useDestinationSearch({
       if (q && !(normalize(p.city).includes(q) || normalize(p.country).includes(q))) return false;
       if (countryFilter.length && !countryFilter.includes(p.iso2)) return false;
       if (tripKinds.length > 0 && !matchesAnyKind(p.categories, tripKinds)) return false;
-      if (minTier > 0 && (p.rating?.tier ?? 0) < minTier) return false;
+      if (ratingActive) {
+        const s = p.rating?.score;
+        if (s == null || s < rLo || s > rHi) return false;
+      }
+      if (gemOnly && !p.rating?.hidden_gem) return false;
       if (unescoOnly && !p.beauty?.unesco) return false;
       if (topBeachOnly && !p.beauty?.top_beach) return false;
       return true;
     });
-  }, [unreachableAll, q, countryFilter, tripKinds, minTier, unescoOnly, topBeachOnly]);
+  }, [unreachableAll, q, countryFilter, tripKinds, ratingActive, rLo, rHi, gemOnly, unescoOnly, topBeachOnly]);
 
   const dealThreshold = useMemo(() => {
     if (priced.length === 0) return null;

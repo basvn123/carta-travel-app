@@ -73,6 +73,8 @@ export const fr = {
   'rating.detourTitle': 'Vaut le détour ou mieux (note 7+)',
   'rating.journey': 'Voyage',
   'rating.journeyTitle': 'Vaut le voyage (note 8,5+)',
+  'rating.hiddenGemsOnly': 'Pépites cachées uniquement',
+  'rating.gemsTitle': 'Uniquement des lieux très bien notés encore méconnus',
   'filter.highlights': 'Points forts',
   'filter.unescoTitle': "Uniquement les destinations avec un site UNESCO à ~60 km",
   'filter.topBeaches': 'Belles plages',

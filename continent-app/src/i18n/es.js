@@ -73,6 +73,8 @@ export const es = {
   'rating.detourTitle': 'Merece un desvío o mejor (nota 7+)',
   'rating.journey': 'Viaje',
   'rating.journeyTitle': 'Merece el viaje (nota 8,5+)',
+  'rating.hiddenGemsOnly': 'Solo joyas escondidas',
+  'rating.gemsTitle': 'Solo lugares muy valorados que el mundo aún no ha descubierto',
   'filter.highlights': 'Destacados',
   'filter.unescoTitle': 'Solo destinos con un sitio UNESCO a ~60 km',
   'filter.topBeaches': 'Mejores playas',

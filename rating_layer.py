@@ -53,7 +53,14 @@ WEIGHTS = {"appeal": 0.70, "beauty": 0.15, "things_to_do": 0.15}
 POI_RATE_WEIGHT = {3: 1.0, 2: 0.45}
 POI_RATE_WEIGHT_LOW = 0.15      # rate 1/0 sights
 POI_ACTIVE_WEIGHT = 0.30        # "get active" POIs (sport/nature)
-THINGS_SATURATION = 14.0        # raw count where the component nears 1
+# Raw count where the component nears 1. Recalibrated 14 -> 28 after the Overture
+# bulk POI import roughly doubled items_full: at 14 the term had gone near-flat
+# (~25% of destinations pegged the 0-1 ceiling, median 0.93, ~zero correlation
+# with appeal), inflating scores without differentiating. 28 restores the
+# original spread (median ~0.73, no ceiling-pegging) so "depth of things to do"
+# discriminates again. Keep this ~= the post-import median raw count (see
+# rating_layer analysis) if the catalogue size shifts materially.
+THINGS_SATURATION = 28.0
 
 TIER_CUTOFFS = {3: 8.5, 2: 7.5, 1: 6.8}
 TIER_LABELS = {3: "Worth the journey", 2: "Worth a detour", 1: "Worth a visit"}

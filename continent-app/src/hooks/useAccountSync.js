@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef } from 'react';
 import { saveTrip, fetchUserSettings, saveUserSettings } from '../auth/tripStorage.js';
+import { clampRatingRange, rangeFromMinTier } from '../lib/rating.js';
 
 /** Keeps a signed-in user's filter/lifestyle preferences synced with their
  *  account: pulls saved settings once right after login (never when a shared
@@ -14,7 +15,8 @@ export function useAccountSync({
   priceMode, setPriceMode,
   countryFilter, setCountryFilter,
   tripKinds, setTripKinds,
-  minTier, setMinTier,
+  ratingRange, setRatingRange,
+  gemOnly, setGemOnly,
   unescoOnly, setUnescoOnly,
   topBeachOnly, setTopBeachOnly,
   sortKey, setSortKey,
@@ -70,13 +72,17 @@ export function useAccountSync({
           : (settings.countryFilter !== 'all' ? [settings.countryFilter] : []));
       }
       if (settings.tripKinds) setTripKinds(settings.tripKinds);
-      if (settings.minTier != null) setMinTier(settings.minTier);
-      // Legacy accounts synced a min-gems (1-5) beauty floor; map it onto the
-      // closest rating tier once, until the next save overwrites it.
+      // Current shape: a rating band. Legacy accounts synced a minimum tier
+      // ('minTier', 1-3) or an even older min-gems beauty floor ('minBeauty',
+      // 1-5); both migrate onto the equivalent [cutoff, 10] band once, until
+      // the next save overwrites them.
+      if (settings.ratingRange != null) setRatingRange(clampRatingRange(settings.ratingRange));
+      else if (settings.minTier != null) setRatingRange(rangeFromMinTier(settings.minTier));
       else if (settings.minBeauty) {
         const mb = settings.minBeauty;
-        setMinTier(mb >= 5 ? 3 : mb >= 4 ? 2 : mb >= 2 ? 1 : 0);
+        setRatingRange(rangeFromMinTier(mb >= 5 ? 3 : mb >= 4 ? 2 : mb >= 2 ? 1 : 0));
       }
+      if (settings.gemOnly != null) setGemOnly(settings.gemOnly);
       if (settings.unescoOnly != null) setUnescoOnly(settings.unescoOnly);
       if (settings.topBeachOnly != null) setTopBeachOnly(settings.topBeachOnly);
       if (settings.sortKey) setSortKey(settings.sortKey);
@@ -90,11 +96,11 @@ export function useAccountSync({
     if (!user || !hydratedRef.current) return;
     const t = setTimeout(() => {
       saveUserSettings(user.id, {
-        choices, priceMode, countryFilter, tripKinds, minTier, unescoOnly, topBeachOnly, sortKey,
+        choices, priceMode, countryFilter, tripKinds, ratingRange, gemOnly, unescoOnly, topBeachOnly, sortKey,
       }).catch(() => {});
     }, 1200);
     return () => clearTimeout(t);
-  }, [user, choices, priceMode, countryFilter, tripKinds, minTier, unescoOnly, topBeachOnly, sortKey]);
+  }, [user, choices, priceMode, countryFilter, tripKinds, ratingRange, gemOnly, unescoOnly, topBeachOnly, sortKey]);
 
   const handleSaveTrip = useCallback(async (destination) => {
     if (!user) { setAuthModalOpen(true); throw new Error('Sign in to save trips'); }

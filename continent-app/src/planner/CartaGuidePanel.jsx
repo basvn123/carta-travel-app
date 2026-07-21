@@ -13,8 +13,8 @@ const GUIDE_MOODS = [
   { key: 'active', labelKey: 'day.moodActive', label: 'Active', Icon: MountainIcon },
 ];
 const GUIDE_RANGES = [
-  { key: 'near', labelKey: 'day.rangeNear', subKey: 'day.rangeNearSub', km: 25 },
-  { key: 'far', labelKey: 'day.rangeFar', subKey: 'day.rangeFarSub', km: 1e9 },
+  { key: 'near', label: 'Close by', sub: 'A short hop from your stay', km: 25 },
+  { key: 'far', label: 'Within reach', sub: 'Day trips are fine too', km: 1e9 },
 ];
 // Section headings shown in the "Let Carta guide you" recommendation list. This
 // panel is not internationalized (its prompts are hardcoded English), so the
