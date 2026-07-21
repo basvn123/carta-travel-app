@@ -5725,12 +5725,17 @@ input, select {
   font-size: 14px;
   color: var(--ink);
   font-weight: 500;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
   display: flex;
   align-items: center;
   gap: 6px;
+  min-width: 0;
+}
+/* Only the name truncates; the hidden-gem tag stays fully visible (below). */
+.result-city-name {
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .result-gem {
   font-family: var(--mono);
@@ -8794,6 +8799,7 @@ input, select {
   border-radius: 3px;
   padding: 1px 5px;
   white-space: nowrap;
+  flex-shrink: 0;
 }
 .hidden-gem-tag.lg { font-size: 10px; padding: 2px 7px; }
 .hidden-gem-tag .gem { color: var(--green); }

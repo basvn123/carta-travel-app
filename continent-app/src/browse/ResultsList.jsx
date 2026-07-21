@@ -94,7 +94,7 @@ const ResultRows = React.memo(function ResultRows({
               <span className="result-rank">{i + 1}</span>
               <span className="result-main">
                 <span className="result-city">
-                  {p.city}
+                  <span className="result-city-name">{p.city}</span>
                   {p.rating?.hidden_gem && <HiddenGemTag />}
                 </span>
                 <span className="result-sub">
@@ -142,7 +142,7 @@ const ResultRows = React.memo(function ResultRows({
                 <span className="result-rank" aria-hidden="true" />
                 <span className="result-main">
                   <span className="result-city">
-                    {p.city}
+                    <span className="result-city-name">{p.city}</span>
                     {p.rating?.hidden_gem && <HiddenGemTag />}
                   </span>
                   <span className="result-country">{p.country}</span>
