@@ -13,6 +13,9 @@ __pycache__/
 # Environment / secrets
 .env
 .env.*
+# ...except the template, which holds no values and is the only place the
+# required env vars are documented (the READMEs point readers at it).
+!.env.example
 cache/otm_key.txt
 
 # OS
