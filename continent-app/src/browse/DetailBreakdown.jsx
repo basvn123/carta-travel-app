@@ -131,19 +131,23 @@ export function BreakdownTab({ destination, breakdown, departDate, returnDate, c
   const staySubtotal = acc ? show(breakdown.accom_total) : null;
   const groundSubtotal = g ? show(groundGroup(breakdown.ground_per_person)) : null;
 
-  // Skyscanner verification link, kept inside the Getting-there group.
+  // Fare verification link, kept inside the Getting-there group.
   // Which airline(s) the shown round-trip fare belongs to: "Ryanair" unless
   // the merged fare data tagged one of the two days for another carrier.
   const fareCarrier = carrierPairName(
     destination.routes?.[breakdown.origin], departDate, returnDate,
   );
 
-  const flightLink = (() => {
-    if (breakdown.transport_mode !== 'plane' || breakdown.fare_total == null) return null;
+  const flightLinks = (() => {
+    if (breakdown.transport_mode !== 'plane' || breakdown.fare_total == null) return [];
     const origin = breakdown.origin;
     const destIata = destination.iata || anchor;
-    if (!origin || !destIata || !departDate || !returnDate) return null;
-    return buildFlightLinks({ origin, destIata, departDate, returnDate }).skyscanner || null;
+    if (!origin || !destIata || !departDate || !returnDate) return [];
+    // subId 'detail' attributes the click to this panel in the affiliate
+    // dashboard, separately from any other surface that links out later.
+    return buildFlightLinks({
+      origin, destIata, departDate, returnDate, subId: 'detail',
+    }).links;
   })();
 
   return (
@@ -249,7 +253,15 @@ export function BreakdownTab({ destination, breakdown, departDate, returnDate, c
           <CarAdvisory lt={breakdown.local_transport} mode={breakdown.transport_mode} />
 
           <div className="cost-group-links">
-            {flightLink && <TextLink href={flightLink}>{t('detail.checkSkyscanner')}</TextLink>}
+            {/* First link carries the full phrase, any further comparison site
+                is appended as a bare "or X" so the row stays scannable. */}
+            {flightLinks.map((l, i) => (
+              <TextLink key={l.provider} href={l.href}>
+                {i === 0
+                  ? t('detail.checkFareOn', { provider: l.provider })
+                  : t('detail.orCompareOn', { provider: l.provider })}
+              </TextLink>
+            ))}
           </div>
         </CostGroup>
 

@@ -13,6 +13,7 @@
 
 import { round2 } from './math.js';
 import { addDays } from './dates.js';
+import { buildAviasalesLink } from './affiliate.js';
 
 // Nights between two ISO date strings (return must be >= depart).
 export function tripDaysBetween(departDate, returnDate) {
@@ -913,20 +914,32 @@ export function fareByWeekday(dest) {
 }
 
 
-// Flight booking deeplink (Skyscanner), the one external service the app links to.
+// Flight booking deeplink, the one external service the app links to.
 // `origin` must be the SAME airport the displayed fare departs from (e.g. CRL for
-// a Charleroi/Ryanair fare, not Brussels BRU) so the Skyscanner search matches the
-// price we show. The search is always per-person (adultsv2=1), the app shows a
-// per-person fare, and Skyscanner otherwise reports a group total that won't line up.
-export function buildFlightLinks({ origin, destIata, departDate, returnDate }) {
+// a Charleroi/Ryanair fare, not Brussels BRU) so the search matches the price we
+// show. The search is always per-person, the app shows a per-person fare, and
+// both providers otherwise report a group total that won't line up.
+//
+// Offers BOTH comparison sites, because they don't return the same set: the
+// budget carriers the app harvests (Ryanair, Wizz, Vueling, Volotea) are sold
+// direct and each aggregator covers a different slice of them, so a fare that
+// looks missing on one often shows up on the other. `links` is ordered with the
+// affiliate-tagged one first (that click is the app's only revenue) and falls
+// back to Skyscanner alone when no marker is configured, so a marker-less dev
+// build behaves exactly as it did before.
+export function buildFlightLinks({ origin, destIata, departDate, returnDate, subId = '' }) {
   if (!origin || !destIata || !departDate || !returnDate) {
-    return { skyscanner: null };
+    return { links: [], skyscanner: null };
   }
   const fmt = (d) => d.replaceAll('-', '').slice(2); // YYMMDD
   const skyscanner =
     `https://www.skyscanner.net/transport/flights/${origin.toLowerCase()}/${destIata.toLowerCase()}/` +
     `${fmt(departDate)}/${fmt(returnDate)}/?adultsv2=1&cabinclass=economy&rtn=1`;
-  return { skyscanner };
+  const aviasales = buildAviasalesLink({ origin, destIata, departDate, returnDate, subId });
+  const links = [];
+  if (aviasales) links.push({ provider: 'Aviasales', href: aviasales });
+  links.push({ provider: 'Skyscanner', href: skyscanner });
+  return { links, skyscanner };
 }
 
 /** Airbnb search deeplink for the destination, prefilled with dates and guests.
