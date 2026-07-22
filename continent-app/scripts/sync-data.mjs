@@ -124,6 +124,44 @@ if (data.fares && Object.keys(data.fares).length) {
   console.log(`[sync-data] fares table -> public/fares/ (${Object.keys(byOrigin).length} origins, ${Math.round(faresBytes / 1024)} KB total; core slimmed)`);
 }
 
+// Wire diet: the app reads only a fraction of some per-destination blocks, and
+// at full-catalogue scale every byte here is multiplied ~25,000x (parse time
+// was the dominant load cost in the perf pass, see scripts/perf/). The master
+// keeps everything; only the shipped core slims down.
+//   - guide / nature / geonames: no app code reads them today. Cut until a UI
+//     does (restoring is deleting a line here).
+//   - climate: was 12 months x 5 verbose keys + a source string PER
+//     DESTINATION (~1 KB each). The app reads t_high/t_low/precip_mm/comfort
+//     and the best-months list, so ship tuples: { m: [[hi,lo,mm,cf] x12],
+//     best: [...] }, with the period hoisted to meta once. t_mean and the
+//     source string were never read (the credit line is i18n copy).
+{
+  let before = 0;
+  let after = 0;
+  let climatePeriod = null;
+  for (const d of Object.values(data.destinations || {})) {
+    for (const k of ['guide', 'nature', 'geonames']) {
+      if (d[k] !== undefined) {
+        before += JSON.stringify(d[k]).length;
+        delete d[k];
+      }
+    }
+    if (d.climate?.months) {
+      before += JSON.stringify(d.climate).length;
+      climatePeriod ||= d.climate.period || null;
+      d.climate = {
+        m: d.climate.months.map((m) => [
+          m.t_high ?? null, m.t_low ?? null, m.precip_mm ?? null, m.comfort ?? null,
+        ]),
+        best: d.climate.summary?.best_months || [],
+      };
+      after += JSON.stringify(d.climate).length;
+    }
+  }
+  if (climatePeriod) data.meta.climate_period = climatePeriod;
+  console.log(`[sync-data] wire diet: ${Math.round(before / 1024)} KB of unread/verbose blocks -> ${Math.round(after / 1024)} KB (compact climate kept)`);
+}
+
 // Scrub em/en dashes from every shipped string (see sanitizeDeep above).
 sanitizeDeep(data);
 sanitizeDeep(activitiesFull);
