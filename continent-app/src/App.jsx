@@ -478,8 +478,10 @@ function TravelApp() {
         {/* Guidance tip: a small floating pill anchored to the bottom-right of
             the header. It's absolutely positioned, so its height is NOT folded
             into --filter-h - the map fills the space right under the header and
-            the expanded text overlays the map instead of pushing it down. */}
-        {activeTab === 'map' && (
+            the expanded text overlays the map instead of pushing it down.
+            Hidden while a slide-over panel is up: it would float on top of the
+            panel with nothing behind it to point at. */}
+        {activeTab === 'map' && !accountOpen && !savedTripsOpen && (
           <div className={`map-guide ${mapGuideOpen ? 'open' : ''}`} role="note">
             <button
               className="map-guide-toggle"
