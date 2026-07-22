@@ -22,7 +22,8 @@ import {
   draftDays, tieredActivities, optimizeOrder, pickerDeck, poiCategory, poiMapCat,
   walkableIdxSet, feasibilityLimits, isMustSee, dwellMinutes, VISIT_PACES,
   farWorthySights, scenicSuggestions, MAX_POI_KM_FROM_CITY, poiScore, poiKind,
-  isTransportInfraPoi, duplicatePoiIndices, canonicalPoiIndices, poiIdentityKeys,
+  poiRating, isTransportInfraPoi, isCommercialNoisePoi, duplicatePoiIndices,
+  canonicalPoiIndices, poiIdentityKeys,
 } from './dayDraft.js';
 import { CartaPlanPanel } from './CartaPlanPanel.jsx';
 import { openDayPlanPdf } from './dayPlanPdf.js';
@@ -510,7 +511,16 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
   // then becomes a numbered stop of the route). Filterable by category so a
   // busy city never turns into a wall of pins.
   const [mapCat, setMapCat] = useState('all');
-  useEffect(() => { setMapCat('all'); }, [stopIdx, plan?.id]);
+  // Second filter axis: minimum rating ('all' | 'top' | 'must'), so a busy
+  // city can be cut down to only its strongest places in one tap.
+  const [mapRating, setMapRating] = useState('all');
+  // "Show selected": the map shows ONLY what's already picked, today's stops
+  // as the numbered route plus the city's other days as check-marked pins.
+  const [showSel, setShowSel] = useState(false);
+  // Where the map is looking right now ({ zoom, bounds }), fed back by
+  // TripMap so zooming in can reveal more of the catalogue.
+  const [mapView, setMapView] = useState(null);
+  useEffect(() => { setMapCat('all'); setMapRating('all'); setShowSel(false); }, [stopIdx, plan?.id]);
 
   // Places already laid into ANY day of this city: their pins are hidden, so
   // a place can't be double-added across days from the map.
@@ -520,6 +530,16 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
     return used;
   }, [assignments, stopIdx]);
 
+  // Places already on the city's OTHER days: the route picker excludes them
+  // from a single-day route so no place lands twice in the same stay.
+  const usedOtherDays = useMemo(() => {
+    const used = new Set();
+    Object.entries(assignments[stopIdx] || {}).forEach(([di, lst]) => {
+      if (Number(di) !== dayIdx) (lst || []).forEach((i) => used.add(i));
+    });
+    return used;
+  }, [assignments, stopIdx, dayIdx]);
+
   const mapDeck = useMemo(
     () => (stop?.dest
       ? pickerDeck(activities.items, [], 48, activities.walkable)
@@ -528,15 +548,64 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
     [activities, stop, assignedAnyDay],
   );
 
-  const mapCatCounts = useMemo(() => {
-    const c = { all: mapDeck.length, sight: 0, nature: 0, active: 0, food: 0 };
-    mapDeck.forEach(({ item }) => { c[poiCategory(item)] += 1; });
-    return c;
-  }, [mapDeck]);
+  // Zoomed in, the map behaves like Google Maps: beyond the always-on top
+  // deck, every catalogued place inside the current viewport surfaces as a
+  // pin, so a dense neighbourhood reveals its depth as you lean in, and the
+  // wider city (not just the 48 strongest places) stays explorable.
+  const ZOOM_REVEAL = 12.8;
+  const zoomDeck = useMemo(() => {
+    if (!stop?.dest || !mapView || mapView.zoom < ZOOM_REVEAL || !mapView.bounds) return [];
+    const [w, s, e, n] = mapView.bounds;
+    const inDeck = new Set(mapDeck.map((d) => d.idx));
+    const out = [];
+    activities.items.forEach((item, idx) => {
+      if (inDeck.has(idx) || assignedAnyDay.has(idx) || activities.suppressed.has(idx)) return;
+      if (item.lat == null || item.lon == null) return;
+      if (item.lat < s || item.lat > n || item.lon < w || item.lon > e) return;
+      if (isTransportInfraPoi(item) || isCommercialNoisePoi(item)) return;
+      out.push({ item, idx });
+    });
+    out.sort((a, b) => poiScore(b.item) - poiScore(a.item));
+    return out.slice(0, 220);
+  }, [stop, mapView, mapDeck, activities, assignedAnyDay]);
 
-  const mapPois = useMemo(
-    () => mapDeck
+  const visibleDeck = useMemo(() => [...mapDeck, ...zoomDeck], [mapDeck, zoomDeck]);
+
+  const passRating = (item) => mapRating === 'all'
+    || (mapRating === 'must' ? isMustSee(item) : poiRating(item).tier >= 2);
+
+  const mapCatCounts = useMemo(() => {
+    const c = { all: visibleDeck.length, sight: 0, nature: 0, active: 0, food: 0, top: 0, must: 0 };
+    visibleDeck.forEach(({ item }) => {
+      c[poiCategory(item)] += 1;
+      if (isMustSee(item)) c.must += 1;
+      if (poiRating(item).tier >= 2) c.top += 1;
+    });
+    return c;
+  }, [visibleDeck]);
+
+  const mapPois = useMemo(() => {
+    // "Show selected": today's picks are already the numbered route, so the
+    // pins are the city's OTHER days' picks, check-marked, not addable twice.
+    if (showSel) {
+      const today = new Set(assignments[stopIdx]?.[dayIdx] || []);
+      return [...assignedAnyDay]
+        .filter((idx) => !today.has(idx))
+        .map((idx) => ({ item: activities.items[idx], idx }))
+        .filter(({ item }) => item && item.lat != null && item.lon != null)
+        .map(({ item, idx }) => ({
+          id: String(idx),
+          label: item.name,
+          lat: item.lat,
+          lon: item.lon,
+          cat: poiMapCat(item),
+          must: isMustSee(item),
+          sel: true,
+        }));
+    }
+    return visibleDeck
       .filter(({ item }) => mapCat === 'all' || poiCategory(item) === mapCat)
+      .filter(({ item }) => passRating(item))
       .map(({ item, idx }) => ({
         id: String(idx),
         label: item.name,
@@ -544,9 +613,8 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
         lon: item.lon,
         cat: poiMapCat(item),
         must: isMustSee(item),
-      })),
-    [mapDeck, mapCat],
-  );
+      }));
+  }, [visibleDeck, mapCat, mapRating, showSel, assignedAnyDay, assignments, stopIdx, dayIdx, activities]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Outstanding sights BEYOND walking range, their own excursion, but too
   // good not to mention (importance + beauty outweigh the distance).
@@ -592,6 +660,30 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
   // of-town answer) narrows what a draft may use, so a big city's draft stays
   // in the centre unless the traveller asked otherwise.
   const applyDraft = async (p) => {
+    // The route picker already built the day lists (the traveller SAW the
+    // route before choosing it): lay them in verbatim, no re-draft that could
+    // produce something different from what was picked.
+    if (p.lists) {
+      const next = { ...assignments };
+      if (p.scope === 'stay') {
+        next[stopIdx] = {};
+        p.lists.forEach((lst, di) => { if (lst.length) next[stopIdx][di] = lst; });
+      } else {
+        next[stopIdx] = { ...(next[stopIdx] || {}), [dayIdx]: p.lists[0] || [] };
+      }
+      setAssignments(next);
+      persistAssignments(plan?.id, next);
+      const savedRoutePrefs = {
+        style: p.style, interests: p.interests, dayLen: p.dayLen, walk: p.walk,
+        fill: p.fill, visit: p.visit, areaKey: p.areaKey,
+        routeMode, tripModes: prefs?.tripModes,
+        dayWalks: prefs?.dayWalks, dayWalkLen: prefs?.dayWalkLen,
+      };
+      setPrefs(savedRoutePrefs);
+      persistPrefs(plan?.id, savedRoutePrefs);
+      setShowShape(false);
+      return;
+    }
     const fullMap = actFull ?? await fetchActivitiesFull();
     if (!actFull && fullMap) setActFull(fullMap);
     const interests = new Set(p.interests || []);
@@ -639,6 +731,7 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
       style: p.style, interests: p.interests, dayLen: p.dayLen, walk: p.walk,
       fill: p.fill, visit: p.visit, areaKey: p.areaKey,
       routeMode, tripModes: prefs?.tripModes,
+      dayWalks: prefs?.dayWalks, dayWalkLen: prefs?.dayWalkLen,
     };
     setPrefs(savedPrefs);
     persistPrefs(plan?.id, savedPrefs);
@@ -817,6 +910,31 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
     persistPrefs(plan?.id, savedPrefs);
   };
 
+  // How much of a pinned walk the traveller wants: the full route, about
+  // half, or just a taste. Stored per walk beside the pins (prefs.dayWalkLen)
+  // so the day plan, the km shown and the PDF all speak the chosen length.
+  const WALK_LENGTHS = [
+    { key: 1, label: 'Full' },
+    { key: 0.5, label: 'Half' },
+    { key: 0.25, label: 'Taste' },
+  ];
+  const walkLenOf = (name) => prefs?.dayWalkLen?.[stopIdx]?.[dayIdx]?.[name] ?? 1;
+  const setWalkLen = (name, frac) => {
+    const savedPrefs = {
+      ...(prefs || {}),
+      dayWalkLen: {
+        ...(prefs?.dayWalkLen || {}),
+        [stopIdx]: {
+          ...(prefs?.dayWalkLen?.[stopIdx] || {}),
+          [dayIdx]: { ...(prefs?.dayWalkLen?.[stopIdx]?.[dayIdx] || {}), [name]: frac },
+        },
+      },
+    };
+    setPrefs(savedPrefs);
+    persistPrefs(plan?.id, savedPrefs);
+  };
+  const walkKmFor = (w, name) => Math.max(0.3, Math.round(w.km * walkLenOf(name) * 10) / 10);
+
   // The pinned walks as plan rows (shown under today's route, whether or not
   // the day has POI stops yet). Rendered from the walk catalogue so the km
   // and the note stay with the name.
@@ -825,11 +943,26 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
       <div className="day-scenic-title"><MountainIcon size={11} /> Today's walk</div>
       {dayWalks.map((name) => {
         const w = scenicWalksFor(stop.dest?.city || '').find((x) => x.name === name);
+        const frac = walkLenOf(name);
         return (
           <div key={name} className="day-plan-walk">
             <span className="day-plan-walk-text">
               <b>{name}</b>
-              {w && <small>~{w.km} km. {w.note}</small>}
+              {w && <small>~{walkKmFor(w, name)} km{frac < 1 ? ` of ${w.km} km` : ''}. {w.note}</small>}
+              {w && (
+                <span className="day-walk-len" role="group" aria-label="How long should this walk be?">
+                  {WALK_LENGTHS.map((o) => (
+                    <button
+                      key={o.key}
+                      type="button"
+                      className={`day-walk-len-btn ${frac === o.key ? 'on' : ''}`}
+                      onClick={() => setWalkLen(name, o.key)}
+                      aria-pressed={frac === o.key}
+                      title={`Walk ${o.label.toLowerCase() === 'full' ? 'the whole route' : o.key === 0.5 ? 'about half of it' : 'a short taste of it'} (~${Math.max(0.3, Math.round(w.km * o.key * 10) / 10)} km)`}
+                    >{o.label}</button>
+                  ))}
+                </span>
+              )}
             </span>
             <button
               className="trip-stop-remove"
@@ -1148,7 +1281,6 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
   // A catalogue town this close to the stay IS the stay: the red stay pin
   // stands in for it, so we don't draw a duplicate town label on top of it.
   const STAY_TOWN_KM = 3;
-  const BEACH_NATURE_RE = /beach|strand|playa|plage|nature|park|lake|waterfall|island|cliff|bay|lagoon|garden|dune|gorge|cave/i;
 
   const exploreTowns = useMemo(() => {
     if (!newStayPoint || newStayPoint.lat == null) return [];
@@ -1198,13 +1330,16 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
       const suppressed = duplicatePoiIndices(items); // dupes within this town
       items.forEach((item, idx) => {
         if (suppressed.has(idx)) return;
-        if (item.lat == null || item.lon == null || isTransportInfraPoi(item)) return;
+        if (item.lat == null || item.lon == null || isTransportInfraPoi(item) || isCommercialNoisePoi(item)) return;
         const km = haversineKm(newStayPoint.lat, newStayPoint.lon, item.lat, item.lon);
         if (km == null || km > EXPLORE_POI_KM) return;
-        const kindName = `${item.kind || ''} ${item.name || ''}`;
-        const cat = BEACH_NATURE_RE.test(kindName) ? 'beach'
+        // Same classifier as the in-day picker map (poiCategory), so the two
+        // maps never disagree on what counts as nature. Non-must-see plain
+        // sights still stay off this wide map to keep it legible.
+        const cat0 = poiCategory(item);
+        const cat = cat0 === 'nature' ? 'beach'
+          : cat0 === 'active' ? 'active'
           : isMustSee(item) ? 'sight'
-          : item.active ? 'active'
           : null;
         if (!cat) return;
         out.push({ key: `p:${t.id}:${idx}`, destId: t.id, idx, item, cat, km: Math.round(km), lat: item.lat, lon: item.lon });
@@ -1750,7 +1885,6 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
                           {t('day.kmFromStayNear', { km: focusedExplore.km, city: destinations[focusedExplore.destId]?.city })}
                           {' '}{focusedExplore.item.desc || ''}
                         </p>
-                        <p className="trip-note">{t('day.planVisitDur', { dur: fmtDur(dwellMinutes(poiKind(focusedExplore.item))) })}</p>
                         <p className="day-explore-depth-note">
                           <InfoIcon size={11} /> {t('day.poiDepthNote')}
                         </p>
@@ -2041,6 +2175,7 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
         focus={stop?.dest?.lat != null ? { ...cityCoords(stop.dest), zoom: 12.2 } : null}
         pois={mapPois}
         onPoiClick={(id) => toggleActivity(Number(id))}
+        onViewChange={setMapView}
         fitMaxZoom={13}
       />
 
@@ -2060,17 +2195,51 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
               <button
                 key={k}
                 type="button"
-                className={`shape-cat-chip day-map-chip ${mapCat === k ? 'on' : ''}`}
-                onClick={() => setMapCat(k)}
-                aria-pressed={mapCat === k}
+                className={`shape-cat-chip day-map-chip ${mapCat === k && !showSel ? 'on' : ''}`}
+                onClick={() => { setMapCat(k); setShowSel(false); }}
+                aria-pressed={mapCat === k && !showSel}
+                disabled={showSel}
               >
                 {label}
                 <span className="shape-cat-count">{mapCatCounts[k]}</span>
               </button>
             ))}
           </div>
+          <div className="day-map-chips">
+            {[
+              ['all', 'Any rating'],
+              ['top', 'Top rated'],
+              ['must', 'Must-see'],
+            ].filter(([k]) => k === 'all' || mapCatCounts[k] > 0).map(([k, label]) => (
+              <button
+                key={`r-${k}`}
+                type="button"
+                className={`shape-cat-chip day-map-chip ${mapRating === k && !showSel ? 'on' : ''}`}
+                onClick={() => { setMapRating(k); setShowSel(false); }}
+                aria-pressed={mapRating === k && !showSel}
+                disabled={showSel}
+              >
+                {label}
+                {k !== 'all' && <span className="shape-cat-count">{mapCatCounts[k]}</span>}
+              </button>
+            ))}
+            {assignedAnyDay.size > 0 && (
+              <button
+                type="button"
+                className={`shape-cat-chip day-map-chip day-map-chip-sel ${showSel ? 'on' : ''}`}
+                onClick={() => setShowSel((v) => !v)}
+                aria-pressed={showSel}
+                title="Show only the places already in your plan"
+              >
+                <CheckIcon size={10} /> Selected
+                <span className="shape-cat-count">{assignedAnyDay.size}</span>
+              </button>
+            )}
+          </div>
           <span className="day-map-hint">
-            Tap a pin to add it to day {dayOffset + dayIdx + 1}
+            {showSel
+              ? `Your picked places in ${stop?.dest?.city || 'this city'}. Numbered pins are day ${dayOffset + dayIdx + 1}`
+              : `Tap a pin to add it to day ${dayOffset + dayIdx + 1}. Zoom in for more places`}
           </span>
         </div>
       )}
@@ -2255,6 +2424,7 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
               numDays={days.length}
               items={activities.items}
               walkable={activities.walkable}
+              excludeIdx={usedOtherDays}
               stayPoint={stayAnchor}
               initial={prefs}
               onDraft={applyDraft}
@@ -2265,7 +2435,7 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
             <div className="trip-block day-plan-block">
               <div className="trip-block-title">Today's plan</div>
               <button className="day-carta-btn" onClick={() => setShowShape(true)}>
-                <SparkIcon size={12} /> Let Carta plan day {dayOffset + dayIdx + 1} for me
+                <SparkIcon size={12} /> Pick a ready-made route for day {dayOffset + dayIdx + 1}
               </button>
               <p className="trip-note">
                 Or build it yourself: tap the pins on the map, or add places
@@ -2388,9 +2558,9 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
               <button
                 className="day-carta-btn day-carta-reshape"
                 onClick={() => setShowShape(true)}
-                title="Answer the quick questions again and let Carta redraft this day"
+                title="Answer the quick questions again and pick a different ready-made route"
               >
-                <SparkIcon size={12} /> Not happy? Let Carta reshape day {dayOffset + dayIdx + 1}
+                <SparkIcon size={12} /> Not happy? Pick a different route for day {dayOffset + dayIdx + 1}
               </button>
 
               {/* Add more places / another city, tucked inside the plan card so

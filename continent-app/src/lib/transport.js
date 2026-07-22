@@ -14,7 +14,9 @@ import { round2 } from './math.js';
 import { transportProfile, legRailQuality, RAIL_SCORE_BONUS, landmassOf } from './countryTransport.js';
 
 const DETOUR = 1.3;             // road km vs straight-line (matches car_layer.py)
-const CAR = { kmh: 82 };
+// Rail follows its own alignment, not the road network: dividing ROAD km
+// (already x1.3) by train speed systematically overstated every rail leg.
+const RAIL_DETOUR = 1.17;
 const LONG_HAUL_KM = 800;       // beyond this, overland stops being sensible
 // What an hour of travel time is worth when ranking modes, EUR. At the old
 // value (3) a 5-euro-cheaper bus outranked a train that saves an hour on
@@ -34,6 +36,149 @@ function gmapsPoint(p) {
 
 function gmapsDir(a, b, mode) {
   return `https://www.google.com/maps/dir/?api=1&origin=${gmapsPoint(a)}&destination=${gmapsPoint(b)}&travelmode=${mode}`;
+}
+
+// One flat 82 km/h made a 60 km hop and a 600 km motorway run the same speed.
+// Short legs are mostly urban egress and N-roads; long ones are mostly
+// motorway. The +0.15 h is getting out of town and parked at the far end.
+function carHours(roadKm) {
+  const kmh = roadKm <= 60 ? 65 : roadKm <= 150 ? 74 : roadKm <= 400 ? 84 : 93;
+  return roadKm / kmh + 0.15;
+}
+
+/** Fuel + tolls for a road leg, split into as many cars as the group fills. */
+function carCosts(destA, destB, roadKm, group, carModel) {
+  const cm = carModel || {};
+  const fuelByIso = cm.fuel_price_by_iso2 || {};
+  const petrolA = fuelByIso[destA.iso2] ?? cm.fuel_price_eur_per_l ?? 1.8;
+  const petrolB = fuelByIso[destB.iso2] ?? cm.fuel_price_eur_per_l ?? 1.8;
+  const petrol = (petrolA + petrolB) / 2;
+  const lPer100 = cm.consumption_l_per_100km ?? 6.5;
+  const cars = Math.max(1, Math.ceil(group / Math.max(1, cm.car_capacity || 4)));
+  const fuelEur = cars * (roadKm / 100) * lPer100 * petrol;
+  const tollRates = cm.toll_model?.distance_rates_eur_per_100km;
+  const tollRate = tollRates
+    ? ((tollRates[destA.iso2] ?? 0) + (tollRates[destB.iso2] ?? 0)) / 2
+    : (cm.toll_eur_per_100km ?? 2.2);
+  const tollEur = cars * (roadKm / 100) * tollRate;
+  return { cars, fuelEur, tollEur };
+}
+
+// --- Priced sea crossings --------------------------------------------------
+// The Channel and the Irish Sea are the two sea gaps people genuinely cross
+// "overland-style": a train through the tunnel, a coach on a ferry, or the
+// car on LeShuttle / a ferry deck. Returning "no route" here hid Eurostar
+// from a Ghent traveller heading to London. Other island gaps (Sicily, the
+// Balearics, the Azores...) stay unpriced: their ferry networks are too
+// varied to estimate honestly and a flight usually wins anyway.
+const EUROSTAR_COUNTRIES = new Set(['FR', 'BE', 'NL', 'DE']);
+
+function seaCrossingOptions(lmA, lmB, destA, destB, straightKm, group, { carModel = null, hasCar = false } = {}) {
+  const pair = [lmA, lmB].sort().join('|');
+  const channel = pair === 'britain|continent';
+  const irishSea = pair === 'britain|ireland';
+  if (!channel && !irishSea) return null;
+  // Road km via the real crossing port (Calais, or Holyhead / Cairnryan),
+  // a bigger detour than an ordinary road leg.
+  const roadKm = straightKm * (channel ? 1.35 : 1.4);
+  const modes = {};
+
+  if (channel) {
+    const continentIso = lmA === 'continent' ? destA.iso2 : destB.iso2;
+    if (EUROSTAR_COUNTRIES.has(continentIso)) {
+      // Advance-fare band: London to Brussels/Paris runs about EUR 60 to 120
+      // booked ahead; domestic rail on either side scales with distance.
+      const pp = Math.min(220, Math.max(59, 0.26 * straightKm));
+      modes.train = {
+        eur_pp: round2(pp),
+        eur_total: round2(pp * group),
+        hours: round2((straightKm * RAIL_DETOUR) / 140 + 1.3),
+        links: [
+          { label: 'Eurostar', url: 'https://www.eurostar.com' },
+          { label: 'Google Maps (transit)', url: gmapsDir(destA, destB, 'transit') },
+        ],
+        note: 'Eurostar through the Channel Tunnel. Book ahead: walk-up fares run far higher.',
+      };
+    }
+    const busPp = Math.max(29, 0.085 * roadKm);
+    modes.bus = {
+      eur_pp: round2(busPp),
+      eur_total: round2(busPp * group),
+      hours: round2(roadKm / 55 + 1.5),
+      links: [
+        { label: 'FlixBus', url: 'https://www.flixbus.com' },
+        { label: 'Google Maps (transit)', url: gmapsDir(destA, destB, 'transit') },
+      ],
+      note: 'The coach crosses by ferry or LeShuttle; the crossing is included in the fare.',
+    };
+  } else {
+    // Rail & Sail (train + ferry through Holyhead or Fishguard) is a real,
+    // famously cheap through-ticket; so are the coach-and-ferry combos.
+    const railPp = Math.min(120, Math.max(45, 0.12 * straightKm));
+    modes.train = {
+      eur_pp: round2(railPp),
+      eur_total: round2(railPp * group),
+      hours: round2(roadKm / 75 + 3),
+      links: [
+        { label: 'Rail & Sail (Irish Ferries)', url: 'https://www.irishferries.com' },
+        { label: 'Stena Line', url: 'https://www.stenaline.com' },
+      ],
+      note: 'Rail & Sail through-tickets combine the train and the ferry crossing.',
+    };
+    const busPp = Math.max(35, 0.08 * roadKm);
+    modes.bus = {
+      eur_pp: round2(busPp),
+      eur_total: round2(busPp * group),
+      hours: round2(roadKm / 55 + 3.5),
+      links: [
+        { label: 'FlixBus', url: 'https://www.flixbus.com' },
+        { label: 'Google Maps (transit)', url: gmapsDir(destA, destB, 'transit') },
+      ],
+      note: 'Coach-and-ferry through-fares include the crossing.',
+    };
+  }
+
+  const { cars, fuelEur, tollEur } = carCosts(destA, destB, roadKm, group, carModel);
+  const ferryPerCar = channel ? 95 : 130;
+  const ferryEur = cars * ferryPerCar;
+  const carTotal = fuelEur + tollEur + ferryEur;
+  modes.car = {
+    eur_pp: round2(carTotal / group),
+    eur_total: round2(carTotal),
+    fuel_eur: round2(fuelEur),
+    toll_eur: round2(tollEur),
+    ferry_eur: round2(ferryEur),
+    hours: round2(carHours(roadKm) + (channel ? 2 : 3.5)),
+    links: [
+      channel
+        ? { label: 'LeShuttle', url: 'https://www.leshuttle.com' }
+        : { label: 'Stena Line', url: 'https://www.stenaline.com' },
+      { label: 'Google Maps (drive)', url: gmapsDir(destA, destB, 'driving') },
+    ],
+    vignettes: [],
+    note: channel
+      ? 'Includes the Channel crossing (LeShuttle or the Dover to Calais ferry, roughly EUR 60 to 150 per car each way).'
+      : 'Includes the car-ferry crossing (roughly EUR 100 to 160 per car each way).',
+  };
+
+  const score = (m, key) => m.eur_pp + m.hours * VALUE_OF_TIME_EUR_H
+    + (key === 'car' && !hasCar ? 8 : 0);
+  const recommended = Object.entries(modes)
+    .sort((a, b) => score(a[1], a[0]) - score(b[1], b[0]))[0][0];
+
+  return {
+    straight_km: Math.round(straightKm),
+    road_km: Math.round(roadKm),
+    no_road: false,
+    sea_crossing: true,
+    long_haul: roadKm > LONG_HAUL_KM,
+    modes,
+    recommended,
+    note: channel
+      ? 'This leg crosses the Channel.'
+      : 'This leg crosses the Irish Sea by ferry.',
+    estimated: true,
+  };
 }
 
 /** The insight record for a destination's country (or null). */
@@ -67,7 +212,12 @@ export function legTransportOptions(destA, destB, groupSize = 1, { carModel = nu
   // flag means "no road from mainland Europe" and, read per endpoint, it
   // declared London -> Edinburgh a sea crossing; landmassOf() knows Great
   // Britain, Ireland, Sicily etc are each one drivable landmass.
-  if (landmassOf(destA) !== landmassOf(destB)) {
+  const lmA = landmassOf(destA);
+  const lmB = landmassOf(destB);
+  if (lmA !== lmB) {
+    const sea = seaCrossingOptions(lmA, lmB, destA, destB, straightKm, group, { carModel, hasCar });
+    if (sea) return sea;
+    const irelandContinent = [lmA, lmB].sort().join('|') === 'continent|ireland';
     return {
       straight_km: Math.round(straightKm),
       road_km: null,
@@ -75,7 +225,9 @@ export function legTransportOptions(destA, destB, groupSize = 1, { carModel = nu
       long_haul: false,
       modes: {},
       recommended: null,
-      note: 'No overland route (sea crossing). Look at ferries or a flight.',
+      note: irelandContinent
+        ? 'No practical overland route. Direct ferries sail France to Ireland (Cherbourg or Roscoff to Dublin or Rosslare, 17 to 19 h with a car); without one, a flight is almost always the sensible choice.'
+        : 'No overland route (sea crossing). Look at ferries or a flight.',
       estimated: true,
     };
   }
@@ -96,13 +248,14 @@ export function legTransportOptions(destA, destB, groupSize = 1, { carModel = nu
   // on an excellent/good network the village usually still has its stop, so
   // the train stays but carries extra access overhead.
   const poorEnd = ltA.transit_quality === 'poor' || ltB.transit_quality === 'poor';
+  const railKm = straightKm * RAIL_DETOUR;
   const railKmh = (profA.railKmh + profB.railKmh) / 2;
   const railEur = (profA.railEur + profB.railEur) / 2;
   const railOverheadH = (profA.railOverheadH + profB.railOverheadH) / 2
     + (poorEnd ? 0.35 : 0);
   // Fare floor scales with the network's price level (a Polish minimum fare
   // is not a Swiss one): ~40 km worth of that country's per-km rate, min EUR 4.
-  const trainPp = railEur === 0 ? 0 : Math.max(4, railEur * 40, railEur * roadKm);
+  const trainPp = railEur === 0 ? 0 : Math.max(4, railEur * 40, railEur * railKm);
   const trainLinks = [];
   if (insA?.rail?.url && insA?.rail?.operator) {
     trainLinks.push({ label: insA.rail.operator, url: insA.rail.url });
@@ -114,7 +267,7 @@ export function legTransportOptions(destA, destB, groupSize = 1, { carModel = nu
   const train = railQuality === 'none' ? null : {
     eur_pp: round2(trainPp),
     eur_total: round2(trainPp * group),
-    hours: round2(roadKm / railKmh + railOverheadH),
+    hours: round2(railKm / railKmh + railOverheadH),
     links: trainLinks,
     note: insA?.rail?.note || null,
   };
@@ -137,23 +290,9 @@ export function legTransportOptions(destA, destB, groupSize = 1, { carModel = nu
   };
 
   // Car -----------------------------------------------------------------
-  const cm = carModel || {};
-  const fuelByIso = cm.fuel_price_by_iso2 || {};
-  const petrolA = fuelByIso[destA.iso2] ?? cm.fuel_price_eur_per_l ?? 1.8;
-  const petrolB = fuelByIso[destB.iso2] ?? cm.fuel_price_eur_per_l ?? 1.8;
-  const petrol = (petrolA + petrolB) / 2;
-  const lPer100 = cm.consumption_l_per_100km ?? 6.5;
-  // Big groups fill more than one car, fuel and tolls scale with car count
-  // (previously this leg quietly assumed a single car for any group size).
-  const cars = Math.max(1, Math.ceil(group / Math.max(1, cm.car_capacity || 4)));
-  const fuelEur = cars * (roadKm / 100) * lPer100 * petrol;
-  // Per-leg tolls: the leg's endpoint countries priced at the toll layer's
-  // real per-country rates (avg of both ends), not the old flat 2.2/100 km.
-  const tollRates = cm.toll_model?.distance_rates_eur_per_100km;
-  const tollRate = tollRates
-    ? ((tollRates[destA.iso2] ?? 0) + (tollRates[destB.iso2] ?? 0)) / 2
-    : (cm.toll_eur_per_100km ?? 2.2);
-  const tollEur = cars * (roadKm / 100) * tollRate;
+  // Big groups fill more than one car, fuel and tolls scale with car count;
+  // toll rates come from the toll layer's real per-country figures.
+  const { fuelEur, tollEur } = carCosts(destA, destB, roadKm, group, carModel);
   const carTotal = fuelEur + tollEur;
   const vignettes = [];
   for (const ins of crossBorder ? [insA, insB] : [insA]) {
@@ -165,7 +304,7 @@ export function legTransportOptions(destA, destB, groupSize = 1, { carModel = nu
     eur_total: round2(carTotal),
     fuel_eur: round2(fuelEur),
     toll_eur: round2(tollEur),
-    hours: round2(roadKm / CAR.kmh),
+    hours: round2(carHours(roadKm)),
     links: [{ label: 'Google Maps (drive)', url: gmapsDir(destA, destB, 'driving') }],
     vignettes,
     note: vignettes.length ? `Vignette: ${vignettes.join(', ')}` : null,

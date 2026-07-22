@@ -128,6 +128,9 @@ function ItinLeg({ leg, onMode }) {
         </span>
         <span className="itin-leg-change">{open ? t('itin.legClose') : t('itin.legChange')}</span>
       </button>
+      {open && leg.sea_crossing && chosen?.note && (
+        <div className="itin-leg-text"><small>{chosen.note}</small></div>
+      )}
       {open && (
         <div className="itin-leg-modes">
           {Object.entries(leg.modes).map(([m, o]) => {

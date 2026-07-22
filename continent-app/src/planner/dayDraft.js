@@ -95,6 +95,20 @@ export function poiKind(item) {
   return kind;
 }
 
+// The bulk harvests (Overture's broad 'landmark'/'attraction' categories above
+// all) drag in commercial noise: apartment blocks called "Condo Gardens
+// Brussels", lounge bars named after the beach they face, ice-cream shops
+// filed under kind "Glacier" (the Romance-language false friend). Their names
+// give them away. Anything matching here in one of the loose kinds is not a
+// sight at all and stays out of the planner's decks.
+const COMMERCIAL_RE = /\b(apartments?|aparthotel|hostels?|hotels?|b&b|guesthouse|guest house|residence|suites?|rooms|store|shops?|boutique|bar|pub|lounge|restaurants?|ristorante|pizzeria|trattoria|osteria|bistro|brasserie|tavern|taverna|cafe|caff[eè]|coffee|helader[ií]a|gelateria|ice cream|takeaway|kebab|camping|campsite|parking|garage|car park|offices?|agency|rentals?|hire|barber|hairdresser|nightclub|casino|supermarket|shopping cent(?:er|re)|mall)\b/i;
+const LOOSE_KINDS = new Set(['Landmark', 'Attraction', 'Glacier', 'Theme park', '']);
+export function isCommercialNoisePoi(item) {
+  if (!item) return false;
+  if (!LOOSE_KINDS.has(item.kind || '')) return false;
+  return COMMERCIAL_RE.test(item.name || '');
+}
+
 export function poiScore(item) {
   let s = item.rate ?? 0;
   if (item.heritage) s += 0.6;
@@ -125,7 +139,13 @@ const FOOD_RE = /market|mercato|marche|markt|brewery|birrificio|winery|vineyard|
  *  miscounted as nature on the strength of its location suffix. */
 export function poiCategory(item) {
   const name = (item.name || '').replace(/\([^)]*\)/g, ' ');
-  const t = `${item.kind || ''} ${name}`;
+  // A lounge bar named after the playa it faces is not the playa: commercial
+  // names classify by their harvested kind alone, never by name keywords. And
+  // a commercial "Glacier" is an ice-cream shop, not ice.
+  const commercial = COMMERCIAL_RE.test(name);
+  const t = commercial
+    ? (item.kind === 'Glacier' ? '' : item.kind || '')
+    : `${item.kind || ''} ${name}`;
   if (NATURE_RE.test(t)) return 'nature';
   if (item.active) return 'active';
   if (FOOD_RE.test(t)) return 'food';
@@ -446,6 +466,7 @@ export function tieredActivities(items, eligibleIdx = null) {
   (items || []).forEach((item, idx) => {
     if (eligibleIdx && !eligibleIdx.has(idx)) return;
     if (isTransportInfraPoi(item)) return;
+    if (isCommercialNoisePoi(item)) return;
     (item.active ? active : sights).push({ item, idx });
   });
   const hasRates = sights.some(({ item }) => item.rate != null);
@@ -500,6 +521,17 @@ const KIND_INTERESTS = {
   'Theme park': ['sports'], 'Ferris wheel': ['photo'],
   'Sauna & baths': ['wellness'], 'Thermal baths': ['wellness'],
   Zoo: ['outdoors'], Aquarium: ['museums'],
+  // Overture / Wikidata spellings of concepts the OTM taxonomy already names
+  // (Opera house vs Opera, Archaeological site vs Ancient site), plus the
+  // broad kinds those sources default to. Without these, half the catalogue
+  // (Overture alone is 50% of items) sat outside every interest filter.
+  Landmark: ['photo'], 'Historic site': ['culture'],
+  'Archaeological site': ['culture'], 'Opera house': ['culture'],
+  'Performing arts': ['culture'], Sculpture: ['photo'],
+  Fortification: ['architecture', 'photo'], 'City gate': ['architecture'],
+  Stadium: ['sports'], 'National park': ['outdoors'],
+  River: ['outdoors'], Island: ['outdoors', 'photo'],
+  Cliffs: ['outdoors', 'photo'], Geyser: ['outdoors', 'photo'],
 };
 
 /** Does this kind speak to any of the chosen interests? Unmapped kinds are
@@ -554,6 +586,12 @@ const KIND_DWELL = {
   Skiing: 180, Golf: 180, 'Horse riding': 90, Swimming: 75,
   'Water park': 180, 'Theme park': 240, 'Ferris wheel': 30,
   'Sauna & baths': 120, 'Thermal baths': 120,
+  // Overture / Wikidata kinds (see the KIND_INTERESTS note): without these,
+  // 27% of the catalogue fell through to the generic 40-minute default.
+  Landmark: 30, Attraction: 40, 'Historic site': 50, 'Archaeological site': 60,
+  'Opera house': 25, 'Performing arts': 25, Sculpture: 10, Fortification: 45,
+  'City gate': 10, Stadium: 60, 'National park': 180, River: 20, Island: 120,
+  Cliffs: 45, Geyser: 45, Activity: 90,
 };
 
 /** Estimated time at a stop, scaled by the traveller's visit style. */
@@ -634,7 +672,7 @@ export function farWorthySights(items, cityDest, { limit = 6 } = {}) {
         ? haversineKm(centre.lat, centre.lon, item.lat, item.lon)
         : null,
     }))
-    .filter(({ item }) => !isTransportInfraPoi(item))
+    .filter(({ item }) => !isTransportInfraPoi(item) && !isCommercialNoisePoi(item))
     .filter(({ item, km }) => km != null && km > MAX_POI_KM_FROM_CITY && km <= FAR_POI_MAX_KM
       && !item.active && poiScore(item) >= 3.4)
     .sort((a, b) => poiScore(b.item) - poiScore(a.item))
@@ -855,6 +893,7 @@ export function candidateDeck(items, interests, limit = 16, eligibleIdx = null) 
   const iset = interests instanceof Set ? interests : new Set(interests || []);
   const all = (items || []).map((item, idx) => ({ item, idx }))
     .filter(({ item, idx }) => item.lat != null && item.lon != null
+      && !isTransportInfraPoi(item) && !isCommercialNoisePoi(item)
       && (!eligibleIdx || eligibleIdx.has(idx)));
   // Worth-the-day score, independent of the chosen mood: sights ride the
   // composite poiScore (rate + heritage + Wikipedia presence/fame) with a
@@ -889,7 +928,8 @@ export function pickerDeck(items, interests, limit = 32, eligibleIdx = null) {
   const suppressed = duplicatePoiIndices(items || []);
   const all = (items || []).map((item, idx) => ({ item, idx }))
     .filter(({ item, idx }) => item.lat != null && item.lon != null
-      && !isTransportInfraPoi(item) && !suppressed.has(idx)
+      && !isTransportInfraPoi(item) && !isCommercialNoisePoi(item)
+      && !suppressed.has(idx)
       && (!eligibleIdx || eligibleIdx.has(idx)));
   // Category-agnostic quality on an absolute scale: sights and nature/active
   // spots alike ride poiScore, so a famous beach can outrank a minor church.
@@ -999,6 +1039,7 @@ export function draftDays({ items, numDays, interests, paceKey, dwellFn, stopsMa
   const maxKm = maxKmFromCentroid || 3.5;
   const all = (items || []).map((item, idx) => ({ item, idx }))
     .filter(({ item, idx }) => item.lat != null && item.lon != null
+      && !isTransportInfraPoi(item) && !isCommercialNoisePoi(item)
       && (!eligibleIdx || eligibleIdx.has(idx)));
 
   // Rank: interest-matching actives join the sights; direct interest matches
@@ -1076,4 +1117,74 @@ export function draftDays({ items, numDays, interests, paceKey, dwellFn, stopsMa
   }
 
   return days.map((d) => optimizeOrder(d, items));
+}
+
+// ---- Ready-made day routes -------------------------------------------------
+// Instead of one invisible "Carta drafts something" button, the planner offers
+// a handful of PREDEFINED routes, each built from the same research/rating
+// signal (poiScore: importance + heritage + Wikipedia fame) but through a
+// different lens. The traveller's answers rank them, they pick one, and the
+// picked route lands as ordinary assignments, fully modifiable afterwards.
+export const ROUTE_THEMES = [
+  { key: 'icons', title: 'The icons', desc: 'The highest-rated must-sees, the route first-timers dream of', interests: [], styles: ['classic', 'mix'] },
+  { key: 'culture', title: 'Culture & museums', desc: 'Museums, churches and the finest architecture', interests: ['museums', 'culture', 'architecture'], styles: ['culture'] },
+  { key: 'outdoors', title: 'Nature & views', desc: 'Parks, water, viewpoints and the prettiest corners outdoors', interests: ['outdoors', 'beaches', 'photo'], styles: ['active'] },
+  { key: 'flavour', title: 'Markets & local flavour', desc: 'Markets, food spots and the squares locals actually use', interests: ['food', 'shopping'], styles: ['foodie'] },
+];
+
+/**
+ * Build one candidate route per theme with the traveller's feasibility limits
+ * applied, ranked so the theme matching their chosen style leads. Near-
+ * duplicate routes (small towns where every lens finds the same six places)
+ * collapse into the first one. Returns [{ key, title, desc, recommended,
+ * lists, stops:[{item,idx}], km, totalMin, avgScore }].
+ */
+export function routeCandidates({ items, numDays = 1, eligibleIdx = null, limits = {}, dwellFactor = 1, styleKey = 'mix' }) {
+  const dwellFn = (kind) => dwellMinutes(kind, dwellFactor);
+  const built = [];
+  for (const theme of ROUTE_THEMES) {
+    const lists = draftDays({
+      items,
+      numDays,
+      interests: new Set(theme.interests),
+      paceKey: 'balanced',
+      dwellFn,
+      eligibleIdx,
+      ...limits,
+    });
+    const day1 = lists[0] || [];
+    if (day1.length < 2) continue;
+    // Skip a theme when it's basically a repeat of an earlier route.
+    const dup = built.some((b) => {
+      const prev = new Set(b.lists[0]);
+      const overlap = day1.filter((i) => prev.has(i)).length;
+      return overlap / day1.length >= 0.7;
+    });
+    if (dup) continue;
+    let straightKm = 0;
+    for (let i = 1; i < day1.length; i++) {
+      const a = items[day1[i - 1]];
+      const b = items[day1[i]];
+      if (a?.lat != null && b?.lat != null) straightKm += haversineKm(a.lat, a.lon, b.lat, b.lon) ?? 0;
+    }
+    const walkKm = Math.round(straightKm * 1.25 * 10) / 10; // street factor
+    const dwellSum = day1.reduce((m, i) => m + dwellFn(poiKind(items[i])), 0);
+    const totalMin = Math.round(dwellSum + (walkKm / 4.5) * 60);
+    const avgScore = Math.round(
+      (day1.reduce((s, i) => s + poiRating(items[i]).score, 0) / day1.length) * 10,
+    ) / 10;
+    built.push({
+      key: theme.key,
+      title: theme.title,
+      desc: theme.desc,
+      recommended: theme.styles.includes(styleKey),
+      lists,
+      stops: day1.map((idx) => ({ item: items[idx], idx })),
+      km: walkKm,
+      totalMin,
+      avgScore,
+    });
+  }
+  // Recommended first, then by how strong the route's places are.
+  return built.sort((a, b) => (b.recommended - a.recommended) || (b.avgScore - a.avgScore));
 }

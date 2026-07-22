@@ -40,7 +40,7 @@ const POI_PLUS_ICON = S('<path d="M12 5v14M5 12h14"/>');
  * numbered stop, and the route redraws. Purely additive: without `pois` the
  * map behaves exactly as before.
  */
-export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedIndex = null, routeGeometry = null, routeSegments = null, showRoute = true, focus = null, pois = null, onPoiClick = null, fitMaxZoom = 7.5 }) {
+export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedIndex = null, routeGeometry = null, routeSegments = null, showRoute = true, focus = null, pois = null, onPoiClick = null, onViewChange = null, fitMaxZoom = 7.5 }) {
   const containerRef = useRef(null);
   const mapRef = useRef(null);
   const markersRef = useRef([]);
@@ -51,6 +51,8 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
   onSelectRef.current = onSelectStop;
   const onPoiClickRef = useRef(onPoiClick);
   onPoiClickRef.current = onPoiClick;
+  const onViewChangeRef = useRef(onViewChange);
+  onViewChangeRef.current = onViewChange;
 
   // Initialise once.
   useEffect(() => {
@@ -105,6 +107,14 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
       map.resize();
       readyRef.current = true;
       mapRef.current._drawTrip?.();
+    });
+    // Let the parent react to where the map is looking (zoom-reveal of more
+    // pins): report zoom + viewport bounds after every settle.
+    map.on('moveend', () => {
+      const cb = onViewChangeRef.current;
+      if (!cb) return;
+      const b = map.getBounds();
+      cb({ zoom: map.getZoom(), bounds: [b.getWest(), b.getSouth(), b.getEast(), b.getNorth()] });
     });
     mapRef.current = map;
 
@@ -224,7 +234,7 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
   // Pickable candidate pins (Day planner): rebuild when the visible set
   // changes, a tapped pin leaves this list (it becomes a numbered stop), so
   // teardown+rebuild keeps the map honest with zero reconciliation logic.
-  const poisKey = (pois || []).map((p) => p.id).join(';');
+  const poisKey = (pois || []).map((p) => `${p.id}${p.sel ? 's' : ''}`).join(';');
   useEffect(() => {
     const map = mapRef.current;
     if (!map) return;
@@ -233,13 +243,10 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
     (pois || []).filter(hasLngLat).forEach((p) => {
       const el = document.createElement('button');
       el.type = 'button';
-      el.className = `dem-pin trip-poi-pin cat-${p.cat || 'sight'}`;
+      el.className = `dem-pin trip-poi-pin cat-${p.cat || 'sight'}${p.sel ? ' sel' : ''}`;
       const ico = document.createElement('span');
       ico.className = 'dem-pin-ico';
       ico.innerHTML = POI_CAT_ICONS[p.cat] || POI_CAT_ICONS.sight;
-      const add = document.createElement('span');
-      add.className = 'trip-poi-pin-add';
-      add.innerHTML = POI_PLUS_ICON;
       const lbl = document.createElement('span');
       lbl.className = 'dem-pin-lbl';
       lbl.textContent = p.label;
@@ -251,9 +258,18 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
         star.title = 'A true must-see';
         el.append(star);
       }
-      el.append(add);
-      el.title = `Add ${p.label} to this day`;
-      el.addEventListener('click', (e) => { e.stopPropagation(); onPoiClickRef.current?.(p.id); });
+      // A selected pin ("show selected" mode) is a status, not a control:
+      // it's already in the plan, so no plus affordance and no click-to-add.
+      if (!p.sel) {
+        const add = document.createElement('span');
+        add.className = 'trip-poi-pin-add';
+        add.innerHTML = POI_PLUS_ICON;
+        el.append(add);
+        el.title = `Add ${p.label} to this day`;
+        el.addEventListener('click', (e) => { e.stopPropagation(); onPoiClickRef.current?.(p.id); });
+      } else {
+        el.title = `${p.label} is already in your plan`;
+      }
       poiMarkersRef.current.push(
         new maplibregl.Marker({ element: el, anchor: 'center' })
           .setLngLat([p.lon, p.lat])

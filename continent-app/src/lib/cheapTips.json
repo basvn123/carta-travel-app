@@ -1,0 +1,2044 @@
+{
+ "generated": "2026-07-22",
+ "tips": [
+  {
+   "id": "gen-lcc-booking-window",
+   "scope": "generic",
+   "category": "flights",
+   "title": "Book low-cost carriers 4 to 10 weeks out",
+   "tip": "Ryanair, Wizz Air, Vueling and Volotea fares are cheapest roughly 4 to 10 weeks before departure (6 to 8 weeks for short-haul), and rise sharply inside 2 weeks. Booking on a Tuesday or Wednesday is measurably cheaper than weekends, when demand pushes dynamic prices up.",
+   "savings": "20 to 40% vs last-minute"
+  },
+  {
+   "id": "gen-lcc-flex-dates",
+   "scope": "generic",
+   "category": "flights",
+   "title": "Shift travel dates by 1 to 2 days",
+   "tip": "On low-cost carriers, departing Tuesday, Wednesday or Saturday instead of Friday or Sunday commonly cuts the fare by 30 to 50%. Always check the airline's own low-fare calendar (Ryanair Fare Finder, Wizz timetable view) rather than a single date.",
+   "savings": "30 to 50% per ticket"
+  },
+  {
+   "id": "gen-ryanair-bag-2025",
+   "scope": "generic",
+   "category": "flights",
+   "title": "New bigger free personal bag on Ryanair",
+   "tip": "Since the end of summer 2025 Ryanair's free under-seat bag is 40x30x20 cm (24 litres, up 20% from 40x25x20). All Airlines for Europe members adopted this minimum, so one well-packed 24L backpack now flies free on Ryanair, Wizz, Vueling and Volotea. Skip priority boarding unless you truly need a second cabin bag.",
+   "savings": "6 to 36 EUR per flight per person"
+  },
+  {
+   "id": "gen-lcc-checkin-fees",
+   "scope": "generic",
+   "category": "flights",
+   "title": "Check in online to dodge airport fees",
+   "tip": "Ryanair charges around 55 EUR for airport check-in and up to 20 EUR to print a boarding pass at some airports. Check in via the app (opens 24h or 60 days ahead with paid seats) and screenshot the pass. Wizz Air charges about 35 EUR for airport check-in too.",
+   "savings": "35 to 55 EUR per person"
+  },
+  {
+   "id": "gen-shoulder-season-med",
+   "scope": "generic",
+   "category": "stay",
+   "title": "Mediterranean shoulder months: May to mid June, mid Sept to Oct",
+   "tip": "In Spain, Italy, Greece, Croatia and Portugal, accommodation runs 30 to 50% below July and August prices in late May, early June, and mid September to October, and the sea is warmest in September. Northern Europe's sweet spots are May and September.",
+   "conditions": {
+    "months": [
+     5,
+     6,
+     9,
+     10
+    ]
+   },
+   "savings": "30 to 50% on lodging"
+  },
+  {
+   "id": "gen-interrail-breakeven",
+   "scope": "generic",
+   "category": "transport",
+   "title": "Interrail only beats advance fares for fast multi-country trips",
+   "tip": "A Global Pass 7 days in 1 month costs about 381 EUR adult 2nd class in 2026 (youth 12 to 27 roughly 25% less, about 286 EUR), so each travel day must be worth 54+ EUR. High-speed trains in France, Spain and Italy also need paid reservations of 10 to 20 EUR per leg on top. If you can book 2+ months ahead, national advance fares usually win; the pass wins for spontaneous long hops (e.g. Germany, Benelux, Austria have no reservation fees).",
+   "savings": "pass or advance fares, differences of 100+ EUR per week"
+  },
+  {
+   "id": "gen-night-buses",
+   "scope": "generic",
+   "category": "transport",
+   "title": "Overnight FlixBus doubles as a hotel",
+   "tip": "Overnight coaches on pairs like Prague to Amsterdam, Berlin to Vienna, Warsaw to Berlin or Milan to Paris typically cost 30 to 60 EUR booked a few weeks out and save one hotel night (worth 60 to 120 EUR in Western capitals).",
+   "savings": "60 to 120 EUR per night"
+  },
+  {
+   "id": "gen-nightjet",
+   "scope": "generic",
+   "category": "transport",
+   "title": "Nightjet Sparschiene from about 30 EUR",
+   "tip": "OBB Nightjet advance fares open around 6 months out: seats from about 30 EUR, couchettes from about 50 to 70 EUR on routes like Vienna to Amsterdam, Zurich to Berlin, Vienna to Rome. Book the day sales open; prices triple close to departure.",
+   "savings": "50%+ vs late booking plus a hotel night"
+  },
+  {
+   "id": "gen-airbnb-weekly",
+   "scope": "generic",
+   "category": "stay",
+   "title": "Airbnb weekly and monthly discounts have thresholds",
+   "tip": "Most hosts auto-apply 5 to 20% at exactly 7 nights and 10 to 30% at exactly 28 nights. A 6-night stay often costs more than 7 nights; check both. For stays under 4 nights an aparthotel usually beats Airbnb because flat cleaning fees of 40 to 80 EUR dominate short stays.",
+   "conditions": {
+    "partyMin": 1
+   },
+   "savings": "5 to 30% on lodging"
+  },
+  {
+   "id": "gen-kitchen-stays",
+   "scope": "generic",
+   "category": "food",
+   "title": "Book a kitchen, cook dinner",
+   "tip": "Self-catering one meal a day from Lidl or Aldi (present in nearly every covered country) cuts roughly 15 to 25 EUR per person per day versus restaurant dinners in Western Europe. Prioritize apartments with a hob for stays of 3+ nights.",
+   "savings": "15 to 25 EUR per person per day"
+  },
+  {
+   "id": "gen-lunch-not-dinner",
+   "scope": "generic",
+   "category": "food",
+   "title": "Eat your restaurant meal at lunch",
+   "tip": "Fixed-price weekday lunch menus are a pan-European institution: menu del dia in Spain (10 to 14 EUR), plat du jour or formule midi in France (12 to 16 EUR), Mittagsmenu in Austria and Germany (10 to 14 EUR), pranzo fisso in Italy, denne menu in Czechia (6 to 8 EUR). The same kitchens charge roughly double at dinner.",
+   "savings": "40 to 60% vs dinner prices"
+  },
+  {
+   "id": "gen-eu-roaming",
+   "scope": "generic",
+   "category": "connectivity",
+   "title": "EU roam-like-at-home covers EU and EEA until 2032",
+   "tip": "Any EU or EEA SIM roams at home rates across the whole bloc. NOT covered: UK (depends on plan), Switzerland, Turkey, and the Western Balkans (AL, ME, RS, BA, MK). For those, a regional eSIM (Airalo Eurolink covers 39 countries incl. UK, CH, TR and Balkans) costs a fraction of per-day roaming passes; a 5GB Turkey eSIM runs 10 to 15 USD.",
+   "savings": "up to 80% vs carrier roaming passes"
+  },
+  {
+   "id": "gen-dcc-refuse",
+   "scope": "generic",
+   "category": "food",
+   "title": "Always pay in local currency, refuse DCC",
+   "tip": "When a card terminal or ATM offers to charge you in your home currency (dynamic currency conversion), decline it. DCC markups run 3 to 8%. Also avoid Euronet ATMs, which combine poor rates with 3 to 5 EUR fees; use bank-owned ATMs and a fee-free card (Revolut, Wise, N26).",
+   "savings": "3 to 8% on every card payment abroad"
+  },
+  {
+   "id": "gen-city-cards-math",
+   "scope": "generic",
+   "category": "activities",
+   "title": "City tourist cards rarely pay off",
+   "tip": "All-inclusive city cards (60 to 90 EUR for 72h in Paris, Amsterdam, Lisbon) need 3+ paid sights per day to break even. A plain transit pass plus picking your 2 or 3 must-sees is usually cheaper, especially where free museum days exist. Exception: passes that bundle expensive transport (e.g. airport trains) can work; do the arithmetic per itinerary.",
+   "savings": "20 to 50 EUR per person per city"
+  },
+  {
+   "id": "gen-free-walking-tours",
+   "scope": "generic",
+   "category": "activities",
+   "title": "Tip-based free walking tours",
+   "tip": "Every major European city has daily tip-based walking tours (GuruWalk, Freetour). A 5 to 10 EUR tip replaces a 25 to 40 EUR paid tour and doubles as orientation on day one.",
+   "savings": "20 to 30 EUR per person"
+  },
+  {
+   "id": "gen-first-sunday-museums",
+   "scope": "generic",
+   "category": "activities",
+   "title": "First-Sunday free museum pattern",
+   "tip": "State museums are free on the first Sunday of the month in France (year-round for Orsay, Pompidou, Rodin), Italy (Domenica al Museo: Colosseum, Uffizi, Pompeii) and Greece (November to March). Plan city stays to straddle the first weekend and book free-day time slots online where required.",
+   "savings": "15 to 30 EUR per museum"
+  },
+  {
+   "id": "gen-tap-water",
+   "scope": "generic",
+   "category": "food",
+   "title": "Free tap water is a legal right in several countries",
+   "tip": "Restaurants must serve free tap water on request in France (une carafe d'eau), Spain (law since 2022) and the UK (licensed premises). It is customary and free in Scandinavia and the Netherlands. In Italy, Belgium and Germany you will usually be sold bottled water instead; order acqua di rubinetto explicitly or skip.",
+   "savings": "2 to 5 EUR per meal"
+  },
+  {
+   "id": "gen-flixtrain",
+   "scope": "generic",
+   "category": "transport",
+   "title": "FlixTrain undercuts DB and SJ",
+   "tip": "FlixTrain runs Berlin to Cologne, Hamburg, Stuttgart and Basel plus Stockholm to Gothenburg, with fares from 10 to 25 EUR, often half of Deutsche Bahn or SJ walk-up prices. Slower and no-frills, but same tracks.",
+   "savings": "30 to 60% vs incumbent rail"
+  },
+  {
+   "id": "gen-vignette-official-sites",
+   "scope": "generic",
+   "category": "driving",
+   "title": "Buy digital vignettes only from official sites",
+   "tip": "Austria (asfinag.at), Czechia (edalnice.cz), Slovakia (eznamka.sk), Slovenia (evinjeta.dars.si), Hungary (nemzetiutdij.hu), Switzerland (via.admin.ch). Third-party reseller sites appear first in search results and add 20 to 100% markup for the identical e-vignette.",
+   "conditions": {
+    "transport": [
+     "car"
+    ]
+   },
+   "savings": "5 to 40 EUR per vignette"
+  },
+  {
+   "id": "gen-toll-route-planning",
+   "scope": "generic",
+   "category": "driving",
+   "title": "Know toll systems before routing",
+   "tip": "Per-km toll motorways: France, Italy, Spain, Portugal, Croatia, Greece, Poland (A4). Vignette countries: Austria, Switzerland, Czechia, Slovakia, Slovenia, Hungary, Romania, Bulgaria. Germany is toll-free for cars. Even 10 km of Austrian or Czech motorway requires a vignette, so a route clipping a corner of a vignette country can cost 10 to 30 EUR extra; set your navigation to avoid tolls for those segments.",
+   "conditions": {
+    "transport": [
+     "car"
+    ]
+   },
+   "savings": "10 to 80 EUR per trip"
+  },
+  {
+   "id": "gen-fuel-border-fills",
+   "scope": "generic",
+   "category": "driving",
+   "title": "Cross-border fuel arbitrage",
+   "tip": "July 2026 petrol: Luxembourg about 1.70 EUR/L vs Belgium 1.81, France 1.96, Germany 2.10, Netherlands and Denmark above 2.10. Fill up in Luxembourg when transiting Benelux, in Slovenia or Austria before Italy, in Spain before France, and in Czechia or Poland before Germany. A 50L tank saves up to 20 EUR per fill.",
+   "conditions": {
+    "transport": [
+     "car"
+    ]
+   },
+   "savings": "10 to 20 EUR per tank"
+  },
+  {
+   "id": "gen-rental-car-excess",
+   "scope": "generic",
+   "category": "driving",
+   "title": "Third-party excess insurance beats the desk",
+   "tip": "Rental desks sell excess-waiver cover at 15 to 30 EUR per day; annual or per-trip standalone excess policies (e.g. via insurers or aggregators) cost 3 to 6 EUR per day equivalent. Decline the desk upsell, pay the deposit on a credit card. Also avoid airport pickup surcharges of 10 to 20% by renting from a downtown office when practical.",
+   "conditions": {
+    "transport": [
+     "car"
+    ]
+   },
+   "savings": "70 to 150 EUR per week"
+  },
+  {
+   "id": "gen-sunday-closing",
+   "scope": "generic",
+   "category": "food",
+   "title": "Shop Saturday in DACH countries",
+   "tip": "Supermarkets in Germany, Austria and most of Switzerland close on Sundays. Buy Sunday food on Saturday or you will be stuck with pricey petrol-station and train-station shops (30 to 100% markup).",
+   "savings": "avoid 30 to 100% convenience markups"
+  },
+  {
+   "id": "gen-rebook-hotels",
+   "scope": "generic",
+   "category": "stay",
+   "title": "Book free-cancellation, then rebook cheaper",
+   "tip": "Reserve refundable hotel rates early for peak dates, then recheck prices 2 to 3 weeks out and after any price drop; cancel and rebook. Combine with loyalty pricing (Booking Genius level 2 gives 10 to 15% off) and price-match policies.",
+   "savings": "10 to 25% on lodging"
+  },
+  {
+   "id": "gen-alt-airports-rail",
+   "scope": "generic",
+   "category": "flights",
+   "title": "Fly to the cheap airport, finish by budget rail or bus",
+   "tip": "Compare total cost of flying into secondary airports plus a budget train or coach: e.g. fly to Milan Bergamo then 10 EUR FlixBus to the city, Frankfurt Hahn plus bus, Barcelona Girona plus 16 EUR coach, Brussels Charleroi plus 17 EUR shuttle. Fares into secondary airports often run 30 to 60% below main hubs; just verify the transfer cost and time before booking.",
+   "savings": "20 to 80 EUR per leg"
+  },
+  {
+   "id": "gen-esim-vs-airport-sim",
+   "scope": "generic",
+   "category": "connectivity",
+   "title": "Skip airport SIM kiosks",
+   "tip": "Airport tourist SIM stands charge 25 to 40 EUR for packages that cost 10 to 15 EUR in city-centre carrier shops or 5 to 15 EUR as an eSIM bought online before departure. Install the eSIM at home over wifi so you land connected.",
+   "savings": "15 to 25 EUR per trip"
+  },
+  {
+   "id": "fr-ouigo",
+   "scope": "country",
+   "country": "FR",
+   "category": "transport",
+   "title": "Ouigo low-cost TGV from 10 EUR",
+   "tip": "SNCF's Ouigo runs high-speed doubles of the main TGV routes (Paris to Lyon, Marseille, Bordeaux, Nantes) from 10 to 19 EUR when booked early; sales open several months ahead. One cabin bag plus one handbag are free; register extra luggage online for 5 EUR (more onboard). Ouigo often leaves from Marne-la-Vallee or airport stations, so check the station before buying.",
+   "savings": "50 to 100 EUR vs TGV InOui walk-up"
+  },
+  {
+   "id": "fr-ouigo-classique",
+   "scope": "country",
+   "country": "FR",
+   "category": "transport",
+   "title": "Ouigo Train Classique flat fares",
+   "tip": "Slower conventional Ouigo Train Classique services (Paris to Nantes, Lyon, Rennes, Bruxelles) sell at flat fares of roughly 10 to 30 EUR regardless of booking date, with kids' seats around 8 EUR. Ideal when you missed the advance-fare window.",
+   "savings": "30 to 70 EUR vs TGV"
+  },
+  {
+   "id": "fr-carte-avantage",
+   "scope": "country",
+   "country": "FR",
+   "category": "transport",
+   "title": "Carte Avantage pays off in 1 or 2 trips",
+   "tip": "SNCF's Carte Avantage (49 EUR per year, versions for under 27, adults, seniors) gives about 30% off TGV InOui and Intercites plus capped fares on long routes. Two Paris to Marseille returns already recoup it. Discounts extend to a travel companion and children.",
+   "savings": "30% per ticket after 49 EUR fee"
+  },
+  {
+   "id": "fr-museums-free-days",
+   "scope": "country",
+   "country": "FR",
+   "category": "activities",
+   "title": "Paris free museum calendar",
+   "tip": "Orsay, Pompidou, Rodin, Cluny and Quai Branly are free the first Sunday of every month (book a slot online); the Orangerie only October to March. The Louvre is NOT free first Sundays; it is free the first Friday evening from 18:00 except July and August. EU residents under 26 enter national museums free year-round with ID.",
+   "savings": "15 to 22 EUR per museum"
+  },
+  {
+   "id": "fr-plat-du-jour",
+   "scope": "country",
+   "country": "FR",
+   "category": "food",
+   "title": "Formule midi instead of dinner",
+   "tip": "Weekday lunch formules (entree + plat or plat + dessert) run 14 to 18 EUR in Paris and 12 to 15 EUR elsewhere at bistros whose dinner mains alone cost that much. A carafe d'eau (free tap water) and bread are legal rights with any meal.",
+   "savings": "15 to 25 EUR per person vs dinner"
+  },
+  {
+   "id": "fr-toll-free-nationales",
+   "scope": "country",
+   "country": "FR",
+   "category": "driving",
+   "title": "Route nationale instead of autoroute",
+   "tip": "French autoroute tolls are steep: Paris to Marseille about 65 EUR each way, Paris to Bordeaux about 55 EUR. Parallel N and D roads are free and add 1.5 to 3 hours on long hauls; worth it for one-way scenic legs. Fuel on autoroute service areas costs about 0.20 EUR/L more than supermarket stations (E.Leclerc, Intermarche are cheapest).",
+   "conditions": {
+    "transport": [
+     "car"
+    ]
+   },
+   "savings": "50 to 130 EUR per long round trip"
+  },
+  {
+   "id": "fr-supermarkets",
+   "scope": "country",
+   "country": "FR",
+   "category": "food",
+   "title": "Supermarket hierarchy",
+   "tip": "Lidl, Aldi and E.Leclerc are the cheapest chains; Carrefour and Auchan hypermarkets mid-range; Monoprix, Franprix and Carrefour City in city centres charge 20 to 40% more. Boulangerie sandwich formules (sandwich + drink + dessert 7 to 9 EUR) beat cafe lunches.",
+   "savings": "20 to 40% on groceries"
+  },
+  {
+   "id": "fr-blablacar-bus",
+   "scope": "country",
+   "country": "FR",
+   "category": "transport",
+   "title": "BlaBlaCar and BlaBlaCar Bus",
+   "tip": "France is BlaBlaCar's home market: intercity rideshares (Paris to Lyon about 25 to 35 EUR) and BlaBlaCar Bus coaches from 5 to 15 EUR undercut trains massively on routes where you missed cheap rail fares.",
+   "savings": "50 to 70% vs walk-up train fares"
+  },
+  {
+   "id": "es-avlo-iryo-ouigo",
+   "scope": "country",
+   "country": "ES",
+   "category": "transport",
+   "title": "Three-way high-speed price war",
+   "tip": "Spain has three budget high-speed operators: Renfe Avlo (from 7 EUR, now on Madrid to Valencia, Alicante, Sevilla and more), Ouigo Spain and iryo. Note Avlo was withdrawn from Madrid to Barcelona in late 2025; there Ouigo from about 9 EUR and iryo are the budget picks. Always compare all three on the same departure day.",
+   "savings": "60 to 100 EUR vs flexible AVE fares"
+  },
+  {
+   "id": "es-cercanias-combinado",
+   "scope": "country",
+   "country": "ES",
+   "category": "transport",
+   "title": "Free Cercanias transfer with AVE tickets",
+   "tip": "Any Renfe AVE or long-distance ticket includes CombinadoCercanias: a free local commuter-rail ride to or from the main station within 4 hours of your train. Look for the code on your ticket and enter it at Cercanias ticket machines instead of buying a metro ticket.",
+   "savings": "2 to 5 EUR per journey"
+  },
+  {
+   "id": "es-menu-del-dia",
+   "scope": "country",
+   "country": "ES",
+   "category": "food",
+   "title": "Menu del dia, the 3-course institution",
+   "tip": "Weekday lunch (13:00 to 16:00) menu del dia gives three courses plus bread and a drink (often wine) for 10 to 14 EUR outside big cities and 12 to 18 EUR in Madrid and Barcelona. Restaurants must also give free tap water on request by law since 2022.",
+   "savings": "50%+ vs ordering a la carte or dinner"
+  },
+  {
+   "id": "es-free-museum-hours",
+   "scope": "country",
+   "country": "ES",
+   "category": "activities",
+   "title": "Madrid's daily free museum windows",
+   "tip": "The Prado is free Monday to Saturday 18:00 to 20:00 and Sundays 17:00 to 19:00; Reina Sofia is free Monday and Wednesday to Saturday 19:00 to 21:00 and Sunday afternoons. Queues move fast; arrive 30 minutes early. That covers Spain's two top museums for 0 EUR.",
+   "savings": "15 EUR per museum"
+  },
+  {
+   "id": "es-supermarkets",
+   "scope": "country",
+   "country": "ES",
+   "category": "food",
+   "title": "Mercadona and Dia for groceries",
+   "tip": "Mercadona (own-brand Hacendado), Lidl and Dia are the cheap chains; El Corte Ingles supermarkets are premium. A jamon-tortilla picnic from Mercadona feeds two for under 10 EUR.",
+   "savings": "20 to 30% on groceries"
+  },
+  {
+   "id": "es-tourist-tax",
+   "scope": "country",
+   "country": "ES",
+   "category": "stay",
+   "title": "Tourist tax only in Catalonia and the Balearics",
+   "tip": "Most of Spain has no lodging tax. Barcelona adds a regional tax plus a municipal surcharge totalling roughly 5 to 7.5 EUR per person per night in 2026 for hotels and apartments; the Balearics charge up to 4 EUR per night in high season (halved October to April). Staying in Girona, Sitges or Valencia instead avoids or shrinks it.",
+   "savings": "25 to 50 EUR per couple per week in Barcelona"
+  },
+  {
+   "id": "es-vueling-volotea-bases",
+   "scope": "country",
+   "country": "ES",
+   "category": "flights",
+   "title": "Vueling and Volotea for domestic hops",
+   "tip": "Vueling (Barcelona hub) and Volotea (mid-size cities like Bilbao, Asturias) sell intra-Spain fares from 15 to 30 EUR booked 4+ weeks out, often beating 4-hour train fares to the islands' gateways and the north coast. For the Canaries and Balearics, residents get 75% subsidies but visitors still find sub-40 EUR fares off-peak.",
+   "savings": "20 to 60 EUR per leg"
+  },
+  {
+   "id": "it-super-economy",
+   "scope": "country",
+   "country": "IT",
+   "category": "transport",
+   "title": "Trenitalia Super Economy and Italo Low Cost",
+   "tip": "Super Economy fares (non-refundable) open about 6 months out and sell until 5 days before departure: Rome to Florence from 15 to 20 EUR vs 50+ walk-up. Italo's Low Cost fares are the direct competitor; compare both. Loyalty programs CartaFreccia and Italo Piu are free and unlock member promos.",
+   "savings": "50 to 70% vs base fares"
+  },
+  {
+   "id": "it-regionale-flat",
+   "scope": "country",
+   "country": "IT",
+   "category": "transport",
+   "title": "Regionale trains have fixed prices, no booking needed",
+   "tip": "Regional trains never surge: Rome to Naples 13 to 14 EUR, Florence to Pisa about 9 EUR, Milan to Verona about 10 EUR, same price bought 5 minutes before departure. On many corridors they take only 30 to 60 minutes longer than Frecce trains that cost 3 to 4 times more on the day.",
+   "savings": "20 to 40 EUR per leg when booking late"
+  },
+  {
+   "id": "it-domenica-al-museo",
+   "scope": "country",
+   "country": "IT",
+   "category": "activities",
+   "title": "Free state museums first Sunday monthly",
+   "tip": "Domenica al Museo makes all state museums and sites free the first Sunday of every month: Colosseum, Pompeii, Uffizi, Galleria Borghese (reservation still required for some). Expect crowds; go at opening. Many sites are also free on select national days (e.g. 25 April, 2 June).",
+   "savings": "16 to 25 EUR per site"
+  },
+  {
+   "id": "it-venice-access-fee",
+   "scope": "country",
+   "country": "IT",
+   "category": "activities",
+   "title": "Venice day fee: book 4+ days ahead or stay over",
+   "tip": "On 60 dates from 3 April to 26 July 2026 (8:30 to 16:00), day visitors to Venice's historic core pay an access fee: 5 EUR if booked at least 4 days ahead, 10 EUR if late. Overnight guests anywhere in the municipality (incl. Mestre, which is also far cheaper to sleep in) are exempt but must register. Murano, Burano and Lido are outside the fee zone.",
+   "conditions": {
+    "months": [
+     4,
+     5,
+     6,
+     7
+    ]
+   },
+   "savings": "5 EUR per person, plus 50%+ cheaper rooms in Mestre"
+  },
+  {
+   "id": "it-coperto-coffee",
+   "scope": "country",
+   "country": "IT",
+   "category": "food",
+   "title": "Coperto, and coffee standing up",
+   "tip": "Budget 1.50 to 3 EUR per person cover charge (coperto) at sit-down restaurants; it is legal and listed on the menu. Espresso at the bar counter costs about 1.20 to 1.50 EUR but 3 to 6 EUR seated at a piazza table, the al banco price is the local default. Aperitivo buffets in Milan and Turin (8 to 12 EUR for a drink plus buffet) can replace dinner.",
+   "savings": "5 to 15 EUR per day"
+  },
+  {
+   "id": "it-supermarkets",
+   "scope": "country",
+   "country": "IT",
+   "category": "food",
+   "title": "Eurospin, Lidl and Conad",
+   "tip": "Eurospin and Lidl are the discount grocers; Conad and Coop mid-range; Carrefour Express in tourist centres is pricey. Rosticcerie and tavola calda counters sell full hot meals for 6 to 9 EUR, and alimentari make fresh panini for 4 to 6 EUR.",
+   "savings": "20 to 35% on food"
+  },
+  {
+   "id": "it-tolls-fuel",
+   "scope": "country",
+   "country": "IT",
+   "category": "driving",
+   "title": "Autostrada tolls and fuel servito trap",
+   "tip": "Autostrade cost roughly 7 to 8 EUR per 100 km (Milan to Rome about 45 EUR). Parallel SS state roads are free. At petrol stations choose the self-service (fai da te) lanes; the attended servito price is 0.20 to 0.40 EUR/L higher for the same fuel.",
+   "conditions": {
+    "transport": [
+     "car"
+    ]
+   },
+   "savings": "10 to 60 EUR per trip"
+  },
+  {
+   "id": "de-deutschlandticket",
+   "scope": "country",
+   "country": "DE",
+   "category": "transport",
+   "title": "Deutschlandticket: all regional transit for 58 EUR (63 from 2026)",
+   "tip": "The Deutschlandticket covers ALL regional trains (RE, RB, S-Bahn) and every city's buses, trams and U-Bahn nationwide for 58 EUR per month in 2025, rising to 63 EUR from January 2026. It is a monthly subscription you can cancel immediately; even for a 10-day trip it beats single tickets fast (a Berlin weekly pass alone is about 44 EUR). Not valid on ICE, IC or EC trains.",
+   "savings": "50 to 150 EUR per multi-city trip"
+  },
+  {
+   "id": "de-sparpreis",
+   "scope": "country",
+   "country": "DE",
+   "category": "transport",
+   "title": "DB Super Sparpreis from 17.99 EUR",
+   "tip": "For long ICE hops the Super Sparpreis starts at 17.99 EUR (e.g. Berlin to Munich) when booked early; sales open 6 months out and cheap buckets empty first. A BahnCard 25 (about 63 EUR per year, also a trial 3-month version) stacks 25% on top of Sparpreis fares.",
+   "savings": "60 to 80% vs Flexpreis"
+  },
+  {
+   "id": "de-no-tolls",
+   "scope": "country",
+   "country": "DE",
+   "category": "driving",
+   "title": "Autobahn is free, fill up in Czechia or Poland",
+   "tip": "Germany has no car tolls or vignette. German fuel is among the priciest in the region (about 2.10 EUR/L petrol July 2026); when near the eastern border, fill in Poland or Czechia at 0.30 to 0.45 EUR/L less. Also avoid Autobahn service-station fuel, which runs about 0.20 EUR/L over town prices; apps like Clever-tanken show live prices, cheapest typically 18:00 to 22:00.",
+   "conditions": {
+    "transport": [
+     "car"
+    ]
+   },
+   "savings": "10 to 25 EUR per tank"
+  },
+  {
+   "id": "de-supermarkets-pfand",
+   "scope": "country",
+   "country": "DE",
+   "category": "food",
+   "title": "Aldi, Lidl, Netto, Penny, and claim your Pfand",
+   "tip": "The four discounters are 20 to 30% below Rewe and Edeka. Nearly all bottles carry a 0.25 EUR Pfand deposit (0.08 to 0.15 for glass); return them at any supermarket's machine before leaving the country or you donate the deposit.",
+   "savings": "20 to 30% on groceries"
+  },
+  {
+   "id": "de-mittagstisch",
+   "scope": "country",
+   "country": "DE",
+   "category": "food",
+   "title": "Mittagstisch and bakery dinners",
+   "tip": "Weekday Mittagstisch lunch specials run 8 to 13 EUR incl. a drink in most cities, versus 18 to 25 EUR dinner mains. Bakeries sell belegte Brotchen (filled rolls) for 3 to 5 EUR, and doner kebab (6 to 8 EUR) remains the national budget meal.",
+   "savings": "10 to 15 EUR per day"
+  },
+  {
+   "id": "de-museumssonntag",
+   "scope": "country",
+   "country": "DE",
+   "category": "activities",
+   "title": "Berlin Museum Sunday",
+   "tip": "On the first Sunday of each month dozens of Berlin museums (incl. several Museum Island houses) are free via Museumssonntag; book free time slots online a few days ahead. Many German city museums also have one free evening or day per week, check each city's Museumsnacht and free-day pages.",
+   "savings": "10 to 20 EUR per museum"
+  },
+  {
+   "id": "pt-cp-promo",
+   "scope": "country",
+   "country": "PT",
+   "category": "transport",
+   "title": "CP Promo fares: 65% off booked 8+ days ahead",
+   "tip": "On Alfa Pendular and Intercidades trains, buying 5 to 7 days ahead saves up to 56% and 8+ days ahead up to 65% (sales open 60 days out, limited seats, non-refundable but date-changeable). Lisbon to Porto drops from about 26 EUR to as low as 10 EUR.",
+   "savings": "up to 65% per ticket"
+  },
+  {
+   "id": "pt-lisbon-transit",
+   "scope": "country",
+   "country": "PT",
+   "category": "transport",
+   "title": "Navegante 24h card beats tram 28 singles",
+   "tip": "Load a reusable Navegante card (0.50 EUR) with the 24h Carris+Metro pass (about 7 EUR) instead of paying onboard: a single tram 28 ride bought from the driver costs about 3.50 EUR. The 24h version incl. CP commuter trains to Cascais and Sintra costs about 11 EUR, cheaper than two return train rides.",
+   "savings": "5 to 10 EUR per day in Lisbon"
+  },
+  {
+   "id": "pt-prato-do-dia",
+   "scope": "country",
+   "country": "PT",
+   "category": "food",
+   "title": "Prato do dia at tascas",
+   "tip": "Family-run tascas serve a prato do dia (main, often with soup, bread and a drink) for 8 to 11 EUR at lunch. The couvert (bread, olives) is charged only if you eat it; wave it away untouched to avoid 2 to 5 EUR. Half portions (meia dose) are a legitimate menu option and feed most appetites.",
+   "savings": "30 to 50% vs tourist-area dinner"
+  },
+  {
+   "id": "pt-electronic-tolls",
+   "scope": "country",
+   "country": "PT",
+   "category": "driving",
+   "title": "Electronic-only motorways catch rental drivers",
+   "tip": "A22 Algarve, A25 and several others have no toll booths, only cameras. Rent a car with a toll transponder (Via Verde) or prepay online (portugaltolls.com); unpaid electronic tolls trigger fines mailed via the rental company plus 25+ EUR admin fees. Free N125 parallels the A22 along the Algarve.",
+   "conditions": {
+    "transport": [
+     "car"
+    ]
+   },
+   "savings": "25 to 60 EUR in avoided fines and fees"
+  },
+  {
+   "id": "pt-supermarkets",
+   "scope": "country",
+   "country": "PT",
+   "category": "food",
+   "title": "Pingo Doce, Continente, Lidl",
+   "tip": "Pingo Doce and Continente own-brands plus Lidl are the value picks; Pingo Doce in-store cafeterias sell complete lunches around 6 to 8 EUR. Minipreco corner shops are fine for basics.",
+   "savings": "20 to 30% on groceries"
+  },
+  {
+   "id": "pt-city-taxes",
+   "scope": "country",
+   "country": "PT",
+   "category": "stay",
+   "title": "Lisbon and Porto tourist taxes",
+   "tip": "Lisbon charges 4 EUR per person per night (max 7 nights) and Porto 3 EUR in 2026; many smaller municipalities charge 1 to 2 EUR or nothing. Sleeping in Vila Nova de Gaia across the river from Porto or in Almada near Lisbon trims both the tax and room rates.",
+   "savings": "25 to 55 EUR per couple per week"
+  },
+  {
+   "id": "gr-acropolis-combo-gone",
+   "scope": "country",
+   "country": "GR",
+   "category": "activities",
+   "title": "The 30 EUR Athens combo ticket is gone; plan around it",
+   "tip": "The official 5-day combo covering the Acropolis plus six sites was discontinued in April 2025; the Acropolis alone now costs 30 EUR in season (15 EUR reduced, and cheaper November to March). Buy only on the official hhticket.gr (private 'Athens passes' cost 60 to 70 EUR). Free-entry days: 6 March, 18 April, 18 May, last weekend of September, 28 October, and first Sundays November to March.",
+   "savings": "30 to 60 EUR per person"
+  },
+  {
+   "id": "gr-ferries-conventional",
+   "scope": "country",
+   "country": "GR",
+   "category": "transport",
+   "title": "Conventional ferries at deck class, not catamarans",
+   "tip": "Blue Star and other conventional ferries with deck/economy class cost roughly half the SeaJets or WorldChampion high-speed fares (Piraeus to Santorini about 45 EUR deck vs 80 to 90 EUR fast). They are also far more reliable in the meltemi wind season. Book cabins only for overnight legs.",
+   "savings": "35 to 50 EUR per island hop"
+  },
+  {
+   "id": "gr-ktel-buses",
+   "scope": "country",
+   "country": "GR",
+   "category": "transport",
+   "title": "KTEL intercity buses",
+   "tip": "The regional KTEL bus network is the cheap way around the mainland: Athens to Delphi about 17 EUR, Athens to Nafplio about 15 EUR, Thessaloniki to Meteora (Kalambaka) via Trikala about 20 EUR. Buy at the station; many routes are not on international booking sites.",
+   "savings": "50%+ vs tours and transfers"
+  },
+  {
+   "id": "gr-food-souvlaki",
+   "scope": "country",
+   "country": "GR",
+   "category": "food",
+   "title": "Souvlaki economics and taverna carafe wine",
+   "tip": "A gyros pita costs 3.50 to 5 EUR and is a full meal. In tavernas, order house wine by the half-kilo carafe (4 to 7 EUR) instead of bottles, and share 2 to 3 mezedes per couple instead of mains. Lidl, Sklavenitis and My Market are the cheap supermarkets.",
+   "savings": "15 to 25 EUR per couple per meal"
+  },
+  {
+   "id": "gr-climate-fee",
+   "scope": "country",
+   "country": "GR",
+   "category": "stay",
+   "title": "Climate fee is seasonal: visit outside March to October",
+   "tip": "Greece's climate resilience fee scales with hotel class and season: from around 2 EUR per room per night at budget hotels up to 15 EUR at 5-star in the March to October season, dropping sharply November to February. Short-term rentals pay a flat fee too. April and October keep good weather with lower fees and 30 to 40% cheaper rooms than August.",
+   "conditions": {
+    "months": [
+     4,
+     10,
+     11
+    ]
+   },
+   "savings": "5 to 13 EUR per room per night plus seasonal room savings"
+  },
+  {
+   "id": "gr-athens-transit",
+   "scope": "country",
+   "country": "GR",
+   "category": "transport",
+   "title": "Athens 5-day transit ticket",
+   "tip": "The Athens 5-day ticket costs about 8.20 EUR for unlimited metro, tram and buses (airport not included); the 3-day tourist ticket with one airport round trip costs about 20 EUR, cheaper than two 9 EUR airport metro singles plus city tickets. Validate to avoid 60x fare fines.",
+   "savings": "10 to 15 EUR over singles"
+  },
+  {
+   "id": "hr-buses-not-trains",
+   "scope": "country",
+   "country": "HR",
+   "category": "transport",
+   "title": "Buses beat trains on the coast",
+   "tip": "Croatian coastal rail is sparse; Arriva, FlixBus and Cazmatrans coaches connect Zagreb, Zadar, Split and Dubrovnik frequently (Zagreb to Split from 15 to 25 EUR booked ahead). Note many operators charge 1 to 2 EUR cash for hold luggage, keep coins.",
+   "savings": "trains often not an option; 10 to 20 EUR vs late booking"
+  },
+  {
+   "id": "hr-jadrolinija-foot",
+   "scope": "country",
+   "country": "HR",
+   "category": "transport",
+   "title": "Walk onto Jadrolinija ferries",
+   "tip": "Car spots on island ferries cost 30 to 50 EUR each way in summer and sell out; foot passengers pay just 4 to 8 EUR (Split to Supetar about 6 EUR) and never queue. Park in Split, walk on, and rent a scooter or use island buses on Brac or Hvar.",
+   "savings": "50 to 90 EUR per island day trip with car left behind"
+  },
+  {
+   "id": "hr-marenda",
+   "scope": "country",
+   "country": "HR",
+   "category": "food",
+   "title": "Marenda and gablec lunch menus",
+   "tip": "Look for marenda (Dalmatia) or gablec (Zagreb region) chalkboards: worker lunches of grilled fish or stew for 8 to 12 EUR in konobas that charge 20+ EUR for dinner mains. Bakeries (Mlinar, Pan-Pek) sell burek around 2.50 to 3.50 EUR. Cheapest supermarkets: Lidl, Plodine, Konzum.",
+   "savings": "10 to 15 EUR per person per day"
+  },
+  {
+   "id": "hr-coastal-road",
+   "scope": "country",
+   "country": "HR",
+   "category": "driving",
+   "title": "A1 tolls vs the free coastal road",
+   "tip": "Zagreb to Split on the A1 costs about 24 EUR in tolls each way (electronic ENC discounts exist). The free D8 Adriatic Magistrala is slow but spectacular; a common money-and-scenery play is A1 down, D8 for shorter coastal hops. Fuel is slightly cheaper than in Slovenia and much cheaper than Italy.",
+   "conditions": {
+    "transport": [
+     "car"
+    ]
+   },
+   "savings": "around 48 EUR per round trip"
+  },
+  {
+   "id": "hr-sojourn-tax-season",
+   "scope": "country",
+   "country": "HR",
+   "category": "stay",
+   "title": "Sojourn tax and June or September seas",
+   "tip": "Croatia's tourist tax is about 2 EUR per person per night in peak season and lower off-peak. Adriatic water is warm well into late September while accommodation drops 30 to 40% after the mid-August peak; June offers the same discount before the rush.",
+   "conditions": {
+    "months": [
+     6,
+     9
+    ]
+   },
+   "savings": "30 to 40% on lodging plus lower tax"
+  },
+  {
+   "id": "pl-pkp-promo",
+   "scope": "country",
+   "country": "PL",
+   "category": "transport",
+   "title": "PKP Intercity promo tiers up to 67% off",
+   "tip": "PKP Intercity sells Promo tickets in tiers (Super Promo, Promo Plus, Promo 45/30/15) with express fares from 49 PLN (about 11 EUR) on routes like Warsaw to Krakow; the intercity.pl app has a dedicated cheap-ticket search. Book 2 to 4 weeks out; cheapest pools empty first.",
+   "savings": "up to 67% vs base fares"
+  },
+  {
+   "id": "pl-polregio-weekend",
+   "scope": "country",
+   "country": "PL",
+   "category": "transport",
+   "title": "Polregio weekend ticket: unlimited regional rail",
+   "tip": "From Friday 18:00 to Monday 06:00 the Polregio weekend ticket gives unlimited travel on all Polregio regional trains countrywide for 59 PLN (48 PLN mini version). Perfect for a Krakow, Katowice, Wroclaw loop or Tricity hopping.",
+   "conditions": {
+    "transport": [
+     "train"
+    ]
+   },
+   "savings": "50 to 100 PLN per weekend"
+  },
+  {
+   "id": "pl-bar-mleczny",
+   "scope": "country",
+   "country": "PL",
+   "category": "food",
+   "title": "Milk bars: full dinner for 20 to 30 PLN",
+   "tip": "Bar mleczny (milk bars) are subsidised canteens serving pierogi, soups and cutlets: a full meal costs 20 to 30 PLN (5 to 7 EUR), a third of restaurant prices. Cheapest supermarkets are Biedronka and Lidl; Zabka corner shops charge 20 to 40% more but sell cheap hot dogs and coffee.",
+   "savings": "10 to 15 EUR per person per day"
+  },
+  {
+   "id": "pl-flixbus",
+   "scope": "country",
+   "country": "PL",
+   "category": "transport",
+   "title": "Dense, cheap coach market",
+   "tip": "FlixBus fares like Krakow to Warsaw from about 25 PLN (6 EUR) booked a week or more ahead often undercut even promo trains, with hourly frequencies between major cities.",
+   "savings": "30 to 60% vs rail on many pairs"
+  },
+  {
+   "id": "pl-free-museum-days",
+   "scope": "country",
+   "country": "PL",
+   "category": "activities",
+   "title": "One free day per week at state museums",
+   "tip": "Most Polish national museums have a fixed free-entry day for permanent collections, e.g. Warsaw's National Museum and Wawel's selected exhibits; days vary per institution, so check sites before scheduling. Auschwitz-Birkenau is always free without a guide if you book an early or late entry slot online.",
+   "savings": "20 to 50 PLN per museum"
+  },
+  {
+   "id": "cz-regiojet-competition",
+   "scope": "country",
+   "country": "CZ",
+   "category": "transport",
+   "title": "RegioJet and Leo Express price war",
+   "tip": "On Prague to Brno and Ostrava, private operators RegioJet (free coffee, cheap seat classes from about 6 to 9 EUR) and Leo Express compete with Ceske drahy, keeping fares low; book a few days ahead on their apps. RegioJet also runs cheap international buses and trains to Vienna, Bratislava and Budapest.",
+   "savings": "30 to 50% vs CD flexi fares"
+  },
+  {
+   "id": "cz-vignette",
+   "scope": "country",
+   "country": "CZ",
+   "category": "driving",
+   "title": "E-vignette only from edalnice.cz",
+   "tip": "Czech motorways need an e-znamka: 1-day about 9.50 EUR, 10-day about 12.40 EUR, annual about 106 EUR (2026). Buy at edalnice.cz; reseller sites add heavy markups. Prague to Brno without the D1 is slow, so the 10-day is usually worth it for road trips.",
+   "conditions": {
+    "transport": [
+     "car"
+    ]
+   },
+   "savings": "5 to 20 EUR vs resellers or fines"
+  },
+  {
+   "id": "cz-lunch-menus",
+   "scope": "country",
+   "country": "CZ",
+   "category": "food",
+   "title": "Polednicke menu and off-centre pubs",
+   "tip": "Weekday lunch menus (soup plus main) cost 150 to 220 CZK (6 to 9 EUR) even in Prague if you walk 5 minutes off the tourist core. Draft beer is 45 to 65 CZK in normal pubs vs 120+ CZK on Old Town Square, and often cheaper than bottled water.",
+   "savings": "50%+ vs tourist-zone prices"
+  },
+  {
+   "id": "cz-prague-transit",
+   "scope": "country",
+   "country": "CZ",
+   "category": "transport",
+   "title": "Prague transit passes are dirt cheap",
+   "tip": "Prague: 30-minute ticket 30 CZK, 90-minute 40 CZK, 24 hours 120 CZK (about 5 EUR), 72 hours 330 CZK, all covering metro, trams and buses (day passes also cover the Petrin funicular). Contactless tap-in works on ticket machines in every tram. Never ride unvalidated; plainclothes inspectors fine 1000+ CZK.",
+   "savings": "taxis and ride-hails avoided; 10 to 20 EUR per day"
+  },
+  {
+   "id": "cz-supermarkets",
+   "scope": "country",
+   "country": "CZ",
+   "category": "food",
+   "title": "Lidl, Kaufland, Penny, and exchange scams",
+   "tip": "Lidl, Kaufland, Penny and Albert are the cheap grocers. Never use Prague street exchange offices advertising 0% commission (their rates are 10 to 20% off market) or Euronet ATMs; pay by card in CZK or withdraw from bank ATMs.",
+   "savings": "10 to 20% on every exchange avoided"
+  },
+  {
+   "id": "at-vignette-day",
+   "scope": "country",
+   "country": "AT",
+   "category": "driving",
+   "title": "1-day vignette for transits",
+   "tip": "Austria's 2026 vignette prices: 1-day 9.60 EUR, 10-day 12.80 EUR, 2-month 32 EUR, annual 106.80 EUR; buy digital at asfinag.at (instantly valid, resellers charge more). Transiting once? The 1-day fits. Note extra section tolls (Brenner, Tauern, Karawanken) are charged separately on top.",
+   "conditions": {
+    "transport": [
+     "car"
+    ]
+   },
+   "savings": "3 to 20 EUR vs wrong duration or reseller"
+  },
+  {
+   "id": "at-sparschiene-westbahn",
+   "scope": "country",
+   "country": "AT",
+   "category": "transport",
+   "title": "OBB Sparschiene vs Westbahn walk-up",
+   "tip": "OBB Sparschiene advance fares (Vienna to Salzburg from about 15 EUR) open 6 months out; when they are gone, private operator Westbahn on the same route sells walk-up fares at roughly half the OBB flex price and cheap app fares. Vienna to Innsbruck and international Sparschiene (to Munich, Zurich, Budapest) follow the same pattern.",
+   "savings": "30 to 60% per intercity leg"
+  },
+  {
+   "id": "at-mittagsmenu",
+   "scope": "country",
+   "country": "AT",
+   "category": "food",
+   "title": "Mittagsmenu and Wurstelstand",
+   "tip": "Weekday lunch menus run 10 to 14 EUR incl. soup in Vienna's Beisln, half the evening cost. Wurstelstand sausages (4 to 6 EUR) and Trzesniewski open sandwiches (about 1.80 each) are institutional cheap eats. Vienna tap water is alpine spring water; carry a bottle.",
+   "savings": "10 to 15 EUR per person per day"
+  },
+  {
+   "id": "at-hofer",
+   "scope": "country",
+   "country": "AT",
+   "category": "food",
+   "title": "Hofer is Aldi",
+   "tip": "Hofer (Aldi's Austrian name), Lidl and Penny are the discounters; Billa and Spar cost 15 to 25% more. Remember Sunday closing: stock up Saturday.",
+   "savings": "15 to 25% on groceries"
+  },
+  {
+   "id": "at-klimaticket-longstay",
+   "scope": "country",
+   "country": "AT",
+   "category": "transport",
+   "title": "Klimaticket for long stays",
+   "tip": "The Klimaticket (1400 EUR per year 2026, 1050 reduced) covers every train, bus and tram in the whole country. Irrelevant for a city break, but for stays over 2 months of heavy travel (or the promotional 2-month trial versions when offered, e.g. 233 EUR May to June 2026) it beats individual intercity tickets.",
+   "conditions": {
+    "partyMin": 1
+   },
+   "savings": "breaks even around 2 Sparschiene trips per week"
+  },
+  {
+   "id": "ch-half-fare",
+   "scope": "country",
+   "country": "CH",
+   "category": "transport",
+   "title": "Half Fare Card: the single best Swiss buy",
+   "tip": "The 1-month Swiss Half Fare Card (150 CHF in 2026) halves nearly all trains, buses, boats and many mountain railways. Swiss full fares are brutal (Zurich to Zermatt about 130 CHF one way), so it breaks even after about 300 CHF of gross travel, which is 2 to 3 alpine excursions. Compare with the Swiss Travel Pass only if you ride trains daily.",
+   "savings": "50% off nearly all transport after break-even"
+  },
+  {
+   "id": "ch-saver-day-pass",
+   "scope": "country",
+   "country": "CH",
+   "category": "transport",
+   "title": "Saver Day Pass from 29 CHF",
+   "tip": "SBB's demand-priced Saver Day Pass gives unlimited nationwide travel for one day from 52 CHF, or from 29 CHF with the Half Fare Card. Buy 2 to 4 weeks ahead for the lowest tiers; ideal for a big-mileage day like Geneva to St. Moritz. Supersaver single tickets (up to 70% off, train-specific) cover one-off legs.",
+   "savings": "50 to 150 CHF per travel day"
+  },
+  {
+   "id": "ch-groceries",
+   "scope": "country",
+   "country": "CH",
+   "category": "food",
+   "title": "Denner, Aldi, Lidl, and picnic strategy",
+   "tip": "Denner, Aldi Suisse and Lidl undercut Migros and Coop by 20 to 30%. Restaurant mains rarely dip below 25 CHF, so the standard budget play is bakery or supermarket lunch (Migros and Coop takeaway counters) and one hot meal per day; tap water and mountain fountains are potable everywhere.",
+   "savings": "30 to 50 CHF per person per day"
+  },
+  {
+   "id": "ch-vignette",
+   "scope": "country",
+   "country": "CH",
+   "category": "driving",
+   "title": "40 CHF annual vignette is the only option",
+   "tip": "Switzerland sells only an annual motorway vignette (40 CHF, digital at via.admin.ch, valid 14 months Dec to Jan). For a single transit, route over non-motorway passes to skip it, but weigh fuel and time; for any multi-day Swiss driving just buy it. Fines are 200 CHF.",
+   "conditions": {
+    "transport": [
+     "car"
+    ]
+   },
+   "savings": "40 CHF if avoidable, 200 CHF fine if ignored"
+  },
+  {
+   "id": "ch-excluded-roaming",
+   "scope": "country",
+   "country": "CH",
+   "category": "connectivity",
+   "title": "Switzerland is outside EU roaming",
+   "tip": "Most EU plans charge extra in Switzerland and UK plans vary. Turn off data roaming at the border or use an eSIM that explicitly includes CH (Airalo Eurolink does); Swisscom shops sell prepaid tourist SIMs but eSIMs bought online are cheaper.",
+   "savings": "5 to 10 EUR per day of roaming charges"
+  },
+  {
+   "id": "nl-stay-outside-amsterdam",
+   "scope": "country",
+   "country": "NL",
+   "category": "stay",
+   "title": "Sleep in Haarlem or Utrecht, not Amsterdam",
+   "tip": "Amsterdam's tourist tax is 12.5% of the room rate, and from January 2026 hotel VAT rose from 9% to 21%, pushing total tax to about a third of the bill, with a rise toward 16% city tax proposed. Haarlem (15 min by train), Zaandam (12 min) or Utrecht (27 min) cut both the tax and base rates by 30 to 50%; a train return is about 10 EUR.",
+   "savings": "50 to 120 EUR per couple per night in high season"
+  },
+  {
+   "id": "nl-train-etickets",
+   "scope": "country",
+   "country": "NL",
+   "category": "transport",
+   "title": "NS e-tickets and off-peak deals",
+   "tip": "Buy NS train tickets online or tap in with a contactless bank card (OVpay); paper tickets from machines carry a surcharge of about 1 EUR each. Watch for seasonal NS day-ticket promos sold via supermarkets and drugstores (Kruidvat, Albert Heijn) at 15 to 20 EUR for unlimited off-peak travel, a steal given Amsterdam to Maastricht alone costs about 27 EUR.",
+   "savings": "10 to 30 EUR per travel day during promos"
+  },
+  {
+   "id": "nl-groceries",
+   "scope": "country",
+   "country": "NL",
+   "category": "food",
+   "title": "Dirk and Lidl over Albert Heijn",
+   "tip": "Dirk van den Broek, Lidl and Aldi price 15 to 25% below Albert Heijn (whose Bonus discounts need the app). Broodje haring or kibbeling stands and HEMA lunch deals are cheap classics; NS station shops are the most expensive place to buy anything.",
+   "savings": "15 to 25% on groceries"
+  },
+  {
+   "id": "nl-intercity-buses",
+   "scope": "country",
+   "country": "NL",
+   "category": "transport",
+   "title": "FlixBus for international hops",
+   "tip": "Amsterdam to Brussels from 10 to 20 EUR and to Paris from 20 to 35 EUR by FlixBus vs 40 to 130 EUR on Eurostar; the coach adds 1.5 to 2.5 hours. Book Eurostar 3+ months out or default to the bus.",
+   "savings": "30 to 100 EUR per leg"
+  },
+  {
+   "id": "nl-museumkaart-caveat",
+   "scope": "country",
+   "country": "NL",
+   "category": "activities",
+   "title": "Museum prices: book online, skip stacked passes",
+   "tip": "Rijksmuseum (25 EUR) and Van Gogh (24 EUR, timed slots sell out) are never free; buy direct online to avoid reseller markups. The Museumkaart (about 75 EUR) only pays off for 4+ big museums and registration hurdles make it awkward for short visits; the I amsterdam card is only worth it with 3+ paid sights per day.",
+   "savings": "avoid 20 to 50 EUR of unused pass value"
+  },
+  {
+   "id": "be-weekend-tickets",
+   "scope": "country",
+   "country": "BE",
+   "category": "transport",
+   "title": "SNCB weekend fares and youth tickets",
+   "tip": "Belgian rail sells weekend return tickets at roughly half the normal return price (valid Friday evening to Sunday). Under 26? The Youth Ticket costs under 10 EUR to anywhere in Belgium one way. The Standard Multi 10-ride pass cuts per-trip cost about 30% and is shareable between travellers.",
+   "savings": "30 to 50% per rail trip"
+  },
+  {
+   "id": "be-colruyt",
+   "scope": "country",
+   "country": "BE",
+   "category": "food",
+   "title": "Colruyt is the price leader",
+   "tip": "Colruyt guarantees the lowest prices and beats Carrefour and Delhaize by 10 to 20%; Aldi and Lidl are the discounters. A frituur meal (frites plus snack) for 6 to 9 EUR is the national budget dinner; dagschotel (dish of the day) lunches run 12 to 16 EUR.",
+   "savings": "10 to 20% on groceries"
+  },
+  {
+   "id": "be-free-first-sunday",
+   "scope": "country",
+   "country": "BE",
+   "category": "activities",
+   "title": "Brussels museums free on first Sundays",
+   "tip": "Many Brussels museums, incl. the Royal Museums of Fine Arts and the Magritte Museum, are free on the first Sunday of each month (some on the first Wednesday afternoon instead); book slots online. Ghent and Antwerp museums have their own monthly free evenings.",
+   "savings": "10 to 15 EUR per museum"
+  },
+  {
+   "id": "be-lux-fuel",
+   "scope": "country",
+   "country": "BE",
+   "category": "driving",
+   "title": "Detour to Luxembourg pumps",
+   "tip": "When driving in Wallonia or the Ardennes, Luxembourg fuel (about 1.70 EUR/L petrol vs 1.81 in Belgium and higher diesel gaps) plus cheap coffee and tobacco make a border stop worth up to 10 EUR per tank; motorway stations right across the border are built for this.",
+   "conditions": {
+    "transport": [
+     "car"
+    ]
+   },
+   "savings": "5 to 10 EUR per tank"
+  },
+  {
+   "id": "be-charleroi-shuttle",
+   "scope": "country",
+   "country": "BE",
+   "category": "flights",
+   "title": "Charleroi is Brussels' budget airport",
+   "tip": "Ryanair and Wizz fares from Brussels Charleroi routinely undercut Zaventem by 30 to 60%; the Flibco shuttle to Brussels-Midi costs about 17 EUR (cheaper booked online) and takes 55 minutes. Compare total door-to-door cost both ways.",
+   "savings": "20 to 60 EUR per flight"
+  },
+  {
+   "id": "gb-advance-12-weeks",
+   "scope": "country",
+   "country": "GB",
+   "category": "transport",
+   "title": "Advance tickets open about 12 weeks out",
+   "tip": "UK operators release Advance singles roughly 12 weeks before travel; average saving is about 61% vs on-the-day fares (London to Manchester from 20 to 30 GBP vs 100+ walk-up). Set alerts (Trainline ticket alert) for your date.",
+   "savings": "about 61% on average"
+  },
+  {
+   "id": "gb-railcard-split",
+   "scope": "country",
+   "country": "GB",
+   "category": "transport",
+   "title": "Stack a 35 GBP Railcard with split ticketing",
+   "tip": "Railcards (16-25, 26-30, Two Together, Senior; 35 GBP per year) give a third off almost all fares and pay off in 1 or 2 longer trips. Split-ticketing sites (TrainSplit, Trainline SplitSave) legally chop one journey into cheaper segments on the same train and stack WITH the railcard discount, together often 50%+ off.",
+   "savings": "33% plus split savings, often 50%+ total"
+  },
+  {
+   "id": "gb-megabus",
+   "scope": "country",
+   "country": "GB",
+   "category": "transport",
+   "title": "Megabus and National Express from 2 GBP",
+   "tip": "Megabus, FlixBus UK and National Express sell London to Manchester, Bristol or Leeds fares from 2 to 8 GBP booked 2+ weeks ahead. Overnight London to Edinburgh coaches (about 20 to 35 GBP) save a hotel night.",
+   "savings": "30 to 90 GBP vs peak rail"
+  },
+  {
+   "id": "gb-free-museums",
+   "scope": "country",
+   "country": "GB",
+   "category": "activities",
+   "title": "National museums are always free",
+   "tip": "The British Museum, National Gallery, Tate Modern, Natural History Museum, V&A, and Scotland's and Wales' national museums charge nothing for permanent collections (donations optional, special exhibitions paid). A full London culture itinerary can cost 0 GBP.",
+   "savings": "60 to 100 GBP per person vs paid-attraction itineraries"
+  },
+  {
+   "id": "gb-contactless-cap",
+   "scope": "country",
+   "country": "GB",
+   "category": "transport",
+   "title": "Tap contactless in London; never buy paper",
+   "tip": "Contactless bank cards auto-cap at the daily and weekly Travelcard price (zone 1 to 2 daily cap around 9 GBP in 2026); paper singles cost several times the Oyster/contactless fare. Use the same card all week for the Monday to Sunday weekly cap.",
+   "savings": "5 to 15 GBP per day vs paper tickets"
+  },
+  {
+   "id": "gb-meal-deals",
+   "scope": "country",
+   "country": "GB",
+   "category": "food",
+   "title": "Supermarket meal deals",
+   "tip": "Tesco (with free Clubcard), Sainsbury's, Boots and Co-op lunch meal deals (main plus snack plus drink) run 3.60 to 5 GBP, the cheapest lunch in any UK city. Aldi and Lidl undercut the big four on groceries by 10 to 20%. Wetherspoons pubs serve full meals with a drink under 10 GBP.",
+   "savings": "5 to 10 GBP per person per day"
+  },
+  {
+   "id": "ie-leap-card",
+   "scope": "country",
+   "country": "IE",
+   "category": "transport",
+   "title": "Leap Card cuts Dublin fares about half",
+   "tip": "A TFI Leap Card (or the Leap contactless fare on cards where rolled out) prices Dublin bus, tram and DART well below cash: the 90-minute transfer fare is about 2 EUR vs 2.60+ cash, with daily and weekly caps. Buy at any newsagent; the paper airport-bus alternatives (Dublin Express about 8 EUR online) beat taxi transfers by 25+ EUR.",
+   "savings": "30 to 50% on city transport"
+  },
+  {
+   "id": "ie-irish-rail-web",
+   "scope": "country",
+   "country": "IE",
+   "category": "transport",
+   "title": "Irish Rail low web fares",
+   "tip": "Booking irishrail.ie a week or more ahead gets Dublin to Cork or Galway low fares from about 10 to 18 EUR vs 40 to 55 EUR flexible walk-up. Midweek departures are cheapest; seat reservation included.",
+   "savings": "25 to 40 EUR per trip"
+  },
+  {
+   "id": "ie-intercity-coaches",
+   "scope": "country",
+   "country": "IE",
+   "category": "transport",
+   "title": "Citylink, GoBus, Aircoach",
+   "tip": "Private coaches beat rail on price and sometimes speed: Dublin to Galway from about 14 to 19 EUR with Citylink/GoBus, Dublin to Belfast with Aircoach around 15 EUR. All bookable online with frequent departures.",
+   "savings": "10 to 30 EUR vs rail"
+  },
+  {
+   "id": "ie-free-museums",
+   "scope": "country",
+   "country": "IE",
+   "category": "activities",
+   "title": "Ireland's national museums are free",
+   "tip": "All four National Museum of Ireland sites, the National Gallery and Chester Beatty Library are free. The paid heavyweights (Guinness Storehouse about 30 EUR, Book of Kells about 25 EUR) sell cheaper early-morning or online slots; book direct.",
+   "savings": "20 to 50 EUR per person"
+  },
+  {
+   "id": "ie-groceries",
+   "scope": "country",
+   "country": "IE",
+   "category": "food",
+   "title": "Aldi, Lidl and Dunnes over Tesco Ireland",
+   "tip": "Aldi and Lidl are 15 to 25% below SuperValu and Centra; Dunnes Stores vouchers (10 EUR off 50) make it competitive. Pub lunch specials (soup plus sandwich 10 to 14 EUR) beat dinner mains at 18 to 28 EUR.",
+   "savings": "15 to 25% on food"
+  },
+  {
+   "id": "no-minipris",
+   "scope": "country",
+   "country": "NO",
+   "category": "transport",
+   "title": "Minipris fares on Oslo to Bergen",
+   "tip": "Vy and SJ Nord sell non-refundable Minipris fares from about 300 NOK on scenic long hauls like Oslo to Bergen (normally 700 to 1100 NOK); book 2 to 8 weeks out on vy.no. The Bergen line doubles as one of Europe's great scenic rides, skip the paid tourist alternatives.",
+   "savings": "400 to 800 NOK per leg"
+  },
+  {
+   "id": "no-groceries",
+   "scope": "country",
+   "country": "NO",
+   "category": "food",
+   "title": "Kiwi, Rema 1000 and First Price",
+   "tip": "Kiwi, Rema 1000 and Extra are the discount chains; the First Price budget brand is the cheapest line. Restaurant mains run 250 to 400 NOK, so the Norwegian norm of matpakke (packed lunch) plus a big included hotel breakfast is the budget backbone. Tap water everywhere is excellent.",
+   "savings": "300 to 500 NOK per person per day"
+  },
+  {
+   "id": "no-alcohol-dutyfree",
+   "scope": "country",
+   "country": "NO",
+   "category": "food",
+   "title": "Buy alcohol at arrival duty-free",
+   "tip": "Alcohol outside supermarket-strength beer is sold only in state Vinmonopolet shops at very high prices, and bar beer runs 100 to 140 NOK. Use your arrival duty-free quota at the airport (a standard local ritual) or accept a dry trip.",
+   "savings": "50%+ on any alcohol"
+  },
+  {
+   "id": "no-city-tolls",
+   "scope": "country",
+   "country": "NO",
+   "category": "driving",
+   "title": "Invisible toll rings bill your plate",
+   "tip": "Norwegian cities and many roads charge via automatic AutoPASS gantries; foreign cars get billed by mail via EPC (rental cars via the hire company plus admin fees). Budget 100 to 300 NOK per driving day around Oslo or Bergen, or park outside the ring and use transit. EVs and off-peak hours are discounted.",
+   "conditions": {
+    "transport": [
+     "car"
+    ]
+   },
+   "savings": "avoid surprise 30 to 60 EUR post-trip bills"
+  },
+  {
+   "id": "no-allemannsretten",
+   "scope": "country",
+   "country": "NO",
+   "category": "stay",
+   "title": "Free wild camping by right",
+   "tip": "Allemannsretten lets you tent for free on uncultivated land 150 m from buildings for up to 2 nights. Combined with 10 to 15 EUR/day supermarket eating, this makes Norway, otherwise Europe's priciest country, viable on a backpacker budget.",
+   "conditions": {
+    "months": [
+     6,
+     7,
+     8,
+     9
+    ]
+   },
+   "savings": "100 to 200 EUR per night vs hotels"
+  },
+  {
+   "id": "se-sj-early",
+   "scope": "country",
+   "country": "SE",
+   "category": "transport",
+   "title": "SJ releases cheap buckets months ahead",
+   "tip": "SJ opens sales several months out and the lowest non-rebookable fares (Stockholm to Gothenburg from about 195 SEK) go first; last-minute X2000 fares hit 700 to 1100 SEK. FlixTrain runs the same corridor cheaper still. MTRX no longer exists separately (merged into VR/SJ landscape); compare on sj.se and flixtrain.se.",
+   "savings": "400 to 800 SEK per leg"
+  },
+  {
+   "id": "se-dagens-ratt",
+   "scope": "country",
+   "country": "SE",
+   "category": "food",
+   "title": "Dagens ratt lunch: the Swedish deal",
+   "tip": "Weekday dagens ratt (11:00 to 14:00) includes a main, salad buffet, bread and coffee for 115 to 145 SEK, at restaurants charging 200 to 300 SEK for the same food at dinner. Willys and Lidl are the cheap grocers; ICA and Coop cost more, and Pressbyran kiosks are for emergencies only.",
+   "savings": "100 to 150 SEK per person per day"
+  },
+  {
+   "id": "se-stockholm-transit",
+   "scope": "country",
+   "country": "SE",
+   "category": "transport",
+   "title": "SL 72-hour pass and no cash",
+   "tip": "Stockholm SL: tap any contactless card for singles (about 43 SEK incl. metro to most of the city) or buy the 72-hour pass (about 350 SEK) if making 3+ trips daily. Skip the Arlanda Express full fare (about 340 SEK) by taking the Flygbussarna coach (about 130 SEK booked online) or commuter train.",
+   "savings": "100 to 200 SEK per airport transfer"
+  },
+  {
+   "id": "se-systembolaget",
+   "scope": "country",
+   "country": "SE",
+   "category": "food",
+   "title": "Alcohol only at Systembolaget",
+   "tip": "Wine and spirits are sold only in state Systembolaget shops (closed Sundays, Saturday afternoons); bar prices are steep (beer 75 to 95 SEK). Buy Systembolaget for accommodation drinks and plan around its hours.",
+   "savings": "50% vs bar prices"
+  },
+  {
+   "id": "se-free-museums",
+   "scope": "country",
+   "country": "SE",
+   "category": "activities",
+   "title": "Stockholm's free state museums",
+   "tip": "Several Stockholm state museums are permanently free, including the Swedish History Museum, Moderna Museet's permanent collection has free slots, and the Medieval Museum; the big paid ones (Vasa about 190 SEK) are cheaper bought online. Djurgarden walks and Gamla Stan cost nothing.",
+   "savings": "150 to 300 SEK per person"
+  },
+  {
+   "id": "dk-orange-tickets",
+   "scope": "country",
+   "country": "DK",
+   "category": "transport",
+   "title": "DSB Orange from 149 DKK",
+   "tip": "DSB Orange and Orange Fri tickets, released up to 2 months ahead for specific departures, cut Copenhagen to Aarhus from about 400 DKK to 149 to 250 DKK. Buy on dsb.dk or the app; cheapest on off-peak midweek departures.",
+   "savings": "150 to 300 DKK per leg"
+  },
+  {
+   "id": "dk-groceries",
+   "scope": "country",
+   "country": "DK",
+   "category": "food",
+   "title": "Netto, Rema 1000, Lidl",
+   "tip": "Netto, Rema 1000 and Lidl are the discounters (Fotex and Irma cost 20 to 30% more). Bakeries discount day-old bread, and smorrebrod takeaway (35 to 60 DKK) beats restaurant lunch. Copenhagen tap water is excellent.",
+   "savings": "20 to 30% on food"
+  },
+  {
+   "id": "dk-cph-transit",
+   "scope": "country",
+   "country": "DK",
+   "category": "transport",
+   "title": "City Pass Small covers the airport",
+   "tip": "Copenhagen's City Pass Small (24h about 90 DKK, zones 1 to 4) includes the metro to and from the airport, which alone costs about 33 DKK per ride; a 72h version exists. Tap-in contactless (rejsekort app rollout) also works. Harbour buses are covered too and double as a cheap canal cruise.",
+   "savings": "30 to 60 DKK per day plus a free harbour tour"
+  },
+  {
+   "id": "dk-glyptotek-free",
+   "scope": "country",
+   "country": "DK",
+   "category": "activities",
+   "title": "Free museum windows in Copenhagen",
+   "tip": "Ny Carlsberg Glyptotek is free on the last Wednesday of the month (check current day), the National Museum and SMK are free for under 18s, and many venues have discounted late hours. The free classics: round tower views beat paid towers, and Freetown Christiania, Nyhavn and harbour swims cost nothing.",
+   "savings": "120 to 150 DKK per museum"
+  },
+  {
+   "id": "dk-oresund",
+   "scope": "country",
+   "country": "DK",
+   "category": "transport",
+   "title": "Cross to Malmo by train, not car",
+   "tip": "The Oresund bridge car toll is about 435 DKK one way (discounts online in advance), while the Oresundstag train from Copenhagen to Malmo costs about 115 DKK return. For a Malmo day trip from Copenhagen, always take the train.",
+   "conditions": {
+    "transport": [
+     "train"
+    ]
+   },
+   "savings": "300+ DKK per crossing"
+  },
+  {
+   "id": "fi-vr-advance",
+   "scope": "country",
+   "country": "FI",
+   "category": "transport",
+   "title": "VR saver fares from under 10 EUR",
+   "tip": "VR's dynamic pricing sells Helsinki to Tampere from 8 to 12 EUR and Helsinki to Turku similar when booked 2+ weeks out; same-day fares triple. Onnibus coaches (from 5 EUR) undercut even that on major pairs.",
+   "savings": "50 to 70% vs same-day"
+  },
+  {
+   "id": "fi-lounas",
+   "scope": "country",
+   "country": "FI",
+   "category": "food",
+   "title": "Lounas buffets 10 to 13 EUR",
+   "tip": "Weekday lounas (11:00 to 14:00) buffets with salad, bread and coffee run 10 to 13 EUR nationwide, incl. Helsinki, vs 20 to 30 EUR dinner mains. Lidl is clearly cheapest for groceries; S-market and K-market follow. Tap water is always free and excellent.",
+   "savings": "10 to 15 EUR per person per day"
+  },
+  {
+   "id": "fi-helsinki-transit",
+   "scope": "country",
+   "country": "FI",
+   "category": "transport",
+   "title": "HSL day tickets and the 1.5h transfer",
+   "tip": "HSL single tickets (about 2.95 EUR AB zone) include 80 to 110 minutes of transfers; day tickets (about 9 EUR AB) cover trams, metro, buses AND the Suomenlinna ferry, which tourists often pay a private operator 8+ EUR for.",
+   "savings": "5 to 10 EUR per day"
+  },
+  {
+   "id": "fi-sauna-swim",
+   "scope": "country",
+   "country": "FI",
+   "category": "activities",
+   "title": "Public saunas and free swimming",
+   "tip": "Skip 50+ EUR spa packages: public saunas like Kotiharjun (Helsinki) charge 15 to 20 EUR, and lake or sea swimming is free everywhere under everyman's rights, which also allow free berry picking and wild camping outside private yards.",
+   "savings": "30 to 50 EUR per visit"
+  },
+  {
+   "id": "hu-budapest-travelcard",
+   "scope": "country",
+   "country": "HU",
+   "category": "transport",
+   "title": "Budapest 72-hour travelcard 5500 HUF",
+   "tip": "The BKK 72-hour travelcard (5500 HUF, about 14 EUR) covers metro, trams, buses, trolleybuses and the cogwheel railway; singles cost 450 HUF each and inspectors are strict. Airport bus 100E needs its own 2200 HUF ticket, or take bus 200E plus metro M3 on the travelcard for a fraction of that.",
+   "savings": "10 to 20 EUR per stay plus airport transfer savings"
+  },
+  {
+   "id": "hu-national-pass",
+   "scope": "country",
+   "country": "HU",
+   "category": "transport",
+   "title": "Country and county monthly passes",
+   "tip": "Hungary sells a national monthly pass (orszagberlet, about 18900 HUF, roughly 47 EUR) valid on ALL MAV trains and Volanbusz intercity buses, and county passes (varmegyeberlet, about 9450 HUF) for one county. For any stay with 3+ intercity trips it demolishes single fares (Budapest to Lake Balaton alone is about 3000 HUF each way).",
+   "savings": "50 to 80% for multi-trip stays"
+  },
+  {
+   "id": "hu-vignette",
+   "scope": "country",
+   "country": "HU",
+   "category": "driving",
+   "title": "Hungarian e-vignette incl. 1-day option",
+   "tip": "Motorways need an e-matrica bought at nemzetiutdij.hu: a 1-day vignette from 5550 HUF (introduced 2025) suits transits; 10-day and monthly versions cost only slightly more, so pick by exact trip length. Cameras enforce; fines exceed 20000 HUF.",
+   "conditions": {
+    "transport": [
+     "car"
+    ]
+   },
+   "savings": "5 to 50 EUR vs wrong vignette or fine"
+  },
+  {
+   "id": "hu-menus-baths",
+   "scope": "country",
+   "country": "HU",
+   "category": "food",
+   "title": "Napi menu lunches and cheaper baths",
+   "tip": "Weekday napi menu (soup plus main) costs 2000 to 3500 HUF (5 to 9 EUR) at etkezde canteens. For thermal baths, Rudas, Lukacs and Kiraly cost 30 to 40% less than Szechenyi, with weekday morning tickets cheapest. Lidl, Aldi and Penny are the cheap supermarkets. Always pay in HUF, never accept forint-to-euro conversion at terminals.",
+   "savings": "10 to 20 EUR per day"
+  },
+  {
+   "id": "hu-bkk-goes-cheap",
+   "scope": "country",
+   "country": "HU",
+   "category": "activities",
+   "title": "Free and near-free Budapest sights",
+   "tip": "Fisherman's Bastion lower terraces, Gellert Hill, Margaret Island and all bridge walks are free; Parliament tickets are half price for EU citizens. Ruin bars have no cover charge; drink prices in Kazinczy street bars are still 2 to 3 EUR for beer.",
+   "savings": "20 to 40 EUR per person"
+  },
+  {
+   "id": "ro-trains-vs-buses",
+   "scope": "country",
+   "country": "RO",
+   "category": "transport",
+   "title": "CFR is cheap but slow; compare buses and BlaBlaCar",
+   "tip": "Trains like Bucharest to Brasov cost only 50 to 75 RON (10 to 15 EUR) but average 40 to 60 km/h on many lines; private coaches and minibuses (autogari.ro lists them) and BlaBlaCar (huge in Romania) are often faster for similar money. Book CFR online for a small discount.",
+   "savings": "hours of time at equal cost; 10 to 20% online rail discount"
+  },
+  {
+   "id": "ro-rovinieta",
+   "scope": "country",
+   "country": "RO",
+   "category": "driving",
+   "title": "Rovinieta is a few euros; buy before the first km",
+   "tip": "Romania's e-vignette (rovinieta) costs only a few euros for short periods (well under 10 EUR for a week-class pass) but is mandatory on ALL national roads, not just motorways, and plate cameras issue fines automatically. Buy at any petrol station or roviniete.ro before setting off. Fuel is among the cheapest in the EU, fill up before leaving toward Hungary.",
+   "conditions": {
+    "transport": [
+     "car"
+    ]
+   },
+   "savings": "avoid 250+ RON fines; 5 to 10 EUR per tank vs Hungary"
+  },
+  {
+   "id": "ro-meniul-zilei",
+   "scope": "country",
+   "country": "RO",
+   "category": "food",
+   "title": "Meniul zilei for 25 to 45 RON",
+   "tip": "Weekday set lunches (soup plus main, sometimes dessert) cost 25 to 45 RON (5 to 9 EUR) in Bucharest and less elsewhere. Lidl, Kaufland and Penny are the discount grocers; Mega Image is the pricey convenience chain. Covrigi (pretzel) stands sell breakfast for 1 EUR.",
+   "savings": "10 to 15 EUR per person per day"
+  },
+  {
+   "id": "ro-black-sea-shoulder",
+   "scope": "country",
+   "country": "RO",
+   "category": "stay",
+   "title": "September on the Black Sea coast",
+   "tip": "Mamaia and Vama Veche accommodation drops 40 to 60% after late August while the sea stays swimmable into mid September; May to early June is similarly cheap. Book directly with guesthouses (pensiuni), which often quote 10 to 20% under platform prices for cash.",
+   "conditions": {
+    "months": [
+     5,
+     6,
+     9
+    ]
+   },
+   "savings": "40 to 60% on lodging"
+  },
+  {
+   "id": "bg-euro-2026",
+   "scope": "country",
+   "country": "BG",
+   "category": "food",
+   "title": "Bulgaria uses the euro since January 2026",
+   "tip": "No more lev exchange: Bulgaria adopted the euro on 1 January 2026, killing the classic airport and border exchange-rate scams. Prices remain among the EU's lowest: a full restaurant meal 8 to 12 EUR, banitsa and ayran breakfast under 2.50 EUR. Kaufland, Lidl and Billa are the main cheap supermarkets.",
+   "savings": "no FX fees or scams; meals half of Western prices"
+  },
+  {
+   "id": "bg-vignette",
+   "scope": "country",
+   "country": "BG",
+   "category": "driving",
+   "title": "Weekend and weekly e-vignettes",
+   "tip": "Bulgarian motorways and most main roads need an e-vignette from bgtoll.bg: the weekly class costs under 10 EUR and there is a cheap weekend vignette for short trips. Cameras enforce by plate; buy before driving, incl. rental cars entering from Greece or Romania.",
+   "conditions": {
+    "transport": [
+     "car"
+    ]
+   },
+   "savings": "avoid 150+ EUR fines"
+  },
+  {
+   "id": "bg-buses-beat-trains",
+   "scope": "country",
+   "country": "BG",
+   "category": "transport",
+   "title": "Intercity buses over BDZ trains",
+   "tip": "Sofia to Plovdiv by bus takes about 2 hours for 8 to 10 EUR vs 2.5 to 3.5 hours by train; buses from Sofia's central bus station also serve Rila Monastery day trips for under 15 EUR return, a fraction of organised-tour prices (40 to 60 EUR).",
+   "savings": "25 to 45 EUR on a Rila day trip"
+  },
+  {
+   "id": "bg-sofia-transit-taxis",
+   "scope": "country",
+   "country": "BG",
+   "category": "transport",
+   "title": "Cheap metro, but only app-hailed taxis",
+   "tip": "Sofia metro singles cost well under 1 EUR with daily passes around 2 EUR. For taxis use the TaxiMe or Yellow apps; street-hailed cabs with doctored meters near stations and the airport overcharge 5 to 10x. The metro runs directly to Sofia airport.",
+   "savings": "10 to 30 EUR per airport run"
+  },
+  {
+   "id": "sk-vignette",
+   "scope": "country",
+   "country": "SK",
+   "category": "driving",
+   "title": "Slovak e-vignette: 1-day 8.10 EUR",
+   "tip": "Slovakia's eznamka.sk sells 1-day (8.10 EUR), 10-day (10.80 EUR), monthly and annual e-vignettes. For Bratislava-only visits you can usually route on toll-free roads from Vienna or Budapest; check the exempt sections map before buying.",
+   "conditions": {
+    "transport": [
+     "car"
+    ]
+   },
+   "savings": "8 to 11 EUR if avoidable"
+  },
+  {
+   "id": "sk-regiojet-vienna",
+   "scope": "country",
+   "country": "SK",
+   "category": "transport",
+   "title": "Bratislava as Vienna's budget twin",
+   "tip": "RegioJet and Slovak Lines connect Vienna and Bratislava hourly for 5 to 10 EUR (under 1.5 hours). Flying into Bratislava (Ryanair base) or Vienna and hopping across lets you pick whichever fare is cheaper; hotels and restaurants in Bratislava cost 30 to 50% less than Vienna.",
+   "savings": "30 to 50% on the whole city break"
+  },
+  {
+   "id": "sk-denne-menu",
+   "scope": "country",
+   "country": "SK",
+   "category": "food",
+   "title": "Denne menu with soup for 6 to 8 EUR",
+   "tip": "Weekday denne menu lunches incl. soup run 6 to 8 EUR even in central Bratislava. Lidl, Kaufland and Billa are the value supermarkets; Tesco is widespread. Kofola on tap is the cheap local cola ritual.",
+   "savings": "8 to 12 EUR per person per day"
+  },
+  {
+   "id": "sk-tatras-trains",
+   "scope": "country",
+   "country": "SK",
+   "category": "transport",
+   "title": "Tatra electric railways",
+   "tip": "The TEZ electric trains link High Tatras resorts (Strbske Pleso, Tatranska Lomnica) for 1 to 3 EUR per hop; a 3-day regional pass costs under 15 EUR. Hiking is free and huts sell affordable food; the Tatras deliver an alpine holiday at a third of Alps prices.",
+   "savings": "60 to 70% vs Austrian or Swiss alpine resorts"
+  },
+  {
+   "id": "si-vignette",
+   "scope": "country",
+   "country": "SI",
+   "category": "driving",
+   "title": "Slovenian e-vignette: weekly about 16 EUR",
+   "tip": "Slovenia's evinjeta (evinjeta.dars.si): weekly about 16 EUR, monthly about 32 EUR, annual about 117.50 EUR. Ljubljana to Bled can be driven toll-free on regional roads in about 50 minutes; only buy the vignette if you will actually use motorways. Cameras enforce with 300+ EUR fines.",
+   "conditions": {
+    "transport": [
+     "car"
+    ]
+   },
+   "savings": "16 EUR if avoidable, 300 EUR fine if ignored"
+  },
+  {
+   "id": "si-bled-bus",
+   "scope": "country",
+   "country": "SI",
+   "category": "transport",
+   "title": "Bled and Bohinj by public bus",
+   "tip": "Arriva buses run Ljubljana to Bled (about 7 to 8 EUR, hourly) and on to Bohinj; no car needed for the classic Julian Alps circuit. In Ljubljana the Urbana card makes city buses about 1.30 EUR per 90 minutes, and the compact centre is fully walkable.",
+   "savings": "30 to 60 EUR per day vs rental car plus parking"
+  },
+  {
+   "id": "si-malica",
+   "scope": "country",
+   "country": "SI",
+   "category": "food",
+   "title": "Malica: the 6 to 9 EUR worker lunch",
+   "tip": "Between about 10:00 and 14:00 many Slovenian restaurants serve malica, a subsidised-style set meal (soup plus main) for 6 to 9 EUR, incl. spots in central Ljubljana. Mercator, Spar, Lidl and Hofer are the grocers; Hofer and Lidl are cheapest. Tap water is excellent everywhere.",
+   "savings": "10 to 15 EUR per person per day"
+  },
+  {
+   "id": "si-tourist-tax",
+   "scope": "country",
+   "country": "SI",
+   "category": "stay",
+   "title": "Tourist tax around 3 EUR in hotspots",
+   "tip": "Ljubljana and Bled charge about 3.13 EUR per person per night; smaller towns charge less. Staying in Radovljica (7 minutes by bus from Bled) or Skofja Loka cuts both the tax and room rates 20 to 40% vs Bled lakefront.",
+   "savings": "20 to 40% on lodging near Bled"
+  },
+  {
+   "id": "al-furgons",
+   "scope": "country",
+   "country": "AL",
+   "category": "transport",
+   "title": "Furgon minibuses run everything",
+   "tip": "Intercity travel is by furgon (shared minibus) and coach: Tirana to Berat about 400 to 500 lek (4 to 5 EUR), Tirana to Sarande about 1300 to 1500 lek. No online booking; pay cash at departure lots (ask for the terminali). They leave when full, go early morning.",
+   "savings": "taxis cost 10x; tours cost 5x"
+  },
+  {
+   "id": "al-cash-atms",
+   "scope": "country",
+   "country": "AL",
+   "category": "food",
+   "title": "Bring euros in cash, avoid ATM fees",
+   "tip": "Most Albanian ATMs charge foreign cards 500 to 800 lek (5 to 8 EUR) per withdrawal. Bring euro cash and exchange at city-centre bureaus (tight spreads, no commission) instead. Everyday prices are the lowest on the Adriatic: byrek under 1 EUR, full grill meals 5 to 8 EUR, coffee 0.60 to 1 EUR.",
+   "savings": "5 to 8 EUR per withdrawal avoided"
+  },
+  {
+   "id": "al-esim",
+   "scope": "country",
+   "country": "AL",
+   "category": "connectivity",
+   "title": "Albania is outside EU roaming",
+   "tip": "EU plans charge roaming in Albania. Vodafone AL and One tourist packs (about 10 to 15 EUR for 20+ GB, sold in city shops, pricier at the airport) or a Balkans eSIM cover it; Albania shares free roaming with the other Western Balkan countries (RS, ME, BA, MK), so one local SIM covers a whole Balkan loop.",
+   "savings": "5 to 10 EUR per day vs EU-carrier roaming"
+  },
+  {
+   "id": "al-riviera-shoulder",
+   "scope": "country",
+   "country": "AL",
+   "category": "stay",
+   "title": "Riviera guesthouses off-peak",
+   "tip": "Ksamil and Himare guesthouses that charge 60 to 90 EUR in August fall to 25 to 40 EUR in June and September with identical weather; many take walk-ins cheaper than platform rates. Water stays warm through September.",
+   "conditions": {
+    "months": [
+     5,
+     6,
+     9,
+     10
+    ]
+   },
+   "savings": "40 to 60% on lodging"
+  },
+  {
+   "id": "me-buses",
+   "scope": "country",
+   "country": "ME",
+   "category": "transport",
+   "title": "Coastal buses and the Kotor-Herceg Novi corridor",
+   "tip": "Blue Line and other coastal buses run Budva, Kotor and Herceg Novi every 30 to 60 minutes for 2 to 5 EUR; buy at kiosks or on board. The Kotor to Perast bus is about 1.50 EUR vs 15+ EUR taxis. Montenegro uses the euro despite being outside the EU.",
+   "savings": "10 to 20 EUR per day vs taxis"
+  },
+  {
+   "id": "me-roaming",
+   "scope": "country",
+   "country": "ME",
+   "category": "connectivity",
+   "title": "No EU roaming, but Balkan regional roaming",
+   "tip": "EU plans charge extra in Montenegro. A local SIM or eSIM (Crnogorski Telekom, One, m:tel tourist packs around 10 EUR) roams free across Serbia, Bosnia, Albania and North Macedonia under the Western Balkans agreement, ideal for multi-country Balkan trips.",
+   "savings": "5 to 10 EUR per day"
+  },
+  {
+   "id": "me-kotor-walls-early",
+   "scope": "country",
+   "country": "ME",
+   "category": "activities",
+   "title": "Kotor walls, beaches and taxes",
+   "tip": "The Kotor fortress walls charge 15 EUR in daytime season hours, but the Ladder of Kotor trail reaches the same fortress views free from outside the ticketed gate. Tourist tax is about 1 to 1.50 EUR per night, usually handled by hosts; ensure private hosts register you to avoid border-exit fines.",
+   "savings": "15 EUR per person"
+  },
+  {
+   "id": "me-supermarkets",
+   "scope": "country",
+   "country": "ME",
+   "category": "food",
+   "title": "Voli and Idea, plus konoba set meals",
+   "tip": "Voli, Idea and HDL Laković are the main supermarket chains for self-catering. Konobas away from the Budva and Kotor waterfronts serve grilled fish or cevapi meals for 7 to 10 EUR vs 15 to 25 EUR with a sea view two streets away.",
+   "savings": "30 to 50% per meal"
+  },
+  {
+   "id": "rs-soko-train",
+   "scope": "country",
+   "country": "RS",
+   "category": "transport",
+   "title": "Soko high-speed Belgrade to Novi Sad",
+   "tip": "The 200 km/h Soko train covers Belgrade to Novi Sad in about 36 minutes for roughly 400 to 600 RSD (3.50 to 5 EUR); buy at the station or srbvoz app. For other routes, buses (BAS Belgrade station) dominate; Belgrade to Nis about 1500 to 2000 RSD.",
+   "savings": "70%+ vs any Western European equivalent"
+  },
+  {
+   "id": "rs-cash-exchange",
+   "scope": "country",
+   "country": "RS",
+   "category": "food",
+   "title": "Menjacnica exchange offices and pekara meals",
+   "tip": "Change euros at city menjacnica offices (spreads under 1%, far better than airports); cards are widely accepted but small kafanas prefer dinars. A pekara (bakery) burek plus yogurt breakfast is 250 to 350 RSD (2 to 3 EUR); kafana daily menus 700 to 1100 RSD. Lidl, Maxi and Idea are the value supermarkets.",
+   "savings": "10 to 15 EUR per person per day"
+  },
+  {
+   "id": "rs-tolls",
+   "scope": "country",
+   "country": "RS",
+   "category": "driving",
+   "title": "Serbian tolls are plaza-based, pay by card",
+   "tip": "The A1 through Serbia (Hungarian border to North Macedonia) charges booth tolls totalling roughly 15 to 20 EUR for a full transit; euros and cards accepted but dinar payment can be slightly cheaper. No vignette needed. Fuel is cheaper than in Hungary or Croatia; fill before exiting north.",
+   "conditions": {
+    "transport": [
+     "car"
+    ]
+   },
+   "savings": "5 to 10 EUR per transit"
+  },
+  {
+   "id": "rs-roaming",
+   "scope": "country",
+   "country": "RS",
+   "category": "connectivity",
+   "title": "Serbia outside EU roaming; Yettel or MTS prepaid",
+   "tip": "EU plans charge roaming in Serbia. Yettel, MTS and A1 prepaid tourist packages cost around 10 EUR for generous data and include free Western Balkans roaming (ME, BA, AL, MK).",
+   "savings": "5 to 10 EUR per day"
+  },
+  {
+   "id": "ba-cheapest-balkans",
+   "scope": "country",
+   "country": "BA",
+   "category": "food",
+   "title": "Pay in marka; some of Europe's lowest prices",
+   "tip": "The convertible mark (BAM) is pegged at 1.95583 to the euro. Some vendors accept euros at a flat 2:1, quietly costing you 2%; pay in BAM by card or exchange properly. Cevapi with somun bread runs 5 to 9 BAM (2.50 to 4.50 EUR), coffee about 1 to 1.50 BAM. Bingo and Konzum are the main supermarkets.",
+   "savings": "meals at a third of Western prices"
+  },
+  {
+   "id": "ba-buses-talgo",
+   "scope": "country",
+   "country": "BA",
+   "category": "transport",
+   "title": "Centrotrans buses and the Sarajevo to Mostar train",
+   "tip": "Buses (Centrotrans and others) are the backbone; Sarajevo to Mostar by the scenic Talgo train costs about 12 BAM (6 EUR) one way and beats every guided-tour price for the same views. Buy at the station; frequencies are low, so check times a day ahead.",
+   "savings": "30 to 50 EUR vs day tours"
+  },
+  {
+   "id": "ba-roaming",
+   "scope": "country",
+   "country": "BA",
+   "category": "connectivity",
+   "title": "No EU roaming; BH Telecom tourist packs",
+   "tip": "Bosnia sits outside EU roam-like-at-home. BH Telecom, m:tel and HT Eronet prepaid tourist packages (about 10 to 15 BAM for ample data) or a Balkans eSIM solve it, with free regional Western Balkans roaming included.",
+   "savings": "5 to 10 EUR per day"
+  },
+  {
+   "id": "ba-sarajevo-free",
+   "scope": "country",
+   "country": "BA",
+   "category": "activities",
+   "title": "Sarajevo and Mostar on foot",
+   "tip": "Sarajevo's Bascarsija, Vrelo Bosne park and the Yellow Fortress viewpoint are free; the war tunnels museum is about 10 BAM. In Mostar, skip paid bridge-viewing terraces: the Lucki most bridge and riverbank give the postcard view free.",
+   "savings": "10 to 20 EUR per person"
+  },
+  {
+   "id": "mk-buses",
+   "scope": "country",
+   "country": "MK",
+   "category": "transport",
+   "title": "Skopje to Ohrid by bus",
+   "tip": "Buses cover Skopje to Ohrid (about 3 hours) for 500 to 700 MKD (8 to 11 EUR); book a day ahead in summer at the Skopje bus station or balkanviator.com. Trains are sparse and slower; ignore them except the novelty Skopje to Bitola line.",
+   "savings": "25+ EUR vs transfers or tours"
+  },
+  {
+   "id": "mk-food",
+   "scope": "country",
+   "country": "MK",
+   "category": "food",
+   "title": "Skara grills and Kam discounters",
+   "tip": "A skara (grill) meal with salad runs 250 to 450 MKD (4 to 7 EUR); tavce gravce bean stew even less. Kam is the discount supermarket chain, with Vero and Tinex mid-range. Ohrid lakefront restaurants charge 50% more than one street back.",
+   "savings": "30 to 50% per meal"
+  },
+  {
+   "id": "mk-tolls",
+   "scope": "country",
+   "country": "MK",
+   "category": "driving",
+   "title": "Small cash tolls, no vignette",
+   "tip": "North Macedonia's motorways charge small booth tolls (roughly 1 to 2.50 EUR per section, about 5 EUR Skopje to Ohrid route total); pay cash in denar or by card. No vignette exists, so no pre-purchase needed.",
+   "conditions": {
+    "transport": [
+     "car"
+    ]
+   },
+   "savings": "no vignette cost at all"
+  },
+  {
+   "id": "mk-roaming",
+   "scope": "country",
+   "country": "MK",
+   "category": "connectivity",
+   "title": "Outside EU roaming; A1 or Telekom prepaid",
+   "tip": "EU plans bill roaming in North Macedonia. A1 and Makedonski Telekom prepaid tourist SIMs cost about 5 to 10 EUR with generous data and include free Western Balkans regional roaming.",
+   "savings": "5 to 10 EUR per day"
+  },
+  {
+   "id": "tr-museum-pass",
+   "scope": "country",
+   "country": "TR",
+   "category": "activities",
+   "title": "Museum Pass Istanbul: do the math first",
+   "tip": "The 5-day Istanbul Museum Pass costs about 6500 TL (105 to 120 EUR) and covers Topkapi with Harem, the Archaeological Museums, Chora and more, but NOT Hagia Sophia's paid visitor gallery, Basilica Cistern, Galata Tower or Dolmabahce. It only breaks even if you visit 4+ covered sites; buy at muze.gov.tr or any covered museum, never from resellers.",
+   "savings": "0 to 25 EUR; avoids overpaying when it does not fit"
+  },
+  {
+   "id": "tr-istanbulkart",
+   "scope": "country",
+   "country": "TR",
+   "category": "transport",
+   "title": "Istanbulkart for everything",
+   "tip": "One Istanbulkart (buy at machines, load cash) covers metro, tram, ferries and buses at roughly half the single-ticket price with discounted transfers; it also pays for public toilets. Bosphorus commuter ferries (Eminonu to Kadikoy or Uskudar) cost under 1 EUR and replace 20+ EUR tourist cruises.",
+   "savings": "50% on transit plus 20 EUR per cruise skipped"
+  },
+  {
+   "id": "tr-lokanta",
+   "scope": "country",
+   "country": "TR",
+   "category": "food",
+   "title": "Esnaf lokanta steam-table restaurants",
+   "tip": "Esnaf lokantasi (tradesmen's canteens) serve home-style stews, rice and vegetables where a filling plate combo costs a third of tourist-strip menus around Sultanahmet. Simit (about 20 TL) plus cay makes breakfast under 1.50 EUR. In bazaars, opening offers are 30 to 50% above the expected price; counter accordingly.",
+   "savings": "50 to 70% per meal"
+  },
+  {
+   "id": "tr-domestic-transport",
+   "scope": "country",
+   "country": "TR",
+   "category": "transport",
+   "title": "Night buses and AJet or Pegasus",
+   "tip": "Intercity night coaches (Kamil Koc, Metro, Pamukkale) are comfortable and save hotel nights (Istanbul to Cappadocia about 700 to 1100 TL). Booked 3+ weeks out, AJet and Pegasus domestic flights often cost the same as the bus (from about 20 to 35 EUR); the Ankara to Konya and Istanbul YHT high-speed trains are also state-subsidised bargains.",
+   "savings": "a hotel night, or 4 to 8 travel hours"
+  },
+  {
+   "id": "tr-money-esim",
+   "scope": "country",
+   "country": "TR",
+   "category": "connectivity",
+   "title": "eSIM beats airport SIMs; pay in lira",
+   "tip": "Turkish airport SIM counters charge 25 to 40 EUR; a 5GB Turkey eSIM costs 10 to 15 USD, and city-centre Turk Telekom or Vodafone shops are mid-priced. Foreign phones only need IMEI registration for stays beyond several months, so short-trip eSIMs are hassle-free. Always choose lira when card terminals offer euro conversion.",
+   "savings": "15 to 30 EUR per trip"
+  },
+  {
+   "id": "tr-shoulder",
+   "scope": "country",
+   "country": "TR",
+   "category": "stay",
+   "title": "Turquoise Coast in May, June and October",
+   "tip": "Antalya, Fethiye and Bodrum hotel prices drop 35 to 55% outside July and August while seas stay swimmable May to late October. City-break Istanbul is cheapest January to March. All-inclusive resorts price dramatically lower booked from within Turkey-facing sites; compare TL prices via a VPN-free incognito search.",
+   "conditions": {
+    "months": [
+     5,
+     6,
+     10
+    ]
+   },
+   "savings": "35 to 55% on resorts"
+  },
+  {
+   "id": "ee-elron",
+   "scope": "country",
+   "country": "EE",
+   "category": "transport",
+   "title": "Elron trains and Bolt everywhere",
+   "tip": "Elron trains cost about 9 to 12 EUR Tallinn to Tartu booked on elron.ee (small online discount, comfortable, wifi). In cities, Bolt ride-hailing is so cheap (airport to Tallinn Old Town about 8 to 12 EUR) that taxis are obsolete; Tallinn's free public transport applies to registered residents only, so tourists buy 1h QR tickets or tap contactless.",
+   "savings": "30 to 50% vs taxis and walk-up fares"
+  },
+  {
+   "id": "ee-paevapraad",
+   "scope": "country",
+   "country": "EE",
+   "category": "food",
+   "title": "Paevapraad lunch specials",
+   "tip": "Weekday paevapraad (dish of the day) costs 7 to 10 EUR even in central Tallinn, half the dinner price. Lidl (since 2022), Maxima and Rimi are the cheap supermarkets; Balti Jaama Turg market hall combines cheap eats with groceries.",
+   "savings": "8 to 12 EUR per person per day"
+  },
+  {
+   "id": "ee-lux-express",
+   "scope": "country",
+   "country": "EE",
+   "category": "transport",
+   "title": "Lux Express across the Baltics",
+   "tip": "Lux Express and Ecolines coaches (wifi, seat screens, coffee) run Tallinn to Riga from about 10 to 20 EUR booked early, cheaper and more frequent than any rail option until Rail Baltica opens. Loyalty registration unlocks promo fares.",
+   "savings": "50%+ vs flying the Baltic capitals"
+  },
+  {
+   "id": "ee-tallinn-card-skip",
+   "scope": "country",
+   "country": "EE",
+   "category": "activities",
+   "title": "Old Town is the attraction; skip the card",
+   "tip": "Tallinn's medieval Old Town, Toompea viewpoints and Kadriorg park are free; the Tallinn Card (about 40+ EUR per day tier) only pays if you enter 3+ paid museums daily. Kumu art museum and Seaplane Harbour are the two most worth paying for (about 12 to 15 EUR each).",
+   "savings": "25 to 40 EUR per person"
+  },
+  {
+   "id": "lv-riga-market",
+   "scope": "country",
+   "country": "LV",
+   "category": "food",
+   "title": "Riga Central Market self-catering",
+   "tip": "The zeppelin-hangar Central Market (Centraltirgus) sells smoked fish, bread, cheese and produce at half supermarket-deli prices; assemble lunch for 4 to 6 EUR. Weekday business lunches (dienas piedavajums) in Riga centre run 7 to 10 EUR. Maxima, Lidl and Rimi are the grocery chains, in that price order.",
+   "savings": "8 to 12 EUR per person per day"
+  },
+  {
+   "id": "lv-jurmala-train",
+   "scope": "country",
+   "country": "LV",
+   "category": "transport",
+   "title": "Jurmala by commuter train for about 1.50 EUR",
+   "tip": "The beach resort of Jurmala (Majori station) is about 30 minutes from Riga by frequent commuter train for about 1.50 EUR each way; skip 20+ EUR taxi or tour offers. Note: driving into Jurmala requires a 3 EUR daily entry toll for cars, another reason to take the train.",
+   "savings": "15 to 40 EUR per beach day"
+  },
+  {
+   "id": "lv-buses",
+   "scope": "country",
+   "country": "LV",
+   "category": "transport",
+   "title": "Riga to Vilnius and Tallinn by coach",
+   "tip": "Lux Express, Ecolines and FlixBus connect Riga to both other Baltic capitals in about 4 hours from 10 to 20 EUR. Riga city transport e-talons tickets are about 1.50 EUR; contactless tap works on newer validators.",
+   "savings": "cheapest capital-hopping in the EU"
+  },
+  {
+   "id": "lv-old-town-lunch",
+   "scope": "country",
+   "country": "LV",
+   "category": "food",
+   "title": "Lido bistros",
+   "tip": "The Lido self-service chain serves Latvian classics buffet-style; a full plate with drink runs 8 to 12 EUR, far below Old Town sit-down prices. Rooftop bars charge 5 to 7 EUR per cocktail vs 12+ EUR in Nordic capitals, Riga remains one of Europe's cheapest capital nightlife cities.",
+   "savings": "30 to 50% per meal"
+  },
+  {
+   "id": "lt-ltg-link",
+   "scope": "country",
+   "country": "LT",
+   "category": "transport",
+   "title": "LTG Link trains from 5 EUR",
+   "tip": "Vilnius to Kaunas trains cost about 5 to 8 EUR (1h10, frequent; buy on ltglink.lt for small discounts). Vilnius to Warsaw is now a direct train (around 25 to 40 EUR) but Ecolines and FlixBus coaches often halve that. City buses in Vilnius are about 1 EUR with the m.Ticket app.",
+   "savings": "30 to 50% vs ad-hoc tickets"
+  },
+  {
+   "id": "lt-canteens",
+   "scope": "country",
+   "country": "LT",
+   "category": "food",
+   "title": "Cepelinai canteens and dienos pietus",
+   "tip": "Valgykla-style canteens and weekday dienos pietus (day lunch) menus serve cepelinai or kugelis meals for 5 to 9 EUR. Maxima, Lidl, Iki and Norfa are the supermarket chains; Norfa and Lidl are cheapest. Vilnius Halės Turgus market is the cheap-eats hall.",
+   "savings": "8 to 12 EUR per person per day"
+  },
+  {
+   "id": "lt-free-vilnius",
+   "scope": "country",
+   "country": "LT",
+   "category": "activities",
+   "title": "Free Vilnius and cheap Trakai",
+   "tip": "Uzupis, the Hill of Three Crosses and Old Town churches are free; Gediminas Tower hill can be climbed free (tower museum optional). Trakai Castle day trip: 2 EUR local train or bus each way, castle about 12 EUR, vs 40+ EUR organised tours.",
+   "savings": "25 to 40 EUR per person"
+  },
+  {
+   "id": "lt-airports",
+   "scope": "country",
+   "country": "LT",
+   "category": "flights",
+   "title": "Kaunas as a Ryanair base",
+   "tip": "Ryanair and Wizz fares into Kaunas are frequently 30 to 50% below Vilnius for the same origin cities; the Kaunas to Vilnius train or bus (5 to 8 EUR, about 1.5h) keeps the total well below a direct Vilnius fare on peak dates.",
+   "savings": "20 to 60 EUR per flight"
+  },
+  {
+   "id": "is-groceries",
+   "scope": "country",
+   "country": "IS",
+   "category": "food",
+   "title": "Bonus and Kronan only",
+   "tip": "Bonus (pink pig logo) is Iceland's cheapest supermarket, with Kronan close behind; both undercut 10-11 and other convenience stores by 40%+. Restaurant mains run 3500 to 6000 ISK, so the standard budget play is self-catering plus the classic pylsa hot dog (about 700 to 900 ISK). Tap water is glacial-grade; never buy bottled.",
+   "savings": "30 to 60 EUR per person per day"
+  },
+  {
+   "id": "is-fuel-discounts",
+   "scope": "country",
+   "country": "IS",
+   "category": "driving",
+   "title": "Discount fuel brands and Costco",
+   "tip": "Orkan, ÓB and Atlantsolia discount pumps price below N1 full-service stations, and Costco Gardabaer (membership needed) is cheapest of all near Reykjavik. On a 1500 km Ring Road trip the brand choice alone saves 20 to 40 EUR. Fill before remote stretches; rural stations are pricier.",
+   "conditions": {
+    "transport": [
+     "car"
+    ]
+   },
+   "savings": "20 to 40 EUR per road trip"
+  },
+  {
+   "id": "is-hot-springs",
+   "scope": "country",
+   "country": "IS",
+   "category": "activities",
+   "title": "Local pools and free hot rivers over Blue Lagoon",
+   "tip": "The Blue Lagoon starts around 70+ EUR; municipal geothermal pools (Reykjavik's Sundhollin, Laugardalslaug) cost about 1300 to 1600 ISK (9 to 11 EUR) and the Reykjadalur hot river near Hveragerdi is free after a 3 km hike. Sky Lagoon sits in between; book any paid lagoon directly online.",
+   "savings": "55 to 65 EUR per person"
+  },
+  {
+   "id": "is-alcohol",
+   "scope": "country",
+   "country": "IS",
+   "category": "food",
+   "title": "Arrival duty-free is the only cheap alcohol",
+   "tip": "Alcohol is sold only at state Vinbudin stores at high prices, and bar beers run 1200 to 1800 ISK. Locals buy their quota at the Keflavik arrivals duty-free store; do the same or budget for very expensive drinks.",
+   "savings": "50%+ on alcohol"
+  },
+  {
+   "id": "is-camping-card",
+   "scope": "country",
+   "country": "IS",
+   "category": "stay",
+   "title": "Campsites and the shoulder window",
+   "tip": "Wild camping outside designated sites is banned for vehicles; campsites run 1500 to 2500 ISK per person. June and early September give near-full daylight and open highland roads at 25 to 40% lower campervan and guesthouse rates than July to August peak.",
+   "conditions": {
+    "months": [
+     6,
+     9
+    ]
+   },
+   "savings": "25 to 40% on sleeping costs"
+  },
+  {
+   "id": "mt-tallinja-explore",
+   "scope": "country",
+   "country": "MT",
+   "category": "transport",
+   "title": "Explore card: 7 days of buses for about 21 EUR",
+   "tip": "The 7-day Explore card (about 21 EUR) covers unlimited buses on Malta and Gozo incl. airport routes; single summer tickets are 2.50 EUR (2 hours with transfers), so the card pays off from about 9 rides. Buses are the only public transport; allow slack, they run late.",
+   "savings": "10 to 20 EUR per week"
+  },
+  {
+   "id": "mt-ferries",
+   "scope": "country",
+   "country": "MT",
+   "category": "transport",
+   "title": "Valletta ferries and the one-way Gozo fare",
+   "tip": "The Sliema and Three Cities ferries (about 2 EUR single) are faster and more scenic than buses around the harbour. The Gozo ferry charges nothing northbound: you pay only on return from Gozo (about 4.65 EUR foot passenger, car about 15.70 EUR), so budget once, not twice.",
+   "savings": "faster and cheaper than buses or taxis"
+  },
+  {
+   "id": "mt-pastizzi",
+   "scope": "country",
+   "country": "MT",
+   "category": "food",
+   "title": "Pastizzi and Lidl",
+   "tip": "Pastizzi (ricotta or pea pastries) cost 0.50 to 1 EUR and are a national breakfast; hole-in-the-wall pastizzerias in Rabat and Valletta side streets are cheapest. Lidl's several Maltese branches undercut Welbee's and Greens supermarkets by 15 to 25%. Tap water is safe but heavily chlorinated; a filter bottle beats buying bottled.",
+   "savings": "10 to 15 EUR per person per day"
+  },
+  {
+   "id": "mt-free-sights",
+   "scope": "country",
+   "country": "MT",
+   "category": "activities",
+   "title": "Free Malta: beaches, Valletta, Mdina",
+   "tip": "Valletta's streets, the Upper Barrakka Gardens (with the noon saluting battery viewable free), Mdina's old city and all beaches cost nothing. St John's Co-Cathedral (about 15 EUR) and the Hypogeum (about 35 EUR, book weeks ahead) are the two big paid items; the combined state Heritage Malta multi-site pass only pays for archaeology-heavy itineraries.",
+   "savings": "20 to 40 EUR per person"
+  },
+  {
+   "id": "cy-intercity-buses",
+   "scope": "country",
+   "country": "CY",
+   "category": "transport",
+   "title": "Intercity buses at 4 to 7 EUR",
+   "tip": "Intercity Buses (intercity-buses.com) link Nicosia, Limassol, Larnaca and Paphos for 4 to 7 EUR per leg with day-return discounts; airport shuttles (Kapnos, Limassol Airport Express) run 9 to 11 EUR vs 50+ EUR taxis. City buses are 1.50 EUR (2 EUR day cap at night).",
+   "savings": "40+ EUR per airport transfer"
+  },
+  {
+   "id": "cy-rental-offseason",
+   "scope": "country",
+   "country": "CY",
+   "category": "driving",
+   "title": "Cheap off-season rentals, drive on the left",
+   "tip": "Outside July and August, weekly car rentals fall to 15 to 25 EUR per day from local firms (airport desks add 10 to 20%). Fuel is among the cheaper in the eurozone. Cyprus drives on the left with UK-style roundabouts; decline the desk's excess insurance in favour of third-party cover.",
+   "conditions": {
+    "months": [
+     3,
+     4,
+     5,
+     10,
+     11
+    ],
+    "transport": [
+     "car"
+    ]
+   },
+   "savings": "30 to 50% vs peak rental rates"
+  },
+  {
+   "id": "cy-north-crossing",
+   "scope": "country",
+   "country": "CY",
+   "category": "food",
+   "title": "Crossing north: cheaper, but watch your phone",
+   "tip": "Crossing to North Cyprus (passport needed at Ledra Street or Metehan) roughly halves meal and hotel prices, paid in Turkish lira. Warning: near and beyond the Green Line phones latch onto Turkish networks with NO EU roaming; set your network manually to a Cypriot carrier or use a Turkey-inclusive eSIM to avoid 5 to 10 EUR per day surprise charges.",
+   "savings": "40 to 50% on meals north of the line"
+  },
+  {
+   "id": "cy-meze-tavernas",
+   "scope": "country",
+   "country": "CY",
+   "category": "food",
+   "title": "Meze once, village tavernas always",
+   "tip": "A full meze (15 to 22 EUR per person, minimum 2 people) replaces multiple courses and is the best-value feast; village tavernas in Omodos or Lefkara charge 30% less than Limassol seafront. Lidl and Sklavenitis are the cheap supermarkets; frappe and halloumi picnic supplies cost a fraction of beach-bar prices.",
+   "conditions": {
+    "partyMin": 2
+   },
+   "savings": "30 to 50% per feast"
+  },
+  {
+   "id": "lu-free-transport",
+   "scope": "country",
+   "country": "LU",
+   "category": "transport",
+   "title": "All public transport is free nationwide",
+   "tip": "Since 2020 every bus, tram and domestic 2nd-class train in Luxembourg is free for everyone, no ticket, card or app needed; only 1st class and cross-border legs are paid. Base yourself anywhere in the country and commute free, incl. to trailheads in the Mullerthal.",
+   "savings": "10 to 20 EUR per person per day"
+  },
+  {
+   "id": "lu-fuel-stop",
+   "scope": "country",
+   "country": "LU",
+   "category": "driving",
+   "title": "The regional fuel station",
+   "tip": "Petrol around 1.70 EUR/L undercuts Germany by about 0.40, France by about 0.26 and Belgium by about 0.11 per litre (July 2026). Motorway stations at Wasserbillig, Dudelange and Capellen are built for transit fills; coffee, alcohol and tobacco are also taxed lower.",
+   "conditions": {
+    "transport": [
+     "car"
+    ]
+   },
+   "savings": "10 to 20 EUR per 50L tank"
+  },
+  {
+   "id": "lu-city-sights",
+   "scope": "country",
+   "country": "LU",
+   "category": "activities",
+   "title": "Luxembourg City's free circuit",
+   "tip": "The Chemin de la Corniche, Bock casemates exterior, Grund valley and Pfaffenthal panoramic lift (free) cover the city's best views without a ticket; several national museums are free or free on set days (e.g. Letzebuerg City Museum free Thursday evenings). Groceries are pricier than in neighbouring France; cross-border Auchan in France is where locals shop big.",
+   "savings": "15 to 25 EUR per person"
+  }
+ ]
+}

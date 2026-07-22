@@ -237,6 +237,13 @@ export function useTripPlanner(data, countryInsights = null) {
     setLegModes({});
     setPlanId(null);
     setPlanned(false);
+    // A brand-new trip must not inherit day picks from a previous, abandoned
+    // draft: both run under TRIP_DRAFT_PLAN_ID until saved, and stale indices
+    // made freshly created days read "Edit plan" (against the WRONG city's
+    // POIs, even). Through the store functions so account sync sees the wipe.
+    persistAssignments(TRIP_DRAFT_PLAN_ID, {});
+    persistPrefs(TRIP_DRAFT_PLAN_ID, {});
+    persistTripExtras(TRIP_DRAFT_PLAN_ID, {});
   }, []);
 
   // Candidate next stops from wherever the itinerary currently ends, ranked to

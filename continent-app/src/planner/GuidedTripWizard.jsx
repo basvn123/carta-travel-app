@@ -10,7 +10,7 @@ import {
   interestFitScore, cityTier, cityCompanions, designStays,
 } from '../lib/tripGuide.js';
 import { knownForFacts } from '../lib/knownFor.js';
-import { gemScore, BAGGAGE_OPTIONS } from '../lib/trip_planner_pricing.js';
+import { gemScore, BAGGAGE_OPTIONS, baggageFeePerLeg } from '../lib/trip_planner_pricing.js';
 import {
   flyInOptions, flyHomeOptions, monthOptions, orderStaysFromAnchor, flightMeta, fmtFlightDuration, flightBadges,
 } from '../lib/wizardFlights.js';
@@ -329,6 +329,20 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
       return { country: c.country, iso2: c.iso2, km: roadKm, hours: Math.round((roadKm / 90) * 10) / 10 };
     }).filter(Boolean);
   }, [selectedCountries, originRec]);
+
+  // The return-flight option list only exists while its step is showing (a
+  // deliberate perf gate), but the running estimate needs the chosen fare on
+  // every later step too, so cache it the moment it's picked.
+  const [returnFareCache, setReturnFareCache] = useState(null); // { id, eur }
+  useEffect(() => {
+    if (flyHome) {
+      setReturnFareCache({ id: flyHome.id, eur: flyHome.ret_exact_eur ?? flyHome.ret_cheapest?.eur ?? null });
+    } else if (!returnFlyId) {
+      setReturnFareCache(null);
+    }
+  }, [flyHome, returnFlyId]);
+
+  const [estimateOpen, setEstimateOpen] = useState(false);
 
   const toggleCountry = (name) => {
     setCountries((prev) => {
@@ -780,6 +794,66 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
     }
     return true;
   };
+
+  // ---- Running price estimate, alive on every step ----------------------
+  // Every choice that adds cost adds a line the moment it's made (flight,
+  // stays, bags, drive), so the total grows honestly with the answers instead
+  // of appearing only at the finish. Ground legs between cities and per-city
+  // extras are priced properly by the planner afterwards; the breakdown says
+  // so rather than pretending a number it can't know yet. (Placed after
+  // nightlyFor on purpose: the memo body runs during this very render.)
+  const runningEstimate = useMemo(() => {
+    if (!path || path === 'booked') return null;
+    const gs = Math.max(1, groupSize || 1);
+    const lines = [];
+    const flying = (path === 'landed' ? landedMode : arriveMode);
+    if (flying === 'fly' && flyIn) {
+      const pp = flyIn.exact_eur ?? flyIn.cheapest?.eur ?? null;
+      if (pp != null) {
+        lines.push({ key: 'flyIn', label: `Flight out to ${flyIn.dest?.city || 'your arrival city'}`, eur: pp * gs, sub: `${eur(pp)} pp one-way` });
+      }
+    }
+    if (flying === 'fly' && returnFareCache?.eur != null && returnFlyId) {
+      lines.push({ key: 'flyHome', label: `Flight home from ${destinations[returnFareCache.id]?.city || 'your last stop'}`, eur: returnFareCache.eur * gs, sub: `${eur(returnFareCache.eur)} pp one-way` });
+    }
+    if (flying === 'other' && Number(ownFlightCost) > 0) {
+      lines.push({ key: 'ownFlight', label: `Your ${ownAirline || 'own'} flights`, eur: Number(ownFlightCost), sub: 'the fare you entered, whole party' });
+    }
+    if (flying === 'fly' && baggage !== 'cabin' && (flyIn || returnFlyId)) {
+      const legs = (flyIn ? 1 : 0) + (returnFlyId ? 1 : 0);
+      const fee = baggageFeePerLeg(baggage) * gs * legs;
+      if (fee > 0) lines.push({ key: 'bags', label: 'Bags', eur: fee, sub: `${eur(baggageFeePerLeg(baggage))} pp per flight` });
+    }
+    if (flying === 'car' && driveNotes.length > 0) {
+      // Rough scale check only: fuel + tolls out and home to the first chosen
+      // country, at the app's average consumption and toll rates. The planner
+      // prices the real route once the stops are pinned.
+      const km = driveNotes[0].km;
+      const cost = Math.round(km * 2 * 0.14);
+      lines.push({ key: 'drive', label: 'Drive there & home (fuel + tolls, rough)', eur: cost, sub: `~${km} km each way` });
+    }
+    if (includedIds.length > 0) {
+      let stayTotal = 0;
+      let priced = 0;
+      for (const id of includedIds) {
+        const d = destinations[id];
+        const n = d ? nightlyFor(id, d) : null;
+        if (n != null) { stayTotal += n * (nights[id] || 0); priced += 1; }
+      }
+      if (priced > 0) {
+        lines.push({
+          key: 'stays',
+          label: `Stays, ${totalNights} ${totalNights === 1 ? 'night' : 'nights'} in ${includedIds.length} ${includedIds.length === 1 ? 'city' : 'cities'}`,
+          eur: stayTotal,
+          sub: 'whole group, from real market anchors',
+        });
+      }
+    }
+    if (!lines.length) return null;
+    const total = lines.reduce((s, l) => s + l.eur, 0);
+    return { lines, total, gs };
+  }, [path, arriveMode, landedMode, flyIn, returnFareCache, returnFlyId, ownFlightCost, ownAirline,
+    baggage, driveNotes, includedIds, nights, totalNights, destinations, groupSize]); // eslint-disable-line react-hooks/exhaustive-deps
   const stayCountries = selectedCountries.map((c) => {
     const ranked = c.cities
       .map(({ id, dest }) => ({
@@ -1914,6 +1988,7 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
                             anchorDest={anchorDest}
                             isAnchor={id === anchorId}
                             companions={companionsFor[id]}
+                            nightlyEur={nightlyFor(id, dest)}
                           />
                         ))}
                       </div>
@@ -1937,6 +2012,7 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
                         anchorDest={anchorDest}
                         isAnchor={id === anchorId}
                         companions={companionsFor[id]}
+                        nightlyEur={nightlyFor(id, destinations[id])}
                       />
                     ))}
                   </div>
@@ -2262,6 +2338,39 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
               <button className="guide-startover" onClick={startOver} title="Clear everything and begin again">↺ Start over</button>
             )}
             {includedIds.length > 0 && `${includedIds.length} ${includedIds.length === 1 ? 'city' : 'cities'}, ${totalNights} nights`}
+            {runningEstimate && (
+              <span className="guide-estimate">
+                <button
+                  className={`guide-estimate-btn ${estimateOpen ? 'open' : ''}`}
+                  onClick={() => setEstimateOpen((v) => !v)}
+                  aria-expanded={estimateOpen}
+                  title="What's in this estimate so far?"
+                >
+                  ≈ {eur(runningEstimate.total)} so far
+                </button>
+                {estimateOpen && (
+                  <div className="guide-estimate-pop" role="dialog" aria-label="Estimate so far">
+                    <div className="guide-estimate-title">Estimate so far, {runningEstimate.gs} {runningEstimate.gs === 1 ? 'traveller' : 'travellers'}</div>
+                    {runningEstimate.lines.map((l) => (
+                      <div key={l.key} className="guide-estimate-line">
+                        <span className="guide-estimate-label">
+                          {l.label}
+                          {l.sub && <small>{l.sub}</small>}
+                        </span>
+                        <b>{eur(l.eur)}</b>
+                      </div>
+                    ))}
+                    <div className="guide-estimate-line guide-estimate-total">
+                      <span className="guide-estimate-label">Total so far</span>
+                      <b>{eur(runningEstimate.total)}</b>
+                    </div>
+                    <p className="guide-estimate-note">
+                      Travel between your cities, airport transfers and extras are priced in the trip overview once your stops are set.
+                    </p>
+                  </div>
+                )}
+              </span>
+            )}
           </div>
           <div className="guide-foot-actions">
             {path && (step > 1

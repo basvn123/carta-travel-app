@@ -2007,8 +2007,60 @@ input, select {
   border-top: 1px solid var(--rule);
   flex-shrink: 0;
 }
-.guide-foot-summary { font-family: var(--mono); font-size: 11px; color: var(--ink-mute); }
+.guide-foot-summary { font-family: var(--mono); font-size: 11px; color: var(--ink-mute); display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 .guide-foot-actions { display: flex; gap: 10px; }
+
+/* ── Running price estimate in the wizard footer ── */
+.guide-estimate { position: relative; display: inline-flex; }
+.guide-estimate-btn {
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--accent) 7%, var(--paper));
+  padding: 4px 12px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.guide-estimate-btn:hover, .guide-estimate-btn.open { background: var(--accent); color: #fff; }
+.guide-estimate-pop {
+  position: absolute;
+  bottom: calc(100% + 10px);
+  left: 0;
+  z-index: 40;
+  width: min(320px, 84vw);
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(26, 26, 26, 0.18);
+  padding: 12px 13px;
+  text-align: left;
+}
+.guide-estimate-title {
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  margin-bottom: 8px;
+}
+.guide-estimate-line {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 4px 0;
+  font-size: 12px;
+  color: var(--ink);
+}
+.guide-estimate-line b { font-family: var(--mono); font-size: 12px; white-space: nowrap; }
+.guide-estimate-label { display: flex; flex-direction: column; gap: 1px; }
+.guide-estimate-label small { font-size: 10.5px; color: var(--ink-mute); font-family: var(--mono); }
+.guide-estimate-total { border-top: 1px solid var(--rule); margin-top: 4px; padding-top: 8px; }
+.guide-estimate-total b { color: var(--accent); }
+.guide-estimate-note { margin: 8px 0 0; font-size: 10.5px; line-height: 1.5; color: var(--ink-mute); }
 .guide-back { padding: 10px 18px; border-radius: 10px; border: 1px solid var(--rule); color: var(--ink-soft); font-size: 13px; }
 .guide-back:hover { border-color: var(--ink-soft); }
 .guide-next {
@@ -6720,6 +6772,109 @@ input, select {
 .auth-submit:hover:not(:disabled) { background: var(--accent); }
 .auth-submit:disabled { opacity: 0.55; cursor: default; }
 
+/* "Continue with Google" + the or-divider under it. */
+.auth-google {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  width: 100%;
+  background: var(--paper);
+  color: var(--ink);
+  border: 1px solid var(--rule);
+}
+.auth-google:hover:not(:disabled) { background: var(--paper-dim); color: var(--ink); }
+.auth-divider {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 12px 0 6px;
+  color: var(--ink-mute);
+  font-size: 11px;
+}
+.auth-divider::before, .auth-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--rule);
+}
+
+/* Privacy policy modal + entry-gate link. */
+.auth-gate-privacy { display: block; margin: 14px auto 0; font-size: 11px; color: var(--ink-mute); }
+.privacy-modal { max-height: 84vh; overflow-y: auto; }
+.privacy-updated { font-size: 11px; color: var(--ink-mute); margin: -6px 0 12px; }
+.privacy-body { font-size: 12.5px; line-height: 1.6; color: var(--ink-soft); text-align: left; }
+.privacy-body h3 { font-size: 12px; letter-spacing: 0.05em; text-transform: uppercase; color: var(--ink); margin: 14px 0 4px; }
+.privacy-body p { margin: 0 0 8px; }
+.privacy-body a { color: var(--accent); }
+
+/* ── Ready-made trips (starter itineraries per country) ── */
+.starter-trips-pickers { display: flex; gap: 8px; margin: 8px 0 10px; flex-wrap: wrap; }
+.starter-trips-pickers > * { flex: 1; min-width: 140px; }
+.starter-trip-list { display: flex; flex-direction: column; gap: 8px; }
+.starter-trip {
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  background: var(--paper);
+  padding: 10px 11px;
+}
+.starter-trip-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.starter-trip-head b { font-size: 13px; color: var(--ink); }
+.starter-trip-desc { display: block; font-size: 11.5px; color: var(--ink-soft); margin-top: 2px; }
+.starter-trip-cities { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 7px; }
+.starter-trip-city {
+  font-size: 11px;
+  color: var(--ink);
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  padding: 2px 9px;
+  background: var(--paper-dim);
+}
+.starter-trip-city b { color: var(--accent); margin-left: 2px; }
+.starter-trip-price { display: block; font-size: 10.5px; color: var(--ink-mute); margin-top: 6px; font-family: var(--mono); }
+.starter-trip-use { width: 100%; justify-content: center; margin-top: 8px; }
+
+/* ── "Travel cheaper" tailored tips ── */
+.cheap-tip-group { margin-bottom: 10px; }
+.cheap-tip-group-title {
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  margin: 8px 0 6px;
+}
+.cheap-tip-generic-toggle { display: inline-flex; align-items: center; gap: 5px; cursor: pointer; background: none; border: 0; padding: 0; }
+.cheap-tip {
+  border: 1px solid var(--rule);
+  border-left: 3px solid var(--accent);
+  border-radius: 8px;
+  background: var(--paper);
+  padding: 8px 10px;
+  margin-bottom: 6px;
+}
+.cheap-tip-head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+.cheap-tip-head b { font-size: 12px; color: var(--ink); }
+.cheap-tip-save {
+  flex: none;
+  font-size: 10px;
+  font-weight: 700;
+  font-family: var(--mono);
+  color: #16794f;
+  background: color-mix(in srgb, #16794f 9%, var(--paper));
+  border-radius: 999px;
+  padding: 2px 8px;
+  white-space: nowrap;
+}
+.cheap-tip small { display: block; font-size: 11.5px; line-height: 1.5; color: var(--ink-soft); margin-top: 3px; }
+.cheap-tip-cat { display: inline-block; font-size: 9.5px; letter-spacing: 0.05em; text-transform: uppercase; color: var(--ink-mute); margin-top: 5px; }
+
+/* Account deletion (danger zone). */
+.account-delete-link { color: #b3372a; font-size: 12.5px; }
+.account-delete-actions { display: flex; gap: 8px; margin-top: 8px; }
+.account-delete-btn { background: #b3372a; border-color: #b3372a; color: #fff; }
+.account-delete-btn:hover:not(:disabled) { background: #96291e; }
+
 .auth-link {
   font-size: 12px;
   color: var(--ink-soft);
@@ -8122,6 +8277,17 @@ input, select {
   font-size: 11.5px;
 }
 .day-activity-detail a:hover { text-decoration: underline; }
+/* The info panel opens on the place's photo, bigger than the row thumbnail,
+   so "what is this?" is answered visually first. */
+.day-detail-photo {
+  display: block;
+  width: 100%;
+  height: 150px;
+  border-radius: 10px;
+  background-size: cover;
+  background-position: center;
+  margin: 2px 0 8px;
+}
 
 /* ─── Shape-your-day: style cards ─── */
 .shape-style-list {
@@ -9043,6 +9209,23 @@ input, select {
 .day-plan-walk-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
 .day-plan-walk-text b { font-size: 12.5px; color: var(--ink); }
 .day-plan-walk-text small { font-size: 11px; line-height: 1.45; color: var(--ink-soft); }
+/* Full / Half / Taste: how much of the pinned walk today holds. */
+.day-walk-len { display: inline-flex; gap: 4px; margin-top: 4px; }
+.day-walk-len-btn {
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: var(--paper);
+  color: var(--ink-soft);
+  font-size: 10.5px;
+  font-weight: 600;
+  padding: 2px 9px;
+  cursor: pointer;
+}
+.day-walk-len-btn.on {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 8%, var(--paper));
+}
 
 /* ───────── Crash guard (ErrorBoundary fallback) ───────── */
 .crash-screen {
@@ -10299,6 +10482,14 @@ input, select {
 }
 .trip-poi-pin-add svg { width: 10px; height: 10px; }
 .trip-poi-pin:hover .trip-poi-pin-add { background: #16794f; color: #fff; }
+/* "Show selected" pins: already in the plan, drawn as quiet checked status
+   (no + affordance, no pointer), so they can't be double-added. */
+.trip-poi-pin.sel {
+  opacity: 0.92;
+  outline: 2px solid #16794f;
+  outline-offset: -1px;
+  cursor: default;
+}
 
 /* Floating tools over the map: category chips + the tap-to-add hint. Sits
    below the top card, never over the rail; chips scroll sideways on phones
@@ -10459,6 +10650,56 @@ input, select {
   width: 100%;
   justify-content: center;
   margin-top: 15px;
+}
+
+/* ── Ready-made route cards (the route picker) ── */
+.carta-route-list { display: flex; flex-direction: column; gap: 8px; }
+.carta-route {
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  background: var(--paper);
+  padding: 10px 11px;
+}
+.carta-route.rec { border-color: var(--accent); }
+.carta-route-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.carta-route-title { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.carta-route-title b { font-size: 13px; color: var(--ink); }
+.carta-route-rec {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.carta-route-desc { display: block; font-size: 11.5px; line-height: 1.45; color: var(--ink-soft); margin-top: 2px; }
+.carta-route-stats { display: block; font-size: 11px; font-weight: 600; color: var(--ink-soft); margin-top: 4px; }
+.carta-route-stops {
+  margin: 6px 0 0;
+  padding-left: 18px;
+  font-size: 11.5px;
+  line-height: 1.6;
+  color: var(--ink);
+}
+.carta-route-stops li { padding-right: 4px; }
+.carta-route-stop-score {
+  margin-left: 6px;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--ink-soft);
+}
+.carta-route-more { color: var(--ink-soft); list-style: none; }
+.carta-route-use {
+  width: 100%;
+  justify-content: center;
+  margin-top: 9px;
 }
 
 /* ── "Where do you drive from?" (wizard car branch + planner own-car editor) ── */

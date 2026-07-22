@@ -223,6 +223,12 @@ function TravelApp() {
   // tapping the pill expands the text in a popover that overlays the map rather
   // than pushing it down.
   const [mapGuideOpen, setMapGuideOpen] = useState(false);
+  // Once the visitor has clicked any destination they have "started": the
+  // START HERE pill has done its job and must not keep floating over the map.
+  // Persisted so it stays gone on the next visit too.
+  const [mapGuideDone, setMapGuideDone] = useState(() => {
+    try { return localStorage.getItem('carta.mapGuideDone') === '1'; } catch { return false; }
+  });
 
   // Greet the FIRST visit with the "built for Ryanair budget travel" notice so
   // it's clear other airlines aren't in the data yet, then stay quiet: the
@@ -260,7 +266,12 @@ function TravelApp() {
   );
 
   // Stable so MapView's marker effect doesn't rebuild every render.
-  const openDetail = useCallback((id) => setSelectedId(id), []);
+  const openDetail = useCallback((id) => {
+    setSelectedId(id);
+    setMapGuideOpen(false);
+    setMapGuideDone(true);
+    try { localStorage.setItem('carta.mapGuideDone', '1'); } catch { /* private mode */ }
+  }, []);
   const collapseList = useCallback(() => setListCollapsed(true), []);
   const openCompare = useCallback(() => setCompareOpen(true), []);
   // "Top picks" hides the unreachable set; a fresh [] every render would
@@ -481,7 +492,7 @@ function TravelApp() {
             the expanded text overlays the map instead of pushing it down.
             Hidden while a slide-over panel is up: it would float on top of the
             panel with nothing behind it to point at. */}
-        {activeTab === 'map' && !accountOpen && !savedTripsOpen && (
+        {activeTab === 'map' && !accountOpen && !savedTripsOpen && !mapGuideDone && (
           <div className={`map-guide ${mapGuideOpen ? 'open' : ''}`} role="note">
             <button
               className="map-guide-toggle"
