@@ -9,6 +9,7 @@ import { BestTimePanel } from './BestTimePanel.jsx';
 import { eur, PRICE_SOURCE_LABELS, ACCOM_SOURCE_LABELS } from '../lib/format.js';
 import { ReceiptIcon, CalendarIcon, BedIcon, DiningIcon, CarIcon, InfoIcon } from '../components/Icons.jsx';
 import { PlaneIcon } from '../components/TransportIcons.jsx';
+import { carrierPairName } from '../lib/carriers.js';
 import { useI18n } from '../i18n/index.jsx';
 
 // Sub-components of the destination detail panel (the cost-breakdown tab and
@@ -131,6 +132,12 @@ export function BreakdownTab({ destination, breakdown, departDate, returnDate, c
   const groundSubtotal = g ? show(groundGroup(breakdown.ground_per_person)) : null;
 
   // Skyscanner verification link, kept inside the Getting-there group.
+  // Which airline(s) the shown round-trip fare belongs to: "Ryanair" unless
+  // the merged fare data tagged one of the two days for another carrier.
+  const fareCarrier = carrierPairName(
+    destination.routes?.[breakdown.origin], departDate, returnDate,
+  );
+
   const flightLink = (() => {
     if (breakdown.transport_mode !== 'plane' || breakdown.fare_total == null) return null;
     const origin = breakdown.origin;
@@ -152,7 +159,7 @@ export function BreakdownTab({ destination, breakdown, departDate, returnDate, c
           title={t('detail.gettingThere')}
           subtitle={breakdown.transport_mode === 'car'
             ? (flyFellBack ? t('detail.noFlightDriveFrom', { origin: originCity }) : t('detail.driveFrom', { origin: originCity }))
-            : t('detail.ryanairRoundTrip')}
+            : t('detail.ryanairRoundTrip', { carrier: fareCarrier })}
           subtotal={transportSubtotal}
           open={openGroups.transport}
           onToggle={() => toggleGroup('transport')}
@@ -205,8 +212,8 @@ export function BreakdownTab({ destination, breakdown, departDate, returnDate, c
                   {t('detail.flight')}
                   <small>
                     {destination.tier === 'gem' && anchorCity
-                      ? t('detail.fareViaAnchor', { city: anchorCity })
-                      : t('detail.fareRoundTrip')}
+                      ? t('detail.fareViaAnchor', { city: anchorCity, carrier: fareCarrier })
+                      : t('detail.fareRoundTrip', { carrier: fareCarrier })}
                   </small>
                 </span>
                 <span className="val">{eur(show(breakdown.fare_total))}</span>

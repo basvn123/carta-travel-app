@@ -70,11 +70,16 @@ export function useTripPlanner(data, countryInsights = null) {
   // priced out of this airport instead of the last stop's own airport, and the
   // last-stop -> airport transfer is priced like any other ground leg.
   const [returnAnchorId, setReturnAnchorId] = useState(draft?.returnAnchorId || null);
-  // A flight the traveller booked themselves with a non-Ryanair airline:
-  // { airline, costTotal } where costTotal is the whole party's total return
-  // fare in EUR. When set, the overview shows THIS instead of pricing a Ryanair
+  // A flight the traveller booked themselves with another airline:
+  // { airline, costTotal, outDate?, retDate? } where costTotal is the whole
+  // party's total return fare in EUR and the dates are the booked departure /
+  // return days. When set, the overview shows THIS instead of pricing a stored
   // fare the traveller isn't taking (see the `flight` memo).
   const [ownFlight, setOwnFlight] = useState(draft?.ownFlight || null);
+  // Where an own-car trip starts: { name, lat, lon } typed by the traveller
+  // ("where do you drive from?"). Falls back to the selected origin airport's
+  // city when unset, so older drafts keep pricing.
+  const [carHome, setCarHome] = useState(draft?.carHome || null);
   const [planId, setPlanId] = useState(null);
   const [planLabel, setPlanLabel] = useState(draft?.planLabel || '');
   const [saveState, setSaveState] = useState('idle'); // idle | saving | saved
@@ -90,10 +95,10 @@ export function useTripPlanner(data, countryInsights = null) {
     }
     persistTripDraft({
       tripStart, tripEnd, stops, groupSize, transportPref, legModes, transferMode, pace,
-      baggage, anchorId, anchorOrigin, returnAnchorId, ownFlight, planId, planLabel, planned,
+      baggage, anchorId, anchorOrigin, returnAnchorId, ownFlight, carHome, planId, planLabel, planned,
     });
   }, [tripStart, tripEnd, stops, groupSize, transportPref, legModes, transferMode, pace,
-      baggage, anchorId, anchorOrigin, returnAnchorId, ownFlight, planId, planLabel, planned]);
+      baggage, anchorId, anchorOrigin, returnAnchorId, ownFlight, carHome, planId, planLabel, planned]);
 
   // Chain each stop's arrive/depart dates from the trip start. A stop with no
   // trip start yet still carries its nights so the UI can show "2 nights".
@@ -198,6 +203,7 @@ export function useTripPlanner(data, countryInsights = null) {
     setAnchorOrigin(null);
     setReturnAnchorId(null);
     setOwnFlight(null);
+    setCarHome(null);
     setPlanId(null);
     setPlanLabel('');
     setPlanned(false);
@@ -207,7 +213,7 @@ export function useTripPlanner(data, countryInsights = null) {
   // ordered list of { destinationId, nights, activities }, an optional name,
   // plus how they want to travel (transport) and how full their days should
   // feel (pace), everything stays editable in the planner afterwards.
-  const loadFromWizard = useCallback(({ startDate, stops: wizardStops, label, groupSize: gs, transport, pace: wizardPace, baggage: wizardBaggage, anchorId: wizardAnchor, anchorOrigin: wizardAnchorOrigin, returnAnchorId: wizardReturnAnchor, ownFlight: wizardOwnFlight }) => {
+  const loadFromWizard = useCallback(({ startDate, stops: wizardStops, label, groupSize: gs, transport, pace: wizardPace, baggage: wizardBaggage, anchorId: wizardAnchor, anchorOrigin: wizardAnchorOrigin, returnAnchorId: wizardReturnAnchor, ownFlight: wizardOwnFlight, carHome: wizardCarHome }) => {
     const total = wizardStops.reduce((sum, s) => sum + Math.max(0, s.nights || 0), 0);
     setTripStart(startDate || '');
     setTripEnd(startDate ? addDays(startDate, total) : '');
@@ -227,6 +233,7 @@ export function useTripPlanner(data, countryInsights = null) {
     setAnchorOrigin(wizardAnchorOrigin || null);
     setReturnAnchorId(wizardReturnAnchor || null);
     setOwnFlight(wizardOwnFlight || null);
+    setCarHome(wizardCarHome || null);
     setLegModes({});
     setPlanId(null);
     setPlanned(false);
@@ -259,7 +266,13 @@ export function useTripPlanner(data, countryInsights = null) {
     // Ryanair fare. `own` marks it so every surface (overview, receipt, export)
     // renders the airline + their entered cost instead of the Ryanair rows.
     if (ownFlight) {
-      return { own: true, airline: ownFlight.airline || '', cost_total: round2(ownFlight.costTotal || 0) };
+      return {
+        own: true,
+        airline: ownFlight.airline || '',
+        cost_total: round2(ownFlight.costTotal || 0),
+        out_date: ownFlight.outDate || null,
+        ret_date: ownFlight.retDate || null,
+      };
     }
     const first = stopDetails[0];
     const last = stopDetails[stopDetails.length - 1];
@@ -435,7 +448,10 @@ export function useTripPlanner(data, countryInsights = null) {
   // flight?") is lifted: the traveller already chose to drive.
   const driveLegs = useMemo(() => {
     if (transportPref !== 'owncar' || !stopDetails.length) return null;
-    const home = originHome(data, data?.meta?.selected_origin) || data?.meta?.home || null;
+    // The traveller's own "driving from" answer wins; the selected origin
+    // airport's city is only the fallback for drafts predating that question.
+    const home = (carHome && carHome.lat != null ? carHome : null)
+      || originHome(data, data?.meta?.selected_origin) || data?.meta?.home || null;
     if (!home) return null;
     const model = { ...(carModel || {}), max_drive_km: 4000 };
     const half = (dest) => {
@@ -458,8 +474,9 @@ export function useTripPlanner(data, countryInsights = null) {
     return {
       out: half(stopDetails[0].dest),
       home: half(stopDetails[stopDetails.length - 1].dest),
+      from: carHome?.name || null,
     };
-  }, [transportPref, stopDetails, data, carModel, groupSize]);
+  }, [transportPref, stopDetails, data, carModel, groupSize, carHome]);
 
   // One rental car for the whole trip (only priced into the total when the
   // traveller chose 'car'; per-leg car choices only pay fuel + tolls since a
@@ -472,6 +489,39 @@ export function useTripPlanner(data, countryInsights = null) {
     // this line must actually cover the whole group.
     return rentalEstimate(carModel, iso2, days, tripStart || stopDetails[0].arriveDate, groupSize);
   }, [transportPref, stopDetails, plannedNights, carModel, tripStart, groupSize]);
+
+  // Vignette countries (AT, CH, SI, CZ, SK, HU, RO, BG) charge a windscreen
+  // sticker instead of per-km tolls, so car legs there price EUR 0 toll. Bill
+  // each country's sticker ONCE per trip, one per car, for the countries the
+  // chosen car legs touch. Own-car trips already pay the home<->trip corridor's
+  // vignettes inside the drive legs (drivingEstimate's toll layer), so the
+  // first/last stop's countries are excluded there to avoid double-billing.
+  const vignettes = useMemo(() => {
+    const prices = carModel?.toll_model?.vignettes_eur;
+    if (!prices) return null;
+    const isoSet = new Set();
+    legs.forEach((l, i) => {
+      if (!l || l.no_road || l.mode !== 'car') return;
+      const a = stopDetails[i]?.dest;
+      const b = stopDetails[i + 1]?.dest;
+      if (a?.iso2) isoSet.add(a.iso2);
+      if (b?.iso2) isoSet.add(b.iso2);
+    });
+    if (transportPref === 'owncar') {
+      isoSet.delete(stopDetails[0]?.dest?.iso2);
+      isoSet.delete(stopDetails[stopDetails.length - 1]?.dest?.iso2);
+    }
+    const items = [...isoSet]
+      .filter((iso) => prices[iso] != null)
+      .map((iso) => ({ iso2: iso, eur: prices[iso] }));
+    if (!items.length) return null;
+    const cars = Math.max(1, Math.ceil(groupSize / Math.max(1, carModel?.car_capacity || 4)));
+    return {
+      items,
+      cars,
+      eur_total: round2(items.reduce((n, v) => n + v.eur, 0) * cars),
+    };
+  }, [legs, stopDetails, transportPref, carModel, groupSize]);
 
   // Accommodation + on-the-ground spend per stop (default lifestyle, the full
   // sliders live in the Map tab's Lifestyle panel; a trip spanning several
@@ -502,8 +552,9 @@ export function useTripPlanner(data, countryInsights = null) {
     if (anchorLegs.out?.ground_total) total += anchorLegs.out.ground_total;
     stayCosts.forEach((s) => { if (s) total += s.total; });
     if (carRental) total += carRental.eur_total;
+    if (vignettes) total += vignettes.eur_total;
     return round2(total);
-  }, [flight, flightTransfer, driveLegs, legs, anchorLegs, stayCosts, carRental]);
+  }, [flight, flightTransfer, driveLegs, legs, anchorLegs, stayCosts, carRental, vignettes]);
 
   // "Take this trip cheaper", the same itinerary on cheaper flight dates
   // (real stored fares only), and a cheaper stop ORDER when reordering
@@ -517,8 +568,10 @@ export function useTripPlanner(data, countryInsights = null) {
   }, [stops, destinations, plannedNights, groupSize, tripStart, transportPref]);
 
   const cheaperOrder = useMemo(
-    () => reorderSavings(stops, destinations, groupSize),
-    [stops, destinations, groupSize],
+    () => reorderSavings(stops, destinations, groupSize, {
+      carModel, countryInsights, hasCar: tripHasCar,
+    }),
+    [stops, destinations, groupSize, carModel, countryInsights, tripHasCar],
   );
 
   // Shift the whole trip to a cheaper start date, keeping stops + nights.
@@ -586,6 +639,7 @@ export function useTripPlanner(data, countryInsights = null) {
     setAnchorOrigin(sorted[0]?.choices?.anchorOrigin || null);
     setReturnAnchorId(sorted[0]?.choices?.returnAnchorId || null);
     setOwnFlight(sorted[0]?.choices?.ownFlight || null);
+    setCarHome(sorted[0]?.choices?.carHome || null);
     setBaggage(sorted[0]?.choices?.baggage || 'cabin');
     // Pricing inputs must round-trip too, otherwise a reopened trip is repriced
     // with whatever the hook currently holds (default 2 travellers) instead of
@@ -619,7 +673,7 @@ export function useTripPlanner(data, countryInsights = null) {
             nights: s.nights,
             groupSize,
             activities: s.activities || [],
-            ...(i === 0 ? { baggage, transportPref, transferMode, pace, ...(anchorId ? { anchorId } : {}), ...(anchorOrigin ? { anchorOrigin } : {}), ...(returnAnchorId ? { returnAnchorId } : {}), ...(ownFlight ? { ownFlight } : {}) } : {}),
+            ...(i === 0 ? { baggage, transportPref, transferMode, pace, ...(anchorId ? { anchorId } : {}), ...(anchorOrigin ? { anchorOrigin } : {}), ...(returnAnchorId ? { returnAnchorId } : {}), ...(ownFlight ? { ownFlight } : {}), ...(carHome ? { carHome } : {}) } : {}),
           },
         };
       }));
@@ -654,7 +708,7 @@ export function useTripPlanner(data, countryInsights = null) {
       setSaveState('idle');
       throw e;
     }
-  }, [planId, planLabel, stops, stopDetails, groupSize, legs, flight, anchorId, anchorOrigin, returnAnchorId, ownFlight, baggage, transportPref, transferMode, pace]);
+  }, [planId, planLabel, stops, stopDetails, groupSize, legs, flight, anchorId, anchorOrigin, returnAnchorId, ownFlight, carHome, baggage, transportPref, transferMode, pace]);
 
   return {
     tripStart, setTripStart, tripEnd, setTripEnd,
@@ -667,8 +721,10 @@ export function useTripPlanner(data, countryInsights = null) {
     addStop, removeStop, setStopNights, setStopActivities, moveStop, reorderStop,
     optimizeRoute, clearPlan, loadFromWizard,
     nextStopSuggestions, flight, legs, anchorLegs, flightTransfer, driveLegs, stayCosts, grandTotal, dayPlan,
+    vignettes, tripHasCar,
     baggage, setBaggage,
     ownFlight, setOwnFlight,
+    carHome, setCarHome,
     planned, setPlanned,
     planId, planLabel, setPlanLabel, saveState, savePlan, loadPlan,
   };

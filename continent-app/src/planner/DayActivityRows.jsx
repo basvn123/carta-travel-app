@@ -28,7 +28,7 @@ export function Collapsible({ title, titleIcon, count, summary, defaultOpen = fa
   );
 }
 
-export function AssignedRow({ item, index, last, dwellMin, onMoveUp, onMoveDown, onRemove }) {
+export function AssignedRow({ item, index, last, onMoveUp, onMoveDown, onRemove }) {
   const [infoOpen, setInfoOpen] = useState(false);
   return (
     <div className="day-timeline-row">
@@ -44,7 +44,6 @@ export function AssignedRow({ item, index, last, dwellMin, onMoveUp, onMoveDown,
           </span>
           <span className="day-assigned-kind">
             {poiKind(item)}
-            {dwellMin ? `, ~${fmtDur(dwellMin)} visit` : ''}
           </span>
         </div>
         <div className="day-timeline-tools">

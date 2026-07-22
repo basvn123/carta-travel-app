@@ -11,7 +11,7 @@
  */
 import { haversineKm, withCityCoords } from './runtime_pricing.js';
 import { round2 } from './math.js';
-import { transportProfile, legRailQuality, RAIL_SCORE_BONUS } from './countryTransport.js';
+import { transportProfile, legRailQuality, RAIL_SCORE_BONUS, landmassOf } from './countryTransport.js';
 
 const DETOUR = 1.3;             // road km vs straight-line (matches car_layer.py)
 const CAR = { kmh: 82 };
@@ -63,7 +63,11 @@ export function legTransportOptions(destA, destB, groupSize = 1, { carModel = nu
 
   const ltA = destA.local_transport || {};
   const ltB = destB.local_transport || {};
-  if (ltA.road_connected === false || ltB.road_connected === false) {
+  // Overland exists iff both stops share a landmass. The raw road_connected
+  // flag means "no road from mainland Europe" and, read per endpoint, it
+  // declared London -> Edinburgh a sea crossing; landmassOf() knows Great
+  // Britain, Ireland, Sicily etc are each one drivable landmass.
+  if (landmassOf(destA) !== landmassOf(destB)) {
     return {
       straight_km: Math.round(straightKm),
       road_km: null,
@@ -87,9 +91,15 @@ export function legTransportOptions(destA, destB, groupSize = 1, { carModel = nu
   const railQuality = legRailQuality(destA.iso2, destB.iso2);
 
   // Train ---------------------------------------------------------------
+  // A 'poor' transit endpoint (rural village, no proper station) makes the
+  // train slower to reach, and on weak national networks not worth offering;
+  // on an excellent/good network the village usually still has its stop, so
+  // the train stays but carries extra access overhead.
+  const poorEnd = ltA.transit_quality === 'poor' || ltB.transit_quality === 'poor';
   const railKmh = (profA.railKmh + profB.railKmh) / 2;
   const railEur = (profA.railEur + profB.railEur) / 2;
-  const railOverheadH = (profA.railOverheadH + profB.railOverheadH) / 2;
+  const railOverheadH = (profA.railOverheadH + profB.railOverheadH) / 2
+    + (poorEnd ? 0.35 : 0);
   // Fare floor scales with the network's price level (a Polish minimum fare
   // is not a Swiss one): ~40 km worth of that country's per-km rate, min EUR 4.
   const trainPp = railEur === 0 ? 0 : Math.max(4, railEur * 40, railEur * roadKm);
@@ -176,10 +186,12 @@ export function legTransportOptions(destA, destB, groupSize = 1, { carModel = nu
     + (key === 'train' ? (RAIL_SCORE_BONUS[railQuality] || 0) : 0)
     + (key === 'car' && !hasCar ? 8 : 0);
   const modes = { ...(train ? { train } : {}), bus, car };
-  // Same honesty rule the day planner applies: where either end has no real
-  // rail (transit_quality 'poor'), don't offer, let alone recommend, a train.
+  // Drop the train where an endpoint has no real rail AND the national
+  // network is too weak to assume a village station exists. In Switzerland
+  // or Belgium a 'poor'-transit lake town almost always still has its train;
+  // in Croatia or Serbia it almost never does.
   const trainDropped = !train
-    || ltA.transit_quality === 'poor' || ltB.transit_quality === 'poor';
+    || (poorEnd && railQuality !== 'excellent' && railQuality !== 'good');
   if (trainDropped) delete modes.train;
   const recommended = Object.entries(modes)
     .sort((a, b) => score(a[1], a[0]) - score(b[1], b[0]))[0][0];

@@ -11,6 +11,7 @@
 
 import { flightTimes } from './format.js';
 import { addDays } from './dates.js';
+import { carrierName } from './carriers.js';
 
 const pad2 = (n) => String(n).padStart(2, '0');
 
@@ -111,7 +112,7 @@ export function tripIcs({ label, stopDetails = [], flight = null, groupSize = 1,
       date: first.arriveDate,
       time: flight.into_time,
       summary: `Flight ${flight.origin} to ${flight.into_anchor}`,
-      description: `Ryanair, ${people}.${refFor('flight-out')} Planned with Carta.`,
+      description: `${carrierName(flight.into_carrier)}, ${people}.${refFor('flight-out')} Planned with Carta.`,
     }));
   } else if (flight?.own) {
     events.push(flightEvent({
@@ -141,7 +142,7 @@ export function tripIcs({ label, stopDetails = [], flight = null, groupSize = 1,
       date: last.departDate,
       time: flight.out_of_time,
       summary: `Flight ${flight.out_anchor} to ${flight.origin}`,
-      description: `Ryanair, ${people}.${refFor('flight-home')} Planned with Carta.`,
+      description: `${carrierName(flight.out_of_carrier)}, ${people}.${refFor('flight-home')} Planned with Carta.`,
     }));
   } else if (flight?.own) {
     events.push(flightEvent({

@@ -18,6 +18,8 @@ import { SparkIcon, TrainIcon, BusIcon, CarIcon, BulbIcon, InfoIcon, ReceiptIcon
 import { PlaneIcon } from '../components/TransportIcons.jsx';
 import { knownForFacts } from '../lib/knownFor.js';
 import { flightReasonLabel } from '../lib/trip_planner_pricing.js';
+import { geocodeAddress } from '../lib/geocode.js';
+import { carrierName } from '../lib/carriers.js';
 
 const SHEET_H_KEY = 'carta.tripSheetH.v1';
 
@@ -104,6 +106,60 @@ function LegRow({ leg, onMode }) {
             ))}
           </div>
           <p className="trip-leg-disclaimer">{t('trip.legDisclaimer')}</p>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/** "Driving from" editor for own-car trips: the drive out/home legs price
+ *  from this point. Same explicit-search Nominatim flow as the wizard. */
+function OwnCarFromEditor({ carHome, setCarHome }) {
+  const { t } = useI18n();
+  const [query, setQuery] = useState('');
+  const [results, setResults] = useState([]);
+  const [busy, setBusy] = useState(false);
+  const search = async () => {
+    const q = query.trim();
+    if (q.length < 3 || busy) return;
+    setBusy(true);
+    setResults(await geocodeAddress(q));
+    setBusy(false);
+  };
+  if (carHome) {
+    return (
+      <p className="trip-note trip-carfrom-note">
+        <CarIcon size={11} /> {t('trip.drivingFrom', { from: carHome.name })}
+        {' '}
+        <button className="trip-carfrom-change" onClick={() => setCarHome(null)}>{t('wizard.change')}</button>
+      </p>
+    );
+  }
+  return (
+    <div className="trip-carfrom">
+      <div className="trip-carfrom-row">
+        <input
+          className="trip-ownflight-input"
+          type="search"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          onKeyDown={(e) => { if (e.key === 'Enter') search(); }}
+          placeholder={t('wizard.carFromPlaceholder')}
+          aria-label={t('wizard.carFromLabel')}
+        />
+        <button className="trip-carfrom-btn" onClick={search} disabled={busy || query.trim().length < 3}>
+          {busy ? t('wizard.searching') : t('wizard.search')}
+        </button>
+      </div>
+      {results.length > 0 && (
+        <div className="trip-carfrom-results">
+          {results.map((r, i) => (
+            <button
+              key={`${r.lat},${r.lon},${i}`}
+              className="trip-carfrom-result"
+              onClick={() => { setCarHome({ name: r.shortLabel, lat: r.lat, lon: r.lon }); setResults([]); setQuery(''); }}
+            >{r.label}</button>
+          ))}
         </div>
       )}
     </div>
@@ -563,6 +619,8 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
               driveLegs={tp.driveLegs}
               stayCosts={tp.stayCosts}
               carRental={tp.carRental}
+              vignettes={tp.vignettes}
+              tripHasCar={tp.tripHasCar}
               activeStopIndex={selectedStop}
               onSelectStop={setSelectedStop}
               isDayPlanned={isDayPlanned}
@@ -719,7 +777,10 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
                     </p>
                   )}
                   {tp.transportPref === 'owncar' && (
-                    <p className="trip-note">{t('trip.ownCarNote')}</p>
+                    <>
+                      <p className="trip-note">{t('trip.ownCarNote')}</p>
+                      <OwnCarFromEditor carHome={tp.carHome} setCarHome={tp.setCarHome} />
+                    </>
                   )}
                 </div>
               )}
@@ -789,14 +850,14 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
                       <div className="trip-total-row">
                         <span className="lbl">
                           <PlaneIcon size={11} /> {t('trip.flightOut')}
-                          <small>{tp.flight.origin} → {tp.flight.into_anchor}{flightTimes(tp.flight.into_time) ? `, ${t('trip.departs', { time: flightTimes(tp.flight.into_time).dep })}` : ''}, {tp.groupSize} {tp.groupSize === 1 ? t('trip.seatOne') : t('trip.seatMany')}</small>
+                          <small>{carrierName(tp.flight.into_carrier)}, {tp.flight.origin} → {tp.flight.into_anchor}{flightTimes(tp.flight.into_time) ? `, ${t('trip.departs', { time: flightTimes(tp.flight.into_time).dep })}` : ''}, {tp.groupSize} {tp.groupSize === 1 ? t('trip.seatOne') : t('trip.seatMany')}</small>
                         </span>
                         <span className="val">{eur(tp.flight.into_fare_eur * tp.groupSize)}</span>
                       </div>
                       <div className="trip-total-row">
                         <span className="lbl">
                           <PlaneIcon size={11} /> {t('trip.flightHome')}
-                          <small>{tp.flight.out_anchor} → {tp.flight.origin}{flightTimes(tp.flight.out_of_time) ? `, ${t('trip.departs', { time: flightTimes(tp.flight.out_of_time).dep })}` : ''}, {tp.groupSize} {tp.groupSize === 1 ? t('trip.seatOne') : t('trip.seatMany')}</small>
+                          <small>{carrierName(tp.flight.out_of_carrier)}, {tp.flight.out_anchor} → {tp.flight.origin}{flightTimes(tp.flight.out_of_time) ? `, ${t('trip.departs', { time: flightTimes(tp.flight.out_of_time).dep })}` : ''}, {tp.groupSize} {tp.groupSize === 1 ? t('trip.seatOne') : t('trip.seatMany')}</small>
                         </span>
                         <span className="val">{eur(tp.flight.out_of_fare_eur * tp.groupSize)}</span>
                       </div>
@@ -826,7 +887,7 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
                           placeholder={t('trip.airlinePlaceholder')}
                           aria-label={t('trip.airlineAria')}
                           value={tp.ownFlight?.airline || ''}
-                          onChange={(e) => tp.setOwnFlight({ airline: e.target.value, costTotal: tp.ownFlight?.costTotal || 0 })}
+                          onChange={(e) => tp.setOwnFlight({ ...tp.ownFlight, airline: e.target.value })}
                         />
                         <input
                           className="trip-ownflight-input trip-ownflight-cost"
@@ -836,8 +897,29 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
                           placeholder={t('trip.totalCostPlaceholder')}
                           aria-label={t('trip.totalCostAria')}
                           value={tp.ownFlight?.costTotal || ''}
-                          onChange={(e) => tp.setOwnFlight({ airline: tp.ownFlight?.airline || '', costTotal: Math.max(0, Math.round(Number(e.target.value) || 0)) })}
+                          onChange={(e) => tp.setOwnFlight({ ...tp.ownFlight, costTotal: Math.max(0, Math.round(Number(e.target.value) || 0)) })}
                         />
+                      </div>
+                      <div className="trip-ownflight-fields">
+                        <label className="trip-ownflight-date">
+                          <span>{t('wizard.ownFlightOutLabel')}</span>
+                          <input
+                            className="trip-ownflight-input"
+                            type="date"
+                            value={tp.ownFlight?.outDate || ''}
+                            onChange={(e) => tp.setOwnFlight({ ...tp.ownFlight, outDate: e.target.value || null })}
+                          />
+                        </label>
+                        <label className="trip-ownflight-date">
+                          <span>{t('wizard.ownFlightRetLabel')}</span>
+                          <input
+                            className="trip-ownflight-input"
+                            type="date"
+                            min={tp.ownFlight?.outDate || undefined}
+                            value={tp.ownFlight?.retDate || ''}
+                            onChange={(e) => tp.setOwnFlight({ ...tp.ownFlight, retDate: e.target.value || null })}
+                          />
+                        </label>
                       </div>
                     </div>
                   ) : tp.flight?.driving ? (
@@ -861,7 +943,9 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
                         </div>
                       )}
                     </>
-                  ) : tp.flight ? (
+                  ) : tp.flight && !tp.tripHasCar ? (
+                    // Travelling by car (rental or own) means no flight plan is
+                    // needed, so the "no single flight plan" dead end is noise.
                     <p className="trip-note">{flightReasonLabel(tp.flight.reason)}</p>
                   ) : null}
 
@@ -893,6 +977,13 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
                     <div className="trip-total-row">
                       <span className="lbl"><CarIcon size={11} /> {t('trip.rentalCar')} <small>{t('trip.rentalDays', { days: tp.carRental.days })}</small></span>
                       <span className="val">{eur(tp.carRental.eur_total)}</span>
+                    </div>
+                  )}
+
+                  {tp.vignettes && (
+                    <div className="trip-total-row">
+                      <span className="lbl"><CarIcon size={11} /> {t('trip.vignettes')} <small>{t('trip.vignettesSub', { countries: tp.vignettes.items.map((v) => v.iso2).join(', ') })}</small></span>
+                      <span className="val">{eur(tp.vignettes.eur_total)}</span>
                     </div>
                   )}
 

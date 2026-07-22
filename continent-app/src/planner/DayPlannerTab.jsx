@@ -30,6 +30,7 @@ import { openDayPlanKml } from './dayPlanKml.js';
 import { MODE_META, DayTripTransport } from './DayTripTransport.jsx';
 import { CartaGuidePanel } from './CartaGuidePanel.jsx';
 import { estimateWalkMinutes, fmtDur } from './dayFormat.js';
+import { searchFold } from '../lib/textSearch.js';
 import { Collapsible, AssignedRow, ActivitySection, ActivityRow } from './DayActivityRows.jsx';
 import {
   loadStandalonePlans, persistStandalonePlans, deleteStandalonePlan,
@@ -557,17 +558,18 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
   );
 
   // Name/kind search over the full catalogue, strongest matches first, with
-  // an honest distance note on anything beyond walking range.
+  // an honest distance note on anything beyond walking range. Diacritic-folded
+  // so "etoile" finds "Maison de l'Étoile".
   const poiSearch = useMemo(() => {
-    const q = poiQuery.trim().toLowerCase();
+    const q = searchFold(poiQuery);
     if (q.length < 2 || !stop?.dest) return [];
     const centre = cityCoords(stop.dest);
     return activities.items
       .map((item, idx) => ({ item, idx }))
       .filter(({ idx }) => !activities.suppressed.has(idx))
       .filter(({ item }) => !isTransportInfraPoi(item))
-      .filter(({ item }) => (item.name || '').toLowerCase().includes(q)
-        || (item.kind || '').toLowerCase().includes(q))
+      .filter(({ item }) => searchFold(item.name).includes(q)
+        || searchFold(item.kind).includes(q))
       .sort((a, b) => poiScore(b.item) - poiScore(a.item))
       .slice(0, 12)
       .map((e) => {
@@ -844,8 +846,6 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
   // "How long at each stop" answer scales the visit-time estimates shown on
   // the timeline and in the day total.
   const visitFactor = (VISIT_PACES.find((v) => v.key === prefs?.visit) || VISIT_PACES[1]).factor;
-  const dwellFor = (it) => dwellMinutes(poiKind(it), visitFactor);
-  const dwellTotal = assignedItems.reduce((n, it) => n + dwellFor(it), 0);
 
   const commitDay = (nextForDay) => {
     const next = { ...assignments, [stopIdx]: { ...(assignments[stopIdx] || {}), [dayIdx]: nextForDay } };
@@ -891,8 +891,8 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
 
   const mapPins = assignedItems
     .filter((it) => it.lat != null && it.lon != null)
-    // name feeds the Google Maps export: "<sight>, <city>" geocodes to the
-    // real listing instead of a nameless "Dropped pin" at the coordinates.
+    // The Google Maps route link is built from the coordinates only; the name
+    // is for on-map labels and never geocoded.
     .map((it) => ({
       lat: it.lat, lon: it.lon, city: it.name,
       name: [it.name, stop?.dest?.city].filter(Boolean).join(', '),
@@ -1315,13 +1315,13 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
   // so a place is findable by name even when its category is hidden. Strongest
   // matches first (towns get a small nudge so a searched town leads its sights).
   const exploreSearch = useMemo(() => {
-    const query = exploreQuery.trim().toLowerCase();
+    const query = searchFold(exploreQuery);
     if (query.length < 2) return [];
     const t2 = t; // the town loop below shadows `t`
     const out = [];
     for (const t of exploreTowns) {
       if (t.id === stayTownId) continue; // that town is the red stay pin itself
-      if ((t.dest.city || '').toLowerCase().includes(query)) {
+      if (searchFold(t.dest.city).includes(query)) {
         out.push({
           id: `t:${t.id}`, cat: 'town', label: t.dest.city,
           sub: `${t2(EXPLORE_CAT_KEY.town)}, ${t2('day.kmFromStay', { km: t.km })}`,
@@ -1332,7 +1332,7 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
       }
     }
     for (const p of explorePois) {
-      if (`${p.item.name || ''} ${p.item.kind || ''}`.toLowerCase().includes(query)) {
+      if (searchFold(`${p.item.name || ''} ${p.item.kind || ''}`).includes(query)) {
         const flag = isMustSee(p.item) ? t2('day.mustSeeTag')
           : (p.item.rate ?? 0) >= 2 ? t2('day.topRated')
           : p.item.heritage ? t2('day.heritageTag') : '';
@@ -2323,7 +2323,6 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
                       item={it}
                       index={i}
                       last={i === assignedItems.length - 1}
-                      dwellMin={dwellFor(it)}
                       onMoveUp={() => moveAssigned(i, -1)}
                       onMoveDown={() => moveAssigned(i, 1)}
                       onRemove={() => toggleActivity(dayAssignedIdx[i])}
@@ -2342,7 +2341,6 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
               {legsAlign && routeOk && (
                 <p className="day-route-total">
                   Full route: {route.km.toFixed(1)} km, about {route.min} min {route.hasFerry ? 'of walking and ferry rides' : 'of walking'}.
-                  {dwellTotal > 0 && ` With time at each place, count on ~${fmtDur(dwellTotal + route.min)} out.`}
                 </p>
               )}
 

@@ -2276,6 +2276,36 @@ input, select {
   margin: 10px 2px 2px;
   line-height: 1.5;
 }
+/* Chronological receipt: per-stop section subtitles (the dates), the leg
+   connector between two stop sections, and the animated expand chevron. */
+.itin-bd-sec-sub {
+  display: inline-block;
+  margin-left: 8px;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  text-transform: none;
+  color: var(--ink-mute);
+}
+.itin-bd-leg {
+  display: flex; align-items: baseline; justify-content: space-between;
+  gap: 10px;
+  margin: 2px 0 2px 14px;
+  padding: 5px 2px 5px 12px;
+  border-left: 2px dotted var(--rule);
+}
+.itin-bd-leg .lbl {
+  display: flex; flex-direction: column;
+  font-size: 12px; color: var(--ink-soft);
+}
+.itin-bd-leg .lbl svg { color: var(--accent); vertical-align: -1px; margin-right: 3px; }
+.itin-bd-leg .lbl small { font-family: var(--mono); font-size: 10px; color: var(--ink-mute); margin-top: 1px; }
+.itin-bd-leg .val { font-family: var(--mono); font-size: 11.5px; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+.itin-breakdown-caret {
+  display: inline-flex;
+  color: var(--ink-mute);
+  transition: transform .18s ease;
+}
+.itin-breakdown-caret.open { transform: rotate(180deg); }
 
 /* ── Overview: the day list, each with a jump into the Day planner ── */
 .itin-days-list { margin-top: 16px; }
@@ -10429,4 +10459,89 @@ input, select {
   width: 100%;
   justify-content: center;
   margin-top: 15px;
+}
+
+/* ── "Where do you drive from?" (wizard car branch + planner own-car editor) ── */
+.guide-carfrom { margin: 10px 0 12px; }
+.guide-carfrom-row { display: flex; gap: 8px; align-items: center; }
+.guide-carfrom-row .guide-search { flex: 1; min-width: 0; }
+.guide-carfrom-search { white-space: nowrap; }
+.guide-carfrom-list { margin-top: 8px; }
+.guide-carfrom-list .guide-city-btn { display: flex; gap: 8px; align-items: center; text-align: left; }
+.guide-carfrom-label { font-size: 12px; color: var(--ink-soft); overflow: hidden; text-overflow: ellipsis; }
+.guide-carfrom-picked .guide-carfrom-icon {
+  display: flex; align-items: center; justify-content: center;
+  width: 34px; height: 34px; flex: none;
+  border-radius: 8px;
+  border: 1px solid var(--rule);
+  color: var(--accent);
+}
+.guide-carfrom-fallback { margin-top: 4px; }
+
+.trip-carfrom { margin: 8px 0 4px; }
+.trip-carfrom-row { display: flex; gap: 8px; }
+.trip-carfrom-row .trip-ownflight-input { flex: 1; min-width: 0; }
+.trip-carfrom-btn {
+  font-family: var(--mono); font-size: 10px;
+  text-transform: uppercase; letter-spacing: 0.08em;
+  color: var(--ink-soft);
+  border: 1px solid var(--rule); border-radius: 8px;
+  background: none; padding: 6px 10px; cursor: pointer;
+}
+.trip-carfrom-btn:disabled { opacity: 0.5; cursor: default; }
+.trip-carfrom-results { display: flex; flex-direction: column; gap: 4px; margin-top: 6px; }
+.trip-carfrom-result {
+  text-align: left; font-size: 12px; color: var(--ink-soft);
+  border: 1px solid var(--rule); border-radius: 8px;
+  background: none; padding: 6px 9px; cursor: pointer;
+}
+.trip-carfrom-result:hover { border-color: var(--accent); color: var(--ink); }
+.trip-carfrom-note b { color: var(--ink); }
+.trip-carfrom-change {
+  font-family: var(--mono); font-size: 9.5px;
+  text-transform: uppercase; letter-spacing: 0.08em;
+  color: var(--ink-mute);
+  border: 1px solid var(--rule); border-radius: 999px;
+  background: none; padding: 2px 8px; cursor: pointer;
+}
+.trip-carfrom-change:hover { color: var(--accent); border-color: var(--accent); }
+.trip-ownflight-date { display: flex; flex-direction: column; gap: 3px; flex: 1; }
+.trip-ownflight-date > span {
+  font-family: var(--mono); font-size: 9.5px;
+  text-transform: uppercase; letter-spacing: 0.08em;
+  color: var(--ink-mute);
+}
+
+/* ── Stay step: rating/price filters + per-night price chip ── */
+.guide-stay-filters {
+  display: flex; align-items: center; gap: 10px;
+  flex-wrap: wrap;
+  margin: 8px 0 4px;
+}
+.guide-stay-filter { display: flex; align-items: center; gap: 6px; }
+.guide-stay-filter > span {
+  font-family: var(--mono); font-size: 9.5px;
+  text-transform: uppercase; letter-spacing: 0.08em;
+  color: var(--ink-mute);
+}
+.guide-stay-filter select {
+  font-size: 12px; color: var(--ink);
+  border: 1px solid var(--rule); border-radius: 8px;
+  background: var(--paper); padding: 5px 8px;
+}
+.guide-stay-filter-clear {
+  font-family: var(--mono); font-size: 9.5px;
+  text-transform: uppercase; letter-spacing: 0.08em;
+  color: var(--ink-mute);
+  border: 1px solid var(--rule); border-radius: 999px;
+  background: none; padding: 3px 9px; cursor: pointer;
+}
+.guide-stay-filter-clear:hover { color: var(--accent); border-color: var(--accent); }
+.guide-stay-price {
+  font-family: var(--mono); font-size: 9.5px;
+  color: var(--ink-soft);
+  background: var(--paper-dim);
+  border-radius: 999px;
+  padding: 2px 7px;
+  white-space: nowrap;
 }

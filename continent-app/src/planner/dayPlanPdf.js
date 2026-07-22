@@ -49,12 +49,12 @@ export function openDayPlanPdf(ctx) {
     if (it.active) return 'A good pick for an active, outdoors stretch.';
     return '';
   };
-  // Search by "<sight>, <city>" so Google opens the real listing (name,
-  // photos, hours) rather than a nameless "Dropped pin" at the coordinates.
-  const placeUrl = (it, city) => {
-    if (it.lat == null || it.lon == null) return null;
-    const q = it.name ? [it.name, city].filter(Boolean).join(', ') : `${it.lat},${it.lon}`;
-    return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q)}`;
+  // Pin the exact coordinates: a "<sight>, <city>" name search geocodes and
+  // lands on "can't find this place" for obscure or local-language names,
+  // while a lat,lon query always opens on the right spot.
+  const placeUrl = (it) => {
+    if (!Number.isFinite(it.lat) || !Number.isFinite(it.lon)) return null;
+    return `https://www.google.com/maps/search/?api=1&query=${it.lat}%2C${it.lon}`;
   };
 
   // Walk everything so a multi-city plan prints as one complete booklet.
@@ -98,7 +98,7 @@ export function openDayPlanPdf(ctx) {
           if (km != null) walk = `<div class="walk">&darr;&ensp;~${estimateWalkMinutes(km)} min walk, ${km.toFixed(1)} km</div>`;
         }
         const acc = accolade(it);
-        const purl = placeUrl(it, s.dest?.city);
+        const purl = placeUrl(it);
         const links = [
           purl ? `<a href="${purl}">Open in Maps</a>` : '',
           safeUrl(it.wiki) ? `<a href="${esc(safeUrl(it.wiki))}">Read more</a>` : '',

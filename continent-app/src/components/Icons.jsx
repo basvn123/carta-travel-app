@@ -25,6 +25,26 @@ export function CalendarIcon({ size = 18, className = '' }) {
   );
 }
 
+export function ChevronDownIcon({ size = 18, className = '' }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.7"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      role="img"
+      aria-hidden="true"
+    >
+      <path d="M6 9.5l6 6 6-6" />
+    </svg>
+  );
+}
+
 export function FilterIcon({ size = 18, className = '' }) {
   return (
     <svg
