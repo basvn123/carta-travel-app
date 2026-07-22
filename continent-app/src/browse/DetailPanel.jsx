@@ -6,12 +6,24 @@ import { WaterQualityBadge, swimRelevant } from '../components/WaterQualityBadge
 import { CrowdingBadge, crowdBadgeWorthShowing } from '../components/CrowdingBadge.jsx';
 import { BestTimePanel } from './BestTimePanel.jsx';
 import { safeUrl, PRICE_SOURCE_LABELS, ACCOM_SOURCE_LABELS } from '../lib/format.js';
-import { ReceiptIcon, CalendarIcon, BedIcon, DiningIcon, CarIcon, InfoIcon } from '../components/Icons.jsx';
+import { ReceiptIcon, CalendarIcon, BedIcon, DiningIcon, CarIcon, InfoIcon, TreeIcon, PersonIcon } from '../components/Icons.jsx';
 import { PlaneIcon } from '../components/TransportIcons.jsx';
 import { useI18n } from '../i18n/index.jsx';
 import { BreakdownTab, ViaAirportOptions } from './DetailBreakdown.jsx';
 
 const fmtDate = (iso) => new Date(iso + 'T00:00:00Z').toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+
+// "City, 1.2M" style line from the GeoNames slice (population + settlement).
+const popLine = (g) => {
+  if (!g) return '';
+  const settle = g.settlement ? g.settlement.charAt(0).toUpperCase() + g.settlement.slice(1) : '';
+  const n = g.population;
+  const pop = n == null ? ''
+    : n >= 1_000_000 ? `${(n / 1e6).toFixed(1).replace(/\.0$/, '')}M`
+    : n >= 10_000 ? `${Math.round(n / 1000)}k`
+    : n.toLocaleString('en-GB');
+  return [settle, pop].filter(Boolean).join(', ');
+};
 
 export function DetailPanel({ destination, departDate, returnDate, choices, setChoices, priceMode = 'total', onClose, onOpenLifestyle, onSelect, data, isFavorite, onToggleFavorite, onSaveTrip, onShiftDates }) {
   const { t } = useI18n();
@@ -126,6 +138,40 @@ export function DetailPanel({ destination, departDate, returnDate, choices, setC
           )}
         </div>
       </div>
+
+      {/* About this place: population, the nearest protected area, and a short
+          Wikivoyage lead. The guide text follows the data language (like POI
+          names/descriptions); only the labels are translated. */}
+      {(destination.guide?.text || destination.nature?.nearest?.name
+        || destination.geonames?.population != null || destination.geonames?.settlement) && (
+        <div className="panel-about">
+          {(destination.geonames?.population != null || destination.geonames?.settlement) && popLine(destination.geonames) && (
+            <div className="panel-about-fact">
+              <PersonIcon size={13} />
+              <span>{t('detail.population')}: {popLine(destination.geonames)}</span>
+            </div>
+          )}
+          {destination.nature?.nearest?.name && (
+            <div className="panel-about-fact">
+              <TreeIcon size={13} />
+              <span>
+                {t('detail.nearestNature')}: {destination.nature.nearest.name}
+                {destination.nature.nearest.kind ? ` (${destination.nature.nearest.kind})` : ''}
+                {destination.nature.nearest.dist_km != null ? `, ${destination.nature.nearest.dist_km} km` : ''}
+              </span>
+            </div>
+          )}
+          {destination.guide?.text && (
+            <p className="panel-about-guide">
+              {destination.guide.text}
+              {safeUrl(destination.guide.url) && (
+                <> <a className="panel-about-guide-link" href={safeUrl(destination.guide.url)}
+                      target="_blank" rel="noreferrer">{t('detail.readGuide')}</a></>
+              )}
+            </p>
+          )}
+        </div>
+      )}
 
       {!breakdown ? (
         <div className="panel-section">

@@ -4,22 +4,21 @@ import { ScoreChip, HiddenGemTag } from '../components/RatingBadge.jsx';
 import { isMustSee, poiKind, dwellMinutes } from './dayDraft.js';
 import { fmtDur } from './dayFormat.js';
 import { cityInsight } from '../lib/tripGuide.js';
+import { useI18n } from '../i18n/index.jsx';
 
-// "Let Carta guide you" questionnaire options (labelKey/subKey -> t()).
+// "Let Carta guide you" questionnaire options (labelKey -> t()).
 const GUIDE_MOODS = [
-  { key: 'sight', labelKey: 'day.moodSights', label: 'Sights', Icon: CastleIcon },
-  { key: 'beach', labelKey: 'day.moodBeaches', label: 'Beaches & nature', Icon: TreeIcon },
-  { key: 'town', labelKey: 'day.moodTowns', label: 'Towns', Icon: HomeIcon },
-  { key: 'active', labelKey: 'day.moodActive', label: 'Active', Icon: MountainIcon },
+  { key: 'sight', labelKey: 'day.moodSights', Icon: CastleIcon },
+  { key: 'beach', labelKey: 'day.moodBeaches', Icon: TreeIcon },
+  { key: 'town', labelKey: 'day.moodTowns', Icon: HomeIcon },
+  { key: 'active', labelKey: 'day.moodActive', Icon: MountainIcon },
 ];
 const GUIDE_RANGES = [
-  { key: 'near', label: 'Close by', sub: 'A short hop from your stay', km: 25 },
-  { key: 'far', label: 'Within reach', sub: 'Day trips are fine too', km: 1e9 },
+  { key: 'near', labelKey: 'day.rangeNear', subKey: 'day.rangeNearSub', km: 25 },
+  { key: 'far', labelKey: 'day.rangeFar', subKey: 'day.rangeFarSub', km: 1e9 },
 ];
-// Section headings shown in the "Let Carta guide you" recommendation list. This
-// panel is not internationalized (its prompts are hardcoded English), so the
-// labels are plain strings rather than i18n keys.
-const GUIDE_GROUP_LABEL = { town: 'Towns', sight: 'Sights', beach: 'Beaches & nature', active: 'Active' };
+// Section headings in the recommendation list reuse the mood labels.
+const GROUP_LABEL_KEY = { town: 'day.moodTowns', sight: 'day.moodSights', beach: 'day.moodBeaches', active: 'day.moodActive' };
 
 /**
  * "Let Carta guide you", the alternative to hunting on the map yourself.
@@ -35,6 +34,7 @@ const GUIDE_GROUP_LABEL = { town: 'Towns', sight: 'Sights', beach: 'Beaches & na
  *   onPreview(cat, lat, lon, focusId)    glide the map to a recommendation
  */
 export function CartaGuidePanel({ towns, pois, stayTownId, pickedTownIds, pickedPoiKeys, onToggleTown, onTogglePoi, onPreview, onClose }) {
+  const { t } = useI18n();
   const [moods, setMoods] = useState(() => new Set(['sight', 'beach', 'town', 'active']));
   const [range, setRange] = useState('far');
   const [topOnly, setTopOnly] = useState(false); // only the genuinely highly-rated
@@ -59,8 +59,8 @@ export function CartaGuidePanel({ towns, pois, stayTownId, pickedTownIds, picked
         .filter((t) => !topOnly || (t.dest.rating?.score || 0) >= 7.5 || t.dest.rating?.hidden_gem)
         .sort((a, b) => (b.dest.rating?.score || 0) - (a.dest.rating?.score || 0))
         .slice(0, 5)
-        .map((t) => ({ type: 'town', key: `t:${t.id}`, town: t }));
-      if (list.length) g.push({ cat: 'town', label: GUIDE_GROUP_LABEL.town, items: list });
+        .map((tw) => ({ type: 'town', key: `t:${tw.id}`, town: tw }));
+      if (list.length) g.push({ cat: 'town', items: list });
     }
     for (const cat of ['sight', 'beach', 'active']) {
       if (!moods.has(cat)) continue;
@@ -69,7 +69,7 @@ export function CartaGuidePanel({ towns, pois, stayTownId, pickedTownIds, picked
         .filter((p) => !topOnly || isMustSee(p.item) || (p.item.rate ?? 0) >= 2 || p.item.heritage)
         .slice(0, 5)
         .map((p) => ({ type: 'poi', key: p.key, poi: p }));
-      if (list.length) g.push({ cat, label: GUIDE_GROUP_LABEL[cat], items: list });
+      if (list.length) g.push({ cat, items: list });
     }
     return g;
   }, [moods, cap, topOnly, towns, pois, stayTownId]);
@@ -79,13 +79,13 @@ export function CartaGuidePanel({ towns, pois, stayTownId, pickedTownIds, picked
   return (
     <div className="day-guide-panel">
       <div className="day-guide-panel-head">
-        <span className="day-guide-panel-title"><SparkIcon size={13} /> Let Carta guide you</span>
-        <button className="day-guide-panel-close" onClick={onClose} aria-label="Close">×</button>
+        <span className="day-guide-panel-title"><SparkIcon size={13} /> {t('day.guideBtn')}</span>
+        <button className="day-guide-panel-close" onClick={onClose} aria-label={t('detail.close')}>×</button>
       </div>
 
       {phase === 'ask' ? (
         <div className="day-guide-ask">
-          <span className="day-guide-q">What are you in the mood for?</span>
+          <span className="day-guide-q">{t('day.guideMoodQ')}</span>
           <div className="day-guide-moods">
             {GUIDE_MOODS.map((m) => (
               <button
@@ -95,12 +95,12 @@ export function CartaGuidePanel({ towns, pois, stayTownId, pickedTownIds, picked
                 aria-pressed={moods.has(m.key)}
               >
                 <m.Icon size={17} />
-                <span>{m.label}</span>
+                <span>{t(m.labelKey)}</span>
               </button>
             ))}
           </div>
 
-          <span className="day-guide-q">How far will you roam?</span>
+          <span className="day-guide-q">{t('day.guideRangeQ')}</span>
           <div className="day-guide-range">
             {GUIDE_RANGES.map((r) => (
               <button
@@ -109,8 +109,8 @@ export function CartaGuidePanel({ towns, pois, stayTownId, pickedTownIds, picked
                 onClick={() => setRange(r.key)}
                 aria-pressed={range === r.key}
               >
-                <b>{r.label}</b>
-                <small>{r.sub}</small>
+                <b>{t(r.labelKey)}</b>
+                <small>{t(r.subKey)}</small>
               </button>
             ))}
           </div>
@@ -120,7 +120,7 @@ export function CartaGuidePanel({ towns, pois, stayTownId, pickedTownIds, picked
             onClick={() => setTopOnly((v) => !v)}
             aria-pressed={topOnly}
           >
-            {topOnly && <CheckIcon size={11} />} Only show the highly rated
+            {topOnly && <CheckIcon size={11} />} {t('day.guideTopOnly')}
           </button>
 
           <button
@@ -128,46 +128,46 @@ export function CartaGuidePanel({ towns, pois, stayTownId, pickedTownIds, picked
             onClick={() => setPhase('results')}
             disabled={moods.size === 0}
           >
-            <SparkIcon size={12} /> Show me what Carta recommends
+            <SparkIcon size={12} /> {t('day.guideGo')}
           </button>
         </div>
       ) : (
         <div className="day-guide-results">
-          <button className="day-guide-back" onClick={() => setPhase('ask')}>← Change answers</button>
+          <button className="day-guide-back" onClick={() => setPhase('ask')}>← {t('day.guideBack')}</button>
           {total === 0 ? (
-            <p className="trip-note">Nothing around your stay fits that yet. Try widening the range, or turning off "highly rated only".</p>
+            <p className="trip-note">{t('day.guideEmpty')}</p>
           ) : (
             groups.map((grp) => (
               <div className="day-guide-group" key={grp.cat}>
                 <div className="day-guide-group-title">
-                  <span className={`day-explore-search-dot cat-${grp.cat}`} /> {grp.label}
+                  <span className={`day-explore-search-dot cat-${grp.cat}`} /> {t(GROUP_LABEL_KEY[grp.cat])}
                 </div>
                 {grp.items.map((rec) => {
                   if (rec.type === 'town') {
-                    const t = rec.town;
-                    const picked = pickedTownIds.has(t.id);
+                    const tw = rec.town;
+                    const picked = pickedTownIds.has(tw.id);
                     return (
                       <div className={`day-guide-rec ${picked ? 'picked' : ''}`} key={rec.key}>
                         <button
                           className="day-guide-rec-main"
-                          onClick={() => onPreview('town', t.lat, t.lon, `t:${t.id}`)}
-                          title="Show on the map"
+                          onClick={() => onPreview('town', tw.lat, tw.lon, `t:${tw.id}`)}
+                          title={t('day.showOnMap')}
                         >
-                          {t.dest.image?.url
-                            ? <span className="day-guide-rec-photo" style={{ backgroundImage: `url(${t.dest.image.url})` }} />
-                            : <span className="day-guide-rec-photo day-guide-rec-photo-empty">{t.dest.city.slice(0, 1)}</span>}
+                          {tw.dest.image?.url
+                            ? <span className="day-guide-rec-photo" style={{ backgroundImage: `url(${tw.dest.image.url})` }} />
+                            : <span className="day-guide-rec-photo day-guide-rec-photo-empty">{tw.dest.city.slice(0, 1)}</span>}
                           <span className="day-guide-rec-body">
                             <span className="day-guide-rec-name">
-                              {t.dest.city}
-                              {t.dest.rating?.score != null && <ScoreChip rating={t.dest.rating} size="xs" />}
-                              {t.dest.rating?.hidden_gem && <HiddenGemTag />}
+                              {tw.dest.city}
+                              {tw.dest.rating?.score != null && <ScoreChip rating={tw.dest.rating} size="xs" />}
+                              {tw.dest.rating?.hidden_gem && <HiddenGemTag />}
                             </span>
-                            <span className="day-guide-rec-meta">{t.km} km from your stay</span>
-                            <span className="day-guide-rec-desc">{cityInsight(t.dest)}</span>
+                            <span className="day-guide-rec-meta">{t('day.kmFromStay', { km: tw.km })}</span>
+                            <span className="day-guide-rec-desc">{cityInsight(tw.dest)}</span>
                           </span>
                         </button>
-                        <button className={`day-guide-rec-add ${picked ? 'on' : ''}`} onClick={() => onToggleTown(t)}>
-                          {picked ? <><CheckIcon size={11} /> Added</> : '+ Add'}
+                        <button className={`day-guide-rec-add ${picked ? 'on' : ''}`} onClick={() => onToggleTown(tw)}>
+                          {picked ? <><CheckIcon size={11} /> {t('day.added')}</> : t('day.addShort')}
                         </button>
                       </div>
                     );
@@ -181,7 +181,7 @@ export function CartaGuidePanel({ towns, pois, stayTownId, pickedTownIds, picked
                       <button
                         className="day-guide-rec-main"
                         onClick={() => onPreview(p.cat, p.lat, p.lon, p.key)}
-                        title="Show on the map"
+                        title={t('day.showOnMap')}
                       >
                         {item.img
                           ? <span className="day-guide-rec-photo" style={{ backgroundImage: `url(${item.img})` }} />
@@ -189,18 +189,18 @@ export function CartaGuidePanel({ towns, pois, stayTownId, pickedTownIds, picked
                         <span className="day-guide-rec-body">
                           <span className="day-guide-rec-name">
                             {item.name}
-                            {must && <span className="day-guide-badge must"><StarIcon size={9} /> Must see</span>}
-                            {!must && (item.rate ?? 0) >= 2 && <span className="day-guide-badge rated">Highly rated</span>}
-                            {item.heritage && <span className="day-guide-badge heritage">Heritage</span>}
+                            {must && <span className="day-guide-badge must"><StarIcon size={9} /> {t('day.mustSee')}</span>}
+                            {!must && (item.rate ?? 0) >= 2 && <span className="day-guide-badge rated">{t('day.highlyRated')}</span>}
+                            {item.heritage && <span className="day-guide-badge heritage">{t('day.heritage')}</span>}
                           </span>
                           <span className="day-guide-rec-meta">
-                            {poiKind(item) ? `${poiKind(item)}, ` : ''}{p.km} km away, ~{fmtDur(dwellMinutes(poiKind(item)))} visit
+                            {poiKind(item) ? `${poiKind(item)}, ` : ''}{t('day.kmAwayVisit', { km: p.km, dur: fmtDur(dwellMinutes(poiKind(item))) })}
                           </span>
                           {item.desc && <span className="day-guide-rec-desc">{item.desc}</span>}
                         </span>
                       </button>
                       <button className={`day-guide-rec-add ${picked ? 'on' : ''}`} onClick={() => onTogglePoi(p)}>
-                        {picked ? <><CheckIcon size={11} /> Added</> : '+ Add'}
+                        {picked ? <><CheckIcon size={11} /> {t('day.added')}</> : t('day.addShort')}
                       </button>
                     </div>
                   );

@@ -678,4 +678,21 @@ export const nl = {
   "saved.tripPlansEmpty": "Nog geen reisplannen. Stel er een samen op het tabblad Reisplanner en tik op \"Reis opslaan\".",
   "saved.tripPlansSub": "Routes met meerdere stops uit de Reisplanner, vluchten en verblijf geprijsd.",
   "saved.untitledTrip": "Naamloze reis",
+
+  // added 2026-07-22: guide/nature/geonames UI + CartaGuide i18n + shell errors
+  "day.guideMoodQ": "Waar heb je zin in?",
+  "day.guideRangeQ": "Hoe ver wil je gaan?",
+  "day.guideTopOnly": "Toon alleen hoog gewaardeerd",
+  "day.guideGo": "Laat zien wat Carta aanraadt",
+  "day.guideBack": "Antwoorden wijzigen",
+  "day.guideEmpty": "Er past nog niets rond je verblijf. Vergroot het bereik, of zet \"alleen hoog gewaardeerd\" uit.",
+  "day.showOnMap": "Toon op de kaart",
+  "day.addShort": "+ Toevoegen",
+  "day.added": "Toegevoegd",
+  "day.kmAwayVisit": "{km} km verderop, ~{dur} bezoek",
+  "detail.population": "Inwoners",
+  "detail.nearestNature": "Dichtste natuur",
+  "detail.readGuide": "Lees de volledige gids op Wikivoyage",
+  "shell.loadErrorHelp": "We konden de reisgegevens van Carta niet laden. Controleer je verbinding en probeer het opnieuw.",
+  "shell.retry": "Opnieuw proberen",
 };

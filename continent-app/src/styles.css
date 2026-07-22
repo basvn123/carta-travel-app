@@ -8371,6 +8371,40 @@ input, select {
   font-style: italic;
 }
 
+/* "About this place": population + nearest protected area + a short guide lead,
+   built from the geonames / nature / guide data slices. */
+.panel-about {
+  margin: 4px 0 14px;
+  padding: 12px 14px;
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  background: var(--paper-dim);
+}
+.panel-about-fact {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: var(--ink-soft);
+}
+.panel-about-fact + .panel-about-fact { margin-top: 5px; }
+.panel-about-fact svg { flex: none; margin-top: 1px; color: var(--ink-mute); }
+.panel-about-guide {
+  margin: 10px 0 0;
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: var(--ink-soft);
+}
+.panel-about-fact + .panel-about-guide { padding-top: 10px; border-top: 1px solid var(--rule); }
+.panel-about-guide-link {
+  color: var(--accent);
+  font-weight: 600;
+  white-space: nowrap;
+  text-decoration: none;
+}
+.panel-about-guide-link:hover { text-decoration: underline; }
+
 /* Structured label/value rows inside the ⓘ popovers (stay, on the ground,
    local rates). One fact per line, label column fixed, easy to scan. */
 .cost-info-facts {

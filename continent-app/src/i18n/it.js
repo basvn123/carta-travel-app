@@ -678,4 +678,21 @@ export const it = {
   "saved.tripPlansEmpty": "Nessun piano di viaggio ancora. Creane uno nella scheda Trip planner e tocca \"Salva viaggio\".",
   "saved.tripPlansSub": "Percorsi multi-tappa creati nel Trip planner, voli e soggiorni con prezzo.",
   "saved.untitledTrip": "Viaggio senza titolo",
+
+  // added 2026-07-22: guide/nature/geonames UI + CartaGuide i18n + shell errors
+  "day.guideMoodQ": "Cosa ti va di fare?",
+  "day.guideRangeQ": "Fino a che distanza vuoi spingerti?",
+  "day.guideTopOnly": "Mostra solo i più votati",
+  "day.guideGo": "Mostrami i consigli di Carta",
+  "day.guideBack": "Modifica le risposte",
+  "day.guideEmpty": "Non c'è ancora nulla di adatto vicino al tuo alloggio. Amplia il raggio o disattiva «solo i più votati».",
+  "day.showOnMap": "Mostra sulla mappa",
+  "day.addShort": "+ Aggiungi",
+  "day.added": "Aggiunto",
+  "day.kmAwayVisit": "a {km} km, visita ~{dur}",
+  "detail.population": "Popolazione",
+  "detail.nearestNature": "Natura più vicina",
+  "detail.readGuide": "Leggi la guida completa su Wikivoyage",
+  "shell.loadErrorHelp": "Non siamo riusciti a caricare i dati di viaggio di Carta. Controlla la connessione e riprova.",
+  "shell.retry": "Riprova",
 };

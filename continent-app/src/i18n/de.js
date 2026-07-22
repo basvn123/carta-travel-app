@@ -678,4 +678,21 @@ export const de = {
   "saved.tripPlansEmpty": "Noch keine Reisepläne. Erstelle einen im Tab Reiseplaner und tippe auf \"Reise speichern\".",
   "saved.tripPlansSub": "Mehrstufige Routen aus dem Reiseplaner, mit Preisen für Flüge und Unterkünfte.",
   "saved.untitledTrip": "Unbenannte Reise",
+
+  // added 2026-07-22: guide/nature/geonames UI + CartaGuide i18n + shell errors
+  "day.guideMoodQ": "Worauf hast du Lust?",
+  "day.guideRangeQ": "Wie weit möchtest du dich bewegen?",
+  "day.guideTopOnly": "Nur hoch bewertete zeigen",
+  "day.guideGo": "Zeig mir Cartas Empfehlungen",
+  "day.guideBack": "Antworten ändern",
+  "day.guideEmpty": "In der Nähe deiner Unterkunft passt dazu noch nichts. Erweitere den Radius oder deaktiviere \"nur hoch bewertete\".",
+  "day.showOnMap": "Auf der Karte zeigen",
+  "day.addShort": "+ Hinzufügen",
+  "day.added": "Hinzugefügt",
+  "day.kmAwayVisit": "{km} km entfernt, ~{dur} Besuch",
+  "detail.population": "Einwohner",
+  "detail.nearestNature": "Nächste Natur",
+  "detail.readGuide": "Den ganzen Reiseführer auf Wikivoyage lesen",
+  "shell.loadErrorHelp": "Cartas Reisedaten konnten nicht geladen werden. Prüfe deine Verbindung und versuche es erneut.",
+  "shell.retry": "Erneut versuchen",
 };

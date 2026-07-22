@@ -1081,4 +1081,21 @@ export const en = {
   "wizard.youLandHere": "you land here",
   "wizard.yourAirport": "your airport",
   "wizard.yourArrival": "your arrival",
+
+  // added 2026-07-22: guide/nature/geonames UI + CartaGuide i18n + shell errors
+  "day.guideMoodQ": "What are you in the mood for?",
+  "day.guideRangeQ": "How far will you roam?",
+  "day.guideTopOnly": "Only show the highly rated",
+  "day.guideGo": "Show me what Carta recommends",
+  "day.guideBack": "Change answers",
+  "day.guideEmpty": "Nothing around your stay fits that yet. Try widening the range, or turning off \"highly rated only\".",
+  "day.showOnMap": "Show on the map",
+  "day.addShort": "+ Add",
+  "day.added": "Added",
+  "day.kmAwayVisit": "{km} km away, ~{dur} visit",
+  "detail.population": "Population",
+  "detail.nearestNature": "Nearest nature",
+  "detail.readGuide": "Read the full guide on Wikivoyage",
+  "shell.loadErrorHelp": "We couldn't load Carta's travel data. Check your connection and try again.",
+  "shell.retry": "Try again",
 };

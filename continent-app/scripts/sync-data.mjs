@@ -30,8 +30,25 @@ const publicDir = resolve(scriptDir, '..', 'public');
 const src = resolve(repoRoot, 'app_data', 'app_data.json');
 const insightsSrc = resolve(repoRoot, 'app_data', 'country_insights.json');
 const airportsCache = resolve(repoRoot, 'cache', 'ryanair_airports.json');
+const wizzAirportsCache = resolve(repoRoot, 'cache', 'wizzair_airports.json');
+const vuelingAirportsCache = resolve(repoRoot, 'cache', 'vueling_airports.json');
 
 const kb = (s) => `${Math.round(s.length / 1024)} KB`;
+
+// A short, display-ready lead for the Wikivoyage guide: the first sentence or
+// two, capped, so the boot payload carries a blurb (shown in the detail panel)
+// rather than a whole article. Sentence-boundary trim, so no ellipsis needed.
+function guideBlurb(text) {
+  const clean = (text || '').replace(/\s+/g, ' ').trim();
+  if (!clean) return '';
+  let out = '';
+  for (const s of clean.split(/(?<=[.!?])\s+/)) {
+    if (out && out.length + s.length > 320) break;
+    out += (out ? ' ' : '') + s;
+    if (out.length >= 220) break;
+  }
+  return out;
+}
 
 // House style: the app must never render an em/en dash. The pipeline can still
 // emit them (harvested POI names, ferry routes, date ranges), so we scrub every
@@ -69,13 +86,18 @@ for (const [id, d] of Object.entries(data.destinations || {})) {
 }
 
 // Origin airport metadata for the "flying from" picker, from the harvested
-// Ryanair airports cache. Only the origins actually priced (meta.all_origins,
-// written by harvest_all_origins.py's patch step) are shipped, keyed by IATA.
-if (data.meta?.all_origins && existsSync(airportsCache)) {
-  const air = JSON.parse(readFileSync(airportsCache, 'utf-8'));
+// airports caches. Only the origins actually priced (meta.all_origins, written
+// by the fare patch steps) are shipped, keyed by IATA. Ryanair's cache wins on
+// overlap; the Wizz Air and Vueling caches fill in origins Ryanair never flies
+// (so those don't show as bare IATA codes).
+const anyAirportsCache = existsSync(airportsCache) || existsSync(wizzAirportsCache) || existsSync(vuelingAirportsCache);
+if (data.meta?.all_origins && anyAirportsCache) {
+  const air = existsSync(airportsCache) ? JSON.parse(readFileSync(airportsCache, 'utf-8')) : {};
+  const wizz = existsSync(wizzAirportsCache) ? JSON.parse(readFileSync(wizzAirportsCache, 'utf-8')) : {};
+  const vueling = existsSync(vuelingAirportsCache) ? JSON.parse(readFileSync(vuelingAirportsCache, 'utf-8')) : {};
   const origins = {};
   for (const code of data.meta.all_origins) {
-    const a = air[code];
+    const a = air[code] || wizz[code] || vueling[code];
     if (!a) continue;
     origins[code] = { name: a.name, city: a.city, country: a.country, lat: a.lat, lon: a.lon };
   }
@@ -128,8 +150,11 @@ if (data.fares && Object.keys(data.fares).length) {
 // at full-catalogue scale every byte here is multiplied ~25,000x (parse time
 // was the dominant load cost in the perf pass, see scripts/perf/). The master
 // keeps everything; only the shipped core slims down.
-//   - guide / nature / geonames: no app code reads them today. Cut until a UI
-//     does (restoring is deleting a line here).
+//   - guide / nature / geonames: the app now shows a compact slice of each
+//     (a guide blurb + link, the single nearest protected area, and
+//     population/settlement) in the detail panel and planner facts. Ship only
+//     that slice; the verbose remainder (full Wikivoyage article, every
+//     protected-area kind/id, GeoNames ids/timezone/elevation) is dropped.
 //   - climate: was 12 months x 5 verbose keys + a source string PER
 //     DESTINATION (~1 KB each). The app reads t_high/t_low/precip_mm/comfort
 //     and the best-months list, so ship tuples: { m: [[hi,lo,mm,cf] x12],
@@ -140,10 +165,41 @@ if (data.fares && Object.keys(data.fares).length) {
   let after = 0;
   let climatePeriod = null;
   for (const d of Object.values(data.destinations || {})) {
-    for (const k of ['guide', 'nature', 'geonames']) {
-      if (d[k] !== undefined) {
-        before += JSON.stringify(d[k]).length;
-        delete d[k];
+    // Wikivoyage guide -> { text: blurb, url }
+    if (d.guide !== undefined) {
+      before += JSON.stringify(d.guide).length;
+      const blurb = guideBlurb(d.guide?.text);
+      if (blurb) {
+        d.guide = d.guide?.url ? { text: blurb, url: d.guide.url } : { text: blurb };
+        after += JSON.stringify(d.guide).length;
+      } else {
+        delete d.guide;
+      }
+    }
+    // Protected areas -> just the single nearest + a national-park flag (the
+    // long OSM/Wikidata URLs and per-kind list are not shown).
+    if (d.nature !== undefined) {
+      before += JSON.stringify(d.nature).length;
+      const nn = d.nature?.nearest;
+      if (nn?.name) {
+        d.nature = {
+          nearest: { name: nn.name, kind: nn.kind, dist_km: nn.dist_km },
+          park: !!d.nature.has_national_park,
+        };
+        after += JSON.stringify(d.nature).length;
+      } else {
+        delete d.nature;
+      }
+    }
+    // GeoNames -> population + settlement type only.
+    if (d.geonames !== undefined) {
+      before += JSON.stringify(d.geonames).length;
+      const g = d.geonames || {};
+      if (g.population != null || g.settlement) {
+        d.geonames = { population: g.population ?? null, settlement: g.settlement ?? null };
+        after += JSON.stringify(d.geonames).length;
+      } else {
+        delete d.geonames;
       }
     }
     if (d.climate?.months) {

@@ -678,4 +678,21 @@ export const es = {
   "saved.tripPlansEmpty": "Aún no tienes planes de viaje. Crea uno en la pestaña Planificador de viajes y toca \"Guardar viaje\".",
   "saved.tripPlansSub": "Rutas de varias paradas creadas en el Planificador de viajes, con vuelos y estancias con precio.",
   "saved.untitledTrip": "Viaje sin título",
+
+  // added 2026-07-22: guide/nature/geonames UI + CartaGuide i18n + shell errors
+  "day.guideMoodQ": "¿Qué te apetece?",
+  "day.guideRangeQ": "¿Hasta dónde quieres llegar?",
+  "day.guideTopOnly": "Mostrar solo lo mejor valorado",
+  "day.guideGo": "Muéstrame lo que recomienda Carta",
+  "day.guideBack": "Cambiar respuestas",
+  "day.guideEmpty": "Todavía no hay nada que encaje cerca de tu alojamiento. Amplía el radio o desactiva «solo lo mejor valorado».",
+  "day.showOnMap": "Mostrar en el mapa",
+  "day.addShort": "+ Añadir",
+  "day.added": "Añadido",
+  "day.kmAwayVisit": "a {km} km, visita ~{dur}",
+  "detail.population": "Población",
+  "detail.nearestNature": "Naturaleza más cercana",
+  "detail.readGuide": "Leer la guía completa en Wikivoyage",
+  "shell.loadErrorHelp": "No pudimos cargar los datos de viaje de Carta. Comprueba tu conexión e inténtalo de nuevo.",
+  "shell.retry": "Intentar de nuevo",
 };

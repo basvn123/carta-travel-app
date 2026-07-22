@@ -224,11 +224,32 @@ function TravelApp() {
   // than pushing it down.
   const [mapGuideOpen, setMapGuideOpen] = useState(false);
 
-  // Every open: make it unmissable that Carta is built for budget travellers
-  // flying Ryanair, and that other airlines aren't in the data yet. Deliberately
-  // not persisted, it should greet every visit, not just the first.
-  const [fareNoticeDismissed, setFareNoticeDismissed] = useState(false);
-  const dismissFareNotice = () => setFareNoticeDismissed(true);
+  // Greet the FIRST visit with the "built for Ryanair budget travel" notice so
+  // it's clear other airlines aren't in the data yet, then stay quiet: the
+  // Ryanair context remains available via the persistent "start here" guide
+  // pill and the per-price confidence pills. Persisted so a returning visitor
+  // isn't re-interrupted on every map visit.
+  const [fareNoticeDismissed, setFareNoticeDismissed] = useState(() => {
+    try { return localStorage.getItem('carta.fareNoticeSeen') === '1'; } catch { return false; }
+  });
+  const dismissFareNotice = () => {
+    setFareNoticeDismissed(true);
+    try { localStorage.setItem('carta.fareNoticeSeen', '1'); } catch { /* private mode */ }
+  };
+
+  // Escape closes the top-most dismissable surface (fare notice, then the
+  // shared-trip offer, then the destination detail). Gives keyboard users a way
+  // out that the click-outside backdrop alone never provided.
+  useEffect(() => {
+    const onKey = (e) => {
+      if (e.key !== 'Escape') return;
+      if (!fareNoticeDismissed) { dismissFareNotice(); return; }
+      if (sharedTrip) { setSharedTrip(null); return; }
+      if (selectedId) { setSelectedId(null); return; }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [fareNoticeDismissed, sharedTrip, selectedId]);
 
   // Let the user collapse the destinations list to give the map the full width.
   // On phones (<=768px) it starts collapsed so the map opens as big as possible;
@@ -383,11 +404,10 @@ function TravelApp() {
       <div className="loading-screen">
         <Logo size={56} />
         <div className="name">Carta</div>
-        <div className="sub" style={{ color: 'var(--accent)' }}>{t('shell.failedToLoad', { error })}</div>
-        <div style={{ fontSize: 12, color: 'var(--ink-mute)', maxWidth: 420, textAlign: 'center', lineHeight: 1.5 }}>
-          The app expects <code>/app_data.json</code> at the site root.
-          Run notebook 05 to regenerate it from your pipeline cache.
-        </div>
+        <div className="sub">{t('shell.loadErrorHelp')}</div>
+        <button className="guide-next" style={{ marginTop: 18 }} onClick={() => window.location.reload()}>
+          {t('shell.retry')}
+        </button>
       </div>
     );
   }
