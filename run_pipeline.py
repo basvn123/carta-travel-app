@@ -251,6 +251,51 @@ def fares_step(ctx):
     return run_cmd([PY, "pipeline/harvest_all_origins.py", "refresh"]) == 0
 
 
+def wizz_step(ctx):
+    """Merge live Wizz Air fares into the shared `fares` table. Runs AFTER the
+    Ryanair patch (fares_step) so it merges onto a fresh table, keeping the
+    cheaper price per (anchor, origin, day) and adding Wizz-only routes. The
+    harvester auto-resets its own fare cache when the window has rolled, so this
+    is just graph (if missing) -> harvest (resume) -> patch (cheapest-wins)."""
+    graph = CACHE / "wizzair_route_graph.json"
+    if not graph.exists():
+        if run_cmd([PY, "pipeline/harvest_wizzair.py", "graph"]) != 0:
+            return False
+    if run_cmd([PY, "pipeline/harvest_wizzair.py", "harvest"]) != 0:
+        return False
+    return run_cmd([PY, "pipeline/harvest_wizzair.py", "patch"]) == 0
+
+
+def vueling_step(ctx):
+    """Merge live Vueling fares into the shared `fares` table. Runs AFTER the
+    Ryanair (fares_step) and Wizz (wizz_step) patches so it merges last, keeping
+    the cheapest price per (anchor, origin, day) and adding Vueling-only routes.
+    Native EUR; the harvester auto-resets its fare cache when the window rolls.
+    graph (if missing) -> harvest (resume) -> patch (cheapest-wins)."""
+    graph = CACHE / "vueling_route_graph.json"
+    if not graph.exists():
+        if run_cmd([PY, "pipeline/harvest_vueling.py", "graph"]) != 0:
+            return False
+    if run_cmd([PY, "pipeline/harvest_vueling.py", "harvest"]) != 0:
+        return False
+    return run_cmd([PY, "pipeline/harvest_vueling.py", "patch"]) == 0
+
+
+def volotea_step(ctx):
+    """Merge live Volotea fares into the shared `fares` table. Runs AFTER the
+    Ryanair, Wizz and Vueling patches (merges last). Native EUR; coarser than the
+    daily calendars (getminprice = cheapest per date window). The harvester
+    auto-resets its fare cache when the window rolls.
+    graph (if missing) -> harvest (resume) -> patch (cheapest-wins)."""
+    graph = CACHE / "volotea_route_graph.json"
+    if not graph.exists():
+        if run_cmd([PY, "pipeline/harvest_volotea.py", "graph"]) != 0:
+            return False
+    if run_cmd([PY, "pipeline/harvest_volotea.py", "harvest"]) != 0:
+        return False
+    return run_cmd([PY, "pipeline/harvest_volotea.py", "patch"]) == 0
+
+
 def fame_step(ctx):
     """Refresh destination fame. The dest pageviews cache is never invalidated
     by the harvester (it only fills missing ids), so to pick up drifted fame we
@@ -287,6 +332,37 @@ TASKS = [
         "writes_app_data": True,
         "run": fares_step,
         "note": "the LIVE fare system (harvest_all_origins); resumes an interrupted refresh.",
+    },
+    {
+        "key": "wizz_fares",
+        "title": "Live Wizz Air fares -> merged cheapest-wins into public/fares",
+        "cadence": "weekly",
+        "writes_app_data": True,
+        "run": wizz_step,
+        "note": ("adds Wizz-only routes + undercuts Ryanair on shared ones; MUST run "
+                 "after `fares` (merges onto the fresh Ryanair table). Full harvest "
+                 "~3h, resumable; tags days Wizz wins as W6 in out_c/ret_c."),
+    },
+    {
+        "key": "vueling_fares",
+        "title": "Live Vueling fares -> merged cheapest-wins into public/fares",
+        "cadence": "weekly",
+        "writes_app_data": True,
+        "run": vueling_step,
+        "note": ("adds Vueling-only routes + undercuts Ryanair/Wizz; native EUR, a "
+                 "full ~11-mo calendar per call. MUST run after `fares` and "
+                 "`wizz_fares`. Discovery ~260 calls then ~1/leg; resumable; tags VY."),
+    },
+    {
+        "key": "volotea_fares",
+        "title": "Live Volotea fares -> merged cheapest-wins into public/fares",
+        "cadence": "weekly",
+        "writes_app_data": True,
+        "run": volotea_step,
+        "note": ("adds Volotea-only regional routes; native EUR via getminprice. "
+                 "COARSER than the others (cheapest per date window, not daily). MUST "
+                 "run after fares/wizz_fares/vueling_fares. ~260 discovery + 1/origin; "
+                 "resumable; tags V7."),
     },
     {
         "key": "fame",

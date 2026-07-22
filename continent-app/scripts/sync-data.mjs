@@ -32,6 +32,7 @@ const insightsSrc = resolve(repoRoot, 'app_data', 'country_insights.json');
 const airportsCache = resolve(repoRoot, 'cache', 'ryanair_airports.json');
 const wizzAirportsCache = resolve(repoRoot, 'cache', 'wizzair_airports.json');
 const vuelingAirportsCache = resolve(repoRoot, 'cache', 'vueling_airports.json');
+const voloteaAirportsCache = resolve(repoRoot, 'cache', 'volotea_airports.json');
 
 const kb = (s) => `${Math.round(s.length / 1024)} KB`;
 
@@ -90,14 +91,16 @@ for (const [id, d] of Object.entries(data.destinations || {})) {
 // by the fare patch steps) are shipped, keyed by IATA. Ryanair's cache wins on
 // overlap; the Wizz Air and Vueling caches fill in origins Ryanair never flies
 // (so those don't show as bare IATA codes).
-const anyAirportsCache = existsSync(airportsCache) || existsSync(wizzAirportsCache) || existsSync(vuelingAirportsCache);
+const anyAirportsCache = existsSync(airportsCache) || existsSync(wizzAirportsCache)
+  || existsSync(vuelingAirportsCache) || existsSync(voloteaAirportsCache);
 if (data.meta?.all_origins && anyAirportsCache) {
   const air = existsSync(airportsCache) ? JSON.parse(readFileSync(airportsCache, 'utf-8')) : {};
   const wizz = existsSync(wizzAirportsCache) ? JSON.parse(readFileSync(wizzAirportsCache, 'utf-8')) : {};
   const vueling = existsSync(vuelingAirportsCache) ? JSON.parse(readFileSync(vuelingAirportsCache, 'utf-8')) : {};
+  const volotea = existsSync(voloteaAirportsCache) ? JSON.parse(readFileSync(voloteaAirportsCache, 'utf-8')) : {};
   const origins = {};
   for (const code of data.meta.all_origins) {
-    const a = air[code] || wizz[code] || vueling[code];
+    const a = air[code] || wizz[code] || vueling[code] || volotea[code];
     if (!a) continue;
     origins[code] = { name: a.name, city: a.city, country: a.country, lat: a.lat, lon: a.lon };
   }
