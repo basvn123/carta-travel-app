@@ -46,6 +46,17 @@ FAME_ARTICLE_OVERRIDES = {
     "CGN": "https://en.wikipedia.org/wiki/Cologne",
     "FKB": "https://en.wikipedia.org/wiki/Baden-Baden",
     "LBA": "https://en.wikipedia.org/wiki/Leeds",
+    # image.page had resolved to the United Kingdom article, giving the small
+    # cathedral city 18,823 views/day (more than London) and a flag hero.
+    "gem:wells-somerset": "https://en.wikipedia.org/wiki/Wells,_Somerset",
+    # These dests' HERO images now come from a city/capital article (see
+    # oneoff/fix_flag_hero_images.py), but their fame should stay the
+    # country/territory article the destination actually is.
+    "LUX": "https://en.wikipedia.org/wiki/Luxembourg",
+    "gem:monaco-mc": "https://en.wikipedia.org/wiki/Monaco",
+    "gem:aland": "https://en.wikipedia.org/wiki/%C3%85land",
+    "GCI": "https://en.wikipedia.org/wiki/Guernsey",
+    "OVD": "https://en.wikipedia.org/wiki/Asturias",
 }
 
 

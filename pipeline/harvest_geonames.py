@@ -36,6 +36,7 @@ Usage:
 import io
 import json
 import sys
+import unicodedata
 import urllib.error
 import urllib.request
 import zipfile
@@ -54,6 +55,13 @@ CACHE = ROOT / "cache" / "geonames_cities500.txt"
 UA = {"User-Agent": "CartaTravelApp/1.0 (portfolio project; bas.vannieuwenhuyse123@gmail.com)"}
 DUMP_URL = "https://download.geonames.org/export/dump/cities500.zip"
 RADIUS_KM = 12.0                 # a destination centre and its town are close
+# Second-chance radius for a NAME-exact match. Airport-tier destinations can
+# carry near-runway coordinates (some stored "city centres" are the airport
+# too), so the nearest populated place is the airport's village: Split matched
+# Plano (607 people), Zurich matched Rumlang, Dubrovnik matched Cilipi. When
+# the local pick doesn't share the destination's name, the settlement actually
+# NAMED like the destination within this radius is the honest match.
+WIDE_RADIUS_KM = 60.0
 
 # GeoNames feature_code (class P = populated place) -> our coarse settlement tag.
 # PPL* variants collapse to city / town / village by capital/seat/population.
@@ -135,7 +143,10 @@ def settlement_tag(fcode, pop):
 # 2. Match each destination to the best nearby populated place                 #
 # --------------------------------------------------------------------------- #
 def _norm(s):
-    return "".join(c for c in (s or "").lower() if c.isalnum())
+    # Accent-fold before comparing: the dataset says "Zurich", GeoNames says
+    # "Zürich" - they must compare equal or the name rescue never fires.
+    folded = unicodedata.normalize("NFKD", s or "")
+    return "".join(c for c in folded.lower() if c.isalnum() and c.isascii())
 
 
 def match(dests, places):
@@ -178,6 +189,15 @@ def match(dests, places):
             if score > best_score:
                 best_score, best = score, (i, dkm)
         i, dkm = best
+        # Name-first wide rescue: the local winner isn't the place we mean
+        # (no name overlap), but a settlement bearing the destination's exact
+        # name sits within WIDE_RADIUS_KM - take the largest such settlement.
+        if dname and pnorm[i] != dname and dname not in pnorm[i]:
+            widx = np.where(dist <= WIDE_RADIUS_KM)[0]
+            named = [int(j) for j in widx if pnorm[j] == dname]
+            if named:
+                j = max(named, key=lambda k: places[k]["pop"])
+                i, dkm = j, float(dist[j])
         p = places[i]
         d["geonames"] = {
             "population": p["pop"],

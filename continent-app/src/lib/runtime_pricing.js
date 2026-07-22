@@ -200,11 +200,22 @@ export const DEFAULT_ACCOM_MODEL = {
   // big house cheaply. factor(g) = (g/4)^0.55 * 4/g -> x1.37 for 2, x0.78 for 7.
   occupancy_exponent: 0.55,
   occupancy_ref_capacity: 4,
+  // 2026-07 recalibration: the old 1.35 peak, stacked on PLI bases that were
+  // themselves off, overstated summer in the long tail while anchored cities'
+  // review-damped curves understated it. One calibrated amplitude for both
+  // regimes: global peaks at 1.25, city curves get a peak-month floor (below).
   seasonality: {
-    1: 0.82, 2: 0.82, 3: 0.90, 4: 0.98, 5: 1.08, 6: 1.22,
-    7: 1.35, 8: 1.35, 9: 1.15, 10: 1.00, 11: 0.85, 12: 0.92,
+    1: 0.82, 2: 0.82, 3: 0.90, 4: 0.98, 5: 1.08, 6: 1.15,
+    7: 1.25, 8: 1.25, 9: 1.12, 10: 1.00, 11: 0.85, 12: 0.92,
   },
 };
+
+// NB (2026-07 recalibration): a peak-month FLOOR on anchored cities' damped
+// curves was tried and reverted. Their bases are annual medians that already
+// carry the summer mix, and measured all-in July nightlies came out 15-40%
+// ABOVE observed ADRs with a 1.15 floor (Ghent 199 vs ~130 real, Amsterdam
+// 413 vs ~280). The damped curve partly offsets a high-side anchor base;
+// keep them paired until the anchor bases themselves are recalibrated.
 
 /** Per-person price factor for a group of `g` vs the stored 4-person
  *  assumption (see occupancy_exponent above). 1 when g == ref capacity. */

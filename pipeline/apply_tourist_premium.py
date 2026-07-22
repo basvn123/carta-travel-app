@@ -78,7 +78,10 @@ PREMIUM_TIERS = {
     "gem:kotor": "high",
     "gem:sveti-stefan": "high",
     "gem:rovinj": "high",
-    "DBV": "high",                    # Dubrovnik (accommodation only - dining is city-anchored)
+    # Dubrovnik: 2026 observed ADRs rival Venice's; 'high' left it ~40% under
+    # reality even after the HR ADR calibration (see apply_longtail_granularity).
+    "DBV": "extreme",
+    "SPU": "high",                    # Split old town, HR's second honeypot
     "gem:lofoten": "high",
     # ---- mild: popular tourist towns, noticeably but modestly above average ----
     "SZG": "mild",                    # Salzburg
@@ -110,6 +113,10 @@ PREMIUM_TIERS = {
     "VRN": "mild",                    # Verona
     "gem:tuscany-siena": "mild",
     "gem:ayia-napa": "mild",
+    # 2026 ADR audit: tourist-city premiums missing in the PLI-scaled markets.
+    "KRK": "mild",                    # Krakow old town
+    "GDN": "mild",                    # Gdansk
+    "ZAD": "mild",                    # Zadar
 }
 
 MULTIPLIERS = {

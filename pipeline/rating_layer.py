@@ -69,6 +69,9 @@ TIER_LABELS = {3: "Worth the journey", 2: "Worth a detour", 1: "Worth a visit"}
 # as a gem by the editors (and still at least tier-1 quality).
 HIDDEN_GEM_FAME_PCTL = {2: 0.40, 1: 0.20}   # min tier -> max fame percentile
 HIDDEN_GEM_MIN_SCORE = 7.0                   # floor for curator-flagged gems
+# The curator flag alone can't overrule fame: a place in the catalogue's TOP
+# fame tail (Utrecht at ~13k views/day) is not hidden, whatever the flag says.
+HIDDEN_GEM_CURATED_MAX_FAME_PCTL = 0.6
 
 RATING_MODEL = {
     "version": "rating_v2",
@@ -76,7 +79,7 @@ RATING_MODEL = {
     "tier_cutoffs": {str(k): v for k, v in TIER_CUTOFFS.items()},
     "tier_labels": {str(k): v for k, v in TIER_LABELS.items()},
     "hidden_gem": ("(tier>=2 & fame_pctl<=0.40) or (tier==1 & fame_pctl<=0.20) "
-                   "or (curated gem & score>=7.0)"),
+                   "or (curated gem & score>=7.0 & fame_pctl<=0.6)"),
     "scale": "absolute 0-10 (no percentile re-spreading)",
     "components": {
         "appeal": "curated 0-10 traveller-appeal judgement (curated_appeal.json)",
@@ -213,7 +216,8 @@ def compute_ratings(dests):
         fame_pct = fame_pctls[i]
         hidden = ((tier >= 2 and fame_pct <= HIDDEN_GEM_FAME_PCTL[2])
                   or (tier == 1 and fame_pct <= HIDDEN_GEM_FAME_PCTL[1])
-                  or (curated_gem[i] and score >= HIDDEN_GEM_MIN_SCORE))
+                  or (curated_gem[i] and score >= HIDDEN_GEM_MIN_SCORE
+                      and fame_pct <= HIDDEN_GEM_CURATED_MAX_FAME_PCTL))
         dests[did]["rating"] = {
             "score": score,
             "tier": tier,

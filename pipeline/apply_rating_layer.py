@@ -36,6 +36,52 @@ DEFAULT_TARGETS = [
 ]
 
 
+# ---------------------------------------------------------------------------
+# Post-apply sanity gate. Ratings regressions are silent (the app just shows
+# wrong stars), so the pipeline fails loudly instead: a famous-set floor, an
+# airport-town ceiling, and no "outstanding" score nobody has ever heard of
+# unless the curators explicitly said so.
+# ---------------------------------------------------------------------------
+FAMOUS_FLOOR = {   # dest id -> minimum defensible score
+    "CIA": 9.0,    # Rome
+    "BVA": 9.0,    # Paris
+    "BCN": 9.0,    # Barcelona
+    "AMS": 8.5,    # Amsterdam
+    "gem:bruges": 8.5,
+    "PRG": 8.5,    # Prague
+}
+# NB: only towns that hold their OWN slot; multi-airport satellites (NYO)
+# inherit their city's unified score and don't belong here.
+AIRPORT_TOWN_CEILING = {"CRL": 5.0, "HHN": 5.0, "TZL": 5.0}
+OBSCURE_STAR_MIN_FAME = 30   # views/day under which a 8.5+ needs a curator gem flag
+
+
+def validate(dests) -> list:
+    """Hard failures as strings; empty list = healthy."""
+    problems = []
+    for did, floor in FAMOUS_FLOOR.items():
+        r = (dests.get(did) or {}).get("rating")
+        if r and r["score"] < floor:
+            problems.append(f"{did} scored {r['score']} < famous floor {floor}")
+    for did, ceil in AIRPORT_TOWN_CEILING.items():
+        r = (dests.get(did) or {}).get("rating")
+        if r and r["score"] >= ceil:
+            problems.append(f"{did} scored {r['score']} >= airport-town ceiling {ceil}")
+    appeal = rating_layer.load_curated_appeal()
+    for did, d in dests.items():
+        r = d.get("rating")
+        if not r:
+            problems.append(f"{did} has no rating block")
+            continue
+        if (r["score"] >= 8.5 and r.get("fame", 0) < OBSCURE_STAR_MIN_FAME
+                and not (appeal.get(did) or {}).get("gem")):
+            problems.append(
+                f"{did} ({d.get('city')}) scores {r['score']} at fame "
+                f"{r.get('fame')}/day with no curator gem flag - wrong-article "
+                f"fame or a curation slip; review it")
+    return problems
+
+
 def main() -> None:
     targets = [Path(a) for a in sys.argv[1:]] or DEFAULT_TARGETS
     print("Applying rating layer (schema v14):")
@@ -44,6 +90,13 @@ def main() -> None:
     data = json.loads(master_path.read_text(encoding="utf-8"))
     dests = data.get("destinations", {})
     counts = rating_layer.compute_ratings(dests)
+
+    problems = validate(dests)
+    if problems:
+        print("  RATING VALIDATION FAILED - nothing written:")
+        for p in problems[:20]:
+            print(f"    - {p}")
+        sys.exit(1)
     data["meta"]["rating_model"] = rating_layer.RATING_MODEL
     data["meta"]["schema_version"] = max(
         data["meta"].get("schema_version", 0), 14)
