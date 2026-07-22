@@ -5,13 +5,14 @@ import { OriginPicker } from '../components/OriginPicker.jsx';
 import { ScoreChip } from '../components/RatingBadge.jsx';
 import { CountryIntel } from '../components/CountryIntel.jsx';
 import { TripMap } from '../map/TripMap.jsx';
-import { TripItinerary } from './TripItinerary.jsx';
+import { TripItinerary, TransferModePicker } from './TripItinerary.jsx';
 import { GuidedTripWizard } from './GuidedTripWizard.jsx';
 import { eur, fmtHours, flightTimes } from '../lib/format.js';
 import { fmtDate } from '../lib/dates.js';
 import { fetchDrivingRoute } from '../lib/routing.js';
 import { useTripPlanner } from '../hooks/useTripPlanner.js';
 import { useCountryInsights } from '../hooks/useCountryInsights.js';
+import { useI18n } from '../i18n/index.jsx';
 import { loadAssignments, TRIP_DRAFT_PLAN_ID } from './dayPlanStore.js';
 import { SparkIcon, TrainIcon, BusIcon, CarIcon, BulbIcon, InfoIcon, ReceiptIcon, BedIcon } from '../components/Icons.jsx';
 import { PlaneIcon } from '../components/TransportIcons.jsx';
@@ -41,22 +42,24 @@ function NightsRing({ planned, total }) {
 }
 
 function Stepper({ value, onChange, min = 0, max = 60, suffix }) {
+  const { t } = useI18n();
   return (
     <div className="trip-stepper">
-      <button type="button" className="trip-step-btn" onClick={() => onChange(Math.max(min, value - 1))} disabled={value <= min} aria-label="Fewer">-</button>
+      <button type="button" className="trip-step-btn" onClick={() => onChange(Math.max(min, value - 1))} disabled={value <= min} aria-label={t('trip.fewer')}>-</button>
       <div className="trip-step-val">
         <span className="trip-step-num">{value}</span>
         {suffix && <span className="trip-step-suffix">{suffix(value)}</span>}
       </div>
-      <button type="button" className="trip-step-btn" onClick={() => onChange(Math.min(max, value + 1))} disabled={value >= max} aria-label="More">+</button>
+      <button type="button" className="trip-step-btn" onClick={() => onChange(Math.min(max, value + 1))} disabled={value >= max} aria-label={t('trip.more')}>+</button>
     </div>
   );
 }
 
+// `label` is an i18n key, render it through t().
 const MODE_META = {
-  train: { Icon: TrainIcon, label: 'Train' },
-  bus: { Icon: BusIcon, label: 'Bus' },
-  car: { Icon: CarIcon, label: 'Car' },
+  train: { Icon: TrainIcon, label: 'trip.modeTrain' },
+  bus: { Icon: BusIcon, label: 'trip.modeBus' },
+  car: { Icon: CarIcon, label: 'trip.modeCar' },
 };
 const ModeIcon = ({ mode, size = 13 }) => {
   const I = MODE_META[mode]?.Icon;
@@ -66,15 +69,16 @@ const ModeIcon = ({ mode, size = 13 }) => {
 /** One overland leg between two stops: the chosen mode inline, expandable to
  *  compare all three (train/bus/car), switch mode, and jump to booking links. */
 function LegRow({ leg, onMode }) {
+  const { t } = useI18n();
   const [open, setOpen] = useState(false);
-  if (!leg) return <div className="trip-leg">↳ Route unknown</div>;
-  if (leg.no_road || !leg.mode) return <div className="trip-leg">↳ {leg.note || 'No overland route (sea crossing)'}</div>;
+  if (!leg) return <div className="trip-leg">↳ {t('trip.routeUnknown')}</div>;
+  if (leg.no_road || !leg.mode) return <div className="trip-leg">↳ {leg.note || t('trip.noOverland')}</div>;
   const chosen = leg.modes[leg.mode];
   return (
     <div className="trip-leg trip-leg-rich">
       <button className="trip-leg-main" onClick={() => setOpen(!open)} aria-expanded={open}>
-        ↳ <ModeIcon mode={leg.mode} /> {MODE_META[leg.mode].label}, ~{leg.road_km} km, est. {eur(chosen.eur_pp)}/person, ~{fmtHours(chosen.hours)}
-        {leg.long_haul ? ', long leg, consider flying' : ''}
+        ↳ <ModeIcon mode={leg.mode} /> {t('trip.legSummary', { mode: t(MODE_META[leg.mode].label), km: leg.road_km, price: eur(chosen.eur_pp), hours: fmtHours(chosen.hours) })}
+        {leg.long_haul ? `, ${t('trip.longLeg')}` : ''}
         <span className="trip-leg-caret">{open ? '−' : '+'}</span>
       </button>
       {open && (
@@ -85,10 +89,10 @@ function LegRow({ leg, onMode }) {
                 key={m}
                 className={`trip-leg-mode ${leg.mode === m ? 'on' : ''}`}
                 onClick={() => onMode(m)}
-                title={leg.recommended === m ? "Carta's pick for this leg" : undefined}
+                title={leg.recommended === m ? t('trip.cartaPick') : undefined}
               >
-                <span><ModeIcon mode={m} /> {MODE_META[m].label}{leg.recommended === m && <span className="guide-reco-mark"><SparkIcon size={10} /></span>}</span>
-                <b>{eur(o.eur_pp)}/p</b>
+                <span><ModeIcon mode={m} /> {t(MODE_META[m].label)}{leg.recommended === m && <span className="guide-reco-mark"><SparkIcon size={10} /></span>}</span>
+                <b>{t('trip.perPersonShort', { price: eur(o.eur_pp) })}</b>
                 <small>~{fmtHours(o.hours)}</small>
               </button>
             ))}
@@ -99,7 +103,7 @@ function LegRow({ leg, onMode }) {
               <a key={j} href={l.url} target="_blank" rel="noreferrer">{l.label} ↗</a>
             ))}
           </div>
-          <p className="trip-leg-disclaimer">Estimates, not live fares. Check the links for real times &amp; prices.</p>
+          <p className="trip-leg-disclaimer">{t('trip.legDisclaimer')}</p>
         </div>
       )}
     </div>
@@ -107,17 +111,18 @@ function LegRow({ leg, onMode }) {
 }
 
 function Suggestions({ suggestions, onPick }) {
+  const { t } = useI18n();
   if (!suggestions.length) return null;
   return (
     <div className="trip-block">
-      <div className="trip-block-title">You might love these next</div>
+      <div className="trip-block-title">{t('trip.suggestTitle')}</div>
       <div className="trip-suggest-row">
         {suggestions.map((s) => (
           <button
             key={s.id}
             className="trip-suggest-card"
             onClick={() => onPick(s)}
-            title={`${s.city}, ${s.country}, ~${s.km} km from ${s.shared_origin || 'overland'}`}
+            title={t('trip.suggestFrom', { city: s.city, country: s.country, km: s.km, from: s.shared_origin || t('trip.overland') })}
           >
             <div className="trip-suggest-thumb" style={s.image ? { backgroundImage: `url(${s.image})` } : undefined}>
               {!s.image && <span className="trip-suggest-fallback">{s.city.slice(0, 1)}</span>}
@@ -137,7 +142,8 @@ function Suggestions({ suggestions, onPick }) {
   );
 }
 
-export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, openPlanId, onOpenPlanConsumed, origin, onChangeOrigin, onPlanDay }) {
+export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, openPlanId, onOpenPlanConsumed, origin, onChangeOrigin, onPlanDay, openSharedTrip, onSharedTripConsumed }) {
+  const { t } = useI18n();
   const countryInsights = useCountryInsights();
   const tp = useTripPlanner(data, countryInsights);
   const destinations = data?.destinations || {};
@@ -235,7 +241,7 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
   };
 
   const handleStartOver = () => {
-    if (!window.confirm('Delete this trip and start over?')) return;
+    if (!window.confirm(t('trip.confirmStartOver'))) return;
     tp.clearPlan();
     setSelectedStop(null);
     setSaveError('');
@@ -266,10 +272,42 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
       setSheetOpen(true);
     }).catch(() => {
       // A failed fetch used to leave the tab silently stuck; surface it instead.
-      setSaveError('Could not open this trip. Please try again.');
+      setSaveError(t('trip.openFailed'));
     });
     onOpenPlanConsumed && onOpenPlanConsumed();
   }, [openPlanId]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // A trip that arrived via a share link (decoded + sanitized in App): load it
+  // like a wizard hand-over and open the planned view. Stops whose destination
+  // id no longer exists in the data are dropped rather than crashing the view.
+  useEffect(() => {
+    if (!openSharedTrip) return;
+    const d = openSharedTrip;
+    const stops = d.stops.filter((s) => destinations[s.destinationId]);
+    if (stops.length) {
+      tp.loadFromWizard({
+        startDate: d.tripStart,
+        stops,
+        label: d.label || '',
+        groupSize: d.groupSize,
+        transport: d.transportPref,
+        pace: d.pace,
+        baggage: d.baggage,
+        anchorId: d.anchorId,
+        anchorOrigin: d.anchorOrigin,
+        returnAnchorId: d.returnAnchorId,
+        ownFlight: d.ownFlight?.airline || d.ownFlight?.costTotal ? d.ownFlight : null,
+      });
+      // The sender's trip name wins here (loadFromWizard treats its label as a
+      // fallback so wizard runs never clobber a typed name; a share must).
+      tp.setPlanLabel(d.label || '');
+      Object.entries(d.legModes || {}).forEach(([i, m]) => tp.setLegMode(Number(i), m));
+      tp.setPlanned(true);
+      setSelectedStop(null);
+      setSheetOpen(true);
+    }
+    onSharedTripConsumed && onSharedTripConsumed();
+  }, [openSharedTrip]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Selecting a stop (via pin or card) scrolls its card into view.
   useEffect(() => {
@@ -355,7 +393,7 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
     const fromEdit = !tp.planned;
     try {
       await tp.savePlan(user.id);
-      setSaveNotice(wasUpdate ? 'Trip updated in Saved trips.' : 'Trip saved to Saved trips.');
+      setSaveNotice(wasUpdate ? t('trip.updatedNotice') : t('trip.savedNotice'));
       window.setTimeout(() => setSaveNotice(''), 3500);
       if (fromEdit && wasUpdate) {
         // Done editing an existing trip: hand the traveller back to the Trip
@@ -365,7 +403,7 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
         if (isNarrow) setSheetOpen(false);
       }
     } catch (e) {
-      setSaveError(e?.message || 'Could not save this trip.');
+      setSaveError(e?.message || t('trip.saveFailed'));
     }
   };
 
@@ -374,12 +412,13 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
   // journeys that belong in the receipt next to the flights they bracket.
   const AnchorLegRow = ({ leg, from, to }) => {
     if (!leg || !leg.ground_total) return null;
-    const Icon = leg.mode === 'car' ? CarIcon : leg.mode === 'bus' ? BusIcon : TrainIcon;
+    const Icon = (leg.mode === 'taxi' || leg.mode === 'rental' || leg.mode === 'car') ? CarIcon
+      : (leg.mode === 'public' || leg.mode === 'bus') ? BusIcon : TrainIcon;
     return (
       <div className="trip-total-row">
         <span className="lbl">
           <Icon size={11} /> {from} → {to}
-          <small>{leg.road_km} km, ~{fmtHours(leg.hours)}, estimate</small>
+          <small>{t('trip.legStats', { km: leg.road_km, hours: fmtHours(leg.hours) })}</small>
         </span>
         <span className="val">{eur(leg.ground_total)}</span>
       </div>
@@ -403,20 +442,20 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
   const plannedActionButtons = (
     <>
       <button className="trip-save-planned-btn" onClick={handleSave} disabled={tp.saveState === 'saving'}>
-        {tp.saveState === 'saving' ? 'Saving…' : tp.saveState === 'saved' ? 'Saved ✓' : tp.planId ? 'Update trip' : 'Save trip'}
+        {tp.saveState === 'saving' ? t('trip.saving') : tp.saveState === 'saved' ? t('trip.savedTick') : tp.planId ? t('trip.updateTrip') : t('trip.saveTrip')}
       </button>
       <div className="trip-planned-secondary">
         <button
           className="trip-edit-btn"
           onClick={() => { tp.setPlanned(false); setSheetOpen(true); }}
-          title="Back to the stop list: add, remove or re-order stops and nights"
+          title={t('trip.editStopsTitle')}
         >
-          Edit stops
+          {t('trip.editStops')}
         </button>
         {tp.stopDetails.length >= 3 && (
-          <button className="trip-plan-again-btn" onClick={() => tp.optimizeRoute()} title="Re-run Carta's routing from your first stop">↻ Replan route</button>
+          <button className="trip-plan-again-btn" onClick={() => tp.optimizeRoute()} title={t('trip.replanTitle')}>↻ {t('trip.replanRoute')}</button>
         )}
-        <button className="trip-startover-btn" onClick={handleStartOver} title="Delete this trip and begin again">Start over</button>
+        <button className="trip-startover-btn" onClick={handleStartOver} title={t('trip.startOverTitle')}>{t('trip.startOver')}</button>
       </div>
     </>
   );
@@ -440,9 +479,9 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
         <div className="trip-launcher" onClick={(e) => e.stopPropagation()}>
           <div className="trip-launcher-card">
             <div className="trip-launcher-spark"><SparkIcon size={20} /></div>
-            <h2 className="trip-launcher-title">Plan your trip</h2>
-            <p className="trip-launcher-sub">Answer a few questions and Carta maps the route, prices the flights and stays, and lines it all up.</p>
-            <button className="trip-launcher-primary" onClick={() => setWizardOpen(true)}>Plan your trip</button>
+            <h2 className="trip-launcher-title">{t('trip.planYourTrip')}</h2>
+            <p className="trip-launcher-sub">{t('trip.launcherSub')}</p>
+            <button className="trip-launcher-primary" onClick={() => setWizardOpen(true)}>{t('trip.planYourTrip')}</button>
           </div>
         </div>
       )}
@@ -461,8 +500,8 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
           onPointerUp={onGripUp}
           onPointerCancel={onGripUp}
           role="separator"
-          aria-label="Drag to resize the panel"
-          title="Drag up or down to move this panel"
+          aria-label={t('trip.gripAria')}
+          title={t('trip.gripTitle')}
         >
           <div className="trip-sheet-grip" />
         </div>
@@ -483,8 +522,8 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
             <button
               className="trip-topcard-close"
               onClick={handleExitOverview}
-              aria-label="Close trip overview"
-              title="Leave this trip and return to the planner"
+              aria-label={t('trip.closeOverviewAria')}
+              title={t('trip.closeOverviewTitle')}
             >
               ×
             </button>
@@ -493,15 +532,15 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
             className="trip-topcard-name"
             value={tp.planLabel}
             onChange={(e) => tp.setPlanLabel(e.target.value)}
-            placeholder="Name your trip"
-            aria-label="Trip name"
+            placeholder={t('trip.namePlaceholder')}
+            aria-label={t('trip.nameAria')}
           />
           <div className="trip-topcard-sub">
             {hasDates
               ? `${fmtDate(tp.tripStart)} → ${fmtDate(tp.tripEnd)}`
               : ''}
             {tp.stopDetails.length > 0 && (
-              <span className="trip-topcard-count">{tp.stopDetails.length} {tp.stopDetails.length === 1 ? 'stop' : 'stops'}</span>
+              <span className="trip-topcard-count">{tp.stopDetails.length} {tp.stopDetails.length === 1 ? t('trip.stopOne') : t('trip.stopMany')}</span>
             )}
           </div>
         </div>
@@ -517,11 +556,29 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
               flight={tp.flight}
               legs={tp.legs}
               anchorLegs={tp.anchorLegs}
+              flightTransfer={tp.flightTransfer}
+              transferMode={tp.transferMode}
+              setTransferMode={tp.setTransferMode}
               stayCosts={tp.stayCosts}
               carRental={tp.carRental}
               activeStopIndex={selectedStop}
               onSelectStop={setSelectedStop}
               isDayPlanned={isDayPlanned}
+              extrasPlanId={tp.planId || TRIP_DRAFT_PLAN_ID}
+              sharePayload={tp.stops.length ? {
+                tripStart: tp.tripStart,
+                stops: tp.stops,
+                groupSize: tp.groupSize,
+                transportPref: tp.transportPref,
+                legModes: tp.legModes,
+                pace: tp.pace,
+                baggage: tp.baggage,
+                anchorId: tp.anchorId,
+                anchorOrigin: tp.anchorOrigin,
+                returnAnchorId: tp.returnAnchorId,
+                ownFlight: tp.ownFlight,
+                label: tp.planLabel,
+              } : null}
               onPlanDay={onPlanDay ? (day) => onPlanDay({
                 planId: tp.planId,
                 stopIndex: day.stopIndex,
@@ -532,16 +589,16 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
           <>
           {/* Step 1 - travel window */}
           <div className="trip-block">
-            <div className="trip-block-title">When are you travelling?</div>
+            <div className="trip-block-title">{t('trip.whenTitle')}</div>
             <div className="trip-dates-row">
               <label className="trip-field">
-                <span className="trip-field-label">Start</span>
-                <DateField value={tp.tripStart} min={dateMin} max={tp.tripEnd || dateMax} onChange={tp.setTripStart} placeholder="Start date" />
+                <span className="trip-field-label">{t('trip.start')}</span>
+                <DateField value={tp.tripStart} min={dateMin} max={tp.tripEnd || dateMax} onChange={tp.setTripStart} placeholder={t('trip.startDate')} />
               </label>
               <span className="trip-dates-arrow">→</span>
               <label className="trip-field">
-                <span className="trip-field-label">End</span>
-                <DateField value={tp.tripEnd} min={tp.tripStart || dateMin} max={dateMax} onChange={tp.setTripEnd} placeholder="End date" />
+                <span className="trip-field-label">{t('trip.end')}</span>
+                <DateField value={tp.tripEnd} min={tp.tripStart || dateMin} max={dateMax} onChange={tp.setTripEnd} placeholder={t('trip.endDate')} />
               </label>
             </div>
           </div>
@@ -550,7 +607,7 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
               the stops - the same order a traveller actually decides things. */}
           {hasDates && onChangeOrigin && (
             <div className="trip-block">
-              <div className="trip-block-title">Where are you travelling from?</div>
+              <div className="trip-block-title">{t('trip.whereFromTitle')}</div>
               <div className="trip-origin-row">
                 <OriginPicker data={data} origin={origin} onChangeOrigin={onChangeOrigin} />
               </div>
@@ -563,8 +620,8 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
               <div className="trip-nights-summary">
                 <NightsRing planned={tp.plannedNights} total={tp.windowNights} />
                 <div className="trip-nights-text">
-                  <strong>{tp.plannedNights}/{tp.windowNights}</strong> nights planned
-                  {tp.plannedNights > tp.windowNights && <span className="trip-nights-warn"> (over your window)</span>}
+                  <strong>{tp.plannedNights}/{tp.windowNights}</strong> {t('trip.nightsPlanned')}
+                  {tp.plannedNights > tp.windowNights && <span className="trip-nights-warn"> {t('trip.overWindow')}</span>}
                 </div>
               </div>
 
@@ -589,22 +646,22 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
                           draggable
                           onDragStart={(e) => { setDragIdx(i); e.dataTransfer.effectAllowed = 'move'; }}
                           onDragEnd={() => setDragIdx(null)}
-                          title="Drag to reorder"
+                          title={t('trip.dragReorder')}
                         >{i + 1}</div>
                         <div className="trip-stop-body">
                           <div className="trip-stop-city">
-                            {s.dest ? s.dest.city : 'Unknown'}
+                            {s.dest ? s.dest.city : t('trip.unknown')}
                             {s.dest && (
                               <button
                                 className={`guide-city-info-btn ${stopInfoIdx === i ? 'open' : ''}`}
                                 onClick={(e) => { e.stopPropagation(); setStopInfoIdx(stopInfoIdx === i ? null : i); }}
                                 aria-expanded={stopInfoIdx === i}
-                                title={`About ${s.dest.city}`}
+                                title={t('trip.aboutCity', { city: s.dest.city })}
                               ><InfoIcon size={12} /></button>
                             )}
                           </div>
                           <div className="trip-stop-when">
-                            {s.arriveDate ? `${fmtDate(s.arriveDate, true)} → ${fmtDate(s.departDate, true)}` : 'Set trip dates'}
+                            {s.arriveDate ? `${fmtDate(s.arriveDate, true)} → ${fmtDate(s.departDate, true)}` : t('trip.setDates')}
                           </div>
                           {stopInfoIdx === i && s.dest && (
                             <div className="guide-city-facts" onClick={(e) => e.stopPropagation()}>
@@ -620,12 +677,12 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
                         <Stepper
                           value={s.nights}
                           onChange={(n) => tp.setStopNights(i, n)}
-                          suffix={(n) => (n === 1 ? 'night' : 'nights')}
+                          suffix={(n) => (n === 1 ? t('trip.nightOne') : t('trip.nightMany'))}
                         />
                         <div className="trip-stop-tools" onClick={(e) => e.stopPropagation()}>
-                          {i > 0 && <button className="trip-stop-move" onClick={() => tp.moveStop(i, -1)} aria-label="Move up" title="Move up">↑</button>}
-                          {i < tp.stopDetails.length - 1 && <button className="trip-stop-move" onClick={() => tp.moveStop(i, 1)} aria-label="Move down" title="Move down">↓</button>}
-                          <button className="trip-stop-remove" onClick={() => tp.removeStop(i)} aria-label="Remove stop" title="Remove">×</button>
+                          {i > 0 && <button className="trip-stop-move" onClick={() => tp.moveStop(i, -1)} aria-label={t('trip.moveUp')} title={t('trip.moveUp')}>↑</button>}
+                          {i < tp.stopDetails.length - 1 && <button className="trip-stop-move" onClick={() => tp.moveStop(i, 1)} aria-label={t('trip.moveDown')} title={t('trip.moveDown')}>↓</button>}
+                          <button className="trip-stop-remove" onClick={() => tp.removeStop(i)} aria-label={t('trip.removeStopAria')} title={t('trip.remove')}>×</button>
                         </div>
                       </div>
                       {i < tp.legs.length && (
@@ -639,24 +696,23 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
               {/* How to travel between the stops */}
               {tp.stopDetails.length > 1 && (
                 <div className="trip-block">
-                  <div className="trip-block-title">Getting between stops</div>
+                  <div className="trip-block-title">{t('trip.betweenTitle')}</div>
                   <div className="trip-transport-seg">
                     {[
-                      ['auto', SparkIcon, 'Carta picks'],
-                      ['public', TrainIcon, 'Train & bus'],
-                      ['car', CarIcon, 'Car'],
+                      ['auto', SparkIcon, 'trip.cartaPicks'],
+                      ['public', TrainIcon, 'trip.trainBus'],
+                      ['car', CarIcon, 'trip.modeCar'],
                     ].map(([k, I, lbl]) => (
                       <button
                         key={k}
                         className={tp.transportPref === k ? 'on' : ''}
                         onClick={() => tp.setTransportPref(k)}
-                      ><I size={12} /> {lbl}</button>
+                      ><I size={12} /> {t(lbl)}</button>
                     ))}
                   </div>
                   {tp.transportPref === 'car' && tp.carRental && (
                     <p className="trip-note">
-                      One rental for the whole trip: ~{eur(tp.carRental.eur_total)} for {tp.carRental.days} days
-                      ({eur(tp.carRental.eur_per_day)}/day, seasonal rate). Split it {tp.groupSize} ways and add fuel + tolls per leg below.
+                      {t('trip.carRentalNote', { total: eur(tp.carRental.eur_total), days: tp.carRental.days, perDay: eur(tp.carRental.eur_per_day), group: tp.groupSize })}
                     </p>
                   )}
                 </div>
@@ -666,11 +722,11 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
               {tp.stopDetails.length > 0 && (tp.cheaperOrder
                 || tp.cheaperDates.candidates.some((c) => c.saving_vs_current == null || c.saving_vs_current > 5)) && (
                 <div className="trip-block trip-savings">
-                  <div className="trip-block-title"><BulbIcon size={13} /> Take it cheaper</div>
+                  <div className="trip-block-title"><BulbIcon size={13} /> {t('trip.cheaperTitle')}</div>
                   {tp.cheaperOrder && (
                     <div className="trip-saving-row">
-                      <span>Visiting your stops in a smarter order shortens the route and saves ~{eur(tp.cheaperOrder.saving_eur)} on ground travel.</span>
-                      <button onClick={tp.applyCheaperOrder}>Reorder</button>
+                      <span>{t('trip.cheaperOrder', { amount: eur(tp.cheaperOrder.saving_eur) })}</span>
+                      <button onClick={tp.applyCheaperOrder}>{t('trip.reorder')}</button>
                     </div>
                   )}
                   {tp.cheaperDates.candidates
@@ -678,12 +734,12 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
                     .map((c) => (
                       <div className="trip-saving-row" key={c.start}>
                         <span>
-                          Start <b>{fmtDate(c.start, true)}</b>: flights {eur(c.total)}
+                          {t('trip.cheaperStart')} <b>{fmtDate(c.start, true)}</b>{t('trip.cheaperFlights', { price: eur(c.total) })}
                           {c.saving_vs_current != null && c.saving_vs_current > 0 && (
-                            <em className="trip-saving-amount"> - {eur(c.saving_vs_current)} cheaper than your current trip</em>
+                            <em className="trip-saving-amount"> - {t('trip.cheaperBy', { amount: eur(c.saving_vs_current) })}</em>
                           )}
                         </span>
-                        <button onClick={() => tp.applyStartDate(c.start)}>Use dates</button>
+                        <button onClick={() => tp.applyStartDate(c.start)}>{t('trip.useDates')}</button>
                       </div>
                     ))}
                 </div>
@@ -694,57 +750,57 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
 
               {/* Add stop */}
               <div className="trip-block">
-                <div className="trip-block-title">{tp.stopDetails.length === 0 ? 'Add your first stop' : 'Add another stop'}</div>
+                <div className="trip-block-title">{tp.stopDetails.length === 0 ? t('trip.addFirstStop') : t('trip.addAnotherStop')}</div>
                 <div className="trip-add-row">
                   <Dropdown
                     className="trip-add-country"
                     value={pendingCountry}
                     onChange={handlePendingCountry}
                     options={countryOptions}
-                    placeholder="Country"
-                    searchPlaceholder="Search countries"
+                    placeholder={t('trip.country')}
+                    searchPlaceholder={t('trip.searchCountries')}
                   />
                   <Dropdown
                     className="trip-add-city"
                     value={pendingDestId}
                     onChange={setPendingDestId}
                     options={cityOptions}
-                    placeholder={pendingCountry ? 'City' : 'Pick a country first'}
-                    searchPlaceholder="Search cities"
+                    placeholder={pendingCountry ? t('trip.city') : t('trip.pickCountryFirst')}
+                    searchPlaceholder={t('trip.searchCities')}
                     disabled={!pendingCountry}
                   />
-                  <button className="trip-add-btn" onClick={addPending} disabled={!pendingDestId}>Add</button>
+                  <button className="trip-add-btn" onClick={addPending} disabled={!pendingDestId}>{t('trip.add')}</button>
                 </div>
               </div>
 
               {/* Totals */}
               {tp.stopDetails.length > 0 && (
                 <div className="trip-block">
-                  <div className="trip-block-title"><ReceiptIcon size={13} /> Trip total</div>
+                  <div className="trip-block-title"><ReceiptIcon size={13} /> {t('trip.totalTitle')}</div>
 
                   {tp.flight?.combinable ? (
                     <>
                       <div className="trip-total-row">
                         <span className="lbl">
-                          <PlaneIcon size={11} /> Flight out
-                          <small>{tp.flight.origin} → {tp.flight.into_anchor}{flightTimes(tp.flight.into_time) ? `, departs ${flightTimes(tp.flight.into_time).dep}` : ''}, {tp.groupSize} {tp.groupSize === 1 ? 'seat' : 'seats'}</small>
+                          <PlaneIcon size={11} /> {t('trip.flightOut')}
+                          <small>{tp.flight.origin} → {tp.flight.into_anchor}{flightTimes(tp.flight.into_time) ? `, ${t('trip.departs', { time: flightTimes(tp.flight.into_time).dep })}` : ''}, {tp.groupSize} {tp.groupSize === 1 ? t('trip.seatOne') : t('trip.seatMany')}</small>
                         </span>
                         <span className="val">{eur(tp.flight.into_fare_eur * tp.groupSize)}</span>
                       </div>
                       <div className="trip-total-row">
                         <span className="lbl">
-                          <PlaneIcon size={11} /> Flight home
-                          <small>{tp.flight.out_anchor} → {tp.flight.origin}{flightTimes(tp.flight.out_of_time) ? `, departs ${flightTimes(tp.flight.out_of_time).dep}` : ''}, {tp.groupSize} {tp.groupSize === 1 ? 'seat' : 'seats'}</small>
+                          <PlaneIcon size={11} /> {t('trip.flightHome')}
+                          <small>{tp.flight.out_anchor} → {tp.flight.origin}{flightTimes(tp.flight.out_of_time) ? `, ${t('trip.departs', { time: flightTimes(tp.flight.out_of_time).dep })}` : ''}, {tp.groupSize} {tp.groupSize === 1 ? t('trip.seatOne') : t('trip.seatMany')}</small>
                         </span>
                         <span className="val">{eur(tp.flight.out_of_fare_eur * tp.groupSize)}</span>
                       </div>
                       {tp.flight.ground_total > 0 && (
                         <div className="trip-total-row">
                           <span className="lbl">
-                            <PlaneIcon size={11} /> Airport transfers
-                            <small>to and from the airports, whole group</small>
+                            <PlaneIcon size={11} /> {t('trip.airportTransfers')}
+                            <small>{t('trip.transfersSub')}</small>
                           </span>
-                          <span className="val">{eur(tp.flight.ground_total)}</span>
+                          <span className="val">{eur(tp.flightTransfer ? tp.flightTransfer.ground_total : tp.flight.ground_total)}</span>
                         </div>
                       )}
                     </>
@@ -752,17 +808,17 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
                     <div className="trip-ownflight">
                       <div className="trip-total-row">
                         <span className="lbl">
-                          <PlaneIcon size={11} /> Your flight
-                          <small>booked with another airline, whole group</small>
+                          <PlaneIcon size={11} /> {t('trip.yourFlight')}
+                          <small>{t('trip.ownFlightSub')}</small>
                         </span>
-                        <span className="val">{tp.flight.cost_total ? eur(tp.flight.cost_total) : '—'}</span>
+                        <span className="val">{tp.flight.cost_total ? eur(tp.flight.cost_total) : '…'}</span>
                       </div>
                       <div className="trip-ownflight-fields">
                         <input
                           className="trip-ownflight-input"
                           type="text"
-                          placeholder="Airline (e.g. easyJet)"
-                          aria-label="Airline you fly with"
+                          placeholder={t('trip.airlinePlaceholder')}
+                          aria-label={t('trip.airlineAria')}
                           value={tp.ownFlight?.airline || ''}
                           onChange={(e) => tp.setOwnFlight({ airline: e.target.value, costTotal: tp.ownFlight?.costTotal || 0 })}
                         />
@@ -771,8 +827,8 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
                           type="number"
                           min="0"
                           inputMode="numeric"
-                          placeholder="Total €"
-                          aria-label="Total flight cost for everyone"
+                          placeholder={t('trip.totalCostPlaceholder')}
+                          aria-label={t('trip.totalCostAria')}
                           value={tp.ownFlight?.costTotal || ''}
                           onChange={(e) => tp.setOwnFlight({ airline: tp.ownFlight?.airline || '', costTotal: Math.max(0, Math.round(Number(e.target.value) || 0)) })}
                         />
@@ -792,17 +848,23 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
                     from={tp.stopDetails[tp.stopDetails.length - 1]?.dest?.city}
                     to={tp.anchorLegs?.outCity || tp.anchorLegs?.anchor?.city}
                   />
+                  <TransferModePicker
+                    flightTransfer={tp.flightTransfer}
+                    anchorIn={tp.anchorLegs?.in}
+                    anchorOut={tp.anchorLegs?.out}
+                    setTransferMode={tp.setTransferMode}
+                  />
 
                   {groundTotal > 0 && (
                     <div className="trip-total-row">
-                      <span className="lbl"><TrainIcon size={11} /> Ground between stops <small>estimated, not a live fare</small></span>
+                      <span className="lbl"><TrainIcon size={11} /> {t('trip.groundBetween')} <small>{t('trip.groundEstimate')}</small></span>
                       <span className="val">{eur(groundTotal)}</span>
                     </div>
                   )}
 
                   {tp.carRental && (
                     <div className="trip-total-row">
-                      <span className="lbl"><CarIcon size={11} /> Rental car <small>{tp.carRental.days} days, whole group</small></span>
+                      <span className="lbl"><CarIcon size={11} /> {t('trip.rentalCar')} <small>{t('trip.rentalDays', { days: tp.carRental.days })}</small></span>
                       <span className="val">{eur(tp.carRental.eur_total)}</span>
                     </div>
                   )}
@@ -810,30 +872,30 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
                   {tp.stopDetails.map((s, i) => tp.stayCosts[i] && (
                     <React.Fragment key={i}>
                       <div className="trip-total-row">
-                        <span className="lbl"><BedIcon size={11} /> {s.dest?.city} <small>{s.nights} {s.nights === 1 ? 'night' : 'nights'} accommodation</small></span>
+                        <span className="lbl"><BedIcon size={11} /> {s.dest?.city} <small>{s.nights === 1 ? t('trip.accomOne', { n: s.nights }) : t('trip.accomMany', { n: s.nights })}</small></span>
                         <span className="val">{eur(tp.stayCosts[i].accomTotal)}</span>
                       </div>
                       <div className="trip-total-row">
-                        <span className="lbl"><ReceiptIcon size={11} /> {s.dest?.city} <small>on the ground: food, transport, fun</small></span>
+                        <span className="lbl"><ReceiptIcon size={11} /> {s.dest?.city} <small>{t('trip.onGroundSub')}</small></span>
                         <span className="val">{eur(tp.stayCosts[i].groundTotal)}</span>
                       </div>
                     </React.Fragment>
                   ))}
 
                   <div className="trip-total-row grand">
-                    <span className="lbl">Total <small>{tp.groupSize} {tp.groupSize === 1 ? 'person' : 'people'}</small></span>
+                    <span className="lbl">{t('trip.total')} <small>{tp.groupSize} {tp.groupSize === 1 ? t('trip.personOne') : t('trip.personMany')}</small></span>
                     <span className="val">{eur(tp.grandTotal)}</span>
                   </div>
 
                   <div className="trip-save-row">
-                    <button className="trip-newtrip-btn" onClick={handleStartOver}>Start over</button>
+                    <button className="trip-newtrip-btn" onClick={handleStartOver}>{t('trip.startOver')}</button>
                     <button className="trip-save-btn" onClick={handleSave} disabled={tp.saveState === 'saving'}>
-                      {tp.saveState === 'saving' ? 'Saving…' : tp.saveState === 'saved' ? 'Saved ✓' : tp.planId ? 'Update trip' : 'Save trip'}
+                      {tp.saveState === 'saving' ? t('trip.saving') : tp.saveState === 'saved' ? t('trip.savedTick') : tp.planId ? t('trip.updateTrip') : t('trip.saveTrip')}
                     </button>
                   </div>
                   {saveError && <p className="trip-note trip-note-error">{saveError}</p>}
-                  {!authConfigured && <p className="trip-note">Accounts aren't set up for this deployment, so trips can't be saved.</p>}
-                  {authConfigured && !user && <p className="trip-note">Sign in to save this trip to your account and edit it later.</p>}
+                  {!authConfigured && <p className="trip-note">{t('trip.noAuthNote')}</p>}
+                  {authConfigured && !user && <p className="trip-note">{t('trip.signInNote')}</p>}
                 </div>
               )}
             </>
@@ -844,8 +906,8 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
           <button className="trip-guide-cta" onClick={() => setWizardOpen(true)}>
             <span className="trip-guide-spark"><SparkIcon size={15} /></span>
             <span className="trip-guide-cta-text">
-              <b>Let Carta guide you</b>
-              <small>Answer a few questions and we'll build the trip for you</small>
+              <b>{t('trip.guideCta')}</b>
+              <small>{t('trip.guideCtaSub')}</small>
             </span>
             <span className="trip-guide-arrow">→</span>
           </button>
@@ -860,7 +922,7 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
             if (!withIntel.length) return null;
             return (
               <div className="trip-block">
-                <div className="trip-block-title">Know before you go</div>
+                <div className="trip-block-title">{t('trip.knowTitle')}</div>
                 {withIntel.map((c) => (
                   <CountryIntel key={c} country={c} rec={countryInsights[c]} />
                 ))}

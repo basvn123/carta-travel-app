@@ -1,7 +1,7 @@
-/* ─────────────────────────────────────────────────────────────────────────
-   Carta · Europe Travel
+/* ==========================================================================
+   Carta, Europe Travel
    Editorial / cartographic aesthetic
-   ───────────────────────────────────────────────────────────────────────── */
+   ========================================================================== */
 
 :root {
   /* Palette - warm paper, deep ink, single rust accent */
@@ -1351,6 +1351,24 @@ input, select {
 .fare-notice-text { font-size: 13.5px; line-height: 1.6; color: var(--ink-soft); margin: 10px 0 0; }
 .fare-notice-text b { color: var(--ink); }
 .fare-notice-btn { margin-top: 18px; width: 100%; }
+
+/* "Open this shared trip?" dialog (a trip arriving via a share link). */
+.share-trip-modal { max-width: 420px; padding: 26px 26px 22px; }
+.share-trip-name { font-size: 14px; color: var(--ink-soft); margin: 10px 0 0; }
+.share-trip-name b { color: var(--ink); }
+.share-trip-warn { color: var(--accent); }
+.share-trip-actions { display: flex; gap: 10px; margin-top: 18px; }
+.share-trip-actions .guide-next { flex: 1; }
+.share-trip-dismiss {
+  padding: 10px 18px;
+  border-radius: 10px;
+  border: 1px solid var(--rule);
+  background: transparent;
+  color: var(--ink-soft);
+  font-size: 13.5px;
+  font-weight: 600;
+}
+.share-trip-dismiss:hover { color: var(--ink); border-color: var(--ink-mute); }
 
 /* Planned-trip actions pinned at the bottom of the sheet (both layouts). */
 .trip-sheet-footer {
@@ -3625,7 +3643,7 @@ input, select {
   font-variant-numeric: tabular-nums;
   letter-spacing: 0.02em;
 }
-.rating-band-dash { margin: 0 1px; opacity: 0.7; }
+.rating-band-dash { margin: 0 4px; opacity: 0.7; }
 .rating-band-any { font-style: italic; opacity: 0.85; }
 
 .reset-filters-btn {
@@ -5045,7 +5063,7 @@ input, select {
   color: var(--ink-mute);
 }
 
-/* Sub-text under each line item (e.g. "Apartment · 3 bedrooms")
+/* Sub-text under each line item (e.g. "Apartment, 3 bedrooms")
    should be tighter and lower contrast so the price reads first. */
 .total-row .label small {
   display: block;
@@ -6871,6 +6889,64 @@ input, select {
 }
 .itin-export-btn:hover { border-color: var(--ink-mute); color: var(--ink); }
 .itin-export-note { font-size: 11.5px; color: var(--ink-mute); margin: 6px 2px 0; text-align: center; }
+
+/* Bookings / notes / packing list on the planned itinerary. */
+.trip-extras { margin-top: 4px; }
+.trip-extras .trip-block-title { margin-top: 16px; display: flex; align-items: baseline; gap: 8px; }
+.extras-count { font-family: var(--mono); font-size: 10.5px; color: var(--ink-mute); font-weight: 400; }
+.extras-row { padding: 8px 0 10px; border-bottom: 1px solid rgba(196, 190, 169, 0.45); }
+.extras-row-head { display: flex; align-items: center; gap: 8px; font-size: 13px; cursor: pointer; }
+.extras-row-head input[type='checkbox'] { accent-color: var(--accent); flex: none; }
+.extras-label { flex: 1; min-width: 0; font-weight: 600; color: var(--ink); }
+.extras-row.done .extras-label { color: var(--ink-mute); }
+.extras-est { font-family: var(--mono); font-size: 10.5px; color: var(--ink-mute); white-space: nowrap; }
+.extras-remove {
+  flex: none; border: none; background: none; color: var(--ink-mute);
+  font-size: 16px; line-height: 1; padding: 0 4px; cursor: pointer;
+}
+.extras-remove:hover { color: var(--accent); }
+.extras-fields { display: flex; gap: 6px; margin-top: 7px; flex-wrap: wrap; align-items: center; }
+.extras-input {
+  flex: 1 1 120px; min-width: 0; padding: 6px 9px; font-size: 12.5px;
+  border: 1px solid var(--rule); border-radius: 8px; background: var(--paper);
+  color: var(--ink);
+}
+.extras-input:focus { outline: none; border-color: var(--accent); }
+.extras-input::placeholder { color: var(--ink-mute); }
+.extras-price { flex: 0 1 110px; font-variant-numeric: tabular-nums; }
+.extras-url { flex: 2 1 150px; }
+.extras-label-input {
+  flex: 1; min-width: 0; padding: 4px 8px; font-size: 13px; font-weight: 600;
+  border: 1px solid var(--rule); border-radius: 8px; background: var(--paper); color: var(--ink);
+}
+.extras-label-input:focus { outline: none; border-color: var(--accent); }
+.extras-open-link { flex: none; display: inline-flex; align-items: center; color: var(--accent); padding: 2px; }
+.extras-delta { font-size: 11px; margin-top: 5px; color: var(--ink-soft); }
+.extras-delta.under { color: #2e7d4f; }
+.extras-delta.over { color: var(--accent); }
+.extras-add-btn {
+  margin-top: 8px; padding: 6px 12px; font-size: 12px; font-weight: 600;
+  border: 1px solid var(--rule); border-radius: 8px; background: transparent;
+  color: var(--ink-soft); cursor: pointer;
+}
+.extras-add-btn:hover:not(:disabled) { color: var(--ink); border-color: var(--ink-mute); }
+.extras-add-btn:disabled { opacity: 0.4; cursor: default; }
+.extras-notes {
+  width: 100%; resize: vertical; padding: 8px 10px; font-size: 12.5px; line-height: 1.5;
+  font-family: inherit; border: 1px solid var(--rule); border-radius: 8px;
+  background: var(--paper); color: var(--ink);
+}
+.extras-notes:focus { outline: none; border-color: var(--accent); }
+.extras-notes::placeholder { color: var(--ink-mute); }
+.extras-check-row {
+  display: flex; align-items: center; gap: 8px; padding: 5px 0;
+  border-bottom: 1px solid rgba(196, 190, 169, 0.35); font-size: 13px; cursor: pointer;
+}
+.extras-check-row input[type='checkbox'] { accent-color: var(--accent); flex: none; }
+.extras-check-text { flex: 1; min-width: 0; }
+.extras-check-row.done .extras-check-text { color: var(--ink-mute); text-decoration: line-through; }
+.extras-check-add { display: flex; gap: 6px; margin-top: 8px; align-items: center; }
+.extras-check-add .extras-add-btn { margin-top: 0; white-space: nowrap; }
 .saved-card-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
 .saved-card-title {
   font-size: 13.5px;
@@ -7405,6 +7481,24 @@ input, select {
 .trip-leg-mode small { font-family: var(--mono); font-size: 10px; color: var(--ink-mute); }
 .trip-leg-mode.on { border-color: var(--accent); background: var(--accent-bg); }
 .trip-leg-note { font-size: 11.5px; color: var(--ink-soft); line-height: 1.45; margin: 4px 0; }
+
+/* Airport-transfer mode picker (how you get from the plane to your stay). */
+.transfer-picker { margin: 6px 0 2px; }
+.transfer-picker-title {
+  display: flex; align-items: center; gap: 5px;
+  font-family: var(--ui); font-size: 11px; color: var(--ink-mute); margin-bottom: 5px;
+}
+.transfer-picker-modes { display: flex; gap: 6px; }
+.transfer-mode {
+  flex: 1;
+  display: flex; flex-direction: column; gap: 2px; align-items: center;
+  padding: 7px 4px;
+  border: 1px solid var(--rule); border-radius: 10px; background: #fff;
+  font-family: var(--ui); font-size: 11px; color: var(--ink-soft); cursor: pointer;
+}
+.transfer-mode-lbl { display: flex; align-items: center; gap: 4px; }
+.transfer-mode b { font-family: var(--mono); font-size: 12px; color: var(--ink); }
+.transfer-mode.on { border-color: var(--accent); background: var(--accent-bg); color: var(--ink); }
 .trip-leg-links { display: flex; flex-wrap: wrap; gap: 10px; margin: 4px 0; }
 .trip-leg-links a { font-size: 11.5px; color: var(--accent); font-weight: 600; text-decoration: none; }
 .trip-leg-links a:hover { text-decoration: underline; }

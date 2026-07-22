@@ -185,7 +185,7 @@ export function CartaGuidePanel({ towns, pois, stayTownId, pickedTownIds, picked
                       >
                         {item.img
                           ? <span className="day-guide-rec-photo" style={{ backgroundImage: `url(${item.img})` }} />
-                          : <span className="day-guide-rec-photo day-guide-rec-photo-empty">{(item.kind || '·').slice(0, 1)}</span>}
+                          : <span className="day-guide-rec-photo day-guide-rec-photo-empty">{(item.kind || '').slice(0, 1)}</span>}
                         <span className="day-guide-rec-body">
                           <span className="day-guide-rec-name">
                             {item.name}
@@ -194,7 +194,7 @@ export function CartaGuidePanel({ towns, pois, stayTownId, pickedTownIds, picked
                             {item.heritage && <span className="day-guide-badge heritage">Heritage</span>}
                           </span>
                           <span className="day-guide-rec-meta">
-                            {poiKind(item) ? `${poiKind(item)}, ` : ''}{p.km} km away · ~{fmtDur(dwellMinutes(poiKind(item)))} visit
+                            {poiKind(item) ? `${poiKind(item)}, ` : ''}{p.km} km away, ~{fmtDur(dwellMinutes(poiKind(item)))} visit
                           </span>
                           {item.desc && <span className="day-guide-rec-desc">{item.desc}</span>}
                         </span>

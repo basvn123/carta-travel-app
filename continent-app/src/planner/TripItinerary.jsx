@@ -1,10 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { eur, fmtHours, flightTimes } from '../lib/format.js';
+import { TripExtras } from './TripExtras.jsx';
+import { loadTripExtras, persistTripExtras, subscribeDayPlanStore } from './dayPlanStore.js';
 import { flightReasonLabel, baggageLabel } from '../lib/trip_planner_pricing.js';
 import { googleMapsDirUrl } from '../lib/routing.js';
+import { cityCoords } from '../lib/runtime_pricing.js';
 import { shareTrip, downloadTripPdf } from '../lib/tripExport.js';
+import { tripKml, downloadKml } from '../lib/kmlExport.js';
+import { tripIcs, downloadIcs } from '../lib/icsExport.js';
+import { buildTripShareUrl } from '../lib/shareLink.js';
 import { useI18n } from '../i18n/index.jsx';
-import { SparkIcon, TrainIcon, BusIcon, CarIcon, BedIcon, ReceiptIcon, ShareIcon, DownloadIcon, LuggageIcon, MapPinIcon } from '../components/Icons.jsx';
+import { SparkIcon, TrainIcon, BusIcon, CarIcon, BedIcon, ReceiptIcon, ShareIcon, DownloadIcon, LuggageIcon, MapPinIcon, RouteIcon, CalendarIcon, LinkIcon } from '../components/Icons.jsx';
 import { PlaneIcon } from '../components/TransportIcons.jsx';
 
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -25,7 +31,54 @@ function fmtFlightWhen(iso, time) {
   return `${fmtLong(iso)}, ${ft.dep}${ft.arr ? `-${ft.arr}` : ''}`;
 }
 
-const LEG_ICONS = { train: TrainIcon, bus: BusIcon, car: CarIcon };
+const LEG_ICONS = { train: TrainIcon, bus: BusIcon, car: CarIcon, public: BusIcon, taxi: CarIcon, rental: CarIcon };
+
+// Airport-transfer modes: how you get from the plane to where you sleep.
+const TRANSFER_META = {
+  public: { Icon: BusIcon, labelKey: 'transfer.public' },
+  taxi: { Icon: CarIcon, labelKey: 'transfer.taxi' },
+  rental: { Icon: CarIcon, labelKey: 'transfer.rental' },
+};
+
+/** One control for every airport transfer on the trip: the fly-in/out hops
+ *  folded into the flight (flightTransfer) and any anchor-city transfers, each
+ *  priced per mode so the traveller sees exactly what public transport vs a
+ *  taxi vs driving their rental costs, and the total follows the choice. */
+export function TransferModePicker({ flightTransfer, anchorIn, anchorOut, setTransferMode }) {
+  const { t } = useI18n();
+  if (!setTransferMode) return null;
+  const sources = [flightTransfer, anchorIn, anchorOut].filter((s) => s && s.modes);
+  if (!sources.length) return null;
+  // Only offer modes available on EVERY transfer, so a compared total is whole.
+  const modes = ['public', 'taxi', 'rental'].filter((m) => sources.every((s) => s.modes[m]));
+  if (modes.length < 2) return null;
+  const totals = {};
+  for (const m of modes) totals[m] = sources.reduce((sum, s) => sum + (s.modes[m]?.eur_total || 0), 0);
+  const active = flightTransfer?.mode || anchorIn?.mode || anchorOut?.mode;
+  const recommended = flightTransfer?.recommended || anchorIn?.recommended || anchorOut?.recommended;
+  return (
+    <div className="transfer-picker">
+      <div className="transfer-picker-title"><PlaneIcon size={11} /> {t('transfer.pickTitle')}</div>
+      <div className="transfer-picker-modes">
+        {modes.map((m) => {
+          const { Icon, labelKey } = TRANSFER_META[m];
+          return (
+            <button
+              key={m}
+              type="button"
+              className={`transfer-mode ${active === m ? 'on' : ''}`}
+              onClick={() => setTransferMode(m)}
+              title={recommended === m ? t('transfer.cartaPick') : undefined}
+            >
+              <span className="transfer-mode-lbl"><Icon size={12} /> {t(labelKey)}{recommended === m && <SparkIcon size={9} />}</span>
+              <b>{eur(totals[m])}</b>
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
 
 /**
  * The planned itinerary: Overview + one tab per day.
@@ -37,8 +90,10 @@ const LEG_ICONS = { train: TrainIcon, bus: BusIcon, car: CarIcon };
  */
 export function TripItinerary({
   dayPlan, stopDetails, grandTotal, groupSize, flight, label = '',
-  legs = [], anchorLegs = null, stayCosts = [], carRental = null,
+  legs = [], anchorLegs = null, flightTransfer = null, stayCosts = [], carRental = null,
+  transferMode = 'auto', setTransferMode = null,
   activeStopIndex, onSelectStop, onPlanDay, isDayPlanned = null,
+  sharePayload = null, extrasPlanId = null,
 }) {
   // Whether a day already has Day-planner picks (drives "Plan" vs "Modify").
   const dayPlanned = (d) => Boolean(isDayPlanned && isDayPlanned(d.stopIndex, d.dayOfStay));
@@ -47,9 +102,78 @@ export function TripItinerary({
   const [breakdownOpen, setBreakdownOpen] = useState(false);
   const [shareState, setShareState] = useState('');
 
+  // Bookings / notes / packing list, keyed by the plan id (or the draft id
+  // before the trip is saved) and stored on the day-plan sync rails: local
+  // first, shadowed to the account when signed in.
+  const [extras, setExtras] = useState(() => loadTripExtras(extrasPlanId));
+  useEffect(() => { setExtras(loadTripExtras(extrasPlanId)); }, [extrasPlanId]);
+  useEffect(() => subscribeDayPlanStore(({ planId, remote }) => {
+    if (remote && planId === extrasPlanId) setExtras(loadTripExtras(extrasPlanId));
+  }), [extrasPlanId]);
+  const saveExtras = (next) => {
+    setExtras(next);
+    persistTripExtras(extrasPlanId, next);
+  };
+
+  // The trip's bookable elements, each with our estimate so a real booked
+  // price can be judged against it at a glance.
+  const bookingRows = [];
+  if (flight?.combinable) {
+    bookingRows.push({ key: 'flight-out', label: `${t('extras.flightOut')}: ${t('itin.fromTo', { a: flight.origin, b: flight.into_anchor })}`, estimate: (flight.into_fare_eur || 0) * groupSize });
+    bookingRows.push({ key: 'flight-home', label: `${t('extras.flightHome')}: ${t('itin.fromTo', { a: flight.out_anchor, b: flight.origin })}`, estimate: (flight.out_of_fare_eur || 0) * groupSize });
+  } else if (flight?.own) {
+    bookingRows.push({ key: 'flight', label: flight.airline ? `${t('extras.ownFlight')}: ${flight.airline}` : t('extras.ownFlight'), estimate: flight.cost_total || null });
+  }
+  stopDetails.forEach((s, i) => {
+    if (!s.dest) return;
+    bookingRows.push({ key: `stay-${i}`, label: t('extras.stayIn', { city: s.dest.city }), estimate: stayCosts[i]?.accomTotal ?? null });
+  });
+  if (carRental) bookingRows.push({ key: 'car', label: t('extras.car'), estimate: carRental.eur_total ?? null });
+
   // Everything the share text / printable PDF needs, in one bag.
   const exportPayload = {
     label, stopDetails, dayPlan, flight, legs, anchorLegs, stayCosts, carRental, grandTotal, groupSize,
+    extras, bookingRows,
+  };
+
+  // A note under the export row (copy feedback, My Maps import steps, ...).
+  const exportNote = (msg, ms = 2500) => {
+    setShareState(msg);
+    if (msg) window.setTimeout(() => setShareState(''), ms);
+  };
+
+  const handleKml = () => {
+    downloadKml(label || 'carta-trip', tripKml({ label, stopDetails, dayPlan, fmtDate: fmtLong }));
+    exportNote(t('export.myMapsHint'), 15000);
+  };
+
+  const handleIcs = () => {
+    const ics = tripIcs(exportPayload);
+    if (!ics) return;
+    downloadIcs(label || 'carta-trip', ics);
+    exportNote(t('export.calendarHint'), 6000);
+  };
+
+  // Same escalation as shareTrip: the native share sheet on phones (a URL
+  // shares fine there), the clipboard on desktop.
+  const handleCopyLink = async () => {
+    const url = await buildTripShareUrl(sharePayload);
+    if (!url) return;
+    if (typeof navigator !== 'undefined' && navigator.share) {
+      try {
+        await navigator.share({ title: label || t('itin.myTrip'), url });
+        return;
+      } catch (e) {
+        if (e && e.name === 'AbortError') return; // user closed the sheet
+        // fall through to clipboard
+      }
+    }
+    try {
+      await navigator.clipboard.writeText(url);
+      exportNote(t('export.linkCopied'), 4000);
+    } catch {
+      exportNote(t('export.linkFailed'), 4000);
+    }
   };
 
   // Anchor-city connections ("fly into Bergamo, then on to Como"): shown as
@@ -71,15 +195,11 @@ export function TripItinerary({
   const activeDay = typeof tab === 'number' ? dayPlan.find((d) => d.dayNum === tab) : null;
 
   // The whole trip as a Google Maps driving route (city to city, in order).
+  // Route through each city CENTRE, never the raw dest coordinate: for
+  // airport-tier stops that raw point is the runway, so cityCoords keeps the
+  // pins downtown where the traveller actually stays.
   const gmapsUrl = googleMapsDirUrl(
-    stopDetails.filter((s) => s.dest?.lat != null).map((s) => ({
-      lat: s.dest.lat,
-      lon: s.dest.lon,
-      // "City, Country" makes Google label the stop instead of dropping a
-      // nameless pin at the coordinates (which are the runway for
-      // airport-tier destinations anyway).
-      name: [s.dest.city, s.dest.country].filter(Boolean).join(', '),
-    })),
+    stopDetails.filter((s) => s.dest?.lat != null).map((s) => cityCoords(s.dest)),
     'driving',
   );
 
@@ -89,7 +209,7 @@ export function TripItinerary({
     <div className="itin">
       <div className="itin-tabs">
         <button className={`itin-tab ${tab === 'overview' ? 'active' : ''}`} onClick={() => { setTab('overview'); }}>
-          Overview
+          {t('itin.overview')}
         </button>
         {dayPlan.map((d) => (
           <button
@@ -97,7 +217,7 @@ export function TripItinerary({
             className={`itin-tab ${tab === d.dayNum ? 'active' : ''} ${activeStopIndex === d.stopIndex && tab === d.dayNum ? 'in-city' : ''}`}
             onClick={() => pickDay(d)}
           >
-            Day {d.dayNum}
+            {t('itin.dayN', { n: d.dayNum })}
           </button>
         ))}
       </div>
@@ -109,22 +229,22 @@ export function TripItinerary({
           {flight?.combinable && (
             <div className="itin-flight-row">
               <PlaneIcon size={12} />
-              <span>Fly <b>{flight.origin} → {flight.into_anchor}</b></span>
+              <span>{t('itin.fly')} <b>{flight.origin} → {flight.into_anchor}</b></span>
               <small>{fmtFlightWhen(stopDetails[0]?.arriveDate, flight.into_time)}</small>
             </div>
           )}
           {flight?.own && (
             <div className="itin-flight-row">
               <PlaneIcon size={12} />
-              <span>{flight.airline ? <>Fly in with <b>{flight.airline}</b></> : <b>Your own flight in</b>}</span>
+              <span>{flight.airline ? <>{t('itin.flyInWith')} <b>{flight.airline}</b></> : <b>{t('itin.ownFlightIn')}</b>}</span>
               <small>{fmtLong(stopDetails[0]?.arriveDate)}</small>
             </div>
           )}
           {anchorIn && (
             <div className="itin-flight-row">
               <AnchorInIcon size={12} />
-              <span>Then <b>{anchorInCity} → {stopDetails[0]?.dest?.city}</b></span>
-              <small>~{fmtHours(anchorIn.hours)} by {anchorIn.mode}</small>
+              <span>{t('itin.then')} <b>{anchorInCity} → {stopDetails[0]?.dest?.city}</b></span>
+              <small>~{fmtHours(anchorIn.hours)} {t(anchorIn.mode === 'car' ? 'itin.byCar' : anchorIn.mode === 'bus' ? 'itin.byBus' : 'itin.byTrain')}</small>
             </div>
           )}
           {stopDetails.map((s, i) => (
@@ -141,9 +261,9 @@ export function TripItinerary({
                 {!s.dest?.image?.url && <span className="itin-stop-thumb-fallback">{s.dest?.city?.slice(0, 1) || '?'}</span>}
               </span>
               <span className="itin-stop-main">
-                <span className="itin-stop-city">{s.dest?.city || 'Unknown'}, {s.dest?.country}</span>
+                <span className="itin-stop-city">{s.dest?.city || t('itin.unknown')}, {s.dest?.country}</span>
                 <span className="itin-stop-sub">
-                  {fmtLong(s.arriveDate)} → {fmtLong(s.departDate)}, {s.nights} {s.nights === 1 ? 'night' : 'nights'}
+                  {fmtLong(s.arriveDate)} → {fmtLong(s.departDate)}, {s.nights} {s.nights === 1 ? t('itin.nightOne') : t('itin.nightMany')}
                 </span>
               </span>
             </button>
@@ -152,14 +272,14 @@ export function TripItinerary({
           {anchorOut && (
             <div className="itin-flight-row">
               <AnchorOutIcon size={12} />
-              <span>Then <b>{stopDetails[stopDetails.length - 1]?.dest?.city} → {anchorOutCity}</b></span>
-              <small>~{fmtHours(anchorOut.hours)} by {anchorOut.mode}</small>
+              <span>{t('itin.then')} <b>{stopDetails[stopDetails.length - 1]?.dest?.city} → {anchorOutCity}</b></span>
+              <small>~{fmtHours(anchorOut.hours)} {t(anchorOut.mode === 'car' ? 'itin.byCar' : anchorOut.mode === 'bus' ? 'itin.byBus' : 'itin.byTrain')}</small>
             </div>
           )}
           {flight?.combinable && (
             <div className="itin-flight-row">
               <PlaneIcon size={12} />
-              <span>Fly home <b>{flight.out_anchor} → {flight.origin}</b></span>
+              <span>{t('itin.flyHome')} <b>{flight.out_anchor} → {flight.origin}</b></span>
               <small>{fmtFlightWhen(stopDetails[stopDetails.length - 1]?.departDate, flight.out_of_time)}</small>
             </div>
           )}
@@ -173,7 +293,7 @@ export function TripItinerary({
               aria-expanded={breakdownOpen}
             >
               <span>
-                <ReceiptIcon size={12} /> Estimated total <small>{groupSize} {groupSize === 1 ? 'person' : 'people'}</small>
+                <ReceiptIcon size={12} /> {t('itin.estimatedTotal')} <small>{groupSize} {groupSize === 1 ? t('itin.personOne') : t('itin.personMany')}</small>
               </span>
               <strong>{eur(grandTotal)}</strong>
               <span className="itin-breakdown-caret" aria-hidden="true">{breakdownOpen ? '−' : '+'}</span>
@@ -184,10 +304,10 @@ export function TripItinerary({
                 {flight?.own && (
                   <div className="trip-total-row">
                     <span className="lbl">
-                      <PlaneIcon size={11} /> Flight{flight.airline ? ` (${flight.airline})` : ''}
-                      <small>booked with another airline{flight.cost_total ? ', whole group' : ', fare not added'}</small>
+                      <PlaneIcon size={11} /> {t('itin.flight')}{flight.airline ? ` (${flight.airline})` : ''}
+                      <small>{flight.cost_total ? t('itin.bookedOtherGroup') : t('itin.bookedOtherNoFare')}</small>
                     </span>
-                    <span className="val">{flight.cost_total ? eur(flight.cost_total) : '—'}</span>
+                    <span className="val">{flight.cost_total ? eur(flight.cost_total) : '…'}</span>
                   </div>
                 )}
                 {flight && !flight.combinable && !flight.own && (
@@ -197,23 +317,23 @@ export function TripItinerary({
                   <>
                     <div className="trip-total-row">
                       <span className="lbl">
-                        <PlaneIcon size={11} /> Flight out
-                        <small>{flight.origin} → {flight.into_anchor}{flightTimes(flight.into_time) ? `, departs ${flightTimes(flight.into_time).dep}` : ''}, {groupSize} {groupSize === 1 ? 'seat' : 'seats'}</small>
+                        <PlaneIcon size={11} /> {t('itin.flightOut')}
+                        <small>{flight.origin} → {flight.into_anchor}{flightTimes(flight.into_time) ? `, ${t('itin.departs', { time: flightTimes(flight.into_time).dep })}` : ''}, {groupSize} {groupSize === 1 ? t('itin.seatOne') : t('itin.seatMany')}</small>
                       </span>
                       <span className="val">{eur(flight.into_fare_eur * groupSize)}</span>
                     </div>
                     <div className="trip-total-row">
                       <span className="lbl">
-                        <PlaneIcon size={11} /> Flight home
-                        <small>{flight.out_anchor} → {flight.origin}{flightTimes(flight.out_of_time) ? `, departs ${flightTimes(flight.out_of_time).dep}` : ''}, {groupSize} {groupSize === 1 ? 'seat' : 'seats'}</small>
+                        <PlaneIcon size={11} /> {t('itin.flightHome')}
+                        <small>{flight.out_anchor} → {flight.origin}{flightTimes(flight.out_of_time) ? `, ${t('itin.departs', { time: flightTimes(flight.out_of_time).dep })}` : ''}, {groupSize} {groupSize === 1 ? t('itin.seatOne') : t('itin.seatMany')}</small>
                       </span>
                       <span className="val">{eur(flight.out_of_fare_eur * groupSize)}</span>
                     </div>
                     {flight.bag_total > 0 && (
                       <div className="trip-total-row">
                         <span className="lbl">
-                          <LuggageIcon size={11} /> Baggage
-                          <small>{baggageLabel(flight.baggage)}, out + home, {groupSize} {groupSize === 1 ? 'person' : 'people'}</small>
+                          <LuggageIcon size={11} /> {t('itin.baggage')}
+                          <small>{baggageLabel(flight.baggage)}, {t('itin.outPlusHome')}, {groupSize} {groupSize === 1 ? t('itin.personOne') : t('itin.personMany')}</small>
                         </span>
                         <span className="val">{eur(flight.bag_total)}</span>
                       </div>
@@ -221,10 +341,10 @@ export function TripItinerary({
                     {flight.ground_total > 0 && (
                       <div className="trip-total-row">
                         <span className="lbl">
-                          <PlaneIcon size={11} /> Airport transfers
-                          <small>to and from the airports, whole group</small>
+                          <PlaneIcon size={11} /> {t('itin.airportTransfers')}
+                          <small>{t('itin.transfersSub')}</small>
                         </span>
-                        <span className="val">{eur(flight.ground_total)}</span>
+                        <span className="val">{eur(flightTransfer ? flightTransfer.ground_total : flight.ground_total)}</span>
                       </div>
                     )}
                   </>
@@ -233,7 +353,7 @@ export function TripItinerary({
                   <div className="trip-total-row">
                     <span className="lbl">
                       <AnchorInIcon size={11} /> {anchorInCity} → {stopDetails[0]?.dest?.city}
-                      <small>{anchorIn.road_km} km, ~{fmtHours(anchorIn.hours)}, estimate</small>
+                      <small>{t('itin.legStats', { km: anchorIn.road_km, hours: fmtHours(anchorIn.hours) })}</small>
                     </span>
                     <span className="val">{eur(anchorIn.ground_total)}</span>
                   </div>
@@ -242,11 +362,17 @@ export function TripItinerary({
                   <div className="trip-total-row">
                     <span className="lbl">
                       <AnchorOutIcon size={11} /> {stopDetails[stopDetails.length - 1]?.dest?.city} → {anchorOutCity}
-                      <small>{anchorOut.road_km} km, ~{fmtHours(anchorOut.hours)}, estimate</small>
+                      <small>{t('itin.legStats', { km: anchorOut.road_km, hours: fmtHours(anchorOut.hours) })}</small>
                     </span>
                     <span className="val">{eur(anchorOut.ground_total)}</span>
                   </div>
                 )}
+                <TransferModePicker
+                  flightTransfer={flightTransfer}
+                  anchorIn={anchorIn}
+                  anchorOut={anchorOut}
+                  setTransferMode={setTransferMode}
+                />
                 {legs.map((l, i) => {
                   if (!l || !l.ground_total) return null;
                   const Icon = LEG_ICONS[l.mode] || TrainIcon;
@@ -256,7 +382,7 @@ export function TripItinerary({
                     <div className="trip-total-row" key={`leg-${i}`}>
                       <span className="lbl">
                         <Icon size={11} /> {a} → {b}
-                        <small>{l.road_km} km, ~{fmtHours(l.hours)}, estimate</small>
+                        <small>{t('itin.legStats', { km: l.road_km, hours: fmtHours(l.hours) })}</small>
                       </span>
                       <span className="val">{eur(l.ground_total)}</span>
                     </div>
@@ -264,7 +390,7 @@ export function TripItinerary({
                 })}
                 {carRental && (
                   <div className="trip-total-row">
-                    <span className="lbl"><CarIcon size={11} /> Rental car <small>{carRental.days} days{carRental.cars > 1 ? `, ${carRental.cars} cars` : ''}, whole group</small></span>
+                    <span className="lbl"><CarIcon size={11} /> {t('itin.rentalCar')} <small>{carRental.cars > 1 ? t('itin.rentalSubCars', { days: carRental.days, cars: carRental.cars }) : t('itin.rentalSub', { days: carRental.days })}</small></span>
                     <span className="val">{eur(carRental.eur_total)}</span>
                   </div>
                 )}
@@ -273,14 +399,14 @@ export function TripItinerary({
                     <div className="trip-total-row">
                       <span className="lbl">
                         <BedIcon size={11} /> {s.dest?.city}
-                        <small>{s.nights} {s.nights === 1 ? 'night' : 'nights'} accommodation</small>
+                        <small>{s.nights === 1 ? t('itin.accomOne', { n: s.nights }) : t('itin.accomMany', { n: s.nights })}</small>
                       </span>
                       <span className="val">{eur(stayCosts[i].accomTotal)}</span>
                     </div>
                     <div className="trip-total-row">
                       <span className="lbl">
                         <ReceiptIcon size={11} /> {s.dest?.city}
-                        <small>on the ground: food, transport, fun</small>
+                        <small>{t('itin.onGroundSub')}</small>
                       </span>
                       <span className="val">{eur(stayCosts[i].groundTotal)}</span>
                     </div>
@@ -293,28 +419,32 @@ export function TripItinerary({
           {/* Every day, one tap from its plan - and one more into the Day
               planner to properly shape it. */}
           <div className="itin-days-list">
-            <div className="trip-block-title">Your days</div>
+            <div className="trip-block-title">{t('itin.yourDays')}</div>
             {dayPlan.map((d) => (
               <div className="itin-day-row" key={d.dayNum}>
                 <button className="itin-day-row-main" onClick={() => pickDay(d)}>
-                  <span className="itin-day-row-num">Day {d.dayNum}</span>
+                  <span className="itin-day-row-num">{t('itin.dayN', { n: d.dayNum })}</span>
                   <span className="itin-day-row-meta">
                     {d.stop.dest?.city}{d.date ? `, ${fmtLong(d.date)}` : ''}
-                    {dayPlanned(d) && ', planned'}
+                    {dayPlanned(d) && `, ${t('itin.planned')}`}
                   </span>
                 </button>
                 {onPlanDay && (
                   <button
                     className="itin-day-plan-btn"
                     onClick={() => onPlanDay(d)}
-                    title={`${dayPlanned(d) ? 'Change' : 'Shape'} day ${d.dayNum} in the Day planner`}
+                    title={t(dayPlanned(d) ? 'itin.changeDayTitle' : 'itin.shapeDayTitle', { n: d.dayNum })}
                   >
-                    <SparkIcon size={11} /> {dayPlanned(d) ? 'Edit plan' : 'Plan'}
+                    <SparkIcon size={11} /> {dayPlanned(d) ? t('itin.editPlan') : t('itin.plan')}
                   </button>
                 )}
               </div>
             ))}
           </div>
+
+          {/* Bookings, notes and the packing list: the trip's life admin,
+              saved with the plan (and synced to the account when signed in). */}
+          <TripExtras rows={bookingRows} extras={extras} onChange={saveExtras} />
 
           {/* Take the trip with you: share it, keep a PDF copy, or open the
               route straight in Google Maps. The Maps link is built from place
@@ -350,6 +480,29 @@ export function TripItinerary({
                 <MapPinIcon size={12} /> {t('export.openInGmaps')}
               </a>
             )}
+            <button
+              className="itin-export-btn"
+              onClick={handleKml}
+              title={t('export.myMapsTitle')}
+            >
+              <RouteIcon size={12} /> {t('export.myMaps')}
+            </button>
+            <button
+              className="itin-export-btn"
+              onClick={handleIcs}
+              title={t('export.calendarTitle')}
+            >
+              <CalendarIcon size={12} /> {t('export.calendar')}
+            </button>
+            {sharePayload && (
+              <button
+                className="itin-export-btn"
+                onClick={handleCopyLink}
+                title={t('export.copyLinkTitle')}
+              >
+                <LinkIcon size={12} /> {t('export.copyLink')}
+              </button>
+            )}
           </div>
           {shareState && <p className="itin-export-note">{shareState}</p>}
         </div>
@@ -363,16 +516,16 @@ export function TripItinerary({
             <div className="itin-day-head">
               <div className="itin-day-date">{fmtLong(activeDay.date)}</div>
               <div className="itin-day-city">
-                Staying in {activeDay.stop.dest?.city}
-                <span className="itin-day-of">Day {activeDay.dayOfStay} of {activeDay.staysOfCity}</span>
+                {t('itin.stayingIn', { city: activeDay.stop.dest?.city })}
+                <span className="itin-day-of">{t('itin.dayOf', { a: activeDay.dayOfStay, b: activeDay.staysOfCity })}</span>
               </div>
             </div>
           </div>
           {activeDay.activities.length === 0 ? (
             <p className="itin-day-empty">
               {dayPlanned(activeDay)
-                ? `This day is planned in the Day planner - open it below to see the route or change it.`
-                : `A free day in ${activeDay.stop.dest?.city}: wander, eat well, no plans. Shape it in the Day planner any time.`}
+                ? t('itin.dayPlannedNote')
+                : t('itin.freeDay', { city: activeDay.stop.dest?.city })}
             </p>
           ) : (
             <ol className="itin-visit-list">
@@ -392,13 +545,14 @@ export function TripItinerary({
           )}
           {activeDay.overflowCount > 0 && (
             <p className="itin-day-overflow">
-              {activeDay.overflowCount} more {activeDay.overflowCount === 1 ? 'pick doesn’t' : 'picks don’t'} fit
-              a day at this pace. Shape the day to choose what stays.
+              {activeDay.overflowCount === 1
+                ? t('itin.overflowOne', { n: activeDay.overflowCount })
+                : t('itin.overflowMany', { n: activeDay.overflowCount })}
             </p>
           )}
           {onPlanDay && (
             <button className="itin-day-planner-btn" onClick={() => onPlanDay(activeDay)}>
-              <SparkIcon size={12} /> {dayPlanned(activeDay) ? 'Edit this day\'s plan in the Day planner' : 'Plan this day in the Day planner'}
+              <SparkIcon size={12} /> {dayPlanned(activeDay) ? t('itin.editDayBtn') : t('itin.planDayBtn')}
             </button>
           )}
         </div>

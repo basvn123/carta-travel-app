@@ -222,9 +222,12 @@ export function useDestinationSearch({
 
   const stats = useMemo(() => {
     if (priced.length === 0) return { priced: 0, min: null };
-    const minVal = priceMode === 'pp'
-      ? Math.min(...priced.map((p) => p.pp))
-      : Math.min(...priced.map((p) => p.total));
+    // Single pass, same RangeError/garbage reasoning as priceBounds above.
+    let minVal = Infinity;
+    for (const p of priced) {
+      const v = priceMode === 'pp' ? p.pp : p.total;
+      if (v < minVal) minVal = v;
+    }
     return { priced: priced.length, total: pricedAll.length, min: Math.round(minVal) };
   }, [priced, pricedAll, priceMode]);
 

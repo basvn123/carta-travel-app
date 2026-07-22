@@ -444,11 +444,21 @@ export function planeReachIndex(allDests) {
   const cached = reachCache.get(allDests);
   if (cached) return cached;
 
-  const served = [];
+  // Served airports go into a coarse lat/lon grid so each unserved town only
+  // measures the airports in its neighbourhood. The old all-pairs scan was
+  // O(unserved x served) haversines, which grows quadratically with the
+  // catalogue and dominated the whole first paint at full scale; the grid
+  // keeps the result identical (every airport within PLANE_REACH_KM is still
+  // considered) at a fraction of the distance calls.
+  const CELL_DEG = 2; // 2 deg latitude = ~222 km per cell, > PLANE_REACH_KM
+  const grid = new Map();
   for (const [id, d] of Object.entries(allDests)) {
     if (d.lat == null || !d.iata) continue;
     if (!d.routes || Object.keys(d.routes).length === 0) continue;
-    served.push([id, d]);
+    const key = `${Math.floor(d.lat / CELL_DEG)}|${Math.floor(d.lon / CELL_DEG)}`;
+    let cell = grid.get(key);
+    if (!cell) { cell = []; grid.set(key, cell); }
+    cell.push([id, d]);
   }
 
   const index = new Map();
@@ -457,12 +467,24 @@ export function planeReachIndex(allDests) {
     if (d.routes && Object.keys(d.routes).length > 0) continue;        // flies in already
     if ((d.local_transport || {}).road_connected === false) continue;  // island: no road leg
     const { lat, lon } = cityCoords(d);            // measure from the town...
+    const gy = Math.floor(lat / CELL_DEG);
+    const gx = Math.floor(lon / CELL_DEG);
+    // Longitude degrees shrink towards the poles; widen the scan accordingly
+    // (cos taken a cell poleward of the town, so edge cases stay covered).
+    const kmPerLonDeg = 111 * Math.max(0.1, Math.cos((Math.min(Math.abs(lat) + CELL_DEG, 84) * Math.PI) / 180));
+    const kLon = Math.ceil(PLANE_REACH_KM / (kmPerLonDeg * CELL_DEG));
     let best = null;
-    for (const [aid, a] of served) {
-      if (aid === id) continue;
-      const km = haversineKm(lat, lon, a.lat, a.lon);   // ...to the runway
-      if (km == null || km > PLANE_REACH_KM) continue;
-      if (!best || km < best.straight_km) best = { id: aid, airport: a, straight_km: km };
+    for (let y = gy - 1; y <= gy + 1; y += 1) {
+      for (let x = gx - kLon; x <= gx + kLon; x += 1) {
+        const cell = grid.get(`${y}|${x}`);
+        if (!cell) continue;
+        for (const [aid, a] of cell) {
+          if (aid === id) continue;
+          const km = haversineKm(lat, lon, a.lat, a.lon);   // ...to the runway
+          if (km == null || km > PLANE_REACH_KM) continue;
+          if (!best || km < best.straight_km) best = { id: aid, airport: a, straight_km: km };
+        }
+      }
     }
     if (best) index.set(id, best);
   }

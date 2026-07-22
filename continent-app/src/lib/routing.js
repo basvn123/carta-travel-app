@@ -111,17 +111,18 @@ export function fetchDrivingRoute(points) {
 const MAX_GMAPS_WAYPOINTS = 9;
 
 /** Build a Google Maps directions URL through the ordered points.
- *  Each point is { lat, lon, name? }. Google renders a bare "lat,lng" stop as a
- *  nameless "Dropped pin", while a place name geocodes to the real listing
- *  (name, photos, hours), so pass name whenever one is known, disambiguated
- *  with its city ("Duomo di Como, Como"). Coordinates stay the fallback.
+ *  Each point is { lat, lon }. We encode every stop as a bare "lat,lng": a
+ *  coordinate ALWAYS resolves to that exact spot and Google always draws the
+ *  route, whereas a place-name query ("Duomo di Como, Como", "your stay") can
+ *  fail to geocode and land the traveller on a "can't find this place" search
+ *  page with no route at all, which is exactly what coordinates avoid. Google
+ *  still reverse-geocodes each pin to a readable label in the directions panel.
  *  mode: 'walking' | 'driving' | 'bicycling' | 'transit'. Returns null if there
- *  aren't at least two points with coordinates. */
+ *  aren't at least two points with finite coordinates. */
 export function googleMapsDirUrl(points, mode = 'walking') {
-  const pts = (points || []).filter((p) => p && p.lat != null && p.lon != null);
+  const pts = (points || []).filter((p) => p && Number.isFinite(p.lat) && Number.isFinite(p.lon));
   if (pts.length < 2) return null;
-  // '|' separates waypoints in the URL, so it can never appear inside one.
-  const ll = (p) => ((p.name || '').replace(/\|/g, ' ').trim()) || `${p.lat},${p.lon}`;
+  const ll = (p) => `${p.lat},${p.lon}`;
   const origin = pts[0];
   const destination = pts[pts.length - 1];
   let middle = pts.slice(1, -1);

@@ -115,7 +115,7 @@ export function ActivityRow({ item, variant, added, onToggle, note }) {
       <button className="day-activity-main" onClick={onToggle}>
         {item.img
           ? <span className="day-thumb" style={{ backgroundImage: `url(${item.img})` }} />
-          : <span className="day-thumb day-thumb-empty" aria-hidden="true">{(item.kind || '·').slice(0, 1)}</span>}
+          : <span className="day-thumb day-thumb-empty" aria-hidden="true">{(item.kind || '').slice(0, 1)}</span>}
         <span className="day-assigned-body">
           <span className="day-assigned-name">
             {item.name}

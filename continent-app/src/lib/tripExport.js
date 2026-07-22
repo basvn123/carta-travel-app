@@ -83,7 +83,7 @@ export async function shareTrip(trip) {
 }
 
 /** Printable HTML for the trip, opened in a new window for print-to-PDF. */
-function tripPrintHtml({ label, stopDetails, dayPlan = [], flight, legs = [], anchorLegs = null, stayCosts = [], carRental, grandTotal, groupSize }) {
+function tripPrintHtml({ label, stopDetails, dayPlan = [], flight, legs = [], anchorLegs = null, stayCosts = [], carRental, grandTotal, groupSize, extras = null, bookingRows = [] }) {
   const first = stopDetails[0];
   const last = stopDetails[stopDetails.length - 1];
   const rows = [];
@@ -117,9 +117,39 @@ function tripPrintHtml({ label, stopDetails, dayPlan = [], flight, legs = [], an
     rows.push(`<tr><td>${esc(s.dest?.city)}: on the ground</td><td>${esc(eur(c.groundTotal))}</td></tr>`);
   });
 
+  // Booking records worth printing: any element with a tick, a confirmation
+  // code, a price or a link, plus the custom rows (dinner slots, tours...).
+  const bookings = [];
+  (bookingRows || []).forEach((r) => {
+    const b = extras?.bookings?.[r.key];
+    if (b && (b.done || b.ref || b.price || b.url)) bookings.push({ label: r.label, ...b });
+  });
+  Object.entries(extras?.bookings || {}).forEach(([k, b]) => {
+    if (k.startsWith('custom:') && b && (b.label || b.ref || b.price || b.url)) {
+      bookings.push({ label: b.label || 'Booking', ...b });
+    }
+  });
+  const bookingRowsHtml = bookings.map((b) => {
+    const price = Number(String(b.price ?? '').replace(',', '.'));
+    const bits = [
+      `${b.done ? 'Booked: ' : ''}${esc(b.label)}`,
+      b.ref ? `ref ${esc(b.ref)}` : '',
+    ].filter(Boolean).join(', ');
+    return `<tr><td>${bits}</td><td>${Number.isFinite(price) && String(b.price ?? '').trim() !== '' ? esc(eur(price)) : ''}</td></tr>`;
+  }).join('');
+
+  const notesHtml = extras?.notes?.trim()
+    ? `<h2>Notes</h2><p class="trip-notes">${esc(extras.notes).replace(/\n/g, '<br/>')}</p>`
+    : '';
+  const packHtml = extras?.checklist?.length
+    ? `<h2>Packing list</h2><ul class="pack">${extras.checklist.map((c) => (
+      `<li class="${c.done ? 'done' : ''}"><span class="box">${c.done ? '&times;' : ''}</span>${esc(c.text)}</li>`
+    )).join('')}</ul>`
+    : '';
+
   const days = dayPlan.map((d) => `
     <div class="day">
-      <div class="day-head"><b>Day ${d.dayNum}</b> &middot; ${esc(d.stop.dest?.city)}${d.date ? ` &middot; ${esc(fmtLong(d.date))}` : ''}</div>
+      <div class="day-head"><b>Day ${d.dayNum}</b>, ${esc(d.stop.dest?.city)}${d.date ? `, ${esc(fmtLong(d.date))}` : ''}</div>
       ${d.activities.length
         ? `<ol>${d.activities.map((a) => `<li>${esc(a)}</li>`).join('')}</ol>`
         : '<p class="free">Free day: wander, eat well, no plans.</p>'}
@@ -144,11 +174,17 @@ function tripPrintHtml({ label, stopDetails, dayPlan = [], flight, legs = [], an
   .day-head { margin-bottom: 3px; }
   .day ol { margin: 2px 0 0 18px; padding: 0; }
   .free { color: #6b6257; font-style: italic; margin: 2px 0; }
+  .trip-notes { font-size: 13.5px; line-height: 1.6; }
+  .pack { list-style: none; margin: 0; padding: 0; columns: 2; column-gap: 32px; font-size: 13.5px; }
+  .pack li { padding: 3px 0; break-inside: avoid; }
+  .pack li.done { color: #a29786; }
+  .pack .box { display: inline-block; width: 13px; height: 13px; border: 1.4px solid #1d1a16; border-radius: 3px; margin-right: 9px; text-align: center; line-height: 11px; font-size: 11px; vertical-align: -2px; }
+  .pack li.done .box { border-color: #a29786; }
   .foot { margin-top: 32px; color: #a29786; font-size: 11.5px; }
   @media print { body { margin: 10mm auto; } }
 </style></head><body>
   <h1>${esc(label || 'My trip')}</h1>
-  <p class="dates">${esc(fmtLong(first?.arriveDate))} &rarr; ${esc(fmtLong(last?.departDate))} &middot; ${groupSize} ${groupSize === 1 ? 'person' : 'people'}</p>
+  <p class="dates">${esc(fmtLong(first?.arriveDate))} &rarr; ${esc(fmtLong(last?.departDate))}, ${groupSize} ${groupSize === 1 ? 'person' : 'people'}</p>
 
   <h2>Route</h2>
   ${flight?.combinable ? `<div class="stop">Fly <b>${esc(flight.origin)} &rarr; ${esc(flight.into_anchor)}</b> <span class="when">${esc(fmtLong(first?.arriveDate) + timesSuffix(flight.into_time))}</span></div>` : ''}
@@ -163,7 +199,14 @@ function tripPrintHtml({ label, stopDetails, dayPlan = [], flight, legs = [], an
     <tr class="total"><td>Estimated total</td><td>${esc(eur(grandTotal))}</td></tr>
   </table>` : ''}
 
+  ${bookingRowsHtml ? `<h2>Bookings</h2>
+  <table>${bookingRowsHtml}</table>` : ''}
+
   ${days ? `<h2>Day by day</h2>${days}` : ''}
+
+  ${notesHtml}
+
+  ${packHtml}
 
   <p class="foot">Planned with Carta. Flight prices are stored Ryanair fares; ground and stay costs are estimates.</p>
 </body></html>`;

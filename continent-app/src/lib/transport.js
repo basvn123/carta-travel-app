@@ -19,13 +19,14 @@ const CAR = { kmh: 82 };
 const LONG_HAUL_KM = 800;       // beyond this, overland stops being sensible
 
 
-// A bare "lat,lng" endpoint shows up in Google Maps as a nameless "Dropped
-// pin"; a "City, Country" query geocodes to the real place. gmapsName (an
-// exact stay address, say) overrides the city pair; when it's present but
-// empty the point deliberately falls back to coordinates.
+// Encode a stop as a bare "lat,lng". A place-name query ("City, Country", a
+// stay address) can fail to geocode and drop the traveller on a Google Maps
+// "can't find this place" search page with no route; a coordinate always
+// resolves to that exact spot and always draws the route. Callers pass
+// city-centre coordinates already (legTransportOptions runs withCityCoords),
+// so the pin is downtown, never the runway.
 function gmapsPoint(p) {
-  const name = p.gmapsName ?? (p.city && p.country ? `${p.city}, ${p.country}` : '');
-  return name ? encodeURIComponent(name) : `${p.lat},${p.lon}`;
+  return `${p.lat},${p.lon}`;
 }
 
 function gmapsDir(a, b, mode) {
@@ -166,6 +167,118 @@ export function legTransportOptions(destA, destB, groupSize = 1, { carModel = nu
     note: null,
     estimated: true,
   };
+}
+
+// --- Airport <-> accommodation transfer -----------------------------------
+// The leg from the plane to where you sleep is NOT an inter-city drive: you
+// just landed, so unless you rented a car you don't have one. The honest ways
+// to cover it are public transport (airport train / bus / shuttle), a taxi or
+// rideshare, or - only when the trip includes a rental you collect at the
+// airport - that car (fuel for the short hop; its day rate is a separate line).
+// It must NEVER be priced as your own car with tolls, which is what the generic
+// legTransportOptions recommender does for a short hop, and the very thing that
+// made the transfer read as "you drive from the airport" when you flew in.
+const TRANSFER = {
+  publicEurPerKm: 0.15, publicFloor: 10, publicCap: 60, publicKmh: 42, publicOverheadH: 0.35,
+  taxiBase: 4, taxiPerKm: 2.0, taxiMin: 14, taxiKmh: 55, taxiMaxKm: 90,
+  rentalKmh: 70,
+};
+
+/** Priced transfer modes for a `roadKm` airport hop, `groupSize` people.
+ *  petrol/consumption/capacity come from the car model; `hasRental` toggles the
+ *  "drive the car you rented" option; `transitPoor` drops public transport
+ *  where the stay has no real rail/bus; `publicOverride` pins the per-person
+ *  public fare to one we already stored (a destination's own
+ *  ground_transport_one_way_eur) instead of re-deriving it from distance.
+ *  Returns `{ road_km, modes: { public?, taxi?, rental? }, recommended,
+ *  estimated }`. */
+export function transferModesFromKm(roadKm, groupSize = 1, {
+  petrol = 1.8, consumption = 6.5, capacity = 4, hasRental = false,
+  transitPoor = false, publicOverride = null,
+} = {}) {
+  const group = Math.max(1, groupSize || 1);
+  const km = Math.max(0.5, roadKm || 0);
+  const cap = Math.max(1, capacity || 4);
+
+  const publicPp = publicOverride != null
+    ? publicOverride
+    : Math.min(TRANSFER.publicCap, Math.max(TRANSFER.publicFloor, TRANSFER.publicEurPerKm * km));
+  const publicMode = {
+    mode: 'public',
+    eur_pp: round2(publicPp),
+    eur_total: round2(publicPp * group),
+    hours: round2(km / TRANSFER.publicKmh + TRANSFER.publicOverheadH),
+  };
+
+  // Taxi / rideshare is priced per cab (up to `cap` seats), so a family splits
+  // one fare rather than paying a "per person" rate that doesn't exist.
+  const cabs = Math.max(1, Math.ceil(group / cap));
+  const perCab = Math.max(TRANSFER.taxiMin, TRANSFER.taxiBase + TRANSFER.taxiPerKm * km);
+  const taxiTotal = perCab * cabs;
+  const taxiMode = {
+    mode: 'taxi',
+    eur_pp: round2(taxiTotal / group),
+    eur_total: round2(taxiTotal),
+    cabs,
+    hours: round2(km / TRANSFER.taxiKmh),
+  };
+
+  const modes = {};
+  if (!transitPoor) modes.public = publicMode;          // no train/bus where transit is poor
+  if (km <= TRANSFER.taxiMaxKm) modes.taxi = taxiMode;   // nobody taxis 200 km
+
+  if (hasRental) {
+    const cars = Math.max(1, Math.ceil(group / cap));
+    const fuel = cars * (km / 100) * consumption * petrol;
+    modes.rental = {
+      mode: 'rental',
+      eur_pp: round2(fuel / group),
+      eur_total: round2(fuel),
+      hours: round2(km / TRANSFER.rentalKmh),
+      included_with_rental: true,
+    };
+  }
+
+  // Carta's default: the car you already rented if you have one, otherwise the
+  // cheapest sensible public option, falling back to a taxi where there's no
+  // public transport at all.
+  const recommended = modes.rental ? 'rental' : (modes.public ? 'public' : 'taxi');
+  return { road_km: Math.round(km), modes, recommended, estimated: true };
+}
+
+/** Airport-transfer options between a fly-in airport city and the stay it
+ *  serves (or the last stop and the fly-home airport). Measured centre to
+ *  centre, the same withCityCoords rule the rest of the planner uses, and
+ *  priced with transferModesFromKm so it can never come out as "your own car".
+ *  @returns the transferModesFromKm shape plus `straight_km` and per-mode
+ *           `links`, or null when either endpoint lacks coordinates. */
+export function airportTransferOptions(fromDest, toDest, groupSize = 1, { carModel = null, hasRental = false } = {}) {
+  fromDest = withCityCoords(fromDest);
+  toDest = withCityCoords(toDest);
+  if (!fromDest || !toDest || fromDest.lat == null || toDest.lat == null) return null;
+  const straightKm = haversineKm(fromDest.lat, fromDest.lon, toDest.lat, toDest.lon);
+  if (straightKm == null) return null;
+  const roadKm = straightKm * DETOUR;
+  const cm = carModel || {};
+  const fuelByIso = cm.fuel_price_by_iso2 || {};
+  const petrol = fuelByIso[toDest.iso2] ?? cm.fuel_price_eur_per_l ?? 1.8;
+  // If EITHER end has no real rail/bus, don't pretend a public transfer exists.
+  const transitPoor = (fromDest.local_transport || {}).transit_quality === 'poor'
+    || (toDest.local_transport || {}).transit_quality === 'poor';
+  const opts = transferModesFromKm(roadKm, groupSize, {
+    petrol,
+    consumption: cm.consumption_l_per_100km ?? 6.5,
+    capacity: cm.car_capacity ?? 4,
+    hasRental,
+    transitPoor,
+  });
+  opts.straight_km = Math.round(straightKm);
+  const links = [
+    { label: 'Google Maps (transit)', url: gmapsDir(fromDest, toDest, 'transit') },
+    { label: 'Google Maps (taxi/drive)', url: gmapsDir(fromDest, toDest, 'driving') },
+  ];
+  for (const m of Object.values(opts.modes)) m.links = links;
+  return opts;
 }
 
 /**

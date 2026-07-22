@@ -26,6 +26,7 @@ import {
 } from './dayDraft.js';
 import { CartaPlanPanel } from './CartaPlanPanel.jsx';
 import { openDayPlanPdf } from './dayPlanPdf.js';
+import { openDayPlanKml } from './dayPlanKml.js';
 import { MODE_META, DayTripTransport } from './DayTripTransport.jsx';
 import { CartaGuidePanel } from './CartaGuidePanel.jsx';
 import { estimateWalkMinutes, fmtDur } from './dayFormat.js';
@@ -33,12 +34,12 @@ import { Collapsible, AssignedRow, ActivitySection, ActivityRow } from './DayAct
 import {
   loadStandalonePlans, persistStandalonePlans, deleteStandalonePlan,
   loadAssignments, persistAssignments, loadPrefs, persistPrefs,
-  TRIP_DRAFT_PLAN_ID,
+  subscribeDayPlanStore, TRIP_DRAFT_PLAN_ID,
 } from './dayPlanStore.js';
 import { loadTripDraft } from './tripDraftStore.js';
 import {
   SparkIcon, StarIcon, InfoIcon, MountainIcon, ShareIcon, MapPinIcon,
-  BedIcon, BookmarkIcon, DownloadIcon,
+  BedIcon, BookmarkIcon, DownloadIcon, RouteIcon,
   FerryIcon, PencilIcon, SearchIcon, HomeIcon, CheckIcon,
 } from '../components/Icons.jsx';
 
@@ -180,6 +181,13 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
 
   // Locally-stored "plan a day for any city" plans (see dayPlanStore).
   const [standalonePlans, setStandalonePlans] = useState(() => loadStandalonePlans());
+
+  // Account sync can rewrite plans underneath us (a pull from another
+  // device); refresh the list so Saved plans matches what arrived. Local
+  // writes already go through setStandalonePlans by hand.
+  useEffect(() => subscribeDayPlanStore(({ remote }) => {
+    if (remote) setStandalonePlans(loadStandalonePlans());
+  }), []);
   // Builder inputs for a new standalone plan: any number of cities from all of
   // Europe (no country filter), days per city, a start date, and optionally
   // the address where the traveller is staying.
@@ -970,7 +978,7 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
           <M.Icon size={11} /> {prefix}{t('day.rideLeg', { min: leg.min, mode: t(M.labelKey).toLowerCase(), km: leg.km.toFixed(1) })}
           {leg.dirUrl && (
             <>
-              {' · '}
+              {', '}
               <a className="day-timeline-ride-dir" href={leg.dirUrl} target="_blank" rel="noreferrer">{t('day.directions')}</a>
             </>
           )}
@@ -1044,6 +1052,17 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
     stop, stops, assignments, plan, days, visitFactor,
     itemsForStop, estimateWalkMinutes, fmtDur,
   });
+
+  // The same walk as the PDF, but as a KML download: every planned day a
+  // My Maps folder of pins in walking order. The toast repeats the import
+  // steps because mymaps.google.com is not a path most travellers know.
+  const downloadKmlFile = () => {
+    const ok = openDayPlanKml({ stop, stops, assignments, plan, visitFactor, itemsForStop });
+    if (ok) {
+      setSaveToast(t('export.myMapsHint'));
+      window.setTimeout(() => setSaveToast(''), 9000);
+    }
+  };
 
   const shareDay = async () => {
     const cityName = stop?.dest?.city || t('day.myDay');
@@ -1260,7 +1279,7 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
       if ((t.dest.city || '').toLowerCase().includes(query)) {
         out.push({
           id: `t:${t.id}`, cat: 'town', label: t.dest.city,
-          sub: `${t2(EXPLORE_CAT_KEY.town)} · ${t2('day.kmFromStay', { km: t.km })}`,
+          sub: `${t2(EXPLORE_CAT_KEY.town)}, ${t2('day.kmFromStay', { km: t.km })}`,
           rating: t.dest.rating || null,
           lat: t.lat, lon: t.lon,
           score: (t.dest.rating?.score || 0) + 6,
@@ -1274,7 +1293,7 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
           : p.item.heritage ? t2('day.heritageTag') : '';
         out.push({
           id: p.key, cat: p.cat, label: p.item.name,
-          sub: `${p.item.kind || t2(EXPLORE_CAT_KEY[p.cat])} · ${t2('day.kmAway', { km: p.km })}${flag ? ` · ${flag}` : ''}`,
+          sub: `${p.item.kind || t2(EXPLORE_CAT_KEY[p.cat])}, ${t2('day.kmAway', { km: p.km })}${flag ? `, ${flag}` : ''}`,
           lat: p.lat, lon: p.lon,
           score: poiScore(p.item),
         });
@@ -2309,6 +2328,9 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
                 </button>
                 <button className="day-action-btn" onClick={downloadPdf} title={t('day.downloadPdfTitle')}>
                   <DownloadIcon size={14} /> {t('day.downloadPdf')}
+                </button>
+                <button className="day-action-btn" onClick={downloadKmlFile} title={t('export.myMapsTitle')}>
+                  <RouteIcon size={14} /> {t('export.myMaps')}
                 </button>
                 <button className="day-action-btn" onClick={shareDay}>
                   <ShareIcon size={14} /> {shareState === 'copied' ? t('day.copied') : t('day.share')}

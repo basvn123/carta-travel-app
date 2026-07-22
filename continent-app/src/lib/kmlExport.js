@@ -105,7 +105,7 @@ function placeHtml({ img, headline, desc, dayLine, wiki, mapsUrl }) {
   const links = [
     mapsUrl ? `<a href="${xmlEsc(mapsUrl)}">Open in Google Maps</a>` : '',
     wiki ? `<a href="${xmlEsc(wiki)}">Wikipedia</a>` : '',
-  ].filter(Boolean).join(' &middot; ');
+  ].filter(Boolean).join(', ');
   if (links) parts.push(links);
   return parts.join('\n');
 }
@@ -128,7 +128,7 @@ export function tripKml({ label, stopDetails = [], dayPlan = [], fmtDate = (d) =
       const acts = (d.activities || []).slice(0, 6).join(', ');
       return `Day ${d.dayNum} (${fmtDate(d.date)}): ${acts || 'free day'}`;
     }).join('<br/>');
-    const headline = `Stop ${i + 1} of ${stops.length} - ${fmtDate(s.arriveDate)} to ${fmtDate(s.departDate)}, ${s.nights} ${s.nights === 1 ? 'night' : 'nights'}`;
+    const headline = `Stop ${i + 1} of ${stops.length}, ${fmtDate(s.arriveDate)} to ${fmtDate(s.departDate)}, ${s.nights} ${s.nights === 1 ? 'night' : 'nights'}`;
     const html = [
       s.dest.image?.url ? `<img src="${xmlEsc(s.dest.image.url)}" width="320"/><br/>` : '',
       `<b>${xmlEsc(headline)}</b><br/>`,
@@ -180,7 +180,7 @@ export function dayPlanKml({ label, days = [] }) {
           it.kind,
           it.dwellMin ? `plan ~${it.dwellMin} min` : '',
           it.mustSee ? 'essential sight' : '',
-        ].filter(Boolean).join(' · '),
+        ].filter(Boolean).join(', '),
         desc: it.desc,
         dayLine: day.label,
         wiki: it.wiki,

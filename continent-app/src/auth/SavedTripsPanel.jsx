@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useAuth } from './AuthContext.jsx';
 import { fetchSavedTrips, deleteTrip } from './tripStorage.js';
 import { fetchTripPlans, deleteTripPlan } from './tripPlanStorage.js';
-import { loadStandalonePlans, deleteStandalonePlan, loadAssignments } from '../planner/dayPlanStore.js';
+import { loadStandalonePlans, deleteStandalonePlan, loadAssignments, subscribeDayPlanStore } from '../planner/dayPlanStore.js';
 import { MapPinIcon, RouteIcon, ListDayIcon, PencilIcon } from '../components/Icons.jsx';
 import { CountryFlagStack } from '../components/CountryFlag.jsx';
 import { useI18n } from '../i18n/index.jsx';
@@ -92,9 +92,13 @@ export function SavedTripsPanel({ data, onClose, onLoadTrip, onLoadTripPlan, onO
   const [error, setError] = useState('');
   const [tripPlans, setTripPlans] = useState([]);
   const [tripPlansLoading, setTripPlansLoading] = useState(!!user);
-  // Device-local day plans, shown alongside the account trips so everything
-  // saved lives in one overview.
+  // Day plans, shown alongside the account trips so everything saved lives
+  // in one overview. Local-first; account sync can rewrite them underneath
+  // this panel (a pull from another device), so refresh on those changes.
   const [dayPlans, setDayPlans] = useState(() => loadStandalonePlans());
+  useEffect(() => subscribeDayPlanStore(({ remote }) => {
+    if (remote) setDayPlans(loadStandalonePlans());
+  }), []);
 
   const loadTrips = () => {
     setLoading(true);

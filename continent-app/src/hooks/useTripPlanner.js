@@ -3,14 +3,14 @@ import {
   tripDaysBetween, accommodationPerPerson, groundSpendPerPerson, DEFAULT_LIFESTYLE, haversineKm,
 } from '../lib/runtime_pricing.js';
 import { combineTripLegs, suggestNextStops } from '../lib/trip_planner_pricing.js';
-import { legTransportOptions, rentalEstimate } from '../lib/transport.js';
+import { legTransportOptions, rentalEstimate, airportTransferOptions, transferModesFromKm } from '../lib/transport.js';
 import { cheapestStartDates, reorderSavings } from '../lib/tripCostOptimizer.js';
 import { addDays } from '../lib/dates.js';
 import { round2 } from '../lib/math.js';
 import {
   fetchTripPlanWithStops, createTripPlan, renameTripPlan, saveTripPlanStops,
 } from '../auth/tripPlanStorage.js';
-import { assignmentsKey, prefsKey, TRIP_DRAFT_PLAN_ID } from '../planner/dayPlanStore.js';
+import { assignmentsKey, prefsKey, extrasKey, persistAssignments, persistPrefs, persistTripExtras, TRIP_DRAFT_PLAN_ID } from '../planner/dayPlanStore.js';
 import { loadRestorableDraft, persistTripDraft, clearTripDraft } from '../planner/tripDraftStore.js';
 
 
@@ -42,6 +42,12 @@ export function useTripPlanner(data, countryInsights = null) {
   // sticks to trains/buses. Individual legs can still be overridden.
   const [transportPref, setTransportPref] = useState(draft?.transportPref || 'auto');
   const [legModes, setLegModes] = useState(draft?.legModes || {}); // { [legIndex]: 'train'|'bus'|'car' }
+  // How the traveller gets from the plane to where they sleep (both the fly-in
+  // and fly-home airport transfers): 'auto' lets Carta pick (the rental car
+  // they collect at the airport if the trip has one, else public transport),
+  // 'public' = airport train/bus/shuttle, 'taxi' = taxi/rideshare, 'rental' =
+  // drive the rental. Priced per mode so the total reflects the real choice.
+  const [transferMode, setTransferMode] = useState(draft?.transferMode || 'auto');
   const [pace, setPace] = useState(draft?.pace || 'balanced'); // 'relaxed' | 'balanced' | 'packed'
   // Ryanair baggage the traveller expects to book: 'cabin' (free small bag),
   // 'priority' (10 kg cabin bag) or 'checked' (20 kg hold bag). Priced per
@@ -79,10 +85,10 @@ export function useTripPlanner(data, countryInsights = null) {
       return;
     }
     persistTripDraft({
-      tripStart, tripEnd, stops, groupSize, transportPref, legModes, pace,
+      tripStart, tripEnd, stops, groupSize, transportPref, legModes, transferMode, pace,
       baggage, anchorId, anchorOrigin, returnAnchorId, ownFlight, planId, planLabel, planned,
     });
-  }, [tripStart, tripEnd, stops, groupSize, transportPref, legModes, pace,
+  }, [tripStart, tripEnd, stops, groupSize, transportPref, legModes, transferMode, pace,
       baggage, anchorId, anchorOrigin, returnAnchorId, ownFlight, planId, planLabel, planned]);
 
   // Chain each stop's arrive/depart dates from the trip start. A stop with no
@@ -183,6 +189,7 @@ export function useTripPlanner(data, countryInsights = null) {
     setTripStart('');
     setTripEnd('');
     setLegModes({});
+    setTransferMode('auto');
     setAnchorId(null);
     setAnchorOrigin(null);
     setReturnAnchorId(null);
@@ -331,21 +338,26 @@ export function useTripPlanner(data, countryInsights = null) {
   const anchorLegs = useMemo(() => {
     const none = { in: null, out: null, anchor: null };
     if (!flight?.combinable) return none;
+    // You've just flown in, so this hop is an AIRPORT TRANSFER, not an inter-city
+    // drive: public transport, a taxi, or the rental you collect at the airport,
+    // never your own car with tolls (which is what the generic leg engine used
+    // to recommend, and why it read as "you drive from the airport").
+    const hasRental = transportPref === 'car';
     const legFor = (a, b) => {
       if (!a || !b) return null;
-      const opts = legTransportOptions(a, b, groupSize, { carModel, countryInsights });
-      if (!opts || opts.no_road || !opts.recommended) return null;
-      const mode = transportPref === 'car' && opts.modes.car ? 'car' : opts.recommended;
-      const chosen = opts.modes[mode] || opts.modes[opts.recommended];
-      return { ...opts, mode, hours: chosen.hours, ground_eur_per_person: chosen.eur_pp, ground_total: chosen.eur_total };
+      const opts = airportTransferOptions(a, b, groupSize, { carModel, hasRental });
+      if (!opts || !Object.keys(opts.modes).length) return null;
+      const mode = transferMode !== 'auto' ? transferMode : opts.recommended;
+      const chosen = opts.modes[mode] || opts.modes[opts.recommended] || Object.values(opts.modes)[0];
+      return { ...opts, mode: chosen.mode, hours: chosen.hours, ground_eur_per_person: chosen.eur_pp, ground_total: chosen.eur_total, links: chosen.links };
     };
     const first = stopDetails[0];
     const last = stopDetails[stopDetails.length - 1];
     // The airports the round flight actually uses (from the flight pricing).
     // When either differs from the stop it serves, the airport<->stop transfer
-    // is a real overland journey - price it like any other leg so it shows up
-    // in the itinerary and the total. Covers "fly into Bergamo, sleep at Como"
-    // AND "fly home from a different airport near your last stop".
+    // is a real journey - price it so it shows up in the itinerary and total.
+    // Covers "fly into Bergamo, sleep at Como" AND "fly home from a different
+    // airport near your last stop".
     const inFrom = flight.in_from_id ? destinations[flight.in_from_id] : null;
     const outFrom = flight.out_from_id ? destinations[flight.out_from_id] : null;
     return {
@@ -358,7 +370,56 @@ export function useTripPlanner(data, countryInsights = null) {
       inCity: inFrom?.city || null,
       outCity: outFrom?.city || null,
     };
-  }, [flight, destinations, stopDetails, groupSize, carModel, countryInsights, transportPref]);
+  }, [flight, destinations, stopDetails, groupSize, carModel, transportPref, transferMode]);
+
+  // The airport <-> stay transfers folded into the flight (stops you fly
+  // STRAIGHT into): the stored fare is a public-transport (bus/shuttle)
+  // estimate, so offer the same taxi / rental alternatives the anchor legs do
+  // and let the chosen transferMode drive the total, so "how you get from the
+  // plane to your bed" is a real, priced choice, not a hidden assumption.
+  const flightTransfer = useMemo(() => {
+    if (!flight?.combinable || !(flight.ground_total > 0)) return null;
+    const iso2 = stopDetails[0]?.dest?.iso2;
+    const fuelByIso = carModel?.fuel_price_by_iso2 || {};
+    const petrol = fuelByIso[iso2] ?? carModel?.fuel_price_eur_per_l ?? 1.8;
+    const consumption = carModel?.consumption_l_per_100km ?? 6.5;
+    const capacity = carModel?.car_capacity ?? 4;
+    const hasRental = transportPref === 'car';
+    // Approximate the hop distance from the stored transfer: its minutes when we
+    // have them, otherwise back the km out of the ~0.15 EUR/km public fare.
+    const kmOf = (eurPp, minutes) => (minutes > 0 ? (minutes / 60) * 42 : Math.max(1, (eurPp || 0) / 0.15));
+    const legOf = (eurPp, minutes) => (eurPp > 0
+      ? transferModesFromKm(kmOf(eurPp, minutes), groupSize, { petrol, consumption, capacity, hasRental, publicOverride: eurPp })
+      : null);
+    const inT = legOf(flight.into_ground_eur, flight.into_ground_minutes);
+    const outT = legOf(flight.out_ground_eur, flight.out_ground_minutes);
+    if (!inT && !outT) return null;
+    // Combine the fly-in and fly-home hops into one figure per mode, keeping
+    // only modes BOTH legs support so a total is never half-priced.
+    const combined = {};
+    for (const k of new Set([...(inT ? Object.keys(inT.modes) : []), ...(outT ? Object.keys(outT.modes) : [])])) {
+      if ((inT && !inT.modes[k]) || (outT && !outT.modes[k])) continue;
+      const a = inT?.modes[k];
+      const b = outT?.modes[k];
+      combined[k] = {
+        mode: k,
+        eur_total: round2((a?.eur_total || 0) + (b?.eur_total || 0)),
+        eur_pp: round2((a?.eur_pp || 0) + (b?.eur_pp || 0)),
+        hours: round2((a?.hours || 0) + (b?.hours || 0)),
+      };
+    }
+    if (!Object.keys(combined).length) return null;
+    const baseRec = (inT || outT).recommended;
+    const recommended = combined[baseRec] ? baseRec : Object.keys(combined)[0];
+    const mode = transferMode !== 'auto' ? transferMode : recommended;
+    const chosen = combined[mode] || combined[recommended];
+    return {
+      modes: combined, recommended, mode: chosen.mode,
+      ground_total: chosen.eur_total, ground_eur_per_person: chosen.eur_pp, hours: chosen.hours,
+      minutes: (flight.into_ground_minutes || 0) + (flight.out_ground_minutes || 0),
+      estimated: true,
+    };
+  }, [flight, stopDetails, groupSize, carModel, transportPref, transferMode]);
 
   // One rental car for the whole trip (only priced into the total when the
   // traveller chose 'car'; per-leg car choices only pay fuel + tolls since a
@@ -388,15 +449,19 @@ export function useTripPlanner(data, countryInsights = null) {
 
   const grandTotal = useMemo(() => {
     let total = 0;
-    if (flight?.combinable) total += flight.fare_total + flight.ground_total + (flight.bag_total || 0);
-    else if (flight?.own) total += flight.cost_total || 0;
+    if (flight?.combinable) {
+      // The airport transfer is priced by the chosen mode (flightTransfer),
+      // not the raw stored public fare, so the total reflects taxi/rental too.
+      const transfer = flightTransfer ? flightTransfer.ground_total : (flight.ground_total || 0);
+      total += flight.fare_total + transfer + (flight.bag_total || 0);
+    } else if (flight?.own) total += flight.cost_total || 0;
     legs.forEach((l) => { if (l && l.ground_total) total += l.ground_total; });
     if (anchorLegs.in?.ground_total) total += anchorLegs.in.ground_total;
     if (anchorLegs.out?.ground_total) total += anchorLegs.out.ground_total;
     stayCosts.forEach((s) => { if (s) total += s.total; });
     if (carRental) total += carRental.eur_total;
     return round2(total);
-  }, [flight, legs, anchorLegs, stayCosts, carRental]);
+  }, [flight, flightTransfer, legs, anchorLegs, stayCosts, carRental]);
 
   // "Take this trip cheaper", the same itinerary on cheaper flight dates
   // (real stored fares only), and a cheaper stop ORDER when reordering
@@ -482,6 +547,7 @@ export function useTripPlanner(data, countryInsights = null) {
     // the saved party size/pace, and the headline total comes out wrong.
     setGroupSize(sorted[0]?.choices?.groupSize || 2);
     setTransportPref(sorted[0]?.choices?.transportPref || 'auto');
+    setTransferMode(sorted[0]?.choices?.transferMode || 'auto');
     setPace(sorted[0]?.choices?.pace || 'balanced');
     setLegModes({});
     setPlanned(false);
@@ -508,20 +574,30 @@ export function useTripPlanner(data, countryInsights = null) {
             nights: s.nights,
             groupSize,
             activities: s.activities || [],
-            ...(i === 0 ? { baggage, transportPref, pace, ...(anchorId ? { anchorId } : {}), ...(anchorOrigin ? { anchorOrigin } : {}), ...(returnAnchorId ? { returnAnchorId } : {}), ...(ownFlight ? { ownFlight } : {}) } : {}),
+            ...(i === 0 ? { baggage, transportPref, transferMode, pace, ...(anchorId ? { anchorId } : {}), ...(anchorOrigin ? { anchorOrigin } : {}), ...(returnAnchorId ? { returnAnchorId } : {}), ...(ownFlight ? { ownFlight } : {}) } : {}),
           },
         };
       }));
       // Day-planner work done against the unsaved draft moves with the trip:
       // re-key its picks/preferences from the draft id to the real plan id.
+      // Through the store's persist functions (not raw setItem) so the move
+      // also reaches account sync: the draft id never syncs, the real id must.
       if (!planId && typeof window !== 'undefined') {
         try {
-          for (const keyFn of [assignmentsKey, prefsKey]) {
-            const v = window.localStorage.getItem(keyFn(TRIP_DRAFT_PLAN_ID));
-            if (v != null) {
-              window.localStorage.setItem(keyFn(id), v);
-              window.localStorage.removeItem(keyFn(TRIP_DRAFT_PLAN_ID));
-            }
+          const picks = window.localStorage.getItem(assignmentsKey(TRIP_DRAFT_PLAN_ID));
+          if (picks != null) {
+            persistAssignments(id, JSON.parse(picks));
+            window.localStorage.removeItem(assignmentsKey(TRIP_DRAFT_PLAN_ID));
+          }
+          const prefs = window.localStorage.getItem(prefsKey(TRIP_DRAFT_PLAN_ID));
+          if (prefs != null) {
+            persistPrefs(id, JSON.parse(prefs));
+            window.localStorage.removeItem(prefsKey(TRIP_DRAFT_PLAN_ID));
+          }
+          const extras = window.localStorage.getItem(extrasKey(TRIP_DRAFT_PLAN_ID));
+          if (extras != null) {
+            persistTripExtras(id, JSON.parse(extras));
+            window.localStorage.removeItem(extrasKey(TRIP_DRAFT_PLAN_ID));
           }
         } catch { /* private mode */ }
       }
@@ -533,17 +609,19 @@ export function useTripPlanner(data, countryInsights = null) {
       setSaveState('idle');
       throw e;
     }
-  }, [planId, planLabel, stops, stopDetails, groupSize, legs, flight, anchorId, anchorOrigin, returnAnchorId, ownFlight, baggage, transportPref, pace]);
+  }, [planId, planLabel, stops, stopDetails, groupSize, legs, flight, anchorId, anchorOrigin, returnAnchorId, ownFlight, baggage, transportPref, transferMode, pace]);
 
   return {
     tripStart, setTripStart, tripEnd, setTripEnd,
     stops, stopDetails, plannedNights, windowNights,
     groupSize, setGroupSize,
-    transportPref, setTransportPref, pace, setPace, setLegMode, carRental, anchorId,
+    transportPref, setTransportPref, transferMode, setTransferMode, pace, setPace, setLegMode, carRental,
+    // The raw share-link ingredients (the same fields the draft persists).
+    anchorId, anchorOrigin, returnAnchorId, legModes,
     cheaperDates, cheaperOrder, applyStartDate, applyCheaperOrder,
     addStop, removeStop, setStopNights, setStopActivities, moveStop, reorderStop,
     optimizeRoute, clearPlan, loadFromWizard,
-    nextStopSuggestions, flight, legs, anchorLegs, stayCosts, grandTotal, dayPlan,
+    nextStopSuggestions, flight, legs, anchorLegs, flightTransfer, stayCosts, grandTotal, dayPlan,
     baggage, setBaggage,
     ownFlight, setOwnFlight,
     planned, setPlanned,
