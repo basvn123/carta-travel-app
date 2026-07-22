@@ -471,7 +471,7 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
       totalNights: windowNights || 5,
       maxStops: stayStyle === 'single' ? 1 : (quizStops || null),
       mustIncludeIds: [...quizMust],
-      transport: (arriveMode === 'car' || landedMode === 'car') ? 'car' : 'auto',
+      transport: (arriveMode === 'car' || landedMode === 'car') ? 'owncar' : 'auto',
     });
     if (!picks.length) return;
     const nextNights = {};
@@ -670,7 +670,7 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
     onComplete({
       startDate: start,
       groupSize,
-      transport: (arriveMode === 'car' || landedMode === 'car') ? 'car' : 'auto',
+      transport: (arriveMode === 'car' || landedMode === 'car') ? 'owncar' : 'auto',
       pace,
       baggage,
       anchorId: path === 'landed' ? (landedMode === 'car' ? null : arrivalId) : (arriveMode === 'fly' && flyIn ? flyIn.id : null),

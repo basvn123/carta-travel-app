@@ -2185,6 +2185,98 @@ input, select {
 .itin-breakdown-body { padding: 4px 2px 2px; }
 .itin-breakdown-body .trip-total-row .lbl svg { color: var(--ink-mute); margin-right: 4px; vertical-align: -1px; }
 
+/* ── Overview: stay-to-stay leg connectors in the route view ──
+   A thin rail between two stop cards carries the chosen mode, its time and
+   its price; tapping it opens the train/bus/car comparison in place. */
+.itin-leg {
+  position: relative;
+  margin: -4px 0;
+  padding-left: 23px;
+}
+.itin-leg-rail {
+  position: absolute;
+  left: 23px; top: 0; bottom: 0;
+  width: 2px;
+  background: var(--rule);
+}
+.itin-leg-main {
+  display: flex; align-items: center; gap: 9px;
+  width: 100%;
+  text-align: left;
+  padding: 7px 10px 7px 0;
+  background: none; border: none;
+  cursor: pointer;
+}
+.itin-leg-glyph {
+  position: relative;
+  z-index: 1;
+  display: flex; align-items: center; justify-content: center;
+  width: 22px; height: 22px; flex: none;
+  margin-left: -10px;
+  border-radius: 50%;
+  border: 1px solid var(--rule);
+  background: var(--paper);
+  color: var(--ink-soft);
+}
+.itin-leg-text { flex: 1; min-width: 0; font-size: 12px; color: var(--ink); }
+.itin-leg-text small { display: block; font-family: var(--mono); font-size: 10px; color: var(--ink-mute); margin-top: 1px; }
+.itin-leg-change {
+  font-family: var(--mono); font-size: 9.5px;
+  text-transform: uppercase; letter-spacing: 0.08em;
+  color: var(--ink-mute);
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  padding: 3px 9px;
+  transition: color .15s, border-color .15s;
+}
+.itin-leg-main:hover .itin-leg-change { color: var(--accent); border-color: var(--accent); }
+.itin-leg-modes {
+  display: flex; gap: 6px;
+  padding: 0 10px 10px 14px;
+}
+.itin-leg-modes .trip-leg-mode { flex: 1; }
+.itin-leg-noroad { padding: 6px 10px 6px 24px; font-family: var(--mono); font-size: 10.5px; color: var(--ink-mute); }
+
+/* ── Overview: the grouped receipt ──
+   Four titled groups (travel there / between stops / sleeping / daily life),
+   each with a subtotal, then the grand total and a per-person line: a receipt
+   that reads top to bottom instead of a flat jumble of rows. */
+.itin-bd-sec { margin: 10px 0 0; }
+.itin-bd-sec-head {
+  display: flex; align-items: baseline; justify-content: space-between;
+  padding: 7px 2px 5px;
+  border-bottom: 1px solid var(--rule);
+}
+.itin-bd-sec-title {
+  font-family: var(--mono); font-size: 9.5px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.12em;
+  color: var(--ink-soft);
+}
+.itin-bd-sec-title svg { color: var(--accent); vertical-align: -1px; margin-right: 3px; }
+.itin-bd-sec-total { font-family: var(--mono); font-size: 11px; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+.itin-bd-sec-rows { padding: 2px 0 2px 6px; }
+.itin-bd-sec-rows .trip-total-row { border: none; padding: 6px 2px; }
+.itin-bd-sec-rows .trip-total-row .val { font-variant-numeric: tabular-nums; }
+.itin-owncar-note { margin: 2px 2px 6px; }
+.itin-bd-grand {
+  display: flex; align-items: baseline; justify-content: space-between;
+  margin-top: 14px;
+  padding: 12px 2px 2px;
+  border-top: 2px solid var(--ink);
+}
+.itin-bd-grand-lbl { font-family: var(--display); font-size: 15.5px; color: var(--ink); }
+.itin-bd-grand-val { font-family: var(--mono); font-size: 17px; font-weight: 600; color: var(--ink); font-variant-numeric: tabular-nums; }
+.itin-bd-pp {
+  text-align: right;
+  font-family: var(--mono); font-size: 10.5px; color: var(--ink-soft);
+  padding: 3px 2px 0;
+}
+.itin-bd-note {
+  font-family: var(--mono); font-size: 9.5px; color: var(--ink-mute);
+  margin: 10px 2px 2px;
+  line-height: 1.5;
+}
+
 /* ── Overview: the day list, each with a jump into the Day planner ── */
 .itin-days-list { margin-top: 16px; }
 .itin-day-row { display: flex; align-items: stretch; gap: 8px; margin-bottom: 6px; }
@@ -2442,7 +2534,8 @@ input, select {
    CENTERED column, so nothing hugs the left edge of an ultrawide window. */
 @media (min-width: 1000px) {
   .day-landing.day-landing-wide { max-width: none; padding: 32px clamp(28px, 3.5vw, 72px) 48px; }
-  .day-landing-wide .section-title,
+  .day-landing-wide .panel-tag,
+  .day-landing-wide .day-landing-title,
   .day-landing-wide .day-landing-lead,
   .day-landing-wide .day-landing-section,
   .day-landing-wide .day-edit-banner,
@@ -2453,13 +2546,30 @@ input, select {
   .day-landing-wide .trip-save-btn.day-build-btn { width: 100%; max-width: 680px; margin-inline: auto; }
   .day-landing-wide .day-explore-steplabel { display: block; width: 100%; max-width: 680px; margin-inline: auto; }
 }
-.day-landing .section-title {
+/* Header mirrors the Saved-trips panel (.panel-tag overline + a display-serif
+   title in sentence case), body copy is explicitly the UI face - the Day
+   planner must read as the same family as everything else saved. */
+.day-landing-title {
   font-family: var(--display);
-  font-size: 22px;
+  font-weight: 500;
+  font-size: 28px;
+  line-height: 1.1;
   color: var(--ink);
+  margin: 0 0 8px;
+}
+.day-landing-lead { font-family: var(--ui); font-size: 13px; line-height: 1.55; margin-bottom: 20px; }
+/* Section headers on the landing ("Your day plans", "Plan a day from a saved
+   trip"): the Saved-trips panel's mono uppercase section style, not the serif
+   block title, so saved things are labelled identically everywhere. */
+.day-landing-section .trip-block-title {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--ink-soft);
   margin-bottom: 8px;
 }
-.day-landing-lead { font-size: 13px; line-height: 1.55; margin-bottom: 20px; }
 .day-build { display: flex; flex-direction: column; gap: 12px; }
 .day-build .trip-add-row { display: block; }
 .day-build-row { display: flex; gap: 14px; }
@@ -8883,6 +8993,26 @@ input, select {
 .day-walk + .day-walk { margin-top: 8px; }
 .day-walk b { font-size: 13px; color: var(--ink); }
 .day-walk small { font-size: 11.5px; line-height: 1.5; color: var(--ink-soft); }
+/* Walk cards became addable: text left, the +/✓ pin button right. */
+.day-walk { flex-direction: row; align-items: center; gap: 10px; }
+.day-walk-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+.day-walk-add { flex: none; }
+.day-walk.added { border-color: var(--accent); }
+
+/* A walk pinned onto the day, shown with the plan itself. */
+.day-plan-walks { margin-top: 10px; }
+.day-plan-walk {
+  display: flex; align-items: flex-start; gap: 10px;
+  border: 1px solid var(--rule);
+  border-left: 3px solid var(--accent);
+  border-radius: 8px;
+  background: var(--paper);
+  padding: 9px 10px;
+}
+.day-plan-walk + .day-plan-walk { margin-top: 6px; }
+.day-plan-walk-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.day-plan-walk-text b { font-size: 12.5px; color: var(--ink); }
+.day-plan-walk-text small { font-size: 11px; line-height: 1.45; color: var(--ink-soft); }
 
 /* ───────── Crash guard (ErrorBoundary fallback) ───────── */
 .crash-screen {

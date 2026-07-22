@@ -11,12 +11,15 @@
  */
 import { haversineKm, withCityCoords } from './runtime_pricing.js';
 import { round2 } from './math.js';
+import { transportProfile, legRailQuality, RAIL_SCORE_BONUS } from './countryTransport.js';
 
 const DETOUR = 1.3;             // road km vs straight-line (matches car_layer.py)
-const TRAIN = { kmh: 95, eurPerKm: 0.15, floor: 8, overheadH: 0.4 };
-const BUS = { kmh: 68, eurPerKm: 0.075, floor: 5, overheadH: 0.5 };
 const CAR = { kmh: 82 };
 const LONG_HAUL_KM = 800;       // beyond this, overland stops being sensible
+// What an hour of travel time is worth when ranking modes, EUR. At the old
+// value (3) a 5-euro-cheaper bus outranked a train that saves an hour on
+// every short hop, which is not how anyone actually travels Ghent -> Antwerp.
+const VALUE_OF_TIME_EUR_H = 6;
 
 
 // Encode a stop as a bare "lat,lng". A place-name query ("City, Country", a
@@ -46,7 +49,7 @@ export function insightFor(dest, countryInsights) {
  * @returns null when either endpoint has no coordinates; `{ ferry: true }`-ish
  *          shape (modes: {}) when there's no road link (sea crossing).
  */
-export function legTransportOptions(destA, destB, groupSize = 1, { carModel = null, countryInsights = null } = {}) {
+export function legTransportOptions(destA, destB, groupSize = 1, { carModel = null, countryInsights = null, hasCar = false } = {}) {
   // Ground legs run town to town: for airport-tier stops the raw lat/lon is
   // the runway (Skavsta is 90 km from Stockholm), so measure from the city
   // centre instead, the flight is the only leg that belongs at the airport.
@@ -77,9 +80,19 @@ export function legTransportOptions(destA, destB, groupSize = 1, { carModel = nu
   const insA = insightFor(destA, countryInsights);
   const insB = insightFor(destB, countryInsights);
   const crossBorder = destA.country !== destB.country;
+  // Per-country network profiles (speed, fare level, frequency overhead):
+  // a Belgian intercity hop and a Croatian coastal one are different products.
+  const profA = transportProfile(destA.iso2);
+  const profB = transportProfile(destB.iso2);
+  const railQuality = legRailQuality(destA.iso2, destB.iso2);
 
   // Train ---------------------------------------------------------------
-  const trainPp = Math.max(TRAIN.floor, TRAIN.eurPerKm * roadKm);
+  const railKmh = (profA.railKmh + profB.railKmh) / 2;
+  const railEur = (profA.railEur + profB.railEur) / 2;
+  const railOverheadH = (profA.railOverheadH + profB.railOverheadH) / 2;
+  // Fare floor scales with the network's price level (a Polish minimum fare
+  // is not a Swiss one): ~40 km worth of that country's per-km rate, min EUR 4.
+  const trainPp = railEur === 0 ? 0 : Math.max(4, railEur * 40, railEur * roadKm);
   const trainLinks = [];
   if (insA?.rail?.url && insA?.rail?.operator) {
     trainLinks.push({ label: insA.rail.operator, url: insA.rail.url });
@@ -88,21 +101,24 @@ export function legTransportOptions(destA, destB, groupSize = 1, { carModel = nu
     trainLinks.push({ label: insB.rail.operator, url: insB.rail.url });
   }
   trainLinks.push({ label: 'Google Maps (transit)', url: gmapsDir(destA, destB, 'transit') });
-  const train = {
+  const train = railQuality === 'none' ? null : {
     eur_pp: round2(trainPp),
     eur_total: round2(trainPp * group),
-    hours: round2(roadKm / TRAIN.kmh + TRAIN.overheadH),
+    hours: round2(roadKm / railKmh + railOverheadH),
     links: trainLinks,
     note: insA?.rail?.note || null,
   };
 
   // Bus -----------------------------------------------------------------
-  const busPp = Math.max(BUS.floor, BUS.eurPerKm * roadKm);
+  const busKmh = (profA.busKmh + profB.busKmh) / 2;
+  const busEurKm = (profA.busEur + profB.busEur) / 2;
+  const busOverheadH = (profA.busOverheadH + profB.busOverheadH) / 2;
+  const busPp = busEurKm === 0 ? 0 : Math.max(3, busEurKm * roadKm);
   const busOperators = (insA?.bus?.operators || []).slice(0, 2).join(', ') || 'FlixBus';
   const bus = {
     eur_pp: round2(busPp),
     eur_total: round2(busPp * group),
-    hours: round2(roadKm / BUS.kmh + BUS.overheadH),
+    hours: round2(roadKm / busKmh + busOverheadH),
     links: [
       { label: busOperators, url: insA?.bus?.url || 'https://www.flixbus.com' },
       { label: 'Google Maps (transit)', url: gmapsDir(destA, destB, 'transit') },
@@ -145,16 +161,28 @@ export function legTransportOptions(destA, destB, groupSize = 1, { carModel = nu
     note: vignettes.length ? `Vignette: ${vignettes.join(', ')}` : null,
   };
 
-  // Recommendation: cheapest per person, with a small value-of-time nudge so
-  // a marginally-cheaper 9h bus doesn't beat a 4h train, and the car's group
-  // economics can win for full cars.
-  const score = (m) => m.eur_pp + m.hours * 3;
-  const modes = { train, bus, car };
+  // Recommendation: cheapest per person with a value-of-time nudge, plus the
+  // leg's rail-quality bonus/penalty. On a dense network (Belgium, Holland,
+  // Germany...) the train's frequency and centre-to-centre arrival are worth
+  // real money the bare price+hours score can't see - that's what makes
+  // Ghent -> Antwerp a train, not the marginally cheaper bus. On a skeletal
+  // network the same honesty counts against the train.
+  //
+  // The car's fuel-split price only exists if there IS a car: unless the trip
+  // says so (hasCar: a rental or the traveller's own car), recommending it
+  // sells a mode the traveller would first have to go and arrange, so it
+  // carries an arrangement friction. It stays offered - just not Carta's pick.
+  const score = (m, key) => m.eur_pp + m.hours * VALUE_OF_TIME_EUR_H
+    + (key === 'train' ? (RAIL_SCORE_BONUS[railQuality] || 0) : 0)
+    + (key === 'car' && !hasCar ? 8 : 0);
+  const modes = { ...(train ? { train } : {}), bus, car };
   // Same honesty rule the day planner applies: where either end has no real
   // rail (transit_quality 'poor'), don't offer, let alone recommend, a train.
-  const trainDropped = ltA.transit_quality === 'poor' || ltB.transit_quality === 'poor';
+  const trainDropped = !train
+    || ltA.transit_quality === 'poor' || ltB.transit_quality === 'poor';
   if (trainDropped) delete modes.train;
-  const recommended = Object.entries(modes).sort((a, b) => score(a[1]) - score(b[1]))[0][0];
+  const recommended = Object.entries(modes)
+    .sort((a, b) => score(a[1], a[0]) - score(b[1], b[0]))[0][0];
 
   return {
     straight_km: Math.round(straightKm),
@@ -163,10 +191,27 @@ export function legTransportOptions(destA, destB, groupSize = 1, { carModel = nu
     long_haul: roadKm > LONG_HAUL_KM,
     modes,
     train_dropped: trainDropped,
+    rail_quality: railQuality,
     recommended,
     note: null,
     estimated: true,
   };
+}
+
+/** Of a leg's public modes, the one Carta would pick (the trip planner's
+ *  "Train & bus" preference): the recommended mode when it's already public,
+ *  else the better-scoring of train and bus. */
+export function preferredPublicMode(opts) {
+  if (!opts || !opts.modes) return null;
+  if (opts.recommended && opts.recommended !== 'car' && opts.modes[opts.recommended]) {
+    return opts.recommended;
+  }
+  const { train, bus } = opts.modes;
+  if (train && bus) {
+    const s = (m) => m.eur_pp + m.hours * VALUE_OF_TIME_EUR_H;
+    return s(train) <= s(bus) ? 'train' : 'bus';
+  }
+  return train ? 'train' : (bus ? 'bus' : null);
 }
 
 // --- Airport <-> accommodation transfer -----------------------------------

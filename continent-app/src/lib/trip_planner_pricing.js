@@ -302,9 +302,10 @@ export function suggestNextStops(fromDest, allDests, arriveDate, {
     const dRoadConnected = (d.local_transport || {}).road_connected !== false;
     // A ground leg only exists when both ends are road-connected (no sea crossing).
     const groundReachable = fromRoadConnected && dRoadConnected && km <= 450;
-    // On a car trip, the next stop must be one you can actually drive to, a
-    // shared flight origin is no help when there's no fixed road link (islands).
-    if (transport === 'car') {
+    // On a car trip (rental or the traveller's own), the next stop must be one
+    // you can actually drive to, a shared flight origin is no help when
+    // there's no fixed road link (islands).
+    if (transport === 'car' || transport === 'owncar') {
       if (!groundReachable) continue;
     } else if (!sharedOrigin && !groundReachable) {
       continue;

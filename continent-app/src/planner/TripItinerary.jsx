@@ -88,9 +88,103 @@ export function TransferModePicker({ flightTransfer, anchorIn, anchorOut, setTra
  * every day with a jump into that day's tab. Each day keeps a light highlight
  * list (the pace cap) and hands fine-tuning to the Day planner via onPlanDay.
  */
+// Traveller-facing names for the leg modes (shared with the mode buttons).
+const MODE_LABEL_KEY = { train: 'trip.modeTrain', bus: 'trip.modeBus', car: 'trip.modeCar' };
+
+/** The connector between two consecutive stops in the route view: how you get
+ *  from stay to stay, as a first-class part of the itinerary (not a line
+ *  buried in the receipt). Tapping it opens the train/bus/car comparison so
+ *  the mode can be changed right where the journey is shown. */
+function ItinLeg({ leg, onMode }) {
+  const { t } = useI18n();
+  const [open, setOpen] = useState(false);
+  if (!leg) return null;
+  if (leg.no_road || !leg.mode) {
+    return (
+      <div className="itin-leg itin-leg-noroad">
+        <span className="itin-leg-rail" aria-hidden="true" />
+        <span className="itin-leg-text"><small>{leg.note || t('trip.noOverland')}</small></span>
+      </div>
+    );
+  }
+  const Icon = LEG_ICONS[leg.mode] || TrainIcon;
+  const chosen = leg.modes[leg.mode];
+  return (
+    <div className={`itin-leg ${open ? 'open' : ''}`}>
+      <span className="itin-leg-rail" aria-hidden="true" />
+      <button
+        className="itin-leg-main"
+        onClick={() => setOpen(!open)}
+        aria-expanded={open}
+        title={t('itin.legChangeTitle')}
+      >
+        <span className="itin-leg-glyph"><Icon size={12} /></span>
+        <span className="itin-leg-text">
+          {t(MODE_LABEL_KEY[leg.mode])}
+          <small>
+            {t('itin.legStats', { km: leg.road_km, hours: fmtHours(chosen?.hours ?? leg.hours) })}, {eur(leg.ground_total)}
+          </small>
+        </span>
+        <span className="itin-leg-change">{open ? t('itin.legClose') : t('itin.legChange')}</span>
+      </button>
+      {open && (
+        <div className="itin-leg-modes">
+          {Object.entries(leg.modes).map(([m, o]) => {
+            const MIcon = LEG_ICONS[m] || TrainIcon;
+            return (
+              <button
+                key={m}
+                type="button"
+                className={`trip-leg-mode itin-leg-mode ${leg.mode === m ? 'on' : ''}`}
+                onClick={() => onMode?.(m)}
+                aria-pressed={leg.mode === m}
+                title={leg.recommended === m ? t('trip.cartaPick') : undefined}
+              >
+                <span><MIcon size={12} /> {t(MODE_LABEL_KEY[m])}{leg.recommended === m && <SparkIcon size={9} />}</span>
+                <b>{eur(o.eur_total)}</b>
+                <small>~{fmtHours(o.hours)}</small>
+              </button>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
+
+/** One titled group of the cost breakdown (Travel there / Between stops /
+ *  Sleeping / Daily life), its rows indented under a header that carries the
+ *  group subtotal, so the receipt reads like a receipt and not a jumble. */
+function BreakdownSection({ Icon, title, total, children }) {
+  return (
+    <section className="itin-bd-sec">
+      <header className="itin-bd-sec-head">
+        <span className="itin-bd-sec-title"><Icon size={11} /> {title}</span>
+        {total > 0 && <span className="itin-bd-sec-total">{eur(total)}</span>}
+      </header>
+      <div className="itin-bd-sec-rows">{children}</div>
+    </section>
+  );
+}
+
+/** A home<->first/last-stop drive row for own-car trips: the journey starts at
+ *  the traveller's door, and the route view should say so. */
+function ItinDriveRow({ leg, labelKey, city }) {
+  const { t } = useI18n();
+  if (!leg) return null;
+  return (
+    <div className="itin-flight-row">
+      <CarIcon size={12} />
+      <span>{t(labelKey, { city })}</span>
+      <small>{t('trip.driveSub', { km: leg.road_km, hours: fmtHours(leg.hours) })}</small>
+    </div>
+  );
+}
+
 export function TripItinerary({
   dayPlan, stopDetails, grandTotal, groupSize, flight, label = '',
-  legs = [], anchorLegs = null, flightTransfer = null, stayCosts = [], carRental = null,
+  legs = [], setLegMode = null, anchorLegs = null, flightTransfer = null,
+  driveLegs = null, stayCosts = [], carRental = null,
   transferMode = 'auto', setTransferMode = null,
   activeStopIndex, onSelectStop, onPlanDay, isDayPlanned = null,
   sharePayload = null, extrasPlanId = null,
@@ -205,6 +299,18 @@ export function TripItinerary({
 
   const groundTotal = legs.reduce((sum, l) => sum + (l && l.ground_total ? l.ground_total : 0), 0);
 
+  // Group subtotals for the breakdown: travel there & back, between the
+  // stops, sleeping, daily life. Together they are the estimated total.
+  const transferTotal = flight?.combinable
+    ? (flightTransfer ? flightTransfer.ground_total : (flight.ground_total || 0)) : 0;
+  const travelTotal = (flight?.combinable ? flight.fare_total + (flight.bag_total || 0) + transferTotal : 0)
+    + (flight?.own ? (flight.cost_total || 0) : 0)
+    + (driveLegs?.out?.ground_total || 0) + (driveLegs?.home?.ground_total || 0)
+    + (anchorIn?.ground_total || 0) + (anchorOut?.ground_total || 0);
+  const betweenTotal = groundTotal + (carRental?.eur_total || 0);
+  const accomSum = stayCosts.reduce((s, c) => s + (c ? c.accomTotal : 0), 0);
+  const dailySum = stayCosts.reduce((s, c) => s + (c ? c.groundTotal : 0), 0);
+
   return (
     <div className="itin">
       <div className="itin-tabs">
@@ -247,27 +353,39 @@ export function TripItinerary({
               <small>~{fmtHours(anchorIn.hours)} {t(anchorIn.mode === 'car' ? 'itin.byCar' : anchorIn.mode === 'bus' ? 'itin.byBus' : 'itin.byTrain')}</small>
             </div>
           )}
+          {flight?.driving && (
+            <ItinDriveRow leg={driveLegs?.out} labelKey="trip.driveOut" city={stopDetails[0]?.dest?.city || ''} />
+          )}
           {stopDetails.map((s, i) => (
-            <button
-              key={i}
-              className={`itin-stop ${activeStopIndex === i ? 'active' : ''}`}
-              onClick={() => onSelectStop?.(i)}
-            >
-              <span className="itin-stop-idx">{i + 1}</span>
-              <span
-                className="itin-stop-thumb"
-                style={s.dest?.image?.url ? { backgroundImage: `url(${s.dest.image.url})` } : undefined}
+            <React.Fragment key={i}>
+              <button
+                className={`itin-stop ${activeStopIndex === i ? 'active' : ''}`}
+                onClick={() => onSelectStop?.(i)}
               >
-                {!s.dest?.image?.url && <span className="itin-stop-thumb-fallback">{s.dest?.city?.slice(0, 1) || '?'}</span>}
-              </span>
-              <span className="itin-stop-main">
-                <span className="itin-stop-city">{s.dest?.city || t('itin.unknown')}, {s.dest?.country}</span>
-                <span className="itin-stop-sub">
-                  {fmtLong(s.arriveDate)} → {fmtLong(s.departDate)}, {s.nights} {s.nights === 1 ? t('itin.nightOne') : t('itin.nightMany')}
+                <span className="itin-stop-idx">{i + 1}</span>
+                <span
+                  className="itin-stop-thumb"
+                  style={s.dest?.image?.url ? { backgroundImage: `url(${s.dest.image.url})` } : undefined}
+                >
+                  {!s.dest?.image?.url && <span className="itin-stop-thumb-fallback">{s.dest?.city?.slice(0, 1) || '?'}</span>}
                 </span>
-              </span>
-            </button>
+                <span className="itin-stop-main">
+                  <span className="itin-stop-city">{s.dest?.city || t('itin.unknown')}, {s.dest?.country}</span>
+                  <span className="itin-stop-sub">
+                    {fmtLong(s.arriveDate)} → {fmtLong(s.departDate)}, {s.nights} {s.nights === 1 ? t('itin.nightOne') : t('itin.nightMany')}
+                  </span>
+                </span>
+              </button>
+              {/* How you get to the NEXT stay: the leg is part of the route,
+                  with its mode changeable in place. */}
+              {i < stopDetails.length - 1 && (
+                <ItinLeg leg={legs[i]} onMode={setLegMode ? (m) => setLegMode(i, m) : null} />
+              )}
+            </React.Fragment>
           ))}
+          {flight?.driving && (
+            <ItinDriveRow leg={driveLegs?.home} labelKey="trip.driveHome" city={stopDetails[stopDetails.length - 1]?.dest?.city || ''} />
+          )}
 
           {anchorOut && (
             <div className="itin-flight-row">
@@ -301,117 +419,172 @@ export function TripItinerary({
 
             {breakdownOpen && (
               <div className="itin-breakdown-body">
-                {flight?.own && (
-                  <div className="trip-total-row">
-                    <span className="lbl">
-                      <PlaneIcon size={11} /> {t('itin.flight')}{flight.airline ? ` (${flight.airline})` : ''}
-                      <small>{flight.cost_total ? t('itin.bookedOtherGroup') : t('itin.bookedOtherNoFare')}</small>
-                    </span>
-                    <span className="val">{flight.cost_total ? eur(flight.cost_total) : '…'}</span>
-                  </div>
-                )}
-                {flight && !flight.combinable && !flight.own && (
-                  <p className="trip-note">{flightReasonLabel(flight.reason)}</p>
-                )}
-                {flight?.combinable && (
-                  <>
+                {/* 1. Travel there & back: the flight (or your own car's drive
+                       out and home), bags, and the airport transfers. */}
+                <BreakdownSection Icon={PlaneIcon} title={t('itin.secTravel')} total={travelTotal}>
+                  {flight?.own && (
                     <div className="trip-total-row">
                       <span className="lbl">
-                        <PlaneIcon size={11} /> {t('itin.flightOut')}
-                        <small>{flight.origin} → {flight.into_anchor}{flightTimes(flight.into_time) ? `, ${t('itin.departs', { time: flightTimes(flight.into_time).dep })}` : ''}, {groupSize} {groupSize === 1 ? t('itin.seatOne') : t('itin.seatMany')}</small>
+                        <PlaneIcon size={11} /> {t('itin.flight')}{flight.airline ? ` (${flight.airline})` : ''}
+                        <small>{flight.cost_total ? t('itin.bookedOtherGroup') : t('itin.bookedOtherNoFare')}</small>
                       </span>
-                      <span className="val">{eur(flight.into_fare_eur * groupSize)}</span>
+                      <span className="val">{flight.cost_total ? eur(flight.cost_total) : '…'}</span>
                     </div>
-                    <div className="trip-total-row">
-                      <span className="lbl">
-                        <PlaneIcon size={11} /> {t('itin.flightHome')}
-                        <small>{flight.out_anchor} → {flight.origin}{flightTimes(flight.out_of_time) ? `, ${t('itin.departs', { time: flightTimes(flight.out_of_time).dep })}` : ''}, {groupSize} {groupSize === 1 ? t('itin.seatOne') : t('itin.seatMany')}</small>
-                      </span>
-                      <span className="val">{eur(flight.out_of_fare_eur * groupSize)}</span>
-                    </div>
-                    {flight.bag_total > 0 && (
+                  )}
+                  {flight && !flight.combinable && !flight.own && !flight.driving && (
+                    <p className="trip-note">{flightReasonLabel(flight.reason)}</p>
+                  )}
+                  {flight?.driving && (
+                    <>
+                      {driveLegs?.out && (
+                        <div className="trip-total-row">
+                          <span className="lbl">
+                            <CarIcon size={11} /> {t('trip.driveOut', { city: stopDetails[0]?.dest?.city || '' })}
+                            <small>{t('trip.driveSub', { km: driveLegs.out.road_km, hours: fmtHours(driveLegs.out.hours) })}</small>
+                          </span>
+                          <span className="val">{eur(driveLegs.out.ground_total)}</span>
+                        </div>
+                      )}
+                      {driveLegs?.home && (
+                        <div className="trip-total-row">
+                          <span className="lbl">
+                            <CarIcon size={11} /> {t('trip.driveHome', { city: stopDetails[stopDetails.length - 1]?.dest?.city || '' })}
+                            <small>{t('trip.driveSub', { km: driveLegs.home.road_km, hours: fmtHours(driveLegs.home.hours) })}</small>
+                          </span>
+                          <span className="val">{eur(driveLegs.home.ground_total)}</span>
+                        </div>
+                      )}
+                      <p className="trip-note itin-owncar-note">{t('trip.ownCarNote')}</p>
+                    </>
+                  )}
+                  {flight?.combinable && (
+                    <>
                       <div className="trip-total-row">
                         <span className="lbl">
-                          <LuggageIcon size={11} /> {t('itin.baggage')}
-                          <small>{baggageLabel(flight.baggage)}, {t('itin.outPlusHome')}, {groupSize} {groupSize === 1 ? t('itin.personOne') : t('itin.personMany')}</small>
+                          <PlaneIcon size={11} /> {t('itin.flightOut')}
+                          <small>{flight.origin} → {flight.into_anchor}{flightTimes(flight.into_time) ? `, ${t('itin.departs', { time: flightTimes(flight.into_time).dep })}` : ''}, {groupSize} {groupSize === 1 ? t('itin.seatOne') : t('itin.seatMany')}</small>
                         </span>
-                        <span className="val">{eur(flight.bag_total)}</span>
+                        <span className="val">{eur(flight.into_fare_eur * groupSize)}</span>
                       </div>
-                    )}
-                    {flight.ground_total > 0 && (
                       <div className="trip-total-row">
                         <span className="lbl">
-                          <PlaneIcon size={11} /> {t('itin.airportTransfers')}
-                          <small>{t('itin.transfersSub')}</small>
+                          <PlaneIcon size={11} /> {t('itin.flightHome')}
+                          <small>{flight.out_anchor} → {flight.origin}{flightTimes(flight.out_of_time) ? `, ${t('itin.departs', { time: flightTimes(flight.out_of_time).dep })}` : ''}, {groupSize} {groupSize === 1 ? t('itin.seatOne') : t('itin.seatMany')}</small>
                         </span>
-                        <span className="val">{eur(flightTransfer ? flightTransfer.ground_total : flight.ground_total)}</span>
+                        <span className="val">{eur(flight.out_of_fare_eur * groupSize)}</span>
+                      </div>
+                      {flight.bag_total > 0 && (
+                        <div className="trip-total-row">
+                          <span className="lbl">
+                            <LuggageIcon size={11} /> {t('itin.baggage')}
+                            <small>{baggageLabel(flight.baggage)}, {t('itin.outPlusHome')}, {groupSize} {groupSize === 1 ? t('itin.personOne') : t('itin.personMany')}</small>
+                          </span>
+                          <span className="val">{eur(flight.bag_total)}</span>
+                        </div>
+                      )}
+                      {flight.ground_total > 0 && (
+                        <div className="trip-total-row">
+                          <span className="lbl">
+                            <PlaneIcon size={11} /> {t('itin.airportTransfers')}
+                            <small>{t('itin.transfersSub')}</small>
+                          </span>
+                          <span className="val">{eur(flightTransfer ? flightTransfer.ground_total : flight.ground_total)}</span>
+                        </div>
+                      )}
+                    </>
+                  )}
+                  {anchorIn && (
+                    <div className="trip-total-row">
+                      <span className="lbl">
+                        <AnchorInIcon size={11} /> {anchorInCity} → {stopDetails[0]?.dest?.city}
+                        <small>{t('itin.legStats', { km: anchorIn.road_km, hours: fmtHours(anchorIn.hours) })}</small>
+                      </span>
+                      <span className="val">{eur(anchorIn.ground_total)}</span>
+                    </div>
+                  )}
+                  {anchorOut && (
+                    <div className="trip-total-row">
+                      <span className="lbl">
+                        <AnchorOutIcon size={11} /> {stopDetails[stopDetails.length - 1]?.dest?.city} → {anchorOutCity}
+                        <small>{t('itin.legStats', { km: anchorOut.road_km, hours: fmtHours(anchorOut.hours) })}</small>
+                      </span>
+                      <span className="val">{eur(anchorOut.ground_total)}</span>
+                    </div>
+                  )}
+                  <TransferModePicker
+                    flightTransfer={flightTransfer}
+                    anchorIn={anchorIn}
+                    anchorOut={anchorOut}
+                    setTransferMode={setTransferMode}
+                  />
+                </BreakdownSection>
+
+                {/* 2. Between the stops: every stay-to-stay leg, plus the
+                       rental when the trip has one. */}
+                {(betweenTotal > 0 || carRental) && (
+                  <BreakdownSection Icon={TrainIcon} title={t('itin.secBetween')} total={betweenTotal}>
+                    {legs.map((l, i) => {
+                      if (!l || !l.ground_total) return null;
+                      const Icon = LEG_ICONS[l.mode] || TrainIcon;
+                      const a = stopDetails[i]?.dest?.city;
+                      const b = stopDetails[i + 1]?.dest?.city;
+                      return (
+                        <div className="trip-total-row" key={`leg-${i}`}>
+                          <span className="lbl">
+                            <Icon size={11} /> {a} → {b}
+                            <small>{t(MODE_LABEL_KEY[l.mode])}, {t('itin.legStats', { km: l.road_km, hours: fmtHours(l.hours) })}</small>
+                          </span>
+                          <span className="val">{eur(l.ground_total)}</span>
+                        </div>
+                      );
+                    })}
+                    {carRental && (
+                      <div className="trip-total-row">
+                        <span className="lbl"><CarIcon size={11} /> {t('itin.rentalCar')} <small>{carRental.cars > 1 ? t('itin.rentalSubCars', { days: carRental.days, cars: carRental.cars }) : t('itin.rentalSub', { days: carRental.days })}</small></span>
+                        <span className="val">{eur(carRental.eur_total)}</span>
                       </div>
                     )}
-                  </>
+                  </BreakdownSection>
                 )}
-                {anchorIn && (
-                  <div className="trip-total-row">
-                    <span className="lbl">
-                      <AnchorInIcon size={11} /> {anchorInCity} → {stopDetails[0]?.dest?.city}
-                      <small>{t('itin.legStats', { km: anchorIn.road_km, hours: fmtHours(anchorIn.hours) })}</small>
-                    </span>
-                    <span className="val">{eur(anchorIn.ground_total)}</span>
-                  </div>
+
+                {/* 3. Sleeping. */}
+                {accomSum > 0 && (
+                  <BreakdownSection Icon={BedIcon} title={t('itin.secSleep')} total={accomSum}>
+                    {stopDetails.map((s, i) => stayCosts[i] && stayCosts[i].accomTotal > 0 && (
+                      <div className="trip-total-row" key={`stay-${i}`}>
+                        <span className="lbl">
+                          <BedIcon size={11} /> {s.dest?.city}
+                          <small>{s.nights === 1 ? t('itin.accomOne', { n: s.nights }) : t('itin.accomMany', { n: s.nights })}</small>
+                        </span>
+                        <span className="val">{eur(stayCosts[i].accomTotal)}</span>
+                      </div>
+                    ))}
+                  </BreakdownSection>
                 )}
-                {anchorOut && (
-                  <div className="trip-total-row">
-                    <span className="lbl">
-                      <AnchorOutIcon size={11} /> {stopDetails[stopDetails.length - 1]?.dest?.city} → {anchorOutCity}
-                      <small>{t('itin.legStats', { km: anchorOut.road_km, hours: fmtHours(anchorOut.hours) })}</small>
-                    </span>
-                    <span className="val">{eur(anchorOut.ground_total)}</span>
-                  </div>
+
+                {/* 4. Daily life: food, local transport, activities. */}
+                {dailySum > 0 && (
+                  <BreakdownSection Icon={ReceiptIcon} title={t('itin.secDaily')} total={dailySum}>
+                    {stopDetails.map((s, i) => stayCosts[i] && stayCosts[i].groundTotal > 0 && (
+                      <div className="trip-total-row" key={`daily-${i}`}>
+                        <span className="lbl">
+                          <ReceiptIcon size={11} /> {s.dest?.city}
+                          <small>{t('itin.onGroundSub')}</small>
+                        </span>
+                        <span className="val">{eur(stayCosts[i].groundTotal)}</span>
+                      </div>
+                    ))}
+                  </BreakdownSection>
                 )}
-                <TransferModePicker
-                  flightTransfer={flightTransfer}
-                  anchorIn={anchorIn}
-                  anchorOut={anchorOut}
-                  setTransferMode={setTransferMode}
-                />
-                {legs.map((l, i) => {
-                  if (!l || !l.ground_total) return null;
-                  const Icon = LEG_ICONS[l.mode] || TrainIcon;
-                  const a = stopDetails[i]?.dest?.city;
-                  const b = stopDetails[i + 1]?.dest?.city;
-                  return (
-                    <div className="trip-total-row" key={`leg-${i}`}>
-                      <span className="lbl">
-                        <Icon size={11} /> {a} → {b}
-                        <small>{t('itin.legStats', { km: l.road_km, hours: fmtHours(l.hours) })}</small>
-                      </span>
-                      <span className="val">{eur(l.ground_total)}</span>
-                    </div>
-                  );
-                })}
-                {carRental && (
-                  <div className="trip-total-row">
-                    <span className="lbl"><CarIcon size={11} /> {t('itin.rentalCar')} <small>{carRental.cars > 1 ? t('itin.rentalSubCars', { days: carRental.days, cars: carRental.cars }) : t('itin.rentalSub', { days: carRental.days })}</small></span>
-                    <span className="val">{eur(carRental.eur_total)}</span>
-                  </div>
+
+                <div className="itin-bd-grand">
+                  <span className="itin-bd-grand-lbl">{t('itin.estimatedTotal')}</span>
+                  <span className="itin-bd-grand-val">{eur(grandTotal)}</span>
+                </div>
+                {groupSize > 1 && (
+                  <div className="itin-bd-pp">{t('itin.perPersonLine', { price: eur(grandTotal / groupSize) })}</div>
                 )}
-                {stopDetails.map((s, i) => stayCosts[i] && (
-                  <React.Fragment key={`stay-${i}`}>
-                    <div className="trip-total-row">
-                      <span className="lbl">
-                        <BedIcon size={11} /> {s.dest?.city}
-                        <small>{s.nights === 1 ? t('itin.accomOne', { n: s.nights }) : t('itin.accomMany', { n: s.nights })}</small>
-                      </span>
-                      <span className="val">{eur(stayCosts[i].accomTotal)}</span>
-                    </div>
-                    <div className="trip-total-row">
-                      <span className="lbl">
-                        <ReceiptIcon size={11} /> {s.dest?.city}
-                        <small>{t('itin.onGroundSub')}</small>
-                      </span>
-                      <span className="val">{eur(stayCosts[i].groundTotal)}</span>
-                    </div>
-                  </React.Fragment>
-                ))}
+                <p className="itin-bd-note">{t('itin.estimateNote')}</p>
               </div>
             )}
           </div>

@@ -796,6 +796,51 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
     persistPrefs(plan?.id, savedPrefs);
   };
 
+  // Iconic walks the traveller pinned onto a day ("the walk itself is the
+  // sight"). They aren't POIs with catalogue indices, so they live beside the
+  // assignments in the plan's prefs, keyed stop -> day -> walk names, and
+  // travel with the plan through the same persist/sync rails.
+  const dayWalks = prefs?.dayWalks?.[stopIdx]?.[dayIdx] || [];
+  const toggleWalk = (name) => {
+    const cur = prefs?.dayWalks?.[stopIdx]?.[dayIdx] || [];
+    const next = cur.includes(name) ? cur.filter((w) => w !== name) : [...cur, name];
+    const savedPrefs = {
+      ...(prefs || {}),
+      dayWalks: {
+        ...(prefs?.dayWalks || {}),
+        [stopIdx]: { ...(prefs?.dayWalks?.[stopIdx] || {}), [dayIdx]: next },
+      },
+    };
+    setPrefs(savedPrefs);
+    persistPrefs(plan?.id, savedPrefs);
+  };
+
+  // The pinned walks as plan rows (shown under today's route, whether or not
+  // the day has POI stops yet). Rendered from the walk catalogue so the km
+  // and the note stay with the name.
+  const pinnedWalksBlock = stop && dayWalks.length > 0 ? (
+    <div className="day-plan-walks">
+      <div className="day-scenic-title"><MountainIcon size={11} /> Today's walk</div>
+      {dayWalks.map((name) => {
+        const w = scenicWalksFor(stop.dest?.city || '').find((x) => x.name === name);
+        return (
+          <div key={name} className="day-plan-walk">
+            <span className="day-plan-walk-text">
+              <b>{name}</b>
+              {w && <small>~{w.km} km. {w.note}</small>}
+            </span>
+            <button
+              className="trip-stop-remove"
+              onClick={() => toggleWalk(name)}
+              aria-label="Remove this walk from today"
+              title="Remove"
+            >×</button>
+          </div>
+        );
+      })}
+    </div>
+  ) : null;
+
   // "How long at each stop" answer scales the visit-time estimates shown on
   // the timeline and in the day total.
   const visitFactor = (VISIT_PACES.find((v) => v.key === prefs?.visit) || VISIT_PACES[1]).factor;
@@ -1466,7 +1511,10 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
               <button className="day-edit-cancel" onClick={cancelEditOnMap}>{t('day.cancel')}</button>
             </div>
           )}
-          <div className="section-title">{editingPlanId ? t('day.changePlaces') : t('day.dayPlanner')}</div>
+          {/* Same type treatment as the Saved-trips panel (mono overline +
+              display-serif title), so the two screens read as one family. */}
+          <div className="panel-tag">{t('day.tag')}</div>
+          <h2 className="day-landing-title">{editingPlanId ? t('day.changePlaces') : t('day.dayPlanner')}</h2>
           <p className="day-landing-lead">
             {editingPlanId
               ? t('day.editLead')
@@ -2223,6 +2271,7 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
                 Or build it yourself: tap the pins on the map, or add places
                 below. Carta keeps the walking order optimal as you add.
               </p>
+              {pinnedWalksBlock}
               <Collapsible
                 className="day-nested"
                 title={`Add places${stop.dest?.city ? ` in ${stop.dest.city}` : ''}`}
@@ -2296,6 +2345,8 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
                   {dwellTotal > 0 && ` With time at each place, count on ~${fmtDur(dwellTotal + route.min)} out.`}
                 </p>
               )}
+
+              {pinnedWalksBlock}
 
               {scenic.length > 0 && (
                 <div className="day-scenic">
@@ -2416,18 +2467,31 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
             />
           )}
 
-          {/* Researched iconic walks: the walk itself is the sight. */}
+          {/* Researched iconic walks: the walk itself is the sight. One tap
+              pins a walk onto the selected day, so the most beautiful walk is
+              part of the plan, not just a tip you read and lose. */}
           {stop && (() => {
             const walks = scenicWalksFor(stop.dest?.city || '');
             if (!walks.length) return null;
             return (
               <Collapsible titleIcon={<MountainIcon size={13} />} title="The most beautiful walk here">
-                {walks.map((w) => (
-                  <div key={w.name} className="day-walk">
-                    <b>{w.name}</b>
-                    <small>~{w.km} km. {w.note}</small>
-                  </div>
-                ))}
+                {walks.map((w) => {
+                  const added = dayWalks.includes(w.name);
+                  return (
+                    <div key={w.name} className={`day-walk${added ? ' added' : ''}`}>
+                      <span className="day-walk-text">
+                        <b>{w.name}</b>
+                        <small>~{w.km} km. {w.note}</small>
+                      </span>
+                      <button
+                        className="day-activity-add day-walk-add"
+                        onClick={() => toggleWalk(w.name)}
+                        title={added ? 'Remove from this day' : `Add to day ${dayOffset + dayIdx + 1}`}
+                        aria-pressed={added}
+                      >{added ? '✓' : '+'}</button>
+                    </div>
+                  );
+                })}
               </Collapsible>
             );
           })()}

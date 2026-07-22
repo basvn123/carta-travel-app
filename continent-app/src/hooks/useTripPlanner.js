@@ -1,9 +1,11 @@
 import { useState, useMemo, useCallback, useEffect } from 'react';
 import {
   tripDaysBetween, accommodationPerPerson, groundSpendPerPerson, DEFAULT_LIFESTYLE, haversineKm,
+  drivingEstimate,
 } from '../lib/runtime_pricing.js';
 import { combineTripLegs, suggestNextStops } from '../lib/trip_planner_pricing.js';
-import { legTransportOptions, rentalEstimate, airportTransferOptions, transferModesFromKm } from '../lib/transport.js';
+import { legTransportOptions, rentalEstimate, airportTransferOptions, transferModesFromKm, preferredPublicMode } from '../lib/transport.js';
+import { originHome } from '../lib/origins.js';
 import { cheapestStartDates, reorderSavings } from '../lib/tripCostOptimizer.js';
 import { addDays } from '../lib/dates.js';
 import { round2 } from '../lib/math.js';
@@ -38,8 +40,10 @@ export function useTripPlanner(data, countryInsights = null) {
   const [stops, setStops] = useState(draft?.stops || []); // [{ destinationId, nights, activities: string[] }]
   const [groupSize, setGroupSize] = useState(draft?.groupSize || 2);
   // How the traveller wants to get between stops: 'auto' lets Carta pick the
-  // best mode per leg, 'car' assumes one rental for the whole trip, 'public'
-  // sticks to trains/buses. Individual legs can still be overridden.
+  // best mode per leg, 'car' assumes one rental for the whole trip, 'owncar'
+  // means they DRIVE from home in their own car (no flight, no rental - fuel
+  // and tolls only), 'public' sticks to trains/buses. Individual legs can
+  // still be overridden.
   const [transportPref, setTransportPref] = useState(draft?.transportPref || 'auto');
   const [legModes, setLegModes] = useState(draft?.legModes || {}); // { [legIndex]: 'train'|'bus'|'car' }
   // How the traveller gets from the plane to where they sleep (both the fly-in
@@ -247,6 +251,10 @@ export function useTripPlanner(data, countryInsights = null) {
   // Stops with no fares of their own (ground-only gems) price via the wizard's
   // fly-in anchor when one is set.
   const flight = useMemo(() => {
+    // Driving there in their own car: there is no flight to price at all.
+    // `driving` marks it so the overview/receipt render drive legs instead of
+    // ever showing a Ryanair fare for a trip nobody flies.
+    if (transportPref === 'owncar') return { driving: true };
     // Booked with another airline: show what the traveller told us, never a
     // Ryanair fare. `own` marks it so every surface (overview, receipt, export)
     // renders the airline + their entered cost instead of the Ryanair rows.
@@ -283,35 +291,33 @@ export function useTripPlanner(data, countryInsights = null) {
     }
     const inDest = hasRoutes(first.dest) ? first.dest : (anchorDest || first.dest);
     return withIds(combineTripLegs(inDest, first.arriveDate, outDest, last.departDate, groupSize, baggage, anchorOrigin), inDest);
-  }, [stopDetails, groupSize, anchorId, anchorOrigin, returnAnchorId, destinations, baggage, ownFlight]);
+  }, [stopDetails, groupSize, anchorId, anchorOrigin, returnAnchorId, destinations, baggage, ownFlight, transportPref]);
 
   // Priced transport options (train / bus / car with booking links) between
   // each consecutive pair of stops, resolved to a chosen mode: an explicit
   // per-leg override wins, then the trip-wide preference, then Carta's pick.
+  // Whether the trip actually has a car on the ground (a rental, or the
+  // traveller's own car driven from home) - it decides both the leg
+  // recommendation (no phantom cars) and the rental line.
+  const tripHasCar = transportPref === 'car' || transportPref === 'owncar';
+
   const legs = useMemo(() => {
     const out = [];
     for (let i = 0; i < stopDetails.length - 1; i++) {
       const a = stopDetails[i].dest;
       const b = stopDetails[i + 1].dest;
-      const opts = a && b ? legTransportOptions(a, b, groupSize, { carModel, countryInsights }) : null;
+      const opts = a && b ? legTransportOptions(a, b, groupSize, { carModel, countryInsights, hasCar: tripHasCar }) : null;
       if (!opts || opts.no_road || !opts.recommended) {
         out.push(opts);
         continue;
       }
       let mode = legModes[i] || null;
       if (!mode) {
-        if (transportPref === 'car') mode = 'car';
+        if (tripHasCar) mode = 'car';
         else if (transportPref === 'public') {
-          // Train vs bus: with the estimate model's rates the train is never
-          // outright cheaper (raw eur_pp compare was a dead branch that always
-          // said bus). Choose by what an hour saved costs instead: the train
-          // wins when its price premium is under ~€12 per hour it saves,           // short hops go by rail, long budget hauls stay on the bus.
-          const train = opts.modes.train;
-          const bus = opts.modes.bus;
-          const hoursSaved = train && bus ? bus.hours - train.hours : 0;
-          mode = train && bus && hoursSaved > 0
-            && (train.eur_pp - bus.eur_pp) / hoursSaved <= 12
-            ? 'train' : (bus ? 'bus' : 'train');
+          // Train vs bus: the same country-profile-aware pick the leg engine
+          // recommends (rail-quality bonus and all), restricted to public modes.
+          mode = preferredPublicMode(opts) || 'bus';
         } else mode = opts.recommended;
       }
       const chosen = opts.modes[mode] || opts.modes[opts.recommended];
@@ -324,7 +330,7 @@ export function useTripPlanner(data, countryInsights = null) {
       });
     }
     return out;
-  }, [stopDetails, groupSize, carModel, countryInsights, transportPref, legModes]);
+  }, [stopDetails, groupSize, carModel, countryInsights, transportPref, tripHasCar, legModes]);
 
   const setLegMode = useCallback((index, mode) => {
     setLegModes((prev) => ({ ...prev, [index]: mode }));
@@ -421,6 +427,40 @@ export function useTripPlanner(data, countryInsights = null) {
     };
   }, [flight, stopDetails, groupSize, carModel, transportPref, transferMode]);
 
+  // Own-car trips start and end at the traveller's door, not an airport: the
+  // drive out (home -> first stop) and the drive home (last stop -> home) are
+  // real, priced legs. Halves of drivingEstimate's round trip, so they reuse
+  // the toll layer's real per-corridor rates (vignettes, peage) where mapped.
+  // The Map tab's max_drive_km cap ("is driving a realistic alternative to a
+  // flight?") is lifted: the traveller already chose to drive.
+  const driveLegs = useMemo(() => {
+    if (transportPref !== 'owncar' || !stopDetails.length) return null;
+    const home = originHome(data, data?.meta?.selected_origin) || data?.meta?.home || null;
+    if (!home) return null;
+    const model = { ...(carModel || {}), max_drive_km: 4000 };
+    const half = (dest) => {
+      if (!dest) return null;
+      const rt = drivingEstimate(dest, home, { group_size: groupSize }, model);
+      if (!rt) return null;
+      return {
+        road_km: rt.road_km,
+        hours: rt.drive_hours_one_way,
+        cars: rt.cars,
+        fuel_eur: round2(rt.fuel_total / 2),
+        toll_eur: round2(rt.toll_total / 2),
+        toll_notes: rt.toll_notes,
+        ground_total: round2(rt.total / 2),
+        ground_eur_per_person: round2(rt.per_person / 2),
+        mode: 'car',
+        estimated: true,
+      };
+    };
+    return {
+      out: half(stopDetails[0].dest),
+      home: half(stopDetails[stopDetails.length - 1].dest),
+    };
+  }, [transportPref, stopDetails, data, carModel, groupSize]);
+
   // One rental car for the whole trip (only priced into the total when the
   // traveller chose 'car'; per-leg car choices only pay fuel + tolls since a
   // trip mixing modes usually means point rentals or rideshares).
@@ -455,21 +495,26 @@ export function useTripPlanner(data, countryInsights = null) {
       const transfer = flightTransfer ? flightTransfer.ground_total : (flight.ground_total || 0);
       total += flight.fare_total + transfer + (flight.bag_total || 0);
     } else if (flight?.own) total += flight.cost_total || 0;
+    if (driveLegs?.out?.ground_total) total += driveLegs.out.ground_total;
+    if (driveLegs?.home?.ground_total) total += driveLegs.home.ground_total;
     legs.forEach((l) => { if (l && l.ground_total) total += l.ground_total; });
     if (anchorLegs.in?.ground_total) total += anchorLegs.in.ground_total;
     if (anchorLegs.out?.ground_total) total += anchorLegs.out.ground_total;
     stayCosts.forEach((s) => { if (s) total += s.total; });
     if (carRental) total += carRental.eur_total;
     return round2(total);
-  }, [flight, flightTransfer, legs, anchorLegs, stayCosts, carRental]);
+  }, [flight, flightTransfer, driveLegs, legs, anchorLegs, stayCosts, carRental]);
 
   // "Take this trip cheaper", the same itinerary on cheaper flight dates
   // (real stored fares only), and a cheaper stop ORDER when reordering
   // meaningfully shortens the overland route.
   const cheaperDates = useMemo(() => {
-    if (stops.length === 0 || plannedNights <= 0) return { candidates: [], current_total: null };
+    // No flights on an own-car trip, so there are no cheaper fare dates to find.
+    if (stops.length === 0 || plannedNights <= 0 || transportPref === 'owncar') {
+      return { candidates: [], current_total: null };
+    }
     return cheapestStartDates(stops, destinations, plannedNights, groupSize, tripStart);
-  }, [stops, destinations, plannedNights, groupSize, tripStart]);
+  }, [stops, destinations, plannedNights, groupSize, tripStart, transportPref]);
 
   const cheaperOrder = useMemo(
     () => reorderSavings(stops, destinations, groupSize),
@@ -621,7 +666,7 @@ export function useTripPlanner(data, countryInsights = null) {
     cheaperDates, cheaperOrder, applyStartDate, applyCheaperOrder,
     addStop, removeStop, setStopNights, setStopActivities, moveStop, reorderStop,
     optimizeRoute, clearPlan, loadFromWizard,
-    nextStopSuggestions, flight, legs, anchorLegs, flightTransfer, stayCosts, grandTotal, dayPlan,
+    nextStopSuggestions, flight, legs, anchorLegs, flightTransfer, driveLegs, stayCosts, grandTotal, dayPlan,
     baggage, setBaggage,
     ownFlight, setOwnFlight,
     planned, setPlanned,

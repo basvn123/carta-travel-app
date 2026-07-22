@@ -121,7 +121,7 @@ function sanitizeShared(d) {
     legModes,
     ownFlight,
     groupSize: clampInt(d.groupSize, 1, 20, 2),
-    transportPref: oneOf(d.transportPref, ['auto', 'car', 'public'], 'auto'),
+    transportPref: oneOf(d.transportPref, ['auto', 'car', 'owncar', 'public'], 'auto'),
     pace: oneOf(d.pace, ['relaxed', 'balanced', 'packed'], 'balanced'),
     baggage: oneOf(d.baggage, ['cabin', 'priority', 'checked'], 'cabin'),
     anchorId: strOrNull(d.anchorId),

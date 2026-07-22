@@ -555,10 +555,12 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
               groupSize={tp.groupSize}
               flight={tp.flight}
               legs={tp.legs}
+              setLegMode={tp.setLegMode}
               anchorLegs={tp.anchorLegs}
               flightTransfer={tp.flightTransfer}
               transferMode={tp.transferMode}
               setTransferMode={tp.setTransferMode}
+              driveLegs={tp.driveLegs}
               stayCosts={tp.stayCosts}
               carRental={tp.carRental}
               activeStopIndex={selectedStop}
@@ -701,7 +703,8 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
                     {[
                       ['auto', SparkIcon, 'trip.cartaPicks'],
                       ['public', TrainIcon, 'trip.trainBus'],
-                      ['car', CarIcon, 'trip.modeCar'],
+                      ['car', CarIcon, 'trip.rentalCarOpt'],
+                      ['owncar', CarIcon, 'trip.ownCarOpt'],
                     ].map(([k, I, lbl]) => (
                       <button
                         key={k}
@@ -714,6 +717,9 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
                     <p className="trip-note">
                       {t('trip.carRentalNote', { total: eur(tp.carRental.eur_total), days: tp.carRental.days, perDay: eur(tp.carRental.eur_per_day), group: tp.groupSize })}
                     </p>
+                  )}
+                  {tp.transportPref === 'owncar' && (
+                    <p className="trip-note">{t('trip.ownCarNote')}</p>
                   )}
                 </div>
               )}
@@ -834,6 +840,27 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
                         />
                       </div>
                     </div>
+                  ) : tp.flight?.driving ? (
+                    <>
+                      {tp.driveLegs?.out && (
+                        <div className="trip-total-row">
+                          <span className="lbl">
+                            <CarIcon size={11} /> {t('trip.driveOut', { city: tp.stopDetails[0]?.dest?.city || '' })}
+                            <small>{t('trip.driveSub', { km: tp.driveLegs.out.road_km, hours: fmtHours(tp.driveLegs.out.hours) })}</small>
+                          </span>
+                          <span className="val">{eur(tp.driveLegs.out.ground_total)}</span>
+                        </div>
+                      )}
+                      {tp.driveLegs?.home && (
+                        <div className="trip-total-row">
+                          <span className="lbl">
+                            <CarIcon size={11} /> {t('trip.driveHome', { city: tp.stopDetails[tp.stopDetails.length - 1]?.dest?.city || '' })}
+                            <small>{t('trip.driveSub', { km: tp.driveLegs.home.road_km, hours: fmtHours(tp.driveLegs.home.hours) })}</small>
+                          </span>
+                          <span className="val">{eur(tp.driveLegs.home.ground_total)}</span>
+                        </div>
+                      )}
+                    </>
                   ) : tp.flight ? (
                     <p className="trip-note">{flightReasonLabel(tp.flight.reason)}</p>
                   ) : null}
