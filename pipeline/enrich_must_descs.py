@@ -20,6 +20,7 @@ Politeness: same UA/backoff as enrich_activities.py, <= 8 workers.
 Resumable: app_data/must_desc_cache.json (keyed destId||name), incremental.
 
 Run:  python enrich_must_descs.py          # fetch (resumes) then apply
+      python enrich_must_descs.py broad    # widen to every wiki/rate-3/heritage POI
       python enrich_must_descs.py apply    # only write cache -> app_data.json
       python enrich_must_descs.py stats    # coverage report, no network
 ASCII-clean per project convention.
@@ -49,13 +50,22 @@ UA = ("CartaTravelApp-enrich/1.0 "
       "(https://github.com/basvn123; contact: bas.vannieuwenhuyse123@gmail.com)")
 HEADERS = {"User-Agent": UA, "Accept": "application/json"}
 
-DESC_MAX = 340
+DESC_MAX = 560
 THUMB_PX = 640
 MAX_WORKERS = 8
 WIKI_MATCH_KM = 30
+BROAD_SEARCH_KM = 12
 MAX_POI_KM_FROM_CITY = 20
 FAR_POI_MAX_KM = 90
 SAVE_EVERY = 100
+
+# Broad mode ("python enrich_must_descs.py broad"): instead of only the
+# surfaced must/far tier, fetch a rich card for EVERY item that plausibly has
+# a Wikipedia article: a stored wiki link, rate 3, or a heritage flag. The
+# name-search fallback gets a tighter geo check (BROAD_SEARCH_KM, coords
+# required) because these items lack a confirmed wiki URL.
+BROAD = False
+STALE_DESC_LEN = 320   # cached cards truncated at the old 340 cap get refetched in broad mode
 
 _cache_lock = threading.Lock()
 _dirty = 0
@@ -205,14 +215,16 @@ _SENT_SPLIT = re.compile(_ABBR + r"(?<=[.!?])\s+(?=[A-Z0-9À-ſ])")
 
 
 def two_sentences(extract):
-    """First 1-2 whole sentences of the intro, capped at DESC_MAX chars."""
+    """First whole sentences of the intro (up to 3), capped at DESC_MAX chars."""
     text = re.sub(r"\s+", " ", (extract or "").strip())
     if not text:
         return ""
     parts = _SENT_SPLIT.split(text)
     out = parts[0].strip()
-    if len(parts) > 1 and len(out) + 1 + len(parts[1]) <= DESC_MAX:
-        out = f"{out} {parts[1].strip()}"
+    for nxt in parts[1:3]:
+        if len(out) + 1 + len(nxt) > DESC_MAX:
+            break
+        out = f"{out} {nxt.strip()}"
     if len(out) > DESC_MAX:
         cut = out[:DESC_MAX]
         cut = cut[: cut.rfind(" ")] if " " in cut else cut
@@ -250,9 +262,15 @@ def resolve(it, dest):
             if cand:
                 co = cand.get("coordinates") or {}
                 plat, plon = it.get("lat"), it.get("lon")
-                ok = True
-                if co and plat is not None:
-                    ok = haversine_km(co.get("lat"), co.get("lon"), plat, plon) <= WIKI_MATCH_KM
+                if BROAD:
+                    # No confirmed wiki URL: only trust the search hit when the
+                    # article itself is geotagged close to the POI.
+                    ok = bool(co) and plat is not None and \
+                        haversine_km(co.get("lat"), co.get("lon"), plat, plon) <= BROAD_SEARCH_KM
+                else:
+                    ok = True
+                    if co and plat is not None:
+                        ok = haversine_km(co.get("lat"), co.get("lon"), plat, plon) <= WIKI_MATCH_KM
                 if ok:
                     summary = cand
     if not summary:
@@ -268,20 +286,42 @@ def resolve(it, dest):
 # ---------------------------------------------------------------------------
 # main phases
 # ---------------------------------------------------------------------------
+def broad_pois(dest):
+    """Every item that plausibly has an article: wiki link, rate 3, heritage."""
+    items = (dest.get("activities") or {}).get("items_full") or []
+    return [it for it in items
+            if it.get("wiki") or (it.get("rate") or 0) >= 3 or it.get("heritage")]
+
+
 def collect_targets(data):
     targets = []
+    pick = broad_pois if BROAD else surfaced_pois
     for dest_id, dest in data["destinations"].items():
-        for it in surfaced_pois(dest):
+        for it in pick(dest):
             targets.append((dest_id, dest, it))
     return targets
+
+
+def _needs_fetch(cache, key):
+    card = cache.get(key)
+    if card is None:
+        return True
+    if not BROAD:
+        return False
+    # Broad mode also refreshes old-cap truncations and retries misses once
+    # (new wiki links from later harvests can turn a miss into a hit).
+    d = card.get("desc") or ""
+    if len(d) >= STALE_DESC_LEN:
+        return True
+    return bool(card.get("_miss"))
 
 
 def fetch_all(data, cache):
     global _dirty
     targets = collect_targets(data)
     todo = [(d_id, dest, it) for d_id, dest, it in targets
-            if f"{d_id}||{it.get('name')}" not in cache]
-    print(f"surfaced POIs: {len(targets)}, to fetch: {len(todo)}")
+            if _needs_fetch(cache, f"{d_id}||{it.get('name')}")]
+    print(f"target POIs: {len(targets)}, to fetch: {len(todo)}")
 
     def work(entry):
         d_id, dest, it = entry
@@ -312,13 +352,11 @@ def apply_cache(data, cache):
     upgraded_desc = filled_img = filled_wiki = 0
     for dest_id, dest in data["destinations"].items():
         items = (dest.get("activities") or {}).get("items_full") or []
-        by_name = {it.get("name"): it for it in items}
-        for it in surfaced_pois(dest):
-            card = cache.get(f"{dest_id}||{it.get('name')}")
+        # Apply straight over the items: whatever mode fetched a card, any item
+        # with a cached card by (dest, name) gets it.
+        for target in items:
+            card = cache.get(f"{dest_id}||{target.get('name')}")
             if not card or card.get("_miss"):
-                continue
-            target = by_name.get(it.get("name"))
-            if target is None:
                 continue
             new_desc = card.get("desc")
             # Only replace when the new text is meaningfully richer.
@@ -353,7 +391,10 @@ def stats(data):
 
 
 def main():
+    global BROAD
     mode = sys.argv[1] if len(sys.argv) > 1 else "run"
+    if mode == "broad":
+        BROAD = True
     data = json.loads(DATA.read_text(encoding="utf-8"))
     if mode == "stats":
         stats(data)
