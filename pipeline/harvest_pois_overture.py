@@ -48,6 +48,8 @@ S3 = f"s3://overturemaps-us-west-2/release/{RELEASE}/theme=places/type=place/*.p
 EU_BBOX = (-25.0, 45.0, 34.0, 72.0)      # lon_min, lon_max, lat_min, lat_max
 MIN_CONF = 0.5
 RADIUS_KM = 5.0
+RADIUS_KM_BIG = 8.0        # big cities: icons live outside the 5 km core (Brussels' Atomium is at 5.4 km)
+BIG_CITY_POP = 200_000     # geonames population gate for the wider radius
 CAP_MERGED = 150
 
 # Overture primary-category -> (display kind, base rate 0..2, is "get active").
@@ -166,7 +168,9 @@ def assign(dry_run):
             continue
         dx = np.radians(dlon) * np.cos(lat0) * 6371.0
         dy = np.radians(dlat) * 6371.0
-        idx = tree.query_ball_point([dx, dy], RADIUS_KM)
+        pop = ((d.get("geonames") or {}).get("population") or 0)
+        idx = tree.query_ball_point(
+            [dx, dy], RADIUS_KM_BIG if pop >= BIG_CITY_POP else RADIUS_KM)
         if not idx:
             continue
         a = d.setdefault("activities", {}) or {}

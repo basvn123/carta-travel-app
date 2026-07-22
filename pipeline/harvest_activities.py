@@ -94,6 +94,8 @@ TOP_N_ACTIVE = 12          # extra "get active" POIs appended to items_full
 MIN_WIKIVOYAGE_SEE = 4     # below this, fall back to city-centre geosearch
 GEO_RADIUS_M = 5000
 OTM_RADIUS_M = 9000
+OTM_PAGE = 500             # radius endpoint page size (its maximum)
+OTM_MAX_PAGES = 4          # candidate pool cap: the 2000 nearest matches
 DELAY_S = 1.1              # Wikimedia rate-limits hard; stay well under ~1 req/s
 OTM_DELAY_S = 0.15         # OpenTripMap free tier allows ~10 req/s
 WIKI_MATCH_KM = 30         # max POI<->article distance for name-match enrichment
@@ -105,6 +107,17 @@ HEADERS = {"User-Agent": "CartaTravelApp/1.0 (portfolio project)",
 OTM_BASE = "https://api.opentripmap.com/0.1/en/places/radius"
 WIKI_API = "https://en.wikipedia.org/w/api.php"
 VOY_API = "https://en.wikivoyage.org/w/api.php"
+# Wikidata SPARQL endpoints, tried in order. QLever first: WDQS aggressively
+# rate-limits anonymous clients during outages (seen 2026-07-22: 1 req/min),
+# while QLever serves the same dump fast. QLever needs explicit PREFIXes.
+SPARQL_ENDPOINTS = [
+    "https://qlever.dev/api/wikidata",
+    "https://query.wikidata.org/sparql",
+]
+SPARQL_PREFIXES = ("PREFIX wd: <http://www.wikidata.org/entity/> "
+                   "PREFIX wdt: <http://www.wikidata.org/prop/direct/> "
+                   "PREFIX wikibase: <http://wikiba.se/ontology#> ")
+SITELINK_CACHE = ROOT / "cache" / "wikidata_sitelinks.json"
 
 # A friendly single-word category from any free text (name/kinds/description).
 # Active/experience needles come first so e.g. "dive_centers" doesn't fall
@@ -267,24 +280,106 @@ def _rate_parts(r):
 ACTIVE_DROP_KINDS = ("stadiums", "fitness", "gyms")
 
 
-def otm_radius(lat, lon, key, kinds, rate_min, limit):
-    url = OTM_BASE + "?" + urllib.parse.urlencode({
+def otm_radius(lat, lon, key, kinds, rate_min, limit, offset=0):
+    params = {
         "radius": OTM_RADIUS_M, "lon": lon, "lat": lat,
         "kinds": kinds, "rate": rate_min, "format": "json",
         "limit": limit, "apikey": key,
-    })
+    }
+    if offset:
+        params["offset"] = offset
+    url = OTM_BASE + "?" + urllib.parse.urlencode(params)
     data = get_json(url)
     return data if isinstance(data, list) else None
 
 
-def _otm_pick(data, cap, seen, extra=None, default_kind="Sight", drop_kinds=()):
+def otm_radius_paged(lat, lon, key, kinds, rate_min):
+    """The full candidate pool, not just the nearest page. The radius endpoint
+    orders by distance, so in a dense city a single limit-N request is spent
+    entirely on the centre and never reaches icons a few km out (Brussels'
+    Atomium at 5.4 km sat behind 500+ nearer POIs and was never fetched).
+    Page with `offset` until a short page, capped at OTM_MAX_PAGES."""
+    out = []
+    for page in range(OTM_MAX_PAGES):
+        batch = otm_radius(lat, lon, key, kinds, rate_min, OTM_PAGE,
+                           offset=page * OTM_PAGE)
+        if batch is None:
+            return out if out else None
+        out += batch
+        if len(batch) < OTM_PAGE:
+            break
+        time.sleep(OTM_DELAY_S)
+    return out
+
+
+_sitelinks = None
+
+
+def _sitelink_cache():
+    global _sitelinks
+    if _sitelinks is None:
+        _sitelinks = load_json(SITELINK_CACHE) if SITELINK_CACHE.exists() else {}
+    return _sitelinks
+
+
+def sitelink_counts(qids):
+    """Wikidata sitelink count per QID - the pipeline's usual pageview-free
+    fame proxy. OTM's importance rate cannot tell a world icon from a
+    heritage-listed facade: central Brussels alone has 400+ POIs at the top
+    heritage rate (3h), which used to crowd the Atomium (plain rate 3) out of
+    the pool. Sitelink counts break that tie: an icon has dozens of language
+    editions, a guild house a handful. One WDQS query per 300 QIDs returns
+    just the count triple (wikibase:sitelinks) - a few KB - instead of
+    wbgetentities' multi-MB full sitelink lists, and folds in the human
+    check: a statue or grave often carries the QID of the PERSON it
+    commemorates ('Jacques-Louis David'...), inheriting the person's fame and
+    outranking Grand Place, so P31=Q5 entities count as 0. Cached permanently
+    in cache/wikidata_sitelinks.json (QID -> count). A failed call caches
+    nothing: those QIDs rank as 0 this run and are re-tried next time."""
+    cache = _sitelink_cache()
+    todo = sorted({q for q in qids if q and q not in cache})
+    for i in range(0, len(todo), 300):
+        chunk = todo[i:i + 300]
+        query = (SPARQL_PREFIXES +
+                 "SELECT ?q ?n ?human WHERE { VALUES ?q { " +
+                 " ".join("wd:" + x for x in chunk) +
+                 " } ?q wikibase:sitelinks ?n . "
+                 "BIND(EXISTS { ?q wdt:P31 wd:Q5 } AS ?human) }")
+        d = None
+        for endpoint in SPARQL_ENDPOINTS:
+            d = get_json(endpoint + "?" + urllib.parse.urlencode(
+                {"format": "json", "query": query}),
+                base_headers={**HEADERS,
+                              "Accept": "application/sparql-results+json"})
+            if d is not None and d.get("results") is not None:
+                break
+            d = None
+        if d is None:
+            continue
+        for b in (d.get("results", {}).get("bindings", []) or []):
+            qid = b["q"]["value"].rsplit("/", 1)[-1]
+            human = (b.get("human") or {}).get("value") == "true"
+            cache[qid] = 0 if human else int(b["n"]["value"])
+        for q in chunk:
+            cache.setdefault(q, 0)  # deleted/redirected entity: no fame
+        SITELINK_CACHE.parent.mkdir(exist_ok=True)
+        SITELINK_CACHE.write_text(json.dumps(cache), encoding="utf-8")
+        time.sleep(DELAY_S)
+    return {q: cache.get(q, 0) for q in qids if q}
+
+
+def _otm_pick(data, cap, seen, extra=None, default_kind="Sight", drop_kinds=(),
+              links=None):
     """Ranked, de-duplicated {name, kind, lat, lon, rate, heritage?, ...} list.
-    Order: popularity base desc, heritage flag as tie-break (3h > 3 > 2h > 2),
-    then the API's own order (distance from the centre - a sane final tie-break
-    for a walking day)."""
+    Order: popularity base desc, Wikidata sitelink fame desc (keeps world
+    icons ahead of the sea of same-rate heritage facades in dense cities),
+    heritage flag as tie-break (3h > 3 > 2h > 2), then the API's own order
+    (distance from the centre - a sane final tie-break for a walking day)."""
+    links = links or {}
+
     def sort_key(p):
         base, her = _rate_parts(p)
-        return (base, her)
+        return (base, links.get(p.get("wikidata"), 0), her)
     out = []
     for p in sorted(data or [], key=sort_key, reverse=True):
         name = (p.get("name") or "").strip()
@@ -315,15 +410,20 @@ def otm_items(lat, lon, key):
     """Sights (interesting_places, rate>=2) + a second, lower-bar query for
     "get active" POIs (sport / amusements / natural). Both keep the importance
     rate - it drives the app's must-see gradation."""
-    sights_raw = otm_radius(lat, lon, key, "interesting_places", "2", 60)
+    sights_raw = otm_radius_paged(lat, lon, key, "interesting_places", "2")
     if sights_raw is None:
         return None
+    # Fame lookup for the whole top-rate band: in dense cities the TOP_N_FULL
+    # cut happens inside base rate 3, so that band is ranked by sitelinks.
+    top_qids = [p.get("wikidata") for p in sights_raw
+                if p.get("wikidata") and _rate_parts(p)[0] >= 3]
+    links = sitelink_counts(top_qids)
     seen = set()
-    full_items = _otm_pick(sights_raw, TOP_N_FULL, seen)
+    full_items = _otm_pick(sights_raw, TOP_N_FULL, seen, links=links)
     if not full_items:
         return None
     time.sleep(OTM_DELAY_S)
-    active_raw = otm_radius(lat, lon, key, ACTIVE_KINDS, "1", 40)
+    active_raw = otm_radius(lat, lon, key, ACTIVE_KINDS, "1", OTM_PAGE)
     full_items += _otm_pick(active_raw, TOP_N_ACTIVE, seen,
                             extra={"active": True}, default_kind="Activity",
                             drop_kinds=ACTIVE_DROP_KINDS)
