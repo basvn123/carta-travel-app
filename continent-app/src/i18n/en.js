@@ -138,13 +138,6 @@ export const en = {
   'results.addShortlist': 'Add to shortlist',
 
   // Sharing & export (trip itinerary + day planner)
-  // Airport transfer (how you get from the plane to your stay)
-  'transfer.pickTitle': 'Getting from the airport to your stay',
-  'transfer.public': 'Public transport',
-  'transfer.taxi': 'Taxi',
-  'transfer.rental': 'Rental car',
-  'transfer.cartaPick': "Carta's pick",
-
   'export.openInGmaps': 'Open in Google Maps',
   'export.openRoute': 'Open the route in Google Maps',
   'export.exportAndShare': 'Export & share',
@@ -335,6 +328,9 @@ export const en = {
   'itin.byTrain': 'by train',
   'itin.byBus': 'by bus',
   'itin.byCar': 'by car',
+  'itin.byPublic': 'by public transport',
+  'itin.byTaxi': 'by taxi',
+  'itin.byRental': 'by rental car',
   'itin.unknown': 'Unknown',
   'itin.nightOne': 'night',
   'itin.nightMany': 'nights',

@@ -34,6 +34,15 @@ function fmtFlightWhen(iso, time) {
 
 const LEG_ICONS = { train: TrainIcon, bus: BusIcon, car: CarIcon, public: BusIcon, taxi: CarIcon, rental: CarIcon };
 
+// "~1 h 50 min by X" wording per leg mode. Airport transfers use the honest
+// public/taxi/rental trio (we know a transfer exists, not which vehicle), so
+// they must never be labelled "by train" - the old fall-through did exactly
+// that for every transfer, taxis included.
+const BY_MODE_KEY = {
+  train: 'itin.byTrain', bus: 'itin.byBus', car: 'itin.byCar',
+  public: 'itin.byPublic', taxi: 'itin.byTaxi', rental: 'itin.byRental',
+};
+
 // Airport-transfer modes: how you get from the plane to where you sleep.
 const TRANSFER_META = {
   public: { Icon: BusIcon, labelKey: 'transfer.public' },
@@ -55,7 +64,15 @@ export function TransferModePicker({ flightTransfer, anchorIn, anchorOut, setTra
   if (modes.length < 2) return null;
   const totals = {};
   for (const m of modes) totals[m] = sources.reduce((sum, s) => sum + (s.modes[m]?.eur_total || 0), 0);
-  const active = flightTransfer?.mode || anchorIn?.mode || anchorOut?.mode;
+  // This picker sets EVERY transfer at once, so it only highlights a mode when
+  // all of them (both directions) currently agree; after a per-leg override in
+  // the route view the directions diverge and nothing is highlighted here.
+  const inUse = new Set([
+    flightTransfer?.mode_in || flightTransfer?.mode,
+    flightTransfer?.mode_out || flightTransfer?.mode,
+    anchorIn?.mode, anchorOut?.mode,
+  ].filter(Boolean));
+  const active = inUse.size === 1 ? inUse.values().next().value : null;
   const recommended = flightTransfer?.recommended || anchorIn?.recommended || anchorOut?.recommended;
   return (
     <div className="transfer-picker">
@@ -77,6 +94,58 @@ export function TransferModePicker({ flightTransfer, anchorIn, anchorOut, setTra
           );
         })}
       </div>
+    </div>
+  );
+}
+
+/** An airport-transfer row in the route view (fly-in airport city to the first
+ *  stay, or the last stay back to the fly-home airport). Tappable like the
+ *  inter-stop legs: it opens the same public / taxi / rental comparison the
+ *  receipt's picker offers, so the mode is a visible choice right where the
+ *  journey is shown, not an assumption. */
+function AnchorTransferLeg({ leg, from, to, onMode }) {
+  const { t } = useI18n();
+  const [open, setOpen] = useState(false);
+  if (!leg) return null;
+  const Icon = LEG_ICONS[leg.mode] || BusIcon;
+  const canPick = Boolean(onMode && leg.modes && Object.keys(leg.modes).length > 1);
+  return (
+    <div className="itin-transfer">
+      <button
+        type="button"
+        className="itin-flight-row itin-transfer-main"
+        onClick={() => canPick && setOpen(!open)}
+        aria-expanded={canPick ? open : undefined}
+        disabled={!canPick}
+        title={canPick ? t('itin.legChangeTitle') : undefined}
+      >
+        <Icon size={12} />
+        <span>{t('itin.then')} <b>{from} → {to}</b></span>
+        <small>~{fmtHours(leg.hours)} {t(BY_MODE_KEY[leg.mode] || 'itin.byPublic')}</small>
+        {canPick && <span className="itin-leg-change">{open ? t('itin.legClose') : t('itin.legChange')}</span>}
+      </button>
+      {open && (
+        <div className="itin-leg-modes itin-transfer-modes">
+          {Object.entries(leg.modes).map(([m, o]) => {
+            const meta = TRANSFER_META[m];
+            const MIcon = meta?.Icon || BusIcon;
+            return (
+              <button
+                key={m}
+                type="button"
+                className={`trip-leg-mode itin-leg-mode ${leg.mode === m ? 'on' : ''}`}
+                onClick={() => onMode(m)}
+                aria-pressed={leg.mode === m}
+                title={leg.recommended === m ? t('transfer.cartaPick') : undefined}
+              >
+                <span><MIcon size={12} /> {t(meta?.labelKey || m)}{leg.recommended === m && <SparkIcon size={9} />}</span>
+                <b>{eur(o.eur_total)}</b>
+                <small>~{fmtHours(o.hours)}</small>
+              </button>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }
@@ -293,8 +362,9 @@ export function TripItinerary({
   // transfer with its own (falling back to the shared anchor for older data).
   const anchorInCity = anchorLegs?.inCity || anchorLegs?.anchor?.city;
   const anchorOutCity = anchorLegs?.outCity || anchorLegs?.anchor?.city;
-  const AnchorInIcon = anchorIn ? (LEG_ICONS[anchorIn.mode] || TrainIcon) : null;
-  const AnchorOutIcon = anchorOut ? (LEG_ICONS[anchorOut.mode] || TrainIcon) : null;
+  // Receipt-row icons for the transfers (the route-view rows carry their own).
+  const AnchorInIcon = anchorIn ? (LEG_ICONS[anchorIn.mode] || BusIcon) : null;
+  const AnchorOutIcon = anchorOut ? (LEG_ICONS[anchorOut.mode] || BusIcon) : null;
 
   const pickDay = (day) => {
     setTab(day.dayNum);
@@ -363,11 +433,12 @@ export function TripItinerary({
             </div>
           )}
           {anchorIn && (
-            <div className="itin-flight-row">
-              <AnchorInIcon size={12} />
-              <span>{t('itin.then')} <b>{anchorInCity} → {stopDetails[0]?.dest?.city}</b></span>
-              <small>~{fmtHours(anchorIn.hours)} {t(anchorIn.mode === 'car' ? 'itin.byCar' : anchorIn.mode === 'bus' ? 'itin.byBus' : 'itin.byTrain')}</small>
-            </div>
+            <AnchorTransferLeg
+              leg={anchorIn}
+              from={anchorInCity}
+              to={stopDetails[0]?.dest?.city}
+              onMode={setTransferMode ? (m) => setTransferMode(m, 'in') : null}
+            />
           )}
           {flight?.driving && (
             <ItinDriveRow leg={driveLegs?.out} labelKey="trip.driveOut" city={stopDetails[0]?.dest?.city || ''} from={driveLegs?.from} />
@@ -404,11 +475,12 @@ export function TripItinerary({
           )}
 
           {anchorOut && (
-            <div className="itin-flight-row">
-              <AnchorOutIcon size={12} />
-              <span>{t('itin.then')} <b>{stopDetails[stopDetails.length - 1]?.dest?.city} → {anchorOutCity}</b></span>
-              <small>~{fmtHours(anchorOut.hours)} {t(anchorOut.mode === 'car' ? 'itin.byCar' : anchorOut.mode === 'bus' ? 'itin.byBus' : 'itin.byTrain')}</small>
-            </div>
+            <AnchorTransferLeg
+              leg={anchorOut}
+              from={stopDetails[stopDetails.length - 1]?.dest?.city}
+              to={anchorOutCity}
+              onMode={setTransferMode ? (m) => setTransferMode(m, 'out') : null}
+            />
           )}
           {flight?.combinable && (
             <div className="itin-flight-row">

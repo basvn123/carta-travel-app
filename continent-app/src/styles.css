@@ -3786,8 +3786,10 @@ input, select {
 .pill-toggle {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 5px;
-  padding: 5px 11px;
+  height: 24px;
+  padding: 0 11px;
   border: 1px solid var(--rule);
   border-radius: 999px;
   background: var(--paper-dim);
@@ -3844,11 +3846,13 @@ input, select {
   justify-content: center;
   flex: none;
   min-width: 88px;
-  padding: 6px 12px;
+  height: 24px;
+  padding: 0 12px;
   border: 1px solid var(--rule);
   border-radius: 8px;
   background: var(--paper-dim);
   font-size: 12px;
+  line-height: 1;
   color: var(--ink-mute);
   white-space: nowrap;
   transition: border-color .15s, background .15s, color .15s;
@@ -4665,12 +4669,14 @@ input, select {
   gap: 8px;
   min-width: 104px;
   max-width: 240px;
-  padding: 6px 10px;
+  height: 24px;
+  padding: 0 10px;
   border: 1px solid var(--rule);
   background: var(--paper);
   border-radius: 8px;
   font-family: inherit;
   font-size: 12.5px;
+  line-height: 1;
   color: var(--ink);
   cursor: pointer;
   text-align: left;
@@ -7416,6 +7422,20 @@ input, select {
 .itin-flight-row svg { color: var(--accent); flex: none; }
 .itin-flight-row b { color: var(--ink); font-weight: 600; }
 .itin-flight-row small { margin-left: auto; font-family: var(--mono); font-size: 10px; color: var(--ink-mute); white-space: nowrap; }
+
+/* Airport-transfer rows are buttons: tap to open the public/taxi/rental
+   comparison right in the route view (same look as the plain flight rows). */
+.itin-transfer-main {
+  width: 100%;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.itin-transfer-main:disabled { cursor: default; }
+.itin-transfer-main small { margin-left: auto; }
+.itin-transfer-main .itin-leg-change { flex: none; margin-left: 8px; }
+.itin-transfer-main:hover .itin-leg-change { color: var(--accent); border-color: var(--accent); }
+.itin-transfer-modes { padding: 6px 0 2px; }
 
 /* Home<->first/last-stop drive rows (own-car trips): title stacked over the
    distance/time, rather than side by side like the short flight rows above -

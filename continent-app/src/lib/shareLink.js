@@ -156,15 +156,22 @@ export async function decodeTripShare(raw) {
  * bar in the same breath (a reload should not re-prompt). Auth hashes and
  * anything else that is not ours are left untouched. Synchronous, so it can
  * run in a useState initializer before useUrlSync's first URL write.
+ *
+ * Idempotent: the first read is cached, because stripping the hash is a side
+ * effect and React StrictMode double-invokes state initializers in dev - the
+ * second call used to find an already-stripped hash and return null, silently
+ * discarding every share link in development.
  */
+let readResult;
 export function readTripShareFromUrl() {
+  if (readResult !== undefined) return readResult;
   if (typeof window === 'undefined') return null;
   const hash = window.location.hash || '';
-  if (!hash.startsWith('#') || !hash.includes(`${PARAM}=`)) return null;
+  if (!hash.startsWith('#') || !hash.includes(`${PARAM}=`)) return (readResult = null);
   const raw = new URLSearchParams(hash.slice(1)).get(PARAM);
-  if (!raw) return null;
+  if (!raw) return (readResult = null);
   try {
     window.history.replaceState(null, '', window.location.pathname + window.location.search);
   } catch { /* the decode still works; only the address bar stays busy */ }
-  return raw;
+  return (readResult = raw);
 }

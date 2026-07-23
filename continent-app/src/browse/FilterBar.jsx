@@ -9,7 +9,7 @@ import { eur } from '../lib/format.js';
 import { useI18n } from '../i18n/index.jsx';
 import { NumberField, DualRange } from '../components/FilterControls.jsx';
 import {
-  isFullRatingRange, FULL_RATING_RANGE, RATING_MAX,
+  isFullRatingRange, FULL_RATING_RANGE, RATING_MIN, RATING_MAX,
 } from '../lib/rating.js';
 
 export function FilterBar({
@@ -472,13 +472,11 @@ export function FilterBar({
                     />
                   </div>
                   <div className={`range-band-box ${ratingNarrowed ? 'is-narrowed' : ''}`}>
-                    {ratingNarrowed ? (
-                      <span className="range-band-nums">
-                        {rLo.toFixed(1)}<span className="range-band-dash">to</span>{rHi.toFixed(1)}
-                      </span>
-                    ) : (
-                      <span className="range-band-any">{t('rating.anyTitle')}</span>
-                    )}
+                    <span className="range-band-nums">
+                      {ratingNarrowed ? rLo.toFixed(1) : RATING_MIN}
+                      <span className="range-band-dash">to</span>
+                      {ratingNarrowed ? rHi.toFixed(1) : RATING_MAX}
+                    </span>
                   </div>
                   <button
                     type="button"

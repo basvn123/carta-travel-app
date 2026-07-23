@@ -18,6 +18,13 @@ import { loadRestorableDraft, persistTripDraft, clearTripDraft } from '../planne
 
 const DEFAULT_STOP_NIGHTS = 2;
 
+/** Airport-transfer choice as { in, out }. Accepts the legacy single-string
+ *  shape from older drafts/saved trips (one mode for both directions). */
+function normalizeTransferMode(v) {
+  if (typeof v === 'string') return { in: v, out: v };
+  return { in: v?.in || 'auto', out: v?.out || 'auto' };
+}
+
 /** Draft-plan state + pricing for the Trip Planner tab.
  *
  *  The traveller first picks the window they want to travel (tripStart,  *  tripEnd), then adds an ordered list of stops, each with a number of nights.
@@ -46,12 +53,19 @@ export function useTripPlanner(data, countryInsights = null) {
   // still be overridden.
   const [transportPref, setTransportPref] = useState(draft?.transportPref || 'auto');
   const [legModes, setLegModes] = useState(draft?.legModes || {}); // { [legIndex]: 'train'|'bus'|'car' }
-  // How the traveller gets from the plane to where they sleep (both the fly-in
-  // and fly-home airport transfers): 'auto' lets Carta pick (the rental car
-  // they collect at the airport if the trip has one, else public transport),
+  // How the traveller gets from the plane to where they sleep, one choice per
+  // DIRECTION ({ in, out }): 'auto' lets Carta pick (the rental car they
+  // collect at the airport if the trip has one, else public transport),
   // 'public' = airport train/bus/shuttle, 'taxi' = taxi/rideshare, 'rental' =
   // drive the rental. Priced per mode so the total reflects the real choice.
-  const [transferMode, setTransferMode] = useState(draft?.transferMode || 'auto');
+  // Older drafts/saved trips stored a single string; normalize keeps them.
+  const [transferMode, setTransferModeRaw] = useState(() => normalizeTransferMode(draft?.transferMode));
+  // setTransferMode(mode) sets both directions (the receipt's one-tap picker);
+  // setTransferMode(mode, 'in'|'out') overrides just that transfer (the
+  // itinerary's per-leg rows), so "taxi there, train back" prices honestly.
+  const setTransferMode = useCallback((mode, dir = null) => {
+    setTransferModeRaw((prev) => (dir ? { ...prev, [dir]: mode } : { in: mode, out: mode }));
+  }, []);
   const [pace, setPace] = useState(draft?.pace || 'balanced'); // 'relaxed' | 'balanced' | 'packed'
   // Ryanair baggage the traveller expects to book: 'cabin' (free small bag),
   // 'priority' (10 kg cabin bag) or 'checked' (20 kg hold bag). Priced per
@@ -207,7 +221,7 @@ export function useTripPlanner(data, countryInsights = null) {
     setPlanId(null);
     setPlanLabel('');
     setPlanned(false);
-  }, []);
+  }, [setTransferMode]);
 
   // Load a whole itinerary the guided wizard just assembled: a start date, an
   // ordered list of { destinationId, nights, activities }, an optional name,
@@ -235,6 +249,9 @@ export function useTripPlanner(data, countryInsights = null) {
     setOwnFlight(wizardOwnFlight || null);
     setCarHome(wizardCarHome || null);
     setLegModes({});
+    // A fresh wizard trip must not inherit the previous draft's airport
+    // transfer choice (a leftover "taxi" would silently reprice this one).
+    setTransferMode('auto');
     setPlanId(null);
     setPlanned(false);
     // A brand-new trip must not inherit day picks from a previous, abandoned
@@ -244,7 +261,7 @@ export function useTripPlanner(data, countryInsights = null) {
     persistAssignments(TRIP_DRAFT_PLAN_ID, {});
     persistPrefs(TRIP_DRAFT_PLAN_ID, {});
     persistTripExtras(TRIP_DRAFT_PLAN_ID, {});
-  }, []);
+  }, [setTransferMode]);
 
   // Candidate next stops from wherever the itinerary currently ends, ranked to
   // surface the most beautiful/characterful places (see suggestNextStops).
@@ -369,11 +386,12 @@ export function useTripPlanner(data, countryInsights = null) {
     // never your own car with tolls (which is what the generic leg engine used
     // to recommend, and why it read as "you drive from the airport").
     const hasRental = transportPref === 'car';
-    const legFor = (a, b) => {
+    const legFor = (a, b, dir) => {
       if (!a || !b) return null;
       const opts = airportTransferOptions(a, b, groupSize, { carModel, hasRental });
       if (!opts || !Object.keys(opts.modes).length) return null;
-      const mode = transferMode !== 'auto' ? transferMode : opts.recommended;
+      const want = transferMode[dir];
+      const mode = want !== 'auto' ? want : opts.recommended;
       const chosen = opts.modes[mode] || opts.modes[opts.recommended] || Object.values(opts.modes)[0];
       return { ...opts, mode: chosen.mode, hours: chosen.hours, ground_eur_per_person: chosen.eur_pp, ground_total: chosen.eur_total, links: chosen.links };
     };
@@ -387,8 +405,8 @@ export function useTripPlanner(data, countryInsights = null) {
     const inFrom = flight.in_from_id ? destinations[flight.in_from_id] : null;
     const outFrom = flight.out_from_id ? destinations[flight.out_from_id] : null;
     return {
-      in: (inFrom && flight.in_from_id !== first.destinationId) ? legFor(inFrom, first.dest) : null,
-      out: (outFrom && flight.out_from_id !== last.destinationId) ? legFor(last.dest, outFrom) : null,
+      in: (inFrom && flight.in_from_id !== first.destinationId) ? legFor(inFrom, first.dest, 'in') : null,
+      out: (outFrom && flight.out_from_id !== last.destinationId) ? legFor(last.dest, outFrom, 'out') : null,
       anchor: inFrom || null,
       // The airport cities each transfer connects to. The fly-in and fly-home
       // airports can differ (you fly home from near your last stop), so the
@@ -437,11 +455,22 @@ export function useTripPlanner(data, countryInsights = null) {
     if (!Object.keys(combined).length) return null;
     const baseRec = (inT || outT).recommended;
     const recommended = combined[baseRec] ? baseRec : Object.keys(combined)[0];
-    const mode = transferMode !== 'auto' ? transferMode : recommended;
-    const chosen = combined[mode] || combined[recommended];
+    // Each direction follows its own choice ("taxi there, train back"), kept
+    // within the modes BOTH hops support so the picker's compared totals stay
+    // whole. `mode` is the shared pick when the directions agree, null when
+    // they diverge (the picker then highlights nothing).
+    const pick = (dir) => (transferMode[dir] !== 'auto' && combined[transferMode[dir]] ? transferMode[dir] : recommended);
+    const modeIn = pick('in');
+    const modeOut = pick('out');
+    const inChosen = inT ? inT.modes[modeIn] : null;
+    const outChosen = outT ? outT.modes[modeOut] : null;
     return {
-      modes: combined, recommended, mode: chosen.mode,
-      ground_total: chosen.eur_total, ground_eur_per_person: chosen.eur_pp, hours: chosen.hours,
+      modes: combined, recommended,
+      mode: modeIn === modeOut ? modeIn : null,
+      mode_in: modeIn, mode_out: modeOut,
+      ground_total: round2((inChosen?.eur_total || 0) + (outChosen?.eur_total || 0)),
+      ground_eur_per_person: round2((inChosen?.eur_pp || 0) + (outChosen?.eur_pp || 0)),
+      hours: round2((inChosen?.hours || 0) + (outChosen?.hours || 0)),
       minutes: (flight.into_ground_minutes || 0) + (flight.out_ground_minutes || 0),
       estimated: true,
     };
@@ -653,7 +682,7 @@ export function useTripPlanner(data, countryInsights = null) {
     // the saved party size/pace, and the headline total comes out wrong.
     setGroupSize(sorted[0]?.choices?.groupSize || 2);
     setTransportPref(sorted[0]?.choices?.transportPref || 'auto');
-    setTransferMode(sorted[0]?.choices?.transferMode || 'auto');
+    setTransferModeRaw(normalizeTransferMode(sorted[0]?.choices?.transferMode));
     setPace(sorted[0]?.choices?.pace || 'balanced');
     setLegModes({});
     setPlanned(false);
