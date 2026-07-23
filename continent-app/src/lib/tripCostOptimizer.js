@@ -12,6 +12,7 @@
  */
 import { addDays } from './dates.js';
 import { combineTripLegs, interCityGroundEstimate } from './trip_planner_pricing.js';
+import { legTransportOptions } from './transport.js';
 import { haversineKm, cityCoords } from './runtime_pricing.js';
 
 /**
@@ -63,12 +64,24 @@ export function cheapestStartDates(stops, destinations, totalNights, groupSize, 
   return { candidates, current_total: currentTotal };
 }
 
-/** Total estimated overland cost of visiting `ids` in that order. */
-function groundCost(ids, destinations, groupSize) {
+/** Total estimated overland cost of visiting `ids` in that order, priced with
+ *  the SAME country-profile leg engine the itinerary shows. The old flat
+ *  0.15 EUR/km estimate could promise a saving the receipt then contradicted.
+ *  Falls back to the flat estimate only when the leg engine has no answer
+ *  (missing coords); a no-road sea leg prices as 0 here, which keeps orders
+ *  that need a ferry from looking cheap. */
+function groundCost(ids, destinations, groupSize, ctx = {}) {
   let total = 0;
   for (let i = 0; i < ids.length - 1; i++) {
-    const est = interCityGroundEstimate(destinations[ids[i]], destinations[ids[i + 1]], groupSize);
-    if (est) total += est.ground_total;
+    const a = destinations[ids[i]];
+    const b = destinations[ids[i + 1]];
+    const opts = legTransportOptions(a, b, groupSize, ctx);
+    if (opts && opts.recommended && opts.modes[opts.recommended]) {
+      total += opts.modes[opts.recommended].eur_total;
+    } else if (!opts) {
+      const est = interCityGroundEstimate(a, b, groupSize);
+      if (est) total += est.ground_total;
+    }
   }
   return total;
 }
@@ -108,13 +121,16 @@ function nnOrder(ids, destinations) {
  * @returns { saving_eur, ordered_ids, current_eur } or null when the current
  *          order is already (near-)optimal / too short to matter.
  */
-export function reorderSavings(stops, destinations, groupSize, { minSavingEur = 15 } = {}) {
+export function reorderSavings(stops, destinations, groupSize, {
+  minSavingEur = 15, carModel = null, countryInsights = null, hasCar = false,
+} = {}) {
   const ids = (stops || []).map((s) => s.destinationId);
   if (ids.length < 3) return null;
-  const current = groundCost(ids, destinations, groupSize);
+  const ctx = { carModel, countryInsights, hasCar };
+  const current = groundCost(ids, destinations, groupSize, ctx);
   const orderedIds = nnOrder(ids, destinations);
   if (orderedIds.every((id, i) => id === ids[i])) return null;
-  const optimized = groundCost(orderedIds, destinations, groupSize);
+  const optimized = groundCost(orderedIds, destinations, groupSize, ctx);
   const saving = Math.round((current - optimized) * 100) / 100;
   if (saving < minSavingEur) return null;
   return { saving_eur: saving, ordered_ids: orderedIds, current_eur: Math.round(current * 100) / 100 };

@@ -6,6 +6,7 @@ import { ScoreChip, HiddenGemTag } from '../components/RatingBadge.jsx';
 import { cityImage, flagUrl, isoToFlag, cityTier, cityInsight } from '../lib/tripGuide.js';
 import { knownForFacts } from '../lib/knownFor.js';
 import { haversineKm } from '../lib/runtime_pricing.js';
+import { eur } from '../lib/format.js';
 
 // Presentational pieces of the guided trip wizard (a nights helper + the city
 // row and its bits), lifted out of GuidedTripWizard. Prop-driven, no closure.
@@ -63,7 +64,7 @@ export function TierChip({ dest }) {
 
 /** One stay-city row: photo, name + tier + what it's known for, an info
  *  toggle with structured facts, and the nights stepper. */
-export function StayRow({ id, dest, nights, onNights, anchorDest, isAnchor, companions }) {
+export function StayRow({ id, dest, nights, onNights, anchorDest, isAnchor, companions, nightlyEur = null }) {
   const { t } = useI18n();
   const [infoOpen, setInfoOpen] = useState(false);
   const km = anchorDest && anchorDest.lat != null && dest.lat != null && !isAnchor
@@ -80,6 +81,11 @@ export function StayRow({ id, dest, nights, onNights, anchorDest, isAnchor, comp
           <TierChip dest={dest} />
           {dest.rating?.score != null && <ScoreChip rating={dest.rating} size="xs" />}
           {dest.rating?.hidden_gem && <HiddenGemTag />}
+          {nightlyEur != null && (
+            <span className="guide-stay-price" title={t('wizard.perNightGroupTitle')}>
+              {t('wizard.perNight', { price: eur(nightlyEur) })}
+            </span>
+          )}
           <button
             className={`guide-city-info-btn ${infoOpen ? 'open' : ''}`}
             onClick={() => setInfoOpen(!infoOpen)}

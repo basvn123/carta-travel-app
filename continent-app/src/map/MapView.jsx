@@ -143,7 +143,7 @@ export function MapView({
           properties: {
             id: p.id, kind: 'caronly',
             ...tipProps(p, {
-              transport: 'No flight from your airport · drivable',
+              transport: 'No flight from your airport, drivable',
               mode: 'car',
             }),
           },
@@ -180,7 +180,7 @@ export function MapView({
         geometry: { type: 'Point', coordinates: [p.lon, p.lat] },
         properties: {
           id: p.id, kind: 'unreach',
-          ...tipProps(p, { transport: 'No flight · too far to drive', dim: 1 }),
+          ...tipProps(p, { transport: 'No flight, too far to drive', dim: 1 }),
         },
       });
     }
@@ -514,7 +514,7 @@ function transportLine(p, byCar) {
   if (byCar) return 'Drive';
   if (p.viaAirport) {
     const leg = p.viaAirport.kind === 'rental' ? 'rental car' : 'shuttle';
-    return `Fly to ${p.viaAirport.city} (${p.viaAirport.iata}) · ${p.viaAirport.road_km} km by ${leg}`;
+    return `Fly to ${p.viaAirport.city} (${p.viaAirport.iata}), ${p.viaAirport.road_km} km by ${leg}`;
   }
   return 'Fly';
 }

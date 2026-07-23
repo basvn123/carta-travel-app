@@ -136,27 +136,38 @@ export function BestTimePanel({ destination, departDate, returnDate, breakdown, 
         </>
       )}
 
-      {destination.climate && <ClimateStrip climate={destination.climate} />}
+      {destination.climate && (
+        <ClimateStrip climate={destination.climate} period={data?.meta?.climate_period} />
+      )}
     </div>
   );
 }
 
-// Real climate normals (Open-Meteo ERA5, 2014-2023) as a 12-month comfort
-// strip: bar height + colour = tourist comfort, with the daytime high above and
-// the best-weather months called out. Independent of fares, it renders even
-// when a destination has no fare history.
-function ClimateStrip({ climate }) {
+// Real climate normals (WorldClim, 1970-2000) as a 12-month comfort strip:
+// bar height + colour = tourist comfort, with the daytime high above and the
+// best-weather months called out. Independent of fares, it renders even when
+// a destination has no fare history.
+//
+// The wire ships climate compact (scripts/sync-data.mjs): m = twelve
+// [t_high, t_low, precip_mm, comfort] tuples, best = best-month numbers, and
+// the measurement period hoisted to meta.climate_period.
+const T_HIGH = 0;
+const T_LOW = 1;
+const PRECIP = 2;
+const COMFORT = 3;
+
+function ClimateStrip({ climate, period }) {
   const { t } = useI18n();
   const [hoverI, setHoverI] = React.useState(null);
-  const months = climate.months || [];
+  const months = climate.m || [];
   if (months.length !== 12) return null;
 
-  const comforts = months.map((m) => m.comfort);
+  const comforts = months.map((m) => m[COMFORT]);
   const cMin = Math.min(...comforts);
   const cMax = Math.max(...comforts);
   const span = cMax - cMin || 1;
-  const best = new Set(climate.summary?.best_months || []);
-  const bestLabel = fmtMonthRanges(climate.summary?.best_months);
+  const best = new Set(climate.best || []);
+  const bestLabel = fmtMonthRanges(climate.best);
 
   const legend = [
     { tier: 'great', key: 'bestTime.climateLegendIdeal' },
@@ -179,11 +190,11 @@ function ClimateStrip({ climate }) {
             onMouseEnter={() => setHoverI(i)}
             onMouseLeave={() => setHoverI(null)}
           >
-            <div className="climate-temp">{m.t_high == null ? '' : `${Math.round(m.t_high)}°`}</div>
+            <div className="climate-temp">{m[T_HIGH] == null ? '' : `${Math.round(m[T_HIGH])}°`}</div>
             <div className="climate-bar-track">
               <div
-                className={`climate-bar climate-${comfortTier(m.comfort)}`}
-                style={{ height: `${20 + ((m.comfort - cMin) / span) * 80}%` }}
+                className={`climate-bar climate-${comfortTier(m[COMFORT])}`}
+                style={{ height: `${20 + ((m[COMFORT] - cMin) / span) * 80}%` }}
               />
             </div>
             <div className="climate-name">{MONTHS_INITIAL[i]}</div>
@@ -191,9 +202,9 @@ function ClimateStrip({ climate }) {
               <div className="climate-tip">
                 <b>{MONTHS_SHORT[i]}</b>{' '}
                 {t('bestTime.climateTip', {
-                  hi: m.t_high == null ? '?' : Math.round(m.t_high),
-                  lo: m.t_low == null ? '?' : Math.round(m.t_low),
-                  precip: m.precip_mm == null ? '?' : Math.round(m.precip_mm),
+                  hi: m[T_HIGH] == null ? '?' : Math.round(m[T_HIGH]),
+                  lo: m[T_LOW] == null ? '?' : Math.round(m[T_LOW]),
+                  precip: m[PRECIP] == null ? '?' : Math.round(m[PRECIP]),
                 })}
               </div>
             )}
@@ -208,7 +219,7 @@ function ClimateStrip({ climate }) {
         ))}
       </div>
       <p className="footnote climate-source">
-        {t('bestTime.climateSource', { period: climate.period })}
+        {t('bestTime.climateSource', { period: period || '' })}
       </p>
     </>
   );

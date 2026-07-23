@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { searchFold } from '../lib/textSearch.js';
 
 /**
  * Custom searchable dropdown. Supports single-select (default) or multi-select.
@@ -96,8 +97,8 @@ export function Dropdown({
 
   const filteredOptions = query
     ? options.filter((o) =>
-        o.label.toLowerCase().includes(query.toLowerCase()) ||
-        (o.sublabel || '').toLowerCase().includes(query.toLowerCase())
+        searchFold(o.label).includes(searchFold(query)) ||
+        searchFold(o.sublabel || '').includes(searchFold(query))
       )
     : options;
 

@@ -1,5 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Logo from '../components/Logo.jsx';
+import { GoogleButton } from './GoogleButton.jsx';
+import { PrivacyPolicy } from '../components/PrivacyPolicy.jsx';
 import { useI18n } from '../i18n/index.jsx';
 
 /**
@@ -10,6 +12,7 @@ import { useI18n } from '../i18n/index.jsx';
  */
 export function AuthGate({ onSignIn, onSignUp, onGuest }) {
   const { t } = useI18n();
+  const [privacyOpen, setPrivacyOpen] = useState(false);
   return (
     <div className="auth-overlay auth-overlay-solid">
       <div className="auth-modal auth-gate">
@@ -24,6 +27,7 @@ export function AuthGate({ onSignIn, onSignUp, onGuest }) {
         </p>
 
         <div className="auth-gate-actions">
+          <GoogleButton />
           <button type="button" className="auth-submit" onClick={onSignIn}>
             {t('gate.signIn')}
           </button>
@@ -35,7 +39,12 @@ export function AuthGate({ onSignIn, onSignUp, onGuest }) {
         <button type="button" className="auth-link auth-gate-guest" onClick={onGuest}>
           {t('gate.guest')}
         </button>
+
+        <button type="button" className="auth-link auth-gate-privacy" onClick={() => setPrivacyOpen(true)}>
+          {t('account.privacyPolicy')}
+        </button>
       </div>
+      {privacyOpen && <PrivacyPolicy onClose={() => setPrivacyOpen(false)} />}
     </div>
   );
 }

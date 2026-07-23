@@ -77,6 +77,17 @@ export function AuthProvider({ children }) {
     if (error) throw error;
   }, []);
 
+  // Google OAuth through Supabase: redirects to Google and back to the app,
+  // where onAuthStateChange picks up the new session. Requires the Google
+  // provider (client id + secret) to be enabled in the Supabase dashboard.
+  const signInWithGoogle = useCallback(async () => {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: { redirectTo: window.location.origin },
+    });
+    if (error) throw error;
+  }, []);
+
   const signOut = useCallback(async () => {
     await supabase.auth.signOut();
   }, []);
@@ -94,6 +105,16 @@ export function AuthProvider({ children }) {
     setRecoveryMode(false);
   }, []);
 
+  // In-app account deletion (App Store guideline 5.1.1(v)): a SECURITY
+  // DEFINER Postgres function `delete_user()` removes the auth user and every
+  // row they own (see supabase/migrations/005_delete_user.sql). The anon
+  // client can't delete auth users itself, so the RPC is the whole mechanism.
+  const deleteAccount = useCallback(async () => {
+    const { error } = await supabase.rpc('delete_user');
+    if (error) throw error;
+    await supabase.auth.signOut();
+  }, []);
+
   const value = {
     configured: authConfigured,
     session,
@@ -105,9 +126,11 @@ export function AuthProvider({ children }) {
     dismissEmailConfirmed: () => setEmailConfirmed(false),
     signUp,
     signIn,
+    signInWithGoogle,
     signOut,
     sendPasswordReset,
     updatePassword,
+    deleteAccount,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

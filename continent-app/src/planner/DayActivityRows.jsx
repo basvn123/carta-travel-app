@@ -1,8 +1,34 @@
 import { useState } from 'react';
 import { StarIcon, InfoIcon } from '../components/Icons.jsx';
-import { isMustSee, poiKind, dwellMinutes } from './dayDraft.js';
+import { isMustSee, poiKind, poiRating } from './dayDraft.js';
+import { ScoreChip } from '../components/RatingBadge.jsx';
 import { safeUrl } from '../lib/format.js';
-import { fmtDur } from './dayFormat.js';
+
+/** The expandable what-is-this panel behind every ⓘ: photo first, then the
+ *  description, then Wikipedia. Time-planning numbers stay out of it on
+ *  purpose: readers want to know WHAT a place is, the route already says
+ *  how the day fits together. */
+function ActivityDetail({ item, className = 'day-activity-detail' }) {
+  return (
+    <div className={className}>
+      {item.img && (
+        <span
+          className="day-detail-photo"
+          style={{ backgroundImage: `url(${item.img})` }}
+          role="img"
+          aria-label={item.name}
+        />
+      )}
+      <p>
+        {item.desc || `${poiKind(item) || 'Place'} in this city.`}
+        {!item.desc && isMustSee(item) ? ' Among the highest-rated sights here.' : ''}
+      </p>
+      {safeUrl(item.wiki) && (
+        <a href={safeUrl(item.wiki)} target="_blank" rel="noreferrer">Read more on Wikipedia ↗</a>
+      )}
+    </div>
+  );
+}
 
 // Presentational pieces of the day planner's "things to do" list and timeline,
 // lifted out of DayPlannerTab. All are prop-driven (no parent-scope closure),
@@ -28,7 +54,7 @@ export function Collapsible({ title, titleIcon, count, summary, defaultOpen = fa
   );
 }
 
-export function AssignedRow({ item, index, last, dwellMin, onMoveUp, onMoveDown, onRemove }) {
+export function AssignedRow({ item, index, last, onMoveUp, onMoveDown, onRemove }) {
   const [infoOpen, setInfoOpen] = useState(false);
   return (
     <div className="day-timeline-row">
@@ -38,13 +64,12 @@ export function AssignedRow({ item, index, last, dwellMin, onMoveUp, onMoveDown,
         <div className="day-assigned-body">
           <span className="day-assigned-name">
             {item.name}
+            <ScoreChip rating={poiRating(item)} />
             {isMustSee(item) && <span className="day-badge-must" title="A true must-see here"><StarIcon size={9} /></span>}
-            {!isMustSee(item) && (item.rate ?? 0) >= 2 && <span className="day-badge-rated" title="Among the best-rated places here">top rated</span>}
             {item.heritage && <span className="day-badge-heritage" title="On a cultural-heritage register">heritage</span>}
           </span>
           <span className="day-assigned-kind">
             {poiKind(item)}
-            {dwellMin ? `, ~${fmtDur(dwellMin)} visit` : ''}
           </span>
         </div>
         <div className="day-timeline-tools">
@@ -58,17 +83,7 @@ export function AssignedRow({ item, index, last, dwellMin, onMoveUp, onMoveDown,
           <button className="trip-stop-move" onClick={onMoveDown} disabled={last} aria-label="Move later" title="Move later">↓</button>
           <button className="trip-stop-remove" onClick={onRemove} aria-label="Remove" title="Remove">×</button>
         </div>
-        {infoOpen && (
-          <div className="day-activity-detail day-timeline-detail">
-            <p>
-              {item.desc || `${poiKind(item) || 'Place'} in this city.`}
-              {!item.desc && isMustSee(item) ? ' Among the highest-rated sights here.' : ''}
-            </p>
-            {safeUrl(item.wiki) && (
-              <a href={safeUrl(item.wiki)} target="_blank" rel="noreferrer">Read more on Wikipedia ↗</a>
-            )}
-          </div>
-        )}
+        {infoOpen && <ActivityDetail item={item} className="day-activity-detail day-timeline-detail" />}
       </div>
     </div>
   );
@@ -115,12 +130,12 @@ export function ActivityRow({ item, variant, added, onToggle, note }) {
       <button className="day-activity-main" onClick={onToggle}>
         {item.img
           ? <span className="day-thumb" style={{ backgroundImage: `url(${item.img})` }} />
-          : <span className="day-thumb day-thumb-empty" aria-hidden="true">{(item.kind || '·').slice(0, 1)}</span>}
+          : <span className="day-thumb day-thumb-empty" aria-hidden="true">{(item.kind || '').slice(0, 1)}</span>}
         <span className="day-assigned-body">
           <span className="day-assigned-name">
             {item.name}
+            <ScoreChip rating={poiRating(item)} />
             {(variant === 'must' || isMustSee(item)) && <span className="day-badge-must" title="A true must-see here"><StarIcon size={9} /></span>}
-            {!isMustSee(item) && variant !== 'must' && (item.rate ?? 0) >= 2 && <span className="day-badge-rated" title="Among the best-rated places here">top rated</span>}
             {item.heritage && <span className="day-badge-heritage" title="On a cultural-heritage register">heritage</span>}
           </span>
           <span className="day-assigned-kind">{poiKind(item)}</span>
@@ -134,18 +149,7 @@ export function ActivityRow({ item, variant, added, onToggle, note }) {
         aria-expanded={infoOpen}
         title={`What is ${item.name}?`}
       ><InfoIcon size={14} /></button>
-      {infoOpen && (
-        <div className="day-activity-detail">
-          <p>
-            {item.desc || `${poiKind(item) || 'Place'} in this city.`}
-            {!item.desc && isMustSee(item) ? ' Among the highest-rated sights here.' : ''}
-            {` Plan ~${fmtDur(dwellMinutes(poiKind(item)))} for a visit.`}
-          </p>
-          {safeUrl(item.wiki) && (
-            <a href={safeUrl(item.wiki)} target="_blank" rel="noreferrer">Read more on Wikipedia ↗</a>
-          )}
-        </div>
-      )}
+      {infoOpen && <ActivityDetail item={item} />}
     </div>
   );
 }

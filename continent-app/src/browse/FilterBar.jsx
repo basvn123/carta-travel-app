@@ -210,7 +210,7 @@ export function FilterBar({
           into the 2-column grid and the grouping/dividers disappear. */}
       <div className="filter-rows">
 
-        {/* ── Row 1 · WHEN & WHO ── */}
+        {/* Row 1: WHEN & WHO */}
         <div className="filter-row">
           {/* Dates */}
           <div className="filter-group group-dates">
@@ -339,7 +339,7 @@ export function FilterBar({
           </div>
         </div>
 
-        {/* ── Row 2 · REFINE ── */}
+        {/* Row 2: REFINE */}
         <div className="filter-row">
           {/* Pricing: how the trip is costed + the budget window */}
           <div className="filter-group group-pricing">
@@ -461,7 +461,7 @@ export function FilterBar({
                     <div className="rating-band-caption">
                       {ratingNarrowed ? (
                         <span className="rating-band-nums">
-                          {rLo.toFixed(1)}<span className="rating-band-dash">–</span>{rHi.toFixed(1)}
+                          {rLo.toFixed(1)}<span className="rating-band-dash">to</span>{rHi.toFixed(1)}
                         </span>
                       ) : (
                         <span className="rating-band-any">{t('rating.anyTitle')}</span>

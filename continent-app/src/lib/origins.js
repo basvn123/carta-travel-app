@@ -58,6 +58,11 @@ function routesForOrigin(faresForOrigin, d, origin) {
       // harvest_flight_times.py). Partial coverage, absent days show no hour.
       outbound_time: rec.out_t || {},
       return_time: rec.ret_t || {},
+      // Days where a non-Ryanair carrier won the cheapest-wins merge
+      // ({date: 'W6'|'VY'|'V7'}, harvest_wizzair/vueling/volotea.py).
+      // Untagged days are Ryanair fares.
+      outbound_carrier: rec.out_c || {},
+      return_carrier: rec.ret_c || {},
       fare_model: 'ryanair_all_origins',
     },
   };

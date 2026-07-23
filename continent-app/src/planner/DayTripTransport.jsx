@@ -86,6 +86,9 @@ export function DayTripTransport({ fromDest, toDest, opts, mode, onPickMode }) {
             })}
           </small>
           <small className={feasible ? 'daytrip-hint' : 'daytrip-hint warn'}>{departHint}</small>
+          {opts.sea_crossing && cur.note && (
+            <small className="daytrip-hint">{cur.note}</small>
+          )}
           {opts.transit_reason && (
             <small className="daytrip-hint warn">{opts.transit_reason}</small>
           )}

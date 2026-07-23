@@ -223,7 +223,7 @@ export function designStays({ destinations, countries, interests, anchorDest, an
   // === false = a sea crossing, same signal legTransportOptions uses). Keep the
   // full pool if that leaves nothing, so a deliberately all-island region (e.g.
   // only Sicily selected) is still designed rather than coming back empty.
-  if (transport === 'car') {
+  if (transport === 'car' || transport === 'owncar') {
     const roadOnly = pool.filter((p) => (p.dest.local_transport || {}).road_connected !== false);
     if (roadOnly.length) pool = roadOnly;
   }

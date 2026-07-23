@@ -49,12 +49,12 @@ export function openDayPlanPdf(ctx) {
     if (it.active) return 'A good pick for an active, outdoors stretch.';
     return '';
   };
-  // Search by "<sight>, <city>" so Google opens the real listing (name,
-  // photos, hours) rather than a nameless "Dropped pin" at the coordinates.
-  const placeUrl = (it, city) => {
-    if (it.lat == null || it.lon == null) return null;
-    const q = it.name ? [it.name, city].filter(Boolean).join(', ') : `${it.lat},${it.lon}`;
-    return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q)}`;
+  // Pin the exact coordinates: a "<sight>, <city>" name search geocodes and
+  // lands on "can't find this place" for obscure or local-language names,
+  // while a lat,lon query always opens on the right spot.
+  const placeUrl = (it) => {
+    if (!Number.isFinite(it.lat) || !Number.isFinite(it.lon)) return null;
+    return `https://www.google.com/maps/search/?api=1&query=${it.lat}%2C${it.lon}`;
   };
 
   // Walk everything so a multi-city plan prints as one complete booklet.
@@ -86,19 +86,19 @@ export function openDayPlanPdf(ctx) {
       const dayDwell = dayItems.reduce((n, it) => n + dwellMinutes(poiKind(it), visitFactor), 0);
       const meta = [
         `${dayItems.length} ${dayItems.length === 1 ? 'stop' : 'stops'}`,
-        dayKm > 0.05 ? `~${dayKm.toFixed(1)} km · ~${estimateWalkMinutes(dayKm)} min on foot` : '',
+        dayKm > 0.05 ? `~${dayKm.toFixed(1)} km, ~${estimateWalkMinutes(dayKm)} min on foot` : '',
         dayDwell > 0 ? `~${fmtDur(dayDwell)} at the sights` : '',
-      ].filter(Boolean).join(' &middot; ');
+      ].filter(Boolean).join(', ');
 
       const rows = dayItems.map((it, i) => {
         const next = dayItems[i + 1];
         let walk = '';
         if (next && it.lat != null && it.lon != null && next.lat != null && next.lon != null) {
           const km = haversineKm(it.lat, it.lon, next.lat, next.lon);
-          if (km != null) walk = `<div class="walk">&darr;&ensp;~${estimateWalkMinutes(km)} min walk &middot; ${km.toFixed(1)} km</div>`;
+          if (km != null) walk = `<div class="walk">&darr;&ensp;~${estimateWalkMinutes(km)} min walk, ${km.toFixed(1)} km</div>`;
         }
         const acc = accolade(it);
-        const purl = placeUrl(it, s.dest?.city);
+        const purl = placeUrl(it);
         const links = [
           purl ? `<a href="${purl}">Open in Maps</a>` : '',
           safeUrl(it.wiki) ? `<a href="${esc(safeUrl(it.wiki))}">Read more</a>` : '',
@@ -150,10 +150,10 @@ export function openDayPlanPdf(ctx) {
     `${plannedDays} planned ${plannedDays === 1 ? 'day' : 'days'}`,
     `${totalPlaces} ${totalPlaces === 1 ? 'place' : 'places'}`,
     citiesWithPlans > 1 ? `${citiesWithPlans} cities` : '',
-  ].filter(Boolean).join(' &middot; ');
+  ].filter(Boolean).join(', ');
 
   const html = `<!doctype html><html><head><meta charset="utf-8">
-      <title>${esc(title)} &middot; day plan</title>
+      <title>${esc(title)}, day plan</title>
       <style>
         :root {
           --paper:#f5f1e8; --paper-dim:#ebe6d8; --ink:#1a1a1a; --ink-soft:#4a4a48;
@@ -208,13 +208,13 @@ export function openDayPlanPdf(ctx) {
         @media print { body { padding:0; background:var(--paper); } .day-route a { border:1px solid var(--accent); } }
       </style></head><body>
       <header class="cover">
-        <div class="kicker">Carta &middot; Europe Travel</div>
+        <div class="kicker">Carta, Europe Travel</div>
         <h1>${esc(title)}</h1>
         <div class="cover-sub">${subParts}</div>
         <p class="cover-note">Your day-by-day plan, in walking order. Every place has a short note on what it is, a link to open it in Google Maps, and each day closes with a link to the whole route. Walking times are straight-line estimates.</p>
       </header>
       ${cityBlocks}
-      <footer><span>Planned with Carta &middot; Europe Travel</span><span>carta.travel</span></footer>
+      <footer><span>Planned with Carta, Europe Travel</span><span>carta.travel</span></footer>
       </body></html>`;
 
   const w = window.open('', '_blank');

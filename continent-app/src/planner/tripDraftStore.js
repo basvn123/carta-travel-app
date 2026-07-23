@@ -9,7 +9,7 @@
  *
  * Draft shape: { tripStart, tripEnd, stops:[{destinationId, nights, activities}],
  *   groupSize, transportPref, legModes, pace, anchorId, anchorOrigin, returnAnchorId,
-   planId, planLabel, planned }
+   ownFlight, planId, planLabel, planned }
  */
 
 const DRAFT_KEY = 'carta.tripDraft.v1';

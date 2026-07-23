@@ -35,7 +35,9 @@ function styleBlock(id, color) {
 }
 
 function placemarkXml(p) {
-  if (p.lat == null || p.lon == null) return '';
+  // Number.isFinite, not == null: a NaN coordinate would write an invalid
+  // <coordinates>NaN,NaN</coordinates> Placemark that My Maps rejects.
+  if (!Number.isFinite(p.lat) || !Number.isFinite(p.lon)) return '';
   return `<Placemark>
     <name>${xmlEsc(p.name)}</name>
     ${p.html ? `<description>${cdata(p.html)}</description>` : ''}
@@ -45,7 +47,7 @@ function placemarkXml(p) {
 }
 
 function pathXml(p) {
-  const coords = (p.coords || []).filter((c) => c && c[0] != null && c[1] != null);
+  const coords = (p.coords || []).filter((c) => c && Number.isFinite(c[0]) && Number.isFinite(c[1]));
   if (coords.length < 2) return '';
   return `<Placemark>
     <name>${xmlEsc(p.name)}</name>
@@ -94,6 +96,14 @@ const searchUrl = (name, city) => (
   `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent([name, city].filter(Boolean).join(', '))}`
 );
 
+// Sights link by exact coordinates: a "<sight>, <city>" name search geocodes
+// and lands on "can't find this place" for obscure or local-language names.
+// Cities keep the name form (city names geocode reliably and open the richer
+// city page).
+const pinUrl = (lat, lon) => (
+  `https://www.google.com/maps/search/?api=1&query=${lat}%2C${lon}`
+);
+
 // The description panel My Maps shows when a pin is tapped: photo, what the
 // place is, how long to plan for it, and the outbound links.
 function placeHtml({ img, headline, desc, dayLine, wiki, mapsUrl }) {
@@ -105,7 +115,7 @@ function placeHtml({ img, headline, desc, dayLine, wiki, mapsUrl }) {
   const links = [
     mapsUrl ? `<a href="${xmlEsc(mapsUrl)}">Open in Google Maps</a>` : '',
     wiki ? `<a href="${xmlEsc(wiki)}">Wikipedia</a>` : '',
-  ].filter(Boolean).join(' &middot; ');
+  ].filter(Boolean).join(', ');
   if (links) parts.push(links);
   return parts.join('\n');
 }
@@ -121,14 +131,14 @@ function placeHtml({ img, headline, desc, dayLine, wiki, mapsUrl }) {
  */
 export function tripKml({ label, stopDetails = [], dayPlan = [], fmtDate = (d) => d || '' }) {
   const name = label || 'My trip';
-  const stops = stopDetails.filter((s) => s?.dest?.lat != null);
+  const stops = stopDetails.filter((s) => Number.isFinite(s?.dest?.lat) && Number.isFinite(s?.dest?.lon));
   const placemarks = stops.map((s, i) => {
     const cityDays = dayPlan.filter((d) => d.stop === s || d.stop?.dest === s.dest);
     const dayLines = cityDays.map((d) => {
       const acts = (d.activities || []).slice(0, 6).join(', ');
       return `Day ${d.dayNum} (${fmtDate(d.date)}): ${acts || 'free day'}`;
     }).join('<br/>');
-    const headline = `Stop ${i + 1} of ${stops.length} - ${fmtDate(s.arriveDate)} to ${fmtDate(s.departDate)}, ${s.nights} ${s.nights === 1 ? 'night' : 'nights'}`;
+    const headline = `Stop ${i + 1} of ${stops.length}, ${fmtDate(s.arriveDate)} to ${fmtDate(s.departDate)}, ${s.nights} ${s.nights === 1 ? 'night' : 'nights'}`;
     const html = [
       s.dest.image?.url ? `<img src="${xmlEsc(s.dest.image.url)}" width="320"/><br/>` : '',
       `<b>${xmlEsc(headline)}</b><br/>`,
@@ -171,7 +181,7 @@ export function dayPlanKml({ label, days = [] }) {
   const styles = days.map((_, i) => ({ id: `day${i}`, color: dayColor(i) }));
   styles.push({ id: 'stay', color: 'ff222222' });
   const folders = days.map((day, di) => {
-    const placemarks = (day.items || []).filter((it) => it.lat != null && it.lon != null).map((it, i) => ({
+    const placemarks = (day.items || []).filter((it) => Number.isFinite(it.lat) && Number.isFinite(it.lon)).map((it, i) => ({
       name: `${i + 1}. ${it.name}`,
       lat: it.lat, lon: it.lon, styleId: `day${di}`,
       html: placeHtml({
@@ -180,11 +190,11 @@ export function dayPlanKml({ label, days = [] }) {
           it.kind,
           it.dwellMin ? `plan ~${it.dwellMin} min` : '',
           it.mustSee ? 'essential sight' : '',
-        ].filter(Boolean).join(' · '),
+        ].filter(Boolean).join(', '),
         desc: it.desc,
         dayLine: day.label,
         wiki: it.wiki,
-        mapsUrl: searchUrl(it.name, day.city),
+        mapsUrl: pinUrl(it.lat, it.lon),
       }),
     }));
     if (day.stay?.lat != null) {
@@ -196,7 +206,7 @@ export function dayPlanKml({ label, days = [] }) {
     }
     const coords = day.routeCoords && day.routeCoords.length >= 2
       ? day.routeCoords
-      : (day.items || []).filter((it) => it.lat != null && it.lon != null).map((it) => [it.lon, it.lat]);
+      : (day.items || []).filter((it) => Number.isFinite(it.lat) && Number.isFinite(it.lon)).map((it) => [it.lon, it.lat]);
     const paths = [{
       name: `${day.label} - walking route`,
       coords,

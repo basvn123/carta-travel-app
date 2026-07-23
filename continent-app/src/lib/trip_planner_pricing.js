@@ -98,6 +98,9 @@ export function combineTripLegs(destA, arriveDate, destB, departDate, groupSize 
       // when the times harvest covers this origin. Display-only.
       into_time: rA.outbound_time?.[arriveDate] || null,
       out_of_time: rB.return_time?.[departDate] || null,
+      // Which airline each priced day belongs to (untagged = Ryanair).
+      into_carrier: rA.outbound_carrier?.[arriveDate] || 'FR',
+      out_of_carrier: rB.return_carrier?.[departDate] || 'FR',
     };
     if (origin === preferOrigin) preferred = cand;
     if (best == null || combinedFare < best.combined_fare) best = cand;
@@ -122,6 +125,8 @@ export function combineTripLegs(destA, arriveDate, destB, departDate, groupSize 
     out_of_fare_eur: round2(best.out_of_fare),
     into_time: best.into_time,
     out_of_time: best.out_of_time,
+    into_carrier: best.into_carrier,
+    out_of_carrier: best.out_of_carrier,
     fare_per_person: round2(best.combined_fare),
     fare_total: round2(best.combined_fare * group),
     into_ground_eur: round2(best.into_ground_eur),
@@ -142,7 +147,7 @@ export function combineTripLegs(destA, arriveDate, destB, departDate, groupSize 
 // Shared so every surface that shows a trip (the planner's Trip total, the
 // planned Overview, the export) explains a missing flight plan identically, // never a message in one place and a silent gap in another.
 const FLIGHT_REASON_LABELS = {
-  no_shared_origin: "These two stops don't share a Ryanair origin airport, so there's no single flight plan connecting them. Try a different first or last stop, or fly home and out again.",
+  no_shared_origin: "These two stops don't share a departure airport with stored budget fares, so there's no single flight plan connecting them. Try a different first or last stop, or fly home and out again.",
   no_fare_for_date: 'No fare is stored for one of these exact dates yet. Try nudging the trip dates.',
   missing_input: 'Pick your travel dates and at least one stop to price the flights.',
 };
@@ -302,9 +307,10 @@ export function suggestNextStops(fromDest, allDests, arriveDate, {
     const dRoadConnected = (d.local_transport || {}).road_connected !== false;
     // A ground leg only exists when both ends are road-connected (no sea crossing).
     const groundReachable = fromRoadConnected && dRoadConnected && km <= 450;
-    // On a car trip, the next stop must be one you can actually drive to, a
-    // shared flight origin is no help when there's no fixed road link (islands).
-    if (transport === 'car') {
+    // On a car trip (rental or the traveller's own), the next stop must be one
+    // you can actually drive to, a shared flight origin is no help when
+    // there's no fixed road link (islands).
+    if (transport === 'car' || transport === 'owncar') {
       if (!groundReachable) continue;
     } else if (!sharedOrigin && !groundReachable) {
       continue;

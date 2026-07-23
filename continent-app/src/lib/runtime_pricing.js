@@ -13,6 +13,7 @@
 
 import { round2 } from './math.js';
 import { addDays } from './dates.js';
+import { buildAviasalesLink } from './affiliate.js';
 
 // Nights between two ISO date strings (return must be >= depart).
 export function tripDaysBetween(departDate, returnDate) {
@@ -200,11 +201,22 @@ export const DEFAULT_ACCOM_MODEL = {
   // big house cheaply. factor(g) = (g/4)^0.55 * 4/g -> x1.37 for 2, x0.78 for 7.
   occupancy_exponent: 0.55,
   occupancy_ref_capacity: 4,
+  // 2026-07 recalibration: the old 1.35 peak, stacked on PLI bases that were
+  // themselves off, overstated summer in the long tail while anchored cities'
+  // review-damped curves understated it. One calibrated amplitude for both
+  // regimes: global peaks at 1.25, city curves get a peak-month floor (below).
   seasonality: {
-    1: 0.82, 2: 0.82, 3: 0.90, 4: 0.98, 5: 1.08, 6: 1.22,
-    7: 1.35, 8: 1.35, 9: 1.15, 10: 1.00, 11: 0.85, 12: 0.92,
+    1: 0.82, 2: 0.82, 3: 0.90, 4: 0.98, 5: 1.08, 6: 1.15,
+    7: 1.25, 8: 1.25, 9: 1.12, 10: 1.00, 11: 0.85, 12: 0.92,
   },
 };
+
+// NB (2026-07 recalibration): a peak-month FLOOR on anchored cities' damped
+// curves was tried and reverted. Their bases are annual medians that already
+// carry the summer mix, and measured all-in July nightlies came out 15-40%
+// ABOVE observed ADRs with a 1.15 floor (Ghent 199 vs ~130 real, Amsterdam
+// 413 vs ~280). The damped curve partly offsets a high-side anchor base;
+// keep them paired until the anchor bases themselves are recalibrated.
 
 /** Per-person price factor for a group of `g` vs the stored 4-person
  *  assumption (see occupancy_exponent above). 1 when g == ref capacity. */
@@ -444,11 +456,21 @@ export function planeReachIndex(allDests) {
   const cached = reachCache.get(allDests);
   if (cached) return cached;
 
-  const served = [];
+  // Served airports go into a coarse lat/lon grid so each unserved town only
+  // measures the airports in its neighbourhood. The old all-pairs scan was
+  // O(unserved x served) haversines, which grows quadratically with the
+  // catalogue and dominated the whole first paint at full scale; the grid
+  // keeps the result identical (every airport within PLANE_REACH_KM is still
+  // considered) at a fraction of the distance calls.
+  const CELL_DEG = 2; // 2 deg latitude = ~222 km per cell, > PLANE_REACH_KM
+  const grid = new Map();
   for (const [id, d] of Object.entries(allDests)) {
     if (d.lat == null || !d.iata) continue;
     if (!d.routes || Object.keys(d.routes).length === 0) continue;
-    served.push([id, d]);
+    const key = `${Math.floor(d.lat / CELL_DEG)}|${Math.floor(d.lon / CELL_DEG)}`;
+    let cell = grid.get(key);
+    if (!cell) { cell = []; grid.set(key, cell); }
+    cell.push([id, d]);
   }
 
   const index = new Map();
@@ -457,12 +479,24 @@ export function planeReachIndex(allDests) {
     if (d.routes && Object.keys(d.routes).length > 0) continue;        // flies in already
     if ((d.local_transport || {}).road_connected === false) continue;  // island: no road leg
     const { lat, lon } = cityCoords(d);            // measure from the town...
+    const gy = Math.floor(lat / CELL_DEG);
+    const gx = Math.floor(lon / CELL_DEG);
+    // Longitude degrees shrink towards the poles; widen the scan accordingly
+    // (cos taken a cell poleward of the town, so edge cases stay covered).
+    const kmPerLonDeg = 111 * Math.max(0.1, Math.cos((Math.min(Math.abs(lat) + CELL_DEG, 84) * Math.PI) / 180));
+    const kLon = Math.ceil(PLANE_REACH_KM / (kmPerLonDeg * CELL_DEG));
     let best = null;
-    for (const [aid, a] of served) {
-      if (aid === id) continue;
-      const km = haversineKm(lat, lon, a.lat, a.lon);   // ...to the runway
-      if (km == null || km > PLANE_REACH_KM) continue;
-      if (!best || km < best.straight_km) best = { id: aid, airport: a, straight_km: km };
+    for (let y = gy - 1; y <= gy + 1; y += 1) {
+      for (let x = gx - kLon; x <= gx + kLon; x += 1) {
+        const cell = grid.get(`${y}|${x}`);
+        if (!cell) continue;
+        for (const [aid, a] of cell) {
+          if (aid === id) continue;
+          const km = haversineKm(lat, lon, a.lat, a.lon);   // ...to the runway
+          if (km == null || km > PLANE_REACH_KM) continue;
+          if (!best || km < best.straight_km) best = { id: aid, airport: a, straight_km: km };
+        }
+      }
     }
     if (best) index.set(id, best);
   }
@@ -880,20 +914,32 @@ export function fareByWeekday(dest) {
 }
 
 
-// Flight booking deeplink (Skyscanner), the one external service the app links to.
+// Flight booking deeplink, the one external service the app links to.
 // `origin` must be the SAME airport the displayed fare departs from (e.g. CRL for
-// a Charleroi/Ryanair fare, not Brussels BRU) so the Skyscanner search matches the
-// price we show. The search is always per-person (adultsv2=1), the app shows a
-// per-person fare, and Skyscanner otherwise reports a group total that won't line up.
-export function buildFlightLinks({ origin, destIata, departDate, returnDate }) {
+// a Charleroi/Ryanair fare, not Brussels BRU) so the search matches the price we
+// show. The search is always per-person, the app shows a per-person fare, and
+// both providers otherwise report a group total that won't line up.
+//
+// Offers BOTH comparison sites, because they don't return the same set: the
+// budget carriers the app harvests (Ryanair, Wizz, Vueling, Volotea) are sold
+// direct and each aggregator covers a different slice of them, so a fare that
+// looks missing on one often shows up on the other. `links` is ordered with the
+// affiliate-tagged one first (that click is the app's only revenue) and falls
+// back to Skyscanner alone when no marker is configured, so a marker-less dev
+// build behaves exactly as it did before.
+export function buildFlightLinks({ origin, destIata, departDate, returnDate, subId = '' }) {
   if (!origin || !destIata || !departDate || !returnDate) {
-    return { skyscanner: null };
+    return { links: [], skyscanner: null };
   }
   const fmt = (d) => d.replaceAll('-', '').slice(2); // YYMMDD
   const skyscanner =
     `https://www.skyscanner.net/transport/flights/${origin.toLowerCase()}/${destIata.toLowerCase()}/` +
     `${fmt(departDate)}/${fmt(returnDate)}/?adultsv2=1&cabinclass=economy&rtn=1`;
-  return { skyscanner };
+  const aviasales = buildAviasalesLink({ origin, destIata, departDate, returnDate, subId });
+  const links = [];
+  if (aviasales) links.push({ provider: 'Aviasales', href: aviasales });
+  links.push({ provider: 'Skyscanner', href: skyscanner });
+  return { links, skyscanner };
 }
 
 /** Airbnb search deeplink for the destination, prefilled with dates and guests.

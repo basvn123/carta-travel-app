@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Logo from '../components/Logo.jsx';
 import { useAuth } from './AuthContext.jsx';
+import { GoogleButton } from './GoogleButton.jsx';
 import { useI18n } from '../i18n/index.jsx';
 
 /**
@@ -116,6 +117,13 @@ export function AuthModal({ onClose, initialMode = 'signin' }) {
 
         <h2 className="auth-title">{titles[mode]}</h2>
         <p className="auth-sub">{subs[mode]}</p>
+
+        {mode !== 'forgot' && !notice && (
+          <>
+            <GoogleButton />
+            <div className="auth-divider"><span>{t('auth.orWithEmail')}</span></div>
+          </>
+        )}
 
         {notice ? (
           <div className="auth-notice">

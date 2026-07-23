@@ -343,6 +343,18 @@ export function knownForFacts(dest) {
       `${c.label} tourism area: ${c.nights_per_km2.toLocaleString('en-GB')} `
       + `overnight stays per km² in ${c.region} (Eurostat ${c.year})`]);
   }
+  if (dest.geonames?.population != null || dest.geonames?.settlement) {
+    const g = dest.geonames;
+    const settle = g.settlement ? g.settlement.charAt(0).toUpperCase() + g.settlement.slice(1) : '';
+    const pop = g.population != null ? `${g.population.toLocaleString('en-GB')} residents` : '';
+    const val = [settle, pop].filter(Boolean).join(', ');
+    if (val) rows.push(['Population', val]);
+  }
+  if (dest.nature?.nearest?.name) {
+    const n = dest.nature.nearest;
+    const dist = n.dist_km != null ? `, ${n.dist_km} km away` : '';
+    rows.push(['Nearest nature', `${n.name}${n.kind ? ` (${n.kind})` : ''}${dist}`]);
+  }
   if (dest.local_transport?.reason) {
     // Scrub dashes used as punctuation (em/en/spaced-hyphen) to keep the app
     // dash-free, since this line comes straight from the dataset.

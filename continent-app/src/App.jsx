@@ -49,6 +49,9 @@ function TabFallback() {
 }
 import { tripDaysBetween, DEFAULT_LIFESTYLE } from './lib/runtime_pricing.js';
 import { loadInitialState } from './lib/urlState.js';
+import { readTripShareFromUrl, decodeTripShare } from './lib/shareLink.js';
+import { loadTripDraft } from './planner/tripDraftStore.js';
+import { bindDayPlanCloud } from './planner/dayPlanSync.js';
 import { AuthProvider, useAuth } from './auth/AuthContext.jsx';
 import { I18nProvider, useI18n } from './i18n/index.jsx';
 import { AuthModal } from './auth/AuthModal.jsx';
@@ -111,6 +114,12 @@ function TravelApp() {
   // once already signed in, or once guest mode has been chosen before.
   const showGate = authConfigured && !authLoading && !user && !recoveryMode && !guestMode;
 
+  // Day plans shadow to the account whenever someone is signed in (and fall
+  // back to local-only for guests). Keyed on the id, not the user object,
+  // so token refreshes with a fresh object don't re-run the merge.
+  const dayPlanUserId = authConfigured && user ? user.id : null;
+  useEffect(() => { bindDayPlanCloud(dayPlanUserId); }, [dayPlanUserId]);
+
   // A deliberate sign-out should bring the gate back (they may want to switch
   // accounts) rather than silently falling through to the guest bypass they
   // chose before they ever had an account.
@@ -165,6 +174,20 @@ function TravelApp() {
   // overridden by your own saved preferences.
   const [cameFromUrl] = useState(() => typeof window !== 'undefined' && !!window.location.search);
 
+  // A whole TRIP shared as a link (see lib/shareLink.js): the hash payload is
+  // captured synchronously before useUrlSync's first URL write would drop it,
+  // decoded async, then offered in a confirm dialog rather than silently
+  // replacing whatever plan is already in the recipient's planner.
+  const [sharedTripRaw] = useState(() => readTripShareFromUrl());
+  const [sharedTrip, setSharedTrip] = useState(null);
+  const [pendingSharedTrip, setPendingSharedTrip] = useState(null);
+  useEffect(() => {
+    if (!sharedTripRaw) return undefined;
+    let live = true;
+    decodeTripShare(sharedTripRaw).then((d) => { if (live && d) setSharedTrip(d); });
+    return () => { live = false; };
+  }, [sharedTripRaw]);
+
   // Stable identity: this lands on every ResultsList row, so a fresh function
   // per render would defeat the list's React.memo.
   const toggleFav = useCallback((id) => setFavorites((prev) => {
@@ -200,12 +223,39 @@ function TravelApp() {
   // tapping the pill expands the text in a popover that overlays the map rather
   // than pushing it down.
   const [mapGuideOpen, setMapGuideOpen] = useState(false);
+  // Once the visitor has clicked any destination they have "started": the
+  // START HERE pill has done its job and must not keep floating over the map.
+  // Persisted so it stays gone on the next visit too.
+  const [mapGuideDone, setMapGuideDone] = useState(() => {
+    try { return localStorage.getItem('carta.mapGuideDone') === '1'; } catch { return false; }
+  });
 
-  // Every open: make it unmissable that Carta is built for budget travellers
-  // flying Ryanair, and that other airlines aren't in the data yet. Deliberately
-  // not persisted, it should greet every visit, not just the first.
-  const [fareNoticeDismissed, setFareNoticeDismissed] = useState(false);
-  const dismissFareNotice = () => setFareNoticeDismissed(true);
+  // Greet the FIRST visit with the "built for Ryanair budget travel" notice so
+  // it's clear other airlines aren't in the data yet, then stay quiet: the
+  // Ryanair context remains available via the persistent "start here" guide
+  // pill and the per-price confidence pills. Persisted so a returning visitor
+  // isn't re-interrupted on every map visit.
+  const [fareNoticeDismissed, setFareNoticeDismissed] = useState(() => {
+    try { return localStorage.getItem('carta.fareNoticeSeen') === '1'; } catch { return false; }
+  });
+  const dismissFareNotice = () => {
+    setFareNoticeDismissed(true);
+    try { localStorage.setItem('carta.fareNoticeSeen', '1'); } catch { /* private mode */ }
+  };
+
+  // Escape closes the top-most dismissable surface (fare notice, then the
+  // shared-trip offer, then the destination detail). Gives keyboard users a way
+  // out that the click-outside backdrop alone never provided.
+  useEffect(() => {
+    const onKey = (e) => {
+      if (e.key !== 'Escape') return;
+      if (!fareNoticeDismissed) { dismissFareNotice(); return; }
+      if (sharedTrip) { setSharedTrip(null); return; }
+      if (selectedId) { setSelectedId(null); return; }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [fareNoticeDismissed, sharedTrip, selectedId]);
 
   // Let the user collapse the destinations list to give the map the full width.
   // On phones (<=768px) it starts collapsed so the map opens as big as possible;
@@ -216,7 +266,12 @@ function TravelApp() {
   );
 
   // Stable so MapView's marker effect doesn't rebuild every render.
-  const openDetail = useCallback((id) => setSelectedId(id), []);
+  const openDetail = useCallback((id) => {
+    setSelectedId(id);
+    setMapGuideOpen(false);
+    setMapGuideDone(true);
+    try { localStorage.setItem('carta.mapGuideDone', '1'); } catch { /* private mode */ }
+  }, []);
   const collapseList = useCallback(() => setListCollapsed(true), []);
   const openCompare = useCallback(() => setCompareOpen(true), []);
   // "Top picks" hides the unreachable set; a fresh [] every render would
@@ -360,11 +415,10 @@ function TravelApp() {
       <div className="loading-screen">
         <Logo size={56} />
         <div className="name">Carta</div>
-        <div className="sub" style={{ color: 'var(--accent)' }}>{t('shell.failedToLoad', { error })}</div>
-        <div style={{ fontSize: 12, color: 'var(--ink-mute)', maxWidth: 420, textAlign: 'center', lineHeight: 1.5 }}>
-          The app expects <code>/app_data.json</code> at the site root.
-          Run notebook 05 to regenerate it from your pipeline cache.
-        </div>
+        <div className="sub">{t('shell.loadErrorHelp')}</div>
+        <button className="guide-next" style={{ marginTop: 18 }} onClick={() => window.location.reload()}>
+          {t('shell.retry')}
+        </button>
       </div>
     );
   }
@@ -435,8 +489,10 @@ function TravelApp() {
         {/* Guidance tip: a small floating pill anchored to the bottom-right of
             the header. It's absolutely positioned, so its height is NOT folded
             into --filter-h - the map fills the space right under the header and
-            the expanded text overlays the map instead of pushing it down. */}
-        {activeTab === 'map' && (
+            the expanded text overlays the map instead of pushing it down.
+            Hidden while a slide-over panel is up: it would float on top of the
+            panel with nothing behind it to point at. */}
+        {activeTab === 'map' && !accountOpen && !savedTripsOpen && !mapGuideDone && (
           <div className={`map-guide ${mapGuideOpen ? 'open' : ''}`} role="note">
             <button
               className="map-guide-toggle"
@@ -461,8 +517,43 @@ function TravelApp() {
         )}
       </div>
 
-      {/* Every open: the fares-source notice, front and centre over the map. */}
-      {activeTab === 'map' && !fareNoticeDismissed && (
+      {/* A trip arrived via share link: offer it, never silently apply it. */}
+      {sharedTrip && (
+        <div className="guide-overlay" onClick={() => setSharedTrip(null)}>
+          <div className="guide-modal share-trip-modal" onClick={(e) => e.stopPropagation()}>
+            <h2 className="guide-title">{t('share.tripTitle')}</h2>
+            <p className="share-trip-name">
+              <b>{sharedTrip.label || t('share.aTrip')}</b>
+              {', '}
+              {sharedTrip.stops.length} {t(sharedTrip.stops.length === 1 ? 'share.stopOne' : 'share.stopMany')}
+            </p>
+            <p className="fare-notice-text">{t('share.tripBody')}</p>
+            {!!(loadTripDraft()?.stops?.length) && (
+              <p className="fare-notice-text share-trip-warn">{t('share.replaceWarn')}</p>
+            )}
+            <div className="share-trip-actions">
+              <button
+                className="guide-next"
+                onClick={() => {
+                  setPendingSharedTrip(sharedTrip);
+                  setSharedTrip(null);
+                  setActiveTab('trip');
+                }}
+              >
+                {t('share.open')}
+              </button>
+              <button className="share-trip-dismiss" onClick={() => setSharedTrip(null)}>
+                {t('share.dismiss')}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Every open: the fares-source notice, front and centre over the map.
+          It waits while a shared-trip offer is on screen (one dialog at a time,
+          and the deep link is what the visitor came for). */}
+      {activeTab === 'map' && !fareNoticeDismissed && !sharedTrip && (
         <div className="guide-overlay fare-notice-overlay" onClick={dismissFareNotice}>
           <div className="guide-modal fare-notice" onClick={(e) => e.stopPropagation()}>
             <h2 className="guide-title">{t('fareNotice.title')}</h2>
@@ -609,6 +700,8 @@ function TravelApp() {
               onRequestAuth={() => setAuthModalOpen(true)}
               openPlanId={pendingTripPlanId}
               onOpenPlanConsumed={() => setPendingTripPlanId(null)}
+              openSharedTrip={pendingSharedTrip}
+              onSharedTripConsumed={() => setPendingSharedTrip(null)}
               origin={choices.origin}
               onChangeOrigin={setOrigin}
               onPlanDay={(target) => {

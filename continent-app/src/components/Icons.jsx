@@ -25,6 +25,26 @@ export function CalendarIcon({ size = 18, className = '' }) {
   );
 }
 
+export function ChevronDownIcon({ size = 18, className = '' }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.7"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      role="img"
+      aria-hidden="true"
+    >
+      <path d="M6 9.5l6 6 6-6" />
+    </svg>
+  );
+}
+
 export function FilterIcon({ size = 18, className = '' }) {
   return (
     <svg
@@ -508,6 +528,15 @@ export function ShareIcon({ size = 15, className = '' }) {
   );
 }
 
+export function LinkIcon({ size = 15, className = '' }) {
+  return (
+    <Glyph size={size} className={className} label="Link">
+      <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+      <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+    </Glyph>
+  );
+}
+
 /* Apple with a pulse line, deliberately unlike the filter/sliders glyphs,
    which it used to be mistaken for in the mobile toolbar. */
 export function LifestyleIcon({ size = 15, className = '' }) {
@@ -553,6 +582,17 @@ export function SearchIcon({ size = 15, className = '' }) {
     <Glyph size={size} className={className} label="Search">
       <circle cx="10.5" cy="10.5" r="6.5" />
       <path d="M20 20l-4.6-4.6" />
+    </Glyph>
+  );
+}
+
+export function PiggyIcon({ size = 15, className = '' }) {
+  return (
+    <Glyph size={size} className={className} label="Save money">
+      <path d="M5 11.5c0-3.6 3.1-6 7-6s7 2.4 7 6c0 1.4-.5 2.6-1.3 3.6l.6 2.9-2.7-.9c-1 .4-2.3.7-3.6.7-3.9 0-7-2.5-7-6.3Z" />
+      <path d="M5.4 10.3c-1.2 0-2.1.6-2.4 1.7.3 1.1 1.2 1.7 2.4 1.7" />
+      <path d="M15.4 10.9h.01" />
+      <path d="M9.5 5.9c.4-1 1.4-1.7 2.5-1.7s2.1.7 2.5 1.7" />
     </Glyph>
   );
 }

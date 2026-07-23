@@ -4,12 +4,24 @@
 export const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 export const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
-/** Add `n` days to an ISO 'YYYY-MM-DD' date (UTC-safe). */
+/** Add `n` days to an ISO 'YYYY-MM-DD' date (UTC-safe).
+ *
+ *  Memoized: the pricing pass calls this for every destination with the SAME
+ *  few dates (trip window sweeps, fare-window scans), which at full catalogue
+ *  scale meant millions of Date allocations for a handful of distinct inputs.
+ *  The input domain per session is tiny, so a simple bounded map wins. */
+const addDaysCache = new Map();
 export function addDays(iso, n) {
   if (!iso) return '';
+  const key = `${iso}|${n}`;
+  const hit = addDaysCache.get(key);
+  if (hit !== undefined) return hit;
   const d = new Date(iso + 'T00:00:00Z');
   d.setUTCDate(d.getUTCDate() + n);
-  return d.toISOString().slice(0, 10);
+  const out = d.toISOString().slice(0, 10);
+  if (addDaysCache.size > 20000) addDaysCache.clear();
+  addDaysCache.set(key, out);
+  return out;
 }
 
 /** '2026-09-04' -> '04 Sep 2026', or 'Fri 04 Sep' with `withWeekday`. */
