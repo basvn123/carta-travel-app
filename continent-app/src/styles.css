@@ -1616,6 +1616,12 @@ input, select {
   transition: background .15s, color .15s;
 }
 .guide-datemode button.on { background: var(--paper); color: var(--accent); box-shadow: var(--shadow-1); }
+/* Stay-style toggle: labels are uneven lengths ("Change stays as we go" vs
+   "One home base"), so an even 50/50 split wraps the longer one mid-text.
+   Size each button to its own content instead, wrapping the whole pill to a
+   second row if it doesn't fit rather than breaking a label across lines. */
+.guide-staystyle-toggle { flex-wrap: wrap; }
+.guide-staystyle-toggle button { flex: none; white-space: nowrap; }
 .guide-when-dates {
   display: flex;
   align-items: flex-end;
@@ -2010,27 +2016,39 @@ input, select {
 .guide-foot-summary { font-family: var(--mono); font-size: 11px; color: var(--ink-mute); display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 .guide-foot-actions { display: flex; gap: 10px; }
 
-/* ── Running price estimate in the wizard footer ── */
+/* ── Running price estimate: pinned right under the header (not the footer)
+   so an updated total is something the traveller actually notices as they
+   move through the steps, styled as a plain white/professional chip rather
+   than an accent-tinted pill. ── */
+.guide-estimate-bar {
+  display: flex;
+  justify-content: flex-end;
+  padding: 0 18px 12px;
+  flex-shrink: 0;
+}
 .guide-estimate { position: relative; display: inline-flex; }
 .guide-estimate-btn {
   font-family: var(--mono);
   font-size: 12px;
   font-weight: 700;
-  color: var(--accent);
-  border: 1px solid var(--accent);
+  color: var(--ink);
+  border: 1px solid var(--rule);
   border-radius: 999px;
-  background: color-mix(in srgb, var(--accent) 7%, var(--paper));
-  padding: 4px 12px;
+  background: var(--paper);
+  box-shadow: var(--shadow-1);
+  padding: 6px 14px;
   cursor: pointer;
   white-space: nowrap;
+  transition: border-color .15s, box-shadow .15s;
 }
-.guide-estimate-btn:hover, .guide-estimate-btn.open { background: var(--accent); color: #fff; }
+.guide-estimate-btn b { color: var(--accent); }
+.guide-estimate-btn:hover, .guide-estimate-btn.open { border-color: var(--ink-soft); box-shadow: var(--shadow-2); }
 .guide-estimate-pop {
   position: absolute;
-  bottom: calc(100% + 10px);
-  left: 0;
+  top: calc(100% + 8px);
+  right: 0;
   z-index: 40;
-  width: min(320px, 84vw);
+  width: min(320px, calc(100vw - 36px));
   background: var(--paper);
   border: 1px solid var(--rule);
   border-radius: 12px;
@@ -2060,7 +2078,6 @@ input, select {
 .guide-estimate-label small { font-size: 10.5px; color: var(--ink-mute); font-family: var(--mono); }
 .guide-estimate-total { border-top: 1px solid var(--rule); margin-top: 4px; padding-top: 8px; }
 .guide-estimate-total b { color: var(--accent); }
-.guide-estimate-note { margin: 8px 0 0; font-size: 10.5px; line-height: 1.5; color: var(--ink-mute); }
 .guide-back { padding: 10px 18px; border-radius: 10px; border: 1px solid var(--rule); color: var(--ink-soft); font-size: 13px; }
 .guide-back:hover { border-color: var(--ink-soft); }
 .guide-next {
@@ -2460,7 +2477,7 @@ input, select {
 }
 .guide-city-thumb .guide-thumb-fallback { font-size: 22px; }
 
-/* Step 3 - "What do you enjoy?" interest tiles */
+/* Tile grid shared by the vacation-type quiz (VIBES) tiles */
 .guide-interest-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
 .guide-interest {
   position: relative;
@@ -3794,17 +3811,16 @@ input, select {
 }
 .pill-toggle.on .gem { opacity: 1; }
 
-/* ─── Rating slicer: 0-10 band slider + hidden-gems toggle ─── */
-.rating-control {
+/* ─── Band sliders: rating (0-10) and price, each a dual-handle rail with a
+   bordered box echoing the chosen range (or "Any" when untouched). Shared
+   layout/box classes keep the two filters visually consistent. ─── */
+.band-control {
   display: flex;
   flex-direction: row;
-  align-items: flex-start;   /* toggle lines up with the slider row (and the
-                                highlights pills), not the taller block's centre */
-  gap: 14px;
+  align-items: center;   /* band box (+ gem toggle, for rating) vertically center against the slider */
+  gap: 10px;
 }
-/* Slider + its band caption stack together; the gem toggle sits to their right
-   (at the same height as the rest of the bar), not stacked below. */
-.rating-slider {
+.band-slider {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -3822,21 +3838,33 @@ input, select {
   transform: translate(-50%, -50%);
   pointer-events: none;
 }
-.rating-band-caption {
-  display: flex;
+.range-band-box {
+  display: inline-flex;
   align-items: center;
-  gap: 6px;
-  min-height: 15px;
-  font-size: 11px;
+  justify-content: center;
+  flex: none;
+  min-width: 88px;
+  padding: 6px 12px;
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  background: var(--paper-dim);
+  font-size: 12px;
   color: var(--ink-mute);
+  white-space: nowrap;
+  transition: border-color .15s, background .15s, color .15s;
 }
-.rating-band-nums {
+.range-band-box.is-narrowed {
+  border-color: var(--accent);
+  background: var(--accent-bg);
+  color: var(--ink);
+}
+.range-band-nums {
   font-family: var(--mono);
   font-variant-numeric: tabular-nums;
   letter-spacing: 0.02em;
 }
-.rating-band-dash { margin: 0 4px; opacity: 0.7; }
-.rating-band-any { font-style: italic; opacity: 0.85; }
+.range-band-dash { margin: 0 4px; opacity: 0.7; }
+.range-band-any { font-style: italic; opacity: 0.85; }
 
 .reset-filters-btn {
   display: inline-flex;
@@ -6328,7 +6356,16 @@ input, select {
      it needs its own span + alignment rather than the flex align-self used
      when filter-row is a plain flex row. */
   .filter-bar.mobile-collapsed .reset-filters-btn { display: none; }
-  .filter-bar.mobile-open .reset-filters-btn { grid-column: 1 / -1; justify-self: end; margin-top: 4px; }
+  .filter-bar.mobile-open .reset-filters-btn {
+    grid-column: 1 / -1;
+    justify-self: stretch;
+    justify-content: center;
+    width: 100%;
+    margin-top: 10px;
+    padding: 11px 16px;
+    border-radius: 10px;
+    font-size: 13px;
+  }
   .filter-stats { display: none; }
 
   /* A tidy 2-column grid instead of left-packed flex-wrap: every control lines
@@ -6361,9 +6398,15 @@ input, select {
   .filter-bar.mobile-open .segmented { width: 100%; }
   .filter-bar.mobile-open .segmented button { flex: 1; }
   .filter-bar.mobile-open .segmented.seg-icons button { padding: 7px 12px; }
-  .filter-bar.mobile-open .rating-control { width: 100%; flex-direction: column; align-items: flex-start; }
-  .filter-bar.mobile-open .rating-slider { width: 100%; }
-  .filter-bar.mobile-open .rating-control .dual-range { width: 100%; }
+  /* Row-wrap instead of a column stack: the full-width slider forces a wrap,
+     so the band box (+ gem toggle, for rating) fall onto their own row
+     together and stretch to fill it rather than each sitting on its own
+     left-packed row with dead space trailing off to the right. */
+  .filter-bar.mobile-open .band-control { width: 100%; flex-wrap: wrap; align-items: stretch; }
+  .filter-bar.mobile-open .band-slider { width: 100%; }
+  .filter-bar.mobile-open .band-control .dual-range { width: 100%; }
+  .filter-bar.mobile-open .range-band-box { flex: 1; }
+  .filter-bar.mobile-open .band-control .gem-toggle { flex: 1; justify-content: center; }
 
   /* iOS Safari zooms the viewport when a focused field is < 16px. Bump the
      interactive controls so focusing them doesn't yank the layout around. */
@@ -7164,25 +7207,57 @@ input, select {
   background-position: center;
 }
 
-/* Share / download actions under the trip overview */
-.itin-export-row { display: flex; gap: 8px; margin-top: 8px; }
-.itin-export-btn {
-  flex: 1;
-  display: inline-flex;
+/* Share / download actions under the trip overview: one toggle, collapsed by
+   default, opening into a clean vertical list instead of up to six equal-width
+   buttons squeezed into a row (each wrapping its label across 2-3 lines). */
+.itin-export { margin-top: 10px; }
+.itin-export-toggle {
+  width: 100%;
+  display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 6px;
-  font-size: 12px;
-  font-weight: 600;
-  padding: 9px 10px;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 10px 14px;
   border: 1px solid var(--rule);
-  border-radius: 10px;
+  border-radius: 12px;
   background: var(--paper);
-  color: var(--ink-soft);
-  text-decoration: none; /* the Google Maps action is an <a>, keep it button-like */
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
   cursor: pointer;
 }
-.itin-export-btn:hover { border-color: var(--ink-mute); color: var(--ink); }
+.itin-export-toggle > span:first-child { display: inline-flex; align-items: center; gap: 8px; }
+.itin-export-toggle svg:first-child { color: var(--accent); }
+.itin-export.open .itin-export-toggle {
+  border-color: var(--ink-mute);
+  border-radius: 12px 12px 0 0;
+  border-bottom: none;
+}
+.itin-export-menu {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--rule);
+  border-top: none;
+  border-radius: 0 0 12px 12px;
+  overflow: hidden;
+}
+.itin-export-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink-soft);
+  background: var(--paper);
+  text-decoration: none; /* the Google Maps action is an <a>, keep it button-like */
+  border-top: 1px dashed var(--rule);
+  cursor: pointer;
+  transition: background .15s, color .15s;
+}
+.itin-export-item:first-child { border-top: none; }
+.itin-export-item svg { color: var(--accent); flex: none; }
+.itin-export-item:hover { background: var(--paper-dim); color: var(--ink); }
 .itin-export-note { font-size: 11.5px; color: var(--ink-mute); margin: 6px 2px 0; text-align: center; }
 
 /* Bookings / notes / packing list on the planned itinerary. */
@@ -7342,6 +7417,35 @@ input, select {
 .itin-flight-row b { color: var(--ink); font-weight: 600; }
 .itin-flight-row small { margin-left: auto; font-family: var(--mono); font-size: 10px; color: var(--ink-mute); white-space: nowrap; }
 
+/* Home<->first/last-stop drive rows (own-car trips): title stacked over the
+   distance/time, rather than side by side like the short flight rows above -
+   both lines run long ("Drive out: home to Monaco" / "~1014 km, about 11h18
+   behind the wheel") and never fit on one line without wrapping badly. */
+.itin-drive-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 14px;
+  border: 1px dashed var(--rule);
+  border-radius: 12px;
+  background: var(--paper-dim);
+}
+.itin-drive-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--accent-bg);
+  color: var(--accent);
+}
+.itin-drive-main { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.itin-drive-label { font-size: 13px; font-weight: 600; color: var(--ink); }
+.itin-drive-label b { color: var(--accent); font-weight: 600; }
+.itin-drive-sub { font-family: var(--mono); font-size: 11px; color: var(--ink-soft); }
+
 .account-signout {
   width: 100%;
   text-align: center;
@@ -7392,19 +7496,18 @@ input, select {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  gap: 8px;
+  gap: 9px;
 }
 .bt-badge {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
+  gap: 6px;
   font-size: 11.5px;
-  font-weight: 700;
-  padding: 5px 11px 5px 8px;
+  font-weight: 600;
+  padding: 6px 12px;
   border-radius: 100px;
   background: #e8f3e6;
   color: #2c6a1f;
-  border: 1px solid #c5dfbe;
   white-space: nowrap;
 }
 .bt-badge-check {
@@ -7413,17 +7516,20 @@ input, select {
   flex-shrink: 0;
 }
 .bt-cta {
-  font-size: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12.5px;
   font-weight: 700;
-  color: var(--accent);
-  background: var(--accent-bg);
-  border: 1px solid var(--accent-soft);
-  padding: 7px 13px;
-  border-radius: 8px;
+  color: var(--paper);
+  background: var(--accent);
+  border: none;
+  padding: 9px 16px;
+  border-radius: 9px;
   white-space: nowrap;
-  transition: background .15s, color .15s;
+  transition: background .15s;
 }
-.bt-cta:hover { background: var(--accent-soft); color: #fff; }
+.bt-cta:hover { background: var(--accent-soft); }
 
 .bt-chart-wrap {
   position: relative;
@@ -7443,33 +7549,6 @@ input, select {
 .bt-pt-you { fill: var(--ink); stroke: var(--paper); }
 .bt-crosshair { stroke: var(--ink-mute); stroke-width: 1; opacity: .5; }
 
-/* Floating labels pinned to the cheapest/your-dates points - kept off the
-   line itself (a plain SVG text label there collides with the chart), and
-   flipped near the edges so they never get clipped or sit over the axes. */
-.bt-pin {
-  position: absolute;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  background: var(--paper);
-  border: 1px solid var(--rule);
-  border-radius: 100px;
-  padding: 3px 9px 3px 7px;
-  font-size: 10.5px;
-  font-weight: 700;
-  color: var(--ink);
-  white-space: nowrap;
-  box-shadow: var(--shadow-1);
-  pointer-events: none;
-}
-.bt-pin-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; display: inline-block; }
-.bt-pin-center.bt-pin-above { transform: translate(-50%, -140%); }
-.bt-pin-left.bt-pin-above   { transform: translate(0, -140%); }
-.bt-pin-right.bt-pin-above  { transform: translate(-100%, -140%); }
-.bt-pin-center.bt-pin-below { transform: translate(-50%, 40%); }
-.bt-pin-left.bt-pin-below   { transform: translate(0, 40%); }
-.bt-pin-right.bt-pin-below  { transform: translate(-100%, 40%); }
-
 .bt-tooltip {
   position: absolute;
   pointer-events: none;
@@ -7486,18 +7565,21 @@ input, select {
 
 .bt-legend {
   display: flex;
-  gap: 16px;
+  gap: 14px;
   flex-wrap: wrap;
-  margin-top: 8px;
+  margin-top: 12px;
 }
 .bt-legend-item {
   display: flex;
   align-items: center;
-  gap: 6px;
-  font-size: 11px;
-  color: var(--ink-soft);
+  gap: 5px;
+  font-family: var(--mono);
+  font-size: 9.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--ink-mute);
 }
-.bt-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; display: inline-block; }
+.bt-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; display: inline-block; }
 .bt-dot-accent { background: var(--accent); }
 .bt-dot-green { background: #2c6a1f; }
 .bt-dot-ink { background: var(--ink); }
@@ -7601,7 +7683,6 @@ input, select {
 .climate-dot-mixed { background: var(--accent-soft); }
 .climate-dot-poor  { background: #9bb0bd; }
 .climate-legend { margin-top: 10px; }
-.climate-source { margin-top: 6px; opacity: 0.75; }
 .climate-tip {
   position: absolute;
   bottom: calc(100% + 6px);
@@ -8074,15 +8155,10 @@ input, select {
 /* ─── Best-time chart: measured-width SVG, mobile-safe headline ─── */
 .bt-chart-wrap svg { display: block; max-width: 100%; }
 @media (max-width: 768px) {
-  .bt-headline { flex-direction: column; align-items: stretch; gap: 10px; }
-  .bt-headline-actions {
-    flex-direction: row;
-    align-items: center;
-    justify-content: flex-start;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-  .bt-badge, .bt-cta { white-space: normal; text-align: left; }
+  .bt-headline { flex-direction: column; align-items: stretch; gap: 12px; }
+  .bt-headline-actions { flex-direction: column; align-items: stretch; gap: 8px; }
+  .bt-badge { justify-content: center; }
+  .bt-cta { width: 100%; }
 }
 
 /* ─── Lifestyle: filter-bar entry point + unit rates ─── */
@@ -8639,8 +8715,8 @@ input, select {
   .filter-bar.mobile-open .filter-baggage   { order: 7; grid-column: 1 / -1; }
   .filter-bar.mobile-open .filter-country   { order: 8; grid-column: 1 / -1; }
   .filter-bar.mobile-open .filter-beauty    { order: 9; grid-column: 1 / -1; }
-  .filter-bar.mobile-open .filter-highlights{ order: 10; grid-column: 1 / -1; }
-  .filter-bar.mobile-open .price-range      { order: 11; grid-column: 1 / -1; }
+  .filter-bar.mobile-open .price-range      { order: 10; grid-column: 1 / -1; }
+  .filter-bar.mobile-open .filter-highlights{ order: 11; grid-column: 1 / -1; }
   .filter-bar.mobile-open .reset-filters-btn{ order: 99; }
 
   /* The lifestyle entry point on mobile is the sliders icon in the header
@@ -8678,31 +8754,27 @@ input, select {
 }
 
 /* "About this place": population + nearest protected area + a short guide lead,
-   built from the geonames / nature / guide data slices. */
-.panel-about {
-  margin: 4px 0 14px;
-  padding: 12px 14px;
-  border: 1px solid var(--rule);
-  border-radius: 10px;
-  background: var(--paper-dim);
-}
+   built from the geonames / nature / guide data slices. A `.panel-section`
+   like every other block in the panel (same side inset + divider) rather than
+   its own inset card, so it doesn't sit flush against the panel edge on
+   narrow screens. */
 .panel-about-fact {
   display: flex;
-  align-items: flex-start;
-  gap: 8px;
+  align-items: center;
+  gap: 9px;
   font-size: 12.5px;
   line-height: 1.45;
   color: var(--ink-soft);
 }
-.panel-about-fact + .panel-about-fact { margin-top: 5px; }
-.panel-about-fact svg { flex: none; margin-top: 1px; color: var(--ink-mute); }
+.panel-about-fact + .panel-about-fact { margin-top: 8px; }
+.panel-about-fact svg { flex: none; color: var(--ink-mute); }
 .panel-about-guide {
-  margin: 10px 0 0;
+  margin: 14px 0 0;
   font-size: 12.5px;
   line-height: 1.6;
   color: var(--ink-soft);
 }
-.panel-about-fact + .panel-about-guide { padding-top: 10px; border-top: 1px solid var(--rule); }
+.panel-about-fact + .panel-about-guide { padding-top: 14px; border-top: 1px solid var(--rule); }
 .panel-about-guide-link {
   color: var(--accent);
   font-weight: 600;
@@ -8738,7 +8810,7 @@ input, select {
   color: var(--ink-mute);
   padding-top: 2px;
 }
-.cost-info-fact-value { color: var(--ink-soft); }
+.cost-info-fact-value { flex: 1; min-width: 0; color: var(--ink-soft); }
 
 /* Lifestyle panel: one merged Eating & drinking section with the cadence
    toggle in its header row; consistent section rhythm. */
@@ -8818,7 +8890,7 @@ input, select {
   color: var(--ink-mute);
   padding-top: 2px;
 }
-.guide-city-fact-value { color: var(--ink-soft); }
+.guide-city-fact-value { flex: 1; min-width: 0; color: var(--ink-soft); }
 /* "Known for" reads like every other fact row - same body font, just ink-dark
    so it still leads the card without the cramped serif wrapping. */
 .guide-city-fact-known .guide-city-fact-value { color: var(--ink); }
@@ -10704,9 +10776,9 @@ input, select {
 
 /* ── "Where do you drive from?" (wizard car branch + planner own-car editor) ── */
 .guide-carfrom { margin: 10px 0 12px; }
-.guide-carfrom-row { display: flex; gap: 8px; align-items: center; }
-.guide-carfrom-row .guide-search { flex: 1; min-width: 0; }
-.guide-carfrom-search { white-space: nowrap; }
+.guide-carfrom-row { display: flex; flex-wrap: nowrap; gap: 8px; align-items: center; }
+.guide-carfrom-row .guide-search { flex: 1; min-width: 0; margin-bottom: 0; }
+.guide-carfrom-search { flex: none; white-space: nowrap; }
 .guide-carfrom-list { margin-top: 8px; }
 .guide-carfrom-list .guide-city-btn { display: flex; gap: 8px; align-items: center; text-align: left; }
 .guide-carfrom-label { font-size: 12px; color: var(--ink-soft); overflow: hidden; text-overflow: ellipsis; }

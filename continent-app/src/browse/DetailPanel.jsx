@@ -144,7 +144,7 @@ export function DetailPanel({ destination, departDate, returnDate, choices, setC
           names/descriptions); only the labels are translated. */}
       {(destination.guide?.text || destination.nature?.nearest?.name
         || destination.geonames?.population != null || destination.geonames?.settlement) && (
-        <div className="panel-about">
+        <div className="panel-section panel-about">
           {(destination.geonames?.population != null || destination.geonames?.settlement) && popLine(destination.geonames) && (
             <div className="panel-about-fact">
               <PersonIcon size={13} />

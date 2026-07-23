@@ -333,15 +333,10 @@ export function knownForFacts(dest) {
     const bw = dest.bathing_water;
     const trend = bw.trend === 'improving' ? ', improving'
       : bw.trend === 'declining' ? ', declining' : '';
-    rows.push(['Water quality',
-      `${bw.rating}: ${bw.excellent_pct}% of ${bw.n_sites} nearby bathing `
-      + `${bw.n_sites === 1 ? 'site' : 'sites'} rated Excellent (EEA ${bw.year}${trend})`]);
+    rows.push(['Water quality', `${bw.rating} bathing water${trend}`]);
   }
   if (dest.crowding) {
-    const c = dest.crowding;
-    rows.push(['Crowds',
-      `${c.label} tourism area: ${c.nights_per_km2.toLocaleString('en-GB')} `
-      + `overnight stays per km² in ${c.region} (Eurostat ${c.year})`]);
+    rows.push(['Crowds', `${dest.crowding.label} tourism area`]);
   }
   if (dest.geonames?.population != null || dest.geonames?.settlement) {
     const g = dest.geonames;

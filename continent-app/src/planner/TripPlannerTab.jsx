@@ -700,60 +700,66 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
                 <div className="trip-stops">
                   {tp.stopDetails.map((s, i) => (
                     <React.Fragment key={i}>
-                      <div
-                        className={`trip-stop ${selectedStop === i ? 'active' : ''} ${dragIdx === i ? 'dragging' : ''}`}
-                        ref={(el) => { stopRefs.current[i] = el; }}
-                        onClick={() => setSelectedStop(i)}
-                        onDragOver={(e) => { if (dragIdx != null) e.preventDefault(); }}
-                        onDrop={(e) => {
-                          e.preventDefault();
-                          if (dragIdx != null && dragIdx !== i) tp.reorderStop(dragIdx, i);
-                          setDragIdx(null);
-                        }}
-                      >
+                      <div className="trip-stop-wrap">
                         <div
-                          className="trip-stop-idx"
-                          draggable
-                          onDragStart={(e) => { setDragIdx(i); e.dataTransfer.effectAllowed = 'move'; }}
-                          onDragEnd={() => setDragIdx(null)}
-                          title={t('trip.dragReorder')}
-                        >{i + 1}</div>
-                        <div className="trip-stop-body">
-                          <div className="trip-stop-city">
-                            {s.dest ? s.dest.city : t('trip.unknown')}
-                            {s.dest && (
-                              <button
-                                className={`guide-city-info-btn ${stopInfoIdx === i ? 'open' : ''}`}
-                                onClick={(e) => { e.stopPropagation(); setStopInfoIdx(stopInfoIdx === i ? null : i); }}
-                                aria-expanded={stopInfoIdx === i}
-                                title={t('trip.aboutCity', { city: s.dest.city })}
-                              ><InfoIcon size={12} /></button>
-                            )}
-                          </div>
-                          <div className="trip-stop-when">
-                            {s.arriveDate ? `${fmtDate(s.arriveDate, true)} → ${fmtDate(s.departDate, true)}` : t('trip.setDates')}
-                          </div>
-                          {stopInfoIdx === i && s.dest && (
-                            <div className="guide-city-facts" onClick={(e) => e.stopPropagation()}>
-                              {knownForFacts(s.dest).map(([label, value]) => (
-                                <div className={`guide-city-fact ${label === 'Known for' ? 'guide-city-fact-known' : ''}`} key={label}>
-                                  <span className="guide-city-fact-label">{label}</span>
-                                  <span className="guide-city-fact-value">{value}</span>
-                                </div>
-                              ))}
+                          className={`trip-stop ${selectedStop === i ? 'active' : ''} ${dragIdx === i ? 'dragging' : ''}`}
+                          ref={(el) => { stopRefs.current[i] = el; }}
+                          onClick={() => setSelectedStop(i)}
+                          onDragOver={(e) => { if (dragIdx != null) e.preventDefault(); }}
+                          onDrop={(e) => {
+                            e.preventDefault();
+                            if (dragIdx != null && dragIdx !== i) tp.reorderStop(dragIdx, i);
+                            setDragIdx(null);
+                          }}
+                        >
+                          <div
+                            className="trip-stop-idx"
+                            draggable
+                            onDragStart={(e) => { setDragIdx(i); e.dataTransfer.effectAllowed = 'move'; }}
+                            onDragEnd={() => setDragIdx(null)}
+                            title={t('trip.dragReorder')}
+                          >{i + 1}</div>
+                          <div className="trip-stop-body">
+                            <div className="trip-stop-city">
+                              {s.dest ? s.dest.city : t('trip.unknown')}
+                              {s.dest && (
+                                <button
+                                  className={`guide-city-info-btn ${stopInfoIdx === i ? 'open' : ''}`}
+                                  onClick={(e) => { e.stopPropagation(); setStopInfoIdx(stopInfoIdx === i ? null : i); }}
+                                  aria-expanded={stopInfoIdx === i}
+                                  title={t('trip.aboutCity', { city: s.dest.city })}
+                                ><InfoIcon size={12} /></button>
+                              )}
                             </div>
-                          )}
+                            <div className="trip-stop-when">
+                              {s.arriveDate ? `${fmtDate(s.arriveDate, true)} → ${fmtDate(s.departDate, true)}` : t('trip.setDates')}
+                            </div>
+                          </div>
+                          <Stepper
+                            value={s.nights}
+                            onChange={(n) => tp.setStopNights(i, n)}
+                            suffix={(n) => (n === 1 ? t('trip.nightOne') : t('trip.nightMany'))}
+                          />
+                          <div className="trip-stop-tools" onClick={(e) => e.stopPropagation()}>
+                            {i > 0 && <button className="trip-stop-move" onClick={() => tp.moveStop(i, -1)} aria-label={t('trip.moveUp')} title={t('trip.moveUp')}>↑</button>}
+                            {i < tp.stopDetails.length - 1 && <button className="trip-stop-move" onClick={() => tp.moveStop(i, 1)} aria-label={t('trip.moveDown')} title={t('trip.moveDown')}>↓</button>}
+                            <button className="trip-stop-remove" onClick={() => tp.removeStop(i)} aria-label={t('trip.removeStopAria')} title={t('trip.remove')}>×</button>
+                          </div>
                         </div>
-                        <Stepper
-                          value={s.nights}
-                          onChange={(n) => tp.setStopNights(i, n)}
-                          suffix={(n) => (n === 1 ? t('trip.nightOne') : t('trip.nightMany'))}
-                        />
-                        <div className="trip-stop-tools" onClick={(e) => e.stopPropagation()}>
-                          {i > 0 && <button className="trip-stop-move" onClick={() => tp.moveStop(i, -1)} aria-label={t('trip.moveUp')} title={t('trip.moveUp')}>↑</button>}
-                          {i < tp.stopDetails.length - 1 && <button className="trip-stop-move" onClick={() => tp.moveStop(i, 1)} aria-label={t('trip.moveDown')} title={t('trip.moveDown')}>↓</button>}
-                          <button className="trip-stop-remove" onClick={() => tp.removeStop(i)} aria-label={t('trip.removeStopAria')} title={t('trip.remove')}>×</button>
-                        </div>
+                        {/* Full width of the row (not squeezed into the narrow
+                            body column alongside the stepper and tools), so
+                            long facts read as normal sentences instead of
+                            wrapping one word per line. */}
+                        {stopInfoIdx === i && s.dest && (
+                          <div className="guide-city-facts" onClick={(e) => e.stopPropagation()}>
+                            {knownForFacts(s.dest).map(([label, value]) => (
+                              <div className={`guide-city-fact ${label === 'Known for' ? 'guide-city-fact-known' : ''}`} key={label}>
+                                <span className="guide-city-fact-label">{label}</span>
+                                <span className="guide-city-fact-value">{value}</span>
+                              </div>
+                            ))}
+                          </div>
+                        )}
                       </div>
                       {i < tp.legs.length && (
                         <LegRow leg={tp.legs[i]} onMode={(m) => tp.setLegMode(i, m)} />

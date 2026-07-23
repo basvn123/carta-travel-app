@@ -58,14 +58,15 @@ export function FilterBar({
 
   const advancedActiveCount = tripKinds.length > 0 ? 1 : 0;
   const beautyActive = !isFullRatingRange(ratingRange) || gemOnly || unescoOnly || topBeachOnly;
+  const priceNarrowed = !!(priceRange && priceBounds &&
+    (priceRange[0] > priceBounds[0] || priceRange[1] < priceBounds[1]));
 
   const anyFilterActive =
     countryFilter.length > 0 ||
     advancedActiveCount > 0 ||
     beautyActive ||
     !!topPick ||
-    (priceRange && priceBounds &&
-      (priceRange[0] > priceBounds[0] || priceRange[1] < priceBounds[1]));
+    priceNarrowed;
 
   const resetAll = () => {
     setCountryFilter([]);
@@ -291,7 +292,6 @@ export function FilterBar({
                       options={Object.entries(baggageOpts).map(([k, v]) => ({
                         value: k,
                         label: v.label,
-                        sublabel: v.per_direction_eur > 0 ? t('filter.perDirection', { n: v.per_direction_eur }) : t('filter.freeBag'),
                       }))}
                     />
                   </div>
@@ -393,14 +393,26 @@ export function FilterBar({
                   <label className="filter-label">
                     {priceMode === 'pp' ? t('filter.pricePP') : t('filter.priceTotal')}
                   </label>
-                  <div className="filter-control">
-                    <DualRange
-                      min={priceBounds[0]}
-                      max={priceBounds[1]}
-                      value={priceRange}
-                      onChange={setPriceRange}
-                      fmt={eur}
-                    />
+                  <div className="filter-control band-control">
+                    <div className="band-slider">
+                      <DualRange
+                        min={priceBounds[0]}
+                        max={priceBounds[1]}
+                        value={priceRange}
+                        onChange={setPriceRange}
+                        fmt={eur}
+                        hideValueRow
+                      />
+                    </div>
+                    <div className={`range-band-box ${priceNarrowed ? 'is-narrowed' : ''}`}>
+                      {priceNarrowed ? (
+                        <span className="range-band-nums">
+                          {eur(priceRange[0])}<span className="range-band-dash">to</span>{eur(priceRange[1])}
+                        </span>
+                      ) : (
+                        <span className="range-band-any">{t('filter.anyPrice')}</span>
+                      )}
+                    </div>
                   </div>
                 </div>
               )}
@@ -446,8 +458,8 @@ export function FilterBar({
                   the hidden-gems toggle to keep only the under-the-radar picks. */}
               <div className="filter filter-beauty">
                 <label className="filter-label">{t('filter.rating')}</label>
-                <div className="filter-control rating-control">
-                  <div className="rating-slider">
+                <div className="filter-control band-control">
+                  <div className="band-slider">
                     <DualRange
                       min={0}
                       max={RATING_MAX * 10}
@@ -458,15 +470,15 @@ export function FilterBar({
                       ariaLabel={t('filter.rating')}
                       hideValueRow
                     />
-                    <div className="rating-band-caption">
-                      {ratingNarrowed ? (
-                        <span className="rating-band-nums">
-                          {rLo.toFixed(1)}<span className="rating-band-dash">to</span>{rHi.toFixed(1)}
-                        </span>
-                      ) : (
-                        <span className="rating-band-any">{t('rating.anyTitle')}</span>
-                      )}
-                    </div>
+                  </div>
+                  <div className={`range-band-box ${ratingNarrowed ? 'is-narrowed' : ''}`}>
+                    {ratingNarrowed ? (
+                      <span className="range-band-nums">
+                        {rLo.toFixed(1)}<span className="range-band-dash">to</span>{rHi.toFixed(1)}
+                      </span>
+                    ) : (
+                      <span className="range-band-any">{t('rating.anyTitle')}</span>
+                    )}
                   </div>
                   <button
                     type="button"

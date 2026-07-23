@@ -175,15 +175,20 @@ function BreakdownSection({ Icon, title, sub, total, children }) {
 }
 
 /** A home<->first/last-stop drive row for own-car trips: the journey starts at
- *  the traveller's door, and the route view should say so. */
+ *  the traveller's door, and the route view should say so. Stacked (title
+ *  over the km/time), not crammed onto one line like the short flight rows -
+ *  "Drive out: home to Monaco" plus its distance never fit next to each
+ *  other without wrapping one word per line. */
 function ItinDriveRow({ leg, labelKey, city, from }) {
   const { t } = useI18n();
   if (!leg) return null;
   return (
-    <div className="itin-flight-row">
-      <CarIcon size={12} />
-      <span>{t(labelKey, { city })}{from ? <b> ({from})</b> : null}</span>
-      <small>{t('trip.driveSub', { km: leg.road_km, hours: fmtHours(leg.hours) })}</small>
+    <div className="itin-drive-row">
+      <span className="itin-drive-icon"><CarIcon size={14} /></span>
+      <span className="itin-drive-main">
+        <span className="itin-drive-label">{t(labelKey, { city })}{from ? <b> ({from})</b> : null}</span>
+        <span className="itin-drive-sub">{t('trip.driveSub', { km: leg.road_km, hours: fmtHours(leg.hours) })}</span>
+      </span>
     </div>
   );
 }
@@ -202,6 +207,7 @@ export function TripItinerary({
   const { t } = useI18n();
   const [tab, setTab] = useState('overview');
   const [breakdownOpen, setBreakdownOpen] = useState(false);
+  const [exportOpen, setExportOpen] = useState(false);
   const [shareState, setShareState] = useState('');
 
   // Bookings / notes / packing list, keyed by the plan id (or the draft id
@@ -658,59 +664,74 @@ export function TripItinerary({
 
           {/* Take the trip with you: share it, keep a PDF copy, or open the
               route straight in Google Maps. The Maps link is built from city
-              coordinates, names failed to geocode for many smaller places. */}
-          <div className="itin-export-row">
+              coordinates, names failed to geocode for many smaller places.
+              Collapsed behind one toggle - a row of up to six buttons each
+              wrapping onto their own lines was the ugliest part of the
+              overview, and it's the same list every trip needs once. */}
+          <div className={`itin-export ${exportOpen ? 'open' : ''}`}>
             <button
-              className="itin-export-btn"
-              onClick={async () => {
-                const r = await shareTrip(exportPayload);
-                setShareState(r === 'copied' ? t('export.copied') : '');
-                if (r === 'copied') window.setTimeout(() => setShareState(''), 2500);
-              }}
-              title={t('export.shareTripTitle')}
+              className="itin-export-toggle"
+              onClick={() => setExportOpen((v) => !v)}
+              aria-expanded={exportOpen}
             >
-              <ShareIcon size={12} /> {t('export.shareTrip')}
+              <span><ShareIcon size={13} /> {t('export.exportAndShare')}</span>
+              <span className={`itin-breakdown-caret ${exportOpen ? 'open' : ''}`} aria-hidden="true"><ChevronDownIcon size={14} /></span>
             </button>
-            <button
-              className="itin-export-btn"
-              onClick={() => downloadTripPdf(exportPayload)}
-              title={t('export.downloadPdfTitle')}
-            >
-              <DownloadIcon size={12} /> {t('export.downloadPdf')}
-            </button>
-            {gmapsUrl && (
-              <a
-                className="itin-export-btn"
-                href={gmapsUrl}
-                target="_blank"
-                rel="noreferrer"
-                title={t('export.openRoute')}
-              >
-                <MapPinIcon size={12} /> {t('export.openInGmaps')}
-              </a>
-            )}
-            <button
-              className="itin-export-btn"
-              onClick={handleKml}
-              title={t('export.myMapsTitle')}
-            >
-              <RouteIcon size={12} /> {t('export.myMaps')}
-            </button>
-            <button
-              className="itin-export-btn"
-              onClick={handleIcs}
-              title={t('export.calendarTitle')}
-            >
-              <CalendarIcon size={12} /> {t('export.calendar')}
-            </button>
-            {sharePayload && (
-              <button
-                className="itin-export-btn"
-                onClick={handleCopyLink}
-                title={t('export.copyLinkTitle')}
-              >
-                <LinkIcon size={12} /> {t('export.copyLink')}
-              </button>
+            {exportOpen && (
+              <div className="itin-export-menu">
+                <button
+                  className="itin-export-item"
+                  onClick={async () => {
+                    const r = await shareTrip(exportPayload);
+                    setShareState(r === 'copied' ? t('export.copied') : '');
+                    if (r === 'copied') window.setTimeout(() => setShareState(''), 2500);
+                  }}
+                  title={t('export.shareTripTitle')}
+                >
+                  <ShareIcon size={13} /> {t('export.shareTrip')}
+                </button>
+                <button
+                  className="itin-export-item"
+                  onClick={() => downloadTripPdf(exportPayload)}
+                  title={t('export.downloadPdfTitle')}
+                >
+                  <DownloadIcon size={13} /> {t('export.downloadPdf')}
+                </button>
+                {gmapsUrl && (
+                  <a
+                    className="itin-export-item"
+                    href={gmapsUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    title={t('export.openRoute')}
+                  >
+                    <MapPinIcon size={13} /> {t('export.openInGmaps')}
+                  </a>
+                )}
+                <button
+                  className="itin-export-item"
+                  onClick={handleKml}
+                  title={t('export.myMapsTitle')}
+                >
+                  <RouteIcon size={13} /> {t('export.myMaps')}
+                </button>
+                <button
+                  className="itin-export-item"
+                  onClick={handleIcs}
+                  title={t('export.calendarTitle')}
+                >
+                  <CalendarIcon size={13} /> {t('export.calendar')}
+                </button>
+                {sharePayload && (
+                  <button
+                    className="itin-export-item"
+                    onClick={handleCopyLink}
+                    title={t('export.copyLinkTitle')}
+                  >
+                    <LinkIcon size={13} /> {t('export.copyLink')}
+                  </button>
+                )}
+              </div>
             )}
           </div>
           {shareState && <p className="itin-export-note">{shareState}</p>}

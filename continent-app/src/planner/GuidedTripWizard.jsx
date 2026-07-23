@@ -7,7 +7,7 @@ import { CityPickerMap } from '../map/CityPickerMap.jsx';
 import { FlightPickerMap } from '../map/FlightPickerMap.jsx';
 import {
   countriesFromData, cityInsight,
-  interestFitScore, cityTier, cityCompanions, designStays,
+  cityTier, cityCompanions, designStays,
 } from '../lib/tripGuide.js';
 import { knownForFacts } from '../lib/knownFor.js';
 import { gemScore, BAGGAGE_OPTIONS, baggageFeePerLeg } from '../lib/trip_planner_pricing.js';
@@ -23,8 +23,8 @@ import { geocodeAddress } from '../lib/geocode.js';
 import { useCountryInsights } from '../hooks/useCountryInsights.js';
 import {
   SparkIcon, CheckIcon, AlertIcon, TrainIcon, CarIcon, InfoIcon,
-  MuseumIcon, TreeIcon, DiningIcon, ShoppingIcon, MoonIcon, MasksIcon,
-  CameraIcon, CoffeeIcon, CastleIcon, BeachIcon, BallIcon, LotusIcon,
+  TreeIcon, DiningIcon, MoonIcon,
+  CameraIcon, CastleIcon, BeachIcon,
   LeafIcon, ScaleIcon, BoltIcon, StarIcon, RouteIcon, BedIcon, MapPinIcon,
   CalendarIcon, PersonIcon, DiamondIcon, DotIcon, LuggageIcon,
 } from '../components/Icons.jsx';
@@ -64,14 +64,13 @@ const PATHS = [
 // The values are logic keys (the render switches on them); STEP_LABEL_KEYS
 // maps each to its translated display label.
 const PATH_STEPS = {
-  full: ['Where', 'When', 'Enjoy', 'Getting there', 'Stay', 'Getting home', 'Finish'],
-  landed: ['Arrival', 'Enjoy', 'Stay', 'Finish'],
+  full: ['Where', 'When', 'Getting there', 'Stay', 'Getting home', 'Finish'],
+  landed: ['Arrival', 'Stay', 'Finish'],
   booked: ['Your trip'],
 };
 const STEP_LABEL_KEYS = {
   'Where': 'wizard.stepWhere',
   'When': 'wizard.stepWhen',
-  'Enjoy': 'wizard.stepEnjoy',
   'Getting there': 'wizard.stepGettingThere',
   'Stay': 'wizard.stepStay',
   'Getting home': 'wizard.stepGettingHome',
@@ -97,24 +96,6 @@ const PACE_CHOICES = [
   { key: 'packed', Icon: BoltIcon, labelKey: 'wizard.pacePacked', subKey: 'wizard.pacePackedSub' },
 ];
 
-// The "What do you enjoy?" tiles. Asked BEFORE the flight/stay picks so the
-// recommended routes and cities are already tuned to what they love.
-// Exported: the Day planner's "Shape your day" wizard shows the same tiles.
-export const INTERESTS = [
-  { key: 'museums', labelKey: 'wizard.intMuseums', Icon: MuseumIcon },
-  { key: 'outdoors', labelKey: 'wizard.intOutdoors', Icon: TreeIcon },
-  { key: 'food', labelKey: 'wizard.intFood', Icon: DiningIcon },
-  { key: 'shopping', labelKey: 'wizard.intShopping', Icon: ShoppingIcon },
-  { key: 'nightlife', labelKey: 'wizard.intNightlife', Icon: MoonIcon },
-  { key: 'culture', labelKey: 'wizard.intCulture', Icon: MasksIcon },
-  { key: 'photo', labelKey: 'wizard.intPhoto', Icon: CameraIcon },
-  { key: 'cafes', labelKey: 'wizard.intCafes', Icon: CoffeeIcon },
-  { key: 'architecture', labelKey: 'wizard.intArchitecture', Icon: CastleIcon },
-  { key: 'beaches', labelKey: 'wizard.intBeaches', Icon: BeachIcon },
-  { key: 'sports', labelKey: 'wizard.intSports', Icon: BallIcon },
-  { key: 'wellness', labelKey: 'wizard.intWellness', Icon: LotusIcon },
-];
-
 const BADGE_LABELS = {
   pick: { labelKey: 'wizard.badgePick', cls: 'pick' },
   cheapest: { labelKey: 'wizard.badgeCheapest', cls: 'cheap' },
@@ -130,7 +111,7 @@ const BADGE_LABELS = {
  * Opens on ONE question: how much is already booked?
  *   - Carta plans it start to end: countries (map pick, or Carta recommends
  *     from a vacation-type quiz) -> dates (exact, exact +-2 days, or fully
- *     flexible) -> interests -> getting there (a MAP of real Ryanair fares;
+ *     flexible) -> getting there (a MAP of real Ryanair fares;
  *     picking one shows the interesting places around it) -> stays (map
  *     zoomed on the arrival region; tap a city for a clean briefing with a
  *     recommended stay length; one home base or changing stays) -> finish.
@@ -172,7 +153,6 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
   const [endDate, setEndDate] = useState('');
   const [flexNights, setFlexNights] = useState(7);
   const [flexMonth, setFlexMonth] = useState(''); // '' = any month
-  const [interests, setInterests] = useState(() => new Set()); // enjoyed themes
   // 'fly' = Ryanair route pick, 'car' = drive, 'other' = the traveller books
   // their own flight with another airline (Carta plans stays + ground only).
   const [arriveMode, setArriveMode] = useState('fly');
@@ -488,14 +468,13 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
     }
   };
 
-  // Carta designs the stays from the interests + arrival + window, steered by
-  // the questionnaire: how busy the days should feel, how many stays, and any
+  // Carta designs the stays from the arrival + window, steered by the
+  // questionnaire: how busy the days should feel, how many stays, and any
   // must-include cities. A one-home-base trip designs exactly one stay.
   const applyDesign = () => {
     const picks = designStays({
       destinations,
       countries,
-      interests,
       anchorDest,
       anchorId,
       totalNights: windowNights || 5,
@@ -532,14 +511,6 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
     });
   };
 
-  const toggleInterest = (key) => {
-    setInterests((prev) => {
-      const next = new Set(prev);
-      next.has(key) ? next.delete(key) : next.add(key);
-      return next;
-    });
-  };
-
   const toggleGroup = (key) => {
     setExpandedGroups((prev) => {
       const next = new Set(prev);
@@ -564,7 +535,6 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
     || (stepName === 'When' && (dateMode === 'flex'
       ? flexNights >= 1
       : Boolean(startDate && endDate && windowNights > 0)))
-    || (stepName === 'Enjoy' && interests.size > 0)
     || (stepName === 'Getting there' && (arriveMode === 'car' || arriveMode === 'other' || flyIn != null))
     || (stepName === 'Arrival' && Boolean(arrivalId && startDate && flexNights >= 1))
     || (stepName === 'Stay' && includedIds.length > 0)
@@ -609,7 +579,6 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
     setEndDate('');
     setFlexNights(7);
     setFlexMonth('');
-    setInterests(new Set());
     setArriveMode('fly');
     setFlyInId('');
     setOwnAirline('');
@@ -860,8 +829,7 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
         id,
         dest,
         rankBase: (dest.rating?.score ?? dest.beauty?.score ?? 0)
-          + (dest.rating?.hidden_gem ? 1.5 : 0)
-          + interestFitScore(dest, interests) * 2.5,
+          + (dest.rating?.hidden_gem ? 1.5 : 0),
       }))
       .filter((cd) => matchesQ(cd.dest) && passesStayFilters(cd.id, cd.dest))
       .sort((a, b) => {
@@ -891,6 +859,9 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
     const out = [];
     for (const c of selectedCountries) {
       for (const { id, dest } of c.cities) {
+        // Same minimum-rating / nightly-budget narrowing as the list view,
+        // so switching between Map and List shows the same candidate pool.
+        if (!passesStayFilters(id, dest)) continue;
         out.push({
           id,
           city: dest.city,
@@ -917,7 +888,8 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
       });
     }
     return out;
-  }, [stepName, selectedCountries, nights, includedIds, anchorId, focusedId, destinations]);
+  }, [stepName, selectedCountries, nights, includedIds, anchorId, focusedId, destinations,
+    stayMinRating, stayMaxNightly, groupSize, startDate]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // "Pairs well with" hints for the selected cities (computed once per pick set).
   const companionsFor = useMemo(() => {
@@ -1074,10 +1046,6 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
     } else if (dateMode === 'flex') {
       recapChips.push({ Icon: CalendarIcon, text: `${flexNights} ${t('wizard.nights')}, ${flexMonth ? months.find((m) => m.key === flexMonth)?.label || flexMonth : t('wizard.cheapestMonth')}` });
     }
-    if (interests.size) {
-      const names = INTERESTS.filter((i) => interests.has(i.key)).map((i) => t(i.labelKey));
-      recapChips.push({ Icon: StarIcon, text: names.slice(0, 3).join(', ') + (names.length > 3 ? ` +${names.length - 3}` : '') });
-    }
     if (path === 'full' && stepName !== 'Getting there') {
       if (arriveMode === 'fly' && flyIn) recapChips.push({ Icon: PlaneIcon, text: t('wizard.flyIntoRecap', { city: flyIn.dest.city }) });
       if (arriveMode === 'car') recapChips.push({ Icon: CarIcon, text: t('wizard.goingByCar') });
@@ -1214,7 +1182,6 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
               ))}
             </div>
           )}
-          <p className="guide-note"><InfoIcon size={11} /> {t('wizard.carFromHint')}</p>
         </>
       )}
     </div>
@@ -1249,6 +1216,43 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
             <div className="shape-head-title"><SparkIcon size={13} /> {t('wizard.letCartaGuide')}</div>
           )}
         </div>
+
+        {/* Running price estimate - kept right under the header (not the
+            footer) so an updated total is something the traveller actually
+            notices as they move through the steps, not something buried
+            below the fold. */}
+        {runningEstimate && (
+          <div className="guide-estimate-bar">
+            <span className="guide-estimate">
+              <button
+                className={`guide-estimate-btn ${estimateOpen ? 'open' : ''}`}
+                onClick={() => setEstimateOpen((v) => !v)}
+                aria-expanded={estimateOpen}
+                title="What's in this estimate so far?"
+              >
+                ≈ <b>{eur(runningEstimate.total)}</b> so far
+              </button>
+              {estimateOpen && (
+                <div className="guide-estimate-pop" role="dialog" aria-label="Estimate so far">
+                  <div className="guide-estimate-title">Estimate so far, {runningEstimate.gs} {runningEstimate.gs === 1 ? 'traveller' : 'travellers'}</div>
+                  {runningEstimate.lines.map((l) => (
+                    <div key={l.key} className="guide-estimate-line">
+                      <span className="guide-estimate-label">
+                        {l.label}
+                        {l.sub && <small>{l.sub}</small>}
+                      </span>
+                      <b>{eur(l.eur)}</b>
+                    </div>
+                  ))}
+                  <div className="guide-estimate-line guide-estimate-total">
+                    <span className="guide-estimate-label">Total so far</span>
+                    <b>{eur(runningEstimate.total)}</b>
+                  </div>
+                </div>
+              )}
+            </span>
+          </div>
+        )}
 
         {/* What Carta is planning around - the running recap of every answer. */}
         {recapChips.length > 0 && (
@@ -1286,6 +1290,17 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
             <>
               <h2 className="guide-title">{t('wizard.whereTitle')}</h2>
               <p className="guide-sub">{t('wizard.whereSub')}</p>
+
+              <div className="guide-when-dates">
+                <label className="trip-field">
+                  <span className="trip-field-label"><PersonIcon size={11} /> People</span>
+                  <div className="guide-people">
+                    <button type="button" onClick={() => setGroupSize(Math.max(1, groupSize - 1))} disabled={groupSize <= 1} aria-label="Fewer people">-</button>
+                    <span>{groupSize}</span>
+                    <button type="button" onClick={() => setGroupSize(Math.min(20, groupSize + 1))} disabled={groupSize >= 20} aria-label="More people">+</button>
+                  </div>
+                </label>
+              </div>
 
               <button className="guide-design-btn" onClick={() => setCountryQuizOpen((v) => !v)}>
                 <span className="guide-design-spark"><SparkIcon size={14} /></span>
@@ -1502,6 +1517,14 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
                     <button type="button" onClick={() => setFlexNights(Math.min(30, flexNights + 1))} disabled={flexNights >= 30} aria-label={t('wizard.moreNights')}>+</button>
                   </div>
                 </label>
+                <label className="trip-field">
+                  <span className="trip-field-label"><PersonIcon size={11} /> People</span>
+                  <div className="guide-people">
+                    <button type="button" onClick={() => setGroupSize(Math.max(1, groupSize - 1))} disabled={groupSize <= 1} aria-label="Fewer people">-</button>
+                    <span>{groupSize}</span>
+                    <button type="button" onClick={() => setGroupSize(Math.min(20, groupSize + 1))} disabled={groupSize >= 20} aria-label="More people">+</button>
+                  </div>
+                </label>
               </div>
               {landedMode === 'other' && (
                 <>
@@ -1512,28 +1535,6 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
                 </>
               )}
               {landedMode === 'car' && carFromField}
-            </>
-          )}
-
-          {/* ---- Enjoy (full + landed) ---- */}
-          {stepName === 'Enjoy' && (
-            <>
-              <h2 className="guide-title">{t('wizard.enjoyTitle')}</h2>
-              <p className="guide-sub">{t('wizard.enjoySub')}</p>
-              <div className="guide-interest-grid">
-                {INTERESTS.map((it) => (
-                  <button
-                    key={it.key}
-                    className={`guide-interest ${interests.has(it.key) ? 'on' : ''}`}
-                    onClick={() => toggleInterest(it.key)}
-                    aria-pressed={interests.has(it.key)}
-                  >
-                    {interests.has(it.key) && <span className="guide-interest-check"><CheckIcon size={11} /></span>}
-                    <span className="guide-interest-icon"><it.Icon size={20} /></span>
-                    <span className="guide-interest-label">{t(it.labelKey)}</span>
-                  </button>
-                ))}
-              </div>
             </>
           )}
 
@@ -1582,7 +1583,6 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
                   <div className="guide-drive-notes">
                     {driveNotes.map((n) => (
                       <div className="guide-drive-note" key={n.country}>
-                        <Flag iso2={n.iso2} className="guide-flag-img-sm" />
                         <b>{n.country}</b>
                         <span>{t('wizard.driveReach', { km: n.km, hours: fmtHours(n.hours) })}</span>
                       </div>
@@ -1756,7 +1756,7 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
               {/* One base, or changing stays? Decides how Carta designs. */}
               <div className="guide-staystyle">
                 <span className="trip-field-label">{t('wizard.howStay')}</span>
-                <div className="guide-datemode">
+                <div className="guide-datemode guide-staystyle-toggle">
                   <button
                     className={stayStyle === 'multi' ? 'on' : ''}
                     onClick={() => setStayStyle('multi')}
@@ -1828,6 +1828,48 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
               {designedNote && includedIds.length > 0 && (
                 <p className="guide-note"><CheckIcon size={11} /> {t(includedIds.length === 1 ? 'wizard.designedOneStop' : 'wizard.designedStops', { n: includedIds.length })}</p>
               )}
+
+              <input
+                className="guide-search"
+                type="search"
+                value={staySearch}
+                onChange={(e) => setStaySearch(e.target.value)}
+                placeholder="Search any city or town…"
+                aria-label="Search cities"
+              />
+              {/* Narrow the pool before falling in love: minimum rating and a
+                  nightly stay budget, with the per-night price on every row.
+                  Applies to both the Map and List views below, so it sits
+                  above the view toggle rather than reading as List-only. */}
+              <div className="guide-stay-filters">
+                <label className="guide-stay-filter">
+                  <span>{t('wizard.stayFilterRating')}</span>
+                  <select value={stayMinRating} onChange={(e) => setStayMinRating(Number(e.target.value))}>
+                    <option value="0">{t('wizard.stayFilterAny')}</option>
+                    <option value="6">6+</option>
+                    <option value="7">7+</option>
+                    <option value="8">8+</option>
+                    <option value="9">9+</option>
+                  </select>
+                </label>
+                <label className="guide-stay-filter">
+                  <span>{t('wizard.stayFilterPrice')}</span>
+                  <select value={stayMaxNightly} onChange={(e) => setStayMaxNightly(Number(e.target.value))}>
+                    <option value="0">{t('wizard.stayFilterAny')}</option>
+                    <option value="60">{t('wizard.stayFilterUpTo', { price: '€60' })}</option>
+                    <option value="90">{t('wizard.stayFilterUpTo', { price: '€90' })}</option>
+                    <option value="120">{t('wizard.stayFilterUpTo', { price: '€120' })}</option>
+                    <option value="180">{t('wizard.stayFilterUpTo', { price: '€180' })}</option>
+                    <option value="250">{t('wizard.stayFilterUpTo', { price: '€250' })}</option>
+                  </select>
+                </label>
+                {(stayMinRating > 0 || stayMaxNightly > 0) && (
+                  <button
+                    className="guide-stay-filter-clear"
+                    onClick={() => { setStayMinRating(0); setStayMaxNightly(0); }}
+                  >{t('wizard.stayFilterClear')}</button>
+                )}
+              </div>
 
               <div className="guide-datemode guide-stay-view">
                 <button className={stayView === 'map' ? 'on' : ''} onClick={() => setStayView('map')}>{t('wizard.map')}</button>
@@ -1916,45 +1958,6 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
                 </>
               )}
 
-              <input
-                className="guide-search"
-                type="search"
-                value={staySearch}
-                onChange={(e) => setStaySearch(e.target.value)}
-                placeholder="Search any city or town…"
-                aria-label="Search cities"
-              />
-              {/* Narrow the list before falling in love: minimum rating and a
-                  nightly stay budget, with the per-night price on every row. */}
-              <div className="guide-stay-filters">
-                <label className="guide-stay-filter">
-                  <span>{t('wizard.stayFilterRating')}</span>
-                  <select value={stayMinRating} onChange={(e) => setStayMinRating(Number(e.target.value))}>
-                    <option value="0">{t('wizard.stayFilterAny')}</option>
-                    <option value="6">6+</option>
-                    <option value="7">7+</option>
-                    <option value="8">8+</option>
-                    <option value="9">9+</option>
-                  </select>
-                </label>
-                <label className="guide-stay-filter">
-                  <span>{t('wizard.stayFilterPrice')}</span>
-                  <select value={stayMaxNightly} onChange={(e) => setStayMaxNightly(Number(e.target.value))}>
-                    <option value="0">{t('wizard.stayFilterAny')}</option>
-                    <option value="60">{t('wizard.stayFilterUpTo', { price: '€60' })}</option>
-                    <option value="90">{t('wizard.stayFilterUpTo', { price: '€90' })}</option>
-                    <option value="120">{t('wizard.stayFilterUpTo', { price: '€120' })}</option>
-                    <option value="180">{t('wizard.stayFilterUpTo', { price: '€180' })}</option>
-                    <option value="250">{t('wizard.stayFilterUpTo', { price: '€250' })}</option>
-                  </select>
-                </label>
-                {(stayMinRating > 0 || stayMaxNightly > 0) && (
-                  <button
-                    className="guide-stay-filter-clear"
-                    onClick={() => { setStayMinRating(0); setStayMaxNightly(0); }}
-                  >{t('wizard.stayFilterClear')}</button>
-                )}
-              </div>
               {windowNights > 0 && (
                 <div className={`guide-nights-budget ${totalNights > windowNights ? 'over' : ''}`}>
                   <b>{totalNights}</b> of <b>{windowNights}</b> nights planned
@@ -2149,7 +2152,7 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
           {stepName === 'Finish' && (
             <>
               <h2 className="guide-title">Last touches</h2>
-              <p className="guide-sub">Who's going and how full the days should feel. Carta picks the best way between your stops; every leg stays adjustable in the planner.</p>
+              <p className="guide-sub">Carta picks the best way between your stops; every leg stays adjustable in the planner.</p>
 
               {ownCarChosen ? (
                 // They bring their own car: never pitch a rental at them, just
@@ -2176,33 +2179,6 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
                 </div>
               )}
 
-              <h3 className="guide-subtitle">Your pace</h3>
-              <div className="guide-transport-grid">
-                {PACE_CHOICES.map((p) => (
-                  <button
-                    key={p.key}
-                    className={`guide-transport ${pace === p.key ? 'on' : ''}`}
-                    onClick={() => setPace(p.key)}
-                    aria-pressed={pace === p.key}
-                  >
-                    <span className="guide-transport-icon"><p.Icon size={18} /></span>
-                    <span className="guide-transport-label">{t(p.labelKey)}</span>
-                    <span className="guide-transport-sub">{t(p.subKey)}</span>
-                  </button>
-                ))}
-              </div>
-
-              <div className="guide-start">
-                <label className="trip-field">
-                  <span className="trip-field-label"><PersonIcon size={11} /> People</span>
-                  <div className="guide-people">
-                    <button type="button" onClick={() => setGroupSize(Math.max(1, groupSize - 1))} disabled={groupSize <= 1} aria-label="Fewer people">-</button>
-                    <span>{groupSize}</span>
-                    <button type="button" onClick={() => setGroupSize(Math.min(20, groupSize + 1))} disabled={groupSize >= 20} aria-label="More people">+</button>
-                  </div>
-                </label>
-              </div>
-
               {/* Ryanair baggage - the seat fares are seat-only, so ask what each
                   traveller carries and add it to the flight cost. Only relevant
                   when Carta is booking the flights. */}
@@ -2220,7 +2196,6 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
                       >
                         <span className="guide-transport-icon"><LuggageIcon size={18} /></span>
                         <span className="guide-transport-label">{opt.label}</span>
-                        <span className="guide-transport-sub">{opt.per_leg_eur === 0 ? 'Included free' : `~${eur(opt.per_leg_eur)} / flight`}</span>
                       </button>
                     ))}
                   </div>
@@ -2338,39 +2313,6 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
               <button className="guide-startover" onClick={startOver} title="Clear everything and begin again">↺ Start over</button>
             )}
             {includedIds.length > 0 && `${includedIds.length} ${includedIds.length === 1 ? 'city' : 'cities'}, ${totalNights} nights`}
-            {runningEstimate && (
-              <span className="guide-estimate">
-                <button
-                  className={`guide-estimate-btn ${estimateOpen ? 'open' : ''}`}
-                  onClick={() => setEstimateOpen((v) => !v)}
-                  aria-expanded={estimateOpen}
-                  title="What's in this estimate so far?"
-                >
-                  ≈ {eur(runningEstimate.total)} so far
-                </button>
-                {estimateOpen && (
-                  <div className="guide-estimate-pop" role="dialog" aria-label="Estimate so far">
-                    <div className="guide-estimate-title">Estimate so far, {runningEstimate.gs} {runningEstimate.gs === 1 ? 'traveller' : 'travellers'}</div>
-                    {runningEstimate.lines.map((l) => (
-                      <div key={l.key} className="guide-estimate-line">
-                        <span className="guide-estimate-label">
-                          {l.label}
-                          {l.sub && <small>{l.sub}</small>}
-                        </span>
-                        <b>{eur(l.eur)}</b>
-                      </div>
-                    ))}
-                    <div className="guide-estimate-line guide-estimate-total">
-                      <span className="guide-estimate-label">Total so far</span>
-                      <b>{eur(runningEstimate.total)}</b>
-                    </div>
-                    <p className="guide-estimate-note">
-                      Travel between your cities, airport transfers and extras are priced in the trip overview once your stops are set.
-                    </p>
-                  </div>
-                )}
-              </span>
-            )}
           </div>
           <div className="guide-foot-actions">
             {path && (step > 1
