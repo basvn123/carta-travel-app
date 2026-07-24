@@ -16,10 +16,12 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import harvest_activities as ha  # noqa: E402
 
 BACKUP = ha.ROOT / "cache" / "activities.backup_20260722.json"
+MISCENTERED = ha.ROOT / "cache" / "miscentered_20260723.json"
 
 
 def reharvested_ids():
-    """The invalidation criterion, replayed against the pre-run backup."""
+    """The invalidation criterion, replayed against the pre-run backup, plus
+    the mis-centred re-do list from the coords fix."""
     backup = json.loads(BACKUP.read_text(encoding="utf-8"))
     ids = set()
     for k, v in backup.items():
@@ -28,6 +30,8 @@ def reharvested_ids():
         sights = [i for i in (v.get("items_full") or []) if not i.get("active")]
         if len(sights) >= 40:
             ids.add(k)
+    if MISCENTERED.exists():
+        ids |= set(json.loads(MISCENTERED.read_text(encoding="utf-8")))
     return ids
 
 

@@ -226,17 +226,24 @@ function ItinLeg({ leg, onMode }) {
 }
 
 /** One titled group of the chronological receipt (Getting there / each stop /
- *  Getting home / For the whole trip), its rows indented under a header that
- *  carries the group subtotal, so the receipt reads like the journey. */
-function BreakdownSection({ Icon, title, sub, total, children }) {
+ *  Getting home / For the whole trip), its rows under a header that carries
+ *  the group subtotal, so the receipt reads like the journey.
+ *
+ *  The subtotal is dropped when the group holds a single priced row: repeating
+ *  the same number twice, once in the header and once right under it, was the
+ *  main thing making the receipt feel cluttered. */
+function BreakdownSection({ title, sub, total, children }) {
+  const pricedRows = React.Children.toArray(children).filter(
+    (c) => typeof c?.props?.className === 'string' && c.props.className.includes('trip-total-row'),
+  ).length;
   return (
     <section className="itin-bd-sec">
       <header className="itin-bd-sec-head">
         <span className="itin-bd-sec-title">
-          <Icon size={11} /> {title}
+          {title}
           {sub && <small className="itin-bd-sec-sub">{sub}</small>}
         </span>
-        {total > 0 && <span className="itin-bd-sec-total">{eur(total)}</span>}
+        {total > 0 && pricedRows > 1 && <span className="itin-bd-sec-total">{eur(total)}</span>}
       </header>
       <div className="itin-bd-sec-rows">{children}</div>
     </section>
@@ -506,7 +513,7 @@ export function TripItinerary({
               aria-expanded={breakdownOpen}
             >
               <span>
-                <ReceiptIcon size={12} /> {t('itin.estimatedTotal')} <small>{groupSize} {groupSize === 1 ? t('itin.personOne') : t('itin.personMany')}</small>
+                {t('itin.estimatedTotal')} <small>{groupSize} {groupSize === 1 ? t('itin.personOne') : t('itin.personMany')}</small>
               </span>
               <strong>{eur(grandTotal)}</strong>
               <span className={`itin-breakdown-caret ${breakdownOpen ? 'open' : ''}`} aria-hidden="true"><ChevronDownIcon size={14} /></span>
@@ -520,7 +527,7 @@ export function TripItinerary({
 
                 {/* 1. Getting there, in journey order. */}
                 {getThereTotal > 0 && (
-                  <BreakdownSection Icon={PlaneIcon} title={t('itin.secGetThere')} total={getThereTotal}>
+                  <BreakdownSection title={t('itin.secGetThere')} total={getThereTotal}>
                     {flight?.combinable && (
                       <div className="trip-total-row">
                         <span className="lbl">
@@ -574,7 +581,6 @@ export function TripItinerary({
                   return (
                     <React.Fragment key={`sec-${i}`}>
                       <BreakdownSection
-                        Icon={BedIcon}
                         title={`${i + 1}. ${s.dest?.city || t('itin.unknown')}`}
                         sub={s.arriveDate ? `${fmtLong(s.arriveDate)} → ${fmtLong(s.departDate)}` : null}
                         total={stopTotal}
@@ -613,7 +619,7 @@ export function TripItinerary({
 
                 {/* 3. Getting home. */}
                 {getHomeTotal > 0 && (
-                  <BreakdownSection Icon={PlaneIcon} title={t('itin.secGetHome')} total={getHomeTotal}>
+                  <BreakdownSection title={t('itin.secGetHome')} total={getHomeTotal}>
                     {anchorOut && (
                       <div className="trip-total-row">
                         <span className="lbl">
@@ -644,9 +650,11 @@ export function TripItinerary({
                   </BreakdownSection>
                 )}
 
-                {/* 4. Round-trip items that belong to the whole journey. */}
-                {(wholeTripTotal > 0 || flight?.driving) && (
-                  <BreakdownSection Icon={ReceiptIcon} title={t('itin.secWholeTrip')} total={wholeTripTotal}>
+                {/* 4. Round-trip items that belong to the whole journey. An
+                       own-car trip has none of them, so the group is skipped
+                       entirely there rather than framing a lone sentence. */}
+                {wholeTripTotal > 0 && (
+                  <BreakdownSection title={t('itin.secWholeTrip')} total={wholeTripTotal}>
                     {flight?.combinable && flight.bag_total > 0 && (
                       <div className="trip-total-row">
                         <span className="lbl">
@@ -680,17 +688,15 @@ export function TripItinerary({
                         <span className="val">{eur(vignettes.eur_total)}</span>
                       </div>
                     )}
-                    {flight?.driving && (
-                      <p className="trip-note itin-owncar-note">{t('trip.ownCarNote')}</p>
-                    )}
-                    <TransferModePicker
-                      flightTransfer={flightTransfer}
-                      anchorIn={anchorIn}
-                      anchorOut={anchorOut}
-                      setTransferMode={setTransferMode}
-                    />
                   </BreakdownSection>
                 )}
+
+                <TransferModePicker
+                  flightTransfer={flightTransfer}
+                  anchorIn={anchorIn}
+                  anchorOut={anchorOut}
+                  setTransferMode={setTransferMode}
+                />
 
                 <div className="itin-bd-grand">
                   <span className="itin-bd-grand-lbl">{t('itin.estimatedTotal')}</span>
@@ -699,7 +705,9 @@ export function TripItinerary({
                 {groupSize > 1 && (
                   <div className="itin-bd-pp">{t('itin.perPersonLine', { price: eur(grandTotal / groupSize) })}</div>
                 )}
-                <p className="itin-bd-note">{t('itin.estimateNote')}</p>
+                {flight?.driving && (
+                  <p className="itin-bd-foot-note">{t('trip.ownCarNote')}</p>
+                )}
               </div>
             )}
           </div>

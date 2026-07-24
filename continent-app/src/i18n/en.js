@@ -358,7 +358,6 @@ export const en = {
   'itin.secSleep': 'Sleeping',
   'itin.secDaily': 'Daily life',
   'itin.perPersonLine': '{price} per person',
-  'itin.estimateNote': "Real budget-airline fares where shown; ground transport, stays and daily life are honest estimates from distance and typical local prices. Booking early usually beats these numbers.",
   'itin.rentalCar': 'Rental car',
   'itin.rentalSub': '{days} days, whole group',
   'itin.rentalSubCars': '{days} days, {cars} cars, whole group',

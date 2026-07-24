@@ -17,7 +17,7 @@ import {
 import { cheapestStartDates } from '../lib/tripCostOptimizer.js';
 import { carAdvice } from '../lib/transport.js';
 import { haversineKm, tripDaysBetween, accommodationPerPerson } from '../lib/runtime_pricing.js';
-import { eur, fmtHours } from '../lib/format.js';
+import { eur } from '../lib/format.js';
 import { fmtDate, addDays } from '../lib/dates.js';
 import { geocodeAddress } from '../lib/geocode.js';
 import { useCountryInsights } from '../hooks/useCountryInsights.js';
@@ -297,9 +297,9 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
   // (homeOptions only exists on the return step); used by the recap + finish.
   const flyHomeDest = arriveMode === 'fly' && returnFlyId ? destinations[returnFlyId] : null;
 
-  // Rough driving reach per selected country, for the car option: straight-line
-  // to the country's centroid with the app's road-detour factor, a scale
-  // check ("Croatia is a 12h drive"), not a route plan.
+  // Rough driving reach per selected country: straight-line to the country's
+  // centroid with the app's road-detour factor. Not shown as advice any more,
+  // it only scales the fuel-and-tolls line in the running estimate below.
   const driveNotes = useMemo(() => {
     if (!originRec || originRec.lat == null) return [];
     return selectedCountries.map((c) => {
@@ -823,6 +823,27 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
     return { lines, total, gs };
   }, [path, arriveMode, landedMode, flyIn, returnFareCache, returnFlyId, ownFlightCost, ownAirline,
     baggage, driveNotes, includedIds, nights, totalNights, destinations, groupSize]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // What the last answer did to the total. estBump is a counter used as a React
+  // key on the figure: a new key remounts it, which restarts the CSS bump, so
+  // every step visibly moves the price instead of silently rewriting it. The
+  // delta chip ("+ EUR 96") fades itself out after a couple of seconds.
+  const [estBump, setEstBump] = useState(0);
+  const [estDelta, setEstDelta] = useState(null);
+  const prevEstTotal = useRef(null);
+  const estTotal = runningEstimate?.total ?? null;
+  useEffect(() => {
+    const prev = prevEstTotal.current;
+    prevEstTotal.current = estTotal;
+    if (estTotal == null || estTotal === prev) return undefined;
+    // No previous total means this answer is what put a price on the board, so
+    // the whole figure is the delta.
+    setEstDelta(prev == null ? estTotal : estTotal - prev);
+    setEstBump((n) => n + 1);
+    const id = setTimeout(() => setEstDelta(null), 2400);
+    return () => clearTimeout(id);
+  }, [estTotal]);
+
   const stayCountries = selectedCountries.map((c) => {
     const ranked = c.cities
       .map(({ id, dest }) => ({
@@ -1189,7 +1210,7 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
 
   // ---------------------------------------------------------------- render --
   return (
-    <div className="guide-overlay" onClick={handleCancel}>
+    <div className="guide-overlay trip-wizard-overlay" onClick={handleCancel}>
       <div className="guide-modal trip-wizard-modal" onClick={(e) => e.stopPropagation()}>
         {/* Header + progress: same one-step-at-a-time header the day planner's
             wizard wears - current step name, "step X of N", thin segments. */}
@@ -1217,40 +1238,58 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
           )}
         </div>
 
-        {/* Running price estimate - kept right under the header (not the
-            footer) so an updated total is something the traveller actually
-            notices as they move through the steps, not something buried
-            below the fold. */}
+        {/* Running price estimate: its own band under the header, the full
+            width of the wizard, so the growing total is a part of the screen
+            rather than a chip in a corner. What the last answer cost lands as
+            a delta chip and a bump on the figure; tapping the band opens the
+            line-by-line breakdown in place. */}
         {runningEstimate && (
-          <div className="guide-estimate-bar">
-            <span className="guide-estimate">
-              <button
-                className={`guide-estimate-btn ${estimateOpen ? 'open' : ''}`}
-                onClick={() => setEstimateOpen((v) => !v)}
-                aria-expanded={estimateOpen}
-                title="What's in this estimate so far?"
-              >
-                ≈ <b>{eur(runningEstimate.total)}</b> so far
-              </button>
-              {estimateOpen && (
-                <div className="guide-estimate-pop" role="dialog" aria-label="Estimate so far">
-                  <div className="guide-estimate-title">Estimate so far, {runningEstimate.gs} {runningEstimate.gs === 1 ? 'traveller' : 'travellers'}</div>
-                  {runningEstimate.lines.map((l) => (
-                    <div key={l.key} className="guide-estimate-line">
-                      <span className="guide-estimate-label">
-                        {l.label}
-                        {l.sub && <small>{l.sub}</small>}
-                      </span>
-                      <b>{eur(l.eur)}</b>
-                    </div>
-                  ))}
-                  <div className="guide-estimate-line guide-estimate-total">
-                    <span className="guide-estimate-label">Total so far</span>
-                    <b>{eur(runningEstimate.total)}</b>
+          <div className={`guide-estimate-band ${estimateOpen ? 'open' : ''}`}>
+            <span className="guide-estimate-flash" key={`flash-${estBump}`} aria-hidden="true" />
+            <button
+              className="guide-estimate-main"
+              onClick={() => setEstimateOpen((v) => !v)}
+              aria-expanded={estimateOpen}
+              title="What's in this estimate so far?"
+            >
+              <span className="guide-estimate-heading">
+                Estimate so far
+                <small>{runningEstimate.gs} {runningEstimate.gs === 1 ? 'traveller' : 'travellers'}</small>
+              </span>
+              <span className="guide-estimate-figure">
+                <b key={`total-${estBump}`}>{eur(runningEstimate.total)}</b>
+                {estDelta != null && estDelta !== 0 && (
+                  <span className={`guide-estimate-delta ${estDelta < 0 ? 'down' : 'up'}`} key={`delta-${estBump}`}>
+                    {estDelta < 0 ? '-' : '+'}{eur(Math.abs(estDelta))}
+                  </span>
+                )}
+              </span>
+              <span className="guide-estimate-chips">
+                {runningEstimate.lines.map((l) => (
+                  <span key={l.key} className="guide-estimate-chip">
+                    {l.label} <b>{eur(l.eur)}</b>
+                  </span>
+                ))}
+              </span>
+              <span className="guide-estimate-toggle">{estimateOpen ? 'Hide' : 'Details'}</span>
+            </button>
+            {estimateOpen && (
+              <div className="guide-estimate-detail" role="region" aria-label="Estimate so far">
+                {runningEstimate.lines.map((l) => (
+                  <div key={l.key} className="guide-estimate-line">
+                    <span className="guide-estimate-label">
+                      {l.label}
+                      {l.sub && <small>{l.sub}</small>}
+                    </span>
+                    <b>{eur(l.eur)}</b>
                   </div>
+                ))}
+                <div className="guide-estimate-line guide-estimate-total">
+                  <span className="guide-estimate-label">Total so far</span>
+                  <b>{eur(runningEstimate.total)}</b>
                 </div>
-              )}
-            </span>
+              </div>
+            )}
           </div>
         )}
 
@@ -1291,7 +1330,9 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
               <h2 className="guide-title">{t('wizard.whereTitle')}</h2>
               <p className="guide-sub">{t('wizard.whereSub')}</p>
 
-              <div className="guide-when-dates">
+              {/* People and the "let Carta pick" CTA are the only two controls
+                  on this screen, so both run the full width with big targets. */}
+              <div className="guide-when-dates guide-people-row">
                 <label className="trip-field">
                   <span className="trip-field-label"><PersonIcon size={11} /> People</span>
                   <div className="guide-people">
@@ -1302,7 +1343,7 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
                 </label>
               </div>
 
-              <button className="guide-design-btn" onClick={() => setCountryQuizOpen((v) => !v)}>
+              <button className="guide-design-btn guide-design-btn-lg" onClick={() => setCountryQuizOpen((v) => !v)}>
                 <span className="guide-design-spark"><SparkIcon size={14} /></span>
                 <span className="guide-design-text">
                   {t('wizard.pickCountriesBtn')}
@@ -1573,22 +1614,10 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
                   </button>
                 </div>
               ) : arriveMode === 'car' ? (
-                <>
-                  {carFromField}
-                  {carFrom == null && (
-                    <p className="guide-sub guide-carfrom-fallback">
-                      {t(selectedCountries.length === 1 ? 'wizard.ownCarReachOne' : 'wizard.ownCarReachMany', { city: originCity })}
-                    </p>
-                  )}
-                  <div className="guide-drive-notes">
-                    {driveNotes.map((n) => (
-                      <div className="guide-drive-note" key={n.country}>
-                        <b>{n.country}</b>
-                        <span>{t('wizard.driveReach', { km: n.km, hours: fmtHours(n.hours) })}</span>
-                      </div>
-                    ))}
-                  </div>
-                </>
+                // Asking where they drive from is the whole question here; the
+                // old "you can reach these countries" distance list said
+                // nothing they needed at this point.
+                carFromField
               ) : routeOptions.length === 0 ? (
                 <div className="guide-noflight">
                   <p className="guide-empty">

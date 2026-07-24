@@ -344,7 +344,6 @@ export const de = {
   'itin.secSleep': 'Übernachten',
   'itin.secDaily': 'Alltag vor Ort',
   'itin.perPersonLine': '{price} pro Person',
-  'itin.estimateNote': "Echte Billigflug-Preise, wo angezeigt; Transport, Unterkunft und Alltag sind ehrliche Schätzungen nach Entfernung und ortsüblichen Preisen. Früh buchen ist meist günstiger.",
   'day.tag': 'Planen Sie Ihre Tage',
   'itin.rentalCar': 'Mietwagen',
   'itin.rentalSub': '{days} Tage, ganze Gruppe',

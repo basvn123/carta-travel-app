@@ -344,7 +344,6 @@ export const es = {
   'itin.secSleep': 'Alojamiento',
   'itin.secDaily': 'Vida diaria',
   'itin.perPersonLine': '{price} por persona',
-  'itin.estimateNote': "Tarifas low cost reales donde se muestran; transporte, alojamiento y vida diaria son estimaciones honestas según distancia y precios locales. Reservar pronto suele salir mejor.",
   'day.tag': 'Planifica tus días',
   'itin.rentalCar': 'Coche de alquiler',
   'itin.rentalSub': '{days} días, todo el grupo',

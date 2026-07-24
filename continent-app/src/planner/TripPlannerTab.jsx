@@ -7,7 +7,6 @@ import { CountryIntel } from '../components/CountryIntel.jsx';
 import { TripMap } from '../map/TripMap.jsx';
 import { TripItinerary, TransferModePicker } from './TripItinerary.jsx';
 import { GuidedTripWizard } from './GuidedTripWizard.jsx';
-import { StarterTrips } from './StarterTrips.jsx';
 import { CheapTipsSection } from './CheapTipsSection.jsx';
 import { eur, fmtHours, flightTimes } from '../lib/format.js';
 import { fmtDate } from '../lib/dates.js';
@@ -1037,7 +1036,6 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
 
           </>
           ) : (
-          <>
           <button className="trip-guide-cta" onClick={() => setWizardOpen(true)}>
             <span className="trip-guide-spark"><SparkIcon size={15} /></span>
             <span className="trip-guide-cta-text">
@@ -1046,20 +1044,6 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
             </span>
             <span className="trip-guide-arrow">→</span>
           </button>
-          {/* Ready-made trips: pick a country, get Carta's researched routes
-              (most beautiful / best value / cheap but lovely / hidden gems),
-              then edit dates, stops and nights like any other trip. */}
-          <StarterTrips
-            destinations={destinations}
-            groupSize={tp.groupSize}
-            onPick={(selection) => {
-              tp.loadFromWizard(selection);
-              tp.setPlanned(false);
-              setSelectedStop(null);
-              setSheetOpen(true);
-            }}
-          />
-          </>
           )}
 
           {/* Deep country intel for every country on the route. Sits outside the

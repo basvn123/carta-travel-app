@@ -344,7 +344,6 @@ export const nl = {
   'itin.secSleep': 'Slapen',
   'itin.secDaily': 'Dagelijks leven',
   'itin.perPersonLine': '{price} per persoon',
-  'itin.estimateNote': "Echte budgettarieven waar getoond; vervoer, verblijf en dagelijks leven zijn eerlijke schattingen op basis van afstand en lokale prijzen. Vroeg boeken is meestal goedkoper.",
   'day.tag': 'Plan je dagen',
   'itin.rentalCar': 'Huurauto',
   'itin.rentalSub': '{days} dagen, hele groep',
