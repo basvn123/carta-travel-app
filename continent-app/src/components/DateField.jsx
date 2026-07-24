@@ -37,8 +37,11 @@ function toISO(y, m, d) {
   return `${y}-${String(m + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
 }
 
-// 6-week (42-cell) grid covering the visible month plus padding days.
-function buildGrid(year, month) {
+// 6-week (42-cell) grid covering the visible month plus padding days. With
+// `trim`, a month that fits in five weeks drops its trailing all-padding row
+// rather than paying a whole empty week of height for it. Side-by-side panes
+// keep the full six rows so the two months stay the same height.
+function buildGrid(year, month, trim) {
   const firstWeekday = new Date(year, month, 1).getDay();
   const start = new Date(year, month, 1 - firstWeekday);
   const cells = [];
@@ -51,7 +54,7 @@ function buildGrid(year, month) {
       outside: d.getMonth() !== month,
     });
   }
-  return cells;
+  return trim && cells.slice(-7).every((c) => c.outside) ? cells.slice(0, 35) : cells;
 }
 
 export function DateField({
@@ -105,7 +108,7 @@ export function DateField({
   const paneCount = Math.max(1, inline ? panes : 1);
   const panesData = useMemo(() => Array.from({ length: paneCount }, (_, i) => {
     const d = new Date(view.y, view.m + i, 1);
-    return { y: d.getFullYear(), m: d.getMonth(), cells: buildGrid(d.getFullYear(), d.getMonth()) };
+    return { y: d.getFullYear(), m: d.getMonth(), cells: buildGrid(d.getFullYear(), d.getMonth(), paneCount === 1) };
   }), [view.y, view.m, paneCount]);
 
   const isDisabled = (iso) => (min && iso < min) || (max && iso > max);
@@ -145,7 +148,11 @@ export function DateField({
   })();
 
   const body = (
-    <div className={inline ? 'cal cal-inline' : 'cal'} role={inline ? undefined : 'dialog'} aria-label="Choose date">
+    <div
+      className={inline ? `cal cal-inline cal-panes-${paneCount}` : 'cal'}
+      role={inline ? undefined : 'dialog'}
+      aria-label="Choose date"
+    >
       <div className="cal-head">
         <button
           type="button"

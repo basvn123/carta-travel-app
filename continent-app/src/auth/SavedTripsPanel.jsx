@@ -35,9 +35,31 @@ function SavedSection({ Icon, title, sub, count, children }) {
 }
 
 /** One saved entry: visual tile (country flags / city photo / icon), title +
- *  meta, chevron, optional edit, delete. */
+ *  meta, chevron, optional edit, delete.
+ *
+ *  Delete asks first. The × used to sit a few pixels from the chevron that
+ *  opens the trip, so one mis-tap threw away work that took real effort to
+ *  build; now it swaps the card for a confirm strip instead of deleting on
+ *  the spot. The two tools also live in their own cluster, fenced off from
+ *  the open affordance, so "open" and "destroy" no longer read as neighbours. */
 function SavedCard({ Icon, visual, title, meta, onOpen, openTitle, onEdit, editTitle, onDelete, deleteLabel }) {
   const { t } = useI18n();
+  const [confirming, setConfirming] = useState(false);
+
+  if (confirming) {
+    return (
+      <div className="saved-card saved-card-confirm" role="alertdialog" aria-label={deleteLabel}>
+        <span className="saved-card-confirm-text">{t('saved.confirmRemove', { name: title })}</span>
+        <button className="saved-card-confirm-keep" onClick={() => setConfirming(false)}>
+          {t('saved.keep')}
+        </button>
+        <button className="saved-card-confirm-go" onClick={onDelete}>
+          {t('saved.remove')}
+        </button>
+      </div>
+    );
+  }
+
   return (
     <div className="saved-card">
       <button className="saved-card-main" onClick={onOpen} title={openTitle}>
@@ -48,24 +70,26 @@ function SavedCard({ Icon, visual, title, meta, onOpen, openTitle, onEdit, editT
         </span>
         <span className="saved-card-open" aria-hidden="true">›</span>
       </button>
-      {onEdit && (
+      <div className="saved-card-tools">
+        {onEdit && (
+          <button
+            className="saved-trip-edit"
+            onClick={onEdit}
+            aria-label={editTitle || t('saved.edit')}
+            title={editTitle || t('saved.edit')}
+          >
+            <PencilIcon size={13} />
+          </button>
+        )}
         <button
-          className="saved-trip-edit"
-          onClick={onEdit}
-          aria-label={editTitle || t('saved.edit')}
-          title={editTitle || t('saved.edit')}
+          className="saved-trip-delete"
+          onClick={() => setConfirming(true)}
+          aria-label={deleteLabel}
+          title={t('saved.remove')}
         >
-          <PencilIcon size={13} />
+          ×
         </button>
-      )}
-      <button
-        className="saved-trip-delete"
-        onClick={onDelete}
-        aria-label={deleteLabel}
-        title={t('saved.remove')}
-      >
-        ×
-      </button>
+      </div>
     </div>
   );
 }

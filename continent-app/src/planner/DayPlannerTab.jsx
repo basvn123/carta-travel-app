@@ -1470,6 +1470,21 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
     });
   };
 
+  // The same popular cities as explore-map pins, so the first step can be
+  // answered on the map instead of only in the form beside it. Once a stay is
+  // chosen they clear out: the map's job then is to show that one place.
+  const stayPins = useMemo(() => (
+    newStayPoint || stayResults ? [] : popularStays.map((r) => ({
+      id: r.id,
+      label: r.name,
+      lat: r.lat,
+      lon: r.lon,
+      cat: 'town',
+      score: r.dest.rating?.score ?? null,
+      tier: r.dest.rating?.tier ?? 0,
+    }))
+  ), [newStayPoint, stayResults, popularStays]);
+
   // The three dates almost every day trip actually falls on, so the date step
   // is one tap rather than a calendar hunt. "This weekend" is the coming
   // Saturday (today, when today IS Saturday).
@@ -2233,14 +2248,25 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
 
           </div>
           {/* The answer, on a map. Follows the chosen stay, or the first
-              search result while the traveller is still deciding. */}
+              search result while the traveller is still deciding. Until
+              something is chosen the popular cities are ON the map as tappable
+              pins, not just as chips beside it: "where are you staying?" is a
+              question about places, and a map you cannot answer with is
+              scenery. */}
           <aside className="day-flow-mapside">
-            <DayExploreMap stay={newStayPoint || (stayResults && stayResults[0]) || null} />
+            <DayExploreMap
+              stay={newStayPoint || (stayResults && stayResults[0]) || null}
+              markers={stayPins}
+              onFocus={(id) => {
+                const row = popularStays.find((r) => r.id === id);
+                if (row) pickPopularStay(row);
+              }}
+            />
             <p className="day-flow-mapcap">
               <MapPinIcon size={11} />
               {newStayPoint
                 ? t('day.mapCapStay', { place: newStayPoint.shortLabel || newStayPoint.label })
-                : t('day.mapCapEmpty')}
+                : stayPins.length ? t('day.mapCapPick') : t('day.mapCapEmpty')}
             </p>
           </aside>
           </div>

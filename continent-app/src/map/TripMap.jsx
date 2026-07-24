@@ -23,6 +23,49 @@ const POI_SPARK_ICON = S('<path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5
 const POI_EVENT_ICON = S('<path d="M4 8h16v3a2 2 0 0 0 0 4v3H4v-3a2 2 0 0 0 0-4z"/><path d="M14 8v12"/>');
 
 /**
+ * A chevron for the route line, drawn pixel by pixel into an RGBA buffer.
+ * A line alone says which places are joined; it doesn't say which way the day
+ * runs. Repeating this glyph along the line answers that at a glance.
+ *
+ * Built in code rather than loaded as an image so it stays inside the app's
+ * strict CSP: no external asset and no data: URL to whitelist.
+ */
+function routeArrowImage(px = 26) {
+  const data = new Uint8Array(px * px * 4);
+  // Paper cream cut out of the rust line, the way a road sign reads: the
+  // chevron has to contrast with the line it rides, not match it.
+  const ink = [247, 242, 233];
+  const halo = [150, 56, 18];
+  const thickness = px * 0.15;
+  const put = (x, y, rgb, a) => {
+    const i = (y * px + x) * 4;
+    if (a <= data[i + 3] / 255) return;
+    data[i] = rgb[0]; data[i + 1] = rgb[1]; data[i + 2] = rgb[2];
+    data[i + 3] = Math.round(a * 255);
+  };
+  // Distance to the two strokes of a ">" chevron, rasterised with a soft edge.
+  const seg = (x, y, x1, y1, x2, y2) => {
+    const dx = x2 - x1, dy = y2 - y1;
+    const t = Math.max(0, Math.min(1, ((x - x1) * dx + (y - y1) * dy) / (dx * dx + dy * dy)));
+    return Math.hypot(x - (x1 + t * dx), y - (y1 + t * dy));
+  };
+  const a1 = [px * 0.34, px * 0.24], a2 = [px * 0.68, px * 0.5], a3 = [px * 0.34, px * 0.76];
+  for (let y = 0; y < px; y++) {
+    for (let x = 0; x < px; x++) {
+      const d = Math.min(
+        seg(x, y, a1[0], a1[1], a2[0], a2[1]),
+        seg(x, y, a2[0], a2[1], a3[0], a3[1]),
+      );
+      const inkA = Math.max(0, Math.min(1, thickness - d + 0.5));
+      const haloA = Math.max(0, Math.min(1, thickness + 1.3 - d + 0.5));
+      if (haloA > 0) put(x, y, halo, haloA * 0.55);
+      if (inkA > 0) put(x, y, ink, inkA);
+    }
+  }
+  return { width: px, height: px, data };
+}
+
+/**
  * The trip's map backdrop: a full-bleed basemap that draws the itinerary as a
  * flowing dashed line through numbered pins, one per stop, and keeps the whole
  * route framed above the bottom sheet. Purely presentational, clicking a pin
@@ -85,6 +128,24 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
           'line-dasharray': [1.5, 1.6],
           'line-opacity': 0.85,
         },
+      });
+      // Direction: chevrons riding the route line, so the day reads as a
+      // sequence (stop 1 to 2 to 3) and not just as a set of joined dots.
+      if (!map.hasImage('route-arrow')) map.addImage('route-arrow', routeArrowImage());
+      map.addLayer({
+        id: 'trip-route-arrows',
+        type: 'symbol',
+        source: 'trip-route',
+        layout: {
+          'symbol-placement': 'line',
+          'symbol-spacing': 92,
+          'icon-image': 'route-arrow',
+          'icon-size': 0.62,
+          'icon-rotation-alignment': 'map',
+          'icon-allow-overlap': true,
+          'icon-ignore-placement': true,
+        },
+        paint: { 'icon-opacity': 0.95 },
       });
       // Ferry legs of a route get their own over-water styling (dashed blue) so
       // a lake or sea crossing never reads as a walk in a straight line.
@@ -277,7 +338,7 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
       // An AI discovery is a status pin too: it lives outside the catalogue,
       // so there is nothing behind it to add to the plan.
       if (p.discovery) {
-        el.title = `${p.label} (AI discovery)`;
+        el.title = `${p.label} (a Carta bot find)`;
         poiMarkersRef.current.push({
           marker: new maplibregl.Marker({ element: el, anchor: 'center' })
             .setLngLat([p.lon, p.lat])

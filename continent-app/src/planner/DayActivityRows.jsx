@@ -1,8 +1,40 @@
 import { useState } from 'react';
-import { StarIcon, InfoIcon } from '../components/Icons.jsx';
-import { isMustSee, poiKind, poiRating } from './dayDraft.js';
+import {
+  StarIcon, InfoIcon, HomeIcon, BeachIcon, MountainIcon, CastleIcon,
+} from '../components/Icons.jsx';
+import { isMustSee, poiKind, poiRating, poiMapCat } from './dayDraft.js';
 import { ScoreChip } from '../components/RatingBadge.jsx';
 import { safeUrl } from '../lib/format.js';
+
+/** A place with no photo still deserves a thumbnail that says what it is.
+ *  The glyphs match the map pins (town / nature / active / sight), so a row
+ *  and its pin read as the same thing. */
+const THUMB_GLYPH = { town: HomeIcon, beach: BeachIcon, active: MountainIcon, sight: CastleIcon };
+
+function ThumbFallback({ item }) {
+  const Glyph = THUMB_GLYPH[poiMapCat(item)] || CastleIcon;
+  return (
+    <span className="day-thumb day-thumb-empty" aria-hidden="true">
+      <Glyph size={19} />
+    </span>
+  );
+}
+
+/** Name + its badges. The name truncates on its own line box so a long title
+ *  can never push the rating chip out of view, and the badge cluster keeps a
+ *  clear gap from the text instead of butting up against the ellipsis. */
+function RowTitle({ item, must }) {
+  return (
+    <span className="day-assigned-name">
+      <span className="day-assigned-title">{item.name}</span>
+      <span className="day-assigned-badges">
+        <ScoreChip rating={poiRating(item)} />
+        {must && <span className="day-badge-must" title="A true must-see here"><StarIcon size={9} /></span>}
+        {item.heritage && <span className="day-badge-heritage" title="On a cultural-heritage register">heritage</span>}
+      </span>
+    </span>
+  );
+}
 
 /** The expandable what-is-this panel behind every ⓘ: photo first, then the
  *  description, then Wikipedia. Time-planning numbers stay out of it on
@@ -62,12 +94,7 @@ export function AssignedRow({ item, index, last, onMoveUp, onMoveDown, onRemove 
       <div className="day-assigned-row day-assigned-with-info">
         {item.img && <span className="day-thumb" style={{ backgroundImage: `url(${item.img})` }} />}
         <div className="day-assigned-body">
-          <span className="day-assigned-name">
-            {item.name}
-            <ScoreChip rating={poiRating(item)} />
-            {isMustSee(item) && <span className="day-badge-must" title="A true must-see here"><StarIcon size={9} /></span>}
-            {item.heritage && <span className="day-badge-heritage" title="On a cultural-heritage register">heritage</span>}
-          </span>
+          <RowTitle item={item} must={isMustSee(item)} />
           <span className="day-assigned-kind">
             {poiKind(item)}
           </span>
@@ -130,14 +157,9 @@ export function ActivityRow({ item, variant, added, onToggle, note }) {
       <button className="day-activity-main" onClick={onToggle}>
         {item.img
           ? <span className="day-thumb" style={{ backgroundImage: `url(${item.img})` }} />
-          : <span className="day-thumb day-thumb-empty" aria-hidden="true">{(item.kind || '').slice(0, 1)}</span>}
+          : <ThumbFallback item={item} />}
         <span className="day-assigned-body">
-          <span className="day-assigned-name">
-            {item.name}
-            <ScoreChip rating={poiRating(item)} />
-            {(variant === 'must' || isMustSee(item)) && <span className="day-badge-must" title="A true must-see here"><StarIcon size={9} /></span>}
-            {item.heritage && <span className="day-badge-heritage" title="On a cultural-heritage register">heritage</span>}
-          </span>
+          <RowTitle item={item} must={variant === 'must' || isMustSee(item)} />
           <span className="day-assigned-kind">{poiKind(item)}</span>
           {note && <span className="day-poi-note">{note}</span>}
         </span>

@@ -2870,12 +2870,29 @@ input, select {
   flex-shrink: 0;
 }
 .day-assigned-body { flex: 1; min-width: 0; text-align: left; }
+/* Name and badges are separate boxes: only the name truncates, so a long
+   title can never shove the rating chip past the ellipsis, and the badges
+   keep a clear gap from the text instead of butting against it. */
 .day-assigned-name {
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: 12px;
   font-size: 13.5px;
   color: var(--ink);
+}
+.day-assigned-title {
+  min-width: 0;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
+.day-assigned-badges {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+/* The badges already sit in a spaced cluster; their own nudges would double up. */
+.day-assigned-badges .day-badge-must,
+.day-assigned-badges .day-badge-heritage { margin-left: 0; }
 .day-assigned-kind {
   font-family: var(--mono);
   font-size: 10px;
@@ -3020,12 +3037,16 @@ input, select {
   background-position: center;
   background-color: var(--accent-bg);
 }
+/* No photo? The thumbnail still says what kind of place this is: a category
+   glyph on warm paper with a hairline inset, rather than a flat pink square
+   holding a single cropped letter. */
 .day-thumb-empty {
   display: flex; align-items: center; justify-content: center;
-  font-family: var(--mono);
-  font-size: 13px;
-  color: var(--accent);
+  background-color: var(--paper-dim);
+  box-shadow: inset 0 0 0 1px var(--rule);
+  color: var(--ink-mute);
 }
+.day-thumb-empty svg { display: block; }
 .day-timeline-row .day-thumb { width: 34px; height: 34px; }
 
 .day-badge-heritage {
@@ -7428,6 +7449,65 @@ input, select {
   transition: border-color .15s, box-shadow .15s;
 }
 .saved-card:hover { border-color: var(--ink-soft); box-shadow: var(--shadow-1); }
+/* Edit and delete belong together, and apart from the chevron that opens the
+   trip: a hairline fence plus a quieter resting state, so the destructive
+   control never reads as part of the open affordance. */
+.saved-card-tools {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding-left: 8px;
+  margin-left: 2px;
+  border-left: 1px solid var(--rule);
+  opacity: 0.6;
+  transition: opacity .15s;
+}
+.saved-card:hover .saved-card-tools,
+.saved-card:focus-within .saved-card-tools { opacity: 1; }
+/* Touch has no hover to reveal them with, so they stay at full strength. */
+@media (hover: none) {
+  .saved-card-tools { opacity: 1; }
+}
+/* Asking first: the card becomes the question, in place, with the safe
+   choice sitting closest to where the tap came from. */
+.saved-card-confirm {
+  gap: 8px;
+  padding: 10px 10px 10px 14px;
+  border-color: var(--accent);
+  background: var(--accent-bg);
+}
+.saved-card-confirm-text {
+  flex: 1;
+  min-width: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.saved-card-confirm-keep,
+.saved-card-confirm-go {
+  flex: none;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.saved-card-confirm-keep {
+  border: 1px solid var(--rule);
+  background: var(--paper);
+  color: var(--ink-soft);
+}
+.saved-card-confirm-keep:hover { border-color: var(--ink-soft); color: var(--ink); }
+.saved-card-confirm-go {
+  border: 1px solid var(--accent);
+  background: var(--accent);
+  color: #fff;
+}
+.saved-card-confirm-go:hover { opacity: 0.9; }
 .saved-card-main {
   flex: 1;
   min-width: 0;
@@ -7628,13 +7708,25 @@ input, select {
   .saved-trips-panel .saved-card-icon { width: 38px; height: 38px; }
 }
 
+/* Even vertical rhythm. The band between the "Saved trips" rule and the first
+   shelf ran wider than the gaps between the shelves themselves, so the panel
+   opened on a hole. One 16px step everywhere instead. */
+.saved-trips-panel .panel-header { padding-bottom: 14px; }
+.saved-trips-panel .panel-section { padding-top: 16px; padding-bottom: 16px; }
+.saved-trips-panel .saved-section-sub { margin-bottom: 12px; }
+.saved-section-count { color: var(--ink-soft); }
+
+/* An empty shelf has to be visible to read as a shelf. A 1px --rule dash on
+   warm paper was close to invisible, so the outline is heavier and darker and
+   the text sits at reading contrast rather than at hint contrast. */
 .saved-empty {
-  font-size: 12px;
-  color: var(--ink-mute);
-  border: 1px dashed var(--rule);
+  font-size: 12.5px;
+  color: var(--ink-soft);
+  border: 1.5px dashed #9a8e80;
   border-radius: 10px;
   padding: 12px 14px;
   line-height: 1.5;
+  background: rgba(196, 190, 169, 0.14);
 }
 
 /* Day planner: save state, top-right of the plan header card. */
@@ -8456,13 +8548,17 @@ input, select {
   background: var(--paper);
 }
 
-/* The grand total: one emphatic card, per-person figure leading. */
+/* The grand total: one emphatic card, per-person figure leading.
+   A saturated rust outline round a price reads as a warning state, not as
+   emphasis, so the card carries its weight with a warm sand fill and a soft
+   shadow instead. The figure itself is deep ink: at 30px it is already the
+   loudest thing on the panel without borrowing the alert colour. */
 .cost-total-card {
   margin-top: 0;
-  border: 1px solid var(--accent);
+  border: none;
   border-radius: 14px;
-  background: linear-gradient(100deg, var(--accent-bg), var(--paper));
-  box-shadow: 0 2px 10px -4px rgba(200, 80, 30, 0.28);
+  background: var(--paper-dim);
+  box-shadow: 0 4px 12px rgba(26, 26, 26, 0.07), 0 1px 2px rgba(26, 26, 26, 0.05);
   padding: 16px 18px 14px;
 }
 .cost-total-main {
@@ -8487,10 +8583,10 @@ input, select {
 }
 .cost-total-val {
   font-family: var(--mono);
-  font-size: 28px;
+  font-size: 30px;
   font-weight: 700;
   font-variant-numeric: tabular-nums;
-  color: var(--accent);
+  color: var(--ink);
   white-space: nowrap;
   letter-spacing: -0.01em;
 }
@@ -8500,7 +8596,7 @@ input, select {
   align-items: baseline;
   margin-top: 10px;
   padding-top: 9px;
-  border-top: 1px solid rgba(200, 80, 30, 0.22);
+  border-top: 1px solid var(--rule);
   font-size: 12px;
   color: var(--ink-soft);
 }
@@ -10878,8 +10974,12 @@ input, select {
   color: var(--ink-soft);
 }
 .day-tier .day-activity-list { padding: 10px; gap: 8px; }
-.day-tier .day-activity-row { border-radius: 10px; }
+.day-tier .day-activity-row { border-radius: 12px; }
 .day-tier-must .day-activity-row { border-left-width: 3px; }
+/* One padding for the whole card, and a thumbnail that isn't crowding the
+   title. The row used to run 8px on the left and 4px on the right, which read
+   as a list that had been squeezed rather than composed. */
+.day-activity-main { gap: 12px; padding: 11px 6px 11px 12px; }
 
 /* Pickable rows: larger imagery, clearer hover, softer chrome. */
 .day-thumb { width: 46px; height: 46px; border-radius: 10px; }
@@ -11581,9 +11681,10 @@ input, select {
   background: none;
 }
 .cal-inline .cal-head { margin-bottom: 6px; }
-/* The combined head title is for the single-pane case only; two panes label
-   themselves, so the head keeps just the arrows. */
-.cal-inline .cal-title { visibility: hidden; }
+/* Two or more panes label themselves, so the head keeps just the arrows. A
+   single pane has no other label, and a month grid with no month on it is a
+   guessing game. */
+.cal-inline:not(.cal-panes-1) .cal-title { visibility: hidden; }
 .cal-panes { display: grid; grid-template-columns: 1fr; gap: 22px; }
 .cal-inline .cal-panes { grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); }
 .cal-pane-title {
@@ -12037,6 +12138,25 @@ input, select {
   border-bottom: 1px dashed var(--rule);
 }
 .ai-sched-stop:last-child { border-bottom: none; }
+/* The Carta bot's day lands as a cascade rather than all at once, so the
+   schedule reads as something being written for you. Staggered by row, capped
+   at eight so a long day never feels slow to arrive. */
+@media (prefers-reduced-motion: no-preference) {
+  .ai-sched-stop {
+    animation: ai-sched-in 320ms cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+  }
+  .ai-sched-stop:nth-child(2) { animation-delay: 45ms; }
+  .ai-sched-stop:nth-child(3) { animation-delay: 90ms; }
+  .ai-sched-stop:nth-child(4) { animation-delay: 135ms; }
+  .ai-sched-stop:nth-child(5) { animation-delay: 180ms; }
+  .ai-sched-stop:nth-child(6) { animation-delay: 225ms; }
+  .ai-sched-stop:nth-child(7) { animation-delay: 270ms; }
+  .ai-sched-stop:nth-child(n + 8) { animation-delay: 315ms; }
+}
+@keyframes ai-sched-in {
+  from { opacity: 0; transform: translateY(7px); }
+  to { opacity: 1; transform: translateY(0); }
+}
 .ai-sched-time {
   flex: 0 0 44px;
   font-family: var(--mono); font-size: 11.5px; font-weight: 700;
@@ -12091,6 +12211,9 @@ input, select {
 /* ───────── AI planner round 2: hero CTA, facts, refine loop, events ───────── */
 
 /* The one big call to action on an empty day. */
+/* The Carta bot's call to action wears the same clothes as the planning-method
+   card that introduces it (.day-flow-card.primary): a soft branded container,
+   not a slab of saturated rust. One assistant, one look, wherever you meet it. */
 .day-ai-hero {
   display: flex;
   align-items: center;
@@ -12098,26 +12221,26 @@ input, select {
   width: 100%;
   padding: 14px 16px;
   margin-bottom: 10px;
-  border: none;
+  border: 1px solid var(--accent);
   border-radius: 14px;
-  background: var(--accent);
-  color: #fff;
+  background: var(--accent-bg);
+  color: var(--ink);
   text-align: left;
   cursor: pointer;
-  box-shadow: 0 2px 10px rgba(200, 80, 30, 0.28);
   transition: transform 0.12s ease, box-shadow 0.12s ease;
 }
-.day-ai-hero:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(200, 80, 30, 0.36); }
+.day-ai-hero:hover { transform: translateY(-1px); box-shadow: var(--shadow-2); }
 .day-ai-hero-ico {
   flex: 0 0 auto;
   width: 36px; height: 36px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.18);
+  border-radius: 12px;
+  background: var(--accent);
+  color: #fff;
   display: inline-flex; align-items: center; justify-content: center;
 }
 .day-ai-hero-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-.day-ai-hero-text b { font-size: 15px; font-weight: 700; letter-spacing: 0.1px; }
-.day-ai-hero-text small { font-size: 11.5px; opacity: 0.9; line-height: 1.4; }
+.day-ai-hero-text b { font-size: 15px; font-weight: 700; letter-spacing: 0.1px; color: var(--accent); }
+.day-ai-hero-text small { font-size: 11.5px; color: var(--ink-soft); line-height: 1.4; }
 
 /* Date + party size, side by side. */
 .ai-plan-facts { display: flex; gap: 14px; flex-wrap: wrap; }
@@ -12294,16 +12417,19 @@ input, select {
    you staying?" is a spatial question, so it now answers itself on a map
    that follows the choice, and the void that framed the card becomes the
    context for it. */
+/* Both columns start on the same line. Centring the question against a taller
+   map left ~180px of dead space above the card and pushed a long step (the
+   calendar) off the bottom of the screen. */
 .day-flow-split {
   flex: 1 1 auto;
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: 26px;
-  align-items: center;
+  align-items: start;
   padding-bottom: 32px;
 }
 .day-flow-split-wide { grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); }
-.day-flow-forms { min-width: 0; display: flex; flex-direction: column; justify-content: center; }
+.day-flow-forms { min-width: 0; display: flex; flex-direction: column; }
 .day-flow-split .day-flow-step { padding-bottom: 0; }
 .day-flow-split .day-flow-panel { max-width: none; margin: 0; }
 .day-flow-mapside { min-width: 0; display: flex; flex-direction: column; gap: 8px; }
@@ -12429,6 +12555,18 @@ input, select {
 /* One month is enough to choose a day; the range shading collapses to a
    single highlighted date. */
 .day-flow-date .cal-panes { grid-template-columns: 1fr; }
+/* A month grid stretched across the full panel gave every date a 74px cell
+   and pushed Continue below the fold. Capping the calendar's width lands the
+   cells near 40px, which is the size a date wants to be, and keeps the whole
+   month plus the button inside one screen. */
+.day-flow-date .date-field-inline {
+  width: 100%;
+  max-width: 316px;
+  margin: 0 auto;
+}
+.day-flow-date .cal-inline .cal-day { font-size: 12.5px; border-radius: 8px; }
+.day-flow-date .cal-inline .cal-head { margin-bottom: 2px; }
+.day-flow-date .cal-weekday { padding-bottom: 3px; }
 .day-flow-next {
   align-self: center;
   min-width: 220px;
@@ -12715,15 +12853,30 @@ input, select {
 
 /* Saved work reads as a quiet footer under the first question, never as a
    competing block. */
+/* Work you already have is a different thing from the question on screen, so
+   it gets its own card rather than a bare list hanging off a rule. It also
+   lines up under the question column instead of floating centred across the
+   full canvas, where it read as an orphan of neither half. */
 .day-flow .day-landing-section {
   width: 100%;
   max-width: 640px;
   margin: 0 auto;
-  padding-top: 18px;
-  border-top: 1px solid var(--rule);
+  padding: 16px 18px;
+  border: 1px solid var(--rule);
+  border-radius: 16px;
+  background: var(--paper);
 }
-.day-flow .day-landing-section + .day-landing-section { border-top: none; padding-top: 4px; }
-.day-flow > .trip-note { max-width: 640px; margin: 10px auto 0; text-align: center; }
+.day-flow .day-landing-section + .day-landing-section { margin-top: 10px; }
+.day-flow > .trip-note { max-width: 640px; margin: 12px auto 0; }
+@media (min-width: 981px) {
+  .day-flow-split-host > .day-landing-section,
+  .day-flow-split-host > .trip-note {
+    width: calc(50% - 13px);
+    max-width: none;
+    margin-left: 0;
+    margin-right: auto;
+  }
+}
 
 @media (max-width: 768px) {
   .day-flow-step > *, .day-flow-step > .day-flow-q, .day-flow-step > .day-flow-cards { max-width: none; }
