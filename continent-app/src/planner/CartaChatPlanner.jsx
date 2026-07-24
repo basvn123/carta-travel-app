@@ -5,6 +5,7 @@ import {
   MapPinIcon, CheckIcon, MountainIcon, BeachIcon, HomeIcon, TicketIcon,
   CoffeeIcon, StarIcon, PersonIcon, BallIcon,
 } from '../components/Icons.jsx';
+import { TownPickerStep } from './TownPickerStep.jsx';
 
 /**
  * CartaChatPlanner, the guided conversation that ends in a real day route.
@@ -27,12 +28,10 @@ import {
  */
 
 // Multi-select answers show a "done" affordance; single-select advances on tap.
+// Mood/interest questions come first so both the nearby-town ranking and the
+// AI city-suggestion step (inside the town question) can use them; `known`
+// stays right after `town` since it refers to the place just chosen.
 const QUESTIONS = [
-  {
-    key: 'town',
-    qKey: 'chat.qTown',
-    dynamic: 'towns', // options are built from the nearby towns
-  },
   {
     key: 'focus',
     qKey: 'chat.qFocus',
@@ -40,14 +39,6 @@ const QUESTIONS = [
       { key: 'city', labelKey: 'chat.focusCity', Icon: CastleIcon },
       { key: 'nature', labelKey: 'chat.focusNature', Icon: TreeIcon },
       { key: 'mix', labelKey: 'chat.focusMix', Icon: SparkIcon },
-    ],
-  },
-  {
-    key: 'known',
-    qKey: 'chat.qKnown',
-    options: [
-      { key: 'first', labelKey: 'chat.knownFirst', Icon: StarIcon },
-      { key: 'again', labelKey: 'chat.knownAgain', Icon: MapPinIcon },
     ],
   },
   {
@@ -63,6 +54,19 @@ const QUESTIONS = [
       { key: 'active', labelKey: 'chat.intActive', Icon: BallIcon },
       { key: 'photo', labelKey: 'chat.intPhoto', Icon: CameraIcon },
       { key: 'local', labelKey: 'chat.intLocal', Icon: CoffeeIcon },
+    ],
+  },
+  {
+    key: 'town',
+    qKey: 'chat.qTown',
+    dynamic: 'towns', // options are built from the nearby towns
+  },
+  {
+    key: 'known',
+    qKey: 'chat.qKnown',
+    options: [
+      { key: 'first', labelKey: 'chat.knownFirst', Icon: StarIcon },
+      { key: 'again', labelKey: 'chat.knownAgain', Icon: MapPinIcon },
     ],
   },
   {
@@ -119,8 +123,16 @@ const QUESTIONS = [
 
 const NUDGES = ['chat.nudgeMore', 'chat.nudgeLess', 'chat.nudgeFood', 'chat.nudgeIndoor'];
 
+// The last question is a blank box, which is the one moment the flow asks the
+// traveller to invent an answer. These are the wishes people actually type,
+// one tap instead of a sentence.
+const EXTRA_PRESETS = [
+  'chat.presetCoffee', 'chat.presetRain', 'chat.presetFamily', 'chat.presetEarly',
+];
+
 export function CartaChatPlanner({
   towns, dateISO, groupSize, signedIn, onRun, onImport, onBack, onManual,
+  stayPoint, cityOptions, onSuggestCity, resolveNearest,
 }) {
   const { t } = useI18n();
   const [step, setStep] = useState(0);
@@ -146,9 +158,15 @@ export function CartaChatPlanner({
         sub: tn.km <= 1
           ? t('chat.rightHere')
           : t('chat.kmAway', { km: Math.round(tn.km) }),
+        // The traveller rating rides along so the choice is a comparison,
+        // not just a list of names and distances.
+        rating: tn.dest.rating || null,
         Icon: HomeIcon,
       }));
-    return { ...q, options: opts.length ? opts : null, skip: !opts.length };
+    // The nearby list can be empty (a remote stay point), but the town
+    // question itself never skips: search, map and AI suggestion all work
+    // without it.
+    return { ...q, options: opts.length ? opts : null, skip: false };
   }), [towns, t]);
 
   const visible = questions.filter((q) => !q.skip);
@@ -164,12 +182,16 @@ export function CartaChatPlanner({
       const picked = (q.options || []).filter((o) => (value || []).includes(o.key));
       return picked.length ? picked.map((o) => t(o.labelKey)).join(', ') : t('chat.anything');
     }
+    // The town may have been picked by search/map/AI, none of which are
+    // among this question's "nearby" options, so its display name travels
+    // alongside the answer itself rather than through the options lookup.
+    if (q.key === 'town') return answers.townLabel || String(value ?? '');
     const o = (q.options || []).find((x) => x.key === value);
     return o ? (o.label || t(o.labelKey)) : String(value ?? '');
   };
 
-  const advance = (key, value) => {
-    const next = { ...answers, [key]: value };
+  const advance = (key, value, extra) => {
+    const next = { ...answers, [key]: value, ...(extra || {}) };
     setAnswers(next);
     if (step + 1 >= visible.length) generate(next, '');
     else setStep(step + 1);
@@ -230,23 +252,47 @@ export function CartaChatPlanner({
         {phase === 'ask' && current && (
           <div className="chat-turn">
             <div className="chat-bubble bot chat-bubble-live">{t(current.qKey)}</div>
-            {current.free ? (
-              <div className="chat-free">
-                <input
-                  className="chat-free-input"
-                  type="text"
-                  maxLength={280}
-                  value={freeText}
-                  placeholder={t('chat.extraPlaceholder')}
-                  onChange={(e) => setFreeText(e.target.value)}
-                  onKeyDown={(e) => { if (e.key === 'Enter') advance('extra', freeText.trim()); }}
-                  autoFocus
-                />
-                <button className="chat-send" onClick={() => advance('extra', freeText.trim())}>
-                  <SparkIcon size={13} /> {t('chat.build')}
-                </button>
-                <button className="chat-skip" onClick={() => advance('extra', '')}>{t('chat.skip')}</button>
-              </div>
+            {current.key === 'town' ? (
+              <TownPickerStep
+                towns={towns}
+                nearbyOptions={current.options}
+                stayPoint={stayPoint}
+                cityOptions={cityOptions}
+                resolveNearest={resolveNearest}
+                onSuggestCity={(freeText) => onSuggestCity(freeText, answers)}
+                onPick={(id, label) => advance('town', id, { townLabel: label })}
+              />
+            ) : current.free ? (
+              <>
+                <div className="chat-opts chat-opts-nudge">
+                  {EXTRA_PRESETS.map((k) => (
+                    <button
+                      key={k}
+                      className={`carta-plan-chip${freeText === t(k) ? ' on' : ''}`}
+                      onClick={() => setFreeText(freeText === t(k) ? '' : t(k))}
+                      aria-pressed={freeText === t(k)}
+                    >
+                      {t(k)}
+                    </button>
+                  ))}
+                </div>
+                <div className="chat-free">
+                  <input
+                    className="chat-free-input"
+                    type="text"
+                    maxLength={280}
+                    value={freeText}
+                    placeholder={t('chat.extraPlaceholder')}
+                    onChange={(e) => setFreeText(e.target.value)}
+                    onKeyDown={(e) => { if (e.key === 'Enter') advance('extra', freeText.trim()); }}
+                    autoFocus
+                  />
+                  <button className="chat-send" onClick={() => advance('extra', freeText.trim())}>
+                    <SparkIcon size={13} /> {t('chat.build')}
+                  </button>
+                  <button className="chat-skip" onClick={() => advance('extra', '')}>{t('chat.skip')}</button>
+                </div>
+              </>
             ) : current.multi ? (
               <>
                 <div className="chat-opts chat-opts-multi">

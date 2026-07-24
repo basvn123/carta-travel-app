@@ -28,6 +28,7 @@ import {
 import { AiDayPlanModal } from './AiDayPlanModal.jsx';
 import { CartaChatPlanner } from './CartaChatPlanner.jsx';
 import { buildAiCandidates, requestAiDayPlan, splitAiPlan } from './aiDayPlan.js';
+import { buildCityCandidates, requestCitySuggestion } from './aiCitySuggest.js';
 import { openDayPlanPdf } from './dayPlanPdf.js';
 import { openDayPlanKml } from './dayPlanKml.js';
 import { MODE_META, DayTripTransport } from './DayTripTransport.jsx';
@@ -44,7 +45,7 @@ import { loadTripDraft } from './tripDraftStore.js';
 import {
   SparkIcon, StarIcon, InfoIcon, MountainIcon, ShareIcon, MapPinIcon,
   BedIcon, BookmarkIcon, DownloadIcon, RouteIcon,
-  FerryIcon, PencilIcon, SearchIcon, HomeIcon, CheckIcon,
+  FerryIcon, PencilIcon, SearchIcon, HomeIcon, CheckIcon, CalendarIcon,
 } from '../components/Icons.jsx';
 
 // How the explore search & "Let Carta guide you" name each pin category.
@@ -1400,8 +1401,93 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
   // and small gems alike), used by the landing multi-city picker and the
   // in-plan "add another city" picker.
   const allCityOptions = useMemo(() => Object.entries(destinations)
-    .map(([id, d]) => ({ value: id, label: `${d.city}, ${d.country}` }))
+    .map(([id, d]) => {
+      const c = cityCoords(d);
+      return { value: id, label: `${d.city}, ${d.country}`, lat: c.lat, lon: c.lon };
+    })
     .sort((a, b) => a.label.localeCompare(b.label)), [destinations]);
+
+  // Snap an arbitrary point (a geocode hit, an AI web discovery) to the
+  // nearest real destination, so the day planner always ends up with a
+  // catalogue id it has POIs for. One rule, shared by every "anywhere"
+  // entry point into the town picker.
+  const resolveNearestTown = useMemo(() => (lat, lon) => {
+    if (!Number.isFinite(lat) || !Number.isFinite(lon)) return null;
+    let best = null;
+    let bestKm = Infinity;
+    for (const [id, d] of Object.entries(destinations)) {
+      const c = cityCoords(d);
+      if (c.lat == null) continue;
+      const km = haversineKm(lat, lon, c.lat, c.lon);
+      if (km != null && km < bestKm) { bestKm = km; best = { id, dest: d }; }
+    }
+    if (!best || bestKm > 150) return null;
+    return { id: best.id, label: `${best.dest.city}, ${best.dest.country}`, km: Math.round(bestKm) };
+  }, [destinations]);
+
+  // Quick-fill starting points for the stay step, so the first screen is never
+  // a bare search box. Population keeps these to cities people actually stay
+  // in; without it, the top of a rating sort is the best-rated hamlet in
+  // Europe, which nobody is looking for.
+  const POPULAR_STAY_MIN_POP = 150000;
+  const popularStays = useMemo(() => {
+    const rows = [];
+    for (const [id, d] of Object.entries(destinations)) {
+      const c = cityCoords(d);
+      if (c.lat == null) continue;
+      rows.push({
+        id,
+        dest: d,
+        lat: c.lat,
+        lon: c.lon,
+        pop: d.geonames?.population ?? 0,
+        score: d.rating?.score ?? 0,
+      });
+    }
+    const big = rows.filter((r) => r.pop >= POPULAR_STAY_MIN_POP);
+    // Multi-airport cities repeat the same centre ("Milan (Malpensa)" and
+    // "(Linate)"): one chip per real city. The airport suffix is a catalogue
+    // detail, never what a traveller calls the place they are staying in, so
+    // the chip carries the bare city name.
+    const byCity = new Map();
+    for (const r of (big.length >= 6 ? big : rows)) {
+      const name = (r.dest.city || '').replace(/\s*\(.*\)\s*$/, '').trim();
+      const key = `${name}|${r.dest.country}`;
+      const cur = byCity.get(key);
+      if (!cur || r.score > cur.score) byCity.set(key, { ...r, name });
+    }
+    return [...byCity.values()].sort((a, b) => b.score - a.score).slice(0, 6);
+  }, [destinations]);
+
+  const pickPopularStay = (row) => {
+    setStayQuery('');
+    setStayResults(null);
+    setNewStayPoint({
+      lat: row.lat,
+      lon: row.lon,
+      label: `${row.name}, ${row.dest.country}`,
+      shortLabel: row.name,
+    });
+  };
+
+  // The three dates almost every day trip actually falls on, so the date step
+  // is one tap rather than a calendar hunt. "This weekend" is the coming
+  // Saturday (today, when today IS Saturday).
+  const quickDates = useMemo(() => {
+    const today = todayISO();
+    const [y, m, d] = today.split('-').map(Number);
+    const toSaturday = (6 - new Date(Date.UTC(y, m - 1, d)).getUTCDay() + 7) % 7;
+    const all = [
+      { key: 'today', labelKey: 'day.quickToday', iso: today },
+      { key: 'tomorrow', labelKey: 'day.quickTomorrow', iso: addDays(today, 1) },
+      { key: 'weekend', labelKey: 'day.quickWeekend', iso: addDays(today, toSaturday) },
+    ];
+    // On a Friday "tomorrow" IS the weekend, and on a Saturday so is "today":
+    // two chips carrying the same date read as a bug, so the earlier, more
+    // specific wording wins and the duplicate drops.
+    const seen = new Set();
+    return all.filter((q) => !seen.has(q.iso) && seen.add(q.iso));
+  }, []);
 
   // ---- Landing explore map: what's around the traveller's stay ----
   // Towns within day-trip reach, and (from the full POI catalogue) beaches &
@@ -1854,6 +1940,36 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
     });
   };
 
+  // The "ask AI" town tab: a wider, coarser candidate list than the nearby
+  // map (which caps at 110km/34 towns to stay legible) since a suggestion
+  // can reasonably range further than a browsable list.
+  const SUGGEST_TOWN_KM = 300;
+  const SUGGEST_TOWN_CAP = 150;
+
+  const suggestCityAi = async (freeText, a) => {
+    if (!newStayPoint || newStayPoint.lat == null) return { ok: false, code: 'too_few' };
+    const wide = Object.entries(destinations)
+      .map(([id, d]) => {
+        const c = cityCoords(d);
+        if (c.lat == null) return null;
+        const km = haversineKm(newStayPoint.lat, newStayPoint.lon, c.lat, c.lon);
+        return km != null && km <= SUGGEST_TOWN_KM ? { id, dest: d, km, ...c } : null;
+      })
+      .filter(Boolean)
+      .sort((x, y) => (y.dest.rating?.score || 0) - (x.dest.rating?.score || 0))
+      .slice(0, SUGGEST_TOWN_CAP);
+    const candidates = buildCityCandidates(wide);
+    if (candidates.length < 3) return { ok: false, code: 'too_few' };
+    return requestCitySuggestion({
+      stay: { lat: newStayPoint.lat, lon: newStayPoint.lon },
+      focus: a?.focus || null,
+      interests: a?.interests || [],
+      freeText,
+      lang,
+      candidates,
+    });
+  };
+
   // Import: build the standalone plan the chat just designed, carry the AI
   // schedule into its prefs, and open it. From here it is an ordinary day
   // plan, editable like any other.
@@ -1955,77 +2071,129 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
           {/* STEP 1, where are you staying */}
           {landingStep === 'stay' && (
             <div className="day-flow-step">
-              <h2 className="day-flow-q">{t('day.whereStaying')}</h2>
-              <div className="day-stay-search day-flow-search">
-                <input
-                  className="day-stay-input"
-                  type="text"
-                  value={stayQuery}
-                  onChange={(e) => setStayQuery(e.target.value)}
-                  onKeyDown={(e) => { if (e.key === 'Enter') searchStay(); }}
-                  placeholder={t('day.stayPlaceholder')}
-                  aria-label={t('day.stayAria')}
-                  autoFocus
-                />
-                <button className="trip-add-btn" onClick={searchStay} disabled={staySearching || stayQuery.trim().length < 3}>
-                  {staySearching ? '…' : t('day.find')}
-                </button>
-              </div>
-              {newStayPoint ? (
-                <div className="day-stay-chosen day-flow-chosen">
-                  <MapPinIcon size={14} />
-                  <span className="day-stay-chosen-label">{newStayPoint.shortLabel || newStayPoint.label}</span>
-                  <button className="trip-stop-remove" onClick={() => { setNewStayPoint(null); setStayResults(null); setExploreFocus(''); }} aria-label={t('day.clearAddress')} title={t('day.clear')}>×</button>
+              <div className="day-flow-panel">
+                <h2 className="day-flow-q">{t('day.whereStaying')}</h2>
+                <div className="day-stay-search day-flow-search">
+                  <input
+                    className="day-stay-input"
+                    type="text"
+                    value={stayQuery}
+                    onChange={(e) => setStayQuery(e.target.value)}
+                    onKeyDown={(e) => { if (e.key === 'Enter') searchStay(); }}
+                    placeholder={t('day.stayPlaceholder')}
+                    aria-label={t('day.stayAria')}
+                    autoFocus
+                  />
+                  <button className="trip-add-btn" onClick={searchStay} disabled={staySearching || stayQuery.trim().length < 3}>
+                    {staySearching ? '…' : t('day.find')}
+                  </button>
                 </div>
-              ) : stayResults && (
-                stayResults.length ? (
-                  <div className="day-stay-results day-flow-results">
-                    {stayResults.map((r, i) => (
-                      <button key={i} className="day-stay-result" onClick={() => setNewStayPoint(r)}>
-                        {r.label}
-                      </button>
-                    ))}
+                {newStayPoint ? (
+                  <div className="day-stay-chosen day-flow-chosen">
+                    <MapPinIcon size={14} />
+                    <span className="day-stay-chosen-label">{newStayPoint.shortLabel || newStayPoint.label}</span>
+                    <button className="trip-stop-remove" onClick={() => { setNewStayPoint(null); setStayResults(null); setExploreFocus(''); }} aria-label={t('day.clearAddress')} title={t('day.clear')}>×</button>
                   </div>
-                ) : (
-                  <p className="trip-note">{t('day.noAddressMatchTown')}</p>
-                )
-              )}
-              {newStayPoint && (
-                <button className="day-flow-next" onClick={() => setLandingStep('when')}>
-                  {t('day.next')}
-                </button>
-              )}
+                ) : stayResults ? (
+                  stayResults.length ? (
+                    <div className="day-stay-results day-flow-results">
+                      {stayResults.map((r, i) => (
+                        <button key={i} className="day-stay-result" onClick={() => setNewStayPoint(r)}>
+                          {r.label}
+                        </button>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="trip-note">{t('day.noAddressMatchTown')}</p>
+                  )
+                ) : popularStays.length > 0 && (
+                  // Nothing typed yet: the popular cities double as the
+                  // "what does an answer look like?" example and a one-tap
+                  // way past the empty box.
+                  <div className="day-flow-suggest">
+                    <span className="day-flow-suggest-label">{t('day.popularStays')}</span>
+                    <div className="day-flow-chips">
+                      {popularStays.map((r) => (
+                        <button key={r.id} className="day-flow-chip" onClick={() => pickPopularStay(r)}>
+                          <MapPinIcon size={13} />
+                          <span>{r.name}</span>
+                          {r.dest.rating?.score != null && <ScoreChip rating={r.dest.rating} size="xs" />}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                {newStayPoint && (
+                  <button className="day-flow-next" onClick={() => setLandingStep('when')}>
+                    {t('day.next')}
+                  </button>
+                )}
+              </div>
             </div>
           )}
 
           {/* STEP 2, when */}
           {landingStep === 'when' && (
             <div className="day-flow-step">
-              <h2 className="day-flow-q">{t('day.whenVisiting')}</h2>
-              <div className="day-flow-date">
-                <DateField value={newStartDate} onChange={setNewStartDate} placeholder={t('day.startDate')} />
+              <div className="day-flow-panel">
+                <h2 className="day-flow-q">{t('day.whenVisiting')}</h2>
+                <div className="day-flow-chips day-flow-chips-center">
+                  {quickDates.map((q) => (
+                    <button
+                      key={q.key}
+                      className={`day-flow-chip${newStartDate === q.iso ? ' on' : ''}`}
+                      onClick={() => setNewStartDate(q.iso)}
+                      aria-pressed={newStartDate === q.iso}
+                    >
+                      <CalendarIcon size={13} />
+                      <span>{t(q.labelKey)}</span>
+                      <small>{fmtDateFull(q.iso, true)}</small>
+                    </button>
+                  ))}
+                </div>
+                <div className="day-flow-date">
+                  <span className="day-flow-suggest-label">{t('day.orPickDate')}</span>
+                  <DateField value={newStartDate} onChange={setNewStartDate} placeholder={t('day.startDate')} />
+                </div>
+                <button className="day-flow-next" onClick={() => setLandingStep('how')} disabled={!newStartDate}>
+                  {t('day.next')}
+                </button>
               </div>
-              <button className="day-flow-next" onClick={() => setLandingStep('how')} disabled={!newStartDate}>
-                {t('day.next')}
-              </button>
             </div>
           )}
 
           {/* STEP 3, how do you want to plan it */}
           {landingStep === 'how' && (
             <div className="day-flow-step">
-              <h2 className="day-flow-q">{t('day.howToPlan')}</h2>
-              <div className="day-flow-cards">
-                <button className="day-flow-card primary" onClick={() => setLandingStep('chat')}>
-                  <span className="day-flow-card-ico"><SparkIcon size={22} /></span>
-                  <b>{t('day.useChatbot')}</b>
-                  <small>{t('day.useChatbotSub')}</small>
-                </button>
-                <button className="day-flow-card" onClick={() => setLandingStep('manual')}>
-                  <span className="day-flow-card-ico"><MapPinIcon size={22} /></span>
-                  <b>{t('day.planManually')}</b>
-                  <small>{t('day.planManuallySub')}</small>
-                </button>
+              <div className="day-flow-panel day-flow-panel-wide">
+                <h2 className="day-flow-q">{t('day.howToPlan')}</h2>
+                <div className="day-flow-cards">
+                  <button className="day-flow-card primary" onClick={() => setLandingStep('chat')}>
+                    <span className="day-flow-card-top">
+                      <span className="day-flow-card-ico"><SparkIcon size={22} /></span>
+                      <span className="day-flow-card-tag">{t('day.recommendedTag')}</span>
+                    </span>
+                    <b>{t('day.useChatbot')}</b>
+                    <small>{t('day.useChatbotSub')}</small>
+                    <ul className="day-flow-card-points">
+                      <li><CheckIcon size={12} /> {t('day.chatPoint1')}</li>
+                      <li><CheckIcon size={12} /> {t('day.chatPoint2')}</li>
+                      <li><CheckIcon size={12} /> {t('day.chatPoint3')}</li>
+                    </ul>
+                  </button>
+                  <button className="day-flow-card" onClick={() => setLandingStep('manual')}>
+                    <span className="day-flow-card-top">
+                      <span className="day-flow-card-ico"><MapPinIcon size={22} /></span>
+                    </span>
+                    <b>{t('day.planManually')}</b>
+                    <small>{t('day.planManuallySub')}</small>
+                    <ul className="day-flow-card-points">
+                      <li><CheckIcon size={12} /> {t('day.manualPoint1')}</li>
+                      <li><CheckIcon size={12} /> {t('day.manualPoint2')}</li>
+                      <li><CheckIcon size={12} /> {t('day.manualPoint3')}</li>
+                    </ul>
+                  </button>
+                </div>
               </div>
             </div>
           )}
@@ -2041,6 +2209,10 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
               onImport={importChatPlan}
               onBack={() => setLandingStep('how')}
               onManual={() => setLandingStep('manual')}
+              stayPoint={newStayPoint}
+              cityOptions={allCityOptions}
+              onSuggestCity={suggestCityAi}
+              resolveNearest={resolveNearestTown}
             />
           )}
 

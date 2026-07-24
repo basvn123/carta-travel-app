@@ -178,6 +178,10 @@ async function run(label, viewport) {
 
   // Walk the whole question set: single-selects advance on tap, the
   // multi-select and the free-text step need their own confirm.
+  // The multi-select shot fires the FIRST time that step is reached, not at a
+  // fixed loop index: the question order is not frozen, and a hardcoded index
+  // silently stops overwriting the screenshot the day the order changes.
+  let multiShot = false;
   for (let i = 0; i < 12; i += 1) {
     if (await page.locator('.chat-typing').count()) break;
     if (await page.locator('.chat-free-input').count()) {
@@ -189,7 +193,10 @@ async function run(label, viewport) {
       await page.waitForTimeout(150);
       await page.locator('.chat-opts-multi .chat-opt').nth(1).click();
       await page.waitForTimeout(150);
-      if (i === 3) await page.screenshot({ path: `${SHOTS}/g6-${label}-chat-multi.png` });
+      if (!multiShot) {
+        multiShot = true;
+        await page.screenshot({ path: `${SHOTS}/g6-${label}-chat-multi.png` });
+      }
       await page.locator('.chat-send-multi').click();
     } else {
       await page.locator('.chat-opt').first().click();

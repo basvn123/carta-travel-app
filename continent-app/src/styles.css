@@ -11705,6 +11705,23 @@ input, select {
   gap: 18px;
   padding-bottom: 40px;
 }
+/* The question and its answer live on one card. Without it the input floats
+   alone on the page background and the step reads as an unfinished screen
+   rather than a form. */
+.day-flow-panel {
+  width: 100%;
+  max-width: 620px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 34px 34px 30px;
+  border: 1px solid var(--rule);
+  border-radius: 20px;
+  background: var(--paper);
+  box-shadow: var(--shadow-2, 0 10px 30px -22px rgba(26, 26, 26, 0.45));
+}
+.day-flow-panel-wide { max-width: 800px; }
 .day-flow-q {
   font-family: var(--display);
   font-size: 30px;
@@ -11713,6 +11730,34 @@ input, select {
   line-height: 1.2;
   text-align: center;
 }
+
+/* Quick-fill chips: popular cities on the stay step, common dates on the
+   date step. Same shape both times so "one tap shortcut" reads the same. */
+.day-flow-suggest { display: flex; flex-direction: column; gap: 9px; }
+.day-flow-suggest-label {
+  font-family: var(--mono); font-size: 9.5px;
+  text-transform: uppercase; letter-spacing: 0.08em;
+  color: var(--ink-mute);
+  text-align: center;
+}
+.day-flow-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.day-flow-chips-center { justify-content: center; }
+.day-flow-chip {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 9px 14px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: var(--paper);
+  color: var(--ink);
+  font-size: 13.5px;
+  cursor: pointer;
+  transition: border-color 0.12s ease, color 0.12s ease, background 0.12s ease;
+}
+.day-flow-chip:hover { border-color: var(--accent); color: var(--accent); }
+.day-flow-chip.on { border-color: var(--accent); background: var(--accent-bg); color: var(--accent); font-weight: 600; }
+.day-flow-chip small { font-size: 11px; color: var(--ink-mute); }
+.day-flow-chip.on small { color: var(--accent); }
+
 .day-flow-search { display: flex; gap: 8px; }
 .day-flow-search .day-stay-input {
   flex: 1 1 auto;
@@ -11731,7 +11776,11 @@ input, select {
   font-size: 14px; font-weight: 600;
 }
 .day-flow-chosen .day-stay-chosen-label { flex: 1 1 auto; }
-.day-flow-date { display: flex; justify-content: center; }
+.day-flow-date {
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  padding-top: 4px;
+  border-top: 1px dashed var(--rule);
+}
 .day-flow-next {
   align-self: center;
   min-width: 220px;
@@ -11764,26 +11813,66 @@ input, select {
 .day-flow-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-2); border-color: var(--accent); }
 .day-flow-card b { font-size: 16px; color: var(--ink); }
 .day-flow-card small { font-size: 12.5px; color: var(--ink-soft); line-height: 1.5; }
+.day-flow-card-top {
+  display: flex; align-items: center; justify-content: space-between;
+  width: 100%; gap: 10px;
+  margin-bottom: 4px;
+}
 .day-flow-card-ico {
   width: 44px; height: 44px;
   border-radius: 12px;
   background: var(--paper-dim);
   color: var(--ink-soft);
   display: inline-flex; align-items: center; justify-content: center;
-  margin-bottom: 4px;
 }
+.day-flow-card-tag {
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: #fff;
+  font-family: var(--mono); font-size: 9px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.07em;
+}
+/* What each route actually gets you, so the fork is a real comparison
+   rather than two similar-looking buttons. */
+.day-flow-card-points {
+  list-style: none;
+  margin: 10px 0 0;
+  padding: 10px 0 0;
+  border-top: 1px dashed var(--rule);
+  display: flex; flex-direction: column; gap: 6px;
+  width: 100%;
+}
+.day-flow-card-points li {
+  display: flex; align-items: flex-start; gap: 7px;
+  font-size: 12px; line-height: 1.45;
+  color: var(--ink-soft);
+  text-align: left;
+}
+.day-flow-card-points li svg { flex: 0 0 auto; margin-top: 2px; color: var(--accent); }
 .day-flow-card.primary { border-color: var(--accent); background: var(--accent-bg); }
 .day-flow-card.primary .day-flow-card-ico { background: var(--accent); color: #fff; }
 .day-flow-card.primary b { color: var(--accent); }
 
 /* ───────── Carta chat planner ───────── */
 
+/* The conversation sits on its own card, same treatment as the guided steps
+   before it, so the bot reads as a contained thing rather than loose bubbles
+   drifting on the page background. */
 .chat-flow {
   flex: 1 1 auto;
   display: flex;
   flex-direction: column;
   min-height: 0;
-  height: calc(100vh - var(--header-h, 64px) - 60px);
+  height: calc(100vh - var(--header-h, 64px) - 92px);
+  width: 100%;
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 20px 26px 18px;
+  border: 1px solid var(--rule);
+  border-radius: 20px;
+  background: var(--paper);
+  box-shadow: var(--shadow-2, 0 10px 30px -22px rgba(26, 26, 26, 0.45));
 }
 .chat-head {
   display: flex; align-items: center; gap: 10px;
@@ -11903,6 +11992,8 @@ input, select {
 .chat-town-tab:hover { border-color: var(--accent); color: var(--accent); }
 .chat-town-tab.on { border-color: var(--accent); background: var(--accent-bg); color: var(--accent); }
 .chat-town-note { margin-top: 8px; }
+.chat-town-resolve { margin-top: 10px; }
+.chat-town-resolve .chat-opt { margin-top: 8px; }
 .chat-town-anywhere { margin-top: 10px; }
 .chat-town-anywhere .chat-send { margin-top: 0; }
 .chat-town-map {
@@ -11950,16 +12041,26 @@ input, select {
   .day-flow-step-label { display: none; }
   .day-flow-step-dot { padding: 6px; }
   .day-flow-next { width: 100%; }
-  .chat-flow { height: calc(100vh - var(--header-h, 56px) - 40px); }
+  /* On a phone the card would be a border tight against the screen edge, so
+     it drops its chrome and the step just uses the full width. */
+  .day-flow-panel {
+    padding: 20px 16px 18px;
+    border-radius: 16px;
+    gap: 14px;
+  }
+  .day-flow-chip { width: 100%; justify-content: center; }
+  .chat-flow {
+    height: calc(100vh - var(--header-h, 56px) - 40px);
+    padding: 14px 14px 12px;
+    border-radius: 16px;
+  }
   .chat-bubble { max-width: 92%; }
   .chat-opt { width: 100%; }
 }
 
-/* Guided-flow refinements: the question column stays a readable width, and
-   the search keeps the app's standard pill-with-button treatment. */
-.day-flow-step > * { width: 100%; max-width: 520px; margin-left: auto; margin-right: auto; }
-.day-flow-step > .day-flow-q { max-width: 640px; }
-.day-flow-step > .day-flow-cards { max-width: 640px; }
+/* Guided-flow refinements: the search keeps the app's standard
+   pill-with-button treatment. (Reading width is the panel's job now: it
+   centres itself and everything inside it fills it.) */
 .day-flow-search { border-radius: 12px; }
 .day-flow-search .day-stay-input { font-size: 16px; padding: 15px 18px; }
 .day-flow-search .trip-add-btn { padding-left: 22px; padding-right: 22px; font-size: 14px; }
