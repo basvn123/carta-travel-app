@@ -1720,16 +1720,6 @@ input, select {
 .guide-origin-label > svg { color: var(--accent); }
 .guide-origin-row .origin-picker { position: relative; }
 .guide-origin-row .origin-btn-from { display: inline; }
-.guide-drive-notes { display: flex; flex-direction: column; gap: 8px; margin: 10px 0 14px; }
-.guide-drive-note {
-  display: flex; align-items: center; gap: 9px;
-  padding: 9px 12px;
-  border: 1px solid var(--rule);
-  border-radius: 10px;
-  font-size: 12.5px;
-  color: var(--ink-soft);
-}
-.guide-drive-note b { color: var(--ink); }
 .guide-noflight { padding: 4px 0 8px; }
 .guide-noflight .guide-empty { display: flex; align-items: baseline; gap: 6px; color: #b3402a; }
 .guide-noflight-back { margin-top: 10px; }
@@ -6857,32 +6847,6 @@ input, select {
 .privacy-body p { margin: 0 0 8px; }
 .privacy-body a { color: var(--accent); }
 
-/* ── Ready-made trips (starter itineraries per country) ── */
-.starter-trips-pickers { display: flex; gap: 8px; margin: 8px 0 10px; flex-wrap: wrap; }
-.starter-trips-pickers > * { flex: 1; min-width: 140px; }
-.starter-trip-list { display: flex; flex-direction: column; gap: 8px; }
-.starter-trip {
-  border: 1px solid var(--rule);
-  border-radius: 10px;
-  background: var(--paper);
-  padding: 10px 11px;
-}
-.starter-trip-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
-.starter-trip-head b { font-size: 13px; color: var(--ink); }
-.starter-trip-desc { display: block; font-size: 11.5px; color: var(--ink-soft); margin-top: 2px; }
-.starter-trip-cities { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 7px; }
-.starter-trip-city {
-  font-size: 11px;
-  color: var(--ink);
-  border: 1px solid var(--rule);
-  border-radius: 999px;
-  padding: 2px 9px;
-  background: var(--paper-dim);
-}
-.starter-trip-city b { color: var(--accent); margin-left: 2px; }
-.starter-trip-price { display: block; font-size: 10.5px; color: var(--ink-mute); margin-top: 6px; font-family: var(--mono); }
-.starter-trip-use { width: 100%; justify-content: center; margin-top: 8px; }
-
 /* ── "Travel cheaper" tailored tips ── */
 .cheap-tip-group { margin-bottom: 10px; }
 .cheap-tip-group-title {
@@ -10543,16 +10507,64 @@ input, select {
 /* Trip wizard: the same shell language as the day planner's wizard - a large,
    calm modal with thin progress segments and one clear question per screen.
    The question logic is untouched; only the clothes changed. */
-.trip-wizard-modal {
-  max-width: 680px;
-  max-height: min(92vh, 860px);
-  min-height: min(560px, 86vh);
-}
 .trip-wizard-modal .guide-title { font-size: 22px; }
 .trip-wizard-modal .guide-sub { font-size: 13.5px; }
 .trip-wizard-modal .guide-path { padding: 15px 18px; border-radius: 14px; }
 .trip-wizard-modal .guide-path-text b { font-size: 15px; }
 .trip-wizard-modal .guide-path-text small { font-size: 12.5px; }
+
+/* Full-bleed wizard: the trip wizard takes the whole page on every screen
+   size, so city grids, maps and pick lists get real room and the questions
+   are easy to work through. Declared after the shared mobile blocks above so
+   those (padded overlay, 88vh sheet) do not shrink it back on phones. */
+.trip-wizard-overlay { padding: 0; align-items: stretch; justify-content: stretch; }
+.trip-wizard-modal {
+  width: 100%;
+  max-width: none;
+  height: 100%;
+  max-height: none;
+  min-height: 0;
+  border-radius: 0;
+}
+/* Wide screens: hold the content off the very edge so lines stay readable,
+   while still using far more width than the old 560px column. */
+@media (min-width: 900px) {
+  .trip-wizard-modal .guide-head,
+  .trip-wizard-modal .guide-foot { padding-left: clamp(20px, 5vw, 72px); padding-right: clamp(20px, 5vw, 72px); }
+  .trip-wizard-modal .guide-body { padding: 24px clamp(20px, 5vw, 72px); }
+}
+/* Phones: keep the footer clear of the home indicator now that the wizard
+   runs to the bottom edge. */
+.trip-wizard-modal .guide-foot { padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px)); }
+
+/* Sparse steps: a two-way toggle stretched across 1400px reads as a mistake,
+   so the date-mode switch keeps a sane width inside the full-bleed shell. */
+.trip-wizard-modal .guide-datemode { max-width: 520px; }
+
+/* Where step: People stepper and the "let Carta pick the countries" CTA both
+   run the full width with generous targets and clear air between them. */
+.guide-people-row { display: block; margin: 0 0 18px; }
+.guide-people-row .trip-field { width: 100%; min-width: 0; gap: 8px; }
+/* Full width on phones, capped on desktop: a stepper stretched across a
+   1440px screen puts - and + a mouse-drag apart, which is harder to use, not
+   easier. */
+.guide-people-row .guide-people {
+  width: 100%;
+  max-width: 300px;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 8px 14px;
+}
+.guide-people-row .guide-people button { width: 36px; height: 36px; font-size: 19px; }
+.guide-people-row .guide-people span { font-size: 16px; min-width: 28px; }
+.guide-design-btn-lg {
+  gap: 14px;
+  padding: 18px 20px;
+  margin-top: 6px;
+  margin-bottom: 18px;
+  font-size: 15px;
+}
+.guide-design-btn-lg small { font-size: 12px; margin-top: 3px; }
 
 /* ───────── Day planner: pickable pins on the big map ───────── */
 
@@ -10809,8 +10821,6 @@ input, select {
   border: 1px solid var(--rule);
   color: var(--accent);
 }
-.guide-carfrom-fallback { margin-top: 4px; }
-
 .trip-carfrom { margin: 8px 0 4px; }
 .trip-carfrom-row { display: flex; gap: 8px; }
 .trip-carfrom-row .trip-ownflight-input { flex: 1; min-width: 0; }
@@ -10993,3 +11003,432 @@ input, select {
   .ai-plan-overlay { padding: 10px; }
   .ai-plan-card { margin: 2vh auto; max-height: 92vh; overflow-y: auto; }
 }
+
+/* ───────── AI planner round 2: hero CTA, facts, refine loop, events ───────── */
+
+/* The one big call to action on an empty day. */
+.day-ai-hero {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 14px 16px;
+  margin-bottom: 10px;
+  border: none;
+  border-radius: 14px;
+  background: var(--accent);
+  color: #fff;
+  text-align: left;
+  cursor: pointer;
+  box-shadow: 0 2px 10px rgba(200, 80, 30, 0.28);
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+.day-ai-hero:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(200, 80, 30, 0.36); }
+.day-ai-hero-ico {
+  flex: 0 0 auto;
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.18);
+  display: inline-flex; align-items: center; justify-content: center;
+}
+.day-ai-hero-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.day-ai-hero-text b { font-size: 15px; font-weight: 700; letter-spacing: 0.1px; }
+.day-ai-hero-text small { font-size: 11.5px; opacity: 0.9; line-height: 1.4; }
+
+/* Date + party size, side by side. */
+.ai-plan-facts { display: flex; gap: 14px; flex-wrap: wrap; }
+.ai-plan-fact { display: flex; flex-direction: column; gap: 5px; }
+.ai-plan-fact .carta-plan-q { display: inline-flex; align-items: center; gap: 5px; }
+.ai-plan-date {
+  border: 1px solid var(--rule);
+  border-radius: 9px;
+  background: var(--paper);
+  color: var(--ink);
+  font: inherit; font-size: 13px;
+  padding: 7px 10px;
+}
+.ai-plan-date:focus { outline: none; border-color: var(--accent); }
+.ai-plan-people { align-self: flex-start; }
+.ai-plan-toggles { display: flex; gap: 18px; flex-wrap: wrap; }
+.ai-plan-hills span { display: inline-flex; align-items: center; gap: 5px; }
+
+/* "Proposal, not yet on your map" framing above the result. */
+.ai-plan-proposal-tag {
+  display: inline-block;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: var(--accent-bg);
+  color: var(--accent);
+  font-size: 10.5px; font-weight: 700;
+  letter-spacing: 0.3px; text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+/* Push the plan back at the AI until it is right. */
+.ai-refine {
+  border-top: 1px solid var(--rule);
+  margin-top: 14px;
+  padding-top: 12px;
+}
+.ai-refine-nudges { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0 9px; }
+.ai-refine-row { display: flex; gap: 8px; }
+.ai-refine-input {
+  flex: 1 1 auto;
+  min-width: 0;
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  background: var(--paper);
+  color: var(--ink);
+  font: inherit; font-size: 13px;
+  padding: 9px 11px;
+}
+.ai-refine-input:focus { outline: none; border-color: var(--accent); }
+
+/* Import is the decisive action: heavier than the secondary buttons. */
+.ai-plan-import { font-weight: 700; padding-top: 13px; padding-bottom: 13px; }
+
+/* Events wear their own tint, distinct from ordinary AI discoveries. */
+.ai-event-tag { background: #e2f0e6; color: #1f6b41; }
+.dem-pin.ai-event { --cat: #1f6b41; border-color: #1f6b41; }
+
+@media (max-width: 768px) {
+  .ai-plan-facts { gap: 10px; }
+  .day-ai-hero-text b { font-size: 14px; }
+}
+
+/* ───────── Day planner: guided full-screen flow ───────── */
+
+.day-flow-screen {
+  display: flex;
+  justify-content: center;
+  padding: 0;
+  overflow-y: auto;
+}
+.day-flow {
+  width: 100%;
+  max-width: 780px;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 18px 20px 40px;
+}
+/* The manual step hosts the wide explore map, so it drops the reading width. */
+.day-flow-manual { max-width: 1400px; }
+
+/* Step rail + help affordance */
+.day-flow-top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 26px;
+}
+.day-flow-steps { display: flex; align-items: center; gap: 6px; flex: 1 1 auto; min-width: 0; }
+.day-flow-step-dot {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 12px 6px 7px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ink-mute);
+  font-size: 12px;
+  cursor: default;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+.day-flow-step-dot.done { cursor: pointer; color: var(--ink-soft); }
+.day-flow-step-dot.done:hover { border-color: var(--accent); color: var(--accent); }
+.day-flow-step-dot.on { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 600; }
+.day-flow-step-num {
+  width: 20px; height: 20px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: var(--paper-dim);
+  color: var(--ink-soft);
+  font-size: 11px; font-weight: 700;
+  display: inline-flex; align-items: center; justify-content: center;
+}
+.day-flow-step-dot.on .day-flow-step-num { background: rgba(255,255,255,0.22); color: #fff; }
+.day-flow-step-dot.done .day-flow-step-num { background: #e2f0e6; color: #1f6b41; }
+.day-flow-help {
+  flex: 0 0 auto;
+  width: 34px; height: 34px;
+  border-radius: 50%;
+  border: 1px solid var(--rule);
+  background: transparent;
+  color: var(--ink-soft);
+  display: inline-flex; align-items: center; justify-content: center;
+  cursor: pointer;
+}
+.day-flow-help:hover { border-color: var(--accent); color: var(--accent); }
+.day-flow-help-card {
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  background: var(--paper-dim);
+  padding: 14px 16px;
+  margin-bottom: 20px;
+}
+.day-flow-help-card b { font-size: 13px; color: var(--ink); }
+.day-flow-help-card p { font-size: 13px; color: var(--ink-soft); line-height: 1.55; margin: 6px 0 10px; }
+.day-flow-help-close {
+  border: 1px solid var(--rule); border-radius: 8px;
+  padding: 6px 14px; font-size: 12.5px; color: var(--ink-soft); background: transparent;
+}
+
+/* One question per screen, vertically centred so it reads as a single ask. */
+.day-flow-step {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 18px;
+  padding-bottom: 40px;
+}
+.day-flow-q {
+  font-family: var(--display);
+  font-size: 30px;
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1.2;
+  text-align: center;
+}
+.day-flow-search { display: flex; gap: 8px; }
+.day-flow-search .day-stay-input {
+  flex: 1 1 auto;
+  font-size: 16px;
+  padding: 14px 16px;
+  border-radius: 12px;
+}
+.day-flow-results { max-height: 260px; overflow-y: auto; }
+.day-flow-chosen {
+  display: flex; align-items: center; gap: 9px;
+  padding: 13px 15px;
+  border: 1px solid var(--accent);
+  border-radius: 12px;
+  background: var(--accent-bg);
+  color: var(--accent);
+  font-size: 14px; font-weight: 600;
+}
+.day-flow-chosen .day-stay-chosen-label { flex: 1 1 auto; }
+.day-flow-date { display: flex; justify-content: center; }
+.day-flow-next {
+  align-self: center;
+  min-width: 220px;
+  padding: 14px 26px;
+  border: none;
+  border-radius: 12px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 15px; font-weight: 700;
+  cursor: pointer;
+}
+.day-flow-next:disabled { opacity: 0.45; cursor: not-allowed; }
+.day-flow-next:not(:disabled):hover { box-shadow: 0 3px 14px rgba(200, 80, 30, 0.3); }
+
+/* The fork: chat or by hand. */
+.day-flow-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.day-flow-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  padding: 22px 20px;
+  border: 1px solid var(--rule);
+  border-radius: 16px;
+  background: var(--paper);
+  text-align: left;
+  cursor: pointer;
+  transition: transform 0.12s ease, box-shadow 0.12s ease, border-color 0.12s ease;
+}
+.day-flow-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-2); border-color: var(--accent); }
+.day-flow-card b { font-size: 16px; color: var(--ink); }
+.day-flow-card small { font-size: 12.5px; color: var(--ink-soft); line-height: 1.5; }
+.day-flow-card-ico {
+  width: 44px; height: 44px;
+  border-radius: 12px;
+  background: var(--paper-dim);
+  color: var(--ink-soft);
+  display: inline-flex; align-items: center; justify-content: center;
+  margin-bottom: 4px;
+}
+.day-flow-card.primary { border-color: var(--accent); background: var(--accent-bg); }
+.day-flow-card.primary .day-flow-card-ico { background: var(--accent); color: #fff; }
+.day-flow-card.primary b { color: var(--accent); }
+
+/* ───────── Carta chat planner ───────── */
+
+.chat-flow {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  height: calc(100vh - var(--header-h, 64px) - 60px);
+}
+.chat-head {
+  display: flex; align-items: center; gap: 10px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--rule);
+}
+.chat-back {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  border: 1px solid var(--rule);
+  background: transparent;
+  color: var(--ink-soft);
+  font-size: 20px; line-height: 1;
+  cursor: pointer;
+}
+.chat-back:hover { border-color: var(--accent); color: var(--accent); }
+.chat-head-title {
+  flex: 1 1 auto;
+  display: inline-flex; align-items: center; gap: 7px;
+  font-size: 14px; font-weight: 700; color: var(--accent);
+}
+.chat-progress { font-family: var(--mono); font-size: 11.5px; color: var(--ink-mute); }
+.chat-body { flex: 1 1 auto; overflow-y: auto; padding: 18px 2px 10px; }
+.chat-turn { margin-bottom: 18px; }
+.chat-bubble {
+  display: inline-block;
+  max-width: 88%;
+  padding: 11px 15px;
+  border-radius: 16px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+.chat-bubble.bot { background: var(--paper-dim); color: var(--ink); border-bottom-left-radius: 5px; }
+.chat-bubble.bot.chat-bubble-live { font-size: 17px; font-weight: 600; }
+.chat-bubble-warn { background: #fdf3e2; color: #8a5a18; }
+.chat-bubble.me {
+  display: block;
+  margin: 7px 0 0 auto;
+  background: var(--accent);
+  color: #fff;
+  border-bottom-right-radius: 5px;
+  width: fit-content;
+  max-width: 88%;
+}
+.chat-typing { display: inline-flex; gap: 5px; align-items: center; }
+.chat-typing span {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--ink-mute);
+  animation: chat-blink 1.2s infinite ease-in-out;
+}
+.chat-typing span:nth-child(2) { animation-delay: 0.2s; }
+.chat-typing span:nth-child(3) { animation-delay: 0.4s; }
+@keyframes chat-blink { 0%, 80%, 100% { opacity: 0.25; } 40% { opacity: 1; } }
+.chat-busy-note { font-size: 12.5px; color: var(--ink-soft); margin-top: 8px; }
+
+.chat-opts { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 12px; }
+.chat-opt {
+  display: inline-flex; align-items: center; gap: 9px;
+  padding: 12px 16px;
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  background: var(--paper);
+  color: var(--ink);
+  font-size: 14px;
+  cursor: pointer;
+  transition: border-color 0.12s ease, background 0.12s ease, transform 0.12s ease;
+}
+.chat-opt:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-1px); }
+.chat-opt.on { border-color: var(--accent); background: var(--accent-bg); color: var(--accent); font-weight: 600; }
+.chat-opt-text { display: flex; flex-direction: column; gap: 1px; text-align: left; }
+.chat-opt-text b { font-size: 14px; font-weight: 600; }
+.chat-opt-text small { font-size: 11.5px; color: var(--ink-mute); }
+.chat-opts-multi .chat-opt { padding: 10px 14px; }
+.chat-send {
+  margin-top: 12px;
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 12px 22px;
+  border: none; border-radius: 12px;
+  background: var(--accent); color: #fff;
+  font-size: 14px; font-weight: 700;
+  cursor: pointer;
+}
+.chat-send-multi { display: block; }
+.chat-skip {
+  margin-left: 10px;
+  border: none; background: transparent;
+  color: var(--ink-mute); font-size: 13px;
+  text-decoration: underline; cursor: pointer;
+}
+.chat-free { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 12px; }
+.chat-free-input {
+  flex: 1 1 260px;
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  background: var(--paper);
+  color: var(--ink);
+  font: inherit; font-size: 14px;
+  padding: 12px 14px;
+}
+.chat-free-input:focus { outline: none; border-color: var(--accent); }
+
+.chat-result { margin-bottom: 10px; }
+.chat-route {
+  margin-top: 12px;
+  border: 1px solid var(--rule);
+  border-radius: 14px;
+  background: var(--paper);
+  padding: 14px 16px;
+}
+.chat-route-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+.chat-route-stats { font-size: 11.5px; color: var(--ink-soft); }
+.chat-refine { margin-top: 14px; }
+.chat-opts-nudge { margin-bottom: 9px; }
+.chat-foot {
+  flex: 0 0 auto;
+  padding-top: 12px;
+  border-top: 1px solid var(--rule);
+}
+.chat-foot-warn { font-size: 12px; color: #8a5a18; }
+.chat-import {
+  width: 100%;
+  display: inline-flex; align-items: center; justify-content: center; gap: 9px;
+  padding: 15px;
+  border: none; border-radius: 12px;
+  background: var(--accent); color: #fff;
+  font-size: 15px; font-weight: 700;
+  cursor: pointer;
+}
+.chat-import:hover { box-shadow: 0 3px 14px rgba(200, 80, 30, 0.32); }
+
+@media (max-width: 768px) {
+  .day-flow { padding: 14px 14px 30px; }
+  .day-flow-q { font-size: 23px; }
+  .day-flow-cards { grid-template-columns: 1fr; }
+  .day-flow-step-label { display: none; }
+  .day-flow-step-dot { padding: 6px; }
+  .day-flow-next { width: 100%; }
+  .chat-flow { height: calc(100vh - var(--header-h, 56px) - 40px); }
+  .chat-bubble { max-width: 92%; }
+  .chat-opt { width: 100%; }
+}
+
+/* Guided-flow refinements: the question column stays a readable width, and
+   the search keeps the app's standard pill-with-button treatment. */
+.day-flow-step > * { width: 100%; max-width: 520px; margin-left: auto; margin-right: auto; }
+.day-flow-step > .day-flow-q { max-width: 640px; }
+.day-flow-step > .day-flow-cards { max-width: 640px; }
+.day-flow-search { border-radius: 12px; }
+.day-flow-search .day-stay-input { font-size: 16px; padding: 15px 18px; }
+.day-flow-search .trip-add-btn { padding-left: 22px; padding-right: 22px; font-size: 14px; }
+
+/* Saved work reads as a quiet footer under the first question, never as a
+   competing block. */
+.day-flow .day-landing-section {
+  width: 100%;
+  max-width: 640px;
+  margin: 0 auto;
+  padding-top: 18px;
+  border-top: 1px solid var(--rule);
+}
+.day-flow .day-landing-section + .day-landing-section { border-top: none; padding-top: 4px; }
+.day-flow > .trip-note { max-width: 640px; margin: 10px auto 0; text-align: center; }
+
+@media (max-width: 768px) {
+  .day-flow-step > *, .day-flow-step > .day-flow-q, .day-flow-step > .day-flow-cards { max-width: none; }
+}
+
+/* The refine row must clear the sticky import bar. */
+.chat-body { padding-bottom: 26px; }

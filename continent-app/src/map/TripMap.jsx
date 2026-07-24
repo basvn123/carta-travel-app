@@ -17,6 +17,10 @@ const POI_CAT_ICONS = {
 };
 const POI_STAR_ICON = '<svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 3l2.4 5.9 6.1.5-4.7 4 1.5 6L12 16.1 6.6 19.4l1.5-6-4.7-4 6.1-.5z"/></svg>';
 const POI_PLUS_ICON = S('<path d="M12 5v14M5 12h14"/>');
+// AI discoveries (day planner): places the AI found beyond the catalogue.
+const POI_SPARK_ICON = S('<path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/><path d="M18.5 15.5l.8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8z"/>');
+// Festivals and dated events, which the catalogue structurally cannot hold.
+const POI_EVENT_ICON = S('<path d="M4 8h16v3a2 2 0 0 0 0 4v3H4v-3a2 2 0 0 0 0-4z"/><path d="M14 8v12"/>');
 
 /**
  * The trip's map backdrop: a full-bleed basemap that draws the itinerary as a
@@ -243,10 +247,10 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
     (pois || []).filter(hasLngLat).forEach((p) => {
       const el = document.createElement('button');
       el.type = 'button';
-      el.className = `dem-pin trip-poi-pin cat-${p.cat || 'sight'}${p.sel ? ' sel' : ''}`;
+      el.className = `dem-pin trip-poi-pin cat-${p.cat || 'sight'}${p.sel ? ' sel' : ''}${p.discovery ? ' ai-disc' : ''}${p.event ? ' ai-event' : ''}`;
       const ico = document.createElement('span');
       ico.className = 'dem-pin-ico';
-      ico.innerHTML = POI_CAT_ICONS[p.cat] || POI_CAT_ICONS.sight;
+      ico.innerHTML = p.event ? POI_EVENT_ICON : p.discovery ? POI_SPARK_ICON : (POI_CAT_ICONS[p.cat] || POI_CAT_ICONS.sight);
       const lbl = document.createElement('span');
       lbl.className = 'dem-pin-lbl';
       lbl.textContent = p.label;
@@ -257,6 +261,17 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
         star.innerHTML = POI_STAR_ICON;
         star.title = 'A true must-see';
         el.append(star);
+      }
+      // An AI discovery is a status pin too: it lives outside the catalogue,
+      // so there is nothing behind it to add to the plan.
+      if (p.discovery) {
+        el.title = `${p.label} (AI discovery)`;
+        poiMarkersRef.current.push(
+          new maplibregl.Marker({ element: el, anchor: 'center' })
+            .setLngLat([p.lon, p.lat])
+            .addTo(map),
+        );
+        return;
       }
       // A selected pin ("show selected" mode) is a status, not a control:
       // it's already in the plan, so no plus affordance and no click-to-add.
