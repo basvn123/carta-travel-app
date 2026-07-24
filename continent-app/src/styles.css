@@ -3912,6 +3912,13 @@ input, select {
   align-items: center;   /* band box (+ gem toggle, for rating) vertically center against the slider */
   gap: 10px;
 }
+/* The rating slider carries a 0/5/10 axis under its rail that the price slider
+   doesn't, making it taller than the pill/box controls beside it. Centering
+   against that extra height drops "Hidden gems only" below the top-aligned
+   UNESCO / Top beaches pills next door, so top-align this row instead. */
+.filter-beauty .band-control {
+  align-items: flex-start;
+}
 .band-slider {
   display: flex;
   flex-direction: column;
