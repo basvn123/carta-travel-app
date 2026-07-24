@@ -145,6 +145,7 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
   const [step, setStep] = useState(1);
 
   const [countries, setCountries] = useState(() => new Set());
+  const [countryQuery, setCountryQuery] = useState('');
   const [countryQuizOpen, setCountryQuizOpen] = useState(false);
   const [vibes, setVibes] = useState(() => new Set());
   const [dateMode, setDateMode] = useState('exact'); // 'exact' | 'flex'
@@ -242,6 +243,14 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
 
   // Which step is which, per path (so the render below reads by NAME).
   const stepName = path ? steps[step - 1] : null;
+
+  // Typing narrows the (43-country) grid; countries already picked always stay
+  // on screen, so a filter can never hide what you chose a moment ago.
+  const shownCountries = useMemo(() => {
+    const q = countryQuery.trim().toLowerCase();
+    if (!q) return allCountries;
+    return allCountries.filter((c) => c.country.toLowerCase().includes(q) || countries.has(c.country));
+  }, [allCountries, countryQuery, countries]);
 
   // Every Ryanair route into the chosen countries for the chosen period,
   // cheapest first. The pick anchors the whole trip, so this must stay
@@ -912,6 +921,18 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
   }, [stepName, selectedCountries, nights, includedIds, anchorId, focusedId, destinations,
     stayMinRating, stayMaxNightly, groupSize, startDate]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // What the briefing panel shows before a pin is tapped: the best-rated
+  // candidates in the chosen region, so an untouched panel still helps.
+  const topCityPicks = useMemo(() => {
+    if (stepName !== 'Stay') return [];
+    return mapCities
+      .filter((c) => !c.selected && c.score != null)
+      .sort((a, b) => b.score - a.score)
+      .slice(0, 4)
+      .map(({ id }) => ({ id, dest: destinations[id] }))
+      .filter((x) => x.dest);
+  }, [stepName, mapCities, destinations]);
+
   // "Pairs well with" hints for the selected cities (computed once per pick set).
   const companionsFor = useMemo(() => {
     const map = {};
@@ -1208,34 +1229,80 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
     </div>
   );
 
+  // ---- The finish summary: the trip in four facts and a photo ------------
+  const summaryHero = anchorDest || destinations[includedIds[0]] || null;
+  const summaryTitle = (path === 'landed' && arrivalDest)
+    ? arrivalDest.country
+    : (selectedCountries.map((c) => c.country).slice(0, 2).join(' & ') || t('wizard.planYourTrip'));
+  const summaryDates = (() => {
+    if (path === 'landed') {
+      return startDate ? `${fmtDate(startDate, true)}, ${flexNights} ${t('wizard.nights')}` : `${flexNights} ${t('wizard.nights')}`;
+    }
+    if (dateMode === 'exact' && startDate && endDate) {
+      return `${fmtDate(startDate, true)} → ${fmtDate(endDate, true)}${flexPad ? `, ${t('wizard.plusMinusDays')}` : ''}`;
+    }
+    const when = flexMonth ? (months.find((m) => m.key === flexMonth)?.label || flexMonth) : t('wizard.cheapestMonth');
+    return `${flexNights} ${t('wizard.nights')}, ${when}`;
+  })();
+  const summaryTransport = (() => {
+    const mode = path === 'landed' ? landedMode : arriveMode;
+    if (mode === 'car') return t('wizard.goingByCar');
+    if (mode === 'other') return ownAirline.trim() || t('wizard.ownFlight');
+    if (flyIn) {
+      return flyHomeDest && flyHomeDest.city !== flyIn.dest.city
+        ? `${flyIn.dest.city} → ${flyHomeDest.city}`
+        : flyIn.dest.city;
+    }
+    return t('wizard.fly');
+  })();
+
+  // ---- How much canvas each step deserves --------------------------------
+  // A form stretched across a 1600px monitor is unreadable: the eye has to
+  // travel from a label on the far left to its control on the far right. So
+  // every step declares the width its content actually needs, and the header,
+  // estimate band, recap, body and footer all align to that same column.
+  //   form - a single column of questions
+  //   mid  - card decks and the trip summary
+  //   wide - only where a map genuinely earns the room
+  const layout = (() => {
+    if (!path) return 'mid';
+    if (stepName === 'Where' || stepName === 'Stay') return 'wide';
+    if (stepName === 'Getting there') return arriveMode === 'fly' && routeOptions.length > 0 ? 'wide' : 'form';
+    if (stepName === 'Getting home') return homeOptions.length > 0 ? 'wide' : 'form';
+    if (stepName === 'Finish') return 'mid';
+    return 'form';
+  })();
+
   // ---------------------------------------------------------------- render --
   return (
     <div className="guide-overlay trip-wizard-overlay" onClick={handleCancel}>
-      <div className="guide-modal trip-wizard-modal" onClick={(e) => e.stopPropagation()}>
+      <div className={`guide-modal trip-wizard-modal wiz-${layout}`} onClick={(e) => e.stopPropagation()}>
         {/* Header + progress: same one-step-at-a-time header the day planner's
             wizard wears - current step name, "step X of N", thin segments. */}
         <div className="guide-head">
           <button className="guide-close" onClick={handleCancel} aria-label={t('wizard.close')}>×</button>
-          {path ? (
-            <>
-              <div className="shape-head-title">
-                {steps[step - 1] ? t(STEP_LABEL_KEYS[steps[step - 1]]) : t('wizard.planYourTrip')}
-                {steps.length > 1 && <span className="shape-head-step">{t('wizard.stepOf', { x: step, n: steps.length })}</span>}
-              </div>
-              {steps.length > 1 && (
-                <div className="shape-progress" aria-hidden="true">
-                  {steps.map((label, i) => (
-                    <span
-                      key={label}
-                      className={`shape-progress-dot ${i + 1 < step ? 'done' : ''} ${i + 1 === step ? 'now' : ''}`}
-                    />
-                  ))}
+          <div className="guide-head-inner">
+            {path ? (
+              <>
+                <div className="shape-head-title">
+                  {steps[step - 1] ? t(STEP_LABEL_KEYS[steps[step - 1]]) : t('wizard.planYourTrip')}
+                  {steps.length > 1 && <span className="shape-head-step">{t('wizard.stepOf', { x: step, n: steps.length })}</span>}
                 </div>
-              )}
-            </>
-          ) : (
-            <div className="shape-head-title"><SparkIcon size={13} /> {t('wizard.letCartaGuide')}</div>
-          )}
+                {steps.length > 1 && (
+                  <div className="shape-progress" aria-hidden="true">
+                    {steps.map((label, i) => (
+                      <span
+                        key={label}
+                        className={`shape-progress-dot ${i + 1 < step ? 'done' : ''} ${i + 1 === step ? 'now' : ''}`}
+                      />
+                    ))}
+                  </div>
+                )}
+              </>
+            ) : (
+              <div className="shape-head-title"><SparkIcon size={13} /> {t('wizard.letCartaGuide')}</div>
+            )}
+          </div>
         </div>
 
         {/* Running price estimate: its own band under the header, the full
@@ -1296,17 +1363,20 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
         {/* What Carta is planning around - the running recap of every answer. */}
         {recapChips.length > 0 && (
           <div className="guide-recap">
-            <span className="guide-recap-label"><CheckIcon size={10} /> {t('wizard.planningAround')}</span>
-            {recapChips.map((c, i) => (
-              <span className="guide-recap-chip" key={i}><c.Icon size={10} /> {c.text}</span>
-            ))}
+            <div className="guide-recap-inner">
+              <span className="guide-recap-label"><CheckIcon size={10} /> {t('wizard.planningAround')}</span>
+              {recapChips.map((c, i) => (
+                <span className="guide-recap-chip" key={i}><c.Icon size={10} /> {c.text}</span>
+              ))}
+            </div>
           </div>
         )}
 
         <div className="guide-body">
+         <div className="guide-canvas">
           {/* ---- Step 0: what are you looking for? ---- */}
           {!path && (
-            <>
+            <div className="guide-lede">
               <h2 className="guide-title">{t('wizard.pathTitle')}</h2>
               <p className="guide-sub">{t('wizard.pathSub')}</p>
               <div className="guide-path-list">
@@ -1317,11 +1387,11 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
                       <b>{t(p.labelKey)}</b>
                       <small>{t(p.subKey)}</small>
                     </span>
-                    <span className="guide-arrow">→</span>
+                    <span className="guide-arrow">{t('wizard.pathChoose')} →</span>
                   </button>
                 ))}
               </div>
-            </>
+            </div>
           )}
 
           {/* ---- FULL PATH: Where ---- */}
@@ -1330,87 +1400,121 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
               <h2 className="guide-title">{t('wizard.whereTitle')}</h2>
               <p className="guide-sub">{t('wizard.whereSub')}</p>
 
-              {/* People and the "let Carta pick" CTA are the only two controls
-                  on this screen, so both run the full width with big targets. */}
-              <div className="guide-when-dates guide-people-row">
-                <label className="trip-field">
-                  <span className="trip-field-label"><PersonIcon size={11} /> People</span>
-                  <div className="guide-people">
-                    <button type="button" onClick={() => setGroupSize(Math.max(1, groupSize - 1))} disabled={groupSize <= 1} aria-label="Fewer people">-</button>
-                    <span>{groupSize}</span>
-                    <button type="button" onClick={() => setGroupSize(Math.min(20, groupSize + 1))} disabled={groupSize >= 20} aria-label="More people">+</button>
+              {/* Picking list on the left, map on the right, both tall: the
+                  map used to be a short wide strip where Europe's flags piled
+                  on top of each other, with 43 country cards stacked below it
+                  as a second, unrelated screen. Now the two are one control -
+                  tap either side, the other follows. */}
+              <div className="guide-split">
+                <div className="guide-split-main">
+                  <div className="guide-card">
+                    <div className="guide-card-head"><PersonIcon size={13} /> {t('wizard.peopleLabel')}</div>
+                    <div className="guide-people guide-people-lg">
+                      <button type="button" onClick={() => setGroupSize(Math.max(1, groupSize - 1))} disabled={groupSize <= 1} aria-label="Fewer people">-</button>
+                      <span>{groupSize}</span>
+                      <button type="button" onClick={() => setGroupSize(Math.min(20, groupSize + 1))} disabled={groupSize >= 20} aria-label="More people">+</button>
+                    </div>
                   </div>
-                </label>
-              </div>
 
-              <button className="guide-design-btn guide-design-btn-lg" onClick={() => setCountryQuizOpen((v) => !v)}>
-                <span className="guide-design-spark"><SparkIcon size={14} /></span>
-                <span className="guide-design-text">
-                  {t('wizard.pickCountriesBtn')}
-                  <small>{t('wizard.pickCountriesSub')}</small>
-                </span>
-              </button>
+                  <button className="guide-design-btn guide-design-btn-lg" onClick={() => setCountryQuizOpen((v) => !v)}>
+                    <span className="guide-design-spark"><SparkIcon size={14} /></span>
+                    <span className="guide-design-text">
+                      {t('wizard.pickCountriesBtn')}
+                      <small>{t('wizard.pickCountriesSub')}</small>
+                    </span>
+                  </button>
 
-              {countryQuizOpen && (
-                <div className="guide-design-quiz">
-                  <span className="trip-field-label">{t('wizard.vibeQuestion')}</span>
-                  <div className="guide-interest-grid guide-vibe-grid">
-                    {VIBES.map((v) => (
-                      <button
-                        key={v.key}
-                        className={`guide-interest ${vibes.has(v.key) ? 'on' : ''}`}
-                        onClick={() => toggleVibe(v.key)}
-                        aria-pressed={vibes.has(v.key)}
-                      >
-                        {vibes.has(v.key) && <span className="guide-interest-check"><CheckIcon size={11} /></span>}
-                        <span className="guide-interest-icon"><v.Icon size={18} /></span>
-                        <span className="guide-interest-label">{t(v.labelKey)}</span>
-                      </button>
-                    ))}
-                  </div>
-                  {countrySuggestions.length > 0 && (
-                    <>
-                      <span className="trip-field-label">{t('wizard.cartaRecommends')}</span>
-                      <div className="guide-country-suggest-list">
-                        {countrySuggestions.map((c) => (
+                  {countryQuizOpen && (
+                    <div className="guide-design-quiz">
+                      <span className="trip-field-label">{t('wizard.vibeQuestion')}</span>
+                      <div className="guide-interest-grid guide-vibe-grid">
+                        {VIBES.map((v) => (
                           <button
-                            key={c.country}
-                            className={`guide-country-suggest ${countries.has(c.country) ? 'on' : ''}`}
-                            onClick={() => toggleCountry(c.country)}
+                            key={v.key}
+                            className={`guide-interest ${vibes.has(v.key) ? 'on' : ''}`}
+                            onClick={() => toggleVibe(v.key)}
+                            aria-pressed={vibes.has(v.key)}
                           >
-                            <Flag iso2={c.iso2} className="guide-flag-img-sm" />
-                            <span className="guide-country-suggest-text">
-                              <b>{c.country}</b>
-                              <small>{c.reason}</small>
-                            </span>
-                            {countries.has(c.country) && <CheckIcon size={13} />}
+                            {vibes.has(v.key) && <span className="guide-interest-check"><CheckIcon size={11} /></span>}
+                            <span className="guide-interest-icon"><v.Icon size={18} /></span>
+                            <span className="guide-interest-label">{t(v.labelKey)}</span>
                           </button>
                         ))}
                       </div>
-                    </>
+                      {countrySuggestions.length > 0 && (
+                        <>
+                          <span className="trip-field-label">{t('wizard.cartaRecommends')}</span>
+                          <div className="guide-country-suggest-list">
+                            {countrySuggestions.map((c) => (
+                              <button
+                                key={c.country}
+                                className={`guide-country-suggest ${countries.has(c.country) ? 'on' : ''}`}
+                                onClick={() => toggleCountry(c.country)}
+                              >
+                                <Flag iso2={c.iso2} className="guide-flag-img-sm" />
+                                <span className="guide-country-suggest-text">
+                                  <b>{c.country}</b>
+                                  <small>{c.reason}</small>
+                                </span>
+                                {countries.has(c.country) && <CheckIcon size={13} />}
+                              </button>
+                            ))}
+                          </div>
+                        </>
+                      )}
+                      {vibes.size === 0 && (
+                        <p className="guide-empty">{t('wizard.pickVibeHint')}</p>
+                      )}
+                      {vibes.size > 0 && countrySuggestions.length === 0 && (
+                        <p className="guide-empty">{t('wizard.noVibeMatches')}</p>
+                      )}
+                    </div>
                   )}
-                  {vibes.size === 0 && (
-                    <p className="guide-empty">{t('wizard.pickVibeHint')}</p>
-                  )}
-                  {vibes.size > 0 && countrySuggestions.length === 0 && (
-                    <p className="guide-empty">{t('wizard.noVibeMatches')}</p>
-                  )}
-                </div>
-              )}
 
-              <CountryPickerMap countries={allCountries} selected={countries} onToggle={toggleCountry} />
-              <div className="guide-country-grid">
-                {allCountries.map((c) => (
-                  <button
-                    key={c.country}
-                    className={`guide-country ${countries.has(c.country) ? 'on' : ''}`}
-                    onClick={() => toggleCountry(c.country)}
-                  >
-                    <Flag iso2={c.iso2} className="guide-flag-img" />
-                    <span className="guide-country-name">{c.country}</span>
-                    <span className="guide-country-n">{c.cities.length} {t('wizard.cities')}</span>
-                  </button>
-                ))}
+                  <div className="guide-picklist-head">
+                    <input
+                      className="guide-search"
+                      type="search"
+                      value={countryQuery}
+                      onChange={(e) => setCountryQuery(e.target.value)}
+                      placeholder={t('wizard.countrySearchPlaceholder')}
+                      aria-label={t('wizard.countrySearchPlaceholder')}
+                    />
+                    <span className="guide-picklist-count">
+                      {countries.size > 0
+                        ? t('wizard.countriesPicked', { n: countries.size })
+                        : t('wizard.countriesNonePicked')}
+                    </span>
+                    {countries.size > 0 && (
+                      <button className="guide-stay-filter-clear" onClick={() => setCountries(new Set())}>
+                        {t('wizard.stayFilterClear')}
+                      </button>
+                    )}
+                  </div>
+
+                  <div className="guide-country-grid">
+                    {shownCountries.map((c) => (
+                      <button
+                        key={c.country}
+                        className={`guide-country ${countries.has(c.country) ? 'on' : ''}`}
+                        onClick={() => toggleCountry(c.country)}
+                        aria-pressed={countries.has(c.country)}
+                      >
+                        {countries.has(c.country) && <span className="guide-country-check"><CheckIcon size={11} /></span>}
+                        <Flag iso2={c.iso2} className="guide-flag-img" />
+                        <span className="guide-country-name">{c.country}</span>
+                        <span className="guide-country-n">{c.cities.length} {t('wizard.cities')}</span>
+                      </button>
+                    ))}
+                    {shownCountries.length === 0 && (
+                      <p className="guide-empty">{t('wizard.noCountryMatches', { q: countryQuery })}</p>
+                    )}
+                  </div>
+                </div>
+
+                <div className="guide-split-side">
+                  <CountryPickerMap countries={allCountries} selected={countries} onToggle={toggleCountry} />
+                </div>
               </div>
             </>
           )}
@@ -1420,64 +1524,76 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
             <>
               <h2 className="guide-title">{t('wizard.whenTitle')}</h2>
               <p className="guide-sub">{t('wizard.whenSub')}</p>
-              <div className="guide-datemode">
-                <button className={dateMode === 'exact' ? 'on' : ''} onClick={() => setDateMode('exact')}>
-                  {t('wizard.knowDates')}
-                </button>
-                <button className={dateMode === 'flex' ? 'on' : ''} onClick={() => setDateMode('flex')}>
-                  <SparkIcon size={12} /> {t('wizard.imFlexible')}
-                </button>
-              </div>
 
-              {dateMode === 'exact' ? (
-                <>
-                  <div className="guide-when-dates">
-                    <label className="trip-field">
-                      <span className="trip-field-label">{t('wizard.start')}</span>
-                      <DateField value={startDate} min={dateMin} max={endDate || dateMax} onChange={setStartDate} placeholder={t('wizard.departureDate')} />
-                    </label>
-                    <span className="trip-dates-arrow">→</span>
-                    <label className="trip-field">
-                      <span className="trip-field-label">{t('wizard.end')}</span>
-                      <DateField value={endDate} min={startDate || dateMin} max={dateMax} onChange={setEndDate} placeholder={t('wizard.returnDate')} />
-                    </label>
-                    {windowNights > 0 && (
-                      <span className="guide-when-nights">{windowNights} {windowNights === 1 ? t('wizard.night') : t('wizard.nights')}</span>
-                    )}
-                  </div>
-                  <button
-                    className={`guide-chip guide-flexpad ${flexPad ? 'on' : ''}`}
-                    onClick={() => setFlexPad(!flexPad)}
-                    aria-pressed={flexPad}
-                  >
-                    <SparkIcon size={11} /> {t('wizard.flexPadBtn')}
+              {/* Every date control sits on one card: floating single-line
+                  inputs across a wide screen read as unrelated fragments, a
+                  card reads as one question with its parts. */}
+              <div className="guide-card">
+                <div className="guide-datemode">
+                  <button className={dateMode === 'exact' ? 'on' : ''} onClick={() => setDateMode('exact')}>
+                    {t('wizard.knowDates')}
                   </button>
-                  {flexPad && (
-                    <p className="guide-note">{t('wizard.flexPadNote')}</p>
-                  )}
-                </>
-              ) : (
-                <>
-                  <div className="guide-flex-nights">
-                    <span className="trip-field-label">{t('wizard.howLong')}</span>
-                    <div className="guide-people">
-                      <button type="button" onClick={() => setFlexNights(Math.max(1, flexNights - 1))} disabled={flexNights <= 1} aria-label={t('wizard.fewerNights')}>-</button>
-                      <span>{flexNights} {flexNights === 1 ? t('wizard.night') : t('wizard.nights')}</span>
-                      <button type="button" onClick={() => setFlexNights(Math.min(21, flexNights + 1))} disabled={flexNights >= 21} aria-label={t('wizard.moreNights')}>+</button>
+                  <button className={dateMode === 'flex' ? 'on' : ''} onClick={() => setDateMode('flex')}>
+                    <SparkIcon size={12} /> {t('wizard.imFlexible')}
+                  </button>
+                </div>
+
+                {dateMode === 'exact' ? (
+                  <>
+                    <div className="guide-card-row">
+                      <div className="guide-when-dates">
+                        <label className="trip-field">
+                          <span className="trip-field-label">{t('wizard.start')}</span>
+                          <DateField value={startDate} min={dateMin} max={endDate || dateMax} onChange={setStartDate} placeholder={t('wizard.departureDate')} />
+                        </label>
+                        <span className="trip-dates-arrow">→</span>
+                        <label className="trip-field">
+                          <span className="trip-field-label">{t('wizard.end')}</span>
+                          <DateField value={endDate} min={startDate || dateMin} max={dateMax} onChange={setEndDate} placeholder={t('wizard.returnDate')} />
+                        </label>
+                        {windowNights > 0 && (
+                          <span className="guide-when-nights">{windowNights} {windowNights === 1 ? t('wizard.night') : t('wizard.nights')}</span>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                  <span className="trip-field-label">{t('wizard.whichMonth')}</span>
-                  <div className="guide-months">
-                    <button className={`guide-chip ${flexMonth === '' ? 'on' : ''}`} onClick={() => setFlexMonth('')}>{t('wizard.anyMonth')}</button>
-                    {months.map((m) => (
-                      <button key={m.key} className={`guide-chip ${flexMonth === m.key ? 'on' : ''}`} onClick={() => setFlexMonth(m.key)}>
-                        {m.label}
+                    <div className="guide-card-row">
+                      <button
+                        className={`guide-chip guide-flexpad ${flexPad ? 'on' : ''}`}
+                        onClick={() => setFlexPad(!flexPad)}
+                        aria-pressed={flexPad}
+                      >
+                        <SparkIcon size={11} /> {t('wizard.flexPadBtn')}
                       </button>
-                    ))}
-                  </div>
-                  <p className="guide-note"><SparkIcon size={11} /> {t('wizard.flexNote')}</p>
-                </>
-              )}
+                      {flexPad && (
+                        <p className="guide-note">{t('wizard.flexPadNote')}</p>
+                      )}
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="guide-card-row">
+                      <span className="trip-field-label">{t('wizard.howLong')}</span>
+                      <div className="guide-people guide-people-lg">
+                        <button type="button" onClick={() => setFlexNights(Math.max(1, flexNights - 1))} disabled={flexNights <= 1} aria-label={t('wizard.fewerNights')}>-</button>
+                        <span>{flexNights} {flexNights === 1 ? t('wizard.night') : t('wizard.nights')}</span>
+                        <button type="button" onClick={() => setFlexNights(Math.min(21, flexNights + 1))} disabled={flexNights >= 21} aria-label={t('wizard.moreNights')}>+</button>
+                      </div>
+                    </div>
+                    <div className="guide-card-row">
+                      <span className="trip-field-label">{t('wizard.whichMonth')}</span>
+                      <div className="guide-months guide-month-grid">
+                        <button className={`guide-chip ${flexMonth === '' ? 'on' : ''}`} onClick={() => setFlexMonth('')}>{t('wizard.anyMonth')}</button>
+                        {months.map((m) => (
+                          <button key={m.key} className={`guide-chip ${flexMonth === m.key ? 'on' : ''}`} onClick={() => setFlexMonth(m.key)}>
+                            {m.label}
+                          </button>
+                        ))}
+                      </div>
+                      <p className="guide-note"><SparkIcon size={11} /> {t('wizard.flexNote')}</p>
+                    </div>
+                  </>
+                )}
+              </div>
             </>
           )}
 
@@ -1489,12 +1605,30 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
                 {t('wizard.arrivalSub')}
               </p>
 
-              <div className="guide-datemode guide-arrive-mode">
-                <button className={landedMode === 'other' ? 'on' : ''} onClick={() => setLandedMode('other')}>
-                  <PlaneIcon size={12} /> {t('wizard.iFlyIn')}
+              <div className="guide-mode-cards">
+                <button
+                  className={`guide-mode-card ${landedMode === 'other' ? 'on' : ''}`}
+                  onClick={() => setLandedMode('other')}
+                  aria-pressed={landedMode === 'other'}
+                >
+                  <span className="guide-mode-icon"><PlaneIcon size={22} /></span>
+                  <span className="guide-mode-text">
+                    <b>{t('wizard.iFlyIn')}</b>
+                    <small>{t('wizard.iFlyInSub')}</small>
+                  </span>
+                  {landedMode === 'other' && <span className="guide-mode-check"><CheckIcon size={12} /></span>}
                 </button>
-                <button className={landedMode === 'car' ? 'on' : ''} onClick={() => setLandedMode('car')}>
-                  <CarIcon size={12} /> {t('wizard.iDriveThere')}
+                <button
+                  className={`guide-mode-card ${landedMode === 'car' ? 'on' : ''}`}
+                  onClick={() => setLandedMode('car')}
+                  aria-pressed={landedMode === 'car'}
+                >
+                  <span className="guide-mode-icon"><CarIcon size={22} /></span>
+                  <span className="guide-mode-text">
+                    <b>{t('wizard.iDriveThere')}</b>
+                    <small>{t('wizard.iDriveThereSub')}</small>
+                  </span>
+                  {landedMode === 'car' && <span className="guide-mode-check"><CheckIcon size={12} /></span>}
                 </button>
               </div>
 
@@ -1545,27 +1679,29 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
                 </>
               )}
 
-              <div className="guide-when-dates guide-arrival-when">
-                <label className="trip-field">
-                  <span className="trip-field-label">{landedMode === 'car' ? t('wizard.dayYouArrive') : t('wizard.dayYouLand')}</span>
-                  <DateField value={startDate} min={dateMin} max={dateMax} onChange={setStartDate} placeholder={t('wizard.arrivalDate')} />
-                </label>
-                <label className="trip-field">
-                  <span className="trip-field-label">{t('wizard.howManyNights')}</span>
-                  <div className="guide-people">
-                    <button type="button" onClick={() => setFlexNights(Math.max(1, flexNights - 1))} disabled={flexNights <= 1} aria-label={t('wizard.fewerNights')}>-</button>
-                    <span>{flexNights}</span>
-                    <button type="button" onClick={() => setFlexNights(Math.min(30, flexNights + 1))} disabled={flexNights >= 30} aria-label={t('wizard.moreNights')}>+</button>
-                  </div>
-                </label>
-                <label className="trip-field">
-                  <span className="trip-field-label"><PersonIcon size={11} /> People</span>
-                  <div className="guide-people">
-                    <button type="button" onClick={() => setGroupSize(Math.max(1, groupSize - 1))} disabled={groupSize <= 1} aria-label="Fewer people">-</button>
-                    <span>{groupSize}</span>
-                    <button type="button" onClick={() => setGroupSize(Math.min(20, groupSize + 1))} disabled={groupSize >= 20} aria-label="More people">+</button>
-                  </div>
-                </label>
+              <div className="guide-card">
+                <div className="guide-when-dates guide-arrival-when">
+                  <label className="trip-field">
+                    <span className="trip-field-label">{landedMode === 'car' ? t('wizard.dayYouArrive') : t('wizard.dayYouLand')}</span>
+                    <DateField value={startDate} min={dateMin} max={dateMax} onChange={setStartDate} placeholder={t('wizard.arrivalDate')} />
+                  </label>
+                  <label className="trip-field">
+                    <span className="trip-field-label">{t('wizard.howManyNights')}</span>
+                    <div className="guide-people">
+                      <button type="button" onClick={() => setFlexNights(Math.max(1, flexNights - 1))} disabled={flexNights <= 1} aria-label={t('wizard.fewerNights')}>-</button>
+                      <span>{flexNights}</span>
+                      <button type="button" onClick={() => setFlexNights(Math.min(30, flexNights + 1))} disabled={flexNights >= 30} aria-label={t('wizard.moreNights')}>+</button>
+                    </div>
+                  </label>
+                  <label className="trip-field">
+                    <span className="trip-field-label"><PersonIcon size={11} /> {t('wizard.peopleLabel')}</span>
+                    <div className="guide-people">
+                      <button type="button" onClick={() => setGroupSize(Math.max(1, groupSize - 1))} disabled={groupSize <= 1} aria-label="Fewer people">-</button>
+                      <span>{groupSize}</span>
+                      <button type="button" onClick={() => setGroupSize(Math.min(20, groupSize + 1))} disabled={groupSize >= 20} aria-label="More people">+</button>
+                    </div>
+                  </label>
+                </div>
               </div>
               {landedMode === 'other' && (
                 <>
@@ -1587,19 +1723,42 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
                 {t('wizard.gettingSub', { city: originCity })}
               </p>
 
-              <div className="guide-datemode guide-arrive-mode">
-                <button className={arriveMode === 'fly' ? 'on' : ''} onClick={() => pickArriveMode('fly')}>
-                  <PlaneIcon size={12} /> {t('wizard.fly')}
+              {/* Two ways to get there, so two cards: a two-way segmented
+                  control stretched across the screen said nothing about what
+                  either option means. */}
+              <div className="guide-mode-cards">
+                <button
+                  className={`guide-mode-card ${arriveMode === 'fly' ? 'on' : ''}`}
+                  onClick={() => pickArriveMode('fly')}
+                  aria-pressed={arriveMode === 'fly'}
+                >
+                  <span className="guide-mode-icon"><PlaneIcon size={22} /></span>
+                  <span className="guide-mode-text">
+                    <b>{t('wizard.fly')}</b>
+                    <small>{t('wizard.flySub')}</small>
+                  </span>
+                  {arriveMode === 'fly' && <span className="guide-mode-check"><CheckIcon size={12} /></span>}
                 </button>
-                <button className={arriveMode === 'car' ? 'on' : ''} onClick={() => pickArriveMode('car')}>
-                  <CarIcon size={12} /> {t('wizard.car')}
+                <button
+                  className={`guide-mode-card ${arriveMode === 'car' ? 'on' : ''}`}
+                  onClick={() => pickArriveMode('car')}
+                  aria-pressed={arriveMode === 'car'}
+                >
+                  <span className="guide-mode-icon"><CarIcon size={22} /></span>
+                  <span className="guide-mode-text">
+                    <b>{t('wizard.car')}</b>
+                    <small>{t('wizard.carSub')}</small>
+                  </span>
+                  {arriveMode === 'car' && <span className="guide-mode-check"><CheckIcon size={12} /></span>}
                 </button>
               </div>
 
               {arriveMode === 'fly' && onChangeOrigin && data?.meta?.origins && Object.keys(data.meta.origins).length > 0 && (
-                <div className="guide-origin-row">
-                  <span className="guide-origin-label"><PlaneIcon size={11} /> {t('wizard.flyingFrom')}</span>
-                  <OriginPicker data={data} origin={origin ?? originCode} onChangeOrigin={onChangeOrigin} />
+                <div className="guide-card guide-origin-card">
+                  <div className="guide-origin-row">
+                    <span className="guide-origin-label"><PlaneIcon size={11} /> {t('wizard.flyingFrom')}</span>
+                    <OriginPicker data={data} origin={origin ?? originCode} onChangeOrigin={onChangeOrigin} />
+                  </div>
                 </div>
               )}
 
@@ -1652,9 +1811,27 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
                       />
                       <div className="guide-flight-side" ref={flightSideRef}>
                         {!flyIn ? (
-                          <div className="guide-flight-side-empty">
-                            <PlaneIcon size={16} />
-                            <p>{t('wizard.tapPlaneHint')}</p>
+                          // Same idea as the stay panel: an untouched briefing
+                          // column earns its space by offering the cheapest
+                          // fares as one-tap shortcuts into the map pick.
+                          <div className="guide-side-idle">
+                            <div className="guide-side-idle-head">
+                              <PlaneIcon size={16} />
+                              <p>{t('wizard.tapPlaneHint')}</p>
+                            </div>
+                            <div className="guide-stay-group-title">{t('wizard.cheapestRightNow')}</div>
+                            <div className="guide-side-idle-list">
+                              {routeOptions.slice(0, 4).map((o) => (
+                                <button key={o.id} className="guide-side-idle-row" onClick={() => setFlyInId(o.id)}>
+                                  <CityThumb dest={o.dest} className="guide-nearby-thumb" />
+                                  <span className="guide-side-idle-text">
+                                    <b>{o.dest.city}</b>
+                                    <small>{t('wizard.flyIntoList', { anchor: o.anchor })}</small>
+                                  </span>
+                                  <b className="guide-side-idle-fare">{eur(o.has_exact ? o.exact_eur : o.cheapest.eur)}</b>
+                                </button>
+                              ))}
+                            </div>
                           </div>
                         ) : (
                           <>
@@ -1858,51 +2035,55 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
                 <p className="guide-note"><CheckIcon size={11} /> {t(includedIds.length === 1 ? 'wizard.designedOneStop' : 'wizard.designedStops', { n: includedIds.length })}</p>
               )}
 
-              <input
-                className="guide-search"
-                type="search"
-                value={staySearch}
-                onChange={(e) => setStaySearch(e.target.value)}
-                placeholder="Search any city or town…"
-                aria-label="Search cities"
-              />
-              {/* Narrow the pool before falling in love: minimum rating and a
-                  nightly stay budget, with the per-night price on every row.
-                  Applies to both the Map and List views below, so it sits
-                  above the view toggle rather than reading as List-only. */}
-              <div className="guide-stay-filters">
-                <label className="guide-stay-filter">
-                  <span>{t('wizard.stayFilterRating')}</span>
-                  <select value={stayMinRating} onChange={(e) => setStayMinRating(Number(e.target.value))}>
-                    <option value="0">{t('wizard.stayFilterAny')}</option>
-                    <option value="6">6+</option>
-                    <option value="7">7+</option>
-                    <option value="8">8+</option>
-                    <option value="9">9+</option>
-                  </select>
-                </label>
-                <label className="guide-stay-filter">
-                  <span>{t('wizard.stayFilterPrice')}</span>
-                  <select value={stayMaxNightly} onChange={(e) => setStayMaxNightly(Number(e.target.value))}>
-                    <option value="0">{t('wizard.stayFilterAny')}</option>
-                    <option value="60">{t('wizard.stayFilterUpTo', { price: '€60' })}</option>
-                    <option value="90">{t('wizard.stayFilterUpTo', { price: '€90' })}</option>
-                    <option value="120">{t('wizard.stayFilterUpTo', { price: '€120' })}</option>
-                    <option value="180">{t('wizard.stayFilterUpTo', { price: '€180' })}</option>
-                    <option value="250">{t('wizard.stayFilterUpTo', { price: '€250' })}</option>
-                  </select>
-                </label>
-                {(stayMinRating > 0 || stayMaxNightly > 0) && (
-                  <button
-                    className="guide-stay-filter-clear"
-                    onClick={() => { setStayMinRating(0); setStayMaxNightly(0); }}
-                  >{t('wizard.stayFilterClear')}</button>
-                )}
-              </div>
+              {/* Search, the narrowing filters and the view switch are one
+                  toolbar: three separate full-width bands stacked on top of
+                  each other pushed the actual map below the fold. */}
+              <div className="guide-toolbar">
+                <input
+                  className="guide-search"
+                  type="search"
+                  value={staySearch}
+                  onChange={(e) => setStaySearch(e.target.value)}
+                  placeholder="Search any city or town…"
+                  aria-label="Search cities"
+                />
+                {/* Narrow the pool before falling in love: minimum rating and a
+                    nightly stay budget, with the per-night price on every row.
+                    Applies to both the Map and List views below. */}
+                <div className="guide-stay-filters">
+                  <label className="guide-stay-filter">
+                    <span>{t('wizard.stayFilterRating')}</span>
+                    <select value={stayMinRating} onChange={(e) => setStayMinRating(Number(e.target.value))}>
+                      <option value="0">{t('wizard.stayFilterAny')}</option>
+                      <option value="6">6+</option>
+                      <option value="7">7+</option>
+                      <option value="8">8+</option>
+                      <option value="9">9+</option>
+                    </select>
+                  </label>
+                  <label className="guide-stay-filter">
+                    <span>{t('wizard.stayFilterPrice')}</span>
+                    <select value={stayMaxNightly} onChange={(e) => setStayMaxNightly(Number(e.target.value))}>
+                      <option value="0">{t('wizard.stayFilterAny')}</option>
+                      <option value="60">{t('wizard.stayFilterUpTo', { price: '€60' })}</option>
+                      <option value="90">{t('wizard.stayFilterUpTo', { price: '€90' })}</option>
+                      <option value="120">{t('wizard.stayFilterUpTo', { price: '€120' })}</option>
+                      <option value="180">{t('wizard.stayFilterUpTo', { price: '€180' })}</option>
+                      <option value="250">{t('wizard.stayFilterUpTo', { price: '€250' })}</option>
+                    </select>
+                  </label>
+                  {(stayMinRating > 0 || stayMaxNightly > 0) && (
+                    <button
+                      className="guide-stay-filter-clear"
+                      onClick={() => { setStayMinRating(0); setStayMaxNightly(0); }}
+                    >{t('wizard.stayFilterClear')}</button>
+                  )}
+                </div>
 
-              <div className="guide-datemode guide-stay-view">
-                <button className={stayView === 'map' ? 'on' : ''} onClick={() => setStayView('map')}>{t('wizard.map')}</button>
-                <button className={stayView === 'list' ? 'on' : ''} onClick={() => setStayView('list')}>{t('wizard.list')}</button>
+                <div className="guide-datemode guide-stay-view">
+                  <button className={stayView === 'map' ? 'on' : ''} onClick={() => setStayView('map')}>{t('wizard.map')}</button>
+                  <button className={stayView === 'list' ? 'on' : ''} onClick={() => setStayView('list')}>{t('wizard.list')}</button>
+                </div>
               </div>
 
               {stayView === 'map' && (
@@ -1916,9 +2097,32 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
                     />
                     <div className="guide-city-side" ref={citySideRef}>
                       {!focusedDest ? (
-                        <div className="guide-flight-side-empty">
-                          <MapPinIcon size={16} />
-                          <p>{t('wizard.tapCityHint')}</p>
+                        // An empty rectangle with one line of grey text was the
+                        // largest thing on this screen. Give the panel a job
+                        // before anything is picked: the best-rated candidates,
+                        // one tap from their briefing.
+                        <div className="guide-side-idle">
+                          <div className="guide-side-idle-head">
+                            <MapPinIcon size={16} />
+                            <p>{t('wizard.tapCityHint')}</p>
+                          </div>
+                          {topCityPicks.length > 0 && (
+                            <>
+                              <div className="guide-stay-group-title">{t('wizard.bestRatedHere')}</div>
+                              <div className="guide-side-idle-list">
+                                {topCityPicks.map(({ id, dest }) => (
+                                  <button key={id} className="guide-side-idle-row" onClick={() => setFocusedId(id)}>
+                                    <CityThumb dest={dest} className="guide-nearby-thumb" />
+                                    <span className="guide-side-idle-text">
+                                      <b>{dest.city}</b>
+                                      <small>{cityInsight(dest)}</small>
+                                    </span>
+                                    {dest.rating?.score != null && <ScoreChip rating={dest.rating} size="xs" />}
+                                  </button>
+                                ))}
+                              </div>
+                            </>
+                          )}
                         </div>
                       ) : (
                         <>
@@ -2078,7 +2282,7 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
                   </div>
 
                   {returnFlightView === 'map' ? (
-                    <div className="guide-flight-wrap">
+                    <div className="guide-flight-wrap guide-flight-wrap-home">
                       <FlightPickerMap
                         options={homeOptions.map((o) => ({
                           id: o.id,
@@ -2231,17 +2435,71 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
                 </>
               )}
 
-              {/* What Carta will arrange - the full recap before committing. */}
-              <div className="guide-final-summary">
-                <div className="guide-stay-group-title">Your trip so far</div>
-                {includedIds.map((id) => destinations[id] && (
-                  <div className="guide-final-stop" key={id}>
-                    <BedIcon size={11} />
-                    <b>{destinations[id].city}</b>
-                    <span>{nights[id]} {nights[id] === 1 ? 'night' : 'nights'}</span>
+              {/* The trip itself, as one card: a photo of where you are going,
+                  the four facts that define the trip, the stops, and what it
+                  costs. The screen used to end on a single grey line of text
+                  with the commit button alone in a far corner. */}
+              <div className="guide-summary">
+                {summaryHero && <CityThumb dest={summaryHero} className="guide-summary-hero" />}
+                <div className="guide-summary-body">
+                  <div className="guide-summary-title">
+                    <b>{summaryTitle}</b>
+                    <small>{totalNights} {totalNights === 1 ? t('wizard.night') : t('wizard.nights')}</small>
                   </div>
-                ))}
+
+                  <div className="guide-summary-facts">
+                    <div className="guide-summary-fact">
+                      <span className="guide-summary-fact-label"><PersonIcon size={10} /> {t('wizard.summaryTravellers')}</span>
+                      <b>{groupSize}</b>
+                    </div>
+                    <div className="guide-summary-fact">
+                      <span className="guide-summary-fact-label"><CalendarIcon size={10} /> {t('wizard.summaryDates')}</span>
+                      <b>{summaryDates}</b>
+                    </div>
+                    <div className="guide-summary-fact">
+                      <span className="guide-summary-fact-label"><RouteIcon size={10} /> {t('wizard.summaryGettingThere')}</span>
+                      <b>{summaryTransport}</b>
+                    </div>
+                    <div className="guide-summary-fact">
+                      <span className="guide-summary-fact-label"><BedIcon size={10} /> {t('wizard.summaryStays')}</span>
+                      <b>{includedIds.length} {includedIds.length === 1 ? t('wizard.stayOne') : t('wizard.stays')}</b>
+                    </div>
+                  </div>
+
+                  <div className="guide-summary-stops">
+                    {includedIds.map((id) => destinations[id] && (
+                      <div className="guide-final-stop" key={id}>
+                        <BedIcon size={11} />
+                        <b>{destinations[id].city}</b>
+                        <Flag iso2={destinations[id].iso2} className="guide-flag-img-sm" />
+                        <span>{nights[id]} {nights[id] === 1 ? t('wizard.night') : t('wizard.nights')}</span>
+                      </div>
+                    ))}
+                  </div>
+
+                  {runningEstimate && (
+                    <div className="guide-summary-cost">
+                      {runningEstimate.lines.map((l) => (
+                        <div className="guide-estimate-line" key={l.key}>
+                          <span className="guide-estimate-label">
+                            {l.label}
+                            {l.sub && <small>{l.sub}</small>}
+                          </span>
+                          <b>{eur(l.eur)}</b>
+                        </div>
+                      ))}
+                      <div className="guide-estimate-line guide-estimate-total">
+                        <span className="guide-estimate-label">{t('wizard.summaryTotal')}</span>
+                        <b>{eur(runningEstimate.total)}</b>
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
+
+              <button className="guide-next guide-summary-cta" onClick={finish} disabled={includedIds.length === 0}>
+                <SparkIcon size={14} /> Let Carta arrange it
+              </button>
             </>
           )}
 
@@ -2254,19 +2512,21 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
                 and it opens the overview with day planning, costs on the ground and the route map.
               </p>
 
-              <div className="guide-when-dates guide-arrival-when">
-                <label className="trip-field">
-                  <span className="trip-field-label">First night</span>
-                  <DateField value={bookedStart} min={dateMin} max={dateMax} onChange={setBookedStart} placeholder="Start date" />
-                </label>
-                <label className="trip-field">
-                  <span className="trip-field-label"><PersonIcon size={11} /> People</span>
-                  <div className="guide-people">
-                    <button type="button" onClick={() => setGroupSize(Math.max(1, groupSize - 1))} disabled={groupSize <= 1} aria-label="Fewer people">-</button>
-                    <span>{groupSize}</span>
-                    <button type="button" onClick={() => setGroupSize(Math.min(20, groupSize + 1))} disabled={groupSize >= 20} aria-label="More people">+</button>
-                  </div>
-                </label>
+              <div className="guide-card">
+                <div className="guide-when-dates guide-arrival-when">
+                  <label className="trip-field">
+                    <span className="trip-field-label">First night</span>
+                    <DateField value={bookedStart} min={dateMin} max={dateMax} onChange={setBookedStart} placeholder="Start date" />
+                  </label>
+                  <label className="trip-field">
+                    <span className="trip-field-label"><PersonIcon size={11} /> {t('wizard.peopleLabel')}</span>
+                    <div className="guide-people">
+                      <button type="button" onClick={() => setGroupSize(Math.max(1, groupSize - 1))} disabled={groupSize <= 1} aria-label="Fewer people">-</button>
+                      <span>{groupSize}</span>
+                      <button type="button" onClick={() => setGroupSize(Math.min(20, groupSize + 1))} disabled={groupSize >= 20} aria-label="More people">+</button>
+                    </div>
+                  </label>
+                </div>
               </div>
 
               {bookedStops.length > 0 && (
@@ -2333,42 +2593,49 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
               </div>
             </>
           )}
+         </div>
         </div>
 
         {/* Footer */}
         <div className="guide-foot">
-          <div className="guide-foot-summary">
-            {hasProgress && (
-              <button className="guide-startover" onClick={startOver} title="Clear everything and begin again">↺ Start over</button>
-            )}
-            {includedIds.length > 0 && `${includedIds.length} ${includedIds.length === 1 ? 'city' : 'cities'}, ${totalNights} nights`}
-          </div>
-          <div className="guide-foot-actions">
-            {path && (step > 1
-              ? <button className="guide-back" onClick={() => setStep(step - 1)}>Back</button>
-              : <button className="guide-back" onClick={() => { setPath(null); setStep(1); }}>Back</button>
-            )}
-            {!path ? null : stepName === 'Your trip' ? (
-              <button className="guide-next" onClick={finishBooked} disabled={!bookedStart || bookedStops.length === 0}>
-                Show my trip overview →
-              </button>
-            ) : stepName === 'Getting there' && arriveMode === 'fly' && routeOptions.length === 0 ? (
-              // No Ryanair route: the way forward is booking your own flight.
-              // Switch the step to the "own flight" view in place (don't skip
-              // ahead) so the traveller can name their airline and fare first.
-              <button
-                className="guide-next"
-                onClick={() => setArriveMode('other')}
-              >
-                I fly with another airline →
-              </button>
-            ) : step < steps.length ? (
-              <button className="guide-next" onClick={() => setStep(step + 1)} disabled={!canNext}>Next</button>
-            ) : (
-              <button className="guide-next" onClick={finish} disabled={includedIds.length === 0}>
-                <SparkIcon size={13} /> Let Carta arrange it
-              </button>
-            )}
+          <div className="guide-foot-inner">
+            <div className="guide-foot-summary">
+              {hasProgress && (
+                <button className="guide-startover" onClick={startOver} title="Clear everything and begin again">↺ Start over</button>
+              )}
+              {includedIds.length > 0 && `${includedIds.length} ${includedIds.length === 1 ? 'city' : 'cities'}, ${totalNights} nights`}
+            </div>
+            <div className="guide-foot-actions">
+              {path && (step > 1
+                ? <button className="guide-back" onClick={() => setStep(step - 1)}>Back</button>
+                : <button className="guide-back" onClick={() => { setPath(null); setStep(1); }}>Back</button>
+              )}
+              {!path ? null : stepName === 'Your trip' ? (
+                <button className="guide-next" onClick={finishBooked} disabled={!bookedStart || bookedStops.length === 0}>
+                  Show my trip overview →
+                </button>
+              ) : stepName === 'Getting there' && arriveMode === 'fly' && routeOptions.length === 0 ? (
+                // No Ryanair route: the way forward is booking your own flight.
+                // Switch the step to the "own flight" view in place (don't skip
+                // ahead) so the traveller can name their airline and fare first.
+                <button
+                  className="guide-next"
+                  onClick={() => setArriveMode('other')}
+                >
+                  I fly with another airline →
+                </button>
+              ) : step < steps.length ? (
+                <button className="guide-next" onClick={() => setStep(step + 1)} disabled={!canNext}>Next</button>
+              ) : (
+                // The Finish step's real call to action sits under the summary
+                // card, where the reading flow ends. This keeps the sticky nav
+                // slot the traveller has used on every step reachable without
+                // scrolling, so a long summary can't hide the way forward.
+                <button className="guide-next" onClick={finish} disabled={includedIds.length === 0}>
+                  <SparkIcon size={13} /> Let Carta arrange it
+                </button>
+              )}
+            </div>
           </div>
         </div>
       </div>

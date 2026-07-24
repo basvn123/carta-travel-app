@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
-import { hasLngLat } from './coords.js';
+import { hasLngLat, keepFitted } from './coords.js';
 
 const MAP_STYLE = 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json';
 
@@ -26,6 +26,7 @@ export function FlightPickerMap({ options = [], origin = null, onPick }) {
   const readyRef = useRef(false);
   const pinsRef = useRef(new Map()); // id -> { marker, el }
   const originRef = useRef(null);
+  const fitRef = useRef(null); // last bounds the pins were fitted to
   const onPickRef = useRef(onPick);
   onPickRef.current = onPick;
 
@@ -40,8 +41,11 @@ export function FlightPickerMap({ options = [], origin = null, onPick }) {
     });
     map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'top-right');
     map.on('load', () => { readyRef.current = true; mapRef.current._build?.(); });
+    const unfit = keepFitted(map, containerRef.current, () => (
+      fitRef.current ? { bounds: fitRef.current, padding: 52, maxZoom: 7 } : null
+    ));
     mapRef.current = map;
-    return () => { map.remove(); mapRef.current = null; readyRef.current = false; pinsRef.current.clear(); };
+    return () => { unfit(); map.remove(); mapRef.current = null; readyRef.current = false; pinsRef.current.clear(); };
   }, []);
 
   // Rebuild pins when the option set changes (countries/dates edited).
@@ -91,11 +95,13 @@ export function FlightPickerMap({ options = [], origin = null, onPick }) {
       }
 
       const all = [...pts, ...(hasLngLat(origin) ? [origin] : [])];
+      fitRef.current = null;
       if (all.length >= 2) {
         const b = all.reduce(
           (acc, c) => acc.extend([c.lon, c.lat]),
           new maplibregl.LngLatBounds([all[0].lon, all[0].lat], [all[0].lon, all[0].lat]),
         );
+        fitRef.current = b;
         map.fitBounds(b, { padding: 52, maxZoom: 7, duration: 0 });
       } else if (all.length === 1) {
         map.jumpTo({ center: [all[0].lon, all[0].lat], zoom: 5.5 });

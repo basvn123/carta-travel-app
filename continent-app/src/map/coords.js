@@ -21,3 +21,29 @@ export const lngLat = (o) => (hasLngLat(o) ? [o.lon, o.lat] : null);
 
 // Keep only the points MapLibre can actually plot.
 export const finitePts = (arr) => (Array.isArray(arr) ? arr.filter(hasLngLat) : []);
+
+/**
+ * Keep a picker map correct when its container changes size.
+ *
+ * The wizard's maps live in panels whose height depends on the viewport and on
+ * which step is showing, so a fitBounds computed at mount can be stale a
+ * moment later, leaving pins outside the visible canvas. Re-fit on resize, but
+ * only until the traveller pans or zooms themselves: after that the view is
+ * theirs and yanking it back would be worse than a slightly loose fit.
+ *
+ * Returns a disconnect function for the effect cleanup.
+ */
+export function keepFitted(map, container, getBounds) {
+  let touched = false;
+  const mark = (e) => { if (e.originalEvent) touched = true; };
+  map.on('dragstart', mark);
+  map.on('zoomstart', mark);
+  const ro = new ResizeObserver(() => {
+    map.resize();
+    if (touched) return;
+    const b = getBounds();
+    if (b) map.fitBounds(b.bounds, { padding: b.padding, maxZoom: b.maxZoom, duration: 0 });
+  });
+  ro.observe(container);
+  return () => ro.disconnect();
+}
