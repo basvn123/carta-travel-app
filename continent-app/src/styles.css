@@ -10224,6 +10224,33 @@ input, select {
   text-overflow: ellipsis;
 }
 .dem-pin:hover { transform: translateY(-1px); box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12), 0 4px 14px rgba(0, 0, 0, 0.16); z-index: 2; }
+
+/* ── Decluttered states (set by declutterPins) ───────────────────────────
+   Where pins would overlap, the lower-priority one gives up its name, then
+   everything but its dot. Nothing is ever hidden outright: a place that
+   vanished from the map would be a place the traveller never considered.
+   Hovering always restores the full pin, so a dot is still explorable. */
+.dem-pin.is-tight { padding-right: 2px; }
+.dem-pin.is-tight .dem-pin-lbl { display: none; }
+.dem-pin.is-dot {
+  gap: 0;
+  padding: 2px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.16);
+}
+.dem-pin.is-dot .dem-pin-lbl,
+.dem-pin.is-dot .dem-pin-rate,
+.dem-pin.is-dot .dem-pin-star,
+.dem-pin.is-dot .trip-poi-pin-add { display: none; }
+.dem-pin.is-dot .dem-pin-ico { width: 13px; height: 13px; }
+.dem-pin.is-dot .dem-pin-ico svg { width: 8px; height: 8px; }
+/* Hover wins over any demotion: reach for a dot and it becomes a pin again. */
+.dem-pin.is-tight:hover, .dem-pin.is-dot:hover { z-index: 6; padding: 2px 9px 2px 2px; gap: 5px; }
+.dem-pin.is-tight:hover .dem-pin-lbl,
+.dem-pin.is-dot:hover .dem-pin-lbl { display: inline; }
+.dem-pin.is-dot:hover .dem-pin-rate,
+.dem-pin.is-dot:hover .dem-pin-star { display: inline-flex; }
+.dem-pin.is-dot:hover .dem-pin-ico { width: 19px; height: 19px; }
+.dem-pin.is-dot:hover .dem-pin-ico svg { width: 12px; height: 12px; }
 .dem-pin.cat-town { --cat: #5b6472; }
 .dem-pin.cat-beach { --cat: #2a8fbd; }
 .dem-pin.cat-sight { --cat: var(--accent); }
@@ -11899,6 +11926,9 @@ input, select {
 }
 /* The manual step hosts the wide explore map, so it drops the reading width. */
 .day-flow-manual { max-width: 1400px; }
+/* So do the setup steps, now that each question sits beside a live map. The
+   780px reading column would squeeze both halves to a third of their width. */
+.day-flow-split-host { max-width: 1240px; }
 
 /* Step rail + help affordance */
 .day-flow-top {
@@ -11986,6 +12016,84 @@ input, select {
   box-shadow: var(--shadow-2, 0 10px 30px -22px rgba(26, 26, 26, 0.45));
 }
 .day-flow-panel-wide { max-width: 800px; }
+
+/* ── Landing: the question beside the place ──────────────────────────────
+   The three setup questions used to sit alone on an empty page. "Where are
+   you staying?" is a spatial question, so it now answers itself on a map
+   that follows the choice, and the void that framed the card becomes the
+   context for it. */
+.day-flow-split {
+  flex: 1 1 auto;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 26px;
+  align-items: center;
+  padding-bottom: 32px;
+}
+.day-flow-split-wide { grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); }
+.day-flow-forms { min-width: 0; display: flex; flex-direction: column; justify-content: center; }
+.day-flow-split .day-flow-step { padding-bottom: 0; }
+.day-flow-split .day-flow-panel { max-width: none; margin: 0; }
+.day-flow-mapside { min-width: 0; display: flex; flex-direction: column; gap: 8px; }
+.day-flow-mapside .dem-map {
+  height: clamp(360px, calc(100vh - 300px), 620px);
+  margin-bottom: 0;
+  border-radius: 18px;
+}
+.day-flow-mapcap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--ink-mute);
+  padding-left: 2px;
+}
+.day-flow-mapcap svg { color: var(--accent); flex: none; }
+/* Below the split point the map would push the question off the screen, so
+   the form leads and the map follows as a strip. */
+@media (max-width: 980px) {
+  .day-flow-split, .day-flow-split-wide { grid-template-columns: 1fr; gap: 18px; }
+  .day-flow-mapside .dem-map { height: 260px; }
+}
+
+/* Once chosen, the stay IS the field. */
+.day-flow-chosen-change {
+  margin-left: auto;
+  font-family: var(--mono);
+  font-size: 9.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-mute);
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: var(--paper);
+  padding: 4px 10px;
+  cursor: pointer;
+}
+.day-flow-chosen-change:hover { color: var(--accent); border-color: var(--accent); }
+
+/* The picks list states the days it holds; editing them happens in the
+   briefing panel, which is the one place with the context to judge. */
+.day-build-city-days {
+  font-family: var(--mono);
+  font-size: 11.5px;
+  color: var(--ink-soft);
+  background: var(--paper-dim);
+  border-radius: 999px;
+  padding: 4px 10px;
+  white-space: nowrap;
+}
+.day-picks-status {
+  margin-left: auto;
+  font-family: var(--mono);
+  font-size: 10px;
+  text-transform: none;
+  letter-spacing: 0.04em;
+  color: var(--accent);
+}
 .day-flow-q {
   font-family: var(--display);
   font-size: 30px;
@@ -12041,10 +12149,14 @@ input, select {
 }
 .day-flow-chosen .day-stay-chosen-label { flex: 1 1 auto; }
 .day-flow-date {
-  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  display: flex; flex-direction: column; align-items: stretch; gap: 8px;
   padding-top: 4px;
   border-top: 1px dashed var(--rule);
 }
+.day-flow-date .day-flow-suggest-label { text-align: center; }
+/* One month is enough to choose a day; the range shading collapses to a
+   single highlighted date. */
+.day-flow-date .cal-panes { grid-template-columns: 1fr; }
 .day-flow-next {
   align-self: center;
   min-width: 220px;

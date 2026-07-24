@@ -2023,7 +2023,9 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
     const flowIdx = activeIdx >= 0 ? activeIdx : FLOW.length - 1;
     return (
       <div className="trip-planner-screen day-flow-screen">
-        <div className={`day-flow${landingStep === 'manual' ? ' day-flow-manual' : ''}`}>
+        <div className={`day-flow${landingStep === 'manual' ? ' day-flow-manual' : ''}${
+          landingStep === 'stay' || landingStep === 'when' || landingStep === 'how' ? ' day-flow-split-host' : ''
+        }`}>
           {editingPlanId && (
             <div className="day-edit-banner">
               <span><PencilIcon size={13} /> {t('day.editBanner')}</span>
@@ -2068,11 +2070,36 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
             </div>
           )}
 
+          {/* The three landing questions share one canvas: the form column on
+              the left, a live map on the right that follows the answer. The
+              questions used to float alone on an empty page, which gave a
+              spatial decision (where are you staying?) no spatial context at
+              all. The map is mounted ONCE around all three steps so moving
+              between them pans it rather than tearing it down and rebuilding. */}
+          {(landingStep === 'stay' || landingStep === 'when' || landingStep === 'how') && (
+          <div className={`day-flow-split${landingStep === 'how' ? ' day-flow-split-wide' : ''}`}>
+          <div className="day-flow-forms">
+
           {/* STEP 1, where are you staying */}
           {landingStep === 'stay' && (
             <div className="day-flow-step">
               <div className="day-flow-panel">
                 <h2 className="day-flow-q">{t('day.whereStaying')}</h2>
+                {/* Once a place is chosen it BECOMES the field. Leaving the
+                    search box filled with the old query above a chosen-city
+                    badge showed the same answer twice, in two different
+                    states, and left it ambiguous which one counted. */}
+                {newStayPoint ? (
+                  <div className="day-stay-chosen day-flow-chosen">
+                    <MapPinIcon size={14} />
+                    <span className="day-stay-chosen-label">{newStayPoint.shortLabel || newStayPoint.label}</span>
+                    <button
+                      className="day-flow-chosen-change"
+                      onClick={() => { setNewStayPoint(null); setStayResults(null); setStayQuery(''); setExploreFocus(''); }}
+                      aria-label={t('day.clearAddress')}
+                    >{t('day.change')}</button>
+                  </div>
+                ) : (
                 <div className="day-stay-search day-flow-search">
                   <input
                     className="day-stay-input"
@@ -2088,13 +2115,8 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
                     {staySearching ? '…' : t('day.find')}
                   </button>
                 </div>
-                {newStayPoint ? (
-                  <div className="day-stay-chosen day-flow-chosen">
-                    <MapPinIcon size={14} />
-                    <span className="day-stay-chosen-label">{newStayPoint.shortLabel || newStayPoint.label}</span>
-                    <button className="trip-stop-remove" onClick={() => { setNewStayPoint(null); setStayResults(null); setExploreFocus(''); }} aria-label={t('day.clearAddress')} title={t('day.clear')}>×</button>
-                  </div>
-                ) : stayResults ? (
+                )}
+                {newStayPoint ? null : stayResults ? (
                   stayResults.length ? (
                     <div className="day-stay-results day-flow-results">
                       {stayResults.map((r, i) => (
@@ -2151,9 +2173,20 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
                     </button>
                   ))}
                 </div>
+                {/* The calendar is on the page, not behind an underlined bit
+                    of text. A single flat field reading "24 Jul 2026" gave no
+                    sense of the surrounding week, which is exactly what you
+                    need when deciding which day to spend somewhere. */}
                 <div className="day-flow-date">
                   <span className="day-flow-suggest-label">{t('day.orPickDate')}</span>
-                  <DateField value={newStartDate} onChange={setNewStartDate} placeholder={t('day.startDate')} />
+                  <DateField
+                    inline
+                    value={newStartDate}
+                    rangeStart={newStartDate}
+                    rangeEnd={newStartDate}
+                    onChange={setNewStartDate}
+                    placeholder={t('day.startDate')}
+                  />
                 </div>
                 <button className="day-flow-next" onClick={() => setLandingStep('how')} disabled={!newStartDate}>
                   {t('day.next')}
@@ -2196,6 +2229,21 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
                 </div>
               </div>
             </div>
+          )}
+
+          </div>
+          {/* The answer, on a map. Follows the chosen stay, or the first
+              search result while the traveller is still deciding. */}
+          <aside className="day-flow-mapside">
+            <DayExploreMap stay={newStayPoint || (stayResults && stayResults[0]) || null} />
+            <p className="day-flow-mapcap">
+              <MapPinIcon size={11} />
+              {newStayPoint
+                ? t('day.mapCapStay', { place: newStayPoint.shortLabel || newStayPoint.label })
+                : t('day.mapCapEmpty')}
+            </p>
+          </aside>
+          </div>
           )}
 
           {/* The chat planner: questions, a proposed route, then import. */}
@@ -2424,6 +2472,14 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
               <div className="day-build-cities">
                 <span className="trip-field-label day-explore-steplabel day-picks-steplabel">
                   <span className="day-step-num">3</span> {t('day.yourPicks')}
+                  {/* What is actually planned so far, stated once. */}
+                  <span className="day-picks-status">
+                    {t('day.picksStatus', {
+                      days: newStops.reduce((n, s) => n + (s.days || 1), 0),
+                      towns: newStops.length,
+                      pois: selPois.length,
+                    })}
+                  </span>
                 </span>
                 {newStops.map((s) => {
                   const d = destinations[s.destinationId];
@@ -2433,11 +2489,14 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
                         {d?.city || t('day.unknown')}
                         <small>{d?.country}</small>
                       </span>
-                      <div className="trip-people day-days-stepper">
-                        <button type="button" onClick={() => setLandingDays(s.destinationId, s.days - 1)} disabled={s.days <= 1} aria-label={t('day.fewerDays')}>-</button>
-                        <span>{s.days} {s.days === 1 ? t('day.dayWord') : t('day.daysWord')}</span>
-                        <button type="button" onClick={() => setLandingDays(s.destinationId, s.days + 1)} aria-label={t('day.moreDays')}>+</button>
-                      </div>
+                      {/* Days are set in the briefing panel, where the town is
+                          actually being judged. A second identical stepper
+                          here meant two controls for one number on one screen;
+                          this row states the answer and leaves editing to the
+                          one place that has the context for it. */}
+                      <span className="day-build-city-days">
+                        {s.days} {s.days === 1 ? t('day.dayWord') : t('day.daysWord')}
+                      </span>
                       <button
                         className="trip-stop-remove"
                         onClick={() => removeLandingCity(s.destinationId)}

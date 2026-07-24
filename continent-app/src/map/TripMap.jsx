@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
-import { hasLngLat } from './coords.js';
+import { hasLngLat, declutterPins } from './coords.js';
 
 // Same clean, key-less Carto Voyager basemap the main map uses.
 const MAP_STYLE = 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json';
@@ -131,7 +131,19 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
       ro.observe(containerRef.current);
     }
 
+    // Candidate POI pins are dense by design (up to 220 on a zoomed-in city),
+    // so they get the same collision pass a real symbol layer would run.
+    // Must-sees outrank ordinary places for the right to keep their name.
+    const stopDeclutter = declutterPins(map, () => (
+      poiMarkersRef.current.map((entry) => (entry && entry.el ? {
+        el: entry.el,
+        lngLat: entry.lngLat,
+        priority: entry.priority,
+      } : null)).filter(Boolean)
+    ));
+
     return () => {
+      stopDeclutter();
       ro?.disconnect();
       map.remove();
       mapRef.current = null;
@@ -242,7 +254,7 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
   useEffect(() => {
     const map = mapRef.current;
     if (!map) return;
-    poiMarkersRef.current.forEach((m) => m.remove());
+    poiMarkersRef.current.forEach((m) => m.marker.remove());
     poiMarkersRef.current = [];
     (pois || []).filter(hasLngLat).forEach((p) => {
       const el = document.createElement('button');
@@ -266,11 +278,14 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
       // so there is nothing behind it to add to the plan.
       if (p.discovery) {
         el.title = `${p.label} (AI discovery)`;
-        poiMarkersRef.current.push(
-          new maplibregl.Marker({ element: el, anchor: 'center' })
+        poiMarkersRef.current.push({
+          marker: new maplibregl.Marker({ element: el, anchor: 'center' })
             .setLngLat([p.lon, p.lat])
             .addTo(map),
-        );
+          el,
+          lngLat: [p.lon, p.lat],
+          priority: 9,
+        });
         return;
       }
       // A selected pin ("show selected" mode) is a status, not a control:
@@ -285,14 +300,18 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
       } else {
         el.title = `${p.label} is already in your plan`;
       }
-      poiMarkersRef.current.push(
-        new maplibregl.Marker({ element: el, anchor: 'center' })
+      poiMarkersRef.current.push({
+        marker: new maplibregl.Marker({ element: el, anchor: 'center' })
           .setLngLat([p.lon, p.lat])
           .addTo(map),
-      );
+        el,
+        lngLat: [p.lon, p.lat],
+        // Already in the plan > must-see > everything else.
+        priority: p.sel ? 10 : p.must ? 8 : 4,
+      });
     });
     return () => {
-      poiMarkersRef.current.forEach((m) => m.remove());
+      poiMarkersRef.current.forEach((m) => m.marker.remove());
       poiMarkersRef.current = [];
     };
   }, [poisKey]); // eslint-disable-line react-hooks/exhaustive-deps
