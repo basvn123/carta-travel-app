@@ -36,6 +36,14 @@ export function CountryPickerMap({ countries = [], selected, onToggle }) {
     const unfit = keepFitted(map, containerRef.current, () => (
       fitRef.current ? { bounds: fitRef.current, padding: 44, maxZoom: 5 } : null
     ));
+    // Zoomed out over Europe, 43 name pills collide into an unreadable stack
+    // around the Benelux and the Alps. Below the threshold each pin shrinks to
+    // its flag (a third of the width), and the names come back as you zoom in.
+    // Selected countries and the hovered pin keep their name at any zoom.
+    const el = containerRef.current;
+    const density = () => el?.classList.toggle('cpm-dense', map.getZoom() < 4.4);
+    map.on('zoom', density);
+    map.on('load', density);
     mapRef.current = map;
     return () => { unfit(); map.remove(); mapRef.current = null; readyRef.current = false; pinsRef.current.clear(); };
   }, []);

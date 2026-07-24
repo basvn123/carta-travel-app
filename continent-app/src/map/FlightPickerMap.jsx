@@ -44,6 +44,14 @@ export function FlightPickerMap({ options = [], origin = null, onPick }) {
     const unfit = keepFitted(map, containerRef.current, () => (
       fitRef.current ? { bounds: fitRef.current, padding: 52, maxZoom: 7 } : null
     ));
+    // Zoomed out, "€28 Dubrovnik" pills sit on top of each other and on the
+    // basemap's own place names. Below the threshold the pill keeps the price
+    // (the thing being compared) and drops the city name; hover and the picked
+    // route always show both.
+    const el = containerRef.current;
+    const density = () => el?.classList.toggle('fpm-dense', map.getZoom() < 5.2);
+    map.on('zoom', density);
+    map.on('load', density);
     mapRef.current = map;
     return () => { unfit(); map.remove(); mapRef.current = null; readyRef.current = false; pinsRef.current.clear(); };
   }, []);

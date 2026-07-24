@@ -8812,10 +8812,12 @@ input, select {
   .filter-bar .filter-lifestyle { display: none; }
 }
 
-/* ─── Date pickers: never off-screen on phones. The popover anchors to its
-   trigger on desktop; on mobile it becomes a centered dialog. ─── */
+/* ─── Date pickers: never off-screen on phones. The POPOVER anchors to its
+   trigger on desktop and becomes a centered dialog on mobile. An inline
+   calendar is not a popover: it lives in the page, so it must be excluded
+   here or it gets yanked to fixed-centre and overlaps the form above it. ─── */
 @media (max-width: 768px) {
-  .cal {
+  .cal:not(.cal-inline) {
     position: fixed;
     left: 50%;
     top: 50%;
@@ -10931,12 +10933,12 @@ input, select {
      subtraction differs per step because the question above the map does. */
   .trip-wizard-modal .guide-flight-wrap .fpm-map,
   .trip-wizard-modal .guide-flight-side {
-    height: clamp(360px, calc(100vh - 520px), 640px);
+    height: clamp(340px, calc(100vh - 570px), 640px);
     max-height: none;
   }
   .trip-wizard-modal .guide-stay-wrap .citypick-map,
   .trip-wizard-modal .guide-city-side {
-    height: clamp(360px, calc(100vh - 500px), 640px);
+    height: clamp(340px, calc(100vh - 545px), 640px);
     max-height: none;
   }
   /* Getting home asks nothing above the map, so it gets the whole page. */
@@ -11072,6 +11074,268 @@ input, select {
   font-size: 15px;
   border-radius: 12px;
   box-shadow: 0 6px 16px rgba(26, 26, 26, 0.12);
+}
+
+/* The ground legs on the receipt: what it costs to move between the stops,
+   which the total used to omit entirely. */
+.guide-summary-legs { padding: 12px 0 4px; border-top: 1px solid var(--rule); margin-top: 8px; }
+.guide-summary-leg {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 0;
+  font-size: 12.5px;
+  color: var(--ink-soft);
+}
+.guide-summary-leg svg { color: var(--accent); flex: none; }
+.guide-summary-leg-label { color: var(--ink); min-width: 0; }
+.guide-summary-leg small { font-family: var(--mono); font-size: 10.5px; color: var(--ink-mute); }
+.guide-summary-leg b { margin-left: auto; font-family: var(--mono); font-size: 12px; color: var(--ink); }
+
+/* ── Named step rail ─────────────────────────────────────────────────────
+   Thin anonymous segments say how far along you are but never what is still
+   coming, which is what makes a six-step form feel open-ended. */
+.wiz-steps {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  list-style: none;
+  margin: 10px 0 0;
+  padding: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.wiz-steps::-webkit-scrollbar { display: none; }
+.wiz-step { flex: 1 1 0; min-width: 0; }
+.wiz-step-btn {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  width: 100%;
+  padding: 7px 4px 9px;
+  border: none;
+  border-top: 2px solid var(--rule);
+  background: none;
+  text-align: left;
+  cursor: default;
+  transition: border-color .16s, color .16s;
+}
+.wiz-step.done .wiz-step-btn { cursor: pointer; border-top-color: var(--accent-soft, #e3b9a1); }
+.wiz-step.now .wiz-step-btn { border-top-color: var(--accent); }
+.wiz-step-mark {
+  flex: none;
+  display: flex; align-items: center; justify-content: center;
+  width: 19px; height: 19px;
+  border-radius: 50%;
+  background: var(--paper-dim);
+  color: var(--ink-mute);
+  font-family: var(--mono);
+  font-size: 10px;
+}
+.wiz-step.done .wiz-step-mark { background: var(--green, #3a9d6b); color: #fff; }
+.wiz-step.now .wiz-step-mark { background: var(--accent); color: #fff; }
+.wiz-step-name {
+  font-size: 11.5px;
+  color: var(--ink-mute);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.wiz-step.now .wiz-step-name { color: var(--ink); font-weight: 600; }
+.wiz-step.done .wiz-step-name { color: var(--ink-soft); }
+.wiz-step.done .wiz-step-btn:hover .wiz-step-name { color: var(--accent); }
+/* Phones: the rail keeps the marks and drops the names it has no room for. */
+@media (max-width: 700px) {
+  .wiz-step-name { display: none; }
+  .wiz-step-btn { justify-content: center; padding-left: 0; padding-right: 0; }
+}
+
+/* The gate on the Stay step, stated in the footer beside Next. */
+.guide-nights-budget {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 11px;
+  border-radius: 999px;
+  border: 1px solid var(--rule);
+  background: var(--paper);
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink-soft);
+}
+.guide-nights-budget b { color: var(--accent); }
+.guide-nights-budget.done { border-color: var(--green, #3a9d6b); color: #2c7d54; }
+.guide-nights-budget.done b, .guide-nights-budget.done svg { color: #2c7d54; }
+.guide-nights-budget.over { border-color: #b3402a; color: #b3402a; }
+.guide-nights-budget.over b { color: #b3402a; }
+
+/* An answered question, folded: still visible, still changeable, no longer
+   competing with the map every time the step re-renders. */
+.guide-answered {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 7px 9px 7px 12px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: var(--paper);
+}
+.guide-answered-label {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-mute);
+}
+.guide-answered-value {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.guide-answered-value svg { color: var(--accent); }
+.guide-answered-edit {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-mute);
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: none;
+  padding: 3px 9px;
+  cursor: pointer;
+}
+.guide-answered-edit:hover { color: var(--accent); border-color: var(--accent); }
+
+/* Step 1 tools: one number and one escape hatch on a single line. A full card
+   for a single stepper, under a saturated orange bar, made the shortcut look
+   like the task and the task look like a footnote. */
+.guide-where-tools {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+.guide-inline-field { display: flex; align-items: center; gap: 10px; flex: none; }
+.guide-inline-field .trip-field-label { margin: 0; white-space: nowrap; }
+/* The quiet variant of the "let Carta decide" CTA: an offer, not the headline. */
+.guide-design-btn-quiet {
+  flex: 1 1 240px;
+  background: var(--paper);
+  color: var(--ink);
+  border: 1px dashed var(--accent);
+  box-shadow: none;
+}
+.guide-design-btn-quiet .guide-design-spark,
+.guide-design-btn-quiet svg { color: var(--accent); }
+.guide-design-btn-quiet small { color: var(--ink-mute); }
+.guide-design-btn-quiet:hover { background: var(--accent-bg); opacity: 1; }
+.guide-design-btn-quiet.on { background: var(--accent-bg); border-style: solid; }
+
+/* Step 3: what changing the departure airport actually buys, in the space the
+   picker used to leave blank. */
+.guide-origin-facts { display: inline-flex; align-items: center; gap: 14px; margin-left: auto; flex-wrap: wrap; }
+.guide-origin-fact { font-family: var(--mono); font-size: 10.5px; color: var(--ink-mute); white-space: nowrap; }
+.guide-origin-fact b { color: var(--accent); font-size: 12px; }
+
+/* Carta's suggested length vs the nights actually booked: two answers to one
+   question, so they can never again share a label. */
+.guide-city-fact-booked {
+  display: block;
+  margin-top: 2px;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  color: var(--accent);
+}
+
+/* ── Map pin density ─────────────────────────────────────────────────────
+   Zoomed out, name pills collide with each other and with the basemap's own
+   labels. Each map drops the widest part of its pin below a zoom threshold
+   and brings it back on hover, on selection, and as you zoom in. */
+.cpm-dense .cpm-pin { padding: 3px; }
+.cpm-dense .cpm-pin .cpm-name { display: none; }
+.cpm-dense .cpm-pin:hover .cpm-name,
+.cpm-dense .cpm-pin.on .cpm-name { display: inline; }
+.cpm-dense .cpm-pin:hover, .cpm-dense .cpm-pin.on { padding: 3px 8px 3px 3px; }
+.cpm-pin:hover, .cpm-pin.on { z-index: 4; }
+.fpm-dense .fpm-pin .fpm-city { display: none; }
+.fpm-dense .fpm-pin:hover .fpm-city,
+.fpm-dense .fpm-pin.on .fpm-city { display: inline; }
+.fpm-pin:hover { z-index: 4; }
+.citypick-pin:hover, .citypick-pin.focused, .citypick-pin.sel { z-index: 4; }
+
+/* ── Inline range calendar ───────────────────────────────────────────────
+   In the page, two months at a time, with the chosen span shaded as one
+   band. Two trigger buttons that each opened their own popover made picking
+   a span a trip through two modals and never showed the trip as a shape. */
+.date-field-inline { position: static; width: 100%; }
+.cal-inline {
+  position: static;
+  width: 100%;
+  padding: 0;
+  border: none;
+  box-shadow: none;
+  background: none;
+}
+.cal-inline .cal-head { margin-bottom: 6px; }
+/* The combined head title is for the single-pane case only; two panes label
+   themselves, so the head keeps just the arrows. */
+.cal-inline .cal-title { visibility: hidden; }
+.cal-panes { display: grid; grid-template-columns: 1fr; gap: 22px; }
+.cal-inline .cal-panes { grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); }
+.cal-pane-title {
+  font-family: var(--display);
+  font-size: 13.5px;
+  color: var(--ink);
+  text-align: center;
+  margin-bottom: 8px;
+}
+.cal-inline .cal-day { font-size: 13px; border-radius: 8px; }
+/* Range: caps at the ends, a connected band between. */
+.cal-day.in-range { background: var(--accent-bg); border-radius: 0; }
+.cal-day.in-range:hover:not(.disabled) { background: var(--accent-bg); }
+.cal-day.range-start { border-radius: 8px 0 0 8px; }
+.cal-day.range-end { border-radius: 0 8px 8px 0; }
+.cal-day.range-start.range-end { border-radius: 8px; }
+.cal-inline .cal-grid { gap: 0 0; row-gap: 2px; }
+
+/* The two ends of the range, read back above the calendar. `next` marks the
+   end the following click will set, so the calendar is never ambiguous. */
+.guide-range-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+.guide-range-end {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 7px 12px;
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  background: var(--paper);
+  min-width: 132px;
+}
+.guide-range-end b { font-family: var(--mono); font-size: 13px; color: var(--ink); }
+.guide-range-end.empty b { color: var(--ink-mute); font-weight: 400; }
+.guide-range-end.next { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-bg); }
+
+/* ── Step transitions ────────────────────────────────────────────────────
+   Moving between steps should read as travel through one form, not as a page
+   reload. Content only; the shell, footer and estimate band hold still. */
+@keyframes wiz-in-fwd { from { opacity: 0; transform: translateX(18px); } to { opacity: 1; transform: none; } }
+@keyframes wiz-in-back { from { opacity: 0; transform: translateX(-18px); } to { opacity: 1; transform: none; } }
+.trip-wizard-modal .guide-canvas { animation: wiz-in-fwd .3s cubic-bezier(0.25, 1, 0.5, 1); }
+.trip-wizard-modal.wiz-back .guide-canvas { animation-name: wiz-in-back; }
+@media (prefers-reduced-motion: reduce) {
+  .trip-wizard-modal .guide-canvas { animation: none; }
+  .trip-wizard-modal .guide-canvas { transition: none; }
 }
 
 /* Sparse steps: a two-way toggle stretched across 1400px reads as a mistake,
