@@ -4,7 +4,7 @@ import { Dropdown } from '../components/Dropdown.jsx';
 import { DateField } from '../components/DateField.jsx';
 import { GemIcon } from '../components/GemRating.jsx';
 import { PlaneIcon, CarIcon } from '../components/TransportIcons.jsx';
-import { CalendarIcon, FilterIcon, LifestyleIcon } from '../components/Icons.jsx';
+import { CalendarIcon, FilterIcon, LifestyleIcon, ChevronDownIcon } from '../components/Icons.jsx';
 import { eur } from '../lib/format.js';
 import { useI18n } from '../i18n/index.jsx';
 import { NumberField, DualRange } from '../components/FilterControls.jsx';
@@ -42,6 +42,14 @@ export function FilterBar({
   const [mobileDatesOpen, setMobileDatesOpen] = React.useState(false);
   const datesAnchorRef = React.useRef(null);
 
+  // Desktop: everything that NARROWS the result set (budget, place, quality,
+  // trip style) lives in a tray that drops below the header, so the bar itself
+  // only ever carries the handful of controls that define the trip (when, who,
+  // how it's priced). The tray overlays the map rather than growing the header,
+  // so opening it never shrinks the map.
+  const [trayOpen, setTrayOpen] = React.useState(false);
+  const trayWrapRef = React.useRef(null);
+
   const openMobileDates = () => { setMobileDatesOpen((v) => !v); setMobileFiltersOpen(false); };
   const openMobileFilters = () => { setMobileFiltersOpen((v) => !v); setMobileDatesOpen(false); };
 
@@ -56,17 +64,41 @@ export function FilterBar({
     return () => document.removeEventListener('mousedown', onClickOutside);
   }, [mobileDatesOpen]);
 
-  const advancedActiveCount = tripKinds.length > 0 ? 1 : 0;
-  const beautyActive = !isFullRatingRange(ratingRange) || gemOnly || unescoOnly || topBeachOnly;
+  // Same for the desktop tray: click anywhere off it (or press Escape) to close.
+  // The listener covers the toggle button too, which sits inside the same
+  // wrapper, so a second click on the trigger closes rather than reopening.
+  React.useEffect(() => {
+    if (!trayOpen) return undefined;
+    const onClickOutside = (e) => {
+      if (trayWrapRef.current && !trayWrapRef.current.contains(e.target)) setTrayOpen(false);
+    };
+    const onKey = (e) => { if (e.key === 'Escape') setTrayOpen(false); };
+    document.addEventListener('mousedown', onClickOutside);
+    document.addEventListener('keydown', onKey);
+    return () => {
+      document.removeEventListener('mousedown', onClickOutside);
+      document.removeEventListener('keydown', onKey);
+    };
+  }, [trayOpen]);
+
+  const ratingNarrowed = !isFullRatingRange(ratingRange);
   const priceNarrowed = !!(priceRange && priceBounds &&
     (priceRange[0] > priceBounds[0] || priceRange[1] < priceBounds[1]));
 
-  const anyFilterActive =
-    countryFilter.length > 0 ||
-    advancedActiveCount > 0 ||
-    beautyActive ||
-    !!topPick ||
-    priceNarrowed;
+  // One count per narrowing control that is actually doing something, shown as
+  // a badge on the tray toggle so a filter left on inside a closed tray can
+  // never silently explain an empty map.
+  const activeFilters = [
+    countryFilter.length > 0,
+    tripKinds.length > 0,
+    ratingNarrowed,
+    gemOnly,
+    unescoOnly,
+    topBeachOnly,
+    !!topPick,
+    priceNarrowed,
+  ].filter(Boolean).length;
+  const anyFilterActive = activeFilters > 0;
 
   const resetAll = () => {
     setCountryFilter([]);
@@ -130,7 +162,6 @@ export function FilterBar({
     { value: RATING_MAX * 10, label: '10' },
   ];
   const [rLo, rHi] = ratingRange;
-  const ratingNarrowed = !isFullRatingRange(ratingRange);
 
   return (
     <div className={`filter-bar ${mobileFiltersOpen ? 'mobile-open' : 'mobile-collapsed'}`}>
@@ -203,16 +234,16 @@ export function FilterBar({
         </div>
       </div>
 
-      {/* Desktop layout: two rows, each divided into labelled category groups
-          (a `.filter-group` per category, a `.filter-divider` between them). The
-          row uses `justify-content: space-between` so the groups spread across
-          the full width of the top panel. On mobile every `.filter-group` is
-          `display: contents`, so the individual `.filter` children fall straight
-          into the 2-column grid and the grouping/dividers disappear. */}
+      {/* Desktop layout: ONE always-visible row that defines the trip (when,
+          who, how it's priced), plus a tray holding everything that narrows the
+          result set. The tray is absolutely positioned over the map, so opening
+          it never grows the header or shrinks the map. On mobile every
+          `.filter-group` / `.filter-tray` is `display: contents`, so the
+          individual `.filter` children fall straight into the sheet's 2-column
+          grid and the desktop grouping disappears. */}
       <div className="filter-rows">
 
-        {/* Row 1: WHEN & WHO */}
-        <div className="filter-row">
+        <div className="filter-row filter-row-primary">
           {/* Dates */}
           <div className="filter-group group-dates">
             <div className="group-fields">
@@ -302,68 +333,10 @@ export function FilterBar({
 
           <div className="filter-divider" aria-hidden="true" />
 
-          {/* Shortcuts */}
-          <div className="filter-group group-shortcuts">
-            <div className="group-fields">
-              {/* Top picks: quick "best of" shortcuts (cheapest / most beautiful) */}
-              <div className="filter filter-toppicks">
-                <label className="filter-label">{t('filter.topPicks')}</label>
-                <div className="filter-control">
-                  <Dropdown
-                    value={topPickValue}
-                    onChange={onTopPick}
-                    options={TOP_PICKS}
-                    placeholder={t('filter.all')}
-                  />
-                </div>
-              </div>
-
-              {/* Lifestyle: how the on-the-ground spend is modelled. Lives here,
-                  next to the filters, so it's settable without opening a
-                  destination (it used to hide inside the Account panel). */}
-              {onOpenLifestyle && (
-                <div className="filter filter-lifestyle">
-                  <label className="filter-label">{t('filter.lifestyle')}</label>
-                  <div className="filter-control">
-                    <button
-                      className="pill-toggle lifestyle-pill"
-                      onClick={onOpenLifestyle}
-                      title={t('filter.setLifestyleTitle')}
-                    >
-                      <LifestyleIcon size={13} /> {t('filter.setLifestyle')}
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-
-        {/* Row 2: REFINE */}
-        <div className="filter-row">
-          {/* Pricing: how the trip is costed + the budget window */}
+          {/* How the trip is costed: both of these repaint every label on the
+              map, so they stay on the always-visible row. */}
           <div className="filter-group group-pricing">
             <div className="group-fields">
-              <div className="filter filter-show">
-                <label className="filter-label">{t('filter.show')}</label>
-                <div className="filter-control">
-                  <div className="segmented compact">
-                    <button
-                      className={priceMode === 'total' ? 'seg-on' : ''}
-                      onClick={() => setPriceMode('total')}
-                    >
-                      {t('filter.total')}
-                    </button>
-                    <button
-                      className={priceMode === 'pp' ? 'seg-on' : ''}
-                      onClick={() => setPriceMode('pp')}
-                    >
-                      {t('filter.perPerson')}
-                    </button>
-                  </div>
-                </div>
-              </div>
-
               <div className="filter filter-travelby">
                 <label className="filter-label">{t('filter.travelBy')}</label>
                 <div className="filter-control">
@@ -388,174 +361,269 @@ export function FilterBar({
                 </div>
               </div>
 
-              {priceBounds && priceRange && (
-                <div className="filter price-range">
-                  <label className="filter-label">
-                    {priceMode === 'pp' ? t('filter.pricePP') : t('filter.priceTotal')}
-                  </label>
-                  <div className="filter-control band-control">
-                    <div className="band-slider">
-                      <DualRange
-                        min={priceBounds[0]}
-                        max={priceBounds[1]}
-                        value={priceRange}
-                        onChange={setPriceRange}
-                        fmt={eur}
-                        hideValueRow
-                      />
-                    </div>
-                    <div className={`range-band-box ${priceNarrowed ? 'is-narrowed' : ''}`}>
-                      {priceNarrowed ? (
-                        <span className="range-band-nums">
-                          {eur(priceRange[0])}<span className="range-band-dash">to</span>{eur(priceRange[1])}
-                        </span>
-                      ) : (
-                        <span className="range-band-any">{t('filter.anyPrice')}</span>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-
-          <div className="filter-divider" aria-hidden="true" />
-
-          {/* Place */}
-          <div className="filter-group group-place">
-            <div className="group-fields">
-              <div className="filter filter-country">
-                <label className="filter-label">{t('filter.country')}</label>
+              <div className="filter filter-show">
+                <label className="filter-label">{t('filter.show')}</label>
                 <div className="filter-control">
-                  <Dropdown
-                    multiple
-                    value={countryFilter}
-                    onChange={setCountryFilter}
-                    options={availableCountries.map(([iso2, name]) => ({ value: iso2, label: name }))}
-                    placeholder={t('filter.allCountries', { n: availableCountries.length })}
-                    searchPlaceholder={t('filter.searchCountry')}
-                    multiLabel={(vals) => {
-                      if (vals.length === 1) {
-                        const hit = availableCountries.find(([iso2]) => iso2 === vals[0]);
-                        return hit ? hit[1] : vals[0];
-                      }
-                      return t('filter.nCountries', { n: vals.length });
-                    }}
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="filter-divider" aria-hidden="true" />
-
-          {/* Quality: the beauty score + independent heritage / coast toggles */}
-          <div className="filter-group group-quality">
-            <div className="group-fields">
-              {/* Traveller rating: a dual-handle band slicer over the 0-10 score
-                  (curated appeal + beauty index + POI depth; fame only flags
-                  hidden gems). Drag either handle to isolate any band, or flip
-                  the hidden-gems toggle to keep only the under-the-radar picks. */}
-              <div className="filter filter-beauty">
-                <label className="filter-label">{t('filter.rating')}</label>
-                <div className="filter-control band-control">
-                  <div className="band-slider">
-                    <DualRange
-                      min={0}
-                      max={RATING_MAX * 10}
-                      value={[Math.round(rLo * 10), Math.round(rHi * 10)]}
-                      onChange={([a, b]) => setRatingRange([a / 10, b / 10])}
-                      fmt={(v) => (v / 10).toFixed(1)}
-                      axis={ratingAxis}
-                      ariaLabel={t('filter.rating')}
-                      hideValueRow
-                    />
+                  <div className="segmented compact">
+                    <button
+                      className={priceMode === 'total' ? 'seg-on' : ''}
+                      onClick={() => setPriceMode('total')}
+                    >
+                      {t('filter.total')}
+                    </button>
+                    <button
+                      className={priceMode === 'pp' ? 'seg-on' : ''}
+                      onClick={() => setPriceMode('pp')}
+                    >
+                      {t('filter.perPerson')}
+                    </button>
                   </div>
-                  <div className={`range-band-box ${ratingNarrowed ? 'is-narrowed' : ''}`}>
-                    <span className="range-band-nums">
-                      {ratingNarrowed ? rLo.toFixed(1) : RATING_MIN}
-                      <span className="range-band-dash">to</span>
-                      {ratingNarrowed ? rHi.toFixed(1) : RATING_MAX}
-                    </span>
-                  </div>
-                  <button
-                    type="button"
-                    className={`pill-toggle gem-toggle ${gemOnly ? 'on' : ''}`}
-                    onClick={() => setGemOnly(!gemOnly)}
-                    aria-pressed={gemOnly}
-                    title={t('rating.gemsTitle')}
-                  >
-                    <GemIcon filled size={9} /> {t('rating.hiddenGemsOnly')}
-                  </button>
                 </div>
               </div>
 
-              {/* Highlights: standalone heritage / coast toggles, kept apart from the
-                  beauty rating so each is a clear, independent yes/no filter. */}
-              <div className="filter filter-highlights">
-                <label className="filter-label">{t('filter.highlights')}</label>
-                <div className="filter-control pill-row">
-                  <button
-                    className={`pill-toggle ${unescoOnly ? 'on' : ''}`}
-                    onClick={() => setUnescoOnly(!unescoOnly)}
-                    aria-pressed={unescoOnly}
-                    title={t('filter.unescoTitle')}
-                  >
-                    UNESCO
-                  </button>
-                  <button
-                    className={`pill-toggle ${topBeachOnly ? 'on' : ''}`}
-                    onClick={() => setTopBeachOnly(!topBeachOnly)}
-                    aria-pressed={topBeachOnly}
-                    title={t('filter.topBeachesTitle')}
-                  >
-                    {t('filter.topBeaches')}
-                  </button>
-                </div>
-              </div>
             </div>
           </div>
 
-          <div className="filter-divider" aria-hidden="true" />
+          {/* Everything that narrows the map lives behind this one trigger.
+              The tray is a sibling of the button (same wrapper) so a click on
+              either counts as "inside" for the outside-click close. */}
+          <div className="filter-actions" ref={trayWrapRef}>
+            <button
+              type="button"
+              className={`filter-tray-btn ${trayOpen ? 'open' : ''} ${anyFilterActive ? 'has-active' : ''}`}
+              onClick={() => setTrayOpen((v) => !v)}
+              aria-expanded={trayOpen}
+              title={t('filter.refineTitle')}
+            >
+              <FilterIcon size={14} />
+              <span>{t('filter.filters')}</span>
+              {anyFilterActive && <span className="filter-tray-badge">{activeFilters}</span>}
+              <ChevronDownIcon size={12} className="filter-tray-caret" />
+            </button>
 
-          {/* Style */}
-          <div className="filter-group group-style">
-            <div className="group-fields">
-              {/* Trip type - a multi-select dropdown, mirroring the Country filter.
-                  A compact trigger keeps the bar to two tidy rows; the choices live
-                  in a popover instead of wrapping a wide chip block across the row. */}
-              <div className="filter filter-triptype">
-                <label className="filter-label">{t('filter.tripType')}</label>
-                <div className="filter-control">
-                  <Dropdown
-                    multiple
-                    value={tripKinds}
-                    onChange={setTripKinds}
-                    options={TRIP_KINDS.map((k) => ({ value: k.key, label: k.label }))}
-                    placeholder={t('filter.allTypes')}
-                    multiLabel={(vals) =>
-                      vals.length === 1
-                        ? (TRIP_KINDS.find((k) => k.key === vals[0])?.label || t('filter.oneType'))
-                        : t('filter.nTypes', { n: vals.length })
-                    }
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Kept inline with the filters it clears (rather than pinned to the
-              bar's outer edge) so it doesn't crowd the account button, which
-              sits in the same top-right corner one row up. */}
-          {anyFilterActive && (
-            <>
-              <div className="filter-divider" aria-hidden="true" />
+            {anyFilterActive && (
               <button className="reset-filters-btn" onClick={resetAll}>
                 {t('filter.reset')}
               </button>
-            </>
-          )}
+            )}
 
+            {/* Rendered even while closed: on mobile this whole wrapper turns
+                into `display: contents` and its fields drop into the filter
+                sheet's grid, where `is-open` plays no part. */}
+            <div className={`filter-tray ${trayOpen ? 'is-open' : ''}`}>
+              <div className="filter-tray-inner">
+                <div className="filter-row filter-row-refine">
+
+                  {/* Budget: the spend window and the "just show me the best"
+                      shortcuts, plus how on-the-ground spend is modelled. */}
+                  <div className="filter-group group-budget">
+                    <div className="group-caption">{t('filter.groupBudget')}</div>
+                    <div className="group-fields">
+                      {priceBounds && priceRange && (
+                        <div className="filter price-range">
+                          <label className="filter-label">
+                            {priceMode === 'pp' ? t('filter.pricePP') : t('filter.priceTotal')}
+                          </label>
+                          <div className="filter-control band-control">
+                            <div className="band-slider">
+                              <DualRange
+                                min={priceBounds[0]}
+                                max={priceBounds[1]}
+                                value={priceRange}
+                                onChange={setPriceRange}
+                                fmt={eur}
+                                hideValueRow
+                              />
+                            </div>
+                            <div className={`range-band-box ${priceNarrowed ? 'is-narrowed' : ''}`}>
+                              {priceNarrowed ? (
+                                <span className="range-band-nums">
+                                  {eur(priceRange[0])}<span className="range-band-dash">to</span>{eur(priceRange[1])}
+                                </span>
+                              ) : (
+                                <span className="range-band-any">{t('filter.anyPrice')}</span>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Top picks: quick "best of" shortcuts (cheapest / best rated) */}
+                      <div className="filter filter-toppicks">
+                        <label className="filter-label">{t('filter.topPicks')}</label>
+                        <div className="filter-control">
+                          <Dropdown
+                            value={topPickValue}
+                            onChange={onTopPick}
+                            options={TOP_PICKS}
+                            placeholder={t('filter.all')}
+                          />
+                        </div>
+                      </div>
+
+                      {/* Lifestyle: how the on-the-ground spend is modelled. Lives
+                          here, next to the filters, so it's settable without opening
+                          a destination (it used to hide inside the Account panel). */}
+                      {onOpenLifestyle && (
+                        <div className="filter filter-lifestyle">
+                          <label className="filter-label">{t('filter.lifestyle')}</label>
+                          <div className="filter-control">
+                            <button
+                              className="pill-toggle lifestyle-pill"
+                              onClick={onOpenLifestyle}
+                              title={t('filter.setLifestyleTitle')}
+                            >
+                              <LifestyleIcon size={13} /> {t('filter.setLifestyle')}
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Quality: the beauty score + independent heritage / coast toggles */}
+                  <div className="filter-group group-quality">
+                    <div className="group-caption">{t('filter.groupQuality')}</div>
+                    <div className="group-fields">
+                      {/* Traveller rating: a dual-handle band slicer over the 0-10
+                          score (curated appeal + beauty index + POI depth; fame only
+                          flags hidden gems). Drag either handle to isolate any band,
+                          or flip the hidden-gems toggle to keep only the
+                          under-the-radar picks. */}
+                      <div className="filter filter-beauty">
+                        <label className="filter-label">{t('filter.rating')}</label>
+                        <div className="filter-control band-control">
+                          <div className="band-slider">
+                            <DualRange
+                              min={0}
+                              max={RATING_MAX * 10}
+                              value={[Math.round(rLo * 10), Math.round(rHi * 10)]}
+                              onChange={([a, b]) => setRatingRange([a / 10, b / 10])}
+                              fmt={(v) => (v / 10).toFixed(1)}
+                              axis={ratingAxis}
+                              ariaLabel={t('filter.rating')}
+                              hideValueRow
+                            />
+                          </div>
+                          <div className={`range-band-box ${ratingNarrowed ? 'is-narrowed' : ''}`}>
+                            <span className="range-band-nums">
+                              {ratingNarrowed ? rLo.toFixed(1) : RATING_MIN}
+                              <span className="range-band-dash">to</span>
+                              {ratingNarrowed ? rHi.toFixed(1) : RATING_MAX}
+                            </span>
+                          </div>
+                          <button
+                            type="button"
+                            className={`pill-toggle gem-toggle ${gemOnly ? 'on' : ''}`}
+                            onClick={() => setGemOnly(!gemOnly)}
+                            aria-pressed={gemOnly}
+                            title={t('rating.gemsTitle')}
+                          >
+                            <GemIcon filled size={9} /> {t('rating.hiddenGemsOnly')}
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Highlights: standalone heritage / coast toggles, kept apart
+                          from the rating so each is a clear, independent yes/no. */}
+                      <div className="filter filter-highlights">
+                        <label className="filter-label">{t('filter.highlights')}</label>
+                        <div className="filter-control pill-row">
+                          <button
+                            className={`pill-toggle ${unescoOnly ? 'on' : ''}`}
+                            onClick={() => setUnescoOnly(!unescoOnly)}
+                            aria-pressed={unescoOnly}
+                            title={t('filter.unescoTitle')}
+                          >
+                            UNESCO
+                          </button>
+                          <button
+                            className={`pill-toggle ${topBeachOnly ? 'on' : ''}`}
+                            onClick={() => setTopBeachOnly(!topBeachOnly)}
+                            aria-pressed={topBeachOnly}
+                            title={t('filter.topBeachesTitle')}
+                          >
+                            {t('filter.topBeaches')}
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Place */}
+                  <div className="filter-group group-place">
+                    <div className="group-caption">{t('filter.groupWhere')}</div>
+                    <div className="group-fields">
+                      <div className="filter filter-country">
+                        <label className="filter-label">{t('filter.country')}</label>
+                        <div className="filter-control">
+                          <Dropdown
+                            multiple
+                            value={countryFilter}
+                            onChange={setCountryFilter}
+                            options={availableCountries.map(([iso2, name]) => ({ value: iso2, label: name }))}
+                            placeholder={t('filter.allCountries', { n: availableCountries.length })}
+                            searchPlaceholder={t('filter.searchCountry')}
+                            multiLabel={(vals) => {
+                              if (vals.length === 1) {
+                                const hit = availableCountries.find(([iso2]) => iso2 === vals[0]);
+                                return hit ? hit[1] : vals[0];
+                              }
+                              return t('filter.nCountries', { n: vals.length });
+                            }}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Style: what kind of trip it should be. A multi-select
+                      dropdown, mirroring Country, so the choices live in a
+                      popover instead of wrapping a wide chip block. */}
+                  <div className="filter-group group-style">
+                    <div className="group-caption">{t('filter.groupStyle')}</div>
+                    <div className="group-fields">
+                      <div className="filter filter-triptype">
+                        <label className="filter-label">{t('filter.tripType')}</label>
+                        <div className="filter-control">
+                          <Dropdown
+                            multiple
+                            value={tripKinds}
+                            onChange={setTripKinds}
+                            options={TRIP_KINDS.map((k) => ({ value: k.key, label: k.label }))}
+                            placeholder={t('filter.allTypes')}
+                            multiLabel={(vals) =>
+                              vals.length === 1
+                                ? (TRIP_KINDS.find((k) => k.key === vals[0])?.label || t('filter.oneType'))
+                                : t('filter.nTypes', { n: vals.length })
+                            }
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Desktop-only footer: says what the tray is currently doing to
+                    the map, and closes it. Hidden inside the mobile sheet, which
+                    has its own dismiss. */}
+                <div className="filter-tray-foot">
+                  <span className="filter-tray-note">
+                    {!anyFilterActive
+                      ? t('filter.noneActive')
+                      : t(activeFilters === 1 ? 'filter.nActiveOne' : 'filter.nActiveMany', { n: activeFilters })}
+                  </span>
+                  <button
+                    type="button"
+                    className="filter-tray-done"
+                    onClick={() => setTrayOpen(false)}
+                  >
+                    {t('filter.done')}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

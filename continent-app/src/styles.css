@@ -1344,7 +1344,6 @@ input, select {
 }
 .via-airport-open:hover { border-color: var(--accent); color: var(--accent); }
 .via-airport-note { font-size: 10.5px; color: var(--ink-mute); font-style: italic; margin-top: 2px; }
-.cost-fallback-note { margin-bottom: 8px; }
 
 /* First-visit "Ryanair fares only" notice. */
 .fare-notice { max-width: 420px; padding: 26px 26px 22px; }
@@ -3266,6 +3265,192 @@ input, select {
   gap: 18px;
   min-width: 0;
 }
+
+/* ─── Two-tier filters: one always-visible row + a refine tray ───────────────
+   The bar itself carries only what DEFINES the trip (when, who, how it's
+   priced). Everything that NARROWS the result set (budget, place, quality,
+   trip style) lives in .filter-tray, a panel that drops below the header and
+   overlays the map, so opening it never grows --filter-h and shrinks the map.
+   On mobile all of this collapses (see the mobile sheet block further down)
+   and the fields fall straight into the existing 2-column grid. */
+
+.filter-row-primary { align-items: stretch; }
+
+/* Trigger + reset, pushed to the trailing edge of the primary row. */
+.filter-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+  align-self: center;
+  flex: none;
+}
+
+.filter-tray-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 13px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.55);
+  color: var(--ink-soft);
+  font-family: var(--mono);
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: color .15s, border-color .15s, background .15s;
+}
+.filter-tray-btn:hover { color: var(--ink); border-color: var(--ink-mute); }
+.filter-tray-btn.open {
+  color: var(--paper);
+  background: var(--ink);
+  border-color: var(--ink);
+}
+.filter-tray-btn.has-active { border-color: var(--accent); color: var(--accent); }
+.filter-tray-btn.has-active.open { color: var(--paper); }
+.filter-tray-btn svg { flex: none; }
+/* Count of narrowing filters, so one left on inside a closed tray can never
+   silently explain an empty map. */
+.filter-tray-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 17px;
+  height: 17px;
+  padding: 0 4px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--paper);
+  font-size: 10px;
+  letter-spacing: 0;
+  font-variant-numeric: tabular-nums;
+}
+.filter-tray-caret { transition: transform .18s ease; }
+.filter-tray-btn.open .filter-tray-caret { transform: rotate(180deg); }
+
+/* Closed by default at every width; the desktop rule below opens it, the
+   mobile sheet dissolves it into the grid. */
+.filter-tray { display: none; }
+
+@media (min-width: 769px) {
+  /* Anchor for the tray: the full-width filters band of the header. Scoped to
+     desktop because the MOBILE sheet (.filter-bar.mobile-open .filter-rows)
+     anchors to .top-bar instead and would clip inside this band. */
+  .app-header-filters { position: relative; }
+
+  .filter-tray.is-open {
+    display: block;
+    position: absolute;
+    top: calc(100% + 10px);     /* clears the header's 9px bottom padding + rule */
+    left: 0; right: 0;
+    z-index: 30;
+    /* Fully opaque: at even 2% transparency the results rows and price pills
+       behind it ghost straight through the tray's own labels. */
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-radius: 0 0 14px 14px;
+    border-top: none;
+    box-shadow: 0 16px 34px rgba(26, 26, 26, 0.16);
+    animation: filter-tray-in .18s cubic-bezier(0.2, 0.9, 0.3, 1);
+  }
+  .filter-tray-inner { padding: 16px 20px 12px; }
+
+  /* Four labelled quadrants on a fixed grid (Budget | Quality over Where |
+     Trip style), not a flex wrap that re-orders itself at every window width.
+     The panel is the surface, so the group cards drop their own chrome and
+     lean on captions plus gutter hairlines instead. */
+  .filter-row-refine {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 0;
+    align-items: start;
+  }
+  .filter-tray .filter-group {
+    background: none;
+    border: 0;
+    border-radius: 0;
+    padding: 0 26px 13px 0;
+  }
+  /* Wrap rather than squeeze: a quadrant's slider keeps its full rail and the
+     band box / toggles drop onto a second line when the column is narrow. */
+  .filter-tray .group-fields { flex-wrap: wrap; gap: 14px 20px; }
+
+  /* Hairlines live on the quadrants themselves, so a group that wraps its
+     fields can't leave a rule floating at the wrong height. */
+  .filter-tray .group-quality,
+  .filter-tray .group-style {
+    border-left: 1px solid var(--rule);
+    padding-left: 26px;
+  }
+  .filter-tray .group-place,
+  .filter-tray .group-style {
+    border-top: 1px solid var(--rule);
+    padding-top: 15px;
+  }
+}
+
+/* Narrow desktop windows: one column, so a quadrant never squeezes a slider
+   down to a stub. The hairlines become simple row rules. */
+@media (min-width: 769px) and (max-width: 1120px) {
+  .filter-row-refine { grid-template-columns: minmax(0, 1fr); }
+  .filter-tray .group-quality,
+  .filter-tray .group-style { border-left: none; padding-left: 0; }
+  .filter-tray .group-quality,
+  .filter-tray .group-place {
+    border-top: 1px solid var(--rule);
+    padding-top: 15px;
+  }
+}
+
+@keyframes filter-tray-in {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Section heading over each cluster of tray fields. */
+.group-caption {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--ink);
+  opacity: 0.55;
+  margin-bottom: 9px;
+}
+
+.filter-tray-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin-top: 13px;
+  padding-top: 11px;
+  border-top: 1px solid var(--rule);
+}
+.filter-tray-note {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  color: var(--ink-mute);
+}
+.filter-tray-done {
+  padding: 7px 20px;
+  border: 1px solid var(--ink);
+  border-radius: 999px;
+  background: var(--ink);
+  color: var(--paper);
+  font-family: var(--mono);
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  transition: opacity .15s;
+}
+.filter-tray-done:hover { opacity: 0.85; }
 
 .filter {
   display: flex;
@@ -5532,12 +5717,21 @@ input, select {
   left: 12px;
   z-index: 6;
   width: 250px;
-  background: var(--paper);
-  border: 1px solid var(--rule);
-  border-radius: 8px;
-  box-shadow: 0 1px 2px rgba(26, 26, 26, 0.08), 0 6px 18px rgba(26, 26, 26, 0.10);
+  /* Translucent + blurred rather than solid paper: the map keeps reading as
+     one continuous surface underneath instead of being punched out by an
+     opaque cream rectangle, and the sea no longer meets a hard edge. */
+  background: rgba(245, 241, 232, 0.82);
+  backdrop-filter: blur(10px) saturate(140%);
+  -webkit-backdrop-filter: blur(10px) saturate(140%);
+  border: 1px solid rgba(196, 190, 169, 0.6);
+  border-radius: 10px;
+  box-shadow: 0 1px 2px rgba(26, 26, 26, 0.06), 0 8px 22px rgba(26, 26, 26, 0.10);
   overflow: hidden;
+  transition: background .15s;
 }
+/* Reading the fine print is a deliberate act: settle to near-opaque on hover
+   so the descriptions never fight the tiles behind them. */
+.map-legend:hover { background: rgba(245, 241, 232, 0.96); }
 .map-legend.is-collapsed { width: auto; }
 
 .legend-head {
@@ -5847,21 +6041,6 @@ input, select {
   letter-spacing: 0.12em;
 }
 .mode-pill-val { font-size: 15px; font-weight: 600; }
-
-/* Underlined text-button used for outbound links (Airbnb, KAYAK) and small
-   in-panel actions ("Adjust lifestyle") under a cost breakdown line. */
-.detail-text-link {
-  display: inline-block;
-  margin-top: 8px;
-  background: none;
-  border: none;
-  padding: 0;
-  color: var(--accent);
-  font: inherit;
-  font-size: 12px;
-  cursor: pointer;
-  text-decoration: underline;
-}
 
 /* --- "Is a car needed here?" advisory --- */
 .car-advisory {
@@ -6484,6 +6663,15 @@ input, select {
   .filter-bar.mobile-open .filter-group,
   .filter-bar.mobile-open .group-fields { display: contents; }
   .filter-bar.mobile-open .filter-divider { display: none; }
+  /* The desktop refine tray has no meaning here: the sheet already shows every
+     filter at once, so its wrappers dissolve and the fields drop into the same
+     grid, ordered by the `order` rules further down. */
+  .filter-bar.mobile-open .filter-actions,
+  .filter-bar.mobile-open .filter-tray,
+  .filter-bar.mobile-open .filter-tray-inner { display: contents; }
+  .filter-bar .filter-tray-btn,
+  .filter-bar .group-caption,
+  .filter-bar .filter-tray-foot { display: none; }
   .filter-bar.mobile-open .filter-country,
   .filter-bar.mobile-open .filter-triptype,
   .filter-bar.mobile-open .filter-beauty,
@@ -8133,7 +8321,76 @@ input, select {
 .cost-group-links {
   display: flex;
   flex-wrap: wrap;
-  gap: 4px 16px;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+/* ─── Cost-group actions: verify this price, or change what drives it ───
+   Every figure in the panel is an estimate; these are the only ways out of
+   one, so they read as buttons rather than the underlined footnotes they
+   used to be. */
+.cost-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  font: inherit;
+  font-size: 12.5px;
+  line-height: 1;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background .15s, border-color .15s, color .15s, transform .12s;
+}
+.cost-action:active { transform: translateY(1px); }
+.cost-action svg { flex: none; }
+.cost-action-out { font-size: 11px; opacity: 0.75; }
+
+.cost-action.is-primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--paper);
+}
+.cost-action.is-primary:hover { background: #b0431a; border-color: #b0431a; }
+
+.cost-action.is-secondary {
+  background: none;
+  border-color: var(--rule);
+  color: var(--ink-soft);
+}
+.cost-action.is-secondary:hover { border-color: var(--accent); color: var(--accent); }
+
+.cost-action.is-action {
+  background: var(--paper-dim);
+  border-color: var(--rule);
+  color: var(--ink);
+}
+.cost-action.is-action:hover { border-color: var(--ink); background: var(--paper); }
+
+/* ─── Cautions inside a cost group (no flight on these dates, a vignette you
+   have to buy before you drive). Amber and icon-led: these cost money or stop
+   the trip if they're read as decoration. ─── */
+.cost-warning {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  margin: 10px 0;
+  padding: 10px 12px;
+  border: 1px solid rgba(217, 131, 36, 0.45);
+  border-left-width: 3px;
+  border-radius: 8px;
+  background: rgba(217, 131, 36, 0.09);
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--ink);
+}
+.cost-warning svg {
+  flex: none;
+  margin-top: 1px;
+  color: #b3690f;
 }
 .cost-info-btn {
   flex: none;
@@ -8184,9 +8441,24 @@ input, select {
   color: var(--ink-mute);
 }
 
+/* The grand total pins to the foot of the panel while the groups above are
+   being read, so the figure the whole breakdown is explaining is never
+   scrolled off. It settles into place naturally at the end of the section.
+   The wrapper (not the card) is what sticks: its paper background is the
+   skirt that stops rows sliding out from under the card's rounded corners.
+   Scroll container is .panel, the same one .panel-header sticks inside. */
+.cost-total-sticky {
+  position: sticky;
+  bottom: 0;
+  z-index: 2;
+  margin-top: 14px;
+  padding-bottom: 10px;
+  background: var(--paper);
+}
+
 /* The grand total: one emphatic card, per-person figure leading. */
 .cost-total-card {
-  margin-top: 14px;
+  margin-top: 0;
   border: 1px solid var(--accent);
   border-radius: 14px;
   background: linear-gradient(100deg, var(--accent-bg), var(--paper));

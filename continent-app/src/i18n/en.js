@@ -112,6 +112,15 @@ export const en = {
   'filter.oneType': '1 type',
   'filter.nTypes': '{n} types',
   'filter.reset': 'Reset',
+  'filter.refineTitle': 'Narrow the map: budget, country, rating, trip style',
+  'filter.groupBudget': 'Budget',
+  'filter.groupWhere': 'Where',
+  'filter.groupQuality': 'Quality',
+  'filter.groupStyle': 'Trip style',
+  'filter.nActiveOne': '1 filter is narrowing the map',
+  'filter.nActiveMany': '{n} filters are narrowing the map',
+  'filter.noneActive': 'Showing every destination we can price',
+  'filter.done': 'Done',
 
   // Results list
   'results.shortlist': 'Shortlist',

@@ -7,7 +7,7 @@ import { WaterQualityBadge } from '../components/WaterQualityBadge.jsx';
 import { CrowdingBadge } from '../components/CrowdingBadge.jsx';
 import { BestTimePanel } from './BestTimePanel.jsx';
 import { eur, PRICE_SOURCE_LABELS, ACCOM_SOURCE_LABELS } from '../lib/format.js';
-import { ReceiptIcon, CalendarIcon, BedIcon, DiningIcon, CarIcon, InfoIcon } from '../components/Icons.jsx';
+import { ReceiptIcon, CalendarIcon, BedIcon, DiningIcon, CarIcon, InfoIcon, AlertIcon, LifestyleIcon } from '../components/Icons.jsx';
 import { PlaneIcon } from '../components/TransportIcons.jsx';
 import { carrierPairName } from '../lib/carriers.js';
 import { useI18n } from '../i18n/index.jsx';
@@ -15,12 +15,37 @@ import { useI18n } from '../i18n/index.jsx';
 // Sub-components of the destination detail panel (the cost-breakdown tab and
 // its pieces), lifted out of DetailPanel. Imports are trimmed to what these use.
 
-// Small underlined text-button, used for the outbound links under each cost
-// line (Airbnb, KAYAK, Skyscanner) and the "Adjust lifestyle" action.
-function TextLink({ href, onClick, children }) {
+/** The action at the foot of a cost group: verify this price with the people
+ *  who actually sell it, or change the assumption behind it. These used to be
+ *  small underlined text links, easy to scan straight past even though they
+ *  are the only way out of an estimate and into a real booking.
+ *
+ *  variant: 'primary'   filled - the canonical place to check this line
+ *           'secondary' outlined - a further comparison site
+ *           'action'    pill - an in-app action, no navigation
+ */
+function CostAction({ href, onClick, variant = 'primary', icon, children }) {
   const props = href ? { href, target: '_blank', rel: 'noreferrer' } : { onClick, type: 'button' };
   const Tag = href ? 'a' : 'button';
-  return <Tag className="detail-text-link" {...props}>{children}</Tag>;
+  return (
+    <Tag className={`cost-action is-${variant}`} {...props}>
+      {icon}
+      <span>{children}</span>
+      {href && <span className="cost-action-out" aria-hidden="true">↗</span>}
+    </Tag>
+  );
+}
+
+/** A caution inside a cost group (no flight on these dates, a vignette you
+ *  must buy before you drive). Amber and icon-led, because these are the lines
+ *  that cost money or block the trip if they're read as decoration. */
+function CostWarning({ children }) {
+  return (
+    <div className="cost-warning">
+      <AlertIcon size={14} />
+      <span>{children}</span>
+    </div>
+  );
 }
 
 function CostGroup({ icon, title, subtitle, subtotal, open, onToggle, infoButton, infoPanel, children }) {
@@ -170,9 +195,9 @@ export function BreakdownTab({ destination, breakdown, departDate, returnDate, c
         >
           {flyFellBack && (
             <>
-              <p className="cost-info-pop cost-fallback-note">
+              <CostWarning>
                 {t('detail.flyFallbackNote', { origin: originCity, city: destination.city })}
-              </p>
+              </CostWarning>
               <ViaAirportOptions
                 destination={destination}
                 data={data}
@@ -204,9 +229,9 @@ export function BreakdownTab({ destination, breakdown, departDate, returnDate, c
                 <GroundLine label={t('detail.tolls')} v={show(breakdown.driving.toll_total)} eur={eur} />
               )}
               {breakdown.driving.toll_notes?.length > 0 && (
-                <p className="cost-info-pop">
+                <CostWarning>
                   {t('detail.tollNotes', { notes: breakdown.driving.toll_notes.join(', ') })}
-                </p>
+                </CostWarning>
               )}
             </>
           ) : (
@@ -253,14 +278,14 @@ export function BreakdownTab({ destination, breakdown, departDate, returnDate, c
           <CarAdvisory lt={breakdown.local_transport} mode={breakdown.transport_mode} />
 
           <div className="cost-group-links">
-            {/* First link carries the full phrase, any further comparison site
-                is appended as a bare "or X" so the row stays scannable. */}
+            {/* First link carries the full phrase and the filled treatment, any
+                further comparison site follows as a quieter outlined button. */}
             {flightLinks.map((l, i) => (
-              <TextLink key={l.provider} href={l.href}>
+              <CostAction key={l.provider} href={l.href} variant={i === 0 ? 'primary' : 'secondary'}>
                 {i === 0
                   ? t('detail.checkFareOn', { provider: l.provider })
                   : t('detail.orCompareOn', { provider: l.provider })}
-              </TextLink>
+              </CostAction>
             ))}
           </div>
         </CostGroup>
@@ -299,7 +324,7 @@ export function BreakdownTab({ destination, breakdown, departDate, returnDate, c
                   departDate,
                   returnDate,
                 });
-                return carLink ? <TextLink href={carLink}>{t('detail.compareKayak')}</TextLink> : null;
+                return carLink ? <CostAction href={carLink}>{t('detail.compareKayak')}</CostAction> : null;
               })()}
             </div>
           </CostGroup>
@@ -348,7 +373,7 @@ export function BreakdownTab({ destination, breakdown, departDate, returnDate, c
                   returnDate,
                   groupSize: choices.group_size,
                 });
-                return airbnb ? <TextLink href={airbnb}>{t('detail.findAirbnb')}</TextLink> : null;
+                return airbnb ? <CostAction href={airbnb}>{t('detail.findAirbnb')}</CostAction> : null;
               })()}
             </div>
           </CostGroup>
@@ -380,30 +405,38 @@ export function BreakdownTab({ destination, breakdown, departDate, returnDate, c
             {g.clubbing > 0 && <GroundLine label={t('detail.clubNights')} v={show(groundGroup(g.clubbing))} eur={eur} />}
             {g.coffees > 0 && <GroundLine label={t('detail.coffees')} v={show(groundGroup(g.coffees))} eur={eur} rate={destination.costs?.coffee_eur} />}
             <GroundLine label={t('detail.groceries')}   v={show(groundGroup(g.groceries))} eur={eur} />
+            {/* This one control re-prices every line above it, so it reads as a
+                real button rather than a footnote. */}
             <div className="cost-group-links">
-              <TextLink onClick={onOpenLifestyle}>{t('detail.adjustLifestyle')}</TextLink>
+              <CostAction variant="action" onClick={onOpenLifestyle} icon={<LifestyleIcon size={13} />}>
+                {t('detail.adjustLifestyle')}
+              </CostAction>
             </div>
           </CostGroup>
         )}
 
         {/* ── Grand total: styled like the lifestyle panel's summary card, with
-              the per-person figure always visible and emphasised. ── */}
-        <div className="cost-total-card">
-          <div className="cost-total-main">
-            <span className="cost-total-label">
-              {t('detail.totalPerPerson')}
-              <small>{breakdown.nights === 1
-                ? t('detail.nightsEverythingOne', { n: breakdown.nights })
-                : t('detail.nightsEverythingMany', { n: breakdown.nights })}</small>
-            </span>
-            <span className="cost-total-val">{eur(breakdown.grand_total / group)}</span>
-          </div>
-          {group > 1 && (
-            <div className="cost-total-sub">
-              <span>{t('detail.wholeGroup', { n: group })}</span>
-              <span>{eur(breakdown.grand_total)}</span>
+              the per-person figure always visible and emphasised. It sticks to
+              the foot of the panel while the groups above are being read, so
+              the number the whole panel is explaining never scrolls away. ── */}
+        <div className="cost-total-sticky">
+          <div className="cost-total-card">
+            <div className="cost-total-main">
+              <span className="cost-total-label">
+                {t('detail.totalPerPerson')}
+                <small>{breakdown.nights === 1
+                  ? t('detail.nightsEverythingOne', { n: breakdown.nights })
+                  : t('detail.nightsEverythingMany', { n: breakdown.nights })}</small>
+              </span>
+              <span className="cost-total-val">{eur(breakdown.grand_total / group)}</span>
             </div>
-          )}
+            {group > 1 && (
+              <div className="cost-total-sub">
+                <span>{t('detail.wholeGroup', { n: group })}</span>
+                <span>{eur(breakdown.grand_total)}</span>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </>
