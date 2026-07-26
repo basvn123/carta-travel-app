@@ -9442,7 +9442,11 @@ input, select {
   cursor: pointer;
 }
 .day-stay-search .trip-add-btn:hover:not(:disabled) { background: #b3491b; }
-.day-stay-search .trip-add-btn:disabled { background: var(--rule); color: var(--paper); cursor: default; opacity: 1; }
+/* Before three characters are typed the button is disabled, and it used to
+   render paper text on a --rule fill: two close values that left "Find"
+   barely legible. A disabled control still has to be readable, so it sits on
+   the dimmer paper tone with muted-ink text (clearly inactive, still a word). */
+.day-stay-search .trip-add-btn:disabled { background: var(--paper-dim); color: var(--ink-mute); cursor: default; opacity: 1; }
 .day-stay-results {
   display: flex;
   flex-direction: column;
@@ -12837,6 +12841,25 @@ input, select {
   text-decoration: underline; cursor: pointer;
 }
 .chat-free { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 12px; }
+/* The final free-text step stacks: the input, then a full-width "Build my
+   route" as the clear primary action, then "Skip" as a quiet line of its own.
+   Build sitting inline next to a small Skip link read as two peers and muddied
+   which one finishes the flow. (Scoped so the town-picker search rows, which
+   also use .chat-free, keep their own layout.) */
+.chat-free-final { flex-direction: column; align-items: stretch; }
+/* In a column the input's flex-basis would size its HEIGHT (it was authored as
+   a row width), ballooning the box to 260px tall. Reset it to a normal field. */
+.chat-free-final .chat-free-input { flex: none; width: 100%; }
+.chat-free-final .chat-send {
+  width: 100%;
+  justify-content: center;
+  margin-top: 4px;
+}
+.chat-free-final .chat-skip {
+  margin-left: 0;
+  align-self: center;
+  padding: 4px 8px;
+}
 .chat-free-input {
   flex: 1 1 260px;
   border: 1px solid var(--rule);
@@ -12913,7 +12936,15 @@ input, select {
   .day-flow-q { font-size: 23px; }
   .day-flow-cards { grid-template-columns: 1fr; }
   .day-flow-step-label { display: none; }
-  .day-flow-step-dot { padding: 6px; }
+  /* With the label hidden the dot was a ~32px circle, under the 44px minimum
+     a thumb needs to hit a back-navigation target reliably. Square it up. */
+  .day-flow-step-dot { padding: 0; min-width: 44px; min-height: 44px; justify-content: center; }
+  /* The six popular cities stacked one-per-row pushed the map a full screen
+     down, so "tap a city on the map" pointed at something below the fold. Two
+     columns halves that stack and brings the map back up; the map already
+     carries the same cities as pins, so nothing is lost. */
+  .day-flow-suggest .day-flow-chips { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .day-flow-suggest .day-flow-chip { width: 100%; }
   .day-flow-next { width: 100%; }
   /* On a phone the card would be a border tight against the screen edge, so
      it drops its chrome and the step just uses the full width. */

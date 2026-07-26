@@ -276,7 +276,7 @@ export function CartaChatPlanner({
                     </button>
                   ))}
                 </div>
-                <div className="chat-free">
+                <div className="chat-free chat-free-final">
                   <input
                     className="chat-free-input"
                     type="text"
