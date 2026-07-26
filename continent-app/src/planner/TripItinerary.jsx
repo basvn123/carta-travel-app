@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { eur, fmtHours, flightTimes } from '../lib/format.js';
 import { TripExtras } from './TripExtras.jsx';
+import { ExpenseLedger } from './ExpenseLedger.jsx';
 import { loadTripExtras, persistTripExtras, subscribeDayPlanStore } from './dayPlanStore.js';
 import { flightReasonLabel, baggageLabel } from '../lib/trip_planner_pricing.js';
 import { googleMapsDirUrl } from '../lib/routing.js';
@@ -10,6 +11,8 @@ import { tripKml, downloadKml } from '../lib/kmlExport.js';
 import { tripIcs, downloadIcs } from '../lib/icsExport.js';
 import { buildTripShareUrl } from '../lib/shareLink.js';
 import { carrierName } from '../lib/carriers.js';
+import { groundLinkFor } from '../lib/groundLinks.js';
+import { BagCheck } from '../components/BagCheck.jsx';
 import { useI18n } from '../i18n/index.jsx';
 import { SparkIcon, TrainIcon, BusIcon, CarIcon, BedIcon, ReceiptIcon, ShareIcon, DownloadIcon, LuggageIcon, MapPinIcon, RouteIcon, CalendarIcon, LinkIcon, ChevronDownIcon } from '../components/Icons.jsx';
 import { PlaneIcon } from '../components/TransportIcons.jsx';
@@ -146,6 +149,27 @@ function AnchorTransferLeg({ leg, from, to, onMode }) {
           })}
         </div>
       )}
+    </div>
+  );
+}
+
+/** A curated secondary-hub note under a flight row: which named shuttle
+ *  actually bridges "Charleroi" and Brussels (or "Bergamo" and Milan), how
+ *  long it takes, how often it runs, and the buffer to plan around. Only
+ *  renders for airports in the curated table, so it never speculates. */
+function GroundLinkNote({ iata, dir }) {
+  const { t } = useI18n();
+  const gl = groundLinkFor(iata);
+  if (!gl) return null;
+  const freq = gl.everyMin ? t('itin.groundLinkEvery', { n: gl.everyMin }) : '';
+  return (
+    <div className="itin-groundlink">
+      <BusIcon size={11} />
+      <span>
+        {t(dir === 'to' ? 'itin.groundLinkTo' : 'itin.groundLinkFrom', {
+          airport: gl.airport, service: gl.service, hub: gl.hub, min: gl.minutes,
+        })}{freq}. {t('itin.groundLinkBuffer', { buffer: gl.bufferMin })}
+      </span>
     </div>
   );
 }
@@ -426,11 +450,15 @@ export function TripItinerary({
           {/* The journey starts with a flight - show it as part of the route,
               not only as a cost line in the breakdown. */}
           {flight?.combinable && (
-            <div className="itin-flight-row">
-              <PlaneIcon size={12} />
-              <span>{t('itin.fly')} <b>{flight.origin} → {flight.into_anchor}</b></span>
-              <small>{fmtFlightWhen(stopDetails[0]?.arriveDate, flight.into_time)}</small>
-            </div>
+            <>
+              <div className="itin-flight-row">
+                <PlaneIcon size={12} />
+                <span>{t('itin.fly')} <b>{flight.origin} → {flight.into_anchor}</b></span>
+                <small>{fmtFlightWhen(stopDetails[0]?.arriveDate, flight.into_time)}</small>
+              </div>
+              <GroundLinkNote iata={flight.origin} dir="to" />
+              <GroundLinkNote iata={flight.into_anchor} dir="from" />
+            </>
           )}
           {flight?.own && (
             <div className="itin-flight-row">
@@ -490,11 +518,14 @@ export function TripItinerary({
             />
           )}
           {flight?.combinable && (
-            <div className="itin-flight-row">
-              <PlaneIcon size={12} />
-              <span>{t('itin.flyHome')} <b>{flight.out_anchor} → {flight.origin}</b></span>
-              <small>{fmtFlightWhen(stopDetails[stopDetails.length - 1]?.departDate, flight.out_of_time)}</small>
-            </div>
+            <>
+              <GroundLinkNote iata={flight.out_anchor} dir="to" />
+              <div className="itin-flight-row">
+                <PlaneIcon size={12} />
+                <span>{t('itin.flyHome')} <b>{flight.out_anchor} → {flight.origin}</b></span>
+                <small>{fmtFlightWhen(stopDetails[stopDetails.length - 1]?.departDate, flight.out_of_time)}</small>
+              </div>
+            </>
           )}
           {flight?.own && (
             <div className="itin-flight-row">
@@ -691,6 +722,8 @@ export function TripItinerary({
                   </BreakdownSection>
                 )}
 
+                <BagCheck flight={flight} />
+
                 <TransferModePicker
                   flightTransfer={flightTransfer}
                   anchorIn={anchorIn}
@@ -741,6 +774,10 @@ export function TripItinerary({
           {/* Bookings, notes and the packing list: the trip's life admin,
               saved with the plan (and synced to the account when signed in). */}
           <TripExtras rows={bookingRows} extras={extras} onChange={saveExtras} />
+
+          {/* Who paid for what, in any currency, and who owes whom: the
+              group's shared-spend book, on the same save/sync rails. */}
+          <ExpenseLedger extras={extras} onChange={saveExtras} groupSize={groupSize} />
 
           {/* Take the trip with you: share it, keep a PDF copy, or open the
               route straight in Google Maps. The Maps link is built from city

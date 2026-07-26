@@ -10,6 +10,7 @@ import { eur, PRICE_SOURCE_LABELS, ACCOM_SOURCE_LABELS } from '../lib/format.js'
 import { ReceiptIcon, CalendarIcon, BedIcon, DiningIcon, CarIcon, InfoIcon, AlertIcon, LifestyleIcon } from '../components/Icons.jsx';
 import { PlaneIcon } from '../components/TransportIcons.jsx';
 import { carrierPairName } from '../lib/carriers.js';
+import { BagCheck } from '../components/BagCheck.jsx';
 import { useI18n } from '../i18n/index.jsx';
 
 // Sub-components of the destination detail panel (the cost-breakdown tab and
@@ -272,6 +273,16 @@ export function BreakdownTab({ destination, breakdown, departDate, returnDate, c
                   <span className="val">{eur(show(breakdown.transfer_total))}</span>
                 </div>
               )}
+              {/* The chosen tier as this route's airlines' actual bag rules:
+                  Ryanair and Wizz do not agree on a centimetre, and the gate
+                  fee is where that surprise gets expensive. */}
+              <BagCheck flight={{
+                combinable: true,
+                into_carrier: destination.routes?.[breakdown.origin]?.outbound_carrier?.[departDate],
+                out_of_carrier: destination.routes?.[breakdown.origin]?.return_carrier?.[returnDate],
+                baggage: choices.baggage_key,
+              }}
+              />
             </>
           )}
 

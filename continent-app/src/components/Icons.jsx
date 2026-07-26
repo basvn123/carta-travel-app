@@ -644,3 +644,12 @@ export function LuggageIcon({ size = 16, className = '' }) {
     </Glyph>
   );
 }
+
+export function ClockIcon({ size = 15, className = '' }) {
+  return (
+    <Glyph size={size} className={className} label="Time">
+      <circle cx="12" cy="12" r="8.5" />
+      <path d="M12 7.5V12l3 2" />
+    </Glyph>
+  );
+}

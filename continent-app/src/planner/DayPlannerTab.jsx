@@ -31,9 +31,11 @@ import { buildAiCandidates, requestAiDayPlan, splitAiPlan } from './aiDayPlan.js
 import { buildCityCandidates, requestCitySuggestion } from './aiCitySuggest.js';
 import { openDayPlanPdf } from './dayPlanPdf.js';
 import { openDayPlanKml } from './dayPlanKml.js';
+import { openDayPlanIcs } from './dayPlanIcs.js';
 import { MODE_META, DayTripTransport } from './DayTripTransport.jsx';
 import { CartaGuidePanel } from './CartaGuidePanel.jsx';
 import { estimateWalkMinutes, fmtDur } from './dayFormat.js';
+import { buildDaySchedule, fmtClock, GAP_SUGGEST_MIN } from './daySchedule.js';
 import { searchFold } from '../lib/textSearch.js';
 import { Collapsible, AssignedRow, ActivitySection, ActivityRow } from './DayActivityRows.jsx';
 import {
@@ -46,6 +48,7 @@ import {
   SparkIcon, StarIcon, InfoIcon, MountainIcon, ShareIcon, MapPinIcon,
   BedIcon, BookmarkIcon, DownloadIcon, RouteIcon,
   FerryIcon, PencilIcon, SearchIcon, HomeIcon, CheckIcon, CalendarIcon,
+  ClockIcon, CoffeeIcon,
 } from '../components/Icons.jsx';
 
 // How the explore search & "Let Carta guide you" name each pin category.
@@ -958,10 +961,17 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
   }, [dayRoadKey]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Ride time per mode from a routed road leg: cars near the routed time
-  // (plus parking), buses the same road with stops and a wait, trains their
-  // own (rail-speed) model. Shared by the card and the timeline's ride leg.
+  // plus a dynamic parking padding, buses the same road with stops and a
+  // wait, trains their own (rail-speed) model. Shared by the card and the
+  // timeline's ride leg.
   const rideMinutes = (mode, roadKm, drivingMin) => {
-    if (mode === 'car') return Math.max(5, Math.round(drivingMin * 1.08 + 5));
+    if (mode === 'car') {
+      // Raw routed minutes lie: nobody teleports from the wheel to the sight.
+      // Pad with 15% of the drive (floor 5, cap 20) for parking, paying and
+      // walking in, so a 60-minute drive honestly reads as ~69.
+      const parkPad = Math.min(20, Math.max(5, Math.round(drivingMin * 0.15)));
+      return Math.max(5, Math.round(drivingMin + parkPad));
+    }
     if (mode === 'bus') return Math.max(10, Math.round(drivingMin * 1.55 + 12));
     return Math.max(10, Math.round((roadKm / (roadKm < 60 ? 68 : 95)) * 60 + 15));
   };
@@ -1278,6 +1288,29 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
 
   const gmapsUrl = googleMapsDirUrl(walkPins, 'walking');
 
+  // The clock behind the timeline: per-kind visit estimates plus the real
+  // (or estimated) legs give every stop an arrival time, slot a lunch pause
+  // into the first opening past 12:30, and expose how much of the day is
+  // honestly still unscheduled. Cheap (a handful of stops), so it simply
+  // recomputes with the render it describes.
+  const schedule = assignedItems.length
+    ? buildDaySchedule({
+      items: assignedItems,
+      legMin: (i) => walkLeg(i)?.min ?? null,
+      dwellMin: (it) => dwellMinutes(poiKind(it), visitFactor),
+      stayLegMin: stayLeg?.min || 0,
+    })
+    : null;
+
+  // Open-time ideas: the strongest unpicked walkable places whose visit still
+  // fits in the leftover. One tap adds them; in auto mode the walking order
+  // re-optimizes like any other add.
+  const gapIdeas = (schedule && schedule.freeMin >= GAP_SUGGEST_MIN)
+    ? mapDeck
+      .filter(({ item }) => dwellMinutes(poiKind(item), visitFactor) + 15 <= schedule.freeMin)
+      .slice(0, 3)
+    : [];
+
   // One timeline connector's label. A ferry leg (a lake/sea crossing OSRM
   // routes over) is called out as a ferry with its own icon, never presented
   // as a walk across the water. A ride leg (stay beyond walking range) wears
@@ -1375,6 +1408,16 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
     if (ok) {
       setSaveToast(t('export.myMapsHint'));
       window.setTimeout(() => setSaveToast(''), 9000);
+    }
+  };
+
+  // Every planned day as timed calendar blocks, spoken in the same clock the
+  // timeline shows, so the plan lands in Google/Apple/Outlook calendars.
+  const downloadIcsFile = () => {
+    const ok = openDayPlanIcs({ stop, stops, assignments, plan, visitFactor, itemsForStop });
+    if (ok) {
+      setSaveToast(t('export.calendarHint'));
+      window.setTimeout(() => setSaveToast(''), 6000);
     }
   };
 
@@ -3129,6 +3172,7 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
                     {stayLeg.ride && (
                       <small className="day-timeline-ride-note">
                         Park up or hop off; from here today's route is on foot.
+                        {stayLeg.mode === 'car' ? ' The estimate already includes parking and walking in.' : ''}
                       </small>
                     )}
                   </div>
@@ -3139,10 +3183,20 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
                       item={it}
                       index={i}
                       last={i === assignedItems.length - 1}
+                      when={schedule ? fmtClock(schedule.rows[i].arriveMin) : null}
+                      dwellLabel={fmtDur(dwellMinutes(poiKind(it), visitFactor))}
                       onMoveUp={() => moveAssigned(i, -1)}
                       onMoveDown={() => moveAssigned(i, 1)}
                       onRemove={() => toggleActivity(dayAssignedIdx[i])}
                     />
+                    {schedule?.lunch?.afterIndex === i && (
+                      <div className="day-timeline-walk day-timeline-lunch">
+                        <CoffeeIcon size={11} /> {t('day.lunchStop', {
+                          start: fmtClock(schedule.lunch.startMin),
+                          end: fmtClock(schedule.lunch.endMin),
+                        })}
+                      </div>
+                    )}
                     {i < assignedItems.length - 1 && (() => {
                       const leg = walkLeg(i);
                       return (
@@ -3158,6 +3212,28 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
                 <p className="day-route-total">
                   Full route: {route.km.toFixed(1)} km, about {route.min} min {route.hasFerry ? 'of walking and ferry rides' : 'of walking'}.
                 </p>
+              )}
+              {schedule && (
+                <p className="day-route-total day-done-line">
+                  <ClockIcon size={11} /> {t('day.doneAround', { time: fmtClock(schedule.endMin) })}
+                  {schedule.freeMin >= GAP_SUGGEST_MIN && <> {t('day.openTime', { dur: fmtDur(schedule.freeMin) })}</>}
+                </p>
+              )}
+              {gapIdeas.length > 0 && (
+                <div className="day-scenic day-gap-ideas">
+                  <div className="day-scenic-title">
+                    <ClockIcon size={11} /> {t('day.gapTitle', { dur: fmtDur(schedule.freeMin) })}
+                  </div>
+                  {gapIdeas.map(({ item, idx }) => (
+                    <button key={idx} className="day-scenic-row" onClick={() => toggleActivity(idx)} title={t('day.gapAddTitle')}>
+                      <span className="day-scenic-text">
+                        <b>{item.name}</b>
+                        <small>{poiKind(item)}, {t('day.gapFits', { dur: fmtDur(dwellMinutes(poiKind(item), visitFactor)) })}</small>
+                      </span>
+                      <span className="day-activity-add">+</span>
+                    </button>
+                  ))}
+                </div>
               )}
 
               {pinnedWalksBlock}
@@ -3196,6 +3272,9 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
                 </button>
                 <button className="day-action-btn" onClick={downloadKmlFile} title={t('export.myMapsTitle')}>
                   <RouteIcon size={14} /> {t('export.myMaps')}
+                </button>
+                <button className="day-action-btn" onClick={downloadIcsFile} title={t('export.calendarTitle')}>
+                  <CalendarIcon size={14} /> {t('export.calendar')}
                 </button>
                 <button className="day-action-btn" onClick={shareDay}>
                   <ShareIcon size={14} /> {shareState === 'copied' ? t('day.copied') : t('day.share')}

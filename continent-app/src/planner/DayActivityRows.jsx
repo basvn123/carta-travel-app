@@ -86,7 +86,7 @@ export function Collapsible({ title, titleIcon, count, summary, defaultOpen = fa
   );
 }
 
-export function AssignedRow({ item, index, last, onMoveUp, onMoveDown, onRemove }) {
+export function AssignedRow({ item, index, last, when, dwellLabel, onMoveUp, onMoveDown, onRemove }) {
   const [infoOpen, setInfoOpen] = useState(false);
   return (
     <div className="day-timeline-row">
@@ -94,6 +94,11 @@ export function AssignedRow({ item, index, last, onMoveUp, onMoveDown, onRemove 
       <div className="day-assigned-row day-assigned-with-info">
         {item.img && <span className="day-thumb" style={{ backgroundImage: `url(${item.img})` }} />}
         <div className="day-assigned-body">
+          {when && (
+            <span className="day-assigned-when">
+              {when}{dwellLabel ? `, ${dwellLabel}` : ''}
+            </span>
+          )}
           <RowTitle item={item} must={isMustSee(item)} />
           <span className="day-assigned-kind">
             {poiKind(item)}

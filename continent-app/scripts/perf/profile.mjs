@@ -67,8 +67,10 @@ async function measure({ synthetic, throttle }) {
   const tMap = Date.now() - t0;
   const loadLongTasks = await page.evaluate(() => Math.round(window.__lt.reduce((a, b) => a + b, 0)));
 
-  // Clear the fare notice so interactions are not blocked by the overlay.
-  try { await page.getByRole('button', { name: 'Got it' }).click({ timeout: 5000 }); } catch { /* absent */ }
+  // Clear the first-visit welcome landing (formerly the fare notice) so
+  // interactions are not blocked by the overlay.
+  try { await page.getByRole('button', { name: 'Explore the map' }).click({ timeout: 5000 }); } catch { /* absent */ }
+  try { await page.getByRole('button', { name: 'Got it' }).click({ timeout: 2000 }); } catch { /* absent */ }
 
   // Interaction 1: free-text search narrowing the whole set (180ms debounce
   // included in the raw number; reported with it subtracted).

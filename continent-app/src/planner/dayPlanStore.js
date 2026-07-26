@@ -190,7 +190,7 @@ export function persistAssignments(planId, assignments, { remote = false } = {})
 
 /* ---- trip extras: bookings, notes, packing list ---- */
 
-const EMPTY_EXTRAS = { bookings: {}, notes: '', checklist: [] };
+const EMPTY_EXTRAS = { bookings: {}, notes: '', checklist: [], expenses: [], people: [] };
 
 /** Always returns the full shape, never null: callers render straight off it. */
 export function loadTripExtras(planId) {
@@ -202,6 +202,9 @@ export function loadTripExtras(planId) {
       bookings: raw.bookings && typeof raw.bookings === 'object' ? raw.bookings : {},
       notes: typeof raw.notes === 'string' ? raw.notes : '',
       checklist: Array.isArray(raw.checklist) ? raw.checklist : [],
+      // Group expense ledger: shared spends + custom traveller names.
+      expenses: Array.isArray(raw.expenses) ? raw.expenses : [],
+      people: Array.isArray(raw.people) ? raw.people : [],
     };
   } catch {
     return { ...EMPTY_EXTRAS };

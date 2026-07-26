@@ -8,6 +8,7 @@ import { ResultsList } from './browse/ResultsList.jsx';
 import { ComparePanel } from './browse/ComparePanel.jsx';
 import { InfoIcon } from './components/Icons.jsx';
 import Logo from './components/Logo.jsx';
+import { WelcomeLanding } from './components/WelcomeLanding.jsx';
 
 // A failed dynamic import is almost always a stale bundle: the client is still
 // running an old index.html whose chunk hashes no longer exist on the server
@@ -133,9 +134,14 @@ function TravelApp() {
   }, [user]);
 
   // Which top-level section is showing: Map (the browse/search experience),
-  // Trip planner, or Day planner. Always open on the map, regardless of which
-  // tab was showing on the last visit.
-  const [activeTab, setActiveTab] = useState('map');
+  // Trip planner, or Day planner. Plain revisits always open on the map (the
+  // localStorage mirror's remembered tab is deliberately ignored), but a link
+  // that carries ?tab= in the actual URL is someone sharing a specific view,
+  // so honor it: before this, `tab` was encoded and decoded yet never read,
+  // and every shared planner link opened on the map.
+  const urlTab = typeof window !== 'undefined' && !!window.location.search
+    && ['trip', 'day'].includes(init.activeTab) ? init.activeTab : null;
+  const [activeTab, setActiveTab] = useState(urlTab || 'map');
 
   const [selectedId, setSelectedId] = useState(init.selectedId ?? null);
 
@@ -159,7 +165,7 @@ function TravelApp() {
 
   // Planner tabs mount on first visit and then stay alive (hidden) so a quick
   // look at another tab never wipes an in-progress plan.
-  const [visitedTabs, setVisitedTabs] = useState(() => new Set(['map']));
+  const [visitedTabs, setVisitedTabs] = useState(() => new Set(['map', urlTab || 'map']));
   useEffect(() => {
     setVisitedTabs((prev) => (prev.has(activeTab) ? prev : new Set([...prev, activeTab])));
   }, [activeTab]);
@@ -230,32 +236,42 @@ function TravelApp() {
     try { return localStorage.getItem('carta.mapGuideDone') === '1'; } catch { return false; }
   });
 
-  // Greet the FIRST visit with the "built for Ryanair budget travel" notice so
-  // it's clear other airlines aren't in the data yet, then stay quiet: the
-  // Ryanair context remains available via the persistent "start here" guide
-  // pill and the per-price confidence pills. Persisted so a returning visitor
-  // isn't re-interrupted on every map visit.
-  const [fareNoticeDismissed, setFareNoticeDismissed] = useState(() => {
-    try { return localStorage.getItem('carta.fareNoticeSeen') === '1'; } catch { return false; }
+  // Greet the FIRST visit with the welcome landing: value statement, an
+  // editable preview of the trip the URL already describes, the three
+  // logistics features that set the planner apart, and the "built for
+  // Europe's budget airlines" fare note (which used to be its own modal,
+  // carta.fareNoticeSeen; that key still counts as seen so returning
+  // visitors aren't re-interrupted). Persisted, shown once.
+  const [welcomeDismissed, setWelcomeDismissed] = useState(() => {
+    try {
+      return localStorage.getItem('carta.welcomeSeen') === '1'
+        || localStorage.getItem('carta.fareNoticeSeen') === '1';
+    } catch { return false; }
   });
-  const dismissFareNotice = () => {
-    setFareNoticeDismissed(true);
-    try { localStorage.setItem('carta.fareNoticeSeen', '1'); } catch { /* private mode */ }
+  const dismissWelcome = () => {
+    setWelcomeDismissed(true);
+    try {
+      localStorage.setItem('carta.welcomeSeen', '1');
+      localStorage.setItem('carta.fareNoticeSeen', '1');
+    } catch { /* private mode */ }
   };
+  // Nudges TripPlannerTab to open the guided wizard (welcome CTA): bumping the
+  // counter is the signal, the tab consumes it via an effect.
+  const [wizardLaunch, setWizardLaunch] = useState(0);
 
-  // Escape closes the top-most dismissable surface (fare notice, then the
+  // Escape closes the top-most dismissable surface (welcome landing, then the
   // shared-trip offer, then the destination detail). Gives keyboard users a way
   // out that the click-outside backdrop alone never provided.
   useEffect(() => {
     const onKey = (e) => {
       if (e.key !== 'Escape') return;
-      if (!fareNoticeDismissed) { dismissFareNotice(); return; }
+      if (!welcomeDismissed) { dismissWelcome(); return; }
       if (sharedTrip) { setSharedTrip(null); return; }
       if (selectedId) { setSelectedId(null); return; }
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [fareNoticeDismissed, sharedTrip, selectedId]);
+  }, [welcomeDismissed, sharedTrip, selectedId]);
 
   // Let the user collapse the destinations list to give the map the full width.
   // On phones (<=768px) it starts collapsed so the map opens as big as possible;
@@ -550,22 +566,29 @@ function TravelApp() {
         </div>
       )}
 
-      {/* Every open: the fares-source notice, front and centre over the map.
+      {/* First visit: the welcome landing, front and centre over the map.
           It waits while a shared-trip offer is on screen (one dialog at a time,
           and the deep link is what the visitor came for). */}
-      {activeTab === 'map' && !fareNoticeDismissed && !sharedTrip && (
-        <div className="guide-overlay fare-notice-overlay" onClick={dismissFareNotice}>
-          <div className="guide-modal fare-notice" onClick={(e) => e.stopPropagation()}>
-            <h2 className="guide-title">{t('fareNotice.title')}</h2>
-            <p className="fare-notice-text">
-              {t('fareNotice.body1')}
-            </p>
-            <p className="fare-notice-text">
-              {t('fareNotice.body2')}
-            </p>
-            <button className="guide-next fare-notice-btn" onClick={dismissFareNotice}>{t('common.gotIt')}</button>
-          </div>
-        </div>
+      {activeTab === 'map' && !welcomeDismissed && !sharedTrip && (
+        <WelcomeLanding
+          data={data}
+          choices={choices}
+          setChoices={setChoices}
+          onChangeOrigin={setOrigin}
+          departDate={departDate}
+          setDepartDate={setDepartDate}
+          returnDate={returnDate}
+          setReturnDate={setReturnDate}
+          dateBounds={dateBounds}
+          reachableCount={pricedAll.length}
+          totalCount={Object.keys(data.destinations).length}
+          onExplore={dismissWelcome}
+          onPlanTrip={() => {
+            dismissWelcome();
+            setActiveTab('trip');
+            setWizardLaunch((n) => n + 1);
+          }}
+        />
       )}
 
       {/* The map tab gets the same keep-alive as the planners: destroying it
@@ -702,6 +725,7 @@ function TravelApp() {
               onOpenPlanConsumed={() => setPendingTripPlanId(null)}
               openSharedTrip={pendingSharedTrip}
               onSharedTripConsumed={() => setPendingSharedTrip(null)}
+              openWizardSignal={wizardLaunch}
               origin={choices.origin}
               onChangeOrigin={setOrigin}
               onPlanDay={(target) => {

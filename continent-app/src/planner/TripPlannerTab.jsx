@@ -199,7 +199,7 @@ function Suggestions({ suggestions, onPick }) {
   );
 }
 
-export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, openPlanId, onOpenPlanConsumed, origin, onChangeOrigin, onPlanDay, openSharedTrip, onSharedTripConsumed }) {
+export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, openPlanId, onOpenPlanConsumed, origin, onChangeOrigin, onPlanDay, openSharedTrip, onSharedTripConsumed, openWizardSignal }) {
   const { t } = useI18n();
   const countryInsights = useCountryInsights();
   const tp = useTripPlanner(data, countryInsights);
@@ -245,6 +245,16 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
     mq.addEventListener('change', onChange);
     return () => mq.removeEventListener('change', onChange);
   }, []);
+
+  // The welcome landing's "Plan a full trip" CTA lands here: the App shell
+  // bumps this counter, and the guided wizard opens without the visitor having
+  // to find the launcher card first. 0 = never asked.
+  useEffect(() => {
+    if (openWizardSignal) {
+      setWizardOpen(true);
+      setSheetOpen(true);
+    }
+  }, [openWizardSignal]);
 
   const persistHeight = (h) => {
     try { localStorage.setItem(SHEET_H_KEY, String(Math.round(h))); } catch { /* private mode */ }

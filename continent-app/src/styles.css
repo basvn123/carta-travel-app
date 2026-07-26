@@ -4,23 +4,26 @@
    ========================================================================== */
 
 :root {
-  /* Palette - warm paper, deep ink, single rust accent */
-  --paper:        #f5f1e8;
-  --paper-dim:    #ebe6d8;
-  --ink:          #1a1a1a;
-  --ink-soft:     #4a4a48;
-  --ink-mute:     #8a8780;
-  --rule:         #c4bea9;
-  --accent:       #c8501e;       /* rust orange */
-  --accent-soft:  #e07a4f;
-  --accent-bg:    #f3d9c8;
-  --green:        #4a6a3a;       /* used sparingly for "good deal" */
-  --shadow-1:     0 1px 2px rgba(26, 26, 26, 0.06), 0 4px 12px rgba(26, 26, 26, 0.04);
-  --shadow-2:     0 4px 16px rgba(26, 26, 26, 0.10), 0 12px 32px rgba(26, 26, 26, 0.08);
+  /* Palette - warm alabaster canvas, deep slate ink, terracotta accent */
+  --paper:        #f8f6f0;
+  --paper-dim:    #efece2;
+  --ink:          #0f172a;
+  --ink-soft:     #414b5e;
+  --ink-mute:     #7d8393;
+  --rule:         #ccc7b8;
+  --accent:       #e05a47;       /* terracotta */
+  --accent-soft:  #e97f6b;
+  --accent-bg:    #f7dcd4;
+  --green:        #4a6a3a;       /* text-safe green for "good deal" copy */
+  --status-success: #10b981;     /* indicator-only green: compliance ticks, open-now dots */
+  --bg-card:      #ffffff;
+  --shadow-1:     0 1px 2px rgba(15, 23, 42, 0.06), 0 4px 12px rgba(15, 23, 42, 0.04);
+  --shadow-2:     0 4px 16px rgba(15, 23, 42, 0.10), 0 12px 32px rgba(15, 23, 42, 0.08);
+  --shadow-card:  0 4px 20px rgba(15, 23, 42, 0.06);
 
   /* Type */
   --display:      'Fraunces', 'Iowan Old Style', Georgia, serif;
-  --ui:           'Inter Tight', system-ui, -apple-system, sans-serif;
+  --ui:           'Plus Jakarta Sans', 'Inter Tight', system-ui, -apple-system, sans-serif;
   --mono:         'JetBrains Mono', 'SF Mono', Menlo, monospace;
 
   /* Layout */
@@ -1350,6 +1353,121 @@ input, select {
 .fare-notice-text { font-size: 13.5px; line-height: 1.6; color: var(--ink-soft); margin: 10px 0 0; }
 .fare-notice-text b { color: var(--ink); }
 .fare-notice-btn { margin-top: 18px; width: 100%; }
+
+/* ───────── First-visit welcome landing ───────── */
+
+.welcome-modal {
+  width: min(100%, 640px);
+  padding: 26px 26px 22px;
+  overflow-y: auto;
+}
+.welcome-brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.welcome-title { margin: 0; }
+.welcome-sub {
+  margin: 4px 0 0;
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--ink-soft);
+}
+.welcome-trip {
+  margin-top: 18px;
+  padding: 14px 16px 12px;
+  background: var(--bg-card);
+  border: 1px solid var(--rule);
+  border-radius: 14px;
+  box-shadow: var(--shadow-card);
+}
+.welcome-trip-head {
+  font-family: var(--mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--ink-mute);
+  margin-bottom: 10px;
+}
+.welcome-trip-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 16px;
+  align-items: flex-end;
+}
+.welcome-field { display: flex; flex-direction: column; gap: 4px; }
+.welcome-field .filter-label { font-size: 10.5px; }
+/* The origin popover is right-aligned to its pill; the field sits first in the
+   row, so give it room and keep the popover inside the card. */
+.welcome-field-origin .origin-pop { right: auto; left: 0; }
+.welcome-live {
+  margin: 12px 0 0;
+  font-size: 12.5px;
+  color: var(--ink-soft);
+}
+.welcome-live-nights { font-weight: 600; color: var(--ink); margin-right: 4px; }
+.welcome-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-top: 16px;
+}
+.welcome-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px 12px 11px;
+  background: var(--bg-card);
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+}
+.welcome-card-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px; height: 30px;
+  border-radius: 9px;
+  background: var(--accent-bg);
+  color: var(--accent);
+  flex-shrink: 0;
+}
+.welcome-card b { font-size: 12.5px; line-height: 1.3; display: block; }
+.welcome-card p {
+  margin: 3px 0 0;
+  font-size: 11.5px;
+  line-height: 1.5;
+  color: var(--ink-soft);
+}
+.welcome-fares {
+  margin: 14px 0 0;
+  font-size: 11.5px;
+  line-height: 1.55;
+  color: var(--ink-mute);
+}
+.welcome-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+  align-items: center;
+}
+.welcome-cta { flex: 1; }
+.welcome-secondary {
+  flex: 1;
+  padding: 11px 16px;
+  border-radius: 10px;
+  border: 1px solid var(--rule);
+  background: var(--bg-card);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.welcome-secondary:hover { border-color: var(--accent); color: var(--accent); }
+@media (max-width: 768px) {
+  .welcome-cards { grid-template-columns: 1fr; }
+  .welcome-card { flex-direction: row; align-items: flex-start; }
+  .welcome-actions { flex-direction: column-reverse; }
+  .welcome-cta, .welcome-secondary { width: 100%; }
+}
 
 /* "Open this shared trip?" dialog (a trip arriving via a share link). */
 .share-trip-modal { max-width: 420px; padding: 26px 26px 22px; }
@@ -2933,6 +3051,34 @@ input, select {
   color: var(--ink-mute);
   padding: 6px 0 6px 68px;
 }
+
+/* Clock chip on every planned stop: arrival time + visit estimate, so the
+   timeline reads as a schedule and not just an ordered list. */
+.day-assigned-when {
+  display: block;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.05em;
+  color: var(--ink-mute);
+  margin-bottom: 1px;
+}
+
+/* Lunch pause slotted into the first opening past 12:30. */
+.day-timeline-lunch {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--accent);
+}
+
+/* "Done around 16:10" + open-time note under the route total. */
+.day-done-line {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.day-done-line svg { flex: none; }
 
 /* A ferry leg (lake/sea crossing) - flagged so it never reads as a walk. */
 .day-timeline-ferry {
@@ -7659,6 +7805,51 @@ input, select {
 .extras-check-row.done .extras-check-text { color: var(--ink-mute); text-decoration: line-through; }
 .extras-check-add { display: flex; gap: 6px; margin-top: 8px; align-items: center; }
 .extras-check-add .extras-add-btn { margin-top: 0; white-space: nowrap; }
+
+/* ── Group expense ledger ── */
+.exp-ledger { margin-top: 4px; }
+.exp-people { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+.exp-person { flex: 1 1 110px; min-width: 0; }
+.exp-row {
+  display: flex; align-items: center; gap: 8px;
+  padding: 6px 0;
+  border-bottom: 1px dashed var(--rule);
+}
+.exp-row-main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.exp-row-main b { font-size: 12.5px; }
+.exp-row-main small { font-size: 10.5px; color: var(--ink-mute); }
+.exp-row-amt { font-family: var(--mono); font-size: 12px; white-space: nowrap; }
+.exp-add { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; align-items: center; }
+.exp-desc { flex: 2 1 150px; min-width: 0; }
+.exp-cur, .exp-payer { flex: 0 0 auto; }
+.exp-add .extras-add-btn { margin-top: 0; white-space: nowrap; }
+.exp-sharers {
+  flex-basis: 100%;
+  display: flex; flex-wrap: wrap; gap: 5px; align-items: center;
+}
+.exp-sharers-lbl { font-size: 10.5px; color: var(--ink-mute); }
+.exp-sharer-chip {
+  padding: 3px 9px; border-radius: 999px;
+  border: 1px solid var(--rule);
+  font-size: 11px; color: var(--ink-mute);
+  background: transparent;
+}
+.exp-sharer-chip.on {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-bg);
+}
+.exp-balances {
+  margin-top: 10px;
+  padding: 10px 12px;
+  background: var(--bg-card);
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+}
+.exp-total { font-size: 12px; font-weight: 700; color: var(--ink); }
+.exp-settle { margin-top: 4px; font-size: 12px; color: var(--ink-soft); }
+.exp-square { color: var(--green); }
+.exp-rate-note { margin-top: 6px; font-size: 10px; color: var(--ink-mute); }
 .saved-card-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
 .saved-card-title {
   font-size: 13.5px;
@@ -8225,6 +8416,38 @@ input, select {
 .trip-leg-mode small { font-family: var(--mono); font-size: 10px; color: var(--ink-mute); }
 .trip-leg-mode.on { border-color: var(--accent); background: var(--accent-bg); }
 .trip-leg-note { font-size: 11.5px; color: var(--ink-soft); line-height: 1.45; margin: 4px 0; }
+
+/* Bag check: the chosen tier as each airline's real allowance + gate fee. */
+.bag-check {
+  margin: 10px 0 4px;
+  padding: 10px 12px;
+  background: var(--bg-card);
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+}
+.bag-check-title {
+  display: flex; align-items: center; gap: 5px;
+  font-size: 11px; font-weight: 700; color: var(--ink);
+  margin-bottom: 5px;
+}
+.bag-check-line {
+  display: flex; align-items: flex-start; gap: 6px;
+  margin: 4px 0 0;
+  font-size: 11.5px; line-height: 1.5; color: var(--ink-soft);
+}
+.bag-check-line svg { flex: none; margin-top: 3px; }
+.bag-check-ok { color: var(--status-success); }
+.bag-check-warn { color: var(--ink-soft); }
+.bag-check-warn svg { color: var(--accent); }
+
+/* Curated secondary-hub shuttle note under a flight row. */
+.itin-groundlink {
+  display: flex; align-items: flex-start; gap: 6px;
+  padding: 2px 0 4px 24px;
+  font-size: 10.5px; line-height: 1.5;
+  color: var(--ink-mute);
+}
+.itin-groundlink svg { flex: none; margin-top: 2px; }
 
 /* Airport-transfer mode picker (how you get from the plane to your stay). */
 .transfer-picker { margin: 6px 0 2px; }
