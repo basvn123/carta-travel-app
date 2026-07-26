@@ -7613,13 +7613,14 @@ input, select {
   margin: 0 0 12px;
   line-height: 1.5;
 }
+/* No overflow clipping here: the actions menu opens out of the card, so the
+   footer strip rounds its own bottom corners instead. */
 .saved-card {
   display: flex;
   flex-direction: column;
   border: 1px solid var(--rule);
   border-radius: 14px;
   background: var(--bg-card);
-  overflow: hidden;
   transition: border-color .15s, box-shadow .15s, background .15s;
 }
 .saved-card:hover { border-color: var(--ink-soft); box-shadow: var(--shadow-1); }
@@ -7953,6 +7954,7 @@ input, select {
   padding: 10px 14px;
   border: none;
   border-top: 1px solid var(--rule);
+  border-radius: 0 0 13px 13px;
   background: var(--paper);
   font-family: var(--ui);
   font-size: 12.5px;

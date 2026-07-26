@@ -597,6 +597,29 @@ export function PencilIcon({ size = 15, className = '' }) {
   );
 }
 
+/* The quiet "more" affordance on a card: one dot row instead of a row of
+   competing buttons, so the card's own tap target stays the loud thing. */
+export function MoreIcon({ size = 15, className = '' }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" className={className} role="img" aria-label="More">
+      <circle cx="5.5" cy="12" r="1.7" fill="currentColor" />
+      <circle cx="12" cy="12" r="1.7" fill="currentColor" />
+      <circle cx="18.5" cy="12" r="1.7" fill="currentColor" />
+    </svg>
+  );
+}
+
+export function TrashIcon({ size = 15, className = '' }) {
+  return (
+    <Glyph size={size} className={className} label="Remove">
+      <path d="M4.5 6.5h15" />
+      <path d="M9.5 6.5V5a1.5 1.5 0 0 1 1.5-1.5h2A1.5 1.5 0 0 1 14.5 5v1.5" />
+      <path d="M6.5 6.5 7.4 19a1.5 1.5 0 0 0 1.5 1.4h6.2a1.5 1.5 0 0 0 1.5-1.4l.9-12.5" />
+      <path d="M10.5 10v6.5M13.5 10v6.5" />
+    </Glyph>
+  );
+}
+
 export function SearchIcon({ size = 15, className = '' }) {
   return (
     <Glyph size={size} className={className} label="Search">

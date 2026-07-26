@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useAuth } from './AuthContext.jsx';
 import { fetchSavedTrips, deleteTrip } from './tripStorage.js';
 import { fetchTripPlans, deleteTripPlan } from './tripPlanStorage.js';
 import { loadStandalonePlans, deleteStandalonePlan, loadAssignments, subscribeDayPlanStore } from '../planner/dayPlanStore.js';
-import { MapPinIcon, RouteIcon, ListDayIcon, PencilIcon } from '../components/Icons.jsx';
+import { MapPinIcon, RouteIcon, ListDayIcon, PencilIcon, MoreIcon, TrashIcon } from '../components/Icons.jsx';
 import { CountryFlagStack } from '../components/CountryFlag.jsx';
 import { useI18n } from '../i18n/index.jsx';
 
@@ -17,16 +17,21 @@ function countPlannedDays(planId) {
   );
 }
 
-/** One labelled shelf of the overview: icon + name + count, an explainer of
- *  what lands here, then its cards. Three of these make the whole panel
- *  self-describing, no guessing which tab produced which entry. */
-function SavedSection({ Icon, title, sub, count, children }) {
+/** One labelled shelf of the overview: title + count, an explainer of what
+ *  lands here, then its cards. Three of these make the whole panel
+ *  self-describing, no guessing which tab produced which entry.
+ *
+ *  The heading used to be tracked-out uppercase mono, which fought the serif
+ *  page title above it; it now sits in the UI face at sentence case, and the
+ *  count is a tinted pill rather than a grey chip that read as unstyled. */
+function SavedSection({ title, sub, count, children }) {
   return (
     <div className="panel-section saved-section">
       <div className="saved-section-head">
-        <Icon size={14} />
         <span className="saved-section-title">{title}</span>
-        {count != null && <span className="saved-section-count">{count}</span>}
+        {count != null && (
+          <span className={`saved-section-count${count > 0 ? ' on' : ''}`}>{count}</span>
+        )}
       </div>
       {sub && <p className="saved-section-sub">{sub}</p>}
       {children}
@@ -34,17 +39,51 @@ function SavedSection({ Icon, title, sub, count, children }) {
   );
 }
 
-/** One saved entry: visual tile (country flags / city photo / icon), title +
- *  meta, chevron, optional edit, delete.
+/** An empty shelf, as an invitation rather than a dashed drop zone: soft
+ *  filled panel, one line of guidance, one button that goes and does it.
+ *  The signed-out and unconfigured states borrow the same panel, so the three
+ *  shelves never disagree about what "nothing here" looks like. */
+function SavedEmpty({ Icon, text, cta, onCta }) {
+  return (
+    <div className="saved-empty">
+      <span className="saved-empty-mark"><Icon size={16} /></span>
+      <p className="saved-empty-text">{text}</p>
+      {cta && onCta && (
+        <button className="saved-empty-cta" onClick={onCta}>{cta}</button>
+      )}
+    </div>
+  );
+}
+
+/** One saved entry. The whole card opens it; everything else it can do lives
+ *  behind one quiet "more" button.
  *
- *  Delete asks first. The × used to sit a few pixels from the chevron that
- *  opens the trip, so one mis-tap threw away work that took real effort to
- *  build; now it swaps the card for a confirm strip instead of deleting on
- *  the spot. The two tools also live in their own cluster, fenced off from
- *  the open affordance, so "open" and "destroy" no longer read as neighbours. */
-function SavedCard({ Icon, visual, title, meta, onOpen, openTitle, onEdit, editTitle, onDelete, deleteLabel }) {
+ *  This used to carry a fenced-off pair of circular edit / delete buttons on
+ *  every row, which ate the width the trip's own details needed and put a
+ *  destructive control a few pixels from the thing that opens the trip. Now
+ *  the tools collapse into a menu, and Remove still asks first: the card
+ *  becomes the question in place, with the safe answer nearest the tap. */
+function SavedCard({ Icon, visual, visualKind = 'icon', title, meta, onOpen, openTitle, actions = [], onDelete, deleteLabel, footer }) {
   const { t } = useI18n();
   const [confirming, setConfirming] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef(null);
+
+  // A menu that outlives the tap that opened it is a menu in the way: close
+  // on any click elsewhere, and on Escape for the keyboard.
+  useEffect(() => {
+    if (!menuOpen) return undefined;
+    const onDocDown = (e) => {
+      if (menuRef.current && !menuRef.current.contains(e.target)) setMenuOpen(false);
+    };
+    const onKey = (e) => { if (e.key === 'Escape') setMenuOpen(false); };
+    document.addEventListener('mousedown', onDocDown);
+    document.addEventListener('keydown', onKey);
+    return () => {
+      document.removeEventListener('mousedown', onDocDown);
+      document.removeEventListener('keydown', onKey);
+    };
+  }, [menuOpen]);
 
   if (confirming) {
     return (
@@ -61,35 +100,60 @@ function SavedCard({ Icon, visual, title, meta, onOpen, openTitle, onEdit, editT
   }
 
   return (
-    <div className="saved-card">
-      <button className="saved-card-main" onClick={onOpen} title={openTitle}>
-        <span className="saved-card-icon">{visual || <Icon size={15} />}</span>
-        <span className="saved-card-text">
-          <span className="saved-card-title">{title}</span>
-          {meta && <span className="saved-card-meta">{meta}</span>}
-        </span>
-        <span className="saved-card-open" aria-hidden="true">›</span>
-      </button>
-      <div className="saved-card-tools">
-        {onEdit && (
-          <button
-            className="saved-trip-edit"
-            onClick={onEdit}
-            aria-label={editTitle || t('saved.edit')}
-            title={editTitle || t('saved.edit')}
-          >
-            <PencilIcon size={13} />
-          </button>
-        )}
-        <button
-          className="saved-trip-delete"
-          onClick={() => setConfirming(true)}
-          aria-label={deleteLabel}
-          title={t('saved.remove')}
-        >
-          ×
+    <div className={`saved-card${footer ? ' has-footer' : ''}`}>
+      <div className="saved-card-row">
+        <button className="saved-card-main" onClick={onOpen} title={openTitle}>
+          <span className={`saved-card-icon is-${visualKind}`}>{visual || <Icon size={16} />}</span>
+          <span className="saved-card-text">
+            <span className="saved-card-title">{title}</span>
+            {meta && <span className="saved-card-meta">{meta}</span>}
+          </span>
         </button>
+        <div className="saved-card-menu" ref={menuRef}>
+          <button
+            className="saved-card-more"
+            onClick={() => setMenuOpen((v) => !v)}
+            aria-label={t('saved.actions')}
+            aria-haspopup="menu"
+            aria-expanded={menuOpen}
+            title={t('saved.actions')}
+          >
+            <MoreIcon size={16} />
+          </button>
+          {menuOpen && (
+            <div className="saved-card-pop" role="menu">
+              {actions.map((a) => (
+                <button
+                  key={a.key}
+                  role="menuitem"
+                  className="saved-card-pop-item"
+                  onClick={() => { setMenuOpen(false); a.onClick(); }}
+                >
+                  {a.icon}
+                  {a.label}
+                </button>
+              ))}
+              <button
+                role="menuitem"
+                className="saved-card-pop-item danger"
+                onClick={() => { setMenuOpen(false); setConfirming(true); }}
+                aria-label={deleteLabel}
+              >
+                <TrashIcon size={14} />
+                {t('saved.remove')}
+              </button>
+            </div>
+          )}
+        </div>
       </div>
+      {/* Kept inside the card's own border instead of branching off it on a
+          connector line: one saved trip should read as one object. */}
+      {footer && (
+        <button className="saved-card-footer" onClick={footer.onClick} title={footer.title}>
+          <span>{footer.label}</span>
+          <span className="saved-card-footer-go" aria-hidden="true">›</span>
+        </button>
+      )}
     </div>
   );
 }
@@ -98,7 +162,7 @@ function SavedCard({ Icon, visual, title, meta, onOpen, openTitle, onEdit, editT
 // lives inside AccountPanel; this gives it a one-tap home of its own). Every
 // kind of "saved" trip lands here, single destinations saved from the map,
 // multi-stop trips built in the Trip planner, and device-local day plans, // each in its own clearly-labelled section.
-export function SavedTripsPanel({ data, onClose, onLoadTrip, onLoadTripPlan, onOpenAuth, onOpenDayPlan }) {
+export function SavedTripsPanel({ data, onClose, onLoadTrip, onLoadTripPlan, onOpenAuth, onOpenDayPlan, onGoToTab }) {
   const { user, configured } = useAuth();
   const { t } = useI18n();
   const destinations = data?.destinations || {};
@@ -178,28 +242,28 @@ export function SavedTripsPanel({ data, onClose, onLoadTrip, onLoadTripPlan, onO
 
       {/* ── Destinations saved from the Map tab ── */}
       <SavedSection
-        Icon={MapPinIcon}
         title={t('saved.destinations')}
         sub={t('saved.destinationsSub')}
         count={user ? trips.length : null}
       >
         {!user ? (
-          configured ? (
-            <>
-              <div className="footnote">{t('saved.signInPrompt')}</div>
-              <button className="account-signin-btn account-signin-spaced" onClick={onOpenAuth}>{t('saved.signIn')}</button>
-            </>
-          ) : (
-            <div className="footnote">{t('saved.notConfigured')}</div>
-          )
+          <SavedEmpty
+            Icon={MapPinIcon}
+            text={configured ? t('saved.signInPrompt') : t('saved.notConfigured')}
+            cta={configured ? t('saved.signIn') : null}
+            onCta={configured ? onOpenAuth : null}
+          />
         ) : loading ? (
           <div className="footnote">{t('saved.loading')}</div>
         ) : error ? (
           <div className="auth-error">{error}</div>
         ) : trips.length === 0 ? (
-          <div className="saved-empty">
-            {t('saved.destinationsEmpty')}
-          </div>
+          <SavedEmpty
+            Icon={MapPinIcon}
+            text={t('saved.destinationsEmpty')}
+            cta={t('saved.browseMap')}
+            onCta={() => onGoToTab && onGoToTab('map')}
+          />
         ) : (
           <div className="saved-card-stack">
             {trips.map((trip) => (
@@ -207,7 +271,10 @@ export function SavedTripsPanel({ data, onClose, onLoadTrip, onLoadTripPlan, onO
                 key={trip.id}
                 Icon={MapPinIcon}
                 title={trip.city}
-                meta={`${trip.country || ''}${trip.depart_date ? `, ${fmtDate(trip.depart_date)} - ${fmtDate(trip.return_date)}` : ''}`}
+                meta={[
+                  trip.country || '',
+                  trip.depart_date ? `${fmtDate(trip.depart_date)} → ${fmtDate(trip.return_date)}` : '',
+                ].filter(Boolean).join(', ')}
                 onOpen={() => onLoadTrip(trip)}
                 openTitle={t('saved.openDestination')}
                 onDelete={() => handleDelete(trip.id)}
@@ -221,7 +288,6 @@ export function SavedTripsPanel({ data, onClose, onLoadTrip, onLoadTripPlan, onO
       {/* ── Multi-stop routes built in the Trip planner ── */}
       {user && (
         <SavedSection
-          Icon={RouteIcon}
           title={t('saved.tripPlans')}
           sub={t('saved.tripPlansSub')}
           count={tripPlansLoading ? null : tripPlans.length}
@@ -229,42 +295,47 @@ export function SavedTripsPanel({ data, onClose, onLoadTrip, onLoadTripPlan, onO
           {tripPlansLoading ? (
             <div className="footnote">{t('saved.loading')}</div>
           ) : tripPlans.length === 0 ? (
-            <div className="saved-empty">
-              {t('saved.tripPlansEmpty')}
-            </div>
+            <SavedEmpty
+              Icon={RouteIcon}
+              text={t('saved.tripPlansEmpty')}
+              cta={t('saved.openTripPlanner')}
+              onCta={() => onGoToTab && onGoToTab('trip')}
+            />
           ) : (
             <div className="saved-card-stack">
               {tripPlans.map((p) => {
                 const plannedDays = countPlannedDays(p.id);
                 return (
-                  <div className="saved-card-stack" key={p.id}>
-                    <SavedCard
-                      Icon={RouteIcon}
-                      visual={p.countries?.length ? <CountryFlagStack countries={p.countries} /> : null}
-                      title={p.label || t('saved.untitledTrip')}
-                      meta={[
-                        p.start_date ? `${fmtDate(p.start_date)} → ${fmtDate(p.end_date)}` : '',
-                        p.cities?.length ? t(p.cities.length === 1 ? 'saved.stops1' : 'saved.stopsN', { n: p.cities.length }) : '',
-                      ].filter(Boolean).join(', ')}
-                      onOpen={() => onLoadTripPlan && onLoadTripPlan(p.id)}
-                      openTitle={t('saved.openTripPlan')}
-                      onEdit={() => onLoadTripPlan && onLoadTripPlan({ id: p.id, edit: true })}
-                      editTitle={t('saved.editTripPlan')}
-                      onDelete={() => handleDeleteTripPlan(p.id)}
-                      deleteLabel={t('saved.removeItem', { name: p.label || t('saved.fallbackTrip') })}
-                    />
-                    {/* This trip's own day-by-day plans, made in the Day
-                        planner (stored on this device, keyed by the trip). */}
-                    <button
-                      className="saved-card-footer"
-                      onClick={() => onOpenDayPlan && onOpenDayPlan({ planId: p.id, stopIndex: 0, dayIndex: 0 })}
-                      title={t('saved.planDaysTitle')}
-                    >
-                      {plannedDays > 0
+                  <SavedCard
+                    key={p.id}
+                    Icon={RouteIcon}
+                    visual={p.countries?.length ? <CountryFlagStack countries={p.countries} size={17} /> : null}
+                    visualKind={p.countries?.length ? 'flag' : 'icon'}
+                    title={p.label || t('saved.untitledTrip')}
+                    meta={[
+                      p.start_date ? `${fmtDate(p.start_date)} → ${fmtDate(p.end_date)}` : '',
+                      p.cities?.length ? t(p.cities.length === 1 ? 'saved.stops1' : 'saved.stopsN', { n: p.cities.length }) : '',
+                    ].filter(Boolean).join(', ')}
+                    onOpen={() => onLoadTripPlan && onLoadTripPlan(p.id)}
+                    openTitle={t('saved.openTripPlan')}
+                    actions={[{
+                      key: 'edit',
+                      label: t('saved.edit'),
+                      icon: <PencilIcon size={14} />,
+                      onClick: () => onLoadTripPlan && onLoadTripPlan({ id: p.id, edit: true }),
+                    }]}
+                    onDelete={() => handleDeleteTripPlan(p.id)}
+                    deleteLabel={t('saved.removeItem', { name: p.label || t('saved.fallbackTrip') })}
+                    /* This trip's own day-by-day plans, made in the Day
+                       planner (stored on this device, keyed by the trip). */
+                    footer={{
+                      label: plannedDays > 0
                         ? t(plannedDays === 1 ? 'saved.plannedDays1' : 'saved.plannedDaysN', { n: plannedDays })
-                        : t('saved.planItsDays')}
-                    </button>
-                  </div>
+                        : t('saved.planItsDays'),
+                      title: t('saved.planDaysTitle'),
+                      onClick: () => onOpenDayPlan && onOpenDayPlan({ planId: p.id, stopIndex: 0, dayIndex: 0 }),
+                    }}
+                  />
                 );
               })}
             </div>
@@ -274,24 +345,28 @@ export function SavedTripsPanel({ data, onClose, onLoadTrip, onLoadTripPlan, onO
 
       {/* ── Day-by-day plans (device-local; they work without an account) ── */}
       <SavedSection
-        Icon={ListDayIcon}
         title={t('saved.dayPlans')}
         sub={t('saved.dayPlansSub')}
         count={dayPlans.length}
       >
         {dayPlans.length === 0 ? (
-          <div className="saved-empty">
-            {t('saved.dayPlansEmpty')}
-          </div>
+          <SavedEmpty
+            Icon={ListDayIcon}
+            text={t('saved.dayPlansEmpty')}
+            cta={t('saved.openDayPlanner')}
+            onCta={() => onGoToTab && onGoToTab('day')}
+          />
         ) : (
           <div className="saved-card-stack">
             {dayPlans.map((sp) => {
               const totalDays = sp.stops?.reduce((n, s) => n + (s.days || 1), 0) || 1;
+              const photo = dayPlanVisual(sp);
               return (
                 <SavedCard
                   key={sp.id}
                   Icon={ListDayIcon}
-                  visual={dayPlanVisual(sp)}
+                  visual={photo}
+                  visualKind={photo ? 'photo' : 'icon'}
                   title={sp.label || t('saved.dayPlanFallbackTitle')}
                   meta={[
                     fmtDate(sp.startDate),
