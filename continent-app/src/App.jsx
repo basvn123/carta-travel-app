@@ -8,7 +8,7 @@ import { ResultsList } from './browse/ResultsList.jsx';
 import { ComparePanel } from './browse/ComparePanel.jsx';
 import { InfoIcon } from './components/Icons.jsx';
 import Logo from './components/Logo.jsx';
-import { WelcomeLanding } from './components/WelcomeLanding.jsx';
+import { HomePage } from './components/HomePage.jsx';
 
 // A failed dynamic import is almost always a stale bundle: the client is still
 // running an old index.html whose chunk hashes no longer exist on the server
@@ -133,15 +133,26 @@ function TravelApp() {
     prevUserRef.current = user;
   }, [user]);
 
-  // Which top-level section is showing: Map (the browse/search experience),
-  // Trip planner, or Day planner. Plain revisits always open on the map (the
-  // localStorage mirror's remembered tab is deliberately ignored), but a link
+  // Whether this visitor has been welcomed before (the homepage's job). The
+  // old fare-notice key still counts, so long-time visitors are never pushed
+  // back through the front page.
+  const [welcomeDismissed, setWelcomeDismissed] = useState(() => {
+    try {
+      return localStorage.getItem('carta.welcomeSeen') === '1'
+        || localStorage.getItem('carta.fareNoticeSeen') === '1';
+    } catch { return false; }
+  });
+
+  // Which top-level section is showing: Home (the front page), Map (the
+  // browse/search experience), Trip planner, or Day planner. First-time
+  // visitors open on the homepage; plain revisits open on the map (the
+  // localStorage mirror's remembered tab is deliberately ignored). A link
   // that carries ?tab= in the actual URL is someone sharing a specific view,
-  // so honor it: before this, `tab` was encoded and decoded yet never read,
-  // and every shared planner link opened on the map.
+  // so it wins over both: before this, `tab` was encoded and decoded yet
+  // never read, and every shared planner link opened on the map.
   const urlTab = typeof window !== 'undefined' && !!window.location.search
-    && ['trip', 'day'].includes(init.activeTab) ? init.activeTab : null;
-  const [activeTab, setActiveTab] = useState(urlTab || 'map');
+    && ['home', 'trip', 'day'].includes(init.activeTab) ? init.activeTab : null;
+  const [activeTab, setActiveTab] = useState(urlTab || (welcomeDismissed ? 'map' : 'home'));
 
   const [selectedId, setSelectedId] = useState(init.selectedId ?? null);
 
@@ -236,42 +247,36 @@ function TravelApp() {
     try { return localStorage.getItem('carta.mapGuideDone') === '1'; } catch { return false; }
   });
 
-  // Greet the FIRST visit with the welcome landing: value statement, an
-  // editable preview of the trip the URL already describes, the three
-  // logistics features that set the planner apart, and the "built for
-  // Europe's budget airlines" fare note (which used to be its own modal,
-  // carta.fareNoticeSeen; that key still counts as seen so returning
-  // visitors aren't re-interrupted). Persisted, shown once.
-  const [welcomeDismissed, setWelcomeDismissed] = useState(() => {
-    try {
-      return localStorage.getItem('carta.welcomeSeen') === '1'
-        || localStorage.getItem('carta.fareNoticeSeen') === '1';
-    } catch { return false; }
-  });
-  const dismissWelcome = () => {
+  // Mark the visitor as welcomed the moment they are anywhere but the
+  // homepage: a CTA, the logo nav, a deep link straight into a planner - all
+  // of it means the front page has done (or forfeited) its job, and the next
+  // plain visit opens on the map like a tool should.
+  useEffect(() => {
+    if (welcomeDismissed || activeTab === 'home') return;
     setWelcomeDismissed(true);
     try {
       localStorage.setItem('carta.welcomeSeen', '1');
       localStorage.setItem('carta.fareNoticeSeen', '1');
     } catch { /* private mode */ }
-  };
-  // Nudges TripPlannerTab to open the guided wizard (welcome CTA): bumping the
-  // counter is the signal, the tab consumes it via an effect.
+  }, [activeTab, welcomeDismissed]);
+  // Nudges TripPlannerTab to open the guided wizard (homepage CTA): bumping
+  // the counter is the signal, the tab consumes it via an effect.
   const [wizardLaunch, setWizardLaunch] = useState(0);
 
-  // Escape closes the top-most dismissable surface (welcome landing, then the
-  // shared-trip offer, then the destination detail). Gives keyboard users a way
-  // out that the click-outside backdrop alone never provided.
+  // Escape closes the top-most dismissable surface (the shared-trip offer,
+  // then the destination detail, then the homepage falls through to the map).
+  // Gives keyboard users a way out that the click-outside backdrop alone
+  // never provided.
   useEffect(() => {
     const onKey = (e) => {
       if (e.key !== 'Escape') return;
-      if (!welcomeDismissed) { dismissWelcome(); return; }
       if (sharedTrip) { setSharedTrip(null); return; }
       if (selectedId) { setSelectedId(null); return; }
+      if (activeTab === 'home') { setActiveTab('map'); }
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [welcomeDismissed, sharedTrip, selectedId]);
+  }, [sharedTrip, selectedId, activeTab]);
 
   // Let the user collapse the destinations list to give the map the full width.
   // On phones (<=768px) it starts collapsed so the map opens as big as possible;
@@ -456,8 +461,8 @@ function TravelApp() {
         <AppHeader
           user={user}
           onOpenAccount={() => setAccountOpen(true)}
-          isHome={activeTab === 'map'}
-          onGoHome={() => setActiveTab('map')}
+          isHome={activeTab === 'home'}
+          onGoHome={() => setActiveTab('home')}
           activeTab={activeTab}
           onChangeTab={(key) => { setSavedTripsOpen(false); setActiveTab(key); }}
           savedOpen={savedTripsOpen}
@@ -566,11 +571,13 @@ function TravelApp() {
         </div>
       )}
 
-      {/* First visit: the welcome landing, front and centre over the map.
-          It waits while a shared-trip offer is on screen (one dialog at a time,
-          and the deep link is what the visitor came for). */}
-      {activeTab === 'map' && !welcomeDismissed && !sharedTrip && (
-        <WelcomeLanding
+      {/* The homepage: a full-viewport front page over the (still-mounted)
+          app. First visits land here, the brand logo reopens it any time,
+          and its hero widget edits the live app state so the CTA hand-off
+          arrives on an already-priced map. Shared-trip offers (z-60) still
+          render above it. */}
+      {activeTab === 'home' && (
+        <HomePage
           data={data}
           choices={choices}
           setChoices={setChoices}
@@ -582,9 +589,8 @@ function TravelApp() {
           dateBounds={dateBounds}
           reachableCount={pricedAll.length}
           totalCount={Object.keys(data.destinations).length}
-          onExplore={dismissWelcome}
+          onExplore={() => setActiveTab('map')}
           onPlanTrip={() => {
-            dismissWelcome();
             setActiveTab('trip');
             setWizardLaunch((n) => n + 1);
           }}
@@ -773,6 +779,9 @@ function TravelApp() {
               setActiveTab('map'); // the loaded trip opens as a map detail panel
             }}
             onOpenAuth={() => { setSavedTripsOpen(false); setAuthModalMode('signin'); setAuthModalOpen(true); }}
+            /* An empty shelf offers the tab that fills it, so "nothing here
+               yet" comes with somewhere to go. */
+            onGoToTab={(key) => { setSavedTripsOpen(false); setActiveTab(key); }}
             onOpenDayPlan={(id) => {
               setSavedTripsOpen(false);
               setPendingDayPlanId(id);

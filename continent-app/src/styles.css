@@ -101,7 +101,11 @@ input, select {
   align-items: center;
   gap: 12px;
   flex-shrink: 0;
+  /* It's a button now: the logo is the way back to the front page. */
+  cursor: pointer;
+  text-align: left;
 }
+.app-header-brand:hover .brand-name { color: var(--accent); }
 .app-header-brand .brand-name {
   font-family: var(--display);
   font-weight: 600;
@@ -1111,8 +1115,8 @@ input, select {
   overflow: hidden;
 }
 .trip-saved-item.active { border-color: var(--accent); }
-/* Same type treatment as the Saved-trips panel's rows (.saved-trip-city /
-   .saved-trip-meta), so saved things read identically everywhere. */
+/* The Day-planner's own inline saved list. The Saved-trips panel styles its
+   rows separately (.saved-card-*), this one stays compact. */
 .trip-saved-main {
   flex: 1;
   text-align: left;
@@ -1354,25 +1358,123 @@ input, select {
 .fare-notice-text b { color: var(--ink); }
 .fare-notice-btn { margin-top: 18px; width: 100%; }
 
-/* ───────── First-visit welcome landing ───────── */
+/* ───────── The homepage (always-on front page) ─────────
+   A full-viewport view layered over the still-mounted app, so leaving and
+   returning never tears down the map. The trip widget + feature cards
+   below (.welcome-*) are shared with it. */
 
-.welcome-modal {
-  width: min(100%, 640px);
-  padding: 26px 26px 22px;
+.home-page {
+  position: fixed;
+  inset: 0;
+  z-index: 55;
+  background: var(--paper);
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
-.welcome-brand {
+.home-inner {
+  max-width: 880px;
+  margin: 0 auto;
+  padding: 26px 22px 48px;
+}
+.home-top {
   display: flex;
   align-items: center;
-  gap: 14px;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 34px;
 }
-.welcome-title { margin: 0; }
-.welcome-sub {
-  margin: 4px 0 0;
-  font-size: 13.5px;
+.home-brand { display: flex; align-items: center; gap: 12px; }
+.home-brand .brand-name {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: 26px;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  color: var(--ink);
+}
+.home-brand .brand-sub {
+  font-family: var(--mono);
+  font-size: 8.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.24em;
+  color: var(--ink-mute);
+  margin-top: 5px;
+}
+.home-top-actions { display: flex; align-items: center; gap: 10px; }
+.home-skip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 7px 12px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  background: var(--bg-card);
+}
+.home-skip:hover { color: var(--accent); border-color: var(--accent); }
+.home-hero { max-width: 660px; }
+.home-headline {
+  font-family: var(--display);
+  font-size: clamp(30px, 5vw, 44px);
+  line-height: 1.12;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+.home-sub {
+  margin-top: 10px;
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--ink-soft);
+  max-width: 540px;
+}
+.home-trip { margin-top: 24px; }
+.home-actions { margin-top: 14px; }
+.home-cards { margin-top: 22px; }
+.home-how { margin-top: 26px; }
+.home-how-title {
+  font-family: var(--mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--ink-mute);
+  margin-bottom: 10px;
+}
+.home-how-steps {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+.home-how-steps li {
+  display: flex;
+  gap: 9px;
+  align-items: flex-start;
+  font-size: 12px;
   line-height: 1.55;
   color: var(--ink-soft);
 }
+.home-how-num {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--ink);
+  color: var(--paper);
+  font-family: var(--mono);
+  font-size: 11px;
+}
+.home-fares { max-width: 660px; }
+@media (max-width: 768px) {
+  .home-top { margin-bottom: 22px; }
+  .home-how-steps { grid-template-columns: 1fr; }
+}
+
 .welcome-trip {
   margin-top: 18px;
   padding: 14px 16px 12px;
@@ -2928,7 +3030,7 @@ input, select {
 .day-gmaps-link:hover { filter: brightness(1.05); }
 .day-saved-sub {
   font-family: var(--mono);
-  font-size: 10.5px; /* matches .saved-trip-meta */
+  font-size: 10.5px;
   color: var(--ink-mute);
   text-transform: none;
   letter-spacing: 0;
@@ -7473,151 +7575,65 @@ input, select {
   margin-top: 2px;
 }
 
-.saved-trip-list {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-.saved-trip-item {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-/* A trip plan + its own day-planner days, grouped as one card. */
-.saved-trip-group { display: flex; flex-direction: column; gap: 4px; }
-.saved-trip-days {
-  align-self: flex-start;
-  margin: 0 0 4px 14px;
-  padding: 4px 10px;
-  border: none;
-  border-left: 2px solid var(--rule);
-  border-radius: 0;
-  background: none;
-  font-size: 11.5px;
-  color: var(--ink-mute);
-  cursor: pointer;
-  text-align: left;
-}
-.saved-trip-days:hover { color: var(--accent); border-left-color: var(--accent); }
-.saved-trip-main {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  padding: 10px 12px;
-  border: 1px solid var(--rule);
-  border-radius: 6px;
-  background: var(--paper);
-  text-align: left;
-  transition: border-color .15s, background .15s;
-}
-.saved-trip-main:hover { border-color: var(--ink-soft); background: var(--paper-dim); }
-.saved-trip-city {
-  font-size: 13.5px;
-  font-weight: 500;
-  color: var(--ink);
-}
-.saved-trip-meta {
-  font-family: var(--mono);
-  font-size: 10.5px;
-  color: var(--ink-mute);
-}
-.saved-trip-delete {
-  flex-shrink: 0;
-  width: 28px; height: 28px;
-  border-radius: 50%;
-  border: 1px solid var(--rule);
-  background: var(--paper);
-  color: var(--ink-mute);
-  font-size: 16px;
-  line-height: 1;
-  transition: border-color .15s, color .15s;
-}
-.saved-trip-delete:hover { border-color: var(--accent); color: var(--accent); }
-/* Pencil next to the delete: jump straight into editing a saved trip. */
-.saved-trip-edit {
-  flex-shrink: 0;
-  width: 28px; height: 28px;
-  display: flex; align-items: center; justify-content: center;
-  border-radius: 50%;
-  border: 1px solid var(--rule);
-  background: var(--paper);
-  color: var(--ink-mute);
-  cursor: pointer;
-  transition: border-color .15s, color .15s;
-}
-.saved-trip-edit:hover { border-color: var(--accent); color: var(--accent); }
-
-/* ─── Saved trips overview: three clearly-labelled sections (destinations,
-   trip plans, day plans), each an icon-led card so what-belongs-where reads
-   at a glance. ─── */
+/* ─── Saved trips overview: three clearly-labelled shelves (destinations,
+   trip plans, day plans), each a card so what-belongs-where reads at a
+   glance. The shelf heading sits in the UI face at sentence case: the old
+   tracked-out uppercase mono fought the serif page title above it. ─── */
 .saved-section { margin-bottom: 6px; }
 .saved-section-head {
   display: flex;
-  align-items: center;
+  align-items: baseline;
   gap: 8px;
-  margin-bottom: 2px;
+  margin-bottom: 4px;
 }
-.saved-section-head svg { color: var(--accent); flex: none; }
 .saved-section-title {
-  font-family: var(--mono);
+  font-family: var(--ui);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+/* A count is a status, not a spare form control: a tinted pill when there is
+   something on the shelf, a quiet one when there is not. */
+.saved-section-count {
+  min-width: 20px;
+  text-align: center;
   font-size: 10.5px;
   font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--ink-soft);
-}
-.saved-section-count {
-  margin-left: auto;
-  font-family: var(--mono);
-  font-size: 10px;
+  line-height: 1.6;
   color: var(--ink-mute);
   background: var(--paper-dim);
-  border: 1px solid var(--rule);
   border-radius: 999px;
-  padding: 2px 8px;
+  padding: 1px 7px;
 }
+.saved-section-count.on { color: #fff; background: var(--accent); }
 .saved-section-sub {
-  font-size: 11.5px;
+  font-size: 12px;
   color: var(--ink-mute);
-  margin: 0 0 10px;
-  line-height: 1.45;
+  margin: 0 0 12px;
+  line-height: 1.5;
 }
 .saved-card {
   display: flex;
-  align-items: center;
-  gap: 12px;
+  flex-direction: column;
   border: 1px solid var(--rule);
-  border-radius: 12px;
-  background: var(--paper);
-  padding: 4px 6px 4px 0;
-  transition: border-color .15s, box-shadow .15s;
+  border-radius: 14px;
+  background: var(--bg-card);
+  overflow: hidden;
+  transition: border-color .15s, box-shadow .15s, background .15s;
 }
 .saved-card:hover { border-color: var(--ink-soft); box-shadow: var(--shadow-1); }
-/* Edit and delete belong together, and apart from the chevron that opens the
-   trip: a hairline fence plus a quieter resting state, so the destructive
-   control never reads as part of the open affordance. */
-.saved-card-tools {
-  flex: none;
+.saved-card-row {
   display: flex;
   align-items: center;
   gap: 4px;
-  padding-left: 8px;
-  margin-left: 2px;
-  border-left: 1px solid var(--rule);
-  opacity: 0.6;
-  transition: opacity .15s;
-}
-.saved-card:hover .saved-card-tools,
-.saved-card:focus-within .saved-card-tools { opacity: 1; }
-/* Touch has no hover to reveal them with, so they stay at full strength. */
-@media (hover: none) {
-  .saved-card-tools { opacity: 1; }
+  padding-right: 6px;
 }
 /* Asking first: the card becomes the question, in place, with the safe
    choice sitting closest to where the tap came from. */
 .saved-card-confirm {
+  flex-direction: row;
+  align-items: center;
   gap: 8px;
   padding: 10px 10px 10px 14px;
   border-color: var(--accent);
@@ -7654,38 +7670,44 @@ input, select {
   color: #fff;
 }
 .saved-card-confirm-go:hover { opacity: 0.9; }
+/* The whole row opens the trip. No chevron, no competing buttons: one target
+   the width of the card, with the tools folded into the menu beside it. */
 .saved-card-main {
   flex: 1;
   min-width: 0;
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 10px 0 10px 12px;
+  gap: 13px;
+  padding: 13px 4px 13px 14px;
   background: none;
   border: none;
   text-align: left;
   cursor: pointer;
 }
+/* A round frame, not a rounded rectangle inside a rounded rectangle: nesting
+   the same shape twice was the busiest thing on the card. Flags carry their
+   own edge, so they get no tile behind them at all. */
 .saved-card-icon {
   flex: none;
-  width: 34px;
-  height: 34px;
+  width: 40px;
+  height: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 10px;
+  border-radius: 50%;
   background: var(--accent-bg);
   color: var(--accent);
   overflow: hidden;
 }
+.saved-card-icon.is-flag { background: none; overflow: visible; }
 /* Country flag tiles on saved trip cards */
-.country-flag { border-radius: 2px; box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.14); display: block; }
+.country-flag { border-radius: 3px; box-shadow: 0 0 0 1px rgba(15, 23, 42, 0.12); display: block; }
 .country-flag-stack { display: flex; align-items: center; justify-content: center; }
 /* Two or three countries: overlap the flags like a fanned hand */
 .country-flag-stack.n2 .country-flag + .country-flag,
 .country-flag-stack.n3 .country-flag + .country-flag { margin-left: -8px; }
 .country-flag-stack.n2 .country-flag,
-.country-flag-stack.n3 .country-flag { box-shadow: 0 0 0 1.5px var(--paper); }
+.country-flag-stack.n3 .country-flag { box-shadow: 0 0 0 2px var(--bg-card); }
 /* A saved day plan wears a photo of its city */
 .saved-card-photo {
   display: block;
@@ -7694,6 +7716,53 @@ input, select {
   background-size: cover;
   background-position: center;
 }
+/* One quiet affordance for everything the card can do besides open. */
+.saved-card-menu { position: relative; flex: none; }
+.saved-card-more {
+  width: 32px; height: 32px;
+  display: flex; align-items: center; justify-content: center;
+  border: none;
+  border-radius: 50%;
+  background: none;
+  color: var(--ink-mute);
+  cursor: pointer;
+  transition: background .15s, color .15s;
+}
+.saved-card-more:hover { background: var(--paper-dim); color: var(--ink); }
+.saved-card-pop {
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 0;
+  z-index: 4;
+  min-width: 168px;
+  display: flex;
+  flex-direction: column;
+  padding: 5px;
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  background: var(--bg-card);
+  box-shadow: var(--shadow-2);
+}
+.saved-card-pop-item {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 9px 10px;
+  border: none;
+  border-radius: 8px;
+  background: none;
+  font-family: var(--ui);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink-soft);
+  text-align: left;
+  cursor: pointer;
+}
+.saved-card-pop-item:hover { background: var(--paper-dim); color: var(--ink); }
+.saved-card-pop-item svg { flex: none; color: var(--ink-mute); }
+.saved-card-pop-item.danger { color: var(--accent); }
+.saved-card-pop-item.danger svg { color: var(--accent); }
+.saved-card-pop-item.danger:hover { background: var(--accent-bg); color: var(--accent); }
 
 /* Share / download actions under the trip overview: one toggle, collapsed by
    default, opening into a clean vertical list instead of up to six equal-width
@@ -7850,38 +7919,52 @@ input, select {
 .exp-settle { margin-top: 4px; font-size: 12px; color: var(--ink-soft); }
 .exp-square { color: var(--green); }
 .exp-rate-note { margin-top: 6px; font-size: 10px; color: var(--ink-mute); }
-.saved-card-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+.saved-card-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+/* The trip's name earns the display face, the same one the panel title wears;
+   its details drop the mono, which read as a data dump at this size. */
 .saved-card-title {
-  font-size: 13.5px;
-  font-weight: 600;
+  font-family: var(--display);
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
   color: var(--ink);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 .saved-card-meta {
-  font-family: var(--mono);
-  font-size: 10.5px;
+  font-family: var(--ui);
+  font-size: 12px;
   color: var(--ink-mute);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
-.saved-card-open { color: var(--ink-mute); font-size: 16px; flex: none; }
-.saved-card-stack { display: flex; flex-direction: column; gap: 8px; }
-/* The trip plan's own day-planning shortcut, attached under its card. */
+.saved-card-stack { display: flex; flex-direction: column; gap: 10px; }
+/* The trip plan's own day-planning shortcut. It used to branch off the card
+   on a connector line, which split one saved trip into two things to read;
+   it now lives inside the same border as a full-width strip. */
 .saved-card-footer {
   display: flex;
   align-items: center;
-  gap: 6px;
-  margin: -4px 0 0 18px;
-  padding: 8px 12px 6px;
-  border-left: 2px solid var(--rule);
-  background: none;
-  border-top: none; border-right: none; border-bottom: none;
-  font-size: 11.5px;
-  color: var(--ink-mute);
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  padding: 10px 14px;
+  border: none;
+  border-top: 1px solid var(--rule);
+  background: var(--paper);
+  font-family: var(--ui);
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--ink-soft);
   cursor: pointer;
   text-align: left;
+  transition: background .15s, color .15s;
 }
-.saved-card-footer:hover { color: var(--accent); border-left-color: var(--accent); }
+.saved-card-footer:hover { background: var(--accent-bg); color: var(--accent); }
+.saved-card-footer-go { font-size: 15px; line-height: 1; color: var(--ink-mute); }
+.saved-card-footer:hover .saved-card-footer-go { color: var(--accent); }
 /* Desktop: the Saved-trips overview gets the same modern, roomy treatment as
    mobile - a wider sheet, breathing space between sections, larger cards -
    instead of being squeezed into the narrow docked column. */
@@ -7892,33 +7975,57 @@ input, select {
     padding-right: 28px;
   }
   .saved-trips-panel .saved-section { margin-bottom: 14px; }
-  .saved-trips-panel .saved-card-stack { gap: 10px; }
-  .saved-trips-panel .saved-card-main { padding: 12px 0 12px 14px; }
-  .saved-trips-panel .saved-card-title { font-size: 14.5px; }
-  .saved-trips-panel .saved-card-meta { font-size: 11px; }
-  .saved-trips-panel .saved-card-icon { width: 38px; height: 38px; }
+  .saved-trips-panel .saved-card-stack { gap: 12px; }
+  .saved-trips-panel .saved-card-main { padding: 15px 4px 15px 16px; }
+  .saved-trips-panel .saved-card-title { font-size: 17px; }
+  .saved-trips-panel .saved-card-icon { width: 44px; height: 44px; }
 }
 
 /* Even vertical rhythm. The band between the "Saved trips" rule and the first
    shelf ran wider than the gaps between the shelves themselves, so the panel
    opened on a hole. One 16px step everywhere instead. */
 .saved-trips-panel .panel-header { padding-bottom: 14px; }
-.saved-trips-panel .panel-section { padding-top: 16px; padding-bottom: 16px; }
+.saved-trips-panel .panel-section { padding-top: 18px; padding-bottom: 18px; }
 .saved-trips-panel .saved-section-sub { margin-bottom: 12px; }
-.saved-section-count { color: var(--ink-soft); }
 
-/* An empty shelf has to be visible to read as a shelf. A 1px --rule dash on
-   warm paper was close to invisible, so the outline is heavier and darker and
-   the text sits at reading contrast rather than at hint contrast. */
+/* An empty shelf should invite, not look like a broken upload zone. A dashed
+   outline reads as "drop a file here"; a soft filled panel with one thing to
+   press reads as "here is where this begins". */
 .saved-empty {
-  font-size: 12.5px;
-  color: var(--ink-soft);
-  border: 1.5px dashed #9a8e80;
-  border-radius: 10px;
-  padding: 12px 14px;
-  line-height: 1.5;
-  background: rgba(196, 190, 169, 0.14);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 18px;
+  border-radius: 14px;
+  background: var(--paper-dim);
 }
+.saved-empty-mark {
+  width: 34px; height: 34px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 50%;
+  background: var(--bg-card);
+  color: var(--accent);
+}
+.saved-empty-text {
+  margin: 0;
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: var(--ink-soft);
+}
+.saved-empty-cta {
+  padding: 8px 16px;
+  border: 1px solid var(--ink);
+  border-radius: 999px;
+  background: var(--ink);
+  font-family: var(--ui);
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--paper);
+  cursor: pointer;
+  transition: background .15s, border-color .15s;
+}
+.saved-empty-cta:hover { background: var(--accent); border-color: var(--accent); }
 
 /* Day planner: save state, top-right of the plan header card. */
 .day-topcard-row {

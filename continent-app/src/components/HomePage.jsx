@@ -4,21 +4,22 @@ import { OriginPicker } from './OriginPicker.jsx';
 import { DateField } from './DateField.jsx';
 import { Dropdown } from './Dropdown.jsx';
 import { NumberField } from './FilterControls.jsx';
-import { LuggageIcon, ClockIcon, BusIcon } from './Icons.jsx';
+import { LanguagePicker } from './LanguagePicker.jsx';
+import { LuggageIcon, ClockIcon, BusIcon, ChevronRightIcon } from './Icons.jsx';
 import { tripDaysBetween } from '../lib/runtime_pricing.js';
 import { useI18n } from '../i18n/index.jsx';
 
 /**
- * First-visit welcome: instead of dropping a new visitor straight onto the
- * dense map view (or, worse, onto someone else's parameter-packed shared URL
- * with no orientation at all), open with a short value statement, an editable
- * preview of the trip the URL/state already describes, and the three things
- * this planner does that generic trip apps don't. Editing the widget writes
- * the real app state, so the map behind it is already re-priced by the time
- * it is dismissed. Shown once; the fare-source note it absorbs used to be its
- * own modal (carta.fareNoticeSeen), which it supersedes.
+ * The always-on homepage: a full-viewport front page rendered as its own
+ * top-level view ('home' in the tab state, no router needed). First-time
+ * visitors land here instead of on the raw data view; the brand logo brings
+ * anyone back. The hero widget is a real pre-loader: it edits the live app
+ * state (origin, dates, travellers, baggage, seeded from any shared URL's
+ * params), so the count under it comes from the same pricing pass the map
+ * runs, and by the time a CTA hands off into the app, everything is already
+ * priced for this trip. Successor of the one-shot WelcomeLanding overlay.
  */
-export function WelcomeLanding({
+export function HomePage({
   data, choices, setChoices, onChangeOrigin,
   departDate, setDepartDate, returnDate, setReturnDate, dateBounds,
   reachableCount, totalCount,
@@ -58,17 +59,30 @@ export function WelcomeLanding({
   ];
 
   return (
-    <div className="guide-overlay welcome-overlay" onClick={onExplore}>
-      <div className="guide-modal welcome-modal" onClick={(e) => e.stopPropagation()}>
-        <div className="welcome-brand">
-          <Logo size={40} />
-          <div>
-            <h2 className="guide-title welcome-title">{t('welcome.title')}</h2>
-            <p className="welcome-sub">{t('welcome.sub')}</p>
+    <div className="home-page">
+      <div className="home-inner">
+        <header className="home-top">
+          <div className="home-brand">
+            <Logo size={44} />
+            <div className="brand-text">
+              <span className="brand-name">Carta</span>
+              <span className="brand-sub">{t('brand.sub')}</span>
+            </div>
           </div>
+          <div className="home-top-actions">
+            <LanguagePicker />
+            <button className="home-skip" onClick={onExplore}>
+              {t('home.skip')} <ChevronRightIcon size={13} />
+            </button>
+          </div>
+        </header>
+
+        <div className="home-hero">
+          <h1 className="home-headline">{t('welcome.title')}</h1>
+          <p className="home-sub">{t('welcome.sub')}</p>
         </div>
 
-        <div className="welcome-trip">
+        <div className="welcome-trip home-trip">
           <div className="welcome-trip-head">{t('welcome.tripLabel')}</div>
           <div className="welcome-trip-grid">
             <div className="welcome-field welcome-field-origin">
@@ -123,14 +137,18 @@ export function WelcomeLanding({
             </div>
           </div>
           {/* Live proof that the widget drives the real app: this count comes
-              from the same pricing pass the map behind the modal renders. */}
+              from the same pricing pass the map behind this page renders. */}
           <p className="welcome-live">
             {nights > 0 && <span className="welcome-live-nights">{t('welcome.nights', { n: nights })}</span>}
             {t('welcome.reachable', { n: reachableCount, total: totalCount, city: originCity })}
           </p>
+          <div className="welcome-actions home-actions">
+            <button className="guide-next welcome-cta" onClick={onExplore}>{t('welcome.explore')}</button>
+            <button className="welcome-secondary" onClick={onPlanTrip}>{t('welcome.planTrip')}</button>
+          </div>
         </div>
 
-        <div className="welcome-cards">
+        <div className="welcome-cards home-cards">
           {cards.map(({ Icon, title, body }) => (
             <div className="welcome-card" key={title}>
               <span className="welcome-card-icon"><Icon size={17} /></span>
@@ -142,12 +160,16 @@ export function WelcomeLanding({
           ))}
         </div>
 
-        <p className="welcome-fares">{t('fareNotice.body1')}</p>
-
-        <div className="welcome-actions">
-          <button className="guide-next welcome-cta" onClick={onExplore}>{t('welcome.explore')}</button>
-          <button className="welcome-secondary" onClick={onPlanTrip}>{t('welcome.planTrip')}</button>
+        <div className="home-how">
+          <div className="home-how-title">{t('home.howTitle')}</div>
+          <ol className="home-how-steps">
+            <li><span className="home-how-num">1</span>{t('home.step1')}</li>
+            <li><span className="home-how-num">2</span>{t('home.step2')}</li>
+            <li><span className="home-how-num">3</span>{t('home.step3')}</li>
+          </ol>
         </div>
+
+        <p className="welcome-fares home-fares">{t('fareNotice.body1')} {t('fareNotice.body2')}</p>
       </div>
     </div>
   );

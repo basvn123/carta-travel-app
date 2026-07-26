@@ -46,14 +46,19 @@ export function AppHeader({
   const { t } = useI18n();
   return (
     <div className={`app-header ${children ? 'has-filters' : ''}`}>
-      <div className="app-header-brand">
+      <button
+        className={`app-header-brand ${isHome ? 'is-home' : ''}`}
+        onClick={onGoHome}
+        title={t('nav.homeTitle')}
+        aria-current={isHome ? 'page' : undefined}
+      >
         <Logo size={46} className="brand-mark" />
         <div className="brand-text">
           <span className="brand-name">Carta</span>
           <span className="brand-sub">{t('brand.sub')}</span>
         </div>
         <div className="brand-divider" aria-hidden="true" />
-      </div>
+      </button>
 
       {/* Desktop-only section switch (BottomNav covers this below 768px). */}
       <nav className="header-nav" aria-label="Sections">
