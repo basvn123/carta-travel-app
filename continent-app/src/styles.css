@@ -10166,6 +10166,44 @@ input, select {
 .guide-city-side-add { width: 100%; margin-top: 10px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
 .citypick-pin.focused { box-shadow: 0 0 0 3px var(--accent-bg), 0 1px 6px rgba(0, 0, 0, 0.18); border-color: var(--accent); }
 
+/* Mobile: the city briefing stacks under the map and its facts table runs long,
+   so the "Add to trip" action used to sit below the fold with nothing but a
+   disabled Next and a "0 of N nights" pill for company, a dead end. The panel
+   now flows in the page's own scroll and its primary action docks to the bottom
+   of the viewport, riding just above the wizard footer while the facts scroll
+   behind it. The action the whole step exists for is never more than a glance
+   away. (Desktop keeps the bounded side panel, where it was always visible.) */
+@media (max-width: 999px) {
+  .trip-wizard-modal .guide-stay-wrap .guide-city-side {
+    max-height: none;
+    overflow: visible;
+  }
+  /* The single "Add to trip" button keeps its accent fill and lifts off the
+     scrolling facts on a shadow, a docked primary action floating above the
+     footer. (Painting a paper bar behind it would have to sit UNDER the button,
+     not on it, so the button paints its own separation via the shadow.) */
+  .trip-wizard-modal .guide-stay-wrap .guide-city-side-add {
+    position: sticky;
+    bottom: 8px;
+    z-index: 3;
+    margin-top: 14px;
+    box-shadow: 0 6px 22px rgba(26, 26, 26, 0.26);
+  }
+  /* Once a city is in the trip the action becomes a control cluster (nights
+     stepper + remove), which does want a paper bar behind it so the -/+ read
+     against the page rather than over the facts. */
+  .trip-wizard-modal .guide-stay-wrap .guide-city-side-actions {
+    position: sticky;
+    bottom: 6px;
+    z-index: 3;
+    margin: 12px -12px 0;
+    padding: 12px;
+    background: var(--paper);
+    border-top: 1px solid var(--rule);
+    box-shadow: 0 -8px 18px -10px rgba(26, 26, 26, 0.22);
+  }
+}
+
 /* -- Stay style + final summary -- */
 .guide-staystyle { margin-bottom: 10px; }
 .guide-staystyle .trip-field-label { display: block; margin-bottom: 6px; }
@@ -11138,39 +11176,57 @@ input, select {
   gap: 16px;
   margin-top: 22px;
 }
+/* Compact by default: icon | (title + description) | chevron on ONE row, so
+   all three options sit inside a phone viewport instead of one-and-a-half
+   tall stacked cards. The roomy vertical treatment is reserved for the wide
+   grid below, where there is horizontal room for it. */
 .trip-wizard-modal .guide-path {
-  flex-direction: column;
-  align-items: flex-start;
+  flex-direction: row;
+  align-items: center;
   gap: 14px;
-  padding: 26px 24px 22px;
+  padding: 16px 16px;
   border-radius: 16px;
-  box-shadow: 0 4px 12px rgba(26, 26, 26, 0.05);
-  height: 100%;
-  transition: border-color .14s, box-shadow .14s, transform .14s;
+  box-shadow: 0 2px 8px rgba(26, 26, 26, 0.04);
+  transition: border-color .14s, box-shadow .14s, transform .1s;
 }
 .trip-wizard-modal .guide-path:hover {
   border-color: var(--accent);
-  box-shadow: 0 12px 26px rgba(26, 26, 26, 0.11);
-  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(26, 26, 26, 0.09);
 }
-.trip-wizard-modal .guide-path-icon { width: 48px; height: 48px; border-radius: 15px; }
+/* Tactile confirmation on tap: the whole card is the target, so pressing it
+   dips it, the way a physical button gives under a finger. */
+.trip-wizard-modal .guide-path:active { transform: scale(0.985); }
+.trip-wizard-modal .guide-path-icon { width: 46px; height: 46px; border-radius: 14px; flex: none; }
 .trip-wizard-modal .guide-path-icon svg { width: 22px; height: 22px; }
-.trip-wizard-modal .guide-path-text { gap: 6px; }
-.trip-wizard-modal .guide-path-text b { font-size: 17px; line-height: 1.25; }
-.trip-wizard-modal .guide-path-text small { font-size: 12.5px; line-height: 1.55; }
-/* The arrow becomes a footer affordance rather than a speck at the far right. */
-.trip-wizard-modal .guide-path .guide-arrow {
-  margin: auto 0 0;
+.trip-wizard-modal .guide-path-text { gap: 3px; }
+.trip-wizard-modal .guide-path-text b { font-size: 16px; line-height: 1.25; }
+/* Reading contrast, not hint contrast: --ink-mute failed AA on paper. */
+.trip-wizard-modal .guide-path-text small { font-size: 12.5px; line-height: 1.45; color: var(--ink-soft); }
+.trip-wizard-modal .guide-path-chev {
+  flex: none;
+  margin-left: auto;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--accent);
-  padding-top: 4px;
+  color: var(--ink-mute);
+  transition: transform .14s, color .14s;
 }
-.trip-wizard-modal .guide-path:hover .guide-arrow { transform: translateX(2px); }
-.trip-wizard-modal .guide-path .guide-arrow { transition: transform .14s; }
+.trip-wizard-modal .guide-path:hover .guide-path-chev { color: var(--accent); transform: translateX(2px); }
+/* Only when the deck can lay out as a real multi-column grid does the roomy
+   vertical card earn its space. */
+@media (min-width: 720px) {
+  .trip-wizard-modal .guide-path {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 24px 22px 20px;
+    height: 100%;
+  }
+  .trip-wizard-modal .guide-path-icon { width: 48px; height: 48px; border-radius: 15px; }
+  .trip-wizard-modal .guide-path-text b { font-size: 17px; }
+  .trip-wizard-modal .guide-path-chev { margin: auto 0 0; }
+  .trip-wizard-modal .guide-path:hover { transform: translateY(-2px); }
+  .trip-wizard-modal .guide-path:active { transform: translateY(-1px) scale(0.99); }
+}
 /* The one-question intro reads as a headline, so it centres over its deck. */
 .guide-lede { text-align: center; }
 .guide-lede .guide-sub { max-width: 56ch; margin-inline: auto; }
@@ -11661,10 +11717,30 @@ input, select {
 .cpm-dense .cpm-pin.on .cpm-name { display: inline; }
 .cpm-dense .cpm-pin:hover, .cpm-dense .cpm-pin.on { padding: 3px 8px 3px 3px; }
 .cpm-pin:hover, .cpm-pin.on { z-index: 4; }
-.fpm-dense .fpm-pin .fpm-city { display: none; }
-.fpm-dense .fpm-pin:hover .fpm-city,
-.fpm-dense .fpm-pin.on .fpm-city { display: inline; }
 .fpm-pin:hover { z-index: 4; }
+
+/* Collision demotion (declutterPins): a crowded pill first drops its city
+   name, keeping the price, then collapses to a bare dot. Nothing vanishes,
+   and hover or selection always restores the full pill. */
+.fpm-pin.is-tight .fpm-city { display: none; }
+.fpm-pin.is-dot {
+  gap: 0;
+  padding: 3px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+.fpm-pin.is-dot .fpm-price,
+.fpm-pin.is-dot .fpm-city,
+.fpm-pin.is-dot svg { display: none; }
+.fpm-pin.is-dot::before {
+  content: '';
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+.fpm-pin.is-tight:hover, .fpm-pin.is-dot:hover { z-index: 6; gap: 4px; padding: 3px 8px; }
+.fpm-pin.is-tight:hover .fpm-city, .fpm-pin.is-dot:hover .fpm-city { display: inline; }
+.fpm-pin.is-dot:hover .fpm-price, .fpm-pin.is-dot:hover svg { display: inline; }
+.fpm-pin.is-dot:hover::before { display: none; }
 .citypick-pin:hover, .citypick-pin.focused, .citypick-pin.sel { z-index: 4; }
 
 /* ── Inline range calendar ───────────────────────────────────────────────
@@ -11724,7 +11800,11 @@ input, select {
 }
 .guide-range-end b { font-family: var(--mono); font-size: 13px; color: var(--ink); }
 .guide-range-end.empty b { color: var(--ink-mute); font-weight: 400; }
-.guide-range-end.next { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-bg); }
+/* "Next" marks which end the next tap sets, so it needs to read as active,
+   not as a warning: a quiet accent border and faint tint, not a glowing 2px
+   ring that out-shouted the calendar it sits above. The start/end labels keep
+   their meaning; the emphasis just stops competing. */
+.guide-range-end.next { border-color: var(--accent-soft); background: var(--accent-bg); }
 
 /* ── Step transitions ────────────────────────────────────────────────────
    Moving between steps should read as travel through one form, not as a page
@@ -11993,9 +12073,17 @@ input, select {
 
 /* ── "Where do you drive from?" (wizard car branch + planner own-car editor) ── */
 .guide-carfrom { margin: 10px 0 12px; }
-.guide-carfrom-row { display: flex; flex-wrap: nowrap; gap: 8px; align-items: center; }
-.guide-carfrom-row .guide-search { flex: 1; min-width: 0; margin-bottom: 0; }
+/* Address then button, stacked: a full-street-address field kept beside a
+   "Search" button on a phone left it a third of the width, truncating what
+   was typed mid-entry. The field gets the whole row; the button sits under it.
+   Side by side returns once there is room (tablet and up). */
+.guide-carfrom-row { display: flex; flex-direction: column; gap: 8px; align-items: stretch; }
+.guide-carfrom-row .guide-search { flex: 1; min-width: 0; margin-bottom: 0; width: 100%; }
 .guide-carfrom-search { flex: none; white-space: nowrap; }
+@media (min-width: 640px) {
+  .guide-carfrom-row { flex-direction: row; align-items: center; }
+  .guide-carfrom-row .guide-search { width: auto; }
+}
 .guide-carfrom-list { margin-top: 8px; }
 .guide-carfrom-list .guide-city-btn { display: flex; gap: 8px; align-items: center; text-align: left; }
 .guide-carfrom-label { font-size: 12px; color: var(--ink-soft); overflow: hidden; text-overflow: ellipsis; }

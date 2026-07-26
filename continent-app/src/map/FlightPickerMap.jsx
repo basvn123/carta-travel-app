@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
-import { hasLngLat, keepFitted } from './coords.js';
+import { hasLngLat, keepFitted, declutterPins } from './coords.js';
 
 const MAP_STYLE = 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json';
 
@@ -44,16 +44,23 @@ export function FlightPickerMap({ options = [], origin = null, onPick }) {
     const unfit = keepFitted(map, containerRef.current, () => (
       fitRef.current ? { bounds: fitRef.current, padding: 52, maxZoom: 7 } : null
     ));
-    // Zoomed out, "€28 Dubrovnik" pills sit on top of each other and on the
-    // basemap's own place names. Below the threshold the pill keeps the price
-    // (the thing being compared) and drops the city name; hover and the picked
-    // route always show both.
-    const el = containerRef.current;
-    const density = () => el?.classList.toggle('fpm-dense', map.getZoom() < 5.2);
-    map.on('zoom', density);
-    map.on('load', density);
+    // Italy alone lands a dozen Ryanair airports within a hundred kilometres,
+    // so "€28 Dubrovnik" pills pile on top of each other and on the basemap's
+    // own place names. The same collision pass the other maps run demotes any
+    // pill that would overlap one already placed: first it drops the city name
+    // (keeping the price, the thing being compared), then to a bare dot. The
+    // cheapest fare wins the right to keep its label; the selected pin always
+    // keeps it (it carries `.on`).
+    const stopDeclutter = declutterPins(map, () => (
+      [...pinsRef.current.values()].map(({ el, o }) => ({
+        el,
+        lngLat: [o.lon, o.lat],
+        // Cheaper is more interesting, so it outranks pricier neighbours.
+        priority: Number.isFinite(o.eur) ? 10000 - o.eur : 0,
+      }))
+    ));
     mapRef.current = map;
-    return () => { unfit(); map.remove(); mapRef.current = null; readyRef.current = false; pinsRef.current.clear(); };
+    return () => { stopDeclutter(); unfit(); map.remove(); mapRef.current = null; readyRef.current = false; pinsRef.current.clear(); };
   }, []);
 
   // Rebuild pins when the option set changes (countries/dates edited).
@@ -86,7 +93,7 @@ export function FlightPickerMap({ options = [], origin = null, onPick }) {
         const marker = new maplibregl.Marker({ element: el, anchor: 'center' })
           .setLngLat([o.lon, o.lat])
           .addTo(map);
-        pinsRef.current.set(o.id, { marker, el });
+        pinsRef.current.set(o.id, { marker, el, o });
       });
 
       if (hasLngLat(origin)) {

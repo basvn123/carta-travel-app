@@ -28,7 +28,7 @@ import {
   TreeIcon, DiningIcon, MoonIcon,
   CameraIcon, CastleIcon, BeachIcon,
   LeafIcon, ScaleIcon, BoltIcon, StarIcon, RouteIcon, BedIcon, MapPinIcon,
-  CalendarIcon, PersonIcon, DiamondIcon, DotIcon, LuggageIcon,
+  CalendarIcon, PersonIcon, DiamondIcon, DotIcon, LuggageIcon, ChevronRightIcon,
 } from '../components/Icons.jsx';
 import { PlaneIcon } from '../components/TransportIcons.jsx';
 import { OriginPicker } from '../components/OriginPicker.jsx';
@@ -1527,7 +1527,10 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
                       <b>{t(p.labelKey)}</b>
                       <small>{t(p.subKey)}</small>
                     </span>
-                    <span className="guide-arrow">{t('wizard.pathChoose')} →</span>
+                    {/* The whole card is the target; a right chevron is the
+                        signifier for that, where a "Choose this ->" text link
+                        read as a second, smaller target inside the first. */}
+                    <span className="guide-path-chev" aria-hidden="true"><ChevronRightIcon size={20} /></span>
                   </button>
                 ))}
               </div>
@@ -2731,10 +2734,11 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
                   )}
                 </div>
               </div>
-
-              <button className="guide-next guide-summary-cta" onClick={finish} disabled={includedIds.length === 0}>
-                <SparkIcon size={14} /> Let Carta arrange it
-              </button>
+              {/* The "Let Carta arrange it" button lives once, in the sticky
+                  footer where the action has sat on every previous step. A
+                  second copy inside the summary card was the same control twice
+                  on one screen; the footer one is always reachable without
+                  scrolling the summary, so this is the copy that stays. */}
             </>
           )}
 
