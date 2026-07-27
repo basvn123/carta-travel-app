@@ -73,6 +73,11 @@ const MAP_RATINGS = [
   { key: 'must', labelKey: 'day.mapQualityMust' },
 ];
 
+// Beyond this, a bot plan's own walking total is not a day anyone walked: it
+// came from a plan saved before the server enforced a walking budget. Well
+// clear of the 40 km ceiling the chat profile allows a keen hiker to ask for.
+const AI_MAX_TRUSTED_WALK_KM = 45;
+
 /** A place's own description, trimmed to a timeline-sized sentence or two on a
  *  word boundary (never mid-word, never mid-sentence if a full stop is near
  *  the limit), so every stop can carry context without the card ballooning. */
@@ -936,6 +941,14 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
     () => (aiPlan?.stops || []).filter((s) => s.external && s.name),
     [aiPlan],
   );
+
+  // Plans imported before the server learned to hold a walking budget carry
+  // totals like "89.4 km on foot, done around 11:32" (the clock used to wrap
+  // at midnight, so an impossible day read as a pleasant morning). They are
+  // saved on the device and would keep saying it forever, so a total no one
+  // could walk means the line is not shown at all. The day itself, its stops
+  // and its own timeline totals, is unaffected.
+  const aiTotalsTrustworthy = (aiPlan?.totals?.walkKm ?? 0) <= AI_MAX_TRUSTED_WALK_KM;
 
   const dayAssignedIdx = assignments[stopIdx]?.[dayIdx] || [];
   const assignedItems = dayAssignedIdx.map((i) => activities.items[i]).filter(Boolean);
@@ -3244,9 +3257,11 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
                     >×</button>
                   </div>
                   {aiPlan.summary && <p className="ai-day-panel-summary">{aiPlan.summary}</p>}
-                  <p className="ai-plan-note">
-                    {t('ai.totals', { km: aiPlan.totals?.walkKm ?? 0, t: aiPlan.totals?.endTime ?? '' })}
-                  </p>
+                  {aiTotalsTrustworthy && (
+                    <p className="ai-plan-note">
+                      {t('ai.totals', { km: aiPlan.totals?.walkKm ?? 0, t: aiPlan.totals?.endTime ?? '' })}
+                    </p>
+                  )}
                 </div>
               )}
 

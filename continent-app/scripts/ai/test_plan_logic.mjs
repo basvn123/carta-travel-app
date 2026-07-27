@@ -124,6 +124,65 @@ const solo = scheduleDay(terrible, { groupSize: 2 });
 const seven = scheduleDay(terrible, { groupSize: 7 });
 check('schedule: big group ends later', seven.endTime > solo.endTime, `${seven.endTime} vs ${solo.endTime}`);
 
+/* ---- the walking budget: days that cannot be walked must not be sold ----
+   Reported from the app as "About 89.4 km on foot, done around 11:32" for a
+   route the traveller had asked to be short. Two faults met: the candidate
+   deck reaches 20 km from the city centre so the model could graze right
+   across it, and the clock wrapped at midnight, which turned a day ending at
+   35:32 into a pleasant-sounding late morning. */
+
+// Stops scattered over the whole 20 km radius, none within walking range of
+// another. There is no walkable day in here and the scheduler must say so
+// rather than invent an 90 km one.
+const CENTRE = { lat: 47.7933, lon: 13.0043 };
+const at = (dLat, dLon, n, dwellMin = 45) => ({
+  id: String(n), name: `Stop ${n}`, dwellMin, why: '', external: false,
+  lat: CENTRE.lat + dLat, lon: CENTRE.lon + dLon,
+});
+const scattered = [at(0.15, 0, 1), at(-0.15, 0, 2), at(0, 0.22, 3), at(0, -0.22, 4),
+  at(0.12, 0.18, 5), at(-0.12, -0.18, 6), at(0.16, -0.1, 7), at(-0.16, 0.12, 8)];
+const spread = scheduleDay(scattered, { groupSize: 2 });
+check('budget: a scattered deck never becomes an 80 km walk',
+  spread.totalKm <= 12, `${spread.totalKm} km`);
+check('budget: the unreachable stops are reported, not silently kept',
+  spread.farDropped > 0 && spread.stops.length < scattered.length);
+
+// The clock must never wrap: an impossible day has to LOOK impossible.
+const hhmm = /^(\d{2,}):([0-5]\d)$/;
+check('clock: end time is well formed', hhmm.test(spread.endTime));
+const marathon = scheduleDay([at(0, 0, 1, 350), at(0.004, 0.004, 2, 350), at(0.008, 0, 3, 350)],
+  { groupSize: 2 });
+check('clock: a day past midnight reads past 24h, not wrapped',
+  Number(marathon.endTime.split(':')[0]) >= 24, marathon.endTime);
+
+// A tight city cluster with two far strays: keep the day, lose the strays.
+const cluster = [at(0.002, 0, 1), at(0.006, 0.004, 2), at(0.011, -0.002, 3), at(0.004, 0.009, 4)];
+const withStrays = scheduleDay([...cluster, at(0.14, 0.16, 9), at(-0.15, -0.13, 10)], { groupSize: 2 });
+check('budget: the walkable cluster survives its outliers',
+  withStrays.stops.length === cluster.length && withStrays.farDropped === 2,
+  `kept ${withStrays.stops.length}, dropped ${withStrays.farDropped}`);
+
+// A day that already fits must come through completely untouched.
+const untouched = scheduleDay(cluster, { groupSize: 2 });
+check('budget: a walkable day is left alone',
+  untouched.stops.length === cluster.length && untouched.farDropped === 0);
+
+// The traveller's own answer is ENFORCED, not just mentioned in the prompt.
+const tight = scheduleDay(cluster, { groupSize: 2, maxWalkKm: 1 });
+check('budget: maxWalkKm is honoured', tight.totalKm <= 1, `${tight.totalKm} km`);
+check('budget: a bigger budget keeps more of the day',
+  scheduleDay(cluster, { groupSize: 2, maxWalkKm: 20 }).stops.length >= tight.stops.length);
+
+// A stay beyond walking range is a ride the app draws separately, so its
+// distance must not be billed to the walking budget.
+const farStay = scheduleDay(cluster, { groupSize: 2, stay: { lat: 48.2, lon: 13.5 } });
+check('stay: a distant stay is not walked', farStay.fromStay === false);
+check('stay: a distant stay adds no walking', farStay.totalKm < 3, `${farStay.totalKm} km`);
+const nearStay = scheduleDay(cluster, { groupSize: 2, stay: { lat: CENTRE.lat - 0.008, lon: CENTRE.lon } });
+check('stay: a stay round the corner still starts the walk', nearStay.fromStay === true);
+check('stay: walking from it costs more than starting at stop 1',
+  nearStay.totalKm > untouched.totalKm);
+
 /* ---- cacheKeyInput ---- */
 const base = {
   model: 'm', destId: 'd', month: 8, groupSize: 7, pace: 'balanced', vibe: 'mix',

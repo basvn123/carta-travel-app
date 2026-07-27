@@ -60,6 +60,30 @@ Do NOT add the 2.5 family: those models answer 404 "no longer available to
 new users" on keys created recently, even though they still appear in the AI
 Studio rate-limit table and in `models.list`.
 
+## The walking budget
+
+`logic.mjs` re-times the day from real distances, and since 2026-07-27 it also
+holds it to a distance a person can walk. The candidate deck reaches 20 km
+from the city centre, so a model that grazed across it used to produce a real,
+faithfully-timed, completely impossible day: one shipped as "About 89.4 km on
+foot, done around 11:32", the clock having wrapped at midnight from 35:32.
+
+`scheduleDay` now keeps the largest walkable CLUSTER of the stops the model
+chose, in the model's own order, and reports the rest as `meta.farDropped`:
+
+| Limit | Default | Source |
+| --- | --- | --- |
+| Total walking | 12 km | `profile.maxWalkKm` when the traveller answered the chat, else `DEFAULT_MAX_WALK_KM` |
+| One leg | 6.5 km | `MAX_LEG_KM`, or half the day's budget when that is larger |
+| Walking from the stay | 2.5 km | `STAY_WALK_MAX_KM`, mirroring the app, which draws a longer hop as a ride |
+
+A `meta.farDropped` that stays high in the logs means the deck is offering the
+model places no walking day can reach. If nothing forms a walkable cluster the
+function answers `too_few` rather than selling a one-stop route.
+
+Note `cacheKeyInput` carries `v: 3`; v2 rows hold the old impossible totals and
+are never served.
+
 ## What is deliberately NOT here
 
 - No Google Search grounding and no other tools in the request: grounding is

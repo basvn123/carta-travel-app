@@ -190,13 +190,94 @@ export function twoOptOrder(pts, start = null) {
   return order;
 }
 
+/**
+ * The biggest group of stops that can honestly be walked in one day, chosen
+ * out of an ordered list and KEEPING that order.
+ *
+ * Dropping outliers one by one is the wrong instrument when the whole deck is
+ * spread: the candidate pool reaches 20 km from the city centre, so a model
+ * that grazed across it produces a list where every leg is long, and a
+ * per-leg filter would strip it down to a single stop. What a traveller
+ * actually wants there is the best walkable CLUSTER.
+ *
+ * Each stop is tried as a seed; the others join it nearest-first for as long
+ * as the resulting path (still in the given order, still anchored) keeps
+ * every leg under `maxLegKm` and the total under `budgetKm`. The seed that
+ * retains the most stops wins, shortest path breaking ties. Order is never
+ * rearranged here: the model's chronology (indoor stops in the hot hours,
+ * the viewpoint at sunset) survives the cut.
+ *
+ * Returns the surviving indices, in order.
+ */
+export function walkableSubset(order, pts, { start = null, maxLegKm, budgetKm }) {
+  if (order.length <= 1) return [...order];
+  const fits = (idxs) => {
+    let total = 0;
+    let prev = start;
+    for (const i of idxs) {
+      if (prev) {
+        const km = haversineKm(prev.lat, prev.lon, pts[i].lat, pts[i].lon) ?? 0;
+        if (km > maxLegKm) return null;
+        total += km;
+        if (total > budgetKm) return null;
+      }
+      prev = pts[i];
+    }
+    return total;
+  };
+  let best = null;
+  let bestKm = Infinity;
+  for (const seed of order) {
+    const chosen = new Set([seed]);
+    const others = order
+      .filter((i) => i !== seed)
+      .map((i) => ({ i, d: haversineKm(pts[seed].lat, pts[seed].lon, pts[i].lat, pts[i].lon) ?? Infinity }))
+      .sort((a, b) => a.d - b.d);
+    for (const { i } of others) {
+      const trial = order.filter((j) => chosen.has(j) || j === i);
+      if (fits(trial) != null) chosen.add(i);
+    }
+    const kept = order.filter((i) => chosen.has(i));
+    const km = fits(kept);
+    if (km == null) continue;
+    if (!best || kept.length > best.length || (kept.length === best.length && km < bestKm)) {
+      best = kept;
+      bestKm = km;
+    }
+  }
+  // Every seed failed its own first leg (a stay anchor further than maxLegKm
+  // from everything). Keep the head of the order rather than nothing.
+  return best || [order[0]];
+}
+
 /* ---- deterministic scheduling ---- */
 
+/**
+ * Minutes past midnight to a clock label. Deliberately does NOT wrap at 24h:
+ * a day that runs to 35:32 has to LOOK wrong. Wrapping turned an impossible
+ * plan into a pleasant-sounding "done around 11:32" and hid the 89 km walk
+ * that produced it.
+ */
 const fmtHM = (min) => {
-  const h = Math.floor(min / 60) % 24;
-  const m = Math.round(min % 60);
-  return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+  const t = Math.max(0, Math.round(min));
+  return `${String(Math.floor(t / 60)).padStart(2, '0')}:${String(t % 60).padStart(2, '0')}`;
 };
+
+// What a person actually walks between sights across a sightseeing day. The
+// traveller's own answer (profile.maxWalkKm) overrides this; it is the
+// fallback for everyone who was never asked.
+export const DEFAULT_MAX_WALK_KM = 12;
+// One leg on foot between two sights, about 85 minutes' walking. Past this it
+// is not a walk between sights, it is a transfer, and that stop belongs to
+// another day. Set here so a genuine city outlier still survives (Brussels'
+// Atomium sits 5.4 km out from the Grand Place and belongs in a Brussels day);
+// the TOTAL budget, not this, is what makes a day possible or not. The app
+// already flags any leg past an hour on foot, so a long one is never silent.
+export const MAX_LEG_KM = 6.5;
+// Beyond this the stay is not a walking origin. Mirrors STAY_WALK_MAX_KM in
+// DayPlannerTab, which already draws that first hop as a ride, so the server
+// must not bill it to the day's walking budget either.
+export const STAY_WALK_MAX_KM = 2.5;
 
 /**
  * The accuracy guarantee: whatever times the model dreamt up, the schedule
@@ -205,34 +286,66 @@ const fmtHM = (min) => {
  * (>12% and >400 m shorter), in which case the day is reordered; either way
  * every arrival time is derived, never trusted.
  *
+ * That guarantee used to cover only the clock. The candidate deck reaches 20
+ * km out from the city centre, so a model that picked stops on opposite edges
+ * of it produced a real, faithfully-timed, completely impossible day: 89 km
+ * on foot, ending the following afternoon. Distance is now held to the same
+ * standard as time. A stop whose incoming leg is a transfer rather than a
+ * walk (MAX_LEG_KM), or that would push the day past its walking budget, is
+ * dropped here rather than scheduled, and reported as `farDropped` so the
+ * caller can say so. `maxWalkKm` is the traveller's own answer from the chat
+ * profile, which until now was only ever REQUESTED of the model in the prompt
+ * and never enforced.
+ *
  * Groups walk slower than couples: sidewalk friction is real. A lunch break
  * lands after the first stop that ends past 12:30.
  */
 export function scheduleDay(stops, {
   stay = null, groupSize = 2, dayStartMin = 9 * 60 + 30, lunchMin = 75,
+  maxWalkKm = DEFAULT_MAX_WALK_KM, maxLegKm = null,
 } = {}) {
   const pts = stops.filter((s) => Number.isFinite(s.lat) && Number.isFinite(s.lon));
   const rest = stops.filter((s) => !Number.isFinite(s.lat) || !Number.isFinite(s.lon));
-  const start = stay && Number.isFinite(stay.lat) && Number.isFinite(stay.lon) ? stay : null;
+  const anchor = stay && Number.isFinite(stay.lat) && Number.isFinite(stay.lon) ? stay : null;
 
   let order = pts.map((_, i) => i);
   let optimized = false;
   if (pts.length >= 3) {
-    const asIsKm = pathKm(order, pts, start);
-    const better = twoOptOrder(pts, start);
-    const betterKm = pathKm(better, pts, start);
+    const asIsKm = pathKm(order, pts, anchor);
+    const better = twoOptOrder(pts, anchor);
+    const betterKm = pathKm(better, pts, anchor);
     if (betterKm < asIsKm * 0.88 && asIsKm - betterKm > 0.4) {
       order = better;
       optimized = true;
     }
   }
 
+  // A stay further out than a short stroll is not where the walking day
+  // begins: the traveller rides in, and the app already draws that hop as a
+  // ride. Anchoring the walk to it would bill the whole transfer to the day's
+  // walking budget and blow it before the first sight.
+  const stayGapKm = anchor
+    ? Math.min(...order.map((i) => haversineKm(anchor.lat, anchor.lon, pts[i].lat, pts[i].lon) ?? Infinity))
+    : Infinity;
+  const startsAtStay = stayGapKm <= STAY_WALK_MAX_KM;
+  const start = startsAtStay ? anchor : null;
+
+  const budgetKm = Math.max(1, Number.isFinite(maxWalkKm) ? maxWalkKm : DEFAULT_MAX_WALK_KM);
+  // No single hop may eat more than half the day's walking, and someone who
+  // asked for a 25 km day is telling us they will happily walk further
+  // between sights too, so the cap rises with their budget rather than
+  // holding everyone to the city-stroll figure.
+  const legCapKm = Number.isFinite(maxLegKm) ? maxLegKm : Math.max(MAX_LEG_KM, budgetKm / 2);
+  const keep = walkableSubset(order, pts, { start, maxLegKm: legCapKm, budgetKm });
+  const farDropped = order.length - keep.length;
+
   const speedKmh = groupSize >= 5 ? 3.8 : 4.5;
   let t = dayStartMin;
   let totalKm = 0;
   let lunchAfter = -1;
   let prev = start;
-  const ordered = order.map((i, pos) => {
+  const ordered = [];
+  for (const i of keep) {
     const s = pts[i];
     const km = prev ? (haversineKm(prev.lat, prev.lon, s.lat, s.lon) ?? 0) : 0;
     const walkMin = Math.round((km / speedKmh) * 60);
@@ -241,17 +354,17 @@ export function scheduleDay(stops, {
     const arrive = t;
     t += s.dwellMin;
     if (lunchAfter < 0 && t >= 12 * 60 + 30) {
-      lunchAfter = pos;
+      lunchAfter = ordered.length;
       t += lunchMin;
     }
     prev = s;
-    return {
+    ordered.push({
       ...s,
       arrive: fmtHM(arrive),
       walkKmFromPrev: Math.round(km * 100) / 100,
       walkMinFromPrev: walkMin,
-    };
-  });
+    });
+  }
 
   return {
     stops: [...ordered, ...rest.map((s) => ({ ...s, arrive: null, walkKmFromPrev: 0, walkMinFromPrev: 0 }))],
@@ -260,6 +373,10 @@ export function scheduleDay(stops, {
     lunchAfter,
     lunchMin: lunchAfter >= 0 ? lunchMin : 0,
     optimized,
+    farDropped,
+    // False when the stay was too far to walk from, so the caller knows the
+    // day's first leg is a ride it has not costed.
+    fromStay: startsAtStay,
   };
 }
 
@@ -329,7 +446,10 @@ export function cacheKeyInput({
 }) {
   const groupBand = groupSize >= 7 ? '7+' : groupSize >= 5 ? '5-6' : groupSize >= 3 ? '3-4' : String(groupSize);
   return JSON.stringify({
-    v: 2,
+    // v3: the scheduler now enforces a walking budget and no longer wraps the
+    // clock at midnight. Cached v2 payloads carry the old impossible totals
+    // ("89.4 km on foot, done around 11:32"), so they must not be served.
+    v: 3,
     model,
     destId,
     when: wantEvents ? (dateISO || '') : month,

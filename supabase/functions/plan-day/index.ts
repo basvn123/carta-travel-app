@@ -325,7 +325,19 @@ Deno.serve(async (req) => {
   const centre = { lat: centreLat, lon: centreLon };
   const { stops: safeStops, dropped } = sanitizeAiStops(parsed.stops, candidates, centre);
   if (safeStops.length < 2) return json(502, { code: 'ai_bad_output' });
-  const sched = scheduleDay(safeStops, { stay, groupSize });
+  // The traveller's own walking answer is ENFORCED here, not merely asked of
+  // the model above: the prompt line is a request, this is the guarantee.
+  const sched = scheduleDay(safeStops, {
+    stay, groupSize, maxWalkKm: profile?.maxWalkKm ?? undefined,
+  });
+  // Nothing here forms a walkable cluster (a deck whose good places are
+  // scattered across the whole 20 km radius). That is not a malformed AI
+  // answer, it is a city that cannot give this traveller a walking day, which
+  // is exactly what `too_few` already tells them while offering the built-in
+  // planner. A one-stop "route" would be worse than saying so.
+  if (sched.stops.filter((s: { arrive?: string | null }) => s.arrive).length < 2) {
+    return json(400, { code: 'too_few' });
+  }
 
   const payload = {
     summary: cleanText(String(parsed.summary ?? ''), 400),
@@ -345,6 +357,11 @@ Deno.serve(async (req) => {
       fellBack: usedModel !== CHAIN[0],
       optimized: sched.optimized,
       dropped,
+      // Stops the model chose that were past the day's walking budget. A
+      // number that stays high in the logs means the candidate deck is
+      // handing the model places no walking day can reach.
+      farDropped: sched.farDropped,
+      fromStay: sched.fromStay,
       cached: false,
       refined: !!refine,
       events: sched.stops.filter((s: { isEvent?: boolean }) => s.isEvent).length,
