@@ -86,7 +86,12 @@ export function Collapsible({ title, titleIcon, count, summary, defaultOpen = fa
   );
 }
 
-export function AssignedRow({ item, index, last, when, dwellLabel, onMoveUp, onMoveDown, onRemove }) {
+/** One stop of the planned day. The name is never truncated here: a row whose
+ *  title reads "Erzabtei Sankt..." tells a traveller nothing. Under it sits the
+ *  sentence that says what the place is (the bot's reason when the day was
+ *  imported, the catalogue description otherwise) and the visit estimate, so
+ *  the timeline carries context instead of a clock. */
+export function AssignedRow({ item, index, last, stayLabel, note, noteFromAi, onMoveUp, onMoveDown, onRemove }) {
   const [infoOpen, setInfoOpen] = useState(false);
   return (
     <div className="day-timeline-row">
@@ -94,11 +99,6 @@ export function AssignedRow({ item, index, last, when, dwellLabel, onMoveUp, onM
       <div className="day-assigned-row day-assigned-with-info">
         {item.img && <span className="day-thumb" style={{ backgroundImage: `url(${item.img})` }} />}
         <div className="day-assigned-body">
-          {when && (
-            <span className="day-assigned-when">
-              {when}{dwellLabel ? `, ${dwellLabel}` : ''}
-            </span>
-          )}
           <RowTitle item={item} must={isMustSee(item)} />
           <span className="day-assigned-kind">
             {poiKind(item)}
@@ -115,6 +115,15 @@ export function AssignedRow({ item, index, last, when, dwellLabel, onMoveUp, onM
           <button className="trip-stop-move" onClick={onMoveDown} disabled={last} aria-label="Move later" title="Move later">↓</button>
           <button className="trip-stop-remove" onClick={onRemove} aria-label="Remove" title="Remove">×</button>
         </div>
+        {/* The narrative and the visit estimate wrap onto their own full-width
+            line of the card. Kept inside the title column they would have had
+            about 160px to work with, which is four words before the clamp. */}
+        {(note || stayLabel) && (
+          <div className="day-assigned-foot">
+            {note && <p className={`day-assigned-note${noteFromAi ? ' from-ai' : ''}`}>{note}</p>}
+            {stayLabel && <span className="day-assigned-when">{stayLabel}</span>}
+          </div>
+        )}
         {infoOpen && <ActivityDetail item={item} className="day-activity-detail day-timeline-detail" />}
       </div>
     </div>

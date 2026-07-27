@@ -602,6 +602,26 @@ export const en = {
   "day.chipSights": "Sights",
   "day.chooseCountryFirst": "Choose a country first",
   "day.city": "City",
+
+  // Day map toolbar. Category (what kind of place) is the everyday filter and
+  // stays on screen; quality (how good) is a collapsible narrowing; "only my
+  // picks" is a view state, not a filter, and lives in its own control layer.
+  "day.mapFilterCat": "Filter places by category",
+  "day.mapFilterQuality": "Filter places by quality",
+  "day.mapCatAll": "All",
+  "day.mapCatSights": "Sights",
+  "day.mapCatNature": "Nature",
+  "day.mapCatActive": "Active",
+  "day.mapCatFood": "Food",
+  "day.mapQualityAny": "Any rating",
+  "day.mapQualityTop": "Top rated",
+  "day.mapQualityMust": "Must-see",
+  "day.mapOnlyPicks": "Only my picks",
+  "day.mapOnlyPicksTitle": "Show only the places already in your plan",
+  "day.mapHintTap": "Tap a pin to add it to day {n}. Zoom in for more places.",
+  "day.mapHintPicked": "Your picked places in {city}. Numbered pins are day {n}.",
+  "day.thisCity": "this city",
+
   "day.clear": "Clear",
   "day.clearAddress": "Clear address",
   "day.clearSearch": "Clear search",
@@ -703,7 +723,16 @@ export const en = {
   "day.removeFromMyDays": "Remove from my days",
   "day.removeX": "Remove {name}",
   "day.rideLeg": "≈{min} min by {mode}, ~{km} km",
-  "day.lunchStop": "Lunch break around {start}, moving again by {end}",
+  // The timeline speaks in macro blocks and durations, not arrival clocks: a
+  // holiday runs on "afternoon, about 45 minutes here", and a phase cannot be
+  // missed by leaving one museum late. The exact minutes still drive the
+  // calendar export and the still-open maths underneath.
+  "day.lunchBreak": "Lunch break, about {dur}",
+  "day.phaseMorning": "Morning",
+  "day.phaseMidday": "Midday",
+  "day.phaseAfternoon": "Afternoon",
+  "day.phaseEvening": "Evening",
+  "day.estStay": "Est. stay {dur}",
   "day.doneAround": "Done around {time}.",
   "day.openTime": "About {dur} of your day is still open.",
   "day.gapTitle": "Fits in your open {dur}",
@@ -1410,6 +1439,7 @@ export const en = {
   "ai.apply": "Import this day onto my map",
   "ai.tweak": "Change my answers",
   "ai.discovery": "Carta bot find",
+  "ai.discoveryTitle": "Carta bot also spotted",
   "ai.discoveryNote": "{n} extra place(s) beyond Carta's catalogue will show as violet spark pins on the map.",
   "ai.summaryTitle": "Carta bot schedule for day {n}",
   "ai.totals": "About {km} km on foot, done around {t}.",

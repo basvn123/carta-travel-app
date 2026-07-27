@@ -6,6 +6,7 @@ import {
   CoffeeIcon, StarIcon, PersonIcon, BallIcon,
 } from '../components/Icons.jsx';
 import { TownPickerStep } from './TownPickerStep.jsx';
+import { stopPhaseLabels } from './daySchedule.js';
 
 /**
  * CartaChatPlanner, the guided conversation that ends in a real day route.
@@ -144,6 +145,10 @@ export function CartaChatPlanner({
   const [refineText, setRefineText] = useState('');
   const [failCode, setFailCode] = useState('');
   const endRef = useRef(null);
+
+  // Macro blocks (Morning / Midday / ...) for the proposed route, announced
+  // once per block, matching how the imported day reads on the timeline.
+  const stopPhases = useMemo(() => stopPhaseLabels(result?.stops), [result]);
 
   // Nearby towns become the first question's options, closest first.
   const questions = useMemo(() => QUESTIONS.map((q) => {
@@ -367,7 +372,9 @@ export function CartaChatPlanner({
               <ol className="ai-sched">
                 {result.stops.map((s, i) => (
                   <li key={i} className={`ai-sched-stop ${s.external ? 'ext' : ''}`}>
-                    <span className="ai-sched-time">{s.arrive || '·'}</span>
+                    {/* Same macro blocks the planned day reads in, not a
+                        per-stop clock. */}
+                    <span className="ai-sched-time">{stopPhases[i] ? t(stopPhases[i]) : ''}</span>
                     <span className="ai-sched-body">
                       <b>
                         {s.name}

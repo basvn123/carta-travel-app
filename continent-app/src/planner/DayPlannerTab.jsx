@@ -35,7 +35,9 @@ import { openDayPlanIcs } from './dayPlanIcs.js';
 import { MODE_META, DayTripTransport } from './DayTripTransport.jsx';
 import { CartaGuidePanel } from './CartaGuidePanel.jsx';
 import { estimateWalkMinutes, fmtDur } from './dayFormat.js';
-import { buildDaySchedule, fmtClock, GAP_SUGGEST_MIN } from './daySchedule.js';
+import {
+  buildDaySchedule, fmtClockLoose, dayPhase, GAP_SUGGEST_MIN,
+} from './daySchedule.js';
 import { searchFold } from '../lib/textSearch.js';
 import { Collapsible, AssignedRow, ActivitySection, ActivityRow } from './DayActivityRows.jsx';
 import {
@@ -48,12 +50,41 @@ import {
   SparkIcon, StarIcon, InfoIcon, MountainIcon, ShareIcon, MapPinIcon,
   BedIcon, BookmarkIcon, DownloadIcon, RouteIcon,
   FerryIcon, PencilIcon, SearchIcon, HomeIcon, CheckIcon, CalendarIcon,
-  ClockIcon, CoffeeIcon,
+  ClockIcon, CoffeeIcon, FilterIcon, ChevronDownIcon,
 } from '../components/Icons.jsx';
 
 // How the explore search & "Let Carta guide you" name each pin category.
 // i18n keys, resolved with t() at render time.
 const EXPLORE_CAT_KEY = { town: 'day.catTown', beach: 'day.catBeach', sight: 'day.catSight', active: 'day.catActive' };
+
+// The day map's two filter axes, kept apart on purpose: WHAT a place is is the
+// everyday question and stays on screen; HOW GOOD it is is an occasional
+// narrowing and lives in the collapsible group.
+const MAP_CATS = [
+  { key: 'all', labelKey: 'day.mapCatAll' },
+  { key: 'sight', labelKey: 'day.mapCatSights' },
+  { key: 'nature', labelKey: 'day.mapCatNature' },
+  { key: 'active', labelKey: 'day.mapCatActive' },
+  { key: 'food', labelKey: 'day.mapCatFood' },
+];
+const MAP_RATINGS = [
+  { key: 'all', labelKey: 'day.mapQualityAny' },
+  { key: 'top', labelKey: 'day.mapQualityTop' },
+  { key: 'must', labelKey: 'day.mapQualityMust' },
+];
+
+/** A place's own description, trimmed to a timeline-sized sentence or two on a
+ *  word boundary (never mid-word, never mid-sentence if a full stop is near
+ *  the limit), so every stop can carry context without the card ballooning. */
+function shortDesc(text, limit = 165) {
+  const s = (text || '').trim();
+  if (s.length <= limit) return s;
+  const cut = s.slice(0, limit);
+  const stop = Math.max(cut.lastIndexOf('. '), cut.lastIndexOf('! '), cut.lastIndexOf('? '));
+  if (stop > limit * 0.55) return cut.slice(0, stop + 1);
+  const space = cut.lastIndexOf(' ');
+  return `${cut.slice(0, space > 0 ? space : limit).replace(/[,;:]$/, '')}...`;
+}
 
 
 const fmtDate = (iso) => (iso ? fmtDateFull(iso).slice(0, 6) : '');
@@ -533,11 +564,19 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
   const [mapRating, setMapRating] = useState('all');
   // "Show selected": the map shows ONLY what's already picked, today's stops
   // as the numbered route plus the city's other days as check-marked pins.
+  // This is a VIEW STATE, not a filter over the catalogue, so it lives in its
+  // own control layer rather than among the quality filters.
   const [showSel, setShowSel] = useState(false);
+  // The quality filter is a collapsible group: kind-of-place is what people
+  // reach for constantly, how-good-is-it is an occasional narrowing, so only
+  // one of the two costs permanent space over the map.
+  const [qualityOpen, setQualityOpen] = useState(false);
   // Where the map is looking right now ({ zoom, bounds }), fed back by
   // TripMap so zooming in can reveal more of the catalogue.
   const [mapView, setMapView] = useState(null);
-  useEffect(() => { setMapCat('all'); setMapRating('all'); setShowSel(false); }, [stopIdx, plan?.id]);
+  useEffect(() => {
+    setMapCat('all'); setMapRating('all'); setShowSel(false); setQualityOpen(false);
+  }, [stopIdx, plan?.id]);
 
   // Places already laid into ANY day of this city: their pins are hidden, so
   // a place can't be double-added across days from the map.
@@ -876,6 +915,27 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
         event: !!s.isEvent,
       }))
   ), [aiPlan]);
+
+  // The AI's one-line reason per catalogue stop, keyed by the same item index
+  // the day's assignments speak. The bot's schedule is NOT a second list any
+  // more: importing a plan lays its stops into the one timeline, and this is
+  // how each row keeps the sentence that explained why it is there.
+  const aiWhyByIdx = useMemo(() => {
+    const m = {};
+    (aiPlan?.stops || []).forEach((s) => {
+      if (s.external || !s.why) return;
+      const idx = Number(s.id);
+      if (Number.isInteger(idx)) m[idx] = s.why;
+    });
+    return m;
+  }, [aiPlan]);
+
+  // Discoveries live outside the catalogue, so they can never become timeline
+  // rows. They stay listed once, under the plan, next to their map pins.
+  const aiDiscoveries = useMemo(
+    () => (aiPlan?.stops || []).filter((s) => s.external && s.name),
+    [aiPlan],
+  );
 
   const dayAssignedIdx = assignments[stopIdx]?.[dayIdx] || [];
   const assignedItems = dayAssignedIdx.map((i) => activities.items[i]).filter(Boolean);
@@ -1301,6 +1361,22 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
       stayLegMin: stayLeg?.min || 0,
     })
     : null;
+
+  // Where each macro phase of the day starts, as a sparse array aligned to
+  // assignedItems: phaseHeads[i] is the phase to announce above stop i, or
+  // null when that stop just continues the phase before it. The traveller
+  // reads "Afternoon", never "14:07".
+  const phaseHeads = useMemo(() => {
+    if (!schedule) return [];
+    const out = [];
+    let prev = null;
+    schedule.rows.forEach((r, i) => {
+      const p = dayPhase(r.arriveMin);
+      out[i] = p.key === prev ? null : p;
+      prev = p.key;
+    });
+    return out;
+  }, [schedule]);
 
   // Open-time ideas: the strongest unpicked walkable places whose visit still
   // fits in the leftover. One tap adds them; in auto mode the walking order
@@ -2837,68 +2913,92 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
         fitMaxZoom={13}
       />
 
-      {/* Floating map tools: category chips filter the pickable pins, and the
-          hint says what tapping one does. Sits over the map, never over the
-          rail, and collapses to a scrollable row on phones. */}
+      {/* Floating map tools. One containerized card so map detail can't bleed
+          up between the controls, and three separate layers inside it: WHAT
+          kind of place (always-on chips), HOW GOOD (a collapsible group, an
+          occasional narrowing), and the view toggle for what you already
+          picked, which is a state and not a filter at all. The hint sits below
+          the card with real air around it, not squeezed under the pills. */}
       {stop && mapDeck.length > 0 && (
         <div className="day-map-tools" onClick={(e) => e.stopPropagation()}>
-          <div className="day-map-chips">
-            {[
-              ['all', 'All'],
-              ['sight', 'Sights'],
-              ['nature', 'Nature'],
-              ['active', 'Active'],
-              ['food', 'Food'],
-            ].filter(([k]) => k === 'all' || mapCatCounts[k] > 0).map(([k, label]) => (
+          <div className="day-map-card">
+            <div className="day-map-chips" role="group" aria-label={t('day.mapFilterCat')}>
+              {MAP_CATS
+                .filter(({ key }) => key === 'all' || mapCatCounts[key] > 0)
+                .map(({ key, labelKey }) => (
+                  <button
+                    key={key}
+                    type="button"
+                    className={`day-map-chip ${mapCat === key && !showSel ? 'on' : ''}`}
+                    onClick={() => { setMapCat(key); setShowSel(false); }}
+                    aria-pressed={mapCat === key && !showSel}
+                    disabled={showSel}
+                  >
+                    {t(labelKey)}
+                    <span className="day-map-count">{mapCatCounts[key]}</span>
+                  </button>
+                ))}
+            </div>
+
+            <div className="day-map-card-foot">
               <button
-                key={k}
                 type="button"
-                className={`shape-cat-chip day-map-chip ${mapCat === k && !showSel ? 'on' : ''}`}
-                onClick={() => { setMapCat(k); setShowSel(false); }}
-                aria-pressed={mapCat === k && !showSel}
+                className={`day-map-chip day-map-quality-btn ${mapRating !== 'all' && !showSel ? 'on' : ''} ${qualityOpen ? 'open' : ''}`}
+                onClick={() => setQualityOpen((v) => !v)}
+                aria-expanded={qualityOpen}
                 disabled={showSel}
               >
-                {label}
-                <span className="shape-cat-count">{mapCatCounts[k]}</span>
+                <FilterIcon size={11} />
+                {t(MAP_RATINGS.find((r) => r.key === mapRating)?.labelKey || 'day.mapQualityAny')}
+                <ChevronDownIcon size={11} className={qualityOpen ? 'day-map-caret up' : 'day-map-caret'} />
               </button>
-            ))}
-          </div>
-          <div className="day-map-chips">
-            {[
-              ['all', 'Any rating'],
-              ['top', 'Top rated'],
-              ['must', 'Must-see'],
-            ].filter(([k]) => k === 'all' || mapCatCounts[k] > 0).map(([k, label]) => (
-              <button
-                key={`r-${k}`}
-                type="button"
-                className={`shape-cat-chip day-map-chip ${mapRating === k && !showSel ? 'on' : ''}`}
-                onClick={() => { setMapRating(k); setShowSel(false); }}
-                aria-pressed={mapRating === k && !showSel}
-                disabled={showSel}
-              >
-                {label}
-                {k !== 'all' && <span className="shape-cat-count">{mapCatCounts[k]}</span>}
-              </button>
-            ))}
-            {assignedAnyDay.size > 0 && (
-              <button
-                type="button"
-                className={`shape-cat-chip day-map-chip day-map-chip-sel ${showSel ? 'on' : ''}`}
-                onClick={() => setShowSel((v) => !v)}
-                aria-pressed={showSel}
-                title="Show only the places already in your plan"
-              >
-                <CheckIcon size={10} /> Selected
-                <span className="shape-cat-count">{assignedAnyDay.size}</span>
-              </button>
+              {assignedAnyDay.size > 0 && (
+                <>
+                  <span className="day-map-divider" aria-hidden="true" />
+                  <button
+                    type="button"
+                    className={`day-map-chip day-map-toggle ${showSel ? 'on' : ''}`}
+                    onClick={() => setShowSel((v) => !v)}
+                    role="switch"
+                    aria-checked={showSel}
+                    title={t('day.mapOnlyPicksTitle')}
+                  >
+                    <CheckIcon size={10} /> {t('day.mapOnlyPicks')}
+                    <span className="day-map-count">{assignedAnyDay.size}</span>
+                  </button>
+                </>
+              )}
+            </div>
+
+            {qualityOpen && !showSel && (
+              <div className="day-map-quality" role="radiogroup" aria-label={t('day.mapFilterQuality')}>
+                {MAP_RATINGS
+                  .filter(({ key }) => key === 'all' || mapCatCounts[key] > 0)
+                  .map(({ key, labelKey }) => (
+                    <button
+                      key={`r-${key}`}
+                      type="button"
+                      className={`day-map-chip ${mapRating === key ? 'on' : ''}`}
+                      onClick={() => { setMapRating(key); setQualityOpen(false); }}
+                      role="radio"
+                      aria-checked={mapRating === key}
+                    >
+                      {t(labelKey)}
+                      {key !== 'all' && <span className="day-map-count">{mapCatCounts[key]}</span>}
+                    </button>
+                  ))}
+              </div>
             )}
           </div>
-          <span className="day-map-hint">
-            {showSel
-              ? `Your picked places in ${stop?.dest?.city || 'this city'}. Numbered pins are day ${dayOffset + dayIdx + 1}`
-              : `Tap a pin to add it to day ${dayOffset + dayIdx + 1}. Zoom in for more places`}
-          </span>
+
+          <p className="day-map-hint">
+            <InfoIcon size={12} />
+            <span>
+              {showSel
+                ? t('day.mapHintPicked', { city: stop?.dest?.city || t('day.thisCity'), n: dayOffset + dayIdx + 1 })
+                : t('day.mapHintTap', { n: dayOffset + dayIdx + 1 })}
+            </span>
+          </p>
         </div>
       )}
 
@@ -3125,10 +3225,11 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
               </div>
               {routeInfoOpen && <p className="day-route-info-note">{routeSummary}</p>}
 
-              {/* The applied AI schedule: arrival times, the model's one-line
-                  reasons, and the walking/end totals. Dismissable; goes stale
-                  gracefully if the day is hand-edited afterwards (the times
-                  are estimates either way). */}
+              {/* An imported bot plan is a HEADER on the day, not a second copy
+                  of it: its stops are already the timeline below, each keeping
+                  the model's one-line reason on its own row. Only the framing
+                  the timeline cannot carry lives here, the bot's summary of the
+                  day and its walking total. Dismissable. */}
               {aiPlan && (
                 <div className="ai-day-panel">
                   <div className="ai-day-panel-head">
@@ -3143,22 +3244,6 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
                     >×</button>
                   </div>
                   {aiPlan.summary && <p className="ai-day-panel-summary">{aiPlan.summary}</p>}
-                  <ol className="ai-sched ai-sched-compact">
-                    {(aiPlan.stops || []).map((s, i) => (
-                      <li key={i} className={`ai-sched-stop ${s.external ? 'ext' : ''}`}>
-                        <span className="ai-sched-time">{s.arrive || '·'}</span>
-                        <span className="ai-sched-body">
-                          <b>
-                            {s.name}
-                            {s.external && (
-                              <span className="ai-disc-tag"><MapPinIcon size={9} /> {t('ai.discovery')}</span>
-                            )}
-                          </b>
-                          {s.why && <small>{s.why}</small>}
-                        </span>
-                      </li>
-                    ))}
-                  </ol>
                   <p className="ai-plan-note">
                     {t('ai.totals', { km: aiPlan.totals?.walkKm ?? 0, t: aiPlan.totals?.endTime ?? '' })}
                   </p>
@@ -3179,21 +3264,29 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
                 )}
                 {assignedItems.map((it, i) => (
                   <React.Fragment key={`${dayAssignedIdx[i]}`}>
+                    {/* Morning / midday / afternoon / evening, in place of a
+                        per-stop clock. A holiday runs on phases, and a phase
+                        cannot be "missed" by leaving one museum late. */}
+                    {phaseHeads[i] && (
+                      <div className="day-phase-head">
+                        <span className="day-phase-label">{t(phaseHeads[i].labelKey)}</span>
+                      </div>
+                    )}
                     <AssignedRow
                       item={it}
                       index={i}
                       last={i === assignedItems.length - 1}
-                      when={schedule ? fmtClock(schedule.rows[i].arriveMin) : null}
-                      dwellLabel={fmtDur(dwellMinutes(poiKind(it), visitFactor))}
+                      stayLabel={t('day.estStay', { dur: fmtDur(dwellMinutes(poiKind(it), visitFactor)) })}
+                      note={aiWhyByIdx[dayAssignedIdx[i]] || shortDesc(it.desc)}
+                      noteFromAi={!!aiWhyByIdx[dayAssignedIdx[i]]}
                       onMoveUp={() => moveAssigned(i, -1)}
                       onMoveDown={() => moveAssigned(i, 1)}
                       onRemove={() => toggleActivity(dayAssignedIdx[i])}
                     />
                     {schedule?.lunch?.afterIndex === i && (
                       <div className="day-timeline-walk day-timeline-lunch">
-                        <CoffeeIcon size={11} /> {t('day.lunchStop', {
-                          start: fmtClock(schedule.lunch.startMin),
-                          end: fmtClock(schedule.lunch.endMin),
+                        <CoffeeIcon size={11} /> {t('day.lunchBreak', {
+                          dur: fmtDur(schedule.lunch.endMin - schedule.lunch.startMin),
                         })}
                       </div>
                     )}
@@ -3215,9 +3308,32 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
               )}
               {schedule && (
                 <p className="day-route-total day-done-line">
-                  <ClockIcon size={11} /> {t('day.doneAround', { time: fmtClock(schedule.endMin) })}
+                  {/* One soft anchor for the whole day, rounded to the quarter
+                      hour: enough to know whether dinner still fits, not a
+                      deadline anyone can run late for. */}
+                  <ClockIcon size={11} /> {t('day.doneAround', { time: fmtClockLoose(schedule.endMin) })}
                   {schedule.freeMin >= GAP_SUGGEST_MIN && <> {t('day.openTime', { dur: fmtDur(schedule.freeMin) })}</>}
                 </p>
+              )}
+
+              {/* The bot's out-of-catalogue finds. They have no catalogue entry
+                  to become a timeline row, so they are listed once here beside
+                  their violet map pins instead of inside the plan. */}
+              {aiDiscoveries.length > 0 && (
+                <div className="day-scenic day-ai-finds">
+                  <div className="day-scenic-title">
+                    <MapPinIcon size={11} /> {t('ai.discoveryTitle')}
+                  </div>
+                  {aiDiscoveries.map((s, i) => (
+                    <div key={i} className="day-ai-find">
+                      <b>
+                        {s.name}
+                        {s.isEvent && <span className="ai-disc-tag ai-event-tag">{t('ai.eventTag')}</span>}
+                      </b>
+                      {s.why && <small>{s.why}</small>}
+                    </div>
+                  ))}
+                </div>
               )}
               {gapIdeas.length > 0 && (
                 <div className="day-scenic day-gap-ideas">

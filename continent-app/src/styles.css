@@ -1,6 +1,13 @@
 /* ==========================================================================
    Carta, Europe Travel
    Editorial / cartographic aesthetic
+
+   Write STANDARD properties only; the build (Lightning CSS, targets in
+   vite.config.js) generates vendor prefixes. Hand-writing a -webkit- twin
+   next to the standard property is actively harmful here: given both,
+   Lightning CSS collapsed the pair down to the -webkit- spelling alone, and
+   Chromium dropped -webkit-backdrop-filter years ago, so every blurred
+   surface in the app shipped with no blur while dev looked correct.
    ========================================================================== */
 
 :root {
@@ -92,7 +99,6 @@ input, select {
   padding: 9px 20px;
   background: rgba(245, 241, 232, 0.92);
   backdrop-filter: blur(12px) saturate(140%);
-  -webkit-backdrop-filter: blur(12px) saturate(140%);
   border-bottom: 1px solid var(--rule);
 }
 
@@ -186,7 +192,6 @@ input, select {
   padding: 0;
   background: none;
   backdrop-filter: none;
-  -webkit-backdrop-filter: none;
   border-bottom: none;
 }
 
@@ -212,7 +217,6 @@ input, select {
        opaque, so losing the blur is invisible. */
     background: rgba(245, 241, 232, 0.97);
     backdrop-filter: none;
-    -webkit-backdrop-filter: none;
   }
   .app-header-brand { display: none; }
   .app-header-account {
@@ -554,7 +558,6 @@ input, select {
   padding: 18px 8px calc(10px + env(safe-area-inset-bottom, 0px));
   background: rgba(245, 241, 232, 0.985);
   backdrop-filter: blur(14px) saturate(140%);
-  -webkit-backdrop-filter: blur(14px) saturate(140%);
   border-top: 1px solid var(--rule);
   box-shadow: 0 -3px 16px rgba(26, 26, 26, 0.08);
 }
@@ -618,7 +621,6 @@ input, select {
   padding: 7px 18px;
   background: rgba(245, 241, 232, 0.85);
   backdrop-filter: blur(12px) saturate(140%);
-  -webkit-backdrop-filter: blur(12px) saturate(140%);
   border-bottom: 1px solid var(--rule);
 }
 
@@ -1384,7 +1386,6 @@ input, select {
   z-index: 5;
   background: rgba(248, 246, 240, 0.86);
   backdrop-filter: blur(14px) saturate(140%);
-  -webkit-backdrop-filter: blur(14px) saturate(140%);
   border-bottom: 1px solid rgba(204, 199, 184, 0.55);
 }
 .home-nav-inner {
@@ -3515,6 +3516,26 @@ input, select {
   text-align: right;
 }
 .day-timeline-row .day-assigned-row { flex: 1; }
+/* A planned stop shows its FULL name. Truncating to "Erzabtei Sankt..." saves
+   a few pixels and costs the traveller the only thing the row is for.
+   Un-clipping the title alone is not enough: sharing one flex line with the
+   rating/must-see cluster left the name barely 46px of a 162px column, which
+   is what produced "Sal..." and "Erz..." in the first place. So on the
+   timeline the name owns its own full-width line and wraps, and the badges
+   drop underneath it. (The pickable browse lists keep the single-line ellipsis
+   treatment: those are scanned, not read.) With a wrapped title and a
+   description under it the row is tall, so the thumbnail and the tools align
+   to the top rather than floating in the middle. */
+.day-timeline-row .day-assigned-name { display: block; }
+.day-timeline-row .day-assigned-title {
+  display: block;
+  white-space: normal;
+  overflow: visible;
+  text-overflow: clip;
+}
+.day-timeline-row .day-assigned-badges { margin-top: 4px; }
+.day-timeline-row .day-assigned-row { align-items: flex-start; }
+.day-timeline-row .day-thumb { margin-top: 2px; }
 .day-timeline-tools { display: flex; align-items: center; gap: 2px; flex-shrink: 0; }
 .day-timeline-walk {
   font-family: var(--mono);
@@ -3523,15 +3544,63 @@ input, select {
   padding: 6px 0 6px 68px;
 }
 
-/* Clock chip on every planned stop: arrival time + visit estimate, so the
-   timeline reads as a schedule and not just an ordered list. */
+/* Visit estimate on every planned stop. Deliberately NOT an arrival time: a
+   leisure day runs on "about 45 minutes here", not on 09:33, and a clock face
+   on every row turns a holiday into a corporate agenda nobody dares run late
+   on. The exact minutes still exist in the model for the calendar export. */
 .day-assigned-when {
-  display: block;
+  display: inline-block;
+  margin-top: 5px;
   font-family: var(--mono);
   font-size: 10px;
   letter-spacing: 0.05em;
+  color: var(--ink-soft);
+  background: var(--paper-dim);
+  border-radius: 999px;
+  padding: 2px 8px;
+}
+
+/* The sentence that says what a place actually is: the bot's reason when the
+   day came from an import, the catalogue description otherwise. It takes a
+   full-width line of the card (flex-basis 100% in a wrapping row), not the
+   narrow title column, so two lines is a real two lines of prose. */
+/* The card's second line: description then visit estimate, across its whole
+   width rather than inside the ~160px title column. */
+.day-assigned-foot { flex: 1 0 100%; min-width: 0; }
+.day-assigned-note {
+  margin: 5px 0 0;
+  font-size: 11.5px;
+  line-height: 1.45;
+  color: var(--ink-soft);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.day-assigned-note.from-ai { color: var(--ink-soft); }
+
+/* Macro phase headers standing in for per-stop clock times. */
+.day-phase-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 14px 0 6px;
+}
+.day-phase-head:first-child { margin-top: 2px; }
+.day-phase-label {
+  flex: none;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
   color: var(--ink-mute);
-  margin-bottom: 1px;
+}
+.day-phase-head::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--rule);
 }
 
 /* Lunch pause slotted into the first opening past 12:30. */
@@ -6366,7 +6435,6 @@ input, select {
      opaque cream rectangle, and the sea no longer meets a hard edge. */
   background: rgba(245, 241, 232, 0.82);
   backdrop-filter: blur(10px) saturate(140%);
-  -webkit-backdrop-filter: blur(10px) saturate(140%);
   border: 1px solid rgba(196, 190, 169, 0.6);
   border-radius: 10px;
   box-shadow: 0 1px 2px rgba(26, 26, 26, 0.06), 0 8px 22px rgba(26, 26, 26, 0.10);
@@ -9405,7 +9473,10 @@ input, select {
   font-size: 11.5px;
   font-weight: 700;
 }
-.day-timeline-row { padding: 3px 0; }
+/* Rows carry a wrapped title plus a description now, so the step number rides
+   at the top beside the name rather than floating in the middle of the card. */
+.day-timeline-row { padding: 3px 0; align-items: flex-start; }
+.day-timeline-num { margin-top: 12px; }
 .day-timeline-walk { padding-left: 34px; }
 .day-route-total {
   margin-top: 10px;
@@ -11750,6 +11821,8 @@ input, select {
 }
 .day-plan-block .day-timeline-row,
 .day-plan-block .day-timeline-walk { position: relative; }
+/* Phase headers line up with the row content, clear of the route hairline. */
+.day-plan-block .day-phase-head { position: relative; padding-left: 34px; }
 .day-plan-block .day-timeline-num { box-shadow: 0 0 0 3px var(--paper); }
 .day-plan-block .day-timeline-row .day-assigned-row { border-radius: 12px; }
 .day-plan-block .day-timeline-walk {
@@ -12644,9 +12717,15 @@ input, select {
   cursor: default;
 }
 
-/* Floating tools over the map: category chips + the tap-to-add hint. Sits
+/* Floating tools over the map. One containerized card holds every control so
+   street names and rivers can't bleed up between loose pills; three layers
+   inside it (category / quality / view state) stay visually distinct. Sits
    below the top card, never over the rail; chips scroll sideways on phones
-   instead of stacking over the map. */
+   instead of stacking over the map.
+
+   NOTE: .day-map-card carries a backdrop-filter, which makes it the containing
+   block for any position:fixed descendant. Every popover in here is therefore
+   position:absolute on purpose. */
 .day-map-tools {
   position: absolute;
   top: 12px;
@@ -12656,33 +12735,122 @@ input, select {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 6px;
+  /* Real air under the card so the hint is a line you read, not a caption
+     squeezed against the controls. */
+  gap: 10px;
   pointer-events: none;
 }
 .day-map-tools > * { pointer-events: auto; }
+
+.day-map-card {
+  position: relative;
+  max-width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 8px;
+  border: 1px solid var(--rule);
+  border-radius: 16px;
+  background: rgba(248, 246, 240, 0.86);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.10), 0 8px 24px rgba(15, 23, 42, 0.06);
+}
 .day-map-chips {
   display: flex;
   gap: 6px;
   max-width: 100%;
+  /* Overflow scrolls sideways rather than wrapping to a ragged second line. */
   overflow-x: auto;
   scrollbar-width: none;
-  padding: 2px;
 }
 .day-map-chips::-webkit-scrollbar { display: none; }
+
+/* One pill spec for every control in here: same height, same padding, same
+   filled active state, whether it filters, opens a group or flips a view. */
 .day-map-chip {
   flex: none;
-  box-shadow: 0 1px 4px rgba(26, 26, 26, 0.14);
-}
-.day-map-hint {
-  font-size: 10.5px;
-  font-weight: 600;
-  color: var(--ink-soft);
-  background: var(--paper);
-  border: 1px solid var(--rule);
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 32px;
+  padding: 0 12px;
   border-radius: 999px;
-  padding: 3px 10px;
-  box-shadow: 0 1px 4px rgba(26, 26, 26, 0.12);
+  border: 1px solid var(--rule);
+  background: rgba(255, 255, 255, 0.72);
+  font-family: var(--ui);
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  color: var(--ink-soft);
+  cursor: pointer;
+  transition: border-color .14s, background .14s, color .14s;
 }
+.day-map-chip svg { color: var(--ink-mute); flex: none; }
+.day-map-chip:hover:not(:disabled) { border-color: var(--ink-soft); color: var(--ink); }
+/* Deep slate, not the terracotta accent: an active filter is a state, not an
+   alert, and the map pins must stay the loudest thing on the canvas. */
+.day-map-chip.on {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: #fff;
+}
+.day-map-chip.on svg { color: #fff; }
+.day-map-chip:disabled { opacity: 0.42; cursor: default; }
+.day-map-count {
+  font-family: var(--mono);
+  font-size: 10px;
+  opacity: 0.75;
+}
+
+/* Second layer: the quality group's trigger and the view toggle, kept apart
+   from the category chips by a hairline so a filter is never mistaken for a
+   state or the other way round. */
+.day-map-card-foot {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  max-width: 100%;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding-top: 8px;
+  border-top: 1px solid rgba(204, 199, 184, 0.6);
+}
+.day-map-card-foot::-webkit-scrollbar { display: none; }
+.day-map-divider {
+  flex: none;
+  width: 1px;
+  height: 18px;
+  background: var(--rule);
+}
+.day-map-caret { transition: transform .16s; }
+.day-map-caret.up { transform: rotate(180deg); }
+.day-map-quality {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(204, 199, 184, 0.6);
+}
+
+/* The one instruction on the screen, given its own line and its own weight. */
+.day-map-hint {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  max-width: 100%;
+  font-size: 11.5px;
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--ink-soft);
+  background: rgba(248, 246, 240, 0.9);
+  backdrop-filter: blur(6px);
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  padding: 7px 12px;
+  box-shadow: 0 1px 6px rgba(15, 23, 42, 0.08);
+}
+.day-map-hint svg { color: var(--ink-mute); flex: none; }
+
 @media (min-width: 769px) {
   .day-map-tools {
     top: 12px;
@@ -13029,10 +13197,14 @@ input, select {
   from { opacity: 0; transform: translateY(7px); }
   to { opacity: 1; transform: translateY(0); }
 }
+/* The block a proposed stop sits in ("Morning"), labelled once per block, in
+   place of the arrival clock this column used to carry. Wider than a 44px
+   "09:30" needed, and quiet: it orients, it does not command. */
 .ai-sched-time {
-  flex: 0 0 44px;
-  font-family: var(--mono); font-size: 11.5px; font-weight: 700;
-  color: var(--accent);
+  flex: 0 0 74px;
+  font-family: var(--mono); font-size: 9.5px; font-weight: 700;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--ink-mute);
   padding-top: 1px;
 }
 .ai-sched-body { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
@@ -13067,6 +13239,19 @@ input, select {
 .ai-sched-compact .ai-sched-stop { padding: 5px 0; }
 .ai-sched-compact .ai-sched-body b { font-size: 12px; }
 .ai-sched-compact .ai-sched-body small { font-size: 11px; }
+
+/* Bot finds that live outside Carta's catalogue. They can't become timeline
+   rows (there is nothing to add), so they are listed once, here. */
+.day-ai-find {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 7px 0;
+  border-bottom: 1px dashed var(--rule);
+}
+.day-ai-find:last-child { border-bottom: none; }
+.day-ai-find b { font-size: 12.5px; font-weight: 600; color: var(--ink); }
+.day-ai-find small { font-size: 11.5px; color: var(--ink-soft); line-height: 1.45; }
 
 /* The empty-day CTA pair: AI first, route picker under it. */
 .day-ai-btn { margin-bottom: 8px; }

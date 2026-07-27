@@ -23,6 +23,62 @@ export function fmtClock(min) {
   return `${String(h).padStart(2, '0')}:${String(m % 60).padStart(2, '0')}`;
 }
 
+/** Same clock, rounded out to the nearest quarter hour. A holiday runs on
+ *  "around four-ish", not on 16:07, so every time the traveller actually reads
+ *  is softened; the exact minutes stay in the model for the calendar export. */
+export function fmtClockLoose(min, stepMin = 15) {
+  return fmtClock(Math.round(Math.max(0, min) / stepMin) * stepMin);
+}
+
+/**
+ * The macro blocks a leisure day is really lived in. The minute-level clock
+ * keeps running underneath (the calendar export and the "still open" maths
+ * need it), but the timeline shows a traveller which PHASE a stop falls in,
+ * so one slow lunch never reads as breaking a timetable.
+ * `untilMin` is exclusive: a stop is in the first phase it starts before.
+ */
+export const DAY_PHASES = [
+  { key: 'morning', labelKey: 'day.phaseMorning', untilMin: 12 * 60 },
+  { key: 'midday', labelKey: 'day.phaseMidday', untilMin: 14 * 60 },
+  { key: 'afternoon', labelKey: 'day.phaseAfternoon', untilMin: 17 * 60 },
+  { key: 'evening', labelKey: 'day.phaseEvening', untilMin: Infinity },
+];
+
+/** The phase a given minute-of-day falls in. Never returns undefined. */
+export function dayPhase(min) {
+  const m = Math.max(0, Math.round(min || 0));
+  return DAY_PHASES.find((p) => m < p.untilMin) || DAY_PHASES[DAY_PHASES.length - 1];
+}
+
+/** "09:30" -> minutes past midnight, or null for anything unparseable. The AI
+ *  returns its arrival times as clock strings. */
+export function clockToMin(hhmm) {
+  const m = /^(\d{1,2}):(\d{2})$/.exec(String(hhmm || '').trim());
+  if (!m) return null;
+  const h = Number(m[1]);
+  const min = Number(m[2]);
+  return h < 24 && min < 60 ? h * 60 + min : null;
+}
+
+/**
+ * Phase labels for a list of AI stops, announced ONCE per block instead of a
+ * clock on every row. Returns a sparse array of i18n keys aligned to `stops`:
+ * entry i is the label to print above stop i, or null when that stop just
+ * continues the block before it. A stop with no parseable time inherits the
+ * running block rather than restarting one.
+ */
+export function stopPhaseLabels(stops) {
+  const out = [];
+  let prev = null;
+  (stops || []).forEach((s, i) => {
+    const min = clockToMin(s?.arrive);
+    const key = min == null ? prev : dayPhase(min).labelKey;
+    out[i] = key && key !== prev ? key : null;
+    if (key) prev = key;
+  });
+  return out;
+}
+
 /**
  * Build the day's clock schedule.
  *   items       - today's stops, already in walking order

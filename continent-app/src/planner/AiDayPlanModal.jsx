@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useI18n } from '../i18n/index.jsx';
 import { DAY_STYLES } from './dayDraft.js';
+import { stopPhaseLabels } from './daySchedule.js';
 import {
   SparkIcon, CastleIcon, MuseumIcon, TreeIcon, DiningIcon, CameraIcon,
   MapPinIcon, CheckIcon, CalendarIcon, PersonIcon, TicketIcon,
@@ -113,6 +114,10 @@ export function AiDayPlanModal({
 
   const externals = result ? result.stops.filter((s) => s.external) : [];
   const events = result ? result.stops.filter((s) => s.isEvent) : [];
+
+  // The macro block each proposed stop falls in, announced once per block
+  // rather than as a clock time on every row.
+  const stopPhases = useMemo(() => stopPhaseLabels(result?.stops), [result]);
 
   return (
     <div className="day-saved-overlay ai-plan-overlay" role="dialog" aria-modal="true" onClick={onClose}>
@@ -227,10 +232,14 @@ export function AiDayPlanModal({
           <>
             <p className="ai-plan-proposal-tag">{t('ai.proposalTag', { n: rounds })}</p>
             {result.summary && <p className="ai-plan-lead">{result.summary}</p>}
+            {/* The proposal reads in the same macro blocks the imported day
+                will: showing 09:33 here and "Morning" thirty seconds later,
+                for the very same plan, would make the day look like a
+                timetable being quietly loosened behind the traveller's back. */}
             <ol className="ai-sched">
               {result.stops.map((s, i) => (
                 <li key={i} className={`ai-sched-stop ${s.external ? 'ext' : ''}`}>
-                  <span className="ai-sched-time">{s.arrive || '·'}</span>
+                  <span className="ai-sched-time">{stopPhases[i] ? t(stopPhases[i]) : ''}</span>
                   <span className="ai-sched-body">
                     <b>
                       {s.name}
