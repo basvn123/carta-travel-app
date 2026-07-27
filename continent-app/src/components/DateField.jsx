@@ -218,7 +218,12 @@ export function DateField({
                   isStart ? 'range-start' : '',
                   isEnd ? 'range-end' : '',
                   inRange ? 'in-range' : '',
-                  iso === todayISO ? 'today' : '',
+                  // Only inside its own month. The 6-week grid pads with the
+                  // neighbouring months' days, so a calendar showing August
+                  // 2026 also holds a cell for 27 July: marking that one
+                  // "today" put a highlighted 27 in the August grid, which
+                  // reads as today being the 27th of the month on show.
+                  !cell.outside && iso === todayISO ? 'today' : '',
                   disabled ? 'disabled' : '',
                 ].filter(Boolean).join(' ');
                 return (

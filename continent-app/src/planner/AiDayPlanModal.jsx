@@ -29,6 +29,9 @@ const FAIL_KEY = {
   no_ai: 'ai.unavailable',
   too_few: 'ai.tooFew',
 };
+// The one failure a pass actually fixes. global_cap is our own daily ceiling,
+// so offering to sell something there would be taking money for a wait.
+const UPSELL_CODES = new Set(['user_cap']);
 
 // Quick nudges under the result, so refining is one tap rather than a blank
 // text box the traveller has to think of something to write in.
@@ -54,6 +57,7 @@ const NUDGES = [
  */
 export function AiDayPlanModal({
   city, dayNumber, dateISO, groupSize, signedIn, onRun, onApply, onFallback, onClose,
+  entitlement, onOpenPass,
 }) {
   const { t } = useI18n();
   const [vibe, setVibe] = useState('mix');
@@ -91,6 +95,9 @@ export function AiDayPlanModal({
       setFailCode(res.code || 'ai_error');
       setPhase('fail');
     }
+    // Whether it worked or hit a cap, the balance just moved. Re-read it so
+    // the counter under the button is not a generation behind.
+    entitlement?.refresh?.();
   };
 
   const chipRow = (label, options, activeKey, onPick) => (
@@ -206,6 +213,19 @@ export function AiDayPlanModal({
               />
             </div>
 
+            {/* Live search is the paid surface. Say so where the box is,
+                rather than letting somebody tick it and quietly not get it. */}
+            {wantEvents && signedIn && entitlement?.known && entitlement.groundLeft <= 0 && (
+              <p className="ai-plan-note ai-plan-note-warn">
+                {t('ai.eventsNeedPass')}
+                {onOpenPass && (
+                  <button className="auth-link ai-plan-upsell-link" onClick={() => onOpenPass('ground')}>
+                    {t('pass.seePasses')}
+                  </button>
+                )}
+              </p>
+            )}
+
             <div className="ai-plan-actions">
               {signedIn ? (
                 <button className="guide-next ai-plan-generate" onClick={() => generate('')}>
@@ -217,6 +237,11 @@ export function AiDayPlanModal({
                 </button>
               )}
             </div>
+            {signedIn && entitlement?.known && entitlement.plansCap > 0 && (
+              <p className="ai-plan-note ai-plan-balance">
+                {t('ai.balance', { left: entitlement.plansLeft, cap: entitlement.plansCap })}
+              </p>
+            )}
             <p className="ai-plan-note">{t('ai.privacy')}</p>
           </>
         )}
@@ -321,6 +346,14 @@ export function AiDayPlanModal({
               {t(FAIL_KEY[failCode] || 'ai.error')}
             </p>
             <div className="ai-plan-actions">
+              {/* A spent allowance is the one failure with something to sell.
+                  It leads, because burying it under "use the built-in
+                  planner" is how an upsell gets missed entirely. */}
+              {UPSELL_CODES.has(failCode) && onOpenPass && (
+                <button className="guide-next ai-plan-generate" onClick={() => onOpenPass('plans')}>
+                  <SparkIcon size={12} /> {t('pass.seePasses')}
+                </button>
+              )}
               {RETRYABLE.has(failCode) && (
                 <button className="guide-next ai-plan-generate" onClick={() => generate('')}>
                   {t('ai.retry')}
@@ -333,7 +366,11 @@ export function AiDayPlanModal({
                 </button>
               )}
               <button
-                className={RETRYABLE.has(failCode) || result ? 'day-saved-done ai-plan-secondary' : 'guide-next ai-plan-generate'}
+                className={
+                  RETRYABLE.has(failCode) || result || (UPSELL_CODES.has(failCode) && onOpenPass)
+                    ? 'day-saved-done ai-plan-secondary'
+                    : 'guide-next ai-plan-generate'
+                }
                 onClick={() => onFallback(answers)}
               >
                 {t('ai.fallback')}

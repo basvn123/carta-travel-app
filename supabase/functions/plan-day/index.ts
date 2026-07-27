@@ -8,25 +8,36 @@
  * logic.mjs before it reaches the app, so coordinates, order and clock times
  * are always derived from real data, never trusted from the model.
  *
- * Zero-billing posture (this is the load-bearing part):
- *   - GEMINI_API_KEY must come from a Google AI Studio key on a project with
- *     NO billing account attached. Without a payment instrument, quota
- *     exhaustion is a 429, never an invoice.
- *   - No grounding/search tools are ever sent in the request: plain
- *     generateContent is the only billable-surface-free call shape.
- *   - The ai_plan_consume RPC enforces per-user and global daily caps well
- *     under Google's free-tier daily limit, and identical requests answer
- *     from the ai_plan_cache table without touching the API at all.
+ * Billing posture (this is the load-bearing part, and it CHANGED in 007).
+ * GEMINI_API_KEY must come from a Google Cloud project WITH an active billing
+ * account. Google's Gemini API Additional Terms, effective 2026-03-23:
+ *
+ *   "You may use only Paid Services when making API Clients available to
+ *    users in the European Economic Area, Switzerland, or the United
+ *    Kingdom."
+ *
+ * Carta's travellers are European, so the old unbilled-key posture is not
+ * available to us. "Paid Services" is defined by the billing account existing
+ * rather than by money being charged, so attaching billing is the compliance
+ * step, not a decision to start spending. What protects the wallet now:
+ *   - Tiered fair-use caps enforced by the ai_consume RPC (migration 007),
+ *     counted per entitlement period rather than per day.
+ *   - Grounded search, the one surface Google meters per query, is paid-tier
+ *     only and carries its OWN counter ('ground'), because on Gemini 3 a
+ *     single grounded generation bills per search the model chooses to run.
+ *   - A global daily ceiling as an abuse backstop.
+ *   - The ai_plan_cache table, where identical requests cost nothing at all.
  *
  * Secrets (set via `supabase secrets set`): GEMINI_API_KEY, and optionally
- * GEMINI_MODEL (default gemini-flash-latest), AI_USER_DAILY_CAP (10),
- * AI_GLOBAL_DAILY_CAP (200).
+ * GEMINI_MODEL (default gemini-flash-latest), AI_GLOBAL_DAILY_CAP (200).
+ * Per-user caps now come from public.plan_tiers, not from env.
  */
 import { createClient } from 'npm:@supabase/supabase-js@2';
 import {
   cleanText, sanitizeCandidates, sanitizeAiStops, scheduleDay, cacheKeyInput,
   modelChain, shouldFallOver,
 } from './logic.mjs';
+import { consume, refund } from '../_shared/passes.mjs';
 
 const CORS = {
   'Access-Control-Allow-Origin': '*',
@@ -155,7 +166,6 @@ Deno.serve(async (req) => {
   // Ordered models to try. Each has its own free daily budget, so exhausting
   // the first is a reason to step down a rung, not to fail the request.
   const CHAIN = modelChain(Deno.env.get('GEMINI_MODEL'), Deno.env.get('GEMINI_MODELS'));
-  const USER_CAP = Number(Deno.env.get('AI_USER_DAILY_CAP')) || 10;
   const GLOBAL_CAP = Number(Deno.env.get('AI_GLOBAL_DAILY_CAP')) || 200;
   const SUPABASE_URL = Deno.env.get('SUPABASE_URL') || '';
   const ANON_KEY = Deno.env.get('SUPABASE_ANON_KEY') || '';
@@ -226,7 +236,36 @@ Deno.serve(async (req) => {
 
   const service = createClient(SUPABASE_URL, SERVICE_KEY);
 
-  // ---- cache first: a hit costs zero quota ----
+  // ---- quota gate (atomic, tier-aware) ----
+  // ORDER MATTERS, and it changed in 007. The cache lookup used to run first,
+  // because under the old zero-billing posture quota existed only to protect
+  // the free Gemini budget and a cache hit spent none of it. Now quota is what
+  // the traveller is BUYING, so it has to be a product rule rather than a cost
+  // passthrough: "3 AI plans a month" has to mean three, including in Paris
+  // where somebody else's identical question is already cached. Leaving the
+  // cache first would have handed free users unlimited plans in exactly the
+  // popular cities most people plan.
+  //
+  // The one cost of this ordering: a cache hit now also ticks the global daily
+  // ceiling, which it does not actually spend anything against. That errs
+  // toward under-serving rather than over-spending, which is the right way to
+  // be wrong.
+  //
+  // The response carries the tier and what is left of it so the client can
+  // render "2 of 3 plans left this month" and put the upsell in front of a
+  // free user at the exact moment the limit bites.
+  const quota = await consume(service, user.id, 'plan', GLOBAL_CAP);
+  if (quota.status === 'quota_check') return json(503, { code: 'quota_check' });
+  if (!quota.ok) {
+    return json(429, {
+      code: quota.status, // 'user_cap' | 'global_cap'
+      tier: quota.tier,
+      cap: quota.cap ?? 0,
+      used: quota.used ?? 0,
+    });
+  }
+
+  // ---- cache: a hit still costs a unit, but costs Google nothing ----
   // Keyed on the CHAIN, not on whichever model happened to answer: the same
   // question must hit the same cache row whether the primary served it or a
   // fallback did, or a busy day would generate the identical plan twice.
@@ -241,28 +280,49 @@ Deno.serve(async (req) => {
     .eq('hash', hash)
     .maybeSingle();
   if (cached?.payload && Date.now() - Date.parse(cached.created_at) < 7 * 86400_000) {
-    return json(200, { ...cached.payload, meta: { ...cached.payload.meta, cached: true } });
+    return json(200, {
+      ...cached.payload,
+      meta: { ...cached.payload.meta, cached: true },
+      pass: { tier: quota.tier, plansLeft: quota.left ?? null },
+    });
   }
 
-  // ---- quota gate (atomic; the zero-billing guarantee's second layer) ----
-  const { data: quota, error: quotaErr } = await service.rpc('ai_plan_consume', {
-    p_user: user.id, p_user_cap: USER_CAP, p_global_cap: GLOBAL_CAP,
-  });
-  if (quotaErr) return json(503, { code: 'quota_check' });
-  if (quota !== 'ok') return json(429, { code: quota }); // 'user_cap' | 'global_cap'
+  // Everything spent from here on has to be returned if the day never gets
+  // built. Quota is now a thing travellers PAY for, so an outage on our side
+  // must not quietly cost them a generation.
+  const spent: string[] = ['plan'];
+  const failed = async (status: number, body: Record<string, unknown>) => {
+    for (const kind of spent) await refund(service, user.id, kind);
+    return json(status, body);
+  };
 
   // ---- the one AI call: plain generateContent, no tools, low temperature ----
   const prompt = buildPrompt({
     city, country, dateISO, month, groupSize, pace, vibe, avoidHills, freeText, lang,
     hasStay: !!stay, candidates, wantEvents, refine, prevStops, profile,
   });
-  // Google Search grounding stays OFF by default. It is the one Gemini
-  // feature with a paid tier beyond its free allowance, and it competes for
-  // the same tiny free-tier request budget, so it is opt-in per deployment
-  // (AI_ENABLE_GROUNDING=true) rather than something that can surprise you.
-  // Even switched on it cannot bill an API key whose Google project has no
-  // billing account: over the allowance the API returns 429, not an invoice.
-  const useGrounding = (Deno.env.get('AI_ENABLE_GROUNDING') || '').toLowerCase() === 'true' && wantEvents;
+  // Google Search grounding is the paid feature, and the only one here that
+  // reliably costs money: on Gemini 3 it bills per individual search query the
+  // model decides to run, so one grounded day can be several billed units.
+  // It therefore takes its own quota ('ground'), which the free tier has none
+  // of. AI_ENABLE_GROUNDING remains a deployment-wide off switch on top.
+  //
+  // Falling short of grounding DEGRADES the request, it does not fail it: the
+  // traveller still gets their day, just built without live listings, and
+  // meta.groundingSkipped tells the client which upsell to show. Refusing
+  // outright would punish a free user for ticking a box they were shown.
+  const groundingEnabled = (Deno.env.get('AI_ENABLE_GROUNDING') || '').toLowerCase() !== 'false';
+  let groundingSkipped: string | null = null;
+  let useGrounding = false;
+  if (wantEvents) {
+    if (!groundingEnabled) {
+      groundingSkipped = 'off';
+    } else {
+      const g = await consume(service, user.id, 'ground', GLOBAL_CAP);
+      if (g.ok) { useGrounding = true; spent.push('ground'); }
+      else groundingSkipped = g.tier === 'free' ? 'tier' : 'cap';
+    }
+  }
   let aiText = '';
   let usedModel = '';
   let lastStatus = 0;
@@ -295,12 +355,12 @@ Deno.serve(async (req) => {
       // A timeout is not a budget problem, and walking the rest of the chain
       // could hold the traveller for minutes. Give up while it still feels
       // like a failed request rather than a hung app.
-      return json(504, { code: 'ai_timeout' });
+      return await failed(504, { code: 'ai_timeout' });
     }
     if (!resp.ok) {
       lastStatus = resp.status;
       if (shouldFallOver(resp.status)) continue;
-      return json(502, { code: 'ai_error', status: resp.status });
+      return await failed(502, { code: 'ai_error', status: resp.status });
     }
     const data = await resp.json();
     aiText = (data?.candidates?.[0]?.content?.parts || [])
@@ -309,22 +369,22 @@ Deno.serve(async (req) => {
     usedModel = model;
     break;
   }
-  // Chain exhausted. A trailing 429 means every model's free daily budget is
-  // spent, which for the traveller is exactly the "come back tomorrow" case
-  // the quota copy already describes, so say that rather than "hiccup".
+  // Chain exhausted. A trailing 429 means every model's budget is spent, which
+  // for the traveller is exactly the "come back tomorrow" case the quota copy
+  // already describes, so say that rather than "hiccup".
   if (!usedModel) {
     return lastStatus === 429
-      ? json(429, { code: 'global_cap' })
-      : json(502, { code: 'ai_error', status: lastStatus });
+      ? await failed(429, { code: 'global_cap' })
+      : await failed(502, { code: 'ai_error', status: lastStatus });
   }
 
   let parsed: { summary?: unknown; stops?: unknown };
-  try { parsed = JSON.parse(aiText); } catch { return json(502, { code: 'ai_bad_output' }); }
+  try { parsed = JSON.parse(aiText); } catch { return await failed(502, { code: 'ai_bad_output' }); }
 
   // ---- server-side truth pass: validate stops, then re-time the day ----
   const centre = { lat: centreLat, lon: centreLon };
   const { stops: safeStops, dropped } = sanitizeAiStops(parsed.stops, candidates, centre);
-  if (safeStops.length < 2) return json(502, { code: 'ai_bad_output' });
+  if (safeStops.length < 2) return await failed(502, { code: 'ai_bad_output' });
   // The traveller's own walking answer is ENFORCED here, not merely asked of
   // the model above: the prompt line is a request, this is the guarantee.
   const sched = scheduleDay(safeStops, {
@@ -336,7 +396,7 @@ Deno.serve(async (req) => {
   // is exactly what `too_few` already tells them while offering the built-in
   // planner. A one-stop "route" would be worse than saying so.
   if (sched.stops.filter((s: { arrive?: string | null }) => s.arrive).length < 2) {
-    return json(400, { code: 'too_few' });
+    return await failed(400, { code: 'too_few' });
   }
 
   const payload = {
@@ -366,11 +426,21 @@ Deno.serve(async (req) => {
       refined: !!refine,
       events: sched.stops.filter((s: { isEvent?: boolean }) => s.isEvent).length,
       grounded: useGrounding,
+      // Why live search did not run, when it was asked for: 'tier' (free
+      // plan), 'cap' (pass fair-use spent) or 'off' (disabled server-wide).
+      // The first two are the upsell moments.
+      groundingSkipped,
     },
   };
 
   // Cache best-effort: a failed insert must never fail the response.
   try { await service.from('ai_plan_cache').upsert({ hash, payload, model: usedModel }); } catch { /* ignore */ }
 
-  return json(200, payload);
+  // Entitlement facts ride OUTSIDE payload so they never reach the cache: the
+  // cached row is shared between users, and one traveller's remaining balance
+  // must not be served to the next.
+  return json(200, {
+    ...payload,
+    pass: { tier: quota.tier, plansLeft: quota.left ?? null },
+  });
 });

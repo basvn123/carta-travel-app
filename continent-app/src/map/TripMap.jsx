@@ -6,6 +6,10 @@ import { hasLngLat, declutterPins } from './coords.js';
 // Same clean, key-less Carto Voyager basemap the main map uses.
 const MAP_STYLE = 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json';
 
+// How close two numbered stop pins may come, in screen pixels, before the
+// later one is nudged clear. A pin is 26px wide, so this is "touching".
+const MIN_PIN_SEP = 30;
+
 // Category glyphs for the pickable POI pins, the same visual language as the
 // explore map's pins (dem-pin), so "tappable place" reads the same everywhere.
 const S = (d) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">${d}</svg>`;
@@ -93,6 +97,7 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
   const markersRef = useRef([]);
   const poiMarkersRef = useRef([]);
   const lastFrameKeyRef = useRef(null);
+  const declutterRef = useRef(null);
   const readyRef = useRef(false);
   const onSelectRef = useRef(onSelectStop);
   onSelectRef.current = onSelectStop;
@@ -100,6 +105,56 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
   onPoiClickRef.current = onPoiClick;
   const onViewChangeRef = useRef(onViewChange);
   onViewChangeRef.current = onViewChange;
+
+  // Two stops 80m apart land on the same 26px pin at the zoom a whole day fits
+  // into, and the pin drawn last simply covers the one before it: that is how a
+  // six-stop route reads as "1, 2, 4, 5" with a number missing, or as the same
+  // number twice when only a sliver of the buried pin shows. Nothing may move a
+  // pin off its coordinate for good, so colliding pins fan apart in SCREEN
+  // space only, recomputed on every move, and settle back onto the true point
+  // as soon as the traveller zooms in far enough for them to stand apart.
+  //
+  // Returns declutter entries for the (nudged) stop pins, highest priority and
+  // never demoted, so the numbers also win against candidate POI labels.
+  const spreadStopPins = () => {
+    const map = mapRef.current;
+    if (!map) return [];
+    const placed = [];
+    const clear = (x, y) => placed.every((p) => Math.hypot(p.x - x, p.y - y) >= MIN_PIN_SEP);
+    // Straight up first, then up-and-out, then sideways: a nudged pin should
+    // read as lifted off a cluster, not as belonging to its neighbour.
+    const fan = (pt) => {
+      for (const r of [MIN_PIN_SEP, MIN_PIN_SEP * 1.85]) {
+        for (const deg of [-90, -50, -130, -20, -160, 0, 180, 40, 140, 90]) {
+          const a = (deg * Math.PI) / 180;
+          const dx = Math.round(Math.cos(a) * r);
+          const dy = Math.round(Math.sin(a) * r);
+          if (clear(pt.x + dx, pt.y + dy)) return { dx, dy };
+        }
+      }
+      return { dx: 0, dy: 0 };
+    };
+    const out = [];
+    markersRef.current.forEach((m) => {
+      if (!m.el || !m.lngLat) return;
+      let pt;
+      try { pt = map.project(m.lngLat); } catch { return; }
+      const { dx, dy } = clear(pt.x, pt.y) ? { dx: 0, dy: 0 } : fan(pt);
+      placed.push({ x: pt.x + dx, y: pt.y + dy });
+      m.el.style.setProperty('--pin-dx', `${dx}px`);
+      m.el.style.setProperty('--pin-dy', `${dy}px`);
+      m.el.classList.toggle('nudged', dx !== 0 || dy !== 0);
+      let lngLat = m.lngLat;
+      if (dx || dy) {
+        try {
+          const ll = map.unproject([pt.x + dx, pt.y + dy]);
+          lngLat = [ll.lng, ll.lat];
+        } catch { /* keep the true point */ }
+      }
+      out.push({ el: m.el, lngLat, priority: 100, keep: true });
+    });
+    return out;
+  };
 
   // Initialise once.
   useEffect(() => {
@@ -195,15 +250,28 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
     // Candidate POI pins are dense by design (up to 220 on a zoomed-in city),
     // so they get the same collision pass a real symbol layer would run.
     // Must-sees outrank ordinary places for the right to keep their name.
-    const stopDeclutter = declutterPins(map, () => (
-      poiMarkersRef.current.map((entry) => (entry && entry.el ? {
-        el: entry.el,
-        lngLat: entry.lngLat,
-        priority: entry.priority,
-      } : null)).filter(Boolean)
-    ));
+    //
+    // The route's numbered pins join that pass as unbeatable entries: the day's
+    // own stops are the one thing on this map that may never be buried, so a
+    // candidate label that lands on top of a stop number gives up its name
+    // instead. They also fan apart in screen space first (see spreadStopPins),
+    // and the pass is fed the nudged positions so it declutters what is
+    // actually drawn.
+    const stopDeclutter = declutterPins(map, () => {
+      const stopEntries = spreadStopPins();
+      return [
+        ...stopEntries,
+        ...poiMarkersRef.current.map((entry) => (entry && entry.el ? {
+          el: entry.el,
+          lngLat: entry.lngLat,
+          priority: entry.priority,
+        } : null)).filter(Boolean),
+      ];
+    });
+    declutterRef.current = stopDeclutter;
 
     return () => {
+      declutterRef.current = null;
       stopDeclutter();
       ro?.disconnect();
       map.remove();
@@ -253,15 +321,30 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
       // Numbered pins, reconcile by teardown+rebuild (there are only a handful).
       markersRef.current.forEach((m) => m.marker.remove());
       // A `stay` point (the traveller's own address) gets its own quiet pin
-      // and doesn't consume a stop number.
+      // and doesn't consume a stop number. `no` lets the caller state the
+      // number itself: the itinerary is the authority on which stop this is, so
+      // a stop the map cannot plot (no coordinates) can never shift the numbers
+      // of the ones it can, and the sidebar and the map always agree.
       let stopNo = 0;
       markersRef.current = pts.map((p, i) => {
+        if (!p.stay) stopNo += 1;
+        const no = p.stay ? null : (p.no ?? stopNo);
+        // The marker element belongs to maplibre: it rewrites that element's
+        // inline `transform` on every frame, which beats anything a stylesheet
+        // says. So the teardrop's rotation lives on an inner shape and the
+        // number rides upright inside it. Rotating the marker element itself is
+        // what silently dropped the rotation and left every stop number tilted
+        // 45 degrees, which is how a 6 came to read as a 9.
         const el = document.createElement('div');
         el.className = p.stay ? 'trip-pin trip-pin-stay' : 'trip-pin';
-        el.title = p.stay ? 'Your stay' : (p.city || `Stop ${i + 1}`);
+        el.title = p.stay ? 'Your stay' : (p.city || `Stop ${no}`);
+        const shape = document.createElement('span');
+        shape.className = 'trip-pin-shape';
         const num = document.createElement('span');
-        num.textContent = p.stay ? '' : String((stopNo += 1));
-        el.appendChild(num);
+        num.className = 'trip-pin-no';
+        num.textContent = p.stay ? '' : String(no);
+        shape.appendChild(num);
+        el.appendChild(shape);
         el.addEventListener('click', (e) => {
           e.stopPropagation();
           onSelectRef.current?.(i);
@@ -269,8 +352,9 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
         const marker = new maplibregl.Marker({ element: el, anchor: 'bottom' })
           .setLngLat([p.lon, p.lat])
           .addTo(map);
-        return { marker, el };
+        return { marker, el, lngLat: [p.lon, p.lat] };
       });
+      spreadStopPins();
 
       // Frame the whole route in the strip above the sheet. With no stops yet,
       // settle on the plan's own city (focus) instead of the whole continent,       // a freshly opened saved day plan should show its city, not Europe.
@@ -371,6 +455,10 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
         priority: p.sel ? 10 : p.must ? 8 : 4,
       });
     });
+    // Filtering the deck rebuilds every pin without moving the map, so ask for
+    // a collision pass: otherwise the new set draws all its labels at once and
+    // a dense old town is a wall of overlapping names until you pan.
+    declutterRef.current?.rerun();
     return () => {
       poiMarkersRef.current.forEach((m) => m.marker.remove());
       poiMarkersRef.current = [];

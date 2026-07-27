@@ -26,6 +26,8 @@ import {
   canonicalPoiIndices, poiIdentityKeys, DAY_STYLES,
 } from './dayDraft.js';
 import { AiDayPlanModal } from './AiDayPlanModal.jsx';
+import { PassModal } from '../components/PassModal.jsx';
+import { useEntitlement } from '../hooks/useEntitlement.js';
 import { CartaChatPlanner } from './CartaChatPlanner.jsx';
 import { buildAiCandidates, requestAiDayPlan, splitAiPlan } from './aiDayPlan.js';
 import { buildCityCandidates, requestCitySuggestion } from './aiCitySuggest.js';
@@ -50,7 +52,7 @@ import {
   SparkIcon, StarIcon, InfoIcon, MountainIcon, ShareIcon, MapPinIcon,
   BedIcon, BookmarkIcon, DownloadIcon, RouteIcon,
   FerryIcon, PencilIcon, SearchIcon, HomeIcon, CheckIcon, CalendarIcon,
-  ClockIcon, CoffeeIcon, FilterIcon, ChevronDownIcon,
+  ClockIcon, CoffeeIcon, FilterIcon, ChevronDownIcon, ChevronRightIcon,
 } from '../components/Icons.jsx';
 
 // How the explore search & "Let Carta guide you" name each pin category.
@@ -126,6 +128,12 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
   const { t, lang } = useI18n();
   const destinations = data?.destinations || {};
   const countryInsights = useCountryInsights();
+  // What this traveller's pass allows. A hint for the UI only, the Edge
+  // Functions enforce it; see useEntitlement.
+  const entitlement = useEntitlement();
+  // '' when closed, otherwise the reason it opened ('plans' | 'ground' | 'browse'),
+  // which decides whether the modal leads with what just ran out.
+  const [passReason, setPassReason] = useState('');
 
   const [savedPlans, setSavedPlans] = useState([]);
   const [plansLoading, setPlansLoading] = useState(false);
@@ -1241,12 +1249,17 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
     setRoute('auto');
   };
 
+  // `no` is the stop's number in TODAY'S timeline, carried onto the map so the
+  // two can never disagree: a stop the map cannot plot (a catalogue entry with
+  // no coordinates) leaves a gap in the pins rather than renumbering every stop
+  // after it.
   const mapPins = assignedItems
-    .filter((it) => it.lat != null && it.lon != null)
+    .map((it, i) => ({ it, no: i + 1 }))
+    .filter(({ it }) => it.lat != null && it.lon != null)
     // The Google Maps route link is built from the coordinates only; the name
     // is for on-map labels and never geocoded.
-    .map((it) => ({
-      lat: it.lat, lon: it.lon, city: it.name,
+    .map(({ it, no }) => ({
+      lat: it.lat, lon: it.lon, city: it.name, no,
       name: [it.name, stop?.dest?.city].filter(Boolean).join(', '),
     }));
 
@@ -2347,6 +2360,10 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
             <div className="day-flow-step">
               <div className="day-flow-panel day-flow-panel-wide">
                 <h2 className="day-flow-q">{t('day.howToPlan')}</h2>
+                {/* Both cards end in the action they perform. The recommended
+                    one used to be the only one that looked pressable, which
+                    left "plan it myself" reading as an explanatory panel that
+                    happened to sit beside a button. */}
                 <div className="day-flow-cards">
                   <button className="day-flow-card primary" onClick={() => setLandingStep('chat')}>
                     <span className="day-flow-card-top">
@@ -2360,6 +2377,9 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
                       <li><CheckIcon size={12} /> {t('day.chatPoint2')}</li>
                       <li><CheckIcon size={12} /> {t('day.chatPoint3')}</li>
                     </ul>
+                    <span className="day-flow-card-go">
+                      {t('day.cardGoBot')}<ChevronRightIcon size={14} />
+                    </span>
                   </button>
                   <button className="day-flow-card" onClick={() => setLandingStep('manual')}>
                     <span className="day-flow-card-top">
@@ -2372,6 +2392,9 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
                       <li><CheckIcon size={12} /> {t('day.manualPoint2')}</li>
                       <li><CheckIcon size={12} /> {t('day.manualPoint3')}</li>
                     </ul>
+                    <span className="day-flow-card-go">
+                      {t('day.cardGoManual')}<ChevronRightIcon size={14} />
+                    </span>
                   </button>
                 </div>
               </div>
@@ -2706,15 +2729,21 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
               <div className="trip-saved-list">
                 {standalonePlans.map((sp) => (
                   <div className="trip-saved-item" key={sp.id}>
+                    {/* The chevron is the row's affordance: without it a
+                        bordered box holding a name reads as a filled-in text
+                        field, not as a saved plan you can open. */}
                     <button className="trip-saved-main" onClick={() => openStandalone(sp)}>
-                      {sp.label || destinations[sp.stops?.[0]?.destinationId]?.city || t('day.dayPlanFallback')}
-                      <small className="day-saved-sub">
-                        {', '}{fmtDate(sp.startDate)}
-                        {(sp.stops?.reduce((n, s) => n + (s.days || 1), 0) || 1) > 1
-                          ? t('day.nDaysSuffix', { n: sp.stops.reduce((n, s) => n + (s.days || 1), 0) })
-                          : ''}
-                        {(sp.stops?.length || 1) > 1 ? t('day.nCitiesSuffix', { n: sp.stops.length }) : ''}
-                      </small>
+                      <span className="trip-saved-label">
+                        {sp.label || destinations[sp.stops?.[0]?.destinationId]?.city || t('day.dayPlanFallback')}
+                        <small className="day-saved-sub">
+                          {', '}{fmtDate(sp.startDate)}
+                          {(sp.stops?.reduce((n, s) => n + (s.days || 1), 0) || 1) > 1
+                            ? t('day.nDaysSuffix', { n: sp.stops.reduce((n, s) => n + (s.days || 1), 0) })
+                            : ''}
+                          {(sp.stops?.length || 1) > 1 ? t('day.nCitiesSuffix', { n: sp.stops.length }) : ''}
+                        </small>
+                      </span>
+                      <span className="trip-saved-go" aria-hidden="true"><ChevronRightIcon size={14} /></span>
                     </button>
                     <button className="trip-saved-del" onClick={() => deleteStandalone(sp.id)} aria-label={t('day.deleteDayPlan')} title={t('day.delete')}>×</button>
                   </div>
@@ -2736,7 +2765,8 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
                   {savedPlans.map((p) => (
                     <div className="trip-saved-item" key={p.id}>
                       <button className="trip-saved-main" onClick={() => openPlan(p.id)}>
-                        {p.label || t('day.untitledTrip')}
+                        <span className="trip-saved-label">{p.label || t('day.untitledTrip')}</span>
+                        <span className="trip-saved-go" aria-hidden="true"><ChevronRightIcon size={14} /></span>
                       </button>
                     </div>
                   ))}
@@ -2912,6 +2942,17 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
           onApply={applyAiResult}
           onFallback={fallbackAi}
           onClose={() => setAiOpen(false)}
+          entitlement={entitlement}
+          onOpenPass={(reason) => setPassReason(reason || 'browse')}
+        />
+      )}
+      {passReason && (
+        <PassModal
+          entitlement={entitlement}
+          reason={passReason}
+          signedIn={!!user && authConfigured}
+          onClose={() => { setPassReason(''); entitlement.refresh(); }}
+          onSignIn={() => setPassReason('')}
         />
       )}
       <TripMap

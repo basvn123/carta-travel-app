@@ -37,11 +37,17 @@ export const finitePts = (arr) => (Array.isArray(arr) ? arr.filter(hasLngLat) : 
  *   1. `is-tight`  - drop the name, keep the icon and the rating
  *   2. `is-dot`    - drop to a bare dot
  * A pin that is selected, focused or hovered is never demoted: the one the
- * traveller is looking at always keeps its label.
+ * traveller is looking at always keeps its label. So is one the caller marks
+ * `keep` - a numbered stop of the planned route has no label to give up, and
+ * burying it under a candidate place would hide the plan itself.
  *
- * `entries()` returns [{ el, lngLat, priority }] fresh on each pass, so
+ * `entries()` returns [{ el, lngLat, priority, keep }] fresh on each pass, so
  * callers can reflect selection changes without re-registering.
- * Returns a teardown function.
+ *
+ * Returns a teardown function that also carries `.rerun()`. Map movement
+ * schedules a pass by itself, but a caller that REBUILDS its pins (a filter
+ * chip, a new day) changes what collides without the map moving an inch, and
+ * until it asks for a pass those fresh pins all carry their full labels.
  */
 export function declutterPins(map, entries, { padding = 2 } = {}) {
   let raf = 0;
@@ -76,7 +82,7 @@ export function declutterPins(map, entries, { padding = 2 } = {}) {
         return placed.some((p) => !(r.r < p.l || r.l > p.r || r.b < p.t || r.t > p.b)) ? null : r;
       };
       // Pinned pins keep their full label whatever else is around them.
-      if (it.el.classList.contains('on') || it.el.classList.contains('focused')
+      if (it.keep || it.el.classList.contains('on') || it.el.classList.contains('focused')
         || it.el.classList.contains('sel')) {
         const r = hit(it.el);
         placed.push(r || {
@@ -97,12 +103,14 @@ export function declutterPins(map, entries, { padding = 2 } = {}) {
   map.on('zoom', schedule);
   map.on('moveend', schedule);
   schedule();
-  return () => {
+  const stop = () => {
     if (raf) cancelAnimationFrame(raf);
     map.off('move', schedule);
     map.off('zoom', schedule);
     map.off('moveend', schedule);
   };
+  stop.rerun = schedule;
+  return stop;
 }
 
 /**

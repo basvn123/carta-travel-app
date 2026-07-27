@@ -10,23 +10,30 @@
  * re-validated server-side in logic.mjs: a catalogue pick must reference a
  * real candidate id, a web discovery needs real, in-area coordinates.
  *
- * Shares its quota ledger and cache with plan-day (`ai_plan_consume`,
- * `ai_plan_cache`, migration 006_ai_day_planner.sql) - both tables are
- * already generic ("one AI generation" / hash-to-payload), so no new
- * migration is needed for this function.
+ * Shares its quota ledger and cache with plan-day (`ai_consume`,
+ * `ai_plan_cache`, migrations 006 and 007) - both tables are already generic
+ * ("one AI generation" / hash-to-payload), so no new migration is needed for
+ * this function.
  *
- * Zero-billing posture: identical to plan-day (see its header). Grounding
- * does not change the guarantee - it comes from the Gemini key's Google
- * project having no billing account attached, so an over-quota call 429s,
- * it never invoices. See README.md for the deploy steps (same as plan-day).
+ * Billing posture: identical to plan-day (see its header). The short version
+ * is that the old unbilled-key guarantee is GONE, because Google's Gemini API
+ * Additional Terms (2026-03-23) require Paid Services for any API client
+ * serving users in the EEA, Switzerland or the UK, which is Carta's whole
+ * market. Grounding matters more here than anywhere else: this endpoint is
+ * grounded by default and Gemini 3 bills per search query the model runs, so
+ * grounded suggestions are a PAID-tier feature and spend the 'ground'
+ * allowance. Free users still get an answer, drawn from Carta's own catalogue
+ * rather than live search. See README.md for the deploy steps.
  *
  * Secrets (set via `supabase secrets set`): GEMINI_API_KEY, and optionally
- * GEMINI_MODEL (default gemini-flash-latest), AI_USER_DAILY_CAP (10),
- * AI_GLOBAL_DAILY_CAP (200), AI_ENABLE_CITY_GROUNDING (default true).
+ * GEMINI_MODEL (default gemini-flash-latest), AI_GLOBAL_DAILY_CAP (200),
+ * AI_ENABLE_CITY_GROUNDING (default true). Per-user caps come from
+ * public.plan_tiers, not from env.
  */
 import { createClient } from 'npm:@supabase/supabase-js@2';
 import { cleanText, modelChain, shouldFallOver } from '../plan-day/logic.mjs';
 import { sanitizeTownCandidates, sanitizeSuggestions, cacheKeyInput } from './logic.mjs';
+import { consume, refund, resolveTier } from '../_shared/passes.mjs';
 
 const CORS = {
   'Access-Control-Allow-Origin': '*',
@@ -138,7 +145,6 @@ Deno.serve(async (req) => {
   const GEMINI_API_KEY = Deno.env.get('GEMINI_API_KEY') || '';
   // Same ordered fallback chain as plan-day, from the shared logic module.
   const CHAIN = modelChain(Deno.env.get('GEMINI_MODEL'), Deno.env.get('GEMINI_MODELS'));
-  const USER_CAP = Number(Deno.env.get('AI_USER_DAILY_CAP')) || 10;
   const GLOBAL_CAP = Number(Deno.env.get('AI_GLOBAL_DAILY_CAP')) || 200;
   const SUPABASE_URL = Deno.env.get('SUPABASE_URL') || '';
   const ANON_KEY = Deno.env.get('SUPABASE_ANON_KEY') || '';
@@ -172,11 +178,45 @@ Deno.serve(async (req) => {
 
   const service = createClient(SUPABASE_URL, SERVICE_KEY);
 
-  // Grounding on by default (the point of this endpoint); one env flag to
-  // switch it off per deployment without a code change.
-  const useGrounding = (Deno.env.get('AI_ENABLE_CITY_GROUNDING') || 'true').toLowerCase() !== 'false';
+  // ---- what is this traveller allowed to ask for? ----
+  // Read-only: deciding whether grounding is on the table has to happen before
+  // the cache key is built (the key includes the grounded flag), and reading
+  // must not spend anything.
+  const enabled = (Deno.env.get('AI_ENABLE_CITY_GROUNDING') || 'true').toLowerCase() !== 'false';
+  const status = await resolveTier(service, user.id);
+  const useGrounding = enabled && (status?.groundLeft ?? 0) > 0;
+  // A free user still gets an answer here, just one drawn purely from Carta's
+  // own catalogue rather than from live search. That is a genuinely weaker
+  // product, which is the point: it is the difference the Trip Pass sells.
+  const groundingSkipped = enabled && !useGrounding
+    ? (status?.tier === 'free' ? 'tier' : 'cap')
+    : null;
 
-  // ---- cache first: a hit costs zero quota ----
+  // ---- quota gate ----
+  // One suggestion costs one unit. A grounded one comes out of the grounded
+  // allowance, because that is the surface Google actually meters. Ordered
+  // before the cache for the same reason as plan-day: the allowance is a
+  // product promise now, not just a cost guard.
+  const kind = useGrounding ? 'ground' : 'plan';
+  let quota = await consume(service, user.id, kind, GLOBAL_CAP);
+  if (!quota.ok && kind === 'ground') {
+    // Lost a race against the traveller's own last grounded call. Degrade
+    // rather than refuse: an ungrounded answer beats an error.
+    quota = await consume(service, user.id, 'plan', GLOBAL_CAP);
+  }
+  if (quota.status === 'quota_check') return json(503, { code: 'quota_check' });
+  if (!quota.ok) {
+    return json(429, {
+      code: quota.status, tier: quota.tier, cap: quota.cap ?? 0, used: quota.used ?? 0,
+    });
+  }
+  const spentKind = quota.ok && useGrounding ? 'ground' : 'plan';
+  const failed = async (st: number, b: Record<string, unknown>) => {
+    await refund(service, user.id, spentKind);
+    return json(st, b);
+  };
+
+  // ---- cache ----
   const hash = await sha256Hex(cacheKeyInput({
     // The chain, not the answering model: see plan-day for why.
     model: CHAIN.join(','), stay, focus, interests, freeText, lang, candidates, grounded: useGrounding,
@@ -187,15 +227,12 @@ Deno.serve(async (req) => {
     .eq('hash', hash)
     .maybeSingle();
   if (cached?.payload && Date.now() - Date.parse(cached.created_at) < 7 * 86400_000) {
-    return json(200, { ...cached.payload, meta: { ...cached.payload.meta, cached: true } });
+    return json(200, {
+      ...cached.payload,
+      meta: { ...cached.payload.meta, cached: true },
+      pass: { tier: quota.tier, left: quota.left ?? null },
+    });
   }
-
-  // ---- quota gate (shared bucket with plan-day) ----
-  const { data: quota, error: quotaErr } = await service.rpc('ai_plan_consume', {
-    p_user: user.id, p_user_cap: USER_CAP, p_global_cap: GLOBAL_CAP,
-  });
-  if (quotaErr) return json(503, { code: 'quota_check' });
-  if (quota !== 'ok') return json(429, { code: quota });
 
   // ---- the one AI call ----
   const prompt = buildPrompt({
@@ -239,12 +276,12 @@ Deno.serve(async (req) => {
       );
     } catch {
       // Timeouts stop the chain: see plan-day, latency beats completeness.
-      return json(504, { code: 'ai_timeout' });
+      return await failed(504, { code: 'ai_timeout' });
     }
     if (!resp.ok) {
       lastStatus = resp.status;
       if (shouldFallOver(resp.status)) continue;
-      return json(502, { code: 'ai_error', status: resp.status });
+      return await failed(502, { code: 'ai_error', status: resp.status });
     }
     const data = await resp.json();
     aiText = (data?.candidates?.[0]?.content?.parts || [])
@@ -255,22 +292,26 @@ Deno.serve(async (req) => {
   }
   if (!usedModel) {
     return lastStatus === 429
-      ? json(429, { code: 'global_cap' })
-      : json(502, { code: 'ai_error', status: lastStatus });
+      ? await failed(429, { code: 'global_cap' })
+      : await failed(502, { code: 'ai_error', status: lastStatus });
   }
 
   const parsed = extractJson(aiText) as { suggestions?: unknown } | undefined;
-  if (!parsed) return json(502, { code: 'ai_bad_output' });
+  if (!parsed) return await failed(502, { code: 'ai_bad_output' });
 
   const suggestions = sanitizeSuggestions(parsed.suggestions, candidates, stay);
-  if (!suggestions.length) return json(502, { code: 'ai_bad_output' });
+  if (!suggestions.length) return await failed(502, { code: 'ai_bad_output' });
 
   const payload = {
     suggestions,
-    meta: { model: usedModel, fellBack: usedModel !== CHAIN[0], cached: false, grounded: useGrounding },
+    meta: {
+      model: usedModel, fellBack: usedModel !== CHAIN[0], cached: false,
+      grounded: useGrounding, groundingSkipped,
+    },
   };
 
   try { await service.from('ai_plan_cache').upsert({ hash, payload, model: usedModel }); } catch { /* ignore */ }
 
-  return json(200, payload);
+  // Entitlement facts stay outside the cached payload: that row is shared.
+  return json(200, { ...payload, pass: { tier: quota.tier, left: quota.left ?? null } });
 });

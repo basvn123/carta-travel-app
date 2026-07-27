@@ -33,6 +33,7 @@ export function DayExploreMap({ stay, markers = [], onFocus, onStayClick, stayFo
   const mapRef = useRef(null);
   const readyRef = useRef(false);
   const pinsRef = useRef(new Map());
+  const declutterRef = useRef(null);
   const stayRef = useRef(null);
   const stayElRef = useRef(null);
   const onFocusRef = useRef(onFocus);
@@ -59,8 +60,10 @@ export function DayExploreMap({ stay, markers = [], onFocus, onStayClick, stayFo
         priority: (m.score ?? (m.must ? 8 : 4)) + (m.cat === 'town' ? 2 : 0),
       }))
     ));
+    declutterRef.current = stopDeclutter;
     mapRef.current = map;
     return () => {
+      declutterRef.current = null;
       stopDeclutter();
       map.remove(); mapRef.current = null; readyRef.current = false; pinsRef.current.clear();
     };
@@ -179,6 +182,9 @@ export function DayExploreMap({ stay, markers = [], onFocus, onStayClick, stayFo
       });
       sync();
       fitAll();
+      // A filter chip rebuilds the pins; fitAll only moves the map when there
+      // are two points to frame, so ask for a collision pass either way.
+      declutterRef.current?.rerun();
     };
     map._build = build;
     if (readyRef.current) build();

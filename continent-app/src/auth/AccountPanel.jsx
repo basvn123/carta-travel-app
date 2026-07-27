@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
 import { useAuth } from './AuthContext.jsx';
-import { LockIcon, PersonIcon } from '../components/Icons.jsx';
+import { LockIcon, PersonIcon, SparkIcon } from '../components/Icons.jsx';
 import { PrivacyPolicy } from '../components/PrivacyPolicy.jsx';
+import { PassModal } from '../components/PassModal.jsx';
+import { useEntitlement } from '../hooks/useEntitlement.js';
+import { TIERS, daysLeft, canUpgrade } from '../lib/pricing.js';
 import { useI18n } from '../i18n/index.jsx';
 
 // Account & preferences. Saved trips deliberately do NOT live here, they have
@@ -11,6 +14,8 @@ import { useI18n } from '../i18n/index.jsx';
 export function AccountPanel({ onClose, onOpenAuth }) {
   const { user, signOut, updatePassword, deleteAccount, configured } = useAuth();
   const { t } = useI18n();
+  const entitlement = useEntitlement();
+  const [passOpen, setPassOpen] = useState(false);
 
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -78,6 +83,31 @@ export function AccountPanel({ onClose, onOpenAuth }) {
                 {fullName && <small>{user.email}</small>}
               </span>
             </div>
+          </div>
+
+          {/* What they hold today. A pass is a finite thing that runs out, so
+              this states the expiry rather than a status word: "Trip Pass"
+              alone tells somebody nothing about whether it still works. */}
+          <div className="panel-section">
+            <div className="section-title section-title-iconed"><SparkIcon size={12} /> {t('pass.sectionTitle')}</div>
+            <div className="account-pass">
+              <b>{t(TIERS[entitlement.tier]?.labelKey || TIERS.free.labelKey)}</b>
+              {entitlement.known && (
+                <small>
+                  {entitlement.tier === 'free'
+                    ? t('pass.statusFree', { left: entitlement.plansLeft, cap: entitlement.plansCap })
+                    : t('pass.statusPaid', {
+                      days: daysLeft(entitlement.expiresAt) ?? 0,
+                      left: entitlement.plansLeft,
+                    })}
+                </small>
+              )}
+            </div>
+            {canUpgrade(entitlement.tier) && (
+              <button className="account-signin-btn account-signin-spaced" onClick={() => setPassOpen(true)}>
+                {t(entitlement.tier === 'free' ? 'pass.seePasses' : 'pass.extend')}
+              </button>
+            )}
           </div>
 
           <div className="panel-section">
@@ -156,6 +186,15 @@ export function AccountPanel({ onClose, onOpenAuth }) {
         </button>
       </div>
       {privacyOpen && <PrivacyPolicy onClose={() => setPrivacyOpen(false)} />}
+      {passOpen && (
+        <PassModal
+          entitlement={entitlement}
+          reason="browse"
+          signedIn={!!user}
+          onClose={() => { setPassOpen(false); entitlement.refresh(); }}
+          onSignIn={() => { setPassOpen(false); onOpenAuth?.(); }}
+        />
+      )}
     </div>
   );
 }
