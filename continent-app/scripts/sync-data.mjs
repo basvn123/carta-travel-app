@@ -23,6 +23,7 @@ import { fileURLToPath } from 'node:url';
 import { dirname, resolve } from 'node:path';
 import { existsSync, readFileSync, writeFileSync, rmSync, mkdirSync } from 'node:fs';
 import { stripDashes } from '../src/lib/format.js';
+import { fareFileBase } from '../src/lib/fareFile.js';
 
 const scriptDir = dirname(fileURLToPath(import.meta.url));   // continent-app/scripts
 const repoRoot = resolve(scriptDir, '..', '..');             // repo root
@@ -137,11 +138,12 @@ if (data.fares && Object.keys(data.fares).length) {
     coverage[origin] = Object.values(slice)
       .filter((rec) => rec?.out && Object.keys(rec.out).length > 0).length;
     // Origin codes are harvested IATA (A-Z only), but never trust that for a
-    // file path.
+    // file path. fareFileBase() also escapes the codes Windows reserves as
+    // device names (PRN), which git will not index, see lib/fareFile.js.
     if (!/^[A-Z0-9]{3,4}$/.test(origin)) continue;
     const out = JSON.stringify(sanitizeDeep(slice));
     faresBytes += out.length;
-    writeFileSync(resolve(faresDir, `${origin}.json`), out);
+    writeFileSync(resolve(faresDir, `${fareFileBase(origin)}.json`), out);
   }
   data.meta.origin_coverage = coverage;
   delete data.fares;

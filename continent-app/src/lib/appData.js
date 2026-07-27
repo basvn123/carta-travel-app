@@ -8,6 +8,8 @@
  *   - /country_insights.json  per-country travel intel (planners + detail)
  */
 
+import { faresUrl } from './fareFile.js';
+
 function fetchJson(path) {
   return fetch(path).then((r) => {
     if (!r.ok) throw new Error(`HTTP ${r.status}`);
@@ -22,14 +24,15 @@ export const appDataPromise = fetchJson('/app_data.json');
 // the real error from their own .then/.catch chains.
 appDataPromise.catch(() => {});
 
-// Per-origin fare slices (public/fares/{IATA}.json, written by sync-data.mjs).
+// Per-origin fare slices (public/fares/{IATA}.json, written by sync-data.mjs;
+// faresUrl() escapes the handful of codes Windows reserves, see fareFile.js).
 // Cached per origin; resolves null on failure so useAppData can tell "no such
 // file / offline" apart from "empty but valid" and fall back gracefully.
 const faresPromises = new Map();
 export function fetchFares(origin) {
   if (!origin || !/^[A-Z0-9]{3,4}$/.test(origin)) return Promise.resolve(null);
   if (!faresPromises.has(origin)) {
-    faresPromises.set(origin, fetchJson(`/fares/${origin}.json`).catch(() => null));
+    faresPromises.set(origin, fetchJson(faresUrl(origin)).catch(() => null));
   }
   return faresPromises.get(origin);
 }
