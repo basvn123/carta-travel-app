@@ -43,10 +43,27 @@ suggestions, never bad data reaching the client.
 
 | Secret | Default | Meaning |
 | --- | --- | --- |
-| `GEMINI_MODEL` | `gemini-flash-latest` | Same model as `plan-day`, pin if the alias moves under you. |
+| `GEMINI_MODEL` | `gemini-flash-latest` | Same first rung as `plan-day`, pin if the alias moves under you. |
+| `GEMINI_MODELS` | (unset) | Same fallback chain as `plan-day`, shared helper in `plan-day/logic.mjs`. |
 | `AI_USER_DAILY_CAP` | `10` | Shared with `plan-day`'s cap - both spend from the same daily bucket. |
 | `AI_GLOBAL_DAILY_CAP` | `200` | Same shared bucket, global side. |
-| `AI_ENABLE_CITY_GROUNDING` | `true` | Set to `false` to disable web search and answer from the catalogue only (falls back to strict `responseSchema` output in that case). |
+| `AI_ENABLE_CITY_GROUNDING` | `true` | **Must be `false` on a free-tier key**, see below. Off, it answers from the catalogue only, with strict `responseSchema` output. |
+
+## Grounding is not available on the free tier
+
+The `true` default predates testing against a real unbilled key. Measured
+2026-07-27: a grounded call returns `429 RESOURCE_EXHAUSTED` immediately,
+while the identical ungrounded call on the same key succeeds. The AI Studio
+rate-limit page shows why, Search grounding for the Gemini 3 family reads
+`0 / 0`. The 2.5 family does list a 1,500/day grounding allowance, but those
+models now answer 404 "no longer available to new users", so that allowance
+is unreachable on a key created recently.
+
+On a zero-billing deployment this must therefore be `false`, and the function
+suggests only from Carta's own catalogue. That is a real capability loss (no
+surfacing of towns Carta has not researched yet) and the only way back is
+attaching billing, which is exactly what the posture exists to avoid. Left
+on, every call fails and the traveller sees a generic error.
 
 ## Local test
 

@@ -16,7 +16,7 @@ const here = dirname(fileURLToPath(import.meta.url));
 const logicPath = resolve(here, '../../../supabase/functions/plan-day/logic.mjs');
 const {
   cleanText, haversineKm, sanitizeCandidates, sanitizeAiStops, twoOptOrder,
-  scheduleDay, cacheKeyInput,
+  scheduleDay, cacheKeyInput, modelChain, shouldFallOver, DEFAULT_MODEL_CHAIN,
 } = await import(pathToFileURL(logicPath).href);
 
 let failures = 0;
@@ -164,6 +164,30 @@ check('events: near event kept and flagged', withEvent.some((s) => s.isEvent ===
 check('events: far event dropped', !withEvent.some((s) => s.name.includes('Fake Far')));
 check('events: catalogue stops never flagged as events',
   withEvent.filter((s) => !s.external).every((s) => !s.isEvent));
+
+/* ---- model fallback chain ---- */
+
+check('chain: default when nothing is configured',
+  modelChain('', '').join() === DEFAULT_MODEL_CHAIN.join());
+check('chain: GEMINI_MODELS replaces the chain outright',
+  modelChain('', 'a, b ,c').join() === 'a,b,c');
+check('chain: a pinned model leads, fallbacks stay behind it',
+  modelChain('gemini-3.5-flash-lite', '')[0] === 'gemini-3.5-flash-lite');
+check('chain: pinning does not duplicate the model further down',
+  modelChain('gemini-3.5-flash-lite', '')
+    .filter((m) => m === 'gemini-3.5-flash-lite').length === 1);
+check('chain: pinning keeps the rest of the fallbacks',
+  modelChain('gemini-3.5-flash-lite', '').length === DEFAULT_MODEL_CHAIN.length);
+check('chain: blank entries are dropped', !modelChain('', 'a,,  ,b').includes(''));
+check('chain: never unbounded', modelChain('', 'a,b,c,d,e,f,g,h').length <= 6);
+// A spent budget, a retired model and Google's "high demand" 503 all mean
+// "try the next rung". A 400 is our own malformed request and would fail
+// identically everywhere, so it must stop the chain.
+check('fallover: 429 spent budget advances', shouldFallOver(429));
+check('fallover: 404 retired model advances', shouldFallOver(404));
+check('fallover: 503 high demand advances', shouldFallOver(503));
+check('fallover: 400 bad request stops the chain', !shouldFallOver(400));
+check('fallover: 403 bad key stops the chain', !shouldFallOver(403));
 
 if (failures) {
   console.error(`\n${failures} test(s) failed`);

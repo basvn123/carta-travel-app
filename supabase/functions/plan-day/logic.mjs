@@ -274,6 +274,55 @@ export function scheduleDay(stops, {
  * The exact DATE matters for events, so events-mode requests key on the day
  * rather than only its month.
  */
+/* ---- model fallback chain ---- */
+
+// Every model on the free tier carries its OWN daily request budget, so a
+// chain is not a redundancy trick, it multiplies the free ceiling: measured
+// on this project's key, gemini-3.6-flash allows 20 requests a day while the
+// lite models allow 500 each. Quality first, capacity last. Falling back is
+// a real downgrade (the lite models do not reason before answering, so their
+// sequencing is noticeably flatter), which is why they sit at the end rather
+// than being used to stretch the budget from the start.
+//
+// Deliberately absent: the 2.5 family, which answers 404 "no longer
+// available to new users" on keys created recently, and preview aliases,
+// which move without notice.
+export const DEFAULT_MODEL_CHAIN = [
+  'gemini-flash-latest',   // 3.6 Flash today, the best of these at sequencing
+  'gemini-3.5-flash',      // same class, its own separate daily budget
+  'gemini-3.5-flash-lite', // no thinking, much larger budget
+  'gemini-3.1-flash-lite', // last resort, same shape as the one above
+];
+
+/**
+ * Resolve the ordered list of models to try.
+ *
+ * GEMINI_MODELS (comma separated) replaces the chain outright. Otherwise
+ * GEMINI_MODEL, if set, is promoted to the front of the default chain and
+ * de-duplicated, so pinning a model still leaves the fallbacks behind it
+ * rather than silently giving up the extra capacity.
+ */
+export function modelChain(primary, list) {
+  const parse = (s) => String(s || '').split(',').map((m) => m.trim()).filter(Boolean);
+  const listed = parse(list);
+  if (listed.length) return [...new Set(listed)].slice(0, 6);
+  const pinned = parse(primary);
+  return [...new Set([...pinned, ...DEFAULT_MODEL_CHAIN])].slice(0, 6);
+}
+
+/**
+ * Should the chain advance to the next model after this HTTP status?
+ *
+ * 429 is the whole point (the daily or per-minute budget for THIS model is
+ * spent). 404 covers a model retired out from under a pinned config, and 5xx
+ * covers the "experiencing high demand" 503 that Google returns on popular
+ * models. Anything else is our own bad request and would fail identically on
+ * every model, so it stops the chain instead of burning the rest.
+ */
+export function shouldFallOver(status) {
+  return status === 429 || status === 404 || status >= 500;
+}
+
 export function cacheKeyInput({
   model, destId, month, dateISO, groupSize, pace, vibe, avoidHills, freeText,
   lang, candidates, refine, prevStopIds, wantEvents, profile,

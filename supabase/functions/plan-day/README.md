@@ -30,9 +30,35 @@ rejects anonymous callers anyway, but the gateway check is a free first wall.
 
 | Secret | Default | Meaning |
 | --- | --- | --- |
-| `GEMINI_MODEL` | `gemini-flash-latest` | Pin a specific Flash model if the alias moves under you. |
+| `GEMINI_MODEL` | `gemini-flash-latest` | Pin the model tried FIRST if the alias moves under you. The default fallbacks stay behind it. |
+| `GEMINI_MODELS` | (unset) | Comma separated chain that replaces the default outright, e.g. `gemini-3.5-flash-lite,gemini-3.1-flash-lite`. Max 6. |
 | `AI_USER_DAILY_CAP` | `10` | Generations per signed-in user per day. |
-| `AI_GLOBAL_DAILY_CAP` | `200` | Generations across all users per day. Keep well under Google's free-tier requests-per-day for the chosen model (some models dropped to 250/day after the December 2025 quota cuts). |
+| `AI_GLOBAL_DAILY_CAP` | `200` | Generations across all users per day. Keep it under the chain's combined free budget (see below). |
+
+## The model fallback chain
+
+Every model carries its OWN free daily request budget, so trying a second
+model after the first is exhausted is not a redundancy trick, it multiplies
+the ceiling. Measured on this project's key (2026-07-27):
+
+| Rung | Model | Free requests per day | Notes |
+| --- | --- | --- | --- |
+| 1 | `gemini-flash-latest` (3.6 Flash today) | 20 | Best sequencing. A thinking model, ~2700 to 3850 thought tokens per day plan. |
+| 2 | `gemini-3.5-flash` | 20 | Same class, separate budget. |
+| 3 | `gemini-3.5-flash-lite` | 500 | Does not reason first, so plans are flatter but valid. Much faster. |
+| 4 | `gemini-3.1-flash-lite` | 500 | Same shape as rung 3. |
+
+Roughly 1,040 free generations a day combined, which is why the 200 global
+cap is comfortable. The chain advances on 429 (budget spent), 404 (model
+retired under a pinned config) and 5xx (Google's "high demand" 503). It stops
+on any other 4xx, because a malformed request fails identically everywhere.
+A timeout also stops it, so one slow model cannot hold the traveller for
+minutes. When every rung is spent the traveller sees the "budget resets
+tomorrow" copy, not a generic error.
+
+Do NOT add the 2.5 family: those models answer 404 "no longer available to
+new users" on keys created recently, even though they still appear in the AI
+Studio rate-limit table and in `models.list`.
 
 ## What is deliberately NOT here
 

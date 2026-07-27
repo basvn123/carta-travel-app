@@ -25,7 +25,7 @@
  * AI_GLOBAL_DAILY_CAP (200), AI_ENABLE_CITY_GROUNDING (default true).
  */
 import { createClient } from 'npm:@supabase/supabase-js@2';
-import { cleanText } from '../plan-day/logic.mjs';
+import { cleanText, modelChain, shouldFallOver } from '../plan-day/logic.mjs';
 import { sanitizeTownCandidates, sanitizeSuggestions, cacheKeyInput } from './logic.mjs';
 
 const CORS = {
@@ -136,7 +136,8 @@ Deno.serve(async (req) => {
   if (req.method !== 'POST') return json(405, { code: 'method' });
 
   const GEMINI_API_KEY = Deno.env.get('GEMINI_API_KEY') || '';
-  const MODEL = Deno.env.get('GEMINI_MODEL') || 'gemini-flash-latest';
+  // Same ordered fallback chain as plan-day, from the shared logic module.
+  const CHAIN = modelChain(Deno.env.get('GEMINI_MODEL'), Deno.env.get('GEMINI_MODELS'));
   const USER_CAP = Number(Deno.env.get('AI_USER_DAILY_CAP')) || 10;
   const GLOBAL_CAP = Number(Deno.env.get('AI_GLOBAL_DAILY_CAP')) || 200;
   const SUPABASE_URL = Deno.env.get('SUPABASE_URL') || '';
@@ -177,7 +178,8 @@ Deno.serve(async (req) => {
 
   // ---- cache first: a hit costs zero quota ----
   const hash = await sha256Hex(cacheKeyInput({
-    model: MODEL, stay, focus, interests, freeText, lang, candidates, grounded: useGrounding,
+    // The chain, not the answering model: see plan-day for why.
+    model: CHAIN.join(','), stay, focus, interests, freeText, lang, candidates, grounded: useGrounding,
   }));
   const { data: cached } = await service
     .from('ai_plan_cache')
@@ -201,44 +203,60 @@ Deno.serve(async (req) => {
     groundedFormat: useGrounding,
   });
   let aiText = '';
-  try {
-    const resp = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'x-goog-api-key': GEMINI_API_KEY },
-        body: JSON.stringify({
-          contents: [{ role: 'user', parts: [{ text: prompt }] }],
-          // Grounding and responseSchema are mutually exclusive on Gemini's
-          // API: send one or the other, never both.
-          ...(useGrounding ? { tools: [{ google_search: {} }] } : {}),
-          generationConfig: {
-            temperature: 0.3,
+  let usedModel = '';
+  let lastStatus = 0;
+  for (const model of CHAIN) {
+    let resp: Response;
+    try {
+      resp = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'x-goog-api-key': GEMINI_API_KEY },
+          body: JSON.stringify({
+            contents: [{ role: 'user', parts: [{ text: prompt }] }],
+            // Grounding and responseSchema are mutually exclusive on Gemini's
+            // API: send one or the other, never both.
+            ...(useGrounding ? { tools: [{ google_search: {} }] } : {}),
+            generationConfig: {
+              temperature: 0.3,
             // Generous ceiling because gemini-flash-latest now resolves to a
             // THINKING model, and its thoughts are charged against this same
             // budget: a real 120-candidate ask burns ~1700-2200 tokens
             // thinking before writing a word, so the old 2048 truncated the
             // JSON mid-object and every call died as ai_bad_output. A ceiling
             // is not a cost, only generated tokens are, so headroom is free.
-            // thinkingBudget does not help: Gemini 3 accepts the field and
-            // ignores it.
-            maxOutputTokens: 8192,
-            ...(useGrounding
-              ? {}
-              : { responseMimeType: 'application/json', responseSchema: RESPONSE_SCHEMA }),
-          },
-        }),
-        signal: AbortSignal.timeout(45_000),
-      },
-    );
-    if (resp.status === 429) return json(429, { code: 'ai_busy' });
-    if (!resp.ok) return json(502, { code: 'ai_error', status: resp.status });
+              // thinkingBudget does not help: Gemini 3 accepts the field and
+              // ignores it.
+              maxOutputTokens: 8192,
+              ...(useGrounding
+                ? {}
+                : { responseMimeType: 'application/json', responseSchema: RESPONSE_SCHEMA }),
+            },
+          }),
+          signal: AbortSignal.timeout(45_000),
+        },
+      );
+    } catch {
+      // Timeouts stop the chain: see plan-day, latency beats completeness.
+      return json(504, { code: 'ai_timeout' });
+    }
+    if (!resp.ok) {
+      lastStatus = resp.status;
+      if (shouldFallOver(resp.status)) continue;
+      return json(502, { code: 'ai_error', status: resp.status });
+    }
     const data = await resp.json();
     aiText = (data?.candidates?.[0]?.content?.parts || [])
       .map((p: { text?: string }) => p.text || '')
       .join('');
-  } catch {
-    return json(504, { code: 'ai_timeout' });
+    usedModel = model;
+    break;
+  }
+  if (!usedModel) {
+    return lastStatus === 429
+      ? json(429, { code: 'global_cap' })
+      : json(502, { code: 'ai_error', status: lastStatus });
   }
 
   const parsed = extractJson(aiText) as { suggestions?: unknown } | undefined;
@@ -249,10 +267,10 @@ Deno.serve(async (req) => {
 
   const payload = {
     suggestions,
-    meta: { model: MODEL, cached: false, grounded: useGrounding },
+    meta: { model: usedModel, fellBack: usedModel !== CHAIN[0], cached: false, grounded: useGrounding },
   };
 
-  try { await service.from('ai_plan_cache').upsert({ hash, payload, model: MODEL }); } catch { /* ignore */ }
+  try { await service.from('ai_plan_cache').upsert({ hash, payload, model: usedModel }); } catch { /* ignore */ }
 
   return json(200, payload);
 });

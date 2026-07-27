@@ -25,6 +25,7 @@
 import { createClient } from 'npm:@supabase/supabase-js@2';
 import {
   cleanText, sanitizeCandidates, sanitizeAiStops, scheduleDay, cacheKeyInput,
+  modelChain, shouldFallOver,
 } from './logic.mjs';
 
 const CORS = {
@@ -151,7 +152,9 @@ Deno.serve(async (req) => {
   if (req.method !== 'POST') return json(405, { code: 'method' });
 
   const GEMINI_API_KEY = Deno.env.get('GEMINI_API_KEY') || '';
-  const MODEL = Deno.env.get('GEMINI_MODEL') || 'gemini-flash-latest';
+  // Ordered models to try. Each has its own free daily budget, so exhausting
+  // the first is a reason to step down a rung, not to fail the request.
+  const CHAIN = modelChain(Deno.env.get('GEMINI_MODEL'), Deno.env.get('GEMINI_MODELS'));
   const USER_CAP = Number(Deno.env.get('AI_USER_DAILY_CAP')) || 10;
   const GLOBAL_CAP = Number(Deno.env.get('AI_GLOBAL_DAILY_CAP')) || 200;
   const SUPABASE_URL = Deno.env.get('SUPABASE_URL') || '';
@@ -224,8 +227,11 @@ Deno.serve(async (req) => {
   const service = createClient(SUPABASE_URL, SERVICE_KEY);
 
   // ---- cache first: a hit costs zero quota ----
+  // Keyed on the CHAIN, not on whichever model happened to answer: the same
+  // question must hit the same cache row whether the primary served it or a
+  // fallback did, or a busy day would generate the identical plan twice.
   const hash = await sha256Hex(cacheKeyInput({
-    model: MODEL, destId, month, dateISO, groupSize, pace, vibe, avoidHills,
+    model: CHAIN.join(','), destId, month, dateISO, groupSize, pace, vibe, avoidHills,
     freeText, lang, candidates, refine, prevStopIds: prevStops, wantEvents,
     profile,
   }));
@@ -258,37 +264,58 @@ Deno.serve(async (req) => {
   // billing account: over the allowance the API returns 429, not an invoice.
   const useGrounding = (Deno.env.get('AI_ENABLE_GROUNDING') || '').toLowerCase() === 'true' && wantEvents;
   let aiText = '';
-  try {
-    const resp = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'x-goog-api-key': GEMINI_API_KEY },
-        body: JSON.stringify({
-          contents: [{ role: 'user', parts: [{ text: prompt }] }],
-          ...(useGrounding ? { tools: [{ google_search: {} }] } : {}),
-          generationConfig: {
-            temperature: refine ? 0.45 : 0.25, // a revision must actually differ
-            // See suggest-city: gemini-flash-latest is a thinking model now
-            // and its thoughts spend this budget, so a full day of stops can
-            // truncate at 4096 and come back as ai_bad_output. Headroom costs
-            // nothing, only generated tokens are billed.
-            maxOutputTokens: 8192,
-            responseMimeType: 'application/json',
-            responseSchema: RESPONSE_SCHEMA,
-          },
-        }),
-        signal: AbortSignal.timeout(45_000),
-      },
-    );
-    if (resp.status === 429) return json(429, { code: 'ai_busy' });
-    if (!resp.ok) return json(502, { code: 'ai_error', status: resp.status });
+  let usedModel = '';
+  let lastStatus = 0;
+  for (const model of CHAIN) {
+    let resp: Response;
+    try {
+      resp = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'x-goog-api-key': GEMINI_API_KEY },
+          body: JSON.stringify({
+            contents: [{ role: 'user', parts: [{ text: prompt }] }],
+            ...(useGrounding ? { tools: [{ google_search: {} }] } : {}),
+            generationConfig: {
+              temperature: refine ? 0.45 : 0.25, // a revision must actually differ
+              // See suggest-city: gemini-flash-latest is a thinking model now
+              // and its thoughts spend this budget, so a full day of stops can
+              // truncate at 4096 and come back as ai_bad_output. Headroom costs
+              // nothing, only generated tokens are billed.
+              maxOutputTokens: 8192,
+              responseMimeType: 'application/json',
+              responseSchema: RESPONSE_SCHEMA,
+            },
+          }),
+          signal: AbortSignal.timeout(45_000),
+        },
+      );
+    } catch {
+      // A timeout is not a budget problem, and walking the rest of the chain
+      // could hold the traveller for minutes. Give up while it still feels
+      // like a failed request rather than a hung app.
+      return json(504, { code: 'ai_timeout' });
+    }
+    if (!resp.ok) {
+      lastStatus = resp.status;
+      if (shouldFallOver(resp.status)) continue;
+      return json(502, { code: 'ai_error', status: resp.status });
+    }
     const data = await resp.json();
     aiText = (data?.candidates?.[0]?.content?.parts || [])
       .map((p: { text?: string }) => p.text || '')
       .join('');
-  } catch {
-    return json(504, { code: 'ai_timeout' });
+    usedModel = model;
+    break;
+  }
+  // Chain exhausted. A trailing 429 means every model's free daily budget is
+  // spent, which for the traveller is exactly the "come back tomorrow" case
+  // the quota copy already describes, so say that rather than "hiccup".
+  if (!usedModel) {
+    return lastStatus === 429
+      ? json(429, { code: 'global_cap' })
+      : json(502, { code: 'ai_error', status: lastStatus });
   }
 
   let parsed: { summary?: unknown; stops?: unknown };
@@ -311,7 +338,11 @@ Deno.serve(async (req) => {
       lunchMin: sched.lunchMin,
     },
     meta: {
-      model: MODEL,
+      model: usedModel,
+      // True when the primary was unavailable and a lower rung answered.
+      // Worth surfacing in logs: a day of this means the free budget on the
+      // good model is consistently gone before travellers get to it.
+      fellBack: usedModel !== CHAIN[0],
       optimized: sched.optimized,
       dropped,
       cached: false,
@@ -322,7 +353,7 @@ Deno.serve(async (req) => {
   };
 
   // Cache best-effort: a failed insert must never fail the response.
-  try { await service.from('ai_plan_cache').upsert({ hash, payload, model: MODEL }); } catch { /* ignore */ }
+  try { await service.from('ai_plan_cache').upsert({ hash, payload, model: usedModel }); } catch { /* ignore */ }
 
   return json(200, payload);
 });
