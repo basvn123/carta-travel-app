@@ -2204,8 +2204,11 @@ input, select {
 /* Stay-style toggle: labels are uneven lengths ("Change stays as we go" vs
    "One home base"), so an even 50/50 split wraps the longer one mid-text.
    Size each button to its own content instead, wrapping the whole pill to a
-   second row if it doesn't fit rather than breaking a label across lines. */
-.guide-staystyle-toggle { flex-wrap: wrap; }
+   second row if it doesn't fit rather than breaking a label across lines.
+   Because the buttons no longer stretch, the tray itself must shrink to its
+   content too, otherwise the pill background runs on as dead space to the
+   right of "One home base". */
+.guide-staystyle-toggle { flex-wrap: wrap; width: fit-content; max-width: 100%; }
 .guide-staystyle-toggle button { flex: none; white-space: nowrap; }
 .guide-when-dates {
   display: flex;
@@ -12147,7 +12150,8 @@ input, select {
 }
 .guide-side-idle-row:hover { border-color: var(--accent); background: var(--accent-bg); }
 .guide-side-idle-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1; }
-.guide-side-idle-text b { font-size: 13px; color: var(--ink); }
+.guide-side-idle-text b { font-size: 13px; color: var(--ink); display: flex; align-items: center; gap: 6px; }
+.guide-side-idle-flag { width: 16px; height: 12px; flex: none; }
 .guide-side-idle-text small {
   font-size: 11px;
   color: var(--ink-mute);
@@ -12464,21 +12468,51 @@ input, select {
   box-shadow: none;
   background: none;
 }
-.cal-inline .cal-head { margin-bottom: 6px; }
+.cal-inline .cal-head { margin-bottom: 2px; }
 /* Two or more panes label themselves, so the head keeps just the arrows. A
    single pane has no other label, and a month grid with no month on it is a
    guessing game. */
 .cal-inline:not(.cal-panes-1) .cal-title { visibility: hidden; }
+/* An arrows-only row is a whole line of height spent on two glyphs, so the
+   arrows ride on the month titles instead and flank them, the way every
+   booking calendar does it. */
+.cal-inline:not(.cal-panes-1) { position: relative; }
+.cal-inline:not(.cal-panes-1) .cal-head {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  margin: 0;
+  pointer-events: none;
+}
+.cal-inline:not(.cal-panes-1) .cal-nav {
+  pointer-events: auto;
+  width: 22px;
+  height: 22px;
+  font-size: 16px;
+}
+.cal-inline:not(.cal-panes-1) .cal-pane-title { min-height: 22px; }
 .cal-panes { display: grid; grid-template-columns: 1fr; gap: 22px; }
-.cal-inline .cal-panes { grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); }
+/* Width is free on this card, height is not: a square day cell across a 780px
+   step grows to ~46px, and two six-row months then push the footer off the
+   screen. Cap the calendar's width and the row height so the whole span is
+   pickable in one view, with no scroll. */
+/* Side-by-side months hold their own width: stretched across the whole card
+   the two grids drift apart and the arrows lose the calendar they belong to. */
+.cal-inline:not(.cal-panes-1) { max-width: 560px; margin-inline: auto; }
+.cal-inline .cal-panes {
+  grid-template-columns: repeat(auto-fit, minmax(215px, 1fr));
+  gap: 18px;
+}
 .cal-pane-title {
   font-family: var(--display);
-  font-size: 13.5px;
+  font-size: 13px;
   color: var(--ink);
   text-align: center;
-  margin-bottom: 8px;
+  margin-bottom: 4px;
 }
 .cal-inline .cal-day { font-size: 13px; border-radius: 8px; }
+.cal-inline .cal-weekday { padding-bottom: 3px; }
 /* Range: caps at the ends, a connected band between. */
 .cal-day.in-range { background: var(--accent-bg); border-radius: 0; }
 .cal-day.in-range:hover:not(.disabled) { background: var(--accent-bg); }
@@ -12492,19 +12526,19 @@ input, select {
 .guide-range-head {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   flex-wrap: wrap;
-  margin-bottom: 14px;
+  margin-bottom: 10px;
 }
 .guide-range-end {
   display: flex;
   flex-direction: column;
-  gap: 3px;
-  padding: 7px 12px;
+  gap: 2px;
+  padding: 5px 12px;
   border: 1px solid var(--rule);
   border-radius: 10px;
   background: var(--paper);
-  min-width: 132px;
+  min-width: 126px;
 }
 .guide-range-end b { font-family: var(--mono); font-size: 13px; color: var(--ink); }
 .guide-range-end.empty b { color: var(--ink-mute); font-weight: 400; }
@@ -12513,6 +12547,48 @@ input, select {
    ring that out-shouted the calendar it sits above. The start/end labels keep
    their meaning; the emphasis just stops competing. */
 .guide-range-end.next { border-color: var(--accent-soft); background: var(--accent-bg); }
+
+/* The dates step is the one form step tall enough to scroll, and scrolling to
+   reach Next on a question this simple reads as broken. The rules between its
+   rows earn less room here than the calendar does. */
+.guide-when-card .guide-card-row { margin-top: 12px; padding-top: 12px; }
+.guide-when-card .guide-flexpad { margin-top: 0; }
+/* Height is the scarce dimension on this step, and a square day cell on a
+   780px card grows to ~46px: six rows of that, twice over, pushed Next off
+   the screen. The cells keep their width and give up their height. */
+.guide-when-card .cal-inline .cal-day { aspect-ratio: auto; height: 26px; }
+
+/* Short laptops: the step fits a 900px-tall window comfortably, and a 720px
+   one only once the gaps give up a few more pixels each. Everything here is
+   spacing and type scale, nothing is hidden, so the step stays whole. */
+@media (max-height: 840px) {
+  .trip-wizard-modal.wiz-when .guide-body { padding-top: 16px; padding-bottom: 20px; }
+  .trip-wizard-modal.wiz-when .guide-title { font-size: 19px; }
+  .trip-wizard-modal.wiz-when .guide-sub { margin-bottom: 10px; font-size: 13px; }
+  .guide-when-card { padding: 14px 18px; margin-bottom: 0; }
+  .guide-when-card .guide-card-row { margin-top: 9px; padding-top: 9px; }
+  .guide-when-card .guide-datemode button { padding-top: 8px; padding-bottom: 8px; }
+  .guide-when-card .guide-range-head { margin-bottom: 6px; }
+  .guide-when-card .guide-range-end { padding: 4px 10px; }
+  .guide-when-card .cal-inline .cal-day { height: 23px; }
+  .guide-when-card .cal-inline .cal-panes { gap: 14px; }
+}
+
+/* Smaller windows again: a browser at half height. Same pass, one notch
+   tighter, down to where a date is still a comfortable tap target. */
+@media (max-height: 700px) {
+  .trip-wizard-modal.wiz-when .guide-body { padding-top: 10px; padding-bottom: 12px; }
+  .trip-wizard-modal.wiz-when .guide-title { font-size: 17px; }
+  .trip-wizard-modal.wiz-when .guide-sub { margin-bottom: 5px; font-size: 12.5px; }
+  .guide-when-card { padding: 11px 16px; }
+  .guide-when-card .guide-card-row { margin-top: 6px; padding-top: 6px; }
+  .guide-when-card .guide-flexpad { padding-top: 5px; padding-bottom: 5px; }
+  .guide-when-card .guide-datemode button { padding-top: 6px; padding-bottom: 6px; }
+  .guide-when-card .guide-range-end { padding: 3px 10px; }
+  .guide-when-card .cal-inline .cal-day { height: 21px; }
+  .guide-when-card .cal-inline .cal-weekday { padding-bottom: 2px; }
+  .guide-when-card .cal-pane-title { font-size: 12.5px; margin-bottom: 2px; }
+}
 
 /* ── Step transitions ────────────────────────────────────────────────────
    Moving between steps should read as travel through one form, not as a page

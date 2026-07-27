@@ -105,7 +105,21 @@ export function DateField({
     };
   }, [open]);
 
-  const paneCount = Math.max(1, inline ? panes : 1);
+  // Two months side by side is the point on a laptop and a trap on a phone,
+  // where they stack and the second one lands below the fold. A narrow screen
+  // gets one month and the head's own title, navigated with the same arrows.
+  const [narrow, setNarrow] = useState(
+    () => typeof window !== 'undefined' && window.matchMedia('(max-width: 620px)').matches,
+  );
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 620px)');
+    const onChange = (e) => setNarrow(e.matches);
+    mq.addEventListener('change', onChange);
+    setNarrow(mq.matches);
+    return () => mq.removeEventListener('change', onChange);
+  }, []);
+
+  const paneCount = Math.max(1, inline && !narrow ? panes : 1);
   const panesData = useMemo(() => Array.from({ length: paneCount }, (_, i) => {
     const d = new Date(view.y, view.m + i, 1);
     return { y: d.getFullYear(), m: d.getMonth(), cells: buildGrid(d.getFullYear(), d.getMonth(), paneCount === 1) };

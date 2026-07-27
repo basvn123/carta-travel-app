@@ -1034,15 +1034,42 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
 
   // What the briefing panel shows before a pin is tapped: the best-rated
   // candidates in the chosen region, so an untouched panel still helps.
+  // Countries take turns. A straight top-4 by score handed every slot to
+  // whichever country rates highest, so an Austria + Germany trip listed four
+  // Austrian cities and never named a German one.
   const topCityPicks = useMemo(() => {
     if (stepName !== 'Stay') return [];
-    return mapCities
-      .filter((c) => !c.selected && c.score != null)
-      .sort((a, b) => b.score - a.score)
-      .slice(0, 4)
+    const byCountry = new Map();
+    for (const c of mapCities) {
+      if (c.selected || c.score == null) continue;
+      const dest = destinations[c.id];
+      if (!dest) continue;
+      const key = dest.country || '';
+      if (!byCountry.has(key)) byCountry.set(key, []);
+      byCountry.get(key).push({ id: c.id, score: c.score });
+    }
+    for (const list of byCountry.values()) list.sort((a, b) => b.score - a.score);
+    // Follow the order the countries were picked in, so the arrival country
+    // leads; anything else (a selected stray from outside them) trails.
+    const order = selectedCountries.map((c) => c.country).filter((k) => byCountry.has(k));
+    for (const key of byCountry.keys()) if (!order.includes(key)) order.push(key);
+    const limit = order.length <= 1 ? 4 : Math.min(8, order.length * 3);
+    const out = [];
+    for (let round = 0; out.length < limit; round += 1) {
+      let added = false;
+      for (const key of order) {
+        const list = byCountry.get(key);
+        if (round >= list.length) continue;
+        out.push(list[round]);
+        added = true;
+        if (out.length >= limit) break;
+      }
+      if (!added) break;
+    }
+    return out
       .map(({ id }) => ({ id, dest: destinations[id] }))
       .filter((x) => x.dest);
-  }, [stepName, mapCities, destinations]);
+  }, [stepName, mapCities, destinations, selectedCountries]);
 
   // "Pairs well with" hints for the selected cities (computed once per pick set).
   const companionsFor = useMemo(() => {
@@ -1396,7 +1423,7 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
   return (
     <div className="guide-overlay trip-wizard-overlay" onClick={handleCancel}>
       <div
-        className={`guide-modal trip-wizard-modal wiz-${layout} ${stepDir === 'back' ? 'wiz-back' : ''}`}
+        className={`guide-modal trip-wizard-modal wiz-${layout} ${stepName === 'When' ? 'wiz-when' : ''} ${stepDir === 'back' ? 'wiz-back' : ''}`}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header + progress: same one-step-at-a-time header the day planner's
@@ -1680,7 +1707,7 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
               {/* Every date control sits on one card: floating single-line
                   inputs across a wide screen read as unrelated fragments, a
                   card reads as one question with its parts. */}
-              <div className="guide-card">
+              <div className="guide-card guide-when-card">
                 <div className="guide-datemode">
                   <button className={dateMode === 'exact' ? 'on' : ''} onClick={() => setDateMode('exact')}>
                     {t('wizard.knowDates')}
@@ -2321,7 +2348,14 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
                                   <button key={id} className="guide-side-idle-row" onClick={() => setFocusedId(id)}>
                                     <CityThumb dest={dest} className="guide-nearby-thumb" />
                                     <span className="guide-side-idle-text">
-                                      <b>{dest.city}</b>
+                                      <b>
+                                        {dest.city}
+                                        {/* Which country each pick sits in, once the trip spans more
+                                            than one: without it a mixed list reads as one region. */}
+                                        {selectedCountries.length > 1 && (
+                                          <Flag iso2={dest.iso2} className="guide-flag-img-sm guide-side-idle-flag" />
+                                        )}
+                                      </b>
                                       <small>{cityInsight(dest)}</small>
                                     </span>
                                     {dest.rating?.score != null && <ScoreChip rating={dest.rating} size="xs" />}
