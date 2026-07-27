@@ -6,6 +6,7 @@ import { useI18n } from '../i18n/index.jsx';
 import { PersonIcon, HomeIcon, MapPinIcon, RouteIcon, ListDayIcon, BookmarkIcon } from './Icons.jsx';
 
 const NAV_ITEMS = [
+  { key: 'home', labelKey: 'nav.home', Icon: HomeIcon },
   { key: 'map', labelKey: 'nav.map', Icon: MapPinIcon },
   { key: 'trip', labelKey: 'nav.trip', Icon: RouteIcon },
   { key: 'day', labelKey: 'nav.day', Icon: ListDayIcon },
@@ -31,10 +32,11 @@ function AccountButton({ user, onOpenAccount }) {
 
 // Always-mounted top panel: brand + section tabs on the left, the Map tab's
 // filters in the middle, and account access on the right, a single row, not
-// a separate header stacked above the filter bar. The tabs here are
-// desktop-only; on mobile they collapse (CSS) and BottomNav takes over as the
-// Map/Trip planner/Day planner switch, with a Home icon shortcut remaining in
-// this row. `children` is the FilterBar, injected only on the Map tab.
+// a separate header stacked above the filter bar. Home is a first-class tab
+// here (the brand mark still works as a shortcut). The tabs are desktop-only;
+// on mobile they collapse (CSS) and BottomNav takes over as the Home/Map/
+// Trip planner/Day planner switch. `children` is the FilterBar, injected only
+// on the Map tab.
 export function AppHeader({
   user, onOpenAccount,
   isHome, onGoHome,
@@ -84,17 +86,6 @@ export function AppHeader({
           <span className="header-nav-label">{t('nav.saved')}</span>
         </button>
       </nav>
-
-      {/* Mobile-only Home shortcut: jumps back to the first page (the map). */}
-      <button
-        className={`header-home-btn ${isHome ? 'active' : ''}`}
-        onClick={onGoHome}
-        aria-current={isHome ? 'page' : undefined}
-        title={t('nav.homeTitle')}
-      >
-        <HomeIcon size={18} className="header-home-icon" />
-        <span className="header-home-label">{t('nav.home')}</span>
-      </button>
 
       {children && <div className="app-header-filters">{children}</div>}
 

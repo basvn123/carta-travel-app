@@ -589,11 +589,15 @@ function TravelApp() {
           dateBounds={dateBounds}
           reachableCount={pricedAll.length}
           totalCount={Object.keys(data.destinations).length}
+          countryCount={availableCountries.length}
+          user={user}
+          onOpenAccount={() => setAccountOpen(true)}
           onExplore={() => setActiveTab('map')}
           onPlanTrip={() => {
             setActiveTab('trip');
             setWizardLaunch((n) => n + 1);
           }}
+          onNavigate={(key) => { setSavedTripsOpen(false); setActiveTab(key); }}
         />
       )}
 
