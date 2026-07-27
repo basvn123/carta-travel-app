@@ -214,7 +214,15 @@ Deno.serve(async (req) => {
           ...(useGrounding ? { tools: [{ google_search: {} }] } : {}),
           generationConfig: {
             temperature: 0.3,
-            maxOutputTokens: 2048,
+            // Generous ceiling because gemini-flash-latest now resolves to a
+            // THINKING model, and its thoughts are charged against this same
+            // budget: a real 120-candidate ask burns ~1700-2200 tokens
+            // thinking before writing a word, so the old 2048 truncated the
+            // JSON mid-object and every call died as ai_bad_output. A ceiling
+            // is not a cost, only generated tokens are, so headroom is free.
+            // thinkingBudget does not help: Gemini 3 accepts the field and
+            // ignores it.
+            maxOutputTokens: 8192,
             ...(useGrounding
               ? {}
               : { responseMimeType: 'application/json', responseSchema: RESPONSE_SCHEMA }),

@@ -269,7 +269,11 @@ Deno.serve(async (req) => {
           ...(useGrounding ? { tools: [{ google_search: {} }] } : {}),
           generationConfig: {
             temperature: refine ? 0.45 : 0.25, // a revision must actually differ
-            maxOutputTokens: 4096,
+            // See suggest-city: gemini-flash-latest is a thinking model now
+            // and its thoughts spend this budget, so a full day of stops can
+            // truncate at 4096 and come back as ai_bad_output. Headroom costs
+            // nothing, only generated tokens are billed.
+            maxOutputTokens: 8192,
             responseMimeType: 'application/json',
             responseSchema: RESPONSE_SCHEMA,
           },
