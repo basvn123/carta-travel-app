@@ -5,6 +5,20 @@ description: The locked design system for Carta, the European budget travel pric
 
 # Carta design system
 
+> **Superseded on colour and type, 2026-07-28.** The shipped product runs the
+> app's original palette everywhere, Home included: warm alabaster ground,
+> terracotta accent, Fraunces display, Plus Jakarta body, JetBrains Mono on
+> measured facts, defined in `continent-app/src/styles.css` `:root`. The
+> cool-grey Timetable palette below was built for the landing page and then
+> deliberately reverted, because a front page that does not look like the map
+> and the planners costs more than a fresher palette buys. Do not repaint the
+> homepage back to it without asking.
+>
+> Everything else here still holds and is still worth reading: the structure,
+> the mono rule, the receipt, the search strip, the copy rules, the "never do
+> this" list and the quality floor. Read the colour and type sections as the
+> reasoning behind those choices rather than as current instructions.
+
 ## Why this file exists
 
 Carta had a homepage that looked machine generated. Not because any single choice was wrong, but

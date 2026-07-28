@@ -3,10 +3,8 @@ import ReactDOM from 'react-dom/client';
 import App from './App.jsx';
 import { ErrorBoundary } from './components/ErrorBoundary.jsx';
 import './styles.css';
-// The landing page runs the Carta design system (.claude/skills/carta-design):
-// tokens first, then the page that references them. Loaded after styles.css so
-// the token scope wins inside .home-page.
-import './styles/tokens.css';
+// The landing page. Runs on the app's own :root tokens from styles.css, so
+// Home, the map and the planners all wear one palette.
 import './styles/home.css';
 
 ReactDOM.createRoot(document.getElementById('root')).render(

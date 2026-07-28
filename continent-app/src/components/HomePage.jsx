@@ -1,10 +1,13 @@
 import React, { useMemo, useState } from 'react';
+import Logo from './Logo.jsx';
 import { OriginPicker } from './OriginPicker.jsx';
 import { DateField } from './DateField.jsx';
 import { Dropdown } from './Dropdown.jsx';
 import { NumberField } from './FilterControls.jsx';
 import { LanguagePicker } from './LanguagePicker.jsx';
 import { PrivacyPolicy } from './PrivacyPolicy.jsx';
+import { RatingBadge } from './RatingBadge.jsx';
+import { MapPinIcon, RouteIcon, ListDayIcon, ReceiptIcon, PersonIcon } from './Icons.jsx';
 import { composeTrip, tripDaysBetween } from '../lib/runtime_pricing.js';
 import { addDays, fmtDate, todayISO } from '../lib/dates.js';
 import { count, eur, eurExact } from '../lib/format.js';
@@ -206,8 +209,7 @@ export function HomePage({
       city: pick.city,
       country: pick.country,
       route: `${trip.origin || choices.origin} to ${trip.anchor_airport || pick.iata || ''}`.trim(),
-      rating: dest.rating?.score ?? null,
-      ratingLabel: dest.rating?.label || '',
+      rating: dest.rating || null,
       lines,
       total: trip.grand_total,
       perDay: trip.grand_total / nights,
@@ -220,42 +222,63 @@ export function HomePage({
   const accountName = user?.user_metadata?.full_name?.trim() || user?.email;
   const totalLabel = count(totalCount);
 
+  // The same shape as AppHeader's NAV_ITEMS, so the front page's tabs are the
+  // app's tabs. Pricing is the one extra: an in-page anchor, not a view.
   const navLinks = [
-    { key: 'map', label: t('nav.map') },
-    { key: 'trip', label: t('nav.trip') },
-    { key: 'day', label: t('nav.day') },
+    { key: 'map', label: t('nav.map'), Icon: MapPinIcon },
+    { key: 'trip', label: t('nav.trip'), Icon: RouteIcon },
+    { key: 'day', label: t('nav.day'), Icon: ListDayIcon },
   ];
 
   return (
     <div className="home-page">
-      {/* ── Nav ── */}
+      {/* ── Header: deliberately a copy of .app-header, down to the divider
+          and the uppercase mono pills, so arriving on Home does not feel
+          like leaving the product. ── */}
       <header className="home-nav">
-        <div className="home-wrap home-nav-inner">
-          <button className="home-mark" onClick={onExplore}>
-            <span className="home-mark-dot" aria-hidden="true" />
-            Carta
+        <div className="home-nav-inner">
+          <button className="home-brand" onClick={onExplore} title={t('home.openApp')}>
+            <Logo size={46} className="brand-mark" />
+            <div className="brand-text">
+              <span className="brand-name">Carta</span>
+              <span className="brand-sub">{t('brand.sub')}</span>
+            </div>
+            <div className="brand-divider" aria-hidden="true" />
           </button>
           <nav className="home-nav-links" aria-label={t('home.navSections')}>
-            {navLinks.map(({ key, label }) => (
-              <button key={key} className="home-nav-link" onClick={() => onNavigate(key)}>
-                {label}
+            {navLinks.map(({ key, label, Icon }) => (
+              <button
+                key={key}
+                className="home-nav-link"
+                onClick={() => onNavigate(key)}
+                title={label}
+              >
+                <Icon size={15} />
+                <span className="home-nav-label">{label}</span>
               </button>
             ))}
-            <button className="home-nav-link" onClick={() => goTo('home-pricing')}>
-              {t('home.navPricing')}
+            <button
+              className="home-nav-link"
+              onClick={() => goTo('home-pricing')}
+              title={t('home.navPricing')}
+            >
+              <ReceiptIcon size={15} />
+              <span className="home-nav-label">{t('home.navPricing')}</span>
             </button>
           </nav>
           <div className="home-nav-actions">
             <LanguagePicker />
-            <button className="home-btn home-btn-ghost home-btn-sm" onClick={onOpenAccount}>
-              {user
-                ? (
-                  <>
-                    <span className="home-nav-initial">{(accountName || '?')[0].toUpperCase()}</span>
-                    {t('header.account')}
-                  </>
-                )
-                : t('gate.signIn')}
+            <button
+              className="account-avatar-btn"
+              onClick={onOpenAccount}
+              title={accountName || t('header.accountTitle')}
+            >
+              <span className="account-avatar">
+                {user ? (accountName || '?')[0].toUpperCase() : <PersonIcon size={14} />}
+              </span>
+              <span className="account-avatar-label">
+                {user ? t('header.account') : t('gate.signIn')}
+              </span>
             </button>
             <button className="home-btn home-btn-primary home-btn-sm" onClick={onExplore}>
               {t('home.openApp')}
@@ -378,7 +401,6 @@ export function HomePage({
                   className={`home-pin ${i === 0 ? 'home-pin-flag' : ''} ${anchorFor(p.x)}`}
                   style={{ left: `${p.x * 100}%`, top: `${p.y * 100}%` }}
                 >
-                  <span className="home-pin-dot" aria-hidden="true" />
                   {p.city} <b>{eur(p.total)}</b>
                 </p>
               ))}
@@ -442,12 +464,11 @@ export function HomePage({
                       {receipt.route}, {t('home.rNights', { n: nights })}, {t('home.rParty', { n: groupSize })}
                     </p>
                   </div>
-                  {receipt.rating != null && (
-                    <div className="home-r-rating">
-                      <p className="home-num">{receipt.rating.toFixed(1)}/10</p>
-                      <p className="home-r-sub">{receipt.ratingLabel}</p>
-                    </div>
-                  )}
+                  {/* The app's own badge, not a lookalike: same score chip,
+                      same tier colour, same hidden-gem tag as the map. */}
+                  <div className="home-r-rating">
+                    <RatingBadge rating={receipt.rating} size="md" showLabel />
+                  </div>
                 </div>
                 <div className="home-r-body">
                   {receipt.lines.map((l) => (
@@ -653,9 +674,12 @@ export function HomePage({
         <div className="home-wrap">
           <div className="home-footer-grid">
             <div>
-              <span className="home-mark">
-                <span className="home-mark-dot" aria-hidden="true" />
-                Carta
+              <span className="home-brand">
+                <Logo size={38} className="brand-mark" />
+                <span className="brand-text">
+                  <span className="brand-name">Carta</span>
+                  <span className="brand-sub">{t('brand.sub')}</span>
+                </span>
               </span>
               <p className="home-footer-tag">{t('home.footTagline')}</p>
             </div>

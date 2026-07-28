@@ -18,6 +18,7 @@
   --ink-soft:     #414b5e;
   --ink-mute:     #7d8393;
   --rule:         #ccc7b8;
+  --rule-soft:    #e2ded1;       /* hairlines inside a card, where --rule is too loud */
   --accent:       #e05a47;       /* terracotta: actions, alerts, the live route */
   --accent-soft:  #e97f6b;
   --accent-bg:    #f7dcd4;
