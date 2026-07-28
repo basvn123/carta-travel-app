@@ -15,6 +15,26 @@ function initialUrlAuthType() {
 }
 
 /**
+ * Does this account have a password at all?
+ *
+ * Somebody who only ever pressed "Continue with Google" has no password to
+ * confirm and no password to change, so the account panel must not ask for
+ * one. Supabase reports the linked identities three different ways depending
+ * on how the session was hydrated, hence the ladder; when none of them are
+ * present we assume there IS a password, because hiding the current-password
+ * field on a guess would remove the check this whole flow exists to add.
+ */
+export function hasPasswordIdentity(user) {
+  if (!user) return false;
+  const ids = user.identities;
+  if (Array.isArray(ids) && ids.length) return ids.some((i) => i.provider === 'email');
+  const meta = user.app_metadata || {};
+  if (Array.isArray(meta.providers) && meta.providers.length) return meta.providers.includes('email');
+  if (meta.provider) return meta.provider === 'email';
+  return true;
+}
+
+/**
  * Wraps the whole app. Tracks the Supabase session and exposes the handful
  * of auth actions the UI needs. When Supabase isn't configured (no env vars),
  * `configured` is false and everything else is inert, the app just runs
@@ -105,6 +125,47 @@ export function AuthProvider({ children }) {
     setRecoveryMode(false);
   }, []);
 
+  /**
+   * Prove the person at the keyboard is the account holder, by signing in
+   * again with the password they claim to have.
+   *
+   * An access token alone is not proof of that: a session left open on an
+   * unlocked phone is enough to reach this panel. So anything that would lock
+   * the real owner out (changing the password, deleting the account) goes
+   * through here first. Supabase has no dedicated verify endpoint, and
+   * signInWithPassword against the current email is the standard stand-in; it
+   * returns a fresh session for the same user, which also satisfies the
+   * "recent login" requirement when secure password change is switched on.
+   */
+  const reauthenticate = useCallback(async (password) => {
+    const email = session?.user?.email;
+    if (!email) throw new Error('This account has no email address to verify against.');
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error) throw error;
+  }, [session]);
+
+  /**
+   * Edit the name and email on the account.
+   *
+   * Supabase does NOT switch the address on request: it mails a confirmation
+   * link to the new one and keeps the old address live until it is clicked.
+   * `emailPending` reports that, so the UI can say what will happen rather
+   * than claiming a change that has not landed yet.
+   */
+  const updateProfile = useCallback(async ({ fullName, email }) => {
+    const attrs = {};
+    if (fullName !== undefined) attrs.data = { full_name: fullName };
+    if (email !== undefined) attrs.email = email;
+    if (!Object.keys(attrs).length) return { emailPending: false };
+    const { data, error } = await supabase.auth.updateUser(attrs, {
+      emailRedirectTo: window.location.origin,
+    });
+    if (error) throw error;
+    const emailPending = email !== undefined
+      && (data?.user?.email || '').toLowerCase() !== email.toLowerCase();
+    return { emailPending };
+  }, []);
+
   // In-app account deletion (App Store guideline 5.1.1(v)): a SECURITY
   // DEFINER Postgres function `delete_user()` removes the auth user and every
   // row they own (see supabase/migrations/005_delete_user.sql). The anon
@@ -119,6 +180,7 @@ export function AuthProvider({ children }) {
     configured: authConfigured,
     session,
     user: session?.user || null,
+    hasPassword: hasPasswordIdentity(session?.user || null),
     loading,
     recoveryMode,
     exitRecoveryMode: () => setRecoveryMode(false),
@@ -130,6 +192,8 @@ export function AuthProvider({ children }) {
     signOut,
     sendPasswordReset,
     updatePassword,
+    reauthenticate,
+    updateProfile,
     deleteAccount,
   };
 

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Logo from '../components/Logo.jsx';
 import { useAuth } from './AuthContext.jsx';
 import { GoogleButton } from './GoogleButton.jsx';
+import { MIN_PASSWORD_LENGTH } from '../lib/passwordStrength.js';
 import { useI18n } from '../i18n/index.jsx';
 
 /**
@@ -51,7 +52,7 @@ export function AuthModal({ onClose, initialMode = 'signin' }) {
     if (!email || !password) { setError(t('auth.errEnterEmailPassword')); return; }
     if (mode === 'signup') {
       if (!fullName.trim()) { setError(t('auth.errEnterName')); return; }
-      if (password.length < 6) { setError(t('auth.errPasswordShort')); return; }
+      if (password.length < MIN_PASSWORD_LENGTH) { setError(t('auth.errPasswordShort', { n: MIN_PASSWORD_LENGTH })); return; }
       if (password !== confirmPassword) { setError(t('auth.errPasswordMismatch')); return; }
     }
 

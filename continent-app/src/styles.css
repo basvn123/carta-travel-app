@@ -32,6 +32,12 @@
   --rate-soft:    #946313;
   --rate-bg:      #f6e6cb;
   --green:        #4a6a3a;       /* text-safe green for "good deal" copy */
+  /* Destructive only, never decoration. Terracotta is the app's action colour
+     and cannot also mean "this erases everything", so deleting an account gets
+     a colour nothing else in the product uses. Both directions clear AA on
+     paper (5.6:1 as text) and as a fill (6.0:1 with white on it). */
+  --danger:       #b3372a;
+  --danger-dark:  #96291e;
   --status-success: #10b981;     /* indicator-only green: compliance ticks, open-now dots */
   --bg-card:      #ffffff;
   --shadow-1:     0 1px 2px rgba(15, 23, 42, 0.06), 0 4px 12px rgba(15, 23, 42, 0.04);
@@ -7353,10 +7359,10 @@ input, select {
 .cheap-tip-cat { display: inline-block; font-size: 9.5px; letter-spacing: 0.05em; text-transform: uppercase; color: var(--ink-mute); margin-top: 5px; }
 
 /* Account deletion (danger zone). */
-.account-delete-link { color: #b3372a; font-size: 12.5px; }
-.account-delete-actions { display: flex; gap: 8px; margin-top: 8px; }
-.account-delete-btn { background: #b3372a; border-color: #b3372a; color: #fff; }
-.account-delete-btn:hover:not(:disabled) { background: #96291e; }
+.account-delete-actions { display: flex; gap: 8px; margin-top: 12px; }
+.account-delete-btn { background: var(--danger); border-color: var(--danger); color: #fff; }
+.account-delete-btn:hover:not(:disabled) { background: var(--danger-dark); }
+.account-delete-btn:disabled { opacity: 0.6; cursor: default; }
 
 .auth-link {
   font-size: 12px;
@@ -7476,12 +7482,6 @@ input, select {
 .account-heading {
   font-size: 26px;
   word-break: break-word;
-}
-.account-heading-sub {
-  font-size: 13px;
-  color: var(--ink-soft);
-  word-break: break-word;
-  margin-top: 2px;
 }
 
 /* ─── Saved trips overview: three clearly-labelled shelves (destinations,
@@ -8872,11 +8872,7 @@ input, select {
   margin-top: 1px;
 }
 
-/* ─── Sign-in buttons inside panels: clear air between text and button ─── */
-.account-signin-spaced {
-  display: block;
-  margin-top: 18px;
-}
+
 
 /* ─── Bigger Home shortcut on mobile (overrides the 19px rule above) ─── */
 @media (max-width: 768px) {
@@ -9526,34 +9522,6 @@ input, select {
 .lifestyle-section-head .section-title { margin-bottom: 0; border-bottom: none; padding-bottom: 0; }
 .lifestyle-cadence { margin: 0; }
 .accom-panel .panel-section { padding: 18px 26px; }
-
-/* Account panel: identity card */
-.account-identity {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px 14px;
-  border: 1px solid var(--rule);
-  border-radius: 10px;
-  background: var(--paper-dim);
-  margin-bottom: 10px;
-}
-.account-identity-avatar {
-  flex: none;
-  width: 38px;
-  height: 38px;
-  border-radius: 50%;
-  background: var(--ink);
-  color: var(--paper);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 15px;
-  font-weight: 600;
-}
-.account-identity-text { display: flex; flex-direction: column; min-width: 0; }
-.account-identity-text b { font-size: 13.5px; font-weight: 600; color: var(--ink); overflow: hidden; text-overflow: ellipsis; }
-.account-identity-text small { font-size: 11.5px; color: var(--ink-mute); }
 
 /* Wizard stay rows: the ⓘ button + expandable facts */
 .guide-city-info-btn {
@@ -13564,13 +13532,224 @@ input, select {
 .ai-plan-balance { color: var(--ink-soft); }
 .ai-plan-upsell-link { margin-left: 6px; }
 
-.account-pass { display: flex; flex-direction: column; gap: 2px; margin-bottom: 10px; }
-.account-pass b { font-size: 14px; color: var(--ink); }
-.account-pass small { font-size: 12px; color: var(--ink-mute); }
 
 @media (max-width: 720px) {
   .pass-grid { grid-template-columns: 1fr; }
   .pass-card { margin: 2vh auto; max-height: 92vh; overflow-y: auto; }
   /* Stacked, the flag would overlap the card above it. */
   .pass-tier.featured { margin-top: 10px; }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   Account panel, 2026-07-28 settings audit.
+
+   Three things drove this block. Contrast: the section headings and field
+   labels were --ink-mute at 9.5px, roughly 3.4:1 on paper, which is unreadable
+   on a phone in daylight and fails AA outright. Targets: the close button was
+   30px and the text links were 12px with no padding, both under any sane
+   thumb. Weight: the destructive action looked like a footnote while the
+   password form looked like the point of the page, and it is the other way
+   round.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* Headings and labels carry real contrast here. --ink-soft is 8.1:1 on paper
+   against --ink-mute's 3.4:1, and the extra half point of size costs nothing. */
+.account-panel .section-title { color: var(--ink-soft); font-size: 10px; }
+.account-panel .auth-label { color: var(--ink-soft); font-size: 10px; letter-spacing: 0.14em; }
+
+/* A 44px target, anchored to the sticky header (see AccountPanel.jsx) so it
+   is still there when you are at the bottom of the panel, and header padding
+   that keeps a long name clear of it. */
+.account-panel .panel-close {
+  top: 12px; right: 12px;
+  width: 44px; height: 44px;
+  font-size: 18px;
+}
+.account-panel .panel-header { padding-right: 68px; }
+
+.account-section-hint {
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--ink-soft);
+  margin-bottom: 14px;
+}
+.account-wide-btn {
+  width: 100%;
+  min-height: 44px;
+  justify-content: center;
+  text-align: center;
+}
+.account-panel .auth-submit { min-height: 44px; }
+/* The profile form saves an edit somebody already made, so it does not need
+   to compete with the two buttons in this panel that start something. */
+.auth-submit-quiet {
+  background: var(--paper);
+  color: var(--ink);
+  border: 1px solid var(--rule);
+}
+.auth-submit-quiet:hover:not(:disabled) { background: var(--paper-dim); border-color: var(--ink); }
+.auth-submit-quiet:disabled { opacity: 1; color: var(--ink-mute); border-color: var(--rule-soft); }
+
+.auth-hint {
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--ink-soft);
+  margin-top: 2px;
+}
+
+/* ─── Password fields: reveal toggle, entropy meter, live requirements ─── */
+
+.pw-input-wrap { position: relative; display: block; }
+.pw-input-wrap input { width: 100%; padding-right: 48px; }
+.pw-reveal {
+  position: absolute;
+  top: 50%;
+  right: 3px;
+  transform: translateY(-50%);
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  color: var(--ink-soft);
+  transition: color .15s, background .15s;
+}
+.pw-reveal:hover { color: var(--ink); background: var(--paper-dim); }
+
+.pw-gauge { display: flex; flex-direction: column; gap: 8px; margin-top: -4px; }
+.pw-strength { display: flex; align-items: center; gap: 10px; }
+.pw-strength-track { flex: 1; display: flex; gap: 3px; }
+.pw-strength-seg {
+  flex: 1;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--rule-soft);
+  transition: background .15s;
+}
+.pw-strength.weak .pw-strength-seg.on { background: var(--danger); }
+.pw-strength.fair .pw-strength-seg.on { background: var(--rate); }
+.pw-strength.strong .pw-strength-seg.on { background: var(--green); }
+.pw-strength-label {
+  flex: none;
+  font-size: 12px;
+  color: var(--ink-soft);
+  white-space: nowrap;
+}
+/* The word is prose, the bit count is a measurement. Only the second is mono. */
+.pw-strength-label b {
+  font-family: var(--mono);
+  font-weight: 400;
+  font-variant-numeric: tabular-nums;
+  font-size: 11px;
+  color: var(--ink-mute);
+  margin-left: 6px;
+}
+
+.pw-reqs { list-style: none; display: flex; flex-direction: column; gap: 5px; }
+.pw-req {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12.5px;
+  color: var(--ink-soft);
+}
+.pw-req.met { color: var(--green); }
+.pw-req svg { flex: none; }
+.pw-req-dot {
+  flex: none;
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  border: 1px solid var(--rule);
+}
+
+.auth-forgot-inline { margin-top: -6px; padding: 4px 0; }
+.account-privacy-link { padding: 6px 0; min-height: 32px; display: inline-flex; align-items: center; }
+
+/* ─── Pass card: what you hold, and what the next one adds ─── */
+
+.account-pass-card {
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  background: var(--bg-card);
+  padding: 14px 16px;
+}
+.account-pass-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.account-pass-tier { font-size: 15px; font-weight: 700; color: var(--ink); }
+/* A sentence, so it is set in the UI face. Mono is for measured facts, and
+   spending it on running prose is what stops it meaning anything when it
+   lands on the price below. Tabular figures because the balance ticks down. */
+.account-pass-status {
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-soft);
+  text-align: right;
+}
+.account-pass-upsell {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid var(--rule-soft);
+}
+.account-pass-upsell-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: 10px;
+}
+.account-pass-feats { list-style: none; display: flex; flex-direction: column; gap: 7px; }
+.account-pass-feat {
+  display: flex;
+  gap: 8px;
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: var(--ink-soft);
+}
+.account-pass-feat svg { flex: none; margin-top: 2px; color: var(--green); }
+.account-pass-price {
+  font-family: var(--mono);
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+  margin: 12px 0 10px;
+}
+.account-pass-price span { font-family: var(--ui); font-size: 12px; color: var(--ink-soft); margin-left: 4px; }
+.account-pass-cta { width: 100%; margin-top: 0; }
+
+/* ─── Danger zone: the only red in the app, and it earns it ─── */
+
+.account-danger-title { color: var(--danger); }
+.account-danger-title svg { color: var(--danger); }
+.account-danger {
+  border: 1px solid color-mix(in srgb, var(--danger) 38%, var(--paper));
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--danger) 5%, var(--paper));
+  padding: 14px 16px;
+}
+/* Was mono at 11px in --ink-mute, which read as a caption nobody had to take
+   seriously. This is the most consequential sentence in the panel. */
+.account-danger-text {
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--ink-soft);
+  margin-bottom: 12px;
+}
+.account-delete-arm {
+  background: var(--paper);
+  color: var(--danger);
+  border: 1px solid color-mix(in srgb, var(--danger) 55%, var(--paper));
+  min-height: 44px;
+}
+.account-delete-arm:hover { background: var(--paper); border-color: var(--danger); color: var(--danger-dark); }
+.account-delete-actions .book-btn { flex: 1; justify-content: center; min-height: 44px; }
+
+@media (max-width: 520px) {
+  .account-pass-status { text-align: left; }
+  .account-delete-actions { flex-direction: column; }
 }

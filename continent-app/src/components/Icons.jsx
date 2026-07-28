@@ -579,6 +579,49 @@ export function LockIcon({ size = 15, className = '' }) {
   );
 }
 
+/* Show/hide password. The struck-through eye is the only glyph pair in here
+   that has to read at 16px inside an input, so it stays coarse on purpose. */
+export function EyeIcon({ size = 15, className = '' }) {
+  return (
+    <Glyph size={size} className={className} label="Show password">
+      <path d="M2.6 12S6.2 5.8 12 5.8 21.4 12 21.4 12 17.8 18.2 12 18.2 2.6 12 2.6 12Z" />
+      <circle cx="12" cy="12" r="3" />
+    </Glyph>
+  );
+}
+
+export function EyeOffIcon({ size = 15, className = '' }) {
+  return (
+    <Glyph size={size} className={className} label="Hide password">
+      <path d="M9.9 6.1a8.9 8.9 0 0 1 2.1-.3c5.8 0 9.4 6.2 9.4 6.2a16.7 16.7 0 0 1-3.3 4" />
+      <path d="M6.4 7.9A16.8 16.8 0 0 0 2.6 12S6.2 18.2 12 18.2a8.9 8.9 0 0 0 3.6-.7" />
+      <path d="M10 10a2.8 2.8 0 0 0 4 4" />
+      <path d="M4.2 4.2 19.8 19.8" />
+    </Glyph>
+  );
+}
+
+/* Door with an arrow leaving it: session control, not account deletion. */
+export function SignOutIcon({ size = 15, className = '' }) {
+  return (
+    <Glyph size={size} className={className} label="Session">
+      <path d="M14.5 8.2V6a1.8 1.8 0 0 0-1.8-1.8H6.3A1.8 1.8 0 0 0 4.5 6v12a1.8 1.8 0 0 0 1.8 1.8h6.4a1.8 1.8 0 0 0 1.8-1.8v-2.2" />
+      <path d="M10.5 12h9M16.4 8.7 19.7 12l-3.3 3.3" />
+    </Glyph>
+  );
+}
+
+/* Shield: the privacy section, distinct from LockIcon which marks the
+   password form two sections above it. */
+export function ShieldIcon({ size = 15, className = '' }) {
+  return (
+    <Glyph size={size} className={className} label="Privacy">
+      <path d="M12 3.5 19 6v5.6c0 4.2-2.9 7.4-7 8.9-4.1-1.5-7-4.7-7-8.9V6l7-2.5Z" />
+      <path d="m9.2 11.8 2 2 3.6-3.6" />
+    </Glyph>
+  );
+}
+
 export function DownloadIcon({ size = 15, className = '' }) {
   return (
     <Glyph size={size} className={className} label="Download">
