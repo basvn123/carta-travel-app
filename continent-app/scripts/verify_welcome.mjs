@@ -1,9 +1,8 @@
 // Headless smoke for the homepage (landing page) + the ?tab= link.
 // Serves the built app (vite preview), then:
 //   1. A fresh visitor with the audit-doc's parameter URL lands on the
-//      homepage, its search strip seeded from those params, its status line
-//      carrying a live count, and its price map carrying real pins with
-//      exactly one flagged as the cheapest.
+//      homepage, its search strip seeded from those params and its status line
+//      carrying a live count.
 //   2. The proof ribbon carries measured facts, and the receipt is a genuine
 //      composeTrip breakdown: itemised lines to the cent, an exact total, and
 //      a computed date-shift footer.
@@ -61,7 +60,9 @@ try {
     await page.getByRole('button', { name: 'Continue without an account' }).click({ timeout: 15000 });
   } catch { /* auth not configured in this build */ }
   await page.locator('.home-page').waitFor({ timeout: 120000 });
-  await page.locator('.home-pin').first().waitFor({ timeout: 60000 });
+  // The receipt total only renders once the pricing pass has produced a trip,
+  // so it is the gate for "prices have landed" on this page.
+  await page.locator('.home-r-big').first().waitFor({ timeout: 60000 });
   const status = await page.locator('.home-status').innerText();
   console.log('status line:', JSON.stringify(status));
   if (!/priced from/.test(status)) fail('status line missing the priced-from count');
@@ -95,15 +96,6 @@ try {
   if (!/€\s?[\d.,]+/.test(ribbonText)) fail(`ribbon carries no measured price: ${ribbonText}`);
   console.log('ribbon:', JSON.stringify(ribbonText.replace(/\n+/g, ' ')));
 
-  // The dark price map: real pins, and exactly one of them flagged as the
-  // cheapest (--flag marks one thing per view, and only that thing).
-  const pins = await page.locator('.home-pin').count();
-  if (pins < 4) fail(`expected a full set of price pins, got ${pins}`);
-  const flagged = await page.locator('.home-pin-flag').count();
-  if (flagged !== 1) fail(`expected exactly 1 flagged cheapest pin, got ${flagged}`);
-  const firstPin = await page.locator('.home-pin').first().innerText();
-  if (!/€\s?[\d.,]+/.test(firstPin)) fail(`price pin carries no price: ${firstPin}`);
-  console.log(`map: ${pins} pins, cheapest flagged, first reads ${JSON.stringify(firstPin)}`);
   await page.screenshot({ path: `${SHOTS}/home.png`, fullPage: false });
 
   // ---- 2. The receipt is a real composeTrip breakdown, not marketing copy:
@@ -133,12 +125,73 @@ try {
   console.log(`receipt: ${rLines} lines, total ${rTotal}, footer ${JSON.stringify(rFoot)}`);
   await page.screenshot({ path: `${SHOTS}/home-receipt.png` });
 
-  // ---- 3. The sections below the fold, and the footer.
-  await page.locator('.home-page').evaluate((el) => { el.scrollTop = el.scrollHeight; });
-  await page.waitForTimeout(600);
+  // ---- 3. The deck: the three tools in one frame, and the sections below it.
+  await page.locator('.deck').scrollIntoViewIfNeeded();
+  await page.waitForTimeout(400);
+  const tabs = page.locator('.deck-tab');
+  const tabCount = await tabs.count();
+  if (tabCount !== 3) fail(`expected 3 deck tabs, got ${tabCount}`);
+  if (await tabs.nth(0).getAttribute('aria-selected') !== 'true') {
+    fail('the deck does not open on the map');
+  }
+  // Only the tool on screen is reachable. Without inert, a Tab press walks
+  // straight into buttons parked off-frame.
+  const inert = await page.locator('.deck-slide[inert]').count();
+  if (inert !== 2) fail(`expected the 2 off-frame slides to be inert, got ${inert}`);
+
+  const trackX = () => page.evaluate(() => {
+    const m = new DOMMatrix(getComputedStyle(document.querySelector('.deck-track')).transform);
+    return { x: m.m41, w: document.querySelector('.deck-stage').clientWidth };
+  });
+  const restX = await trackX();
+  if (Math.abs(restX.x) > 1) fail(`the deck does not rest on the first slide: ${restX.x}`);
+
+  await tabs.nth(1).click();
+  await page.waitForTimeout(900);
+  if (await tabs.nth(1).getAttribute('aria-selected') !== 'true') {
+    fail('clicking the trip planner tab did not select it');
+  }
+  const movedX = await trackX();
+  if (Math.abs(movedX.x + movedX.w) > 2) {
+    fail(`the track sits at ${movedX.x} instead of one stage width (${-movedX.w})`);
+  }
+  console.log(`deck: tab 2 slid the track to ${Math.round(movedX.x)}px`);
+
+  // An ARIA tab set, so the arrow keys move the selection.
+  await tabs.nth(1).press('ArrowRight');
+  await page.waitForTimeout(900);
+  if (await tabs.nth(2).getAttribute('aria-selected') !== 'true') {
+    fail('ArrowRight did not move the deck to the day planner');
+  }
+  const dayCta = await page.locator('.deck-slide.is-on .deck-cta button').innerText();
+  console.log(`deck: ArrowRight reached the day planner, its button reads ${JSON.stringify(dayCta)}`);
+  await page.screenshot({ path: `${SHOTS}/home-deck-day.png` });
+  await tabs.nth(0).click();
+  await page.waitForTimeout(900);
+
+  // And it is draggable, which is how anyone on a phone will drive it. The
+  // axis is decided on the first few pixels, so the drag has to move in steps
+  // rather than teleport.
+  const box = await page.locator('.deck-stage').boundingBox();
+  const midY = box.y + box.height / 2;
+  await page.mouse.move(box.x + box.width * 0.55, midY);
+  await page.mouse.down();
+  for (let i = 1; i <= 6; i += 1) {
+    await page.mouse.move(box.x + box.width * 0.55 - i * 40, midY);
+  }
+  await page.mouse.up();
+  await page.waitForTimeout(900);
+  if (await tabs.nth(1).getAttribute('aria-selected') !== 'true') {
+    fail('dragging the deck to the left did not move it on a slide');
+  }
+  console.log('deck: a drag moved it one slide');
+  await tabs.nth(0).click();
+  await page.waitForTimeout(900);
+
   // The three product screenshots must actually decode. Shot falls back to a
   // text placeholder on error, so a broken path fails quietly and the page
-  // just stops showing the product.
+  // just stops showing the product. All three have been on screen by now, so
+  // the lazy ones are no longer an excuse.
   const shotState = await page.evaluate(async () => {
     const imgs = [...document.querySelectorAll('.home-shot img')];
     await Promise.all(imgs.map((i) => i.decode().catch(() => {})));
@@ -147,6 +200,18 @@ try {
   if (shotState.imgs !== 3) fail(`expected 3 product screenshots, got ${shotState.imgs}`);
   if (shotState.broken) fail(`${shotState.broken} product screenshots failed to load`);
   console.log('all 3 product screenshots loaded');
+
+  // The screenshot is the point of the section, so it has to be the biggest
+  // thing in it: the old stacked layout gave it half a row.
+  const shotW = await page.evaluate(() => {
+    const shot = document.querySelector('.deck-slide.is-on .home-shot');
+    const slide = document.querySelector('.deck-slide.is-on');
+    return { shot: Math.round(shot.getBoundingClientRect().width), slide: Math.round(slide.getBoundingClientRect().width) };
+  });
+  if (shotW.shot < shotW.slide * 0.55) {
+    fail(`the screenshot is ${shotW.shot}px of a ${shotW.slide}px slide, smaller than the layout it replaced`);
+  }
+  console.log(`shot: ${shotW.shot}px wide in a ${shotW.slide}px slide`);
 
   // The three live micro-previews: real prices, a real split, real sights.
   const previews = await page.locator('.home-prev').count();
@@ -165,6 +230,20 @@ try {
   const stops = await page.locator('.home-prev-stop').count();
   if (stops !== 3) fail(`expected 3 real sights in the day preview, got ${stops}`);
   console.log(`previews: ${prevRows.join(' ')} | split ${bars.join(' ')} | ${stops} sights`);
+
+  // Every claim under a tool must be honest about what it does not do, and
+  // the footnote under each live card is where the page says so.
+  const foots = await page.locator('.home-prev-foot').allInnerTexts();
+  if (foots.length !== 3) fail(`expected a footnote under each live card, got ${foots.length}`);
+  if (!foots.some((s) => /not live bookings/i.test(s))) {
+    fail(`no card admits that beds and food are modelled: ${foots.join(' | ')}`);
+  }
+  if (!foots.some((s) => /opening times/i.test(s))) {
+    fail(`no card admits the day planner ignores opening times: ${foots.join(' | ')}`);
+  }
+
+  await page.locator('.home-page').evaluate((el) => { el.scrollTop = el.scrollHeight; });
+  await page.waitForTimeout(600);
 
   const faqs = await page.locator('.home-faq-item').count();
   if (faqs !== 5) fail(`expected 5 FAQ entries, got ${faqs}`);
@@ -302,8 +381,6 @@ try {
     const root = document.querySelector('.home-page');
     const wide = [...root.querySelectorAll('*')]
       .filter((el) => el.getBoundingClientRect().right > root.clientWidth + 1)
-      // Pins are absolutely placed inside a clipping panel by design.
-      .filter((el) => !el.closest('.home-map'))
       .map((el) => `${el.tagName.toLowerCase()}.${el.className}`.slice(0, 60));
     return { scrolls: root.scrollWidth > root.clientWidth + 1, wide: wide.slice(0, 5) };
   });

@@ -284,118 +284,6 @@
 .home-search .date-field { width: 100%; }
 .home-search .home-btn { width: 100%; }
 
-/* ── The price map ───────────────────────────────────────────────────────
-   Not a tile map: the graticule and coastlines are drawn. Every pin is a real
-   destination at its real coordinates, priced by the same pass that prices the
-   map tab, and wearing that tab's .price-pill so the two read as one product.
-   The cheapest is in the accent, which is what "deal" means on the real map. */
-.home-map {
-  position: relative;
-  margin-top: 20px;
-  height: 430px;
-  border: 1px solid var(--rule);
-  border-radius: 18px;
-  background: var(--paper-dim);
-  box-shadow: var(--shadow-card);
-  overflow: hidden;
-}
-.home-map-grat {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-}
-.home-map-grat .grat { stroke: rgba(15, 23, 42, 0.07); stroke-width: 1; }
-.home-map-grat .coast {
-  stroke: rgba(15, 23, 42, 0.16);
-  stroke-width: 1.25;
-  fill: none;
-}
-.home-pin {
-  position: absolute;
-  transform: translate(-50%, -50%);
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  padding: 4px 9px;
-  border: 1px solid var(--ink);
-  border-radius: 4px;
-  background: var(--paper);
-  color: var(--ink);
-  font-size: 12px;
-  font-weight: 600;
-  white-space: nowrap;
-  box-shadow: 0 1px 2px rgba(26, 26, 26, 0.12), 0 2px 6px rgba(26, 26, 26, 0.06);
-}
-.home-pin b {
-  font-family: var(--mono);
-  font-weight: 500;
-  font-variant-numeric: tabular-nums;
-  letter-spacing: -0.01em;
-}
-/* "Deal" on the real map is the rust accent. One pin per view carries it. */
-.home-pin-flag {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: var(--paper);
-  box-shadow: 0 1px 2px rgba(200, 80, 30, 0.30), 0 2px 6px rgba(200, 80, 30, 0.18);
-}
-.home-pin-flag b { font-weight: 600; }
-/* Labels near the frame edge hang off the point instead of straddling it, so
-   Porto and Riga stay readable without being moved inland to fit. */
-.home-pin-l,
-.home-origin.home-pin-l { transform: translate(0, -50%); }
-.home-pin-r,
-.home-origin.home-pin-r { transform: translate(-100%, -50%); }
-.home-origin {
-  position: absolute;
-  transform: translate(-50%, -50%);
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  font-family: var(--mono);
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  color: var(--ink);
-}
-.home-origin-ring {
-  width: 12px;
-  height: 12px;
-  flex: none;
-  border: 3px solid var(--ink);
-  border-radius: 50%;
-  background: var(--paper);
-}
-/* The app puts its map key in a small white card, bottom left. */
-.home-map-legend {
-  position: absolute;
-  left: 18px;
-  bottom: 16px;
-  right: 18px;
-  max-width: 640px;
-  padding: 9px 14px;
-  border: 1px solid var(--rule);
-  border-radius: 10px;
-  background: rgba(255, 255, 255, 0.9);
-  box-shadow: var(--shadow-1);
-  font-family: var(--mono);
-  font-size: 10.5px;
-  line-height: 1.55;
-  color: var(--ink-soft);
-}
-.home-map-empty {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 24px;
-  text-align: center;
-  color: var(--ink-soft);
-  font-size: 14px;
-}
-
 /* ── Proof ribbon ────────────────────────────────────────────────────────
    The redesign put five-star ratings and traveller handles here. Carta has
    no testimonials, and inventing them would undo the one thing the page is
@@ -702,6 +590,192 @@
   color: var(--ink-mute);
 }
 
+/* ── The product deck ────────────────────────────────────────────────────
+   The map, the trip planner and the day planner used to be three stacked
+   sections: three page-downs, and three screenshots that each had to share a
+   row with a column of prose. One frame holds all three now, the tab rail
+   picks one, and the screenshot gets the width the old layout could not give
+   it. The motion is the section's one deliberate moment: the track slides,
+   the marker under the rail follows, and the incoming column rises into
+   place. Nothing auto-advances. */
+.home-deck .home-lede-wide { max-width: 68ch; }
+.deck { margin-top: 30px; }
+
+/* The rail: the app's own segmented-control idiom, one cell per tool. */
+.deck-railwrap {
+  position: relative;
+  border: 1px solid var(--rule);
+  border-radius: 16px;
+  background: var(--bg-card);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+}
+.deck-rail {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+}
+.deck-tab {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  padding: 14px 20px 15px;
+  border: 0;
+  border-right: 1px solid var(--rule-soft);
+  background: none;
+  text-align: left;
+  color: var(--ink-mute);
+  cursor: pointer;
+  transition: color .18s, background .18s;
+}
+.deck-tab:last-child { border-right: 0; }
+.deck-tab:hover { color: var(--ink); background: var(--paper-dim); }
+.deck-tab.is-on { color: var(--ink); background: var(--paper-dim); }
+.deck-tab:focus-visible { outline: 2px solid var(--accent); outline-offset: -3px; }
+.deck-tab-icon {
+  display: flex;
+  flex: none;
+  color: var(--ink-mute);
+  transition: color .18s;
+}
+.deck-tab.is-on .deck-tab-icon { color: var(--accent); }
+.deck-tab-text { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.deck-tab-text b {
+  font-family: var(--ui);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: inherit;
+}
+.deck-tab-text i {
+  font-family: var(--mono);
+  font-style: normal;
+  font-size: 9.5px;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+/* Equal cells, so the marker is arithmetic rather than measurement. The
+   z-index is not decoration: the selected cell has a fill of its own, and
+   without this the marker paints underneath it and never shows. */
+.deck-ink {
+  position: absolute;
+  z-index: 2;
+  left: 0;
+  bottom: 0;
+  height: 2px;
+  background: var(--accent);
+  transition: transform .5s cubic-bezier(.22, .9, .24, 1);
+}
+
+/* The stage clips at the padding edge, so the slides are cut off cleanly at
+   the sides while the cards keep room for their shadow above and below. */
+.deck-stage {
+  overflow: hidden;
+  padding: 16px 0 6px;
+  touch-action: pan-y;
+}
+.deck-track {
+  display: flex;
+  align-items: stretch;
+  will-change: transform;
+  transition: transform .58s cubic-bezier(.22, .9, .24, 1);
+}
+.deck-stage.is-dragging { cursor: grabbing; }
+.deck-stage.is-dragging .deck-track { transition: none; }
+.deck-slide {
+  flex: 0 0 100%;
+  min-width: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) clamp(310px, 31%, 372px);
+  gap: 36px;
+  align-items: center;
+}
+.deck-shot { min-width: 0; }
+.deck-shot .home-prev { margin-top: 14px; }
+.deck-say { min-width: 0; }
+.deck-title { font-size: clamp(23px, 2.5vw, 31px); }
+.deck-body { margin-top: 14px; font-size: 15px; line-height: 1.65; max-width: none; }
+
+/* Three claims, hairline separated: what the tool does that a fare search
+   does not. Terms are short enough to read as labels, not headlines. */
+.deck-points { list-style: none; margin: 18px 0 0; padding: 0; }
+.deck-points li {
+  display: flex;
+  gap: 12px;
+  padding: 10px 0;
+  border-top: 1px solid var(--rule-soft);
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--ink-soft);
+}
+.deck-points li:last-child { border-bottom: 1px solid var(--rule-soft); }
+.deck-points b {
+  flex: none;
+  width: 104px;
+  font-weight: 700;
+  color: var(--ink);
+}
+.deck-cta { margin-top: 22px; }
+
+.deck-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 6px;
+}
+.deck-hint {
+  font-size: 10px;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+}
+.deck-arrows { display: flex; gap: 8px; }
+.deck-arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  background: var(--bg-card);
+  color: var(--ink);
+  cursor: pointer;
+  transition: border-color .15s, color .15s, opacity .15s;
+}
+.deck-arrow:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+.deck-arrow:disabled { opacity: 0.32; cursor: default; }
+.deck-arrow-back svg { transform: rotate(180deg); }
+
+/* The incoming slide rises into place, once, in reading order. */
+@keyframes deckRise {
+  from { opacity: 0; transform: translateY(9px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes deckShot {
+  from { opacity: 0; transform: scale(.985); }
+  to { opacity: 1; transform: none; }
+}
+.deck-slide.is-on .deck-shot { animation: deckShot .55s cubic-bezier(.22, .9, .24, 1) both; }
+.deck-slide.is-on .deck-say > * { animation: deckRise .48s cubic-bezier(.22, .9, .24, 1) both; }
+.deck-slide.is-on .deck-say > *:nth-child(2) { animation-delay: .05s; }
+.deck-slide.is-on .deck-say > *:nth-child(3) { animation-delay: .1s; }
+.deck-slide.is-on .deck-say > *:nth-child(4) { animation-delay: .15s; }
+
+@media (prefers-reduced-motion: reduce) {
+  .deck-track,
+  .deck-ink { transition: none; }
+  .deck-slide.is-on .deck-shot,
+  .deck-slide.is-on .deck-say > * { animation: none; }
+}
+
 /* ── How it works: three steps, one band ─────────────────────────────────
    Numbered markers are earned here: the order carries information (you
    cannot plan the days before you have picked the place). */
@@ -774,20 +848,25 @@
 /* ── Pricing ─────────────────────────────────────────────────────────── */
 .home-prices {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(3, 1fr);
   gap: 18px;
-  margin-top: 38px;
-  max-width: 820px;
+  margin-top: 44px;
+  max-width: 1020px;
 }
 .home-plan {
+  position: relative;
+  display: flex;
+  flex-direction: column;
   padding: 26px;
   border: 1px solid var(--rule);
   border-radius: 18px;
   background: var(--bg-card);
   box-shadow: var(--shadow-card);
+  transition: transform .18s ease, box-shadow .18s ease;
 }
-/* The recommended plan is outlined, never dimmed or tinted against the other. */
-.home-plan-hi { border: 2px solid var(--accent); }
+.home-plan:hover { transform: translateY(-3px); box-shadow: var(--shadow-2); }
+/* The recommended plan is outlined, never dimmed or tinted against the others. */
+.home-plan-hi { border: 2px solid var(--accent); padding: 25px; }
 .home-plan-name {
   font-family: var(--mono);
   font-size: 10px;
@@ -807,10 +886,17 @@
   color: var(--ink);
 }
 .home-plan-per { font-family: var(--mono); font-size: 11px; color: var(--ink-mute); }
+.home-plan-blurb {
+  margin-top: 12px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--ink-soft);
+}
 .home-plan ul {
   list-style: none;
-  margin: 20px 0 24px;
+  margin: 14px 0 24px;
   padding: 0;
+  flex: 1;
   font-size: 13.5px;
   color: var(--ink-soft);
 }
@@ -830,18 +916,55 @@
   border-radius: 50%;
   background: var(--accent);
 }
+/* The buttons share a baseline however uneven the feature lists run. */
+.home-plan .home-btn { margin-top: auto; }
 .home-badge {
-  display: inline-block;
-  margin-bottom: 12px;
-  padding: 4px 10px;
+  position: absolute;
+  top: -11px;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  padding: 4px 11px;
   border-radius: 999px;
-  background: var(--accent-bg);
-  color: var(--accent);
+  background: var(--accent);
+  color: #fff;
   font-family: var(--mono);
   font-size: 9.5px;
   font-weight: 600;
   letter-spacing: 0.12em;
   text-transform: uppercase;
+}
+.home-price-fine {
+  margin-top: 22px;
+  max-width: 640px;
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--ink-mute);
+}
+
+/* The page's one scroll-triggered moment: the three cards rise once, when the
+   section first comes into view. `backwards`, never `both`, so the finished
+   state is the stylesheet's own and the hover lift keeps working; without the
+   .home-prices-live class nothing is hidden, so a browser with no
+   IntersectionObserver just sees the cards. */
+.home-prices-live .home-plan {
+  animation: home-plan-rise .6s cubic-bezier(.16, .84, .32, 1) backwards;
+}
+.home-prices-live .home-plan:nth-child(2) { animation-delay: .09s; }
+.home-prices-live .home-plan:nth-child(3) { animation-delay: .18s; }
+.home-prices-live .home-badge {
+  animation: home-badge-pop .4s cubic-bezier(.3, 1.4, .55, 1) .5s backwards;
+}
+@keyframes home-plan-rise {
+  from { opacity: 0; transform: translateY(20px); }
+}
+@keyframes home-badge-pop {
+  from { opacity: 0; transform: translateX(-50%) translateY(4px) scale(.7); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .home-prices-live .home-plan,
+  .home-prices-live .home-badge { animation: none; }
+  .home-plan, .home-plan:hover { transition: none; transform: none; }
 }
 
 /* ── FAQ ─────────────────────────────────────────────────────────────── */
@@ -992,7 +1115,11 @@
   .home-steps { grid-template-columns: 1fr; }
   .home-step { border-right: 0; border-bottom: 1px solid var(--rule-soft); }
   .home-step:last-child { border-bottom: 0; }
-  .home-map { height: 340px; }
+  /* The screenshot leads on a phone: it is the thing that says what the tool
+     looks like, and the column beside it has nowhere left to stand. */
+  .deck-slide { grid-template-columns: 1fr; gap: 24px; align-items: start; }
+  .deck-tab { flex-direction: column; align-items: flex-start; gap: 7px; padding: 12px 14px; }
+  .deck-title { font-size: 24px; }
   .home-closer { width: calc(100% - 36px); padding: 44px 22px 38px; border-radius: 20px; }
   .home-footer-bottom { flex-direction: column; gap: 8px; }
 }
@@ -1010,12 +1137,15 @@
   .home-ribbon-cell { width: 100%; }
   .home-hero-ctas .home-btn,
   .home-closer-row .home-btn { flex: 1 1 100%; }
-  .home-map { height: 300px; }
-  .home-pin { font-size: 11px; padding: 3px 7px; }
-  .home-map-legend { font-size: 9.5px; padding: 8px 11px; }
   .home-prev-split p > span:first-child { width: 104px; font-size: 11.5px; }
   .home-prev-stop { flex-wrap: wrap; }
   .home-prev-stop i { margin-left: 0; }
+  /* At this width the tool name alone has to carry the cell. */
+  .deck-tab { padding: 11px; }
+  .deck-tab-text i { display: none; }
+  .deck-tab-text b { font-size: 12.5px; }
+  .deck-points b { width: 88px; }
+  .deck-foot { margin-top: 10px; }
   .home-r-head,
   .home-r-body,
   .home-r-total,

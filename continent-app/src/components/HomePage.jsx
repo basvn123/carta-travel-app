@@ -6,6 +6,7 @@ import { Dropdown } from './Dropdown.jsx';
 import { NumberField } from './FilterControls.jsx';
 import { PrivacyPolicy } from './PrivacyPolicy.jsx';
 import { RatingBadge } from './RatingBadge.jsx';
+import { HomeDeck } from './HomeDeck.jsx';
 import { MapPinIcon, RouteIcon, ListDayIcon } from './Icons.jsx';
 import { composeTrip, tripDaysBetween } from '../lib/runtime_pricing.js';
 import { addDays, fmtDate, todayISO } from '../lib/dates.js';
@@ -14,37 +15,6 @@ import { useI18n } from '../i18n/index.jsx';
 
 const CONTACT = 'bas.vannieuwenhuyse123@gmail.com';
 const EMPTY_META = {};
-
-/* ── The dark price map ───────────────────────────────────────────────────
-   A survey-map register, not a real tile map: the graticule and coastlines
-   are decoration, but every pin is a real destination at its real
-   coordinates, priced by the same pass that prices the map tab. */
-
-// The frame the pins are projected into. Wide enough for Porto and Riga,
-// tight enough that Europe still looks like Europe.
-const FRAME = { lonMin: -11, lonMax: 32, latMin: 34.5, latMax: 62 };
-const MAX_PINS = 8;
-
-const mercY = (deg) => Math.log(Math.tan(Math.PI / 4 + (deg * Math.PI / 180) / 2));
-
-/** lat/lon -> {x, y} as 0..1 fractions of the panel, Mercator on the vertical
- *  so the continent is not vertically squashed. Returns null off-frame. */
-function project(lat, lon) {
-  if (!Number.isFinite(lat) || !Number.isFinite(lon)) return null;
-  const x = (lon - FRAME.lonMin) / (FRAME.lonMax - FRAME.lonMin);
-  const top = mercY(FRAME.latMax);
-  const y = (top - mercY(lat)) / (top - mercY(FRAME.latMin));
-  if (x < 0 || x > 1 || y < 0 || y > 1) return null;
-  return { x, y };
-}
-
-/** Which edge a label hangs off, so a pin near the frame edge stays inside it
- *  without lying about where the city is. */
-function anchorFor(x) {
-  if (x < 0.12) return 'home-pin-l';
-  if (x > 0.84) return 'home-pin-r';
-  return '';
-}
 
 /* The budget line in the proof ribbon. A fixed "under €300" reads as empty on
    an expensive week and as trivial on a cheap one, so the line is derived:
@@ -141,35 +111,13 @@ export function HomePage({
     return t('home.freshDays', { n: days });
   }, [meta, t]);
 
-  const originAt = useMemo(() => {
-    const o = meta.origins?.[choices.origin];
-    return o ? project(o.lat, o.lon) : null;
-  }, [meta, choices.origin]);
-
-  /* ── Map pins ──────────────────────────────────────────────────────────
-     pricedAll arrives cheapest-first, so walking it in order and keeping the
-     first pin in each patch of the frame gives eight labels that do not
-     collide, with the cheapest of them first (and flagged). The origin marker
-     owns its own patch too: the nearest destinations to home are also among
-     the cheapest, so without this the CRL ring printed straight through the
-     Villers Abbey label. */
-  const pins = useMemo(() => {
-    const clash = (a, b) => Math.abs(a.x - b.x) < 0.14 && Math.abs(a.y - b.y) < 0.1;
-    const out = [];
-    for (const p of pricedAll || []) {
-      if (out.length >= MAX_PINS) break;
-      // Flight prices only. The engine quietly prices a flightless place as a
-      // drive, and a landing page whose headline promises fares should not
-      // advertise a €327 tank of fuel to Albania as its cheapest find.
-      if (p.mode !== 'plane' || !p.planeOk) continue;
-      const at = project(p.lat, p.lon);
-      if (!at) continue;
-      if (originAt && clash(at, originAt)) continue;
-      if (out.some((o) => clash(o, at))) continue;
-      out.push({ ...p, ...at });
-    }
-    return out;
-  }, [pricedAll, originAt]);
+  /* Flight prices only, cheapest first. The engine quietly prices a flightless
+     place as a drive, and a page whose headline promises fares should not
+     advertise a €327 tank of fuel to Albania as its cheapest find. */
+  const flyable = useMemo(
+    () => (pricedAll || []).filter((p) => p.mode === 'plane' && p.planeOk),
+    [pricedAll],
+  );
 
   /* ── The proof ribbon ──────────────────────────────────────────────────
      Three measured facts, no testimonials: what the cheapest week costs per
@@ -177,7 +125,6 @@ export function HomePage({
      the fares behind both were last checked. */
   const proof = useMemo(() => {
     if (!pricedCount || nights <= 0) return null;
-    const flyable = pricedAll.filter((p) => p.mode === 'plane' && p.planeOk);
     const cheapest = flyable[0] || pricedAll[0];
     if (!cheapest) return null;
     const step = cheapest.pp < 200 ? 25 : cheapest.pp < 500 ? 50 : 100;
@@ -200,17 +147,16 @@ export function HomePage({
       line,
       under,
     };
-  }, [pricedAll, pricedCount, nights]);
+  }, [flyable, pricedAll, pricedCount, nights]);
 
   /* ── The receipt, the split and the day ────────────────────────────────
-     All three come off the SAME destination the map flags as cheapest.
-     Deliberately pins[0] rather than a separately-chosen "best" one: when the
-     receipt and the flagged pin disagree, the page argues with itself, and it
-     did (the map flagged a €568 drive while the receipt totalled a €898
-     flight). Whatever mode the engine priced, the lines below say so. */
+     All three come off the SAME destination the ribbon calls cheapest, so the
+     page cannot argue with itself: it once headlined a €568 drive while the
+     receipt totalled a €898 flight. Whatever mode the engine priced for that
+     one destination, the lines below say so. */
   const trip = useMemo(() => {
     if (!data || !pricedCount || nights <= 0) return null;
-    const pick = pins[0] || pricedAll[0];
+    const pick = flyable[0] || pricedAll[0];
     const dest = data.destinations[pick.id];
     const priced = dest && composeTrip(dest, departDate, returnDate, choices, data.destinations);
     if (!priced) return null;
@@ -312,14 +258,11 @@ export function HomePage({
       split,
       sights,
     };
-  }, [data, pins, pricedAll, pricedCount, departDate, returnDate, dateBounds,
+  }, [data, flyable, pricedAll, pricedCount, departDate, returnDate, dateBounds,
     choices, nights, groupSize, bagLabel, fareAge, t]);
 
   // The three cheapest flyable destinations, for the map card's mini list.
-  const cheapThree = useMemo(
-    () => (pricedAll || []).filter((p) => p.mode === 'plane' && p.planeOk).slice(0, 3),
-    [pricedAll],
-  );
+  const cheapThree = useMemo(() => flyable.slice(0, 3), [flyable]);
 
   const phases = [t('day.phaseMorning'), t('day.phaseAfternoon'), t('day.phaseEvening')];
 
@@ -329,6 +272,142 @@ export function HomePage({
     [t('home.faq3Q'), t('home.faq3A')],
     [t('home.faq4Q'), t('home.faq4A')],
     [t('home.faq5Q'), t('home.faq5A')],
+  ];
+
+  /* ── The deck ────────────────────────────────────────────────────────────
+     One slide per tool. Each carries the same three things: what it does, a
+     live card built from today's real prices, and the limit that card is
+     subject to, in the product's own voice. The footnote under each card is
+     the honest half of the argument, and it is deliberately in the same place
+     every time rather than buried in a coverage section nobody reaches. */
+  const deckCopy = {
+    aria: t('home.deckAria'),
+    hint: t('home.deckHint'),
+    prev: t('home.deckPrev'),
+    next: t('home.deckNext'),
+  };
+
+  const deckSlides = [
+    {
+      key: 'map',
+      icon: <MapPinIcon size={15} />,
+      tab: t('home.mapEyebrow'),
+      note: t('home.mapNote'),
+      title: t('home.mapTitle'),
+      body: t('home.mapBody'),
+      points: [
+        [t('home.mapP1'), t('home.mapP1Body')],
+        [t('home.mapP2'), t('home.mapP2Body')],
+        [t('home.mapP3'), t('home.mapP3Body')],
+      ],
+      cta: t('home.mapCta'),
+      onCta: onExplore,
+      shot: { src: '/shots/map.webp', url: 'carta-europetravel.com/map', alt: t('home.shotMapAlt') },
+      preview: (
+        <div className="home-prev">
+          {cheapThree.length ? (
+            <>
+              <p className="home-prev-cap home-num">
+                {t('home.prevMapHead', { city: originCity, n: nights })}
+              </p>
+              {cheapThree.map((p) => (
+                <p className="home-prev-row" key={p.id}>
+                  <span>{p.city}, {p.country}</span>
+                  <b className="home-num">{eur(p.pp)}</b>
+                </p>
+              ))}
+              <p className="home-prev-foot home-num">
+                {t('home.prevMapFoot', {
+                  n: count(flyable.length), total: totalLabel, city: originCity,
+                })}
+              </p>
+            </>
+          ) : (
+            <p className="home-prev-empty">{t('home.prevEmpty')}</p>
+          )}
+        </div>
+      ),
+    },
+    {
+      key: 'trip',
+      icon: <RouteIcon size={15} />,
+      tab: t('home.tripEyebrow'),
+      note: t('home.tripNote'),
+      title: t('home.tripTitle'),
+      body: t('home.tripBody'),
+      points: [
+        [t('home.tripP1'), t('home.tripP1Body')],
+        [t('home.tripP2'), t('home.tripP2Body')],
+        [t('home.tripP3'), t('home.tripP3Body')],
+      ],
+      cta: t('home.tripCta'),
+      onCta: onPlanTrip,
+      shot: { src: '/shots/trip.webp', url: 'carta-europetravel.com/trip', alt: t('home.shotTripAlt') },
+      preview: (
+        <div className="home-prev">
+          {trip?.split.length ? (
+            <>
+              <p className="home-prev-cap home-num">
+                {t('home.prevSplitHead', { city: trip.city })}
+              </p>
+              <div className="home-prev-split">
+                {trip.split.map((s) => (
+                  <p key={s.key}>
+                    <span>{s.label}</span>
+                    <span className="home-prev-bar">
+                      <span style={{ width: `${s.pct}%` }} />
+                    </span>
+                    <b className="home-num">{eur(s.amount)}</b>
+                  </p>
+                ))}
+              </div>
+              <p className="home-prev-foot home-num">
+                {t('home.prevSplitFoot', { price: eurExact(trip.perPerson) })}
+              </p>
+            </>
+          ) : (
+            <p className="home-prev-empty">{t('home.prevEmpty')}</p>
+          )}
+        </div>
+      ),
+    },
+    {
+      key: 'day',
+      icon: <ListDayIcon size={15} />,
+      tab: t('home.dayEyebrow'),
+      note: t('home.dayNote'),
+      title: t('home.dayTitle'),
+      body: t('home.dayBody'),
+      points: [
+        [t('home.dayP1'), t('home.dayP1Body')],
+        [t('home.dayP2'), t('home.dayP2Body')],
+        [t('home.dayP3'), t('home.dayP3Body')],
+      ],
+      cta: t('home.dayCta'),
+      onCta: () => onNavigate('day'),
+      shot: { src: '/shots/day.webp', url: 'carta-europetravel.com/day', alt: t('home.shotDayAlt') },
+      preview: (
+        <div className="home-prev">
+          {trip?.sights.length ? (
+            <>
+              <p className="home-prev-cap home-num">
+                {t('home.prevDayHead', { city: trip.city })}
+              </p>
+              {trip.sights.map((s, i) => (
+                <p className="home-prev-stop" key={s.name}>
+                  <span className="home-num">{phases[i]}</span>
+                  <b>{s.name}</b>
+                  <i>{s.kind}</i>
+                </p>
+              ))}
+              <p className="home-prev-foot home-num">{t('home.prevDayFoot')}</p>
+            </>
+          ) : (
+            <p className="home-prev-empty">{t('home.prevEmpty')}</p>
+          )}
+        </div>
+      ),
+    },
   ];
 
   return (
@@ -414,52 +493,6 @@ export function HomePage({
                   {t('home.priceAll', { total: totalLabel })}
                 </button>
               </div>
-            </div>
-
-            {/* ── The one dark surface: real destinations, real prices ── */}
-            <div className="home-map">
-              <svg className="home-map-grat" viewBox="0 0 1180 430" preserveAspectRatio="none" aria-hidden="true">
-                <g className="grat">
-                  <path d="M0 60H1180M0 130H1180M0 200H1180M0 270H1180M0 340H1180M0 410H1180" />
-                  <path d="M90 0V430M230 0V430M370 0V430M510 0V430M650 0V430M790 0V430M930 0V430M1070 0V430" />
-                </g>
-                <g className="coast">
-                  <path d="M180 300C260 240 300 250 360 210 420 170 470 190 520 150" />
-                  <path d="M240 380C330 330 400 340 470 290 540 240 610 260 690 210" />
-                  <path d="M480 400C560 350 640 360 720 300 800 240 880 250 980 190" />
-                </g>
-              </svg>
-
-              {originAt && (
-                <p
-                  className={`home-origin ${anchorFor(originAt.x)}`}
-                  style={{ left: `${originAt.x * 100}%`, top: `${originAt.y * 100}%` }}
-                >
-                  <span className="home-origin-ring" aria-hidden="true" />
-                  {choices.origin}
-                </p>
-              )}
-
-              {pins.map((p, i) => (
-                <p
-                  key={p.id}
-                  /* --flag marks exactly one thing per view: the cheapest. */
-                  className={`home-pin ${i === 0 ? 'home-pin-flag' : ''} ${anchorFor(p.x)}`}
-                  style={{ left: `${p.x * 100}%`, top: `${p.y * 100}%` }}
-                >
-                  {p.city} <b>{eur(p.total)}</b>
-                </p>
-              ))}
-
-              {!pins.length && (
-                <p className="home-map-empty">{t('home.mapEmpty', { city: originCity })}</p>
-              )}
-
-              <p className="home-map-legend">
-                {pins.length
-                  ? t('home.mapLegend', { n: nights, party: groupSize, bag: bagLabel })
-                  : t('home.mapLegendPending')}
-              </p>
             </div>
           </div>
         </section>
@@ -556,138 +589,18 @@ export function HomePage({
           </div>
         </section>
 
-        {/* ── The three tools ────────────────────────────────────────────
-            Each one gets a screenshot of the real running app and a live
-            micro-preview built from the same priced data as the map tab, so
-            what the page shows is what the visitor gets. */}
-
-        {/* 1, the map */}
-        <section className="home-section home-section-tight" id="home-features">
-          <div className="home-wrap home-two home-two-flip">
-            <div>
-              <p className="home-eyebrow">
-                <MapPinIcon size={13} />
-                {t('home.mapEyebrow')}
-              </p>
-              <h2 className="home-h2">{t('home.mapTitle')}</h2>
-              <p className="home-lede">{t('home.mapBody')}</p>
-
-              <div className="home-prev">
-                {cheapThree.length ? (
-                  <>
-                    <p className="home-prev-cap home-num">
-                      {t('home.prevMapHead', { city: originCity, n: nights })}
-                    </p>
-                    {cheapThree.map((p) => (
-                      <p className="home-prev-row" key={p.id}>
-                        <span>{p.city}, {p.country}</span>
-                        <b className="home-num">{eur(p.pp)}</b>
-                      </p>
-                    ))}
-                    <p className="home-prev-foot home-num">
-                      {t('home.prevMapFoot', { total: totalLabel })}
-                    </p>
-                  </>
-                ) : (
-                  <p className="home-prev-empty">{t('home.prevEmpty')}</p>
-                )}
-              </div>
-
-              <div className="home-two-cta">
-                <button className="home-btn home-btn-ghost" onClick={onExplore}>
-                  {t('home.mapCta')}
-                </button>
-              </div>
-            </div>
-            <Shot src="/shots/map.webp" url="carta-europetravel.com/map" alt={t('home.shotMapAlt')} />
-          </div>
-        </section>
-
-        {/* 2, the trip planner */}
-        <section className="home-section home-section-tight">
-          <div className="home-wrap home-two">
-            <div>
-              <p className="home-eyebrow">
-                <RouteIcon size={13} />
-                {t('home.tripEyebrow')}
-              </p>
-              <h2 className="home-h2">{t('home.tripTitle')}</h2>
-              <p className="home-lede">{t('home.tripBody')}</p>
-
-              <div className="home-prev">
-                {trip?.split.length ? (
-                  <>
-                    <p className="home-prev-cap home-num">
-                      {t('home.prevSplitHead', { city: trip.city })}
-                    </p>
-                    <div className="home-prev-split">
-                      {trip.split.map((s) => (
-                        <p key={s.key}>
-                          <span>{s.label}</span>
-                          <span className="home-prev-bar">
-                            <span style={{ width: `${s.pct}%` }} />
-                          </span>
-                          <b className="home-num">{eur(s.amount)}</b>
-                        </p>
-                      ))}
-                    </div>
-                    <p className="home-prev-foot home-num">
-                      {t('home.prevSplitFoot', { price: eurExact(trip.perPerson) })}
-                    </p>
-                  </>
-                ) : (
-                  <p className="home-prev-empty">{t('home.prevEmpty')}</p>
-                )}
-              </div>
-
-              <div className="home-two-cta">
-                <button className="home-btn home-btn-ghost" onClick={onPlanTrip}>
-                  {t('home.tripCta')}
-                </button>
-              </div>
-            </div>
-            <Shot src="/shots/trip.webp" url="carta-europetravel.com/trip" alt={t('home.shotTripAlt')} />
-          </div>
-        </section>
-
-        {/* 3, the day planner */}
-        <section className="home-section home-section-tight">
-          <div className="home-wrap home-two home-two-flip">
-            <div>
-              <p className="home-eyebrow">
-                <ListDayIcon size={13} />
-                {t('home.dayEyebrow')}
-              </p>
-              <h2 className="home-h2">{t('home.dayTitle')}</h2>
-              <p className="home-lede">{t('home.dayBody')}</p>
-
-              <div className="home-prev">
-                {trip?.sights.length ? (
-                  <>
-                    <p className="home-prev-cap home-num">
-                      {t('home.prevDayHead', { city: trip.city })}
-                    </p>
-                    {trip.sights.map((s, i) => (
-                      <p className="home-prev-stop" key={s.name}>
-                        <span className="home-num">{phases[i]}</span>
-                        <b>{s.name}</b>
-                        <i>{s.kind}</i>
-                      </p>
-                    ))}
-                    <p className="home-prev-foot home-num">{t('home.prevDayFoot')}</p>
-                  </>
-                ) : (
-                  <p className="home-prev-empty">{t('home.prevEmpty')}</p>
-                )}
-              </div>
-
-              <div className="home-two-cta">
-                <button className="home-btn home-btn-ghost" onClick={() => onNavigate('day')}>
-                  {t('home.dayCta')}
-                </button>
-              </div>
-            </div>
-            <Shot src="/shots/day.webp" url="carta-europetravel.com/day" alt={t('home.shotDayAlt')} />
+        {/* ── The three tools, in one frame ──────────────────────────────
+            Stacked, these were three screens of scrolling and three half-size
+            screenshots. The deck gives them one section and one large frame,
+            and each still carries a live micro-preview built from the same
+            priced data as the map tab, so what the page shows is what the
+            visitor gets. */}
+        <section className="home-section home-section-tight home-deck" id="home-features">
+          <div className="home-wrap">
+            <p className="home-eyebrow">{t('home.deckEyebrow')}</p>
+            <h2 className="home-h2">{t('home.deckTitle')}</h2>
+            <p className="home-lede home-lede-wide">{t('home.deckBody')}</p>
+            <HomeDeck slides={deckSlides} copy={deckCopy} />
           </div>
         </section>
 
@@ -906,27 +819,6 @@ export function HomePage({
       </footer>
 
       {privacyOpen && <PrivacyPolicy onClose={() => setPrivacyOpen(false)} />}
-    </div>
-  );
-}
-
-/**
- * A product screenshot in a browser frame. The images are captured from the
- * running app by scripts/shots.mjs; until they exist (or if one fails to
- * load) the frame states what belongs there rather than shipping a broken
- * image icon.
- */
-function Shot({ src, url, alt }) {
-  const [failed, setFailed] = useState(false);
-  return (
-    <div className="home-shot">
-      <div className="home-shot-bar" aria-hidden="true">
-        <i /><i /><i />
-        <span>{url}</span>
-      </div>
-      {failed
-        ? <div className="home-shot-body"><p>{alt}</p></div>
-        : <img src={src} alt={alt} loading="lazy" onError={() => setFailed(true)} />}
     </div>
   );
 }
