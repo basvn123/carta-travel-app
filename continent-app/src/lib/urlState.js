@@ -48,7 +48,14 @@ export function encodeState({
   if (choices?.group_size) q.set('g', String(choices.group_size));
   if (choices?.baggage_key) q.set('b', choices.baggage_key);
   if (choices?.transport_mode && choices.transport_mode !== 'plane') q.set('t', choices.transport_mode);
+  if (choices?.stay_tier && choices.stay_tier !== 'home') q.set('st', choices.stay_tier);
   if (choices?.origin) q.set('o', choices.origin);
+  // Where a drive starts, packed as "lat,lon,name". The name is free text and
+  // can hold commas of its own, so the decoder splits on the first two only.
+  const dh = choices?.drive_home;
+  if (dh && Number.isFinite(dh.lat) && Number.isFinite(dh.lon)) {
+    q.set('dh', `${dh.lat.toFixed(4)},${dh.lon.toFixed(4)},${dh.name || ''}`);
+  }
   // Store anything that differs from the APP default ('pp', see App.jsx),
   // else "Total" silently flips back to per-person on reload.
   if (priceMode && priceMode !== 'pp') q.set('pm', priceMode);
@@ -90,7 +97,18 @@ export function decodeState(search) {
   if (has('g')) out.group_size = Math.max(1, parseInt(q.get('g'), 10) || 1);
   if (has('b')) out.baggage_key = q.get('b');
   if (has('t')) out.transport_mode = q.get('t');
+  if (has('st')) out.stay_tier = q.get('st');
   if (has('o')) out.origin = q.get('o');
+  if (has('dh')) {
+    const raw = q.get('dh');
+    const cut = raw.indexOf(',');
+    const cut2 = cut >= 0 ? raw.indexOf(',', cut + 1) : -1;
+    const lat = cut >= 0 ? Number(raw.slice(0, cut)) : NaN;
+    const lon = cut >= 0 ? Number(raw.slice(cut + 1, cut2 < 0 ? undefined : cut2)) : NaN;
+    if (Number.isFinite(lat) && Number.isFinite(lon)) {
+      out.drive_home = { lat, lon, name: cut2 < 0 ? '' : raw.slice(cut2 + 1) };
+    }
+  }
   if (has('pm')) out.priceMode = q.get('pm');
   // iso2 codes joined by '.', legacy links stored a single code (still parses).
   if (has('cf')) out.countryFilter = q.get('cf').split('.').filter((c) => c && c !== 'all');

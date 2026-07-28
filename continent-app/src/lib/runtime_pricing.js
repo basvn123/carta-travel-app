@@ -104,6 +104,30 @@ export function carsForGroup(groupSize, capacity) {
   return Math.max(1, Math.ceil(Math.max(1, groupSize) / Math.max(1, capacity || 4)));
 }
 
+const isPoint = (p) => !!p && Number.isFinite(p.lat) && Number.isFinite(p.lon);
+
+/** Is the app still waiting on the "where do you drive from?" answer?
+ *
+ *  A drive starts at the traveller's own door, not at a runway. The departure
+ *  AIRPORT is a flight input, and quietly reusing it as the drive origin priced
+ *  a journey nobody was taking ("Charleroi to Nuremberg" for someone who lives
+ *  in Ghent). So in car mode the town is required: without it driveOrigin()
+ *  hands composeTrip nothing, every destination comes back undrivable, and the
+ *  Map tab holds its results back until the question is answered.
+ */
+export function needsDriveHome(choices) {
+  return (choices?.transport_mode === 'car') && !isPoint(choices?.drive_home);
+}
+
+/** Where a drive starts. The town the traveller named always wins; the origin
+ *  airport is the fallback only in plane mode, where the drive is just the
+ *  comparison offered when no fare exists. */
+function driveOrigin(choices) {
+  if (isPoint(choices?.drive_home)) return choices.drive_home;
+  if (choices?.transport_mode === 'car') return null;
+  return isPoint(choices?.home) ? choices.home : null;
+}
+
 /** Cost of *driving there and back* for the whole group, or null if the trip is
  *  not road-reachable or beyond `max_drive_km`. Fuel + a motorway-toll allowance,
  *  multiplied by the number of cars the group fills. Comparable to the plane fare.
@@ -244,6 +268,55 @@ export function capacityBucketNightly(buckets, groupSize) {
   return { night: fit[1], cap: fit[0] };
 }
 
+// Stay tiers, cheapest to priciest. 'home' is the classic Airbnb entire-home
+// anchor; the others read the measured city tiers (accommodation.tiers, from
+// harvest_hostelworld.py + harvest_hotels_liteapi.py via apply_stay_tiers.py).
+export const STAY_TIERS = ['dorm', 'private', 'home', 'hotel', 'hotel3', 'hotel4', 'hotel5'];
+
+// Which tier reads which measured field. 'hotel' is Hostelworld's UNSTARRED
+// hotel price (free to harvest); hotel3/4/5 are LiteAPI's star-classified
+// ones. A dataset may carry either, both, or neither.
+export const STAY_TIER_FIELD = {
+  dorm: 'dorm_pp_night_eur',
+  private: 'private_room_night_eur',
+  hotel: 'hotel_night_eur',
+  hotel3: 'hotel3_night_eur',
+  hotel4: 'hotel4_night_eur',
+  hotel5: 'hotel5_night_eur',
+};
+
+/** The tiers worth offering, given what the dataset actually measured
+ *  (meta.stay_tiers_available, written by apply_stay_tiers.py). 'home' is
+ *  always there: every destination has an entire-place anchor. When the
+ *  star tiers exist, the unstarred 'hotel' tier is dropped rather than shown
+ *  beside them, since "Hotel" next to "3-star hotel" reads as a mystery. */
+export function offeredStayTiers(meta) {
+  const measured = meta?.stay_tiers_available;
+  if (!Array.isArray(measured) || measured.length === 0) return ['home'];
+  const hasStars = measured.some((t) => t === 'hotel3' || t === 'hotel4' || t === 'hotel5');
+  return STAY_TIERS.filter((t) => t === 'home'
+    || (measured.includes(t) && !(t === 'hotel' && hasStars)));
+}
+
+/** Per-person nightly (BEFORE season) for a non-home stay tier, or null when
+ *  the destination has no measured price for that tier. Dorms price per bed;
+ *  private rooms and hotel rooms are DOUBLE rooms, so a group books
+ *  ceil(g / 2) of them and splits the bill across the real heads. */
+export function stayTierNightly(a, tier, groupSize) {
+  const t = a?.tiers;
+  if (!t || tier === 'home') return null;
+  const g = Math.max(1, groupSize || 1);
+  if (tier === 'dorm') {
+    return t.dorm_pp_night_eur > 0
+      ? { nightlyPp: t.dorm_pp_night_eur, rooms: null, rate: t.dorm_pp_night_eur }
+      : null;
+  }
+  const room = t[STAY_TIER_FIELD[tier]] ?? null;
+  if (!(room > 0)) return null;
+  const rooms = Math.ceil(g / 2);
+  return { nightlyPp: (room * rooms) / g, rooms, rate: room };
+}
+
 /** Per-person accommodation cost for the trip, broken down. Returns null if the
  *  destination has no accommodation anchor.
  *  Applies, in order: summer seasonality on the nightly, a weekly discount for
@@ -255,13 +328,24 @@ export function capacityBucketNightly(buckets, groupSize) {
  *                       overrides the one global summer curve.
  *    - a.capacity_buckets : OBSERVED whole-home nightly per group size replaces
  *                       the modelled occupancy^0.55 extrapolation.
+ *
+ *  `stayTier` ('dorm'|'private'|'home'|'hotel3'|'hotel4'|'hotel5', default
+ *  'home') switches the nightly basis to a measured city tier when one exists.
+ *  Non-home tiers charge no cleaning or service fee (a dorm bed or hotel room
+ *  is booked at its listed rate) and skip the Airbnb weekly discount; the
+ *  seasonality curve still applies. A tier the city has no measurement for
+ *  falls back to the entire-home price and says so (tier_fallback), so a
+ *  village with no hostel never silently prices a fantasy dorm.
  */
-export function accommodationPerPerson(dest, nights, departDate, model, groupSize) {
+export function accommodationPerPerson(dest, nights, departDate, model, groupSize, stayTier) {
   const a = dest.accommodation;
   if (!a || a.per_person_night_eur == null) return null;
   const m = { ...DEFAULT_ACCOM_MODEL, ...(model || {}) };
   const n = Math.max(0, nights);
   const g = Math.max(1, groupSize || 1);
+  const wantTier = STAY_TIERS.includes(stayTier) ? stayTier : 'home';
+  const tierPick = wantTier !== 'home' ? stayTierNightly(a, wantTier, g) : null;
+  const tier = tierPick ? wantTier : 'home';
 
   // Seasonality: prefer this city's own calendar-derived curve (12 values,
   // index 0 = Jan), fall back to the one global summer curve.
@@ -275,30 +359,36 @@ export function accommodationPerPerson(dest, nights, departDate, model, groupSiz
         : (m.seasonality && m.seasonality[month] != null ? m.seasonality[month] : 1))
     : 1;
 
-  // Length-of-stay (weekly) discount.
-  const los = n >= (m.min_nights_for_weekly || 7)
+  // Length-of-stay (weekly) discount: an Airbnb construct, home tier only.
+  const los = tier === 'home' && n >= (m.min_nights_for_weekly || 7)
     ? 1 - (m.weekly_discount_pct || 0) / 100 : 1;
 
-  // Per-person nightly BEFORE season: prefer an observed capacity bucket (a
+  // Per-person nightly BEFORE season. Tier pick first (a measured dorm bed or
+  // room rate in THIS city); else prefer an observed capacity bucket (a
   // real home sized for the group, split across the real heads); else fall back
   // to the stored 4-sleeper per-person figure re-fitted by the occupancy curve.
-  const bucket = groupSize ? capacityBucketNightly(a.capacity_buckets, g) : null;
-  const nightlyBasis = bucket ? 'capacity_bucket' : 'occupancy_curve';
-  const baseNightlyPp = bucket
-    ? bucket.night / g
-    : (a.per_person_night_eur || 0) * (groupSize ? occupancyFactor(g, m) : 1);
+  const bucket = tier === 'home' && groupSize
+    ? capacityBucketNightly(a.capacity_buckets, g) : null;
+  const nightlyBasis = tierPick ? 'stay_tier'
+    : bucket ? 'capacity_bucket' : 'occupancy_curve';
+  const baseNightlyPp = tierPick
+    ? tierPick.nightlyPp
+    : bucket
+      ? bucket.night / g
+      : (a.per_person_night_eur || 0) * (groupSize ? occupancyFactor(g, m) : 1);
 
   const nightlyPp = baseNightlyPp * season;
-  const lodging   = nightlyPp * n * los;
   // Cleaning is charged once per BOOKING; the stored per-person figure is the
   // reference 4-sleeper's share. Rebuild the booking fee and split it across
   // the real group, so a couple isn't quietly charged half a fee too little
-  // and seven friends almost double.
+  // and seven friends almost double. Hostel beds and hotel rooms carry no
+  // cleaning or platform service fee: the listed rate is the bill.
+  const lodging   = nightlyPp * n * los;
   const ref = m.occupancy_ref_capacity ?? DEFAULT_ACCOM_MODEL.occupancy_ref_capacity;
-  const cleaning = (a.cleaning_per_person_eur || 0)
+  const cleaning = tier !== 'home' ? 0 : (a.cleaning_per_person_eur || 0)
     * (groupSize ? ref / Math.max(1, groupSize) : 1);
   const subtotal  = lodging + cleaning;
-  const withFees  = subtotal * (1 + (m.service_fee_pct || 0) / 100);
+  const withFees  = subtotal * (tier !== 'home' ? 1 : 1 + (m.service_fee_pct || 0) / 100);
 
   // Neighbourhood spread (measured/city matches only): the whole-home nightly
   // range across a city's neighbourhoods, so the UI can say "€90-€180 depending
@@ -316,9 +406,17 @@ export function accommodationPerPerson(dest, nights, departDate, model, groupSiz
     service: round2(withFees - subtotal),
     season,
     season_basis: seasonBasis,         // 'city_calendar' | 'global_curve'
-    nightly_basis: nightlyBasis,       // 'capacity_bucket' | 'occupancy_curve'
+    nightly_basis: nightlyBasis,       // 'stay_tier' | 'capacity_bucket' | 'occupancy_curve'
     neighbourhood_range: hoodRange,    // { min, max } whole-home nightly, or null
     los,
+    tier,                              // the tier actually priced
+    tier_requested: wantTier,          // what the user asked for
+    // True when the asked-for tier has no measurement here and the entire-home
+    // price stands in; the UI must say so rather than imply a dorm exists.
+    tier_fallback: wantTier !== tier,
+    // Display rate for the tier: dorm per-bed or room per-night (pre-season).
+    tier_rate_eur: tierPick ? round2(tierPick.rate) : null,
+    tier_rooms: tierPick ? tierPick.rooms : null,
     total: round2(withFees),
   };
 }
@@ -588,11 +686,11 @@ export function composeTrip(dest, departDate, returnDate, choices, allDests = nu
 
   const groupSize = Math.max(1, choices.group_size || 1);
   const nights = Math.max(1, tripDaysBetween(departDate, returnDate));
-  const home = choices.home || null;
+  const home = driveOrigin(choices);
   const carModel = choices.car_model || null;
 
   // Accommodation + on-the-ground are the same whichever way you travel.
-  const accom = accommodationPerPerson(dest, nights, departDate, choices.accommodation_model, groupSize);
+  const accom = accommodationPerPerson(dest, nights, departDate, choices.accommodation_model, groupSize, choices.stay_tier);
   const accomPerPerson = accom ? accom.total : 0;
   const accomTotal = accomPerPerson * groupSize;
 
@@ -676,6 +774,10 @@ export function composeTrip(dest, departDate, returnDate, choices, allDests = nu
 
     // Driving (present when drivable)
     driving:            driving,         // group-total breakdown (fuel + tolls)
+    // The point the drive was measured from, so the receipt can name it rather
+    // than saying "from your airport" about a road trip. Null when the fallback
+    // origin airport supplied the coordinates.
+    drive_from:         driving ? (choices.drive_home?.name || null) : null,
 
     // Local transport / rental at the destination
     local_transport:    lt,
@@ -689,6 +791,11 @@ export function composeTrip(dest, departDate, returnDate, choices, allDests = nu
     accommodation:      accom,
     accom_per_person:   round2(accomPerPerson),
     accom_total:        round2(accomTotal),
+    // Stay tier actually priced ('home' when no tier chosen or none measured)
+    // + the honesty flag for a requested-but-unmeasured tier.
+    stay_tier:          accom ? accom.tier : 'home',
+    stay_tier_fallback: accom ? accom.tier_fallback : false,
+    stay_tiers_available: dest.accommodation?.tiers || null,
 
     // On-the-ground (per person + totals)
     cost_level:         dest.costs?.level || null,
@@ -942,14 +1049,33 @@ export function buildFlightLinks({ origin, destIata, departDate, returnDate, sub
   return { links, skyscanner };
 }
 
-/** Airbnb search deeplink for the destination, prefilled with dates and guests.
+/** Stay search deeplink for the destination, prefilled with dates and guests.
  *  The accommodation price is an estimate; this lets the user verify/book real
- *  listings. Searches the city (Airbnb has no per-listing deeplink we can know).
+ *  listings. Provider follows the stay tier: hostel tiers go to Hostelworld
+ *  (city search, they have no stable per-property deeplink we can know),
+ *  hotel tiers to KAYAK hotels (city only in the path: KAYAK mis-geocodes a
+ *  "City, Country" string, the same trap as the car links), and the default
+ *  entire-home tier to Airbnb city search.
  */
-export function buildAccommodationLink({ city, country, departDate, returnDate, groupSize = 1 }) {
+export function buildAccommodationLink({ city, country, departDate, returnDate, groupSize = 1, stayTier = 'home' }) {
   if (!city || !departDate || !returnDate) return null;
-  const where = encodeURIComponent([city, country].filter(Boolean).join(', '));
   const adults = Math.max(1, groupSize | 0);
+  if (stayTier === 'dorm' || stayTier === 'private') {
+    const q = encodeURIComponent([city, country].filter(Boolean).join(', '));
+    return (
+      `https://www.hostelworld.com/search?search_keywords=${q}` +
+      `&date_from=${departDate}&date_to=${returnDate}&number_of_guests=${adults}`
+    );
+  }
+  const stars = { hotel3: 3, hotel4: 4, hotel5: 5 }[stayTier];
+  if (stars || stayTier === 'hotel') {
+    // KAYAK takes the star floor as a path segment, so a star tier opens
+    // already filtered to what its price was measured at. The unstarred
+    // Hostelworld tier gets a plain hotel search, no star claim implied.
+    const starPath = stars ? `/${stars}stars` : '';
+    return `https://www.kayak.com/hotels/${encodeURIComponent(city)}/${departDate}/${returnDate}/${adults}adults${starPath}`;
+  }
+  const where = encodeURIComponent([city, country].filter(Boolean).join(', '));
   return (
     `https://www.airbnb.com/s/${where}/homes` +
     `?checkin=${departDate}&checkout=${returnDate}` +

@@ -1,6 +1,5 @@
 import React from 'react';
 import Logo from './Logo.jsx';
-import { OriginPicker } from './OriginPicker.jsx';
 import { LanguagePicker } from './LanguagePicker.jsx';
 import { useI18n } from '../i18n/index.jsx';
 import { PersonIcon, HomeIcon, MapPinIcon, RouteIcon, ListDayIcon, BookmarkIcon } from './Icons.jsx';
@@ -37,12 +36,15 @@ function AccountButton({ user, onOpenAccount }) {
 // on mobile they collapse (CSS) and BottomNav takes over as the Home/Map/
 // Trip planner/Day planner switch. `children` is the FilterBar, injected only
 // on the Map tab.
+//
+// The "travelling from" picker used to live in this row's right edge. It now
+// floats over the map itself, level with the Destinations pill (see
+// .map-toolrow in App), where it has room to state the question it is asking.
 export function AppHeader({
   user, onOpenAccount,
   isHome, onGoHome,
   activeTab, onChangeTab,
   savedOpen, onToggleSaved,
-  data, origin, onChangeOrigin,
   children,
 }) {
   const { t } = useI18n();
@@ -90,12 +92,6 @@ export function AppHeader({
       {children && <div className="app-header-filters">{children}</div>}
 
       <div className="app-header-account">
-        {/* The From picker only belongs on the Map tab: the Trip planner asks
-            "where are you travelling from?" inside its own flow, and the Day
-            planner doesn't price flights at all. */}
-        {activeTab === 'map' && (
-          <OriginPicker data={data} origin={origin} onChangeOrigin={onChangeOrigin} />
-        )}
         <LanguagePicker />
         <AccountButton user={user} onOpenAccount={onOpenAccount} />
       </div>

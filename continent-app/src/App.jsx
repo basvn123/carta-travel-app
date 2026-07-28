@@ -48,7 +48,8 @@ const DayPlannerTab = lazyWithReload(() => import('./planner/DayPlannerTab.jsx')
 function TabFallback() {
   return <div className="loading-screen"><div className="pulse" /></div>;
 }
-import { tripDaysBetween, DEFAULT_LIFESTYLE } from './lib/runtime_pricing.js';
+import { tripDaysBetween, DEFAULT_LIFESTYLE, needsDriveHome } from './lib/runtime_pricing.js';
+import { OriginPicker } from './components/OriginPicker.jsx';
 import { loadInitialState } from './lib/urlState.js';
 import { readTripShareFromUrl, decodeTripShare } from './lib/shareLink.js';
 import { loadTripDraft } from './planner/tripDraftStore.js';
@@ -133,26 +134,20 @@ function TravelApp() {
     prevUserRef.current = user;
   }, [user]);
 
-  // Whether this visitor has been welcomed before (the homepage's job). The
-  // old fare-notice key still counts, so long-time visitors are never pushed
-  // back through the front page.
-  const [welcomeDismissed, setWelcomeDismissed] = useState(() => {
-    try {
-      return localStorage.getItem('carta.welcomeSeen') === '1'
-        || localStorage.getItem('carta.fareNoticeSeen') === '1';
-    } catch { return false; }
-  });
-
   // Which top-level section is showing: Home (the front page), Map (the
-  // browse/search experience), Trip planner, or Day planner. First-time
-  // visitors open on the homepage; plain revisits open on the map (the
-  // localStorage mirror's remembered tab is deliberately ignored). A link
-  // that carries ?tab= in the actual URL is someone sharing a specific view,
-  // so it wins over both: before this, `tab` was encoded and decoded yet
-  // never read, and every shared planner link opened on the map.
+  // browse/search experience), Trip planner, or Day planner. EVERY visit
+  // opens on Home, first or fiftieth: it is a tab like the others, it shows
+  // today's real prices, and the tabs to leave it are in the header and the
+  // bottom bar. (The localStorage mirror's remembered tab is deliberately
+  // ignored.)
+  // A query string, though, means the view was shared or reloaded, so it
+  // decides which tab opens. The encoder omits `tab` for the map (it is the
+  // URL's implicit default), so a link carrying filters but no tab is a map
+  // link, not a reason to drop someone on the front page.
   const urlTab = typeof window !== 'undefined' && !!window.location.search
-    && ['home', 'trip', 'day'].includes(init.activeTab) ? init.activeTab : null;
-  const [activeTab, setActiveTab] = useState(urlTab || (welcomeDismissed ? 'map' : 'home'));
+    ? (['home', 'map', 'trip', 'day'].includes(init.activeTab) ? init.activeTab : 'map')
+    : null;
+  const [activeTab, setActiveTab] = useState(urlTab || 'home');
 
   const [selectedId, setSelectedId] = useState(init.selectedId ?? null);
 
@@ -167,7 +162,15 @@ function TravelApp() {
     baggage_key: init.baggage_key ?? 'priority_10kg',
     baggage_per_direction_eur: 25,
     transport_mode: init.transport_mode ?? 'plane',  // 'plane' | 'car' (car only for trips <= max_drive_km)
+    // How expensive to sleep: 'dorm'|'private'|'home'|'hotel3'|'hotel4'|'hotel5'.
+    // Home (entire place) is the classic anchor; the rest price from measured
+    // city tiers where they exist and honestly fall back where they don't.
+    stay_tier: init.stay_tier ?? 'home',
     origin: init.origin ?? null,   // departure airport IATA; defaulted from data on load
+    // Where a DRIVE starts: { name, lat, lon }, named by the traveller. Car
+    // mode prices nothing until this is set, so a road trip is never quietly
+    // costed from the departure airport (see needsDriveHome).
+    drive_home: init.drive_home ?? null,
     lifestyle: { ...DEFAULT_LIFESTYLE, ...(init.lifestyle || {}) },
   });
 
@@ -247,18 +250,6 @@ function TravelApp() {
     try { return localStorage.getItem('carta.mapGuideDone') === '1'; } catch { return false; }
   });
 
-  // Mark the visitor as welcomed the moment they are anywhere but the
-  // homepage: a CTA, the logo nav, a deep link straight into a planner - all
-  // of it means the front page has done (or forfeited) its job, and the next
-  // plain visit opens on the map like a tool should.
-  useEffect(() => {
-    if (welcomeDismissed || activeTab === 'home') return;
-    setWelcomeDismissed(true);
-    try {
-      localStorage.setItem('carta.welcomeSeen', '1');
-      localStorage.setItem('carta.fareNoticeSeen', '1');
-    } catch { /* private mode */ }
-  }, [activeTab, welcomeDismissed]);
   // Nudges TripPlannerTab to open the guided wizard (homepage CTA): bumping
   // the counter is the signal, the tab consumes it via an effect.
   const [wizardLaunch, setWizardLaunch] = useState(0);
@@ -295,9 +286,10 @@ function TravelApp() {
   }, []);
   const collapseList = useCallback(() => setListCollapsed(true), []);
   const openCompare = useCallback(() => setCompareOpen(true), []);
-  // "Top picks" hides the unreachable set; a fresh [] every render would
-  // re-render the memoized list/map for nothing, so keep one empty constant.
-  const noUnreachable = useRef([]).current;
+  // "Top picks" hides the unreachable set, and an unanswered "where do you
+  // drive from?" hides both sets; a fresh [] every render would re-render the
+  // memoized list/map for nothing, so keep one empty constant.
+  const noResults = useRef([]).current;
 
   // Fetch app_data.json, apply its defaults into `choices`, and derive the
   // fare-date bounds used to default/clamp the depart & return pickers.
@@ -312,6 +304,32 @@ function TravelApp() {
     origin: code,
     home: originHome(data, code) ?? prev.home,
   })), [data]);
+
+  // The town a road trip sets off from ({ name, lat, lon } from the geocoder,
+  // or null to ask again). Without it the engine cannot cost a drive at all,
+  // so this is the one answer that empties the map on purpose.
+  const setDriveHome = useCallback((point) => {
+    setChoices((prev) => ({ ...prev, drive_home: point || null }));
+  }, []);
+
+  // Drive mode with the question still open. The engine falls back to flight
+  // prices in this state (which is what the flights-first homepage wants), so
+  // it is the MAP tab that holds its results back: showing fares under a car
+  // toggle would answer a question nobody asked.
+  const driveHomeMissing = needsDriveHome(choices);
+
+  // Bumping this counter opens the picker's popover. It fires the moment the
+  // question becomes blocking (switching to Drive with no town set) and again
+  // from the map's prompt, so the answer is never something to go hunting for.
+  const [originAsk, setOriginAsk] = useState(0);
+  const [originPopOpen, setOriginPopOpen] = useState(false);
+  useEffect(() => {
+    if (!driveHomeMissing) return;
+    setOriginAsk((n) => n + 1);
+    // The open destination card was priced under the old mode and the map it
+    // came from is now empty, so it cannot stay up behind the question.
+    setSelectedId(null);
+  }, [driveHomeMissing]);
 
   // Keep --filter-h in sync with the filter bar's real height. The bar uses
   // min-height + wraps its controls; everything below it is positioned at
@@ -346,8 +364,8 @@ function TravelApp() {
     () => choices,
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [choices.group_size, choices.baggage_key, choices.baggage_per_direction_eur,
-      choices.transport_mode, choices.origin, choices.home, choices.lifestyle,
-      choices.origin_pref, choices.car_model, choices.accommodation_model],
+      choices.transport_mode, choices.stay_tier, choices.origin, choices.home, choices.lifestyle,
+      choices.origin_pref, choices.car_model, choices.accommodation_model, choices.drive_home],
   );
 
   // Price every destination for the current dates/choices, then narrow that
@@ -362,6 +380,12 @@ function TravelApp() {
     ratingRange, gemOnly, unescoOnly, topBeachOnly, topPick,
     initialPriceRange: init.priceRange,
   });
+
+  // What the Map tab is allowed to show. Everything else (the homepage's pins
+  // and receipt) keeps the full priced set: those are fares, and they do not
+  // depend on the answer the map is waiting for.
+  const mapPriced = driveHomeMissing ? noResults : priced;
+  const mapUnreachable = (driveHomeMissing || topPick) ? noResults : unreachable;
 
   // Keep the URL + localStorage in sync so the view is shareable and survives a
   // reload (debounced; runs only once data has loaded). See useUrlSync.
@@ -467,9 +491,6 @@ function TravelApp() {
           onChangeTab={(key) => { setSavedTripsOpen(false); setActiveTab(key); }}
           savedOpen={savedTripsOpen}
           onToggleSaved={() => setSavedTripsOpen((v) => !v)}
-          data={data}
-          origin={choices.origin}
-          onChangeOrigin={setOrigin}
         >
           {activeTab === 'map' && (
             <FilterBar
@@ -571,11 +592,12 @@ function TravelApp() {
         </div>
       )}
 
-      {/* The homepage: a full-viewport front page over the (still-mounted)
-          app. First visits land here, the brand logo reopens it any time,
-          and its hero widget edits the live app state so the CTA hand-off
-          arrives on an already-priced map. Shared-trip offers (z-60) still
-          render above it. */}
+      {/* The homepage: a tab body like the map and the planners, sitting
+          under the same .app-header rather than over it, so leaving Home is
+          one tap on chrome that never moved. Every visit lands here, the
+          brand mark comes back any time, and the hero's search strip edits
+          the live app state so the CTA hand-off arrives on an already-priced
+          map. */}
       {activeTab === 'home' && (
         <HomePage
           data={data}
@@ -592,7 +614,6 @@ function TravelApp() {
           pricedAll={pricedAll}
           totalCount={Object.keys(data.destinations).length}
           countryCount={availableCountries.length}
-          user={user}
           onOpenAccount={() => setAccountOpen(true)}
           onExplore={() => setActiveTab('map')}
           onPlanTrip={() => {
@@ -612,8 +633,8 @@ function TravelApp() {
         <div className={activeTab === 'map' ? undefined : 'tab-keep-hidden'}>
           <div onClick={(e) => e.stopPropagation()}>
             <ResultsList
-              priced={priced}
-              unreachable={topPick ? noUnreachable : unreachable}
+              priced={mapPriced}
+              unreachable={mapUnreachable}
               locationQuery={locationQuery}
               setLocationQuery={setLocationQuery}
               priceMode={priceMode}
@@ -631,12 +652,18 @@ function TravelApp() {
               totalCount={Object.keys(data.destinations).length}
               homeCity={data.meta?.origins?.[data.meta?.selected_origin]?.city || data.meta?.home_city || 'your airport'}
               transportMode={choices.transport_mode || 'plane'}
+              needsDriveHome={driveHomeMissing}
               onCollapse={collapseList}
             />
           </div>
 
-          {/* Reopen tab - only visible (via CSS) when the list is collapsed. */}
-          <div onClick={(e) => e.stopPropagation()}>
+          {/* The map's own control row, floating just under the top panel and
+              tracking the left edge of the map (so it clears the destinations
+              gutter when that is open). Holds the list-reopen tab, only shown
+              when the list is collapsed, and the "travelling from" picker,
+              which needs the room here to ask a real question in Drive mode
+              rather than being a 12px pill lost in the header. */}
+          <div className="map-toolrow" onClick={(e) => e.stopPropagation()}>
             <button
               className="list-reopen"
               onClick={() => setListCollapsed(false)}
@@ -646,12 +673,45 @@ function TravelApp() {
               <span className="chev">›</span>
               <span>{t('results.destinations')}</span>
             </button>
+
+            <OriginPicker
+              data={data}
+              origin={choices.origin}
+              onChangeOrigin={setOrigin}
+              mode={choices.transport_mode === 'car' ? 'car' : 'plane'}
+              driveHome={choices.drive_home}
+              onChangeDriveHome={setDriveHome}
+              askOpen={originAsk}
+              onOpenChange={setOriginPopOpen}
+            />
           </div>
+
+          {/* Drive mode with no starting town: the map is empty on purpose, so
+              say so instead of leaving a blank continent behind. Only while the
+              picker is shut, though: the popover asks the same question, and
+              both on screen at once reads as a stutter. */}
+          {driveHomeMissing && !originPopOpen && (
+            <div className="drive-ask" onClick={(e) => e.stopPropagation()}>
+              <p className="drive-ask-title">{t('wizard.carFromLabel')}</p>
+              <p className="drive-ask-body">{t('origin.driveWhy')}</p>
+              <div className="drive-ask-actions">
+                <button className="drive-ask-btn" onClick={() => setOriginAsk((n) => n + 1)}>
+                  {t('origin.driveSetPoint')}
+                </button>
+                <button
+                  className="drive-ask-alt"
+                  onClick={() => setChoices((prev) => ({ ...prev, transport_mode: 'plane' }))}
+                >
+                  {t('origin.driveBackToFlights')}
+                </button>
+              </div>
+            </div>
+          )}
 
           <Suspense fallback={null}>
             <MapView
-              priced={priced}
-              unreachable={topPick ? noUnreachable : unreachable}
+              priced={mapPriced}
+              unreachable={mapUnreachable}
               priceMode={priceMode}
               groupSize={choices.group_size}
               selectedId={selectedId}

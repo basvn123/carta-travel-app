@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import {
   buildFlightLinks, buildAccommodationLink, buildCarRentalLink, viaNearestAirport,
+  offeredStayTiers, STAY_TIER_FIELD,
 } from '../lib/runtime_pricing.js';
 import { ScoreChip, HiddenGemTag } from '../components/RatingBadge.jsx';
 import { WaterQualityBadge } from '../components/WaterQualityBadge.jsx';
@@ -116,6 +117,9 @@ export function BreakdownTab({ destination, breakdown, departDate, returnDate, c
   const { t } = useI18n();
   const group = Math.max(1, choices.group_size || 1);
   const originCity = data?.meta?.origins?.[data?.meta?.selected_origin]?.city || t('detail.yourAirport');
+  // A drive is measured from the traveller's own town once they have named it,
+  // so the receipt must say that town and not the departure airport's city.
+  const driveFromCity = breakdown.drive_from || originCity;
   // The traveller asked to fly but no fare exists for these dates, so the
   // price shown is a DRIVE, say so loudly instead of a quiet "drive from
   // home", and offer real fly-via-nearby-airport alternatives.
@@ -188,7 +192,7 @@ export function BreakdownTab({ destination, breakdown, departDate, returnDate, c
           icon={breakdown.transport_mode === 'car' ? <CarIcon size={15} /> : <PlaneIcon size={15} />}
           title={t('detail.gettingThere')}
           subtitle={breakdown.transport_mode === 'car'
-            ? (flyFellBack ? t('detail.noFlightDriveFrom', { origin: originCity }) : t('detail.driveFrom', { origin: originCity }))
+            ? (flyFellBack ? t('detail.noFlightDriveFrom', { origin: driveFromCity }) : t('detail.driveFrom', { origin: driveFromCity }))
             : t('detail.ryanairRoundTrip', { carrier: fareCarrier })}
           subtotal={transportSubtotal}
           open={openGroups.transport}
@@ -342,27 +346,63 @@ export function BreakdownTab({ destination, breakdown, departDate, returnDate, c
         )}
 
         {/* ── Your stay ── */}
-        {acc && (
+        {acc && (() => {
+          const servedTier = breakdown.stay_tier || 'home';
+          const tiers = destination.accommodation?.tiers || null;
+          // Per-tier nightly for the chip hints: dorm is per bed, the rest per room.
+          const tierOptions = offeredStayTiers(data?.meta);
+          const tierRate = Object.fromEntries(tierOptions.map((k) => [
+            k, k === 'home' ? breakdown.accom_entire_home_night_eur
+              : tiers?.[STAY_TIER_FIELD[k]],
+          ]));
+          const baseRate = servedTier === 'home'
+            ? breakdown.accom_entire_home_night_eur : acc.tier_rate_eur;
+          const linkLabel = servedTier === 'dorm' || servedTier === 'private'
+            ? t('detail.findHostelworld')
+            : servedTier.startsWith('hotel')
+              ? t('detail.findHotels') : t('detail.findAirbnb');
+          return (
           <CostGroup
             icon={<BedIcon size={15} />}
             title={breakdown.nights === 1
               ? t('detail.stayTitleOne', { n: breakdown.nights })
               : t('detail.stayTitleMany', { n: breakdown.nights })}
+            subtitle={t(`stay.${servedTier}`)}
             subtotal={staySubtotal}
             open={openGroups.stay}
             onToggle={() => toggleGroup('stay')}
             infoButton={<InfoButton open={infoOpen === 'stay'} onClick={() => toggleInfo('stay')} />}
             infoPanel={infoOpen === 'stay' && (
               <InfoFacts rows={[
-                [t('detail.infoType'), t('detail.entireHome')],
-                [t('detail.infoBaseRate'), breakdown.accom_entire_home_night_eur ? t('detail.perNightApprox', { n: Math.round(breakdown.accom_entire_home_night_eur) }) : null],
+                [t('detail.infoType'), t(`stay.${servedTier}`)],
+                [t('detail.infoBaseRate'), baseRate ? t('detail.perNightApprox', { n: Math.round(baseRate) }) : null],
                 [t('detail.infoNights'), String(breakdown.nights)],
-                [t('detail.infoFees'), t('detail.feesIncluded')],
-                [t('detail.infoAdjustedFor'), t('detail.seasonLos')],
-                [t('detail.infoSource'), accomSourceLabel],
+                [t('detail.infoFees'), servedTier === 'home' ? t('detail.feesIncluded') : t('detail.noPlatformFees')],
+                [t('detail.infoAdjustedFor'), servedTier === 'home' ? t('detail.seasonLos') : t('detail.seasonOnly')],
+                [t('detail.infoSource'), servedTier === 'home' ? accomSourceLabel : t('detail.stayTierSource')],
               ]} />
             )}
           >
+            {/* How expensive to sleep. Tapping a tier re-prices the whole map,
+                not just this destination; unmeasured tiers stay tappable but
+                say they will fall back (honesty over a dead button). */}
+            <div className="stay-tier-row" role="group" aria-label={t('filter.stay')}>
+              {tierOptions.length > 1 && tierOptions.map((k) => (
+                <button
+                  key={k}
+                  type="button"
+                  className={`stay-tier-chip${servedTier === k ? ' on' : ''}`}
+                  title={k !== 'home' && !tierRate[k] ? t('detail.stayTierUnmeasuredTitle') : undefined}
+                  onClick={() => setChoices({ ...choices, stay_tier: k })}
+                >
+                  <span>{t(`stay.${k}`)}</span>
+                  {tierRate[k] > 0 && <b>{Math.round(tierRate[k])}</b>}
+                </button>
+              ))}
+            </div>
+            {breakdown.stay_tier_fallback && (
+              <CostWarning>{t('detail.stayTierFallback', { tier: t(`stay.${acc.tier_requested}`) })}</CostWarning>
+            )}
             <GroundLine label={t('detail.lodging')}     v={show(groundGroup(acc.lodging))}  eur={eur} />
             <GroundLine label={t('detail.cleaningFee')} v={show(groundGroup(acc.cleaning))} eur={eur} />
             <GroundLine label={t('detail.serviceFee')}  v={show(groundGroup(acc.service))}  eur={eur} />
@@ -377,18 +417,20 @@ export function BreakdownTab({ destination, breakdown, departDate, returnDate, c
             )}
             <div className="cost-group-links">
               {(() => {
-                const airbnb = buildAccommodationLink({
+                const link = buildAccommodationLink({
                   city: destination.city,
                   country: destination.country,
                   departDate,
                   returnDate,
                   groupSize: choices.group_size,
+                  stayTier: servedTier,
                 });
-                return airbnb ? <CostAction href={airbnb}>{t('detail.findAirbnb')}</CostAction> : null;
+                return link ? <CostAction href={link}>{linkLabel}</CostAction> : null;
               })()}
             </div>
           </CostGroup>
-        )}
+          );
+        })()}
 
         {/* ── On the ground ── */}
         {g && (

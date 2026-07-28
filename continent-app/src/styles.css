@@ -255,24 +255,6 @@ input, select {
   }
   .app-header-account .account-avatar { width: 40px; height: 40px; font-size: 15px; }
 
-  /* The From/airport picker no longer competes for space in the crowded 56px
-     top row. It's pulled out of the account flow and floated just below the
-     header, level with the DESTINATIONS reopen pill (.list-reopen, top:
-     var(--filter-h) + 12px). The containing block is .top-bar (position:
-     absolute, top:0, height == --filter-h), so top: 100% lands flush beneath
-     the header and +12px matches the pill's offset exactly. */
-  .app-header-account .origin-picker {
-    position: absolute;
-    top: calc(100% + 12px);
-    right: 12px;
-    z-index: 24;
-  }
-  /* ...but only while the list is collapsed (the map is showing). When the
-     Destinations panel is open it fills this spot, so the floated picker would
-     sit on top of the panel header - hide it there, mirroring how the
-     .list-reopen pill only appears when the list is collapsed. */
-  .app:not(.list-collapsed) .app-header-account .origin-picker { display: none; }
-
   /* The desktop section tabs collapse; BottomNav (which includes Home) is
      the switch on mobile. */
   .header-nav { display: none; }
@@ -349,11 +331,10 @@ input, select {
 .map-guide-dismiss:hover { opacity: 0.85; }
 
 @media (max-width: 768px) {
-  /* The From/airport pill now floats top-right just below the header (see the
-     .origin-picker rule above). Drop the first-visit guide tip beneath it so
-     the two share the right edge stacked, rather than overlapping. Once the
-     guide is dismissed the pill has the corner to itself. */
-  .map-guide { right: 10px; margin-top: 46px; }
+  /* The From pill moved to the map's control strip on the LEFT (.map-toolrow),
+     so the guide tip has the right corner back and no longer needs the 46px
+     drop that kept the two from overlapping. */
+  .map-guide { right: 10px; }
 
   /* When the destinations list is open it becomes a full-width overlay (see
      .results-list below), so the guide pill would float on top of the list.
@@ -537,9 +518,161 @@ input, select {
 }
 .origin-opt.on .origin-opt-code { color: var(--accent); }
 
+/* ── The picker as a map control (see .map-toolrow) ──────────────────────
+   On the map it is not a header pill any more: it is the control that decides
+   what every price on screen means, so it gets the size to say so. It also
+   opens leftward, since it now sits at the map's left edge. */
+.map-toolrow .origin-btn {
+  max-width: 300px;
+  gap: 10px;
+  padding: 9px 14px 9px 12px;
+  background: var(--paper);
+  box-shadow: var(--shadow-1);
+}
+.map-toolrow .origin-btn-from { font-size: 9px; }
+.map-toolrow .origin-btn-caret { font-size: 11px; }
+.map-toolrow .origin-btn-label { gap: 2px; }
+.map-toolrow .origin-btn-label b { font-size: 14px; max-width: 220px; }
+.map-toolrow .origin-pop { left: 0; right: auto; }
+
+/* Drive mode: the pill states which question it is asking, and glows while
+   that question is the reason the map is empty. */
+.origin-btn-icon { display: inline-flex; flex: none; color: var(--accent); }
+.origin-btn.needs-answer {
+  border-color: var(--accent);
+  background: var(--accent-bg);
+}
+.origin-btn.needs-answer .origin-btn-label b { color: var(--accent); }
+.origin-pop-drive { width: 340px; max-width: min(340px, calc(100vw - 24px)); }
+.origin-drive-ask {
+  font-family: var(--display);
+  font-size: 16px;
+  color: var(--ink);
+  margin-bottom: 3px;
+}
+.origin-drive-note {
+  font-size: 11.5px;
+  line-height: 1.5;
+  color: var(--ink-mute);
+  margin-bottom: 10px;
+}
+.origin-drive-row { display: flex; gap: 6px; }
+.origin-drive-row .origin-search { flex: 1; min-width: 0; }
+.origin-drive-search {
+  flex: none;
+  padding: 0 12px;
+  border: 1px solid var(--accent);
+  border-radius: 9px;
+  background: var(--accent);
+  color: var(--paper);
+  font-family: var(--mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+}
+.origin-drive-search:disabled { opacity: .45; cursor: default; }
+.origin-drive-list { max-height: 260px; }
+.origin-drive-opt {
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+}
+.origin-drive-opt > svg { color: var(--ink-mute); flex: none; }
+.origin-drive-opt-label { font-size: 12.5px; line-height: 1.4; }
+.origin-drive-picked {
+  margin-top: 10px;
+  padding-top: 9px;
+  border-top: 1px solid var(--rule);
+  font-size: 11.5px;
+  color: var(--ink-mute);
+}
+.origin-drive-clear {
+  margin-left: 6px;
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--accent);
+  font-family: var(--ui);
+  font-size: 11.5px;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+/* The same question, restated over the empty map it is holding back. Centred
+   in the map rather than tucked under the picker: the picker's popover drops
+   into exactly that spot, and the prompt was swallowing its Search button. */
+.drive-ask {
+  position: absolute;
+  top: calc(var(--filter-h) + 22vh);
+  left: var(--panel-w);
+  right: 0;
+  margin: 0 auto;
+  z-index: 15;
+  width: 340px;
+  max-width: calc(100vw - 24px);
+  padding: 16px 18px;
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  border-radius: 14px;
+  box-shadow: var(--shadow-2);
+}
+.app.list-collapsed .drive-ask { left: 0; }
+.drive-ask-title { font-family: var(--display); font-size: 17px; color: var(--ink); }
+.drive-ask-body {
+  margin-top: 6px;
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: var(--ink-mute);
+}
+.drive-ask-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 14px;
+}
+.drive-ask-btn {
+  padding: 9px 15px;
+  white-space: nowrap;
+  border: 1px solid var(--accent);
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--paper);
+  font-family: var(--mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+}
+.drive-ask-alt {
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--ink-soft);
+  font-family: var(--ui);
+  font-size: 12px;
+  text-decoration: underline;
+  cursor: pointer;
+}
+.drive-ask-alt:hover { color: var(--ink); }
+
+@media (max-width: 880px) {
+  /* The destinations gutter is gone below 880px, so the strip follows the map
+     to the viewport edge. */
+  .map-toolrow { left: 12px; }
+  .drive-ask { left: 0; }
+}
+
 @media (max-width: 768px) {
   .origin-btn-from { display: none; }
   .origin-btn-label b { max-width: 96px; }
+  /* Phones: the strip is the only chrome over the map, so the picker keeps its
+     label but drops back to pill size next to the Destinations tab. */
+  .map-toolrow .origin-btn { padding: 7px 11px; gap: 7px; }
+  .map-toolrow .origin-btn-label b { font-size: 12.5px; max-width: 120px; }
+  .map-toolrow .origin-btn-from { display: block; font-size: 8.5px; }
+  .drive-ask { top: calc(var(--filter-h) + 96px); left: 12px; right: 12px; width: auto; }
   /* Phones: the anchored popover overflowed the screen when its trigger sat
      mid-layout (e.g. the wizard's "Flying from" row). Pin it to the viewport
      instead so the full search + list is always on screen. */
@@ -2436,6 +2569,7 @@ input, select {
   padding: 0 10px 10px 14px;
 }
 .itin-leg-modes .trip-leg-mode { flex: 1; }
+.itin-leg .trip-leg-links { margin: 0; padding: 0 10px 10px 14px; }
 .itin-leg-noroad { padding: 6px 10px 6px 24px; font-family: var(--mono); font-size: 10.5px; color: var(--ink-mute); }
 
 /* ── Overview: the grouped receipt ──
@@ -4382,15 +4516,33 @@ input, select {
   background: var(--paper-dim);
 }
 
-.list-reopen {
+/* ── The map's floating control row ──────────────────────────────────────
+   One strip under the top panel carrying the map's own controls: the
+   list-reopen tab and the "travelling from" picker. It tracks the left edge
+   of the MAP (not the viewport), so it clears the destinations gutter when
+   that is open and slides left with it when it collapses. Pointer events are
+   off on the strip itself so the map stays draggable through the gaps. */
+.map-toolrow {
   position: absolute;
   top: calc(var(--filter-h) + 12px);
-  left: 12px;
+  left: calc(var(--panel-w) + 12px);
+  /* Above the drive prompt (z 15): the picker's popover drops over that card,
+     and the popover is where the prompt's own button sends you. */
   z-index: 16;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  pointer-events: none;
+}
+.map-toolrow > * { pointer-events: auto; }
+.app.list-collapsed .map-toolrow { left: 12px; }
+
+.list-reopen {
   display: none;            /* shown only when .app.list-collapsed */
   align-items: center;
   gap: 6px;
   padding: 7px 13px 7px 9px;
+  align-self: center;
   background: var(--paper);
   border: 1px solid var(--rule);
   border-radius: 999px;
@@ -8659,6 +8811,43 @@ input, select {
   margin-top: 12px;
 }
 
+/* ─── Stay tier chips: how expensive to sleep ───
+   Dorm bed through 4-5 star hotel; the active tier prices the stay and every
+   map label. The mono figure is the measured nightly (per bed for dorms, per
+   room for the rest); a chip without one has no measurement in this city and
+   will fall back to the entire-home price. */
+.stay-tier-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 8px 0 4px;
+}
+.stay-tier-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: var(--paper);
+  font: inherit;
+  font-size: 11.5px;
+  line-height: 1;
+  color: var(--ink);
+  cursor: pointer;
+  transition: border-color .15s, background .15s;
+}
+.stay-tier-chip:hover { border-color: var(--ink-soft); }
+.stay-tier-chip.on { border-color: var(--accent); background: var(--accent-bg); }
+.stay-tier-chip b {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-mute);
+}
+.stay-tier-chip.on b { color: var(--accent); }
+
 /* ─── Cost-group actions: verify this price, or change what drives it ───
    Every figure in the panel is an estimate; these are the only ways out of
    one, so they read as buttons rather than the underlined footnotes they
@@ -8871,7 +9060,6 @@ input, select {
   color: var(--ink-mute);
   margin-top: 1px;
 }
-
 
 
 /* ─── Bigger Home shortcut on mobile (overrides the 19px rule above) ─── */
@@ -12830,19 +13018,43 @@ input, select {
   gap: 12px;
   margin-bottom: 26px;
 }
-.day-flow-steps { display: flex; align-items: center; gap: 6px; flex: 1 1 auto; min-width: 0; }
+.day-flow-steps { display: flex; align-items: center; gap: 0; flex: 1 1 auto; min-width: 0; }
+/* The connector between two pills. Three separate pills read as three
+   unrelated chips; joined, they read as a journey with a position on it,
+   which is the whole job of a progress rail on the FIRST screen. */
+.day-flow-step-rail {
+  flex: 0 1 26px;
+  min-width: 10px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--rule-soft);
+  transition: background 0.2s ease;
+}
+.day-flow-step-rail.done { background: var(--accent); }
 .day-flow-step-dot {
   display: inline-flex;
   align-items: center;
   gap: 7px;
+  margin: 0 4px;
   padding: 6px 12px 6px 7px;
   border: 1px solid var(--rule);
   border-radius: 999px;
   background: transparent;
-  color: var(--ink-mute);
+  color: var(--ink-soft);
   font-size: 12px;
   cursor: default;
   transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+/* Upcoming steps are still part of the map of the journey, so they stay
+   legible rather than fading to a hint of grey. */
+.day-flow-step-dot:disabled { color: var(--ink-mute); border-color: var(--rule-soft); }
+.day-flow-stepcount {
+  flex: 0 0 auto;
+  font-family: var(--mono);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-soft);
+  white-space: nowrap;
 }
 .day-flow-step-dot.done { cursor: pointer; color: var(--ink-soft); }
 .day-flow-step-dot.done:hover { border-color: var(--accent); color: var(--accent); }
@@ -12930,32 +13142,64 @@ input, select {
 .day-flow-forms { min-width: 0; display: flex; flex-direction: column; }
 .day-flow-split .day-flow-step { padding-bottom: 0; }
 .day-flow-split .day-flow-panel { max-width: none; margin: 0; }
-.day-flow-mapside { min-width: 0; display: flex; flex-direction: column; gap: 8px; }
+/* Saved work continues the question column instead of starting a new band
+   under the whole split. Below the split it began level with the bottom of a
+   620px map, so step 1 was a question card, then a screen of nothing, then
+   the saved plans somewhere near the fold. */
+.day-flow-saved { display: flex; flex-direction: column; gap: 10px; margin-top: 16px; }
+.day-flow-mapside { min-width: 0; }
+/* Map and its instruction are ONE surface, wearing the same border and radius
+   as the question card opposite. Loose, the map read as a tile floating on the
+   page with a caption dangling under it. */
+.day-flow-mappanel {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--rule);
+  border-radius: 20px;
+  background: var(--paper);
+  overflow: hidden;
+}
+/* Sized against the question beside it, not against the window. At 620px the
+   map towered over a form that is four chips and a search box, and the row
+   read as a tall picture with a small note next to it. */
 .day-flow-mapside .dem-map {
-  height: clamp(360px, calc(100vh - 300px), 620px);
+  height: clamp(340px, calc(100vh - 400px), 500px);
   margin-bottom: 0;
-  border-radius: 18px;
+  border: none;
+  border-radius: 0;
 }
 /* This line is an INSTRUCTION ("tap a city on the map"), not a label, so it is
    set in the UI face at a readable size in ink that passes AA against paper.
    As 10.5px grey mono capitals it measured about 3.5:1, and reading it was work
-   at the exact moment the traveller needs telling what to do. */
+   at the exact moment the traveller needs telling what to do. It sits INSIDE
+   the frame, on its own hairline-topped row, so a long place name wraps within
+   the panel rather than running past its edge. */
 .day-flow-mapcap {
   display: flex;
-  align-items: center;
-  gap: 6px;
+  align-items: flex-start;
+  gap: 7px;
+  padding: 11px 14px;
+  border-top: 1px solid var(--rule-soft);
+  background: var(--paper-dim);
   font-family: var(--ui);
   font-size: 12.5px;
+  line-height: 1.45;
   letter-spacing: 0;
   color: var(--ink-soft);
-  padding-left: 2px;
 }
-.day-flow-mapcap svg { color: var(--accent); flex: none; }
+.day-flow-mapcap svg { color: var(--accent); flex: none; margin-top: 2px; }
 /* Below the split point the map would push the question off the screen, so
    the form leads and the map follows as a strip. */
 @media (max-width: 980px) {
   .day-flow-split, .day-flow-split-wide { grid-template-columns: 1fr; gap: 18px; }
   .day-flow-mapside .dem-map { height: 260px; }
+  /* Stacked, the reading order is question, then the map that answers it,
+     then saved work. The form column dissolves into the grid so its two
+     children can be ordered around the map between them. */
+  .day-flow-forms { display: contents; }
+  .day-flow-split .day-flow-step { order: 1; }
+  .day-flow-mapside { order: 2; }
+  .day-flow-saved { order: 3; margin-top: 0; }
 }
 
 /* Once chosen, the stay IS the field. */
@@ -13059,17 +13303,35 @@ input, select {
    single highlighted date. */
 .day-flow-date .cal-panes { grid-template-columns: 1fr; }
 /* A month grid stretched across the full panel gave every date a 74px cell
-   and pushed Continue below the fold. Capping the calendar's width lands the
-   cells near 40px, which is the size a date wants to be, and keeps the whole
-   month plus the button inside one screen. */
+   and pushed Continue below the fold. Capping the calendar's width keeps the
+   whole month plus the button inside one screen. The cap used to be 316px,
+   which put the cells at roughly 43px with 12.5px numerals: legible, but a
+   thumb-sized target it was not, and a date grid is nothing but targets. At
+   372px the cells clear 50px and the numbers can carry their real size. */
 .day-flow-date .date-field-inline {
   width: 100%;
-  max-width: 316px;
+  max-width: 372px;
   margin: 0 auto;
 }
-.day-flow-date .cal-inline .cal-day { font-size: 12.5px; border-radius: 8px; }
-.day-flow-date .cal-inline .cal-head { margin-bottom: 2px; }
-.day-flow-date .cal-weekday { padding-bottom: 3px; }
+.day-flow-date .cal-inline .cal-day { font-size: 14px; border-radius: 10px; }
+.day-flow-date .cal-inline .cal-head { margin-bottom: 4px; }
+.day-flow-date .cal-inline .cal-title { font-size: 14px; }
+.day-flow-date .cal-weekday { font-size: 11px; padding-bottom: 5px; }
+.day-flow-date .cal-inline .cal-weekdays,
+.day-flow-date .cal-inline .cal-grid { gap: 3px; }
+/* A 720px laptop is the shortest screen the date step has to finish on, and
+   thumb-sized cells are what that step is for, so the room comes out of the
+   card's own padding and the space around the question instead of out of the
+   grid. The cells stay at or above 44px. */
+@media (max-height: 830px) and (min-width: 981px) {
+  .day-flow-top { margin-bottom: 14px; }
+  .day-flow-split { padding-bottom: 14px; }
+  .day-flow-split .day-flow-panel { padding: 20px 26px 18px; gap: 11px; }
+  .day-flow-q { font-size: 25px; }
+  .day-flow-date { padding-top: 0; }
+  .day-flow-date .date-field-inline { max-width: 340px; }
+  .day-flow-next { padding: 12px 24px; }
+}
 .day-flow-next {
   align-self: center;
   min-width: 220px;
@@ -13114,13 +13376,17 @@ input, select {
   color: var(--ink-soft);
   display: inline-flex; align-items: center; justify-content: center;
 }
+/* 9px uppercase mono was a badge you had to lean in to read, on the one card
+   the screen is trying to point at. At 11px with real padding it is legible
+   at arm's length and still reads as a stamp rather than a heading. */
 .day-flow-card-tag {
-  padding: 3px 9px;
+  padding: 5px 11px;
   border-radius: 999px;
   background: var(--accent);
   color: #fff;
-  font-family: var(--mono); font-size: 9px; font-weight: 700;
-  text-transform: uppercase; letter-spacing: 0.07em;
+  font-family: var(--mono); font-size: 11px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.06em;
+  white-space: nowrap;
 }
 /* What each route actually gets you, so the fork is a real comparison
    rather than two similar-looking buttons. */
@@ -13140,7 +13406,10 @@ input, select {
 }
 .day-flow-card-points li svg { flex: 0 0 auto; margin-top: 2px; color: var(--accent); }
 /* The action every card ends in, so the fork is two buttons and not one button
-   beside a leaflet. */
+   beside a leaflet. Only the recommended card fills its action: two saturated
+   blocks side by side made the screen shout twice and said neither was the
+   answer. The second is an outline of the same size, so it is unmistakably a
+   button and unmistakably the quieter one. */
 .day-flow-card-go {
   display: inline-flex; align-items: center; gap: 6px;
   /* Both cards stretch to the taller one, so auto keeps the two actions on the
@@ -13148,13 +13417,18 @@ input, select {
   margin-top: auto;
   padding: 9px 14px;
   border-radius: 999px;
-  border: 1px solid var(--ink);
-  background: var(--ink);
-  color: var(--paper);
+  border: 1px solid var(--rule);
+  background: transparent;
+  color: var(--ink);
   font-size: 12.5px; font-weight: 600;
+  transition: border-color 0.12s ease, color 0.12s ease;
 }
-.day-flow-card:hover .day-flow-card-go { background: var(--accent); border-color: var(--accent); }
-.day-flow-card.primary .day-flow-card-go { background: var(--accent); border-color: var(--accent); }
+.day-flow-card:hover .day-flow-card-go { border-color: var(--ink); }
+.day-flow-card.primary .day-flow-card-go {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
 .day-flow-card { border-width: 1.5px; }
 .day-flow-card.primary { border-color: var(--accent); background: var(--accent-bg); }
 .day-flow-card.primary .day-flow-card-ico { background: var(--accent); color: #fff; }
@@ -13201,7 +13475,27 @@ input, select {
   font-size: 14px; font-weight: 700; color: var(--accent);
 }
 .chat-progress { font-family: var(--mono); font-size: 11.5px; color: var(--ink-mute); }
-.chat-body { flex: 1 1 auto; overflow-y: auto; padding: 18px 2px 10px; }
+/* The transcript scrolls, so it grows a scrollbar, and the platform default is
+   a thick opaque slab sitting inside a warm paper card. Thin and tinted, it
+   still says "there is more above" without being the loudest thing on screen.
+   (Firefox takes the two-keyword form; Chromium and Safari take the
+   ::-webkit-scrollbar pseudo-elements, so both are given.) */
+.chat-body {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  padding: 18px 2px 10px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--rule) transparent;
+}
+.chat-body::-webkit-scrollbar { width: 8px; }
+.chat-body::-webkit-scrollbar-track { background: transparent; }
+.chat-body::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: var(--rule);
+  border: 2px solid var(--paper);
+  background-clip: padding-box;
+}
+.chat-body::-webkit-scrollbar-thumb:hover { background: var(--ink-mute); }
 .chat-turn { margin-bottom: 18px; }
 .chat-bubble {
   display: inline-block;
@@ -13223,6 +13517,9 @@ input, select {
   width: fit-content;
   max-width: 88%;
 }
+/* Still the right shape for the town picker's short "ask Carta" wait, which
+   is one question to one answer. The ROUTE build, which is long and has real
+   stages, gets .rbs below instead. */
 .chat-typing { display: inline-flex; gap: 5px; align-items: center; }
 .chat-typing span {
   width: 7px; height: 7px; border-radius: 50%;
@@ -13232,7 +13529,99 @@ input, select {
 .chat-typing span:nth-child(2) { animation-delay: 0.2s; }
 .chat-typing span:nth-child(3) { animation-delay: 0.4s; }
 @keyframes chat-blink { 0%, 80%, 100% { opacity: 0.25; } 40% { opacity: 1; } }
-.chat-busy-note { font-size: 12.5px; color: var(--ink-soft); margin-top: 8px; }
+
+/* ── The route being built ───────────────────────────────────────────────
+   A build takes ten to thirty seconds. A typing bubble spent all of it saying
+   "something is happening", in the vocabulary of a messaging app rather than
+   of the routing engine that is actually running. This is the same wait spent
+   showing the work: a route drawing itself stop by stop, over a log of the
+   real passes, with the real numbers in them. */
+.rbs {
+  border: 1px solid var(--rule);
+  border-radius: 16px;
+  background: var(--paper);
+  overflow: hidden;
+}
+.rbs-head { padding: 13px 16px 0; }
+.rbs-title { font-family: var(--display); font-size: 16px; font-weight: 600; color: var(--ink); }
+.rbs-canvas { padding: 8px 14px 4px; }
+.rbs-svg { display: block; width: 100%; height: auto; }
+/* The survey grid the route is drawn over: present, never competing. */
+.rbs-grid-line { stroke: var(--rule-soft); }
+.rbs-grid { opacity: 0.75; }
+/* The corridor under consideration, then the line that won it. */
+.rbs-ghost { stroke: var(--rule); stroke-width: 1.6; stroke-dasharray: 3 6; opacity: 0.7; }
+.rbs-line {
+  stroke: var(--accent);
+  stroke-width: 2.6;
+  stroke-linecap: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: rbs-draw 2800ms linear infinite;
+}
+@keyframes rbs-draw {
+  0% { stroke-dashoffset: 1; }
+  86%, 100% { stroke-dashoffset: 0; }
+}
+.rbs-node-halo { fill: var(--accent); opacity: 0.14; }
+.rbs-node-dot { fill: var(--paper); stroke: var(--accent); stroke-width: 2; }
+/* Every stop runs the SAME 2800ms cycle as the line, and appears at its own
+   point inside it, so the whole canvas shares one phase. Staggering with
+   animation-delay instead gave each stop its own loop, and the late ones
+   stayed lit right through the next redraw. */
+.rbs-node { opacity: 0; animation-duration: 2800ms; animation-timing-function: linear; animation-iteration-count: infinite; }
+.rbs-node-0 { animation-name: rbs-pop-0; }
+.rbs-node-1 { animation-name: rbs-pop-1; }
+.rbs-node-2 { animation-name: rbs-pop-2; }
+.rbs-node-3 { animation-name: rbs-pop-3; }
+.rbs-node-4 { animation-name: rbs-pop-4; }
+@keyframes rbs-pop-0 { 0% { opacity: 0; } 4%, 94% { opacity: 1; } 100% { opacity: 0; } }
+@keyframes rbs-pop-1 { 0%, 19% { opacity: 0; } 24%, 94% { opacity: 1; } 100% { opacity: 0; } }
+@keyframes rbs-pop-2 { 0%, 38% { opacity: 0; } 43%, 94% { opacity: 1; } 100% { opacity: 0; } }
+@keyframes rbs-pop-3 { 0%, 59% { opacity: 0; } 64%, 94% { opacity: 1; } 100% { opacity: 0; } }
+@keyframes rbs-pop-4 { 0%, 81% { opacity: 0; } 86%, 94% { opacity: 1; } 100% { opacity: 0; } }
+.rbs-head-dot { fill: var(--accent); }
+.rbs-log {
+  list-style: none;
+  margin: 0;
+  padding: 4px 16px 14px;
+  display: flex; flex-direction: column; gap: 7px;
+}
+.rbs-line-row {
+  display: flex; align-items: flex-start; gap: 9px;
+  font-size: 12.5px;
+  line-height: 1.4;
+  color: var(--ink-soft);
+}
+.rbs-line-ico {
+  flex: none;
+  width: 19px; height: 19px;
+  border-radius: 50%;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: var(--paper-dim);
+  color: var(--ink-mute);
+}
+.rbs-line-row.done .rbs-line-ico { background: var(--accent-bg); color: var(--accent); }
+.rbs-line-row.now { color: var(--ink); font-weight: 600; }
+.rbs-line-row.now .rbs-line-ico {
+  background: var(--accent);
+  color: #fff;
+  animation: rbs-pulse 1.5s ease-in-out infinite;
+}
+@keyframes rbs-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.55; } }
+/* Numbers inside the log are measured facts, so they are set like every other
+   measured fact in the app. */
+.rbs-line-text { min-width: 0; font-variant-numeric: tabular-nums; }
+/* Motion is the point here, but it is never the message: every line is
+   readable, and the finished route is the resting state. */
+@media (prefers-reduced-motion: reduce) {
+  .rbs-line, .rbs-node, .rbs-line-row.now .rbs-line-ico { animation: none; }
+  .rbs-line { stroke-dashoffset: 0; }
+  .rbs-node { opacity: 1; }
+  /* SMIL does not read the motion preference, so the travelling head is
+     removed outright rather than paused. */
+  .rbs-head-dot { display: none; }
+}
 
 .chat-opts { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 12px; }
 .chat-opt {
@@ -13401,28 +13790,28 @@ input, select {
 /* Saved work reads as a quiet footer under the first question, never as a
    competing block. */
 /* Work you already have is a different thing from the question on screen, so
-   it gets its own card rather than a bare list hanging off a rule. It also
-   lines up under the question column instead of floating centred across the
-   full canvas, where it read as an orphan of neither half. */
+   it gets its own card rather than a bare list hanging off a rule. It lives
+   in the question column (.day-flow-saved), directly under the card it
+   continues, so it needs no width of its own: the column already has one. */
 .day-flow .day-landing-section {
   width: 100%;
-  max-width: 640px;
-  margin: 0 auto;
   padding: 16px 18px;
   border: 1px solid var(--rule);
   border-radius: 16px;
   background: var(--paper);
 }
-.day-flow .day-landing-section + .day-landing-section { margin-top: 10px; }
-.day-flow > .trip-note { max-width: 640px; margin: 12px auto 0; }
-@media (min-width: 981px) {
-  .day-flow-split-host > .day-landing-section,
-  .day-flow-split-host > .trip-note {
-    width: calc(50% - 13px);
-    max-width: none;
-    margin-left: 0;
-    margin-right: auto;
-  }
+.day-flow-saved .trip-note { margin: 0; }
+/* Two trips can honestly share a label ("Austria & Germany" planned twice),
+   so the dates-and-stops line under the name is not decoration, it is the
+   only thing telling the rows apart. It gets its own line, at a size and an
+   ink that can actually be read: 10.5px of --ink-mute measures about 3.6:1
+   against paper, fine for a timestamp, not fine for a distinguisher. */
+.day-flow-saved .day-saved-sub {
+  display: block;
+  margin-top: 3px;
+  font-size: 11.5px;
+  color: var(--ink-soft);
+  font-variant-numeric: tabular-nums;
 }
 
 @media (max-width: 768px) {
@@ -13531,7 +13920,6 @@ input, select {
 
 .ai-plan-balance { color: var(--ink-soft); }
 .ai-plan-upsell-link { margin-left: 6px; }
-
 
 @media (max-width: 720px) {
   .pass-grid { grid-template-columns: 1fr; }

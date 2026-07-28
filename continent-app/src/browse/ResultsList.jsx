@@ -43,7 +43,7 @@ const SORT_DEFAULT_DIR = Object.fromEntries(SORTS.map((s) => [s.key, s.dir]));
 // with the windowing below, typing/sorting no longer touches thousands of rows.
 const ResultRows = React.memo(function ResultRows({
   rows, unreachable, priceMode, dealThreshold, selectedId, favSet,
-  onSelect, onToggleFav, showFavOnly, homeCity, t,
+  onSelect, onToggleFav, showFavOnly, homeCity, needsDriveHome, t,
 }) {
   const scrollRef = useRef(null);
   const sentinelRef = useRef(null);
@@ -78,7 +78,10 @@ const ResultRows = React.memo(function ResultRows({
     <div className="results-scroll" ref={scrollRef}>
       {rows.length === 0 ? (
         <div className="results-empty">
-          {showFavOnly ? t('results.emptyFav') : t('results.empty')}
+          {/* No filter is hiding these: drive mode is holding every price back
+              until the traveller says which town they set off from. */}
+          {needsDriveHome ? t('results.emptyDrive')
+            : showFavOnly ? t('results.emptyFav') : t('results.empty')}
         </div>
       ) : (
         shownRows.map((p, i) => {
@@ -168,6 +171,7 @@ export const ResultsList = React.memo(function ResultsList({
   showFavOnly, setShowFavOnly,
   onOpenCompare,
   reachableCount, totalCount, homeCity = 'Brussels', transportMode = 'plane',
+  needsDriveHome = false,
   onCollapse,
 }) {
   const { t } = useI18n();
@@ -302,6 +306,7 @@ export const ResultsList = React.memo(function ResultsList({
         onToggleFav={onToggleFav}
         showFavOnly={showFavOnly}
         homeCity={homeCity}
+        needsDriveHome={needsDriveHome}
         t={t}
       />
     </div>
