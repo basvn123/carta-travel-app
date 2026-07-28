@@ -1,0 +1,3754 @@
+[
+ {
+  "city": "Amsterdam",
+  "country": "Netherlands",
+  "lat": 52.373,
+  "lon": 4.892,
+  "probes": [
+   {
+    "month": 2,
+    "hotels": [
+     {
+      "bucket": 3,
+      "night_eur": 94.14
+     },
+     {
+      "bucket": 3,
+      "night_eur": 103.32
+     },
+     {
+      "bucket": 3,
+      "night_eur": 114.8
+     },
+     {
+      "bucket": 3,
+      "night_eur": 123.98
+     },
+     {
+      "bucket": 3,
+      "night_eur": 137.76
+     },
+     {
+      "bucket": 4,
+      "night_eur": 135.91
+     },
+     {
+      "bucket": 4,
+      "night_eur": 150.31
+     },
+     {
+      "bucket": 4,
+      "night_eur": 159.9
+     },
+     {
+      "bucket": 4,
+      "night_eur": 174.29
+     },
+     {
+      "bucket": 4,
+      "night_eur": 195.08
+     },
+     {
+      "bucket": 5,
+      "night_eur": 238.13
+     },
+     {
+      "bucket": 5,
+      "night_eur": 259.78
+     },
+     {
+      "bucket": 5,
+      "night_eur": 270.6
+     },
+     {
+      "bucket": 5,
+      "night_eur": 300.37
+     },
+     {
+      "bucket": 5,
+      "night_eur": 346.37
+     }
+    ]
+   },
+   {
+    "month": 5,
+    "hotels": [
+     {
+      "bucket": 3,
+      "night_eur": 123.98
+     },
+     {
+      "bucket": 3,
+      "night_eur": 136.08
+     },
+     {
+      "bucket": 3,
+      "night_eur": 151.2
+     },
+     {
+      "bucket": 3,
+      "night_eur": 163.3
+     },
+     {
+      "bucket": 3,
+      "night_eur": 181.44
+     },
+     {
+      "bucket": 4,
+      "night_eur": 179.01
+     },
+     {
+      "bucket": 4,
+      "night_eur": 197.96
+     },
+     {
+      "bucket": 4,
+      "night_eur": 210.6
+     },
+     {
+      "bucket": 4,
+      "night_eur": 229.55
+     },
+     {
+      "bucket": 4,
+      "night_eur": 256.93
+     },
+     {
+      "bucket": 5,
+      "night_eur": 313.63
+     },
+     {
+      "bucket": 5,
+      "night_eur": 342.14
+     },
+     {
+      "bucket": 5,
+      "night_eur": 356.4
+     },
+     {
+      "bucket": 5,
+      "night_eur": 395.6
+     },
+     {
+      "bucket": 5,
+      "night_eur": 456.19
+     }
+    ]
+   },
+   {
+    "month": 8,
+    "hotels": [
+     {
+      "bucket": 3,
+      "night_eur": 143.5
+     },
+     {
+      "bucket": 3,
+      "night_eur": 157.5
+     },
+     {
+      "bucket": 3,
+      "night_eur": 175.0
+     },
+     {
+      "bucket": 3,
+      "night_eur": 189.0
+     },
+     {
+      "bucket": 3,
+      "night_eur": 210.0
+     },
+     {
+      "bucket": 4,
+      "night_eur": 207.19
+     },
+     {
+      "bucket": 4,
+      "night_eur": 229.12
+     },
+     {
+      "bucket": 4,
+      "night_eur": 243.75
+     },
+     {
+      "bucket": 4,
+      "night_eur": 265.69
+     },
+     {
+      "bucket": 4,
+      "night_eur": 297.38
+     },
+     {
+      "bucket": 5,
+      "night_eur": 363.0
+     },
+     {
+      "bucket": 5,
+      "night_eur": 396.0
+     },
+     {
+      "bucket": 5,
+      "night_eur": 412.5
+     },
+     {
+      "bucket": 5,
+      "night_eur": 457.88
+     },
+     {
+      "bucket": 5,
+      "night_eur": 528.0
+     }
+    ]
+   },
+   {
+    "month": 10,
+    "hotels": [
+     {
+      "bucket": 3,
+      "night_eur": 114.8
+     },
+     {
+      "bucket": 3,
+      "night_eur": 126.0
+     },
+     {
+      "bucket": 3,
+      "night_eur": 140.0
+     },
+     {
+      "bucket": 3,
+      "night_eur": 151.2
+     },
+     {
+      "bucket": 3,
+      "night_eur": 168.0
+     },
+     {
+      "bucket": 4,
+      "night_eur": 165.75
+     },
+     {
+      "bucket": 4,
+      "night_eur": 183.3
+     },
+     {
+      "bucket": 4,
+      "night_eur": 195.0
+     },
+     {
+      "bucket": 4,
+      "night_eur": 212.55
+     },
+     {
+      "bucket": 4,
+      "night_eur": 237.9
+     },
+     {
+      "bucket": 5,
+      "night_eur": 290.4
+     },
+     {
+      "bucket": 5,
+      "night_eur": 316.8
+     },
+     {
+      "bucket": 5,
+      "night_eur": 330.0
+     },
+     {
+      "bucket": 5,
+      "night_eur": 366.3
+     },
+     {
+      "bucket": 5,
+      "night_eur": 422.4
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "city": "Barcelona",
+  "country": "Spain",
+  "lat": 41.387,
+  "lon": 2.17,
+  "probes": [
+   {
+    "month": 2,
+    "hotels": [
+     {
+      "bucket": 3,
+      "night_eur": 80.69
+     },
+     {
+      "bucket": 3,
+      "night_eur": 88.56
+     },
+     {
+      "bucket": 3,
+      "night_eur": 98.4
+     },
+     {
+      "bucket": 3,
+      "night_eur": 106.27
+     },
+     {
+      "bucket": 3,
+      "night_eur": 118.08
+     },
+     {
+      "bucket": 4,
+      "night_eur": 115.0
+     },
+     {
+      "bucket": 4,
+      "night_eur": 127.18
+     },
+     {
+      "bucket": 4,
+      "night_eur": 135.3
+     },
+     {
+      "bucket": 4,
+      "night_eur": 147.48
+     },
+     {
+      "bucket": 4,
+      "night_eur": 165.07
+     },
+     {
+      "bucket": 5,
+      "night_eur": 205.66
+     },
+     {
+      "bucket": 5,
+      "night_eur": 224.35
+     },
+     {
+      "bucket": 5,
+      "night_eur": 233.7
+     },
+     {
+      "bucket": 5,
+      "night_eur": 259.41
+     },
+     {
+      "bucket": 5,
+      "night_eur": 299.14
+     }
+    ]
+   },
+   {
+    "month": 5,
+    "hotels": [
+     {
+      "bucket": 3,
+      "night_eur": 106.27
+     },
+     {
+      "bucket": 3,
+      "night_eur": 116.64
+     },
+     {
+      "bucket": 3,
+      "night_eur": 129.6
+     },
+     {
+      "bucket": 3,
+      "night_eur": 139.97
+     },
+     {
+      "bucket": 3,
+      "night_eur": 155.52
+     },
+     {
+      "bucket": 4,
+      "night_eur": 151.47
+     },
+     {
+      "bucket": 4,
+      "night_eur": 167.51
+     },
+     {
+      "bucket": 4,
+      "night_eur": 178.2
+     },
+     {
+      "bucket": 4,
+      "night_eur": 194.24
+     },
+     {
+      "bucket": 4,
+      "night_eur": 217.4
+     },
+     {
+      "bucket": 5,
+      "night_eur": 270.86
+     },
+     {
+      "bucket": 5,
+      "night_eur": 295.49
+     },
+     {
+      "bucket": 5,
+      "night_eur": 307.8
+     },
+     {
+      "bucket": 5,
+      "night_eur": 341.66
+     },
+     {
+      "bucket": 5,
+      "night_eur": 393.98
+     }
+    ]
+   },
+   {
+    "month": 8,
+    "hotels": [
+     {
+      "bucket": 3,
+      "night_eur": 123.0
+     },
+     {
+      "bucket": 3,
+      "night_eur": 135.0
+     },
+     {
+      "bucket": 3,
+      "night_eur": 150.0
+     },
+     {
+      "bucket": 3,
+      "night_eur": 162.0
+     },
+     {
+      "bucket": 3,
+      "night_eur": 180.0
+     },
+     {
+      "bucket": 4,
+      "night_eur": 175.31
+     },
+     {
+      "bucket": 4,
+      "night_eur": 193.88
+     },
+     {
+      "bucket": 4,
+      "night_eur": 206.25
+     },
+     {
+      "bucket": 4,
+      "night_eur": 224.81
+     },
+     {
+      "bucket": 4,
+      "night_eur": 251.62
+     },
+     {
+      "bucket": 5,
+      "night_eur": 313.5
+     },
+     {
+      "bucket": 5,
+      "night_eur": 342.0
+     },
+     {
+      "bucket": 5,
+      "night_eur": 356.25
+     },
+     {
+      "bucket": 5,
+      "night_eur": 395.44
+     },
+     {
+      "bucket": 5,
+      "night_eur": 456.0
+     }
+    ]
+   },
+   {
+    "month": 10,
+    "hotels": [
+     {
+      "bucket": 3,
+      "night_eur": 98.4
+     },
+     {
+      "bucket": 3,
+      "night_eur": 108.0
+     },
+     {
+      "bucket": 3,
+      "night_eur": 120.0
+     },
+     {
+      "bucket": 3,
+      "night_eur": 129.6
+     },
+     {
+      "bucket": 3,
+      "night_eur": 144.0
+     },
+     {
+      "bucket": 4,
+      "night_eur": 140.25
+     },
+     {
+      "bucket": 4,
+      "night_eur": 155.1
+     },
+     {
+      "bucket": 4,
+      "night_eur": 165.0
+     },
+     {
+      "bucket": 4,
+      "night_eur": 179.85
+     },
+     {
+      "bucket": 4,
+      "night_eur": 201.3
+     },
+     {
+      "bucket": 5,
+      "night_eur": 250.8
+     },
+     {
+      "bucket": 5,
+      "night_eur": 273.6
+     },
+     {
+      "bucket": 5,
+      "night_eur": 285.0
+     },
+     {
+      "bucket": 5,
+      "night_eur": 316.35
+     },
+     {
+      "bucket": 5,
+      "night_eur": 364.8
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "city": "Berlin",
+  "country": "Germany",
+  "lat": 52.52,
+  "lon": 13.405,
+  "probes": [
+   {
+    "month": 2,
+    "hotels": [
+     {
+      "bucket": 3,
+      "night_eur": 63.88
+     },
+     {
+      "bucket": 3,
+      "night_eur": 70.11
+     },
+     {
+      "bucket": 3,
+      "night_eur": 77.9
+     },
+     {
+      "bucket": 3,
+      "night_eur": 84.13
+     },
+     {
+      "bucket": 3,
+      "night_eur": 93.48
+     },
+     {
+      "bucket": 4,
+      "night_eur": 90.61
+     },
+     {
+      "bucket": 4,
+      "night_eur": 100.2
+     },
+     {
+      "bucket": 4,
+      "night_eur": 106.6
+     },
+     {
+      "bucket": 4,
+      "night_eur": 116.19
+     },
+     {
+      "bucket": 4,
+      "night_eur": 130.05
+     },
+     {
+      "bucket": 5,
+      "night_eur": 158.75
+     },
+     {
+      "bucket": 5,
+      "night_eur": 173.18
+     },
+     {
+      "bucket": 5,
+      "night_eur": 180.4
+     },
+     {
+      "bucket": 5,
+      "night_eur": 200.24
+     },
+     {
+      "bucket": 5,
+      "night_eur": 230.91
+     }
+    ]
+   },
+   {
+    "month": 5,
+    "hotels": [
+     {
+      "bucket": 3,
+      "night_eur": 84.13
+     },
+     {
+      "bucket": 3,
+      "night_eur": 92.34
+     },
+     {
+      "bucket": 3,
+      "night_eur": 102.6
+     },
+     {
+      "bucket": 3,
+      "night_eur": 110.81
+     },
+     {
+      "bucket": 3,
+      "night_eur": 123.12
+     },
+     {
+      "bucket": 4,
+      "night_eur": 119.34
+     },
+     {
+      "bucket": 4,
+      "night_eur": 131.98
+     },
+     {
+      "bucket": 4,
+      "night_eur": 140.4
+     },
+     {
+      "bucket": 4,
+      "night_eur": 153.04
+     },
+     {
+      "bucket": 4,
+      "night_eur": 171.29
+     },
+     {
+      "bucket": 5,
+      "night_eur": 209.09
+     },
+     {
+      "bucket": 5,
+      "night_eur": 228.1
+     },
+     {
+      "bucket": 5,
+      "night_eur": 237.6
+     },
+     {
+      "bucket": 5,
+      "night_eur": 263.74
+     },
+     {
+      "bucket": 5,
+      "night_eur": 304.13
+     }
+    ]
+   },
+   {
+    "month": 8,
+    "hotels": [
+     {
+      "bucket": 3,
+      "night_eur": 97.37
+     },
+     {
+      "bucket": 3,
+      "night_eur": 106.88
+     },
+     {
+      "bucket": 3,
+      "night_eur": 118.75
+     },
+     {
+      "bucket": 3,
+      "night_eur": 128.25
+     },
+     {
+      "bucket": 3,
+      "night_eur": 142.5
+     },
+     {
+      "bucket": 4,
+      "night_eur": 138.12
+     },
+     {
+      "bucket": 4,
+      "night_eur": 152.75
+     },
+     {
+      "bucket": 4,
+      "night_eur": 162.5
+     },
+     {
+      "bucket": 4,
+      "night_eur": 177.13
+     },
+     {
+      "bucket": 4,
+      "night_eur": 198.25
+     },
+     {
+      "bucket": 5,
+      "night_eur": 242.0
+     },
+     {
+      "bucket": 5,
+      "night_eur": 264.0
+     },
+     {
+      "bucket": 5,
+      "night_eur": 275.0
+     },
+     {
+      "bucket": 5,
+      "night_eur": 305.25
+     },
+     {
+      "bucket": 5,
+      "night_eur": 352.0
+     }
+    ]
+   },
+   {
+    "month": 10,
+    "hotels": [
+     {
+      "bucket": 3,
+      "night_eur": 77.9
+     },
+     {
+      "bucket": 3,
+      "night_eur": 85.5
+     },
+     {
+      "bucket": 3,
+      "night_eur": 95.0
+     },
+     {
+      "bucket": 3,
+      "night_eur": 102.6
+     },
+     {
+      "bucket": 3,
+      "night_eur": 114.0
+     },
+     {
+      "bucket": 4,
+      "night_eur": 110.5
+     },
+     {
+      "bucket": 4,
+      "night_eur": 122.2
+     },
+     {
+      "bucket": 4,
+      "night_eur": 130.0
+     },
+     {
+      "bucket": 4,
+      "night_eur": 141.7
+     },
+     {
+      "bucket": 4,
+      "night_eur": 158.6
+     },
+     {
+      "bucket": 5,
+      "night_eur": 193.6
+     },
+     {
+      "bucket": 5,
+      "night_eur": 211.2
+     },
+     {
+      "bucket": 5,
+      "night_eur": 220.0
+     },
+     {
+      "bucket": 5,
+      "night_eur": 244.2
+     },
+     {
+      "bucket": 5,
+      "night_eur": 281.6
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "city": "Prague",
+  "country": "Czechia",
+  "lat": 50.087,
+  "lon": 14.421,
+  "probes": [
+   {
+    "month": 2,
+    "hotels": [
+     {
+      "bucket": 3,
+      "night_eur": 50.43
+     },
+     {
+      "bucket": 3,
+      "night_eur": 55.35
+     },
+     {
+      "bucket": 3,
+      "night_eur": 61.5
+     },
+     {
+      "bucket": 3,
+      "night_eur": 66.42
+     },
+     {
+      "bucket": 3,
+      "night_eur": 73.8
+     },
+     {
+      "bucket": 4,
+      "night_eur": 69.7
+     },
+     {
+      "bucket": 4,
+      "night_eur": 77.08
+     },
+     {
+      "bucket": 4,
+      "night_eur": 82.0
+     },
+     {
+      "bucket": 4,
+      "night_eur": 89.38
+     },
+     {
+      "bucket": 4,
+      "night_eur": 100.04
+     },
+     {
+      "bucket": 5,
+      "night_eur": 126.28
+     },
+     {
+      "bucket": 5,
+      "night_eur": 137.76
+     },
+     {
+      "bucket": 5,
+      "night_eur": 143.5
+     },
+     {
+      "bucket": 5,
+      "night_eur": 159.29
+     },
+     {
+      "bucket": 5,
+      "night_eur": 183.68
+     }
+    ]
+   },
+   {
+    "month": 5,
+    "hotels": [
+     {
+      "bucket": 3,
+      "night_eur": 66.42
+     },
+     {
+      "bucket": 3,
+      "night_eur": 72.9
+     },
+     {
+      "bucket": 3,
+      "night_eur": 81.0
+     },
+     {
+      "bucket": 3,
+      "night_eur": 87.48
+     },
+     {
+      "bucket": 3,
+      "night_eur": 97.2
+     },
+     {
+      "bucket": 4,
+      "night_eur": 91.8
+     },
+     {
+      "bucket": 4,
+      "night_eur": 101.52
+     },
+     {
+      "bucket": 4,
+      "night_eur": 108.0
+     },
+     {
+      "bucket": 4,
+      "night_eur": 117.72
+     },
+     {
+      "bucket": 4,
+      "night_eur": 131.76
+     },
+     {
+      "bucket": 5,
+      "night_eur": 166.32
+     },
+     {
+      "bucket": 5,
+      "night_eur": 181.44
+     },
+     {
+      "bucket": 5,
+      "night_eur": 189.0
+     },
+     {
+      "bucket": 5,
+      "night_eur": 209.79
+     },
+     {
+      "bucket": 5,
+      "night_eur": 241.92
+     }
+    ]
+   },
+   {
+    "month": 8,
+    "hotels": [
+     {
+      "bucket": 3,
+      "night_eur": 76.87
+     },
+     {
+      "bucket": 3,
+      "night_eur": 84.38
+     },
+     {
+      "bucket": 3,
+      "night_eur": 93.75
+     },
+     {
+      "bucket": 3,
+      "night_eur": 101.25
+     },
+     {
+      "bucket": 3,
+      "night_eur": 112.5
+     },
+     {
+      "bucket": 4,
+      "night_eur": 106.25
+     },
+     {
+      "bucket": 4,
+      "night_eur": 117.5
+     },
+     {
+      "bucket": 4,
+      "night_eur": 125.0
+     },
+     {
+      "bucket": 4,
+      "night_eur": 136.25
+     },
+     {
+      "bucket": 4,
+      "night_eur": 152.5
+     },
+     {
+      "bucket": 5,
+      "night_eur": 192.5
+     },
+     {
+      "bucket": 5,
+      "night_eur": 210.0
+     },
+     {
+      "bucket": 5,
+      "night_eur": 218.75
+     },
+     {
+      "bucket": 5,
+      "night_eur": 242.81
+     },
+     {
+      "bucket": 5,
+      "night_eur": 280.0
+     }
+    ]
+   },
+   {
+    "month": 10,
+    "hotels": [
+     {
+      "bucket": 3,
+      "night_eur": 61.5
+     },
+     {
+      "bucket": 3,
+      "night_eur": 67.5
+     },
+     {
+      "bucket": 3,
+      "night_eur": 75.0
+     },
+     {
+      "bucket": 3,
+      "night_eur": 81.0
+     },
+     {
+      "bucket": 3,
+      "night_eur": 90.0
+     },
+     {
+      "bucket": 4,
+      "night_eur": 85.0
+     },
+     {
+      "bucket": 4,
+      "night_eur": 94.0
+     },
+     {
+      "bucket": 4,
+      "night_eur": 100.0
+     },
+     {
+      "bucket": 4,
+      "night_eur": 109.0
+     },
+     {
+      "bucket": 4,
+      "night_eur": 122.0
+     },
+     {
+      "bucket": 5,
+      "night_eur": 154.0
+     },
+     {
+      "bucket": 5,
+      "night_eur": 168.0
+     },
+     {
+      "bucket": 5,
+      "night_eur": 175.0
+     },
+     {
+      "bucket": 5,
+      "night_eur": 194.25
+     },
+     {
+      "bucket": 5,
+      "night_eur": 224.0
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "city": "Lisbon",
+  "country": "Portugal",
+  "lat": 38.722,
+  "lon": -9.139,
+  "probes": [
+   {
+    "month": 2,
+    "hotels": [
+     {
+      "bucket": 3,
+      "night_eur": 67.24
+     },
+     {
+      "bucket": 3,
+      "night_eur": 73.8
+     },
+     {
+      "bucket": 3,
+      "night_eur": 82.0
+     },
+     {
+      "bucket": 3,
+      "night_eur": 88.56
+     },
+     {
+      "bucket": 3,
+      "night_eur": 98.4
+     },
+     {
+      "bucket": 4,
+      "night_eur": 97.58
+     },
+     {
+      "bucket": 4,
+      "night_eur": 107.91
+     },
+     {
+      "bucket": 4,
+      "night_eur": 114.8
+     },
+     {
+      "bucket": 4,
+      "night_eur": 125.13
+     },
+     {
+      "bucket": 4,
+      "night_eur": 140.06
+     },
+     {
+      "bucket": 5,
+      "night_eur": 173.18
+     },
+     {
+      "bucket": 5,
+      "night_eur": 188.93
+     },
+     {
+      "bucket": 5,
+      "night_eur": 196.8
+     },
+     {
+      "bucket": 5,
+      "night_eur": 218.45
+     },
+     {
+      "bucket": 5,
+      "night_eur": 251.9
+     }
+    ]
+   },
+   {
+    "month": 5,
+    "hotels": [
+     {
+      "bucket": 3,
+      "night_eur": 88.56
+     },
+     {
+      "bucket": 3,
+      "night_eur": 97.2
+     },
+     {
+      "bucket": 3,
+      "night_eur": 108.0
+     },
+     {
+      "bucket": 3,
+      "night_eur": 116.64
+     },
+     {
+      "bucket": 3,
+      "night_eur": 129.6
+     },
+     {
+      "bucket": 4,
+      "night_eur": 128.52
+     },
+     {
+      "bucket": 4,
+      "night_eur": 142.13
+     },
+     {
+      "bucket": 4,
+      "night_eur": 151.2
+     },
+     {
+      "bucket": 4,
+      "night_eur": 164.81
+     },
+     {
+      "bucket": 4,
+      "night_eur": 184.46
+     },
+     {
+      "bucket": 5,
+      "night_eur": 228.1
+     },
+     {
+      "bucket": 5,
+      "night_eur": 248.83
+     },
+     {
+      "bucket": 5,
+      "night_eur": 259.2
+     },
+     {
+      "bucket": 5,
+      "night_eur": 287.71
+     },
+     {
+      "bucket": 5,
+      "night_eur": 331.78
+     }
+    ]
+   },
+   {
+    "month": 8,
+    "hotels": [
+     {
+      "bucket": 3,
+      "night_eur": 102.5
+     },
+     {
+      "bucket": 3,
+      "night_eur": 112.5
+     },
+     {
+      "bucket": 3,
+      "night_eur": 125.0
+     },
+     {
+      "bucket": 3,
+      "night_eur": 135.0
+     },
+     {
+      "bucket": 3,
+      "night_eur": 150.0
+     },
+     {
+      "bucket": 4,
+      "night_eur": 148.75
+     },
+     {
+      "bucket": 4,
+      "night_eur": 164.5
+     },
+     {
+      "bucket": 4,
+      "night_eur": 175.0
+     },
+     {
+      "bucket": 4,
+      "night_eur": 190.75
+     },
+     {
+      "bucket": 4,
+      "night_eur": 213.5
+     },
+     {
+      "bucket": 5,
+      "night_eur": 264.0
+     },
+     {
+      "bucket": 5,
+      "night_eur": 288.0
+     },
+     {
+      "bucket": 5,
+      "night_eur": 300.0
+     },
+     {
+      "bucket": 5,
+      "night_eur": 333.0
+     },
+     {
+      "bucket": 5,
+      "night_eur": 384.0
+     }
+    ]
+   },
+   {
+    "month": 10,
+    "hotels": [
+     {
+      "bucket": 3,
+      "night_eur": 82.0
+     },
+     {
+      "bucket": 3,
+      "night_eur": 90.0
+     },
+     {
+      "bucket": 3,
+      "night_eur": 100.0
+     },
+     {
+      "bucket": 3,
+      "night_eur": 108.0
+     },
+     {
+      "bucket": 3,
+      "night_eur": 120.0
+     },
+     {
+      "bucket": 4,
+      "night_eur": 119.0
+     },
+     {
+      "bucket": 4,
+      "night_eur": 131.6
+     },
+     {
+      "bucket": 4,
+      "night_eur": 140.0
+     },
+     {
+      "bucket": 4,
+      "night_eur": 152.6
+     },
+     {
+      "bucket": 4,
+      "night_eur": 170.8
+     },
+     {
+      "bucket": 5,
+      "night_eur": 211.2
+     },
+     {
+      "bucket": 5,
+      "night_eur": 230.4
+     },
+     {
+      "bucket": 5,
+      "night_eur": 240.0
+     },
+     {
+      "bucket": 5,
+      "night_eur": 266.4
+     },
+     {
+      "bucket": 5,
+      "night_eur": 307.2
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "city": "Porto",
+  "country": "Portugal",
+  "lat": 41.158,
+  "lon": -8.629,
+  "probes": [
+   {
+    "month": 2,
+    "hotels": [
+     {
+      "bucket": 3,
+      "night_eur": 57.15
+     },
+     {
+      "bucket": 3,
+      "night_eur": 62.73
+     },
+     {
+      "bucket": 3,
+      "night_eur": 69.7
+     },
+     {
+      "bucket": 3,
+      "night_eur": 75.28
+     },
+     {
+      "bucket": 3,
+      "night_eur": 83.64
+     },
+     {
+      "bucket": 4,
+      "night_eur": 80.16
+     },
+     {
+      "bucket": 4,
+      "night_eur": 88.64
+     },
+     {
+      "bucket": 4,
+      "night_eur": 94.3
+     },
+     {
+      "bucket": 4,
+      "night_eur": 102.79
+     },
+     {
+      "bucket": 4,
+      "night_eur": 115.05
+     },
+     {
+      "bucket": 5,
+      "night_eur": 140.71
+     },
+     {
+      "bucket": 5,
+      "night_eur": 153.5
+     },
+     {
+      "bucket": 5,
+      "night_eur": 159.9
+     },
+     {
+      "bucket": 5,
+      "night_eur": 177.49
+     },
+     {
+      "bucket": 5,
+      "night_eur": 204.67
+     }
+    ]
+   },
+   {
+    "month": 5,
+    "hotels": [
+     {
+      "bucket": 3,
+      "night_eur": 75.28
+     },
+     {
+      "bucket": 3,
+      "night_eur": 82.62
+     },
+     {
+      "bucket": 3,
+      "night_eur": 91.8
+     },
+     {
+      "bucket": 3,
+      "night_eur": 99.14
+     },
+     {
+      "bucket": 3,
+      "night_eur": 110.16
+     },
+     {
+      "bucket": 4,
+      "night_eur": 105.57
+     },
+     {
+      "bucket": 4,
+      "night_eur": 116.75
+     },
+     {
+      "bucket": 4,
+      "night_eur": 124.2
+     },
+     {
+      "bucket": 4,
+      "night_eur": 135.38
+     },
+     {
+      "bucket": 4,
+      "night_eur": 151.52
+     },
+     {
+      "bucket": 5,
+      "night_eur": 185.33
+     },
+     {
+      "bucket": 5,
+      "night_eur": 202.18
+     },
+     {
+      "bucket": 5,
+      "night_eur": 210.6
+     },
+     {
+      "bucket": 5,
+      "night_eur": 233.77
+     },
+     {
+      "bucket": 5,
+      "night_eur": 269.57
+     }
+    ]
+   },
+   {
+    "month": 8,
+    "hotels": [
+     {
+      "bucket": 3,
+      "night_eur": 87.12
+     },
+     {
+      "bucket": 3,
+      "night_eur": 95.62
+     },
+     {
+      "bucket": 3,
+      "night_eur": 106.25
+     },
+     {
+      "bucket": 3,
+      "night_eur": 114.75
+     },
+     {
+      "bucket": 3,
+      "night_eur": 127.5
+     },
+     {
+      "bucket": 4,
+      "night_eur": 122.19
+     },
+     {
+      "bucket": 4,
+      "night_eur": 135.12
+     },
+     {
+      "bucket": 4,
+      "night_eur": 143.75
+     },
+     {
+      "bucket": 4,
+      "night_eur": 156.69
+     },
+     {
+      "bucket": 4,
+      "night_eur": 175.37
+     },
+     {
+      "bucket": 5,
+      "night_eur": 214.5
+     },
+     {
+      "bucket": 5,
+      "night_eur": 234.0
+     },
+     {
+      "bucket": 5,
+      "night_eur": 243.75
+     },
+     {
+      "bucket": 5,
+      "night_eur": 270.56
+     },
+     {
+      "bucket": 5,
+      "night_eur": 312.0
+     }
+    ]
+   },
+   {
+    "month": 10,
+    "hotels": [
+     {
+      "bucket": 3,
+      "night_eur": 69.7
+     },
+     {
+      "bucket": 3,
+      "night_eur": 76.5
+     },
+     {
+      "bucket": 3,
+      "night_eur": 85.0
+     },
+     {
+      "bucket": 3,
+      "night_eur": 91.8
+     },
+     {
+      "bucket": 3,
+      "night_eur": 102.0
+     },
+     {
+      "bucket": 4,
+      "night_eur": 97.75
+     },
+     {
+      "bucket": 4,
+      "night_eur": 108.1
+     },
+     {
+      "bucket": 4,
+      "night_eur": 115.0
+     },
+     {
+      "bucket": 4,
+      "night_eur": 125.35
+     },
+     {
+      "bucket": 4,
+      "night_eur": 140.3
+     },
+     {
+      "bucket": 5,
+      "night_eur": 171.6
+     },
+     {
+      "bucket": 5,
+      "night_eur": 187.2
+     },
+     {
+      "bucket": 5,
+      "night_eur": 195.0
+     },
+     {
+      "bucket": 5,
+      "night_eur": 216.45
+     },
+     {
+      "bucket": 5,
+      "night_eur": 249.6
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "city": "Krakow",
+  "country": "Poland",
+  "lat": 50.062,
+  "lon": 19.937,
+  "probes": [
+   {
+    "month": 2,
+    "hotels": [
+     {
+      "bucket": 3,
+      "night_eur": 43.71
+     },
+     {
+      "bucket": 3,
+      "night_eur": 47.97
+     },
+     {
+      "bucket": 3,
+      "night_eur": 53.3
+     },
+     {
+      "bucket": 3,
+      "night_eur": 57.56
+     },
+     {
+      "bucket": 3,
+      "night_eur": 63.96
+     },
+     {
+      "bucket": 4,
+      "night_eur": 61.34
+     },
+     {
+      "bucket": 4,
+      "night_eur": 67.83
+     },
+     {
+      "bucket": 4,
+      "night_eur": 72.16
+     },
+     {
+      "bucket": 4,
+      "night_eur": 78.65
+     },
+     {
+      "bucket": 4,
+      "night_eur": 88.04
+     },
+     {
+      "bucket": 5,
+      "night_eur": 108.24
+     },
+     {
+      "bucket": 5,
+      "night_eur": 118.08
+     },
+     {
+      "bucket": 5,
+      "night_eur": 123.0
+     },
+     {
+      "bucket": 5,
+      "night_eur": 136.53
+     },
+     {
+      "bucket": 5,
+      "night_eur": 157.44
+     }
+    ]
+   },
+   {
+    "month": 5,
+    "hotels": [
+     {
+      "bucket": 3,
+      "night_eur": 57.56
+     },
+     {
+      "bucket": 3,
+      "night_eur": 63.18
+     },
+     {
+      "bucket": 3,
+      "night_eur": 70.2
+     },
+     {
+      "bucket": 3,
+      "night_eur": 75.82
+     },
+     {
+      "bucket": 3,
+      "night_eur": 84.24
+     },
+     {
+      "bucket": 4,
+      "night_eur": 80.78
+     },
+     {
+      "bucket": 4,
+      "night_eur": 89.34
+     },
+     {
+      "bucket": 4,
+      "night_eur": 95.04
+     },
+     {
+      "bucket": 4,
+      "night_eur": 103.59
+     },
+     {
+      "bucket": 4,
+      "night_eur": 115.95
+     },
+     {
+      "bucket": 5,
+      "night_eur": 142.56
+     },
+     {
+      "bucket": 5,
+      "night_eur": 155.52
+     },
+     {
+      "bucket": 5,
+      "night_eur": 162.0
+     },
+     {
+      "bucket": 5,
+      "night_eur": 179.82
+     },
+     {
+      "bucket": 5,
+      "night_eur": 207.36
+     }
+    ]
+   },
+   {
+    "month": 8,
+    "hotels": [
+     {
+      "bucket": 3,
+      "night_eur": 66.62
+     },
+     {
+      "bucket": 3,
+      "night_eur": 73.12
+     },
+     {
+      "bucket": 3,
+      "night_eur": 81.25
+     },
+     {
+      "bucket": 3,
+      "night_eur": 87.75
+     },
+     {
+      "bucket": 3,
+      "night_eur": 97.5
+     },
+     {
+      "bucket": 4,
+      "night_eur": 93.5
+     },
+     {
+      "bucket": 4,
+      "night_eur": 103.4
+     },
+     {
+      "bucket": 4,
+      "night_eur": 110.0
+     },
+     {
+      "bucket": 4,
+      "night_eur": 119.9
+     },
+     {
+      "bucket": 4,
+      "night_eur": 134.2
+     },
+     {
+      "bucket": 5,
+      "night_eur": 165.0
+     },
+     {
+      "bucket": 5,
+      "night_eur": 180.0
+     },
+     {
+      "bucket": 5,
+      "night_eur": 187.5
+     },
+     {
+      "bucket": 5,
+      "night_eur": 208.13
+     },
+     {
+      "bucket": 5,
+      "night_eur": 240.0
+     }
+    ]
+   },
+   {
+    "month": 10,
+    "hotels": [
+     {
+      "bucket": 3,
+      "night_eur": 53.3
+     },
+     {
+      "bucket": 3,
+      "night_eur": 58.5
+     },
+     {
+      "bucket": 3,
+      "night_eur": 65.0
+     },
+     {
+      "bucket": 3,
+      "night_eur": 70.2
+     },
+     {
+      "bucket": 3,
+      "night_eur": 78.0
+     },
+     {
+      "bucket": 4,
+      "night_eur": 74.8
+     },
+     {
+      "bucket": 4,
+      "night_eur": 82.72
+     },
+     {
+      "bucket": 4,
+      "night_eur": 88.0
+     },
+     {
+      "bucket": 4,
+      "night_eur": 95.92
+     },
+     {
+      "bucket": 4,
+      "night_eur": 107.36
+     },
+     {
+      "bucket": 5,
+      "night_eur": 132.0
+     },
+     {
+      "bucket": 5,
+      "night_eur": 144.0
+     },
+     {
+      "bucket": 5,
+      "night_eur": 150.0
+     },
+     {
+      "bucket": 5,
+      "night_eur": 166.5
+     },
+     {
+      "bucket": 5,
+      "night_eur": 192.0
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "city": "Budapest",
+  "country": "Hungary",
+  "lat": 47.498,
+  "lon": 19.04,
+  "probes": [
+   {
+    "month": 2,
+    "hotels": [
+     {
+      "bucket": 3,
+      "night_eur": 47.07
+     },
+     {
+      "bucket": 3,
+      "night_eur": 51.66
+     },
+     {
+      "bucket": 3,
+      "night_eur": 57.4
+     },
+     {
+      "bucket": 3,
+      "night_eur": 61.99
+     },
+     {
+      "bucket": 3,
+      "night_eur": 68.88
+     },
+     {
+      "bucket": 4,
+      "night_eur": 66.21
+     },
+     {
+      "bucket": 4,
+      "night_eur": 73.23
+     },
+     {
+      "bucket": 4,
+      "night_eur": 77.9
+     },
+     {
+      "bucket": 4,
+      "night_eur": 84.91
+     },
+     {
+      "bucket": 4,
+      "night_eur": 95.04
+     },
+     {
+      "bucket": 5,
+      "night_eur": 115.46
+     },
+     {
+      "bucket": 5,
+      "night_eur": 125.95
+     },
+     {
+      "bucket": 5,
+      "night_eur": 131.2
+     },
+     {
+      "bucket": 5,
+      "night_eur": 145.63
+     },
+     {
+      "bucket": 5,
+      "night_eur": 167.94
+     }
+    ]
+   },
+   {
+    "month": 5,
+    "hotels": [
+     {
+      "bucket": 3,
+      "night_eur": 61.99
+     },
+     {
+      "bucket": 3,
+      "night_eur": 68.04
+     },
+     {
+      "bucket": 3,
+      "night_eur": 75.6
+     },
+     {
+      "bucket": 3,
+      "night_eur": 81.65
+     },
+     {
+      "bucket": 3,
+      "night_eur": 90.72
+     },
+     {
+      "bucket": 4,
+      "night_eur": 87.21
+     },
+     {
+      "bucket": 4,
+      "night_eur": 96.44
+     },
+     {
+      "bucket": 4,
+      "night_eur": 102.6
+     },
+     {
+      "bucket": 4,
+      "night_eur": 111.83
+     },
+     {
+      "bucket": 4,
+      "night_eur": 125.17
+     },
+     {
+      "bucket": 5,
+      "night_eur": 152.06
+     },
+     {
+      "bucket": 5,
+      "night_eur": 165.89
+     },
+     {
+      "bucket": 5,
+      "night_eur": 172.8
+     },
+     {
+      "bucket": 5,
+      "night_eur": 191.81
+     },
+     {
+      "bucket": 5,
+      "night_eur": 221.18
+     }
+    ]
+   },
+   {
+    "month": 8,
+    "hotels": [
+     {
+      "bucket": 3,
+      "night_eur": 71.75
+     },
+     {
+      "bucket": 3,
+      "night_eur": 78.75
+     },
+     {
+      "bucket": 3,
+      "night_eur": 87.5
+     },
+     {
+      "bucket": 3,
+      "night_eur": 94.5
+     },
+     {
+      "bucket": 3,
+      "night_eur": 105.0
+     },
+     {
+      "bucket": 4,
+      "night_eur": 100.94
+     },
+     {
+      "bucket": 4,
+      "night_eur": 111.62
+     },
+     {
+      "bucket": 4,
+      "night_eur": 118.75
+     },
+     {
+      "bucket": 4,
+      "night_eur": 129.44
+     },
+     {
+      "bucket": 4,
+      "night_eur": 144.88
+     },
+     {
+      "bucket": 5,
+      "night_eur": 176.0
+     },
+     {
+      "bucket": 5,
+      "night_eur": 192.0
+     },
+     {
+      "bucket": 5,
+      "night_eur": 200.0
+     },
+     {
+      "bucket": 5,
+      "night_eur": 222.0
+     },
+     {
+      "bucket": 5,
+      "night_eur": 256.0
+     }
+    ]
+   },
+   {
+    "month": 10,
+    "hotels": [
+     {
+      "bucket": 3,
+      "night_eur": 57.4
+     },
+     {
+      "bucket": 3,
+      "night_eur": 63.0
+     },
+     {
+      "bucket": 3,
+      "night_eur": 70.0
+     },
+     {
+      "bucket": 3,
+      "night_eur": 75.6
+     },
+     {
+      "bucket": 3,
+      "night_eur": 84.0
+     },
+     {
+      "bucket": 4,
+      "night_eur": 80.75
+     },
+     {
+      "bucket": 4,
+      "night_eur": 89.3
+     },
+     {
+      "bucket": 4,
+      "night_eur": 95.0
+     },
+     {
+      "bucket": 4,
+      "night_eur": 103.55
+     },
+     {
+      "bucket": 4,
+      "night_eur": 115.9
+     },
+     {
+      "bucket": 5,
+      "night_eur": 140.8
+     },
+     {
+      "bucket": 5,
+      "night_eur": 153.6
+     },
+     {
+      "bucket": 5,
+      "night_eur": 160.0
+     },
+     {
+      "bucket": 5,
+      "night_eur": 177.6
+     },
+     {
+      "bucket": 5,
+      "night_eur": 204.8
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "city": "Rome",
+  "country": "Italy",
+  "lat": 41.893,
+  "lon": 12.483,
+  "probes": [
+   {
+    "month": 2,
+    "hotels": [
+     {
+      "bucket": 3,
+      "night_eur": 80.69
+     },
+     {
+      "bucket": 3,
+      "night_eur": 88.56
+     },
+     {
+      "bucket": 3,
+      "night_eur": 98.4
+     },
+     {
+      "bucket": 3,
+      "night_eur": 106.27
+     },
+     {
+      "bucket": 3,
+      "night_eur": 118.08
+     },
+     {
+      "bucket": 4,
+      "night_eur": 118.49
+     },
+     {
+      "bucket": 4,
+      "night_eur": 131.04
+     },
+     {
+      "bucket": 4,
+      "night_eur": 139.4
+     },
+     {
+      "bucket": 4,
+      "night_eur": 151.95
+     },
+     {
+      "bucket": 4,
+      "night_eur": 170.07
+     },
+     {
+      "bucket": 5,
+      "night_eur": 216.48
+     },
+     {
+      "bucket": 5,
+      "night_eur": 236.16
+     },
+     {
+      "bucket": 5,
+      "night_eur": 246.0
+     },
+     {
+      "bucket": 5,
+      "night_eur": 273.06
+     },
+     {
+      "bucket": 5,
+      "night_eur": 314.88
+     }
+    ]
+   },
+   {
+    "month": 5,
+    "hotels": [
+     {
+      "bucket": 3,
+      "night_eur": 106.27
+     },
+     {
+      "bucket": 3,
+      "night_eur": 116.64
+     },
+     {
+      "bucket": 3,
+      "night_eur": 129.6
+     },
+     {
+      "bucket": 3,
+      "night_eur": 139.97
+     },
+     {
+      "bucket": 3,
+      "night_eur": 155.52
+     },
+     {
+      "bucket": 4,
+      "night_eur": 156.06
+     },
+     {
+      "bucket": 4,
+      "night_eur": 172.58
+     },
+     {
+      "bucket": 4,
+      "night_eur": 183.6
+     },
+     {
+      "bucket": 4,
+      "night_eur": 200.12
+     },
+     {
+      "bucket": 4,
+      "night_eur": 223.99
+     },
+     {
+      "bucket": 5,
+      "night_eur": 285.12
+     },
+     {
+      "bucket": 5,
+      "night_eur": 311.04
+     },
+     {
+      "bucket": 5,
+      "night_eur": 324.0
+     },
+     {
+      "bucket": 5,
+      "night_eur": 359.64
+     },
+     {
+      "bucket": 5,
+      "night_eur": 414.72
+     }
+    ]
+   },
+   {
+    "month": 8,
+    "hotels": [
+     {
+      "bucket": 3,
+      "night_eur": 123.0
+     },
+     {
+      "bucket": 3,
+      "night_eur": 135.0
+     },
+     {
+      "bucket": 3,
+      "night_eur": 150.0
+     },
+     {
+      "bucket": 3,
+      "night_eur": 162.0
+     },
+     {
+      "bucket": 3,
+      "night_eur": 180.0
+     },
+     {
+      "bucket": 4,
+      "night_eur": 180.62
+     },
+     {
+      "bucket": 4,
+      "night_eur": 199.75
+     },
+     {
+      "bucket": 4,
+      "night_eur": 212.5
+     },
+     {
+      "bucket": 4,
+      "night_eur": 231.62
+     },
+     {
+      "bucket": 4,
+      "night_eur": 259.25
+     },
+     {
+      "bucket": 5,
+      "night_eur": 330.0
+     },
+     {
+      "bucket": 5,
+      "night_eur": 360.0
+     },
+     {
+      "bucket": 5,
+      "night_eur": 375.0
+     },
+     {
+      "bucket": 5,
+      "night_eur": 416.25
+     },
+     {
+      "bucket": 5,
+      "night_eur": 480.0
+     }
+    ]
+   },
+   {
+    "month": 10,
+    "hotels": [
+     {
+      "bucket": 3,
+      "night_eur": 98.4
+     },
+     {
+      "bucket": 3,
+      "night_eur": 108.0
+     },
+     {
+      "bucket": 3,
+      "night_eur": 120.0
+     },
+     {
+      "bucket": 3,
+      "night_eur": 129.6
+     },
+     {
+      "bucket": 3,
+      "night_eur": 144.0
+     },
+     {
+      "bucket": 4,
+      "night_eur": 144.5
+     },
+     {
+      "bucket": 4,
+      "night_eur": 159.8
+     },
+     {
+      "bucket": 4,
+      "night_eur": 170.0
+     },
+     {
+      "bucket": 4,
+      "night_eur": 185.3
+     },
+     {
+      "bucket": 4,
+      "night_eur": 207.4
+     },
+     {
+      "bucket": 5,
+      "night_eur": 264.0
+     },
+     {
+      "bucket": 5,
+      "night_eur": 288.0
+     },
+     {
+      "bucket": 5,
+      "night_eur": 300.0
+     },
+     {
+      "bucket": 5,
+      "night_eur": 333.0
+     },
+     {
+      "bucket": 5,
+      "night_eur": 384.0
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "city": "Paris",
+  "country": "France",
+  "lat": 48.857,
+  "lon": 2.352,
+  "probes": [
+   {
+    "month": 2,
+    "hotels": [
+     {
+      "bucket": 3,
+      "night_eur": 100.86
+     },
+     {
+      "bucket": 3,
+      "night_eur": 110.7
+     },
+     {
+      "bucket": 3,
+      "night_eur": 123.0
+     },
+     {
+      "bucket": 3,
+      "night_eur": 132.84
+     },
+     {
+      "bucket": 3,
+      "night_eur": 147.6
+     },
+     {
+      "bucket": 4,
+      "night_eur": 149.85
+     },
+     {
+      "bucket": 4,
+      "night_eur": 165.72
+     },
+     {
+      "bucket": 4,
+      "night_eur": 176.3
+     },
+     {
+      "bucket": 4,
+      "night_eur": 192.17
+     },
+     {
+      "bucket": 4,
+      "night_eur": 215.09
+     },
+     {
+      "bucket": 5,
+      "night_eur": 274.21
+     },
+     {
+      "bucket": 5,
+      "night_eur": 299.14
+     },
+     {
+      "bucket": 5,
+      "night_eur": 311.6
+     },
+     {
+      "bucket": 5,
+      "night_eur": 345.88
+     },
+     {
+      "bucket": 5,
+      "night_eur": 398.85
+     }
+    ]
+   },
+   {
+    "month": 5,
+    "hotels": [
+     {
+      "bucket": 3,
+      "night_eur": 132.84
+     },
+     {
+      "bucket": 3,
+      "night_eur": 145.8
+     },
+     {
+      "bucket": 3,
+      "night_eur": 162.0
+     },
+     {
+      "bucket": 3,
+      "night_eur": 174.96
+     },
+     {
+      "bucket": 3,
+      "night_eur": 194.4
+     },
+     {
+      "bucket": 4,
+      "night_eur": 197.37
+     },
+     {
+      "bucket": 4,
+      "night_eur": 218.27
+     },
+     {
+      "bucket": 4,
+      "night_eur": 232.2
+     },
+     {
+      "bucket": 4,
+      "night_eur": 253.1
+     },
+     {
+      "bucket": 4,
+      "night_eur": 283.28
+     },
+     {
+      "bucket": 5,
+      "night_eur": 361.15
+     },
+     {
+      "bucket": 5,
+      "night_eur": 393.98
+     },
+     {
+      "bucket": 5,
+      "night_eur": 410.4
+     },
+     {
+      "bucket": 5,
+      "night_eur": 455.54
+     },
+     {
+      "bucket": 5,
+      "night_eur": 525.31
+     }
+    ]
+   },
+   {
+    "month": 8,
+    "hotels": [
+     {
+      "bucket": 3,
+      "night_eur": 153.75
+     },
+     {
+      "bucket": 3,
+      "night_eur": 168.75
+     },
+     {
+      "bucket": 3,
+      "night_eur": 187.5
+     },
+     {
+      "bucket": 3,
+      "night_eur": 202.5
+     },
+     {
+      "bucket": 3,
+      "night_eur": 225.0
+     },
+     {
+      "bucket": 4,
+      "night_eur": 228.44
+     },
+     {
+      "bucket": 4,
+      "night_eur": 252.62
+     },
+     {
+      "bucket": 4,
+      "night_eur": 268.75
+     },
+     {
+      "bucket": 4,
+      "night_eur": 292.94
+     },
+     {
+      "bucket": 4,
+      "night_eur": 327.88
+     },
+     {
+      "bucket": 5,
+      "night_eur": 418.0
+     },
+     {
+      "bucket": 5,
+      "night_eur": 456.0
+     },
+     {
+      "bucket": 5,
+      "night_eur": 475.0
+     },
+     {
+      "bucket": 5,
+      "night_eur": 527.25
+     },
+     {
+      "bucket": 5,
+      "night_eur": 608.0
+     }
+    ]
+   },
+   {
+    "month": 10,
+    "hotels": [
+     {
+      "bucket": 3,
+      "night_eur": 123.0
+     },
+     {
+      "bucket": 3,
+      "night_eur": 135.0
+     },
+     {
+      "bucket": 3,
+      "night_eur": 150.0
+     },
+     {
+      "bucket": 3,
+      "night_eur": 162.0
+     },
+     {
+      "bucket": 3,
+      "night_eur": 180.0
+     },
+     {
+      "bucket": 4,
+      "night_eur": 182.75
+     },
+     {
+      "bucket": 4,
+      "night_eur": 202.1
+     },
+     {
+      "bucket": 4,
+      "night_eur": 215.0
+     },
+     {
+      "bucket": 4,
+      "night_eur": 234.35
+     },
+     {
+      "bucket": 4,
+      "night_eur": 262.3
+     },
+     {
+      "bucket": 5,
+      "night_eur": 334.4
+     },
+     {
+      "bucket": 5,
+      "night_eur": 364.8
+     },
+     {
+      "bucket": 5,
+      "night_eur": 380.0
+     },
+     {
+      "bucket": 5,
+      "night_eur": 421.8
+     },
+     {
+      "bucket": 5,
+      "night_eur": 486.4
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "city": "Vienna",
+  "country": "Austria",
+  "lat": 48.208,
+  "lon": 16.373,
+  "probes": [
+   {
+    "month": 2,
+    "hotels": [
+     {
+      "bucket": 3,
+      "night_eur": 70.6
+     },
+     {
+      "bucket": 3,
+      "night_eur": 77.49
+     },
+     {
+      "bucket": 3,
+      "night_eur": 86.1
+     },
+     {
+      "bucket": 3,
+      "night_eur": 92.99
+     },
+     {
+      "bucket": 3,
+      "night_eur": 103.32
+     },
+     {
+      "bucket": 4,
+      "night_eur": 101.06
+     },
+     {
+      "bucket": 4,
+      "night_eur": 111.77
+     },
+     {
+      "bucket": 4,
+      "night_eur": 118.9
+     },
+     {
+      "bucket": 4,
+      "night_eur": 129.6
+     },
+     {
+      "bucket": 4,
+      "night_eur": 145.06
+     },
+     {
+      "bucket": 5,
+      "night_eur": 176.79
+     },
+     {
+      "bucket": 5,
+      "night_eur": 192.86
+     },
+     {
+      "bucket": 5,
+      "night_eur": 200.9
+     },
+     {
+      "bucket": 5,
+      "night_eur": 223.0
+     },
+     {
+      "bucket": 5,
+      "night_eur": 257.15
+     }
+    ]
+   },
+   {
+    "month": 5,
+    "hotels": [
+     {
+      "bucket": 3,
+      "night_eur": 92.99
+     },
+     {
+      "bucket": 3,
+      "night_eur": 102.06
+     },
+     {
+      "bucket": 3,
+      "night_eur": 113.4
+     },
+     {
+      "bucket": 3,
+      "night_eur": 122.47
+     },
+     {
+      "bucket": 3,
+      "night_eur": 136.08
+     },
+     {
+      "bucket": 4,
+      "night_eur": 133.11
+     },
+     {
+      "bucket": 4,
+      "night_eur": 147.2
+     },
+     {
+      "bucket": 4,
+      "night_eur": 156.6
+     },
+     {
+      "bucket": 4,
+      "night_eur": 170.69
+     },
+     {
+      "bucket": 4,
+      "night_eur": 191.05
+     },
+     {
+      "bucket": 5,
+      "night_eur": 232.85
+     },
+     {
+      "bucket": 5,
+      "night_eur": 254.02
+     },
+     {
+      "bucket": 5,
+      "night_eur": 264.6
+     },
+     {
+      "bucket": 5,
+      "night_eur": 293.71
+     },
+     {
+      "bucket": 5,
+      "night_eur": 338.69
+     }
+    ]
+   },
+   {
+    "month": 8,
+    "hotels": [
+     {
+      "bucket": 3,
+      "night_eur": 107.62
+     },
+     {
+      "bucket": 3,
+      "night_eur": 118.12
+     },
+     {
+      "bucket": 3,
+      "night_eur": 131.25
+     },
+     {
+      "bucket": 3,
+      "night_eur": 141.75
+     },
+     {
+      "bucket": 3,
+      "night_eur": 157.5
+     },
+     {
+      "bucket": 4,
+      "night_eur": 154.06
+     },
+     {
+      "bucket": 4,
+      "night_eur": 170.37
+     },
+     {
+      "bucket": 4,
+      "night_eur": 181.25
+     },
+     {
+      "bucket": 4,
+      "night_eur": 197.56
+     },
+     {
+      "bucket": 4,
+      "night_eur": 221.12
+     },
+     {
+      "bucket": 5,
+      "night_eur": 269.5
+     },
+     {
+      "bucket": 5,
+      "night_eur": 294.0
+     },
+     {
+      "bucket": 5,
+      "night_eur": 306.25
+     },
+     {
+      "bucket": 5,
+      "night_eur": 339.94
+     },
+     {
+      "bucket": 5,
+      "night_eur": 392.0
+     }
+    ]
+   },
+   {
+    "month": 10,
+    "hotels": [
+     {
+      "bucket": 3,
+      "night_eur": 86.1
+     },
+     {
+      "bucket": 3,
+      "night_eur": 94.5
+     },
+     {
+      "bucket": 3,
+      "night_eur": 105.0
+     },
+     {
+      "bucket": 3,
+      "night_eur": 113.4
+     },
+     {
+      "bucket": 3,
+      "night_eur": 126.0
+     },
+     {
+      "bucket": 4,
+      "night_eur": 123.25
+     },
+     {
+      "bucket": 4,
+      "night_eur": 136.3
+     },
+     {
+      "bucket": 4,
+      "night_eur": 145.0
+     },
+     {
+      "bucket": 4,
+      "night_eur": 158.05
+     },
+     {
+      "bucket": 4,
+      "night_eur": 176.9
+     },
+     {
+      "bucket": 5,
+      "night_eur": 215.6
+     },
+     {
+      "bucket": 5,
+      "night_eur": 235.2
+     },
+     {
+      "bucket": 5,
+      "night_eur": 245.0
+     },
+     {
+      "bucket": 5,
+      "night_eur": 271.95
+     },
+     {
+      "bucket": 5,
+      "night_eur": 313.6
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "city": "Dublin",
+  "country": "Ireland",
+  "lat": 53.349,
+  "lon": -6.26,
+  "probes": [
+   {
+    "month": 2,
+    "hotels": [
+     {
+      "bucket": 3,
+      "night_eur": 87.41
+     },
+     {
+      "bucket": 3,
+      "night_eur": 95.94
+     },
+     {
+      "bucket": 3,
+      "night_eur": 106.6
+     },
+     {
+      "bucket": 3,
+      "night_eur": 115.13
+     },
+     {
+      "bucket": 3,
+      "night_eur": 127.92
+     },
+     {
+      "bucket": 4,
+      "night_eur": 125.46
+     },
+     {
+      "bucket": 4,
+      "night_eur": 138.74
+     },
+     {
+      "bucket": 4,
+      "night_eur": 147.6
+     },
+     {
+      "bucket": 4,
+      "night_eur": 160.88
+     },
+     {
+      "bucket": 4,
+      "night_eur": 180.07
+     },
+     {
+      "bucket": 5,
+      "night_eur": 212.87
+     },
+     {
+      "bucket": 5,
+      "night_eur": 232.22
+     },
+     {
+      "bucket": 5,
+      "night_eur": 241.9
+     },
+     {
+      "bucket": 5,
+      "night_eur": 268.51
+     },
+     {
+      "bucket": 5,
+      "night_eur": 309.63
+     }
+    ]
+   },
+   {
+    "month": 5,
+    "hotels": [
+     {
+      "bucket": 3,
+      "night_eur": 115.13
+     },
+     {
+      "bucket": 3,
+      "night_eur": 126.36
+     },
+     {
+      "bucket": 3,
+      "night_eur": 140.4
+     },
+     {
+      "bucket": 3,
+      "night_eur": 151.63
+     },
+     {
+      "bucket": 3,
+      "night_eur": 168.48
+     },
+     {
+      "bucket": 4,
+      "night_eur": 165.24
+     },
+     {
+      "bucket": 4,
+      "night_eur": 182.74
+     },
+     {
+      "bucket": 4,
+      "night_eur": 194.4
+     },
+     {
+      "bucket": 4,
+      "night_eur": 211.9
+     },
+     {
+      "bucket": 4,
+      "night_eur": 237.17
+     },
+     {
+      "bucket": 5,
+      "night_eur": 280.37
+     },
+     {
+      "bucket": 5,
+      "night_eur": 305.86
+     },
+     {
+      "bucket": 5,
+      "night_eur": 318.6
+     },
+     {
+      "bucket": 5,
+      "night_eur": 353.65
+     },
+     {
+      "bucket": 5,
+      "night_eur": 407.81
+     }
+    ]
+   },
+   {
+    "month": 8,
+    "hotels": [
+     {
+      "bucket": 3,
+      "night_eur": 133.25
+     },
+     {
+      "bucket": 3,
+      "night_eur": 146.25
+     },
+     {
+      "bucket": 3,
+      "night_eur": 162.5
+     },
+     {
+      "bucket": 3,
+      "night_eur": 175.5
+     },
+     {
+      "bucket": 3,
+      "night_eur": 195.0
+     },
+     {
+      "bucket": 4,
+      "night_eur": 191.25
+     },
+     {
+      "bucket": 4,
+      "night_eur": 211.5
+     },
+     {
+      "bucket": 4,
+      "night_eur": 225.0
+     },
+     {
+      "bucket": 4,
+      "night_eur": 245.25
+     },
+     {
+      "bucket": 4,
+      "night_eur": 274.5
+     },
+     {
+      "bucket": 5,
+      "night_eur": 324.5
+     },
+     {
+      "bucket": 5,
+      "night_eur": 354.0
+     },
+     {
+      "bucket": 5,
+      "night_eur": 368.75
+     },
+     {
+      "bucket": 5,
+      "night_eur": 409.31
+     },
+     {
+      "bucket": 5,
+      "night_eur": 472.0
+     }
+    ]
+   },
+   {
+    "month": 10,
+    "hotels": [
+     {
+      "bucket": 3,
+      "night_eur": 106.6
+     },
+     {
+      "bucket": 3,
+      "night_eur": 117.0
+     },
+     {
+      "bucket": 3,
+      "night_eur": 130.0
+     },
+     {
+      "bucket": 3,
+      "night_eur": 140.4
+     },
+     {
+      "bucket": 3,
+      "night_eur": 156.0
+     },
+     {
+      "bucket": 4,
+      "night_eur": 153.0
+     },
+     {
+      "bucket": 4,
+      "night_eur": 169.2
+     },
+     {
+      "bucket": 4,
+      "night_eur": 180.0
+     },
+     {
+      "bucket": 4,
+      "night_eur": 196.2
+     },
+     {
+      "bucket": 4,
+      "night_eur": 219.6
+     },
+     {
+      "bucket": 5,
+      "night_eur": 259.6
+     },
+     {
+      "bucket": 5,
+      "night_eur": 283.2
+     },
+     {
+      "bucket": 5,
+      "night_eur": 295.0
+     },
+     {
+      "bucket": 5,
+      "night_eur": 327.45
+     },
+     {
+      "bucket": 5,
+      "night_eur": 377.6
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "city": "Brussels",
+  "country": "Belgium",
+  "lat": 50.847,
+  "lon": 4.352,
+  "probes": [
+   {
+    "month": 2,
+    "hotels": [
+     {
+      "bucket": 3,
+      "night_eur": 67.24
+     },
+     {
+      "bucket": 3,
+      "night_eur": 73.8
+     },
+     {
+      "bucket": 3,
+      "night_eur": 82.0
+     },
+     {
+      "bucket": 3,
+      "night_eur": 88.56
+     },
+     {
+      "bucket": 3,
+      "night_eur": 98.4
+     },
+     {
+      "bucket": 4,
+      "night_eur": 96.19
+     },
+     {
+      "bucket": 4,
+      "night_eur": 106.37
+     },
+     {
+      "bucket": 4,
+      "night_eur": 113.16
+     },
+     {
+      "bucket": 4,
+      "night_eur": 123.34
+     },
+     {
+      "bucket": 4,
+      "night_eur": 138.06
+     },
+     {
+      "bucket": 5,
+      "night_eur": 165.97
+     },
+     {
+      "bucket": 5,
+      "night_eur": 181.06
+     },
+     {
+      "bucket": 5,
+      "night_eur": 188.6
+     },
+     {
+      "bucket": 5,
+      "night_eur": 209.35
+     },
+     {
+      "bucket": 5,
+      "night_eur": 241.41
+     }
+    ]
+   },
+   {
+    "month": 5,
+    "hotels": [
+     {
+      "bucket": 3,
+      "night_eur": 88.56
+     },
+     {
+      "bucket": 3,
+      "night_eur": 97.2
+     },
+     {
+      "bucket": 3,
+      "night_eur": 108.0
+     },
+     {
+      "bucket": 3,
+      "night_eur": 116.64
+     },
+     {
+      "bucket": 3,
+      "night_eur": 129.6
+     },
+     {
+      "bucket": 4,
+      "night_eur": 126.68
+     },
+     {
+      "bucket": 4,
+      "night_eur": 140.1
+     },
+     {
+      "bucket": 4,
+      "night_eur": 149.04
+     },
+     {
+      "bucket": 4,
+      "night_eur": 162.45
+     },
+     {
+      "bucket": 4,
+      "night_eur": 181.83
+     },
+     {
+      "bucket": 5,
+      "night_eur": 218.59
+     },
+     {
+      "bucket": 5,
+      "night_eur": 238.46
+     },
+     {
+      "bucket": 5,
+      "night_eur": 248.4
+     },
+     {
+      "bucket": 5,
+      "night_eur": 275.72
+     },
+     {
+      "bucket": 5,
+      "night_eur": 317.95
+     }
+    ]
+   },
+   {
+    "month": 8,
+    "hotels": [
+     {
+      "bucket": 3,
+      "night_eur": 102.5
+     },
+     {
+      "bucket": 3,
+      "night_eur": 112.5
+     },
+     {
+      "bucket": 3,
+      "night_eur": 125.0
+     },
+     {
+      "bucket": 3,
+      "night_eur": 135.0
+     },
+     {
+      "bucket": 3,
+      "night_eur": 150.0
+     },
+     {
+      "bucket": 4,
+      "night_eur": 146.62
+     },
+     {
+      "bucket": 4,
+      "night_eur": 162.15
+     },
+     {
+      "bucket": 4,
+      "night_eur": 172.5
+     },
+     {
+      "bucket": 4,
+      "night_eur": 188.03
+     },
+     {
+      "bucket": 4,
+      "night_eur": 210.45
+     },
+     {
+      "bucket": 5,
+      "night_eur": 253.0
+     },
+     {
+      "bucket": 5,
+      "night_eur": 276.0
+     },
+     {
+      "bucket": 5,
+      "night_eur": 287.5
+     },
+     {
+      "bucket": 5,
+      "night_eur": 319.12
+     },
+     {
+      "bucket": 5,
+      "night_eur": 368.0
+     }
+    ]
+   },
+   {
+    "month": 10,
+    "hotels": [
+     {
+      "bucket": 3,
+      "night_eur": 82.0
+     },
+     {
+      "bucket": 3,
+      "night_eur": 90.0
+     },
+     {
+      "bucket": 3,
+      "night_eur": 100.0
+     },
+     {
+      "bucket": 3,
+      "night_eur": 108.0
+     },
+     {
+      "bucket": 3,
+      "night_eur": 120.0
+     },
+     {
+      "bucket": 4,
+      "night_eur": 117.3
+     },
+     {
+      "bucket": 4,
+      "night_eur": 129.72
+     },
+     {
+      "bucket": 4,
+      "night_eur": 138.0
+     },
+     {
+      "bucket": 4,
+      "night_eur": 150.42
+     },
+     {
+      "bucket": 4,
+      "night_eur": 168.36
+     },
+     {
+      "bucket": 5,
+      "night_eur": 202.4
+     },
+     {
+      "bucket": 5,
+      "night_eur": 220.8
+     },
+     {
+      "bucket": 5,
+      "night_eur": 230.0
+     },
+     {
+      "bucket": 5,
+      "night_eur": 255.3
+     },
+     {
+      "bucket": 5,
+      "night_eur": 294.4
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "city": "Seville",
+  "country": "Spain",
+  "lat": 37.389,
+  "lon": -5.984,
+  "probes": [
+   {
+    "month": 2,
+    "hotels": [
+     {
+      "bucket": 3,
+      "night_eur": 60.52
+     },
+     {
+      "bucket": 3,
+      "night_eur": 66.42
+     },
+     {
+      "bucket": 3,
+      "night_eur": 73.8
+     },
+     {
+      "bucket": 3,
+      "night_eur": 79.7
+     },
+     {
+      "bucket": 3,
+      "night_eur": 88.56
+     },
+     {
+      "bucket": 4,
+      "night_eur": 85.03
+     },
+     {
+      "bucket": 4,
+      "night_eur": 94.04
+     },
+     {
+      "bucket": 4,
+      "night_eur": 100.04
+     },
+     {
+      "bucket": 4,
+      "night_eur": 109.04
+     },
+     {
+      "bucket": 4,
+      "night_eur": 122.05
+     },
+     {
+      "bucket": 5,
+      "night_eur": 147.93
+     },
+     {
+      "bucket": 5,
+      "night_eur": 161.38
+     },
+     {
+      "bucket": 5,
+      "night_eur": 168.1
+     },
+     {
+      "bucket": 5,
+      "night_eur": 186.59
+     },
+     {
+      "bucket": 5,
+      "night_eur": 215.17
+     }
+    ]
+   },
+   {
+    "month": 5,
+    "hotels": [
+     {
+      "bucket": 3,
+      "night_eur": 79.7
+     },
+     {
+      "bucket": 3,
+      "night_eur": 87.48
+     },
+     {
+      "bucket": 3,
+      "night_eur": 97.2
+     },
+     {
+      "bucket": 3,
+      "night_eur": 104.98
+     },
+     {
+      "bucket": 3,
+      "night_eur": 116.64
+     },
+     {
+      "bucket": 4,
+      "night_eur": 112.0
+     },
+     {
+      "bucket": 4,
+      "night_eur": 123.85
+     },
+     {
+      "bucket": 4,
+      "night_eur": 131.76
+     },
+     {
+      "bucket": 4,
+      "night_eur": 143.62
+     },
+     {
+      "bucket": 4,
+      "night_eur": 160.75
+     },
+     {
+      "bucket": 5,
+      "night_eur": 194.83
+     },
+     {
+      "bucket": 5,
+      "night_eur": 212.54
+     },
+     {
+      "bucket": 5,
+      "night_eur": 221.4
+     },
+     {
+      "bucket": 5,
+      "night_eur": 245.75
+     },
+     {
+      "bucket": 5,
+      "night_eur": 283.39
+     }
+    ]
+   },
+   {
+    "month": 8,
+    "hotels": [
+     {
+      "bucket": 3,
+      "night_eur": 92.25
+     },
+     {
+      "bucket": 3,
+      "night_eur": 101.25
+     },
+     {
+      "bucket": 3,
+      "night_eur": 112.5
+     },
+     {
+      "bucket": 3,
+      "night_eur": 121.5
+     },
+     {
+      "bucket": 3,
+      "night_eur": 135.0
+     },
+     {
+      "bucket": 4,
+      "night_eur": 129.62
+     },
+     {
+      "bucket": 4,
+      "night_eur": 143.35
+     },
+     {
+      "bucket": 4,
+      "night_eur": 152.5
+     },
+     {
+      "bucket": 4,
+      "night_eur": 166.23
+     },
+     {
+      "bucket": 4,
+      "night_eur": 186.05
+     },
+     {
+      "bucket": 5,
+      "night_eur": 225.5
+     },
+     {
+      "bucket": 5,
+      "night_eur": 246.0
+     },
+     {
+      "bucket": 5,
+      "night_eur": 256.25
+     },
+     {
+      "bucket": 5,
+      "night_eur": 284.44
+     },
+     {
+      "bucket": 5,
+      "night_eur": 328.0
+     }
+    ]
+   },
+   {
+    "month": 10,
+    "hotels": [
+     {
+      "bucket": 3,
+      "night_eur": 73.8
+     },
+     {
+      "bucket": 3,
+      "night_eur": 81.0
+     },
+     {
+      "bucket": 3,
+      "night_eur": 90.0
+     },
+     {
+      "bucket": 3,
+      "night_eur": 97.2
+     },
+     {
+      "bucket": 3,
+      "night_eur": 108.0
+     },
+     {
+      "bucket": 4,
+      "night_eur": 103.7
+     },
+     {
+      "bucket": 4,
+      "night_eur": 114.68
+     },
+     {
+      "bucket": 4,
+      "night_eur": 122.0
+     },
+     {
+      "bucket": 4,
+      "night_eur": 132.98
+     },
+     {
+      "bucket": 4,
+      "night_eur": 148.84
+     },
+     {
+      "bucket": 5,
+      "night_eur": 180.4
+     },
+     {
+      "bucket": 5,
+      "night_eur": 196.8
+     },
+     {
+      "bucket": 5,
+      "night_eur": 205.0
+     },
+     {
+      "bucket": 5,
+      "night_eur": 227.55
+     },
+     {
+      "bucket": 5,
+      "night_eur": 262.4
+     }
+    ]
+   }
+  ]
+ }
+]

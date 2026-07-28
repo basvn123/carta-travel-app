@@ -67,6 +67,10 @@ export function useTripPlanner(data, countryInsights = null) {
     setTransferModeRaw((prev) => (dir ? { ...prev, [dir]: mode } : { in: mode, out: mode }));
   }, []);
   const [pace, setPace] = useState(draft?.pace || 'balanced'); // 'relaxed' | 'balanced' | 'packed'
+  // How expensive the traveller wants to sleep: 'dorm' | 'private' | 'home' |
+  // 'hotel3' | 'hotel4' | 'hotel5'. Home (entire place) is the default; other
+  // tiers price from the measured city tiers where they exist.
+  const [stayTier, setStayTier] = useState(draft?.stayTier || 'home');
   // Ryanair baggage the traveller expects to book: 'cabin' (free small bag),
   // 'priority' (10 kg cabin bag) or 'checked' (20 kg hold bag). Priced per
   // person per flight leg on top of the seat fare.
@@ -110,9 +114,11 @@ export function useTripPlanner(data, countryInsights = null) {
     persistTripDraft({
       tripStart, tripEnd, stops, groupSize, transportPref, legModes, transferMode, pace,
       baggage, anchorId, anchorOrigin, returnAnchorId, ownFlight, carHome, planId, planLabel, planned,
+      stayTier,
     });
   }, [tripStart, tripEnd, stops, groupSize, transportPref, legModes, transferMode, pace,
-      baggage, anchorId, anchorOrigin, returnAnchorId, ownFlight, carHome, planId, planLabel, planned]);
+      baggage, anchorId, anchorOrigin, returnAnchorId, ownFlight, carHome, planId, planLabel, planned,
+      stayTier]);
 
   // Chain each stop's arrive/depart dates from the trip start. A stop with no
   // trip start yet still carries its nights so the UI can show "2 nights".
@@ -566,12 +572,12 @@ export function useTripPlanner(data, countryInsights = null) {
     if (!s.dest) return null;
     // A 0-night pass-through stop books nothing, without this gate the
     // accommodation model still charges its cleaning + service fee.
-    const accom = s.nights > 0 ? accommodationPerPerson(s.dest, s.nights, s.arriveDate, null, groupSize) : null;
+    const accom = s.nights > 0 ? accommodationPerPerson(s.dest, s.nights, s.arriveDate, null, groupSize, stayTier) : null;
     const ground = groundSpendPerPerson(s.dest, s.nights, DEFAULT_LIFESTYLE);
     const accomTotal = round2((accom ? accom.total : 0) * groupSize);
     const groundTotal = round2((ground ? ground.total : 0) * groupSize);
     return { accom, ground, accomTotal, groundTotal, total: round2(accomTotal + groundTotal) };
-  }), [stopDetails, groupSize]);
+  }), [stopDetails, groupSize, stayTier]);
 
   const grandTotal = useMemo(() => {
     let total = 0;
@@ -759,6 +765,7 @@ export function useTripPlanner(data, countryInsights = null) {
     nextStopSuggestions, flight, legs, anchorLegs, flightTransfer, driveLegs, stayCosts, grandTotal, dayPlan,
     vignettes, tripHasCar,
     baggage, setBaggage,
+    stayTier, setStayTier,
     ownFlight, setOwnFlight,
     carHome, setCarHome,
     planned, setPlanned,

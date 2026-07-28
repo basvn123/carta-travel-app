@@ -245,6 +245,13 @@ function ItinLeg({ leg, onMode }) {
           })}
         </div>
       )}
+      {open && chosen?.links?.length > 0 && (
+        <div className="trip-leg-links itin-leg-links">
+          {chosen.links.map((l, j) => (
+            <a key={j} href={l.url} target="_blank" rel="noreferrer">{l.label} ↗</a>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

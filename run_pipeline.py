@@ -411,6 +411,21 @@ TASKS = [
         "note": ("snapshot dates are pinned in harvest_accommodation.py (2026-06). "
                  "Bump DATASETS + purge cache/iab to actually get newer prices."),
     },
+    {
+        "key": "staytiers",
+        "title": "Hostel + hotel stay tiers (Hostelworld / LiteAPI)",
+        "cadence": "monthly",
+        "writes_app_data": True,
+        "cmds": [
+            [PY, "pipeline/harvest_hostelworld.py"],
+            [PY, "pipeline/harvest_hotels_liteapi.py"],
+            [PY, "pipeline/apply_stay_tiers.py"],
+        ],
+        "note": ("needs HW_CONSUMER_KEY/HW_CONSUMER_SECRET + LITEAPI_KEY in the env; "
+                 "without them the harvesters no-op cleanly (no cache written). Apply "
+                 "REFUSES fixture anchors (dev --fixtures runs) loudly: re-harvest with "
+                 "real keys before this task can ship tiers."),
+    },
 
     # ---- backfill / on catalogue growth: MANUAL (--only), coverage-guarded ---- #
     {

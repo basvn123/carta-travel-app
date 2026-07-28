@@ -4,7 +4,8 @@
  * For every consecutive pair of stops the planner offers THREE priced ways to
  * travel (train / bus / car), each an honest distance-based ESTIMATE (there is
  * no free live intercity fare API), plus deep links to check & book the real
- * thing: the departure country's rail operator (from country_insights), FlixBus,
+ * thing: Omio (affiliate-tagged, first when configured, see omio.js), the
+ * departure country's rail operator (from country_insights), FlixBus,
  * and Google Maps directions. Car costs come from the pipeline's car_model
  * (per-country petrol prices, EUR/100km tolls), split across the group, which
  * is exactly why a car often wins for 3-4 people and loses for solo travellers.
@@ -12,6 +13,7 @@
 import { haversineKm, withCityCoords } from './runtime_pricing.js';
 import { round2 } from './math.js';
 import { transportProfile, legRailQuality, RAIL_SCORE_BONUS, landmassOf } from './countryTransport.js';
+import { buildOmioLink } from './omio.js';
 
 const DETOUR = 1.3;             // road km vs straight-line (matches car_layer.py)
 // Rail follows its own alignment, not the road network: dividing ROAD km
@@ -36,6 +38,14 @@ function gmapsPoint(p) {
 
 function gmapsDir(a, b, mode) {
   return `https://www.google.com/maps/dir/?api=1&origin=${gmapsPoint(a)}&destination=${gmapsPoint(b)}&travelmode=${mode}`;
+}
+
+// The affiliate-tagged Omio link for a leg, as a spreadable links-array
+// fragment: one entry when a tracking link is configured and the route is
+// expressible, empty otherwise so every links array keeps its current shape.
+function omioLeg(a, b, mode) {
+  const url = buildOmioLink({ fromCity: a.city, toCity: b.city, mode, subId: 'leg' });
+  return url ? [{ label: 'Omio', url }] : [];
 }
 
 // One flat 82 km/h made a 60 km hop and a 600 km motorway run the same speed.
@@ -94,6 +104,7 @@ function seaCrossingOptions(lmA, lmB, destA, destB, straightKm, group, { carMode
         eur_total: round2(pp * group),
         hours: round2((straightKm * RAIL_DETOUR) / 140 + 1.3),
         links: [
+          ...omioLeg(destA, destB, 'train'),
           { label: 'Eurostar', url: 'https://www.eurostar.com' },
           { label: 'Google Maps (transit)', url: gmapsDir(destA, destB, 'transit') },
         ],
@@ -106,6 +117,7 @@ function seaCrossingOptions(lmA, lmB, destA, destB, straightKm, group, { carMode
       eur_total: round2(busPp * group),
       hours: round2(roadKm / 55 + 1.5),
       links: [
+        ...omioLeg(destA, destB, 'bus'),
         { label: 'FlixBus', url: 'https://www.flixbus.com' },
         { label: 'Google Maps (transit)', url: gmapsDir(destA, destB, 'transit') },
       ],
@@ -120,6 +132,9 @@ function seaCrossingOptions(lmA, lmB, destA, destB, straightKm, group, { carMode
       eur_total: round2(railPp * group),
       hours: round2(roadKm / 75 + 3),
       links: [
+        // The multimode /travel/ page: no train crosses the Irish Sea, so the
+        // per-mode /trains/ route page would be the wrong landing spot here.
+        ...omioLeg(destA, destB, null),
         { label: 'Rail & Sail (Irish Ferries)', url: 'https://www.irishferries.com' },
         { label: 'Stena Line', url: 'https://www.stenaline.com' },
       ],
@@ -131,6 +146,7 @@ function seaCrossingOptions(lmA, lmB, destA, destB, straightKm, group, { carMode
       eur_total: round2(busPp * group),
       hours: round2(roadKm / 55 + 3.5),
       links: [
+        ...omioLeg(destA, destB, null),
         { label: 'FlixBus', url: 'https://www.flixbus.com' },
         { label: 'Google Maps (transit)', url: gmapsDir(destA, destB, 'transit') },
       ],
@@ -256,7 +272,7 @@ export function legTransportOptions(destA, destB, groupSize = 1, { carModel = nu
   // Fare floor scales with the network's price level (a Polish minimum fare
   // is not a Swiss one): ~40 km worth of that country's per-km rate, min EUR 4.
   const trainPp = railEur === 0 ? 0 : Math.max(4, railEur * 40, railEur * railKm);
-  const trainLinks = [];
+  const trainLinks = [...omioLeg(destA, destB, 'train')];
   if (insA?.rail?.url && insA?.rail?.operator) {
     trainLinks.push({ label: insA.rail.operator, url: insA.rail.url });
   }
@@ -283,6 +299,7 @@ export function legTransportOptions(destA, destB, groupSize = 1, { carModel = nu
     eur_total: round2(busPp * group),
     hours: round2(roadKm / busKmh + busOverheadH),
     links: [
+      ...omioLeg(destA, destB, 'bus'),
       { label: busOperators, url: insA?.bus?.url || 'https://www.flixbus.com' },
       { label: 'Google Maps (transit)', url: gmapsDir(destA, destB, 'transit') },
     ],

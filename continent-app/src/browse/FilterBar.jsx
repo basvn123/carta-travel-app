@@ -6,6 +6,7 @@ import { GemIcon } from '../components/GemRating.jsx';
 import { PlaneIcon, CarIcon } from '../components/TransportIcons.jsx';
 import { CalendarIcon, FilterIcon, LifestyleIcon, ChevronDownIcon } from '../components/Icons.jsx';
 import { eur } from '../lib/format.js';
+import { offeredStayTiers } from '../lib/runtime_pricing.js';
 import { useI18n } from '../i18n/index.jsx';
 import { NumberField, DualRange } from '../components/FilterControls.jsx';
 import {
@@ -33,6 +34,9 @@ export function FilterBar({
 }) {
   const { t } = useI18n();
   const baggageOpts = data?.meta?.baggage_options || {};
+  // Only the stay tiers this dataset measured (see apply_stay_tiers.py).
+  const stayTierOptions = React.useMemo(
+    () => offeredStayTiers(data?.meta), [data?.meta]);
 
   // Mobile-only: the dense filter set collapses behind a filter icon, and the
   // depart/return pickers collapse behind a separate calendar icon. On desktop
@@ -360,6 +364,25 @@ export function FilterBar({
                   </div>
                 </div>
               </div>
+
+              {/* How expensive to sleep: re-prices the stay line of every
+                  destination, dorm bed through hotel. Only tiers the dataset
+                  actually measured are offered; cities missing the chosen one
+                  fall back to the entire-place price and the breakdown says
+                  so. With no tier data at all this collapses to one option,
+                  so it hides itself rather than showing a dead control. */}
+              {stayTierOptions.length > 1 && (
+                <div className="filter filter-staytier">
+                  <label className="filter-label">{t('filter.stay')}</label>
+                  <div className="filter-control">
+                    <Dropdown
+                      value={choices.stay_tier || 'home'}
+                      onChange={(v) => setChoices({ ...choices, stay_tier: v })}
+                      options={stayTierOptions.map((k) => ({ value: k, label: t(`stay.${k}`) }))}
+                    />
+                  </div>
+                </div>
+              )}
 
               <div className="filter filter-show">
                 <label className="filter-label">{t('filter.show')}</label>
