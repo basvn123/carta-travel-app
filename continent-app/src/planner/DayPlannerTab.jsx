@@ -2054,10 +2054,15 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
     return [...out];
   };
 
-  const runChatAi = async (a) => {
+  // `onStage` reports the real milestones of a build to the chat's route
+  // animation, so the wait shows the work rather than three dots: how many
+  // places were read, how many survived the traveller's answers, and when the
+  // sequencing call actually went out.
+  const runChatAi = async (a, onStage = () => {}) => {
     const destId = a.town || exploreTowns[0]?.id;
     const info = await chatDest(destId);
     if (!info) return { ok: false, code: 'too_few' };
+    onStage({ key: 'read', vars: { n: info.items.length, city: info.dest.city } });
     const candidates = buildAiCandidates({
       items: info.items,
       walkable: info.walkable,
@@ -2066,6 +2071,8 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
       limit: 24,
     });
     if (candidates.length < 3) return { ok: false, code: 'too_few' };
+    onStage({ key: 'shortlist', vars: { n: candidates.length } });
+    onStage({ key: 'route', vars: { km: Number(a.distance) || 5 } });
     const centre = cityCoords(info.dest);
     return requestAiDayPlan({
       dest: {
@@ -2170,6 +2177,14 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
     openStandalone(sp);
   };
 
+  // What tells two saved trips apart when their labels match: the window they
+  // cover and how many stops they hold. Both ride on the row fetchTripPlans
+  // already returns, so this costs no extra query.
+  const tripPlanSub = (p) => [
+    p.start_date ? `${fmtDate(p.start_date)} → ${fmtDate(p.end_date)}` : '',
+    p.cities?.length ? t(p.cities.length === 1 ? 'saved.stops1' : 'saved.stopsN', { n: p.cities.length }) : '',
+  ].filter(Boolean).join(', ');
+
   // Landing screen: a guided flow (stay -> when -> how), then either the
   // manual explore map or the chat planner. Saved plans stay reachable from
   // the first step.
@@ -2195,23 +2210,35 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
 
           {/* One decision per screen. The step rail doubles as back navigation
               (a completed step is tappable); everything explanatory hides
-              behind the help button so the screen itself stays a question. */}
+              behind the help button so the screen itself stays a question.
+              The rail is on screen from the FIRST question, not from the
+              second: a progress indicator that appears halfway through tells
+              the traveller where they are only once they no longer need it. */}
           <div className="day-flow-top">
-            <div className="day-flow-steps">
+            <nav className="day-flow-steps" aria-label={t('day.progressAria')}>
               {FLOW.map((s, i) => (
-                <button
-                  key={s.key}
-                  type="button"
-                  className={`day-flow-step-dot${i === flowIdx ? ' on' : ''}${i < flowIdx ? ' done' : ''}`}
-                  onClick={() => { if (i < flowIdx) setLandingStep(s.key); }}
-                  disabled={i > flowIdx}
-                  aria-current={i === flowIdx ? 'step' : undefined}
-                >
-                  <span className="day-flow-step-num">{i < flowIdx ? '✓' : i + 1}</span>
-                  <span className="day-flow-step-label">{t(s.labelKey)}</span>
-                </button>
+                <React.Fragment key={s.key}>
+                  {/* The connector is what makes three pills read as one
+                      journey with a position on it. */}
+                  {i > 0 && (
+                    <span className={`day-flow-step-rail${i <= flowIdx ? ' done' : ''}`} aria-hidden="true" />
+                  )}
+                  <button
+                    type="button"
+                    className={`day-flow-step-dot${i === flowIdx ? ' on' : ''}${i < flowIdx ? ' done' : ''}`}
+                    onClick={() => { if (i < flowIdx) setLandingStep(s.key); }}
+                    disabled={i > flowIdx}
+                    aria-current={i === flowIdx ? 'step' : undefined}
+                  >
+                    <span className="day-flow-step-num">{i < flowIdx ? '✓' : i + 1}</span>
+                    <span className="day-flow-step-label">{t(s.labelKey)}</span>
+                  </button>
+                </React.Fragment>
               ))}
-            </div>
+            </nav>
+            <span className="day-flow-stepcount">
+              {t('day.stepXofN', { x: flowIdx + 1, n: FLOW.length })}
+            </span>
             <button
               className="day-flow-help"
               onClick={() => setHowToOpen((v) => !v)}
@@ -2401,28 +2428,106 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
             </div>
           )}
 
+          {/* Work you already have belongs UNDER the question it continues,
+              in the same column. Sitting below the whole split it started
+              level with the bottom of a 620px map, which left the question
+              column half empty and pushed saved plans off the fold. */}
+          {landingStep === 'stay' && (
+            <div className="day-flow-saved">
+              {standalonePlans.length > 0 && (
+                <div className="day-landing-section">
+                  <div className="trip-block-title">{t('day.yourDayPlans')}</div>
+                  <div className="trip-saved-list">
+                    {standalonePlans.map((sp) => (
+                      <div className="trip-saved-item" key={sp.id}>
+                        {/* The chevron is the row's affordance: without it a
+                            bordered box holding a name reads as a filled-in text
+                            field, not as a saved plan you can open. */}
+                        <button className="trip-saved-main" onClick={() => openStandalone(sp)}>
+                          <span className="trip-saved-label">
+                            {sp.label || destinations[sp.stops?.[0]?.destinationId]?.city || t('day.dayPlanFallback')}
+                            <small className="day-saved-sub">
+                              {fmtDate(sp.startDate)}
+                              {(sp.stops?.reduce((n, s) => n + (s.days || 1), 0) || 1) > 1
+                                ? t('day.nDaysSuffix', { n: sp.stops.reduce((n, s) => n + (s.days || 1), 0) })
+                                : ''}
+                              {(sp.stops?.length || 1) > 1 ? t('day.nCitiesSuffix', { n: sp.stops.length }) : ''}
+                            </small>
+                          </span>
+                          <span className="trip-saved-go" aria-hidden="true"><ChevronRightIcon size={14} /></span>
+                        </button>
+                        <button className="trip-saved-del" onClick={() => deleteStandalone(sp.id)} aria-label={t('day.deleteDayPlan')} title={t('day.delete')}>×</button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Or plan a day from a saved trip */}
+              {authConfigured && user && (
+                <div className="day-landing-section">
+                  <div className="trip-block-title">{t('day.planFromSavedTrip')}</div>
+                  {plansLoading ? (
+                    <p className="trip-note">{t('day.loadingSavedTrips')}</p>
+                  ) : savedPlans.length === 0 ? (
+                    <p className="trip-note">{t('day.noSavedTrips')}</p>
+                  ) : (
+                    <div className="trip-saved-list">
+                      {savedPlans.map((p) => (
+                        <div className="trip-saved-item" key={p.id}>
+                          <button className="trip-saved-main" onClick={() => openPlan(p.id)}>
+                            <span className="trip-saved-label">
+                              {p.label || t('day.untitledTrip')}
+                              {/* Two trips can honestly carry the same label
+                                  ("Austria & Germany" planned twice), and two
+                                  identical rows are unpickable. Their dates and
+                                  stop count are what tells them apart. */}
+                              {tripPlanSub(p) && <small className="day-saved-sub">{tripPlanSub(p)}</small>}
+                            </span>
+                            <span className="trip-saved-go" aria-hidden="true"><ChevronRightIcon size={14} /></span>
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {authConfigured && !user && <p className="trip-note">{t('day.signInNote')}</p>}
+              {!authConfigured && <p className="trip-note">{t('day.noAuthNote')}</p>}
+            </div>
+          )}
+
           </div>
           {/* The answer, on a map. Follows the chosen stay, or the first
               search result while the traveller is still deciding. Until
               something is chosen the popular cities are ON the map as tappable
               pins, not just as chips beside it: "where are you staying?" is a
               question about places, and a map you cannot answer with is
-              scenery. */}
+              scenery.
+
+              Map and caption share one bordered surface, the same one the
+              question card wears. Loose, the map read as a tile floating on
+              the page with its instruction dangling underneath it. */}
           <aside className="day-flow-mapside">
-            <DayExploreMap
-              stay={newStayPoint || (stayResults && stayResults[0]) || null}
-              markers={stayPins}
-              onFocus={(id) => {
-                const row = popularStays.find((r) => r.id === id);
-                if (row) pickPopularStay(row);
-              }}
-            />
-            <p className="day-flow-mapcap">
-              <MapPinIcon size={11} />
-              {newStayPoint
-                ? t('day.mapCapStay', { place: newStayPoint.shortLabel || newStayPoint.label })
-                : stayPins.length ? t('day.mapCapPick') : t('day.mapCapEmpty')}
-            </p>
+            <div className="day-flow-mappanel">
+              <DayExploreMap
+                stay={newStayPoint || (stayResults && stayResults[0]) || null}
+                markers={stayPins}
+                onFocus={(id) => {
+                  const row = popularStays.find((r) => r.id === id);
+                  if (row) pickPopularStay(row);
+                }}
+              />
+              <p className="day-flow-mapcap">
+                <MapPinIcon size={13} />
+                <span>
+                  {newStayPoint
+                    ? t('day.mapCapStay', { place: newStayPoint.shortLabel || newStayPoint.label })
+                    : stayPins.length ? t('day.mapCapPick') : t('day.mapCapEmpty')}
+                </span>
+              </p>
+            </div>
           </aside>
           </div>
           )}
@@ -2721,70 +2826,6 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
           </div>
           )}
 
-          {/* Saved work stays reachable from the first step only, so the later
-              steps are the question and nothing else. */}
-          {landingStep === 'stay' && standalonePlans.length > 0 && (
-            <div className="day-landing-section">
-              <div className="trip-block-title">{t('day.yourDayPlans')}</div>
-              <div className="trip-saved-list">
-                {standalonePlans.map((sp) => (
-                  <div className="trip-saved-item" key={sp.id}>
-                    {/* The chevron is the row's affordance: without it a
-                        bordered box holding a name reads as a filled-in text
-                        field, not as a saved plan you can open. */}
-                    <button className="trip-saved-main" onClick={() => openStandalone(sp)}>
-                      <span className="trip-saved-label">
-                        {sp.label || destinations[sp.stops?.[0]?.destinationId]?.city || t('day.dayPlanFallback')}
-                        <small className="day-saved-sub">
-                          {', '}{fmtDate(sp.startDate)}
-                          {(sp.stops?.reduce((n, s) => n + (s.days || 1), 0) || 1) > 1
-                            ? t('day.nDaysSuffix', { n: sp.stops.reduce((n, s) => n + (s.days || 1), 0) })
-                            : ''}
-                          {(sp.stops?.length || 1) > 1 ? t('day.nCitiesSuffix', { n: sp.stops.length }) : ''}
-                        </small>
-                      </span>
-                      <span className="trip-saved-go" aria-hidden="true"><ChevronRightIcon size={14} /></span>
-                    </button>
-                    <button className="trip-saved-del" onClick={() => deleteStandalone(sp.id)} aria-label={t('day.deleteDayPlan')} title={t('day.delete')}>×</button>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Or plan a day from a saved trip */}
-          {landingStep === 'stay' && authConfigured && user && (
-            <div className="day-landing-section">
-              <div className="trip-block-title">{t('day.planFromSavedTrip')}</div>
-              {plansLoading ? (
-                <p className="trip-note">{t('day.loadingSavedTrips')}</p>
-              ) : savedPlans.length === 0 ? (
-                <p className="trip-note">{t('day.noSavedTrips')}</p>
-              ) : (
-                <div className="trip-saved-list">
-                  {savedPlans.map((p) => (
-                    <div className="trip-saved-item" key={p.id}>
-                      <button className="trip-saved-main" onClick={() => openPlan(p.id)}>
-                        <span className="trip-saved-label">{p.label || t('day.untitledTrip')}</span>
-                        <span className="trip-saved-go" aria-hidden="true"><ChevronRightIcon size={14} /></span>
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
-
-          {landingStep === 'stay' && authConfigured && !user && (
-            <p className="trip-note">
-              {t('day.signInNote')}
-            </p>
-          )}
-          {landingStep === 'stay' && !authConfigured && (
-            <p className="trip-note">
-              {t('day.noAuthNote')}
-            </p>
-          )}
         </div>
       </div>
     );

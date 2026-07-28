@@ -6,6 +6,7 @@ import {
   CoffeeIcon, StarIcon, PersonIcon, BallIcon,
 } from '../components/Icons.jsx';
 import { TownPickerStep } from './TownPickerStep.jsx';
+import { RouteBuildingStage } from './RouteBuildingStage.jsx';
 import { stopPhaseLabels } from './daySchedule.js';
 
 /**
@@ -144,6 +145,9 @@ export function CartaChatPlanner({
   const [rounds, setRounds] = useState(0);
   const [refineText, setRefineText] = useState('');
   const [failCode, setFailCode] = useState('');
+  // Milestones the build reports as it runs, fed to the route animation so
+  // the wait shows real work with real numbers instead of a typing bubble.
+  const [stages, setStages] = useState([]);
   const endRef = useRef(null);
 
   // Macro blocks (Morning / Midday / ...) for the proposed route, announced
@@ -177,9 +181,12 @@ export function CartaChatPlanner({
   const visible = questions.filter((q) => !q.skip);
   const current = visible[step] || null;
 
+  // The build card grows a line at a time while it runs, so the transcript
+  // follows it: without `stages` here the log walked off the bottom of the
+  // scroller as soon as the third line arrived.
   useEffect(() => {
     endRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
-  }, [step, phase, result]);
+  }, [step, phase, result, stages.length]);
 
   const answerLabel = (q, value) => {
     if (q.free) return value || t('chat.nothingSpecial');
@@ -211,13 +218,14 @@ export function CartaChatPlanner({
   };
 
   const generate = async (profile, refine) => {
+    setStages([]);
     setPhase('busy');
     const res = await onRun({
       ...profile,
       freeText: (profile.extra || '').trim(),
       refine,
       prevStops: refine && result ? result.stops.map((s) => s.name) : [],
-    });
+    }, (stage) => setStages((prev) => [...prev, stage]));
     if (res.ok) {
       setResult(res.plan);
       setRounds((n) => n + 1);
@@ -352,10 +360,7 @@ export function CartaChatPlanner({
 
         {phase === 'busy' && (
           <div className="chat-turn">
-            <div className="chat-bubble bot chat-typing">
-              <span /><span /><span />
-            </div>
-            <p className="chat-busy-note">{rounds ? t('chat.reworking') : t('chat.building')}</p>
+            <RouteBuildingStage stages={stages} reworking={rounds > 0} />
           </div>
         )}
 
