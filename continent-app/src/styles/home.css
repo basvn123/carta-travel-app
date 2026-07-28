@@ -15,24 +15,30 @@
    is the app's.
 
    Chrome is borrowed rather than reinvented, so Home reads as a tab:
-     - the header matches .app-header (brand + divider, uppercase mono pills)
      - buttons match .guide-next (10px radius, accent fill)
      - map pins match .price-pill (paper fill, ink hairline, deal in accent)
      - cards match the app's panels (white, --rule, 16px, --shadow-card)
 
-   .home-page sits ABOVE the app chrome (.top-bar, z 25) and BELOW the mobile
-   BottomNav (z 50), which is what makes Home a real tab on phones instead of
-   a trap.
+   LAYOUT, 2026-07-28: Home is a TAB BODY, not an overlay. It sits under the
+   real .app-header exactly like the map and the two planners do (top:
+   var(--filter-h), bottom: var(--bottom-nav-h), z BELOW .top-bar's 25), so
+   the front page wears the app's actual header rather than a copy of it and
+   switching Home -> Map -> Trip changes nothing but the body. That is also
+   why the page has no header and no "open the app" button of its own.
 
    Write STANDARD properties only; the build (Lightning CSS, targets in
    vite.config.js) generates the vendor prefixes.
    ========================================================================== */
 
 .home-page {
-  position: fixed;
-  inset: 0;
-  z-index: 45;
+  position: absolute;
+  top: var(--filter-h);
+  left: 0;
+  right: 0;
+  bottom: var(--bottom-nav-h);
+  z-index: 20;
   overflow-y: auto;
+  overscroll-behavior: contain;
   background: var(--paper);
   color: var(--ink);
   font-family: var(--ui);
@@ -66,6 +72,9 @@
 /* The app's section-label idiom: uppercase mono micro-caps, used on every
    panel heading in the map and the planners. */
 .home-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
   font-family: var(--mono);
   font-size: 10px;
   font-weight: 600;
@@ -74,6 +83,7 @@
   color: var(--accent);
   margin-bottom: 14px;
 }
+.home-eyebrow svg { flex: none; }
 
 .home-page h1,
 .home-page h2,
@@ -138,31 +148,14 @@
 .home-btn-lg { padding: 14px 26px; font-size: 14px; }
 .home-btn-wide { width: 100%; }
 
-/* ── Header: a copy of .app-header, so Home wears the same hat ───────── */
-.home-nav {
-  position: sticky;
-  top: 0;
-  z-index: 5;
-  background: rgba(245, 241, 232, 0.94);
-  border-bottom: 1px solid var(--rule);
-}
-.home-nav-inner {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  padding: 9px 24px;
-  max-width: 1160px;
-  margin: 0 auto;
-}
+/* ── Brand lockup (footer only: the page's hat is the app's own header) ── */
 .home-brand {
   display: flex;
   align-items: center;
   gap: 12px;
   flex-shrink: 0;
-  cursor: pointer;
   text-align: left;
 }
-.home-brand:hover .brand-name { color: var(--accent); }
 .home-brand .brand-name {
   font-family: var(--display);
   font-weight: 600;
@@ -180,38 +173,9 @@
   color: var(--ink-mute);
   margin-top: 5px;
 }
-.home-brand .brand-divider { height: 44px; margin-left: 8px; }
-.home-nav-links {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  flex-shrink: 0;
-}
-.home-nav-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  padding: 8px 14px;
-  border-radius: 999px;
-  font-family: var(--mono);
-  font-size: 10.5px;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  white-space: nowrap;
-  color: var(--ink-mute);
-  transition: color .15s, background .15s;
-}
-.home-nav-link:hover { color: var(--ink); background: var(--paper-dim); }
-.home-nav-actions {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-left: auto;
-  flex-shrink: 0;
-}
 
 /* ── Hero ────────────────────────────────────────────────────────────── */
-.home-hero { padding: 64px 0 0; }
+.home-hero { padding: 52px 0 0; }
 .home-status {
   display: inline-flex;
   align-items: center;
@@ -432,31 +396,43 @@
   font-size: 14px;
 }
 
-/* ── Trust strip ─────────────────────────────────────────────────────── */
-.home-trust {
+/* ── Proof ribbon ────────────────────────────────────────────────────────
+   The redesign put five-star ratings and traveller handles here. Carta has
+   no testimonials, and inventing them would undo the one thing the page is
+   selling. So the ribbon carries three measured facts instead: today's
+   cheapest week per person, how much of Europe sits under a real budget
+   line, and when the fares behind both were last checked. */
+.home-ribbon {
   margin-top: 56px;
   border-top: 1px solid var(--rule);
   border-bottom: 1px solid var(--rule);
   background: rgba(239, 236, 226, 0.5);
 }
-.home-trust-grid { display: grid; grid-template-columns: repeat(4, 1fr); }
-.home-trust-cell {
-  padding: 24px 24px 24px 0;
-  border-right: 1px solid var(--rule-soft);
+.home-ribbon-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 14px 44px;
+  padding: 20px 24px;
 }
-.home-trust-cell:last-child { border-right: 0; }
-.home-trust-cell h3 {
-  margin-bottom: 5px;
-  font-family: var(--ui);
-  font-size: 14px;
-  font-weight: 700;
-  letter-spacing: -0.005em;
-}
-.home-trust-cell p {
+.home-ribbon-cell {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 10px;
   font-size: 13px;
-  line-height: 1.55;
+  line-height: 1.5;
   color: var(--ink-soft);
 }
+.home-ribbon-cell b {
+  font-family: var(--mono);
+  font-size: 19px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+.home-ribbon-cell span { max-width: 30ch; }
+.home-ribbon-pending { color: var(--ink-mute); }
 
 /* ── Two column sections, alternating sides ──────────────────────────── */
 .home-two {
@@ -576,6 +552,103 @@
   color: #8a3323;
 }
 
+/* ── Live micro-previews ─────────────────────────────────────────────────
+   One under each product section: the three cheapest destinations, where the
+   money goes on that trip, and three real sights in that city. All of it is
+   the same priced data the map tab runs on, so the page cannot drift from
+   the product. Built from the app's own idioms: a mono caption, hairline
+   rows, figures right aligned in mono. */
+.home-prev {
+  margin-top: 26px;
+  padding: 14px 16px;
+  border: 1px solid var(--rule);
+  border-radius: 14px;
+  background: var(--bg-card);
+  box-shadow: var(--shadow-card);
+}
+.home-prev-cap {
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+}
+.home-prev-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--rule-soft);
+  font-size: 13.5px;
+  color: var(--ink-soft);
+}
+.home-prev-cap + .home-prev-row { border-top: 1px solid var(--rule-soft); margin-top: 8px; }
+.home-prev-row b { flex: none; font-weight: 500; color: var(--ink); }
+.home-prev-foot {
+  margin-top: 10px;
+  font-size: 10px;
+  line-height: 1.6;
+  color: var(--ink-mute);
+}
+.home-prev-empty { font-size: 13px; color: var(--ink-mute); }
+
+/* Where the money goes: three bars, widths straight off the real total. */
+.home-prev-split {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+.home-prev-split p { display: flex; align-items: center; gap: 10px; }
+.home-prev-split p > span:first-child {
+  width: 148px;
+  flex: none;
+  font-size: 12.5px;
+  color: var(--ink-soft);
+}
+.home-prev-split b { flex: none; width: 62px; text-align: right; font-size: 12px; font-weight: 500; }
+.home-prev-bar {
+  flex: 1;
+  min-width: 40px;
+  height: 7px;
+  border-radius: 99px;
+  background: var(--rule-soft);
+  overflow: hidden;
+}
+.home-prev-bar span { display: block; height: 100%; background: var(--accent); }
+.home-prev-split p:nth-child(2) .home-prev-bar span { background: var(--rate); }
+.home-prev-split p:nth-child(3) .home-prev-bar span { background: var(--green); }
+
+/* A day in that city: phase, sight, what kind of thing it is. */
+.home-prev-stop {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--rule-soft);
+  font-size: 13.5px;
+}
+.home-prev-cap + .home-prev-stop { border-top: 1px solid var(--rule-soft); margin-top: 8px; }
+.home-prev-stop span {
+  width: 72px;
+  flex: none;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+}
+.home-prev-stop b { font-weight: 600; color: var(--ink); }
+.home-prev-stop i {
+  margin-left: auto;
+  font-family: var(--mono);
+  font-style: normal;
+  font-size: 9.5px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+}
+
 /* ── Screenshot frames ───────────────────────────────────────────────── */
 .home-shot {
   border: 1px solid var(--rule);
@@ -628,6 +701,39 @@
   line-height: 1.7;
   color: var(--ink-mute);
 }
+
+/* ── How it works: three steps, one band ─────────────────────────────────
+   Numbered markers are earned here: the order carries information (you
+   cannot plan the days before you have picked the place). */
+.home-steps {
+  margin-top: 34px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border: 1px solid var(--rule);
+  border-radius: 20px;
+  background: var(--bg-card);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+}
+.home-step { padding: 26px; border-right: 1px solid var(--rule-soft); }
+.home-step:last-child { border-right: 0; }
+.home-step h3 { margin-top: 16px; }
+.home-step p { margin-top: 8px; font-size: 13.5px; line-height: 1.6; color: var(--ink-soft); }
+.home-step-mark { display: flex; align-items: center; gap: 12px; }
+.home-step-mark span {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+}
+.home-step-mark i { flex: 1; height: 2px; background: var(--rule-soft); }
+.home-step-mark-last span { background: var(--ink); }
 
 /* ── Coverage ────────────────────────────────────────────────────────── */
 .home-cov { background: rgba(239, 236, 226, 0.5); }
@@ -741,31 +847,31 @@
 /* ── FAQ ─────────────────────────────────────────────────────────────── */
 .home-faq { max-width: 800px; }
 .home-faq h2 { margin-bottom: 28px; }
-.home-faq details { padding: 18px 0; border-top: 1px solid var(--rule); }
-.home-faq details:last-of-type { border-bottom: 1px solid var(--rule); }
-.home-faq summary {
+.home-faq-item { border-top: 1px solid var(--rule); }
+.home-faq-item:last-child { border-bottom: 1px solid var(--rule); }
+.home-faq-q {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   gap: 20px;
+  width: 100%;
+  padding: 18px 0;
+  border: 0;
+  background: none;
   cursor: pointer;
+  text-align: left;
   font-family: var(--display);
   font-size: 17px;
   font-weight: 600;
   letter-spacing: -0.01em;
   color: var(--ink);
-  list-style: none;
+  transition: color .15s;
 }
-.home-faq summary::-webkit-details-marker { display: none; }
-.home-faq summary::after {
-  content: '+';
-  font-family: var(--mono);
-  font-size: 16px;
-  color: var(--ink-mute);
-}
-.home-faq details[open] summary::after { content: '\2212'; }
-.home-faq details[open] summary { color: var(--accent); }
-.home-faq details p {
-  margin-top: 12px;
+.home-faq-q:hover { color: var(--accent); }
+.home-faq-q[aria-expanded='true'] { color: var(--accent); }
+.home-faq-q span { flex: none; font-size: 16px; color: var(--ink-mute); }
+.home-faq-a {
+  margin: -4px 0 18px;
   max-width: 70ch;
   font-size: 14px;
   line-height: 1.7;
@@ -869,60 +975,47 @@
 }
 
 /* ── Responsive: down to 380px with no horizontal scroll ─────────────── */
-@media (max-width: 1000px) {
-  .home-nav-link .home-nav-label { display: none; }
-  .home-nav-link { padding: 9px; }
-}
-
 @media (max-width: 900px) {
-  .home-nav-links,
-  .home-nav-actions .home-btn-ghost { display: none; }
   .home-wrap { padding: 0 18px; }
-  .home-nav-inner { padding: 9px 18px; gap: 12px; }
-  .home-hero { padding-top: 40px; }
+  .home-hero { padding-top: 34px; }
   .home-section { padding: 56px 0; }
   .home-search { grid-template-columns: 1fr 1fr; }
   .home-field { border-bottom: 1px solid var(--rule-soft); }
   .home-field:nth-child(2n) { border-right: 0; }
   .home-field-go { grid-column: 1 / -1; border-bottom: 0; padding: 12px; }
-  .home-trust-grid { grid-template-columns: 1fr 1fr; }
-  .home-trust-cell { padding: 20px 18px 20px 0; }
-  .home-trust-cell:nth-child(2n) { border-right: 0; }
+  .home-ribbon-row { padding: 18px; gap: 12px 28px; }
   .home-two,
   .home-cov-grid,
   .home-prices,
   .home-footer-grid { grid-template-columns: 1fr; gap: 32px; }
   .home-two-flip > *:first-child { order: 0; }
+  .home-steps { grid-template-columns: 1fr; }
+  .home-step { border-right: 0; border-bottom: 1px solid var(--rule-soft); }
+  .home-step:last-child { border-bottom: 0; }
   .home-map { height: 340px; }
   .home-closer { width: calc(100% - 36px); padding: 44px 22px 38px; border-radius: 20px; }
   .home-footer-bottom { flex-direction: column; gap: 8px; }
 }
 
 @media (max-width: 768px) {
-  /* Leave room for the BottomNav: Home is a real tab down there. */
-  .home-page { padding-bottom: var(--bottom-nav-h); }
   /* "Europe Travel" wraps to two lines at this width and shoves the row
      taller; the wordmark alone carries the brand on a phone. */
   .home-brand .brand-sub { display: none; }
   .home-brand .brand-name { font-size: 22px; }
-  .home-brand .brand-divider { display: none; }
 }
 
 @media (max-width: 560px) {
   .home-search { grid-template-columns: 1fr; }
   .home-field { border-right: 0; }
-  .home-trust-grid { grid-template-columns: 1fr; }
-  .home-trust-cell {
-    padding: 16px 0;
-    border-right: 0;
-    border-bottom: 1px solid var(--rule-soft);
-  }
-  .home-trust-cell:last-child { border-bottom: 0; }
+  .home-ribbon-cell { width: 100%; }
   .home-hero-ctas .home-btn,
   .home-closer-row .home-btn { flex: 1 1 100%; }
   .home-map { height: 300px; }
   .home-pin { font-size: 11px; padding: 3px 7px; }
   .home-map-legend { font-size: 9.5px; padding: 8px 11px; }
+  .home-prev-split p > span:first-child { width: 104px; font-size: 11.5px; }
+  .home-prev-stop { flex-wrap: wrap; }
+  .home-prev-stop i { margin-left: 0; }
   .home-r-head,
   .home-r-body,
   .home-r-total,
