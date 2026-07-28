@@ -9,6 +9,24 @@ export function eur(n) {
   return Number.isFinite(n) ? `€${Math.round(n).toLocaleString(activeLocale())}` : '-';
 }
 
+/** Grouped whole number in the app language, e.g. "1,570". Bare
+ *  `n.toLocaleString()` follows the machine's locale instead, which is how the
+ *  landing page ended up printing "1.570 destinations" next to "€1,083.48". */
+export function count(n) {
+  return Number.isFinite(n) ? Math.round(n).toLocaleString(activeLocale()) : '-';
+}
+
+/** Euro to the cent, e.g. "€24.99". The landing page receipt runs on this
+ *  rather than eur(): rounding a €24.99 fare to €25 quietly turns the product's
+ *  whole claim ("this is the real stored fare") into an estimate. */
+export function eurExact(n) {
+  return Number.isFinite(n)
+    ? new Intl.NumberFormat(activeLocale(), {
+      style: 'currency', currency: 'EUR', minimumFractionDigits: 2, maximumFractionDigits: 2,
+    }).format(n)
+    : '-';
+}
+
 /** Decimal hours in human units: 0.17 -> "10 min", 2.5 -> "2 h 30 min".
  *  Nobody reads "0.17h each way" as ten minutes. */
 export function fmtHours(h) {

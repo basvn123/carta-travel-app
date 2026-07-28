@@ -587,7 +587,9 @@ function TravelApp() {
           returnDate={returnDate}
           setReturnDate={setReturnDate}
           dateBounds={dateBounds}
-          reachableCount={pricedAll.length}
+          // Cheapest-first, so the landing page can take its receipt
+          // destination and its map pins straight off the front of it.
+          pricedAll={pricedAll}
           totalCount={Object.keys(data.destinations).length}
           countryCount={availableCountries.length}
           user={user}
