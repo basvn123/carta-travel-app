@@ -93,6 +93,11 @@ export const it = {
   'home.rShiftNone': "Le tariffe su questa rotta sono state controllate {ago}.",
   'home.rEmptyTitle': "Nessun viaggio calcolato",
   'home.rEmptyBody': "Scegli date con voli da {city} e il dettaglio completo compare qui.",
+  'home.findLabel': "Calcola qualsiasi città",
+  'home.findPh': "Barcelona",
+  'home.findNoFare': "nessuna tariffa in queste date",
+  'home.findNone': 'Nessun risultato per "{q}" tra {total} destinazioni',
+  'home.findClear': "Torna al viaggio più economico",
   'home.rUnpriced': "{city} non ha un prezzo da {origin} in quelle date. Sposta una data o scegli un'altra città.",
 
   // The three products, in one swipeable deck

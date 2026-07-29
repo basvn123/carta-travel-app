@@ -7,7 +7,7 @@ import { NumberField } from './FilterControls.jsx';
 import { PrivacyPolicy } from './PrivacyPolicy.jsx';
 import { RatingBadge } from './RatingBadge.jsx';
 import { HomeDeck } from './HomeDeck.jsx';
-import { CalendarIcon, ChevronRightIcon, MapPinIcon, RouteIcon, ListDayIcon } from './Icons.jsx';
+import { CalendarIcon, ChevronRightIcon, MapPinIcon, RouteIcon, ListDayIcon, SearchIcon } from './Icons.jsx';
 import { composeTrip, tripDaysBetween } from '../lib/runtime_pricing.js';
 import { TIERS, TIER_ORDER, formatPrice, yearPassTripsEquivalent } from '../lib/pricing.js';
 import { addDays, fmtDate, todayISO } from '../lib/dates.js';
@@ -94,6 +94,13 @@ export function HomePage({
   const { t, lang } = useI18n();
   const [privacyOpen, setPrivacyOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState(0);
+
+  /* The city search above the receipt: type any place and the receipt prices
+     that whole trip instead of today's cheapest find. */
+  const [destQuery, setDestQuery] = useState('');
+  const [pickedId, setPickedId] = useState(null);
+  const [findOpen, setFindOpen] = useState(false);
+  const [findHi, setFindHi] = useState(0);
   const priceLocale = (LANGUAGES.find((l) => l.code === lang) || LANGUAGES[0]).bcp47;
 
   /* The page's two deliberate animation moments, both one-shot and additive:
@@ -158,6 +165,81 @@ export function HomePage({
     [pricedAll],
   );
 
+  const pricedById = useMemo(() => {
+    const m = new Map();
+    for (const p of pricedAll || []) m.set(p.id, p);
+    return m;
+  }, [pricedAll]);
+
+  /* One searchable row per place name. Multi-airport cities repeat the same
+     name on every gateway; keep the gateway the pricing pass kept, so the
+     suggestion's price matches the receipt it produces. */
+  const catalogue = useMemo(() => {
+    if (!data?.destinations) return [];
+    const byName = new Map();
+    for (const [id, d] of Object.entries(data.destinations)) {
+      if (!d?.city) continue;
+      const key = fold(`${d.city}|${d.country || ''}`);
+      const have = byName.get(key);
+      const priced = pricedById.has(id);
+      if (!have || (priced && !have.priced)) {
+        byName.set(key, {
+          id,
+          city: d.city,
+          country: d.country || '',
+          priced,
+          f: fold(d.city),
+          s: fold(`${d.city} ${d.country || ''}`),
+        });
+      }
+    }
+    return [...byName.values()];
+  }, [data, pricedById]);
+
+  const destMatches = useMemo(() => {
+    const q = fold(destQuery.trim());
+    if (q.length < 2) return [];
+    const hits = [];
+    for (const c of catalogue) {
+      const rank = c.f.startsWith(q) ? 0 : c.f.includes(q) ? 1 : c.s.includes(q) ? 2 : -1;
+      if (rank < 0) continue;
+      hits.push({ ...c, pp: pricedById.get(c.id)?.pp ?? null, rank });
+    }
+    hits.sort((a, b) => a.rank - b.rank
+      || (a.pp == null) - (b.pp == null)
+      || (a.pp ?? 0) - (b.pp ?? 0)
+      || a.city.localeCompare(b.city));
+    return hits.slice(0, FIND_LIMIT);
+  }, [catalogue, destQuery, pricedById]);
+
+  const pickDest = (m) => {
+    setPickedId(m.id);
+    setDestQuery(`${m.city}, ${m.country}`);
+    setFindOpen(false);
+    setFindHi(0);
+  };
+  const clearPick = () => {
+    setPickedId(null);
+    setDestQuery('');
+    setFindOpen(false);
+    setFindHi(0);
+  };
+  const onFindKey = (e) => {
+    if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+      if (!findOpen || !destMatches.length) return;
+      e.preventDefault();
+      const d = e.key === 'ArrowDown' ? 1 : -1;
+      setFindHi((h) => (h + d + destMatches.length) % destMatches.length);
+    } else if (e.key === 'Enter') {
+      if (findOpen && destMatches.length) {
+        e.preventDefault();
+        pickDest(destMatches[Math.min(findHi, destMatches.length - 1)]);
+      }
+    } else if (e.key === 'Escape') {
+      setFindOpen(false);
+    }
+  };
+
   /* ── The proof ribbon ──────────────────────────────────────────────────
      Three measured facts, no testimonials: what the cheapest week costs per
      person today, how much of Europe sits under a real budget line, and when
@@ -189,16 +271,37 @@ export function HomePage({
   }, [flyable, pricedAll, pricedCount, nights]);
 
   /* ── The receipt, the split and the day ────────────────────────────────
-     All three come off the SAME destination the ribbon calls cheapest, so the
-     page cannot argue with itself: it once headlined a €568 drive while the
-     receipt totalled a €898 flight. Whatever mode the engine priced for that
-     one destination, the lines below say so. */
+     All three come off the SAME destination, so the page cannot argue with
+     itself: it once headlined a €568 drive while the receipt totalled a €898
+     flight. That destination is the searched city when the visitor typed
+     one, and today's cheapest flyable trip otherwise. Whatever mode the
+     engine priced for it, the lines below say so. */
   const trip = useMemo(() => {
-    if (!data || !pricedCount || nights <= 0) return null;
-    const pick = flyable[0] || pricedAll[0];
+    if (!data || nights <= 0) return null;
+    let pick = null;
+    if (pickedId) {
+      pick = pricedById.get(pickedId) || null;
+      if (!pick) {
+        /* The pricing pass skipped this place, but compose anyway: the answer
+           to "what does it cost" should be an honest no-price line for THAT
+           city, not a silent fall-back to somewhere else. */
+        const d = data.destinations[pickedId];
+        if (d) {
+          pick = {
+            id: pickedId, city: d.city, country: d.country, iata: d.iata || d.anchor_airport,
+          };
+        }
+      }
+    }
+    if (!pick) pick = flyable[0] || pricedAll?.[0] || null;
+    if (!pick) return null;
     const dest = data.destinations[pick.id];
     const priced = dest && composeTrip(dest, departDate, returnDate, choices, data.destinations);
-    if (!priced) return null;
+    if (!priced) {
+      return pickedId
+        ? { unpriced: true, city: pick.city, country: pick.country }
+        : null;
+    }
 
     /* The lines must add up to the total, exactly. composeTrip prices two
        different journeys and only one of them is the answer: the plane total
@@ -297,7 +400,7 @@ export function HomePage({
       split,
       sights,
     };
-  }, [data, flyable, pricedAll, pricedCount, departDate, returnDate, dateBounds,
+  }, [data, flyable, pricedAll, pricedById, pickedId, departDate, returnDate, dateBounds,
     choices, nights, groupSize, bagLabel, fareAge, t]);
 
   // The three cheapest flyable destinations, for the map card's mini list.
@@ -344,7 +447,7 @@ export function HomePage({
       icon: <ListDayIcon size={16} />,
       title: t('home.step3Title'),
       body: t('home.step3Body'),
-      live: trip?.sights.length
+      live: trip?.sights?.length
         ? t('home.step3Live', { n: trip.sights.length, city: trip.city })
         : null,
       link: t('home.tripCta'),
@@ -431,7 +534,7 @@ export function HomePage({
       shot: { src: '/shots/trip.webp', url: 'carta-europetravel.com/trip', alt: t('home.shotTripAlt') },
       preview: (
         <div className="home-prev">
-          {trip?.split.length ? (
+          {trip?.split?.length ? (
             <>
               <p className="home-prev-cap home-num">
                 {t('home.prevSplitHead', { city: trip.city })}
@@ -474,7 +577,7 @@ export function HomePage({
       shot: { src: '/shots/day.webp', url: 'carta-europetravel.com/day', alt: t('home.shotDayAlt') },
       preview: (
         <div className="home-prev">
-          {trip?.sights.length ? (
+          {trip?.sights?.length ? (
             <>
               <p className="home-prev-cap home-num">
                 {t('home.prevDayHead', { city: trip.city })}
@@ -659,52 +762,125 @@ export function HomePage({
               </ul>
             </div>
 
-            {trip ? (
-              <div className="home-receipt">
-                <div className="home-r-head">
-                  <div>
-                    <p className="home-r-title">{trip.city}, {trip.country}</p>
-                    <p className="home-r-sub">
-                      {trip.route}, {t('home.rNights', { n: nights })}, {t('home.rParty', { n: groupSize })}
-                    </p>
-                  </div>
-                  {/* The app's own badge, not a lookalike: same score chip,
-                      same tier colour, same hidden-gem tag as the map. */}
-                  <div className="home-r-rating">
-                    <RatingBadge rating={trip.rating} size="md" showLabel />
-                  </div>
+            <div className="home-r-col">
+              {/* The whole-trip promise, made typable: search any of the
+                  priced places and the receipt below reprices for it. */}
+              <div className="home-find">
+                <label className="home-find-label" htmlFor="home-find-input">
+                  {t('home.findLabel')}
+                </label>
+                <div className="home-find-box">
+                  <SearchIcon size={15} />
+                  <input
+                    id="home-find-input"
+                    type="text"
+                    role="combobox"
+                    aria-expanded={findOpen && destMatches.length > 0}
+                    aria-controls="home-find-list"
+                    aria-autocomplete="list"
+                    aria-activedescendant={findOpen && destMatches.length
+                      ? `home-find-opt-${findHi}` : undefined}
+                    autoComplete="off"
+                    spellCheck="false"
+                    placeholder={t('home.findPh')}
+                    value={destQuery}
+                    onChange={(e) => { setDestQuery(e.target.value); setFindOpen(true); setFindHi(0); }}
+                    onKeyDown={onFindKey}
+                    onBlur={() => setFindOpen(false)}
+                  />
+                  {pickedId && (
+                    <button
+                      type="button"
+                      className="home-find-clear"
+                      aria-label={t('home.findClear')}
+                      title={t('home.findClear')}
+                      onClick={clearPick}
+                    >
+                      ×
+                    </button>
+                  )}
                 </div>
-                <div className="home-r-body">
-                  {trip.lines.map((l) => (
-                    <p className="home-r-line" key={l.label}>
-                      <span>{l.label}</span>
-                      <b>{eurExact(l.amount)}</b>
-                    </p>
-                  ))}
-                </div>
-                <div className="home-r-total">
-                  <div>
-                    <p className="home-r-total-label">{t('home.rWholeTrip')}</p>
-                    <p className="home-r-total-sub">
-                      {t('home.rPerDay', { price: eurExact(trip.perDay) })}
-                      {trip.showPerPerson
-                        && `, ${t('home.rPerPerson', { price: eurExact(trip.perPerson) })}`}
-                    </p>
-                  </div>
-                  <p className="home-r-big">{eurExact(trip.total)}</p>
-                </div>
-                <p className="home-r-foot">{trip.shiftLine}</p>
+                {findOpen && destQuery.trim().length >= 2 && (
+                  <ul className="home-find-list" id="home-find-list" role="listbox">
+                    {destMatches.length ? destMatches.map((m, i) => (
+                      <li key={m.id} id={`home-find-opt-${i}`} role="option" aria-selected={i === findHi}>
+                        <button
+                          type="button"
+                          tabIndex={-1}
+                          className={i === findHi ? 'is-hi' : ''}
+                          onMouseDown={(e) => { e.preventDefault(); pickDest(m); }}
+                          onMouseEnter={() => setFindHi(i)}
+                        >
+                          <span>{m.city}, {m.country}</span>
+                          {m.pp != null
+                            ? <b className="home-num">{eur(m.pp)}</b>
+                            : <i>{t('home.findNoFare')}</i>}
+                        </button>
+                      </li>
+                    )) : (
+                      <li className="home-find-none">
+                        {t('home.findNone', { q: destQuery.trim(), total: totalLabel })}
+                      </li>
+                    )}
+                  </ul>
+                )}
               </div>
-            ) : (
-              <div className="home-receipt">
-                <div className="home-r-head">
-                  <p className="home-r-title">{t('home.rEmptyTitle')}</p>
+
+              {trip && !trip.unpriced ? (
+                <div className="home-receipt">
+                  <div className="home-r-head">
+                    <div>
+                      <p className="home-r-title">{trip.city}, {trip.country}</p>
+                      <p className="home-r-sub">
+                        {trip.route}, {t('home.rNights', { n: nights })}, {t('home.rParty', { n: groupSize })}
+                      </p>
+                    </div>
+                    {/* The app's own badge, not a lookalike: same score chip,
+                        same tier colour, same hidden-gem tag as the map. */}
+                    <div className="home-r-rating">
+                      <RatingBadge rating={trip.rating} size="md" showLabel />
+                    </div>
+                  </div>
+                  <div className="home-r-body">
+                    {trip.lines.map((l) => (
+                      <p className="home-r-line" key={l.label}>
+                        <span>{l.label}</span>
+                        <b>{eurExact(l.amount)}</b>
+                      </p>
+                    ))}
+                  </div>
+                  <div className="home-r-total">
+                    <div>
+                      <p className="home-r-total-label">{t('home.rWholeTrip')}</p>
+                      <p className="home-r-total-sub">
+                        {t('home.rPerDay', { price: eurExact(trip.perDay) })}
+                        {trip.showPerPerson
+                          && `, ${t('home.rPerPerson', { price: eurExact(trip.perPerson) })}`}
+                      </p>
+                    </div>
+                    <p className="home-r-big">{eurExact(trip.total)}</p>
+                  </div>
+                  <p className="home-r-foot">{trip.shiftLine}</p>
                 </div>
-                <div className="home-r-body">
-                  <p className="home-r-line"><span>{t('home.rEmptyBody', { city: originCity })}</span></p>
+              ) : (
+                <div className="home-receipt">
+                  <div className="home-r-head">
+                    <p className="home-r-title">
+                      {trip?.unpriced ? `${trip.city}, ${trip.country}` : t('home.rEmptyTitle')}
+                    </p>
+                  </div>
+                  <div className="home-r-body">
+                    <p className="home-r-line">
+                      <span>
+                        {trip?.unpriced
+                          ? t('home.rUnpriced', { city: trip.city, origin: originCity })
+                          : t('home.rEmptyBody', { city: originCity })}
+                      </span>
+                    </p>
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
+            </div>
           </div>
         </section>
 

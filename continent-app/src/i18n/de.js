@@ -93,6 +93,11 @@ export const de = {
   'home.rShiftNone': "Die Preise auf dieser Strecke wurden {ago} zuletzt geprüft.",
   'home.rEmptyTitle': "Noch keine berechnete Reise",
   'home.rEmptyBody': "Wähle Daten mit Flügen ab {city} und die volle Aufschlüsselung erscheint hier.",
+  'home.findLabel': "Rechne jede Stadt durch",
+  'home.findPh': "Barcelona",
+  'home.findNoFare': "kein Tarif an diesen Daten",
+  'home.findNone': 'Nichts zu "{q}" unter {total} Orten',
+  'home.findClear': "Wieder die günstigste Reise zeigen",
   'home.rUnpriced': "{city} hat ab {origin} an diesen Daten keinen Preis. Verschieb ein Datum oder wähle eine andere Stadt.",
 
   // The three products, in one swipeable deck

@@ -344,6 +344,117 @@
 .home-plist li:last-child { border-bottom: 1px solid var(--rule-soft); }
 .home-plist b { flex: none; color: var(--ink); font-weight: 700; }
 
+/* ── Price any city: the receipt's own search ────────────────────────────
+   The whole-trip promise made typable: pick any place and the receipt below
+   reprices for that trip instead of today's cheapest. The suggestion list is
+   absolute inside this relative wrap, never fixed, so no ancestor transform
+   can steal it (see the calendar popover incident). */
+.home-r-col { min-width: 0; }
+.home-find { position: relative; margin-bottom: 14px; }
+.home-find-label {
+  display: block;
+  margin-bottom: 8px;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+}
+.home-find-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 10px 0 14px;
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  background: var(--bg-card);
+  color: var(--ink-mute);
+}
+.home-find-box:focus-within {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent);
+}
+.home-find-box input {
+  flex: 1;
+  min-width: 0;
+  height: 46px;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--ink);
+}
+.home-find-box input::placeholder { color: var(--ink-mute); font-weight: 400; }
+/* The box draws the ring, so the inner input must not double it. */
+.home-page .home-find-box input:focus-visible { outline: none; }
+.home-find-clear {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--paper-dim);
+  color: var(--ink-soft);
+  font-size: 17px;
+  line-height: 1;
+  cursor: pointer;
+}
+.home-find-clear:hover { background: var(--rule-soft); color: var(--ink); }
+.home-find-list {
+  position: absolute;
+  z-index: 40;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  margin: 0;
+  padding: 6px;
+  list-style: none;
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  background: var(--bg-card);
+  box-shadow: var(--shadow-card);
+}
+.home-find-list li { margin: 0; }
+.home-find-list button {
+  display: flex;
+  width: 100%;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 9px 10px;
+  border: 0;
+  border-radius: 8px;
+  background: none;
+  font: inherit;
+  font-size: 14px;
+  color: var(--ink);
+  text-align: left;
+  cursor: pointer;
+}
+.home-find-list button.is-hi { background: var(--paper-dim); }
+.home-find-list button b {
+  flex: none;
+  font-family: var(--mono);
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+.home-find-list button i {
+  flex: none;
+  font-style: normal;
+  font-size: 11.5px;
+  color: var(--ink-mute);
+}
+.home-find-none {
+  padding: 10px 12px;
+  font-size: 13.5px;
+  color: var(--ink-mute);
+}
+
 /* ── The receipt ─────────────────────────────────────────────────────────
    Modelled on the app's cost-breakdown panel: a --paper-dim header band, one
    hairline-separated line per component with the figure right aligned in
@@ -776,9 +887,13 @@
   .deck-slide.is-on .deck-say > * { animation: none; }
 }
 
-/* ── How it works: three steps, one band ─────────────────────────────────
+/* ── How it works: the three questions, answered in order ────────────────
    Numbered markers are earned here: the order carries information (you
-   cannot plan the days before you have picked the place). */
+   cannot rank trips before the inputs exist, or plan days before a place is
+   picked). Each mark row is a little route: the number, a dashed leg, then
+   the icon of the tab that answers the question. The band draws itself once
+   as it scrolls into view; without the -live class (no IntersectionObserver,
+   screenshot harnesses, reduced motion) it is simply complete. */
 .home-steps {
   margin-top: 34px;
   display: grid;
@@ -789,12 +904,20 @@
   box-shadow: var(--shadow-card);
   overflow: hidden;
 }
-.home-step { padding: 26px; border-right: 1px solid var(--rule-soft); }
+.home-step {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 26px;
+  border-right: 1px solid var(--rule-soft);
+  transition: background 0.2s;
+}
+.home-step:hover { background: rgba(239, 236, 226, 0.35); }
 .home-step:last-child { border-right: 0; }
 .home-step h3 { margin-top: 16px; }
-.home-step p { margin-top: 8px; font-size: 13.5px; line-height: 1.6; color: var(--ink-soft); }
-.home-step-mark { display: flex; align-items: center; gap: 12px; }
-.home-step-mark span {
+.home-step-body { margin: 8px 0 18px; font-size: 13.5px; line-height: 1.6; color: var(--ink-soft); }
+.home-step-mark { display: flex; align-items: center; gap: 12px; width: 100%; }
+.home-step-num {
   display: grid;
   place-items: center;
   width: 32px;
@@ -806,8 +929,88 @@
   font-size: 13px;
   font-weight: 600;
 }
-.home-step-mark i { flex: 1; height: 2px; background: var(--rule-soft); }
-.home-step-mark-last span { background: var(--ink); }
+.home-step:last-child .home-step-num { background: var(--ink); }
+.home-step-route { flex: 1; height: 0; border-top: 2px dashed var(--rule); }
+.home-step-glyph { flex: none; display: grid; place-items: center; color: var(--accent); }
+
+/* The readout and the hand-off pin to the bottom, so the three cards keep
+   one baseline however long the copy above them runs. */
+.home-step-foot {
+  margin-top: auto;
+  width: 100%;
+  padding-top: 14px;
+  border-top: 1px dashed var(--rule-soft);
+}
+.home-step-live {
+  margin: 0 0 10px;
+  font-size: 11.5px;
+  line-height: 1.5;
+  color: var(--ink-soft);
+  overflow-wrap: anywhere;
+}
+.home-step-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 0;
+  border: 0;
+  background: none;
+  font-family: var(--ui);
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--accent);
+  cursor: pointer;
+}
+.home-step-link svg { transition: transform 0.15s; }
+.home-step-link:hover svg { transform: translateX(2px); }
+
+/* The one-shot draw: the number lands, the leg draws toward the tool, the
+   card prints. Everything is ADDITIVE on .home-steps-live and backwards
+   filled, so nothing sits invisible if the observer never fires. */
+@keyframes stepNum {
+  from { opacity: 0; transform: scale(0.5); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes stepRoute {
+  from { transform: scaleX(0); }
+  to { transform: none; }
+}
+@keyframes stepPrint {
+  from { opacity: 0; transform: translateY(7px); }
+  to { opacity: 1; transform: none; }
+}
+.home-steps-live .home-step:nth-child(1) { --step-at: 0s; }
+.home-steps-live .home-step:nth-child(2) { --step-at: 0.4s; }
+.home-steps-live .home-step:nth-child(3) { --step-at: 0.8s; }
+.home-steps-live .home-step-num {
+  animation: stepNum 0.35s cubic-bezier(0.22, 0.9, 0.24, 1) both;
+  animation-delay: var(--step-at);
+}
+.home-steps-live .home-step-route {
+  transform-origin: left center;
+  animation: stepRoute 0.4s cubic-bezier(0.22, 0.9, 0.24, 1) both;
+  animation-delay: calc(var(--step-at) + 0.12s);
+}
+.home-steps-live .home-step-glyph {
+  animation: stepPrint 0.35s cubic-bezier(0.22, 0.9, 0.24, 1) both;
+  animation-delay: calc(var(--step-at) + 0.34s);
+}
+.home-steps-live .home-step h3,
+.home-steps-live .home-step-body,
+.home-steps-live .home-step-foot {
+  animation: stepPrint 0.45s cubic-bezier(0.22, 0.9, 0.24, 1) both;
+  animation-delay: calc(var(--step-at) + 0.16s);
+}
+@media (prefers-reduced-motion: reduce) {
+  .home-step,
+  .home-step-link svg { transition: none; }
+  .home-steps-live .home-step-num,
+  .home-steps-live .home-step-route,
+  .home-steps-live .home-step-glyph,
+  .home-steps-live .home-step h3,
+  .home-steps-live .home-step-body,
+  .home-steps-live .home-step-foot { animation: none; }
+}
 
 /* ── Coverage ────────────────────────────────────────────────────────── */
 .home-cov { background: rgba(239, 236, 226, 0.5); }

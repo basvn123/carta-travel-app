@@ -93,6 +93,11 @@ export const nl = {
   'home.rShiftNone': "De tarieven op deze route zijn {ago} voor het laatst gecheckt.",
   'home.rEmptyTitle': "Nog geen geprijsde reis",
   'home.rEmptyBody': "Kies datums met vluchten vanaf {city} en de volledige opsplitsing verschijnt hier.",
+  'home.findLabel': "Reken elke stad door",
+  'home.findPh': "Barcelona",
+  'home.findNoFare': "geen tarief op deze data",
+  'home.findNone': 'Niets gevonden voor "{q}" in {total} plaatsen',
+  'home.findClear': "Toon weer de goedkoopste reis",
   'home.rUnpriced': "{city} heeft geen prijs vanaf {origin} op die data. Schuif met een datum of kies een andere stad.",
 
   // The three products, in one swipeable deck

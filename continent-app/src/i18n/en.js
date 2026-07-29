@@ -102,6 +102,11 @@ export const en = {
   'home.rShiftNone': "Fares on this route were last checked {ago}.",
   'home.rEmptyTitle': "No priced trip yet",
   'home.rEmptyBody': "Pick dates with flights from {city} and the full breakdown appears here.",
+  'home.findLabel': "Price any city",
+  'home.findPh': "Barcelona",
+  'home.findNoFare': "no fare on these dates",
+  'home.findNone': 'Nothing called "{q}" in {total} places',
+  'home.findClear': "Show the cheapest trip again",
   'home.rUnpriced': "{city} has no price from {origin} on those dates. Shift a date or pick another city.",
 
   // The three products, in one swipeable deck
