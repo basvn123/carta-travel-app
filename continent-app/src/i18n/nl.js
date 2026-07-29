@@ -1048,6 +1048,8 @@ export const nl = {
   "ai.optimizedNote": "Routecheck: de wandelvolgorde is op de server geoptimaliseerd.",
   "ai.routeCheckedNote": "Routecheck: de wandelvolgorde zit binnen enkele procenten van optimaal.",
   "ai.walkLeg": "{min} min lopen vanaf de vorige stop",
+  "ai.mapHint": "Tik op een stop om die op de kaart te vinden.",
+  "ai.showOnMap": "Toon {name} op de kaart",
   "ai.dismiss": "Carta-bot schema verwijderen",
   "ai.privacy": "Alleen je antwoorden en Carta's eigen plekkenlijst gaan naar de AI-dienst.",
   "ai.btnEmptySub": "Beantwoord een paar vragen, bekijk de dag en importeer hem op je kaart",

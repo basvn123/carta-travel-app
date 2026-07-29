@@ -1048,6 +1048,8 @@ export const it = {
   "ai.optimizedNote": "Controllo percorso: l'ordine a piedi e stato riottimizzato lato server.",
   "ai.routeCheckedNote": "Controllo percorso: l'ordine a piedi e a pochi punti percentuali dall'ottimo.",
   "ai.walkLeg": "{min} min a piedi dalla tappa precedente",
+  "ai.mapHint": "Tocca una tappa per trovarla sulla mappa.",
+  "ai.showOnMap": "Mostra {name} sulla mappa",
   "ai.dismiss": "Rimuovi il programma del bot di Carta",
   "ai.privacy": "Al servizio IA vengono inviate solo le tue risposte e l'elenco di luoghi di Carta.",
   "ai.btnEmptySub": "Rispondi a poche domande, controlla la giornata, poi importala sulla mappa",

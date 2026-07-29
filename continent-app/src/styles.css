@@ -3322,12 +3322,17 @@ input, select {
 
 /* Thumbnails (activity rows + timeline). */
 .day-thumb {
+  /* Blockified for free when it is a flex item (every list row), but the AI
+     proposal nests it inside a badge wrapper, and an inline span ignores both
+     of the sizes below. */
+  display: block;
   width: 40px; height: 40px;
   flex-shrink: 0;
   border-radius: 8px;
   background-size: cover;
   background-position: center;
   background-color: var(--accent-bg);
+  object-fit: cover;
 }
 /* No photo? The thumbnail still says what kind of place this is: a category
    glyph on warm paper with a hairline inset, rather than a flat pink square
@@ -12840,6 +12845,84 @@ input, select {
 .ai-sched-body b { font-size: 13px; font-weight: 600; color: var(--ink); }
 .ai-sched-body small { font-size: 11.5px; color: var(--ink-soft); line-height: 1.45; }
 .ai-sched-walk { color: var(--ink-mute); }
+
+/* ── The proposal as a route: a map of the day above the stops it lists ──
+   A named place the traveller has never been to is not a place yet. The photo
+   is what makes "Huis van Alijn" a decision rather than a word, and the map is
+   what answers the question the list structurally cannot: is this one walk
+   through one quarter, or three corners of the city stitched together. */
+.ai-route-map {
+  position: relative;
+  height: 248px;
+  margin: 12px 0 4px;
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--paper-dim);
+}
+/* The trip map is normally full-bleed BESIDE the desktop side panel, so it
+   carries `left: var(--panel-w)`. Embedded here that left over offset left the
+   canvas 34px wide, fitBounds could not fit a route into less padding than it
+   was given, and every stop of the day drew on the same pixel. Same reset the
+   wizard's inline map already does (.day-build-map). */
+.ai-route-map .trip-map,
+.ai-route-map > div { position: absolute !important; inset: 0 !important; }
+/* The proposal's stop rows are pickable (they light their pin), so the row
+   itself is the button. It has to shed every default a button carries. */
+.ai-sched-main {
+  flex: 1 1 auto;
+  display: flex; align-items: flex-start; gap: 10px;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+}
+button.ai-sched-main { cursor: pointer; }
+.ai-sched-thumb { position: relative; flex: 0 0 auto; }
+/* The stop's number, on its picture, is what ties the row to the numbered pin
+   before anything has been tapped. */
+.ai-sched-no {
+  position: absolute;
+  left: -5px; top: -5px;
+  min-width: 18px; height: 18px;
+  display: flex; align-items: center; justify-content: center;
+  padding: 0 4px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: #fff;
+  font-family: var(--mono); font-size: 10px; font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  box-shadow: 0 0 0 2px var(--paper);
+}
+.ai-sched-stop.ext .ai-sched-no { background: #5b3fa8; }
+/* Selected: the row and its pin are one thing, so picking either says so on
+   both. Kept to a tint and a rule, no lift, this is a list of places and not
+   a stack of cards. */
+.ai-sched-stop.on { background: var(--accent-bg); }
+.ai-sched-stop.on .ai-sched-body b { color: var(--accent); }
+.ai-sched-stop {
+  border-radius: 8px;
+  padding-left: 6px; padding-right: 6px;
+  margin-left: -6px; margin-right: -6px;
+  transition: background 0.15s;
+}
+button.ai-sched-main:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+.ai-route-hint {
+  margin-top: 8px;
+  font-size: 11px;
+  color: var(--ink-mute);
+}
+@media (max-width: 640px) {
+  .ai-route-map { height: 204px; }
+  .ai-sched-time { flex-basis: 58px; }
+}
 .ai-disc-tag {
   display: inline-flex; align-items: center; gap: 3px;
   margin-left: 6px;

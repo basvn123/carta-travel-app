@@ -7,6 +7,7 @@ import {
 } from '../components/Icons.jsx';
 import { TownPickerStep } from './TownPickerStep.jsx';
 import { RouteBuildingStage } from './RouteBuildingStage.jsx';
+import { AiPlanRoute } from './AiPlanRoute.jsx';
 import { stopPhaseLabels } from './daySchedule.js';
 
 /**
@@ -374,26 +375,9 @@ export function CartaChatPlanner({
                   {t('ai.totals', { km: result.totals?.walkKm ?? 0, t: result.totals?.endTime ?? '' })}
                 </span>
               </div>
-              <ol className="ai-sched">
-                {result.stops.map((s, i) => (
-                  <li key={i} className={`ai-sched-stop ${s.external ? 'ext' : ''}`}>
-                    {/* Same macro blocks the planned day reads in, not a
-                        per-stop clock. */}
-                    <span className="ai-sched-time">{stopPhases[i] ? t(stopPhases[i]) : ''}</span>
-                    <span className="ai-sched-body">
-                      <b>
-                        {s.name}
-                        {s.isEvent ? (
-                          <span className="ai-disc-tag ai-event-tag"><TicketIcon size={9} /> {t('ai.eventTag')}</span>
-                        ) : s.external ? (
-                          <span className="ai-disc-tag"><MapPinIcon size={9} /> {t('ai.discovery')}</span>
-                        ) : null}
-                      </b>
-                      {s.why && <small>{s.why}</small>}
-                    </span>
-                  </li>
-                ))}
-              </ol>
+              {/* The route on a map, then the stops in the same macro blocks
+                  the planned day reads in, not a per-stop clock. */}
+              <AiPlanRoute stops={result.stops} phases={stopPhases} />
               {result.stops.some((s) => s.isEvent) && (
                 <p className="ai-plan-note ai-plan-note-warn">{t('ai.eventCaveat')}</p>
               )}

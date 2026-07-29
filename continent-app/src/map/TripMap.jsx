@@ -10,6 +10,11 @@ const MAP_STYLE = 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json'
 // later one is nudged clear. A pin is 26px wide, so this is "touching".
 const MIN_PIN_SEP = 30;
 
+// The drawn teardrop, which is bigger than the 26px marker box it hangs from
+// and rises above its own coordinate. Used to keep a decluttered pin on the map.
+const PIN_HALF = 19;
+const PIN_TALL = 38;
+
 // Category glyphs for the pickable POI pins, the same visual language as the
 // explore map's pins (dem-pin), so "tappable place" reads the same everywhere.
 const S = (d) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">${d}</svg>`;
@@ -91,7 +96,7 @@ function routeArrowImage(px = 26) {
  * numbered stop, and the route redraws. Purely additive: without `pois` the
  * map behaves exactly as before.
  */
-export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedIndex = null, routeGeometry = null, routeSegments = null, showRoute = true, focus = null, pois = null, onPoiClick = null, onViewChange = null, fitMaxZoom = 7.5 }) {
+export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedIndex = null, routeGeometry = null, routeSegments = null, showRoute = true, focus = null, pois = null, onPoiClick = null, onViewChange = null, fitMaxZoom = 7.5, fitPadding = null, scrollZoom = true, easeToSelected = true }) {
   const containerRef = useRef(null);
   const mapRef = useRef(null);
   const markersRef = useRef([]);
@@ -121,6 +126,16 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
     if (!map) return [];
     const placed = [];
     const clear = (x, y) => placed.every((p) => Math.hypot(p.x - x, p.y - y) >= MIN_PIN_SEP);
+    // Nowhere off the map. The pin is drawn UPWARD from its point (anchor
+    // bottom), so a lift of 30-55px near the top edge put whole stop numbers
+    // outside the canvas: on the full-screen map they hid under the header, and
+    // on the AI proposal's small preview they landed on the card around it.
+    // Better an overlapping pin, which the traveller can zoom apart, than a
+    // pin that is not on the map at all.
+    const canvas = map.getCanvas();
+    const W = canvas.clientWidth || 0;
+    const H = canvas.clientHeight || 0;
+    const onMap = (x, y) => x >= PIN_HALF && x <= W - PIN_HALF && y >= PIN_TALL && y <= H;
     // Straight up first, then up-and-out, then sideways: a nudged pin should
     // read as lifted off a cluster, not as belonging to its neighbour.
     const fan = (pt) => {
@@ -129,7 +144,7 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
           const a = (deg * Math.PI) / 180;
           const dx = Math.round(Math.cos(a) * r);
           const dy = Math.round(Math.sin(a) * r);
-          if (clear(pt.x + dx, pt.y + dy)) return { dx, dy };
+          if (clear(pt.x + dx, pt.y + dy) && onMap(pt.x + dx, pt.y + dy)) return { dx, dy };
         }
       }
       return { dx: 0, dy: 0 };
@@ -166,6 +181,10 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
       zoom: 3.6,
       attributionControl: { compact: true },
       interactive: true,
+      // A map embedded in a scrolling column must not eat the wheel: reading
+      // past the AI proposal would zoom the map instead of scrolling the page.
+      // Drag, double-tap and pinch still work, and the route frames itself.
+      scrollZoom,
     });
     map.on('load', () => {
       map.addSource('trip-route', {
@@ -241,9 +260,29 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
     // Re-sync the canvas to the container whenever it changes size (tab mount,
     // window resize, sheet width changes). This is what keeps the map from
     // staying blank when the container wasn't fully laid out at construction.
+    //
+    // Resizing alone is not enough when the container had NO size yet: the
+    // framing that ran against a 0x0 canvas put every stop of the day on the
+    // same pixel, and the pins then fanned out of the map entirely, so a
+    // walking route read as a flower of numbers over the card. When a
+    // container goes from unlaid-out to real, frame the route again (and drop
+    // the frame-once memory, so a map that only frames once still gets its
+    // one framing against a real canvas).
     let ro = null;
     if (typeof ResizeObserver !== 'undefined' && containerRef.current) {
-      ro = new ResizeObserver(() => map.resize());
+      const laidOut = (el) => el.clientWidth >= 40 && el.clientHeight >= 40;
+      let wasLaidOut = laidOut(containerRef.current);
+      ro = new ResizeObserver(() => {
+        map.resize();
+        const el = containerRef.current;
+        if (!el) return;
+        const now = laidOut(el);
+        if (now && !wasLaidOut) {
+          lastFrameKeyRef.current = null;
+          map._drawTrip?.();
+        }
+        wasLaidOut = now;
+      });
       ro.observe(containerRef.current);
     }
 
@@ -278,7 +317,9 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
       mapRef.current = null;
       readyRef.current = false;
     };
-  }, []);
+    // Deliberately once: scrollZoom is a construction-time option, and
+    // rebuilding the map to change it would throw the viewport away.
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Redraw pins + route whenever the stop list (or the sheet height) changes.
   useEffect(() => {
@@ -380,7 +421,10 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
           new maplibregl.LngLatBounds([pts[0].lon, pts[0].lat], [pts[0].lon, pts[0].lat]),
         );
         map.fitBounds(bounds, {
-          padding: { top: 70, left: 60, right: 60, bottom: padBottom + 20 },
+          // Framing margins assume a full-screen map with a sheet over its
+          // bottom. An embedded map (the AI proposal preview) is a few hundred
+          // pixels tall and states its own, or the route fits into a letterbox.
+          padding: fitPadding || { top: 70, left: 60, right: 60, bottom: padBottom + 20 },
           maxZoom: fitMaxZoom,
           duration: 700,
         });
@@ -390,7 +434,7 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
     // Store so the load handler can invoke the latest closure once ready.
     map._drawTrip = draw;
     if (readyRef.current) draw();
-  }, [stops, padBottom, routeGeometry, routeSegments, showRoute, focus?.lat, focus?.lon, pois != null, fitMaxZoom]);
+  }, [stops, padBottom, routeGeometry, routeSegments, showRoute, focus?.lat, focus?.lon, pois != null, fitMaxZoom, fitPadding]);
 
   // Pickable candidate pins (Day planner): rebuild when the visible set
   // changes, a tapped pin leaves this list (it becomes a numbered stop), so
@@ -466,14 +510,18 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
   }, [poisKey]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Highlight the selected pin and ease it into the visible strip.
+  //
+  // A map that already frames every stop (the AI proposal preview) must not
+  // recentre on the one you picked: it would push the rest of the day off a
+  // 232px map to show you something you could already see.
   useEffect(() => {
     const map = mapRef.current;
     markersRef.current.forEach((m, i) => m.el.classList.toggle('active', i === selectedIndex));
-    if (map && selectedIndex != null) {
+    if (map && easeToSelected && selectedIndex != null) {
       const p = stops.filter(hasLngLat)[selectedIndex];
       if (p) map.easeTo({ center: [p.lon, p.lat], padding: { bottom: padBottom }, duration: 500 });
     }
-  }, [selectedIndex, stops, padBottom]);
+  }, [selectedIndex, stops, padBottom, easeToSelected]);
 
   return <div className="trip-map" ref={containerRef} />;
 }

@@ -1048,6 +1048,8 @@ export const fr = {
   "ai.optimizedNote": "Verification d'itineraire : l'ordre de marche a ete re-optimise cote serveur.",
   "ai.routeCheckedNote": "Verification d'itineraire : l'ordre de marche est a quelques pourcents de l'optimal.",
   "ai.walkLeg": "{min} min de marche depuis l'etape precedente",
+  "ai.mapHint": "Touchez une etape pour la trouver sur la carte.",
+  "ai.showOnMap": "Voir {name} sur la carte",
   "ai.dismiss": "Retirer le programme du bot Carta",
   "ai.privacy": "Seules vos reponses et la liste de lieux de Carta sont envoyees au service IA.",
   "ai.btnEmptySub": "Repondez a quelques questions, verifiez la journee, puis importez-la sur votre carte",

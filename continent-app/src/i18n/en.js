@@ -1670,6 +1670,8 @@ export const en = {
   "ai.optimizedNote": "Route check: the walking order was re-optimized on the server.",
   "ai.routeCheckedNote": "Route check: the walking order is within a few percent of optimal.",
   "ai.walkLeg": "{min} min walk from the previous stop",
+  "ai.mapHint": "Tap a stop to find it on the map.",
+  "ai.showOnMap": "Show {name} on the map",
   "ai.dismiss": "Remove the Carta bot schedule",
   "ai.privacy": "Only your answers and Carta's own place list are sent to the AI service.",
 

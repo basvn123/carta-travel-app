@@ -167,8 +167,28 @@ check('event stop tagged', (await page.locator('.ai-event-tag').count()) >= 1);
 check('event caveat shown', (await page.getByText(/not live listings/i).count()) >= 1);
 check('refine box offered', await page.locator('.ai-refine-input').isVisible().catch(() => false));
 check('import button offered', await page.locator('.ai-plan-import').isVisible().catch(() => false));
-check('nothing imported yet: map has no numbered pins',
-  (await page.locator('.trip-pin').count()) === 0);
+// The proposal draws its own preview map, so "not on your map yet" is now a
+// claim about the TRIP map specifically: pins inside the proposal card do not
+// count, pins on the map behind it would mean the import already happened.
+const tripPins = async () => (await page.locator('.trip-pin').count())
+  - (await page.locator('.ai-route-map .trip-pin').count());
+check('nothing imported yet: the trip map has no numbered pins', (await tripPins()) === 0);
+// The preview map loads its basemap before it can place pins.
+await page.waitForSelector('.ai-route-map .trip-pin', { timeout: 20000 }).catch(() => {});
+check('the proposal is drawn as a route on its own map',
+  (await page.locator('.ai-route-map .trip-pin').count()) === 4);
+check('every stop carries a thumbnail',
+  (await page.locator('.ai-sched-stop .day-thumb').count()) === 4);
+check('catalogue stops show their photo, not a glyph',
+  (await page.locator('.ai-sched-stop .day-thumb:not(.day-thumb-empty)').count()) >= 1);
+check('stop numbers tie the rows to the pins',
+  (await page.locator('.ai-sched-no').allInnerTexts()).join(',') === '1,2,3,4');
+// Row and pin are one thing: tapping the third row selects the third pin.
+await page.locator('.ai-sched-main').nth(2).click();
+await page.waitForTimeout(600);
+check('tapping a row selects it', (await page.locator('.ai-sched-stop.on').count()) === 1);
+check('tapping a row highlights its pin',
+  (await page.locator('.ai-route-map .trip-pin.active .trip-pin-no').innerText()) === '3');
 await page.screenshot({ path: `${SHOTS}/f2-proposal.png` });
 
 // ---- refine ----
@@ -186,8 +206,7 @@ await page.screenshot({ path: `${SHOTS}/f3-refined.png` });
 await page.locator('.ai-plan-import').click();
 await page.waitForTimeout(2500);
 check('modal closed after import', (await page.locator('.ai-plan-card').count()) === 0);
-check('catalogue stops became numbered map pins',
-  (await page.locator('.trip-pin').count()) >= 3);
+check('catalogue stops became numbered map pins', (await tripPins()) >= 3);
 check('discovery pin on the map', (await page.locator('.dem-pin.ai-disc').count()) >= 1);
 await page.locator('.day-plan-collapse .day-collapse-head').first().click().catch(() => {});
 await page.waitForTimeout(800);

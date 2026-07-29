@@ -13,7 +13,7 @@
  */
 import { supabase } from '../lib/supabaseClient.js';
 import {
-  pickerDeck, dwellMinutes, poiRating, poiCategory, isMustSee, poiKind,
+  pickerDeck, dwellMinutes, poiRating, poiCategory, isMustSee, poiKind, poiMapCat,
 } from './dayDraft.js';
 
 /**
@@ -69,6 +69,38 @@ export async function requestAiDayPlan(payload) {
   } catch {
     return { ok: false, code: 'network' };
   }
+}
+
+/**
+ * Put the catalogue's own photo (and category) back on each proposed stop.
+ *
+ * The Edge Function is sent a deliberately thin candidate deck and answers
+ * with names, coordinates and reasons: sending image URLs to a language model
+ * would be paying tokens for something we already hold locally. So the picture
+ * is rejoined here, on the way back, through the one link the two halves share:
+ * `id` is the stop's ORIGINAL index into the city's items array.
+ *
+ * Bot finds live outside the catalogue and have no photo by definition; they
+ * keep their glyph. Returns a new plan, the argument is untouched.
+ */
+export function decorateAiStops(plan, items) {
+  if (!plan?.stops?.length) return plan;
+  return {
+    ...plan,
+    stops: plan.stops.map((s) => {
+      if (s.external) return s;
+      const idx = Number(s.id);
+      const item = Number.isInteger(idx) ? items?.[idx] : null;
+      if (!item) return s;
+      return {
+        ...s,
+        img: item.img || '',
+        cat: poiMapCat(item),
+        kind: poiKind(item) || item.kind || '',
+        mustSee: isMustSee(item),
+      };
+    }),
+  };
 }
 
 /**

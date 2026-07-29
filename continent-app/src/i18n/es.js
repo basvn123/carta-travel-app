@@ -1048,6 +1048,8 @@ export const es = {
   "ai.optimizedNote": "Revision de ruta: el orden a pie se reoptimizo en el servidor.",
   "ai.routeCheckedNote": "Revision de ruta: el orden a pie esta a pocos puntos del optimo.",
   "ai.walkLeg": "{min} min a pie desde la parada anterior",
+  "ai.mapHint": "Toca una parada para encontrarla en el mapa.",
+  "ai.showOnMap": "Ver {name} en el mapa",
   "ai.dismiss": "Quitar el horario del bot de Carta",
   "ai.privacy": "Solo tus respuestas y la lista de lugares de Carta se envian al servicio de IA.",
   "ai.btnEmptySub": "Responde unas preguntas, revisa el dia y luego importalo a tu mapa",

@@ -29,7 +29,9 @@ import { AiDayPlanModal } from './AiDayPlanModal.jsx';
 import { PassModal } from '../components/PassModal.jsx';
 import { useEntitlement } from '../hooks/useEntitlement.js';
 import { CartaChatPlanner } from './CartaChatPlanner.jsx';
-import { buildAiCandidates, requestAiDayPlan, splitAiPlan } from './aiDayPlan.js';
+import {
+  buildAiCandidates, requestAiDayPlan, splitAiPlan, decorateAiStops,
+} from './aiDayPlan.js';
 import { buildCityCandidates, requestCitySuggestion } from './aiCitySuggest.js';
 import { openDayPlanPdf } from './dayPlanPdf.js';
 import { openDayPlanKml } from './dayPlanKml.js';
@@ -810,17 +812,24 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
     };
     setPrefs(remembered);
     persistPrefs(plan?.id, remembered);
+    // Coordinates live in the lazily fetched full list, so wait for it the way
+    // the built-in draft does. Asking the bot in the first seconds after a plan
+    // opens used to read the placeholder list and answer "not enough
+    // catalogued places here", which is a wrong sentence about a full city.
+    const fullMap = actFull ?? await fetchActivitiesFull();
+    if (!actFull && fullMap) setActFull(fullMap);
+    const { items, walkable } = itemsForStop(stop, fullMap);
     // The AI only ever sequences OUR researched candidates: same quality bar
     // as the map's pins, minus what the city's other days already claimed.
     const candidates = buildAiCandidates({
-      items: activities.items,
-      walkable: activities.walkable,
+      items,
+      walkable,
       excludeIdx: usedOtherDays,
       interests: style.interests,
     });
     if (candidates.length < 3) return { ok: false, code: 'too_few' };
     const centre = cityCoords(stop.dest);
-    return requestAiDayPlan({
+    const res = await requestAiDayPlan({
       dest: {
         id: stop.destination_id,
         city: stop.dest.city,
@@ -841,6 +850,8 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
       stay: stayAnchor ? { lat: stayAnchor.lat, lon: stayAnchor.lon } : null,
       candidates,
     });
+    // The bot answers with names and reasons; the photos are already here.
+    return res.ok ? { ...res, plan: decorateAiStops(res.plan, items) } : res;
   };
 
   // Group size only exists on the trip planner's draft; standalone day plans
@@ -2074,7 +2085,7 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
     onStage({ key: 'shortlist', vars: { n: candidates.length } });
     onStage({ key: 'route', vars: { km: Number(a.distance) || 5 } });
     const centre = cityCoords(info.dest);
-    return requestAiDayPlan({
+    const res = await requestAiDayPlan({
       dest: {
         id: destId, city: info.dest.city, country: info.dest.country,
         lat: centre.lat, lon: centre.lon,
@@ -2105,6 +2116,9 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
       stay: newStayPoint ? { lat: newStayPoint.lat, lon: newStayPoint.lon } : null,
       candidates,
     });
+    // Rejoin each proposed stop with the catalogue photo it came from, so the
+    // proposal shows the places rather than only naming them.
+    return res.ok ? { ...res, plan: decorateAiStops(res.plan, info.items) } : res;
   };
 
   // The "ask AI" town tab: a wider, coarser candidate list than the nearby

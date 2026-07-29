@@ -1048,6 +1048,8 @@ export const de = {
   "ai.optimizedNote": "Routen-Check: Die Gehreihenfolge wurde serverseitig neu optimiert.",
   "ai.routeCheckedNote": "Routen-Check: Die Gehreihenfolge liegt wenige Prozent vom Optimum entfernt.",
   "ai.walkLeg": "{min} Min. Fußweg vom vorigen Stopp",
+  "ai.mapHint": "Tippe einen Stopp an, um ihn auf der Karte zu finden.",
+  "ai.showOnMap": "{name} auf der Karte zeigen",
   "ai.dismiss": "Carta-Bot Zeitplan entfernen",
   "ai.privacy": "Nur deine Antworten und Cartas eigene Ortsliste gehen an den KI-Dienst.",
   "ai.btnEmptySub": "Ein paar Fragen beantworten, den Tag pruefen, dann auf die Karte importieren",

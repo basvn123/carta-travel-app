@@ -2,9 +2,10 @@ import React, { useMemo, useState } from 'react';
 import { useI18n } from '../i18n/index.jsx';
 import { DAY_STYLES } from './dayDraft.js';
 import { stopPhaseLabels } from './daySchedule.js';
+import { AiPlanRoute } from './AiPlanRoute.jsx';
 import {
   SparkIcon, CastleIcon, MuseumIcon, TreeIcon, DiningIcon, CameraIcon,
-  MapPinIcon, CheckIcon, CalendarIcon, PersonIcon, TicketIcon,
+  CheckIcon, CalendarIcon, PersonIcon, TicketIcon,
 } from '../components/Icons.jsx';
 
 const STYLE_ICONS = {
@@ -260,28 +261,10 @@ export function AiDayPlanModal({
             {/* The proposal reads in the same macro blocks the imported day
                 will: showing 09:33 here and "Morning" thirty seconds later,
                 for the very same plan, would make the day look like a
-                timetable being quietly loosened behind the traveller's back. */}
-            <ol className="ai-sched">
-              {result.stops.map((s, i) => (
-                <li key={i} className={`ai-sched-stop ${s.external ? 'ext' : ''}`}>
-                  <span className="ai-sched-time">{stopPhases[i] ? t(stopPhases[i]) : ''}</span>
-                  <span className="ai-sched-body">
-                    <b>
-                      {s.name}
-                      {s.isEvent ? (
-                        <span className="ai-disc-tag ai-event-tag"><TicketIcon size={9} /> {t('ai.eventTag')}</span>
-                      ) : s.external ? (
-                        <span className="ai-disc-tag"><MapPinIcon size={9} /> {t('ai.discovery')}</span>
-                      ) : null}
-                    </b>
-                    {s.why && <small>{s.why}</small>}
-                    {i > 0 && s.walkMinFromPrev > 0 && (
-                      <small className="ai-sched-walk">{t('ai.walkLeg', { min: s.walkMinFromPrev })}</small>
-                    )}
-                  </span>
-                </li>
-              ))}
-            </ol>
+                timetable being quietly loosened behind the traveller's back.
+                Above them, the same day drawn as a route, because "is this one
+                walk or three?" is not a question a list can answer. */}
+            <AiPlanRoute stops={result.stops} phases={stopPhases} />
             <p className="ai-plan-note">
               {t('ai.totals', { km: result.totals?.walkKm ?? 0, t: result.totals?.endTime ?? '' })}
               {' '}

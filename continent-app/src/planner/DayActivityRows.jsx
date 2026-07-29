@@ -11,13 +11,37 @@ import { safeUrl } from '../lib/format.js';
  *  and its pin read as the same thing. */
 const THUMB_GLYPH = { town: HomeIcon, beach: BeachIcon, active: MountainIcon, sight: CastleIcon };
 
-function ThumbFallback({ item }) {
-  const Glyph = THUMB_GLYPH[poiMapCat(item)] || CastleIcon;
+/** The one thumbnail every list of places uses: the photo when the catalogue
+ *  has one, its category glyph when it does not. `cat` is a poiMapCat key and
+ *  `Glyph` overrides it for places that are not catalogue rows at all (a bot
+ *  find has no category to speak of). */
+export function PoiThumb({ img, cat, name, Glyph }) {
+  // Some harvested photo URLs are dead (Wikimedia 400s on a few of the 640px
+  // thumbnails). A CSS background cannot tell, so it paints an empty tinted
+  // square; a real <img> can say it failed and hand the row back to its glyph.
+  const [failed, setFailed] = useState(false);
+  if (img && !failed) {
+    return (
+      <img
+        className="day-thumb"
+        src={img}
+        alt={name || ''}
+        loading="lazy"
+        decoding="async"
+        onError={() => setFailed(true)}
+      />
+    );
+  }
+  const Fallback = Glyph || THUMB_GLYPH[cat] || CastleIcon;
   return (
     <span className="day-thumb day-thumb-empty" aria-hidden="true">
-      <Glyph size={19} />
+      <Fallback size={19} />
     </span>
   );
+}
+
+function ItemThumb({ item }) {
+  return <PoiThumb img={item.img} cat={poiMapCat(item)} name={item.name} />;
 }
 
 /** Name + its badges. The name truncates on its own line box so a long title
@@ -97,7 +121,9 @@ export function AssignedRow({ item, index, last, stayLabel, note, noteFromAi, on
     <div className="day-timeline-row">
       <div className="day-timeline-num">{index + 1}</div>
       <div className="day-assigned-row day-assigned-with-info">
-        {item.img && <span className="day-thumb" style={{ backgroundImage: `url(${item.img})` }} />}
+        {/* Always a thumbnail, photo or glyph: a timeline where only some rows
+            carry a picture reads as a list with holes punched in it. */}
+        <ItemThumb item={item} />
         <div className="day-assigned-body">
           <RowTitle item={item} must={isMustSee(item)} />
           <span className="day-assigned-kind">
@@ -169,9 +195,7 @@ export function ActivityRow({ item, variant, added, onToggle, note }) {
   return (
     <div className={`day-activity-row day-activity-rich ${variant} ${added ? 'added' : ''}`}>
       <button className="day-activity-main" onClick={onToggle}>
-        {item.img
-          ? <span className="day-thumb" style={{ backgroundImage: `url(${item.img})` }} />
-          : <ThumbFallback item={item} />}
+        <ItemThumb item={item} />
         <span className="day-assigned-body">
           <RowTitle item={item} must={variant === 'must' || isMustSee(item)} />
           <span className="day-assigned-kind">{poiKind(item)}</span>
