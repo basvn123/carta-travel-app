@@ -27,6 +27,7 @@ export const en = {
   'nav.savedShort': 'Saved',
   'header.account': 'Account',
   'header.accountTitle': 'Account & preferences',
+  'header.seePricing': 'See pricing',
   'lang.pick': 'Language',
 
   // Entry gate
@@ -101,6 +102,7 @@ export const en = {
   'home.rShiftNone': "Fares on this route were last checked {ago}.",
   'home.rEmptyTitle': "No priced trip yet",
   'home.rEmptyBody': "Pick dates with flights from {city} and the full breakdown appears here.",
+  'home.rUnpriced': "{city} has no price from {origin} on those dates. Shift a date or pick another city.",
 
   // The three products, in one swipeable deck
   'home.deckEyebrow': "The three tools",
@@ -160,15 +162,22 @@ export const en = {
   'home.prevDayFoot': "Carta times the walks between them and the hours you have left. It does not check opening times.",
   'home.prevEmpty': "Pick dates with flights and this fills with real prices.",
 
-  // How it works
+  // How it works: the three questions a budget trip actually starts with
   'home.stepEyebrow': "How it works",
-  'home.stepTitle': "Three steps, then you travel.",
-  'home.step1Title': "Say when, and from where",
-  'home.step1Body': "Your dates, your airport, how many of you, which bag. Nothing else, and no account.",
-  'home.step2Title': "Compare whole trips, not fares",
-  'home.step2Body': "Every destination in Europe reprices at once, flight, bag, transfer, bed and food in one figure you can rank.",
-  'home.step3Title': "Plan the trip, then the days",
-  'home.step3Body': "Turn the place you picked into nights, routes and walking days, with the running total in view the whole way.",
+  'home.stepTitle': "The three questions every budget trip starts with.",
+  'home.stepLede': "When the money decides, you do not start by picking a city. You start by finding out what the money buys. Carta works in that order.",
+  'home.dateRange': "{a} to {b}",
+  'home.step1Title': "What do I have to work with?",
+  'home.step1Body': "Dates, airport, how many of you, which bag. No account, and no destination yet: finding one is the point.",
+  'home.step1Live': "Yours right now: {line}",
+  'home.step1Link': "Change yours above",
+  'home.step2Title': "Where can I actually afford to go?",
+  'home.step2Body': "Every destination becomes one all-in figure for your dates: flight, bag, transfer, bed and food. Rank the continent by it and the answer is a list, not a guess.",
+  'home.step2Live': "{n} places under {price} from {city} today",
+  'home.step2LiveCheap': "cheapest today: {city}, {price} per person",
+  'home.step3Title': "What will I do there all day?",
+  'home.step3Body': "The trip planner turns your pick into nights and legs. The day planner turns each day into a walking route with hours on it. The total keeps counting through both.",
+  'home.step3Live': "{n} real sights already lined up for {city}",
 
   // Coverage: the limits, stated plainly
   'home.covEyebrow': "Coverage",
@@ -186,23 +195,12 @@ export const en = {
 
   // Pricing (PLACEHOLDER TIERS, see HomePage.jsx)
   'home.priceEyebrow': "Pricing",
-  'home.priceTitle': "Browse for free. Pay when you plan.",
-  'home.priceBody': "Everything you need to find a trip is free. Plus is for the parts that only matter once you are actually going.",
-  'home.planFree': "Free",
+  'home.priceTitle': "Every price is free. The bot is {price}, once.",
+  'home.priceBody': "The map, every cost line and the trip planner are free for everyone. A pass pays for the Carta bot, which builds your days and checks the live web for events and opening hours.",
   'home.planFreePer': "forever",
-  'home.planFree1': "All {total} destinations priced, one departure airport",
-  'home.planFree2': "Full cost breakdown per destination",
-  'home.planFree3': "Three saved trips",
-  'home.planFree4': "One day plan at a time",
-  'home.planBadge': "Most useful",
-  'home.planPlus': "Carta Plus",
-  'home.planPlusPer': "per month, or €39 a year",
-  'home.planPlus1': "Compare several departure airports side by side",
-  'home.planPlus2': "Unlimited saved trips and day plans",
-  'home.planPlus3': "Exports to Google Maps, PDF and calendar",
-  'home.planPlus4': "Price alerts when a destination drops",
-  'home.planPlus5': "Group trips with the cost split per person",
-  'home.planPlusCta': "Start with Plus",
+  'home.planFree1': "All {total} destinations priced from your airport",
+  'home.planFree2': "Full cost breakdown, trip planner and saved trips",
+  'home.planEverything': "Everything in Free",
 
   // FAQ
   'home.faqTitle': "Questions people ask first",
@@ -1689,7 +1687,7 @@ export const en = {
   "pass.freeBlurb": "Enough to plan a day and see how Carta works.",
   "pass.tripBlurb": "One trip's worth of planning, from first idea to the day you fly.",
   "pass.yearBlurb": "For anyone who takes more than one trip a year.",
-  "pass.freePrice": "Free",
+  "pass.freePrice": "€0",
   "pass.perTrip": "once, 30 days",
   "pass.perYear": "once, 12 months",
   "pass.mostPopular": "Most popular",

@@ -254,6 +254,18 @@ input, select {
     background: none;
   }
   .app-header-account .account-avatar { width: 40px; height: 40px; font-size: 15px; }
+  /* Pricing collapses to its glyph, the same 40px touch target as the avatar. */
+  .app-header-account .header-pricing-btn {
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    justify-content: center;
+    border: none;
+    background: none;
+    box-shadow: none;
+  }
+  .app-header-account .header-pricing-btn svg { width: 18px; height: 18px; }
+  .header-pricing-label { display: none; }
 
   /* The desktop section tabs collapse; BottomNav (which includes Home) is
      the switch on mobile. */
@@ -7309,6 +7321,29 @@ input, select {
   color: var(--ink-soft);
 }
 
+/* "See pricing" in the header: quiet chrome next to the account button, the
+   same pill height, terracotta only on the glyph so it reads as a place to go
+   rather than an alert. */
+.header-pricing-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 38px;
+  padding: 0 14px;
+  border-radius: 999px;
+  border: 1px solid var(--rule);
+  background: var(--paper);
+  font-family: inherit;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--ink-soft);
+  box-shadow: var(--shadow-1);
+  cursor: pointer;
+  transition: border-color .15s, background .15s, color .15s;
+}
+.header-pricing-btn svg { color: var(--accent); flex-shrink: 0; }
+.header-pricing-btn:hover { border-color: var(--ink); background: var(--paper-dim); color: var(--ink); }
+
 @media (max-width: 880px) {
   .account-slot { width: 100%; justify-content: flex-end; margin: 2px 0 0; }
   .account-avatar-label { display: none; }
@@ -13908,7 +13943,15 @@ button.ai-sched-main:focus-visible {
 
 /* Wider than the AI dialog because it holds three columns. It still collapses
    to one on phones, where a horizontal pricing table is unreadable. */
-.pass-card { width: min(100%, 760px); }
+.pass-card {
+  width: min(100%, 800px);
+  text-align: left;
+  animation: pass-card-in .38s cubic-bezier(.16, .84, .32, 1) backwards;
+}
+.pass-overlay { animation: pass-overlay-in .25s ease backwards; }
+
+@keyframes pass-overlay-in { from { opacity: 0; } }
+@keyframes pass-card-in { from { opacity: 0; transform: translateY(14px) scale(.985); } }
 
 .pass-current {
   font-size: 12.5px;
@@ -13934,11 +13977,26 @@ button.ai-sched-main:focus-visible {
   border-radius: 12px;
   padding: 16px 14px 14px;
   background: var(--paper);
+  transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+  /* One-shot on open; `backwards` (never `both`) so the finished state is the
+     stylesheet's own, and the hover transform underneath still applies. */
+  animation: pass-tier-rise .45s cubic-bezier(.16, .84, .32, 1) backwards;
 }
+.pass-tier:nth-child(2) { animation-delay: .07s; }
+.pass-tier:nth-child(3) { animation-delay: .14s; }
+.pass-tier:hover { transform: translateY(-2px); box-shadow: var(--shadow-card); }
+
+@keyframes pass-tier-rise { from { opacity: 0; transform: translateY(12px); } }
+
 /* The Trip Pass is the one being sold, so it gets the accent border and the
    flag. Everything else stays quiet rather than competing with it. */
 .pass-tier.featured { border-color: var(--accent); border-width: 2px; padding: 15px 13px 13px; }
 .pass-tier.current { background: var(--wash, #f6f3ee); }
+
+@media (prefers-reduced-motion: reduce) {
+  .pass-overlay, .pass-card, .pass-tier { animation: none; }
+  .pass-tier, .pass-tier:hover { transition: none; transform: none; }
+}
 
 .pass-flag {
   position: absolute;
@@ -13964,10 +14022,11 @@ button.ai-sched-main:focus-visible {
 }
 .pass-price {
   font-family: var(--display);
-  font-size: 24px;
+  font-size: 27px;
   font-weight: 600;
   color: var(--ink);
   line-height: 1.15;
+  font-variant-numeric: tabular-nums;
 }
 .pass-price small {
   display: block;
@@ -13994,6 +14053,21 @@ button.ai-sched-main:focus-visible {
 /* Buttons sit on a shared baseline however uneven the feature lists are. */
 .pass-tier .pass-buy, .pass-buy-placeholder { margin-top: auto; }
 .pass-buy { width: 100%; justify-content: center; }
+/* The Year Pass buys too, but only the featured pass gets the filled button:
+   two identical primaries would say neither is the answer. */
+.pass-buy-quiet {
+  padding: 10px 22px;
+  border-radius: 10px;
+  border: 1px solid var(--rule);
+  background: var(--paper);
+  color: var(--ink);
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color .15s, color .15s;
+}
+.pass-buy-quiet:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+.pass-buy-quiet:disabled { opacity: 0.4; cursor: default; }
 .pass-buy-placeholder {
   font-size: 11.5px;
   color: var(--ink-mute);

@@ -20,6 +20,7 @@ export const nl = {
   'nav.savedShort': 'Bewaard',
   'header.account': 'Account',
   'header.accountTitle': 'Account & voorkeuren',
+  'header.seePricing': 'Bekijk prijzen',
   'lang.pick': 'Taal',
 
   'gate.title': 'Vind je volgende reis',
@@ -92,6 +93,7 @@ export const nl = {
   'home.rShiftNone': "De tarieven op deze route zijn {ago} voor het laatst gecheckt.",
   'home.rEmptyTitle': "Nog geen geprijsde reis",
   'home.rEmptyBody': "Kies datums met vluchten vanaf {city} en de volledige opsplitsing verschijnt hier.",
+  'home.rUnpriced': "{city} heeft geen prijs vanaf {origin} op die data. Schuif met een datum of kies een andere stad.",
 
   // The three products, in one swipeable deck
   'home.deckEyebrow': "De drie tools",
@@ -153,13 +155,20 @@ export const nl = {
 
   // How it works
   'home.stepEyebrow': "Hoe het werkt",
-  'home.stepTitle': "Drie stappen, dan reis je.",
-  'home.step1Title': "Zeg wanneer, en vanwaar",
-  'home.step1Body': "Je datums, je luchthaven, met hoeveel jullie zijn, welke bagage. Meer niet, en geen account.",
-  'home.step2Title': "Vergelijk hele reizen, geen tickets",
-  'home.step2Body': "Elke bestemming in Europa wordt in één keer herrekend: vlucht, bagage, transfer, bed en eten in één bedrag dat je kunt rangschikken.",
-  'home.step3Title': "Plan de reis, dan de dagen",
-  'home.step3Body': "Maak van de plek die je koos nachten, routes en wandeldagen, met het lopende totaal de hele weg in beeld.",
+  'home.stepTitle': "De drie vragen waar elke budgetreis mee begint.",
+  'home.stepLede': "Als het geld beslist, begin je niet met een stad kiezen. Je begint met uitzoeken wat je geld waard is. Carta werkt in die volgorde.",
+  'home.dateRange': "{a} tot {b}",
+  'home.step1Title': "Wat heb ik te besteden?",
+  'home.step1Body': "Datums, luchthaven, met hoeveel jullie zijn, welke bagage. Geen account, en nog geen bestemming: die vinden is nou juist de bedoeling.",
+  'home.step1Live': "Dat van jou, nu: {line}",
+  'home.step1Link': "Pas het hierboven aan",
+  'home.step2Title': "Waar kan ik echt heen met dat geld?",
+  'home.step2Body': "Elke bestemming wordt één totaalbedrag voor jouw datums: vlucht, bagage, transfer, bed en eten. Rangschik het continent erop en het antwoord is een lijst, geen gok.",
+  'home.step2Live': "{n} plekken onder {price} vanaf {city}, vandaag",
+  'home.step2LiveCheap': "goedkoopste vandaag: {city}, {price} per persoon",
+  'home.step3Title': "Wat doe ik daar de hele dag?",
+  'home.step3Body': "De reisplanner maakt van je keuze nachten en etappes. De dagplanner maakt van elke dag een wandelroute met uren erbij. Het totaal telt al die tijd door.",
+  'home.step3Live': "{n} echte bezienswaardigheden staan al klaar voor {city}",
 
   // Coverage: the limits, stated plainly
   'home.covEyebrow': "Dekking",
@@ -177,23 +186,12 @@ export const nl = {
 
   // Pricing (PLACEHOLDER TIERS, see HomePage.jsx)
   'home.priceEyebrow': "Prijzen",
-  'home.priceTitle': "Gratis rondkijken. Betalen als je plant.",
-  'home.priceBody': "Alles wat je nodig hebt om een reis te vinden is gratis. Plus is voor de extra's die pas tellen als je echt gaat.",
-  'home.planFree': "Gratis",
+  'home.priceTitle': "Elke prijs is gratis. De bot kost {price}, eenmalig.",
+  'home.priceBody': "De kaart, elke kostenpost en de reisplanner zijn voor iedereen gratis. Een pas betaalt voor de Carta bot, die je dagen uitwerkt en live op het web zoekt naar evenementen en openingstijden.",
   'home.planFreePer': "voor altijd",
-  'home.planFree1': "Alle {total} bestemmingen geprijsd, één vertrekluchthaven",
-  'home.planFree2': "Volledige kostenopsplitsing per bestemming",
-  'home.planFree3': "Drie bewaarde reizen",
-  'home.planFree4': "Eén dagplan tegelijk",
-  'home.planBadge': "Meest nuttig",
-  'home.planPlus': "Carta Plus",
-  'home.planPlusPer': "per maand, of € 39 per jaar",
-  'home.planPlus1': "Vergelijk meerdere vertrekluchthavens naast elkaar",
-  'home.planPlus2': "Onbeperkt reizen en dagplannen bewaren",
-  'home.planPlus3': "Export naar Google Maps, pdf en agenda",
-  'home.planPlus4': "Prijsmeldingen als een bestemming zakt",
-  'home.planPlus5': "Groepsreizen met de kosten per persoon verdeeld",
-  'home.planPlusCta': "Begin met Plus",
+  'home.planFree1': "Alle {total} bestemmingen geprijsd vanaf jouw luchthaven",
+  'home.planFree2': "Volledige kostenopsplitsing, reisplanner en bewaarde reizen",
+  'home.planEverything': "Alles uit Gratis",
 
   // FAQ
   'home.faqTitle': "Wat mensen als eerste vragen",
@@ -1166,7 +1164,7 @@ export const nl = {
   "pass.freeBlurb": "Genoeg om een dag te plannen en Carta te leren kennen.",
   "pass.tripBlurb": "Eén reis lang plannen, van eerste idee tot de dag dat je vliegt.",
   "pass.yearBlurb": "Voor wie meer dan één reis per jaar maakt.",
-  "pass.freePrice": "Gratis",
+  "pass.freePrice": "€0",
   "pass.perTrip": "eenmalig, 30 dagen",
   "pass.perYear": "eenmalig, 12 maanden",
   "pass.mostPopular": "Populairst",

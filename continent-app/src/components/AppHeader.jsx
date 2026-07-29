@@ -2,7 +2,7 @@ import React from 'react';
 import Logo from './Logo.jsx';
 import { LanguagePicker } from './LanguagePicker.jsx';
 import { useI18n } from '../i18n/index.jsx';
-import { PersonIcon, HomeIcon, MapPinIcon, RouteIcon, ListDayIcon, BookmarkIcon } from './Icons.jsx';
+import { PersonIcon, HomeIcon, MapPinIcon, RouteIcon, ListDayIcon, BookmarkIcon, TicketIcon } from './Icons.jsx';
 
 const NAV_ITEMS = [
   { key: 'home', labelKey: 'nav.home', Icon: HomeIcon },
@@ -41,7 +41,7 @@ function AccountButton({ user, onOpenAccount }) {
 // floats over the map itself, level with the Destinations pill (see
 // .map-toolrow in App), where it has room to state the question it is asking.
 export function AppHeader({
-  user, onOpenAccount,
+  user, onOpenAccount, onSeePricing,
   isHome, onGoHome,
   activeTab, onChangeTab,
   savedOpen, onToggleSaved,
@@ -92,6 +92,16 @@ export function AppHeader({
       {children && <div className="app-header-filters">{children}</div>}
 
       <div className="app-header-account">
+        {onSeePricing && (
+          <button
+            className="header-pricing-btn"
+            onClick={onSeePricing}
+            title={t('header.seePricing')}
+          >
+            <TicketIcon size={14} />
+            <span className="header-pricing-label">{t('header.seePricing')}</span>
+          </button>
+        )}
         <LanguagePicker />
         <AccountButton user={user} onOpenAccount={onOpenAccount} />
       </div>

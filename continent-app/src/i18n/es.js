@@ -20,6 +20,7 @@ export const es = {
   'nav.savedShort': 'Guardados',
   'header.account': 'Cuenta',
   'header.accountTitle': 'Cuenta y preferencias',
+  'header.seePricing': 'Ver precios',
   'lang.pick': 'Idioma',
 
   'gate.title': 'Encuentra tu próximo viaje',
@@ -92,6 +93,7 @@ export const es = {
   'home.rShiftNone': "Las tarifas de esta ruta se comprobaron {ago}.",
   'home.rEmptyTitle': "Aún no hay viaje calculado",
   'home.rEmptyBody': "Elige fechas con vuelos desde {city} y el desglose completo aparece aquí.",
+  'home.rUnpriced': "{city} no tiene precio desde {origin} en esas fechas. Mueve una fecha o elige otra ciudad.",
 
   // The three products, in one swipeable deck
   'home.deckEyebrow': "Las tres herramientas",
@@ -153,13 +155,20 @@ export const es = {
 
   // How it works
   'home.stepEyebrow': "Cómo funciona",
-  'home.stepTitle': "Tres pasos y te vas.",
-  'home.step1Title': "Di cuándo y desde dónde",
-  'home.step1Body': "Tus fechas, tu aeropuerto, cuántos sois, qué equipaje. Nada más, y sin cuenta.",
-  'home.step2Title': "Compara viajes enteros, no billetes",
-  'home.step2Body': "Cada destino de Europa se recalcula de una vez: vuelo, equipaje, traslado, cama y comida en una cifra que puedes ordenar.",
-  'home.step3Title': "Planea el viaje y luego los días",
-  'home.step3Body': "Convierte el sitio que elegiste en noches, rutas y días a pie, con el total en marcha a la vista todo el rato.",
+  'home.stepTitle': "Las tres preguntas con las que empieza todo viaje de bajo presupuesto.",
+  'home.stepLede': "Cuando decide el dinero, no empiezas eligiendo una ciudad. Empiezas viendo qué compra tu dinero. Carta trabaja en ese orden.",
+  'home.dateRange': "del {a} al {b}",
+  'home.step1Title': "¿Con qué cuento?",
+  'home.step1Body': "Fechas, aeropuerto, cuántos sois, qué equipaje. Sin cuenta, y todavía sin destino: encontrarlo es precisamente la idea.",
+  'home.step1Live': "Lo tuyo, ahora mismo: {line}",
+  'home.step1Link': "Cámbialo arriba",
+  'home.step2Title': "¿Adónde puedo permitirme ir de verdad?",
+  'home.step2Body': "Cada destino se convierte en una cifra total para tus fechas: vuelo, equipaje, traslado, cama y comida. Ordena el continente por esa cifra y la respuesta es una lista, no una apuesta.",
+  'home.step2Live': "{n} sitios por debajo de {price} desde {city}, hoy",
+  'home.step2LiveCheap': "lo más barato hoy: {city}, {price} por persona",
+  'home.step3Title': "¿Y qué hago allí todo el día?",
+  'home.step3Body': "El planificador de viaje convierte tu elección en noches y tramos. El planificador de día convierte cada día en una ruta a pie con sus horas. El total sigue sumando mientras tanto.",
+  'home.step3Live': "{n} sitios reales ya en la lista para {city}",
 
   // Coverage: the limits, stated plainly
   'home.covEyebrow': "Cobertura",
@@ -177,23 +186,12 @@ export const es = {
 
   // Pricing (PLACEHOLDER TIERS, see HomePage.jsx)
   'home.priceEyebrow': "Precios",
-  'home.priceTitle': "Mira gratis. Paga cuando planees.",
-  'home.priceBody': "Todo lo que necesitas para encontrar un viaje es gratis. Plus es para lo que solo importa cuando ya vas de verdad.",
-  'home.planFree': "Gratis",
+  'home.priceTitle': "Cada precio es gratis. El bot cuesta {price}, una sola vez.",
+  'home.priceBody': "El mapa, cada línea de coste y el planificador de viaje son gratis para todos. Un pase paga el bot de Carta, que construye tus días y busca en la web eventos y horarios de apertura.",
   'home.planFreePer': "para siempre",
-  'home.planFree1': "Los {total} destinos calculados, un aeropuerto de salida",
-  'home.planFree2': "Desglose completo de costes por destino",
-  'home.planFree3': "Tres viajes guardados",
-  'home.planFree4': "Un plan de día a la vez",
-  'home.planBadge': "Lo más útil",
-  'home.planPlus': "Carta Plus",
-  'home.planPlusPer': "al mes, o 39 € al año",
-  'home.planPlus1': "Comparar varios aeropuertos de salida en paralelo",
-  'home.planPlus2': "Viajes y planes de día guardados sin límite",
-  'home.planPlus3': "Exportar a Google Maps, PDF y calendario",
-  'home.planPlus4': "Avisos cuando baja un destino",
-  'home.planPlus5': "Viajes de grupo con el coste repartido por persona",
-  'home.planPlusCta': "Empezar con Plus",
+  'home.planFree1': "Los {total} destinos calculados desde tu aeropuerto",
+  'home.planFree2': "Desglose completo de costes, planificador y viajes guardados",
+  'home.planEverything': "Todo lo de Gratis",
 
   // FAQ
   'home.faqTitle': "Lo que la gente pregunta primero",
@@ -1166,7 +1164,7 @@ export const es = {
   "pass.freeBlurb": "Lo justo para planificar un día y ver cómo funciona Carta.",
   "pass.tripBlurb": "Planificación para un viaje entero, desde la primera idea hasta el día del vuelo.",
   "pass.yearBlurb": "Para quien viaja más de una vez al año.",
-  "pass.freePrice": "Gratis",
+  "pass.freePrice": "0 €",
   "pass.perTrip": "un pago, 30 días",
   "pass.perYear": "un pago, 12 meses",
   "pass.mostPopular": "El más elegido",

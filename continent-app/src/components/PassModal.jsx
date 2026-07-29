@@ -104,7 +104,7 @@ export function PassModal({ entitlement, reason = '', onClose, onSignIn, signedI
                 </ul>
                 {buyable ? (
                   <button
-                    className="guide-next pass-buy"
+                    className={`pass-buy ${tier.featured ? 'guide-next' : 'pass-buy-quiet'}`}
                     disabled={!!busy}
                     onClick={() => buy(id)}
                   >

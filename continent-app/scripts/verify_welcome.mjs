@@ -6,9 +6,11 @@
 //   2. The proof ribbon carries measured facts, and the receipt is a genuine
 //      composeTrip breakdown: itemised lines to the cent, an exact total, and
 //      a computed date-shift footer.
-//   3. Every section below the fold renders (there are no scroll reveals to
-//      fire any more), the three live micro-previews carry real prices and
-//      real sights, and the footer's privacy policy opens in-app.
+//   3. Every section below the fold renders (the pricing cards' one-shot rise
+//      is the only scroll-triggered effect, and it is additive), the three
+//      live micro-previews carry real prices and real sights, the pricing
+//      section quotes the same pass figures as the PassModal behind the
+//      header's See pricing button, and the privacy policy opens in-app.
 //   4. Home is a TAB: the app header stays put across Home -> Map -> Home,
 //      the CTAs hand off, and no "open the app" button exists any more.
 //   5. Every visit opens on Home (there is no returning-visitor bypass), and
@@ -95,6 +97,31 @@ try {
   const ribbonText = await page.locator('.home-ribbon-row').innerText();
   if (!/€\s?[\d.,]+/.test(ribbonText)) fail(`ribbon carries no measured price: ${ribbonText}`);
   console.log('ribbon:', JSON.stringify(ribbonText.replace(/\n+/g, ' ')));
+
+  // The three questions: the section sits BEFORE the deck (it hands off
+  // forward), and each card carries a live readout off real app state plus
+  // a link into the tab that answers it.
+  const stepCount = await page.locator('.home-step').count();
+  if (stepCount !== 3) fail(`expected 3 how-it-works cards, got ${stepCount}`);
+  const sectionOrder = await page.evaluate(() => {
+    const ids = [...document.querySelectorAll('.home-page section')].map((s) => s.id);
+    return { flow: ids.indexOf('home-workflow'), deck: ids.indexOf('home-features') };
+  });
+  if (sectionOrder.flow < 0 || sectionOrder.flow > sectionOrder.deck) {
+    fail(`how-it-works sits at index ${sectionOrder.flow}, after the deck at ${sectionOrder.deck}`);
+  }
+  const stepLive = await page.locator('.home-step-live').allInnerTexts();
+  if (stepLive.length < 2) fail(`expected live readouts on the step cards, got ${stepLive.length}`);
+  if (stepLive[0] && !/CRL|Charleroi/.test(stepLive[0])) {
+    fail(`step 1 readout is not the visitor's own search: ${stepLive[0]}`);
+  }
+  if (!stepLive.some((s) => /€\s?[\d.,]+/.test(s))) {
+    fail(`no step readout carries a price: ${stepLive.join(' | ')}`);
+  }
+  if (await page.locator('.home-step-link').count() !== 3) {
+    fail('each step card needs a link into its tab');
+  }
+  console.log(`steps: ${stepLive.map((s) => JSON.stringify(s)).join(' ')}`);
 
   await page.screenshot({ path: `${SHOTS}/home.png`, fullPage: false });
 
@@ -250,13 +277,44 @@ try {
   await page.locator('.home-faq-q').nth(2).click();
   if (!(await page.locator('.home-faq-a').count())) fail('FAQ accordion did not open');
   const plans = await page.locator('.home-plan').count();
-  if (plans !== 2) fail(`expected 2 pricing plans, got ${plans}`);
-  // The redesign deleted every scroll-triggered effect; nothing may be left
-  // sitting at opacity 0 waiting for an observer that no longer exists.
-  const invisible = await page.evaluate(() => [...document.querySelectorAll('.home-page section, .home-page footer')]
+  if (plans !== 3) fail(`expected 3 pricing plans (Free / Trip / Year), got ${plans}`);
+  // The section renders from lib/pricing.js, the same table the PassModal
+  // sells from, so the marketing page may never quote its own numbers.
+  const planPrices = (await page.locator('.home-plan-price').allInnerTexts()).join(' ');
+  if (!planPrices.includes('6.99') || !planPrices.includes('14.99')) {
+    fail(`home pricing does not carry the pass prices: ${planPrices}`);
+  }
+  if (await page.locator('.home-plan-hi .home-badge').count() !== 1) {
+    fail('the featured pass carries no Most popular badge');
+  }
+  // One primary button per view: the featured pass, nothing else.
+  const primaries = await page.locator('#home-pricing .home-btn-primary').count();
+  if (primaries !== 1) fail(`expected exactly 1 primary CTA in pricing, got ${primaries}`);
+  // The only scroll-triggered effect left is the pass cards' one-shot rise,
+  // and it is ADDITIVE (backwards fill on a class the observer adds): nothing
+  // may SIT at opacity 0 if the observer never fires. Let the rise finish,
+  // then confirm everything stands at full opacity.
+  await page.waitForTimeout(1400);
+  const invisible = await page.evaluate(() => [...document.querySelectorAll('.home-page section, .home-page footer, .home-plan')]
     .filter((el) => Number(getComputedStyle(el).opacity) < 0.9).length);
-  if (invisible) fail(`${invisible} sections render invisible`);
+  if (invisible) fail(`${invisible} sections/cards render invisible`);
   await page.screenshot({ path: `${SHOTS}/home-full.png`, fullPage: true });
+
+  // The header's See pricing button opens the pass picker the app sells
+  // from: same three tiers, same figures as the cards above.
+  await page.locator('.header-pricing-btn').click();
+  await page.locator('.pass-card').waitFor({ timeout: 10000 });
+  const tierCount = await page.locator('.pass-tier').count();
+  if (tierCount !== 3) fail(`pass modal shows ${tierCount} tiers, not 3`);
+  const modalPrices = (await page.locator('.pass-price').allInnerTexts()).join(' ');
+  if (!modalPrices.includes('6.99') || !modalPrices.includes('14.99')) {
+    fail(`pass modal prices disagree with the homepage: ${modalPrices}`);
+  }
+  await page.waitForTimeout(700);
+  await page.screenshot({ path: `${SHOTS}/pass-modal.png` });
+  await page.locator('.pass-card .day-saved-close').click();
+  if (await page.locator('.pass-card').count()) fail('the pass modal did not close');
+  console.log(`pricing aligned: 3 home cards and 3 modal tiers both quote ${JSON.stringify(planPrices)}`);
 
   await page.locator('.home-footer-link', { hasText: 'Privacy policy' }).click();
   await page.locator('.privacy-modal').waitFor({ timeout: 10000 });

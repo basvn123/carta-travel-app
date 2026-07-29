@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import Logo from './Logo.jsx';
 import { OriginPicker } from './OriginPicker.jsx';
 import { DateField } from './DateField.jsx';
@@ -7,14 +7,24 @@ import { NumberField } from './FilterControls.jsx';
 import { PrivacyPolicy } from './PrivacyPolicy.jsx';
 import { RatingBadge } from './RatingBadge.jsx';
 import { HomeDeck } from './HomeDeck.jsx';
-import { MapPinIcon, RouteIcon, ListDayIcon } from './Icons.jsx';
+import { CalendarIcon, ChevronRightIcon, MapPinIcon, RouteIcon, ListDayIcon } from './Icons.jsx';
 import { composeTrip, tripDaysBetween } from '../lib/runtime_pricing.js';
+import { TIERS, TIER_ORDER, formatPrice, yearPassTripsEquivalent } from '../lib/pricing.js';
 import { addDays, fmtDate, todayISO } from '../lib/dates.js';
 import { count, eur, eurExact } from '../lib/format.js';
-import { useI18n } from '../i18n/index.jsx';
+import { useI18n, LANGUAGES } from '../i18n/index.jsx';
 
 const CONTACT = 'bas.vannieuwenhuyse123@gmail.com';
 const EMPTY_META = {};
+
+/* Accent folding for the city search, so "krakow" finds Kraków. The combining
+   marks cover most of Europe; ł is the one frequent letter NFD leaves alone. */
+const fold = (s) => String(s || '')
+  .toLowerCase()
+  .normalize('NFD')
+  .replace(/[̀-ͯ]/g, '')
+  .replace(/ł/g, 'l');
+const FIND_LIMIT = 6;
 
 /* The budget line in the proof ribbon. A fixed "under €300" reads as empty on
    an expensive week and as trivial on a cheap one, so the line is derived:
@@ -32,6 +42,28 @@ const SIGHT_KINDS = new Set([
   'Bridge', 'Tower', 'Monument', 'Gallery', 'Church', 'Basilica', 'Fortress',
   'Old town', 'Viewpoint', 'Beach', 'Abbey', 'Theatre',
 ]);
+
+/* A one-shot "has this scrolled into view" flag. The watched element must be
+   fully visible by default: the flag only ADDS a keyframe class, so a browser
+   without IntersectionObserver, a screenshot harness, or a reduced-motion
+   reader simply sees the finished layout. */
+function useSeenOnce(threshold) {
+  const [seen, setSeen] = useState(false);
+  const ref = useRef(null);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || typeof IntersectionObserver !== 'function') return undefined;
+    const obs = new IntersectionObserver((entries) => {
+      if (entries.some((e) => e.isIntersecting)) {
+        setSeen(true);
+        obs.disconnect();
+      }
+    }, { threshold });
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, [threshold]);
+  return [ref, seen];
+}
 
 /**
  * The Carta homepage.
@@ -57,11 +89,18 @@ export function HomePage({
   data, choices, setChoices, onChangeOrigin,
   departDate, setDepartDate, returnDate, setReturnDate, dateBounds,
   pricedAll, totalCount, countryCount,
-  onOpenAccount, onExplore, onPlanTrip, onNavigate,
+  onOpenAccount, onExplore, onPlanTrip, onNavigate, onOpenPass,
 }) {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   const [privacyOpen, setPrivacyOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState(0);
+  const priceLocale = (LANGUAGES.find((l) => l.code === lang) || LANGUAGES[0]).bcp47;
+
+  /* The page's two deliberate animation moments, both one-shot and additive:
+     the steps band draws its route as it first scrolls into view, and the
+     pass cards rise when the pricing section does. */
+  const [plansRef, plansSeen] = useSeenOnce(0.15);
+  const [stepsRef, stepsSeen] = useSeenOnce(0.3);
 
   // A stable fallback, not a fresh {} per render: `meta` is a dependency of
   // the fare-freshness and origin-pin memos, and a new object every render
@@ -266,6 +305,53 @@ export function HomePage({
 
   const phases = [t('day.phaseMorning'), t('day.phaseAfternoon'), t('day.phaseEvening')];
 
+  /* ── The three questions ────────────────────────────────────────────────
+     How-it-works, framed the way a budget traveller actually thinks: what do
+     I have, where does it reach, what happens when I am there. Each card
+     ends in a live mono readout (the visitor's own search, today's count
+     under the ribbon's budget line, the sights already queued for the
+     receipt's city) and a link into the tab that answers the question. */
+  const stepDates = departDate && returnDate
+    ? t('home.dateRange', { a: fmtDate(departDate), b: fmtDate(returnDate) })
+    : null;
+  const steps = [
+    {
+      key: 'have',
+      icon: <CalendarIcon size={16} />,
+      title: t('home.step1Title'),
+      body: t('home.step1Body'),
+      live: t('home.step1Live', {
+        line: [originCity, stepDates, t('home.rParty', { n: groupSize }), bagLabel || null]
+          .filter(Boolean).join(', '),
+      }),
+      link: t('home.step1Link'),
+      onLink: () => goTo('home-search'),
+    },
+    {
+      key: 'where',
+      icon: <MapPinIcon size={16} />,
+      title: t('home.step2Title'),
+      body: t('home.step2Body'),
+      live: !proof ? null
+        : proof.line != null
+          ? t('home.step2Live', { n: count(proof.under), price: eur(proof.line), city: originCity })
+          : t('home.step2LiveCheap', { city: proof.city, price: eur(proof.pp) }),
+      link: t('home.mapCta'),
+      onLink: onExplore,
+    },
+    {
+      key: 'days',
+      icon: <ListDayIcon size={16} />,
+      title: t('home.step3Title'),
+      body: t('home.step3Body'),
+      live: trip?.sights.length
+        ? t('home.step3Live', { n: trip.sights.length, city: trip.city })
+        : null,
+      link: t('home.tripCta'),
+      onLink: onPlanTrip,
+    },
+  ];
+
   const faq = [
     [t('home.faq1Q'), t('home.faq1A')],
     [t('home.faq2Q'), t('home.faq2A')],
@@ -440,7 +526,7 @@ export function HomePage({
 
             {/* The search strip: the app's real controls, so editing here
                 reprices the map behind this page. */}
-            <div className="home-search">
+            <div className="home-search" id="home-search">
               <div className="home-field">
                 <span className="home-field-label">{t('origin.from')}</span>
                 <OriginPicker data={data} origin={choices.origin} onChangeOrigin={onChangeOrigin} />
@@ -525,8 +611,41 @@ export function HomePage({
           </div>
         </div>
 
+        {/* ── How it works: the three questions ──────────────────────────
+            Numbered because the order is real: you cannot rank trips before
+            the inputs exist, or plan days before a place is picked. The band
+            hands off forward: step 1 edits the strip above, steps 2 and 3
+            open the tabs the deck below demonstrates. */}
+        <section className="home-section" id="home-workflow">
+          <div className="home-wrap">
+            <p className="home-eyebrow">{t('home.stepEyebrow')}</p>
+            <h2 className="home-h2">{t('home.stepTitle')}</h2>
+            <p className="home-lede">{t('home.stepLede')}</p>
+            <div ref={stepsRef} className={`home-steps ${stepsSeen ? 'home-steps-live' : ''}`}>
+              {steps.map((s, i) => (
+                <article className="home-step" key={s.key}>
+                  <div className="home-step-mark">
+                    <span className="home-step-num home-num">{i + 1}</span>
+                    <i className="home-step-route" aria-hidden="true" />
+                    <span className="home-step-glyph">{s.icon}</span>
+                  </div>
+                  <h3 className="home-h3">{s.title}</h3>
+                  <p className="home-step-body">{s.body}</p>
+                  <div className="home-step-foot">
+                    {s.live && <p className="home-step-live home-num">{s.live}</p>}
+                    <button className="home-step-link" type="button" onClick={s.onLink}>
+                      {s.link}
+                      <ChevronRightIcon size={13} />
+                    </button>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </div>
+        </section>
+
         {/* ── One honest total: the receipt ── */}
-        <section className="home-section" id="home-total">
+        <section className="home-section home-section-tight" id="home-total">
           <div className="home-wrap home-two">
             <div>
               <p className="home-eyebrow">{t('home.totalEyebrow')}</p>
@@ -604,31 +723,6 @@ export function HomePage({
           </div>
         </section>
 
-        {/* ── How it works ── */}
-        <section className="home-section home-section-tight" id="home-workflow">
-          <div className="home-wrap">
-            <p className="home-eyebrow">{t('home.stepEyebrow')}</p>
-            <h2 className="home-h2">{t('home.stepTitle')}</h2>
-            <div className="home-steps">
-              <div className="home-step">
-                <div className="home-step-mark"><span className="home-num">1</span><i /></div>
-                <h3 className="home-h3">{t('home.step1Title')}</h3>
-                <p>{t('home.step1Body')}</p>
-              </div>
-              <div className="home-step">
-                <div className="home-step-mark"><span className="home-num">2</span><i /></div>
-                <h3 className="home-h3">{t('home.step2Title')}</h3>
-                <p>{t('home.step2Body')}</p>
-              </div>
-              <div className="home-step">
-                <div className="home-step-mark home-step-mark-last"><span className="home-num">3</span></div>
-                <h3 className="home-h3">{t('home.step3Title')}</h3>
-                <p>{t('home.step3Body')}</p>
-              </div>
-            </div>
-          </div>
-        </section>
-
         {/* ── Coverage: the limits, stated in the product's own voice ── */}
         <section className="home-section home-cov" id="home-coverage">
           <div className="home-wrap">
@@ -658,47 +752,71 @@ export function HomePage({
         </section>
 
         {/* ── Pricing ────────────────────────────────────────────────────
-            PLACEHOLDER TIERS. The figures and limits below are the ones from
-            the redesign brief, not a live billing product: nothing in the app
-            charges for Plus yet. Confirm the real names, limits and prices
-            before this page goes public. */}
+            Rendered from the same TIERS table and the same pass.* strings as
+            the in-app PassModal, so this page and the checkout can never
+            quote different numbers. pricing.js is the client mirror of
+            public.plan_tiers; the server enforces, this displays. */}
         <section className="home-section" id="home-pricing">
           <div className="home-wrap">
             <p className="home-eyebrow">{t('home.priceEyebrow')}</p>
-            <h2 className="home-h2">{t('home.priceTitle')}</h2>
+            <h2 className="home-h2">
+              {t('home.priceTitle', { price: formatPrice(TIERS.trip.priceCents, priceLocale) })}
+            </h2>
             <p className="home-lede">{t('home.priceBody')}</p>
-            <div className="home-prices">
-              <div className="home-plan">
-                <p className="home-plan-name">{t('home.planFree')}</p>
-                <p className="home-plan-price">€0</p>
-                <p className="home-plan-per">{t('home.planFreePer')}</p>
-                <ul>
-                  <li>{t('home.planFree1', { total: totalLabel })}</li>
-                  <li>{t('home.planFree2')}</li>
-                  <li>{t('home.planFree3')}</li>
-                  <li>{t('home.planFree4')}</li>
-                </ul>
-                <button className="home-btn home-btn-ghost home-btn-wide" onClick={onExplore}>
-                  {t('home.mapCta')}
-                </button>
-              </div>
-              <div className="home-plan home-plan-hi">
-                <p className="home-badge">{t('home.planBadge')}</p>
-                <p className="home-plan-name">{t('home.planPlus')}</p>
-                <p className="home-plan-price">€4.99</p>
-                <p className="home-plan-per">{t('home.planPlusPer')}</p>
-                <ul>
-                  <li>{t('home.planPlus1')}</li>
-                  <li>{t('home.planPlus2')}</li>
-                  <li>{t('home.planPlus3')}</li>
-                  <li>{t('home.planPlus4')}</li>
-                  <li>{t('home.planPlus5')}</li>
-                </ul>
-                <button className="home-btn home-btn-primary home-btn-wide" onClick={onOpenAccount}>
-                  {t('home.planPlusCta')}
-                </button>
-              </div>
+            <div ref={plansRef} className={`home-prices ${plansSeen ? 'home-prices-live' : ''}`}>
+              {TIER_ORDER.map((id) => {
+                const tier = TIERS[id];
+                const paid = tier.priceCents > 0;
+                return (
+                  <div key={id} className={`home-plan ${tier.featured ? 'home-plan-hi' : ''}`}>
+                    {tier.featured && <p className="home-badge">{t('pass.mostPopular')}</p>}
+                    <p className="home-plan-name">{t(tier.labelKey)}</p>
+                    <p className="home-plan-price">
+                      {paid ? formatPrice(tier.priceCents, priceLocale) : '€0'}
+                    </p>
+                    <p className="home-plan-per">
+                      {id === 'trip' ? t('pass.perTrip')
+                        : id === 'year' ? t('pass.perYear')
+                          : t('home.planFreePer')}
+                    </p>
+                    <p className="home-plan-blurb">{t(tier.blurbKey)}</p>
+                    <ul>
+                      {id === 'free' ? (
+                        <>
+                          <li>{t('home.planFree1', { total: totalLabel })}</li>
+                          <li>{t('home.planFree2')}</li>
+                          <li>{t('pass.featPlansFree', { n: tier.aiPlans })}</li>
+                          <li>{t('pass.featSearchOff')}</li>
+                        </>
+                      ) : (
+                        <>
+                          <li>{t('home.planEverything')}</li>
+                          <li>{t('pass.featPlansPaid', { n: tier.aiPlans })}</li>
+                          <li>{t('pass.featSearchOn', { n: tier.grounded })}</li>
+                          {id === 'year' && (
+                            <li>{t('pass.featValue', { n: yearPassTripsEquivalent() })}</li>
+                          )}
+                          <li>{t('pass.featOneOff')}</li>
+                        </>
+                      )}
+                    </ul>
+                    {paid ? (
+                      <button
+                        className={`home-btn ${tier.featured ? 'home-btn-primary' : 'home-btn-ghost'} home-btn-wide`}
+                        onClick={onOpenPass}
+                      >
+                        {t('pass.buy')}
+                      </button>
+                    ) : (
+                      <button className="home-btn home-btn-ghost home-btn-wide" onClick={onExplore}>
+                        {t('home.mapCta')}
+                      </button>
+                    )}
+                  </div>
+                );
+              })}
             </div>
+            <p className="home-price-fine">{t('pass.vatNote')} {t('pass.noSubNote')}</p>
           </div>
         </section>
 

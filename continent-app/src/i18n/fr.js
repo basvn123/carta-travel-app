@@ -20,6 +20,7 @@ export const fr = {
   'nav.savedShort': 'Favoris',
   'header.account': 'Compte',
   'header.accountTitle': 'Compte & préférences',
+  'header.seePricing': 'Voir les tarifs',
   'lang.pick': 'Langue',
 
   'gate.title': 'Trouvez votre prochain voyage',
@@ -92,6 +93,7 @@ export const fr = {
   'home.rShiftNone': "Les tarifs sur cette liaison ont été vérifiés {ago}.",
   'home.rEmptyTitle': "Pas encore de voyage chiffré",
   'home.rEmptyBody': "Choisis des dates avec des vols au départ de {city} et le détail complet apparaît ici.",
+  'home.rUnpriced': "{city} n'a pas de prix depuis {origin} à ces dates. Décale une date ou choisis une autre ville.",
 
   // The three products, in one swipeable deck
   'home.deckEyebrow': "Les trois outils",
@@ -153,13 +155,20 @@ export const fr = {
 
   // How it works
   'home.stepEyebrow': "Comment ça marche",
-  'home.stepTitle': "Trois étapes, puis tu pars.",
-  'home.step1Title': "Dis quand, et d'où",
-  'home.step1Body': "Tes dates, ton aéroport, combien vous êtes, quel bagage. Rien d'autre, et aucun compte.",
-  'home.step2Title': "Compare des voyages entiers, pas des billets",
-  'home.step2Body': "Chaque destination d'Europe se rechiffre d'un coup: vol, bagage, transfert, lit et repas dans un seul montant que tu peux classer.",
-  'home.step3Title': "Planifie le voyage, puis les journées",
-  'home.step3Body': "Transforme le lieu choisi en nuits, en trajets et en journées à pied, avec le total courant sous les yeux du début à la fin.",
+  'home.stepTitle': "Les trois questions par lesquelles commence tout voyage à petit budget.",
+  'home.stepLede': "Quand c'est l'argent qui décide, tu ne commences pas par choisir une ville. Tu commences par voir ce que ton argent achète. Carta travaille dans cet ordre.",
+  'home.dateRange': "du {a} au {b}",
+  'home.step1Title': "Avec quoi je pars?",
+  'home.step1Body': "Dates, aéroport, combien vous êtes, quel bagage. Aucun compte, et pas encore de destination: la trouver, c'est le but.",
+  'home.step1Live': "Tes réglages, à l'instant: {line}",
+  'home.step1Link': "Modifie-les plus haut",
+  'home.step2Title': "Où est-ce que je peux vraiment me permettre d'aller?",
+  'home.step2Body': "Chaque destination devient un montant tout compris pour tes dates: vol, bagage, transfert, lit et repas. Classe le continent selon ce montant et la réponse est une liste, pas un pari.",
+  'home.step2Live': "{n} endroits sous {price} depuis {city}, aujourd'hui",
+  'home.step2LiveCheap': "le moins cher aujourd'hui: {city}, {price} par personne",
+  'home.step3Title': "Et je fais quoi là-bas toute la journée?",
+  'home.step3Body': "Le planificateur de voyage transforme ton choix en nuits et en trajets. Le planificateur de journée transforme chaque jour en parcours à pied, heures comprises. Le total continue de compter pendant tout ce temps.",
+  'home.step3Live': "{n} vrais sites déjà prêts pour {city}",
 
   // Coverage: the limits, stated plainly
   'home.covEyebrow': "Couverture",
@@ -177,23 +186,12 @@ export const fr = {
 
   // Pricing (PLACEHOLDER TIERS, see HomePage.jsx)
   'home.priceEyebrow': "Tarifs",
-  'home.priceTitle': "Explore gratuitement. Paie quand tu planifies.",
-  'home.priceBody': "Tout ce qu'il faut pour trouver un voyage est gratuit. Plus, c'est pour ce qui compte une fois que tu pars vraiment.",
-  'home.planFree': "Gratuit",
+  'home.priceTitle': "Chaque prix est gratuit. Le bot coûte {price}, une seule fois.",
+  'home.priceBody': "La carte, chaque ligne de coût et le planificateur de voyage sont gratuits pour tout le monde. Un pass paie le bot Carta, qui construit tes journées et cherche sur le web les événements et les horaires d'ouverture.",
   'home.planFreePer': "pour toujours",
-  'home.planFree1': "Les {total} destinations chiffrées, un aéroport de départ",
-  'home.planFree2': "Détail complet des coûts par destination",
-  'home.planFree3': "Trois voyages enregistrés",
-  'home.planFree4': "Un plan de journée à la fois",
-  'home.planBadge': "Le plus utile",
-  'home.planPlus': "Carta Plus",
-  'home.planPlusPer': "par mois, ou 39 € par an",
-  'home.planPlus1': "Comparer plusieurs aéroports de départ côte à côte",
-  'home.planPlus2': "Voyages et plans de journée enregistrés sans limite",
-  'home.planPlus3': "Export vers Google Maps, PDF et agenda",
-  'home.planPlus4': "Alertes quand une destination baisse",
-  'home.planPlus5': "Voyages de groupe avec le coût réparti par personne",
-  'home.planPlusCta': "Commencer avec Plus",
+  'home.planFree1': "Les {total} destinations chiffrées depuis ton aéroport",
+  'home.planFree2': "Détail complet des coûts, planificateur et voyages enregistrés",
+  'home.planEverything': "Tout ce qui est dans Gratuit",
 
   // FAQ
   'home.faqTitle': "Les questions qu'on pose en premier",
@@ -1166,7 +1164,7 @@ export const fr = {
   "pass.freeBlurb": "De quoi planifier une journée et découvrir Carta.",
   "pass.tripBlurb": "De quoi planifier un voyage entier, de la première idée au départ.",
   "pass.yearBlurb": "Pour celles et ceux qui partent plus d'une fois par an.",
-  "pass.freePrice": "Gratuit",
+  "pass.freePrice": "0 €",
   "pass.perTrip": "une fois, 30 jours",
   "pass.perYear": "une fois, 12 mois",
   "pass.mostPopular": "Le plus choisi",

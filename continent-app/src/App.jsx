@@ -61,6 +61,8 @@ import { AuthGate } from './auth/AuthGate.jsx';
 import { ResetPasswordScreen } from './auth/ResetPasswordScreen.jsx';
 import { AccountPanel } from './auth/AccountPanel.jsx';
 import { SavedTripsPanel } from './auth/SavedTripsPanel.jsx';
+import { PassModal } from './components/PassModal.jsx';
+import { useEntitlement } from './hooks/useEntitlement.js';
 import { originHome } from './lib/origins.js';
 import { useAppData } from './hooks/useAppData.js';
 import { useDestinationSearch } from './hooks/useDestinationSearch.js';
@@ -72,6 +74,23 @@ import { useFilterState } from './hooks/useFilterState.js';
 // Once someone picks "continue without an account" on the entry gate, don't
 // ask again on this device, only a fresh sign-in should bring accounts back.
 const GUEST_KEY = 'continent.guestMode.v1';
+
+// The pass picker, reachable from chrome (the header's "See pricing" and the
+// homepage cards) rather than only from a spent allowance. Mounted only while
+// open so the ai_status read happens when somebody actually looks at prices,
+// not on every app load.
+function GlobalPassModal({ signedIn, onClose, onSignIn }) {
+  const entitlement = useEntitlement();
+  return (
+    <PassModal
+      entitlement={entitlement}
+      reason=""
+      signedIn={signedIn}
+      onClose={onClose}
+      onSignIn={onSignIn}
+    />
+  );
+}
 
 
 export default function App() {
@@ -111,6 +130,8 @@ function TravelApp() {
   const [guestMode, setGuestMode] = useState(
     () => typeof window !== 'undefined' && localStorage.getItem(GUEST_KEY) === '1'
   );
+  // The pass picker, opened from the header or the homepage pricing cards.
+  const [passOpen, setPassOpen] = useState(false);
   // Shown before any data/route decisions: sign in, create an account, or
   // continue as a guest. Skipped entirely when accounts aren't configured,
   // once already signed in, or once guest mode has been chosen before.
@@ -485,6 +506,7 @@ function TravelApp() {
         <AppHeader
           user={user}
           onOpenAccount={() => setAccountOpen(true)}
+          onSeePricing={() => setPassOpen(true)}
           isHome={activeTab === 'home'}
           onGoHome={() => setActiveTab('home')}
           activeTab={activeTab}
@@ -615,6 +637,7 @@ function TravelApp() {
           totalCount={Object.keys(data.destinations).length}
           countryCount={availableCountries.length}
           onOpenAccount={() => setAccountOpen(true)}
+          onOpenPass={() => setPassOpen(true)}
           onExplore={() => setActiveTab('map')}
           onPlanTrip={() => {
             setActiveTab('trip');
@@ -866,6 +889,20 @@ function TravelApp() {
           <AccountPanel
             onClose={() => setAccountOpen(false)}
             onOpenAuth={() => { setAccountOpen(false); setAuthModalMode('signin'); setAuthModalOpen(true); }}
+          />
+        </div>
+      )}
+
+      {passOpen && (
+        <div onClick={(e) => e.stopPropagation()}>
+          <GlobalPassModal
+            signedIn={!!user && authConfigured}
+            onClose={() => setPassOpen(false)}
+            onSignIn={() => {
+              setPassOpen(false);
+              setAuthModalMode('signin');
+              setAuthModalOpen(true);
+            }}
           />
         </div>
       )}

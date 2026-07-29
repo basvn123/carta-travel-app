@@ -52,11 +52,20 @@ create table if not exists public.plan_tiers (
 -- Year Pass has to stay near a 2x multiple of it: at 3.76x the annual tier was
 -- dominated by simply buying two Trip Passes, which is what a real traveller
 -- with two trips a year would do.
+--
+-- Caps are sized so a FULLY EXHAUSTED pass still clears its variable cost
+-- (the arithmetic lives with the client mirror in
+-- continent-app/src/lib/pricing.js). The binding constraint is grounded
+-- search at ~EUR 0.05 worst case per unit: the Year Pass briefly shipped
+-- with 200, which left pocket change of margin on a maxed-out pass, so it
+-- was cut to 120 (still 3x the Trip Pass) on 2026-07-28. If the live table
+-- predates that, re-run this insert in the SQL editor; the on-conflict
+-- update makes it safe.
 insert into public.plan_tiers (tier, ai_plans, grounded, period_days, price_cents, rank)
 values
   ('free',   3,   0, null,    0, 0),
   ('trip',  60,  40,   30,  699, 1),
-  ('year', 300, 200,  365, 1499, 2)
+  ('year', 300, 120,  365, 1499, 2)
 on conflict (tier) do update set
   ai_plans    = excluded.ai_plans,
   grounded    = excluded.grounded,

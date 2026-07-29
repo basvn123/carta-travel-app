@@ -35,6 +35,29 @@
  *    So there is no evidence base for .99 specifically, which is why the price
  *    moved on cost grounds instead. PRICE_TEST_ALTERNATIVES below exists
  *    because this is a live A/B question, not a settled one.
+ *
+ * COST FLOOR (2026-07-28). The fair-use caps are sized so a pass stays
+ * profitable even if the buyer exhausts every unit, because the caps are the
+ * only thing standing between a scripted client and the margin. Worst case
+ * per unit, taken conservatively high:
+ *
+ *    plan     Flash tokens only, ~6k in + ~2.5k out   ~ EUR 0.01
+ *    ground   billed per search query on Gemini 3, a grounded plan can fan
+ *             out to several queries                  ~ EUR 0.05
+ *
+ * Net receipts strip 21% VAT (prices are VAT inclusive) and Stripe's
+ * EUR 0.25 + ~1.5%:
+ *
+ *    Trip  EUR 6.99  -> ~5.40 net vs (60 x .01 + 40 x .05)  = 2.60 max cost
+ *    Year  EUR 14.99 -> ~11.90 net vs (300 x .01 + 120 x .05) = 9.00 max cost
+ *
+ * That is why the Year Pass carries 120 grounded searches and not the 200 it
+ * briefly shipped with: at 200 the fully-exhausted cost was ~EUR 11.30
+ * against ~EUR 11.90 net, a margin of pocket change on the heaviest users.
+ * 120 is still 3x the Trip Pass and still more live searches than a year of
+ * normal planning uses. Typical utilisation sits far below the caps, so the
+ * realistic margin is much higher; this floor is about the worst case, and
+ * any future cap raise should redo this arithmetic first.
  */
 
 /** Tier ids in display order. Mirrors public.plan_tiers.rank. */
@@ -70,7 +93,7 @@ export const TIERS = {
     id: 'year',
     priceCents: 1499,
     aiPlans: 300,
-    grounded: 200,
+    grounded: 120,
     periodDays: 365,
     labelKey: 'pass.yearName',
     blurbKey: 'pass.yearBlurb',
