@@ -51,6 +51,10 @@ import {
 } from './dayPlanStore.js';
 import { loadTripDraft } from './tripDraftStore.js';
 import {
+  loadDiscovered, saveDiscovered, removeDiscovered, subscribeDiscovered, isStale,
+} from './discoveredStore.js';
+import { researchCity } from '../lib/cityResearch.js';
+import {
   SparkIcon, StarIcon, InfoIcon, MountainIcon, ShareIcon, MapPinIcon,
   BedIcon, BookmarkIcon, DownloadIcon, RouteIcon,
   FerryIcon, PencilIcon, SearchIcon, HomeIcon, CheckIcon, CalendarIcon,
@@ -128,7 +132,34 @@ function buildStandalonePlan(sp) {
 
 export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPlanConsumed }) {
   const { t, lang } = useI18n();
-  const destinations = data?.destinations || {};
+  // Towns the traveller asked Carta to research (discoveredStore.js). They are
+  // real destinations from here on: pins, POI lists, search hits and plan
+  // stops all read them out of the same map as the catalogue.
+  const [discovered, setDiscovered] = useState(loadDiscovered);
+  useEffect(() => subscribeDiscovered(() => setDiscovered(loadDiscovered())), []);
+  // A researched town whose name and place the catalogue has since caught up
+  // with is retired: the pipeline's record has prices and ratings this one
+  // never will, and two pins on one town is the worse outcome.
+  const supersededIds = useMemo(() => {
+    const base = Object.values(data?.destinations || {});
+    const isSameTown = (a, b) => {
+      if (a.city !== b.city) return false;
+      const ca = cityCoords(a);
+      const cb = cityCoords(b);
+      return (haversineKm(ca.lat, ca.lon, cb.lat, cb.lon) ?? 99) <= 3;
+    };
+    return Object.entries(discovered)
+      .filter(([, d]) => base.some((b) => isSameTown(b, d)))
+      .map(([id]) => id);
+  }, [data, discovered]);
+  useEffect(() => { supersededIds.forEach(removeDiscovered); }, [supersededIds]);
+  const destinations = useMemo(() => {
+    const out = { ...(data?.destinations || {}) };
+    Object.entries(discovered).forEach(([id, d]) => {
+      if (!supersededIds.includes(id)) out[id] = d;
+    });
+    return out;
+  }, [data, discovered, supersededIds]);
   const countryInsights = useCountryInsights();
   // What this traveller's pass allows. A hint for the UI only, the Edge
   // Functions enforce it; see useEntitlement.
@@ -1578,8 +1609,50 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
       if (km != null && km < bestKm) { bestKm = km; best = { id, dest: d }; }
     }
     if (!best || bestKm > 150) return null;
-    return { id: best.id, label: `${best.dest.city}, ${best.dest.country}`, km: Math.round(bestKm) };
+    return {
+      id: best.id, dest: best.dest, label: `${best.dest.city}, ${best.dest.country}`, km: Math.round(bestKm),
+    };
   }, [destinations]);
+
+  // A town this close to what was asked for is that town under another
+  // spelling, not a new place: reuse the record instead of researching a
+  // duplicate ("Gent" when the catalogue says "Ghent").
+  const SAME_TOWN_KM = 3;
+
+  /**
+   * "Carta doesn't have this town, go and get it." Harvests the place from
+   * open data (see lib/cityResearch.js), stores it on this device and returns
+   * the destination id, which from here on is an ordinary id: the wizard, the
+   * map, the POI picker and saved plans all take it without knowing it was
+   * researched a moment ago.
+   *
+   * Resolves { ok: true, id, label } or { ok: false, code }.
+   */
+  const researchTown = async (place, onStage = () => {}) => {
+    const { name, country = '', lat = null, lon = null } = place || {};
+    if (!name) return { ok: false, code: 'not_found' };
+
+    const near = resolveNearestTown(lat, lon);
+    if (near && near.km <= SAME_TOWN_KM) return { ok: true, id: near.id, label: near.label };
+
+    // Already researched, and recently enough to still be current.
+    const seen = Object.entries(discovered).find(([, d]) => {
+      const c = cityCoords(d);
+      const km = haversineKm(lat, lon, c.lat, c.lon);
+      return d.city?.toLowerCase() === name.toLowerCase() || (km != null && km <= SAME_TOWN_KM);
+    });
+    if (seen && !isStale(seen[1])) {
+      return { ok: true, id: seen[0], label: `${seen[1].city}, ${seen[1].country}` };
+    }
+
+    const res = await researchCity({
+      name, country, lat, lon, nearest: near?.dest || null, onStage,
+    });
+    if (!res.ok) return res;
+    saveDiscovered(res.dest);
+    setDiscovered(loadDiscovered());
+    return { ok: true, id: res.dest.id, label: `${res.dest.city}, ${res.dest.country}` };
+  };
 
   // Quick-fill starting points for the stay step, so the first screen is never
   // a bare search box. Population keeps these to cities people actually stay
@@ -2561,6 +2634,7 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
               cityOptions={allCityOptions}
               onSuggestCity={suggestCityAi}
               resolveNearest={resolveNearestTown}
+              onResearchCity={researchTown}
             />
           )}
 

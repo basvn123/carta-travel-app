@@ -212,18 +212,22 @@ async function runAnywhereResolve(label, viewport) {
   await page.waitForTimeout(500);
   await page.locator('.chat-town-anywhere .chat-opts .chat-opt').first().click();
   await page.waitForTimeout(400);
-  // The disclosure must be readable BEFORE the pick lands, not flash and
-  // advance on its own: a confirm card names the real destination, not the
-  // made-up query, and the wizard only moves on once it is tapped.
-  check(`${label}: resolution surfaces a real destination, not the typed name`,
-    (await page.locator('.chat-town-resolve .chat-town-note').count()) === 1
-    && !(await page.locator('.chat-town-resolve .chat-town-note').innerText()).toLowerCase().includes('zzqx'));
+  // The card must be readable BEFORE the pick lands, not flash and advance on
+  // its own. It names the place that was ASKED for (researching it is the lead
+  // action, see verify_city_research.mjs) and offers the nearest catalogued
+  // town underneath; either way the wizard waits for a tap.
+  const resolve = page.locator('.chat-town-resolve');
+  check(`${label}: the card names the place that was asked for`,
+    (await resolve.locator('.chat-town-note').count()) === 1
+    && (await resolve.locator('.chat-town-note').innerText()).toLowerCase().includes('zzqx'));
+  check(`${label}: the nearest real destination is offered as the fallback`,
+    /km away/i.test(await resolve.innerText()));
   check(`${label}: wizard has NOT advanced before confirming`,
     (await page.getByText(/have you been here before\?/i).count()) === 0);
   await page.screenshot({ path: `${SHOTS}/tp5-${label}-anywhere-resolve-confirm.png` });
-  await page.locator('.chat-town-resolve .chat-opt').click();
+  await resolve.locator('.chat-opt').filter({ hasText: /^Use / }).click();
   await page.waitForTimeout(400);
-  check(`${label}: confirming the resolved pick advances the wizard`,
+  check(`${label}: taking the fallback advances the wizard`,
     (await page.getByText(/have you been here before\?/i).count()) >= 1);
   await page.screenshot({ path: `${SHOTS}/tp5-${label}-anywhere-resolved.png` });
 

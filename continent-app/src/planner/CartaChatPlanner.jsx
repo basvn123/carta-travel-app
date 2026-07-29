@@ -135,7 +135,7 @@ const EXTRA_PRESETS = [
 
 export function CartaChatPlanner({
   towns, dateISO, groupSize, signedIn, onRun, onImport, onBack, onManual,
-  stayPoint, cityOptions, onSuggestCity, resolveNearest,
+  stayPoint, cityOptions, onSuggestCity, resolveNearest, onResearchCity,
 }) {
   const { t } = useI18n();
   const [step, setStep] = useState(0);
@@ -273,6 +273,7 @@ export function CartaChatPlanner({
                 stayPoint={stayPoint}
                 cityOptions={cityOptions}
                 resolveNearest={resolveNearest}
+                onResearchCity={onResearchCity}
                 onSuggestCity={(freeText) => onSuggestCity(freeText, answers)}
                 onPick={(id, label) => advance('town', id, { townLabel: label })}
               />

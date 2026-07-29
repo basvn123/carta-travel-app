@@ -18,9 +18,13 @@ import { geocodeAddress } from '../lib/geocode.js';
  *   Ask     free-text wish to Carta's AI, which reads the local catalogue
  *           and (optionally) the web, and proposes a short list
  *
- * Search and Ask both may land on a place outside the catalogue; those
- * resolve to the nearest real destination via `resolveNearest`, so the day
- * planner downstream always gets a catalogue id it has POIs for.
+ * Search and Ask both may land on a place outside the catalogue. When that
+ * happens the traveller is offered the town they actually asked for: Carta
+ * researches it live (`onResearchCity`, see lib/cityResearch.js), which mints
+ * a real destination id with a real POI list. Snapping to the nearest
+ * catalogued city via `resolveNearest` is still there, but as the fallback it
+ * always should have been: someone who types Lokeren wants Lokeren, not Ghent
+ * 20 km away.
  */
 
 const TABS = [
@@ -35,7 +39,7 @@ const AI_FAIL_KEY = {
 };
 
 export function TownPickerStep({
-  towns, nearbyOptions, stayPoint, cityOptions, resolveNearest, onSuggestCity, onPick,
+  towns, nearbyOptions, stayPoint, cityOptions, resolveNearest, onResearchCity, onSuggestCity, onPick,
 }) {
   const { t } = useI18n();
   const [tab, setTab] = useState('nearby');
@@ -44,10 +48,12 @@ export function TownPickerStep({
   const [geoResults, setGeoResults] = useState(null);
   const [note, setNote] = useState('');
   // A geocode hit or an AI web discovery isn't a catalogue id: it waits here,
-  // disclosed, until the traveller actively confirms the nearest real
-  // destination Carta actually has data for (never an instant, unreadable
-  // swap under their tap).
+  // disclosed, until the traveller says what to do with it (research the town
+  // itself, or settle for the nearest one Carta already holds). Never an
+  // instant, unreadable swap under their tap.
   const [pendingPick, setPendingPick] = useState(null);
+  const [research, setResearch] = useState(null); // { stage, vars } while harvesting
+  const [researchFail, setResearchFail] = useState('');
   const [aiText, setAiText] = useState('');
   const [aiBusy, setAiBusy] = useState(false);
   const [aiResults, setAiResults] = useState(null);
@@ -68,14 +74,41 @@ export function TownPickerStep({
   }, [query, cityOptions]);
 
   // Land on a place with no catalogue id of its own (a geocode hit or an AI
-  // web discovery): find the nearest real destination, but don't pick it yet
-  // - surface the disclosure and let the traveller confirm.
-  const pickResolved = (lat, lon, queryLabel) => {
-    const nearest = resolveNearest ? resolveNearest(lat, lon) : null;
-    setPendingPick(null);
-    if (!nearest) { setNote(t('chat.townNoData', { q: queryLabel })); return; }
+  // web discovery). Nothing is picked yet: the traveller is shown what Carta
+  // knows about that place (usually nothing) and offered the two real answers,
+  // research it or use a neighbour.
+  const pickResolved = (lat, lon, queryLabel, country = '') => {
     setNote('');
-    setPendingPick(nearest);
+    setResearchFail('');
+    setResearch(null);
+    setPendingPick({
+      name: queryLabel,
+      country,
+      lat,
+      lon,
+      nearest: resolveNearest ? resolveNearest(lat, lon) : null,
+    });
+  };
+
+  // Go and get the town. Progress is the real harvest's own stages, so the
+  // wait shows which source is being read rather than a spinner.
+  const runResearch = async () => {
+    if (!pendingPick || research || !onResearchCity) return;
+    setResearchFail('');
+    setResearch({ stage: 'locate', vars: { name: pendingPick.name } });
+    const res = await onResearchCity(
+      {
+        name: pendingPick.name, country: pendingPick.country, lat: pendingPick.lat, lon: pendingPick.lon,
+      },
+      ({ key, vars }) => setResearch({ stage: key, vars: vars || {} }),
+    );
+    setResearch(null);
+    if (res?.ok) {
+      setPendingPick(null);
+      onPick(res.id, res.label);
+      return;
+    }
+    setResearchFail(res?.code || 'not_found');
   };
 
   const runGeoSearch = async () => {
@@ -100,15 +133,50 @@ export function TownPickerStep({
     setAiBusy(false);
   };
 
+  // The off-catalogue card: what was asked for, what Carta holds, and the two
+  // ways forward. Research leads, because it answers the question that was
+  // actually asked.
   const pendingPickCard = pendingPick && (
     <div className="chat-town-resolve">
-      <p className="trip-note chat-town-note">
-        {t('chat.townClosest', { city: pendingPick.label, km: pendingPick.km })}
-      </p>
-      <button className="chat-opt" onClick={() => onPick(pendingPick.id, pendingPick.label)}>
-        <HomeIcon size={16} />
-        <span className="chat-opt-text"><b>{t('chat.townUseThis', { city: pendingPick.label })}</b></span>
-      </button>
+      {research ? (
+        <div className="chat-town-working">
+          <p className="trip-note">
+            <SparkIcon size={13} /> {t(`chat.townResearch.${research.stage}`, { ...research.vars, name: pendingPick.name })}
+          </p>
+          <div className="chat-bubble bot chat-typing"><span /><span /><span /></div>
+        </div>
+      ) : (
+        <>
+          <p className="trip-note chat-town-note">
+            {researchFail
+              ? t(`chat.townResearchFail.${researchFail}`, { name: pendingPick.name })
+              : t('chat.townUnknown', { name: pendingPick.name })}
+          </p>
+          {onResearchCity && researchFail !== 'no_sights' && (
+            <button className="chat-opt chat-opt-lead" onClick={runResearch}>
+              <SparkIcon size={16} />
+              <span className="chat-opt-text">
+                <b>{t('chat.townResearchGo', { name: pendingPick.name })}</b>
+                <small>{t('chat.townResearchSub')}</small>
+              </span>
+            </button>
+          )}
+          {pendingPick.nearest ? (
+            <button
+              className="chat-opt"
+              onClick={() => onPick(pendingPick.nearest.id, pendingPick.nearest.label)}
+            >
+              <HomeIcon size={16} />
+              <span className="chat-opt-text">
+                <b>{t('chat.townUseThis', { city: pendingPick.nearest.label })}</b>
+                <small>{t('chat.townClosest', { km: pendingPick.nearest.km })}</small>
+              </span>
+            </button>
+          ) : (
+            <p className="trip-note">{t('chat.townNoData', { q: pendingPick.name })}</p>
+          )}
+        </>
+      )}
     </div>
   );
 
@@ -124,7 +192,11 @@ export function TownPickerStep({
               role="tab"
               className={`chat-town-tab ${tab === tb.key ? 'on' : ''}`}
               aria-selected={tab === tb.key}
-              onClick={() => { setTab(tb.key); setPendingPick(null); }}
+              // A harvest in flight ends by picking its town, so leaving the
+              // tab mid-run would advance the wizard from somewhere the
+              // traveller can no longer see.
+              disabled={!!research}
+              onClick={() => { setTab(tb.key); setPendingPick(null); setResearchFail(''); }}
             >
               <Icon size={14} /> {t(tb.labelKey)}
             </button>
@@ -182,7 +254,7 @@ export function TownPickerStep({
                 geoResults.length ? (
                   <div className="chat-opts">
                     {geoResults.map((r, i) => (
-                      <button key={i} className="chat-opt" onClick={() => pickResolved(r.lat, r.lon, r.shortLabel || r.label)}>
+                      <button key={i} className="chat-opt" onClick={() => pickResolved(r.lat, r.lon, r.name || r.shortLabel || r.label, r.country)}>
                         <MapPinIcon size={16} />
                         <span className="chat-opt-text"><b>{r.shortLabel || r.label}</b></span>
                       </button>
@@ -248,7 +320,7 @@ export function TownPickerStep({
                     className="chat-opt"
                     onClick={() => (s.inCatalog && s.id
                       ? onPick(s.id, `${s.name}${s.country ? `, ${s.country}` : ''}`)
-                      : pickResolved(s.lat, s.lon, s.name))}
+                      : pickResolved(s.lat, s.lon, s.name, s.country))}
                   >
                     {s.inCatalog ? <HomeIcon size={16} /> : <SparkIcon size={16} />}
                     <span className="chat-opt-text">

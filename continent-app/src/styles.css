@@ -13823,9 +13823,21 @@ button.ai-sched-main:focus-visible {
 }
 .chat-town-tab:hover { border-color: var(--accent); color: var(--accent); }
 .chat-town-tab.on { border-color: var(--accent); background: var(--accent-bg); color: var(--accent); }
+.chat-town-tab:disabled { opacity: .5; cursor: default; }
+.chat-town-tab:disabled:hover { border-color: var(--rule); color: var(--ink-soft); }
 .chat-town-note { margin-top: 8px; }
 .chat-town-resolve { margin-top: 10px; }
 .chat-town-resolve .chat-opt { margin-top: 8px; }
+/* Researching a town Carta has never held is the answer to what was asked, so
+   it leads the card; snapping to a neighbour sits under it as the fallback. */
+.chat-town-resolve .chat-opt-lead {
+  border-color: var(--accent);
+  background: var(--accent-bg);
+}
+.chat-town-resolve .chat-opt-lead b { color: var(--accent); }
+.chat-town-working { margin-top: 8px; }
+.chat-town-working .trip-note { display: flex; align-items: center; gap: 6px; }
+.chat-town-working .chat-typing { margin-top: 8px; }
 .chat-town-anywhere { margin-top: 10px; }
 .chat-town-anywhere .chat-send { margin-top: 0; }
 .chat-town-map {
