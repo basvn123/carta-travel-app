@@ -30,9 +30,15 @@ that interval has elapsed since its last success (state in logs/pipeline_state.j
 So you schedule ONE weekly job and each layer self-selects how often it fires:
 
   weekly    fares (live Ryanair re-fetch, rolling window) + ship
+  weekly    fare snapshot archive -> drift check -> model retrain -> estimates
+  weekly    raw open-data mirror (src/ingestion: schedules, realtime, ADS-B)
   monthly   fame (pageviews) -> beauty -> rating; flight times for covered origins
+  monthly   holiday calendars (demand catalysts for the estimation model)
   quarterly open-data snapshots (crowding, bathing water, lodging) *
   backfill  static/heavy or null-risk jobs - MANUAL only, via --only (guarded)
+
+Tasks marked `soft` (the estimation/ingestion layer) log failures loudly but
+never block the core fare refresh + ship; they retry on the next run.
 
   * several quarterly sources pin a YEAR / snapshot date in their own source and
     will re-emit identical data until you bump it; the task prints the reminder.
@@ -296,6 +302,55 @@ def volotea_step(ctx):
     return run_cmd([PY, "pipeline/harvest_volotea.py", "patch"]) == 0
 
 
+def fare_history_step(ctx):
+    """Schema-gate the shipped fare wire files (dead-letter quarantine) and
+    archive today's snapshot to data/history/fares - the (lead time, price)
+    escalation history the estimation model trains on. Runs after the carrier
+    merges so it archives the fully merged table."""
+    return run_cmd([PY, "-m", "src.estimation.snapshot"]) == 0
+
+
+def model_is_stale(days=30):
+    """Retrain cadence guard: even without drift, refit on the trailing
+    window once the artifact is older than `days`."""
+    try:
+        meta = json.loads((ROOT / "data" / "models" / "fare_model_metrics.json")
+                          .read_text(encoding="utf-8"))
+        trained = datetime.fromisoformat(meta["trained_at"])
+        return (now_utc() - trained) >= timedelta(days=days)
+    except Exception:
+        return True
+
+
+def fare_model_step(ctx):
+    """Drift-gated retrain + estimate export. drift.py exit codes: 0 = no/minor
+    drift, 2 = no model or history yet, 3 = major data drift or concept drift
+    (MAPE) -> retrain. A drift-free model still retrains after 30 days."""
+    rc = run_cmd([PY, "-m", "src.estimation.drift"])
+    if rc not in (0, 2, 3):
+        return False
+    if rc in (2, 3) or model_is_stale():
+        reason = {2: "no model yet", 3: "drift detected"}.get(rc, "model >30 days old")
+        log(f"  retraining ({reason})")
+        if run_cmd([PY, "-m", "src.estimation.model", "train"]) != 0:
+            return False
+    return run_cmd([PY, "-m", "src.estimation.model", "estimate"]) == 0
+
+
+def ingestion_step(ctx):
+    """Raw open-data mirror: NAP schedule feeds (GTFS/NeTEx), GTFS-RT + SIRI
+    realtime, OpenSky ADS-B, ferries, historical pricing -> data/raw with
+    per-day manifests. Collectors missing credentials SKIP cleanly."""
+    return run_cmd([PY, "-m", "src.ingestion.run_all"]) == 0
+
+
+def demand_events_step(ctx):
+    """Public + school holiday calendars (Nager.Date / OpenHolidays), the
+    exogenous demand catalysts behind the model's holiday features."""
+    return run_cmd([PY, "-m", "src.ingestion.run_all",
+                    "--only", "holidays,school_holidays"]) == 0
+
+
 def fame_step(ctx):
     """Refresh destination fame. The dest pageviews cache is never invalidated
     by the harvester (it only fills missing ids), so to pick up drifted fame we
@@ -363,6 +418,50 @@ TASKS = [
                  "COARSER than the others (cheapest per date window, not daily). MUST "
                  "run after fares/wizz_fares/vueling_fares. ~260 discovery + 1/origin; "
                  "resumable; tags V7."),
+    },
+    # ---- estimation + raw ingestion layer: soft (never blocks the ship) ---- #
+    {
+        "key": "fare_history",
+        "title": "Schema-gate + archive fare snapshot -> data/history",
+        "cadence": "weekly",
+        "writes_app_data": False,
+        "soft": True,
+        "run": fare_history_step,
+        "note": ("builds the (lead time, price) training history for the fare "
+                 "estimation model; anomalous fare files are dead-lettered to "
+                 "data/deadletter. Runs after the carrier merges."),
+    },
+    {
+        "key": "fare_model",
+        "title": "Fare estimation model: drift check -> retrain -> estimates",
+        "cadence": "weekly",
+        "writes_app_data": False,
+        "soft": True,
+        "run": fare_model_step,
+        "note": ("PSI/KS + MAPE drift gates decide the retrain "
+                 "(logs/drift_report.json); quantile GBDT exports route-month "
+                 "price bands to data/models/fare_estimates.json.gz."),
+    },
+    {
+        "key": "ingestion",
+        "title": "Raw open-data mirror (schedules, realtime, ADS-B, ferries)",
+        "cadence": "weekly",
+        "writes_app_data": False,
+        "soft": True,
+        "run": ingestion_step,
+        "note": ("src/ingestion collectors -> data/raw; keyless sources SKIP with "
+                 "instructions. `python -m src.ingestion.run_all --list` for the "
+                 "roster, --check to probe endpoints."),
+    },
+    {
+        "key": "demand_events",
+        "title": "Demand catalysts: public + school holiday calendars",
+        "cadence": "monthly",
+        "writes_app_data": False,
+        "soft": True,
+        "run": demand_events_step,
+        "note": ("Nager.Date + OpenHolidays -> data/raw/holidays + "
+                 "data/raw/school_holidays; feeds the model's holiday features."),
     },
     {
         "key": "fame",
@@ -653,7 +752,7 @@ def main():
 
     ctx = {"dest_count": dest_count()}
     backed_up = False
-    ran, skipped, failed = [], [], []
+    ran, skipped, failed, soft_failed = [], [], [], []
     try:
         for t in plan:
             log("\n" + "-" * 70)
@@ -699,6 +798,10 @@ def main():
                 state.setdefault(t["key"], {})["last_success"] = now_utc().isoformat()
                 save_state(state)
                 ctx["dest_count"] = dest_count()
+            elif t.get("soft"):
+                log(f"  SOFT-FAIL ({dt}s) - estimation/ingestion layer; does not "
+                    "block the data ship and retries next run.")
+                soft_failed.append(t["key"])
             else:
                 log(f"  FAILED ({dt}s) - stopping before ship to avoid shipping half data.")
                 failed.append(t["key"])
@@ -730,7 +833,8 @@ def main():
                 failed.append("ship")
 
     log("\n" + "=" * 70)
-    log(f"done. ran={ran or '-'}  skipped={skipped or '-'}  failed={failed or '-'}")
+    log(f"done. ran={ran or '-'}  skipped={skipped or '-'}  failed={failed or '-'}"
+        f"  soft-failed={soft_failed or '-'}")
     log("=" * 70)
     return 1 if failed else 0
 
