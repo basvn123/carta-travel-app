@@ -8,8 +8,8 @@
  * and is dropped (not restored) on the next visit, so the planner opens clean.
  *
  * Draft shape: { tripStart, tripEnd, stops:[{destinationId, nights, activities}],
- *   groupSize, transportPref, legModes, pace, anchorId, anchorOrigin, returnAnchorId,
-   ownFlight, planId, planLabel, planned }
+ *   groupSize, transportPref, legModes, ownLegs, pace, anchorId, anchorOrigin,
+   returnAnchorId, ownFlight, planId, planLabel, planned }
  */
 
 const DRAFT_KEY = 'carta.tripDraft.v1';

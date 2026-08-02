@@ -631,6 +631,15 @@ export function DownloadIcon({ size = 15, className = '' }) {
   );
 }
 
+export function UploadIcon({ size = 15, className = '' }) {
+  return (
+    <Glyph size={size} className={className} label="Upload">
+      <path d="M12 15V5M7.5 9.5 12 5l4.5 4.5" />
+      <path d="M4.5 18.5h15" />
+    </Glyph>
+  );
+}
+
 export function PencilIcon({ size = 15, className = '' }) {
   return (
     <Glyph size={size} className={className} label="Edit">

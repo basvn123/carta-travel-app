@@ -116,15 +116,20 @@ export function splitAiPlan(plan, items) {
   const extras = [];
   for (const s of plan?.stops || []) {
     if (s.external) {
-      if (Number.isFinite(s.lat) && Number.isFinite(s.lon) && s.name) {
+      // Unmapped discoveries (the server could not place them) are kept too:
+      // the traveller's own wish must never silently vanish. No coordinates
+      // means no pin, only the listed line with its "custom location" note.
+      if (s.name) {
+        const mapped = Number.isFinite(s.lat) && Number.isFinite(s.lon);
         extras.push({
           name: s.name,
-          lat: s.lat,
-          lon: s.lon,
+          lat: mapped ? s.lat : null,
+          lon: mapped ? s.lon : null,
           arrive: s.arrive || null,
           dwellMin: s.dwellMin || 45,
           why: s.why || '',
           isEvent: !!s.isEvent,
+          unmapped: !mapped,
         });
       }
       continue;

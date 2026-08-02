@@ -190,7 +190,13 @@ export function persistAssignments(planId, assignments, { remote = false } = {})
 
 /* ---- trip extras: bookings, notes, packing list ---- */
 
-const EMPTY_EXTRAS = { bookings: {}, notes: '', checklist: [], expenses: [], people: [] };
+const EMPTY_EXTRAS = {
+  bookings: {}, notes: '', checklist: [], expenses: [], people: [],
+  // Magic-import staging: activities parsed out of uploaded documents wait in
+  // `inbox` until the traveller routes each one to a trip day; the routed ones
+  // live in `dayExtras`, keyed by trip day number.
+  inbox: [], dayExtras: {},
+};
 
 /** Always returns the full shape, never null: callers render straight off it. */
 export function loadTripExtras(planId) {
@@ -205,6 +211,8 @@ export function loadTripExtras(planId) {
       // Group expense ledger: shared spends + custom traveller names.
       expenses: Array.isArray(raw.expenses) ? raw.expenses : [],
       people: Array.isArray(raw.people) ? raw.people : [],
+      inbox: Array.isArray(raw.inbox) ? raw.inbox : [],
+      dayExtras: raw.dayExtras && typeof raw.dayExtras === 'object' ? raw.dayExtras : {},
     };
   } catch {
     return { ...EMPTY_EXTRAS };

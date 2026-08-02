@@ -15,7 +15,7 @@ import { useTripPlanner } from '../hooks/useTripPlanner.js';
 import { useCountryInsights } from '../hooks/useCountryInsights.js';
 import { useI18n } from '../i18n/index.jsx';
 import { loadAssignments, TRIP_DRAFT_PLAN_ID } from './dayPlanStore.js';
-import { SparkIcon, TrainIcon, BusIcon, CarIcon, BulbIcon, InfoIcon, ReceiptIcon, BedIcon } from '../components/Icons.jsx';
+import { SparkIcon, TrainIcon, BusIcon, CarIcon, FerryIcon, BulbIcon, InfoIcon, ReceiptIcon, BedIcon } from '../components/Icons.jsx';
 import { PlaneIcon } from '../components/TransportIcons.jsx';
 import { knownForFacts } from '../lib/knownFor.js';
 import { flightReasonLabel } from '../lib/trip_planner_pricing.js';
@@ -63,6 +63,9 @@ const MODE_META = {
   train: { Icon: TrainIcon, label: 'trip.modeTrain' },
   bus: { Icon: BusIcon, label: 'trip.modeBus' },
   car: { Icon: CarIcon, label: 'trip.modeCar' },
+  // Hops Carta prices from what the traveller paid, not from its own data.
+  fly: { Icon: PlaneIcon, label: 'trip.modeFly' },
+  ferry: { Icon: FerryIcon, label: 'trip.modeFerry' },
 };
 const ModeIcon = ({ mode, size = 13 }) => {
   const I = MODE_META[mode]?.Icon;
@@ -80,8 +83,12 @@ function LegRow({ leg, onMode }) {
   return (
     <div className="trip-leg trip-leg-rich">
       <button className="trip-leg-main" onClick={() => setOpen(!open)} aria-expanded={open}>
-        ↳ <ModeIcon mode={leg.mode} /> {t('trip.legSummary', { mode: t(MODE_META[leg.mode].label), km: leg.road_km, price: eur(chosen.eur_pp), hours: fmtHours(chosen.hours) })}
-        {leg.long_haul ? `, ${t('trip.longLeg')}` : ''}
+        ↳ <ModeIcon mode={leg.mode} /> {chosen.own
+          ? (chosen.eur_total > 0
+            ? t('trip.legBookedSummary', { mode: t(MODE_META[leg.mode].label), price: eur(chosen.eur_total) })
+            : `${t(MODE_META[leg.mode].label)}, ${t('trip.legBookedNoPrice')}`)
+          : t('trip.legSummary', { mode: t(MODE_META[leg.mode].label), km: leg.road_km, price: eur(chosen.eur_pp), hours: fmtHours(chosen.hours) })}
+        {leg.long_haul && !chosen.own ? `, ${t('trip.longLeg')}` : ''}
         <span className="trip-leg-caret">{open ? '−' : '+'}</span>
       </button>
       {open && (
@@ -94,9 +101,9 @@ function LegRow({ leg, onMode }) {
                 onClick={() => onMode(m)}
                 title={leg.recommended === m ? t('trip.cartaPick') : undefined}
               >
-                <span><ModeIcon mode={m} /> {t(MODE_META[m].label)}{leg.recommended === m && <span className="guide-reco-mark"><SparkIcon size={10} /></span>}</span>
-                <b>{t('trip.perPersonShort', { price: eur(o.eur_pp) })}</b>
-                <small>~{fmtHours(o.hours)}</small>
+                <span><ModeIcon mode={m} /> {t(MODE_META[m].label)}{leg.recommended === m && !o.own && <span className="guide-reco-mark"><SparkIcon size={10} /></span>}</span>
+                <b>{o.own && !(o.eur_total > 0) ? '-' : t('trip.perPersonShort', { price: eur(o.eur_pp) })}</b>
+                <small>{o.own ? t('trip.legBooked') : `~${fmtHours(o.hours)}`}</small>
               </button>
             ))}
           </div>
@@ -106,7 +113,7 @@ function LegRow({ leg, onMode }) {
               <a key={j} href={l.url} target="_blank" rel="noreferrer">{l.label} ↗</a>
             ))}
           </div>
-          <p className="trip-leg-disclaimer">{t('trip.legDisclaimer')}</p>
+          {!chosen.own && <p className="trip-leg-disclaimer">{t('trip.legDisclaimer')}</p>}
         </div>
       )}
     </div>
@@ -364,11 +371,12 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
         anchorOrigin: d.anchorOrigin,
         returnAnchorId: d.returnAnchorId,
         ownFlight: d.ownFlight?.airline || d.ownFlight?.costTotal ? d.ownFlight : null,
+        legModes: d.legModes,
+        ownLegs: d.ownLegs,
       });
       // The sender's trip name wins here (loadFromWizard treats its label as a
       // fallback so wizard runs never clobber a typed name; a share must).
       tp.setPlanLabel(d.label || '');
-      Object.entries(d.legModes || {}).forEach(([i, m]) => tp.setLegMode(Number(i), m));
       tp.setPlanned(true);
       setSelectedStop(null);
       setSheetOpen(true);
@@ -643,6 +651,7 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
                 groupSize: tp.groupSize,
                 transportPref: tp.transportPref,
                 legModes: tp.legModes,
+                ownLegs: tp.ownLegs,
                 pace: tp.pace,
                 baggage: tp.baggage,
                 anchorId: tp.anchorId,

@@ -14,7 +14,7 @@ import { carrierName } from '../lib/carriers.js';
 import { groundLinkFor } from '../lib/groundLinks.js';
 import { BagCheck } from '../components/BagCheck.jsx';
 import { useI18n } from '../i18n/index.jsx';
-import { SparkIcon, TrainIcon, BusIcon, CarIcon, BedIcon, ReceiptIcon, ShareIcon, DownloadIcon, LuggageIcon, MapPinIcon, RouteIcon, CalendarIcon, LinkIcon, ChevronDownIcon } from '../components/Icons.jsx';
+import { SparkIcon, TrainIcon, BusIcon, CarIcon, FerryIcon, BedIcon, ReceiptIcon, ShareIcon, DownloadIcon, LuggageIcon, MapPinIcon, RouteIcon, CalendarIcon, LinkIcon, ChevronDownIcon } from '../components/Icons.jsx';
 import { PlaneIcon } from '../components/TransportIcons.jsx';
 
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -35,7 +35,10 @@ function fmtFlightWhen(iso, time) {
   return `${fmtLong(iso)}, ${ft.dep}${ft.arr ? `-${ft.arr}` : ''}`;
 }
 
-const LEG_ICONS = { train: TrainIcon, bus: BusIcon, car: CarIcon, public: BusIcon, taxi: CarIcon, rental: CarIcon };
+const LEG_ICONS = {
+  train: TrainIcon, bus: BusIcon, car: CarIcon, fly: PlaneIcon, ferry: FerryIcon,
+  public: BusIcon, taxi: CarIcon, rental: CarIcon,
+};
 
 // "~1 h 50 min by X" wording per leg mode. Airport transfers use the honest
 // public/taxi/rental trio (we know a transfer exists, not which vehicle), so
@@ -43,6 +46,7 @@ const LEG_ICONS = { train: TrainIcon, bus: BusIcon, car: CarIcon, public: BusIco
 // that for every transfer, taxis included.
 const BY_MODE_KEY = {
   train: 'itin.byTrain', bus: 'itin.byBus', car: 'itin.byCar',
+  fly: 'itin.byFlight', ferry: 'itin.byFerry',
   public: 'itin.byPublic', taxi: 'itin.byTaxi', rental: 'itin.byRental',
 };
 
@@ -183,7 +187,10 @@ function GroundLinkNote({ iata, dir }) {
  * list (the pace cap) and hands fine-tuning to the Day planner via onPlanDay.
  */
 // Traveller-facing names for the leg modes (shared with the mode buttons).
-const MODE_LABEL_KEY = { train: 'trip.modeTrain', bus: 'trip.modeBus', car: 'trip.modeCar' };
+const MODE_LABEL_KEY = {
+  train: 'trip.modeTrain', bus: 'trip.modeBus', car: 'trip.modeCar',
+  fly: 'trip.modeFly', ferry: 'trip.modeFerry',
+};
 
 /** The connector between two consecutive stops in the route view: how you get
  *  from stay to stay, as a first-class part of the itinerary (not a line
@@ -216,7 +223,13 @@ function ItinLeg({ leg, onMode }) {
         <span className="itin-leg-text">
           {t(MODE_LABEL_KEY[leg.mode])}
           <small>
-            {t('itin.legStats', { km: leg.road_km, hours: fmtHours(chosen?.hours ?? leg.hours) })}, {eur(leg.ground_total)}
+            {chosen?.own
+              // Their own booking: Carta has no km or duration for it, only
+              // the fare they told us, so it must not pretend to an estimate.
+              // Nor to a fare, when they left the price blank: EUR 0.00 there
+              // reads as "this hop was free", which is not what they said.
+              ? (leg.ground_total > 0 ? `${t('trip.legBooked')}, ${eur(leg.ground_total)}` : t('trip.legBookedNoPrice'))
+              : `${t('itin.legStats', { km: leg.road_km, hours: fmtHours(chosen?.hours ?? leg.hours) })}, ${eur(leg.ground_total)}`}
           </small>
         </span>
         <span className="itin-leg-change">{open ? t('itin.legClose') : t('itin.legChange')}</span>
@@ -237,9 +250,9 @@ function ItinLeg({ leg, onMode }) {
                 aria-pressed={leg.mode === m}
                 title={leg.recommended === m ? t('trip.cartaPick') : undefined}
               >
-                <span><MIcon size={12} /> {t(MODE_LABEL_KEY[m])}{leg.recommended === m && <SparkIcon size={9} />}</span>
-                <b>{eur(o.eur_total)}</b>
-                <small>~{fmtHours(o.hours)}</small>
+                <span><MIcon size={12} /> {t(MODE_LABEL_KEY[m])}{leg.recommended === m && !o.own && <SparkIcon size={9} />}</span>
+                <b>{o.own && !(o.eur_total > 0) ? '-' : eur(o.eur_total)}</b>
+                <small>{o.own ? t('trip.legBooked') : `~${fmtHours(o.hours)}`}</small>
               </button>
             );
           })}
@@ -646,7 +659,11 @@ export function TripItinerary({
                         <div className="itin-bd-leg">
                           <span className="lbl">
                             <LegIcon size={11} /> {s.dest?.city} → {stopDetails[i + 1]?.dest?.city}
-                            <small>{t(MODE_LABEL_KEY[l.mode])}, {t('itin.legStats', { km: l.road_km, hours: fmtHours(l.hours) })}</small>
+                            <small>
+                              {t(MODE_LABEL_KEY[l.mode])}, {l.modes?.[l.mode]?.own
+                                ? t('trip.legBooked')
+                                : t('itin.legStats', { km: l.road_km, hours: fmtHours(l.hours) })}
+                            </small>
                           </span>
                           <span className="val">{eur(l.ground_total)}</span>
                         </div>
@@ -756,31 +773,71 @@ export function TripItinerary({
               planner to properly shape it. */}
           <div className="itin-days-list">
             <div className="trip-block-title">{t('itin.yourDays')}</div>
-            {dayPlan.map((d) => (
-              <div className="itin-day-row" key={d.dayNum}>
-                <button className="itin-day-row-main" onClick={() => pickDay(d)}>
-                  <span className="itin-day-row-num">{t('itin.dayN', { n: d.dayNum })}</span>
-                  <span className="itin-day-row-meta">
-                    {d.stop.dest?.city}{d.date ? `, ${fmtLong(d.date)}` : ''}
-                    {dayPlanned(d) && `, ${t('itin.planned')}`}
-                  </span>
-                </button>
-                {onPlanDay && (
-                  <button
-                    className="itin-day-plan-btn"
-                    onClick={() => onPlanDay(d)}
-                    title={t(dayPlanned(d) ? 'itin.changeDayTitle' : 'itin.shapeDayTitle', { n: d.dayNum })}
-                  >
-                    <SparkIcon size={11} /> {dayPlanned(d) ? t('itin.editPlan') : t('itin.plan')}
+            {dayPlan.map((d) => {
+              const placed = extras.dayExtras?.[d.dayNum] || [];
+              return (
+                <div className="itin-day-row" key={d.dayNum}>
+                  <button className="itin-day-row-main" onClick={() => pickDay(d)}>
+                    <span className="itin-day-row-num">{t('itin.dayN', { n: d.dayNum })}</span>
+                    <span className="itin-day-row-meta">
+                      {d.stop.dest?.city}{d.date ? `, ${fmtLong(d.date)}` : ''}
+                      {dayPlanned(d) && `, ${t('itin.planned')}`}
+                    </span>
                   </button>
-                )}
-              </div>
-            ))}
+                  {onPlanDay && (
+                    <button
+                      className="itin-day-plan-btn"
+                      onClick={() => onPlanDay(d)}
+                      title={t(dayPlanned(d) ? 'itin.changeDayTitle' : 'itin.shapeDayTitle', { n: d.dayNum })}
+                    >
+                      <SparkIcon size={11} /> {dayPlanned(d) ? t('itin.editPlan') : t('itin.plan')}
+                    </button>
+                  )}
+                  {/* Activities routed here from the import inbox: pinned to
+                      the day, removable where they are shown. */}
+                  {placed.length > 0 && (
+                    <div className="itin-day-extras">
+                      {placed.map((a) => (
+                        <span className="itin-day-extra" key={a.id}>
+                          {a.name}
+                          {a.eur != null && <small>{eur(a.eur)}</small>}
+                          <button
+                            onClick={() => saveExtras({
+                              ...extras,
+                              dayExtras: {
+                                ...extras.dayExtras,
+                                [d.dayNum]: placed.filter((x) => x.id !== a.id),
+                              },
+                            })}
+                            aria-label={t('extras.removeTitle')}
+                            title={t('extras.removeTitle')}
+                          >×</button>
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
 
           {/* Bookings, notes and the packing list: the trip's life admin,
               saved with the plan (and synced to the account when signed in). */}
-          <TripExtras rows={bookingRows} extras={extras} onChange={saveExtras} />
+          <TripExtras
+            rows={bookingRows}
+            extras={extras}
+            onChange={saveExtras}
+            days={dayPlan.map((d) => ({ n: d.dayNum, city: d.stop.dest?.city || '', date: d.date }))}
+            importContext={{
+              stops: stopDetails.filter((s) => s.dest).map((s) => ({
+                city: s.dest.city,
+                country: s.dest.country,
+                arrive: s.arriveDate || '',
+                nights: s.nights,
+              })),
+              groupSize,
+            }}
+          />
 
           {/* Who paid for what, in any currency, and who owes whom: the
               group's shared-spend book, on the same save/sync rails. */}

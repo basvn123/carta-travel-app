@@ -68,7 +68,7 @@ async function run(label, viewport) {
     const t = m.text();
     if (t.startsWith('UNHANDLED::')) { if (!isMockAuthNoise(t)) errors.push(`[${label}] rejection: ${t.slice(11, 160)}`); return; }
     if (m.type() !== 'error') return;
-    if (/tile|cartocdn|ERR_|emrldtp|config is not valid|nominatim/i.test(t)) return;
+    if (/tile|cartocdn|ERR_|emrldtp|config is not valid|nominatim|MIME type|Service worker/i.test(t)) return;
     if (isMockAuthNoise(t)) return;
     errors.push(`[${label}] console: ${t.slice(0, 140)}`);
   });

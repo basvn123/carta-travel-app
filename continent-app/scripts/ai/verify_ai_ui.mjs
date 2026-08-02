@@ -51,9 +51,9 @@ async function boot(browser, { viewport, withAiState }) {
   page.on('pageerror', (e) => errors.push('pageerror: ' + e.message.split('\n')[0]));
   page.on('console', (m) => {
     const t = m.text();
-    // Basemap tiles and the Travelpayouts affiliate beacon are network noise
-    // in a sandboxed preview, not app errors.
-    if (m.type() === 'error' && !/tile|cartocdn|ERR_|emrldtp|config is not valid/i.test(t)) {
+    // Basemap tiles, the Travelpayouts affiliate beacon and the service
+    // worker (absent from a bare preview) are network noise, not app errors.
+    if (m.type() === 'error' && !/tile|cartocdn|ERR_|emrldtp|config is not valid|MIME type|Service worker/i.test(t)) {
       errors.push('console: ' + t.slice(0, 140));
     }
   });
@@ -137,11 +137,14 @@ const browser = await chromium.launch();
   await page.locator('.day-plan-collapse .day-collapse-head').first().click().catch(() => {});
   await page.waitForTimeout(800);
   check('B: AI schedule card renders', await page.locator('.ai-day-panel').isVisible().catch(() => false));
-  check('B: schedule lists 4 stops', (await page.locator('.ai-day-panel .ai-sched-stop').count()) === 4);
-  check('B: discovery tag in schedule', await page.locator('.ai-day-panel .ai-disc-tag').first().isVisible().catch(() => false));
+  // Since the v20 redesign the bot card is a HEADER (summary + totals); its
+  // stops lay into the one timeline and its reasons ride the rows, so that
+  // is where they are asserted (the collapse is already open, one click up).
+  check('B: bot stops laid into the timeline', (await page.locator('.day-timeline-row').count()) >= 3);
+  check('B: bot reasons ride the timeline rows', (await page.locator('.day-assigned-note.from-ai').count()) >= 1);
   check('B: discovery pin on map', (await page.locator('.dem-pin.ai-disc').count()) >= 1);
   check('B: numbered route pins on map', (await page.locator('.trip-pin').count()) >= 3);
-  check('B: AI re-plan button present', await page.getByRole('button', { name: /ai re-plan/i }).first().isVisible().catch(() => false));
+  check('B: AI re-plan button present', await page.getByRole('button', { name: /re-plan day/i }).first().isVisible().catch(() => false));
   await page.screenshot({ path: `${SHOTS}/b1-applied-desktop.png` });
   await page.close();
 }
@@ -153,7 +156,7 @@ const browser = await chromium.launch();
   await page.locator('.day-plan-collapse .day-collapse-head').first().click().catch(() => {});
   await page.waitForTimeout(800);
   await page.screenshot({ path: `${SHOTS}/c1-applied-mobile.png` });
-  const replan = page.getByRole('button', { name: /ai re-plan/i }).first();
+  const replan = page.getByRole('button', { name: /re-plan day/i }).first();
   if (await replan.isVisible().catch(() => false)) {
     await replan.click();
     await page.waitForTimeout(600);

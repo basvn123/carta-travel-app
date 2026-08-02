@@ -82,7 +82,7 @@ page.on('console', (m) => {
     return;
   }
   if (m.type() !== 'error') return;
-  if (/tile|cartocdn|ERR_|emrldtp|config is not valid/i.test(t)) return;
+  if (/tile|cartocdn|ERR_|emrldtp|config is not valid|MIME type|Service worker/i.test(t)) return;
   if (isMockAuthNoise(t)) return;
   errors.push('console: ' + t.slice(0, 140));
 });

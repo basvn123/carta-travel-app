@@ -59,7 +59,10 @@ import {
   BedIcon, BookmarkIcon, DownloadIcon, RouteIcon,
   FerryIcon, PencilIcon, SearchIcon, HomeIcon, CheckIcon, CalendarIcon,
   ClockIcon, CoffeeIcon, FilterIcon, ChevronDownIcon, ChevronRightIcon,
+  UploadIcon,
 } from '../components/Icons.jsx';
+import { MagicImportZone } from './MagicImportZone.jsx';
+import { toInboxItems } from './bookingImport.js';
 
 // How the explore search & "Let Carta guide you" name each pin category.
 // i18n keys, resolved with t() at render time.
@@ -518,9 +521,20 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
     return () => { alive = false; };
   }, []);
 
+  // The traveller's own places for a destination (typed into the search, or
+  // taken from an imported document), stored per plan in prefs.customPois so
+  // they ride the same save/sync rails as everything else in the plan. They
+  // merge APPENDED to the catalogue, so a custom place is an ordinary item
+  // everywhere downstream: assignments index it, the schedule times it, the
+  // map pins it, the PDF prints it. Append-only per destination: removing or
+  // reordering entries would shift the indices saved assignments point at.
+  const customPoisFor = (destId) => (prefs?.customPois?.[destId] || [])
+    .map((c) => ({ ...c, custom: true }));
+
   const itemsForStop = (s, fullMap = actFull) => {
     const a = s?.dest?.activities;
     if (!a) return { items: [], walkable: new Set(), suppressed: new Set(), canon: new Map(), limited: true };
+    const customs = customPoisFor(s.destination_id);
     const full = (a.items_full && a.items_full.length)
       ? a.items_full
       : fullMap?.[s.destination_id];
@@ -535,18 +549,22 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
     // but leave the array (and every index) untouched, so saved assignments
     // and toggles that already reference an index stay valid.
     if (full && full.length) {
-      const { suppressed, canon } = canonicalPoiIndices(full);
-      const walkable = walkableIdxSet(full, s.dest);
+      const merged = customs.length ? [...full, ...customs] : full;
+      const { suppressed, canon } = canonicalPoiIndices(merged);
+      const walkable = walkableIdxSet(merged, s.dest);
       suppressed.forEach((i) => walkable.delete(i));
-      return { items: full, walkable, suppressed, canon, limited: false };
+      return { items: merged, walkable, suppressed, canon, limited: false };
     }
-    const items = (a.items || []).map((it) => ({ ...it, lat: null, lon: null }));
+    const items = [
+      ...(a.items || []).map((it) => ({ ...it, lat: null, lon: null })),
+      ...customs,
+    ];
     const { suppressed, canon } = canonicalPoiIndices(items);
     const walkable = new Set(items.map((_, i) => i).filter((i) => !suppressed.has(i)));
     return { items, walkable, suppressed, canon, limited: true };
   };
 
-  const activities = useMemo(() => itemsForStop(stop), [stop, actFull]); // eslint-disable-line react-hooks/exhaustive-deps
+  const activities = useMemo(() => itemsForStop(stop), [stop, actFull, prefs?.customPois]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Saved plans can predate a dedupe improvement, so a day may already hold
   // BOTH copies of a place ("Parafia ..." next to "Kosciol pw. ..."). Repair
@@ -1261,6 +1279,123 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
     setPrefs(savedPrefs);
     persistPrefs(plan?.id, savedPrefs);
   };
+
+  // A place the catalogue does not know (Gaisberg, a cousin's restaurant, a
+  // spot from an imported itinerary) still belongs on the day. Best effort to
+  // pin it for real: one explicit Nominatim lookup scoped to the city; a hit
+  // within day-trip range gives it true coordinates, anything else (miss,
+  // offline, wrong-country namesake) falls back to the city centre with
+  // unmapped:true, so the day keeps scheduling and the row says the location
+  // is approximate. Never a thrown error, never a silently-lost place.
+  const CUSTOM_POI_MAX_KM = 60;
+  const [customBusy, setCustomBusy] = useState(false);
+  // `dropIdeaId` folds "and take it out of the import-ideas drawer" into the
+  // SAME prefs write: two sequential writes both derived from the same stale
+  // `prefs` would have raced, and the loser's change would silently vanish.
+  const addCustomPlace = async (rawName, { kind = 'Custom place', note = '', dropIdeaId = null } = {}) => {
+    const name = (rawName || '').trim().slice(0, 90);
+    if (!name || !stop?.dest || customBusy) return;
+    setCustomBusy(true);
+    const centre = cityCoords(stop.dest);
+    let lat = null;
+    let lon = null;
+    try {
+      const hits = await geocodeAddress(`${name}, ${stop.dest.city}`);
+      const near = hits.find((h) => {
+        const km = haversineKm(centre.lat, centre.lon, h.lat, h.lon);
+        return km != null && km <= CUSTOM_POI_MAX_KM;
+      });
+      if (near) { lat = near.lat; lon = near.lon; }
+    } catch { /* geocoder down: the centre fallback below carries the day */ }
+    const unmapped = lat == null;
+    const item = {
+      id: `c${Date.now()}`,
+      name,
+      kind,
+      desc: note || '',
+      lat: unmapped ? centre.lat : lat,
+      lon: unmapped ? centre.lon : lon,
+      custom: true,
+      ...(unmapped ? { unmapped: true } : {}),
+    };
+    const destKey = stop.destination_id;
+    const savedPrefs = {
+      ...(prefs || {}),
+      customPois: {
+        ...(prefs?.customPois || {}),
+        [destKey]: [...(prefs?.customPois?.[destKey] || []), item],
+      },
+      ...(dropIdeaId ? {
+        ideaInbox: {
+          ...(prefs?.ideaInbox || {}),
+          [destKey]: (prefs?.ideaInbox?.[destKey] || []).filter((i) => i.id !== dropIdeaId),
+        },
+      } : {}),
+    };
+    // The merged list appends customs at the end, so the new item's index is
+    // simply the current length; assign it to today in the same breath.
+    const newIdx = activities.items.length;
+    const current = assignments[stopIdx]?.[dayIdx] || [];
+    const nextAssign = {
+      ...assignments,
+      [stopIdx]: { ...(assignments[stopIdx] || {}), [dayIdx]: [...current, newIdx] },
+    };
+    setPrefs(savedPrefs);
+    persistPrefs(plan?.id, savedPrefs);
+    setAssignments(nextAssign);
+    persistAssignments(plan?.id, nextAssign);
+    setPoiQuery('');
+    setCustomBusy(false);
+    return item;
+  };
+
+  // ---- Import ideas: documents or a link in, one-tap custom stops out ----
+  // Extracted activities wait per destination in prefs.ideaInbox (same rails,
+  // same sync as everything else in the plan) until each is added to the open
+  // day as a custom place, or discarded.
+  const ideaList = prefs?.ideaInbox?.[stop?.destination_id] || [];
+  const stageIdeas = (result) => {
+    if (!stop) return { filled: 0, staged: 0 };
+    const destKey = stop.destination_id;
+    const fresh = toInboxItems(result.activities, {
+      existingNames: [
+        ...ideaList.map((i) => i.name),
+        ...customPoisFor(destKey).map((c) => c.name),
+      ],
+    });
+    if (fresh.length) {
+      const saved = {
+        ...(prefs || {}),
+        ideaInbox: { ...(prefs?.ideaInbox || {}), [destKey]: [...ideaList, ...fresh] },
+      };
+      setPrefs(saved);
+      persistPrefs(plan?.id, saved);
+    }
+    return { filled: 0, staged: fresh.length };
+  };
+  const discardIdea = (idea) => {
+    if (!stop) return;
+    const destKey = stop.destination_id;
+    const saved = {
+      ...(prefs || {}),
+      ideaInbox: {
+        ...(prefs?.ideaInbox || {}),
+        [destKey]: ideaList.filter((i) => i.id !== idea.id),
+      },
+    };
+    setPrefs(saved);
+    persistPrefs(plan?.id, saved);
+  };
+  // What the parse-booking prompt matches against: the one open city.
+  const dayImportContext = stop?.dest ? {
+    stops: [{
+      city: stop.dest.city,
+      country: stop.dest.country || '',
+      arrive: '',
+      nights: 1,
+    }],
+    groupSize: prefs?.aiGroupSize || 2,
+  } : null;
 
   // Adding a stop re-optimizes the whole day's route (nearest-neighbour) when
   // Carta is in charge of the order; removing just drops it in place.
@@ -2964,22 +3099,43 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
           )}
         </div>
         {poiQuery.trim().length >= 2 && (
-          poiSearch.length ? (
-            <div className="day-activity-list day-search-results">
-              {poiSearch.map(({ item, idx, note }) => (
-                <ActivityRow
-                  key={idx}
-                  item={item}
-                  variant={isMustSee(item) ? 'must' : ''}
-                  added={dayAssignedIdx.includes(idx)}
-                  onToggle={() => toggleActivity(idx)}
-                  note={note}
-                />
-              ))}
-            </div>
-          ) : (
-            <p className="trip-note">{t('day.poiSearchEmpty', { q: poiQuery.trim(), city: stop.dest?.city || 'here' })}</p>
-          )
+          <>
+            {poiSearch.length > 0 && (
+              <div className="day-activity-list day-search-results">
+                {poiSearch.map(({ item, idx, note }) => (
+                  <ActivityRow
+                    key={idx}
+                    item={item}
+                    variant={isMustSee(item) ? 'must' : ''}
+                    added={dayAssignedIdx.includes(idx)}
+                    onToggle={() => toggleActivity(idx)}
+                    note={note}
+                  />
+                ))}
+              </div>
+            )}
+            {/* The catalogue is a head start, not a gatekeeper: whatever was
+                typed can always become a custom stop on today's plan. Shown
+                whenever no catalogue name matches the query exactly, so
+                "Gaisberg" is one tap from the timeline instead of a dead
+                "nothing matches" wall. */}
+            {poiQuery.trim().length >= 3
+              && !poiSearch.some(({ item }) => searchFold(item.name) === searchFold(poiQuery))
+              && (
+                <button
+                  className="day-custom-add"
+                  onClick={() => addCustomPlace(poiQuery)}
+                  disabled={customBusy}
+                >
+                  {customBusy
+                    ? <><span className="day-custom-spin" aria-hidden="true" /> {t('day.customAdding')}</>
+                    : <>+ {t('day.customAdd', { q: poiQuery.trim() })}</>}
+                </button>
+              )}
+            {poiSearch.length === 0 && (
+              <p className="trip-note">{t('day.poiSearchEmpty', { q: poiQuery.trim(), city: stop.dest?.city || 'here' })}</p>
+            )}
+          </>
         )}
         {tiers.must.length > 0 && (
           <ActivitySection
@@ -3514,6 +3670,9 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
                       <b>
                         {s.name}
                         {s.isEvent && <span className="ai-disc-tag ai-event-tag">{t('ai.eventTag')}</span>}
+                        {/* The bot knew the place but could not place it: the
+                            find is kept, labelled, and simply has no pin. */}
+                        {s.unmapped && <span className="ai-disc-tag ai-unmapped-tag">{t('ai.unmappedTag')}</span>}
                       </b>
                       {s.why && <small>{s.why}</small>}
                     </div>
@@ -3612,6 +3771,47 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
                   <p className="trip-note">Turns this into a multi-city day trip: each city gets its own days and picks.</p>
                 </Collapsible>
               )}
+            </Collapsible>
+          )}
+
+          {/* 3.5 Import ideas: a blog's "one day in Salzburg", an itinerary
+              PDF, a pasted link. Carta extracts the activities; each one is a
+              tap from becoming a custom stop on the open day, so an already
+              planned day grows without retyping anything. */}
+          {stop && dayImportContext && (
+            <Collapsible
+              className="day-import-collapse"
+              titleIcon={<UploadIcon size={13} />}
+              title={t('day.importTitle')}
+              count={ideaList.length ? ideaList.length : null}
+            >
+              <MagicImportZone
+                onResult={stageIdeas}
+                importContext={dayImportContext}
+                leadKey="day.importLead"
+              />
+              {ideaList.map((idea) => (
+                <div className="day-idea-row" key={idea.id}>
+                  <span className="day-idea-text">
+                    <b>{idea.name}</b>
+                    {(idea.note || idea.durationMin != null) && (
+                      <small>
+                        {[idea.durationMin != null ? `~${idea.durationMin} min` : null, idea.note]
+                          .filter(Boolean).join(', ')}
+                      </small>
+                    )}
+                  </span>
+                  <button
+                    className="day-idea-add"
+                    disabled={customBusy}
+                    onClick={() => addCustomPlace(idea.name, { note: idea.note || '', dropIdeaId: idea.id })}
+                    title={t('day.importAddTitle', { n: dayOffset + dayIdx + 1 })}
+                  >
+                    + {t('day.importAddHere', { n: dayOffset + dayIdx + 1 })}
+                  </button>
+                  <button className="trip-stop-remove" onClick={() => discardIdea(idea)} aria-label={t('extras.removeTitle')} title={t('extras.removeTitle')}>×</button>
+                </div>
+              ))}
             </Collapsible>
           )}
 

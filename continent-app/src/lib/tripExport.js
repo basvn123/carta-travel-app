@@ -37,7 +37,7 @@ function esc(s) {
 // Traveller-facing words for leg/transfer mode keys (the raw keys leak
 // jargon like "by public" or "by rental" into shared text otherwise).
 const MODE_WORD = {
-  train: 'train', bus: 'bus', car: 'car',
+  train: 'train', bus: 'bus', car: 'car', fly: 'flight', ferry: 'ferry',
   public: 'public transport', taxi: 'taxi', rental: 'rental car',
 };
 const modeWord = (mode) => MODE_WORD[mode] || mode;
@@ -125,7 +125,10 @@ function tripPrintHtml({ label, stopDetails, dayPlan = [], flight, legs = [], an
     }
     const l = legs[i];
     if (i < stopDetails.length - 1 && l && l.ground_total) {
-      rows.push(`<tr><td>${esc(s.dest?.city)} &rarr; ${esc(stopDetails[i + 1]?.dest?.city)} (${esc(modeWord(l.mode))}, estimate)</td><td>${esc(eur(l.ground_total))}</td></tr>`);
+      // A hop the traveller booked themselves carries their own fare, so it
+      // must not go out on the receipt labelled as one of Carta's estimates.
+      const qual = l.modes?.[l.mode]?.own ? 'booked' : 'estimate';
+      rows.push(`<tr><td>${esc(s.dest?.city)} &rarr; ${esc(stopDetails[i + 1]?.dest?.city)} (${esc(modeWord(l.mode))}, ${qual})</td><td>${esc(eur(l.ground_total))}</td></tr>`);
     }
   });
   // 3. Getting home.

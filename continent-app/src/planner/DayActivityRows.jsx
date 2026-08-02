@@ -2,8 +2,7 @@ import { useState } from 'react';
 import {
   StarIcon, InfoIcon, HomeIcon, BeachIcon, MountainIcon, CastleIcon,
 } from '../components/Icons.jsx';
-import { isMustSee, poiKind, poiRating, poiMapCat } from './dayDraft.js';
-import { ScoreChip } from '../components/RatingBadge.jsx';
+import { isMustSee, poiKind, poiMapCat } from './dayDraft.js';
 import { safeUrl } from '../lib/format.js';
 
 /** A place with no photo still deserves a thumbnail that says what it is.
@@ -44,18 +43,32 @@ function ItemThumb({ item }) {
   return <PoiThumb img={item.img} cat={poiMapCat(item)} name={item.name} />;
 }
 
-/** Name + its badges. The name truncates on its own line box so a long title
- *  can never push the rating chip out of view, and the badge cluster keeps a
- *  clear gap from the text instead of butting up against the ellipsis. */
+/** Name first, badges under it. The name owns its whole line (wrapping, never
+ *  truncating: "Hohensalzburg Fortress" must not render as "H..."), and the
+ *  badge row beneath carries only marks that differentiate: the must-see
+ *  star, the heritage register, a custom place's origin. The rating chip is
+ *  gone from these lists on purpose: with nearly every card wearing the same
+ *  8.7 it ranked nothing and only crowded the title out of its own row. */
 function RowTitle({ item, must }) {
+  const badges = [
+    must && <span key="m" className="day-badge-must" title="A true must-see here"><StarIcon size={9} /></span>,
+    item.heritage && <span key="h" className="day-badge-heritage" title="On a cultural-heritage register">heritage</span>,
+    item.custom && (
+      <span
+        key="c"
+        className="day-badge-custom"
+        title={item.unmapped
+          ? 'Your own place. Location approximate: shown at the city centre'
+          : 'Your own place, added to this plan by you'}
+      >
+        custom{item.unmapped ? ', location approximate' : ''}
+      </span>
+    ),
+  ].filter(Boolean);
   return (
     <span className="day-assigned-name">
       <span className="day-assigned-title">{item.name}</span>
-      <span className="day-assigned-badges">
-        <ScoreChip rating={poiRating(item)} />
-        {must && <span className="day-badge-must" title="A true must-see here"><StarIcon size={9} /></span>}
-        {item.heritage && <span className="day-badge-heritage" title="On a cultural-heritage register">heritage</span>}
-      </span>
+      {badges.length > 0 && <span className="day-assigned-badges">{badges}</span>}
     </span>
   );
 }

@@ -106,23 +106,32 @@ export function sanitizeAiStops(aiStops, candidates, centre, {
       });
       continue;
     }
-    // Not one of ours: only acceptable as an explicit discovery with sane,
-    // in-area coordinates. The model inventing a "catalogue" stop is a drop.
+    // Not one of ours: acceptable as an explicit discovery. With sane,
+    // in-area coordinates it becomes a mapped stop; with missing or
+    // out-of-area coordinates it is KEPT as an unmapped custom node rather
+    // than dropped. Dropping was how a traveller's own wish ("include
+    // Gaisberg") could vanish without a trace whenever the model failed to
+    // coordinate it: the plan came back as if the wish had never been made.
+    // An unmapped node carries no coordinates at all, so it can never place
+    // a pin somewhere wrong; scheduleDay already passes coordless stops
+    // through with arrive:null instead of routing them. The model inventing
+    // a "catalogue" stop (a fake id) is still a drop.
     const lat = num(s.lat);
     const lon = num(s.lon);
     const name = cleanText(s.name, 90);
     const km = centre ? haversineKm(centre.lat, centre.lon, lat, lon) : null;
     const inArea = km != null && km <= maxKmFromCentre;
-    if (s.inCatalog === false && name && inArea && externals < maxExternal) {
+    if (s.inCatalog === false && name && externals < maxExternal) {
       externals += 1;
       stops.push({
         id: null,
         name,
-        lat,
-        lon,
+        lat: inArea ? lat : null,
+        lon: inArea ? lon : null,
         dwellMin,
         why,
         external: true,
+        unmapped: !inArea,
         // Festivals, markets and one-off events: the model works from
         // training data with no live feed, so these are always presented as
         // "worth checking" rather than as confirmed opening times.

@@ -19,12 +19,12 @@ import {
   carAdvice, legTransportOptions, airportTransferOptions, preferredPublicMode,
 } from '../lib/transport.js';
 import { haversineKm, tripDaysBetween, accommodationPerPerson } from '../lib/runtime_pricing.js';
-import { eur } from '../lib/format.js';
+import { eur, fmtHours } from '../lib/format.js';
 import { fmtDate, addDays } from '../lib/dates.js';
 import { geocodeAddress } from '../lib/geocode.js';
 import { useCountryInsights } from '../hooks/useCountryInsights.js';
 import {
-  SparkIcon, CheckIcon, AlertIcon, TrainIcon, CarIcon, InfoIcon,
+  SparkIcon, CheckIcon, AlertIcon, TrainIcon, BusIcon, CarIcon, FerryIcon, InfoIcon,
   TreeIcon, DiningIcon, MoonIcon,
   CameraIcon, CastleIcon, BeachIcon,
   LeafIcon, ScaleIcon, BoltIcon, StarIcon, RouteIcon, BedIcon, MapPinIcon,
@@ -38,6 +38,31 @@ import { suggestedNights, Flag, CityThumb, StayRow } from './GuidedTripWizardPar
 const ROUTES_PREVIEW = 14;
 const CITIES_PREVIEW = 8;
 const NEARBY_KM = 140;
+
+/** Both halves of what a "transport and stays booked" traveller already holds,
+ *  so the card shows which trip it is before the label says so. */
+function BookedPathIcon({ size = 18 }) {
+  return (
+    <span className="guide-path-duo" aria-hidden="true">
+      <RouteIcon size={Math.round(size * 0.85)} />
+      <BedIcon size={Math.round(size * 0.7)} />
+    </span>
+  );
+}
+
+// The five ways a traveller moves between two stops they've already booked.
+// Carta prices the overland three from its own engine; a flight or a ferry it
+// holds no fares for, so those carry the price the traveller paid instead of
+// an invented one.
+const BOOKED_LEG_MODES = [
+  { key: 'train', Icon: TrainIcon, labelKey: 'trip.modeTrain' },
+  { key: 'bus', Icon: BusIcon, labelKey: 'trip.modeBus' },
+  { key: 'car', Icon: CarIcon, labelKey: 'trip.modeCar' },
+  { key: 'fly', Icon: PlaneIcon, labelKey: 'trip.modeFly' },
+  { key: 'ferry', Icon: FerryIcon, labelKey: 'trip.modeFerry' },
+];
+const BOOKED_MODE_BY_KEY = Object.fromEntries(BOOKED_LEG_MODES.map((m) => [m.key, m]));
+const OWN_BOOKED_MODES = new Set(['fly', 'ferry']);
 
 // The three ways into the wizard, how much is already booked decides how many
 // questions Carta still gets to ask.
@@ -56,7 +81,7 @@ const PATHS = [
   },
   {
     key: 'booked',
-    Icon: CheckIcon,
+    Icon: BookedPathIcon,
     labelKey: 'wizard.pathBooked',
     subKey: 'wizard.pathBookedSub',
   },
@@ -222,6 +247,15 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
   const [bookedStops, setBookedStops] = useState([]); // [{ destinationId, nights }]
   const [bookedCountry, setBookedCountry] = useState('');
   const [bookedCity, setBookedCity] = useState('');
+  // How each hop between two stops is travelled, keyed by leg index (leg i
+  // joins stop i to stop i+1): { mode: 'train'|'bus'|'car'|'fly'|'ferry',
+  // eur }. The overland three are priced by Carta's own engine, so they carry
+  // no figure; a flight or a ferry is one the traveller booked themselves, so
+  // it carries the party total they paid.
+  const [bookedLegs, setBookedLegs] = useState({});
+  // Adding a stop is a two-field question, kept folded once the route exists
+  // so the timeline reads as a route rather than as a form with leftovers.
+  const [bookedAddOpen, setBookedAddOpen] = useState(false);
 
   // Memoized: these three feed downstream memos (companionsFor, mapCities, which
   // each scan the whole destinations map). Recreating them as fresh arrays every
@@ -648,6 +682,8 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
     setBookedStops([]);
     setBookedCountry('');
     setBookedCity('');
+    setBookedLegs({});
+    setBookedAddOpen(false);
   };
 
   // Data-driven "should this trip have a car?" verdict for the Finish step,
@@ -755,10 +791,87 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
     });
   };
 
+  // ---- "Everything is booked": the route between the typed stops ----------
+  // Nights run in sequence from the first one, so each stop knows the day it
+  // is arrived at without asking a date per stay.
+  const bookedTotalNights = bookedStops.reduce((sum, s) => sum + Math.max(0, s.nights || 0), 0);
+  const bookedNightsBefore = useMemo(() => {
+    let cursor = 0;
+    return bookedStops.map((s) => {
+      const before = cursor;
+      cursor += Math.max(0, s.nights || 0);
+      return before;
+    });
+  }, [bookedStops]);
+
+  // Priced with the same engine the overview uses afterwards, so the figure
+  // shown under a connector here is the figure on the receipt there.
+  const bookedLegOptions = useMemo(() => {
+    if (bookedStops.length < 2) return [];
+    const gs = Math.max(1, groupSize || 1);
+    const carModel = data?.meta?.car_model || null;
+    return bookedStops.slice(0, -1).map((s, i) => {
+      const a = destinations[s.destinationId];
+      const b = destinations[bookedStops[i + 1]?.destinationId];
+      if (!a || !b) return null;
+      return legTransportOptions(a, b, gs, { carModel, countryInsights, hasCar: false });
+    });
+  }, [bookedStops, destinations, groupSize, data, countryInsights]);
+
+  // Which mode a hop is travelling on: the traveller's answer, else Carta's
+  // pick, else a flight (the only honest suggestion across water).
+  const bookedLegMode = (i) => bookedLegs[i]?.mode
+    || bookedLegOptions[i]?.recommended
+    || (bookedLegOptions[i]?.no_road ? 'fly' : null);
+
+  const setBookedLegMode = (i, mode) => {
+    setBookedLegs((prev) => ({ ...prev, [i]: { mode, eur: prev[i]?.eur ?? '' } }));
+  };
+  const setBookedLegCost = (i, eurText) => {
+    setBookedLegs((prev) => ({ ...prev, [i]: { mode: prev[i]?.mode || 'fly', eur: eurText } }));
+  };
+
+  // Dropping a stop retires BOTH hops that touched it (the one arriving and
+  // the one leaving); what replaces them is a different journey, so inheriting
+  // either answer would put a mode on a leg nobody chose it for.
+  const removeBookedStop = (idx) => {
+    setBookedStops((prev) => prev.filter((_, j) => j !== idx));
+    setBookedLegs((prev) => {
+      const next = {};
+      Object.entries(prev).forEach(([k, v]) => {
+        const i = Number(k);
+        if (i === idx - 1 || i === idx) return;
+        next[i > idx ? i - 1 : i] = v;
+      });
+      return next;
+    });
+  };
+
   // "Everything is booked": hand over exactly what they typed, straight to
   // the overview, no design pass, no repricing of decisions already made.
   const finishBooked = () => {
     if (!bookedStart || !bookedStops.length) return;
+    // Split the answers the way the planner stores them: overland modes are a
+    // per-leg override on Carta's own pricing, a flight or ferry is a leg it
+    // has no fares for and prices from what the traveller paid.
+    //
+    // Walk the legs rather than the answers, so what the overview receives is
+    // what this screen actually showed. A sea crossing opens on Flight without
+    // anyone touching it; handing over nothing for it made the overview say
+    // "no overland route" about a hop the traveller had just seen named.
+    const legModes = {};
+    const ownLegs = {};
+    for (let i = 0; i < bookedStops.length - 1; i += 1) {
+      const mode = bookedLegMode(i);
+      if (!mode) continue;
+      if (OWN_BOOKED_MODES.has(mode)) {
+        ownLegs[i] = { mode, eur: Math.max(0, Math.min(99999, Number(bookedLegs[i]?.eur) || 0)) };
+      } else if (bookedLegs[i]?.mode) {
+        // Only an explicit answer becomes an override. Carta's own pick stays
+        // Carta's pick, so it can re-derive if the trip is edited afterwards.
+        legModes[i] = mode;
+      }
+    }
     onComplete({
       startDate: bookedStart,
       groupSize,
@@ -769,6 +882,8 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
       label: [...new Set(bookedStops.map((s) => destinations[s.destinationId]?.country).filter(Boolean))]
         .slice(0, 2).join(' & '),
       stops: bookedStops.map((s) => ({ ...s, activities: [] })),
+      legModes,
+      ownLegs,
     });
   };
 
@@ -1416,6 +1531,10 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
     if (stepName === 'Getting there') return arriveMode === 'fly' && routeOptions.length > 0 ? 'wide' : 'form';
     if (stepName === 'Getting home') return homeOptions.length > 0 ? 'wide' : 'form';
     if (stepName === 'Finish') return 'mid';
+    // The booked path is a route, not a question: a stop row carries a city,
+    // its dates, its nights and a remove, and its connector carries a mode
+    // and a price. At form width those two rows wrapped into four.
+    if (stepName === 'Your trip') return 'mid';
     return 'form';
   })();
 
@@ -2124,12 +2243,12 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
                             >
                               <CityThumb dest={o.dest} className="guide-city-thumb" />
                               <span className="guide-route-main">
-                                <span className="guide-route-city">
+                                <span className="booked-stop-city">
                                   {o.dest.city}
                                   <Flag iso2={o.dest.iso2} className="guide-flag-img-sm" />
                                   {badge && <span className={`guide-route-badge ${badge.cls}`}>{badge.cls === 'pick' && <SparkIcon size={9} />}{t(badge.labelKey)}</span>}
                                 </span>
-                                <span className="guide-route-sub">
+                                <span className="booked-stop-sub">
                                   <PlaneIcon size={10} /> {t('wizard.flyIntoList', { anchor: o.anchor })}
                                   {meta ? t('wizard.flightDur', { dur: fmtFlightDuration(meta.min) }) : ''}
                                 </span>
@@ -2606,12 +2725,12 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
                         >
                           <CityThumb dest={o.dest} className="guide-city-thumb" />
                           <span className="guide-route-main">
-                            <span className="guide-route-city">
+                            <span className="booked-stop-city">
                               {o.dest.city}
                               <Flag iso2={o.dest.iso2} className="guide-flag-img-sm" />
                               {o.is_out_anchor && <span className="guide-route-badge pick">{t('wizard.roundTripBadge')}</span>}
                             </span>
-                            <span className="guide-route-sub">
+                            <span className="booked-stop-sub">
                               <PlaneIcon size={10} /> {t('wizard.homeFromList', { anchor: o.anchor })}
                               {o.km != null ? t('wizard.kmAway', { km: o.km }) : ''}
                             </span>
@@ -2776,94 +2895,170 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
             </>
           )}
 
-          {/* ---- BOOKED PATH: type the trip in ---- */}
+          {/* ---- BOOKED PATH: type the trip in ----
+              One vertical route: every stay a node, every hop between two
+              stays a connector that names how it is travelled. The hops used
+              to be missing entirely, so a three-city trip priced its nights
+              and none of the moving between them. */}
           {stepName === 'Your trip' && (
             <>
-              <h2 className="guide-title">Fill in your trip</h2>
-              <p className="guide-sub">
-                Flights and stays are booked - just tell Carta where you're sleeping and from when,
-                and it opens the overview with day planning, costs on the ground and the route map.
-              </p>
+              <h2 className="guide-title">{t('wizard.bookedTitle')}</h2>
 
-              <div className="guide-card">
-                <div className="guide-when-dates guide-arrival-when">
-                  <label className="trip-field">
-                    <span className="trip-field-label">First night</span>
-                    <DateField value={bookedStart} min={dateMin} max={dateMax} onChange={setBookedStart} placeholder="Start date" />
-                  </label>
-                  <label className="trip-field">
-                    <span className="trip-field-label"><PersonIcon size={11} /> {t('wizard.peopleLabel')}</span>
-                    <div className="guide-people">
-                      <button type="button" onClick={() => setGroupSize(Math.max(1, groupSize - 1))} disabled={groupSize <= 1} aria-label="Fewer people">-</button>
-                      <span>{groupSize}</span>
-                      <button type="button" onClick={() => setGroupSize(Math.min(20, groupSize + 1))} disabled={groupSize >= 20} aria-label="More people">+</button>
-                    </div>
-                  </label>
-                </div>
+              {/* Trip-wide answers, above the route they apply to. */}
+              <div className="guide-card guide-trip-meta">
+                <label className="trip-field">
+                  <span className="trip-field-label"><CalendarIcon size={11} /> {t('wizard.bookedFirstNight')}</span>
+                  <DateField value={bookedStart} min={dateMin} max={dateMax} onChange={setBookedStart} placeholder={t('wizard.bookedFirstNightPlaceholder')} />
+                </label>
+                <span className="guide-trip-meta-rule" aria-hidden="true" />
+                <label className="trip-field">
+                  <span className="trip-field-label"><PersonIcon size={11} /> {t('wizard.peopleLabel')}</span>
+                  <div className="guide-people">
+                    <button type="button" onClick={() => setGroupSize(Math.max(1, groupSize - 1))} disabled={groupSize <= 1} aria-label={t('trip.fewer')}>-</button>
+                    <span>{groupSize}</span>
+                    <button type="button" onClick={() => setGroupSize(Math.min(20, groupSize + 1))} disabled={groupSize >= 20} aria-label={t('trip.more')}>+</button>
+                  </div>
+                </label>
+                {bookedTotalNights > 0 && bookedStart && (
+                  <span className="guide-trip-meta-sum">
+                    {t(bookedTotalNights === 1 ? 'wizard.bookedSpanOne' : 'wizard.bookedSpanMany', {
+                      nights: bookedTotalNights,
+                      end: fmtDate(addDays(bookedStart, bookedTotalNights)),
+                    })}
+                  </span>
+                )}
               </div>
 
-              {bookedStops.length > 0 && (
-                <div className="guide-city-list guide-booked-list">
-                  {bookedStops.map((s, i) => {
-                    const dest = destinations[s.destinationId];
-                    if (!dest) return null;
-                    return (
-                      <div className="guide-city on" key={`${s.destinationId}-${i}`}>
-                        <CityThumb dest={dest} className="guide-city-thumb" />
-                        <div className="guide-city-info">
-                          <div className="guide-city-name">{dest.city} <Flag iso2={dest.iso2} className="guide-flag-img-sm" /></div>
-                          <div className="guide-city-insight">{dest.country}</div>
+              <ol className="booked-route">
+                {bookedStops.map((s, i) => {
+                  const dest = destinations[s.destinationId];
+                  if (!dest) return null;
+                  const arrive = bookedStart ? addDays(bookedStart, bookedNightsBefore[i]) : '';
+                  const isLast = i === bookedStops.length - 1;
+                  const mode = bookedLegMode(i);
+                  const opts = bookedLegOptions[i];
+                  const priced = opts && !opts.no_road ? opts.modes : {};
+                  const ownHop = OWN_BOOKED_MODES.has(mode);
+                  const est = ownHop ? null : priced[mode];
+                  const HopIcon = BOOKED_MODE_BY_KEY[mode]?.Icon || RouteIcon;
+                  return (
+                    <li className="booked-route-item" key={`${s.destinationId}-${i}`}>
+                      <div className="booked-stop">
+                        <span className="booked-stop-index">{i + 1}</span>
+                        <CityThumb dest={dest} className="booked-stop-thumb" />
+                        <div className="booked-stop-info">
+                          <div className="booked-stop-city">{dest.city} <Flag iso2={dest.iso2} className="guide-flag-img-sm" /></div>
+                          <div className="booked-stop-sub">
+                            {dest.country}
+                            {arrive && <span className="booked-stop-date">{fmtDate(arrive)}</span>}
+                          </div>
                         </div>
                         <div className="guide-nights">
-                          <button onClick={() => setBookedStops((prev) => prev.map((x, j) => (j === i ? { ...x, nights: Math.max(1, x.nights - 1) } : x)))} aria-label="Fewer nights">-</button>
-                          <span className="guide-nights-val"><b>{s.nights}</b> {s.nights === 1 ? 'night' : 'nights'}</span>
-                          <button onClick={() => setBookedStops((prev) => prev.map((x, j) => (j === i ? { ...x, nights: Math.min(30, x.nights + 1) } : x)))} aria-label="More nights">+</button>
+                          <button onClick={() => setBookedStops((prev) => prev.map((x, j) => (j === i ? { ...x, nights: Math.max(1, x.nights - 1) } : x)))} aria-label={t('wizard.fewerNights')}>-</button>
+                          <span className="guide-nights-val"><b>{s.nights}</b> {s.nights === 1 ? t('wizard.nightOne') : t('wizard.nightMany')}</span>
+                          <button onClick={() => setBookedStops((prev) => prev.map((x, j) => (j === i ? { ...x, nights: Math.min(30, x.nights + 1) } : x)))} aria-label={t('wizard.moreNights')}>+</button>
                         </div>
                         <button
                           className="trip-stop-remove"
-                          onClick={() => setBookedStops((prev) => prev.filter((_, j) => j !== i))}
-                          aria-label={`Remove ${dest.city}`}
-                          title="Remove"
+                          onClick={() => removeBookedStop(i)}
+                          aria-label={t('wizard.removeStop', { city: dest.city })}
+                          title={t('wizard.removeStop', { city: dest.city })}
                         >×</button>
                       </div>
-                    );
-                  })}
-                </div>
-              )}
 
-              <div className="trip-add-row">
-                <Dropdown
-                  className="trip-add-country"
-                  value={bookedCountry}
-                  onChange={(c) => { setBookedCountry(c); setBookedCity(''); }}
-                  options={allCountries.map((c) => ({ value: c.country, label: c.country }))}
-                  placeholder="Country"
-                  searchPlaceholder="Search countries"
-                />
-                <Dropdown
-                  className="trip-add-city"
-                  value={bookedCity}
-                  onChange={setBookedCity}
-                  options={bookedCountry
-                    ? Object.entries(destinations)
-                      .filter(([, d]) => d.country === bookedCountry)
-                      .map(([id, d]) => ({ value: id, label: d.city }))
-                      .sort((a, b) => a.label.localeCompare(b.label))
-                    : []}
-                  placeholder={bookedCountry ? 'City' : 'Pick a country first'}
-                  searchPlaceholder="Search cities"
-                  disabled={!bookedCountry}
-                />
-                <button
-                  className="trip-add-btn"
-                  onClick={() => {
-                    if (!bookedCity) return;
-                    setBookedStops((prev) => [...prev, { destinationId: bookedCity, nights: 2 }]);
-                    setBookedCity('');
-                  }}
-                  disabled={!bookedCity}
-                >Add</button>
-              </div>
+                      {!isLast && (
+                        <div className={`booked-hop ${ownHop ? 'own' : ''}`}>
+                          <span className="booked-hop-glyph"><HopIcon size={13} /></span>
+                          <span className="booked-hop-to">
+                            {t('wizard.hopTo', { city: destinations[bookedStops[i + 1]?.destinationId]?.city || '' })}
+                          </span>
+                          <Dropdown
+                            className="booked-hop-mode"
+                            value={mode || ''}
+                            onChange={(m) => setBookedLegMode(i, m)}
+                            options={BOOKED_LEG_MODES
+                              .filter((m) => priced[m.key] || OWN_BOOKED_MODES.has(m.key))
+                              .map((m) => ({
+                                value: m.key,
+                                label: t(m.labelKey),
+                                sublabel: priced[m.key]
+                                  ? `${eur(priced[m.key].eur_total)}, ~${fmtHours(priced[m.key].hours)}`
+                                  : t('wizard.hopYouBooked'),
+                              }))}
+                            placeholder={t('wizard.hopMode')}
+                          />
+                          {ownHop ? (
+                            // No fares exist for an intra-trip flight or an
+                            // island ferry, so the traveller's own figure is
+                            // the only honest one this leg can carry.
+                            <label className="booked-hop-cost">
+                              <span className="booked-hop-cost-cur">€</span>
+                              <input
+                                type="number"
+                                min="0"
+                                inputMode="numeric"
+                                value={bookedLegs[i]?.eur ?? ''}
+                                onChange={(e) => setBookedLegCost(i, e.target.value)}
+                                placeholder={t('wizard.hopCostPlaceholder')}
+                                aria-label={t('wizard.hopCostLabel')}
+                              />
+                            </label>
+                          ) : est ? (
+                            <span className="booked-hop-est">
+                              {eur(est.eur_total)}<small>~{fmtHours(est.hours)}</small>
+                            </span>
+                          ) : (
+                            <span className="booked-hop-est booked-hop-none">{t('wizard.hopNoRoad')}</span>
+                          )}
+                        </div>
+                      )}
+                    </li>
+                  );
+                })}
+
+                <li className="booked-route-item booked-add">
+                  {bookedAddOpen || bookedStops.length === 0 ? (
+                    <div className="trip-add-row">
+                      <Dropdown
+                        className="trip-add-country"
+                        value={bookedCountry}
+                        onChange={(c) => { setBookedCountry(c); setBookedCity(''); }}
+                        options={allCountries.map((c) => ({ value: c.country, label: c.country }))}
+                        placeholder={t('wizard.addCountry')}
+                        searchPlaceholder={t('wizard.searchCountries')}
+                      />
+                      <Dropdown
+                        className="trip-add-city"
+                        value={bookedCity}
+                        onChange={setBookedCity}
+                        options={bookedCountry
+                          ? Object.entries(destinations)
+                            .filter(([, d]) => d.country === bookedCountry)
+                            .map(([id, d]) => ({ value: id, label: d.city }))
+                            .sort((a, b) => a.label.localeCompare(b.label))
+                          : []}
+                        placeholder={bookedCountry ? t('wizard.addCity') : t('wizard.addCountryFirst')}
+                        searchPlaceholder={t('wizard.searchCities')}
+                        disabled={!bookedCountry}
+                      />
+                      <button
+                        className="trip-add-btn"
+                        onClick={() => {
+                          if (!bookedCity) return;
+                          setBookedStops((prev) => [...prev, { destinationId: bookedCity, nights: 2 }]);
+                          setBookedCity('');
+                          setBookedAddOpen(false);
+                        }}
+                        disabled={!bookedCity}
+                      >{t('wizard.addStopAction')}</button>
+                    </div>
+                  ) : (
+                    <button className="booked-add-btn" onClick={() => setBookedAddOpen(true)}>
+                      + {t('wizard.addStop')}
+                    </button>
+                  )}
+                </li>
+              </ol>
             </>
           )}
          </div>

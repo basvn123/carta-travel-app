@@ -2370,7 +2370,16 @@ input, select {
   transition: opacity .15s;
 }
 .guide-next:hover:not(:disabled) { opacity: 0.9; }
-.guide-next:disabled { opacity: 0.4; cursor: default; }
+/* A ghosted terracotta button read as a live one someone had dimmed, and on
+   the first screen of a step (nothing filled in yet) that is the whole
+   footer. Not-yet gets its own flat neutral instead, which is both more
+   legible and unmistakably inactive. */
+.guide-next:disabled {
+  background: var(--paper-dim);
+  border-color: var(--rule);
+  color: var(--ink-mute);
+  cursor: default;
+}
 
 /* ───────── Guided trip: "Carta plan this?" popup ───────── */
 .trip-plan-prompt-overlay {
@@ -2672,7 +2681,9 @@ input, select {
 
 /* ── Overview: the day list, each with a jump into the Day planner ── */
 .itin-days-list { margin-top: 16px; }
-.itin-day-row { display: flex; align-items: stretch; gap: 8px; margin-bottom: 6px; }
+/* flex-wrap carries the imported-activity chips (.itin-day-extras spans the
+   full width) onto their own line under the day. */
+.itin-day-row { display: flex; align-items: stretch; gap: 8px; margin-bottom: 6px; flex-wrap: wrap; }
 .itin-day-row-main {
   flex: 1;
   min-width: 0;
@@ -3078,29 +3089,44 @@ input, select {
   flex-shrink: 0;
 }
 .day-assigned-body { flex: 1; min-width: 0; text-align: left; }
-/* Name and badges are separate boxes: only the name truncates, so a long
-   title can never shove the rating chip past the ellipsis, and the badges
-   keep a clear gap from the text instead of butting against it. */
+/* The name owns its whole line and WRAPS, badges drop underneath: sharing
+   one flex line with a badge cluster in a 380px rail is what once rendered
+   "Hohensalzburg Fortress" as "H...". A place row whose name cannot be read
+   has no reason to exist, in the browse lists exactly as on the timeline. */
 .day-assigned-name {
-  display: flex;
-  align-items: center;
-  gap: 12px;
+  display: block;
   font-size: 13.5px;
   color: var(--ink);
 }
 .day-assigned-title {
+  display: block;
   min-width: 0;
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
 }
 .day-assigned-badges {
-  flex: none;
   display: inline-flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 4px;
+  margin-top: 3px;
 }
 /* The badges already sit in a spaced cluster; their own nudges would double up. */
 .day-assigned-badges .day-badge-must,
 .day-assigned-badges .day-badge-heritage { margin-left: 0; }
+/* A place of the traveller's own making, and honest about a centre-fallback
+   pin: the badge is the quiet "this one is yours" mark on row and timeline. */
+.day-badge-custom {
+  font-family: var(--mono);
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 2px 6px;
+  border-radius: 999px;
+  background: var(--accent-bg);
+  color: var(--accent);
+  white-space: nowrap;
+}
 .day-assigned-kind {
   font-family: var(--mono);
   font-size: 10px;
@@ -3134,23 +3160,10 @@ input, select {
   text-align: right;
 }
 .day-timeline-row .day-assigned-row { flex: 1; }
-/* A planned stop shows its FULL name. Truncating to "Erzabtei Sankt..." saves
-   a few pixels and costs the traveller the only thing the row is for.
-   Un-clipping the title alone is not enough: sharing one flex line with the
-   rating/must-see cluster left the name barely 46px of a 162px column, which
-   is what produced "Sal..." and "Erz..." in the first place. So on the
-   timeline the name owns its own full-width line and wraps, and the badges
-   drop underneath it. (The pickable browse lists keep the single-line ellipsis
-   treatment: those are scanned, not read.) With a wrapped title and a
+/* A planned stop shows its FULL name (stacked title + badges is now the base
+   .day-assigned-name treatment everywhere). With a wrapped title and a
    description under it the row is tall, so the thumbnail and the tools align
    to the top rather than floating in the middle. */
-.day-timeline-row .day-assigned-name { display: block; }
-.day-timeline-row .day-assigned-title {
-  display: block;
-  white-space: normal;
-  overflow: visible;
-  text-overflow: clip;
-}
 .day-timeline-row .day-assigned-badges { margin-top: 4px; }
 .day-timeline-row .day-assigned-row { align-items: flex-start; }
 .day-timeline-row .day-thumb { margin-top: 2px; }
@@ -7919,10 +7932,130 @@ input, select {
 .itin-export-item:hover { background: var(--paper-dim); color: var(--ink); }
 .itin-export-note { font-size: 11.5px; color: var(--ink-mute); margin: 6px 2px 0; text-align: center; }
 
-/* Bookings / notes / packing list on the planned itinerary. */
+/* Bookings / notes / packing list on the planned itinerary. One rhythm:
+   28px between sections, carried by the section wrapper rather than by each
+   title's own ad-hoc margin, so inserting a section (the inbox appears and
+   disappears) never changes its neighbours' spacing. */
 .trip-extras { margin-top: 4px; }
-.trip-extras .trip-block-title { margin-top: 16px; display: flex; align-items: baseline; gap: 8px; }
+.extras-section + .extras-section { margin-top: 28px; }
+/* The expense ledger is its own component but the same stack: it keeps the
+   28px beat where the sections hand over to it. */
+.trip-extras + .trip-extras.exp-ledger { margin-top: 28px; }
+.trip-extras .trip-block-title { display: flex; align-items: baseline; gap: 8px; }
 .extras-count { font-family: var(--mono); font-size: 10.5px; color: var(--ink-mute); font-weight: 400; }
+
+/* ── Magic import: documents in, filled rows + staged activities out ── */
+.extras-dropzone {
+  margin: 10px 0 4px;
+  padding: 14px 16px;
+  border: 1.5px dashed var(--rule);
+  border-radius: 12px;
+  background: var(--paper-dim);
+  transition: border-color .15s, background .15s;
+}
+.extras-dropzone.over { border-color: var(--accent); background: var(--accent-bg); }
+.extras-drop-lead {
+  display: flex; align-items: flex-start; gap: 9px;
+  font-size: 12.5px; line-height: 1.5; color: var(--ink-soft);
+}
+.extras-drop-glyph {
+  flex: none;
+  display: inline-flex; align-items: center; gap: 2px;
+  color: var(--accent);
+  padding-top: 1px;
+}
+.extras-drop-actions { display: flex; align-items: center; gap: 10px; margin-top: 8px; flex-wrap: wrap; }
+.extras-drop-actions .extras-add-btn { margin-top: 0; background: var(--paper); }
+.extras-drop-hint { font-family: var(--mono); font-size: 10px; color: var(--ink-mute); }
+.extras-drop-busy {
+  display: flex; align-items: center; gap: 9px;
+  font-size: 12.5px; color: var(--ink-soft);
+  padding: 4px 0;
+}
+.extras-drop-spinner {
+  flex: none;
+  width: 14px; height: 14px;
+  border: 2px solid var(--rule);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: extras-spin 0.9s linear infinite;
+}
+@keyframes extras-spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) {
+  .extras-drop-spinner { animation: none; border-top-color: var(--rule); }
+}
+.extras-drop-status { margin-top: 8px; font-size: 12px; }
+.extras-drop-status.ok { color: var(--green); }
+.extras-drop-status.err { color: var(--danger); }
+
+/* What the import touched, named where it touched it. */
+.extras-ai-badge {
+  flex: none;
+  display: inline-flex; align-items: center; gap: 3px;
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: var(--accent-bg);
+  color: var(--accent);
+  font-family: var(--mono);
+  font-size: 9.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+}
+
+/* ── Activity Inbox: staged activities waiting for a day ── */
+.extras-inbox-count {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  min-width: 18px; height: 18px;
+  padding: 0 5px;
+  display: inline-flex; align-items: center; justify-content: center;
+  border-radius: 999px;
+  background: var(--accent-bg);
+  color: var(--accent);
+}
+.extras-inbox-sub { font-size: 11.5px; color: var(--ink-mute); margin: 2px 0 8px; }
+.extras-inbox-item {
+  display: flex; align-items: center; gap: 9px;
+  padding: 9px 10px;
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  background: var(--paper);
+  margin-bottom: 6px;
+}
+.extras-inbox-glyph { flex: none; color: var(--ink-mute); display: inline-flex; }
+.extras-inbox-info { flex: 1; min-width: 0; }
+.extras-inbox-name { font-size: 12.5px; font-weight: 600; color: var(--ink); }
+.extras-inbox-meta { font-size: 11px; color: var(--ink-soft); margin-top: 1px; }
+.extras-inbox-day { flex: none; }
+.extras-inbox-day .dropdown-trigger {
+  min-width: 0;
+  height: 28px;
+  border-radius: 999px;
+  font-size: 11.5px;
+  color: var(--accent);
+  border-color: var(--accent-soft);
+  white-space: nowrap;
+}
+.extras-inbox-day .dropdown-trigger:hover { background: var(--accent-bg); border-color: var(--accent); }
+
+/* Imported activities pinned onto a day row in the days list. */
+.itin-day-extras { flex-basis: 100%; display: flex; flex-wrap: wrap; gap: 5px; padding: 2px 0 6px 10px; }
+.itin-day-extra {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 3px 5px 3px 9px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: var(--paper);
+  font-size: 11.5px;
+  color: var(--ink-soft);
+}
+.itin-day-extra small { font-family: var(--mono); font-size: 10px; color: var(--ink-mute); }
+.itin-day-extra button {
+  border: none; background: none; cursor: pointer;
+  color: var(--ink-mute); font-size: 13px; line-height: 1; padding: 0 2px;
+}
+.itin-day-extra button:hover { color: var(--accent); }
 .extras-row { padding: 8px 0 10px; border-bottom: 1px solid rgba(196, 190, 169, 0.45); }
 .extras-row-head { display: flex; align-items: center; gap: 8px; font-size: 13px; cursor: pointer; }
 .extras-row-head input[type='checkbox'] { accent-color: var(--accent); flex: none; }
@@ -7934,16 +8067,25 @@ input, select {
   font-size: 16px; line-height: 1; padding: 0 4px; cursor: pointer;
 }
 .extras-remove:hover { color: var(--accent); }
-.extras-fields { display: flex; gap: 6px; margin-top: 7px; flex-wrap: wrap; align-items: center; }
+/* Two fixed rows per booking: code beside the paid amount, then the link on
+   its own full line. The old flex-wrap laid the three fields out differently
+   per card depending on how long each value happened to be. */
+.extras-fields {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 120px;
+  gap: 6px;
+  margin-top: 7px;
+}
 .extras-input {
-  flex: 1 1 120px; min-width: 0; padding: 6px 9px; font-size: 12.5px;
+  min-width: 0; width: 100%; padding: 6px 9px; font-size: 12.5px;
   border: 1px solid var(--rule); border-radius: 8px; background: var(--paper);
   color: var(--ink);
 }
 .extras-input:focus { outline: none; border-color: var(--accent); }
 .extras-input::placeholder { color: var(--ink-mute); }
-.extras-price { flex: 0 1 110px; font-variant-numeric: tabular-nums; }
-.extras-url { flex: 2 1 150px; }
+.extras-price { font-variant-numeric: tabular-nums; }
+.extras-url-wrap { grid-column: 1 / -1; display: flex; align-items: center; gap: 6px; }
+.extras-url { flex: 1; }
 .extras-label-input {
   flex: 1; min-width: 0; padding: 4px 8px; font-size: 13px; font-weight: 600;
   border: 1px solid var(--rule); border-radius: 8px; background: var(--paper); color: var(--ink);
@@ -10096,6 +10238,74 @@ input, select {
 
 /* Sight search inside "Add to your trip" + distance notes on far sights */
 .day-poi-search { margin-bottom: 10px; }
+
+/* ── Custom places: the search's "not in the catalogue" escape hatch ── */
+/* The catalogue is a head start, not a gatekeeper: whatever was typed can
+   become a stop. Dashed like the other "make something new" affordances. */
+.day-custom-add {
+  display: flex; align-items: center; justify-content: center; gap: 7px;
+  width: 100%;
+  margin: 8px 0 10px;
+  padding: 10px 12px;
+  border: 1px dashed var(--accent-soft);
+  border-radius: 10px;
+  font-size: 12.5px;
+  color: var(--accent);
+  text-align: center;
+  transition: border-color .15s, background .15s;
+}
+.day-custom-add:hover:not(:disabled) { border-color: var(--accent); background: var(--accent-bg); }
+.day-custom-add:disabled { color: var(--ink-mute); border-color: var(--rule); cursor: default; }
+.day-custom-spin {
+  flex: none;
+  width: 12px; height: 12px;
+  border: 2px solid var(--rule);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: extras-spin 0.9s linear infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .day-custom-spin { animation: none; }
+}
+
+/* ── Import ideas drawer: extracted activities awaiting a day ── */
+.day-import-collapse .extras-dropzone { margin: 0 0 10px; }
+.day-idea-row {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--rule-soft);
+}
+.day-idea-row:last-child { border-bottom: none; }
+.day-idea-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+.day-idea-text b { font-size: 12.5px; color: var(--ink); font-weight: 600; }
+.day-idea-text small { font-size: 11px; color: var(--ink-soft); }
+.day-idea-add {
+  flex: none;
+  padding: 5px 11px;
+  border: 1px solid var(--accent-soft);
+  border-radius: 999px;
+  font-size: 11.5px;
+  color: var(--accent);
+  white-space: nowrap;
+  transition: background .15s, border-color .15s;
+}
+.day-idea-add:hover:not(:disabled) { background: var(--accent-bg); border-color: var(--accent); }
+.day-idea-add:disabled { color: var(--ink-mute); border-color: var(--rule); cursor: default; }
+
+/* The link row inside the dropzone: a URL is a document too. */
+.extras-drop-url { display: flex; gap: 6px; margin-top: 8px; }
+.extras-drop-url input {
+  flex: 1; min-width: 0;
+  padding: 6px 10px;
+  font-size: 12px;
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  background: var(--paper);
+  color: var(--ink);
+}
+.extras-drop-url input:focus { outline: none; border-color: var(--accent); }
+.extras-drop-url input::placeholder { color: var(--ink-mute); }
+.extras-drop-url .extras-add-btn { margin-top: 0; white-space: nowrap; background: var(--paper); }
 .day-search-results { margin-bottom: 12px; }
 .day-poi-note {
   display: block;
@@ -10377,6 +10587,10 @@ input, select {
   background: var(--accent-bg);
   color: var(--accent);
 }
+/* Two glyphs, because this path is about transport AND a bed, and a single
+   tick said only "done" without saying done with what. */
+.guide-path-duo { display: inline-flex; align-items: center; gap: 2px; }
+.guide-path-duo svg:last-child { opacity: 0.7; }
 .guide-path-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
 .guide-path-text b { font-size: 14px; }
 .guide-path-text small { font-size: 11.5px; color: var(--ink-mute); line-height: 1.45; }
@@ -11748,6 +11962,220 @@ input, select {
 .guide-people-lg button { width: 36px; height: 36px; font-size: 19px; }
 .guide-people-lg span { font-size: 16px; min-width: 28px; }
 
+/* ── The booked path: one route, the stays and the hops between them ─────
+   Trip-wide answers (first night, party size) sit in a header bar above the
+   route; the route itself is a numbered vertical list where every pair of
+   stays is joined by the journey between them. Those hops used to be absent
+   entirely, so a three-city trip could be filled in without ever saying how
+   the cities were crossed, and the overview had to guess. */
+.guide-trip-meta {
+  display: flex;
+  align-items: flex-end;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+.guide-trip-meta-rule { width: 1px; align-self: stretch; background: var(--rule-soft); }
+.guide-trip-meta-sum {
+  margin-left: auto;
+  padding-bottom: 9px;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink-soft);
+}
+.guide-trip-meta .trip-field-label { display: flex; align-items: center; gap: 5px; }
+
+/* One rhythm down the whole route: 16px between every stacked element, and
+   the rail painted on the ITEM rather than on the connector alone, so the
+   spacing sits inside the line instead of cutting it into segments. The stop
+   card's own fill hides the rail where it passes behind a card. */
+/* Where the rail sits: the stop number's own centre line, which is the card
+   border (1) + its padding (14) + half a 26px disc, less the 1px the 2px-wide
+   line needs to straddle it. */
+.booked-route { list-style: none; --booked-rail: 27px; }
+.booked-route-item {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-bottom: 16px;
+  background: linear-gradient(var(--rule), var(--rule)) var(--booked-rail) 0 / 2px 100% no-repeat;
+}
+.booked-stop {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  background: var(--paper);
+}
+/* Both ends of the row are the same 26px box, so the card's left and right
+   gutters read as equal weight and not just measure equal. */
+.booked-stop-index {
+  flex: none;
+  width: 26px; height: 26px;
+  border-radius: 50%;
+  background: var(--ink);
+  color: var(--paper);
+  font-family: var(--mono);
+  font-size: 11px;
+  display: flex; align-items: center; justify-content: center;
+}
+.booked-stop .trip-stop-remove { width: 26px; height: 26px; }
+.booked-stop-thumb {
+  flex: none;
+  width: 46px; height: 46px;
+  border-radius: 9px;
+  background: var(--paper-dim) center/cover no-repeat;
+  display: flex; align-items: center; justify-content: center;
+}
+.booked-stop-thumb .guide-thumb-fallback { font-size: 18px; color: var(--ink-mute); }
+.booked-stop-info { flex: 1; min-width: 0; }
+/* The flag rides with the last word, not off in the far corner: as a flex
+   item beside a name long enough to wrap ("Agrigento (Valley of the
+   Temples)") it was pushed to the opposite edge of the card. */
+.booked-stop-city {
+  font-family: var(--display);
+  font-size: 15px;
+  line-height: 1.3;
+  color: var(--ink);
+}
+.booked-stop-city .guide-flag-img-sm { display: inline-block; vertical-align: -2px; margin-left: 3px; }
+.booked-stop-sub { display: flex; align-items: center; gap: 9px; font-size: 12px; color: var(--ink-soft); }
+.booked-stop-date { font-family: var(--mono); font-size: 11px; color: var(--ink-mute); white-space: nowrap; }
+
+/* The connector. Its glyph column is twice the rail offset, so the icon lands
+   dead on the line the stop numbers sit on, and the glyph's own fill covers
+   the rail where it crosses. */
+.booked-hop { display: flex; align-items: center; gap: 10px; }
+.booked-hop-glyph {
+  flex: none;
+  align-self: stretch;
+  width: calc(var(--booked-rail) * 2 + 2px);
+  min-height: 38px;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--ink-soft);
+}
+.booked-hop-glyph svg {
+  display: block;
+  box-sizing: content-box;
+  width: 13px; height: 13px;
+  padding: 6px;
+  border-radius: 50%;
+  background: var(--paper-dim);
+}
+.booked-hop.own .booked-hop-glyph { color: var(--accent); }
+.booked-hop-to { flex: 1; min-width: 0; font-size: 12.5px; color: var(--ink-soft); }
+.booked-hop-mode { flex: 0 0 158px; }
+/* The estimate and the typed fare are the same column, so the mode pickers
+   line up down the route whichever way each hop is travelled. */
+.booked-hop-est {
+  flex: 0 0 132px;
+  display: flex; flex-direction: column; align-items: flex-end;
+  font-family: var(--mono);
+  font-size: 12.5px;
+  color: var(--ink);
+}
+.booked-hop-est small { font-size: 10.5px; color: var(--ink-mute); }
+.booked-hop-none { font-size: 11px; color: var(--ink-mute); }
+.booked-hop-cost {
+  flex: 0 0 132px;
+  display: flex; align-items: center; gap: 5px;
+  height: 38px;
+  padding: 0 10px;
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  background: var(--paper);
+  transition: border-color .15s;
+}
+.booked-hop-cost:focus-within { border-color: var(--accent); }
+.booked-hop-cost-cur { font-family: var(--mono); font-size: 12px; color: var(--ink-mute); }
+.booked-hop-cost input {
+  width: 100%; min-width: 0;
+  border: none; background: none; outline: none;
+  font-family: var(--mono); font-size: 13px; color: var(--ink);
+}
+
+/* Adding a stop extends the route in place, so it keeps the rail. The 8px
+   here sits under the item's own 16px, giving the creation row the 24px it
+   needs to stop reading as part of the stack above it. */
+.booked-add:not(:first-child) {
+  padding-top: 8px;
+  background: linear-gradient(var(--rule), var(--rule)) var(--booked-rail) 0 / 2px 8px no-repeat;
+}
+/* Two even fields and a button that hugs its label. Left to grow, the city
+   select swallowed every spare pixel and opened a void before "Add". */
+.booked-add .trip-add-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap: 12px;
+}
+.booked-add .trip-add-btn { padding: 0 28px; }
+/* Same not-yet treatment as the footer's primary: a ghosted ink button read
+   as a live one someone had dimmed. */
+.booked-add .trip-add-btn:disabled {
+  opacity: 1;
+  background: var(--paper-dim);
+  border-color: var(--rule);
+  color: var(--ink-mute);
+}
+.booked-add-btn {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px dashed var(--rule);
+  border-radius: 12px;
+  font-size: 13px;
+  color: var(--ink-soft);
+  transition: border-color .15s, color .15s;
+}
+.booked-add-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+/* Every control on this screen is the same height, so the row reads as one
+   object; the shared dropdown's 24px filter-bar size does not belong here. */
+.booked-route .dropdown-trigger,
+.booked-hop-mode .dropdown-trigger {
+  width: 100%;
+  max-width: none;
+  height: 38px;
+  border-radius: 10px;
+  font-size: 13px;
+}
+.booked-route .trip-add-btn { height: 38px; }
+
+/* Phones: both the stop and its hop become two rows under one continuous
+   rail. Squeezed onto single lines 340px wide, a city name broke across four
+   lines and its date across three. */
+@media (max-width: 700px) {
+  .booked-stop {
+    display: grid;
+    grid-template-columns: 26px 46px minmax(0, 1fr) auto;
+    grid-template-areas: 'idx thumb info info' 'idx thumb nights remove';
+    column-gap: 10px;
+    row-gap: 8px;
+  }
+  .booked-stop-index { grid-area: idx; }
+  .booked-stop-thumb { grid-area: thumb; }
+  .booked-stop-info { grid-area: info; }
+  .booked-stop .guide-nights { grid-area: nights; }
+  .booked-stop .trip-stop-remove { grid-area: remove; }
+
+  .booked-hop {
+    display: grid;
+    grid-template-columns: calc(var(--booked-rail) * 2 + 2px) minmax(0, 1fr) auto;
+    grid-template-areas: 'glyph to to' 'glyph mode price';
+    align-items: center;
+    row-gap: 7px;
+  }
+  .booked-hop-glyph { grid-area: glyph; min-height: 0; }
+  .booked-hop-to { grid-area: to; }
+  .booked-hop-mode { grid-area: mode; flex: none; }
+  .booked-hop-est, .booked-hop-cost { grid-area: price; flex: none; width: 118px; }
+
+  /* Three controls side by side do not fit 390px, so Add takes its own line
+     (the same shape the planner's add row already uses on phones). */
+  .booked-add .trip-add-row { grid-template-columns: 1fr 1fr; }
+  .booked-add .trip-add-btn { grid-column: 1 / -1; }
+}
+
 /* ── Step 2: when ────────────────────────────────────────────────────────
    Month pills as an even grid: as free-flowing chips they wrapped into a
    ragged line and read as leftovers in a field of beige. */
@@ -13100,6 +13528,9 @@ button.ai-sched-main:focus-visible {
 
 /* Events wear their own tint, distinct from ordinary AI discoveries. */
 .ai-event-tag { background: #e2f0e6; color: #1f6b41; }
+/* A find the bot could not place: kept, listed, and honest about having no
+   pin, in the app's neutral tones rather than the discovery violet. */
+.ai-unmapped-tag { background: var(--paper-dim); color: var(--ink-soft); }
 .dem-pin.ai-event { --cat: #1f6b41; border-color: #1f6b41; }
 
 @media (max-width: 768px) {

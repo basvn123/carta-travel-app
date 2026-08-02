@@ -18,6 +18,11 @@ import { loadRestorableDraft, persistTripDraft, clearTripDraft } from '../planne
 
 const DEFAULT_STOP_NIGHTS = 2;
 
+// The two ways between stops Carta cannot price from its own data: an
+// intra-trip flight and an island ferry. They only ever exist because the
+// traveller told us they booked one.
+const OWN_LEG_MODES = new Set(['fly', 'ferry']);
+
 /** Airport-transfer choice as { in, out }. Accepts the legacy single-string
  *  shape from older drafts/saved trips (one mode for both directions). */
 function normalizeTransferMode(v) {
@@ -53,6 +58,11 @@ export function useTripPlanner(data, countryInsights = null) {
   // still be overridden.
   const [transportPref, setTransportPref] = useState(draft?.transportPref || 'auto');
   const [legModes, setLegModes] = useState(draft?.legModes || {}); // { [legIndex]: 'train'|'bus'|'car' }
+  // Hops the traveller booked themselves: a flight between two stops, a ferry
+  // out to an island. Carta holds no fares for either, so instead of inventing
+  // one it carries the price they typed, keyed the same way as legModes:
+  // { [legIndex]: { mode: 'fly'|'ferry', eur } } where eur is the party total.
+  const [ownLegs, setOwnLegs] = useState(draft?.ownLegs || {});
   // How the traveller gets from the plane to where they sleep, one choice per
   // DIRECTION ({ in, out }): 'auto' lets Carta pick (the rental car they
   // collect at the airport if the trip has one, else public transport),
@@ -112,11 +122,11 @@ export function useTripPlanner(data, countryInsights = null) {
       return;
     }
     persistTripDraft({
-      tripStart, tripEnd, stops, groupSize, transportPref, legModes, transferMode, pace,
+      tripStart, tripEnd, stops, groupSize, transportPref, legModes, ownLegs, transferMode, pace,
       baggage, anchorId, anchorOrigin, returnAnchorId, ownFlight, carHome, planId, planLabel, planned,
       stayTier,
     });
-  }, [tripStart, tripEnd, stops, groupSize, transportPref, legModes, transferMode, pace,
+  }, [tripStart, tripEnd, stops, groupSize, transportPref, legModes, ownLegs, transferMode, pace,
       baggage, anchorId, anchorOrigin, returnAnchorId, ownFlight, carHome, planId, planLabel, planned,
       stayTier]);
 
@@ -150,12 +160,34 @@ export function useTripPlanner(data, countryInsights = null) {
     setStops((prev) => [...prev, { destinationId, nights, activities }]);
   }, []);
 
+  // Re-key the per-leg answers after a stop at `index` is removed: legs
+  // index-1 and index both described journeys that no longer exist, and
+  // everything after them moves down one.
+  const shiftLegKeys = (map, index) => {
+    const next = {};
+    Object.entries(map).forEach(([k, v]) => {
+      const i = Number(k);
+      if (i === index - 1 || i === index) return;
+      next[i > index ? i - 1 : i] = v;
+    });
+    return next;
+  };
+  const dropLegAt = useCallback((index) => {
+    setLegModes((prev) => shiftLegKeys(prev, index));
+    setOwnLegs((prev) => shiftLegKeys(prev, index));
+  }, []);
+
   const setStopActivities = useCallback((index, activities) => {
     setStops((prev) => prev.map((s, i) => (i === index ? { ...s, activities } : s)));
   }, []);
 
   const removeStop = useCallback((index) => {
     setStops((prev) => prev.filter((_, i) => i !== index));
+    // Leg i joins stop i to stop i+1, so dropping a stop retires both legs
+    // that touched it and pulls every later leg back one place. Left alone,
+    // the choices slid onto the wrong pair of cities, and a self-booked hop
+    // took its fare with it.
+    dropLegAt(index);
   }, []);
 
   const setStopNights = useCallback((index, nights) => {
@@ -164,6 +196,9 @@ export function useTripPlanner(data, countryInsights = null) {
     )));
   }, []);
 
+  // Reordering makes every leg a different pair of cities, so the per-leg
+  // answers cannot follow the move; they are dropped rather than reattached
+  // to journeys nobody chose them for (same reasoning as optimizeRoute).
   const moveStop = useCallback((index, dir) => {
     setStops((prev) => {
       const j = index + dir;
@@ -172,6 +207,8 @@ export function useTripPlanner(data, countryInsights = null) {
       [next[index], next[j]] = [next[j], next[index]];
       return next;
     });
+    setLegModes({});
+    setOwnLegs({});
   }, []);
 
   // Move the stop at `from` to sit at position `to` (drag-and-drop reorder).
@@ -183,6 +220,8 @@ export function useTripPlanner(data, countryInsights = null) {
       next.splice(to, 0, moved);
       return next;
     });
+    setLegModes({});
+    setOwnLegs({});
   }, []);
 
   // Reorder the stops into an efficient nearest-neighbour route from the first
@@ -210,6 +249,7 @@ export function useTripPlanner(data, countryInsights = null) {
     });
     // A new order invalidates per-leg mode overrides (leg N is a new pair).
     setLegModes({});
+    setOwnLegs({});
   }, [destinations]);
 
   // Wipe the whole draft so the traveller can start over from scratch.
@@ -218,6 +258,7 @@ export function useTripPlanner(data, countryInsights = null) {
     setTripStart('');
     setTripEnd('');
     setLegModes({});
+    setOwnLegs({});
     setTransferMode('auto');
     setAnchorId(null);
     setAnchorOrigin(null);
@@ -233,7 +274,7 @@ export function useTripPlanner(data, countryInsights = null) {
   // ordered list of { destinationId, nights, activities }, an optional name,
   // plus how they want to travel (transport) and how full their days should
   // feel (pace), everything stays editable in the planner afterwards.
-  const loadFromWizard = useCallback(({ startDate, stops: wizardStops, label, groupSize: gs, transport, pace: wizardPace, baggage: wizardBaggage, anchorId: wizardAnchor, anchorOrigin: wizardAnchorOrigin, returnAnchorId: wizardReturnAnchor, ownFlight: wizardOwnFlight, carHome: wizardCarHome }) => {
+  const loadFromWizard = useCallback(({ startDate, stops: wizardStops, label, groupSize: gs, transport, pace: wizardPace, baggage: wizardBaggage, anchorId: wizardAnchor, anchorOrigin: wizardAnchorOrigin, returnAnchorId: wizardReturnAnchor, ownFlight: wizardOwnFlight, carHome: wizardCarHome, legModes: wizardLegModes, ownLegs: wizardOwnLegs }) => {
     const total = wizardStops.reduce((sum, s) => sum + Math.max(0, s.nights || 0), 0);
     setTripStart(startDate || '');
     setTripEnd(startDate ? addDays(startDate, total) : '');
@@ -254,7 +295,11 @@ export function useTripPlanner(data, countryInsights = null) {
     setReturnAnchorId(wizardReturnAnchor || null);
     setOwnFlight(wizardOwnFlight || null);
     setCarHome(wizardCarHome || null);
-    setLegModes({});
+    // The "everything is booked" path asks how each hop is travelled, so the
+    // wizard can hand over per-leg choices; every other path leaves them to
+    // Carta and hands over nothing.
+    setLegModes(wizardLegModes || {});
+    setOwnLegs(wizardOwnLegs || {});
     // A fresh wizard trip must not inherit the previous draft's airport
     // transfer choice (a leftover "taxi" would silently reprice this one).
     setTransferMode('auto');
@@ -345,16 +390,40 @@ export function useTripPlanner(data, countryInsights = null) {
   const tripHasCar = transportPref === 'car' || transportPref === 'owncar';
 
   const legs = useMemo(() => {
+    const group = Math.max(1, groupSize || 1);
     const out = [];
     for (let i = 0; i < stopDetails.length - 1; i++) {
       const a = stopDetails[i].dest;
       const b = stopDetails[i + 1].dest;
       const opts = a && b ? legTransportOptions(a, b, groupSize, { carModel, countryInsights, hasCar: tripHasCar }) : null;
-      if (!opts || opts.no_road || !opts.recommended) {
+      // A hop the traveller booked themselves. It joins the priced overland
+      // options rather than replacing them, so switching to the train and back
+      // to the flight is one tap either way and neither price is lost. It also
+      // rescues a sea crossing Carta can't price at all: "no overland route"
+      // becomes the ferry they actually hold a ticket for.
+      const own = ownLegs[i];
+      const ownEntry = own && OWN_LEG_MODES.has(own.mode) ? (() => {
+        const total = Math.max(0, Math.min(99999, Number(own.eur) || 0));
+        return {
+          eur_pp: round2(total / group),
+          eur_total: round2(total),
+          hours: null,
+          links: [],
+          own: true,
+          note: null,
+        };
+      })() : null;
+
+      if (!opts || ((opts.no_road || !opts.recommended) && !ownEntry)) {
         out.push(opts);
         continue;
       }
-      let mode = legModes[i] || null;
+      const priced = opts.no_road ? {} : opts.modes;
+      const modes = ownEntry ? { ...priced, [own.mode]: ownEntry } : priced;
+      // An explicit per-leg pick wins, but only while it still names a mode
+      // this leg actually offers (reordering the trip can retire one).
+      let mode = modes[legModes[i]] ? legModes[i] : null;
+      if (!mode && ownEntry) mode = own.mode;
       if (!mode) {
         if (tripHasCar) mode = 'car';
         else if (transportPref === 'public') {
@@ -363,9 +432,12 @@ export function useTripPlanner(data, countryInsights = null) {
           mode = preferredPublicMode(opts) || 'bus';
         } else mode = opts.recommended;
       }
-      const chosen = opts.modes[mode] || opts.modes[opts.recommended];
+      const chosen = modes[mode] || modes[opts.recommended] || ownEntry;
       out.push({
         ...opts,
+        no_road: false,
+        modes,
+        recommended: opts.recommended || own.mode,
         mode,
         hours: chosen.hours,
         ground_eur_per_person: chosen.eur_pp,
@@ -373,10 +445,20 @@ export function useTripPlanner(data, countryInsights = null) {
       });
     }
     return out;
-  }, [stopDetails, groupSize, carModel, countryInsights, transportPref, tripHasCar, legModes]);
+  }, [stopDetails, groupSize, carModel, countryInsights, transportPref, tripHasCar, legModes, ownLegs]);
 
   const setLegMode = useCallback((index, mode) => {
     setLegModes((prev) => ({ ...prev, [index]: mode }));
+  }, []);
+
+  // Declare (or clear, with mode null) a hop the traveller booked themselves.
+  const setOwnLeg = useCallback((index, mode, eurTotal) => {
+    setOwnLegs((prev) => {
+      const next = { ...prev };
+      if (!mode) delete next[index];
+      else next[index] = { mode, eur: Math.max(0, Math.min(99999, Number(eurTotal) || 0)) };
+      return next;
+    });
   }, []);
 
   // The wizard's anchor prices the FLIGHT when the first/last stop has no
@@ -628,6 +710,7 @@ export function useTripPlanner(data, countryInsights = null) {
     const byId = new Map(stops.map((s) => [s.destinationId, s]));
     setStops(cheaperOrder.ordered_ids.map((id) => byId.get(id)).filter(Boolean));
     setLegModes({});
+    setOwnLegs({});
   }, [cheaperOrder, stops]);
 
   // Continuous day-by-day itinerary: one entry per day on the ground, tagged
@@ -690,7 +773,11 @@ export function useTripPlanner(data, countryInsights = null) {
     setTransportPref(sorted[0]?.choices?.transportPref || 'auto');
     setTransferModeRaw(normalizeTransferMode(sorted[0]?.choices?.transferMode));
     setPace(sorted[0]?.choices?.pace || 'balanced');
-    setLegModes({});
+    // Per-leg choices are answers, not derivations: a reopened trip that
+    // silently reverted to Carta's pick threw away the flight the traveller
+    // told us about and repriced the hop as a coach.
+    setLegModes(sorted[0]?.choices?.legModes || {});
+    setOwnLegs(sorted[0]?.choices?.ownLegs || {});
     setPlanned(false);
   }, []);
 
@@ -715,7 +802,7 @@ export function useTripPlanner(data, countryInsights = null) {
             nights: s.nights,
             groupSize,
             activities: s.activities || [],
-            ...(i === 0 ? { baggage, transportPref, transferMode, pace, ...(anchorId ? { anchorId } : {}), ...(anchorOrigin ? { anchorOrigin } : {}), ...(returnAnchorId ? { returnAnchorId } : {}), ...(ownFlight ? { ownFlight } : {}), ...(carHome ? { carHome } : {}) } : {}),
+            ...(i === 0 ? { baggage, transportPref, transferMode, pace, ...(anchorId ? { anchorId } : {}), ...(anchorOrigin ? { anchorOrigin } : {}), ...(returnAnchorId ? { returnAnchorId } : {}), ...(ownFlight ? { ownFlight } : {}), ...(carHome ? { carHome } : {}), ...(Object.keys(legModes).length ? { legModes } : {}), ...(Object.keys(ownLegs).length ? { ownLegs } : {}) } : {}),
           },
         };
       }));
@@ -750,15 +837,15 @@ export function useTripPlanner(data, countryInsights = null) {
       setSaveState('idle');
       throw e;
     }
-  }, [planId, planLabel, stops, stopDetails, groupSize, legs, flight, anchorId, anchorOrigin, returnAnchorId, ownFlight, carHome, baggage, transportPref, transferMode, pace]);
+  }, [planId, planLabel, stops, stopDetails, groupSize, legs, flight, anchorId, anchorOrigin, returnAnchorId, ownFlight, carHome, baggage, transportPref, transferMode, pace, legModes, ownLegs]);
 
   return {
     tripStart, setTripStart, tripEnd, setTripEnd,
     stops, stopDetails, plannedNights, windowNights,
     groupSize, setGroupSize,
-    transportPref, setTransportPref, transferMode, setTransferMode, pace, setPace, setLegMode, carRental,
+    transportPref, setTransportPref, transferMode, setTransferMode, pace, setPace, setLegMode, setOwnLeg, carRental,
     // The raw share-link ingredients (the same fields the draft persists).
-    anchorId, anchorOrigin, returnAnchorId, legModes,
+    anchorId, anchorOrigin, returnAnchorId, legModes, ownLegs,
     cheaperDates, cheaperOrder, applyStartDate, applyCheaperOrder,
     addStop, removeStop, setStopNights, setStopActivities, moveStop, reorderStop,
     optimizeRoute, clearPlan, loadFromWizard,

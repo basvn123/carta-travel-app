@@ -68,11 +68,26 @@ const { stops, dropped } = sanitizeAiStops(aiStops, cands, centre);
 check('ai stops: catalogue ids resolved to our data', stops.filter((s) => !s.external).length === 3);
 check('ai stops: duplicate id dropped', !stops.some((s) => s.name === 'Grand Place again'));
 check('ai stops: hallucinated id dropped', !stops.some((s) => s.name.includes('Hallucinated')));
-check('ai stops: near discovery kept, far one dropped', stops.filter((s) => s.external).length === 1);
-check('ai stops: drop count honest', dropped === 3, `got ${dropped}`);
+check('ai stops: near discovery kept mapped', stops.some((s) => s.external && !s.unmapped && s.name === 'Chez Leon'));
+// A named discovery the model could not coordinate is KEPT as an unmapped
+// node (no coords, no pin) rather than silently dropped: this is how a
+// traveller's own "include Gaisberg" wish survives a geocoding miss.
+const moon = stops.find((s) => s.name === 'Restaurant On The Moon');
+check('ai stops: far discovery kept unmapped', !!moon && moon.external && moon.unmapped === true);
+check('ai stops: unmapped discovery carries no coords', moon.lat === null && moon.lon === null);
+check('ai stops: drop count honest', dropped === 2, `got ${dropped}`);
 check('ai stops: dwell clamped', stops.every((s) => s.dwellMin <= 360));
 const gp = stops.find((s) => s.id === '0');
 check('ai stops: catalogue coords are ours', gp.lat === 50.8467 && gp.lon === 4.3525);
+// And the scheduler passes an unmapped node through untimed instead of
+// routing a walk to nowhere.
+const schedWithUnmapped = scheduleDay(stops, { groupSize: 2 });
+const moonSched = schedWithUnmapped.stops.find((s) => s.name === 'Restaurant On The Moon');
+check('scheduler: unmapped stop kept with arrive null', !!moonSched && moonSched.arrive === null);
+// A coordless wish must never be the difference between a day and an error:
+// entirely-unmapped input still returns a shaped (empty-schedule) answer.
+const onlyUnmapped = scheduleDay([{ name: 'X', lat: null, lon: null, dwellMin: 30, external: true, unmapped: true }], {});
+check('scheduler: survives an all-unmapped day', onlyUnmapped.stops.length === 1 && onlyUnmapped.stops[0].arrive === null);
 
 /* ---- twoOptOrder: must beat a deliberately crossed route ---- */
 // Four corners of a square visited in a crossing (bowtie) order: 2-opt must
@@ -94,9 +109,12 @@ check('2-opt: shorter than crossed path', opt < bowtie, `${opt.toFixed(2)} vs ${
 
 /* ---- scheduleDay ---- */
 const sched = scheduleDay(stops, { stay: { lat: 50.846, lon: 4.352 }, groupSize: 7 });
-check('schedule: every routed stop has an arrival time', sched.stops.every((s) => s.arrive));
+// Unmapped nodes ride along untimed by design; every stop that CAN be routed
+// must still get a real arrival, in a monotonic order.
+const timed = sched.stops.filter((s) => !s.unmapped);
+check('schedule: every routed stop has an arrival time', timed.every((s) => s.arrive));
 check('schedule: starts at/after 09:30', sched.stops[0].arrive >= '09:30');
-check('schedule: monotonic times', sched.stops.every((s, i, a) => i === 0 || a[i - 1].arrive <= s.arrive));
+check('schedule: monotonic times', timed.every((s, i, a) => i === 0 || a[i - 1].arrive <= s.arrive));
 check('schedule: lunch inserted', sched.lunchAfter >= 0 && sched.lunchMin > 0);
 check('schedule: totals present', sched.totalKm > 0 && /^\d{2}:\d{2}$/.test(sched.endTime));
 
@@ -220,7 +238,10 @@ const withEvent = sanitizeAiStops([
   { name: 'Fake Far Festival', arrive: '16:00', dwellMin: 60, why: 'w', inCatalog: false, isEvent: true, lat: 10, lon: 4.35 },
 ], cands, centre).stops;
 check('events: near event kept and flagged', withEvent.some((s) => s.isEvent === true && s.external));
-check('events: far event dropped', !withEvent.some((s) => s.name.includes('Fake Far')));
+// A far event keeps its listing but loses its coordinates: named, unmapped,
+// and impossible to pin somewhere wrong.
+const farEvent = withEvent.find((s) => s.name.includes('Fake Far'));
+check('events: far event kept unmapped, never pinned', !!farEvent && farEvent.unmapped === true && farEvent.lat === null);
 check('events: catalogue stops never flagged as events',
   withEvent.filter((s) => !s.external).every((s) => !s.isEvent));
 
