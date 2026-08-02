@@ -67,8 +67,13 @@ export async function requestBookingImport(payload) {
       let code = 'ai_error';
       try {
         const body = await error.context?.json?.();
-        if (body?.code) code = body.code;
+        // Only our own string codes: the gateway answers a missing function
+        // with {code:"NOT_FOUND"} and some proxies use numbers, both of which
+        // used to fall through as a retryable "hiccup". A function that is
+        // not deployed is the same traveller-facing fact as one switched off.
+        if (typeof body?.code === 'string') code = body.code;
       } catch { /* non-JSON error body */ }
+      if (code === 'NOT_FOUND' || error.context?.status === 404) code = 'no_ai';
       return { ok: false, code };
     }
     if (data?.code === 'nothing_found') return { ok: false, code: 'nothing_found' };

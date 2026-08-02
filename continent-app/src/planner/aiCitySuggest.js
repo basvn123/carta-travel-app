@@ -50,8 +50,11 @@ export async function requestCitySuggestion(payload) {
       let code = 'ai_error';
       try {
         const body = await error.context?.json?.();
-        if (body?.code) code = body.code;
+        // Only our own string codes: the gateway's {code:"NOT_FOUND"} for an
+        // undeployed function must map to "not switched on", not "hiccup".
+        if (typeof body?.code === 'string') code = body.code;
       } catch { /* non-JSON error body */ }
+      if (code === 'NOT_FOUND' || error.context?.status === 404) code = 'no_ai';
       return { ok: false, code };
     }
     if (!data || !Array.isArray(data.suggestions)) {
