@@ -70,6 +70,7 @@ import { useAccountSync } from './hooks/useAccountSync.js';
 import { useUrlSync } from './hooks/useUrlSync.js';
 import { usePanelState } from './hooks/usePanelState.js';
 import { useFilterState } from './hooks/useFilterState.js';
+import { useReach } from './lib/reach.js';
 
 // Once someone picks "continue without an account" on the entry gate, don't
 // ask again on this device, only a fresh sign-in should bring accounts back.
@@ -122,7 +123,8 @@ function TravelApp() {
     priceMode, setPriceMode, countryFilter, setCountryFilter,
     tripKinds, setTripKinds, ratingRange, setRatingRange, gemOnly, setGemOnly,
     unescoOnly, setUnescoOnly, topBeachOnly, setTopBeachOnly,
-    topPick, setTopPick, sortKey, setSortKey, showFavOnly, setShowFavOnly,
+    topPick, setTopPick, reachHours, setReachHours,
+    sortKey, setSortKey, showFavOnly, setShowFavOnly,
   } = useFilterState(init);
 
   // Whether this visitor has already dismissed the entry gate as a guest.
@@ -389,6 +391,11 @@ function TravelApp() {
       choices.origin_pref, choices.car_model, choices.accommodation_model, choices.drive_home],
   );
 
+  // The current origin's travel-time table (public/reach/{IATA}.json), or null
+  // when that origin has none. Null keeps the reach filter inert AND tells the
+  // filter bar to show its quiet "no data yet" state instead of dead chips.
+  const reachMinutes = useReach(choices.origin);
+
   // Price every destination for the current dates/choices, then narrow that
   // down through the location search, filter bar, and "top picks" shortcut.
   const {
@@ -399,6 +406,7 @@ function TravelApp() {
     data, departDate, returnDate, choices: pricingChoices,
     locationQuery: debouncedLocationQuery, countryFilter, priceMode, tripKinds,
     ratingRange, gemOnly, unescoOnly, topBeachOnly, topPick,
+    reachHours, reachMinutes,
     initialPriceRange: init.priceRange,
   });
 
@@ -413,7 +421,7 @@ function TravelApp() {
   useUrlSync(!!data, {
     departDate, returnDate, choices, priceMode, countryFilter,
     tripKinds, priceRange, priceBounds, selectedId, favorites, sortKey, showFavOnly,
-    ratingRange, gemOnly, unescoOnly, topBeachOnly, topPick, activeTab,
+    ratingRange, gemOnly, unescoOnly, topBeachOnly, topPick, reachHours, activeTab,
   });
 
   // Sync a signed-in user's filter/lifestyle preferences with their account,
@@ -545,6 +553,9 @@ function TravelApp() {
               setTopBeachOnly={setTopBeachOnly}
               topPick={topPick}
               setTopPick={setTopPick}
+              reachHours={reachHours}
+              setReachHours={setReachHours}
+              reachAvailable={!!reachMinutes}
               onOpenLifestyle={() => setLifestyleOpen(true)}
             />
           )}

@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { RatingBadge, HiddenGemTag } from '../components/RatingBadge.jsx';
 import { WaterQualityBadge, swimRelevant } from '../components/WaterQualityBadge.jsx';
 import { eur } from '../lib/format.js';
+import { fareProv, estPrefix, FromWord } from '../components/FareProvenance.jsx';
 import { useI18n } from '../i18n/index.jsx';
 
 /**
@@ -88,6 +89,9 @@ const ResultRows = React.memo(function ResultRows({
           const isDeal = dealThreshold != null && p.total <= dealThreshold;
           const isSel = p.id === selectedId;
           const fav = favSet.has(p.id);
+          // Discovery phrasing: cheapest-found totals are "from" prices, and
+          // an estimated one carries the tilde instead (contract A fields).
+          const prov = fareProv(p.prov || p);
           return (
             <div
               key={p.id}
@@ -109,7 +113,8 @@ const ResultRows = React.memo(function ResultRows({
                 </span>
               </span>
               <span className={`result-price ${isDeal ? 'is-deal' : ''}`}>
-                {eur(priceMode === 'pp' ? p.pp : p.total)}
+                {!prov?.est && <FromWord />}
+                {`${estPrefix(prov)}${eur(priceMode === 'pp' ? p.pp : p.total)}`}
                 {priceMode === 'pp' && <small>/pp</small>}
               </span>
               <button

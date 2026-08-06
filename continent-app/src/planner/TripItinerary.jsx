@@ -13,6 +13,7 @@ import { buildTripShareUrl } from '../lib/shareLink.js';
 import { carrierName } from '../lib/carriers.js';
 import { groundLinkFor } from '../lib/groundLinks.js';
 import { BagCheck } from '../components/BagCheck.jsx';
+import { fareProv, flightProv, estPrefix, FareTag, BookingNote } from '../components/FareProvenance.jsx';
 import { useI18n } from '../i18n/index.jsx';
 import { SparkIcon, TrainIcon, BusIcon, CarIcon, FerryIcon, BedIcon, ReceiptIcon, ShareIcon, DownloadIcon, LuggageIcon, MapPinIcon, RouteIcon, CalendarIcon, LinkIcon, ChevronDownIcon } from '../components/Icons.jsx';
 import { PlaneIcon } from '../components/TransportIcons.jsx';
@@ -146,7 +147,7 @@ function AnchorTransferLeg({ leg, from, to, onMode }) {
                 title={leg.recommended === m ? t('transfer.cartaPick') : undefined}
               >
                 <span><MIcon size={12} /> {t(meta?.labelKey || m)}{leg.recommended === m && <SparkIcon size={9} />}</span>
-                <b>{eur(o.eur_total)}</b>
+                <b>{`${estPrefix(fareProv(o))}${eur(o.eur_total)}`}</b>
                 <small>~{fmtHours(o.hours)}</small>
               </button>
             );
@@ -210,6 +211,9 @@ function ItinLeg({ leg, onMode }) {
   }
   const Icon = LEG_ICONS[leg.mode] || TrainIcon;
   const chosen = leg.modes[leg.mode];
+  // Provenance flags ride on the chosen mode option or the leg itself
+  // (contract A fields, or the ground resolver's est/src).
+  const legProv = fareProv(chosen) || fareProv(leg);
   return (
     <div className={`itin-leg ${open ? 'open' : ''}`}>
       <span className="itin-leg-rail" aria-hidden="true" />
@@ -222,6 +226,7 @@ function ItinLeg({ leg, onMode }) {
         <span className="itin-leg-glyph"><Icon size={12} /></span>
         <span className="itin-leg-text">
           {t(MODE_LABEL_KEY[leg.mode])}
+          <FareTag prov={chosen?.own ? null : legProv} />
           <small>
             {chosen?.own
               // Their own booking: Carta has no km or duration for it, only
@@ -229,7 +234,7 @@ function ItinLeg({ leg, onMode }) {
               // Nor to a fare, when they left the price blank: EUR 0.00 there
               // reads as "this hop was free", which is not what they said.
               ? (leg.ground_total > 0 ? `${t('trip.legBooked')}, ${eur(leg.ground_total)}` : t('trip.legBookedNoPrice'))
-              : `${t('itin.legStats', { km: leg.road_km, hours: fmtHours(chosen?.hours ?? leg.hours) })}, ${eur(leg.ground_total)}`}
+              : `${t('itin.legStats', { km: leg.road_km, hours: fmtHours(chosen?.hours ?? leg.hours) })}, ${estPrefix(legProv)}${eur(leg.ground_total)}`}
           </small>
         </span>
         <span className="itin-leg-change">{open ? t('itin.legClose') : t('itin.legChange')}</span>
@@ -251,7 +256,7 @@ function ItinLeg({ leg, onMode }) {
                 title={leg.recommended === m ? t('trip.cartaPick') : undefined}
               >
                 <span><MIcon size={12} /> {t(MODE_LABEL_KEY[m])}{leg.recommended === m && !o.own && <SparkIcon size={9} />}</span>
-                <b>{o.own && !(o.eur_total > 0) ? '-' : eur(o.eur_total)}</b>
+                <b>{o.own && !(o.eur_total > 0) ? '-' : `${o.own ? '' : estPrefix(fareProv(o))}${eur(o.eur_total)}`}</b>
                 <small>{o.own ? t('trip.legBooked') : `~${fmtHours(o.hours)}`}</small>
               </button>
             );
@@ -263,6 +268,7 @@ function ItinLeg({ leg, onMode }) {
           {chosen.links.map((l, j) => (
             <a key={j} href={l.url} target="_blank" rel="noreferrer">{l.label} ↗</a>
           ))}
+          <BookingNote />
         </div>
       )}
     </div>
@@ -583,9 +589,10 @@ export function TripItinerary({
                       <div className="trip-total-row">
                         <span className="lbl">
                           <PlaneIcon size={11} /> {t('itin.flightOut')}
+                          <FareTag prov={flightProv(flight, 'into')} />
                           <small>{carrierName(flight.into_carrier)}, {flight.origin} → {flight.into_anchor}{flightTimes(flight.into_time) ? `, ${t('itin.departs', { time: flightTimes(flight.into_time).dep })}` : ''}, {groupSize} {groupSize === 1 ? t('itin.seatOne') : t('itin.seatMany')}</small>
                         </span>
-                        <span className="val">{eur(flight.into_fare_eur * groupSize)}</span>
+                        <span className="val">{`${estPrefix(flightProv(flight, 'into'))}${eur(flight.into_fare_eur * groupSize)}`}</span>
                       </div>
                     )}
                     {flight?.own && (
@@ -615,7 +622,7 @@ export function TripItinerary({
                           <AnchorInIcon size={11} /> {anchorInCity} → {stopDetails[0]?.dest?.city}
                           <small>{t('itin.legStats', { km: anchorIn.road_km, hours: fmtHours(anchorIn.hours) })}</small>
                         </span>
-                        <span className="val">{eur(anchorIn.ground_total)}</span>
+                        <span className="val">{`${estPrefix(fareProv(anchorIn))}${eur(anchorIn.ground_total)}`}</span>
                       </div>
                     )}
                   </BreakdownSection>
@@ -665,7 +672,9 @@ export function TripItinerary({
                                 : t('itin.legStats', { km: l.road_km, hours: fmtHours(l.hours) })}
                             </small>
                           </span>
-                          <span className="val">{eur(l.ground_total)}</span>
+                          <span className="val">{l.modes?.[l.mode]?.own
+                            ? eur(l.ground_total)
+                            : `${estPrefix(fareProv(l.modes?.[l.mode]) || fareProv(l))}${eur(l.ground_total)}`}</span>
                         </div>
                       )}
                     </React.Fragment>
@@ -681,7 +690,7 @@ export function TripItinerary({
                           <AnchorOutIcon size={11} /> {stopDetails[stopDetails.length - 1]?.dest?.city} → {anchorOutCity}
                           <small>{t('itin.legStats', { km: anchorOut.road_km, hours: fmtHours(anchorOut.hours) })}</small>
                         </span>
-                        <span className="val">{eur(anchorOut.ground_total)}</span>
+                        <span className="val">{`${estPrefix(fareProv(anchorOut))}${eur(anchorOut.ground_total)}`}</span>
                       </div>
                     )}
                     {flight?.driving && driveLegs?.home && (
@@ -697,9 +706,10 @@ export function TripItinerary({
                       <div className="trip-total-row">
                         <span className="lbl">
                           <PlaneIcon size={11} /> {t('itin.flightHome')}
+                          <FareTag prov={flightProv(flight, 'out_of')} />
                           <small>{carrierName(flight.out_of_carrier)}, {flight.out_anchor} → {flight.origin}{flightTimes(flight.out_of_time) ? `, ${t('itin.departs', { time: flightTimes(flight.out_of_time).dep })}` : ''}, {groupSize} {groupSize === 1 ? t('itin.seatOne') : t('itin.seatMany')}</small>
                         </span>
-                        <span className="val">{eur(flight.out_of_fare_eur * groupSize)}</span>
+                        <span className="val">{`${estPrefix(flightProv(flight, 'out_of'))}${eur(flight.out_of_fare_eur * groupSize)}`}</span>
                       </div>
                     )}
                   </BreakdownSection>

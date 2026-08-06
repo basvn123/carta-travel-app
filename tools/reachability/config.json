@@ -1,0 +1,16 @@
+{
+  "api": "https://api.transitous.org/api/v3/plan",
+  "user_agent": "Carta-reachability/0.1 (portfolio project, contact: bas.vannieuwenhuyse123@gmail.com)",
+  "origins": [
+    { "iata": "BRU", "name": "Brussels", "lat": 50.84664, "lon": 4.35262 },
+    { "iata": "CRL", "name": "Charleroi", "lat": 50.41845, "lon": 4.44477 }
+  ],
+  "radius_km": 1500,
+  "max_minutes": 720,
+  "search_window_s": 28800,
+  "max_post_transit_s": 3600,
+  "num_itineraries": 5,
+  "min_request_interval_s": 1.0,
+  "timeout_s": 60,
+  "backoff_s": [5, 15, 45]
+}

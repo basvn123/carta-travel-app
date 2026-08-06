@@ -390,8 +390,10 @@ def _leg_eur(cache, chunks, frm, to, rates, start, end):
 
 
 def _merge_leg(rec, side, src_eur):
-    """Keep the cheaper price per day; tag days Wizz wins in {side}_c. Returns
-    (added, undercut, kept) day counts for reporting."""
+    """Keep the cheaper price per day; tag days Wizz wins in {side}_c. A day
+    held by the Travelpayouts cache ("TP") is also reclaimed at EQUAL price,
+    since a cached quote must never beat a direct one it does not undercut.
+    Returns (added, undercut, kept) day counts for reporting."""
     dst = rec.setdefault(side, {})
     tag = rec.get(side + "_c") or {}
     added = undercut = kept = 0
@@ -399,8 +401,14 @@ def _merge_leg(rec, side, src_eur):
         cur = dst.get(day)
         if cur is None:
             dst[day] = eur; tag[day] = CARRIER; added += 1
-        elif eur < cur - 0.005:
+        elif eur < cur - 0.005 or (tag.get(day) == "TP" and eur <= cur + 0.005):
             dst[day] = eur; tag[day] = CARRIER; undercut += 1
+            # the day is direct-harvested again: its cached-quote provenance
+            # (per-day observed/expires) no longer applies
+            for suf in ("_o", "_x"):
+                m = rec.get(side + suf)
+                if m and m.pop(day, None) is not None and not m:
+                    del rec[side + suf]
         else:
             kept += 1
     if tag:
@@ -426,6 +434,7 @@ def patch(dry_run=False):
     tot_added = tot_undercut = tot_kept = 0
     save_examples = []
 
+    obs = int(time.time() // 86400)   # contract A `o`, unix epoch days
     for origin, anchor in pairs:
         out_eur = _leg_eur(cache, chunks, origin, anchor, rates, start, end)
         ret_eur = _leg_eur(cache, chunks, anchor, origin, rates, start, end)
@@ -433,9 +442,15 @@ def patch(dry_run=False):
             continue
         anchor_col = fares.setdefault(anchor, {})
         existed = origin in anchor_col
-        rec = anchor_col.setdefault(origin, {"out": {}, "ret": {}})
+        # Contract A: routes this harvester CREATES are stamped with its own
+        # source code; merged-into records keep their base source (per-day
+        # winners live in out_c/ret_c) and only get `o` bumped when touched.
+        rec = anchor_col.setdefault(origin, {"out": {}, "ret": {},
+                                             "s": CARRIER, "o": obs})
         a1, u1, k1 = _merge_leg(rec, "out", out_eur)
         a2, u2, k2 = _merge_leg(rec, "ret", ret_eur)
+        if a1 + a2 + u1 + u2:
+            rec["o"] = obs
         if not existed and (rec.get("out") or rec.get("ret")):
             new_routes += 1
         tot_added += a1 + a2; tot_undercut += u1 + u2; tot_kept += k1 + k2

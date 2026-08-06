@@ -14,6 +14,7 @@ functional domain of the blueprint has a concrete counterpart here:
 | Feature engineering (lead time + decay, cyclical encodings, capacity, competition, distance) | Tabular feature builder over the snapshot history | `src/estimation/features.py` |
 | Non-linear temporal modeling (GBDT point + quantile forecasts) | sklearn HistGradientBoosting: point + q10/q50/q90 on log price, target-encoded routes, out-of-time MAPE | `src/estimation/model.py` |
 | MLOps: drift detection, retraining, schema gate | PSI + KS + MAPE gates -> drift-triggered retrain; dead-letter quarantine for anomalous fare payloads | `src/estimation/drift.py`, `snapshot.py`, `run_pipeline.py` |
+| Ground per-km fare model (price-per-km per mode per country, calibrated on collected samples) | Robust per-country base + per-km fits from the raw pricing archives, contract C artifact for the app's ground fare resolver | `src/estimation/ground_calibration.py` -> `data/derived/ground_fare_calibration.json` |
 | Orchestration (the blueprint's Airflow DAGs) | Cadence-tiered `run_pipeline.py`, driven weekly by the `TravelAppFareRefresh` Scheduled Task -> `run_pipeline.bat` | repo root |
 
 ## The weekly loop
@@ -86,6 +87,50 @@ Nothing in the app consumes this file automatically yet; it is the artifact
 a "typical price for this month" UI layer would read, and it fills the gaps
 in the sparse fare calendar.
 
+## Ground fare calibration (contract C)
+
+`python -m src.estimation.ground_calibration` replaces the blueprint's dated
+ground-transport priors (10.7 ct/km for German coaches, 2018; 0.10 to 0.20
+EUR/km rail from mixed-vintage studies) with per-country fits from pricing
+data the ingestion layer already collects. Output:
+`data/derived/ground_fare_calibration.json`,
+
+    { "meta": { "generated_at": iso, "samples": {...} },
+      "countries": { "<ISO2>": { "train|bus|ferry":
+          { "base_eur": float, "per_km_eur": float, "n": int } } } }
+
+consumed by `continent-app/src/lib/groundFares.js`. Any (country, mode) cell
+absent from the artifact falls back to the curated priors in
+`countryTransport.js`; the calibrator therefore only emits cells it can
+defend and stays silent everywhere else.
+
+Method per cell: raw priced rows reduce to one "from" fare per (origin,
+destination, service day), the minimum across trains, classes and fare
+buckets, matching the app's cheapest-wins fare semantics. Each OD pair
+collapses to (distance, median daily minimum), with distance = great-circle
+between city centres x 1.3 (no routed distances exist in the raw data).
+The line price = base + per_km x km is fit with the Theil-Sen estimator
+(median of pairwise slopes) so a single odd corridor cannot bend it; a
+slightly negative intercept is clamped to zero with the slope refit as the
+median price/km. Gates: at least 30 daily-minimum observations AND 5
+distinct OD pairs per cell, per-km within 0.02 to 0.40 EUR, base within 0
+to 30 EUR. Anything gated out is logged in `meta.samples.rejects` and not
+emitted. `n` per cell is the daily-minimum count behind the fit;
+`meta.samples` also records per-source usability, pair counts, the
+observation date range and unmatched city names.
+
+Usable-data inventory (2026-08-05): of everything collected, only the Renfe
+Kaggle archive (`data/raw/renfe_kaggle/`, thegurus 2019-2020 ticket prices)
+carries prices attached to OD pairs, so the artifact currently calibrates
+ES train alone. TGV MAX (`sncf_availability`) has ODs and times but no
+price column (occupancy proxy only); the Flix GTFS and every national GTFS
+mirror (DE, NL, SE, NO) ship schedules without fare files; the Nordic ferry
+sources are an operator index without fares. FR rail, DE bus and all ferry
+cells therefore stay on priors until a source with prices lands (Ferryhopper
+sampling, an Omio partner feed, or LCC-style ground crawls). The ES fit is
+2019-2020 vintage promo-fare data; `meta.samples` records the date range so
+consumers can judge freshness.
+
 ## Drift gates (weekly, before any retrain)
 
 | Check | Threshold | Action |
@@ -109,6 +154,8 @@ python -m src.estimation.snapshot              schema-gate + archive today's far
 python -m src.estimation.model train           fit point + quantile models
 python -m src.estimation.drift                 PSI/KS/MAPE report (exit 3 = retrain)
 python -m src.estimation.model estimate        export route-month price bands
+python -m src.estimation.ground_calibration    fit contract C ground per-km cells
+python -m src.estimation.ground_calibration --inventory   what raw pricing data is usable
 python run_pipeline.py --list                  what the automation will do, when
 ```
 

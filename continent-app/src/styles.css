@@ -1550,6 +1550,61 @@ input, select {
 .fare-notice-text b { color: var(--ink); }
 .fare-notice-btn { margin-top: 18px; width: 100%; }
 
+/* ───────── Fare provenance (FareProvenance.jsx) ─────────
+   Freshness and estimate labeling on price surfaces. The "from" word and the
+   age chip are metadata (muted, small); the est. tag is a quiet bordered chip,
+   deliberately NOT the accent or the rating ochre: an estimate is a caveat,
+   not an action and not a measure. */
+.prov-from {
+  /* Prose, not a measured number: keep it in the UI face even inside a mono
+     price block, and let the figure keep the mono. */
+  font-family: var(--ui);
+  font-size: 0.8em;
+  font-weight: 400;
+  color: var(--ink-mute);
+  margin-right: 0.32em;
+  letter-spacing: 0;
+}
+.fare-prov {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 4px;
+  margin-left: 6px;
+  vertical-align: baseline;
+}
+.fare-prov-est {
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 1.5;
+  color: var(--ink-soft);
+  background: var(--paper-dim);
+  border: 1px solid var(--rule-soft);
+  border-radius: 4px;
+  padding: 0 4px;
+  cursor: help;
+  white-space: nowrap;
+}
+.fare-prov-age {
+  font-size: 10px;
+  color: var(--ink-mute);
+  white-space: nowrap;
+}
+.fare-prov-age.is-expired { color: var(--rate-soft); cursor: help; }
+.booking-note { font-size: 10.5px; color: var(--ink-mute); font-style: italic; margin: 4px 0 0; }
+/* Inside a flex link row the note takes its own full-width line. */
+.cost-group-links .booking-note { flex: 1 0 100%; margin: 0; }
+.trip-leg-links .booking-note { flex: 1 0 100%; margin: 0; }
+
+/* The hover card's freshness line (built in plain DOM by MapView). */
+.tip-fresh { margin-top: 4px; font-size: 10px; color: var(--ink-mute); }
+.tip-price .prov-from { margin-right: 2px; font-size: 9px; align-self: baseline; }
+.tip-price .tip-est {
+  font-size: 8.5px;
+  font-weight: 600;
+  opacity: 0.85;
+  margin-left: 1px;
+}
+
 /* The homepage lives in its own stylesheet: src/styles/home.css, on the
    Carta design tokens in src/styles/tokens.css. It is a separate design
    system from the app shell below (cool greys, Instrument Sans, no
@@ -4433,6 +4488,16 @@ input, select {
   color: var(--paper);
 }
 .pill-toggle.on .gem { opacity: 1; }
+
+/* Reach filter: the quiet "no travel-time data" state where the hour chips
+   would be. Sized like a chip row so the tray doesn't jump between origins. */
+.reach-note {
+  display: inline-flex;
+  align-items: center;
+  height: 24px;
+  font-size: 12px;
+  color: var(--ink-mute);
+}
 
 /* ─── Band sliders: rating (0-10) and price, each a dual-handle rail with a
    bordered box echoing the chosen range (or "Any" when untouched). Shared

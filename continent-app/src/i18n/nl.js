@@ -268,6 +268,12 @@ export const nl = {
   'filter.pricePP': 'Prijs per persoon',
   'filter.priceTotal': 'Prijs totaal',
   'filter.anyPrice': 'Elke prijs',
+  'filter.reach': 'Max reistijd',
+  'filter.reachAny': 'Alles',
+  'filter.reachAnyTitle': 'Geen reistijdlimiet',
+  'filter.reachHours': '{n}u',
+  'filter.reachHoursTitle': 'Alleen plaatsen binnen {n} uur met trein of bus',
+  'filter.reachNoData': 'Nog geen reistijddata voor deze luchthaven',
   'filter.country': 'Land',
   'filter.allCountries': 'Alle landen ({n})',
   'filter.searchCountry': 'Zoek een land...',
@@ -1228,4 +1234,14 @@ export const nl = {
   "pass.errUnavailable": "Passes staan nog niet aan op deze server.",
   "pass.errNetwork": "Kon de checkout niet bereiken. Controleer je verbinding en probeer het opnieuw.",
   "pass.errGeneric": "Kon de checkout niet openen. Er is niets in rekening gebracht.",
+
+  // Fare provenance: freshness and estimate labeling (FareProvenance.jsx).
+  "prov.fromWord": "vanaf",
+  "prov.seenToday": "vandaag gezien",
+  "prov.seenYesterday": "gisteren gezien",
+  "prov.seenDays": "{n} dagen geleden gezien",
+  "prov.est": "schatting",
+  "prov.estTitle": "een schatting, geen actuele prijs",
+  "prov.expiredTitle": "deze prijs is verlopen, controleer voor het boeken",
+  "prov.bookingNote": "Prijzen kunnen veranderd zijn, controleer op de boekingssite.",
 };

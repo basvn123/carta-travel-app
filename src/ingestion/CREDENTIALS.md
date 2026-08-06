@@ -40,7 +40,7 @@ live 2026-07-31.
    (you must be logged in to see that button)
 3. In "Select an App", give it a name (e.g. "carta-ingestion") and description
 4. Open the app under "my apps"; copy the TOKEN shown there (not the token hash)
-5. Paste into `OTD_SWISS_TOKEN=` — the collector sends it as
+5. Paste into `OTD_SWISS_TOKEN=`; the collector sends it as
    `Authorization: Bearer <token>` (confirmed live; the bare header without
    "Bearer " 401s)
    You only need the CKAN plan: it's the one behind catalog/resource
@@ -87,40 +87,50 @@ live 2026-07-31.
    (alerts, trip updates, vehicle positions) for all four operators, which
    none of the old individual sources provided.
 
+### 9. Travelpayouts (travelpayouts: Aviasales cached cheapest fares)
+1. Create an account at https://www.travelpayouts.com (the affiliate
+   network behind Aviasales; the Data API comes with every account)
+2. Dashboard, then the Aviasales/flights program, then Tools > API: the
+   page shows your API token
+3. Paste into `TRAVELPAYOUTS_TOKEN=` (sent as the X-Access-Token header)
+   Note: `run_all --check` only probes host reachability (the API paths
+   404 on HEAD); the token itself is validated on the first real call,
+   and a rejected or missing token reports SKIP with instructions.
+
 ## Registration first, then paste account URLs
 
-### 9. gtfs.de account links (germany: fv/rv/nv split feeds, currently 403)
+### 10. gtfs.de account links (germany: fv/rv/nv split feeds, currently 403)
 1. Register at https://gtfs.de/en/ (free tier, attribution required)
 2. Your account page lists personalised latest.zip download links for the
    long distance / regional / local splits
 3. Paste them comma separated into `GERMANY_FEED_URLS=`
    (the full national aggregate already downloads without an account)
 
-### 10. Mobilithek, Germany (germany: NeTEx publications)
+### 11. Mobilithek, Germany (germany: NeTEx publications)
 1. Register at https://mobilithek.info (BundID or simple account)
 2. Find a publication (e.g. DELFI NeTEx), create a subscription to it
 3. Copy the subscription's download URL(s) into `MOBILITHEK_URLS=`
 
-### 11. Rejseplanen Labs, Denmark (denmark: national GTFS incl. ferries)
+### 12. Rejseplanen Labs, Denmark (denmark: national GTFS incl. ferries)
 1. Open https://labs.rejseplanen.dk in a browser (it 403s bots, loads fine
    interactively) and follow the data access signup
 2. The developer account gives stable GTFS download URLs
 3. Paste into `DENMARK_FEED_URLS=`
 
-### 12. FinAP / Traficom, Finland (finland: operator NeTEx/GTFS downloads)
+### 13. FinAP / Traficom, Finland (finland: operator NeTEx/GTFS downloads)
 1. Register at https://finap.fi (free)
 2. Browse the catalogue, copy the download URLs of the operator packages
    you want
 3. Paste into `FINLAND_FEED_URLS=`
    (the open Digitraffic rail JSON needs nothing and already flows)
 
-### 13. NDOV Loket, Netherlands (netherlands: gated NeTEx folders)
+### 14. NDOV Loket, Netherlands (netherlands: gated NeTEx folders)
 1. The front door redirects to https://govi.nu ; request an account via the
    contact/application form (they email credentials)
 2. `NDOV_USER=` and `NDOV_PASS=` (used as basic auth on data.ndovloket.nl)
    (the national GTFS via OVapi is CC0 and already flows without this)
 
-### 14. ERA / RINF (era: deep register exports)
+### 15. ERA / RINF (era: deep register exports)
 1. Request an account through the RINF application at https://rinf.era.europa.eu
 2. Once inside, copy the export/search URLs you want mirrored
 3. Paste into `ERA_EXPORT_URLS=`
@@ -129,14 +139,14 @@ live 2026-07-31.
 
 ## Restricted or commercial
 
-### 15. EUROCONTROL DDR / ADRR (eurocontrol_ddr: trajectories, capacity files)
+### 16. EUROCONTROL DDR / ADRR (eurocontrol_ddr: trajectories, capacity files)
 1. Requires a OneSky Online account plus a signed research data agreement:
    start at https://www.eurocontrol.int/ddr ("How to access")
 2. Approval is manual and can take weeks; aimed at research bodies
 3. There is no API: export files manually, drop them into
    `data/staging/eurocontrol/`, the sweeper manifests them on the next run
 
-### 16. Ferryhopper (ferryhopper: Mediterranean schedules + base fares)
+### 17. Ferryhopper (ferryhopper: Mediterranean schedules + base fares)
 1. Commercial aggregator: request partner/API terms via
    https://www.ferryhopper.com/en/ (partnerships contact)
 2. With an agreed endpoint, set `FERRYHOPPER_API_TMPL=` (placeholders

@@ -21,6 +21,7 @@ import { knownForFacts } from '../lib/knownFor.js';
 import { flightReasonLabel } from '../lib/trip_planner_pricing.js';
 import { geocodeAddress } from '../lib/geocode.js';
 import { carrierName } from '../lib/carriers.js';
+import { fareProv, flightProv, estPrefix, FareTag } from '../components/FareProvenance.jsx';
 
 const SHEET_H_KEY = 'carta.tripSheetH.v1';
 
@@ -80,6 +81,7 @@ function LegRow({ leg, onMode }) {
   if (!leg) return <div className="trip-leg">↳ {t('trip.routeUnknown')}</div>;
   if (leg.no_road || !leg.mode) return <div className="trip-leg">↳ {leg.note || t('trip.noOverland')}</div>;
   const chosen = leg.modes[leg.mode];
+  const legProv = fareProv(chosen) || fareProv(leg);
   return (
     <div className="trip-leg trip-leg-rich">
       <button className="trip-leg-main" onClick={() => setOpen(!open)} aria-expanded={open}>
@@ -87,8 +89,9 @@ function LegRow({ leg, onMode }) {
           ? (chosen.eur_total > 0
             ? t('trip.legBookedSummary', { mode: t(MODE_META[leg.mode].label), price: eur(chosen.eur_total) })
             : `${t(MODE_META[leg.mode].label)}, ${t('trip.legBookedNoPrice')}`)
-          : t('trip.legSummary', { mode: t(MODE_META[leg.mode].label), km: leg.road_km, price: eur(chosen.eur_pp), hours: fmtHours(chosen.hours) })}
+          : t('trip.legSummary', { mode: t(MODE_META[leg.mode].label), km: leg.road_km, price: `${estPrefix(legProv)}${eur(chosen.eur_pp)}`, hours: fmtHours(chosen.hours) })}
         {leg.long_haul && !chosen.own ? `, ${t('trip.longLeg')}` : ''}
+        {!chosen.own && <FareTag prov={legProv} />}
         <span className="trip-leg-caret">{open ? '−' : '+'}</span>
       </button>
       {open && (
@@ -102,7 +105,7 @@ function LegRow({ leg, onMode }) {
                 title={leg.recommended === m ? t('trip.cartaPick') : undefined}
               >
                 <span><ModeIcon mode={m} /> {t(MODE_META[m].label)}{leg.recommended === m && !o.own && <span className="guide-reco-mark"><SparkIcon size={10} /></span>}</span>
-                <b>{o.own && !(o.eur_total > 0) ? '-' : t('trip.perPersonShort', { price: eur(o.eur_pp) })}</b>
+                <b>{o.own && !(o.eur_total > 0) ? '-' : t('trip.perPersonShort', { price: `${o.own ? '' : estPrefix(fareProv(o))}${eur(o.eur_pp)}` })}</b>
                 <small>{o.own ? t('trip.legBooked') : `~${fmtHours(o.hours)}`}</small>
               </button>
             ))}
@@ -495,7 +498,7 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
           <Icon size={11} /> {from} → {to}
           <small>{t('trip.legStats', { km: leg.road_km, hours: fmtHours(leg.hours) })}</small>
         </span>
-        <span className="val">{eur(leg.ground_total)}</span>
+        <span className="val">{`${estPrefix(fareProv(leg))}${eur(leg.ground_total)}`}</span>
       </div>
     );
   };
@@ -884,16 +887,18 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
                       <div className="trip-total-row">
                         <span className="lbl">
                           <PlaneIcon size={11} /> {t('trip.flightOut')}
+                          <FareTag prov={flightProv(tp.flight, 'into')} />
                           <small>{carrierName(tp.flight.into_carrier)}, {tp.flight.origin} → {tp.flight.into_anchor}{flightTimes(tp.flight.into_time) ? `, ${t('trip.departs', { time: flightTimes(tp.flight.into_time).dep })}` : ''}, {tp.groupSize} {tp.groupSize === 1 ? t('trip.seatOne') : t('trip.seatMany')}</small>
                         </span>
-                        <span className="val">{eur(tp.flight.into_fare_eur * tp.groupSize)}</span>
+                        <span className="val">{`${estPrefix(flightProv(tp.flight, 'into'))}${eur(tp.flight.into_fare_eur * tp.groupSize)}`}</span>
                       </div>
                       <div className="trip-total-row">
                         <span className="lbl">
                           <PlaneIcon size={11} /> {t('trip.flightHome')}
+                          <FareTag prov={flightProv(tp.flight, 'out_of')} />
                           <small>{carrierName(tp.flight.out_of_carrier)}, {tp.flight.out_anchor} → {tp.flight.origin}{flightTimes(tp.flight.out_of_time) ? `, ${t('trip.departs', { time: flightTimes(tp.flight.out_of_time).dep })}` : ''}, {tp.groupSize} {tp.groupSize === 1 ? t('trip.seatOne') : t('trip.seatMany')}</small>
                         </span>
-                        <span className="val">{eur(tp.flight.out_of_fare_eur * tp.groupSize)}</span>
+                        <span className="val">{`${estPrefix(flightProv(tp.flight, 'out_of'))}${eur(tp.flight.out_of_fare_eur * tp.groupSize)}`}</span>
                       </div>
                       {tp.flight.ground_total > 0 && (
                         <div className="trip-total-row">

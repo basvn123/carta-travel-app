@@ -3,6 +3,8 @@ import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { MapLegend } from './MapLegend.jsx';
 import { hasLngLat } from './coords.js';
+import { fareProv, fareAgeText } from '../components/FareProvenance.jsx';
+import { useI18n } from '../i18n/index.jsx';
 
 // Carto Voyager, clean, beige, no API key needed
 const MAP_STYLE = 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json';
@@ -38,7 +40,22 @@ const SRC_PRICED = 'carta-priced';
 const SRC_DOTS = 'carta-dots';
 const LYR_PRICED_DOT = 'carta-priced-dot';
 const LYR_PRICED_LABEL = 'carta-priced-label';
+const LYR_PRICED_LABEL_FAR = 'carta-priced-label-far';
 const LYR_DOTS = 'carta-dots-layer';
+
+// Continental-zoom label gate. Symbol collision runs on the main thread and
+// scales with the number of CANDIDATE labels, not the number that fit, so a
+// 25k-destination catalogue blocks panning for seconds even though collision
+// hides all but a few hundred pills. Below FAR_ZOOM the far label layer only
+// admits the cheapest FAR_KEEP destinations per FAR_CELL_DEG-degree grid cell
+// (grid rank `gr`, computed per rebuild); collision culls to roughly that
+// density anyway, so the visible result is unchanged while placement stays
+// O(what fits on screen). From FAR_ZOOM up the ungated layer takes over and
+// zooming keeps revealing every price.
+const FAR_ZOOM = 6;
+const FAR_KEEP = 6;
+const FAR_CELL_DEG = 2;
+const FAR_GATE = ['<', ['get', 'gr'], FAR_KEEP];
 // Carto Voyager ships Montserrat glyphs; the fallbacks cover style changes.
 const LABEL_FONT = ['Montserrat Medium', 'Open Sans Regular', 'Noto Sans Regular'];
 
@@ -64,6 +81,11 @@ export function MapView({
   const dataRef = useRef({ pricedFC: EMPTY_FC, dotsFC: EMPTY_FC });
   const onSelectRef = useRef(onSelect);
   onSelectRef.current = onSelect;
+  // The hover card is plain DOM built inside a once-only map handler, so it
+  // reads the translator through a ref to follow live language switches.
+  const { t } = useI18n();
+  const tRef = useRef(t);
+  tRef.current = t;
 
   // Initialize map once
   useEffect(() => {
@@ -98,7 +120,7 @@ export function MapView({
     const tip = new maplibregl.Popup({
       closeButton: false, closeOnClick: false, offset: 14, className: 'map-tip',
     }).setDOMContent(tipEl);
-    for (const layer of [LYR_PRICED_LABEL, LYR_PRICED_DOT, LYR_DOTS]) {
+    for (const layer of [LYR_PRICED_LABEL, LYR_PRICED_LABEL_FAR, LYR_PRICED_DOT, LYR_DOTS]) {
       map.on('click', layer, pick);
       map.on('mouseenter', layer, () => { map.getCanvas().style.cursor = 'pointer'; });
       map.on('mouseleave', layer, () => { map.getCanvas().style.cursor = ''; tip.remove(); });
@@ -109,7 +131,7 @@ export function MapView({
         if (!Number.isFinite(lon) || !Number.isFinite(lat)) return;
         // renderTip builds the card from DOM nodes + textContent - data never
         // reaches the page as markup, so third-party place names stay inert.
-        renderTip(tipEl, f.properties);
+        renderTip(tipEl, f.properties, tRef.current);
         tip.setLngLat([lon, lat]).addTo(map);
       });
     }
@@ -152,12 +174,15 @@ export function MapView({
       }
       const isDeal = dealThreshold != null && p.total <= dealThreshold;
       const displayVal = priceMode === 'pp' ? p.pp : p.total;
+      // Provenance, when the priced object carries it (contract A fields or a
+      // prov bag): an estimated total gets the tilde right on the pin.
+      const prov = fareProv(p.prov || p);
       pricedFeatures.push({
         type: 'Feature',
         geometry: { type: 'Point', coordinates: [p.lon, p.lat] },
         properties: {
           id: p.id,
-          label: `€${formatPrice(displayVal)}`,
+          label: `${prov?.est ? '~' : ''}€${formatPrice(displayVal)}`,
           deal: isDeal ? 1 : 0,
           gem: p.rating?.hidden_gem ? 1 : 0,
           top: (p.rating?.tier ?? 0) === 3 ? 1 : 0,
@@ -169,6 +194,7 @@ export function MapView({
             mode: p.mode === 'car' ? 'car' : 'plane',
             price: `€${formatPrice(displayVal)}`,
             priceNote: priceMode === 'pp' ? 'per person' : 'total',
+            prov,
           }),
         },
       });
@@ -184,6 +210,20 @@ export function MapView({
         },
       });
     }
+    // Grid rank for the far label layer: cheapest first within each cell.
+    const byCell = new Map();
+    for (const f of pricedFeatures) {
+      const [lon, lat] = f.geometry.coordinates;
+      const key = `${Math.floor(lon / FAR_CELL_DEG)}:${Math.floor(lat / FAR_CELL_DEG)}`;
+      let cell = byCell.get(key);
+      if (!cell) byCell.set(key, cell = []);
+      cell.push(f);
+    }
+    for (const cell of byCell.values()) {
+      cell.sort((a, b) => a.properties.sort - b.properties.sort);
+      cell.forEach((f, i) => { f.properties.gr = i; });
+    }
+
     const pricedFC = { type: 'FeatureCollection', features: pricedFeatures };
     const dotsFC = { type: 'FeatureCollection', features: dotFeatures };
     dataRef.current = { pricedFC, dotsFC };
@@ -228,6 +268,9 @@ export function MapView({
       if (!map.getLayer(LYR_PRICED_LABEL)) return;
       const keep = ['!=', ['get', 'id'], selectedId ?? '___none___'];
       map.setFilter(LYR_PRICED_LABEL, keep);
+      // The far layer's grid-rank gate is part of its identity, re-compose it
+      // here or deselecting would silently drop it.
+      map.setFilter(LYR_PRICED_LABEL_FAR, ['all', FAR_GATE, keep]);
       map.setFilter(LYR_PRICED_DOT, keep);
       map.setFilter(LYR_DOTS, keep);
     };
@@ -330,8 +373,11 @@ function ensureLayers(map) {
   // ink on paper, rust for deals). The pill background is a 9-slice image that
   // icon-text-fit sizes to the price; the glyph is baked into its left edge, so
   // the whole thing is one collision unit and one big click target.
-  map.addLayer({
-    id: LYR_PRICED_LABEL,
+  // Two zoom-banded copies of the same style: the far one carries the grid-rank
+  // gate (see FAR_GATE), the near one is ungated. min/maxzoom means only one
+  // builds buckets and places symbols at any given zoom.
+  const labelLayer = (id, extra) => ({
+    id,
     type: 'symbol',
     source: SRC_PRICED,
     layout: {
@@ -349,11 +395,17 @@ function ensureLayers(map) {
       'text-offset': [0.5, -1.35],
       'symbol-sort-key': ['get', 'sort'],
       'text-padding': 1,
+      // The defaults, stated: collision must stay on, it is the declutter.
+      'text-allow-overlap': false,
+      'icon-allow-overlap': false,
     },
     paint: {
       'text-color': ['case', ['==', ['get', 'deal'], 1], PAPER, INK],
     },
+    ...extra,
   });
+  map.addLayer(labelLayer(LYR_PRICED_LABEL_FAR, { maxzoom: FAR_ZOOM, filter: FAR_GATE }));
+  map.addLayer(labelLayer(LYR_PRICED_LABEL, { minzoom: FAR_ZOOM }));
 }
 
 // Bake one stretchable pill image per (mode, deal) and register it. Full-colour
@@ -446,7 +498,8 @@ function createPriced(p, map, onSelectRef, priceMode, dealThreshold) {
   icon.className = 'pill-ico';
   icon.innerHTML = byCar ? CAR_SVG : PLANE_SVG;
   const val = document.createElement('span');
-  val.textContent = `€${formatPrice(displayVal)}`;
+  // Same tilde the WebGL pins carry: an estimated total never reads exact.
+  val.textContent = `${fareProv(p.prov || p)?.est ? '~' : ''}€${formatPrice(displayVal)}`;
   pill.append(icon, val);
   root.appendChild(pill);
 
@@ -522,7 +575,7 @@ function transportLine(p, byCar) {
 // Flat, primitive-only bag of everything renderTip() reads back on hover.
 // MapLibre round-trips feature properties through the GeoJSON source, so these
 // stay scalars (no nested objects). Every hoverable feature carries them.
-function tipProps(p, { transport, price = '', priceNote = '', mode = '', dim = 0 }) {
+function tipProps(p, { transport, price = '', priceNote = '', mode = '', dim = 0, prov = null }) {
   const r = p.rating || {};
   return {
     tCity: p.city || '',
@@ -537,6 +590,10 @@ function tipProps(p, { transport, price = '', priceNote = '', mode = '', dim = 0
     tPrice: price,
     tPriceNote: priceNote,
     tDim: dim,
+    // Fare provenance as scalars: observed_at in epoch days (-1 = unknown)
+    // and the estimate flag, translated back to text at hover time.
+    tProvO: prov?.o ?? -1,
+    tProvEst: prov?.est ? 1 : 0,
   };
 }
 
@@ -544,7 +601,7 @@ function tipProps(p, { transport, price = '', priceNote = '', mode = '', dim = 0
 // third-party data never reaches the page as markup. Mirrors the app's card
 // language: hero image, serif city name, the rating score-chip, a muted
 // transport line.
-function renderTip(el, pr) {
+function renderTip(el, pr, t) {
   el.className = `tip-card${pr.tDim ? ' is-dim' : ''}${pr.tImg ? '' : ' no-img'}`;
   el.replaceChildren();
 
@@ -560,7 +617,7 @@ function renderTip(el, pr) {
     img.onerror = () => { media.remove(); el.classList.add('no-img'); };
     img.src = pr.tImg;
     media.appendChild(img);
-    if (pr.tPrice) media.appendChild(priceChip(pr, true));
+    if (pr.tPrice) media.appendChild(priceChip(pr, true, t));
     el.appendChild(media);
   }
 
@@ -573,7 +630,7 @@ function renderTip(el, pr) {
   city.className = 'tip-city';
   city.textContent = pr.tCity;
   head.appendChild(city);
-  if (pr.tPrice && !pr.tImg) head.appendChild(priceChip(pr, false));
+  if (pr.tPrice && !pr.tImg) head.appendChild(priceChip(pr, false, t));
   body.appendChild(head);
 
   if (pr.tCountry) {
@@ -625,14 +682,39 @@ function renderTip(el, pr) {
     body.appendChild(row);
   }
 
+  // When we know when this fare was last seen, say so: freshness is the
+  // honest half of a cached price.
+  if (t && pr.tProvO >= 0) {
+    const fresh = document.createElement('div');
+    fresh.className = 'tip-fresh';
+    fresh.textContent = fareAgeText(t, { o: pr.tProvO });
+    body.appendChild(fresh);
+  }
+
   el.appendChild(body);
 }
 
-// The €-price, as an overlay chip on the image or an inline chip in the header.
-function priceChip(pr, overlay) {
+// The €-price, as an overlay chip on the image or an inline chip in the
+// header. Discovery phrasing: a live-quote total reads "from €X"; an
+// estimated one reads "~€X" with a small est. marker instead.
+function priceChip(pr, overlay, t) {
   const chip = document.createElement('div');
   chip.className = `tip-price${overlay ? ' is-overlay' : ' is-inline'}`;
-  chip.appendChild(document.createTextNode(pr.tPrice));
+  const est = !!pr.tProvEst;
+  if (!est && t) {
+    const from = document.createElement('span');
+    from.className = 'prov-from';
+    from.textContent = t('prov.fromWord');
+    chip.appendChild(from);
+  }
+  chip.appendChild(document.createTextNode(`${est ? '~' : ''}${pr.tPrice}`));
+  if (est && t) {
+    const mark = document.createElement('span');
+    mark.className = 'tip-est';
+    mark.textContent = t('prov.est');
+    mark.title = t('prov.estTitle');
+    chip.appendChild(mark);
+  }
   if (pr.tPriceNote === 'per person') {
     const note = document.createElement('span');
     note.className = 'tip-price-note';

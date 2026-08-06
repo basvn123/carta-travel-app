@@ -54,13 +54,25 @@ function routesForOrigin(faresForOrigin, d, origin) {
       ground_transport_minutes: leg.minutes,
       outbound_fare: rec.out,
       return_fare: rec.ret || {},
+      // Contract A provenance, absent on legacy slices (read side stays
+      // tolerant): s = source that created the record's base fares
+      // ('FR'|'W6'|'VY'|'V7'|'TP'), o = epoch DAY the record's prices were
+      // last confirmed by a harvest. Per-day refinements (Travelpayouts cache
+      // quotes) ride beside the carrier maps below: the observed/expires
+      // epoch day of date D is outbound_seen[D] ?? o / outbound_expires[D].
+      ...(rec.s != null ? { s: rec.s } : {}),
+      ...(rec.o != null ? { o: rec.o } : {}),
+      ...(rec.out_o ? { outbound_seen: rec.out_o } : {}),
+      ...(rec.ret_o ? { return_seen: rec.ret_o } : {}),
+      ...(rec.out_x ? { outbound_expires: rec.out_x } : {}),
+      ...(rec.ret_x ? { return_expires: rec.ret_x } : {}),
       // Dep/arr local times of each day's cheapest flight ('HH:MM/HH:MM',
       // harvest_flight_times.py). Partial coverage, absent days show no hour.
       outbound_time: rec.out_t || {},
       return_time: rec.ret_t || {},
-      // Days where a non-Ryanair carrier won the cheapest-wins merge
-      // ({date: 'W6'|'VY'|'V7'}, harvest_wizzair/vueling/volotea.py).
-      // Untagged days are Ryanair fares.
+      // Days where a non-Ryanair source won the cheapest-wins merge
+      // ({date: 'W6'|'VY'|'V7'|'TP'}, harvest_wizzair/vueling/volotea.py plus
+      // the Travelpayouts staging merge). Untagged days are Ryanair fares.
       outbound_carrier: rec.out_c || {},
       return_carrier: rec.ret_c || {},
       fare_model: 'ryanair_all_origins',

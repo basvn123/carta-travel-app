@@ -12,6 +12,7 @@ import { composeTrip, tripDaysBetween } from '../lib/runtime_pricing.js';
 import { TIERS, TIER_ORDER, formatPrice, yearPassTripsEquivalent } from '../lib/pricing.js';
 import { addDays, fmtDate, todayISO } from '../lib/dates.js';
 import { count, eur, eurExact } from '../lib/format.js';
+import { fareProv, estPrefix, FareTag, FromWord } from './FareProvenance.jsx';
 import { useI18n, LANGUAGES } from '../i18n/index.jsx';
 
 const CONTACT = 'bas.vannieuwenhuyse123@gmail.com';
@@ -310,15 +311,18 @@ export function HomePage({
        Listing them all put a €100 bag and a €140 rental on a receipt whose
        total contained neither. Follow transport_mode, and nothing else. */
     const lines = [];
-    const push = (label, amount) => {
-      if (Number.isFinite(amount) && amount > 0) lines.push({ label, amount });
+    const push = (label, amount, prov) => {
+      if (Number.isFinite(amount) && amount > 0) lines.push({ label, amount, prov });
     };
     let travel = 0;
     if (priced.transport_mode === 'plane') {
       const out = priced.fare_out_eur * groupSize;
       const back = priced.fare_in_eur * groupSize;
-      push(t('home.rFlightOut', { date: fmtDate(departDate) }), out);
-      push(t('home.rFlightBack', { date: fmtDate(returnDate) }), back);
+      // Provenance of the priced fares (contract A fields when the pipeline
+      // ships them): the flight lines carry the age chip / estimate tilde.
+      const prov = fareProv(priced);
+      push(t('home.rFlightOut', { date: fmtDate(departDate) }), out, prov);
+      push(t('home.rFlightBack', { date: fmtDate(returnDate) }), back, prov);
       push(t('home.rBag', { bag: bagLabel }), priced.baggage_total);
       push(t('home.rTransfer', { city: priced.anchor_airport || pick.iata || pick.city }), priced.transfer_total);
       push(t('home.rRental', { n: nights }), priced.rental_total);
@@ -499,12 +503,18 @@ export function HomePage({
               <p className="home-prev-cap home-num">
                 {t('home.prevMapHead', { city: originCity, n: nights })}
               </p>
-              {cheapThree.map((p) => (
-                <p className="home-prev-row" key={p.id}>
-                  <span>{p.city}, {p.country}</span>
-                  <b className="home-num">{eur(p.pp)}</b>
-                </p>
-              ))}
+              {cheapThree.map((p) => {
+                const prov = fareProv(p.prov || p);
+                return (
+                  <p className="home-prev-row" key={p.id}>
+                    <span>{p.city}, {p.country}</span>
+                    <b className="home-num">
+                      {!prov?.est && <FromWord />}
+                      {`${estPrefix(prov)}${eur(p.pp)}`}
+                    </b>
+                  </p>
+                );
+              })}
               <p className="home-prev-foot home-num">
                 {t('home.prevMapFoot', {
                   n: count(flyable.length), total: totalLabel, city: originCity,
@@ -813,7 +823,15 @@ export function HomePage({
                         >
                           <span>{m.city}, {m.country}</span>
                           {m.pp != null
-                            ? <b className="home-num">{eur(m.pp)}</b>
+                            ? (() => {
+                              const prov = fareProv(pricedById.get(m.id)?.prov || pricedById.get(m.id));
+                              return (
+                                <b className="home-num">
+                                  {!prov?.est && <FromWord />}
+                                  {`${estPrefix(prov)}${eur(m.pp)}`}
+                                </b>
+                              );
+                            })()
                             : <i>{t('home.findNoFare')}</i>}
                         </button>
                       </li>
@@ -844,8 +862,8 @@ export function HomePage({
                   <div className="home-r-body">
                     {trip.lines.map((l) => (
                       <p className="home-r-line" key={l.label}>
-                        <span>{l.label}</span>
-                        <b>{eurExact(l.amount)}</b>
+                        <span>{l.label}<FareTag prov={l.prov} /></span>
+                        <b>{`${estPrefix(l.prov)}${eurExact(l.amount)}`}</b>
                       </p>
                     ))}
                   </div>

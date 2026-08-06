@@ -12,6 +12,7 @@ import { ReceiptIcon, CalendarIcon, BedIcon, DiningIcon, CarIcon, InfoIcon, Aler
 import { PlaneIcon } from '../components/TransportIcons.jsx';
 import { carrierPairName } from '../lib/carriers.js';
 import { BagCheck } from '../components/BagCheck.jsx';
+import { fareProv, estPrefix, FareTag, BookingNote } from '../components/FareProvenance.jsx';
 import { useI18n } from '../i18n/index.jsx';
 
 // Sub-components of the destination detail panel (the cost-breakdown tab and
@@ -167,6 +168,9 @@ export function BreakdownTab({ destination, breakdown, departDate, returnDate, c
   const fareCarrier = carrierPairName(
     destination.routes?.[breakdown.origin], departDate, returnDate,
   );
+  // Provenance of the shown fare (contract A fields on the hydrated route,
+  // when the fare pipeline ships them): age chip + estimate styling.
+  const flightFareProv = fareProv(destination.routes?.[breakdown.origin]);
 
   const flightLinks = (() => {
     if (breakdown.transport_mode !== 'plane' || breakdown.fare_total == null) return [];
@@ -244,13 +248,14 @@ export function BreakdownTab({ destination, breakdown, departDate, returnDate, c
               <div className="total-row">
                 <span className="label">
                   {t('detail.flight')}
+                  <FareTag prov={flightFareProv} />
                   <small>
                     {destination.tier === 'gem' && anchorCity
                       ? t('detail.fareViaAnchor', { city: anchorCity, carrier: fareCarrier })
                       : t('detail.fareRoundTrip', { carrier: fareCarrier })}
                   </small>
                 </span>
-                <span className="val">{eur(show(breakdown.fare_total))}</span>
+                <span className="val">{`${estPrefix(flightFareProv)}${eur(show(breakdown.fare_total))}`}</span>
               </div>
               {breakdown.baggage_per_person > 0 && (
                 <div className="total-row sub-row">
@@ -302,6 +307,7 @@ export function BreakdownTab({ destination, breakdown, departDate, returnDate, c
                   : t('detail.orCompareOn', { provider: l.provider })}
               </CostAction>
             ))}
+            {flightLinks.length > 0 && <BookingNote />}
           </div>
         </CostGroup>
 
@@ -339,7 +345,12 @@ export function BreakdownTab({ destination, breakdown, departDate, returnDate, c
                   departDate,
                   returnDate,
                 });
-                return carLink ? <CostAction href={carLink}>{t('detail.compareKayak')}</CostAction> : null;
+                return carLink ? (
+                  <>
+                    <CostAction href={carLink}>{t('detail.compareKayak')}</CostAction>
+                    <BookingNote />
+                  </>
+                ) : null;
               })()}
             </div>
           </CostGroup>
@@ -425,7 +436,12 @@ export function BreakdownTab({ destination, breakdown, departDate, returnDate, c
                   groupSize: choices.group_size,
                   stayTier: servedTier,
                 });
-                return link ? <CostAction href={link}>{linkLabel}</CostAction> : null;
+                return link ? (
+                  <>
+                    <CostAction href={link}>{linkLabel}</CostAction>
+                    <BookingNote />
+                  </>
+                ) : null;
               })()}
             </div>
           </CostGroup>

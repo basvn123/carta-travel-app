@@ -1,0 +1,4182 @@
+{
+ "meta": {
+  "generated_at": "2026-08-06T08:16:30+00:00",
+  "fares_dir": "continent-app/public/fares",
+  "n_origins": 286,
+  "day_prices_by_source": {
+   "FR": 669698,
+   "V7": 1907,
+   "VY": 7232,
+   "W6": 233471
+  },
+  "popularity_weights": {
+   "major": 3.0,
+   "secondary": 2.0,
+   "default": 1.0
+  },
+  "priority": "age_days x popularity; --max-origins N refreshes the highest first"
+ },
+ "origins": {
+  "AAL": {
+   "file": "AAL.json",
+   "n_anchors": 2,
+   "day_prices": 10,
+   "sources": {
+    "V7": 10
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "AAR": {
+   "file": "AAR.json",
+   "n_anchors": 8,
+   "day_prices": 907,
+   "sources": {
+    "FR": 907
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "ABZ": {
+   "file": "ABZ.json",
+   "n_anchors": 5,
+   "day_prices": 493,
+   "sources": {
+    "FR": 421,
+    "W6": 72
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "ACE": {
+   "file": "ACE.json",
+   "n_anchors": 41,
+   "day_prices": 4875,
+   "sources": {
+    "FR": 3931,
+    "V7": 57,
+    "VY": 887
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "AES": {
+   "file": "AES.json",
+   "n_anchors": 1,
+   "day_prices": 186,
+   "sources": {
+    "W6": 186
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "AGA": {
+   "file": "AGA.json",
+   "n_anchors": 27,
+   "day_prices": 2920,
+   "sources": {
+    "FR": 2708,
+    "W6": 212
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "AGP": {
+   "file": "AGP.json",
+   "n_anchors": 97,
+   "day_prices": 18296,
+   "sources": {
+    "FR": 13496,
+    "V7": 106,
+    "VY": 2684,
+    "W6": 2010
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 3.0,
+   "priority": 3.9
+  },
+  "AHO": {
+   "file": "AHO.json",
+   "n_anchors": 33,
+   "day_prices": 2873,
+   "sources": {
+    "FR": 2450,
+    "V7": 33,
+    "W6": 390
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "AJA": {
+   "file": "AJA.json",
+   "n_anchors": 8,
+   "day_prices": 86,
+   "sources": {
+    "V7": 86
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "ALC": {
+   "file": "ALC.json",
+   "n_anchors": 92,
+   "day_prices": 18035,
+   "sources": {
+    "FR": 14364,
+    "V7": 49,
+    "VY": 2229,
+    "W6": 1393
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 3.0,
+   "priority": 3.9
+  },
+  "AMM": {
+   "file": "AMM.json",
+   "n_anchors": 14,
+   "day_prices": 532,
+   "sources": {
+    "FR": 471,
+    "W6": 61
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "AMS": {
+   "file": "AMS.json",
+   "n_anchors": 8,
+   "day_prices": 1641,
+   "sources": {
+    "FR": 447,
+    "VY": 1194
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 3.0,
+   "priority": 3.9
+  },
+  "AOI": {
+   "file": "AOI.json",
+   "n_anchors": 10,
+   "day_prices": 881,
+   "sources": {
+    "FR": 640,
+    "V7": 65,
+    "W6": 176
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "ARN": {
+   "file": "ARN.json",
+   "n_anchors": 50,
+   "day_prices": 6645,
+   "sources": {
+    "FR": 5813,
+    "VY": 238,
+    "W6": 594
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 2.0,
+   "priority": 2.6
+  },
+  "ATH": {
+   "file": "ATH.json",
+   "n_anchors": 41,
+   "day_prices": 5728,
+   "sources": {
+    "FR": 4146,
+    "V7": 87,
+    "W6": 1495
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 3.0,
+   "priority": 3.9
+  },
+  "AUH": {
+   "file": "AUH.json",
+   "n_anchors": 7,
+   "day_prices": 576,
+   "sources": {
+    "W6": 576
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "AYT": {
+   "file": "AYT.json",
+   "n_anchors": 5,
+   "day_prices": 502,
+   "sources": {
+    "W6": 502
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "BBU": {
+   "file": "BBU.json",
+   "n_anchors": 72,
+   "day_prices": 10514,
+   "sources": {
+    "FR": 502,
+    "W6": 10012
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "BCM": {
+   "file": "BCM.json",
+   "n_anchors": 2,
+   "day_prices": 335,
+   "sources": {
+    "W6": 335
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "BCN": {
+   "file": "BCN.json",
+   "n_anchors": 78,
+   "day_prices": 14991,
+   "sources": {
+    "FR": 10960,
+    "V7": 126,
+    "W6": 3905
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 3.0,
+   "priority": 3.9
+  },
+  "BDS": {
+   "file": "BDS.json",
+   "n_anchors": 27,
+   "day_prices": 3881,
+   "sources": {
+    "FR": 3705,
+    "V7": 8,
+    "W6": 168
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "BEG": {
+   "file": "BEG.json",
+   "n_anchors": 24,
+   "day_prices": 2956,
+   "sources": {
+    "W6": 2956
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 2.0,
+   "priority": 2.6
+  },
+  "BEM": {
+   "file": "BEM.json",
+   "n_anchors": 2,
+   "day_prices": 140,
+   "sources": {
+    "FR": 140
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "BER": {
+   "file": "BER.json",
+   "n_anchors": 55,
+   "day_prices": 8264,
+   "sources": {
+    "FR": 6714,
+    "V7": 7,
+    "W6": 1543
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 3.0,
+   "priority": 3.9
+  },
+  "BES": {
+   "file": "BES.json",
+   "n_anchors": 18,
+   "day_prices": 196,
+   "sources": {
+    "V7": 196
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "BFS": {
+   "file": "BFS.json",
+   "n_anchors": 16,
+   "day_prices": 2175,
+   "sources": {
+    "FR": 2175
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "BGO": {
+   "file": "BGO.json",
+   "n_anchors": 6,
+   "day_prices": 622,
+   "sources": {
+    "W6": 622
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "BGY": {
+   "file": "BGY.json",
+   "n_anchors": 107,
+   "day_prices": 21383,
+   "sources": {
+    "FR": 19014,
+    "V7": 39,
+    "W6": 2330
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 3.0,
+   "priority": 3.9
+  },
+  "BHX": {
+   "file": "BHX.json",
+   "n_anchors": 52,
+   "day_prices": 7034,
+   "sources": {
+    "FR": 6891,
+    "W6": 143
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 2.0,
+   "priority": 2.6
+  },
+  "BIA": {
+   "file": "BIA.json",
+   "n_anchors": 6,
+   "day_prices": 77,
+   "sources": {
+    "V7": 77
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "BIO": {
+   "file": "BIO.json",
+   "n_anchors": 26,
+   "day_prices": 1433,
+   "sources": {
+    "V7": 164,
+    "W6": 1269
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "BIQ": {
+   "file": "BIQ.json",
+   "n_anchors": 5,
+   "day_prices": 606,
+   "sources": {
+    "FR": 606
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "BJV": {
+   "file": "BJV.json",
+   "n_anchors": 2,
+   "day_prices": 108,
+   "sources": {
+    "FR": 108
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "BLL": {
+   "file": "BLL.json",
+   "n_anchors": 8,
+   "day_prices": 756,
+   "sources": {
+    "W6": 756
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "BLQ": {
+   "file": "BLQ.json",
+   "n_anchors": 67,
+   "day_prices": 10698,
+   "sources": {
+    "FR": 9168,
+    "V7": 19,
+    "W6": 1511
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 2.0,
+   "priority": 2.6
+  },
+  "BNX": {
+   "file": "BNX.json",
+   "n_anchors": 7,
+   "day_prices": 779,
+   "sources": {
+    "FR": 655,
+    "W6": 124
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "BOD": {
+   "file": "BOD.json",
+   "n_anchors": 34,
+   "day_prices": 676,
+   "sources": {
+    "V7": 349,
+    "W6": 327
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 2.0,
+   "priority": 2.6
+  },
+  "BOH": {
+   "file": "BOH.json",
+   "n_anchors": 20,
+   "day_prices": 2090,
+   "sources": {
+    "FR": 2090
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "BOJ": {
+   "file": "BOJ.json",
+   "n_anchors": 14,
+   "day_prices": 1190,
+   "sources": {
+    "FR": 788,
+    "W6": 402
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "BRE": {
+   "file": "BRE.json",
+   "n_anchors": 5,
+   "day_prices": 900,
+   "sources": {
+    "FR": 900
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "BRI": {
+   "file": "BRI.json",
+   "n_anchors": 73,
+   "day_prices": 9974,
+   "sources": {
+    "FR": 8699,
+    "V7": 81,
+    "W6": 1194
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 2.0,
+   "priority": 2.6
+  },
+  "BRQ": {
+   "file": "BRQ.json",
+   "n_anchors": 3,
+   "day_prices": 355,
+   "sources": {
+    "FR": 355
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "BRS": {
+   "file": "BRS.json",
+   "n_anchors": 38,
+   "day_prices": 5118,
+   "sources": {
+    "FR": 5118
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 2.0,
+   "priority": 2.6
+  },
+  "BRU": {
+   "file": "BRU.json",
+   "n_anchors": 11,
+   "day_prices": 1312,
+   "sources": {
+    "FR": 1301,
+    "V7": 11
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 3.0,
+   "priority": 3.9
+  },
+  "BSL": {
+   "file": "BSL.json",
+   "n_anchors": 25,
+   "day_prices": 3489,
+   "sources": {
+    "FR": 547,
+    "W6": 2942
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 2.0,
+   "priority": 2.6
+  },
+  "BTS": {
+   "file": "BTS.json",
+   "n_anchors": 48,
+   "day_prices": 6825,
+   "sources": {
+    "FR": 4133,
+    "W6": 2692
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "BUD": {
+   "file": "BUD.json",
+   "n_anchors": 96,
+   "day_prices": 16928,
+   "sources": {
+    "FR": 9072,
+    "W6": 7856
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 3.0,
+   "priority": 3.9
+  },
+  "BVA": {
+   "file": "BVA.json",
+   "n_anchors": 69,
+   "day_prices": 10459,
+   "sources": {
+    "FR": 9109,
+    "V7": 10,
+    "W6": 1340
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 2.0,
+   "priority": 2.6
+  },
+  "BVE": {
+   "file": "BVE.json",
+   "n_anchors": 2,
+   "day_prices": 62,
+   "sources": {
+    "FR": 54,
+    "V7": 8
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "BZG": {
+   "file": "BZG.json",
+   "n_anchors": 6,
+   "day_prices": 758,
+   "sources": {
+    "FR": 758
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "BZR": {
+   "file": "BZR.json",
+   "n_anchors": 8,
+   "day_prices": 531,
+   "sources": {
+    "FR": 531
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "CAG": {
+   "file": "CAG.json",
+   "n_anchors": 41,
+   "day_prices": 5815,
+   "sources": {
+    "FR": 5796,
+    "V7": 19
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "CCF": {
+   "file": "CCF.json",
+   "n_anchors": 9,
+   "day_prices": 725,
+   "sources": {
+    "FR": 725
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "CDT": {
+   "file": "CDT.json",
+   "n_anchors": 29,
+   "day_prices": 2940,
+   "sources": {
+    "FR": 524,
+    "W6": 2416
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "CFU": {
+   "file": "CFU.json",
+   "n_anchors": 51,
+   "day_prices": 3461,
+   "sources": {
+    "FR": 3128,
+    "V7": 44,
+    "W6": 289
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "CGN": {
+   "file": "CGN.json",
+   "n_anchors": 35,
+   "day_prices": 5620,
+   "sources": {
+    "FR": 4991,
+    "W6": 629
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 3.0,
+   "priority": 3.9
+  },
+  "CHQ": {
+   "file": "CHQ.json",
+   "n_anchors": 37,
+   "day_prices": 2625,
+   "sources": {
+    "FR": 2487,
+    "W6": 138
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "CIA": {
+   "file": "CIA.json",
+   "n_anchors": 32,
+   "day_prices": 6412,
+   "sources": {
+    "FR": 4143,
+    "W6": 2269
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 3.0,
+   "priority": 3.9
+  },
+  "CIY": {
+   "file": "CIY.json",
+   "n_anchors": 3,
+   "day_prices": 82,
+   "sources": {
+    "W6": 82
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "CLJ": {
+   "file": "CLJ.json",
+   "n_anchors": 40,
+   "day_prices": 4353,
+   "sources": {
+    "FR": 681,
+    "W6": 3672
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "CLY": {
+   "file": "CLY.json",
+   "n_anchors": 2,
+   "day_prices": 25,
+   "sources": {
+    "V7": 25
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "CND": {
+   "file": "CND.json",
+   "n_anchors": 2,
+   "day_prices": 150,
+   "sources": {
+    "W6": 150
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "CPH": {
+   "file": "CPH.json",
+   "n_anchors": 37,
+   "day_prices": 6476,
+   "sources": {
+    "FR": 5763,
+    "V7": 11,
+    "W6": 702
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 3.0,
+   "priority": 3.9
+  },
+  "CRA": {
+   "file": "CRA.json",
+   "n_anchors": 15,
+   "day_prices": 1482,
+   "sources": {
+    "W6": 1482
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "CRL": {
+   "file": "CRL.json",
+   "n_anchors": 109,
+   "day_prices": 16878,
+   "sources": {
+    "FR": 15117,
+    "V7": 20,
+    "W6": 1741
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 3.0,
+   "priority": 3.9
+  },
+  "CRV": {
+   "file": "CRV.json",
+   "n_anchors": 4,
+   "day_prices": 620,
+   "sources": {
+    "FR": 620
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "CTA": {
+   "file": "CTA.json",
+   "n_anchors": 55,
+   "day_prices": 9284,
+   "sources": {
+    "FR": 7265,
+    "V7": 50,
+    "W6": 1969
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 2.0,
+   "priority": 2.6
+  },
+  "CUF": {
+   "file": "CUF.json",
+   "n_anchors": 2,
+   "day_prices": 114,
+   "sources": {
+    "FR": 114
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "CWL": {
+   "file": "CWL.json",
+   "n_anchors": 5,
+   "day_prices": 690,
+   "sources": {
+    "FR": 690
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "DBV": {
+   "file": "DBV.json",
+   "n_anchors": 29,
+   "day_prices": 2380,
+   "sources": {
+    "FR": 2110,
+    "V7": 42,
+    "W6": 228
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 2.0,
+   "priority": 2.6
+  },
+  "DEB": {
+   "file": "DEB.json",
+   "n_anchors": 4,
+   "day_prices": 274,
+   "sources": {
+    "W6": 274
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "DLE": {
+   "file": "DLE.json",
+   "n_anchors": 1,
+   "day_prices": 86,
+   "sources": {
+    "FR": 86
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "DLM": {
+   "file": "DLM.json",
+   "n_anchors": 4,
+   "day_prices": 217,
+   "sources": {
+    "FR": 159,
+    "W6": 58
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "DTM": {
+   "file": "DTM.json",
+   "n_anchors": 30,
+   "day_prices": 4344,
+   "sources": {
+    "W6": 4344
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "DUB": {
+   "file": "DUB.json",
+   "n_anchors": 113,
+   "day_prices": 21013,
+   "sources": {
+    "FR": 21013
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 3.0,
+   "priority": 3.9
+  },
+  "DXB": {
+   "file": "DXB.json",
+   "n_anchors": 7,
+   "day_prices": 576,
+   "sources": {
+    "W6": 576
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "EDI": {
+   "file": "EDI.json",
+   "n_anchors": 62,
+   "day_prices": 9935,
+   "sources": {
+    "FR": 9935
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 2.0,
+   "priority": 2.6
+  },
+  "EFL": {
+   "file": "EFL.json",
+   "n_anchors": 9,
+   "day_prices": 418,
+   "sources": {
+    "FR": 337,
+    "V7": 12,
+    "W6": 69
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "EGC": {
+   "file": "EGC.json",
+   "n_anchors": 6,
+   "day_prices": 498,
+   "sources": {
+    "FR": 498
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "EIN": {
+   "file": "EIN.json",
+   "n_anchors": 47,
+   "day_prices": 7698,
+   "sources": {
+    "FR": 5090,
+    "W6": 2608
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 3.0,
+   "priority": 3.9
+  },
+  "EMA": {
+   "file": "EMA.json",
+   "n_anchors": 31,
+   "day_prices": 3704,
+   "sources": {
+    "FR": 3704
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "ESB": {
+   "file": "ESB.json",
+   "n_anchors": 1,
+   "day_prices": 106,
+   "sources": {
+    "W6": 106
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "ESU": {
+   "file": "ESU.json",
+   "n_anchors": 5,
+   "day_prices": 305,
+   "sources": {
+    "FR": 305
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "EVN": {
+   "file": "EVN.json",
+   "n_anchors": 16,
+   "day_prices": 1670,
+   "sources": {
+    "W6": 1670
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "EXT": {
+   "file": "EXT.json",
+   "n_anchors": 4,
+   "day_prices": 364,
+   "sources": {
+    "FR": 364
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "FAO": {
+   "file": "FAO.json",
+   "n_anchors": 47,
+   "day_prices": 6984,
+   "sources": {
+    "FR": 6559,
+    "V7": 32,
+    "W6": 393
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 2.0,
+   "priority": 2.6
+  },
+  "FCO": {
+   "file": "FCO.json",
+   "n_anchors": 100,
+   "day_prices": 15736,
+   "sources": {
+    "FR": 8014,
+    "V7": 64,
+    "W6": 7658
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 3.0,
+   "priority": 3.9
+  },
+  "FDH": {
+   "file": "FDH.json",
+   "n_anchors": 4,
+   "day_prices": 312,
+   "sources": {
+    "FR": 166,
+    "W6": 146
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "FEZ": {
+   "file": "FEZ.json",
+   "n_anchors": 17,
+   "day_prices": 2680,
+   "sources": {
+    "FR": 2680
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "FKB": {
+   "file": "FKB.json",
+   "n_anchors": 32,
+   "day_prices": 3884,
+   "sources": {
+    "FR": 3255,
+    "W6": 629
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "FMM": {
+   "file": "FMM.json",
+   "n_anchors": 48,
+   "day_prices": 6624,
+   "sources": {
+    "FR": 3949,
+    "W6": 2675
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "FMO": {
+   "file": "FMO.json",
+   "n_anchors": 6,
+   "day_prices": 651,
+   "sources": {
+    "FR": 651
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "FNC": {
+   "file": "FNC.json",
+   "n_anchors": 14,
+   "day_prices": 1677,
+   "sources": {
+    "FR": 1309,
+    "W6": 368
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "FNI": {
+   "file": "FNI.json",
+   "n_anchors": 4,
+   "day_prices": 297,
+   "sources": {
+    "FR": 297
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "FRL": {
+   "file": "FRL.json",
+   "n_anchors": 3,
+   "day_prices": 326,
+   "sources": {
+    "FR": 326
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "FSC": {
+   "file": "FSC.json",
+   "n_anchors": 2,
+   "day_prices": 188,
+   "sources": {
+    "FR": 188
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "FUE": {
+   "file": "FUE.json",
+   "n_anchors": 27,
+   "day_prices": 2660,
+   "sources": {
+    "FR": 2568,
+    "W6": 92
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "GDN": {
+   "file": "GDN.json",
+   "n_anchors": 67,
+   "day_prices": 10187,
+   "sources": {
+    "FR": 5433,
+    "W6": 4754
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 2.0,
+   "priority": 2.6
+  },
+  "GHV": {
+   "file": "GHV.json",
+   "n_anchors": 10,
+   "day_prices": 834,
+   "sources": {
+    "W6": 834
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "GLA": {
+   "file": "GLA.json",
+   "n_anchors": 10,
+   "day_prices": 1292,
+   "sources": {
+    "FR": 1218,
+    "W6": 74
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 2.0,
+   "priority": 2.6
+  },
+  "GNB": {
+   "file": "GNB.json",
+   "n_anchors": 8,
+   "day_prices": 42,
+   "sources": {
+    "FR": 32,
+    "W6": 10
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "GOA": {
+   "file": "GOA.json",
+   "n_anchors": 14,
+   "day_prices": 1636,
+   "sources": {
+    "FR": 1254,
+    "W6": 382
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "GOT": {
+   "file": "GOT.json",
+   "n_anchors": 28,
+   "day_prices": 3379,
+   "sources": {
+    "FR": 2997,
+    "W6": 382
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 2.0,
+   "priority": 2.6
+  },
+  "GRO": {
+   "file": "GRO.json",
+   "n_anchors": 29,
+   "day_prices": 3163,
+   "sources": {
+    "FR": 3163
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "GRX": {
+   "file": "GRX.json",
+   "n_anchors": 1,
+   "day_prices": 32,
+   "sources": {
+    "W6": 32
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "GYD": {
+   "file": "GYD.json",
+   "n_anchors": 3,
+   "day_prices": 272,
+   "sources": {
+    "W6": 272
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "HAM": {
+   "file": "HAM.json",
+   "n_anchors": 15,
+   "day_prices": 2212,
+   "sources": {
+    "FR": 1005,
+    "W6": 1207
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 2.0,
+   "priority": 2.6
+  },
+  "HAU": {
+   "file": "HAU.json",
+   "n_anchors": 1,
+   "day_prices": 156,
+   "sources": {
+    "W6": 156
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "HBE": {
+   "file": "HBE.json",
+   "n_anchors": 1,
+   "day_prices": 90,
+   "sources": {
+    "W6": 90
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "HEL": {
+   "file": "HEL.json",
+   "n_anchors": 10,
+   "day_prices": 1277,
+   "sources": {
+    "FR": 1277
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 2.0,
+   "priority": 2.6
+  },
+  "HER": {
+   "file": "HER.json",
+   "n_anchors": 15,
+   "day_prices": 1180,
+   "sources": {
+    "FR": 658,
+    "W6": 522
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "HHN": {
+   "file": "HHN.json",
+   "n_anchors": 31,
+   "day_prices": 3317,
+   "sources": {
+    "FR": 2769,
+    "W6": 548
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 2.0,
+   "priority": 2.6
+  },
+  "HRG": {
+   "file": "HRG.json",
+   "n_anchors": 8,
+   "day_prices": 517,
+   "sources": {
+    "W6": 517
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "IAS": {
+   "file": "IAS.json",
+   "n_anchors": 23,
+   "day_prices": 2918,
+   "sources": {
+    "FR": 411,
+    "W6": 2507
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "IBZ": {
+   "file": "IBZ.json",
+   "n_anchors": 32,
+   "day_prices": 4543,
+   "sources": {
+    "FR": 4515,
+    "W6": 28
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 2.0,
+   "priority": 2.6
+  },
+  "INI": {
+   "file": "INI.json",
+   "n_anchors": 5,
+   "day_prices": 487,
+   "sources": {
+    "FR": 347,
+    "W6": 140
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "IST": {
+   "file": "IST.json",
+   "n_anchors": 5,
+   "day_prices": 878,
+   "sources": {
+    "W6": 878
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "JED": {
+   "file": "JED.json",
+   "n_anchors": 3,
+   "day_prices": 370,
+   "sources": {
+    "W6": 370
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "JMK": {
+   "file": "JMK.json",
+   "n_anchors": 9,
+   "day_prices": 575,
+   "sources": {
+    "FR": 409,
+    "W6": 166
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "JSI": {
+   "file": "JSI.json",
+   "n_anchors": 10,
+   "day_prices": 596,
+   "sources": {
+    "FR": 554,
+    "W6": 42
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "JTR": {
+   "file": "JTR.json",
+   "n_anchors": 15,
+   "day_prices": 1037,
+   "sources": {
+    "FR": 899,
+    "W6": 138
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "KEF": {
+   "file": "KEF.json",
+   "n_anchors": 7,
+   "day_prices": 975,
+   "sources": {
+    "W6": 975
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "KGS": {
+   "file": "KGS.json",
+   "n_anchors": 12,
+   "day_prices": 802,
+   "sources": {
+    "FR": 802
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "KIR": {
+   "file": "KIR.json",
+   "n_anchors": 7,
+   "day_prices": 1188,
+   "sources": {
+    "FR": 1188
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "KLU": {
+   "file": "KLU.json",
+   "n_anchors": 2,
+   "day_prices": 210,
+   "sources": {
+    "FR": 210
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "KLX": {
+   "file": "KLX.json",
+   "n_anchors": 3,
+   "day_prices": 146,
+   "sources": {
+    "FR": 128,
+    "W6": 18
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "KRK": {
+   "file": "KRK.json",
+   "n_anchors": 96,
+   "day_prices": 17925,
+   "sources": {
+    "FR": 14093,
+    "W6": 3832
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 3.0,
+   "priority": 3.9
+  },
+  "KSC": {
+   "file": "KSC.json",
+   "n_anchors": 9,
+   "day_prices": 1238,
+   "sources": {
+    "FR": 792,
+    "W6": 446
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "KTW": {
+   "file": "KTW.json",
+   "n_anchors": 47,
+   "day_prices": 6063,
+   "sources": {
+    "FR": 2573,
+    "W6": 3490
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "KUN": {
+   "file": "KUN.json",
+   "n_anchors": 44,
+   "day_prices": 5136,
+   "sources": {
+    "FR": 3268,
+    "W6": 1868
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 2.0,
+   "priority": 2.6
+  },
+  "KUT": {
+   "file": "KUT.json",
+   "n_anchors": 24,
+   "day_prices": 2608,
+   "sources": {
+    "W6": 2608
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "LBA": {
+   "file": "LBA.json",
+   "n_anchors": 25,
+   "day_prices": 3358,
+   "sources": {
+    "FR": 3105,
+    "W6": 253
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "LBC": {
+   "file": "LBC.json",
+   "n_anchors": 3,
+   "day_prices": 359,
+   "sources": {
+    "FR": 359
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "LCA": {
+   "file": "LCA.json",
+   "n_anchors": 30,
+   "day_prices": 3875,
+   "sources": {
+    "FR": 110,
+    "W6": 3765
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "LCJ": {
+   "file": "LCJ.json",
+   "n_anchors": 7,
+   "day_prices": 855,
+   "sources": {
+    "FR": 855
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "LDE": {
+   "file": "LDE.json",
+   "n_anchors": 7,
+   "day_prices": 615,
+   "sources": {
+    "FR": 615
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "LDY": {
+   "file": "LDY.json",
+   "n_anchors": 1,
+   "day_prices": 156,
+   "sources": {
+    "FR": 156
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "LEI": {
+   "file": "LEI.json",
+   "n_anchors": 4,
+   "day_prices": 313,
+   "sources": {
+    "FR": 265,
+    "W6": 48
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "LGW": {
+   "file": "LGW.json",
+   "n_anchors": 15,
+   "day_prices": 3154,
+   "sources": {
+    "FR": 1116,
+    "W6": 2038
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 3.0,
+   "priority": 3.9
+  },
+  "LIG": {
+   "file": "LIG.json",
+   "n_anchors": 5,
+   "day_prices": 550,
+   "sources": {
+    "FR": 550
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "LIL": {
+   "file": "LIL.json",
+   "n_anchors": 2,
+   "day_prices": 314,
+   "sources": {
+    "FR": 314
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "LIS": {
+   "file": "LIS.json",
+   "n_anchors": 37,
+   "day_prices": 6920,
+   "sources": {
+    "FR": 6333,
+    "W6": 587
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 3.0,
+   "priority": 3.9
+  },
+  "LJU": {
+   "file": "LJU.json",
+   "n_anchors": 2,
+   "day_prices": 300,
+   "sources": {
+    "W6": 300
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "LMP": {
+   "file": "LMP.json",
+   "n_anchors": 2,
+   "day_prices": 174,
+   "sources": {
+    "W6": 174
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "LNZ": {
+   "file": "LNZ.json",
+   "n_anchors": 3,
+   "day_prices": 198,
+   "sources": {
+    "FR": 198
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "LPA": {
+   "file": "LPA.json",
+   "n_anchors": 31,
+   "day_prices": 2964,
+   "sources": {
+    "FR": 2815,
+    "W6": 149
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "LPL": {
+   "file": "LPL.json",
+   "n_anchors": 38,
+   "day_prices": 4799,
+   "sources": {
+    "FR": 4493,
+    "W6": 306
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 2.0,
+   "priority": 2.6
+  },
+  "LRH": {
+   "file": "LRH.json",
+   "n_anchors": 6,
+   "day_prices": 464,
+   "sources": {
+    "FR": 464
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "LTN": {
+   "file": "LTN.json",
+   "n_anchors": 74,
+   "day_prices": 12759,
+   "sources": {
+    "FR": 3420,
+    "W6": 9339
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 3.0,
+   "priority": 3.9
+  },
+  "LUX": {
+   "file": "LUX.json",
+   "n_anchors": 12,
+   "day_prices": 2109,
+   "sources": {
+    "FR": 2109
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "LUZ": {
+   "file": "LUZ.json",
+   "n_anchors": 10,
+   "day_prices": 681,
+   "sources": {
+    "FR": 398,
+    "W6": 283
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "LWN": {
+   "file": "LWN.json",
+   "n_anchors": 1,
+   "day_prices": 46,
+   "sources": {
+    "W6": 46
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "LXS": {
+   "file": "LXS.json",
+   "n_anchors": 1,
+   "day_prices": 32,
+   "sources": {
+    "FR": 32
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "LYS": {
+   "file": "LYS.json",
+   "n_anchors": 6,
+   "day_prices": 654,
+   "sources": {
+    "W6": 654
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 2.0,
+   "priority": 2.6
+  },
+  "MAD": {
+   "file": "MAD.json",
+   "n_anchors": 65,
+   "day_prices": 12235,
+   "sources": {
+    "FR": 9468,
+    "W6": 2767
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 3.0,
+   "priority": 3.9
+  },
+  "MAH": {
+   "file": "MAH.json",
+   "n_anchors": 20,
+   "day_prices": 1736,
+   "sources": {
+    "FR": 1627,
+    "W6": 109
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "MAN": {
+   "file": "MAN.json",
+   "n_anchors": 80,
+   "day_prices": 13919,
+   "sources": {
+    "FR": 13919
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 3.0,
+   "priority": 3.9
+  },
+  "MLA": {
+   "file": "MLA.json",
+   "n_anchors": 73,
+   "day_prices": 13008,
+   "sources": {
+    "FR": 11702,
+    "W6": 1306
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 2.0,
+   "priority": 2.6
+  },
+  "MLH": {
+   "file": "MLH.json",
+   "n_anchors": 23,
+   "day_prices": 3074,
+   "sources": {
+    "W6": 3074
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "MME": {
+   "file": "MME.json",
+   "n_anchors": 5,
+   "day_prices": 366,
+   "sources": {
+    "FR": 366
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "MMX": {
+   "file": "MMX.json",
+   "n_anchors": 9,
+   "day_prices": 951,
+   "sources": {
+    "FR": 245,
+    "W6": 706
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "MRS": {
+   "file": "MRS.json",
+   "n_anchors": 45,
+   "day_prices": 6506,
+   "sources": {
+    "FR": 6506
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 2.0,
+   "priority": 2.6
+  },
+  "MST": {
+   "file": "MST.json",
+   "n_anchors": 4,
+   "day_prices": 306,
+   "sources": {
+    "W6": 306
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "MXP": {
+   "file": "MXP.json",
+   "n_anchors": 67,
+   "day_prices": 12188,
+   "sources": {
+    "FR": 7620,
+    "W6": 4568
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 3.0,
+   "priority": 3.9
+  },
+  "NAP": {
+   "file": "NAP.json",
+   "n_anchors": 63,
+   "day_prices": 7967,
+   "sources": {
+    "FR": 6642,
+    "W6": 1325
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 3.0,
+   "priority": 3.9
+  },
+  "NCE": {
+   "file": "NCE.json",
+   "n_anchors": 14,
+   "day_prices": 1762,
+   "sources": {
+    "FR": 418,
+    "W6": 1344
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 2.0,
+   "priority": 2.6
+  },
+  "NCL": {
+   "file": "NCL.json",
+   "n_anchors": 21,
+   "day_prices": 2730,
+   "sources": {
+    "FR": 2730
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "NDR": {
+   "file": "NDR.json",
+   "n_anchors": 7,
+   "day_prices": 603,
+   "sources": {
+    "FR": 603
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "NOC": {
+   "file": "NOC.json",
+   "n_anchors": 17,
+   "day_prices": 2102,
+   "sources": {
+    "FR": 2102
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "NQY": {
+   "file": "NQY.json",
+   "n_anchors": 6,
+   "day_prices": 716,
+   "sources": {
+    "FR": 716
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "NRN": {
+   "file": "NRN.json",
+   "n_anchors": 33,
+   "day_prices": 3977,
+   "sources": {
+    "FR": 3977
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "NTE": {
+   "file": "NTE.json",
+   "n_anchors": 8,
+   "day_prices": 1224,
+   "sources": {
+    "FR": 1224
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 2.0,
+   "priority": 2.6
+  },
+  "NUE": {
+   "file": "NUE.json",
+   "n_anchors": 29,
+   "day_prices": 3080,
+   "sources": {
+    "FR": 2586,
+    "W6": 494
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "NWI": {
+   "file": "NWI.json",
+   "n_anchors": 3,
+   "day_prices": 258,
+   "sources": {
+    "FR": 258
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "NYO": {
+   "file": "NYO.json",
+   "n_anchors": 4,
+   "day_prices": 402,
+   "sources": {
+    "W6": 402
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 2.0,
+   "priority": 2.6
+  },
+  "OHD": {
+   "file": "OHD.json",
+   "n_anchors": 5,
+   "day_prices": 188,
+   "sources": {
+    "W6": 188
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "OLB": {
+   "file": "OLB.json",
+   "n_anchors": 13,
+   "day_prices": 1138,
+   "sources": {
+    "FR": 1012,
+    "W6": 126
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "OMR": {
+   "file": "OMR.json",
+   "n_anchors": 2,
+   "day_prices": 140,
+   "sources": {
+    "W6": 140
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "OPO": {
+   "file": "OPO.json",
+   "n_anchors": 63,
+   "day_prices": 10335,
+   "sources": {
+    "FR": 9732,
+    "W6": 603
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 3.0,
+   "priority": 3.9
+  },
+  "ORK": {
+   "file": "ORK.json",
+   "n_anchors": 31,
+   "day_prices": 4329,
+   "sources": {
+    "FR": 4329
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 2.0,
+   "priority": 2.6
+  },
+  "ORY": {
+   "file": "ORY.json",
+   "n_anchors": 4,
+   "day_prices": 938,
+   "sources": {
+    "W6": 938
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "OSI": {
+   "file": "OSI.json",
+   "n_anchors": 1,
+   "day_prices": 22,
+   "sources": {
+    "FR": 22
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "OSL": {
+   "file": "OSL.json",
+   "n_anchors": 10,
+   "day_prices": 1450,
+   "sources": {
+    "FR": 636,
+    "W6": 814
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 2.0,
+   "priority": 2.6
+  },
+  "OSR": {
+   "file": "OSR.json",
+   "n_anchors": 3,
+   "day_prices": 188,
+   "sources": {
+    "FR": 188
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "OTP": {
+   "file": "OTP.json",
+   "n_anchors": 87,
+   "day_prices": 13776,
+   "sources": {
+    "FR": 4589,
+    "W6": 9187
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 2.0,
+   "priority": 2.6
+  },
+  "OUD": {
+   "file": "OUD.json",
+   "n_anchors": 5,
+   "day_prices": 412,
+   "sources": {
+    "FR": 412
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "OVD": {
+   "file": "OVD.json",
+   "n_anchors": 3,
+   "day_prices": 168,
+   "sources": {
+    "W6": 168
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "OZZ": {
+   "file": "OZZ.json",
+   "n_anchors": 2,
+   "day_prices": 106,
+   "sources": {
+    "FR": 106
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "PAD": {
+   "file": "PAD.json",
+   "n_anchors": 3,
+   "day_prices": 202,
+   "sources": {
+    "FR": 202
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "PDV": {
+   "file": "PDV.json",
+   "n_anchors": 6,
+   "day_prices": 463,
+   "sources": {
+    "FR": 303,
+    "W6": 160
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "PED": {
+   "file": "PED.json",
+   "n_anchors": 4,
+   "day_prices": 275,
+   "sources": {
+    "FR": 275
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "PEG": {
+   "file": "PEG.json",
+   "n_anchors": 11,
+   "day_prices": 1326,
+   "sources": {
+    "FR": 1132,
+    "W6": 194
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "PFO": {
+   "file": "PFO.json",
+   "n_anchors": 37,
+   "day_prices": 4134,
+   "sources": {
+    "FR": 4063,
+    "W6": 71
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "PGF": {
+   "file": "PGF.json",
+   "n_anchors": 9,
+   "day_prices": 323,
+   "sources": {
+    "FR": 323
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "PIK": {
+   "file": "PIK.json",
+   "n_anchors": 10,
+   "day_prices": 1435,
+   "sources": {
+    "FR": 1435
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "PIS": {
+   "file": "PIS.json",
+   "n_anchors": 2,
+   "day_prices": 132,
+   "sources": {
+    "FR": 132
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "PLQ": {
+   "file": "PLQ.json",
+   "n_anchors": 2,
+   "day_prices": 293,
+   "sources": {
+    "FR": 223,
+    "W6": 70
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "PMF": {
+   "file": "PMF.json",
+   "n_anchors": 5,
+   "day_prices": 526,
+   "sources": {
+    "FR": 526
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "PMI": {
+   "file": "PMI.json",
+   "n_anchors": 71,
+   "day_prices": 12051,
+   "sources": {
+    "FR": 11479,
+    "W6": 572
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 3.0,
+   "priority": 3.9
+  },
+  "PMO": {
+   "file": "PMO.json",
+   "n_anchors": 48,
+   "day_prices": 8485,
+   "sources": {
+    "FR": 6745,
+    "W6": 1740
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 2.0,
+   "priority": 2.6
+  },
+  "POZ": {
+   "file": "POZ.json",
+   "n_anchors": 40,
+   "day_prices": 5218,
+   "sources": {
+    "FR": 4913,
+    "W6": 305
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 2.0,
+   "priority": 2.6
+  },
+  "PRG": {
+   "file": "PRG.json",
+   "n_anchors": 48,
+   "day_prices": 8088,
+   "sources": {
+    "FR": 6220,
+    "W6": 1868
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 3.0,
+   "priority": 3.9
+  },
+  "PRN": {
+   "file": "PRN_.json",
+   "n_anchors": 7,
+   "day_prices": 838,
+   "sources": {
+    "W6": 838
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "PSA": {
+   "file": "PSA.json",
+   "n_anchors": 55,
+   "day_prices": 7934,
+   "sources": {
+    "FR": 7259,
+    "W6": 675
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 2.0,
+   "priority": 2.6
+  },
+  "PSR": {
+   "file": "PSR.json",
+   "n_anchors": 20,
+   "day_prices": 2977,
+   "sources": {
+    "FR": 2770,
+    "W6": 207
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "PUY": {
+   "file": "PUY.json",
+   "n_anchors": 7,
+   "day_prices": 427,
+   "sources": {
+    "FR": 427
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "PVK": {
+   "file": "PVK.json",
+   "n_anchors": 7,
+   "day_prices": 341,
+   "sources": {
+    "FR": 341
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "QSR": {
+   "file": "QSR.json",
+   "n_anchors": 4,
+   "day_prices": 286,
+   "sources": {
+    "FR": 286
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "RAK": {
+   "file": "RAK.json",
+   "n_anchors": 50,
+   "day_prices": 7782,
+   "sources": {
+    "FR": 7303,
+    "W6": 479
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "RBA": {
+   "file": "RBA.json",
+   "n_anchors": 19,
+   "day_prices": 2638,
+   "sources": {
+    "FR": 2638
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "RDO": {
+   "file": "RDO.json",
+   "n_anchors": 3,
+   "day_prices": 400,
+   "sources": {
+    "W6": 400
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "RDZ": {
+   "file": "RDZ.json",
+   "n_anchors": 2,
+   "day_prices": 44,
+   "sources": {
+    "FR": 44
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "REG": {
+   "file": "REG.json",
+   "n_anchors": 12,
+   "day_prices": 1592,
+   "sources": {
+    "FR": 1592
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "REU": {
+   "file": "REU.json",
+   "n_anchors": 11,
+   "day_prices": 1517,
+   "sources": {
+    "FR": 1517
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "RHO": {
+   "file": "RHO.json",
+   "n_anchors": 28,
+   "day_prices": 2645,
+   "sources": {
+    "FR": 2418,
+    "W6": 227
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "RIX": {
+   "file": "RIX.json",
+   "n_anchors": 20,
+   "day_prices": 2888,
+   "sources": {
+    "FR": 2888
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 2.0,
+   "priority": 2.6
+  },
+  "RJK": {
+   "file": "RJK.json",
+   "n_anchors": 8,
+   "day_prices": 311,
+   "sources": {
+    "FR": 217,
+    "W6": 94
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "RMF": {
+   "file": "RMF.json",
+   "n_anchors": 7,
+   "day_prices": 472,
+   "sources": {
+    "W6": 472
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "RMI": {
+   "file": "RMI.json",
+   "n_anchors": 16,
+   "day_prices": 1343,
+   "sources": {
+    "FR": 1010,
+    "W6": 333
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "RMO": {
+   "file": "RMO.json",
+   "n_anchors": 34,
+   "day_prices": 4538,
+   "sources": {
+    "W6": 4538
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "RMU": {
+   "file": "RMU.json",
+   "n_anchors": 7,
+   "day_prices": 1267,
+   "sources": {
+    "FR": 1267
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "RVN": {
+   "file": "RVN.json",
+   "n_anchors": 10,
+   "day_prices": 582,
+   "sources": {
+    "FR": 582
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "RZE": {
+   "file": "RZE.json",
+   "n_anchors": 12,
+   "day_prices": 1116,
+   "sources": {
+    "FR": 1018,
+    "W6": 98
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "SBZ": {
+   "file": "SBZ.json",
+   "n_anchors": 6,
+   "day_prices": 546,
+   "sources": {
+    "W6": 546
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "SCN": {
+   "file": "SCN.json",
+   "n_anchors": 2,
+   "day_prices": 140,
+   "sources": {
+    "FR": 140
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "SCQ": {
+   "file": "SCQ.json",
+   "n_anchors": 11,
+   "day_prices": 1076,
+   "sources": {
+    "FR": 926,
+    "W6": 150
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "SCV": {
+   "file": "SCV.json",
+   "n_anchors": 12,
+   "day_prices": 1558,
+   "sources": {
+    "W6": 1558
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "SDR": {
+   "file": "SDR.json",
+   "n_anchors": 13,
+   "day_prices": 1043,
+   "sources": {
+    "FR": 803,
+    "W6": 240
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "SFT": {
+   "file": "SFT.json",
+   "n_anchors": 1,
+   "day_prices": 112,
+   "sources": {
+    "FR": 112
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "SJJ": {
+   "file": "SJJ.json",
+   "n_anchors": 12,
+   "day_prices": 835,
+   "sources": {
+    "FR": 697,
+    "W6": 138
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "SKG": {
+   "file": "SKG.json",
+   "n_anchors": 33,
+   "day_prices": 4336,
+   "sources": {
+    "FR": 4034,
+    "W6": 302
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 2.0,
+   "priority": 2.6
+  },
+  "SKP": {
+   "file": "SKP.json",
+   "n_anchors": 36,
+   "day_prices": 4108,
+   "sources": {
+    "W6": 4108
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "SNN": {
+   "file": "SNN.json",
+   "n_anchors": 32,
+   "day_prices": 4195,
+   "sources": {
+    "FR": 4195
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 2.0,
+   "priority": 2.6
+  },
+  "SOF": {
+   "file": "SOF.json",
+   "n_anchors": 55,
+   "day_prices": 8457,
+   "sources": {
+    "FR": 4756,
+    "W6": 3701
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 2.0,
+   "priority": 2.6
+  },
+  "SPU": {
+   "file": "SPU.json",
+   "n_anchors": 9,
+   "day_prices": 682,
+   "sources": {
+    "FR": 192,
+    "W6": 490
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 2.0,
+   "priority": 2.6
+  },
+  "SPX": {
+   "file": "SPX.json",
+   "n_anchors": 4,
+   "day_prices": 414,
+   "sources": {
+    "W6": 414
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "SSH": {
+   "file": "SSH.json",
+   "n_anchors": 14,
+   "day_prices": 1451,
+   "sources": {
+    "W6": 1451
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "STN": {
+   "file": "STN.json",
+   "n_anchors": 136,
+   "day_prices": 30122,
+   "sources": {
+    "FR": 30122
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 3.0,
+   "priority": 3.9
+  },
+  "STR": {
+   "file": "STR.json",
+   "n_anchors": 6,
+   "day_prices": 698,
+   "sources": {
+    "W6": 698
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 2.0,
+   "priority": 2.6
+  },
+  "SUF": {
+   "file": "SUF.json",
+   "n_anchors": 29,
+   "day_prices": 4282,
+   "sources": {
+    "FR": 3935,
+    "W6": 347
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "SUJ": {
+   "file": "SUJ.json",
+   "n_anchors": 1,
+   "day_prices": 106,
+   "sources": {
+    "W6": 106
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "SVG": {
+   "file": "SVG.json",
+   "n_anchors": 2,
+   "day_prices": 304,
+   "sources": {
+    "W6": 304
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "SVQ": {
+   "file": "SVQ.json",
+   "n_anchors": 50,
+   "day_prices": 7536,
+   "sources": {
+    "FR": 6755,
+    "W6": 781
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 2.0,
+   "priority": 2.6
+  },
+  "SZG": {
+   "file": "SZG.json",
+   "n_anchors": 5,
+   "day_prices": 321,
+   "sources": {
+    "FR": 321
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "SZY": {
+   "file": "SZY.json",
+   "n_anchors": 1,
+   "day_prices": 84,
+   "sources": {
+    "FR": 84
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "SZZ": {
+   "file": "SZZ.json",
+   "n_anchors": 6,
+   "day_prices": 648,
+   "sources": {
+    "FR": 488,
+    "W6": 160
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "TAT": {
+   "file": "TAT.json",
+   "n_anchors": 3,
+   "day_prices": 208,
+   "sources": {
+    "W6": 208
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "TFS": {
+   "file": "TFS.json",
+   "n_anchors": 46,
+   "day_prices": 6648,
+   "sources": {
+    "FR": 5807,
+    "W6": 841
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "TGD": {
+   "file": "TGD.json",
+   "n_anchors": 26,
+   "day_prices": 2489,
+   "sources": {
+    "FR": 677,
+    "W6": 1812
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "TGM": {
+   "file": "TGM.json",
+   "n_anchors": 9,
+   "day_prices": 906,
+   "sources": {
+    "W6": 906
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "TIA": {
+   "file": "TIA.json",
+   "n_anchors": 70,
+   "day_prices": 12530,
+   "sources": {
+    "FR": 4497,
+    "W6": 8033
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "TKU": {
+   "file": "TKU.json",
+   "n_anchors": 3,
+   "day_prices": 270,
+   "sources": {
+    "W6": 270
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "TLL": {
+   "file": "TLL.json",
+   "n_anchors": 15,
+   "day_prices": 2008,
+   "sources": {
+    "FR": 784,
+    "W6": 1224
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 2.0,
+   "priority": 2.6
+  },
+  "TLS": {
+   "file": "TLS.json",
+   "n_anchors": 27,
+   "day_prices": 3350,
+   "sources": {
+    "FR": 3350
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 2.0,
+   "priority": 2.6
+  },
+  "TLV": {
+   "file": "TLV.json",
+   "n_anchors": 20,
+   "day_prices": 3404,
+   "sources": {
+    "W6": 3404
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "TNG": {
+   "file": "TNG.json",
+   "n_anchors": 18,
+   "day_prices": 2894,
+   "sources": {
+    "FR": 2894
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "TOS": {
+   "file": "TOS.json",
+   "n_anchors": 2,
+   "day_prices": 204,
+   "sources": {
+    "W6": 204
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "TPS": {
+   "file": "TPS.json",
+   "n_anchors": 22,
+   "day_prices": 2563,
+   "sources": {
+    "FR": 2563
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "TRD": {
+   "file": "TRD.json",
+   "n_anchors": 1,
+   "day_prices": 108,
+   "sources": {
+    "W6": 108
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "TRF": {
+   "file": "TRF.json",
+   "n_anchors": 18,
+   "day_prices": 2815,
+   "sources": {
+    "FR": 2307,
+    "W6": 508
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 2.0,
+   "priority": 2.6
+  },
+  "TRN": {
+   "file": "TRN.json",
+   "n_anchors": 44,
+   "day_prices": 6182,
+   "sources": {
+    "FR": 4497,
+    "W6": 1685
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "TRS": {
+   "file": "TRS.json",
+   "n_anchors": 21,
+   "day_prices": 2901,
+   "sources": {
+    "FR": 2804,
+    "W6": 97
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "TSF": {
+   "file": "TSF.json",
+   "n_anchors": 46,
+   "day_prices": 5672,
+   "sources": {
+    "FR": 4930,
+    "W6": 742
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 2.0,
+   "priority": 2.6
+  },
+  "TSR": {
+   "file": "TSR.json",
+   "n_anchors": 23,
+   "day_prices": 1512,
+   "sources": {
+    "W6": 1512
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "TTU": {
+   "file": "TTU.json",
+   "n_anchors": 5,
+   "day_prices": 536,
+   "sources": {
+    "FR": 536
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "TUF": {
+   "file": "TUF.json",
+   "n_anchors": 3,
+   "day_prices": 284,
+   "sources": {
+    "FR": 284
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "TZL": {
+   "file": "TZL.json",
+   "n_anchors": 11,
+   "day_prices": 1032,
+   "sources": {
+    "W6": 1032
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "VAR": {
+   "file": "VAR.json",
+   "n_anchors": 22,
+   "day_prices": 1763,
+   "sources": {
+    "FR": 145,
+    "W6": 1618
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "VCE": {
+   "file": "VCE.json",
+   "n_anchors": 42,
+   "day_prices": 7156,
+   "sources": {
+    "FR": 4182,
+    "W6": 2974
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 2.0,
+   "priority": 2.6
+  },
+  "VIE": {
+   "file": "VIE.json",
+   "n_anchors": 67,
+   "day_prices": 11398,
+   "sources": {
+    "FR": 11398
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 3.0,
+   "priority": 3.9
+  },
+  "VIL": {
+   "file": "VIL.json",
+   "n_anchors": 1,
+   "day_prices": 52,
+   "sources": {
+    "FR": 52
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "VIT": {
+   "file": "VIT.json",
+   "n_anchors": 6,
+   "day_prices": 660,
+   "sources": {
+    "FR": 660
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "VLC": {
+   "file": "VLC.json",
+   "n_anchors": 68,
+   "day_prices": 10776,
+   "sources": {
+    "FR": 8571,
+    "W6": 2205
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 3.0,
+   "priority": 3.9
+  },
+  "VNO": {
+   "file": "VNO.json",
+   "n_anchors": 34,
+   "day_prices": 4359,
+   "sources": {
+    "FR": 2523,
+    "W6": 1836
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 2.0,
+   "priority": 2.6
+  },
+  "VOL": {
+   "file": "VOL.json",
+   "n_anchors": 1,
+   "day_prices": 54,
+   "sources": {
+    "FR": 54
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "VRN": {
+   "file": "VRN.json",
+   "n_anchors": 18,
+   "day_prices": 3089,
+   "sources": {
+    "FR": 2751,
+    "W6": 338
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "VST": {
+   "file": "VST.json",
+   "n_anchors": 3,
+   "day_prices": 205,
+   "sources": {
+    "FR": 205
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "VXO": {
+   "file": "VXO.json",
+   "n_anchors": 3,
+   "day_prices": 179,
+   "sources": {
+    "FR": 179
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "WAW": {
+   "file": "WAW.json",
+   "n_anchors": 63,
+   "day_prices": 9448,
+   "sources": {
+    "FR": 1364,
+    "W6": 8084
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 3.0,
+   "priority": 3.9
+  },
+  "WMI": {
+   "file": "WMI.json",
+   "n_anchors": 56,
+   "day_prices": 7917,
+   "sources": {
+    "FR": 6571,
+    "W6": 1346
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 3.0,
+   "priority": 3.9
+  },
+  "WRO": {
+   "file": "WRO.json",
+   "n_anchors": 64,
+   "day_prices": 8363,
+   "sources": {
+    "FR": 6712,
+    "W6": 1651
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 2.0,
+   "priority": 2.6
+  },
+  "XCR": {
+   "file": "XCR.json",
+   "n_anchors": 1,
+   "day_prices": 67,
+   "sources": {
+    "FR": 67
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "ZAD": {
+   "file": "ZAD.json",
+   "n_anchors": 47,
+   "day_prices": 3650,
+   "sources": {
+    "FR": 3598,
+    "W6": 52
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "ZAG": {
+   "file": "ZAG.json",
+   "n_anchors": 27,
+   "day_prices": 3866,
+   "sources": {
+    "FR": 3866
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 2.0,
+   "priority": 2.6
+  },
+  "ZAZ": {
+   "file": "ZAZ.json",
+   "n_anchors": 8,
+   "day_prices": 873,
+   "sources": {
+    "FR": 481,
+    "W6": 392
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  },
+  "ZTH": {
+   "file": "ZTH.json",
+   "n_anchors": 16,
+   "day_prices": 584,
+   "sources": {
+    "FR": 350,
+    "W6": 234
+   },
+   "newest_o": "2026-08-05",
+   "oldest_o": "2026-08-05",
+   "basis": "o",
+   "age_days": 1.3,
+   "popularity": 1.0,
+   "priority": 1.3
+  }
+ }
+}

@@ -50,12 +50,18 @@ export function useDestinationSearch({
   data, departDate, returnDate, choices,
   locationQuery, countryFilter, priceMode, tripKinds,
   ratingRange, gemOnly, unescoOnly, topBeachOnly, topPick,
+  reachHours, reachMinutes,
   initialPriceRange,
 }) {
   // Rating band as a stable [lo, hi] tuple, and whether it constrains anything.
   const rLo = ratingRange?.[0] ?? 0;
   const rHi = ratingRange?.[1] ?? 10;
   const ratingActive = !isFullRatingRange(ratingRange);
+  // "Reachable within N hours": only bites when the origin actually has a
+  // reach table (lib/reach.js resolves null otherwise), so a cutoff restored
+  // from a shared URL degrades to "off" rather than hiding every destination.
+  const reachActive = Number.isFinite(reachHours) && reachHours > 0 && reachMinutes instanceof Map;
+  const reachCutoffMin = reachActive ? reachHours * 60 : Infinity;
   // Compute, in one pass, the priceable destinations (flight/drive + stay) and the
   // ones that can't be reached from home (no Ryanair route + not drivable). The
   // unreachable ones are still surfaced in the UI, just flagged, never silently
@@ -181,9 +187,15 @@ export function useDestinationSearch({
       if (gemOnly && !p.rating?.hidden_gem) return false;
       if (unescoOnly && !p.beauty?.unesco) return false;
       if (topBeachOnly && !p.beauty?.top_beach) return false;
+      if (reachActive) {
+        // Loader already Number.isFinite-guarded the table; a destination with
+        // no entry is simply not known reachable, so the cutoff hides it.
+        const m = reachMinutes.get(p.id);
+        if (m == null || m > reachCutoffMin) return false;
+      }
       return true;
     });
-  }, [pricedAll, q, countryFilter, priceRange, priceMode, tripKinds, ratingActive, rLo, rHi, gemOnly, unescoOnly, topBeachOnly]);
+  }, [pricedAll, q, countryFilter, priceRange, priceMode, tripKinds, ratingActive, rLo, rHi, gemOnly, unescoOnly, topBeachOnly, reachActive, reachCutoffMin, reachMinutes]);
 
   // "Top picks" trims the filtered set to the N best by price or beauty. Applied
   // here (not just in the list) so the map and stats reflect the shortlist too.
@@ -209,9 +221,15 @@ export function useDestinationSearch({
       if (gemOnly && !p.rating?.hidden_gem) return false;
       if (unescoOnly && !p.beauty?.unesco) return false;
       if (topBeachOnly && !p.beauty?.top_beach) return false;
+      // Same travel-time cutoff as the priced set: these rows have no price,
+      // but "under N hours" is still a fact the reach table answers.
+      if (reachActive) {
+        const m = reachMinutes.get(p.id);
+        if (m == null || m > reachCutoffMin) return false;
+      }
       return true;
     });
-  }, [unreachableAll, q, countryFilter, tripKinds, ratingActive, rLo, rHi, gemOnly, unescoOnly, topBeachOnly]);
+  }, [unreachableAll, q, countryFilter, tripKinds, ratingActive, rLo, rHi, gemOnly, unescoOnly, topBeachOnly, reachActive, reachCutoffMin, reachMinutes]);
 
   const dealThreshold = useMemo(() => {
     if (priced.length === 0) return null;

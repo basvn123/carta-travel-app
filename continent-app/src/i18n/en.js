@@ -279,6 +279,12 @@ export const en = {
   'filter.pricePP': 'Price per person',
   'filter.priceTotal': 'Price total',
   'filter.anyPrice': 'Any price',
+  'filter.reach': 'Max travel time',
+  'filter.reachAny': 'Any',
+  'filter.reachAnyTitle': 'No travel-time limit',
+  'filter.reachHours': '{n}h',
+  'filter.reachHoursTitle': 'Only places within {n} hours by train or bus',
+  'filter.reachNoData': 'No travel-time data for this airport yet',
   'filter.country': 'Country',
   'filter.allCountries': 'All countries ({n})',
   'filter.searchCountry': 'Search country...',
@@ -1790,4 +1796,14 @@ export const en = {
   "pass.errUnavailable": "Passes are not switched on for this server yet.",
   "pass.errNetwork": "Could not reach the checkout. Check your connection and try again.",
   "pass.errGeneric": "Could not open the checkout. Nothing has been charged.",
+
+  // Fare provenance: freshness and estimate labeling (FareProvenance.jsx).
+  "prov.fromWord": "from",
+  "prov.seenToday": "seen today",
+  "prov.seenYesterday": "seen yesterday",
+  "prov.seenDays": "seen {n} days ago",
+  "prov.est": "est.",
+  "prov.estTitle": "estimated, not a live quote",
+  "prov.expiredTitle": "this quote has lapsed, confirm before booking",
+  "prov.bookingNote": "Prices may have changed, confirm on the booking site.",
 };

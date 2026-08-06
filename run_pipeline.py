@@ -29,6 +29,7 @@ Each task declares its own refresh interval; the driver runs a task only when
 that interval has elapsed since its last success (state in logs/pipeline_state.json).
 So you schedule ONE weekly job and each layer self-selects how often it fires:
 
+  weekly    Travelpayouts cache staging (cheap API cache reads, feeds the merge)
   weekly    fares (live Ryanair re-fetch, rolling window) + ship
   weekly    fare snapshot archive -> drift check -> model retrain -> estimates
   weekly    raw open-data mirror (src/ingestion: schedules, realtime, ADS-B)
@@ -43,12 +44,34 @@ never block the core fare refresh + ship; they retry on the next run.
   * several quarterly sources pin a YEAR / snapshot date in their own source and
     will re-emit identical data until you bump it; the task prints the reminder.
 
+FRESHNESS + STALENESS-TIERED REFRESH
+------------------------------------
+Every run (and every --dry-run) writes data/derived/freshness_report.json: per
+shipped fare slice (continent-app/public/fares/<ORIGIN>.json) the newest/oldest
+observed_at (`o`, contract A epoch days; file mtime when a slice predates
+provenance), day-price counts by source (FR/W6/VY/V7/TP/EST/legacy), and a
+staleness priority = age_days x popularity (static origin tier list below).
+Because `patch` restamps every record's `o` on each full rebuild, the report
+also folds in this driver's own refresh ledger (logs/pipeline_state.json,
+fares_freshness) so targeted refreshes stay visible between full runs.
+
+`--max-origins N` turns the fares task into a targeted refresh: the N
+stalest-highest-priority origins (Ryanair-served only; the other carriers have
+their own weekly tasks) get their legs invalidated in cache/fare_all_origins.json,
+then the normal resume harvest re-fetches just those legs and `patch` rebuilds
+the table. Without the flag nothing changes: the weekly full refresh still
+re-fetches everything, which is what keeps the long tail from starving.
+
 USAGE
 -----
   python run_pipeline.py                     # run every task that is DUE
-  python run_pipeline.py --dry-run           # show the plan, run nothing
+  python run_pipeline.py --dry-run           # show the plan + freshness summary,
+                                             #   run nothing (report file still written)
   python run_pipeline.py --max-cadence weekly# only weekly-tier tasks (fast fares run)
   python run_pipeline.py --only fares         # force one/more tasks by key, ignore "due"
+  python run_pipeline.py --only fares --max-origins 5
+                                             # targeted: re-fetch only the 5 stalest
+                                             #   high-priority origins, then patch
   python run_pipeline.py --list              # list tasks, cadences, last-run, due?
   python run_pipeline.py --force             # bypass the other-python concurrency guard
   python run_pipeline.py --ship none         # skip the npm build at the end
@@ -103,6 +126,40 @@ def npm_exe():
 CADENCE_DAYS = {"weekly": 7, "monthly": 30, "quarterly": 90}
 CADENCE_RANK = {"weekly": 1, "monthly": 2, "quarterly": 3, "backfill": 9, "manual": 9}
 KEEP_BACKUPS = 6
+
+FARES_DIR = CONTINENT / "public" / "fares"
+DERIVED = ROOT / "data" / "derived"
+FRESHNESS_REPORT = DERIVED / "freshness_report.json"
+FARE_CACHE = CACHE / "fare_all_origins.json"
+RYANAIR_GRAPH = CACHE / "ryanair_route_graph.json"
+
+# Static popularity tiers for the staleness priority (age_days x weight).
+# "Popular pairs refresh often, the long tail rarely": the weekly full refresh
+# covers everything, a targeted --max-origins run picks from the top of this
+# ranking. Curated list of the biggest low-cost origins plus the app's home
+# market (BE/NL); everything absent weighs 1.0.
+ORIGIN_POPULARITY = {
+    3.0: [  # major
+        "STN", "LTN", "LGW", "MAN", "DUB", "CRL", "BRU", "AMS", "EIN", "BGY",
+        "MXP", "FCO", "CIA", "NAP", "MAD", "BCN", "PMI", "AGP", "ALC", "VLC",
+        "LIS", "OPO", "BER", "DUS", "CGN", "VIE", "WAW", "WMI", "KRK", "BUD",
+        "PRG", "ATH", "CPH",
+    ],
+    2.0: [  # secondary
+        "EDI", "GLA", "BRS", "LPL", "BHX", "ORK", "SNN", "BVA", "MRS", "NCE",
+        "TLS", "BOD", "NTE", "LYS", "BLQ", "VCE", "TSF", "PSA", "CTA", "PMO",
+        "BRI", "SVQ", "IBZ", "FAO", "SKG", "GDN", "POZ", "WRO", "OTP", "SOF",
+        "BEG", "ZAG", "SPU", "DBV", "RIX", "VNO", "KUN", "TLL", "HEL", "ARN",
+        "NYO", "GOT", "OSL", "TRF", "HAM", "STR", "HHN", "BSL", "GVA", "MLA",
+    ],
+}
+_ORIGIN_WEIGHT = {o: w for w, lst in ORIGIN_POPULARITY.items() for o in lst}
+
+# Mirror of continent-app/src/lib/fareFile.js: fare slices for IATA codes that
+# collide with DOS device names ship with a trailing underscore (PRN_.json).
+_RESERVED_FARE_NAMES = ({"CON", "PRN", "AUX", "NUL"}
+                        | {f"COM{i}" for i in range(10)}
+                        | {f"LPT{i}" for i in range(10)})
 
 _LOG_FH = None
 
@@ -226,6 +283,243 @@ def guard_cache_covers(cache_rel, min_ratio=0.95):
 
 
 # --------------------------------------------------------------------------- #
+# Freshness report + staleness-targeted fare refresh
+# --------------------------------------------------------------------------- #
+def fare_file_origin(path):
+    """Origin IATA for a fare slice filename, undoing the fareFile.js escape."""
+    stem = path.stem
+    if stem.endswith("_") and stem[:-1] in _RESERVED_FARE_NAMES:
+        return stem[:-1]
+    return stem
+
+
+def _day_iso(epoch_days):
+    return (date(1970, 1, 1) + timedelta(days=int(epoch_days))).isoformat()
+
+
+def _months_between(start_iso, end_iso):
+    """First-of-month keys covering [start_iso, end_iso], the fare cache's
+    month unit (mirrors harvest_all_origins.months_in_window)."""
+    sy, sm = int(start_iso[:4]), int(start_iso[5:7])
+    ey, em = int(end_iso[:4]), int(end_iso[5:7])
+    out, y, m = [], sy, sm
+    while (y, m) <= (ey, em):
+        out.append(f"{y:04d}-{m:02d}-01")
+        m += 1
+        if m == 13:
+            m = 1; y += 1
+    return out
+
+
+def _load_master():
+    return json.loads(APP_DATA.read_text(encoding="utf-8"))
+
+
+def _anchor_set(master):
+    anchors = set()
+    for d in (master.get("destinations") or {}).values():
+        if d.get("anchor_airport"):
+            anchors.add(d["anchor_airport"])
+        if d.get("tier") == "airport" and d.get("iata"):
+            anchors.add(d["iata"])
+    return anchors
+
+
+def _ledger(state):
+    """Per-origin refresh ledger. Needed because `patch` restamps every
+    record's `o` with the patch day on each full rebuild, so the wire alone
+    cannot tell a targeted-refreshed origin from an untouched one."""
+    led = state.setdefault("fares_freshness", {})
+    led.setdefault("origins", {})
+    return led
+
+
+def build_freshness_report(state):
+    """Scan the shipped fare slices and write data/derived/freshness_report.json:
+    per origin the newest/oldest observation (contract A `o` + sparse
+    out_o/ret_o, file mtime as fallback), day-price counts by source, and a
+    staleness priority (age_days x popularity). Returns the report dict."""
+    now = now_utc()
+    led = _ledger(state)
+    origins, totals = {}, {}
+    for p in sorted(FARES_DIR.glob("*.json")) if FARES_DIR.exists() else []:
+        origin = fare_file_origin(p)
+        mtime = datetime.fromtimestamp(p.stat().st_mtime, tz=timezone.utc)
+        entry = {"file": p.name}
+        obs, sources, n_days, n_anchors = [], {}, 0, 0
+        try:
+            slice_obj = json.loads(p.read_text(encoding="utf-8"))
+            if not isinstance(slice_obj, dict):
+                raise ValueError("not an object")
+        except Exception as e:
+            slice_obj = {}
+            entry["error"] = f"unreadable ({type(e).__name__})"
+        for rec in slice_obj.values():
+            if not isinstance(rec, dict):
+                continue
+            n_anchors += 1
+            if isinstance(rec.get("o"), (int, float)):
+                obs.append(int(rec["o"]))
+            for side in ("out_o", "ret_o"):
+                for v in (rec.get(side) or {}).values():
+                    if isinstance(v, (int, float)):
+                        obs.append(int(v))
+            base = rec.get("s") or "legacy"
+            for side in ("out", "ret"):
+                days = rec.get(side) or {}
+                tags = rec.get(side + "_c") or {}
+                n_days += len(days)
+                for day in days:
+                    src = tags.get(day) or base
+                    sources[src] = sources.get(src, 0) + 1
+        for s, c in sources.items():
+            totals[s] = totals.get(s, 0) + c
+        entry["n_anchors"] = n_anchors
+        entry["day_prices"] = n_days
+        entry["sources"] = dict(sorted(sources.items()))
+        if obs:
+            entry["newest_o"] = _day_iso(max(obs))
+            entry["oldest_o"] = _day_iso(min(obs))
+            entry["basis"] = "o"
+            freshest = datetime.fromtimestamp(max(obs) * 86400, tz=timezone.utc)
+        else:
+            entry["mtime"] = mtime.isoformat(timespec="seconds")
+            entry["basis"] = "mtime"
+            freshest = mtime
+        led_iso = led["origins"].get(origin) or ""
+        if led.get("full") and led["full"] > led_iso:
+            led_iso = led["full"]
+        if led_iso:
+            entry["last_pipeline_refresh"] = led_iso
+            try:
+                led_dt = datetime.fromisoformat(led_iso)
+                if led_dt > freshest:
+                    freshest = led_dt
+                    entry["basis"] = "ledger"
+            except ValueError:
+                pass
+        entry["age_days"] = round(max(0.0, (now - freshest).total_seconds() / 86400), 1)
+        entry["popularity"] = _ORIGIN_WEIGHT.get(origin, 1.0)
+        entry["priority"] = round(entry["age_days"] * entry["popularity"], 1)
+        origins[origin] = entry
+    report = {
+        "meta": {
+            "generated_at": now.isoformat(timespec="seconds"),
+            "fares_dir": "continent-app/public/fares",
+            "n_origins": len(origins),
+            "day_prices_by_source": dict(sorted(totals.items())),
+            "popularity_weights": {"major": 3.0, "secondary": 2.0, "default": 1.0},
+            "priority": "age_days x popularity; --max-origins N refreshes the highest first",
+        },
+        "origins": origins,
+    }
+    DERIVED.mkdir(parents=True, exist_ok=True)
+    FRESHNESS_REPORT.write_text(json.dumps(report, indent=1), encoding="utf-8")
+    return report
+
+
+def print_freshness_summary(report):
+    origins = report.get("origins") or {}
+    if not origins:
+        log(f"freshness: no fare slices under {FARES_DIR.relative_to(ROOT)}")
+        return
+    ages = [i["age_days"] for i in origins.values()]
+    stale = sum(1 for a in ages if a >= 14)
+    log(f"freshness: {len(origins)} origins in public/fares/; age "
+        f"{min(ages)}..{max(ages)} days; {stale} older than 14 days")
+    by_src = report["meta"]["day_prices_by_source"]
+    log("  day-prices by source: " + (", ".join(
+        f"{s} {c:,}" for s, c in sorted(by_src.items(), key=lambda kv: -kv[1])) or "-"))
+    top = sorted(origins.items(), key=lambda kv: (-kv[1]["priority"], kv[0]))[:8]
+    log("  stalest first (age x popularity): " + ", ".join(
+        f"{o} {i['priority']}" for o, i in top))
+    log(f"  report -> {FRESHNESS_REPORT.relative_to(ROOT)}")
+
+
+def pick_stalest_origins(report, n, eligible=None):
+    """Top-n origins by staleness priority, optionally filtered to an eligible
+    set (targeted refresh can only re-fetch Ryanair-served origins)."""
+    rows = [(o, i) for o, i in (report.get("origins") or {}).items()
+            if eligible is None or o in eligible]
+    rows.sort(key=lambda kv: (-kv[1]["priority"], kv[0]))
+    return [o for o, _ in rows[:n]]
+
+
+def targeted_leg_keys(targets, graph, anchors, months):
+    """Fare-cache keys (frm|to|month) a targeted refresh must invalidate:
+    both legs of every (target origin, catalogue anchor) route pair."""
+    keys = set()
+    for t in targets:
+        for a in graph.get(t) or []:
+            if a not in anchors:
+                continue
+            for m in months:
+                keys.add(f"{t}|{a}|{m}")
+                keys.add(f"{a}|{t}|{m}")
+    return keys
+
+
+def fares_targeted_step(ctx):
+    """--max-origins N: refresh only the N stalest-highest-priority origins.
+    Works entirely through the harvester's own resume semantics: drop the
+    targets' legs from cache/fare_all_origins.json, let `harvest` re-fetch
+    exactly the missing legs, then `patch` rebuilds the table as usual (which
+    also re-merges the TP staging). The window is NOT rolled; only the weekly
+    full refresh does that."""
+    n = ctx["max_origins"]
+    state = ctx["state"]
+    if not FARE_CACHE.exists():
+        log("  no cache/fare_all_origins.json: a targeted run can only invalidate")
+        log("  slices of an existing harvest. Run the full `fares` task first.")
+        return False
+    if not RYANAIR_GRAPH.exists():
+        if run_cmd([PY, "pipeline/harvest_all_origins.py", "graph"]) != 0:
+            return False
+    graph = json.loads(RYANAIR_GRAPH.read_text(encoding="utf-8"))
+    eligible = {o for o, dests in graph.items() if dests}
+
+    report = build_freshness_report(state)
+    targets = pick_stalest_origins(report, n, eligible=eligible)
+    if not targets:
+        log("  freshness report lists no Ryanair-served origins; nothing to refresh")
+        return False
+    log("  targeted refresh, stalest first (age x popularity): " + ", ".join(
+        f"{o} (age {report['origins'][o]['age_days']}d, prio "
+        f"{report['origins'][o]['priority']})" for o in targets))
+
+    master = _load_master()
+    meta = master.get("meta") or {}
+    start_iso, end_iso = meta.get("start_date"), meta.get("end_date")
+    if not start_iso or not end_iso:
+        log("  master has no fare window (meta.start_date/end_date); run the full task")
+        return False
+    if start_iso == date.today().isoformat():
+        log("  note: window rolled today, an interrupted full refresh may be pending;")
+        log("  its missing legs will be resumed too (extra calls beyond the targets).")
+
+    months = _months_between(start_iso, end_iso)
+    cache = json.loads(FARE_CACHE.read_text(encoding="utf-8"))
+    keys = targeted_leg_keys(targets, graph, _anchor_set(master), months)
+    dropped = 0
+    for k in keys:
+        if k in cache:
+            del cache[k]
+            dropped += 1
+    if dropped:
+        FARE_CACHE.write_text(json.dumps(cache, indent=0), encoding="utf-8")
+    log(f"  invalidated {dropped} of {len(keys)} target legs in the fare cache; re-fetching")
+
+    if run_cmd([PY, "pipeline/harvest_all_origins.py", "harvest"]) != 0:
+        return False
+    if run_cmd([PY, "pipeline/harvest_all_origins.py", "patch"]) != 0:
+        return False
+    stamp = now_utc().isoformat()
+    for t in targets:
+        _ledger(state)["origins"][t] = stamp
+    return True
+
+
+# --------------------------------------------------------------------------- #
 # Custom step: fares (resume-if-interrupted, else rolling refresh)
 # --------------------------------------------------------------------------- #
 def fares_step(ctx):
@@ -233,8 +527,10 @@ def fares_step(ctx):
     actually ships as public/fares/). If a previous refresh was interrupted -
     window already rolled to today AND a partial fare cache exists - RESUME it
     (harvest+patch) instead of deleting the cache and restarting the ~hours-long
-    fetch. Otherwise do a full rolling refresh."""
-    fares_cache = CACHE / "fare_all_origins.json"
+    fetch. Otherwise do a full rolling refresh. With --max-origins N the step
+    becomes a staleness-targeted partial refresh instead (fares_targeted_step)."""
+    if ctx.get("max_origins"):
+        return fares_targeted_step(ctx)
     today = date.today().isoformat()
     try:
         meta = json.loads(APP_DATA.read_text(encoding="utf-8"))["meta"]
@@ -242,19 +538,23 @@ def fares_step(ctx):
     except Exception:
         window_is_current = False
 
-    graph = CACHE / "ryanair_route_graph.json"
-    if not graph.exists():
+    if not RYANAIR_GRAPH.exists():
         if run_cmd([PY, "pipeline/harvest_all_origins.py", "graph"]) != 0:
             return False
 
-    if window_is_current and fares_cache.exists():
+    if window_is_current and FARE_CACHE.exists():
         log("  window already rolled to today with a partial cache -> RESUME (harvest+patch)")
         if run_cmd([PY, "pipeline/harvest_all_origins.py", "harvest"]) != 0:
             return False
-        return run_cmd([PY, "pipeline/harvest_all_origins.py", "patch"]) == 0
-
-    log("  rolling fare window forward and re-fetching live (refresh)")
-    return run_cmd([PY, "pipeline/harvest_all_origins.py", "refresh"]) == 0
+        ok = run_cmd([PY, "pipeline/harvest_all_origins.py", "patch"]) == 0
+    else:
+        log("  rolling fare window forward and re-fetching live (refresh)")
+        ok = run_cmd([PY, "pipeline/harvest_all_origins.py", "refresh"]) == 0
+    if ok:
+        # A full refresh re-fetched every origin; the per-origin ledger
+        # entries are superseded by this stamp.
+        _ledger(ctx["state"])["full"] = now_utc().isoformat()
+    return ok
 
 
 def wizz_step(ctx):
@@ -380,6 +680,19 @@ def fame_step(ctx):
 #   guard(ctx)      optional; (ok, reason). ok=False SKIPS (not a failure)
 #   note            printed reminder (e.g. "bump the YEAR first")
 TASKS = [
+    {
+        "key": "tp_stage",
+        "title": "Travelpayouts cache staging -> data/derived/tp_fares.json",
+        "cadence": "weekly",
+        "writes_app_data": False,
+        "soft": True,
+        "cmds": [[PY, "-m", "src.ingestion.run_all", "--only", "travelpayouts"]],
+        "note": ("cheap (provider-encouraged API cache reads, no scraping), so it can "
+                 "run as often as the pipeline itself. Ordered BEFORE `fares` so the "
+                 "patch merges fresh staging. Missing TRAVELPAYOUTS_TOKEN -> the "
+                 "collector SKIPs cleanly. Also part of the weekly `ingestion` sweep; "
+                 "the duplicate run is harmless."),
+    },
     {
         "key": "fares",
         "title": "Live Ryanair fares (rolling window) -> public/fares",
@@ -699,6 +1012,11 @@ def main():
     ap.add_argument("--only", help="comma-list of task keys to force-run (ignores 'due')")
     ap.add_argument("--max-cadence", choices=["weekly", "monthly", "quarterly"],
                     help="only run tasks at or faster than this tier")
+    ap.add_argument("--max-origins", type=int, metavar="N",
+                    help="fares task only: targeted refresh of the N stalest-highest-"
+                         "priority origins (age x popularity, data/derived/"
+                         "freshness_report.json) instead of the full re-fetch; "
+                         "pairs well with --only fares")
     ap.add_argument("--dry-run", action="store_true", help="print the plan, run nothing")
     ap.add_argument("--list", action="store_true", help="list tasks + last-run + due, then exit")
     ap.add_argument("--force", action="store_true", help="bypass the other-python concurrency guard")
@@ -706,6 +1024,8 @@ def main():
     ap.add_argument("--ship", choices=["build", "data", "none"], default="build",
                     help="after writers: full vite build (default), sync-only, or nothing")
     args = ap.parse_args()
+    if args.max_origins is not None and args.max_origins < 1:
+        ap.error("--max-origins must be >= 1")
 
     LOGS.mkdir(parents=True, exist_ok=True)
     global _LOG_FH
@@ -730,7 +1050,24 @@ def main():
         log(f"  - {t['key']:<14} [{t['cadence']}]  {t['title']}")
         if t.get("note"):
             log(f"      note: {t['note']}")
+    if args.max_origins and not any(t["key"] == "fares" for t in plan):
+        log(f"\n(--max-origins {args.max_origins} set but `fares` is not in this "
+            "plan; use --only fares to force it)")
     if args.dry_run:
+        log("")
+        try:
+            report = build_freshness_report(state)
+            print_freshness_summary(report)
+            if args.max_origins:
+                eligible = None
+                if RYANAIR_GRAPH.exists():
+                    graph = json.loads(RYANAIR_GRAPH.read_text(encoding="utf-8"))
+                    eligible = {o for o, dests in graph.items() if dests}
+                targets = pick_stalest_origins(report, args.max_origins, eligible)
+                log(f"  --max-origins {args.max_origins}: the fares task would "
+                    "re-fetch only: " + (", ".join(targets) or "-"))
+        except Exception as e:
+            log(f"(freshness report failed: {type(e).__name__}: {e})")
         log("\n--dry-run: nothing executed.")
         return 0
 
@@ -750,7 +1087,8 @@ def main():
             return 2
         LOCK.write_text(f"{os.getpid()} {now_utc().isoformat()}\n", encoding="utf-8")
 
-    ctx = {"dest_count": dest_count()}
+    ctx = {"dest_count": dest_count(), "state": state,
+           "max_origins": args.max_origins}
     backed_up = False
     ran, skipped, failed, soft_failed = [], [], [], []
     try:
@@ -831,6 +1169,14 @@ def main():
             if rc != 0:
                 log("  ! build FAILED - data written to app_data.json but not shipped.")
                 failed.append("ship")
+
+    # Freshness report, regenerated AFTER the ship because public/fares/ is only
+    # rewritten by the build/sync: this is the age of what the app now serves.
+    log("")
+    try:
+        print_freshness_summary(build_freshness_report(state))
+    except Exception as e:
+        log(f"(freshness report failed: {type(e).__name__}: {e})")
 
     log("\n" + "=" * 70)
     log(f"done. ran={ran or '-'}  skipped={skipped or '-'}  failed={failed or '-'}"

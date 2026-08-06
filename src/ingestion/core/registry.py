@@ -37,10 +37,13 @@ MODULES = [
     "maritime.nordic_ferries",
     "maritime.greece",
     "maritime.ferryhopper",
+    # Long distance bus networks
+    "bus.flixbus_gtfs",
     # Historical pricing and yield proxies
     "pricing.renfe_kaggle",
     "pricing.ryanair_archive",
     "pricing.sncf_availability",
+    "pricing.travelpayouts",
     # Exogenous demand catalysts (holiday calendars for the estimation model)
     "events.holidays",
 ]

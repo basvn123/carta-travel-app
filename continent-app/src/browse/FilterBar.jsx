@@ -9,6 +9,7 @@ import { eur } from '../lib/format.js';
 import { offeredStayTiers } from '../lib/runtime_pricing.js';
 import { useI18n } from '../i18n/index.jsx';
 import { NumberField, DualRange } from '../components/FilterControls.jsx';
+import { ReachFilter } from '../components/ReachFilter.jsx';
 import {
   isFullRatingRange, FULL_RATING_RANGE, RATING_MIN, RATING_MAX,
 } from '../lib/rating.js';
@@ -30,6 +31,8 @@ export function FilterBar({
   unescoOnly, setUnescoOnly,
   topBeachOnly, setTopBeachOnly,
   topPick, setTopPick,
+  reachHours, setReachHours,
+  reachAvailable,
   onOpenLifestyle,
 }) {
   const { t } = useI18n();
@@ -101,6 +104,9 @@ export function FilterBar({
     topBeachOnly,
     !!topPick,
     priceNarrowed,
+    // Counted only while it can bite: with no reach data the filter is inert,
+    // and a badge for it would claim the map is narrowed when it is not.
+    reachAvailable && reachHours != null,
   ].filter(Boolean).length;
   const anyFilterActive = activeFilters > 0;
 
@@ -112,6 +118,7 @@ export function FilterBar({
     setUnescoOnly(false);
     setTopBeachOnly(false);
     setTopPick(null);
+    setReachHours(null);
     if (priceBounds) setPriceRange(priceBounds);
   };
 
@@ -470,6 +477,15 @@ export function FilterBar({
                           </div>
                         </div>
                       )}
+
+                      {/* Travel time: keep only what the reach table says is
+                          under N hours from the departure airport. Pairs with
+                          the price window above: under X euros AND N hours. */}
+                      <ReachFilter
+                        value={reachHours}
+                        onChange={setReachHours}
+                        available={reachAvailable}
+                      />
 
                       {/* Top picks: quick "best of" shortcuts (cheapest / best rated) */}
                       <div className="filter filter-toppicks">

@@ -39,7 +39,7 @@ function unpackLifestyle(s) {
 export function encodeState({
   departDate, returnDate, choices, priceMode, countryFilter,
   tripKinds, priceRange, priceBounds, selectedId, favorites, sortKey, showFavOnly,
-  ratingRange, gemOnly, unescoOnly, topBeachOnly, topPick, activeTab,
+  ratingRange, gemOnly, unescoOnly, topBeachOnly, topPick, reachHours, activeTab,
 }) {
   const q = new URLSearchParams();
   if (activeTab && activeTab !== 'map') q.set('tab', activeTab);
@@ -81,6 +81,8 @@ export function encodeState({
   if (unescoOnly) q.set('un', '1');
   if (topBeachOnly) q.set('tb', '1');
   if (topPick && topPick.by && topPick.n) q.set('top', `${topPick.by}.${topPick.n}`);
+  // "Reachable within N hours" cutoff, whole hours (see ReachFilter).
+  if (Number.isFinite(reachHours) && reachHours > 0) q.set('rh', String(Math.round(reachHours)));
   const ls = packLifestyle(choices?.lifestyle);
   if (ls) q.set('ls', ls);
   return q.toString();
@@ -140,6 +142,10 @@ export function decodeState(search) {
     const [by, n] = q.get('top').split('.');
     const count = parseInt(n, 10);
     if ((by === 'price' || by === 'beauty') && count > 0) out.topPick = { by, n: count };
+  }
+  if (has('rh')) {
+    const h = parseInt(q.get('rh'), 10);
+    if (Number.isFinite(h) && h > 0 && h <= 48) out.reachHours = h;
   }
   const ls = unpackLifestyle(q.get('ls'));
   if (ls) out.lifestyle = ls;
