@@ -1,8 +1,77 @@
 import { useState } from 'react';
-import { StarIcon, InfoIcon } from '../components/Icons.jsx';
-import { isMustSee, poiKind, poiRating } from './dayDraft.js';
-import { ScoreChip } from '../components/RatingBadge.jsx';
+import {
+  StarIcon, InfoIcon, HomeIcon, BeachIcon, MountainIcon, CastleIcon,
+} from '../components/Icons.jsx';
+import { isMustSee, poiKind, poiMapCat } from './dayDraft.js';
 import { safeUrl } from '../lib/format.js';
+
+/** A place with no photo still deserves a thumbnail that says what it is.
+ *  The glyphs match the map pins (town / nature / active / sight), so a row
+ *  and its pin read as the same thing. */
+const THUMB_GLYPH = { town: HomeIcon, beach: BeachIcon, active: MountainIcon, sight: CastleIcon };
+
+/** The one thumbnail every list of places uses: the photo when the catalogue
+ *  has one, its category glyph when it does not. `cat` is a poiMapCat key and
+ *  `Glyph` overrides it for places that are not catalogue rows at all (a bot
+ *  find has no category to speak of). */
+export function PoiThumb({ img, cat, name, Glyph }) {
+  // Some harvested photo URLs are dead (Wikimedia 400s on a few of the 640px
+  // thumbnails). A CSS background cannot tell, so it paints an empty tinted
+  // square; a real <img> can say it failed and hand the row back to its glyph.
+  const [failed, setFailed] = useState(false);
+  if (img && !failed) {
+    return (
+      <img
+        className="day-thumb"
+        src={img}
+        alt={name || ''}
+        loading="lazy"
+        decoding="async"
+        onError={() => setFailed(true)}
+      />
+    );
+  }
+  const Fallback = Glyph || THUMB_GLYPH[cat] || CastleIcon;
+  return (
+    <span className="day-thumb day-thumb-empty" aria-hidden="true">
+      <Fallback size={19} />
+    </span>
+  );
+}
+
+function ItemThumb({ item }) {
+  return <PoiThumb img={item.img} cat={poiMapCat(item)} name={item.name} />;
+}
+
+/** Name first, badges under it. The name owns its whole line (wrapping, never
+ *  truncating: "Hohensalzburg Fortress" must not render as "H..."), and the
+ *  badge row beneath carries only marks that differentiate: the must-see
+ *  star, the heritage register, a custom place's origin. The rating chip is
+ *  gone from these lists on purpose: with nearly every card wearing the same
+ *  8.7 it ranked nothing and only crowded the title out of its own row. */
+function RowTitle({ item, must }) {
+  const badges = [
+    must && <span key="m" className="day-badge-must" title="A true must-see here"><StarIcon size={9} /></span>,
+    item.heritage && <span key="h" className="day-badge-heritage" title="On a cultural-heritage register">heritage</span>,
+    item.custom && (
+      <span
+        key="c"
+        className="day-badge-custom"
+        title={item.unmapped
+          ? 'Your own place. Location approximate: shown at the city centre'
+          : 'Your own place, added to this plan by you'}
+      >
+        custom{item.unmapped ? ', location approximate' : ''}
+      </span>
+    ),
+  ].filter(Boolean);
+  return (
+    <span className="day-assigned-name">
+      <span className="day-assigned-title">{item.name}</span>
+      {badges.length > 0 && <span className="day-assigned-badges">{badges}</span>}
+    </span>
+  );
+}
 
 /** The expandable what-is-this panel behind every ⓘ: photo first, then the
  *  description, then Wikipedia. Time-planning numbers stay out of it on
@@ -54,20 +123,22 @@ export function Collapsible({ title, titleIcon, count, summary, defaultOpen = fa
   );
 }
 
-export function AssignedRow({ item, index, last, onMoveUp, onMoveDown, onRemove }) {
+/** One stop of the planned day. The name is never truncated here: a row whose
+ *  title reads "Erzabtei Sankt..." tells a traveller nothing. Under it sits the
+ *  sentence that says what the place is (the bot's reason when the day was
+ *  imported, the catalogue description otherwise) and the visit estimate, so
+ *  the timeline carries context instead of a clock. */
+export function AssignedRow({ item, index, last, stayLabel, note, noteFromAi, onMoveUp, onMoveDown, onRemove }) {
   const [infoOpen, setInfoOpen] = useState(false);
   return (
     <div className="day-timeline-row">
       <div className="day-timeline-num">{index + 1}</div>
       <div className="day-assigned-row day-assigned-with-info">
-        {item.img && <span className="day-thumb" style={{ backgroundImage: `url(${item.img})` }} />}
+        {/* Always a thumbnail, photo or glyph: a timeline where only some rows
+            carry a picture reads as a list with holes punched in it. */}
+        <ItemThumb item={item} />
         <div className="day-assigned-body">
-          <span className="day-assigned-name">
-            {item.name}
-            <ScoreChip rating={poiRating(item)} />
-            {isMustSee(item) && <span className="day-badge-must" title="A true must-see here"><StarIcon size={9} /></span>}
-            {item.heritage && <span className="day-badge-heritage" title="On a cultural-heritage register">heritage</span>}
-          </span>
+          <RowTitle item={item} must={isMustSee(item)} />
           <span className="day-assigned-kind">
             {poiKind(item)}
           </span>
@@ -83,6 +154,15 @@ export function AssignedRow({ item, index, last, onMoveUp, onMoveDown, onRemove 
           <button className="trip-stop-move" onClick={onMoveDown} disabled={last} aria-label="Move later" title="Move later">↓</button>
           <button className="trip-stop-remove" onClick={onRemove} aria-label="Remove" title="Remove">×</button>
         </div>
+        {/* The narrative and the visit estimate wrap onto their own full-width
+            line of the card. Kept inside the title column they would have had
+            about 160px to work with, which is four words before the clamp. */}
+        {(note || stayLabel) && (
+          <div className="day-assigned-foot">
+            {note && <p className={`day-assigned-note${noteFromAi ? ' from-ai' : ''}`}>{note}</p>}
+            {stayLabel && <span className="day-assigned-when">{stayLabel}</span>}
+          </div>
+        )}
         {infoOpen && <ActivityDetail item={item} className="day-activity-detail day-timeline-detail" />}
       </div>
     </div>
@@ -128,16 +208,9 @@ export function ActivityRow({ item, variant, added, onToggle, note }) {
   return (
     <div className={`day-activity-row day-activity-rich ${variant} ${added ? 'added' : ''}`}>
       <button className="day-activity-main" onClick={onToggle}>
-        {item.img
-          ? <span className="day-thumb" style={{ backgroundImage: `url(${item.img})` }} />
-          : <span className="day-thumb day-thumb-empty" aria-hidden="true">{(item.kind || '').slice(0, 1)}</span>}
+        <ItemThumb item={item} />
         <span className="day-assigned-body">
-          <span className="day-assigned-name">
-            {item.name}
-            <ScoreChip rating={poiRating(item)} />
-            {(variant === 'must' || isMustSee(item)) && <span className="day-badge-must" title="A true must-see here"><StarIcon size={9} /></span>}
-            {item.heritage && <span className="day-badge-heritage" title="On a cultural-heritage register">heritage</span>}
-          </span>
+          <RowTitle item={item} must={variant === 'must' || isMustSee(item)} />
           <span className="day-assigned-kind">{poiKind(item)}</span>
           {note && <span className="day-poi-note">{note}</span>}
         </span>

@@ -85,6 +85,9 @@ const strOrNull = (v) => (typeof v === 'string' && v ? v.slice(0, 40) : null);
 const oneOf = (v, opts, dflt) => (opts.includes(v) ? v : dflt);
 
 const LEG_MODES = new Set(['train', 'bus', 'car']);
+// Hops the sender booked themselves; they travel with a price because Carta
+// cannot re-derive one at the other end.
+const OWN_LEG_MODES = new Set(['fly', 'ferry']);
 
 /** Whitelist + clamp a decoded payload into a safe draft; null when unusable. */
 function sanitizeShared(d) {
@@ -106,6 +109,16 @@ function sanitizeShared(d) {
     }
   }
 
+  const ownLegs = {};
+  if (d.ownLegs && typeof d.ownLegs === 'object') {
+    for (const [k, v] of Object.entries(d.ownLegs)) {
+      const i = Number(k);
+      if (!Number.isInteger(i) || i < 0 || i >= stops.length) continue;
+      if (!v || typeof v !== 'object' || !OWN_LEG_MODES.has(v.mode)) continue;
+      ownLegs[i] = { mode: v.mode, eur: clampInt(v.eur, 0, 99999, 0) };
+    }
+  }
+
   const ownFlight = d.ownFlight && typeof d.ownFlight === 'object'
     ? {
       airline: String(d.ownFlight.airline || '').slice(0, 60),
@@ -119,6 +132,7 @@ function sanitizeShared(d) {
     tripStart: isIsoDate(d.tripStart) ? d.tripStart : '',
     stops,
     legModes,
+    ownLegs,
     ownFlight,
     groupSize: clampInt(d.groupSize, 1, 20, 2),
     transportPref: oneOf(d.transportPref, ['auto', 'car', 'owncar', 'public'], 'auto'),
@@ -156,15 +170,22 @@ export async function decodeTripShare(raw) {
  * bar in the same breath (a reload should not re-prompt). Auth hashes and
  * anything else that is not ours are left untouched. Synchronous, so it can
  * run in a useState initializer before useUrlSync's first URL write.
+ *
+ * Idempotent: the first read is cached, because stripping the hash is a side
+ * effect and React StrictMode double-invokes state initializers in dev - the
+ * second call used to find an already-stripped hash and return null, silently
+ * discarding every share link in development.
  */
+let readResult;
 export function readTripShareFromUrl() {
+  if (readResult !== undefined) return readResult;
   if (typeof window === 'undefined') return null;
   const hash = window.location.hash || '';
-  if (!hash.startsWith('#') || !hash.includes(`${PARAM}=`)) return null;
+  if (!hash.startsWith('#') || !hash.includes(`${PARAM}=`)) return (readResult = null);
   const raw = new URLSearchParams(hash.slice(1)).get(PARAM);
-  if (!raw) return null;
+  if (!raw) return (readResult = null);
   try {
     window.history.replaceState(null, '', window.location.pathname + window.location.search);
   } catch { /* the decode still works; only the address bar stays busy */ }
-  return raw;
+  return (readResult = raw);
 }

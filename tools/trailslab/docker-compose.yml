@@ -1,0 +1,37 @@
+# Trails and daytrips content lab: local PostGIS + pgRouting staging DB.
+# Local-only by design. This stack never touches the live Supabase project;
+# publishing to production is a separate, explicit export step.
+#
+# Image tag scheme is <postgres>-<postgis>-<pgrouting>. Any recent combination
+# works; bump deliberately and re-run the smoke test after changing it.
+#
+# Usage, from this directory:
+#   docker compose up -d
+#   python ../../pipeline/trails/smoke_test.py   (from the repo root: python pipeline/trails/smoke_test.py)
+
+services:
+  trailslab-db:
+    image: pgrouting/pgrouting:17-3.5-3.7
+    container_name: trailslab-db
+    # 5433 on the host: the machine already runs a native PostgreSQL on 5432.
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_DB: trailslab
+      POSTGRES_USER: trailslab
+      # Local development password, matches pipeline/trails/db.py defaults.
+      # Override via TRAILSLAB_PASSWORD in the repo-root .env if you change it.
+      POSTGRES_PASSWORD: trailslab
+    volumes:
+      # Everything in initdb/ runs once, on first start with an empty volume.
+      # To re-apply after schema edits: docker compose down -v && docker compose up -d
+      - ./initdb:/docker-entrypoint-initdb.d:ro
+      - trailslab_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U trailslab -d trailslab"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+volumes:
+  trailslab_pgdata:

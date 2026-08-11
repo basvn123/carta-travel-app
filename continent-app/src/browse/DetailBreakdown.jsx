@@ -1,26 +1,54 @@
 import React, { useMemo } from 'react';
 import {
   buildFlightLinks, buildAccommodationLink, buildCarRentalLink, viaNearestAirport,
+  offeredStayTiers, STAY_TIER_FIELD,
 } from '../lib/runtime_pricing.js';
 import { ScoreChip, HiddenGemTag } from '../components/RatingBadge.jsx';
 import { WaterQualityBadge } from '../components/WaterQualityBadge.jsx';
 import { CrowdingBadge } from '../components/CrowdingBadge.jsx';
 import { BestTimePanel } from './BestTimePanel.jsx';
 import { eur, PRICE_SOURCE_LABELS, ACCOM_SOURCE_LABELS } from '../lib/format.js';
-import { ReceiptIcon, CalendarIcon, BedIcon, DiningIcon, CarIcon, InfoIcon } from '../components/Icons.jsx';
+import { ReceiptIcon, CalendarIcon, BedIcon, DiningIcon, CarIcon, InfoIcon, AlertIcon, LifestyleIcon } from '../components/Icons.jsx';
 import { PlaneIcon } from '../components/TransportIcons.jsx';
 import { carrierPairName } from '../lib/carriers.js';
+import { BagCheck } from '../components/BagCheck.jsx';
+import { fareProv, estPrefix, FareTag, BookingNote } from '../components/FareProvenance.jsx';
 import { useI18n } from '../i18n/index.jsx';
 
 // Sub-components of the destination detail panel (the cost-breakdown tab and
 // its pieces), lifted out of DetailPanel. Imports are trimmed to what these use.
 
-// Small underlined text-button, used for the outbound links under each cost
-// line (Airbnb, KAYAK, Skyscanner) and the "Adjust lifestyle" action.
-function TextLink({ href, onClick, children }) {
+/** The action at the foot of a cost group: verify this price with the people
+ *  who actually sell it, or change the assumption behind it. These used to be
+ *  small underlined text links, easy to scan straight past even though they
+ *  are the only way out of an estimate and into a real booking.
+ *
+ *  variant: 'primary'   filled - the canonical place to check this line
+ *           'secondary' outlined - a further comparison site
+ *           'action'    pill - an in-app action, no navigation
+ */
+function CostAction({ href, onClick, variant = 'primary', icon, children }) {
   const props = href ? { href, target: '_blank', rel: 'noreferrer' } : { onClick, type: 'button' };
   const Tag = href ? 'a' : 'button';
-  return <Tag className="detail-text-link" {...props}>{children}</Tag>;
+  return (
+    <Tag className={`cost-action is-${variant}`} {...props}>
+      {icon}
+      <span>{children}</span>
+      {href && <span className="cost-action-out" aria-hidden="true">↗</span>}
+    </Tag>
+  );
+}
+
+/** A caution inside a cost group (no flight on these dates, a vignette you
+ *  must buy before you drive). Amber and icon-led, because these are the lines
+ *  that cost money or block the trip if they're read as decoration. */
+function CostWarning({ children }) {
+  return (
+    <div className="cost-warning">
+      <AlertIcon size={14} />
+      <span>{children}</span>
+    </div>
+  );
 }
 
 function CostGroup({ icon, title, subtitle, subtotal, open, onToggle, infoButton, infoPanel, children }) {
@@ -90,6 +118,9 @@ export function BreakdownTab({ destination, breakdown, departDate, returnDate, c
   const { t } = useI18n();
   const group = Math.max(1, choices.group_size || 1);
   const originCity = data?.meta?.origins?.[data?.meta?.selected_origin]?.city || t('detail.yourAirport');
+  // A drive is measured from the traveller's own town once they have named it,
+  // so the receipt must say that town and not the departure airport's city.
+  const driveFromCity = breakdown.drive_from || originCity;
   // The traveller asked to fly but no fare exists for these dates, so the
   // price shown is a DRIVE, say so loudly instead of a quiet "drive from
   // home", and offer real fly-via-nearby-airport alternatives.
@@ -137,6 +168,9 @@ export function BreakdownTab({ destination, breakdown, departDate, returnDate, c
   const fareCarrier = carrierPairName(
     destination.routes?.[breakdown.origin], departDate, returnDate,
   );
+  // Provenance of the shown fare (contract A fields on the hydrated route,
+  // when the fare pipeline ships them): age chip + estimate styling.
+  const flightFareProv = fareProv(destination.routes?.[breakdown.origin]);
 
   const flightLinks = (() => {
     if (breakdown.transport_mode !== 'plane' || breakdown.fare_total == null) return [];
@@ -162,7 +196,7 @@ export function BreakdownTab({ destination, breakdown, departDate, returnDate, c
           icon={breakdown.transport_mode === 'car' ? <CarIcon size={15} /> : <PlaneIcon size={15} />}
           title={t('detail.gettingThere')}
           subtitle={breakdown.transport_mode === 'car'
-            ? (flyFellBack ? t('detail.noFlightDriveFrom', { origin: originCity }) : t('detail.driveFrom', { origin: originCity }))
+            ? (flyFellBack ? t('detail.noFlightDriveFrom', { origin: driveFromCity }) : t('detail.driveFrom', { origin: driveFromCity }))
             : t('detail.ryanairRoundTrip', { carrier: fareCarrier })}
           subtotal={transportSubtotal}
           open={openGroups.transport}
@@ -170,9 +204,9 @@ export function BreakdownTab({ destination, breakdown, departDate, returnDate, c
         >
           {flyFellBack && (
             <>
-              <p className="cost-info-pop cost-fallback-note">
+              <CostWarning>
                 {t('detail.flyFallbackNote', { origin: originCity, city: destination.city })}
-              </p>
+              </CostWarning>
               <ViaAirportOptions
                 destination={destination}
                 data={data}
@@ -204,9 +238,9 @@ export function BreakdownTab({ destination, breakdown, departDate, returnDate, c
                 <GroundLine label={t('detail.tolls')} v={show(breakdown.driving.toll_total)} eur={eur} />
               )}
               {breakdown.driving.toll_notes?.length > 0 && (
-                <p className="cost-info-pop">
+                <CostWarning>
                   {t('detail.tollNotes', { notes: breakdown.driving.toll_notes.join(', ') })}
-                </p>
+                </CostWarning>
               )}
             </>
           ) : (
@@ -214,13 +248,14 @@ export function BreakdownTab({ destination, breakdown, departDate, returnDate, c
               <div className="total-row">
                 <span className="label">
                   {t('detail.flight')}
+                  <FareTag prov={flightFareProv} />
                   <small>
                     {destination.tier === 'gem' && anchorCity
                       ? t('detail.fareViaAnchor', { city: anchorCity, carrier: fareCarrier })
                       : t('detail.fareRoundTrip', { carrier: fareCarrier })}
                   </small>
                 </span>
-                <span className="val">{eur(show(breakdown.fare_total))}</span>
+                <span className="val">{`${estPrefix(flightFareProv)}${eur(show(breakdown.fare_total))}`}</span>
               </div>
               {breakdown.baggage_per_person > 0 && (
                 <div className="total-row sub-row">
@@ -247,21 +282,32 @@ export function BreakdownTab({ destination, breakdown, departDate, returnDate, c
                   <span className="val">{eur(show(breakdown.transfer_total))}</span>
                 </div>
               )}
+              {/* The chosen tier as this route's airlines' actual bag rules:
+                  Ryanair and Wizz do not agree on a centimetre, and the gate
+                  fee is where that surprise gets expensive. */}
+              <BagCheck flight={{
+                combinable: true,
+                into_carrier: destination.routes?.[breakdown.origin]?.outbound_carrier?.[departDate],
+                out_of_carrier: destination.routes?.[breakdown.origin]?.return_carrier?.[returnDate],
+                baggage: choices.baggage_key,
+              }}
+              />
             </>
           )}
 
           <CarAdvisory lt={breakdown.local_transport} mode={breakdown.transport_mode} />
 
           <div className="cost-group-links">
-            {/* First link carries the full phrase, any further comparison site
-                is appended as a bare "or X" so the row stays scannable. */}
+            {/* First link carries the full phrase and the filled treatment, any
+                further comparison site follows as a quieter outlined button. */}
             {flightLinks.map((l, i) => (
-              <TextLink key={l.provider} href={l.href}>
+              <CostAction key={l.provider} href={l.href} variant={i === 0 ? 'primary' : 'secondary'}>
                 {i === 0
                   ? t('detail.checkFareOn', { provider: l.provider })
                   : t('detail.orCompareOn', { provider: l.provider })}
-              </TextLink>
+              </CostAction>
             ))}
+            {flightLinks.length > 0 && <BookingNote />}
           </div>
         </CostGroup>
 
@@ -299,34 +345,75 @@ export function BreakdownTab({ destination, breakdown, departDate, returnDate, c
                   departDate,
                   returnDate,
                 });
-                return carLink ? <TextLink href={carLink}>{t('detail.compareKayak')}</TextLink> : null;
+                return carLink ? (
+                  <>
+                    <CostAction href={carLink}>{t('detail.compareKayak')}</CostAction>
+                    <BookingNote />
+                  </>
+                ) : null;
               })()}
             </div>
           </CostGroup>
         )}
 
         {/* ── Your stay ── */}
-        {acc && (
+        {acc && (() => {
+          const servedTier = breakdown.stay_tier || 'home';
+          const tiers = destination.accommodation?.tiers || null;
+          // Per-tier nightly for the chip hints: dorm is per bed, the rest per room.
+          const tierOptions = offeredStayTiers(data?.meta);
+          const tierRate = Object.fromEntries(tierOptions.map((k) => [
+            k, k === 'home' ? breakdown.accom_entire_home_night_eur
+              : tiers?.[STAY_TIER_FIELD[k]],
+          ]));
+          const baseRate = servedTier === 'home'
+            ? breakdown.accom_entire_home_night_eur : acc.tier_rate_eur;
+          const linkLabel = servedTier === 'dorm' || servedTier === 'private'
+            ? t('detail.findHostelworld')
+            : servedTier.startsWith('hotel')
+              ? t('detail.findHotels') : t('detail.findAirbnb');
+          return (
           <CostGroup
             icon={<BedIcon size={15} />}
             title={breakdown.nights === 1
               ? t('detail.stayTitleOne', { n: breakdown.nights })
               : t('detail.stayTitleMany', { n: breakdown.nights })}
+            subtitle={t(`stay.${servedTier}`)}
             subtotal={staySubtotal}
             open={openGroups.stay}
             onToggle={() => toggleGroup('stay')}
             infoButton={<InfoButton open={infoOpen === 'stay'} onClick={() => toggleInfo('stay')} />}
             infoPanel={infoOpen === 'stay' && (
               <InfoFacts rows={[
-                [t('detail.infoType'), t('detail.entireHome')],
-                [t('detail.infoBaseRate'), breakdown.accom_entire_home_night_eur ? t('detail.perNightApprox', { n: Math.round(breakdown.accom_entire_home_night_eur) }) : null],
+                [t('detail.infoType'), t(`stay.${servedTier}`)],
+                [t('detail.infoBaseRate'), baseRate ? t('detail.perNightApprox', { n: Math.round(baseRate) }) : null],
                 [t('detail.infoNights'), String(breakdown.nights)],
-                [t('detail.infoFees'), t('detail.feesIncluded')],
-                [t('detail.infoAdjustedFor'), t('detail.seasonLos')],
-                [t('detail.infoSource'), accomSourceLabel],
+                [t('detail.infoFees'), servedTier === 'home' ? t('detail.feesIncluded') : t('detail.noPlatformFees')],
+                [t('detail.infoAdjustedFor'), servedTier === 'home' ? t('detail.seasonLos') : t('detail.seasonOnly')],
+                [t('detail.infoSource'), servedTier === 'home' ? accomSourceLabel : t('detail.stayTierSource')],
               ]} />
             )}
           >
+            {/* How expensive to sleep. Tapping a tier re-prices the whole map,
+                not just this destination; unmeasured tiers stay tappable but
+                say they will fall back (honesty over a dead button). */}
+            <div className="stay-tier-row" role="group" aria-label={t('filter.stay')}>
+              {tierOptions.length > 1 && tierOptions.map((k) => (
+                <button
+                  key={k}
+                  type="button"
+                  className={`stay-tier-chip${servedTier === k ? ' on' : ''}`}
+                  title={k !== 'home' && !tierRate[k] ? t('detail.stayTierUnmeasuredTitle') : undefined}
+                  onClick={() => setChoices({ ...choices, stay_tier: k })}
+                >
+                  <span>{t(`stay.${k}`)}</span>
+                  {tierRate[k] > 0 && <b>{Math.round(tierRate[k])}</b>}
+                </button>
+              ))}
+            </div>
+            {breakdown.stay_tier_fallback && (
+              <CostWarning>{t('detail.stayTierFallback', { tier: t(`stay.${acc.tier_requested}`) })}</CostWarning>
+            )}
             <GroundLine label={t('detail.lodging')}     v={show(groundGroup(acc.lodging))}  eur={eur} />
             <GroundLine label={t('detail.cleaningFee')} v={show(groundGroup(acc.cleaning))} eur={eur} />
             <GroundLine label={t('detail.serviceFee')}  v={show(groundGroup(acc.service))}  eur={eur} />
@@ -341,18 +428,25 @@ export function BreakdownTab({ destination, breakdown, departDate, returnDate, c
             )}
             <div className="cost-group-links">
               {(() => {
-                const airbnb = buildAccommodationLink({
+                const link = buildAccommodationLink({
                   city: destination.city,
                   country: destination.country,
                   departDate,
                   returnDate,
                   groupSize: choices.group_size,
+                  stayTier: servedTier,
                 });
-                return airbnb ? <TextLink href={airbnb}>{t('detail.findAirbnb')}</TextLink> : null;
+                return link ? (
+                  <>
+                    <CostAction href={link}>{linkLabel}</CostAction>
+                    <BookingNote />
+                  </>
+                ) : null;
               })()}
             </div>
           </CostGroup>
-        )}
+          );
+        })()}
 
         {/* ── On the ground ── */}
         {g && (
@@ -380,30 +474,38 @@ export function BreakdownTab({ destination, breakdown, departDate, returnDate, c
             {g.clubbing > 0 && <GroundLine label={t('detail.clubNights')} v={show(groundGroup(g.clubbing))} eur={eur} />}
             {g.coffees > 0 && <GroundLine label={t('detail.coffees')} v={show(groundGroup(g.coffees))} eur={eur} rate={destination.costs?.coffee_eur} />}
             <GroundLine label={t('detail.groceries')}   v={show(groundGroup(g.groceries))} eur={eur} />
+            {/* This one control re-prices every line above it, so it reads as a
+                real button rather than a footnote. */}
             <div className="cost-group-links">
-              <TextLink onClick={onOpenLifestyle}>{t('detail.adjustLifestyle')}</TextLink>
+              <CostAction variant="action" onClick={onOpenLifestyle} icon={<LifestyleIcon size={13} />}>
+                {t('detail.adjustLifestyle')}
+              </CostAction>
             </div>
           </CostGroup>
         )}
 
         {/* ── Grand total: styled like the lifestyle panel's summary card, with
-              the per-person figure always visible and emphasised. ── */}
-        <div className="cost-total-card">
-          <div className="cost-total-main">
-            <span className="cost-total-label">
-              {t('detail.totalPerPerson')}
-              <small>{breakdown.nights === 1
-                ? t('detail.nightsEverythingOne', { n: breakdown.nights })
-                : t('detail.nightsEverythingMany', { n: breakdown.nights })}</small>
-            </span>
-            <span className="cost-total-val">{eur(breakdown.grand_total / group)}</span>
-          </div>
-          {group > 1 && (
-            <div className="cost-total-sub">
-              <span>{t('detail.wholeGroup', { n: group })}</span>
-              <span>{eur(breakdown.grand_total)}</span>
+              the per-person figure always visible and emphasised. It sticks to
+              the foot of the panel while the groups above are being read, so
+              the number the whole panel is explaining never scrolls away. ── */}
+        <div className="cost-total-sticky">
+          <div className="cost-total-card">
+            <div className="cost-total-main">
+              <span className="cost-total-label">
+                {t('detail.totalPerPerson')}
+                <small>{breakdown.nights === 1
+                  ? t('detail.nightsEverythingOne', { n: breakdown.nights })
+                  : t('detail.nightsEverythingMany', { n: breakdown.nights })}</small>
+              </span>
+              <span className="cost-total-val">{eur(breakdown.grand_total / group)}</span>
             </div>
-          )}
+            {group > 1 && (
+              <div className="cost-total-sub">
+                <span>{t('detail.wholeGroup', { n: group })}</span>
+                <span>{eur(breakdown.grand_total)}</span>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </>

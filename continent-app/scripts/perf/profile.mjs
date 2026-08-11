@@ -60,15 +60,19 @@ async function measure({ synthetic, throttle }) {
   }
 
   const t0 = Date.now();
-  await page.goto(BASE, { waitUntil: 'domcontentloaded' });
+  // The app now opens on the Home tab; ?tab=map lands straight on the browse
+  // map so the row/map waits below still see visible elements.
+  await page.goto(`${BASE}/?tab=map`, { waitUntil: 'domcontentloaded' });
   await page.locator('.result-row').first().waitFor({ timeout: 240000 });
   const tRows = Date.now() - t0;
   await page.locator('.maplibregl-canvas').waitFor({ timeout: 120000 });
   const tMap = Date.now() - t0;
   const loadLongTasks = await page.evaluate(() => Math.round(window.__lt.reduce((a, b) => a + b, 0)));
 
-  // Clear the fare notice so interactions are not blocked by the overlay.
-  try { await page.getByRole('button', { name: 'Got it' }).click({ timeout: 5000 }); } catch { /* absent */ }
+  // Clear the first-visit welcome landing (formerly the fare notice) so
+  // interactions are not blocked by the overlay.
+  try { await page.getByRole('button', { name: 'Explore the map' }).click({ timeout: 5000 }); } catch { /* absent */ }
+  try { await page.getByRole('button', { name: 'Got it' }).click({ timeout: 2000 }); } catch { /* absent */ }
 
   // Interaction 1: free-text search narrowing the whole set (180ms debounce
   // included in the raw number; reported with it subtracted).
@@ -89,11 +93,39 @@ async function measure({ synthetic, throttle }) {
   const ppMs = Date.now() - t1;
   const interLongTasks = await page.evaluate(() => Math.round(window.__lt.reduce((a, b) => a + b, 0)));
 
+  // Interaction 3: map pan + zoom. The load metrics never exercise the WebGL
+  // pin layers; symbol collision placement runs on the main thread and scales
+  // with the number of placed labels, so this is where a 25k symbol source
+  // would actually hurt. Scripted wheel-zoom to city level over Munich, a
+  // drag-pan, then zoom back out; the long-task total during the sequence is
+  // the metric (wall time is dominated by the fixed settle waits).
+  const canvas = page.locator('.maplibregl-canvas');
+  const box = await canvas.boundingBox();
+  const cx = box.x + box.width * 0.62, cy = box.y + box.height * 0.5;
+  await page.evaluate(() => { window.__lt.length = 0; });
+  for (let i = 0; i < 6; i += 1) {
+    await page.mouse.move(cx, cy);
+    await page.mouse.wheel(0, -400);
+    await page.waitForTimeout(350);
+  }
+  await page.mouse.move(cx, cy);
+  await page.mouse.down();
+  await page.mouse.move(cx - 220, cy - 120, { steps: 12 });
+  await page.mouse.up();
+  await page.waitForTimeout(500);
+  for (let i = 0; i < 6; i += 1) {
+    await page.mouse.move(cx, cy);
+    await page.mouse.wheel(0, 400);
+    await page.waitForTimeout(350);
+  }
+  await page.waitForTimeout(800);
+  const mapLongTasks = await page.evaluate(() => Math.round(window.__lt.reduce((a, b) => a + b, 0)));
+
   const heapMB = await page.evaluate(() => (performance.memory ? Math.round(performance.memory.usedJSHeapSize / 1048576) : null));
   const rowCount = await page.evaluate(() => document.querySelectorAll('.result-row').length);
 
   await browser.close();
-  return { tRows, tMap, loadLongTasks, searchMs, ppMs, interLongTasks, heapMB, rowCount };
+  return { tRows, tMap, loadLongTasks, searchMs, ppMs, interLongTasks, mapLongTasks, heapMB, rowCount };
 }
 
 try {
@@ -112,6 +144,7 @@ try {
     console.log(`  search narrow:        ${m.searchMs} ms (debounce removed)`);
     console.log(`  total->pp toggle:     ${m.ppMs} ms`);
     console.log(`  long tasks (interact):${m.interLongTasks} ms blocked`);
+    console.log(`  map pan/zoom:         ${m.mapLongTasks} ms blocked`);
     console.log(`  JS heap:              ${m.heapMB} MB, DOM rows: ${m.rowCount}`);
   }
 } finally {

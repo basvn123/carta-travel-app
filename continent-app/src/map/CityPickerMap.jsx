@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
-import { hasLngLat } from './coords.js';
+import { hasLngLat, keepFitted } from './coords.js';
 
 const MAP_STYLE = 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json';
 
@@ -48,6 +48,7 @@ export function CityPickerMap({ cities = [], onToggle, onFocus, anchor = null })
   onToggleRef.current = onToggle;
   const onFocusRef = useRef(onFocus);
   onFocusRef.current = onFocus;
+  const fitRef = useRef(null); // last bounds the pins were fitted to
 
   useEffect(() => {
     if (mapRef.current) return;
@@ -60,8 +61,11 @@ export function CityPickerMap({ cities = [], onToggle, onFocus, anchor = null })
     });
     map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'top-right');
     map.on('load', () => { readyRef.current = true; mapRef.current._build?.(); });
+    const unfit = keepFitted(map, containerRef.current, () => (
+      fitRef.current ? { bounds: fitRef.current, padding: 46, maxZoom: 7 } : null
+    ));
     mapRef.current = map;
-    return () => { map.remove(); mapRef.current = null; readyRef.current = false; pinsRef.current.clear(); };
+    return () => { unfit(); map.remove(); mapRef.current = null; readyRef.current = false; pinsRef.current.clear(); };
   }, []);
 
   // The set of cities only changes with the chosen countries, rebuild then.
@@ -101,6 +105,7 @@ export function CityPickerMap({ cities = [], onToggle, onFocus, anchor = null })
           .addTo(map);
         pinsRef.current.set(c.id, { marker, el, label, meta });
       });
+      fitRef.current = null;
       if (hasLngLat(anchor)) {
         // Land the conversation where the traveller lands: open on the
         // arrival region, zoomed in enough that its neighbours read clearly.
@@ -110,6 +115,7 @@ export function CityPickerMap({ cities = [], onToggle, onFocus, anchor = null })
           (acc, c) => acc.extend([c.lon, c.lat]),
           new maplibregl.LngLatBounds([pts[0].lon, pts[0].lat], [pts[0].lon, pts[0].lat]),
         );
+        fitRef.current = b;
         map.fitBounds(b, { padding: 46, maxZoom: 7, duration: 0 });
       } else if (pts.length === 1) {
         map.jumpTo({ center: [pts[0].lon, pts[0].lat], zoom: 6.5 });

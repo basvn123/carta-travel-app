@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
-import { hasLngLat, finitePts } from './coords.js';
+import { hasLngLat, finitePts, declutterPins } from './coords.js';
 
 const MAP_STYLE = 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json';
 
@@ -33,6 +33,7 @@ export function DayExploreMap({ stay, markers = [], onFocus, onStayClick, stayFo
   const mapRef = useRef(null);
   const readyRef = useRef(false);
   const pinsRef = useRef(new Map());
+  const declutterRef = useRef(null);
   const stayRef = useRef(null);
   const stayElRef = useRef(null);
   const onFocusRef = useRef(onFocus);
@@ -51,8 +52,21 @@ export function DayExploreMap({ stay, markers = [], onFocus, onStayClick, stayFo
     });
     map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'top-right');
     map.on('load', () => { readyRef.current = true; mapRef.current._build?.(); });
+    // Better-rated places win the right to keep their name when pins collide.
+    const stopDeclutter = declutterPins(map, () => (
+      [...pinsRef.current.values()].map(({ el, m }) => ({
+        el,
+        lngLat: [m.lon, m.lat],
+        priority: (m.score ?? (m.must ? 8 : 4)) + (m.cat === 'town' ? 2 : 0),
+      }))
+    ));
+    declutterRef.current = stopDeclutter;
     mapRef.current = map;
-    return () => { map.remove(); mapRef.current = null; readyRef.current = false; pinsRef.current.clear(); };
+    return () => {
+      declutterRef.current = null;
+      stopDeclutter();
+      map.remove(); mapRef.current = null; readyRef.current = false; pinsRef.current.clear();
+    };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Stay pin + recenter when the address changes.
@@ -164,10 +178,13 @@ export function DayExploreMap({ stay, markers = [], onFocus, onStayClick, stayFo
         const marker = new maplibregl.Marker({ element: el, anchor: 'center' })
           .setLngLat([m.lon, m.lat])
           .addTo(map);
-        pinsRef.current.set(m.id, { marker, el });
+        pinsRef.current.set(m.id, { marker, el, m });
       });
       sync();
       fitAll();
+      // A filter chip rebuilds the pins; fitAll only moves the map when there
+      // are two points to frame, so ask for a collision pass either way.
+      declutterRef.current?.rerun();
     };
     map._build = build;
     if (readyRef.current) build();

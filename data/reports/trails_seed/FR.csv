@@ -1,0 +1,16 @@
+rank,curation_rank,title,ref,network,distance_km,popularity,pageviews_day,sitelinks,anchors,quality_score,portal_agreement,status,family_members,trip_id,osm_relation
+1,85.69,Via Francigena - Variante historique,GR 145,iwn,21.0,0.62,85,30,,96,agree,needs_review,7,7254,12666968
+2,83.1,"Via Lugdunum, Geneva to Lyon",,iwn,155.3,0.546,0,0,"Lyon (1466/day, 1866 m); Pérouges (53/day, 196 m)",96,agree,needs_review,1,3772,5151350
+3,83.1,Via Lugdunum,,iwn,233.7,0.546,0,0,"Lyon (1466/day, 1866 m); Pérouges (53/day, 196 m)",96,agree,needs_review,1,8008,15659468
+4,80.61,Via Francigena,VF,iwn,1026.1,0.594,247,30,"Battle of Reims (727/day, 976 m); Reims (727/day, 976 m); Dover Castle (234/day, 966 m)",79.3,agree,needs_review,1,6828,11860709
+5,78.36,"European long distance path E5, France",E5,iwn,2125.1,0.625,0,0,"Notre Dame Treasure (4938/day, 39 m); Paris (CDG) (4938/day, 577 m); Paris (4938/day, 464 m)",66,agree,needs_review,1,7348,12844449
+6,74.78,GR 12,GR 12,iwn,364.6,0.737,0,0,"Paris (4938/day, 244 m); Paris (4938/day, 244 m); Sacré-Cœur (4938/day, 1864 m)",,,draft,5,31494,12825428
+7,74.23,"SPHC, étape 12",,iwn,23.3,0.721,0,0,"Grotte Chauvet (414/day, 128 m); Pont d'Arc (30/day, 780 m)",,,draft,24,34786,15010170
+8,73.05,"Grand Tour de Paris, liaison Pont d’Austerlitz",GR 11,nwn,62.3,0.83,0,0,"Paris (Orly) (4938/day, 1782 m); Notre Dame Treasure (4938/day, 1347 m); Paris (Beauvais) (4938/day, 1782 m)",,,draft,14,30460,11822114
+9,72.94,Chemin de Stevenson,GR 70,nwn,228.0,0.827,221,7,,,,draft,13,24704,223039
+10,72.26,GR 2,GR 2,nwn,10.6,0.807,0,0,"Paris (4938/day, 464 m); Mona Lisa (4938/day, 1134 m); Paris (Orly) (4938/day, 577 m)",,,draft,11,27229,6581070
+11,71.52,European long distance path E5,E5,iwn,2125.1,0.448,12,13,"National Assembly (4938/day, 143 m); Dome of Les Invalids (4938/day, 900 m); National Assembly (4938/day, 143 m)",63.3,agree,needs_review,5,390,300393
+12,71.49,Camiño Francés,,iwn,16.6,0.643,49,19,"Saint-Jean-Pied-de-Port (98/day, 323 m)",,,draft,2,25079,2163573
+13,71.45,Tour du Mont Blanc - Itinéraire principal,TMB-IP,rwn,83.8,0.534,93,17,"Chamonix-Mont-Blanc (484/day, 69 m); Église Saint-Nicolas-de-Véroce de Saint-Gervais-les-Bains (90/day, 834 m)",96,agree,needs_review,1,5746,9678362
+14,71.14,GR 5 Lorraine,GR 5,iwn,293.0,0.632,0,0,"Metz (528/day, 199 m); Medieval houses in Metz (67/day, 239 m); Metz Cathedral (67/day, 137 m)",,,draft,8,25013,2029679
+15,70.92,Chemin du Piémont Pyrénéen,10,nwn,25.5,0.769,0,0,"Pont-Vieux (771/day, 118 m); Carcassonne (771/day, 515 m); Pont Vieux (771/day, 60 m)",,,draft,26,35714,15828650

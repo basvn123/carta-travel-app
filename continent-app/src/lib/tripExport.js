@@ -34,6 +34,14 @@ function esc(s) {
   ));
 }
 
+// Traveller-facing words for leg/transfer mode keys (the raw keys leak
+// jargon like "by public" or "by rental" into shared text otherwise).
+const MODE_WORD = {
+  train: 'train', bus: 'bus', car: 'car', fly: 'flight', ferry: 'ferry',
+  public: 'public transport', taxi: 'taxi', rental: 'rental car',
+};
+const modeWord = (mode) => MODE_WORD[mode] || mode;
+
 /** Plain-text itinerary, used for sharing. */
 export function tripSummaryText({ label, stopDetails, flight, anchorLegs, driveLegs = null, tripHasCar = false, grandTotal, groupSize }) {
   const lines = [];
@@ -45,12 +53,12 @@ export function tripSummaryText({ label, stopDetails, flight, anchorLegs, driveL
   if (flight?.combinable) lines.push(`Fly ${flight.origin} to ${flight.into_anchor}${timesSuffix(flight.into_time)}`);
   if (flight?.own) lines.push(flight.airline ? `Flight with ${flight.airline}${flight.out_date ? `, ${fmtLong(flight.out_date)}` : ''}${flight.cost_total ? ` (${eur(flight.cost_total)})` : ''}` : 'Your own flight (another airline)');
   if (flight?.driving && driveLegs?.out) lines.push(`Drive out${driveLegs.from ? ` from ${driveLegs.from}` : ''} to ${first?.dest?.city} (${driveLegs.out.road_km} km)`);
-  if (anchorLegs?.in?.ground_total) lines.push(`Then ${anchorLegs.anchor?.city} to ${first?.dest?.city} by ${anchorLegs.in.mode}`);
+  if (anchorLegs?.in?.ground_total) lines.push(`Then ${anchorLegs.anchor?.city} to ${first?.dest?.city} by ${modeWord(anchorLegs.in.mode)}`);
   stopDetails.forEach((s, i) => {
     if (!s.dest) return;
     lines.push(`${i + 1}. ${s.dest.city}, ${s.dest.country} - ${s.nights} ${s.nights === 1 ? 'night' : 'nights'} (${fmtLong(s.arriveDate)})`);
   });
-  if (anchorLegs?.out?.ground_total) lines.push(`Then ${last?.dest?.city} to ${anchorLegs.anchor?.city} by ${anchorLegs.out.mode}`);
+  if (anchorLegs?.out?.ground_total) lines.push(`Then ${last?.dest?.city} to ${anchorLegs.anchor?.city} by ${modeWord(anchorLegs.out.mode)}`);
   if (flight?.combinable) lines.push(`Fly home ${flight.out_anchor} to ${flight.origin}${timesSuffix(flight.out_of_time)}`);
   if (flight?.driving && driveLegs?.home) lines.push(`Drive home from ${last?.dest?.city} (${driveLegs.home.road_km} km)`);
   if (flight && !flight.combinable && !flight.own && !flight.driving && !tripHasCar) lines.push(`Flights: ${flightReasonLabel(flight.reason)}`);
@@ -106,7 +114,7 @@ function tripPrintHtml({ label, stopDetails, dayPlan = [], flight, legs = [], an
     rows.push(`<tr><td>Drive out${driveLegs.from ? ` from ${esc(driveLegs.from)}` : ''} to ${esc(first?.dest?.city)} (${driveLegs.out.road_km} km)</td><td>${esc(eur(driveLegs.out.ground_total))}</td></tr>`);
   }
   if (anchorLegs?.in?.ground_total) {
-    rows.push(`<tr><td>${esc(anchorLegs.anchor?.city)} &rarr; ${esc(first?.dest?.city)} (${esc(anchorLegs.in.mode)}, estimate)</td><td>${esc(eur(anchorLegs.in.ground_total))}</td></tr>`);
+    rows.push(`<tr><td>${esc(anchorLegs.anchor?.city)} &rarr; ${esc(first?.dest?.city)} (${esc(modeWord(anchorLegs.in.mode))}, estimate)</td><td>${esc(eur(anchorLegs.in.ground_total))}</td></tr>`);
   }
   // 2. Each stop in order, the leg to the next stop between them.
   stopDetails.forEach((s, i) => {
@@ -117,12 +125,15 @@ function tripPrintHtml({ label, stopDetails, dayPlan = [], flight, legs = [], an
     }
     const l = legs[i];
     if (i < stopDetails.length - 1 && l && l.ground_total) {
-      rows.push(`<tr><td>${esc(s.dest?.city)} &rarr; ${esc(stopDetails[i + 1]?.dest?.city)} (${esc(l.mode)}, estimate)</td><td>${esc(eur(l.ground_total))}</td></tr>`);
+      // A hop the traveller booked themselves carries their own fare, so it
+      // must not go out on the receipt labelled as one of Carta's estimates.
+      const qual = l.modes?.[l.mode]?.own ? 'booked' : 'estimate';
+      rows.push(`<tr><td>${esc(s.dest?.city)} &rarr; ${esc(stopDetails[i + 1]?.dest?.city)} (${esc(modeWord(l.mode))}, ${qual})</td><td>${esc(eur(l.ground_total))}</td></tr>`);
     }
   });
   // 3. Getting home.
   if (anchorLegs?.out?.ground_total) {
-    rows.push(`<tr><td>${esc(last?.dest?.city)} &rarr; ${esc(anchorLegs.anchor?.city)} (${esc(anchorLegs.out.mode)}, estimate)</td><td>${esc(eur(anchorLegs.out.ground_total))}</td></tr>`);
+    rows.push(`<tr><td>${esc(last?.dest?.city)} &rarr; ${esc(anchorLegs.anchor?.city)} (${esc(modeWord(anchorLegs.out.mode))}, estimate)</td><td>${esc(eur(anchorLegs.out.ground_total))}</td></tr>`);
   }
   if (flight?.driving && driveLegs?.home) {
     rows.push(`<tr><td>Drive home from ${esc(last?.dest?.city)} (${driveLegs.home.road_km} km)</td><td>${esc(eur(driveLegs.home.ground_total))}</td></tr>`);

@@ -32,7 +32,15 @@ see [SCHEMA.md](SCHEMA.md)).
 ├── run_pipeline.py         THE pipeline entry point: cadence-aware orchestrator
 │                           (weekly fares, monthly fame/rating, quarterly
 │                           open-data, manual backfills). `--list` shows tasks.
-├── run_pipeline.bat        Windows Scheduled Task wrapper (CartaDataPipeline)
+├── run_pipeline.bat        Windows Scheduled Task wrapper (task:
+│                           TravelAppFareRefresh, Mon 09:00)
+│
+├── src/                    Python packages (run as modules from the repo root)
+│   ├── ingestion/          26-collector raw open-data mirror -> data/raw/
+│   │                       (NAP schedule feeds, GTFS-RT/SIRI, OpenSky ADS-B,
+│   │                       ferries, pricing archives, holiday calendars)
+│   └── estimation/         Fare model: snapshot history, quantile GBDT,
+│                           PSI/KS drift gates. See ESTIMATION.md
 │
 ├── pipeline/               All live data-pipeline code (run from the repo root)
 │   ├── harvest_*.py            Fetch external sources -> cache/ and/or master
@@ -71,7 +79,20 @@ root** (e.g. `python pipeline/audit_gaps.py`).
 
 The legacy fare refresher (`reharvest_flights.py` + `refresh_fares*.bat`) is in
 `archive/` - the live fare system is `pipeline/harvest_all_origins.py`, driven
-by the weekly `fares` task, which ships `continent-app/public/fares/`.
+by the weekly `fares` task, which ships `continent-app/public/fares/`. The
+`TravelAppFareRefresh` Scheduled Task (Mon 09:00) runs `run_pipeline.bat`, so
+the whole cadence model fires unattended.
+
+The same orchestrator drives the trails content lab (`trails_ingest`,
+`trails_elevation`, `trails_validate`, `trails_popularity`), which stages into
+the local PostGIS lab rather than the master and so never blocks the ship. Its
+validation task also demotes published trips whose quality regressed, back to
+`needs_review` and never further - see [tools/trailslab/README.md](tools/trailslab/README.md).
+
+On top of the fare refresh sits an automated estimation layer (weekly
+snapshot history -> quantile GBDT fare model -> PSI/KS drift-gated
+retraining) plus a raw open-data ingestion mirror - see
+[ESTIMATION.md](ESTIMATION.md).
 
 ## Data flow
 

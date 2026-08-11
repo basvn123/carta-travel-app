@@ -6,6 +6,11 @@
  * in the fare slices, hydrated to routes.outbound_carrier/return_carrier).
  * An untagged day is therefore a Ryanair fare, which is why the fallback
  * here is 'FR', not 'unknown'.
+ *
+ * 'TP' is not an airline: it marks a day filled from the Travelpayouts
+ * (Aviasales) fare cache, covering carriers we cannot harvest directly. The
+ * operating airline of such a quote is only shown on the booking site, so
+ * the label names that site rather than guessing an airline.
  */
 
 export const CARRIER_NAMES = {
@@ -13,6 +18,7 @@ export const CARRIER_NAMES = {
   W6: 'Wizz Air',
   VY: 'Vueling',
   V7: 'Volotea',
+  TP: 'Aviasales',
 };
 
 /** Human airline name for a carrier code (untagged = Ryanair). */

@@ -29,6 +29,17 @@ Caches (all idempotent / resumable):
   cache/ryanair_route_graph.json  {origin_code: [reachable dest codes]}
   cache/fare_all_origins.json     {"frm|to|month": {day_iso: price}}
 
+Provenance (contract A, see SCHEMA.md "Fare provenance"):
+  Every record written by `patch` carries `s` (source code, "FR" here) and `o`
+  (unix epoch DAYS the prices were harvested). The Wizz/Vueling/Volotea merges
+  stamp their own codes on routes they create and tag the days they win in
+  out_c/ret_c; `patch` also folds in the Travelpayouts staging file
+  data/derived/tp_fares.json (contract B) when it exists, tagging won days
+  "TP" with per-day out_o/out_x (observed/expires, epoch days). A TP quote
+  only ever wins a day it is strictly cheaper on (and the direct-carrier
+  merges reclaim ties from TP), so cached third-party quotes can never
+  displace an equal-or-cheaper direct fare. No staging file = no TP step.
+
 Run:
   python harvest_all_origins.py graph      # (re)fetch airports + route graph
   python harvest_all_origins.py harvest     # harvest fares (resumes cache)
@@ -37,6 +48,9 @@ Run:
   python harvest_all_origins.py refresh     # roll window to [today..+HORIZON],
                                             #   drop fare cache, re-harvest + patch
   python harvest_all_origins.py stats       # print scope without harvesting
+  python harvest_all_origins.py tp          # re-merge the Travelpayouts staging
+                                            #   into the existing table (offline;
+                                            #   run after a staging refresh)
 
 Tuning via env:
   HARVEST_DELAY   base delay between calls, seconds (default 1.2)
@@ -55,7 +69,10 @@ GRAPH_CACHE = CACHE_DIR / "ryanair_route_graph.json"
 FARE_CACHE = CACHE_DIR / "fare_all_origins.json"
 APP_DATA = ROOT / "app_data" / "app_data.json"
 
+TP_STAGING = ROOT / "data" / "derived" / "tp_fares.json"
+
 CURRENCY = "EUR"
+SOURCE = "FR"                        # contract A source code for this harvester
 FARE_ENDPOINT = ("https://www.ryanair.com/api/farfnd/v4/oneWayFares/"
                  "{frm}/{to}/cheapestPerDay?outboundMonthOfDate={month}&currency=" + CURRENCY)
 AIRPORTS_ENDPOINT = "https://www.ryanair.com/api/views/locate/5/airports/en/active"
@@ -82,6 +99,12 @@ def _get_json(url, timeout=40):
 
 def load_app_data():
     return json.loads(APP_DATA.read_text(encoding="utf-8"))
+
+
+def epoch_day():
+    """Unix epoch DAYS (UTC): the slim observed_at/expires_at unit of the fare
+    provenance fields (contract A)."""
+    return int(time.time() // 86400)
 
 
 def months_in_window(start_iso, end_iso):
@@ -272,6 +295,136 @@ def _merge_months(cache, frm, to, months, start_iso, end_iso):
     return dict(sorted(fares.items()))
 
 
+def merge_tp_staging(data, fares):
+    """Fold the Travelpayouts staging file (contract B) into `fares`,
+    cheapest-wins. Coverage backfill for carriers we cannot scrape directly
+    (easyJet, Brussels Airlines, Norwegian, Pegasus, Transavia, legacy).
+
+    Rules:
+      - absent/unreadable staging file: return None, table untouched (the
+        weekly chain then behaves exactly as before this step existed)
+      - expired quotes (exp < today) and days outside the fare window are
+        dropped at merge time
+      - a TP quote wins a day only when NO direct quote exists for it or when
+        it is STRICTLY cheaper; the carrier merges additionally reclaim ties,
+        so a cached quote never displaces an equal-or-cheaper direct fare
+      - won days are tagged "TP" in out_c/ret_c (the same per-day source map
+        the carrier merges use; the app builds its Aviasales deeplink from
+        route + date at click time, so no link is stored in the wire)
+      - per-day observed/expires land in sparse out_o/out_x (ret_o/ret_x)
+        epoch-day maps; record-level `o` is not bumped by TP (it dates the
+        direct harvest that built the record)
+      - org -> dst is merged as the OUT leg of (origin=org, anchor=dst) when
+        dst is a catalogue anchor and org is an origin we already serve, and
+        as the RET leg of (origin=dst, anchor=org) when that record already
+        exists (a ret-only column can never render, so none is created)
+
+    Mutates `fares` in place; returns a stats dict for meta.fares_model_tp.
+    """
+    if not TP_STAGING.exists():
+        return None
+    try:
+        staging = json.loads(TP_STAGING.read_text(encoding="utf-8"))
+    except Exception as e:
+        print(f"  TP staging unreadable ({type(e).__name__}): skipping the TP step")
+        return None
+    quotes = staging.get("fares") or []
+    meta = data["meta"]
+    start_iso, end_iso = meta["start_date"], meta["end_date"]
+    anchors = anchor_set(data)
+    known_origins = set(meta.get("all_origins") or [])
+    for col in fares.values():
+        known_origins.update(col)
+    today_d = epoch_day()
+    stats = {"added": 0, "undercut": 0, "kept": 0,
+             "expired": 0, "skipped": 0, "new_routes": 0}
+
+    def merge_day(rec, side, day, eur, obs_d, exp_d):
+        prices = rec.setdefault(side, {})
+        cur = prices.get(day)
+        if cur is None:
+            stats["added"] += 1
+        elif eur < cur - 0.005:
+            stats["undercut"] += 1
+        else:
+            stats["kept"] += 1
+            return
+        prices[day] = eur
+        tags = rec.get(side + "_c") or {}
+        tags[day] = "TP"
+        rec[side + "_c"] = tags
+        if obs_d is not None and obs_d != rec.get("o"):
+            seen = rec.get(side + "_o") or {}
+            seen[day] = obs_d
+            rec[side + "_o"] = seen
+        if exp_d is not None:
+            xp = rec.get(side + "_x") or {}
+            xp[day] = exp_d
+            rec[side + "_x"] = xp
+
+    for q in quotes:
+        org, dst, day, cents = q.get("org"), q.get("dst"), q.get("d"), q.get("eur")
+        if not org or not dst or not day or not isinstance(cents, (int, float)):
+            stats["skipped"] += 1
+            continue
+        exp_d = q.get("exp")
+        if exp_d is not None and exp_d < today_d:
+            stats["expired"] += 1
+            continue
+        if not (start_iso <= day <= end_iso):
+            stats["skipped"] += 1
+            continue
+        eur = round(cents / 100.0, 2)
+        if eur <= 0:
+            stats["skipped"] += 1
+            continue
+        obs_d = q.get("obs")
+        merged = False
+        if dst in anchors and org in known_origins:
+            col = fares.setdefault(dst, {})
+            rec = col.get(org)
+            if rec is None:
+                rec = col[org] = {"out": {}, "ret": {},
+                                  "s": "TP", "o": obs_d if obs_d is not None else today_d}
+                stats["new_routes"] += 1
+            merge_day(rec, "out", day, eur, obs_d, exp_d)
+            merged = True
+        if org in anchors:
+            rec = (fares.get(org) or {}).get(dst)
+            if rec is not None:
+                merge_day(rec, "ret", day, eur, obs_d, exp_d)
+                merged = True
+        if not merged:
+            stats["skipped"] += 1
+
+    stats["staging_generated_at"] = (staging.get("meta") or {}).get("generated_at")
+    stats["merged_from"] = date.today().isoformat()
+    print(f"  TP staging merged: {stats['added']} day-prices added, "
+          f"{stats['undercut']} undercut direct, {stats['kept']} kept "
+          f"(direct cheaper/equal), {stats['new_routes']} new routes, "
+          f"{stats['expired']} expired, {stats['skipped']} out of scope")
+    return stats
+
+
+def merge_tp():
+    """Standalone TP re-merge into the EXISTING table (offline, no harvest):
+    for when the staging file refreshes between weekly fare runs. The weekly
+    `patch` already folds staging in by itself."""
+    data = load_app_data()
+    fares = data.get("fares") or {}
+    if not fares:
+        sys.exit("no fares table in the master; run patch first")
+    stats = merge_tp_staging(data, fares)
+    if stats is None:
+        print(f"no TP staging at {TP_STAGING}; nothing to merge")
+        return
+    data["fares"] = dict(sorted(fares.items()))
+    data["meta"]["all_origins"] = sorted({o for a in fares.values() for o in a})
+    data["meta"]["fares_model_tp"] = stats
+    APP_DATA.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
+    print(f"TP merge written; app_data.json is {APP_DATA.stat().st_size / 1e6:.1f} MB")
+
+
 def patch():
     if not FARE_CACHE.exists():
         sys.exit("no fare cache; run harvest first")
@@ -283,6 +436,7 @@ def patch():
     months = months_in_window(start_iso, end_iso)
     pairs = origin_anchor_pairs(data, graph)
 
+    obs = epoch_day()
     fares = {}
     n_legs = n_anchors = 0
     for origin, anchor in pairs:
@@ -290,9 +444,14 @@ def patch():
         ret = _merge_months(cache, anchor, origin, months, start_iso, end_iso)
         if not out and not ret:
             continue
-        fares.setdefault(anchor, {})[origin] = {"out": out, "ret": ret}
+        # Contract A provenance: source code + the epoch day these prices were
+        # harvested. The carrier merges refine per-day winners in out_c/ret_c.
+        fares.setdefault(anchor, {})[origin] = {"out": out, "ret": ret,
+                                                "s": SOURCE, "o": obs}
         n_legs += 1
     n_anchors = len(fares)
+
+    tp_stats = merge_tp_staging(data, fares)
 
     data["fares"] = dict(sorted(fares.items()))
     all_origins = sorted({o for a in fares.values() for o in a})
@@ -300,7 +459,8 @@ def patch():
         "method": ("real per-day Ryanair fares (farefinder cheapestPerDay) from "
                    "every European Ryanair origin to every catalogue anchor; only "
                    "bookable days kept. Deduped by (anchor, origin) in top-level "
-                   "`fares`; ground transport joined per-destination at read time."),
+                   "`fares`; ground transport joined per-destination at read time. "
+                   "Records carry contract A provenance (s, o)."),
         "fare_model": FARE_MODEL,
         "currency": CURRENCY,
         "window": f"{start_iso}..{end_iso}",
@@ -310,6 +470,10 @@ def patch():
         "harvested_from": date.today().isoformat(),
     }
     meta["all_origins"] = all_origins
+    if tp_stats is not None:
+        meta["fares_model_tp"] = tp_stats
+    else:
+        meta.pop("fares_model_tp", None)
 
     APP_DATA.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
     size_mb = APP_DATA.stat().st_size / 1e6
@@ -367,6 +531,8 @@ if __name__ == "__main__":
         patch()
     elif cmd == "stats":
         stats()
+    elif cmd == "tp":
+        merge_tp()
     elif cmd == "refresh":
         refresh()
     elif cmd == "all":

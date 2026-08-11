@@ -26,7 +26,7 @@ const dateVal = (iso) => (iso ? iso.replace(/-/g, '') : '');
 const timedVal = (iso, hhmm) => `${dateVal(iso)}T${hhmm.replace(':', '')}00`;
 
 /** TEXT escaping per RFC 5545: backslash, semicolon, comma, newline. */
-const esc = (s) => String(s ?? '')
+export const esc = (s) => String(s ?? '')
   .replace(/\\/g, '\\\\')
   .replace(/;/g, '\\;')
   .replace(/,/g, '\\,')
@@ -34,7 +34,7 @@ const esc = (s) => String(s ?? '')
 
 /** Fold long content lines (continuations start with a space). Kept well
  *  under the 75-octet limit so multi-byte city names never straddle a fold. */
-function fold(line) {
+export function fold(line) {
   if (line.length <= 60) return [line];
   const parts = [line.slice(0, 60)];
   for (let i = 60; i < line.length; i += 59) parts.push(` ${line.slice(i, i + 59)}`);
@@ -46,7 +46,7 @@ const minsOf = (hhmm) => {
   return Number.isFinite(h) && Number.isFinite(m) ? h * 60 + m : null;
 };
 
-function vevent({ uid, allDay, startDate, endDate, startTime, endTime, summary, location, description }) {
+export function vevent({ uid, allDay, startDate, endDate, startTime, endTime, summary, location, description }) {
   const lines = ['BEGIN:VEVENT', `UID:${uid}`, `DTSTAMP:${dtstamp()}`];
   if (allDay) {
     lines.push(`DTSTART;VALUE=DATE:${dateVal(startDate)}`);

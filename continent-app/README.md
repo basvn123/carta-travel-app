@@ -85,6 +85,11 @@ the rust accent ("deal"). Click any pill to open the detail panel.
   backend involved. Set `VITE_TP_MARKER` (see `.env.example`) to enable it;
   unset, the panel shows the plain Skyscanner link alone. `node
   scripts/verify-affiliate.mjs` locks the deeplink path format.
+- **`src/lib/omio.js`**, the Omio deeplink builder (Impact network), same
+  no-API click-out model for the overland legs: transport.js puts a tracked
+  "Omio" link first on every train/bus leg when `VITE_OMIO_TRACKING_LINK` is
+  set (see `.env.example`); unset, legs keep the operator and Google Maps
+  links alone. `node scripts/verify-omio.mjs` locks the link format.
 - **`src/LifestylePanel.jsx`**, the frequency steppers + live spend preview.
 - **`src/MapView.jsx`**, MapLibre with Carto Voyager basemap (free, no API key).
 - **`src/FilterBar.jsx`**, top filter strip with the dual-row layout.

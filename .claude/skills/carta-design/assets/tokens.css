@@ -1,0 +1,90 @@
+/* Carta design tokens. The only file in the codebase allowed to contain hex values. */
+
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400;0,500;0,600;0,700&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+:root {
+  /* Ink and paper. Cool greys only, never warm. */
+  --ink: #0E1116;
+  --ink-70: #4A525E;
+  --ink-45: #78818F;
+  --paper: #FFFFFF;
+  --panel: #F4F5F7;
+  --line: #E3E6EB;
+  --line-strong: #C7CCD5;
+
+  /* The one saturated colour. Interactive states only. */
+  --signal: #1E3FD6;
+  --signal-dark: #14309F;
+  --signal-wash: #EDF1FE;
+
+  /* Cheapest option marker. Exactly one per view. */
+  --flag: #FFD54A;
+
+  /* Data only, never chrome. */
+  --up: #0B7A5A;
+  --down: #B3261E;
+
+  /* Type */
+  --font: 'Instrument Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  /* Radius. Nothing rounder than these. */
+  --radius-control: 6px;
+  --radius-card: 10px;
+
+  /* Spacing */
+  --wrap: 1180px;
+  --gutter: 32px;
+  --section: 96px;
+  --h-control: 44px;
+  --h-control-lg: 52px;
+  --h-control-sm: 38px;
+}
+
+@media (max-width: 900px) {
+  :root {
+    --gutter: 20px;
+    --section: 64px;
+  }
+}
+
+/* Base */
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font);
+  font-size: 17px;
+  line-height: 1.55;
+  letter-spacing: -0.005em;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3 { margin: 0; font-weight: 600; line-height: 1.05; }
+h1 { font-size: clamp(38px, 5.4vw, 66px); letter-spacing: -0.03em; max-width: 15ch; }
+h2 { font-size: clamp(28px, 3.4vw, 40px); letter-spacing: -0.028em; }
+h3 { font-size: 20px; letter-spacing: -0.02em; line-height: 1.25; }
+
+/* Measured facts: prices, dates, times, airport codes, counts. Never prose. */
+.num {
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+
+.wrap { max-width: var(--wrap); margin: 0 auto; padding: 0 var(--gutter); }
+.lede { font-size: 19px; color: var(--ink-70); line-height: 1.5; max-width: 44ch; }
+
+/* Focus is always visible. */
+:focus-visible {
+  outline: 2px solid var(--signal);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

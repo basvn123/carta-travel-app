@@ -1,0 +1,5434 @@
+[
+ {
+  "city": "Amsterdam",
+  "country": "Netherlands",
+  "lat": 52.373,
+  "lon": 4.892,
+  "probes": [
+   {
+    "month": 2,
+    "properties": [
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 80.02,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 87.82,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 97.58,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 105.39,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 117.1,
+      "rating": 8.1
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 26.86,
+      "private_eur": 76.75,
+      "rating": 7.4
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 29.62,
+      "private_eur": 84.62,
+      "rating": 9.1
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 32.03,
+      "private_eur": 91.51,
+      "rating": 8.2
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 34.44,
+      "private_eur": 98.4,
+      "rating": 8.8
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 36.85,
+      "private_eur": 105.29,
+      "rating": 7.9
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 39.95,
+      "private_eur": 114.14,
+      "rating": 9.4
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 44.08,
+      "private_eur": 125.95,
+      "rating": 8.5
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 48.9,
+      "private_eur": 139.73,
+      "rating": 7.1
+     },
+     {
+      "type": "GUESTHOUSE",
+      "dorm_eur": null,
+      "private_eur": 93.48,
+      "rating": 8.6
+     },
+     {
+      "type": "GUESTHOUSE",
+      "dorm_eur": null,
+      "private_eur": 110.21,
+      "rating": 8.6
+     }
+    ]
+   },
+   {
+    "month": 5,
+    "properties": [
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 105.39,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 115.67,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 128.52,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 138.8,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 154.22,
+      "rating": 8.1
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 35.38,
+      "private_eur": 101.09,
+      "rating": 7.4
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 39.01,
+      "private_eur": 111.46,
+      "rating": 9.1
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 42.18,
+      "private_eur": 120.53,
+      "rating": 8.2
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 45.36,
+      "private_eur": 129.6,
+      "rating": 8.8
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 48.54,
+      "private_eur": 138.67,
+      "rating": 7.9
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 52.62,
+      "private_eur": 150.34,
+      "rating": 9.4
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 58.06,
+      "private_eur": 165.89,
+      "rating": 8.5
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 64.41,
+      "private_eur": 184.03,
+      "rating": 7.1
+     },
+     {
+      "type": "GUESTHOUSE",
+      "dorm_eur": null,
+      "private_eur": 123.12,
+      "rating": 8.6
+     },
+     {
+      "type": "GUESTHOUSE",
+      "dorm_eur": null,
+      "private_eur": 145.15,
+      "rating": 8.6
+     }
+    ]
+   },
+   {
+    "month": 8,
+    "properties": [
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 121.97,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 133.88,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 148.75,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 160.65,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 178.5,
+      "rating": 8.1
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 40.95,
+      "private_eur": 117.0,
+      "rating": 7.4
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 45.15,
+      "private_eur": 129.0,
+      "rating": 9.1
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 48.83,
+      "private_eur": 139.5,
+      "rating": 8.2
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 52.5,
+      "private_eur": 150.0,
+      "rating": 8.8
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 56.18,
+      "private_eur": 160.5,
+      "rating": 7.9
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 60.9,
+      "private_eur": 174.0,
+      "rating": 9.4
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 67.2,
+      "private_eur": 192.0,
+      "rating": 8.5
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 74.55,
+      "private_eur": 213.0,
+      "rating": 7.1
+     },
+     {
+      "type": "GUESTHOUSE",
+      "dorm_eur": null,
+      "private_eur": 142.5,
+      "rating": 8.6
+     },
+     {
+      "type": "GUESTHOUSE",
+      "dorm_eur": null,
+      "private_eur": 168.0,
+      "rating": 8.6
+     }
+    ]
+   },
+   {
+    "month": 10,
+    "properties": [
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 97.58,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 107.1,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 119.0,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 128.52,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 142.8,
+      "rating": 8.1
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 32.76,
+      "private_eur": 93.6,
+      "rating": 7.4
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 36.12,
+      "private_eur": 103.2,
+      "rating": 9.1
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 39.06,
+      "private_eur": 111.6,
+      "rating": 8.2
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 42.0,
+      "private_eur": 120.0,
+      "rating": 8.8
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 44.94,
+      "private_eur": 128.4,
+      "rating": 7.9
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 48.72,
+      "private_eur": 139.2,
+      "rating": 9.4
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 53.76,
+      "private_eur": 153.6,
+      "rating": 8.5
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 59.64,
+      "private_eur": 170.4,
+      "rating": 7.1
+     },
+     {
+      "type": "GUESTHOUSE",
+      "dorm_eur": null,
+      "private_eur": 114.0,
+      "rating": 8.6
+     },
+     {
+      "type": "GUESTHOUSE",
+      "dorm_eur": null,
+      "private_eur": 134.4,
+      "rating": 8.6
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "city": "Barcelona",
+  "country": "Spain",
+  "lat": 41.387,
+  "lon": 2.17,
+  "probes": [
+   {
+    "month": 2,
+    "properties": [
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 68.58,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 75.28,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 83.64,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 90.33,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 100.37,
+      "rating": 8.1
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 21.11,
+      "private_eur": 60.76,
+      "rating": 7.4
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 23.27,
+      "private_eur": 66.99,
+      "rating": 9.1
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 25.17,
+      "private_eur": 72.45,
+      "rating": 8.2
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 27.06,
+      "private_eur": 77.9,
+      "rating": 8.8
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 28.95,
+      "private_eur": 83.35,
+      "rating": 7.9
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 31.39,
+      "private_eur": 90.36,
+      "rating": 9.4
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 34.64,
+      "private_eur": 99.71,
+      "rating": 8.5
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 38.43,
+      "private_eur": 110.62,
+      "rating": 7.1
+     },
+     {
+      "type": "GUESTHOUSE",
+      "dorm_eur": null,
+      "private_eur": 74.0,
+      "rating": 8.6
+     },
+     {
+      "type": "GUESTHOUSE",
+      "dorm_eur": null,
+      "private_eur": 87.25,
+      "rating": 8.6
+     }
+    ]
+   },
+   {
+    "month": 5,
+    "properties": [
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 90.33,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 99.14,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 110.16,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 118.97,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 132.19,
+      "rating": 8.1
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 27.8,
+      "private_eur": 80.03,
+      "rating": 7.4
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 30.65,
+      "private_eur": 88.24,
+      "rating": 9.1
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 33.15,
+      "private_eur": 95.42,
+      "rating": 8.2
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 35.64,
+      "private_eur": 102.6,
+      "rating": 8.8
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 38.13,
+      "private_eur": 109.78,
+      "rating": 7.9
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 41.34,
+      "private_eur": 119.02,
+      "rating": 9.4
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 45.62,
+      "private_eur": 131.33,
+      "rating": 8.5
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 50.61,
+      "private_eur": 145.69,
+      "rating": 7.1
+     },
+     {
+      "type": "GUESTHOUSE",
+      "dorm_eur": null,
+      "private_eur": 97.47,
+      "rating": 8.6
+     },
+     {
+      "type": "GUESTHOUSE",
+      "dorm_eur": null,
+      "private_eur": 114.91,
+      "rating": 8.6
+     }
+    ]
+   },
+   {
+    "month": 8,
+    "properties": [
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 104.55,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 114.75,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 127.5,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 137.7,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 153.0,
+      "rating": 8.1
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 32.18,
+      "private_eur": 92.63,
+      "rating": 7.4
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 35.48,
+      "private_eur": 102.12,
+      "rating": 9.1
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 38.36,
+      "private_eur": 110.44,
+      "rating": 8.2
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 41.25,
+      "private_eur": 118.75,
+      "rating": 8.8
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 44.14,
+      "private_eur": 127.06,
+      "rating": 7.9
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 47.85,
+      "private_eur": 137.75,
+      "rating": 9.4
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 52.8,
+      "private_eur": 152.0,
+      "rating": 8.5
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 58.58,
+      "private_eur": 168.62,
+      "rating": 7.1
+     },
+     {
+      "type": "GUESTHOUSE",
+      "dorm_eur": null,
+      "private_eur": 112.81,
+      "rating": 8.6
+     },
+     {
+      "type": "GUESTHOUSE",
+      "dorm_eur": null,
+      "private_eur": 133.0,
+      "rating": 8.6
+     }
+    ]
+   },
+   {
+    "month": 10,
+    "properties": [
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 83.64,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 91.8,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 102.0,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 110.16,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 122.4,
+      "rating": 8.1
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 25.74,
+      "private_eur": 74.1,
+      "rating": 7.4
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 28.38,
+      "private_eur": 81.7,
+      "rating": 9.1
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 30.69,
+      "private_eur": 88.35,
+      "rating": 8.2
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 33.0,
+      "private_eur": 95.0,
+      "rating": 8.8
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 35.31,
+      "private_eur": 101.65,
+      "rating": 7.9
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 38.28,
+      "private_eur": 110.2,
+      "rating": 9.4
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 42.24,
+      "private_eur": 121.6,
+      "rating": 8.5
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 46.86,
+      "private_eur": 134.9,
+      "rating": 7.1
+     },
+     {
+      "type": "GUESTHOUSE",
+      "dorm_eur": null,
+      "private_eur": 90.25,
+      "rating": 8.6
+     },
+     {
+      "type": "GUESTHOUSE",
+      "dorm_eur": null,
+      "private_eur": 106.4,
+      "rating": 8.6
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "city": "Berlin",
+  "country": "Germany",
+  "lat": 52.52,
+  "lon": 13.405,
+  "probes": [
+   {
+    "month": 2,
+    "properties": [
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 54.46,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 59.78,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 66.42,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 71.73,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 79.7,
+      "rating": 8.1
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 16.63,
+      "private_eur": 47.97,
+      "rating": 7.4
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 18.34,
+      "private_eur": 52.89,
+      "rating": 9.1
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 19.83,
+      "private_eur": 57.19,
+      "rating": 8.2
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 21.32,
+      "private_eur": 61.5,
+      "rating": 8.8
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 22.81,
+      "private_eur": 65.8,
+      "rating": 7.9
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 24.73,
+      "private_eur": 71.34,
+      "rating": 9.4
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 27.29,
+      "private_eur": 78.72,
+      "rating": 8.5
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 30.27,
+      "private_eur": 87.33,
+      "rating": 7.1
+     },
+     {
+      "type": "GUESTHOUSE",
+      "dorm_eur": null,
+      "private_eur": 58.42,
+      "rating": 8.6
+     },
+     {
+      "type": "GUESTHOUSE",
+      "dorm_eur": null,
+      "private_eur": 68.88,
+      "rating": 8.6
+     }
+    ]
+   },
+   {
+    "month": 5,
+    "properties": [
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 71.73,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 78.73,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 87.48,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 94.48,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 104.98,
+      "rating": 8.1
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 21.9,
+      "private_eur": 63.18,
+      "rating": 7.4
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 24.15,
+      "private_eur": 69.66,
+      "rating": 9.1
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 26.11,
+      "private_eur": 75.33,
+      "rating": 8.2
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 28.08,
+      "private_eur": 81.0,
+      "rating": 8.8
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 30.05,
+      "private_eur": 86.67,
+      "rating": 7.9
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 32.57,
+      "private_eur": 93.96,
+      "rating": 9.4
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 35.94,
+      "private_eur": 103.68,
+      "rating": 8.5
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 39.87,
+      "private_eur": 115.02,
+      "rating": 7.1
+     },
+     {
+      "type": "GUESTHOUSE",
+      "dorm_eur": null,
+      "private_eur": 76.95,
+      "rating": 8.6
+     },
+     {
+      "type": "GUESTHOUSE",
+      "dorm_eur": null,
+      "private_eur": 90.72,
+      "rating": 8.6
+     }
+    ]
+   },
+   {
+    "month": 8,
+    "properties": [
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 83.03,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 91.12,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 101.25,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 109.35,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 121.5,
+      "rating": 8.1
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 25.35,
+      "private_eur": 73.12,
+      "rating": 7.4
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 27.95,
+      "private_eur": 80.62,
+      "rating": 9.1
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 30.23,
+      "private_eur": 87.19,
+      "rating": 8.2
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 32.5,
+      "private_eur": 93.75,
+      "rating": 8.8
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 34.77,
+      "private_eur": 100.31,
+      "rating": 7.9
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 37.7,
+      "private_eur": 108.75,
+      "rating": 9.4
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 41.6,
+      "private_eur": 120.0,
+      "rating": 8.5
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 46.15,
+      "private_eur": 133.12,
+      "rating": 7.1
+     },
+     {
+      "type": "GUESTHOUSE",
+      "dorm_eur": null,
+      "private_eur": 89.06,
+      "rating": 8.6
+     },
+     {
+      "type": "GUESTHOUSE",
+      "dorm_eur": null,
+      "private_eur": 105.0,
+      "rating": 8.6
+     }
+    ]
+   },
+   {
+    "month": 10,
+    "properties": [
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 66.42,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 72.9,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 81.0,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 87.48,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 97.2,
+      "rating": 8.1
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 20.28,
+      "private_eur": 58.5,
+      "rating": 7.4
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 22.36,
+      "private_eur": 64.5,
+      "rating": 9.1
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 24.18,
+      "private_eur": 69.75,
+      "rating": 8.2
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 26.0,
+      "private_eur": 75.0,
+      "rating": 8.8
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 27.82,
+      "private_eur": 80.25,
+      "rating": 7.9
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 30.16,
+      "private_eur": 87.0,
+      "rating": 9.4
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 33.28,
+      "private_eur": 96.0,
+      "rating": 8.5
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 36.92,
+      "private_eur": 106.5,
+      "rating": 7.1
+     },
+     {
+      "type": "GUESTHOUSE",
+      "dorm_eur": null,
+      "private_eur": 71.25,
+      "rating": 8.6
+     },
+     {
+      "type": "GUESTHOUSE",
+      "dorm_eur": null,
+      "private_eur": 84.0,
+      "rating": 8.6
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "city": "Prague",
+  "country": "Czechia",
+  "lat": 50.087,
+  "lon": 14.421,
+  "probes": [
+   {
+    "month": 2,
+    "properties": [
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 43.03,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 47.23,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 52.48,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 56.68,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 62.98,
+      "rating": 8.1
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 10.87,
+      "private_eur": 35.18,
+      "rating": 7.4
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 11.99,
+      "private_eur": 38.79,
+      "rating": 9.1
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 12.96,
+      "private_eur": 41.94,
+      "rating": 8.2
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 13.94,
+      "private_eur": 45.1,
+      "rating": 8.8
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 14.92,
+      "private_eur": 48.26,
+      "rating": 7.9
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 16.17,
+      "private_eur": 52.32,
+      "rating": 9.4
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 17.84,
+      "private_eur": 57.73,
+      "rating": 8.5
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 19.79,
+      "private_eur": 64.04,
+      "rating": 7.1
+     },
+     {
+      "type": "GUESTHOUSE",
+      "dorm_eur": null,
+      "private_eur": 42.84,
+      "rating": 8.6
+     },
+     {
+      "type": "GUESTHOUSE",
+      "dorm_eur": null,
+      "private_eur": 50.51,
+      "rating": 8.6
+     }
+    ]
+   },
+   {
+    "month": 5,
+    "properties": [
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 56.68,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 62.21,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 69.12,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 74.65,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 82.94,
+      "rating": 8.1
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 14.32,
+      "private_eur": 46.33,
+      "rating": 7.4
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 15.79,
+      "private_eur": 51.08,
+      "rating": 9.1
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 17.07,
+      "private_eur": 55.24,
+      "rating": 8.2
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 18.36,
+      "private_eur": 59.4,
+      "rating": 8.8
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 19.65,
+      "private_eur": 63.56,
+      "rating": 7.9
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 21.3,
+      "private_eur": 68.9,
+      "rating": 9.4
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 23.5,
+      "private_eur": 76.03,
+      "rating": 8.5
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 26.07,
+      "private_eur": 84.35,
+      "rating": 7.1
+     },
+     {
+      "type": "GUESTHOUSE",
+      "dorm_eur": null,
+      "private_eur": 56.43,
+      "rating": 8.6
+     },
+     {
+      "type": "GUESTHOUSE",
+      "dorm_eur": null,
+      "private_eur": 66.53,
+      "rating": 8.6
+     }
+    ]
+   },
+   {
+    "month": 8,
+    "properties": [
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 65.6,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 72.0,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 80.0,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 86.4,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 96.0,
+      "rating": 8.1
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 16.57,
+      "private_eur": 53.62,
+      "rating": 7.4
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 18.27,
+      "private_eur": 59.12,
+      "rating": 9.1
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 19.76,
+      "private_eur": 63.94,
+      "rating": 8.2
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 21.25,
+      "private_eur": 68.75,
+      "rating": 8.8
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 22.74,
+      "private_eur": 73.56,
+      "rating": 7.9
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 24.65,
+      "private_eur": 79.75,
+      "rating": 9.4
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 27.2,
+      "private_eur": 88.0,
+      "rating": 8.5
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 30.18,
+      "private_eur": 97.62,
+      "rating": 7.1
+     },
+     {
+      "type": "GUESTHOUSE",
+      "dorm_eur": null,
+      "private_eur": 65.31,
+      "rating": 8.6
+     },
+     {
+      "type": "GUESTHOUSE",
+      "dorm_eur": null,
+      "private_eur": 77.0,
+      "rating": 8.6
+     }
+    ]
+   },
+   {
+    "month": 10,
+    "properties": [
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 52.48,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 57.6,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 64.0,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 69.12,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 76.8,
+      "rating": 8.1
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 13.26,
+      "private_eur": 42.9,
+      "rating": 7.4
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 14.62,
+      "private_eur": 47.3,
+      "rating": 9.1
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 15.81,
+      "private_eur": 51.15,
+      "rating": 8.2
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 17.0,
+      "private_eur": 55.0,
+      "rating": 8.8
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 18.19,
+      "private_eur": 58.85,
+      "rating": 7.9
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 19.72,
+      "private_eur": 63.8,
+      "rating": 9.4
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 21.76,
+      "private_eur": 70.4,
+      "rating": 8.5
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 24.14,
+      "private_eur": 78.1,
+      "rating": 7.1
+     },
+     {
+      "type": "GUESTHOUSE",
+      "dorm_eur": null,
+      "private_eur": 52.25,
+      "rating": 8.6
+     },
+     {
+      "type": "GUESTHOUSE",
+      "dorm_eur": null,
+      "private_eur": 61.6,
+      "rating": 8.6
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "city": "Lisbon",
+  "country": "Portugal",
+  "lat": 38.722,
+  "lon": -9.139,
+  "probes": [
+   {
+    "month": 2,
+    "properties": [
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 57.15,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 62.73,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 69.7,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 75.28,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 83.64,
+      "rating": 8.1
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 17.27,
+      "private_eur": 44.77,
+      "rating": 7.4
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 19.04,
+      "private_eur": 49.36,
+      "rating": 9.1
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 20.59,
+      "private_eur": 53.38,
+      "rating": 8.2
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 22.14,
+      "private_eur": 57.4,
+      "rating": 8.8
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 23.69,
+      "private_eur": 61.42,
+      "rating": 7.9
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 25.68,
+      "private_eur": 66.58,
+      "rating": 9.4
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 28.34,
+      "private_eur": 73.47,
+      "rating": 8.5
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 31.44,
+      "private_eur": 81.51,
+      "rating": 7.1
+     },
+     {
+      "type": "GUESTHOUSE",
+      "dorm_eur": null,
+      "private_eur": 54.53,
+      "rating": 8.6
+     },
+     {
+      "type": "GUESTHOUSE",
+      "dorm_eur": null,
+      "private_eur": 64.29,
+      "rating": 8.6
+     }
+    ]
+   },
+   {
+    "month": 5,
+    "properties": [
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 75.28,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 82.62,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 91.8,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 99.14,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 110.16,
+      "rating": 8.1
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 22.74,
+      "private_eur": 58.97,
+      "rating": 7.4
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 25.08,
+      "private_eur": 65.02,
+      "rating": 9.1
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 27.12,
+      "private_eur": 70.31,
+      "rating": 8.2
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 29.16,
+      "private_eur": 75.6,
+      "rating": 8.8
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 31.2,
+      "private_eur": 80.89,
+      "rating": 7.9
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 33.83,
+      "private_eur": 87.7,
+      "rating": 9.4
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 37.32,
+      "private_eur": 96.77,
+      "rating": 8.5
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 41.41,
+      "private_eur": 107.35,
+      "rating": 7.1
+     },
+     {
+      "type": "GUESTHOUSE",
+      "dorm_eur": null,
+      "private_eur": 71.82,
+      "rating": 8.6
+     },
+     {
+      "type": "GUESTHOUSE",
+      "dorm_eur": null,
+      "private_eur": 84.67,
+      "rating": 8.6
+     }
+    ]
+   },
+   {
+    "month": 8,
+    "properties": [
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 87.12,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 95.62,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 106.25,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 114.75,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 127.5,
+      "rating": 8.1
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 26.33,
+      "private_eur": 68.25,
+      "rating": 7.4
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 29.02,
+      "private_eur": 75.25,
+      "rating": 9.1
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 31.39,
+      "private_eur": 81.38,
+      "rating": 8.2
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 33.75,
+      "private_eur": 87.5,
+      "rating": 8.8
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 36.11,
+      "private_eur": 93.62,
+      "rating": 7.9
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 39.15,
+      "private_eur": 101.5,
+      "rating": 9.4
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 43.2,
+      "private_eur": 112.0,
+      "rating": 8.5
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 47.92,
+      "private_eur": 124.25,
+      "rating": 7.1
+     },
+     {
+      "type": "GUESTHOUSE",
+      "dorm_eur": null,
+      "private_eur": 83.12,
+      "rating": 8.6
+     },
+     {
+      "type": "GUESTHOUSE",
+      "dorm_eur": null,
+      "private_eur": 98.0,
+      "rating": 8.6
+     }
+    ]
+   },
+   {
+    "month": 10,
+    "properties": [
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 69.7,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 76.5,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 85.0,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 91.8,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 102.0,
+      "rating": 8.1
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 21.06,
+      "private_eur": 54.6,
+      "rating": 7.4
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 23.22,
+      "private_eur": 60.2,
+      "rating": 9.1
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 25.11,
+      "private_eur": 65.1,
+      "rating": 8.2
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 27.0,
+      "private_eur": 70.0,
+      "rating": 8.8
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 28.89,
+      "private_eur": 74.9,
+      "rating": 7.9
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 31.32,
+      "private_eur": 81.2,
+      "rating": 9.4
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 34.56,
+      "private_eur": 89.6,
+      "rating": 8.5
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 38.34,
+      "private_eur": 99.4,
+      "rating": 7.1
+     },
+     {
+      "type": "GUESTHOUSE",
+      "dorm_eur": null,
+      "private_eur": 66.5,
+      "rating": 8.6
+     },
+     {
+      "type": "GUESTHOUSE",
+      "dorm_eur": null,
+      "private_eur": 78.4,
+      "rating": 8.6
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "city": "Porto",
+  "country": "Portugal",
+  "lat": 41.158,
+  "lon": -8.629,
+  "probes": [
+   {
+    "month": 2,
+    "properties": [
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 48.41,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 53.14,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 59.04,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 63.76,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 70.85,
+      "rating": 8.1
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 13.43,
+      "private_eur": 38.38,
+      "rating": 7.4
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 14.81,
+      "private_eur": 42.31,
+      "rating": 9.1
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 16.01,
+      "private_eur": 45.76,
+      "rating": 8.2
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 17.22,
+      "private_eur": 49.2,
+      "rating": 8.8
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 18.43,
+      "private_eur": 52.64,
+      "rating": 7.9
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 19.98,
+      "private_eur": 57.07,
+      "rating": 9.4
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 22.04,
+      "private_eur": 62.98,
+      "rating": 8.5
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 24.45,
+      "private_eur": 69.86,
+      "rating": 7.1
+     },
+     {
+      "type": "GUESTHOUSE",
+      "dorm_eur": null,
+      "private_eur": 46.74,
+      "rating": 8.6
+     },
+     {
+      "type": "GUESTHOUSE",
+      "dorm_eur": null,
+      "private_eur": 55.1,
+      "rating": 8.6
+     }
+    ]
+   },
+   {
+    "month": 5,
+    "properties": [
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 63.76,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 69.98,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 77.76,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 83.98,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 93.31,
+      "rating": 8.1
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 17.69,
+      "private_eur": 50.54,
+      "rating": 7.4
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 19.5,
+      "private_eur": 55.73,
+      "rating": 9.1
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 21.09,
+      "private_eur": 60.26,
+      "rating": 8.2
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 22.68,
+      "private_eur": 64.8,
+      "rating": 8.8
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 24.27,
+      "private_eur": 69.34,
+      "rating": 7.9
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 26.31,
+      "private_eur": 75.17,
+      "rating": 9.4
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 29.03,
+      "private_eur": 82.94,
+      "rating": 8.5
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 32.21,
+      "private_eur": 92.02,
+      "rating": 7.1
+     },
+     {
+      "type": "GUESTHOUSE",
+      "dorm_eur": null,
+      "private_eur": 61.56,
+      "rating": 8.6
+     },
+     {
+      "type": "GUESTHOUSE",
+      "dorm_eur": null,
+      "private_eur": 72.58,
+      "rating": 8.6
+     }
+    ]
+   },
+   {
+    "month": 8,
+    "properties": [
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 73.8,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 81.0,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 90.0,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 97.2,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 108.0,
+      "rating": 8.1
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 20.47,
+      "private_eur": 58.5,
+      "rating": 7.4
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 22.57,
+      "private_eur": 64.5,
+      "rating": 9.1
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 24.41,
+      "private_eur": 69.75,
+      "rating": 8.2
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 26.25,
+      "private_eur": 75.0,
+      "rating": 8.8
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 28.09,
+      "private_eur": 80.25,
+      "rating": 7.9
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 30.45,
+      "private_eur": 87.0,
+      "rating": 9.4
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 33.6,
+      "private_eur": 96.0,
+      "rating": 8.5
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 37.27,
+      "private_eur": 106.5,
+      "rating": 7.1
+     },
+     {
+      "type": "GUESTHOUSE",
+      "dorm_eur": null,
+      "private_eur": 71.25,
+      "rating": 8.6
+     },
+     {
+      "type": "GUESTHOUSE",
+      "dorm_eur": null,
+      "private_eur": 84.0,
+      "rating": 8.6
+     }
+    ]
+   },
+   {
+    "month": 10,
+    "properties": [
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 59.04,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 64.8,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 72.0,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 77.76,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 86.4,
+      "rating": 8.1
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 16.38,
+      "private_eur": 46.8,
+      "rating": 7.4
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 18.06,
+      "private_eur": 51.6,
+      "rating": 9.1
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 19.53,
+      "private_eur": 55.8,
+      "rating": 8.2
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 21.0,
+      "private_eur": 60.0,
+      "rating": 8.8
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 22.47,
+      "private_eur": 64.2,
+      "rating": 7.9
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 24.36,
+      "private_eur": 69.6,
+      "rating": 9.4
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 26.88,
+      "private_eur": 76.8,
+      "rating": 8.5
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 29.82,
+      "private_eur": 85.2,
+      "rating": 7.1
+     },
+     {
+      "type": "GUESTHOUSE",
+      "dorm_eur": null,
+      "private_eur": 57.0,
+      "rating": 8.6
+     },
+     {
+      "type": "GUESTHOUSE",
+      "dorm_eur": null,
+      "private_eur": 67.2,
+      "rating": 8.6
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "city": "Krakow",
+  "country": "Poland",
+  "lat": 50.062,
+  "lon": 19.937,
+  "probes": [
+   {
+    "month": 2,
+    "properties": [
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 36.98,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 40.59,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 45.1,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 48.71,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 54.12,
+      "rating": 8.1
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 8.31,
+      "private_eur": 28.78,
+      "rating": 7.4
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 9.17,
+      "private_eur": 31.73,
+      "rating": 9.1
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 9.91,
+      "private_eur": 34.32,
+      "rating": 8.2
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 10.66,
+      "private_eur": 36.9,
+      "rating": 8.8
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 11.41,
+      "private_eur": 39.48,
+      "rating": 7.9
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 12.37,
+      "private_eur": 42.8,
+      "rating": 9.4
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 13.64,
+      "private_eur": 47.23,
+      "rating": 8.5
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 15.14,
+      "private_eur": 52.4,
+      "rating": 7.1
+     },
+     {
+      "type": "GUESTHOUSE",
+      "dorm_eur": null,
+      "private_eur": 35.05,
+      "rating": 8.6
+     },
+     {
+      "type": "GUESTHOUSE",
+      "dorm_eur": null,
+      "private_eur": 41.33,
+      "rating": 8.6
+     }
+    ]
+   },
+   {
+    "month": 5,
+    "properties": [
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 48.71,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 53.46,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 59.4,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 64.15,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 71.28,
+      "rating": 8.1
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 10.95,
+      "private_eur": 37.91,
+      "rating": 7.4
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 12.07,
+      "private_eur": 41.8,
+      "rating": 9.1
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 13.06,
+      "private_eur": 45.2,
+      "rating": 8.2
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 14.04,
+      "private_eur": 48.6,
+      "rating": 8.8
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 15.02,
+      "private_eur": 52.0,
+      "rating": 7.9
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 16.29,
+      "private_eur": 56.38,
+      "rating": 9.4
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 17.97,
+      "private_eur": 62.21,
+      "rating": 8.5
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 19.94,
+      "private_eur": 69.01,
+      "rating": 7.1
+     },
+     {
+      "type": "GUESTHOUSE",
+      "dorm_eur": null,
+      "private_eur": 46.17,
+      "rating": 8.6
+     },
+     {
+      "type": "GUESTHOUSE",
+      "dorm_eur": null,
+      "private_eur": 54.43,
+      "rating": 8.6
+     }
+    ]
+   },
+   {
+    "month": 8,
+    "properties": [
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 56.37,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 61.88,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 68.75,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 74.25,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 82.5,
+      "rating": 8.1
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 12.68,
+      "private_eur": 43.88,
+      "rating": 7.4
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 13.97,
+      "private_eur": 48.38,
+      "rating": 9.1
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 15.11,
+      "private_eur": 52.31,
+      "rating": 8.2
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 16.25,
+      "private_eur": 56.25,
+      "rating": 8.8
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 17.39,
+      "private_eur": 60.19,
+      "rating": 7.9
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 18.85,
+      "private_eur": 65.25,
+      "rating": 9.4
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 20.8,
+      "private_eur": 72.0,
+      "rating": 8.5
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 23.08,
+      "private_eur": 79.88,
+      "rating": 7.1
+     },
+     {
+      "type": "GUESTHOUSE",
+      "dorm_eur": null,
+      "private_eur": 53.44,
+      "rating": 8.6
+     },
+     {
+      "type": "GUESTHOUSE",
+      "dorm_eur": null,
+      "private_eur": 63.0,
+      "rating": 8.6
+     }
+    ]
+   },
+   {
+    "month": 10,
+    "properties": [
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 45.1,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 49.5,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 55.0,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 59.4,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 66.0,
+      "rating": 8.1
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 10.14,
+      "private_eur": 35.1,
+      "rating": 7.4
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 11.18,
+      "private_eur": 38.7,
+      "rating": 9.1
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 12.09,
+      "private_eur": 41.85,
+      "rating": 8.2
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 13.0,
+      "private_eur": 45.0,
+      "rating": 8.8
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 13.91,
+      "private_eur": 48.15,
+      "rating": 7.9
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 15.08,
+      "private_eur": 52.2,
+      "rating": 9.4
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 16.64,
+      "private_eur": 57.6,
+      "rating": 8.5
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 18.46,
+      "private_eur": 63.9,
+      "rating": 7.1
+     },
+     {
+      "type": "GUESTHOUSE",
+      "dorm_eur": null,
+      "private_eur": 42.75,
+      "rating": 8.6
+     },
+     {
+      "type": "GUESTHOUSE",
+      "dorm_eur": null,
+      "private_eur": 50.4,
+      "rating": 8.6
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "city": "Budapest",
+  "country": "Hungary",
+  "lat": 47.498,
+  "lon": 19.04,
+  "probes": [
+   {
+    "month": 2,
+    "properties": [
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 40.34,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 44.28,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 49.2,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 53.14,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 59.04,
+      "rating": 8.1
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 9.59,
+      "private_eur": 31.98,
+      "rating": 7.4
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 10.58,
+      "private_eur": 35.26,
+      "rating": 9.1
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 11.44,
+      "private_eur": 38.13,
+      "rating": 8.2
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 12.3,
+      "private_eur": 41.0,
+      "rating": 8.8
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 13.16,
+      "private_eur": 43.87,
+      "rating": 7.9
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 14.27,
+      "private_eur": 47.56,
+      "rating": 9.4
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 15.74,
+      "private_eur": 52.48,
+      "rating": 8.5
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 17.47,
+      "private_eur": 58.22,
+      "rating": 7.1
+     },
+     {
+      "type": "GUESTHOUSE",
+      "dorm_eur": null,
+      "private_eur": 38.95,
+      "rating": 8.6
+     },
+     {
+      "type": "GUESTHOUSE",
+      "dorm_eur": null,
+      "private_eur": 45.92,
+      "rating": 8.6
+     }
+    ]
+   },
+   {
+    "month": 5,
+    "properties": [
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 53.14,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 58.32,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 64.8,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 69.98,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 77.76,
+      "rating": 8.1
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 12.64,
+      "private_eur": 42.12,
+      "rating": 7.4
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 13.93,
+      "private_eur": 46.44,
+      "rating": 9.1
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 15.07,
+      "private_eur": 50.22,
+      "rating": 8.2
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 16.2,
+      "private_eur": 54.0,
+      "rating": 8.8
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 17.33,
+      "private_eur": 57.78,
+      "rating": 7.9
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 18.79,
+      "private_eur": 62.64,
+      "rating": 9.4
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 20.74,
+      "private_eur": 69.12,
+      "rating": 8.5
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 23.0,
+      "private_eur": 76.68,
+      "rating": 7.1
+     },
+     {
+      "type": "GUESTHOUSE",
+      "dorm_eur": null,
+      "private_eur": 51.3,
+      "rating": 8.6
+     },
+     {
+      "type": "GUESTHOUSE",
+      "dorm_eur": null,
+      "private_eur": 60.48,
+      "rating": 8.6
+     }
+    ]
+   },
+   {
+    "month": 8,
+    "properties": [
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 61.5,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 67.5,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 75.0,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 81.0,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 90.0,
+      "rating": 8.1
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 14.63,
+      "private_eur": 48.75,
+      "rating": 7.4
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 16.12,
+      "private_eur": 53.75,
+      "rating": 9.1
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 17.44,
+      "private_eur": 58.12,
+      "rating": 8.2
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 18.75,
+      "private_eur": 62.5,
+      "rating": 8.8
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 20.06,
+      "private_eur": 66.88,
+      "rating": 7.9
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 21.75,
+      "private_eur": 72.5,
+      "rating": 9.4
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 24.0,
+      "private_eur": 80.0,
+      "rating": 8.5
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 26.62,
+      "private_eur": 88.75,
+      "rating": 7.1
+     },
+     {
+      "type": "GUESTHOUSE",
+      "dorm_eur": null,
+      "private_eur": 59.38,
+      "rating": 8.6
+     },
+     {
+      "type": "GUESTHOUSE",
+      "dorm_eur": null,
+      "private_eur": 70.0,
+      "rating": 8.6
+     }
+    ]
+   },
+   {
+    "month": 10,
+    "properties": [
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 49.2,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 54.0,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 60.0,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 64.8,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 72.0,
+      "rating": 8.1
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 11.7,
+      "private_eur": 39.0,
+      "rating": 7.4
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 12.9,
+      "private_eur": 43.0,
+      "rating": 9.1
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 13.95,
+      "private_eur": 46.5,
+      "rating": 8.2
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 15.0,
+      "private_eur": 50.0,
+      "rating": 8.8
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 16.05,
+      "private_eur": 53.5,
+      "rating": 7.9
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 17.4,
+      "private_eur": 58.0,
+      "rating": 9.4
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 19.2,
+      "private_eur": 64.0,
+      "rating": 8.5
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 21.3,
+      "private_eur": 71.0,
+      "rating": 7.1
+     },
+     {
+      "type": "GUESTHOUSE",
+      "dorm_eur": null,
+      "private_eur": 47.5,
+      "rating": 8.6
+     },
+     {
+      "type": "GUESTHOUSE",
+      "dorm_eur": null,
+      "private_eur": 56.0,
+      "rating": 8.6
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "city": "Rome",
+  "country": "Italy",
+  "lat": 41.893,
+  "lon": 12.483,
+  "probes": [
+   {
+    "month": 2,
+    "properties": [
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 68.58,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 75.28,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 83.64,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 90.33,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 100.37,
+      "rating": 8.1
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 19.19,
+      "private_eur": 54.37,
+      "rating": 7.4
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 21.16,
+      "private_eur": 59.94,
+      "rating": 9.1
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 22.88,
+      "private_eur": 64.82,
+      "rating": 8.2
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 24.6,
+      "private_eur": 69.7,
+      "rating": 8.8
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 26.32,
+      "private_eur": 74.58,
+      "rating": 7.9
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 28.54,
+      "private_eur": 80.85,
+      "rating": 9.4
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 31.49,
+      "private_eur": 89.22,
+      "rating": 8.5
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 34.93,
+      "private_eur": 98.97,
+      "rating": 7.1
+     },
+     {
+      "type": "GUESTHOUSE",
+      "dorm_eur": null,
+      "private_eur": 66.21,
+      "rating": 8.6
+     },
+     {
+      "type": "GUESTHOUSE",
+      "dorm_eur": null,
+      "private_eur": 78.06,
+      "rating": 8.6
+     }
+    ]
+   },
+   {
+    "month": 5,
+    "properties": [
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 90.33,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 99.14,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 110.16,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 118.97,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 132.19,
+      "rating": 8.1
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 25.27,
+      "private_eur": 71.6,
+      "rating": 7.4
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 27.86,
+      "private_eur": 78.95,
+      "rating": 9.1
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 30.13,
+      "private_eur": 85.37,
+      "rating": 8.2
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 32.4,
+      "private_eur": 91.8,
+      "rating": 8.8
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 34.67,
+      "private_eur": 98.23,
+      "rating": 7.9
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 37.58,
+      "private_eur": 106.49,
+      "rating": 9.4
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 41.47,
+      "private_eur": 117.5,
+      "rating": 8.5
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 46.01,
+      "private_eur": 130.36,
+      "rating": 7.1
+     },
+     {
+      "type": "GUESTHOUSE",
+      "dorm_eur": null,
+      "private_eur": 87.21,
+      "rating": 8.6
+     },
+     {
+      "type": "GUESTHOUSE",
+      "dorm_eur": null,
+      "private_eur": 102.82,
+      "rating": 8.6
+     }
+    ]
+   },
+   {
+    "month": 8,
+    "properties": [
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 104.55,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 114.75,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 127.5,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 137.7,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 153.0,
+      "rating": 8.1
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 29.25,
+      "private_eur": 82.88,
+      "rating": 7.4
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 32.25,
+      "private_eur": 91.38,
+      "rating": 9.1
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 34.88,
+      "private_eur": 98.81,
+      "rating": 8.2
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 37.5,
+      "private_eur": 106.25,
+      "rating": 8.8
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 40.12,
+      "private_eur": 113.69,
+      "rating": 7.9
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 43.5,
+      "private_eur": 123.25,
+      "rating": 9.4
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 48.0,
+      "private_eur": 136.0,
+      "rating": 8.5
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 53.25,
+      "private_eur": 150.88,
+      "rating": 7.1
+     },
+     {
+      "type": "GUESTHOUSE",
+      "dorm_eur": null,
+      "private_eur": 100.94,
+      "rating": 8.6
+     },
+     {
+      "type": "GUESTHOUSE",
+      "dorm_eur": null,
+      "private_eur": 119.0,
+      "rating": 8.6
+     }
+    ]
+   },
+   {
+    "month": 10,
+    "properties": [
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 83.64,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 91.8,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 102.0,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 110.16,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 122.4,
+      "rating": 8.1
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 23.4,
+      "private_eur": 66.3,
+      "rating": 7.4
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 25.8,
+      "private_eur": 73.1,
+      "rating": 9.1
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 27.9,
+      "private_eur": 79.05,
+      "rating": 8.2
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 30.0,
+      "private_eur": 85.0,
+      "rating": 8.8
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 32.1,
+      "private_eur": 90.95,
+      "rating": 7.9
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 34.8,
+      "private_eur": 98.6,
+      "rating": 9.4
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 38.4,
+      "private_eur": 108.8,
+      "rating": 8.5
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 42.6,
+      "private_eur": 120.7,
+      "rating": 7.1
+     },
+     {
+      "type": "GUESTHOUSE",
+      "dorm_eur": null,
+      "private_eur": 80.75,
+      "rating": 8.6
+     },
+     {
+      "type": "GUESTHOUSE",
+      "dorm_eur": null,
+      "private_eur": 95.2,
+      "rating": 8.6
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "city": "Paris",
+  "country": "France",
+  "lat": 48.857,
+  "lon": 2.352,
+  "probes": [
+   {
+    "month": 2,
+    "properties": [
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 86.07,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 94.46,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 104.96,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 113.36,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 125.95,
+      "rating": 8.1
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 26.22,
+      "private_eur": 70.36,
+      "rating": 7.4
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 28.91,
+      "private_eur": 77.57,
+      "rating": 9.1
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 31.27,
+      "private_eur": 83.89,
+      "rating": 8.2
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 33.62,
+      "private_eur": 90.2,
+      "rating": 8.8
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 35.97,
+      "private_eur": 96.51,
+      "rating": 7.9
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 39.0,
+      "private_eur": 104.63,
+      "rating": 9.4
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 43.03,
+      "private_eur": 115.46,
+      "rating": 8.5
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 47.74,
+      "private_eur": 128.08,
+      "rating": 7.1
+     },
+     {
+      "type": "GUESTHOUSE",
+      "dorm_eur": null,
+      "private_eur": 85.69,
+      "rating": 8.6
+     },
+     {
+      "type": "GUESTHOUSE",
+      "dorm_eur": null,
+      "private_eur": 101.02,
+      "rating": 8.6
+     }
+    ]
+   },
+   {
+    "month": 5,
+    "properties": [
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 113.36,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 124.42,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 138.24,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 149.3,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 165.89,
+      "rating": 8.1
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 34.54,
+      "private_eur": 92.66,
+      "rating": 7.4
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 38.08,
+      "private_eur": 102.17,
+      "rating": 9.1
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 41.18,
+      "private_eur": 110.48,
+      "rating": 8.2
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 44.28,
+      "private_eur": 118.8,
+      "rating": 8.8
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 47.38,
+      "private_eur": 127.12,
+      "rating": 7.9
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 51.36,
+      "private_eur": 137.81,
+      "rating": 9.4
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 56.68,
+      "private_eur": 152.06,
+      "rating": 8.5
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 62.88,
+      "private_eur": 168.7,
+      "rating": 7.1
+     },
+     {
+      "type": "GUESTHOUSE",
+      "dorm_eur": null,
+      "private_eur": 112.86,
+      "rating": 8.6
+     },
+     {
+      "type": "GUESTHOUSE",
+      "dorm_eur": null,
+      "private_eur": 133.06,
+      "rating": 8.6
+     }
+    ]
+   },
+   {
+    "month": 8,
+    "properties": [
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 131.2,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 144.0,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 160.0,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 172.8,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 192.0,
+      "rating": 8.1
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 39.98,
+      "private_eur": 107.25,
+      "rating": 7.4
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 44.07,
+      "private_eur": 118.25,
+      "rating": 9.1
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 47.66,
+      "private_eur": 127.88,
+      "rating": 8.2
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 51.25,
+      "private_eur": 137.5,
+      "rating": 8.8
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 54.84,
+      "private_eur": 147.12,
+      "rating": 7.9
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 59.45,
+      "private_eur": 159.5,
+      "rating": 9.4
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 65.6,
+      "private_eur": 176.0,
+      "rating": 8.5
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 72.78,
+      "private_eur": 195.25,
+      "rating": 7.1
+     },
+     {
+      "type": "GUESTHOUSE",
+      "dorm_eur": null,
+      "private_eur": 130.62,
+      "rating": 8.6
+     },
+     {
+      "type": "GUESTHOUSE",
+      "dorm_eur": null,
+      "private_eur": 154.0,
+      "rating": 8.6
+     }
+    ]
+   },
+   {
+    "month": 10,
+    "properties": [
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 104.96,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 115.2,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 128.0,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 138.24,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 153.6,
+      "rating": 8.1
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 31.98,
+      "private_eur": 85.8,
+      "rating": 7.4
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 35.26,
+      "private_eur": 94.6,
+      "rating": 9.1
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 38.13,
+      "private_eur": 102.3,
+      "rating": 8.2
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 41.0,
+      "private_eur": 110.0,
+      "rating": 8.8
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 43.87,
+      "private_eur": 117.7,
+      "rating": 7.9
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 47.56,
+      "private_eur": 127.6,
+      "rating": 9.4
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 52.48,
+      "private_eur": 140.8,
+      "rating": 8.5
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 58.22,
+      "private_eur": 156.2,
+      "rating": 7.1
+     },
+     {
+      "type": "GUESTHOUSE",
+      "dorm_eur": null,
+      "private_eur": 104.5,
+      "rating": 8.6
+     },
+     {
+      "type": "GUESTHOUSE",
+      "dorm_eur": null,
+      "private_eur": 123.2,
+      "rating": 8.6
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "city": "Vienna",
+  "country": "Austria",
+  "lat": 48.208,
+  "lon": 16.373,
+  "probes": [
+   {
+    "month": 2,
+    "properties": [
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 59.84,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 65.68,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 72.98,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 78.82,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 87.58,
+      "rating": 8.1
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 17.27,
+      "private_eur": 44.77,
+      "rating": 7.4
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 19.04,
+      "private_eur": 49.36,
+      "rating": 9.1
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 20.59,
+      "private_eur": 53.38,
+      "rating": 8.2
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 22.14,
+      "private_eur": 57.4,
+      "rating": 8.8
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 23.69,
+      "private_eur": 61.42,
+      "rating": 7.9
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 25.68,
+      "private_eur": 66.58,
+      "rating": 9.4
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 28.34,
+      "private_eur": 73.47,
+      "rating": 8.5
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 31.44,
+      "private_eur": 81.51,
+      "rating": 7.1
+     },
+     {
+      "type": "GUESTHOUSE",
+      "dorm_eur": null,
+      "private_eur": 54.53,
+      "rating": 8.6
+     },
+     {
+      "type": "GUESTHOUSE",
+      "dorm_eur": null,
+      "private_eur": 64.29,
+      "rating": 8.6
+     }
+    ]
+   },
+   {
+    "month": 5,
+    "properties": [
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 78.82,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 86.51,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 96.12,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 103.81,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 115.34,
+      "rating": 8.1
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 22.74,
+      "private_eur": 58.97,
+      "rating": 7.4
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 25.08,
+      "private_eur": 65.02,
+      "rating": 9.1
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 27.12,
+      "private_eur": 70.31,
+      "rating": 8.2
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 29.16,
+      "private_eur": 75.6,
+      "rating": 8.8
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 31.2,
+      "private_eur": 80.89,
+      "rating": 7.9
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 33.83,
+      "private_eur": 87.7,
+      "rating": 9.4
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 37.32,
+      "private_eur": 96.77,
+      "rating": 8.5
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 41.41,
+      "private_eur": 107.35,
+      "rating": 7.1
+     },
+     {
+      "type": "GUESTHOUSE",
+      "dorm_eur": null,
+      "private_eur": 71.82,
+      "rating": 8.6
+     },
+     {
+      "type": "GUESTHOUSE",
+      "dorm_eur": null,
+      "private_eur": 84.67,
+      "rating": 8.6
+     }
+    ]
+   },
+   {
+    "month": 8,
+    "properties": [
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 91.22,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 100.13,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 111.25,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 120.15,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 133.5,
+      "rating": 8.1
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 26.33,
+      "private_eur": 68.25,
+      "rating": 7.4
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 29.02,
+      "private_eur": 75.25,
+      "rating": 9.1
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 31.39,
+      "private_eur": 81.38,
+      "rating": 8.2
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 33.75,
+      "private_eur": 87.5,
+      "rating": 8.8
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 36.11,
+      "private_eur": 93.62,
+      "rating": 7.9
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 39.15,
+      "private_eur": 101.5,
+      "rating": 9.4
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 43.2,
+      "private_eur": 112.0,
+      "rating": 8.5
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 47.92,
+      "private_eur": 124.25,
+      "rating": 7.1
+     },
+     {
+      "type": "GUESTHOUSE",
+      "dorm_eur": null,
+      "private_eur": 83.12,
+      "rating": 8.6
+     },
+     {
+      "type": "GUESTHOUSE",
+      "dorm_eur": null,
+      "private_eur": 98.0,
+      "rating": 8.6
+     }
+    ]
+   },
+   {
+    "month": 10,
+    "properties": [
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 72.98,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 80.1,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 89.0,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 96.12,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 106.8,
+      "rating": 8.1
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 21.06,
+      "private_eur": 54.6,
+      "rating": 7.4
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 23.22,
+      "private_eur": 60.2,
+      "rating": 9.1
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 25.11,
+      "private_eur": 65.1,
+      "rating": 8.2
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 27.0,
+      "private_eur": 70.0,
+      "rating": 8.8
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 28.89,
+      "private_eur": 74.9,
+      "rating": 7.9
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 31.32,
+      "private_eur": 81.2,
+      "rating": 9.4
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 34.56,
+      "private_eur": 89.6,
+      "rating": 8.5
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 38.34,
+      "private_eur": 99.4,
+      "rating": 7.1
+     },
+     {
+      "type": "GUESTHOUSE",
+      "dorm_eur": null,
+      "private_eur": 66.5,
+      "rating": 8.6
+     },
+     {
+      "type": "GUESTHOUSE",
+      "dorm_eur": null,
+      "private_eur": 78.4,
+      "rating": 8.6
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "city": "Dublin",
+  "country": "Ireland",
+  "lat": 53.349,
+  "lon": -6.26,
+  "probes": [
+   {
+    "month": 2,
+    "properties": [
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 73.96,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 81.18,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 90.2,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 97.42,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 108.24,
+      "rating": 8.1
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 23.03,
+      "private_eur": 70.36,
+      "rating": 7.4
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 25.39,
+      "private_eur": 77.57,
+      "rating": 9.1
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 27.45,
+      "private_eur": 83.89,
+      "rating": 8.2
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 29.52,
+      "private_eur": 90.2,
+      "rating": 8.8
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 31.59,
+      "private_eur": 96.51,
+      "rating": 7.9
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 34.24,
+      "private_eur": 104.63,
+      "rating": 9.4
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 37.79,
+      "private_eur": 115.46,
+      "rating": 8.5
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 41.92,
+      "private_eur": 128.08,
+      "rating": 7.1
+     },
+     {
+      "type": "GUESTHOUSE",
+      "dorm_eur": null,
+      "private_eur": 85.69,
+      "rating": 8.6
+     },
+     {
+      "type": "GUESTHOUSE",
+      "dorm_eur": null,
+      "private_eur": 101.02,
+      "rating": 8.6
+     }
+    ]
+   },
+   {
+    "month": 5,
+    "properties": [
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 97.42,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 106.92,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 118.8,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 128.3,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 142.56,
+      "rating": 8.1
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 30.33,
+      "private_eur": 92.66,
+      "rating": 7.4
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 33.44,
+      "private_eur": 102.17,
+      "rating": 9.1
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 36.16,
+      "private_eur": 110.48,
+      "rating": 8.2
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 38.88,
+      "private_eur": 118.8,
+      "rating": 8.8
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 41.6,
+      "private_eur": 127.12,
+      "rating": 7.9
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 45.1,
+      "private_eur": 137.81,
+      "rating": 9.4
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 49.77,
+      "private_eur": 152.06,
+      "rating": 8.5
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 55.21,
+      "private_eur": 168.7,
+      "rating": 7.1
+     },
+     {
+      "type": "GUESTHOUSE",
+      "dorm_eur": null,
+      "private_eur": 112.86,
+      "rating": 8.6
+     },
+     {
+      "type": "GUESTHOUSE",
+      "dorm_eur": null,
+      "private_eur": 133.06,
+      "rating": 8.6
+     }
+    ]
+   },
+   {
+    "month": 8,
+    "properties": [
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 112.75,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 123.75,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 137.5,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 148.5,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 165.0,
+      "rating": 8.1
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 35.1,
+      "private_eur": 107.25,
+      "rating": 7.4
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 38.7,
+      "private_eur": 118.25,
+      "rating": 9.1
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 41.85,
+      "private_eur": 127.88,
+      "rating": 8.2
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 45.0,
+      "private_eur": 137.5,
+      "rating": 8.8
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 48.15,
+      "private_eur": 147.12,
+      "rating": 7.9
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 52.2,
+      "private_eur": 159.5,
+      "rating": 9.4
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 57.6,
+      "private_eur": 176.0,
+      "rating": 8.5
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 63.9,
+      "private_eur": 195.25,
+      "rating": 7.1
+     },
+     {
+      "type": "GUESTHOUSE",
+      "dorm_eur": null,
+      "private_eur": 130.62,
+      "rating": 8.6
+     },
+     {
+      "type": "GUESTHOUSE",
+      "dorm_eur": null,
+      "private_eur": 154.0,
+      "rating": 8.6
+     }
+    ]
+   },
+   {
+    "month": 10,
+    "properties": [
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 90.2,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 99.0,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 110.0,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 118.8,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 132.0,
+      "rating": 8.1
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 28.08,
+      "private_eur": 85.8,
+      "rating": 7.4
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 30.96,
+      "private_eur": 94.6,
+      "rating": 9.1
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 33.48,
+      "private_eur": 102.3,
+      "rating": 8.2
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 36.0,
+      "private_eur": 110.0,
+      "rating": 8.8
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 38.52,
+      "private_eur": 117.7,
+      "rating": 7.9
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 41.76,
+      "private_eur": 127.6,
+      "rating": 9.4
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 46.08,
+      "private_eur": 140.8,
+      "rating": 8.5
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 51.12,
+      "private_eur": 156.2,
+      "rating": 7.1
+     },
+     {
+      "type": "GUESTHOUSE",
+      "dorm_eur": null,
+      "private_eur": 104.5,
+      "rating": 8.6
+     },
+     {
+      "type": "GUESTHOUSE",
+      "dorm_eur": null,
+      "private_eur": 123.2,
+      "rating": 8.6
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "city": "Brussels",
+  "country": "Belgium",
+  "lat": 50.847,
+  "lon": 4.352,
+  "probes": [
+   {
+    "month": 2,
+    "properties": [
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 57.15,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 62.73,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 69.7,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 75.28,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 83.64,
+      "rating": 8.1
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 17.91,
+      "private_eur": 47.97,
+      "rating": 7.4
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 19.75,
+      "private_eur": 52.89,
+      "rating": 9.1
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 21.35,
+      "private_eur": 57.19,
+      "rating": 8.2
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 22.96,
+      "private_eur": 61.5,
+      "rating": 8.8
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 24.57,
+      "private_eur": 65.8,
+      "rating": 7.9
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 26.63,
+      "private_eur": 71.34,
+      "rating": 9.4
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 29.39,
+      "private_eur": 78.72,
+      "rating": 8.5
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 32.6,
+      "private_eur": 87.33,
+      "rating": 7.1
+     },
+     {
+      "type": "GUESTHOUSE",
+      "dorm_eur": null,
+      "private_eur": 58.42,
+      "rating": 8.6
+     },
+     {
+      "type": "GUESTHOUSE",
+      "dorm_eur": null,
+      "private_eur": 68.88,
+      "rating": 8.6
+     }
+    ]
+   },
+   {
+    "month": 5,
+    "properties": [
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 75.28,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 82.62,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 91.8,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 99.14,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 110.16,
+      "rating": 8.1
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 23.59,
+      "private_eur": 63.18,
+      "rating": 7.4
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 26.01,
+      "private_eur": 69.66,
+      "rating": 9.1
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 28.12,
+      "private_eur": 75.33,
+      "rating": 8.2
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 30.24,
+      "private_eur": 81.0,
+      "rating": 8.8
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 32.36,
+      "private_eur": 86.67,
+      "rating": 7.9
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 35.08,
+      "private_eur": 93.96,
+      "rating": 9.4
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 38.71,
+      "private_eur": 103.68,
+      "rating": 8.5
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 42.94,
+      "private_eur": 115.02,
+      "rating": 7.1
+     },
+     {
+      "type": "GUESTHOUSE",
+      "dorm_eur": null,
+      "private_eur": 76.95,
+      "rating": 8.6
+     },
+     {
+      "type": "GUESTHOUSE",
+      "dorm_eur": null,
+      "private_eur": 90.72,
+      "rating": 8.6
+     }
+    ]
+   },
+   {
+    "month": 8,
+    "properties": [
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 87.12,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 95.62,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 106.25,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 114.75,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 127.5,
+      "rating": 8.1
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 27.3,
+      "private_eur": 73.12,
+      "rating": 7.4
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 30.1,
+      "private_eur": 80.62,
+      "rating": 9.1
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 32.55,
+      "private_eur": 87.19,
+      "rating": 8.2
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 35.0,
+      "private_eur": 93.75,
+      "rating": 8.8
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 37.45,
+      "private_eur": 100.31,
+      "rating": 7.9
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 40.6,
+      "private_eur": 108.75,
+      "rating": 9.4
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 44.8,
+      "private_eur": 120.0,
+      "rating": 8.5
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 49.7,
+      "private_eur": 133.12,
+      "rating": 7.1
+     },
+     {
+      "type": "GUESTHOUSE",
+      "dorm_eur": null,
+      "private_eur": 89.06,
+      "rating": 8.6
+     },
+     {
+      "type": "GUESTHOUSE",
+      "dorm_eur": null,
+      "private_eur": 105.0,
+      "rating": 8.6
+     }
+    ]
+   },
+   {
+    "month": 10,
+    "properties": [
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 69.7,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 76.5,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 85.0,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 91.8,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 102.0,
+      "rating": 8.1
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 21.84,
+      "private_eur": 58.5,
+      "rating": 7.4
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 24.08,
+      "private_eur": 64.5,
+      "rating": 9.1
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 26.04,
+      "private_eur": 69.75,
+      "rating": 8.2
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 28.0,
+      "private_eur": 75.0,
+      "rating": 8.8
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 29.96,
+      "private_eur": 80.25,
+      "rating": 7.9
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 32.48,
+      "private_eur": 87.0,
+      "rating": 9.4
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 35.84,
+      "private_eur": 96.0,
+      "rating": 8.5
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 39.76,
+      "private_eur": 106.5,
+      "rating": 7.1
+     },
+     {
+      "type": "GUESTHOUSE",
+      "dorm_eur": null,
+      "private_eur": 71.25,
+      "rating": 8.6
+     },
+     {
+      "type": "GUESTHOUSE",
+      "dorm_eur": null,
+      "private_eur": 84.0,
+      "rating": 8.6
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "city": "Seville",
+  "country": "Spain",
+  "lat": 37.389,
+  "lon": -5.984,
+  "probes": [
+   {
+    "month": 2,
+    "properties": [
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 51.1,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 56.09,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 62.32,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 67.31,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 74.78,
+      "rating": 8.1
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 14.07,
+      "private_eur": 38.38,
+      "rating": 7.4
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 15.51,
+      "private_eur": 42.31,
+      "rating": 9.1
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 16.78,
+      "private_eur": 45.76,
+      "rating": 8.2
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 18.04,
+      "private_eur": 49.2,
+      "rating": 8.8
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 19.3,
+      "private_eur": 52.64,
+      "rating": 7.9
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 20.93,
+      "private_eur": 57.07,
+      "rating": 9.4
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 23.09,
+      "private_eur": 62.98,
+      "rating": 8.5
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 25.62,
+      "private_eur": 69.86,
+      "rating": 7.1
+     },
+     {
+      "type": "GUESTHOUSE",
+      "dorm_eur": null,
+      "private_eur": 46.74,
+      "rating": 8.6
+     },
+     {
+      "type": "GUESTHOUSE",
+      "dorm_eur": null,
+      "private_eur": 55.1,
+      "rating": 8.6
+     }
+    ]
+   },
+   {
+    "month": 5,
+    "properties": [
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 67.31,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 73.87,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 82.08,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 88.65,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 98.5,
+      "rating": 8.1
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 18.53,
+      "private_eur": 50.54,
+      "rating": 7.4
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 20.43,
+      "private_eur": 55.73,
+      "rating": 9.1
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 22.1,
+      "private_eur": 60.26,
+      "rating": 8.2
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 23.76,
+      "private_eur": 64.8,
+      "rating": 8.8
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 25.42,
+      "private_eur": 69.34,
+      "rating": 7.9
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 27.56,
+      "private_eur": 75.17,
+      "rating": 9.4
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 30.41,
+      "private_eur": 82.94,
+      "rating": 8.5
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 33.74,
+      "private_eur": 92.02,
+      "rating": 7.1
+     },
+     {
+      "type": "GUESTHOUSE",
+      "dorm_eur": null,
+      "private_eur": 61.56,
+      "rating": 8.6
+     },
+     {
+      "type": "GUESTHOUSE",
+      "dorm_eur": null,
+      "private_eur": 72.58,
+      "rating": 8.6
+     }
+    ]
+   },
+   {
+    "month": 8,
+    "properties": [
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 77.9,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 85.5,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 95.0,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 102.6,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 114.0,
+      "rating": 8.1
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 21.45,
+      "private_eur": 58.5,
+      "rating": 7.4
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 23.65,
+      "private_eur": 64.5,
+      "rating": 9.1
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 25.58,
+      "private_eur": 69.75,
+      "rating": 8.2
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 27.5,
+      "private_eur": 75.0,
+      "rating": 8.8
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 29.43,
+      "private_eur": 80.25,
+      "rating": 7.9
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 31.9,
+      "private_eur": 87.0,
+      "rating": 9.4
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 35.2,
+      "private_eur": 96.0,
+      "rating": 8.5
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 39.05,
+      "private_eur": 106.5,
+      "rating": 7.1
+     },
+     {
+      "type": "GUESTHOUSE",
+      "dorm_eur": null,
+      "private_eur": 71.25,
+      "rating": 8.6
+     },
+     {
+      "type": "GUESTHOUSE",
+      "dorm_eur": null,
+      "private_eur": 84.0,
+      "rating": 8.6
+     }
+    ]
+   },
+   {
+    "month": 10,
+    "properties": [
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 62.32,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 68.4,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 76.0,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 82.08,
+      "rating": 8.1
+     },
+     {
+      "type": "HOTEL",
+      "dorm_eur": null,
+      "private_eur": 91.2,
+      "rating": 8.1
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 17.16,
+      "private_eur": 46.8,
+      "rating": 7.4
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 18.92,
+      "private_eur": 51.6,
+      "rating": 9.1
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 20.46,
+      "private_eur": 55.8,
+      "rating": 8.2
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 22.0,
+      "private_eur": 60.0,
+      "rating": 8.8
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 23.54,
+      "private_eur": 64.2,
+      "rating": 7.9
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 25.52,
+      "private_eur": 69.6,
+      "rating": 9.4
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 28.16,
+      "private_eur": 76.8,
+      "rating": 8.5
+     },
+     {
+      "type": "HOSTEL",
+      "dorm_eur": 31.24,
+      "private_eur": 85.2,
+      "rating": 7.1
+     },
+     {
+      "type": "GUESTHOUSE",
+      "dorm_eur": null,
+      "private_eur": 57.0,
+      "rating": 8.6
+     },
+     {
+      "type": "GUESTHOUSE",
+      "dorm_eur": null,
+      "private_eur": 67.2,
+      "rating": 8.6
+     }
+    ]
+   }
+  ]
+ }
+]

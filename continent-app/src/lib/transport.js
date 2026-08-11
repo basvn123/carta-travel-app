@@ -4,7 +4,8 @@
  * For every consecutive pair of stops the planner offers THREE priced ways to
  * travel (train / bus / car), each an honest distance-based ESTIMATE (there is
  * no free live intercity fare API), plus deep links to check & book the real
- * thing: the departure country's rail operator (from country_insights), FlixBus,
+ * thing: Omio (affiliate-tagged, first when configured, see omio.js), the
+ * departure country's rail operator (from country_insights), FlixBus,
  * and Google Maps directions. Car costs come from the pipeline's car_model
  * (per-country petrol prices, EUR/100km tolls), split across the group, which
  * is exactly why a car often wins for 3-4 people and loses for solo travellers.
@@ -12,6 +13,9 @@
 import { haversineKm, withCityCoords } from './runtime_pricing.js';
 import { round2 } from './math.js';
 import { transportProfile, legRailQuality, RAIL_SCORE_BONUS, landmassOf } from './countryTransport.js';
+import { buildOmioLink } from './omio.js';
+import { resolveGroundFare } from './groundFares.js';
+import { isNum } from '../map/coords.js';
 
 const DETOUR = 1.3;             // road km vs straight-line (matches car_layer.py)
 // Rail follows its own alignment, not the road network: dividing ROAD km
@@ -36,6 +40,14 @@ function gmapsPoint(p) {
 
 function gmapsDir(a, b, mode) {
   return `https://www.google.com/maps/dir/?api=1&origin=${gmapsPoint(a)}&destination=${gmapsPoint(b)}&travelmode=${mode}`;
+}
+
+// The affiliate-tagged Omio link for a leg, as a spreadable links-array
+// fragment: one entry when a tracking link is configured and the route is
+// expressible, empty otherwise so every links array keeps its current shape.
+function omioLeg(a, b, mode) {
+  const url = buildOmioLink({ fromCity: a.city, toCity: b.city, mode, subId: 'leg' });
+  return url ? [{ label: 'Omio', url }] : [];
 }
 
 // One flat 82 km/h made a 60 km hop and a 600 km motorway run the same speed.
@@ -83,64 +95,79 @@ function seaCrossingOptions(lmA, lmB, destA, destB, straightKm, group, { carMode
   const roadKm = straightKm * (channel ? 1.35 : 1.4);
   const modes = {};
 
+  const sea = channel ? 'channel' : 'irishsea';
   if (channel) {
     const continentIso = lmA === 'continent' ? destA.iso2 : destB.iso2;
     if (EUROSTAR_COUNTRIES.has(continentIso)) {
       // Advance-fare band: London to Brussels/Paris runs about EUR 60 to 120
       // booked ahead; domestic rail on either side scales with distance.
-      const pp = Math.min(220, Math.max(59, 0.26 * straightKm));
+      const fare = resolveGroundFare({ mode: 'train', sea, km: straightKm, straightKm });
       modes.train = {
-        eur_pp: round2(pp),
-        eur_total: round2(pp * group),
+        eur_pp: round2(fare.eur),
+        eur_total: round2(fare.eur * group),
         hours: round2((straightKm * RAIL_DETOUR) / 140 + 1.3),
         links: [
+          ...omioLeg(destA, destB, 'train'),
           { label: 'Eurostar', url: 'https://www.eurostar.com' },
           { label: 'Google Maps (transit)', url: gmapsDir(destA, destB, 'transit') },
         ],
         note: 'Eurostar through the Channel Tunnel. Book ahead: walk-up fares run far higher.',
+        est: fare.est,
+        src: fare.src,
       };
     }
-    const busPp = Math.max(29, 0.085 * roadKm);
+    const busFare = resolveGroundFare({ mode: 'bus', sea, km: roadKm, straightKm });
     modes.bus = {
-      eur_pp: round2(busPp),
-      eur_total: round2(busPp * group),
+      eur_pp: round2(busFare.eur),
+      eur_total: round2(busFare.eur * group),
       hours: round2(roadKm / 55 + 1.5),
       links: [
+        ...omioLeg(destA, destB, 'bus'),
         { label: 'FlixBus', url: 'https://www.flixbus.com' },
         { label: 'Google Maps (transit)', url: gmapsDir(destA, destB, 'transit') },
       ],
       note: 'The coach crosses by ferry or LeShuttle; the crossing is included in the fare.',
+      est: busFare.est,
+      src: busFare.src,
     };
   } else {
     // Rail & Sail (train + ferry through Holyhead or Fishguard) is a real,
     // famously cheap through-ticket; so are the coach-and-ferry combos.
-    const railPp = Math.min(120, Math.max(45, 0.12 * straightKm));
+    const fare = resolveGroundFare({ mode: 'train', sea, km: straightKm, straightKm });
     modes.train = {
-      eur_pp: round2(railPp),
-      eur_total: round2(railPp * group),
+      eur_pp: round2(fare.eur),
+      eur_total: round2(fare.eur * group),
       hours: round2(roadKm / 75 + 3),
       links: [
+        // The multimode /travel/ page: no train crosses the Irish Sea, so the
+        // per-mode /trains/ route page would be the wrong landing spot here.
+        ...omioLeg(destA, destB, null),
         { label: 'Rail & Sail (Irish Ferries)', url: 'https://www.irishferries.com' },
         { label: 'Stena Line', url: 'https://www.stenaline.com' },
       ],
       note: 'Rail & Sail through-tickets combine the train and the ferry crossing.',
+      est: fare.est,
+      src: fare.src,
     };
-    const busPp = Math.max(35, 0.08 * roadKm);
+    const busFare = resolveGroundFare({ mode: 'bus', sea, km: roadKm, straightKm });
     modes.bus = {
-      eur_pp: round2(busPp),
-      eur_total: round2(busPp * group),
+      eur_pp: round2(busFare.eur),
+      eur_total: round2(busFare.eur * group),
       hours: round2(roadKm / 55 + 3.5),
       links: [
+        ...omioLeg(destA, destB, null),
         { label: 'FlixBus', url: 'https://www.flixbus.com' },
         { label: 'Google Maps (transit)', url: gmapsDir(destA, destB, 'transit') },
       ],
       note: 'Coach-and-ferry through-fares include the crossing.',
+      est: busFare.est,
+      src: busFare.src,
     };
   }
 
   const { cars, fuelEur, tollEur } = carCosts(destA, destB, roadKm, group, carModel);
-  const ferryPerCar = channel ? 95 : 130;
-  const ferryEur = cars * ferryPerCar;
+  const ferryFare = resolveGroundFare({ mode: 'ferry', sea, km: roadKm, straightKm });
+  const ferryEur = cars * ferryFare.eur;
   const carTotal = fuelEur + tollEur + ferryEur;
   modes.car = {
     eur_pp: round2(carTotal / group),
@@ -159,6 +186,8 @@ function seaCrossingOptions(lmA, lmB, destA, destB, straightKm, group, { carMode
     note: channel
       ? 'Includes the Channel crossing (LeShuttle or the Dover to Calais ferry, roughly EUR 60 to 150 per car each way).'
       : 'Includes the car-ferry crossing (roughly EUR 100 to 160 per car each way).',
+    est: true,
+    src: 'model',
   };
 
   const score = (m, key) => m.eur_pp + m.hours * VALUE_OF_TIME_EUR_H
@@ -200,11 +229,14 @@ export function legTransportOptions(destA, destB, groupSize = 1, { carModel = nu
   // centre instead, the flight is the only leg that belongs at the airport.
   destA = withCityCoords(destA);
   destB = withCityCoords(destB);
-  if (!destA || !destB || destA.lat == null || destB.lat == null) return null;
+  // Number.isFinite, not `!= null`: a NaN coordinate used to sail through the
+  // null check and price every mode of the leg as NaN (the coords.js lesson).
+  if (!destA || !destB || !isNum(destA.lat) || !isNum(destA.lon)
+    || !isNum(destB.lat) || !isNum(destB.lon)) return null;
   const group = Math.max(1, groupSize || 1);
 
   const straightKm = haversineKm(destA.lat, destA.lon, destB.lat, destB.lon);
-  if (straightKm == null) return null;
+  if (!isNum(straightKm)) return null;
 
   const ltA = destA.local_transport || {};
   const ltB = destB.local_transport || {};
@@ -250,13 +282,15 @@ export function legTransportOptions(destA, destB, groupSize = 1, { carModel = nu
   const poorEnd = ltA.transit_quality === 'poor' || ltB.transit_quality === 'poor';
   const railKm = straightKm * RAIL_DETOUR;
   const railKmh = (profA.railKmh + profB.railKmh) / 2;
-  const railEur = (profA.railEur + profB.railEur) / 2;
   const railOverheadH = (profA.railOverheadH + profB.railOverheadH) / 2
     + (poorEnd ? 0.35 : 0);
-  // Fare floor scales with the network's price level (a Polish minimum fare
-  // is not a Swiss one): ~40 km worth of that country's per-km rate, min EUR 4.
-  const trainPp = railEur === 0 ? 0 : Math.max(4, railEur * 40, railEur * railKm);
-  const trainLinks = [];
+  // Fare via the resolver: real quote, then calibration, then the country
+  // profile priors (a per-km rate with a floor of ~40 km at that rate, min
+  // EUR 4, averaged across both endpoint networks).
+  const trainFare = resolveGroundFare({
+    mode: 'train', isoA: destA.iso2, isoB: destB.iso2, km: railKm, straightKm,
+  });
+  const trainLinks = [...omioLeg(destA, destB, 'train')];
   if (insA?.rail?.url && insA?.rail?.operator) {
     trainLinks.push({ label: insA.rail.operator, url: insA.rail.url });
   }
@@ -264,29 +298,35 @@ export function legTransportOptions(destA, destB, groupSize = 1, { carModel = nu
     trainLinks.push({ label: insB.rail.operator, url: insB.rail.url });
   }
   trainLinks.push({ label: 'Google Maps (transit)', url: gmapsDir(destA, destB, 'transit') });
-  const train = railQuality === 'none' ? null : {
-    eur_pp: round2(trainPp),
-    eur_total: round2(trainPp * group),
+  const train = railQuality === 'none' || !trainFare ? null : {
+    eur_pp: round2(trainFare.eur),
+    eur_total: round2(trainFare.eur * group),
     hours: round2(railKm / railKmh + railOverheadH),
     links: trainLinks,
     note: insA?.rail?.note || null,
+    est: trainFare.est,
+    src: trainFare.src,
   };
 
   // Bus -----------------------------------------------------------------
   const busKmh = (profA.busKmh + profB.busKmh) / 2;
-  const busEurKm = (profA.busEur + profB.busEur) / 2;
   const busOverheadH = (profA.busOverheadH + profB.busOverheadH) / 2;
-  const busPp = busEurKm === 0 ? 0 : Math.max(3, busEurKm * roadKm);
+  const busFare = resolveGroundFare({
+    mode: 'bus', isoA: destA.iso2, isoB: destB.iso2, km: roadKm, straightKm,
+  });
   const busOperators = (insA?.bus?.operators || []).slice(0, 2).join(', ') || 'FlixBus';
   const bus = {
-    eur_pp: round2(busPp),
-    eur_total: round2(busPp * group),
+    eur_pp: round2(busFare.eur),
+    eur_total: round2(busFare.eur * group),
     hours: round2(roadKm / busKmh + busOverheadH),
     links: [
+      ...omioLeg(destA, destB, 'bus'),
       { label: busOperators, url: insA?.bus?.url || 'https://www.flixbus.com' },
       { label: 'Google Maps (transit)', url: gmapsDir(destA, destB, 'transit') },
     ],
     note: insA?.bus?.note || null,
+    est: busFare.est,
+    src: busFare.src,
   };
 
   // Car -----------------------------------------------------------------
@@ -308,6 +348,8 @@ export function legTransportOptions(destA, destB, groupSize = 1, { carModel = nu
     links: [{ label: 'Google Maps (drive)', url: gmapsDir(destA, destB, 'driving') }],
     vignettes,
     note: vignettes.length ? `Vignette: ${vignettes.join(', ')}` : null,
+    est: true,
+    src: 'model',
   };
 
   // Recommendation: cheapest per person with a value-of-time nudge, plus the
@@ -374,8 +416,10 @@ export function preferredPublicMode(opts) {
 // It must NEVER be priced as your own car with tolls, which is what the generic
 // legTransportOptions recommender does for a short hop, and the very thing that
 // made the transfer read as "you drive from the airport" when you flew in.
+// Speeds, overheads and taxi economics; the public FARE band lives with the
+// other ground-fare priors in groundFares.js.
 const TRANSFER = {
-  publicEurPerKm: 0.15, publicFloor: 10, publicCap: 60, publicKmh: 42, publicOverheadH: 0.35,
+  publicKmh: 42, publicOverheadH: 0.35,
   taxiBase: 4, taxiPerKm: 2.0, taxiMin: 14, taxiKmh: 55, taxiMaxKm: 90,
   rentalKmh: 70,
 };
@@ -396,14 +440,16 @@ export function transferModesFromKm(roadKm, groupSize = 1, {
   const km = Math.max(0.5, roadKm || 0);
   const cap = Math.max(1, capacity || 4);
 
-  const publicPp = publicOverride != null
-    ? publicOverride
-    : Math.min(TRANSFER.publicCap, Math.max(TRANSFER.publicFloor, TRANSFER.publicEurPerKm * km));
+  // A stored per-person fare (a destination's own ground_transport_one_way_eur)
+  // resolves as a real quote; without one the resolver prices the transfer band.
+  const publicFare = resolveGroundFare({ mode: 'public', quote: publicOverride, km });
   const publicMode = {
     mode: 'public',
-    eur_pp: round2(publicPp),
-    eur_total: round2(publicPp * group),
+    eur_pp: round2(publicFare.eur),
+    eur_total: round2(publicFare.eur * group),
     hours: round2(km / TRANSFER.publicKmh + TRANSFER.publicOverheadH),
+    est: publicFare.est,
+    src: publicFare.src,
   };
 
   // Taxi / rideshare is priced per cab (up to `cap` seats), so a family splits
@@ -417,6 +463,8 @@ export function transferModesFromKm(roadKm, groupSize = 1, {
     eur_total: round2(taxiTotal),
     cabs,
     hours: round2(km / TRANSFER.taxiKmh),
+    est: true,
+    src: 'model',
   };
 
   const modes = {};
@@ -432,6 +480,8 @@ export function transferModesFromKm(roadKm, groupSize = 1, {
       eur_total: round2(fuel),
       hours: round2(km / TRANSFER.rentalKmh),
       included_with_rental: true,
+      est: true,
+      src: 'model',
     };
   }
 
@@ -451,9 +501,10 @@ export function transferModesFromKm(roadKm, groupSize = 1, {
 export function airportTransferOptions(fromDest, toDest, groupSize = 1, { carModel = null, hasRental = false } = {}) {
   fromDest = withCityCoords(fromDest);
   toDest = withCityCoords(toDest);
-  if (!fromDest || !toDest || fromDest.lat == null || toDest.lat == null) return null;
+  if (!fromDest || !toDest || !isNum(fromDest.lat) || !isNum(fromDest.lon)
+    || !isNum(toDest.lat) || !isNum(toDest.lon)) return null;
   const straightKm = haversineKm(fromDest.lat, fromDest.lon, toDest.lat, toDest.lon);
-  if (straightKm == null) return null;
+  if (!isNum(straightKm)) return null;
   const roadKm = straightKm * DETOUR;
   const cm = carModel || {};
   const fuelByIso = cm.fuel_price_by_iso2 || {};

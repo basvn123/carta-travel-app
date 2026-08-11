@@ -7,7 +7,6 @@ import { CountryIntel } from '../components/CountryIntel.jsx';
 import { TripMap } from '../map/TripMap.jsx';
 import { TripItinerary, TransferModePicker } from './TripItinerary.jsx';
 import { GuidedTripWizard } from './GuidedTripWizard.jsx';
-import { StarterTrips } from './StarterTrips.jsx';
 import { CheapTipsSection } from './CheapTipsSection.jsx';
 import { eur, fmtHours, flightTimes } from '../lib/format.js';
 import { fmtDate } from '../lib/dates.js';
@@ -16,12 +15,13 @@ import { useTripPlanner } from '../hooks/useTripPlanner.js';
 import { useCountryInsights } from '../hooks/useCountryInsights.js';
 import { useI18n } from '../i18n/index.jsx';
 import { loadAssignments, TRIP_DRAFT_PLAN_ID } from './dayPlanStore.js';
-import { SparkIcon, TrainIcon, BusIcon, CarIcon, BulbIcon, InfoIcon, ReceiptIcon, BedIcon } from '../components/Icons.jsx';
+import { SparkIcon, TrainIcon, BusIcon, CarIcon, FerryIcon, BulbIcon, InfoIcon, ReceiptIcon, BedIcon } from '../components/Icons.jsx';
 import { PlaneIcon } from '../components/TransportIcons.jsx';
 import { knownForFacts } from '../lib/knownFor.js';
 import { flightReasonLabel } from '../lib/trip_planner_pricing.js';
 import { geocodeAddress } from '../lib/geocode.js';
 import { carrierName } from '../lib/carriers.js';
+import { fareProv, flightProv, estPrefix, FareTag } from '../components/FareProvenance.jsx';
 
 const SHEET_H_KEY = 'carta.tripSheetH.v1';
 
@@ -64,6 +64,9 @@ const MODE_META = {
   train: { Icon: TrainIcon, label: 'trip.modeTrain' },
   bus: { Icon: BusIcon, label: 'trip.modeBus' },
   car: { Icon: CarIcon, label: 'trip.modeCar' },
+  // Hops Carta prices from what the traveller paid, not from its own data.
+  fly: { Icon: PlaneIcon, label: 'trip.modeFly' },
+  ferry: { Icon: FerryIcon, label: 'trip.modeFerry' },
 };
 const ModeIcon = ({ mode, size = 13 }) => {
   const I = MODE_META[mode]?.Icon;
@@ -78,11 +81,17 @@ function LegRow({ leg, onMode }) {
   if (!leg) return <div className="trip-leg">↳ {t('trip.routeUnknown')}</div>;
   if (leg.no_road || !leg.mode) return <div className="trip-leg">↳ {leg.note || t('trip.noOverland')}</div>;
   const chosen = leg.modes[leg.mode];
+  const legProv = fareProv(chosen) || fareProv(leg);
   return (
     <div className="trip-leg trip-leg-rich">
       <button className="trip-leg-main" onClick={() => setOpen(!open)} aria-expanded={open}>
-        ↳ <ModeIcon mode={leg.mode} /> {t('trip.legSummary', { mode: t(MODE_META[leg.mode].label), km: leg.road_km, price: eur(chosen.eur_pp), hours: fmtHours(chosen.hours) })}
-        {leg.long_haul ? `, ${t('trip.longLeg')}` : ''}
+        ↳ <ModeIcon mode={leg.mode} /> {chosen.own
+          ? (chosen.eur_total > 0
+            ? t('trip.legBookedSummary', { mode: t(MODE_META[leg.mode].label), price: eur(chosen.eur_total) })
+            : `${t(MODE_META[leg.mode].label)}, ${t('trip.legBookedNoPrice')}`)
+          : t('trip.legSummary', { mode: t(MODE_META[leg.mode].label), km: leg.road_km, price: `${estPrefix(legProv)}${eur(chosen.eur_pp)}`, hours: fmtHours(chosen.hours) })}
+        {leg.long_haul && !chosen.own ? `, ${t('trip.longLeg')}` : ''}
+        {!chosen.own && <FareTag prov={legProv} />}
         <span className="trip-leg-caret">{open ? '−' : '+'}</span>
       </button>
       {open && (
@@ -95,9 +104,9 @@ function LegRow({ leg, onMode }) {
                 onClick={() => onMode(m)}
                 title={leg.recommended === m ? t('trip.cartaPick') : undefined}
               >
-                <span><ModeIcon mode={m} /> {t(MODE_META[m].label)}{leg.recommended === m && <span className="guide-reco-mark"><SparkIcon size={10} /></span>}</span>
-                <b>{t('trip.perPersonShort', { price: eur(o.eur_pp) })}</b>
-                <small>~{fmtHours(o.hours)}</small>
+                <span><ModeIcon mode={m} /> {t(MODE_META[m].label)}{leg.recommended === m && !o.own && <span className="guide-reco-mark"><SparkIcon size={10} /></span>}</span>
+                <b>{o.own && !(o.eur_total > 0) ? '-' : t('trip.perPersonShort', { price: `${o.own ? '' : estPrefix(fareProv(o))}${eur(o.eur_pp)}` })}</b>
+                <small>{o.own ? t('trip.legBooked') : `~${fmtHours(o.hours)}`}</small>
               </button>
             ))}
           </div>
@@ -107,7 +116,7 @@ function LegRow({ leg, onMode }) {
               <a key={j} href={l.url} target="_blank" rel="noreferrer">{l.label} ↗</a>
             ))}
           </div>
-          <p className="trip-leg-disclaimer">{t('trip.legDisclaimer')}</p>
+          {!chosen.own && <p className="trip-leg-disclaimer">{t('trip.legDisclaimer')}</p>}
         </div>
       )}
     </div>
@@ -200,7 +209,7 @@ function Suggestions({ suggestions, onPick }) {
   );
 }
 
-export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, openPlanId, onOpenPlanConsumed, origin, onChangeOrigin, onPlanDay, openSharedTrip, onSharedTripConsumed }) {
+export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, openPlanId, onOpenPlanConsumed, origin, onChangeOrigin, onPlanDay, openSharedTrip, onSharedTripConsumed, openWizardSignal }) {
   const { t } = useI18n();
   const countryInsights = useCountryInsights();
   const tp = useTripPlanner(data, countryInsights);
@@ -246,6 +255,16 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
     mq.addEventListener('change', onChange);
     return () => mq.removeEventListener('change', onChange);
   }, []);
+
+  // The welcome landing's "Plan a full trip" CTA lands here: the App shell
+  // bumps this counter, and the guided wizard opens without the visitor having
+  // to find the launcher card first. 0 = never asked.
+  useEffect(() => {
+    if (openWizardSignal) {
+      setWizardOpen(true);
+      setSheetOpen(true);
+    }
+  }, [openWizardSignal]);
 
   const persistHeight = (h) => {
     try { localStorage.setItem(SHEET_H_KEY, String(Math.round(h))); } catch { /* private mode */ }
@@ -355,11 +374,12 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
         anchorOrigin: d.anchorOrigin,
         returnAnchorId: d.returnAnchorId,
         ownFlight: d.ownFlight?.airline || d.ownFlight?.costTotal ? d.ownFlight : null,
+        legModes: d.legModes,
+        ownLegs: d.ownLegs,
       });
       // The sender's trip name wins here (loadFromWizard treats its label as a
       // fallback so wizard runs never clobber a typed name; a share must).
       tp.setPlanLabel(d.label || '');
-      Object.entries(d.legModes || {}).forEach(([i, m]) => tp.setLegMode(Number(i), m));
       tp.setPlanned(true);
       setSelectedStop(null);
       setSheetOpen(true);
@@ -478,7 +498,7 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
           <Icon size={11} /> {from} → {to}
           <small>{t('trip.legStats', { km: leg.road_km, hours: fmtHours(leg.hours) })}</small>
         </span>
-        <span className="val">{eur(leg.ground_total)}</span>
+        <span className="val">{`${estPrefix(fareProv(leg))}${eur(leg.ground_total)}`}</span>
       </div>
     );
   };
@@ -634,6 +654,7 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
                 groupSize: tp.groupSize,
                 transportPref: tp.transportPref,
                 legModes: tp.legModes,
+                ownLegs: tp.ownLegs,
                 pace: tp.pace,
                 baggage: tp.baggage,
                 anchorId: tp.anchorId,
@@ -700,60 +721,66 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
                 <div className="trip-stops">
                   {tp.stopDetails.map((s, i) => (
                     <React.Fragment key={i}>
-                      <div
-                        className={`trip-stop ${selectedStop === i ? 'active' : ''} ${dragIdx === i ? 'dragging' : ''}`}
-                        ref={(el) => { stopRefs.current[i] = el; }}
-                        onClick={() => setSelectedStop(i)}
-                        onDragOver={(e) => { if (dragIdx != null) e.preventDefault(); }}
-                        onDrop={(e) => {
-                          e.preventDefault();
-                          if (dragIdx != null && dragIdx !== i) tp.reorderStop(dragIdx, i);
-                          setDragIdx(null);
-                        }}
-                      >
+                      <div className="trip-stop-wrap">
                         <div
-                          className="trip-stop-idx"
-                          draggable
-                          onDragStart={(e) => { setDragIdx(i); e.dataTransfer.effectAllowed = 'move'; }}
-                          onDragEnd={() => setDragIdx(null)}
-                          title={t('trip.dragReorder')}
-                        >{i + 1}</div>
-                        <div className="trip-stop-body">
-                          <div className="trip-stop-city">
-                            {s.dest ? s.dest.city : t('trip.unknown')}
-                            {s.dest && (
-                              <button
-                                className={`guide-city-info-btn ${stopInfoIdx === i ? 'open' : ''}`}
-                                onClick={(e) => { e.stopPropagation(); setStopInfoIdx(stopInfoIdx === i ? null : i); }}
-                                aria-expanded={stopInfoIdx === i}
-                                title={t('trip.aboutCity', { city: s.dest.city })}
-                              ><InfoIcon size={12} /></button>
-                            )}
-                          </div>
-                          <div className="trip-stop-when">
-                            {s.arriveDate ? `${fmtDate(s.arriveDate, true)} → ${fmtDate(s.departDate, true)}` : t('trip.setDates')}
-                          </div>
-                          {stopInfoIdx === i && s.dest && (
-                            <div className="guide-city-facts" onClick={(e) => e.stopPropagation()}>
-                              {knownForFacts(s.dest).map(([label, value]) => (
-                                <div className={`guide-city-fact ${label === 'Known for' ? 'guide-city-fact-known' : ''}`} key={label}>
-                                  <span className="guide-city-fact-label">{label}</span>
-                                  <span className="guide-city-fact-value">{value}</span>
-                                </div>
-                              ))}
+                          className={`trip-stop ${selectedStop === i ? 'active' : ''} ${dragIdx === i ? 'dragging' : ''}`}
+                          ref={(el) => { stopRefs.current[i] = el; }}
+                          onClick={() => setSelectedStop(i)}
+                          onDragOver={(e) => { if (dragIdx != null) e.preventDefault(); }}
+                          onDrop={(e) => {
+                            e.preventDefault();
+                            if (dragIdx != null && dragIdx !== i) tp.reorderStop(dragIdx, i);
+                            setDragIdx(null);
+                          }}
+                        >
+                          <div
+                            className="trip-stop-idx"
+                            draggable
+                            onDragStart={(e) => { setDragIdx(i); e.dataTransfer.effectAllowed = 'move'; }}
+                            onDragEnd={() => setDragIdx(null)}
+                            title={t('trip.dragReorder')}
+                          >{i + 1}</div>
+                          <div className="trip-stop-body">
+                            <div className="trip-stop-city">
+                              {s.dest ? s.dest.city : t('trip.unknown')}
+                              {s.dest && (
+                                <button
+                                  className={`guide-city-info-btn ${stopInfoIdx === i ? 'open' : ''}`}
+                                  onClick={(e) => { e.stopPropagation(); setStopInfoIdx(stopInfoIdx === i ? null : i); }}
+                                  aria-expanded={stopInfoIdx === i}
+                                  title={t('trip.aboutCity', { city: s.dest.city })}
+                                ><InfoIcon size={12} /></button>
+                              )}
                             </div>
-                          )}
+                            <div className="trip-stop-when">
+                              {s.arriveDate ? `${fmtDate(s.arriveDate, true)} → ${fmtDate(s.departDate, true)}` : t('trip.setDates')}
+                            </div>
+                          </div>
+                          <Stepper
+                            value={s.nights}
+                            onChange={(n) => tp.setStopNights(i, n)}
+                            suffix={(n) => (n === 1 ? t('trip.nightOne') : t('trip.nightMany'))}
+                          />
+                          <div className="trip-stop-tools" onClick={(e) => e.stopPropagation()}>
+                            {i > 0 && <button className="trip-stop-move" onClick={() => tp.moveStop(i, -1)} aria-label={t('trip.moveUp')} title={t('trip.moveUp')}>↑</button>}
+                            {i < tp.stopDetails.length - 1 && <button className="trip-stop-move" onClick={() => tp.moveStop(i, 1)} aria-label={t('trip.moveDown')} title={t('trip.moveDown')}>↓</button>}
+                            <button className="trip-stop-remove" onClick={() => tp.removeStop(i)} aria-label={t('trip.removeStopAria')} title={t('trip.remove')}>×</button>
+                          </div>
                         </div>
-                        <Stepper
-                          value={s.nights}
-                          onChange={(n) => tp.setStopNights(i, n)}
-                          suffix={(n) => (n === 1 ? t('trip.nightOne') : t('trip.nightMany'))}
-                        />
-                        <div className="trip-stop-tools" onClick={(e) => e.stopPropagation()}>
-                          {i > 0 && <button className="trip-stop-move" onClick={() => tp.moveStop(i, -1)} aria-label={t('trip.moveUp')} title={t('trip.moveUp')}>↑</button>}
-                          {i < tp.stopDetails.length - 1 && <button className="trip-stop-move" onClick={() => tp.moveStop(i, 1)} aria-label={t('trip.moveDown')} title={t('trip.moveDown')}>↓</button>}
-                          <button className="trip-stop-remove" onClick={() => tp.removeStop(i)} aria-label={t('trip.removeStopAria')} title={t('trip.remove')}>×</button>
-                        </div>
+                        {/* Full width of the row (not squeezed into the narrow
+                            body column alongside the stepper and tools), so
+                            long facts read as normal sentences instead of
+                            wrapping one word per line. */}
+                        {stopInfoIdx === i && s.dest && (
+                          <div className="guide-city-facts" onClick={(e) => e.stopPropagation()}>
+                            {knownForFacts(s.dest).map(([label, value]) => (
+                              <div className={`guide-city-fact ${label === 'Known for' ? 'guide-city-fact-known' : ''}`} key={label}>
+                                <span className="guide-city-fact-label">{label}</span>
+                                <span className="guide-city-fact-value">{value}</span>
+                              </div>
+                            ))}
+                          </div>
+                        )}
                       </div>
                       {i < tp.legs.length && (
                         <LegRow leg={tp.legs[i]} onMode={(m) => tp.setLegMode(i, m)} />
@@ -860,16 +887,18 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
                       <div className="trip-total-row">
                         <span className="lbl">
                           <PlaneIcon size={11} /> {t('trip.flightOut')}
+                          <FareTag prov={flightProv(tp.flight, 'into')} />
                           <small>{carrierName(tp.flight.into_carrier)}, {tp.flight.origin} → {tp.flight.into_anchor}{flightTimes(tp.flight.into_time) ? `, ${t('trip.departs', { time: flightTimes(tp.flight.into_time).dep })}` : ''}, {tp.groupSize} {tp.groupSize === 1 ? t('trip.seatOne') : t('trip.seatMany')}</small>
                         </span>
-                        <span className="val">{eur(tp.flight.into_fare_eur * tp.groupSize)}</span>
+                        <span className="val">{`${estPrefix(flightProv(tp.flight, 'into'))}${eur(tp.flight.into_fare_eur * tp.groupSize)}`}</span>
                       </div>
                       <div className="trip-total-row">
                         <span className="lbl">
                           <PlaneIcon size={11} /> {t('trip.flightHome')}
+                          <FareTag prov={flightProv(tp.flight, 'out_of')} />
                           <small>{carrierName(tp.flight.out_of_carrier)}, {tp.flight.out_anchor} → {tp.flight.origin}{flightTimes(tp.flight.out_of_time) ? `, ${t('trip.departs', { time: flightTimes(tp.flight.out_of_time).dep })}` : ''}, {tp.groupSize} {tp.groupSize === 1 ? t('trip.seatOne') : t('trip.seatMany')}</small>
                         </span>
-                        <span className="val">{eur(tp.flight.out_of_fare_eur * tp.groupSize)}</span>
+                        <span className="val">{`${estPrefix(flightProv(tp.flight, 'out_of'))}${eur(tp.flight.out_of_fare_eur * tp.groupSize)}`}</span>
                       </div>
                       {tp.flight.ground_total > 0 && (
                         <div className="trip-total-row">
@@ -1031,7 +1060,6 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
 
           </>
           ) : (
-          <>
           <button className="trip-guide-cta" onClick={() => setWizardOpen(true)}>
             <span className="trip-guide-spark"><SparkIcon size={15} /></span>
             <span className="trip-guide-cta-text">
@@ -1040,20 +1068,6 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
             </span>
             <span className="trip-guide-arrow">→</span>
           </button>
-          {/* Ready-made trips: pick a country, get Carta's researched routes
-              (most beautiful / best value / cheap but lovely / hidden gems),
-              then edit dates, stops and nights like any other trip. */}
-          <StarterTrips
-            destinations={destinations}
-            groupSize={tp.groupSize}
-            onPick={(selection) => {
-              tp.loadFromWizard(selection);
-              tp.setPlanned(false);
-              setSelectedStop(null);
-              setSheetOpen(true);
-            }}
-          />
-          </>
           )}
 
           {/* Deep country intel for every country on the route. Sits outside the

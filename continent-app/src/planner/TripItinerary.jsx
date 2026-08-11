@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { eur, fmtHours, flightTimes } from '../lib/format.js';
 import { TripExtras } from './TripExtras.jsx';
+import { ExpenseLedger } from './ExpenseLedger.jsx';
 import { loadTripExtras, persistTripExtras, subscribeDayPlanStore } from './dayPlanStore.js';
 import { flightReasonLabel, baggageLabel } from '../lib/trip_planner_pricing.js';
 import { googleMapsDirUrl } from '../lib/routing.js';
@@ -10,8 +11,11 @@ import { tripKml, downloadKml } from '../lib/kmlExport.js';
 import { tripIcs, downloadIcs } from '../lib/icsExport.js';
 import { buildTripShareUrl } from '../lib/shareLink.js';
 import { carrierName } from '../lib/carriers.js';
+import { groundLinkFor } from '../lib/groundLinks.js';
+import { BagCheck } from '../components/BagCheck.jsx';
+import { fareProv, flightProv, estPrefix, FareTag, BookingNote } from '../components/FareProvenance.jsx';
 import { useI18n } from '../i18n/index.jsx';
-import { SparkIcon, TrainIcon, BusIcon, CarIcon, BedIcon, ReceiptIcon, ShareIcon, DownloadIcon, LuggageIcon, MapPinIcon, RouteIcon, CalendarIcon, LinkIcon, ChevronDownIcon } from '../components/Icons.jsx';
+import { SparkIcon, TrainIcon, BusIcon, CarIcon, FerryIcon, BedIcon, ReceiptIcon, ShareIcon, DownloadIcon, LuggageIcon, MapPinIcon, RouteIcon, CalendarIcon, LinkIcon, ChevronDownIcon } from '../components/Icons.jsx';
 import { PlaneIcon } from '../components/TransportIcons.jsx';
 
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -32,7 +36,20 @@ function fmtFlightWhen(iso, time) {
   return `${fmtLong(iso)}, ${ft.dep}${ft.arr ? `-${ft.arr}` : ''}`;
 }
 
-const LEG_ICONS = { train: TrainIcon, bus: BusIcon, car: CarIcon, public: BusIcon, taxi: CarIcon, rental: CarIcon };
+const LEG_ICONS = {
+  train: TrainIcon, bus: BusIcon, car: CarIcon, fly: PlaneIcon, ferry: FerryIcon,
+  public: BusIcon, taxi: CarIcon, rental: CarIcon,
+};
+
+// "~1 h 50 min by X" wording per leg mode. Airport transfers use the honest
+// public/taxi/rental trio (we know a transfer exists, not which vehicle), so
+// they must never be labelled "by train" - the old fall-through did exactly
+// that for every transfer, taxis included.
+const BY_MODE_KEY = {
+  train: 'itin.byTrain', bus: 'itin.byBus', car: 'itin.byCar',
+  fly: 'itin.byFlight', ferry: 'itin.byFerry',
+  public: 'itin.byPublic', taxi: 'itin.byTaxi', rental: 'itin.byRental',
+};
 
 // Airport-transfer modes: how you get from the plane to where you sleep.
 const TRANSFER_META = {
@@ -55,7 +72,15 @@ export function TransferModePicker({ flightTransfer, anchorIn, anchorOut, setTra
   if (modes.length < 2) return null;
   const totals = {};
   for (const m of modes) totals[m] = sources.reduce((sum, s) => sum + (s.modes[m]?.eur_total || 0), 0);
-  const active = flightTransfer?.mode || anchorIn?.mode || anchorOut?.mode;
+  // This picker sets EVERY transfer at once, so it only highlights a mode when
+  // all of them (both directions) currently agree; after a per-leg override in
+  // the route view the directions diverge and nothing is highlighted here.
+  const inUse = new Set([
+    flightTransfer?.mode_in || flightTransfer?.mode,
+    flightTransfer?.mode_out || flightTransfer?.mode,
+    anchorIn?.mode, anchorOut?.mode,
+  ].filter(Boolean));
+  const active = inUse.size === 1 ? inUse.values().next().value : null;
   const recommended = flightTransfer?.recommended || anchorIn?.recommended || anchorOut?.recommended;
   return (
     <div className="transfer-picker">
@@ -81,6 +106,79 @@ export function TransferModePicker({ flightTransfer, anchorIn, anchorOut, setTra
   );
 }
 
+/** An airport-transfer row in the route view (fly-in airport city to the first
+ *  stay, or the last stay back to the fly-home airport). Tappable like the
+ *  inter-stop legs: it opens the same public / taxi / rental comparison the
+ *  receipt's picker offers, so the mode is a visible choice right where the
+ *  journey is shown, not an assumption. */
+function AnchorTransferLeg({ leg, from, to, onMode }) {
+  const { t } = useI18n();
+  const [open, setOpen] = useState(false);
+  if (!leg) return null;
+  const Icon = LEG_ICONS[leg.mode] || BusIcon;
+  const canPick = Boolean(onMode && leg.modes && Object.keys(leg.modes).length > 1);
+  return (
+    <div className="itin-transfer">
+      <button
+        type="button"
+        className="itin-flight-row itin-transfer-main"
+        onClick={() => canPick && setOpen(!open)}
+        aria-expanded={canPick ? open : undefined}
+        disabled={!canPick}
+        title={canPick ? t('itin.legChangeTitle') : undefined}
+      >
+        <Icon size={12} />
+        <span>{t('itin.then')} <b>{from} → {to}</b></span>
+        <small>~{fmtHours(leg.hours)} {t(BY_MODE_KEY[leg.mode] || 'itin.byPublic')}</small>
+        {canPick && <span className="itin-leg-change">{open ? t('itin.legClose') : t('itin.legChange')}</span>}
+      </button>
+      {open && (
+        <div className="itin-leg-modes itin-transfer-modes">
+          {Object.entries(leg.modes).map(([m, o]) => {
+            const meta = TRANSFER_META[m];
+            const MIcon = meta?.Icon || BusIcon;
+            return (
+              <button
+                key={m}
+                type="button"
+                className={`trip-leg-mode itin-leg-mode ${leg.mode === m ? 'on' : ''}`}
+                onClick={() => onMode(m)}
+                aria-pressed={leg.mode === m}
+                title={leg.recommended === m ? t('transfer.cartaPick') : undefined}
+              >
+                <span><MIcon size={12} /> {t(meta?.labelKey || m)}{leg.recommended === m && <SparkIcon size={9} />}</span>
+                <b>{`${estPrefix(fareProv(o))}${eur(o.eur_total)}`}</b>
+                <small>~{fmtHours(o.hours)}</small>
+              </button>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
+
+/** A curated secondary-hub note under a flight row: which named shuttle
+ *  actually bridges "Charleroi" and Brussels (or "Bergamo" and Milan), how
+ *  long it takes, how often it runs, and the buffer to plan around. Only
+ *  renders for airports in the curated table, so it never speculates. */
+function GroundLinkNote({ iata, dir }) {
+  const { t } = useI18n();
+  const gl = groundLinkFor(iata);
+  if (!gl) return null;
+  const freq = gl.everyMin ? t('itin.groundLinkEvery', { n: gl.everyMin }) : '';
+  return (
+    <div className="itin-groundlink">
+      <BusIcon size={11} />
+      <span>
+        {t(dir === 'to' ? 'itin.groundLinkTo' : 'itin.groundLinkFrom', {
+          airport: gl.airport, service: gl.service, hub: gl.hub, min: gl.minutes,
+        })}{freq}. {t('itin.groundLinkBuffer', { buffer: gl.bufferMin })}
+      </span>
+    </div>
+  );
+}
+
 /**
  * The planned itinerary: Overview + one tab per day.
  *
@@ -90,7 +188,10 @@ export function TransferModePicker({ flightTransfer, anchorIn, anchorOut, setTra
  * list (the pace cap) and hands fine-tuning to the Day planner via onPlanDay.
  */
 // Traveller-facing names for the leg modes (shared with the mode buttons).
-const MODE_LABEL_KEY = { train: 'trip.modeTrain', bus: 'trip.modeBus', car: 'trip.modeCar' };
+const MODE_LABEL_KEY = {
+  train: 'trip.modeTrain', bus: 'trip.modeBus', car: 'trip.modeCar',
+  fly: 'trip.modeFly', ferry: 'trip.modeFerry',
+};
 
 /** The connector between two consecutive stops in the route view: how you get
  *  from stay to stay, as a first-class part of the itinerary (not a line
@@ -110,6 +211,9 @@ function ItinLeg({ leg, onMode }) {
   }
   const Icon = LEG_ICONS[leg.mode] || TrainIcon;
   const chosen = leg.modes[leg.mode];
+  // Provenance flags ride on the chosen mode option or the leg itself
+  // (contract A fields, or the ground resolver's est/src).
+  const legProv = fareProv(chosen) || fareProv(leg);
   return (
     <div className={`itin-leg ${open ? 'open' : ''}`}>
       <span className="itin-leg-rail" aria-hidden="true" />
@@ -122,8 +226,15 @@ function ItinLeg({ leg, onMode }) {
         <span className="itin-leg-glyph"><Icon size={12} /></span>
         <span className="itin-leg-text">
           {t(MODE_LABEL_KEY[leg.mode])}
+          <FareTag prov={chosen?.own ? null : legProv} />
           <small>
-            {t('itin.legStats', { km: leg.road_km, hours: fmtHours(chosen?.hours ?? leg.hours) })}, {eur(leg.ground_total)}
+            {chosen?.own
+              // Their own booking: Carta has no km or duration for it, only
+              // the fare they told us, so it must not pretend to an estimate.
+              // Nor to a fare, when they left the price blank: EUR 0.00 there
+              // reads as "this hop was free", which is not what they said.
+              ? (leg.ground_total > 0 ? `${t('trip.legBooked')}, ${eur(leg.ground_total)}` : t('trip.legBookedNoPrice'))
+              : `${t('itin.legStats', { km: leg.road_km, hours: fmtHours(chosen?.hours ?? leg.hours) })}, ${estPrefix(legProv)}${eur(leg.ground_total)}`}
           </small>
         </span>
         <span className="itin-leg-change">{open ? t('itin.legClose') : t('itin.legChange')}</span>
@@ -144,12 +255,20 @@ function ItinLeg({ leg, onMode }) {
                 aria-pressed={leg.mode === m}
                 title={leg.recommended === m ? t('trip.cartaPick') : undefined}
               >
-                <span><MIcon size={12} /> {t(MODE_LABEL_KEY[m])}{leg.recommended === m && <SparkIcon size={9} />}</span>
-                <b>{eur(o.eur_total)}</b>
-                <small>~{fmtHours(o.hours)}</small>
+                <span><MIcon size={12} /> {t(MODE_LABEL_KEY[m])}{leg.recommended === m && !o.own && <SparkIcon size={9} />}</span>
+                <b>{o.own && !(o.eur_total > 0) ? '-' : `${o.own ? '' : estPrefix(fareProv(o))}${eur(o.eur_total)}`}</b>
+                <small>{o.own ? t('trip.legBooked') : `~${fmtHours(o.hours)}`}</small>
               </button>
             );
           })}
+        </div>
+      )}
+      {open && chosen?.links?.length > 0 && (
+        <div className="trip-leg-links itin-leg-links">
+          {chosen.links.map((l, j) => (
+            <a key={j} href={l.url} target="_blank" rel="noreferrer">{l.label} ↗</a>
+          ))}
+          <BookingNote />
         </div>
       )}
     </div>
@@ -157,17 +276,24 @@ function ItinLeg({ leg, onMode }) {
 }
 
 /** One titled group of the chronological receipt (Getting there / each stop /
- *  Getting home / For the whole trip), its rows indented under a header that
- *  carries the group subtotal, so the receipt reads like the journey. */
-function BreakdownSection({ Icon, title, sub, total, children }) {
+ *  Getting home / For the whole trip), its rows under a header that carries
+ *  the group subtotal, so the receipt reads like the journey.
+ *
+ *  The subtotal is dropped when the group holds a single priced row: repeating
+ *  the same number twice, once in the header and once right under it, was the
+ *  main thing making the receipt feel cluttered. */
+function BreakdownSection({ title, sub, total, children }) {
+  const pricedRows = React.Children.toArray(children).filter(
+    (c) => typeof c?.props?.className === 'string' && c.props.className.includes('trip-total-row'),
+  ).length;
   return (
     <section className="itin-bd-sec">
       <header className="itin-bd-sec-head">
         <span className="itin-bd-sec-title">
-          <Icon size={11} /> {title}
+          {title}
           {sub && <small className="itin-bd-sec-sub">{sub}</small>}
         </span>
-        {total > 0 && <span className="itin-bd-sec-total">{eur(total)}</span>}
+        {total > 0 && pricedRows > 1 && <span className="itin-bd-sec-total">{eur(total)}</span>}
       </header>
       <div className="itin-bd-sec-rows">{children}</div>
     </section>
@@ -175,15 +301,20 @@ function BreakdownSection({ Icon, title, sub, total, children }) {
 }
 
 /** A home<->first/last-stop drive row for own-car trips: the journey starts at
- *  the traveller's door, and the route view should say so. */
+ *  the traveller's door, and the route view should say so. Stacked (title
+ *  over the km/time), not crammed onto one line like the short flight rows -
+ *  "Drive out: home to Monaco" plus its distance never fit next to each
+ *  other without wrapping one word per line. */
 function ItinDriveRow({ leg, labelKey, city, from }) {
   const { t } = useI18n();
   if (!leg) return null;
   return (
-    <div className="itin-flight-row">
-      <CarIcon size={12} />
-      <span>{t(labelKey, { city })}{from ? <b> ({from})</b> : null}</span>
-      <small>{t('trip.driveSub', { km: leg.road_km, hours: fmtHours(leg.hours) })}</small>
+    <div className="itin-drive-row">
+      <span className="itin-drive-icon"><CarIcon size={14} /></span>
+      <span className="itin-drive-main">
+        <span className="itin-drive-label">{t(labelKey, { city })}{from ? <b> ({from})</b> : null}</span>
+        <span className="itin-drive-sub">{t('trip.driveSub', { km: leg.road_km, hours: fmtHours(leg.hours) })}</span>
+      </span>
     </div>
   );
 }
@@ -202,6 +333,7 @@ export function TripItinerary({
   const { t } = useI18n();
   const [tab, setTab] = useState('overview');
   const [breakdownOpen, setBreakdownOpen] = useState(false);
+  const [exportOpen, setExportOpen] = useState(false);
   const [shareState, setShareState] = useState('');
 
   // Bookings / notes / packing list, keyed by the plan id (or the draft id
@@ -287,8 +419,9 @@ export function TripItinerary({
   // transfer with its own (falling back to the shared anchor for older data).
   const anchorInCity = anchorLegs?.inCity || anchorLegs?.anchor?.city;
   const anchorOutCity = anchorLegs?.outCity || anchorLegs?.anchor?.city;
-  const AnchorInIcon = anchorIn ? (LEG_ICONS[anchorIn.mode] || TrainIcon) : null;
-  const AnchorOutIcon = anchorOut ? (LEG_ICONS[anchorOut.mode] || TrainIcon) : null;
+  // Receipt-row icons for the transfers (the route-view rows carry their own).
+  const AnchorInIcon = anchorIn ? (LEG_ICONS[anchorIn.mode] || BusIcon) : null;
+  const AnchorOutIcon = anchorOut ? (LEG_ICONS[anchorOut.mode] || BusIcon) : null;
 
   const pickDay = (day) => {
     setTab(day.dayNum);
@@ -343,11 +476,15 @@ export function TripItinerary({
           {/* The journey starts with a flight - show it as part of the route,
               not only as a cost line in the breakdown. */}
           {flight?.combinable && (
-            <div className="itin-flight-row">
-              <PlaneIcon size={12} />
-              <span>{t('itin.fly')} <b>{flight.origin} → {flight.into_anchor}</b></span>
-              <small>{fmtFlightWhen(stopDetails[0]?.arriveDate, flight.into_time)}</small>
-            </div>
+            <>
+              <div className="itin-flight-row">
+                <PlaneIcon size={12} />
+                <span>{t('itin.fly')} <b>{flight.origin} → {flight.into_anchor}</b></span>
+                <small>{fmtFlightWhen(stopDetails[0]?.arriveDate, flight.into_time)}</small>
+              </div>
+              <GroundLinkNote iata={flight.origin} dir="to" />
+              <GroundLinkNote iata={flight.into_anchor} dir="from" />
+            </>
           )}
           {flight?.own && (
             <div className="itin-flight-row">
@@ -357,11 +494,12 @@ export function TripItinerary({
             </div>
           )}
           {anchorIn && (
-            <div className="itin-flight-row">
-              <AnchorInIcon size={12} />
-              <span>{t('itin.then')} <b>{anchorInCity} → {stopDetails[0]?.dest?.city}</b></span>
-              <small>~{fmtHours(anchorIn.hours)} {t(anchorIn.mode === 'car' ? 'itin.byCar' : anchorIn.mode === 'bus' ? 'itin.byBus' : 'itin.byTrain')}</small>
-            </div>
+            <AnchorTransferLeg
+              leg={anchorIn}
+              from={anchorInCity}
+              to={stopDetails[0]?.dest?.city}
+              onMode={setTransferMode ? (m) => setTransferMode(m, 'in') : null}
+            />
           )}
           {flight?.driving && (
             <ItinDriveRow leg={driveLegs?.out} labelKey="trip.driveOut" city={stopDetails[0]?.dest?.city || ''} from={driveLegs?.from} />
@@ -398,18 +536,22 @@ export function TripItinerary({
           )}
 
           {anchorOut && (
-            <div className="itin-flight-row">
-              <AnchorOutIcon size={12} />
-              <span>{t('itin.then')} <b>{stopDetails[stopDetails.length - 1]?.dest?.city} → {anchorOutCity}</b></span>
-              <small>~{fmtHours(anchorOut.hours)} {t(anchorOut.mode === 'car' ? 'itin.byCar' : anchorOut.mode === 'bus' ? 'itin.byBus' : 'itin.byTrain')}</small>
-            </div>
+            <AnchorTransferLeg
+              leg={anchorOut}
+              from={stopDetails[stopDetails.length - 1]?.dest?.city}
+              to={anchorOutCity}
+              onMode={setTransferMode ? (m) => setTransferMode(m, 'out') : null}
+            />
           )}
           {flight?.combinable && (
-            <div className="itin-flight-row">
-              <PlaneIcon size={12} />
-              <span>{t('itin.flyHome')} <b>{flight.out_anchor} → {flight.origin}</b></span>
-              <small>{fmtFlightWhen(stopDetails[stopDetails.length - 1]?.departDate, flight.out_of_time)}</small>
-            </div>
+            <>
+              <GroundLinkNote iata={flight.out_anchor} dir="to" />
+              <div className="itin-flight-row">
+                <PlaneIcon size={12} />
+                <span>{t('itin.flyHome')} <b>{flight.out_anchor} → {flight.origin}</b></span>
+                <small>{fmtFlightWhen(stopDetails[stopDetails.length - 1]?.departDate, flight.out_of_time)}</small>
+              </div>
+            </>
           )}
           {flight?.own && (
             <div className="itin-flight-row">
@@ -428,7 +570,7 @@ export function TripItinerary({
               aria-expanded={breakdownOpen}
             >
               <span>
-                <ReceiptIcon size={12} /> {t('itin.estimatedTotal')} <small>{groupSize} {groupSize === 1 ? t('itin.personOne') : t('itin.personMany')}</small>
+                {t('itin.estimatedTotal')} <small>{groupSize} {groupSize === 1 ? t('itin.personOne') : t('itin.personMany')}</small>
               </span>
               <strong>{eur(grandTotal)}</strong>
               <span className={`itin-breakdown-caret ${breakdownOpen ? 'open' : ''}`} aria-hidden="true"><ChevronDownIcon size={14} /></span>
@@ -442,14 +584,15 @@ export function TripItinerary({
 
                 {/* 1. Getting there, in journey order. */}
                 {getThereTotal > 0 && (
-                  <BreakdownSection Icon={PlaneIcon} title={t('itin.secGetThere')} total={getThereTotal}>
+                  <BreakdownSection title={t('itin.secGetThere')} total={getThereTotal}>
                     {flight?.combinable && (
                       <div className="trip-total-row">
                         <span className="lbl">
                           <PlaneIcon size={11} /> {t('itin.flightOut')}
+                          <FareTag prov={flightProv(flight, 'into')} />
                           <small>{carrierName(flight.into_carrier)}, {flight.origin} → {flight.into_anchor}{flightTimes(flight.into_time) ? `, ${t('itin.departs', { time: flightTimes(flight.into_time).dep })}` : ''}, {groupSize} {groupSize === 1 ? t('itin.seatOne') : t('itin.seatMany')}</small>
                         </span>
-                        <span className="val">{eur(flight.into_fare_eur * groupSize)}</span>
+                        <span className="val">{`${estPrefix(flightProv(flight, 'into'))}${eur(flight.into_fare_eur * groupSize)}`}</span>
                       </div>
                     )}
                     {flight?.own && (
@@ -479,7 +622,7 @@ export function TripItinerary({
                           <AnchorInIcon size={11} /> {anchorInCity} → {stopDetails[0]?.dest?.city}
                           <small>{t('itin.legStats', { km: anchorIn.road_km, hours: fmtHours(anchorIn.hours) })}</small>
                         </span>
-                        <span className="val">{eur(anchorIn.ground_total)}</span>
+                        <span className="val">{`${estPrefix(fareProv(anchorIn))}${eur(anchorIn.ground_total)}`}</span>
                       </div>
                     )}
                   </BreakdownSection>
@@ -496,7 +639,6 @@ export function TripItinerary({
                   return (
                     <React.Fragment key={`sec-${i}`}>
                       <BreakdownSection
-                        Icon={BedIcon}
                         title={`${i + 1}. ${s.dest?.city || t('itin.unknown')}`}
                         sub={s.arriveDate ? `${fmtLong(s.arriveDate)} → ${fmtLong(s.departDate)}` : null}
                         total={stopTotal}
@@ -524,9 +666,15 @@ export function TripItinerary({
                         <div className="itin-bd-leg">
                           <span className="lbl">
                             <LegIcon size={11} /> {s.dest?.city} → {stopDetails[i + 1]?.dest?.city}
-                            <small>{t(MODE_LABEL_KEY[l.mode])}, {t('itin.legStats', { km: l.road_km, hours: fmtHours(l.hours) })}</small>
+                            <small>
+                              {t(MODE_LABEL_KEY[l.mode])}, {l.modes?.[l.mode]?.own
+                                ? t('trip.legBooked')
+                                : t('itin.legStats', { km: l.road_km, hours: fmtHours(l.hours) })}
+                            </small>
                           </span>
-                          <span className="val">{eur(l.ground_total)}</span>
+                          <span className="val">{l.modes?.[l.mode]?.own
+                            ? eur(l.ground_total)
+                            : `${estPrefix(fareProv(l.modes?.[l.mode]) || fareProv(l))}${eur(l.ground_total)}`}</span>
                         </div>
                       )}
                     </React.Fragment>
@@ -535,14 +683,14 @@ export function TripItinerary({
 
                 {/* 3. Getting home. */}
                 {getHomeTotal > 0 && (
-                  <BreakdownSection Icon={PlaneIcon} title={t('itin.secGetHome')} total={getHomeTotal}>
+                  <BreakdownSection title={t('itin.secGetHome')} total={getHomeTotal}>
                     {anchorOut && (
                       <div className="trip-total-row">
                         <span className="lbl">
                           <AnchorOutIcon size={11} /> {stopDetails[stopDetails.length - 1]?.dest?.city} → {anchorOutCity}
                           <small>{t('itin.legStats', { km: anchorOut.road_km, hours: fmtHours(anchorOut.hours) })}</small>
                         </span>
-                        <span className="val">{eur(anchorOut.ground_total)}</span>
+                        <span className="val">{`${estPrefix(fareProv(anchorOut))}${eur(anchorOut.ground_total)}`}</span>
                       </div>
                     )}
                     {flight?.driving && driveLegs?.home && (
@@ -558,17 +706,20 @@ export function TripItinerary({
                       <div className="trip-total-row">
                         <span className="lbl">
                           <PlaneIcon size={11} /> {t('itin.flightHome')}
+                          <FareTag prov={flightProv(flight, 'out_of')} />
                           <small>{carrierName(flight.out_of_carrier)}, {flight.out_anchor} → {flight.origin}{flightTimes(flight.out_of_time) ? `, ${t('itin.departs', { time: flightTimes(flight.out_of_time).dep })}` : ''}, {groupSize} {groupSize === 1 ? t('itin.seatOne') : t('itin.seatMany')}</small>
                         </span>
-                        <span className="val">{eur(flight.out_of_fare_eur * groupSize)}</span>
+                        <span className="val">{`${estPrefix(flightProv(flight, 'out_of'))}${eur(flight.out_of_fare_eur * groupSize)}`}</span>
                       </div>
                     )}
                   </BreakdownSection>
                 )}
 
-                {/* 4. Round-trip items that belong to the whole journey. */}
-                {(wholeTripTotal > 0 || flight?.driving) && (
-                  <BreakdownSection Icon={ReceiptIcon} title={t('itin.secWholeTrip')} total={wholeTripTotal}>
+                {/* 4. Round-trip items that belong to the whole journey. An
+                       own-car trip has none of them, so the group is skipped
+                       entirely there rather than framing a lone sentence. */}
+                {wholeTripTotal > 0 && (
+                  <BreakdownSection title={t('itin.secWholeTrip')} total={wholeTripTotal}>
                     {flight?.combinable && flight.bag_total > 0 && (
                       <div className="trip-total-row">
                         <span className="lbl">
@@ -602,17 +753,17 @@ export function TripItinerary({
                         <span className="val">{eur(vignettes.eur_total)}</span>
                       </div>
                     )}
-                    {flight?.driving && (
-                      <p className="trip-note itin-owncar-note">{t('trip.ownCarNote')}</p>
-                    )}
-                    <TransferModePicker
-                      flightTransfer={flightTransfer}
-                      anchorIn={anchorIn}
-                      anchorOut={anchorOut}
-                      setTransferMode={setTransferMode}
-                    />
                   </BreakdownSection>
                 )}
+
+                <BagCheck flight={flight} />
+
+                <TransferModePicker
+                  flightTransfer={flightTransfer}
+                  anchorIn={anchorIn}
+                  anchorOut={anchorOut}
+                  setTransferMode={setTransferMode}
+                />
 
                 <div className="itin-bd-grand">
                   <span className="itin-bd-grand-lbl">{t('itin.estimatedTotal')}</span>
@@ -621,7 +772,9 @@ export function TripItinerary({
                 {groupSize > 1 && (
                   <div className="itin-bd-pp">{t('itin.perPersonLine', { price: eur(grandTotal / groupSize) })}</div>
                 )}
-                <p className="itin-bd-note">{t('itin.estimateNote')}</p>
+                {flight?.driving && (
+                  <p className="itin-bd-foot-note">{t('trip.ownCarNote')}</p>
+                )}
               </div>
             )}
           </div>
@@ -630,87 +783,146 @@ export function TripItinerary({
               planner to properly shape it. */}
           <div className="itin-days-list">
             <div className="trip-block-title">{t('itin.yourDays')}</div>
-            {dayPlan.map((d) => (
-              <div className="itin-day-row" key={d.dayNum}>
-                <button className="itin-day-row-main" onClick={() => pickDay(d)}>
-                  <span className="itin-day-row-num">{t('itin.dayN', { n: d.dayNum })}</span>
-                  <span className="itin-day-row-meta">
-                    {d.stop.dest?.city}{d.date ? `, ${fmtLong(d.date)}` : ''}
-                    {dayPlanned(d) && `, ${t('itin.planned')}`}
-                  </span>
-                </button>
-                {onPlanDay && (
-                  <button
-                    className="itin-day-plan-btn"
-                    onClick={() => onPlanDay(d)}
-                    title={t(dayPlanned(d) ? 'itin.changeDayTitle' : 'itin.shapeDayTitle', { n: d.dayNum })}
-                  >
-                    <SparkIcon size={11} /> {dayPlanned(d) ? t('itin.editPlan') : t('itin.plan')}
+            {dayPlan.map((d) => {
+              const placed = extras.dayExtras?.[d.dayNum] || [];
+              return (
+                <div className="itin-day-row" key={d.dayNum}>
+                  <button className="itin-day-row-main" onClick={() => pickDay(d)}>
+                    <span className="itin-day-row-num">{t('itin.dayN', { n: d.dayNum })}</span>
+                    <span className="itin-day-row-meta">
+                      {d.stop.dest?.city}{d.date ? `, ${fmtLong(d.date)}` : ''}
+                      {dayPlanned(d) && `, ${t('itin.planned')}`}
+                    </span>
                   </button>
-                )}
-              </div>
-            ))}
+                  {onPlanDay && (
+                    <button
+                      className="itin-day-plan-btn"
+                      onClick={() => onPlanDay(d)}
+                      title={t(dayPlanned(d) ? 'itin.changeDayTitle' : 'itin.shapeDayTitle', { n: d.dayNum })}
+                    >
+                      <SparkIcon size={11} /> {dayPlanned(d) ? t('itin.editPlan') : t('itin.plan')}
+                    </button>
+                  )}
+                  {/* Activities routed here from the import inbox: pinned to
+                      the day, removable where they are shown. */}
+                  {placed.length > 0 && (
+                    <div className="itin-day-extras">
+                      {placed.map((a) => (
+                        <span className="itin-day-extra" key={a.id}>
+                          {a.name}
+                          {a.eur != null && <small>{eur(a.eur)}</small>}
+                          <button
+                            onClick={() => saveExtras({
+                              ...extras,
+                              dayExtras: {
+                                ...extras.dayExtras,
+                                [d.dayNum]: placed.filter((x) => x.id !== a.id),
+                              },
+                            })}
+                            aria-label={t('extras.removeTitle')}
+                            title={t('extras.removeTitle')}
+                          >×</button>
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
 
           {/* Bookings, notes and the packing list: the trip's life admin,
               saved with the plan (and synced to the account when signed in). */}
-          <TripExtras rows={bookingRows} extras={extras} onChange={saveExtras} />
+          <TripExtras
+            rows={bookingRows}
+            extras={extras}
+            onChange={saveExtras}
+            days={dayPlan.map((d) => ({ n: d.dayNum, city: d.stop.dest?.city || '', date: d.date }))}
+            importContext={{
+              stops: stopDetails.filter((s) => s.dest).map((s) => ({
+                city: s.dest.city,
+                country: s.dest.country,
+                arrive: s.arriveDate || '',
+                nights: s.nights,
+              })),
+              groupSize,
+            }}
+          />
+
+          {/* Who paid for what, in any currency, and who owes whom: the
+              group's shared-spend book, on the same save/sync rails. */}
+          <ExpenseLedger extras={extras} onChange={saveExtras} groupSize={groupSize} />
 
           {/* Take the trip with you: share it, keep a PDF copy, or open the
               route straight in Google Maps. The Maps link is built from city
-              coordinates, names failed to geocode for many smaller places. */}
-          <div className="itin-export-row">
+              coordinates, names failed to geocode for many smaller places.
+              Collapsed behind one toggle - a row of up to six buttons each
+              wrapping onto their own lines was the ugliest part of the
+              overview, and it's the same list every trip needs once. */}
+          <div className={`itin-export ${exportOpen ? 'open' : ''}`}>
             <button
-              className="itin-export-btn"
-              onClick={async () => {
-                const r = await shareTrip(exportPayload);
-                setShareState(r === 'copied' ? t('export.copied') : '');
-                if (r === 'copied') window.setTimeout(() => setShareState(''), 2500);
-              }}
-              title={t('export.shareTripTitle')}
+              className="itin-export-toggle"
+              onClick={() => setExportOpen((v) => !v)}
+              aria-expanded={exportOpen}
             >
-              <ShareIcon size={12} /> {t('export.shareTrip')}
+              <span><ShareIcon size={13} /> {t('export.exportAndShare')}</span>
+              <span className={`itin-breakdown-caret ${exportOpen ? 'open' : ''}`} aria-hidden="true"><ChevronDownIcon size={14} /></span>
             </button>
-            <button
-              className="itin-export-btn"
-              onClick={() => downloadTripPdf(exportPayload)}
-              title={t('export.downloadPdfTitle')}
-            >
-              <DownloadIcon size={12} /> {t('export.downloadPdf')}
-            </button>
-            {gmapsUrl && (
-              <a
-                className="itin-export-btn"
-                href={gmapsUrl}
-                target="_blank"
-                rel="noreferrer"
-                title={t('export.openRoute')}
-              >
-                <MapPinIcon size={12} /> {t('export.openInGmaps')}
-              </a>
-            )}
-            <button
-              className="itin-export-btn"
-              onClick={handleKml}
-              title={t('export.myMapsTitle')}
-            >
-              <RouteIcon size={12} /> {t('export.myMaps')}
-            </button>
-            <button
-              className="itin-export-btn"
-              onClick={handleIcs}
-              title={t('export.calendarTitle')}
-            >
-              <CalendarIcon size={12} /> {t('export.calendar')}
-            </button>
-            {sharePayload && (
-              <button
-                className="itin-export-btn"
-                onClick={handleCopyLink}
-                title={t('export.copyLinkTitle')}
-              >
-                <LinkIcon size={12} /> {t('export.copyLink')}
-              </button>
+            {exportOpen && (
+              <div className="itin-export-menu">
+                <button
+                  className="itin-export-item"
+                  onClick={async () => {
+                    const r = await shareTrip(exportPayload);
+                    setShareState(r === 'copied' ? t('export.copied') : '');
+                    if (r === 'copied') window.setTimeout(() => setShareState(''), 2500);
+                  }}
+                  title={t('export.shareTripTitle')}
+                >
+                  <ShareIcon size={13} /> {t('export.shareTrip')}
+                </button>
+                <button
+                  className="itin-export-item"
+                  onClick={() => downloadTripPdf(exportPayload)}
+                  title={t('export.downloadPdfTitle')}
+                >
+                  <DownloadIcon size={13} /> {t('export.downloadPdf')}
+                </button>
+                {gmapsUrl && (
+                  <a
+                    className="itin-export-item"
+                    href={gmapsUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    title={t('export.openRoute')}
+                  >
+                    <MapPinIcon size={13} /> {t('export.openInGmaps')}
+                  </a>
+                )}
+                <button
+                  className="itin-export-item"
+                  onClick={handleKml}
+                  title={t('export.myMapsTitle')}
+                >
+                  <RouteIcon size={13} /> {t('export.myMaps')}
+                </button>
+                <button
+                  className="itin-export-item"
+                  onClick={handleIcs}
+                  title={t('export.calendarTitle')}
+                >
+                  <CalendarIcon size={13} /> {t('export.calendar')}
+                </button>
+                {sharePayload && (
+                  <button
+                    className="itin-export-item"
+                    onClick={handleCopyLink}
+                    title={t('export.copyLinkTitle')}
+                  >
+                    <LinkIcon size={13} /> {t('export.copyLink')}
+                  </button>
+                )}
+              </div>
             )}
           </div>
           {shareState && <p className="itin-export-note">{shareState}</p>}

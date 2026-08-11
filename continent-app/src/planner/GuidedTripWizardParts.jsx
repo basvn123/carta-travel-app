@@ -72,55 +72,60 @@ export function StayRow({ id, dest, nights, onNights, anchorDest, isAnchor, comp
     : null;
   const n = nights || 0;
   return (
-    <div className={`guide-city ${n > 0 ? 'on' : ''}`}>
-      <CityThumb dest={dest} className="guide-city-thumb" />
-      <div className="guide-city-info">
-        <div className="guide-city-name">
-          {dest.city}
-          {isAnchor && <span className="guide-anchor-badge"><PlaneIcon size={9} /> {t('wizard.youLandHere')}</span>}
-          <TierChip dest={dest} />
-          {dest.rating?.score != null && <ScoreChip rating={dest.rating} size="xs" />}
-          {dest.rating?.hidden_gem && <HiddenGemTag />}
-          {nightlyEur != null && (
-            <span className="guide-stay-price" title={t('wizard.perNightGroupTitle')}>
-              {t('wizard.perNight', { price: eur(nightlyEur) })}
-            </span>
+    <div className="guide-city-wrap">
+      <div className={`guide-city ${n > 0 ? 'on' : ''}`}>
+        <CityThumb dest={dest} className="guide-city-thumb" />
+        <div className="guide-city-info">
+          <div className="guide-city-name">
+            {dest.city}
+            {isAnchor && <span className="guide-anchor-badge"><PlaneIcon size={9} /> {t('wizard.youLandHere')}</span>}
+            <TierChip dest={dest} />
+            {dest.rating?.score != null && <ScoreChip rating={dest.rating} size="xs" />}
+            {dest.rating?.hidden_gem && <HiddenGemTag />}
+            {nightlyEur != null && (
+              <span className="guide-stay-price" title={t('wizard.perNightGroupTitle')}>
+                {t('wizard.perNight', { price: eur(nightlyEur) })}
+              </span>
+            )}
+            <button
+              className={`guide-city-info-btn ${infoOpen ? 'open' : ''}`}
+              onClick={() => setInfoOpen(!infoOpen)}
+              aria-expanded={infoOpen}
+              title={t('wizard.aboutCity', { city: dest.city })}
+            ><InfoIcon size={12} /></button>
+          </div>
+          <div className="guide-city-insight">
+            {km != null ? `${t('wizard.kmFromArrival', { km })} ` : ''}{cityInsight(dest)}
+          </div>
+          {n > 0 && companions && companions.length > 0 && (
+            <div className="guide-city-combo">
+              {t('wizard.pairsWellWith')} {companions.map((c, i) => (
+                <span key={c.id}>{i > 0 && ' & '}<b>{c.dest.city}</b> ({c.km} km)</span>
+              ))}
+            </div>
           )}
-          <button
-            className={`guide-city-info-btn ${infoOpen ? 'open' : ''}`}
-            onClick={() => setInfoOpen(!infoOpen)}
-            aria-expanded={infoOpen}
-            title={t('wizard.aboutCity', { city: dest.city })}
-          ><InfoIcon size={12} /></button>
         </div>
-        <div className="guide-city-insight">
-          {km != null ? `${t('wizard.kmFromArrival', { km })} ` : ''}{cityInsight(dest)}
+        <div className="guide-nights">
+          <button onClick={() => onNights(id, n - 1)} disabled={n <= 0} aria-label={t('wizard.fewerNights')}>-</button>
+          <span className="guide-nights-val">
+            {n === 0 ? <span className="guide-nights-zero">{t('wizard.addNights')}</span> : <><b>{n}</b> {n === 1 ? t('wizard.night') : t('wizard.nights')}</>}
+          </span>
+          <button onClick={() => onNights(id, n + 1)} aria-label={t('wizard.moreNights')}>+</button>
         </div>
-        {infoOpen && (
-          <div className="guide-city-facts">
-            {knownForFacts(dest).map(([label, value]) => (
-              <div className={`guide-city-fact ${label === 'Known for' ? 'guide-city-fact-known' : ''}`} key={label}>
-                <span className="guide-city-fact-label">{label}</span>
-                <span className="guide-city-fact-value">{value}</span>
-              </div>
-            ))}
-          </div>
-        )}
-        {n > 0 && companions && companions.length > 0 && (
-          <div className="guide-city-combo">
-            {t('wizard.pairsWellWith')} {companions.map((c, i) => (
-              <span key={c.id}>{i > 0 && ' & '}<b>{c.dest.city}</b> ({c.km} km)</span>
-            ))}
-          </div>
-        )}
       </div>
-      <div className="guide-nights">
-        <button onClick={() => onNights(id, n - 1)} disabled={n <= 0} aria-label={t('wizard.fewerNights')}>-</button>
-        <span className="guide-nights-val">
-          {n === 0 ? <span className="guide-nights-zero">{t('wizard.addNights')}</span> : <><b>{n}</b> {n === 1 ? t('wizard.night') : t('wizard.nights')}</>}
-        </span>
-        <button onClick={() => onNights(id, n + 1)} aria-label={t('wizard.moreNights')}>+</button>
-      </div>
+      {/* Full width of the row (not squeezed into the narrow middle column
+          alongside the thumbnail and nights stepper), so long facts read as
+          normal sentences instead of wrapping one word per line. */}
+      {infoOpen && (
+        <div className="guide-city-facts">
+          {knownForFacts(dest).map(([label, value]) => (
+            <div className={`guide-city-fact ${label === 'Known for' ? 'guide-city-fact-known' : ''}`} key={label}>
+              <span className="guide-city-fact-label">{label}</span>
+              <span className="guide-city-fact-value">{value}</span>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

@@ -4,9 +4,9 @@ REM Runs every pipeline task that is DUE (fares weekly; fame/rating monthly;
 REM open-data snapshots quarterly) then rebuilds the app. Output goes to
 REM logs\pipeline_<date>.log (run_pipeline.py also tees there). No pauses.
 REM
-REM One-time setup (replaces the old fares-only task) - run in an admin shell:
-REM   schtasks /Create /TN "CartaDataPipeline" /TR "\"%~f0\"" /SC WEEKLY /D SUN /ST 03:00 /RL LIMITED /F
-REM   schtasks /Delete /TN "TravelAppFareRefresh" /F   REM old task refreshed the wrong (legacy) fares
+REM Scheduled since 2026-07-31 via the existing weekly task (no admin needed):
+REM   TravelAppFareRefresh, Mon 09:00, Task To Run -> this file.
+REM   (It previously ran the deleted legacy refresh_fares_scheduled.bat.)
 REM
 REM Manual one-off from a normal shell:  run_pipeline.bat
 cd /d "%~dp0"

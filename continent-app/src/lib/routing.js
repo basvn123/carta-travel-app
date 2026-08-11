@@ -82,7 +82,16 @@ export async function fetchRoute(points, profile = 'foot') {
   if (pts.length < 2) return null;
   const coords = pts.map((p) => `${p.lon},${p.lat}`).join(';');
   // steps=true so we can tell walking apart from ferry crossings within a leg.
-  const url = `${base}/${coords}?overview=full&geometries=geojson&steps=true`;
+  //
+  // radiuses=unlimited is what keeps a whole day's route from collapsing to
+  // straight lines. Our coordinates are the sight itself, which for a hilltop
+  // fortress, an abbey courtyard or a beach can be hundreds of metres from the
+  // nearest routable path; past OSRM's default snapping radius it answers
+  // NoSegment for the entire request, we fall back to hop-to-hop straight
+  // lines, and the map draws a walk through buildings and across a river.
+  // Unlimited snapping lets it walk from the nearest real path instead.
+  const url = `${base}/${coords}?overview=full&geometries=geojson&steps=true`
+    + `&radiuses=${pts.map(() => 'unlimited').join(';')}`;
   try {
     const r = await fetch(url);
     if (!r.ok) return null;

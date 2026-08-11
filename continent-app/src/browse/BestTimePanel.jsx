@@ -137,7 +137,7 @@ export function BestTimePanel({ destination, departDate, returnDate, breakdown, 
       )}
 
       {destination.climate && (
-        <ClimateStrip climate={destination.climate} period={data?.meta?.climate_period} />
+        <ClimateStrip climate={destination.climate} />
       )}
     </div>
   );
@@ -156,7 +156,7 @@ const T_LOW = 1;
 const PRECIP = 2;
 const COMFORT = 3;
 
-function ClimateStrip({ climate, period }) {
+function ClimateStrip({ climate }) {
   const { t } = useI18n();
   const [hoverI, setHoverI] = React.useState(null);
   const months = climate.m || [];
@@ -218,9 +218,6 @@ function ClimateStrip({ climate, period }) {
           </span>
         ))}
       </div>
-      <p className="footnote climate-source">
-        {t('bestTime.climateSource', { period: period || '' })}
-      </p>
     </>
   );
 }
@@ -301,17 +298,6 @@ function BestTimeChart({ windows, cheapest, yours }) {
     setHoverI(idx);
   };
 
-  // Pin placement with collision handling: when the two markers sit close
-  // together, keep "cheapest" above its point and push "your dates" below so
-  // the labels can never overlap each other.
-  const pinPos = (i) => ({ xPct: (x(i) / W) * 100, yPct: (y(pts[i].total) / H) * 100 });
-  const cheapPos = pinPos(cheapI);
-  const yoursPos = pinPos(yoursI);
-  const tooClose = Math.abs(cheapPos.xPct - yoursPos.xPct) < 30;
-  const cheapSide = cheapPos.yPct < 26 ? 'below' : 'above';
-  let yoursSide = yoursPos.yPct < 26 ? 'below' : 'above';
-  if (tooClose && yoursSide === cheapSide) yoursSide = cheapSide === 'above' ? 'below' : 'above';
-
   return (
     <div className="bt-chart-wrap" ref={wrapRef}>
       <svg
@@ -339,12 +325,9 @@ function BestTimeChart({ windows, cheapest, yours }) {
           <line x1={x(hoverI)} x2={x(hoverI)} y1={padT} y2={H - padB} className="bt-crosshair" />
         )}
 
-        <circle cx={x(cheapI)} cy={y(pts[cheapI].total)} r={5} className="bt-pt bt-pt-cheap" />
-        <circle cx={x(yoursI)} cy={y(pts[yoursI].total)} r={5} className="bt-pt bt-pt-you" />
+        <circle cx={x(cheapI)} cy={y(pts[cheapI].total)} r={6} className="bt-pt bt-pt-cheap" />
+        <circle cx={x(yoursI)} cy={y(pts[yoursI].total)} r={6} className="bt-pt bt-pt-you" />
       </svg>
-
-      <ChartPin pos={cheapPos} side={cheapSide} dotClass="green" label={t('bestTime.pinCheapest')} />
-      <ChartPin pos={yoursPos} side={yoursSide} dotClass="ink" label={t('bestTime.pinYourDates')} />
 
       {hoverI != null && (
         <div
@@ -360,20 +343,6 @@ function BestTimeChart({ windows, cheapest, yours }) {
         <span className="bt-legend-item"><i className="bt-dot bt-dot-green" /> {t('bestTime.legendCheapest')}</span>
         <span className="bt-legend-item"><i className="bt-dot bt-dot-ink" /> {t('bestTime.legendYours')}</span>
       </div>
-    </div>
-  );
-}
-
-// A small floating label pinned to a chart point. Flips to stay clear of the
-// chart edges instead of overlapping the line or getting clipped: right-
-// anchored near the right edge, left-anchored near the left edge, and pushed
-// below the point instead of above when told to (collision handling above).
-function ChartPin({ pos, side, dotClass, label }) {
-  const h = pos.xPct < 15 ? 'left' : pos.xPct > 85 ? 'right' : 'center';
-  return (
-    <div className={`bt-pin bt-pin-${h} bt-pin-${side}`} style={{ left: `${pos.xPct}%`, top: `${pos.yPct}%` }}>
-      <i className={`bt-pin-dot bt-dot-${dotClass}`} />
-      {label}
     </div>
   );
 }

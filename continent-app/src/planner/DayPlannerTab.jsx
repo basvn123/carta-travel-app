@@ -23,14 +23,25 @@ import {
   walkableIdxSet, feasibilityLimits, isMustSee, dwellMinutes, VISIT_PACES,
   farWorthySights, scenicSuggestions, MAX_POI_KM_FROM_CITY, poiScore, poiKind,
   poiRating, isTransportInfraPoi, isCommercialNoisePoi, duplicatePoiIndices,
-  canonicalPoiIndices, poiIdentityKeys,
+  canonicalPoiIndices, poiIdentityKeys, DAY_STYLES,
 } from './dayDraft.js';
-import { CartaPlanPanel } from './CartaPlanPanel.jsx';
+import { AiDayPlanModal } from './AiDayPlanModal.jsx';
+import { PassModal } from '../components/PassModal.jsx';
+import { useEntitlement } from '../hooks/useEntitlement.js';
+import { CartaChatPlanner } from './CartaChatPlanner.jsx';
+import {
+  buildAiCandidates, requestAiDayPlan, splitAiPlan, decorateAiStops,
+} from './aiDayPlan.js';
+import { buildCityCandidates, requestCitySuggestion } from './aiCitySuggest.js';
 import { openDayPlanPdf } from './dayPlanPdf.js';
 import { openDayPlanKml } from './dayPlanKml.js';
+import { openDayPlanIcs } from './dayPlanIcs.js';
 import { MODE_META, DayTripTransport } from './DayTripTransport.jsx';
 import { CartaGuidePanel } from './CartaGuidePanel.jsx';
 import { estimateWalkMinutes, fmtDur } from './dayFormat.js';
+import {
+  buildDaySchedule, fmtClockLoose, dayPhase, GAP_SUGGEST_MIN,
+} from './daySchedule.js';
 import { searchFold } from '../lib/textSearch.js';
 import { Collapsible, AssignedRow, ActivitySection, ActivityRow } from './DayActivityRows.jsx';
 import {
@@ -40,14 +51,56 @@ import {
 } from './dayPlanStore.js';
 import { loadTripDraft } from './tripDraftStore.js';
 import {
+  loadDiscovered, saveDiscovered, removeDiscovered, subscribeDiscovered, isStale,
+} from './discoveredStore.js';
+import { researchCity } from '../lib/cityResearch.js';
+import {
   SparkIcon, StarIcon, InfoIcon, MountainIcon, ShareIcon, MapPinIcon,
   BedIcon, BookmarkIcon, DownloadIcon, RouteIcon,
-  FerryIcon, PencilIcon, SearchIcon, HomeIcon, CheckIcon,
+  FerryIcon, PencilIcon, SearchIcon, HomeIcon, CheckIcon, CalendarIcon,
+  ClockIcon, CoffeeIcon, FilterIcon, ChevronDownIcon, ChevronRightIcon,
+  UploadIcon,
 } from '../components/Icons.jsx';
+import { MagicImportZone } from './MagicImportZone.jsx';
+import { toInboxItems } from './bookingImport.js';
 
 // How the explore search & "Let Carta guide you" name each pin category.
 // i18n keys, resolved with t() at render time.
 const EXPLORE_CAT_KEY = { town: 'day.catTown', beach: 'day.catBeach', sight: 'day.catSight', active: 'day.catActive' };
+
+// The day map's two filter axes, kept apart on purpose: WHAT a place is is the
+// everyday question and stays on screen; HOW GOOD it is is an occasional
+// narrowing and lives in the collapsible group.
+const MAP_CATS = [
+  { key: 'all', labelKey: 'day.mapCatAll' },
+  { key: 'sight', labelKey: 'day.mapCatSights' },
+  { key: 'nature', labelKey: 'day.mapCatNature' },
+  { key: 'active', labelKey: 'day.mapCatActive' },
+  { key: 'food', labelKey: 'day.mapCatFood' },
+];
+const MAP_RATINGS = [
+  { key: 'all', labelKey: 'day.mapQualityAny' },
+  { key: 'top', labelKey: 'day.mapQualityTop' },
+  { key: 'must', labelKey: 'day.mapQualityMust' },
+];
+
+// Beyond this, a bot plan's own walking total is not a day anyone walked: it
+// came from a plan saved before the server enforced a walking budget. Well
+// clear of the 40 km ceiling the chat profile allows a keen hiker to ask for.
+const AI_MAX_TRUSTED_WALK_KM = 45;
+
+/** A place's own description, trimmed to a timeline-sized sentence or two on a
+ *  word boundary (never mid-word, never mid-sentence if a full stop is near
+ *  the limit), so every stop can carry context without the card ballooning. */
+function shortDesc(text, limit = 165) {
+  const s = (text || '').trim();
+  if (s.length <= limit) return s;
+  const cut = s.slice(0, limit);
+  const stop = Math.max(cut.lastIndexOf('. '), cut.lastIndexOf('! '), cut.lastIndexOf('? '));
+  if (stop > limit * 0.55) return cut.slice(0, stop + 1);
+  const space = cut.lastIndexOf(' ');
+  return `${cut.slice(0, space > 0 ? space : limit).replace(/[,;:]$/, '')}...`;
+}
 
 
 const fmtDate = (iso) => (iso ? fmtDateFull(iso).slice(0, 6) : '');
@@ -81,9 +134,42 @@ function buildStandalonePlan(sp) {
 
 
 export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPlanConsumed }) {
-  const { t } = useI18n();
-  const destinations = data?.destinations || {};
+  const { t, lang } = useI18n();
+  // Towns the traveller asked Carta to research (discoveredStore.js). They are
+  // real destinations from here on: pins, POI lists, search hits and plan
+  // stops all read them out of the same map as the catalogue.
+  const [discovered, setDiscovered] = useState(loadDiscovered);
+  useEffect(() => subscribeDiscovered(() => setDiscovered(loadDiscovered())), []);
+  // A researched town whose name and place the catalogue has since caught up
+  // with is retired: the pipeline's record has prices and ratings this one
+  // never will, and two pins on one town is the worse outcome.
+  const supersededIds = useMemo(() => {
+    const base = Object.values(data?.destinations || {});
+    const isSameTown = (a, b) => {
+      if (a.city !== b.city) return false;
+      const ca = cityCoords(a);
+      const cb = cityCoords(b);
+      return (haversineKm(ca.lat, ca.lon, cb.lat, cb.lon) ?? 99) <= 3;
+    };
+    return Object.entries(discovered)
+      .filter(([, d]) => base.some((b) => isSameTown(b, d)))
+      .map(([id]) => id);
+  }, [data, discovered]);
+  useEffect(() => { supersededIds.forEach(removeDiscovered); }, [supersededIds]);
+  const destinations = useMemo(() => {
+    const out = { ...(data?.destinations || {}) };
+    Object.entries(discovered).forEach(([id, d]) => {
+      if (!supersededIds.includes(id)) out[id] = d;
+    });
+    return out;
+  }, [data, discovered, supersededIds]);
   const countryInsights = useCountryInsights();
+  // What this traveller's pass allows. A hint for the UI only, the Edge
+  // Functions enforce it; see useEntitlement.
+  const entitlement = useEntitlement();
+  // '' when closed, otherwise the reason it opened ('plans' | 'ground' | 'browse'),
+  // which decides whether the modal leads with what just ran out.
+  const [passReason, setPassReason] = useState('');
 
   const [savedPlans, setSavedPlans] = useState([]);
   const [plansLoading, setPlansLoading] = useState(false);
@@ -97,7 +183,10 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
   // Carta-plan answers (null until asked) + whether the inline plan panel
   // (the "Shape day N" questions in the rail) is open.
   const [prefs, setPrefs] = useState(null);
-  const [showShape, setShowShape] = useState(false);
+  // The AI day-planner dialog (plan-day Edge Function). Applied AI schedules
+  // live in prefs.aiPlans keyed "stopIdx:dayIdx", so they survive reloads and
+  // ride the same per-plan cloud sync as every other answer.
+  const [aiOpen, setAiOpen] = useState(false);
   // Carta keeps the walking order optimal on every add ('auto'); manual
   // reordering switches to 'manual' until "Best route" is tapped again.
   const [routeMode, setRouteMode] = useState('auto');
@@ -200,6 +289,11 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
   const [stayResults, setStayResults] = useState(null); // null = not searched
   const [staySearching, setStaySearching] = useState(false);
   const [newStayPoint, setNewStayPoint] = useState(null);
+  // The landing is a guided flow, one decision per screen, so nothing is on
+  // show before it is needed: stay -> when -> how, then either the manual
+  // explore map or the Carta chat planner.
+  const [landingStep, setLandingStep] = useState('stay');
+  const [howToOpen, setHowToOpen] = useState(false);
   // "Add another city" picker inside an open standalone plan.
   const [addCityId, setAddCityId] = useState('');
   // Free-text sight search across the city's FULL catalogue, including
@@ -246,7 +340,13 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
   useEffect(() => {
     if (!user) { setSavedPlans([]); return; }
     setPlansLoading(true);
-    fetchTripPlans(user.id).then(setSavedPlans).finally(() => setPlansLoading(false));
+    // A rejected fetch (offline, or a session whose token no longer verifies)
+    // must not escape as an unhandled rejection: the trip-based plans simply
+    // stay absent, and standalone day plans carry on working from this device.
+    fetchTripPlans(user.id)
+      .then(setSavedPlans)
+      .catch(() => setSavedPlans([]))
+      .finally(() => setPlansLoading(false));
   }, [user?.id]);
 
   // Shared open-plan bootstrap: restore assignments + shape-your-day answers,
@@ -261,9 +361,6 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
     const p = loadPrefs(planId);
     setPrefs(p);
     setRouteMode(p?.routeMode || 'auto');
-    // Land straight on the big map with its pickable pins, no modal in the
-    // way. The Carta-plan panel stays one tap away in the rail.
-    setShowShape(false);
   };
 
   const openPlan = async (planId) => {
@@ -424,9 +521,20 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
     return () => { alive = false; };
   }, []);
 
+  // The traveller's own places for a destination (typed into the search, or
+  // taken from an imported document), stored per plan in prefs.customPois so
+  // they ride the same save/sync rails as everything else in the plan. They
+  // merge APPENDED to the catalogue, so a custom place is an ordinary item
+  // everywhere downstream: assignments index it, the schedule times it, the
+  // map pins it, the PDF prints it. Append-only per destination: removing or
+  // reordering entries would shift the indices saved assignments point at.
+  const customPoisFor = (destId) => (prefs?.customPois?.[destId] || [])
+    .map((c) => ({ ...c, custom: true }));
+
   const itemsForStop = (s, fullMap = actFull) => {
     const a = s?.dest?.activities;
     if (!a) return { items: [], walkable: new Set(), suppressed: new Set(), canon: new Map(), limited: true };
+    const customs = customPoisFor(s.destination_id);
     const full = (a.items_full && a.items_full.length)
       ? a.items_full
       : fullMap?.[s.destination_id];
@@ -441,18 +549,22 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
     // but leave the array (and every index) untouched, so saved assignments
     // and toggles that already reference an index stay valid.
     if (full && full.length) {
-      const { suppressed, canon } = canonicalPoiIndices(full);
-      const walkable = walkableIdxSet(full, s.dest);
+      const merged = customs.length ? [...full, ...customs] : full;
+      const { suppressed, canon } = canonicalPoiIndices(merged);
+      const walkable = walkableIdxSet(merged, s.dest);
       suppressed.forEach((i) => walkable.delete(i));
-      return { items: full, walkable, suppressed, canon, limited: false };
+      return { items: merged, walkable, suppressed, canon, limited: false };
     }
-    const items = (a.items || []).map((it) => ({ ...it, lat: null, lon: null }));
+    const items = [
+      ...(a.items || []).map((it) => ({ ...it, lat: null, lon: null })),
+      ...customs,
+    ];
     const { suppressed, canon } = canonicalPoiIndices(items);
     const walkable = new Set(items.map((_, i) => i).filter((i) => !suppressed.has(i)));
     return { items, walkable, suppressed, canon, limited: true };
   };
 
-  const activities = useMemo(() => itemsForStop(stop), [stop, actFull]); // eslint-disable-line react-hooks/exhaustive-deps
+  const activities = useMemo(() => itemsForStop(stop), [stop, actFull, prefs?.customPois]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Saved plans can predate a dedupe improvement, so a day may already hold
   // BOTH copies of a place ("Parafia ..." next to "Kosciol pw. ..."). Repair
@@ -516,11 +628,19 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
   const [mapRating, setMapRating] = useState('all');
   // "Show selected": the map shows ONLY what's already picked, today's stops
   // as the numbered route plus the city's other days as check-marked pins.
+  // This is a VIEW STATE, not a filter over the catalogue, so it lives in its
+  // own control layer rather than among the quality filters.
   const [showSel, setShowSel] = useState(false);
+  // The quality filter is a collapsible group: kind-of-place is what people
+  // reach for constantly, how-good-is-it is an occasional narrowing, so only
+  // one of the two costs permanent space over the map.
+  const [qualityOpen, setQualityOpen] = useState(false);
   // Where the map is looking right now ({ zoom, bounds }), fed back by
   // TripMap so zooming in can reveal more of the catalogue.
   const [mapView, setMapView] = useState(null);
-  useEffect(() => { setMapCat('all'); setMapRating('all'); setShowSel(false); }, [stopIdx, plan?.id]);
+  useEffect(() => {
+    setMapCat('all'); setMapRating('all'); setShowSel(false); setQualityOpen(false);
+  }, [stopIdx, plan?.id]);
 
   // Places already laid into ANY day of this city: their pins are hidden, so
   // a place can't be double-added across days from the map.
@@ -653,37 +773,13 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
       });
   }, [poiQuery, activities, stop, t]);
 
-  // Draft from the Carta-plan answers, scoped to THIS city, never the whole
-  // plan. scope 'day' redrafts only the selected day (places already laid
-  // into the city's other days stay put and are never duplicated); scope
-  // 'stay' redrafts every day of the current city. `areaIdx` (the which-part-
-  // of-town answer) narrows what a draft may use, so a big city's draft stays
-  // in the centre unless the traveller asked otherwise.
+  // Carta's own deterministic draft for THIS city, never the whole plan. It
+  // is the fallback behind the AI planner: same answers, no network, no
+  // quota, so the planner button always ends in a planned day. scope 'day'
+  // drafts only the selected day (places already laid into the city's other
+  // days stay put and are never duplicated); scope 'stay' drafts every day
+  // of the current city.
   const applyDraft = async (p) => {
-    // The route picker already built the day lists (the traveller SAW the
-    // route before choosing it): lay them in verbatim, no re-draft that could
-    // produce something different from what was picked.
-    if (p.lists) {
-      const next = { ...assignments };
-      if (p.scope === 'stay') {
-        next[stopIdx] = {};
-        p.lists.forEach((lst, di) => { if (lst.length) next[stopIdx][di] = lst; });
-      } else {
-        next[stopIdx] = { ...(next[stopIdx] || {}), [dayIdx]: p.lists[0] || [] };
-      }
-      setAssignments(next);
-      persistAssignments(plan?.id, next);
-      const savedRoutePrefs = {
-        style: p.style, interests: p.interests, dayLen: p.dayLen, walk: p.walk,
-        fill: p.fill, visit: p.visit, areaKey: p.areaKey,
-        routeMode, tripModes: prefs?.tripModes,
-        dayWalks: prefs?.dayWalks, dayWalkLen: prefs?.dayWalkLen,
-      };
-      setPrefs(savedRoutePrefs);
-      persistPrefs(plan?.id, savedRoutePrefs);
-      setShowShape(false);
-      return;
-    }
     const fullMap = actFull ?? await fetchActivitiesFull();
     if (!actFull && fullMap) setActFull(fullMap);
     const interests = new Set(p.interests || []);
@@ -732,11 +828,195 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
       fill: p.fill, visit: p.visit, areaKey: p.areaKey,
       routeMode, tripModes: prefs?.tripModes,
       dayWalks: prefs?.dayWalks, dayWalkLen: prefs?.dayWalkLen,
+      aiPlans: prunedAiPlans(p.scope),
     };
     setPrefs(savedPrefs);
     persistPrefs(plan?.id, savedPrefs);
-    setShowShape(false);
   };
+
+  /* ---- AI day planner (plan-day Edge Function) ---- */
+
+  const aiKey = `${stopIdx}:${dayIdx}`;
+  const aiPlan = prefs?.aiPlans?.[aiKey] || null;
+
+  // A redraft invalidates the AI schedule it replaces: drop this day's entry
+  // (or every entry of this city when the whole stay was redrafted).
+  function prunedAiPlans(scope) {
+    const m = { ...(prefs?.aiPlans || {}) };
+    Object.keys(m).forEach((k) => {
+      if (scope === 'stay' ? k.startsWith(`${stopIdx}:`) : k === aiKey) delete m[k];
+    });
+    return m;
+  }
+
+  const runAi = async (answers) => {
+    const style = DAY_STYLES.find((s) => s.key === answers.vibe) || DAY_STYLES[4];
+    if (!stop?.dest) return { ok: false, code: 'too_few' };
+    // Remember the traveller's own date/party answers so the next day of the
+    // trip opens with them already filled in.
+    const remembered = {
+      ...(prefs || {}),
+      aiDate: answers.date || null,
+      aiGroupSize: answers.groupSize || null,
+    };
+    setPrefs(remembered);
+    persistPrefs(plan?.id, remembered);
+    // Coordinates live in the lazily fetched full list, so wait for it the way
+    // the built-in draft does. Asking the bot in the first seconds after a plan
+    // opens used to read the placeholder list and answer "not enough
+    // catalogued places here", which is a wrong sentence about a full city.
+    const fullMap = actFull ?? await fetchActivitiesFull();
+    if (!actFull && fullMap) setActFull(fullMap);
+    const { items, walkable } = itemsForStop(stop, fullMap);
+    // The AI only ever sequences OUR researched candidates: same quality bar
+    // as the map's pins, minus what the city's other days already claimed.
+    const candidates = buildAiCandidates({
+      items,
+      walkable,
+      excludeIdx: usedOtherDays,
+      interests: style.interests,
+    });
+    if (candidates.length < 3) return { ok: false, code: 'too_few' };
+    const centre = cityCoords(stop.dest);
+    const res = await requestAiDayPlan({
+      dest: {
+        id: stop.destination_id,
+        city: stop.dest.city,
+        country: stop.dest.country,
+        lat: centre.lat,
+        lon: centre.lon,
+      },
+      date: answers.date || days[dayIdx] || null,
+      groupSize: answers.groupSize || aiGroupSize(),
+      pace: answers.pace,
+      vibe: answers.vibe,
+      avoidHills: answers.avoidHills,
+      freeText: answers.freeText,
+      wantEvents: !!answers.wantEvents,
+      refine: answers.refine || '',
+      prevStops: answers.prevStops || [],
+      lang,
+      stay: stayAnchor ? { lat: stayAnchor.lat, lon: stayAnchor.lon } : null,
+      candidates,
+    });
+    // The bot answers with names and reasons; the photos are already here.
+    return res.ok ? { ...res, plan: decorateAiStops(res.plan, items) } : res;
+  };
+
+  // Group size only exists on the trip planner's draft; standalone day plans
+  // default to a couple, which just means standard walking speed.
+  const aiGroupSize = () => {
+    if (plan?.id === TRIP_DRAFT_PLAN_ID) {
+      const g = Number(loadTripDraft()?.groupSize);
+      if (Number.isFinite(g) && g >= 1) return Math.min(20, Math.round(g));
+    }
+    return 2;
+  };
+
+  // "Put it on the map": catalogue stops become the day's assignments in the
+  // AI's optimized order (numbered pins + OSRM walking route redraw on their
+  // own), discoveries become spark pins, and the schedule card is kept in
+  // prefs. Route mode flips to manual so the AI's deliberate chronology
+  // (indoor stops in the hot hours) is not instantly reshuffled.
+  const applyAiResult = (result) => {
+    const { orderedIdx } = splitAiPlan(result, activities.items);
+    if (orderedIdx.length) {
+      const next = {
+        ...assignments,
+        [stopIdx]: { ...(assignments[stopIdx] || {}), [dayIdx]: orderedIdx },
+      };
+      setAssignments(next);
+      persistAssignments(plan?.id, next);
+    }
+    setRouteMode('manual');
+    const saved = {
+      ...(prefs || {}),
+      routeMode: 'manual',
+      aiPlans: {
+        ...(prefs?.aiPlans || {}),
+        [aiKey]: {
+          summary: result.summary || '',
+          stops: result.stops || [],
+          totals: result.totals || null,
+          meta: result.meta || null,
+          appliedAt: Date.now(),
+        },
+      },
+    };
+    setPrefs(saved);
+    persistPrefs(plan?.id, saved);
+    setAiOpen(false);
+  };
+
+  const dismissAi = () => {
+    const saved = { ...(prefs || {}), aiPlans: prunedAiPlans('day') };
+    setPrefs(saved);
+    persistPrefs(plan?.id, saved);
+  };
+
+  // Every AI failure path lands here: the deterministic built-in draft, fed
+  // with the same answers, so the button always ends in a planned day.
+  const fallbackAi = (answers) => {
+    setAiOpen(false);
+    const style = DAY_STYLES.find((s) => s.key === answers.vibe) || DAY_STYLES[4];
+    applyDraft({
+      scope: 'day',
+      style: style.key,
+      interests: style.interests,
+      dayLen: 'full',
+      walk: answers.avoidHills ? 'light' : 'moderate',
+      fill: answers.pace === 'relaxed' ? 'light' : answers.pace === 'packed' ? 'packed' : 'balanced',
+      visit: answers.pace === 'relaxed' ? 'deep' : answers.pace === 'packed' ? 'quick' : 'standard',
+      areaKey: 'all',
+      areaIdx: null,
+    });
+  };
+
+  // The AI's out-of-catalogue discoveries for the selected day get their own
+  // spark pins on the map. Status pins, not controls: there is no catalogue
+  // entry behind them to add to the plan.
+  const aiDiscoveryPins = useMemo(() => (
+    (aiPlan?.stops || [])
+      .filter((s) => s.external && Number.isFinite(s.lat) && Number.isFinite(s.lon))
+      .map((s, i) => ({
+        id: `ai:${i}`,
+        label: s.name,
+        lat: s.lat,
+        lon: s.lon,
+        cat: 'sight',
+        discovery: true,
+        event: !!s.isEvent,
+      }))
+  ), [aiPlan]);
+
+  // The AI's one-line reason per catalogue stop, keyed by the same item index
+  // the day's assignments speak. The bot's schedule is NOT a second list any
+  // more: importing a plan lays its stops into the one timeline, and this is
+  // how each row keeps the sentence that explained why it is there.
+  const aiWhyByIdx = useMemo(() => {
+    const m = {};
+    (aiPlan?.stops || []).forEach((s) => {
+      if (s.external || !s.why) return;
+      const idx = Number(s.id);
+      if (Number.isInteger(idx)) m[idx] = s.why;
+    });
+    return m;
+  }, [aiPlan]);
+
+  // Discoveries live outside the catalogue, so they can never become timeline
+  // rows. They stay listed once, under the plan, next to their map pins.
+  const aiDiscoveries = useMemo(
+    () => (aiPlan?.stops || []).filter((s) => s.external && s.name),
+    [aiPlan],
+  );
+
+  // Plans imported before the server learned to hold a walking budget carry
+  // totals like "89.4 km on foot, done around 11:32" (the clock used to wrap
+  // at midnight, so an impossible day read as a pleasant morning). They are
+  // saved on the device and would keep saying it forever, so a total no one
+  // could walk means the line is not shown at all. The day itself, its stops
+  // and its own timeline totals, is unaffected.
+  const aiTotalsTrustworthy = (aiPlan?.totals?.walkKm ?? 0) <= AI_MAX_TRUSTED_WALK_KM;
 
   const dayAssignedIdx = assignments[stopIdx]?.[dayIdx] || [];
   const assignedItems = dayAssignedIdx.map((i) => activities.items[i]).filter(Boolean);
@@ -822,10 +1102,17 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
   }, [dayRoadKey]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Ride time per mode from a routed road leg: cars near the routed time
-  // (plus parking), buses the same road with stops and a wait, trains their
-  // own (rail-speed) model. Shared by the card and the timeline's ride leg.
+  // plus a dynamic parking padding, buses the same road with stops and a
+  // wait, trains their own (rail-speed) model. Shared by the card and the
+  // timeline's ride leg.
   const rideMinutes = (mode, roadKm, drivingMin) => {
-    if (mode === 'car') return Math.max(5, Math.round(drivingMin * 1.08 + 5));
+    if (mode === 'car') {
+      // Raw routed minutes lie: nobody teleports from the wheel to the sight.
+      // Pad with 15% of the drive (floor 5, cap 20) for parking, paying and
+      // walking in, so a 60-minute drive honestly reads as ~69.
+      const parkPad = Math.min(20, Math.max(5, Math.round(drivingMin * 0.15)));
+      return Math.max(5, Math.round(drivingMin + parkPad));
+    }
     if (mode === 'bus') return Math.max(10, Math.round(drivingMin * 1.55 + 12));
     return Math.max(10, Math.round((roadKm / (roadKm < 60 ? 68 : 95)) * 60 + 15));
   };
@@ -993,6 +1280,123 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
     persistPrefs(plan?.id, savedPrefs);
   };
 
+  // A place the catalogue does not know (Gaisberg, a cousin's restaurant, a
+  // spot from an imported itinerary) still belongs on the day. Best effort to
+  // pin it for real: one explicit Nominatim lookup scoped to the city; a hit
+  // within day-trip range gives it true coordinates, anything else (miss,
+  // offline, wrong-country namesake) falls back to the city centre with
+  // unmapped:true, so the day keeps scheduling and the row says the location
+  // is approximate. Never a thrown error, never a silently-lost place.
+  const CUSTOM_POI_MAX_KM = 60;
+  const [customBusy, setCustomBusy] = useState(false);
+  // `dropIdeaId` folds "and take it out of the import-ideas drawer" into the
+  // SAME prefs write: two sequential writes both derived from the same stale
+  // `prefs` would have raced, and the loser's change would silently vanish.
+  const addCustomPlace = async (rawName, { kind = 'Custom place', note = '', dropIdeaId = null } = {}) => {
+    const name = (rawName || '').trim().slice(0, 90);
+    if (!name || !stop?.dest || customBusy) return;
+    setCustomBusy(true);
+    const centre = cityCoords(stop.dest);
+    let lat = null;
+    let lon = null;
+    try {
+      const hits = await geocodeAddress(`${name}, ${stop.dest.city}`);
+      const near = hits.find((h) => {
+        const km = haversineKm(centre.lat, centre.lon, h.lat, h.lon);
+        return km != null && km <= CUSTOM_POI_MAX_KM;
+      });
+      if (near) { lat = near.lat; lon = near.lon; }
+    } catch { /* geocoder down: the centre fallback below carries the day */ }
+    const unmapped = lat == null;
+    const item = {
+      id: `c${Date.now()}`,
+      name,
+      kind,
+      desc: note || '',
+      lat: unmapped ? centre.lat : lat,
+      lon: unmapped ? centre.lon : lon,
+      custom: true,
+      ...(unmapped ? { unmapped: true } : {}),
+    };
+    const destKey = stop.destination_id;
+    const savedPrefs = {
+      ...(prefs || {}),
+      customPois: {
+        ...(prefs?.customPois || {}),
+        [destKey]: [...(prefs?.customPois?.[destKey] || []), item],
+      },
+      ...(dropIdeaId ? {
+        ideaInbox: {
+          ...(prefs?.ideaInbox || {}),
+          [destKey]: (prefs?.ideaInbox?.[destKey] || []).filter((i) => i.id !== dropIdeaId),
+        },
+      } : {}),
+    };
+    // The merged list appends customs at the end, so the new item's index is
+    // simply the current length; assign it to today in the same breath.
+    const newIdx = activities.items.length;
+    const current = assignments[stopIdx]?.[dayIdx] || [];
+    const nextAssign = {
+      ...assignments,
+      [stopIdx]: { ...(assignments[stopIdx] || {}), [dayIdx]: [...current, newIdx] },
+    };
+    setPrefs(savedPrefs);
+    persistPrefs(plan?.id, savedPrefs);
+    setAssignments(nextAssign);
+    persistAssignments(plan?.id, nextAssign);
+    setPoiQuery('');
+    setCustomBusy(false);
+    return item;
+  };
+
+  // ---- Import ideas: documents or a link in, one-tap custom stops out ----
+  // Extracted activities wait per destination in prefs.ideaInbox (same rails,
+  // same sync as everything else in the plan) until each is added to the open
+  // day as a custom place, or discarded.
+  const ideaList = prefs?.ideaInbox?.[stop?.destination_id] || [];
+  const stageIdeas = (result) => {
+    if (!stop) return { filled: 0, staged: 0 };
+    const destKey = stop.destination_id;
+    const fresh = toInboxItems(result.activities, {
+      existingNames: [
+        ...ideaList.map((i) => i.name),
+        ...customPoisFor(destKey).map((c) => c.name),
+      ],
+    });
+    if (fresh.length) {
+      const saved = {
+        ...(prefs || {}),
+        ideaInbox: { ...(prefs?.ideaInbox || {}), [destKey]: [...ideaList, ...fresh] },
+      };
+      setPrefs(saved);
+      persistPrefs(plan?.id, saved);
+    }
+    return { filled: 0, staged: fresh.length };
+  };
+  const discardIdea = (idea) => {
+    if (!stop) return;
+    const destKey = stop.destination_id;
+    const saved = {
+      ...(prefs || {}),
+      ideaInbox: {
+        ...(prefs?.ideaInbox || {}),
+        [destKey]: ideaList.filter((i) => i.id !== idea.id),
+      },
+    };
+    setPrefs(saved);
+    persistPrefs(plan?.id, saved);
+  };
+  // What the parse-booking prompt matches against: the one open city.
+  const dayImportContext = stop?.dest ? {
+    stops: [{
+      city: stop.dest.city,
+      country: stop.dest.country || '',
+      arrive: '',
+      nights: 1,
+    }],
+    groupSize: prefs?.aiGroupSize || 2,
+  } : null;
+
   // Adding a stop re-optimizes the whole day's route (nearest-neighbour) when
   // Carta is in charge of the order; removing just drops it in place.
   const toggleActivity = (itemIdx) => {
@@ -1022,12 +1426,17 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
     setRoute('auto');
   };
 
+  // `no` is the stop's number in TODAY'S timeline, carried onto the map so the
+  // two can never disagree: a stop the map cannot plot (a catalogue entry with
+  // no coordinates) leaves a gap in the pins rather than renumbering every stop
+  // after it.
   const mapPins = assignedItems
-    .filter((it) => it.lat != null && it.lon != null)
+    .map((it, i) => ({ it, no: i + 1 }))
+    .filter(({ it }) => it.lat != null && it.lon != null)
     // The Google Maps route link is built from the coordinates only; the name
     // is for on-map labels and never geocoded.
-    .map((it) => ({
-      lat: it.lat, lon: it.lon, city: it.name,
+    .map(({ it, no }) => ({
+      lat: it.lat, lon: it.lon, city: it.name, no,
       name: [it.name, stop?.dest?.city].filter(Boolean).join(', '),
     }));
 
@@ -1142,6 +1551,45 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
 
   const gmapsUrl = googleMapsDirUrl(walkPins, 'walking');
 
+  // The clock behind the timeline: per-kind visit estimates plus the real
+  // (or estimated) legs give every stop an arrival time, slot a lunch pause
+  // into the first opening past 12:30, and expose how much of the day is
+  // honestly still unscheduled. Cheap (a handful of stops), so it simply
+  // recomputes with the render it describes.
+  const schedule = assignedItems.length
+    ? buildDaySchedule({
+      items: assignedItems,
+      legMin: (i) => walkLeg(i)?.min ?? null,
+      dwellMin: (it) => dwellMinutes(poiKind(it), visitFactor),
+      stayLegMin: stayLeg?.min || 0,
+    })
+    : null;
+
+  // Where each macro phase of the day starts, as a sparse array aligned to
+  // assignedItems: phaseHeads[i] is the phase to announce above stop i, or
+  // null when that stop just continues the phase before it. The traveller
+  // reads "Afternoon", never "14:07".
+  const phaseHeads = useMemo(() => {
+    if (!schedule) return [];
+    const out = [];
+    let prev = null;
+    schedule.rows.forEach((r, i) => {
+      const p = dayPhase(r.arriveMin);
+      out[i] = p.key === prev ? null : p;
+      prev = p.key;
+    });
+    return out;
+  }, [schedule]);
+
+  // Open-time ideas: the strongest unpicked walkable places whose visit still
+  // fits in the leftover. One tap adds them; in auto mode the walking order
+  // re-optimizes like any other add.
+  const gapIdeas = (schedule && schedule.freeMin >= GAP_SUGGEST_MIN)
+    ? mapDeck
+      .filter(({ item }) => dwellMinutes(poiKind(item), visitFactor) + 15 <= schedule.freeMin)
+      .slice(0, 3)
+    : [];
+
   // One timeline connector's label. A ferry leg (a lake/sea crossing OSRM
   // routes over) is called out as a ferry with its own icon, never presented
   // as a walk across the water. A ride leg (stay beyond walking range) wears
@@ -1242,6 +1690,16 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
     }
   };
 
+  // Every planned day as timed calendar blocks, spoken in the same clock the
+  // timeline shows, so the plan lands in Google/Apple/Outlook calendars.
+  const downloadIcsFile = () => {
+    const ok = openDayPlanIcs({ stop, stops, assignments, plan, visitFactor, itemsForStop });
+    if (ok) {
+      setSaveToast(t('export.calendarHint'));
+      window.setTimeout(() => setSaveToast(''), 6000);
+    }
+  };
+
   const shareDay = async () => {
     const cityName = stop?.dest?.city || t('day.myDay');
     const lines = assignedItems.map((it, i) => `${i + 1}. ${it.name}`);
@@ -1265,8 +1723,150 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
   // and small gems alike), used by the landing multi-city picker and the
   // in-plan "add another city" picker.
   const allCityOptions = useMemo(() => Object.entries(destinations)
-    .map(([id, d]) => ({ value: id, label: `${d.city}, ${d.country}` }))
+    .map(([id, d]) => {
+      const c = cityCoords(d);
+      return { value: id, label: `${d.city}, ${d.country}`, lat: c.lat, lon: c.lon };
+    })
     .sort((a, b) => a.label.localeCompare(b.label)), [destinations]);
+
+  // Snap an arbitrary point (a geocode hit, an AI web discovery) to the
+  // nearest real destination, so the day planner always ends up with a
+  // catalogue id it has POIs for. One rule, shared by every "anywhere"
+  // entry point into the town picker.
+  const resolveNearestTown = useMemo(() => (lat, lon) => {
+    if (!Number.isFinite(lat) || !Number.isFinite(lon)) return null;
+    let best = null;
+    let bestKm = Infinity;
+    for (const [id, d] of Object.entries(destinations)) {
+      const c = cityCoords(d);
+      if (c.lat == null) continue;
+      const km = haversineKm(lat, lon, c.lat, c.lon);
+      if (km != null && km < bestKm) { bestKm = km; best = { id, dest: d }; }
+    }
+    if (!best || bestKm > 150) return null;
+    return {
+      id: best.id, dest: best.dest, label: `${best.dest.city}, ${best.dest.country}`, km: Math.round(bestKm),
+    };
+  }, [destinations]);
+
+  // A town this close to what was asked for is that town under another
+  // spelling, not a new place: reuse the record instead of researching a
+  // duplicate ("Gent" when the catalogue says "Ghent").
+  const SAME_TOWN_KM = 3;
+
+  /**
+   * "Carta doesn't have this town, go and get it." Harvests the place from
+   * open data (see lib/cityResearch.js), stores it on this device and returns
+   * the destination id, which from here on is an ordinary id: the wizard, the
+   * map, the POI picker and saved plans all take it without knowing it was
+   * researched a moment ago.
+   *
+   * Resolves { ok: true, id, label } or { ok: false, code }.
+   */
+  const researchTown = async (place, onStage = () => {}) => {
+    const { name, country = '', lat = null, lon = null } = place || {};
+    if (!name) return { ok: false, code: 'not_found' };
+
+    const near = resolveNearestTown(lat, lon);
+    if (near && near.km <= SAME_TOWN_KM) return { ok: true, id: near.id, label: near.label };
+
+    // Already researched, and recently enough to still be current.
+    const seen = Object.entries(discovered).find(([, d]) => {
+      const c = cityCoords(d);
+      const km = haversineKm(lat, lon, c.lat, c.lon);
+      return d.city?.toLowerCase() === name.toLowerCase() || (km != null && km <= SAME_TOWN_KM);
+    });
+    if (seen && !isStale(seen[1])) {
+      return { ok: true, id: seen[0], label: `${seen[1].city}, ${seen[1].country}` };
+    }
+
+    const res = await researchCity({
+      name, country, lat, lon, nearest: near?.dest || null, onStage,
+    });
+    if (!res.ok) return res;
+    saveDiscovered(res.dest);
+    setDiscovered(loadDiscovered());
+    return { ok: true, id: res.dest.id, label: `${res.dest.city}, ${res.dest.country}` };
+  };
+
+  // Quick-fill starting points for the stay step, so the first screen is never
+  // a bare search box. Population keeps these to cities people actually stay
+  // in; without it, the top of a rating sort is the best-rated hamlet in
+  // Europe, which nobody is looking for.
+  const POPULAR_STAY_MIN_POP = 150000;
+  const popularStays = useMemo(() => {
+    const rows = [];
+    for (const [id, d] of Object.entries(destinations)) {
+      const c = cityCoords(d);
+      if (c.lat == null) continue;
+      rows.push({
+        id,
+        dest: d,
+        lat: c.lat,
+        lon: c.lon,
+        pop: d.geonames?.population ?? 0,
+        score: d.rating?.score ?? 0,
+      });
+    }
+    const big = rows.filter((r) => r.pop >= POPULAR_STAY_MIN_POP);
+    // Multi-airport cities repeat the same centre ("Milan (Malpensa)" and
+    // "(Linate)"): one chip per real city. The airport suffix is a catalogue
+    // detail, never what a traveller calls the place they are staying in, so
+    // the chip carries the bare city name.
+    const byCity = new Map();
+    for (const r of (big.length >= 6 ? big : rows)) {
+      const name = (r.dest.city || '').replace(/\s*\(.*\)\s*$/, '').trim();
+      const key = `${name}|${r.dest.country}`;
+      const cur = byCity.get(key);
+      if (!cur || r.score > cur.score) byCity.set(key, { ...r, name });
+    }
+    return [...byCity.values()].sort((a, b) => b.score - a.score).slice(0, 6);
+  }, [destinations]);
+
+  const pickPopularStay = (row) => {
+    setStayQuery('');
+    setStayResults(null);
+    setNewStayPoint({
+      lat: row.lat,
+      lon: row.lon,
+      label: `${row.name}, ${row.dest.country}`,
+      shortLabel: row.name,
+    });
+  };
+
+  // The same popular cities as explore-map pins, so the first step can be
+  // answered on the map instead of only in the form beside it. Once a stay is
+  // chosen they clear out: the map's job then is to show that one place.
+  const stayPins = useMemo(() => (
+    newStayPoint || stayResults ? [] : popularStays.map((r) => ({
+      id: r.id,
+      label: r.name,
+      lat: r.lat,
+      lon: r.lon,
+      cat: 'town',
+      score: r.dest.rating?.score ?? null,
+      tier: r.dest.rating?.tier ?? 0,
+    }))
+  ), [newStayPoint, stayResults, popularStays]);
+
+  // The three dates almost every day trip actually falls on, so the date step
+  // is one tap rather than a calendar hunt. "This weekend" is the coming
+  // Saturday (today, when today IS Saturday).
+  const quickDates = useMemo(() => {
+    const today = todayISO();
+    const [y, m, d] = today.split('-').map(Number);
+    const toSaturday = (6 - new Date(Date.UTC(y, m - 1, d)).getUTCDay() + 7) % 7;
+    const all = [
+      { key: 'today', labelKey: 'day.quickToday', iso: today },
+      { key: 'tomorrow', labelKey: 'day.quickTomorrow', iso: addDays(today, 1) },
+      { key: 'weekend', labelKey: 'day.quickWeekend', iso: addDays(today, toSaturday) },
+    ];
+    // On a Friday "tomorrow" IS the weekend, and on a Saturday so is "today":
+    // two chips carrying the same date read as a bug, so the earlier, more
+    // specific wording wins and the duplicate drops.
+    const seen = new Set();
+    return all.filter((q) => !seen.has(q.iso) && seen.add(q.iso));
+  }, []);
 
   // ---- Landing explore map: what's around the traveller's stay ----
   // Towns within day-trip reach, and (from the full POI catalogue) beaches &
@@ -1634,75 +2234,547 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
     openStandalone(sp);
   };
 
-  // Landing screen: plan a day for any city (no trip required), reopen a saved
-  // day plan, or pick one of your saved trips to plan its stops.
+  /* ---- Carta chat planner (landing): answers -> AI day -> new plan ---- */
+
+  // The chat's chosen town, resolved to its destination record and full POI
+  // list. Everything the chat does hangs off this one lookup.
+  const chatDest = async (destId) => {
+    const dest = destinations[destId];
+    if (!dest) return null;
+    const fullMap = actFull ?? await fetchActivitiesFull();
+    if (!actFull && fullMap) setActFull(fullMap);
+    const items = (dest.activities?.items_full?.length
+      ? dest.activities.items_full
+      : fullMap?.[destId]) || [];
+    if (!items.length) return null;
+    const { suppressed } = canonicalPoiIndices(items);
+    const walkable = walkableIdxSet(items, dest);
+    suppressed.forEach((i) => walkable.delete(i));
+    return { dest, items, walkable };
+  };
+
+  // The chat's answers speak the traveller's language; the ranking engine and
+  // the prompt speak interests and pace. Translate once, here.
+  const chatInterests = (a) => {
+    const map = {
+      landmarks: ['culture', 'architecture', 'photo'],
+      museums: ['museums', 'culture'],
+      food: ['food'],
+      nature: ['outdoors'],
+      beach: ['beaches', 'outdoors'],
+      active: ['sports', 'outdoors'],
+      photo: ['photo'],
+      local: ['food', 'cafes', 'shopping'],
+    };
+    const out = new Set();
+    (a.interests || []).forEach((k) => (map[k] || []).forEach((v) => out.add(v)));
+    if (a.focus === 'nature') ['outdoors', 'beaches'].forEach((v) => out.add(v));
+    if (a.focus === 'city') ['culture', 'architecture'].forEach((v) => out.add(v));
+    return [...out];
+  };
+
+  // `onStage` reports the real milestones of a build to the chat's route
+  // animation, so the wait shows the work rather than three dots: how many
+  // places were read, how many survived the traveller's answers, and when the
+  // sequencing call actually went out.
+  const runChatAi = async (a, onStage = () => {}) => {
+    const destId = a.town || exploreTowns[0]?.id;
+    const info = await chatDest(destId);
+    if (!info) return { ok: false, code: 'too_few' };
+    onStage({ key: 'read', vars: { n: info.items.length, city: info.dest.city } });
+    const candidates = buildAiCandidates({
+      items: info.items,
+      walkable: info.walkable,
+      excludeIdx: null,
+      interests: chatInterests(a),
+      limit: 24,
+    });
+    if (candidates.length < 3) return { ok: false, code: 'too_few' };
+    onStage({ key: 'shortlist', vars: { n: candidates.length } });
+    onStage({ key: 'route', vars: { km: Number(a.distance) || 5 } });
+    const centre = cityCoords(info.dest);
+    const res = await requestAiDayPlan({
+      dest: {
+        id: destId, city: info.dest.city, country: info.dest.country,
+        lat: centre.lat, lon: centre.lon,
+      },
+      date: newStartDate || todayISO(),
+      groupSize: prefs?.aiGroupSize || 2,
+      pace: a.dayLength === 'half' ? 'relaxed' : a.dayLength === 'evening' ? 'packed' : 'balanced',
+      vibe: a.focus === 'nature' ? 'active' : (a.interests || []).includes('museums') ? 'culture'
+        : (a.interests || []).includes('food') ? 'foodie' : a.focus === 'city' ? 'classic' : 'mix',
+      avoidHills: a.terrain === 'flat',
+      freeText: a.freeText || '',
+      wantEvents: a.events === 'yes',
+      // The full answer profile rides along so the prompt can honour the
+      // things no single existing field captures (walking budget, terrain
+      // appetite, first visit or not, what they want to eat).
+      profile: {
+        focus: a.focus || null,
+        known: a.known || null,
+        interests: a.interests || [],
+        maxWalkKm: Number(a.distance) || null,
+        terrain: a.terrain || null,
+        dayLength: a.dayLength || null,
+        food: a.food || null,
+      },
+      refine: a.refine || '',
+      prevStops: a.prevStops || [],
+      lang,
+      stay: newStayPoint ? { lat: newStayPoint.lat, lon: newStayPoint.lon } : null,
+      candidates,
+    });
+    // Rejoin each proposed stop with the catalogue photo it came from, so the
+    // proposal shows the places rather than only naming them.
+    return res.ok ? { ...res, plan: decorateAiStops(res.plan, info.items) } : res;
+  };
+
+  // The "ask AI" town tab: a wider, coarser candidate list than the nearby
+  // map (which caps at 110km/34 towns to stay legible) since a suggestion
+  // can reasonably range further than a browsable list.
+  const SUGGEST_TOWN_KM = 300;
+  const SUGGEST_TOWN_CAP = 150;
+
+  const suggestCityAi = async (freeText, a) => {
+    if (!newStayPoint || newStayPoint.lat == null) return { ok: false, code: 'too_few' };
+    const wide = Object.entries(destinations)
+      .map(([id, d]) => {
+        const c = cityCoords(d);
+        if (c.lat == null) return null;
+        const km = haversineKm(newStayPoint.lat, newStayPoint.lon, c.lat, c.lon);
+        return km != null && km <= SUGGEST_TOWN_KM ? { id, dest: d, km, ...c } : null;
+      })
+      .filter(Boolean)
+      .sort((x, y) => (y.dest.rating?.score || 0) - (x.dest.rating?.score || 0))
+      .slice(0, SUGGEST_TOWN_CAP);
+    const candidates = buildCityCandidates(wide);
+    if (candidates.length < 3) return { ok: false, code: 'too_few' };
+    return requestCitySuggestion({
+      stay: { lat: newStayPoint.lat, lon: newStayPoint.lon },
+      focus: a?.focus || null,
+      interests: a?.interests || [],
+      freeText,
+      lang,
+      candidates,
+    });
+  };
+
+  // Import: build the standalone plan the chat just designed, carry the AI
+  // schedule into its prefs, and open it. From here it is an ordinary day
+  // plan, editable like any other.
+  const importChatPlan = async (result, a) => {
+    const destId = a.town || exploreTowns[0]?.id;
+    const info = await chatDest(destId);
+    if (!info) return;
+    const { orderedIdx } = splitAiPlan(result, info.items);
+    const sp = {
+      id: `local:${Date.now()}`,
+      label: info.dest.city || t('day.dayPlanFallback'),
+      startDate: newStartDate || todayISO(),
+      stayPoint: newStayPoint,
+      stops: [{ destinationId: destId, days: 1 }],
+    };
+    if (orderedIdx.length) persistAssignments(sp.id, { 0: { 0: orderedIdx } });
+    persistPrefs(sp.id, {
+      routeMode: 'manual',
+      aiPlans: {
+        '0:0': {
+          summary: result.summary || '',
+          stops: result.stops || [],
+          totals: result.totals || null,
+          meta: result.meta || null,
+          appliedAt: Date.now(),
+        },
+      },
+    });
+    const next = [sp, ...standalonePlans];
+    setStandalonePlans(next);
+    persistStandalonePlans(next);
+    setStayQuery('');
+    setStayResults(null);
+    setNewStayPoint(null);
+    setSelPois([]);
+    setExploreFocus('');
+    setLandingStep('stay');
+    openStandalone(sp);
+  };
+
+  // What tells two saved trips apart when their labels match: the window they
+  // cover and how many stops they hold. Both ride on the row fetchTripPlans
+  // already returns, so this costs no extra query.
+  const tripPlanSub = (p) => [
+    p.start_date ? `${fmtDate(p.start_date)} → ${fmtDate(p.end_date)}` : '',
+    p.cities?.length ? t(p.cities.length === 1 ? 'saved.stops1' : 'saved.stopsN', { n: p.cities.length }) : '',
+  ].filter(Boolean).join(', ');
+
+  // Landing screen: a guided flow (stay -> when -> how), then either the
+  // manual explore map or the chat planner. Saved plans stay reachable from
+  // the first step.
   if (!plan) {
+    const FLOW = [
+      { key: 'stay', labelKey: 'day.stepStay' },
+      { key: 'when', labelKey: 'day.stepWhen' },
+      { key: 'how', labelKey: 'day.stepHow' },
+    ];
+    const activeIdx = FLOW.findIndex((s) => s.key === landingStep);
+    const flowIdx = activeIdx >= 0 ? activeIdx : FLOW.length - 1;
     return (
-      <div className="trip-planner-screen day-landing-screen">
-        <div className={`day-landing${newStayPoint ? ' day-landing-wide' : ''}`}>
+      <div className="trip-planner-screen day-flow-screen">
+        <div className={`day-flow${landingStep === 'manual' ? ' day-flow-manual' : ''}${
+          landingStep === 'stay' || landingStep === 'when' || landingStep === 'how' ? ' day-flow-split-host' : ''
+        }`}>
           {editingPlanId && (
             <div className="day-edit-banner">
               <span><PencilIcon size={13} /> {t('day.editBanner')}</span>
               <button className="day-edit-cancel" onClick={cancelEditOnMap}>{t('day.cancel')}</button>
             </div>
           )}
-          {/* Same type treatment as the Saved-trips panel (mono overline +
-              display-serif title), so the two screens read as one family. */}
-          <div className="panel-tag">{t('day.tag')}</div>
-          <h2 className="day-landing-title">{editingPlanId ? t('day.changePlaces') : t('day.dayPlanner')}</h2>
-          <p className="day-landing-lead">
-            {editingPlanId
-              ? t('day.editLead')
-              : t('day.landingLead')}
-          </p>
 
-          <div className="day-build">
-            {/* 1. Where are you staying - town, street, hotel or apartment
-                  address. It anchors everything: the map, the routes, the
-                  getting-there advice. */}
-            <div className="day-build-row day-build-top">
-              <label className="trip-field day-build-field">
-                <span className="trip-field-label"><span className="day-step-num">1</span> {t('day.whereStaying')}</span>
+          {/* One decision per screen. The step rail doubles as back navigation
+              (a completed step is tappable); everything explanatory hides
+              behind the help button so the screen itself stays a question.
+              The rail is on screen from the FIRST question, not from the
+              second: a progress indicator that appears halfway through tells
+              the traveller where they are only once they no longer need it. */}
+          <div className="day-flow-top">
+            <nav className="day-flow-steps" aria-label={t('day.progressAria')}>
+              {FLOW.map((s, i) => (
+                <React.Fragment key={s.key}>
+                  {/* The connector is what makes three pills read as one
+                      journey with a position on it. */}
+                  {i > 0 && (
+                    <span className={`day-flow-step-rail${i <= flowIdx ? ' done' : ''}`} aria-hidden="true" />
+                  )}
+                  <button
+                    type="button"
+                    className={`day-flow-step-dot${i === flowIdx ? ' on' : ''}${i < flowIdx ? ' done' : ''}`}
+                    onClick={() => { if (i < flowIdx) setLandingStep(s.key); }}
+                    disabled={i > flowIdx}
+                    aria-current={i === flowIdx ? 'step' : undefined}
+                  >
+                    <span className="day-flow-step-num">{i < flowIdx ? '✓' : i + 1}</span>
+                    <span className="day-flow-step-label">{t(s.labelKey)}</span>
+                  </button>
+                </React.Fragment>
+              ))}
+            </nav>
+            <span className="day-flow-stepcount">
+              {t('day.stepXofN', { x: flowIdx + 1, n: FLOW.length })}
+            </span>
+            <button
+              className="day-flow-help"
+              onClick={() => setHowToOpen((v) => !v)}
+              aria-expanded={howToOpen}
+              aria-label={t('day.howItWorks')}
+              title={t('day.howItWorks')}
+            >
+              <InfoIcon size={16} />
+            </button>
+          </div>
+          {howToOpen && (
+            <div className="day-flow-help-card">
+              <b>{t('day.howItWorks')}</b>
+              <p>{editingPlanId ? t('day.editLead') : t('day.landingLead')}</p>
+              <button className="day-flow-help-close" onClick={() => setHowToOpen(false)}>{t('common.gotIt')}</button>
+            </div>
+          )}
+
+          {/* The three landing questions share one canvas: the form column on
+              the left, a live map on the right that follows the answer. The
+              questions used to float alone on an empty page, which gave a
+              spatial decision (where are you staying?) no spatial context at
+              all. The map is mounted ONCE around all three steps so moving
+              between them pans it rather than tearing it down and rebuilding. */}
+          {(landingStep === 'stay' || landingStep === 'when' || landingStep === 'how') && (
+          <div className={`day-flow-split${landingStep === 'how' ? ' day-flow-split-wide' : ''}`}>
+          <div className="day-flow-forms">
+
+          {/* STEP 1, where are you staying */}
+          {landingStep === 'stay' && (
+            <div className="day-flow-step">
+              <div className="day-flow-panel">
+                <h2 className="day-flow-q">{t('day.whereStaying')}</h2>
+                {/* Once a place is chosen it BECOMES the field. Leaving the
+                    search box filled with the old query above a chosen-city
+                    badge showed the same answer twice, in two different
+                    states, and left it ambiguous which one counted. */}
                 {newStayPoint ? (
-                  <div className="day-stay-chosen">
+                  <div className="day-stay-chosen day-flow-chosen">
+                    <MapPinIcon size={14} />
                     <span className="day-stay-chosen-label">{newStayPoint.shortLabel || newStayPoint.label}</span>
-                    <button className="trip-stop-remove" onClick={() => { setNewStayPoint(null); setStayResults(null); setExploreFocus(''); }} aria-label={t('day.clearAddress')} title={t('day.clear')}>×</button>
+                    <button
+                      className="day-flow-chosen-change"
+                      onClick={() => { setNewStayPoint(null); setStayResults(null); setStayQuery(''); setExploreFocus(''); }}
+                      aria-label={t('day.clearAddress')}
+                    >{t('day.change')}</button>
                   </div>
                 ) : (
-                  <div className="day-stay-search">
-                    <input
-                      className="day-stay-input"
-                      type="text"
-                      value={stayQuery}
-                      onChange={(e) => setStayQuery(e.target.value)}
-                      onKeyDown={(e) => { if (e.key === 'Enter') searchStay(); }}
-                      placeholder={t('day.stayPlaceholder')}
-                      aria-label={t('day.stayAria')}
-                    />
-                    <button className="trip-add-btn" onClick={searchStay} disabled={staySearching || stayQuery.trim().length < 3}>
-                      {staySearching ? '…' : t('day.find')}
-                    </button>
+                <div className="day-stay-search day-flow-search">
+                  <input
+                    className="day-stay-input"
+                    type="text"
+                    value={stayQuery}
+                    onChange={(e) => setStayQuery(e.target.value)}
+                    onKeyDown={(e) => { if (e.key === 'Enter') searchStay(); }}
+                    placeholder={t('day.stayPlaceholder')}
+                    aria-label={t('day.stayAria')}
+                    autoFocus
+                  />
+                  <button className="trip-add-btn" onClick={searchStay} disabled={staySearching || stayQuery.trim().length < 3}>
+                    {staySearching ? '…' : t('day.find')}
+                  </button>
+                </div>
+                )}
+                {newStayPoint ? null : stayResults ? (
+                  stayResults.length ? (
+                    <div className="day-stay-results day-flow-results">
+                      {stayResults.map((r, i) => (
+                        <button key={i} className="day-stay-result" onClick={() => setNewStayPoint(r)}>
+                          {r.label}
+                        </button>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="trip-note">{t('day.noAddressMatchTown')}</p>
+                  )
+                ) : popularStays.length > 0 && (
+                  // Nothing typed yet: the popular cities double as the
+                  // "what does an answer look like?" example and a one-tap
+                  // way past the empty box.
+                  <div className="day-flow-suggest">
+                    <span className="day-flow-suggest-label">{t('day.popularStays')}</span>
+                    <div className="day-flow-chips">
+                      {popularStays.map((r) => (
+                        <button key={r.id} className="day-flow-chip" onClick={() => pickPopularStay(r)}>
+                          <MapPinIcon size={13} />
+                          <span>{r.name}</span>
+                          {r.dest.rating?.score != null && <ScoreChip rating={r.dest.rating} size="xs" />}
+                        </button>
+                      ))}
+                    </div>
                   </div>
                 )}
-              </label>
-              <label className="trip-field day-build-date">
-                <span className="trip-field-label">{t('day.firstDay')}</span>
-                <DateField value={newStartDate} onChange={setNewStartDate} placeholder={t('day.startDate')} />
-              </label>
+                {newStayPoint && (
+                  <button className="day-flow-next" onClick={() => setLandingStep('when')}>
+                    {t('day.next')}
+                  </button>
+                )}
+              </div>
             </div>
-            {!newStayPoint && stayResults && (
-              stayResults.length ? (
-                <div className="day-stay-results">
-                  {stayResults.map((r, i) => (
-                    <button key={i} className="day-stay-result" onClick={() => setNewStayPoint(r)}>
-                      {r.label}
+          )}
+
+          {/* STEP 2, when */}
+          {landingStep === 'when' && (
+            <div className="day-flow-step">
+              <div className="day-flow-panel">
+                <h2 className="day-flow-q">{t('day.whenVisiting')}</h2>
+                <div className="day-flow-chips day-flow-chips-center">
+                  {quickDates.map((q) => (
+                    <button
+                      key={q.key}
+                      className={`day-flow-chip${newStartDate === q.iso ? ' on' : ''}`}
+                      onClick={() => setNewStartDate(q.iso)}
+                      aria-pressed={newStartDate === q.iso}
+                    >
+                      <CalendarIcon size={13} />
+                      <span>{t(q.labelKey)}</span>
+                      <small>{fmtDateFull(q.iso, true)}</small>
                     </button>
                   ))}
                 </div>
-              ) : (
-                <p className="trip-note">{t('day.noAddressMatchTown')}</p>
-              )
-            )}
+                {/* The calendar is on the page, not behind an underlined bit
+                    of text. A single flat field reading "24 Jul 2026" gave no
+                    sense of the surrounding week, which is exactly what you
+                    need when deciding which day to spend somewhere. */}
+                <div className="day-flow-date">
+                  <span className="day-flow-suggest-label">{t('day.orPickDate')}</span>
+                  <DateField
+                    inline
+                    value={newStartDate}
+                    rangeStart={newStartDate}
+                    rangeEnd={newStartDate}
+                    onChange={setNewStartDate}
+                    placeholder={t('day.startDate')}
+                  />
+                </div>
+                <button className="day-flow-next" onClick={() => setLandingStep('how')} disabled={!newStartDate}>
+                  {t('day.next')}
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* STEP 3, how do you want to plan it */}
+          {landingStep === 'how' && (
+            <div className="day-flow-step">
+              <div className="day-flow-panel day-flow-panel-wide">
+                <h2 className="day-flow-q">{t('day.howToPlan')}</h2>
+                {/* Both cards end in the action they perform. The recommended
+                    one used to be the only one that looked pressable, which
+                    left "plan it myself" reading as an explanatory panel that
+                    happened to sit beside a button. */}
+                <div className="day-flow-cards">
+                  <button className="day-flow-card primary" onClick={() => setLandingStep('chat')}>
+                    <span className="day-flow-card-top">
+                      <span className="day-flow-card-ico"><SparkIcon size={22} /></span>
+                      <span className="day-flow-card-tag">{t('day.recommendedTag')}</span>
+                    </span>
+                    <b>{t('day.useChatbot')}</b>
+                    <small>{t('day.useChatbotSub')}</small>
+                    <ul className="day-flow-card-points">
+                      <li><CheckIcon size={12} /> {t('day.chatPoint1')}</li>
+                      <li><CheckIcon size={12} /> {t('day.chatPoint2')}</li>
+                      <li><CheckIcon size={12} /> {t('day.chatPoint3')}</li>
+                    </ul>
+                    <span className="day-flow-card-go">
+                      {t('day.cardGoBot')}<ChevronRightIcon size={14} />
+                    </span>
+                  </button>
+                  <button className="day-flow-card" onClick={() => setLandingStep('manual')}>
+                    <span className="day-flow-card-top">
+                      <span className="day-flow-card-ico"><MapPinIcon size={22} /></span>
+                    </span>
+                    <b>{t('day.planManually')}</b>
+                    <small>{t('day.planManuallySub')}</small>
+                    <ul className="day-flow-card-points">
+                      <li><CheckIcon size={12} /> {t('day.manualPoint1')}</li>
+                      <li><CheckIcon size={12} /> {t('day.manualPoint2')}</li>
+                      <li><CheckIcon size={12} /> {t('day.manualPoint3')}</li>
+                    </ul>
+                    <span className="day-flow-card-go">
+                      {t('day.cardGoManual')}<ChevronRightIcon size={14} />
+                    </span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Work you already have belongs UNDER the question it continues,
+              in the same column. Sitting below the whole split it started
+              level with the bottom of a 620px map, which left the question
+              column half empty and pushed saved plans off the fold. */}
+          {landingStep === 'stay' && (
+            <div className="day-flow-saved">
+              {standalonePlans.length > 0 && (
+                <div className="day-landing-section">
+                  <div className="trip-block-title">{t('day.yourDayPlans')}</div>
+                  <div className="trip-saved-list">
+                    {standalonePlans.map((sp) => (
+                      <div className="trip-saved-item" key={sp.id}>
+                        {/* The chevron is the row's affordance: without it a
+                            bordered box holding a name reads as a filled-in text
+                            field, not as a saved plan you can open. */}
+                        <button className="trip-saved-main" onClick={() => openStandalone(sp)}>
+                          <span className="trip-saved-label">
+                            {sp.label || destinations[sp.stops?.[0]?.destinationId]?.city || t('day.dayPlanFallback')}
+                            <small className="day-saved-sub">
+                              {fmtDate(sp.startDate)}
+                              {(sp.stops?.reduce((n, s) => n + (s.days || 1), 0) || 1) > 1
+                                ? t('day.nDaysSuffix', { n: sp.stops.reduce((n, s) => n + (s.days || 1), 0) })
+                                : ''}
+                              {(sp.stops?.length || 1) > 1 ? t('day.nCitiesSuffix', { n: sp.stops.length }) : ''}
+                            </small>
+                          </span>
+                          <span className="trip-saved-go" aria-hidden="true"><ChevronRightIcon size={14} /></span>
+                        </button>
+                        <button className="trip-saved-del" onClick={() => deleteStandalone(sp.id)} aria-label={t('day.deleteDayPlan')} title={t('day.delete')}>×</button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Or plan a day from a saved trip */}
+              {authConfigured && user && (
+                <div className="day-landing-section">
+                  <div className="trip-block-title">{t('day.planFromSavedTrip')}</div>
+                  {plansLoading ? (
+                    <p className="trip-note">{t('day.loadingSavedTrips')}</p>
+                  ) : savedPlans.length === 0 ? (
+                    <p className="trip-note">{t('day.noSavedTrips')}</p>
+                  ) : (
+                    <div className="trip-saved-list">
+                      {savedPlans.map((p) => (
+                        <div className="trip-saved-item" key={p.id}>
+                          <button className="trip-saved-main" onClick={() => openPlan(p.id)}>
+                            <span className="trip-saved-label">
+                              {p.label || t('day.untitledTrip')}
+                              {/* Two trips can honestly carry the same label
+                                  ("Austria & Germany" planned twice), and two
+                                  identical rows are unpickable. Their dates and
+                                  stop count are what tells them apart. */}
+                              {tripPlanSub(p) && <small className="day-saved-sub">{tripPlanSub(p)}</small>}
+                            </span>
+                            <span className="trip-saved-go" aria-hidden="true"><ChevronRightIcon size={14} /></span>
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {authConfigured && !user && <p className="trip-note">{t('day.signInNote')}</p>}
+              {!authConfigured && <p className="trip-note">{t('day.noAuthNote')}</p>}
+            </div>
+          )}
+
+          </div>
+          {/* The answer, on a map. Follows the chosen stay, or the first
+              search result while the traveller is still deciding. Until
+              something is chosen the popular cities are ON the map as tappable
+              pins, not just as chips beside it: "where are you staying?" is a
+              question about places, and a map you cannot answer with is
+              scenery.
+
+              Map and caption share one bordered surface, the same one the
+              question card wears. Loose, the map read as a tile floating on
+              the page with its instruction dangling underneath it. */}
+          <aside className="day-flow-mapside">
+            <div className="day-flow-mappanel">
+              <DayExploreMap
+                stay={newStayPoint || (stayResults && stayResults[0]) || null}
+                markers={stayPins}
+                onFocus={(id) => {
+                  const row = popularStays.find((r) => r.id === id);
+                  if (row) pickPopularStay(row);
+                }}
+              />
+              <p className="day-flow-mapcap">
+                <MapPinIcon size={13} />
+                <span>
+                  {newStayPoint
+                    ? t('day.mapCapStay', { place: newStayPoint.shortLabel || newStayPoint.label })
+                    : stayPins.length ? t('day.mapCapPick') : t('day.mapCapEmpty')}
+                </span>
+              </p>
+            </div>
+          </aside>
+          </div>
+          )}
+
+          {/* The chat planner: questions, a proposed route, then import. */}
+          {landingStep === 'chat' && (
+            <CartaChatPlanner
+              towns={exploreTowns}
+              dateISO={newStartDate}
+              groupSize={prefs?.aiGroupSize || 2}
+              signedIn={!!user && authConfigured}
+              onRun={runChatAi}
+              onImport={importChatPlan}
+              onBack={() => setLandingStep('how')}
+              onManual={() => setLandingStep('manual')}
+              stayPoint={newStayPoint}
+              cityOptions={allCityOptions}
+              onSuggestCity={suggestCityAi}
+              resolveNearest={resolveNearestTown}
+              onResearchCity={researchTown}
+            />
+          )}
+
+          {landingStep === 'manual' && (
+          <div className="day-build">
 
             {/* 2. Explore what's around the stay: a zoomed-in map with filter
                   chips (towns by default so it never opens overloaded), a
@@ -1909,6 +2981,14 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
               <div className="day-build-cities">
                 <span className="trip-field-label day-explore-steplabel day-picks-steplabel">
                   <span className="day-step-num">3</span> {t('day.yourPicks')}
+                  {/* What is actually planned so far, stated once. */}
+                  <span className="day-picks-status">
+                    {t('day.picksStatus', {
+                      days: newStops.reduce((n, s) => n + (s.days || 1), 0),
+                      towns: newStops.length,
+                      pois: selPois.length,
+                    })}
+                  </span>
                 </span>
                 {newStops.map((s) => {
                   const d = destinations[s.destinationId];
@@ -1918,11 +2998,14 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
                         {d?.city || t('day.unknown')}
                         <small>{d?.country}</small>
                       </span>
-                      <div className="trip-people day-days-stepper">
-                        <button type="button" onClick={() => setLandingDays(s.destinationId, s.days - 1)} disabled={s.days <= 1} aria-label={t('day.fewerDays')}>-</button>
-                        <span>{s.days} {s.days === 1 ? t('day.dayWord') : t('day.daysWord')}</span>
-                        <button type="button" onClick={() => setLandingDays(s.destinationId, s.days + 1)} aria-label={t('day.moreDays')}>+</button>
-                      </div>
+                      {/* Days are set in the briefing panel, where the town is
+                          actually being judged. A second identical stepper
+                          here meant two controls for one number on one screen;
+                          this row states the answer and leaves editing to the
+                          one place that has the context for it. */}
+                      <span className="day-build-city-days">
+                        {s.days} {s.days === 1 ? t('day.dayWord') : t('day.daysWord')}
+                      </span>
                       <button
                         className="trip-stop-remove"
                         onClick={() => removeLandingCity(s.destinationId)}
@@ -1964,63 +3047,8 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
               <p className="trip-note">{t('day.picksSpecificNote')}</p>
             )}
           </div>
-
-          {/* Your saved day plans (stored on this device) */}
-          {standalonePlans.length > 0 && (
-            <div className="day-landing-section">
-              <div className="trip-block-title">{t('day.yourDayPlans')}</div>
-              <div className="trip-saved-list">
-                {standalonePlans.map((sp) => (
-                  <div className="trip-saved-item" key={sp.id}>
-                    <button className="trip-saved-main" onClick={() => openStandalone(sp)}>
-                      {sp.label || destinations[sp.stops?.[0]?.destinationId]?.city || t('day.dayPlanFallback')}
-                      <small className="day-saved-sub">
-                        {', '}{fmtDate(sp.startDate)}
-                        {(sp.stops?.reduce((n, s) => n + (s.days || 1), 0) || 1) > 1
-                          ? t('day.nDaysSuffix', { n: sp.stops.reduce((n, s) => n + (s.days || 1), 0) })
-                          : ''}
-                        {(sp.stops?.length || 1) > 1 ? t('day.nCitiesSuffix', { n: sp.stops.length }) : ''}
-                      </small>
-                    </button>
-                    <button className="trip-saved-del" onClick={() => deleteStandalone(sp.id)} aria-label={t('day.deleteDayPlan')} title={t('day.delete')}>×</button>
-                  </div>
-                ))}
-              </div>
-            </div>
           )}
 
-          {/* Or plan a day from a saved trip */}
-          {authConfigured && user && (
-            <div className="day-landing-section">
-              <div className="trip-block-title">{t('day.planFromSavedTrip')}</div>
-              {plansLoading ? (
-                <p className="trip-note">{t('day.loadingSavedTrips')}</p>
-              ) : savedPlans.length === 0 ? (
-                <p className="trip-note">{t('day.noSavedTrips')}</p>
-              ) : (
-                <div className="trip-saved-list">
-                  {savedPlans.map((p) => (
-                    <div className="trip-saved-item" key={p.id}>
-                      <button className="trip-saved-main" onClick={() => openPlan(p.id)}>
-                        {p.label || t('day.untitledTrip')}
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
-
-          {authConfigured && !user && (
-            <p className="trip-note">
-              {t('day.signInNote')}
-            </p>
-          )}
-          {!authConfigured && (
-            <p className="trip-note">
-              {t('day.noAuthNote')}
-            </p>
-          )}
         </div>
       </div>
     );
@@ -2071,22 +3099,43 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
           )}
         </div>
         {poiQuery.trim().length >= 2 && (
-          poiSearch.length ? (
-            <div className="day-activity-list day-search-results">
-              {poiSearch.map(({ item, idx, note }) => (
-                <ActivityRow
-                  key={idx}
-                  item={item}
-                  variant={isMustSee(item) ? 'must' : ''}
-                  added={dayAssignedIdx.includes(idx)}
-                  onToggle={() => toggleActivity(idx)}
-                  note={note}
-                />
-              ))}
-            </div>
-          ) : (
-            <p className="trip-note">{t('day.poiSearchEmpty', { q: poiQuery.trim(), city: stop.dest?.city || 'here' })}</p>
-          )
+          <>
+            {poiSearch.length > 0 && (
+              <div className="day-activity-list day-search-results">
+                {poiSearch.map(({ item, idx, note }) => (
+                  <ActivityRow
+                    key={idx}
+                    item={item}
+                    variant={isMustSee(item) ? 'must' : ''}
+                    added={dayAssignedIdx.includes(idx)}
+                    onToggle={() => toggleActivity(idx)}
+                    note={note}
+                  />
+                ))}
+              </div>
+            )}
+            {/* The catalogue is a head start, not a gatekeeper: whatever was
+                typed can always become a custom stop on today's plan. Shown
+                whenever no catalogue name matches the query exactly, so
+                "Gaisberg" is one tap from the timeline instead of a dead
+                "nothing matches" wall. */}
+            {poiQuery.trim().length >= 3
+              && !poiSearch.some(({ item }) => searchFold(item.name) === searchFold(poiQuery))
+              && (
+                <button
+                  className="day-custom-add"
+                  onClick={() => addCustomPlace(poiQuery)}
+                  disabled={customBusy}
+                >
+                  {customBusy
+                    ? <><span className="day-custom-spin" aria-hidden="true" /> {t('day.customAdding')}</>
+                    : <>+ {t('day.customAdd', { q: poiQuery.trim() })}</>}
+                </button>
+              )}
+            {poiSearch.length === 0 && (
+              <p className="trip-note">{t('day.poiSearchEmpty', { q: poiQuery.trim(), city: stop.dest?.city || 'here' })}</p>
+            )}
+          </>
         )}
         {tiers.must.length > 0 && (
           <ActivitySection
@@ -2167,80 +3216,128 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
           </div>
         </div>
       )}
+      {aiOpen && stop && (
+        <AiDayPlanModal
+          city={stop.dest?.city || ''}
+          dayNumber={dayOffset + dayIdx + 1}
+          dateISO={days[dayIdx] || prefs?.aiDate || ''}
+          groupSize={prefs?.aiGroupSize || aiGroupSize()}
+          signedIn={!!user && authConfigured}
+          onRun={runAi}
+          onApply={applyAiResult}
+          onFallback={fallbackAi}
+          onClose={() => setAiOpen(false)}
+          entitlement={entitlement}
+          onOpenPass={(reason) => setPassReason(reason || 'browse')}
+        />
+      )}
+      {passReason && (
+        <PassModal
+          entitlement={entitlement}
+          reason={passReason}
+          signedIn={!!user && authConfigured}
+          onClose={() => { setPassReason(''); entitlement.refresh(); }}
+          onSignIn={() => setPassReason('')}
+        />
+      )}
       <TripMap
         stops={routePins}
         padBottom={isNarrow ? Math.min(sheetPx, 420) : 420}
         routeGeometry={routeOk ? route.geometry : null}
         routeSegments={routeOk ? route.segments : null}
         focus={stop?.dest?.lat != null ? { ...cityCoords(stop.dest), zoom: 12.2 } : null}
-        pois={mapPois}
+        pois={aiDiscoveryPins.length ? [...mapPois, ...aiDiscoveryPins] : mapPois}
         onPoiClick={(id) => toggleActivity(Number(id))}
         onViewChange={setMapView}
         fitMaxZoom={13}
       />
 
-      {/* Floating map tools: category chips filter the pickable pins, and the
-          hint says what tapping one does. Sits over the map, never over the
-          rail, and collapses to a scrollable row on phones. */}
+      {/* Floating map tools. One containerized card so map detail can't bleed
+          up between the controls, and three separate layers inside it: WHAT
+          kind of place (always-on chips), HOW GOOD (a collapsible group, an
+          occasional narrowing), and the view toggle for what you already
+          picked, which is a state and not a filter at all. The hint sits below
+          the card with real air around it, not squeezed under the pills. */}
       {stop && mapDeck.length > 0 && (
         <div className="day-map-tools" onClick={(e) => e.stopPropagation()}>
-          <div className="day-map-chips">
-            {[
-              ['all', 'All'],
-              ['sight', 'Sights'],
-              ['nature', 'Nature'],
-              ['active', 'Active'],
-              ['food', 'Food'],
-            ].filter(([k]) => k === 'all' || mapCatCounts[k] > 0).map(([k, label]) => (
+          <div className="day-map-card">
+            <div className="day-map-chips" role="group" aria-label={t('day.mapFilterCat')}>
+              {MAP_CATS
+                .filter(({ key }) => key === 'all' || mapCatCounts[key] > 0)
+                .map(({ key, labelKey }) => (
+                  <button
+                    key={key}
+                    type="button"
+                    className={`day-map-chip ${mapCat === key && !showSel ? 'on' : ''}`}
+                    onClick={() => { setMapCat(key); setShowSel(false); }}
+                    aria-pressed={mapCat === key && !showSel}
+                    disabled={showSel}
+                  >
+                    {t(labelKey)}
+                    <span className="day-map-count">{mapCatCounts[key]}</span>
+                  </button>
+                ))}
+            </div>
+
+            <div className="day-map-card-foot">
               <button
-                key={k}
                 type="button"
-                className={`shape-cat-chip day-map-chip ${mapCat === k && !showSel ? 'on' : ''}`}
-                onClick={() => { setMapCat(k); setShowSel(false); }}
-                aria-pressed={mapCat === k && !showSel}
+                className={`day-map-chip day-map-quality-btn ${mapRating !== 'all' && !showSel ? 'on' : ''} ${qualityOpen ? 'open' : ''}`}
+                onClick={() => setQualityOpen((v) => !v)}
+                aria-expanded={qualityOpen}
                 disabled={showSel}
               >
-                {label}
-                <span className="shape-cat-count">{mapCatCounts[k]}</span>
+                <FilterIcon size={11} />
+                {t(MAP_RATINGS.find((r) => r.key === mapRating)?.labelKey || 'day.mapQualityAny')}
+                <ChevronDownIcon size={11} className={qualityOpen ? 'day-map-caret up' : 'day-map-caret'} />
               </button>
-            ))}
-          </div>
-          <div className="day-map-chips">
-            {[
-              ['all', 'Any rating'],
-              ['top', 'Top rated'],
-              ['must', 'Must-see'],
-            ].filter(([k]) => k === 'all' || mapCatCounts[k] > 0).map(([k, label]) => (
-              <button
-                key={`r-${k}`}
-                type="button"
-                className={`shape-cat-chip day-map-chip ${mapRating === k && !showSel ? 'on' : ''}`}
-                onClick={() => { setMapRating(k); setShowSel(false); }}
-                aria-pressed={mapRating === k && !showSel}
-                disabled={showSel}
-              >
-                {label}
-                {k !== 'all' && <span className="shape-cat-count">{mapCatCounts[k]}</span>}
-              </button>
-            ))}
-            {assignedAnyDay.size > 0 && (
-              <button
-                type="button"
-                className={`shape-cat-chip day-map-chip day-map-chip-sel ${showSel ? 'on' : ''}`}
-                onClick={() => setShowSel((v) => !v)}
-                aria-pressed={showSel}
-                title="Show only the places already in your plan"
-              >
-                <CheckIcon size={10} /> Selected
-                <span className="shape-cat-count">{assignedAnyDay.size}</span>
-              </button>
+              {assignedAnyDay.size > 0 && (
+                <>
+                  <span className="day-map-divider" aria-hidden="true" />
+                  <button
+                    type="button"
+                    className={`day-map-chip day-map-toggle ${showSel ? 'on' : ''}`}
+                    onClick={() => setShowSel((v) => !v)}
+                    role="switch"
+                    aria-checked={showSel}
+                    title={t('day.mapOnlyPicksTitle')}
+                  >
+                    <CheckIcon size={10} /> {t('day.mapOnlyPicks')}
+                    <span className="day-map-count">{assignedAnyDay.size}</span>
+                  </button>
+                </>
+              )}
+            </div>
+
+            {qualityOpen && !showSel && (
+              <div className="day-map-quality" role="radiogroup" aria-label={t('day.mapFilterQuality')}>
+                {MAP_RATINGS
+                  .filter(({ key }) => key === 'all' || mapCatCounts[key] > 0)
+                  .map(({ key, labelKey }) => (
+                    <button
+                      key={`r-${key}`}
+                      type="button"
+                      className={`day-map-chip ${mapRating === key ? 'on' : ''}`}
+                      onClick={() => { setMapRating(key); setQualityOpen(false); }}
+                      role="radio"
+                      aria-checked={mapRating === key}
+                    >
+                      {t(labelKey)}
+                      {key !== 'all' && <span className="day-map-count">{mapCatCounts[key]}</span>}
+                    </button>
+                  ))}
+              </div>
             )}
           </div>
-          <span className="day-map-hint">
-            {showSel
-              ? `Your picked places in ${stop?.dest?.city || 'this city'}. Numbered pins are day ${dayOffset + dayIdx + 1}`
-              : `Tap a pin to add it to day ${dayOffset + dayIdx + 1}. Zoom in for more places`}
-          </span>
+
+          <p className="day-map-hint">
+            <InfoIcon size={12} />
+            <span>
+              {showSel
+                ? t('day.mapHintPicked', { city: stop?.dest?.city || t('day.thisCity'), n: dayOffset + dayIdx + 1 })
+                : t('day.mapHintTap', { n: dayOffset + dayIdx + 1 })}
+            </span>
+          </p>
         </div>
       )}
 
@@ -2411,31 +3508,19 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
             </div>
           )}
 
-          {/* 3. Today's plan. The Carta-plan panel (when open) takes this
-              spot: one compact screen of pre-answered questions that drafts
-              the SELECTED day right here in the rail - the big map and its
-              pins stay in view the whole time. Otherwise: empty days get the
-              CTA + place browser, planned days the collapsible plan card. */}
-          {stop && showShape && (
-            <CartaPlanPanel
-              city={stop.dest?.city || 'this city'}
-              cityDest={stop.dest}
-              dayNumber={dayOffset + dayIdx + 1}
-              numDays={days.length}
-              items={activities.items}
-              walkable={activities.walkable}
-              excludeIdx={usedOtherDays}
-              stayPoint={stayAnchor}
-              initial={prefs}
-              onDraft={applyDraft}
-              onClose={() => setShowShape(false)}
-            />
-          )}
-          {stop && !showShape && assignedItems.length === 0 && (
+          {/* 3. Today's plan. An empty day leads with the AI planner as the
+              one big call to action; building by hand stays available right
+              underneath (map pins or the place browser). A planned day shows
+              the collapsible plan card instead. */}
+          {stop && assignedItems.length === 0 && (
             <div className="trip-block day-plan-block">
               <div className="trip-block-title">Today's plan</div>
-              <button className="day-carta-btn" onClick={() => setShowShape(true)}>
-                <SparkIcon size={12} /> Pick a ready-made route for day {dayOffset + dayIdx + 1}
+              <button className="day-ai-hero" onClick={() => setAiOpen(true)}>
+                <span className="day-ai-hero-ico"><SparkIcon size={18} /></span>
+                <span className="day-ai-hero-text">
+                  <b>{t('ai.btnEmpty', { n: dayOffset + dayIdx + 1 })}</b>
+                  <small>{t('ai.btnEmptySub')}</small>
+                </span>
               </button>
               <p className="trip-note">
                 Or build it yourself: tap the pins on the map, or add places
@@ -2452,7 +3537,7 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
             </div>
           )}
 
-          {stop && !showShape && assignedItems.length > 0 && (
+          {stop && assignedItems.length > 0 && (
             <Collapsible
               className="day-plan-block day-plan-collapse"
               title="Today's plan"
@@ -2473,8 +3558,38 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
                     <SparkIcon size={11} /> Let Carta reorder
                   </button>
                 )}
+                <button className="day-route-optimize day-ai-replan" onClick={() => setAiOpen(true)}>
+                  <SparkIcon size={11} /> {t('ai.btnReplan')}
+                </button>
               </div>
               {routeInfoOpen && <p className="day-route-info-note">{routeSummary}</p>}
+
+              {/* An imported bot plan is a HEADER on the day, not a second copy
+                  of it: its stops are already the timeline below, each keeping
+                  the model's one-line reason on its own row. Only the framing
+                  the timeline cannot carry lives here, the bot's summary of the
+                  day and its walking total. Dismissable. */}
+              {aiPlan && (
+                <div className="ai-day-panel">
+                  <div className="ai-day-panel-head">
+                    <span className="ai-day-panel-title">
+                      <SparkIcon size={11} /> {t('ai.summaryTitle', { n: dayOffset + dayIdx + 1 })}
+                    </span>
+                    <button
+                      className="trip-stop-remove"
+                      onClick={dismissAi}
+                      aria-label={t('ai.dismiss')}
+                      title={t('ai.dismiss')}
+                    >×</button>
+                  </div>
+                  {aiPlan.summary && <p className="ai-day-panel-summary">{aiPlan.summary}</p>}
+                  {aiTotalsTrustworthy && (
+                    <p className="ai-plan-note">
+                      {t('ai.totals', { km: aiPlan.totals?.walkKm ?? 0, t: aiPlan.totals?.endTime ?? '' })}
+                    </p>
+                  )}
+                </div>
+              )}
 
               <div className="day-timeline">
                 {stayLeg && (
@@ -2483,20 +3598,39 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
                     {stayLeg.ride && (
                       <small className="day-timeline-ride-note">
                         Park up or hop off; from here today's route is on foot.
+                        {stayLeg.mode === 'car' ? ' The estimate already includes parking and walking in.' : ''}
                       </small>
                     )}
                   </div>
                 )}
                 {assignedItems.map((it, i) => (
                   <React.Fragment key={`${dayAssignedIdx[i]}`}>
+                    {/* Morning / midday / afternoon / evening, in place of a
+                        per-stop clock. A holiday runs on phases, and a phase
+                        cannot be "missed" by leaving one museum late. */}
+                    {phaseHeads[i] && (
+                      <div className="day-phase-head">
+                        <span className="day-phase-label">{t(phaseHeads[i].labelKey)}</span>
+                      </div>
+                    )}
                     <AssignedRow
                       item={it}
                       index={i}
                       last={i === assignedItems.length - 1}
+                      stayLabel={t('day.estStay', { dur: fmtDur(dwellMinutes(poiKind(it), visitFactor)) })}
+                      note={aiWhyByIdx[dayAssignedIdx[i]] || shortDesc(it.desc)}
+                      noteFromAi={!!aiWhyByIdx[dayAssignedIdx[i]]}
                       onMoveUp={() => moveAssigned(i, -1)}
                       onMoveDown={() => moveAssigned(i, 1)}
                       onRemove={() => toggleActivity(dayAssignedIdx[i])}
                     />
+                    {schedule?.lunch?.afterIndex === i && (
+                      <div className="day-timeline-walk day-timeline-lunch">
+                        <CoffeeIcon size={11} /> {t('day.lunchBreak', {
+                          dur: fmtDur(schedule.lunch.endMin - schedule.lunch.startMin),
+                        })}
+                      </div>
+                    )}
                     {i < assignedItems.length - 1 && (() => {
                       const leg = walkLeg(i);
                       return (
@@ -2512,6 +3646,54 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
                 <p className="day-route-total">
                   Full route: {route.km.toFixed(1)} km, about {route.min} min {route.hasFerry ? 'of walking and ferry rides' : 'of walking'}.
                 </p>
+              )}
+              {schedule && (
+                <p className="day-route-total day-done-line">
+                  {/* One soft anchor for the whole day, rounded to the quarter
+                      hour: enough to know whether dinner still fits, not a
+                      deadline anyone can run late for. */}
+                  <ClockIcon size={11} /> {t('day.doneAround', { time: fmtClockLoose(schedule.endMin) })}
+                  {schedule.freeMin >= GAP_SUGGEST_MIN && <> {t('day.openTime', { dur: fmtDur(schedule.freeMin) })}</>}
+                </p>
+              )}
+
+              {/* The bot's out-of-catalogue finds. They have no catalogue entry
+                  to become a timeline row, so they are listed once here beside
+                  their violet map pins instead of inside the plan. */}
+              {aiDiscoveries.length > 0 && (
+                <div className="day-scenic day-ai-finds">
+                  <div className="day-scenic-title">
+                    <MapPinIcon size={11} /> {t('ai.discoveryTitle')}
+                  </div>
+                  {aiDiscoveries.map((s, i) => (
+                    <div key={i} className="day-ai-find">
+                      <b>
+                        {s.name}
+                        {s.isEvent && <span className="ai-disc-tag ai-event-tag">{t('ai.eventTag')}</span>}
+                        {/* The bot knew the place but could not place it: the
+                            find is kept, labelled, and simply has no pin. */}
+                        {s.unmapped && <span className="ai-disc-tag ai-unmapped-tag">{t('ai.unmappedTag')}</span>}
+                      </b>
+                      {s.why && <small>{s.why}</small>}
+                    </div>
+                  ))}
+                </div>
+              )}
+              {gapIdeas.length > 0 && (
+                <div className="day-scenic day-gap-ideas">
+                  <div className="day-scenic-title">
+                    <ClockIcon size={11} /> {t('day.gapTitle', { dur: fmtDur(schedule.freeMin) })}
+                  </div>
+                  {gapIdeas.map(({ item, idx }) => (
+                    <button key={idx} className="day-scenic-row" onClick={() => toggleActivity(idx)} title={t('day.gapAddTitle')}>
+                      <span className="day-scenic-text">
+                        <b>{item.name}</b>
+                        <small>{poiKind(item)}, {t('day.gapFits', { dur: fmtDur(dwellMinutes(poiKind(item), visitFactor)) })}</small>
+                      </span>
+                      <span className="day-activity-add">+</span>
+                    </button>
+                  ))}
+                </div>
               )}
 
               {pinnedWalksBlock}
@@ -2551,16 +3733,19 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
                 <button className="day-action-btn" onClick={downloadKmlFile} title={t('export.myMapsTitle')}>
                   <RouteIcon size={14} /> {t('export.myMaps')}
                 </button>
+                <button className="day-action-btn" onClick={downloadIcsFile} title={t('export.calendarTitle')}>
+                  <CalendarIcon size={14} /> {t('export.calendar')}
+                </button>
                 <button className="day-action-btn" onClick={shareDay}>
                   <ShareIcon size={14} /> {shareState === 'copied' ? t('day.copied') : t('day.share')}
                 </button>
               </div>
               <button
                 className="day-carta-btn day-carta-reshape"
-                onClick={() => setShowShape(true)}
-                title="Answer the quick questions again and pick a different ready-made route"
+                onClick={() => setAiOpen(true)}
+                title={t('ai.replanTitle')}
               >
-                <SparkIcon size={12} /> Not happy? Pick a different route for day {dayOffset + dayIdx + 1}
+                <SparkIcon size={12} /> {t('ai.replanCta', { n: dayOffset + dayIdx + 1 })}
               </button>
 
               {/* Add more places / another city, tucked inside the plan card so
@@ -2586,6 +3771,47 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
                   <p className="trip-note">Turns this into a multi-city day trip: each city gets its own days and picks.</p>
                 </Collapsible>
               )}
+            </Collapsible>
+          )}
+
+          {/* 3.5 Import ideas: a blog's "one day in Salzburg", an itinerary
+              PDF, a pasted link. Carta extracts the activities; each one is a
+              tap from becoming a custom stop on the open day, so an already
+              planned day grows without retyping anything. */}
+          {stop && dayImportContext && (
+            <Collapsible
+              className="day-import-collapse"
+              titleIcon={<UploadIcon size={13} />}
+              title={t('day.importTitle')}
+              count={ideaList.length ? ideaList.length : null}
+            >
+              <MagicImportZone
+                onResult={stageIdeas}
+                importContext={dayImportContext}
+                leadKey="day.importLead"
+              />
+              {ideaList.map((idea) => (
+                <div className="day-idea-row" key={idea.id}>
+                  <span className="day-idea-text">
+                    <b>{idea.name}</b>
+                    {(idea.note || idea.durationMin != null) && (
+                      <small>
+                        {[idea.durationMin != null ? `~${idea.durationMin} min` : null, idea.note]
+                          .filter(Boolean).join(', ')}
+                      </small>
+                    )}
+                  </span>
+                  <button
+                    className="day-idea-add"
+                    disabled={customBusy}
+                    onClick={() => addCustomPlace(idea.name, { note: idea.note || '', dropIdeaId: idea.id })}
+                    title={t('day.importAddTitle', { n: dayOffset + dayIdx + 1 })}
+                  >
+                    + {t('day.importAddHere', { n: dayOffset + dayIdx + 1 })}
+                  </button>
+                  <button className="trip-stop-remove" onClick={() => discardIdea(idea)} aria-label={t('extras.removeTitle')} title={t('extras.removeTitle')}>×</button>
+                </div>
+              ))}
             </Collapsible>
           )}
 

@@ -1,0 +1,16 @@
+rank,curation_rank,title,ref,network,distance_km,popularity,pageviews_day,sitelinks,anchors,quality_score,portal_agreement,status,family_members,trip_id,osm_relation
+1,79.69,Alpe Adria Trail E01,AATE01,iwn,13.5,0.627,0,0,"Grossglockner High Alpine Road (86/day, 1224 m)",95,,needs_review,26,18084,13864036
+2,78.25,Via Alpina Red R15,VA-R15,iwn,13.6,0.55,32,0,"Peč (76/day, 1 m)",100,,needs_review,28,12233,2716464
+3,77.12,Via Alpina,,iwn,468.9,0.786,32,15,"Peč (76/day, 1 m)",62.5,,needs_review,8,9467,20014200
+4,76.57,Jakobsweg,Jakobsweg Melk - Persenbeug,iwn,32.0,0.502,0,0,"Melk (85/day, 147 m)",100,,needs_review,7,11612,1923428
+5,76.39,"Camino Húngaro, Budapest–Lébény–Rajka-Wolfsthal",StJ,iwn,26.7,0.532,136,77,,95,,needs_review,1,12122,2529355
+6,76.15,Südalpenweg 03 - Etappe 17,03,nwn,12.7,0.633,0,0,"Peč (76/day, 1 m)",100,,needs_review,30,18025,13742289
+7,75.02,Nord-Süd Weitwanderweg 05,05,nwn,473.6,0.6,0,0,"Melk (85/day, 6 m)",100,,needs_review,20,9784,171840
+8,74.99,Jakobsweg Wien,,nwn,37.6,0.6,0,0,"Vienna (3369/day, 6 m)",100,,needs_review,1,12001,2354234
+9,74.93,Panoramaweg Südalpen 01,PanSüd 01,nwn,12.4,0.598,0,0,"Peč (76/day, 1 m)",100,,needs_review,21,19689,17341652
+10,72.79,Rupertiweg 10 (Stadtroute Salzburg),10,nwn,14.3,0.537,0,0,"Archbishopric of Salzburg (1284/day, 355 m); Salzburg (1284/day, 696 m); Nonnberg (89/day, 29 m)",100,,needs_review,1,13526,4681537
+11,72.17,Europäischer Fernwanderweg E4 (von Salzburg nach Gresten),E4,iwn,265.7,0.537,0,0,"Salzburg (1284/day, 1053 m); Archbishopric of Salzburg (1284/day, 735 m); Nonnberg (89/day, 374 m)",77.5,,needs_review,1,14969,7073840
+12,71.9,Adlerweg Etappe 1,AW1,rwn,12.8,0.69,0,0,"Bergbahn St. Johann (184/day, 436 m)",100,,needs_review,30,12620,3305324
+13,71.57,AV Weg 440,440,rwn,12.0,0.681,0,0,"Hundstein (159/day, 27 m)",100,,needs_review,228,19919,17715985
+14,71.53,Mariazellerweg 506,506,rwn,8.3,0.68,0,0,"Fürstenstand (694/day, 975 m)",100,,needs_review,11,17555,12442822
+15,70.63,Wanderweg 601,601,rwn,29.6,0.654,0,0,"Hallstatt-Dachstein Salzkammergut cultural landscape (621/day, 257 m); Hallstatt (621/day, 587 m)",100,,needs_review,9,10489,1105283

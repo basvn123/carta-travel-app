@@ -29,6 +29,10 @@ export function useFilterState(init) {
   // Quick "best of" shortcut: { by: 'price' | 'beauty', n } or null. Trims the
   // (already filtered) results down to the N best by that metric, in list + map.
   const [topPick, setTopPick] = useState(init.topPick ?? null);
+  // "Reachable within N hours" cutoff (null = off). Only bites when the
+  // current origin has a reach artifact (see lib/reach.js), so a cutoff kept
+  // in the URL can never empty the map of an origin without travel-time data.
+  const [reachHours, setReachHours] = useState(init.reachHours ?? null);
   const [sortKey, setSortKey] = useState(init.sortKey ?? 'beauty');
   const [showFavOnly, setShowFavOnly] = useState(init.showFavOnly ?? false);
   return {
@@ -40,6 +44,7 @@ export function useFilterState(init) {
     unescoOnly, setUnescoOnly,
     topBeachOnly, setTopBeachOnly,
     topPick, setTopPick,
+    reachHours, setReachHours,
     sortKey, setSortKey,
     showFavOnly, setShowFavOnly,
   };

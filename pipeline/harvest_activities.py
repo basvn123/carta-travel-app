@@ -413,6 +413,17 @@ def otm_items(lat, lon, key):
     sights_raw = otm_radius_paged(lat, lon, key, "interesting_places", "2")
     if sights_raw is None:
         return None
+    if len(sights_raw) >= OTM_PAGE * OTM_MAX_PAGES:
+        # Ultra-dense centre (Amsterdam: 8000+ rate>=2 POIs in 9 km): the
+        # nearest-2000 window ends before the edge, so world icons past it
+        # (Rijksmuseum at 1.7 km!) are absent. The rate>=3 band alone fits in
+        # the page budget everywhere (probed: <2000 even in AMS/Prague), so
+        # fetch it in full and merge - the TOP_N_FULL cut happens inside that
+        # band anyway.
+        time.sleep(OTM_DELAY_S)
+        top_raw = otm_radius_paged(lat, lon, key, "interesting_places", "3")
+        have = {p.get("xid") for p in sights_raw}
+        sights_raw += [p for p in (top_raw or []) if p.get("xid") not in have]
     # Fame lookup for the whole top-rate band: in dense cities the TOP_N_FULL
     # cut happens inside base rate 3, so that band is ranked by sitelinks.
     top_qids = [p.get("wikidata") for p in sights_raw
@@ -613,6 +624,10 @@ def batch_coords(titles):
         d = get_json(WIKI_API + "?" + urllib.parse.urlencode({
             "action": "query", "format": "json", "formatversion": "2",
             "prop": "coordinates", "redirects": "1", "titles": "|".join(chunk),
+            # coordinates defaults to ~10 results per response; without this,
+            # titles past the cut silently resolve to None and the harvest
+            # falls back to AIRPORT coords (Rome's pool became Ostia).
+            "colimit": "max",
         }))
         q = (d or {}).get("query", {})
         rmap = _resolve_map(chunk, q.get("normalized"), q.get("redirects"))
@@ -837,12 +852,28 @@ def harvest(dests, resume=True):
     print(f"Harvesting activities: {len(todo)} to fetch, {len(cache)} cached")
     if not todo:
         return cache
-    # City-centre coords for every city in one batched pass (~1 call per 50
-    # cities) instead of two Wikipedia calls per destination.
-    cities = {did: clean_city(d.get("city")) for did, d in todo}
-    centers = batch_coords(sorted(set(cities.values())))
+    # Harvest centre preference: the master's own city_lat/city_lon first
+    # (apply_city_center, schema v13) - deterministic, immune to Wikipedia
+    # title ambiguity ('Lagos' resolved to Nigeria, 'Montserrat' to the
+    # Caribbean) and to the coordinates prop's per-response result cap.
+    # Wikipedia lookup only for dests without stored centres (the 07d towns/
+    # gems, whose own lat/lon IS the place), sanity-bounded to 60 km of the
+    # dest's coords; dest lat/lon as the final fallback.
+    cities = {did: clean_city(d.get("city")) for did, d in todo
+              if d.get("city_lat") is None}
+    centers = batch_coords(sorted(set(cities.values()))) if cities else {}
+
+    def centre_for(did, d):
+        if d.get("city_lat") is not None:
+            return d["city_lat"], d["city_lon"]
+        c = centers.get(cities.get(did))
+        dlat, dlon = d.get("lat"), d.get("lon")
+        if c and (dlat is None or haversine_km(c[0], c[1], dlat, dlon) <= 60):
+            return c
+        return dlat, dlon
+
     for n, (did, d) in enumerate(todo, 1):
-        clat, clon = centers.get(cities[did]) or (d.get("lat"), d.get("lon"))
+        clat, clon = centre_for(did, d)
         res = otm_items(clat, clon, key) if clat is not None else None
         if not res:
             # OTM had nothing here - fall back to the keyless tiers (Wikivoyage

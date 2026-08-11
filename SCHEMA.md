@@ -167,7 +167,20 @@ are archived in `archive/notebooks/`, and the live accommodation path is
         "source_km": 0.0,                // distance town->anchor centre (<=20 km)
         "settlement_tier": "metro",      // long-tail pop tier (+pop sources only)
         "pop_factor": 1.15,              // multiplier that tier applied
-        "longtail_base": { }             // pre-tier values, for idempotent reruns
+        "longtail_base": { },            // pre-tier values, for idempotent reruns
+        // --- stay tiers (apply_stay_tiers.py), measured cities only (<=20km),
+        // ANNUAL medians like the Airbnb anchor; the runtime seasons them.
+        // Powers choices.stay_tier: dorm|private|home|hotel3|hotel4|hotel5.
+        "tiers": {
+          "dorm_pp_night_eur": 18.4,       // cheapest-dorm median, PER BED (Hostelworld)
+          "private_room_night_eur": 55.0,  // hostel/guesthouse private double, PER ROOM
+          "hotel3_night_eur": 92.0,        // 3-star double, PER ROOM (LiteAPI)
+          "hotel4_night_eur": 128.0,       // 4-star double, PER ROOM (LiteAPI)
+          "hotel5_night_eur": 210.0,       // 5-star double, PER ROOM (LiteAPI)
+          "n_hostels": 14, "n_hotels": 52, // properties behind the medians
+          "src": "hostelworld+liteapi",    // "fixture" = dev data, never shipped
+          "captured": "2026-07-28"
+        }
       },
       "local_transport": {          // "do I need a car here?" (category estimate)
         "car_needed": false,             // true -> a rental is added when you fly in
@@ -465,7 +478,38 @@ Pipeline order (updated; scripts live in `pipeline/`, run from the repo root -
     apply_car_layer -> apply_airport_anchors -> apply_airport_categories
     -> apply_beauty_layer -> harvest_pageviews -> apply_rating_layer
     -> apply_toll_layer -> harvest_accommodation -> apply_accommodation_anchors
-    -> apply_tourist_premium -> enrich_activities apply -> sync-data (build)
+    -> apply_tourist_premium -> harvest_hostelworld + harvest_hotels_liteapi
+    -> apply_stay_tiers -> enrich_activities apply -> sync-data (build)
+
+## Stay tiers (added 2026-07-28): hostels + hotels beside the Airbnb anchor
+
+`accommodation.tiers` (see the destination schema above) lets a traveller pick
+how expensive to sleep: dorm bed, private hostel room, entire place (the
+classic anchor), 3-star or 4/5-star hotel. Two new harvesters feed it:
+
+- `harvest_hostelworld.py` - Hostelworld Partner API (affiliate credentials in
+  `HW_CONSUMER_KEY`/`HW_CONSUMER_SECRET`; apply at partners.hostelworld.com).
+  Per city, 4 date probes spread over the year; median per-property cheapest
+  dorm (HOSTEL) and cheapest private (HOSTEL+GUESTHOUSE), de-seasoned into an
+  annual figure. -> `cache/hostel_city_anchors.json`
+- `harvest_hotels_liteapi.py` - LiteAPI v3 (`LITEAPI_KEY`, self-service at
+  liteapi.travel; picked after Amadeus Self-Service shut down 2026-07-17).
+  Star-rated hotel list per city, then 4 rate probes for a 2-adult double;
+  medians per star bucket (3.0-3.5 vs 4.0-5.0). -> `cache/hotel_city_anchors.json`
+- `apply_stay_tiers.py` assigns anchors city-only (<=20 km, no regional
+  borrowing, same rule as the Airbnb anchors) onto `accommodation.tiers` of
+  both app_data targets. Idempotent (strips old tiers first). REFUSES
+  src="fixture" anchors unless `--allow-fixtures` (dev chain:
+  `pipeline/oneoff/make_stay_fixtures.py` -> `harvest_* --fixtures`).
+
+Runtime (`runtime_pricing.js`): `choices.stay_tier` ('home' default, URL param
+`st`). Dorms price per bed; private/hotel rooms are doubles, ceil(g/2) rooms
+split across the group. Non-home tiers keep the seasonality curve but charge
+no cleaning fee, no service fee and no weekly discount. A tier with no
+measurement falls back to the entire-home price with `tier_fallback: true`,
+surfaced in the breakdown ("no measured dorm price here"). Booking links
+follow the tier: Hostelworld search (dorm/private), KAYAK hotels (hotel
+tiers), Airbnb (home).
 
 ## Schema v16, bathing-water quality (added 2026-07-18)
 
@@ -580,6 +624,75 @@ APPLY IS DEFERRED: a concurrent session expanded the catalogue (1570 -> 24803
 GeoNames dests) mid-session and re-patches app_data.json. Run the real
 `python harvest_pois_overture.py assign` + `npm run data` only once that
 harvest is finished, or it will be clobbered.
+
+## Fare provenance, contract A (added 2026-08-05)
+
+Every record of the deduplicated fares table (master `data.fares[anchor][origin]`,
+shipped as per-origin slices `public/fares/<ORIGIN>.json[anchor]` by sync-data.mjs,
+reserved DOS names escaped per `lib/fareFile.js`) now carries provenance. All new
+fields are optional; a record without them is a legacy direct harvest of unknown
+age and must keep working everywhere (the read side is tolerant).
+
+```jsonc
+"fares": {
+  "<anchor_iata>": {
+    "<origin_iata>": {
+      "out":   { "2026-08-12": 24.99 },   // date -> cheapest EUR, outbound
+      "ret":   { "2026-08-15": 19.99 },   // date -> cheapest EUR, return
+      "out_t": { "2026-08-12": "07:10/09:25" },  // dep/arr times, partial
+      "ret_t": { },
+      "out_c": { "2026-08-12": "W6" },    // per-day winning source, sparse:
+      "ret_c": { },                       //   'W6'|'VY'|'V7'|'TP'; untagged = FR
+      "s": "FR",       // source that CREATED the record's base fares:
+                       //   FR | W6 | VY | V7 | TP  (EST is reserved for the
+                       //   frontend estimate fallback and never stored here)
+      "o": 20670,      // unix epoch DAYS the record's prices were last
+                       //   confirmed by a harvest/merge step
+      "out_o": { "2026-08-12": 20665 },   // per-day observed_at, sparse, only
+      "ret_o": { },                       //   where it differs from `o` (TP)
+      "out_x": { "2026-08-12": 20672 },   // per-day expires_at, sparse, only
+      "ret_x": { }                        //   when the source supplies one (TP)
+    }
+  }
+}
+```
+
+Resolution rules (what a reader should compute for a displayed date D):
+- source of D on a side: `out_c[D] || rec.s || 'FR'`
+- observed epoch day of D: `out_o[D] ?? rec.o` (absent on legacy records)
+- expires epoch day of D: `out_x[D]` (usually absent; only cache quotes expire)
+- `e: 1` marks a model estimate. The pipeline NEVER writes it; it is attached
+  by the frontend ground-fare/estimate fallback layer at runtime.
+
+Merge policy (cheapest-wins, direct carriers stay primary):
+- `harvest_all_origins.py patch` rebuilds the table from the Ryanair cache and
+  stamps `s:"FR"` and `o` on every record, then folds in the Travelpayouts
+  staging file `data/derived/tp_fares.json` (contract B: `{meta, fares:[{org,
+  dst, d, eur(int cents), link, obs, exp}]}`) when it exists. Absent staging
+  file = the step is a no-op and the table is byte-identical to the pre-TP
+  behaviour plus the `s`/`o` stamps.
+- TP quotes: expired quotes and days outside the fare window are dropped; a
+  quote only wins a day with NO direct price or a STRICTLY cheaper one, and is
+  tagged `TP` with per-day `out_o`/`out_x`. `org->dst` joins as the out leg of
+  (origin=org, anchor=dst) for origins already served; it also fills the ret
+  leg of an existing (origin=dst, anchor=org) record. No deeplink is stored:
+  the app already builds its Aviasales link from route + date at click time
+  (`lib/affiliate.js`), which is exactly where a TP quote points.
+- Wizz/Vueling/Volotea patches merge cheapest-wins as before, stamp `s`/`o` on
+  routes they create, bump `o` on records they actually touch, and RECLAIM a
+  TP-held day at equal price (a cached quote never beats an equal-or-cheaper
+  direct fare, regardless of merge order); reclaiming clears that day from
+  `out_o`/`out_x`.
+- `harvest_all_origins.py tp` re-merges a refreshed staging file into the
+  existing table offline, between weekly runs.
+
+Read side: `lib/origins.js` hydrates `s` and `o` verbatim onto each route,
+plus `outbound_seen`/`return_seen` (`out_o`/`ret_o`) and `outbound_expires`/
+`return_expires` (`out_x`/`ret_x`). `lib/carriers.js` maps the `TP` tag to the
+booking source name (Aviasales) since the operating airline of a cached quote
+is only shown at booking. The estimation snapshot gate (`src/estimation/
+snapshot.py`) whitelists record keys and silently skips unknown ones, so the
+provenance fields pass the schema gate without being archived.
 
 ## Served data split (added 2026-07-12)
 

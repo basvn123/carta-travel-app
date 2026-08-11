@@ -1,10 +1,19 @@
 import React, { useEffect, useRef } from 'react';
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
-import { hasLngLat } from './coords.js';
+import { hasLngLat, declutterPins } from './coords.js';
 
 // Same clean, key-less Carto Voyager basemap the main map uses.
 const MAP_STYLE = 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json';
+
+// How close two numbered stop pins may come, in screen pixels, before the
+// later one is nudged clear. A pin is 26px wide, so this is "touching".
+const MIN_PIN_SEP = 30;
+
+// The drawn teardrop, which is bigger than the 26px marker box it hangs from
+// and rises above its own coordinate. Used to keep a decluttered pin on the map.
+const PIN_HALF = 19;
+const PIN_TALL = 38;
 
 // Category glyphs for the pickable POI pins, the same visual language as the
 // explore map's pins (dem-pin), so "tappable place" reads the same everywhere.
@@ -17,6 +26,53 @@ const POI_CAT_ICONS = {
 };
 const POI_STAR_ICON = '<svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 3l2.4 5.9 6.1.5-4.7 4 1.5 6L12 16.1 6.6 19.4l1.5-6-4.7-4 6.1-.5z"/></svg>';
 const POI_PLUS_ICON = S('<path d="M12 5v14M5 12h14"/>');
+// AI discoveries (day planner): places the AI found beyond the catalogue.
+const POI_SPARK_ICON = S('<path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/><path d="M18.5 15.5l.8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8z"/>');
+// Festivals and dated events, which the catalogue structurally cannot hold.
+const POI_EVENT_ICON = S('<path d="M4 8h16v3a2 2 0 0 0 0 4v3H4v-3a2 2 0 0 0 0-4z"/><path d="M14 8v12"/>');
+
+/**
+ * A chevron for the route line, drawn pixel by pixel into an RGBA buffer.
+ * A line alone says which places are joined; it doesn't say which way the day
+ * runs. Repeating this glyph along the line answers that at a glance.
+ *
+ * Built in code rather than loaded as an image so it stays inside the app's
+ * strict CSP: no external asset and no data: URL to whitelist.
+ */
+function routeArrowImage(px = 26) {
+  const data = new Uint8Array(px * px * 4);
+  // Paper cream cut out of the rust line, the way a road sign reads: the
+  // chevron has to contrast with the line it rides, not match it.
+  const ink = [247, 242, 233];
+  const halo = [150, 56, 18];
+  const thickness = px * 0.15;
+  const put = (x, y, rgb, a) => {
+    const i = (y * px + x) * 4;
+    if (a <= data[i + 3] / 255) return;
+    data[i] = rgb[0]; data[i + 1] = rgb[1]; data[i + 2] = rgb[2];
+    data[i + 3] = Math.round(a * 255);
+  };
+  // Distance to the two strokes of a ">" chevron, rasterised with a soft edge.
+  const seg = (x, y, x1, y1, x2, y2) => {
+    const dx = x2 - x1, dy = y2 - y1;
+    const t = Math.max(0, Math.min(1, ((x - x1) * dx + (y - y1) * dy) / (dx * dx + dy * dy)));
+    return Math.hypot(x - (x1 + t * dx), y - (y1 + t * dy));
+  };
+  const a1 = [px * 0.34, px * 0.24], a2 = [px * 0.68, px * 0.5], a3 = [px * 0.34, px * 0.76];
+  for (let y = 0; y < px; y++) {
+    for (let x = 0; x < px; x++) {
+      const d = Math.min(
+        seg(x, y, a1[0], a1[1], a2[0], a2[1]),
+        seg(x, y, a2[0], a2[1], a3[0], a3[1]),
+      );
+      const inkA = Math.max(0, Math.min(1, thickness - d + 0.5));
+      const haloA = Math.max(0, Math.min(1, thickness + 1.3 - d + 0.5));
+      if (haloA > 0) put(x, y, halo, haloA * 0.55);
+      if (inkA > 0) put(x, y, ink, inkA);
+    }
+  }
+  return { width: px, height: px, data };
+}
 
 /**
  * The trip's map backdrop: a full-bleed basemap that draws the itinerary as a
@@ -40,12 +96,13 @@ const POI_PLUS_ICON = S('<path d="M12 5v14M5 12h14"/>');
  * numbered stop, and the route redraws. Purely additive: without `pois` the
  * map behaves exactly as before.
  */
-export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedIndex = null, routeGeometry = null, routeSegments = null, showRoute = true, focus = null, pois = null, onPoiClick = null, onViewChange = null, fitMaxZoom = 7.5 }) {
+export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedIndex = null, routeGeometry = null, routeSegments = null, showRoute = true, focus = null, pois = null, onPoiClick = null, onViewChange = null, fitMaxZoom = 7.5, fitPadding = null, scrollZoom = true, easeToSelected = true }) {
   const containerRef = useRef(null);
   const mapRef = useRef(null);
   const markersRef = useRef([]);
   const poiMarkersRef = useRef([]);
   const lastFrameKeyRef = useRef(null);
+  const declutterRef = useRef(null);
   const readyRef = useRef(false);
   const onSelectRef = useRef(onSelectStop);
   onSelectRef.current = onSelectStop;
@@ -53,6 +110,66 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
   onPoiClickRef.current = onPoiClick;
   const onViewChangeRef = useRef(onViewChange);
   onViewChangeRef.current = onViewChange;
+
+  // Two stops 80m apart land on the same 26px pin at the zoom a whole day fits
+  // into, and the pin drawn last simply covers the one before it: that is how a
+  // six-stop route reads as "1, 2, 4, 5" with a number missing, or as the same
+  // number twice when only a sliver of the buried pin shows. Nothing may move a
+  // pin off its coordinate for good, so colliding pins fan apart in SCREEN
+  // space only, recomputed on every move, and settle back onto the true point
+  // as soon as the traveller zooms in far enough for them to stand apart.
+  //
+  // Returns declutter entries for the (nudged) stop pins, highest priority and
+  // never demoted, so the numbers also win against candidate POI labels.
+  const spreadStopPins = () => {
+    const map = mapRef.current;
+    if (!map) return [];
+    const placed = [];
+    const clear = (x, y) => placed.every((p) => Math.hypot(p.x - x, p.y - y) >= MIN_PIN_SEP);
+    // Nowhere off the map. The pin is drawn UPWARD from its point (anchor
+    // bottom), so a lift of 30-55px near the top edge put whole stop numbers
+    // outside the canvas: on the full-screen map they hid under the header, and
+    // on the AI proposal's small preview they landed on the card around it.
+    // Better an overlapping pin, which the traveller can zoom apart, than a
+    // pin that is not on the map at all.
+    const canvas = map.getCanvas();
+    const W = canvas.clientWidth || 0;
+    const H = canvas.clientHeight || 0;
+    const onMap = (x, y) => x >= PIN_HALF && x <= W - PIN_HALF && y >= PIN_TALL && y <= H;
+    // Straight up first, then up-and-out, then sideways: a nudged pin should
+    // read as lifted off a cluster, not as belonging to its neighbour.
+    const fan = (pt) => {
+      for (const r of [MIN_PIN_SEP, MIN_PIN_SEP * 1.85]) {
+        for (const deg of [-90, -50, -130, -20, -160, 0, 180, 40, 140, 90]) {
+          const a = (deg * Math.PI) / 180;
+          const dx = Math.round(Math.cos(a) * r);
+          const dy = Math.round(Math.sin(a) * r);
+          if (clear(pt.x + dx, pt.y + dy) && onMap(pt.x + dx, pt.y + dy)) return { dx, dy };
+        }
+      }
+      return { dx: 0, dy: 0 };
+    };
+    const out = [];
+    markersRef.current.forEach((m) => {
+      if (!m.el || !m.lngLat) return;
+      let pt;
+      try { pt = map.project(m.lngLat); } catch { return; }
+      const { dx, dy } = clear(pt.x, pt.y) ? { dx: 0, dy: 0 } : fan(pt);
+      placed.push({ x: pt.x + dx, y: pt.y + dy });
+      m.el.style.setProperty('--pin-dx', `${dx}px`);
+      m.el.style.setProperty('--pin-dy', `${dy}px`);
+      m.el.classList.toggle('nudged', dx !== 0 || dy !== 0);
+      let lngLat = m.lngLat;
+      if (dx || dy) {
+        try {
+          const ll = map.unproject([pt.x + dx, pt.y + dy]);
+          lngLat = [ll.lng, ll.lat];
+        } catch { /* keep the true point */ }
+      }
+      out.push({ el: m.el, lngLat, priority: 100, keep: true });
+    });
+    return out;
+  };
 
   // Initialise once.
   useEffect(() => {
@@ -64,6 +181,10 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
       zoom: 3.6,
       attributionControl: { compact: true },
       interactive: true,
+      // A map embedded in a scrolling column must not eat the wheel: reading
+      // past the AI proposal would zoom the map instead of scrolling the page.
+      // Drag, double-tap and pinch still work, and the route frames itself.
+      scrollZoom,
     });
     map.on('load', () => {
       map.addSource('trip-route', {
@@ -81,6 +202,24 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
           'line-dasharray': [1.5, 1.6],
           'line-opacity': 0.85,
         },
+      });
+      // Direction: chevrons riding the route line, so the day reads as a
+      // sequence (stop 1 to 2 to 3) and not just as a set of joined dots.
+      if (!map.hasImage('route-arrow')) map.addImage('route-arrow', routeArrowImage());
+      map.addLayer({
+        id: 'trip-route-arrows',
+        type: 'symbol',
+        source: 'trip-route',
+        layout: {
+          'symbol-placement': 'line',
+          'symbol-spacing': 92,
+          'icon-image': 'route-arrow',
+          'icon-size': 0.62,
+          'icon-rotation-alignment': 'map',
+          'icon-allow-overlap': true,
+          'icon-ignore-placement': true,
+        },
+        paint: { 'icon-opacity': 0.95 },
       });
       // Ferry legs of a route get their own over-water styling (dashed blue) so
       // a lake or sea crossing never reads as a walk in a straight line.
@@ -121,19 +260,66 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
     // Re-sync the canvas to the container whenever it changes size (tab mount,
     // window resize, sheet width changes). This is what keeps the map from
     // staying blank when the container wasn't fully laid out at construction.
+    //
+    // Resizing alone is not enough when the container had NO size yet: the
+    // framing that ran against a 0x0 canvas put every stop of the day on the
+    // same pixel, and the pins then fanned out of the map entirely, so a
+    // walking route read as a flower of numbers over the card. When a
+    // container goes from unlaid-out to real, frame the route again (and drop
+    // the frame-once memory, so a map that only frames once still gets its
+    // one framing against a real canvas).
     let ro = null;
     if (typeof ResizeObserver !== 'undefined' && containerRef.current) {
-      ro = new ResizeObserver(() => map.resize());
+      const laidOut = (el) => el.clientWidth >= 40 && el.clientHeight >= 40;
+      let wasLaidOut = laidOut(containerRef.current);
+      ro = new ResizeObserver(() => {
+        map.resize();
+        const el = containerRef.current;
+        if (!el) return;
+        const now = laidOut(el);
+        if (now && !wasLaidOut) {
+          lastFrameKeyRef.current = null;
+          map._drawTrip?.();
+        }
+        wasLaidOut = now;
+      });
       ro.observe(containerRef.current);
     }
 
+    // Candidate POI pins are dense by design (up to 220 on a zoomed-in city),
+    // so they get the same collision pass a real symbol layer would run.
+    // Must-sees outrank ordinary places for the right to keep their name.
+    //
+    // The route's numbered pins join that pass as unbeatable entries: the day's
+    // own stops are the one thing on this map that may never be buried, so a
+    // candidate label that lands on top of a stop number gives up its name
+    // instead. They also fan apart in screen space first (see spreadStopPins),
+    // and the pass is fed the nudged positions so it declutters what is
+    // actually drawn.
+    const stopDeclutter = declutterPins(map, () => {
+      const stopEntries = spreadStopPins();
+      return [
+        ...stopEntries,
+        ...poiMarkersRef.current.map((entry) => (entry && entry.el ? {
+          el: entry.el,
+          lngLat: entry.lngLat,
+          priority: entry.priority,
+        } : null)).filter(Boolean),
+      ];
+    });
+    declutterRef.current = stopDeclutter;
+
     return () => {
+      declutterRef.current = null;
+      stopDeclutter();
       ro?.disconnect();
       map.remove();
       mapRef.current = null;
       readyRef.current = false;
     };
-  }, []);
+    // Deliberately once: scrollZoom is a construction-time option, and
+    // rebuilding the map to change it would throw the viewport away.
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Redraw pins + route whenever the stop list (or the sheet height) changes.
   useEffect(() => {
@@ -176,15 +362,30 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
       // Numbered pins, reconcile by teardown+rebuild (there are only a handful).
       markersRef.current.forEach((m) => m.marker.remove());
       // A `stay` point (the traveller's own address) gets its own quiet pin
-      // and doesn't consume a stop number.
+      // and doesn't consume a stop number. `no` lets the caller state the
+      // number itself: the itinerary is the authority on which stop this is, so
+      // a stop the map cannot plot (no coordinates) can never shift the numbers
+      // of the ones it can, and the sidebar and the map always agree.
       let stopNo = 0;
       markersRef.current = pts.map((p, i) => {
+        if (!p.stay) stopNo += 1;
+        const no = p.stay ? null : (p.no ?? stopNo);
+        // The marker element belongs to maplibre: it rewrites that element's
+        // inline `transform` on every frame, which beats anything a stylesheet
+        // says. So the teardrop's rotation lives on an inner shape and the
+        // number rides upright inside it. Rotating the marker element itself is
+        // what silently dropped the rotation and left every stop number tilted
+        // 45 degrees, which is how a 6 came to read as a 9.
         const el = document.createElement('div');
         el.className = p.stay ? 'trip-pin trip-pin-stay' : 'trip-pin';
-        el.title = p.stay ? 'Your stay' : (p.city || `Stop ${i + 1}`);
+        el.title = p.stay ? 'Your stay' : (p.city || `Stop ${no}`);
+        const shape = document.createElement('span');
+        shape.className = 'trip-pin-shape';
         const num = document.createElement('span');
-        num.textContent = p.stay ? '' : String((stopNo += 1));
-        el.appendChild(num);
+        num.className = 'trip-pin-no';
+        num.textContent = p.stay ? '' : String(no);
+        shape.appendChild(num);
+        el.appendChild(shape);
         el.addEventListener('click', (e) => {
           e.stopPropagation();
           onSelectRef.current?.(i);
@@ -192,8 +393,9 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
         const marker = new maplibregl.Marker({ element: el, anchor: 'bottom' })
           .setLngLat([p.lon, p.lat])
           .addTo(map);
-        return { marker, el };
+        return { marker, el, lngLat: [p.lon, p.lat] };
       });
+      spreadStopPins();
 
       // Frame the whole route in the strip above the sheet. With no stops yet,
       // settle on the plan's own city (focus) instead of the whole continent,       // a freshly opened saved day plan should show its city, not Europe.
@@ -219,7 +421,10 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
           new maplibregl.LngLatBounds([pts[0].lon, pts[0].lat], [pts[0].lon, pts[0].lat]),
         );
         map.fitBounds(bounds, {
-          padding: { top: 70, left: 60, right: 60, bottom: padBottom + 20 },
+          // Framing margins assume a full-screen map with a sheet over its
+          // bottom. An embedded map (the AI proposal preview) is a few hundred
+          // pixels tall and states its own, or the route fits into a letterbox.
+          padding: fitPadding || { top: 70, left: 60, right: 60, bottom: padBottom + 20 },
           maxZoom: fitMaxZoom,
           duration: 700,
         });
@@ -229,7 +434,7 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
     // Store so the load handler can invoke the latest closure once ready.
     map._drawTrip = draw;
     if (readyRef.current) draw();
-  }, [stops, padBottom, routeGeometry, routeSegments, showRoute, focus?.lat, focus?.lon, pois != null, fitMaxZoom]);
+  }, [stops, padBottom, routeGeometry, routeSegments, showRoute, focus?.lat, focus?.lon, pois != null, fitMaxZoom, fitPadding]);
 
   // Pickable candidate pins (Day planner): rebuild when the visible set
   // changes, a tapped pin leaves this list (it becomes a numbered stop), so
@@ -238,15 +443,15 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
   useEffect(() => {
     const map = mapRef.current;
     if (!map) return;
-    poiMarkersRef.current.forEach((m) => m.remove());
+    poiMarkersRef.current.forEach((m) => m.marker.remove());
     poiMarkersRef.current = [];
     (pois || []).filter(hasLngLat).forEach((p) => {
       const el = document.createElement('button');
       el.type = 'button';
-      el.className = `dem-pin trip-poi-pin cat-${p.cat || 'sight'}${p.sel ? ' sel' : ''}`;
+      el.className = `dem-pin trip-poi-pin cat-${p.cat || 'sight'}${p.sel ? ' sel' : ''}${p.discovery ? ' ai-disc' : ''}${p.event ? ' ai-event' : ''}`;
       const ico = document.createElement('span');
       ico.className = 'dem-pin-ico';
-      ico.innerHTML = POI_CAT_ICONS[p.cat] || POI_CAT_ICONS.sight;
+      ico.innerHTML = p.event ? POI_EVENT_ICON : p.discovery ? POI_SPARK_ICON : (POI_CAT_ICONS[p.cat] || POI_CAT_ICONS.sight);
       const lbl = document.createElement('span');
       lbl.className = 'dem-pin-lbl';
       lbl.textContent = p.label;
@@ -257,6 +462,20 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
         star.innerHTML = POI_STAR_ICON;
         star.title = 'A true must-see';
         el.append(star);
+      }
+      // An AI discovery is a status pin too: it lives outside the catalogue,
+      // so there is nothing behind it to add to the plan.
+      if (p.discovery) {
+        el.title = `${p.label} (a Carta bot find)`;
+        poiMarkersRef.current.push({
+          marker: new maplibregl.Marker({ element: el, anchor: 'center' })
+            .setLngLat([p.lon, p.lat])
+            .addTo(map),
+          el,
+          lngLat: [p.lon, p.lat],
+          priority: 9,
+        });
+        return;
       }
       // A selected pin ("show selected" mode) is a status, not a control:
       // it's already in the plan, so no plus affordance and no click-to-add.
@@ -270,27 +489,39 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
       } else {
         el.title = `${p.label} is already in your plan`;
       }
-      poiMarkersRef.current.push(
-        new maplibregl.Marker({ element: el, anchor: 'center' })
+      poiMarkersRef.current.push({
+        marker: new maplibregl.Marker({ element: el, anchor: 'center' })
           .setLngLat([p.lon, p.lat])
           .addTo(map),
-      );
+        el,
+        lngLat: [p.lon, p.lat],
+        // Already in the plan > must-see > everything else.
+        priority: p.sel ? 10 : p.must ? 8 : 4,
+      });
     });
+    // Filtering the deck rebuilds every pin without moving the map, so ask for
+    // a collision pass: otherwise the new set draws all its labels at once and
+    // a dense old town is a wall of overlapping names until you pan.
+    declutterRef.current?.rerun();
     return () => {
-      poiMarkersRef.current.forEach((m) => m.remove());
+      poiMarkersRef.current.forEach((m) => m.marker.remove());
       poiMarkersRef.current = [];
     };
   }, [poisKey]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Highlight the selected pin and ease it into the visible strip.
+  //
+  // A map that already frames every stop (the AI proposal preview) must not
+  // recentre on the one you picked: it would push the rest of the day off a
+  // 232px map to show you something you could already see.
   useEffect(() => {
     const map = mapRef.current;
     markersRef.current.forEach((m, i) => m.el.classList.toggle('active', i === selectedIndex));
-    if (map && selectedIndex != null) {
+    if (map && easeToSelected && selectedIndex != null) {
       const p = stops.filter(hasLngLat)[selectedIndex];
       if (p) map.easeTo({ center: [p.lon, p.lat], padding: { bottom: padBottom }, duration: 500 });
     }
-  }, [selectedIndex, stops, padBottom]);
+  }, [selectedIndex, stops, padBottom, easeToSelected]);
 
   return <div className="trip-map" ref={containerRef} />;
 }

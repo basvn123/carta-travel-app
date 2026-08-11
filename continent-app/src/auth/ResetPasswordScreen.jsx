@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Logo from '../components/Logo.jsx';
 import { useAuth } from './AuthContext.jsx';
+import { MIN_PASSWORD_LENGTH } from '../lib/passwordStrength.js';
 import { useI18n } from '../i18n/index.jsx';
 
 /**
@@ -20,7 +21,10 @@ export function ResetPasswordScreen() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-    if (password.length < 6) { setError(t('auth.errPasswordShort')); return; }
+    // One floor for the whole app. This screen is where the account panel's
+    // "forgot your password" link lands, so a shorter minimum here would just
+    // be a way around the one there.
+    if (password.length < MIN_PASSWORD_LENGTH) { setError(t('auth.errPasswordShort', { n: MIN_PASSWORD_LENGTH })); return; }
     if (password !== confirmPassword) { setError(t('auth.errPasswordMismatch')); return; }
 
     setLoading(true);

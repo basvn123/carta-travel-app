@@ -1,11 +1,11 @@
 import React from 'react';
 import Logo from './Logo.jsx';
-import { OriginPicker } from './OriginPicker.jsx';
 import { LanguagePicker } from './LanguagePicker.jsx';
 import { useI18n } from '../i18n/index.jsx';
-import { PersonIcon, HomeIcon, MapPinIcon, RouteIcon, ListDayIcon, BookmarkIcon } from './Icons.jsx';
+import { PersonIcon, HomeIcon, MapPinIcon, RouteIcon, ListDayIcon, BookmarkIcon, TicketIcon } from './Icons.jsx';
 
 const NAV_ITEMS = [
+  { key: 'home', labelKey: 'nav.home', Icon: HomeIcon },
   { key: 'map', labelKey: 'nav.map', Icon: MapPinIcon },
   { key: 'trip', labelKey: 'nav.trip', Icon: RouteIcon },
   { key: 'day', labelKey: 'nav.day', Icon: ListDayIcon },
@@ -31,29 +31,38 @@ function AccountButton({ user, onOpenAccount }) {
 
 // Always-mounted top panel: brand + section tabs on the left, the Map tab's
 // filters in the middle, and account access on the right, a single row, not
-// a separate header stacked above the filter bar. The tabs here are
-// desktop-only; on mobile they collapse (CSS) and BottomNav takes over as the
-// Map/Trip planner/Day planner switch, with a Home icon shortcut remaining in
-// this row. `children` is the FilterBar, injected only on the Map tab.
+// a separate header stacked above the filter bar. Home is a first-class tab
+// here (the brand mark still works as a shortcut). The tabs are desktop-only;
+// on mobile they collapse (CSS) and BottomNav takes over as the Home/Map/
+// Trip planner/Day planner switch. `children` is the FilterBar, injected only
+// on the Map tab.
+//
+// The "travelling from" picker used to live in this row's right edge. It now
+// floats over the map itself, level with the Destinations pill (see
+// .map-toolrow in App), where it has room to state the question it is asking.
 export function AppHeader({
-  user, onOpenAccount,
+  user, onOpenAccount, onSeePricing,
   isHome, onGoHome,
   activeTab, onChangeTab,
   savedOpen, onToggleSaved,
-  data, origin, onChangeOrigin,
   children,
 }) {
   const { t } = useI18n();
   return (
     <div className={`app-header ${children ? 'has-filters' : ''}`}>
-      <div className="app-header-brand">
+      <button
+        className={`app-header-brand ${isHome ? 'is-home' : ''}`}
+        onClick={onGoHome}
+        title={t('nav.homeTitle')}
+        aria-current={isHome ? 'page' : undefined}
+      >
         <Logo size={46} className="brand-mark" />
         <div className="brand-text">
           <span className="brand-name">Carta</span>
           <span className="brand-sub">{t('brand.sub')}</span>
         </div>
         <div className="brand-divider" aria-hidden="true" />
-      </div>
+      </button>
 
       {/* Desktop-only section switch (BottomNav covers this below 768px). */}
       <nav className="header-nav" aria-label="Sections">
@@ -80,25 +89,18 @@ export function AppHeader({
         </button>
       </nav>
 
-      {/* Mobile-only Home shortcut: jumps back to the first page (the map). */}
-      <button
-        className={`header-home-btn ${isHome ? 'active' : ''}`}
-        onClick={onGoHome}
-        aria-current={isHome ? 'page' : undefined}
-        title={t('nav.homeTitle')}
-      >
-        <HomeIcon size={18} className="header-home-icon" />
-        <span className="header-home-label">{t('nav.home')}</span>
-      </button>
-
       {children && <div className="app-header-filters">{children}</div>}
 
       <div className="app-header-account">
-        {/* The From picker only belongs on the Map tab: the Trip planner asks
-            "where are you travelling from?" inside its own flow, and the Day
-            planner doesn't price flights at all. */}
-        {activeTab === 'map' && (
-          <OriginPicker data={data} origin={origin} onChangeOrigin={onChangeOrigin} />
+        {onSeePricing && (
+          <button
+            className="header-pricing-btn"
+            onClick={onSeePricing}
+            title={t('header.seePricing')}
+          >
+            <TicketIcon size={14} />
+            <span className="header-pricing-label">{t('header.seePricing')}</span>
+          </button>
         )}
         <LanguagePicker />
         <AccountButton user={user} onOpenAccount={onOpenAccount} />
