@@ -232,6 +232,8 @@ export const en = {
   'home.footLegal': "Legal",
   'home.footPrivacy': "Privacy policy",
   'home.footContact': "Contact",
+  'home.footData': "Data sources",
+  'home.footDataBody': "Carta runs on open data. Every source whose licence asks for a credit gets one here, and the full ledger of what we use lives in the repo.",
   'home.footRights': "© {year} Carta",
   'home.footCounts': "{total} destinations in {countries} countries",
 

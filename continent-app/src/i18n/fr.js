@@ -223,6 +223,8 @@ export const fr = {
   'home.footLegal': "Mentions légales",
   'home.footPrivacy': "Politique de confidentialité",
   'home.footContact': "Contact",
+  'home.footData': "Sources de données",
+  'home.footDataBody': "Carta fonctionne avec des données ouvertes. Chaque source dont la licence demande un crédit l'obtient ici, et le registre complet se trouve dans le dépôt.",
   'home.footRights': "© {year} Carta",
   'home.footCounts': "{total} destinations dans {countries} pays",
 

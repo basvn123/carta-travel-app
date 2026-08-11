@@ -1,0 +1,59 @@
+{
+ "meta": {
+  "generated_at": "2026-08-11T14:49:28+00:00",
+  "db": "tools/trailslab (local PostGIS staging)",
+  "statuses": [
+   "published"
+  ],
+  "countries": [
+   "CH"
+  ],
+  "floor": 60.0,
+  "max_drop": 15.0,
+  "since_hours": 48.0,
+  "stale_days": 90,
+  "n_trips": 1,
+  "n_judged": 1,
+  "n_regressed": 0,
+  "n_demoted": 0,
+  "n_watch": 1,
+  "dry_run": false,
+  "policy": "below 60 a published trip is demoted to needs_review and reopened in the review queue; it is never unpublished, rejected or deleted"
+ },
+ "countries": {
+  "CH": {
+   "n_trips": 1,
+   "by_status": {
+    "published": 1
+   },
+   "never_validated": 0,
+   "n_regressed": 0,
+   "n_watch": 1,
+   "newest_validated": "2026-08-11T14:49:26+00:00",
+   "oldest_validated": "2026-08-11T14:49:26+00:00",
+   "age_days": 0.0,
+   "stale": 0,
+   "quality_min": 80.0,
+   "quality_median": 80.0
+  }
+ },
+ "regressions": [],
+ "watch": [
+  {
+   "id": 62302,
+   "country": "CH",
+   "title": "Regression test slipped",
+   "status": "published",
+   "quality_score": 80.0,
+   "floor": 60.0,
+   "failing_checks": [],
+   "review_baseline": {
+    "quality_score": 100.0,
+    "action": "approve",
+    "at": "2026-08-11T14:49:26+00:00",
+    "drop": 20.0
+   },
+   "last_validated_at": "2026-08-11T14:49:26+00:00"
+  }
+ ]
+}

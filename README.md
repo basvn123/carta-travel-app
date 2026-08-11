@@ -83,6 +83,12 @@ by the weekly `fares` task, which ships `continent-app/public/fares/`. The
 `TravelAppFareRefresh` Scheduled Task (Mon 09:00) runs `run_pipeline.bat`, so
 the whole cadence model fires unattended.
 
+The same orchestrator drives the trails content lab (`trails_ingest`,
+`trails_elevation`, `trails_validate`, `trails_popularity`), which stages into
+the local PostGIS lab rather than the master and so never blocks the ship. Its
+validation task also demotes published trips whose quality regressed, back to
+`needs_review` and never further - see [tools/trailslab/README.md](tools/trailslab/README.md).
+
 On top of the fare refresh sits an automated estimation layer (weekly
 snapshot history -> quantile GBDT fare model -> PSI/KS drift-gated
 retraining) plus a raw open-data ingestion mirror - see

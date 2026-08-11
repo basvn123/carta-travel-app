@@ -1,0 +1,16 @@
+rank,curation_rank,title,ref,network,distance_km,popularity,pageviews_day,sitelinks,anchors,quality_score,portal_agreement,status,family_members,trip_id,osm_relation
+1,91.18,Via Alpina Stage 58: Sücka - Sargans,,iwn,15.2,0.748,0,0,"Vaduz (449/day, 796 m); Vaduz Castle (158/day, 988 m); Schloss Vaduz (158/day, 992 m)",100,agree,needs_review,29,9473,20021314
+2,88.89,Hugenotten- und Waldenserweg,HuWa,nwn,5.4,0.825,0,0,"Zurich (1476/day, 1478 m)",100,agree,needs_review,40,8312,17243459
+3,88.37,ViaJacobi,4,nwn,9.3,0.839,0,0,"Geneva (1822/day, 30 m); Broken Chair (61/day, 1524 m)",96,agree,needs_review,33,6340,11063902
+4,88.05,Trans Swiss Trail,2,nwn,15.8,0.801,0,0,"Bern (1022/day, 289 m)",100,agree,needs_review,33,8009,15660924
+5,85.4,ViaGottardo,7,nwn,20.4,0.754,0,0,"Basel (1158/day, 449 m); Basel (1158/day, 1067 m); Basel Minster (60/day, 592 m)",96,agree,needs_review,17,8556,18560774
+6,84.76,Alpenpanorama-Weg,3,nwn,12.5,0.736,0,0,"Luzern (640/day, 107 m); Spreuer Bridge, Lucerne (640/day, 192 m); Lucerne (640/day, 160 m)",96,agree,needs_review,21,6265,10960528
+7,84.33,Chemin panorama alpin,3,nwn,27.6,0.724,0,0,"Geneva (1822/day, 513 m); ICRC (350/day, 572 m); Palace of Nations (102/day, 222 m)",96,agree,needs_review,9,6277,10963203
+8,84.25,Via Alpina Red R103,ehem. VA-R103,iwn,7.6,0.55,32,0,,100,agree,needs_review,4,3574,4203466
+9,83.77,Via Francigena,70,iwn,207.1,0.536,54,30,"Lausanne (802/day, 1346 m); Lausanne (802/day, 1388 m); Cantonal museum of Zoology, Lausanne (802/day, 1771 m)",100,agree,needs_review,1,43,124582
+10,83.56,"Europäischer Fernwanderweg E5, Schweiz",E5,iwn,233.3,0.53,0,0,"Basel (1158/day, 1970 m); Restaurant Schloss Laufen (230/day, 230 m); Wörth Castle (230/day, 63 m)",100,agree,needs_review,1,4250,6440998
+11,81.23,Tour Monte Rosa tappa 1,TMR,nwn,12.3,0.607,0,0,"Zermatt (427/day, 731 m)",100,agree,needs_review,7,5488,9237283
+12,79.86,Via son Giachen,43,rwn,261.1,0.774,657,77,"Ruinaulta (Rhine Gorge) (9/day, 523 m)",96,agree,needs_review,21,1291,1601190
+13,79.59,"Chemin de Compostelle, Basel -Laufen",,iwn,25.3,0.446,702,77,,96,agree,needs_review,1,8126,16021353
+14,79.58,ViaBerna Etappe 9,38,rwn,15.2,0.767,0,0,"Bern (1022/day, 289 m)",96,agree,needs_review,21,8196,16461873
+15,79.48,Via Gottardo,7,nwn,29.4,0.585,0,0,"Spreuer Bridge, Lucerne (640/day, 70 m); Lucerne Central and University Library (640/day, 289 m); Lucerne (640/day, 160 m)",96,agree,needs_review,4,1661,2123995

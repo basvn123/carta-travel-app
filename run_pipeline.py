@@ -35,7 +35,13 @@ So you schedule ONE weekly job and each layer self-selects how often it fires:
   weekly    raw open-data mirror (src/ingestion: schedules, realtime, ADS-B)
   monthly   fame (pageviews) -> beauty -> rating; flight times for covered origins
   monthly   holiday calendars (demand catalysts for the estimation model)
+  monthly   trails popularity (curation shortlists for the review queue)
   quarterly open-data snapshots (crowding, bathing water, lodging) *
+  quarterly trails ingest (Geofabrik hiking relations -> the trailslab lab)
+  after     trails elevation + validation: no interval of their own; they are
+            due when the task they depend on last succeeded more recently than
+            they did (trails_ingest -> trails_elevation -> trails_validate).
+            A chain that starts in one run finishes in the same run.
   backfill  static/heavy or null-risk jobs - MANUAL only, via --only (guarded)
 
 Tasks marked `soft` (the estimation/ingestion layer) log failures loudly but
@@ -62,6 +68,28 @@ then the normal resume harvest re-fetches just those legs and `patch` rebuilds
 the table. Without the flag nothing changes: the weekly full refresh still
 re-fetches everything, which is what keeps the long tail from starving.
 
+TRAILS CONTENT LAB
+------------------
+The trails tasks drive the LOCAL PostGIS staging lab (tools/trailslab, port
+5433), never app_data.json, so they take no master lock, never gate the ship,
+and a lab that is down SKIPS them (guard) instead of failing the run. The chain
+is ingest -> elevation -> validate, plus popularity on its own monthly clock.
+
+REGRESSION PATH: validate.py routes DRAFTS only, which is what keeps `approved`
+human-only, so published content had nothing watching it. trails_validate now
+runs pipeline/trails/regression.py straight after the validation pass: a
+published trip whose refreshed quality_score fell below the review threshold is
+demoted to needs_review and reopened in the review queue with its failing
+checks attached (a row in validation_runs AND one in trip_reviews). It is never
+unpublished, rejected or deleted. The result lands in
+data/derived/trails_freshness.json, folded into freshness_report.json under
+"trails" so one report still answers "how old and how healthy is what we
+serve".
+
+`--dry-run` executes the read-only half of trails_validate against the staging
+DB (a sampled validation pass plus the full regression detection), so you can
+see what a real run would move before it moves anything.
+
 USAGE
 -----
   python run_pipeline.py                     # run every task that is DUE
@@ -72,6 +100,10 @@ USAGE
   python run_pipeline.py --only fares --max-origins 5
                                              # targeted: re-fetch only the 5 stalest
                                              #   high-priority origins, then patch
+  python run_pipeline.py --only trails_validate --dry-run
+                                             # score the staging lab and list the
+                                             #   published trips that regressed,
+                                             #   without moving any of them
   python run_pipeline.py --list              # list tasks, cadences, last-run, due?
   python run_pipeline.py --force             # bypass the other-python concurrency guard
   python run_pipeline.py --ship none         # skip the npm build at the end
@@ -83,6 +115,7 @@ import argparse
 import json
 import os
 import shutil
+import socket
 import subprocess
 import sys
 import time
@@ -124,7 +157,12 @@ def npm_exe():
     return _resolve(["npm", "npm.cmd"], [Path(d) / "npm.cmd" for d in _NODE_DIRS])
 
 CADENCE_DAYS = {"weekly": 7, "monthly": 30, "quarterly": 90}
-CADENCE_RANK = {"weekly": 1, "monthly": 2, "quarterly": 3, "backfill": 9, "manual": 9}
+# "after" has no interval: the task is due when a task it declares in `after`
+# succeeded more recently than it did. Ranked with the monthly tier so a
+# monthly-tier run still finishes a chain a quarterly ingest started; it cannot
+# fire on its own, since the trigger has to have run first.
+CADENCE_RANK = {"weekly": 1, "monthly": 2, "after": 2, "quarterly": 3,
+                "backfill": 9, "manual": 9}
 KEEP_BACKUPS = 6
 
 FARES_DIR = CONTINENT / "public" / "fares"
@@ -132,6 +170,14 @@ DERIVED = ROOT / "data" / "derived"
 FRESHNESS_REPORT = DERIVED / "freshness_report.json"
 FARE_CACHE = CACHE / "fare_all_origins.json"
 RYANAIR_GRAPH = CACHE / "ryanair_route_graph.json"
+
+# Trails content lab (tools/trailslab): written by pipeline/trails/regression.py,
+# folded into the freshness report under "trails".
+TRAILS_FRESHNESS = DERIVED / "trails_freshness.json"
+# A --dry-run probe has to stay fast enough to sit in front of every plan, so
+# the validation half runs on a sample. The regression half always runs whole:
+# it only reads the published set, which is small by construction.
+TRAILS_DRY_LIMIT = 2000
 
 # Static popularity tiers for the staleness priority (age_days x weight).
 # "Popular pairs refresh often, the long tail rarely": the weekly full refresh
@@ -282,6 +328,37 @@ def guard_cache_covers(cache_rel, min_ratio=0.95):
     return _g
 
 
+def trailslab_endpoint():
+    """(host, port) of the local trails lab. Mirrors pipeline/trails/db.py:
+    real environment first, then the repo-root .env, then the compose defaults."""
+    if not os.environ.get("TRAILSLAB_HOST") or not os.environ.get("TRAILSLAB_PORT"):
+        try:
+            sys.path.insert(0, str(ROOT / "pipeline"))
+            from env_local import load_env
+            load_env()
+        except Exception:
+            pass
+    host = os.environ.get("TRAILSLAB_HOST") or "localhost"
+    try:
+        port = int(os.environ.get("TRAILSLAB_PORT") or 5433)
+    except ValueError:
+        port = 5433
+    return host, port
+
+
+def guard_trailslab_up(ctx):
+    """Trails tasks need the Docker lab on 5433. A lab that is down is a SKIP,
+    never a failure: it is a local dev container, not part of the data ship."""
+    host, port = trailslab_endpoint()
+    try:
+        with socket.create_connection((host, port), timeout=4):
+            return True, f"trails lab reachable at {host}:{port}"
+    except OSError as e:
+        return False, (f"trails lab not reachable at {host}:{port} "
+                       f"({type(e).__name__}) - start it with "
+                       f"`cd tools/trailslab && docker compose up -d`")
+
+
 # --------------------------------------------------------------------------- #
 # Freshness report + staleness-targeted fare refresh
 # --------------------------------------------------------------------------- #
@@ -413,15 +490,72 @@ def build_freshness_report(state):
         },
         "origins": origins,
     }
+    trails = trails_freshness_section()
+    if trails:
+        report["trails"] = trails
     DERIVED.mkdir(parents=True, exist_ok=True)
     FRESHNESS_REPORT.write_text(json.dumps(report, indent=1), encoding="utf-8")
     return report
+
+
+def trails_freshness_section():
+    """Fold the trails lab's own report (written by pipeline/trails/regression.py)
+    into the freshness report, so the published-content regressions sit next to
+    the fare staleness instead of in a file nobody opens. Read, never computed
+    here: this driver must keep working without psycopg or a running lab."""
+    if not TRAILS_FRESHNESS.exists():
+        return None
+    try:
+        src = json.loads(TRAILS_FRESHNESS.read_text(encoding="utf-8"))
+        meta = dict(src.get("meta") or {})
+    except Exception as e:
+        # Same shape as a good section, so every consumer can read it blind.
+        return {"meta": {"error": f"{TRAILS_FRESHNESS.name} unreadable "
+                                  f"({type(e).__name__})"},
+                "countries": {}, "regressions": [], "watch": []}
+    meta["source"] = "data/derived/trails_freshness.json"
+    meta["age_days"] = round(max(0.0, (
+        now_utc() - datetime.fromtimestamp(TRAILS_FRESHNESS.stat().st_mtime,
+                                           tz=timezone.utc)
+    ).total_seconds() / 86400), 1)
+    return {"meta": meta,
+            "countries": src.get("countries") or {},
+            "regressions": src.get("regressions") or [],
+            "watch": src.get("watch") or []}
+
+
+def print_trails_freshness(report):
+    """The trails half of the freshness summary: how much published content
+    regressed, and how stale the staging lab's validation is."""
+    trails = report.get("trails")
+    if not trails:
+        return
+    meta = trails.get("meta") or {}
+    if meta.get("error"):
+        log(f"trails freshness: {meta['error']}")
+        return
+    n_reg, n_watch = len(trails["regressions"]), len(trails["watch"])
+    log(f"trails: {meta.get('n_trips', 0)} trips in "
+        f"{', '.join(meta.get('statuses') or ['-'])}, "
+        f"{meta.get('n_judged', 0)} freshly validated; {n_reg} regressed below "
+        f"{meta.get('floor', '?')} ({meta.get('n_demoted', 0)} demoted to "
+        f"needs_review), {n_watch} on watch "
+        f"(report {meta.get('age_days', '?')} days old)")
+    verb = "would demote" if meta.get("dry_run") else "demoted"
+    for r in trails["regressions"][:5]:
+        log(f"    {verb} {r['id']} [{r['country']}] {r['title'][:44]}: "
+            f"{r['quality_score']} < {r['floor']:g}"
+            + (" (" + ", ".join(r["failing_checks"]) + ")"
+               if r["failing_checks"] else ""))
+    if n_reg > 5:
+        log(f"    ... {n_reg - 5} more in {TRAILS_FRESHNESS.relative_to(ROOT)}")
 
 
 def print_freshness_summary(report):
     origins = report.get("origins") or {}
     if not origins:
         log(f"freshness: no fare slices under {FARES_DIR.relative_to(ROOT)}")
+        print_trails_freshness(report)
         return
     ages = [i["age_days"] for i in origins.values()]
     stale = sum(1 for a in ages if a >= 14)
@@ -434,6 +568,7 @@ def print_freshness_summary(report):
     log("  stalest first (age x popularity): " + ", ".join(
         f"{o} {i['priority']}" for o, i in top))
     log(f"  report -> {FRESHNESS_REPORT.relative_to(ROOT)}")
+    print_trails_freshness(report)
 
 
 def pick_stalest_origins(report, n, eligible=None):
@@ -651,6 +786,35 @@ def demand_events_step(ctx):
                     "--only", "holidays,school_holidays"]) == 0
 
 
+def trails_validate_step(ctx):
+    """Score every staged trip, then police the published set.
+
+    validate.py routes drafts by threshold and never touches a status a human
+    set, so on its own it would refresh a published trip's quality_score and do
+    nothing about a collapse. regression.py closes that: below the review
+    threshold a published trip is demoted to needs_review and reopened in the
+    review queue (both ledgers get a row), never unpublished and never deleted,
+    and the outcome lands in data/derived/trails_freshness.json which the
+    freshness report folds in."""
+    if run_cmd([PY, "pipeline/trails/validate.py"]) != 0:
+        return False
+    return run_cmd([PY, "pipeline/trails/regression.py", "--verbose"]) == 0
+
+
+def trails_validate_dry(ctx):
+    """The read-only half of the task, for --dry-run: a sampled validation pass
+    against the staging DB (nothing written, no status moved) plus the FULL
+    regression detection, so the plan can say which published trips a real run
+    would demote before it demotes them."""
+    log(f"  dry-run probe: validating a sample of {TRAILS_DRY_LIMIT} staged "
+        "trips (a real run validates all of them)")
+    if run_cmd([PY, "pipeline/trails/validate.py", "--dry-run",
+                "--limit", str(TRAILS_DRY_LIMIT), "--top", "5"]) != 0:
+        return False
+    return run_cmd([PY, "pipeline/trails/regression.py",
+                    "--dry-run", "--verbose"]) == 0
+
+
 def fame_step(ctx):
     """Refresh destination fame. The dest pageviews cache is never invalidated
     by the harvester (it only fills missing ids), so to pick up drifted fame we
@@ -673,11 +837,16 @@ def fame_step(ctx):
 # Task registry
 # --------------------------------------------------------------------------- #
 # Each task: key, title, cadence, writes_app_data, and either cmds or run.
-#   cadence         weekly | monthly | quarterly | backfill  (backfill = --only)
+#   cadence         weekly | monthly | quarterly | after | backfill
+#                   (after = event-driven, see `after`; backfill = --only only)
+#   after           task keys this one follows; due when one of them succeeded
+#                   more recently than this task did
 #   writes_app_data -> pre-write backup + concurrency guard
 #   run(ctx)->bool  custom step (preferred where logic is needed)
 #   cmds            list of argv lists, run in order; any non-zero fails the task
 #   guard(ctx)      optional; (ok, reason). ok=False SKIPS (not a failure)
+#   dry_run(ctx)    optional read-only probe executed under --dry-run
+#   soft            failures are logged and retried next run, never block the ship
 #   note            printed reminder (e.g. "bump the YEAR first")
 TASKS = [
     {
@@ -839,6 +1008,68 @@ TASKS = [
                  "real keys before this task can ship tiers."),
     },
 
+    # ---- trails content lab (tools/trailslab, local PostGIS): soft + guarded ---- #
+    {
+        "key": "trails_ingest",
+        "title": "Trails: OSM hiking relations -> trailslab staging",
+        "cadence": "quarterly",
+        "writes_app_data": False,
+        "soft": True,
+        "guard": guard_trailslab_up,
+        "cmds": [[PY, "pipeline/trails/ingest_osm_routes.py", "--refresh"]],
+        "note": ("re-downloads the Geofabrik per-country extracts (--refresh; "
+                 "without it the cached .pbf is re-ingested and nothing moves) "
+                 "and upserts on (source, source_ref), so re-ingesting edits "
+                 "trips in place instead of duplicating them. Multi-GB "
+                 "downloads and a long pyosmium pass: quarterly on purpose. "
+                 "Triggers trails_elevation and trails_validate."),
+    },
+    {
+        "key": "trails_elevation",
+        "title": "Trails: Copernicus GLO-30 elevation, distance + duration",
+        "cadence": "after",
+        "after": ["trails_ingest"],
+        "writes_app_data": False,
+        "soft": True,
+        "guard": guard_trailslab_up,
+        "cmds": [[PY, "pipeline/trails/elevation.py"]],
+        "note": ("geometry-change driven twice over: the task is due after an "
+                 "ingest, and the script itself only samples trips whose "
+                 "elevation is missing or whose 2D geometry hash moved, so an "
+                 "ingest that changed nothing costs one query. DEM tiles are "
+                 "cached under data/raw/dem."),
+    },
+    {
+        "key": "trails_validate",
+        "title": "Trails: validation engine + published-content regression gate",
+        "cadence": "after",
+        "after": ["trails_ingest", "trails_elevation"],
+        "writes_app_data": False,
+        "soft": True,
+        "guard": guard_trailslab_up,
+        "run": trails_validate_step,
+        "dry_run": trails_validate_dry,
+        "note": ("five checks -> quality_score, drafts routed by threshold "
+                 "(approve stays human-only), then the regression gate demotes "
+                 "published trips that fell below the review threshold to "
+                 "needs_review and reports them under \"trails\" in the "
+                 "freshness report. Nothing is ever unpublished or deleted. "
+                 "--dry-run runs both halves read-only against staging."),
+    },
+    {
+        "key": "trails_popularity",
+        "title": "Trails: popularity + curation shortlists (data/reports/trails_seed)",
+        "cadence": "monthly",
+        "writes_app_data": False,
+        "soft": True,
+        "guard": guard_trailslab_up,
+        "cmds": [[PY, "pipeline/trails/popularity.py"]],
+        "note": ("fame is a rolling average, so monthly is plenty; also folds "
+                 "in the newest quality and portal signals, which is why it "
+                 "sits after trails_validate in this list. Writes a "
+                 "curation_rank row per trip for the review queue's ordering."),
+    },
+
     # ---- backfill / on catalogue growth: MANUAL (--only), coverage-guarded ---- #
     {
         "key": "geonames",
@@ -971,18 +1202,53 @@ TASK_BY_KEY = {t["key"]: t for t in TASKS}
 # --------------------------------------------------------------------------- #
 # Planner + runner
 # --------------------------------------------------------------------------- #
+def _last_success(task_key, state):
+    raw = state.get(task_key, {}).get("last_success")
+    if not raw:
+        return None
+    try:
+        return datetime.fromisoformat(raw)
+    except Exception:
+        return None
+
+
 def is_due(task, state):
+    if task["cadence"] == "after":
+        # Event-driven: due when something it follows has moved since. Never
+        # due on a lab where the trigger has not run at all, so a fresh clone
+        # does not try to validate an empty staging DB.
+        mine = _last_success(task["key"], state)
+        for dep in task.get("after") or []:
+            theirs = _last_success(dep, state)
+            if theirs and (mine is None or theirs > mine):
+                return True
+        return False
     days = CADENCE_DAYS.get(task["cadence"])
     if days is None:            # backfill/manual: never auto-due
         return False
-    last = state.get(task["key"], {}).get("last_success")
-    if not last:
+    last = _last_success(task["key"], state)
+    if last is None:
         return True
-    try:
-        elapsed = now_utc() - datetime.fromisoformat(last)
-    except Exception:
-        return True
-    return elapsed >= timedelta(days=days)
+    return (now_utc() - last) >= timedelta(days=days)
+
+
+def chain_followups(plan, state, args, done_keys):
+    """Tasks that became due because something they follow just succeeded.
+
+    Without this a chain would take one scheduled run per link (ingest this
+    week, elevation next week, validation the week after). Skipped with --only:
+    there the operator named exactly what should run."""
+    if args.only:
+        return []
+    ceiling = CADENCE_RANK.get(args.max_cadence, 3) if args.max_cadence else 3
+    added = []
+    for t in TASKS:
+        if t["cadence"] != "after" or t in plan or t["key"] in done_keys:
+            continue
+        if CADENCE_RANK[t["cadence"]] <= ceiling and is_due(t, state):
+            plan.append(t)
+            added.append(t["key"])
+    return added
 
 
 def select_tasks(args, state):
@@ -1000,11 +1266,42 @@ def select_tasks(args, state):
 
 def cmd_list(args):
     state = load_state()
-    log(f"{'KEY':<14} {'CADENCE':<10} {'LAST SUCCESS':<22} DUE  TITLE")
+    log(f"{'KEY':<18} {'CADENCE':<10} {'LAST SUCCESS':<22} DUE  TITLE")
     for t in TASKS:
         last = state.get(t["key"], {}).get("last_success", "-")
         due = "yes" if is_due(t, state) else ("--" if t["cadence"] in ("backfill", "manual") else "no")
-        log(f"{t['key']:<14} {t['cadence']:<10} {last:<22} {due:<4} {t['title']}")
+        title = t["title"]
+        if t["cadence"] == "after":     # say what triggers it, the column can't
+            title += "  (follows " + ", ".join(t["after"]) + ")"
+        log(f"{t['key']:<18} {t['cadence']:<10} {last:<22} {due:<4} {title}")
+
+
+def run_dry_probes(plan):
+    """Under --dry-run, execute the read-only probe of every planned task that
+    has one. Everything else still runs nothing: a probe may only read, and it
+    exists so a plan can show what a real run WOULD change (which published
+    trails would be demoted, say) rather than only naming the task."""
+    probed = []
+    for t in plan:
+        probe = t.get("dry_run")
+        if not probe:
+            continue
+        log("\n" + "-" * 70)
+        log(f"DRY-RUN PROBE {t['key']}  (read-only)  {t['title']}")
+        guard = t.get("guard")
+        if guard:
+            ok, reason = guard({"dry_run": True})
+            log(f"  guard: {reason}")
+            if not ok:
+                continue
+        try:
+            ok = bool(probe({"dry_run": True}))
+        except Exception as e:
+            log(f"  probe raised {type(e).__name__}: {e}")
+            ok = False
+        log("  probe OK" if ok else "  probe FAILED (a real run may still work)")
+        probed.append(t["key"])
+    return probed
 
 
 def main():
@@ -1047,13 +1344,14 @@ def main():
         return 0
     log("plan:")
     for t in plan:
-        log(f"  - {t['key']:<14} [{t['cadence']}]  {t['title']}")
+        log(f"  - {t['key']:<18} [{t['cadence']}]  {t['title']}")
         if t.get("note"):
             log(f"      note: {t['note']}")
     if args.max_origins and not any(t["key"] == "fares" for t in plan):
         log(f"\n(--max-origins {args.max_origins} set but `fares` is not in this "
             "plan; use --only fares to force it)")
     if args.dry_run:
+        probed = run_dry_probes(plan)
         log("")
         try:
             report = build_freshness_report(state)
@@ -1068,7 +1366,10 @@ def main():
                     "re-fetch only: " + (", ".join(targets) or "-"))
         except Exception as e:
             log(f"(freshness report failed: {type(e).__name__}: {e})")
-        log("\n--dry-run: nothing executed.")
+        log("\n--dry-run: nothing written"
+            + (f" (read-only probes executed: {', '.join(probed)})"
+               if probed else "; no task in this plan has a read-only probe")
+            + ".")
         return 0
 
     writers = [t for t in plan if t.get("writes_app_data")]
@@ -1136,6 +1437,11 @@ def main():
                 state.setdefault(t["key"], {})["last_success"] = now_utc().isoformat()
                 save_state(state)
                 ctx["dest_count"] = dest_count()
+                # Whatever this unblocked joins the plan now, so a chain
+                # (ingest -> elevation -> validate) completes in one run.
+                added = chain_followups(plan, state, args, set(ran))
+                for key in added:
+                    log(f"  -> queued {key} (follows {t['key']})")
             elif t.get("soft"):
                 log(f"  SOFT-FAIL ({dt}s) - estimation/ingestion layer; does not "
                     "block the data ship and retries next run.")

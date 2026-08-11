@@ -7,17 +7,22 @@
  * directly harvested carrier fares) are deliberately absent; the ledger is
  * the full record.
  *
- * Not wired into the UI yet: a later pass renders this in a footer or about
- * screen and clears the ledger's MISSING list. When that pass runs the
- * source names stay as-is (proper nouns), and any surrounding prose goes
- * through i18n like every other UI string. Keep entries in sync with the
- * ledger: a new row there with a required credit means a new entry here.
+ * Rendered by the Data sources block in the home footer (HomePage.jsx). The
+ * credit lines stay in English on purpose: they are license notices naming
+ * proper nouns, and a translated "© OpenStreetMap contributors" is a worse
+ * credit, not a better one. The prose around the block (heading, lede) goes
+ * through i18n like every other UI string.
+ *
+ * Keep entries in sync with the ledger: a new row there with a required
+ * credit means a new entry here. Order is the ledger's, roughly by how much
+ * of the product each source carries.
  */
 export const ATTRIBUTIONS = [
   {
     source: 'OpenStreetMap',
     license: 'ODbL 1.0',
-    credit: 'Map data, points of interest and nature areas © OpenStreetMap contributors',
+    credit: 'Map data, points of interest, nature areas and trail routes '
+      + '© OpenStreetMap contributors',
   },
   {
     source: 'CARTO',
@@ -75,6 +80,40 @@ export const ATTRIBUTIONS = [
     credit: 'Points of interest from OpenTripMap (opentripmap.io)',
   },
   {
+    source: 'Overture Maps',
+    license: 'CDLA-Permissive 2.0',
+    credit: 'Sightseeing places from Overture Maps Foundation',
+  },
+  // Trails vertical (tools/trailslab). The published hikes, daytrips and city
+  // trips are produced works: selected, measured, described and approved one
+  // by one. OSM above covers their geometry; these four cover what shaped it.
+  {
+    source: 'Copernicus GLO-30',
+    license: 'Copernicus DEM instance terms (credit required)',
+    credit: 'Trail elevation, ascent and descent from the Copernicus GLO-30 '
+      + 'DEM (© ESA, Airbus)',
+  },
+  {
+    source: 'swisstopo',
+    license: 'swisstopo open government data terms',
+    credit: 'Swiss trails checked against swissTLM3D-Wanderwege, source swisstopo',
+  },
+  {
+    source: 'IGN',
+    license: 'Etalab Licence Ouverte 2.0',
+    credit: 'French trails checked against IGN BD TOPO, Etalab 2.0',
+  },
+  {
+    source: 'Kartverket',
+    license: 'CC BY 4.0',
+    credit: 'Norwegian trails checked against Turrutebasen, Kartverket',
+  },
+  {
+    source: 'Transitous',
+    license: 'Per underlying feed (see the national feeds below)',
+    credit: 'Public transport travel times via Transitous',
+  },
+  {
     source: 'GTFS.de / DELFI',
     license: 'CC BY-SA 4.0',
     credit: 'German timetable data from gtfs.de, DELFI',
@@ -83,6 +122,11 @@ export const ATTRIBUTIONS = [
     source: 'Entur',
     license: 'NLOD',
     credit: 'Norwegian timetable data from Entur',
+  },
+  {
+    source: 'Digitraffic',
+    license: 'CC BY 4.0',
+    credit: 'Finnish rail data from Digitraffic, Fintraffic',
   },
   {
     source: 'opentransportdata.swiss',

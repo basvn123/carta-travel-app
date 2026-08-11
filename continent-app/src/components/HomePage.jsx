@@ -13,6 +13,7 @@ import { TIERS, TIER_ORDER, formatPrice, yearPassTripsEquivalent } from '../lib/
 import { addDays, fmtDate, todayISO } from '../lib/dates.js';
 import { count, eur, eurExact } from '../lib/format.js';
 import { fareProv, estPrefix, FareTag, FromWord } from './FareProvenance.jsx';
+import { ATTRIBUTIONS } from '../data/attribution.js';
 import { useI18n, LANGUAGES } from '../i18n/index.jsx';
 
 const CONTACT = 'bas.vannieuwenhuyse123@gmail.com';
@@ -1121,6 +1122,21 @@ export function HomePage({
               </ul>
             </div>
           </div>
+          {/* Data credits. Every source whose license asks for a visible
+              credit, from continent-app/src/data/attribution.js, which is
+              derived from docs/tos/data_licenses.md. A hairline list rather
+              than cards: it is a run of related facts, and the licenses ask
+              for legibility, not for decoration. */}
+          <section className="home-credits" aria-labelledby="home-credits-h">
+            <h3 id="home-credits-h">{t('home.footData')}</h3>
+            <p className="home-credits-lede">{t('home.footDataBody')}</p>
+            <ul className="home-credits-list">
+              {ATTRIBUTIONS.map((a) => (
+                <li key={a.source}>{a.credit}</li>
+              ))}
+            </ul>
+          </section>
+
           <div className="home-footer-bottom">
             <span>{t('home.footRights', { year: new Date().getFullYear() })}</span>
             <span className="home-num">

@@ -223,6 +223,8 @@ export const nl = {
   'home.footLegal': "Juridisch",
   'home.footPrivacy': "Privacybeleid",
   'home.footContact': "Contact",
+  'home.footData': "Databronnen",
+  'home.footDataBody': "Carta draait op open data. Elke bron waarvan de licentie om vermelding vraagt, krijgt die hier, en het volledige overzicht staat in de repo.",
   'home.footRights': "© {year} Carta",
   'home.footCounts': "{total} bestemmingen in {countries} landen",
 

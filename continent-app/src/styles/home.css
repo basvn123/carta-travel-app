@@ -1289,6 +1289,46 @@
   transition: color .15s;
 }
 .home-footer-link:hover { color: var(--accent); }
+/* Data credits: the licenses behind the numbers, set as a hairline list so
+   25 sources read as a register rather than a wall. Columns fill the width
+   available and collapse to one on a phone. */
+.home-credits {
+  margin-top: 34px;
+  padding-top: 22px;
+  border-top: 1px solid var(--rule-soft);
+}
+.home-credits h3 {
+  margin-bottom: 10px;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+}
+.home-credits-lede {
+  max-width: 62ch;
+  font-size: 12.5px;
+  line-height: 1.65;
+  color: var(--ink-soft);
+}
+.home-credits-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(252px, 1fr));
+  gap: 0 32px;
+  margin: 16px 0 0;
+  padding: 0;
+  list-style: none;
+}
+/* Credits are the substance of this block, not metadata around it, so they
+   sit at --ink-soft: a required notice has to clear the contrast floor. */
+.home-credits-list li {
+  padding: 7px 0;
+  border-top: 1px solid var(--rule-soft);
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--ink-soft);
+}
 .home-footer-bottom {
   display: flex;
   justify-content: space-between;

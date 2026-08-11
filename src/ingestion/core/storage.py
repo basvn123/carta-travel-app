@@ -7,7 +7,9 @@ NTFS refuses them and git core.protectNTFS refuses to index them.
 """
 import hashlib
 import json
+import os
 import re
+import time
 from datetime import datetime, timezone
 from pathlib import Path
 from urllib.parse import unquote, urlparse
@@ -81,7 +83,10 @@ class RawStore:
     def save_response(self, name, resp, url, note=""):
         """Stream a requests response to disk (atomic .part rename), manifest it."""
         dest = self.path_for(name)
-        tmp = dest.with_suffix(dest.suffix + ".part")
+        # PID in the temp name: concurrent sessions downloading the same
+        # artifact must never interleave writes into one .part (seen with two
+        # parallel Geofabrik pulls; both files ended up corrupt).
+        tmp = dest.with_suffix(dest.suffix + f".{os.getpid()}.part")
         digest = hashlib.sha256()
         size = 0
         try:
@@ -91,9 +96,22 @@ class RawStore:
                         fh.write(chunk)
                         digest.update(chunk)
                         size += len(chunk)
-            tmp.replace(dest)
+            # Windows: virus scanners hold freshly closed multi-GB files open
+            # for a while, so the rename hits a transient sharing violation.
+            for wait in (0, 1, 2, 5, 10, 20, 40, 60):
+                time.sleep(wait)
+                try:
+                    tmp.replace(dest)
+                    break
+                except PermissionError:
+                    continue
+            else:
+                tmp.replace(dest)
         finally:
-            tmp.unlink(missing_ok=True)
+            try:
+                tmp.unlink(missing_ok=True)
+            except OSError:
+                pass  # scanner still holds the orphan .part; harmless
         self._record(dest, url, size, digest.hexdigest(),
                      resp.headers.get("Content-Type", ""), note)
         return dest

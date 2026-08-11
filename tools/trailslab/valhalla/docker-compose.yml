@@ -1,0 +1,45 @@
+# Local Valhalla routing for the trails lab: repairs gappy hike geometries
+# (pipeline/trails/repair.py) and later composes daytrip legs.
+#
+# Per-country graphs only, never a full Europe build on this machine. Each
+# country gets its own tile directory under ./data/<slug>/, holding exactly
+# one Geofabrik extract staged there by prepare.py (hardlinked from the
+# data/raw/geofabrik/ cache, so nothing is downloaded twice). The scripted
+# image builds tiles from every .pbf it finds in /custom_files on first
+# start, then serves /route on port 8002.
+#
+# Usage, from the repo root (stages the extract, starts this stack, waits):
+#   python tools/trailslab/valhalla/prepare.py --country switzerland --up --wait
+#
+# Switching country restarts the container over another tile directory:
+#   python tools/trailslab/valhalla/prepare.py --country norway --up --wait
+#
+# Image tag: latest, per the docker-valhalla project's convention of not
+# versioning the scripted wrapper separately. Pin deliberately if a pull
+# ever breaks the repair script.
+
+services:
+  trailslab-valhalla:
+    image: ghcr.io/valhalla/valhalla-scripted:latest
+    container_name: trailslab-valhalla
+    ports:
+      - "8002:8002"
+    volumes:
+      - ./data/${VALHALLA_COUNTRY:-switzerland}:/custom_files
+    environment:
+      serve_tiles: "True"
+      # Admin areas make border-aware routing correct near CH/FR/AT edges.
+      build_admins: "True"
+      # Not needed for pedestrian costing; keeps the build light.
+      build_time_zones: "False"
+      # Elevation is handled by our own Copernicus GLO-30 step, not Valhalla.
+      build_elevation: "False"
+      # Tiles rebuild only when absent; prepare.py --force-rebuild flips this.
+      force_rebuild: ${VALHALLA_FORCE_REBUILD:-False}
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:8002/status || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      # Tile building happens before the service starts; give it ample room.
+      start_period: 90m
