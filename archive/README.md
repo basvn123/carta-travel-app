@@ -12,4 +12,5 @@ without fixes - that is intentional; they are retired.
 | `harvest_pois_osm.py` | `pipeline/harvest_pois_overture.py` | Per-dest Overpass sweeps don't scale to the full catalogue (ban risk); Overture parquet does. |
 | `harvest_protected_areas.py` | `pipeline/harvest_protected_areas_osm.py` | Wikidata SPARQL (WDQS) proved unreliable (502/504 outages); the OSM version is the live `nature` task. |
 | `harvest_osm_wikidata.py` | split across `harvest_pois_overture.py`, `harvest_protected_areas_osm.py`, `harvest_pois_wikidata_images.py` | Combined v15-era script whose jobs now have dedicated, wired-in harvesters. |
-| `notebooks/` (00-05, 03b) | `run_pipeline.py` + `pipeline/` | The original v1 notebook pipeline (schema v7, ~450 dests). SCHEMA.md's provenance sections still describe the cost/accommodation methodology they established. |
+| `notebooks/` (00-05, 03b) | `run_pipeline.py` + `pipeline/` | The original v1 notebook pipeline (schema v7, ~450 dests). docs/SCHEMA.md's provenance sections still describe the cost/accommodation methodology they established. |
+| `HomePage.jsx`, `home-redesign.css` | `continent-app/src/components/HomePage.jsx` | The standalone home-redesign brief/draft that used to sit at the repo root; the shipped Home tab evolved from it inside the app. |

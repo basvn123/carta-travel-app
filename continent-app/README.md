@@ -97,7 +97,7 @@ the rust accent ("deal"). Click any pill to open the detail panel.
 - **`src/styles.css`**, editorial/cartographic design. Fraunces serif, Inter
   Tight, JetBrains Mono.
 
-See `../SCHEMA.md` for the full `app_data.json` contract.
+See `../docs/SCHEMA.md` for the full `app_data.json` contract.
 
 ## Swapping in real data
 
