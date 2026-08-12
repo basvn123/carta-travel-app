@@ -54,7 +54,7 @@ MASTER = ROOT / "app_data" / "app_data.json"
 NIGHTS_CACHE = ROOT / "cache" / "eurostat_nights_nuts3.json"
 GEO_CACHE = ROOT / "cache" / "nuts3_2021.geojson"
 
-UA = {"User-Agent": "CartaTravelApp/1.0 (portfolio project; bas.vannieuwenhuyse123@gmail.com)"}
+UA = {"User-Agent": "CartaTravelApp/1.0 (portfolio project; data@carta-europetravel.com)"}
 NIGHTS_URL = (
     "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/"
     "tour_occ_nin3?format=JSON&lang=EN&c_resid=TOTAL&unit=NR&nace_r2=I551-I553"

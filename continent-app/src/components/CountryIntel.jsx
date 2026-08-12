@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { flagUrl, isoToFlag } from '../lib/tripGuide.js';
 import { fmtMonths } from '../lib/dates.js';
-import { stripDashes as cleanDash } from '../lib/format.js';
+import { stripDashes as cleanDash, safeUrl } from '../lib/format.js';
 import {
   TrainIcon, BusIcon, CarIcon, AlertIcon,
   TicketIcon, RoadIcon, CheckIcon, BanIcon,
@@ -31,8 +31,9 @@ function Flag({ iso2, className = 'cintel-flag' }) {
 }
 
 function LinkOut({ href, children }) {
-  if (!href) return <span>{children}</span>;
-  return <a href={href} target="_blank" rel="noreferrer" className="cintel-link">{children} ↗</a>;
+  const url = safeUrl(href);
+  if (!url) return <span>{children}</span>;
+  return <a href={url} target="_blank" rel="noreferrer" className="cintel-link">{children} ↗</a>;
 }
 
 /** One icon-led line inside an intel row. `tone` = 'warn' tints the icon rust. */

@@ -46,7 +46,7 @@ ROOT = Path(__file__).resolve().parent
 MASTER = ROOT / "app_data" / "app_data.json"
 CACHE = ROOT / "cache" / "osm_pois_full.json"
 
-UA = {"User-Agent": "CartaTravelApp/1.0 (portfolio project; bas.vannieuwenhuyse123@gmail.com)"}
+UA = {"User-Agent": "CartaTravelApp/1.0 (portfolio project; data@carta-europetravel.com)"}
 ENDPOINTS = [
     "https://overpass.kumi.systems/api/interpreter",
     "https://overpass-api.de/api/interpreter",

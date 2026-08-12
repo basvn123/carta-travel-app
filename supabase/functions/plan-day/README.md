@@ -4,22 +4,24 @@ Sequences a day from Carta's own POI catalogue with Gemini, then re-validates
 and re-times everything server-side (`logic.mjs`). The client never sees the
 AI key; guests never spend quota; identical requests answer from cache.
 
-## Zero-billing setup (do these in order)
+## Setup (billing posture CHANGED in migration 007)
 
-1. Create a **dedicated Google account** for this prototype (not your main
-   one). Never attach a billing account or card to it, anywhere. This is the
-   entire guarantee: with no payment instrument on file, running out of free
-   quota returns errors, never charges.
-2. In [Google AI Studio](https://aistudio.google.com) with that account,
-   create an API key. Do NOT "upgrade", do NOT enable billing when prompted.
-   Attaching billing to the underlying Cloud project permanently removes the
-   free tier there and makes every call billable from the first token.
-3. Run the migration: `supabase db push` (or paste
-   `supabase/migrations/006_ai_day_planner.sql` into the SQL editor).
-4. Set the secret and deploy:
+The old zero-billing guarantee is retired. Google's Gemini API Additional
+Terms (effective 2026-03-23) allow only Paid Services for API clients serving
+the EEA/CH/UK, so `GEMINI_API_KEY` must come from a Google Cloud project WITH
+an active billing account; see the header comment in `index.ts` for the exact
+wording. Attaching billing is the compliance step, not a decision to spend.
+What protects the wallet now: per-tier caps in `public.plan_tiers` enforced by
+the `ai_consume` RPC (migration 007), the paid-tier-only grounded-search
+counter, the `AI_GLOBAL_DAILY_CAP` backstop, and the answer cache.
+
+1. Run the migrations: paste `supabase/migrations/006_ai_day_planner.sql` and
+   `007_passes.sql` into the SQL editor (never `db push` against the live
+   project).
+2. Set the secret and deploy:
 
    ```
-   supabase secrets set GEMINI_API_KEY=<your AI Studio key>
+   supabase secrets set GEMINI_API_KEY=<key from the billed project>
    supabase functions deploy plan-day
    ```
 
@@ -32,8 +34,10 @@ rejects anonymous callers anyway, but the gateway check is a free first wall.
 | --- | --- | --- |
 | `GEMINI_MODEL` | `gemini-flash-latest` | Pin the model tried FIRST if the alias moves under you. The default fallbacks stay behind it. |
 | `GEMINI_MODELS` | (unset) | Comma separated chain that replaces the default outright, e.g. `gemini-3.5-flash-lite,gemini-3.1-flash-lite`. Max 6. |
-| `AI_USER_DAILY_CAP` | `10` | Generations per signed-in user per day. |
-| `AI_GLOBAL_DAILY_CAP` | `200` | Generations across all users per day. Keep it under the chain's combined free budget (see below). |
+| `AI_GLOBAL_DAILY_CAP` | `200` | Generations across all users per day, the abuse backstop. The 200 default applies only when the secret is unset; setting it high effectively removes the backstop. |
+
+Per-user caps are rows in `public.plan_tiers` (migration 007), not env vars.
+The old `AI_USER_DAILY_CAP` secret is dead: no function reads it.
 
 ## The model fallback chain
 
@@ -86,11 +90,11 @@ are never served.
 
 ## What is deliberately NOT here
 
-- No Google Search grounding and no other tools in the request: grounding is
-  the one Gemini feature that can bill past its free allowance, so the tool
-  simply never rides along.
 - No client-side key, no `VITE_GEMINI_*` var: anything with a `VITE_` prefix
   is compiled into the public bundle.
+- Grounded search rides along only for paid tiers with `groundLeft > 0`, and
+  each grounded generation spends the separate `'ground'` counter: it is the
+  one Gemini surface billed per search query the model chooses to run.
 
 ## Local test
 

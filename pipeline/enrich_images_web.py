@@ -54,7 +54,7 @@ def _atomic_write(path, text):
     tmp.replace(path)
 
 UA = ("CartaTravelApp-enrich/1.0 "
-      "(https://github.com/basvn123; contact: bas.vannieuwenhuyse123@gmail.com)")
+      "(https://github.com/basvn123; contact: data@carta-europetravel.com)")
 HEADERS = {"User-Agent": UA, "Accept": "application/json"}
 
 MAX_WORKERS = 6

@@ -184,11 +184,11 @@ Deno.serve(async (req) => {
   // must not spend anything.
   const enabled = (Deno.env.get('AI_ENABLE_CITY_GROUNDING') || 'true').toLowerCase() !== 'false';
   const status = await resolveTier(service, user.id);
-  const useGrounding = enabled && (status?.groundLeft ?? 0) > 0;
+  let useGrounding = enabled && (status?.groundLeft ?? 0) > 0;
   // A free user still gets an answer here, just one drawn purely from Carta's
   // own catalogue rather than from live search. That is a genuinely weaker
   // product, which is the point: it is the difference the Trip Pass sells.
-  const groundingSkipped = enabled && !useGrounding
+  let groundingSkipped = enabled && !useGrounding
     ? (status?.tier === 'free' ? 'tier' : 'cap')
     : null;
 
@@ -201,8 +201,13 @@ Deno.serve(async (req) => {
   let quota = await consume(service, user.id, kind, GLOBAL_CAP);
   if (!quota.ok && kind === 'ground') {
     // Lost a race against the traveller's own last grounded call. Degrade
-    // rather than refuse: an ungrounded answer beats an error.
+    // rather than refuse: an ungrounded answer beats an error. Degrade for
+    // real, though: no 'ground' unit was spent, so this request must not run
+    // grounded search either, and a later failure must refund the 'plan'
+    // unit it actually consumed (refunding 'ground' would mint paid quota).
     quota = await consume(service, user.id, 'plan', GLOBAL_CAP);
+    useGrounding = false;
+    groundingSkipped = 'cap';
   }
   if (quota.status === 'quota_check') return json(503, { code: 'quota_check' });
   if (!quota.ok) {
@@ -210,7 +215,7 @@ Deno.serve(async (req) => {
       code: quota.status, tier: quota.tier, cap: quota.cap ?? 0, used: quota.used ?? 0,
     });
   }
-  const spentKind = quota.ok && useGrounding ? 'ground' : 'plan';
+  const spentKind = useGrounding ? 'ground' : 'plan';
   const failed = async (st: number, b: Record<string, unknown>) => {
     await refund(service, user.id, spentKind);
     return json(st, b);

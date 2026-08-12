@@ -21,6 +21,7 @@ still identifies and records the matching datasets, it just cannot fetch
 their files yet.
 """
 import re
+from urllib.parse import urlparse
 
 from lxml import etree
 
@@ -62,7 +63,10 @@ def parse_catalog(xml_bytes):
     """[(dataset_title, [{downloadURL, title}, ...]), ...] restricted to
     datasets whose title mentions gtfs/netex/hrdf, each resource list newest
     first."""
-    root = etree.fromstring(xml_bytes)
+    # resolve_entities=False: the catalog is remote content; a hostile DTD
+    # entity could otherwise splice local file contents into dataset titles.
+    root = etree.fromstring(
+        xml_bytes, etree.XMLParser(resolve_entities=False, no_network=True))
 
     distributions = {}
     for dist in root.iter(f"{{{NS['dcat']}}}Distribution"):
@@ -113,6 +117,15 @@ class Switzerland(Collector):
         for title, resources in matched:
             for resource in resources[:per_dataset]:
                 name = resource["title"] or "resource.zip"
+                # The download URL comes verbatim from the remote catalog; the
+                # token only ever goes to the portal's own host, so a poisoned
+                # downloadURL cannot harvest OTD_SWISS_TOKEN.
+                host = urlparse(resource["downloadURL"]).netloc.lower()
+                if host != "opentransportdata.swiss" and \
+                        not host.endswith(".opentransportdata.swiss"):
+                    print(f"  [switzerland] skipping off-portal downloadURL "
+                          f"host {host!r} for {name!r}")
+                    continue
                 if self.grab(session, store, resource["downloadURL"], name=name,
                              headers=headers, note=title):
                     total += 1

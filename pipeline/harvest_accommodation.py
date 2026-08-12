@@ -157,7 +157,7 @@ DATASETS = [
 MIN_LISTINGS = 30          # minimum to trust a median
 MIN_BUCKET   = 12          # minimum listings for a per-capacity bucket
 MIN_HOOD     = 25          # minimum listings for a neighbourhood median
-UA = {"User-Agent": "CartaTravelApp-accom/2.0 (contact: bas.vannieuwenhuyse123@gmail.com)"}
+UA = {"User-Agent": "CartaTravelApp-accom/2.0 (contact: data@carta-europetravel.com)"}
 
 
 def haversine_km(lat1, lon1, lat2, lon2):

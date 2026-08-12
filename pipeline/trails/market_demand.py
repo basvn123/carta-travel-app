@@ -79,7 +79,7 @@ FRESH_MAX_AGE_Y = 4
 MIN_CITIES = 3
 
 UA = ("carta-travel-app market-demand harvester "
-      "(contact: bas.vannieuwenhuyse123@gmail.com)")
+      "(contact: data@carta-europetravel.com)")
 
 EUROSTAT_BASE = ("https://ec.europa.eu/eurostat/api/dissemination/"
                  "statistics/1.0/data/")

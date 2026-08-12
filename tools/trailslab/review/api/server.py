@@ -458,6 +458,9 @@ def trip_detail(trip_id: int):
 @app.get("/api/trips/{trip_id}/portal")
 def trip_portal(trip_id: int, radius: float = PORTAL_RADIUS_M):
     """Official portal geometry near this trip, for the map overlay."""
+    # Clamp: an unbounded radius turns the ST_DWithin probe into a
+    # whole-table geography scan that leans on statement_timeout alone.
+    radius = max(1.0, min(float(radius), 10 * PORTAL_RADIUS_M))
     with connect() as conn, conn.cursor(row_factory=dict_row) as cur:
         cur.execute(f"SET LOCAL statement_timeout = {PORTAL_TIMEOUT_MS}")
         try:

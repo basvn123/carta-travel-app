@@ -159,6 +159,24 @@ export function safeFetchUrl(v) {
     if (u.protocol !== 'https:' && u.protocol !== 'http:') return '';
     const host = u.hostname.toLowerCase();
     if (PRIVATE_HOST_RE.test(host) || host.endsWith('.local') || host.endsWith('.internal') || !host.includes('.')) return '';
+    // IPv6 with an embedded IPv4 tail ([::ffff:127.0.0.1]) sails past the
+    // dotted-prefix patterns above; no bracketed literal is worth fetching.
+    if (host.startsWith('[')) return '';
+    // Hex labels (0x7f.0.0.1) resolve as IPs but read as domains to the
+    // regex. Purely numeric hosts must be a strict dotted quad (no leading
+    // zeros, so no octal reparse) that lands outside every non-public range.
+    if (/(^|\.)0x[0-9a-f]+(\.|$)/.test(host)) return '';
+    if (/^\d+(\.\d+)+$/.test(host)) {
+      const parts = host.split('.');
+      if (parts.length !== 4 || parts.some((p) => (p.length > 1 && p[0] === '0') || Number(p) > 255)) return '';
+      const [a, b] = parts.map(Number);
+      if (a === 0 || a === 10 || a === 127 || a >= 224
+        || (a === 100 && b >= 64 && b <= 127)
+        || (a === 169 && b === 254)
+        || (a === 172 && b >= 16 && b <= 31)
+        || (a === 192 && b === 168)
+        || (a === 198 && (b === 18 || b === 19))) return '';
+    }
     return u.href;
   } catch {
     return '';
