@@ -19,12 +19,13 @@ export const en = {
   'nav.saved': 'Saved trips',
   'nav.home': 'Home',
   'nav.homeTitle': 'Home: the Carta front page',
-  // Short forms for the mobile bottom bar, where five tabs share the width.
-  'nav.homeShort': 'Home',
-  'nav.mapShort': 'Map',
-  'nav.tripShort': 'Trip',
-  'nav.dayShort': 'Day',
-  'nav.savedShort': 'Saved',
+  // Mobile bottom bar: three items around a central plus that opens the
+  // Trip planner / Day planner chooser.
+  'nav.explore': 'Explore',
+  'nav.myTrips': 'My trips',
+  'nav.planNew': 'Plan something new',
+  'nav.planTripSub': 'Route, flights and costs',
+  'nav.planDaySub': 'Hour by hour in one city',
   'header.account': 'Account',
   'header.accountTitle': 'Account & preferences',
   'header.seePricing': 'See pricing',
