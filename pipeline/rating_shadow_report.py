@@ -28,6 +28,14 @@ DATA = ROOT / "app_data" / "app_data.json"
 CURATED = ROOT / "app_data" / "curated_appeal.json"
 PV_CACHE = ROOT / "cache" / "dest_pageviews.json"
 OUT = ROOT / "app_data" / "rating_review_queue.json"
+WV_LISTINGS = ROOT / "cache" / "wikivoyage_listings.json"
+
+try:
+    _WV_STATUS = {did: rec.get("status")
+                  for did, rec in json.loads(
+                      WV_LISTINGS.read_text(encoding="utf-8")).items()}
+except Exception:
+    _WV_STATUS = {}
 
 GAP_FLAG = 2.0
 
@@ -38,10 +46,21 @@ W = {"beauty": 0.35, "must_see": 0.25, "guide": 0.15, "fame": 0.15, "nature": 0.
 def shadow_components(d, pv):
     beauty = ((d.get("beauty") or {}).get("score") or 0.0)          # already 0-10
     items = ((d.get("activities") or {}).get("items_full")) or []
-    rate3 = sum(1 for it in items if it.get("rate") == 3)
+    rate3 = sum(1 for it in items
+                if it.get("rate") == 3
+                and not it.get("dup") and not it.get("noise"))
     must_see = min(rate3 / 12.0, 1.0) * 10.0
-    guide_txt = ((d.get("guide") or {}).get("blurb")) or ""
+    # The MASTER stores the Wikivoyage extract as guide.text ("blurb" only
+    # exists in the served copy after sync-data slimming). Reading "blurb"
+    # here made the guide component silently zero for every destination.
+    g = d.get("guide") or {}
+    guide_txt = g.get("text") or g.get("blurb") or ""
     guide = min(len(guide_txt) / 1500.0, 1.0) * 10.0
+    # Wikivoyage's own review ladder beats raw text length where we have it:
+    # Star/Guide articles are rare, hand-reviewed levels (a strong "worth
+    # visiting" signal), cached by harvest_wikivoyage_listings.py.
+    status = (_WV_STATUS or {}).get(d.get("id"))
+    guide = max(guide, {"star": 10.0, "guide": 8.0, "usable": 5.0}.get(status, 0.0))
     fame = min(math.log10(1 + (pv or 0)) / 3.5, 1.0) * 10.0        # ~3000/day = ceiling
     nature = min(len(d.get("nature") or []) / 5.0, 1.0) * 10.0
     return {"beauty": beauty, "must_see": must_see, "guide": guide,

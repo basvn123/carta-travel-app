@@ -691,6 +691,15 @@ Resolution rules (what a reader should compute for a displayed date D):
   chosen dates (`runtime_pricing.pickEstimateForDates`, both directions
   required), and every surface renders the result as "~EUR X est." with
   source `EST` (`composeTrip.fare_estimated`).
+- SERVICE GATE (added 2026-08-12): a band month ships only when
+  `data/derived/tp_service_evidence.json` (built by the travelpayouts
+  collector from its raw cached itineraries, airline codes included) shows an
+  airline OUTSIDE the harvested families (FR/RK/RR, W6/W4/W9, VY, V7) flying
+  that direction that month. Rationale: the harvested carriers' stored days
+  ARE their complete calendars, so estimating one of their gaps would invent
+  a flight; only verifiable other-carrier service licenses an estimate.
+  No evidence artifact = no bands at all. `verify_flight_estimates.mjs`
+  asserts the invariant on the shipped slices.
 
 Merge policy (cheapest-wins, direct carriers stay primary):
 - `harvest_all_origins.py patch` rebuilds the table from the Ryanair cache and

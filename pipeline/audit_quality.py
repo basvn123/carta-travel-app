@@ -18,6 +18,10 @@ Checks:
   coverage  per-country % of POIs with wiki / img / desc / heritage, and
             per-dest completeness worst offenders
   images    rate-3 POIs without an image (the cards that matter most)
+  fop       images on modern-architecture kinds in no-freedom-of-panorama
+            countries (BE FR GR IT LU BY UA BG CY EE LV LT RO SI): photos of
+            modern buildings/sculpture there are not freely licensable even
+            on Commons - review queue, not an auto-drop
 
 Usage:
     python audit_quality.py                 # full report
@@ -48,6 +52,16 @@ FAR_KM = 50.0                             # POI farther than this from centre
 DUP_RADIUS_M = 150.0                      # fuzzy-name duplicate search radius
 NAME_SIM_FLAG = 0.82                      # normalized-name similarity cutoff
 RATE3_SHARE_FLAG = 0.45                   # dest rate-3 share above this = inflated
+
+# No freedom of panorama (Wikimedia Commons country lists, 2026): photos of
+# MODERN buildings, sculptures and public art in these countries are
+# copyright-encumbered regardless of the photo's own licence.
+NO_FOP = {"BE", "FR", "GR", "IT", "LU", "BY", "UA",
+          "BG", "CY", "EE", "LV", "LT", "RO", "SI"}
+# Kinds whose subject is plausibly a modern work (pre-1900 churches/castles
+# and natural features are fine; these can be 20th-21st century).
+FOP_RISK_KINDS = {"Landmark", "Museum", "Gallery", "Theatre", "Opera",
+                  "Stadium", "Bridge", "Tower", "Monument", "Sculpture"}
 
 # Latin fold for letters NFKD leaves alone (the l-with-stroke gotcha).
 _FOLD = str.maketrans({
@@ -112,7 +126,9 @@ def audit(dests, top_n):
         "kinds": {"missing": 0, "vocab": Counter()},
         "coverage": {"by_country": {}, "worst_dests": []},
         "images": {"rate3_no_img": 0, "rate3_no_img_examples": []},
+        "fop": {"flagged": 0, "by_country": {}, "examples": []},
     }
+    fop_country = Counter()
     cov_country = defaultdict(lambda: Counter())
     dest_scores = []
     dup_examples = []
@@ -141,6 +157,8 @@ def audit(dests, top_n):
                 if dk > FAR_KM:
                     rep["coords"]["far_from_centre"].append(
                         f"{label} ({dk:.0f} km)")
+            if it.get("dup") or it.get("noise"):
+                continue              # tagged out of the live catalogue
             rate = it.get("rate")
             rep["rates"]["dist"][rate] += 1
             if rate == 3:
@@ -154,6 +172,12 @@ def audit(dests, top_n):
                 rep["kinds"]["missing"] += 1
             else:
                 rep["kinds"]["vocab"][kind] += 1
+            if (it.get("img") and cc in NO_FOP and kind in FOP_RISK_KINDS
+                    and not it.get("heritage")):   # heritage register = old work
+                rep["fop"]["flagged"] += 1
+                fop_country[cc] += 1
+                if len(rep["fop"]["examples"]) < top_n:
+                    rep["fop"]["examples"].append(label)
             c["pois"] += 1
             for f in ("wiki", "img", "desc", "heritage"):
                 if it.get(f):
@@ -175,6 +199,8 @@ def audit(dests, top_n):
         buckets = defaultdict(list)
         pts = []
         for i, it in enumerate(items):
+            if it.get("dup") or it.get("noise"):
+                continue
             nn = norm_name(it.get("name"))
             if not nn:
                 continue
@@ -219,6 +245,7 @@ def audit(dests, top_n):
                         f"{did}: '{items[i].get('name')}' ~ "
                         f"'{items[j].get('name')}' (sim {sim})")
 
+    rep["fop"]["by_country"] = dict(fop_country.most_common())
     rep["dupes"]["dests_affected"] = len(dup_dests)
     rep["dupes"]["examples"] = dup_examples
     rep["rates"]["inflated_dests"].sort(key=lambda t: -t[1])
@@ -280,6 +307,9 @@ def main():
           f"{len(rep['kinds']['vocab'])} distinct kinds")
     im = rep["images"]
     print(f"images: {im['rate3_no_img']} rate-3 POIs without an image")
+    fo = rep["fop"]
+    print(f"FoP review queue: {fo['flagged']} images on modern-work kinds in "
+          f"no-FoP countries {fo['by_country']}")
     print("\ncoverage by country (pois / wiki / img / desc / heritage):")
     for cc, c in sorted(rep["coverage"]["by_country"].items(),
                         key=lambda x: -x[1]["pois"])[:args.top]:

@@ -98,40 +98,70 @@ b = composeTrip(realExpensive, DEPART, RETURN, CHOICES);
 check('real 800 beats estimated 20 (order, not price)',
   b?.fare_per_person === 800 && b?.fare_estimated === false);
 
-console.log('--- wire: the shipped BRU slice carries usable bands ---');
+console.log('--- wire: bands are shipped AND service-gated ---');
 
-const slice = JSON.parse(readFileSync(resolve(here, '../public/fares/BRU.json'), 'utf-8'));
-let banded_records = 0;
-for (const rec of Object.values(slice)) {
-  if (rec && typeof rec === 'object' && (rec.e_out || rec.e_ret)) banded_records += 1;
-}
-check(`records with e_out/e_ret in the BRU slice (${banded_records})`, banded_records > 0);
+// Same family set as the pipeline gate: airlines whose calendars the direct
+// harvest holds completely. A shipped band month must be evidenced by an
+// airline OUTSIDE this set, or the estimate could invent a flight.
+const FAMILY = new Set(['FR', 'RK', 'RR', 'W6', 'W4', 'W9', 'VY', 'V7']);
+const evidence = JSON.parse(readFileSync(
+  resolve(here, '../../data/derived/tp_service_evidence.json'), 'utf-8')).routes;
+const evidencedMonths = (org, dst) => new Set(
+  Object.entries(evidence[`${org}-${dst}`] || {})
+    .filter(([, airlines]) => airlines.some((a) => !FAMILY.has(a)))
+    .map(([m]) => m),
+);
 
-const agp = slice.AGP;
-check('BRU->AGP carries both band directions', !!(agp?.e_out && agp?.e_ret));
-if (agp?.e_out && agp?.e_ret) {
-  // Find a window month with a band but no stored outbound day: the exact
-  // "no flight these dates" gap the fallback exists for.
-  const storedMonths = new Set(Object.keys(agp.out || {}).map((d) => d.slice(0, 7)));
-  const gapMonth = Object.keys(agp.e_out).find(
-    (m) => !storedMonths.has(m) && agp.e_ret[m] != null,
-  );
-  check(`a gap month exists with a band (${gapMonth || 'none'})`, !!gapMonth);
-  if (gapMonth) {
-    const dest = makeDest({
-      BRU: {
-        outbound_fare: agp.out || {}, return_fare: agp.ret || {},
-        outbound_estimate: agp.e_out, return_estimate: agp.e_ret,
-        anchor_airport: 'AGP',
-      },
-    });
-    const dep = `${gapMonth}-10`, ret = `${gapMonth}-14`;
-    check('no stored fare for the gap dates',
-      pickFareForDates(dest, dep, ret) === null);
-    const est = pickEstimateForDates(dest, dep, ret);
-    check(`gap dates price from the band (~€${est?.fare} est.)`,
-      Number.isFinite(est?.fare) && est.fare > 0 && est.estimated === true);
+let bandedRecords = 0;
+let bandMonths = 0;
+let ungatedViolations = 0;
+let gapCase = null;
+for (const org of ['BRU', 'CRL']) {
+  const slice = JSON.parse(readFileSync(resolve(here, `../public/fares/${org}.json`), 'utf-8'));
+  for (const [anchor, rec] of Object.entries(slice)) {
+    if (!rec || typeof rec !== 'object' || (!rec.e_out && !rec.e_ret)) continue;
+    bandedRecords += 1;
+    const outOk = evidencedMonths(org, anchor);
+    const retOk = evidencedMonths(anchor, org);
+    for (const m of Object.keys(rec.e_out || {})) {
+      bandMonths += 1;
+      if (!outOk.has(m)) ungatedViolations += 1;
+    }
+    for (const m of Object.keys(rec.e_ret || {})) {
+      bandMonths += 1;
+      if (!retOk.has(m)) ungatedViolations += 1;
+    }
+    // Remember one route where a banded month has NO stored outbound day:
+    // the exact "no flight these dates" gap the fallback exists to fill.
+    if (!gapCase && rec.e_out && rec.e_ret) {
+      const stored = new Set(Object.keys(rec.out || {}).map((d) => d.slice(0, 7)));
+      const m = Object.keys(rec.e_out).find((x) => !stored.has(x) && rec.e_ret[x] != null);
+      if (m) gapCase = { org, anchor, rec, month: m };
+    }
   }
+}
+check(`banded records across BRU+CRL slices (${bandedRecords})`, bandedRecords > 0);
+check(`every shipped band month is service-evidenced (${bandMonths} months, ${ungatedViolations} violations)`,
+  bandMonths > 0 && ungatedViolations === 0);
+
+if (gapCase) {
+  const { org, anchor, rec, month } = gapCase;
+  const dest = makeDest({
+    [org]: {
+      outbound_fare: rec.out || {}, return_fare: rec.ret || {},
+      outbound_estimate: rec.e_out, return_estimate: rec.e_ret,
+      anchor_airport: anchor,
+    },
+  });
+  const dep = `${month}-10`, ret = `${month}-14`;
+  check(`gap case ${org}->${anchor} ${month}: no stored fare for the dates`,
+    pickFareForDates(dest, dep, ret) === null);
+  const est = pickEstimateForDates(dest, dep, ret);
+  check(`gap case prices from the band (~€${est?.fare} est.)`,
+    Number.isFinite(est?.fare) && est.fare > 0 && est.estimated === true);
+} else {
+  console.log('  note  no stored-gap band month in BRU/CRL right now (evidence-'
+    + 'covered months all have stored days); unit tests cover the resolution path');
 }
 
 console.log(failures === 0 ? 'verify_flight_estimates OK' : `${failures} FAILURES`);

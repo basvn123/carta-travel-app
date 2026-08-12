@@ -56,11 +56,13 @@ POI_ACTIVE_WEIGHT = 0.30        # "get active" POIs (sport/nature)
 # Raw count where the component nears 1. Recalibrated 14 -> 28 after the Overture
 # bulk POI import roughly doubled items_full: at 14 the term had gone near-flat
 # (~25% of destinations pegged the 0-1 ceiling, median 0.93, ~zero correlation
-# with appeal), inflating scores without differentiating. 28 restores the
-# original spread (median ~0.73, no ceiling-pegging) so "depth of things to do"
-# discriminates again. Keep this ~= the post-import median raw count (see
-# rating_layer analysis) if the catalogue size shifts materially.
-THINGS_SATURATION = 28.0
+# with appeal), inflating scores without differentiating. 28 restored the
+# original spread. Recalibrated 28 -> 19 in 2026-08 when the significance
+# engine (score_significance.py) deflated rate-3 from 30% to 10% of POIs and
+# dup/noise items left the count: the per-dest raw median moved to ~25, and
+# 25/19 ~= 1.32 keeps the median component at the calibrated ~0.73. Keep
+# sat ~= median_raw / 1.32 if the catalogue shifts materially again.
+THINGS_SATURATION = 19.0
 
 TIER_CUTOFFS = {3: 8.5, 2: 7.5, 1: 6.8}
 TIER_LABELS = {3: "Worth the journey", 2: "Worth a detour", 1: "Worth a visit"}
@@ -112,6 +114,8 @@ def things_to_do01(dest):
         return min(1.0, (n * 0.6) / THINGS_SATURATION) if n else 0.0
     raw = 0.0
     for it in items:
+        if it.get("dup") or it.get("noise"):
+            continue        # 2026-08: dedupe/noise tags, not real depth
         if it.get("active"):
             raw += POI_ACTIVE_WEIGHT
         else:

@@ -23,16 +23,19 @@ import json
 import os
 
 
-def atomic_write_json(path, data, *, indent=1, ensure_ascii=False):
+def atomic_write_json(path, data, *, indent=1, ensure_ascii=False,
+                      separators=None):
     """Serialize ``data`` to ``path`` atomically (tmp -> fsync -> os.replace).
 
     ``path`` may be a str or pathlib.Path. The temp file lives beside the target
-    so os.replace stays on one filesystem and is truly atomic.
+    so os.replace stays on one filesystem and is truly atomic. Pass ``indent=
+    None, separators=(",", ":")`` for the compact form served files use.
     """
     path = os.fspath(path)
     tmp = path + ".tmp"
     with open(tmp, "w", encoding="utf-8") as f:
-        json.dump(data, f, indent=indent, ensure_ascii=ensure_ascii)
+        json.dump(data, f, indent=indent, ensure_ascii=ensure_ascii,
+                  separators=separators)
         f.flush()
         os.fsync(f.fileno())
     os.replace(tmp, path)
