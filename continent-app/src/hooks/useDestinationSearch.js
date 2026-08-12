@@ -105,6 +105,10 @@ export function useDestinationSearch({
           planeOk: b.plane_reachable,      // is there a flight at all for these dates
           drivable: b.drivable,
           viaAirport: b.via_airport,       // set when flying into a nearby airport
+          // A flight priced from the estimate bands (no stored day matched)
+          // must read "~€X est." on pins, rows and hover cards.
+          prov: b.transport_mode === 'plane' && b.fare_estimated
+            ? { est: true, s: 'EST', o: null, x: null } : null,
         });
       }
     }

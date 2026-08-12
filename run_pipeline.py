@@ -769,7 +769,12 @@ def fare_model_step(ctx):
         log(f"  retraining ({reason})")
         if run_cmd([PY, "-m", "src.estimation.model", "train"]) != 0:
             return False
-    return run_cmd([PY, "-m", "src.estimation.model", "estimate"]) == 0
+    if run_cmd([PY, "-m", "src.estimation.model", "estimate"]) != 0:
+        return False
+    # Re-attach the estimate fallback bands (e_out/e_ret) so the master picks
+    # up the fresh export without waiting for next week's `fares` patch (which
+    # also attaches them itself).
+    return run_cmd([PY, "pipeline/harvest_all_origins.py", "est"]) == 0
 
 
 def ingestion_step(ctx):
@@ -917,12 +922,14 @@ TASKS = [
         "key": "fare_model",
         "title": "Fare estimation model: drift check -> retrain -> estimates",
         "cadence": "weekly",
-        "writes_app_data": False,
+        "writes_app_data": True,
         "soft": True,
         "run": fare_model_step,
         "note": ("PSI/KS + MAPE drift gates decide the retrain "
                  "(logs/drift_report.json); quantile GBDT exports route-month "
-                 "price bands to data/models/fare_estimates.json.gz."),
+                 "price bands to data/models/fare_estimates.json.gz, then "
+                 "re-attaches them to the master as e_out/e_ret fallback "
+                 "bands (harvest_all_origins.py est)."),
     },
     {
         "key": "ingestion",
@@ -952,6 +959,40 @@ TASKS = [
         "writes_app_data": True,
         "run": fame_step,
         "note": "fame is a rolling 12-mo average; monthly is plenty. Cheap, additive.",
+    },
+    {
+        "key": "poi_significance",
+        "title": "POI significance: signals -> dedupe -> gated re-tier -> rating",
+        "cadence": "monthly",
+        "writes_app_data": True,
+        "soft": True,
+        "cmds": [
+            [PY, "pipeline/harvest_pageviews.py", "pois"],
+            [PY, "pipeline/harvest_poi_wikidata.py"],
+            [PY, "pipeline/harvest_wikivoyage_listings.py"],
+            [PY, "pipeline/dedupe_pois.py"],
+            [PY, "pipeline/normalize_poi_kinds.py"],
+            [PY, "pipeline/score_significance.py", "apply"],
+            [PY, "pipeline/apply_rating_layer.py"],
+        ],
+        "note": ("the 2026-08 open-signal rate engine (docs/QUALITY_UPGRADE_PLAN.md): "
+                 "pageviews + Wikidata sitelinks/heritage + Wikivoyage See/Do "
+                 "listings -> composite score -> local-quota rate 0-3. All "
+                 "harvests resumable + cache-only; score_significance apply "
+                 "REFUSES to write when the anchor validation gate fails "
+                 "(logs/significance_report.json). apply_rating_layer last: the "
+                 "dest rating's things component saturates on the new rates."),
+    },
+    {
+        "key": "audit",
+        "title": "Data-quality audit scorecard (read-only)",
+        "cadence": "monthly",
+        "writes_app_data": False,
+        "soft": True,
+        "cmds": [[PY, "pipeline/audit_quality.py"]],
+        "note": ("coords/dupes/rate-inflation/coverage report -> "
+                 "logs/audit_quality_report.json; never blocks, but read it "
+                 "after any POI-layer change."),
     },
     {
         "key": "flight_times",

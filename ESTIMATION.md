@@ -175,3 +175,16 @@ python run_pipeline.py --list                  what the automation will do, when
   school holidays) is implemented from free sources; concerts/sports impact
   scoring would need a paid key and can slot in as extra `events` collectors
   plus features later.
+
+## Serving the estimates: e_out/e_ret fallback bands (added 2026-08-12)
+
+The weekly export (data/models/fare_estimates.json.gz, route-month p50/p10/p90
+bands) is now CONSUMED by the fare pipeline: `harvest_all_origins.py` attaches
+each route's p50 month medians to the master fares table as `e_out`/`e_ret`
+({YYYY-MM: eur}, window months only) during `patch`, and the `fare_model`
+pipeline task re-attaches them right after a retrain (`harvest_all_origins.py
+est`, offline). The app reads a band only when no stored fare day matches the
+traveller's dates (runtime_pricing.pickEstimateForDates) and renders it as
+"~EUR X est." (source EST). This is the flight half of the fallback-chain rule:
+real quote, then cached quote, then model estimate, never a blank. See
+SCHEMA.md "Fare provenance" for the exact field semantics.

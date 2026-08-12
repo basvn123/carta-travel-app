@@ -12,7 +12,7 @@ import { composeTrip, tripDaysBetween } from '../lib/runtime_pricing.js';
 import { TIERS, TIER_ORDER, formatPrice, yearPassTripsEquivalent } from '../lib/pricing.js';
 import { addDays, fmtDate, todayISO } from '../lib/dates.js';
 import { count, eur, eurExact } from '../lib/format.js';
-import { fareProv, estPrefix, FareTag, FromWord } from './FareProvenance.jsx';
+import { fareProv, estPrefix, FareTag, FromWord, flightBreakdownProv } from './FareProvenance.jsx';
 import { ATTRIBUTIONS } from '../data/attribution.js';
 import { useI18n, LANGUAGES } from '../i18n/index.jsx';
 
@@ -321,7 +321,7 @@ export function HomePage({
       const back = priced.fare_in_eur * groupSize;
       // Provenance of the priced fares (contract A fields when the pipeline
       // ships them): the flight lines carry the age chip / estimate tilde.
-      const prov = fareProv(priced);
+      const prov = flightBreakdownProv(priced);
       push(t('home.rFlightOut', { date: fmtDate(departDate) }), out, prov);
       push(t('home.rFlightBack', { date: fmtDate(returnDate) }), back, prov);
       push(t('home.rBag', { bag: bagLabel }), priced.baggage_total);

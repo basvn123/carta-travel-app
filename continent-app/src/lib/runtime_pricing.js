@@ -449,6 +449,46 @@ export function pickFareForDates(dest, departDate, returnDate, originPref = 'aut
   return best;
 }
 
+/** The flight half of the fallback-chain rule (real quote, then cached
+ *  quote, then model estimate, never a blank): the cheapest origin's
+ *  estimate-band round trip for the given dates, or null. Bands are the
+ *  estimation model's p50 month medians (routes[o].outbound_estimate /
+ *  return_estimate, {YYYY-MM: eur}), attached by the fare pipeline only for
+ *  routes with fare history. Both directions must be covered: a half-known
+ *  round trip would be a guess wearing an estimate's label. Callers treat
+ *  the result as ESTIMATED (est flag, "EST" source), and it must only ever
+ *  be consulted after pickFareForDates came back empty.
+ */
+export function pickEstimateForDates(dest, departDate, returnDate, originPref = 'auto') {
+  const routes = dest.routes || {};
+  const origins = originPref && originPref !== 'auto'
+    ? (routes[originPref] ? [originPref] : [])
+    : Object.keys(routes);
+  const outMonth = departDate.slice(0, 7);
+  const retMonth = returnDate.slice(0, 7);
+  let best = null;
+  for (const o of origins) {
+    const r = routes[o];
+    const out = r.outbound_estimate?.[outMonth];
+    const ret = r.return_estimate?.[retMonth];
+    if (out == null || ret == null) continue;
+    const fare = out + ret;
+    if (best == null || fare < best.fare) {
+      best = {
+        fare,
+        origin: o,
+        out_eur: out,
+        in_eur: ret,
+        anchor_airport: r.anchor_airport || dest.iata,
+        ground_eur: r.ground_transport_one_way_eur || 0,
+        ground_minutes: r.ground_transport_minutes || 0,
+        estimated: true,
+      };
+    }
+  }
+  return best;
+}
+
 /** Contiguous windows of dates (union of outbound_fare across this
  *  destination's routes) that actually have a fare, so when the selected
  *  dates come back with nothing, the UI can tell the traveller which periods
@@ -641,29 +681,37 @@ export function airportLastLeg(dest, straightKm) {
  */
 function planeFare(dest, departDate, returnDate, choices, allDests) {
   const own = pickFareForDates(dest, departDate, returnDate, choices.origin_pref);
-  if (own || !allDests) return { fare: own, via: null };
+  if (own) return { fare: own, via: null };
 
-  const near = planeReachIndex(allDests)?.get(dest.id);
-  if (!near) return { fare: null, via: null };
-  const nearFare = pickFareForDates(near.airport, departDate, returnDate, choices.origin_pref);
-  if (!nearFare) return { fare: null, via: null };
+  // A REAL fare into a nearby served airport still beats estimating this one.
+  const near = allDests ? planeReachIndex(allDests)?.get(dest.id) : null;
+  if (near) {
+    const nearFare = pickFareForDates(near.airport, departDate, returnDate, choices.origin_pref);
+    if (nearFare) {
+      const leg = airportLastLeg(dest, near.straight_km);
+      return {
+        fare: {
+          ...nearFare,
+          anchor_airport: near.airport.iata,
+          ground_eur: leg.eur_pp_one_way,
+          ground_minutes: leg.minutes,
+        },
+        via: {
+          ...leg,
+          id: near.id,
+          city: near.airport.city,
+          iata: near.airport.iata,
+          straight_km: Math.round(near.straight_km),
+        },
+      };
+    }
+  }
 
-  const leg = airportLastLeg(dest, near.straight_km);
-  return {
-    fare: {
-      ...nearFare,
-      anchor_airport: near.airport.iata,
-      ground_eur: leg.eur_pp_one_way,
-      ground_minutes: leg.minutes,
-    },
-    via: {
-      ...leg,
-      id: near.id,
-      city: near.airport.city,
-      iata: near.airport.iata,
-      straight_km: Math.round(near.straight_km),
-    },
-  };
+  // No stored day matches anywhere: the model's month-median band prices the
+  // route as an ESTIMATE (fare.estimated = true) instead of silently forcing
+  // the trip onto the road.
+  const est = pickEstimateForDates(dest, departDate, returnDate, choices.origin_pref);
+  return { fare: est, via: null };
 }
 
 /** Full trip cost for these dates + choices. Prices the trip two ways and picks
@@ -761,6 +809,9 @@ export function composeTrip(dest, departDate, returnDate, choices, allDests = nu
     fare_out_eur:       fare ? round2(fare.out_eur) : null,
     fare_in_eur:        fare ? round2(fare.in_eur) : null,
     fare_total:         fare ? round2(fare.fare * groupSize) : null,
+    // True when the flight is priced from the estimate bands, not a stored
+    // fare: every surface must render it "~€X est.", never as a quote.
+    fare_estimated:     !!fare?.estimated,
     baggage_per_person: round2(baggageRt),
     baggage_total:      round2(baggageRt * groupSize),
     flight_per_person:  flightPerPerson != null ? round2(flightPerPerson) : null,

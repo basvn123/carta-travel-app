@@ -12,7 +12,7 @@ import { ReceiptIcon, CalendarIcon, BedIcon, DiningIcon, CarIcon, InfoIcon, Aler
 import { PlaneIcon } from '../components/TransportIcons.jsx';
 import { carrierPairName } from '../lib/carriers.js';
 import { BagCheck } from '../components/BagCheck.jsx';
-import { fareProv, estPrefix, FareTag, BookingNote } from '../components/FareProvenance.jsx';
+import { estPrefix, FareTag, BookingNote, flightBreakdownProv } from '../components/FareProvenance.jsx';
 import { useI18n } from '../i18n/index.jsx';
 
 // Sub-components of the destination detail panel (the cost-breakdown tab and
@@ -168,9 +168,11 @@ export function BreakdownTab({ destination, breakdown, departDate, returnDate, c
   const fareCarrier = carrierPairName(
     destination.routes?.[breakdown.origin], departDate, returnDate,
   );
-  // Provenance of the shown fare (contract A fields on the hydrated route,
-  // when the fare pipeline ships them): age chip + estimate styling.
-  const flightFareProv = fareProv(destination.routes?.[breakdown.origin]);
+  // Provenance of the shown fare: an estimate-band price (no stored day for
+  // these dates) is always EST; otherwise the hydrated route's contract A
+  // fields drive the age chip + estimate styling.
+  const flightFareProv = flightBreakdownProv(breakdown, destination.routes?.[breakdown.origin]);
+  const fareEstimated = !!breakdown.fare_estimated;
 
   const flightLinks = (() => {
     if (breakdown.transport_mode !== 'plane' || breakdown.fare_total == null) return [];
@@ -197,7 +199,7 @@ export function BreakdownTab({ destination, breakdown, departDate, returnDate, c
           title={t('detail.gettingThere')}
           subtitle={breakdown.transport_mode === 'car'
             ? (flyFellBack ? t('detail.noFlightDriveFrom', { origin: driveFromCity }) : t('detail.driveFrom', { origin: driveFromCity }))
-            : t('detail.ryanairRoundTrip', { carrier: fareCarrier })}
+            : (fareEstimated ? t('detail.estimatedRoundTrip') : t('detail.ryanairRoundTrip', { carrier: fareCarrier }))}
           subtotal={transportSubtotal}
           open={openGroups.transport}
           onToggle={() => toggleGroup('transport')}
@@ -250,9 +252,13 @@ export function BreakdownTab({ destination, breakdown, departDate, returnDate, c
                   {t('detail.flight')}
                   <FareTag prov={flightFareProv} />
                   <small>
-                    {destination.tier === 'gem' && anchorCity
-                      ? t('detail.fareViaAnchor', { city: anchorCity, carrier: fareCarrier })
-                      : t('detail.fareRoundTrip', { carrier: fareCarrier })}
+                    {fareEstimated
+                      ? (destination.tier === 'gem' && anchorCity
+                        ? t('detail.fareEstimatedViaAnchor', { city: anchorCity })
+                        : t('detail.fareEstimated'))
+                      : (destination.tier === 'gem' && anchorCity
+                        ? t('detail.fareViaAnchor', { city: anchorCity, carrier: fareCarrier })
+                        : t('detail.fareRoundTrip', { carrier: fareCarrier }))}
                   </small>
                 </span>
                 <span className="val">{`${estPrefix(flightFareProv)}${eur(show(breakdown.fare_total))}`}</span>
