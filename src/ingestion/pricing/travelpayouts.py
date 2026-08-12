@@ -48,6 +48,7 @@ import gzip
 import json
 import time
 from datetime import datetime, timezone
+from pathlib import Path
 
 from ..core import config
 from ..core.collector import Collector
@@ -58,6 +59,17 @@ from ..core.storage import utcnow
 API_BASE = config.env("TRAVELPAYOUTS_API_BASE", "https://api.travelpayouts.com")
 FARES_DIR = config.ROOT / "continent-app" / "public" / "fares"
 DERIVED_PATH = config.ROOT / "data" / "derived" / "tp_fares.json"
+EVIDENCE_PATH = config.ROOT / "data" / "derived" / "tp_service_evidence.json"
+
+# Airline codes of the directly harvested carrier families. Their service
+# calendars in the fare table are COMPLETE (farefinder/timetable harvests
+# return every bookable day, so a missing stored day is a day they do not
+# fly). Only quotes from OTHER airlines therefore prove that a route flies
+# on days/months the direct harvest cannot see, which is what the estimate
+# bands' service gate needs.
+HARVESTED_FAMILY = {"FR", "RK", "RR",   # Ryanair group (incl. Ryanair UK)
+                    "W6", "W4", "W9",   # Wizz Air group (Malta, UK)
+                    "VY", "V7"}         # Vueling, Volotea
 
 DAY_SECONDS = 86400
 # Three letter DOS device names that collide with IATA codes; their fare
@@ -172,6 +184,94 @@ def stage_quote(best, entry, org, dst, today, today_days, date=None):
     return True
 
 
+def _note_evidence(routes, org, dst, month, airline):
+    if len(org) == 3 and len(dst) == 3 and org != dst and len(month) == 7 and airline:
+        routes.setdefault(f"{org}-{dst}", {}).setdefault(month, set()).add(airline)
+
+
+def build_service_evidence(write=True):
+    """Distil every dated raw batch under data/raw/travelpayouts/ into the
+    service-evidence artifact data/derived/tp_service_evidence.json:
+
+        { "meta": {...}, "routes": { "ORG-DST": { "YYYY-MM": [airlines] } } }
+
+    A (route, month) entry means the Aviasales cache held at least one REAL
+    dated DIRECT itinerary for it, flown by the listed airlines. The estimate
+    band merge (harvest_all_origins.merge_est_bands) only keeps a band month
+    backed by an airline outside HARVESTED_FAMILY, so an estimate can never
+    invent a flight on a route-month nothing verifiably serves. Round-trip
+    calendar quotes, useless as one-way fares, still contribute evidence for
+    both directions here. Accumulates across ALL raw days on disk, so
+    evidence widens with every collector run.
+    """
+    root = config.DATA_DIR / "travelpayouts"
+    routes = {}
+    batches = 0
+    for day_dir in sorted(root.glob("*")) if root.exists() else []:
+        # The storage layer suffixes a timestamp when the plain name is taken
+        # (smoke run before a full run), so match every variant of the batch.
+        for pfd in sorted(day_dir.glob("prices_for_dates.json*.gz")):
+            try:
+                wrapper = json.loads(gzip.decompress(pfd.read_bytes()))
+            except (OSError, ValueError):
+                wrapper = None
+            for key, body in ((wrapper or {}).get("responses") or {}).items():
+                batches += 1
+                parts = key.split("-", 2)      # "ORG-DST-YYYY-MM"
+                req_org = parts[0] if len(parts) > 1 else ""
+                req_dst = parts[1] if len(parts) > 1 else ""
+                for entry in (body or {}).get("data") or []:
+                    if not isinstance(entry, dict) or entry.get("transfers"):
+                        continue
+                    month = str(entry.get("departure_at") or "")[:7]
+                    airline = str(entry.get("airline") or "").upper()
+                    org = str(entry.get("origin_airport") or req_org).upper()
+                    dst = str(entry.get("destination_airport") or req_dst).upper()
+                    _note_evidence(routes, org, dst, month, airline)
+                    # Requested codes too: the fare table is keyed by them.
+                    _note_evidence(routes, req_org, req_dst, month, airline)
+        for cal in sorted(day_dir.glob("calendar.json*.gz")):
+            try:
+                wrapper = json.loads(gzip.decompress(cal.read_bytes()))
+            except (OSError, ValueError):
+                wrapper = None
+            for key, body in ((wrapper or {}).get("responses") or {}).items():
+                batches += 1
+                parts = key.split("-")          # "ORG-DST"
+                if len(parts) != 2:
+                    continue
+                org, dst = parts[0].upper(), parts[1].upper()
+                data = (body or {}).get("data") or {}
+                for day, entry in (data.items() if isinstance(data, dict) else []):
+                    if not isinstance(entry, dict) or entry.get("transfers"):
+                        continue
+                    airline = str(entry.get("airline") or "").upper()
+                    _note_evidence(routes, org, dst, str(day)[:7], airline)
+                    ret_month = str(entry.get("return_at") or "")[:7]
+                    _note_evidence(routes, dst, org, ret_month, airline)
+
+    n_months = sum(len(m) for m in routes.values())
+    other = sum(1 for m in routes.values() for a in m.values()
+                if any(x not in HARVESTED_FAMILY for x in a))
+    artifact = {
+        "meta": {"generated_at": utcnow(), "raw_batches": batches,
+                 "routes": len(routes), "route_months": n_months,
+                 "route_months_other_carrier": other,
+                 "harvested_family": sorted(HARVESTED_FAMILY)},
+        "routes": {k: {m: sorted(v) for m, v in sorted(months.items())}
+                   for k, months in sorted(routes.items())},
+    }
+    if write:
+        EVIDENCE_PATH.parent.mkdir(parents=True, exist_ok=True)
+        EVIDENCE_PATH.write_text(
+            json.dumps(artifact, ensure_ascii=False, separators=(",", ":")),
+            encoding="utf-8")
+        print(f"    [travelpayouts] service evidence: {len(routes)} routes, "
+              f"{n_months} route-months ({other} with a non-harvested airline) "
+              f"-> {EVIDENCE_PATH.name}")
+    return artifact
+
+
 @register
 class Travelpayouts(Collector):
     name = "travelpayouts"
@@ -233,7 +333,9 @@ class Travelpayouts(Collector):
             return None
         top_pairs = config.env_int("TP_TOP_PAIRS", 15)
         cal_pairs = config.env_int("TP_CAL_PAIRS", 20)
-        months = _month_starts(config.env_int("TP_MONTHS", 2))
+        # 6 months so evidence + quotes span the app's whole fare window
+        # (HORIZON_DAYS = 150), not just the near term.
+        months = _month_starts(config.env_int("TP_MONTHS", 6))
         pfd_limit = config.env_int("TP_PFD_LIMIT", 300)
         direct_only = config.env_flag("TP_DIRECT_ONLY", True)
 
@@ -347,7 +449,10 @@ class Travelpayouts(Collector):
               f"({expired} expired quotes dropped, {rt_skipped} round trip "
               f"calendar quotes skipped)")
 
+        evidence = build_service_evidence()
+
         return (f"{len(origins)} origins ({len(unresolved)} unknown to TP), "
                 f"{len(records)} dated fares over {len(staged_pairs)} pairs, "
                 f"{len(staged_pairs) - len(overlap)} pairs without direct "
-                f"carrier coverage -> {DERIVED_PATH.name}")
+                f"carrier coverage -> {DERIVED_PATH.name}; "
+                f"{evidence['meta']['route_months']} evidence route-months")

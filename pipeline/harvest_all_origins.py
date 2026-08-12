@@ -84,6 +84,13 @@ APP_DATA = ROOT / "app_data" / "app_data.json"
 
 TP_STAGING = ROOT / "data" / "derived" / "tp_fares.json"
 EST_EXPORT = ROOT / "data" / "models" / "fare_estimates.json.gz"
+EST_EVIDENCE = ROOT / "data" / "derived" / "tp_service_evidence.json"
+
+# Same family set as src/ingestion/pricing/travelpayouts.py: airlines whose
+# service calendars the direct harvest already holds COMPLETELY. Only a quote
+# from an airline outside this set proves a route-month flies beyond what the
+# stored days show, which is what licenses an estimate band there.
+HARVESTED_FAMILY = {"FR", "RK", "RR", "W6", "W4", "W9", "VY", "V7"}
 
 CURRENCY = "EUR"
 SOURCE = "FR"                        # contract A source code for this harvester
@@ -451,6 +458,15 @@ def merge_est_bands(data, fares):
     is the flight half of the fallback-chain rule: real quote, then cached
     quote, then model estimate, never a blank.
 
+    SERVICE GATE: the harvested carriers' calendars are complete, so a
+    stored-day gap on a single-carrier route is a day nothing flies, and an
+    estimate there would invent a flight. A band month is therefore attached
+    ONLY when the Travelpayouts service evidence (contract in
+    src/ingestion/pricing/travelpayouts.build_service_evidence, file
+    data/derived/tp_service_evidence.json) shows an airline OUTSIDE the
+    harvested families flying that direction that month. No evidence
+    artifact = NO bands (fail-honest), and stale bands are still cleared.
+
     Bands from a previous merge are cleared first, so a route the model no
     longer covers loses its stale band on re-merge. Mutates `fares` in place;
     returns a stats dict for meta.fares_model_est, or None when the export is
@@ -465,9 +481,29 @@ def merge_est_bands(data, fares):
         print(f"  estimate export unreadable ({type(e).__name__}): skipping the est step")
         return None
     est = export.get("estimates") or {}
+
+    evidence = None
+    if EST_EVIDENCE.exists():
+        try:
+            evidence = json.loads(EST_EVIDENCE.read_text(encoding="utf-8")).get("routes")
+        except (OSError, ValueError) as e:
+            print(f"  service evidence unreadable ({type(e).__name__})")
+    if evidence is None:
+        print("  NO service evidence (data/derived/tp_service_evidence.json): "
+              "estimate bands are not attached and stale ones are cleared. "
+              "Run the travelpayouts collector to license bands again.")
+
+    def allowed_months(org, dst):
+        """Window months a non-harvested airline verifiably flies org->dst."""
+        if evidence is None:
+            return set()
+        return {m for m, airlines in (evidence.get(f"{org}-{dst}") or {}).items()
+                if any(a not in HARVESTED_FAMILY for a in airlines)}
+
     meta = data["meta"]
     start_m, end_m = meta["start_date"][:7], meta["end_date"][:7]
-    stats = {"routes": 0, "route_months": 0, "cleared": 0,
+    stats = {"routes": 0, "route_months": 0, "cleared": 0, "months_gated": 0,
+             "service_gate": "tp_service_evidence" if evidence is not None else "NO EVIDENCE, all bands dropped",
              "export_generated_at": export.get("generated_at"),
              "merged_from": date.today().isoformat()}
 
@@ -482,11 +518,17 @@ def merge_est_bands(data, fares):
                 if had:
                     stats["cleared"] += 1
                 continue
+            # out leg flies origin -> anchor, ret leg anchor -> origin.
+            allowed = {"out": allowed_months(origin, anchor),
+                       "ret": allowed_months(anchor, origin)}
             added = False
             for side, key in (("out", "e_out"), ("ret", "e_ret")):
                 keep = {}
                 for month, row in (bands.get(side) or {}).items():
                     if not (start_m <= month <= end_m):
+                        continue
+                    if month not in allowed[side]:
+                        stats["months_gated"] += 1
                         continue
                     # export row: [p10, p50, p90, cheapest_p50, cheapest_day]
                     p50 = row[1] if isinstance(row, (list, tuple)) and len(row) >= 2 else None
@@ -498,9 +540,12 @@ def merge_est_bands(data, fares):
                     added = True
             if added:
                 stats["routes"] += 1
+            elif had:
+                stats["cleared"] += 1
 
     print(f"  estimate bands merged: {stats['routes']} routes carry e_out/e_ret "
-          f"({stats['route_months']} route-months, window {start_m}..{end_m}, "
+          f"({stats['route_months']} route-months kept, {stats['months_gated']} "
+          f"gated off for lack of service evidence, window {start_m}..{end_m}, "
           f"{stats['cleared']} stale bands cleared)")
     return stats
 
