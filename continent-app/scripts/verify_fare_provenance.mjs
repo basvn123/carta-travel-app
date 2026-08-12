@@ -160,11 +160,22 @@ async function checkHome(page, mock, tag) {
   const body = await page.locator('.home-r-body').innerText();
 
   if (!mock) {
-    if (tags > 0) fail(`[home ${tag}] provenance chips rendered with no fields`);
-    else ok(`[home ${tag}] no provenance chips without fields`);
+    // Since the estimate bands shipped, the receipt's pick can be GENUINELY
+    // estimate-priced with no mock: est chips are then correct, but only
+    // when the tilde rides the flight lines too, and an age chip can never
+    // appear without fields (only harvests and mocks produce observed_at).
+    const ageChips = await count(page, '.home-receipt .fare-prov-age');
+    const estChips = await count(page, '.home-receipt .fare-prov-est');
+    const tilde = /~€/.test(body);
+    if (ageChips > 0) fail(`[home ${tag}] age chips rendered with no fields`);
+    else ok(`[home ${tag}] no age chips without fields`);
+    if ((estChips > 0) !== tilde) {
+      fail(`[home ${tag}] est chip/tilde mismatch (chips ${estChips}, tilde ${tilde})`);
+    } else {
+      ok(`[home ${tag}] est styling consistent (${estChips > 0 ? 'genuinely estimated receipt' : 'quoted receipt, no chips'})`);
+    }
     if (fromWords < 1) fail(`[home ${tag}] discovery rows carry no "from" word`);
     else ok(`[home ${tag}] "from" phrasing on discovery rows (${fromWords})`);
-    if (/~€/.test(body)) fail(`[home ${tag}] tilde price in receipt with no fields`);
   } else if (mock.includes('est')) {
     if (await count(page, '.home-receipt .fare-prov-est') < 1) fail(`[home ${tag}] est. chip missing on receipt flight lines`);
     else ok(`[home ${tag}] est. chip on receipt flight lines`);
@@ -173,8 +184,13 @@ async function checkHome(page, mock, tag) {
     if (fromWords > 0) fail(`[home ${tag}] "from" phrasing kept on an estimate`);
     else ok(`[home ${tag}] estimates drop the "from" word`);
   } else {
-    if (await count(page, '.home-receipt .fare-prov-age') < 1) fail(`[home ${tag}] age chip missing on receipt flight lines`);
-    else ok(`[home ${tag}] age chip on receipt flight lines`);
+    // Mocked age: the receipt shows the age chip, UNLESS its fare is
+    // genuinely estimate-priced, in which case EST correctly replaces the
+    // age (an estimate has no observed_at). Some chip must always render.
+    const seenAges = await count(page, '.home-receipt .fare-prov-age');
+    const seenEsts = await count(page, '.home-receipt .fare-prov-est');
+    if (seenAges < 1 && seenEsts < 1) fail(`[home ${tag}] no chip at all on receipt flight lines`);
+    else ok(`[home ${tag}] receipt chips render (age ${seenAges}, est ${seenEsts}; est replaces age on an estimated fare)`);
   }
   await page.locator('#home-total').scrollIntoViewIfNeeded();
   await page.screenshot({ path: `${SHOTS}/prov-home-${tag}.png` });

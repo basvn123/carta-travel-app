@@ -217,8 +217,20 @@ are archived in `archive/notebooks/`, and the live accommodation path is
                                           // no coordinates) when this key is missing.
           {
             "name": "Grote Markt", "kind": "Square", "lat": 51.208, "lon": 3.225,
-            "rate": 3,                    // v12: OTM importance 0..3 (3 = must-see tier).
-                                          // Drives the Day planner's must-see gradation.
+            "rate": 3,                    // v15.1 (2026-08): recalibrated composite
+                                          // significance 0..3 (score_significance.py):
+                                          // pageviews + Wikidata sitelinks/heritage +
+                                          // Wikivoyage See/Do listings + old-rate prior,
+                                          // blended per-dest/catalogue percentile, local
+                                          // quota (~top 12% = 3, next ~28% = 2). Was
+                                          // raw OTM importance before v15.1. Drives the
+                                          // Day planner's must-see gradation.
+            "dup": true,                  // v15.1: near-duplicate of a richer entry in
+                                          // this list (dedupe_pois.py). Kept in place so
+                                          // saved-plan indices stay valid; scoring quotas
+                                          // and exports skip it. (optional)
+            "noise": 1,                   // v15.1: commercial noise demoted by
+                                          // normalize_poi_kinds.py; rate forced 0. (optional)
             "heritage": true,             // v12: on a cultural-heritage register (optional)
             "active": true,               // v12: "get active" POI (sport/amusements/natural;
                                           // optional, sights omit it)
@@ -343,21 +355,25 @@ Four layers on top of v13; every one has an `apply_*.py` and is idempotent.
 
 ```jsonc
 "rating": {
-  "score": 9.5,                  // 0-10, one decimal, the headline number
-  "tier": 3,                     // 3 "Worth the journey" (~top 8%) | 2 "Worth a
-                                 // detour" (~22%) | 1 "Worth a visit" (~35%) | 0
+  "score": 9.5,                  // 0-10, one decimal, ABSOLUTE (no percentile
+                                 // re-spreading): 8+ genuinely outstanding
+  "tier": 3,                     // 3 "Worth the journey" (>=8.5) | 2 "Worth a
+                                 // detour" (>=7.5) | 1 "Worth a visit" (>=6.8) | 0
   "label": "Worth the journey",  // Michelin Green Guide idiom
-  "hidden_gem": false,           // highly rated + low fame (earned, not a record type)
+  "hidden_gem": false,           // highly rated + low fame, or curator-flagged gem
   "fame": 4029,                  // avg daily Wikipedia pageviews, last 12 months
-  "components": { "beauty": 0.73, "things_to_do": 0.94, "fame": 1.0 },
-  "source": "rating_v1"
+  "components": { "beauty": 0.73, "things_to_do": 0.94, "appeal": 0.85 },
+  "source": "rating_v2"
 }
 ```
 
-Blend: beauty 45% (the v9 Beauty Index) + things-to-do 20% (rate-weighted
-saturating POI count) + fame 35% (log-scaled pageviews from
-`cache/dest_pageviews.json`, harvest_pageviews.py). The blended 0..1 score is
-display-calibrated through a fixed percentile curve; tier cutoffs 8.5/7.0/5.5.
+rating_v2 blend (rating_layer.py, replaced v1's 45/20/35 fame-led mix in
+2026-07): curated appeal 70% (`app_data/curated_appeal.json`, a hand-scored
+0-10 traveller-appeal judgement per destination, anchors Rome 10 ...
+Charleroi 2.5) + beauty 15% (the v9 Beauty Index) + things-to-do 15%
+(rate-weighted saturating POI count over `items_full`). Fame (pageviews) no
+longer moves the score at all; it only decides `hidden_gem`. Tier cutoffs
+8.5/7.5/6.8, absolute scale.
 Multi-airport cities are unified and hold ONE slot in the distribution.
 `meta.rating_model` documents everything. The UI (RatingBadge.jsx) shows the
 score chip + 1-3 tier diamonds everywhere the old 1-5 gem row lived; the
@@ -651,7 +667,10 @@ age and must keep working everywhere (the read side is tolerant).
       "out_o": { "2026-08-12": 20665 },   // per-day observed_at, sparse, only
       "ret_o": { },                       //   where it differs from `o` (TP)
       "out_x": { "2026-08-12": 20672 },   // per-day expires_at, sparse, only
-      "ret_x": { }                        //   when the source supplies one (TP)
+      "ret_x": { },                       //   when the source supplies one (TP)
+      "e_out": { "2026-09": 63 },         // estimate fallback bands: model p50
+      "e_ret": { "2026-09": 58 }          //   month-median EUR per direction,
+                                          //   window months only (added 2026-08-12)
     }
   }
 }
@@ -663,6 +682,15 @@ Resolution rules (what a reader should compute for a displayed date D):
 - expires epoch day of D: `out_x[D]` (usually absent; only cache quotes expire)
 - `e: 1` marks a model estimate. The pipeline NEVER writes it; it is attached
   by the frontend ground-fare/estimate fallback layer at runtime.
+- `e_out`/`e_ret` are route-level estimate BANDS, not fares: `{YYYY-MM: eur}`
+  p50 month medians from the estimation export (`data/models/
+  fare_estimates.json.gz`), attached by `harvest_all_origins.py` (`patch`, or
+  offline via `est`) for window months only. Real bookable days remain the
+  only entries in `out`/`ret`, so calendars and best-fare windows never show
+  invented flights. The app reads a band ONLY when no stored day matches the
+  chosen dates (`runtime_pricing.pickEstimateForDates`, both directions
+  required), and every surface renders the result as "~EUR X est." with
+  source `EST` (`composeTrip.fare_estimated`).
 
 Merge policy (cheapest-wins, direct carriers stay primary):
 - `harvest_all_origins.py patch` rebuilds the table from the Ryanair cache and

@@ -40,6 +40,16 @@ Provenance (contract A, see SCHEMA.md "Fare provenance"):
   merges reclaim ties from TP), so cached third-party quotes can never
   displace an equal-or-cheaper direct fare. No staging file = no TP step.
 
+Estimate fallback bands (the flight half of the "always an estimate" rule):
+  `patch` also attaches e_out/e_ret to each route record: {YYYY-MM: eur}
+  month-median (p50) one-way estimates from the estimation layer's export
+  (data/models/fare_estimates.json.gz, src/estimation.model). These are
+  route-LEVEL bands, deliberately not per-day fares: real bookable days stay
+  the only entries in out/ret (so fare calendars never show invented
+  flights), and the app reads a band ONLY when no stored day matches the
+  traveller's dates, rendering it as "~EUR X est." (source "EST"). A few
+  ints per route keep the wire slim. No export = no est step.
+
 Run:
   python harvest_all_origins.py graph      # (re)fetch airports + route graph
   python harvest_all_origins.py harvest     # harvest fares (resumes cache)
@@ -51,13 +61,16 @@ Run:
   python harvest_all_origins.py tp          # re-merge the Travelpayouts staging
                                             #   into the existing table (offline;
                                             #   run after a staging refresh)
+  python harvest_all_origins.py est         # re-attach estimate fallback bands
+                                            #   from the estimation export
+                                            #   (offline; run after a retrain)
 
 Tuning via env:
   HARVEST_DELAY   base delay between calls, seconds (default 1.2)
   HARVEST_WORKERS parallel fetchers (default 1; try 3-4 to cut wall-clock,
                   at higher risk of 429s - backoff self-heals either way)
 """
-import json, os, sys, time, threading, urllib.request, urllib.error
+import gzip, json, os, sys, time, threading, urllib.request, urllib.error
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import date, timedelta
 from pathlib import Path
@@ -70,6 +83,7 @@ FARE_CACHE = CACHE_DIR / "fare_all_origins.json"
 APP_DATA = ROOT / "app_data" / "app_data.json"
 
 TP_STAGING = ROOT / "data" / "derived" / "tp_fares.json"
+EST_EXPORT = ROOT / "data" / "models" / "fare_estimates.json.gz"
 
 CURRENCY = "EUR"
 SOURCE = "FR"                        # contract A source code for this harvester
@@ -425,6 +439,90 @@ def merge_tp():
     print(f"TP merge written; app_data.json is {APP_DATA.stat().st_size / 1e6:.1f} MB")
 
 
+def merge_est_bands(data, fares):
+    """Attach route-level estimate fallback bands from the estimation layer's
+    export: rec["e_out"] / rec["e_ret"] = {YYYY-MM: eur}, the model's p50
+    month-median one-way price for the route, window months only.
+
+    Deliberately NOT per-day fares: out/ret keep holding real bookable days
+    only (fare calendars and best-fare windows never show invented flights).
+    The app consults a band ONLY when no stored day matches the traveller's
+    dates, and renders it estimated (source "EST", tilde + est. chip), which
+    is the flight half of the fallback-chain rule: real quote, then cached
+    quote, then model estimate, never a blank.
+
+    Bands from a previous merge are cleared first, so a route the model no
+    longer covers loses its stale band on re-merge. Mutates `fares` in place;
+    returns a stats dict for meta.fares_model_est, or None when the export is
+    absent or unreadable (the chain then behaves exactly as before).
+    """
+    if not EST_EXPORT.exists():
+        return None
+    try:
+        with gzip.open(EST_EXPORT, "rt", encoding="utf-8") as fh:
+            export = json.load(fh)
+    except (OSError, ValueError) as e:
+        print(f"  estimate export unreadable ({type(e).__name__}): skipping the est step")
+        return None
+    est = export.get("estimates") or {}
+    meta = data["meta"]
+    start_m, end_m = meta["start_date"][:7], meta["end_date"][:7]
+    stats = {"routes": 0, "route_months": 0, "cleared": 0,
+             "export_generated_at": export.get("generated_at"),
+             "merged_from": date.today().isoformat()}
+
+    for anchor, col in fares.items():
+        est_anchor = est.get(anchor) or {}
+        for origin, rec in col.items():
+            had = ("e_out" in rec) or ("e_ret" in rec)
+            rec.pop("e_out", None)
+            rec.pop("e_ret", None)
+            bands = est_anchor.get(origin)
+            if not bands:
+                if had:
+                    stats["cleared"] += 1
+                continue
+            added = False
+            for side, key in (("out", "e_out"), ("ret", "e_ret")):
+                keep = {}
+                for month, row in (bands.get(side) or {}).items():
+                    if not (start_m <= month <= end_m):
+                        continue
+                    # export row: [p10, p50, p90, cheapest_p50, cheapest_day]
+                    p50 = row[1] if isinstance(row, (list, tuple)) and len(row) >= 2 else None
+                    if isinstance(p50, (int, float)) and p50 > 0:
+                        keep[month] = int(round(p50))
+                if keep:
+                    rec[key] = dict(sorted(keep.items()))
+                    stats["route_months"] += len(keep)
+                    added = True
+            if added:
+                stats["routes"] += 1
+
+    print(f"  estimate bands merged: {stats['routes']} routes carry e_out/e_ret "
+          f"({stats['route_months']} route-months, window {start_m}..{end_m}, "
+          f"{stats['cleared']} stale bands cleared)")
+    return stats
+
+
+def merge_est():
+    """Standalone est re-merge into the EXISTING table (offline, no harvest):
+    for when the estimation layer retrains between weekly fare runs. The
+    weekly `patch` already attaches the bands by itself."""
+    data = load_app_data()
+    fares = data.get("fares") or {}
+    if not fares:
+        sys.exit("no fares table in the master; run patch first")
+    stats = merge_est_bands(data, fares)
+    if stats is None:
+        print(f"no estimate export at {EST_EXPORT}; nothing to merge")
+        return
+    data["fares"] = dict(sorted(fares.items()))
+    data["meta"]["fares_model_est"] = stats
+    APP_DATA.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
+    print(f"est merge written; app_data.json is {APP_DATA.stat().st_size / 1e6:.1f} MB")
+
+
 def patch():
     if not FARE_CACHE.exists():
         sys.exit("no fare cache; run harvest first")
@@ -452,6 +550,7 @@ def patch():
     n_anchors = len(fares)
 
     tp_stats = merge_tp_staging(data, fares)
+    est_stats = merge_est_bands(data, fares)
 
     data["fares"] = dict(sorted(fares.items()))
     all_origins = sorted({o for a in fares.values() for o in a})
@@ -474,6 +573,10 @@ def patch():
         meta["fares_model_tp"] = tp_stats
     else:
         meta.pop("fares_model_tp", None)
+    if est_stats is not None:
+        meta["fares_model_est"] = est_stats
+    else:
+        meta.pop("fares_model_est", None)
 
     APP_DATA.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
     size_mb = APP_DATA.stat().st_size / 1e6
@@ -533,6 +636,8 @@ if __name__ == "__main__":
         stats()
     elif cmd == "tp":
         merge_tp()
+    elif cmd == "est":
+        merge_est()
     elif cmd == "refresh":
         refresh()
     elif cmd == "all":

@@ -67,6 +67,16 @@ export function fareProv(obj) {
   return { o, x, s, est };
 }
 
+/** Provenance of a composeTrip breakdown's FLIGHT price. An estimate-band
+ *  fare (breakdown.fare_estimated, no stored day matched the dates) is
+ *  always EST regardless of what the route record says; otherwise the route
+ *  record's contract A fields (or the breakdown itself, keeping the
+ *  ?provmock verify seam) decide. */
+export function flightBreakdownProv(breakdown, routeRec = null) {
+  if (breakdown?.fare_estimated) return { est: true, s: 'EST', o: null, x: null };
+  return fareProv(routeRec || breakdown);
+}
+
 /** Provenance for one direction of a round-trip fare pair ('into' or
  *  'out_of', the trip planner's flight object), falling back to flat fields
  *  when no per-direction bag is attached. */

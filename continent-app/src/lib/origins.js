@@ -66,6 +66,11 @@ function routesForOrigin(faresForOrigin, d, origin) {
       ...(rec.ret_o ? { return_seen: rec.ret_o } : {}),
       ...(rec.out_x ? { outbound_expires: rec.out_x } : {}),
       ...(rec.ret_x ? { return_expires: rec.ret_x } : {}),
+      // Estimate fallback bands ({YYYY-MM: eur}, model p50 month medians).
+      // Read ONLY when no stored day matches the chosen dates; rendered as
+      // "~EUR X est." (source EST), never as a bookable fare.
+      ...(rec.e_out ? { outbound_estimate: rec.e_out } : {}),
+      ...(rec.e_ret ? { return_estimate: rec.e_ret } : {}),
       // Dep/arr local times of each day's cheapest flight ('HH:MM/HH:MM',
       // harvest_flight_times.py). Partial coverage, absent days show no hour.
       outbound_time: rec.out_t || {},
