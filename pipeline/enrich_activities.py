@@ -673,8 +673,8 @@ def main():
         print(f"network phases took {time.time() - t0:.0f}s")
 
     data = apply_to_data(data, cache)
-    DATA.write_text(json.dumps(data, indent=1, ensure_ascii=False),
-                    encoding="utf-8")
+    from pipeline_io import atomic_write_json
+    atomic_write_json(DATA, data)
     save_cache(cache, force=True)
     after = coverage(data)
     print(f"after:  {after}")

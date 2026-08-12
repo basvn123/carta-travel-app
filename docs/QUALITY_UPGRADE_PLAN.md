@@ -33,51 +33,69 @@ destinations, 134,657 POIs (items_full), all open-data sourced.
 
 ## Plan
 
-### Phase 1: audit + dedupe (index-stable)
+### Phase 1: audit + dedupe (index-stable) - DONE 2026-08-11
 - [x] pipeline/audit_quality.py, report in logs/audit_quality_report.json
-- [ ] pipeline/dedupe_pois.py: same union-find rules as the UI, but at the
-  master: merge signal fields (wiki, img, desc, heritage, pop) into the
-  winner, tag losers `dup: true` (NO deletion or reordering; saved plans
-  reference stable indices). Exports and scoring skip dup-tagged POIs.
+  (+ FoP no-freedom-of-panorama image review queue, 8,542 flagged)
+- [x] pipeline/dedupe_pois.py: UI union-find rules ported but STRICTER
+  (name-token corroboration for img/geo keys, document-frequency filter,
+  distinct-year guard): 7,202 dups tagged, 507 fields merged into winners.
+  Index-stable (saved plans keep speaking in original indices).
+- [x] normalize_poi_kinds.py finally applied: 1,957 commercial-noise POIs
+  demoted rate 0 + noise:1; writer hardened to atomic_write_json.
 
-### Phase 2: POI significance engine (replaces blind trust in OTM rate)
-- [ ] 2a harvest_poi_sitelinks.py: wiki URL -> QID (prop=pageprops, batched
-  50/req) -> sitelink count + heritage-designation flag (wbgetentities),
-  cache/poi_sitelinks.json. Finish the POI pop harvest (resumable, exists).
-- [ ] 2b harvest_wikivoyage_listings.py: en.wikivoyage wikitext per dest,
-  parse {{see}}/{{do}} listings (name, coords, order) + article status
-  (star/guide/usable); match to POIs by normalized name + geo proximity;
-  cache/wikivoyage_listings.json.
-- [ ] 2c score_significance.py: composite per POI
+### Phase 2: POI significance engine - DONE 2026-08-12 (applied)
+- [x] 2a harvest_poi_wikidata.py: 26k wiki URLs -> QID -> sitelinks,
+  heritage P1435, visitors P1174, PLUS admin/settlement/station class flags
+  (6,568 POIs were riding their TOWN's article fame - the class flags zero
+  those signals). cache/poi_wikidata.json. POI pop harvest completed:
+  34,464 URLs.
+- [x] 2b harvest_wikivoyage_listings.py: 1,010 articles, 13,248 See/Do
+  listings + status ladder (4 star, 103 guide). cache/wikivoyage_listings.json.
+- [x] 2c score_significance.py: composite per POI
       s = w_pv*zlog(pop) + w_sl*zlog(sitelinks) + w_her*heritage
         + w_wv*wikivoyage_listing (order-weighted) + w_rate*(old rate prior)
       blend = 0.6 * per-dest percentile + 0.4 * Europe-wide percentile
       (playbook C: per-city normalisation keeps small-town tier-1s).
-      New rate: quota per dest scaled by catalogue size (rate-3 capped
-      ~top 15% locally with corroboration required, every dest with >= 6
-      POIs keeps >= 1 rate-3). Components stored in cache/poi_significance.json
-      (sidecar, keeps the wire lean); apply pass rewrites it.rate + it.pop
-      in the master, idempotent.
-- [ ] 2d validate: anchors gold set (UNESCO/heritage + curated gems +
-  Wikivoyage star listings must land tier >= 2; known noise kinds must not
-  be rate-3), Spearman old-vs-new per dest, review queue of biggest movers.
-  Benchmark per playbook: precision >= ~0.8 on anchors before apply.
+      New rate: LOCAL quota (top ~12% = 3 with corroboration required,
+      next ~28% = 2), heritage floor (designated + >= 15 sitelinks never
+      falls below 2). Ledger in cache/poi_significance.json; apply rewrote
+      63,674 rates + set pop on 22,386 POIs. Rate-3 share 29.8% -> 9.9%,
+      inflated dests 192 -> 0.
+- [x] 2d validated + gated: famous-heritage anchors recall 1.0 (1,392),
+  Wikivoyage top listings 0.957 (2,347), zero uncorroborated rate-3s,
+  median per-dest Spearman(old,new) 0.75. Gate (min recall 0.80) is
+  enforced INSIDE `score_significance.py apply` - it refuses to write on
+  failure. Movers ledger in logs/significance_report.json.
 
-### Phase 3: dest rating hardening
-- [ ] apply pop to master (enrich_activities apply path), verify wire.
-- [ ] rating_layer things_to_do component recomputed from the new rates
-  (dedupe + deflation changes the rate-3 counts it saturates on).
-- [ ] rating_shadow_report.py refresh -> human review queue for curated
-  appeal outliers (the 70% component stays human, per rating_v2 rationale).
+### Phase 3: dest rating hardening - DONE 2026-08-12
+- [x] pop applied via score_significance apply; wire re-synced.
+- [x] rating_layer: dup/noise excluded from things_to_do,
+  THINGS_SATURATION recalibrated 28 -> 19 (median raw moved to ~25;
+  keeps the median component at the calibrated ~0.73). Tier counts held
+  steady (40/150/413) through apply_rating_layer's own validation gate.
+- [x] rating_shadow_report.py: fixed silently-dead guide component
+  (read guide.blurb, master has guide.text), added the Wikivoyage
+  star/guide/usable status ladder, refreshed the review queue.
 
-### Phase 4: automation + hygiene
-- [ ] run_pipeline tasks: audit_quality (report-only, every run),
-  poi sitelinks/pageviews (monthly), wikivoyage listings (quarterly),
-  score_significance apply behind the validation gate.
-- [ ] data_licenses.md rows for the new call patterns (Wikidata CC0,
-  Wikivoyage CC BY-SA listing-derived rates).
-- [ ] no-FoP image review flag (BE FR GR IT LU + list): images.fop_flag on
-  POIs in no-FoP countries whose subject is modern architecture kinds.
+### Phase 4: automation + hygiene - DONE 2026-08-12
+- [x] run_pipeline tasks: `poi_significance` (monthly chain: pageviews ->
+  wikidata -> wv listings -> dedupe -> normalize -> gated apply -> rating)
+  and `audit` (monthly report-only).
+- [x] data_licenses.md rows extended (harvest_poi_wikidata,
+  harvest_wikivoyage_listings call patterns).
+- [x] no-FoP image review queue in audit_quality.py (report-only).
+- [x] SCHEMA.md: stale rating_v1 stanza replaced with rating_v2; new POI
+  fields (rate v15.1 semantics, dup, noise) documented.
+- [x] verify: npm run data synced, build + smoke-nav green, top-sight
+  spot checks (BRU/KRK/Hallstatt/CRL) correct on the served wire.
+
+### Known follow-ups
+- 514 residual fuzzy dup pairs (deliberately unmerged; UI suppression
+  covers them) - e.g. KRK "Polish Aviation Museum"/"Muzeum Lotnictwa".
+- 409 rate-3 POIs still imageless -> run must_descs/poi_images backfill.
+- 8,542 FoP-flagged images await a human review policy.
+- Big-city Wikivoyage listings live in district articles (not followed);
+  small towns, where the signal matters most, are covered.
 
 ## Explicitly NOT doing (and why)
 - Postgres medallion warehouse migration: trailslab PostGIS exists for

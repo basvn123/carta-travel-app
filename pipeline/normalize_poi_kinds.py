@@ -33,6 +33,8 @@ import re
 import sys
 from pathlib import Path
 
+from pipeline_io import atomic_write_json
+
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_TARGETS = [
     ROOT / "app_data" / "app_data.json",                        # master (items_full)
@@ -99,7 +101,13 @@ def patch(path: Path) -> None:
             n_kind += k
             n_noise += n
 
-    path.write_text(json.dumps(data, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
+    # master keeps the pipeline's canonical indent=1; the served copy stays
+    # compact (it is what the browser downloads). Both go through the atomic
+    # writer so an interrupted run can never truncate a dataset.
+    if "destinations" in data:
+        atomic_write_json(path, data)
+    else:
+        atomic_write_json(path, data, indent=None, separators=(",", ":"))
     print(f"  {path.name}: {n_kind} kinds normalized, {n_noise} commercial-noise items demoted")
 
 
