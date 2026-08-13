@@ -21,6 +21,8 @@ export const nl = {
   'header.account': 'Account',
   'header.accountTitle': 'Account & voorkeuren',
   'header.seePricing': 'Bekijk prijzen',
+  'header.passes': 'Passen',
+  'account.language': 'Taal',
   'lang.pick': 'Taal',
 
   'gate.title': 'Vind je volgende reis',
@@ -233,6 +235,8 @@ export const nl = {
 
   'filter.datesTitle': 'Vertrek- & terugreisdatum',
   'filter.datesAria': 'Data',
+  'filter.dates': 'Datums',
+  'filter.dateSpan': '{a} t/m {b}',
   'filter.filters': 'Filters',
   'filter.lifestyleAria': 'Lifestyle-instellingen',
   'filter.lifestyleTitle': 'Lifestyle: hoe je eet, drinkt en geld uitgeeft',
@@ -1292,4 +1296,12 @@ export const nl = {
   "prov.estTitle": "een schatting, geen actuele prijs",
   "prov.expiredTitle": "deze prijs is verlopen, controleer voor het boeken",
   "prov.bookingNote": "Prijzen kunnen veranderd zijn, controleer op de boekingssite.",
+  "trails.nearbyTitle": "Wandelingen en dagtochten in de buurt",
+  "trails.cityDay": "Stadsdag",
+  "trails.dayHike": "Dagwandeling",
+  "trails.trail": "Wandelroute",
+  "trails.stops": "{n} stops",
+  "trails.credit": "Routes van OpenStreetMap, waar beschikbaar gecontroleerd met officiële bronnen.",
+  "day.readyMade": "Gebruik de kant-en-klare dag in {city}",
+  "day.readyMadeSub": "{n} stops in wandelvolgorde, {km} km te voet",
 };

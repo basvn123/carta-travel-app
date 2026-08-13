@@ -10,6 +10,7 @@ import { ReceiptIcon, CalendarIcon, BedIcon, DiningIcon, CarIcon, InfoIcon, Tree
 import { PlaneIcon } from '../components/TransportIcons.jsx';
 import { useI18n } from '../i18n/index.jsx';
 import { BreakdownTab, ViaAirportOptions } from './DetailBreakdown.jsx';
+import { TrailsNearby } from '../components/TrailsNearby.jsx';
 
 const fmtDate = (iso) => new Date(iso + 'T00:00:00Z').toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
 
@@ -172,6 +173,8 @@ export function DetailPanel({ destination, departDate, returnDate, choices, setC
           )}
         </div>
       )}
+
+      <TrailsNearby destination={destination} />
 
       {!breakdown ? (
         <div className="panel-section">

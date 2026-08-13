@@ -15,6 +15,7 @@ import { useI18n } from '../i18n/index.jsx';
 import { localIntelFor } from '../lib/localIntel.js';
 import { geocodeAddress } from '../lib/geocode.js';
 import { scenicWalksFor } from '../lib/scenicWalks.js';
+import { findCitytrip, resolveCitytripStops, loadTrail } from '../lib/citytrips.js';
 import { CountryIntel } from '../components/CountryIntel.jsx';
 import { useCountryInsights } from '../hooks/useCountryInsights.js';
 import { addDays, todayISO, fmtDate as fmtDateFull } from '../lib/dates.js';
@@ -187,6 +188,9 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
   // live in prefs.aiPlans keyed "stopIdx:dayIdx", so they survive reloads and
   // ride the same per-plan cloud sync as every other answer.
   const [aiOpen, setAiOpen] = useState(false);
+  // The published ready-made day for the selected city (trails wire,
+  // category citytrip), when one exists. Null for most towns.
+  const [citytrip, setCitytrip] = useState(null);
   // Carta keeps the walking order optimal on every add ('auto'); manual
   // reordering switches to 'manual' until "Best route" is tapped again.
   const [routeMode, setRouteMode] = useState('auto');
@@ -832,6 +836,39 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
     };
     setPrefs(savedPrefs);
     persistPrefs(plan?.id, savedPrefs);
+  };
+
+  /* ---- Ready-made day: the published citytrip for this city ---- */
+
+  useEffect(() => {
+    let live = true;
+    setCitytrip(null);
+    const dest = stop?.dest;
+    if (dest?.iso2 && dest?.id) {
+      findCitytrip(dest.iso2, dest.id).then((ct) => { if (live) setCitytrip(ct); });
+    }
+    return () => { live = false; };
+  }, [stop?.dest?.id]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Lay the citytrip's stops into the selected day, in their composed
+  // walking order. Same assignment shape as a hand-built or drafted day, so
+  // everything downstream (route, clock, exports) just works. Stops whose
+  // catalogue POI no longer resolves are skipped, never invented.
+  const applyCitytrip = async () => {
+    if (!citytrip || !stop?.dest) return;
+    const fullMap = actFull ?? await fetchActivitiesFull();
+    if (!actFull && fullMap) setActFull(fullMap);
+    const detail = await loadTrail(citytrip.id);
+    if (!detail) return;
+    const { items } = itemsForStop(stop, fullMap);
+    const { indices } = resolveCitytripStops(detail, items, stop.dest.id);
+    if (!indices.length) return;
+    const next = {
+      ...assignments,
+      [stopIdx]: { ...(assignments[stopIdx] || {}), [dayIdx]: indices },
+    };
+    setAssignments(next);
+    persistAssignments(plan?.id, next);
   };
 
   /* ---- AI day planner (plan-day Edge Function) ---- */
@@ -3522,6 +3559,18 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
                   <small>{t('ai.btnEmptySub')}</small>
                 </span>
               </button>
+              {citytrip && (
+                <button className="day-ai-hero day-citytrip-hero" onClick={applyCitytrip}>
+                  <span className="day-ai-hero-ico"><RouteIcon size={18} /></span>
+                  <span className="day-ai-hero-text">
+                    <b>{t('day.readyMade', { city: stop.dest?.city || '' })}</b>
+                    <small>{t('day.readyMadeSub', {
+                      n: citytrip.n_stops,
+                      km: (citytrip.distance_m / 1000).toFixed(1),
+                    })}</small>
+                  </span>
+                </button>
+              )}
               <p className="trip-note">
                 Or build it yourself: tap the pins on the map, or add places
                 below. Carta keeps the walking order optimal as you add.

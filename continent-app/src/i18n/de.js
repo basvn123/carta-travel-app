@@ -21,6 +21,8 @@ export const de = {
   'header.account': 'Konto',
   'header.accountTitle': 'Konto & Einstellungen',
   'header.seePricing': 'Preise ansehen',
+  'header.passes': 'Pässe',
+  'account.language': 'Sprache',
   'lang.pick': 'Sprache',
 
   'gate.title': 'Finde deine nächste Reise',
@@ -233,6 +235,8 @@ export const de = {
 
   'filter.datesTitle': 'Hin- & Rückreisedatum',
   'filter.datesAria': 'Daten',
+  'filter.dates': 'Daten',
+  'filter.dateSpan': '{a} bis {b}',
   'filter.filters': 'Filter',
   'filter.lifestyleAria': 'Lifestyle-Einstellungen',
   'filter.lifestyleTitle': 'Lifestyle: wie du isst, trinkst und Geld ausgibst',
@@ -1292,4 +1296,12 @@ export const de = {
   "prov.estTitle": "geschätzt, kein Live-Preis",
   "prov.expiredTitle": "dieser Preis ist abgelaufen, vor dem Buchen prüfen",
   "prov.bookingNote": "Preise können sich geändert haben, auf der Buchungsseite prüfen.",
+  "trails.nearbyTitle": "Wanderungen und Tagesausflüge in der Nähe",
+  "trails.cityDay": "Stadttag",
+  "trails.dayHike": "Tageswanderung",
+  "trails.trail": "Wanderweg",
+  "trails.stops": "{n} Stationen",
+  "trails.credit": "Routen von OpenStreetMap, wo vorhanden mit offiziellen Quellen abgeglichen.",
+  "day.readyMade": "Den fertigen Tag in {city} verwenden",
+  "day.readyMadeSub": "{n} Stationen in Gehreihenfolge, {km} km zu Fuß",
 };

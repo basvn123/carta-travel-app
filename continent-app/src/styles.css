@@ -240,32 +240,37 @@ input, select {
     margin-left: auto;
     display: flex;
     align-items: center;
-    padding: 0 12px;
+    gap: 4px;
+    padding: 0 10px;
     height: 56px;
     min-height: 56px;
   }
   .app-header-account .account-avatar-label { display: none; }
+  /* 44px hit areas throughout the row (HIG minimum); the drawn circle stays a
+     touch smaller so the bar keeps its air. */
   .app-header-account .account-avatar-btn {
-    width: 40px;
-    height: 40px;
+    width: 44px;
+    height: 44px;
     padding: 0;
     justify-content: center;
     border: none;
     background: none;
   }
-  .app-header-account .account-avatar { width: 40px; height: 40px; font-size: 15px; }
-  /* Pricing collapses to its glyph, the same 40px touch target as the avatar. */
+  .app-header-account .account-avatar { width: 38px; height: 38px; font-size: 15px; }
+  /* Passes: a labelled chip instead of a bare ticket glyph, so the upgrade
+     entry says what it is. Accent on the glyph and word only, no fill. */
   .app-header-account .header-pricing-btn {
-    width: 40px;
-    height: 40px;
-    padding: 0;
-    justify-content: center;
+    height: 44px;
+    padding: 0 10px;
+    gap: 6px;
     border: none;
     background: none;
     box-shadow: none;
+    color: var(--accent);
   }
-  .app-header-account .header-pricing-btn svg { width: 18px; height: 18px; }
+  .app-header-account .header-pricing-btn svg { width: 16px; height: 16px; }
   .header-pricing-label { display: none; }
+  .app-header-account .header-pricing-label-short { display: inline; }
 
   /* The desktop section tabs collapse; BottomNav (which includes Home) is
      the switch on mobile. */
@@ -356,65 +361,9 @@ input, select {
   .app:not(.list-collapsed) .map-guide { display: none; }
 }
 
-/* ───────── Language picker: a compact flag pill in the header that switches
-   the UI language. Same manners and palette as the origin picker beside it. */
-.lang-picker { position: relative; }
-.lang-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 9px;
-  border-radius: 999px;
-  background: var(--paper-dim);
-  border: 1px solid var(--rule);
-  color: var(--ink-soft);
-  cursor: pointer;
-  transition: background .15s, border-color .15s, color .15s;
-}
-.lang-btn:hover { background: #efe9db; color: var(--ink); }
-.lang-btn .country-flag { border-radius: 2px; flex: none; }
-.lang-btn-code {
-  font-family: var(--mono);
-  font-size: 10.5px;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-}
-.lang-btn-caret { font-size: 9px; color: var(--ink-mute); flex: none; }
-.lang-pop {
-  position: absolute;
-  top: calc(100% + 8px);
-  right: 0;
-  width: 180px;
-  padding: 6px;
-  background: var(--paper, #fbf8f1);
-  border: 1px solid var(--rule);
-  border-radius: 14px;
-  box-shadow: var(--shadow-2);
-  z-index: 60;
-}
-.lang-opt {
-  display: flex;
-  align-items: center;
-  gap: 9px;
-  width: 100%;
-  padding: 8px 10px;
-  border-radius: 8px;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  text-align: left;
-  color: var(--ink-soft);
-  transition: background .12s, color .12s;
-}
-.lang-opt:hover { background: var(--paper-dim); color: var(--ink); }
-.lang-opt.on { background: var(--accent-bg); color: var(--accent); }
-.lang-opt .country-flag { border-radius: 2px; flex: none; }
-.lang-opt-label { font-size: 13px; font-weight: 500; flex: 1; }
-.lang-opt-check { font-size: 11px; }
-@media (max-width: 768px) {
-  /* Keep the header row tight on phones: flag only, no code. */
-  .lang-btn-code { display: none; }
-}
+/* The header language flag is gone: the app language now switches from the
+   Account panel (.account-lang-grid), where a once-per-person setting
+   belongs. */
 
 /* ───────── Origin picker: the "flying from" control in the header. A compact
    pill that opens a searchable, country-grouped list of departure airports;
@@ -5100,38 +5049,108 @@ input, select {
 }
 .account-lifestyle-btn { width: 100%; justify-content: space-between; }
 
-/* ─── Mobile top-bar icon buttons (dates / filters) ─── */
-
-.icon-btn {
-  position: relative;
-  display: inline-flex;
+/* ─── Account hub: app language ───
+   Moved here from the top bar. All six languages visible at once, the active
+   one ticked, no dropdown to open. */
+.account-lang-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.account-lang-opt {
+  display: flex;
   align-items: center;
-  justify-content: center;
-  width: 40px;
-  height: 40px;
-  border-radius: 999px;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 12px;
+  border-radius: 10px;
   border: 1px solid var(--rule);
   background: var(--paper);
   color: var(--ink-soft);
-  flex-shrink: 0;
-  transition: border-color .15s, color .15s, background .15s;
+  font-size: 13px;
+  font-weight: 500;
+  text-align: left;
+  transition: border-color .15s, background .15s, color .15s;
 }
-.icon-btn:hover { border-color: var(--ink); color: var(--ink); }
-.icon-btn.open {
-  background: var(--paper-dim);
-  border-color: var(--ink);
-  color: var(--ink);
+.account-lang-opt:hover { border-color: var(--ink); color: var(--ink); }
+.account-lang-opt.on {
+  border-color: var(--accent);
+  background: var(--accent-bg);
+  color: var(--accent);
 }
-.icon-btn.has-active { border-color: var(--accent); color: var(--accent); }
-.icon-btn-dot {
-  position: absolute;
-  top: 6px;
-  right: 6px;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
+.account-lang-opt .country-flag { border-radius: 2px; flex: none; }
+.account-lang-label { flex: 1; }
+
+/* ─── Mobile top-bar: one segmented pill (dates | filters) ───
+   Replaces the old row of unlabelled 40px icon circles. Modelled on the
+   desktop search strip: a single bordered row split by an internal hairline,
+   the dates half stating the chosen window in mono (a measured fact), the
+   filters half a labelled trigger carrying its active count. */
+
+.mobile-seg {
+  display: inline-flex;
+  align-items: stretch;
+  min-height: 44px;
+  max-width: 100%;
+  min-width: 0;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: var(--paper);
+}
+.mobile-seg .mobile-dates-anchor {
+  display: flex;
+  min-width: 0;
+}
+.mobile-seg-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 44px;
+  min-width: 0;
+  padding: 0 13px;
+  border-radius: 999px;
+  color: var(--ink-soft);
+  transition: color .15s, background .15s;
+}
+.mobile-seg-btn:hover,
+.mobile-seg-btn.open { background: var(--paper-dim); color: var(--ink); }
+.mobile-seg-btn.has-active { color: var(--accent); }
+.mobile-seg-btn svg { flex-shrink: 0; }
+/* The chosen dates are a measured fact, so they read in mono. Ellipsis is the
+   safety valve for the widest locales on the narrowest phones. */
+.mobile-seg-value {
+  font-family: var(--mono);
+  font-size: 11.5px;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.mobile-seg-label {
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.mobile-seg-count {
+  min-width: 17px;
+  height: 17px;
+  padding: 0 4px;
+  border-radius: 999px;
   background: var(--accent);
-  border: 1.5px solid var(--paper);
+  color: var(--paper);
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 17px;
+  text-align: center;
+  flex-shrink: 0;
+}
+.mobile-seg-rule {
+  width: 1px;
+  align-self: stretch;
+  margin: 9px 0;
+  background: var(--rule);
+  flex: none;
 }
 
 .mobile-dates-anchor { position: relative; }
@@ -7134,7 +7153,10 @@ input, select {
   /* Brand and account access now live in the always-visible AppHeader above
      this bar; only the calendar/filter icon triggers remain here. */
   .filter-bar .mobile-header-actions { display: inline-flex; }
-  .mobile-header-actions { align-items: center; gap: 8px; }
+  .mobile-header-actions { align-items: center; gap: 8px; flex: 1; min-width: 0; }
+  /* The Filters segment keeps its label; when width runs out it is the dates
+     value that ellipsizes. */
+  .mobile-seg > .mobile-seg-btn { flex-shrink: 0; }
 
   /* Depart/Return live behind the calendar icon's popover instead. */
   .row-date-fields { display: none; }
@@ -7510,6 +7532,14 @@ input, select {
 }
 .header-pricing-btn svg { color: var(--accent); flex-shrink: 0; }
 .header-pricing-btn:hover { border-color: var(--ink); background: var(--paper-dim); color: var(--ink); }
+/* Short "Passes" wording is the mobile chip's label; desktop keeps the full
+   "See pricing". The narrowest phones fall back to the glyph alone, still on
+   a 44px target. */
+.header-pricing-label-short { display: none; }
+@media (max-width: 379px) {
+  .app-header-account .header-pricing-label-short { display: none; }
+  .app-header-account .header-pricing-btn { padding: 0 8px; }
+}
 
 @media (max-width: 880px) {
   .account-slot { width: 100%; justify-content: flex-end; margin: 2px 0 0; }
@@ -10325,9 +10355,9 @@ input, select {
   .filter-bar.mobile-open .filter-highlights{ order: 11; grid-column: 1 / -1; }
   .filter-bar.mobile-open .reset-filters-btn{ order: 99; }
 
-  /* The lifestyle entry point on mobile is the sliders icon in the header
-     row; the in-sheet pill would be a duplicate. */
-  .filter-bar .filter-lifestyle { display: none; }
+  /* Lifestyle's one mobile entry point is this in-sheet pill: the header
+     lost its standalone lifestyle icon when the trigger row became the
+     segmented dates | filters pill. */
 }
 
 /* ─── Date pickers: never off-screen on phones. The POPOVER anchors to its
@@ -15507,3 +15537,48 @@ button.ai-sched-main:focus-visible {
   .account-back, .account-profile-card, .account-invite-btn, .account-menu-row,
   .account-faq-q, .account-faq-chev, .account-feedback-input { transition: none; }
 }
+
+/* ---- Trails nearby (destination detail) + ready-made day ------------- */
+/* The published trails wire surfacing in the browse panel: the city's own
+   composed day first, then trails within reach. Hairline rows, mono facts,
+   nothing boxed: a run of related facts, not a card deck. */
+.trails-nearby-title {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 13px; font-weight: 600; color: var(--ink-soft);
+  margin-bottom: 6px;
+}
+.trails-nearby-row {
+  padding: 8px 0;
+  border-top: 1px solid var(--rule-soft);
+}
+.trails-nearby-head {
+  display: flex; align-items: baseline; justify-content: space-between; gap: 10px;
+}
+.trails-nearby-name { font-size: 13.5px; font-weight: 600; color: var(--ink); }
+.trails-nearby-kind {
+  flex: none; font-size: 11px; color: var(--ink-mute);
+  border: 1px solid var(--rule-soft); border-radius: 4px; padding: 1px 6px;
+}
+.trails-nearby-kind.city { color: var(--accent); border-color: var(--accent-soft); }
+.trails-nearby-facts {
+  display: flex; gap: 12px; margin-top: 2px;
+  font-family: var(--mono); font-size: 12px; color: var(--ink-soft);
+  font-variant-numeric: tabular-nums;
+}
+.trails-nearby-summary {
+  margin: 4px 0 0; font-size: 12.5px; line-height: 1.45; color: var(--ink-mute);
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+.trails-nearby-credit {
+  margin: 8px 0 0; font-size: 11px; color: var(--ink-mute);
+}
+
+/* The ready-made day button sits under the AI hero as the quiet second
+   option: same shape, paper ground and a hairline instead of the terracotta
+   wash, so the day keeps exactly one loud call to action. */
+.day-citytrip-hero {
+  border-color: var(--rule);
+  background: var(--bg-card);
+}
+.day-citytrip-hero:hover { background: var(--paper-dim); }
+.day-citytrip-hero .day-ai-hero-ico { color: var(--ink-soft); }

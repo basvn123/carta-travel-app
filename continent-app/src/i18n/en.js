@@ -29,6 +29,8 @@ export const en = {
   'header.account': 'Account',
   'header.accountTitle': 'Account & preferences',
   'header.seePricing': 'See pricing',
+  'header.passes': 'Passes',
+  'account.language': 'Language',
   'lang.pick': 'Language',
 
   // Entry gate
@@ -245,6 +247,8 @@ export const en = {
   // Filter bar
   'filter.datesTitle': 'Depart & return dates',
   'filter.datesAria': 'Dates',
+  'filter.dates': 'Dates',
+  'filter.dateSpan': '{a} to {b}',
   'filter.filters': 'Filters',
   'filter.lifestyleAria': 'Lifestyle settings',
   'filter.lifestyleTitle': "Lifestyle: how you'll eat, drink and spend",
@@ -1855,4 +1859,12 @@ export const en = {
   "prov.estTitle": "estimated, not a live quote",
   "prov.expiredTitle": "this quote has lapsed, confirm before booking",
   "prov.bookingNote": "Prices may have changed, confirm on the booking site.",
+  "trails.nearbyTitle": "Hikes and day trips nearby",
+  "trails.cityDay": "City day",
+  "trails.dayHike": "Day hike",
+  "trails.trail": "Trail",
+  "trails.stops": "{n} stops",
+  "trails.credit": "Trail routes from OpenStreetMap, checked against official sources where published.",
+  "day.readyMade": "Use the ready-made {city} day",
+  "day.readyMadeSub": "{n} stops in walking order, {km} km on foot",
 };

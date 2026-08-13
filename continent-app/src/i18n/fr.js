@@ -21,6 +21,8 @@ export const fr = {
   'header.account': 'Compte',
   'header.accountTitle': 'Compte & préférences',
   'header.seePricing': 'Voir les tarifs',
+  'header.passes': 'Pass',
+  'account.language': 'Langue',
   'lang.pick': 'Langue',
 
   'gate.title': 'Trouvez votre prochain voyage',
@@ -233,6 +235,8 @@ export const fr = {
 
   'filter.datesTitle': 'Dates aller & retour',
   'filter.datesAria': 'Dates',
+  'filter.dates': 'Dates',
+  'filter.dateSpan': '{a} au {b}',
   'filter.filters': 'Filtres',
   'filter.lifestyleAria': 'Réglages de style de vie',
   'filter.lifestyleTitle': 'Style de vie : comment vous mangez, buvez et dépensez',
@@ -1292,4 +1296,12 @@ export const fr = {
   "prov.estTitle": "estimation, pas un tarif en direct",
   "prov.expiredTitle": "ce tarif a expiré, vérifiez avant de réserver",
   "prov.bookingNote": "Les prix peuvent avoir changé, vérifiez sur le site de réservation.",
+  "trails.nearbyTitle": "Randonnées et excursions à proximité",
+  "trails.cityDay": "Journee en ville",
+  "trails.dayHike": "Randonnée d'un jour",
+  "trails.trail": "Itinéraire",
+  "trails.stops": "{n} étapes",
+  "trails.credit": "Itinéraires d'OpenStreetMap, vérifiés avec les sources officielles quand elles existent.",
+  "day.readyMade": "Utiliser la journée toute prête à {city}",
+  "day.readyMadeSub": "{n} étapes dans l'ordre de marche, {km} km à pied",
 };

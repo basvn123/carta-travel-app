@@ -21,6 +21,8 @@ export const it = {
   'header.account': 'Account',
   'header.accountTitle': 'Account e preferenze',
   'header.seePricing': 'Vedi prezzi',
+  'header.passes': 'Pass',
+  'account.language': 'Lingua',
   'lang.pick': 'Lingua',
 
   'gate.title': 'Trova il tuo prossimo viaggio',
@@ -233,6 +235,8 @@ export const it = {
 
   'filter.datesTitle': 'Date di andata e ritorno',
   'filter.datesAria': 'Date',
+  'filter.dates': 'Date',
+  'filter.dateSpan': '{a} al {b}',
   'filter.filters': 'Filtri',
   'filter.lifestyleAria': 'Impostazioni stile di vita',
   'filter.lifestyleTitle': 'Stile di vita: come mangi, bevi e spendi',
@@ -1292,4 +1296,12 @@ export const it = {
   "prov.estTitle": "una stima, non una tariffa in tempo reale",
   "prov.expiredTitle": "questa tariffa è scaduta, verifica prima di prenotare",
   "prov.bookingNote": "I prezzi possono essere cambiati, verifica sul sito di prenotazione.",
+  "trails.nearbyTitle": "Escursioni e gite vicine",
+  "trails.cityDay": "Giornata in città",
+  "trails.dayHike": "Escursione di un giorno",
+  "trails.trail": "Sentiero",
+  "trails.stops": "{n} tappe",
+  "trails.credit": "Percorsi da OpenStreetMap, verificati con le fonti ufficiali dove pubblicate.",
+  "day.readyMade": "Usa la giornata già pronta a {city}",
+  "day.readyMadeSub": "{n} tappe in ordine di cammino, {km} km a piedi",
 };
