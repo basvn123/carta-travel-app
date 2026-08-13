@@ -62,9 +62,13 @@ _DIRECT_RE = re.compile(
     r"upload\.wikimedia\.org/wikipedia/commons/[0-9a-f]/[0-9a-f]{2}/([^/?]+)$")
 _TAG_RE = re.compile(r"<[^>]+>")
 # Licence short names that fail the gate. "Public domain", CC0, CC BY,
-# CC BY-SA and the localised variants all pass.
-_BAD_LICENSE_RE = re.compile(r"\b(nc|nd|noncommercial|no.?derivatives"
-                             r"|permission|copyright(ed)?( work)?)\b", re.I)
+# CC BY-SA, FAL and the localised variants all pass, and so does
+# "Copyrighted free use" (Commons' released-for-any-purpose grant; an
+# earlier regex wrongly flagged it on the word "copyrighted" - the 2026-08
+# full sweep found those 36 were the ONLY hits, i.e. zero real violations).
+_BAD_LICENSE_RE = re.compile(r"\b(nc\b|nd\b|noncommercial|non.?commercial"
+                             r"|no.?derivatives|by permission|permission only"
+                             r")", re.I)
 
 
 def commons_filename(img_url):
