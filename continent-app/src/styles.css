@@ -8426,6 +8426,385 @@ input, select {
 }
 .saved-empty-cta:hover { background: var(--accent); border-color: var(--accent); }
 
+/* ─── Saved trips v2: two states of travelling under one roof. Favorites is
+   the shortlist (photo-led, aspirational), Planned trips is the calendar
+   (mini map, ledger, upcoming > day plans > past, in falling visual weight).
+   The dates do the filing: nothing is archived by hand. ─── */
+
+/* The segmented control lives inside the sticky header so the two states are
+   always one tap apart, however deep the scroll. */
+.saved-panel-header { padding-bottom: 16px; }
+.saved-tabs { margin-top: 14px; }
+.saved-tabs button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 10px 12px;
+  font-weight: 600;
+}
+.saved-tabs button small {
+  font-family: var(--mono);
+  font-size: 10px;
+  line-height: 1.6;
+  min-width: 18px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: var(--paper-dim);
+  color: var(--ink-soft);
+  opacity: 1;
+}
+.saved-tabs button.seg-on small { background: rgba(255, 255, 255, 0.18); color: var(--paper); }
+
+/* Mini map: upcoming trips pinned in departure order. Same embed contract as
+   the AI route preview: the map normally lays itself out full-bleed beside the
+   side panel, so pin it to this frame with force. */
+.saved-map-section { padding-bottom: 16px; }
+.saved-map {
+  position: relative;
+  height: 170px;
+  border: 1px solid var(--rule);
+  border-radius: 14px;
+  overflow: hidden;
+  background: var(--paper-dim);
+}
+.saved-map .trip-map,
+.saved-map > div { position: absolute !important; inset: 0 !important; }
+.saved-map-loading { position: absolute; inset: 0; background: var(--paper-dim); }
+.saved-map-caption {
+  display: flex;
+  align-items: baseline;
+  gap: 9px;
+  min-width: 0;
+  margin-top: 10px;
+}
+.saved-map-caption-label {
+  flex: none;
+  font-family: var(--mono);
+  font-size: 9.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--ink-mute);
+}
+.saved-map-caption-city {
+  font-family: var(--display);
+  font-size: 17px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.saved-map-caption-when {
+  flex: none;
+  margin-left: auto;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--accent);
+}
+
+/* The travel ledger: two measured facts, each opening its own list. */
+.saved-ledger-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.saved-ledger-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  padding: 14px 16px;
+  border: 1px solid var(--rule);
+  border-radius: 14px;
+  background: var(--bg-card);
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color .15s, box-shadow .15s, background .15s;
+}
+.saved-ledger-tile:hover { border-color: var(--ink-soft); box-shadow: var(--shadow-1); }
+.saved-ledger-tile.is-open { border-color: var(--accent); background: var(--accent-bg); }
+.saved-ledger-num {
+  display: flex;
+  align-items: baseline;
+  gap: 5px;
+  font-family: var(--mono);
+  font-size: 26px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.1;
+  color: var(--ink);
+}
+.saved-ledger-of { font-size: 12.5px; color: var(--ink-mute); }
+.saved-ledger-label { font-size: 11.5px; line-height: 1.35; color: var(--ink-soft); }
+.saved-ledger-detail { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.saved-ledger-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: var(--bg-card);
+  font-size: 11.5px;
+  color: var(--ink-soft);
+}
+
+/* Favorites: a photo grid, because a wishlist is looked at, not audited. */
+.fav-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.fav-card {
+  position: relative;
+  border: 1px solid var(--rule);
+  border-radius: 14px;
+  overflow: hidden;
+  background: var(--bg-card);
+}
+.fav-card-open {
+  position: relative;
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  padding: 0;
+  border: none;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+}
+.fav-card-photo {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  background-color: var(--paper-dim);
+  transition: transform .35s ease;
+}
+.fav-card-open:hover .fav-card-photo { transform: scale(1.04); }
+.fav-card-photo.is-fallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink-mute);
+}
+/* Legibility shade under the caption, dark enough to carry white text even
+   over the paper-dim fallback tile. */
+.fav-card-shade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(15, 23, 42, 0) 42%, rgba(15, 23, 42, 0.78) 100%);
+}
+.fav-card-text {
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.fav-card-city {
+  font-family: var(--display);
+  font-size: 18px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  color: #fff;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.fav-card-sub { display: flex; align-items: baseline; gap: 8px; min-width: 0; }
+.fav-card-country {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.85);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.fav-card-dates { flex: none; font-family: var(--mono); font-size: 10px; color: rgba(255, 255, 255, 0.75); }
+/* The bookmark IS the saved state: tapping it is how a favorite is let go. */
+.fav-card-mark {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 50%;
+  background: rgba(15, 23, 42, 0.45);
+  color: #fff;
+  cursor: pointer;
+  transition: background .15s;
+}
+.fav-card-mark:hover { background: var(--accent); }
+.fav-card-ask {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 12px;
+  background: rgba(248, 246, 240, 0.94);
+  text-align: center;
+}
+.fav-card-ask-text { font-size: 12.5px; font-weight: 600; color: var(--ink); }
+.fav-card-ask-row { display: flex; gap: 8px; }
+
+/* Upcoming trips: the heaviest object in the panel, photo full-bleed, the
+   countdown worn as a chip, tools tucked into the usual corner menu. */
+.uptrip-card {
+  border: 1px solid var(--rule);
+  border-radius: 14px;
+  overflow: hidden;
+  background: var(--bg-card);
+  transition: border-color .15s, box-shadow .15s;
+}
+.uptrip-card:hover { border-color: var(--ink-soft); box-shadow: var(--shadow-1); }
+.uptrip-visual { position: relative; }
+.uptrip-open {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 158px;
+  padding: 0;
+  border: none;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+  overflow: hidden;
+}
+.uptrip-photo {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  background-color: var(--paper-dim);
+  transition: transform .35s ease;
+}
+.uptrip-open:hover .uptrip-photo { transform: scale(1.03); }
+.uptrip-photo.is-fallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink-mute);
+}
+.uptrip-shade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(15, 23, 42, 0.10) 0%, rgba(15, 23, 42, 0) 35%, rgba(15, 23, 42, 0.78) 100%);
+}
+.uptrip-when {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(248, 246, 240, 0.92);
+  font-family: var(--mono);
+  font-size: 10.5px;
+  color: var(--ink);
+}
+.uptrip-text {
+  position: absolute;
+  left: 14px;
+  right: 14px;
+  bottom: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.uptrip-title {
+  font-family: var(--display);
+  font-size: 21px;
+  font-weight: 500;
+  letter-spacing: -0.015em;
+  color: #fff;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.uptrip-meta { display: flex; align-items: center; gap: 10px; }
+.uptrip-dates { font-family: var(--mono); font-size: 11px; color: rgba(255, 255, 255, 0.92); }
+.uptrip-stops { font-size: 11px; color: rgba(255, 255, 255, 0.8); }
+.uptrip-meta .country-flag-stack .country-flag { box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.4); }
+.uptrip-menu { position: absolute; top: 6px; right: 6px; }
+.uptrip-menu .saved-card-more { background: rgba(248, 246, 240, 0.85); color: var(--ink-soft); }
+.uptrip-menu .saved-card-more:hover { background: var(--paper); color: var(--ink); }
+
+/* Past trips: a record, so hairline rows rather than boxed cards, and the
+   thumbnails step back until pointed at. */
+.saved-section.is-muted .saved-section-title { color: var(--ink-soft); }
+.saved-past-empty { margin: 0; font-size: 12.5px; line-height: 1.55; color: var(--ink-mute); }
+.past-list { display: flex; flex-direction: column; }
+.past-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 0;
+  border-bottom: 1px solid var(--rule);
+}
+.past-row:last-child { border-bottom: none; }
+.past-row-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 9px 0;
+  border: none;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+}
+.past-row-thumb {
+  flex: none;
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background-size: cover;
+  background-position: center;
+  background-color: var(--paper-dim);
+  filter: grayscale(0.55) contrast(0.92);
+  opacity: 0.85;
+  transition: filter .15s, opacity .15s;
+}
+.past-row-thumb.is-fallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink-mute);
+  filter: none;
+}
+.past-row-main:hover .past-row-thumb { filter: none; opacity: 1; }
+.past-row-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.past-row-title {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.past-row-main:hover .past-row-title { color: var(--ink); }
+.past-row-meta { font-family: var(--mono); font-size: 10.5px; color: var(--ink-mute); }
+
+/* Desktop: the roomier sheet lets the imagery breathe. */
+@media (min-width: 881px) {
+  .saved-map { height: 208px; }
+  .uptrip-open { height: 188px; }
+  .fav-grid { gap: 12px; }
+  .uptrip-title { font-size: 23px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fav-card-photo,
+  .uptrip-photo { transition: none; }
+  .fav-card-open:hover .fav-card-photo,
+  .uptrip-open:hover .uptrip-photo { transform: none; }
+}
+
 /* Day planner: save state, top-right of the plan header card. */
 .day-topcard-row {
   display: flex;

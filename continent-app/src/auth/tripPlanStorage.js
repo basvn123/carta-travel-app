@@ -13,7 +13,7 @@ export async function fetchTripPlans(userId) {
   // real, up-to-date trip window, including any date changes saved later.
   const { data: stops } = await supabase
     .from('trip_plan_stops')
-    .select('trip_plan_id, arrive_date, depart_date, city, country, position')
+    .select('trip_plan_id, arrive_date, depart_date, city, country, position, destination_id')
     .in('trip_plan_id', plans.map((p) => p.id))
     .order('position', { ascending: true });
   const byPlan = {};
@@ -26,6 +26,9 @@ export async function fetchTripPlans(userId) {
       end_date: ss.length ? ss[ss.length - 1].depart_date : null,
       cities: ss.map((s) => s.city).filter(Boolean),
       countries: [...new Set(ss.map((s) => s.country).filter(Boolean))],
+      // Destination ids in stop order, so overview cards can borrow the first
+      // stop's catalogue photo and coordinates without a second fetch.
+      destination_ids: ss.map((s) => s.destination_id).filter(Boolean),
     };
   });
 }
