@@ -35,16 +35,16 @@ export function FilterBar({
   reachAvailable,
   onOpenLifestyle,
 }) {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   const baggageOpts = data?.meta?.baggage_options || {};
   // Only the stay tiers this dataset measured (see apply_stay_tiers.py).
   const stayTierOptions = React.useMemo(
     () => offeredStayTiers(data?.meta), [data?.meta]);
 
-  // Mobile-only: the dense filter set collapses behind a filter icon, and the
-  // depart/return pickers collapse behind a separate calendar icon. On desktop
-  // the CSS keeps everything always visible and hides these triggers, so this
-  // state is inert there.
+  // Mobile-only: the dense filter set collapses behind a labelled Filters
+  // segment, and the depart/return pickers behind the dates segment beside it,
+  // both halves of one segmented pill. On desktop the CSS keeps everything
+  // always visible and hides these triggers, so this state is inert there.
   const [mobileFiltersOpen, setMobileFiltersOpen] = React.useState(false);
   const [mobileDatesOpen, setMobileDatesOpen] = React.useState(false);
   const datesAnchorRef = React.useRef(null);
@@ -174,74 +174,94 @@ export function FilterBar({
   ];
   const [rLo, rHi] = ratingRange;
 
+  // Mobile pill: the dates segment reads the chosen window back as a fact
+  // ("12 to 19 Sep") rather than a generic label, and falls back to the plain
+  // word only while nothing is picked yet. Within one month the first date
+  // drops its month, which is what keeps the widest locales on the pill.
+  const shortDate = React.useCallback((iso, dayOnly) => {
+    if (!iso) return null;
+    try {
+      const opts = dayOnly
+        ? { day: 'numeric', timeZone: 'UTC' }
+        : { day: 'numeric', month: 'short', timeZone: 'UTC' };
+      // Plain 'en' means US month-first ("Aug 25"); the audience is European,
+      // so English gets day-first like every other supported locale.
+      const locale = lang === 'en' ? 'en-GB' : lang;
+      return new Intl.DateTimeFormat(locale, opts).format(new Date(iso + 'T00:00:00Z'));
+    } catch { return iso; }
+  }, [lang]);
+  const sameMonth = !!(departDate && returnDate && departDate.slice(0, 7) === returnDate.slice(0, 7));
+  const dateSummary = departDate && returnDate
+    ? t('filter.dateSpan', { a: shortDate(departDate, sameMonth), b: shortDate(returnDate) })
+    : (shortDate(departDate) || t('filter.dates'));
+
   return (
     <div className={`filter-bar ${mobileFiltersOpen ? 'mobile-open' : 'mobile-collapsed'}`}>
       {/* Header wrapper is `display: contents` on desktop (so its content stays a
-          direct flex child) and a real flex row on mobile (the calendar/filter
-          icon triggers - brand and account now live in the always-mounted
-          AppHeader above this bar). */}
+          direct flex child) and a real flex row on mobile. There it carries ONE
+          segmented pill instead of the old row of unlabelled icon circles: a
+          dates segment that states the chosen window, a hairline, then a
+          labelled Filters segment with the active count. Lifestyle has no
+          standalone trigger any more; it lives inside the filter sheet with
+          the rest of the spend controls. */}
       <div className="filter-mobile-header">
         <div className="mobile-header-actions">
-          <div className="mobile-dates-anchor" ref={datesAnchorRef}>
-            <button
-              className={`icon-btn ${mobileDatesOpen ? 'open' : ''}`}
-              onClick={openMobileDates}
-              aria-expanded={mobileDatesOpen}
-              aria-label={t('filter.datesAria')}
-              title={t('filter.datesTitle')}
-            >
-              <CalendarIcon size={18} />
-            </button>
+          <div className="mobile-seg">
+            <div className="mobile-dates-anchor" ref={datesAnchorRef}>
+              <button
+                type="button"
+                className={`mobile-seg-btn ${mobileDatesOpen ? 'open' : ''}`}
+                onClick={openMobileDates}
+                aria-expanded={mobileDatesOpen}
+                aria-label={t('filter.datesAria')}
+                title={t('filter.datesTitle')}
+              >
+                <CalendarIcon size={16} />
+                <span className="mobile-seg-value">{dateSummary}</span>
+              </button>
 
-            {mobileDatesOpen && (
-              <div className="mobile-dates-pop">
-                <div className="filter">
-                  <label className="filter-label">{t('filter.depart')}</label>
-                  <div className="filter-control">
-                    <DateField
-                      value={departDate || ''}
-                      min={dateBounds?.min}
-                      max={dateBounds?.max}
-                      onChange={onDepartChange}
-                    />
+              {mobileDatesOpen && (
+                <div className="mobile-dates-pop">
+                  <div className="filter">
+                    <label className="filter-label">{t('filter.depart')}</label>
+                    <div className="filter-control">
+                      <DateField
+                        value={departDate || ''}
+                        min={dateBounds?.min}
+                        max={dateBounds?.max}
+                        onChange={onDepartChange}
+                      />
+                    </div>
+                  </div>
+                  <div className="filter">
+                    <label className="filter-label">{t('filter.return')}</label>
+                    <div className="filter-control">
+                      <DateField
+                        value={returnDate || ''}
+                        min={departDate || dateBounds?.min}
+                        max={dateBounds?.max}
+                        onChange={(v) => setReturnDate(v)}
+                      />
+                    </div>
                   </div>
                 </div>
-                <div className="filter">
-                  <label className="filter-label">{t('filter.return')}</label>
-                  <div className="filter-control">
-                    <DateField
-                      value={returnDate || ''}
-                      min={departDate || dateBounds?.min}
-                      max={dateBounds?.max}
-                      onChange={(v) => setReturnDate(v)}
-                    />
-                  </div>
-                </div>
-              </div>
-            )}
+              )}
+            </div>
+
+            <span className="mobile-seg-rule" aria-hidden="true" />
+
+            <button
+              type="button"
+              className={`mobile-seg-btn ${mobileFiltersOpen ? 'open' : ''} ${anyFilterActive ? 'has-active' : ''}`}
+              onClick={openMobileFilters}
+              aria-expanded={mobileFiltersOpen}
+              title={t('filter.filters')}
+            >
+              <FilterIcon size={16} />
+              <span className="mobile-seg-label">{t('filter.filters')}</span>
+              {anyFilterActive && <span className="mobile-seg-count">{activeFilters}</span>}
+            </button>
           </div>
-
-          <button
-            className={`icon-btn ${mobileFiltersOpen ? 'open' : ''} ${anyFilterActive ? 'has-active' : ''}`}
-            onClick={openMobileFilters}
-            aria-expanded={mobileFiltersOpen}
-            aria-label={t('filter.filters')}
-            title={t('filter.filters')}
-          >
-            <FilterIcon size={18} />
-            {anyFilterActive && <span className="icon-btn-dot" aria-hidden="true" />}
-          </button>
-
-          {onOpenLifestyle && (
-            <button
-              className="icon-btn"
-              onClick={() => { setMobileFiltersOpen(false); setMobileDatesOpen(false); onOpenLifestyle(); }}
-              aria-label={t('filter.lifestyleAria')}
-              title={t('filter.lifestyleTitle')}
-            >
-              <LifestyleIcon size={18} />
-            </button>
-          )}
         </div>
       </div>
 

@@ -6,6 +6,7 @@ import {
   ShieldIcon, SignOutIcon, SparkIcon, TrashIcon,
 } from '../components/Icons.jsx';
 import { PrivacyPolicy } from '../components/PrivacyPolicy.jsx';
+import { CountryFlag } from '../components/CountryFlag.jsx';
 import { PassModal } from '../components/PassModal.jsx';
 import { useEntitlement } from '../hooks/useEntitlement.js';
 import { TIERS, daysLeft, canUpgrade, formatPrice } from '../lib/pricing.js';
@@ -144,7 +145,7 @@ export function AccountPanel({ onClose, onOpenAuth }) {
     user, hasPassword, signOut, updatePassword, reauthenticate,
     updateProfile, sendPasswordReset, deleteAccount, configured,
   } = useAuth();
-  const { t, lang } = useI18n();
+  const { t, lang, setLang, languages } = useI18n();
   const entitlement = useEntitlement();
   const panelRef = useRef(null);
   const [view, setView] = useState('home'); // 'home' | 'profile' | 'faq' | 'feedback'
@@ -456,6 +457,29 @@ export function AccountPanel({ onClose, onOpenAuth }) {
                 {shareCopied ? <CheckIcon size={15} /> : <ShareIcon size={15} />}
                 {shareCopied ? t('account.inviteCopied') : t('account.inviteBtn')}
               </button>
+            </div>
+          </div>
+
+          {/* App language, moved here from the top bar: switching it is a
+              once-per-person action, so it lives with the other settings
+              instead of spending header width. Works signed out. */}
+          <div className="panel-section">
+            <div className="section-title">{t('account.language')}</div>
+            <div className="account-lang-grid" role="listbox" aria-label={t('account.language')}>
+              {languages.map((l) => (
+                <button
+                  key={l.code}
+                  type="button"
+                  className={`account-lang-opt ${l.code === lang ? 'on' : ''}`}
+                  onClick={() => setLang(l.code)}
+                  role="option"
+                  aria-selected={l.code === lang}
+                >
+                  <CountryFlag country={l.flag} size={15} />
+                  <span className="account-lang-label">{l.label}</span>
+                  {l.code === lang && <CheckIcon size={13} />}
+                </button>
+              ))}
             </div>
           </div>
 

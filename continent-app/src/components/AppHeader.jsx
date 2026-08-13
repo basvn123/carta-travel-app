@@ -1,6 +1,5 @@
 import React from 'react';
 import Logo from './Logo.jsx';
-import { LanguagePicker } from './LanguagePicker.jsx';
 import { useI18n } from '../i18n/index.jsx';
 import { PersonIcon, HomeIcon, MapPinIcon, RouteIcon, ListDayIcon, BookmarkIcon, TicketIcon } from './Icons.jsx';
 
@@ -92,6 +91,10 @@ export function AppHeader({
       {children && <div className="app-header-filters">{children}</div>}
 
       <div className="app-header-account">
+        {/* Passes entry: full "See pricing" wording on desktop, a compact
+            labelled chip on mobile. The language picker left this row for the
+            Account panel: switching languages is rare, the row over the map
+            is not the place to spend width on it. */}
         {onSeePricing && (
           <button
             className="header-pricing-btn"
@@ -100,9 +103,9 @@ export function AppHeader({
           >
             <TicketIcon size={14} />
             <span className="header-pricing-label">{t('header.seePricing')}</span>
+            <span className="header-pricing-label-short">{t('header.passes')}</span>
           </button>
         )}
-        <LanguagePicker />
         <AccountButton user={user} onOpenAccount={onOpenAccount} />
       </div>
     </div>
