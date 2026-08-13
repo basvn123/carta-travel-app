@@ -56,7 +56,27 @@ from src.ingestion.core.http import PoliteSession  # noqa: E402
 from src.ingestion.core.storage import RawStore  # noqa: E402
 
 GEOFABRIK_BASE = "https://download.geofabrik.de/europe"
-COUNTRIES = {"switzerland": "CH", "france": "FR", "norway": "NO", "austria": "AT"}
+# Geofabrik europe extract slug -> ISO2. The whole catalogue footprint; Russia
+# and Belarus are deliberately absent (no destinations there). Note two
+# boundary quirks inherited from Geofabrik's cuts: great-britain excludes
+# Northern Ireland, which arrives inside ireland-and-northern-ireland and is
+# therefore stored as IE until validation flags the bbox.
+COUNTRIES = {
+    "albania": "AL", "andorra": "AD", "austria": "AT", "belgium": "BE",
+    "bosnia-herzegovina": "BA", "bulgaria": "BG", "croatia": "HR",
+    "cyprus": "CY", "czech-republic": "CZ", "denmark": "DK",
+    "estonia": "EE", "faroe-islands": "FO", "finland": "FI",
+    "france": "FR", "germany": "DE", "great-britain": "GB",
+    "greece": "GR", "hungary": "HU", "iceland": "IS",
+    "ireland-and-northern-ireland": "IE", "italy": "IT", "kosovo": "XK",
+    "latvia": "LV", "liechtenstein": "LI", "lithuania": "LT",
+    "luxembourg": "LU", "macedonia": "MK", "malta": "MT",
+    "moldova": "MD", "monaco": "MC", "montenegro": "ME",
+    "netherlands": "NL", "norway": "NO", "poland": "PL",
+    "portugal": "PT", "romania": "RO", "serbia": "RS",
+    "slovakia": "SK", "slovenia": "SI", "spain": "ES",
+    "sweden": "SE", "switzerland": "CH", "turkey": "TR", "ukraine": "UA",
+}
 
 ROUTE_VALUES = {"hiking", "foot", "walking"}
 MAJOR_NETWORKS = {"iwn", "nwn", "rwn"}
