@@ -361,6 +361,56 @@ def length_factor(distance_m):
     return max(0.0, min(1.0, (distance_m or 0) / full))
 
 
+# --------------------------------------------------------------------------
+# Day-hike family: the flagship ranking's length factor exists to suppress
+# extract-clipped crumbs of long routes, but it also buries genuine half-day
+# loops, which rarely have their own Wikipedia footprint. This family flips
+# the lens: eligibility is a walkable loop, and fame comes from the
+# CATALOGUE anchors near the line (a loop above a famous lake inherits the
+# lake's draw). Network level is ignored: day hikes are usually lwn/local.
+# --------------------------------------------------------------------------
+
+DAYHIKE_MIN_M = 5_000
+DAYHIKE_MAX_M = 25_000
+DAYHIKE_LOOP_GAP_M = 2_000
+DAYHIKE_SAC_OK = {None, "", "hiking", "mountain_hiking"}
+DAYHIKE_WEIGHTS = {"portal": 0.15, "quality": 0.35, "popularity": 0.50}
+
+
+def is_dayhike(trip):
+    d = trip["distance_m"] or 0
+    if not DAYHIKE_MIN_M <= d <= DAYHIKE_MAX_M:
+        return False
+    if (trip.get("sac_scale") or "") not in DAYHIKE_SAC_OK:
+        return False
+    if (trip.get("roundtrip") or "").lower() == "yes":
+        return True
+    gap = trip.get("loop_gap_m")
+    return gap is not None and gap <= DAYHIKE_LOOP_GAP_M
+
+
+def dayhike_rank(trip):
+    """0-100 rank for the dayhike family: anchored fame first, no network
+    component, no length factor (eligibility already bounded the length)."""
+    if trip["portal_agreement"] is None:
+        portal = CONFIG["portal"]["missing"]
+    elif trip["portal_agreement"]:
+        portal = CONFIG["portal"]["agree"]
+    else:
+        portal = CONFIG["portal"]["mismatch"]
+    quality = (CONFIG["quality_missing"] if trip["quality_score"] is None
+               else max(0.0, min(1.0, float(trip["quality_score"]) / 100.0)))
+    anchor_fame = max((f for _, f, _ in trip["anchors"]), default=0)
+    own = min(1.0, CONFIG["own_pv_weight"]
+              * log_score(trip["pageviews"], CONFIG["pv_log_cap"])
+              + CONFIG["own_sitelink_weight"]
+              * log_score(trip["sitelinks"], CONFIG["sitelink_log_cap"]))
+    pop = max(log_score(anchor_fame, CONFIG["pv_log_cap"]), own)
+    components = {"portal": portal, "quality": quality, "popularity": pop}
+    rank = 100.0 * sum(DAYHIKE_WEIGHTS[k] * v for k, v in components.items())
+    return round(rank, 2), components
+
+
 def curation_rank(trip):
     w = CONFIG["weights"]
     if trip["portal_agreement"] is None:
@@ -394,13 +444,19 @@ def load_trips(conn, countries):
         cur.execute("""
             SELECT id, country, title, network, distance_m, quality_score,
                    status, source_ref, raw_tags->>'ref',
-                   raw_tags->>'wikipedia', raw_tags->>'wikidata'
+                   raw_tags->>'wikipedia', raw_tags->>'wikidata',
+                   sac_scale, raw_tags->>'roundtrip',
+                   ST_Distance(
+                       ST_StartPoint(ST_GeometryN(geom, 1))::geography,
+                       ST_EndPoint(ST_GeometryN(
+                           geom, ST_NumGeometries(geom)))::geography)
             FROM trips
             WHERE source = 'osm' AND category = 'hike'
               AND country = ANY(%s)""", (countries,))
         cols = ("id", "country", "title", "network", "distance_m",
                 "quality_score", "status", "source_ref", "ref",
-                "wikipedia", "wikidata")
+                "wikipedia", "wikidata", "sac_scale", "roundtrip",
+                "loop_gap_m")
         trips = [dict(zip(cols, row)) for row in cur.fetchall()]
         cur.execute("""
             SELECT DISTINCT ON (subject_id) subject_id, passed
@@ -413,9 +469,9 @@ def load_trips(conn, countries):
     return trips
 
 
-def write_validation_rows(conn, trips):
+def write_validation_rows(conn, trips, check_name="popularity"):
     from psycopg.types.json import Jsonb
-    rows = [("trip", t["id"], "popularity", True, t["curation_rank"],
+    rows = [("trip", t["id"], check_name, True, t["curation_rank"],
              Jsonb({"curation_rank": t["curation_rank"],
                     "components": t["components"],
                     "pageviews_day": t["pageviews"],
@@ -513,6 +569,11 @@ def main():
                         help="no network calls; use fame caches as they are")
     parser.add_argument("--dry-run", action="store_true",
                         help="no validation_runs writes, CSVs still written")
+    parser.add_argument("--family", choices=("flagship", "dayhikes"),
+                        default="flagship",
+                        help="flagship: famous long routes (default); "
+                             "dayhikes: 5-25 km walkable loops ranked by "
+                             "nearby catalogue fame")
     args = parser.parse_args()
 
     countries = [c.strip().upper() for c in args.countries.split(",")
@@ -578,11 +639,21 @@ def main():
                                            family_sizes[t["family"]])
         t["curation_rank"], t["components"] = curation_rank(t)
 
+    check_name, suffix = "popularity", ""
+    if args.family == "dayhikes":
+        trips = [t for t in trips if is_dayhike(t)]
+        print(f"[dayhikes] {len(trips)} eligible walkable loops "
+              f"({DAYHIKE_MIN_M / 1000:g}-{DAYHIKE_MAX_M / 1000:g} km)")
+        for t in trips:
+            t["curation_rank"], t["components"] = dayhike_rank(t)
+            t["popularity"] = t["components"]["popularity"]
+        check_name, suffix = "popularity_dayhike", "_dayhikes"
+
     if args.dry_run:
         print("[db] dry run: skipping validation_runs writes")
-    else:
-        write_validation_rows(conn, trips)
-        print(f"[db] wrote {len(trips)} popularity rows to validation_runs")
+    elif trips:
+        write_validation_rows(conn, trips, check_name)
+        print(f"[db] wrote {len(trips)} {check_name} rows to validation_runs")
     conn.close()
 
     REPORT_DIR.mkdir(parents=True, exist_ok=True)
@@ -591,7 +662,7 @@ def main():
         by_country[t["country"]].append(t)
     for country in sorted(by_country):
         rows, ranked = shortlist(by_country[country], args.top)
-        path = REPORT_DIR / f"{country}.csv"
+        path = REPORT_DIR / f"{country}{suffix}.csv"
         write_csv(path, rows)
         print(f"\n[{country}] shortlist -> {path}")
         for i, t in enumerate(rows[:10], 1):
@@ -599,7 +670,8 @@ def main():
             print(f"  {i:2}. {t['curation_rank']:6.2f}  {t['title']} "
                   f"({nets}, {(t['distance_m'] or 0) / 1000:.0f} km, "
                   f"pop {t['popularity']:.2f}, {t['family_members']} in family)")
-        spot_check(country, ranked)
+        if args.family == "flagship":
+            spot_check(country, ranked)
 
 
 if __name__ == "__main__":

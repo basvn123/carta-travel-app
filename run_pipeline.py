@@ -222,6 +222,24 @@ def now_utc():
     return datetime.now(timezone.utc)
 
 
+def heartbeat(suffix=""):
+    """Ping the external dead-man's-switch (Healthchecks.io style: base URL =
+    success, /start and /fail variants). The Scheduled Task and pg-style
+    schedulers fail SILENTLY (machine asleep, task disabled, lock stuck), so
+    an external monitor that expects a ping per cadence window is the only
+    thing that notices a run that never happened. No env var = no-op; a ping
+    failure is logged and never breaks the run."""
+    base = os.environ.get("CARTA_HEARTBEAT_URL", "").rstrip("/")
+    if not base:
+        return
+    import urllib.request
+    url = base + suffix
+    try:
+        urllib.request.urlopen(url, timeout=10).read()
+    except Exception as e:
+        log(f"(heartbeat {suffix or '/'} failed: {type(e).__name__})")
+
+
 # --------------------------------------------------------------------------- #
 # Safety helpers
 # --------------------------------------------------------------------------- #
@@ -1433,6 +1451,7 @@ def main():
            "max_origins": args.max_origins}
     backed_up = False
     ran, skipped, failed, soft_failed = [], [], [], []
+    heartbeat("/start")
     try:
         for t in plan:
             log("\n" + "-" * 70)
@@ -1529,6 +1548,7 @@ def main():
     log(f"done. ran={ran or '-'}  skipped={skipped or '-'}  failed={failed or '-'}"
         f"  soft-failed={soft_failed or '-'}")
     log("=" * 70)
+    heartbeat("/fail" if failed else "")
     return 1 if failed else 0
 
 

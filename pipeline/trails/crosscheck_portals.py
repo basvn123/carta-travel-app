@@ -21,6 +21,17 @@ conventions as the src/ingestion collectors):
       GML (EPSG:25833) ordered anonymously through the Geonorge download API
       (the WFS advertises no result paging, so bulk goes through the file
       channel). rutenavn inside FotruteInfo carries route names.
+  DE  Bayerische Vermessungsverwaltung "Wanderwege" GPX bundle (CC BY 4.0,
+      updated monthly): the named signposted long-distance routes of
+      Bavaria as one GPX per route. Trail geometry in Germany is held at
+      Laender level; Bavaria is the one Land with a clean, verified open
+      download, so the DE check covers Bavaria only and the match is
+      restricted to trips inside its bbox (the `coverage` key) so trips in
+      other Laender do not collect meaningless failed checks. AT was
+      surveyed too (2026-08): the Tirol/tiris hub publishes bike routes but
+      no hiking-trail vector layer, the OeAV Wegenetz is not open, and no
+      other Land ships trail geometry under an open licence, so there is
+      deliberately no AT loader yet.
 
 Matching, per staged OSM trip of the country:
   geometry: sample points every --step metres along the trip (capped at
@@ -93,6 +104,9 @@ IGN_LAYER = "BDTOPO_V3:itineraire_autre"
 IGN_PAGE = 1000
 GEONORGE_API = "https://nedlasting.geonorge.no/api"
 TURRUTE_UUID = "d1422d17-6d95-4ef1-96ab-8af31744dd63"
+BVV_GPX_URL = ("https://geodaten.bayern.de/odd/m/2/freizeitwege/wanderwege/"
+               "gpx/wanderwege_gpx.zip")
+BAVARIA_BBOX = (8.95, 47.25, 13.90, 50.60)   # lon/lat envelope, DE coverage
 
 NEAR_M = 60          # a sampled point this close to official geometry counts as covered
 LOOSE_M = 150        # secondary coverage band, recorded in details
@@ -385,6 +399,59 @@ def load_turrutebasen(session, refresh):
 
 
 # ---------------------------------------------------------------------------
+# Loader: Germany (Bavaria), BVV Wanderwege GPX bundle
+# ---------------------------------------------------------------------------
+
+def fetch_bvv_gpx_zip(session, refresh):
+    cached = None if refresh else cached_download(
+        "bvv_wanderwege", "wanderwege_gpx*.zip")
+    if cached:
+        print(f"  [DE] archive: {cached.name} (cached)")
+        return cached
+    print(f"  [DE] downloading {BVV_GPX_URL}")
+    resp = session.get(BVV_GPX_URL, stream=True)
+    path = RawStore("bvv_wanderwege").save_response(
+        "wanderwege_gpx.zip", resp, BVV_GPX_URL,
+        note="BVV Wanderwege named-route GPX bundle, Bavaria; CC BY 4.0, "
+             "credit Bayerische Vermessungsverwaltung")
+    print(f"  [DE] archive: {path.name} ({path.stat().st_size / 1e6:.0f} MB)")
+    return path
+
+
+def load_bvv_wanderwege(session, refresh):
+    """Yield (name, srid, wkb_hex) per named GPX route in the BVV bundle."""
+    zip_path = fetch_bvv_gpx_zip(session, refresh)
+    routes = 0
+    with zipfile.ZipFile(zip_path) as zf:
+        for member in zf.namelist():
+            if not member.lower().endswith(".gpx"):
+                continue
+            try:
+                root = etree.fromstring(zf.read(member))
+            except etree.XMLSyntaxError:
+                continue
+            for trk in root.findall(".//{*}trk"):
+                name = None
+                nm = trk.find("{*}name")
+                if nm is not None and (nm.text or "").strip():
+                    name = nm.text.strip()
+                if not name:
+                    name = Path(member).stem.replace("_", " ")
+                parts = []
+                for seg in trk.findall(".//{*}trkseg"):
+                    pts = [(float(p.get("lon")), float(p.get("lat")))
+                           for p in seg.findall("{*}trkpt")
+                           if p.get("lon") and p.get("lat")]
+                    if len(pts) >= 2:
+                        parts.append(pts)
+                if parts:
+                    routes += 1
+                    yield (name, 4326,
+                           shapely.to_wkb(MultiLineString(parts), hex=True))
+    print(f"  [DE] {routes} named GPX routes parsed")
+
+
+# ---------------------------------------------------------------------------
 # Staging into portal_trails
 # ---------------------------------------------------------------------------
 
@@ -395,6 +462,9 @@ SOURCES = {
            "license": "Etalab Licence Ouverte 2.0"},
     "NO": {"source": "turrutebasen", "loader": load_turrutebasen,
            "license": "CC BY 4.0"},
+    "DE": {"source": "bvv_wanderwege", "loader": load_bvv_wanderwege,
+           "license": "CC BY 4.0 (Bayerische Vermessungsverwaltung)",
+           "coverage": BAVARIA_BBOX},
 }
 
 
@@ -492,6 +562,19 @@ SELECT id, title, COALESCE(ST_Length(geom::geography), 0),
        raw_tags->>'name', raw_tags->>'ref', raw_tags->>'name:en'
 FROM trips
 WHERE source = 'osm' AND country = %s AND status <> 'rejected'
+ORDER BY id
+"""
+
+# Variant for sources whose official data covers only part of the country
+# (DE = Bavaria): trips outside the coverage envelope are skipped entirely
+# instead of collecting meaningless failed portal checks.
+TRIPS_SQL_COVERAGE = """
+SELECT id, title, COALESCE(ST_Length(geom::geography), 0),
+       ST_X(ST_Centroid(geom)), ST_Y(ST_Centroid(geom)),
+       raw_tags->>'name', raw_tags->>'ref', raw_tags->>'name:en'
+FROM trips
+WHERE source = 'osm' AND country = %s AND status <> 'rejected'
+  AND ST_Intersects(geom, ST_MakeEnvelope(%s, %s, %s, %s, 4326))
 ORDER BY id
 """
 
@@ -595,8 +678,12 @@ def check_trip(cur, trip, country, name_index, name_tokens, args):
 
 def match_country(conn, country, name_index, name_tokens, prior_passed, args):
     from psycopg.types.json import Jsonb
+    coverage = SOURCES[country].get("coverage")
     with conn.cursor() as cur:
-        cur.execute(TRIPS_SQL, (country,))
+        if coverage:
+            cur.execute(TRIPS_SQL_COVERAGE, (country, *coverage))
+        else:
+            cur.execute(TRIPS_SQL, (country,))
         trips = cur.fetchall()
     if args.limit:
         trips = trips[:args.limit]

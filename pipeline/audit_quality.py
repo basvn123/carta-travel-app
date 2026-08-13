@@ -22,6 +22,9 @@ Checks:
             countries (BE FR GR IT LU BY UA BG CY EE LV LT RO SI): photos of
             modern buildings/sculpture there are not freely licensable even
             on Commons - review queue, not an auto-drop
+  tasl      POI images whose Commons file fails the licence gate (NC/ND/
+            permission-only) per cache/poi_image_licenses.json
+            (harvest_image_licenses.py); these images must be dropped
 
 Usage:
     python audit_quality.py                 # full report
@@ -127,8 +130,17 @@ def audit(dests, top_n):
         "coverage": {"by_country": {}, "worst_dests": []},
         "images": {"rate3_no_img": 0, "rate3_no_img_examples": []},
         "fop": {"flagged": 0, "by_country": {}, "examples": []},
+        "tasl": {"bad_license": 0, "examples": [], "unresolved": None},
     }
     fop_country = Counter()
+    # Per-file Commons licence verdicts, when the TASL harvest has run.
+    try:
+        import harvest_image_licenses as hil
+        lic_cache = json.loads(
+            (Path(__file__).resolve().parents[1] / "cache" /
+             "poi_image_licenses.json").read_text(encoding="utf-8"))
+    except Exception:
+        hil, lic_cache = None, {}
     cov_country = defaultdict(lambda: Counter())
     dest_scores = []
     dup_examples = []
@@ -178,6 +190,14 @@ def audit(dests, top_n):
                 fop_country[cc] += 1
                 if len(rep["fop"]["examples"]) < top_n:
                     rep["fop"]["examples"].append(label)
+            if hil and it.get("img"):
+                fn = hil.commons_filename(it["img"])
+                lic = lic_cache.get(fn) if fn else None
+                if lic and not lic.get("miss") and not lic.get("ok"):
+                    rep["tasl"]["bad_license"] += 1
+                    if len(rep["tasl"]["examples"]) < top_n:
+                        rep["tasl"]["examples"].append(
+                            f"{label} ({lic.get('license')})")
             c["pois"] += 1
             for f in ("wiki", "img", "desc", "heritage"):
                 if it.get(f):
@@ -310,6 +330,11 @@ def main():
     fo = rep["fop"]
     print(f"FoP review queue: {fo['flagged']} images on modern-work kinds in "
           f"no-FoP countries {fo['by_country']}")
+    ta = rep["tasl"]
+    print(f"licence gate: {ta['bad_license']} POI images on NC/ND/"
+          f"permission-only Commons files (must be dropped)")
+    for line in ta["examples"][:args.top if hasattr(args, 'top') else 5]:
+        print(f"   {line}")
     print("\ncoverage by country (pois / wiki / img / desc / heritage):")
     for cc, c in sorted(rep["coverage"]["by_country"].items(),
                         key=lambda x: -x[1]["pois"])[:args.top]:
