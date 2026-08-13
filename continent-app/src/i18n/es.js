@@ -348,6 +348,7 @@ export const es = {
   'filter.fromPrice': 'desde {p}',
   'filter.showAllN': 'Ver los {n}',
   'filter.showFewer': 'Ver menos',
+  'filter.anyRating': 'Cualquier nota',
 
   'results.shortlist': 'Favoritos',
   'results.destinations': 'Destinos',

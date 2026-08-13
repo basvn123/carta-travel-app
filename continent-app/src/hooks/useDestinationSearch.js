@@ -142,6 +142,28 @@ export function useDestinationSearch({
     return [Math.floor(mn), Math.ceil(mx)];
   }, [pricedAll, priceMode]);
 
+  // How the priced set is distributed across the bounds, as counts per bin.
+  // The price slider draws this behind its rail, so dragging a handle shows
+  // where the destinations actually sit instead of asking for a number blind.
+  // One pass over the same array priceBounds already walks, memoised on the
+  // same inputs, so it costs nothing extra per keystroke at 24.8k rows.
+  const PRICE_BINS = 44;
+  const priceHistogram = useMemo(() => {
+    if (!priceBounds || pricedAll.length === 0) return null;
+    const [lo, hi] = priceBounds;
+    const span = hi - lo;
+    if (!(span > 0)) return null;
+    const bins = new Array(PRICE_BINS).fill(0);
+    for (const p of pricedAll) {
+      const v = priceMode === 'pp' ? p.pp : p.total;
+      let i = Math.floor(((v - lo) / span) * PRICE_BINS);
+      if (i < 0) i = 0;
+      if (i >= PRICE_BINS) i = PRICE_BINS - 1;
+      bins[i] += 1;
+    }
+    return bins;
+  }, [pricedAll, priceBounds, priceMode]);
+
   const [priceRange, setPriceRange] = useState(null);
 
   // On the first time bounds are known, honor a shared price range; afterwards
@@ -254,7 +276,7 @@ export function useDestinationSearch({
   }, [priced, pricedAll, priceMode]);
 
   return {
-    pricedAll, unreachableAll, availableCountries, priceBounds,
+    pricedAll, unreachableAll, availableCountries, priceBounds, priceHistogram,
     priceRange, setPriceRange,
     filtered, priced, unreachable, dealThreshold, stats,
   };

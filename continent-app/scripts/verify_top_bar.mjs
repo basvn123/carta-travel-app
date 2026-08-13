@@ -90,10 +90,14 @@ await page.waitForTimeout(300);
 // ── Filters sheet opens and carries the lifestyle entry ──
 await page.locator('.mobile-seg > .mobile-seg-btn').click();
 await page.waitForTimeout(500);
-check('filter sheet opens', await page.locator('.filter-bar.mobile-open .filter-rows').isVisible());
-check('lifestyle lives inside the sheet', await page.locator('.filter-bar.mobile-open .lifestyle-pill').isVisible());
+// The sheet is now the modal .fsheet (see verify_filter_sheet.mjs), not the
+// inline .filter-rows drawer this bar used to unfold.
+check('filter sheet opens', await page.locator('.fsheet').isVisible());
+check('lifestyle lives inside the sheet', await page.locator('.fsheet .fsheet-link-btn').isVisible());
 await page.screenshot({ path: 'shots/top-bar-filter-sheet.png' });
-await page.locator('.mobile-seg > .mobile-seg-btn').click();
+// The trigger is behind the scrim while the modal is up, as it should be: the
+// sheet closes from its own control.
+await page.locator('.fsheet-close').click();
 await page.waitForTimeout(300);
 
 // ── Language moved to the Account panel; switching works. The panel opens

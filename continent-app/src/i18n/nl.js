@@ -348,6 +348,7 @@ export const nl = {
   'filter.fromPrice': 'vanaf {p}',
   'filter.showAllN': 'Toon alle {n}',
   'filter.showFewer': 'Toon minder',
+  'filter.anyRating': 'Elke score',
 
   'results.shortlist': 'Favorieten',
   'results.destinations': 'Bestemmingen',

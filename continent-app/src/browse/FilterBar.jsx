@@ -10,6 +10,7 @@ import { offeredStayTiers } from '../lib/runtime_pricing.js';
 import { useI18n } from '../i18n/index.jsx';
 import { NumberField, DualRange } from '../components/FilterControls.jsx';
 import { ReachFilter } from '../components/ReachFilter.jsx';
+import { FilterSheet } from './FilterSheet.jsx';
 import {
   isFullRatingRange, FULL_RATING_RANGE, RATING_MIN, RATING_MAX,
 } from '../lib/rating.js';
@@ -25,6 +26,7 @@ export function FilterBar({
   availableCountries,
   priceRange, setPriceRange,
   priceBounds,
+  priceHistogram,
   tripKinds, setTripKinds,
   ratingRange, setRatingRange,
   gemOnly, setGemOnly,
@@ -48,6 +50,21 @@ export function FilterBar({
   const [mobileFiltersOpen, setMobileFiltersOpen] = React.useState(false);
   const [mobileDatesOpen, setMobileDatesOpen] = React.useState(false);
   const datesAnchorRef = React.useRef(null);
+
+  // Phones get a real modal bottom sheet (FilterSheet) instead of the desktop
+  // rows folded into a grid: the two layouts want different controls, not the
+  // same controls at a different width. Tracked in JS rather than CSS so only
+  // one of them is ever mounted, and the sheet can portal out of this header
+  // (whose backdrop-filter would otherwise capture its fixed positioning).
+  const [isPhone, setIsPhone] = React.useState(
+    () => typeof window !== 'undefined' && window.matchMedia('(max-width: 768px)').matches,
+  );
+  React.useEffect(() => {
+    const mq = window.matchMedia('(max-width: 768px)');
+    const onChange = (e) => setIsPhone(e.matches);
+    mq.addEventListener('change', onChange);
+    return () => mq.removeEventListener('change', onChange);
+  }, []);
 
   // Desktop: everything that NARROWS the result set (budget, place, quality,
   // trip style) lives in a tray that drops below the header, so the bar itself
@@ -265,13 +282,55 @@ export function FilterBar({
         </div>
       </div>
 
+      {/* The phone surface: a modal bottom sheet over a scrim, mounted only at
+          phone widths so the desktop rows below never render twice. */}
+      {isPhone && mobileFiltersOpen && (
+        <FilterSheet
+          onClose={() => setMobileFiltersOpen(false)}
+          data={data}
+          choices={choices}
+          setChoices={setChoices}
+          priceMode={priceMode}
+          setPriceMode={setPriceMode}
+          countryFilter={countryFilter}
+          setCountryFilter={setCountryFilter}
+          availableCountries={availableCountries}
+          priceRange={priceRange}
+          setPriceRange={setPriceRange}
+          priceBounds={priceBounds}
+          priceHistogram={priceHistogram}
+          tripKinds={tripKinds}
+          setTripKinds={setTripKinds}
+          ratingRange={ratingRange}
+          setRatingRange={setRatingRange}
+          gemOnly={gemOnly}
+          setGemOnly={setGemOnly}
+          unescoOnly={unescoOnly}
+          setUnescoOnly={setUnescoOnly}
+          topBeachOnly={topBeachOnly}
+          setTopBeachOnly={setTopBeachOnly}
+          topPick={topPick}
+          setTopPick={setTopPick}
+          reachHours={reachHours}
+          setReachHours={setReachHours}
+          reachAvailable={reachAvailable}
+          onOpenLifestyle={onOpenLifestyle}
+          onNightsCommit={onNightsCommit}
+          nights={choices.trip_days || 0}
+          activeFilters={activeFilters}
+          resetAll={resetAll}
+          resultCount={stats?.priced ?? 0}
+          cheapest={stats?.min ?? null}
+          priceNarrowed={priceNarrowed}
+          ratingNarrowed={ratingNarrowed}
+        />
+      )}
+
       {/* Desktop layout: ONE always-visible row that defines the trip (when,
           who, how it's priced), plus a tray holding everything that narrows the
           result set. The tray is absolutely positioned over the map, so opening
-          it never grows the header or shrinks the map. On mobile every
-          `.filter-group` / `.filter-tray` is `display: contents`, so the
-          individual `.filter` children fall straight into the sheet's 2-column
-          grid and the desktop grouping disappears. */}
+          it never grows the header or shrinks the map. */}
+      {!isPhone && (
       <div className="filter-rows">
 
         <div className="filter-row filter-row-primary">
@@ -482,13 +541,14 @@ export function FilterBar({
                                 value={priceRange}
                                 onChange={setPriceRange}
                                 fmt={eur}
+                                hist={priceHistogram}
                                 hideValueRow
                               />
                             </div>
                             <div className={`range-band-box ${priceNarrowed ? 'is-narrowed' : ''}`}>
                               {priceNarrowed ? (
                                 <span className="range-band-nums">
-                                  {eur(priceRange[0])}<span className="range-band-dash">to</span>{eur(priceRange[1])}
+                                  {eur(priceRange[0])}<span className="range-band-dash">{t('filter.to')}</span>{eur(priceRange[1])}
                                 </span>
                               ) : (
                                 <span className="range-band-any">{t('filter.anyPrice')}</span>
@@ -567,7 +627,7 @@ export function FilterBar({
                           <div className={`range-band-box ${ratingNarrowed ? 'is-narrowed' : ''}`}>
                             <span className="range-band-nums">
                               {ratingNarrowed ? rLo.toFixed(1) : RATING_MIN}
-                              <span className="range-band-dash">to</span>
+                              <span className="range-band-dash">{t('filter.to')}</span>
                               {ratingNarrowed ? rHi.toFixed(1) : RATING_MAX}
                             </span>
                           </div>
@@ -685,6 +745,7 @@ export function FilterBar({
           </div>
         </div>
       </div>
+      )}
     </div>
   );
 }

@@ -5165,6 +5165,436 @@ input, select {
   box-shadow: var(--shadow-2);
 }
 
+/* ═══════════════════════════════════════════════════════════════════════
+   PHONE FILTER SHEET  (.fsheet, see browse/FilterSheet.jsx)
+
+   A modal bottom sheet, not a drawer inside the header. Filtering is a modal
+   task: the sheet takes the screen, a scrim covers the map, the bottom nav and
+   the trip button underneath it (they used to sit on top of the price slider),
+   and one sticky bar at the bottom carries the two things a filter screen owes
+   you, "clear all" and how many places you are left with.
+
+   Every measurement here is a multiple of 8 (4 only inside a component), so
+   the vertical rhythm is predictable: 8px binds a label to its control, 16px
+   separates fields inside a section, 32px and a hairline separate sections.
+   Every control is at least 44px tall.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.fsheet-scrim {
+  position: fixed;
+  inset: 0;
+  /* Over the bottom nav (z 50) and its raised plus: while the sheet is up,
+     nothing from the shell may overlap the controls. */
+  z-index: 60;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  background: rgba(15, 23, 42, 0.44);
+  animation: fsheet-scrim-in .2s ease-out;
+}
+
+.fsheet {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 560px;
+  max-height: 92dvh;
+  background: var(--paper);
+  border-radius: 20px 20px 0 0;
+  box-shadow: 0 -8px 40px rgba(15, 23, 42, 0.22);
+  transition: transform .22s cubic-bezier(0.2, 0.9, 0.3, 1);
+  animation: fsheet-in .26s cubic-bezier(0.2, 0.9, 0.3, 1);
+  overflow: hidden;
+}
+
+@keyframes fsheet-scrim-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes fsheet-in { from { transform: translateY(100%); } to { transform: translateY(0); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .fsheet, .fsheet-scrim { animation: none; transition: none; }
+}
+
+/* ── Header: grab handle, title, close. Owns the drag gesture, so it opts out
+      of touch scrolling. ── */
+.fsheet-head {
+  flex: none;
+  padding: 8px 16px 12px;
+  border-bottom: 1px solid var(--rule-soft);
+  touch-action: none;
+}
+.fsheet-grab {
+  display: block;
+  width: 40px;
+  height: 4px;
+  margin: 0 auto 8px;
+  border-radius: 2px;
+  background: var(--rule);
+}
+.fsheet-head-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 44px;
+}
+.fsheet-title {
+  font-family: var(--display);
+  font-size: 21px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+.fsheet-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  margin-right: -8px;    /* optical: the glyph lines up with the body edge */
+  border-radius: 50%;
+  color: var(--ink-soft);
+  transition: background .15s, color .15s;
+}
+.fsheet-close:hover { background: var(--paper-dim); color: var(--ink); }
+
+/* ── Body ── */
+.fsheet-body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 24px 16px 32px;
+}
+
+.fsheet-section + .fsheet-section {
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 1px solid var(--rule-soft);
+}
+.fsheet-caption {
+  margin-bottom: 16px;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--ink-soft);
+}
+.fsheet-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.fsheet-label {
+  display: block;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  /* --ink-mute is 3.4:1 on paper, below the floor for 10px type; the labels
+     are the map of this screen, so they get the darker grey. */
+  color: var(--ink-soft);
+}
+.fsheet-field > .fsheet-label { margin-bottom: 8px; }
+.fsheet-hint {
+  display: block;
+  margin-top: 2px;
+  font-size: 12px;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--ink-mute);
+}
+
+/* Label left, control right, one line: the counts do not deserve two rows. */
+.fsheet-inline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 44px;
+}
+.fsheet-inline-text { min-width: 0; }
+
+/* ── Chips: every option visible, one tap to switch, wrapping across the
+      horizontal axis instead of stacking dropdowns down the vertical one.
+      Ink fill means "this is my trip"; terracotta means "this is hiding
+      destinations from the map", the same thing the accent means everywhere
+      else in the app. ── */
+.fchips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.fchips.cols-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+.fchip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 16px;
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  background: var(--bg-card);
+  color: var(--ink-soft);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.2;
+  text-align: center;
+  transition: background .15s, border-color .15s, color .15s;
+}
+.fchip svg { flex: none; }
+.fchip:hover { border-color: var(--ink-mute); color: var(--ink); }
+.fchip.on {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--paper);
+}
+.fchip.on.narrow {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+/* ── Steppers: a count is set by two 44px buttons, not by summoning the
+      keyboard over the sheet you are reading. The glyph is 14px inside a
+      44px target, which is the whole point of the pattern. ── */
+.fstepper {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex: none;
+}
+.fstepper-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--rule);
+  border-radius: 50%;
+  background: var(--bg-card);
+  color: var(--ink);
+  transition: border-color .15s, background .15s, color .15s;
+}
+.fstepper-btn:hover:not(:disabled) { border-color: var(--ink); background: var(--paper-dim); }
+.fstepper-btn:disabled { color: var(--ink-mute); border-color: var(--rule-soft); cursor: default; }
+.fstepper-value {
+  min-width: 32px;
+  text-align: center;
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+/* ── Sliders: the rail carries the price distribution, so a handle is dragged
+      against the shape of the data instead of into the dark. ── */
+.fsheet-band {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.fsheet .dual-range { width: 100%; }
+.fsheet .dual-range-track { height: 40px; }
+.fsheet .dual-range-track::before,
+.fsheet .dual-range-fill { height: 3px; border-radius: 3px; }
+/* 24px clears the WCAG 2.5.8 target minimum with the handle still reading as
+   a handle; the readout below takes the precision work. */
+.fsheet .dual-range-input::-webkit-slider-thumb {
+  width: 24px; height: 24px;
+  border-width: 2px;
+  box-shadow: 0 1px 4px rgba(15, 23, 42, 0.22);
+}
+.fsheet .dual-range-input::-moz-range-thumb {
+  width: 24px; height: 24px;
+  border-width: 2px;
+}
+.fsheet .dual-range-axis-tick { font-size: 10.5px; }
+.fsheet .dual-range-hist { height: 34px; }
+
+.dual-range-hist {
+  display: flex;
+  align-items: flex-end;
+  gap: 1px;
+  /* Shallow on the desktop tray, where the rail is 124px wide and a tall
+     chart would swamp it; the sheet gives it room below. */
+  height: 22px;
+  margin-bottom: 2px;
+  pointer-events: none;
+}
+.dual-range-bar {
+  flex: 1;
+  min-height: 1px;
+  border-radius: 1px 1px 0 0;
+  background: var(--rule);
+  transition: background .15s;
+}
+/* Muted, not the full accent: the bars are context, and the one thing on this
+   screen allowed to shout in terracotta is the action button. */
+.dual-range-bar.in { background: var(--accent-soft); opacity: 0.62; }
+
+.fsheet-readout {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  padding: 0 16px;
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  background: var(--paper-dim);
+  font-size: 14px;
+  color: var(--ink-soft);
+}
+.fsheet-readout.is-narrowed {
+  border-color: var(--accent);
+  background: var(--accent-bg);
+  color: var(--ink);
+}
+.fsheet-nums {
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink);
+}
+.fsheet-to {
+  margin: 0 8px;
+  font-family: var(--ui);
+  font-size: 12px;
+  color: var(--ink-soft);
+}
+
+/* Secondary, full-width action inside a section (lifestyle). */
+.fsheet-link-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 16px;
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  background: var(--bg-card);
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 500;
+  transition: border-color .15s, background .15s;
+}
+.fsheet-link-btn:hover { border-color: var(--ink-mute); background: var(--paper-dim); }
+
+.fsheet-more {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  margin-top: 4px;
+  color: var(--accent);
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.fsheet-note {
+  padding: 12px 16px;
+  border-radius: 12px;
+  background: var(--paper-dim);
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--ink-soft);
+}
+
+/* Country picker: the one control the markdown leaves as a dropdown, because
+   43 countries is a real list. It just has to be a 44px field like the rest. */
+.fsheet .dropdown { width: 100%; }
+.fsheet .dropdown-trigger {
+  width: 100%;
+  max-width: none;
+  min-height: 44px;
+  padding: 0 16px;
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  background: var(--bg-card);
+  font-size: 14px;
+}
+
+/* ── Sticky action bar ── */
+.fsheet-foot {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 16px calc(12px + env(safe-area-inset-bottom, 0px));
+  border-top: 1px solid var(--rule);
+  background: var(--paper);
+  box-shadow: 0 -2px 14px rgba(15, 23, 42, 0.07);
+}
+.fsheet-clear {
+  flex: none;
+  min-height: 44px;
+  padding: 0 8px;
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.fsheet-clear:disabled {
+  color: var(--ink-mute);
+  text-decoration: none;
+  cursor: default;
+}
+.fsheet-apply {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  min-height: 52px;
+  padding: 0 16px;
+  border-radius: 14px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+  transition: background .15s;
+}
+.fsheet-apply:hover { background: #cf4c3a; }
+.fsheet-apply-main { display: inline-flex; align-items: baseline; }
+.fsheet-apply-count {
+  margin: 0 5px;
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}
+.fsheet-apply-sub {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 400;
+  opacity: 0.85;
+}
+/* Nothing matches: the primary action is no longer "show me", it is "undo
+   what you just did", so the button steps back and Clear all takes the lead. */
+.fsheet-apply.is-empty {
+  background: var(--paper-dim);
+  border: 1px solid var(--rule);
+  color: var(--ink-soft);
+}
+.fsheet-apply.is-empty:hover { background: var(--paper-dim); }
+.fsheet-foot.is-empty .fsheet-clear { color: var(--accent); }
+
+.fsheet button:focus-visible,
+.fsheet [tabindex]:focus-visible,
+.fsheet input:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
 .more-panel {
   position: absolute;
   top: var(--filter-h);
@@ -7156,82 +7586,12 @@ input, select {
   /* Depart/Return live behind the calendar icon's popover instead. */
   .row-date-fields { display: none; }
 
-  /* Collapsed: just the header row. Open: rows drop down and scroll. */
-  .filter-bar.mobile-collapsed .filter-rows { display: none; }
-  .filter-bar.mobile-open .filter-rows {
-    display: flex;
-    flex-direction: column;
-    padding: 6px 16px 16px;
-    gap: 14px;
-    border-top: 1px solid var(--rule);
-    max-height: calc(100dvh - 58px - 60px);
-    overflow-y: auto;
-  }
-  /* Reset pill lives in the dropdown sheet on mobile, not under the collapsed
-     header. It's a grid item inside the last filter row there (see below), so
-     it needs its own span + alignment rather than the flex align-self used
-     when filter-row is a plain flex row. */
-  .filter-bar.mobile-collapsed .reset-filters-btn { display: none; }
-  .filter-bar.mobile-open .reset-filters-btn {
-    grid-column: 1 / -1;
-    justify-self: stretch;
-    justify-content: center;
-    width: 100%;
-    margin-top: 10px;
-    padding: 11px 16px;
-    border-radius: 10px;
-    font-size: 13px;
-  }
+  /* The desktop rows are not rendered at this width at all: FilterBar mounts
+     the modal bottom sheet (.fsheet) instead, so the old inline drawer, its
+     2-column grid, the `display: contents` group flattening and the ordering
+     rules that went with it are gone. The bar itself is just the header pill. */
+  .filter-rows { display: none; }
   .filter-stats { display: none; }
-
-  /* A tidy 2-column grid instead of left-packed flex-wrap: every control lines
-     up, and dropdowns/segmented toggles are stretched to fill their cell so
-     nothing sits as a small box surrounded by dead space. Wide controls
-     (dropdowns with long option text, the price slider, the beauty scale)
-     span both columns. */
-  .filter-bar.mobile-open .filter-row {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    align-items: end;
-    gap: 12px 10px;
-  }
-  /* Categories are a desktop-only layout: on mobile the group wrappers and their
-     captions collapse so each `.filter` falls straight into the grid above. */
-  .filter-bar.mobile-open .filter-group,
-  .filter-bar.mobile-open .group-fields { display: contents; }
-  .filter-bar.mobile-open .filter-divider { display: none; }
-  /* The desktop refine tray has no meaning here: the sheet already shows every
-     filter at once, so its wrappers dissolve and the fields drop into the same
-     grid, ordered by the `order` rules further down. */
-  .filter-bar.mobile-open .filter-actions,
-  .filter-bar.mobile-open .filter-tray,
-  .filter-bar.mobile-open .filter-tray-inner { display: contents; }
-  .filter-bar .filter-tray-btn,
-  .filter-bar .group-caption,
-  .filter-bar .filter-tray-foot { display: none; }
-  .filter-bar.mobile-open .filter-country,
-  .filter-bar.mobile-open .filter-triptype,
-  .filter-bar.mobile-open .filter-beauty,
-  .filter-bar.mobile-open .filter-highlights,
-  .filter-bar.mobile-open .price-range {
-    grid-column: 1 / -1;
-  }
-  .filter-bar.mobile-open .filter-control { width: 100%; }
-  .filter-bar.mobile-open .dropdown { width: 100%; }
-  .filter-bar.mobile-open .dropdown-trigger { width: 100%; max-width: none; }
-  .filter-bar.mobile-open .filter input[type="number"] { width: 100%; }
-  .filter-bar.mobile-open .segmented { width: 100%; }
-  .filter-bar.mobile-open .segmented button { flex: 1; }
-  .filter-bar.mobile-open .segmented.seg-icons button { padding: 7px 12px; }
-  /* Row-wrap instead of a column stack: the full-width slider forces a wrap,
-     so the band box (+ gem toggle, for rating) fall onto their own row
-     together and stretch to fill it rather than each sitting on its own
-     left-packed row with dead space trailing off to the right. */
-  .filter-bar.mobile-open .band-control { width: 100%; flex-wrap: wrap; align-items: stretch; }
-  .filter-bar.mobile-open .band-slider { width: 100%; }
-  .filter-bar.mobile-open .band-control .dual-range { width: 100%; }
-  .filter-bar.mobile-open .range-band-box { flex: 1; }
-  .filter-bar.mobile-open .band-control .gem-toggle { flex: 1; justify-content: center; }
 
   /* iOS Safari zooms the viewport when a focused field is < 16px. Bump the
      interactive controls so focusing them doesn't yank the layout around. */
@@ -10311,52 +10671,9 @@ input, select {
   .shape-pick-list { max-height: 42vh; }
 }
 
-/* ─── Mobile filter sheet: one tidy 2-column grid across BOTH rows so the
-   pairs the eye expects sit side by side (Show + Travel by, Top picks +
-   Trip type). The .filter-row wrappers collapse (display: contents) and
-   `order` lays the fields out. ─── */
-@media (max-width: 768px) {
-  /* The sheet escapes its half-width slot in the header flex row and overlays
-     the map full-bleed, anchored to the bottom of the (absolute) .top-bar -
-     without this it inherits the narrow app-header-filters band and every
-     control clips. */
-  .filter-bar.mobile-open .filter-rows {
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 100%;
-    z-index: 30;
-    background: var(--paper);
-    border-bottom: 1px solid var(--rule);
-    box-shadow: 0 14px 28px rgba(26, 26, 26, 0.16);
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 14px 10px;
-    align-items: start; /* captions of side-by-side pairs share one top line */
-    padding: 12px 16px 18px;
-    border-top: 1px solid var(--rule);
-    max-height: calc(100dvh - 58px - 60px);
-    overflow-y: auto;
-  }
-  .filter-bar.mobile-open .filter-row { display: contents; }
-
-  .filter-bar.mobile-open .filter-show      { order: 1; grid-column: auto; }
-  .filter-bar.mobile-open .filter-travelby  { order: 2; grid-column: auto; }
-  .filter-bar.mobile-open .filter-toppicks  { order: 3; grid-column: auto; }
-  .filter-bar.mobile-open .filter-triptype  { order: 4; grid-column: auto; }
-  .filter-bar.mobile-open .filter-people    { order: 5; }
-  .filter-bar.mobile-open .filter-nights    { order: 6; }
-  .filter-bar.mobile-open .filter-baggage   { order: 7; grid-column: 1 / -1; }
-  .filter-bar.mobile-open .filter-country   { order: 8; grid-column: 1 / -1; }
-  .filter-bar.mobile-open .filter-beauty    { order: 9; grid-column: 1 / -1; }
-  .filter-bar.mobile-open .price-range      { order: 10; grid-column: 1 / -1; }
-  .filter-bar.mobile-open .filter-highlights{ order: 11; grid-column: 1 / -1; }
-  .filter-bar.mobile-open .reset-filters-btn{ order: 99; }
-
-  /* Lifestyle's one mobile entry point is this in-sheet pill: the header
-     lost its standalone lifestyle icon when the trigger row became the
-     segmented dates | filters pill. */
-}
+/* The 2-column inline drawer that used to live here (a grid of the desktop
+   fields, ordered by `order`) is gone: phones get the modal bottom sheet in
+   the .fsheet block instead. */
 
 /* ─── Date pickers: never off-screen on phones. The POPOVER anchors to its
    trigger on desktop and becomes a centered dialog on mobile. An inline

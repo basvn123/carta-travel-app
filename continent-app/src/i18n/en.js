@@ -362,6 +362,7 @@ export const en = {
   'filter.fromPrice': 'from {p}',
   'filter.showAllN': 'Show all {n}',
   'filter.showFewer': 'Show fewer',
+  'filter.anyRating': 'Any rating',
 
   // Results list
   'results.shortlist': 'Shortlist',
