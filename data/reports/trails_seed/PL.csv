@@ -1,0 +1,16 @@
+rank,curation_rank,title,ref,network,distance_km,popularity,pageviews_day,sitelinks,anchors,quality_score,portal_agreement,status,family_members,trip_id,osm_relation
+1,84.13,Szlak Maryjny - etap 14.,M02-01,iwn,26.0,0.754,0,0,"Ratusz (1529/day, 81 m); Biegański House (245/day, 292 m); Saint Sigismund church in Częstochowa (245/day, 25 m)",95,,needs_review,14,183476,4749313
+2,79.41,Jasnogórska Droga św. Jakuba,Camino,iwn,56.5,0.619,0,0,"Ratusz (1529/day, 1032 m); Biegański House (245/day, 1382 m); 34 Saint Mary Avenue in Częstochowa (245/day, 1244 m)",95,,needs_review,3,183446,4606615
+3,75.8,European long distance path E11 - part Poland,E11,iwn,1236.6,0.723,10,10,"Poznan (723/day, 14 m); Centrum Kultury Zamek (723/day, 168 m); Adam Mickiewicz Monument in Poznań (723/day, 194 m)",66,,needs_review,2,64456,2856709
+4,74.34,Główny Szlak Beskidzki,GSB,nwn,499.8,0.674,106,24,"Babia Gora (23/day, 1018 m)",87,,needs_review,1,68163,545421
+5,73.68,Via Regia Droga św. Jakuba,,nwn,24.6,0.562,45,22,,100,,needs_review,2,183455,4648544
+6,70.48,European long distance path E3 - part Poland (west),E3,iwn,307.1,0.364,0,0,"Chełmiec (89/day, 61 m); Wałbrzych Town Hall (89/day, 1757 m); Stara Kopalnia (89/day, 1985 m)",95,,needs_review,1,104898,3083510
+7,70.03,Mazowiecka Droga św. Jakuba,,nwn,167.4,0.574,0,0,"Roman Catholic Archdiocese of Warsaw (2253/day, 39 m); Holy Cross Church (2253/day, 1127 m); Muzeum Sztuki Nowoczesnej (2253/day, 1923 m)",83.8,,needs_review,1,184962,15098993
+8,69.92,Główny Szlak Świętokrzyski im. Edmunda Massalskiego,GSŚ,nwn,92.9,0.483,23,3,,96,,needs_review,2,183227,3372500
+9,69.16,Droga św. Jakuba - Via Regia Podkarpacka,,nwn,207.3,0.433,0,0,"Saints Stanislaus and Adalbert church in Rzeszów (260/day, 20 m); Town Hall in Rzeszów (260/day, 53 m); Rzeszow (260/day, 758 m)",100,,needs_review,1,175728,11063636
+10,68.36,Lubelska Droga św. Jakuba,,nwn,145.2,0.475,0,0,"German Nazi concentration and extermination camp Majdanek (492/day, 843 m); Lublin (439/day, 102 m); Teatr Stary (437/day, 57 m)",91,,needs_review,1,183044,3162602
+11,68.05,European long distance path E3 - part Poland (east),E3,iwn,249.1,0.43,0,0,"Zakopane (248/day, 1376 m); Tatra Museum in Zakopane (248/day, 1738 m); Pęksowy Brzyzek National Cemetery in Zakopane (248/day, 1457 m)",76,,needs_review,1,69759,5242655
+12,67.96,Szlak Orlich Gniazd,SL/KA-1,rwn,160.7,0.67,150,17,"Ratusz (1529/day, 1088 m); 47 Saint Mary Avenue in Częstochowa (245/day, 1160 m); Częstochowa Town Hall (245/day, 1131 m)",87,,needs_review,1,182724,1697841
+13,67.92,Via Regia,,nwn,61.3,0.612,0,0,"Galeria Handlowa Sky Tower (1371/day, 1901 m); Historic centre of Wrocław (1371/day, 137 m); Wroclaw (1371/day, 25 m)",70,,needs_review,2,184582,12592231
+14,67.32,Wrocławska Droga Świętego Jakuba,,nwn,42.7,0.541,0,0,"Feniks (1371/day, 944 m); Galeria Handlowa Sky Tower (1371/day, 1976 m); Historic centre of Wrocław (1371/day, 1180 m)",77.5,,needs_review,1,184583,12593507
+15,67.18,Szlak Mestwina,KP-4060-n,rwn,9.1,0.555,0,0,"Church of SS. Peter and Paul in Chełmno (1694/day, 104 m); 17 Grudziądzka Street in Chełmno (73/day, 284 m); Saints James and Nicholas church in Chełmno (73/day, 139 m)",100,,needs_review,1,183799,6246042

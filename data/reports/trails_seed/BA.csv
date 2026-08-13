@@ -1,0 +1,16 @@
+rank,curation_rank,title,ref,network,distance_km,popularity,pageviews_day,sitelinks,anchors,quality_score,portal_agreement,status,family_members,trip_id,osm_relation
+1,60.41,Banjalučka transverzala,lwn,lwn,14.5,0.54,0,0,"Banja Luka (456/day, 1990 m)",100,,needs_review,1,63931,2148504
+2,60.22,Marijin put M02/44 (Slavonski Brod-Derventa),M02/44,iwn,26.7,0.071,0,0,,95,,needs_review,1,63952,4797953
+3,60.22,Marijin put M02/45 (Derventa-Kotorsko),M02/45,iwn,26.5,0.071,0,0,,95,,needs_review,1,63953,4798319
+4,60.22,Marijin put M02/46 (Kotorsko-Doboj),M02/46,iwn,10.0,0.071,0,0,,95,,needs_review,1,63954,4798320
+5,60.22,Marijin put M02/52 (Novi Travnik-Bugojno),M02/52,iwn,26.2,0.071,0,0,,95,,needs_review,1,63959,4800931
+6,60.22,Marijin put M02/53 (Bugojno-Kupres),M02/53,iwn,23.6,0.071,0,0,,95,,needs_review,1,63960,4802262
+7,60.22,Marijin put M02/54 (Kupres-Šuica),M02/54,iwn,21.8,0.071,0,0,,95,,needs_review,1,63961,4802263
+8,60.22,Marijin put M02/55 (Šuica-Donji Brišnik),M02/55,iwn,25.9,0.071,0,0,,95,,needs_review,1,63962,4802264
+9,60.22,Marijin put M02/57 (Posušje-Široki Brijeg),M02/57,iwn,26.5,0.071,0,0,,95,,needs_review,1,63964,4802266
+10,60.22,Marijin put M02/50 (Nemila-Zenica),M02/50,iwn,22.4,0.071,0,0,,95,,needs_review,1,63957,4800876
+11,59.17,Pješačka staza br. 1,1,lwn,10.2,0.598,0,0,"Debelo brdo (1730/day, 1851 m); Sarajevo Olympic Bobsleigh Track (62/day, 1330 m)",87,,needs_review,2,63994,10590877
+12,57.42,Marijin put M02/48 (Maglaj-Žepče),M02/48,iwn,19.6,0.071,0,0,,83.8,,needs_review,1,63955,4800756
+13,57.42,Marijin put M02/58 (Široki Brijeg-Međugorje),M02/58,iwn,29.5,0.071,0,0,,83.8,,needs_review,1,63951,4749302
+14,57.42,Marijin put M02/51 (Zenica-Novi Travnik),M02/51,iwn,30.4,0.071,0,0,,83.8,,needs_review,1,63958,4800877
+15,57.42,Marijin put M02/56 (Donji Brišnik-Posušje),M02/56,iwn,26.7,0.071,0,0,,83.8,,needs_review,1,63963,4802265

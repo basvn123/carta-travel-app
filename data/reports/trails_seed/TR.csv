@@ -1,0 +1,16 @@
+rank,curation_rank,title,ref,network,distance_km,popularity,pageviews_day,sitelinks,anchors,quality_score,portal_agreement,status,family_members,trip_id,osm_relation
+1,66.73,Likya Yolu,,nwn,633.2,0.667,119,20,,57.5,,draft,1,175936,51855
+2,65.97,Sultans Trail Section 6: Edirne - Istanbul,ST6,iwn,340.3,0.199,14,11,,100,,needs_review,1,176040,19932854
+3,63.5,ST602 Ortakçi - Süloglu,ST602,iwn,16.9,0.129,14,11,,100,,needs_review,1,176041,19933044
+4,63.5,ST609 Binkiliç - Gümüşpinar,ST609,iwn,20.8,0.129,14,11,,100,,needs_review,1,176049,19938339
+5,63.5,ST611 Dağyenice - Boyalik,ST611,iwn,25.1,0.129,14,11,,100,,needs_review,1,176051,19944051
+6,61.68,ST614 Pirinççi - Eyüp,ST614,iwn,26.0,0.076,14,0,,100,,needs_review,1,176054,19944241
+7,61.68,ST603 Süloglu - Kiklareli,ST603,iwn,32.4,0.076,14,0,,100,,needs_review,1,176042,19933097
+8,61.68,ST604 Kirklareli - Üsküpdere,ST604,iwn,19.4,0.076,14,0,,100,,needs_review,1,176043,19935110
+9,61.68,ST605 Üsküpdere - Pinarhisar,ST605,iwn,18.3,0.076,14,0,,100,,needs_review,1,176045,19935285
+10,61.68,ST606 Pinarhisar - Vize,ST606,iwn,27.9,0.076,14,0,,100,,needs_review,1,176046,19936904
+11,61.68,ST607 Vize - Saray,ST607,iwn,23.2,0.076,14,0,,100,,needs_review,1,176047,19936992
+12,61.68,ST608 Saray - Binkiliç,ST608,iwn,29.1,0.076,14,0,,100,,needs_review,1,176048,19937763
+13,61.68,ST610 Gümüşpinar - Dağyenice,ST610,iwn,22.3,0.076,14,0,,100,,needs_review,1,176050,19938340
+14,61.68,ST612 Boyalik - Sazlibosna,ST612,iwn,16.6,0.076,14,0,,100,,needs_review,1,176052,19944052
+15,61.68,ST613 Sazlibosna - Pirinççi,ST613,iwn,27.2,0.076,14,0,,100,,needs_review,1,176053,19944240

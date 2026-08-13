@@ -1,0 +1,16 @@
+rank,curation_rank,title,ref,network,distance_km,popularity,pageviews_day,sitelinks,anchors,quality_score,portal_agreement,status,family_members,trip_id,osm_relation
+1,80.24,Camino Maltés,,iwn,35.0,0.643,0,0,"Mariam Al Batool school (6502/day, 1256 m); Monument ta' Hal Luqa (6502/day, 1477 m); Monument ta' Hal Luqa (6502/day, 1477 m)",95,,needs_review,1,62398,20281540
+2,75.24,Victoria Lines,,nwn,16.0,0.643,0,0,"Malta Marine Park (6502/day, 760 m); Malta Marine Park (6502/day, 760 m)",95,,needs_review,1,62416,20602397
+3,68.94,MMV Tour 1,MMV 1,lwn,13.0,0.784,0,0,"Clapham Junction (6502/day, 704 m); Megalithic Temples of Malta (278/day, 50 m); Ħaġar Qim (105/day, 32 m)",100,,needs_review,7,62380,78822
+4,63.99,Ħad-Dingli - Il-Fawwara - Wied iż-Żurrieq,,lwn,12.6,0.643,0,0,"Clapham Junction (6502/day, 704 m); Megalithic Temples of Malta (278/day, 233 m); Ħaġar Qim (105/day, 171 m)",100,,needs_review,1,62389,15954353
+5,63.99,Mdina Walk,,lwn,9.6,0.643,0,0,"Clapham Junction (6502/day, 551 m); Palazzo Vilhena (360/day, 28 m); Mdina (360/day, 67 m)",100,,needs_review,1,62392,15955071
+6,62.99,Girgenti Walk,,lwn,8.0,0.643,0,0,"Clapham Junction (6502/day, 171 m); Megalithic Temples of Malta (278/day, 1702 m); Ħaġar Qim (105/day, 1689 m)",96,,needs_review,1,62402,20584230
+7,58.82,Three Villages Walk,,lwn,6.7,0.531,0,0,"Maltese (1163/day, 375 m); Maltese (1163/day, 375 m); Malta (315/day, 1005 m)",95,,needs_review,1,62405,20598701
+8,58.16,Gozo Coastal Walk,,lwn,49.8,0.476,0,0,"Gozo (504/day, 1752 m); Gozo (504/day, 1752 m); Gozo (499/day, 1922 m)",100,,needs_review,1,62387,8240320
+9,57.16,Ramla Walk,,lwn,7.8,0.476,0,0,"Gozo (504/day, 393 m); Gozo (504/day, 393 m); Gozo (499/day, 610 m)",96,,needs_review,1,62406,20599334
+10,56.91,Xlendi Walk,,lwn,12.0,0.476,0,0,"Gozo (504/day, 1925 m); Gozo (504/day, 1925 m)",95,,needs_review,1,62410,20602014
+11,56.91,Salt Pans Walk,,lwn,11.7,0.476,0,0,"Gozo (504/day, 944 m); Gozo (504/day, 944 m); Gozo (499/day, 19 m)",95,,needs_review,1,62411,20602015
+12,56.91,Church Trail - Gozo Central/South,,lwn,7.3,0.476,0,0,"Gozo (504/day, 1756 m); Gozo (504/day, 1756 m); Gozo (499/day, 1040 m)",95,,needs_review,1,62413,20602169
+13,56.91,Church Trail - Gozo North/North-East,,lwn,9.4,0.476,0,0,"Gozo (504/day, 762 m); Gozo (504/day, 762 m); Gozo (499/day, 1316 m)",95,,needs_review,1,62414,20602170
+14,56.81,Maqluba Walk,,lwn,6.2,0.437,0,0,"Megalithic Temples of Malta (278/day, 770 m); Ħaġar Qim (105/day, 826 m); Ħaġar Qim (105/day, 754 m)",100,,needs_review,1,62390,15954387
+15,56.81,Ħal Millieri,,lwn,5.9,0.437,0,0,"Megalithic Temples of Malta (278/day, 1611 m); EgyptAir Flight 648 (118/day, 1574 m); Ħaġar Qim (105/day, 1601 m)",100,,needs_review,1,62391,15954551

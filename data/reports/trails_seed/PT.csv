@@ -1,0 +1,16 @@
+rank,curation_rank,title,ref,network,distance_km,popularity,pageviews_day,sitelinks,anchors,quality_score,portal_agreement,status,family_members,trip_id,osm_relation
+1,75.7,Rota Vicentina - Trilho dos Pescadores - 13,RV,rwn,11.0,0.799,0,0,"disappearance of Madeleine McCann (3810/day, 405 m); Lagos (1990/day, 238 m); Convento dos Frades Trinos (302/day, 40 m)",100,,needs_review,12,80236,20810592
+2,75.59,PR 2 - Vereda do Urzal,PR 2,rwn,9.5,0.824,0,0,"Levadas of Madeira Island (12671/day, 1291 m); Laurisilva of Madeira (1016/day, 1970 m); Madeira Island (323/day, 647 m)",96,,needs_review,7,79011,4298398
+3,75.37,Caminho do Atlântico (Troço Abano-Azoia),GR11;E9,nwn,5.7,0.646,0,0,"Adrenunes (477/day, 870 m); Adrenunes 250 m (89/day, 811 m)",95,,needs_review,10,79934,16095684
+4,73.83,Caminho Minhoto Ribeiro,,iwn,40.3,0.459,0,0,"Bracara Augusta (389/day, 827 m); Battle of Braga (389/day, 827 m); Capela da Casa dos Coimbras (389/day, 325 m)",95,,needs_review,1,80118,19300688
+5,72.7,Caminho de Fátima Nascente,,nwn,29.2,0.534,0,0,"Fatima (1233/day, 25 m); Fátima (322/day, 25 m); Parish Church of Fátima (322/day, 345 m)",100,,needs_review,1,79346,8253890
+6,71.45,Caminho de Tejo,,nwn,57.9,0.534,0,0,"Fatima (1233/day, 59 m); Cabeço dos Valinhos (322/day, 620 m); Moinhos da Fazarga (322/day, 1881 m)",95,,needs_review,1,79338,8187249
+7,70.22,PR 17 - Caminho do Pináculo e Folhadal,PR 17,rwn,15.5,0.671,0,0,"Pico Ruivo do Paul (12671/day, 1580 m)",96,,needs_review,1,79020,4441703
+8,69.89,Ramal Nossa Senhora de Fátima,,nwn,9.6,0.57,0,0,"Lisbon (2126/day, 1882 m); Lisbon Airport (453/day, 1533 m); Eurosport 1 (67/day, 362 m)",83.8,,needs_review,1,79579,10276524
+9,69.46,Rota Vicentina - Caminho Histórico,GR11,nwn,243.9,0.635,0,0,"Battle of Cape St Vincent (78/day, 114 m); Battle of Cape St. Vincent (78/day, 112 m); Torre de Aspa (68/day, 468 m)",73,,needs_review,2,79276,7592697
+10,69.45,Camino Torres - Salamanca to Ponte de Lima,,iwn,290.1,0.459,0,0,"Capela da Casa dos Coimbras (389/day, 224 m); Museu dos Biscainhos (389/day, 62 m); Braga (389/day, 40 m)",77.5,,needs_review,1,79617,11536416
+11,69.05,Caminho Português da Costa,CPC,nwn,138.5,0.626,0,0,"Porto (1206/day, 366 m); Ribeira (Porto) (1162/day, 13 m); Porto city hall (230/day, 482 m)",72.5,,needs_review,1,79167,6100606
+12,68.83,Camino Torres - 03 Caminho de Santiago Braga,CT,nwn,36.1,0.459,0,0,"Igreja de Santa Cruz (389/day, 281 m); Museu dos Biscainhos (389/day, 62 m); Picoto (389/day, 1752 m)",95,,needs_review,1,79347,8256938
+13,68.28,Caminho Real 25,CR25,rwn,38.6,0.615,0,0,"British Cemetery of Funchal (1016/day, 37 m); Igreja de Santo António (1016/day, 1522 m); Museu de História Natural do Funchal (1016/day, 68 m)",96,,needs_review,4,80151,19661598
+14,67.03,Caminho Português por Braga,,nwn,61.1,0.533,0,0,"Porto (1206/day, 110 m); Ribeira (Porto) (1162/day, 269 m); Bracara Augusta (389/day, 302 m)",77.5,,needs_review,1,79481,8903414
+15,66.97,Caminho Português da Costa (Viana do Castelo - A Guarda),,nwn,28.1,0.406,0,0,"Funicular de Santa Luzia (172/day, 1494 m); Igreja da Senhora da Agonia (113/day, 1497 m); Santa Luzia Sanctuary (113/day, 851 m)",95,,needs_review,1,80069,18168169

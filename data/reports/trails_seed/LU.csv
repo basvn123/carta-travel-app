@@ -1,0 +1,16 @@
+rank,curation_rank,title,ref,network,distance_km,popularity,pageviews_day,sitelinks,anchors,quality_score,portal_agreement,status,family_members,trip_id,osm_relation
+1,89.32,Via Sancti Martini HW-40-02 Junglinster - Luxembourg,VSM,iwn,23.0,0.902,0,0,"Luxembourg (4785/day, 464 m); Luxembourg (4747/day, 1425 m); Saint-Michel (4747/day, 252 m)",95,,needs_review,4,63282,11184454
+2,79.54,Via Sancti Martini Luxembourg,,iwn,86.4,0.623,0,0,"Luxembourg (4785/day, 270 m); Saint-Michel (4747/day, 82 m); Luxembourg (4747/day, 1341 m)",95,,needs_review,1,63278,11179012
+3,74.79,Sentier du Sud 1 (Luxembourg-Dudelange),SLD,nwn,33.0,0.623,0,0,"Luxembourg (4785/day, 1310 m); Luxembourg (4747/day, 1512 m); Saint-Michel (4747/day, 1181 m)",96,,needs_review,1,63007,1952362
+4,74.49,GR 5 Luxembourg,GR 5,nwn,177.6,0.621,0,0,"Schengen Agreement (283/day, 115 m); European Museum Schengen (107/day, 15 m); Vianden Castle (53/day, 130 m)",95,,needs_review,1,63076,2790499
+5,73.1,European long distance path E3 - part Luxembourg,E3,iwn,240.5,0.439,0,0,"Schengen Agreement (283/day, 115 m); European Museum Schengen (107/day, 15 m); Vianden Castle (53/day, 130 m)",95,,needs_review,1,63193,6346265
+6,69.54,Sentier des Auberges de Jeunesse Luxembourg-Hollenfels,ADJ,rwn,25.2,0.623,0,0,"Luxembourg (4785/day, 425 m); Saint-Michel (4747/day, 232 m); Luxembourg (4747/day, 1497 m)",100,,needs_review,1,63037,2317823
+7,68.92,Sentier des Auberges de Jeunesse,ADJ,nwn,51.7,0.623,0,0,"Luxembourg (4785/day, 425 m); Saint-Michel (4747/day, 232 m); Luxembourg (4747/day, 1497 m)",72.5,,needs_review,1,63379,18572708
+8,67.59,Escapardenne Eisleck Trail - Etape 2,ESCE,nwn,19.0,0.424,0,0,"Clervaux (31/day, 636 m)",95,,needs_review,3,63215,7356826
+9,65.59,Jakobsweg Luxemburg,JW,iwn,182.7,0.433,657,77,"Luxembourg (4785/day, 41 m); Luxembourg (4747/day, 852 m); Saint-Michel (4747/day, 38 m)",83.8,mismatch,needs_review,1,24902,1685944
+10,64.05,European long distance path E2 - part Luxemburg,E2,iwn,177.6,0.18,26,10,"Schengen Agreement (283/day, 115 m); European Museum Schengen (107/day, 15 m); Vianden Castle (53/day, 130 m)",95,,needs_review,1,63008,1976058
+11,63.99,Sentier du Nord,SDN,nwn,69.6,0.314,0,0,"Diekirch (41/day, 247 m); Diekirch (41/day, 247 m); Clervaux (31/day, 365 m)",96,,needs_review,1,63074,2746279
+12,63.65,Sentiers locaux Ardennes Colmar-Berg A,A,rwn,10.3,0.483,0,0,"Luxembourgish (559/day, 791 m); Berg Castle (61/day, 50 m)",96,,needs_review,1,63251,9333606
+13,63.65,Sentier Adrien Ries,SARI,rwn,50.1,0.483,0,0,"Luxembourgish (559/day, 791 m); Berg Castle (61/day, 460 m); Diekirch (41/day, 303 m)",96,,needs_review,1,63120,3324182
+14,63.12,Sentier Ardennes-Eifel,SAE,nwn,87.0,0.296,0,0,"Clervaux (31/day, 134 m); Esch-sur-Sûre (11/day, 955 m)",95,,needs_review,1,63016,2071064
+15,62.32,Sentier Victor Hugo,SVHU,nwn,26.5,0.331,0,0,"Vianden Castle (53/day, 102 m); Vianden (35/day, 1937 m)",87,,needs_review,1,63006,1950941

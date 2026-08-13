@@ -1,0 +1,16 @@
+rank,curation_rank,title,ref,network,distance_km,popularity,pageviews_day,sitelinks,anchors,quality_score,portal_agreement,status,family_members,trip_id,osm_relation
+1,76.34,Nordkalottruta Etapp 12: Kilpisjärvi - Treriksröset,,iwn,18.2,0.324,0,0,,100,agree,needs_review,6,24595,19059065
+2,67.47,European Long distance path E1 - Finland,E1,iwn,72.5,0.071,0,0,,100,agree,needs_review,1,22078,4220916
+3,65.35,Mariehamn Runt,,rwn,13.4,0.531,0,0,"Åland (Mariehamn) (1178/day, 489 m); Åland Museum (225/day, 163 m); Pommern (225/day, 46 m)",96,,needs_review,1,112595,12742996
+4,64.84,Reitti 2000,,rwn,108.5,0.553,0,0,"Stone Visitor (1634/day, 1342 m); Helsinki Olympic Stadium (134/day, 780 m); Helsinki Halli (54/day, 847 m)",91,,needs_review,1,112162,417727
+5,61.98,S:t Olofs sjöled Åland,,nwn,25.6,0.531,0,0,"Church of St. Olaf (1179/day, 6 m); Åland (Mariehamn) (1178/day, 336 m); Pommern (225/day, 243 m)",57.5,,draft,1,112593,12686108
+6,59.14,Ylläs-Levi kesäreitti,,nwn,51.7,0.45,0,0,"Levi (Lapland) (339/day, 49 m); Levitunturi (83/day, 756 m)",57.5,,draft,1,112176,1444446
+7,57.92,Ruijanpolku,,rwn,34.3,0.29,5,2,,100,,needs_review,1,112282,5621331
+8,57.04,UKK-reitti,UKK,nwn,887.2,0.364,16,2,,61.2,,needs_review,1,112232,2505663
+9,56.65,Jomala Vandringsled,,rwn,36.1,0.531,0,0,"Church of St. Olaf (1179/day, 108 m); Åland (Mariehamn) (1178/day, 1489 m); Pommern (225/day, 1455 m)",61.2,,needs_review,1,112222,2180518
+10,56.47,Hetta-Pallas-vaellusreitti,,nwn,47.4,0.071,0,0,,100,,needs_review,1,112177,1444449
+11,56.22,Piilolan polku,Pii,rwn,31.3,0.071,0,0,,100,agree,needs_review,1,24165,6577170
+12,56.22,Kilpisjärvi - Goldahytta,,rwn,13.5,0.071,0,0,,100,agree,needs_review,1,24287,9518790
+13,55.81,Luontopolku,,lwn,5.7,0.444,0,0,"Oulanka National Park (11/day, 1068 m)",95,,needs_review,15,112402,8769054
+14,54.35,TRO2,TRO2,rwn,12.7,0.071,0,0,,92.5,agree,needs_review,1,23985,6301216
+15,54.25,Aikavaellus,,lcn,14.2,0.471,0,0,"Turku Art Museum (468/day, 1066 m); Turku City Theatre (468/day, 1217 m); Luostarinmäki crafts quarters (468/day, 543 m)",95,,needs_review,1,112705,14194308

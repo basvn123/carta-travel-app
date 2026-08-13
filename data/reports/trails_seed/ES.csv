@@ -1,0 +1,16 @@
+rank,curation_rank,title,ref,network,distance_km,popularity,pageviews_day,sitelinks,anchors,quality_score,portal_agreement,status,family_members,trip_id,osm_relation
+1,81.57,Vía de la Plata hiking,VDLP,iwn,707.3,0.716,51,24,"Cathedral of Seville (1871/day, 81 m); Seville (1871/day, 1406 m); Hispalis (1871/day, 1679 m)",90,,needs_review,4,176095,241329
+2,81.44,Málaga - Rincón de la Victoria,GR 249,nwn,15.1,0.813,0,0,"Palacio Episcopal Centro de Arte (1214/day, 343 m); Parque de la Memoria (1214/day, 1685 m); Iglesia de la Esperanza (1214/day, 560 m)",96,,needs_review,37,177384,6272486
+3,80.85,Camino del Norte (Cantabria),CdN,nwn,185.2,0.767,28,13,"Santander (457/day, 216 m); Playa de La Concha (420/day, 1843 m); Hospital of San Rafael (Santander) (420/day, 210 m)",100,,needs_review,6,176104,360167
+4,80.18,GR 172 De la Mussara a Bellprat,GR 172,nwn,207.7,0.748,0,0,"Montserrat (1985/day, 9 m); Plaça de la Font (318/day, 526 m); Tarragona Turisme (318/day, 358 m)",100,,needs_review,11,177080,5011783
+5,79.56,E02 Talaia ibilbidea: Pasai San Pedro - Donostia,GR 121,nwn,10.5,0.766,0,0,"San Sebastián (1278/day, 561 m); Ulia (1278/day, 274 m); Mount Igeldo (1278/day, 1371 m)",95,,needs_review,16,177033,4621829
+6,78.24,Andalucía (Province of Cádiz),GR 7,nwn,163.3,0.85,0,0,"Castillo de Santa Catalina (2140/day, 49 m); Puerta de Jerez (206/day, 429 m); Battle of Río Salado (84/day, 1226 m)",78,,needs_review,36,177083,5165929
+7,77.58,Etapa 36: Badajoz - San Francisco de Olivenza,GR 114,nwn,27.1,0.702,0,0,"Monument to the Universal Extremeños (222/day, 418 m); Badajoz (222/day, 318 m); Torre Espantaperros (222/day, 570 m)",96,,needs_review,45,80218,20422994
+8,76.86,Sendero Europeo Arco Mediteraneo - Etapa 1,GR 92,nwn,26.9,0.85,0,0,"Castillo de Santa Catalina (2140/day, 50 m); Puerta de Jerez (206/day, 270 m); Tarifa (31/day, 322 m)",72.5,,needs_review,42,181217,17769680
+9,76.02,Itinerari 7 - El Camí de Llevant: de Montserrat a Salses,CC-C,nwn,687.9,0.458,1,1,"Montserrat (1985/day, 108 m); Sant Josep Convent (498/day, 63 m); Cross of St. Pere Galligants (498/day, 24 m)",100,agree,needs_review,43,39830,18665492
+10,75.58,Etapa 21: Cebreros - Ávila,GR 239,nwn,41.2,0.645,0,0,"Royal Monastery of Santa Ana, Ávila (1210/day, 574 m); Church of San Pedro (153/day, 197 m); Iglesia de San Pedro (153/day, 184 m)",96,,needs_review,5,182084,19557109
+11,75.09,Étape 09,HRP,nwn,16.9,0.475,0,8,,93.8,agree,needs_review,13,25551,3330734
+12,74.72,Ruta de Pedra en Sec: Stage 7: Son Amer - Pont Romà,GR 221,nwn,16.9,0.621,8,7,,96,,needs_review,16,181002,16358016
+13,74.56,Camí de Sant Jaume de Tarragona a Lleida - Etapa 1,,nwn,18.9,0.588,0,0,"Tarragona (318/day, 201 m); Plaça de la Font (318/day, 95 m); National Archaeological Museum of Tarragona (318/day, 180 m)",100,,needs_review,7,177838,7405929
+14,74.44,Camino Santiaguista de Uclés,,nwn,137.1,0.584,0,0,"Real Cocina de Palacio (2648/day, 157 m); Real Canal de Manzanares (2648/day, 208 m); Madrid (2538/day, 702 m)",100,,needs_review,1,178377,9615323
+15,73.96,Camino de Santiago del Estrecho,,nwn,147.9,0.57,0,0,"Castillo de Santa Catalina (2140/day, 49 m); Puerta de Jerez (206/day, 187 m); Battle of Río Salado (84/day, 1226 m)",100,,needs_review,1,176710,3421730
