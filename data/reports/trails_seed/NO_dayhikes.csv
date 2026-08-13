@@ -1,0 +1,13 @@
+rank,curation_rank,title,ref,network,distance_km,popularity,pageviews_day,sitelinks,anchors,quality_score,portal_agreement,status,family_members,trip_id,osm_relation
+1,89.45,Turvei B10,B10,lwn,9.0,0.81,0,0,"Akershus castle (1738/day, 1448 m); Munch museum (1738/day, 693 m); Munch museum (1738/day, 693 m)",97,agree,needs_review,1,21717,1629175
+2,85.67,St. Olavsleden dagsetapp Vikhammer - Nidarosdomen,,iwn,13.4,0.713,0,5,"Trondheim (713/day, 239 m); Nidaros Cathedral (254/day, 155 m); Norwegian University of Science and Technology (106/day, 8 m)",100,agree,needs_review,9,24614,19237780
+3,85.67,Midtbyrunden,,lwn,5.9,0.713,0,0,"Trondheim (713/day, 239 m); Nidaros Cathedral (254/day, 155 m)",100,agree,needs_review,1,24178,6686630
+4,84.62,Hjerterunden,,lwn,5.1,0.713,0,0,"Trondheim (713/day, 393 m); Nidaros Cathedral (254/day, 315 m)",97,agree,needs_review,1,22105,4855088
+5,84.62,Forsvarsrunden,,lwn,5.8,0.713,0,0,"Trondheim (713/day, 736 m); Nidaros Cathedral (254/day, 638 m); Norwegian University of Science and Technology (106/day, 1823 m)",97,agree,needs_review,1,24331,11125495
+6,82.1,Turvei B1,B1,lwn,13.2,0.81,0,0,"National Theatre (1738/day, 1948 m); Royal Palace (1738/day, 1485 m); Museum of Cultural History (1738/day, 1717 m)",76,agree,needs_review,1,21716,1629174
+7,82.1,Havnepromenaden Fjordbyen Oslo,H,lwn,8.9,0.81,0,0,"Akershus castle (1738/day, 80 m); MUNCH (1738/day, 64 m); Oslo (Torp) (1738/day, 433 m)",76,agree,needs_review,1,24218,7809508
+8,79.55,Hvitløypa,,lwn,11.5,0.591,0,0,"Steinerskolen i Kristiansand (230/day, 1765 m); Kristiansand (226/day, 1376 m)",100,agree,needs_review,1,24662,21103457
+9,79.45,Bymarka rundt,,lwn,10.5,0.589,0,0,"Kristiansand (226/day, 1859 m)",100,agree,needs_review,1,22104,4845286
+10,78.51,Revsvatnet,,lwn,5.2,0.57,0,0,"Preikestolen (190/day, 1782 m); Preikestolen (Pulpit Rock) (190/day, 1784 m); Preikestolen (190/day, 1932 m)",100,agree,needs_review,1,22044,3333528
+11,78.51,Preikestolen Roundtrip,,lwn,8.2,0.57,0,0,"Preikestolen (190/day, 3 m); Preikestolen (Pulpit Rock) (190/day, 7 m); Preikestolen (190/day, 130 m)",100,agree,needs_review,1,22086,4270259
+12,78.51,Preikestolen BaseCamp – Moslifjellet,,lwn,6.7,0.57,0,0,"Preikestolen (190/day, 1906 m); Preikestolen (Pulpit Rock) (190/day, 1906 m)",100,agree,needs_review,1,24580,18228663

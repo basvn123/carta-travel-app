@@ -1,0 +1,16 @@
+rank,curation_rank,title,ref,network,distance_km,popularity,pageviews_day,sitelinks,anchors,quality_score,portal_agreement,status,family_members,trip_id,osm_relation
+1,86.22,Rundweg Engehalbinsel,,lwn,9.6,0.752,0,0,"Bern (1022/day, 1971 m); Bern (1013/day, 1983 m); Child Eater Fountain (104/day, 1930 m)",96,agree,needs_review,1,3642,4581476
+2,82.89,Kulturweg,,lwn,8.4,0.658,0,0,"Zermatt (427/day, 273 m)",100,agree,needs_review,1,8664,19448943
+3,81.76,Sentier nature Grand Lausanne,138,lwn,6.8,0.726,0,0,"Townhall of Lausanne (802/day, 1684 m); Galeries Saint-François, Lausanne (802/day, 1934 m); Lausanne (802/day, 1765 m)",87,agree,needs_review,1,8098,15854614
+4,81.49,Naturweg,19,lwn,5.9,0.658,0,0,"Zermatt (427/day, 1603 m)",96,agree,needs_review,1,8665,19448972
+5,81.49,5-Seenweg,186,lwn,11.7,0.658,0,0,"Zermatt (427/day, 1603 m)",96,agree,needs_review,1,8666,19449262
+6,81.49,Edelweissweg,30,lwn,19.4,0.658,0,0,"Zermatt (427/day, 207 m)",96,agree,needs_review,1,8659,19447387
+7,81.14,Giro Lungolago Ascona,653,lwn,6.4,0.651,0,0,"Chiesa Madonna della Fontana (400/day, 761 m); Grotto Madonna della Fontana (400/day, 737 m); Casa Rusca, Pinacoteca comunale (146/day, 1833 m)",96,agree,needs_review,1,9172,19728031
+8,79.69,St.Galler Brückenweg,960,lwn,8.4,0.622,5,3,"Lokremise (306/day, 1890 m); Lokremise Theater 1 (306/day, 1940 m); Lokremise Theater 2 (306/day, 1914 m)",96,agree,needs_review,1,7743,14321198
+9,79.55,Rheinfall Rundweg,896,lwn,7.4,0.591,0,0,"Restaurant Schloss Laufen (230/day, 51 m); Wörth Castle (230/day, 63 m); Rhine Falls (Schaffhausen) (230/day, 125 m)",100,agree,needs_review,1,1432,1702853
+10,79.42,Via Alpina,1,nwn,16.2,0.663,0,0,"Vaduz (449/day, 1118 m); Landtag (448/day, 919 m); Rotes Haus (448/day, 1491 m)",89.3,agree,needs_review,18,7076,12359032
+11,79.05,Tour des trois rivières,,lwn,10.4,0.609,0,0,"Priestly Fraternity of St. Peter (272/day, 1367 m); Fribourg (235/day, 737 m); Cordeliers convent (235/day, 1652 m)",96,agree,needs_review,1,1454,1718788
+12,79.05,Tour du Lac / See-Rundweg,,lwn,8.1,0.609,0,0,"Priestly Fraternity of St. Peter (272/day, 392 m); Fribourg (235/day, 738 m); Fribourg (235/day, 738 m)",96,agree,needs_review,1,7742,14318374
+13,79.05,Gorges du Gottéron,269,lwn,8.5,0.609,0,0,"Priestly Fraternity of St. Peter (272/day, 695 m); Cordeliers convent (235/day, 706 m); Fribourg (235/day, 1566 m)",96,agree,needs_review,1,8455,17833136
+14,78.57,Chemin des Narcisses,133,lwn,5.6,0.599,0,0,"Caux (249/day, 1995 m); Montreux (249/day, 1650 m)",96,agree,needs_review,1,956,1179776
+15,78.34,Wisshornweg,32,lwn,12.5,0.658,0,0,"Zermatt (427/day, 503 m)",87,agree,needs_review,1,8657,19447236

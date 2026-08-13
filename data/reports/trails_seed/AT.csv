@@ -1,16 +1,16 @@
 rank,curation_rank,title,ref,network,distance_km,popularity,pageviews_day,sitelinks,anchors,quality_score,portal_agreement,status,family_members,trip_id,osm_relation
-1,79.69,Alpe Adria Trail E01,AATE01,iwn,13.5,0.627,0,0,"Grossglockner High Alpine Road (86/day, 1224 m)",95,,needs_review,26,18084,13864036
-2,78.25,Via Alpina Red R15,VA-R15,iwn,13.6,0.55,32,0,"Peč (76/day, 1 m)",100,,needs_review,28,12233,2716464
-3,77.12,Via Alpina,,iwn,468.9,0.786,32,15,"Peč (76/day, 1 m)",62.5,,needs_review,8,9467,20014200
-4,76.57,Jakobsweg,Jakobsweg Melk - Persenbeug,iwn,32.0,0.502,0,0,"Melk (85/day, 147 m)",100,,needs_review,7,11612,1923428
-5,76.39,"Camino Húngaro, Budapest–Lébény–Rajka-Wolfsthal",StJ,iwn,26.7,0.532,136,77,,95,,needs_review,1,12122,2529355
-6,76.15,Südalpenweg 03 - Etappe 17,03,nwn,12.7,0.633,0,0,"Peč (76/day, 1 m)",100,,needs_review,30,18025,13742289
-7,75.02,Nord-Süd Weitwanderweg 05,05,nwn,473.6,0.6,0,0,"Melk (85/day, 6 m)",100,,needs_review,20,9784,171840
-8,74.99,Jakobsweg Wien,,nwn,37.6,0.6,0,0,"Vienna (3369/day, 6 m)",100,,needs_review,1,12001,2354234
-9,74.93,Panoramaweg Südalpen 01,PanSüd 01,nwn,12.4,0.598,0,0,"Peč (76/day, 1 m)",100,,needs_review,21,19689,17341652
-10,72.79,Rupertiweg 10 (Stadtroute Salzburg),10,nwn,14.3,0.537,0,0,"Archbishopric of Salzburg (1284/day, 355 m); Salzburg (1284/day, 696 m); Nonnberg (89/day, 29 m)",100,,needs_review,1,13526,4681537
-11,72.17,Europäischer Fernwanderweg E4 (von Salzburg nach Gresten),E4,iwn,265.7,0.537,0,0,"Salzburg (1284/day, 1053 m); Archbishopric of Salzburg (1284/day, 735 m); Nonnberg (89/day, 374 m)",77.5,,needs_review,1,14969,7073840
-12,71.9,Adlerweg Etappe 1,AW1,rwn,12.8,0.69,0,0,"Bergbahn St. Johann (184/day, 436 m)",100,,needs_review,30,12620,3305324
-13,71.57,AV Weg 440,440,rwn,12.0,0.681,0,0,"Hundstein (159/day, 27 m)",100,,needs_review,228,19919,17715985
-14,71.53,Mariazellerweg 506,506,rwn,8.3,0.68,0,0,"Fürstenstand (694/day, 975 m)",100,,needs_review,11,17555,12442822
-15,70.63,Wanderweg 601,601,rwn,29.6,0.654,0,0,"Hallstatt-Dachstein Salzkammergut cultural landscape (621/day, 257 m); Hallstatt (621/day, 587 m)",100,,needs_review,9,10489,1105283
+1,81.42,Jakobsweg,,nwn,70.4,0.876,702,77,"Salzburg (1284/day, 236 m); Archbishopric of Salzburg (1284/day, 261 m); Hohensalzburg Fortress (155/day, 354 m)",87,,needs_review,7,11624,1932084
+2,79.81,Alpe Adria Trail E01,AATE01,iwn,13.5,0.623,0,0,"Grossglockner High Alpine Road (86/day, 1224 m)",96,,published,25,18084,13864036
+3,78.97,Via Alpina Red R47,VA-R47,iwn,11.2,0.571,32,0,,100,,needs_review,23,15900,8535437
+4,75.92,Südalpenweg 03 - Etappe 17,03,nwn,12.7,0.626,0,0,"Peč (76/day, 1 m)",100,,published,28,18025,13742289
+5,75.02,Nord-Süd Weitwanderweg 05,05,nwn,473.6,0.6,0,0,"Wachau (85/day, 1100 m); Melk (85/day, 6 m); Church of Spitz, Lower Austria (85/day, 434 m)",100,,published,20,9784,171840
+6,74.99,Jakobsweg Wien,,nwn,37.6,0.6,0,0,"Vienna (3369/day, 6 m); DO&CO Albertina (3332/day, 342 m); Battle of Vienna (1891/day, 67 m)",100,,published,1,12001,2354234
+7,74.89,Adlerweg Etappe 12,AW12,rwn,16.2,0.776,0,0,"Jesuit Church (686/day, 1970 m); Golden Roof Museum (64/day, 1994 m); Hofburg (33/day, 1948 m)",100,,needs_review,30,17369,12026956
+8,74.41,Panoramaweg Südalpen 01,PanSüd 01,nwn,12.4,0.583,0,0,"Peč (76/day, 1 m)",100,,published,18,19689,17341652
+9,73.75,European long distance path E6 - Main route Austria,E6,iwn,596.3,0.486,19,10,"Church of Spitz, Lower Austria (85/day, 434 m); Melk (85/day, 6 m); Wachau (85/day, 1100 m)",91,,needs_review,1,9815,188265
+10,73.29,Europäischer Fernwanderweg E4 (von Salzburg nach Gresten),E4,iwn,265.7,0.537,0,0,"Salzburg (1284/day, 1053 m); Archbishopric of Salzburg (1284/day, 735 m); Hohensalzburg Fortress (155/day, 228 m)",82,,needs_review,1,14969,7073840
+11,72.79,Rupertiweg 10 (Stadtroute Salzburg),10,nwn,14.3,0.537,0,0,"Salzburg (1284/day, 696 m); Archbishopric of Salzburg (1284/day, 355 m); Hohensalzburg Fortress (155/day, 81 m)",100,,published,1,13526,4681537
+12,72.63,Rupertiweg 10A,10A,nwn,136.0,0.532,0,0,"Inn (284/day, 55 m)",100,,needs_review,4,16588,10390816
+13,72.49,Jakobsweg Österreich,,iwn,1419.3,0.6,0,0,"Vienna (3369/day, 6 m); DO&CO Albertina (3332/day, 342 m); Battle of Vienna (1891/day, 67 m)",70,,needs_review,1,1641,2073724
+14,71.84,Sultans Trail Section 1: Vienna - Bratislava,ST1,iwn,106.9,0.367,14,11,"Vienna (3369/day, 6 m); DO&CO Albertina (3332/day, 193 m); Battle of Vienna (1891/day, 67 m)",100,,needs_review,1,19116,16073883
+15,71.57,AV Weg 440,440,rwn,12.0,0.681,0,0,"Hundstein (159/day, 27 m)",100,,published,220,19919,17715985

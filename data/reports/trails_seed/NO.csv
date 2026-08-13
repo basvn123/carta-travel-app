@@ -1,16 +1,16 @@
 rank,curation_rank,title,ref,network,distance_km,popularity,pageviews_day,sitelinks,anchors,quality_score,portal_agreement,status,family_members,trip_id,osm_relation
-1,75.75,Jotunheimstien,,nwn,330.6,0.65,0,0,"Akershus castle (1738/day, 1448 m); Akershus castle (1738/day, 1448 m); National Gallery (1738/day, 958 m)",96,,needs_review,4,23134,5620490
-2,72.8,"North Sea Trail, Norway",NST,iwn,1228.0,0.698,0,0,"Munch museum (1738/day, 1588 m); The Norwegian Museum of Cultural History (1738/day, 367 m); Fram (1738/day, 18 m)",57.5,,draft,3,21617,84480
-3,72.23,Gudbrandsdalsleden,,nwn,228.2,0.557,0,0,"Museum of Cultural History (1738/day, 643 m); Munch museum (1738/day, 231 m); MUNCH (1738/day, 505 m)",95,,needs_review,1,21664,1370273
-4,72.23,Borgleden,,nwn,184.6,0.557,0,0,"Oslo (Torp) (1738/day, 1757 m); Munch museum (1738/day, 1482 m); Oslo (Gardermoen) (1738/day, 1757 m)",95,,needs_review,1,23144,5672944
-5,72.23,Romeriksleden,,nwn,228.4,0.557,0,0,"Oslo (Torp) (1738/day, 1709 m); Akershus castle (1738/day, 1534 m); MUNCH (1738/day, 505 m)",95,,needs_review,1,21648,1200009
-6,71.94,St. Olavsleden dagsetapp Stiklestad - Munkeby,,iwn,20.7,0.406,0,5,,95,,needs_review,11,24620,19237786
-7,71.74,European Long distance path E1 - Norway (north),E1,iwn,478.6,0.4,0,0,"Nordkapp (North Cape) (155/day, 349 m)",95,,needs_review,1,24380,12884857
-8,70.92,European Long distance path E1 - Norway (south),E1,iwn,1035.7,0.376,0,0,"Roros (108/day, 4 m); Røros Mining Town and the Circumference (108/day, 73 m)",95,,needs_review,1,22066,3916040
-9,70.92,"European Long distance path E1 - Norway, Hedmark",E1,iwn,100.5,0.376,0,0,"Roros (108/day, 4 m); Røros Mining Town and the Circumference (108/day, 73 m)",95,,needs_review,1,22100,4503723
-10,70.92,"European Long distance path E1 - Norway, Røros-Nedalshytta",E1,iwn,93.8,0.376,0,0,"Røros Mining Town and the Circumference (108/day, 73 m); Roros (108/day, 4 m)",95,,needs_review,1,23495,6135573
-11,70.01,Nordkalottruta Etapp 1: Buletjávri - Čunovuohppi,,iwn,17.1,0.343,0,0,,96,,needs_review,28,24279,9517537
-12,69.66,"Euroopan vapaareititetty digitaalinen kävelyreitti E6, Suomi",E6,iwn,68.8,0.34,13,10,,95,,needs_review,1,21643,1017409
-13,67.98,Rondanestien,,nwn,439.3,0.557,0,0,"MUNCH (1738/day, 890 m); Oslo (Torp) (1738/day, 1033 m); Museum of Cultural History (1738/day, 1077 m)",78,,needs_review,1,21611,31463
-14,67.97,Gudbrandsdalsleden (Lillehammer-Dovre),,nwn,161.9,0.435,0,0,"Lillehammer (267/day, 139 m); Lillehammer station (267/day, 130 m); Lillehammer (267/day, 134 m)",95,,needs_review,1,23141,5659125
-15,67.86,Kyststier langs Oslofjorden,,iwn,1030.5,0.557,0,0,"Fram (1738/day, 18 m); National Theatre (1738/day, 392 m); National Gallery (1738/day, 648 m)",57.5,,draft,1,21659,1362633
+1,82.75,Jotunheimstien,,nwn,330.6,0.65,0,0,"Munch museum (1738/day, 693 m); Museum of Cultural History (1738/day, 1077 m); Royal Palace (1738/day, 1459 m)",100,agree,published,4,23134,5620490
+2,79.48,Gudbrandsdalsleden,,nwn,228.2,0.557,0,0,"The Norwegian Museum of Cultural History (1738/day, 1910 m); National Gallery (1738/day, 710 m); Oslo (Gardermoen) (1738/day, 1014 m)",100,agree,published,1,21664,1370273
+3,79.48,Romeriksleden,,nwn,228.4,0.557,0,0,"Munch museum (1738/day, 1096 m); MUNCH (1738/day, 505 m); MUNCH (1738/day, 505 m)",100,agree,published,1,21648,1200009
+4,79.48,Borgleden,,nwn,184.6,0.557,0,0,"MUNCH (1738/day, 577 m); MUNCH (1738/day, 577 m); Oslo (Torp) (1738/day, 1757 m)",100,agree,published,1,23144,5672944
+5,78.99,European Long distance path E1 - Norway (north),E1,iwn,478.6,0.4,0,0,"Nordkapp (North Cape) (155/day, 349 m); Visitor Centre (152/day, 67 m); North Cape (152/day, 349 m)",100,agree,published,1,24380,12884857
+6,78.88,St. Olavsleden dagsetapp Stiklestad - Munkeby,,iwn,20.7,0.397,0,5,,100,agree,published,10,24620,19237786
+7,78.48,Kyststier langs Oslofjorden,,iwn,1030.5,0.557,0,0,"Viking Ship Museum (1738/day, 223 m); Museum of Cultural History (1738/day, 677 m); Museum of Cultural History (1738/day, 677 m)",76,agree,needs_review,1,21659,1362633
+8,78.48,"North Sea Trail, Norway",NST,iwn,1228.0,0.557,0,0,"MUNCH (1738/day, 64 m); Viking Ship Museum (1738/day, 223 m); Fram (1738/day, 18 m)",76,agree,needs_review,1,21617,84480
+9,78.17,"European Long distance path E1 - Norway, Hedmark",E1,iwn,100.5,0.376,0,0,"Røros Copper Works (108/day, 27 m); Røros Mining Town and the Circumference (108/day, 73 m); Roros (108/day, 4 m)",100,agree,published,1,22100,4503723
+10,78.17,European Long distance path E1 - Norway (south),E1,iwn,1035.7,0.376,0,0,"Røros Mining Town and the Circumference (108/day, 73 m); Røros Copper Works (108/day, 27 m); Roros (108/day, 4 m)",100,agree,published,1,22066,3916040
+11,78.17,"European Long distance path E1 - Norway, Røros-Nedalshytta",E1,iwn,93.8,0.376,0,0,"Roros (108/day, 4 m); Røros Copper Works (108/day, 64 m); Røros Mining Town and the Circumference (108/day, 73 m)",100,agree,published,1,23495,6135573
+12,77.45,Nordkalottruta,,iwn,402.9,0.575,1,11,,69.3,agree,needs_review,21,21872,2437984
+13,76.7,Østerdalsleden,PØ,nwn,377.0,0.499,0,0,"Trondheim (713/day, 183 m); Nidaros Cathedral (254/day, 54 m)",97,agree,needs_review,1,22107,5129262
+14,76.7,Gudbrandsdalsleden (Skaun-Nidaros),,nwn,46.8,0.499,0,0,"Trondheim (713/day, 183 m); Nidaros Cathedral (254/day, 54 m)",97,agree,needs_review,1,23140,5659103
+15,76.48,Rondanestien,,nwn,439.3,0.557,0,0,"National Gallery (1738/day, 958 m); MUNCH (1738/day, 890 m); MUNCH (1738/day, 890 m)",88,agree,needs_review,1,21611,31463

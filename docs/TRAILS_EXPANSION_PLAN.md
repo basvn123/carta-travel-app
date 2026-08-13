@@ -12,23 +12,26 @@ for CH only; portal cross-checks live for CH/FR/NO; 49 trips published (CH);
 20 citytrips at needs_review; popularity shortlists favour long famous
 routes; POI images carry no per-file licence metadata.
 
-## Wave A: finish the four started countries
+## Wave A: finish the four started countries - STAGED 2026-08-13
 
-Everything below runs inside the existing lab chain (elevation -> validate ->
-popularity -> crosscheck -> describe -> review -> export), no new code.
-
-- [ ] Elevation for FR, NO, AT (`pipeline/trails/elevation.py`, GLO-30
-  tiles; CH's window-3 + 5m gate calibration carries over). Watch the
-  re-ingest-zeroes-Z gotcha: run elevation AFTER any re-ingest.
-- [ ] Validate + repair for FR/NO/AT (repair needs the per-country Valhalla
-  tile swap; Valhalla far-snaps outside its loaded country).
-- [ ] Popularity shortlists for FR/NO/AT, then describe + drift-check, then
-  human review to publish. Target: the playbook's 5-15 flagship hikes per
-  country actually published, not just staged.
-- [ ] Citytrips: clear the 20 needs_review pilots through the review UI.
+- [x] Elevation NO (2,957) + AT (11,415) + FR (18,307), all zero
+  low-coverage; FR calibration medians exactly 1.00 for both distance and
+  ascent over thousands of tagged routes. (NO's ascent tag-check read 0.00
+  over its 11 tagged routes; profiles themselves are healthy, the tag
+  sample is junk.)
+- [x] validate.py for NO/AT/FR: quality scores + drafts to needs_review.
+- [x] Flagship + dayhike shortlists for NO/AT/FR (spot checks: Adlerweg
+  family rank 7, GR 5 top-10, Preikestolen surfaced).
+- [ ] describe.py for the NO/AT/FR shortlists: BLOCKED in this session,
+  no ANTHROPIC_API_KEY / GEMINI_API_KEY in the environment. One command
+  per country once a key is in .env:
+  `python pipeline/trails/describe.py --countries NO,AT,FR --top 15`
+- [ ] HUMAN: review UI approval pass (trips + the 20 staged citytrips).
+  Approval is deliberately the only path to published.
 
 Benchmark: 4 countries with published, elevation-profiled, portal-checked
-flagship trails; public/trails/{AT,FR,NO}.json no longer empty.
+flagship trails; public/trails/{AT,FR,NO}.json no longer empty (fires on
+the first approval + export run after the review pass).
 
 ## Wave B: DE + AT portal cross-checks - DONE 2026-08-13 (DE; AT n/a)
 

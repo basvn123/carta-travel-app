@@ -1,0 +1,16 @@
+rank,curation_rank,title,ref,network,distance_km,popularity,pageviews_day,sitelinks,anchors,quality_score,portal_agreement,status,family_members,trip_id,osm_relation
+1,98.25,Via Alpina Red R161,VA-R161,iwn,12.5,0.965,32,0,"monaco top cars collection (7237/day, 294 m); Monaco (7237/day, 671 m); Jardins de Saint-Martin (7237/day, 34 m)",100,agree,needs_review,18,25126,2249131
+2,98.25,Tour de la tête de Chien,18,lwn,7.1,0.965,0,0,"Jardins de Saint-Martin (7237/day, 1550 m); Albert 1er (7237/day, 1545 m); monaco top cars collection (7237/day, 942 m)",100,agree,needs_review,1,32552,13491106
+3,98.25,Sentier de Cap d'Ail,48,lwn,5.3,0.965,0,0,"Albert 1er (7237/day, 1316 m); Jardins de Saint-Martin (7237/day, 1351 m); monaco top cars collection (7237/day, 948 m)",100,agree,needs_review,1,32584,13499597
+4,98.25,Trophée d'Auguste,03,lwn,6.7,0.965,0,0,"monaco top cars collection (7237/day, 863 m); Monaco (7237/day, 418 m); Jardins de Saint-Martin (7237/day, 1037 m)",100,agree,needs_review,1,32612,13506619
+5,94.48,La Fée d'Argouges,,lwn,8.2,0.89,0,0,"Hôtel de La Tour du Pin (3614/day, 1474 m); Baron Gérard Museum (184/day, 1633 m); Augustodurum (184/day, 1286 m)",100,agree,needs_review,1,32592,13502308
+6,90.46,La ceinture verte autour de Strasbourg,,lwn,17.2,0.809,0,0,"Rue Sainte-Madeleine (Krutenau) (1723/day, 563 m); Strasbourg (1723/day, 411 m); Europe (1723/day, 219 m)",100,agree,needs_review,1,39724,18522672
+7,89.25,Sentier Denecourt-Colinet 7,7,lwn,10.7,0.785,0,0,"Hôtel d'Albret (Fontainebleau) (1379/day, 1843 m); INSEAD (349/day, 564 m); Fontainebleau (328/day, 1712 m)",100,agree,needs_review,10,24686,157632
+8,89.25,Sentier des Carriers,,lwn,6.9,0.785,0,0,"Hôtel d'Albret (Fontainebleau) (1379/day, 1948 m); INSEAD (349/day, 628 m); Fontainebleau (328/day, 1959 m)",100,agree,needs_review,2,25391,2901737
+9,89.25,Sentier Denecourt-Colinet 9 Est,9E,lwn,6.4,0.785,0,0,"Hôtel d'Albret (Fontainebleau) (1379/day, 768 m); INSEAD (349/day, 1598 m); Fontainebleau (328/day, 1457 m)",100,agree,needs_review,1,24725,368071
+10,89.25,Circuit découverte du domaine national du Chateau de Fontainebleau,,lcn,8.6,0.785,0,0,"Hôtel d'Albret (Fontainebleau) (1379/day, 128 m); INSEAD (349/day, 963 m); Fontainebleau (328/day, 376 m)",100,agree,needs_review,1,26166,4551712
+11,86.53,Boucle des Châteaux,,lwn,13.7,0.731,0,0,"maison à galerie (835/day, 1158 m); The Scene of the Dead Man (835/day, 1961 m); Grotte de Lascaux (574/day, 1541 m)",100,agree,needs_review,3,39748,18567858
+12,86.53,Boucle du Bois de la Saladie (version longue),,lwn,15.0,0.731,0,0,"maison à galerie (835/day, 202 m); The Scene of the Dead Man (835/day, 322 m); Grotte de Lascaux (574/day, 687 m)",100,agree,needs_review,1,39753,18568463
+13,86.1,Péiras e Vinhas,PR,lwn,23.2,0.722,0,0,"Pont-Vieux (771/day, 405 m); Carcassonne (771/day, 992 m); Pont Vieux (771/day, 449 m)",100,agree,needs_review,1,42708,20704311
+14,85.49,Le Bord de la Loire,,lwn,9.1,0.71,0,0,"Passage Pommeraye, a 19th-century shopping gallery (689/day, 1825 m); Maillé-Brézé (41/day, 1113 m)",100,agree,needs_review,1,27971,8186441
+15,84.35,Rando Croquis,,lwn,5.1,0.692,0,0,"Millau Viaduct (585/day, 1772 m)",99.3,agree,needs_review,1,38977,17927538
