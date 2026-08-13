@@ -373,7 +373,8 @@ def length_factor(distance_m):
 DAYHIKE_MIN_M = 5_000
 DAYHIKE_MAX_M = 25_000
 DAYHIKE_LOOP_GAP_M = 2_000
-DAYHIKE_SAC_OK = {None, "", "hiking", "mountain_hiking"}
+DAYHIKE_SAC_OK = {None, "", "hiking", "mountain_hiking",
+                  "demanding_mountain_hiking"}   # T3: Besseggen, Gorge walks
 DAYHIKE_WEIGHTS = {"portal": 0.15, "quality": 0.35, "popularity": 0.50}
 
 
@@ -384,6 +385,12 @@ def is_dayhike(trip):
     if (trip.get("sac_scale") or "") not in DAYHIKE_SAC_OK:
         return False
     if (trip.get("roundtrip") or "").lower() == "yes":
+        return True
+    # A-to-B day routes famous enough to carry their own article (Besseggen
+    # ends at a boat dock, not where it starts) pass without the loop rule;
+    # for anonymous relations the loop requirement is what keeps clipped
+    # stage crumbs of long routes out.
+    if trip.get("wikipedia") or trip.get("wikidata"):
         return True
     gap = trip.get("loop_gap_m")
     return gap is not None and gap <= DAYHIKE_LOOP_GAP_M
