@@ -6,13 +6,36 @@ import { WaterQualityBadge, swimRelevant } from '../components/WaterQualityBadge
 import { CrowdingBadge, crowdBadgeWorthShowing } from '../components/CrowdingBadge.jsx';
 import { BestTimePanel } from './BestTimePanel.jsx';
 import { safeUrl, PRICE_SOURCE_LABELS, ACCOM_SOURCE_LABELS } from '../lib/format.js';
-import { ReceiptIcon, CalendarIcon, BedIcon, DiningIcon, CarIcon, InfoIcon, TreeIcon, PersonIcon } from '../components/Icons.jsx';
-import { PlaneIcon } from '../components/TransportIcons.jsx';
+import { ReceiptIcon, CalendarIcon, InfoIcon, TreeIcon, PersonIcon } from '../components/Icons.jsx';
 import { useI18n } from '../i18n/index.jsx';
 import { BreakdownTab, ViaAirportOptions } from './DetailBreakdown.jsx';
-import { TrailsNearby } from '../components/TrailsNearby.jsx';
 
 const fmtDate = (iso) => new Date(iso + 'T00:00:00Z').toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+
+/** Collapsible block for secondary panel content. The body stays mounted so
+ *  the open/close can animate (grid-rows 0fr -> 1fr); visibility gates the
+ *  tab order while closed. */
+function PanelAccordion({ icon, title, meta, defaultOpen = false, children }) {
+  const [open, setOpen] = React.useState(defaultOpen);
+  return (
+    <div className={`panel-acc ${open ? 'open' : ''}`}>
+      <button type="button" className="panel-acc-head" aria-expanded={open} onClick={() => setOpen((o) => !o)}>
+        {icon && <span className="panel-acc-icon">{icon}</span>}
+        <span className="panel-acc-title">{title}</span>
+        {meta && <span className="panel-acc-meta">{meta}</span>}
+        <svg className="panel-acc-chev" width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"
+          fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M6 9l6 6 6-6" />
+        </svg>
+      </button>
+      <div className="acc-fold" aria-hidden={!open}>
+        <div className="acc-fold-inner">
+          <div className="panel-acc-body">{children}</div>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 // "City, 1.2M" style line from the GeoNames slice (population + settlement).
 const popLine = (g) => {
@@ -31,11 +54,81 @@ export function DetailPanel({ destination, departDate, returnDate, choices, setC
   const [saveState, setSaveState] = React.useState('idle'); // idle | saving | saved
   const [activeTab, setActiveTab] = React.useState('breakdown'); // breakdown | best-time
 
-  // Land back on the breakdown whenever the user picks a different destination.
-  React.useEffect(() => { setActiveTab('breakdown'); }, [destination?.id]);
+  // Below 768px the panel is a bottom sheet over the map, opening at a half
+  // snap so the pin that was tapped stays visible; drag the grip (or tap it)
+  // to move between half, full and closed. Above 768px it stays the fixed
+  // side panel and the grip disappears.
+  const [isNarrow, setIsNarrow] = React.useState(
+    () => typeof window !== 'undefined' && window.matchMedia('(max-width: 768px)').matches,
+  );
+  const [sheetH, setSheetH] = React.useState(null); // px; null = CSS half snap
+  const [dragging, setDragging] = React.useState(false);
+  const sheetRef = React.useRef(null);
+  const scrollRef = React.useRef(null);
+  const dragRef = React.useRef(null);
+
+  React.useEffect(() => {
+    if (typeof window === 'undefined') return undefined;
+    const mq = window.matchMedia('(max-width: 768px)');
+    const onChange = (e) => setIsNarrow(e.matches);
+    mq.addEventListener('change', onChange);
+    return () => mq.removeEventListener('change', onChange);
+  }, []);
+
+  // Land back on the breakdown, at the half snap, scrolled to the top,
+  // whenever the user picks a different destination.
+  React.useEffect(() => {
+    setActiveTab('breakdown');
+    setSheetH(null);
+    if (scrollRef.current) scrollRef.current.scrollTop = 0;
+  }, [destination?.id]);
+
+  // The sheet's snap geometry, measured live: the gap under the sheet is the
+  // bottom nav, so full height = containing block minus that gap.
+  const snapPoints = () => {
+    const sheet = sheetRef.current;
+    const parent = sheet?.offsetParent;
+    if (!sheet || !parent) return null;
+    const bottomGap = parent.clientHeight - sheet.offsetTop - sheet.offsetHeight;
+    const full = parent.clientHeight - bottomGap - 10;
+    const half = Math.min(Math.round(full * 0.62), 560);
+    return { half, full };
+  };
+
+  const onGripDown = (e) => {
+    const sheet = sheetRef.current;
+    if (!sheet) return;
+    dragRef.current = { startY: e.clientY, startH: sheet.offsetHeight, moved: false, snaps: snapPoints() };
+    setDragging(true);
+    try { e.currentTarget.setPointerCapture(e.pointerId); } catch { /* older browsers */ }
+  };
+  const onGripMove = (e) => {
+    const st = dragRef.current;
+    if (!st || !st.snaps) return;
+    const dy = st.startY - e.clientY; // drag up -> taller
+    if (Math.abs(dy) > 4) st.moved = true;
+    setSheetH(Math.max(80, Math.min(st.snaps.full, st.startH + dy)));
+  };
+  const onGripUp = (e) => {
+    const st = dragRef.current;
+    dragRef.current = null;
+    setDragging(false);
+    try { e.currentTarget.releasePointerCapture(e.pointerId); } catch { /* older browsers */ }
+    if (!st || !st.snaps) return;
+    const { half, full } = st.snaps;
+    const h = sheetRef.current?.offsetHeight || half;
+    if (!st.moved) {
+      // Tap: toggle half <-> full.
+      setSheetH(h > (half + full) / 2 ? half : full);
+      return;
+    }
+    // Flung low = dismiss; otherwise settle on the nearest snap.
+    if (h < half * 0.55) { setSheetH(null); onClose?.(); return; }
+    setSheetH(h > (half + full) / 2 ? full : half);
+  };
 
   if (!destination) {
-    return <div className="panel" aria-hidden="true" />;
+    return <div className="panel dest-panel" aria-hidden="true" />;
   }
 
   const handleSaveTrip = async () => {
@@ -57,9 +150,31 @@ export function DetailPanel({ destination, departDate, returnDate, choices, setC
   const image = destination.image;
 
   return (
-    <div className="panel open">
-      <button className="panel-close" onClick={onClose} aria-label={t('detail.close')}>x</button>
+    <div
+      ref={sheetRef}
+      className={`panel dest-panel open ${dragging ? 'dragging' : ''}`}
+      style={isNarrow && sheetH != null ? { height: sheetH } : undefined}
+    >
+      {/* Grip: the sheet's handle on phones (drag to resize, tap to toggle
+          half/full). display:none above 768px. */}
+      <div
+        className="dest-grip-hit"
+        onPointerDown={onGripDown}
+        onPointerMove={onGripMove}
+        onPointerUp={onGripUp}
+        onPointerCancel={onGripUp}
+        aria-hidden="true"
+      >
+        <div className="dest-grip" />
+      </div>
+      <button className="panel-close" onClick={onClose} aria-label={t('detail.close')}>
+        <svg width="12" height="12" viewBox="0 0 24 24" aria-hidden="true"
+          fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
+          <path d="M5 5l14 14M19 5L5 19" />
+        </svg>
+      </button>
 
+      <div className="dest-panel-scroll" ref={scrollRef}>
       {/* The most impressive image of the region (Wikipedia lead photo). */}
       {image?.url && (
         <div className="panel-hero" style={{ backgroundImage: `url(${image.url})` }}>
@@ -140,41 +255,46 @@ export function DetailPanel({ destination, departDate, returnDate, choices, setC
         </div>
       </div>
 
-      {/* About this place: population, the nearest protected area, and a short
-          Wikivoyage lead. The guide text follows the data language (like POI
-          names/descriptions); only the labels are translated. */}
+      {/* About this place, folded away by default: population, the nearest
+          protected area, and a short Wikivoyage lead. The guide text follows
+          the data language (like POI names/descriptions); only the labels are
+          translated. */}
       {(destination.guide?.text || destination.nature?.nearest?.name
         || destination.geonames?.population != null || destination.geonames?.settlement) && (
-        <div className="panel-section panel-about">
-          {(destination.geonames?.population != null || destination.geonames?.settlement) && popLine(destination.geonames) && (
-            <div className="panel-about-fact">
-              <PersonIcon size={13} />
-              <span>{t('detail.population')}: {popLine(destination.geonames)}</span>
-            </div>
-          )}
-          {destination.nature?.nearest?.name && (
-            <div className="panel-about-fact">
-              <TreeIcon size={13} />
-              <span>
-                {t('detail.nearestNature')}: {destination.nature.nearest.name}
-                {destination.nature.nearest.kind ? ` (${destination.nature.nearest.kind})` : ''}
-                {destination.nature.nearest.dist_km != null ? `, ${destination.nature.nearest.dist_km} km` : ''}
-              </span>
-            </div>
-          )}
-          {destination.guide?.text && (
-            <p className="panel-about-guide">
-              {destination.guide.text}
-              {safeUrl(destination.guide.url) && (
-                <> <a className="panel-about-guide-link" href={safeUrl(destination.guide.url)}
-                      target="_blank" rel="noreferrer">{t('detail.readGuide')}</a></>
-              )}
-            </p>
-          )}
+        <div className="panel-section panel-section-acc">
+          <PanelAccordion
+            icon={<InfoIcon size={13} />}
+            title={t('detail.aboutTitle', { city: destination.city })}
+            meta={popLine(destination.geonames) || null}
+          >
+            {(destination.geonames?.population != null || destination.geonames?.settlement) && popLine(destination.geonames) && (
+              <div className="panel-about-fact">
+                <PersonIcon size={13} />
+                <span>{t('detail.population')}: {popLine(destination.geonames)}</span>
+              </div>
+            )}
+            {destination.nature?.nearest?.name && (
+              <div className="panel-about-fact">
+                <TreeIcon size={13} />
+                <span>
+                  {t('detail.nearestNature')}: {destination.nature.nearest.name}
+                  {destination.nature.nearest.kind ? ` (${destination.nature.nearest.kind})` : ''}
+                  {destination.nature.nearest.dist_km != null ? `, ${destination.nature.nearest.dist_km} km` : ''}
+                </span>
+              </div>
+            )}
+            {destination.guide?.text && (
+              <p className="panel-about-guide">
+                {destination.guide.text}
+                {safeUrl(destination.guide.url) && (
+                  <> <a className="panel-about-guide-link" href={safeUrl(destination.guide.url)}
+                        target="_blank" rel="noreferrer">{t('detail.readGuide')}</a></>
+                )}
+              </p>
+            )}
+          </PanelAccordion>
         </div>
       )}
-
-      <TrailsNearby destination={destination} />
 
       {!breakdown ? (
         <div className="panel-section">
@@ -257,6 +377,7 @@ export function DetailPanel({ destination, departDate, returnDate, choices, setC
           )}
         </>
       )}
+      </div>
     </div>
   );
 }

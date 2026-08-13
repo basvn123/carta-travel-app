@@ -15863,3 +15863,185 @@ button.ai-sched-main:focus-visible {
 @media (prefers-reduced-motion: reduce) {
   .places-seg { transition: none; }
 }
+
+/* ═══════════════════════════════════════════════════════════════════════
+   Destination detail v2: a bottom sheet on phones, folded sections and a
+   tighter header everywhere. The palette and type stay the app's own; the
+   compaction is structural (see Travel App UI modernization brief).
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* The detail panel owns its scroll in an inner container so the phone sheet
+   can pin a grip above it. Side effect on desktop: the close button now
+   stays put while the content scrolls, instead of scrolling away. */
+.panel.dest-panel {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.dest-panel-scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+/* Grip: rendered always, shown only in the phone sheet layout below. */
+.dest-grip-hit { display: none; }
+
+/* ── Fold: the animated collapse behind the cost groups and the about
+      accordion. The body stays mounted; grid-rows animates the height and
+      visibility keeps the closed content out of the tab order. ── */
+.acc-fold {
+  display: grid;
+  grid-template-rows: 0fr;
+  visibility: hidden;
+  transition: grid-template-rows .26s cubic-bezier(0.4, 0, 0.2, 1), visibility 0s linear .26s;
+}
+.acc-fold[aria-hidden="false"] {
+  grid-template-rows: 1fr;
+  visibility: visible;
+  transition: grid-template-rows .26s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.acc-fold-inner { overflow: hidden; min-height: 0; }
+
+/* ── About accordion: population, nearest nature and the guide lead, folded
+      into one tappable row instead of a permanently open block. ── */
+.panel-section-acc { padding: 0; }
+.panel-acc-head {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  width: 100%;
+  padding: 14px 22px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+}
+.panel-acc-head:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+.panel-acc-icon { display: flex; color: var(--ink-mute); }
+.panel-acc-title {
+  flex: 1;
+  min-width: 0;
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--ink);
+}
+.panel-acc-meta {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  color: var(--ink-mute);
+  max-width: 40%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.panel-acc-chev {
+  flex: none;
+  color: var(--ink-mute);
+  transition: transform .22s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.panel-acc.open .panel-acc-chev { transform: rotate(180deg); }
+.panel-acc-body { padding: 0 22px 16px; }
+
+/* ── Header compaction: same content, less air, so price and dates arrive
+      a full screen earlier. Scoped to the destination panel only. ── */
+.dest-panel .panel-hero { height: 172px; }
+.dest-panel .panel-header { padding: 16px 22px 12px; }
+.dest-panel .panel-city { font-size: 33px; }
+.dest-panel .panel-knownfor { margin: 5px 0 8px; }
+.dest-panel .panel-action-row { margin: 2px 0 2px; }
+.dest-panel .panel-section { padding: 16px 22px; }
+
+/* ── Micro-interactions: press states on everything tappable in the panel.
+      Transform only, so layout never shifts. ── */
+.panel-fav:active,
+.stay-tier-chip:active,
+.bt-cta:active,
+.via-airport-open:active,
+.panel-tabs .tab:active { transform: scale(0.96); }
+.cost-action:active { transform: translateY(1px) scale(0.98); }
+.cost-group-head:active { background: var(--rule); }
+.panel-acc-head:active .panel-acc-title { color: var(--ink-soft); }
+
+/* ── Phone layout: the panel becomes a bottom sheet over the map. Opens at
+      a half snap (the tapped pin stays visible), drags to full or away. ── */
+@media (max-width: 768px) {
+  .panel.dest-panel {
+    top: auto;
+    height: min(62dvh, 560px);
+    max-height: calc(100% - var(--bottom-nav-h) - 10px);
+    border: 1px solid var(--rule);
+    border-bottom: none;
+    border-radius: 18px 18px 0 0;
+    box-shadow: 0 -8px 30px rgba(26, 26, 26, 0.18);
+    transform: translateY(112%);
+    transition: transform .32s cubic-bezier(0.2, 0.9, 0.3, 1), height .26s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .panel.dest-panel.open { transform: translateY(0); }
+  .panel.dest-panel.dragging { transition: none; }
+
+  .dest-grip-hit {
+    display: block;
+    flex-shrink: 0;
+    padding: 9px 0 7px;
+    cursor: ns-resize;
+    touch-action: none;
+    user-select: none;
+  }
+  .dest-grip {
+    width: 42px;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--rule);
+    margin: 0 auto;
+    transition: background .15s, width .15s;
+  }
+  .dest-grip-hit:active .dest-grip { background: var(--ink-mute); width: 52px; }
+
+  .panel.dest-panel .panel-close { top: 26px; }
+  .dest-panel .panel-hero { height: 148px; }
+
+  /* Charts turn into swipeable strips instead of squeezing 12 columns into
+     a phone width: each month keeps a readable column and the row scrolls. */
+  .dest-panel .climate-chart,
+  .dest-panel .dow-chart {
+    overflow-x: auto;
+    scroll-snap-type: x proximity;
+    padding-bottom: 6px;
+    scrollbar-width: thin;
+  }
+  .dest-panel .climate-col { flex: 0 0 40px; scroll-snap-align: start; }
+  .dest-panel .dow-col { flex: 0 0 48px; scroll-snap-align: start; }
+
+  /* Chip rows swipe sideways rather than stacking three rows tall. */
+  .dest-panel .bt-length-chips,
+  .dest-panel .stay-tier-row {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .dest-panel .bt-length-chips .chip,
+  .dest-panel .stay-tier-chip { flex: none; }
+
+  /* The tall header scrolls away on the phone sheet (sticky, it ate ~250px
+     of an 844px screen); the slim tab bar sticks instead, so switching
+     between the breakdown and best-time stays one tap from anywhere. */
+  .dest-panel .panel-header { position: static; }
+  .dest-panel .panel-tabs {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background: var(--paper);
+    margin-bottom: 0;
+    padding-bottom: 2px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .panel.dest-panel,
+  .acc-fold,
+  .cost-group-caret,
+  .panel-acc-chev,
+  .dest-grip { transition: none; }
+}

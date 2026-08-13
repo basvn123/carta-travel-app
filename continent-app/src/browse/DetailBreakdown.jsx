@@ -71,10 +71,21 @@ function CostGroup({ icon, title, subtitle, subtotal, open, onToggle, infoButton
         </span>
         {infoButton}
         {subtotal != null && <span className="cost-group-val">{eur(subtotal)}</span>}
-        <span className="cost-group-caret" aria-hidden="true">{open ? '−' : '+'}</span>
+        <span className="cost-group-caret" aria-hidden="true">
+          <svg width="13" height="13" viewBox="0 0 24 24"
+            fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M6 9l6 6 6-6" />
+          </svg>
+        </span>
       </div>
       {infoPanel}
-      {open && <div className="cost-group-body">{children}</div>}
+      {/* Mounted while closed so open/close animates; visibility (via
+          .acc-fold) keeps the collapsed rows out of the tab order. */}
+      <div className="acc-fold" aria-hidden={!open}>
+        <div className="acc-fold-inner">
+          <div className="cost-group-body">{children}</div>
+        </div>
+      </div>
     </div>
   );
 }
