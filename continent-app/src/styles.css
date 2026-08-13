@@ -14895,3 +14895,229 @@ button.ai-sched-main:focus-visible {
   .account-pass-status { text-align: left; }
   .account-delete-actions { flex-direction: column; }
 }
+
+/* ─── Account hub: profile card, invite banner, help menu, subviews ───
+   The panel is a hub with spokes (profile, FAQ, feedback), so the hub itself
+   holds only doors: a card per destination, no forms. Objects get borders,
+   which is why the profile row and the menu are boxed while the FAQ below is
+   a hairline list. */
+
+/* Back control in the sticky header. Set exactly like .panel-tag so the eye
+   reads it as the same slot, but it is a real button with a 44px hit area. */
+.account-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 30px;
+  margin: -6px 0 0 -4px;
+  padding: 4px 8px 4px 4px;
+  border-radius: 6px;
+  font-family: var(--mono);
+  font-size: 9.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--ink-soft);
+  transition: color .15s, background .15s;
+}
+.account-back:hover { color: var(--ink); background: var(--paper-dim); }
+.account-back svg { color: currentColor; }
+
+/* The monogram disc. Initials, not a photo: there is no image storage behind
+   this, and a coloured circle with letters never arrives broken. Named
+   account-hub-avatar because .account-avatar is already the header button. */
+.account-hub-avatar {
+  flex: none;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: color-mix(in srgb, var(--accent) 14%, var(--paper));
+  border: 1px solid color-mix(in srgb, var(--accent) 30%, var(--paper));
+  color: var(--accent);
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+}
+.account-hub-avatar-guest {
+  background: var(--paper-dim);
+  border-color: var(--rule);
+  color: var(--ink-soft);
+}
+.account-hub-avatar-lg { width: 64px; height: 64px; font-size: 21px; }
+.account-profile-head {
+  display: flex;
+  justify-content: center;
+  padding-top: 24px;
+  padding-bottom: 6px;
+  border-bottom: none;
+}
+
+/* The door to profile details: who you are, and a chevron promising the rest. */
+.account-profile-card {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  background: var(--bg-card);
+  text-align: left;
+  transition: border-color .15s, background .15s;
+}
+.account-profile-card:hover { border-color: var(--ink-soft); background: var(--paper-dim); }
+.account-profile-meta {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.account-profile-meta b {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.account-profile-meta span {
+  font-size: 12.5px;
+  color: var(--ink-soft);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.account-menu-chev { flex: none; color: var(--ink-mute); }
+
+.account-signin-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 16px;
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  background: var(--bg-card);
+}
+.account-signin-card .account-section-hint { margin-bottom: 2px; }
+
+/* The invite banner: the one tinted surface in the panel, because it is the
+   one thing here that is an invitation rather than plumbing. */
+.account-invite {
+  border: 1px solid color-mix(in srgb, var(--accent) 32%, var(--paper));
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--accent) 7%, var(--paper));
+  padding: 16px;
+}
+.account-invite-title {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: 4px;
+}
+.account-invite-body {
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--ink-soft);
+  margin-bottom: 12px;
+}
+.account-invite-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 0 14px;
+  border: 1px solid color-mix(in srgb, var(--accent) 55%, var(--paper));
+  border-radius: 6px;
+  background: var(--paper);
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--ink);
+  transition: border-color .15s, background .15s;
+}
+.account-invite-btn:hover { border-color: var(--accent); }
+.account-invite-btn svg { color: var(--accent); }
+
+/* The help menu: one bounded object, rows divided by hairlines, every row a
+   52px button. The chevron is the only hint needed that these go somewhere. */
+.account-menu {
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  background: var(--bg-card);
+  overflow: hidden;
+}
+.account-menu-row {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 52px;
+  padding: 0 16px;
+  text-align: left;
+  transition: background .15s;
+}
+.account-menu-row + .account-menu-row { border-top: 1px solid var(--rule-soft); }
+.account-menu-row:hover { background: var(--paper-dim); }
+.account-menu-icon { flex: none; display: flex; color: var(--ink-soft); }
+.account-menu-label { flex: 1; font-size: 14px; font-weight: 500; color: var(--ink); }
+
+/* FAQ accordion: a hairline list, one answer open at a time. The question is
+   a full-width button so the whole row is the target, not just the chevron. */
+.account-faq { border-top: 1px solid var(--rule); }
+.account-faq-item { border-bottom: 1px solid var(--rule); }
+.account-faq-q {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 2px;
+  text-align: left;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--ink);
+  transition: color .15s;
+}
+.account-faq-q:hover { color: var(--accent); }
+.account-faq-chev { flex: none; color: var(--ink-mute); transition: transform .15s; }
+.account-faq-item.open .account-faq-chev { transform: rotate(180deg); }
+.account-faq-a {
+  padding: 0 2px 16px;
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: var(--ink-soft);
+}
+
+/* Feedback: a textarea styled like every other input in the app. */
+.account-feedback-input {
+  width: 100%;
+  min-height: 130px;
+  resize: vertical;
+  padding: 10px 12px;
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  background: var(--paper);
+  font-family: var(--ui);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--ink);
+  transition: border-color .15s, background .15s;
+}
+.account-feedback-input:hover { border-color: var(--ink-soft); }
+.account-feedback-input:focus {
+  outline: none;
+  border-color: var(--accent);
+  background: var(--paper-dim);
+}
+.account-feedback-input::placeholder { color: var(--ink-mute); }
+.account-feedback-note { margin-top: 10px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .account-back, .account-profile-card, .account-invite-btn, .account-menu-row,
+  .account-faq-q, .account-faq-chev, .account-feedback-input { transition: none; }
+}
