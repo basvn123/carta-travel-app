@@ -700,23 +700,23 @@ input, select {
   }
 }
 
-/* ───────── Bottom nav: the Map / Trip planner / Day planner switch on MOBILE
-   only (Strava-style icon + label tabs). On desktop the same tabs live in the
-   app header (.header-nav), so the bar hides and its height variable zeroes
-   out - every panel/map offset uses var(--bottom-nav-h), so the layout
-   reclaims the strip automatically. ───────── */
+/* ───────── Bottom nav, MOBILE only: Explore | plus | My trips. The raised
+   central plus opens the Trip planner / Day planner chooser (.plan-chooser).
+   On desktop the sections live in the app header (.header-nav), so the bar
+   hides and its height variable zeroes out - every panel/map offset uses
+   var(--bottom-nav-h), so the layout reclaims the strip automatically. ───────── */
 
 .bottom-nav {
   position: fixed;
   bottom: 0; left: 0; right: 0;
   z-index: 50;
-  display: flex;
-  justify-content: center;
-  gap: 4px;
+  display: grid;
+  /* 1fr | auto | 1fr keeps the plus dead-centre whatever the label widths. */
+  grid-template-columns: 1fr auto 1fr;
+  align-items: stretch;
   height: var(--bottom-nav-h);
-  /* Extra top padding so the icon + label sit well clear of the top border and
-     the map above, and a near-opaque panel so map markers don't bleed through. */
-  padding: 18px 8px calc(10px + env(safe-area-inset-bottom, 0px));
+  /* Near-opaque panel so map markers don't bleed through the blur. */
+  padding: 10px 14px calc(8px + env(safe-area-inset-bottom, 0px));
   background: rgba(245, 241, 232, 0.985);
   backdrop-filter: blur(14px) saturate(140%);
   border-top: 1px solid var(--rule);
@@ -724,41 +724,130 @@ input, select {
 }
 
 .bottom-nav-item {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 4px;
-  /* Five tabs share a 390px phone, so they must be free to shrink below
-     their label width (flex items default to min-width:auto and would
-     otherwise push each other's text into overlap). */
-  flex: 1 1 0;
+  gap: 5px;
   min-width: 0;
-  max-width: 160px;
   border-radius: 10px;
   color: var(--ink-mute);
-  transition: color .15s;
+  transition: color .15s, transform .1s;
 }
 .bottom-nav-item:hover { color: var(--ink-soft); }
+.bottom-nav-item:active { transform: scale(0.95); }
 .bottom-nav-item.active { color: var(--accent); }
+/* Active tab marker: a short accent tick on the bar's top edge, aligned with
+   the border above (the item sits 10px inside the bar's top padding). */
+.bottom-nav-item.active::before {
+  content: '';
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 22px;
+  height: 3px;
+  border-radius: 0 0 3px 3px;
+  background: var(--accent);
+}
 .bottom-nav-icon { flex-shrink: 0; }
 .bottom-nav-label {
   max-width: 100%;
   font-family: var(--mono);
-  font-size: 9.5px;
+  font-size: 10px;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.07em;
   /* Never wrap: a wrapped label grows the row and collides with its
      neighbours instead of staying inside its own tab. */
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
-/* Narrow phones: drop the tracking and a little size before the longest
-   translated label (Guardados, Gespeichert) starts truncating. */
-@media (max-width: 400px) {
-  .bottom-nav { gap: 0; padding-left: 4px; padding-right: 4px; }
-  .bottom-nav-label { font-size: 8.5px; letter-spacing: 0.04em; }
+
+/* The plus: raised over the bar's top edge, a paper ring so it reads as a
+   button floating above the map rather than a pin on it. Rotates to a cross
+   while the chooser is open. */
+.bottom-nav-plus {
+  align-self: start;
+  margin: -26px 18px 0;
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--accent);
+  color: #fff;
+  border: 4px solid var(--paper);
+  box-shadow: 0 6px 16px rgba(224, 90, 71, 0.38), var(--shadow-1);
+  transition: transform .2s, box-shadow .15s;
+}
+.bottom-nav-plus:active { transform: scale(0.94); }
+.bottom-nav-plus.open { transform: rotate(45deg); }
+/* On the Trip/Day planner tabs the plus is the "you are here" item. */
+.bottom-nav-plus.active {
+  box-shadow: 0 0 0 3px var(--accent-bg), 0 6px 16px rgba(224, 90, 71, 0.38);
+}
+
+/* The Trip planner / Day planner chooser, anchored above the plus. */
+.plan-chooser-backdrop {
+  position: fixed;
+  inset: 0;
+  /* Below the bar (z 50): the plus stays visible and tappable to close. */
+  z-index: 49;
+  background: rgba(15, 23, 42, 0.28);
+}
+.plan-chooser {
+  position: fixed;
+  left: 50%;
+  bottom: calc(var(--bottom-nav-h) + 40px);
+  transform: translateX(-50%);
+  z-index: 51;
+  width: min(330px, calc(100vw - 28px));
+  background: var(--bg-card);
+  border: 1px solid var(--rule);
+  border-radius: 14px;
+  box-shadow: var(--shadow-2);
+  overflow: hidden;
+  animation: plan-chooser-in .18s ease-out;
+}
+@keyframes plan-chooser-in {
+  from { opacity: 0; transform: translateX(-50%) translateY(10px); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+.plan-chooser-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  padding: 15px 18px;
+  text-align: left;
+  color: var(--ink);
+}
+.plan-chooser-item + .plan-chooser-item { border-top: 1px solid var(--rule-soft); }
+.plan-chooser-item:hover, .plan-chooser-item:active { background: var(--paper); }
+.plan-chooser-icon { color: var(--accent); flex-shrink: 0; }
+.plan-chooser-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.plan-chooser-title { font-size: 14px; font-weight: 600; }
+.plan-chooser-sub { font-size: 12px; color: var(--ink-mute); }
+
+@media (prefers-reduced-motion: reduce) {
+  .plan-chooser { animation: none; }
+  .bottom-nav-plus, .bottom-nav-item { transition: none; }
+}
+
+/* Narrow phones: a little less tracking before the longest translated labels
+   (Meine Reisen, Mes voyages) start truncating. */
+@media (max-width: 360px) {
+  .bottom-nav { padding-left: 8px; padding-right: 8px; }
+  .bottom-nav-label { font-size: 9px; letter-spacing: 0.04em; }
+  .bottom-nav-plus { margin-left: 10px; margin-right: 10px; }
 }
 
 /* Desktop: the header tabs replace the bar entirely. Must come after the base
@@ -14805,4 +14894,230 @@ button.ai-sched-main:focus-visible {
 @media (max-width: 520px) {
   .account-pass-status { text-align: left; }
   .account-delete-actions { flex-direction: column; }
+}
+
+/* ─── Account hub: profile card, invite banner, help menu, subviews ───
+   The panel is a hub with spokes (profile, FAQ, feedback), so the hub itself
+   holds only doors: a card per destination, no forms. Objects get borders,
+   which is why the profile row and the menu are boxed while the FAQ below is
+   a hairline list. */
+
+/* Back control in the sticky header. Set exactly like .panel-tag so the eye
+   reads it as the same slot, but it is a real button with a 44px hit area. */
+.account-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 30px;
+  margin: -6px 0 0 -4px;
+  padding: 4px 8px 4px 4px;
+  border-radius: 6px;
+  font-family: var(--mono);
+  font-size: 9.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--ink-soft);
+  transition: color .15s, background .15s;
+}
+.account-back:hover { color: var(--ink); background: var(--paper-dim); }
+.account-back svg { color: currentColor; }
+
+/* The monogram disc. Initials, not a photo: there is no image storage behind
+   this, and a coloured circle with letters never arrives broken. Named
+   account-hub-avatar because .account-avatar is already the header button. */
+.account-hub-avatar {
+  flex: none;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: color-mix(in srgb, var(--accent) 14%, var(--paper));
+  border: 1px solid color-mix(in srgb, var(--accent) 30%, var(--paper));
+  color: var(--accent);
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+}
+.account-hub-avatar-guest {
+  background: var(--paper-dim);
+  border-color: var(--rule);
+  color: var(--ink-soft);
+}
+.account-hub-avatar-lg { width: 64px; height: 64px; font-size: 21px; }
+.account-profile-head {
+  display: flex;
+  justify-content: center;
+  padding-top: 24px;
+  padding-bottom: 6px;
+  border-bottom: none;
+}
+
+/* The door to profile details: who you are, and a chevron promising the rest. */
+.account-profile-card {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  background: var(--bg-card);
+  text-align: left;
+  transition: border-color .15s, background .15s;
+}
+.account-profile-card:hover { border-color: var(--ink-soft); background: var(--paper-dim); }
+.account-profile-meta {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.account-profile-meta b {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.account-profile-meta span {
+  font-size: 12.5px;
+  color: var(--ink-soft);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.account-menu-chev { flex: none; color: var(--ink-mute); }
+
+.account-signin-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 16px;
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  background: var(--bg-card);
+}
+.account-signin-card .account-section-hint { margin-bottom: 2px; }
+
+/* The invite banner: the one tinted surface in the panel, because it is the
+   one thing here that is an invitation rather than plumbing. */
+.account-invite {
+  border: 1px solid color-mix(in srgb, var(--accent) 32%, var(--paper));
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--accent) 7%, var(--paper));
+  padding: 16px;
+}
+.account-invite-title {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: 4px;
+}
+.account-invite-body {
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--ink-soft);
+  margin-bottom: 12px;
+}
+.account-invite-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 0 14px;
+  border: 1px solid color-mix(in srgb, var(--accent) 55%, var(--paper));
+  border-radius: 6px;
+  background: var(--paper);
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--ink);
+  transition: border-color .15s, background .15s;
+}
+.account-invite-btn:hover { border-color: var(--accent); }
+.account-invite-btn svg { color: var(--accent); }
+
+/* The help menu: one bounded object, rows divided by hairlines, every row a
+   52px button. The chevron is the only hint needed that these go somewhere. */
+.account-menu {
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  background: var(--bg-card);
+  overflow: hidden;
+}
+.account-menu-row {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 52px;
+  padding: 0 16px;
+  text-align: left;
+  transition: background .15s;
+}
+.account-menu-row + .account-menu-row { border-top: 1px solid var(--rule-soft); }
+.account-menu-row:hover { background: var(--paper-dim); }
+.account-menu-icon { flex: none; display: flex; color: var(--ink-soft); }
+.account-menu-label { flex: 1; font-size: 14px; font-weight: 500; color: var(--ink); }
+
+/* FAQ accordion: a hairline list, one answer open at a time. The question is
+   a full-width button so the whole row is the target, not just the chevron. */
+.account-faq { border-top: 1px solid var(--rule); }
+.account-faq-item { border-bottom: 1px solid var(--rule); }
+.account-faq-q {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 2px;
+  text-align: left;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--ink);
+  transition: color .15s;
+}
+.account-faq-q:hover { color: var(--accent); }
+.account-faq-chev { flex: none; color: var(--ink-mute); transition: transform .15s; }
+.account-faq-item.open .account-faq-chev { transform: rotate(180deg); }
+.account-faq-a {
+  padding: 0 2px 16px;
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: var(--ink-soft);
+}
+
+/* Feedback: a textarea styled like every other input in the app. */
+.account-feedback-input {
+  width: 100%;
+  min-height: 130px;
+  resize: vertical;
+  padding: 10px 12px;
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  background: var(--paper);
+  font-family: var(--ui);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--ink);
+  transition: border-color .15s, background .15s;
+}
+.account-feedback-input:hover { border-color: var(--ink-soft); }
+.account-feedback-input:focus {
+  outline: none;
+  border-color: var(--accent);
+  background: var(--paper-dim);
+}
+.account-feedback-input::placeholder { color: var(--ink-mute); }
+.account-feedback-note { margin-top: 10px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .account-back, .account-profile-card, .account-invite-btn, .account-menu-row,
+  .account-faq-q, .account-faq-chev, .account-feedback-input { transition: none; }
 }

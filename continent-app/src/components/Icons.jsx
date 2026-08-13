@@ -153,6 +153,47 @@ export function ListDayIcon({ size = 20, className = '' }) {
   );
 }
 
+export function CompassIcon({ size = 20, className = '' }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.7"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      role="img"
+      aria-label="Explore"
+    >
+      <circle cx="12" cy="12" r="9" />
+      <path d="M15.5 8.5 13.6 13.6 8.5 15.5l1.9-5.1 5.1-1.9Z" />
+    </svg>
+  );
+}
+
+export function PlusIcon({ size = 20, className = '' }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      role="img"
+      aria-label="Plan"
+    >
+      <path d="M12 5v14M5 12h14" />
+    </svg>
+  );
+}
+
 export function BookmarkIcon({ size = 20, className = '' }) {
   return (
     <svg
@@ -725,6 +766,35 @@ export function ClockIcon({ size = 15, className = '' }) {
     <Glyph size={size} className={className} label="Time">
       <circle cx="12" cy="12" r="8.5" />
       <path d="M12 7.5V12l3 2" />
+    </Glyph>
+  );
+}
+
+/* ─── Account hub glyphs: the settings menu and its subview navigation ─── */
+
+export function ArrowLeftIcon({ size = 15, className = '' }) {
+  return (
+    <Glyph size={size} className={className} label="Back">
+      <path d="M19.5 12h-15M10.8 5.3 4.1 12l6.7 6.7" />
+    </Glyph>
+  );
+}
+
+export function QuestionIcon({ size = 15, className = '' }) {
+  return (
+    <Glyph size={size} className={className} label="Questions">
+      <circle cx="12" cy="12" r="8.5" />
+      <path d="M9.4 9.4a2.6 2.6 0 0 1 5.2.3c0 1.7-2.6 2.1-2.6 3.8" />
+      <path d="M12 16.6h.01" />
+    </Glyph>
+  );
+}
+
+export function FeedbackIcon({ size = 15, className = '' }) {
+  return (
+    <Glyph size={size} className={className} label="Feedback">
+      <path d="M4.5 6.5A2 2 0 0 1 6.5 4.5h11a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H9l-4.5 3.5v-13.5Z" />
+      <path d="M8.5 9h7M8.5 12h4.5" />
     </Glyph>
   );
 }

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useI18n } from '../i18n/index.jsx';
 import { TrainIcon, BusIcon, CarIcon, SparkIcon } from '../components/Icons.jsx';
-import { eur } from '../lib/format.js';
+import { eur, safeUrl } from '../lib/format.js';
 import { fmtDur } from './dayFormat.js';
 
 // The three inter-city day-trip modes and their glyphs/labels. Exported because
@@ -131,7 +131,7 @@ export function DayTripTransport({ fromDest, toDest, opts, mode, onPickMode }) {
           )}
           <div className="trip-leg-links">
             {cur.links.map((l, j) => (
-              <a key={j} href={l.url} target="_blank" rel="noreferrer">{l.label} ↗</a>
+              <a key={j} href={safeUrl(l.url)} target="_blank" rel="noreferrer">{l.label} ↗</a>
             ))}
           </div>
         </>

@@ -47,7 +47,7 @@ DATA = ROOT / "app_data" / "app_data.json"
 CACHE = ROOT / "app_data" / "must_desc_cache.json"
 
 UA = ("CartaTravelApp-enrich/1.0 "
-      "(https://github.com/basvn123; contact: bas.vannieuwenhuyse123@gmail.com)")
+      "(https://github.com/basvn123; contact: data@carta-europetravel.com)")
 HEADERS = {"User-Agent": UA, "Accept": "application/json"}
 
 DESC_MAX = 560

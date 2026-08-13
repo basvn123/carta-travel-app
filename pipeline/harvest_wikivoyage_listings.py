@@ -43,7 +43,7 @@ CACHE = ROOT / "cache" / "wikivoyage_listings.json"
 
 API = "https://en.wikivoyage.org/w/api.php"
 UA = {"User-Agent": "CartaTravelApp/1.0 (portfolio project; "
-                    "bas.vannieuwenhuyse123@gmail.com)"}
+                    "data@carta-europetravel.com)"}
 DELAY_S = 0.6
 RETRIES = 5
 TIMEOUT_S = 60

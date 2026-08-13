@@ -8,7 +8,7 @@ from ..core.collector import Collector
 from ..core.registry import register
 from ..core.scrape import extract_links
 
-GTFS_NL = config.env("NDOV_GTFS_URL", "http://gtfs.ovapi.nl/nl/gtfs-nl.zip")
+GTFS_NL = config.env("NDOV_GTFS_URL", "https://gtfs.ovapi.nl/nl/gtfs-nl.zip")
 NETEX_INDEX = config.env("NDOV_NETEX_INDEX", "https://data.ndovloket.nl/netex/")
 
 

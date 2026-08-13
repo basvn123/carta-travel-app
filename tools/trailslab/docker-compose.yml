@@ -14,8 +14,10 @@ services:
     image: pgrouting/pgrouting:17-3.5-3.7
     container_name: trailslab-db
     # 5433 on the host: the machine already runs a native PostgreSQL on 5432.
+    # Loopback-only: the dev password is a known literal, so the port must
+    # never be reachable from the LAN. Re-apply with: docker compose up -d
     ports:
-      - "5433:5432"
+      - "127.0.0.1:5433:5432"
     environment:
       POSTGRES_DB: trailslab
       POSTGRES_USER: trailslab

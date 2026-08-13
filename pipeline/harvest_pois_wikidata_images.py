@@ -40,7 +40,7 @@ DATA = ROOT / "app_data" / "app_data.json"
 CACHE = ROOT / "cache" / "wikidata_poi_images.json"
 
 WDQS = "https://query.wikidata.org/sparql"
-UA = "CartaTravelApp-wikidata-images/1.0 (bas.vannieuwenhuyse123@gmail.com)"
+UA = "CartaTravelApp-wikidata-images/1.0 (data@carta-europetravel.com)"
 BOX_DEG = 0.08          # +-0.08 deg box (~9 km lat) around each city centre
 QLIMIT = 6000           # cap rows so a dense-city box can't overflow the WDQS response
 MATCH_M = 120.0         # a POI accepts a Wikidata image within this distance if names overlap

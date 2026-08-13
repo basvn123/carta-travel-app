@@ -57,7 +57,7 @@ MASTER = ROOT / "app_data" / "app_data.json"
 CACHE = ROOT / "cache" / "wikidata_protected_areas.json"
 
 UA = {
-    "User-Agent": "CartaTravelApp/1.0 (portfolio project; bas.vannieuwenhuyse123@gmail.com)",
+    "User-Agent": "CartaTravelApp/1.0 (portfolio project; data@carta-europetravel.com)",
     "Accept": "application/sparql-results+json",
 }
 ENDPOINT = "https://query.wikidata.org/sparql"

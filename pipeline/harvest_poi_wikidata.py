@@ -44,7 +44,7 @@ DATA = ROOT / "app_data" / "app_data.json"
 CACHE = ROOT / "cache" / "poi_wikidata.json"
 
 UA = {"User-Agent": "CartaTravelApp/1.0 (portfolio project; "
-                    "bas.vannieuwenhuyse123@gmail.com)"}
+                    "data@carta-europetravel.com)"}
 TITLES_PER_REQ = 50
 QIDS_PER_QUERY = 200
 DELAY_S = 0.15

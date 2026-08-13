@@ -44,6 +44,18 @@ export function PrivacyPolicy({ onClose }) {
             descriptions load from Wikimedia servers. Opening a booking or
             Google Maps link takes you to that provider under its own policy.
           </p>
+          <p>
+            The AI planning features send what you give them to Google's Gemini
+            service for processing: the day planner sends your trip dates, stops
+            and stated interests, and the booking import sends the documents,
+            pasted text or page you ask it to read. Do not upload documents you
+            would not share with a cloud service. Extracted facts (booking
+            references, prices, dates, links) are stored with your saved plans;
+            a short-lived server cache (24 hours) holds parsed results so a
+            repeated import does not cost you a second AI credit. Traveller
+            names, email addresses and phone numbers are excluded from the
+            extraction by design.
+          </p>
 
           <h3>Retention and deletion</h3>
           <p>

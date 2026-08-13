@@ -316,7 +316,14 @@ def build_facts(trip):
 
 
 def facts_text(facts):
-    return "\n".join(f"- {k}: {v}" for k, v in facts.items())
+    # Titles, refs and anchor names originate in OSM tags anyone can edit.
+    # One value per line, no control characters, bounded length: a tag that
+    # tries to smuggle its own "- instruction:" lines or prompt text into the
+    # FACTS block stays a single, visibly odd value instead.
+    def clean(v):
+        flat = re.sub(r"[\x00-\x1f\x7f]+", " ", str(v))
+        return re.sub(r"\s{2,}", " ", flat).strip()[:300]
+    return "\n".join(f"- {k}: {clean(v)}" for k, v in facts.items())
 
 
 # ---------------------------------------------------------------------------

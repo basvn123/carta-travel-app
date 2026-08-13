@@ -52,7 +52,7 @@ ROOT = Path(__file__).resolve().parents[1]
 MASTER = ROOT / "app_data" / "app_data.json"
 CACHE = ROOT / "cache" / "geonames_cities500.txt"
 
-UA = {"User-Agent": "CartaTravelApp/1.0 (portfolio project; bas.vannieuwenhuyse123@gmail.com)"}
+UA = {"User-Agent": "CartaTravelApp/1.0 (portfolio project; data@carta-europetravel.com)"}
 DUMP_URL = "https://download.geonames.org/export/dump/cities500.zip"
 RADIUS_KM = 12.0                 # a destination centre and its town are close
 # Second-chance radius for a NAME-exact match. Airport-tier destinations can

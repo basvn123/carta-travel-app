@@ -56,7 +56,7 @@ BACKOFFS = [5, 15, 30]
 IMAGE_MODEL = "wikipedia_pageimage_v1"
 
 HEADERS = {
-    "User-Agent": "CartaTravelApp/1.0 (portfolio project; contact bas.vannieuwenhuyse123@gmail.com)",
+    "User-Agent": "CartaTravelApp/1.0 (portfolio project; contact data@carta-europetravel.com)",
     "Accept": "application/json",
 }
 

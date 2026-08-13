@@ -44,7 +44,7 @@ DATA = ROOT / "app_data" / "app_data.json"
 CACHE = ROOT / "cache" / "wikidata_landmarks.json"
 
 WDQS = "https://query.wikidata.org/sparql"
-UA = "CartaTravelApp-landmark-backfill/1.0 (bas.vannieuwenhuyse123@gmail.com)"
+UA = "CartaTravelApp-landmark-backfill/1.0 (data@carta-europetravel.com)"
 BOX_DEG = 0.09           # +-0.09 deg (~10 km lat) around the city centre
 MIN_SITELINKS = 10       # fame floor: keeps the query tiny and the adds famous
 TOP_RATE_SITELINKS = 25  # >= this many wikis -> rate 3 (top tier)

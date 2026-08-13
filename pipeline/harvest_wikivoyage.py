@@ -50,7 +50,7 @@ DATA = ROOT / "app_data" / "app_data.json"
 CACHE = ROOT / "cache" / "wikivoyage.json"
 
 API = "https://en.wikivoyage.org/w/api.php"
-UA = {"User-Agent": "CartaTravelApp/1.0 (portfolio project; bas.vannieuwenhuyse123@gmail.com)"}
+UA = {"User-Agent": "CartaTravelApp/1.0 (portfolio project; data@carta-europetravel.com)"}
 
 TITLES_PER_REQ = 20              # MediaWiki extracts cap with exlimit=max
 COORD_TOL_KM = 90.0             # accept a guide whose centre is within this range

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { eur, fmtHours, flightTimes } from '../lib/format.js';
+import { eur, fmtHours, flightTimes, safeUrl } from '../lib/format.js';
 import { TripExtras } from './TripExtras.jsx';
 import { ExpenseLedger } from './ExpenseLedger.jsx';
 import { loadTripExtras, persistTripExtras, subscribeDayPlanStore } from './dayPlanStore.js';
@@ -266,7 +266,7 @@ function ItinLeg({ leg, onMode }) {
       {open && chosen?.links?.length > 0 && (
         <div className="trip-leg-links itin-leg-links">
           {chosen.links.map((l, j) => (
-            <a key={j} href={l.url} target="_blank" rel="noreferrer">{l.label} ↗</a>
+            <a key={j} href={safeUrl(l.url)} target="_blank" rel="noreferrer">{l.label} ↗</a>
           ))}
           <BookingNote />
         </div>

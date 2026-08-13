@@ -222,14 +222,23 @@ def load_swisstopo(session, refresh):
                FROM gpkg_contents c
                JOIN gpkg_geometry_columns g ON g.table_name = c.table_name
                WHERE c.data_type = 'features'""").fetchall()
+        ident = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*$")
         for table, geom_col, srs_id, gtype in tables:
             if not any(k in (gtype or "").upper() for k in ("LINE", "CURVE", "GEOMETRY")):
+                continue
+            # Identifiers come out of a downloaded file's own metadata tables;
+            # only plain names may reach the interpolated SQL below.
+            if not ident.match(table or "") or not ident.match(geom_col or ""):
+                print(f"  [CH] skipping table with non-identifier name: "
+                      f"{table!r} / {geom_col!r}")
                 continue
             cols = [r[1] for r in con.execute(f"PRAGMA table_info('{table}')")]
             name_col = next(
                 (c for c in cols if c.lower() == "name"),
                 next((c for c in cols if "name" in c.lower()
                       and not c.lower().endswith("_uuid")), None))
+            if name_col and not ident.match(name_col):
+                name_col = None
             sel_name = f'"{name_col}"' if name_col else "NULL"
             print(f"  [CH] table {table}: geometry {geom_col} ({gtype}, "
                   f"srs {srs_id}), name column: {name_col or 'none'}")

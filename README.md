@@ -3,7 +3,7 @@
 Find affordable European getaways by **total trip cost** (real Ryanair fares +
 Airbnb-based stays + on-the-ground spend), then plan the trip city by city and
 day by day. 1,570 destinations across 43 European countries (master schema v15,
-see [SCHEMA.md](SCHEMA.md)).
+see [SCHEMA.md](docs/SCHEMA.md)).
 
 ## Repository layout
 
@@ -26,7 +26,7 @@ see [SCHEMA.md](SCHEMA.md)).
 │
 ├── app_data/               MASTER datasets (source of truth for the app)
 │   ├── app_data.json           1,570 destinations, schema v15 (gitignored,
-│   │                           rebuilt by the pipeline; see SCHEMA.md)
+│   │                           rebuilt by the pipeline; see docs/SCHEMA.md)
 │   └── country_insights.json   Deep per-country travel intel, 43 countries
 │
 ├── run_pipeline.py         THE pipeline entry point: cadence-aware orchestrator
@@ -40,7 +40,7 @@ see [SCHEMA.md](SCHEMA.md)).
 │   │                       (NAP schedule feeds, GTFS-RT/SIRI, OpenSky ADS-B,
 │   │                       ferries, pricing archives, holiday calendars)
 │   └── estimation/         Fare model: snapshot history, quantile GBDT,
-│                           PSI/KS drift gates. See ESTIMATION.md
+│                           PSI/KS drift gates. See docs/ESTIMATION.md
 │
 ├── pipeline/               All live data-pipeline code (run from the repo root)
 │   ├── harvest_*.py            Fetch external sources -> cache/ and/or master
@@ -58,6 +58,9 @@ see [SCHEMA.md](SCHEMA.md)).
 │   └── notebooks/          The original v1 notebook pipeline (schema v7 era)
 │
 ├── cache/                  Harvest caches (LFS-tracked; secrets gitignored)
+├── docs/                   Product + engineering docs (1.CARTA.md overview,
+│                           2.SIGNIFICANCE.md, SCHEMA.md, ESTIMATION.md,
+│                           PRICEMAP_CHUNKS.md, plans, ToS/license ledger)
 ├── logs/                   Pipeline logs + run state (gitignored)
 └── supabase/               SQL schema + migrations (RLS on every table)
 ```
@@ -92,7 +95,7 @@ validation task also demotes published trips whose quality regressed, back to
 On top of the fare refresh sits an automated estimation layer (weekly
 snapshot history -> quantile GBDT fare model -> PSI/KS drift-gated
 retraining) plus a raw open-data ingestion mirror - see
-[ESTIMATION.md](ESTIMATION.md).
+[ESTIMATION.md](docs/ESTIMATION.md).
 
 ## Data flow
 

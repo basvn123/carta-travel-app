@@ -22,8 +22,10 @@ services:
   trailslab-valhalla:
     image: ghcr.io/valhalla/valhalla-scripted:latest
     container_name: trailslab-valhalla
+    # Loopback-only: an unauthenticated routing service has no business being
+    # reachable from the LAN. Re-apply with: docker compose up -d
     ports:
-      - "8002:8002"
+      - "127.0.0.1:8002:8002"
     volumes:
       - ./data/${VALHALLA_COUNTRY:-switzerland}:/custom_files
     environment:

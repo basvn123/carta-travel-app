@@ -56,7 +56,7 @@ DATA = ROOT / "app_data" / "app_data.json"
 CACHE = ROOT / "app_data" / "enrich_cache.json"
 
 UA = ("CartaTravelApp-enrich/1.0 "
-      "(https://github.com/basvn123; contact: bas.vannieuwenhuyse123@gmail.com)")
+      "(https://github.com/basvn123; contact: data@carta-europetravel.com)")
 HEADERS = {"User-Agent": UA, "Accept": "application/json"}
 
 WIKI_MATCH_KM = 30          # POI <-> article max distance for a name match

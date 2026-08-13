@@ -40,7 +40,7 @@ PUBLIC = ROOT / "continent-app" / "public" / "app_data.json"
 CACHE = ROOT / "cache" / "osm_wikidata.json"
 NEW_GEMS = ROOT / "app_data" / "new_gems_2026_07c.json"
 
-UA = {"User-Agent": "CartaTravelApp/1.0 (portfolio project; bas.vannieuwenhuyse123@gmail.com)"}
+UA = {"User-Agent": "CartaTravelApp/1.0 (portfolio project; data@carta-europetravel.com)"}
 OVERPASS = "https://overpass-api.de/api/interpreter"
 WIKIDATA_ENTITY = "https://www.wikidata.org/wiki/Special:EntityData/{}.json"
 WIKI_API = "https://en.wikipedia.org/w/api.php"

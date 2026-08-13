@@ -50,7 +50,7 @@ ROOT = Path(__file__).resolve().parents[1]
 MASTER = ROOT / "app_data" / "app_data.json"
 CACHE = ROOT / "cache" / "eea_bathing_water.json"
 
-UA = {"User-Agent": "CartaTravelApp/1.0 (portfolio project; bas.vannieuwenhuyse123@gmail.com)"}
+UA = {"User-Agent": "CartaTravelApp/1.0 (portfolio project; data@carta-europetravel.com)"}
 
 # EEA discomap ArcGIS REST - the 2025 bathing season point layer (id 3).
 YEAR = 2025

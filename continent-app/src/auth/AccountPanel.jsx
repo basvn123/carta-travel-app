@@ -1,7 +1,8 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useAuth } from './AuthContext.jsx';
 import {
-  CheckIcon, EyeIcon, EyeOffIcon, LockIcon, PersonIcon,
+  ArrowLeftIcon, CheckIcon, ChevronDownIcon, ChevronRightIcon, EyeIcon,
+  EyeOffIcon, FeedbackIcon, LockIcon, PersonIcon, QuestionIcon, ShareIcon,
   ShieldIcon, SignOutIcon, SparkIcon, TrashIcon,
 } from '../components/Icons.jsx';
 import { PrivacyPolicy } from '../components/PrivacyPolicy.jsx';
@@ -11,16 +12,16 @@ import { TIERS, daysLeft, canUpgrade, formatPrice } from '../lib/pricing.js';
 import { MIN_PASSWORD_LENGTH, passwordStrength } from '../lib/passwordStrength.js';
 import { useI18n } from '../i18n/index.jsx';
 
-// Account & preferences. Saved trips deliberately do NOT live here, they have
-// their own panel (SavedTripsPanel, opened from the nav) so this stays a clean
-// account-management surface.
+// Account hub. The panel is a hub with three spokes rather than one long
+// scroll: the hub answers "who am I, what do I hold, where do I get help",
+// and everything with a form on it (profile, FAQ, feedback) is a subview
+// behind its own back button. A settings screen earns that structure the
+// moment it holds both a password form and a feedback box, because the person
+// who came to report a bug should never scroll past "Delete account" to do it.
 //
-// The panel reads top to bottom as who you are, what you hold, how you get in,
-// how you leave, and how you erase yourself. Each of those is a section with
-// its own heading, because a settings screen that is one undifferentiated
-// scroll makes somebody read everything to find one thing. The order is also a
-// safety order: the destructive action is last, behind its own confirmation,
-// as far from "Sign out" as the panel allows.
+// Saved trips deliberately do NOT live here, they have their own panel
+// (SavedTripsPanel, opened from the nav) so this stays a clean
+// account-management surface.
 //
 // Two rules worth keeping if this file is edited again:
 //   - Anything that could lock the real owner out (changing the password,
@@ -30,6 +31,36 @@ import { useI18n } from '../i18n/index.jsx';
 //     here is behind `hasPassword` and offers the email route instead.
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+// Same address the privacy policy names as the controller contact.
+const CONTACT = 'bas.vannieuwenhuyse123@gmail.com';
+const SHARE_URL = 'https://carta-europetravel.com';
+
+// Reuses the homepage answers so the two FAQ surfaces cannot drift apart,
+// then adds the four questions that only make sense once you have an account.
+const FAQ_KEYS = [
+  ['home.faq1Q', 'home.faq1A'],
+  ['home.faq2Q', 'home.faq2A'],
+  ['home.faq3Q', 'home.faq3A'],
+  ['home.faq4Q', 'home.faq4A'],
+  ['home.faq5Q', 'home.faq5A'],
+  ['account.faq6Q', 'account.faq6A'],
+  ['account.faq7Q', 'account.faq7A'],
+  ['account.faq8Q', 'account.faq8A'],
+  ['account.faq9Q', 'account.faq9A'],
+];
+
+/** Initials for the avatar disc. Two letters from a name, one from an email,
+ *  because a coloured circle with nothing in it reads as a broken image. */
+function monogram(name, email) {
+  const trimmed = (name || '').trim();
+  if (trimmed) {
+    const parts = trimmed.split(/\s+/);
+    const first = parts[0][0] || '';
+    const last = parts.length > 1 ? parts[parts.length - 1][0] : '';
+    return (first + last).toUpperCase();
+  }
+  return (email || '?').trim().charAt(0).toUpperCase();
+}
 
 /** Password input with a reveal toggle. Typing a long passphrase blind on a
  *  phone is how people end up locked out of accounts they still own. */
@@ -97,6 +128,17 @@ function PasswordMeter({ password, confirm }) {
   );
 }
 
+/** One row of the hub menu: icon, label, chevron. A real button, 52px tall. */
+function MenuRow({ icon, label, onClick }) {
+  return (
+    <button type="button" className="account-menu-row" onClick={onClick}>
+      <span className="account-menu-icon">{icon}</span>
+      <span className="account-menu-label">{label}</span>
+      <ChevronRightIcon size={16} className="account-menu-chev" />
+    </button>
+  );
+}
+
 export function AccountPanel({ onClose, onOpenAuth }) {
   const {
     user, hasPassword, signOut, updatePassword, reauthenticate,
@@ -104,6 +146,8 @@ export function AccountPanel({ onClose, onOpenAuth }) {
   } = useAuth();
   const { t, lang } = useI18n();
   const entitlement = useEntitlement();
+  const panelRef = useRef(null);
+  const [view, setView] = useState('home'); // 'home' | 'profile' | 'faq' | 'feedback'
   const [passOpen, setPassOpen] = useState(false);
   const [privacyOpen, setPrivacyOpen] = useState(false);
 
@@ -129,6 +173,10 @@ export function AccountPanel({ onClose, onOpenAuth }) {
   const [deleteBusy, setDeleteBusy] = useState(false);
   const [deleteError, setDeleteError] = useState('');
 
+  const [openFaq, setOpenFaq] = useState(null);
+  const [feedbackText, setFeedbackText] = useState('');
+  const [shareCopied, setShareCopied] = useState(false);
+
   // Re-seed the form when the account itself changes (sign out and back in as
   // somebody else). Keyed on the values rather than the user object, so an
   // ordinary token refresh does not wipe what is half typed.
@@ -138,6 +186,17 @@ export function AccountPanel({ onClose, onOpenAuth }) {
     setProfileError('');
     setProfileNotice('');
   }, [storedName, storedEmail]);
+
+  // A subview keeps the hub's scroll position otherwise, and "page two opens
+  // halfway down" reads as a rendering bug.
+  useEffect(() => {
+    panelRef.current?.scrollTo?.(0, 0);
+  }, [view]);
+
+  // Signing out while on the profile spoke leaves a form for nobody.
+  useEffect(() => {
+    if (!user && view === 'profile') setView('home');
+  }, [user, view]);
 
   const emailChanged = email.trim().toLowerCase() !== storedEmail.toLowerCase();
   const profileDirty = name.trim() !== storedName || emailChanged;
@@ -255,30 +314,169 @@ export function AccountPanel({ onClose, onOpenAuth }) {
     setDeleteError('');
   };
 
+  // The native share sheet where there is one, the clipboard where there
+  // isn't. A dismissed sheet is a decision, not a failure, so it stays silent.
+  const handleShare = async () => {
+    const text = t('account.shareText');
+    if (navigator.share) {
+      try {
+        await navigator.share({ title: 'Carta', text, url: SHARE_URL });
+        return;
+      } catch (err) {
+        if (err?.name === 'AbortError') return;
+      }
+    }
+    try {
+      await navigator.clipboard.writeText(`${text} ${SHARE_URL}`);
+      setShareCopied(true);
+      window.setTimeout(() => setShareCopied(false), 2500);
+    } catch {
+      /* No share sheet and no clipboard access: nothing sane to do. */
+    }
+  };
+
+  // Feedback goes by email rather than into a database nobody reads: the
+  // mailto keeps the sender's address attached so they can get an answer.
+  const handleSendFeedback = () => {
+    const subject = encodeURIComponent(t('account.feedbackSubject'));
+    const body = encodeURIComponent(feedbackText.trim());
+    window.location.href = `mailto:${CONTACT}?subject=${subject}&body=${body}`;
+  };
+
   const tier = TIERS[entitlement.tier] || TIERS.free;
   const upgrade = TIERS.trip;
   const locale = { en: 'en-GB', nl: 'nl-NL', de: 'de-DE', fr: 'fr-FR', es: 'es-ES', it: 'it-IT' }[lang] || 'en-GB';
 
+  const heading = view === 'profile' ? t('account.profileDetails')
+    : view === 'faq' ? t('account.menuFaq')
+    : view === 'feedback' ? t('account.feedbackTitle')
+    : user ? (storedName || storedEmail) : t('account.preferences');
+
   return (
-    <div className="panel open account-panel">
+    <div className="panel open account-panel" ref={panelRef}>
       {/* The close button lives INSIDE the sticky header. As a child of the
           scrolling panel it was positioned against the content box, so it slid
           out of sight the moment anybody scrolled and the panel had no visible
           way out at the bottom, which is where the delete section is. */}
       <div className="panel-header">
         <button className="panel-close" onClick={onClose} aria-label={t('account.close')}>x</button>
-        <div className="panel-tag">{t('account.tag')}</div>
-        <h2 className="panel-city account-heading">
-          {user ? (storedName || storedEmail) : t('account.preferences')}
-        </h2>
+        {view === 'home' ? (
+          <div className="panel-tag">{t('account.tag')}</div>
+        ) : (
+          <button type="button" className="account-back" onClick={() => setView('home')}>
+            <ArrowLeftIcon size={13} /> {t('account.tag')}
+          </button>
+        )}
+        <h2 className="panel-city account-heading">{heading}</h2>
       </div>
 
-      {user ? (
+      {view === 'home' && (
         <>
-          {/* Who you are, and the only place in the panel that says it. The
-              old layout printed the name and email twice, once in the header
-              and again in a "Signed in as" card, and neither copy could be
-              edited. */}
+          {/* Who you are, as a door rather than a form: the editable fields
+              live one level down, so the hub stays a place you can read in
+              five seconds. */}
+          <div className="panel-section">
+            {user ? (
+              <button type="button" className="account-profile-card" onClick={() => setView('profile')}>
+                <span className="account-hub-avatar" aria-hidden="true">{monogram(storedName, storedEmail)}</span>
+                <span className="account-profile-meta">
+                  <b>{storedName || storedEmail}</b>
+                  <span>{storedName ? storedEmail : t('account.profileRowHint')}</span>
+                </span>
+                <ChevronRightIcon size={16} className="account-menu-chev" />
+              </button>
+            ) : configured ? (
+              <div className="account-signin-card">
+                <span className="account-hub-avatar account-hub-avatar-guest" aria-hidden="true"><PersonIcon size={20} /></span>
+                <p className="account-section-hint">{t('account.signInPrompt')}</p>
+                <button className="auth-submit account-wide-btn" onClick={onOpenAuth}>{t('account.signIn')}</button>
+              </div>
+            ) : null}
+          </div>
+
+          {/* What they hold today. A pass is a finite thing that runs out, so
+              this states the expiry rather than a status word: "Trip Pass"
+              alone tells somebody nothing about whether it still works. Below
+              it, what the next pass would add, in the same plain numbers the
+              pricing table uses. */}
+          {user && (
+            <div className="panel-section">
+              <div className="section-title section-title-iconed"><SparkIcon size={12} /> {t('pass.sectionTitle')}</div>
+              <div className="account-pass-card">
+                <div className="account-pass-head">
+                  <b className="account-pass-tier">{t(tier.labelKey)}</b>
+                  {entitlement.known && (
+                    <span className="account-pass-status">
+                      {entitlement.tier === 'free'
+                        ? t('pass.statusFree', { left: entitlement.plansLeft, cap: entitlement.plansCap })
+                        : t('pass.statusPaid', {
+                          days: daysLeft(entitlement.expiresAt) ?? 0,
+                          left: entitlement.plansLeft,
+                        })}
+                    </span>
+                  )}
+                </div>
+
+                {canUpgrade(entitlement.tier) && (
+                  <div className="account-pass-upsell">
+                    <div className="account-pass-upsell-title">
+                      {t('account.passAdds', { name: t(upgrade.labelKey) })}
+                    </div>
+                    <ul className="account-pass-feats">
+                      <li className="account-pass-feat">
+                        <CheckIcon size={13} />{t('pass.featPlansPaid', { n: upgrade.aiPlans })}
+                      </li>
+                      <li className="account-pass-feat">
+                        <CheckIcon size={13} />{t('pass.featSearchOn', { n: upgrade.grounded })}
+                      </li>
+                      <li className="account-pass-feat">
+                        <CheckIcon size={13} />{t('pass.featOneOff')}
+                      </li>
+                    </ul>
+                    <div className="account-pass-price">
+                      {formatPrice(upgrade.priceCents, locale)} <span>{t('pass.perTrip')}</span>
+                    </div>
+                    <button className="auth-submit account-pass-cta" onClick={() => setPassOpen(true)}>
+                      {t(entitlement.tier === 'free' ? 'pass.seePasses' : 'pass.extend')}
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Word of mouth is the whole marketing budget. The banner earns its
+              tint by being the one thing here that is an invitation rather
+              than plumbing. */}
+          <div className="panel-section">
+            <div className="account-invite">
+              <b className="account-invite-title">{t('account.inviteTitle')}</b>
+              <p className="account-invite-body">{t('account.inviteBody')}</p>
+              <button type="button" className="account-invite-btn" onClick={handleShare}>
+                {shareCopied ? <CheckIcon size={15} /> : <ShareIcon size={15} />}
+                {shareCopied ? t('account.inviteCopied') : t('account.inviteBtn')}
+              </button>
+            </div>
+          </div>
+
+          {/* Help, in the order people need it: say something, look something
+              up, read the fine print. All three work signed out. */}
+          <div className="panel-section">
+            <div className="account-menu">
+              <MenuRow icon={<FeedbackIcon size={17} />} label={t('account.menuFeedback')} onClick={() => setView('feedback')} />
+              <MenuRow icon={<QuestionIcon size={17} />} label={t('account.menuFaq')} onClick={() => setView('faq')} />
+              <MenuRow icon={<ShieldIcon size={17} />} label={t('account.privacyPolicy')} onClick={() => setPrivacyOpen(true)} />
+            </div>
+          </div>
+        </>
+      )}
+
+      {view === 'profile' && user && (
+        <>
+          <div className="panel-section account-profile-head">
+            <span className="account-hub-avatar account-hub-avatar-lg" aria-hidden="true">{monogram(storedName, storedEmail)}</span>
+          </div>
+
           <div className="panel-section">
             <div className="section-title section-title-iconed"><PersonIcon size={12} /> {t('account.profileTitle')}</div>
             <form className="auth-form auth-form-inline" onSubmit={handleProfileSave}>
@@ -310,55 +508,6 @@ export function AccountPanel({ onClose, onOpenAuth }) {
                 {profileBusy ? t('account.pleaseWait') : t('account.saveProfile')}
               </button>
             </form>
-          </div>
-
-          {/* What they hold today. A pass is a finite thing that runs out, so
-              this states the expiry rather than a status word: "Trip Pass"
-              alone tells somebody nothing about whether it still works. Below
-              it, what the next pass would add, in the same plain numbers the
-              pricing table uses. */}
-          <div className="panel-section">
-            <div className="section-title section-title-iconed"><SparkIcon size={12} /> {t('pass.sectionTitle')}</div>
-            <div className="account-pass-card">
-              <div className="account-pass-head">
-                <b className="account-pass-tier">{t(tier.labelKey)}</b>
-                {entitlement.known && (
-                  <span className="account-pass-status">
-                    {entitlement.tier === 'free'
-                      ? t('pass.statusFree', { left: entitlement.plansLeft, cap: entitlement.plansCap })
-                      : t('pass.statusPaid', {
-                        days: daysLeft(entitlement.expiresAt) ?? 0,
-                        left: entitlement.plansLeft,
-                      })}
-                  </span>
-                )}
-              </div>
-
-              {canUpgrade(entitlement.tier) && (
-                <div className="account-pass-upsell">
-                  <div className="account-pass-upsell-title">
-                    {t('account.passAdds', { name: t(upgrade.labelKey) })}
-                  </div>
-                  <ul className="account-pass-feats">
-                    <li className="account-pass-feat">
-                      <CheckIcon size={13} />{t('pass.featPlansPaid', { n: upgrade.aiPlans })}
-                    </li>
-                    <li className="account-pass-feat">
-                      <CheckIcon size={13} />{t('pass.featSearchOn', { n: upgrade.grounded })}
-                    </li>
-                    <li className="account-pass-feat">
-                      <CheckIcon size={13} />{t('pass.featOneOff')}
-                    </li>
-                  </ul>
-                  <div className="account-pass-price">
-                    {formatPrice(upgrade.priceCents, locale)} <span>{t('pass.perTrip')}</span>
-                  </div>
-                  <button className="auth-submit account-pass-cta" onClick={() => setPassOpen(true)}>
-                    {t(entitlement.tier === 'free' ? 'pass.seePasses' : 'pass.extend')}
-                  </button>
-                </div>
-              )}
-            </div>
           </div>
 
           <div className="panel-section">
@@ -423,71 +572,103 @@ export function AccountPanel({ onClose, onOpenAuth }) {
               {t('account.signOut')}
             </button>
           </div>
-        </>
-      ) : configured ? (
-        <div className="panel-section">
-          <div className="section-title section-title-iconed"><PersonIcon size={12} /> {t('account.tag')}</div>
-          <p className="account-section-hint">{t('account.signInPrompt')}</p>
-          <button className="auth-submit account-wide-btn" onClick={onOpenAuth}>{t('account.signIn')}</button>
-        </div>
-      ) : null}
 
-      <div className="panel-section">
-        <div className="section-title section-title-iconed"><ShieldIcon size={12} /> {t('account.privacyTitle')}</div>
-        <button className="auth-link account-privacy-link" onClick={() => setPrivacyOpen(true)}>
-          {t('account.privacyPolicy')}
-        </button>
-      </div>
-
-      {user && (
-        <div className="panel-section">
-          <div className="section-title section-title-iconed account-danger-title"><TrashIcon size={12} /> {t('account.deleteTitle')}</div>
-          <div className="account-danger">
-            {!deleteArmed ? (
-              <>
-                <p className="account-danger-text">{t('account.deleteHint')}</p>
-                <button className="book-btn account-delete-arm account-wide-btn" onClick={() => setDeleteArmed(true)}>
-                  {t('account.deleteBtn')}
-                </button>
-              </>
-            ) : (
-              <>
-                <p className="account-danger-text">{t('account.deleteConfirmHint')}</p>
-                {hasPassword ? (
-                  <PasswordField
-                    id="acct-delete-pw"
-                    label={t('account.deleteConfirmPassword')}
-                    value={deletePassword}
-                    onChange={setDeletePassword}
-                    autoComplete="current-password"
-                    placeholder={t('account.currentPasswordPlaceholder')}
-                  />
-                ) : (
-                  <div className="auth-field">
-                    <label className="auth-label" htmlFor="acct-delete-email">
-                      {t('account.deleteConfirmEmail', { email: storedEmail })}
-                    </label>
-                    <input
-                      id="acct-delete-email"
-                      type="text"
-                      autoComplete="off"
-                      value={deleteEmail}
-                      onChange={(e) => setDeleteEmail(e.target.value)}
+          <div className="panel-section">
+            <div className="section-title section-title-iconed account-danger-title"><TrashIcon size={12} /> {t('account.deleteTitle')}</div>
+            <div className="account-danger">
+              {!deleteArmed ? (
+                <>
+                  <p className="account-danger-text">{t('account.deleteHint')}</p>
+                  <button className="book-btn account-delete-arm account-wide-btn" onClick={() => setDeleteArmed(true)}>
+                    {t('account.deleteBtn')}
+                  </button>
+                </>
+              ) : (
+                <>
+                  <p className="account-danger-text">{t('account.deleteConfirmHint')}</p>
+                  {hasPassword ? (
+                    <PasswordField
+                      id="acct-delete-pw"
+                      label={t('account.deleteConfirmPassword')}
+                      value={deletePassword}
+                      onChange={setDeletePassword}
+                      autoComplete="current-password"
+                      placeholder={t('account.currentPasswordPlaceholder')}
                     />
+                  ) : (
+                    <div className="auth-field">
+                      <label className="auth-label" htmlFor="acct-delete-email">
+                        {t('account.deleteConfirmEmail', { email: storedEmail })}
+                      </label>
+                      <input
+                        id="acct-delete-email"
+                        type="text"
+                        autoComplete="off"
+                        value={deleteEmail}
+                        onChange={(e) => setDeleteEmail(e.target.value)}
+                      />
+                    </div>
+                  )}
+                  {deleteError && <div className="auth-error">{deleteError}</div>}
+                  <div className="account-delete-actions">
+                    <button className="book-btn secondary" onClick={disarmDelete}>
+                      {t('account.deleteKeep')}
+                    </button>
+                    <button className="book-btn account-delete-btn" onClick={handleDeleteAccount} disabled={deleteBusy}>
+                      {deleteBusy ? t('account.pleaseWait') : t('account.deleteForever')}
+                    </button>
                   </div>
-                )}
-                {deleteError && <div className="auth-error">{deleteError}</div>}
-                <div className="account-delete-actions">
-                  <button className="book-btn secondary" onClick={disarmDelete}>
-                    {t('account.deleteKeep')}
-                  </button>
-                  <button className="book-btn account-delete-btn" onClick={handleDeleteAccount} disabled={deleteBusy}>
-                    {deleteBusy ? t('account.pleaseWait') : t('account.deleteForever')}
-                  </button>
-                </div>
-              </>
-            )}
+                </>
+              )}
+            </div>
           </div>
+        </>
+      )}
+
+      {view === 'faq' && (
+        <div className="panel-section">
+          <p className="account-section-hint">{t('account.faqHint')}</p>
+          <div className="account-faq">
+            {FAQ_KEYS.map(([qKey, aKey], i) => (
+              <div key={qKey} className={`account-faq-item${openFaq === i ? ' open' : ''}`}>
+                <button
+                  type="button"
+                  className="account-faq-q"
+                  aria-expanded={openFaq === i}
+                  onClick={() => setOpenFaq(openFaq === i ? null : i)}
+                >
+                  <span>{t(qKey)}</span>
+                  <ChevronDownIcon size={15} className="account-faq-chev" />
+                </button>
+                {openFaq === i && <p className="account-faq-a">{t(aKey)}</p>}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {view === 'feedback' && (
+        <div className="panel-section">
+          <p className="account-section-hint">{t('account.feedbackHint')}</p>
+          <div className="auth-field">
+            <label className="auth-label" htmlFor="acct-feedback">{t('account.feedbackLabel')}</label>
+            <textarea
+              id="acct-feedback"
+              className="account-feedback-input"
+              rows={6}
+              value={feedbackText}
+              onChange={(e) => setFeedbackText(e.target.value)}
+              placeholder={t('account.feedbackPlaceholder')}
+            />
+          </div>
+          <button
+            className="auth-submit account-wide-btn"
+            disabled={!feedbackText.trim()}
+            onClick={handleSendFeedback}
+          >
+            {t('account.feedbackSend')}
+          </button>
+          <p className="auth-hint account-feedback-note">{t('account.feedbackNote', { email: CONTACT })}</p>
         </div>
       )}
 

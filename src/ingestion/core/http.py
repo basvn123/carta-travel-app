@@ -6,7 +6,7 @@ same way in every scraper.
 """
 import random
 import time
-from urllib.parse import urlparse
+from urllib.parse import urlparse, urlsplit
 
 import requests
 
@@ -25,6 +25,18 @@ USER_AGENTS = [
 ]
 
 RETRY_STATUSES = {408, 429, 500, 502, 503, 504}
+
+
+def redact_url(url):
+    """URL without its query string, for error messages and logs. Several
+    portals (Trafiklab, the Belgian gateway) carry the API key as a query
+    param; an exception that embeds the full URL would otherwise write the
+    key in cleartext to logs/pipeline_*.log."""
+    try:
+        split = urlsplit(url)
+        return split._replace(query="", fragment="").geturl() if split.query else url
+    except (TypeError, ValueError):
+        return "<unparseable url>"
 
 
 class ProxyPool:
@@ -104,11 +116,11 @@ class PoliteSession:
                     **kw,
                 )
             except requests.RequestException as exc:
-                last_err = f"{type(exc).__name__}: {exc}"
+                last_err = f"{type(exc).__name__}: {exc}".replace(url, redact_url(url))
             else:
                 if resp.status_code < 400 or resp.status_code in allow_error:
                     return resp
-                last_err = f"HTTP {resp.status_code} for {url}"
+                last_err = f"HTTP {resp.status_code} for {redact_url(url)}"
                 if resp.status_code not in RETRY_STATUSES:
                     raise HTTPFailed(last_err)
                 retry_after = resp.headers.get("Retry-After", "")

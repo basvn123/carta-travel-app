@@ -34,7 +34,7 @@ CUR_DIR = Path(sys.argv[1]) if len(sys.argv) > 1 else Path(
     "c--Users-Gebruiker-Documents-Portfolio-Travel-App/"
     "68938d7a-a645-42d2-b8b2-18a21d2ff61c/scratchpad")
 
-UA = {"User-Agent": "CartaTravelApp/1.0 (portfolio; bas.vannieuwenhuyse123@gmail.com)"}
+UA = {"User-Agent": "CartaTravelApp/1.0 (portfolio; data@carta-europetravel.com)"}
 WIKI_API = "https://en.wikipedia.org/w/api.php"
 MIN_FULL = 8          # top up anything below this
 GEO_RADIUS_M = 10000  # Wikipedia geosearch hard cap is 10 km
