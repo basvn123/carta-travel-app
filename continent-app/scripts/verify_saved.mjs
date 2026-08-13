@@ -94,7 +94,12 @@ try {
   if (dashed) fail(`${dashed} empty state(s) still drawn with a dashed border`);
   const plannedEmpties = await empty.locator('.saved-empty').count();
   if (plannedEmpties < 1) fail('planned tab shows no empty invitation');
-  console.log('planned tab, fresh device: empty shelves =', plannedEmpties);
+  // The mini map is always on: with nothing to pin it rests on Europe with
+  // one quiet line underneath, never a missing section.
+  await empty.locator('.saved-map .trip-map canvas').waitFor({ timeout: 15000 }).catch(() => fail('resting mini map never appeared on a fresh device'));
+  if (!(await empty.locator('.saved-map-empty').count())) fail('empty map is missing its caption line');
+  await empty.waitForTimeout(900);
+  console.log('planned tab, fresh device: empty shelves =', plannedEmpties, '+ resting map');
   await empty.locator('.saved-trips-panel').screenshot({ path: `${SHOTS}/saved-empty-planned.png` });
   await pickTab(empty, 'favorites');
   const favEmpty = await empty.locator('.saved-empty').count();

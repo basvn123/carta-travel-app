@@ -1054,6 +1054,7 @@ export const fr = {
   "saved.past": "Voyages passés",
   "saved.pastSub": "Votre carnet de voyage. Les voyages s'archivent ici d'eux-mêmes une fois leurs dates passées.",
   "saved.pastEmpty": "Rien ici pour l'instant. Terminez un voyage à venir et il restera ici pour y repenser.",
+  "saved.mapEmpty": "Rien d'épinglé pour l'instant. Planifiez un voyage et il apparaîtra sur cette carte.",
   "saved.countriesLabel": "Pays européens visités",
   "saved.citiesLabel": "Villes visitées",
 

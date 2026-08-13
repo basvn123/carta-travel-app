@@ -1054,6 +1054,7 @@ export const nl = {
   "saved.past": "Voorbije reizen",
   "saved.pastSub": "Je reisarchief. Reizen verhuizen vanzelf hierheen zodra hun data voorbij zijn.",
   "saved.pastEmpty": "Nog niets hier. Rond een komende reis af en die blijft hier bewaard om op terug te kijken.",
+  "saved.mapEmpty": "Nog niets geprikt. Plan een reis en die landt op deze kaart.",
   "saved.countriesLabel": "Europese landen bezocht",
   "saved.citiesLabel": "Steden bezocht",
 

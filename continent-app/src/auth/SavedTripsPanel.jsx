@@ -626,32 +626,34 @@ export function SavedTripsPanel({ data, onClose, onLoadTrip, onLoadTripPlan, onO
         </div>
       ) : (
         <>
-          {/* ── The mini map: every upcoming trip pinned in departure order. ── */}
-          {heroItems.length > 0 && (
-            <div className="panel-section saved-section saved-map-section">
-              <div className="saved-map">
-                <Suspense fallback={<div className="saved-map-loading" aria-hidden="true" />}>
-                  <SavedTripMap
-                    stops={heroItems.map((i) => ({ lat: i.lat, lon: i.lon, city: i.city }))}
-                    showRoute={false}
-                    scrollZoom={false}
-                    easeToSelected={false}
-                    padBottom={0}
-                    fitMaxZoom={5.5}
-                    fitPadding={{ top: 42, left: 42, right: 42, bottom: 42 }}
-                    onSelectStop={(i) => heroItems[i]?.open()}
-                  />
-                </Suspense>
-              </div>
-              {nextUp && (
-                <div className="saved-map-caption">
-                  <span className="saved-map-caption-label">{t('saved.nextUp')}</span>
-                  <span className="saved-map-caption-city">{nextUp.city}</span>
-                  <span className="saved-map-caption-when">{whenLabel(nextUp.start, null)}</span>
-                </div>
-              )}
+          {/* ── The mini map: every upcoming trip pinned in departure order.
+              Always on: with nothing to pin it rests on Europe, the empty
+              map itself being the invitation. ── */}
+          <div className="panel-section saved-section saved-map-section">
+            <div className="saved-map">
+              <Suspense fallback={<div className="saved-map-loading" aria-hidden="true" />}>
+                <SavedTripMap
+                  stops={heroItems.map((i) => ({ lat: i.lat, lon: i.lon, city: i.city }))}
+                  showRoute={false}
+                  scrollZoom={false}
+                  easeToSelected={false}
+                  padBottom={0}
+                  fitMaxZoom={5.5}
+                  fitPadding={{ top: 42, left: 42, right: 42, bottom: 42 }}
+                  onSelectStop={(i) => heroItems[i]?.open()}
+                />
+              </Suspense>
             </div>
-          )}
+            {nextUp ? (
+              <div className="saved-map-caption">
+                <span className="saved-map-caption-label">{t('saved.nextUp')}</span>
+                <span className="saved-map-caption-city">{nextUp.city}</span>
+                <span className="saved-map-caption-when">{whenLabel(nextUp.start, null)}</span>
+              </div>
+            ) : (
+              <p className="saved-map-empty">{t('saved.mapEmpty')}</p>
+            )}
+          </div>
 
           {/* ── The travel ledger, once there is a record to add up. Day
               plans are local-first, so the record works signed out too. ── */}

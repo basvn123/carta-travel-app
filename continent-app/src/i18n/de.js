@@ -1054,6 +1054,7 @@ export const de = {
   "saved.past": "Vergangene Reisen",
   "saved.pastSub": "Dein Reisearchiv. Reisen ziehen von selbst hierher, sobald ihre Daten vorbei sind.",
   "saved.pastEmpty": "Noch nichts hier. Schließe eine kommende Reise ab und sie bleibt hier zum Zurückblicken.",
+  "saved.mapEmpty": "Noch nichts markiert. Plane eine Reise und sie landet auf dieser Karte.",
   "saved.countriesLabel": "Besuchte Länder in Europa",
   "saved.citiesLabel": "Besuchte Städte",
 

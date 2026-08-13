@@ -1054,6 +1054,7 @@ export const it = {
   "saved.past": "Viaggi passati",
   "saved.pastSub": "Il tuo archivio di viaggio. I viaggi si spostano qui da soli quando le loro date sono passate.",
   "saved.pastEmpty": "Ancora niente qui. Concludi un viaggio in programma e resterà qui da ricordare.",
+  "saved.mapEmpty": "Ancora niente sulla mappa. Pianifica un viaggio e comparirà qui.",
   "saved.countriesLabel": "Paesi europei visitati",
   "saved.citiesLabel": "Città visitate",
 

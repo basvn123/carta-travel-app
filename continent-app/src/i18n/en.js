@@ -1299,6 +1299,7 @@ export const en = {
   "saved.past": "Past trips",
   "saved.pastSub": "Your travel record. Trips move here on their own once their dates pass.",
   "saved.pastEmpty": "Nothing here yet. Finish an upcoming trip and it is kept here to look back on.",
+  "saved.mapEmpty": "Nowhere pinned yet. Plan a trip and it lands on this map.",
   "saved.countriesLabel": "European countries visited",
   "saved.citiesLabel": "Cities visited",
 

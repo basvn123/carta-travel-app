@@ -8503,6 +8503,13 @@ input, select {
   font-size: 11px;
   color: var(--accent);
 }
+/* Nothing pinned yet: the resting map stays, one quiet line says why. */
+.saved-map-empty {
+  margin: 10px 0 0;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--ink-mute);
+}
 
 /* The travel ledger: two measured facts, each opening its own list. */
 .saved-ledger-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
