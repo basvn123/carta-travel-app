@@ -1,11 +1,13 @@
-// Headless verify for the mobile bottom nav rework: Explore | plus | My trips,
-// with the raised plus opening the Trip planner / Day planner chooser.
+// Headless verify for the mobile bottom nav: Destinations | Explore | plus |
+// My trips | Account, with the raised plus opening the Trip planner / Day
+// planner chooser.
 //
 //   node scripts/verify_bottom_nav.mjs [url]      (default http://localhost:4173)
 //
-// Runs at a 390x844 phone viewport. Asserts: no Home tab in the bar, the three
-// items render with labels, the plus chooser opens/closes, both chooser options
-// land on their planner tab, and My trips opens the saved panel. Screenshots to
+// Runs at a 390x844 phone viewport. Asserts: no Home tab in the bar, the four
+// labelled items render whole (no ellipsis truncation), the plus chooser
+// opens/closes, both chooser options land on their planner tab, My trips opens
+// the saved panel and Account opens the account panel. Screenshots to
 // shots/bottom-nav-*.png.
 
 import { chromium } from 'playwright';
@@ -32,12 +34,18 @@ await page.waitForTimeout(3000);
 const checks = [];
 const check = (label, ok, note = '') => { checks.push({ label, ok, note }); };
 
-// Bar contents: exactly Explore + My trips items around one plus, no Home.
+// Bar contents: Destinations + Explore + My trips + Account around one plus.
 const labels = await page.locator('.bottom-nav .bottom-nav-label').allInnerTexts();
-check('bar labels are Explore + My trips', labels.length === 2
-  && /explore/i.test(labels[0]) && /my trips/i.test(labels[1]), labels.join(' | '));
+check('bar labels are Destinations | Explore | My trips | Account',
+  labels.length === 4
+  && /destinations/i.test(labels[0]) && /explore/i.test(labels[1])
+  && /my trips/i.test(labels[2]) && /account/i.test(labels[3]), labels.join(' | '));
 check('no Home item in the bar', !labels.some((l) => /home/i.test(l)));
 check('plus button renders', await page.locator('.bottom-nav-plus').isVisible());
+// No label may truncate: a clipped DESTINATI... reads as a broken bar.
+const clipped = await page.locator('.bottom-nav-label').evaluateAll(
+  (els) => els.filter((el) => el.scrollWidth > el.clientWidth).map((el) => el.textContent));
+check('no label truncates', clipped.length === 0, clipped.join(' | '));
 await page.screenshot({ path: 'shots/bottom-nav-bar.png' });
 
 // Plus -> chooser -> Trip planner.
@@ -70,15 +78,39 @@ await page.locator('.plan-chooser-backdrop').click({ position: { x: 20, y: 200 }
 await page.waitForTimeout(300);
 check('backdrop click closes the chooser', !(await page.locator('.plan-chooser').isVisible().catch(() => false)));
 
-// Explore + My trips.
-await page.locator('.bottom-nav-item').first().click();
-await page.waitForTimeout(1500);
-check('Explore returns to the map', await page.locator('.bottom-nav-item.active').first().isVisible());
-await page.locator('.bottom-nav-item').nth(1).click();
+// Destinations (leftmost) -> the places tab.
+await page.locator('.bottom-nav-item').nth(0).click();
 await page.waitForTimeout(1200);
-check('My trips opens the saved panel', await page.locator('.bottom-nav-item.active').nth(0).innerText()
-  .then((t) => /my trips/i.test(t)).catch(() => false));
+check('Destinations opens the places tab', await page.locator('.places-tab').isVisible());
+check('Destinations item marked active', await page.locator('.bottom-nav-item.active .bottom-nav-label').first()
+  .innerText().then((t) => /destinations/i.test(t)).catch(() => false));
+
+// Explore.
+await page.locator('.bottom-nav-item').nth(1).click();
+await page.waitForTimeout(1500);
+check('Explore returns to the map', await page.locator('.bottom-nav-item.active .bottom-nav-label').first()
+  .innerText().then((t) => /explore/i.test(t)).catch(() => false));
+
+// My trips.
+await page.locator('.bottom-nav-item').nth(2).click();
+await page.waitForTimeout(1200);
+check('My trips opens the saved panel', await page.locator('.bottom-nav-item.active .bottom-nav-label').first()
+  .innerText().then((t) => /my trips/i.test(t)).catch(() => false));
 await page.screenshot({ path: 'shots/bottom-nav-saved.png' });
+
+// Account (rightmost) opens the account panel and takes the active state.
+await page.locator('.bottom-nav-item').nth(3).click();
+await page.waitForTimeout(1200);
+check('Account opens the account panel', await page.locator('.account-panel').isVisible());
+check('Account item marked active', await page.locator('.bottom-nav-item.active .bottom-nav-label').first()
+  .innerText().then((t) => /account/i.test(t)).catch(() => false));
+check('no account avatar in the mobile top bar', !(await page.locator('.account-avatar-btn').isVisible().catch(() => false)));
+await page.screenshot({ path: 'shots/bottom-nav-account.png' });
+
+// Tapping Account again closes the panel (a toggle, like a tab).
+await page.locator('.bottom-nav-item').nth(3).click();
+await page.waitForTimeout(600);
+check('Account tap toggles the panel shut', !(await page.locator('.account-panel').isVisible().catch(() => false)));
 
 const failed = checks.filter((c) => !c.ok);
 console.log('=== bottom nav verify ===  target:', URL);

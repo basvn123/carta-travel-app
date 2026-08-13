@@ -1,15 +1,21 @@
 import React, { useEffect, useState } from 'react';
-import { CompassIcon, RouteIcon, ListDayIcon, BookmarkIcon, PlusIcon } from './Icons.jsx';
+import { GlobeIcon, CompassIcon, RouteIcon, ListDayIcon, BookmarkIcon, PlusIcon, PersonIcon } from './Icons.jsx';
 import { useI18n } from '../i18n/index.jsx';
 
 // Bottom navigation, MOBILE only (hidden by CSS on desktop, where the same
-// sections live in the AppHeader). Three items: Explore (the map), a raised
-// central plus that opens the Trip planner / Day planner chooser, and My
-// trips (the saved-trips panel). Home has no tab here on purpose: the front
-// page is a desktop entrance, and on a phone every bar item already leads
-// somewhere more useful. The homepage overlay sits BELOW this bar (z-index),
-// so tapping any item leaves it like any other tab switch.
-export function BottomNav({ activeTab, onChangeTab, savedOpen, onToggleSaved }) {
+// sections live in the AppHeader). Five slots around a raised central plus:
+// Destinations (the catalogue + published trips), Explore (the map), the plus
+// that opens the Trip planner / Day planner chooser, My trips (the saved-trips
+// panel) and Account (the account panel, which left the top bar on mobile so
+// the row over the map keeps its width for the filters). Home has no tab here
+// on purpose: the front page is a desktop entrance, and on a phone every bar
+// item already leads somewhere more useful. The homepage overlay sits BELOW
+// this bar (z-index), so tapping any item leaves it like any other tab switch.
+export function BottomNav({
+  activeTab, onChangeTab,
+  savedOpen, onToggleSaved,
+  accountOpen, onToggleAccount,
+}) {
   const { t } = useI18n();
   const [planOpen, setPlanOpen] = useState(false);
 
@@ -22,7 +28,10 @@ export function BottomNav({ activeTab, onChangeTab, savedOpen, onToggleSaved }) 
   }, [planOpen]);
 
   const goTab = (key) => { setPlanOpen(false); onChangeTab(key); };
-  const planActive = (activeTab === 'trip' || activeTab === 'day') && !savedOpen;
+  // A slide-over (saved trips, account) on top of a tab claims the active
+  // state: the bar highlights what is actually on screen.
+  const overlayOpen = savedOpen || accountOpen;
+  const planActive = (activeTab === 'trip' || activeTab === 'day') && !overlayOpen;
 
   return (
     <>
@@ -50,8 +59,18 @@ export function BottomNav({ activeTab, onChangeTab, savedOpen, onToggleSaved }) 
 
       <nav className="bottom-nav" aria-label="Sections">
         <button
-          className={`bottom-nav-item ${activeTab === 'map' && !savedOpen ? 'active' : ''}`}
-          aria-current={activeTab === 'map' && !savedOpen ? 'page' : undefined}
+          className={`bottom-nav-item ${activeTab === 'places' && !overlayOpen ? 'active' : ''}`}
+          aria-current={activeTab === 'places' && !overlayOpen ? 'page' : undefined}
+          onClick={() => goTab('places')}
+          title={t('nav.places')}
+        >
+          <GlobeIcon size={22} className="bottom-nav-icon" />
+          <span className="bottom-nav-label">{t('nav.places')}</span>
+        </button>
+
+        <button
+          className={`bottom-nav-item ${activeTab === 'map' && !overlayOpen ? 'active' : ''}`}
+          aria-current={activeTab === 'map' && !overlayOpen ? 'page' : undefined}
           onClick={() => goTab('map')}
           title={t('nav.map')}
         >
@@ -77,6 +96,16 @@ export function BottomNav({ activeTab, onChangeTab, savedOpen, onToggleSaved }) 
         >
           <BookmarkIcon size={22} className="bottom-nav-icon" />
           <span className="bottom-nav-label">{t('nav.myTrips')}</span>
+        </button>
+
+        <button
+          className={`bottom-nav-item ${accountOpen ? 'active' : ''}`}
+          aria-pressed={accountOpen}
+          onClick={() => { setPlanOpen(false); onToggleAccount(); }}
+          title={t('header.accountTitle')}
+        >
+          <PersonIcon size={22} className="bottom-nav-icon" />
+          <span className="bottom-nav-label">{t('nav.account')}</span>
         </button>
       </nav>
     </>

@@ -5,6 +5,7 @@ import { BottomNav } from './components/BottomNav.jsx';
 import { DetailPanel } from './browse/DetailPanel.jsx';
 import { LifestylePanel } from './browse/LifestylePanel.jsx';
 import { ResultsList } from './browse/ResultsList.jsx';
+import { DestinationsTab } from './browse/DestinationsTab.jsx';
 import { ComparePanel } from './browse/ComparePanel.jsx';
 import { InfoIcon } from './components/Icons.jsx';
 import Logo from './components/Logo.jsx';
@@ -158,7 +159,8 @@ function TravelApp() {
   }, [user]);
 
   // Which top-level section is showing: Home (the front page), Map (the
-  // browse/search experience), Trip planner, or Day planner. EVERY visit
+  // browse/search experience), Destinations (the catalogue + published
+  // trips), Trip planner, or Day planner. EVERY visit
   // opens on Home, first or fiftieth: it is a tab like the others, it shows
   // today's real prices, and the tabs to leave it are in the header and the
   // bottom bar. (The localStorage mirror's remembered tab is deliberately
@@ -168,7 +170,7 @@ function TravelApp() {
   // URL's implicit default), so a link carrying filters but no tab is a map
   // link, not a reason to drop someone on the front page.
   const urlTab = typeof window !== 'undefined' && !!window.location.search
-    ? (['home', 'map', 'trip', 'day'].includes(init.activeTab) ? init.activeTab : 'map')
+    ? (['home', 'map', 'places', 'trip', 'day'].includes(init.activeTab) ? init.activeTab : 'map')
     : null;
   const [activeTab, setActiveTab] = useState(urlTab || 'home');
 
@@ -399,7 +401,7 @@ function TravelApp() {
   // Price every destination for the current dates/choices, then narrow that
   // down through the location search, filter bar, and "top picks" shortcut.
   const {
-    pricedAll, unreachableAll, availableCountries, priceBounds,
+    pricedAll, unreachableAll, availableCountries, priceBounds, priceHistogram,
     priceRange, setPriceRange,
     priced, unreachable, dealThreshold, stats,
   } = useDestinationSearch({
@@ -541,6 +543,7 @@ function TravelApp() {
               priceRange={priceRange}
               setPriceRange={setPriceRange}
               priceBounds={priceBounds}
+              priceHistogram={priceHistogram}
               tripKinds={tripKinds}
               setTripKinds={setTripKinds}
               ratingRange={ratingRange}
@@ -816,6 +819,21 @@ function TravelApp() {
         </div>
       )}
 
+      {/* The Destinations tab: the catalogue and the published trips as a
+          browsable section of their own. Picking a place hands over to the
+          map tab, where the detail panel already knows how to price it. */}
+      {visitedTabs.has('places') && (
+        <div className={activeTab === 'places' ? undefined : 'tab-keep-hidden'} onClick={(e) => e.stopPropagation()}>
+          <DestinationsTab
+            data={data}
+            pricedAll={pricedAll}
+            priceMode={priceMode}
+            availableCountries={availableCountries}
+            onSelectDest={(id) => { setActiveTab('map'); openDetail(id); }}
+          />
+        </div>
+      )}
+
       {/* Planner tabs stay MOUNTED once visited and just hide: a quick hop to
           another tab and back keeps the open plan, picks and scroll intact.
           MapLibre (v4, ResizeObserver) resizes itself when shown again. */}
@@ -859,9 +877,11 @@ function TravelApp() {
       <div onClick={(e) => e.stopPropagation()}>
         <BottomNav
           activeTab={activeTab}
-          onChangeTab={(key) => { setSavedTripsOpen(false); setActiveTab(key); }}
+          onChangeTab={(key) => { setSavedTripsOpen(false); setAccountOpen(false); setActiveTab(key); }}
           savedOpen={savedTripsOpen}
-          onToggleSaved={() => setSavedTripsOpen((v) => !v)}
+          onToggleSaved={() => { setAccountOpen(false); setSavedTripsOpen((v) => !v); }}
+          accountOpen={accountOpen}
+          onToggleAccount={() => { setSavedTripsOpen(false); setAccountOpen((v) => !v); }}
         />
       </div>
 

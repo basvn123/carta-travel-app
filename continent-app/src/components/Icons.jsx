@@ -65,6 +65,25 @@ export function ChevronRightIcon({ size = 18, className = '' }) {
   );
 }
 
+export function CloseIcon({ size = 16, className = '' }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      className={className}
+      role="img"
+      aria-hidden="true"
+    >
+      <path d="M6 6l12 12M18 6L6 18" />
+    </svg>
+  );
+}
+
 export function FilterIcon({ size = 18, className = '' }) {
   return (
     <svg
@@ -253,6 +272,28 @@ export function PersonIcon({ size = 14, className = '' }) {
     >
       <circle cx="12" cy="8" r="4" />
       <path d="M4.5 20c1.4-4 4-6 7.5-6s6.1 2 7.5 6" />
+    </svg>
+  );
+}
+
+export function GlobeIcon({ size = 20, className = '' }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.7"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      role="img"
+      aria-label="Destinations"
+    >
+      <circle cx="12" cy="12" r="9" />
+      <path d="M3 12h18" />
+      <path d="M12 3c2.7 2.4 4 5.4 4 9s-1.3 6.6-4 9c-2.7-2.4-4-5.4-4-9s1.3-6.6 4-9Z" />
     </svg>
   );
 }

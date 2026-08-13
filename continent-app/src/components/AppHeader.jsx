@@ -1,11 +1,12 @@
 import React from 'react';
 import Logo from './Logo.jsx';
 import { useI18n } from '../i18n/index.jsx';
-import { PersonIcon, HomeIcon, MapPinIcon, RouteIcon, ListDayIcon, BookmarkIcon, TicketIcon } from './Icons.jsx';
+import { PersonIcon, HomeIcon, MapPinIcon, GlobeIcon, RouteIcon, ListDayIcon, BookmarkIcon, TicketIcon } from './Icons.jsx';
 
 const NAV_ITEMS = [
   { key: 'home', labelKey: 'nav.home', Icon: HomeIcon },
   { key: 'map', labelKey: 'nav.map', Icon: MapPinIcon },
+  { key: 'places', labelKey: 'nav.places', Icon: GlobeIcon },
   { key: 'trip', labelKey: 'nav.trip', Icon: RouteIcon },
   { key: 'day', labelKey: 'nav.day', Icon: ListDayIcon },
 ];

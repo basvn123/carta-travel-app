@@ -402,7 +402,9 @@ try {
   await stubSupabase(page2, state);
   await page2.goto(`${BASE}/?o=CRL&tab=map`);
   await page2.waitForTimeout(2500);
-  const mobileBtn = page2.locator('.mobile-account-btn, .bottom-nav-item:has-text("Account"), .account-avatar-btn').first();
+  // :visible keeps the header avatar (display:none on mobile since Account
+  // moved to the bottom bar) from shadowing the item that can be clicked.
+  const mobileBtn = page2.locator('.mobile-account-btn:visible, .bottom-nav-item:has-text("Account"), .account-avatar-btn:visible').first();
   await mobileBtn.click({ timeout: 30000 });
   await page2.locator('.account-panel').waitFor({ timeout: 15000 });
   await page2.waitForTimeout(500);

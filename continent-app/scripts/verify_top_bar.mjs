@@ -35,8 +35,9 @@ await page.addInitScript(() => {
 await page.goto(URL, { waitUntil: 'domcontentloaded', timeout: 45000 });
 await page.waitForTimeout(3000);
 
-// Make sure the Map tab (explore) is the active surface.
-const exploreItem = page.locator('.bottom-nav-item').first();
+// Make sure the Map tab (explore) is the active surface. Find it by label:
+// the bar's first item is Destinations now, not Explore.
+const exploreItem = page.locator('.bottom-nav-item', { hasText: /explore/i }).first();
 if (await exploreItem.isVisible().catch(() => false)) {
   await exploreItem.click();
   await page.waitForTimeout(2000);
@@ -64,7 +65,8 @@ for (const [name, sel] of [
   ['dates segment', '.mobile-dates-anchor .mobile-seg-btn'],
   ['filters segment', '.mobile-seg > .mobile-seg-btn'],
   ['passes chip', '.app-header-account .header-pricing-btn'],
-  ['account button', '.app-header-account .account-avatar-btn'],
+  // Account moved out of the top row on mobile: it is the bar's last item.
+  ['account item (bottom bar)', '.bottom-nav-item:has-text("Account")'],
 ]) {
   const box = await page.locator(sel).first().boundingBox().catch(() => null);
   check(`${name} target >= 44px tall`, !!box && box.height >= 43.5, box ? `${Math.round(box.width)}x${Math.round(box.height)}` : 'missing');
@@ -94,8 +96,9 @@ await page.screenshot({ path: 'shots/top-bar-filter-sheet.png' });
 await page.locator('.mobile-seg > .mobile-seg-btn').click();
 await page.waitForTimeout(300);
 
-// ── Language moved to the Account panel; switching works ──
-await page.locator('.app-header-account .account-avatar-btn').click();
+// ── Language moved to the Account panel; switching works. The panel opens
+//    from the bottom bar's Account item on mobile. ──
+await page.locator('.bottom-nav-item', { hasText: /account/i }).first().click();
 await page.waitForTimeout(800);
 const langGrid = page.locator('.account-lang-grid');
 check('account panel shows the language grid', await langGrid.isVisible());
