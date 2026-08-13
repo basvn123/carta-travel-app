@@ -464,7 +464,7 @@ SOURCES = {
            "license": "CC BY 4.0"},
     "DE": {"source": "bvv_wanderwege", "loader": load_bvv_wanderwege,
            "license": "CC BY 4.0 (Bayerische Vermessungsverwaltung)",
-           "coverage": BAVARIA_BBOX},
+           "coverage": BAVARIA_BBOX, "reference": "routes"},
 }
 
 
@@ -672,6 +672,16 @@ def check_trip(cur, trip, country, name_index, name_tokens, args):
         "length_ratio": length_ratio,
         "flags": flags,
     }
+    # Reference-scope guard: swissTLM3D and Turrutebasen are COMPLETE path
+    # networks, so low coverage there is evidence of a bad trip. A source
+    # tagged reference="routes" (the BVV bundle: only Bavaria's ~330 named
+    # long-distance routes) proves nothing about the local trail it simply
+    # does not contain - record failure ONLY when a strong name match says
+    # the official route exists and the geometry still disagrees; otherwise
+    # stay silent so 13k unnamed local trails don't collect fake mismatches.
+    if (not passed and SOURCES[country].get("reference") == "routes"
+            and not name_matched and "location_mismatch" not in flags):
+        return None
     return {"tid": tid, "title": title, "passed": passed, "score": score,
             "details": details}
 
