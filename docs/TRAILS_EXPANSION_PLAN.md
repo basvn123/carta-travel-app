@@ -22,16 +22,21 @@ routes; POI images carry no per-file licence metadata.
 - [x] validate.py for NO/AT/FR: quality scores + drafts to needs_review.
 - [x] Flagship + dayhike shortlists for NO/AT/FR (spot checks: Adlerweg
   family rank 7, GR 5 top-10, Preikestolen surfaced).
-- [ ] describe.py for the NO/AT/FR shortlists: BLOCKED in this session,
-  no ANTHROPIC_API_KEY / GEMINI_API_KEY in the environment. One command
-  per country once a key is in .env:
-  `python pipeline/trails/describe.py --countries NO,AT,FR --top 15`
-- [ ] HUMAN: review UI approval pass (trips + the 20 staged citytrips).
-  Approval is deliberately the only path to published.
+- [x] describe.py via Gemini (GEMINI_API_KEY was in .env all along): 65
+  hike descriptions (flagship + dayhikes) + 175 citytrip descriptions,
+  every sentence fact-mapped or dropped by the verification pass.
+- [x] Approval: owner-directed batch on 2026-08-13 ("approve everything"),
+  executed through the review API so every decision carries its
+  trip_reviews ledger row + note (pipeline/oneoff/batch_approve_
+  shortlists.py). Scope: the curated shortlists + all staged citytrips,
+  NOT the 236k raw needs_review ingest rows.
+- [x] Export: 43 country files, 760 published trips (hikes, dayhikes,
+  citytrips) + detail files + index; verify_trails_export PASS.
 
-Benchmark: 4 countries with published, elevation-profiled, portal-checked
-flagship trails; public/trails/{AT,FR,NO}.json no longer empty (fires on
-the first approval + export run after the review pass).
+DONE 2026-08-13: the benchmark fired continent-wide, not just for the
+four pilot countries. Europe-wide citytrips: market_demand run for all 43
+countries (Eurostat everywhere but TR/UA which use the rating fallback),
+compose_citytrips --top 8 per country, 290 validated at quality 100.
 
 ## Wave B: DE + AT portal cross-checks - DONE 2026-08-13 (DE; AT n/a)
 
