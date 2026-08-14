@@ -1116,6 +1116,27 @@ TASKS = [
                  "--dry-run runs both halves read-only against staging."),
     },
     {
+        "key": "trails_describe",
+        "title": "Trails: describe published trips missing or stale text",
+        "cadence": "monthly",
+        "writes_app_data": False,
+        "soft": True,
+        "cmds": [
+            [PY, "pipeline/trails/describe.py", "--pending",
+             "--provider", "gemini"],
+            [PY, "pipeline/trails/export_wire.py", "--countries",
+             "AL,AD,AT,BE,BA,BG,HR,CY,CZ,DK,EE,FI,FR,DE,GB,GR,HU,IS,IE,IT,"
+             "XK,LV,LI,LT,LU,MK,MT,MD,MC,ME,NL,NO,PL,PT,RO,RS,SK,SI,ES,SE,"
+             "CH,TR,UA"],
+        ],
+        "note": ("self-heals the description tail: the Gemini free tier "
+                 "rate-caps daily, so any batch (a template fix, a new "
+                 "publish wave) can leave published trips with missing or "
+                 "hike-flavoured text. --pending selects exactly those, "
+                 "describes what the quota allows and re-exports; the next "
+                 "run finishes the rest. Needs GEMINI_API_KEY in .env."),
+    },
+    {
         "key": "trails_popularity",
         "title": "Trails: popularity + curation shortlists (data/reports/trails_seed)",
         "cadence": "monthly",

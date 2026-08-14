@@ -956,6 +956,11 @@ def main():
                              f"pilot set is {PILOT_COUNTRIES})")
     parser.add_argument("--ids", default="",
                         help="comma separated trip ids, bypasses the shortlist")
+    parser.add_argument("--pending", action="store_true",
+                        help="select PUBLISHED trips whose description is "
+                             "missing or stale (citytrips still describing "
+                             "themselves as hiking routes); the self-healing "
+                             "mode run_pipeline uses, safe to rerun any time")
     parser.add_argument("--top", type=int, default=15,
                         help="shortlist rows per country (default: 15)")
     parser.add_argument("--provider", choices=("auto", "claude", "gemini"),
@@ -981,7 +986,18 @@ def main():
         cur.execute(DESCRIPTIONS_DDL.read_text())   # fresh labs and old volumes
     conn.commit()
 
-    if args.ids:
+    if args.pending:
+        with conn.cursor() as cur:
+            cur.execute("""
+                SELECT id FROM trips WHERE status = 'published'
+                  AND (description_md IS NULL OR description_md = ''
+                       OR (category = 'citytrip'
+                           AND description_md NOT ILIKE '%%sightseeing%%'))
+                ORDER BY id""")
+            ids = [r[0] for r in cur.fetchall()]
+        args.redescribe = True          # stale text is the point of the mode
+        print(f"[pending] {len(ids)} published trips need a description")
+    elif args.ids:
         ids = [int(i) for i in args.ids.split(",") if i.strip()]
     else:
         ids = []
@@ -997,6 +1013,9 @@ def main():
             ids.extend(picked)
     if not ids:
         conn.close()
+        if args.pending:
+            print("[pending] nothing to do: every published trip is described")
+            return
         sys.exit("no trips selected; run popularity.py first or pass --ids")
 
     trips = load_trips(conn, ids)
