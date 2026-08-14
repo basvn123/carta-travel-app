@@ -839,3 +839,57 @@ export function FeedbackIcon({ size = 15, className = '' }) {
     </Glyph>
   );
 }
+
+/* ─── Destinations tab category glyphs ─── */
+
+export function SkylineIcon({ size = 15, className = '' }) {
+  return (
+    <Glyph size={size} className={className} label="General">
+      <path d="M3 20h18" />
+      <path d="M4.5 20V9.5l4-2v12.5" />
+      <path d="M8.5 20V11l5 2v7" />
+      <path d="M13.5 20V7.5l6 2.5v10" />
+      <path d="M16.5 13.5v.01M16.5 16.5v.01M6 12v.01M6 15v.01" />
+    </Glyph>
+  );
+}
+
+export function SuitcaseIcon({ size = 15, className = '' }) {
+  return (
+    <Glyph size={size} className={className} label="Trips">
+      <rect x="4" y="7.5" width="16" height="12" rx="2" />
+      <path d="M9 7.5V5.8A1.8 1.8 0 0 1 10.8 4h2.4A1.8 1.8 0 0 1 15 5.8v1.7" />
+      <path d="M8.5 7.5v12M15.5 7.5v12" />
+    </Glyph>
+  );
+}
+
+export function BootIcon({ size = 15, className = '' }) {
+  return (
+    <Glyph size={size} className={className} label="Trails">
+      <path d="M7 4h5v5.5l4.5 3A5 5 0 0 1 19 16v3H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2Z" />
+      <path d="M7 4v5.5h5" />
+      <path d="M9 19v-2.5M12.5 19v-2.5M16 19v-2.5" />
+    </Glyph>
+  );
+}
+
+export function PalmIcon({ size = 15, className = '' }) {
+  return (
+    <Glyph size={size} className={className} label="Islands">
+      <path d="M12.5 8.5c-1.5 4-2 8-1.5 12" />
+      <path d="M12.5 8.5C11 5.9 8.6 4.9 5.5 5.6c1.8 1.6 4.1 2.6 7 2.9Z" />
+      <path d="M12.5 8.5c.4-3 2.2-4.8 5.3-5 -.9 2.2-2.7 3.9-5.3 5Z" />
+      <path d="M12.5 8.5c2.9-1 5.5-.4 7.6 1.9 -2.7.5-5.2 0-7.6-1.9Z" />
+      <path d="M4 20.5c2-1.4 4-1.4 6 0s4 1.4 6 0 3-1.2 4 0" />
+    </Glyph>
+  );
+}
+
+export function HeartIcon({ size = 15, className = '' }) {
+  return (
+    <Glyph size={size} className={className} label="Romantic">
+      <path d="M12 20 5.2 13.4a4.6 4.6 0 0 1 0-6.6 4.7 4.7 0 0 1 6.6 0l.2.2.2-.2a4.7 4.7 0 0 1 6.6 0 4.6 4.6 0 0 1 0 6.6L12 20Z" />
+    </Glyph>
+  );
+}

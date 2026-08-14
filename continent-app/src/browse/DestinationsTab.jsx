@@ -1,29 +1,41 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { lazy, Suspense, useEffect, useMemo, useRef, useState } from 'react';
 import { RatingBadge } from '../components/RatingBadge.jsx';
+import { CountryFlag } from '../components/CountryFlag.jsx';
 import { eur } from '../lib/format.js';
 import { fareProv, estPrefix, FromWord } from '../components/FareProvenance.jsx';
 import { loadTrails, loadTrailsIndex } from '../lib/trails.js';
+import { associateTrip, haversineKm, tripCentre, tripKindKey, tripThemes } from '../lib/trailCards.js';
 import { useI18n } from '../i18n/index.jsx';
-import { SearchIcon, ChevronRightIcon, RouteIcon } from '../components/Icons.jsx';
+import {
+  SearchIcon, ChevronRightIcon, RouteIcon, SkylineIcon, SuitcaseIcon, BootIcon,
+  BeachIcon, MountainIcon,
+} from '../components/Icons.jsx';
 
 /**
- * The Destinations tab: the whole catalogue as a browsable section of its own,
- * reachable from the bottom bar (mobile) and the header tabs (desktop).
+ * The Destinations tab: the whole catalogue and every published trip as a
+ * browsable section of its own, reachable from the bottom bar (mobile) and
+ * the header tabs (desktop).
  *
- * Two segments share one country filter:
- *   Destinations     every priced place, cheapest first, with a text search
- *   Trips and trails the published trips (hikes, city days) from the content
- *                    lab, browsed by country or by "near this town" search
+ * Five categories share one search, one country filter and one sort row:
+ *   General    every priced place as a photo card, and a country index of
+ *              flag cards when nothing is filtered yet
+ *   Trips      composed city days from the content lab
+ *   Trails     drawn hikes from the content lab
+ *   Beaches    the beach-flavoured slice of both
+ *   Mountains  the mountain-flavoured slice of both
  *
- * The near-search matches catalogue cities (accent-folded), then loads that
- * city's country file and sorts its trips by distance from the city centre.
- * Trips are published one country at a time, so the search stays inside the
- * matched city's country; a border town will not see the neighbour's trails
- * until that country is published too.
+ * The wire carries route data only; photos, ratings and prices are joined
+ * client-side from the catalogue (lib/trailCards.js). Trips are published one
+ * country at a time, so the four trip categories browse country first: flag
+ * cards from the index until a country (or a near-city search) is picked.
+ * Tapping any trip opens the TrailSheet with the route on a real map.
  */
 
-const PAGE = 80;
+const PAGE = 36;
 const NEAR_MAX_ROWS = 80;
+
+// Lazy: the sheet imports maplibre-gl, which stays out of the main bundle.
+const TrailSheet = lazy(() => import('./TrailSheet.jsx').then((m) => ({ default: m.TrailSheet })));
 
 const norm = (s) => String(s || '')
   .toLowerCase()
@@ -31,72 +43,137 @@ const norm = (s) => String(s || '')
   .replace(/[̀-ͯ]/g, '')
   .replace(/ł/g, 'l'); // l-with-stroke does not decompose
 
-function haversineKm(lat1, lon1, lat2, lon2) {
-  const R = 6371, dLat = (lat2 - lat1) * Math.PI / 180, dLon = (lon2 - lon1) * Math.PI / 180;
-  const a = Math.sin(dLat / 2) ** 2
-    + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon / 2) ** 2;
-  return 2 * R * Math.asin(Math.min(1, Math.sqrt(a)));
-}
-
-function bboxCentre(bbox) {
-  return bbox?.length === 4
-    ? { lat: (bbox[1] + bbox[3]) / 2, lon: (bbox[0] + bbox[2]) / 2 }
-    : null;
-}
-
 const hoursText = (min) => {
   const h = min / 60;
   return h >= 10 ? String(Math.round(h)) : h.toFixed(1);
 };
 
-/** Where a trip sits on the map: the anchor city for a composed city day,
- *  the extent's centre for a drawn trail. */
-function tripCentre(tr) {
-  if (tr.category === 'citytrip' && tr.anchor?.lat != null) {
-    return { lat: tr.anchor.lat, lon: tr.anchor.lon };
-  }
-  return bboxCentre(tr.bbox);
+const CATS = [
+  { key: 'general', Icon: SkylineIcon, labelKey: 'places.catGeneral' },
+  { key: 'trips', Icon: SuitcaseIcon, labelKey: 'places.catTrips' },
+  { key: 'trails', Icon: BootIcon, labelKey: 'places.catTrails' },
+  { key: 'beaches', Icon: BeachIcon, labelKey: 'places.catBeaches' },
+  { key: 'mountains', Icon: MountainIcon, labelKey: 'places.catMountains' },
+];
+
+const SORTS = [
+  { key: 'rating', labelKey: 'places.sortRating', defaultDir: -1 },
+  { key: 'price', labelKey: 'places.sortPrice', defaultDir: 1 },
+  { key: 'az', labelKey: 'places.sortAZ', defaultDir: 1 },
+];
+
+/** One catalogue place as a photo card: hero image, name, rating, from-price. */
+function DestCard({ p, km, priceMode, onSelect, t }) {
+  const prov = fareProv(p.prov || p);
+  return (
+    <button className="places-dcard" onClick={() => onSelect(p.id)}>
+      {p.image
+        ? <img className="places-card-img" src={p.image} alt="" loading="lazy" />
+        : <span className="places-card-img places-card-noimg" aria-hidden="true" />}
+      <span className="places-card-scrim" aria-hidden="true" />
+      {km != null && (
+        <span className="places-card-km">{t('places.kmAway', { km: Math.round(km) })}</span>
+      )}
+      <span className="places-card-overlay">
+        <span className="places-card-main">
+          <span className="places-card-name">{p.city}</span>
+          <span className="places-card-sub">
+            <span>{p.country}</span>
+            <RatingBadge rating={p.rating} size="xs" showGem={false} />
+          </span>
+        </span>
+        <span className="places-card-right">
+          <span className="places-card-price">
+            {!prov?.est && <FromWord />}
+            {`${estPrefix(prov)}${eur(priceMode === 'pp' ? p.pp : p.total)}`}
+            {priceMode === 'pp' && <small>/pp</small>}
+          </span>
+          <ChevronRightIcon size={15} className="places-card-chev" />
+        </span>
+      </span>
+    </button>
+  );
 }
 
-/** One published trip as a list row. Facts only, in the wire's own numbers;
- *  a composed city day is a link to its city, a hike is information. */
-function TrailRow({ tr, km, data, onSelectDest, t }) {
+/** One published trip as a photo card; hikes carry their summary below. */
+function TripCard({ card, km, onOpen, t }) {
+  const { tr, assoc, kindKey, price } = card;
   const isCityDay = tr.category === 'citytrip';
-  const kindLabel = isCityDay
-    ? t('trails.cityDay')
-    : (tr.distance_m <= 25000 ? t('trails.dayHike') : t('trails.trail'));
   const diffKey = tr.difficulty === 'easy' ? 'places.diffEasy'
     : tr.difficulty === 'moderate' ? 'places.diffModerate'
       : tr.difficulty === 'hard' ? 'places.diffHard' : null;
-  const clickable = isCityDay && tr.anchor?.dest && data.destinations[tr.anchor.dest];
-  const Body = (
-    <>
-      <div className="places-trail-head">
-        <span className="places-trail-name">{tr.name}</span>
+  return (
+    <button className="places-tcard" onClick={() => onOpen(card)}>
+      <span className="places-tcard-top">
+        {assoc.photoUrl
+          ? <img className="places-card-img" src={assoc.photoUrl} alt="" loading="lazy" />
+          : (
+            <span className="places-card-img places-card-noimg" aria-hidden="true">
+              <RouteIcon size={26} />
+            </span>
+          )}
+        <span className="places-card-scrim" aria-hidden="true" />
         {km != null && (
-          <span className="places-trail-km">{t('places.kmAway', { km: Math.round(km) })}</span>
+          <span className="places-card-km">{t('places.kmAway', { km: Math.round(km) })}</span>
         )}
-        <span className={`places-trail-kind ${isCityDay ? 'city' : ''}`}>{kindLabel}</span>
-        {clickable && <ChevronRightIcon size={14} className="places-row-chev" />}
-      </div>
-      <div className="places-trail-facts">
-        {tr.distance_m != null && (
-          <span>{(tr.distance_m / 1000).toFixed(1).replace(/\.0$/, '')} km</span>
-        )}
-        {tr.duration_min != null && <span>{hoursText(tr.duration_min)} h</span>}
-        {!isCityDay && tr.ascent_m != null && <span>+{Math.round(tr.ascent_m)} m</span>}
-        {isCityDay && tr.n_stops != null && <span>{t('trails.stops', { n: tr.n_stops })}</span>}
-        {diffKey && <span>{t(diffKey)}</span>}
-      </div>
-      {tr.summary && <p className="places-trail-summary">{tr.summary}</p>}
-    </>
-  );
-  return clickable ? (
-    <button className="places-trailrow clickable" onClick={() => onSelectDest(tr.anchor.dest)}>
-      {Body}
+        <span className="places-card-overlay">
+          <span className="places-card-main">
+            <span className="places-card-name">{tr.name}</span>
+            <span className="places-card-facts">
+              {tr.distance_m != null && (
+                <span>{(tr.distance_m / 1000).toFixed(1).replace(/\.0$/, '')} km</span>
+              )}
+              {tr.duration_min != null && <span>{hoursText(tr.duration_min)} h</span>}
+              {isCityDay && tr.n_stops != null && <span>{t('trails.stops', { n: tr.n_stops })}</span>}
+              {!isCityDay && tr.ascent_m != null && <span>+{Math.round(tr.ascent_m)} m</span>}
+            </span>
+            <span className={`places-card-kind ${isCityDay ? 'city' : ''}`}>{t(kindKey)}</span>
+          </span>
+          <span className="places-card-right">
+            {isCityDay && assoc.dest?.rating && (
+              <RatingBadge rating={assoc.dest.rating} size="xs" showGem={false} />
+            )}
+            {!isCityDay && diffKey && (
+              <span className="places-card-diff">{t(diffKey)}</span>
+            )}
+            {isCityDay && price && (
+              <span className="places-card-price">
+                <FromWord />
+                {eur(price.pp)}
+                <small>/pp</small>
+              </span>
+            )}
+            <ChevronRightIcon size={15} className="places-card-chev" />
+          </span>
+        </span>
+      </span>
+      {!isCityDay && tr.summary && <span className="places-tcard-summary">{tr.summary}</span>}
     </button>
-  ) : (
-    <div className="places-trailrow">{Body}</div>
+  );
+}
+
+/** One country as a photo card: its best-rated place as the cover, the flag
+ *  small beside the name. Real photography, never a stretched flag. */
+function CountryCard({ cc, name, sub, img, onPick }) {
+  return (
+    <button className="places-ccard" onClick={() => onPick(cc)}>
+      {img
+        ? <img className="places-card-img" src={img} alt="" loading="lazy" />
+        : <span className="places-card-img places-card-noimg" aria-hidden="true" />}
+      <span className="places-card-scrim" aria-hidden="true" />
+      <span className="places-card-overlay">
+        <span className="places-card-main">
+          <span className="places-card-name">
+            <CountryFlag country={cc} size={13} className="places-card-flag" />
+            {name}
+          </span>
+          <span className="places-card-sub"><span>{sub}</span></span>
+        </span>
+        <span className="places-card-right">
+          <ChevronRightIcon size={15} className="places-card-chev" />
+        </span>
+      </span>
+    </button>
   );
 }
 
@@ -107,12 +184,14 @@ export function DestinationsTab({
   const scrollRef = useRef(null);
   const sentinelRef = useRef(null);
 
-  const [seg, setSeg] = useState('dests');           // 'dests' | 'trails'
+  const [cat, setCat] = useState('general');         // CATS key
   const [query, setQuery] = useState('');
   const [debouncedQuery, setDebouncedQuery] = useState('');
   const [country, setCountry] = useState('');        // ISO2 or '' for all
   const [nearDest, setNearDest] = useState(null);    // { id, city, iso2, lat, lon }
+  const [sort, setSort] = useState({ key: 'rating', dir: -1 });
   const [visible, setVisible] = useState(PAGE);
+  const [sheetCard, setSheetCard] = useState(null);  // enriched trip card or null
 
   // Trails data: the country index (which countries have anything), and the
   // one country file the current selection needs.
@@ -132,9 +211,10 @@ export function DestinationsTab({
     return () => clearTimeout(timer);
   }, [query]);
 
+  const isTripCat = cat !== 'general';
   const trailsCountry = nearDest ? nearDest.iso2 : country;
   useEffect(() => {
-    if (seg !== 'trails' || !trailsCountry) { setCountryTrips(null); return undefined; }
+    if (!isTripCat || !trailsCountry) { setCountryTrips(null); return undefined; }
     let live = true;
     setTrailsLoading(true);
     loadTrails(trailsCountry).then((trips) => {
@@ -143,7 +223,7 @@ export function DestinationsTab({
       setTrailsLoading(false);
     });
     return () => { live = false; };
-  }, [seg, trailsCountry]);
+  }, [isTripCat, trailsCountry]);
 
   // ISO2 -> display name, from the catalogue first (it matches the rows on
   // screen), the browser's region names for any code the catalogue lacks.
@@ -154,38 +234,8 @@ export function DestinationsTab({
     return (cc) => map.get(cc) || (dn ? dn.of(cc) : cc) || cc;
   }, [availableCountries, lang]);
 
-  // ── Destinations segment ──────────────────────────────────────────────
-
-  const q = useMemo(() => norm(debouncedQuery), [debouncedQuery]);
-  const dests = useMemo(() => {
-    if (seg !== 'dests') return [];
-    return pricedAll.filter((p) => {
-      if (country && p.iso2 !== country) return false;
-      if (q && !(norm(p.city).includes(q) || norm(p.country).includes(q))) return false;
-      return true;
-    });
-  }, [seg, pricedAll, country, q]);
-
-  // New filter result: collapse the window and go back to the top.
-  useEffect(() => {
-    setVisible(PAGE);
-    scrollRef.current?.scrollTo?.(0, 0);
-  }, [dests]);
-
-  useEffect(() => {
-    const el = sentinelRef.current;
-    if (!el) return undefined;
-    const io = new IntersectionObserver((entries) => {
-      if (entries[0].isIntersecting) setVisible((v) => (v < dests.length ? v + PAGE : v));
-    }, { root: scrollRef.current, rootMargin: '600px' });
-    io.observe(el);
-    return () => io.disconnect();
-  }, [dests.length]);
-
-  // ── Trails segment ────────────────────────────────────────────────────
-
   // City suggestions for the near-search, deduped so London's four gateway
-  // entries offer one London.
+  // entries offer one London. Also the index every hike is joined against.
   const destIndex = useMemo(() => {
     const seen = new Set();
     const out = [];
@@ -201,8 +251,29 @@ export function DestinationsTab({
     return out;
   }, [data]);
 
+  const priceById = useMemo(() => {
+    const m = new Map();
+    for (const p of pricedAll) m.set(p.id, p);
+    return m;
+  }, [pricedAll]);
+
+  // Country card covers: the best-rated place of each country supplies the
+  // photo, so the index shows real photography rather than a stretched flag.
+  const countryCover = useMemo(() => {
+    const m = new Map();
+    for (const p of pricedAll) {
+      if (!p.image) continue;
+      const score = p.rating?.score ?? 0;
+      const cur = m.get(p.iso2);
+      if (!cur || score > cur.score) m.set(p.iso2, { img: p.image, score });
+    }
+    return m;
+  }, [pricedAll]);
+
+  const q = useMemo(() => norm(debouncedQuery), [debouncedQuery]);
+
   const suggestions = useMemo(() => {
-    if (seg !== 'trails' || !q) return [];
+    if (!q) return [];
     const starts = [], includes = [];
     for (const d of destIndex) {
       const c = norm(d.city);
@@ -211,7 +282,7 @@ export function DestinationsTab({
       if (starts.length >= 6) break;
     }
     return [...starts, ...includes].slice(0, 6);
-  }, [seg, q, destIndex]);
+  }, [q, destIndex]);
 
   const pickNear = (d) => {
     setNearDest(d);
@@ -219,86 +290,178 @@ export function DestinationsTab({
     setCountry('');
   };
 
-  const nearRows = useMemo(() => {
-    if (!nearDest || !countryTrips) return null;
-    return countryTrips
-      .map((tr) => {
-        const c = tripCentre(tr);
-        return c ? { tr, km: haversineKm(nearDest.lat, nearDest.lon, c.lat, c.lon) } : null;
+  // ── General: the priced catalogue ─────────────────────────────────────
+
+  const destRows = useMemo(() => {
+    if (cat !== 'general') return [];
+    const filtered = pricedAll.filter((p) => {
+      if (country && p.iso2 !== country) return false;
+      if (q && !(norm(p.city).includes(q) || norm(p.country).includes(q))) return false;
+      return true;
+    });
+    if (nearDest) {
+      return filtered
+        .map((p) => ({ p, km: haversineKm(nearDest.lat, nearDest.lon, p.lat, p.lon) }))
+        .sort((a, b) => a.km - b.km)
+        .slice(0, NEAR_MAX_ROWS);
+    }
+    const rows = filtered.map((p) => ({ p, km: null }));
+    const dir = sort.dir;
+    if (sort.key === 'rating') {
+      rows.sort((a, b) => dir * ((a.p.rating?.score ?? -1) - (b.p.rating?.score ?? -1)));
+    } else if (sort.key === 'price') {
+      const v = (p) => (priceMode === 'pp' ? p.pp : p.total) ?? Infinity;
+      rows.sort((a, b) => dir * (v(a.p) - v(b.p)));
+    } else {
+      rows.sort((a, b) => dir * a.p.city.localeCompare(b.p.city));
+    }
+    return rows;
+  }, [cat, pricedAll, country, q, nearDest, sort, priceMode]);
+
+  // The country index for General: every priced country as a flag card.
+  const generalCountries = useMemo(() => {
+    if (cat !== 'general') return [];
+    const agg = new Map();
+    for (const p of pricedAll) {
+      const a = agg.get(p.iso2) || { n: 0, min: Infinity };
+      a.n += 1;
+      const v = priceMode === 'pp' ? p.pp : p.total;
+      if (v != null && v < a.min) a.min = v;
+      agg.set(p.iso2, a);
+    }
+    return availableCountries
+      .map(([cc, name]) => ({ cc, name, ...agg.get(cc) }))
+      .filter((c) => c.n > 0)
+      .sort((a, b) => a.name.localeCompare(b.name));
+  }, [cat, pricedAll, availableCountries, priceMode]);
+
+  // ── Trip categories: the published wire, joined to the catalogue ──────
+
+  const tripCards = useMemo(() => {
+    if (!isTripCat || !countryTrips) return null;
+    return countryTrips.map((tr) => {
+      const assoc = associateTrip(tr, data.destinations, destIndex);
+      return {
+        tr,
+        assoc,
+        kindKey: tripKindKey(tr, assoc.dest),
+        themes: tripThemes(tr, assoc.dest),
+        price: assoc.destId ? priceById.get(assoc.destId) || null : null,
+      };
+    });
+  }, [isTripCat, countryTrips, data, destIndex, priceById]);
+
+  const tripRows = useMemo(() => {
+    if (!tripCards) return null;
+    let rows = tripCards.filter((c) => (
+      cat === 'trips' ? c.tr.category === 'citytrip'
+        : cat === 'trails' ? c.tr.category !== 'citytrip'
+          : cat === 'beaches' ? c.themes.has('beach')
+            : c.themes.has('mountains')
+    ));
+    if (q) rows = rows.filter((c) => norm(c.tr.name).includes(q));
+    if (nearDest) {
+      return rows
+        .map((c) => {
+          const ctr = tripCentre(c.tr);
+          return ctr ? { c, km: haversineKm(nearDest.lat, nearDest.lon, ctr.lat, ctr.lon) } : null;
+        })
+        .filter(Boolean)
+        .sort((a, b) => a.km - b.km)
+        .slice(0, NEAR_MAX_ROWS);
+    }
+    const dir = sort.dir;
+    const out = rows.map((c) => ({ c, km: null }));
+    if (sort.key === 'rating') {
+      out.sort((a, b) => dir * ((a.c.assoc.dest?.rating?.score ?? -1) - (b.c.assoc.dest?.rating?.score ?? -1)));
+    } else if (sort.key === 'price') {
+      const v = (c) => c.price?.pp ?? Infinity;
+      out.sort((a, b) => dir * (v(a.c) - v(b.c)));
+    } else {
+      out.sort((a, b) => dir * a.c.tr.name.localeCompare(b.c.tr.name));
+    }
+    return out;
+  }, [tripCards, cat, q, nearDest, sort]);
+
+  // The country index for trip categories: published countries as flag cards.
+  const tripCountries = useMemo(() => {
+    if (!isTripCat || !trailsIndex) return [];
+    return trailsIndex.countries
+      .map((c) => {
+        const n = cat === 'trips' ? (c.counts?.citytrip || 0)
+          : cat === 'trails' ? (c.counts?.hike || 0)
+            : c.n_trips;
+        return { cc: c.country, name: countryName(c.country), n };
       })
-      .filter(Boolean)
-      .sort((a, b) => a.km - b.km)
-      .slice(0, NEAR_MAX_ROWS);
-  }, [nearDest, countryTrips]);
-
-  const countryRows = useMemo(() => {
-    if (nearDest || !countryTrips) return null;
-    // City days first (there are few and they name the place), then the
-    // trails from short to long.
-    const cityDays = countryTrips.filter((tr) => tr.category === 'citytrip')
+      .filter((c) => c.n > 0)
       .sort((a, b) => a.name.localeCompare(b.name));
-    const hikes = countryTrips.filter((tr) => tr.category !== 'citytrip')
-      .sort((a, b) => (a.distance_m ?? 0) - (b.distance_m ?? 0));
-    return [...cityDays, ...hikes];
-  }, [nearDest, countryTrips]);
-
-  const indexCountries = useMemo(() => {
-    if (!trailsIndex) return [];
-    return [...trailsIndex.countries]
-      .map((c) => ({ ...c, name: countryName(c.country) }))
-      .sort((a, b) => a.name.localeCompare(b.name));
-  }, [trailsIndex, countryName]);
+  }, [isTripCat, trailsIndex, cat, countryName]);
 
   const trailsTotal = useMemo(
     () => (trailsIndex ? trailsIndex.countries.reduce((s, c) => s + (c.n_trips || 0), 0) : 0),
     [trailsIndex],
   );
 
-  const switchSeg = (next) => {
-    if (next === seg) return;
-    setSeg(next);
+  // New filter result: collapse the window and go back to the top.
+  const rowCount = cat === 'general' ? destRows.length : (tripRows?.length ?? 0);
+  useEffect(() => {
+    setVisible(PAGE);
+    scrollRef.current?.scrollTo?.(0, 0);
+  }, [cat, country, q, nearDest, sort]);
+
+  useEffect(() => {
+    const el = sentinelRef.current;
+    if (!el) return undefined;
+    const io = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting) setVisible((v) => (v < rowCount ? v + PAGE : v));
+    }, { root: scrollRef.current, rootMargin: '600px' });
+    io.observe(el);
+    return () => io.disconnect();
+  }, [rowCount]);
+
+  const switchCat = (next) => {
+    if (next === cat) return;
+    setCat(next);
     setQuery('');
     scrollRef.current?.scrollTo?.(0, 0);
   };
 
+  const toggleSort = (key) => {
+    setSort((s) => (s.key === key
+      ? { key, dir: -s.dir }
+      : { key, dir: SORTS.find((x) => x.key === key).defaultDir }));
+  };
+
   const fmt = (n) => n.toLocaleString(lang);
 
-  const trailRowProps = { data, onSelectDest, t };
-  const showTrailRows = seg === 'trails' && !trailsLoading
-    && ((nearRows && nearRows.length > 0) || (countryRows && countryRows.length > 0));
+  const showCountryIndex = !q && !country && !nearDest;
+  const showTripRows = isTripCat && !trailsLoading && tripRows && tripRows.length > 0;
 
   return (
     <div className="places-tab" ref={scrollRef}>
       <div className="places-wrap">
         <h1 className="places-title">{t('places.title')}</h1>
         <p className="places-meta">
-          {seg === 'dests'
+          {cat === 'general'
             ? t('places.metaDests', { n: fmt(pricedAll.length), c: availableCountries.length })
             : (trailsIndex
               ? t('places.metaTrails', { n: fmt(trailsTotal), c: trailsIndex.countries.length })
-              : ' ')}
+              : ' ')}
         </p>
 
-        <div className="places-segs" role="tablist">
-          <button
-            role="tab"
-            aria-selected={seg === 'dests'}
-            className={`places-seg ${seg === 'dests' ? 'on' : ''}`}
-            onClick={() => switchSeg('dests')}
-          >
-            {t('places.segDests')}
-            <span className="places-count">{fmt(pricedAll.length)}</span>
-          </button>
-          <button
-            role="tab"
-            aria-selected={seg === 'trails'}
-            className={`places-seg ${seg === 'trails' ? 'on' : ''}`}
-            onClick={() => switchSeg('trails')}
-          >
-            <RouteIcon size={14} />
-            {t('places.segTrails')}
-            {trailsIndex && <span className="places-count">{fmt(trailsTotal)}</span>}
-          </button>
+        <div className="places-cats" role="tablist">
+          {CATS.map(({ key, Icon, labelKey }) => (
+            <button
+              key={key}
+              role="tab"
+              aria-selected={cat === key}
+              className={`places-cat ${cat === key ? 'on' : ''}`}
+              onClick={() => switchCat(key)}
+            >
+              <Icon size={17} />
+              <span>{t(labelKey)}</span>
+            </button>
+          ))}
         </div>
 
         <div className="places-controls">
@@ -308,10 +471,10 @@ export function DestinationsTab({
               type="text"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder={seg === 'dests' ? t('places.searchDest') : t('places.searchTrail')}
-              aria-label={seg === 'dests' ? t('places.searchDest') : t('places.searchTrail')}
+              placeholder={t('places.searchDest')}
+              aria-label={t('places.searchDest')}
             />
-            {seg === 'trails' && suggestions.length > 0 && (
+            {suggestions.length > 0 && (
               <div className="places-sugg" role="listbox">
                 {suggestions.map((d) => (
                   <button key={d.id} className="places-sugg-item" onClick={() => pickNear(d)}>
@@ -335,87 +498,114 @@ export function DestinationsTab({
           </select>
         </div>
 
-        {seg === 'dests' && (
+        {!showCountryIndex && (
+          <div className="places-sorts" role="group" aria-label={t('places.sortLabel')}>
+            {SORTS.map(({ key, labelKey }) => (
+              <button
+                key={key}
+                className={`places-sort ${!nearDest && sort.key === key ? 'on' : ''}`}
+                onClick={() => { setNearDest(null); toggleSort(key); }}
+              >
+                {t(labelKey)}
+                {!nearDest && sort.key === key && (
+                  <span className="places-sort-dir">{sort.dir === 1 ? '↑' : '↓'}</span>
+                )}
+              </button>
+            ))}
+          </div>
+        )}
+
+        {nearDest && (
+          <div className="places-nearhead">
+            <span>{t('places.nearHead', { city: nearDest.city })}</span>
+            <button className="places-nearclear" onClick={() => setNearDest(null)}>
+              {t('places.clearNear')}
+            </button>
+          </div>
+        )}
+
+        {cat === 'general' && (
           <div className="places-list">
-            {dests.slice(0, visible).map((p) => {
-              const prov = fareProv(p.prov || p);
-              return (
-                <button key={p.id} className="places-row" onClick={() => onSelectDest(p.id)}>
-                  <span className="places-row-main">
-                    <span className="places-row-city">{p.city}</span>
-                    <span className="places-row-sub">
-                      <span>{p.country}</span>
-                      <RatingBadge rating={p.rating} size="xs" showGem={false} />
-                    </span>
-                  </span>
-                  <span className="places-row-price">
-                    {!prov?.est && <FromWord />}
-                    {`${estPrefix(prov)}${eur(priceMode === 'pp' ? p.pp : p.total)}`}
-                    {priceMode === 'pp' && <small>/pp</small>}
-                  </span>
-                  <ChevronRightIcon size={15} className="places-row-chev" />
-                </button>
-              );
-            })}
-            {dests.length === 0 && <p className="places-empty">{t('places.emptyDest')}</p>}
-            {visible < dests.length && (
-              <div ref={sentinelRef} aria-hidden="true" style={{ height: 1 }} />
+            {showCountryIndex
+              ? generalCountries.map((c) => (
+                <CountryCard
+                  key={c.cc}
+                  cc={c.cc}
+                  name={c.name}
+                  sub={`${t('places.placesCount', { n: fmt(c.n) })}${Number.isFinite(c.min) ? `, ${t('places.fromPrice', { price: eur(c.min) })}` : ''}`}
+                  img={countryCover.get(c.cc)?.img || null}
+                  onPick={(cc) => setCountry(cc)}
+                />
+              ))
+              : (
+                <>
+                  {destRows.slice(0, visible).map(({ p, km }) => (
+                    <DestCard key={p.id} p={p} km={km} priceMode={priceMode} onSelect={onSelectDest} t={t} />
+                  ))}
+                  {destRows.length === 0 && <p className="places-empty">{t('places.emptyDest')}</p>}
+                </>
+              )}
+            {visible < destRows.length && (
+              <div ref={sentinelRef} className="places-sentinel" aria-hidden="true" style={{ height: 1 }} />
             )}
           </div>
         )}
 
-        {seg === 'trails' && (
+        {isTripCat && (
           <div className="places-list">
-            {nearDest && (
-              <div className="places-nearhead">
-                <span>{t('places.nearHead', { city: nearDest.city })}</span>
-                <button className="places-nearclear" onClick={() => setNearDest(null)}>
-                  {t('places.clearNear')}
-                </button>
-              </div>
+            {showCountryIndex && (
+              <>
+                <p className="places-intro">{t('places.trailsIntro')}</p>
+                {tripCountries.map((c) => (
+                  <CountryCard
+                    key={c.cc}
+                    cc={c.cc}
+                    name={c.name}
+                    sub={t('places.tripsCount', { n: fmt(c.n) })}
+                    img={countryCover.get(c.cc)?.img || null}
+                    onPick={(cc) => setCountry(cc)}
+                  />
+                ))}
+                {trailsIndex && tripCountries.length === 0 && (
+                  <p className="places-empty">{t('places.catEmpty')}</p>
+                )}
+              </>
             )}
 
-            {trailsLoading && <p className="places-empty">{'…'}</p>}
+            {!showCountryIndex && trailsLoading && <p className="places-empty">{'…'}</p>}
 
-            {!trailsLoading && nearDest && nearRows && (
-              nearRows.length > 0
-                ? nearRows.map(({ tr, km }) => (
-                  <TrailRow key={tr.id} tr={tr} km={km} {...trailRowProps} />
+            {!showCountryIndex && !trailsLoading && tripRows && (
+              tripRows.length > 0
+                ? tripRows.slice(0, visible).map(({ c, km }) => (
+                  <TripCard key={c.tr.id} card={c} km={km} onOpen={setSheetCard} t={t} />
                 ))
-                : <p className="places-empty">{t('places.noneNear', { city: nearDest.city })}</p>
-            )}
-
-            {!trailsLoading && !nearDest && country && countryRows && (
-              countryRows.length > 0
-                ? countryRows.map((tr) => <TrailRow key={tr.id} tr={tr} {...trailRowProps} />)
                 : (
                   <p className="places-empty">
-                    {t('places.trailsEmpty', { country: countryName(country) })}
+                    {nearDest
+                      ? t('places.noneNear', { city: nearDest.city })
+                      : t('places.trailsEmpty', { country: countryName(trailsCountry || country) })}
                   </p>
                 )
             )}
 
-            {!nearDest && !country && (
-              <>
-                <p className="places-intro">{t('places.trailsIntro')}</p>
-                {indexCountries.map((c) => (
-                  <button
-                    key={c.country}
-                    className="places-cidx-row"
-                    onClick={() => { setCountry(c.country); setNearDest(null); }}
-                  >
-                    <span className="places-cidx-name">{c.name}</span>
-                    <span className="places-cidx-count">{t('places.tripsCount', { n: c.n_trips })}</span>
-                    <ChevronRightIcon size={15} className="places-row-chev" />
-                  </button>
-                ))}
-              </>
+            {!showCountryIndex && visible < (tripRows?.length ?? 0) && (
+              <div ref={sentinelRef} className="places-sentinel" aria-hidden="true" style={{ height: 1 }} />
             )}
 
-            {showTrailRows && <p className="places-credit">{t('trails.credit')}</p>}
+            {showTripRows && <p className="places-credit">{t('trails.credit')}</p>}
           </div>
         )}
       </div>
+
+      {sheetCard && (
+        <Suspense fallback={null}>
+          <TrailSheet
+            card={sheetCard}
+            onClose={() => setSheetCard(null)}
+            onSelectDest={(id) => { setSheetCard(null); onSelectDest(id); }}
+          />
+        </Suspense>
+      )}
     </div>
   );
 }

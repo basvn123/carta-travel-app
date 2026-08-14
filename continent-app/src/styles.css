@@ -219,6 +219,59 @@ input, select {
   margin-left: auto;
 }
 
+/* Trip-kind category rail: a full-width band directly under the header on the
+   Map tab. Same translucent panel as the header so the two read as one unit;
+   sits inside .top-bar, so its height folds into --filter-h. */
+.kind-rail {
+  background: rgba(245, 241, 232, 0.92);
+  backdrop-filter: blur(12px) saturate(140%);
+  border-bottom: 1px solid var(--rule);
+}
+.kind-rail-scroll {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 14px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  overscroll-behavior-x: contain;
+}
+.kind-rail-scroll::-webkit-scrollbar { display: none; }
+.kind-rail-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  flex-shrink: 0;
+  height: 38px;
+  padding: 0 14px;
+  border-radius: 999px;
+  border: 1px solid var(--rule);
+  background: var(--bg-card);
+  font-family: var(--ui);
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  white-space: nowrap;
+  transition: color .15s, background .15s, border-color .15s;
+}
+.kind-rail-chip:hover { color: var(--ink); background: var(--paper-dim); }
+.kind-rail-chip.on {
+  color: var(--paper);
+  background: var(--ink);
+  border-color: var(--ink);
+}
+.kind-rail-icon { flex-shrink: 0; opacity: .85; }
+.kind-rail-chip.on .kind-rail-icon { opacity: 1; }
+.kind-rail-clear {
+  border-style: dashed;
+  background: none;
+  color: var(--ink-mute);
+}
+.kind-rail-clear:hover { color: var(--danger); background: none; }
+@media (max-width: 768px) {
+  .kind-rail-scroll { padding: 7px 10px; }
+}
+
 @media (max-width: 768px) {
   /* One fixed panel on mobile: the calendar/filter triggers sit on the LEFT,
      the account avatar on the RIGHT, both the same 40px circle at the same
@@ -6725,6 +6778,16 @@ input, select {
   gap: 8px;
 }
 
+/* What every price on the map includes, stated once at the top of the key. */
+.legend-allin {
+  margin: 0 0 2px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--rule-soft);
+  font-size: 10.5px;
+  line-height: 1.45;
+  color: var(--ink-soft);
+}
+
 .legend-row {
   display: flex;
   align-items: flex-start;
@@ -8819,14 +8882,17 @@ input, select {
 /* The segmented control lives inside the sticky header so the two states are
    always one tap apart, however deep the scroll. */
 .saved-panel-header { padding-bottom: 16px; }
-.saved-tabs { margin-top: 14px; }
+/* Three states of travelling on one row, never wrapping to a second. */
+.saved-tabs { margin-top: 14px; grid-template-columns: repeat(3, 1fr); }
 .saved-tabs button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 7px;
-  padding: 10px 12px;
+  gap: 6px;
+  min-width: 0;
+  padding: 10px 6px;
   font-weight: 600;
+  white-space: nowrap;
 }
 .saved-tabs button small {
   font-family: var(--mono);
@@ -8896,47 +8962,65 @@ input, select {
   color: var(--ink-mute);
 }
 
-/* The travel ledger: two measured facts, each opening its own list. */
-.saved-ledger-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.saved-ledger-tile {
+/* The travel ledger: what the record adds up to. Two cards, each a measured
+   fact in mono with its own evidence underneath, flags with names on one
+   side, the city roll on the other. */
+.ledger2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; align-items: start; }
+.ledger2-card {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   gap: 4px;
-  padding: 14px 16px;
+  padding: 15px 16px;
   border: 1px solid var(--rule);
   border-radius: 14px;
   background: var(--bg-card);
-  font-family: inherit;
-  text-align: left;
-  cursor: pointer;
-  transition: border-color .15s, box-shadow .15s, background .15s;
 }
-.saved-ledger-tile:hover { border-color: var(--ink-soft); box-shadow: var(--shadow-1); }
-.saved-ledger-tile.is-open { border-color: var(--accent); background: var(--accent-bg); }
-.saved-ledger-num {
+.ledger2-title { font-size: 12.5px; font-weight: 600; color: var(--ink); }
+.ledger2-num {
   display: flex;
   align-items: baseline;
   gap: 5px;
   font-family: var(--mono);
-  font-size: 26px;
+  font-size: 27px;
   font-weight: 500;
   font-variant-numeric: tabular-nums;
   line-height: 1.1;
   color: var(--ink);
 }
-.saved-ledger-of { font-size: 12.5px; color: var(--ink-mute); }
-.saved-ledger-label { font-size: 11.5px; line-height: 1.35; color: var(--ink-soft); }
-.saved-ledger-detail { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
-.saved-ledger-chip {
-  display: inline-flex;
+.ledger2-of { font-size: 13px; color: var(--ink-mute); }
+.ledger2-cap { font-size: 11px; line-height: 1.35; color: var(--ink-soft); }
+.ledger2-flags { display: flex; flex-wrap: wrap; gap: 8px 12px; margin-top: 8px; }
+.ledger2-flagitem {
+  display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 6px;
+  gap: 3px;
+  min-width: 34px;
+}
+.ledger2-flagitem .country-flag { border-radius: 3px; box-shadow: 0 0 0 1px var(--rule); }
+.ledger2-flagname {
+  max-width: 64px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 10px;
+  color: var(--ink-soft);
+}
+.ledger2-flagitem.is-more {
+  justify-content: center;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink-mute);
+}
+.ledger2-cities {
+  margin-top: 8px;
   padding: 4px 10px;
   border: 1px solid var(--rule);
   border-radius: 999px;
-  background: var(--bg-card);
+  background: var(--paper-dim);
   font-size: 11.5px;
+  line-height: 1.45;
   color: var(--ink-soft);
 }
 
@@ -8982,10 +9066,24 @@ input, select {
   inset: 0;
   background: linear-gradient(to bottom, rgba(15, 23, 42, 0) 42%, rgba(15, 23, 42, 0.78) 100%);
 }
+/* The country flag as a corner badge, on its own paper chip so it reads over
+   any photo. */
+.fav-card-flag {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px 6px;
+  border-radius: 8px;
+  background: rgba(248, 246, 240, 0.92);
+}
+.fav-card-flag .country-flag { display: block; border-radius: 2px; }
 .fav-card-text {
   position: absolute;
   left: 12px;
-  right: 12px;
+  right: 44px;
   bottom: 10px;
   display: flex;
   flex-direction: column;
@@ -9010,10 +9108,38 @@ input, select {
   white-space: nowrap;
 }
 .fav-card-dates { flex: none; font-family: var(--mono); font-size: 10px; color: rgba(255, 255, 255, 0.75); }
+/* When and as what it was kept: the trip-kind tag plus the saved date. */
+.fav-card-kept {
+  display: flex;
+  flex-wrap: wrap; /* the saved date drops to its own line on narrow cards */
+  align-items: center;
+  gap: 3px 6px;
+  margin-top: 3px;
+  min-width: 0;
+}
+.fav-card-kind {
+  flex: none;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: rgba(248, 246, 240, 0.24);
+  font-size: 8.5px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.92);
+}
+.fav-card-savedon {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: var(--mono);
+  font-size: 9.5px;
+  color: rgba(255, 255, 255, 0.75);
+}
 /* The bookmark IS the saved state: tapping it is how a favorite is let go. */
 .fav-card-mark {
   position: absolute;
-  top: 8px;
+  bottom: 8px;
   right: 8px;
   width: 28px;
   height: 28px;
@@ -9059,7 +9185,7 @@ input, select {
   position: relative;
   display: block;
   width: 100%;
-  height: 158px;
+  height: 178px;
   padding: 0;
   border: none;
   background: none;
@@ -9090,7 +9216,7 @@ input, select {
 .uptrip-when {
   position: absolute;
   top: 10px;
-  left: 10px;
+  left: 44px; /* clears the corner menu button */
   padding: 4px 10px;
   border-radius: 999px;
   background: rgba(248, 246, 240, 0.92);
@@ -9098,18 +9224,31 @@ input, select {
   font-size: 10.5px;
   color: var(--ink);
 }
+/* The country flag as a corner badge, on its own paper chip. */
+.uptrip-flag {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 7px;
+  border-radius: 9px;
+  background: rgba(248, 246, 240, 0.92);
+}
+.uptrip-flag .country-flag { display: block; border-radius: 2px; }
 .uptrip-text {
   position: absolute;
   left: 14px;
-  right: 14px;
+  right: 54px;
   bottom: 12px;
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 3px;
 }
 .uptrip-title {
   font-family: var(--display);
-  font-size: 21px;
+  font-size: 23px;
   font-weight: 500;
   letter-spacing: -0.015em;
   color: #fff;
@@ -9117,77 +9256,60 @@ input, select {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.uptrip-meta { display: flex; align-items: center; gap: 10px; }
-.uptrip-dates { font-family: var(--mono); font-size: 11px; color: rgba(255, 255, 255, 0.92); }
-.uptrip-stops { font-size: 11px; color: rgba(255, 255, 255, 0.8); }
-.uptrip-meta .country-flag-stack .country-flag { box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.4); }
-.uptrip-menu { position: absolute; top: 6px; right: 6px; }
-.uptrip-menu .saved-card-more { background: rgba(248, 246, 240, 0.85); color: var(--ink-soft); }
-.uptrip-menu .saved-card-more:hover { background: var(--paper); color: var(--ink); }
-
-/* Past trips: a record, so hairline rows rather than boxed cards, and the
-   thumbnails step back until pointed at. */
-.saved-section.is-muted .saved-section-title { color: var(--ink-soft); }
-.saved-past-empty { margin: 0; font-size: 12.5px; line-height: 1.55; color: var(--ink-mute); }
-.past-list { display: flex; flex-direction: column; }
-.past-row {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  padding: 3px 0;
-  border-bottom: 1px solid var(--rule);
-}
-.past-row:last-child { border-bottom: none; }
-.past-row-main {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 9px 0;
-  border: none;
-  background: none;
-  text-align: left;
-  cursor: pointer;
-}
-.past-row-thumb {
-  flex: none;
-  width: 38px;
-  height: 38px;
-  border-radius: 10px;
-  background-size: cover;
-  background-position: center;
-  background-color: var(--paper-dim);
-  filter: grayscale(0.55) contrast(0.92);
-  opacity: 0.85;
-  transition: filter .15s, opacity .15s;
-}
-.past-row-thumb.is-fallback {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--ink-mute);
-  filter: none;
-}
-.past-row-main:hover .past-row-thumb { filter: none; opacity: 1; }
-.past-row-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
-.past-row-title {
-  font-size: 13.5px;
-  font-weight: 600;
-  color: var(--ink-soft);
+.uptrip-sub {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.88);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.past-row-main:hover .past-row-title { color: var(--ink); }
-.past-row-meta { font-family: var(--mono); font-size: 10.5px; color: var(--ink-mute); }
+.uptrip-dateblock {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  margin-top: 4px;
+}
+.uptrip-datelabel { font-size: 10px; color: rgba(255, 255, 255, 0.68); }
+.uptrip-dates { font-family: var(--mono); font-size: 11px; color: rgba(255, 255, 255, 0.92); }
+/* The state mark: a calendar for a commitment, a check for a memory. */
+.uptrip-state {
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(248, 246, 240, 0.92);
+  color: var(--ink);
+}
+.uptrip-card.is-visited .uptrip-state { background: var(--ink); color: var(--paper); }
+.uptrip-menu { position: absolute; top: 6px; left: 6px; }
+.uptrip-menu .saved-card-more { background: rgba(248, 246, 240, 0.85); color: var(--ink-soft); }
+.uptrip-menu .saved-card-more:hover { background: var(--paper); color: var(--ink); }
+/* The menu popover hangs from the left corner here, not the right. */
+.uptrip-menu .saved-card-pop { left: 0; right: auto; }
+
+/* The one heading that names each tab's main list steps up to the display
+   face; the shelf headings around it stay quiet. */
+.saved-section.is-big .saved-section-title {
+  font-family: var(--display);
+  font-size: 21px;
+  font-weight: 500;
+  letter-spacing: -0.015em;
+  text-transform: none;
+  color: var(--ink);
+}
 
 /* Desktop: the roomier sheet lets the imagery breathe. */
 @media (min-width: 881px) {
   .saved-map { height: 208px; }
-  .uptrip-open { height: 188px; }
+  .uptrip-open { height: 208px; }
   .fav-grid { gap: 12px; }
-  .uptrip-title { font-size: 23px; }
+  .uptrip-title { font-size: 25px; }
+  .saved-section.is-big .saved-section-title { font-size: 23px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -9367,37 +9489,73 @@ input, select {
 }
 .bt-cta:hover { background: var(--accent-soft); }
 
-.bt-chart-wrap {
-  position: relative;
-  overflow: visible;
+/* Cheapest trip total by month (BestTimePanel MonthBars): rounded bars,
+   taller = pricier, green = cheapest month, ink dot = the user's month.
+   Same visual language as the weekday and climate strips below. */
+.month-chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 5px;
+  height: 118px;
   margin-top: 4px;
 }
-.bt-axis {
-  font-family: var(--mono);
-  font-size: 9px;
-  fill: var(--ink-mute);
+.mo-col {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  height: 100%;
+  justify-content: flex-end;
+  padding: 0;
+  background: none;
+  border: none;
+  cursor: pointer;
 }
-.bt-grid { stroke: var(--rule); stroke-width: 1; opacity: .6; }
-.bt-line { fill: none; stroke: var(--accent); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-.bt-area { fill: var(--accent); opacity: .08; }
-.bt-pt { stroke-width: 2; }
-.bt-pt-cheap { fill: #2c6a1f; stroke: var(--paper); }
-.bt-pt-you { fill: var(--ink); stroke: var(--paper); }
-.bt-crosshair { stroke: var(--ink-mute); stroke-width: 1; opacity: .5; }
-
-.bt-tooltip {
-  position: absolute;
-  pointer-events: none;
-  background: var(--ink);
-  color: var(--paper);
-  font-size: 11.5px;
-  padding: 6px 10px;
-  border-radius: 8px;
-  box-shadow: var(--shadow-2);
-  transform: translate(-50%, -125%);
+.mo-val {
+  min-height: 14px;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--ink);
   white-space: nowrap;
 }
-.bt-tooltip b { font-weight: 700; }
+.mo-col.is-cheap .mo-val { color: #2c6a1f; }
+.mo-bar-track {
+  width: 100%;
+  display: flex;
+  align-items: flex-end;
+  flex: 1;
+}
+.mo-bar {
+  width: 100%;
+  border-radius: 4px 4px 2px 2px;
+  background: var(--accent-soft);
+  transition: filter .12s;
+}
+.mo-col:hover .mo-bar { filter: brightness(1.08); }
+.mo-col.is-cheap .mo-bar { background: #2c6a1f; }
+.mo-name {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  font-family: var(--mono);
+  font-size: 9.5px;
+  color: var(--ink-mute);
+  white-space: nowrap;
+}
+.mo-col.is-cheap .mo-name,
+.mo-col.is-you .mo-name { color: var(--ink); font-weight: 700; }
+.mo-you-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--ink);
+  flex-shrink: 0;
+}
+.mo-tip { bottom: calc(100% + 2px); }
 
 .bt-legend {
   display: flex;
@@ -10148,8 +10306,7 @@ input, select {
   font-weight: 600;
 }
 
-/* ─── Best-time chart: measured-width SVG, mobile-safe headline ─── */
-.bt-chart-wrap svg { display: block; max-width: 100%; }
+/* ─── Best-time tab: mobile-safe headline ─── */
 @media (max-width: 768px) {
   .bt-headline { flex-direction: column; align-items: stretch; gap: 12px; }
   .bt-headline-actions { flex-direction: column; align-items: stretch; gap: 8px; }
@@ -15931,38 +16088,68 @@ button.ai-sched-main:focus-visible {
   min-height: 15px;
 }
 
-/* Two real segments, not chips: the active half carries the ink. */
-.places-segs {
+/* Five category tabs: icon above a tiny label, the active one on the warm
+   accent tile. General is the catalogue; the other four browse the wire. */
+.places-cats {
   display: flex;
-  margin-top: 16px;
-  border: 1px solid var(--rule);
-  border-radius: 10px;
-  overflow: hidden;
-  background: var(--paper-dim);
+  gap: 6px;
+  margin-top: 14px;
 }
-.places-seg {
+.places-cat {
   flex: 1;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  gap: 7px;
+  gap: 4px;
   min-width: 0;
-  padding: 10px 8px;
-  font-size: 13px;
+  padding: 9px 2px 7px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  font-size: 10.5px;
   font-weight: 600;
   color: var(--ink-soft);
   transition: color .15s, background .15s;
 }
-.places-seg + .places-seg { border-left: 1px solid var(--rule); }
-.places-seg:hover { color: var(--ink); }
-.places-seg.on { background: var(--ink); color: var(--paper); }
-.places-count {
-  font-family: var(--mono);
-  font-size: 10.5px;
-  font-weight: 400;
-  opacity: 0.75;
-  font-variant-numeric: tabular-nums;
+.places-cat span {
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
+.places-cat:hover { color: var(--ink); }
+.places-cat.on {
+  background: var(--accent-bg);
+  border-color: var(--accent-soft);
+  color: var(--ink);
+}
+.places-cat.on svg { color: var(--accent); }
+
+/* Sort chips: one active at a time, the arrow says which way it runs. */
+.places-sorts {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+.places-sort {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 7px 14px;
+  border: 1px solid var(--rule);
+  border-radius: 9px;
+  background: var(--bg-card);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  transition: color .15s, background .15s, border-color .15s;
+}
+.places-sort:hover { color: var(--ink); }
+.places-sort.on {
+  background: var(--accent-bg);
+  border-color: var(--accent-soft);
+  color: var(--ink);
+}
+.places-sort-dir { font-family: var(--mono); font-size: 11px; color: var(--accent); }
 
 .places-controls {
   display: flex;
@@ -16025,48 +16212,190 @@ button.ai-sched-main:focus-visible {
 .places-sugg-city { font-size: 13.5px; font-weight: 600; color: var(--ink); }
 .places-sugg-country { font-size: 11.5px; color: var(--ink-mute); }
 
-.places-list { margin-top: 10px; }
-
-/* Destination rows: place and country on the left, the honest total on the
-   right, one hairline between neighbours. */
-.places-row {
-  display: flex;
-  align-items: center;
+.places-list {
+  display: grid;
+  grid-template-columns: 1fr;
   gap: 12px;
+  margin-top: 12px;
+}
+@media (min-width: 640px) {
+  .places-list { grid-template-columns: 1fr 1fr; }
+}
+.places-list > .places-empty,
+.places-list > .places-intro,
+.places-list > .places-credit,
+.places-list > .places-sentinel { grid-column: 1 / -1; }
+
+/* ── Photo cards: every list entry is an image with its facts laid over a
+      scrim, the mono numbers stay mono. One shared overlay grammar for
+      destination cards, trip cards and country flag cards. ── */
+
+.places-dcard, .places-ccard, .places-tcard-top {
+  position: relative;
+  display: block;
   width: 100%;
-  padding: 12px 2px;
-  border-bottom: 1px solid var(--rule-soft);
+  border-radius: 14px;
+  overflow: hidden;
+  background: var(--paper-dim);
   text-align: left;
 }
-.places-row:hover { background: var(--paper-dim); }
-.places-row-main { flex: 1; min-width: 0; }
-.places-row-city {
+.places-dcard { height: 150px; }
+.places-ccard { height: 92px; }
+.places-tcard-top { height: 158px; border-radius: 0; }
+.places-dcard:focus-visible, .places-ccard:focus-visible, .places-tcard:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.places-card-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
   display: block;
-  font-size: 14.5px;
+  transition: transform .3s ease;
+}
+.places-dcard:hover .places-card-img,
+.places-ccard:hover .places-card-img,
+.places-tcard:hover .places-card-img { transform: scale(1.03); }
+.places-card-noimg {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--paper-dim);
+  color: var(--ink-mute);
+}
+.places-card-scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(26, 26, 26, 0.78) 0%, rgba(26, 26, 26, 0.06) 62%);
+  pointer-events: none;
+}
+.places-ccard .places-card-scrim {
+  background: linear-gradient(to top, rgba(26, 26, 26, 0.72) 0%, rgba(26, 26, 26, 0.12) 70%);
+}
+
+/* The small flag sits beside the country name on the cover photo. */
+.places-card-flag {
+  display: inline-block;
+  vertical-align: -1px;
+  margin-right: 8px;
+  border-radius: 2px;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.35);
+}
+
+.places-card-overlay {
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+  padding: 10px 12px;
+}
+.places-card-main { flex: 1; min-width: 0; }
+.places-card-name {
+  display: block;
+  font-family: var(--display);
+  font-size: 17px;
   font-weight: 600;
-  color: var(--ink);
+  letter-spacing: -0.01em;
+  color: #fff;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  text-shadow: 0 1px 2px rgba(26, 26, 26, 0.4);
 }
-.places-row-sub {
+.places-card-sub {
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-top: 2px;
-  font-size: 12px;
-  color: var(--ink-mute);
+  margin-top: 3px;
+  font-size: 11.5px;
+  color: rgba(255, 255, 255, 0.88);
 }
-.places-row-price {
+.places-card-facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+  margin-top: 3px;
   font-family: var(--mono);
-  font-size: 13.5px;
-  font-weight: 600;
-  color: var(--ink);
-  white-space: nowrap;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.92);
   font-variant-numeric: tabular-nums;
 }
-.places-row-price small { font-size: 10px; color: var(--ink-mute); font-weight: 400; }
-.places-row-chev { color: var(--ink-mute); flex-shrink: 0; }
+.places-card-kind {
+  display: inline-block;
+  margin-top: 6px;
+  padding: 2px 8px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.18);
+  font-size: 10.5px;
+  font-weight: 600;
+  color: #fff;
+  white-space: nowrap;
+}
+.places-card-kind.city { background: rgba(200, 80, 30, 0.55); }
+.places-card-right {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 5px;
+}
+.places-card-price {
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 600;
+  color: #fff;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+  text-shadow: 0 1px 2px rgba(26, 26, 26, 0.4);
+}
+.places-card-price small { font-size: 10px; font-weight: 400; opacity: 0.8; }
+.places-card-price .prov-from { margin-right: 4px; color: rgba(255, 255, 255, 0.8); }
+.places-card-diff {
+  font-size: 10.5px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 6px;
+  padding: 1px 7px;
+  white-space: nowrap;
+}
+.places-card-chev { color: rgba(255, 255, 255, 0.8); flex-shrink: 0; }
+.places-card-km {
+  position: absolute;
+  top: 10px; right: 12px;
+  padding: 2px 8px;
+  border-radius: 6px;
+  background: rgba(26, 26, 26, 0.55);
+  font-family: var(--mono);
+  font-size: 10.5px;
+  color: #fff;
+  font-variant-numeric: tabular-nums;
+}
+
+/* A published trip: the photo card on top, a hike's summary below it. */
+.places-tcard {
+  display: block;
+  width: 100%;
+  border: 1px solid var(--rule);
+  border-radius: 14px;
+  overflow: hidden;
+  background: var(--bg-card);
+  text-align: left;
+}
+.places-tcard-summary {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  padding: 9px 12px 11px;
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: var(--ink-soft);
+}
 
 .places-empty, .places-intro {
   padding: 20px 2px;
@@ -16075,62 +16404,6 @@ button.ai-sched-main:focus-visible {
   color: var(--ink-soft);
 }
 .places-intro { padding-bottom: 10px; }
-
-/* Published trip rows: the same facts row the detail panel's nearby block
-   uses, at list scale. A composed city day links to its city. */
-.places-trailrow {
-  display: block;
-  width: 100%;
-  padding: 12px 2px;
-  border-bottom: 1px solid var(--rule-soft);
-  text-align: left;
-}
-.places-trailrow.clickable { cursor: pointer; }
-.places-trailrow.clickable:hover { background: var(--paper-dim); }
-.places-trail-head {
-  display: flex;
-  align-items: baseline;
-  gap: 10px;
-}
-.places-trail-name { flex: 1; min-width: 0; font-size: 14px; font-weight: 600; color: var(--ink); }
-.places-trail-km {
-  flex: none;
-  font-family: var(--mono);
-  font-size: 11px;
-  color: var(--ink-mute);
-  white-space: nowrap;
-  font-variant-numeric: tabular-nums;
-}
-.places-trail-kind {
-  flex: none;
-  font-size: 11px;
-  color: var(--ink-mute);
-  border: 1px solid var(--rule-soft);
-  border-radius: 4px;
-  padding: 1px 6px;
-  white-space: nowrap;
-}
-.places-trail-kind.city { color: var(--accent); border-color: var(--accent-soft); }
-.places-trail-facts {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  margin-top: 3px;
-  font-family: var(--mono);
-  font-size: 12px;
-  color: var(--ink-soft);
-  font-variant-numeric: tabular-nums;
-}
-.places-trail-summary {
-  margin: 5px 0 0;
-  font-size: 12.5px;
-  line-height: 1.45;
-  color: var(--ink-mute);
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
 
 .places-nearhead {
   display: flex;
@@ -16149,26 +16422,6 @@ button.ai-sched-main:focus-visible {
 }
 .places-nearclear:hover { text-decoration: underline; }
 
-/* Country index: which countries have anything published, with counts. */
-.places-cidx-row {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  width: 100%;
-  padding: 12px 2px;
-  border-bottom: 1px solid var(--rule-soft);
-  text-align: left;
-}
-.places-cidx-row:hover { background: var(--paper-dim); }
-.places-cidx-name { flex: 1; min-width: 0; font-size: 14px; font-weight: 600; color: var(--ink); }
-.places-cidx-count {
-  font-family: var(--mono);
-  font-size: 11.5px;
-  color: var(--ink-mute);
-  white-space: nowrap;
-  font-variant-numeric: tabular-nums;
-}
-
 .places-credit { margin: 14px 0 0; font-size: 11px; color: var(--ink-mute); }
 
 @media (max-width: 768px) {
@@ -16176,9 +16429,208 @@ button.ai-sched-main:focus-visible {
   .places-title { font-size: 23px; }
   .places-country { max-width: 40%; }
 }
+@media (max-width: 480px) {
+  .places-controls { flex-direction: column; }
+  .places-country { max-width: none; }
+}
 
 @media (prefers-reduced-motion: reduce) {
-  .places-seg { transition: none; }
+  .places-cat, .places-sort, .places-card-img { transition: none; }
+  .places-dcard:hover .places-card-img,
+  .places-ccard:hover .places-card-img,
+  .places-tcard:hover .places-card-img { transform: none; }
+}
+
+/* ── The trip sheet: the route on a real map, the wire's numbers, the
+      elevation profile and the stops. A bottom sheet on phones, a centred
+      dialog on desktop. ── */
+.tsheet-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 240;
+  background: rgba(26, 26, 26, 0.42);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+.tsheet {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-height: calc(100dvh - 40px);
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  border-bottom: none;
+  border-radius: 18px 18px 0 0;
+  overflow: hidden;
+}
+@media (min-width: 769px) {
+  .tsheet-scrim { align-items: center; padding: 32px; }
+  .tsheet {
+    max-width: 560px;
+    max-height: min(86dvh, 780px);
+    border-radius: 16px;
+    border-bottom: 1px solid var(--rule);
+  }
+}
+.tsheet-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px 18px 12px;
+  border-bottom: 1px solid var(--rule-soft);
+}
+.tsheet-head .places-card-kind {
+  margin-top: 0;
+  background: var(--paper-dim);
+  color: var(--ink-soft);
+}
+.tsheet-head .places-card-kind.city { background: var(--accent-bg); color: var(--accent); }
+.tsheet-head-main { flex: 1; min-width: 0; }
+.tsheet-title {
+  margin: 7px 0 0;
+  font-family: var(--display);
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  line-height: 1.2;
+}
+.tsheet-sub {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 5px;
+  font-size: 12px;
+  color: var(--ink-mute);
+}
+.tsheet-close {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  color: var(--ink-mute);
+}
+.tsheet-close:hover { background: var(--paper-dim); color: var(--ink); }
+.tsheet-body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 0 18px calc(18px + env(safe-area-inset-bottom, 0px));
+}
+.tsheet-map {
+  position: relative;
+  height: 240px;
+  margin: 14px 0 0;
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--paper-dim);
+}
+.tsheet-map .maplibregl-map { position: absolute !important; inset: 0 !important; }
+.tsheet-start-pin {
+  display: block;
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 2.5px solid #fff;
+  box-shadow: 0 1px 3px rgba(26, 26, 26, 0.35);
+}
+.tsheet-facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 16px;
+  padding: 12px 2px;
+  border-bottom: 1px solid var(--rule-soft);
+  font-family: var(--mono);
+  font-size: 12.5px;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+.tsheet-sec-title {
+  margin-top: 14px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.tsheet-elev-svg {
+  display: block;
+  width: 100%;
+  height: 76px;
+  margin-top: 8px;
+}
+.tsheet-elev-area { fill: var(--accent-bg); stroke: none; }
+.tsheet-elev-line { fill: none; stroke: var(--accent); stroke-width: 1.6; }
+.tsheet-elev-axis {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 3px;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  color: var(--ink-mute);
+  font-variant-numeric: tabular-nums;
+}
+.tsheet-desc { margin-top: 12px; }
+.tsheet-desc p {
+  margin: 0 0 10px;
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--ink-soft);
+}
+.tsheet-stops ol {
+  margin: 8px 0 0;
+  padding: 0 0 0 22px;
+}
+.tsheet-stops li { padding: 5px 0; }
+.tsheet-stops li::marker {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--accent);
+}
+.tsheet-stop-name { display: block; font-size: 13px; font-weight: 600; color: var(--ink); }
+.tsheet-stop-facts {
+  display: flex;
+  gap: 12px;
+  margin-top: 1px;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink-mute);
+  font-variant-numeric: tabular-nums;
+}
+.tsheet-cta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  margin-top: 16px;
+  padding: 12px 16px;
+  border-radius: 11px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  text-align: left;
+}
+.tsheet-cta:hover { filter: brightness(0.95); }
+.tsheet-cta-price {
+  font-family: var(--mono);
+  font-size: 12.5px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  opacity: 0.92;
+  white-space: nowrap;
+}
+.tsheet-credit {
+  margin: 14px 0 0;
+  font-size: 10.5px;
+  line-height: 1.45;
+  color: var(--ink-mute);
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
