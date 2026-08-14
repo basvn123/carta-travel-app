@@ -107,7 +107,19 @@ SAMPLE_PER_BUCKET = 40       # hotels priced per star bucket (median needs far l
 MIN_HOTELS_PER_BUCKET = 4    # fewer priced hotels than this is noise, not a rate
 CALL_GAP_S = 0.5
 
+# The ONLY endpoints this harvester may ever call. Both sit in LiteAPI's free
+# tier (docs.liteapi.travel/reference/api-pricing-usage-costs, re-checked
+# 2026-08-14: hotel content and the Rates step are free, coordinate search
+# included). /data/places and /pricing/index are METERED, so any new endpoint
+# must be priced first and added here deliberately, not slipped in by accident.
+FREE_ENDPOINTS = {("GET", "/data/hotels"), ("POST", "/hotels/rates")}
+
+
 def api(method, path, key, params=None, body=None):
+    if (method, path) not in FREE_ENDPOINTS:
+        raise RuntimeError(
+            f"refusing {method} {path}: not in FREE_ENDPOINTS. LiteAPI meters "
+            "some endpoints per request; price it and allowlist it explicitly.")
     url = f"{BASE}{path}"
     if params:
         url += "?" + urllib.parse.urlencode(params)
