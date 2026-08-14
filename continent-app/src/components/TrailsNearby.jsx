@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useTrails } from '../lib/trails.js';
 import { useI18n } from '../i18n/index.jsx';
 import { RouteIcon } from './Icons.jsx';
@@ -27,12 +27,15 @@ const hours = (min) => {
 /**
  * "Hikes and day trips nearby" for the destination detail panel: the city's
  * own composed day first, then published trails whose extent sits within
- * NEARBY_KM of the city centre. Facts only, in the catalogue's own numbers;
- * resolves to nothing (renders null) for the many countries and towns with
- * no published content yet.
+ * NEARBY_KM of the city centre. Renders as a folded panel accordion (the
+ * same .panel-acc visual language the redesigned panel uses; the markup is
+ * repeated here because the section owns its visibility: it must render
+ * NOTHING at all, header included, for the many towns without published
+ * content). Facts only, in the catalogue's own numbers.
  */
 export function TrailsNearby({ destination }) {
   const { t } = useI18n();
+  const [open, setOpen] = useState(false);
   const trips = useTrails(destination?.iso2) || [];
 
   const rows = useMemo(() => {
@@ -57,36 +60,51 @@ export function TrailsNearby({ destination }) {
   if (!rows.length) return null;
 
   return (
-    <div className="panel-section trails-nearby">
-      <div className="trails-nearby-title">
-        <RouteIcon size={13} /> {t('trails.nearbyTitle')}
-      </div>
-      {rows.map((tr) => {
-        const isCityDay = tr.category === 'citytrip';
-        const kindLabel = isCityDay
-          ? t('trails.cityDay')
-          : (tr.distance_m <= 25000 ? t('trails.dayHike') : t('trails.trail'));
-        return (
-          <div key={tr.id} className="trails-nearby-row">
-            <div className="trails-nearby-head">
-              <span className="trails-nearby-name">{tr.name}</span>
-              <span className={`trails-nearby-kind ${isCityDay ? 'city' : ''}`}>{kindLabel}</span>
+    <div className="panel-section panel-section-acc trails-nearby">
+      <div className={`panel-acc ${open ? 'open' : ''}`}>
+        <button type="button" className="panel-acc-head" aria-expanded={open}
+          onClick={() => setOpen((o) => !o)}>
+          <span className="panel-acc-icon"><RouteIcon size={13} /></span>
+          <span className="panel-acc-title">{t('trails.nearbyTitle')}</span>
+          <span className="panel-acc-meta">{rows.length}</span>
+          <svg className="panel-acc-chev" width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"
+            fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M6 9l6 6 6-6" />
+          </svg>
+        </button>
+        <div className="acc-fold" aria-hidden={!open}>
+          <div className="acc-fold-inner">
+            <div className="panel-acc-body">
+              {rows.map((tr) => {
+                const isCityDay = tr.category === 'citytrip';
+                const kindLabel = isCityDay
+                  ? t('trails.cityDay')
+                  : (tr.distance_m <= 25000 ? t('trails.dayHike') : t('trails.trail'));
+                return (
+                  <div key={tr.id} className="trails-nearby-row">
+                    <div className="trails-nearby-head">
+                      <span className="trails-nearby-name">{tr.name}</span>
+                      <span className={`trails-nearby-kind ${isCityDay ? 'city' : ''}`}>{kindLabel}</span>
+                    </div>
+                    <div className="trails-nearby-facts">
+                      {tr.distance_m != null && (
+                        <span>{(tr.distance_m / 1000).toFixed(1).replace(/\.0$/, '')} km</span>
+                      )}
+                      {tr.duration_min != null && <span>{hours(tr.duration_min)} h</span>}
+                      {!isCityDay && tr.ascent_m != null && <span>+{Math.round(tr.ascent_m)} m</span>}
+                      {isCityDay && tr.n_stops != null && (
+                        <span>{t('trails.stops', { n: tr.n_stops })}</span>
+                      )}
+                    </div>
+                    {tr.summary && <p className="trails-nearby-summary">{tr.summary}</p>}
+                  </div>
+                );
+              })}
+              <p className="trails-nearby-credit">{t('trails.credit')}</p>
             </div>
-            <div className="trails-nearby-facts">
-              {tr.distance_m != null && (
-                <span>{(tr.distance_m / 1000).toFixed(1).replace(/\.0$/, '')} km</span>
-              )}
-              {tr.duration_min != null && <span>{hours(tr.duration_min)} h</span>}
-              {!isCityDay && tr.ascent_m != null && <span>+{Math.round(tr.ascent_m)} m</span>}
-              {isCityDay && tr.n_stops != null && (
-                <span>{t('trails.stops', { n: tr.n_stops })}</span>
-              )}
-            </div>
-            {tr.summary && <p className="trails-nearby-summary">{tr.summary}</p>}
           </div>
-        );
-      })}
-      <p className="trails-nearby-credit">{t('trails.credit')}</p>
+        </div>
+      </div>
     </div>
   );
 }
