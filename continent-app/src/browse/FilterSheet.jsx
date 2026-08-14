@@ -513,7 +513,7 @@ export function FilterSheet({
                     onClick={() => toggleKind(k.key)}
                     aria-pressed={tripKinds.includes(k.key)}
                   >
-                    <span>{k.label}</span>
+                    <span>{t(`kind.${k.key}`)}</span>
                   </button>
                 ))}
               </div>

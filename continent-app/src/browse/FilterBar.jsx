@@ -709,11 +709,11 @@ export function FilterBar({
                             multiple
                             value={tripKinds}
                             onChange={setTripKinds}
-                            options={TRIP_KINDS.map((k) => ({ value: k.key, label: k.label }))}
+                            options={TRIP_KINDS.map((k) => ({ value: k.key, label: t(`kind.${k.key}`) }))}
                             placeholder={t('filter.allTypes')}
                             multiLabel={(vals) =>
                               vals.length === 1
-                                ? (TRIP_KINDS.find((k) => k.key === vals[0])?.label || t('filter.oneType'))
+                                ? (TRIP_KINDS.some((k) => k.key === vals[0]) ? t(`kind.${vals[0]}`) : t('filter.oneType'))
                                 : t('filter.nTypes', { n: vals.length })
                             }
                           />

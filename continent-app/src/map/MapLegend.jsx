@@ -35,6 +35,9 @@ export function MapLegend({ transportMode = 'plane', counts = {} }) {
 
       {open && (
         <div className="legend-body">
+          {/* The one sentence that stops a pin's figure being read as a bare
+              flight price: it is the whole trip. */}
+          <p className="legend-allin">{t('legend.allIn')}</p>
           <div className="legend-row">
             <span className="legend-pill"><PlaneIcon size={13} /><i>€000</i></span>
             <span className="legend-text">

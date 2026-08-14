@@ -32,9 +32,12 @@ const pillName = (mode, deal) => `pill-${mode}${deal ? '-deal' : ''}`;
 const GEM_SVG = '<svg viewBox="0 0 24 24" width="9" height="9" fill="currentColor" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 L19 9 L12 21 L5 9 Z"/></svg>';
 
 // The app palette, mirrored for the WebGL layers (CSS vars can't reach them).
-const INK = '#1a1a1a';
-const PAPER = '#f5f1e8';
-const ACCENT = '#c8501e';
+// Keep in lockstep with styles.css :root (--ink / --paper / --accent): the
+// pill bitmaps are canvas-baked from these, so a token change must be
+// mirrored here by hand.
+const INK = '#0f172a';
+const PAPER = '#f8f6f0';
+const ACCENT = '#e05a47';
 
 const SRC_PRICED = 'carta-priced';
 const SRC_DOTS = 'carta-dots';

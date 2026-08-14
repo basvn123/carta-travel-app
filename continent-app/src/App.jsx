@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo, Suspense, lazy } from 'react';
 import { AppHeader } from './components/AppHeader.jsx';
 import { FilterBar } from './browse/FilterBar.jsx';
+import { CategoryRail } from './browse/CategoryRail.jsx';
 import { BottomNav } from './components/BottomNav.jsx';
 import { DetailPanel } from './browse/DetailPanel.jsx';
 import { LifestylePanel } from './browse/LifestylePanel.jsx';
@@ -563,6 +564,13 @@ function TravelApp() {
             />
           )}
         </AppHeader>
+
+        {/* Trip-kind categories as a full-width scrollable rail under the
+            header, Map tab only. Lives inside .top-bar so the ResizeObserver
+            folds its height into --filter-h and the map stays flush below. */}
+        {activeTab === 'map' && (
+          <CategoryRail tripKinds={tripKinds} setTripKinds={setTripKinds} />
+        )}
 
         {/* Guidance tip: a small floating pill anchored to the bottom-right of
             the header. It's absolutely positioned, so its height is NOT folded

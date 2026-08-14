@@ -125,7 +125,7 @@ export function BestTimePanel({ destination, departDate, returnDate, breakdown, 
             )}
           </div>
 
-          <BestTimeChart windows={windows} cheapest={cheapest} yours={yours} />
+          <MonthBars windows={windows} cheapest={cheapest} yours={yours} />
 
           {hasWeekday && (
             <>
@@ -222,128 +222,87 @@ function ClimateStrip({ climate }) {
   );
 }
 
-function BestTimeChart({ windows, cheapest, yours }) {
+// Cheapest achievable trip total per calendar month, as rounded bars: taller
+// means pricier, the cheapest month is green, and the month holding the
+// user's own departure carries an ink dot. Replaces the old per-window fare
+// line, which was jagged and asked the reader to do the month bucketing by
+// eye. Hover, tap or focus a bar for that month's cheapest window and dates.
+function MonthBars({ windows, cheapest, yours }) {
   const { t } = useI18n();
-  const [hoverI, setHoverI] = React.useState(null);
-  const wrapRef = React.useRef(null);
-  const svgRef = React.useRef(null);
+  const [tipKey, setTipKey] = React.useState(null);
 
-  // Render at the wrapper's REAL pixel width instead of stretching a fixed
-  // 600px viewBox (preserveAspectRatio="none" distorted every label on
-  // phones, the "overlapping / squished labels" problem).
-  const [W, setW] = React.useState(600);
-  React.useEffect(() => {
-    const el = wrapRef.current;
-    if (!el || typeof ResizeObserver === 'undefined') return undefined;
-    const apply = () => { if (el.clientWidth > 40) setW(el.clientWidth); };
-    apply();
-    const ro = new ResizeObserver(apply);
-    ro.observe(el);
-    return () => ro.disconnect();
-  }, []);
-
-  const H = 190, padL = 46, padR = 10, padT = 26, padB = 24;
-
-  // Downsample so the line stays legible over a long fare horizon.
-  const step = Math.max(1, Math.ceil(windows.length / 60));
-  const pts = windows.filter((_, i) => i % step === 0);
-
-  const values = pts.map((w) => w.total);
-  const minV = Math.min(...values);
-  const maxV = Math.max(...values);
-  const span = maxV - minV || 1;
-
-  const x = (i) => padL + (i / Math.max(1, pts.length - 1)) * (W - padL - padR);
-  const y = (v) => padT + (1 - (v - minV) / span) * (H - padT - padB);
-
-  const closestIdx = (iso) => {
-    const t = new Date(iso + 'T00:00:00Z').getTime();
-    let bi = 0, bd = Infinity;
-    pts.forEach((w, i) => {
-      const d = Math.abs(new Date(w.start + 'T00:00:00Z').getTime() - t);
-      if (d < bd) { bd = d; bi = i; }
-    });
-    return bi;
-  };
-  const cheapI = closestIdx(cheapest.start);
-  const yoursI = closestIdx(yours.start);
-
-  const pathD = pts.map((w, i) => `${i === 0 ? 'M' : 'L'}${x(i).toFixed(1)},${y(w.total).toFixed(1)}`).join(' ');
-  const areaD = `${pathD} L${x(pts.length - 1).toFixed(1)},${H - padB} L${x(0).toFixed(1)},${H - padB} Z`;
-
-  // One tick per month change, then thinned so labels never crowd: at ~44px
-  // per label the available width caps how many we can show.
-  let lastMonth = null;
-  let monthTicks = [];
-  pts.forEach((w, i) => {
-    const m = new Date(w.start + 'T00:00:00Z').getUTCMonth();
-    if (m !== lastMonth) {
-      lastMonth = m;
-      monthTicks.push({ i, label: new Date(w.start + 'T00:00:00Z').toLocaleDateString('en-GB', { month: 'short' }) });
+  const months = React.useMemo(() => {
+    const byMonth = new Map();
+    for (const w of windows) {
+      const key = w.start.slice(0, 7);
+      const cur = byMonth.get(key);
+      if (!cur || w.total < cur.total) byMonth.set(key, w);
     }
-  });
-  const maxTicks = Math.max(2, Math.floor((W - padL - padR) / 44));
-  if (monthTicks.length > maxTicks) {
-    const keepEvery = Math.ceil(monthTicks.length / maxTicks);
-    monthTicks = monthTicks.filter((_, i) => i % keepEvery === 0);
-  }
-  const yTicks = [minV, Math.round((minV + maxV) / 2), maxV];
+    const list = [...byMonth.entries()]
+      .sort(([a], [b]) => (a < b ? -1 : 1))
+      .map(([key, w]) => ({ key, w, label: MONTHS_SHORT[parseInt(key.slice(5), 10) - 1] }));
+    // A horizon can wrap the year (Sep..Sep): the second appearance of a month
+    // name gets its two-digit year so the axis stays unambiguous.
+    const seen = new Set();
+    for (const m of list) {
+      if (seen.has(m.label)) m.label = `${m.label} '${m.key.slice(2, 4)}`;
+      else seen.add(m.label);
+    }
+    return list;
+  }, [windows]);
 
-  const handleMove = (e) => {
-    if (!svgRef.current) return;
-    const rect = svgRef.current.getBoundingClientRect();
-    const relX = e.clientX - rect.left;
-    let idx = Math.round(((relX - padL) / (W - padL - padR)) * (pts.length - 1));
-    idx = Math.max(0, Math.min(pts.length - 1, idx));
-    setHoverI(idx);
-  };
+  if (months.length < 3) return null;
+
+  const totals = months.map((m) => m.w.total);
+  const vMin = Math.min(...totals);
+  const vMax = Math.max(...totals);
+  const span = vMax - vMin || 1;
+  const cheapKey = cheapest.start.slice(0, 7);
+  const yourKey = yours.start ? yours.start.slice(0, 7) : null;
 
   return (
-    <div className="bt-chart-wrap" ref={wrapRef}>
-      <svg
-        ref={svgRef}
-        width={W}
-        height={H}
-        viewBox={`0 0 ${W} ${H}`}
-        onMouseMove={handleMove}
-        onMouseLeave={() => setHoverI(null)}
-      >
-        {yTicks.map((v) => (
-          <g key={v}>
-            <line x1={padL} x2={W - padR} y1={y(v)} y2={y(v)} className="bt-grid" />
-            <text x={2} y={y(v) + 3} className="bt-axis">{eur(v)}</text>
-          </g>
-        ))}
-        {monthTicks.map(({ i, label }) => (
-          <text key={i} x={x(i)} y={H - 6} className="bt-axis" textAnchor="middle">{label}</text>
-        ))}
-
-        <path d={areaD} className="bt-area" />
-        <path d={pathD} className="bt-line" />
-
-        {hoverI != null && (
-          <line x1={x(hoverI)} x2={x(hoverI)} y1={padT} y2={H - padB} className="bt-crosshair" />
-        )}
-
-        <circle cx={x(cheapI)} cy={y(pts[cheapI].total)} r={6} className="bt-pt bt-pt-cheap" />
-        <circle cx={x(yoursI)} cy={y(pts[yoursI].total)} r={6} className="bt-pt bt-pt-you" />
-      </svg>
-
-      {hoverI != null && (
-        <div
-          className="bt-tooltip"
-          style={{ left: `${(x(hoverI) / W) * 100}%`, top: `${(y(pts[hoverI].total) / H) * 100}%` }}
-        >
-          <b>{eur(pts[hoverI].total)}</b>{t('bestTime.weekOf', { date: fmtDate(pts[hoverI].start) })}
-        </div>
-      )}
-
-      <div className="bt-legend">
-        <span className="bt-legend-item"><i className="bt-dot bt-dot-accent" /> {t('bestTime.legendTotal')}</span>
-        <span className="bt-legend-item"><i className="bt-dot bt-dot-green" /> {t('bestTime.legendCheapest')}</span>
-        <span className="bt-legend-item"><i className="bt-dot bt-dot-ink" /> {t('bestTime.legendYours')}</span>
+    <>
+      <div className="section-title" style={{ marginTop: 16 }}>{t('bestTime.monthTitle')}</div>
+      <div className="month-chart">
+        {months.map(({ key, w, label }) => {
+          const isCheap = key === cheapKey;
+          const isYou = key === yourKey;
+          return (
+            <button
+              key={key}
+              type="button"
+              className={`mo-col ${isCheap ? 'is-cheap' : ''} ${isYou ? 'is-you' : ''}`}
+              onMouseEnter={() => setTipKey(key)}
+              onMouseLeave={() => setTipKey((k) => (k === key ? null : k))}
+              onFocus={() => setTipKey(key)}
+              onBlur={() => setTipKey((k) => (k === key ? null : k))}
+              aria-label={t('bestTime.monthFrom', { month: label, price: eur(w.total) })}
+              aria-current={isYou ? 'date' : undefined}
+            >
+              <div className="mo-val">{(isCheap || isYou) ? eur(w.total) : ''}</div>
+              <div className="mo-bar-track">
+                <div className="mo-bar" style={{ height: `${20 + ((w.total - vMin) / span) * 80}%` }} />
+              </div>
+              <div className="mo-name">
+                {isYou && <i className="mo-you-dot" aria-hidden="true" />}
+                {label}
+              </div>
+              {tipKey === key && (
+                <div className="climate-tip mo-tip">
+                  <b>{eur(w.total)}</b> {fmtDate(w.start)} - {fmtDate(w.end)}
+                </div>
+              )}
+            </button>
+          );
+        })}
       </div>
-    </div>
+      <div className="bt-legend">
+        <span className="bt-legend-item"><i className="bt-dot bt-dot-green" /> {t('bestTime.legendCheapest')}</span>
+        {yourKey && (
+          <span className="bt-legend-item"><i className="bt-dot bt-dot-ink" /> {t('bestTime.legendYours')}</span>
+        )}
+      </div>
+    </>
   );
 }
 
