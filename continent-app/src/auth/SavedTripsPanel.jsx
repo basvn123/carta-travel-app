@@ -3,8 +3,9 @@ import { useAuth } from './AuthContext.jsx';
 import { fetchSavedTrips, deleteTrip } from './tripStorage.js';
 import { fetchTripPlans, deleteTripPlan } from './tripPlanStorage.js';
 import { loadStandalonePlans, deleteStandalonePlan, loadAssignments, subscribeDayPlanStore } from '../planner/dayPlanStore.js';
-import { MapPinIcon, RouteIcon, ListDayIcon, PencilIcon, MoreIcon, TrashIcon, BookmarkIcon } from '../components/Icons.jsx';
-import { CountryFlag, CountryFlagStack } from '../components/CountryFlag.jsx';
+import { MapPinIcon, RouteIcon, ListDayIcon, PencilIcon, TrashIcon, MoreIcon, BookmarkIcon, CalendarIcon, CheckIcon } from '../components/Icons.jsx';
+import { CountryFlag, CountryFlagStack, COUNTRY_ISO2 } from '../components/CountryFlag.jsx';
+import { kindsForDest } from '../lib/trip_kinds.js';
 import { useI18n } from '../i18n/index.jsx';
 
 // The mini map at the top of Planned trips rides on the same code-split chunk
@@ -42,13 +43,15 @@ function addDaysIso(offset) {
 const SAVED_MOCK = typeof window !== 'undefined'
   && new URLSearchParams(window.location.search).has('savedmock');
 const MOCK_FAVS = [
-  { id: 'mf1', destination_id: 'LIS', city: 'Lisbon', country: 'Portugal', depart_date: addDaysIso(34), return_date: addDaysIso(38) },
-  { id: 'mf2', destination_id: 'OPO', city: 'Porto', country: 'Portugal', depart_date: addDaysIso(62), return_date: addDaysIso(65) },
-  { id: 'mf3', destination_id: 'gem:bruges', city: 'Bruges', country: 'Belgium' },
+  { id: 'mf1', destination_id: 'LIS', city: 'Lisbon', country: 'Portugal', depart_date: addDaysIso(34), return_date: addDaysIso(38), created_at: addDaysIso(-12) },
+  { id: 'mf2', destination_id: 'OPO', city: 'Porto', country: 'Portugal', depart_date: addDaysIso(62), return_date: addDaysIso(65), created_at: addDaysIso(-30) },
+  { id: 'mf3', destination_id: 'gem:bruges', city: 'Bruges', country: 'Belgium', created_at: addDaysIso(-45) },
 ];
 const MOCK_PLANS = [
   { id: 'mp1', label: null, cities: ['Lisbon', 'Porto'], countries: ['Portugal'], start_date: addDaysIso(21), end_date: addDaysIso(27), destination_ids: ['LIS', 'OPO'] },
   { id: 'mp2', label: 'Autumn in Flanders', cities: ['Bruges'], countries: ['Belgium'], start_date: addDaysIso(-40), end_date: addDaysIso(-35), destination_ids: ['gem:bruges'] },
+  { id: 'mp3', label: null, cities: ['Salzburg'], countries: ['Austria'], start_date: addDaysIso(-11), end_date: addDaysIso(-9), destination_ids: ['SZG'] },
+  { id: 'mp4', label: null, cities: ['Munich'], countries: ['Germany'], start_date: addDaysIso(-9), end_date: addDaysIso(-7), destination_ids: ['MUC'] },
 ];
 
 function daysUntil(dateStr, todayIso) {
@@ -64,11 +67,20 @@ function dayPlanEndDate(sp) {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 }
 
+// First-seen-order dedupe, dropping holes; keeps "Lisbon, Porto" in the order
+// the trip actually visits them, unlike a Set spread of mixed sources.
+function orderedUnique(list) {
+  const out = [];
+  for (const v of list) if (v && !out.includes(v)) out.push(v);
+  return out;
+}
+
 /** One labelled shelf of the overview: title + count, an explainer of what
- *  lands here, then its cards. */
-function SavedSection({ title, sub, count, muted, children }) {
+ *  lands here, then its cards. `big` promotes the title to the display face,
+ *  for the one heading that names each tab's main list. */
+function SavedSection({ title, sub, count, muted, big, children }) {
   return (
-    <div className={`panel-section saved-section${muted ? ' is-muted' : ''}`}>
+    <div className={`panel-section saved-section${muted ? ' is-muted' : ''}${big ? ' is-big' : ''}`}>
       <div className="saved-section-head">
         <span className="saved-section-title">{title}</span>
         {count != null && (
@@ -200,12 +212,16 @@ function SavedCard({ Icon, visual, visualKind = 'icon', title, meta, onOpen, ope
   );
 }
 
-/** A favorite: one saved place, photo first. The bookmark mark in the corner
- *  is the saved state itself, so tapping it is how a favorite is let go
- *  (with the same in-place confirmation as everywhere else). */
-function FavCard({ trip, img, dates, onOpen, openTitle, onDelete, deleteLabel }) {
+/** A favorite: one saved place, photo first, its country flag worn in the
+ *  corner and the day it was kept in the caption. The bookmark mark is the
+ *  saved state itself, so tapping it is how a favorite is let go (with the
+ *  same in-place confirmation as everywhere else). */
+function FavCard({ trip, img, dates, kind, savedOn, onOpen, openTitle, onDelete, deleteLabel }) {
   const { t } = useI18n();
   const [confirming, setConfirming] = useState(false);
+  // The corner flag already names the country; the text line only steps in
+  // for a country the flag catalogue does not cover.
+  const hasFlag = !!(trip.country && COUNTRY_ISO2[trip.country]);
 
   return (
     <div className="fav-card">
@@ -218,12 +234,25 @@ function FavCard({ trip, img, dates, onOpen, openTitle, onDelete, deleteLabel })
           {!img && <MapPinIcon size={22} />}
         </span>
         <span className="fav-card-shade" aria-hidden="true" />
+        {hasFlag && (
+          <span className="fav-card-flag" aria-hidden="true">
+            <CountryFlag country={trip.country} size={13} />
+          </span>
+        )}
         <span className="fav-card-text">
           <span className="fav-card-city">{trip.city}</span>
-          <span className="fav-card-sub">
-            {trip.country && <span className="fav-card-country">{trip.country}</span>}
-            {dates && <span className="fav-card-dates">{dates}</span>}
-          </span>
+          {(!hasFlag && trip.country) || dates ? (
+            <span className="fav-card-sub">
+              {!hasFlag && trip.country && <span className="fav-card-country">{trip.country}</span>}
+              {dates && <span className="fav-card-dates">{dates}</span>}
+            </span>
+          ) : null}
+          {(kind || savedOn) && (
+            <span className="fav-card-kept">
+              {kind && <span className="fav-card-kind">{kind}</span>}
+              {savedOn && <span className="fav-card-savedon">{t('saved.savedOn', { date: savedOn })}</span>}
+            </span>
+          )}
         </span>
       </button>
       <button
@@ -247,9 +276,11 @@ function FavCard({ trip, img, dates, onOpen, openTitle, onDelete, deleteLabel })
   );
 }
 
-/** An upcoming trip: the biggest object in the panel. Full-width photo, the
- *  countdown worn on the sleeve, the day-planning handle kept as a footer. */
-function UpcomingTripCard({ title, img, whenChip, dates, stopsLabel, countries, onOpen, openTitle, actions, onDelete, deleteLabel, footer }) {
+/** The big journey card, shared by Planned and Visited: full-width photo, the
+ *  country as the headline, its flag as a corner badge, dates under a small
+ *  label, and one mark in the other corner saying which state it is in, a
+ *  calendar for a commitment, a check for a memory. */
+function JourneyCard({ title, sub, img, whenChip, countries = [], dateLabel, dates, visited, onOpen, openTitle, actions, onDelete, deleteLabel, footer }) {
   const [confirming, setConfirming] = useState(false);
 
   if (confirming) {
@@ -257,7 +288,7 @@ function UpcomingTripCard({ title, img, whenChip, dates, stopsLabel, countries, 
   }
 
   return (
-    <div className="uptrip-card">
+    <div className={`uptrip-card${visited ? ' is-visited' : ''}`}>
       <div className="uptrip-visual">
         <button className="uptrip-open" onClick={onOpen} title={openTitle}>
           <span
@@ -269,13 +300,23 @@ function UpcomingTripCard({ title, img, whenChip, dates, stopsLabel, countries, 
           </span>
           <span className="uptrip-shade" aria-hidden="true" />
           {whenChip && <span className="uptrip-when">{whenChip}</span>}
+          {countries.length > 0 && (
+            <span className="uptrip-flag" aria-hidden="true">
+              <CountryFlagStack countries={countries} size={15} />
+            </span>
+          )}
           <span className="uptrip-text">
             <span className="uptrip-title">{title}</span>
-            <span className="uptrip-meta">
-              {dates && <span className="uptrip-dates">{dates}</span>}
-              {stopsLabel && <span className="uptrip-stops">{stopsLabel}</span>}
-              {countries?.length ? <CountryFlagStack countries={countries} size={14} /> : null}
-            </span>
+            {sub && <span className="uptrip-sub">{sub}</span>}
+            {dates && (
+              <span className="uptrip-dateblock">
+                {dateLabel && <span className="uptrip-datelabel">{dateLabel}</span>}
+                <span className="uptrip-dates">{dates}</span>
+              </span>
+            )}
+          </span>
+          <span className="uptrip-state" aria-hidden="true">
+            {visited ? <CheckIcon size={13} /> : <CalendarIcon size={13} />}
           </span>
         </button>
         <div className="uptrip-menu">
@@ -292,91 +333,55 @@ function UpcomingTripCard({ title, img, whenChip, dates, stopsLabel, countries, 
   );
 }
 
-/** A past trip: a quiet hairline row in the record, not a card competing with
- *  the future. Thumbnail desaturated, dates carrying the year. */
-function PastRow({ title, img, Icon, meta, onOpen, openTitle, actions = [], onDelete, deleteLabel }) {
-  const [confirming, setConfirming] = useState(false);
-
-  if (confirming) {
-    return <ConfirmRow name={title} label={deleteLabel} onKeep={() => setConfirming(false)} onRemove={onDelete} />;
-  }
-
-  return (
-    <div className="past-row">
-      <button className="past-row-main" onClick={onOpen} title={openTitle}>
-        <span
-          className={`past-row-thumb${img ? '' : ' is-fallback'}`}
-          style={img ? { backgroundImage: `url(${img})` } : undefined}
-          aria-hidden="true"
-        >
-          {!img && Icon && <Icon size={14} />}
-        </span>
-        <span className="past-row-text">
-          <span className="past-row-title">{title}</span>
-          {meta && <span className="past-row-meta">{meta}</span>}
-        </span>
-      </button>
-      <CardMenu actions={actions} onAskRemove={() => setConfirming(true)} removeLabel={deleteLabel} />
-    </div>
-  );
-}
-
-/** The travel ledger: what the record adds up to. Two bordered tiles, each a
- *  measured fact in mono, each opening its own list. Rendered only once there
- *  is at least one finished trip, a zero is not a story worth a dashboard. */
-function TravelLedger({ visitedCountries, visitedCities, catalogueCountryCount }) {
+/** What the record adds up to: countries against the whole European map, and
+ *  cities, each card carrying its own evidence, flags with names, city chips.
+ *  The denominator is the flag catalogue itself, every European country the
+ *  app can show, so the fraction stays honest as coverage grows. */
+function TravelLedger({ visitedCountries, visitedCities }) {
   const { t } = useI18n();
-  const [open, setOpen] = useState(null); // 'countries' | 'cities' | null
-  const toggle = (key) => setOpen((cur) => (cur === key ? null : key));
+  const europeanTotal = useMemo(() => new Set(Object.values(COUNTRY_ISO2)).size, []);
+  const europeanVisited = visitedCountries.filter((c) => COUNTRY_ISO2[c]).length;
+  const MAX_FLAGS = 8;
+  const MAX_CITIES = 6;
+  const cityLine = visitedCities.slice(0, MAX_CITIES).join(', ')
+    + (visitedCities.length > MAX_CITIES ? ` +${visitedCities.length - MAX_CITIES}` : '');
 
   return (
-    <div className="saved-ledger">
-      <div className="saved-ledger-row">
-        <button
-          className={`saved-ledger-tile${open === 'countries' ? ' is-open' : ''}`}
-          onClick={() => toggle('countries')}
-          aria-expanded={open === 'countries'}
-        >
-          <span className="saved-ledger-num">
-            {visitedCountries.length}
-            <span className="saved-ledger-of">/ {catalogueCountryCount}</span>
-          </span>
-          <span className="saved-ledger-label">{t('saved.countriesLabel')}</span>
-        </button>
-        <button
-          className={`saved-ledger-tile${open === 'cities' ? ' is-open' : ''}`}
-          onClick={() => toggle('cities')}
-          aria-expanded={open === 'cities'}
-        >
-          <span className="saved-ledger-num">{visitedCities.length}</span>
-          <span className="saved-ledger-label">{t('saved.citiesLabel')}</span>
-        </button>
-      </div>
-      {open === 'countries' && (
-        <div className="saved-ledger-detail">
-          {visitedCountries.map((c) => (
-            <span key={c} className="saved-ledger-chip">
-              <CountryFlag country={c} size={13} />
-              {c}
+    <div className="ledger2">
+      <div className="ledger2-card">
+        <span className="ledger2-title">{t('saved.visitedCountries')}</span>
+        <span className="ledger2-num">
+          {europeanVisited}
+          <span className="ledger2-of">/ {europeanTotal}</span>
+        </span>
+        <span className="ledger2-cap">{t('saved.europeanCountries')}</span>
+        <div className="ledger2-flags">
+          {visitedCountries.slice(0, MAX_FLAGS).map((c) => (
+            <span key={c} className="ledger2-flagitem">
+              <CountryFlag country={c} size={17} />
+              <span className="ledger2-flagname">{c}</span>
             </span>
           ))}
+          {visitedCountries.length > MAX_FLAGS && (
+            <span className="ledger2-flagitem is-more">+{visitedCountries.length - MAX_FLAGS}</span>
+          )}
         </div>
-      )}
-      {open === 'cities' && (
-        <div className="saved-ledger-detail">
-          {visitedCities.map((c) => (
-            <span key={c} className="saved-ledger-chip">{c}</span>
-          ))}
-        </div>
-      )}
+      </div>
+      <div className="ledger2-card">
+        <span className="ledger2-title">{t('saved.visitedCities')}</span>
+        <span className="ledger2-num">{visitedCities.length}</span>
+        <span className="ledger2-cap">{t('saved.citiesLabel')}</span>
+        {cityLine && <span className="ledger2-cities">{cityLine}</span>}
+      </div>
     </div>
   );
 }
 
-// Standalone Saved trips panel, opened from the bottom nav. Two states of
-// travelling, two tabs: Favorites is the shortlist of single places saved from
-// the map, Planned trips is the calendar, multi-stop routes and day plans
-// sorted into upcoming and past by their own dates.
+// Standalone Saved trips panel, opened from the bottom nav. Three states of
+// travelling, three tabs: Favorites is the shortlist of single places saved
+// from the map, Planned is the calendar of upcoming routes and day plans, and
+// Visited is the record that finished trips file themselves into, with the
+// country and city ledger on top.
 export function SavedTripsPanel({ data, onClose, onLoadTrip, onLoadTripPlan, onOpenAuth, onOpenDayPlan, onGoToTab }) {
   const { user, configured } = useAuth();
   const { t } = useI18n();
@@ -384,8 +389,10 @@ export function SavedTripsPanel({ data, onClose, onLoadTrip, onLoadTripPlan, onO
   const todayIso = localToday();
 
   const [tab, setTab] = useState(() => {
-    try { return localStorage.getItem('carta.savedTripsTab') === 'favorites' ? 'favorites' : 'planned'; }
-    catch { return 'planned'; }
+    try {
+      const stored = localStorage.getItem('carta.savedTripsTab');
+      return ['favorites', 'planned', 'visited'].includes(stored) ? stored : 'planned';
+    } catch { return 'planned'; }
   });
   const pickTab = (v) => {
     setTab(v);
@@ -451,6 +458,8 @@ export function SavedTripsPanel({ data, onClose, onLoadTrip, onLoadTripPlan, onO
 
   const fmtDate = (s) => s ? new Date(s + 'T00:00:00Z').toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }) : '';
   const fmtDateYear = (s) => s ? new Date(s + 'T00:00:00Z').toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : '';
+  // Supabase timestamps come with a time part; trim to the calendar day.
+  const fmtStamp = (s) => (s ? fmtDateYear(String(s).slice(0, 10)) : '');
 
   // ── Temporal classification: the dates decide, nobody files anything. ──
   const upcomingPlans = useMemo(() => tripPlans
@@ -477,7 +486,55 @@ export function SavedTripsPanel({ data, onClose, onLoadTrip, onLoadTripPlan, onO
     const lon = d.city_lon != null ? d.city_lon : d.lon;
     return lat != null && lon != null ? { lat, lon } : null;
   };
-  const destImage = (id) => destinations[id]?.image?.url || null;
+
+  // ── Images for everything. The direct lookup misses when a stop's id is a
+  // researched town or an id that fell out of the catalogue, so every card
+  // walks a fallback chain: its own destinations, then any catalogue entry in
+  // the same city, then the best-rated photo of the same country. ──
+  const imageLookup = useMemo(() => {
+    const byCity = new Map();
+    const byCountry = new Map();
+    for (const d of Object.values(destinations)) {
+      const url = d.image?.url;
+      if (!url) continue;
+      const score = d.rating?.score ?? d.beauty?.score ?? 0;
+      const cityKey = (d.city || '').toLowerCase();
+      const curCity = cityKey && byCity.get(cityKey);
+      if (cityKey && (!curCity || score > curCity.score)) byCity.set(cityKey, { url, score });
+      const curCountry = d.country && byCountry.get(d.country);
+      if (d.country && (!curCountry || score > curCountry.score)) byCountry.set(d.country, { url, score });
+    }
+    return { byCity, byCountry };
+  }, [destinations]);
+
+  const resolveImage = ({ ids = [], cities = [], countries = [] }) => {
+    for (const id of ids) {
+      const u = destinations[id]?.image?.url;
+      if (u) return u;
+    }
+    for (const c of cities) {
+      const hit = imageLookup.byCity.get((c || '').toLowerCase());
+      if (hit) return hit.url;
+    }
+    for (const c of countries) {
+      const hit = imageLookup.byCountry.get(c);
+      if (hit) return hit.url;
+    }
+    return null;
+  };
+
+  // A trip plan's places, from its stored arrays and its stops both, so a
+  // plan saved before the arrays existed still knows where it went.
+  const planCountries = (p) => orderedUnique([
+    ...(p.countries || []),
+    ...(p.destination_ids || []).map((id) => destinations[id]?.country),
+  ]);
+  const planCities = (p) => orderedUnique([
+    ...(p.cities || []),
+    ...(p.destination_ids || []).map((id) => destinations[id]?.city),
+  ]);
+  const dayPlanCountries = (sp) => orderedUnique((sp.stops || []).map((s) => destinations[s.destinationId]?.country));
+  const dayPlanCities = (sp) => orderedUnique((sp.stops || []).map((s) => destinations[s.destinationId]?.city));
 
   // Pins for the mini map: every upcoming trip's first stop, numbered in
   // departure order, so the map answers "where am I going, and in what order".
@@ -501,20 +558,15 @@ export function SavedTripsPanel({ data, onClose, onLoadTrip, onLoadTripPlan, onO
     const countries = new Set();
     const cities = new Set();
     pastPlans.forEach((p) => {
-      (p.countries || []).forEach((c) => countries.add(c));
-      (p.cities || []).forEach((c) => cities.add(c));
+      planCountries(p).forEach((c) => countries.add(c));
+      planCities(p).forEach((c) => cities.add(c));
     });
-    pastDayPlans.forEach((sp) => (sp.stops || []).forEach((s) => {
-      const d = destinations[s.destinationId];
-      if (d?.country) countries.add(d.country);
-      if (d?.city) cities.add(d.city);
-    }));
+    pastDayPlans.forEach((sp) => {
+      dayPlanCountries(sp).forEach((c) => countries.add(c));
+      dayPlanCities(sp).forEach((c) => cities.add(c));
+    });
     return { countries: [...countries].sort(), cities: [...cities] };
-  }, [pastPlans, pastDayPlans, destinations]);
-  const catalogueCountryCount = useMemo(
-    () => new Set(Object.values(destinations).map((d) => d.country).filter(Boolean)).size,
-    [destinations],
-  );
+  }, [pastPlans, pastDayPlans, destinations]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const whenLabel = (start, end) => {
     if (!start) return t('saved.noDatesYet');
@@ -529,6 +581,23 @@ export function SavedTripsPanel({ data, onClose, onLoadTrip, onLoadTripPlan, onO
     const cs = p.cities || [];
     if (cs.length > 1) return `${cs[0]} → ${cs[cs.length - 1]}`;
     return cs[0] || t('saved.untitledTrip');
+  };
+
+  // The journey card wears the country as its headline when the trip stays in
+  // one, the cities beneath; a named or multi-country trip keeps its route.
+  const journeyParts = (p) => {
+    const countries = planCountries(p);
+    const cities = planCities(p);
+    if (p.label) return { title: p.label, sub: cities.join(', '), countries };
+    if (countries.length === 1) return { title: countries[0], sub: cities.join(', '), countries };
+    return { title: planTitle(p), sub: countries.join(', '), countries };
+  };
+  const dayJourneyParts = (sp) => {
+    const countries = dayPlanCountries(sp);
+    const cities = dayPlanCities(sp);
+    if (sp.label && countries.length !== 1) return { title: sp.label, sub: cities.join(', '), countries };
+    if (countries.length === 1) return { title: countries[0], sub: cities.join(', ') || sp.label, countries };
+    return { title: sp.label || t('saved.dayPlanFallbackTitle'), sub: cities.join(', '), countries };
   };
 
   const dayPlanMeta = (sp) => {
@@ -554,6 +623,15 @@ export function SavedTripsPanel({ data, onClose, onLoadTrip, onLoadTripPlan, onO
     return rows;
   }, [pastPlans, pastDayPlans]);
 
+  const signedOutEmpty = (
+    <SavedEmpty
+      Icon={RouteIcon}
+      text={configured ? t('saved.signInPrompt') : t('saved.notConfigured')}
+      cta={configured ? t('saved.signIn') : null}
+      onCta={configured ? onOpenAuth : null}
+    />
+  );
+
   return (
     <div className="panel open account-panel saved-trips-panel">
       <button className="panel-close" onClick={onClose} aria-label={t('saved.close')}>x</button>
@@ -561,8 +639,8 @@ export function SavedTripsPanel({ data, onClose, onLoadTrip, onLoadTripPlan, onO
       <div className="panel-header saved-panel-header">
         <div className="panel-tag">{t('saved.tag')}</div>
         <h2 className="panel-city account-heading">{t('saved.title')}</h2>
-        {/* One mutually exclusive choice between the two states of travelling:
-            the shortlist of wishes, or the calendar of commitments. */}
+        {/* Three states of travelling, one mutually exclusive choice: the
+            shortlist of wishes, the calendar of commitments, the record. */}
         <div className="panel-segment saved-tabs" role="tablist" aria-label={t('saved.title')}>
           <button
             role="tab"
@@ -582,13 +660,21 @@ export function SavedTripsPanel({ data, onClose, onLoadTrip, onLoadTripPlan, onO
             {t('saved.tabPlanned')}
             {plannedCount > 0 && <small>{plannedCount}</small>}
           </button>
+          <button
+            role="tab"
+            aria-selected={tab === 'visited'}
+            className={tab === 'visited' ? 'seg-on' : ''}
+            onClick={() => pickTab('visited')}
+          >
+            {t('saved.tabVisited')}
+            {pastCount > 0 && <small>{pastCount}</small>}
+          </button>
         </div>
       </div>
 
-      {tab === 'favorites' ? (
+      {tab === 'favorites' && (
         /* ── Favorites: places saved from the map, photo first. ── */
-        <div className="panel-section saved-section">
-          <p className="saved-section-sub">{t('saved.destinationsSub')}</p>
+        <SavedSection title={t('saved.favsTitle')} sub={t('saved.destinationsSub')} big>
           {!authed ? (
             <SavedEmpty
               Icon={MapPinIcon}
@@ -613,8 +699,10 @@ export function SavedTripsPanel({ data, onClose, onLoadTrip, onLoadTripPlan, onO
                 <FavCard
                   key={trip.id}
                   trip={trip}
-                  img={destImage(trip.destination_id)}
+                  img={resolveImage({ ids: [trip.destination_id], cities: [trip.city], countries: [trip.country] })}
                   dates={trip.depart_date ? `${fmtDate(trip.depart_date)} → ${fmtDate(trip.return_date)}` : ''}
+                  kind={(() => { const k = kindsForDest(destinations[trip.destination_id]?.categories)[0]; return k ? t(`kind.${k.key}`) : ''; })()}
+                  savedOn={fmtStamp(trip.created_at)}
                   onOpen={() => onLoadTrip(trip)}
                   openTitle={t('saved.openDestination')}
                   onDelete={() => handleDelete(trip.id)}
@@ -623,8 +711,10 @@ export function SavedTripsPanel({ data, onClose, onLoadTrip, onLoadTripPlan, onO
               ))}
             </div>
           )}
-        </div>
-      ) : (
+        </SavedSection>
+      )}
+
+      {tab === 'planned' && (
         <>
           {/* ── The mini map: every upcoming trip pinned in departure order.
               Always on: with nothing to pin it rests on Europe, the empty
@@ -655,32 +745,14 @@ export function SavedTripsPanel({ data, onClose, onLoadTrip, onLoadTripPlan, onO
             )}
           </div>
 
-          {/* ── The travel ledger, once there is a record to add up. Day
-              plans are local-first, so the record works signed out too. ── */}
-          {pastCount > 0 && (
-            <div className="panel-section saved-section">
-              <TravelLedger
-                visitedCountries={visited.countries}
-                visitedCities={visited.cities}
-                catalogueCountryCount={catalogueCountryCount}
-              />
-            </div>
-          )}
-
-          {/* ── Upcoming trips: the heaviest objects in the panel. ── */}
+          {/* ── Upcoming journeys: the heaviest objects in the panel. ── */}
           <SavedSection
-            title={t('saved.upcoming')}
+            title={t('saved.upcomingJourneys')}
             sub={t('saved.tripPlansSub')}
             count={authed && !tripPlansLoading ? upcomingPlans.length : null}
+            big
           >
-            {!authed ? (
-              <SavedEmpty
-                Icon={RouteIcon}
-                text={configured ? t('saved.signInPrompt') : t('saved.notConfigured')}
-                cta={configured ? t('saved.signIn') : null}
-                onCta={configured ? onOpenAuth : null}
-              />
-            ) : tripPlansLoading ? (
+            {!authed ? signedOutEmpty : tripPlansLoading ? (
               <div className="footnote">{t('saved.loading')}</div>
             ) : upcomingPlans.length === 0 ? (
               <SavedEmpty
@@ -693,15 +765,17 @@ export function SavedTripsPanel({ data, onClose, onLoadTrip, onLoadTripPlan, onO
               <div className="saved-card-stack">
                 {upcomingPlans.map((p) => {
                   const plannedDays = countPlannedDays(p.id);
+                  const parts = journeyParts(p);
                   return (
-                    <UpcomingTripCard
+                    <JourneyCard
                       key={p.id}
-                      title={planTitle(p)}
-                      img={destImage(p.destination_ids?.[0])}
+                      title={parts.title}
+                      sub={parts.sub}
+                      countries={parts.countries}
+                      img={resolveImage({ ids: p.destination_ids || [], cities: planCities(p), countries: parts.countries })}
                       whenChip={whenLabel(p.start_date, p.end_date)}
-                      dates={p.start_date ? `${fmtDate(p.start_date)} → ${fmtDate(p.end_date)}` : ''}
-                      stopsLabel={p.cities?.length ? t(p.cities.length === 1 ? 'saved.stops1' : 'saved.stopsN', { n: p.cities.length }) : ''}
-                      countries={p.countries || []}
+                      dateLabel={t('saved.datesLabel')}
+                      dates={p.start_date ? `${fmtDate(p.start_date)} → ${fmtDateYear(p.end_date)}` : ''}
                       onOpen={() => onLoadTripPlan && onLoadTripPlan(p.id)}
                       openTitle={t('saved.openTripPlan')}
                       actions={[{
@@ -742,7 +816,11 @@ export function SavedTripsPanel({ data, onClose, onLoadTrip, onLoadTripPlan, onO
             ) : (
               <div className="saved-card-stack">
                 {upcomingDayPlans.map((sp) => {
-                  const url = destImage(sp.stops?.[0]?.destinationId);
+                  const url = resolveImage({
+                    ids: (sp.stops || []).map((s) => s.destinationId),
+                    cities: dayPlanCities(sp),
+                    countries: dayPlanCountries(sp),
+                  });
                   const photo = url ? <span className="saved-card-photo" style={{ backgroundImage: `url(${url})` }} aria-hidden="true" /> : null;
                   return (
                     <SavedCard
@@ -762,57 +840,92 @@ export function SavedTripsPanel({ data, onClose, onLoadTrip, onLoadTripPlan, onO
               </div>
             )}
           </SavedSection>
+        </>
+      )}
+
+      {tab === 'visited' && (
+        <>
+          {/* ── The ledger, once there is a record to add up. Day plans are
+              local-first, so the record works signed out too. ── */}
+          {pastCount > 0 && (
+            <div className="panel-section saved-section">
+              <TravelLedger
+                visitedCountries={visited.countries}
+                visitedCities={visited.cities}
+              />
+            </div>
+          )}
 
           {/* ── The record: finished trips file themselves, newest first. ── */}
-          {(pastCount > 0 || plannedCount > 0) && (
-            <SavedSection
-              title={t('saved.past')}
-              sub={t('saved.pastSub')}
-              count={pastCount}
-              muted
-            >
-              {pastCount === 0 ? (
-                <p className="saved-past-empty">{t('saved.pastEmpty')}</p>
-              ) : (
-                <div className="past-list">
-                  {pastRecord.map((row) => (row.kind === 'plan' ? (
-                    <PastRow
-                      key={`p${row.item.id}`}
-                      title={planTitle(row.item)}
-                      img={destImage(row.item.destination_ids?.[0])}
-                      Icon={RouteIcon}
-                      meta={[
-                        row.item.start_date ? `${fmtDate(row.item.start_date)} → ${fmtDateYear(row.item.end_date)}` : '',
-                        row.item.cities?.length ? t(row.item.cities.length === 1 ? 'saved.stops1' : 'saved.stopsN', { n: row.item.cities.length }) : '',
-                      ].filter(Boolean).join(', ')}
-                      onOpen={() => onLoadTripPlan && onLoadTripPlan(row.item.id)}
-                      openTitle={t('saved.openTripPlan')}
-                      actions={[{
-                        key: 'edit',
-                        label: t('saved.edit'),
-                        icon: <PencilIcon size={14} />,
-                        onClick: () => onLoadTripPlan && onLoadTripPlan({ id: row.item.id, edit: true }),
-                      }]}
-                      onDelete={() => handleDeleteTripPlan(row.item.id)}
-                      deleteLabel={t('saved.removeItem', { name: row.item.label || t('saved.fallbackTrip') })}
-                    />
-                  ) : (
-                    <PastRow
-                      key={`d${row.item.id}`}
-                      title={row.item.label || t('saved.dayPlanFallbackTitle')}
-                      img={destImage(row.item.stops?.[0]?.destinationId)}
-                      Icon={ListDayIcon}
-                      meta={fmtDateYear(row.item.startDate)}
-                      onOpen={() => onOpenDayPlan && onOpenDayPlan(row.item.id)}
+          <SavedSection
+            title={t('saved.travelRecord')}
+            sub={t('saved.pastSub')}
+            count={pastCount}
+            big
+          >
+            {pastCount === 0 ? (
+              <SavedEmpty
+                Icon={CheckIcon}
+                text={t('saved.pastEmpty')}
+                cta={t('saved.planFirstTrip')}
+                onCta={() => onGoToTab && onGoToTab('trip')}
+              />
+            ) : (
+              <div className="saved-card-stack">
+                {pastRecord.map((row) => {
+                  if (row.kind === 'plan') {
+                    const p = row.item;
+                    const parts = journeyParts(p);
+                    return (
+                      <JourneyCard
+                        key={`p${p.id}`}
+                        visited
+                        title={parts.title}
+                        sub={parts.sub}
+                        countries={parts.countries}
+                        img={resolveImage({ ids: p.destination_ids || [], cities: planCities(p), countries: parts.countries })}
+                        dateLabel={t('saved.visitedLabel')}
+                        dates={p.start_date ? `${fmtDate(p.start_date)} → ${fmtDateYear(p.end_date)}` : ''}
+                        onOpen={() => onLoadTripPlan && onLoadTripPlan(p.id)}
+                        openTitle={t('saved.openTripPlan')}
+                        actions={[{
+                          key: 'edit',
+                          label: t('saved.edit'),
+                          icon: <PencilIcon size={14} />,
+                          onClick: () => onLoadTripPlan && onLoadTripPlan({ id: p.id, edit: true }),
+                        }]}
+                        onDelete={() => handleDeleteTripPlan(p.id)}
+                        deleteLabel={t('saved.removeItem', { name: p.label || t('saved.fallbackTrip') })}
+                      />
+                    );
+                  }
+                  const sp = row.item;
+                  const parts = dayJourneyParts(sp);
+                  return (
+                    <JourneyCard
+                      key={`d${sp.id}`}
+                      visited
+                      title={parts.title}
+                      sub={parts.sub}
+                      countries={parts.countries}
+                      img={resolveImage({
+                        ids: (sp.stops || []).map((s) => s.destinationId),
+                        cities: dayPlanCities(sp),
+                        countries: parts.countries,
+                      })}
+                      dateLabel={t('saved.visitedLabel')}
+                      dates={sp.startDate ? `${fmtDate(sp.startDate)} → ${fmtDateYear(dayPlanEndDate(sp))}` : ''}
+                      onOpen={() => onOpenDayPlan && onOpenDayPlan(sp.id)}
                       openTitle={t('saved.openDayPlan')}
-                      onDelete={() => setDayPlans(deleteStandalonePlan(row.item.id))}
-                      deleteLabel={t('saved.removeItem', { name: row.item.label || t('saved.fallbackDayPlan') })}
+                      actions={[]}
+                      onDelete={() => setDayPlans(deleteStandalonePlan(sp.id))}
+                      deleteLabel={t('saved.removeItem', { name: sp.label || t('saved.fallbackDayPlan') })}
                     />
-                  )))}
-                </div>
-              )}
-            </SavedSection>
-          )}
+                  );
+                })}
+              </div>
+            )}
+          </SavedSection>
         </>
       )}
     </div>

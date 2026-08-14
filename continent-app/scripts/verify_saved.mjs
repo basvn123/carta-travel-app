@@ -1,9 +1,12 @@
-// Headless look at the redesigned Saved-trips panel, in the states reachable
+// Headless look at the three-tab Saved-trips panel, in the states reachable
 // without an account:
-//   1. Fresh device: segmented Favorites / Planned tabs, empty invitations.
+//   1. Fresh device: Favorites / Planned / Visited tabs, empty invitations.
 //   2. Seeded day plans: one upcoming (card + mini map + caption) and one
-//      finished (past record row + travel ledger), filed by their own dates.
-//   3. Mobile width: no sideways scroll, both tabs.
+//      finished (Visited tab: ledger cards + travel-record journey card).
+//   3. The ?savedmock seam: favorites with flags and saved dates, the big
+//      planned journey card, three visited cards, and no photo fallbacks,
+//      every card must resolve an image through the fallback chain.
+//   4. Mobile width: no sideways scroll, all three tabs.
 // Run from inside continent-app/:  node scripts/verify_saved.mjs
 import { chromium } from 'playwright';
 import { spawn } from 'node:child_process';
@@ -73,8 +76,9 @@ const openSaved = async (page) => {
   await page.waitForTimeout(600);
 };
 
+const TAB_INDEX = { favorites: 0, planned: 1, visited: 2 };
 const pickTab = async (page, which) => {
-  await page.locator('.saved-tabs button').nth(which === 'favorites' ? 0 : 1).click();
+  await page.locator('.saved-tabs button').nth(TAB_INDEX[which]).click();
   await page.waitForTimeout(400);
 };
 
@@ -82,13 +86,13 @@ try {
   await waitForServer();
   const browser = await chromium.launch();
 
-  // ---- 1. Fresh device: tabs up top, invitations instead of dead ends.
+  // ---- 1. Fresh device: three tabs up top, invitations instead of dead ends.
   const empty = await browser.newPage({ viewport: { width: 1360, height: 900 } });
   await empty.goto(BASE);
   await enterApp(empty);
   await openSaved(empty);
   const tabs = await empty.locator('.saved-tabs button').count();
-  if (tabs !== 2) fail(`expected 2 segmented tabs, got ${tabs}`);
+  if (tabs !== 3) fail(`expected 3 segmented tabs, got ${tabs}`);
   const dashed = await empty.evaluate(() => [...document.querySelectorAll('.saved-empty')]
     .map((el) => getComputedStyle(el).borderStyle).filter((s) => s.includes('dashed')).length);
   if (dashed) fail(`${dashed} empty state(s) still drawn with a dashed border`);
@@ -105,6 +109,11 @@ try {
   const favEmpty = await empty.locator('.saved-empty').count();
   if (favEmpty !== 1) fail(`favorites tab should show exactly one state block, got ${favEmpty}`);
   await empty.locator('.saved-trips-panel').screenshot({ path: `${SHOTS}/saved-empty-favorites.png` });
+  await pickTab(empty, 'visited');
+  const visEmpty = await empty.locator('.saved-empty').count();
+  if (visEmpty !== 1) fail(`visited tab should show exactly one state block, got ${visEmpty}`);
+  if (await empty.locator('.ledger2').count()) fail('empty visited tab should not show a zeroed ledger');
+  await empty.locator('.saved-trips-panel').screenshot({ path: `${SHOTS}/saved-empty-visited.png` });
 
   // ---- 2. Seeded day plans: the dates do the filing.
   const full = await browser.newPage({ viewport: { width: 1360, height: 900 } });
@@ -120,22 +129,11 @@ try {
   if (upTitles.length !== 1 || !upTitles[0].includes('Lisbon')) {
     fail(`expected one upcoming day-plan card (Lisbon and Porto), got: ${JSON.stringify(upTitles)}`);
   }
-  const pastTitles = await full.locator('.past-row-title').allInnerTexts();
-  if (pastTitles.length !== 1 || !pastTitles[0].includes('Bruges')) {
-    fail(`expected Bruges in the past record, got: ${JSON.stringify(pastTitles)}`);
-  }
   // The mini map pins the upcoming trip and the caption names it.
   await full.locator('.saved-map .trip-map canvas').waitFor({ timeout: 15000 }).catch(() => fail('mini map canvas never appeared'));
   const caption = (await full.locator('.saved-map-caption').innerText().catch(() => '')).replace(/\s+/g, ' ');
   if (!/Lisbon/i.test(caption)) fail(`map caption does not name the next trip: "${caption}"`);
   console.log('caption:', caption);
-  // The ledger adds up the finished plan: 1 country, 1 city, signed out.
-  const ledgerNums = await full.locator('.saved-ledger-num').allInnerTexts();
-  if (ledgerNums.length !== 2) fail(`expected 2 ledger tiles, got ${ledgerNums.length}`);
-  console.log('ledger:', ledgerNums.map((s) => s.replace(/\s+/g, ' ')));
-  await full.locator('.saved-ledger-tile').first().click();
-  const chips = await full.locator('.saved-ledger-chip').count();
-  if (chips < 1) fail('countries tile opened no chips');
   await full.waitForTimeout(700);
   await full.locator('.saved-trips-panel').screenshot({ path: `${SHOTS}/saved-planned-full.png` });
 
@@ -148,8 +146,25 @@ try {
   await full.locator('.saved-card-confirm-keep').click();
   if ((await full.locator('.saved-card .saved-card-title').count()) !== 1) fail('"Keep" did not put the card back');
 
-  // ---- 2b. The account-only shapes, through the ?savedmock seam: the
-  // favorites photo grid, the big upcoming trip card, and the past record.
+  // Visited tab: the finished Bruges day plan became a journey card, and the
+  // ledger adds it up: 1 European country out of the whole flag catalogue.
+  await pickTab(full, 'visited');
+  const visCards = await full.locator('.uptrip-card.is-visited').count();
+  if (visCards !== 1) fail(`expected 1 visited journey card, got ${visCards}`);
+  const visTitle = await full.locator('.uptrip-card.is-visited .uptrip-title').innerText();
+  if (!/Belgium|Bruges/.test(visTitle)) fail(`visited card title unexpected: "${visTitle}"`);
+  const ledgerNums = await full.locator('.ledger2-num').allInnerTexts();
+  if (ledgerNums.length !== 2) fail(`expected 2 ledger cards, got ${ledgerNums.length}`);
+  if (!/1\s*\/\s*43/.test(ledgerNums[0].replace(/\s+/g, ' '))) {
+    fail(`countries ledger should read 1 / 43, got "${ledgerNums[0]}"`);
+  }
+  console.log('ledger:', ledgerNums.map((s) => s.replace(/\s+/g, ' ')));
+  const flagItems = await full.locator('.ledger2-flagitem').count();
+  if (flagItems < 1) fail('countries ledger shows no flag');
+  await full.waitForTimeout(700);
+  await full.locator('.saved-trips-panel').screenshot({ path: `${SHOTS}/saved-visited-full.png` });
+
+  // ---- 3. The account-only shapes, through the ?savedmock seam.
   const mock = await browser.newPage({ viewport: { width: 1360, height: 900 } });
   await mock.addInitScript(() => localStorage.setItem('carta.savedTripsTab', 'planned'));
   await mock.goto(`${BASE}/?savedmock`);
@@ -158,16 +173,45 @@ try {
   const upCards = await mock.locator('.uptrip-card').count();
   if (upCards !== 1) fail(`expected 1 upcoming trip card, got ${upCards}`);
   const upTitle = await mock.locator('.uptrip-title').innerText();
-  if (!/Lisbon.*Porto/.test(upTitle)) fail(`upcoming card title unexpected: "${upTitle}"`);
+  const upSub = await mock.locator('.uptrip-sub').innerText().catch(() => '');
+  if (!/Portugal/.test(upTitle)) fail(`upcoming card should headline the country, got "${upTitle}"`);
+  if (!/Lisbon.*Porto/.test(upSub)) fail(`upcoming card cities line unexpected: "${upSub}"`);
   const chip = await mock.locator('.uptrip-when').innerText();
   if (!/In \d+ days/.test(chip)) fail(`countdown chip unexpected: "${chip}"`);
-  const mockPast = await mock.locator('.past-row-title').allInnerTexts();
-  if (!mockPast.some((s) => s.includes('Flanders'))) fail(`past record misses the finished plan: ${JSON.stringify(mockPast)}`);
+  if (!(await mock.locator('.uptrip-flag').count())) fail('upcoming card is missing its corner flag badge');
+  if (!(await mock.locator('.uptrip-datelabel').count())) fail('upcoming card is missing its Dates label');
   await mock.waitForTimeout(900);
   await mock.locator('.saved-trips-panel').screenshot({ path: `${SHOTS}/saved-mock-planned.png` });
+
+  // Visited tab: three finished mock trips, ledger at 3 countries.
+  await pickTab(mock, 'visited');
+  const mockVis = await mock.locator('.uptrip-card.is-visited').count();
+  if (mockVis !== 3) fail(`expected 3 visited journey cards, got ${mockVis}`);
+  const mockVisTitles = await mock.locator('.uptrip-card.is-visited .uptrip-title').allInnerTexts();
+  if (!mockVisTitles.some((s) => s.includes('Flanders'))) fail(`visited record misses the labelled plan: ${JSON.stringify(mockVisTitles)}`);
+  if (!mockVisTitles.some((s) => /Austria|Salzburg/.test(s))) fail(`visited record misses Salzburg: ${JSON.stringify(mockVisTitles)}`);
+  const mockLedger = await mock.locator('.ledger2-num').allInnerTexts();
+  if (!/3\s*\/\s*43/.test((mockLedger[0] || '').replace(/\s+/g, ' '))) {
+    fail(`mock countries ledger should read 3 / 43, got "${mockLedger[0]}"`);
+  }
+  const mockFlagNames = await mock.locator('.ledger2-flagname').allInnerTexts();
+  for (const c of ['Austria', 'Belgium', 'Germany']) {
+    if (!mockFlagNames.includes(c)) fail(`ledger flags miss ${c}: ${JSON.stringify(mockFlagNames)}`);
+  }
+  // Every visited card must resolve a photo through the fallback chain.
+  const visFallbacks = await mock.locator('.uptrip-photo.is-fallback').count();
+  if (visFallbacks) fail(`${visFallbacks} visited card(s) fell back to an icon instead of a photo`);
+  await mock.waitForTimeout(700);
+  await mock.locator('.saved-trips-panel').screenshot({ path: `${SHOTS}/saved-mock-visited.png` });
+
+  // Favorites: photo grid with flags, kind tags and saved dates.
   await pickTab(mock, 'favorites');
   const favs = await mock.locator('.fav-card').count();
   if (favs !== 3) fail(`expected 3 favorite cards, got ${favs}`);
+  const favFallbacks = await mock.locator('.fav-card-photo.is-fallback').count();
+  if (favFallbacks) fail(`${favFallbacks} favorite(s) fell back to an icon instead of a photo`);
+  if ((await mock.locator('.fav-card-flag').count()) !== 3) fail('favorite cards are missing corner flags');
+  if ((await mock.locator('.fav-card-savedon').count()) !== 3) fail('favorite cards are missing their saved dates');
   await mock.waitForTimeout(600);
   await mock.locator('.saved-trips-panel').screenshot({ path: `${SHOTS}/saved-mock-favorites.png` });
   // Letting a favorite go still asks first, in place.
@@ -176,24 +220,24 @@ try {
   await mock.locator('.saved-card-confirm-keep').first().click();
   if ((await mock.locator('.fav-card').count()) !== 3) fail('"Keep" removed the favorite anyway');
 
-  // Mock seam, mobile width.
+  // Mock seam, mobile width, all three tabs, no sideways scroll.
   const mockMob = await browser.newPage({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
   await mockMob.addInitScript(() => localStorage.setItem('carta.savedTripsTab', 'planned'));
   await mockMob.goto(`${BASE}/?savedmock`);
   await enterApp(mockMob);
   await openSaved(mockMob);
   await mockMob.waitForTimeout(900);
-  const mockOverflow = await mockMob.evaluate(() => {
-    const p = document.querySelector('.saved-trips-panel');
-    return p ? p.scrollWidth - p.clientWidth : -1;
-  });
-  if (mockOverflow > 1) fail(`mock panel scrolls sideways on mobile by ${mockOverflow}px`);
-  await mockMob.screenshot({ path: `${SHOTS}/saved-mock-mobile-planned.png` });
-  await pickTab(mockMob, 'favorites');
-  await mockMob.waitForTimeout(500);
-  await mockMob.screenshot({ path: `${SHOTS}/saved-mock-mobile-favorites.png` });
+  for (const which of ['planned', 'visited', 'favorites']) {
+    await pickTab(mockMob, which);
+    const overflow = await mockMob.evaluate(() => {
+      const p = document.querySelector('.saved-trips-panel');
+      return p ? p.scrollWidth - p.clientWidth : -1;
+    });
+    if (overflow > 1) fail(`mock ${which} tab scrolls sideways on mobile by ${overflow}px`);
+    await mockMob.screenshot({ path: `${SHOTS}/saved-mock-mobile-${which}.png` });
+  }
 
-  // ---- 3. Mobile width, both tabs, no sideways scroll.
+  // ---- 4. Seeded day plans, mobile width.
   const mob = await browser.newPage({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
   await mob.addInitScript((plans) => {
     localStorage.setItem('carta.savedTripsTab', 'planned');
@@ -209,8 +253,8 @@ try {
   });
   if (overflow > 1) fail(`saved panel scrolls sideways on mobile by ${overflow}px`);
   await mob.screenshot({ path: `${SHOTS}/saved-mobile-planned.png` });
-  await pickTab(mob, 'favorites');
-  await mob.screenshot({ path: `${SHOTS}/saved-mobile-favorites.png` });
+  await pickTab(mob, 'visited');
+  await mob.screenshot({ path: `${SHOTS}/saved-mobile-visited.png` });
 
   await browser.close();
   console.log(process.exitCode ? 'done with failures' : 'all checks passed');
