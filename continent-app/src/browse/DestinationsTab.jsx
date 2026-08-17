@@ -389,7 +389,12 @@ export function DestinationsTab({
       const key = CLASS_OF.get(p.place?.class);
       if (key) counts.set(key, counts.get(key) + 1);
     }
-    return counts;
+    // Inert until the place layer is in the wire: a catalogue with no classes
+    // yet would otherwise show a rail of four disabled zeros. Same rule the
+    // reach filter follows (see components/ReachFilter.jsx).
+    let any = false;
+    for (const n of counts.values()) if (n > 0) any = true;
+    return any ? counts : null;
   }, [cat, pricedAll, country, q]);
 
   // The country index for General: every priced country as a flag card.

@@ -893,3 +893,58 @@ export function HeartIcon({ size = 15, className = '' }) {
     </Glyph>
   );
 }
+
+/* ─────────────────────────────────────────────────────────────────────────
+   Place-class glyphs (dest.place.class, place_layer.py). These answer a
+   different question from the trip-kind icons above: not "what is it like"
+   but "how big is it", which is what tells a traveller whether to sleep
+   somewhere or spend an afternoon there.
+
+   They are drawn as one family on purpose, a rising skyline: a single
+   pitched roof, a church and a house, a terrace of blocks, a tower among
+   blocks. Read left to right in the class rail they show scale growing,
+   so the row is legible before anyone reads the labels.
+   ───────────────────────────────────────────────────────────────────────── */
+
+export function VillageIcon({ size = 15, className = '' }) {
+  return (
+    <Glyph size={size} className={className} label="Village">
+      <path d="M4 20h16" />
+      <path d="M7 20v-6l4.5-3.5L16 14v6" />
+      <path d="M10.2 20v-3.2h2.6V20" />
+    </Glyph>
+  );
+}
+
+export function TownIcon({ size = 15, className = '' }) {
+  return (
+    <Glyph size={size} className={className} label="Town">
+      <path d="M3 20h18" />
+      <path d="M6 20v-7l3-2.5 3 2.5v7" />
+      <path d="M15 20V9l2.5-3L20 9v11" />
+      <path d="M17.5 12.5v.01" />
+    </Glyph>
+  );
+}
+
+export function CityIcon({ size = 15, className = '' }) {
+  return (
+    <Glyph size={size} className={className} label="City">
+      <path d="M3 20h18" />
+      <path d="M5 20V11h5v9" />
+      <path d="M10 20V7h5v13" />
+      <path d="M15 20v-6h4v6" />
+      <path d="M7 14v.01M7 17v.01M12.5 10v.01M12.5 13v.01M12.5 16v.01" />
+    </Glyph>
+  );
+}
+
+export function AreaIcon({ size = 15, className = '' }) {
+  return (
+    <Glyph size={size} className={className} label="Nature and islands">
+      <path d="M3 17.5c1.6-1.1 3.2-1.1 4.8 0s3.2 1.1 4.8 0 3.2-1.1 4.8 0 2.2.9 3.1.3" />
+      <path d="M3 21c1.6-1.1 3.2-1.1 4.8 0s3.2 1.1 4.8 0 3.2-1.1 4.8 0 2.2.9 3.1.3" />
+      <path d="m4.5 13.5 4.2-6.4 3.1 4.6 2.1-2.9 4.6 6.7" />
+    </Glyph>
+  );
+}
