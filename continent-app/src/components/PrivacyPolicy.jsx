@@ -40,7 +40,11 @@ export function PrivacyPolicy({ onClose }) {
             with Carta and nothing else. Walking and driving routes are computed
             by the public OSRM/FOSSGIS routing service and address search by
             OpenStreetMap Nominatim; both receive only the coordinates or the
-            address text you searched, never your identity. Photos and place
+            address text you searched, never your identity. If you ask the
+            Destinations tab to use your location, the browser asks you first,
+            and the coordinate it returns goes to Nominatim to be named and
+            nowhere else. It is not stored and it does not leave the session.
+            Photos and place
             descriptions load from Wikimedia servers. Opening a booking or
             Google Maps link takes you to that provider under its own policy.
           </p>

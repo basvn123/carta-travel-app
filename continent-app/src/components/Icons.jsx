@@ -763,6 +763,19 @@ export function SearchIcon({ size = 15, className = '' }) {
   );
 }
 
+/* "Where I am now": the crosshair every map app puts on this action, so it
+   needs no label to be understood. Distinct from CompassIcon, which is the
+   Explore tab and would read as navigation rather than a fix on a position. */
+export function CrosshairIcon({ size = 16, className = '' }) {
+  return (
+    <Glyph size={size} className={className} label="My location">
+      <circle cx="12" cy="12" r="6.5" />
+      <path d="M12 2.2v3.1M12 18.7v3.1M2.2 12h3.1M18.7 12h3.1" />
+      <circle cx="12" cy="12" r="1.4" fill="currentColor" stroke="none" />
+    </Glyph>
+  );
+}
+
 export function PiggyIcon({ size = 15, className = '' }) {
   return (
     <Glyph size={size} className={className} label="Save money">

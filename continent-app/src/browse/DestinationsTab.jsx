@@ -7,9 +7,10 @@ import { loadTrails, loadTrailsIndex } from '../lib/trails.js';
 import { associateTrip, haversineKm, tripCentre, tripKindKey, tripThemes } from '../lib/trailCards.js';
 import { useI18n } from '../i18n/index.jsx';
 import { OriginPicker } from '../components/OriginPicker.jsx';
+import { geocodeAddress, reverseGeocode } from '../lib/geocode.js';
 import {
   SearchIcon, ChevronRightIcon, RouteIcon, SkylineIcon, SuitcaseIcon, BootIcon,
-  BeachIcon, MountainIcon, BedIcon,
+  BeachIcon, MountainIcon, BedIcon, MapPinIcon, CrosshairIcon,
   CityIcon, TownIcon, VillageIcon, AreaIcon,
 } from '../components/Icons.jsx';
 
@@ -37,6 +38,16 @@ import {
  * price-shaped chrome is not shown for it: no rating/price/A-Z sort, no
  * priced-from origin, no stay tier. Controls that cannot change anything on
  * screen only suggest the numbers exist somewhere.
+ *
+ * The search box answers two questions with one field. Typing filters the
+ * catalogue as you go (local, instant) and offers the matching cities as
+ * suggestions. Anything else, a village Carta does not price, a postcode, a
+ * street and house number, is a location rather than a destination: Enter (or
+ * the "search anywhere" row) geocodes it through Nominatim and the tab
+ * switches to near-mode, listing the closest places and trips to that point
+ * with the distance on every card. That is what makes "what can I reach from
+ * my own front door" a question this tab can answer. The crosshair in the
+ * field asks the browser the same question without the typing.
  */
 
 const PAGE = 36;
@@ -55,6 +66,36 @@ const hoursText = (min) => {
   const h = min / 60;
   return h >= 10 ? String(Math.round(h)) : h.toFixed(1);
 };
+
+/**
+ * How a geocoded hit reads on two lines: the place itself, then the rest of
+ * the address that says which one it is.
+ *
+ * Nominatim names a town in `name` and leaves it empty for a street address,
+ * where the label instead opens with a bare house number ("12, Kerkstraat,
+ * Knesselare, Aalter, ..."). A title of "12" is no use to anyone, so a numeric
+ * first part pulls the street and the town in with it.
+ */
+function geoLines(r) {
+  const parts = String(r.label || '').split(',').map((s) => s.trim()).filter(Boolean);
+  // Bilingual country tails ("Belgie / Belgique / Belgien") are noise on a row
+  // this narrow; the parsed country name says the same thing once.
+  if (parts.length && r.country) parts[parts.length - 1] = r.country;
+  const first = parts[0] || '';
+  // The house rule runs first: for a street address the geocoder backfills the
+  // empty name with that same bare number, so testing the name would hide it.
+  if (/^\d/.test(first) && parts.length > 2) {
+    return { title: parts.slice(0, 3).join(', '), rest: parts.slice(3).join(', ') };
+  }
+  const named = (r.name || '').trim();
+  if (named && first.toLowerCase() === named.toLowerCase()) {
+    return { title: named, rest: parts.slice(1).join(', ') };
+  }
+  return {
+    title: parts.slice(0, 2).join(', ') || named || r.shortLabel || '',
+    rest: parts.slice(2).join(', '),
+  };
+}
 
 const CATS = [
   { key: 'general', Icon: SkylineIcon, labelKey: 'places.catGeneral' },
@@ -229,13 +270,33 @@ export function DestinationsTab({
   const [query, setQuery] = useState('');
   const [debouncedQuery, setDebouncedQuery] = useState('');
   const [country, setCountry] = useState('');        // ISO2 or '' for all
-  const [nearDest, setNearDest] = useState(null);    // { id, city, iso2, lat, lon }
+  // The point everything is measured from in near-mode. A catalogue city or
+  // any geocoded location, so it carries a name and coordinates rather than a
+  // destination id: { id|null, name, sub, iso2|null, lat, lon }.
+  const [nearPlace, setNearPlace] = useState(null);
   const [sort, setSort] = useState({ key: 'rating', dir: -1 });
   const [visible, setVisible] = useState(PAGE);
   const [pageCard, setPageCard] = useState(null);    // enriched trip card or null
   // A shared #trail= link: { id, country } until the country file has loaded
   // and the card it names can be opened.
   const [wantedTrail, setWantedTrail] = useState(null);
+
+  // Free-text location search. The catalogue suggestions below are local and
+  // instant; this one is a network call to Nominatim, so it fires on an
+  // explicit action (Enter, or the "search anywhere" row), never per
+  // keystroke, which is what its fair-use policy asks for.
+  const [suggOpen, setSuggOpen] = useState(false);
+  const [geoBusy, setGeoBusy] = useState(false);
+  const [geoHits, setGeoHits] = useState(null);      // null until this term was searched
+  const geoSeq = useRef(0);
+  const searchRef = useRef(null);
+
+  // "Near me". The button is only rendered where the browser can answer at
+  // all: geolocation is undefined outside a secure context, and chrome for a
+  // capability that is not there is worse than no chrome.
+  const canLocate = typeof navigator !== 'undefined' && 'geolocation' in navigator;
+  const [locBusy, setLocBusy] = useState(false);
+  const [locErr, setLocErr] = useState('');
 
   // Trails data: the country index (which countries have anything), and the
   // one country file the current selection needs.
@@ -255,7 +316,7 @@ export function DestinationsTab({
     if (!openTrail) return;
     setCat('trails');
     setQuery('');
-    setNearDest(null);
+    setNearPlace(null);
     setCountry(openTrail.country);
     setWantedTrail(openTrail);
     onOpenTrailConsumed?.();
@@ -267,8 +328,27 @@ export function DestinationsTab({
     return () => clearTimeout(timer);
   }, [query]);
 
+  // Geocoded hits answer one exact term. A changed term retires them, and the
+  // bumped sequence retires any reply still in flight for the old one, so a
+  // slow answer can never land under a query the traveller has moved past.
+  useEffect(() => {
+    geoSeq.current += 1;
+    setGeoHits(null);
+    setGeoBusy(false);
+    setLocErr('');
+  }, [query]);
+
+  // Click away and the suggestion list closes. It overlays the cards, so it
+  // cannot be left open behind a tap that was meant for the list underneath.
+  useEffect(() => {
+    if (!suggOpen) return undefined;
+    const onDoc = (e) => { if (!searchRef.current?.contains(e.target)) setSuggOpen(false); };
+    document.addEventListener('mousedown', onDoc);
+    return () => document.removeEventListener('mousedown', onDoc);
+  }, [suggOpen]);
+
   const isTripCat = cat !== 'general';
-  const trailsCountry = nearDest ? nearDest.iso2 : country;
+  const trailsCountry = nearPlace ? nearPlace.iso2 : country;
   useEffect(() => {
     if (!isTripCat || !trailsCountry) { setCountryTrips(null); return undefined; }
     let live = true;
@@ -307,6 +387,17 @@ export function DestinationsTab({
     return out;
   }, [data]);
 
+  // Where each destination actually is, city centre first. Some rows are
+  // anchored on their airport, and measuring "how far is this from my street"
+  // against a runway 40 km out of town orders the nearest list wrong.
+  const centreById = useMemo(() => {
+    const m = new Map();
+    for (const [id, d] of Object.entries(data.destinations)) {
+      m.set(id, [d.city_lat ?? d.lat, d.city_lon ?? d.lon]);
+    }
+    return m;
+  }, [data]);
+
   const priceById = useMemo(() => {
     const m = new Map();
     for (const p of pricedAll) m.set(p.id, p);
@@ -340,10 +431,92 @@ export function DestinationsTab({
     return [...starts, ...includes].slice(0, 6);
   }, [q, destIndex]);
 
-  const pickNear = (d) => {
-    setNearDest(d);
+  const term = query.trim();
+  // Nominatim's own floor is 3 characters; below it the row would promise a
+  // search that returns nothing.
+  const canGeo = term.length >= 3;
+
+  const pickNear = (place) => {
+    setNearPlace(place);
     setQuery('');
     setCountry('');
+    setSuggOpen(false);
+  };
+
+  const pickDest = (d) => pickNear({
+    id: d.id, name: d.city, sub: d.country, iso2: d.iso2, lat: d.lat, lon: d.lon,
+  });
+
+  // A geocoded location: the place reads as the heading, the rest of the
+  // address stays on the line beside it, so the header says which of the
+  // several Gents on earth this is.
+  const pickGeo = (r) => {
+    const { title, rest } = geoLines(r);
+    pickNear({ id: null, name: title, sub: rest, iso2: r.iso2, lat: r.lat, lon: r.lon });
+  };
+
+  const runGeoSearch = async () => {
+    if (!canGeo) return;
+    const seq = geoSeq.current + 1;
+    geoSeq.current = seq;
+    setGeoBusy(true);
+    setSuggOpen(true);
+    const hits = await geocodeAddress(term, { limit: 8 });
+    if (geoSeq.current !== seq) return;   // the term moved on while we waited
+    setGeoHits(hits);
+    setGeoBusy(false);
+  };
+
+  // Enter takes the best answer already on screen and only reaches for the
+  // network when there is none: a hit if the map was searched, otherwise the
+  // top catalogue city, otherwise search the map. Typing an address matches no
+  // city, so an address falls straight through to the search.
+  const onSearchEnter = () => {
+    if (geoHits?.length) pickGeo(geoHits[0]);
+    else if (suggestions.length) pickDest(suggestions[0]);
+    else runGeoSearch();
+  };
+
+  /**
+   * The same anchor, straight from the browser. The device answers with a
+   * coordinate and Nominatim turns that into a name and a country (the trails
+   * wire is published per country), but the ranking only ever uses the
+   * coordinate, so a reverse lookup that fails still leaves a working anchor
+   * under a plain "My location" heading.
+   */
+  const useMyLocation = () => {
+    if (!canLocate || locBusy) return;
+    setLocErr('');
+    setLocBusy(true);
+    navigator.geolocation.getCurrentPosition(
+      async (pos) => {
+        const lat = pos?.coords?.latitude;
+        const lon = pos?.coords?.longitude;
+        if (!Number.isFinite(lat) || !Number.isFinite(lon)) {
+          setLocBusy(false);
+          setLocErr(t('places.locateFailed'));
+          return;
+        }
+        const hit = await reverseGeocode(lat, lon);
+        const lines = hit ? geoLines(hit) : null;
+        setLocBusy(false);
+        pickNear({
+          id: null,
+          name: lines?.title || t('places.myLocation'),
+          sub: lines?.rest || '',
+          iso2: hit?.iso2 || null,
+          lat,
+          lon,
+        });
+      },
+      (err) => {
+        setLocBusy(false);
+        // Code 1 is a refusal, which is a setting to change rather than a
+        // failure to retry; everything else is "it did not come through".
+        setLocErr(err?.code === 1 ? t('places.locateDenied') : t('places.locateFailed'));
+      },
+      { enableHighAccuracy: false, timeout: 12000, maximumAge: 5 * 60 * 1000 },
+    );
   };
 
   // ── General: the priced catalogue ─────────────────────────────────────
@@ -359,9 +532,12 @@ export function DestinationsTab({
       if (wantClass && p.place?.class && !wantClass.has(CLASS_OF.get(p.place.class))) return false;
       return true;
     });
-    if (nearDest) {
+    if (nearPlace) {
       return filtered
-        .map((p) => ({ p, km: haversineKm(nearDest.lat, nearDest.lon, p.lat, p.lon) }))
+        .map((p) => {
+          const c = centreById.get(p.id);
+          return { p, km: haversineKm(nearPlace.lat, nearPlace.lon, c?.[0] ?? p.lat, c?.[1] ?? p.lon) };
+        })
         .sort((a, b) => a.km - b.km)
         .slice(0, NEAR_MAX_ROWS);
     }
@@ -376,7 +552,7 @@ export function DestinationsTab({
       rows.sort((a, b) => dir * a.p.city.localeCompare(b.p.city));
     }
     return rows;
-  }, [cat, pricedAll, country, q, nearDest, sort, priceMode, classes]);
+  }, [cat, pricedAll, country, q, nearPlace, centreById, sort, priceMode, classes]);
 
   // How many places each size holds under the country/search filter, so a chip
   // can say "42" and can grey itself out rather than leading to an empty list.
@@ -453,11 +629,11 @@ export function DestinationsTab({
             : c.themes.has('mountains')
     ));
     if (q) rows = rows.filter((c) => norm(c.tr.name).includes(q));
-    if (nearDest) {
+    if (nearPlace) {
       return rows
         .map((c) => {
           const ctr = tripCentre(c.tr);
-          return ctr ? { c, km: haversineKm(nearDest.lat, nearDest.lon, ctr.lat, ctr.lon) } : null;
+          return ctr ? { c, km: haversineKm(nearPlace.lat, nearPlace.lon, ctr.lat, ctr.lon) } : null;
         })
         .filter(Boolean)
         .sort((a, b) => a.km - b.km)
@@ -478,7 +654,7 @@ export function DestinationsTab({
       out.sort((a, b) => dir * a.c.tr.name.localeCompare(b.c.tr.name));
     }
     return out;
-  }, [tripCards, cat, q, nearDest, sort]);
+  }, [tripCards, cat, q, nearPlace, sort]);
 
   // The country index for trip categories: published countries as flag cards.
   const tripCountries = useMemo(() => {
@@ -499,7 +675,7 @@ export function DestinationsTab({
   useEffect(() => {
     setVisible(PAGE);
     scrollRef.current?.scrollTo?.(0, 0);
-  }, [cat, country, q, nearDest, sort, classes]);
+  }, [cat, country, q, nearPlace, sort, classes]);
 
   useEffect(() => {
     const el = sentinelRef.current;
@@ -533,8 +709,11 @@ export function DestinationsTab({
 
   const fmt = (n) => n.toLocaleString(lang);
 
-  const showCountryIndex = !q && !country && !nearDest;
+  const showCountryIndex = !q && !country && !nearPlace;
   const showTripRows = isTripCat && !trailsLoading && tripRows && tripRows.length > 0;
+  // A geocoded point with no country (an ocean, a border way) has no trails
+  // file to read, so the trip categories say so rather than render nothing.
+  const nearNoCountry = isTripCat && nearPlace && !nearPlace.iso2;
   // Trails carry no price and no rating: a hike is free and is not scored, so
   // the origin, the stay tier and the rating/price/A-Z sorts have nothing to
   // act on here. Distance from a searched city still orders them.
@@ -559,30 +738,93 @@ export function DestinationsTab({
         </div>
 
         <div className="places-controls">
-          <div className="places-search">
+          <div className="places-search" ref={searchRef}>
             <SearchIcon size={15} className="places-search-icon" />
             <input
               type="text"
               value={query}
-              onChange={(e) => setQuery(e.target.value)}
+              onChange={(e) => { setQuery(e.target.value); setSuggOpen(true); }}
+              onFocus={() => setSuggOpen(true)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') { e.preventDefault(); onSearchEnter(); }
+                else if (e.key === 'Escape') setSuggOpen(false);
+              }}
               placeholder={t('places.searchDest')}
               aria-label={t('places.searchDest')}
             />
-            {suggestions.length > 0 && (
+            {canLocate && (
+              <button
+                type="button"
+                className="places-locate"
+                onClick={useMyLocation}
+                disabled={locBusy}
+                aria-busy={locBusy || undefined}
+                title={t('places.useMyLocation')}
+                aria-label={t('places.useMyLocation')}
+              >
+                {locBusy
+                  ? <span className="places-locate-spin" aria-hidden="true" />
+                  : <CrosshairIcon size={16} />}
+              </button>
+            )}
+            {suggOpen && (suggestions.length > 0 || canGeo) && (
               <div className="places-sugg" role="listbox">
+                {/* Two groups, headed only once the second one exists: the
+                    places Carta prices, then anywhere else on the map. */}
+                {suggestions.length > 0 && geoHits && geoHits.length > 0 && (
+                  <p className="places-sugg-head">{t('places.suggCatalogue')}</p>
+                )}
                 {suggestions.map((d) => (
-                  <button key={d.id} className="places-sugg-item" onClick={() => pickNear(d)}>
+                  <button key={d.id} className="places-sugg-item" onClick={() => pickDest(d)}>
                     <span className="places-sugg-city">{d.city}</span>
                     <span className="places-sugg-country">{d.country}</span>
                   </button>
                 ))}
+                {canGeo && !geoHits && (
+                  <button
+                    type="button"
+                    className="places-sugg-item places-sugg-any"
+                    onClick={runGeoSearch}
+                    disabled={geoBusy}
+                  >
+                    <span className="places-sugg-city">
+                      <MapPinIcon size={13} />
+                      {geoBusy ? t('places.searchingAny') : t('places.searchAny', { q: term })}
+                    </span>
+                    {!geoBusy && <span className="places-sugg-country">{t('places.searchAnyHint')}</span>}
+                  </button>
+                )}
+                {geoHits && geoHits.length > 0 && (
+                  <>
+                    <p className="places-sugg-head">{t('places.suggAnywhere')}</p>
+                    {geoHits.map((r, i) => {
+                      const { title, rest } = geoLines(r);
+                      return (
+                        <button
+                          key={`${r.lat},${r.lon},${i}`}
+                          className="places-sugg-item is-geo"
+                          onClick={() => pickGeo(r)}
+                        >
+                          <span className="places-sugg-city">
+                            <MapPinIcon size={13} />
+                            {title}
+                          </span>
+                          <span className="places-sugg-country">{rest}</span>
+                        </button>
+                      );
+                    })}
+                  </>
+                )}
+                {geoHits && geoHits.length === 0 && (
+                  <p className="places-sugg-note">{t('places.anywhereNone')}</p>
+                )}
               </div>
             )}
           </div>
           <select
             className="places-country"
             value={country}
-            onChange={(e) => { setCountry(e.target.value); setNearDest(null); }}
+            onChange={(e) => { setCountry(e.target.value); setNearPlace(null); }}
             aria-label={t('places.allCountries')}
           >
             <option value="">{t('places.allCountries')}</option>
@@ -622,6 +864,10 @@ export function DestinationsTab({
           )}
         </div>
 
+        {/* A refused or failed location fix, said once, under the field that
+            asked for it. Cleared as soon as anything is typed. */}
+        {locErr && <p className="places-locate-err" role="status">{locErr}</p>}
+
         {/* Size rail. Sits above the sorts because it changes WHICH places are
             on screen, where the sorts only change their order. Hidden on the
             country index, where there are no places to size yet. */}
@@ -655,11 +901,11 @@ export function DestinationsTab({
             {SORTS.map(({ key, labelKey }) => (
               <button
                 key={key}
-                className={`places-sort ${!nearDest && sort.key === key ? 'on' : ''}`}
-                onClick={() => { setNearDest(null); toggleSort(key); }}
+                className={`places-sort ${!nearPlace && sort.key === key ? 'on' : ''}`}
+                onClick={() => { setNearPlace(null); toggleSort(key); }}
               >
                 {t(labelKey)}
-                {!nearDest && sort.key === key && (
+                {!nearPlace && sort.key === key && (
                   <span className="places-sort-dir">{sort.dir === 1 ? '↑' : '↓'}</span>
                 )}
               </button>
@@ -667,10 +913,11 @@ export function DestinationsTab({
           </div>
         )}
 
-        {nearDest && (
+        {nearPlace && (
           <div className="places-nearhead">
-            <span>{t('places.nearHead', { city: nearDest.city })}</span>
-            <button className="places-nearclear" onClick={() => setNearDest(null)}>
+            <span className="places-nearname">{t('places.nearHead', { city: nearPlace.name })}</span>
+            {nearPlace.sub && <span className="places-nearsub">{nearPlace.sub}</span>}
+            <button className="places-nearclear" onClick={() => setNearPlace(null)}>
               {t('places.clearNear')}
             </button>
           </div>
@@ -694,7 +941,27 @@ export function DestinationsTab({
                   {destRows.slice(0, visible).map(({ p, km }) => (
                     <DestCard key={p.id} p={p} km={km} priceMode={priceMode} onSelect={onSelectDest} t={t} />
                   ))}
-                  {destRows.length === 0 && <p className="places-empty">{t('places.emptyDest')}</p>}
+                  {/* Nothing matched the text, which is exactly the case where
+                      the typed thing is a location rather than a destination:
+                      offer the map search instead of a dead end. Not while the
+                      suggestion list is open, which carries the same offer a
+                      few pixels higher. */}
+                  {destRows.length === 0 && (
+                    <div className="places-empty">
+                      <p>{t('places.emptyDest')}</p>
+                      {canGeo && !geoHits && !suggOpen && (
+                        <button
+                          type="button"
+                          className="places-empty-cta"
+                          onClick={runGeoSearch}
+                          disabled={geoBusy}
+                        >
+                          <MapPinIcon size={14} />
+                          {geoBusy ? t('places.searchingAny') : t('places.searchAny', { q: term })}
+                        </button>
+                      )}
+                    </div>
+                  )}
                 </>
               )}
             {visible < destRows.length && (
@@ -732,11 +999,15 @@ export function DestinationsTab({
                 ))
                 : (
                   <p className="places-empty">
-                    {nearDest
-                      ? t('places.noneNear', { city: nearDest.city })
+                    {nearPlace
+                      ? t('places.noneNear', { city: nearPlace.name })
                       : t('places.trailsEmpty', { country: countryName(trailsCountry || country) })}
                   </p>
                 )
+            )}
+
+            {!showCountryIndex && !trailsLoading && !tripRows && nearNoCountry && (
+              <p className="places-empty">{t('places.noneNear', { city: nearPlace.name })}</p>
             )}
 
             {!showCountryIndex && visible < (tripRows?.length ?? 0) && (
