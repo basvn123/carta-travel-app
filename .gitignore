@@ -78,3 +78,10 @@ data/deadletter/
 # master. The merge (harvest_all_origins.py tp) tolerates its absence, and
 # the merged result ships in continent-app/public/fares/ anyway.
 data/derived/tp_fares.json
+
+# Coverage candidate universe (docs/COVERAGE.md): ~70 MB of every plausible
+# European destination with its measurements, rebuilt offline in ~75 seconds
+# by build_place_candidates.py from the gazetteer and the POI corpus, both of
+# which ARE tracked. The scored output that people actually read is small and
+# committed: data/reports/coverage/ and coverage_gaps.json.
+data/derived/place_candidates.json

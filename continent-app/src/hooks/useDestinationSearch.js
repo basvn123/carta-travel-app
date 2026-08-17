@@ -86,6 +86,10 @@ export function useDestinationSearch({
         categories: d.categories || [],
         beauty: d.beauty || null,
         rating: d.rating || null,
+        // What size of place this is (place_layer.py). The Destinations tab
+        // filters on it, so it has to survive the projection: without it every
+        // size chip counts zero and the whole rail greys out.
+        place: d.place || null,
         bathing_water: d.bathing_water || null,
         crowding: d.crowding || null,
         image: d.image?.url || null,     // hero thumbnail for the map hover card

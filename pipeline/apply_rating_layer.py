@@ -59,6 +59,31 @@ OBSCURE_STAR_MIN_FAME = 30   # views/day under which a 8.5+ needs a curator gem 
 def validate(dests) -> list:
     """Hard failures as strings; empty list = healthy."""
     problems = []
+    # The per-class appeal scale is the one part of the model that can go
+    # wrong quietly: a bad ceiling shifts a whole class and nothing crashes.
+    # appeal_scale.EXPECTED names real places and the score each must still
+    # reach, so a mis-set ceiling fails the run instead of shipping.
+    import appeal_scale
+    appeal_file = rating_layer.load_curated_appeal()
+    scales = appeal_scale.scales_for(dests, appeal_file)
+    for did, cls, floor in appeal_scale.EXPECTED:
+        d = dests.get(did)
+        if not d:
+            continue
+        got_cls = appeal_scale.class_of(d)
+        if got_cls != cls:
+            problems.append(
+                f"{did} is classed {got_cls}, appeal_scale expects {cls} - the "
+                f"place layer moved it and the checkpoint is now meaningless")
+            continue
+        raw = (appeal_file.get(did) or {}).get("appeal")
+        if raw is None:
+            continue
+        scaled = appeal_scale.rescale(raw, cls, scales)
+        if scaled < floor:
+            problems.append(
+                f"{did} ({d.get('city')}) scaled appeal {scaled} < expected "
+                f"{floor} for a {cls}: check CLASS_CEILING/GAMMA")
     for did, floor in FAMOUS_FLOOR.items():
         r = (dests.get(did) or {}).get("rating")
         if r and r["score"] < floor:
