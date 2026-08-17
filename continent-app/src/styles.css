@@ -16190,10 +16190,14 @@ button.ai-sched-main:focus-visible {
 
 .places-controls {
   display: flex;
+  flex-wrap: wrap;
   gap: 10px;
   margin-top: 12px;
 }
-.places-search { position: relative; flex: 1; min-width: 0; }
+/* Search takes the full width and the three controls that decide what is
+   listed and how it is priced sit in one row beneath it. Four controls on one
+   line squeezed the placeholder to three words. */
+.places-search { position: relative; flex: 1 1 100%; min-width: 0; }
 .places-search-icon {
   position: absolute;
   left: 12px; top: 50%;
@@ -16222,6 +16226,21 @@ button.ai-sched-main:focus-visible {
   font-size: 13px;
   color: var(--ink);
 }
+/* The departure the prices were computed from. The shared OriginPicker wears
+   its map pill by default, so it takes the row's 42px shell here. */
+.places-controls .origin-btn {
+  height: 42px;
+  max-width: none;
+  padding: 0 12px;
+  border-radius: 10px;
+  background: var(--bg-card);
+}
+.places-controls .origin-btn:hover { background: var(--bg-card); border-color: var(--accent-soft); }
+/* The narrow-screen rule that drops the caption is for the header pill; here
+   the caption is what says these prices depend on the airport. */
+.places-controls .origin-btn-from { display: block; }
+.places-controls .origin-btn-label b { max-width: none; }
+
 /* The stay tier every price on this tab was computed at; opens the lifestyle
    panel. Same 42px shell as the country select so the row reads as one bar. */
 .places-lifestyle {
@@ -16240,9 +16259,6 @@ button.ai-sched-main:focus-visible {
 }
 .places-lifestyle:hover { border-color: var(--accent-soft); color: var(--ink); }
 .places-lifestyle b { font-weight: 600; color: var(--ink); }
-@media (max-width: 620px) {
-  .places-lifestyle-label { display: none; }
-}
 
 /* Near-search suggestions, anchored under the input. */
 .places-sugg {
@@ -16280,7 +16296,6 @@ button.ai-sched-main:focus-visible {
   .places-list { grid-template-columns: 1fr 1fr; }
 }
 .places-list > .places-empty,
-.places-list > .places-intro,
 .places-list > .places-credit,
 .places-list > .places-sentinel { grid-column: 1 / -1; }
 
@@ -16455,13 +16470,12 @@ button.ai-sched-main:focus-visible {
   color: var(--ink-soft);
 }
 
-.places-empty, .places-intro {
+.places-empty {
   padding: 20px 2px;
   font-size: 13px;
   line-height: 1.5;
   color: var(--ink-soft);
 }
-.places-intro { padding-bottom: 10px; }
 
 .places-nearhead {
   display: flex;
@@ -16487,8 +16501,14 @@ button.ai-sched-main:focus-visible {
   .places-country { max-width: 40%; }
 }
 @media (max-width: 480px) {
+  /* Stacked: every control takes the full width, the origin pill included, so
+     the column reads as one set rather than three widths. */
   .places-controls { flex-direction: column; }
   .places-country { max-width: none; }
+  .places-controls .origin-picker { width: 100%; }
+  .places-controls .origin-btn { width: 100%; }
+  .places-controls .origin-btn-label { flex: 1; }
+  .places-lifestyle { width: 100%; }
 }
 
 @media (prefers-reduced-motion: reduce) {

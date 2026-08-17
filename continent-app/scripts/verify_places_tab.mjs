@@ -172,6 +172,31 @@ const deskCols = await desk.locator('.places-list').evaluate(
 check('desktop: cards flow in two columns', deskCols === 2, `${deskCols} columns`);
 await desk.screenshot({ path: 'shots/places-desktop.png' });
 
+// ── Priced from: the origin every price here was computed from ──────────
+const originBtn = desk.locator('.places-controls .origin-btn');
+check('priced-from picker sits in the controls row', await originBtn.isVisible().catch(() => false),
+  (await originBtn.innerText().catch(() => '')).replace(/\n/g, ' '));
+const beforeOrigin = await desk.locator('.places-ccard .places-card-sub').first().innerText().catch(() => '');
+await originBtn.click();
+await desk.waitForTimeout(500);
+await desk.locator('.origin-search').fill('Barcelona');
+await desk.waitForTimeout(600);
+await desk.locator('.origin-opt').first().click();
+await desk.waitForTimeout(2500);
+check('picking an origin names it on the button', /barcelona/i.test(await originBtn.innerText().catch(() => '')),
+  (await originBtn.innerText().catch(() => '')).replace(/\n/g, ' '));
+const afterOrigin = await desk.locator('.places-ccard .places-card-sub').first().innerText().catch(() => '');
+check('catalogue prices follow the origin', beforeOrigin !== afterOrigin && /€/.test(afterOrigin),
+  `${beforeOrigin} -> ${afterOrigin}`);
+await desk.screenshot({ path: 'shots/places-origin.png' });
+
+// ── The trips index lost its intro paragraph ─────────────────────────────
+await desk.locator('.places-cat', { hasText: /^trips$/i }).click();
+await desk.waitForTimeout(1200);
+check('trips index carries no intro paragraph', await desk.locator('.places-intro').count() === 0);
+await desk.locator('.places-cat', { hasText: /general/i }).click();
+await desk.waitForTimeout(800);
+
 // ── Lifestyle: the stay tier every price here was computed at ────────────
 const pill = desk.locator('.places-lifestyle');
 check('lifestyle pill sits in the controls row', await pill.isVisible().catch(() => false));

@@ -24,6 +24,10 @@ import { useI18n } from '../i18n/index.jsx';
 export function OriginPicker({
   data, origin, onChangeOrigin,
   mode = 'plane', driveHome = null, onChangeDriveHome, askOpen = 0, onOpenChange,
+  // The caption over the picked origin. Defaults to the map's terse "from";
+  // surfaces that show prices next to it (the Destinations tab) say what the
+  // origin is actually doing there, "priced from".
+  fromLabel = null,
 }) {
   const { t } = useI18n();
   const [open, setOpen] = useState(false);
@@ -106,7 +110,7 @@ export function OriginPicker({
             the wizard and trip planner reuse it inside their own labelled rows. */}
         {isCar && <span className="origin-btn-icon" aria-hidden="true"><CarIcon size={16} /></span>}
         <span className="origin-btn-label">
-          <span className="origin-btn-from">{isCar ? t('origin.drivingFrom') : t('origin.from')}</span>
+          <span className="origin-btn-from">{fromLabel || (isCar ? t('origin.drivingFrom') : t('origin.from'))}</span>
           <b>{label}</b>
         </span>
         <span className="origin-btn-caret" aria-hidden="true">▾</span>

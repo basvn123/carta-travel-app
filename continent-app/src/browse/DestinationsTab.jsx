@@ -6,6 +6,7 @@ import { fareProv, estPrefix, FromWord } from '../components/FareProvenance.jsx'
 import { loadTrails, loadTrailsIndex } from '../lib/trails.js';
 import { associateTrip, haversineKm, tripCentre, tripKindKey, tripThemes } from '../lib/trailCards.js';
 import { useI18n } from '../i18n/index.jsx';
+import { OriginPicker } from '../components/OriginPicker.jsx';
 import {
   SearchIcon, ChevronRightIcon, RouteIcon, SkylineIcon, SuitcaseIcon, BootIcon,
   BeachIcon, MountainIcon, BedIcon,
@@ -180,6 +181,7 @@ function CountryCard({ cc, name, sub, img, onPick }) {
 export function DestinationsTab({
   data, pricedAll, priceMode = 'total', availableCountries = [], onSelectDest,
   stayTier = 'home', onOpenLifestyle,
+  origin, onChangeOrigin, transportMode = 'plane', driveHome = null, onChangeDriveHome,
 }) {
   const { t, lang } = useI18n();
   const scrollRef = useRef(null);
@@ -483,6 +485,21 @@ export function DestinationsTab({
               <option key={cc} value={cc}>{name}</option>
             ))}
           </select>
+          {/* Where the trip starts: the flight (or the drive) is the biggest
+              line in every price on this tab, and it changes with the airport,
+              so the origin these figures were priced from is named here and
+              switchable without a trip to the map. */}
+          {onChangeOrigin && (
+            <OriginPicker
+              data={data}
+              origin={origin}
+              onChangeOrigin={onChangeOrigin}
+              mode={transportMode === 'car' ? 'car' : 'plane'}
+              driveHome={driveHome}
+              onChangeDriveHome={onChangeDriveHome}
+              fromLabel={t('places.pricedFrom')}
+            />
+          )}
           {/* Every price on this tab is a whole trip at the traveller's own
               stay tier, so the tier it was priced at belongs on screen beside
               the numbers, and one tap opens the panel that changes it. */}
@@ -557,7 +574,6 @@ export function DestinationsTab({
           <div className="places-list">
             {showCountryIndex && (
               <>
-                <p className="places-intro">{t('places.trailsIntro')}</p>
                 {tripCountries.map((c) => (
                   <CountryCard
                     key={c.cc}

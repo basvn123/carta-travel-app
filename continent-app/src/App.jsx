@@ -844,6 +844,11 @@ function TravelApp() {
             onSelectDest={(id) => { setActiveTab('map'); openDetail(id); }}
             stayTier={choices.stay_tier || 'home'}
             onOpenLifestyle={() => setLifestyleOpen(true)}
+            origin={choices.origin}
+            onChangeOrigin={setOrigin}
+            transportMode={choices.transport_mode || 'plane'}
+            driveHome={choices.drive_home}
+            onChangeDriveHome={setDriveHome}
           />
         </div>
       )}
