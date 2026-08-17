@@ -46,6 +46,13 @@ const POI_SPARK_ICON = S('<path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5
 // Festivals and dated events, which the catalogue structurally cannot hold.
 const POI_EVENT_ICON = S('<path d="M4 8h16v3a2 2 0 0 0 0 4v3H4v-3a2 2 0 0 0 0-4z"/><path d="M14 8v12"/>');
 
+// The pushpin for places that are marked rather than sequenced (the travel
+// record). Colours live in the stylesheet so it stays on the palette.
+const PUSHPIN_SVG = '<svg class="trip-pin-push" viewBox="0 0 24 30" aria-hidden="true">'
+  + '<path class="trip-pin-needle" d="M10.5 16h3L12 29.6z"/>'
+  + '<circle class="trip-pin-head" cx="12" cy="9.6" r="8.4"/>'
+  + '<circle class="trip-pin-dot" cx="12" cy="9.6" r="3.1"/></svg>';
+
 /**
  * A chevron for the route line, drawn pixel by pixel into an RGBA buffer.
  * A line alone says which places are joined; it doesn't say which way the day
@@ -410,10 +417,16 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
         el.title = p.stay ? 'Your stay' : (p.city || `Stop ${no}`);
         const shape = document.createElement('span');
         shape.className = 'trip-pin-shape';
-        const num = document.createElement('span');
-        num.className = 'trip-pin-no';
-        num.textContent = bare ? '' : String(no);
-        shape.appendChild(num);
+        if (p.plain) {
+          // A pushpin, not a numbered teardrop: a round head on a needle
+          // whose tip is the coordinate (the marker is anchored bottom).
+          shape.innerHTML = PUSHPIN_SVG;
+        } else {
+          const num = document.createElement('span');
+          num.className = 'trip-pin-no';
+          num.textContent = bare ? '' : String(no);
+          shape.appendChild(num);
+        }
         el.appendChild(shape);
         el.addEventListener('click', (e) => {
           e.stopPropagation();

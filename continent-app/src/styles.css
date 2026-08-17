@@ -959,6 +959,35 @@ input, select {
   font-size: 12px;
   font-weight: 700;
 }
+/* A place that is marked, not sequenced (the travel record): a pushpin, head
+   on a needle, its tip on the coordinate. The needle is what makes it read as
+   stuck into the map rather than as another route stop. */
+.trip-pin-plain { width: 24px; height: 30px; }
+.trip-pin-plain .trip-pin-shape {
+  transform: translate(var(--pin-dx, 0px), var(--pin-dy, 0px));
+  background: none;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+.trip-pin-push {
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 2px 3px rgba(15, 23, 42, 0.32));
+}
+/* The lifted-off-a-cluster shadow belongs to the pin's SHAPE, which for a
+   pushpin is a transparent box: a box-shadow on it draws a grey rectangle
+   floating next to the pin. It goes on the glyph instead. */
+.trip-pin-plain.nudged .trip-pin-shape { box-shadow: none; }
+.trip-pin-plain.nudged .trip-pin-push { filter: drop-shadow(0 3px 5px rgba(15, 23, 42, 0.42)); }
+.trip-pin-head { fill: var(--accent); }
+.trip-pin-dot { fill: #fff; opacity: 0.34; }
+.trip-pin-needle { fill: var(--ink-soft); }
+.trip-pin-plain.active .trip-pin-head { fill: var(--ink); }
+.trip-pin-plain.active .trip-pin-shape {
+  transform: translate(var(--pin-dx, 0px), var(--pin-dy, 0px)) scale(1.12);
+}
+
 /* The traveller's own stay: a quiet ink pin without a stop number */
 .trip-pin-stay {
   width: 18px; height: 18px;
@@ -8923,7 +8952,7 @@ input, select {
 .saved-map-section { padding-bottom: 16px; }
 .saved-map {
   position: relative;
-  height: 170px;
+  height: 220px;
   border: 1px solid var(--rule);
   border-radius: 14px;
   overflow: hidden;
@@ -9276,7 +9305,7 @@ input, select {
 
 /* Desktop: the roomier sheet lets the imagery breathe. */
 @media (min-width: 881px) {
-  .saved-map { height: 208px; }
+  .saved-map { height: 260px; }
   .uptrip-open { height: 208px; }
   .fav-grid { gap: 12px; }
   .uptrip-title { font-size: 25px; }

@@ -861,8 +861,8 @@ export function SavedTripsPanel({ data, onClose, onLoadTrip, onLoadTripPlan, onO
                     scrollZoom={false}
                     easeToSelected={false}
                     padBottom={0}
-                    fitMaxZoom={5.5}
-                    fitPadding={{ top: 42, left: 42, right: 42, bottom: 42 }}
+                    fitMaxZoom={7}
+                    fitPadding={{ top: 18, left: 18, right: 18, bottom: 18 }}
                     onSelectStop={(i) => visitedItems[i]?.open()}
                   />
                 </Suspense>
