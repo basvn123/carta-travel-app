@@ -400,6 +400,71 @@ into priced rows, and anything not copied there does not exist to this tab.
 
 ---
 
+## The 2026-08-17 expansion: 1,570 -> 3,038
+
+`promote_place_candidates.py --per-country 200 --min-worth 0.40` produced 1,468
+specs across 34 countries, inserted by `apply_new_gems.py`. 572 carry a
+designation. The split: 595 bookable by air, 775 drive-or-browse, 98
+browse-only. Flight reachability is deliberately NOT a requirement, because
+requiring it was silently discarding exactly the small places the catalogue was
+missing.
+
+Three guards earn their place in that run, each from something that got
+through:
+
+- **6 km separation** between promoted places. Le Chesnay sits 2 km from
+  Versailles and matched the Versailles park's own UNESCO components from
+  1.87 km away, so both were promoted off the same palace.
+- **District-name rule.** "Altstadt Nord" is central Cologne and matched the
+  cathedral at 0.28 km. It slipped the coverage check only because Carta pins
+  Cologne at its airport, 16 km out. The parent-city test missed it too, since
+  the gazetteer says "Koln" where the catalogue says "Cologne", so the name
+  itself is the signal.
+- **No Wikipedia coordinate snap.** The original recipe re-resolves each
+  place's coordinates from a Wikipedia title. Sensible for a dozen hand-typed
+  specs, a hazard for 1,468 machine-generated ones, and unnecessary: the
+  GeoNames coordinates are already the better data.
+
+### Uncurated destinations are no longer punished for being new
+
+1,468 places arrived with no entry in `curated_appeal.json`, and the fallback
+scoring path had been guessed rather than fitted. Measured against the curated
+set, the hand-picked blend scored those destinations **1.78 points** below what
+they actually get: every new place would have entered a tier and a half too
+low, purely for being new. That is the same structural unfairness as marking a
+village down for being small, pointed somewhere else.
+
+The fallback is now a least-squares fit of the real score onto acclaim, beauty
+and highlights, computed at scoring time over every curated destination so it
+cannot go stale. Mean absolute error 0.52, against 2.02 for the guess. The
+coefficients ship in `meta.rating_model.fallback_fit`.
+
+### Still owed to these 1,468
+
+Photos and POIs. The image harvest died when the disk hit zero bytes free, and
+the POI harvest never started. Until POIs land they score with `highlights = 0`
+and average 5.75 against the curated 6.69.
+
+**Resume once there is disk headroom (a few GB):**
+
+```
+python pipeline/harvest_images.py         # ~1,468 lookups, resumable
+python pipeline/harvest_activities.py     # the long one, hours
+python pipeline/apply_place_layer.py      # depth reads the new POIs
+python pipeline/apply_rating_layer.py     # highlights + refitted fallback
+cd continent-app && npm run data && npm run build
+node scripts/verify_place_classes.mjs
+```
+
+A note paid for in a destroyed cache: `harvest_images.py` checkpointed with
+`Path.write_text`, which truncates the target and then streams. When the disk
+filled mid-checkpoint it left a 0-byte file where 24,803 cached lookups had
+been (recovered from git). That call site, and the master and served-copy
+writes in `apply_rating_layer.py`, `apply_place_layer.py` and
+`apply_designations.py`, now use `pipeline_io.atomic_write_json`, which builds
+a temp file beside the target and renames it. **40 pipeline scripts still use
+the truncating pattern** and are one full disk away from the same loss.
+
 ## Re-running the whole thing
 
 ```

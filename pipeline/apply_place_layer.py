@@ -109,7 +109,7 @@ def main():
         served["meta"]["place_model"] = place_layer.PLACE_MODEL
         served["meta"]["schema_version"] = max(
             served["meta"].get("schema_version", 0), 16)
-        path.write_text(json.dumps(served, ensure_ascii=False), encoding="utf-8")
+        atomic_write_json(path, served, indent=None, separators=(",", ":"))
         print(f"  {path.name}: mirrored place onto {n} dests")
 
 

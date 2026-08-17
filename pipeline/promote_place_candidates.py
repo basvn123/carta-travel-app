@@ -62,12 +62,50 @@ ROOT = Path(__file__).resolve().parents[1]
 MASTER = ROOT / "app_data" / "app_data.json"
 GAPS = ROOT / "data" / "reports" / "coverage_gaps.json"
 
-ANCHOR_MAX_KM = 220.0     # beyond this a gem's copied fares mean nothing
+# How far a gem may sit from the airport whose costs and routes it copies.
+# Generous on purpose: an anchor is needed because build_record copies its
+# cost basket and accommodation model, NOT because the place must be flyable.
+# A gem whose anchor has no fares simply enters browse-only, which is a real
+# and useful state - plenty of Europe's best small places have no airport
+# within an hour and are reached by train, bus or car.
+ANCHOR_MAX_KM = 400.0
+
+# Two promoted places this close together are one place twice. Applied greedily
+# in worth order, so the better of a pair survives. Le Chesnay is why: it sits
+# 2 km from Versailles and matched the Versailles park's own UNESCO components
+# from 1.87 km away, so both were promoted off the same palace.
+MIN_SEPARATION_KM = 6.0
+
+# ...and this catches the other half of the same problem. A candidate whose
+# parent city is ALREADY in the catalogue is that city's old town, not a new
+# destination: "Altstadt Nord" is central Cologne, matched Cologne cathedral at
+# 0.28 km, and slipped the coverage check only because Carta's Cologne entry is
+# pinned at the airport 16 km out (see the airport-anchored-centres note).
+SKIP_PARENT_ALREADY_SHIPPED = True
+
+# Names that describe a PART of a city rather than naming a place. The
+# parent-city test misses these whenever the gazetteer and the catalogue
+# disagree on the city's name, which is often: "Altstadt Nord" is central
+# Cologne, but its parent reads "Koln" where Carta says "Cologne". A district
+# called "old town north" is never a destination in its own right, in any
+# language, so the name itself is the reliable signal.
+DISTRICT_NAME_WORDS = {
+    "altstadt", "neustadt", "innenstadt", "oldtown", "citycentre", "citycenter",
+    "centro", "centrum", "centre", "center", "staremiasto", "stadtmitte",
+    "cascoantiguo", "cascoviejo", "ciutatvella", "cittavecchia", "vieilleville",
+    "binnenstad", "gamlastan", "indreby", "kaupunginosa", "sentrum",
+}
 DRIVE_KMH = 62.0
 ROAD_FACTOR = 1.25
 EUR_PER_KM = 0.42
 EUR_MIN, EUR_MAX = 5, 55
-MIN_WORTH = 0.45          # floor for anything promoted, whatever the flags say
+# Absolute floor, whatever the flags say. Lowered 0.45 -> 0.40 for the Europe
+# wide expansion: sampling that band found Plus Beaux Villages (Castelnau-de-
+# Montmiral, Crancot), Borghi piu belli (Cetona), Alpine villages (Samoens at
+# 8.8x its size) and heritage towns (Pontarlier) sitting just under the old cut,
+# alongside ordinary but real market towns. For a catalogue meant to cover the
+# continent that is the right trade; below 0.40 it thins out fast.
+MIN_WORTH = 0.40
 
 # Registers -> the catalogue's existing category vocabulary.
 KIND_CATEGORIES = {
@@ -91,6 +129,13 @@ CAT_CATEGORIES = {
 }
 SIZE_CATEGORY = {"metro": "city", "city": "city", "town": "town",
                  "village": "village", "area": "nature"}
+
+
+def norm_city(name):
+    """Loose city-name key for "is this already shipped" tests."""
+    s = unicodedata.normalize("NFKD", name or "")
+    s = "".join(c for c in s if not unicodedata.combining(c))
+    return re.sub(r"[^a-z0-9]+", "", s.lower())
 
 
 def slugify(name):
@@ -241,8 +286,12 @@ def main():
         if args.top:
             rows = rows[:args.top]
 
+    shipped_cities = {norm_city(d.get("city")) for d in dests.values()}
+
     specs, skipped = [], []
     seen = set()
+    accepted_pts = []
+    rows = sorted(rows, key=lambda r: -r["worth"])   # greedy: best wins a spot
     for r in rows:
         # A cluster has a POI's name, not a place's: never promotable unnamed.
         if r["track"] == "cluster":
@@ -252,15 +301,29 @@ def main():
         if slug in existing_slugs or slug in seen:
             skipped.append((r["name"], f"slug '{slug}' already exists"))
             continue
+        if norm_city(r["name"]) in DISTRICT_NAME_WORDS or any(
+                w in DISTRICT_NAME_WORDS for w in re.findall(r"[a-z]+", (r["name"] or "").lower())):
+            skipped.append((r["name"], "names a district, not a place"))
+            continue
+        if SKIP_PARENT_ALREADY_SHIPPED and norm_city(r.get("parent_city")) in shipped_cities:
+            skipped.append((r["name"], f"is a district of {r['parent_city']}, already shipped"))
+            continue
+        near = next((p for p in accepted_pts
+                     if haversine(r["lat"], r["lon"], p[0], p[1]) < MIN_SEPARATION_KM), None)
+        if near:
+            skipped.append((r["name"], f"within {MIN_SEPARATION_KM:.0f} km of {near[2]}"))
+            continue
         best = pick_anchor(r["lat"], r["lon"], r["iso2"], anchors)
         if not best:
             skipped.append((r["name"], f"no anchor within {ANCHOR_MAX_KM:.0f} km"))
             continue
         _cost, anchor_id, km, reachable = best
-        if not reachable:
-            skipped.append((r["name"], f"nearest anchor {anchor_id} is unreachable"))
-            continue
+        # An unreachable anchor is no longer a rejection. The gem enters
+        # browse-only and is still worth having: it prices its stay, its food
+        # and its local transport, and the trip planner can still route to it
+        # overland. Refusing it only hid the places nobody flies to.
         seen.add(slug)
+        accepted_pts.append((r["lat"], r["lon"], r["name"]))
         size_class = size_class_for(r["pop"])
         cats = categories_for(r, size_class)
         unknown = [c for c in cats if vocab and c not in vocab]

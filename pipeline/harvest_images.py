@@ -224,10 +224,16 @@ def harvest(dests, resume=True):
         print(f"  [{n}/{len(todo)}] {tag} {d.get('city')}, {d.get('country')}"
               + (f" -> {res['title']}" if res else ""))
         if n % 25 == 0:
-            CACHE.write_text(json.dumps(cache, ensure_ascii=False, indent=1), encoding="utf-8")
+            # atomic_write_json, not write_text: write_text truncates the file
+            # and THEN streams, so a failure mid-write destroys what was there.
+            # On 2026-08-17 this checkpoint ran the disk to zero bytes free and
+            # took a 24,803-entry cache with it, which had to be recovered from
+            # git. The atomic writer builds a temp file beside the target and
+            # renames it, so a full disk costs you the new data, never the old.
+            atomic_write_json(CACHE, cache)
         time.sleep(DELAY_S)
     CACHE.parent.mkdir(exist_ok=True)
-    CACHE.write_text(json.dumps(cache, ensure_ascii=False, indent=1), encoding="utf-8")
+    atomic_write_json(CACHE, cache)
     hits = sum(1 for v in cache.values() if v)
     print(f"Harvest done: {hits}/{len(cache)} have an image. Cache: {CACHE}")
     return cache

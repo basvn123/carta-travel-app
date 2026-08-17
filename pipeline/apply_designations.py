@@ -161,7 +161,7 @@ def main():
                 d["designations"] = found[did]
                 n += 1
         served["meta"]["designation_model"] = DESIGNATION_MODEL
-        path.write_text(json.dumps(served, ensure_ascii=False), encoding="utf-8")
+        atomic_write_json(path, served, indent=None, separators=(",", ":"))
         print(f"  {path.name}: mirrored designations onto {n} dests")
 
 

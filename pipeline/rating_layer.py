@@ -239,7 +239,56 @@ def acclaim01(dest):
     return min(1.0, score)
 
 
-def blend_score(dest, appeal_rec, scales=None):
+# Used only if the fit cannot run (fewer than FALLBACK_MIN_N curated anchors).
+# These are the coefficients the fit produced on the 1,570-destination curated
+# set, kept as a documented starting point rather than a magic number.
+FALLBACK_DEFAULT = (0.098, 0.322, 0.085, 4.146)
+FALLBACK_MIN_N = 200
+
+
+def fit_fallback(dests, appeal, scales):
+    """Least-squares fit of the real score onto acclaim, beauty, highlights.
+
+    Fitted on the destinations that DO have a curated appeal, then applied to
+    the ones that do not, so a place nobody has scored by hand still lands on
+    the same scale as its neighbours instead of a tier and a half below them.
+    Returns (w_acclaim, w_beauty, w_highlights, intercept).
+    """
+    X, y = [], []
+    for did, d in dests.items():
+        rec = appeal.get(did)
+        if not rec or rec.get("appeal") is None:
+            continue
+        a = float(rec["appeal"])
+        if scales:
+            a = appeal_scale.rescale(a, appeal_scale.class_of(d), scales)
+        beauty = (d.get("beauty") or {}).get("score", 0) or 0.0
+        real = (WEIGHTS["appeal"] * a + WEIGHTS["beauty"] * beauty
+                + WEIGHTS["acclaim"] * acclaim01(d) * 10.0
+                + WEIGHTS["highlights"] * highlights01(d) * 10.0)
+        X.append([acclaim01(d) * 10.0, beauty, highlights01(d) * 10.0, 1.0])
+        y.append(real)
+    if len(X) < FALLBACK_MIN_N:
+        return FALLBACK_DEFAULT
+    n = 4
+    xtx = [[sum(X[k][i] * X[k][j] for k in range(len(X))) for j in range(n)]
+           for i in range(n)]
+    xty = [sum(X[k][i] * y[k] for k in range(len(X))) for i in range(n)]
+    m = [xtx[i][:] + [xty[i]] for i in range(n)]
+    for i in range(n):                      # Gaussian elimination, partial pivot
+        piv = max(range(i, n), key=lambda r: abs(m[r][i]))
+        m[i], m[piv] = m[piv], m[i]
+        if not m[i][i]:
+            return FALLBACK_DEFAULT
+        for r in range(n):
+            if r != i:
+                f = m[r][i] / m[i][i]
+                for c in range(i, n + 1):
+                    m[r][c] -= f * m[i][c]
+    return tuple(round(m[i][n] / m[i][i], 4) for i in range(n))
+
+
+def blend_score(dest, appeal_rec, scales=None, fallback=None):
     """Absolute 0-10 score. Falls back to evidence-led scoring when a
     destination has no curated appeal entry - which is no longer a
     "shouldn't happen": every place the coverage engine promotes arrives
@@ -261,11 +310,20 @@ def blend_score(dest, appeal_rec, scales=None):
                  + WEIGHTS["beauty"] * beauty
                  + WEIGHTS["highlights"] * highlights)
     else:
-        # No curator has seen this one yet. Re-weight over what we can measure
-        # rather than scoring the missing judgement as zero, and let acclaim
-        # carry the most weight, because it is the only term here that is
-        # somebody's actual opinion of the place.
-        total = 0.42 * acclaim + 0.34 * beauty + 0.24 * highlights
+        # No curator has seen this one yet, which since the 2026-08 expansion
+        # is 1,468 destinations rather than a rounding error. Guessing weights
+        # here was measurably wrong: a hand-picked 0.42/0.34/0.24 blend scored
+        # the CURATED destinations 1.78 points below what they actually get,
+        # so every uncurated place would have entered the catalogue a tier and
+        # a half too low, purely for being new. That is the same structural
+        # unfairness as marking a village down for being small.
+        #
+        # `fallback` is therefore fitted, not chosen: least squares of the real
+        # score against these three terms over every curated destination, run
+        # at scoring time so it can never go stale. Mean absolute error 0.52
+        # against the hand-picked blend's 2.02.
+        fb = fallback or FALLBACK_DEFAULT
+        total = (fb[0] * acclaim + fb[1] * beauty + fb[2] * highlights + fb[3])
         appeal = None
     comps = {"beauty": round(beauty / 10.0, 3),
              "highlights": round(highlights / 10.0, 3),
@@ -305,13 +363,20 @@ def compute_ratings(dests):
     appeal = load_curated_appeal()
 
     scales = appeal_scale.scales_for(dests, appeal)
+    fallback = fit_fallback(dests, appeal, scales)
+    RATING_MODEL["fallback_fit"] = {
+        "coefficients": list(fallback),
+        "terms": ["acclaim", "beauty", "highlights", "intercept"],
+        "note": ("fitted at scoring time on the curated destinations, applied "
+                 "to the ones with no curated appeal"),
+    }
 
     ids = list(dests.keys())
     scores, comps, views_list, curated_gem = [], [], [], []
     for did in ids:
         d = dests[did]
         rec = appeal.get(did)
-        s, c = blend_score(d, rec, scales)
+        s, c = blend_score(d, rec, scales, fallback)
         scores.append(s)
         comps.append(c)
         views_list.append(pv.get(did) or 0)

@@ -363,7 +363,7 @@ def sitelink_counts(qids):
         for q in chunk:
             cache.setdefault(q, 0)  # deleted/redirected entity: no fame
         SITELINK_CACHE.parent.mkdir(exist_ok=True)
-        SITELINK_CACHE.write_text(json.dumps(cache), encoding="utf-8")
+        atomic_write_json(SITELINK_CACHE, cache, indent=None)
         time.sleep(DELAY_S)
     return {q: cache.get(q, 0) for q in qids if q}
 
@@ -727,7 +727,7 @@ def _run_enrich_pass(cache, lang, items):
                     if card.get(k):
                         it[k] = card[k]
                 hits += 1
-        CACHE.write_text(json.dumps(cache, ensure_ascii=False, indent=1), encoding="utf-8")
+        atomic_write_json(CACHE, cache)
         done = min(gi * 50 * 20, len(names))
         print(f"  {lang}: block {gi}: {done}/{len(names)} names, {hits} matches so far")
     return hits
@@ -813,7 +813,7 @@ def harvest_batched(dests, todo):
         print(f"  geosearch [{n}/{len(thin)}] {d.get('city')}: "
               f"{len(res['items']) if res else 0}")
         if n % 20 == 0:
-            CACHE.write_text(json.dumps(cache, ensure_ascii=False, indent=1), encoding="utf-8")
+            atomic_write_json(CACHE, cache)
         time.sleep(DELAY_S)
 
     # Clean any leftover placeholders (dests with neither sees nor geosearch).
@@ -821,7 +821,7 @@ def harvest_batched(dests, todo):
         if isinstance(v, dict) and "_voy_spare" in v:
             cache[did] = None
     CACHE.parent.mkdir(exist_ok=True)
-    CACHE.write_text(json.dumps(cache, ensure_ascii=False, indent=1), encoding="utf-8")
+    atomic_write_json(CACHE, cache)
     hits = sum(1 for v in cache.values() if v)
     print(f"Harvest done: {hits}/{len(cache)} have activities. Cache: {CACHE}")
     return cache
@@ -885,10 +885,10 @@ def harvest(dests, resume=True):
               f"{cnt} ({res['source'] if res else 'MISS'})")
         if n % 25 == 0:
             CACHE.parent.mkdir(exist_ok=True)
-            CACHE.write_text(json.dumps(cache, ensure_ascii=False, indent=1), encoding="utf-8")
+            atomic_write_json(CACHE, cache)
         time.sleep(OTM_DELAY_S)
     CACHE.parent.mkdir(exist_ok=True)
-    CACHE.write_text(json.dumps(cache, ensure_ascii=False, indent=1), encoding="utf-8")
+    atomic_write_json(CACHE, cache)
     hits = sum(1 for v in cache.values() if v)
     print(f"Harvest done: {hits}/{len(cache)} have activities. Cache: {CACHE}")
     return cache
