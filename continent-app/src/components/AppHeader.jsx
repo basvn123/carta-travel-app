@@ -1,11 +1,14 @@
 import React from 'react';
 import Logo from './Logo.jsx';
 import { useI18n } from '../i18n/index.jsx';
-import { PersonIcon, HomeIcon, MapPinIcon, GlobeIcon, RouteIcon, ListDayIcon, BookmarkIcon, TicketIcon } from './Icons.jsx';
+import { PersonIcon, HomeIcon, CompassIcon, GlobeIcon, RouteIcon, ListDayIcon, BookmarkIcon, TicketIcon } from './Icons.jsx';
 
 const NAV_ITEMS = [
   { key: 'home', labelKey: 'nav.home', Icon: HomeIcon },
-  { key: 'map', labelKey: 'nav.map', Icon: MapPinIcon },
+  // The tab is still keyed 'map' (state, share links, deep links all use it),
+  // but it reads Explore here exactly as it does in the phone bar: one name
+  // for one section, whatever the window width.
+  { key: 'map', labelKey: 'nav.explore', Icon: CompassIcon },
   { key: 'places', labelKey: 'nav.places', Icon: GlobeIcon },
   { key: 'trip', labelKey: 'nav.trip', Icon: RouteIcon },
   { key: 'day', labelKey: 'nav.day', Icon: ListDayIcon },
@@ -33,9 +36,9 @@ function AccountButton({ user, onOpenAccount }) {
 // filters in the middle, and account access on the right, a single row, not
 // a separate header stacked above the filter bar. Home is a first-class tab
 // here (the brand mark still works as a shortcut). The tabs are desktop-only;
-// on mobile they collapse (CSS) and BottomNav takes over as the Home/Map/
+// on mobile they collapse (CSS) and BottomNav takes over as the Home/Explore/
 // Trip planner/Day planner switch. `children` is the FilterBar, injected only
-// on the Map tab.
+// on the Explore tab.
 //
 // The "travelling from" picker used to live in this row's right edge. It now
 // floats over the map itself, level with the Destinations pill (see

@@ -719,7 +719,12 @@ function TravelApp() {
               when the list is collapsed, and the "travelling from" picker,
               which needs the room here to ask a real question in Drive mode
               rather than being a 12px pill lost in the header. */}
-          <div className="map-toolrow" onClick={(e) => e.stopPropagation()}>
+          <div
+            /* pop-open lifts the strip over the top bar while the picker's
+               popover is down; see the z-index note on .map-toolrow. */
+            className={`map-toolrow ${originPopOpen ? 'pop-open' : ''}`}
+            onClick={(e) => e.stopPropagation()}
+          >
             <button
               className="list-reopen"
               onClick={() => setListCollapsed(false)}

@@ -690,17 +690,23 @@ input, select {
   .drive-ask { top: calc(var(--filter-h) + 96px); left: 12px; right: 12px; width: auto; }
   /* Phones: the anchored popover overflowed the screen when its trigger sat
      mid-layout (e.g. the wizard's "Flying from" row). Pin it to the viewport
-     instead so the full search + list is always on screen. */
+     instead so the full search + list is always on screen. Its top follows the
+     measured top bar rather than a fixed 76px, which the trip-kind rail grew
+     past - the list started behind the chips. */
   .origin-pop {
     position: fixed;
     left: 12px;
     right: 12px;
-    top: 76px;
+    top: calc(var(--filter-h) + 10px);
     width: auto;
     max-width: none;
     max-height: min(65vh, calc(100vh - 140px));
     z-index: 90;
   }
+  /* ...and it has to outrank the map-control rule above (two classes, so a
+     media query alone does not win it): on a phone the list is a sheet across
+     the viewport, not a dropdown hung off the left edge of the pill. */
+  .map-toolrow .origin-pop { left: 12px; right: 12px; }
 }
 
 /* ───────── Bottom nav, MOBILE only: Destinations | Explore | plus | My trips
@@ -4808,6 +4814,12 @@ input, select {
   gap: 10px;
   pointer-events: none;
 }
+/* The strip is a stacking context, so nothing inside it can climb over the top
+   bar (z 25) however high its own z-index is - which is what buried the From
+   popover under the trip-kind chips. Lift the whole strip for as long as the
+   popover is down, and only then, so the header's filter tray keeps the map to
+   itself the rest of the time. */
+.map-toolrow.pop-open { z-index: 26; }
 .map-toolrow > * { pointer-events: auto; }
 .app.list-collapsed .map-toolrow { left: 12px; }
 

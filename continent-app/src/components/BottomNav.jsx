@@ -72,7 +72,7 @@ export function BottomNav({
           className={`bottom-nav-item ${activeTab === 'map' && !overlayOpen ? 'active' : ''}`}
           aria-current={activeTab === 'map' && !overlayOpen ? 'page' : undefined}
           onClick={() => goTab('map')}
-          title={t('nav.map')}
+          title={t('nav.explore')}
         >
           <CompassIcon size={22} className="bottom-nav-icon" />
           <span className="bottom-nav-label">{t('nav.explore')}</span>

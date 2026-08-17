@@ -1071,7 +1071,7 @@ export function HomePage({
               <h3>{t('home.footProduct')}</h3>
               <ul>
                 <li>
-                  <button className="home-footer-link" onClick={onExplore}>{t('nav.map')}</button>
+                  <button className="home-footer-link" onClick={onExplore}>{t('nav.explore')}</button>
                 </li>
                 <li>
                   <button className="home-footer-link" onClick={onPlanTrip}>{t('nav.trip')}</button>
