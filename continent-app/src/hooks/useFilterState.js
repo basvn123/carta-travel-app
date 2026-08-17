@@ -26,6 +26,10 @@ export function useFilterState(init) {
   const [gemOnly, setGemOnly] = useState(init.gemOnly ?? false);
   const [unescoOnly, setUnescoOnly] = useState(init.unescoOnly ?? false);
   const [topBeachOnly, setTopBeachOnly] = useState(init.topBeachOnly ?? false);
+  // The map's size toggle: keep only the cities (place.class city/metro) and
+  // drop the towns, villages and areas. Lives here rather than in the filter
+  // tray because it is a map control, next to the origin picker.
+  const [bigOnly, setBigOnly] = useState(init.bigOnly ?? false);
   // Quick "best of" shortcut: { by: 'price' | 'beauty', n } or null. Trims the
   // (already filtered) results down to the N best by that metric, in list + map.
   const [topPick, setTopPick] = useState(init.topPick ?? null);
@@ -43,6 +47,7 @@ export function useFilterState(init) {
     gemOnly, setGemOnly,
     unescoOnly, setUnescoOnly,
     topBeachOnly, setTopBeachOnly,
+    bigOnly, setBigOnly,
     topPick, setTopPick,
     reachHours, setReachHours,
     sortKey, setSortKey,

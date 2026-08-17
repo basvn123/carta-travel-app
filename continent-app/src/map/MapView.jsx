@@ -59,6 +59,20 @@ const FAR_ZOOM = 6;
 const FAR_KEEP = 6;
 const FAR_CELL_DEG = 2;
 const FAR_GATE = ['<', ['get', 'gr'], FAR_KEEP];
+
+// Cards that open themselves. Past CARD_ZOOM the map is no longer a continent
+// of prices, it is a handful of candidates, and a €-pill is a poor way to
+// choose between them. From there the best-rated few open their hover card
+// unprompted: photo, name, rating, how you get there, price. Zoom back out and
+// they close again, because at that scale they would cover the map they are
+// meant to explain. Kept deliberately small: these are DOM popups over a WebGL
+// map, and the whole reason the pins are layers is that DOM does not scale.
+const CARD_ZOOM = 8;
+const CARD_MAX = 4;
+// The card's own box (see .tip-card: 226px wide, ~200px tall with its photo),
+// plus a gutter. Used to keep two cards from covering each other.
+const CARD_W = 226 + 10;
+const CARD_H = 200 + 10;
 // Carto Voyager ships Montserrat glyphs; the fallbacks cover style changes.
 const LABEL_FONT = ['Montserrat Medium', 'Open Sans Regular', 'Noto Sans Regular'];
 
@@ -84,6 +98,10 @@ export function MapView({
   const dataRef = useRef({ pricedFC: EMPTY_FC, dotsFC: EMPTY_FC });
   const onSelectRef = useRef(onSelect);
   onSelectRef.current = onSelect;
+  // The cards that open themselves once you are zoomed in far enough, by dest
+  // id, and the function that recomputes which ones those are.
+  const autoCardsRef = useRef(new Map());
+  const refreshCardsRef = useRef(() => {});
   // The hover card is plain DOM built inside a once-only map handler, so it
   // reads the translator through a ref to follow live language switches.
   const { t } = useI18n();
@@ -130,6 +148,9 @@ export function MapView({
       map.on('mousemove', layer, (e) => {
         const f = e.features?.[0];
         if (!f?.properties?.tCity) return;
+        // This one already has a card open on the map; a second copy of it
+        // under the cursor is just the same card twice.
+        if (autoCardsRef.current.has(f.properties.id)) { tip.remove(); return; }
         const [lon, lat] = f.geometry?.coordinates || [];
         if (!Number.isFinite(lon) || !Number.isFinite(lat)) return;
         // renderTip builds the card from DOM nodes + textContent - data never
@@ -140,6 +161,11 @@ export function MapView({
     }
 
     mapRef.current = map;
+    // Verify seam: the headless map checks need to put the view at an exact
+    // zoom, and wheel gestures land wherever they land. Same idea as the
+    // ?provmock / ?savedmock seams elsewhere, scoped to this container rather
+    // than hung on window.
+    if (containerRef.current) containerRef.current._cartaMap = map;
     return () => {
       tip.remove();
       selectedMarkerRef.current?.marker.remove();
@@ -235,8 +261,116 @@ export function MapView({
     if (map && map.getSource(SRC_PRICED)) {
       map.getSource(SRC_PRICED).setData(pricedFC);
       map.getSource(SRC_DOTS).setData(dotsFC);
+      // A filter change can remove the very destinations the open cards are
+      // for. Wait for the new frame, then recompute against what is actually
+      // drawn (querying before idle reads the old features back).
+      map.once('idle', () => refreshCardsRef.current());
     }
   }, [priced, unreachable, priceMode, dealThreshold, transportMode]);
+
+  // Zoomed-in cards. Everything here is screen-space, so it re-runs whenever
+  // the view settles (moveend covers pan, zoom and flyTo) and never per frame.
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map) return undefined;
+    const live = autoCardsRef.current;
+
+    const closeAll = () => {
+      for (const popup of live.values()) popup.remove();
+      live.clear();
+    };
+
+    const refresh = () => {
+      if (!map.getLayer(LYR_PRICED_DOT)) return;
+      if (map.getZoom() < CARD_ZOOM) { closeAll(); return; }
+
+      // Rendered features only, so this is bounded by what is on screen, not
+      // by the catalogue. The circle layer (not the labels) is the source: a
+      // price pill that lost a collision is still a destination worth a card.
+      const seen = new Set();
+      const ranked = [];
+      for (const f of map.queryRenderedFeatures({ layers: [LYR_PRICED_DOT] })) {
+        const id = f.properties?.id;
+        if (!id || seen.has(id) || !f.properties.tCity) continue;
+        seen.add(id);
+        ranked.push(f);
+      }
+      // Best first. A card is an editorial object, so the rating leads and the
+      // price breaks ties, unlike the pins, where cheapest always wins.
+      ranked.sort((a, b) =>
+        (b.properties.tScore - a.properties.tScore) || (a.properties.sort - b.properties.sort));
+
+      const el = map.getContainer();
+      const w = el.clientWidth;
+      const h = el.clientHeight;
+      // The map's own furniture, in container coordinates. A card that lands on
+      // the legend or the From picker hides a control to show a suggestion,
+      // which is the wrong way round.
+      const base = el.getBoundingClientRect();
+      const reserved = [];
+      for (const sel of ['.map-toolrow', '.map-legend', '.map-guide']) {
+        const node = document.querySelector(sel);
+        if (!node) continue;
+        const b = node.getBoundingClientRect();
+        if (!b.width || !b.height) continue;
+        reserved.push({
+          left: b.left - base.left, right: b.right - base.left,
+          top: b.top - base.top, bottom: b.bottom - base.top,
+        });
+      }
+      const clearsFurniture = (pt) => !reserved.some((r) =>
+        pt.x + CARD_W / 2 > r.left && pt.x - CARD_W / 2 < r.right
+        && pt.y > r.top && pt.y - CARD_H < r.bottom);
+      const placed = [];
+      const keep = new Map();
+      for (const f of ranked) {
+        if (keep.size >= CARD_MAX) break;
+        const [lon, lat] = f.geometry?.coordinates || [];
+        if (!Number.isFinite(lon) || !Number.isFinite(lat)) continue;
+        const pt = map.project([lon, lat]);
+        // The whole card has to fit: one sliding under the header or off the
+        // left edge reads as a rendering fault, not as information.
+        if (pt.x - CARD_W / 2 < 0 || pt.x + CARD_W / 2 > w) continue;
+        if (pt.y - CARD_H < 0 || pt.y > h) continue;
+        if (!clearsFurniture(pt)) continue;
+        if (placed.some((q) => Math.abs(q.x - pt.x) < CARD_W && Math.abs(q.y - pt.y) < CARD_H)) continue;
+        placed.push(pt);
+        keep.set(f.properties.id, { props: f.properties, lon, lat });
+      }
+
+      // Reuse whatever is still wanted: a pan that keeps a card must not blink
+      // it off and on again.
+      for (const [id, popup] of live) {
+        if (!keep.has(id)) { popup.remove(); live.delete(id); }
+      }
+      for (const [id, { props, lon, lat }] of keep) {
+        if (live.has(id)) continue;
+        const card = document.createElement('div');
+        renderTip(card, props, tRef.current);
+        card.addEventListener('click', (e) => {
+          e.stopPropagation();
+          onSelectRef.current(id);
+        });
+        const popup = new maplibregl.Popup({
+          closeButton: false,
+          closeOnClick: false,
+          offset: 16,
+          anchor: 'bottom',        // fixed, so the collision maths above holds
+          className: 'map-tip map-tip-auto',
+          focusAfterOpen: false,   // opening a card must never steal the keyboard
+        }).setDOMContent(card).setLngLat([lon, lat]).addTo(map);
+        live.set(id, popup);
+      }
+    };
+
+    refreshCardsRef.current = refresh;
+    map.on('moveend', refresh);
+    if (map.isStyleLoaded()) refresh();
+    return () => {
+      map.off('moveend', refresh);
+      closeAll();
+    };
+  }, []);
 
   // Latest lists via refs for the selection effects below (the arrays get new
   // identities on every filter tick; the effects must not re-run on those).
@@ -276,6 +410,10 @@ export function MapView({
       map.setFilter(LYR_PRICED_LABEL_FAR, ['all', FAR_GATE, keep]);
       map.setFilter(LYR_PRICED_DOT, keep);
       map.setFilter(LYR_DOTS, keep);
+      // The selected destination is hidden from the layers and gets its own DOM
+      // pill, so its auto card has to go (and come back on deselect). Selecting
+      // flies the map, but deselecting does not, so ask for the recount here.
+      map.once('idle', () => refreshCardsRef.current());
     };
     if (map.isStyleLoaded()) apply(); else map.once('load', apply);
 

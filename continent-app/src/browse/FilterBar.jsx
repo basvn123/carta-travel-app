@@ -26,8 +26,9 @@ export function FilterBar({
   priceRange, setPriceRange,
   priceBounds,
   priceHistogram,
-  // Edited by the category rail now, kept here only so Reset clears it too.
-  setTripKinds,
+  // Edited on the map (the category rail, the size toggle), kept here only so
+  // Reset clears them too.
+  setTripKinds, setBigOnly,
   ratingRange, setRatingRange,
   gemOnly, setGemOnly,
   unescoOnly, setUnescoOnly,
@@ -130,9 +131,10 @@ export function FilterBar({
 
   const resetAll = () => {
     setCountryFilter([]);
-    // Reset means the whole board, rail chips included, even though they are
-    // not what put the badge there.
+    // Reset means the whole board: the rail chips and the map's size toggle go
+    // too, even though neither is what put the badge there.
     setTripKinds([]);
+    setBigOnly(false);
     setRatingRange([...FULL_RATING_RANGE]);
     setGemOnly(false);
     setUnescoOnly(false);

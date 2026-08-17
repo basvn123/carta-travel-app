@@ -39,7 +39,7 @@ function unpackLifestyle(s) {
 export function encodeState({
   departDate, returnDate, choices, priceMode, countryFilter,
   tripKinds, priceRange, priceBounds, selectedId, favorites, sortKey, showFavOnly,
-  ratingRange, gemOnly, unescoOnly, topBeachOnly, topPick, reachHours, activeTab,
+  ratingRange, gemOnly, unescoOnly, topBeachOnly, bigOnly, topPick, reachHours, activeTab,
 }) {
   const q = new URLSearchParams();
   if (activeTab && activeTab !== 'map') q.set('tab', activeTab);
@@ -80,6 +80,9 @@ export function encodeState({
   if (gemOnly) q.set('gem', '1');
   if (unescoOnly) q.set('un', '1');
   if (topBeachOnly) q.set('tb', '1');
+  // The map's size toggle: cities only, no towns or villages (place_layer.py
+  // classes). Off is the default, so only the narrowed state is stored.
+  if (bigOnly) q.set('big', '1');
   if (topPick && topPick.by && topPick.n) q.set('top', `${topPick.by}.${topPick.n}`);
   // "Reachable within N hours" cutoff, whole hours (see ReachFilter).
   if (Number.isFinite(reachHours) && reachHours > 0) q.set('rh', String(Math.round(reachHours)));
@@ -138,6 +141,7 @@ export function decodeState(search) {
   if (has('gem')) out.gemOnly = q.get('gem') === '1';
   if (has('un')) out.unescoOnly = q.get('un') === '1';
   if (has('tb')) out.topBeachOnly = q.get('tb') === '1';
+  if (has('big')) out.bigOnly = q.get('big') === '1';
   if (has('top')) {
     const [by, n] = q.get('top').split('.');
     const count = parseInt(n, 10);

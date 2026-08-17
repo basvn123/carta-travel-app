@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { composeTrip } from '../lib/runtime_pricing.js';
 import { matchesAnyKind } from '../lib/trip_kinds.js';
 import { isFullRatingRange } from '../lib/rating.js';
+import { isBigPlace } from '../lib/placeSize.js';
 
 // Accent- and case-insensitive text key, so "malaga" matches "Málaga".
 function normalize(s) {
@@ -49,7 +50,7 @@ function dedupeGateways(rows) {
 export function useDestinationSearch({
   data, departDate, returnDate, choices,
   locationQuery, countryFilter, priceMode, tripKinds,
-  ratingRange, gemOnly, unescoOnly, topBeachOnly, topPick,
+  ratingRange, gemOnly, unescoOnly, topBeachOnly, bigOnly, topPick,
   reachHours, reachMinutes,
   initialPriceRange,
 }) {
@@ -217,6 +218,7 @@ export function useDestinationSearch({
       if (gemOnly && !p.rating?.hidden_gem) return false;
       if (unescoOnly && !p.beauty?.unesco) return false;
       if (topBeachOnly && !p.beauty?.top_beach) return false;
+      if (bigOnly && !isBigPlace(p)) return false;
       if (reachActive) {
         // Loader already Number.isFinite-guarded the table; a destination with
         // no entry is simply not known reachable, so the cutoff hides it.
@@ -225,7 +227,7 @@ export function useDestinationSearch({
       }
       return true;
     });
-  }, [pricedAll, q, countryFilter, priceRange, priceMode, tripKinds, ratingActive, rLo, rHi, gemOnly, unescoOnly, topBeachOnly, reachActive, reachCutoffMin, reachMinutes]);
+  }, [pricedAll, q, countryFilter, priceRange, priceMode, tripKinds, ratingActive, rLo, rHi, gemOnly, unescoOnly, topBeachOnly, bigOnly, reachActive, reachCutoffMin, reachMinutes]);
 
   // "Top picks" trims the filtered set to the N best by price or beauty. Applied
   // here (not just in the list) so the map and stats reflect the shortlist too.
@@ -251,6 +253,7 @@ export function useDestinationSearch({
       if (gemOnly && !p.rating?.hidden_gem) return false;
       if (unescoOnly && !p.beauty?.unesco) return false;
       if (topBeachOnly && !p.beauty?.top_beach) return false;
+      if (bigOnly && !isBigPlace(p)) return false;
       // Same travel-time cutoff as the priced set: these rows have no price,
       // but "under N hours" is still a fact the reach table answers.
       if (reachActive) {
@@ -259,7 +262,7 @@ export function useDestinationSearch({
       }
       return true;
     });
-  }, [unreachableAll, q, countryFilter, tripKinds, ratingActive, rLo, rHi, gemOnly, unescoOnly, topBeachOnly, reachActive, reachCutoffMin, reachMinutes]);
+  }, [unreachableAll, q, countryFilter, tripKinds, ratingActive, rLo, rHi, gemOnly, unescoOnly, topBeachOnly, bigOnly, reachActive, reachCutoffMin, reachMinutes]);
 
   const dealThreshold = useMemo(() => {
     if (priced.length === 0) return null;

@@ -52,6 +52,7 @@ function TabFallback() {
 }
 import { tripDaysBetween, DEFAULT_LIFESTYLE, needsDriveHome } from './lib/runtime_pricing.js';
 import { OriginPicker } from './components/OriginPicker.jsx';
+import { PlaceSizeToggle } from './components/PlaceSizeToggle.jsx';
 import { loadInitialState } from './lib/urlState.js';
 import { readTripShareFromUrl, decodeTripShare } from './lib/shareLink.js';
 import { readTrailFromUrl } from './lib/trails.js';
@@ -126,6 +127,7 @@ function TravelApp() {
     priceMode, setPriceMode, countryFilter, setCountryFilter,
     tripKinds, setTripKinds, ratingRange, setRatingRange, gemOnly, setGemOnly,
     unescoOnly, setUnescoOnly, topBeachOnly, setTopBeachOnly,
+    bigOnly, setBigOnly,
     topPick, setTopPick, reachHours, setReachHours,
     sortKey, setSortKey, showFavOnly, setShowFavOnly,
   } = useFilterState(init);
@@ -425,7 +427,7 @@ function TravelApp() {
   } = useDestinationSearch({
     data, departDate, returnDate, choices: pricingChoices,
     locationQuery: debouncedLocationQuery, countryFilter, priceMode, tripKinds,
-    ratingRange, gemOnly, unescoOnly, topBeachOnly, topPick,
+    ratingRange, gemOnly, unescoOnly, topBeachOnly, bigOnly, topPick,
     reachHours, reachMinutes,
     initialPriceRange: init.priceRange,
   });
@@ -441,7 +443,7 @@ function TravelApp() {
   useUrlSync(!!data, {
     departDate, returnDate, choices, priceMode, countryFilter,
     tripKinds, priceRange, priceBounds, selectedId, favorites, sortKey, showFavOnly,
-    ratingRange, gemOnly, unescoOnly, topBeachOnly, topPick, reachHours, activeTab,
+    ratingRange, gemOnly, unescoOnly, topBeachOnly, bigOnly, topPick, reachHours, activeTab,
   });
 
   // Sync a signed-in user's filter/lifestyle preferences with their account,
@@ -563,6 +565,7 @@ function TravelApp() {
               priceBounds={priceBounds}
               priceHistogram={priceHistogram}
               setTripKinds={setTripKinds}
+              setBigOnly={setBigOnly}
               ratingRange={ratingRange}
               setRatingRange={setRatingRange}
               gemOnly={gemOnly}
@@ -750,6 +753,12 @@ function TravelApp() {
               askOpen={originAsk}
               onOpenChange={setOriginPopOpen}
             />
+
+            {/* Cities only, or everything down to the villages. A map control
+                rather than a filter-tray field: at continental zoom a capital
+                and a hamlet are the same dot, and that is a question you ask
+                while looking at the map. */}
+            <PlaceSizeToggle bigOnly={bigOnly} onChange={setBigOnly} />
           </div>
 
           {/* Drive mode with no starting town: the map is empty on purpose, so

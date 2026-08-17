@@ -693,6 +693,27 @@ input, select {
   .map-toolrow .origin-btn { padding: 7px 11px; gap: 7px; }
   .map-toolrow .origin-btn-label b { font-size: 12.5px; max-width: 120px; }
   .map-toolrow .origin-btn-from { display: block; font-size: 8.5px; }
+  /* Phones: the strip carries two pills now, so the size toggle drops to the
+     picker's size, keeps its caption and swaps to the short label. Both stay
+     well over the 44px target. */
+  .size-toggle { padding: 7px 11px; gap: 7px; }
+  .size-toggle-label b { font-size: 12.5px; }
+  .size-toggle-cap { font-size: 8.5px; }
+  /* Scoped to .size-toggle so these beat the base rules, which sit further
+     down the file at the same one-class specificity and would otherwise win. */
+  .size-toggle .size-toggle-value { display: none; }
+  .size-toggle .size-toggle-value-short { display: block; }
+  /* Three pills can share a 390px row (Destinations tab, From, size) with 8px
+     of air, and if a longer origin name ever breaks that, the strip wraps
+     instead of running off the screen. Both pills hold the 44px touch target,
+     which the picker alone did not. */
+  .map-toolrow {
+    gap: 8px;
+    flex-wrap: wrap;
+    max-width: calc(100vw - 24px);
+  }
+  .map-toolrow .origin-btn,
+  .size-toggle { min-height: 44px; }
   .drive-ask { top: calc(var(--filter-h) + 96px); left: 12px; right: 12px; width: auto; }
   /* Phones: the anchored popover overflowed the screen when its trigger sat
      mid-layout (e.g. the wizard's "Flying from" row). Pin it to the viewport
@@ -4832,6 +4853,57 @@ input, select {
 .map-toolrow > * { pointer-events: auto; }
 .app.list-collapsed .map-toolrow { left: 12px; }
 
+/* ── Size toggle: cities, or everything down to the villages ──────────────
+   Sits to the right of the From picker and wears the same map-control pill, so
+   the two read as one strip of answers about what is on screen. The caption
+   holds still and only the value changes, exactly like the picker beside it. */
+.size-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 14px 9px 12px;
+  border-radius: 999px;
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  box-shadow: var(--shadow-1);
+  cursor: pointer;
+  transition: background .15s, border-color .15s, color .15s;
+}
+.size-toggle:hover { border-color: var(--ink); }
+.size-toggle-icon { display: inline-flex; flex: none; color: var(--ink-mute); }
+.size-toggle-label {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  line-height: 1.1;
+  min-width: 0;
+}
+.size-toggle-cap {
+  font-family: var(--mono);
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--ink-mute);
+}
+.size-toggle-label b {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink);
+  white-space: nowrap;
+}
+.size-toggle-value-short { display: none; }   /* phones only, see the media query */
+/* On: the map is NOT showing everything, and a filled pill says that at a
+   glance. Ink, like the category chips right above it, not the accent: the
+   accent already means "deal" on this screen. */
+.size-toggle.on {
+  background: var(--ink);
+  border-color: var(--ink);
+}
+.size-toggle.on .size-toggle-icon,
+.size-toggle.on .size-toggle-label b { color: var(--paper); }
+.size-toggle.on .size-toggle-cap { color: rgba(248, 246, 240, 0.72); }
+
 .list-reopen {
   display: none;            /* shown only when .app.list-collapsed */
   align-items: center;
@@ -6978,6 +7050,15 @@ input, select {
   border-radius: 12px;
   box-shadow: none;
   pointer-events: none;   /* the card must never eat the hover that spawned it */
+}
+/* The cards that open themselves once you are zoomed in (MapView, CARD_ZOOM).
+   Unlike the hover card there is no cursor to protect, and the card IS the way
+   into the destination, so it takes clicks. */
+.map-tip-auto .maplibregl-popup-content { pointer-events: auto; }
+.map-tip-auto .tip-card { cursor: pointer; }
+.map-tip-auto .tip-card:hover {
+  border-color: var(--ink-mute);
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.14), 0 16px 40px rgba(15, 23, 42, 0.10);
 }
 
 .tip-card {
