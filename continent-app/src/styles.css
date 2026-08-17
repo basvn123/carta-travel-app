@@ -983,6 +983,60 @@ input, select {
 .trip-pin-head { fill: var(--accent); }
 .trip-pin-dot { fill: #fff; opacity: 0.34; }
 .trip-pin-needle { fill: var(--ink-soft); }
+
+/* Zoomed in, the pushpin's head becomes the place itself: the photo rises off
+   the needle, which stays stuck in the map, and the name reads under the tip.
+   Below the threshold both are absent, so a continent of pins stays a
+   continent of pins. */
+.trip-pin-photo,
+.trip-pin-label {
+  position: absolute;
+  left: 50%;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .18s ease, transform .18s ease;
+}
+.trip-pin-photo {
+  bottom: 14px;
+  width: 44px;
+  height: 44px;
+  margin-left: -22px;
+  border-radius: 50%;
+  border: 2px solid var(--paper);
+  background: var(--paper-dim) center / cover no-repeat;
+  box-shadow: 0 0 0 2px var(--accent), 0 4px 12px rgba(15, 23, 42, 0.32);
+  transform: translateY(6px) scale(0.55);
+  transform-origin: 50% 100%;
+}
+.trip-pin-label {
+  top: calc(100% + 3px);
+  padding: 2px 7px;
+  border-radius: 999px;
+  border: 1px solid var(--rule-soft);
+  background: var(--paper);
+  font-family: var(--ui);
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--ink);
+  white-space: nowrap;
+  transform: translate(-50%, -3px);
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.16);
+}
+.pins-photo .trip-pin-plain.has-photo .trip-pin-photo {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+.pins-photo .trip-pin-plain.has-photo .trip-pin-label {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+.pins-photo .trip-pin-plain.has-photo .trip-pin-head,
+.pins-photo .trip-pin-plain.has-photo .trip-pin-dot { opacity: 0; }
+.trip-pin-head, .trip-pin-dot { transition: opacity .18s ease; }
+@media (prefers-reduced-motion: reduce) {
+  .trip-pin-photo, .trip-pin-label, .trip-pin-head, .trip-pin-dot { transition: none; }
+}
 .trip-pin-plain.active .trip-pin-head { fill: var(--ink); }
 .trip-pin-plain.active .trip-pin-shape {
   transform: translate(var(--pin-dx, 0px), var(--pin-dy, 0px)) scale(1.12);

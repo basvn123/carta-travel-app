@@ -559,22 +559,30 @@ export function SavedTripsPanel({ data, onClose, onLoadTrip, onLoadTripPlan, onO
   const visitedItems = useMemo(() => {
     const out = [];
     const seen = new Set();
-    const add = (city, at, open) => {
+    const add = (city, at, open, id) => {
       if (!at) return;
       const key = (city || '').toLowerCase() || `${at.lat},${at.lon}`;
       if (seen.has(key)) return;
       seen.add(key);
-      out.push({ lat: at.lat, lon: at.lon, city: city || '', plain: true, open });
+      out.push({
+        lat: at.lat,
+        lon: at.lon,
+        city: city || '',
+        plain: true,
+        // Zoomed in, the pin wears the place's own photograph.
+        img: resolveImage({ ids: id ? [id] : [], cities: [city] }),
+        open,
+      });
     };
     pastPlans.forEach((p) => {
       const open = () => onLoadTripPlan && onLoadTripPlan(p.id);
-      (p.destination_ids || []).forEach((id) => add(destinations[id]?.city, destCoords(id), open));
+      (p.destination_ids || []).forEach((id) => add(destinations[id]?.city, destCoords(id), open, id));
       (p.cities || []).forEach((c) => add(c, cityCoords(c), open));
     });
     pastDayPlans.forEach((sp) => {
       const open = () => onOpenDayPlan && onOpenDayPlan(sp.id);
       (sp.stops || []).forEach((s) => {
-        add(destinations[s.destinationId]?.city, destCoords(s.destinationId), open);
+        add(destinations[s.destinationId]?.city, destCoords(s.destinationId), open, s.destinationId);
       });
     });
     return out;
@@ -595,6 +603,14 @@ export function SavedTripsPanel({ data, onClose, onLoadTrip, onLoadTripPlan, onO
     });
     return { countries: [...countries].sort(), cities: [...cities] };
   }, [pastPlans, pastDayPlans, destinations]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // MapLibre states the cooperative-gesture rule in its own overlay, in the
+  // traveller's language.
+  const mapLocale = useMemo(() => ({
+    'CooperativeGesturesHandler.WindowsHelpText': t('map.ctrlZoom'),
+    'CooperativeGesturesHandler.MacHelpText': t('map.cmdZoom'),
+    'CooperativeGesturesHandler.MobileHelpText': t('map.twoFingers'),
+  }), [t]);
 
   // The same countries as ISO2, which is what the map paints by.
   const visitedIso = useMemo(
@@ -858,11 +874,15 @@ export function SavedTripsPanel({ data, onClose, onLoadTrip, onLoadTripPlan, onO
                     stops={visitedItems}
                     countryFills={visitedIso}
                     showRoute={false}
-                    scrollZoom={false}
+                    scrollZoom
+                    cooperativeGestures
+                    zoomControls
+                    mapLocale={mapLocale}
+                    photoZoom={6}
                     easeToSelected={false}
                     padBottom={0}
                     fitMaxZoom={7}
-                    fitPadding={{ top: 18, left: 18, right: 18, bottom: 18 }}
+                    fitPadding={{ top: 24, left: 24, right: 24, bottom: 24 }}
                     onSelectStop={(i) => visitedItems[i]?.open()}
                   />
                 </Suspense>

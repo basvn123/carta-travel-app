@@ -210,6 +210,34 @@ try {
   await mock.locator('.saved-map .trip-pin').first().waitFor({ timeout: 20000 }).catch(() => fail('mock record map never drew a pin'));
   const mockPins = await mock.locator('.saved-map .trip-pin').count();
   if (mockPins < 3) fail(`mock record map should pin every visited city, got ${mockPins}`);
+
+  // The map is explorable: +/- buttons, and the wheel scrolls the page until
+  // ctrl is held (it says so).
+  if (!(await mock.locator('.saved-map .maplibregl-ctrl-zoom-in').count())) fail('record map has no zoom controls');
+  const mapBox = await mock.locator('.saved-map').boundingBox();
+  await mock.mouse.move(mapBox.x + mapBox.width / 2, mapBox.y + mapBox.height / 2);
+  await mock.mouse.wheel(0, -200);
+  await mock.waitForTimeout(400);
+  const gestureHint = await mock.locator('.maplibregl-cooperative-gesture-screen').innerText().catch(() => '');
+  if (!/ctrl/i.test(gestureHint)) fail(`plain wheel over the map should explain itself, got "${gestureHint}"`);
+
+  // Every pin carries the city's photo, revealed one zoom step past the frame.
+  const photos = await mock.locator('.saved-map .trip-pin-photo').evaluateAll(
+    (els) => els.map((e) => getComputedStyle(e).backgroundImage));
+  if (photos.length !== mockPins) fail(`expected a photo on each of ${mockPins} pins, got ${photos.length}`);
+  if (photos.some((b) => !/^url\(/.test(b))) fail(`a record pin has no photo: ${JSON.stringify(photos)}`);
+  if (await mock.locator('.saved-map .trip-map.pins-photo').count()) fail('photos should be hidden at the opening frame');
+  await mock.locator('.saved-map .maplibregl-ctrl-zoom-in').click();
+  await mock.waitForTimeout(1100);
+  if (!(await mock.locator('.saved-map .trip-map.pins-photo').count())) fail('one zoom step in should reveal the photo pins');
+  const pinNames = await mock.locator('.saved-map .trip-pin-label').allInnerTexts();
+  for (const c of ['Munich', 'Salzburg', 'Bruges']) {
+    if (!pinNames.includes(c)) fail(`photo pins miss ${c}: ${JSON.stringify(pinNames)}`);
+  }
+  await mock.waitForTimeout(600);
+  await mock.locator('.saved-map').screenshot({ path: `${SHOTS}/saved-record-photopins.png` });
+  await mock.locator('.saved-map .maplibregl-ctrl-zoom-out').click();
+  await mock.waitForTimeout(900);
   // Every visited card must resolve a photo through the fallback chain.
   const visFallbacks = await mock.locator('.uptrip-photo.is-fallback').count();
   if (visFallbacks) fail(`${visFallbacks} visited card(s) fell back to an icon instead of a photo`);

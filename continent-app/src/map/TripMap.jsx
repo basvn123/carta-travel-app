@@ -121,8 +121,14 @@ function routeArrowImage(px = 26) {
  * `countryFills` (optional) is a list of ISO2 codes to paint as filled
  * countries under the pins, e.g. ['AT','DE'] for the travel record's map of
  * where you have been.
+ *
+ * `photoZoom` (optional) is the zoom at which a plain pin carrying an `img`
+ * swaps its head for a photo of the place, so zooming in tells you more than
+ * zooming in on a dot would. `zoomControls` adds the +/- buttons, and
+ * `cooperativeGestures` makes the wheel scroll the page unless ctrl is held,
+ * which is what an embedded map inside a scrolling panel wants.
  */
-export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedIndex = null, routeGeometry = null, routeSegments = null, showRoute = true, focus = null, pois = null, onPoiClick = null, onViewChange = null, fitMaxZoom = 7.5, fitPadding = null, scrollZoom = true, easeToSelected = true, countryFills = null }) {
+export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedIndex = null, routeGeometry = null, routeSegments = null, showRoute = true, focus = null, pois = null, onPoiClick = null, onViewChange = null, fitMaxZoom = 7.5, fitPadding = null, scrollZoom = true, easeToSelected = true, countryFills = null, photoZoom = null, zoomControls = false, cooperativeGestures = false, mapLocale = null }) {
   const containerRef = useRef(null);
   const mapRef = useRef(null);
   const markersRef = useRef([]);
@@ -141,6 +147,12 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
   const countryBoundsRef = useRef(new Map());
   const countryFillsRef = useRef(countryFills);
   countryFillsRef.current = countryFills;
+  const photoZoomRef = useRef(photoZoom);
+  photoZoomRef.current = photoZoom;
+  // The zoom the current framing settled on. Photos are meant to answer "I
+  // zoomed in", so the threshold is one step past whatever the map opened at,
+  // however wide or tight that was, and never later than `photoZoom`.
+  const frameZoomRef = useRef(null);
 
   // Two stops 80m apart land on the same 26px pin at the zoom a whole day fits
   // into, and the pin drawn last simply covers the one before it: that is how a
@@ -156,7 +168,10 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
     const map = mapRef.current;
     if (!map) return [];
     const placed = [];
-    const clear = (x, y) => placed.every((p) => Math.hypot(p.x - x, p.y - y) >= MIN_PIN_SEP);
+    // A pin wearing a photo is 44px across, not 26, so it needs more room
+    // than a teardrop before two of them read as one.
+    const sep = containerRef.current?.classList.contains('pins-photo') ? 54 : MIN_PIN_SEP;
+    const clear = (x, y) => placed.every((p) => Math.hypot(p.x - x, p.y - y) >= sep);
     // Nowhere off the map. The pin is drawn UPWARD from its point (anchor
     // bottom), so a lift of 30-55px near the top edge put whole stop numbers
     // outside the canvas: on the full-screen map they hid under the header, and
@@ -170,7 +185,7 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
     // Straight up first, then up-and-out, then sideways: a nudged pin should
     // read as lifted off a cluster, not as belonging to its neighbour.
     const fan = (pt) => {
-      for (const r of [MIN_PIN_SEP, MIN_PIN_SEP * 1.85]) {
+      for (const r of [sep, sep * 1.85]) {
         for (const deg of [-90, -50, -130, -20, -160, 0, 180, 40, 140, 90]) {
           const a = (deg * Math.PI) / 180;
           const dx = Math.round(Math.cos(a) * r);
@@ -216,7 +231,35 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
       // past the AI proposal would zoom the map instead of scrolling the page.
       // Drag, double-tap and pinch still work, and the route frames itself.
       scrollZoom,
+      // The middle ground for an embedded map you are meant to explore: the
+      // wheel scrolls the page until you hold ctrl, and one finger pans the
+      // page while two move the map. MapLibre states both in an overlay.
+      cooperativeGestures,
+      ...(mapLocale ? { locale: mapLocale } : {}),
     });
+    if (zoomControls) {
+      map.addControl(new maplibregl.NavigationControl({ showCompass: false, showZoom: true }), 'top-right');
+    }
+    // Above a threshold a plain pin is worth more than a dot: it becomes the
+    // place's own photograph. The class rides the container so pins built
+    // later inherit the current zoom state without a second pass.
+    const syncPinZoom = () => {
+      const el = containerRef.current;
+      const abs = photoZoomRef.current;
+      if (!el) return;
+      if (abs == null) { el.classList.remove('pins-photo'); return; }
+      const framed = frameZoomRef.current;
+      const at = framed == null ? abs : Math.min(abs, framed + 0.9);
+      const want = map.getZoom() >= at;
+      if (want === el.classList.contains('pins-photo')) return;
+      el.classList.toggle('pins-photo', want);
+      // Pins just changed size: re-spread them against the new separation.
+      spreadStopPins();
+      declutterRef.current?.rerun();
+    };
+    map._syncPinZoom = syncPinZoom;
+    map.on('zoom', syncPinZoom);
+    map.on('load', syncPinZoom);
     map.on('load', () => {
       map.addSource('trip-route', {
         type: 'geojson',
@@ -358,6 +401,15 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
     const map = mapRef.current;
     if (!map) return;
 
+    // What zoom a framing will land on, worked out before the animation runs,
+    // so the photo-pin threshold is known the moment the map is framed.
+    const rememberFrameZoom = (bounds, opts) => {
+      let z = null;
+      try { z = map.cameraForBounds(bounds, { padding: opts.padding })?.zoom ?? null; } catch { z = null; }
+      frameZoomRef.current = z == null ? null : Math.min(z, opts.maxZoom ?? Infinity);
+      map._syncPinZoom?.();
+    };
+
     const draw = () => {
       const pts = stops.filter(hasLngLat);
 
@@ -413,7 +465,8 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
         // what silently dropped the rotation and left every stop number tilted
         // 45 degrees, which is how a 6 came to read as a 9.
         const el = document.createElement('div');
-        el.className = `trip-pin${p.stay ? ' trip-pin-stay' : ''}${p.plain ? ' trip-pin-plain' : ''}`;
+        const withPhoto = !!(p.plain && p.img);
+        el.className = `trip-pin${p.stay ? ' trip-pin-stay' : ''}${p.plain ? ' trip-pin-plain' : ''}${withPhoto ? ' has-photo' : ''}`;
         el.title = p.stay ? 'Your stay' : (p.city || `Stop ${no}`);
         const shape = document.createElement('span');
         shape.className = 'trip-pin-shape';
@@ -421,6 +474,17 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
           // A pushpin, not a numbered teardrop: a round head on a needle
           // whose tip is the coordinate (the marker is anchored bottom).
           shape.innerHTML = PUSHPIN_SVG;
+          // Zoomed in, the head lifts into a photo of the place with its name
+          // under the needle. The needle never moves: the pin still points.
+          if (withPhoto) {
+            const photo = document.createElement('span');
+            photo.className = 'trip-pin-photo';
+            photo.style.backgroundImage = `url("${p.img}")`;
+            const label = document.createElement('span');
+            label.className = 'trip-pin-label';
+            label.textContent = p.city || '';
+            el.append(photo, label);
+          }
         } else {
           const num = document.createElement('span');
           num.className = 'trip-pin-no';
@@ -462,11 +526,13 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
           ),
         );
         pts.forEach((p) => bounds.extend([p.lon, p.lat]));
-        map.fitBounds(bounds, {
+        const opts = {
           padding: fitPadding || { top: 70, left: 60, right: 60, bottom: padBottom + 20 },
           maxZoom: fitMaxZoom,
           duration: 700,
-        });
+        };
+        rememberFrameZoom(bounds, opts);
+        map.fitBounds(bounds, opts);
         return;
       }
       if (pts.length === 0 && hasLngLat(focus)) {
@@ -477,20 +543,24 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
           padding: { bottom: padBottom },
         });
       } else if (pts.length === 1) {
+        frameZoomRef.current = 6;
+        map._syncPinZoom?.();
         map.easeTo({ center: [pts[0].lon, pts[0].lat], zoom: 6, duration: 700, padding: { bottom: padBottom } });
       } else if (pts.length >= 2) {
         const bounds = pts.reduce(
           (b, p) => b.extend([p.lon, p.lat]),
           new maplibregl.LngLatBounds([pts[0].lon, pts[0].lat], [pts[0].lon, pts[0].lat]),
         );
-        map.fitBounds(bounds, {
+        const opts = {
           // Framing margins assume a full-screen map with a sheet over its
           // bottom. An embedded map (the AI proposal preview) is a few hundred
           // pixels tall and states its own, or the route fits into a letterbox.
           padding: fitPadding || { top: 70, left: 60, right: 60, bottom: padBottom + 20 },
           maxZoom: fitMaxZoom,
           duration: 700,
-        });
+        };
+        rememberFrameZoom(bounds, opts);
+        map.fitBounds(bounds, opts);
       }
     };
 
