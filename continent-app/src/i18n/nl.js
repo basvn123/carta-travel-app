@@ -23,7 +23,7 @@ export const nl = {
   'header.account': 'Account',
   'header.accountTitle': 'Account & voorkeuren',
   'header.seePricing': 'Bekijk prijzen',
-  'header.passes': 'Passen',
+  'header.passes': 'Haal een pas',
   'account.language': 'Taal',
   'lang.pick': 'Taal',
 

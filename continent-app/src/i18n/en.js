@@ -31,7 +31,7 @@ export const en = {
   'header.account': 'Account',
   'header.accountTitle': 'Account & preferences',
   'header.seePricing': 'See pricing',
-  'header.passes': 'Passes',
+  'header.passes': 'Get a pass',
   'account.language': 'Language',
   'lang.pick': 'Language',
 

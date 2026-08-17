@@ -98,12 +98,11 @@ try {
   if (dashed) fail(`${dashed} empty state(s) still drawn with a dashed border`);
   const plannedEmpties = await empty.locator('.saved-empty').count();
   if (plannedEmpties < 1) fail('planned tab shows no empty invitation');
-  // The mini map is always on: with nothing to pin it rests on Europe with
-  // one quiet line underneath, never a missing section.
-  await empty.locator('.saved-map .trip-map canvas').waitFor({ timeout: 15000 }).catch(() => fail('resting mini map never appeared on a fresh device'));
-  if (!(await empty.locator('.saved-map-empty').count())) fail('empty map is missing its caption line');
+  // The map belongs to the record now: nothing on Planned, and nothing on an
+  // empty Visited tab either (a map of no visits says nothing).
+  if (await empty.locator('.saved-map').count()) fail('planned tab still carries the mini map');
   await empty.waitForTimeout(900);
-  console.log('planned tab, fresh device: empty shelves =', plannedEmpties, '+ resting map');
+  console.log('planned tab, fresh device: empty shelves =', plannedEmpties);
   await empty.locator('.saved-trips-panel').screenshot({ path: `${SHOTS}/saved-empty-planned.png` });
   await pickTab(empty, 'favorites');
   const favEmpty = await empty.locator('.saved-empty').count();
@@ -113,6 +112,7 @@ try {
   const visEmpty = await empty.locator('.saved-empty').count();
   if (visEmpty !== 1) fail(`visited tab should show exactly one state block, got ${visEmpty}`);
   if (await empty.locator('.ledger2').count()) fail('empty visited tab should not show a zeroed ledger');
+  if (await empty.locator('.saved-map').count()) fail('empty visited tab should not show a map of nothing');
   await empty.locator('.saved-trips-panel').screenshot({ path: `${SHOTS}/saved-empty-visited.png` });
 
   // ---- 2. Seeded day plans: the dates do the filing.
@@ -129,11 +129,7 @@ try {
   if (upTitles.length !== 1 || !upTitles[0].includes('Lisbon')) {
     fail(`expected one upcoming day-plan card (Lisbon and Porto), got: ${JSON.stringify(upTitles)}`);
   }
-  // The mini map pins the upcoming trip and the caption names it.
-  await full.locator('.saved-map .trip-map canvas').waitFor({ timeout: 15000 }).catch(() => fail('mini map canvas never appeared'));
-  const caption = (await full.locator('.saved-map-caption').innerText().catch(() => '')).replace(/\s+/g, ' ');
-  if (!/Lisbon/i.test(caption)) fail(`map caption does not name the next trip: "${caption}"`);
-  console.log('caption:', caption);
+  if (await full.locator('.saved-map').count()) fail('planned tab still carries the mini map');
   await full.waitForTimeout(700);
   await full.locator('.saved-trips-panel').screenshot({ path: `${SHOTS}/saved-planned-full.png` });
 
@@ -153,6 +149,17 @@ try {
   if (visCards !== 1) fail(`expected 1 visited journey card, got ${visCards}`);
   const visTitle = await full.locator('.uptrip-card.is-visited .uptrip-title').innerText();
   if (!/Belgium|Bruges/.test(visTitle)) fail(`visited card title unexpected: "${visTitle}"`);
+  // The record's own map: Bruges pinned, Belgium painted.
+  await full.locator('.saved-map .trip-map canvas').waitFor({ timeout: 15000 }).catch(() => fail('record map canvas never appeared'));
+  // Pins are drawn on the style's load event, which is a network round trip
+  // after the canvas exists.
+  await full.locator('.saved-map .trip-pin').first().waitFor({ timeout: 20000 }).catch(() => fail('record map never drew a pin'));
+  const visPins = await full.locator('.saved-map .trip-pin.trip-pin-plain').count();
+  if (visPins < 1) fail(`record map pinned nothing, got ${visPins} pins`);
+  const numbered = await full.locator('.saved-map .trip-pin-no').allInnerTexts();
+  if (numbered.some((s) => s.trim())) fail(`record pins should carry no numbers: ${JSON.stringify(numbered)}`);
+  const shapesRes = await full.evaluate(() => fetch('/country_shapes.json').then((r) => r.ok));
+  if (!shapesRes) fail('country_shapes.json is not being served');
   const ledgerNums = await full.locator('.ledger2-num').allInnerTexts();
   if (ledgerNums.length !== 2) fail(`expected 2 ledger cards, got ${ledgerNums.length}`);
   if (!/1\s*\/\s*43/.test(ledgerNums[0].replace(/\s+/g, ' '))) {
@@ -198,6 +205,11 @@ try {
   for (const c of ['Austria', 'Belgium', 'Germany']) {
     if (!mockFlagNames.includes(c)) fail(`ledger flags miss ${c}: ${JSON.stringify(mockFlagNames)}`);
   }
+  // The record map carries a pin per visited city, three countries painted.
+  await mock.locator('.saved-map .trip-map canvas').waitFor({ timeout: 15000 }).catch(() => fail('mock record map never appeared'));
+  await mock.locator('.saved-map .trip-pin').first().waitFor({ timeout: 20000 }).catch(() => fail('mock record map never drew a pin'));
+  const mockPins = await mock.locator('.saved-map .trip-pin').count();
+  if (mockPins < 3) fail(`mock record map should pin every visited city, got ${mockPins}`);
   // Every visited card must resolve a photo through the fallback chain.
   const visFallbacks = await mock.locator('.uptrip-photo.is-fallback').count();
   if (visFallbacks) fail(`${visFallbacks} visited card(s) fell back to an icon instead of a photo`);

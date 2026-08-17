@@ -6,6 +6,21 @@ import { hasLngLat, declutterPins } from './coords.js';
 // Same clean, key-less Carto Voyager basemap the main map uses.
 const MAP_STYLE = 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json';
 
+// Country outlines for the `countryFills` layer, fetched once per session and
+// shared by every map that asks for them. The basemap's vector tiles carry
+// boundary LINES but no admin polygons, so a country cannot be painted from
+// the tiles: these shapes ship with the app (see
+// pipeline/oneoff/build_country_shapes.py).
+let countryShapesPromise = null;
+const loadCountryShapes = () => {
+  if (!countryShapesPromise) {
+    countryShapesPromise = fetch('/country_shapes.json')
+      .then((r) => (r.ok ? r.json() : Promise.reject(new Error(String(r.status)))))
+      .catch(() => ({ type: 'FeatureCollection', features: [] }));
+  }
+  return countryShapesPromise;
+};
+
 // How close two numbered stop pins may come, in screen pixels, before the
 // later one is nudged clear. A pin is 26px wide, so this is "touching".
 const MIN_PIN_SEP = 30;
@@ -95,8 +110,12 @@ function routeArrowImage(px = 26) {
  * `onPoiClick(id)` - the Day planner adds it to the day, the pin becomes a
  * numbered stop, and the route redraws. Purely additive: without `pois` the
  * map behaves exactly as before.
+ *
+ * `countryFills` (optional) is a list of ISO2 codes to paint as filled
+ * countries under the pins, e.g. ['AT','DE'] for the travel record's map of
+ * where you have been.
  */
-export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedIndex = null, routeGeometry = null, routeSegments = null, showRoute = true, focus = null, pois = null, onPoiClick = null, onViewChange = null, fitMaxZoom = 7.5, fitPadding = null, scrollZoom = true, easeToSelected = true }) {
+export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedIndex = null, routeGeometry = null, routeSegments = null, showRoute = true, focus = null, pois = null, onPoiClick = null, onViewChange = null, fitMaxZoom = 7.5, fitPadding = null, scrollZoom = true, easeToSelected = true, countryFills = null }) {
   const containerRef = useRef(null);
   const mapRef = useRef(null);
   const markersRef = useRef([]);
@@ -110,6 +129,11 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
   onPoiClickRef.current = onPoiClick;
   const onViewChangeRef = useRef(onViewChange);
   onViewChangeRef.current = onViewChange;
+  // iso2 -> [west, south, east, north], filled once the shapes land, so the
+  // framing can hold a painted country whose pins sit in one corner of it.
+  const countryBoundsRef = useRef(new Map());
+  const countryFillsRef = useRef(countryFills);
+  countryFillsRef.current = countryFills;
 
   // Two stops 80m apart land on the same 26px pin at the zoom a whole day fits
   // into, and the pin drawn last simply covers the one before it: that is how a
@@ -246,6 +270,7 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
       map.resize();
       readyRef.current = true;
       mapRef.current._drawTrip?.();
+      mapRef.current._drawCountries?.();
     });
     // Let the parent react to where the map is looking (zoom-reveal of more
     // pins): report zoom + viewport bounds after every settle.
@@ -366,10 +391,14 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
       // number itself: the itinerary is the authority on which stop this is, so
       // a stop the map cannot plot (no coordinates) can never shift the numbers
       // of the ones it can, and the sidebar and the map always agree.
+      // `plain` is a place on the map that is not a step in anything: the
+      // travel record's visited cities have no order to carry, so they get the
+      // teardrop without a number.
       let stopNo = 0;
       markersRef.current = pts.map((p, i) => {
-        if (!p.stay) stopNo += 1;
-        const no = p.stay ? null : (p.no ?? stopNo);
+        const bare = p.stay || p.plain;
+        if (!bare) stopNo += 1;
+        const no = bare ? null : (p.no ?? stopNo);
         // The marker element belongs to maplibre: it rewrites that element's
         // inline `transform` on every frame, which beats anything a stylesheet
         // says. So the teardrop's rotation lives on an inner shape and the
@@ -377,13 +406,13 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
         // what silently dropped the rotation and left every stop number tilted
         // 45 degrees, which is how a 6 came to read as a 9.
         const el = document.createElement('div');
-        el.className = p.stay ? 'trip-pin trip-pin-stay' : 'trip-pin';
+        el.className = `trip-pin${p.stay ? ' trip-pin-stay' : ''}${p.plain ? ' trip-pin-plain' : ''}`;
         el.title = p.stay ? 'Your stay' : (p.city || `Stop ${no}`);
         const shape = document.createElement('span');
         shape.className = 'trip-pin-shape';
         const num = document.createElement('span');
         num.className = 'trip-pin-no';
-        num.textContent = p.stay ? '' : String(no);
+        num.textContent = bare ? '' : String(no);
         shape.appendChild(num);
         el.appendChild(shape);
         el.addEventListener('click', (e) => {
@@ -406,6 +435,27 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
       const frameKey = focus ? `${focus.lat},${focus.lon}` : null;
       if (pois != null && frameKey && lastFrameKeyRef.current === frameKey) return;
       lastFrameKeyRef.current = frameKey;
+      // A painted country belongs inside the frame: pins in one corner of
+      // Germany must not leave the rest of it off the map.
+      const fillBoxes = (countryFillsRef.current || [])
+        .map((iso) => countryBoundsRef.current.get(iso))
+        .filter(Boolean);
+      if (fillBoxes.length) {
+        const bounds = fillBoxes.reduce(
+          (b, [w, s, e, n]) => b.extend([w, s]).extend([e, n]),
+          new maplibregl.LngLatBounds(
+            [fillBoxes[0][0], fillBoxes[0][1]],
+            [fillBoxes[0][2], fillBoxes[0][3]],
+          ),
+        );
+        pts.forEach((p) => bounds.extend([p.lon, p.lat]));
+        map.fitBounds(bounds, {
+          padding: fitPadding || { top: 70, left: 60, right: 60, bottom: padBottom + 20 },
+          maxZoom: fitMaxZoom,
+          duration: 700,
+        });
+        return;
+      }
       if (pts.length === 0 && hasLngLat(focus)) {
         map.easeTo({
           center: [focus.lon, focus.lat],
@@ -435,6 +485,59 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
     map._drawTrip = draw;
     if (readyRef.current) draw();
   }, [stops, padBottom, routeGeometry, routeSegments, showRoute, focus?.lat, focus?.lon, pois != null, fitMaxZoom, fitPadding]);
+
+  // Filled countries (the travel record): the shapes load on first use only,
+  // so every other map in the app pays nothing for this layer.
+  const fillsKey = (countryFills || []).join(',');
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map) return;
+    let cancelled = false;
+    const codes = (countryFills || []).filter(Boolean);
+    const apply = async () => {
+      if (!map.getSource('country-shapes')) {
+        if (!codes.length) return;
+        const data = await loadCountryShapes();
+        if (cancelled || mapRef.current !== map || map.getSource('country-shapes')) return;
+        map.addSource('country-shapes', { type: 'geojson', data });
+        (data.features || []).forEach((f) => {
+          let w = 180, s = 90, e = -180, n = -90;
+          f.geometry.coordinates.forEach((poly) => poly.forEach((ring) => ring.forEach(([x, y]) => {
+            if (x < w) w = x;
+            if (x > e) e = x;
+            if (y < s) s = y;
+            if (y > n) n = y;
+          })));
+          countryBoundsRef.current.set(f.properties.iso2, [w, s, e, n]);
+        });
+        // Beneath the basemap's first symbol layer: a painted country must sit
+        // under the place names it is there to give context to, never over them.
+        const firstSymbol = map.getStyle().layers.find((l) => l.type === 'symbol')?.id;
+        map.addLayer({
+          id: 'country-fill',
+          type: 'fill',
+          source: 'country-shapes',
+          paint: { 'fill-color': '#e05a47', 'fill-opacity': 0.2 },
+        }, firstSymbol);
+        map.addLayer({
+          id: 'country-outline',
+          type: 'line',
+          source: 'country-shapes',
+          paint: { 'line-color': '#c8501e', 'line-width': 1.1, 'line-opacity': 0.75 },
+        }, firstSymbol);
+      }
+      const filter = ['in', ['get', 'iso2'], ['literal', codes]];
+      map.setFilter('country-fill', filter);
+      map.setFilter('country-outline', filter);
+      // The shapes arrive after the first framing, and a painted country is
+      // part of what has to fit: frame again now that its extent is known.
+      lastFrameKeyRef.current = null;
+      map._drawTrip?.();
+    };
+    map._drawCountries = apply;
+    if (readyRef.current) apply();
+    return () => { cancelled = true; };
+  }, [fillsKey]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Pickable candidate pins (Day planner): rebuild when the visible set
   // changes, a tapped pin leaves this list (it becomes a numbered stop), so

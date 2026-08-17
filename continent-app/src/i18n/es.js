@@ -23,7 +23,7 @@ export const es = {
   'header.account': 'Cuenta',
   'header.accountTitle': 'Cuenta y preferencias',
   'header.seePricing': 'Ver precios',
-  'header.passes': 'Pases',
+  'header.passes': 'Consigue un pase',
   'account.language': 'Idioma',
   'lang.pick': 'Idioma',
 

@@ -246,7 +246,9 @@ input, select {
   padding: 0 14px;
   border-radius: 999px;
   border: 1px solid var(--rule);
-  background: var(--bg-card);
+  /* Transparent, so the rail reads as one band with the header above it: the
+     white pills used to float as a second layer of cards over the alabaster. */
+  background: transparent;
   font-family: var(--ui);
   font-size: 12.5px;
   font-weight: 600;
@@ -254,7 +256,7 @@ input, select {
   white-space: nowrap;
   transition: color .15s, background .15s, border-color .15s;
 }
-.kind-rail-chip:hover { color: var(--ink); background: var(--paper-dim); }
+.kind-rail-chip:hover { color: var(--ink); background: var(--paper-dim); border-color: var(--ink-mute); }
 .kind-rail-chip.on {
   color: var(--paper);
   background: var(--ink);
@@ -301,16 +303,24 @@ input, select {
   /* Account left this row on mobile: it is the rightmost item of the bottom
      bar now, and the row over the map keeps its width for the filters. */
   .app-header-account .account-avatar-btn { display: none; }
-  /* Passes: a labelled chip instead of a bare ticket glyph, so the upgrade
-     entry says what it is. Accent on the glyph and word only, no fill. */
+  /* Passes: a real bordered chip, not bare accent text floating in the bar.
+     Soft terracotta wash inside an accent hairline, with the label in ink so
+     it stays readable (accent on the wash is only 2.8:1). */
   .app-header-account .header-pricing-btn {
-    height: 44px;
-    padding: 0 10px;
+    height: 38px;
+    padding: 0 12px;
     gap: 6px;
-    border: none;
-    background: none;
+    border: 1px solid var(--accent);
+    background: var(--accent-bg);
     box-shadow: none;
-    color: var(--accent);
+    color: var(--ink);
+    font-weight: 600;
+  }
+  .app-header-account .header-pricing-btn:hover,
+  .app-header-account .header-pricing-btn:active {
+    border-color: var(--accent);
+    background: var(--paper);
+    color: var(--ink);
   }
   .app-header-account .header-pricing-btn svg { width: 16px; height: 16px; }
   .header-pricing-label { display: none; }
@@ -8922,45 +8932,6 @@ input, select {
 .saved-map .trip-map,
 .saved-map > div { position: absolute !important; inset: 0 !important; }
 .saved-map-loading { position: absolute; inset: 0; background: var(--paper-dim); }
-.saved-map-caption {
-  display: flex;
-  align-items: baseline;
-  gap: 9px;
-  min-width: 0;
-  margin-top: 10px;
-}
-.saved-map-caption-label {
-  flex: none;
-  font-family: var(--mono);
-  font-size: 9.5px;
-  text-transform: uppercase;
-  letter-spacing: 0.14em;
-  color: var(--ink-mute);
-}
-.saved-map-caption-city {
-  font-family: var(--display);
-  font-size: 17px;
-  font-weight: 500;
-  letter-spacing: -0.01em;
-  color: var(--ink);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.saved-map-caption-when {
-  flex: none;
-  margin-left: auto;
-  font-family: var(--mono);
-  font-size: 11px;
-  color: var(--accent);
-}
-/* Nothing pinned yet: the resting map stays, one quiet line says why. */
-.saved-map-empty {
-  margin: 10px 0 0;
-  font-size: 12.5px;
-  line-height: 1.5;
-  color: var(--ink-mute);
-}
 
 /* The travel ledger: what the record adds up to. Two cards, each a measured
    fact in mono with its own evidence underneath, flags with names on one
@@ -16069,23 +16040,7 @@ button.ai-sched-main:focus-visible {
 .places-wrap {
   max-width: 780px;
   margin: 0 auto;
-  padding: 24px 24px calc(32px + env(safe-area-inset-bottom, 0px));
-}
-
-.places-title {
-  font-family: var(--display);
-  font-size: 26px;
-  font-weight: 600;
-  letter-spacing: -0.01em;
-  color: var(--ink);
-}
-.places-meta {
-  margin-top: 4px;
-  font-family: var(--mono);
-  font-size: 11px;
-  color: var(--ink-mute);
-  font-variant-numeric: tabular-nums;
-  min-height: 15px;
+  padding: 12px 24px calc(32px + env(safe-area-inset-bottom, 0px));
 }
 
 /* Five category tabs: icon above a tiny label, the active one on the warm
@@ -16093,7 +16048,6 @@ button.ai-sched-main:focus-visible {
 .places-cats {
   display: flex;
   gap: 6px;
-  margin-top: 14px;
 }
 .places-cat {
   flex: 1;
@@ -16426,7 +16380,6 @@ button.ai-sched-main:focus-visible {
 
 @media (max-width: 768px) {
   .places-wrap { padding-left: 16px; padding-right: 16px; }
-  .places-title { font-size: 23px; }
   .places-country { max-width: 40%; }
 }
 @media (max-width: 480px) {

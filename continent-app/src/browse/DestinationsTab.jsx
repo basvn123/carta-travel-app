@@ -397,11 +397,6 @@ export function DestinationsTab({
       .sort((a, b) => a.name.localeCompare(b.name));
   }, [isTripCat, trailsIndex, cat, countryName]);
 
-  const trailsTotal = useMemo(
-    () => (trailsIndex ? trailsIndex.countries.reduce((s, c) => s + (c.n_trips || 0), 0) : 0),
-    [trailsIndex],
-  );
-
   // New filter result: collapse the window and go back to the top.
   const rowCount = cat === 'general' ? destRows.length : (tripRows?.length ?? 0);
   useEffect(() => {
@@ -440,15 +435,6 @@ export function DestinationsTab({
   return (
     <div className="places-tab" ref={scrollRef}>
       <div className="places-wrap">
-        <h1 className="places-title">{t('places.title')}</h1>
-        <p className="places-meta">
-          {cat === 'general'
-            ? t('places.metaDests', { n: fmt(pricedAll.length), c: availableCountries.length })
-            : (trailsIndex
-              ? t('places.metaTrails', { n: fmt(trailsTotal), c: trailsIndex.countries.length })
-              : ' ')}
-        </p>
-
         <div className="places-cats" role="tablist">
           {CATS.map(({ key, Icon, labelKey }) => (
             <button

@@ -536,21 +536,49 @@ export function SavedTripsPanel({ data, onClose, onLoadTrip, onLoadTripPlan, onO
   const dayPlanCountries = (sp) => orderedUnique((sp.stops || []).map((s) => destinations[s.destinationId]?.country));
   const dayPlanCities = (sp) => orderedUnique((sp.stops || []).map((s) => destinations[s.destinationId]?.city));
 
-  // Pins for the mini map: every upcoming trip's first stop, numbered in
-  // departure order, so the map answers "where am I going, and in what order".
-  const heroItems = useMemo(() => {
-    const items = [];
-    upcomingPlans.forEach((p) => {
-      const at = destCoords(p.destination_ids?.[0]);
-      if (at) items.push({ ...at, city: p.cities?.[0] || p.label || t('saved.fallbackTrip'), start: p.start_date, open: () => onLoadTripPlan && onLoadTripPlan(p.id) });
+  // City name -> coordinates, best-rated entry wins the name, so a record that
+  // stored "Munich" as plain text (no destination id) still lands on the map.
+  const cityCoordIndex = useMemo(() => {
+    const m = new Map();
+    for (const d of Object.values(destinations)) {
+      const key = (d.city || '').toLowerCase();
+      const lat = d.city_lat != null ? d.city_lat : d.lat;
+      const lon = d.city_lon != null ? d.city_lon : d.lon;
+      if (!key || lat == null || lon == null) continue;
+      const score = d.rating?.score ?? d.beauty?.score ?? 0;
+      const cur = m.get(key);
+      if (!cur || score > cur.score) m.set(key, { lat, lon, score });
+    }
+    return m;
+  }, [destinations]);
+  const cityCoords = (city) => cityCoordIndex.get((city || '').toLowerCase()) || null;
+
+  // Every place in the record, pinned. Not first stops only: the map is the
+  // record's own claim, so each city of each finished trip earns its pin, and
+  // the countries underneath are painted from the same trips.
+  const visitedItems = useMemo(() => {
+    const out = [];
+    const seen = new Set();
+    const add = (city, at, open) => {
+      if (!at) return;
+      const key = (city || '').toLowerCase() || `${at.lat},${at.lon}`;
+      if (seen.has(key)) return;
+      seen.add(key);
+      out.push({ lat: at.lat, lon: at.lon, city: city || '', plain: true, open });
+    };
+    pastPlans.forEach((p) => {
+      const open = () => onLoadTripPlan && onLoadTripPlan(p.id);
+      (p.destination_ids || []).forEach((id) => add(destinations[id]?.city, destCoords(id), open));
+      (p.cities || []).forEach((c) => add(c, cityCoords(c), open));
     });
-    upcomingDayPlans.forEach((sp) => {
-      const at = destCoords(sp.stops?.[0]?.destinationId);
-      if (at) items.push({ ...at, city: destinations[sp.stops[0].destinationId]?.city || sp.label, start: sp.startDate, open: () => onOpenDayPlan && onOpenDayPlan(sp.id) });
+    pastDayPlans.forEach((sp) => {
+      const open = () => onOpenDayPlan && onOpenDayPlan(sp.id);
+      (sp.stops || []).forEach((s) => {
+        add(destinations[s.destinationId]?.city, destCoords(s.destinationId), open);
+      });
     });
-    items.sort((a, b) => ((a.start || '9999') < (b.start || '9999') ? -1 : 1));
-    return items.slice(0, 8);
-  }, [upcomingPlans, upcomingDayPlans]); // eslint-disable-line react-hooks/exhaustive-deps
+    return out;
+  }, [pastPlans, pastDayPlans, destinations, cityCoordIndex]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // What the record adds up to: distinct countries and cities out of finished
   // trips only. Favorites never count, a wish is not a visit.
@@ -567,6 +595,12 @@ export function SavedTripsPanel({ data, onClose, onLoadTrip, onLoadTripPlan, onO
     });
     return { countries: [...countries].sort(), cities: [...cities] };
   }, [pastPlans, pastDayPlans, destinations]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // The same countries as ISO2, which is what the map paints by.
+  const visitedIso = useMemo(
+    () => visited.countries.map((c) => COUNTRY_ISO2[c]).filter(Boolean),
+    [visited],
+  );
 
   const whenLabel = (start, end) => {
     if (!start) return t('saved.noDatesYet');
@@ -609,7 +643,6 @@ export function SavedTripsPanel({ data, onClose, onLoadTrip, onLoadTripPlan, onO
     ].filter(Boolean).join(', ');
   };
 
-  const nextUp = heroItems.find((i) => i.start) || heroItems[0] || null;
   const plannedCount = upcomingPlans.length + upcomingDayPlans.length;
   const pastCount = pastPlans.length + pastDayPlans.length;
 
@@ -674,7 +707,7 @@ export function SavedTripsPanel({ data, onClose, onLoadTrip, onLoadTripPlan, onO
 
       {tab === 'favorites' && (
         /* ── Favorites: places saved from the map, photo first. ── */
-        <SavedSection title={t('saved.favsTitle')} sub={t('saved.destinationsSub')} big>
+        <SavedSection title={t('saved.favsTitle')} big>
           {!authed ? (
             <SavedEmpty
               Icon={MapPinIcon}
@@ -716,39 +749,9 @@ export function SavedTripsPanel({ data, onClose, onLoadTrip, onLoadTripPlan, onO
 
       {tab === 'planned' && (
         <>
-          {/* ── The mini map: every upcoming trip pinned in departure order.
-              Always on: with nothing to pin it rests on Europe, the empty
-              map itself being the invitation. ── */}
-          <div className="panel-section saved-section saved-map-section">
-            <div className="saved-map">
-              <Suspense fallback={<div className="saved-map-loading" aria-hidden="true" />}>
-                <SavedTripMap
-                  stops={heroItems.map((i) => ({ lat: i.lat, lon: i.lon, city: i.city }))}
-                  showRoute={false}
-                  scrollZoom={false}
-                  easeToSelected={false}
-                  padBottom={0}
-                  fitMaxZoom={5.5}
-                  fitPadding={{ top: 42, left: 42, right: 42, bottom: 42 }}
-                  onSelectStop={(i) => heroItems[i]?.open()}
-                />
-              </Suspense>
-            </div>
-            {nextUp ? (
-              <div className="saved-map-caption">
-                <span className="saved-map-caption-label">{t('saved.nextUp')}</span>
-                <span className="saved-map-caption-city">{nextUp.city}</span>
-                <span className="saved-map-caption-when">{whenLabel(nextUp.start, null)}</span>
-              </div>
-            ) : (
-              <p className="saved-map-empty">{t('saved.mapEmpty')}</p>
-            )}
-          </div>
-
           {/* ── Upcoming journeys: the heaviest objects in the panel. ── */}
           <SavedSection
             title={t('saved.upcomingJourneys')}
-            sub={t('saved.tripPlansSub')}
             count={authed && !tripPlansLoading ? upcomingPlans.length : null}
             big
           >
@@ -803,7 +806,6 @@ export function SavedTripsPanel({ data, onClose, onLoadTrip, onLoadTripPlan, onO
           {/* ── Day plans: lighter commitments, lighter cards. ── */}
           <SavedSection
             title={t('saved.dayPlans')}
-            sub={t('saved.dayPlansSub')}
             count={upcomingDayPlans.length}
           >
             {upcomingDayPlans.length === 0 ? (
@@ -845,6 +847,29 @@ export function SavedTripsPanel({ data, onClose, onLoadTrip, onLoadTripPlan, onO
 
       {tab === 'visited' && (
         <>
+          {/* ── The map of the record: every country you finished a trip in
+              painted, every city in it pinned. It belongs here and nowhere
+              else, a map of plans would be a map of intentions. ── */}
+          {pastCount > 0 && (
+            <div className="panel-section saved-section saved-map-section">
+              <div className="saved-map">
+                <Suspense fallback={<div className="saved-map-loading" aria-hidden="true" />}>
+                  <SavedTripMap
+                    stops={visitedItems}
+                    countryFills={visitedIso}
+                    showRoute={false}
+                    scrollZoom={false}
+                    easeToSelected={false}
+                    padBottom={0}
+                    fitMaxZoom={5.5}
+                    fitPadding={{ top: 42, left: 42, right: 42, bottom: 42 }}
+                    onSelectStop={(i) => visitedItems[i]?.open()}
+                  />
+                </Suspense>
+              </div>
+            </div>
+          )}
+
           {/* ── The ledger, once there is a record to add up. Day plans are
               local-first, so the record works signed out too. ── */}
           {pastCount > 0 && (
@@ -859,7 +884,6 @@ export function SavedTripsPanel({ data, onClose, onLoadTrip, onLoadTripPlan, onO
           {/* ── The record: finished trips file themselves, newest first. ── */}
           <SavedSection
             title={t('saved.travelRecord')}
-            sub={t('saved.pastSub')}
             count={pastCount}
             big
           >
