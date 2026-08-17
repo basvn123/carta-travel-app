@@ -1003,6 +1003,8 @@ export const nl = {
   "lifestyle.profileFamily": "Familie",
   "lifestyle.profileFoodie": "Foodie",
   "lifestyle.profileNightlife": "Nachtleven",
+  "lifestyle.stay": "Waar je slaapt",
+  "lifestyle.stayNote": "Elke prijs volgt deze keuze: de kaart, de bon en de reisplanner. Een stad zonder gemeten prijs voor jouw keuze toont de hele woning.",
   "lifestyle.tag": "Levensstijl",
   "lifestyle.title": "Hoe je zult uitgeven",
 

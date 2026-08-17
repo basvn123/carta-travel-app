@@ -1248,6 +1248,8 @@ export const en = {
   "lifestyle.profileFamily": "Family",
   "lifestyle.profileFoodie": "Foodie",
   "lifestyle.profileNightlife": "Nightlife",
+  "lifestyle.stay": "Where you sleep",
+  "lifestyle.stayNote": "Every price follows this: the map, the receipt and the trip planner. A city with no measured price for your pick shows the entire place instead.",
   "lifestyle.tag": "Lifestyle",
   "lifestyle.title": "How you'll spend",
 

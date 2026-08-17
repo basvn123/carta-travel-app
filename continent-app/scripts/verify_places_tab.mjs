@@ -171,6 +171,31 @@ const deskCols = await desk.locator('.places-list').evaluate(
 ).catch(() => 0);
 check('desktop: cards flow in two columns', deskCols === 2, `${deskCols} columns`);
 await desk.screenshot({ path: 'shots/places-desktop.png' });
+
+// ── Lifestyle: the stay tier every price here was computed at ────────────
+const pill = desk.locator('.places-lifestyle');
+check('lifestyle pill sits in the controls row', await pill.isVisible().catch(() => false));
+check('pill names the current stay tier', /entire place/i.test(await pill.innerText().catch(() => '')),
+  (await pill.innerText().catch(() => '')).replace(/\n/g, ' '));
+// Brussels, one of the cities with measured tiers, so the dorm price is a
+// real number rather than the entire-place fallback every village shows.
+await desk.locator('.places-country').selectOption('BE');
+await desk.waitForTimeout(1200);
+const bru = desk.locator('.places-dcard', { hasText: 'Brussels' }).first();
+const priceBefore = await bru.locator('.places-card-price').innerText().catch(() => '');
+await pill.click();
+await desk.waitForTimeout(700);
+check('lifestyle panel opens over the destinations tab',
+  await desk.locator('.accom-panel .lifestyle-stay-chips').isVisible().catch(() => false));
+await desk.screenshot({ path: 'shots/places-lifestyle.png' });
+await desk.locator('.lifestyle-stay-chips .chip', { hasText: 'Dorm bed' }).first().click();
+await desk.waitForTimeout(1500);
+const priceAfter = await bru.locator('.places-card-price').innerText().catch(() => '');
+check('catalogue prices follow the stay tier', priceBefore !== priceAfter && /€/.test(priceAfter),
+  `${priceBefore.replace(/\n/g, ' ')} -> ${priceAfter.replace(/\n/g, ' ')}`);
+check('pill follows the new tier', /dorm bed/i.test(await pill.innerText().catch(() => '')),
+  (await pill.innerText().catch(() => '')).replace(/\n/g, ' '));
+
 await desk.close();
 
 await browser.close();

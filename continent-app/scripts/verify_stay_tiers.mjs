@@ -151,6 +151,35 @@ try {
     console.log('(Alghero not in results, fallback note check skipped)');
   }
 
+  // ---- 3. The lifestyle panel owns the same choice ----
+  // "Where you sleep" sits beside the eating and drinking steppers, and it
+  // writes the same choices.stay_tier the filter bar reads, so a change made
+  // in one place must show up in the other and in the URL.
+  await page.goto(`${BASE}/?o=CRL&d=2026-08-04&r=2026-08-11&tab=map`);
+  await page.waitForTimeout(2500);
+  for (const label of ['Continue without an account', 'Got it']) {
+    const btn = page.getByRole('button', { name: label });
+    if (await btn.count()) await btn.first().click().catch(() => {});
+  }
+  await page.locator('.filter-tray-btn').first().click();
+  await page.waitForTimeout(400);
+  await page.getByRole('button', { name: /Lifestyle/i }).first().click();
+  await page.waitForTimeout(600);
+  const stayChips = page.locator('.lifestyle-stay-chips .chip');
+  const lsChipCount = await stayChips.count();
+  console.log('lifestyle stay chips:', lsChipCount);
+  if (lsChipCount !== 6) fail(`expected 6 stay chips in the lifestyle panel, got ${lsChipCount}`);
+  const lsOn = await page.locator('.lifestyle-stay-chips .chip.on').innerText();
+  if (!/Entire place/i.test(lsOn)) fail(`lifestyle panel opened on ${lsOn}, expected the entire-place default`);
+  await page.screenshot({ path: `${SHOTS}/stay-tiers-lifestyle.png` });
+
+  await stayChips.filter({ hasText: 'Dorm bed' }).first().click();
+  await page.waitForTimeout(1200);
+  if (!/[?&]st=dorm/.test(page.url())) fail(`stay tier not in the URL after the panel click: ${page.url()}`);
+  const barText = await page.locator('.filter-staytier').innerText();
+  if (!/Dorm bed/i.test(barText)) fail('filter bar did not follow the lifestyle panel choice');
+  console.log('lifestyle panel drives the shared stay tier OK');
+
   await browser.close();
   if (process.exitCode !== 1) console.log('verify_stay_tiers OK');
 } catch (err) {

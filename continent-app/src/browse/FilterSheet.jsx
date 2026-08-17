@@ -381,7 +381,7 @@ export function FilterSheet({
               <button
                 type="button"
                 className="fsheet-link-btn"
-                onClick={onOpenLifestyle}
+                onClick={() => { onClose?.(); onOpenLifestyle(); }}
                 title={t('filter.setLifestyleTitle')}
               >
                 <LifestyleIcon size={15} />

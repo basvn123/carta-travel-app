@@ -154,7 +154,7 @@ const BADGE_LABELS = {
  * fare dates. The parent gets { startDate, groupSize, transport, pace, label,
  * anchorId, stops:[{destinationId, nights, activities}] }.
  */
-export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onComplete }) {
+export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onComplete, stayTier = 'home' }) {
   const { t } = useI18n();
   const destinations = data?.destinations || {};
   const dateMin = data?.meta?.start_date;
@@ -892,13 +892,15 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
   const matchesQ = (dest) => !q || dest.city.toLowerCase().includes(q);
   // Rough per-night stay price for the WHOLE group at a candidate city, from
   // the same accommodation model the receipt uses (a 2-night stay so one-off
-  // fees amortize). Cached hard: the Stay list can hold hundreds of rows.
+  // fees amortize), at the traveller's chosen stay tier. Cached hard: the Stay
+  // list can hold hundreds of rows, and the tier is in the key so switching it
+  // does not serve stale prices.
   const nightlyCache = useRef(new Map());
   const nightlyFor = (id, dest) => {
-    const key = `${id}|${groupSize}|${startDate || ''}`;
+    const key = `${id}|${groupSize}|${startDate || ''}|${stayTier}`;
     const cache = nightlyCache.current;
     if (cache.has(key)) return cache.get(key);
-    const a = accommodationPerPerson(dest, 2, startDate || null, null, groupSize);
+    const a = accommodationPerPerson(dest, 2, startDate || null, null, groupSize, stayTier);
     const v = a && a.total > 0 ? Math.round((a.total * groupSize) / 2) : null;
     cache.set(key, v);
     return v;
@@ -1057,7 +1059,8 @@ export function GuidedTripWizard({ data, origin, onChangeOrigin, onCancel, onCom
     const total = lines.reduce((s, l) => s + l.eur, 0);
     return { lines, total, gs };
   }, [path, arriveMode, landedMode, flyIn, returnFareCache, returnFlyId, ownFlightCost, ownAirline,
-    baggage, driveNotes, includedIds, nights, totalNights, destinations, groupSize, groundLegs]); // eslint-disable-line react-hooks/exhaustive-deps
+    baggage, driveNotes, includedIds, nights, totalNights, destinations, groupSize, groundLegs,
+    stayTier]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // What the last answer did to the total. estBump is a counter used as a React
   // key on the figure: a new key remounts it, which restarts the CSS bump, so

@@ -39,7 +39,7 @@ function normalizeTransferMode(v) {
  *  (combineTripLegs: fly into the first stop, out of the last) plus an
  *  estimated overland leg between consecutive stops (interCityGroundEstimate).
  */
-export function useTripPlanner(data, countryInsights = null) {
+export function useTripPlanner(data, countryInsights = null, preferredStayTier = 'home') {
   const destinations = data?.destinations || {};
   const carModel = data?.meta?.car_model || null;
 
@@ -79,8 +79,15 @@ export function useTripPlanner(data, countryInsights = null) {
   const [pace, setPace] = useState(draft?.pace || 'balanced'); // 'relaxed' | 'balanced' | 'packed'
   // How expensive the traveller wants to sleep: 'dorm' | 'private' | 'home' |
   // 'hotel3' | 'hotel4' | 'hotel5'. Home (entire place) is the default; other
-  // tiers price from the measured city tiers where they exist.
-  const [stayTier, setStayTier] = useState(draft?.stayTier || 'home');
+  // tiers price from the measured city tiers where they exist. The lifestyle
+  // panel owns this choice app-wide (`choices.stay_tier`), so it arrives as
+  // preferredStayTier and every later change to it re-prices the open trip:
+  // the planner has no picker of its own, and a plan that priced dorm beds
+  // while the map priced hotel rooms would be two different answers.
+  const [stayTier, setStayTier] = useState(draft?.stayTier || preferredStayTier || 'home');
+  useEffect(() => {
+    if (preferredStayTier) setStayTier(preferredStayTier);
+  }, [preferredStayTier]);
   // Ryanair baggage the traveller expects to book: 'cabin' (free small bag),
   // 'priority' (10 kg cabin bag) or 'checked' (20 kg hold bag). Priced per
   // person per flight leg on top of the seat fare.

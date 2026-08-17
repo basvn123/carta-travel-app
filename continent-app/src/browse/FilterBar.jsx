@@ -589,7 +589,7 @@ export function FilterBar({
                           <div className="filter-control">
                             <button
                               className="pill-toggle lifestyle-pill"
-                              onClick={onOpenLifestyle}
+                              onClick={() => { setTrayOpen(false); onOpenLifestyle(); }}
                               title={t('filter.setLifestyleTitle')}
                             >
                               <LifestyleIcon size={13} /> {t('filter.setLifestyle')}

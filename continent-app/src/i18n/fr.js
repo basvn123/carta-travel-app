@@ -1003,6 +1003,8 @@ export const fr = {
   "lifestyle.profileFamily": "Famille",
   "lifestyle.profileFoodie": "Gourmand",
   "lifestyle.profileNightlife": "Vie nocturne",
+  "lifestyle.stay": "Où vous dormez",
+  "lifestyle.stayNote": "Tous les prix suivent ce choix : la carte, le reçu et le planificateur. Une ville sans prix mesuré pour votre choix affiche le logement entier.",
   "lifestyle.tag": "Style de vie",
   "lifestyle.title": "Comment vous dépenserez",
 

@@ -16222,6 +16222,27 @@ button.ai-sched-main:focus-visible {
   font-size: 13px;
   color: var(--ink);
 }
+/* The stay tier every price on this tab was computed at; opens the lifestyle
+   panel. Same 42px shell as the country select so the row reads as one bar. */
+.places-lifestyle {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 42px;
+  padding: 0 12px;
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  background: var(--bg-card);
+  font-size: 13px;
+  color: var(--ink-soft);
+  white-space: nowrap;
+  cursor: pointer;
+}
+.places-lifestyle:hover { border-color: var(--accent-soft); color: var(--ink); }
+.places-lifestyle b { font-weight: 600; color: var(--ink); }
+@media (max-width: 620px) {
+  .places-lifestyle-label { display: none; }
+}
 
 /* Near-search suggestions, anchored under the input. */
 .places-sugg {

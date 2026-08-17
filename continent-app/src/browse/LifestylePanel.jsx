@@ -1,15 +1,20 @@
 import React from 'react';
-import { DEFAULT_LIFESTYLE } from '../lib/runtime_pricing.js';
-import { DiningIcon, LifestyleIcon } from '../components/Icons.jsx';
+import { DEFAULT_LIFESTYLE, offeredStayTiers } from '../lib/runtime_pricing.js';
+import { BedIcon, DiningIcon, LifestyleIcon } from '../components/Icons.jsx';
 import { useI18n } from '../i18n/index.jsx';
 
 /**
  * Lifestyle settings panel, slides in from the left.
  *
- * The user describes how their vacation looks (dinners, casual meals, fast food,
- * bar drinks, club nights, self-catered days). Each is priced at the chosen
- * destination's real local rates inside the trip breakdown. Profile presets set
- * everything at once (e.g. a young group that goes clubbing).
+ * The user describes how their vacation looks: where they sleep (dorm bed
+ * through hotel room) and how they eat and drink (dinners, casual meals, fast
+ * food, bar drinks, club nights, self-catered days). Each is priced at the
+ * chosen destination's real local rates inside the trip breakdown. Profile
+ * presets set the eating and drinking side at once (e.g. a young group that
+ * goes clubbing).
+ *
+ * The stay tier is the same `choices.stay_tier` the filter bar carries, so
+ * every priced surface (map labels, receipt, compare, trip planner) follows it.
  *
  * Frequencies can be read per-week or per-day via the cadence toggle. The six
  * period-counts are stored in whatever cadence is active; switching cadence
@@ -82,7 +87,7 @@ function matchProfile(ls) {
   return null;
 }
 
-export function LifestylePanel({ choices, setChoices, onClose }) {
+export function LifestylePanel({ choices, setChoices, onClose, data }) {
   const { t } = useI18n();
   const ls = choices.lifestyle || {};
   const cadence = ls.cadence || 'week';
@@ -92,6 +97,13 @@ export function LifestylePanel({ choices, setChoices, onClose }) {
   const setProfile = (name) => setChoices({ ...choices, lifestyle: { ...PROFILES[name] } });
   const setCadence = (c) => setChoices({ ...choices, lifestyle: toCadence(ls, c) });
   const active = matchProfile(ls);
+
+  // Only the tiers this dataset measured (apply_stay_tiers.py writes
+  // meta.stay_tiers_available); 'home' is always there. With nothing measured
+  // this is a single option, so the section hides rather than showing a
+  // control that cannot change anything.
+  const stayTiers = React.useMemo(() => offeredStayTiers(data?.meta), [data?.meta]);
+  const stayTier = choices.stay_tier || 'home';
 
   const maxFor = (key) => PERIOD_FIELDS.find((f) => f.key === key).max[cadence];
 
@@ -103,6 +115,24 @@ export function LifestylePanel({ choices, setChoices, onClose }) {
         <div className="panel-tag">{t('lifestyle.tag')}</div>
         <h2 className="panel-city">{t('lifestyle.title')}</h2>
       </div>
+
+      {stayTiers.length > 1 && (
+        <div className="panel-section">
+          <div className="section-title section-title-iconed"><BedIcon size={12} /> {t('lifestyle.stay')}</div>
+          <div className="kind-chips lifestyle-stay-chips">
+            {stayTiers.map((k) => (
+              <button
+                key={k}
+                className={`chip ${stayTier === k ? 'on' : ''}`}
+                onClick={() => setChoices({ ...choices, stay_tier: k })}
+              >
+                {t(`stay.${k}`)}
+              </button>
+            ))}
+          </div>
+          <p className="footnote">{t('lifestyle.stayNote')}</p>
+        </div>
+      )}
 
       <div className="panel-section">
         <div className="section-title section-title-iconed"><LifestyleIcon size={12} /> {t('lifestyle.profile')}</div>

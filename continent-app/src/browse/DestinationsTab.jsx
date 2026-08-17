@@ -8,7 +8,7 @@ import { associateTrip, haversineKm, tripCentre, tripKindKey, tripThemes } from 
 import { useI18n } from '../i18n/index.jsx';
 import {
   SearchIcon, ChevronRightIcon, RouteIcon, SkylineIcon, SuitcaseIcon, BootIcon,
-  BeachIcon, MountainIcon,
+  BeachIcon, MountainIcon, BedIcon,
 } from '../components/Icons.jsx';
 
 /**
@@ -179,6 +179,7 @@ function CountryCard({ cc, name, sub, img, onPick }) {
 
 export function DestinationsTab({
   data, pricedAll, priceMode = 'total', availableCountries = [], onSelectDest,
+  stayTier = 'home', onOpenLifestyle,
 }) {
   const { t, lang } = useI18n();
   const scrollRef = useRef(null);
@@ -482,6 +483,21 @@ export function DestinationsTab({
               <option key={cc} value={cc}>{name}</option>
             ))}
           </select>
+          {/* Every price on this tab is a whole trip at the traveller's own
+              stay tier, so the tier it was priced at belongs on screen beside
+              the numbers, and one tap opens the panel that changes it. */}
+          {onOpenLifestyle && (
+            <button
+              type="button"
+              className="places-lifestyle"
+              onClick={onOpenLifestyle}
+              title={t('filter.setLifestyleTitle')}
+            >
+              <BedIcon size={15} />
+              <span className="places-lifestyle-label">{t('filter.lifestyle')}</span>
+              <b>{t(`stay.${stayTier}`)}</b>
+            </button>
+          )}
         </div>
 
         {!showCountryIndex && (

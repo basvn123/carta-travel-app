@@ -780,16 +780,6 @@ function TravelApp() {
             </div>
           )}
 
-          {lifestyleOpen && (
-            <div onClick={(e) => e.stopPropagation()}>
-              <LifestylePanel
-                choices={choices}
-                setChoices={setChoices}
-                onClose={() => setLifestyleOpen(false)}
-              />
-            </div>
-          )}
-
           <div onClick={(e) => e.stopPropagation()}>
             <DetailPanel
               destination={selectedDest}
@@ -827,6 +817,20 @@ function TravelApp() {
         </div>
       )}
 
+      {/* Lifestyle lives outside the tab blocks: where you sleep and how you
+          eat price the map, the catalogue and the planners alike, so the panel
+          has to open over whichever tab asked for it. */}
+      {lifestyleOpen && (
+        <div onClick={(e) => e.stopPropagation()}>
+          <LifestylePanel
+            choices={choices}
+            setChoices={setChoices}
+            onClose={() => setLifestyleOpen(false)}
+            data={data}
+          />
+        </div>
+      )}
+
       {/* The Destinations tab: the catalogue and the published trips as a
           browsable section of their own. Picking a place hands over to the
           map tab, where the detail panel already knows how to price it. */}
@@ -838,6 +842,8 @@ function TravelApp() {
             priceMode={priceMode}
             availableCountries={availableCountries}
             onSelectDest={(id) => { setActiveTab('map'); openDetail(id); }}
+            stayTier={choices.stay_tier || 'home'}
+            onOpenLifestyle={() => setLifestyleOpen(true)}
           />
         </div>
       )}
@@ -860,6 +866,7 @@ function TravelApp() {
               openWizardSignal={wizardLaunch}
               origin={choices.origin}
               onChangeOrigin={setOrigin}
+              stayTier={choices.stay_tier || 'home'}
               onPlanDay={(target) => {
                 setPendingDayPlanId(target); // { planId|null, stopIndex, dayIndex }
                 setActiveTab('day');
