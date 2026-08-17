@@ -16091,10 +16091,6 @@ button.ai-sched-main:focus-visible {
   font-family: var(--mono); font-size: 12px; color: var(--ink-soft);
   font-variant-numeric: tabular-nums;
 }
-.trails-nearby-summary {
-  margin: 4px 0 0; font-size: 12.5px; line-height: 1.45; color: var(--ink-mute);
-  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
-}
 .trails-nearby-credit {
   margin: 8px 0 0; font-size: 11px; color: var(--ink-mute);
 }
@@ -16160,6 +16156,89 @@ button.ai-sched-main:focus-visible {
   color: var(--ink);
 }
 .places-cat.on svg { color: var(--accent); }
+
+/* Size rail: which places are on screen, by how big they are.
+   The glyph sits in a real circle because the four sizes are a set you scan
+   rather than four labels you read, and a round token reads as "one of these"
+   faster than a row of words. The circle is a hairline ring on paper, not a
+   tinted tile: the accent arrives only when a size is switched on, so an
+   untouched rail stays quiet next to the prices, which are what this tab is
+   actually for. Multi-select, because "towns and villages" is a real way to
+   look for somewhere and forcing one choice would not allow it. */
+/* Wraps rather than scrolling: four sizes do not fit one 390px row once each
+   carries a count, and a size that has scrolled off the edge is a size nobody
+   discovers. Two tidy rows beat one row with a secret in it. */
+.places-classes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+.places-class {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  flex: 0 0 auto;
+  padding: 5px 12px 5px 5px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: var(--bg-card);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  transition: color .15s, border-color .15s, background .15s;
+}
+.places-class-dot {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--paper-dim);
+  color: var(--ink-soft);
+  transition: background .15s, color .15s;
+}
+.places-class-n {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--ink-mute);
+  font-variant-numeric: tabular-nums;
+}
+.places-class:hover:not(:disabled) { color: var(--ink); border-color: var(--rule); }
+.places-class:hover:not(:disabled) .places-class-dot { background: var(--rule-soft); }
+.places-class.on {
+  border-color: var(--accent-soft);
+  color: var(--ink);
+}
+.places-class.on .places-class-dot { background: var(--accent-bg); color: var(--accent); }
+.places-class.on .places-class-n { color: var(--ink-soft); }
+.places-class:disabled { opacity: .4; }
+.places-class:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* The same glyph on the card, so the size stays legible while scrolling.
+   Bottom-left, opposite the km badge, over the scrim where the type already
+   sits on dark. */
+.places-card-class {
+  position: absolute;
+  top: 10px; left: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: rgba(26, 26, 26, 0.55);
+  color: #fff;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .places-class, .places-class-dot { transition: none; }
+}
 
 /* Sort chips: one active at a time, the arrow says which way it runs. */
 .places-sorts {
@@ -16303,7 +16382,7 @@ button.ai-sched-main:focus-visible {
       scrim, the mono numbers stay mono. One shared overlay grammar for
       destination cards, trip cards and country flag cards. ── */
 
-.places-dcard, .places-ccard, .places-tcard-top {
+.places-dcard, .places-ccard, .places-tcard {
   position: relative;
   display: block;
   width: 100%;
@@ -16314,7 +16393,7 @@ button.ai-sched-main:focus-visible {
 }
 .places-dcard { height: 150px; }
 .places-ccard { height: 92px; }
-.places-tcard-top { height: 158px; border-radius: 0; }
+.places-tcard { height: 158px; }
 .places-dcard:focus-visible, .places-ccard:focus-visible, .places-tcard:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
@@ -16449,27 +16528,6 @@ button.ai-sched-main:focus-visible {
   font-variant-numeric: tabular-nums;
 }
 
-/* A published trip: the photo card on top, a hike's summary below it. */
-.places-tcard {
-  display: block;
-  width: 100%;
-  border: 1px solid var(--rule);
-  border-radius: 14px;
-  overflow: hidden;
-  background: var(--bg-card);
-  text-align: left;
-}
-.places-tcard-summary {
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  padding: 9px 12px 11px;
-  font-size: 12.5px;
-  line-height: 1.45;
-  color: var(--ink-soft);
-}
-
 .places-empty {
   padding: 20px 2px;
   font-size: 13px;
@@ -16518,132 +16576,374 @@ button.ai-sched-main:focus-visible {
   .places-tcard:hover .places-card-img { transform: none; }
 }
 
-/* ── The trip sheet: the route on a real map, the wire's numbers, the
-      elevation profile and the stops. A bottom sheet on phones, a centred
-      dialog on desktop. ── */
-.tsheet-scrim {
+/* ══════════════════════════════════════════════════════════════════════════
+   The trail page: a published hike or city day as a page of its own, opened
+   from a card in the Destinations tab or from a shared #trail= link. Replaced
+   the old .tsheet dialog, which had nowhere to put a description, an export
+   row or a live follow HUD.
+
+   Two states in one component: reading (map at the top, everything under it)
+   and following (the map takes the whole page under the bar, HUD over it).
+   ══════════════════════════════════════════════════════════════════════════ */
+.tpage {
   position: fixed;
   inset: 0;
   z-index: 240;
-  background: rgba(26, 26, 26, 0.42);
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-}
-.tsheet {
   display: flex;
   flex-direction: column;
-  width: 100%;
-  max-height: calc(100dvh - 40px);
   background: var(--paper);
-  border: 1px solid var(--rule);
-  border-bottom: none;
-  border-radius: 18px 18px 0 0;
-  overflow: hidden;
 }
-@media (min-width: 769px) {
-  .tsheet-scrim { align-items: center; padding: 32px; }
-  .tsheet {
-    max-width: 560px;
-    max-height: min(86dvh, 780px);
-    border-radius: 16px;
-    border-bottom: 1px solid var(--rule);
-  }
-}
-.tsheet-head {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  padding: 16px 18px 12px;
-  border-bottom: 1px solid var(--rule-soft);
-}
-.tsheet-head .places-card-kind {
-  margin-top: 0;
-  background: var(--paper-dim);
-  color: var(--ink-soft);
-}
-.tsheet-head .places-card-kind.city { background: var(--accent-bg); color: var(--accent); }
-.tsheet-head-main { flex: 1; min-width: 0; }
-.tsheet-title {
-  margin: 7px 0 0;
-  font-family: var(--display);
-  font-size: 20px;
-  font-weight: 600;
-  letter-spacing: -0.01em;
-  color: var(--ink);
-  line-height: 1.2;
-}
-.tsheet-sub {
+
+/* Back, the name, share. Sticky by being outside the scroller. */
+.tpage-bar {
+  flex: none;
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-top: 5px;
-  font-size: 12px;
-  color: var(--ink-mute);
+  height: 52px;
+  padding: 0 10px;
+  border-bottom: 1px solid var(--rule-soft);
+  background: var(--paper);
 }
-.tsheet-close {
+.tpage-back {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 34px;
+  padding: 0 10px 0 7px;
+  border-radius: 8px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.tpage-back:hover { background: var(--paper-dim); }
+/* The bar carries the name only once the heading has scrolled out of the
+   page, so the two never sit on screen saying the same thing. */
+.tpage-bar-title {
+  flex: 1;
+  min-width: 0;
+  font-family: var(--display);
+  font-size: 14.5px;
+  font-weight: 600;
+  color: var(--ink);
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  opacity: 0;
+  transition: opacity .18s ease;
+}
+.tpage-bar-title.on { opacity: 1; }
+.tpage-bar-act {
   flex: none;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 30px;
-  height: 30px;
+  width: 34px;
+  height: 34px;
   border-radius: 8px;
-  color: var(--ink-mute);
+  color: var(--ink-soft);
 }
-.tsheet-close:hover { background: var(--paper-dim); color: var(--ink); }
-.tsheet-body {
+.tpage-bar-act:hover { background: var(--paper-dim); color: var(--ink); }
+
+.tpage-scroll {
   flex: 1;
   min-height: 0;
   overflow-y: auto;
   overscroll-behavior: contain;
-  padding: 0 18px calc(18px + env(safe-area-inset-bottom, 0px));
 }
-.tsheet-map {
+
+/* ── The route map ── */
+.tpage-hero {
   position: relative;
-  height: 240px;
-  margin: 14px 0 0;
-  border: 1px solid var(--rule);
-  border-radius: 12px;
-  overflow: hidden;
+  height: 44vh;
+  min-height: 240px;
+  border-bottom: 1px solid var(--rule);
   background: var(--paper-dim);
 }
-.tsheet-map .maplibregl-map { position: absolute !important; inset: 0 !important; }
-.tsheet-start-pin {
+@media (min-width: 900px) {
+  .tpage-hero { height: 400px; }
+}
+/* !important is load order, not taste: MapLibre puts .maplibregl-map on the
+   CONTAINER (this element), and maplibre-gl.css arrives with the lazy chunk
+   AFTER styles.css. Same specificity, later sheet wins, so its
+   "position: relative; overflow: hidden" collapses the map to zero height and
+   the route disappears behind its own clip. */
+.tpage-map {
+  position: absolute !important;
+  inset: 0 !important;
+}
+.tpage-start-pin {
   display: block;
   width: 13px;
   height: 13px;
   border-radius: 50%;
   background: var(--accent);
   border: 2.5px solid #fff;
-  box-shadow: 0 1px 3px rgba(26, 26, 26, 0.35);
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.35);
 }
-.tsheet-facts {
+/* The walker's own position. MapLibre rewrites a marker element's inline
+   transform every frame, so anything animated lives on the inner dot. */
+.tpage-me { display: block; width: 26px; height: 26px; }
+.tpage-me-dot {
+  display: block;
+  width: 15px;
+  height: 15px;
+  margin: 5.5px;
+  border-radius: 50%;
+  background: var(--ink);
+  border: 3px solid #fff;
+  box-shadow: 0 0 0 0 rgba(15, 23, 42, 0.35);
+  animation: tpage-me-pulse 2s ease-out infinite;
+}
+@keyframes tpage-me-pulse {
+  0% { box-shadow: 0 0 0 0 rgba(15, 23, 42, 0.30); }
+  70% { box-shadow: 0 0 0 12px rgba(15, 23, 42, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(15, 23, 42, 0); }
+}
+
+/* ── Following: the map takes the page, the HUD reports on it ── */
+.tpage.following .tpage-scroll { overflow: hidden; }
+.tpage.following .tpage-hero {
+  position: absolute;
+  inset: 52px 0 0;
+  height: auto;
+  min-height: 0;
+  z-index: 5;
+  border-bottom: none;
+}
+/* The HUD card would sit on top of the basemap credit, which has to stay
+   readable, so the map's own control row moves above it while following.
+   !important to beat the app-wide 8px control margin, which is itself
+   !important (see .maplibregl-ctrl-bottom-left above). */
+.tpage.following .maplibregl-ctrl-bottom-right,
+.tpage.following .maplibregl-ctrl-bottom-left {
+  margin-bottom: calc(118px + env(safe-area-inset-bottom, 0px)) !important;
+}
+.tpage-hud { position: absolute; inset: 0; pointer-events: none; }
+.tpage-hud-close {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  pointer-events: auto;
   display: flex;
-  flex-wrap: wrap;
-  gap: 6px 16px;
-  padding: 12px 2px;
-  border-bottom: 1px solid var(--rule-soft);
-  font-family: var(--mono);
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  background: var(--paper);
+  color: var(--ink);
+}
+.tpage-recentre {
+  position: absolute;
+  left: 50%;
+  bottom: calc(150px + env(safe-area-inset-bottom, 0px));
+  transform: translateX(-50%);
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 34px;
+  padding: 0 14px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: var(--paper);
   font-size: 12.5px;
+  font-weight: 600;
+  color: var(--ink);
+  box-shadow: var(--shadow-1);
+}
+.tpage-hud-card {
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+  pointer-events: auto;
+  padding: 12px 14px 13px;
+  border: 1px solid var(--rule);
+  border-radius: 14px;
+  background: var(--paper);
+  box-shadow: var(--shadow-2);
+}
+@media (min-width: 900px) {
+  .tpage-hud-card { left: auto; right: 16px; width: 340px; }
+  .tpage-recentre { left: auto; right: 186px; transform: none; }
+}
+.tpage-hud-err, .tpage-hud-wait {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--ink-soft);
+}
+.tpage-hud-off {
+  margin: 0 0 8px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--danger);
+}
+.tpage-hud-top { display: flex; align-items: baseline; gap: 7px; }
+.tpage-hud-done {
+  font-family: var(--mono);
+  font-size: 30px;
+  font-weight: 500;
+  line-height: 1;
   color: var(--ink);
   font-variant-numeric: tabular-nums;
 }
-.tsheet-sec-title {
+.tpage-hud-of {
+  font-family: var(--mono);
+  font-size: 12.5px;
+  color: var(--ink-mute);
+  font-variant-numeric: tabular-nums;
+}
+.tpage-hud-track {
+  height: 6px;
+  margin: 9px 0 8px;
+  border-radius: 3px;
+  background: var(--paper-dim);
+  overflow: hidden;
+}
+.tpage-hud-fill { display: block; height: 100%; background: var(--accent); }
+.tpage-hud-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+  font-family: var(--mono);
+  font-size: 11.5px;
+  color: var(--ink-soft);
+  font-variant-numeric: tabular-nums;
+}
+.tpage-hud-acc { color: var(--ink-mute); }
+
+/* ── The page body ── */
+.tpage-col {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 16px 18px calc(44px + env(safe-area-inset-bottom, 0px));
+}
+.tpage-head .places-card-kind {
+  margin-top: 0;
+  background: var(--paper-dim);
+  color: var(--ink-soft);
+}
+.tpage-head .places-card-kind.city { background: var(--accent-bg); color: var(--accent); }
+.tpage-title {
+  margin: 8px 0 0;
+  font-family: var(--display);
+  font-size: clamp(21px, 4.4vw, 28px);
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  line-height: 1.18;
+  color: var(--ink);
+}
+.tpage-sub {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 6px;
+  font-size: 12.5px;
+  color: var(--ink-mute);
+}
+
+/* The measured facts as one bordered instrument. A 1px grid gap over a hairline
+   ground draws the dividers, so cells stay even however many facts a route has
+   and no nth-child arithmetic decides where a border goes. */
+.tpage-facts {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
   margin-top: 14px;
-  font-size: 12px;
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  background: var(--rule-soft);
+  overflow: hidden;
+}
+@media (min-width: 560px) {
+  .tpage-facts { grid-template-columns: repeat(auto-fit, minmax(96px, 1fr)); }
+}
+.tpage-fact {
+  padding: 9px 12px 10px;
+  background: var(--bg-card);
+}
+.tpage-fact-val {
+  display: block;
+  font-family: var(--mono);
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+/* Difficulty is a word, not a measurement, so it leaves the mono column. */
+.tpage-fact-val.is-word { font-family: var(--ui); font-size: 14px; font-weight: 600; }
+.tpage-fact-label {
+  display: block;
+  margin-top: 2px;
+  font-size: 10.5px;
+  color: var(--ink-mute);
+}
+
+/* The one primary action: leaving with the route. Following it in the browser
+   sits in the secondary row below, because a tab cannot promise more. */
+.tpage-primary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  height: 48px;
+  margin-top: 14px;
+  border-radius: 12px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+}
+.tpage-primary:hover { filter: brightness(0.95); }
+@media (min-width: 700px) {
+  /* A 720px wide button reads as a banner, not an action. */
+  .tpage-primary { max-width: 340px; }
+}
+.tpage-primary + .tpage-acts { margin-top: 10px; }
+
+.tpage-sec { margin-top: 24px; }
+.tpage-sec-title {
+  margin: 0 0 9px;
+  font-family: var(--display);
+  font-size: 15.5px;
   font-weight: 600;
   color: var(--ink);
 }
-.tsheet-elev-svg {
-  display: block;
-  width: 100%;
-  height: 76px;
-  margin-top: 8px;
+
+/* What to expect: a run of related facts, so hairlines rather than boxes. */
+.tpage-story { list-style: none; margin: 0; padding: 0; }
+.tpage-story li {
+  display: flex;
+  gap: 10px;
+  padding: 9px 0;
+  border-top: 1px solid var(--rule-soft);
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--ink-soft);
 }
-.tsheet-elev-area { fill: var(--accent-bg); stroke: none; }
-.tsheet-elev-line { fill: none; stroke: var(--accent); stroke-width: 1.6; }
-.tsheet-elev-axis {
+.tpage-story li:first-child { border-top: none; padding-top: 2px; }
+.tpage-story-icon { flex: none; margin-top: 2px; color: var(--ink-soft); }
+
+.tpage-prose p {
+  margin: 0 0 10px;
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: var(--ink-soft);
+}
+
+.tpage-elev { margin-top: 2px; }
+.tpage-elev-svg { display: block; width: 100%; height: 96px; }
+.tpage-elev-area { fill: var(--accent-bg); stroke: none; }
+.tpage-elev-line { fill: none; stroke: var(--accent); stroke-width: 1.6; }
+.tpage-elev-here { stroke: var(--ink); stroke-width: 1.4; stroke-dasharray: 3 3; }
+.tpage-elev-axis {
   display: flex;
   justify-content: space-between;
   margin-top: 3px;
@@ -16652,25 +16952,17 @@ button.ai-sched-main:focus-visible {
   color: var(--ink-mute);
   font-variant-numeric: tabular-nums;
 }
-.tsheet-desc { margin-top: 12px; }
-.tsheet-desc p {
-  margin: 0 0 10px;
-  font-size: 13px;
-  line-height: 1.55;
-  color: var(--ink-soft);
-}
-.tsheet-stops ol {
-  margin: 8px 0 0;
-  padding: 0 0 0 22px;
-}
-.tsheet-stops li { padding: 5px 0; }
-.tsheet-stops li::marker {
+
+.tpage-stops { margin: 0; padding: 0 0 0 22px; }
+.tpage-stops li { padding: 7px 0; border-top: 1px solid var(--rule-soft); }
+.tpage-stops li:first-child { border-top: none; }
+.tpage-stops li::marker {
   font-family: var(--mono);
   font-size: 11px;
   color: var(--accent);
 }
-.tsheet-stop-name { display: block; font-size: 13px; font-weight: 600; color: var(--ink); }
-.tsheet-stop-facts {
+.tpage-stop-name { display: block; font-size: 13.5px; font-weight: 600; color: var(--ink); }
+.tpage-stop-facts {
   display: flex;
   gap: 12px;
   margin-top: 1px;
@@ -16679,35 +16971,102 @@ button.ai-sched-main:focus-visible {
   color: var(--ink-mute);
   font-variant-numeric: tabular-nums;
 }
-.tsheet-cta {
+
+.tpage-acts { display: flex; flex-wrap: wrap; gap: 8px; }
+.tpage-act {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 42px;
+  padding: 0 14px;
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  background: var(--bg-card);
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--ink);
+  text-decoration: none;
+}
+.tpage-act:hover { background: var(--paper-dim); }
+.tpage-act-wide { width: 100%; justify-content: center; margin-top: 10px; }
+.tpage-note {
+  margin: 10px 0 0;
+  font-size: 11.5px;
+  line-height: 1.5;
+  color: var(--ink-mute);
+}
+.tpage-note + .tpage-note { margin-top: 6px; }
+
+.tpage-start {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 14px;
+}
+.tpage-start-coords {
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+.tpage-start-near { font-size: 12.5px; color: var(--ink-soft); }
+
+.tpage-cta {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
   width: 100%;
-  margin-top: 16px;
-  padding: 12px 16px;
-  border-radius: 11px;
-  background: var(--accent);
-  color: #fff;
+  margin-top: 24px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: var(--ink);
+  color: var(--paper);
   font-size: 14px;
   font-weight: 600;
   text-align: left;
 }
-.tsheet-cta:hover { filter: brightness(0.95); }
-.tsheet-cta-price {
+.tpage-cta-right { display: flex; align-items: center; gap: 10px; }
+.tpage-cta-price {
   font-family: var(--mono);
   font-size: 12.5px;
   font-weight: 500;
   font-variant-numeric: tabular-nums;
-  opacity: 0.92;
+  opacity: 0.9;
   white-space: nowrap;
 }
-.tsheet-credit {
-  margin: 14px 0 0;
+.tpage-credit {
+  margin: 20px 0 0;
   font-size: 10.5px;
   line-height: 1.45;
   color: var(--ink-mute);
+}
+
+.tpage-toast {
+  position: absolute;
+  left: 50%;
+  bottom: calc(28px + env(safe-area-inset-bottom, 0px));
+  transform: translateX(-50%);
+  z-index: 30;
+  padding: 11px 16px;
+  border-radius: 10px;
+  background: var(--ink);
+  color: var(--paper);
+  font-size: 13px;
+  font-weight: 600;
+  box-shadow: var(--shadow-2);
+}
+
+.tpage-back:focus-visible, .tpage-bar-act:focus-visible, .tpage-primary:focus-visible,
+.tpage-act:focus-visible, .tpage-cta:focus-visible, .tpage-hud-close:focus-visible,
+.tpage-recentre:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tpage-me-dot { animation: none; }
+  .tpage-bar-title { transition: none; }
 }
 
 /* ═══════════════════════════════════════════════════════════════════════

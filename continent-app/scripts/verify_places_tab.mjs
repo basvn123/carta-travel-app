@@ -93,34 +93,34 @@ const tFacts = await page.locator('.places-tcard .places-card-facts').first().in
 check('trip cards carry km and stops', /km/.test(tFacts) && /stop/i.test(tFacts), tFacts.replace(/\n/g, ' '));
 await page.screenshot({ path: 'shots/places-trips.png' });
 
-// ── Trip sheet: the route on a real map ──
+// ── The trail page: the route on a real map (see verify_trail_page.mjs for
+//    the page itself: exports, following, the composed explanation) ──
 await page.locator('.places-tcard').first().click();
 await page.waitForTimeout(4500);
-check('trip sheet opens', await page.locator('.tsheet').isVisible());
-check('sheet draws the route map', await page.locator('.tsheet-map canvas').isVisible().catch(() => false));
-const factsText = await page.locator('.tsheet-facts').innerText().catch(() => '');
-check('sheet facts carry the wire numbers', /km/.test(factsText) && /h/.test(factsText), factsText.replace(/\n/g, ' '));
-const stopsCount = await page.locator('.tsheet-stops li').count();
-check('citytrip sheet lists its stops', stopsCount >= 3, `${stopsCount} stops`);
-check('citytrip sheet offers the destination CTA', await page.locator('.tsheet-cta').isVisible());
-await page.screenshot({ path: 'shots/places-sheet-citytrip.png' });
-await page.locator('.tsheet-close').click();
+check('trip page opens', await page.locator('.tpage').isVisible());
+check('page draws the route map', await page.locator('.tpage-map canvas').isVisible().catch(() => false));
+const factsText = await page.locator('.tpage-facts').innerText().catch(() => '');
+check('page facts carry the wire numbers', /km/.test(factsText) && /h/.test(factsText), factsText.replace(/\n/g, ' '));
+const stopsCount = await page.locator('.tpage-stops li').count();
+check('citytrip page lists its stops', stopsCount >= 3, `${stopsCount} stops`);
+check('citytrip page offers the destination CTA', await page.locator('.tpage-cta').isVisible());
+await page.screenshot({ path: 'shots/places-page-citytrip.png' });
+await page.locator('.tpage-back').click();
 await page.waitForTimeout(500);
 
-// ── Trails: hike cards with summary, sheet gets an elevation profile ──
+// ── Trails: facts-only cards, the page gets an elevation profile ──
 await page.locator('.places-cat', { hasText: /trails/i }).click();
 await page.waitForTimeout(1500);
 const hikeCards = await page.locator('.places-tcard').count();
 check('hike cards render for Albania', hikeCards >= 3, `${hikeCards} cards`);
-const hikeSummary = await page.locator('.places-tcard-summary').first().innerText().catch(() => '');
-check('hike cards carry a summary', hikeSummary.length > 20, hikeSummary.slice(0, 50));
+check('hike cards carry no clipped summary', await page.locator('.places-tcard-summary').count() === 0);
 await page.screenshot({ path: 'shots/places-trails.png' });
 
 await page.locator('.places-tcard').first().click();
 await page.waitForTimeout(4500);
-check('hike sheet shows the elevation profile', await page.locator('.tsheet-elev-svg').isVisible().catch(() => false));
-await page.screenshot({ path: 'shots/places-sheet-hike.png' });
-await page.locator('.tsheet-close').click();
+check('hike page shows the elevation profile', await page.locator('.tpage-elev-svg').isVisible().catch(() => false));
+await page.screenshot({ path: 'shots/places-page-hike.png' });
+await page.locator('.tpage-back').click();
 await page.waitForTimeout(400);
 
 // ── Beaches and Mountains: themed slices ──

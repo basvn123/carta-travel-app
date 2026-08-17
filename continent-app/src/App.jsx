@@ -54,6 +54,7 @@ import { tripDaysBetween, DEFAULT_LIFESTYLE, needsDriveHome } from './lib/runtim
 import { OriginPicker } from './components/OriginPicker.jsx';
 import { loadInitialState } from './lib/urlState.js';
 import { readTripShareFromUrl, decodeTripShare } from './lib/shareLink.js';
+import { readTrailFromUrl } from './lib/trails.js';
 import { loadTripDraft } from './planner/tripDraftStore.js';
 import { bindDayPlanCloud } from './planner/dayPlanSync.js';
 import { AuthProvider, useAuth } from './auth/AuthContext.jsx';
@@ -233,6 +234,16 @@ function TravelApp() {
     decodeTripShare(sharedTripRaw).then((d) => { if (live && d) setSharedTrip(d); });
     return () => { live = false; };
   }, [sharedTripRaw]);
+
+  // A single TRAIL shared as a link (#trail=63478&tc=AL, see lib/trailExport.js):
+  // read once at startup and handed to the Destinations tab, which loads that
+  // country's published trips and opens the trail's own page. The hash carries
+  // nothing else, so the recipient's saved dates, origin and lifestyle survive
+  // opening someone else's trail.
+  const [pendingTrail, setPendingTrail] = useState(() => readTrailFromUrl());
+  useEffect(() => {
+    if (pendingTrail) setActiveTab('places');
+  }, [pendingTrail]);
 
   // Stable identity: this lands on every ResultsList row, so a fresh function
   // per render would defeat the list's React.memo.
@@ -849,6 +860,8 @@ function TravelApp() {
             transportMode={choices.transport_mode || 'plane'}
             driveHome={choices.drive_home}
             onChangeDriveHome={setDriveHome}
+            openTrail={pendingTrail}
+            onOpenTrailConsumed={() => setPendingTrail(null)}
           />
         </div>
       )}

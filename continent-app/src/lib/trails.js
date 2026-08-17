@@ -78,6 +78,35 @@ export function loadTrail(id) {
     .then((raw) => (raw && raw.id ? raw : null));
 }
 
+/**
+ * A shared trail link, read once at startup: "#trail=63478&tc=AL".
+ *
+ * The hash, not the query string, for the same reasons shareLink.js uses it:
+ * the payload never reaches a server log, it never collides with the
+ * browse-state params useUrlSync writes, and a link that carries nothing else
+ * leaves the recipient's own saved dates and origin alone. Supabase auth links
+ * also land in the hash, so only a hash carrying our own `trail=` is touched.
+ *
+ * Cached, so React's double-invoked StrictMode mount reads the same value
+ * instead of losing it to the first strip.
+ */
+let trailReadResult;
+
+export function readTrailFromUrl() {
+  if (trailReadResult !== undefined) return trailReadResult;
+  if (typeof window === 'undefined') return null;
+  const hash = window.location.hash || '';
+  if (!hash.startsWith('#') || !hash.includes('trail=')) return (trailReadResult = null);
+  const params = new URLSearchParams(hash.slice(1));
+  const id = Number(params.get('trail'));
+  const cc = String(params.get('tc') || '').toUpperCase();
+  if (!Number.isInteger(id) || id <= 0 || !COUNTRY_RE.test(cc)) return (trailReadResult = null);
+  try {
+    window.history.replaceState(null, '', window.location.pathname + window.location.search);
+  } catch { /* the trail still opens; only the address bar stays busy */ }
+  return (trailReadResult = { id, country: cc });
+}
+
 /** The published trips for a country, or null while loading. */
 export function useTrails(country) {
   const [trips, setTrips] = useState(null);

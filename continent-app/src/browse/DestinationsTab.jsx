@@ -10,6 +10,7 @@ import { OriginPicker } from '../components/OriginPicker.jsx';
 import {
   SearchIcon, ChevronRightIcon, RouteIcon, SkylineIcon, SuitcaseIcon, BootIcon,
   BeachIcon, MountainIcon, BedIcon,
+  CityIcon, TownIcon, VillageIcon, AreaIcon,
 } from '../components/Icons.jsx';
 
 /**
@@ -29,14 +30,20 @@ import {
  * client-side from the catalogue (lib/trailCards.js). Trips are published one
  * country at a time, so the four trip categories browse country first: flag
  * cards from the index until a country (or a near-city search) is picked.
- * Tapping any trip opens the TrailSheet with the route on a real map.
+ * Tapping any trip opens the TrailPage: the route on a real map, what to
+ * expect, the exports, and live following.
+ *
+ * Trails are the one category that carries no price and no rating, so the
+ * price-shaped chrome is not shown for it: no rating/price/A-Z sort, no
+ * priced-from origin, no stay tier. Controls that cannot change anything on
+ * screen only suggest the numbers exist somewhere.
  */
 
 const PAGE = 36;
 const NEAR_MAX_ROWS = 80;
 
-// Lazy: the sheet imports maplibre-gl, which stays out of the main bundle.
-const TrailSheet = lazy(() => import('./TrailSheet.jsx').then((m) => ({ default: m.TrailSheet })));
+// Lazy: the page imports maplibre-gl, which stays out of the main bundle.
+const TrailPage = lazy(() => import('./TrailPage.jsx').then((m) => ({ default: m.TrailPage })));
 
 const norm = (s) => String(s || '')
   .toLowerCase()
@@ -57,15 +64,36 @@ const CATS = [
   { key: 'mountains', Icon: MountainIcon, labelKey: 'places.catMountains' },
 ];
 
+/**
+ * Place classes, in rising order of size (dest.place.class, written by
+ * place_layer.py). The rail exists to answer the question the rating cannot:
+ * a traveller looking at 1,570 priced places needs to know which ones are a
+ * base and which ones are an afternoon, and "Bruges 8.8" does not say.
+ *
+ * `metro` is folded into `city` here. Five sizes is a taxonomy; four chips is
+ * a decision, and nobody browsing has ever needed to separate a 300,000-person
+ * city from a 90,000-person one before choosing where to sleep.
+ */
+const CLASSES = [
+  { key: 'city', Icon: CityIcon, labelKey: 'places.classCity', match: ['city', 'metro'] },
+  { key: 'town', Icon: TownIcon, labelKey: 'places.classTown', match: ['town'] },
+  { key: 'village', Icon: VillageIcon, labelKey: 'places.classVillage', match: ['village'] },
+  { key: 'area', Icon: AreaIcon, labelKey: 'places.classArea', match: ['area'] },
+];
+const CLASS_OF = new Map(CLASSES.flatMap((c) => c.match.map((m) => [m, c.key])));
+
 const SORTS = [
   { key: 'rating', labelKey: 'places.sortRating', defaultDir: -1 },
   { key: 'price', labelKey: 'places.sortPrice', defaultDir: 1 },
   { key: 'az', labelKey: 'places.sortAZ', defaultDir: 1 },
 ];
 
-/** One catalogue place as a photo card: hero image, name, rating, from-price. */
+/** One catalogue place as a photo card: hero image, name, rating, from-price.
+ *  The size glyph rides in the corner so the distinction the rail filters on
+ *  is still readable once you have stopped filtering and started scrolling. */
 function DestCard({ p, km, priceMode, onSelect, t }) {
   const prov = fareProv(p.prov || p);
+  const cls = CLASSES.find((c) => c.key === CLASS_OF.get(p.place?.class));
   return (
     <button className="places-dcard" onClick={() => onSelect(p.id)}>
       {p.image
@@ -74,6 +102,11 @@ function DestCard({ p, km, priceMode, onSelect, t }) {
       <span className="places-card-scrim" aria-hidden="true" />
       {km != null && (
         <span className="places-card-km">{t('places.kmAway', { km: Math.round(km) })}</span>
+      )}
+      {cls && (
+        <span className="places-card-class" role="img" aria-label={t(cls.labelKey)}>
+          <cls.Icon size={14} />
+        </span>
       )}
       <span className="places-card-overlay">
         <span className="places-card-main">
@@ -96,7 +129,13 @@ function DestCard({ p, km, priceMode, onSelect, t }) {
   );
 }
 
-/** One published trip as a photo card; hikes carry their summary below. */
+/**
+ * One published trip as a photo card: the name, the measured facts, the kind.
+ *
+ * No description here. The wire's summary was clamped to two lines and broke
+ * mid-sentence on every card, which reads as a bug rather than a teaser; the
+ * whole explanation now lives on the trail page, one tap away.
+ */
 function TripCard({ card, km, onOpen, t }) {
   const { tr, assoc, kindKey, price } = card;
   const isCityDay = tr.category === 'citytrip';
@@ -105,50 +144,47 @@ function TripCard({ card, km, onOpen, t }) {
       : tr.difficulty === 'hard' ? 'places.diffHard' : null;
   return (
     <button className="places-tcard" onClick={() => onOpen(card)}>
-      <span className="places-tcard-top">
-        {assoc.photoUrl
-          ? <img className="places-card-img" src={assoc.photoUrl} alt="" loading="lazy" />
-          : (
-            <span className="places-card-img places-card-noimg" aria-hidden="true">
-              <RouteIcon size={26} />
+      {assoc.photoUrl
+        ? <img className="places-card-img" src={assoc.photoUrl} alt="" loading="lazy" />
+        : (
+          <span className="places-card-img places-card-noimg" aria-hidden="true">
+            <RouteIcon size={26} />
+          </span>
+        )}
+      <span className="places-card-scrim" aria-hidden="true" />
+      {km != null && (
+        <span className="places-card-km">{t('places.kmAway', { km: Math.round(km) })}</span>
+      )}
+      <span className="places-card-overlay">
+        <span className="places-card-main">
+          <span className="places-card-name">{tr.name}</span>
+          <span className="places-card-facts">
+            {tr.distance_m != null && (
+              <span>{(tr.distance_m / 1000).toFixed(1).replace(/\.0$/, '')} km</span>
+            )}
+            {tr.duration_min != null && <span>{hoursText(tr.duration_min)} h</span>}
+            {isCityDay && tr.n_stops != null && <span>{t('trails.stops', { n: tr.n_stops })}</span>}
+            {!isCityDay && tr.ascent_m != null && <span>+{Math.round(tr.ascent_m)} m</span>}
+          </span>
+          <span className={`places-card-kind ${isCityDay ? 'city' : ''}`}>{t(kindKey)}</span>
+        </span>
+        <span className="places-card-right">
+          {isCityDay && assoc.dest?.rating && (
+            <RatingBadge rating={assoc.dest.rating} size="xs" showGem={false} />
+          )}
+          {!isCityDay && diffKey && (
+            <span className="places-card-diff">{t(diffKey)}</span>
+          )}
+          {isCityDay && price && (
+            <span className="places-card-price">
+              <FromWord />
+              {eur(price.pp)}
+              <small>/pp</small>
             </span>
           )}
-        <span className="places-card-scrim" aria-hidden="true" />
-        {km != null && (
-          <span className="places-card-km">{t('places.kmAway', { km: Math.round(km) })}</span>
-        )}
-        <span className="places-card-overlay">
-          <span className="places-card-main">
-            <span className="places-card-name">{tr.name}</span>
-            <span className="places-card-facts">
-              {tr.distance_m != null && (
-                <span>{(tr.distance_m / 1000).toFixed(1).replace(/\.0$/, '')} km</span>
-              )}
-              {tr.duration_min != null && <span>{hoursText(tr.duration_min)} h</span>}
-              {isCityDay && tr.n_stops != null && <span>{t('trails.stops', { n: tr.n_stops })}</span>}
-              {!isCityDay && tr.ascent_m != null && <span>+{Math.round(tr.ascent_m)} m</span>}
-            </span>
-            <span className={`places-card-kind ${isCityDay ? 'city' : ''}`}>{t(kindKey)}</span>
-          </span>
-          <span className="places-card-right">
-            {isCityDay && assoc.dest?.rating && (
-              <RatingBadge rating={assoc.dest.rating} size="xs" showGem={false} />
-            )}
-            {!isCityDay && diffKey && (
-              <span className="places-card-diff">{t(diffKey)}</span>
-            )}
-            {isCityDay && price && (
-              <span className="places-card-price">
-                <FromWord />
-                {eur(price.pp)}
-                <small>/pp</small>
-              </span>
-            )}
-            <ChevronRightIcon size={15} className="places-card-chev" />
-          </span>
+          <ChevronRightIcon size={15} className="places-card-chev" />
         </span>
       </span>
-      {!isCityDay && tr.summary && <span className="places-tcard-summary">{tr.summary}</span>}
     </button>
   );
 }
@@ -182,19 +218,24 @@ export function DestinationsTab({
   data, pricedAll, priceMode = 'total', availableCountries = [], onSelectDest,
   stayTier = 'home', onOpenLifestyle,
   origin, onChangeOrigin, transportMode = 'plane', driveHome = null, onChangeDriveHome,
+  openTrail = null, onOpenTrailConsumed,
 }) {
   const { t, lang } = useI18n();
   const scrollRef = useRef(null);
   const sentinelRef = useRef(null);
 
   const [cat, setCat] = useState('general');         // CATS key
+  const [classes, setClasses] = useState([]);        // CLASSES keys, [] = all sizes
   const [query, setQuery] = useState('');
   const [debouncedQuery, setDebouncedQuery] = useState('');
   const [country, setCountry] = useState('');        // ISO2 or '' for all
   const [nearDest, setNearDest] = useState(null);    // { id, city, iso2, lat, lon }
   const [sort, setSort] = useState({ key: 'rating', dir: -1 });
   const [visible, setVisible] = useState(PAGE);
-  const [sheetCard, setSheetCard] = useState(null);  // enriched trip card or null
+  const [pageCard, setPageCard] = useState(null);    // enriched trip card or null
+  // A shared #trail= link: { id, country } until the country file has loaded
+  // and the card it names can be opened.
+  const [wantedTrail, setWantedTrail] = useState(null);
 
   // Trails data: the country index (which countries have anything), and the
   // one country file the current selection needs.
@@ -207,6 +248,18 @@ export function DestinationsTab({
     loadTrailsIndex().then((idx) => { if (live) setTrailsIndex(idx); });
     return () => { live = false; };
   }, []);
+
+  // A shared link names one trip in one country: browse that country's trails
+  // so the card exists, then open its page (below, once the file has landed).
+  useEffect(() => {
+    if (!openTrail) return;
+    setCat('trails');
+    setQuery('');
+    setNearDest(null);
+    setCountry(openTrail.country);
+    setWantedTrail(openTrail);
+    onOpenTrailConsumed?.();
+  }, [openTrail, onOpenTrailConsumed]);
 
   // Debounce only the 24.8k-row filter, never the input itself.
   useEffect(() => {
@@ -297,9 +350,13 @@ export function DestinationsTab({
 
   const destRows = useMemo(() => {
     if (cat !== 'general') return [];
+    const wantClass = classes.length ? new Set(classes) : null;
     const filtered = pricedAll.filter((p) => {
       if (country && p.iso2 !== country) return false;
       if (q && !(norm(p.city).includes(q) || norm(p.country).includes(q))) return false;
+      // A destination with no place block predates the class layer, so it is
+      // shown under every size rather than hidden by a filter it never saw.
+      if (wantClass && p.place?.class && !wantClass.has(CLASS_OF.get(p.place.class))) return false;
       return true;
     });
     if (nearDest) {
@@ -319,7 +376,21 @@ export function DestinationsTab({
       rows.sort((a, b) => dir * a.p.city.localeCompare(b.p.city));
     }
     return rows;
-  }, [cat, pricedAll, country, q, nearDest, sort, priceMode]);
+  }, [cat, pricedAll, country, q, nearDest, sort, priceMode, classes]);
+
+  // How many places each size holds under the country/search filter, so a chip
+  // can say "42" and can grey itself out rather than leading to an empty list.
+  const classCounts = useMemo(() => {
+    if (cat !== 'general') return null;
+    const counts = new Map(CLASSES.map((c) => [c.key, 0]));
+    for (const p of pricedAll) {
+      if (country && p.iso2 !== country) continue;
+      if (q && !(norm(p.city).includes(q) || norm(p.country).includes(q))) continue;
+      const key = CLASS_OF.get(p.place?.class);
+      if (key) counts.set(key, counts.get(key) + 1);
+    }
+    return counts;
+  }, [cat, pricedAll, country, q]);
 
   // The country index for General: every priced country as a flag card.
   const generalCountries = useMemo(() => {
@@ -354,6 +425,20 @@ export function DestinationsTab({
     });
   }, [isTripCat, countryTrips, data, destIndex, priceById]);
 
+  // The shared link's trip, as soon as its country file has been joined. It
+  // opens whatever it is: a city day arriving through a trail link still gets
+  // its own page rather than an empty Trails list.
+  useEffect(() => {
+    if (!wantedTrail || !tripCards) return;
+    const hit = tripCards.find((c) => String(c.tr.id) === String(wantedTrail.id));
+    if (hit) {
+      setPageCard(hit);
+      setWantedTrail(null);
+    } else if (countryTrips) {
+      setWantedTrail(null); // published list no longer carries it
+    }
+  }, [wantedTrail, tripCards, countryTrips]);
+
   const tripRows = useMemo(() => {
     if (!tripCards) return null;
     let rows = tripCards.filter((c) => (
@@ -375,6 +460,10 @@ export function DestinationsTab({
     }
     const dir = sort.dir;
     const out = rows.map((c) => ({ c, km: null }));
+    // Trails keep the order the wire published them in, which is the lab's own
+    // quality score, highest first (export_wire.py). There are no price or
+    // rating chips over this list to say otherwise.
+    if (cat === 'trails') return out;
     if (sort.key === 'rating') {
       out.sort((a, b) => dir * ((a.c.assoc.dest?.rating?.score ?? -1) - (b.c.assoc.dest?.rating?.score ?? -1)));
     } else if (sort.key === 'price') {
@@ -405,7 +494,7 @@ export function DestinationsTab({
   useEffect(() => {
     setVisible(PAGE);
     scrollRef.current?.scrollTo?.(0, 0);
-  }, [cat, country, q, nearDest, sort]);
+  }, [cat, country, q, nearDest, sort, classes]);
 
   useEffect(() => {
     const el = sentinelRef.current;
@@ -421,7 +510,14 @@ export function DestinationsTab({
     if (next === cat) return;
     setCat(next);
     setQuery('');
+    setClasses([]);
     scrollRef.current?.scrollTo?.(0, 0);
+  };
+
+  const toggleClass = (key) => {
+    setClasses((cur) => (cur.includes(key)
+      ? cur.filter((k) => k !== key)
+      : [...cur, key]));
   };
 
   const toggleSort = (key) => {
@@ -434,6 +530,10 @@ export function DestinationsTab({
 
   const showCountryIndex = !q && !country && !nearDest;
   const showTripRows = isTripCat && !trailsLoading && tripRows && tripRows.length > 0;
+  // Trails carry no price and no rating: a hike is free and is not scored, so
+  // the origin, the stay tier and the rating/price/A-Z sorts have nothing to
+  // act on here. Distance from a searched city still orders them.
+  const showPriceChrome = cat !== 'trails';
 
   return (
     <div className="places-tab" ref={scrollRef}>
@@ -489,7 +589,7 @@ export function DestinationsTab({
               line in every price on this tab, and it changes with the airport,
               so the origin these figures were priced from is named here and
               switchable without a trip to the map. */}
-          {onChangeOrigin && (
+          {showPriceChrome && onChangeOrigin && (
             <OriginPicker
               data={data}
               origin={origin}
@@ -503,7 +603,7 @@ export function DestinationsTab({
           {/* Every price on this tab is a whole trip at the traveller's own
               stay tier, so the tier it was priced at belongs on screen beside
               the numbers, and one tap opens the panel that changes it. */}
-          {onOpenLifestyle && (
+          {showPriceChrome && onOpenLifestyle && (
             <button
               type="button"
               className="places-lifestyle"
@@ -517,7 +617,35 @@ export function DestinationsTab({
           )}
         </div>
 
-        {!showCountryIndex && (
+        {/* Size rail. Sits above the sorts because it changes WHICH places are
+            on screen, where the sorts only change their order. Hidden on the
+            country index, where there are no places to size yet. */}
+        {cat === 'general' && !showCountryIndex && classCounts && (
+          <div className="places-classes" role="group" aria-label={t('places.classLabel')}>
+            {CLASSES.map(({ key, Icon, labelKey }) => {
+              const n = classCounts.get(key) || 0;
+              const on = classes.includes(key);
+              return (
+                <button
+                  key={key}
+                  type="button"
+                  className={`places-class ${on ? 'on' : ''}`}
+                  aria-pressed={on}
+                  disabled={!n && !on}
+                  onClick={() => toggleClass(key)}
+                >
+                  <span className="places-class-dot" aria-hidden="true">
+                    <Icon size={17} />
+                  </span>
+                  <span className="places-class-label">{t(labelKey)}</span>
+                  <span className="places-class-n">{fmt(n)}</span>
+                </button>
+              );
+            })}
+          </div>
+        )}
+
+        {!showCountryIndex && showPriceChrome && (
           <div className="places-sorts" role="group" aria-label={t('places.sortLabel')}>
             {SORTS.map(({ key, labelKey }) => (
               <button
@@ -595,7 +723,7 @@ export function DestinationsTab({
             {!showCountryIndex && !trailsLoading && tripRows && (
               tripRows.length > 0
                 ? tripRows.slice(0, visible).map(({ c, km }) => (
-                  <TripCard key={c.tr.id} card={c} km={km} onOpen={setSheetCard} t={t} />
+                  <TripCard key={c.tr.id} card={c} km={km} onOpen={setPageCard} t={t} />
                 ))
                 : (
                   <p className="places-empty">
@@ -615,12 +743,12 @@ export function DestinationsTab({
         )}
       </div>
 
-      {sheetCard && (
+      {pageCard && (
         <Suspense fallback={null}>
-          <TrailSheet
-            card={sheetCard}
-            onClose={() => setSheetCard(null)}
-            onSelectDest={(id) => { setSheetCard(null); onSelectDest(id); }}
+          <TrailPage
+            card={pageCard}
+            onClose={() => setPageCard(null)}
+            onSelectDest={(id) => { setPageCard(null); onSelectDest(id); }}
           />
         </Suspense>
       )}

@@ -96,7 +96,10 @@ export function TrailsNearby({ destination }) {
                         <span>{t('trails.stops', { n: tr.n_stops })}</span>
                       )}
                     </div>
-                    {tr.summary && <p className="trails-nearby-summary">{tr.summary}</p>}
+                    {/* No summary line: the wire's is composed from the same
+                        numbers this row already shows, and it names the
+                        country by ISO2 code. The trail page explains a route
+                        properly (see lib/trailStory.js). */}
                   </div>
                 );
               })}
