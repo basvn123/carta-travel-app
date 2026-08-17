@@ -116,6 +116,12 @@ input, select {
   background: rgba(245, 241, 232, 0.92);
   backdrop-filter: blur(12px) saturate(140%);
   border-bottom: 1px solid var(--rule);
+  /* The filter tray hangs from this row and cannot leave it (backdrop-filter
+     makes the header a stacking context), so the header itself has to out-rank
+     the map guide pill below it (z 24). Otherwise the tip floats on top of the
+     panel the reader just opened. */
+  position: relative;
+  z-index: 25;
 }
 
 .app-header-brand {
@@ -3927,7 +3933,12 @@ input, select {
   .filter-tray.is-open {
     display: block;
     position: absolute;
-    top: calc(100% + 10px);     /* clears the header's 9px bottom padding + rule */
+    /* Clears the header's 9px bottom padding + rule, and then the category
+       rail: the tray cannot escape .app-header (backdrop-filter makes it a
+       containing block), so it is told how tall the rail is instead. Without
+       this the rail's chips paint over the tray's first row, which is where
+       the Budget and Quality captions live. */
+    top: calc(100% + 10px + var(--kind-rail-h, 0px));
     left: 0; right: 0;
     z-index: 30;
     /* Fully opaque: at even 2% transparency the results rows and price pills
@@ -3941,10 +3952,11 @@ input, select {
   }
   .filter-tray-inner { padding: 16px 20px 12px; }
 
-  /* Four labelled quadrants on a fixed grid (Budget | Quality over Where |
-     Trip style), not a flex wrap that re-orders itself at every window width.
-     The panel is the surface, so the group cards drop their own chrome and
-     lean on captions plus gutter hairlines instead. */
+  /* Three labelled groups on a fixed grid (Budget | Quality over Where), not a
+     flex wrap that re-orders itself at every window width. The panel is the
+     surface, so the group cards drop their own chrome and lean on captions
+     plus gutter hairlines instead. Trip style used to hold the fourth cell;
+     the category rail owns that question now. */
   .filter-row-refine {
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
@@ -3963,13 +3975,11 @@ input, select {
 
   /* Hairlines live on the quadrants themselves, so a group that wraps its
      fields can't leave a rule floating at the wrong height. */
-  .filter-tray .group-quality,
-  .filter-tray .group-style {
+  .filter-tray .group-quality {
     border-left: 1px solid var(--rule);
     padding-left: 26px;
   }
-  .filter-tray .group-place,
-  .filter-tray .group-style {
+  .filter-tray .group-place {
     border-top: 1px solid var(--rule);
     padding-top: 15px;
   }
@@ -3979,8 +3989,7 @@ input, select {
    down to a stub. The hairlines become simple row rules. */
 @media (min-width: 769px) and (max-width: 1120px) {
   .filter-row-refine { grid-template-columns: minmax(0, 1fr); }
-  .filter-tray .group-quality,
-  .filter-tray .group-style { border-left: none; padding-left: 0; }
+  .filter-tray .group-quality { border-left: none; padding-left: 0; }
   .filter-tray .group-quality,
   .filter-tray .group-place {
     border-top: 1px solid var(--rule);
@@ -5646,17 +5655,6 @@ input, select {
 }
 .fsheet-link-btn:hover { border-color: var(--ink-mute); background: var(--paper-dim); }
 
-.fsheet-more {
-  display: inline-flex;
-  align-items: center;
-  min-height: 44px;
-  margin-top: 4px;
-  color: var(--accent);
-  font-size: 13px;
-  font-weight: 500;
-  text-decoration: underline;
-  text-underline-offset: 3px;
-}
 .fsheet-note {
   padding: 12px 16px;
   border-radius: 12px;

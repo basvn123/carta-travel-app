@@ -82,15 +82,34 @@ const browser = await chromium.launch();
 
   await page.screenshot({ path: 'shots/category-rail-phone-off.png' });
 
-  // Toggle Beach and confirm the filter actually bites: the chip turns on and
-  // the Filters segment gains an active count.
+  // How many places are on the board before the rail touches anything. The
+  // sheet's primary action carries the live count, so it is the cheapest
+  // honest read of "did the filter bite".
+  const shownCount = async () => {
+    await page.locator('.mobile-seg > .mobile-seg-btn').click();
+    await page.locator('.fsheet').waitFor({ timeout: 15000 });
+    await page.waitForTimeout(500);
+    const txt = await page.locator('.fsheet-apply').innerText();
+    await page.keyboard.press('Escape');
+    await page.waitForTimeout(400);
+    return Number((txt.match(/[\d.,]{2,}/) || ['0'])[0].replace(/[.,]/g, ''));
+  };
+  const before = await shownCount();
+
+  // Toggle Beach and confirm the filter actually bites: the chip turns on, the
+  // shared state moves (the URL carries it), and the board shrinks.
   const beach = page.locator('.kind-rail-chip', { hasText: 'Beach' }).first();
   await beach.click();
   await page.waitForTimeout(1500);
   check('phone: Beach chip reports pressed', (await beach.getAttribute('aria-pressed')) === 'true');
+  check('phone: the choice reaches shared state', /[?&]tk=beach/.test(page.url()), page.url().slice(-40));
+  const after = await shownCount();
+  check('phone: the rail narrows the board', after > 0 && after < before, `${before} -> ${after}`);
+  // The Filters badge is for what the sheet holds. Trip style is not in there
+  // any more (the rail IS the control), so a badge for it would point at a
+  // sheet where the thing being counted cannot be found.
   const segCount = await page.locator('.mobile-seg-count').textContent().catch(() => null);
-  check('phone: Filters badge counts the rail selection', segCount != null && Number(segCount) >= 1,
-    `badge=${segCount}`);
+  check('phone: the Filters badge stays out of it', segCount == null, `badge=${segCount}`);
   check('phone: clear chip appears', await page.locator('.kind-rail-clear').count() === 1);
   await page.screenshot({ path: 'shots/category-rail-phone-on.png' });
 
@@ -113,7 +132,7 @@ const browser = await chromium.launch();
   await seed(page);
   await page.goto(BASE, { waitUntil: 'domcontentloaded', timeout: 45000 });
   await page.waitForTimeout(3000);
-  const mapNav = page.locator('.header-nav-item', { hasText: /^map$/i });
+  const mapNav = page.locator('.header-nav-item', { hasText: /^explore$/i });
   if (await mapNav.count()) await mapNav.first().click();
   await page.waitForTimeout(2500);
 

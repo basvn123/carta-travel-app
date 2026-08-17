@@ -385,6 +385,12 @@ function TravelApp() {
     if (!el || typeof ResizeObserver === 'undefined') return;
     const apply = () => {
       document.documentElement.style.setProperty('--filter-h', `${el.offsetHeight}px`);
+      // The category rail's own height, so the header's filter tray can drop
+      // clear of it. The tray is trapped inside .app-header (backdrop-filter
+      // makes it a stacking context AND a containing block), so it cannot
+      // simply be told to sit under the whole bar.
+      const rail = el.querySelector('.kind-rail');
+      document.documentElement.style.setProperty('--kind-rail-h', `${rail ? rail.offsetHeight : 0}px`);
     };
     apply();
     const ro = new ResizeObserver(apply);
@@ -556,7 +562,6 @@ function TravelApp() {
               setPriceRange={setPriceRange}
               priceBounds={priceBounds}
               priceHistogram={priceHistogram}
-              tripKinds={tripKinds}
               setTripKinds={setTripKinds}
               ratingRange={ratingRange}
               setRatingRange={setRatingRange}

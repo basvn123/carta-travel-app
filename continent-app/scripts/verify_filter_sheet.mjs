@@ -95,11 +95,14 @@ check('steppers replaced the number fields',
 check('no bare number inputs left',
   await page.locator('.fsheet input[type="number"]').count() === 0);
 const chips = await page.locator('.fsheet .fchip').count();
-check('chip sets carry the short lists', chips >= 20, `${chips} chips`);
+check('chip sets carry the short lists', chips >= 12, `${chips} chips`);
 check('price slider draws the distribution',
   await page.locator('.fsheet .dual-range-hist .dual-range-bar').count() > 10);
-check('trip styles are progressively disclosed',
-  await page.locator('.fsheet-more').isVisible());
+// Trip style left the sheet: the category rail under the header carries the
+// same chips in the open, so asking again in here was asking twice.
+check('the sheet does not repeat the category rail',
+  await page.locator('.fsheet', { hasText: /trip style/i }).count() === 0
+  && await page.locator('.fsheet .fchip', { hasText: /^Nightlife$/ }).count() === 0);
 
 // ── Touch targets: everything interactive in the sheet clears 44px ──
 const small = await page.evaluate(() => {
@@ -327,9 +330,9 @@ await desk.addInitScript(() => {
 await desk.goto(URL, { waitUntil: 'domcontentloaded', timeout: 45000 });
 await desk.waitForTimeout(3000);
 try {
-  // The desktop shell can land on Home; the filter rows live on Explore.
-  // Desktop calls the map tab "Map" (the phone bar calls the same tab Explore).
-  const exploreTab = desk.locator('.header-nav-item', { hasText: /^\s*map\s*$/i }).first();
+  // The desktop shell can land on Home; the filter rows live on Explore, which
+  // is what the tab is called at every width now.
+  const exploreTab = desk.locator('.header-nav-item', { hasText: /^\s*explore\s*$/i }).first();
   if (await exploreTab.isVisible().catch(() => false)) {
     await exploreTab.click();
     await desk.waitForTimeout(1500);

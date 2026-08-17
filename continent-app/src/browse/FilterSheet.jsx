@@ -1,6 +1,5 @@
 import React from 'react';
 import { createPortal } from 'react-dom';
-import { TRIP_KINDS } from '../lib/trip_kinds.js';
 import { Dropdown } from '../components/Dropdown.jsx';
 import { GemIcon } from '../components/GemRating.jsx';
 import { PlaneIcon, CarIcon } from '../components/TransportIcons.jsx';
@@ -11,10 +10,6 @@ import { useI18n } from '../i18n/index.jsx';
 import { Stepper, DualRange } from '../components/FilterControls.jsx';
 import { RATING_MIN, RATING_MAX } from '../lib/rating.js';
 
-// How many trip-style chips are shown before "show all". Six covers the kinds
-// people actually reach for; the rest stay one tap away instead of adding a
-// row and a half of scroll to a sheet nobody wanted to scroll.
-const STYLE_PREVIEW = 6;
 const REACH_STEPS = [3, 5, 8, 12];
 
 /* ── Small building blocks, all on the 8pt scale ───────────────────────────
@@ -101,7 +96,6 @@ export function FilterSheet({
   priceMode, setPriceMode,
   countryFilter, setCountryFilter, availableCountries,
   priceRange, setPriceRange, priceBounds, priceHistogram,
-  tripKinds, setTripKinds,
   ratingRange, setRatingRange,
   gemOnly, setGemOnly,
   unescoOnly, setUnescoOnly,
@@ -119,7 +113,6 @@ export function FilterSheet({
   const sheetRef = React.useRef(null);
   const panelRef = React.useRef(null);
   const closeRef = React.useRef(null);
-  const [styleExpanded, setStyleExpanded] = React.useState(false);
 
   const baggageOpts = data?.meta?.baggage_options || {};
   const stayTierOptions = React.useMemo(
@@ -198,14 +191,6 @@ export function FilterSheet({
   // "Show 855 places" split around its number, so the figure can be set in
   // mono without hardcoding English word order.
   const countHalves = (resultCount === 1 ? t('filter.showOne') : t('filter.showN')).split('{n}');
-
-  const styleShown = styleExpanded
-    ? TRIP_KINDS
-    : TRIP_KINDS.filter((k, i) => i < STYLE_PREVIEW || tripKinds.includes(k.key));
-  const styleHidden = TRIP_KINDS.length - styleShown.length;
-
-  const toggleKind = (key) => setTripKinds(
-    tripKinds.includes(key) ? tripKinds.filter((k) => k !== key) : [...tripKinds, key]);
 
   return createPortal(
     <div
@@ -500,35 +485,9 @@ export function FilterSheet({
 
           </Section>
 
-          {/* ── What kind of place it should be. Six styles show, the rest
-                stay behind one tap rather than a row and a half of scroll. ── */}
-          <Section title={t('filter.groupStyle')}>
-            <Field label={t('filter.tripType')} wide>
-              <div className="fchips" role="group" aria-label={t('filter.tripType')}>
-                {styleShown.map((k) => (
-                  <button
-                    key={k.key}
-                    type="button"
-                    className={`fchip ${tripKinds.includes(k.key) ? 'on narrow' : ''}`}
-                    onClick={() => toggleKind(k.key)}
-                    aria-pressed={tripKinds.includes(k.key)}
-                  >
-                    <span>{t(`kind.${k.key}`)}</span>
-                  </button>
-                ))}
-              </div>
-              {(styleHidden > 0 || styleExpanded) && (
-                <button
-                  type="button"
-                  className="fsheet-more"
-                  onClick={() => setStyleExpanded((v) => !v)}
-                  aria-expanded={styleExpanded}
-                >
-                  {styleExpanded ? t('filter.showFewer') : t('filter.showAllN', { n: TRIP_KINDS.length })}
-                </button>
-              )}
-            </Field>
-          </Section>
+          {/* A trip-style section used to close the sheet. The category rail
+              sits above the map with the same chips, so answering it here was
+              answering it twice. */}
         </div>
 
         {/* ── Sticky action bar: the count is the answer to the whole sheet, so

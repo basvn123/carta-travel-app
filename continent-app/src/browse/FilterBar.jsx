@@ -1,5 +1,4 @@
 import React from 'react';
-import { TRIP_KINDS } from '../lib/trip_kinds.js';
 import { Dropdown } from '../components/Dropdown.jsx';
 import { DateField } from '../components/DateField.jsx';
 import { GemIcon } from '../components/GemRating.jsx';
@@ -27,7 +26,8 @@ export function FilterBar({
   priceRange, setPriceRange,
   priceBounds,
   priceHistogram,
-  tripKinds, setTripKinds,
+  // Edited by the category rail now, kept here only so Reset clears it too.
+  setTripKinds,
   ratingRange, setRatingRange,
   gemOnly, setGemOnly,
   unescoOnly, setUnescoOnly,
@@ -111,10 +111,11 @@ export function FilterBar({
 
   // One count per narrowing control that is actually doing something, shown as
   // a badge on the tray toggle so a filter left on inside a closed tray can
-  // never silently explain an empty map.
+  // never silently explain an empty map. Trip kinds are deliberately NOT
+  // counted: they live on the category rail, lit up in plain sight, so a badge
+  // for them would send you into a tray that no longer holds them.
   const activeFilters = [
     countryFilter.length > 0,
-    tripKinds.length > 0,
     ratingNarrowed,
     gemOnly,
     unescoOnly,
@@ -129,6 +130,8 @@ export function FilterBar({
 
   const resetAll = () => {
     setCountryFilter([]);
+    // Reset means the whole board, rail chips included, even though they are
+    // not what put the badge there.
     setTripKinds([]);
     setRatingRange([...FULL_RATING_RANGE]);
     setGemOnly(false);
@@ -299,8 +302,6 @@ export function FilterBar({
           setPriceRange={setPriceRange}
           priceBounds={priceBounds}
           priceHistogram={priceHistogram}
-          tripKinds={tripKinds}
-          setTripKinds={setTripKinds}
           ratingRange={ratingRange}
           setRatingRange={setRatingRange}
           gemOnly={gemOnly}
@@ -696,31 +697,10 @@ export function FilterBar({
                     </div>
                   </div>
 
-                  {/* Style: what kind of trip it should be. A multi-select
-                      dropdown, mirroring Country, so the choices live in a
-                      popover instead of wrapping a wide chip block. */}
-                  <div className="filter-group group-style">
-                    <div className="group-caption">{t('filter.groupStyle')}</div>
-                    <div className="group-fields">
-                      <div className="filter filter-triptype">
-                        <label className="filter-label">{t('filter.tripType')}</label>
-                        <div className="filter-control">
-                          <Dropdown
-                            multiple
-                            value={tripKinds}
-                            onChange={setTripKinds}
-                            options={TRIP_KINDS.map((k) => ({ value: k.key, label: t(`kind.${k.key}`) }))}
-                            placeholder={t('filter.allTypes')}
-                            multiLabel={(vals) =>
-                              vals.length === 1
-                                ? (TRIP_KINDS.some((k) => k.key === vals[0]) ? t(`kind.${vals[0]}`) : t('filter.oneType'))
-                                : t('filter.nTypes', { n: vals.length })
-                            }
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+                  {/* Trip style used to be a fourth quadrant here. The category
+                      rail under the header edits the same tripKinds and is
+                      always on screen, so the tray was asking a question that
+                      was already answered a row above it. */}
                 </div>
 
                 {/* Desktop-only footer: says what the tray is currently doing to
