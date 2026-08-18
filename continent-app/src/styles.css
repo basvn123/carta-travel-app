@@ -9326,6 +9326,171 @@ input, select {
   color: var(--ink-soft);
 }
 
+/* ── Adding a trip that already happened. The form is a quiet sheet inside
+   the record's own shelf rather than a modal: what you type lands in the
+   list a few centimetres below it, in the same card as everything else. ── */
+.saved-section-action { margin-left: auto; }
+.saved-add-past {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 11px 5px 8px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: var(--bg-card);
+  font-family: var(--ui);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  cursor: pointer;
+  transition: border-color .15s, color .15s, background .15s;
+}
+.saved-add-past svg { color: var(--ink-mute); }
+.saved-add-past:hover { border-color: var(--ink); color: var(--ink); }
+.saved-add-past:hover svg { color: var(--ink); }
+.saved-add-past.is-open {
+  border-color: var(--accent);
+  background: var(--accent-bg);
+  color: var(--accent);
+}
+.saved-add-past.is-open svg { color: var(--accent); }
+
+.pasttrip-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 12px;
+  padding: 14px;
+  border: 1px solid var(--rule);
+  border-radius: 14px;
+  background: var(--bg-card);
+}
+.pasttrip-field { display: flex; flex-direction: column; gap: 8px; }
+.pasttrip-label { font-size: 12.5px; font-weight: 600; color: var(--ink); }
+.pasttrip-sublabel { font-size: 11px; color: var(--ink-mute); }
+
+.pasttrip-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.pasttrip-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 4px 4px 9px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: var(--paper-dim);
+  font-size: 12px;
+  color: var(--ink);
+}
+.pasttrip-chip .country-flag { border-radius: 2px; }
+.pasttrip-chip-city { font-weight: 600; }
+.pasttrip-chip-x {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--ink-mute);
+  cursor: pointer;
+}
+.pasttrip-chip-x:hover { background: var(--accent-bg); color: var(--accent); }
+
+.pasttrip-search { position: relative; }
+.pasttrip-search-icon {
+  position: absolute;
+  left: 11px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--ink-mute);
+  pointer-events: none;
+}
+.pasttrip-input {
+  width: 100%;
+  height: 38px;
+  padding: 0 12px 0 32px;
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  background: var(--paper);
+  font-family: var(--ui);
+  font-size: 13.5px;
+  color: var(--ink);
+}
+.pasttrip-input.is-plain { padding-left: 12px; }
+.pasttrip-input::placeholder { color: var(--ink-mute); }
+.pasttrip-input:focus { outline: none; border-color: var(--accent); }
+
+.pasttrip-results {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--rule-soft);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.pasttrip-result {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 8px 10px;
+  border: none;
+  border-bottom: 1px solid var(--rule-soft);
+  background: var(--paper);
+  font-family: var(--ui);
+  font-size: 13px;
+  text-align: left;
+  color: var(--ink);
+  cursor: pointer;
+}
+.pasttrip-result:last-child { border-bottom: none; }
+.pasttrip-result:hover { background: var(--paper-dim); }
+.pasttrip-result svg { flex: none; color: var(--ink-mute); }
+.pasttrip-result-city { font-weight: 600; }
+.pasttrip-result-country {
+  margin-left: auto;
+  font-size: 11.5px;
+  color: var(--ink-mute);
+}
+
+.pasttrip-dates { display: flex; flex-wrap: wrap; gap: 10px 20px; }
+.pasttrip-datecell { display: flex; flex-direction: column; gap: 3px; }
+.pasttrip-note {
+  margin: 0;
+  font-size: 11.5px;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-mute);
+}
+.pasttrip-error { margin: 0; font-size: 12px; color: var(--accent); }
+
+.pasttrip-actions { display: flex; justify-content: flex-end; gap: 8px; }
+.pasttrip-cancel,
+.pasttrip-save {
+  padding: 8px 16px;
+  border-radius: 999px;
+  font-family: var(--ui);
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .15s, border-color .15s, color .15s;
+}
+.pasttrip-cancel {
+  border: 1px solid var(--rule);
+  background: transparent;
+  color: var(--ink-soft);
+}
+.pasttrip-cancel:hover { border-color: var(--ink); color: var(--ink); }
+.pasttrip-save {
+  border: 1px solid var(--ink);
+  background: var(--ink);
+  color: var(--paper);
+}
+.pasttrip-save:hover { background: var(--ink-soft); border-color: var(--ink-soft); }
+.pasttrip-save:disabled,
+.pasttrip-cancel:disabled { opacity: .45; cursor: default; }
+.pasttrip-save:disabled:hover { background: var(--ink); border-color: var(--ink); }
+
 /* Favorites: a photo grid, because a wishlist is looked at, not audited. */
 .fav-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .fav-card {

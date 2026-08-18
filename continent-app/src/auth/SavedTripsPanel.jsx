@@ -3,7 +3,9 @@ import { useAuth } from './AuthContext.jsx';
 import { fetchSavedTrips, deleteTrip } from './tripStorage.js';
 import { fetchTripPlans, deleteTripPlan } from './tripPlanStorage.js';
 import { loadStandalonePlans, deleteStandalonePlan, loadAssignments, subscribeDayPlanStore } from '../planner/dayPlanStore.js';
-import { MapPinIcon, RouteIcon, ListDayIcon, PencilIcon, TrashIcon, MoreIcon, BookmarkIcon, CalendarIcon, CheckIcon } from '../components/Icons.jsx';
+import { MapPinIcon, RouteIcon, ListDayIcon, PencilIcon, TrashIcon, MoreIcon, BookmarkIcon, CalendarIcon, CheckIcon, PlusIcon } from '../components/Icons.jsx';
+import { PastTripForm } from './PastTripForm.jsx';
+import { savePastTripToAccount, savePastTripOnDevice, pastTripAsPlanRow, defaultPastLabel } from './pastTrip.js';
 import { CountryFlag, CountryFlagStack, COUNTRY_ISO2 } from '../components/CountryFlag.jsx';
 import { kindsForDest } from '../lib/trip_kinds.js';
 import { useI18n } from '../i18n/index.jsx';
@@ -77,8 +79,9 @@ function orderedUnique(list) {
 
 /** One labelled shelf of the overview: title + count, an explainer of what
  *  lands here, then its cards. `big` promotes the title to the display face,
- *  for the one heading that names each tab's main list. */
-function SavedSection({ title, sub, count, muted, big, children }) {
+ *  for the one heading that names each tab's main list. `action` is the one
+ *  thing you can do to the shelf itself, kept on the heading line. */
+function SavedSection({ title, sub, count, muted, big, action, children }) {
   return (
     <div className={`panel-section saved-section${muted ? ' is-muted' : ''}${big ? ' is-big' : ''}`}>
       <div className="saved-section-head">
@@ -86,6 +89,7 @@ function SavedSection({ title, sub, count, muted, big, children }) {
         {count != null && (
           <span className={`saved-section-count${count > 0 ? ' on' : ''}`}>{count}</span>
         )}
+        {action && <span className="saved-section-action">{action}</span>}
       </div>
       {sub && <p className="saved-section-sub">{sub}</p>}
       {children}
@@ -443,6 +447,39 @@ export function SavedTripsPanel({ data, onClose, onLoadTrip, onLoadTripPlan, onO
       await deleteTrip(id);
     } catch {
       loadTrips(); // roll back the optimistic removal on failure
+    }
+  };
+
+  // ── Adding a trip that already happened. It is written in the shape the
+  // record already reads (an account trip plan when there is an account, a
+  // device day plan when there is not), so it comes back through the same
+  // classifier, card, map and ledger as every other finished trip. ──
+  const [pastOpen, setPastOpen] = useState(false);
+  const [pastBusy, setPastBusy] = useState(false);
+  const [pastError, setPastError] = useState('');
+
+  const handleSavePastTrip = async (form) => {
+    // An unnamed trip is named after its countries, which is what the record's
+    // cards read as their headline.
+    const payload = { ...form, label: form.label || defaultPastLabel(form.places) };
+    setPastBusy(true);
+    setPastError('');
+    try {
+      if (SAVED_MOCK) {
+        setTripPlans((prev) => [pastTripAsPlanRow(`mock:${Date.now()}`, payload), ...prev]);
+      } else if (user) {
+        const id = await savePastTripToAccount(user.id, payload);
+        // Optimistic: the record shows the trip at once, and the next fetch
+        // replaces this row with the stored one.
+        setTripPlans((prev) => [pastTripAsPlanRow(id, payload), ...prev]);
+      } else {
+        setDayPlans(savePastTripOnDevice(payload));
+      }
+      setPastOpen(false);
+    } catch (e) {
+      setPastError(e.message || t('saved.pastSaveFailed'));
+    } finally {
+      setPastBusy(false);
     }
   };
 
@@ -906,15 +943,37 @@ export function SavedTripsPanel({ data, onClose, onLoadTrip, onLoadTripPlan, onO
             title={t('saved.travelRecord')}
             count={pastCount}
             big
+            action={(
+              <button
+                className={`saved-add-past${pastOpen ? ' is-open' : ''}`}
+                onClick={() => { setPastError(''); setPastOpen((v) => !v); }}
+                aria-expanded={pastOpen}
+              >
+                <PlusIcon size={13} />
+                {t('saved.addPastTrip')}
+              </button>
+            )}
           >
-            {pastCount === 0 ? (
+            {/* Trips taken before Carta, or booked somewhere else, are told
+                here rather than left out of the record. */}
+            {pastOpen && (
+              <PastTripForm
+                destinations={destinations}
+                todayIso={todayIso}
+                busy={pastBusy}
+                error={pastError}
+                onCancel={() => setPastOpen(false)}
+                onSave={handleSavePastTrip}
+              />
+            )}
+            {pastCount === 0 && !pastOpen ? (
               <SavedEmpty
                 Icon={CheckIcon}
                 text={t('saved.pastEmpty')}
-                cta={t('saved.planFirstTrip')}
-                onCta={() => onGoToTab && onGoToTab('trip')}
+                cta={t('saved.addPastTrip')}
+                onCta={() => { setPastError(''); setPastOpen(true); }}
               />
-            ) : (
+            ) : pastCount === 0 ? null : (
               <div className="saved-card-stack">
                 {pastRecord.map((row) => {
                   if (row.kind === 'plan') {
