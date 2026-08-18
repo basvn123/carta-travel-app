@@ -37,8 +37,10 @@ const openDetail = async (page, viaHeader) => {
   }
   await page.waitForTimeout(1500);
   await page.locator('.places-search input').fill('malbork');
-  await page.waitForTimeout(700);
-  await page.locator('.places-row').first().click();
+  await page.waitForTimeout(900);
+  // The tab lists photo cards now (.places-dcard); the old .places-row markup
+  // went with the Destinations rework.
+  await page.locator('.places-dcard').first().click();
   await page.waitForTimeout(2500);
 };
 

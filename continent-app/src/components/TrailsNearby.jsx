@@ -33,12 +33,13 @@ const hours = (min) => {
  * NOTHING at all, header included, for the many towns without published
  * content). Facts only, in the catalogue's own numbers.
  */
-export function TrailsNearby({ destination }) {
-  const { t } = useI18n();
-  const [open, setOpen] = useState(false);
+/** The rows themselves, so a caller can count what is nearby without
+ *  rendering the block: the panel advertises "2 hikes and day trips" on a card
+ *  that leads to it, and a card that lies about the number is worse than no
+ *  card at all. */
+export function useNearbyTrails(destination) {
   const trips = useTrails(destination?.iso2) || [];
-
-  const rows = useMemo(() => {
+  return useMemo(() => {
     if (!trips.length || !destination) return [];
     const lat = destination.city_lat ?? destination.lat;
     const lon = destination.city_lon ?? destination.lon;
@@ -56,6 +57,12 @@ export function TrailsNearby({ destination }) {
       .map((e) => e.tr);
     return [...cityDay, ...hikes].slice(0, MAX_ROWS);
   }, [trips, destination]);
+}
+
+export function TrailsNearby({ destination, defaultOpen = false }) {
+  const { t } = useI18n();
+  const [open, setOpen] = useState(defaultOpen);
+  const rows = useNearbyTrails(destination);
 
   if (!rows.length) return null;
 

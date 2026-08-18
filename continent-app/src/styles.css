@@ -4319,18 +4319,52 @@ input, select {
    panel keeps the base z-index. */
 .account-panel { z-index: 56; }
 
-.panel-header {
+/* ── The destination panel's identity bar ────────────────────────────────
+   Eyebrow, score, name and the one badge that is a warning rather than a
+   qualifier, above the hero and pinned. Everything below it scrolls, so the
+   answer to "which place am I reading about" is never more than a glance
+   away, however deep into the receipt you are. */
+.dsheet-bar {
   position: sticky;
   top: 0;
+  z-index: 3;
   background: var(--paper);
   border-bottom: 1px solid var(--rule);
-  padding: 22px 28px 16px;
+  /* Symmetric side padding, so the centred title stays centred with the close
+     button sitting over the right gutter. */
+  padding: 13px 52px 12px;
+}
+.dsheet-bar .panel-tag { text-align: center; margin-bottom: 7px; }
+.dsheet-bar-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 9px;
+}
+/* Scoped past .dest-panel's own compaction rules further down the file (which
+   set the old header's 33px city and pushed the close button to top: 26px). */
+.dest-panel .dsheet-bar .panel-city {
+  font-size: 25px;
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.dest-panel .dsheet-bar .panel-close { top: 13px; right: 14px; }
+
+/* The card under the hero: country, what the place is known for, the badges
+   the bar leaves out, and the two save actions. */
+.panel-header {
+  background: var(--paper);
+  padding: 14px 16px 13px;
   z-index: 1;
 }
 .panel-close {
   position: absolute;
-  top: 18px; right: 18px;
-  z-index: 3;                 /* sit above the sticky panel-header */
+  top: 14px; right: 16px;
+  z-index: 3;                 /* sit above the sticky bar's own content */
   width: 30px; height: 30px;
   display: flex; align-items: center; justify-content: center;
   border-radius: 50%;
@@ -7951,12 +7985,135 @@ input, select {
   backdrop-filter: blur(2px);
 }
 .panel-hero-credit:hover { background: rgba(26, 26, 26, 0.62); }
-/* When a hero is present, lift the header up so it overlaps the fade and the
-   sticky behaviour still pins it cleanly to the top on scroll. */
-.panel-header.has-hero {
-  margin-top: -22px;
-  border-radius: 14px 14px 0 0;
+/* With a hero above it, the first card lifts over the photo's fade so the two
+   read as one composition rather than a picture with a box under it. */
+.panel-header.has-hero { margin-top: -26px; }
+
+/* ── Cards: the panel is a stack of them ─────────────────────────────────
+   One bounded object per card (identity, price, receipt, guide), inset from
+   the panel edge, so the eye can skip a whole block instead of reading a
+   continuous column of sections divided by hairlines. */
+.dsheet-card {
+  position: relative;
+  margin: 0 14px 12px;
+  padding: 14px 16px;
+  border: 1px solid var(--rule);
+  border-radius: 14px;
+  background: var(--paper);
+  box-shadow: var(--shadow-1);
 }
+
+/* The price card: the number the whole panel exists to justify, and the one
+   primary action on the surface. */
+.dsheet-price {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  background: var(--paper-dim);
+  border-color: transparent;
+}
+.dsheet-price-main { min-width: 0; }
+.dsheet-price-cap {
+  display: block;
+  font-family: var(--ui);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.dsheet-price-cap small {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--ink-soft);
+  margin-left: 6px;
+}
+.dsheet-price-val {
+  display: block;
+  margin-top: 2px;
+  font-family: var(--mono);
+  font-size: 34px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  color: var(--ink);
+}
+.dsheet-price-note {
+  display: block;
+  margin-top: 2px;
+  font-size: 12.5px;
+  color: var(--ink-soft);
+}
+.dsheet-book {
+  flex: none;
+  min-height: 44px;
+  padding: 11px 18px;
+  border-radius: 10px;
+  background: var(--accent);
+  color: var(--paper);
+  font-family: var(--ui);
+  font-size: 14.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .15s, transform .1s;
+}
+.dsheet-book:hover { background: #cf4f3c; }
+.dsheet-book:active { transform: scale(0.97); }
+
+/* Two doors into the Explore tab at the foot of the receipt. Each says what
+   is behind it, so neither is a mystery link. */
+.dsheet-links {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 10px;
+  margin-top: 14px;
+}
+.dsheet-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 12px;
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  background: var(--paper);
+  text-align: left;
+  cursor: pointer;
+  transition: border-color .15s, background .15s;
+}
+.dsheet-link:hover { border-color: var(--ink-mute); background: var(--paper-dim); }
+.dsheet-link-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 32px; height: 32px;
+  border-radius: 10px;
+  background: var(--accent-bg);
+  color: var(--accent);
+}
+.dsheet-link-text { min-width: 0; }
+.dsheet-link-text b {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1.25;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.dsheet-link-text small {
+  display: block;
+  margin-top: 2px;
+  font-size: 11.5px;
+  color: var(--ink-mute);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+
+/* The Explore tab: cards, not a wall of prose. */
+.dsheet-explore { padding: 16px 0 20px; }
+.dsheet-explore .dsheet-card { margin-bottom: 12px; }
+.dsheet-explore .panel-about-fact:first-of-type { margin-top: 8px; }
+.dsheet-explore .trails-nearby { padding: 0 14px; border-bottom: none; }
 
 /* Things-to-do list */
 .todo-list { list-style: none; margin: 0 0 4px; padding: 0; }
@@ -10160,12 +10317,15 @@ input, select {
   margin-bottom: 12px;
   overflow: hidden;
 }
+/* One cost line, as a row you could read off a receipt: a tinted glyph tile,
+   what it is and what it assumes, then the figure with the single fact that
+   says what the figure is for. */
 .cost-group-head {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 10px 14px;
-  background: var(--paper-dim);
+  gap: 12px;
+  padding: 12px 12px 12px 14px;
+  background: var(--paper);
   cursor: pointer;
 }
 .cost-group-head:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
@@ -10173,9 +10333,9 @@ input, select {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 28px; height: 28px;
+  width: 40px; height: 40px;
   flex-shrink: 0;
-  border-radius: 8px;
+  border-radius: 12px;
   background: var(--accent-bg);
   color: var(--accent);
 }
@@ -10183,25 +10343,42 @@ input, select {
   flex: 1;
   min-width: 0;
   font-weight: 600;
-  font-size: 13.5px;
+  font-size: 15px;
   color: var(--ink);
   line-height: 1.25;
 }
+/* Prose, so it is set in the UI face: the mono is reserved for the figures
+   in the column to its right. */
 .cost-group-title small {
   display: block;
-  font-family: var(--mono);
-  font-size: 10px;
+  font-family: var(--ui);
+  font-size: 12.5px;
   font-weight: 400;
   color: var(--ink-mute);
-  margin-top: 1px;
+  margin-top: 2px;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.cost-group-money {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 1px;
 }
 .cost-group-val {
   font-family: var(--mono);
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 600;
   font-variant-numeric: tabular-nums;
   color: var(--ink);
+  white-space: nowrap;
+}
+.cost-group-valsub {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.04em;
+  color: var(--ink-mute);
   white-space: nowrap;
 }
 .cost-group-caret {
@@ -10382,27 +10559,27 @@ input, select {
    The wrapper (not the card) is what sticks: its paper background is the
    skirt that stops rows sliding out from under the card's rounded corners.
    Scroll container is .panel, the same one .panel-header sticks inside. */
+/* Not sticky any more. It was pinned so the number could not scroll away, but
+   the price card at the top of the panel carries that number now, and pinning
+   this cost the receipt its second and third rows on a phone: one line and a
+   total, with the rest hidden behind it. */
 .cost-total-sticky {
-  position: sticky;
-  bottom: 0;
-  z-index: 2;
   margin-top: 14px;
   padding-bottom: 10px;
   background: var(--paper);
 }
 
-/* The grand total: one emphatic card, per-person figure leading.
-   A saturated rust outline round a price reads as a warning state, not as
-   emphasis, so the card carries its weight with a warm sand fill and a soft
-   shadow instead. The figure itself is deep ink: at 30px it is already the
-   loudest thing on the panel without borrowing the alert colour. */
+/* The sum that closes the receipt. The emphatic figure moved to the price card
+   at the top of the panel, so this is the arithmetic line the rows add up to:
+   a rule above it, the label left, the figure right. It still sticks to the
+   foot of the panel, so the number never scrolls away. */
 .cost-total-card {
   margin-top: 0;
   border: none;
-  border-radius: 14px;
-  background: var(--paper-dim);
-  box-shadow: 0 4px 12px rgba(26, 26, 26, 0.07), 0 1px 2px rgba(26, 26, 26, 0.05);
-  padding: 16px 18px 14px;
+  border-top: 1px solid var(--ink);
+  border-radius: 0;
+  background: var(--paper);
+  padding: 12px 4px 6px;
 }
 .cost-total-main {
   display: flex;
@@ -10411,22 +10588,21 @@ input, select {
   gap: 14px;
 }
 .cost-total-label {
-  font-family: var(--display);
-  font-size: 17px;
+  font-family: var(--ui);
+  font-size: 15px;
   font-weight: 600;
   color: var(--ink);
 }
 .cost-total-label small {
-  display: block;
   font-family: var(--mono);
-  font-size: 10px;
+  font-size: 10.5px;
   letter-spacing: 0.02em;
-  color: var(--ink-soft);
-  margin-top: 3px;
+  color: var(--ink-mute);
+  margin-left: 7px;
 }
 .cost-total-val {
   font-family: var(--mono);
-  font-size: 30px;
+  font-size: 18px;
   font-weight: 700;
   font-variant-numeric: tabular-nums;
   color: var(--ink);
@@ -17354,6 +17530,16 @@ button.ai-sched-main:focus-visible {
       a full screen earlier. Scoped to the destination panel only. ── */
 .dest-panel .panel-hero { height: 172px; }
 .dest-panel .panel-header { padding: 16px 22px 12px; }
+/* Three tabs in a 440px panel: tight enough that none of them wraps onto a
+   second line, at every width. A tab label broken in half reads as a fault. */
+.dest-panel .panel-tabs .tab {
+  flex: none;
+  white-space: nowrap;
+  padding-left: 0;
+  padding-right: 15px;
+  font-size: 9.5px;
+  letter-spacing: 0.06em;
+}
 .dest-panel .panel-city { font-size: 33px; }
 .dest-panel .panel-knownfor { margin: 5px 0 8px; }
 .dest-panel .panel-action-row { margin: 2px 0 2px; }
@@ -17407,6 +17593,21 @@ button.ai-sched-main:focus-visible {
 
   .panel.dest-panel .panel-close { top: 26px; }
   .dest-panel .panel-hero { height: 148px; }
+  /* The bar is the sheet's first row, under the grip: name at a size that
+     leaves the score and the badge on the same line as it. */
+  .dest-panel .dsheet-bar { padding: 8px 46px 10px; }
+  .dest-panel .dsheet-bar .panel-city { font-size: 21px; }
+  .dest-panel .dsheet-bar .panel-close { top: 8px; right: 12px; }
+  .dsheet-card { margin-left: 12px; margin-right: 12px; }
+  /* Three tabs on a 390px screen: they scroll rather than wrap into a
+     three-line block that pushes the receipt off the sheet. */
+  .dest-panel .panel-tabs {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .dest-panel .panel-tabs::-webkit-scrollbar { display: none; }
 
   /* Charts turn into swipeable strips instead of squeezing 12 columns into
      a phone width: each month keeps a readable column and the row scrolls. */

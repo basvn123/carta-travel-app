@@ -3,12 +3,8 @@ import {
   buildFlightLinks, buildAccommodationLink, buildCarRentalLink, viaNearestAirport,
   offeredStayTiers, STAY_TIER_FIELD,
 } from '../lib/runtime_pricing.js';
-import { ScoreChip, HiddenGemTag } from '../components/RatingBadge.jsx';
-import { WaterQualityBadge } from '../components/WaterQualityBadge.jsx';
-import { CrowdingBadge } from '../components/CrowdingBadge.jsx';
-import { BestTimePanel } from './BestTimePanel.jsx';
 import { eur, PRICE_SOURCE_LABELS, ACCOM_SOURCE_LABELS } from '../lib/format.js';
-import { ReceiptIcon, CalendarIcon, BedIcon, DiningIcon, CarIcon, InfoIcon, AlertIcon, LifestyleIcon } from '../components/Icons.jsx';
+import { BedIcon, DiningIcon, CarIcon, InfoIcon, AlertIcon, LifestyleIcon } from '../components/Icons.jsx';
 import { PlaneIcon } from '../components/TransportIcons.jsx';
 import { carrierPairName } from '../lib/carriers.js';
 import { BagCheck } from '../components/BagCheck.jsx';
@@ -51,11 +47,12 @@ function CostWarning({ children }) {
   );
 }
 
-function CostGroup({ icon, title, subtitle, subtotal, open, onToggle, infoButton, infoPanel, children }) {
+function CostGroup({ icon, title, subtitle, subtotal, valueSub, open, onToggle, infoButton, infoPanel, headRef, children }) {
   return (
     <div className="cost-group">
       <div
         className="cost-group-head"
+        ref={headRef}
         role="button"
         tabIndex={0}
         aria-expanded={open}
@@ -70,7 +67,14 @@ function CostGroup({ icon, title, subtitle, subtotal, open, onToggle, infoButton
           {subtitle && <small>{subtitle}</small>}
         </span>
         {infoButton}
-        {subtotal != null && <span className="cost-group-val">{eur(subtotal)}</span>}
+        {subtotal != null && (
+          <span className="cost-group-money">
+            <span className="cost-group-val">{eur(subtotal)}</span>
+            {/* The route, the nights, the rate: the one fact that says what
+                this figure is FOR, in the column where the eye already is. */}
+            {valueSub && <small className="cost-group-valsub">{valueSub}</small>}
+          </span>
+        )}
         <span className="cost-group-caret" aria-hidden="true">
           <svg width="13" height="13" viewBox="0 0 24 24"
             fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -125,7 +129,7 @@ function InfoButton({ open, onClick, label }) {
   );
 }
 
-export function BreakdownTab({ destination, breakdown, departDate, returnDate, choices, setChoices, priceMode, onOpenLifestyle, anchor, anchorCity, data, onSelect }) {
+export function BreakdownTab({ destination, breakdown, departDate, returnDate, choices, setChoices, priceMode, onOpenLifestyle, anchor, anchorCity, data, onSelect, bookSignal = 0, footer = null }) {
   const { t } = useI18n();
   const group = Math.max(1, choices.group_size || 1);
   const originCity = data?.meta?.origins?.[data?.meta?.selected_origin]?.city || t('detail.yourAirport');
@@ -143,6 +147,21 @@ export function BreakdownTab({ destination, breakdown, departDate, returnDate, c
   // expanding a whole section.
   const [openGroups, setOpenGroups] = React.useState({ transport: false, rental: false, stay: false, ground: false });
   const toggleGroup = (key) => setOpenGroups((o) => ({ ...o, [key]: !o[key] }));
+
+  // "Start booking" (the panel's one primary action) lands here: open the leg
+  // you book first and put it under the reader's eye. It deliberately does not
+  // open an airline in a new tab, the links inside the group do that, next to
+  // the bag rules that decide whether the fare is really the fare.
+  const transportHeadRef = React.useRef(null);
+  React.useEffect(() => {
+    if (!bookSignal) return;
+    setOpenGroups((o) => ({ ...o, transport: true }));
+    const el = transportHeadRef.current;
+    if (!el) return;
+    const reduce = typeof window !== 'undefined'
+      && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    el.scrollIntoView({ block: 'start', behavior: reduce ? 'auto' : 'smooth' });
+  }, [bookSignal]);
   const [infoOpen, setInfoOpen] = React.useState(null); // 'stay' | 'ground' | 'rates' | null
   const toggleInfo = (key) => setInfoOpen((v) => (v === key ? null : key));
 
@@ -200,9 +219,9 @@ export function BreakdownTab({ destination, breakdown, departDate, returnDate, c
   return (
     <>
       <div className="panel-section">
-        <div className="section-title section-title-iconed">
-          <ReceiptIcon size={12} /> {t('detail.tripTotal')} {priceMode === 'pp' ? t('detail.perPersonSuffix') : ''}
-        </div>
+        {/* No "trip total" heading here any more: the price card at the top of
+            the panel already says what this column adds up to, and saying it
+            twice cost a phone screen the first cost row. */}
 
         {/* ── Getting there ── */}
         <CostGroup
@@ -212,8 +231,13 @@ export function BreakdownTab({ destination, breakdown, departDate, returnDate, c
             ? (flyFellBack ? t('detail.noFlightDriveFrom', { origin: driveFromCity }) : t('detail.driveFrom', { origin: driveFromCity }))
             : (fareEstimated ? t('detail.estimatedRoundTrip') : t('detail.ryanairRoundTrip', { carrier: fareCarrier }))}
           subtotal={transportSubtotal}
+          valueSub={breakdown.transport_mode === 'car'
+            ? (breakdown.driving?.road_km ? t('detail.kmEachWay', { km: breakdown.driving.road_km }) : null)
+            : (breakdown.origin && (anchor || destination.iata)
+              ? `${breakdown.origin} → ${anchor || destination.iata}` : null)}
           open={openGroups.transport}
           onToggle={() => toggleGroup('transport')}
+          headRef={transportHeadRef}
         >
           {flyFellBack && (
             <>
@@ -397,6 +421,7 @@ export function BreakdownTab({ destination, breakdown, departDate, returnDate, c
               : t('detail.stayTitleMany', { n: breakdown.nights })}
             subtitle={t(`stay.${servedTier}`)}
             subtotal={staySubtotal}
+            valueSub={baseRate ? t('detail.perNightApprox', { n: Math.round(baseRate) }) : null}
             open={openGroups.stay}
             onToggle={() => toggleGroup('stay')}
             infoButton={<InfoButton open={infoOpen === 'stay'} onClick={() => toggleInfo('stay')} />}
@@ -472,7 +497,10 @@ export function BreakdownTab({ destination, breakdown, departDate, returnDate, c
             title={breakdown.nights === 1
               ? t('detail.groundTitleOne', { n: breakdown.nights })
               : t('detail.groundTitleMany', { n: breakdown.nights })}
+            subtitle={t('detail.groundSub')}
             subtotal={groundSubtotal}
+            valueSub={breakdown.nights > 0
+              ? t('detail.perDayApprox', { n: Math.round(groundSubtotal / breakdown.nights) }) : null}
             open={openGroups.ground}
             onToggle={() => toggleGroup('ground')}
             infoButton={<InfoButton open={infoOpen === 'ground'} onClick={() => toggleInfo('ground')} />}
@@ -501,29 +529,34 @@ export function BreakdownTab({ destination, breakdown, departDate, returnDate, c
           </CostGroup>
         )}
 
-        {/* ── Grand total: styled like the lifestyle panel's summary card, with
-              the per-person figure always visible and emphasised. It sticks to
-              the foot of the panel while the groups above are being read, so
-              the number the whole panel is explaining never scrolls away. ── */}
+        {/* ── The sum of the rows above. The big per-person figure now leads
+              the panel (see the price card in DetailPanel), so this is the
+              plain arithmetic that closes the receipt, still stuck to the foot
+              of the panel so the number never scrolls away while the groups
+              above are being read. ── */}
         <div className="cost-total-sticky">
           <div className="cost-total-card">
             <div className="cost-total-main">
               <span className="cost-total-label">
-                {t('detail.totalPerPerson')}
-                <small>{breakdown.nights === 1
-                  ? t('detail.nightsEverythingOne', { n: breakdown.nights })
-                  : t('detail.nightsEverythingMany', { n: breakdown.nights })}</small>
+                {t('detail.total')}
+                <small>{priceMode === 'pp' ? t('detail.perPersonSuffix') : t('detail.wholeGroup', { n: group })}</small>
               </span>
-              <span className="cost-total-val">{eur(breakdown.grand_total / group)}</span>
+              <span className="cost-total-val">
+                {eur(priceMode === 'pp' ? breakdown.grand_total / group : breakdown.grand_total)}
+              </span>
             </div>
             {group > 1 && (
               <div className="cost-total-sub">
-                <span>{t('detail.wholeGroup', { n: group })}</span>
-                <span>{eur(breakdown.grand_total)}</span>
+                <span>{priceMode === 'pp' ? t('detail.wholeGroup', { n: group }) : t('detail.totalPerPerson')}</span>
+                <span>{eur(priceMode === 'pp' ? breakdown.grand_total : breakdown.grand_total / group)}</span>
               </div>
             )}
           </div>
         </div>
+
+        {/* Doors into the Explore tab, passed in by the panel: they belong at
+            the end of the receipt, not above it. */}
+        {footer}
       </div>
     </>
   );
