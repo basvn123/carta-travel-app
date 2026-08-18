@@ -75,6 +75,27 @@ await page.waitForTimeout(200);
 check('children note is honest', /full travellers/i.test(await page.locator('.guide-party-card').innerText()));
 await page.locator('.guide-style-card', { hasText: /budget/i }).click();
 await page.waitForTimeout(200);
+
+// The two counters line up: same right edge, whatever their labels read.
+const stepperBoxes = await page.locator('.guide-party-row .guide-people').evaluateAll(
+  (els) => els.map((e) => { const r = e.getBoundingClientRect(); return { right: Math.round(r.right), top: Math.round(r.top) }; }),
+);
+const sameRow = stepperBoxes.every((b) => b.top === stepperBoxes[0].top);
+const sameEdge = new Set(stepperBoxes.map((b) => b.right)).size === stepperBoxes.length
+  ? sameRow // side by side: distinct right edges are fine when tops match
+  : true;   // stacked: they share one right edge
+check('party counters align', stepperBoxes.length === 2 && sameEdge, JSON.stringify(stepperBoxes));
+
+// The lifestyle panel is reachable from the style presets.
+const lsLink = page.locator('.guide-lifestyle-link');
+check('lifestyle panel link offered', await lsLink.isVisible());
+await lsLink.click();
+await page.waitForTimeout(900);
+check('link opens the lifestyle panel', await page.locator('.lifestyle-panel, .slideover, [class*="lifestyle"]').first().isVisible().catch(() => false));
+await page.keyboard.press('Escape');
+await page.waitForTimeout(700);
+const closeLs = page.locator('.panel-close, .lifestyle-close').first();
+if (await closeLs.isVisible().catch(() => false)) { await closeLs.click(); await page.waitForTimeout(500); }
 await page.screenshot({ path: 'shots/planner-v2-basics.png' });
 check('next unlocks with dates set', await page.locator('.guide-next').isEnabled());
 await page.locator('.guide-next').click();
@@ -85,9 +106,26 @@ check('step 2 is Where', /where are we going/i.test(await page.locator('.guide-t
 await page.waitForTimeout(2500); // fare slices for the nearby airports
 const badgeCount = await page.locator('.guide-ccard-badges').count();
 check('country cards carry transit badges', badgeCount >= 10, String(badgeCount));
-const estCount = await page.locator('.guide-ccard-est').count();
+const estCount = await page.locator('.guide-ccard-n').count();
 check('country cards carry all-in estimates', estCount >= 10, String(estCount));
-check('matrix note explains the badges', await page.locator('.guide-matrix-note').isVisible());
+const cardLine = await page.locator('.guide-ccard-n').first().innerText();
+check('estimate reads "from X pp all-in"', /^from .+ pp all-in$/.test(cardLine.trim()), cardLine);
+check('no city count on the cards', !/\d+ cities/i.test(await page.locator('.guide-cgrid').innerText()));
+check('no badge legend paragraph', await page.locator('.guide-matrix-note').count() === 0);
+// A duration is one token: "22 h 24 min" must not break across two lines.
+const badgeWraps = await page.locator('.guide-ccard-badge').evaluateAll((els) => els.filter((e) => {
+  const lh = parseFloat(getComputedStyle(e).lineHeight) || 14;
+  return e.getBoundingClientRect().height > lh * 1.6;
+}).length);
+check('transit badges stay on one line', badgeWraps === 0, `${badgeWraps} wrapped`);
+// The picking CTA and the search field belong together.
+const gap = await page.evaluate(() => {
+  const cta = document.querySelector('.guide-where-tools');
+  const search = document.querySelector('.guide-picklist-head');
+  if (!cta || !search) return null;
+  return Math.round(search.getBoundingClientRect().top - cta.getBoundingClientRect().bottom);
+});
+check('CTA and search sit close', gap != null && gap <= 16, `${gap}px`);
 check('recap carries origin + party', /ghent/i.test(await page.locator('.guide-recap').innerText().catch(() => '')) && /3 travellers/i.test(await page.locator('.guide-recap').innerText().catch(() => '')));
 await page.screenshot({ path: 'shots/planner-v2-where.png' });
 await page.locator('.guide-ccard', { hasText: 'France' }).first().click();
@@ -99,6 +137,24 @@ await page.waitForTimeout(2000);
 check('fly card carries a compared price', /pp return/i.test(await page.locator('.guide-mode-card').first().innerText()));
 const tagText = await page.locator('.guide-mode-cards').innerText();
 check('cheapest/fastest tags present', /cheapest|fastest/i.test(tagText));
+// Both mode cards keep one rhythm: a numbers row, then a tag row, each
+// figure unbroken, and the two cards the same height.
+const modeGeom = await page.locator('.guide-mode-card').evaluateAll((els) => els.map((e) => {
+  const price = e.querySelector('.guide-mode-price');
+  const lh = price ? (parseFloat(getComputedStyle(price).lineHeight) || 15) : 0;
+  return {
+    h: Math.round(e.getBoundingClientRect().height),
+    priceRows: price ? Math.round(price.getBoundingClientRect().height / lh) : 0,
+  };
+}));
+check('mode cards match in height', new Set(modeGeom.map((m) => m.h)).size === 1, JSON.stringify(modeGeom));
+check('both cards run the same rhythm', new Set(modeGeom.map((m) => m.priceRows)).size === 1, JSON.stringify(modeGeom));
+const figureWraps = await page.locator('.guide-mode-price > *').evaluateAll((els) => els.filter((e) => {
+  const lh = parseFloat(getComputedStyle(e).lineHeight) || 14;
+  return e.getBoundingClientRect().height > lh * 1.6;
+}).length);
+check('no figure breaks mid-line', figureWraps === 0, `${figureWraps} wrapped`);
+check('step names the departure place', /oostakker|ghent|gent/i.test(await page.locator('.guide-sub').first().innerText().catch(() => '')));
 await page.locator('.guide-stay-view button', { hasText: /^list$/i }).click();
 await page.waitForTimeout(800);
 const groups = await page.locator('.guide-airport-group').count();

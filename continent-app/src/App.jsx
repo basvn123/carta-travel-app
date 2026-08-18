@@ -903,6 +903,8 @@ function TravelApp() {
               openWizardSignal={wizardLaunch}
               origin={choices.origin}
               onChangeOrigin={setOrigin}
+              lifestyle={choices.lifestyle}
+              onOpenLifestyle={() => setLifestyleOpen(true)}
               stayTier={choices.stay_tier || 'home'}
               onPlanDay={(target) => {
                 setPendingDayPlanId(target); // { planId|null, stopIndex, dayIndex }

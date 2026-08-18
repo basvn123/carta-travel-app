@@ -257,7 +257,7 @@ export function driveOption(meta, from, dest, groupSize) {
  */
 export function countryTransitMatrix(allCountries, destinations, slices, {
   from = null, nights = 7, groupSize = 2, styleKey = 'standard',
-  startDate = '', flexMonth = '', notBefore = '', meta = null,
+  startDate = '', flexMonth = '', notBefore = '', meta = null, lifestyle = null,
 } = {}) {
   const out = new Map();
   if (!allCountries?.length) return out;
@@ -285,7 +285,9 @@ export function countryTransitMatrix(allCountries, destinations, slices, {
     }
   }
 
-  const lifestyle = styleLifestyle(styleKey, meta?.defaults?.lifestyle);
+  // The traveller's own lifestyle panel is the base a style bends; Standard
+  // defers to it entirely, so tuning the panel moves these badges too.
+  const dailyLifestyle = styleLifestyle(styleKey, lifestyle || meta?.defaults?.lifestyle);
   const stayTier = STYLE_BY_KEY[styleKey]?.stayTier || 'home';
   const n = Math.max(1, nights);
 
@@ -299,7 +301,7 @@ export function countryTransitMatrix(allCountries, destinations, slices, {
     // Bed + daily spending, per person per night, at the chosen style.
     const a = accommodationPerPerson(top, n, startDate || null, null, groupSize, stayTier);
     const stayPP = a && a.total > 0 ? a.total / n : null;
-    const g = groundSpendPerPerson(top, n, lifestyle);
+    const g = groundSpendPerPerson(top, n, dailyLifestyle);
     const dailyPP = g && g.total > 0 ? g.total / n : null;
 
     const flyPP = flight ? flight.eur * 2 : null;       // out + back, rough

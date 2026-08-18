@@ -209,7 +209,7 @@ function Suggestions({ suggestions, onPick }) {
   );
 }
 
-export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, openPlanId, onOpenPlanConsumed, origin, onChangeOrigin, onPlanDay, openSharedTrip, onSharedTripConsumed, openWizardSignal, stayTier = 'home' }) {
+export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, openPlanId, onOpenPlanConsumed, origin, onChangeOrigin, onPlanDay, openSharedTrip, onSharedTripConsumed, openWizardSignal, stayTier = 'home', lifestyle = null, onOpenLifestyle = null }) {
   const { t } = useI18n();
   const countryInsights = useCountryInsights();
   // `stayTier` is the lifestyle panel's "where you sleep" choice; the planner
@@ -562,6 +562,8 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
           origin={origin}
           onChangeOrigin={onChangeOrigin}
           stayTier={tp.stayTier}
+          lifestyle={lifestyle}
+          onOpenLifestyle={onOpenLifestyle}
           onCancel={() => setWizardOpen(false)}
           onComplete={handleWizardComplete}
         />
@@ -1134,7 +1136,7 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
       )}
 
       {wizardOpen && (
-        <GuidedTripWizard data={data} origin={origin} onChangeOrigin={onChangeOrigin} stayTier={tp.stayTier} onCancel={() => setWizardOpen(false)} onComplete={handleWizardComplete} />
+        <GuidedTripWizard data={data} origin={origin} onChangeOrigin={onChangeOrigin} stayTier={tp.stayTier} lifestyle={lifestyle} onOpenLifestyle={onOpenLifestyle} onCancel={() => setWizardOpen(false)} onComplete={handleWizardComplete} />
       )}
     </div>
   );
