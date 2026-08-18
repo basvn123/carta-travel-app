@@ -105,7 +105,7 @@ const run = async () => {
     await hit.click();
     await page.waitForTimeout(150);
   }
-  const chips = await form.locator('.pasttrip-chip-city').allInnerTexts();
+  const chips = await form.locator('.pasttrip-place-name').allInnerTexts();
   if (chips.length !== 2) fail(`expected 2 city chips, got ${chips.length}: ${chips.join(', ')}`);
   else ok(`cities picked: ${chips.join(', ')}`);
 
@@ -115,6 +115,70 @@ const run = async () => {
   const note = await form.locator('.pasttrip-note').last().innerText().catch(() => '');
   if (!/night/i.test(note)) fail(`no nights read-out after picking dates (saw "${note}")`);
   else ok(`dates read back as "${note}"`);
+
+  // ── Everything a trip is, past where and when ──
+  const openFold = async (title) => {
+    await form.locator('.pasttrip-fold-head').filter({ hasText: title }).first().click();
+    await page.waitForTimeout(150);
+  };
+
+  // Nights: move one off the first city, the trip's own length must not change.
+  const nightsBefore = await form.locator('.pasttrip-stepper-val').allInnerTexts();
+  await form.locator('.pasttrip-place').first().locator('.pasttrip-stepper button').first().click();
+  const nightsAfter = await form.locator('.pasttrip-stepper-val').allInnerTexts();
+  const sum = (l) => l.reduce((n, v) => n + Number(v), 0);
+  if (sum(nightsBefore) !== sum(nightsAfter) || nightsBefore[0] === nightsAfter[0]) {
+    fail(`nights stepper did not move a night between cities: ${nightsBefore} -> ${nightsAfter}`);
+  } else ok(`nights per city: ${nightsAfter.join(' + ')}`);
+
+  await openFold('Who came');
+  await form.locator('.pasttrip-fold-body .pasttrip-stepper').first().locator('button').last().click();
+  await form.locator('.pasttrip-ghost').filter({ hasText: 'Add a name' }).click();
+  await form.locator('.pasttrip-fold-body .pasttrip-input').last().fill('Anna');
+
+  await openFold('How you travelled');
+  await form.locator('.pasttrip-mode').first().click(); // by air to the first city
+
+  await openFold('Where you slept');
+  await form.locator('.pasttrip-fold-body .pasttrip-input').first().fill('Hotel Elefant');
+  await form.locator('.pasttrip-select').first().selectOption('hotel');
+
+  await openFold('What it cost');
+  const amounts = form.locator('.pasttrip-input.is-amount');
+  await amounts.nth(0).fill('180');
+  await amounts.nth(1).fill('320');
+  await amounts.nth(2).fill('140');
+  const total = await form.locator('.pasttrip-total b').innerText();
+  if (!/640/.test(total)) fail(`spend total should be 640, read "${total}"`);
+  else ok(`spend totals to ${total}`);
+
+  await openFold('How it was');
+  await form.locator('.pasttrip-rate').nth(7).click(); // 8/10
+  await form.locator('.pasttrip-textarea').fill('Rain every afternoon, and the best schnitzel of my life.');
+  const hlRow = form.locator('.pasttrip-listrow').last();
+  await hlRow.locator('input').fill('The fortress at dusk');
+  await hlRow.locator('button').click();
+  if (await form.locator('.pasttrip-fold-body input[value="The fortress at dusk"]').count() !== 1) {
+    fail('the highlight did not land in the list');
+  } else ok('highlights, rating and story taken');
+
+  await openFold('Photographs');
+  await form.locator('.pasttrip-file').setInputFiles('scripts/fixtures/past_trip_photo.png');
+  await page.waitForTimeout(400);
+  if (await form.locator('.pasttrip-photo img').count() !== 1) fail('the photo did not attach');
+  else {
+    const src = await form.locator('.pasttrip-photo img').first().getAttribute('src');
+    if (!/^data:image\/jpeg/.test(src || '')) fail('the photo was not downscaled to a jpeg data url');
+    else ok('a photo attaches, downscaled, and becomes the cover');
+  }
+
+  // Anywhere off the catalogue is offered, without calling the geocoder here.
+  await form.locator('.pasttrip-input').first().fill('Lokeren');
+  await page.waitForTimeout(300);
+  if (!await form.locator('.pasttrip-ghost').filter({ hasText: 'Lokeren' }).count()) {
+    fail('no way to add a place the catalogue does not hold');
+  } else ok('a place off the catalogue can be looked up');
+  await form.locator('.pasttrip-input').first().fill('');
 
   const save = form.locator('.pasttrip-save');
   if (await save.isDisabled()) fail('save stays disabled with cities and past dates filled in');
@@ -131,11 +195,57 @@ const run = async () => {
     if (!/Visited/.test(text)) fail(`saved card is not marked visited: ${text}`);
     else ok(`card reads: ${text.replace(/\n/g, ' | ')}`);
   }
+  const cardPhoto = await page.locator('.uptrip-photo').first().getAttribute('style');
+  if (!/data:image\/jpeg/.test(cardPhoto || '')) fail('the card did not take your own photo as its cover');
+  else ok('the card wears your photograph');
+
   const ledger = await page.locator('.ledger2').innerText().catch(() => '');
   if (!/Austria|Germany/.test(ledger)) fail(`ledger did not count the trip: ${ledger}`);
   else ok('ledger counts the logged trip');
   if (!await page.locator('.saved-map').count()) fail('no record map after logging a trip');
   else ok('record map is there');
+
+  // ── The card carries what was entered, and opens the trip back up ──
+  const footer = page.locator('.saved-card-footer').first();
+  const footerText = await footer.innerText().catch(() => '');
+  if (!/8\/10/.test(footerText) || !/640/.test(footerText)) {
+    fail(`card footer does not summarise the memory: "${footerText}"`);
+  } else ok(`card footer reads: ${footerText.replace(/\n/g, ' ')}`);
+  await footer.click();
+  await page.locator('.memo').waitFor({ timeout: 5000 });
+  const memo = await page.locator('.memo').innerText();
+  for (const [what, re] of [
+    ['the story', /schnitzel/i],
+    ['the highlight', /fortress at dusk/i],
+    ['the rating', /\b8\b/],
+    ['who came', /travellers|Anna/i],
+    ['where you slept', /Hotel Elefant/],
+    ['the receipt', /Total/i],
+  ]) {
+    if (!re.test(memo)) fail(`the memory view is missing ${what}`);
+  }
+  ok('the memory view reads back everything entered');
+  // The panel is its own scroll container, so bring the memory into frame
+  // before the shot rather than relying on the page scroll.
+  await page.locator('.memo').scrollIntoViewIfNeeded();
+  await page.waitForTimeout(300);
+  await page.screenshot({ path: `${SHOTS}/past_trip_memory.png` });
+
+  // ── Editing it keeps the same trip ──
+  await page.locator('.memo-edit').click();
+  await page.locator('.pasttrip-form').waitFor({ timeout: 5000 });
+  const editForm = page.locator('.pasttrip-form');
+  if (await editForm.locator('.pasttrip-place').count() !== 2) fail('edit did not prefill the cities');
+  await editForm.locator('.pasttrip-input.is-plain').first().fill('Alpine summer');
+  await editForm.locator('.pasttrip-save').click();
+  await page.waitForTimeout(800);
+  if (await page.locator('.uptrip-card.is-visited').count() !== 1) {
+    fail('editing a logged trip made a second one');
+  } else {
+    const renamed = await page.locator('.uptrip-card.is-visited').first().innerText();
+    if (!/Alpine summer/.test(renamed)) fail(`the rename did not stick: ${renamed}`);
+    else ok('editing rewrites the same trip');
+  }
   await page.screenshot({ path: `${SHOTS}/past_trip_record.png`, fullPage: true });
 
   // ── 2. It survives a reload ──

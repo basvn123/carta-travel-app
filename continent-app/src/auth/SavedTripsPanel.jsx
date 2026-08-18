@@ -5,9 +5,17 @@ import { fetchTripPlans, deleteTripPlan } from './tripPlanStorage.js';
 import { loadStandalonePlans, deleteStandalonePlan, loadAssignments, subscribeDayPlanStore } from '../planner/dayPlanStore.js';
 import { MapPinIcon, RouteIcon, ListDayIcon, PencilIcon, TrashIcon, MoreIcon, BookmarkIcon, CalendarIcon, CheckIcon, PlusIcon } from '../components/Icons.jsx';
 import { PastTripForm } from './PastTripForm.jsx';
-import { savePastTripToAccount, savePastTripOnDevice, pastTripAsPlanRow, defaultPastLabel } from './pastTrip.js';
+import { TripMemoryView } from './TripMemoryView.jsx';
+import {
+  savePastTripToAccount, savePastTripOnDevice, pastTripAsPlanRow, defaultPastLabel,
+  updatePastTripInAccount, updatePastTripOnDevice,
+} from './pastTrip.js';
+import {
+  loadMemory, saveMemory, clearMemory, coverPhoto, memoryPoints, spendSummary, SPEND_CATS,
+} from './pastTripMemory.js';
 import { CountryFlag, CountryFlagStack, COUNTRY_ISO2 } from '../components/CountryFlag.jsx';
 import { kindsForDest } from '../lib/trip_kinds.js';
+import { eur } from '../lib/format.js';
 import { useI18n } from '../i18n/index.jsx';
 
 // The mini map at the top of Planned trips rides on the same code-split chunk
@@ -454,28 +462,67 @@ export function SavedTripsPanel({ data, onClose, onLoadTrip, onLoadTripPlan, onO
   // record already reads (an account trip plan when there is an account, a
   // device day plan when there is not), so it comes back through the same
   // classifier, card, map and ledger as every other finished trip. ──
+  // `editing` is null when closed, { id } when a logged trip is being
+  // rewritten, and {} when a new one is being told for the first time.
   const [pastOpen, setPastOpen] = useState(false);
+  const [pastEdit, setPastEdit] = useState(null);
   const [pastBusy, setPastBusy] = useState(false);
   const [pastError, setPastError] = useState('');
+  // Memories live outside React state (extras in localStorage, shadowed to the
+  // account), so a save bumps this to re-read them.
+  const [memTick, setMemTick] = useState(0);
+  const [openMemory, setOpenMemory] = useState('');
+
+  // Spend categories in the reader's language, so the ledger rows a memory
+  // writes are readable rather than machine keys.
+  const spendLabels = useMemo(
+    () => Object.fromEntries(SPEND_CATS.map((c) => [c, t(`saved.pastSpend_${c}`)])),
+    [t],
+  );
+
+  const openPastForm = (initial) => {
+    setPastError('');
+    setPastEdit(initial || null);
+    setPastOpen(true);
+  };
 
   const handleSavePastTrip = async (form) => {
     // An unnamed trip is named after its countries, which is what the record's
     // cards read as their headline.
     const payload = { ...form, label: form.label || defaultPastLabel(form.places) };
+    const editId = pastEdit?.id || null;
     setPastBusy(true);
     setPastError('');
     try {
+      let planId = editId;
       if (SAVED_MOCK) {
-        setTripPlans((prev) => [pastTripAsPlanRow(`mock:${Date.now()}`, payload), ...prev]);
+        planId = editId || `mock:${Date.now()}`;
+        setTripPlans((prev) => [
+          pastTripAsPlanRow(planId, payload),
+          ...prev.filter((p) => p.id !== planId),
+        ]);
+      } else if (pastEdit?.local) {
+        updatePastTripOnDevice(editId, payload);
+        setDayPlans(loadStandalonePlans());
+      } else if (editId && user) {
+        await updatePastTripInAccount(user.id, editId, payload);
+        setTripPlans((prev) => prev.map((p) => (p.id === editId ? pastTripAsPlanRow(editId, payload) : p)));
       } else if (user) {
-        const id = await savePastTripToAccount(user.id, payload);
+        planId = await savePastTripToAccount(user.id, payload);
         // Optimistic: the record shows the trip at once, and the next fetch
         // replaces this row with the stored one.
-        setTripPlans((prev) => [pastTripAsPlanRow(id, payload), ...prev]);
+        setTripPlans((prev) => [pastTripAsPlanRow(planId, payload), ...prev]);
       } else {
-        setDayPlans(savePastTripOnDevice(payload));
+        const saved = savePastTripOnDevice(payload);
+        planId = saved.id;
+        setDayPlans(saved.plans);
       }
+      // Everything a trip plan cannot hold rides alongside it, keyed by the
+      // same id, so it survives an edit and syncs with the trip.
+      if (payload.memory) saveMemory(planId, { ...payload.memory, places: payload.memory.places }, spendLabels);
+      setMemTick((n) => n + 1);
       setPastOpen(false);
+      setPastEdit(null);
     } catch (e) {
       setPastError(e.message || t('saved.pastSaveFailed'));
     } finally {
@@ -485,6 +532,8 @@ export function SavedTripsPanel({ data, onClose, onLoadTrip, onLoadTripPlan, onO
 
   const handleDeleteTripPlan = async (id) => {
     setTripPlans((prev) => prev.filter((p) => p.id !== id));
+    clearMemory(id);
+    setMemTick((n) => n + 1);
     if (SAVED_MOCK) return;
     try {
       await deleteTripPlan(id);
@@ -515,6 +564,20 @@ export function SavedTripsPanel({ data, onClose, onLoadTrip, onLoadTripPlan, onO
     .filter((sp) => { const end = dayPlanEndDate(sp); return end && end < todayIso; })
     .sort((a, b) => (dayPlanEndDate(a) < dayPlanEndDate(b) ? 1 : -1)),
   [dayPlans, todayIso]);
+
+  // The trip's own words, keyed by plan id, for every finished trip on show.
+  // A trip with a memory was told by hand; one without was lived through the
+  // app, and the record shows both the same way.
+  const memories = useMemo(() => {
+    const out = {};
+    [...pastPlans.map((p) => p.id), ...pastDayPlans.map((sp) => sp.id)].forEach((id) => {
+      const m = loadMemory(id);
+      if (m) out[id] = m;
+    });
+    return out;
+    // memTick is the point: memories live in localStorage, so a save has to
+    // re-read them even though no prop changed.
+  }, [pastPlans, pastDayPlans, memTick]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const destCoords = (id) => {
     const d = destinations[id];
@@ -612,18 +675,21 @@ export function SavedTripsPanel({ data, onClose, onLoadTrip, onLoadTripPlan, onO
       });
     };
     pastPlans.forEach((p) => {
-      const open = () => onLoadTripPlan && onLoadTripPlan(p.id);
+      const open = () => setOpenMemory((cur) => (cur === p.id ? '' : p.id));
       (p.destination_ids || []).forEach((id) => add(destinations[id]?.city, destCoords(id), open, id));
       (p.cities || []).forEach((c) => add(c, cityCoords(c), open));
+      // A place off the catalogue pins from its own geocoded coordinates.
+      memoryPoints(memories[p.id]).forEach((pt) => add(pt.city, pt, open, pt.id));
     });
     pastDayPlans.forEach((sp) => {
-      const open = () => onOpenDayPlan && onOpenDayPlan(sp.id);
+      const open = () => setOpenMemory((cur) => (cur === sp.id ? '' : sp.id));
       (sp.stops || []).forEach((s) => {
         add(destinations[s.destinationId]?.city, destCoords(s.destinationId), open, s.destinationId);
       });
+      memoryPoints(memories[sp.id]).forEach((pt) => add(pt.city, pt, open, pt.id));
     });
     return out;
-  }, [pastPlans, pastDayPlans, destinations, cityCoordIndex]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [pastPlans, pastDayPlans, destinations, cityCoordIndex, memories]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // What the record adds up to: distinct countries and cities out of finished
   // trips only. Favorites never count, a wish is not a visit.
@@ -638,8 +704,15 @@ export function SavedTripsPanel({ data, onClose, onLoadTrip, onLoadTripPlan, onO
       dayPlanCountries(sp).forEach((c) => countries.add(c));
       dayPlanCities(sp).forEach((c) => cities.add(c));
     });
+    // Places the catalogue has never held count too: the traveller was there.
+    Object.values(memories).forEach((m) => {
+      (m.places || []).forEach((p) => {
+        if (p.country) countries.add(p.country);
+        if (p.city) cities.add(p.city);
+      });
+    });
     return { countries: [...countries].sort(), cities: [...cities] };
-  }, [pastPlans, pastDayPlans, destinations]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [pastPlans, pastDayPlans, destinations, memories]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // MapLibre states the cooperative-gesture rule in its own overlay, in the
   // traveller's language.
@@ -695,6 +768,54 @@ export function SavedTripsPanel({ data, onClose, onLoadTrip, onLoadTripPlan, onO
       t(totalDays === 1 ? 'saved.days1' : 'saved.daysN', { n: totalDays }),
     ].filter(Boolean).join(', ');
   };
+
+  // What a logged trip says on its own card, before it is opened: the marks
+  // that were actually made, never a placeholder for the ones that were not.
+  const memoryLine = (m) => {
+    const spend = spendSummary(m);
+    return [
+      m.rating != null ? t('saved.pastRatedN', { n: m.rating }) : '',
+      spend.any ? eur(spend.total) : '',
+      m.photos?.length ? t(m.photos.length === 1 ? 'saved.pastPhotos1' : 'saved.pastPhotosN', { n: m.photos.length }) : '',
+      m.story?.trim() ? t('saved.pastStoryWritten') : '',
+    ].filter(Boolean).join(', ') || t('saved.pastSeeTrip');
+  };
+
+  // Re-opening a logged trip in the form it was told in. The memory holds the
+  // places (it is the only thing that knows an off-catalogue town), and the
+  // trip itself holds the dates.
+  const placesFromPlan = (p) => (p.cities || []).map((city, i) => ({
+    id: (p.destination_ids || [])[i] || null,
+    city,
+    country: destinations[(p.destination_ids || [])[i]]?.country || '',
+    lat: null,
+    lon: null,
+    nights: null,
+  }));
+  const editableFromPlan = (p, mem) => ({
+    id: p.id,
+    label: p.label || '',
+    startDate: p.start_date,
+    endDate: p.end_date,
+    places: mem?.places?.length ? mem.places : placesFromPlan(p),
+    memory: mem,
+  });
+  const editableFromDayPlan = (sp, mem) => ({
+    id: sp.id,
+    local: true,
+    label: sp.label || '',
+    startDate: sp.startDate,
+    endDate: dayPlanEndDate(sp),
+    places: mem?.places?.length ? mem.places : (sp.stops || []).map((s) => ({
+      id: destinations[s.destinationId] ? s.destinationId : null,
+      city: destinations[s.destinationId]?.city || s.city || '',
+      country: destinations[s.destinationId]?.country || s.country || '',
+      lat: s.lat ?? null,
+      lon: s.lon ?? null,
+      nights: null,
+    })),
+    memory: mem,
+  });
 
   const plannedCount = upcomingPlans.length + upcomingDayPlans.length;
   const pastCount = pastPlans.length + pastDayPlans.length;
@@ -946,7 +1067,7 @@ export function SavedTripsPanel({ data, onClose, onLoadTrip, onLoadTripPlan, onO
             action={(
               <button
                 className={`saved-add-past${pastOpen ? ' is-open' : ''}`}
-                onClick={() => { setPastError(''); setPastOpen((v) => !v); }}
+                onClick={() => (pastOpen ? (setPastOpen(false), setPastEdit(null)) : openPastForm(null))}
                 aria-expanded={pastOpen}
               >
                 <PlusIcon size={13} />
@@ -958,11 +1079,13 @@ export function SavedTripsPanel({ data, onClose, onLoadTrip, onLoadTripPlan, onO
                 here rather than left out of the record. */}
             {pastOpen && (
               <PastTripForm
+                key={pastEdit?.id || 'new'}
                 destinations={destinations}
                 todayIso={todayIso}
                 busy={pastBusy}
                 error={pastError}
-                onCancel={() => setPastOpen(false)}
+                initial={pastEdit}
+                onCancel={() => { setPastOpen(false); setPastEdit(null); }}
                 onSave={handleSavePastTrip}
               />
             )}
@@ -971,7 +1094,7 @@ export function SavedTripsPanel({ data, onClose, onLoadTrip, onLoadTripPlan, onO
                 Icon={CheckIcon}
                 text={t('saved.pastEmpty')}
                 cta={t('saved.addPastTrip')}
-                onCta={() => { setPastError(''); setPastOpen(true); }}
+                onCta={() => openPastForm(null)}
               />
             ) : pastCount === 0 ? null : (
               <div className="saved-card-stack">
@@ -979,51 +1102,97 @@ export function SavedTripsPanel({ data, onClose, onLoadTrip, onLoadTripPlan, onO
                   if (row.kind === 'plan') {
                     const p = row.item;
                     const parts = journeyParts(p);
+                    const mem = memories[p.id];
+                    const showing = openMemory === p.id;
                     return (
-                      <JourneyCard
-                        key={`p${p.id}`}
-                        visited
-                        title={parts.title}
-                        sub={parts.sub}
-                        countries={parts.countries}
-                        img={resolveImage({ ids: p.destination_ids || [], cities: planCities(p), countries: parts.countries })}
-                        dateLabel={t('saved.visitedLabel')}
-                        dates={p.start_date ? `${fmtDate(p.start_date)} → ${fmtDateYear(p.end_date)}` : ''}
-                        onOpen={() => onLoadTripPlan && onLoadTripPlan(p.id)}
-                        openTitle={t('saved.openTripPlan')}
-                        actions={[{
-                          key: 'edit',
-                          label: t('saved.edit'),
-                          icon: <PencilIcon size={14} />,
-                          onClick: () => onLoadTripPlan && onLoadTripPlan({ id: p.id, edit: true }),
-                        }]}
-                        onDelete={() => handleDeleteTripPlan(p.id)}
-                        deleteLabel={t('saved.removeItem', { name: p.label || t('saved.fallbackTrip') })}
-                      />
+                      <div className="saved-record-row" key={`p${p.id}`}>
+                        <JourneyCard
+                          visited
+                          title={parts.title}
+                          sub={parts.sub}
+                          countries={parts.countries}
+                          // Your own photograph outranks the catalogue's: it is
+                          // the one picture of this trip that was actually there.
+                          img={coverPhoto(mem)
+                            || resolveImage({ ids: p.destination_ids || [], cities: planCities(p), countries: parts.countries })}
+                          dateLabel={t('saved.visitedLabel')}
+                          dates={p.start_date ? `${fmtDate(p.start_date)} → ${fmtDateYear(p.end_date)}` : ''}
+                          onOpen={mem
+                            ? () => setOpenMemory(showing ? '' : p.id)
+                            : () => onLoadTripPlan && onLoadTripPlan(p.id)}
+                          openTitle={mem ? t('saved.pastSeeTrip') : t('saved.openTripPlan')}
+                          actions={[
+                            mem && {
+                              key: 'memory',
+                              label: t('saved.pastEditTrip'),
+                              icon: <PencilIcon size={14} />,
+                              onClick: () => openPastForm(editableFromPlan(p, mem)),
+                            },
+                            {
+                              key: 'edit',
+                              label: mem ? t('saved.openTripPlanner') : t('saved.edit'),
+                              icon: <RouteIcon size={14} />,
+                              onClick: () => onLoadTripPlan && onLoadTripPlan({ id: p.id, edit: true }),
+                            },
+                          ].filter(Boolean)}
+                          footer={mem ? {
+                            label: memoryLine(mem),
+                            title: t('saved.pastSeeTrip'),
+                            onClick: () => setOpenMemory(showing ? '' : p.id),
+                          } : null}
+                          onDelete={() => handleDeleteTripPlan(p.id)}
+                          deleteLabel={t('saved.removeItem', { name: p.label || t('saved.fallbackTrip') })}
+                        />
+                        {showing && mem && (
+                          <TripMemoryView memory={mem} onEdit={() => openPastForm(editableFromPlan(p, mem))} />
+                        )}
+                      </div>
                     );
                   }
                   const sp = row.item;
                   const parts = dayJourneyParts(sp);
+                  const mem = memories[sp.id];
+                  const showing = openMemory === sp.id;
                   return (
-                    <JourneyCard
-                      key={`d${sp.id}`}
-                      visited
-                      title={parts.title}
-                      sub={parts.sub}
-                      countries={parts.countries}
-                      img={resolveImage({
-                        ids: (sp.stops || []).map((s) => s.destinationId),
-                        cities: dayPlanCities(sp),
-                        countries: parts.countries,
-                      })}
-                      dateLabel={t('saved.visitedLabel')}
-                      dates={sp.startDate ? `${fmtDate(sp.startDate)} → ${fmtDateYear(dayPlanEndDate(sp))}` : ''}
-                      onOpen={() => onOpenDayPlan && onOpenDayPlan(sp.id)}
-                      openTitle={t('saved.openDayPlan')}
-                      actions={[]}
-                      onDelete={() => setDayPlans(deleteStandalonePlan(sp.id))}
-                      deleteLabel={t('saved.removeItem', { name: sp.label || t('saved.fallbackDayPlan') })}
-                    />
+                    <div className="saved-record-row" key={`d${sp.id}`}>
+                      <JourneyCard
+                        visited
+                        title={parts.title}
+                        sub={parts.sub}
+                        countries={parts.countries}
+                        img={coverPhoto(mem) || resolveImage({
+                          ids: (sp.stops || []).map((s) => s.destinationId),
+                          cities: dayPlanCities(sp),
+                          countries: parts.countries,
+                        })}
+                        dateLabel={t('saved.visitedLabel')}
+                        dates={sp.startDate ? `${fmtDate(sp.startDate)} → ${fmtDateYear(dayPlanEndDate(sp))}` : ''}
+                        onOpen={mem
+                          ? () => setOpenMemory(showing ? '' : sp.id)
+                          : () => onOpenDayPlan && onOpenDayPlan(sp.id)}
+                        openTitle={mem ? t('saved.pastSeeTrip') : t('saved.openDayPlan')}
+                        actions={mem ? [{
+                          key: 'memory',
+                          label: t('saved.pastEditTrip'),
+                          icon: <PencilIcon size={14} />,
+                          onClick: () => openPastForm(editableFromDayPlan(sp, mem)),
+                        }] : []}
+                        footer={mem ? {
+                          label: memoryLine(mem),
+                          title: t('saved.pastSeeTrip'),
+                          onClick: () => setOpenMemory(showing ? '' : sp.id),
+                        } : null}
+                        onDelete={() => {
+                          clearMemory(sp.id);
+                          setMemTick((n) => n + 1);
+                          setDayPlans(deleteStandalonePlan(sp.id));
+                        }}
+                        deleteLabel={t('saved.removeItem', { name: sp.label || t('saved.fallbackDayPlan') })}
+                      />
+                      {showing && mem && (
+                        <TripMemoryView memory={mem} onEdit={() => openPastForm(editableFromDayPlan(sp, mem))} />
+                      )}
+                    </div>
                   );
                 })}
               </div>

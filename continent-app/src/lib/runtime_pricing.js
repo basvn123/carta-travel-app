@@ -570,7 +570,7 @@ export function groundSpendPerPerson(dest, nights, lifestyle) {
  * from 60 km out to PLANE_REACH_KM is resolved here, at runtime, against the
  * live catalogue, so widening the radius needs no data rebuild.
  */
-export const PLANE_REACH_KM = 100;
+export const PLANE_REACH_KM = 200;
 
 // Last-leg model. Same scale the pipeline uses for its baked-in anchors, so a
 // transfer costs the same whether it was baked at build time or computed here.
@@ -600,7 +600,7 @@ export function planeReachIndex(allDests) {
   // catalogue and dominated the whole first paint at full scale; the grid
   // keeps the result identical (every airport within PLANE_REACH_KM is still
   // considered) at a fraction of the distance calls.
-  const CELL_DEG = 2; // 2 deg latitude = ~222 km per cell, > PLANE_REACH_KM
+  const CELL_DEG = 2; // 2 deg latitude = ~222 km per cell
   const grid = new Map();
   for (const [id, d] of Object.entries(allDests)) {
     if (d.lat == null || !d.iata) continue;
@@ -623,8 +623,12 @@ export function planeReachIndex(allDests) {
     // (cos taken a cell poleward of the town, so edge cases stay covered).
     const kmPerLonDeg = 111 * Math.max(0.1, Math.cos((Math.min(Math.abs(lat) + CELL_DEG, 84) * Math.PI) / 180));
     const kLon = Math.ceil(PLANE_REACH_KM / (kmPerLonDeg * CELL_DEG));
+    // Latitude spans a fixed 111 km/deg, but the scan still has to widen with
+    // the radius: hardcoding one cell each way silently stops covering
+    // PLANE_REACH_KM the moment it exceeds a cell's 222 km height.
+    const kLat = Math.ceil(PLANE_REACH_KM / (111 * CELL_DEG));
     let best = null;
-    for (let y = gy - 1; y <= gy + 1; y += 1) {
+    for (let y = gy - kLat; y <= gy + kLat; y += 1) {
       for (let x = gx - kLon; x <= gx + kLon; x += 1) {
         const cell = grid.get(`${y}|${x}`);
         if (!cell) continue;

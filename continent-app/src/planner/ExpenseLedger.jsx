@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { eur } from '../lib/format.js';
+import { EUR_RATES, CURRENCIES } from '../lib/currency.js';
 import { useI18n } from '../i18n/index.jsx';
 import { ReceiptIcon } from '../components/Icons.jsx';
 
@@ -13,14 +14,8 @@ import { ReceiptIcon } from '../components/Icons.jsx';
  * when signed in), so a saved trip carries its ledger.
  */
 
-// Approximate EUR value of one unit of each supported currency. The ledger is
-// a fairness tool, not a bank: near-enough mid-market rates are exactly right
-// for splitting a dinner in Kraków, and they keep the ledger fully offline.
-const EUR_RATES = {
-  EUR: 1, GBP: 1.17, CHF: 1.05, PLN: 0.23, CZK: 0.041, HUF: 0.0025,
-  SEK: 0.088, NOK: 0.086, DKK: 0.134, RON: 0.20, BGN: 0.51, TRY: 0.022,
-};
-const CURRENCIES = Object.keys(EUR_RATES);
+// Rates live in lib/currency.js: a past trip's spend converts the same way,
+// and two copies of a rate table is one copy too many.
 
 const fmtAmount = (amount, currency) => (currency === 'EUR'
   ? eur(amount)

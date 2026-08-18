@@ -9358,6 +9358,8 @@ input, select {
 }
 .saved-add-past.is-open svg { color: var(--accent); }
 
+.saved-record-row { display: flex; flex-direction: column; }
+
 .pasttrip-form {
   display: flex;
   flex-direction: column;
@@ -9769,6 +9771,174 @@ input, select {
 .pasttrip-save:disabled,
 .pasttrip-cancel:disabled { opacity: .45; cursor: default; }
 .pasttrip-save:disabled:hover { background: var(--ink); border-color: var(--ink); }
+
+/* ── A logged trip, read back under its own card ── */
+.memo {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin: -6px 0 2px;
+  padding: 14px;
+  border: 1px solid var(--rule);
+  border-top: none;
+  border-radius: 0 0 14px 14px;
+  background: var(--bg-card);
+}
+.memo-photos {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(104px, 1fr));
+  gap: 8px;
+}
+.memo-photo { margin: 0; }
+.memo-photo img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: 8px;
+}
+.memo-photo figcaption {
+  margin-top: 4px;
+  font-size: 10.5px;
+  line-height: 1.35;
+  color: var(--ink-mute);
+}
+.memo-block { display: flex; flex-direction: column; gap: 6px; }
+.memo-title {
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+}
+.memo-rating {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 4px;
+  align-self: flex-start;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: var(--rate-bg);
+  color: var(--rate);
+}
+.memo-rating svg { align-self: center; }
+.memo-rating b {
+  font-family: var(--mono);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+.memo-rating small { font-family: var(--mono); font-size: 10px; }
+.memo-story {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.55;
+  white-space: pre-wrap;
+  color: var(--ink-soft);
+}
+.memo-list { margin: 0; padding-left: 16px; font-size: 12.5px; line-height: 1.6; color: var(--ink-soft); }
+.memo-line {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  font-size: 12.5px;
+  color: var(--ink-soft);
+}
+.memo-line svg { color: var(--ink-mute); }
+
+.memo-route { display: flex; flex-direction: column; gap: 4px; }
+.memo-stop {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12.5px;
+  color: var(--ink);
+}
+.memo-leg {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  color: var(--ink-mute);
+}
+.memo-leg.is-plain { width: 20px; }
+.memo-stop-mark { display: flex; }
+.memo-stop-mark .country-flag { border-radius: 2px; }
+.memo-stop-city { font-weight: 600; }
+.memo-stop-city.is-home { font-weight: 400; color: var(--ink-mute); }
+.memo-stop-nights {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-mute);
+}
+.memo-stop-stay {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: auto;
+  overflow: hidden;
+  max-width: 45%;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 11.5px;
+  color: var(--ink-mute);
+}
+
+.memo-receipt { display: flex; flex-direction: column; }
+.memo-recline {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 5px 0;
+  border-bottom: 1px solid var(--rule-soft);
+  font-size: 12.5px;
+  color: var(--ink-soft);
+}
+.memo-recline b {
+  font-family: var(--mono);
+  font-size: 12.5px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+}
+.memo-recline.is-total {
+  margin-top: 2px;
+  border-top: 2px solid var(--ink);
+  border-bottom: none;
+  padding-top: 8px;
+  color: var(--ink);
+}
+.memo-recline.is-total b { font-size: 17px; }
+.memo-recline.is-each { border-bottom: none; color: var(--ink-mute); }
+.memo-recline.is-each b { font-size: 12px; color: var(--ink-mute); }
+.memo-note { margin: 0; font-size: 11px; color: var(--ink-mute); }
+
+.memo-edit {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  align-self: flex-start;
+  padding: 7px 14px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: transparent;
+  font-family: var(--ui);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  cursor: pointer;
+}
+.memo-edit:hover { border-color: var(--ink); color: var(--ink); }
+
+@media (prefers-reduced-motion: reduce) {
+  .pasttrip-fold-chev,
+  .saved-add-past,
+  .pasttrip-mode,
+  .pasttrip-save,
+  .pasttrip-cancel { transition: none; }
+}
 
 /* Favorites: a photo grid, because a wishlist is looked at, not audited. */
 .fav-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }

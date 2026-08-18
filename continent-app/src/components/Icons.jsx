@@ -344,6 +344,19 @@ export function BusIcon({ size = 15, className = '' }) {
   );
 }
 
+export function BikeIcon({ size = 15, className = '' }) {
+  return (
+    <Glyph size={size} className={className} label="Bike">
+      <circle cx="5.8" cy="16.5" r="3.5" />
+      <circle cx="18.2" cy="16.5" r="3.5" />
+      <path d="M5.8 16.5 10 8.5h4.4" />
+      <path d="m10 8.5 4.6 8h3.6" />
+      <path d="M13 5.5h2.6l1.4 3" />
+      <path d="M8.2 8.5h3.6" />
+    </Glyph>
+  );
+}
+
 export function FerryIcon({ size = 15, className = '' }) {
   return (
     <Glyph size={size} className={className} label="Ferry">

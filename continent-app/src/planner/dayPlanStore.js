@@ -196,6 +196,10 @@ const EMPTY_EXTRAS = {
   // `inbox` until the traveller routes each one to a trip day; the routed ones
   // live in `dayExtras`, keyed by trip day number.
   inbox: [], dayExtras: {},
+  // A trip that already happened, told by hand: who came, how you travelled,
+  // what it cost, how it was, the photographs (see auth/pastTripMemory.js).
+  // Null on every trip the app itself planned.
+  memory: null,
 };
 
 /** Always returns the full shape, never null: callers render straight off it. */
@@ -213,6 +217,7 @@ export function loadTripExtras(planId) {
       people: Array.isArray(raw.people) ? raw.people : [],
       inbox: Array.isArray(raw.inbox) ? raw.inbox : [],
       dayExtras: raw.dayExtras && typeof raw.dayExtras === 'object' ? raw.dayExtras : {},
+      memory: raw.memory && typeof raw.memory === 'object' ? raw.memory : null,
     };
   } catch {
     return { ...EMPTY_EXTRAS };
