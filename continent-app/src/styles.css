@@ -16093,9 +16093,6 @@ button.ai-sched-main:focus-visible {
 }
 /* The manual step hosts the wide explore map, so it drops the reading width. */
 .day-flow-manual { max-width: 1400px; }
-/* So do the setup steps, now that each question sits beside a live map. The
-   780px reading column would squeeze both halves to a third of their width. */
-.day-flow-split-host { max-width: 1240px; }
 
 /* Step rail + help affordance */
 .day-flow-top {
@@ -16216,77 +16213,77 @@ button.ai-sched-main:focus-visible {
 /* Both columns start on the same line. Centring the question against a taller
    map left ~180px of dead space above the card and pushed a long step (the
    calendar) off the bottom of the screen. */
+/* The setup questions read as one centered column. The locator map that used
+   to sit beside them is gone on purpose: the popular-city chips already
+   answer "where", and the map spent a screen of height saying the same thing
+   again while pushing saved work under the fold. */
 .day-flow-split {
   flex: 1 1 auto;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  gap: 26px;
-  align-items: start;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 640px;
+  margin-inline: auto;
   padding-bottom: 32px;
 }
-.day-flow-split-wide { grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); }
 .day-flow-forms { min-width: 0; display: flex; flex-direction: column; }
 .day-flow-split .day-flow-step { padding-bottom: 0; }
 .day-flow-split .day-flow-panel { max-width: none; margin: 0; }
-/* Saved work continues the question column instead of starting a new band
-   under the whole split. Below the split it began level with the bottom of a
-   620px map, so step 1 was a question card, then a screen of nothing, then
-   the saved plans somewhere near the fold. */
-.day-flow-saved { display: flex; flex-direction: column; gap: 10px; margin-top: 16px; }
-.day-flow-mapside { min-width: 0; }
-/* Map and its instruction are ONE surface, wearing the same border and radius
-   as the question card opposite. Loose, the map read as a tile floating on the
-   page with a caption dangling under it. */
-.day-flow-mappanel {
+/* Saved work continues the question column, close under the card it
+   continues, never a screen of dead space below it. */
+.day-flow-saved { display: flex; flex-direction: column; gap: 14px; margin-top: 18px; }
+/* The chosen destination, above the later questions: city photo, name, the
+   picked date once there is one, and the way back to change the answer. */
+.day-flow-dest {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 10px 12px;
+  margin-bottom: 14px;
+  border: 1px solid var(--rule);
+  border-radius: 14px;
+  background: var(--bg-card);
+  box-shadow: var(--shadow-1);
+}
+.day-flow-dest .day-thumb {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  flex: none;
+}
+.day-flow-dest-text {
+  flex: 1 1 auto;
+  min-width: 0;
   display: flex;
   flex-direction: column;
-  border: 1px solid var(--rule);
-  border-radius: 20px;
-  background: var(--paper);
-  overflow: hidden;
+  gap: 2px;
 }
-/* Sized against the question beside it, not against the window. At 620px the
-   map towered over a form that is four chips and a search box, and the row
-   read as a tall picture with a small note next to it. */
-.day-flow-mapside .dem-map {
-  height: clamp(340px, calc(100vh - 400px), 500px);
-  margin-bottom: 0;
-  border: none;
-  border-radius: 0;
+.day-flow-dest-name {
+  font-size: 14.5px;
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1.3;
+  overflow-wrap: anywhere;
 }
-/* This line is an INSTRUCTION ("tap a city on the map"), not a label, so it is
-   set in the UI face at a readable size in ink that passes AA against paper.
-   As 10.5px grey mono capitals it measured about 3.5:1, and reading it was work
-   at the exact moment the traveller needs telling what to do. It sits INSIDE
-   the frame, on its own hairline-topped row, so a long place name wraps within
-   the panel rather than running past its edge. */
-.day-flow-mapcap {
-  display: flex;
-  align-items: flex-start;
-  gap: 7px;
-  padding: 11px 14px;
-  border-top: 1px solid var(--rule-soft);
-  background: var(--paper-dim);
-  font-family: var(--ui);
-  font-size: 12.5px;
-  line-height: 1.45;
-  letter-spacing: 0;
+.day-flow-dest-date {
+  font-family: var(--mono);
+  font-size: 10.5px;
   color: var(--ink-soft);
+  font-variant-numeric: tabular-nums;
 }
-.day-flow-mapcap svg { color: var(--accent); flex: none; margin-top: 2px; }
-/* Below the split point the map would push the question off the screen, so
-   the form leads and the map follows as a strip. */
-@media (max-width: 980px) {
-  .day-flow-split, .day-flow-split-wide { grid-template-columns: 1fr; gap: 18px; }
-  .day-flow-mapside .dem-map { height: 260px; }
-  /* Stacked, the reading order is question, then the map that answers it,
-     then saved work. The form column dissolves into the grid so its two
-     children can be ordered around the map between them. */
-  .day-flow-forms { display: contents; }
-  .day-flow-split .day-flow-step { order: 1; }
-  .day-flow-mapside { order: 2; }
-  .day-flow-saved { order: 3; margin-top: 0; }
+.day-flow-dest-change {
+  flex: none;
+  border: 1px solid var(--rule);
+  background: var(--paper);
+  border-radius: 999px;
+  padding: 6px 13px;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  cursor: pointer;
+  transition: border-color .15s, color .15s;
 }
+.day-flow-dest-change:hover { border-color: var(--accent); color: var(--accent); }
 
 /* Once chosen, the stay IS the field. */
 .day-flow-chosen-change {
@@ -16910,6 +16907,16 @@ button.ai-sched-main:focus-visible {
   font-size: 11.5px;
   color: var(--ink-soft);
   font-variant-numeric: tabular-nums;
+}
+/* Each saved row wears its city's catalogue photo as a 46px thumb (an
+   accent-tinted glyph tile when there is none): the photos are what makes
+   this list read as trips rather than as form fields. */
+.day-flow-saved .trip-saved-main { gap: 11px; }
+.day-flow-saved .trip-saved-main .day-thumb {
+  width: 46px;
+  height: 46px;
+  border-radius: 10px;
+  flex: none;
 }
 
 @media (max-width: 768px) {

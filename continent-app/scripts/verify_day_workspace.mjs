@@ -76,13 +76,43 @@ try {
 
   const card = page.locator('.trip-saved-main', { hasText: 'Salzburg day' }).first();
   await card.waitFor({ timeout: 90000 });
+  // The landing row wears a thumbnail (city photo, or its glyph tile).
+  if (await card.locator('.day-thumb').count() !== 1) fail('the saved-plan row has no thumbnail');
+  else pass('saved-plan row carries a thumbnail');
   console.log('opening the seeded plan...');
   await card.click();
 
   const planHead = page.locator('.day-plan-collapse .day-collapse-head').first();
   await planHead.waitFor({ timeout: 60000 });
   console.log('day view open');
-  await page.waitForTimeout(2500); // let OSRM answer so the km stat can land
+
+  // Wait on the STATE, not the clock: the full activities file is 19MB, and
+  // until it lands the seeded day resolves only partially (3 of 4 stops from
+  // the slim list) and the map has no markers yet. The header stats and the
+  // route pins are only meaningful once all 4 stops are resolved.
+  const waitForCount = async (locator, n, ms) => {
+    const t0 = Date.now();
+    while (Date.now() - t0 < ms) {
+      if (await locator.count() === n) return true;
+      await page.waitForTimeout(250);
+    }
+    return await locator.count() === n;
+  };
+  const timelineRowsEarly = page.locator('.day-timeline-row');
+  if (await timelineRowsEarly.count() === 0) await planHead.click();
+  if (!await waitForCount(timelineRowsEarly, STOPS.length, 45000)) {
+    fail(`the timeline never reached ${STOPS.length} resolved stops`);
+  }
+  if (!await waitForCount(page.locator('.trip-pin'), STOPS.length, 30000)) {
+    fail(`the map never reached ${STOPS.length} route pins`);
+  }
+  // Give OSRM a moment so the km figure can join the stats strip.
+  const statsLoc = page.locator('.day-topcard-stats');
+  const t0 = Date.now();
+  while (Date.now() - t0 < 12000) {
+    if (/km/.test(await statsLoc.innerText().catch(() => ''))) break;
+    await page.waitForTimeout(400);
+  }
 
   console.log('\n1. Persistent day stats in the plan header');
   const stats = page.locator('.day-topcard-stats');

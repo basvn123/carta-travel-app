@@ -44,7 +44,7 @@ import {
   buildDaySchedule, fmtClockLoose, dayPhase, GAP_SUGGEST_MIN,
 } from './daySchedule.js';
 import { searchFold } from '../lib/textSearch.js';
-import { Collapsible, AssignedRow, ActivitySection, ActivityRow } from './DayActivityRows.jsx';
+import { Collapsible, AssignedRow, ActivitySection, ActivityRow, PoiThumb } from './DayActivityRows.jsx';
 import {
   loadStandalonePlans, persistStandalonePlans, deleteStandalonePlan,
   loadAssignments, persistAssignments, loadPrefs, persistPrefs,
@@ -1922,17 +1922,6 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
   // The same popular cities as explore-map pins, so the first step can be
   // answered on the map instead of only in the form beside it. Once a stay is
   // chosen they clear out: the map's job then is to show that one place.
-  const stayPins = useMemo(() => (
-    newStayPoint || stayResults ? [] : popularStays.map((r) => ({
-      id: r.id,
-      label: r.name,
-      lat: r.lat,
-      lon: r.lon,
-      cat: 'town',
-      score: r.dest.rating?.score ?? null,
-      tier: r.dest.rating?.tier ?? 0,
-    }))
-  ), [newStayPoint, stayResults, popularStays]);
 
   // The three dates almost every day trip actually falls on, so the date step
   // is one tap rather than a calendar hunt. "This weekend" is the coming
@@ -2574,6 +2563,32 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
           <div className={`day-flow-split${landingStep === 'how' ? ' day-flow-split-wide' : ''}`}>
           <div className="day-flow-forms">
 
+          {/* Past step 1, the chosen destination rides above the question:
+              the locator map used to be what kept saying "Salzburg" while a
+              date was picked; now a compact banner does, wearing the city's
+              catalogue photo, and it is the way back to change the answer. */}
+          {(landingStep === 'when' || landingStep === 'how') && newStayPoint && (() => {
+            const near = resolveNearestTown(newStayPoint.lat, newStayPoint.lon);
+            return (
+              <div className="day-flow-dest">
+                <PoiThumb img={near?.dest?.image?.url} name={near?.dest?.city || ''} Glyph={MapPinIcon} />
+                <span className="day-flow-dest-text">
+                  <b className="day-flow-dest-name">{newStayPoint.shortLabel || newStayPoint.label}</b>
+                  {landingStep === 'how' && newStartDate && (
+                    <small className="day-flow-dest-date">{fmtDateFull(newStartDate, true)}</small>
+                  )}
+                </span>
+                <button
+                  className="day-flow-dest-change"
+                  onClick={() => setLandingStep('stay')}
+                  title={t('day.clearAddress')}
+                >
+                  {t('day.change')}
+                </button>
+              </div>
+            );
+          })()}
+
           {/* STEP 1, where are you staying */}
           {landingStep === 'stay' && (
             <div className="day-flow-step">
@@ -2745,12 +2760,18 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
                 <div className="day-landing-section">
                   <div className="trip-block-title">{t('day.yourDayPlans')}</div>
                   <div className="trip-saved-list">
-                    {standalonePlans.map((sp) => (
+                    {standalonePlans.map((sp) => {
+                      // The row wears the face of its city: the catalogue's
+                      // hero photo as a small thumb, the same photo language
+                      // the timeline rows speak. No photo, a pin glyph.
+                      const spDest = destinations[sp.stops?.[0]?.destinationId];
+                      return (
                       <div className="trip-saved-item" key={sp.id}>
                         {/* The chevron is the row's affordance: without it a
                             bordered box holding a name reads as a filled-in text
                             field, not as a saved plan you can open. */}
                         <button className="trip-saved-main" onClick={() => openStandalone(sp)}>
+                          <PoiThumb img={spDest?.image?.url} name={spDest?.city || ''} Glyph={MapPinIcon} />
                           <span className="trip-saved-label">
                             {sp.label || destinations[sp.stops?.[0]?.destinationId]?.city || t('day.dayPlanFallback')}
                             <small className="day-saved-sub">
@@ -2765,7 +2786,8 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
                         </button>
                         <button className="trip-saved-del" onClick={() => deleteStandalone(sp.id)} aria-label={t('day.deleteDayPlan')} title={t('day.delete')}>×</button>
                       </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 </div>
               )}
@@ -2780,9 +2802,12 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
                     <p className="trip-note">{t('day.noSavedTrips')}</p>
                   ) : (
                     <div className="trip-saved-list">
-                      {savedPlans.map((p) => (
+                      {savedPlans.map((p) => {
+                        const pDest = destinations[p.destination_ids?.[0]];
+                        return (
                         <div className="trip-saved-item" key={p.id}>
                           <button className="trip-saved-main" onClick={() => openPlan(p.id)}>
+                            <PoiThumb img={pDest?.image?.url} name={pDest?.city || ''} Glyph={RouteIcon} />
                             <span className="trip-saved-label">
                               {p.label || t('day.untitledTrip')}
                               {/* Two trips can honestly carry the same label
@@ -2794,7 +2819,8 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
                             <span className="trip-saved-go" aria-hidden="true"><ChevronRightIcon size={14} /></span>
                           </button>
                         </div>
-                      ))}
+                        );
+                      })}
                     </div>
                   )}
                 </div>
@@ -2806,36 +2832,6 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
           )}
 
           </div>
-          {/* The answer, on a map. Follows the chosen stay, or the first
-              search result while the traveller is still deciding. Until
-              something is chosen the popular cities are ON the map as tappable
-              pins, not just as chips beside it: "where are you staying?" is a
-              question about places, and a map you cannot answer with is
-              scenery.
-
-              Map and caption share one bordered surface, the same one the
-              question card wears. Loose, the map read as a tile floating on
-              the page with its instruction dangling underneath it. */}
-          <aside className="day-flow-mapside">
-            <div className="day-flow-mappanel">
-              <DayExploreMap
-                stay={newStayPoint || (stayResults && stayResults[0]) || null}
-                markers={stayPins}
-                onFocus={(id) => {
-                  const row = popularStays.find((r) => r.id === id);
-                  if (row) pickPopularStay(row);
-                }}
-              />
-              <p className="day-flow-mapcap">
-                <MapPinIcon size={13} />
-                <span>
-                  {newStayPoint
-                    ? t('day.mapCapStay', { place: newStayPoint.shortLabel || newStayPoint.label })
-                    : stayPins.length ? t('day.mapCapPick') : t('day.mapCapEmpty')}
-                </span>
-              </p>
-            </div>
-          </aside>
           </div>
           )}
 

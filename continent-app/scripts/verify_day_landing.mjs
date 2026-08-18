@@ -1,8 +1,8 @@
 // Headless check of the day planner's landing flow after the visual-review
 // pass: the progress rail is on screen from the FIRST question, saved work
-// sits in the question column instead of a screen below the map, the map and
-// its instruction are one framed surface, the date grid has thumb-sized
-// targets, and the fork shows one filled action rather than two.
+// sits close under the question card, the locator map is gone (the popular
+// city chips carry the choice), the date grid has thumb-sized targets, and
+// the fork shows one filled action rather than two.
 //
 // It also drives the chat to its build state (with the catalogue fetch held
 // open) so the route-building animation can be measured instead of guessed at.
@@ -117,37 +117,45 @@ try {
       else ok(`saved work ${gap}px under the ${gapInfo.stacked ? 'map' : 'card'}, same column`);
     }
 
-    // 3. Map and caption are one framed surface, and the caption fits inside it.
-    const mapPanel = await page.evaluate(() => {
-      const panel = document.querySelector('.day-flow-mappanel');
-      const cap = document.querySelector('.day-flow-mapcap');
-      if (!panel || !cap) return null;
-      const p = panel.getBoundingClientRect();
-      const c = cap.getBoundingClientRect();
-      const cs = getComputedStyle(panel);
+    // 3. The locator map is gone: the popular-city chips carry the choice,
+    //    and the question column is one centered reading width.
+    const column = await page.evaluate(() => {
+      const split = document.querySelector('.day-flow-split');
+      const flow = document.querySelector('.day-flow');
+      if (!split || !flow) return null;
+      const s = split.getBoundingClientRect();
+      const f = flow.getBoundingClientRect();
       return {
-        bordered: cs.borderTopWidth !== '0px',
-        capInside: c.bottom <= p.bottom + 1 && c.right <= p.right + 1,
-        capClipped: cap.scrollHeight - cap.clientHeight > 1,
-        capSize: parseFloat(getComputedStyle(cap).fontSize),
+        mapGone: !document.querySelector('.day-flow-mapside, .day-flow-mappanel'),
+        width: Math.round(s.width),
+        centered: Math.abs((s.left - f.left) - (f.right - s.right)) <= 2,
       };
     });
-    if (!mapPanel) fail(`${size.name}: no framed map panel`);
+    if (!column) fail(`${size.name}: no question column on the landing screen`);
     else {
-      if (!mapPanel.bordered) fail(`${size.name}: the map panel has no frame`);
-      if (!mapPanel.capInside) fail(`${size.name}: the map caption hangs outside the frame`);
-      if (mapPanel.capClipped) fail(`${size.name}: the map caption is clipped`);
-      if (mapPanel.capSize < 12) fail(`${size.name}: map caption at ${mapPanel.capSize}px`);
-      else ok(`map + caption one frame, caption ${mapPanel.capSize}px`);
+      if (!column.mapGone) fail(`${size.name}: the locator map still renders on the landing`);
+      if (column.width > 660) fail(`${size.name}: question column is ${column.width}px, wider than a reading column`);
+      if (!column.centered) fail(`${size.name}: question column is not centered`);
+      else ok(`no locator map, question column ${column.width}px centered`);
     }
     await page.screenshot({ path: `${SHOTS}/day-landing-${size.name}.png`, fullPage: size.name === 'phone' });
 
-    // 4. Step 2: the date grid's touch targets.
+    // 4. Step 2: the date grid's touch targets, and the chosen-destination
+    //    banner standing in for the removed locator map.
     const chip = page.locator('.day-flow-chip').first();
+    const chipCity = (await chip.innerText()).replace(/[\d.]+/g, '').trim();
     await chip.click();
     await page.locator('.day-flow-next').click();
     await page.locator('.day-flow-date').waitFor({ timeout: 30000 });
     await page.waitForTimeout(400);
+    const destBanner = page.locator('.day-flow-dest');
+    if (await destBanner.count() !== 1) fail(`${size.name}: no chosen-destination banner on step 2`);
+    else {
+      const bannerText = (await destBanner.innerText()).trim();
+      if (!bannerText.includes(chipCity)) fail(`${size.name}: banner says "${bannerText}", expected "${chipCity}"`);
+      if (await destBanner.locator('.day-thumb').count() !== 1) fail(`${size.name}: destination banner has no thumb`);
+      else ok(`destination banner: "${chipCity}" with thumb`);
+    }
     const cal = await page.evaluate(() => {
       const d = document.querySelector('.day-flow-date .cal-day');
       const r = d ? d.getBoundingClientRect() : null;
@@ -168,10 +176,14 @@ try {
     }
     await page.screenshot({ path: `${SHOTS}/day-when-${size.name}.png` });
 
-    // 5. Step 3: one filled action, and a badge you can read.
+    // 5. Step 3: one filled action, a badge you can read, and the banner now
+    //    carries the picked date too.
     await page.locator('.day-flow-next').click();
     await page.locator('.day-flow-cards').waitFor({ timeout: 30000 });
     await page.waitForTimeout(300);
+    if (await page.locator('.day-flow-dest .day-flow-dest-date').count() !== 1) {
+      fail(`${size.name}: the banner does not show the picked date on step 3`);
+    } else ok('banner carries the picked date on step 3');
     const fork = await page.evaluate(() => {
       const solid = (el) => {
         const bg = getComputedStyle(el).backgroundColor;
