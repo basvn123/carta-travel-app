@@ -138,6 +138,44 @@ national portal rows were updated 2026-08-07 when the first
 | Wikimedia Commons stop images for citytrips (`pipeline/trails/compose_citytrips.py`) | Per-file licence, author and description URL resolved via the Wikimedia API for every citytrip stop image; NC/ND and unresolvable files are dropped before staging | Per file: CC0, CC BY, CC BY-SA, public domain and kin; the lab `images` table rejects NC/ND at insert | Yes, per file (author, licence and source URL stored per images row) | Some files (CC BY-SA) | Staging only; per-file credit ships with any published citytrip surface |
 | Claude API (`--provider claude`) or Gemini API (`--provider gemini`) in `pipeline/trails/describe.py` | Not a data source: the model only rewrites the facts block we assemble from staged rows. The stored `description_md` is our own text and inherits the licenses of the facts behind it (ODbL for OSM tags and geometry, portal terms for the confirmation line) | Anthropic commercial terms: customer owns the outputs. Google Gemini terms: same for outputs, but on the **free** tier Google may use prompts and responses to improve their products, so only open-data facts go in the prompt | No credit obligation to either vendor | No | n/a. Trail credits still owe OSM and the national portals as above. NOTE: the EEA paid-services rule that put `plan-day` on a billed Gemini key covers API clients offered to users; describe.py is a local batch script and is not one, so the free tier is in scope for it only while it stays local |
 
+## 8. Natural features layer (beaches and mountains)
+
+The `pipeline/features/*` chain lifts beaches and summits out of the POI layer
+into standalone entities, scores them, and publishes tiers 1 and 2 as one file
+per priced country: `continent-app/public/features/<ISO2>.json` plus
+`index.json`. Today that is 5,472 features across 43 country files.
+
+Nothing in this layer downloads anything new. Every input is a cache that
+already has a row above; what changed is that the derived rows are now
+PUBLISHED, and publishing is what turns a scoring signal into an attribution
+obligation. That is why each source gets its own row here rather than a
+footnote on the section 5 row it reuses.
+
+What a shipped row actually contains: a name, a coordinate, a tier and a rank,
+plus a bathing-water class, a designation list, an elevation, a Wikipedia
+reference and a photo with its full TASL block where they exist. It contains no
+prose from any source. Each country file carries a `sources` block resolving
+the short keys its features cite (`osm` in all 43, `eea` in 28, `whc` in 13),
+which is the citation surface the UI has to render.
+
+| Source | What we take | License | Attribution required | Share-alike | Where attributed today |
+|---|---|---|---|---|---|
+| OpenStreetMap via the existing POI layer (`pipeline/features/build_features.py` over `continent-app/public/activities_full.json`, harvested by OpenTripMap, Overture and Overpass: see section 5) | The spine: names, coordinates, kinds and the POI rate for every beach and summit, deduped and re-identified | ODbL 1.0 | Yes: © OpenStreetMap contributors | Yes: the wire is an extract of a derived database | Every feature lists `osm` in its `sources` and every country file resolves the citation; the home footer's OpenStreetMap credit covers the app. MISSING: no features surface renders the citation block yet |
+| OSM protected areas (`pipeline/harvest_protected_areas_osm.py` -> `cache/osm_protected_areas.json`, joined at 5 km) | The protected area around a feature and the designations read off it: national_park (808 shipped), natural_monument (162), wilderness (52), plus geopark and ramsar by site name | ODbL 1.0 | Yes: © OpenStreetMap contributors | Yes, as above | Same `osm` citation. The inferred natura2000 label is scored but deliberately never shipped: it is protect_class read as a habitat site, not a site-code join |
+| EEA WISE bathing water (`cache/eea_bathing_water.json` via `pipeline/harvest_bathing_water.py`, joined at 2 km) | The official class (Excellent, Good, Sufficient, Poor) and the season year, on 2,089 of the 5,472 shipped features. A Poor class caps a beach at tier 3 | EEA standard re-use policy, effectively CC BY 4.0, verify | Yes | No | 28 country files carry the `eea` citation and the `bathing_year`; the home footer credits the EEA. MISSING at the feature surface until the UI renders the file's `sources` block |
+| UNESCO World Heritage List (`cache/unesco_whc.json`, natural and mixed properties only, joined at 10 km by `pipeline/features/rank_features.py`) | The `unesco` designation on 276 shipped features, and the "UNESCO World Heritage Centre, World Heritage List" citation in 13 country files | UNESCO World Heritage Centre terms of use: reuse with source attribution; parts of the WHC site are CC BY-SA 3.0 IGO, verify. Also verify the cache itself: no harvester for its 1,247 rows exists anywhere in the current tree, so its provenance is asserted by its field shape, not by a script | Yes, verify | Verify | MISSING. This is the first user-facing use of the cache (`beauty_layer.py` and `rating_layer.py` only ever used it as a hidden scoring signal), and `attribution.js` has no UNESCO entry |
+| Wikimedia Commons, per file (`cache/poi_image_licenses.json`, gated in `build_features.py` and `rank_features.py`, resolved by `pipeline/features/enrich_images.py`) | 2,766 photos, each shipped with url, author, licence and licence_url. NC, ND, permission-only and unresolved-licence files are refused rather than shipped uncredited | Per file: CC BY-SA (1,996), CC BY (306), public domain or CC0 (368), plus a handful of GFDL and GPL | Yes, per file | Yes for the CC BY-SA, GFDL and GPL files | The TASL row ships with every image, which is the data the credit needs. MISSING: nothing renders it yet, and 35 attribution-required files ship with a licence but no author name (a gap in the licence cache, not in the wire) |
+| Wikipedia (`pipeline/harvest_pageviews.py` counts carried on the POI, article references resolved by `pipeline/features/enrich_wikidata.py`) | Pageview counts as half of the fame term, and the article reference ("en:Es Trenc") on 2,193 shipped features. No sentence of article text is taken | Pageview statistics CC0; article text CC BY-SA 4.0 | No for the statistics; a reference is a link, not text | No, while no prose ships | Home footer credits Wikipedia for the text it does use elsewhere. The day a feature card prints a sentence from an article, this becomes a CC BY-SA credit plus a share-alike obligation on that text |
+| Wikidata (`pipeline/features/enrich_wikidata.py`, plus `cache/wikidata_sitelinks.json` and `cache/poi_wikidata.json` from the significance pass) | QIDs, elevation and prominence for summits, sitelink counts as the other half of the fame term | CC0 | No | No | None needed |
+| Wikivoyage listings (`cache/wikivoyage_listings.json` via `pipeline/harvest_wikivoyage_listings.py`, curation term in `rank_features.py`) | Whether an editor listed this feature and how early they listed it: a weight, never the prose | CC BY-SA 4.0 | Yes if any of its prose is ever used | Yes if any of its prose is ever used | Section 5's row carries the blurb credit in the footer. Nothing further is owed while only the numeric signal is used |
+
+The share-alike question this layer raises is the same one follow-up item 2
+already tracks, and it is not answered by the fact that the export is
+selective. The ranker keeps 5,472 of 17,858 candidates, scores them, corroborates
+them and tiers them, which is a produced work in the sense the trails export
+uses, but the names and coordinates inside it are still OpenStreetMap's. Treat
+the wire as an ODbL extract until that review happens.
+
 ## MISSING attributions, follow-up list
 
 Cleared on 2026-08-11 by the footer pass. The home footer now renders a Data
@@ -170,7 +208,69 @@ What is still open, and what each needs:
    which are still pending. The stay tiers ship on fixtures until then.
 5. Feeds still marked "Raw ETL only": nothing renders from them yet. Each row
    says what its credit becomes when something does.
+6. UNESCO World Heritage Centre: the natural-features wire cites it in 13
+   country files and tags 276 features with the `unesco` designation, and
+   `attribution.js` has no entry for it. The ready-to-paste entry is at the
+   bottom of this file. Confirm the terms wording first, and confirm where
+   `cache/unesco_whc.json` came from: no script in the tree writes it.
+7. The natural-features citation surface: every country file already carries
+   the `sources` block and every photo its TASL row, and none of it renders,
+   because the features UI is still being built. The obligation lands the
+   moment a beach or a summit is shown, not when the file is written. Two
+   credits are needed there: the file's `sources` block (OpenStreetMap always,
+   the EEA where a water class is shown, UNESCO where a designation is) and
+   the per-image author, licence and licence_url beside each photo.
+8. 35 shipped photos carry an attribution-required licence with no author name
+   (`cache/poi_image_licenses.json` resolved the licence but not the author).
+   A per-image credit that reads "CC BY-SA 3.0" with nobody credited is not a
+   credit. Either the cache fills the author, or those files stop shipping.
 
 Open risk items, not attribution but licensing scope: WorldClim non-commercial
 scope, Ferryhopper commercial terms, OpenSky commercial-use terms, Numbeo
-anchor provenance. Each is flagged in its row above.
+anchor provenance, and the handful of GFDL and GPL photos in the features wire
+(both are copyleft licences written for documentation and software, and a
+thumbnail credit line may not discharge them). Each is flagged in its row
+above.
+
+## Ready to paste into `continent-app/src/data/attribution.js`
+
+Written here rather than applied: the front end is being edited in a parallel
+session, so this file's derived credits are handed over instead of merged.
+Entry order in that file follows this ledger, roughly by how much of the
+product each source carries.
+
+ONE NEW ENTRY. Place it after the European Environment Agency entry, which is
+the other designation-and-quality source in the same block:
+
+```js
+  {
+    source: 'UNESCO World Heritage Centre',
+    license: 'UNESCO WHC terms of use (verify)',
+    credit: 'World Heritage designations from the UNESCO World Heritage List',
+  },
+```
+
+ONE AMENDED ENTRY. The existing OpenStreetMap credit names what the app showed
+before this layer existed; beaches and summits are now their own published
+entities, so the line should say so:
+
+```js
+  {
+    source: 'OpenStreetMap',
+    license: 'ODbL 1.0',
+    credit: 'Map data, points of interest, nature areas, beaches, summits and '
+      + 'trail routes © OpenStreetMap contributors',
+  },
+```
+
+NOTHING ELSE CHANGES IN THAT FILE. The EEA, Wikipedia, Wikivoyage, Wikimedia
+Commons, OpenTripMap and Overture entries already cover their part of this
+layer, and Wikidata is CC0 and correctly absent. The two credits the footer
+cannot carry are per-feature, and belong in the features UI itself:
+
+- the country file's `sources` block, rendered wherever its features are shown
+  (`osm` in all 43 files, `eea` in 28, `whc` in 13; each entry is already a
+  `{name, url}` pair ready to render as a link),
+- the per-photo credit from the feature's own `image` object:
+  `image.author`, `image.licence` and `image.licence_url`, which is exactly
+  the per-file obligation follow-up item 1 has been open on since 2026-08-11.

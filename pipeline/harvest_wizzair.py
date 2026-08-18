@@ -27,16 +27,33 @@ Merge model (shared `fares` table):
   Ryanair-won days stay untagged (the app's existing default). So this MUST run
   AFTER the Ryanair fares patch - run_pipeline sequences it that way.
 
+Schedule capture (out_f / ret_f):
+  The timetable endpoint returns one row per DAY: one price (that day's
+  cheapest) plus `departureDates`, the local departure time of EVERY flight
+  Wizz operates that day. The price is therefore day-level and there is no
+  per-flight price here; the times, however, are per-flight, and they are the
+  free schedule signal. Days Wizz wins carry them as
+  out_f/ret_f = {day: "HH:MM,HH:MM"}, always describing the carrier named in
+  out_c/ret_c for that day, so the field stays correct once other carriers
+  fill their own days. Days with times but no bookable price are still
+  dropped: the fare table never gains a day you cannot buy.
+
 Caches (idempotent / resumable):
   cache/wizzair_meta.json         {version, date}   current API version
   cache/wizzair_airports.json     {iata: {name, city, country, lat, lon, currency}}
   cache/wizzair_route_graph.json  {origin: [reachable dest codes]}
-  cache/wizz_fare_cache.json      {"lo|hi|chunkStart": {"o": {...}, "r": {...}}, _window}
+  cache/wizz_fare_cache.json      {"lo|hi|chunkStart": {"o": {...}, "r": {...},
+                                   "v": 2}, _window}; a leg map is
+                                   {day: [amount, currency, "HH:MM,HH:MM"]},
+                                   the third field being every departure time
+                                   Wizz operates that day (absent in v1 blocks)
   cache/fx_rates_eur.json         {date, rates}      EUR -> currency table
 
 Run:
   python harvest_wizzair.py graph          # (re)fetch route map + airports
   python harvest_wizzair.py harvest [N]    # harvest fares (resume; optional N-pair cap)
+  python harvest_wizzair.py harvest --refresh-times   # also re-fetch pre-schedule
+                                           #   (v1) blocks, which a plain resume skips
   python harvest_wizzair.py patch [--dry-run]  # merge EUR fares into data["fares"]
   python harvest_wizzair.py all            # graph (if missing) + harvest + patch
   python harvest_wizzair.py stats          # print scope without harvesting
@@ -63,6 +80,7 @@ CURRENCY = "EUR"
 CARRIER = "W6"                       # Wizz Air IATA code (tag for days it wins)
 FARE_MODEL = "wizzair_timetable_all_origins"
 CHUNK_DAYS = 28                      # timetable caps the from..to span; 28 is safe
+CACHE_V = 2                          # fare-cache block schema (2 = carries departure times)
 WIZZ_HOST = "https://be.wizzair.com"
 WIZZ_SITE = "https://wizzair.com"
 FX_URL = "https://open.er-api.com/v6/latest/EUR"
@@ -266,25 +284,46 @@ def date_chunks(start_iso, end_iso, n=CHUNK_DAYS):
 #  Phase 2: fare harvest (timetable = date range, both directions, one call)
 # --------------------------------------------------------------------------- #
 def _parse_timetable(flights):
-    """[{departureDate, price:{amount,currencyCode}, priceType}] -> {day: [amt, cur]}
-    keeping only real, bookable, cheapest-per-day fares."""
-    out = {}
+    """[{departureDate, departureDates, price:{amount,currencyCode}, priceType}]
+    -> {day: [amt, cur, "HH:MM,HH:MM"]}, real bookable fares only.
+
+    The endpoint returns ONE row per day, not per flight: `price` is that day's
+    cheapest across every departure, while `departureDates` lists the local
+    departure time of each flight Wizz actually operates that day. So the price
+    here is unavoidably day-level (there is no per-flight price on the timetable
+    endpoint), but the TIMES are per-flight, and they are the free schedule
+    signal this parser exists to keep. Times are unioned across a day's rows,
+    because they describe the day's service rather than whichever row happened
+    to carry the cheapest fare.
+
+    A day with times but no bookable price is still dropped, exactly as before:
+    the fare table must never gain a day you cannot buy.
+    """
+    prices, times = {}, {}
     for f in flights or []:
         pt = f.get("priceType")
         if pt not in (None, "price"):
             continue
+        day = (f.get("departureDate") or "")[:10]
+        if not day:
+            continue
+        for stamp in f.get("departureDates") or []:
+            hhmm = str(stamp)[11:16]
+            if len(hhmm) == 5 and hhmm[2] == ":":
+                times.setdefault(day, set()).add(hhmm)
         p = f.get("price") or {}
         amt = p.get("amount")
         if amt is None or amt <= 0:
             continue
-        day = (f.get("departureDate") or "")[:10]
-        if not day:
-            continue
         cur = p.get("currencyCode")
-        prev = out.get(day)
+        prev = prices.get(day)
         if prev is None or amt < prev[0]:
-            out[day] = [round(float(amt), 2), cur]
-    return out
+            prices[day] = [round(float(amt), 2), cur]
+    for day, row in prices.items():
+        t = times.get(day)
+        if t:
+            row.append(",".join(sorted(t)))
+    return prices
 
 
 def fetch_chunk(base, lo, hi, cs, ce):
@@ -298,7 +337,8 @@ def fetch_chunk(base, lo, hi, cs, ce):
     }
     payload = _post_json(base + "/search/timetable", body)
     return {"o": _parse_timetable(payload.get("outboundFlights")),
-            "r": _parse_timetable(payload.get("returnFlights"))}
+            "r": _parse_timetable(payload.get("returnFlights")),
+            "v": CACHE_V}
 
 
 def _fetch_with_backoff(base, lo, hi, cs, ce):
@@ -308,17 +348,17 @@ def _fetch_with_backoff(base, lo, hi, cs, ce):
             return fetch_chunk(base, lo, hi, cs, ce)
         except urllib.error.HTTPError as e:
             if e.code == 404:
-                return {"o": {}, "r": {}}
+                return {"o": {}, "r": {}, "v": CACHE_V}
             if e.code in (429, 503) and attempt < len(BACKOFFS):
                 time.sleep(BACKOFFS[attempt]); attempt += 1; continue
-            return {"o": {}, "r": {}}
+            return {"o": {}, "r": {}, "v": CACHE_V}
         except Exception:
             if attempt < len(BACKOFFS):
                 time.sleep(BACKOFFS[attempt]); attempt += 1; continue
-            return {"o": {}, "r": {}}
+            return {"o": {}, "r": {}, "v": CACHE_V}
 
 
-def harvest(limit=None):
+def harvest(limit=None, refresh_times=False):
     data = load_app_data()
     graph = load_graph()
     meta = data["meta"]
@@ -339,7 +379,18 @@ def harvest(limit=None):
     base = api_base()
     jobs = [(f"{lo}|{hi}|{cs}", lo, hi, cs, ce)
             for (lo, hi) in upairs for (cs, ce) in chunks]
-    todo = [j for j in jobs if j[0] not in cache]
+    if refresh_times:
+        # A v1 block holds the same prices but no departure times, so a plain
+        # resume would skip it forever. Re-fetch those too; the request body is
+        # unchanged, this only costs calls, never a different query.
+        todo = [j for j in jobs
+                if j[0] not in cache or (cache.get(j[0]) or {}).get("v", 1) < CACHE_V]
+        stale = sum(1 for j in jobs
+                    if j[0] in cache and (cache.get(j[0]) or {}).get("v", 1) < CACHE_V)
+        print(f"  --refresh-times: {stale} cached blocks predate the schedule capture "
+              f"and will be re-fetched")
+    else:
+        todo = [j for j in jobs if j[0] not in cache]
     print(f"{len(upairs)} city pairs x {len(chunks)} chunks -> {len(jobs)} calls; "
           f"{len(cache) - 1} cached, {len(todo)} to fetch (workers={WORKERS}, delay={DELAY_S}s)")
 
@@ -381,28 +432,64 @@ def _leg_eur(cache, chunks, frm, to, rates, start, end):
         blk = cache.get(f"{lo}|{hi}|{cs}")
         if not blk:
             continue
-        for day, (amt, cur) in (blk.get(dirn) or {}).items():
+        for day, row in (blk.get(dirn) or {}).items():
+            # v1 blocks are [amt, cur]; v2 appends the day's departure times
             if start <= day <= end:
-                eur = to_eur(amt, cur, rates)
+                eur = to_eur(row[0], row[1], rates)
                 if eur is not None:
                     out[day] = eur
     return dict(sorted(out.items()))
 
 
-def _merge_leg(rec, side, src_eur):
+def _leg_times(cache, chunks, frm, to, start, end):
+    """{day: "HH:MM,HH:MM"} departure times for frm->to. Blocks harvested before
+    CACHE_V 2 carry no times and simply contribute nothing, so a partially
+    refreshed cache degrades to today's behaviour instead of erroring."""
+    lo, hi = (frm, to) if frm < to else (to, frm)
+    dirn = "o" if frm < to else "r"
+    out = {}
+    for cs, _ce in chunks:
+        blk = cache.get(f"{lo}|{hi}|{cs}")
+        if not blk:
+            continue
+        for day, row in (blk.get(dirn) or {}).items():
+            if len(row) > 2 and row[2] and start <= day <= end:
+                out[day] = row[2]
+    return dict(sorted(out.items()))
+
+
+def _merge_leg(rec, side, src_eur, src_times=None):
     """Keep the cheaper price per day; tag days Wizz wins in {side}_c. A day
     held by the Travelpayouts cache ("TP") is also reclaimed at EQUAL price,
     since a cached quote must never beat a direct one it does not undercut.
+
+    Days Wizz wins also get its departure times in {side}_f ("HH:MM,HH:MM",
+    every flight it operates that day). The invariant is that {side}_f[day]
+    always describes the carrier named in {side}_c[day], so the app can never
+    print one airline's departure times beside another airline's price. Each
+    carrier enforces it over ITS OWN days only (clear-then-fill), which is what
+    lets this patch and harvest_ryanair_schedules.py run in either order.
+
     Returns (added, undercut, kept) day counts for reporting."""
     dst = rec.setdefault(side, {})
     tag = rec.get(side + "_c") or {}
+    freq = rec.get(side + "_f") or {}
+    src_times = src_times or {}
     added = undercut = kept = 0
+
+    def won(day):
+        t = src_times.get(day)
+        if t:
+            freq[day] = t
+        else:
+            freq.pop(day, None)
+
     for day, eur in src_eur.items():
         cur = dst.get(day)
         if cur is None:
-            dst[day] = eur; tag[day] = CARRIER; added += 1
+            dst[day] = eur; tag[day] = CARRIER; won(day); added += 1
         elif eur < cur - 0.005 or (tag.get(day) == "TP" and eur <= cur + 0.005):
-            dst[day] = eur; tag[day] = CARRIER; undercut += 1
+            dst[day] = eur; tag[day] = CARRIER; won(day); undercut += 1
             # the day is direct-harvested again: its cached-quote provenance
             # (per-day observed/expires) no longer applies
             for suf in ("_o", "_x"):
@@ -413,6 +500,19 @@ def _merge_leg(rec, side, src_eur):
             kept += 1
     if tag:
         rec[side + "_c"] = tag
+    # Clear-then-fill scoped to the days this carrier OWNS. A day another
+    # carrier holds belongs to that carrier's own schedule patch (see
+    # harvest_ryanair_schedules.apply_schedule), so deleting it here would
+    # destroy that patch's work depending on which of the two ran last, and
+    # the two are meant to be order independent. A day we still own but no
+    # longer have a schedule for drops out, which is how a route Wizz stopped
+    # flying loses its stale times.
+    for day in [d for d in freq if tag.get(d) == CARRIER and d not in src_times]:
+        del freq[day]
+    if freq:
+        rec[side + "_f"] = freq
+    elif side + "_f" in rec:
+        del rec[side + "_f"]
     return added, undercut, kept
 
 
@@ -434,10 +534,13 @@ def patch(dry_run=False):
     tot_added = tot_undercut = tot_kept = 0
     save_examples = []
 
+    tot_sched = 0                     # days that gained a Wizz schedule
     obs = int(time.time() // 86400)   # contract A `o`, unix epoch days
     for origin, anchor in pairs:
         out_eur = _leg_eur(cache, chunks, origin, anchor, rates, start, end)
         ret_eur = _leg_eur(cache, chunks, anchor, origin, rates, start, end)
+        out_tim = _leg_times(cache, chunks, origin, anchor, start, end)
+        ret_tim = _leg_times(cache, chunks, anchor, origin, start, end)
         if not out_eur and not ret_eur:
             continue
         anchor_col = fares.setdefault(anchor, {})
@@ -447,13 +550,14 @@ def patch(dry_run=False):
         # winners live in out_c/ret_c) and only get `o` bumped when touched.
         rec = anchor_col.setdefault(origin, {"out": {}, "ret": {},
                                              "s": CARRIER, "o": obs})
-        a1, u1, k1 = _merge_leg(rec, "out", out_eur)
-        a2, u2, k2 = _merge_leg(rec, "ret", ret_eur)
+        a1, u1, k1 = _merge_leg(rec, "out", out_eur, out_tim)
+        a2, u2, k2 = _merge_leg(rec, "ret", ret_eur, ret_tim)
         if a1 + a2 + u1 + u2:
             rec["o"] = obs
         if not existed and (rec.get("out") or rec.get("ret")):
             new_routes += 1
         tot_added += a1 + a2; tot_undercut += u1 + u2; tot_kept += k1 + k2
+        tot_sched += len(rec.get("out_f") or {}) + len(rec.get("ret_f") or {})
         if u1 and len(save_examples) < 8:
             # find one representative undercut day for the report
             for day, eur in out_eur.items():
@@ -467,6 +571,7 @@ def patch(dry_run=False):
         print(f"Wizz would ADD {new_routes} brand-new (anchor,origin) routes")
         print(f"day-prices: {tot_added} added, {tot_undercut} undercut Ryanair, "
               f"{tot_kept} kept (Ryanair already cheaper/equal)")
+        print(f"day-schedules (out_f/ret_f) on Wizz-held days: {tot_sched}")
         print(f"distinct origins after merge: {len(all_origins)} "
               f"(was {len(meta.get('all_origins') or [])})")
         for o, a, day, eur in save_examples:
@@ -479,19 +584,23 @@ def patch(dry_run=False):
         "method": ("real per-day Wizz Air fares (search/timetable) from every Wizz "
                    "origin to every catalogue anchor, converted to EUR (open.er-api.com), "
                    "merged cheapest-wins into `fares`; days Wizz wins tagged W6 in "
-                   "out_c/ret_c. Runs AFTER the Ryanair patch."),
+                   "out_c/ret_c, and their departure times in out_f/ret_f "
+                   "(\"HH:MM,HH:MM\", every flight Wizz operates that day). "
+                   "Runs AFTER the Ryanair patch."),
         "fare_model": FARE_MODEL,
         "currency": CURRENCY,
         "window": f"{start}..{end}",
         "new_routes_added": new_routes,
         "days_added": tot_added,
         "days_undercut_ryanair": tot_undercut,
+        "days_with_schedule": tot_sched,
         "harvested_from": date.today().isoformat(),
     }
     APP_DATA.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
     size_mb = APP_DATA.stat().st_size / 1e6
     print(f"patched Wizz fares: +{new_routes} new routes, {tot_added} day-prices added, "
-          f"{tot_undercut} undercut Ryanair, {tot_kept} kept")
+          f"{tot_undercut} undercut Ryanair, {tot_kept} kept, "
+          f"{tot_sched} days carry a Wizz schedule")
     print(f"distinct origins now {len(all_origins)}; app_data.json is {size_mb:.1f} MB")
 
 
@@ -524,7 +633,7 @@ if __name__ == "__main__":
         build_graph()
     elif cmd == "harvest":
         lim = int(sys.argv[2]) if len(sys.argv) > 2 and sys.argv[2].isdigit() else None
-        harvest(limit=lim)
+        harvest(limit=lim, refresh_times="--refresh-times" in sys.argv)
     elif cmd == "patch":
         patch(dry_run="--dry-run" in sys.argv)
     elif cmd == "stats":

@@ -36,6 +36,7 @@ So you schedule ONE weekly job and each layer self-selects how often it fires:
   monthly   fame (pageviews) -> beauty -> rating; flight times for covered origins
   monthly   holiday calendars (demand catalysts for the estimation model)
   monthly   trails popularity (curation shortlists for the review queue)
+  monthly   natural features: the beach and summit wire, rebuilt behind its gate
   quarterly open-data snapshots (crowding, bathing water, lodging) *
   quarterly trails ingest (Geofabrik hiking relations -> the trailslab lab)
   after     trails elevation + validation: no interval of their own; they are
@@ -90,6 +91,22 @@ serve".
 DB (a sampled validation pass plus the full regression detection), so you can
 see what a real run would move before it moves anything.
 
+NATURAL FEATURES GATE
+---------------------
+The `features` task rebuilds the beach and summit layer (pipeline/features) and
+publishes continent-app/public/features/. It is deliberately NOT soft: the last
+two of its six stages are a validator that exits 1 on any hard check and an
+exporter that refuses to write unless the verdict it reads was produced from the
+exact features.json now on disk. Shipping a beach we cannot credit, or a bus
+station filed as a summit, is worse than shipping nothing, so a failing gate
+fails the task and stops the run before the ship.
+
+It never writes app_data.json, so it takes no master lock and needs no backup,
+but it does write a wire, which is what `writes_wire` says: a features-only run
+still triggers the build, or the new country files would sit in public/ and
+never reach dist. `--dry-run` runs the validator alone (it exports nothing) so
+the plan can say whether today's artifact would pass the gate.
+
 USAGE
 -----
   python run_pipeline.py                     # run every task that is DUE
@@ -121,6 +138,13 @@ import sys
 import time
 from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
+
+if sys.platform == "win32":
+    # Task Scheduler, a piped console and cmd.exe all hand this process cp1252,
+    # and the tasks it drives print real place names (Puy de Dome,
+    # Eyjafjallajokull). Every pipeline script already reconfigures; the driver
+    # that tees their output has to as well, or it dies on their success.
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
 ROOT = Path(__file__).parent
 APP_DATA = ROOT / "app_data" / "app_data.json"
@@ -170,6 +194,21 @@ DERIVED = ROOT / "data" / "derived"
 FRESHNESS_REPORT = DERIVED / "freshness_report.json"
 FARE_CACHE = CACHE / "fare_all_origins.json"
 RYANAIR_GRAPH = CACHE / "ryanair_route_graph.json"
+
+# Natural features layer (pipeline/features): beaches and summits lifted out of
+# the POI layer, gated, then published as one file per country.
+FEATURES_DIR = ROOT / "pipeline" / "features"
+FEATURES_ARTIFACT = DERIVED / "features.json"
+# The six stages, in the only order that works: each fills the fields the next
+# one reads, and the last two are the gate (see NATURAL FEATURES GATE above).
+FEATURE_STAGES = ("build_features.py", "enrich_wikidata.py", "enrich_images.py",
+                  "rank_features.py", "validate_features.py",
+                  "export_features.py")
+# What the spine is built from. Both are the SHIPPED copies (sync-data.mjs
+# writes them at ship time), never the master, which is why the layer trails a
+# same-run POI refresh by one run.
+FEATURE_INPUTS = (CONTINENT / "public" / "app_data.json",
+                  CONTINENT / "public" / "activities_full.json")
 
 # Trails content lab (tools/trailslab): written by pipeline/trails/regression.py,
 # folded into the freshness report under "trails".
@@ -307,13 +346,22 @@ def save_state(state):
 
 
 def run_cmd(argv, cwd=None):
-    """Stream a subprocess, tee its output to the log, return the exit code."""
+    """Stream a subprocess, tee its output to the log, return the exit code.
+
+    UTF-8 both ways, deliberately: the child's pipe is not a console, so a
+    python step that does not reconfigure would default to cp1252 and a step
+    that does (every pipeline/ script) would not, and one accented place name
+    in a progress line would then kill the driver mid-task with a decode error
+    rather than anything to do with the data. errors="replace" keeps a stray
+    byte from a non-python child cosmetic."""
     pretty = " ".join(str(a) for a in argv)
     log(f"  $ {pretty}")
+    env = dict(os.environ, PYTHONIOENCODING="utf-8")
     try:
         proc = subprocess.Popen(
             argv, cwd=str(cwd or ROOT), stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT, text=True, bufsize=1,
+            encoding="utf-8", errors="replace", env=env,
         )
     except FileNotFoundError as e:
         log(f"  ! command not found: {e}")
@@ -362,6 +410,25 @@ def trailslab_endpoint():
     except ValueError:
         port = 5433
     return host, port
+
+
+def guard_features_stages(ctx):
+    """The features chain is only worth starting when all six stages and both
+    shipped inputs are on disk. The enrich stages are being written in a
+    parallel session, and a chain that is half landed would fail the run on a
+    "can't open file" exit code, which says nothing about the data: that is a
+    SKIP with a reason, the same treatment the trails lab gets when it is down."""
+    missing = [s for s in FEATURE_STAGES if not (FEATURES_DIR / s).exists()]
+    if missing:
+        return False, (f"pipeline/features is incomplete ({', '.join(missing)} "
+                       f"not on disk yet) - skipping until the chain is whole")
+    absent = [p.name for p in FEATURE_INPUTS if not p.exists()]
+    if absent:
+        return False, (f"{', '.join(absent)} missing from continent-app/public: "
+                       f"the spine reads the SHIPPED catalogue, not the master, "
+                       f"so run `npm run data` (or a full ship) first")
+    return True, (f"all {len(FEATURE_STAGES)} stages present, spine inputs "
+                  f"shipped")
 
 
 def guard_trailslab_up(ctx):
@@ -838,6 +905,23 @@ def trails_validate_dry(ctx):
                     "--dry-run", "--verbose"]) == 0
 
 
+def features_validate_dry(ctx):
+    """The read-only half of the features task, for --dry-run: run the gate on
+    the artifact that is on disk right now and export nothing, so the plan can
+    say whether a real run would reach the wire at all.
+
+    validate_features.py reads data/derived/features.json and writes one thing,
+    its own verdict. That verdict is a statement about a file this probe did not
+    touch, and export_features.py refuses to act on a verdict whose sha1 no
+    longer matches, so writing it cannot ship anything by itself."""
+    if not FEATURES_ARTIFACT.exists():
+        log(f"  no {FEATURES_ARTIFACT.relative_to(ROOT)} yet: a real run would "
+            f"build and rank it first, so there is nothing to validate")
+        return False
+    log("  dry-run probe: validating the ranked artifact, exporting nothing")
+    return run_cmd([PY, "pipeline/features/validate_features.py"]) == 0
+
+
 def hero_audit_dry(ctx):
     """The read-only half of the hero audit: classify every hero that is on
     disk right now and write the report, but look for no replacement and touch
@@ -874,6 +958,9 @@ def fame_step(ctx):
 #   after           task keys this one follows; due when one of them succeeded
 #                   more recently than this task did
 #   writes_app_data -> pre-write backup + concurrency guard
+#   writes_wire     -> writes continent-app/public/ directly, never the master:
+#                      no backup and no lock, but the ship still has to run or
+#                      the new files never reach dist
 #   run(ctx)->bool  custom step (preferred where logic is needed)
 #   cmds            list of argv lists, run in order; any non-zero fails the task
 #   guard(ctx)      optional; (ok, reason). ok=False SKIPS (not a failure)
@@ -1020,6 +1107,31 @@ TASKS = [
         "note": ("coords/dupes/rate-inflation/coverage report -> "
                  "logs/audit_quality_report.json; never blocks, but read it "
                  "after any POI-layer change."),
+    },
+    {
+        "key": "features",
+        "title": "Natural features: beaches + summits -> public/features",
+        "cadence": "monthly",
+        "writes_app_data": False,
+        "writes_wire": True,
+        "guard": guard_features_stages,
+        "dry_run": features_validate_dry,
+        "cmds": [[PY, f"pipeline/features/{stage}"] for stage in FEATURE_STAGES],
+        "note": ("the six stages share ONE artifact and each fills the fields "
+                 "the next one reads, so the order is the pipeline: build "
+                 "lifts the beach and summit spine out of the POI, bathing-"
+                 "water and protected-area caches; enrich_wikidata adds "
+                 "elevation, prominence and sitelinks; enrich_images adds a "
+                 "Commons photo with its TASL row; rank scores and tiers on "
+                 "all of it (a photo that only arrives after ranking is a "
+                 "photo the score never saw); validate is the gate and exits 1 "
+                 "on any hard check; export refuses to write unless that "
+                 "verdict's sha1 still matches features.json. NOT soft on "
+                 "purpose: a failing gate must stop the run rather than ship a "
+                 "beach nobody can credit. Reads the SHIPPED "
+                 "public/app_data.json + activities_full.json, so it sees the "
+                 "last ship's POI layer, one run behind a poi_significance "
+                 "that fires in the same run."),
     },
     {
         "key": "flight_times",
@@ -1570,8 +1682,11 @@ def main():
             except OSError:
                 pass
 
-    # Ship, only if a writer ran and none failed.
-    if ran and not failed and any(TASK_BY_KEY[k].get("writes_app_data") for k in ran):
+    # Ship, only if a writer ran and none failed. A wire writer counts: it puts
+    # new files in public/ that only the build copies into dist.
+    if ran and not failed and any(TASK_BY_KEY[k].get("writes_app_data")
+                                  or TASK_BY_KEY[k].get("writes_wire")
+                                  for k in ran):
         if args.ship == "none":
             log("\n--ship none: skipping build. Run `npm run build` in continent-app to ship.")
         elif args.ship == "data":
