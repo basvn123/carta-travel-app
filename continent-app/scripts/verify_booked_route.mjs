@@ -77,9 +77,8 @@ try {
     });
     await page.goto(`${BASE}/?tab=trip&o=CRL`);
 
-    const launch = page.locator('.trip-guide-cta, .trip-launcher-primary').first();
-    await launch.waitFor({ timeout: 120000 });
-    await launch.click();
+    // The planner opens straight on the three options now (no launcher card,
+    // no modal), so the path deck is the first thing on screen.
 
     // Path 3: transport and stays booked.
     const paths = page.locator('.guide-path');

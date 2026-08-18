@@ -1,145 +1,133 @@
-// Headless check that the wizard's dates step fits on screen without scrolling.
-// Two six-row months with square day cells used to push the footer past the
-// fold, so this measures the scrolling body, not just eyeballs a screenshot.
-// Run from inside continent-app/:  node scripts/verify_when_step.mjs
+// Headless verify for the wizard's When step: no past dates offered (the fare
+// window opens on the harvest date, which is behind us), and a calendar sized
+// for the screen it is on.
+//
+//   node scripts/verify_when_step.mjs [url]   (default http://localhost:4173)
+//
+// Runs at 1440x1000 desktop and 390x844 phone. Shots to shots/when-*.png.
+
 import { chromium } from 'playwright';
-import { spawn, spawnSync } from 'node:child_process';
-import { mkdirSync } from 'node:fs';
 
-const PORT = 4189;
-const BASE = `http://127.0.0.1:${PORT}`;
-const SHOTS = 'scripts/shots';
-mkdirSync(SHOTS, { recursive: true });
+const URL = process.argv[2] || 'http://localhost:4173/';
+const browser = await chromium.launch();
+const checks = [];
+const errors = [];
+const check = (label, ok, note = '') => checks.push({ label, ok, note });
+const NOISE = /emrldtp|ERR_FAILED|config is not valid/;
+const iso = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 
-const isUp = async () => {
-  try { return (await fetch(BASE)).ok; } catch { return false; }
-};
-let srv = null;
-const waitForServer = async () => {
-  if (await isUp()) return;
-  srv = spawn('npx', ['vite', 'preview', '--port', String(PORT), '--strictPort'], {
-    shell: true, stdio: 'ignore',
-  });
-  for (let i = 0; i < 60; i += 1) {
-    if (await isUp()) return;
-    await new Promise((r) => setTimeout(r, 500));
-  }
-  throw new Error('vite preview never came up');
-};
-
-const fail = (msg) => { console.error('FAIL:', msg); process.exitCode = 1; };
-
-// The step is only honest at the sizes people actually use: a laptop and a
-// short laptop are where a tall form step first starts to scroll.
-const SIZES = [
-  { name: 'laptop', width: 1360, height: 900 },
-  { name: 'short', width: 1360, height: 720 },
-  { name: 'narrow', width: 900, height: 780 },
-  // A half-screen window on a scaled display: the CSS viewport people
-  // actually get when the browser is not maximised.
-  { name: 'half', width: 720, height: 620 },
-  { name: 'phone', width: 390, height: 844 },
-];
-
-try {
-  await waitForServer();
-  const browser = await chromium.launch();
-
-  for (const size of SIZES) {
-    const ctx = await browser.newContext({ viewport: { width: size.width, height: size.height } });
-    const page = await ctx.newPage();
-    await page.addInitScript(() => {
+async function toWhenStep(width, height, fakeNow) {
+  const page = await browser.newPage({ viewport: { width, height } });
+  page.on('pageerror', (e) => errors.push('pageerror: ' + e.message.split('\n')[0]));
+  page.on('console', (m) => { if (m.type() === 'error' && !NOISE.test(m.text())) errors.push('console: ' + m.text().slice(0, 120)); });
+  await page.addInitScript(() => {
+    try {
+      localStorage.setItem('continent.lang.v1', 'en');
       localStorage.setItem('continent.guestMode.v1', '1');
-      localStorage.setItem('carta.fareNoticeSeen', '1');
       localStorage.setItem('carta.welcomeSeen', '1');
-      localStorage.setItem('continent.onboardingSeen.v1', '1');
-    });
-    await page.goto(`${BASE}/?tab=trip&o=CRL`);
-
-    // Open the wizard, take the full path, name a country, land on When.
-    // .trip-launcher is the wrapper div and swallows its own clicks; the
-    // button inside it is what opens the wizard.
-    const launch = page.locator('.trip-guide-cta, .trip-launcher-primary').first();
-    await launch.waitFor({ timeout: 120000 });
-    await launch.click();
-    await page.locator('.guide-path').first().waitFor({ timeout: 30000 });
-    await page.locator('.guide-path').first().click();
-    await page.locator('.guide-country').first().waitFor({ timeout: 30000 });
-    await page.locator('.guide-country').first().click();
-    await page.locator('.guide-next').click();
-    await page.locator('.guide-when-card').waitFor({ timeout: 30000 });
-    await page.waitForTimeout(600);
-
-    const m = await page.evaluate(() => {
-      const body = document.querySelector('.trip-wizard-modal .guide-body')
-        || document.querySelector('.guide-body');
-      const card = document.querySelector('.guide-when-card');
-      const foot = document.querySelector('.guide-foot');
-      const days = [...document.querySelectorAll('.cal-inline .cal-day')];
-      const d = days[0] ? days[0].getBoundingClientRect() : null;
-      return {
-        scrollH: body ? body.scrollHeight : 0,
-        clientH: body ? body.clientHeight : 0,
-        cardH: card ? Math.round(card.getBoundingClientRect().height) : 0,
-        cardBottom: card ? Math.round(card.getBoundingClientRect().bottom) : 0,
-        footTop: foot ? Math.round(foot.getBoundingClientRect().top) : 0,
-        cell: d ? { w: Math.round(d.width), h: Math.round(d.height) } : null,
-        panes: document.querySelectorAll('.cal-inline .cal-pane').length,
-        // Per-block heights, so tuning this step is arithmetic and not guesswork.
-        parts: Object.fromEntries(['.guide-title', '.guide-sub', '.guide-datemode',
-          '.guide-range-head', '.cal-inline .cal-head', '.cal-inline .cal-panes',
-          '.guide-when-card .guide-card-row:last-child']
-          .map((s) => {
-            const el = document.querySelector(s);
-            return [s, el ? Math.round(el.getBoundingClientRect().height) : 0];
-          })),
-      };
-    });
-    const overflow = m.scrollH - m.clientH;
-    console.log(`${size.name} ${size.width}x${size.height}:`, JSON.stringify(m), `overflow=${overflow}`);
-    const wantPanes = size.width < 620 ? 1 : 2;
-    if (m.panes !== wantPanes) fail(`${size.name}: expected ${wantPanes} month pane(s), got ${m.panes}`);
-    if (!size.allowScroll) {
-      if (overflow > 1) fail(`${size.name}: dates step still scrolls by ${overflow}px`);
-      if (m.cardBottom > m.footTop) fail(`${size.name}: card runs under the footer`);
-    }
-    await page.screenshot({ path: `${SHOTS}/when-${size.name}.png` });
-
-    // Picking a span adds the nights count and Clear to the range row: the
-    // step has to still fit once it is answered, not only while it is empty.
-    const days = page.locator('.cal-inline .cal-day:not(.outside):not(.disabled)');
-    await days.first().click();
-    await days.nth(6).click();
-    await page.waitForTimeout(300);
-    const after = await page.evaluate(() => {
-      const body = document.querySelector('.trip-wizard-modal .guide-body');
-      return {
-        overflow: body ? body.scrollHeight - body.clientHeight : 0,
-        band: document.querySelectorAll('.cal-day.in-range').length,
-        nights: (document.querySelector('.guide-when-nights') || {}).textContent || '',
-        nextOn: !document.querySelector('.guide-next').disabled,
-      };
-    });
-    console.log(`  picked:`, JSON.stringify(after));
-    if (!after.band) fail(`${size.name}: range picked but nothing shaded between the ends`);
-    if (!after.nextOn) fail(`${size.name}: Next stayed disabled after picking a range`);
-    if (!size.allowScroll && after.overflow > 1) {
-      fail(`${size.name}: step scrolls by ${after.overflow}px once dates are picked`);
-    }
-    await page.screenshot({ path: `${SHOTS}/when-${size.name}-picked.png` });
-    await ctx.close();
-  }
-
-  await browser.close();
-  if (process.exitCode !== 1) console.log('verify_when_step OK');
-} catch (err) {
-  fail(err.message);
-} finally {
-  if (srv) {
-    srv.kill();
-    if (process.platform === 'win32' && srv.pid) {
-      try { spawnSync('taskkill', ['/pid', String(srv.pid), '/T', '/F'], { stdio: 'ignore' }); } catch { /* already gone */ }
-    }
-  }
-  process.exit(process.exitCode === 1 ? 1 : 0);
+    } catch { /* storage unavailable */ }
+  });
+  // Travelling clock: the floor has to be TODAY on whatever day the app runs,
+  // so the check pins a fake today and asserts the calendar follows it.
+  if (fakeNow) await page.clock.setFixedTime(new Date(fakeNow));
+  await page.goto(URL, { waitUntil: 'domcontentloaded', timeout: 45000 });
+  await page.waitForTimeout(3000);
+  const guest = page.getByText(/continue without an account/i).first();
+  if (await guest.isVisible().catch(() => false)) { await guest.click(); await page.waitForTimeout(1200); }
+  const top = page.locator('button', { hasText: /trip planner/i }).first();
+  if (await top.isVisible().catch(() => false)) await top.click();
+  else { await page.locator('.bottom-nav-plus').click(); await page.waitForTimeout(500); await page.locator('.plan-chooser-item').first().click(); }
+  await page.waitForTimeout(2000);
+  await page.locator('.guide-path').first().click();   // Carta plans it start to end
+  await page.waitForTimeout(1200);                      // dates live on Trip basics now
+  return page;
 }
+
+// Every enabled day cell, as ISO. Desktops show two panes, each with its own
+// title; phones show one, titled in the calendar head.
+async function enabledDays(page) {
+  return page.$$eval('.cal-inline', (cals) => {
+    const cal = cals[0];
+    if (!cal) return [];
+    const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+    const headTitle = cal.querySelector('.cal-title')?.textContent?.trim() || '';
+    const out = [];
+    for (const pane of cal.querySelectorAll('.cal-pane')) {
+      const title = pane.querySelector('.cal-pane-title')?.textContent?.trim() || headTitle;
+      const [mName, y] = title.split(' ');
+      const m = MONTHS.indexOf(mName);
+      if (m < 0) continue;
+      for (const b of pane.querySelectorAll('.cal-day')) {
+        if (b.classList.contains('disabled') || b.classList.contains('outside') || b.disabled) continue;
+        const d = Number(b.textContent.trim());
+        if (d) out.push(`${y}-${String(m + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`);
+      }
+    }
+    return out.sort();
+  });
+}
+
+// ── Desktop, real clock ──
+{
+  const page = await toWhenStep(1440, 1000);
+  check('lands on the basics step', /set up your trip/i.test(await page.locator('.guide-title').first().innerText()));
+  const days = await enabledDays(page);
+  const today = iso(new Date());
+  check('calendar offers days', days.length > 0, String(days.length));
+  check('no day before today is selectable', days.every((d) => d >= today), `earliest ${days[0]}, today ${today}`);
+  const cell = await page.locator('.cal-day:not(.disabled):not(.outside)').first().boundingBox();
+  check('day cells are comfortable on desktop', cell && cell.height >= 34, `${Math.round(cell?.height || 0)}px`);
+  const cal = await page.locator('.cal-inline').boundingBox();
+  check('calendar uses the width', cal && cal.width >= 700, `${Math.round(cal?.width || 0)}px`);
+  const titleSize = await page.locator('.guide-title').first().evaluate((el) => parseFloat(getComputedStyle(el).fontSize));
+  check('the question is sized for the page', titleSize >= 25, `${titleSize}px`);
+  await page.screenshot({ path: 'shots/when-desktop.png' });
+
+  // "I'm flexible" offers months, and a month that has already passed is not
+  // one of them.
+  await page.locator('.guide-datemode button', { hasText: /flexible/i }).click();
+  await page.waitForTimeout(600);
+  const monthChips = await page.locator('.guide-month, .guide-chip').allInnerTexts().catch(() => []);
+  const months = monthChips.map((x) => x.trim()).filter((x) => /^[A-Z][a-z]{2} \d{4}$/.test(x));
+  const MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const nowKey = (() => { const d = new Date(); return d.getFullYear() * 12 + d.getMonth(); })();
+  const past = months.filter((m) => {
+    const [name, y] = m.split(' ');
+    return Number(y) * 12 + MON.indexOf(name) < nowKey;
+  });
+  check('flexible months are offered', months.length > 0, months.slice(0, 3).join(', '));
+  check('no month that has already passed', past.length === 0, past.join(', '));
+  await page.screenshot({ path: 'shots/when-flexible.png' });
+  await page.close();
+}
+
+// ── Desktop, clock moved forward two months: the floor must move with it ──
+{
+  const fake = new Date();
+  fake.setMonth(fake.getMonth() + 2);
+  const page = await toWhenStep(1440, 1000, fake);
+  const days = await enabledDays(page);
+  const fakeToday = iso(fake);
+  check('floor follows the clock', days.length === 0 || days.every((d) => d >= fakeToday), `earliest ${days[0]}, faked today ${fakeToday}`);
+  check('later clock still offers dates', days.length > 0, String(days.length));
+  await page.close();
+}
+
+// ── Phone ──
+{
+  const page = await toWhenStep(390, 844);
+  const days = await enabledDays(page);
+  check('phone: calendar renders days', days.length > 0, String(days.length));
+  check('phone: no past days', days.every((d) => d >= iso(new Date())), `earliest ${days[0]}`);
+  const scrollW = await page.evaluate(() => document.documentElement.scrollWidth);
+  check('phone: no horizontal scroll', scrollW <= 390, String(scrollW));
+  await page.screenshot({ path: 'shots/when-phone.png' });
+  await page.close();
+}
+
+await browser.close();
+const pass = checks.filter((c) => c.ok).length;
+for (const c of checks) console.log(`${c.ok ? 'PASS' : 'FAIL'}  ${c.label}${c.note ? `  (${c.note})` : ''}`);
+console.log(`\n${pass}/${checks.length} checks passed`);
+if (errors.length) console.log('errors:\n' + [...new Set(errors)].slice(0, 8).join('\n'));
+process.exit(pass === checks.length && errors.length === 0 ? 0 : 1);

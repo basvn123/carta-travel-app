@@ -9,7 +9,7 @@ import { TripItinerary, TransferModePicker } from './TripItinerary.jsx';
 import { GuidedTripWizard } from './GuidedTripWizard.jsx';
 import { CheapTipsSection } from './CheapTipsSection.jsx';
 import { eur, fmtHours, flightTimes } from '../lib/format.js';
-import { fmtDate } from '../lib/dates.js';
+import { fmtDate, laterISO, useToday } from '../lib/dates.js';
 import { fetchDrivingRoute } from '../lib/routing.js';
 import { useTripPlanner } from '../hooks/useTripPlanner.js';
 import { useCountryInsights } from '../hooks/useCountryInsights.js';
@@ -216,7 +216,10 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
   // prices its stays from the same setting as the map and the receipt.
   const tp = useTripPlanner(data, countryInsights, stayTier);
   const destinations = data?.destinations || {};
-  const dateMin = data?.meta?.start_date;
+  // Trip dates start today at the earliest, never at the fare window's
+  // harvest date (see useToday).
+  const today = useToday();
+  const dateMin = laterISO(data?.meta?.start_date, today);
   const dateMax = data?.meta?.end_date;
 
   const [pendingCountry, setPendingCountry] = useState('');
@@ -313,6 +316,10 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
   // the route on the map. Edit / Replan / Start over stay one tap away.
   const handleWizardComplete = (selection) => {
     tp.loadFromWizard(selection);
+    // The wizard's travel style decides what a bed costs (budget hostels vs
+    // 4-star); the planner's receipt must price the same tier the estimate
+    // promised.
+    if (selection.stayTier) tp.setStayTier(selection.stayTier);
     tp.setPlanned(true);
     setWizardOpen(false);
     setSelectedStop(null);
@@ -539,6 +546,28 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
       </div>
     </>
   );
+
+  // An empty planner has nothing to put on a map: no stops, no route, no
+  // prices. So the tab opens on the question instead of on a locator map of
+  // Europe, and the guide runs as the page itself, under the app header,
+  // rather than as a modal that covers it. The map layout returns the moment
+  // there is a trip to draw.
+  const emptyPlanner = !tp.planned && tp.stopDetails.length === 0;
+  if (emptyPlanner) {
+    return (
+      <div className="trip-planner-screen trip-planner-blank">
+        <GuidedTripWizard
+          inline
+          data={data}
+          origin={origin}
+          onChangeOrigin={onChangeOrigin}
+          stayTier={tp.stayTier}
+          onCancel={() => setWizardOpen(false)}
+          onComplete={handleWizardComplete}
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="trip-planner-screen">
