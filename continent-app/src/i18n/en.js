@@ -391,6 +391,9 @@ export const en = {
 
   // Sharing & export (trip itinerary + day planner)
   'export.openInGmaps': 'Open in Google Maps',
+  'day.statStops': '{n} stops',
+  'day.statWalk': '{km} km on foot',
+  'day.statDone': 'done ~{time}',
   'export.openRoute': 'Open the route in Google Maps',
   'export.exportAndShare': 'Export & share',
   'export.shareTrip': 'Share trip',

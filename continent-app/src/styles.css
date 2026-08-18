@@ -10755,6 +10755,68 @@ input, select {
 .day-action-btn.day-action-primary:hover { opacity: 0.92; }
 .day-action-btn svg { flex: none; }
 
+/* One export menu instead of a row of six buttons: the popover holds PDF,
+   My Maps, calendar, share and the saved-trips state, so the plan itself is
+   what fills the panel. */
+.day-export { position: relative; display: inline-flex; }
+.day-export-btn.open { border-color: var(--ink-soft); background: var(--paper-dim); }
+.day-export-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  min-width: 236px;
+  display: flex;
+  flex-direction: column;
+  padding: 5px;
+  background: var(--bg-card);
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  box-shadow: var(--shadow-2);
+  z-index: 40;
+}
+.day-export-item {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  width: 100%;
+  padding: 9px 11px;
+  border: 0;
+  border-radius: 8px;
+  background: none;
+  color: var(--ink);
+  font-size: 12.5px;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+  transition: background .12s;
+}
+.day-export-item:hover { background: var(--paper-dim); }
+.day-export-item svg { flex: none; color: var(--ink-soft); }
+
+/* The day's numbers in the plan header, above the scroll so they never leave
+   the screen: stops, kilometres on foot, the loose end-of-day time. */
+.day-topcard-stats {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 9px;
+  margin-top: 7px;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-soft);
+}
+.day-stat-sep { width: 1px; height: 11px; background: var(--rule); }
+
+/* Timeline row <-> map pin sync: hovering a card lifts its pin on the map;
+   tapping a pin scrolls to its card and rings it once. */
+.day-timeline-row .day-assigned-row { transition: border-color .15s, box-shadow .15s; }
+.day-timeline-row:hover .day-assigned-row { border-color: var(--ink-soft); }
+.day-timeline-row.map-focus .day-assigned-row {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-bg);
+}
+
 /* Multi-city chips: city + its own remove control. */
 .day-city-chip {
   display: inline-flex;
@@ -14154,6 +14216,16 @@ input, select {
    plus a little + that says exactly what a tap does. Tapping adds it to the
    selected day and the pin turns into a numbered stop of the route. */
 .trip-poi-pin { padding-right: 5px; }
+/* Candidates stay a register quieter than the route: paler border, muted
+   label, a lighter shadow. The numbered terracotta stops are the loudest
+   thing on this map; hovering a candidate restores its full voice. */
+.trip-poi-pin:not(.sel) {
+  border-color: var(--rule-soft);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06), 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+.trip-poi-pin .dem-pin-lbl { color: var(--ink-soft); }
+.trip-poi-pin:hover { border-color: var(--rule); }
+.trip-poi-pin:hover .dem-pin-lbl { color: var(--ink); }
 .trip-poi-pin-add {
   flex: 0 0 auto;
   display: inline-flex;

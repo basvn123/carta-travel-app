@@ -103,11 +103,20 @@ function ActivityDetail({ item, className = 'day-activity-detail' }) {
 // lifted out of DayPlannerTab. All are prop-driven (no parent-scope closure),
 // so this is a pure relocation.
 
-export function Collapsible({ title, titleIcon, count, summary, defaultOpen = false, className = '', children }) {
-  const [open, setOpen] = useState(defaultOpen);
+export function Collapsible({ title, titleIcon, count, summary, defaultOpen = false, open: openProp, onOpenChange, className = '', children }) {
+  // Uncontrolled by default; a parent that needs to open the card itself
+  // (say, when a map pin is tapped while the plan is folded away) passes
+  // `open` + `onOpenChange` and owns the state instead.
+  const [openState, setOpenState] = useState(defaultOpen);
+  const controlled = openProp != null;
+  const open = controlled ? openProp : openState;
+  const toggle = () => {
+    if (controlled) onOpenChange?.(!open);
+    else setOpenState(!open);
+  };
   return (
     <div className={`trip-block day-collapse ${open ? 'open' : ''} ${className}`}>
-      <button className="day-collapse-head" onClick={() => setOpen(!open)} aria-expanded={open}>
+      <button className="day-collapse-head" onClick={toggle} aria-expanded={open}>
         <span className="day-collapse-headline">
           <span className="day-collapse-title">
             {titleIcon}
@@ -128,10 +137,15 @@ export function Collapsible({ title, titleIcon, count, summary, defaultOpen = fa
  *  sentence that says what the place is (the bot's reason when the day was
  *  imported, the catalogue description otherwise) and the visit estimate, so
  *  the timeline carries context instead of a clock. */
-export function AssignedRow({ item, index, last, stayLabel, note, noteFromAi, onMoveUp, onMoveDown, onRemove }) {
+export function AssignedRow({ item, index, last, stayLabel, note, noteFromAi, onMoveUp, onMoveDown, onRemove, rowRef, mapFocus, onHoverChange }) {
   const [infoOpen, setInfoOpen] = useState(false);
   return (
-    <div className="day-timeline-row">
+    <div
+      className={`day-timeline-row${mapFocus ? ' map-focus' : ''}`}
+      ref={rowRef}
+      onMouseEnter={onHoverChange ? () => onHoverChange(true) : undefined}
+      onMouseLeave={onHoverChange ? () => onHoverChange(false) : undefined}
+    >
       <div className="day-timeline-num">{index + 1}</div>
       <div className="day-assigned-row day-assigned-with-info">
         {/* Always a thumbnail, photo or glyph: a timeline where only some rows

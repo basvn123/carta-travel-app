@@ -382,6 +382,9 @@ export const nl = {
   'transfer.cartaPick': 'Keuze van Carta',
 
   'export.openInGmaps': 'Open in Google Maps',
+  'day.statStops': '{n} stops',
+  'day.statWalk': '{km} km te voet',
+  'day.statDone': 'klaar ~{time}',
   'export.openRoute': 'Open de route in Google Maps',
   'export.exportAndShare': 'Exporteren & delen',
   'export.shareTrip': 'Deel reis',

@@ -382,6 +382,9 @@ export const it = {
   'transfer.cartaPick': 'Scelta di Carta',
 
   'export.openInGmaps': 'Apri in Google Maps',
+  'day.statStops': '{n} tappe',
+  'day.statWalk': '{km} km a piedi',
+  'day.statDone': 'fine ~{time}',
   'export.openRoute': 'Apri il percorso in Google Maps',
   'export.exportAndShare': 'Esporta e condividi',
   'export.shareTrip': 'Condividi viaggio',

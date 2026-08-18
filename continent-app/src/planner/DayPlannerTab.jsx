@@ -1588,6 +1588,54 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
 
   const gmapsUrl = googleMapsDirUrl(walkPins, 'walking');
 
+  // Timeline row <-> map marker sync. Marker order is routePins (all of which
+  // carry coordinates): the stay pin, when present, shifts every stop marker
+  // by one, and mapPins carries `no` (row index + 1), so a coordinate-less
+  // stop can never desync the two directions.
+  const [planOpen, setPlanOpen] = useState(false);
+  const [hoverRow, setHoverRow] = useState(null);
+  const [flashRow, setFlashRow] = useState(null); // { idx, at }
+  const rowRefs = useRef({});
+  const stayPinOffset = stayAnchor ? 1 : 0;
+  const markerIdxForRow = (r) => {
+    const j = mapPins.findIndex((p) => p.no === r + 1);
+    return j < 0 ? null : j + stayPinOffset;
+  };
+  const focusRow = hoverRow != null ? hoverRow : (flashRow ? flashRow.idx : null);
+  const selectedMarkerIdx = focusRow != null ? markerIdxForRow(focusRow) : null;
+  // A tapped pin opens the plan card if it was folded, then scrolls to and
+  // flashes its row; the tiny delay lets the collapsible body mount first.
+  const onMapStopClick = (i) => {
+    const p = mapPins[i - stayPinOffset];
+    if (!p) return;
+    setPlanOpen(true);
+    setFlashRow({ idx: p.no - 1, at: Date.now() });
+  };
+  useEffect(() => {
+    if (!flashRow) return undefined;
+    const reduced = window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
+    const scrollT = window.setTimeout(() => {
+      rowRefs.current[flashRow.idx]?.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'center' });
+    }, 80);
+    const clearT = window.setTimeout(() => setFlashRow(null), 1800);
+    return () => { window.clearTimeout(scrollT); window.clearTimeout(clearT); };
+  }, [flashRow]);
+
+  // The export menu: one compact popover in place of a row of six buttons.
+  const [exportOpen, setExportOpen] = useState(false);
+  const exportRef = useRef(null);
+  useEffect(() => {
+    if (!exportOpen) return undefined;
+    const onDown = (e) => { if (!exportRef.current?.contains(e.target)) setExportOpen(false); };
+    const onKey = (e) => { if (e.key === 'Escape') setExportOpen(false); };
+    document.addEventListener('mousedown', onDown);
+    document.addEventListener('keydown', onKey);
+    return () => {
+      document.removeEventListener('mousedown', onDown);
+      document.removeEventListener('keydown', onKey);
+    };
+  }, [exportOpen]);
+
   // The clock behind the timeline: per-kind visit estimates plus the real
   // (or estimated) legs give every stop an arrival time, slot a lunch pause
   // into the first opening past 12:30, and expose how much of the day is
@@ -3285,6 +3333,9 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
         focus={stop?.dest?.lat != null ? { ...cityCoords(stop.dest), zoom: 12.2 } : null}
         pois={aiDiscoveryPins.length ? [...mapPois, ...aiDiscoveryPins] : mapPois}
         onPoiClick={(id) => toggleActivity(Number(id))}
+        onSelectStop={onMapStopClick}
+        selectedIndex={selectedMarkerIdx}
+        easeToSelected={false}
         onViewChange={setMapView}
         fitMaxZoom={13}
       />
@@ -3436,6 +3487,25 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
               </button>
             )}
           </div>
+          {/* The day's honest numbers, always in view above the scroll: how
+              many stops, how far on foot, when you are roughly done. */}
+          {assignedItems.length > 0 && (
+            <div className="day-topcard-stats">
+              <span>{t('day.statStops', { n: assignedItems.length })}</span>
+              {legsAlign && routeOk && (
+                <>
+                  <span className="day-stat-sep" aria-hidden="true" />
+                  <span>{t('day.statWalk', { km: route.km.toFixed(1) })}</span>
+                </>
+              )}
+              {schedule && (
+                <>
+                  <span className="day-stat-sep" aria-hidden="true" />
+                  <span>{t('day.statDone', { time: fmtClockLoose(schedule.endMin) })}</span>
+                </>
+              )}
+            </div>
+          )}
         </div>
 
         <div className="trip-sheet-scroll">
@@ -3592,6 +3662,8 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
               title="Today's plan"
               count={assignedItems.length}
               summary={<span className="day-plan-summary-text">{planSummaryText}</span>}
+              open={planOpen}
+              onOpenChange={setPlanOpen}
             >
               <div className="day-route-mode">
                 <button
@@ -3672,6 +3744,9 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
                       onMoveUp={() => moveAssigned(i, -1)}
                       onMoveDown={() => moveAssigned(i, 1)}
                       onRemove={() => toggleActivity(dayAssignedIdx[i])}
+                      rowRef={(el) => { rowRefs.current[i] = el; }}
+                      mapFocus={flashRow?.idx === i}
+                      onHoverChange={(on) => setHoverRow((cur) => (on ? i : (cur === i ? null : cur)))}
                     />
                     {schedule?.lunch?.afterIndex === i && (
                       <div className="day-timeline-walk day-timeline-lunch">
@@ -3762,32 +3837,52 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
                 </div>
               )}
 
+              {/* Two controls instead of six: the route link the day actually
+                  runs on, and one menu holding every export. A row of large
+                  stacked buttons was pushing the plan itself below the fold. */}
               <div className="day-actions-row">
                 {gmapsUrl && (
                   <a className="day-action-btn day-action-primary" href={gmapsUrl} target="_blank" rel="noreferrer">
                     <MapPinIcon size={14} /> {t('export.openInGmaps')}
                   </a>
                 )}
-                <button
-                  className="day-action-btn"
-                  onClick={handleSavedTripsClick}
-                  title={plan.standalone || daySaveState === 'saved' ? 'This day plan is in your Saved trips' : 'Keep this day plan in your Saved trips'}
-                >
-                  <BookmarkIcon size={14} />
-                  {plan.standalone || daySaveState === 'saved' ? 'In Saved trips' : 'Save to Saved trips'}
-                </button>
-                <button className="day-action-btn" onClick={downloadPdf} title={t('day.downloadPdfTitle')}>
-                  <DownloadIcon size={14} /> {t('day.downloadPdf')}
-                </button>
-                <button className="day-action-btn" onClick={downloadKmlFile} title={t('export.myMapsTitle')}>
-                  <RouteIcon size={14} /> {t('export.myMaps')}
-                </button>
-                <button className="day-action-btn" onClick={downloadIcsFile} title={t('export.calendarTitle')}>
-                  <CalendarIcon size={14} /> {t('export.calendar')}
-                </button>
-                <button className="day-action-btn" onClick={shareDay}>
-                  <ShareIcon size={14} /> {shareState === 'copied' ? t('day.copied') : t('day.share')}
-                </button>
+                <div className="day-export" ref={exportRef}>
+                  <button
+                    className={`day-action-btn day-export-btn ${exportOpen ? 'open' : ''}`}
+                    onClick={() => setExportOpen((v) => !v)}
+                    aria-haspopup="menu"
+                    aria-expanded={exportOpen}
+                  >
+                    <DownloadIcon size={14} /> {t('export.exportAndShare')}
+                    <ChevronDownIcon size={11} className={exportOpen ? 'day-map-caret up' : 'day-map-caret'} />
+                  </button>
+                  {exportOpen && (
+                    <div className="day-export-menu" role="menu">
+                      <button className="day-export-item" role="menuitem" onClick={() => { setExportOpen(false); downloadPdf(); }} title={t('day.downloadPdfTitle')}>
+                        <DownloadIcon size={14} /> {t('day.downloadPdf')}
+                      </button>
+                      <button className="day-export-item" role="menuitem" onClick={() => { setExportOpen(false); downloadKmlFile(); }} title={t('export.myMapsTitle')}>
+                        <RouteIcon size={14} /> {t('export.myMaps')}
+                      </button>
+                      <button className="day-export-item" role="menuitem" onClick={() => { setExportOpen(false); downloadIcsFile(); }} title={t('export.calendarTitle')}>
+                        <CalendarIcon size={14} /> {t('export.calendar')}
+                      </button>
+                      {/* Share stays open so "Copied!" is seen where it was clicked. */}
+                      <button className="day-export-item" role="menuitem" onClick={shareDay}>
+                        <ShareIcon size={14} /> {shareState === 'copied' ? t('day.copied') : t('day.share')}
+                      </button>
+                      <button
+                        className="day-export-item"
+                        role="menuitem"
+                        onClick={() => { setExportOpen(false); handleSavedTripsClick(); }}
+                        title={plan.standalone || daySaveState === 'saved' ? 'This day plan is in your Saved trips' : 'Keep this day plan in your Saved trips'}
+                      >
+                        <BookmarkIcon size={14} />
+                        {plan.standalone || daySaveState === 'saved' ? 'In Saved trips' : 'Save to Saved trips'}
+                      </button>
+                    </div>
+                  )}
+                </div>
               </div>
               <button
                 className="day-carta-btn day-carta-reshape"
