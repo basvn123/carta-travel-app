@@ -20,7 +20,7 @@ Two phases (idempotent, resumable - mirrors reharvest_flights.py):
 Run:  python harvest_images.py            # harvest then patch (resumes cache)
       python harvest_images.py harvest    # harvest only
       python harvest_images.py patch      # patch only (from existing cache)
-      python harvest_images.py refresh    # drop cache, re-fetch all, patch
+      python harvest_images.py refresh    # re-fetch all (audited heroes kept), patch
 
 Everything ASCII-clean (no emoji/dingbats) per project convention.
 """
@@ -257,7 +257,10 @@ def patch(cache=None):
                     "hires": rec.get("original"),
                     "credit": rec.get("title"),
                     "page": rec.get("url"),
-                    "source": "wikipedia",
+                    # audit_hero_images.py writes "commons_audit" here when it
+                    # replaces a map or a coat of arms; keep that provenance
+                    # rather than relabelling every record "wikipedia".
+                    "source": rec.get("source") or "wikipedia",
                 }
                 n_img += 1
             # else: not in this cache run (e.g. a partial/resumed harvest).
@@ -281,9 +284,20 @@ def main():
     data = load_json(PRIMARY)
     dests = data.get("destinations", {})
     if cmd == "refresh" and CACHE.exists():
+        # A refresh re-fetches every Wikipedia lead image, and for hundreds of
+        # small towns that lead image is the locator map or the coat of arms
+        # audit_hero_images.py already replaced. Those picks are kept: they are
+        # the only records here that no re-harvest can reproduce.
+        keep = {did: rec for did, rec in (load_json(CACHE) or {}).items()
+                if isinstance(rec, dict) and rec.get("source") == "commons_audit"}
         CACHE.unlink()
+        if keep:
+            atomic_write_json(CACHE, keep)
+            print(f"  refresh: kept {len(keep)} audited heroes, dropped the rest")
     if cmd in ("all", "harvest", "refresh"):
-        cache = harvest(dests, resume=(cmd != "refresh"))
+        # resume=True on a refresh too: the cache now holds only the audited
+        # picks, and those are exactly what must survive the re-harvest.
+        cache = harvest(dests, resume=True)
     else:
         cache = None
     if cmd in ("all", "patch", "refresh"):
