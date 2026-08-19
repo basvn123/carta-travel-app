@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useAuth } from './AuthContext.jsx';
 import {
   ArrowLeftIcon, CheckIcon, ChevronDownIcon, ChevronRightIcon, CloseIcon, EyeIcon,
-  EyeOffIcon, FeedbackIcon, InfoIcon, LockIcon, PersonIcon, QuestionIcon,
+  EyeOffIcon, FeedbackIcon, InfoIcon, LockIcon, PencilIcon, PersonIcon, QuestionIcon,
   ShareIcon, ShieldIcon, SignOutIcon, SparkIcon, TrashIcon,
 } from '../components/Icons.jsx';
 import { PrivacyPolicy } from '../components/PrivacyPolicy.jsx';
@@ -59,6 +59,13 @@ const FAQ_KEYS = [
 
 /** Initials for the avatar disc. Two letters from a name, one from an email,
  *  because a coloured circle with nothing in it reads as a broken image. */
+// The avatar shelf. Deliberately short: a grid of every emoji is a keyboard
+// rather than a choice, and these have to read at 20px inside a 64px circle.
+const AVATAR_EMOJI = [
+  '\u{1F9F3}', '\u{2708}\u{FE0F}', '\u{1F5FA}\u{FE0F}', '\u{1F3D4}\u{FE0F}', '\u{1F3D6}\u{FE0F}', '\u{1F686}',
+  '\u{1F6F6}', '\u{1F3D5}\u{FE0F}', '\u{1F9ED}', '\u{1F320}', '\u{2615}', '\u{1F42C}',
+];
+
 function monogram(name, email) {
   const trimmed = (name || '').trim();
   if (trimmed) {
@@ -68,6 +75,35 @@ function monogram(name, email) {
     return (first + last).toUpperCase();
   }
   return (email || '?').trim().charAt(0).toUpperCase();
+}
+
+/**
+ * A field's verdict, sitting at the end of its label line.
+ *
+ * The profile form asks for three things that can each be wrong on their own,
+ * and a single error at the foot of the form makes you work out which. A mark
+ * per field answers that before you press anything. It stays away until the
+ * field has something in it or has been touched, so an untouched form is not
+ * a column of red.
+ */
+function FieldMark({ show, ok, okLabel, badLabel }) {
+  if (!show) return null;
+  return (
+    <span className={`auth-mark${ok ? ' is-ok' : ' is-bad'}`} title={ok ? okLabel : badLabel}>
+      {ok ? <CheckIcon size={11} /> : <CloseIcon size={11} />}
+      <span className="sr-only">{ok ? okLabel : badLabel}</span>
+    </span>
+  );
+}
+
+/** Label plus, when there is one, the field's verdict at the far end. */
+function FieldLabel({ htmlFor, children, mark }) {
+  return (
+    <div className="auth-label-row">
+      <label className="auth-label" htmlFor={htmlFor}>{children}</label>
+      {mark}
+    </div>
+  );
 }
 
 /**
@@ -82,6 +118,7 @@ function monogram(name, email) {
  */
 function PasswordField({
   id, label, value, onChange, autoComplete, placeholder, required = false, error = '', hint = null,
+  mark = null,
 }) {
   const { t } = useI18n();
   const [shown, setShown] = useState(false);
@@ -89,7 +126,7 @@ function PasswordField({
   const hintId = `${id}-hint`;
   const describedBy = [error ? errorId : null, hint ? hintId : null].filter(Boolean).join(' ');
   return (
-    <div className={`auth-field${error ? ' has-error' : ''}`}>
+    <div className={`auth-field${error ? ' has-error' : ''}${mark ? ' has-mark' : ''}`}>
       <label className="auth-label" htmlFor={id}>{label}</label>
       <div className="pw-input-wrap">
         <input
@@ -103,6 +140,7 @@ function PasswordField({
           aria-invalid={error ? 'true' : undefined}
           aria-describedby={describedBy || undefined}
         />
+        {mark}
         <button
           type="button"
           className="pw-reveal"
@@ -204,6 +242,12 @@ export function AccountPanel({
   // separately and saves separately. storedHandle is what the account actually
   // holds; `handle` is what is in the field.
   const [storedHandle, setStoredHandle] = useState('');
+  // The avatar the profile carries. Emoji, not a photograph: migration 010
+  // rules out uploads on purpose, because a picture of a person is the one
+  // thing in this panel that would need moderating.
+  const [avatarEmoji, setAvatarEmoji] = useState('');
+  const [storedAvatar, setStoredAvatar] = useState('');
+  const [avatarOpen, setAvatarOpen] = useState(false);
   const [handle, setHandle] = useState('');
   const [profileError, setProfileError] = useState('');
   const [profileNotice, setProfileNotice] = useState('');
@@ -252,13 +296,17 @@ export function AccountPanel({
   // handle to show, which is why a failure here is silent rather than an
   // error: it is not something the account holder can act on.
   useEffect(() => {
-    if (!user) { setStoredHandle(''); setHandle(''); return undefined; }
+    if (!user) { setStoredHandle(''); setHandle(''); setAvatarEmoji(''); setStoredAvatar(''); return undefined; }
     let live = true;
     fetchMyProfile(user.id)
       .then((row) => {
         if (!live || !row) return;
         setStoredHandle(row.handle || '');
         setHandle(row.handle || '');
+        // fetchMyProfile hands back the row as Postgres names it, so this is
+        // avatar_emoji rather than the camelCase findByHandle returns.
+        setAvatarEmoji(row.avatar_emoji || '');
+        setStoredAvatar(row.avatar_emoji || '');
       })
       .catch((err) => console.warn('[account] could not read your profile:', err?.message || err));
     return () => { live = false; };
@@ -282,7 +330,16 @@ export function AccountPanel({
 
   const emailChanged = email.trim().toLowerCase() !== storedEmail.toLowerCase();
   const handleChanged = !!storedHandle && handle !== storedHandle;
-  const profileDirty = name.trim() !== storedName || emailChanged || handleChanged;
+  const avatarChanged = avatarEmoji !== storedAvatar;
+  const nameChanged = name.trim() !== storedName;
+  const profileDirty = nameChanged || emailChanged || handleChanged || avatarChanged;
+
+  // What each field's mark reports. A mark is only shown once the field has
+  // something in it or has been edited, so opening the panel does not look
+  // like a list of complaints.
+  const nameOk = !!name.trim();
+  const emailOk = EMAIL_RE.test(email.trim());
+  const handleOk = !handleProblem(handle);
 
   const handleProfileSave = async (e) => {
     e.preventDefault();
@@ -301,10 +358,14 @@ export function AccountPanel({
       // The handle goes first: it is the one field that can be refused by
       // somebody else's choice, and failing after the email change had already
       // been sent would leave the account half saved.
-      if (handleChanged) {
+      if (handleChanged || avatarChanged) {
         try {
-          await saveMyProfile(user.id, { handle });
+          await saveMyProfile(user.id, {
+            ...(handleChanged ? { handle } : {}),
+            ...(avatarChanged ? { avatarEmoji } : {}),
+          });
           setStoredHandle(handle);
+          setStoredAvatar(avatarEmoji);
         } catch (err) {
           // Taken, and that is all anybody is told. Who holds it is not the
           // asker's business, and answering would make the lookup a directory.
@@ -333,6 +394,11 @@ export function AccountPanel({
   const pwRulesMet = passwordMeetsRules(newPassword);
   const pwMatches = !!confirmPassword && newPassword === confirmPassword;
   const pwReady = (!hasPassword || !!currentPassword) && pwRulesMet && pwMatches;
+
+  // Whether what is in the handle field right now would be refused. Drives the
+  // one hint the field shows; the specific complaint still comes back from the
+  // save, where taken-by-somebody-else can also be the answer.
+  const handleUnfit = !!storedHandle && !!handleProblem(handle);
 
   const clearPwFieldError = (key) => setPwFieldError((cur) => (cur[key] ? { ...cur, [key]: '' } : cur));
 
@@ -645,14 +711,57 @@ export function AccountPanel({
       {view === 'profile' && user && (
         <>
           <div className="panel-section account-profile-head">
-            <span className="account-hub-avatar account-hub-avatar-lg" aria-hidden="true">{monogram(storedName, storedEmail)}</span>
+            <span className="account-hub-avatar account-hub-avatar-lg" aria-hidden="true">
+              {avatarEmoji || monogram(storedName, storedEmail)}
+            </span>
+            {/* Emoji, not an upload. Migration 010 rules photographs out on
+                purpose: a picture of a person is the one thing on this panel
+                that would need moderating, and friends see this avatar. */}
+            {storedHandle && (
+              <button
+                type="button"
+                className="account-avatar-edit"
+                onClick={() => setAvatarOpen((v) => !v)}
+                aria-expanded={avatarOpen}
+              >
+                <PencilIcon size={12} />
+                {t('profile.editAvatar')}
+              </button>
+            )}
+            {avatarOpen && (
+              <div className="account-avatar-picker" role="group" aria-label={t('profile.editAvatar')}>
+                {AVATAR_EMOJI.map((e) => (
+                  <button
+                    type="button"
+                    key={e}
+                    className={`account-avatar-opt${e === avatarEmoji ? ' on' : ''}`}
+                    onClick={() => setAvatarEmoji(e === avatarEmoji ? '' : e)}
+                    aria-pressed={e === avatarEmoji}
+                  >
+                    {e}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
 
           <div className="panel-section">
             <div className="section-title section-title-iconed"><PersonIcon size={12} /> {t('account.profileTitle')}</div>
             <form className="auth-form auth-form-inline" onSubmit={handleProfileSave}>
               <div className="auth-field">
-                <label className="auth-label" htmlFor="acct-name">{t('account.name')}</label>
+                <FieldLabel
+                  htmlFor="acct-name"
+                  mark={(
+                    <FieldMark
+                      show={!!name || nameChanged}
+                      ok={nameOk}
+                      okLabel={t('profile.markOk')}
+                      badLabel={t('account.errNameEmpty')}
+                    />
+                  )}
+                >
+                  {t('account.name')}
+                </FieldLabel>
                 <input
                   id="acct-name"
                   type="text"
@@ -663,7 +772,19 @@ export function AccountPanel({
               </div>
               {storedHandle && (
                 <div className="auth-field">
-                  <label className="auth-label" htmlFor="acct-handle">{t('profile.handle')}</label>
+                  <FieldLabel
+                    htmlFor="acct-handle"
+                    mark={(
+                      <FieldMark
+                        show={!!handle || handleChanged}
+                        ok={handleOk}
+                        okLabel={t('profile.markOk')}
+                        badLabel={t('profile.markHandleBad')}
+                      />
+                    )}
+                  >
+                    {t('profile.handle')}
+                  </FieldLabel>
                   <div className="acct-handle-row">
                     <span className="acct-handle-at" aria-hidden="true">@</span>
                     <input
@@ -675,13 +796,34 @@ export function AccountPanel({
                       maxLength={HANDLE_MAX}
                       value={handle}
                       onChange={(e) => setHandle(normaliseHandle(e.target.value))}
+                      aria-describedby={handleUnfit ? 'acct-handle-hint' : undefined}
                     />
                   </div>
-                  <div className="auth-hint acct-handle-hint">{t('profile.handleHint')}</div>
+                  {/* The rule appears when it is being broken, and not before.
+                      A handle that already fits does not need telling what a
+                      handle is; one that does not fit needs telling exactly
+                      this, at the moment it stops fitting. */}
+                  {handleUnfit && (
+                    <div className="auth-hint acct-handle-hint" id="acct-handle-hint" role="status">
+                      {t('profile.handleHint')}
+                    </div>
+                  )}
                 </div>
               )}
               <div className="auth-field">
-                <label className="auth-label" htmlFor="acct-email">{t('account.email')}</label>
+                <FieldLabel
+                  htmlFor="acct-email"
+                  mark={(
+                    <FieldMark
+                      show={!!email || emailChanged}
+                      ok={emailOk}
+                      okLabel={t('profile.markOk')}
+                      badLabel={t('account.errEmailInvalid')}
+                    />
+                  )}
+                >
+                  {t('account.email')}
+                </FieldLabel>
                 <input
                   id="acct-email"
                   type="email"
@@ -694,7 +836,7 @@ export function AccountPanel({
               </div>
               {profileError && <div className="auth-error">{profileError}</div>}
               {profileNotice && <div className="auth-notice auth-notice-inline">{profileNotice}</div>}
-              <button type="submit" className="auth-submit auth-submit-quiet" disabled={!profileDirty || profileBusy}>
+              <button type="submit" className="auth-submit" disabled={!profileDirty || profileBusy}>
                 {profileBusy ? t('account.pleaseWait') : t('account.saveProfile')}
               </button>
             </form>
@@ -702,7 +844,7 @@ export function AccountPanel({
 
           <div className="panel-section">
             <div className="section-title section-title-iconed">
-              <LockIcon size={12} /> {t(hasPassword ? 'account.changePassword' : 'account.passwordTitle')}
+              <LockIcon size={12} /> {t('account.securityTitle')}
             </div>
             {/* Success is announced once, dismissibly, and the fields empty
                 behind it. A banner that cannot be closed becomes furniture on
@@ -779,11 +921,18 @@ export function AccountPanel({
                   placeholder={t('account.confirmNewPasswordPlaceholder')}
                   required
                   error={pwFieldError.confirm || ''}
-                  hint={confirmPassword ? (
-                    <p className={`pw-match${pwMatches ? ' met' : ''}`}>
-                      {pwMatches ? <CheckIcon size={13} /> : <span className="pw-req-dot" />}
-                      {t(pwMatches ? 'account.reqMatch' : 'account.errPasswordMismatch')}
-                    </p>
+                  mark={confirmPassword ? (
+                    <FieldMark
+                      show
+                      ok={pwMatches}
+                      okLabel={t('account.reqMatch')}
+                      badLabel={t('account.errPasswordMismatch')}
+                    />
+                  ) : null}
+                  // The tick alone carries the good news; only the bad news
+                  // needs a sentence.
+                  hint={confirmPassword && !pwMatches ? (
+                    <p className="pw-match">{t('account.errPasswordMismatch')}</p>
                   ) : null}
                 />
                 <label className="auth-check">
@@ -837,7 +986,7 @@ export function AccountPanel({
           </div>
 
           <div className="panel-section">
-            <div className="section-title section-title-iconed account-danger-title"><TrashIcon size={12} /> {t('account.deleteTitle')}</div>
+            <div className="section-title section-title-iconed account-danger-title"><TrashIcon size={12} /> {t('account.dangerTitle')}</div>
             <div className="account-danger">
               {/* Closed, this is one red button and nothing else. The sentence
                   about what deletion costs is not a standing notice on a panel

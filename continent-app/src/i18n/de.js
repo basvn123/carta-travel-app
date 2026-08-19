@@ -473,7 +473,6 @@ export const de = {
   // ── Planner / browse / auth / detail flows (added 2026-07) ──
 
   // account
-  "account.changePassword": "Passwort ändern",
   "account.close": "Schließen",
   "account.confirmNewPassword": "Neues Passwort bestätigen",
   "account.confirmNewPasswordPlaceholder": "Wiederhole das neue Passwort",
@@ -491,7 +490,6 @@ export const de = {
   "account.signOut": "Abmelden",
   "account.tag": "Konto",
   "account.updatePassword": "Passwort aktualisieren",
-  "account.passwordTitle": "Passwort",
   "account.profileTitle": "Profil",
   "account.name": "Name",
   "account.email": "E-Mail",
@@ -521,7 +519,6 @@ export const de = {
   "account.sessionTitle": "Sitzung",
   "account.privacyTitle": "Datenschutz",
   "account.privacyPolicy": "Datenschutzerklärung",
-  "account.deleteTitle": "Konto löschen",
   "account.deleteHint": "Beim Löschen des Kontos verschwinden deine gespeicherten Reisen, Tagespläne und Einstellungen von den Servern von Carta. Das lässt sich nicht rückgängig machen.",
   "account.deleteBtn": "Mein Konto löschen",
   "account.deleteKeep": "Konto behalten",
@@ -1508,4 +1505,11 @@ export const de = {
   "account.forgotConfirm": "Wir schicken einen Link an {email}. Öffne ihn, um ohne das alte Passwort ein neues zu setzen.",
   "account.forgotSend": "Link senden",
   "account.forgotCancel": "Jetzt nicht",
+
+  // Profildetails: Urteil pro Feld, der Avatar, die umbenannten Abschnitte
+  "account.securityTitle": "Sicherheit",
+  "account.dangerTitle": "Vorsicht",
+  "profile.editAvatar": "Avatar ändern",
+  "profile.markOk": "Das passt",
+  "profile.markHandleBad": "Dieser Name wird abgelehnt",
 };

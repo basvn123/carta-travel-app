@@ -287,6 +287,45 @@ try {
       fail(`the handle field did not normalise what was typed: ${await handleInput.inputValue()}`);
     } else ok('capitals, spaces and punctuation are folded away as you type');
 
+    // Each field says whether it is fine on its own line, so one error at the
+    // foot of the form never has to be traced back to a field.
+    const markOf = (f) => page.locator(`.auth-field:has(#acct-${f}) .auth-label-row .auth-mark`);
+    for (const f of ['name', 'handle', 'email']) {
+      if (!(await markOf(f).count())) fail(`the ${f} field carries no verdict of its own`);
+      if (!/is-ok/.test(await markOf(f).getAttribute('class'))) fail(`a valid ${f} does not read as valid`);
+    }
+    await handleInput.fill('ab');
+    if (!/is-bad/.test(await markOf('handle').getAttribute('class'))) fail('a refusable handle still reads as fine');
+    if (/is-bad/.test(await markOf('name').getAttribute('class'))) fail('one bad field marked the others bad');
+    ok('every profile field carries its own verdict, and only its own');
+
+    // The avatar is a saved choice, not a decoration.
+    await page.locator('.account-avatar-edit').click();
+    const opt = page.locator('.account-avatar-opt').first();
+    if (!(await opt.count())) fail('editing the avatar offers nothing to pick');
+    await opt.click();
+    if (await opt.getAttribute('aria-pressed') !== 'true') fail('picking an avatar does not select it');
+    const picked = (await opt.innerText()).trim();
+    if ((await page.locator('.account-hub-avatar-lg').innerText()).trim() !== picked) {
+      fail('the circle still shows the monogram after an avatar was picked');
+    }
+    await handleInput.fill(SEEDED_HANDLE);
+    ok('picking an avatar shows in the circle at once');
+
+    // The rule shows up when it is being broken, and not while it is being kept.
+    if (await page.locator('.acct-handle-hint').count()) {
+      fail('the handle rule is on show over a handle that already fits it');
+    }
+    await handleInput.fill('ab');
+    const rule = await page.locator('.acct-handle-hint').innerText();
+    if (!/3 to 24/.test(rule)) fail(`a handle that does not fit explains nothing: ${rule}`);
+    if (await handleInput.getAttribute('aria-describedby') !== 'acct-handle-hint') {
+      fail('the rule is not tied to the field it is about');
+    }
+    await handleInput.fill('sam_okonkwo');
+    if (await page.locator('.acct-handle-hint').count()) fail('the rule stayed up after the handle fitted again');
+    ok('the handle rule appears only while the handle does not fit');
+
     // Too short: caught before it ever reaches the database.
     await handleInput.fill('ab');
     await save.click();
@@ -315,7 +354,10 @@ try {
     if (!state.profileUpdates.some((u) => u.handle === 'sam_travels')) {
       fail('a valid handle was never written');
     } else ok('a free handle saves');
-    await page.screenshot({ path: `${SHOTS}/account-handle.png` });
+    if (!state.profileUpdates.some((u) => u.avatar_emoji)) {
+      fail('the avatar was picked but never written to the profile');
+    } else ok('the avatar rides along on the same save, as a real profile field');
+    await page.locator('.account-panel').screenshot({ path: `${SHOTS}/account-handle.png` });
   }
 
   // ---- 4 & 5. Password: the whole production contract, field by field.
@@ -368,10 +410,16 @@ try {
   ok('the checklist ticks each rule off as it is typed');
 
   // Confirm reports the match live, without waiting for a submit.
-  if (await page.locator('.pw-match.met').count()) fail('mismatched confirm reads as matching');
+  // A mismatch says so in words; a match is the tick inside the field, so the
+  // good news costs no line.
+  const confirmMark = page.locator('.auth-field:has(#acct-confirm-pw) .auth-mark');
+  if (await confirmMark.evaluate((el) => el.className).catch(() => '') === '') fail('confirm carries no state mark');
+  if (!/is-bad/.test(await confirmMark.getAttribute('class'))) fail('mismatched confirm reads as matching');
+  if (!(await page.locator('.pw-match').count())) fail('a mismatch is never said in words');
   await confirm.fill('abcdefgH9!');
-  if (!(await page.locator('.pw-match.met').count())) fail('a matching confirm does not say so');
-  ok('confirm reports the match as it is typed');
+  if (!/is-ok/.test(await confirmMark.getAttribute('class'))) fail('a matching confirm does not say so');
+  if (await page.locator('.pw-match').count()) fail('a matched confirm still spends a line saying so');
+  ok('confirm ticks in the field on a match, and says why in words on a mismatch');
   await confirm.fill('abcdefgH9');
   await page.locator('.account-panel').screenshot({ path: `${SHOTS}/account-password-live.png` });
   await confirm.fill('abcdefgH9!');
@@ -451,7 +499,7 @@ try {
   console.log('   profile sections:', order.map((s) => s.trim()).join(' / '));
   const idx = (re) => order.findIndex((s) => re.test(s));
   const [profile, pw, session, danger] = [
-    idx(/profile/i), idx(/change password/i), idx(/session/i), idx(/delete/i),
+    idx(/profile/i), idx(/security/i), idx(/session/i), idx(/danger/i),
   ];
   if ([profile, pw, session, danger].some((i) => i < 0)) fail(`a section is missing: ${order.join(' | ')}`);
   if (!(profile < pw && pw < session && session < danger)) {
@@ -611,6 +659,11 @@ try {
   const profSpill = await spillCheck();
   if (profSpill.scrolls) fail(`the profile spoke scrolls sideways at 380px: ${profSpill.wide.join(' | ')}`);
   ok('380px: no horizontal scroll on the hub or the profile spoke');
+  // The whole spoke in one frame, for reading the layout rather than testing it.
+  await page2.setViewportSize({ width: 400, height: 1500 });
+  await page2.mouse.move(0, 0);
+  await page2.waitForTimeout(400);
+  await page2.locator('.account-panel').screenshot({ path: `${SHOTS}/account-profile-spoke.png` });
   await page2.screenshot({ path: `${SHOTS}/account-profile-380.png`, fullPage: true });
 
   await browser.close();

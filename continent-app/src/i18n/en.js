@@ -517,7 +517,6 @@ export const en = {
   // ── Planner / browse / auth / detail flows (added 2026-07) ──
 
   // account
-  "account.changePassword": "Change password",
   "account.close": "Close",
   "account.confirmNewPassword": "Confirm new password",
   "account.confirmNewPasswordPlaceholder": "Repeat the new password",
@@ -534,7 +533,6 @@ export const en = {
   "account.signInPrompt": "Sign in to save trips and sync your settings across devices.",
   "account.signOut": "Sign out",
   "account.privacyPolicy": "Privacy policy",
-  "account.deleteTitle": "Delete account",
   "account.deleteHint": "Deleting your account removes your saved trips, day plans and settings from Carta's servers. This cannot be undone.",
   "account.deleteBtn": "Delete my account",
   "account.deleteKeep": "Keep my account",
@@ -542,7 +540,6 @@ export const en = {
   "account.tag": "Account",
   "account.updatePassword": "Update password",
   // profile
-  "account.passwordTitle": "Password",
   "account.profileTitle": "Profile",
   "account.name": "Name",
   "account.email": "Email",
@@ -555,7 +552,7 @@ export const en = {
   // password
   "account.currentPassword": "Current password",
   "account.currentPasswordPlaceholder": "The password you use now",
-  "account.forgotPassword": "Forgot your current password?",
+  "account.forgotPassword": "Forgot current password?",
   "account.resetSent": "Reset link sent to {email}. Open it to set a new password.",
   "account.errCurrentPassword": "That current password isn't right.",
   "account.errCurrentPasswordMissing": "Enter your current password first.",
@@ -2106,4 +2103,11 @@ export const en = {
   "account.forgotConfirm": "We can email a reset link to {email}. Open it to set a new password without the old one.",
   "account.forgotSend": "Send the link",
   "account.forgotCancel": "Not now",
+
+  // profile details: per-field verdicts, the avatar, the renamed sections
+  "account.securityTitle": "Security",
+  "account.dangerTitle": "Danger zone",
+  "profile.editAvatar": "Edit avatar",
+  "profile.markOk": "This one is fine",
+  "profile.markHandleBad": "This handle will be refused",
 };

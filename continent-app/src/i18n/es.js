@@ -473,7 +473,6 @@ export const es = {
   // ── Planner / browse / auth / detail flows (added 2026-07) ──
 
   // account
-  "account.changePassword": "Cambiar contraseña",
   "account.close": "Cerrar",
   "account.confirmNewPassword": "Confirmar nueva contraseña",
   "account.confirmNewPasswordPlaceholder": "Repite la nueva contraseña",
@@ -491,7 +490,6 @@ export const es = {
   "account.signOut": "Cerrar sesión",
   "account.tag": "Cuenta",
   "account.updatePassword": "Actualizar contraseña",
-  "account.passwordTitle": "Contraseña",
   "account.profileTitle": "Perfil",
   "account.name": "Nombre",
   "account.email": "Correo",
@@ -521,7 +519,6 @@ export const es = {
   "account.sessionTitle": "Sesión",
   "account.privacyTitle": "Privacidad",
   "account.privacyPolicy": "Política de privacidad",
-  "account.deleteTitle": "Eliminar cuenta",
   "account.deleteHint": "Eliminar tu cuenta borra tus viajes, planes de día y ajustes de los servidores de Carta. No se puede deshacer.",
   "account.deleteBtn": "Eliminar mi cuenta",
   "account.deleteKeep": "Conservar mi cuenta",
@@ -1508,4 +1505,11 @@ export const es = {
   "account.forgotConfirm": "Podemos enviar un enlace a {email}. Ábrelo para elegir una contraseña nueva sin la anterior.",
   "account.forgotSend": "Enviar el enlace",
   "account.forgotCancel": "Ahora no",
+
+  // detalles del perfil: veredicto por campo, el avatar, las secciones renombradas
+  "account.securityTitle": "Seguridad",
+  "account.dangerTitle": "Zona sensible",
+  "profile.editAvatar": "Cambiar el avatar",
+  "profile.markOk": "Este está bien",
+  "profile.markHandleBad": "Este nombre será rechazado",
 };

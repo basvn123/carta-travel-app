@@ -473,7 +473,6 @@ export const nl = {
   // ── Planner / browse / auth / detail flows (added 2026-07) ──
 
   // account
-  "account.changePassword": "Wachtwoord wijzigen",
   "account.close": "Sluiten",
   "account.confirmNewPassword": "Bevestig nieuw wachtwoord",
   "account.confirmNewPasswordPlaceholder": "Herhaal het nieuwe wachtwoord",
@@ -491,7 +490,6 @@ export const nl = {
   "account.signOut": "Uitloggen",
   "account.tag": "Account",
   "account.updatePassword": "Wachtwoord bijwerken",
-  "account.passwordTitle": "Wachtwoord",
   "account.profileTitle": "Profiel",
   "account.name": "Naam",
   "account.email": "E-mail",
@@ -521,7 +519,6 @@ export const nl = {
   "account.sessionTitle": "Sessie",
   "account.privacyTitle": "Privacy",
   "account.privacyPolicy": "Privacybeleid",
-  "account.deleteTitle": "Account verwijderen",
   "account.deleteHint": "Je account verwijderen wist je opgeslagen reizen, dagplannen en instellingen van de servers van Carta. Dit kan niet ongedaan worden gemaakt.",
   "account.deleteBtn": "Verwijder mijn account",
   "account.deleteKeep": "Account behouden",
@@ -1508,4 +1505,11 @@ export const nl = {
   "account.forgotConfirm": "We mailen een herstellink naar {email}. Open die om een nieuw wachtwoord te kiezen zonder het oude.",
   "account.forgotSend": "Stuur de link",
   "account.forgotCancel": "Nu niet",
+
+  // profielgegevens: oordeel per veld, de avatar, de hernoemde secties
+  "account.securityTitle": "Beveiliging",
+  "account.dangerTitle": "Let op",
+  "profile.editAvatar": "Avatar wijzigen",
+  "profile.markOk": "Deze is in orde",
+  "profile.markHandleBad": "Deze naam wordt geweigerd",
 };

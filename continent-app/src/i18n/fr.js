@@ -473,7 +473,6 @@ export const fr = {
   // ── Planner / browse / auth / detail flows (added 2026-07) ──
 
   // account
-  "account.changePassword": "Modifier le mot de passe",
   "account.close": "Fermer",
   "account.confirmNewPassword": "Confirmer le nouveau mot de passe",
   "account.confirmNewPasswordPlaceholder": "Répétez le nouveau mot de passe",
@@ -491,7 +490,6 @@ export const fr = {
   "account.signOut": "Se déconnecter",
   "account.tag": "Compte",
   "account.updatePassword": "Mettre à jour le mot de passe",
-  "account.passwordTitle": "Mot de passe",
   "account.profileTitle": "Profil",
   "account.name": "Nom",
   "account.email": "E-mail",
@@ -521,7 +519,6 @@ export const fr = {
   "account.sessionTitle": "Session",
   "account.privacyTitle": "Confidentialité",
   "account.privacyPolicy": "Politique de confidentialité",
-  "account.deleteTitle": "Supprimer le compte",
   "account.deleteHint": "Supprimer votre compte efface vos voyages, plans de journée et réglages des serveurs de Carta. C'est irréversible.",
   "account.deleteBtn": "Supprimer mon compte",
   "account.deleteKeep": "Garder mon compte",
@@ -1508,4 +1505,11 @@ export const fr = {
   "account.forgotConfirm": "Nous pouvons envoyer un lien a {email}. Ouvrez-le pour choisir un nouveau mot de passe sans l'ancien.",
   "account.forgotSend": "Envoyer le lien",
   "account.forgotCancel": "Pas maintenant",
+
+  // détails du profil : verdict par champ, l'avatar, les sections renommées
+  "account.securityTitle": "Sécurité",
+  "account.dangerTitle": "Zone sensible",
+  "profile.editAvatar": "Changer l'avatar",
+  "profile.markOk": "Celui-ci est bon",
+  "profile.markHandleBad": "Ce nom sera refusé",
 };
