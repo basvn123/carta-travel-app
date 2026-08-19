@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useAuth } from './AuthContext.jsx';
 import {
-  ArrowLeftIcon, CheckIcon, ChevronDownIcon, ChevronRightIcon, EyeIcon,
+  ArrowLeftIcon, CheckIcon, ChevronDownIcon, ChevronRightIcon, CloseIcon, EyeIcon,
   EyeOffIcon, FeedbackIcon, InfoIcon, LockIcon, PersonIcon, QuestionIcon,
   ShareIcon, ShieldIcon, SignOutIcon, SparkIcon, TrashIcon,
 } from '../components/Icons.jsx';
@@ -11,7 +11,9 @@ import { CountryFlag } from '../components/CountryFlag.jsx';
 import { PassModal } from '../components/PassModal.jsx';
 import { useEntitlement } from '../hooks/useEntitlement.js';
 import { TIERS, daysLeft, canUpgrade, formatPrice } from '../lib/pricing.js';
-import { MIN_PASSWORD_LENGTH, passwordStrength } from '../lib/passwordStrength.js';
+import {
+  MIN_PASSWORD_LENGTH, passwordStrength, checkPasswordRules, passwordMeetsRules,
+} from '../lib/passwordStrength.js';
 import { useI18n } from '../i18n/index.jsx';
 import {
   fetchMyProfile, saveMyProfile, normaliseHandle, handleProblem, HANDLE_MAX,
@@ -68,13 +70,26 @@ function monogram(name, email) {
   return (email || '?').trim().charAt(0).toUpperCase();
 }
 
-/** Password input with a reveal toggle. Typing a long passphrase blind on a
- *  phone is how people end up locked out of accounts they still own. */
-function PasswordField({ id, label, value, onChange, autoComplete, placeholder }) {
+/**
+ * Password input with a reveal toggle, and the one place a password field's
+ * error is allowed to appear: directly under the field it belongs to.
+ *
+ * Typing a long passphrase blind on a phone is how people end up locked out of
+ * accounts they still own, hence the reveal. `error` and `hint` are wired
+ * through aria-describedby rather than left as loose text, so a screen reader
+ * hears "current password, invalid, that current password isn't right" instead
+ * of a sentence stranded somewhere below the button.
+ */
+function PasswordField({
+  id, label, value, onChange, autoComplete, placeholder, required = false, error = '', hint = null,
+}) {
   const { t } = useI18n();
   const [shown, setShown] = useState(false);
+  const errorId = `${id}-error`;
+  const hintId = `${id}-hint`;
+  const describedBy = [error ? errorId : null, hint ? hintId : null].filter(Boolean).join(' ');
   return (
-    <div className="auth-field">
+    <div className={`auth-field${error ? ' has-error' : ''}`}>
       <label className="auth-label" htmlFor={id}>{label}</label>
       <div className="pw-input-wrap">
         <input
@@ -84,6 +99,9 @@ function PasswordField({ id, label, value, onChange, autoComplete, placeholder }
           value={value}
           onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}
+          required={required}
+          aria-invalid={error ? 'true' : undefined}
+          aria-describedby={describedBy || undefined}
         />
         <button
           type="button"
@@ -95,22 +113,47 @@ function PasswordField({ id, label, value, onChange, autoComplete, placeholder }
           {shown ? <EyeOffIcon size={16} /> : <EyeIcon size={16} />}
         </button>
       </div>
+      {error && <p className="auth-field-error" id={errorId} role="alert">{error}</p>}
+      {hint && <div className="auth-field-hint" id={hintId}>{hint}</div>}
     </div>
   );
 }
 
-/** Entropy meter plus the two things that actually block submission. Both are
- *  live, so nobody presses the button to find out what the rules were. */
-function PasswordMeter({ password, confirm }) {
+/**
+ * What the new password still needs, ticked off as it is typed.
+ *
+ * Two readings of the same secret, kept side by side on purpose. The checklist
+ * is the floor the form enforces and it is learnable: four rules, each either
+ * met or not. The meter underneath is the honest measurement, and it is what
+ * tells somebody that a four-word phrase clearing every rule is far better
+ * than an eight-character mangle that also clears them. Neither is enough on
+ * its own, which is why the button gates on the first and nobody is nagged
+ * about the second.
+ *
+ * It renders nothing until there is something to check, so the closed form is
+ * three fields and a button rather than a page of conditions.
+ */
+function PasswordChecklist({ password }) {
   const { t } = useI18n();
   const strength = useMemo(() => passwordStrength(password), [password]);
+  const rules = useMemo(() => checkPasswordRules(password), [password]);
   if (!password) return null;
-  const reqs = [
-    { key: 'len', met: password.length >= MIN_PASSWORD_LENGTH, label: t('account.reqLength', { n: MIN_PASSWORD_LENGTH }) },
-    { key: 'match', met: !!confirm && password === confirm, label: t('account.reqMatch') },
-  ];
+  const labels = {
+    len: t('account.reqLength', { n: MIN_PASSWORD_LENGTH }),
+    upper: t('account.reqUpper'),
+    number: t('account.reqNumber'),
+    symbol: t('account.reqSymbol'),
+  };
   return (
     <div className="pw-gauge">
+      <ul className="pw-reqs">
+        {rules.map((r) => (
+          <li key={r.key} className={`pw-req${r.met ? ' met' : ''}`}>
+            {r.met ? <CheckIcon size={13} /> : <span className="pw-req-dot" />}
+            {labels[r.key]}
+          </li>
+        ))}
+      </ul>
       <div className={`pw-strength ${strength.level}`}>
         <div className="pw-strength-track" aria-hidden="true">
           {[1, 2, 3].map((seg) => (
@@ -122,14 +165,6 @@ function PasswordMeter({ password, confirm }) {
           <b>{t('account.strengthBits', { n: strength.bits })}</b>
         </span>
       </div>
-      <ul className="pw-reqs">
-        {reqs.map((r) => (
-          <li key={r.key} className={`pw-req${r.met ? ' met' : ''}`}>
-            {r.met ? <CheckIcon size={13} /> : <span className="pw-req-dot" />}
-            {r.label}
-          </li>
-        ))}
-      </ul>
     </div>
   );
 }
@@ -150,7 +185,7 @@ export function AccountPanel({
   destinations,
 }) {
   const {
-    user, hasPassword, signOut, updatePassword, reauthenticate,
+    user, hasPassword, signOut, signOutOtherDevices, updatePassword, reauthenticate,
     updateProfile, sendPasswordReset, deleteAccount, configured,
   } = useAuth();
   const { t, lang, setLang, languages } = useI18n();
@@ -177,9 +212,20 @@ export function AccountPanel({
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  // Errors that belong to one field sit under that field; pwError is only for
+  // what the form as a whole failed at, which in practice means the network.
+  const [pwFieldError, setPwFieldError] = useState({});
   const [pwError, setPwError] = useState('');
   const [pwNotice, setPwNotice] = useState('');
   const [pwLoading, setPwLoading] = useState(false);
+  // Opt-in, and off by default: signing out the other devices is the right
+  // thing to offer here and the wrong thing to do to somebody who only wanted
+  // a new password.
+  const [signOutOthers, setSignOutOthers] = useState(false);
+  // The reset link says what it is about to do before it does it. Mailing
+  // somebody a password reset they did not quite mean to ask for is a small
+  // fright, and the panel already uses this arm-then-confirm shape to delete.
+  const [forgotArmed, setForgotArmed] = useState(false);
 
   const [deleteArmed, setDeleteArmed] = useState(false);
   const [deletePassword, setDeletePassword] = useState('');
@@ -281,14 +327,39 @@ export function AccountPanel({
     }
   };
 
+  // Live state of the form, the same booleans the checklist draws and the
+  // submit button gates on. One source, so the button can never be pressable
+  // over a rule the list is still showing as unmet.
+  const pwRulesMet = passwordMeetsRules(newPassword);
+  const pwMatches = !!confirmPassword && newPassword === confirmPassword;
+  const pwReady = (!hasPassword || !!currentPassword) && pwRulesMet && pwMatches;
+
+  const clearPwFieldError = (key) => setPwFieldError((cur) => (cur[key] ? { ...cur, [key]: '' } : cur));
+
   const handlePasswordChange = async (e) => {
     e.preventDefault();
+    // A second submit while the first is in flight would re-authenticate and
+    // re-write the password against a session that is already moving.
+    if (pwLoading) return;
     setPwError('');
     setPwNotice('');
-    if (hasPassword && !currentPassword) { setPwError(t('account.errCurrentPasswordMissing')); return; }
-    if (newPassword.length < MIN_PASSWORD_LENGTH) { setPwError(t('account.errPasswordShort', { n: MIN_PASSWORD_LENGTH })); return; }
-    if (newPassword !== confirmPassword) { setPwError(t('account.errPasswordMismatch')); return; }
-    if (hasPassword && newPassword === currentPassword) { setPwError(t('account.errPasswordSame')); return; }
+    setPwFieldError({});
+    if (hasPassword && !currentPassword) {
+      setPwFieldError({ current: t('account.errCurrentPasswordMissing') });
+      return;
+    }
+    if (!pwRulesMet) {
+      setPwFieldError({ next: t('account.errPasswordRules') });
+      return;
+    }
+    if (!pwMatches) {
+      setPwFieldError({ confirm: t('account.errPasswordMismatch') });
+      return;
+    }
+    if (hasPassword && newPassword === currentPassword) {
+      setPwFieldError({ next: t('account.errPasswordSame') });
+      return;
+    }
     setPwLoading(true);
     try {
       // Prove ownership before changing the credential, so a borrowed session
@@ -297,16 +368,31 @@ export function AccountPanel({
         try {
           await reauthenticate(currentPassword);
         } catch {
-          setPwError(t('account.errCurrentPassword'));
+          setPwFieldError({ current: t('account.errCurrentPassword') });
           setPwLoading(false);
           return;
         }
       }
       await updatePassword(newPassword);
-      setPwNotice(t('account.passwordUpdated'));
+      // The password is changed either way. If the sweep of the other devices
+      // fails, say so instead of letting a green banner imply a laptop was
+      // signed out when it was not.
+      let sweptOthers = false;
+      let sweepFailed = false;
+      if (signOutOthers) {
+        try {
+          await signOutOtherDevices();
+          sweptOthers = true;
+        } catch {
+          sweepFailed = true;
+        }
+      }
+      setPwNotice(sweptOthers ? t('account.passwordUpdatedOthers') : t('account.passwordUpdated'));
+      if (sweepFailed) setPwError(t('account.errSignOutOthers'));
       setCurrentPassword('');
       setNewPassword('');
       setConfirmPassword('');
+      setSignOutOthers(false);
     } catch (err) {
       setPwError(err.message || t('account.errGeneric'));
     } finally {
@@ -318,11 +404,14 @@ export function AccountPanel({
   // the way out for somebody who cannot supply the current password, and the
   // way in for a Google-only account that wants a password of its own.
   const handleSendReset = async () => {
+    if (pwLoading) return;
     setPwError('');
     setPwNotice('');
+    setPwFieldError({});
     setPwLoading(true);
     try {
       await sendPasswordReset(storedEmail);
+      setForgotArmed(false);
       setPwNotice(t('account.resetSent', { email: storedEmail }));
     } catch (err) {
       setPwError(err.message || t('account.errGeneric'));
@@ -615,39 +704,106 @@ export function AccountPanel({
             <div className="section-title section-title-iconed">
               <LockIcon size={12} /> {t(hasPassword ? 'account.changePassword' : 'account.passwordTitle')}
             </div>
+            {/* Success is announced once, dismissibly, and the fields empty
+                behind it. A banner that cannot be closed becomes furniture on
+                the next visit to the panel. */}
+            {pwNotice && (
+              <div className="auth-banner" role="status">
+                <CheckIcon size={14} />
+                <span className="auth-banner-text">{pwNotice}</span>
+                <button
+                  type="button"
+                  className="auth-banner-x"
+                  onClick={() => setPwNotice('')}
+                  aria-label={t('account.dismissNotice')}
+                >
+                  <CloseIcon size={13} />
+                </button>
+              </div>
+            )}
             {hasPassword ? (
-              <form className="auth-form auth-form-inline" onSubmit={handlePasswordChange}>
+              /* noValidate: every rule here is checked live and reported in the
+                 panel's own voice, and the browser's own bubble would talk over
+                 it in the browser's language rather than the reader's.
+                 `required` stays, for the semantics and the screen reader. */
+              <form className="auth-form auth-form-inline" onSubmit={handlePasswordChange} noValidate>
                 <PasswordField
                   id="acct-current-pw"
                   label={t('account.currentPassword')}
                   value={currentPassword}
-                  onChange={setCurrentPassword}
+                  onChange={(v) => { setCurrentPassword(v); clearPwFieldError('current'); }}
                   autoComplete="current-password"
                   placeholder={t('account.currentPasswordPlaceholder')}
+                  required
+                  error={pwFieldError.current || ''}
                 />
-                <button type="button" className="auth-link auth-forgot-inline" onClick={handleSendReset} disabled={pwLoading}>
-                  {t('account.forgotPassword')}
-                </button>
+                {!forgotArmed ? (
+                  <button
+                    type="button"
+                    className="auth-link auth-forgot-inline"
+                    onClick={() => setForgotArmed(true)}
+                    disabled={pwLoading}
+                  >
+                    {t('account.forgotPassword')}
+                  </button>
+                ) : (
+                  <div className="auth-forgot-confirm">
+                    <p className="auth-forgot-text">{t('account.forgotConfirm', { email: storedEmail })}</p>
+                    <div className="auth-forgot-actions">
+                      <button type="button" className="book-btn secondary" onClick={() => setForgotArmed(false)}>
+                        {t('account.forgotCancel')}
+                      </button>
+                      <button type="button" className="book-btn" onClick={handleSendReset} disabled={pwLoading}>
+                        {pwLoading ? t('account.pleaseWait') : t('account.forgotSend')}
+                      </button>
+                    </div>
+                  </div>
+                )}
                 <PasswordField
                   id="acct-new-pw"
                   label={t('account.newPassword')}
                   value={newPassword}
-                  onChange={setNewPassword}
+                  onChange={(v) => { setNewPassword(v); clearPwFieldError('next'); }}
                   autoComplete="new-password"
                   placeholder={t('account.newPasswordPlaceholder', { n: MIN_PASSWORD_LENGTH })}
+                  required
+                  error={pwFieldError.next || ''}
+                  hint={newPassword ? <PasswordChecklist password={newPassword} /> : null}
                 />
-                <PasswordMeter password={newPassword} confirm={confirmPassword} />
                 <PasswordField
                   id="acct-confirm-pw"
                   label={t('account.confirmNewPassword')}
                   value={confirmPassword}
-                  onChange={setConfirmPassword}
+                  onChange={(v) => { setConfirmPassword(v); clearPwFieldError('confirm'); }}
                   autoComplete="new-password"
                   placeholder={t('account.confirmNewPasswordPlaceholder')}
+                  required
+                  error={pwFieldError.confirm || ''}
+                  hint={confirmPassword ? (
+                    <p className={`pw-match${pwMatches ? ' met' : ''}`}>
+                      {pwMatches ? <CheckIcon size={13} /> : <span className="pw-req-dot" />}
+                      {t(pwMatches ? 'account.reqMatch' : 'account.errPasswordMismatch')}
+                    </p>
+                  ) : null}
                 />
+                <label className="auth-check">
+                  <input
+                    type="checkbox"
+                    checked={signOutOthers}
+                    onChange={(e) => setSignOutOthers(e.target.checked)}
+                  />
+                  <span>{t('account.signOutOthers')}</span>
+                </label>
                 {pwError && <div className="auth-error">{pwError}</div>}
-                {pwNotice && <div className="auth-notice auth-notice-inline">{pwNotice}</div>}
-                <button type="submit" className="auth-submit" disabled={pwLoading}>
+                {/* Disabled until the form could actually succeed, and while it
+                    is in flight, which is the half that stops a second submit
+                    re-authenticating against a session already being replaced. */}
+                <button
+                  type="submit"
+                  className="auth-submit"
+                  disabled={pwLoading || !pwReady}
+                  aria-busy={pwLoading || undefined}
+                >
                   {pwLoading ? t('account.pleaseWait') : t('account.updatePassword')}
                 </button>
               </form>
@@ -655,8 +811,12 @@ export function AccountPanel({
               <>
                 <p className="account-section-hint">{t('account.noPasswordHint')}</p>
                 {pwError && <div className="auth-error">{pwError}</div>}
-                {pwNotice && <div className="auth-notice auth-notice-inline">{pwNotice}</div>}
-                <button className="book-btn secondary account-wide-btn" onClick={handleSendReset} disabled={pwLoading}>
+                <button
+                  className="book-btn secondary account-wide-btn"
+                  onClick={handleSendReset}
+                  disabled={pwLoading}
+                  aria-busy={pwLoading || undefined}
+                >
                   {pwLoading ? t('account.pleaseWait') : t('account.sendSetPassword')}
                 </button>
               </>
@@ -668,7 +828,9 @@ export function AccountPanel({
               train hit one of the two things nobody meant to press. */}
           <div className="panel-section">
             <div className="section-title section-title-iconed"><SignOutIcon size={12} /> {t('account.sessionTitle')}</div>
-            <p className="account-section-hint">{t('account.sessionHint')}</p>
+            {/* No explainer. Signing out is the one control here that nobody
+                needs told what it does, and the reassurance that saved trips
+                survive it only raises a doubt it then has to answer. */}
             <button className="book-btn secondary account-signout account-wide-btn" onClick={signOut}>
               {t('account.signOut')}
             </button>
@@ -677,16 +839,18 @@ export function AccountPanel({
           <div className="panel-section">
             <div className="section-title section-title-iconed account-danger-title"><TrashIcon size={12} /> {t('account.deleteTitle')}</div>
             <div className="account-danger">
+              {/* Closed, this is one red button and nothing else. The sentence
+                  about what deletion costs is not a standing notice on a panel
+                  people open to change their name: it is the answer to having
+                  pressed the button, and it appears when the question is
+                  actually being asked. */}
               {!deleteArmed ? (
-                <>
-                  <p className="account-danger-text">{t('account.deleteHint')}</p>
-                  <button className="book-btn account-delete-arm account-wide-btn" onClick={() => setDeleteArmed(true)}>
-                    {t('account.deleteBtn')}
-                  </button>
-                </>
+                <button className="book-btn account-delete-arm account-wide-btn" onClick={() => setDeleteArmed(true)}>
+                  {t('account.deleteBtn')}
+                </button>
               ) : (
                 <>
-                  <p className="account-danger-text">{t('account.deleteConfirmHint')}</p>
+                  <p className="account-danger-text">{t('account.deleteHint')}</p>
                   {hasPassword ? (
                     <PasswordField
                       id="acct-delete-pw"

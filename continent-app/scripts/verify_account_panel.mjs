@@ -113,7 +113,12 @@ async function stubSupabase(page, state) {
     state.recoverCalls += 1;
     return route.fulfill({ status: 200, contentType: 'application/json', body: '{}' });
   });
-  await page.route('**/auth/v1/logout*', (route) => route.fulfill({ status: 204, body: '' }));
+  // Supabase puts the scope in the query string: ?scope=others for the sweep
+  // of other devices, no scope (or global) for an ordinary sign out.
+  await page.route('**/auth/v1/logout*', (route) => {
+    state.logoutScopes.push(new URL(route.request().url()).searchParams.get('scope') || 'global');
+    return route.fulfill({ status: 204, body: '' });
+  });
 
   // public.profiles, added in migration 010. The GET seeds the handle field;
   // the PATCH records what was written and refuses one reserved-in-this-test
@@ -171,7 +176,7 @@ try {
   await waitForServer();
   const browser = await chromium.launch();
   const state = {
-    reauthAttempts: [], userUpdates: [], recoverCalls: 0,
+    reauthAttempts: [], userUpdates: [], recoverCalls: 0, logoutScopes: [],
     profileUpdates: [],
     profile: {
       user_id: USER.id, handle: SEEDED_HANDLE,
@@ -313,67 +318,132 @@ try {
     await page.screenshot({ path: `${SHOTS}/account-handle.png` });
   }
 
-  // ---- 4 & 5. Password: current required, measured, revealable, 8 not 6.
+  // ---- 4 & 5. Password: the whole production contract, field by field.
   console.log('4. password security');
   const current = page.locator('#acct-current-pw');
   const next = page.locator('#acct-new-pw');
   const confirm = page.locator('#acct-confirm-pw');
+  const submit = page.locator('.auth-submit', { hasText: 'Update password' });
   if (!(await current.count())) fail('no current-password field: the panel still lets a borrowed session take the account');
-  if (await current.getAttribute('autocomplete') !== 'current-password') fail('current password has the wrong autocomplete attribute');
-  if (await next.getAttribute('autocomplete') !== 'new-password') fail('new password has the wrong autocomplete attribute');
 
+  // Attributes: masked, autofilled by the right heuristic, required.
+  for (const [name, loc, auto] of [
+    ['current', current, 'current-password'],
+    ['new', next, 'new-password'],
+    ['confirm', confirm, 'new-password'],
+  ]) {
+    if (await loc.getAttribute('type') !== 'password') fail(`the ${name} password field is not masked`);
+    if (await loc.getAttribute('autocomplete') !== auto) fail(`${name} password has the wrong autocomplete attribute`);
+    if (await loc.getAttribute('required') === null) fail(`${name} password is not marked required`);
+  }
+  ok('all three fields are masked, required, and carry the right autocomplete');
+
+  // The reveal toggle is a real toggle, and says which state it is in.
+  const revealNew = page.locator('.pw-input-wrap:has(#acct-new-pw) .pw-reveal').first();
+  if (await revealNew.getAttribute('aria-pressed') !== 'false') fail('the reveal toggle does not report its state');
+  await revealNew.click();
+  if (await next.getAttribute('type') !== 'text') fail('the reveal toggle did not unmask the field');
+  if (await revealNew.getAttribute('aria-pressed') !== 'true') fail('the reveal toggle did not flip aria-pressed');
+  await revealNew.click();
+  ok('reveal toggles are real toggles, with aria-pressed following the field');
+
+  // Nothing is submittable until it could succeed. This is what stops the
+  // double submit, and it is why there is no "press to find out" step.
+  if (await submit.isEnabled()) fail('the empty form is submittable');
   await next.fill('abcdefg');
   await confirm.fill('abcdefg');
-  await page.locator('button', { hasText: 'Update password' }).click();
-  let err = await page.locator('.auth-error').first().innerText();
-  if (!/current password/i.test(err)) fail(`empty current password was not the first complaint: ${err}`);
-  ok('the current password is demanded before anything else');
+  if (await submit.isEnabled()) fail('a 7-character password with no current password is submittable');
+  ok('submit stays disabled until the form could actually succeed');
 
+  // The checklist is live, and it is the same four rules the button gates on.
+  const rules = page.locator('.pw-reqs .pw-req');
+  if (await rules.count() !== 4) fail(`expected four rules in the checklist, got ${await rules.count()}`);
+  if (await page.locator('.pw-req.met').count() !== 0) fail('"abcdefg" met a rule it should not have');
+  await next.fill('abcdefgH');
+  if (await page.locator('.pw-req.met').count() !== 2) fail('length and capital did not tick together');
+  await next.fill('abcdefgH9');
+  if (await page.locator('.pw-req.met').count() !== 3) fail('the digit did not tick');
+  await next.fill('abcdefgH9!');
+  if (await page.locator('.pw-req.met').count() !== 4) fail('the symbol did not tick');
+  ok('the checklist ticks each rule off as it is typed');
+
+  // Confirm reports the match live, without waiting for a submit.
+  if (await page.locator('.pw-match.met').count()) fail('mismatched confirm reads as matching');
+  await confirm.fill('abcdefgH9!');
+  if (!(await page.locator('.pw-match.met').count())) fail('a matching confirm does not say so');
+  ok('confirm reports the match as it is typed');
+  await confirm.fill('abcdefgH9');
+  await page.locator('.account-panel').screenshot({ path: `${SHOTS}/account-password-live.png` });
+  await confirm.fill('abcdefgH9!');
+
+  // The meter is still the honest reading next to the checklist.
+  await next.fill('aaaaaaaaAA11!!');
+  await confirm.fill('aaaaaaaaAA11!!');
+  if (/strong/.test(await page.locator('.pw-strength').getAttribute('class'))) {
+    fail('fourteen characters of repeats read as strong just for clearing the rules');
+  }
+  await next.fill('Ferry timetable rhubarb 41!');
+  await confirm.fill('Ferry timetable rhubarb 41!');
+  if (!/strong/.test(await page.locator('.pw-strength').getAttribute('class'))) {
+    fail('a long passphrase did not read as strong');
+  }
+  ok('the meter still separates a strong passphrase from a rule-clearing mangle');
+
+  // A wrong current password is reported under the current password field.
   await current.fill('whatever-is-wrong');
-  await page.locator('button', { hasText: 'Update password' }).click();
-  err = await page.locator('.auth-error').first().innerText();
-  if (!/at least 8/i.test(err)) fail(`a 7-character password was accepted at the length check: ${err}`);
-  ok('the floor is 8 characters, not 6');
-
-  await next.fill('aaaaaaaaaaaa');
-  await confirm.fill('aaaaaaaaaaaa');
-  await page.locator('.pw-strength').waitFor({ timeout: 5000 });
-  const weak = await page.locator('.pw-strength').getAttribute('class');
-  if (!/weak/.test(weak)) fail(`twelve repeated letters did not read as weak: ${weak}`);
-  await next.fill('ferry timetable rhubarb 41');
-  await confirm.fill('ferry timetable rhubarb 41');
-  const strong = await page.locator('.pw-strength').getAttribute('class');
-  if (!/strong/.test(strong)) fail(`a long passphrase did not read as strong: ${strong}`);
-  const met = await page.locator('.pw-req.met').count();
-  if (met !== 2) fail(`expected both requirements met, got ${met}`);
-  ok('meter: weak for repeats, strong for a passphrase, both requirements live');
-
-  if (await next.getAttribute('type') !== 'password') fail('the new password field is not masked');
-  await page.locator('.pw-input-wrap:has(#acct-new-pw) .pw-reveal').first().click();
-  if (await next.getAttribute('type') !== 'text') fail('the reveal toggle did not unmask the field');
-  ok('passwords can be revealed while typing');
-
-  await page.locator('button', { hasText: 'Update password' }).click();
-  await page.waitForTimeout(600);
-  err = await page.locator('.auth-error').first().innerText();
-  if (!/isn't right|is not right/i.test(err)) fail(`a wrong current password did not stop the change: ${err}`);
+  await submit.click();
+  await page.waitForTimeout(700);
+  const fieldErr = await page.locator('#acct-current-pw-error').innerText();
+  if (!/isn't right|is not right/i.test(fieldErr)) fail(`the re-auth failure did not land on the field: ${fieldErr}`);
+  if (await current.getAttribute('aria-invalid') !== 'true') fail('the failed field is not marked invalid');
   if (!state.reauthAttempts.includes('whatever-is-wrong')) fail('no re-authentication call was made at all');
-  ok('a wrong current password is rejected by a real re-auth call');
-
+  ok('a wrong current password is rejected by a real re-auth call, and said so under the field');
   await current.fill(RIGHT_PASSWORD);
-  await page.locator('button', { hasText: 'Update password' }).click();
-  await page.waitForTimeout(800);
-  const notice = await page.locator('.auth-notice-inline').last().innerText();
-  if (!/updated/i.test(notice)) fail(`the correct current password did not complete the change: ${notice}`);
-  if (!state.userUpdates.some((u) => u.password)) fail('no password update was sent after re-auth');
-  ok('the correct current password completes the change');
+  if (await page.locator('#acct-current-pw-error').count()) fail('the field error survived a correction');
+  ok('the error clears the moment the field is corrected');
 
-  // ---- 6. Forgot password reaches the reset mail.
+  // The sweep of other devices is opt-in, and really happens.
+  const sweep = page.locator('.auth-check input[type="checkbox"]');
+  if (!(await sweep.count())) fail('there is no way to sign out the other devices');
+  if (await sweep.isChecked()) fail('other devices are signed out by default');
+  await sweep.check();
+  const scopesBefore = state.logoutScopes.length;
+  await submit.click();
+  await page.waitForTimeout(900);
+  if (!state.userUpdates.some((u) => u.password)) fail('no password update was sent after re-auth');
+  if (!state.logoutScopes.slice(scopesBefore).includes('others')) {
+    fail(`the checkbox sent no others-scoped sign out: ${JSON.stringify(state.logoutScopes)}`);
+  }
+  ok('the correct current password completes the change and sweeps the other devices');
+
+  // Success is a banner you can close, over fields that emptied themselves.
+  const banner = page.locator('.auth-banner');
+  if (!(await banner.count())) fail('a completed change showed no success banner');
+  if (!/signed out/i.test(await banner.innerText())) fail('the banner does not report the device sweep it just did');
+  for (const [name, loc] of [['current', current], ['new', next], ['confirm', confirm]]) {
+    if (await loc.inputValue() !== '') fail(`the ${name} field still holds the password after a successful change`);
+  }
+  if (await sweep.isChecked()) fail('the device sweep stayed armed for the next change');
+  await page.screenshot({ path: `${SHOTS}/account-password-success.png` });
+  await banner.locator('.auth-banner-x').click();
+  if (await page.locator('.auth-banner').count()) fail('the success banner cannot be dismissed');
+  ok('success is a dismissible banner, and the fields empty behind it');
+
+  // ---- 6. Forgot password says where the link is going before it goes.
   console.log('5. recovery');
   await page.locator('.auth-forgot-inline').click();
-  await page.waitForTimeout(600);
+  const forgot = page.locator('.auth-forgot-confirm');
+  if (!(await forgot.count())) fail('the forgot-password link fires with no confirmation step');
+  if (!(await forgot.innerText()).includes(USER.email)) fail('the confirmation does not name the address');
+  if (state.recoverCalls) fail('opening the confirmation already sent the mail');
+  await forgot.locator('button', { hasText: 'Send the link' }).click();
+  await page.waitForTimeout(700);
   if (!state.recoverCalls) fail('the forgot-password link sent no reset mail');
-  ok('forgot password sends the reset link to the address on file');
+  if (!/Reset link sent/i.test(await page.locator('.auth-banner').innerText())) {
+    fail('sending the reset link reported nothing');
+  }
+  ok('forgot password names the address, then sends the reset link to it');
+  await page.locator('.auth-banner-x').click();
 
   // ---- 7. Sign out clear of deletion; deletion red, confirmed, gated.
   console.log('6. layout and deletion');
@@ -397,7 +467,16 @@ try {
 
   const dangerColor = await page.locator('.account-delete-arm').evaluate((el) => getComputedStyle(el).color);
   if (!/^rgb\(1[6-9]\d,\s*\d+,\s*\d+\)/.test(dangerColor)) fail(`the delete button is not red: ${dangerColor}`);
+  // Closed, the danger box is one button: what deletion costs is the answer
+  // to pressing it, not a notice standing over a panel people open to change
+  // their name.
+  if (await page.locator('.account-danger-text').count()) {
+    fail('the deletion warning is showing before anybody asked to delete anything');
+  }
   await page.locator('.account-delete-arm').click();
+  const warning = await page.locator('.account-danger-text').innerText();
+  if (!/cannot be undone/i.test(warning)) fail(`arming shows no warning about what is lost: "${warning}"`);
+  ok('the warning appears on pressing Delete my account, not before');
   const delPw = page.locator('#acct-delete-pw');
   if (!(await delPw.count())) fail('deletion does not ask for the password');
   await page.locator('button', { hasText: 'Delete forever' }).click();

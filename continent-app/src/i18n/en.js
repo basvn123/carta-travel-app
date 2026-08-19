@@ -537,7 +537,6 @@ export const en = {
   "account.deleteTitle": "Delete account",
   "account.deleteHint": "Deleting your account removes your saved trips, day plans and settings from Carta's servers. This cannot be undone.",
   "account.deleteBtn": "Delete my account",
-  "account.deleteConfirmHint": "Your account and everything saved with it goes immediately and permanently. Confirm below to delete it.",
   "account.deleteKeep": "Keep my account",
   "account.deleteForever": "Delete forever",
   "account.tag": "Account",
@@ -573,7 +572,6 @@ export const en = {
   "account.sendSetPassword": "Email me a link",
   // session, privacy, deletion
   "account.sessionTitle": "Session",
-  "account.sessionHint": "Signs you out on this device. Your saved trips and day plans stay on your account.",
   "account.privacyTitle": "Privacy",
   "account.deleteConfirmEmail": "Type {email} to confirm",
   "account.errDeleteEmail": "That does not match the address on the account.",
@@ -2095,4 +2093,17 @@ export const en = {
   "saved.crewName": "A name",
   "saved.crewAddName": "Add",
   "saved.crewRemove": "Take {name} off this trip",
+
+  // change password: the checklist, the sweep of other devices, the reset step
+  "account.reqUpper": "One capital letter",
+  "account.reqNumber": "One number",
+  "account.reqSymbol": "One symbol, such as ! or #",
+  "account.errPasswordRules": "Your new password does not meet every rule below yet.",
+  "account.signOutOthers": "Sign out of every other device",
+  "account.passwordUpdatedOthers": "Password updated. Every other device has been signed out.",
+  "account.errSignOutOthers": "Your password changed, but the other devices stayed signed in. Try signing them out again.",
+  "account.dismissNotice": "Dismiss this message",
+  "account.forgotConfirm": "We can email a reset link to {email}. Open it to set a new password without the old one.",
+  "account.forgotSend": "Send the link",
+  "account.forgotCancel": "Not now",
 };

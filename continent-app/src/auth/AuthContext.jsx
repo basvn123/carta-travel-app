@@ -112,6 +112,20 @@ export function AuthProvider({ children }) {
     await supabase.auth.signOut();
   }, []);
 
+  /**
+   * Sign out everywhere except here.
+   *
+   * Changing a password is the moment somebody remembers the laptop they lent
+   * out, so the form offers this alongside it. Supabase's 'others' scope
+   * revokes every other refresh token for the user and leaves the current
+   * session alone, which is exactly the promise the checkbox makes: the device
+   * you are typing on stays signed in.
+   */
+  const signOutOtherDevices = useCallback(async () => {
+    const { error } = await supabase.auth.signOut({ scope: 'others' });
+    if (error) throw error;
+  }, []);
+
   const sendPasswordReset = useCallback(async (email) => {
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: window.location.origin,
@@ -190,6 +204,7 @@ export function AuthProvider({ children }) {
     signIn,
     signInWithGoogle,
     signOut,
+    signOutOtherDevices,
     sendPasswordReset,
     updatePassword,
     reauthenticate,

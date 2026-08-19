@@ -17438,6 +17438,108 @@ button.ai-sched-main:focus-visible {
   border: 1px solid var(--rule);
 }
 
+/* A field's error belongs under that field, not in a pile at the foot of the
+   form. Red on the border as well as the text, because somebody scanning a
+   three-field form reads the outline before they read the sentence. */
+.auth-field.has-error input { border-color: var(--danger); }
+.auth-field.has-error input:focus { border-color: var(--danger); }
+.auth-field-error {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--danger);
+}
+.auth-field-hint { display: flex; flex-direction: column; gap: 8px; }
+
+/* Live match state under the confirm field. Same shape as one checklist row,
+   because it is the same kind of fact: a condition that is met or is not. */
+.pw-match {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12.5px;
+  color: var(--ink-soft);
+}
+.pw-match.met { color: var(--green); }
+.pw-match svg { flex: none; }
+
+/* "Sign out of every other device". A real label wrapping a real checkbox, so
+   the whole row is the hit target and the 44px floor is met by its padding. */
+.auth-check {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-height: 44px;
+  padding: 4px 0;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--ink-soft);
+  cursor: pointer;
+}
+.auth-check input[type='checkbox'] {
+  accent-color: var(--accent);
+  flex: none;
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+.auth-check:hover { color: var(--ink); }
+
+/* The success banner. Dismissible, because it outlives the moment it reports:
+   without the close it is still sitting there the next time the panel opens. */
+.auth-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  margin-bottom: 14px;
+  padding: 11px 8px 11px 12px;
+  border: 1px solid color-mix(in srgb, var(--green) 34%, var(--paper));
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--green) 7%, var(--paper));
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--green);
+}
+.auth-banner svg { flex: none; margin-top: 1px; }
+.auth-banner-text { flex: 1; min-width: 0; }
+.auth-banner-x {
+  flex: none;
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: -3px 0;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--green);
+  cursor: pointer;
+  transition: background .15s;
+}
+.auth-banner-x:hover { background: color-mix(in srgb, var(--green) 14%, var(--paper)); }
+
+/* Forgot your password, as a step rather than a trapdoor. Pressing the link
+   used to mail a reset immediately; this says which address it is going to
+   first, in the same arm-then-confirm shape the delete section uses. */
+.auth-forgot-confirm {
+  margin-top: -4px;
+  padding: 12px;
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  background: var(--paper-dim);
+}
+.auth-forgot-text {
+  margin: 0 0 10px;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--ink-soft);
+}
+.auth-forgot-actions { display: flex; gap: 8px; }
+.auth-forgot-actions .book-btn { flex: 1; justify-content: center; min-height: 40px; }
+
 .auth-forgot-inline { margin-top: -6px; padding: 4px 0; }
 .account-privacy-link { padding: 6px 0; min-height: 32px; display: inline-flex; align-items: center; }
 
