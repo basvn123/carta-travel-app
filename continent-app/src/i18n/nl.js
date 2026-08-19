@@ -1486,4 +1486,15 @@ export const nl = {
   "saved.alongside": "Naast je vrienden",
   "saved.alongsideSub": "Alleen de reizen die elke vriend je wilde tonen, dus dit is geen rangschikking.",
   "saved.alongsideYou": "Jij",
+
+  // de kaart van je record op schermgrootte, en wie meeging op de kaart zelf
+  "saved.mapExpand": "Bekijk de kaart groter",
+  "saved.mapShrink": "Kaart sluiten",
+  "saved.mapFullTitle": "Waar je bent geweest",
+  "saved.crewAdd": "Voeg toe wie meeging",
+  "saved.crewTitle": "Wie ging er mee",
+  "saved.crewEmpty": "Voeg toe wie meeging",
+  "saved.crewName": "Een naam",
+  "saved.crewAddName": "Toevoegen",
+  "saved.crewRemove": "Haal {name} van deze reis",
 };

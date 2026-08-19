@@ -1486,4 +1486,15 @@ export const it = {
   "saved.alongside": "Accanto ai tuoi amici",
   "saved.alongsideSub": "Solo i viaggi che ogni amico ha scelto di mostrarti, quindi non è una classifica.",
   "saved.alongsideYou": "Tu",
+
+  // la mappa del diario a tutto schermo, e chi era con te sulla scheda
+  "saved.mapExpand": "Vedi la mappa più grande",
+  "saved.mapShrink": "Chiudi la mappa",
+  "saved.mapFullTitle": "Dove sei stato",
+  "saved.crewAdd": "Aggiungi chi era con te",
+  "saved.crewTitle": "Chi era con te",
+  "saved.crewEmpty": "Aggiungi chi era con te",
+  "saved.crewName": "Un nome",
+  "saved.crewAddName": "Aggiungi",
+  "saved.crewRemove": "Togli {name} da questo viaggio",
 };

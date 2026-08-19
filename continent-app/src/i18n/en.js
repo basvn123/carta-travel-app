@@ -2084,4 +2084,15 @@ export const en = {
   "saved.alongside": "Alongside your friends",
   "saved.alongsideSub": "Counting only the trips each friend chose to show you, so this is not a ranking.",
   "saved.alongsideYou": "You",
+
+  // the record map at device size, and who came on the card itself
+  "saved.mapExpand": "See the map bigger",
+  "saved.mapShrink": "Close the map",
+  "saved.mapFullTitle": "Where you have been",
+  "saved.crewAdd": "Add who came",
+  "saved.crewTitle": "Who came along",
+  "saved.crewEmpty": "Add who came along",
+  "saved.crewName": "A name",
+  "saved.crewAddName": "Add",
+  "saved.crewRemove": "Take {name} off this trip",
 };

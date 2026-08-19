@@ -1486,4 +1486,15 @@ export const de = {
   "saved.alongside": "Neben deinen Freunden",
   "saved.alongsideSub": "Nur die Reisen, die jeder Freund dir zeigen wollte, also keine Rangliste.",
   "saved.alongsideYou": "Du",
+
+  // die Karte des Reisebuchs in Gerätegröße, und wer dabei war auf der Karte
+  "saved.mapExpand": "Karte größer sehen",
+  "saved.mapShrink": "Karte schließen",
+  "saved.mapFullTitle": "Wo du warst",
+  "saved.crewAdd": "Wer dabei war hinzufügen",
+  "saved.crewTitle": "Wer dabei war",
+  "saved.crewEmpty": "Trag ein, wer dabei war",
+  "saved.crewName": "Ein Name",
+  "saved.crewAddName": "Hinzufügen",
+  "saved.crewRemove": "{name} von dieser Reise nehmen",
 };

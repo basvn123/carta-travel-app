@@ -1486,4 +1486,15 @@ export const fr = {
   "saved.alongside": "Avec vos amis",
   "saved.alongsideSub": "Uniquement les voyages que chaque ami a choisi de vous montrer, ce n’est donc pas un classement.",
   "saved.alongsideYou": "Vous",
+
+  // la carte du carnet en plein écran, et qui était là sur la fiche
+  "saved.mapExpand": "Voir la carte en grand",
+  "saved.mapShrink": "Fermer la carte",
+  "saved.mapFullTitle": "Où vous êtes allé",
+  "saved.crewAdd": "Ajouter qui était là",
+  "saved.crewTitle": "Qui était du voyage",
+  "saved.crewEmpty": "Ajoutez qui était du voyage",
+  "saved.crewName": "Un nom",
+  "saved.crewAddName": "Ajouter",
+  "saved.crewRemove": "Retirer {name} de ce voyage",
 };

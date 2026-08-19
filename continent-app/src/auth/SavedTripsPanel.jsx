@@ -984,6 +984,25 @@ export function SavedTripsPanel({ data, onClose, onLoadTrip, onLoadTripPlan, onO
     [visited],
   );
 
+  // Everything both copies of the record's map agree on. The frame differs
+  // (a card, or the whole device), the data never does. Tapping a pin opens
+  // that trip, which means leaving the big map: a trip opening behind a
+  // full-screen map would look like nothing happened.
+  const visitedMapProps = {
+    stops: visitedItems,
+    countryFills: visitedIso,
+    showRoute: false,
+    scrollZoom: true,
+    zoomControls: true,
+    mapLocale,
+    photoZoom: 6,
+    easeToSelected: false,
+    padBottom: 0,
+    fitMaxZoom: 7,
+    fitPadding: { top: 24, left: 24, right: 24, bottom: 24 },
+    onSelectStop: (i) => { setMapFull(false); visitedItems[i]?.open(); },
+  };
+
   const whenLabel = (start, end) => {
     if (!start) return t('saved.noDatesYet');
     const n = daysUntil(start, todayIso);
@@ -1380,25 +1399,58 @@ export function SavedTripsPanel({ data, onClose, onLoadTrip, onLoadTripPlan, onO
           {pastCount > 0 && (
             <div className="panel-section saved-section saved-map-section">
               <div className="saved-map">
+                {/* While the big map is up this frame keeps its height but
+                    drops its map: only one MapLibre instance is ever alive,
+                    which is the expensive thing here, and both are built from
+                    the same visitedMapProps so neither can drift. */}
+                {!mapFull && (
+                  <Suspense fallback={<div className="saved-map-loading" aria-hidden="true" />}>
+                    <SavedTripMap {...visitedMapProps} cooperativeGestures />
+                  </Suspense>
+                )}
+                <button
+                  className="saved-map-expand"
+                  onClick={() => setMapFull(true)}
+                  aria-label={t('saved.mapExpand')}
+                  title={t('saved.mapExpand')}
+                >
+                  <ExpandIcon size={15} />
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* ── The map at device size. It is portalled to <body> on purpose:
+              the panel is transformed while open, and a transformed ancestor
+              becomes the containing block for position:fixed, which would pin
+              this overlay to the panel's column instead of the screen. Out
+              here it also drops cooperativeGestures, because a map that owns
+              the whole device should answer a pinch directly. ── */}
+          {mapFull && pastCount > 0 && createPortal(
+            <div className="savedmap-full" role="dialog" aria-label={t('saved.mapFullTitle')}>
+              <div className="savedmap-full-map">
                 <Suspense fallback={<div className="saved-map-loading" aria-hidden="true" />}>
                   <SavedTripMap
-                    stops={visitedItems}
-                    countryFills={visitedIso}
-                    showRoute={false}
-                    scrollZoom
-                    cooperativeGestures
-                    zoomControls
-                    mapLocale={mapLocale}
-                    photoZoom={6}
-                    easeToSelected={false}
-                    padBottom={0}
-                    fitMaxZoom={7}
-                    fitPadding={{ top: 24, left: 24, right: 24, bottom: 24 }}
-                    onSelectStop={(i) => visitedItems[i]?.open()}
+                    {...visitedMapProps}
+                    fitMaxZoom={9}
+                    fitPadding={{ top: 84, left: 28, right: 28, bottom: 56 }}
                   />
                 </Suspense>
               </div>
-            </div>
+              <div className="savedmap-full-bar">
+                <span className="savedmap-full-title">{t('saved.mapFullTitle')}</span>
+                <button
+                  className="savedmap-full-close"
+                  onClick={() => setMapFull(false)}
+                  aria-label={t('saved.mapShrink')}
+                  title={t('saved.mapShrink')}
+                >
+                  <ShrinkIcon size={15} />
+                  <span>{t('saved.mapShrink')}</span>
+                </button>
+              </div>
+            </div>,
+            document.body,
           )}
 
           {/* ── The ledger, once there is a record to add up. Day plans are
@@ -1491,6 +1543,7 @@ export function SavedTripsPanel({ data, onClose, onLoadTrip, onLoadTripPlan, onO
                             },
                             shareAction(p.id),
                           ].filter(Boolean)}
+                          crew={crewBarFor(p.id)}
                           footer={mem ? {
                             label: memoryLine(mem),
                             title: t('saved.pastSeeTrip'),
@@ -1534,6 +1587,7 @@ export function SavedTripsPanel({ data, onClose, onLoadTrip, onLoadTripPlan, onO
                           icon: <PencilIcon size={14} />,
                           onClick: () => openPastForm(editableFromDayPlan(sp, mem)),
                         }] : []}
+                        crew={crewBarFor(sp.id)}
                         footer={mem ? {
                           label: memoryLine(mem),
                           title: t('saved.pastSeeTrip'),

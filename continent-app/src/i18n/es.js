@@ -1486,4 +1486,15 @@ export const es = {
   "saved.alongside": "Junto a tus amigos",
   "saved.alongsideSub": "Solo los viajes que cada amigo decidió mostrarte, así que no es una clasificación.",
   "saved.alongsideYou": "Tú",
+
+  // el mapa del registro a pantalla completa, y quién vino en la propia tarjeta
+  "saved.mapExpand": "Ver el mapa más grande",
+  "saved.mapShrink": "Cerrar el mapa",
+  "saved.mapFullTitle": "Dónde has estado",
+  "saved.crewAdd": "Añadir quién vino",
+  "saved.crewTitle": "Quién vino",
+  "saved.crewEmpty": "Añade quién vino",
+  "saved.crewName": "Un nombre",
+  "saved.crewAddName": "Añadir",
+  "saved.crewRemove": "Quitar a {name} de este viaje",
 };
