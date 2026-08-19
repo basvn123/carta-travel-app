@@ -145,7 +145,9 @@ function MenuRow({ icon, label, onClick }) {
   );
 }
 
-export function AccountPanel({ onClose, onOpenAuth, initialView = 'home', onViewChange }) {
+export function AccountPanel({
+  onClose, onOpenAuth, initialView = 'home', onViewChange, pendingFriendHandle,
+}) {
   const {
     user, hasPassword, signOut, updatePassword, reauthenticate,
     updateProfile, sendPasswordReset, deleteAccount, configured,
@@ -723,7 +725,9 @@ export function AccountPanel({ onClose, onOpenAuth, initialView = 'home', onView
         </>
       )}
 
-      {view === 'friends' && user && <FriendsSpoke userId={user.id} />}
+      {view === 'friends' && user && (
+        <FriendsSpoke userId={user.id} pendingHandle={pendingFriendHandle} />
+      )}
 
       {view === 'faq' && (
         <div className="panel-section">

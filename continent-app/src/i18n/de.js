@@ -1442,6 +1442,8 @@ export const de = {
 
   // friends: the people whose trips you can see (auth/friends.js)
   "friends.title": "Freunde",
+  "friends.share": "Teilen",
+  "friends.inviteText": "Füg mich auf Carta hinzu, mein Nutzername ist @{handle}.",
   "friends.yourHandle": "Dein Nutzername",
   "friends.yourHandleHint": "Gib ihn jemandem, dann kann er dich hinzufügen.",
   "friends.aboutTitle": "Wie Freunde funktionieren",

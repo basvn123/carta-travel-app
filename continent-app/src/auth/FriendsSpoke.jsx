@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import {
-  PersonIcon, CheckIcon, CloseIcon, SearchIcon, PlusIcon, InfoIcon,
+  PersonIcon, CheckIcon, CloseIcon, SearchIcon, PlusIcon, InfoIcon, ShareIcon,
 } from '../components/Icons.jsx';
 import { useI18n } from '../i18n/index.jsx';
 import { findByHandle, normaliseHandle, handleProblem, fetchMyProfile } from './profiles.js';
 import {
   fetchFriendLinks, sendFriendRequest, acceptFriendRequest, removeFriendLink,
-  listFriendTrips,
+  listFriendTrips, buildFriendInviteUrl,
 } from './friends.js';
 import { FriendTripPanel } from './FriendTripPanel.jsx';
 import { CountryFlagStack } from '../components/CountryFlag.jsx';
@@ -49,7 +49,7 @@ function Person({ link, children }) {
   );
 }
 
-export function FriendsSpoke({ userId }) {
+export function FriendsSpoke({ userId, pendingHandle }) {
   const { t } = useI18n();
   const [links, setLinks] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -110,6 +110,42 @@ export function FriendsSpoke({ userId }) {
     }
   };
 
+  // Sharing hands over a LINK, not a string to retype: it opens Carta on this
+  // page with the handle already looked up, so the person on the other end
+  // presses one button. The share sheet where the browser has one, the
+  // clipboard where it does not.
+  const shareHandle = async () => {
+    const url = buildFriendInviteUrl(myHandle);
+    if (!url) return;
+    const text = t('friends.inviteText', { handle: myHandle });
+    try {
+      if (navigator.share) {
+        await navigator.share({ title: 'Carta', text, url });
+        return;
+      }
+      await navigator.clipboard.writeText(`${text} ${url}`);
+      setCopied(true);
+    } catch (err) {
+      // Dismissing the share sheet rejects; that is a decision, not a fault.
+      if (err?.name !== 'AbortError') setError(t('share.copyFailed'));
+    }
+  };
+
+  // Somebody opened your invite link: look their handle up straight away, so
+  // the page opens on the person rather than on an empty search box.
+  useEffect(() => {
+    if (!pendingHandle || pendingHandle === myHandle) return;
+    setQuery(pendingHandle);
+    let live = true;
+    findByHandle(pendingHandle)
+      .then((hit) => {
+        if (!live || !hit || hit.userId === userId) return;
+        setFound(hit);
+      })
+      .catch(() => {});
+    return () => { live = false; };
+  }, [pendingHandle, myHandle, userId]);
+
   const search = async (e) => {
     e.preventDefault();
     setError('');
@@ -169,6 +205,10 @@ export function FriendsSpoke({ userId }) {
             <button type="button" className="frn-me-copy" onClick={copyHandle}>
               {copied ? <CheckIcon size={13} /> : null}
               {copied ? t('share.copied') : t('share.copy')}
+            </button>
+            <button type="button" className="frn-me-share" onClick={shareHandle}>
+              <ShareIcon size={13} />
+              {t('friends.share')}
             </button>
           </div>
           <p className="account-section-hint">{t('friends.yourHandleHint')}</p>

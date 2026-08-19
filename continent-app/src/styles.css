@@ -19452,10 +19452,37 @@ button.ai-sched-main:focus-visible {
      that already carries one would be a guess. */
   .header-friends-btn { height: 38px; padding: 0 11px; font-size: 12.5px; }
 }
-@media (max-width: 400px) {
-  /* At the narrowest widths Passes and Friends cannot both carry words.
-     Friends keeps the icon; it is the one with a tooltip and a bottom-bar
-     sibling, while Passes has neither. */
-  .header-friends-label { display: none; }
-  .header-friends-btn { padding: 0 9px; }
+@media (max-width: 420px) {
+  /* The label always shows: an icon alone in a row that already carries
+     another icon is a guess, and this door is new enough that nobody knows
+     the glyph yet. Both chips tighten instead, which is what actually makes
+     them fit next to each other on a 390px screen. */
+  .header-friends-btn { padding: 0 9px; gap: 5px; font-size: 12px; }
+  .app-header-account { gap: 6px; padding: 0 8px; }
+  .app-header-account .header-pricing-btn { padding: 0 10px; }
+}
+
+/* Sharing your handle: copy for the people who want the text, share for the
+   ones who want it in a chat. Both fit beside the handle at 390px. */
+.frn-me-share {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  flex: none;
+  min-height: 32px;
+  padding: 6px 13px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--accent);
+  font-family: var(--ui);
+  font-size: 12px;
+  font-weight: 600;
+  color: #fff;
+  cursor: pointer;
+}
+.frn-me-share:hover { background: var(--accent-soft); }
+.frn-me { flex-wrap: wrap; }
+.frn-me-handle { flex: 1 1 100%; }
+@media (min-width: 420px) {
+  .frn-me-handle { flex: 1 1 auto; }
 }

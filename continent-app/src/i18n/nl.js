@@ -1442,6 +1442,8 @@ export const nl = {
 
   // friends: the people whose trips you can see (auth/friends.js)
   "friends.title": "Vrienden",
+  "friends.share": "Deel",
+  "friends.inviteText": "Voeg me toe op Carta, mijn gebruikersnaam is @{handle}.",
   "friends.yourHandle": "Jouw gebruikersnaam",
   "friends.yourHandleHint": "Geef deze aan iemand en die kan je toevoegen.",
   "friends.aboutTitle": "Hoe vrienden werken",

@@ -55,6 +55,7 @@ import { PlaceSizeToggle } from './components/PlaceSizeToggle.jsx';
 import { loadInitialState } from './lib/urlState.js';
 import { readTripShareFromUrl, decodeTripShare } from './lib/shareLink.js';
 import { readShareTokenFromUrl, stripShareTokenFromUrl } from './auth/tripShares.js';
+import { readFriendHandleFromUrl, stripFriendHandleFromUrl } from './auth/friends.js';
 import { readTrailFromUrl } from './lib/trails.js';
 import { loadTripDraft } from './planner/tripDraftStore.js';
 import { bindDayPlanCloud } from './planner/dayPlanSync.js';
@@ -147,6 +148,24 @@ function TravelApp() {
   // nothing at all.
   const [accountView, setAccountView] = useState('home');
   const [accountEntry, setAccountEntry] = useState(0);
+  // Somebody's invite link (#friend=<handle>). Read once at startup, like
+  // every other hash this app answers, and stripped from the bar right away.
+  const [pendingFriend, setPendingFriend] = useState(() => readFriendHandleFromUrl());
+  useEffect(() => {
+    if (pendingFriend) stripFriendHandleFromUrl();
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  // An invite opens the friends page as soon as there is an account to open
+  // it for. A guest lands on the account hub instead, which is where signing
+  // in is, and the handle waits: dropping it would waste the one tap the
+  // sender was trying to save.
+  useEffect(() => {
+    if (!pendingFriend) return;
+    setSavedTripsOpen(false);
+    setAccountView(user ? 'friends' : 'home');
+    setAccountEntry((n) => n + 1);
+    setAccountOpen(true);
+  }, [pendingFriend, user]); // eslint-disable-line react-hooks/exhaustive-deps
+
   const openAccountAt = (view) => {
     setSavedTripsOpen(false);
     setAccountView(view);
@@ -975,6 +994,7 @@ function TravelApp() {
             key={accountEntry}
             initialView={accountView}
             onViewChange={setAccountView}
+            pendingFriendHandle={pendingFriend}
             onClose={() => setAccountOpen(false)}
             onOpenAuth={() => { setAccountOpen(false); setAuthModalMode('signin'); setAuthModalOpen(true); }}
           />

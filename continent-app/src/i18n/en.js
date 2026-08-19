@@ -2040,6 +2040,8 @@ export const en = {
 
   // friends: the people whose trips you can see (auth/friends.js)
   "friends.title": "Friends",
+  "friends.share": "Share",
+  "friends.inviteText": "Add me on Carta, my handle is @{handle}.",
   "friends.yourHandle": "Your handle",
   "friends.yourHandleHint": "Give this to someone and they can add you.",
   "friends.aboutTitle": "How friends work",

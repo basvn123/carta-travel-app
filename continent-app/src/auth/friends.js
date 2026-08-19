@@ -153,6 +153,46 @@ export async function getFriendTrip(planId) {
   };
 }
 
+/* ---- handing somebody your handle ---- */
+
+const INVITE_PARAM = 'friend';
+
+/**
+ * A link that opens Carta on the friends page with your handle already looked
+ * up. Sending "@bas_v" and hoping somebody types it correctly is a worse
+ * version of the same act, and typing is where handles get lost.
+ *
+ * In the hash, like every other link this app hands out (#trip=, #shared=,
+ * #trail=), so the handle never reaches a server log.
+ */
+export function buildFriendInviteUrl(handle) {
+  if (!handle || typeof window === 'undefined') return null;
+  return `${window.location.origin}${window.location.pathname}#${INVITE_PARAM}=${handle}`;
+}
+
+/** The handle in the current URL, or null. Validated to the same shape the
+ *  database enforces, so a tampered link cannot reach the lookup at all. */
+export function readFriendHandleFromUrl() {
+  if (typeof window === 'undefined') return null;
+  const hash = (window.location.hash || '').replace(/^#/, '');
+  if (!hash.includes(`${INVITE_PARAM}=`)) return null;
+  const handle = new URLSearchParams(hash).get(INVITE_PARAM);
+  return /^[a-z0-9_]{3,24}$/.test(handle || '') ? handle : null;
+}
+
+/** Strips our param without disturbing the rest of the hash or the history. */
+export function stripFriendHandleFromUrl() {
+  if (typeof window === 'undefined') return;
+  const params = new URLSearchParams((window.location.hash || '').replace(/^#/, ''));
+  params.delete(INVITE_PARAM);
+  const rest = params.toString();
+  window.history.replaceState(
+    null,
+    '',
+    `${window.location.pathname}${window.location.search}${rest ? `#${rest}` : ''}`,
+  );
+}
+
 /* ---- who a trip is shown to ---- */
 
 export const VISIBILITIES = ['private', 'friends', 'link'];

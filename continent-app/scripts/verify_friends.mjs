@@ -233,6 +233,18 @@ const run = async () => {
   if (clip !== '@sam_okonkwo') fail(`copying your handle put "${clip}" on the clipboard`);
   else ok('and copies with one tap');
 
+  // Sharing hands over a LINK that opens this page with the handle looked up,
+  // not a string to retype. Headless Chromium has no navigator.share, so the
+  // clipboard fallback is what runs, which is also the desktop path.
+  await page.locator('.frn-me-share').click();
+  await page.waitForTimeout(400);
+  const shared = await page.evaluate(() => navigator.clipboard.readText());
+  if (!/#friend=sam_okonkwo$/.test(shared)) {
+    fail(`sharing your handle produced no invite link: "${shared}"`);
+  } else if (!/@sam_okonkwo/.test(shared)) {
+    fail(`the shared text does not name the handle: "${shared}"`);
+  } else ok('sharing hands over an invite link, not a string to retype');
+
   // The two explanatory paragraphs are folded away until asked for.
   const beforeInfo = await page.locator(ACCOUNT_PANEL).innerText();
   if (/yours alone|Nobody yet/i.test(beforeInfo)) {
@@ -363,6 +375,23 @@ const run = async () => {
   await page.screenshot({ path: `${SHOTS}/friends-trip.png` });
   await ctx.close();
 
+  /* ---- 7b. Opening somebody's invite link ---- */
+  const inviteCtx = await browser.newContext({ viewport: { width: 1360, height: 950 } });
+  await inviteCtx.addInitScript(seedSession(PROJECT_REF, ME));
+  const ip = await inviteCtx.newPage();
+  ip.on('pageerror', (e) => fail(`page error on an invite: ${e.message}`));
+  await stub(ip, state);
+  await ip.goto(`${BASE}/?o=CRL#friend=jonas`);
+  await ip.locator('.frn-find').waitFor({ timeout: 60000 });
+  await ip.waitForTimeout(900);
+  const invited = await ip.locator(ACCOUNT_PANEL).innerText();
+  if (!/Jonas Peeters/.test(invited)) {
+    fail(`an invite link did not look the sender up: ${invited.slice(0, 200)}`);
+  } else ok('an invite link opens the friends page on the sender');
+  if (/#friend=/.test(ip.url())) fail(`the invite handle stayed in the address bar: ${ip.url()}`);
+  else ok('and the handle is stripped from the address bar');
+  await inviteCtx.close();
+
   /* ---- 8a. The header's own Friends door, on a wide screen ---- */
   const deskCtx = await browser.newContext({ viewport: { width: 1360, height: 950 } });
   await deskCtx.addInitScript(seedSession(PROJECT_REF, ME));
@@ -405,6 +434,11 @@ const run = async () => {
   );
   if (overflow <= 1) ok('no sideways scroll at 390px');
   else fail(`page scrolls sideways by ${overflow}px at 390px`);
+
+  // The word, not just the glyph, at the narrowest width this app supports.
+  const mobLabel = await mp.locator('.header-friends-btn').innerText();
+  if (!/Friends/i.test(mobLabel)) fail(`the Friends button is icon-only at 390px: "${mobLabel}"`);
+  else ok('the Friends button keeps its word at 390px');
   await mp.screenshot({ path: `${SHOTS}/friends-mobile.png` });
 
   // The row carrying Passes must survive a full-bleed slide-over: it used to
