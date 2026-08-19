@@ -19410,3 +19410,52 @@ button.ai-sched-main:focus-visible {
   line-height: 1.5;
   color: var(--ink-soft);
 }
+
+/* ── The header stays put while a slide-over is open ───────────────────────
+   Account and My trips are full-bleed on a phone and used to start at top:0,
+   which buried the row carrying Passes. They now begin below it, and the
+   header out-ranks them, so the one control that sells the product is
+   reachable from every screen instead of only from the ones behind a panel.
+   56px is the mobile header row (see .app-header-account). ─────────────── */
+@media (max-width: 768px) {
+  .app-header { z-index: 57; }
+  .account-panel,
+  .saved-trips-panel { top: 56px; }
+}
+
+/* ── Friends: its own door in the top row, beside Passes ────────────────── */
+.header-friends-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 38px;
+  padding: 0 13px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: transparent;
+  font-family: var(--ui);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink-soft);
+  cursor: pointer;
+  white-space: nowrap;
+}
+.header-friends-btn:hover { border-color: var(--ink); color: var(--ink); }
+.header-friends-btn.on {
+  border-color: var(--ink);
+  background: var(--ink);
+  color: var(--paper);
+}
+
+@media (max-width: 768px) {
+  /* Beside the Passes chip, same height, label kept: an icon alone in a row
+     that already carries one would be a guess. */
+  .header-friends-btn { height: 38px; padding: 0 11px; font-size: 12.5px; }
+}
+@media (max-width: 400px) {
+  /* At the narrowest widths Passes and Friends cannot both carry words.
+     Friends keeps the icon; it is the one with a tooltip and a bottom-bar
+     sibling, while Passes has neither. */
+  .header-friends-label { display: none; }
+  .header-friends-btn { padding: 0 9px; }
+}

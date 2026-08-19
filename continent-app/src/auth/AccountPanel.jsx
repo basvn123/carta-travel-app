@@ -145,7 +145,7 @@ function MenuRow({ icon, label, onClick }) {
   );
 }
 
-export function AccountPanel({ onClose, onOpenAuth }) {
+export function AccountPanel({ onClose, onOpenAuth, initialView = 'home', onViewChange }) {
   const {
     user, hasPassword, signOut, updatePassword, reauthenticate,
     updateProfile, sendPasswordReset, deleteAccount, configured,
@@ -153,7 +153,7 @@ export function AccountPanel({ onClose, onOpenAuth }) {
   const { t, lang, setLang, languages } = useI18n();
   const entitlement = useEntitlement();
   const panelRef = useRef(null);
-  const [view, setView] = useState('home'); // 'home' | 'profile' | 'friends' | 'faq' | 'feedback' | 'data'
+  const [view, setView] = useState(initialView); // 'home' | 'profile' | 'friends' | 'faq' | 'feedback' | 'data'
   const [passOpen, setPassOpen] = useState(false);
   const [privacyOpen, setPrivacyOpen] = useState(false);
 
@@ -214,6 +214,11 @@ export function AccountPanel({ onClose, onOpenAuth }) {
       .catch(() => {});
     return () => { live = false; };
   }, [user]);
+
+  // The header's Friends button lights up only while that spoke is showing,
+  // so navigating back to the hub inside the panel unlights it. One effect
+  // rather than a callback on every setView, which would drift.
+  useEffect(() => { onViewChange?.(view); }, [view]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // A subview keeps the hub's scroll position otherwise, and "page two opens
   // halfway down" reads as a rendering bug.
@@ -531,20 +536,6 @@ export function AccountPanel({ onClose, onOpenAuth }) {
               ))}
             </div>
           </div>
-
-          {/* Who you travel with. Account only, so it is simply absent for a
-              guest rather than a door that opens onto a sign-in prompt. */}
-          {user && (
-            <div className="panel-section">
-              <div className="account-menu">
-                <MenuRow
-                  icon={<PersonIcon size={17} />}
-                  label={t('friends.title')}
-                  onClick={() => setView('friends')}
-                />
-              </div>
-            </div>
-          )}
 
           {/* Help, in the order people need it: say something, look something
               up, read the fine print. All three work signed out. */}

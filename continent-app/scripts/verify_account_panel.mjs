@@ -200,12 +200,13 @@ try {
   const mono = await page.locator('.account-hub-avatar').first().innerText();
   if (mono.trim() !== 'SO') fail(`monogram for Sam Okonkwo is "${mono}", expected SO`);
   if (!(await page.locator('.account-invite').count())) fail('the invite banner is missing');
-  // Five rows now: Friends sits with the account's own things, above the four
-  // help rows (feedback, FAQ, privacy, data sources).
+  // Four help rows: feedback, FAQ, privacy, data sources. Friends is NOT among
+  // them; it has its own door in the header (see verify_friends.mjs), because
+  // seeing who you travel with is a place you go, not a setting you change.
   const menuRows = await page.locator('.account-menu-row').count();
-  if (menuRows !== 5) fail(`expected 5 hub menu rows, found ${menuRows}`);
-  if (!await page.locator('.account-menu-row').filter({ hasText: 'Friends' }).count()) {
-    fail('the hub has no Friends row for a signed-in traveller');
+  if (menuRows !== 4) fail(`expected 4 help menu rows, found ${menuRows}`);
+  if (await page.locator('.account-menu-row').filter({ hasText: 'Friends' }).count()) {
+    fail('Friends is back in the account hub, competing with its header door');
   }
   const rowBox = await page.locator('.account-menu-row').first().boundingBox();
   if (!rowBox || rowBox.height < 44) fail(`menu rows are ${rowBox?.height}px tall, under the 44px target`);

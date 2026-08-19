@@ -19,7 +19,9 @@
 //      Remove, which would read as deleting somebody else's trip.
 //   7. Privacy rule 2: a friend's trip names its crew but carries no account
 //      id behind any of them.
-//   8. Mobile width: no sideways scroll.
+//   8. Mobile width: no sideways scroll, the Passes control survives both
+//      slide-overs, opening one closes the other, and the header's own
+//      Friends door lands on the friends spoke.
 //
 // Run from inside continent-app/:  node scripts/verify_friends.mjs
 import { chromium } from 'playwright';
@@ -45,6 +47,11 @@ const ME = {
 const SOFIE = { user_id: '00000000-0000-4000-8000-0000000000a1', handle: 'sofie_v', display_name: 'Sofie Vermeulen', avatar_emoji: null };
 const JONAS = { user_id: '00000000-0000-4000-8000-0000000000a2', handle: 'jonas', display_name: 'Jonas Peeters', avatar_emoji: null };
 const ANA = { user_id: '00000000-0000-4000-8000-0000000000a3', handle: 'ana_r', display_name: 'Ana Rocha', avatar_emoji: null };
+
+// GOTCHA: SavedTripsPanel carries the .account-panel class too (it borrows its
+// z-index), so `.account-panel` matches BOTH slide-overs. Anything asserting
+// about the account panel alone uses ACCOUNT_PANEL below.
+const ACCOUNT_PANEL = '.account-panel:not(.saved-trips-panel)';
 
 const isUp = async () => {
   try { return (await fetch(BASE)).ok; } catch { return false; }
@@ -176,7 +183,7 @@ const run = async () => {
   await guest.goto(`${BASE}/?o=CRL`);
   await guest.locator('.account-avatar-btn').first().click({ timeout: 60000 });
   await guest.locator('.account-panel').waitFor({ timeout: 15000 });
-  const guestText = await guest.locator('.account-panel').innerText();
+  const guestText = await guest.locator(ACCOUNT_PANEL).innerText();
   if (/Friends/i.test(guestText)) fail('a guest is offered a Friends row');
   else ok('a guest is never shown the Friends row');
   await guestCtx.close();
@@ -208,12 +215,10 @@ const run = async () => {
   await stub(page, state);
   await page.goto(`${BASE}/?o=CRL`);
   await page.locator('.account-avatar-btn').first().waitFor({ timeout: 120000 });
-  await page.locator('.account-avatar-btn').first().click();
-  await page.locator('.account-panel').waitFor({ timeout: 15000 });
 
   /* ---- 2. The spoke, sorted by who it is waiting on ---- */
-  const row = page.locator('.account-menu-row, .account-menu button').filter({ hasText: 'Friends' }).first();
-  await row.click({ timeout: 10000 });
+  const row = page.locator('.header-friends-btn');
+  await row.click({ timeout: 15000 });
   await page.locator('.frn-find').waitFor({ timeout: 10000 });
 
   // Your own handle leads the page: adding a friend needs yours before theirs.
@@ -229,7 +234,7 @@ const run = async () => {
   else ok('and copies with one tap');
 
   // The two explanatory paragraphs are folded away until asked for.
-  const beforeInfo = await page.locator('.account-panel').innerText();
+  const beforeInfo = await page.locator(ACCOUNT_PANEL).innerText();
   if (/yours alone|Nobody yet/i.test(beforeInfo)) {
     fail('the explanatory prose is on the page before the info icon is used');
   } else ok('the prose is folded away, not standing on the page');
@@ -244,7 +249,7 @@ const run = async () => {
   // for a person to actually appear before reading the panel, or this races
   // and reports an empty spoke that is merely not loaded yet.
   await page.locator('.frn-row').first().waitFor({ timeout: 15000 });
-  const spoke = await page.locator('.account-panel').innerText();
+  const spoke = await page.locator(ACCOUNT_PANEL).innerText();
   // .section-title is uppercased in CSS and innerText reports what is
   //  rendered, so the headings are matched case-insensitively.
   let spokeOk = true;
@@ -262,7 +267,7 @@ const run = async () => {
   // The spoke is the friends PAGE: the count in its heading, and the trips
   // those friends are showing, on the same screen.
   await page.locator('.frn-trip-row').first().waitFor({ timeout: 10000 });
-  const spokeTrips = await page.locator('.account-panel').innerText();
+  const spokeTrips = await page.locator(ACCOUNT_PANEL).innerText();
   if (!/Two weeks in Portugal/.test(spokeTrips)) fail('the spoke does not list the friend trip');
   else if (!/Sofie Vermeulen/.test(spokeTrips)) fail('the spoke trip does not say whose it is');
   else ok('their trips are on the friends page itself');
@@ -358,6 +363,31 @@ const run = async () => {
   await page.screenshot({ path: `${SHOTS}/friends-trip.png` });
   await ctx.close();
 
+  /* ---- 8a. The header's own Friends door, on a wide screen ---- */
+  const deskCtx = await browser.newContext({ viewport: { width: 1360, height: 950 } });
+  await deskCtx.addInitScript(seedSession(PROJECT_REF, ME));
+  const dp = await deskCtx.newPage();
+  await stub(dp, state);
+  await dp.goto(`${BASE}/?o=CRL`);
+  const friendsBtn = dp.locator('.header-friends-btn');
+  await friendsBtn.waitFor({ timeout: 120000 });
+  if (!/Friends/i.test(await friendsBtn.innerText())) fail('the header Friends button has no label');
+  else ok('the header carries a labelled Friends door');
+  await friendsBtn.click();
+  await dp.locator('.frn-find').waitFor({ timeout: 15000 });
+  ok('it opens straight onto the friends page, not the account hub');
+
+  // Opening My trips must close the account panel, and the other way round.
+  await dp.locator('.header-nav-item').filter({ hasText: /^Saved trips$/ }).first().click();
+  await dp.waitForTimeout(500);
+  if (await dp.locator(ACCOUNT_PANEL).count()) fail('opening My trips left the account panel open');
+  else ok('opening My trips closes the account panel');
+  await dp.locator('.header-friends-btn').click();
+  await dp.waitForTimeout(500);
+  if (await dp.locator('.saved-trips-panel').count()) fail('opening Friends left My trips open');
+  else ok('opening the account side closes My trips');
+  await deskCtx.close();
+
   /* ---- 8. Mobile ---- */
   const mob = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
   await mob.addInitScript(seedSession(PROJECT_REF, ME));
@@ -366,11 +396,8 @@ const run = async () => {
   await mp.goto(`${BASE}/?o=CRL`);
   // The phone header has no avatar (it lives only in the bottom bar), and the
   // desktop one is present but hidden, so it must not be waited on here.
-  const acct = mp.locator('.bottom-nav-item').filter({ hasText: 'Account' }).locator('visible=true').first();
-  await acct.waitFor({ timeout: 120000 });
-  await acct.click();
-  await mp.locator('.account-panel').waitFor({ timeout: 15000 });
-  await mp.locator('.account-menu button, .account-menu-row').filter({ hasText: 'Friends' }).first().click();
+  await mp.locator('.header-friends-btn').waitFor({ timeout: 120000 });
+  await mp.locator('.header-friends-btn').click();
   await mp.locator('.frn-find').waitFor({ timeout: 10000 });
   await mp.waitForTimeout(400);
   const overflow = await mp.evaluate(
@@ -379,6 +406,25 @@ const run = async () => {
   if (overflow <= 1) ok('no sideways scroll at 390px');
   else fail(`page scrolls sideways by ${overflow}px at 390px`);
   await mp.screenshot({ path: `${SHOTS}/friends-mobile.png` });
+
+  // The row carrying Passes must survive a full-bleed slide-over: it used to
+  // start at top:0 and bury the one control that sells the product.
+  const passVisible = async () => mp.locator('.header-pricing-btn').isVisible();
+  if (!await passVisible()) fail('Passes is not visible with the account panel open');
+  else ok('Passes survives the account panel');
+  const headerBox = await mp.locator('.app-header').boundingBox();
+  const panelBox = await mp.locator(ACCOUNT_PANEL).boundingBox();
+  if (panelBox && headerBox && panelBox.y < headerBox.y + headerBox.height - 1) {
+    fail(`the account panel starts at y=${panelBox.y}, over a header ending at ${headerBox.y + headerBox.height}`);
+  } else ok('the account panel begins below the header, not over it');
+
+  await mp.locator('.bottom-nav-item').filter({ hasText: 'My trips' }).locator('visible=true').first().click();
+  await mp.locator('.saved-trips-panel').waitFor({ timeout: 12000 });
+  if (await mp.locator(ACCOUNT_PANEL).count()) fail('My trips left the account panel open on a phone');
+  else ok('on a phone too, one slide-over closes the other');
+  if (!await passVisible()) fail('Passes is not visible with My trips open');
+  else ok('Passes survives My trips as well');
+  await mp.screenshot({ path: `${SHOTS}/friends-mobile-header.png` });
   await mob.close();
 
   await browser.close();

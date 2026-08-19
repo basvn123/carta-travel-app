@@ -1,7 +1,10 @@
 import React from 'react';
 import Logo from './Logo.jsx';
 import { useI18n } from '../i18n/index.jsx';
-import { PersonIcon, CompassIcon, GlobeIcon, RouteIcon, ListDayIcon, BookmarkIcon, TicketIcon } from './Icons.jsx';
+import {
+  PersonIcon, CompassIcon, GlobeIcon, RouteIcon, ListDayIcon, BookmarkIcon,
+  TicketIcon, FriendsIcon,
+} from './Icons.jsx';
 
 const NAV_ITEMS = [
   { key: 'places', labelKey: 'nav.places', Icon: GlobeIcon },
@@ -43,7 +46,7 @@ function AccountButton({ user, onOpenAccount }) {
 // floats over the map itself, level with the Destinations pill (see
 // .map-toolrow in App), where it has room to state the question it is asking.
 export function AppHeader({
-  user, onOpenAccount, onSeePricing,
+  user, onOpenAccount, onSeePricing, onOpenFriends, friendsOpen,
   onBrandClick,
   activeTab, onChangeTab,
   savedOpen, onToggleSaved,
@@ -106,6 +109,21 @@ export function AppHeader({
             <TicketIcon size={14} />
             <span className="header-pricing-label">{t('header.seePricing')}</span>
             <span className="header-pricing-label-short">{t('header.passes')}</span>
+          </button>
+        )}
+        {/* Friends is its own door, not a row buried in the account panel:
+            seeing who you travel with is a place you go, not a setting you
+            change. It lives in this group rather than with the section tabs
+            because those collapse on a phone and this must not. */}
+        {onOpenFriends && user && (
+          <button
+            className={`header-friends-btn${friendsOpen ? ' on' : ''}`}
+            onClick={onOpenFriends}
+            aria-pressed={friendsOpen}
+            title={t('friends.title')}
+          >
+            <FriendsIcon size={15} />
+            <span className="header-friends-label">{t('friends.title')}</span>
           </button>
         )}
         <AccountButton user={user} onOpenAccount={onOpenAccount} />

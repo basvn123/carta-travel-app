@@ -276,6 +276,32 @@ export function PersonIcon({ size = 14, className = '' }) {
   );
 }
 
+/** Two people. Friends has to read differently from Account at a glance, and
+ *  the single figure is already spoken for by the account avatar. Same 1.9
+ *  stroke and 24 grid as the rest, so it sits level with them in a row. */
+export function FriendsIcon({ size = 15, className = '' }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.9"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      role="img"
+      aria-hidden="true"
+    >
+      <circle cx="9" cy="8.5" r="3.4" />
+      <path d="M2.6 19.4c1.1-3.2 3.3-4.9 6.4-4.9s5.3 1.7 6.4 4.9" />
+      <path d="M16.2 5.6a3.4 3.4 0 0 1 0 6.6" />
+      <path d="M17.6 15.1c2.1.6 3.5 2.1 4 4.3" />
+    </svg>
+  );
+}
+
 export function GlobeIcon({ size = 20, className = '' }) {
   return (
     <svg

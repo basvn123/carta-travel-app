@@ -140,6 +140,19 @@ function TravelApp() {
   );
   // The pass picker, opened from the header or the account panel.
   const [passOpen, setPassOpen] = useState(false);
+  // Which spoke the account panel opens on. The header's Friends button is
+  // its own door into the same panel, so it says where to land. The nonce
+  // remounts the panel on every such open: initialView only seeds state, so
+  // without it a second press while the panel already stands open would do
+  // nothing at all.
+  const [accountView, setAccountView] = useState('home');
+  const [accountEntry, setAccountEntry] = useState(0);
+  const openAccountAt = (view) => {
+    setSavedTripsOpen(false);
+    setAccountView(view);
+    setAccountEntry((n) => n + 1);
+    setAccountOpen(true);
+  };
   // Shown before any data/route decisions: sign in, create an account, or
   // continue as a guest. Skipped entirely when accounts aren't configured,
   // once already signed in, or once guest mode has been chosen before.
@@ -555,13 +568,15 @@ function TravelApp() {
       <div className="top-bar" ref={filterBarRef} onClick={(e) => e.stopPropagation()}>
         <AppHeader
           user={user}
-          onOpenAccount={() => setAccountOpen(true)}
+          onOpenAccount={() => openAccountAt('home')}
+          onOpenFriends={() => openAccountAt('friends')}
+          friendsOpen={accountOpen && accountView === 'friends'}
           onSeePricing={() => setPassOpen(true)}
           onBrandClick={() => { setSavedTripsOpen(false); setActiveTab('places'); }}
           activeTab={activeTab}
           onChangeTab={(key) => { setSavedTripsOpen(false); setActiveTab(key); }}
           savedOpen={savedTripsOpen}
-          onToggleSaved={() => setSavedTripsOpen((v) => !v)}
+          onToggleSaved={() => { setAccountOpen(false); setSavedTripsOpen((v) => !v); }}
         >
           {activeTab === 'map' && (
             <FilterBar
@@ -920,7 +935,7 @@ function TravelApp() {
           savedOpen={savedTripsOpen}
           onToggleSaved={() => { setAccountOpen(false); setSavedTripsOpen((v) => !v); }}
           accountOpen={accountOpen}
-          onToggleAccount={() => { setSavedTripsOpen(false); setAccountOpen((v) => !v); }}
+          onToggleAccount={() => (accountOpen ? setAccountOpen(false) : openAccountAt('home'))}
         />
       </div>
 
@@ -957,6 +972,9 @@ function TravelApp() {
       {accountOpen && (
         <div onClick={(e) => e.stopPropagation()}>
           <AccountPanel
+            key={accountEntry}
+            initialView={accountView}
+            onViewChange={setAccountView}
             onClose={() => setAccountOpen(false)}
             onOpenAuth={() => { setAccountOpen(false); setAuthModalMode('signin'); setAuthModalOpen(true); }}
           />
