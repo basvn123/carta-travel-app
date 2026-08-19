@@ -1,0 +1,393 @@
+{
+  "iso2": "PT",
+  "country": "Portugal",
+  "checked_at": "2026-08-17",
+  "beaches": {
+    "wrong": [
+      {
+        "name": "Praia das Maçãs Prehistoric Monument",
+        "class": "other",
+        "why": "Tier 2 rank 31. An archaeological monument, an artificial-cave necropolis near Praia das Macas in Sintra. The actual beach is a separate row 0.36 km away at tier 2 rank 139. A tomb site is ranked above the beach it is named after.",
+        "source_url": "https://en.wikipedia.org/wiki/Praia_das_Ma%C3%A7%C3%A3s_Prehistoric_Monument"
+      },
+      {
+        "name": "Edifício dos Paços do Concelho da Praia da Vitória, Praia da Vitória",
+        "class": "other",
+        "why": "Tier 2 rank 53. The town hall building of Praia da Vitoria on Terceira, joined to pt:Pacos do Concelho de Praia da Vitoria. The town's name contains 'Praia', which is how a municipal office became a beach.",
+        "source_url": "https://pt.wikipedia.org/wiki/Pa%C3%A7os_do_Concelho_de_Praia_da_Vit%C3%B3ria"
+      },
+      {
+        "name": "Forte de Nossa Senhora da Luz (Praia da Vitória)",
+        "class": "other",
+        "why": "Tier 2 rank 180. A coastal fort. Same 'Praia da Vitoria' name-capture as the town hall; 'Forte de Santa Cruz (Praia da Vitória)' at rank 182 is a second fort caught the same way.",
+        "source_url": "https://pt.wikipedia.org/wiki/Praia_da_Vit%C3%B3ria"
+      },
+      {
+        "name": "São Martinho do Porto",
+        "class": "town_or_village",
+        "why": "Tier 2 rank 173. A town in the Alcobaca municipality, not a beach. Its viewpoint is separately listed at rank 184.",
+        "source_url": "https://pt.wikipedia.org/wiki/S%C3%A3o_Martinho_do_Porto"
+      },
+      {
+        "name": "Miradouro da Praia de Sao Martinho do Porto",
+        "class": "viewpoint_not_summit",
+        "why": "Tier 2 rank 184. A signposted miradouro overlooking the bay, 0.16 km from the town row. Same family as Switzerland's 'View to Aletschgletscher'.",
+        "source_url": "https://pt.wikipedia.org/wiki/S%C3%A3o_Martinho_do_Porto"
+      },
+      {
+        "name": "Water Sports St Eulalia Beach",
+        "class": "hospitality",
+        "why": "Tier 2 rank 56. A watersports rental operator on Praia Santa Eulalia, Albufeira, which is itself already tier 2 rank 17 only 0.43 km away.",
+        "source_url": "https://www.openstreetmap.org/#map=17/37.09142/-8.21529"
+      },
+      {
+        "name": "Evaristo's Beach",
+        "class": "hospitality",
+        "why": "Tier 2 rank 178. Evaristo is a beach restaurant and club west of Albufeira; the row is its venue, 0.41 km from Praia do Castelo at rank 49. Same family as the 52 hospitality rows already known ('Vila BeachBar', 'Kubo Bar').",
+        "source_url": "https://www.openstreetmap.org/#map=17/37.07418/-8.30299"
+      },
+      {
+        "name": "Sintra - Praias",
+        "class": "park_or_area",
+        "why": "Tier 2 rank 74. A collective label meaning 'Sintra - beaches', not a single beach. It sits 0.20 km from Praia Grande do Rodizio at rank 32.",
+        "source_url": "https://www.openstreetmap.org/#map=15/38.8147/-9.4765"
+      },
+      {
+        "name": "Praia fluvial de Areeiros",
+        "class": "wrong_country",
+        "why": "Tier 2 rank 95. The coordinate 42.0537/-8.62017 reverse-geocodes to 'Tui, O Baixo Mino, Pontevedra, Galicia, Espana'. It is a Galician river beach on the Spanish bank of the Minho, filed under Portugal, and it is a river beach rather than a sea beach.",
+        "source_url": "https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=42.0537&lon=-8.62017"
+      },
+      {
+        "name": "Baiona, España",
+        "class": "town_or_village",
+        "why": "Tier 2 rank 94. The name is a Spanish town plus the word Espana. The point 42.0503/-8.62151 actually reverse-geocodes to 'Ganfei, Valenca, Viana do Castelo, Portugal', and the real Baiona is 30 km away at roughly 42.117/-8.851. So it is a mislabelled user POI on the Minho, not a beach and not Baiona.",
+        "source_url": "https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=42.0503&lon=-8.62151"
+      },
+      {
+        "name": "Felisia Beach, Algarve Portugal",
+        "class": "duplicate_of:Falesia Beach",
+        "why": "Tier 2 rank 130. A misspelt user string for Praia da Falesia, which is tier 1 rank 5. 'Praia Falesla. Olhos De Agua' at rank 151 is a second misspelt copy 0.30 km away. Both carry the region name appended, the signature of a review-site POI.",
+        "source_url": "https://en.wikipedia.org/wiki/Fal%C3%A9sia_Beach"
+      },
+      {
+        "name": "Praia Da Oura (Oura Beach)",
+        "class": "duplicate_of:Oura Beach",
+        "why": "Tier 2 rank 136, 0.25 km from tier 1 rank 10. 'Praia da oura rua' at rank 137 is a third copy whose name literally ends in the word 'street'.",
+        "source_url": "https://en.wikipedia.org/wiki/Praia_da_Oura"
+      },
+      {
+        "name": "St Eulalia Beach",
+        "class": "duplicate_of:Praia Santa Eulália",
+        "why": "Tier 2 rank 59, with 'Praia Sta. Eulalia' at rank 152 only 0.10 km from the tier 2 rank 17 row. Three spellings of one Albufeira beach in one language-mixed set.",
+        "source_url": "https://www.openstreetmap.org/#map=17/37.09436/-8.21672"
+      },
+      {
+        "name": "Cabanas Beach",
+        "class": "duplicate_of:Praia de Cabanas de Tavira",
+        "why": "Tier 2 rank 116. Four rows within 100 m for the same Tavira sandbar beach: 'Cabanas Beach' (116), 'Praia de Cabanas de Tavira' (121), 'Praia da Abóbora' (133) and 'Praia de Cabana' (140). Bulgaria's four-name Nesebar problem, repeated.",
+        "source_url": "https://www.openstreetmap.org/#map=16/37.13279/-7.59154"
+      },
+      {
+        "name": "Playa De Comporta",
+        "class": "other",
+        "why": "Tier 2 rank 118. Praia da Comporta is a real and well-known beach, but the row carries the Spanish-language spelling 'Playa', which marks it as an unvetted user string rather than a curated name. Cosmetic but it will render on a Portuguese country card.",
+        "source_url": "https://www.openstreetmap.org/#map=15/38.39381/-8.81035"
+      },
+      {
+        "name": "California beach",
+        "class": "duplicate_of:Califórnia Beach -Sesimbra",
+        "why": "Tier 2 rank 126, 0.10 km from rank 162. Two spellings of the same Sesimbra beach, one anglicised and one with a stray leading hyphen.",
+        "source_url": "https://www.openstreetmap.org/#map=17/38.44166/-9.09552"
+      },
+      {
+        "name": "Tavira island beach",
+        "class": "duplicate_of:Praia da Ilha de Tavira",
+        "why": "Tier 2 rank 119, 0.28 km from rank 33. Same barrier-island beach under an English translation.",
+        "source_url": "https://www.openstreetmap.org/#map=15/37.10833/-7.62361"
+      }
+    ],
+    "missing": [
+      {
+        "name": "Praia de Benagil",
+        "qid": "Q2895643",
+        "lat": 37.0875,
+        "lon": -8.42583,
+        "why": "The beach and sea cave (Algar de Benagil) that is the single most reproduced image of the Algarve. Absent from all 347 PT rows, in any tier, although Praia da Marinha 1.5 km away is tier 1 rank 2 and Praia do Carvalho 1 km away is tier 2 rank 54.",
+        "source_url": "https://pt.wikipedia.org/wiki/Praia_de_Benagil",
+        "verified": true
+      },
+      {
+        "name": "Praia da Rocha",
+        "qid": "Q1752037",
+        "lat": 37.11667,
+        "lon": -8.53333,
+        "why": "Portimao's great cliff-backed beach, the Algarve's best known resort beach and one of the longest. Absent entirely, while three Albufeira beaches occupy tier 1.",
+        "source_url": "https://pt.wikipedia.org/wiki/Praia_da_Rocha",
+        "verified": true
+      },
+      {
+        "name": "Praia do Amado",
+        "qid": "Q10352935",
+        "lat": 37.16654,
+        "lon": -8.90455,
+        "why": "The main surf beach of the Costa Vicentina inside the Southwest Alentejo and Vicentine Coast natural park, a fixture of Portuguese surf tourism. Absent entirely.",
+        "source_url": "https://pt.wikipedia.org/wiki/Praia_do_Amado",
+        "verified": true
+      },
+      {
+        "name": "Praia do Meco",
+        "qid": "Q10353038",
+        "lat": 38.48917,
+        "lon": -9.18372,
+        "why": "The long Atlantic beach south of Lisbon on the Costa da Caparica coast, Portugal's best known naturist-tolerant beach and a major Lisbon day trip. Absent entirely.",
+        "source_url": "https://pt.wikipedia.org/wiki/Praia_do_Meco",
+        "verified": true
+      },
+      {
+        "name": "Ilha da Barreta (Ilha Deserta)",
+        "qid": "Q4863401",
+        "lat": 36.9611,
+        "lon": -7.8889,
+        "why": "The uninhabited barrier island in the Ria Formosa natural park and the southernmost point of mainland Portugal, reached only by boat from Faro. The defining eastern-Algarve beach experience and absent entirely.",
+        "source_url": "https://pt.wikipedia.org/wiki/Ilha_da_Barreta",
+        "verified": true
+      },
+      {
+        "name": "Praia do Camilo",
+        "qid": "Q10352972",
+        "lat": 37.08778,
+        "lon": -8.66866,
+        "why": "Not absent but badly buried at tier 2 rank 75. The wooden-stair cove beside Ponta da Piedade in Lagos is one of the two or three most photographed beaches in Portugal and belongs in tier 1. Note its water class in the wire is only 'Sufficient', which may be what pushed it down.",
+        "source_url": "https://pt.wikipedia.org/wiki/Praia_do_Camilo",
+        "verified": true
+      },
+      {
+        "name": "Praia da Ursa",
+        "qid": "Q10352678",
+        "lat": 38.79015,
+        "lon": -9.4924,
+        "why": "Present only as 'Ursa Beach' at tier 2 rank 175. The sea-stack beach below Cabo da Roca is the signature wild beach of the Sintra coast and outranks several Albufeira resort strips currently in tier 1.",
+        "source_url": "https://pt.wikipedia.org/wiki/Praia_da_Ursa",
+        "verified": true
+      },
+      {
+        "name": "Praia de Odeceixe",
+        "qid": "Q7237779",
+        "lat": 37.44222,
+        "lon": -8.79778,
+        "why": "Present as 'Praia de Odeceixe-Mar' at tier 2 rank 23. The river-mouth beach on the Alentejo/Algarve border is a national favourite and a defensible tier 1 entry; the -Mar suffix should also be normalised.",
+        "source_url": "https://pt.wikipedia.org/wiki/Praia_de_Odeceixe",
+        "verified": true
+      },
+      {
+        "name": "Porto Santo beach",
+        "qid": null,
+        "lat": null,
+        "lon": null,
+        "why": "The nine-kilometre golden beach that is the entire reason Porto Santo (island Q27320, 33.06194/-16.35639) is a destination. It is in the wire at tier 2 rank 188, which is far too low for one of the best known beaches in the Portuguese Atlantic. I could not confirm a QID for the beach as distinct from the island, so no coordinate is asserted.",
+        "source_url": "https://www.wikidata.org/wiki/Q27320",
+        "verified": false
+      },
+      {
+        "name": "Praia Dona Ana (Lagos)",
+        "qid": null,
+        "lat": null,
+        "lon": null,
+        "why": "The postcard cove of Lagos, alongside Praia do Camilo. No Portuguese or English Wikipedia article and no QID confirmed in this pass, so coordinates are deliberately not asserted.",
+        "source_url": "https://pt.wikipedia.org/w/index.php?search=Praia+Dona+Ana",
+        "verified": false
+      },
+      {
+        "name": "Praia da Comporta",
+        "qid": null,
+        "lat": null,
+        "lon": null,
+        "why": "The Alentejo dune beach that anchors the Comporta/Melides coast. Present in the wire only as the Spanish-spelled 'Playa De Comporta' at tier 2 rank 118. No QID confirmed in this pass.",
+        "source_url": "https://pt.wikipedia.org/w/index.php?search=Praia+da+Comporta",
+        "verified": false
+      }
+    ],
+    "order": [
+      "Praia de Albarquel at rank 4 is not defensible. It is a small, sheltered, largely urban beach on the Sado estuary at Setubal, backed by a park and the N10. Fourth in the whole of Portugal, above every Lagos beach, above Benagil and above Praia da Ursa, is a ranking artefact.",
+      "Oura Beach at rank 10 is a resort strip immediately behind the Albufeira nightlife quarter. Real, but not a national top ten beach on any Portuguese list.",
+      "Albufeira supplies three of the twelve tier 1 beaches (rank 5 Falesia is next door, rank 10 Oura, rank 12 Sao Rafael) and about thirty tier 2 rows. Lagos and the Ponta da Piedade coast, arguably the most photographed shoreline in the country, supply zero tier 1 entries. There is no per-municipality cap.",
+      "No Azores beach appears in tier 1 at all, although the file holds nine Azores beach rows. Madeira gets two tier 1 slots, which is fair.",
+      "Praia do Guincho at rank 1 and Praia da Marinha at rank 2 are both correct and correctly placed. Praia do Norte at rank 3 is defensible on the strength of the Nazare big-wave season, though the name collides with two other 'Praia do Norte' rows in the same file (Ericeira and Faial).",
+      "Below roughly rank 110 the beach list degrades into user POIs, forts, town halls, viewpoints and businesses. Ranks 130 to 190 in particular should not ship without a filter pass."
+    ]
+  },
+  "mountains": {
+    "wrong": [
+      {
+        "name": "Monte Aloia",
+        "class": "wrong_country",
+        "why": "Tier 1 rank 7. This mountain is in SPAIN. English Wikipedia states it is in Galicia, municipality of Tui, and gives 42.079417/-8.6703167, which matches the row's 42.0794/-8.67032 exactly. Nominatim reverse on that coordinate returns 'Tui, O Baixo Mino, Pontevedra, Galicia, Espana'. The row also carries designation 'national_park', which is wrong twice over: Monte Aloia was declared a parque natural in 1978, not a national park. Portugal's seventh-ranked mountain is Spanish.",
+        "source_url": "https://en.wikipedia.org/wiki/Monte_Aloia"
+      },
+      {
+        "name": "Estrela",
+        "class": "other",
+        "why": "Tier 1 rank 9. The coordinate 40.32188/-7.61293 is the Torre summit (Q2746237 sits at 40.32187/-7.61297), so the location is right, but the name is truncated to 'Estrela', the Wikipedia link is en:Serra da Estrela cheese, and the card image is a photograph of a wheel of cheese (Queijo_Serra_da_Estrela.jpg). Portugal's highest mainland mountain renders as a dairy product. This is the second worst entry in the country after Monte Aloia.",
+        "source_url": "https://pt.wikipedia.org/wiki/Torre_(Serra_da_Estrela)"
+      },
+      {
+        "name": "Paul da Serra",
+        "class": "park_or_area",
+        "why": "Tier 1 rank 3. Wikipedia describes it as 'the largest and most extensive plateau of Madeira, at about 24 km2, with an altitude averaging about 1,500 m'. Its own high point is a separate peak, Pico do Paul, at 1,640 m. A 24 square kilometre moorland plateau is an area, not a summit.",
+        "source_url": "https://en.wikipedia.org/wiki/Paul_da_Serra"
+      },
+      {
+        "name": "Achada do Teixeira",
+        "class": "viewpoint_not_summit",
+        "why": "Tier 1 rank 5. The road-end plateau and car park that serves as the northern trailhead for the Pico Ruivo walk, known for the 'Homem em Pe' basalt rock. Wikipedia calls it a settlement of the parish of Santana. It is a trailhead and viewpoint, not one of Portugal's five best mountains.",
+        "source_url": "https://en.wikipedia.org/wiki/Achada_do_Teixeira"
+      },
+      {
+        "name": "Arrábida Mountain",
+        "class": "park_or_area",
+        "why": "Tier 1 rank 10. Joined to en:Arrabida Natural Park. The Serra da Arrabida is a coastal range and a protected park, not a named summit; its actual high point is Formosinho.",
+        "source_url": "https://en.wikipedia.org/wiki/Arr%C3%A1bida_Natural_Park"
+      },
+      {
+        "name": "Buçaco",
+        "class": "park_or_area",
+        "why": "Tier 1 rank 12. The Mata Nacional do Bucaco is a walled Carmelite forest with a palace hotel on a low serra near Luso. It is a forest and heritage estate, not a mountain, and it is Portugal's twelfth-ranked peak while Peneda-Geres has none.",
+        "source_url": "https://en.wikipedia.org/wiki/Serra_do_Bu%C3%A7aco"
+      },
+      {
+        "name": "Aloia Mountain",
+        "class": "duplicate_of:Monte Aloia",
+        "why": "Tier 2 rank 53. A second row for the same Galician mountain at 42.08187/-8.68083, also in Spain, also mis-designated 'national_park'. The same wrong-country feature is in the Portuguese file twice.",
+        "source_url": "https://en.wikipedia.org/wiki/Monte_Aloia"
+      },
+      {
+        "name": "Pelourinho de Aguada de Cima",
+        "class": "other",
+        "why": "Tier 2 rank 54. A pelourinho is a stone pillory column, a listed civic monument in a village square near Aveiro. It has a Wikipedia article and therefore scored, and it is now ranked as a Portuguese mountain.",
+        "source_url": "https://pt.wikipedia.org/wiki/Pelourinho_de_Aguada_de_Cima"
+      },
+      {
+        "name": "Pico Island",
+        "class": "island",
+        "why": "Tier 2 rank 43. The island of Pico itself, not a summit. Its mountain is already tier 1 rank 6 as 'Mount Pico'.",
+        "source_url": "https://en.wikipedia.org/wiki/Pico_Island"
+      },
+      {
+        "name": "Ilhéu de Cima",
+        "class": "island",
+        "why": "Tier 2 rank 16. An islet off Porto Santo carrying a lighthouse. An island, ranked sixteenth among Portugal's mountains.",
+        "source_url": "https://en.wikipedia.org/wiki/Ilh%C3%A9u_de_Cima"
+      },
+      {
+        "name": "Farilhão Grande",
+        "class": "island",
+        "why": "Tier 2 rank 64. One of the Farilhoes islets in the Berlengas archipelago, a nature reserve with no public landing. 'Ilha Velha' at rank 65 is a second Berlengas islet in the same block.",
+        "source_url": "https://pt.wikipedia.org/wiki/Berlengas"
+      },
+      {
+        "name": "Pico do Arieiro",
+        "class": "duplicate_of:Pico do Areeiro",
+        "why": "Tier 2 rank 44, 0.01 km from tier 1 rank 2. The two accepted Portuguese spellings of the same Madeiran summit produced two rows, one with a Wikipedia link and one without.",
+        "source_url": "https://en.wikipedia.org/wiki/Pico_do_Areeiro"
+      },
+      {
+        "name": "Reserva Natural da Montanha do Pico",
+        "class": "duplicate_of:Mount Pico",
+        "why": "Tier 2 rank 107, 0.30 km from tier 1 rank 6. A protected-area designation for the same volcano. 'Montanha do Pico; Prainha e Caveiro - Ilha do Pico' at rank 32 is a third row, and its semicolon-joined name is a Natura 2000 site string rather than a place name.",
+        "source_url": "https://en.wikipedia.org/wiki/Mount_Pico"
+      },
+      {
+        "name": "Pico da Vara / Ribeira do Guilherme - Ilha de S. Miguel",
+        "class": "park_or_area",
+        "why": "Tier 2 rank 56. A Natura 2000 special protection area name, complete with the slash and the island suffix, ranked as a mountain. Its coordinate 37.8/-25.25 is a rounded polygon centroid, not a summit.",
+        "source_url": "https://en.wikipedia.org/wiki/Pico_da_Vara"
+      },
+      {
+        "name": "Pico da Esperança e Planalto Central",
+        "class": "duplicate_of:Pico da Esperança",
+        "why": "Tier 2 rank 35, 0.36 km from rank 15. Another protected-area name ('and Central Plateau') duplicating the summit it contains.",
+        "source_url": "https://en.wikipedia.org/wiki/Pico_da_Esperan%C3%A7a"
+      },
+      {
+        "name": "Barquinha",
+        "class": "town_or_village",
+        "why": "Tier 2 rank 22, and the head of a block of fifteen rows that all share the identical fallback score 0.859 and all have wikipedia null: Barquinha (22), Cabeço de Alcainça (23), Casal de Loivos (26), Colmeal (27), Ervedosa (28), Estorãos (29), Granado (30), Monte da caparica (33), Pereiro (34), Quinta Nova (36), Relva de Tábuas (37), Santiago (38), São Mamede (39), São Salvador (40), Senhora do Castelo (41), Sobral (42). These are freguesia, hamlet and quinta names, not mountains. Barquinha is Vila Nova da Barquinha, a town on the Tagus; Monte da Caparica is a town in Almada; Casal de Loivos is a Douro hamlet.",
+        "source_url": "https://pt.wikipedia.org/wiki/Vila_Nova_da_Barquinha"
+      },
+      {
+        "name": "Monsanto",
+        "class": "park_or_area",
+        "why": "Tier 2 rank 31, in the same 0.859 block. The coordinate 38.73397/-9.18964 is the Parque Florestal de Monsanto, Lisbon's municipal forest park, not a mountain. The name also collides with the historic hill village of Monsanto in Idanha-a-Nova, so the row is ambiguous as well as wrong.",
+        "source_url": "https://pt.wikipedia.org/wiki/Parque_Florestal_de_Monsanto"
+      }
+    ],
+    "missing": [
+      {
+        "name": "Torre (Serra da Estrela)",
+        "qid": "Q2746237",
+        "lat": 40.32187,
+        "lon": -7.61297,
+        "why": "The highest point of mainland Portugal at 1,993 m, the country's only ski area and its most visited mountain. It is at the right coordinate in the wire but under the name 'Estrela', linked to a cheese article and illustrated with a photograph of cheese, so it is effectively missing as a mountain. Renaming this one row to Torre and re-joining it to Q2746237 fixes Portugal's biggest mainland gap.",
+        "source_url": "https://pt.wikipedia.org/wiki/Torre_(Serra_da_Estrela)",
+        "verified": true
+      },
+      {
+        "name": "Peneda-Gerês National Park",
+        "qid": "Q1473702",
+        "lat": 41.73,
+        "lon": -8.16,
+        "why": "Portugal's only national park, and the country's defining mountain landscape (Serra da Peneda, Serra do Geres, Serra Amarela, Serra do Soajo). Not one feature from it appears anywhere in the 347-row PT file: searches for Peneda, Geres, Soajo, Amarela and Nevosa all return nothing. I could not confirm a QID for the Nevosa summit itself, so only the park is asserted here.",
+        "source_url": "https://www.wikidata.org/wiki/Q1473702",
+        "verified": true
+      },
+      {
+        "name": "Serra do Marão",
+        "qid": "Q976135",
+        "lat": 41.26722,
+        "lon": -7.8972,
+        "why": "The range that separates the Douro from the coast, rising to 1,415 m, and one of the best known mountain names in northern Portugal. Absent from every tier while sixteen village names occupy tier 2.",
+        "source_url": "https://www.wikidata.org/wiki/Q976135",
+        "verified": true
+      },
+      {
+        "name": "Cabo Girão",
+        "qid": "Q856866",
+        "lat": 32.66,
+        "lon": -17.01,
+        "why": "Madeira's 580 m sea cliff with the glass skywalk, among the most visited sights on the island and one of the highest sea cliffs in Europe. Madeira supplies five of the twelve tier 1 mountains and none of them is this.",
+        "source_url": "https://www.wikidata.org/wiki/Q856866",
+        "verified": true
+      },
+      {
+        "name": "Fóia",
+        "qid": "Q913368",
+        "lat": 37.31556,
+        "lon": -8.59417,
+        "why": "The highest point of the Algarve at 902 m, in the Serra de Monchique, and the only mountain most Algarve visitors will ever drive up. Present at tier 2 rank 13, one place below the tier 1 cut and below a plateau, a trailhead and a Spanish mountain. It belongs in tier 1.",
+        "source_url": "https://www.wikidata.org/wiki/Q913368",
+        "verified": true
+      },
+      {
+        "name": "Serra do Gerês",
+        "qid": "Q3111438",
+        "lat": null,
+        "lon": null,
+        "why": "The specific range inside Peneda-Geres, the one the Portuguese name when they say 'the mountains'. The Wikidata item exists but returned no P625 coordinate in this pass, so no coordinate is asserted.",
+        "source_url": "https://www.wikidata.org/wiki/Q3111438",
+        "verified": false
+      }
+    ],
+    "order": [
+      "Mount Pico is Portugal's highest mountain at 2,351 m, an active stratovolcano climbed by permit, and the emblem of the Azores. It sits at rank 6, below a 24 km2 plateau (Paul da Serra, rank 3), a trailhead car park (Achada do Teixeira, rank 5) and Madeira's second and third peaks. It should be rank 1 or rank 2.",
+      "Five of the twelve tier 1 mountains are inside a 4 km radius on Madeira: Pico Ruivo (1), Pico do Areeiro (2), Pico das Torres (4), Achada do Teixeira (5), plus Paul da Serra (3) a little west. Once Monte Aloia is removed for being Spanish, mainland Portugal is left with three tier 1 mountains, one of which is a cheese.",
+      "Fóia (rank 13) and the Serra da Estrela cantaros, Cântaro Gordo (24) and Cântaro Raso (25), rank below sixteen village and quinta names in the flat 0.859 score bucket. Any tie-break that puts an unnamed hamlet above the highest point of the Algarve is broken.",
+      "Pico Alto on Santa Maria (rank 11, 587 m) and Morro Alto on Flores (rank 8, 911 m) are the high points of two of the smallest Azorean islands. Listing them would be reasonable under an explicit regional-spread rule, but there is no such rule, because Geres and Marao are absent altogether.",
+      "Pico Ruivo at rank 1 and Pico do Areeiro at rank 2 are individually correct choices. The list's problem is not its head, it is that the head is all one island.",
+      "The 0.859 score plateau (ranks 22 to 42) and the 0.825 plateau (ranks 47 to 52) show the scorer running out of signal and falling back to a constant. Everything in a constant-score band should be treated as unranked, not as tier 2."
+    ]
+  },
+  "counts_verdict": "Twelve tier 1 beaches and twelve tier 1 mountains is about right for Portugal's size, unlike Spain where twelve is far too few. The problem is the split, not the total. On mountains, Madeira takes five of twelve tier 1 slots and the Azores three, leaving four for mainland Portugal, and one of those four (Monte Aloia) is in Spain and appears twice in the file. So mainland Portugal, which holds Serra da Estrela, Peneda-Geres, Marao, Montemuro, Lousa, Aire e Candeeiros and Sao Mamede, gets three genuine tier 1 mountains, one of which renders as cheese. On beaches, twelve is a fair count but Albufeira alone takes three slots while Lagos takes none and the Azores take none. The fix is a per-region quota (mainland north, mainland centre, Lisbon coast, Alentejo, Algarve, Madeira, Azores) rather than a bigger tier 1.",
+  "top_pick_verdict": "Both top picks are acceptable, which is not true of Spain. top_beach 'Praia do Guincho' is a real, famous, EEA-Excellent Atlantic beach inside the Sintra-Cascais natural park and it makes a strong country card. Praia da Marinha, already ranked 2, is the more universally recognised Portuguese beach image and would be the safer choice if the card has to carry one picture. top_mountain 'Pico Ruivo' is an honest pick: Madeira's highest peak at 1,862 m and the destination of the country's most walked mountain trail. The stronger claim belongs to Ponta do Pico (Q928681, 38.47/-28.40) as Portugal's actual highest mountain, but Pico Ruivo is not wrong and its image is real. Neither top pick needs to be rejected; both tier 1 lists underneath them do need work.",
+  "notes": "Systemic issues found in PT, in priority order. (1) Cross-border bleed: Monte Aloia appears twice in the Portuguese mountain file, once in tier 1, and both rows are in Galicia, Spain, confirmed by Wikipedia and by Nominatim reverse geocoding. A third row, 'Praia fluvial de Areeiros' at beach rank 95, reverse-geocodes to Tui, Spain. A fourth, 'Baiona, Espana' at beach rank 94, is in Portugal but named for a Spanish town. Every one of these is on the Minho, so the country assignment near that border is unreliable and should be re-derived from a polygon test rather than a nearest-destination join. (2) Wikipedia mis-joins produce the worst-looking rows: a cheese article on the country's highest mainland mountain, a town hall, two forts, a pillory and a prehistoric tomb. Validating the linked item's Wikidata P31 against an allowed class list would remove all of them. (3) Constant-score fallback bands: mountain ranks 22-42 all score exactly 0.859 with wikipedia null, and are almost entirely freguesia and hamlet names; ranks 47-52 all score 0.825. These bands carry no ranking information and should not be exposed as tier 2. (4) Protected-area names are leaking in as features: 'Montanha do Pico; Prainha e Caveiro - Ilha do Pico', 'Pico da Vara / Ribeira do Guilherme - Ilha de S. Miguel', 'Reserva Natural da Montanha do Pico', 'Pico da Esperanca e Planalto Central'. Natura 2000 strings are recognisable by their semicolons, slashes and island suffixes. (5) Spelling-variant duplicates that the deduper missed because of accents and language: Areeiro/Arieiro, Falesia/Felisia/Falesla, Santa Eulalia/Sta. Eulalia/St Eulalia, four rows for the Cabanas de Tavira sandbar. (6) Madeira and the Azores are over-weighted relative to the mainland on mountains and under-weighted on beaches, in both cases because the ranking has no regional quota."
+}

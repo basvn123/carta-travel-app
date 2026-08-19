@@ -1,0 +1,328 @@
+{
+  "iso2": "AL",
+  "country": "Albania",
+  "checked_at": "2026-08-17",
+  "beaches": {
+    "wrong": [
+      {
+        "name": "Palase Beach",
+        "class": "other",
+        "why": "Tier 1 rank 1 and the country's top_beach, but the coordinate 40.1650,19.6247 reverse-geocodes to a village road (Rruga Shen Thanasi) in Palase/Kondaqi, not to a shoreline. The real Palase beach is 3.1 km west, which is where the tier 2 entry 'Palase Beach, Green Coast' (40.1658,19.5881) sits. One of the two is a phantom and the phantom is the one on the country card.",
+        "source_url": "https://nominatim.openstreetmap.org/reverse?format=jsonv2&zoom=16&lat=40.1650&lon=19.6247"
+      },
+      {
+        "name": "Himare, Albania",
+        "class": "town_or_village",
+        "why": "This is the town of Himare (40.1010,19.7457 is the town centre), not a beach. Himare's beaches are Spile, Potami and Livadhi, which are listed separately.",
+        "source_url": "https://en.wikipedia.org/wiki/Himar%C3%AB"
+      },
+      {
+        "name": "Ksamil",
+        "class": "town_or_village",
+        "why": "Ksamil is a village (Wikidata Q1790776, 39.7667,20.0000). The row is the settlement name used as a beach, and its coordinate collides with the 'Lori Beach' and 'Paradise Beach' rows 30 m away.",
+        "source_url": "https://www.wikidata.org/wiki/Q1790776"
+      },
+      {
+        "name": "Akoli beach",
+        "class": "wrong_country",
+        "why": "Tier 1 rank 13. Coordinate 39.7770,19.9536 reverse-geocodes to Agios Stefanos, Municipality of North Corfu, Greece. It is across the Corfu channel from Ksamil and is not in Albania.",
+        "source_url": "https://nominatim.openstreetmap.org/reverse?format=jsonv2&zoom=14&lat=39.7770&lon=19.9536"
+      },
+      {
+        "name": "Avlaki Beach",
+        "class": "wrong_country",
+        "why": "Coordinate 39.7795,19.9418 reverse-geocodes to Agios Stefanos, North Corfu, Greece. Avlaki is a well-known Corfu beach near Kassiopi, harvested into the Albanian file because it is only 5.6 km from Ksamil.",
+        "source_url": "https://nominatim.openstreetmap.org/reverse?format=jsonv2&zoom=14&lat=39.7795&lon=19.9418"
+      },
+      {
+        "name": "Barbarian beach",
+        "class": "wrong_country",
+        "why": "Coordinate 39.7851,19.9451 reverse-geocodes to Agios Stefanos, North Corfu, Greece.",
+        "source_url": "https://nominatim.openstreetmap.org/reverse?format=jsonv2&zoom=14&lat=39.7851&lon=19.9451"
+      },
+      {
+        "name": "Hidden Beach",
+        "class": "wrong_country",
+        "why": "Coordinate 39.7763,19.9541 reverse-geocodes to Agios Stefanos, North Corfu, Greece. Same Corfu cluster as Akoli, Avlaki and Barbarian.",
+        "source_url": "https://nominatim.openstreetmap.org/reverse?format=jsonv2&zoom=14&lat=39.7763&lon=19.9541"
+      },
+      {
+        "name": "Stela beach",
+        "class": "hospitality",
+        "why": "Tier 1 rank 9. The feature at 39.7742,20.0020 is Stela Beach Restaurant, OSM way 438521952, amenity=restaurant. It is a restaurant terrace on the Ksamil strand, not a beach.",
+        "source_url": "https://www.openstreetmap.org/way/438521952"
+      },
+      {
+        "name": "Abiori Beach",
+        "class": "hospitality",
+        "why": "Tier 1 rank 11. Matches Restorant Piceri Abiori, OSM way 438521959, amenity=restaurant, on the Ksamil strand.",
+        "source_url": "https://www.openstreetmap.org/way/438521959"
+      },
+      {
+        "name": "Afa Beach",
+        "class": "hospitality",
+        "why": "Tier 1 rank 12. Named after Afa Hotel (OSM node 6632162413, tourism=hotel) and its coordinate 39.7729,20.0022 is the same point as the 'King beach' row 20 m away.",
+        "source_url": "https://www.openstreetmap.org/node/6632162413"
+      },
+      {
+        "name": "Korali Beach Ksamil",
+        "class": "hospitality",
+        "why": "Named after Bar Restaurant Korali, OSM way 438521956, amenity=restaurant.",
+        "source_url": "https://www.openstreetmap.org/way/438521956"
+      },
+      {
+        "name": "Castle Beach",
+        "class": "hospitality",
+        "why": "OSM way 676538408 is tagged natural=beach but access=customers, supervised=yes, opening_hours=Mo-Su 07:00-22:00, and it is the private beach of Hotel Castle (OSM way 290555525, tourism=hotel, hotelcastle.al). A paying hotel concession, not a public beach.",
+        "source_url": "https://www.openstreetmap.org/way/676538408"
+      },
+      {
+        "name": "Ksamil, Saranda, Albania, Castel Beach",
+        "class": "duplicate_of:Castle Beach",
+        "why": "39.7677,19.9985 is 35 m from the 'Castle Beach' row at 39.7680,19.9985. Same Hotel Castle concession under a second, machine-generated name string.",
+        "source_url": "https://www.openstreetmap.org/way/676538408"
+      },
+      {
+        "name": "King beach",
+        "class": "duplicate_of:Ksamil",
+        "why": "OSM way 676541761, natural=beach but access=customers with opening hours: one fenced concession on the single continuous Ksamil strand, which the file already lists as 'Ksamil'.",
+        "source_url": "https://www.openstreetmap.org/way/676541761"
+      },
+      {
+        "name": "Coco Beach",
+        "class": "duplicate_of:Ksamil",
+        "why": "OSM way 676554540, natural=beach with access=customers. Another concession segment of the same Ksamil strand, 39.7759,20.0012.",
+        "source_url": "https://www.openstreetmap.org/way/676554540"
+      },
+      {
+        "name": "Lori Beach",
+        "class": "duplicate_of:Ksamil",
+        "why": "OSM way 436076767, natural=beach, access=customers, attached to Lori Beach Bar Restaurant (node 6642768485). Coordinate 39.7663,19.9945 is identical to the 'Ksamil' row.",
+        "source_url": "https://www.openstreetmap.org/way/436076767"
+      },
+      {
+        "name": "Paradise Beach",
+        "class": "duplicate_of:Ksamil",
+        "why": "39.7664,19.9953 is within 70 m of the 'Ksamil' and 'Lori Beach' rows. Same stretch of sand under a third commercial name.",
+        "source_url": "https://www.openstreetmap.org/way/436076767"
+      },
+      {
+        "name": "Akuarium Jale Beach",
+        "class": "duplicate_of:Jale Beach",
+        "why": "40.1199,19.7014 is 40 m from the tier 1 'Jale Beach' row at 40.1196,19.7017. Albanian and English spellings of the same bay.",
+        "source_url": "https://www.openstreetmap.org/way/713100084"
+      },
+      {
+        "name": "Drymades Beach",
+        "class": "duplicate_of:Drimadh Beach",
+        "why": "40.1563,19.6086 versus 40.1564,19.6076 for 'Drimadh Beach': 85 m apart. Drimadh and Drymades are transliterations of the same Dhermi beach.",
+        "source_url": "https://en.wikipedia.org/wiki/Dh%C3%ABrmi"
+      },
+      {
+        "name": "Livadi Beach",
+        "class": "duplicate_of:Livadh",
+        "why": "40.1076,19.7253 versus 40.1090,19.7240 for 'Livadh': 190 m apart, same Himare beach spelled two ways.",
+        "source_url": "https://en.wikipedia.org/wiki/Himar%C3%AB"
+      },
+      {
+        "name": "Palase Beach, Green Coast",
+        "class": "duplicate_of:Palase Beach",
+        "why": "Same named beach as the tier 1 rank 1 row. Given the reverse geocode this entry holds the correct location and the tier 1 row holds the wrong one, so the merge kept the wrong survivor.",
+        "source_url": "https://nominatim.openstreetmap.org/reverse?format=jsonv2&zoom=16&lat=40.1658&lon=19.5881"
+      },
+      {
+        "name": "Folie Marine",
+        "class": "hospitality",
+        "why": "Folie Marine is a hotel and beach club occupying Qeramidhe bay at Jal (foliemarine.com). OSM carries it as node 2282041692 place=locality, which is why it slipped the natural-feature filter.",
+        "source_url": "https://foliemarine.com/"
+      },
+      {
+        "name": "Nassau Beach Dhermi",
+        "class": "hospitality",
+        "why": "The Nassau Hotel at Dhermi, OSM node 10896649054, tourism=hotel, 34 rooms, nassau.al, with its restaurant 'Baha by Nassau'. The row is the hotel's private beach section.",
+        "source_url": "https://www.openstreetmap.org/node/10896649054"
+      },
+      {
+        "name": "LaSiesta Dhermi",
+        "class": "hospitality",
+        "why": "A branded Dhermi beach club and accommodation, not a named natural beach. No natural=beach feature of this name exists in OSM in the Dhermi bounding box.",
+        "source_url": "https://www.openstreetmap.org/#map=15/40.1419/19.6393"
+      },
+      {
+        "name": "Pepperon The Beach",
+        "class": "hospitality",
+        "why": "A beach bar and restaurant brand name at Dhermi. No natural=beach feature of this name exists in OSM in the Dhermi bounding box.",
+        "source_url": "https://www.openstreetmap.org/#map=15/40.1514/19.6159"
+      }
+    ],
+    "missing": [
+      {
+        "name": "Gjipe Beach (Plazhi i Gjipese)",
+        "qid": "Q25567109",
+        "lat": 40.1436,
+        "lon": 19.6703,
+        "why": "The single most photographed beach in Albania: a canyon mouth between Dhermi and Jale reachable only on foot or by boat. Absent from tier 1 and tier 2 entirely while nine Ksamil bar terraces are in tier 1.",
+        "source_url": "https://en.wikipedia.org/wiki/Canyon_of_Gjipe",
+        "verified": true
+      },
+      {
+        "name": "Borsh Beach (Plazhi i Borshit)",
+        "qid": "Q574153",
+        "lat": 40.0625,
+        "lon": 19.8567,
+        "why": "The longest beach on the Albanian Riviera, roughly 7 km. The catalogue uses Borsh as a 'near city' for other rows but never lists the beach itself. QID given is the settlement of Borsh; the beach has no separate Wikidata item.",
+        "source_url": "https://www.wikidata.org/wiki/Q574153",
+        "verified": false
+      },
+      {
+        "name": "Velipoja Beach",
+        "qid": "Q1021579",
+        "lat": 41.8647,
+        "lon": 19.43,
+        "why": "The main beach of northern Albania and one of the country's highest-volume domestic resorts, inside the Velipoja protected landscape. The whole north coast is absent from the file. QID is the settlement.",
+        "source_url": "https://www.wikidata.org/wiki/Q1021579",
+        "verified": false
+      },
+      {
+        "name": "Shengjin Beach (Plazhi i Shengjinit)",
+        "qid": "Q606485",
+        "lat": 41.8136,
+        "lon": 19.5939,
+        "why": "The other principal northern beach resort, next to the Kune-Vain-Tale protected area. QID is the settlement.",
+        "source_url": "https://www.wikidata.org/wiki/Q606485",
+        "verified": false
+      },
+      {
+        "name": "Pulebardha Beach",
+        "qid": null,
+        "lat": null,
+        "lon": null,
+        "why": "A named cove between Saranda and Ksamil that appears in every Albanian Riviera shortlist. Could not confirm a Wikidata item or an authoritative coordinate, so left unverified rather than guessed.",
+        "source_url": null,
+        "verified": false
+      },
+      {
+        "name": "Mirror Beach (Plazhi i Pasqyrave)",
+        "qid": null,
+        "lat": null,
+        "lon": null,
+        "why": "The rock-pool beach on the Saranda to Ksamil road, a standard stop on the coastal route. No Wikidata item confirmed, so unverified.",
+        "source_url": null,
+        "verified": false
+      }
+    ],
+    "order": [
+      "Rank 1 'Palase Beach' is indefensible as the country card image because its coordinate is inland on a village road and it is duplicated at rank 35 with the correct location.",
+      "Ranks 9 to 13 (King beach, Stela beach, Abiori Beach, Afa Beach, Akoli beach) are all Ksamil bar and hotel concessions or a Greek beach. They sit above Drymades, Livadhi, Dhermiu and Borsh, which are the real beaches.",
+      "Ksamil supplies 8 of the 12 tier-1 slots once its aliases are counted. One town should not own two thirds of a country's beach tab.",
+      "'Turquoise Beach' at rank 7 could not be confirmed as a named natural beach in any source; it should not outrank Drymades or Dhermiu until it is.",
+      "Rank 6 is missing from the file entirely: tier 1 runs 1,2,3,4,5,7,8,9,10,11,12,13. A row was dropped after ranking without recompacting."
+    ]
+  },
+  "mountains": {
+    "wrong": [
+      {
+        "name": "Mount Cika",
+        "class": "duplicate_of:CIka Mountain",
+        "why": "Rank 11 duplicates rank 2. Both are Cika, the 2044 m summit of the Ceraunian Mountains. Worse, the rank 2 coordinate 40.1680,19.7372 is about 10 km from the Ceraunian summit at 40.1981,19.6390, while the rank 11 coordinate 40.2000,19.6167 is roughly right, so the higher-ranked copy is the mislocated one.",
+        "source_url": "https://en.wikipedia.org/wiki/Ceraunian_Mountains"
+      },
+      {
+        "name": "Rosi Peak",
+        "class": "duplicate_of:Maja e Rosit",
+        "why": "Rank 12 at 42.4700,19.8500 is the English rendering of rank 5 'Maja e Rosit' at 42.4795,19.8505, 1.1 km apart. Both link to the same peak.",
+        "source_url": "https://en.wikipedia.org/wiki/Maja_e_Rosit"
+      },
+      {
+        "name": "Maja Zogut",
+        "class": "duplicate_of:CIka Mountain",
+        "why": "40.1677,19.7337 is 300 m from the rank 2 'CIka Mountain' row. Two names on one point in the Ceraunian ridge above Himare.",
+        "source_url": "https://en.wikipedia.org/wiki/Ceraunian_Mountains"
+      },
+      {
+        "name": "Maja e Dhembelit",
+        "class": "duplicate_of:Mount Dhembel",
+        "why": "40.2008,20.3125 is 130 m from the rank 4 'Mount Dhembel' row at 40.1997,20.3132. Albanian definite form of the same peak.",
+        "source_url": "https://en.wikipedia.org/wiki/Dh%C3%ABmbel"
+      },
+      {
+        "name": "Maja e Kollates",
+        "class": "duplicate_of:Zla Kolata",
+        "why": "42.4834,19.9093 is 1.1 km from the rank 3 'Zla Kolata / Kollate e Keqe' row at 42.4849,19.8960, and the file separately carries 'Rodi e Kollates' and 'Dobra Kolata'. The Kolata group is being split into four rows by name variant.",
+        "source_url": "https://en.wikipedia.org/wiki/Zla_Kolata"
+      },
+      {
+        "name": "Maja Grykat e Hapeta",
+        "class": "other",
+        "why": "Tier 1 rank 9 with a two-decimal placeholder coordinate, 42.4000,19.9000. That is a rounded grid point, not a surveyed summit position, and it drags a false 'near Valbona 6.0 km' onto the card.",
+        "source_url": "https://www.openstreetmap.org/#map=12/42.4000/19.9000"
+      },
+      {
+        "name": "Renojate kalase se mborjes",
+        "class": "other",
+        "why": "The string is 'Rrenojat e kalase se Mborjes', the ruins of Mborje castle near Korce. A heritage ruin, not a summit.",
+        "source_url": "https://sq.wikipedia.org/wiki/Mborje"
+      },
+      {
+        "name": "Kodra Kryse",
+        "class": "not_notable",
+        "why": "'Kodra' means hillock. A minor rise above Lake Koman with no elevation, no Wikipedia article and no designation; it has no business in a national mountain tab.",
+        "source_url": "https://www.openstreetmap.org/#map=14/42.2254/19.8701"
+      },
+      {
+        "name": "Maja Lejeve (656)",
+        "class": "not_notable",
+        "why": "The name carries its own elevation, 656 m, in a country whose peaks reach 2764 m. It is an unnamed-grade contour point that survived only because it is near Lake Koman.",
+        "source_url": "https://www.openstreetmap.org/#map=14/42.2364/19.8936"
+      }
+    ],
+    "missing": [
+      {
+        "name": "Mount Korab (Maja e Korabit)",
+        "qid": "Q912579",
+        "lat": 41.7903,
+        "lon": 20.5467,
+        "why": "The highest mountain in Albania at 2764 m, shared with North Macedonia, and the object of the annual Korab summit hike. Completely absent from tier 1 and tier 2. This is the single largest hole in the Albanian mountain list.",
+        "source_url": "https://www.wikidata.org/wiki/Q912579",
+        "verified": true
+      },
+      {
+        "name": "Mount Tomorr",
+        "qid": "Q2305090",
+        "lat": 40.71,
+        "lon": 20.1333,
+        "why": "2415 m, a national park and the holiest mountain in the country, with the Abbas Ali pilgrimage every August. Absent.",
+        "source_url": "https://www.wikidata.org/wiki/Q2305090",
+        "verified": true
+      },
+      {
+        "name": "Mount Dajti",
+        "qid": "Q1157724",
+        "lat": 41.37,
+        "lon": 19.93,
+        "why": "1613 m, a national park directly above Tirana reached by the Dajti Ekspres cable car, so by visitor numbers it is the most climbed mountain in Albania. Absent while unnamed 600 m hillocks are in tier 2.",
+        "source_url": "https://www.wikidata.org/wiki/Q1157724",
+        "verified": true
+      },
+      {
+        "name": "Gjallica",
+        "qid": "Q944830",
+        "lat": 42.01,
+        "lon": 20.47,
+        "why": "2485 m, the landmark pyramid above Kukes and one of the country's most recognisable summits. Absent.",
+        "source_url": "https://www.wikidata.org/wiki/Q944830",
+        "verified": true
+      }
+    ],
+    "order": [
+      "Rank 1 Maja Jezerce (2694 m, Wikidata Q1032440, 42.4420,19.8126) is correct and defensible: it is the highest peak lying wholly in Albania and the highest in the Dinaric Alps.",
+      "Rank 2 'CIka Mountain' is placed above Zla Kolata, Radohima and Harapi on a coordinate that is 10 km off the actual summit. It should either be corrected to the rank 11 position or dropped.",
+      "Zla Kolata at rank 3 is the highest point of Montenegro on the shared ridge. Keeping it under Albania is defensible because the border runs over the summit, but it should not outrank Radohima and Harapi, which are the peaks visitors to Theth actually climb.",
+      "Ranks 6 to 12 are almost entirely Theth and Valbona sub-peaks with tied scores (0.862, 0.846). The tie means the visible order is alphabetical noise, not merit.",
+      "The 0.778 and 0.624 score plateaus in tier 2 hold 44 rows in two flat bands, so nothing below rank 12 is actually ranked."
+    ]
+  },
+  "counts_verdict": "38 beaches and 68 mountains is a plausible magnitude for Albania, but the composition is wrong on both tabs. The beaches are three coastal pockets (Dhermi/Palase, Himare/Jale/Qeparo, Ksamil) plus four Greek strays, with zero coverage of the entire northern coast (Velipoja, Shengjin, Durres, Divjaka-Karavasta) and zero coverage of Gjipe, Grama and Kakome. The mountains are two pockets (the Accursed Mountains around Theth/Valbona and the Permet/Korce ridges) and miss Korab, Tomorr, Dajti and Gjallica, so a user could browse 68 Albanian mountains without meeting the highest, the holiest or the most visited one.",
+  "top_pick_verdict": "top_mountain 'Maja Jezerce' is a good country card: correct name, correct coordinate, correct claim to fame. top_beach 'Palase Beach' is not: its coordinate is inland on a village street and the same beach appears again at rank 35 with the right position. Replace it with Gjipe Beach (Q25567109) or, if a recognisable name matters more than a photogenic one, Ksamil once the concession rows are merged into a single 'Ksamil Beach'.",
+  "notes": "Highest-value structural findings for the pipeline. (1) Four tier-1/tier-2 beaches are physically in Greece, on Corfu, because the country was assigned by nearest catalogue city (Ksamil) rather than by point-in-polygon against the border; Akoli beach is in tier 1. (2) The Ksamil strand is fragmented into at least nine rows by commercial concession names, and OSM tags those polygons access=customers with opening_hours, which is a clean, machine-readable signal to merge or drop them. (3) Several tier-1 rows are literally hotel and restaurant POIs (Afa Hotel, Stela Beach Restaurant, Restorant Piceri Abiori, Bar Restaurant Korali, Hotel Castle). (4) Rank numbering has a hole at beach rank 6, so ranks were not recompacted after a post-ranking drop. (5) 'Havana Beach' and 'Turquoise Beach' could not be confirmed as named natural beaches in any source; they are not listed as wrong here but should be treated as unverified rather than published."
+}

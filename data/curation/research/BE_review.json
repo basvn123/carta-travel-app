@@ -1,0 +1,330 @@
+{
+  "iso2": "BE",
+  "country": "Belgium",
+  "checked_at": "2026-08-17",
+  "beaches": {
+    "wrong": [
+      {
+        "name": "Mons Plage",
+        "class": "other",
+        "why": "Not a beach. Mons is roughly 60 km from the North Sea and has no coast. The shipped coordinate 50.45633,3.95505 reverse-geocodes to 'Petit pois, 42, Rue de Nimy, Quartier Rachot, Faubourg du Parc, Mons', a clothes shop on a city-centre shopping street. The name refers to the city's temporary summer urban-beach installation. Filter family: seasonal city-centre 'plage'/'beach' events in landlocked towns.",
+        "source_url": "https://www.monscentreville.be/cet-ete-cest-destination-mons/"
+      },
+      {
+        "name": "Naaktstrand",
+        "class": "duplicate_of:Naaktstrand Bredene",
+        "why": "Tier 1 rank 4. 'Naaktstrand' is simply the Dutch common noun for 'nudist beach', with no qualifier. Its coordinate 51.25988,2.98477 sits 370 m from 'Naaktstrand Bredene' at tier 2 rank 8, on the same Bredene nudist section, which is Belgium's only official nudist beach. A generic common noun occupies one of the country's five tier-1 beach slots.",
+        "source_url": "https://nl.wikipedia.org/wiki/Bredene"
+      },
+      {
+        "name": "De Haan Beach, Belgium",
+        "class": "duplicate_of:De Haan Beach",
+        "why": "Tier 2 rank 6. The same De Haan beach as tier 1 rank 5, 320 m apart, with the country name appended. Country-suffixed geotag, not a distinct feature.",
+        "source_url": "https://nl.wikipedia.org/wiki/De_Haan"
+      },
+      {
+        "name": "Silver Beach",
+        "class": "hospitality",
+        "why": "Tier 2 rank 11. A beach bar and concession at De Haan, 51.27785,3.03124, sitting 30 m from 'Stranduitbating Oscar' and 40 m from 'De Haan Beach'. Three rows within 50 m, two of them commercial operators.",
+        "source_url": "https://www.openstreetmap.org/#map=18/51.2779/3.0312"
+      },
+      {
+        "name": "Stranduitbating Oscar",
+        "class": "hospitality",
+        "why": "Tier 2 rank 13. 'Stranduitbating' is the Dutch term for a beach concession business. This is the trading name of the operator of a De Haan beach section, not a beach.",
+        "source_url": "https://www.openstreetmap.org/#map=18/51.2779/3.0291"
+      },
+      {
+        "name": "Spioenkop Wenduine",
+        "class": "viewpoint_not_summit",
+        "why": "Tier 2 rank 12, filed under beaches. The Spioenkop is the second-highest dune of the Belgian coast at 31 m, topped by a white pavilion, used as an observation post since 1770 and named after the 1900 Battle of Spioenkop in Natal. It is a dune viewpoint. If it belongs anywhere it belongs in the mountains kind, and even there it would be a viewpoint rather than a summit.",
+        "source_url": "https://www.visitdehaan.be/en/spioenkop"
+      },
+      {
+        "name": "Oosterstrand 🏖",
+        "class": "other",
+        "why": "Tier 2 rank 9. Real Ostend beach, but the shipped name carries a trailing beach-with-umbrella emoji lifted straight from the source POI label. Cosmetic, but it will render as an emoji in the UI and it defeats name-based deduplication against any clean 'Oosterstrand' row.",
+        "source_url": "https://www.openstreetmap.org/#map=17/51.2396/2.9329"
+      }
+    ],
+    "missing": [
+      {
+        "name": "Knokke-Heist",
+        "qid": "Q12988",
+        "lat": 51.34222222,
+        "lon": 3.28472222,
+        "why": "The flagship Belgian beach resort, containing Het Zoute and Duinbergen and the Zwin nature park at the Dutch border. It is the beach a Belgian names first and it is absent from the file at every tier. Its absence is the single largest defect in this country. QID and coordinate are for the municipality.",
+        "source_url": "https://www.wikidata.org/wiki/Q12988",
+        "verified": true
+      },
+      {
+        "name": "De Panne",
+        "qid": "Q674954",
+        "lat": 51.10194444,
+        "lon": 2.59166667,
+        "why": "The widest beach in Belgium at roughly 450 m at low tide, backed by the Westhoek Flemish nature reserve, the largest contiguous dune massif on the Belgian coast and the first Flemish nature reserve, designated in 1957. It also has the Plopsaland draw. Absent from the file. QID and coordinate are for the municipality.",
+        "source_url": "https://natuurenbos.be/natuurgebieden/de-westhoek",
+        "verified": true
+      },
+      {
+        "name": "Blankenberge",
+        "qid": "Q328104",
+        "lat": 51.31305556,
+        "lon": 3.13194444,
+        "why": "One of the three biggest Belgian coastal resorts, with the pier and the Sea Life centre, between Zeebrugge and Wenduine. Absent, although its immediate neighbours De Haan and Bredene supply eight of the thirteen rows.",
+        "source_url": "https://www.wikidata.org/wiki/Q328104",
+        "verified": true
+      },
+      {
+        "name": "Oostduinkerke",
+        "qid": "Q2314278",
+        "lat": 51.11583333,
+        "lon": 2.68194444,
+        "why": "The only place in the world where shrimp fishing on horseback is still practised, inscribed on the UNESCO representative list of intangible cultural heritage. The most distinctive beach on the Belgian coast on any cultural measure, and absent.",
+        "source_url": "https://www.wikidata.org/wiki/Q2314278",
+        "verified": true
+      },
+      {
+        "name": "Koksijde-Bad",
+        "qid": "Q15071300",
+        "lat": 51.11700278,
+        "lon": 2.63711667,
+        "why": "Major western-coast resort beach, adjoining the Doornpanne and Hoge Blekker dunes. Absent.",
+        "source_url": "https://www.wikidata.org/wiki/Q15071300",
+        "verified": true
+      },
+      {
+        "name": "Nieuwpoort",
+        "qid": "Q623310",
+        "lat": 51.11666667,
+        "lon": 2.75,
+        "why": "Nieuwpoort-Bad and the largest marina on the North Sea, at the IJzer mouth. Absent.",
+        "source_url": "https://www.wikidata.org/wiki/Q623310",
+        "verified": true
+      },
+      {
+        "name": "Middelkerke",
+        "qid": "Q492369",
+        "lat": 51.18472222,
+        "lon": 2.81916667,
+        "why": "Central-coast resort beach with Westende, immediately west of Ostend. Absent, though Ostend itself supplies two rows.",
+        "source_url": "https://www.wikidata.org/wiki/Q492369",
+        "verified": true
+      },
+      {
+        "name": "Wenduine",
+        "qid": "Q498639",
+        "lat": 51.29805556,
+        "lon": 3.0825,
+        "why": "Resort beach between De Haan and Blankenberge. Present in the file only obliquely, as 'Spioenkop Wenduine', which is the dune viewpoint above the town rather than its beach.",
+        "source_url": "https://www.wikidata.org/wiki/Q498639",
+        "verified": true
+      },
+      {
+        "name": "Zeebrugge",
+        "qid": "Q184383",
+        "lat": 51.33027778,
+        "lon": 3.20638889,
+        "why": "Beach and seafront beside the port, with the Zeebrugge mole. Lower priority than the others here, but it completes the coast.",
+        "source_url": "https://www.wikidata.org/wiki/Q184383",
+        "verified": true
+      },
+      {
+        "name": "Het Zwin",
+        "qid": "Q2131926",
+        "lat": null,
+        "lon": null,
+        "why": "The tidal salt-marsh nature park at Knokke-Heist on the Dutch border, the best-known piece of undeveloped Belgian coast. Wikidata item confirmed, but the nl.wikipedia coordinates property returned no lat/lon, so the coordinate is not verified here. Note it is a nature reserve rather than a bathing beach, so it may belong to a different kind.",
+        "source_url": "https://www.wikidata.org/wiki/Q2131926",
+        "verified": false
+      }
+    ],
+    "order": [
+      "Not defensible on coverage. Belgium has 67 km of coast and fifteen coastal resort municipalities. All five tier-1 rows come from just three of them: Bredene, Ostend and De Haan. Knokke-Heist, De Panne, Blankenberge, Koksijde, Oostduinkerke, Nieuwpoort, Middelkerke and Zeebrugge contribute nothing at any tier.",
+      "Bredene Beach at rank 1 is a real Belgian beach and not an embarrassment, but it is a mid-tier resort ranked above nothing, because its natural rivals are simply not in the file.",
+      "'Naaktstrand' at rank 4, a bare common noun, outranks 'De Haan Beach' at rank 5, a named beach of a named resort. A generic label should never outrank a qualified one.",
+      "Plage de Maboge (tier 2 rank 10) is a genuine river beach on the Ourthe at La Roche-en-Ardenne and is correctly placed in tier 2, but it is one of only two non-coastal entries and it ranks above real coastal rows, which shows the tier-2 ordering is close to flat: eight of the thirteen rows share the identical score 0.484, so there is effectively no ranking signal below tier 1.",
+      "The score distribution itself is a defect: ranks 6 through 13 all score 0.484, meaning the tie-break is alphabetical rather than merit-based ('De Haan Beach, Belgium', 'Mons Plage', 'Naaktstrand Bredene', 'Oosterstrand', 'Plage de Maboge', 'Silver Beach', 'Spioenkop Wenduine', 'Stranduitbating Oscar')."
+    ]
+  },
+  "mountains": {
+    "wrong": [
+      {
+        "name": "Baraque Michel",
+        "class": "town_or_village",
+        "why": "The country's number one mountain is not a mountain. fr.wikipedia: 'La Baraque Michel (anciennement en allemand Michelshuette) est un lieu-dit du plateau des Hautes Fagnes.' It is a named locality on the Hautes Fagnes plateau built around an eighteenth-century inn and the Fischbach chapel, at about 675 m. It sits below the actual high point and it outranks it. This is the same failure family as Austria's 'Schlossberg' outranking the Grossglockner.",
+        "source_url": "https://fr.wikipedia.org/wiki/Baraque_Michel"
+      },
+      {
+        "name": "Monument to the Battle of Sprimont",
+        "class": "other",
+        "why": "Tier 1 rank 6. A war memorial in the province of Liege commemorating the French victory over Austrian troops on 18 September 1794, inscribed 'Ici l'armee francaise a vaincu les troupes autrichiennes'. It is a monument node, not a summit. Filter family: historic=memorial and historic=monument leaking into the mountain kind.",
+        "source_url": "https://www.liegetourisme.be/monument-de-la-bataille-de-sprimont.html"
+      },
+      {
+        "name": "Blandijnberg",
+        "class": "not_notable",
+        "why": "Tier 1 rank 3. nl.wikipedia: 'De Blandijnberg is een heuvel in het centrum van de Belgische stad Gent.' It is the low rise in central Ghent on which Ghent University's arts faculty building stands, and it is the highest point of the city only in the sense that Ghent is flat. Nobody visits it as a hill. It ranks third in Belgium, above every Ardennes and Flemish Ardennes climb.",
+        "source_url": "https://nl.wikipedia.org/wiki/Blandijnberg"
+      },
+      {
+        "name": "Terril de Ciply",
+        "class": "other",
+        "why": "Tier 1 rank 5. A terril is a coal-mining spoil heap. This one stands at Ciply in the municipality of Mons in Hainaut. Spoil heaps are a genuine Walloon landscape feature but they are industrial waste tips, not mountains, and they should not be occupying a country's top five.",
+        "source_url": "https://fr.wikipedia.org/wiki/Terril_de_Ciply"
+      },
+      {
+        "name": "Mont Éribus",
+        "class": "other",
+        "why": "Tier 1 rank 7. Mont Heribus at Cuesmes near Mons is an ancient 60 m rise capped by a coal spoil heap that brings it to 107 m; the Heribus pit closed on 2 March 1968 and the City of Mons manages the terril as a biodiversity site. Same spoil-heap family as Terril de Ciply and 'Martinet coal mine'. Together with 'Bois La-Haut' (tier 2 rank 17), Mons supplies three of Belgium's seventeen mountain rows, all of them coal-country tips.",
+        "source_url": "https://www.mons.be/fr/vivre-a-mons/environnement-transition-ecologique/biodiversite/fichiers-biodiversite/fichiers/plan-de-gestion-du-terril-de-lheribus-version-2023.pdf"
+      },
+      {
+        "name": "Mont des Arts - Kunstberg",
+        "class": "park_or_area",
+        "why": "Tier 2 rank 8, coordinate 50.84421,4.35761, 400 m from the Grand Place. The Mont des Arts is a formal garden, staircase and square complex in central Brussels between the Royal Library and the Place Royale. It is an urban square, not a hill anyone walks up as a landscape feature. Filter family: urban squares and gardens whose Dutch name ends in -berg.",
+        "source_url": "https://en.wikipedia.org/wiki/Mont_des_Arts"
+      },
+      {
+        "name": "Martinet coal mine",
+        "class": "other",
+        "why": "Tier 2 rank 14, at Charleroi. A former colliery site. Its own name says it is a coal mine. Same industrial-heritage family as the two Mons terrils.",
+        "source_url": "https://www.openstreetmap.org/#map=17/50.4319/4.3808"
+      },
+      {
+        "name": "Lettenberg",
+        "class": "not_notable",
+        "why": "Tier 1 rank 4. A low rise in Heuvelland near Kemmel, known for its four preserved British WWI concrete bunkers rather than as a hill. Its far more significant neighbour 3.5 km away, the Kemmelberg, the highest point of West Flanders and the site of the 1918 Battle of the Kemmelberg, is absent from the file entirely. The scorer picked the small sibling and dropped the famous one.",
+        "source_url": "https://nl.wikipedia.org/wiki/Lettenberg"
+      },
+      {
+        "name": "Bruine Put",
+        "class": "not_notable",
+        "why": "Tier 2 rank 9. 'Bruine Put' means 'brown pit'. A minor woodland spot near Hallerbos with no standing as a summit. Hallerbos supplies four of the seventeen rows (Bruine Put, Krekelenberg, Kristallenberg, Quarante Bonniers) purely because it is a catalogue anchor.",
+        "source_url": "https://nl.wikipedia.org/wiki/Bruine_Put"
+      }
+    ],
+    "missing": [
+      {
+        "name": "Weisser Stein",
+        "qid": "Q646452",
+        "lat": 50.4084,
+        "lon": 6.3695,
+        "why": "The second-highest point of Belgium at 693.05 m, on the Eifel plateau near the German border in the territory Belgium acquired in 1919. Absent from the file, while a lieu-dit and a Ghent campus hill occupy tier 1. Note it lies close to the German border, so a point-in-polygon check should confirm the Belgian summit rather than the German Weisser Stein near Udenbreth.",
+        "source_url": "https://www.wikidata.org/wiki/Q646452",
+        "verified": true
+      },
+      {
+        "name": "Kemmelberg",
+        "qid": "Q209541",
+        "lat": 50.7792,
+        "lon": 2.8144,
+        "why": "The highest point of West Flanders at about 156 m, the site of the April 1918 Battle of the Kemmelberg, a Flanders Fields pilgrimage site and one of the cobbled climbs of Gent-Wevelgem. The file instead carries 'Lettenberg', a minor rise 3.5 km away in the same hill range.",
+        "source_url": "https://www.wikidata.org/wiki/Q209541",
+        "verified": true
+      },
+      {
+        "name": "Muur van Geraardsbergen",
+        "qid": "Q110540",
+        "lat": 50.7725,
+        "lon": 3.89,
+        "why": "The Kapelmuur, the single most famous climb in Belgium and the emotional centre of the Tour of Flanders, topped by the Oudenberg chapel. Absent from the file at every tier. For a Belgian Mountains tab this is as serious an omission as Praia da Marinha would be for Portugal's beaches.",
+        "source_url": "https://www.wikidata.org/wiki/Q110540",
+        "verified": true
+      },
+      {
+        "name": "Koppenberg",
+        "qid": "Q1784123",
+        "lat": 50.8111,
+        "lon": 3.5778,
+        "why": "The steepest cobbled climb of the Flemish Ardennes at Oudenaarde and a Tour of Flanders landmark. Absent.",
+        "source_url": "https://www.wikidata.org/wiki/Q1784123",
+        "verified": true
+      },
+      {
+        "name": "Paterberg",
+        "qid": "Q204334",
+        "lat": 50.7826,
+        "lon": 3.546,
+        "why": "Cobbled Flemish Ardennes climb at Kluisbergen, paired with the Oude Kwaremont in the Tour of Flanders finale. Absent.",
+        "source_url": "https://www.wikidata.org/wiki/Q204334",
+        "verified": true
+      },
+      {
+        "name": "Mont de l'Enclus",
+        "qid": "Q2842559",
+        "lat": 50.7581,
+        "lon": 3.4934,
+        "why": "A 151 m hill of the Flemish Ardennes straddling the Flanders-Wallonia language border, with a summit tower and walking terrain, and a regular fixture of Belgian cycle racing. Absent.",
+        "source_url": "https://www.wikidata.org/wiki/Q2842559",
+        "verified": true
+      },
+      {
+        "name": "Rochers de Freÿ",
+        "qid": "Q3437625",
+        "lat": 50.22541,
+        "lon": 4.894023,
+        "why": "fr.wikipedia: 'Les Rochers de Freyr forment le massif rocheux le plus haut de Belgique.' The highest rock massif in the country, on the right bank of the Meuse between Waulsort and Anseremme near Dinant, classified as major Walloon heritage and Belgium's premier climbing site. Absent. The Wikipedia title is 'Rochers de Freyr'.",
+        "source_url": "https://www.wikidata.org/wiki/Q3437625",
+        "verified": true
+      },
+      {
+        "name": "Baraque de Fraiture",
+        "qid": "Q2183673",
+        "lat": 50.2494,
+        "lon": 5.7389,
+        "why": "At 651 m one of the highest points in Belgium and the country's best-known small ski station, in the municipality of Vielsalm, province of Luxembourg. Caveat: fr.wikipedia also calls it a 'lieu-dit', so it shares the locality-versus-summit ambiguity of Baraque Michel; if the filter drops localities it should drop this too and use the adjacent summit instead.",
+        "source_url": "https://www.wikidata.org/wiki/Q2183673",
+        "verified": true
+      },
+      {
+        "name": "Croix-Scaille",
+        "qid": "Q2528758",
+        "lat": 49.95083,
+        "lon": 4.84556,
+        "why": "High plateau summit of the Ardennes at the French border near Gedinne, with the Tour du Millenaire observation tower. Absent. Coordinate is from fr.wikipedia; the massif straddles the Franco-Belgian border so a point-in-polygon check is needed.",
+        "source_url": "https://www.wikidata.org/wiki/Q2528758",
+        "verified": true
+      },
+      {
+        "name": "Mont Rigi",
+        "qid": "Q880713",
+        "lat": 50.511157,
+        "lon": 6.075358,
+        "why": "The Hautes Fagnes high point beside Botrange with the Liege University scientific station, the usual starting point for the Fagnes boardwalk walks. Lower priority than the others, listed because the file already spends two tier-1 slots in this exact area.",
+        "source_url": "https://www.wikidata.org/wiki/Q880713",
+        "verified": true
+      },
+      {
+        "name": "Oude Kwaremont",
+        "qid": "Q2062006",
+        "lat": null,
+        "lon": null,
+        "why": "The longest cobbled climb of the Tour of Flanders, at Kluisbergen. Wikidata item confirmed, but the nl.wikipedia coordinates property returned no lat/lon, so the coordinate is not verified here.",
+        "source_url": "https://www.wikidata.org/wiki/Q2062006",
+        "verified": false
+      },
+      {
+        "name": "Le Hérou",
+        "qid": "Q25382178",
+        "lat": 50.155,
+        "lon": 5.6617,
+        "why": "The rocky crest above the Ourthe meander at Nadrin, the signature Ardennes viewpoint and scramble. Marked unverified because two Wikidata items appear to describe it: nl.wikipedia maps this title to Q25382178 with the coordinate given, while fr.wikipedia's 'Herou' maps to Q16642745 with no coordinate. Resolve the duplicate before using either.",
+        "source_url": "https://www.wikidata.org/wiki/Q25382178",
+        "verified": false
+      }
+    ],
+    "order": [
+      "The single worst ordering error in the file: Baraque Michel at rank 1 sits above Signal de Botrange at rank 2. Signal de Botrange has been the highest point of Belgium at 694 m since 1919; Baraque Michel is a lieu-dit with an inn and a chapel a few hundred metres away and lower down. Swapping these two fixes both the ranking and the country card in one move.",
+      "Blandijnberg at rank 3 is far too high. A low rise in central Ghent whose landmark is a university faculty building should not outrank anything in the Ardennes or the Flemish Ardennes.",
+      "Terril de Ciply (rank 5) and Mont Eribus (rank 7) are too high: coal spoil heaps at Mons taking two of the seven tier-1 slots. With 'Bois La-Haut' at tier 2 rank 17 and 'Martinet coal mine' at rank 14, four of the seventeen rows are mining spoil.",
+      "Monument to the Battle of Sprimont at rank 6 should not be in the list at all, let alone in tier 1.",
+      "Lettenberg at rank 4 is the wrong hill from the right area: the Kemmelberg, 3.5 km away, is the notable one and is absent.",
+      "Geographic clustering drives the whole list. Of seventeen rows: three from Mons, four from Hallerbos, three from the Hautes Fagnes. The Flemish Ardennes, which is where Belgian hill fame actually lives (Muur van Geraardsbergen, Koppenberg, Paterberg, Oude Kwaremont, Mont de l'Enclus), contributes nothing.",
+      "Signal de Botrange itself is correctly scored at 0.978 and just needs to be first. It is the one unambiguously right entry in the country."
+    ]
+  },
+  "counts_verdict": "Beaches: 13 rows with 5 in tier 1 is too few and, worse, badly distributed. Belgium's coast is only 67 km long but it holds fifteen resort municipalities, and thirteen rows spread over just three of them (Bredene, Ostend, De Haan) is not a usable Beaches tab. Deduped it is worse still: 'Naaktstrand' duplicates 'Naaktstrand Bredene', 'De Haan Beach, Belgium' duplicates 'De Haan Beach', and 'Silver Beach' and 'Stranduitbating Oscar' are two concessions within 50 m of 'De Haan Beach'. That leaves roughly five distinct real beaches for the entire country, and none of them is Knokke or De Panne. The right target is about 12 to 15 rows, one per resort municipality, with tier 1 holding Knokke-Heist, De Panne, Ostend, Blankenberge, Oostduinkerke and Koksijde. Mountains: 17 rows is a sensible budget for a country topping out at 694 m, and 7 in tier 1 is right. The count is fine; the contents are not. Four of the seventeen are industrial spoil heaps or a coal mine, one is a war memorial, one is a Brussels urban garden, one is a Ghent campus hill, and the top entry is a hamlet. A defensible Belgian set of 17 would be: Signal de Botrange, Weisser Stein, Baraque de Fraiture, Mont Rigi, Croix-Scaille, Le Herou, Rochers de Freyr, Kemmelberg, Muur van Geraardsbergen, Koppenberg, Paterberg, Oude Kwaremont, Mont de l'Enclus, Hoge Blekker, plus a small Hautes Fagnes and Ardennes tail.",
+  "top_pick_verdict": "Beach: no, though it is not absurd. top_beach 'Bredene Beach' is a genuine Belgian resort beach with Excellent bathing water and the country's only official nudist section, so it is at least a real place. But no Belgian would put Bredene on the country card. That is Knokke-Heist (Q12988, 51.34222, 3.28472), with De Panne (Q674954, 51.10194, 2.59167) as the alternative if the card wants wide sand and dunes rather than the Zoute promenade. Both are absent from the file. Mountain: no, and this one is a clear error rather than a judgement call. top_mountain 'Baraque Michel' is a lieu-dit on the Hautes Fagnes plateau, an inn and a chapel, not a summit. The right answer is already in the file at rank 2: Signal de Botrange (Q322824, 50.50174, 6.0926), 694 m, the highest point of Belgium since 1919, with its stone tower and the Fagnes boardwalks. Promote it and the country card is fixed.",
+  "notes": "Belgium's two lists fail in opposite directions. The beaches fail on recall: the harvester found only three of fifteen coastal municipalities, so the correct answers are simply not present at any tier and no amount of re-ranking will surface them. The mountains fail on precision: the count is right but the set is contaminated by four industrial spoil heaps (Terril de Ciply, Mont Eribus, Bois La-Haut, Martinet coal mine), a war memorial, a Brussels urban garden and a lieu-dit, while the entire Flemish Ardennes cycling-climb family that carries Belgian hill fame is missing. Two systemic patterns are visible. First, catalogue-city anchoring: rows cluster around whichever city is already in the app's catalogue (Mons 3, Hallerbos 4, High Fens 3, De Haan 6 beaches), so the ranking measures POI density near an anchor rather than national salience. Second, a flat score distribution below tier 1: eight of the thirteen beach rows share the identical score 0.484, so tier-2 ordering is effectively alphabetical. One positive: Signal de Botrange is present, correctly identified and correctly scored, so the underlying elevation and Wikipedia signals do work when the feature is a real summit; the problem is what gets in alongside it and what ranks above it."
+}

@@ -1,0 +1,209 @@
+{
+  "iso2": "RO",
+  "country": "Romania",
+  "checked_at": "2026-08-17",
+  "beaches": {
+    "wrong": [
+      {
+        "name": "Cap Kaliakra",
+        "class": "wrong_country",
+        "why": "Tier 1 rank 6, filed under Romania at 43.7353,28.5576. That latitude is south of the Romanian border: Vama Veche, the southernmost Romanian village, sits at 43.75222 (Q936239) and Durankulak in Bulgaria at 43.69293 (Q1266785). The point is roughly 1.5 km inside Bulgaria, and the name itself is Bulgaria's Cape Kaliakra (43.36,28.46). Border buffer bug.",
+        "source_url": "https://www.wikidata.org/wiki/Q936239"
+      },
+      {
+        "name": "Biblioteca",
+        "class": "other",
+        "why": "Tier 1 rank 5. This is the Vama Veche beach library, the 'Plaja de Carte' book installation on the sand, not a beach. It carries the same coordinates (43.7557,28.5743) as the tier 2 entry 'Plaja de Carte' (43.7562,28.5742), so it is also a duplicate of that row.",
+        "source_url": "https://www.digi24.ro/regional/digi24-constanta/biblioteca-din-mijlocul-plajei-peste-2-000-de-carti-puse-gratuit-la-dispozitia-turistilor-in-vama-veche-274412"
+      },
+      {
+        "name": "Дуранкулак-север",
+        "class": "wrong_country",
+        "why": "Tier 2 rank 8, i.e. inside the top ten shown for Romania. Durankulak is a Bulgarian village and lake (Q1266785, 43.69293,28.52624); the row sits at 43.7112,28.5742, in Bulgaria. Cyrillic name filed under a Latin-script country is a second signal.",
+        "source_url": "https://www.wikidata.org/wiki/Q1266785"
+      },
+      {
+        "name": "Mamaia, Constanța, România",
+        "class": "duplicate_of:Crush Beach Mamaia",
+        "why": "Tier 2 ranks 7, 9 and 10 are 'Crush Beach Mamaia' (44.2374,28.6254), 'Mamaia, Constanța, România' (44.2350,28.6258) and 'Mamaia Expres Beach' (44.2197,28.6375): three names for the Mamaia strand, one of them a bare place string copied out of a geocoder. None of the three is the beach itself, which is missing from tier 1 entirely.",
+        "source_url": "https://www.wikidata.org/wiki/Q854646"
+      }
+    ],
+    "missing": [
+      {
+        "name": "Mamaia",
+        "qid": "Q854646",
+        "lat": 44.24639,
+        "lon": 28.62278,
+        "why": "Romania's flagship beach resort and the single beach any Romanian would name first. Present in the wire only as three fragmentary tier 2 strings; absent from tier 1.",
+        "source_url": "https://www.wikidata.org/wiki/Q854646",
+        "verified": true
+      },
+      {
+        "name": "Vadu",
+        "qid": "Q3623456",
+        "lat": 44.45062,
+        "lon": 28.73801,
+        "why": "The best known wild beach on the Romanian coast, inside the Danube Delta Biosphere Reserve. Absent from the file at every tier.",
+        "source_url": "https://www.wikidata.org/wiki/Q3623456",
+        "verified": true
+      },
+      {
+        "name": "Corbu",
+        "qid": "Q5054198",
+        "lat": 44.45771,
+        "lon": 28.74875,
+        "why": "Corbu beach is the wild counterpart to Mamaia and a standard summer destination; QID and coordinates given are for the village the beach is named after and adjoins.",
+        "source_url": "https://www.wikidata.org/wiki/Q5054198",
+        "verified": true
+      },
+      {
+        "name": "Sfântu Gheorghe",
+        "qid": "Q1187750",
+        "lat": 44.89651,
+        "lon": 29.5929,
+        "why": "The Danube Delta beach village, reachable only by boat; a signature Romanian beach experience. Absent.",
+        "source_url": "https://www.wikidata.org/wiki/Q1187750",
+        "verified": true
+      },
+      {
+        "name": "Costinești",
+        "qid": "Q12113675",
+        "lat": 43.95095,
+        "lon": 28.60122,
+        "why": "The country's student and festival beach resort; a top ten Romanian beach by visitor numbers. Absent.",
+        "source_url": "https://www.wikidata.org/wiki/Q12113675",
+        "verified": true
+      },
+      {
+        "name": "Eforie Nord",
+        "qid": "Q1296448",
+        "lat": 44.06389,
+        "lon": 28.63333,
+        "why": "Major coastal resort, paired with the Techirghiol mud lake. Absent.",
+        "source_url": "https://www.wikidata.org/wiki/Q1296448",
+        "verified": true
+      },
+      {
+        "name": "Gura Portitei",
+        "qid": "Q12729642",
+        "lat": null,
+        "lon": null,
+        "why": "Isolated sandbar resort between the Danube Delta lagoons and the sea, a classic Romanian wild beach. Wikidata item exists but carries no P625, so no coordinate is asserted here.",
+        "source_url": "https://www.wikidata.org/wiki/Q12729642",
+        "verified": false
+      }
+    ],
+    "order": [
+      "The whole tier 1 is one 8 km strip. All six tier 1 beaches sit between 43.735 and 43.815 N, i.e. Vama Veche, 2 Mai and south Mangalia, and two of the six are not in Romania at all. Constanta, Mamaia, Eforie, Costinesti, Neptun and the entire Danube Delta coast contribute nothing to tier 1.",
+      "Vama Veche Beach at rank 1 is a defensible cult pick, but it cannot outrank Mamaia when Mamaia is not in the list.",
+      "'Plaja Eminescu' at rank 2 is a minor local strand near Mangalia; ranking it second nationally is not defensible.",
+      "'plaja nudiști' at rank 3 and 'plaja Golful Pescarilor' at rank 4 are lowercase user-entered descriptors on the 2 Mai strip, 300 m apart, and they share that strip with tier 2 'plaja 2 Mai' and 'Pe plaja la Mangalia'. Four rows, one beach.",
+      "Every tier 1 beach scores on 'Excellent' bathing water, and ranks 5 and 6 both sit at score 0.48 alongside ten tier 2 rows at exactly 0.48. The tier boundary inside that flat band is arbitrary."
+    ]
+  },
+  "mountains": {
+    "wrong": [
+      {
+        "name": "Dealul Arsenalului",
+        "class": "not_notable",
+        "why": "Tier 1 rank 11, at 44.4255,26.0783, two kilometres from Bucharest Otopeni airport on the Romanian Plain. A named rise of a few tens of metres in flat farmland, presented as one of Romania's twelve top mountains.",
+        "source_url": "https://www.openstreetmap.org/#map=14/44.4255/26.0783"
+      },
+      {
+        "name": "Dealul Galata",
+        "class": "not_notable",
+        "why": "Tier 1 rank 12. An urban hill inside Iași carrying the Galata monastery and a city district. It is a neighbourhood landmark, not a summit, and it is in a country with 2,500 m Carpathian peaks.",
+        "source_url": "https://www.openstreetmap.org/#map=14/47.1452/27.5399"
+      },
+      {
+        "name": "Dealu Turului",
+        "class": "not_notable",
+        "why": "Tier 1 rank 10. A low wooded hill 6 km from Turda; no national recognition, no Wikipedia or Wikidata entry, and it is ranked above every peak in the Bucegi, Făgăraș west and Paring ranges that the harvest missed.",
+        "source_url": "https://www.openstreetmap.org/#map=14/46.6128/23.7185"
+      },
+      {
+        "name": "Piatra Șoimului",
+        "class": "not_notable",
+        "why": "Tier 1 rank 7. A small rock outcrop and viewpoint above Gura Humorului in Bucovina, roughly 600 m. It is a half hour town walk, ranked seventh in a country whose seventh mountain should be a Carpathian 2,400 m summit.",
+        "source_url": "https://www.openstreetmap.org/#map=14/47.5403/25.8880"
+      },
+      {
+        "name": "Bucura II",
+        "class": "duplicate_of:Bucura I",
+        "why": "Tier 1 ranks 8 and 9 are 'Bucura I' (45.3659,22.8616) and 'Bucura II' (45.3684,22.8657), 400 m apart on the same Retezat ridge above Bucura lake. They are subsidiary bumps of one feature and they consume two of Romania's twelve tier 1 mountain slots.",
+        "source_url": "https://www.openstreetmap.org/#map=15/45.3659/22.8616"
+      },
+      {
+        "name": "Ciomatul Mare",
+        "class": "duplicate_of:Ciomadul",
+        "why": "Tier 2 rank 26 at 46.1362,25.8855 duplicates tier 1 rank 3 'Ciomadul' at 46.1300,25.8800. Ciomatul Mare is simply the alternative Romanian form of the same volcanic massif around Lake Sfanta Ana.",
+        "source_url": "https://en.wikipedia.org/wiki/Ciomadul",
+        "verified": true
+      },
+      {
+        "name": "Fișer",
+        "class": "town_or_village",
+        "why": "Tier 2 rank 16 at 46.0657,25.1308, listed as a mountain. Fișer is a village in Brașov county near Viscri, not a summit.",
+        "source_url": "https://www.openstreetmap.org/#map=14/46.0657/25.1308"
+      }
+    ],
+    "missing": [
+      {
+        "name": "Moldoveanu Peak",
+        "qid": "Q746524",
+        "lat": 45.59944,
+        "lon": 24.73621,
+        "why": "2,544 m, the highest mountain in Romania, in the Făgăraș range. Completely absent from the 73 harvested Romanian mountains. Negoiu and Vânătoarea lui Buteanu from the same ridge made tier 1, so the gap is a recall failure on the single most important row.",
+        "source_url": "https://www.wikidata.org/wiki/Q746524",
+        "verified": true
+      },
+      {
+        "name": "Omu Peak",
+        "qid": "Q544244",
+        "lat": 45.4458,
+        "lon": 25.4564,
+        "why": "2,514 m, the summit of the Bucegi and the most visited high mountain in Romania (cable car from Bușteni, the Sphinx and Babele nearby). Absent, although Caraiman on the same massif is tier 1 rank 4.",
+        "source_url": "https://www.wikidata.org/wiki/Q544244",
+        "verified": true
+      },
+      {
+        "name": "Parângu Mare",
+        "qid": "Q897451",
+        "lat": 45.34028,
+        "lon": 23.54083,
+        "why": "2,519 m, the highest point of the Paring range and Romania's third 2,500 m summit. Absent.",
+        "source_url": "https://www.wikidata.org/wiki/Q897451",
+        "verified": true
+      },
+      {
+        "name": "Toaca",
+        "qid": "Q31489285",
+        "lat": 46.97751,
+        "lon": 25.94994,
+        "why": "1,900 m, the emblematic pyramid of the Ceahlău massif and one of Romania's most photographed mountains. Absent; the parent massif Ceahlău is Q870349.",
+        "source_url": "https://www.wikidata.org/wiki/Q31489285",
+        "verified": true
+      },
+      {
+        "name": "Piatra Craiului",
+        "qid": "Q1072058",
+        "lat": 45.53333,
+        "lon": 25.21667,
+        "why": "2,238 m limestone ridge and national park, the country's signature knife-edge hike. Absent from the mountain set.",
+        "source_url": "https://www.wikidata.org/wiki/Q1072058",
+        "verified": true
+      }
+    ],
+    "order": [
+      "Ranks 1 to 6 are genuinely good: Peleaga, Negoiu, Ciomadul, Caraiman, Vânătoarea lui Buteanu, Păpușa are all real, well known summits. The list then falls off a cliff: ranks 7 to 12 are five low hills and a duplicate.",
+      "Peleaga at rank 1 (2,509 m, Retezat) is defensible only because Moldoveanu is missing. With Moldoveanu present, Peleaga belongs around rank 3.",
+      "Dealul Arsenalului at rank 11 is the clearest ranking failure in the country: a plain-country mound above every Bucegi and Paring summit, all of which are absent.",
+      "Ciomadul at rank 3 is a volcanic massif rather than a named peak; acceptable, but it should not be scored as a summit while its own duplicate sits at tier 2 rank 26.",
+      "Retezat is over-represented: Peleaga, Păpușa, Bucura I, Bucura II in tier 1 and La Clince, Sesele Mari, Sesele Mici, Zanoaga, Judele in tier 2, i.e. nine of the top 24 rows from one national park."
+    ]
+  },
+  "counts_verdict": "Both counts are wrong in different directions. 16 beaches for 245 km of Black Sea coast is far too few, and six tier 1 beaches all drawn from an 8 km strip at the Bulgarian border (two of them actually in Bulgaria) is not a national top pick list. 73 mountains is a healthy number for the Carpathians, but the set contains none of Moldoveanu, Omu, Parangu Mare, Toaca or Piatra Craiului, so twelve tier 1 slots had to be padded with hills near Bucharest, Iași and Turda. Twelve tier 1 mountains is defensible for Romania; the twelve chosen are not.",
+  "top_pick_verdict": "top_beach 'Vama Veche Beach' is a real and much loved beach and a defensible cult choice, but the country card beach for Romania is Mamaia (Q854646), which the wire only holds as three broken tier 2 strings. top_mountain 'Peleaga' is a real 2,509 m summit and is far better than most tier 1 rows, but Romania's country card mountain is Moldoveanu (2,544 m, Q746524), or Omu in the Bucegi if recognisability matters more than altitude. Neither top pick should ship as is.",
+  "notes": "Three systemic bugs are visible in this one country. First, border bleed: two Bulgarian points (Cap Kaliakra, Дуранкулак-север) are filed under RO, both south of 43.75 N. Second, flat-score tiering: ten tier 2 beaches carry exactly the same score (0.48) as tier 1 ranks 5 and 6, so the tier cut inside that band is arbitrary. Third, and most serious, the source POI layer simply does not contain Romania's famous mountains or its famous beaches; this is a harvest recall problem upstream of ranking, and no amount of re-ranking fixes it."
+}

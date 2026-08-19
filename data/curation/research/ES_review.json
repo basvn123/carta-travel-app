@@ -1,0 +1,426 @@
+{
+  "iso2": "ES",
+  "country": "Spain",
+  "checked_at": "2026-08-17",
+  "beaches": {
+    "wrong": [
+      {
+        "name": "Magdalena Beach",
+        "class": "other",
+        "why": "Tier 1 rank 9. The beach itself is real (Playa de la Magdalena, Santander), but the row is joined to en:Magdalena Peninsula, the headland and royal palace, so the card describes a peninsula and a palace rather than a beach. Name/Wikipedia mis-join, not a fake feature.",
+        "source_url": "https://en.wikipedia.org/wiki/Magdalena_Peninsula"
+      },
+      {
+        "name": "La Concha Beach",
+        "class": "duplicate_of:Playa de la Concha - Kontxa hondartza",
+        "why": "Tier 2 rank 164. Same beach as tier 1 rank 2, 0.50 km away, and joined to the identical Wikipedia article en:Beach of La Concha.",
+        "source_url": "https://en.wikipedia.org/wiki/Beach_of_La_Concha"
+      },
+      {
+        "name": "La Concha, Donosti",
+        "class": "duplicate_of:Playa de la Concha - Kontxa hondartza",
+        "why": "Tier 2 rank 132. Third copy of the same San Sebastian beach, 0.6 km from the tier 1 row, under a colloquial user-typed name (Donosti).",
+        "source_url": "https://en.wikipedia.org/wiki/Beach_of_La_Concha"
+      },
+      {
+        "name": "platges de Barcelona",
+        "class": "park_or_area",
+        "why": "Tier 2 rank 98. A collective plural article covering all of Barcelona's beaches, not a single beach. Catalan ca:Platges de Barcelona is a list-style overview.",
+        "source_url": "https://ca.wikipedia.org/wiki/Platges_de_Barcelona"
+      },
+      {
+        "name": "Área Recreativa Playa de Los Quebrantos",
+        "class": "park_or_area",
+        "why": "Tier 2 rank 102. A recreation area (car park, picnic ground) adjacent to Playa de los Quebrantos, which is already tier 2 rank 16 only 0.34 km away.",
+        "source_url": "https://www.turismoasturias.es/"
+      },
+      {
+        "name": "Mirador de los Quebrantos",
+        "class": "viewpoint_not_summit",
+        "why": "Tier 2 rank 134. A signposted viewpoint over the same beach, 0.46 km from the beach row. Same family as Switzerland's 'View to Aletschgletscher'.",
+        "source_url": "https://www.turismoasturias.es/"
+      },
+      {
+        "name": "Escuela de surf Planeta Palombina",
+        "class": "hospitality",
+        "why": "Tier 2 rank 129. A commercial surf school business on Playa de Palombina (tier 2 rank 46, 0.24 km away), not a beach.",
+        "source_url": "https://www.openstreetmap.org/#map=17/43.43129/-4.80914"
+      },
+      {
+        "name": "Bora Bora Beach",
+        "class": "hospitality",
+        "why": "Tier 2 rank 241. Bora Bora is a beach club and apartment complex on Playa d'en Bossa, opened 1982, with a restaurant, sushi bar, DJ sets and Balinese beds. A venue, not a beach.",
+        "source_url": "https://www.apartmentsborabora.com/en/beach-club/club"
+      },
+      {
+        "name": "Isla Magica Ibiza ️",
+        "class": "not_notable",
+        "why": "Tier 2 rank 250. A user-generated POI string carrying a trailing emoji. Isla Magica is a theme park in Seville, 700 km away; nothing of that name is a beach in Ibiza.",
+        "source_url": "https://www.openstreetmap.org/#map=17/38.90632/1.42338"
+      },
+      {
+        "name": "Platja De Ses Illetes, Formentera",
+        "class": "other",
+        "why": "Tier 2 rank 255. Geocode collapse: pinned to 38.89999/1.43333 near Ibiza Town, but Ses Illetes (Q6126237) is at 38.75/1.4333 on Formentera, roughly 17 km south across the strait. It shares the identical coordinate with two unrelated rows.",
+        "source_url": "https://www.wikidata.org/wiki/Q6126237"
+      },
+      {
+        "name": "Cala Comte - Ibiza",
+        "class": "other",
+        "why": "Tier 2 rank 242. Geocode collapse: pinned to 38.90623/1.42320, but Cala Comte (Q5018254) is at 38.9625/1.22028 on the west coast of Ibiza, about 17 km away on the wrong side of the island.",
+        "source_url": "https://www.wikidata.org/wiki/Q5018254"
+      },
+      {
+        "name": "Torre de'n Rovira, Cala Comte",
+        "class": "other",
+        "why": "Tier 2 rank 260. Same geocode collapse: identical coordinate 38.89999/1.43333 as 'Escana, Ibiza' and 'Platja De Ses Illetes, Formentera', three unrelated places sharing one point.",
+        "source_url": "https://www.wikidata.org/wiki/Q5018254"
+      },
+      {
+        "name": "Escana, Ibiza",
+        "class": "other",
+        "why": "Tier 2 rank 248. Third row sharing the exact coordinate 38.89999/1.43333. Part of a 13-row cluster (ranks 241-260) that all sit inside a 1 km blob near Ibiza airport and all carry water class 'Good' and source 'whc'.",
+        "source_url": "https://www.openstreetmap.org/#map=15/38.89999/1.43333"
+      },
+      {
+        "name": "Platja d es Cavallet",
+        "class": "duplicate_of:Platja des Cavallet",
+        "why": "Tier 2 rank 254. Malformed spelling of tier 1 rank 4. 'Playa des cavallet , Ibiza' (rank 257) is a third copy. Both sit in the collapsed-coordinate blob rather than at the real beach (38.84424/1.40254).",
+        "source_url": "https://ca.wikipedia.org/wiki/Platja_des_Cavallet"
+      },
+      {
+        "name": "Las Salinas, Eivissa",
+        "class": "duplicate_of:Platja de ses Salines",
+        "why": "Tier 2 rank 252. One of four rows for Ses Salines ('Salinas Ibiza' rank 259, 'Ses Salines Playa de Ibiza' rank 184, 'Platja de ses Salines' rank 163, 'Platja Ses Salinas' rank 180). Bulgaria's Nesebar problem, in Ibiza.",
+        "source_url": "https://ca.wikipedia.org/wiki/Platja_de_ses_Salines"
+      },
+      {
+        "name": "Playa de Cueva",
+        "class": "duplicate_of:Playa de Cueva",
+        "why": "Tier 2 rank 166 versus rank 38. Two rows with the identical name and the identical Wikipedia article es:Playa de Cueva, but 20 km apart (43.584/-6.245 versus 43.551/-6.472). One of the two is geocoded wrong.",
+        "source_url": "https://es.wikipedia.org/wiki/Playa_de_Cueva"
+      },
+      {
+        "name": "Platja de l'Illa Roja",
+        "class": "duplicate_of:Cala de l'Illa Roja",
+        "why": "Tier 2 rank 289, 0.11 km from tier 1 rank 6. 'Cala Moreta' (rank 288) is a third copy 0.02 km from it. The tier 1 row already carries ca:Platja de l'Illa Roja as its Wikipedia link.",
+        "source_url": "https://ca.wikipedia.org/wiki/Platja_de_l%27Illa_Roja"
+      },
+      {
+        "name": "Playa del Pájaro Amarillo (Oyambre)",
+        "class": "duplicate_of:Playa de Oyambre",
+        "why": "Tier 2 rank 110, 0.26 km from tier 1 rank 8. A local sector name for the same Cantabrian beach. Note the tier 1 row's own id is 'playa-de-oyambre-2', so dedupe already ran and still left both.",
+        "source_url": "https://es.wikipedia.org/wiki/Playa_de_Oyambre"
+      },
+      {
+        "name": "Cala Aiguablava. Begur",
+        "class": "duplicate_of:Platja d'Aiguablava",
+        "why": "Tier 2 rank 124, 0.02 km from tier 2 rank 19. Same cove, user-typed name with a stray full stop and the municipality appended.",
+        "source_url": "https://ca.wikipedia.org/wiki/Platja_d%27Aiguablava"
+      },
+      {
+        "name": "Platja Gran",
+        "class": "duplicate_of:Platja Gran",
+        "why": "Tier 2 ranks 209 and 219. Two different beaches (Cadaques 42.2885/3.27817 and Tossa de Mar 41.7189/2.93339) under one generic Catalan name meaning 'big beach'. Ambiguous on a country card; also 0.21 km from Platja de Port Alguer (rank 13), which may make one of them a third Cadaques duplicate.",
+        "source_url": "https://ca.wikipedia.org/wiki/Tossa_de_Mar"
+      }
+    ],
+    "missing": [
+      {
+        "name": "Playa de Ses Illetes (Formentera)",
+        "qid": "Q6126237",
+        "lat": 38.75,
+        "lon": 1.4333,
+        "why": "Routinely named Spain's best beach and one of Europe's best; the white-sand spit at the north tip of Formentera. Present in the wire only as a bad-geocoded tier 2 rank 255 row pinned 17 km away in Ibiza, so a user filtering by tier 1 never sees it.",
+        "source_url": "https://www.wikidata.org/wiki/Q6126237",
+        "verified": true
+      },
+      {
+        "name": "Playa de Rodas (Islas Cíes)",
+        "qid": "Q23993081",
+        "lat": 42.23,
+        "lon": -8.9,
+        "why": "The crescent beach of the Cies Islands in the Atlantic Islands of Galicia National Park, access-capped by permit. Absent from all 594 ES rows, as is the island group itself (Islas Cies, Q1658753).",
+        "source_url": "https://es.wikipedia.org/wiki/Playa_de_Rodas",
+        "verified": true
+      },
+      {
+        "name": "Playa de Bolonia",
+        "qid": "Q24024579",
+        "lat": 36.09,
+        "lon": -5.77,
+        "why": "The great dune beach west of Tarifa beside the Roman town of Baelo Claudia. Absent entirely, although the neighbouring Playa de Los Lances is tier 1 rank 5 and Playa Chica is tier 2 rank 30, so the harvester reached the area and skipped the famous one.",
+        "source_url": "https://es.wikipedia.org/wiki/Playa_de_Bolonia",
+        "verified": true
+      },
+      {
+        "name": "Playa de Las Teresitas (Tenerife)",
+        "qid": "Q2414727",
+        "lat": 28.51,
+        "lon": -16.19,
+        "why": "Tenerife's signature beach, Sahara-sand, above Santa Cruz. Tenerife has three features in the entire ES file and none of them is a notable beach.",
+        "source_url": "https://es.wikipedia.org/wiki/Playa_de_Las_Teresitas",
+        "verified": true
+      },
+      {
+        "name": "Playa de Macarella (Menorca)",
+        "qid": "Q11934484",
+        "lat": 39.94,
+        "lon": 3.94,
+        "why": "With Macarelleta, the image used for Menorca in every campaign. Menorca contributes 5 rows to the whole ES file and no tier 1 entry at all.",
+        "source_url": "https://es.wikipedia.org/wiki/Playa_de_Macarella",
+        "verified": true
+      },
+      {
+        "name": "Playa del Silencio (Asturias)",
+        "qid": "Q6078521",
+        "lat": 43.57,
+        "lon": -6.3,
+        "why": "The best known cove of the Asturian coast, a protected landscape. Absent, while five ordinary Cantabrian and Asturian beaches occupy tier 1 and high tier 2.",
+        "source_url": "https://es.wikipedia.org/wiki/Playa_del_Silencio",
+        "verified": true
+      },
+      {
+        "name": "Cala Comte (Ibiza)",
+        "qid": "Q5018254",
+        "lat": 38.9625,
+        "lon": 1.22028,
+        "why": "Ibiza's sunset beach and the island's most photographed water. Present only as a mis-geocoded tier 2 rank 242 row 17 km from the real location.",
+        "source_url": "https://www.wikidata.org/wiki/Q5018254",
+        "verified": true
+      },
+      {
+        "name": "Dunas de Maspalomas (Gran Canaria)",
+        "qid": "Q8770950",
+        "lat": 27.7417,
+        "lon": -15.5853,
+        "why": "The dune field and beach that is the Canaries' most recognised coastal image, a protected natural reserve. Gran Canaria has two rows in the entire ES file, both mountains.",
+        "source_url": "https://es.wikipedia.org/wiki/Dunas_de_Maspalomas",
+        "verified": true
+      },
+      {
+        "name": "Playa de Papagayo (Lanzarote)",
+        "qid": null,
+        "lat": null,
+        "lon": null,
+        "why": "The best known beach of Lanzarote, inside the Los Ajaches protected area. Could not confirm a Wikipedia article or QID from es.wikipedia or en.wikipedia within this pass, so coordinates are deliberately not asserted.",
+        "source_url": "https://es.wikipedia.org/w/index.php?search=Playa+de+Papagayo",
+        "verified": false
+      },
+      {
+        "name": "Playa de Sotavento (Fuerteventura)",
+        "qid": null,
+        "lat": null,
+        "lon": null,
+        "why": "The Jandia lagoon beach, the windsurfing world cup venue and Fuerteventura's emblem. Fuerteventura contributes three rows to the whole file, all inland hills. No QID confirmed in this pass.",
+        "source_url": "https://es.wikipedia.org/w/index.php?search=Playa+de+Sotavento",
+        "verified": false
+      }
+    ],
+    "order": [
+      "The ranking has zero Canary Islands beaches in tier 1. Across all 594 ES features only 24 are in the Canaries: Tenerife 3, Gran Canaria 2, Lanzarote 6, Fuerteventura 3, La Gomera 10. The Canaries are Spain's largest beach-holiday region by visitor nights and they are effectively missing. This is the single worst ranking defect for the Beaches tab.",
+      "Playa de la Malagueta (rank 12) and Playa del Orzán (rank 10) are ordinary working city beaches. They outrank Ses Illetes, Cala Comte, Bolonia, Macarella, Las Teresitas and Maspalomas, none of which appear in tier 1 at all.",
+      "Cala de l'Illa Roja at rank 6 is a small unofficially naturist cove reached by a cliff stair. Defensible in a Costa Brava list, not in a national top 6.",
+      "Regional clustering is severe. Begur and the Palafrugell coast supply ranks 6, 15, 18, 19, 22, 25, 26 (seven of the top 26 inside about 10 km) and Comillas/San Vicente supply ranks 8, 17, 27, 29. There is no per-region cap.",
+      "Praia das Catedrais at rank 3 and Playa de la Concha at rank 2 are correctly high. Es Trenc at rank 1 is a real, protected, genuinely famous beach, so the top of the list is honest even where the middle is not.",
+      "Below roughly rank 240 the beach list degenerates into a user-POI dump: emoji names, business names, foreign-language duplicates and a coordinate blob. Anything past rank 200 should not be shipped without a second pass."
+    ]
+  },
+  "mountains": {
+    "wrong": [
+      {
+        "name": "Mendizorrotza",
+        "class": "other",
+        "why": "Tier 1 rank 6. This is the Mendizorrotza sports complex in Vitoria-Gasteiz, home of Deportivo Alaves. The row's own linked article is en:Mendizorrotza Stadium and its coordinate 42.83436/-2.68880 matches Estadio de Mendizorroza (Q1369390) at 42.837111/-2.688044. A football stadium is ranked as Spain's sixth mountain.",
+        "source_url": "https://www.wikidata.org/wiki/Q1369390"
+      },
+      {
+        "name": "Gaztelugatxeko Doniene / San Juan de Gaztelugatxe",
+        "class": "island",
+        "why": "Tier 1 rank 4. A tidal islet crowned by a hermitage and reached by a stone footbridge and 241 steps. It is a rock island and a pilgrimage chapel, not a mountain. Same failure family as Bass Rock in the GB list.",
+        "source_url": "https://en.wikipedia.org/wiki/Gaztelugatxe"
+      },
+      {
+        "name": "San Juan de Gaztelugatxe",
+        "class": "duplicate_of:Gaztelugatxeko Doniene / San Juan de Gaztelugatxe",
+        "why": "Tier 1 rank 5. The identical feature 30 metres from rank 4, with the identical Wikipedia article (en:Gaztelugatxe) and the identical Wikimedia image file. Two of Spain's twelve tier 1 mountain slots are the same islet.",
+        "source_url": "https://en.wikipedia.org/wiki/Gaztelugatxe"
+      },
+      {
+        "name": "Monte Perdido Massif",
+        "class": "duplicate_of:Monte Perdido",
+        "why": "Tier 1 rank 8. Same feature as rank 7, 0.5 km away, same Wikipedia article en:Monte Perdido, same Wikimedia image file. Another pair of tier 1 slots burned on one mountain.",
+        "source_url": "https://en.wikipedia.org/wiki/Monte_Perdido"
+      },
+      {
+        "name": "Picos de Europa",
+        "class": "park_or_area",
+        "why": "Tier 1 rank 3. A mountain range and national park, not a summit, and it sits 2.3 km from Torre Cerredo at rank 2, which is that range's highest peak. Its card image is a photograph of Picu Urriellu, a different mountain that the wire ranks 279th.",
+        "source_url": "https://en.wikipedia.org/wiki/Picos_de_Europa"
+      },
+      {
+        "name": "Sierra de Gata",
+        "class": "park_or_area",
+        "why": "Tier 1 rank 9. The point 36.82583/-2.08250 is inside the Cabo de Gata-Nijar natural park in Almeria and the row is joined to that park's article. The notable Sierra de Gata (Q1088937) is a Sistema Central range at 40.23/-6.75 on the Caceres/Salamanca border, about 500 km away. A protected-area polygon carrying another range's name.",
+        "source_url": "https://es.wikipedia.org/wiki/Sierra_de_Gata"
+      },
+      {
+        "name": "Sierra del Torcal",
+        "class": "park_or_area",
+        "why": "Tier 1 rank 12. El Torcal de Antequera (Q1013353) is an 1,171 ha paraje natural, a karst landscape famous for its rock towers, not a named summit. Worth keeping as a natural feature but not as a mountain entry.",
+        "source_url": "https://es.wikipedia.org/wiki/Torcal_de_Antequera"
+      },
+      {
+        "name": "Battle of the Black Mountain",
+        "class": "other",
+        "why": "Tier 2 rank 19. An article about a 1794 battle in the War of the Pyrenees, i.e. a historical event, ranked as a mountain near Figueres. Exactly the same failure as Croatia's 'Battle of Gvozd Mountain' in the index.",
+        "source_url": "https://en.wikipedia.org/wiki/Battle_of_the_Black_Mountain"
+      },
+      {
+        "name": "Casa de los Picos",
+        "class": "other",
+        "why": "Tier 2 rank 40. A fifteenth-century palace in Segovia whose facade is covered in carved granite diamond points. The word 'picos' in the building's name has been read as peaks.",
+        "source_url": "https://es.wikipedia.org/wiki/Casa_de_los_Picos"
+      },
+      {
+        "name": "Montaña Clara",
+        "class": "island",
+        "why": "Tier 2 rank 25. An uninhabited volcanic islet in the Chinijo Archipelago north of La Graciosa, a nature reserve closed to landing. An island, not a mountain.",
+        "source_url": "https://en.wikipedia.org/wiki/Monta%C3%B1a_Clara"
+      },
+      {
+        "name": "Mont Tàber",
+        "class": "not_notable",
+        "why": "Tier 2 rank 66. The roughly 16 m Roman-era rise under Barcelona cathedral, marked by a millstone plaque in Carrer del Paradis. A historical curiosity, not a mountain a traveller hikes.",
+        "source_url": "https://es.wikipedia.org/wiki/Monte_T%C3%A1ber"
+      },
+      {
+        "name": "Cerro de Garabitas",
+        "class": "not_notable",
+        "why": "Tier 2 rank 50. The high point inside Madrid's Casa de Campo municipal park, a city-park hill.",
+        "source_url": "https://es.wikipedia.org/wiki/Cerro_Garabitas"
+      },
+      {
+        "name": "Monte do Gozo",
+        "class": "not_notable",
+        "why": "Tier 2 rank 22. A low rise outside Santiago de Compostela known for its pilgrim monument and hostel complex, not for being a mountain.",
+        "source_url": "https://en.wikipedia.org/wiki/Monte_do_Gozo"
+      },
+      {
+        "name": "Morrón de los Genoveses",
+        "class": "other",
+        "why": "Tier 2 rank 59. Joined to es:Playa de los Genoveses, a beach article. A mountain row describing a beach.",
+        "source_url": "https://es.wikipedia.org/wiki/Playa_de_los_Genoveses"
+      },
+      {
+        "name": "Serra d'Irta",
+        "class": "park_or_area",
+        "why": "Tier 2 rank 43. Joined to es:Parque natural de la Sierra de Irta, a natural park designation rather than a summit.",
+        "source_url": "https://es.wikipedia.org/wiki/Parque_natural_de_la_Sierra_de_Irta"
+      },
+      {
+        "name": "Sierra de Aracena and Picos de Aroche Natural Park",
+        "class": "park_or_area",
+        "why": "Tier 2 rank 61. The park's own name is in the feature name. A designation polygon, not a peak.",
+        "source_url": "https://en.wikipedia.org/wiki/Sierra_de_Aracena_and_Picos_de_Aroche_Natural_Park"
+      },
+      {
+        "name": "Urgull",
+        "class": "not_notable",
+        "why": "Tier 2 rank 16. A 123 m wooded hillock in the middle of San Sebastian topped by a castle and a Christ statue. A city park with a view, listed above Aneto, Mulhacen and Teide, all of which are absent.",
+        "source_url": "https://en.wikipedia.org/wiki/Urgull"
+      },
+      {
+        "name": "Puig des Molins, Ibiza",
+        "class": "duplicate_of:Puig des Molins",
+        "why": "Tier 2 rank 267, 0.11 km from rank 266. Puig des Molins is in any case a Phoenician-Punic necropolis hill in Ibiza Town, an archaeological site rather than a mountain.",
+        "source_url": "https://en.wikipedia.org/wiki/Puig_des_Molins"
+      }
+    ],
+    "missing": [
+      {
+        "name": "Teide",
+        "qid": "Q38954",
+        "lat": 28.27306,
+        "lon": -16.63944,
+        "why": "Spain's highest mountain at 3,715 m, the world's third tallest volcanic structure, a UNESCO World Heritage site and the centre of the most visited national park in Europe. It does not appear anywhere in the 594-row ES snapshot, in any tier. This is the single biggest data failure in the Spanish set.",
+        "source_url": "https://www.wikidata.org/wiki/Q38954",
+        "verified": true
+      },
+      {
+        "name": "Mulhacén",
+        "qid": "Q209528",
+        "lat": 37.05333,
+        "lon": -3.31139,
+        "why": "Highest mountain in mainland Spain at 3,479 m, the roof of Sierra Nevada. Absent from every tier, and no Sierra Nevada feature of any kind appears in the file.",
+        "source_url": "https://www.wikidata.org/wiki/Q209528",
+        "verified": true
+      },
+      {
+        "name": "Aneto",
+        "qid": "Q208081",
+        "lat": 42.63222,
+        "lon": 0.65778,
+        "why": "Highest peak of the Pyrenees at 3,404 m, in the Posets-Maladeta natural park. Absent, while sixteen obscure Aiguestortes peaks occupy tier 2.",
+        "source_url": "https://www.wikidata.org/wiki/Q208081",
+        "verified": true
+      },
+      {
+        "name": "Naranjo de Bulnes (Picu Urriellu)",
+        "qid": "Q2636482",
+        "lat": 43.2,
+        "lon": -4.81667,
+        "why": "The limestone tower that is the emblem of the Picos de Europa and of Asturias. It is in the file, as 'Picu Urriellu' at tier 2 rank 279 out of 279 mountain rows, dead last, while its own photograph is used to illustrate the tier 1 'Picos de Europa' card at rank 3.",
+        "source_url": "https://www.wikidata.org/wiki/Q2636482",
+        "verified": true
+      },
+      {
+        "name": "Montserrat",
+        "qid": "Q732115",
+        "lat": 41.59167,
+        "lon": 1.83778,
+        "why": "The serrated conglomerate massif and Benedictine abbey above Barcelona, Catalonia's symbolic mountain and one of the most visited natural sites in Spain. Absent from every tier.",
+        "source_url": "https://www.wikidata.org/wiki/Q732115",
+        "verified": true
+      },
+      {
+        "name": "Roque Nublo",
+        "qid": "Q1424835",
+        "lat": 27.97083,
+        "lon": -15.6125,
+        "why": "The 80 m basalt monolith that is Gran Canaria's emblem, in the Roque Nublo rural park. Absent, while its lower neighbour Pico de las Nieves takes tier 1 rank 11.",
+        "source_url": "https://www.wikidata.org/wiki/Q1424835",
+        "verified": true
+      },
+      {
+        "name": "Pico Almanzor",
+        "qid": "Q203353",
+        "lat": 40.24667,
+        "lon": -5.29778,
+        "why": "Highest point of the Sierra de Gredos at 2,592 m, the classic mountain of the Sistema Central and a Madrid weekend objective. Absent from every tier.",
+        "source_url": "https://www.wikidata.org/wiki/Q203353",
+        "verified": true
+      },
+      {
+        "name": "Peñalara",
+        "qid": "Q1478880",
+        "lat": 40.85,
+        "lon": -3.95,
+        "why": "Highest point of the Sierra de Guadarrama at 2,428 m, inside the Guadarrama national park, the mountain Madrid actually walks. Absent, while Cerro de Garabitas, a hill in a Madrid city park, is tier 2 rank 50.",
+        "source_url": "https://www.wikidata.org/wiki/Q1478880",
+        "verified": true
+      }
+    ],
+    "order": [
+      "Roque de Agando at rank 1 is indefensible as Spain's top mountain. It is a striking volcanic plug on La Gomera, worth listing, but it is not a mountain anyone climbs and it is not what a Spanish mountain card should show. Teide, Mulhacen, Aneto and Montserrat are all absent, so the number one slot went to the most photogenic thing the harvester happened to hold.",
+      "Picos de Europa at rank 3 sits directly above and 2.3 km from Torre Cerredo at rank 2, which is its own summit. The range outranks its own high point, and the range card carries a picture of a third mountain that the wire ranks 279th.",
+      "The mountain ranking is a map of OpenStreetMap peak density, not of fame. Sixteen of the 279 rows are minor Aiguestortes summits (ranks 14, 15, 23, 24, 33, 34, 38, 45, 46, 47, 53, 54, 55, 56, 57, 58) and a comparable block are unnamed-to-travellers torres in the Picos. One national park with dense OSM coverage outweighs the whole of the Sierra Nevada, which contributes nothing.",
+      "Two tier 1 slots are the Gaztelugatxe islet twice and two more are Monte Perdido twice. A third of Spain's tier 1 mountains are duplicates or non-mountains, before counting the football stadium at rank 6.",
+      "Puig Major at rank 10 is genuinely Mallorca's highest peak but the summit is an active military radar installation and closed to the public. It should be listed with that caveat rather than presented as a walk.",
+      "Monte Perdido at rank 7 and Torre Cerredo at rank 2 are the two entries whose position is straightforwardly correct."
+    ]
+  },
+  "counts_verdict": "Twelve tier 1 beaches and twelve tier 1 mountains is far too few for Spain, and the composition matters more than the count. Spain has roughly 8,000 km of coast plus two archipelagos, and the Pyrenees, Sierra Nevada, Picos de Europa, Gredos, Guadarrama, Montserrat and Teide. Compare Malta at 6 beaches: Spain gets twice Malta's allocation for a country with more than a hundred times the coastline and the Canaries on top. Worse, of 594 total features only 24 are in the Canaries (Tenerife 3, Gran Canaria 2, Fuerteventura 3), 5 in Menorca and 7 in Formentera, so no per-region quota can even be met from the current harvest. Spain needs a tier 1 of at least 20 per kind, an explicit per-autonomous-community and per-island quota, and a re-harvest of the Canaries and Menorca before the tab is credible.",
+  "top_pick_verdict": "top_beach 'Es Trenc Beach' is acceptable: a real, protected, genuinely famous Mallorcan beach with an Excellent EEA class. I would still put Playa de la Concha, San Sebastian, on the country card, because it is the single most recognisable Spanish beach image and it is already ranked 2. top_mountain 'Roque de Agando' is not acceptable and should be rejected outright. Spain's country-card mountain is Teide (Q38954), or Mulhacen (Q209528) if the card is meant to show mainland Spain. Shipping a La Gomera rock pinnacle as Spain's mountain while Teide is absent from the dataset entirely would be the most visible error in the whole release.",
+  "notes": "Systemic issues found in ES, in priority order. (1) Coverage hole: the Canaries and Menorca are barely harvested, which is why Teide, Roque Nublo, Las Teresitas, Maspalomas, Papagayo, Sotavento and Macarella are all absent rather than merely mis-ranked. Fixing rank order will not fix this; the harvest must be re-run with island coverage checks. (2) Geocode collapse: beach ranks 241-260 form a 13-row cluster inside a 1 km blob at roughly 38.905/1.423 near Ibiza airport, containing rows named for Cala Comte (real 38.9625/1.22028), Ses Illetes on Formentera (real 38.75/1.4333), Cala d'Hort, Cala Saladeta, Ses Salines and Es Cavallet. Three rows share the exact coordinate 38.89999/1.43333. All 13 carry sources ['eea','osm','whc'] and water 'Good', so the cluster is identifiable by a single query. (3) Duplicate density: I counted 20 beach pairs under 500 m in tier 1/2 that are the same feature under different spellings or languages, plus four rows for Ses Salines and three for La Concha. (4) Wikipedia mis-joins are the mechanism behind most non-beach and non-mountain rows: a stadium article, a palace article, a battle article, a beach article on a mountain row, a peninsula article on a beach row. Validating the linked item's Wikidata P31 against an allowed class list would remove most of them in one pass. (5) The 'unesco' designation is being applied loosely: Platja des Cavallet and the whole Ibiza blob carry it because Ibiza is a UNESCO site, not because the beaches are."
+}

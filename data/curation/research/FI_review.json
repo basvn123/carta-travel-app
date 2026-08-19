@@ -1,0 +1,207 @@
+{
+  "iso2": "FI",
+  "country": "Finland",
+  "checked_at": "2026-08-17",
+  "beaches": {
+    "wrong": [
+      {
+        "name": "Rauman seurakunta Kesakoti",
+        "class": "hospitality",
+        "why": "Tier 1, rank 7. The name means 'Rauma parish summer house'. OSM has a building named Kesakoti on Kesakodintie at exactly the snapshot coordinate 61.1363/21.4589. It is a church owned summer camp property, not a public beach, and it sits in Finland's tier 1.",
+        "source_url": "https://nominatim.openstreetmap.org/ui/search.html?q=Kes%C3%A4koti+Rauma"
+      },
+      {
+        "name": "Siikajarvi",
+        "class": "other",
+        "why": "Tier 1, rank 12. Siikajarvi is a lake (and the surrounding Espoo district) at Nuuksio; OSM has the lake at 60.28156/24.51844, matching the snapshot coordinate. The feature names a body of water and an administrative area, not a beach.",
+        "source_url": "https://nominatim.openstreetmap.org/ui/search.html?q=Siikaj%C3%A4rvi+Espoo"
+      },
+      {
+        "name": "Hammars Strand / Hamarin Ranta",
+        "class": "duplicate_of:Hamarin Ranta",
+        "why": "Tier 2, rank 13, 300 m from the tier 1 rank 1 entry Hamarin Ranta at Porvoo. The row literally carries both the Swedish and the Finnish name of the same shore, and the pipeline still kept it as a second feature.",
+        "source_url": "data/curation/wire_snapshot/FI.json"
+      },
+      {
+        "name": "Plagenin uimaranta",
+        "class": "duplicate_of:Hangon uimaranta",
+        "why": "Tier 2, rank 18 at 59.8249/22.9836 versus tier 1 rank 2 Hangon uimaranta at 59.8250/22.9838. About 20 m apart: the same Hanko beach (Plagen) under two names. Hanko alone supplies seven of the 34 Finnish beaches (Hangon uimaranta, Plagenin, Keskustan, Tulliniemen etelainen, Bellevue Beach, Casinon ranta, Hanko Beach, Furuvik, Gunnarsin ranta, Gunnarsstrand).",
+        "source_url": "data/curation/wire_snapshot/FI.json"
+      },
+      {
+        "name": "Pyynikki Beach East",
+        "class": "duplicate_of:Pyynikin uimaranta",
+        "why": "Tier 2, rank 19, 340 m along the same Pyynikki shore in Tampere as the tier 1 rank 6 entry.",
+        "source_url": "data/curation/wire_snapshot/FI.json"
+      }
+    ],
+    "missing": [
+      {
+        "name": "Yyteri Beach",
+        "qid": "Q120441350",
+        "lat": 61.563,
+        "lon": 21.5244,
+        "why": "Finland's most famous beach: about 6 km of sand and dunes at Pori, the first beach destination in Finland to receive the Blue Flag, and a Visit Finland headline product. Its absence is the Praia da Marinha failure for Finland. The district item is Q2545517.",
+        "source_url": "https://www.visitfinland.com/en/product/a6e0f40d-5989-42da-9dd7-296b07ae2973/pori-yyteri-beach-soft-sand-and-the-warmth-of-the-sun/",
+        "verified": true
+      },
+      {
+        "name": "Kalajoen Hiekkasarkat",
+        "qid": "Q18659766",
+        "lat": 64.239717,
+        "lon": 23.817433,
+        "why": "Kalajoki's dune resort on the Gulf of Bothnia, roughly 15 km of sand and the country's biggest beach holiday destination, promoted by Visit Finland as the full beach resort experience.",
+        "source_url": "https://www.wikidata.org/wiki/Q18659766",
+        "verified": true
+      },
+      {
+        "name": "Hietaniemi beach (Hietsu)",
+        "qid": "Q2041018",
+        "lat": 60.174167,
+        "lon": 24.906667,
+        "why": "Helsinki's main city beach. Helsinki does not appear once in the Finnish beach list, which is a hole no filter can excuse: the capital's summer shore is the single most used beach in the country.",
+        "source_url": "https://www.wikidata.org/wiki/Q2041018",
+        "verified": true
+      },
+      {
+        "name": "Aurinkolahti",
+        "qid": "Q2871913",
+        "lat": 60.20222,
+        "lon": 25.15361,
+        "why": "Vuosaari's artificial sand beach in eastern Helsinki, the city's second big bathing beach and the one with the calmest water.",
+        "source_url": "https://www.wikidata.org/wiki/Q2871913",
+        "verified": true
+      }
+    ],
+    "order": [
+      "Every tier 1 beach is a municipal uimaranta drawn from the EEA bathing water register (32 of 34 rows carry sources ['eea','osm']), so the ranking is a ranking of water quality plus distance to a catalogue city, not of beaches. Eleven of the twelve tier 1 rows share the score 0.932, which means the ordering inside tier 1 is arbitrary.",
+      "Hamarin Ranta at rank 1 is a suburban swimming beach at Porvoo, chosen over Yyteri and Kalajoki which are absent, and it is illustrated with a photograph of the Hamari water tower.",
+      "Hangon uimaranta at rank 2 is a fair pick (Hanko is Finland's beach town) but the same beach then reappears at tier 2 rank 18.",
+      "Rauman seurakunta Kesakoti at rank 7 outranks every real beach in Lapland and Aland.",
+      "Ounaskoski beach (tier 2, rank 14) is a river bank in Rovaniemi; Arktikumin ranta (rank 22) is the lawn in front of the Arktikum museum. Both are city shorelines rather than beaches."
+    ]
+  },
+  "mountains": {
+    "wrong": [
+      {
+        "name": "Kakolanmaki",
+        "class": "not_notable",
+        "why": "Tier 1, rank 2. A 42 m hill in central Turku, one of the city's seven hills, known for the Kakola prison complex that operated until 2007 and is now a hotel. Wikidata classes it as a hill (P31 Q54050) with elevation 42 m. It is the second highest ranked mountain in Finland.",
+        "source_url": "https://fi.wikipedia.org/wiki/Kakolanm%C3%A4ki"
+      },
+      {
+        "name": "Yliopistonmaki",
+        "class": "town_or_village",
+        "why": "Tier 1, rank 3. OSM records Yliopistonmaki as place=neighbourhood in central Turku: the University Hill campus quarter. An urban neighbourhood ranked third among Finnish mountains.",
+        "source_url": "https://nominatim.openstreetmap.org/ui/search.html?q=Yliopistonm%C3%A4ki+Turku"
+      },
+      {
+        "name": "Samppalinnan vuori",
+        "class": "not_notable",
+        "why": "Tier 1, rank 5. A small hill inside Samppalinna park in Turku, 500 m from the cathedral, carrying the old observatory and the park's water tower. OSM tags it natural=peak, which is how it entered the pool; that tag is not a fame signal.",
+        "source_url": "https://nominatim.openstreetmap.org/ui/search.html?q=Samppalinnanm%C3%A4ki+Turku"
+      },
+      {
+        "name": "Vartiovuori",
+        "class": "not_notable",
+        "why": "Tier 2, rank 17. A fourth Turku city hill, 500 m from the centre, in the same park belt as Samppalinna. Four of Finland's 18 tiered mountains are hills inside the city of Turku.",
+        "source_url": "https://nominatim.openstreetmap.org/ui/search.html?q=Vartiovuori+Turku"
+      },
+      {
+        "name": "Nasi glacial erratic Porvoo",
+        "class": "other",
+        "why": "Tier 2, rank 14. A glacial erratic, that is a single boulder left by the ice sheet, near Porvoo. A boulder is not a mountain and the name says so.",
+        "source_url": "data/curation/wire_snapshot/FI.json"
+      },
+      {
+        "name": "Ailin Laavuvaara",
+        "class": "other",
+        "why": "Tier 2, rank 18, score 0.259. The name means 'Aili's lean-to hill': an OSM name given to a shelter site near Inari, not an established mountain name.",
+        "source_url": "data/curation/wire_snapshot/FI.json"
+      }
+    ],
+    "missing": [
+      {
+        "name": "Halti",
+        "qid": "Q216035",
+        "lat": 69.32361,
+        "lon": 21.27833,
+        "why": "Finland's highest point at about 1324 m, on the Norwegian border in Enontekio. Any national mountains list must contain it.",
+        "source_url": "https://fi.wikipedia.org/wiki/Halti",
+        "verified": true
+      },
+      {
+        "name": "Saana",
+        "qid": "Q1637507",
+        "lat": 69.04361,
+        "lon": 20.85611,
+        "why": "The fell above Kilpisjarvi, a Finnish national landscape and probably the most photographed mountain in the country.",
+        "source_url": "https://fi.wikipedia.org/wiki/Saana_(tunturi)",
+        "verified": true
+      },
+      {
+        "name": "Yllas (Yllastunturi)",
+        "qid": "Q1542451",
+        "lat": 67.56611,
+        "lon": 24.23306,
+        "why": "718 m, the highest fell in the Pallas-Yllastunturi national park area and the biggest ski fell in Finland.",
+        "source_url": "https://www.wikidata.org/wiki/Q1542451",
+        "verified": true
+      },
+      {
+        "name": "Taivaskero (Pallastunturi)",
+        "qid": "Q3514086",
+        "lat": 68.075,
+        "lon": 24.05361,
+        "why": "The highest top of the Pallastunturi group, the start of the Hetta to Pallas trail and a Finnish national landscape.",
+        "source_url": "https://www.wikidata.org/wiki/Q3514086",
+        "verified": true
+      },
+      {
+        "name": "Rukatunturi",
+        "qid": "Q762945",
+        "lat": 66.16556,
+        "lon": 29.15167,
+        "why": "493 m at Kuusamo, Finland's best known ski and hiking fell outside Lapland proper and the gateway to Oulanka national park, which the list represents only with Hiidenvaara and Jakalavaara.",
+        "source_url": "https://www.wikidata.org/wiki/Q762945",
+        "verified": true
+      },
+      {
+        "name": "Iso-Syote",
+        "qid": "Q536744",
+        "lat": 65.62556,
+        "lon": 27.60444,
+        "why": "The southernmost fell of Finland and a year round resort in Pudasjarvi.",
+        "source_url": "https://fi.wikipedia.org/wiki/Iso-Sy%C3%B6te",
+        "verified": true
+      },
+      {
+        "name": "Kiilopaa",
+        "qid": "Q11871352",
+        "lat": 68.34133,
+        "lon": 27.5025,
+        "why": "546 m fell in Urho Kekkonen national park at Saariselka, one of the easiest true fell summits to reach in Finland.",
+        "source_url": "https://www.wikidata.org/wiki/Q11871352",
+        "verified": true
+      },
+      {
+        "name": "Aakenustunturi",
+        "qid": "Q1571816",
+        "lat": 67.69167,
+        "lon": 24.46556,
+        "why": "570 m fell in Kittila, next door to the Levi destination the app already carries, and a better representative of that area than the tier 2 entries currently there.",
+        "source_url": "https://www.wikidata.org/wiki/Q1571816",
+        "verified": true
+      }
+    ],
+    "order": [
+      "The Koli ranking is inverted. Paha-Koli (rank 6) and Akka-Koli (rank 7) sit in tier 1 while Ukko-Koli, the highest summit of Koli at 347 m and the view that is Finland's best known national landscape, sits in tier 2 at rank 16 with a lower score. Ukko-Koli should be the Finnish top pick, or close to it.",
+      "Four Turku city hills (ranks 2, 3, 5 and tier 2 rank 17) outrank every fell in Lapland except Ounasvaara and Katkatunturi. Halti, Saana, Yllas, Pallas and Ruka are absent.",
+      "Levitunturi, the fell that gives the Levi destination its name, is only tier 2 rank 13 while Katkatunturi (rank 4) and the mis-scoped Pyhatunturi (tier 2 rank 15) rank above it.",
+      "Ounasvaara at rank 1 is a 204 m ski and recreation hill at Rovaniemi. Reasonable as an accessible pick, not as the mountain of Finland."
+    ]
+  },
+  "counts_verdict": "34 beaches and 18 mountains is roughly the right order of magnitude for a low relief country, but the composition is wrong on both tabs. The beaches are municipal swimming beaches from one register, so Helsinki, Pori (Yyteri) and Kalajoki are missing while Hanko supplies ten rows and Ystad-style clustering repeats. 18 mountains is too few once you remove the four Turku city hills and the five Koli knolls: that leaves nine features for a country with a whole Lapland fell chain, so the real number should be 40 or more with Lapland dominant.",
+  "top_pick_verdict": "Neither pick is right. top_beach 'Hamarin Ranta' is a Porvoo suburb swimming beach illustrated with a water tower; the Finland beach card is Yyteri. top_mountain 'Ounasvaara' is Rovaniemi's ski hill; the card should be Ukko-Koli (already in the data, wrongly demoted to tier 2) or Saana at Kilpisjarvi.",
+  "notes": "Image joins are frequently unrelated to the feature: Hamarin Ranta shows the Hamari water tower, Hangon uimaranta shows Hanko's Orthodox church, Kuparivuoren uimaranta shows the Kuparivuori road tunnel. Name hygiene is poor: 'Kuparivuoren_uimaranta' keeps a raw underscore. One geographic risk to re-check before shipping: the entry 'Pyhatunturi' at 67.7742/24.6432 is placed next to Levi in Kittila, whereas the famous Pyhatunturi (Q837158) is at 67.0136/27.1489 in Pelkosenniemi, so either a minor namesake fell has been picked up or the coordinate is wrong. Finally, 32 of 34 beaches carry an EEA row, which is why the beach tab reads like a water quality register rather than a travel list."
+}

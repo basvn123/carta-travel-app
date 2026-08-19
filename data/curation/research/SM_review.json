@@ -1,0 +1,58 @@
+{
+  "iso2": "SM",
+  "country": "San Marino",
+  "checked_at": "2026-08-17",
+  "beaches": {
+    "wrong": [],
+    "missing": [],
+    "order": [
+      "Zero beaches is correct. San Marino is landlocked and has no coast and no listed bathing water, so an empty beach list is the right answer rather than a gap."
+    ]
+  },
+  "mountains": {
+    "wrong": [
+      {
+        "name": "Guaita",
+        "class": "duplicate_of:Monte Titano",
+        "why": "Tier 1, rank 2, and 370 m from the Monte Titano row at rank 1. Guaita is the first of San Marino's three towers and the name of the peak it stands on. Wikidata does type Q2711604 as a mountain (P31 Q8502, described as 'mountain peak near in the city of San Marino'), so this is not a straightforward data error, but it is one of the three sub-summits of the single mountain already at rank 1, not a second mountain. The practical failure is visible in the wire itself: the image attached to this row is 'Guaita Fortress', so the Mountains tab will show San Marino's second-ranked mountain as a photograph of a castle.",
+        "source_url": "https://www.wikidata.org/wiki/Q2711604"
+      },
+      {
+        "name": "Montale",
+        "class": "duplicate_of:Monte Titano",
+        "why": "Tier 2, rank 3, and 290 m from the Monte Titano row. The third tower of San Marino and the third sub-summit of Monte Titano. Same situation as Guaita: Wikidata types Q2224877 as a mountain, the shipped image is 'Montale Tower'. Between them, Guaita and Montale take two of San Marino's five mountain slots for peaks that are part of the mountain at rank 1.",
+        "source_url": "https://www.wikidata.org/wiki/Q2224877"
+      }
+    ],
+    "missing": [
+      {
+        "name": "Monte Carlo",
+        "qid": "Q3498210",
+        "lat": 43.915,
+        "lon": 12.45556,
+        "why": "Absent. At 559 m it is San Marino's second-highest named mountain after Monte Titano, higher than Monte San Cristoforo (531 m) and Monte della Mandra (352 m), both of which are in the file. It sits about 2 km south of the wire's Monte Titano coordinate, comfortably inside the harvest radius, so this is a harvest or scoring gap rather than a distance one. It should be rank 2 once the two towers are folded into Monte Titano.",
+        "source_url": "https://www.wikidata.org/wiki/Q3498210",
+        "verified": true
+      },
+      {
+        "name": "Monte Pulito",
+        "qid": "Q3861877",
+        "lat": 43.930941,
+        "lon": 12.490289,
+        "why": "Absent. A named San Marino hill in the east of the republic, at a similar scale to Monte della Mandra which is in the file. Low priority: worth adding only to fill out a very short list.",
+        "source_url": "https://www.wikidata.org/wiki/Q3861877",
+        "verified": false
+      }
+    ],
+    "order": [
+      "Monte Titano at rank 1 is unarguably correct: 739 m, the country's high point, a UNESCO World Heritage site and the reason the state exists where it does. Nothing else in San Marino competes.",
+      "Ranks 2 and 3 should not exist as separate mountains. Guaita and Montale are sub-summits of the rank-1 feature and are 370 m and 290 m from it respectively; a 500 m dedupe radius would remove both.",
+      "Once those are folded in, the defensible order is Monte Titano (739 m), Monte Carlo (559 m, currently missing), Monte San Cristoforo (531 m, currently rank 4), Monte della Mandra (352 m, currently rank 5). Only the relative order of the last two is currently right.",
+      "Monte San Cristoforo at rank 4 and Monte della Mandra at rank 5 are both genuine mountains in San Marino, confirmed in Wikidata as P31 mountain with country San Marino, and both wire coordinates match Wikidata to within about 30 m. No objection to either being present.",
+      "Image quality problem that affects the visible order: Monte San Cristoforo and Monte della Mandra both ship the same picture, a relief map of San Marino (Reliefkarte_San_Marino.png). Two of the five rows will render an identical cartographic diagram instead of a mountain, which reads as broken even though the ranking is fine."
+    ]
+  },
+  "counts_verdict": "0 beaches is exactly right for a landlocked republic. 5 mountains is generous but not absurd for a 61 square kilometre state built on one ridge; the honest count after removing Guaita and Montale as sub-summits of Monte Titano is 3, and adding Monte Carlo would bring it back to 4 real, distinct, named mountains, which is about right. Two tier-1 entries for San Marino is one too many: Monte Titano alone should be tier 1.",
+  "top_pick_verdict": "Yes. top_mountain 'Monte Titano' is exactly what belongs on the San Marino country card, and there is no serious alternative: it is the high point, the UNESCO site, the skyline in every photograph of the country, and the wire coordinate (43.93219, 12.45097) is close to the Wikidata value (43.92833, 12.45222). top_beach is null, which is correct. I would change nothing about either pick.",
+  "notes": "San Marino is the cleanest of the three files in my group. No hospitality rows, no junk titles, no islands, no mislocated features, and every one of the five entries is a real named landform in the right country with coordinates matching Wikidata. The only defect is a proximity dedupe failure: two of San Marino's three named summits are also the sites of its two most famous towers, so a name-based filter will not catch them and the pipeline has scored them as separate mountains. This is a slightly different failure from Austria's Schlossberg or Switzerland's 'View to Aletschgletscher': here Wikidata genuinely types both as peaks, so the fix is a parent-summit or 500 m radius collapse, not a name blacklist. Worth noting that a generic per-country fallback image (the San Marino relief map) is being reused across multiple rows; that should be treated as no image rather than as an image, since a card with a relief map on it looks worse than a card with a placeholder."
+}

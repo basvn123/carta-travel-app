@@ -1,0 +1,191 @@
+{
+  "iso2": "IS",
+  "country": "Iceland",
+  "checked_at": "2026-08-17",
+  "beaches": {
+    "wrong": [],
+    "missing": [
+      {
+        "name": "Reynisfjara",
+        "qid": "Q115641739",
+        "lat": 63.40494,
+        "lon": -19.06401,
+        "why": "The black basalt-sand beach at Vik with the Reynisdrangar sea stacks and the basalt column cave, one of the most visited sites in Iceland. The app carries a 'Vik & South Coast' anchor 2 km away and from it ships Reynisfjall, the cliff directly above the beach, as a mountain, while shipping no beach at all.",
+        "source_url": "https://www.wikidata.org/wiki/Q115641739",
+        "verified": true
+      },
+      {
+        "name": "Breidamerkursandur (Diamond Beach)",
+        "qid": "Q14567939",
+        "lat": 63.9636,
+        "lon": -16.38624,
+        "why": "The black outwash beach below Jokulsarlon where icebergs strand on the sand; universally marketed as Diamond Beach and a fixed stop on every south-coast itinerary. The app carries a 'Jokulsarlon' anchor and returns one mountain from it.",
+        "source_url": "https://www.wikidata.org/wiki/Q14567939",
+        "verified": true
+      },
+      {
+        "name": "Djupalonssandur",
+        "qid": "Q5285420",
+        "lat": 64.75232,
+        "lon": -23.90132,
+        "why": "The black pebble beach in Snaefellsjokull National Park with the four lifting stones and the Epine trawler wreck. The app carries a 'Snaefellsnes' anchor.",
+        "source_url": "https://www.wikidata.org/wiki/Q5285420",
+        "verified": true
+      },
+      {
+        "name": "Raudasandur",
+        "qid": null,
+        "lat": null,
+        "lon": null,
+        "why": "The red-sand beach in the Westfjords, the counterpoint to Iceland's black beaches and the reason many travellers drive the Latrabjarg road. No Wikidata entity confirmed, so listed unverified.",
+        "source_url": "https://www.westfjords.is/",
+        "verified": false
+      },
+      {
+        "name": "Ytri-Tunga",
+        "qid": null,
+        "lat": null,
+        "lon": null,
+        "why": "The Snaefellsnes beach known for its resident seal colony, the most reliable seal-watching spot in the country. No Wikidata entity confirmed, so listed unverified.",
+        "source_url": "https://www.west.is/",
+        "verified": false
+      }
+    ],
+    "order": [
+      "There is nothing to order: the IS file contains zero beaches and the index reports top_beach null, so the Beaches tab returns an empty country for Iceland.",
+      "A defensible product argument exists for zero, since no Icelandic beach is a swimming beach and Reynisfjara in particular is dangerous because of sneaker waves that have killed visitors. But that argument requires the tab to say so. Silently returning an empty country for one of Europe's most visited coastlines reads as missing data, not as an editorial decision, and it also loses Reynisfjara and Diamond Beach, which are top-five Iceland attractions by visit count.",
+      "Recommended resolution: ship these as beaches with a safety flag rather than omitting them, or rename the tab's Iceland state to something like 'coastline' with an explicit no-swimming note."
+    ]
+  },
+  "mountains": {
+    "wrong": [
+      {
+        "name": "Svartsengi",
+        "class": "other",
+        "why": "Family: infrastructure_not_summit. Svartsengi is a geothermal power station on the Reykjanes peninsula, run by HS Orka, whose runoff created the Blue Lagoon in 1976; the linked Wikipedia article is the Eldvorp-Svartsengi volcanic system, an area name, not a peak. The stored point 63.87766,-22.44816 is 0.3 km from the app's own Blue Lagoon anchor, that is, on the plant. The actual mountain at that spot is Thorbjorn. It is ranked 10 of Iceland's mountains.",
+        "source_url": "https://en.wikipedia.org/wiki/Svartsengi_power_station"
+      },
+      {
+        "name": "Thorsmork",
+        "class": "park_or_area",
+        "why": "Tier 1 rank 5. Thorsmork is the valley and nature reserve between the Tindfjallajokull, Eyjafjallajokull and Myrdalsjokull glaciers, the terminus of the Laugavegur trail. The app's own anchor destination is also called 'Thorsmork' and sits 0.0 km away, so the region is being listed as one of its own mountains.",
+        "source_url": "https://en.wikipedia.org/wiki/Thorsmork"
+      },
+      {
+        "name": "Kerlingarfjoll",
+        "class": "park_or_area",
+        "why": "Tier 1 rank 4. English Wikipedia describes it as a volcanic massif regarded as part of a tuya fissure system of roughly 100 km2, that is, a mountain range, not a summit. Its high point is Snaekollur at 1,477 m. As with Thorsmork, the app's own anchor is called 'Kerlingarfjoll' at 0.0 km, so the entry is circular.",
+        "source_url": "https://en.wikipedia.org/wiki/Kerlingarfj%C3%B6ll"
+      },
+      {
+        "name": "Storhofdi",
+        "class": "park_or_area",
+        "why": "Family: headland_or_peninsula. Tier 1 rank 3, that is, Iceland's third mountain. English Wikipedia: 'a peninsula and the southernmost point of Heimaey', roughly 120 m high, known for its weather station, its claim to be the windiest place in Europe, and its puffin hide. It is a headland viewpoint, not a mountain.",
+        "source_url": "https://en.wikipedia.org/wiki/St%C3%B3rh%C3%B6f%C3%B0i"
+      },
+      {
+        "name": "Bergthorugata",
+        "class": "other",
+        "why": "Family: street_or_urban_address. Tier 2 rank 38, id mountain:IS:berg-orugata, stored at 64.14232,-21.92263, which is downtown Reykjavik beside Hallgrimskirkja. Bergthorugata is a 460 m residential street in the city centre, ingested from OSM as a mountain and, worse, carrying a 'natural_monument' designation, so the protected-area join is also placing a conservation label on a city street.",
+        "source_url": "https://www.walkscore.com/score/berg%C3%BE%C3%B3rugata-reykjav%C3%ADk-capital-region-iceland"
+      },
+      {
+        "name": "Bergthorshvoll",
+        "class": "other",
+        "why": "Family: street_or_urban_address. Tier 2 rank 37, stored at 64.14198,-21.91857, 400 m from the Bergthorugata row and likewise in central Reykjavik, also tagged 'natural_monument'. The historic Bergthorshvoll of Njals saga is a farm site in Rangarvellir, over 100 km away, so this is neither a mountain nor the place its name suggests.",
+        "source_url": "https://www.wikidata.org/wiki/Q1032612",
+        "verified": false
+      },
+      {
+        "name": "Eyjafjallajokull volcano",
+        "class": "other",
+        "why": "Family: appended_english_type_suffix. Low severity and the right feature, but the shipped string bolts the English word 'volcano' onto a native name that already means 'the glacier of Eyjafjoll'. It is the country's top_mountain, so the redundancy is on the country card. The same suffix pattern should be stripped wherever it occurs.",
+        "source_url": "https://en.wikipedia.org/wiki/Eyjafjallaj%C3%B6kull"
+      }
+    ],
+    "missing": [
+      {
+        "name": "Hvannadalshnjukur",
+        "qid": "Q140084",
+        "lat": 64.01583,
+        "lon": -16.67472,
+        "why": "2,110 m, the highest point in Iceland, the summit of the Oraefajokull volcano in Vatnajokull National Park. The app carries a 'Skaftafell / Vatnajokull' anchor about 15 km away and returns Kristinartindar from it instead. Absent from the file in any tier.",
+        "source_url": "https://www.wikidata.org/wiki/Q140084",
+        "verified": true
+      },
+      {
+        "name": "Kirkjufell",
+        "qid": "Q1547402",
+        "lat": 64.94104,
+        "lon": -23.30569,
+        "why": "The 463 m arrowhead peak at Grundarfjordur, by a wide margin the most photographed mountain in Iceland and the one that appears on the country's own tourism imagery. The app carries a 'Snaefellsnes' anchor from which it returns Helgrindur, Ellidatindar, Gjafakollur and Lysuhyrna, but not Kirkjufell.",
+        "source_url": "https://www.wikidata.org/wiki/Q1547402",
+        "verified": true
+      },
+      {
+        "name": "Snaefellsjokull",
+        "qid": "Q1315012",
+        "lat": 64.8,
+        "lon": -23.78333,
+        "why": "The 1,446 m glacier-capped stratovolcano at the tip of the Snaefellsnes peninsula, the namesake of a national park and the entrance to the underworld in Jules Verne. Absent from the file.",
+        "source_url": "https://www.wikidata.org/wiki/Q1315012",
+        "verified": true
+      },
+      {
+        "name": "Herdubreid",
+        "qid": "Q961546",
+        "lat": 65.17891,
+        "lon": -16.34732,
+        "why": "The 1,682 m tuya in the Odadahraun highlands, widely styled Iceland's national mountain and voted the country's favourite mountain. Absent from the file.",
+        "source_url": "https://www.wikidata.org/wiki/Q961546",
+        "verified": true
+      },
+      {
+        "name": "Esja",
+        "qid": "Q116693",
+        "lat": 64.25,
+        "lon": -21.63333,
+        "why": "The 914 m mountain range across the bay from Reykjavik and the most walked hill in Iceland by a large margin, the capital's default afternoon out. Absent, while two Reykjavik streets are in the mountain list.",
+        "source_url": "https://www.wikidata.org/wiki/Q116693",
+        "verified": true
+      },
+      {
+        "name": "Hekla",
+        "qid": "Q184975",
+        "lat": 63.99222,
+        "lon": -19.66583,
+        "why": "1,491 m, Iceland's most famous active volcano, historically the 'Gateway to Hell', with more than 20 eruptions since 1104. Absent from the file.",
+        "source_url": "https://www.wikidata.org/wiki/Q184975",
+        "verified": true
+      },
+      {
+        "name": "Vestrahorn",
+        "qid": "Q1774351",
+        "lat": 64.28,
+        "lon": -14.94,
+        "why": "889 m of gabbro peaks rising straight out of the black sand at Stokksnes near Hofn, the second most photographed mountain in the country after Kirkjufell. Absent from the file.",
+        "source_url": "https://www.wikidata.org/wiki/Q1774351",
+        "verified": true
+      },
+      {
+        "name": "Lomagnupur",
+        "qid": "Q1639686",
+        "lat": 63.96667,
+        "lon": -17.51667,
+        "why": "The 767 m cliff-fronted promontory on the Skeidararsandur, one of the landmarks of the Ring Road's south coast. Absent from the file.",
+        "source_url": "https://www.wikidata.org/wiki/Q1639686",
+        "verified": true
+      }
+    ],
+    "order": [
+      "Four of Iceland's top ten mountains are not mountains: a peninsula at rank 3 (Storhofdi), a mountain range at rank 4 (Kerlingarfjoll), a valley at rank 5 (Thorsmork) and a power station at rank 10 (Svartsengi). Whatever else is fixed, the top ten cannot ship in this state.",
+      "Eyjafjallajokull at rank 1 is defensible on global recognition after the 2010 eruption, so the head of the list is sound even though the name string needs cleaning.",
+      "Hlidarfjall (rank 7) and Sulur (rank 9) are both Akureyri local hills and both outrank Blahnjukur (rank 11) and Helgrindur (rank 12); Hlidarfjall in particular is best known as a ski area rather than as a mountain, and having two of Akureyri's own hills in the national top ten is an artefact of Akureyri being one of only 17 anchor destinations.",
+      "Tier 2 has no ordering signal: ranks 17 to 21 all carry the identical score 0.84 and are sorted alphabetically (Arnarfell, Einhyrningur, Hrafnabjorg, Husavikurfjall, Utigonguhofdi), and ranks 22 to 24 all carry 0.816 and are likewise alphabetical.",
+      "Three of the twelve tier-1 entries (Thorsmork, Kerlingarfjoll, and arguably Svartsengi at the Blue Lagoon) sit at or near 0.0 km from an anchor destination bearing the same name, so the pipeline is rediscovering its own anchors and promoting them to the top of the mountain list."
+    ]
+  },
+  "counts_verdict": "Partly. 61 mountains from 17 anchor destinations is a thin but not absurd raw volume for a country whose named peaks are mostly remote and unroaded, and the maximum near.km of 8.8 explains the thinness precisely. The composition, however, is not defensible: Iceland's highest point, its national mountain, its most photographed mountain, its most walked mountain and its most famous volcano are all absent from the file, while two Reykjavik streets are in it. Twelve tier-1 entries is too many when four of them are not mountains; six to eight correct entries would serve the tab better. Zero beaches is a hole rather than a count: Reynisfjara and Diamond Beach are top-five Icelandic attractions and the Beaches tab currently returns an empty country.",
+  "top_pick_verdict": "Acceptable with a caveat. top_mountain 'Eyjafjallajokull volcano' is the right kind of pick on worldwide recognition, but the ' volcano' suffix should be stripped and, for a country card image, Kirkjufell or Snaefellsjokull would carry the country better because Eyjafjallajokull is usually seen as an ash cloud rather than as a mountain. top_beach null is honest given an empty beach set, but the card should carry Reynisfjara once the beach layer exists.",
+  "notes": "Two distinct defects, not one. First, coverage: the harvest is a radius sweep with max near.km 8.8 around 17 tourist-stop anchors, so anything more than 9 km from a stop cannot enter the dataset at all, which is why Hekla, Herdubreid, Snaefellsjokull, Esja and Hvannadalshnjukur are missing rather than mis-ranked. Second, typing: the mountain layer is admitting OSM features that are not summits, ranging from named regions and a peninsula that a human would spot, down to two Reykjavik street rows (Bergthorugata, Bergthorshvoll) that only a name or coordinate check would catch. Both of those street rows also carry a 'natural_monument' designation, so the protected-area join is attaching conservation labels to points inside a city centre and should be re-verified nationally, not just for these two rows."
+}

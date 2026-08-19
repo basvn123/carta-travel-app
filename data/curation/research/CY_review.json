@@ -1,0 +1,202 @@
+{
+  "iso2": "CY",
+  "country": "Cyprus",
+  "checked_at": "2026-08-17",
+  "beaches": {
+    "wrong": [
+      {
+        "name": "Cape Greco Sea Caves",
+        "class": "other",
+        "why": "Not a beach. This is the sea-cave and cliff section of Cape Greco National Forest Park: vertical limestone, caves and rock bridges, no sand and no shore access. It was known as a cliff-jumping spot and that was fenced off in 2026 on erosion grounds. Sitting at tier 1 rank 6 it sends users to a cliff edge under a Beaches heading.",
+        "source_url": "https://cyprus-mail.com/2026/07/18/despite-a-fence-at-cape-greco-people-just-keep-jumping"
+      },
+      {
+        "name": "Cyprus, Famagusta, Paralimni, Protaras Area",
+        "class": "other",
+        "why": "Not a name. A comma-separated geocoder breadcrumb (country, district, municipality, area) used verbatim as a beach title at tier 1 rank 7. Its coordinates 35.0008, 34.0445 sit 1.9 km from Fig Tree Bay, which is itself absent from the file, so the flagship beach of Protaras is represented by an address string.",
+        "source_url": "https://www.wikidata.org/wiki/Q2113430"
+      },
+      {
+        "name": "Limnara Beach",
+        "class": "duplicate_of:Kermia (Limnara) Beach",
+        "why": "Tier 1 rank 9, 45 m from tier 1 rank 8, whose name literally contains this one in parentheses. Two of Cyprus's twelve top-beach slots are the same beach.",
+        "source_url": "https://www.openstreetmap.org/#map=17/34.9730/34.0392"
+      },
+      {
+        "name": "Paralia Larnaca",
+        "class": "duplicate_of:Finikoudes Beach",
+        "why": "Tier 1 rank 2 is a generic 'Larnaca beach' label sitting at 34.91444, 33.63776, which is Finikoudes Beach, present separately at tier 2 rank 52. The row's own image file is named Larnaca_01-2017_img27_Finikoudes.jpg, so the source data already knows what it is. A four-row cluster sits on this point: Paralia Larnaca, Sunorama Beach Garden, Aiya Napa Beach and Finikoudes Beach.",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Larnaca_01-2017_img27_Finikoudes.jpg"
+      },
+      {
+        "name": "Aiya Napa Beach , Cyprus",
+        "class": "duplicate_of:Paralia Larnaca",
+        "why": "Tier 2 rank 20 at 34.91436, 33.63776, identical to Paralia Larnaca to four decimal places. It is labelled Ayia Napa but positioned on the Larnaca seafront, about 40 km away. A row whose name and its own near.city disagree by tens of kilometres is a filterable class of its own.",
+        "source_url": "https://www.openstreetmap.org/#map=17/34.9144/33.6378"
+      },
+      {
+        "name": "Faros Beach",
+        "class": "duplicate_of:Lighthouse Beach",
+        "why": "Tier 2 rank 51 at 34.76463, 32.40653, 20 m from tier 1 rank 4 'Lighthouse Beach'. Faros is simply the Greek for lighthouse; the ranker has counted the same Paphos beach twice under a translation pair. A second unrelated 'Faros Beach' near Larnaca sits at tier 2 rank 15, so the name is also colliding across the country.",
+        "source_url": "https://www.openstreetmap.org/#map=17/34.7644/32.4067"
+      },
+      {
+        "name": "Sunorama Beach Garden",
+        "class": "hospitality",
+        "why": "Tier 2 rank 19. A beach garden venue on the Larnaca seafront, 300 m from the city centre, filed as a natural feature. Same family as the 52 known hospitality rows.",
+        "source_url": "https://www.openstreetmap.org/#map=18/34.9135/33.6374"
+      },
+      {
+        "name": "Atlantida Beach Weddings Made Easy",
+        "class": "hospitality",
+        "why": "Tier 2 rank 27. A wedding services business near Paphos. The name is a marketing slogan and there is no natural feature behind it at all. This is the clearest single hospitality offender in the Cyprus file.",
+        "source_url": "https://www.openstreetmap.org/#map=17/34.7363/32.4422"
+      },
+      {
+        "name": "Beach Cypria Maris",
+        "class": "hospitality",
+        "why": "Tier 2 rank 32. The private beach frontage of a Paphos hotel, named after the hotel rather than after any beach.",
+        "source_url": "https://www.openstreetmap.org/#map=17/34.7414/32.4314"
+      },
+      {
+        "name": "Elysium Beach",
+        "class": "hospitality",
+        "why": "Tier 2 rank 47. The beach frontage of a Paphos hotel of the same name, on the Tombs of the Kings shore.",
+        "source_url": "https://www.openstreetmap.org/#map=17/34.7719/32.4046"
+      },
+      {
+        "name": "Galatex Beach",
+        "class": "hospitality",
+        "why": "Tier 2 rank 53. Named after the Galatex apartment and shopping complex on the Limassol tourist strip, not after a beach.",
+        "source_url": "https://www.openstreetmap.org/#map=17/34.6963/33.0922"
+      },
+      {
+        "name": "Curium beach",
+        "class": "duplicate_of:Curium Beach Cyprus",
+        "why": "Tier 2 rank 39 at 34.75555, 32.41399, which is the Paphos seafront. Kourion (Curium) beach is at 34.664, 32.879 below the Kourion archaeological site, 44 km east, exactly where the file's own 'Curium Beach Cyprus' (rank 40) and 'Cyprus Kurion Beach' (rank 43) sit. Three names, one beach, one of them 44 km out of position.",
+        "source_url": "https://en.wikipedia.org/wiki/Kourion"
+      },
+      {
+        "name": "Episkopi Beach",
+        "class": "duplicate_of:Aphrodite Beach",
+        "why": "Tier 2 rank 49 at 34.66549, 32.62785, which is the Petra tou Romiou shore, about 26 km west of Episkopi Bay. It duplicates 'Aphrodite Beach' (rank 23) and \"Aphrodite's Beach\" (rank 25), which sit 20 m and 110 m away. Three names for the Aphrodite's Rock beach, one of them carrying a wrong place name.",
+        "source_url": "https://en.wikipedia.org/wiki/Episkopi_Bay"
+      },
+      {
+        "name": "Blue Lagoon",
+        "class": "other",
+        "why": "Tier 2 rank 35 at 35.04111, 32.39431, which is 20 m from Latchi Beach (tier 1 rank 3) inside Latchi harbour. The Blue Lagoon is on the tip of the Akamas peninsula and is reached only by boat or off-road track; this row is the harbour quay the boat trips leave from, sold under the lagoon's name. Mislocated by roughly 10 km.",
+        "source_url": "https://www.openstreetmap.org/#map=17/35.0411/32.3943"
+      },
+      {
+        "name": "Ayia Napa Nissi Beach",
+        "class": "duplicate_of:Nissi beach",
+        "why": "Tier 2 rank 30, 25 m from tier 1 rank 1. 'Cypr Agia Napa' at rank 41 sits 200 m away on the same beach, giving Nissi three names.",
+        "source_url": "https://en.wikipedia.org/wiki/Nissi_Beach"
+      }
+    ],
+    "missing": [
+      {
+        "name": "Fig Tree Bay, Protaras",
+        "qid": "Q15217662",
+        "lat": 35.0128,
+        "lon": 34.0589,
+        "why": "The most awarded beach in Cyprus and the one the Deputy Ministry of Tourism leads with; a perennial European top-10 fixture. Absent from the file entirely, the nearest row being the 'Cyprus, Famagusta, Paralimni, Protaras Area' address string 1.9 km away. A Cyprus Beaches tab without Fig Tree Bay is a failure on its own.",
+        "source_url": "https://www.wikidata.org/wiki/Q15217662",
+        "verified": true
+      },
+      {
+        "name": "Konnos Beach (Konnos Bay)",
+        "qid": "Q109590319",
+        "lat": 34.9838,
+        "lon": 34.0696,
+        "why": "The sheltered pine-backed cove between Protaras and Cape Greco, on every Cyprus shortlist and inside the national forest park. Absent entirely; the nearest row is the Cape Greco Sea Caves cliff, 2.2 km away, which is not a beach.",
+        "source_url": "https://www.wikidata.org/wiki/Q109590319",
+        "verified": true
+      },
+      {
+        "name": "Coral Bay, Peyia",
+        "qid": "Q5169445",
+        "lat": 34.854,
+        "lon": 32.3695,
+        "why": "The main sandy bay of the Paphos district, 11 km north of the city, and the beach most Paphos visitors are sent to. Absent entirely; the nearest beach row of any tier is 8.9 km away. Note the QID resolves to the resort settlement, which is coincident with the bay.",
+        "source_url": "https://en.wikipedia.org/wiki/Coral_Bay,_Cyprus",
+        "verified": true
+      },
+      {
+        "name": "Lara Beach (Lara Bay), Akamas",
+        "qid": null,
+        "lat": null,
+        "lon": null,
+        "why": "The undeveloped turtle-nesting bay on the west Akamas peninsula, protected as a green and loggerhead nesting site with its own conservation station, and the one wild beach a Cyprus list should carry against a dozen resort strips. No Wikidata item and no Wikipedia article found, so coordinates are not asserted here.",
+        "source_url": "https://www.cyprusisland.net/cyprus-beaches/lara-beach-akamas",
+        "verified": false
+      }
+    ],
+    "order": [
+      "Five of the twelve tier-1 slots (ranks 6, 7, 8, 9, 10) fall on a 2.5 km stretch of the Ayia Napa and Protaras coast, and two of those five are the same beach while another is a cliff and another is an address string. Meanwhile Fig Tree Bay, Konnos and Coral Bay are absent from the country entirely. This is the worst geographic concentration failure in the file.",
+      "Zapalo Episkopi at tier 1 rank 5 is a real and pretty cove (Zapallo Bay, locally Tripiti or Apollo beach) but it is a hard-to-reach dirt-track cove inside the British Akrotiri Sovereign Base Area. Ranking it fifth in Cyprus, above every Paphos and Protaras beach, is not defensible on any traveller's reading.",
+      "Paralia Larnaca at rank 2 is a city promenade beach with imported sand next to the Larnaca seafront cafes. Real, but not the second best beach in Cyprus.",
+      "Nissi beach at rank 1 is defensible and I would keep it, with Fig Tree Bay as the alternative once it exists in the data.",
+      "Score ties are deciding the cut: ranks 6 to 10 all score exactly 0.919 and ranks 13 to 19 all score 0.824, then everything from rank 20 down collapses to a flat 0.418. Below rank 19 the ranker has no signal at all and is ordering the remaining 34 beaches alphabetically, which is why the tier-2 tail reads Alykes, Aphrodisiac, Aphrodite, Aphrodite, Aphrodite's, Arsinoe, Atlantida."
+    ]
+  },
+  "mountains": {
+    "wrong": [
+      {
+        "name": "Kyrenia Mountains",
+        "class": "park_or_area",
+        "why": "Not a summit but a 160 km long range (Q909107) whose high point, Mount Selvili, is 1,024 m. It is stored at 35.3, 33.3333, a rounded centroid, and its illustration is a topographic map of the whole island rather than a photograph of a mountain. It also lies wholly in the de facto Turkish-controlled north, which is not reachable on a normal Republic of Cyprus itinerary. As the country's only tier-1 mountain and its top_mountain it is the worst entry in the Cyprus file.",
+        "source_url": "https://en.wikipedia.org/wiki/Kyrenia_Mountains"
+      },
+      {
+        "name": "Petra tou Romiou",
+        "class": "other",
+        "why": "Aphrodite's Rock, a coastal sea stack in the surf on the Paphos to Limassol road, filed as a mountain at tier 2 rank 2. Its own coordinates 34.66352, 32.62697 are inside the file's own beach cluster: 'Aphrodite Beach', \"Aphrodite's Beach\" and 'Episkopi Beach' all sit within 120 m of it. It is a beach landmark, not a summit.",
+        "source_url": "https://en.wikipedia.org/wiki/Petra_tou_Romiou"
+      },
+      {
+        "name": "Bubulla Peak",
+        "class": "not_notable",
+        "why": "Tier 2 rank 3 at 35.18935, 33.38452, which is Pallouriotissa, a built-up inner suburb of Nicosia on the flat Mesaoria plain, with a supermarket as its nearest mapped neighbour. It is a stray OSM node, has no article, no elevation and no prominence, and it carries a national_park designation flag it cannot possibly have earned. It is one of only three mountain rows in the entire country.",
+        "source_url": "https://mapcarta.com/N5227187217"
+      }
+    ],
+    "missing": [
+      {
+        "name": "Mount Olympus (Chionistra), Troodos",
+        "qid": "Q819979",
+        "lat": 34.93639,
+        "lon": 32.86333,
+        "why": "The highest point in Cyprus at 1,952 m, the summit of the Troodos massif, the island's ski area and the anchor of its entire mountain tourism offer. It is absent from the file completely: the nearest mountain row of any tier is Petra tou Romiou, a sea stack 37 km away. Cyprus's Mountains tab currently contains no mountain in the Troodos at all.",
+        "source_url": "https://en.wikipedia.org/wiki/Mount_Olympus_(Cyprus)",
+        "verified": true
+      },
+      {
+        "name": "Troodos Mountains",
+        "qid": "Q466628",
+        "lat": null,
+        "lon": null,
+        "why": "The range itself, covering most of western Cyprus and holding the painted churches UNESCO site, the Caledonia and Artemis trails and the hill resorts. Absent entirely. Listed here with its QID; coordinates not asserted because I did not confirm a canonical point for the range.",
+        "source_url": "https://www.wikidata.org/wiki/Q466628",
+        "verified": false
+      },
+      {
+        "name": "Stavrovouni",
+        "qid": "Q22984988",
+        "lat": null,
+        "lon": null,
+        "why": "The isolated 750 m peak between Larnaca and Nicosia crowned by Stavrovouni Monastery (Q2426066), one of the oldest monasteries in Cyprus and a landmark visible from most of the south-east. A reasonable second or third entry for a Cyprus mountain list. QID found but coordinates not confirmed, so none are asserted.",
+        "source_url": "https://www.wikidata.org/wiki/Q2426066",
+        "verified": false
+      }
+    ],
+    "order": [
+      "There is no ranking to defend. The country has three mountain rows in total and all three are wrong: a range, a sea stack and a node in a Nicosia suburb. The correct order is Mount Olympus (Chionistra) first and the other three removed.",
+      "The Kyrenia Mountains row would still be defensible as a tier-2 range entry if range features are allowed at all, but never as the country's top_mountain and never as its only tier-1 mountain."
+    ]
+  },
+  "counts_verdict": "12 tier-1 beaches is right for Cyprus and matches the cap seen across the snapshot; 53 beach candidates is on the thin side for an island with this much developed coast, but workable. 1 tier-1 mountain out of a candidate pool of 3 is a harvest failure, not a ranking decision. For comparison the snapshot gives Malta 3 mountain candidates, and Malta's highest point is a 253 m cliff, whereas Cyprus has a 1,952 m massif with ski lifts, forest trails and hill resorts. Something in the mountain harvest is not reaching the Troodos at all. Fixing CY mountains means re-harvesting the country, not re-ranking it.",
+  "top_pick_verdict": "top_beach 'Nissi beach' is a defensible country card: it is the most recognisable beach in Cyprus, correctly placed, with Excellent water, a Wikipedia article and a usable image. Fig Tree Bay would be the alternative once it exists in the data. top_mountain 'Kyrenia Mountains' is not defensible: it is a range rather than a peak, it is stored on a rounded centroid, its image is a topographic map of the island, and it is in the de facto Turkish-controlled north. It must be Mount Olympus / Chionistra (Q819979, 34.93639, 32.86333, 1,952 m).",
+  "notes": "Cyprus shows three distinct faults. First, name-collision duplication is severe: 8 clusters within 200 m of each other cover 20 of the 53 beach rows, and the pattern includes translation pairs (Lighthouse Beach and Faros Beach), parenthetical pairs (Kermia (Limnara) Beach and Limnara Beach), and Greek and Latin script pairs (Dasoudi Beach and the same name in Greek). Second, mislocation: at least four rows carry a real name at coordinates tens of kilometres from that name's actual place (Aiya Napa Beach on the Larnaca seafront, Curium beach at Paphos, Episkopi Beach at Petra tou Romiou, Blue Lagoon in Latchi harbour). A cheap machine check catches all of these: reject any row whose name contains a place name whose own coordinates are more than about 5 km away, and reject any row whose name disagrees with its near.city by more than the near.km value. Third, below rank 19 every beach scores an identical 0.418 and the list is effectively alphabetical, which is how a wedding company called 'Atlantida Beach Weddings Made Easy' ends up ranked as a Cyprus beach. Separately, note that two tier-1 beaches (Zapalo Episkopi, Lady's Mile) lie within the British Akrotiri Sovereign Base Area rather than the Republic of Cyprus; that is arguably correct for a traveller-facing island tab but worth a deliberate decision rather than an accident."
+}

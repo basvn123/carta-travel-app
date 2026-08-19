@@ -1,0 +1,258 @@
+{
+  "iso2": "SI",
+  "country": "Slovenia",
+  "checked_at": "2026-08-17",
+  "beaches": {
+    "wrong": [
+      {
+        "name": "Crveni vrh plaza",
+        "class": "wrong_country",
+        "why": "Crveni Vrh is Alberi 300A, Savudrija, Istria County, Croatia - the address of the Kempinski Hotel Adriatic resort. The row at 45.49573,13.53360 is on the Croatian shore south of the Slovenian border, ranked as Slovenia's third beach.",
+        "source_url": "https://www.kempinski.com/en/istria/hotel-adriatic/"
+      },
+      {
+        "name": "Kanegra Beach",
+        "class": "wrong_country",
+        "why": "Kanegra is a naturist beach and campsite in Savudrija, Umag municipality, Croatia, roughly 10 km from Umag, on the southern shore of the Bay of Piran. It is listed as a Slovenian tier 1 beach.",
+        "source_url": "https://www.camping.hr/campsites/naturist-kanegra"
+      },
+      {
+        "name": "Am Strand von Portoroz",
+        "class": "duplicate_of:Plaza Portoroz",
+        "why": "German for 'on the beach of Portoroz'. A caption, not a place name, sitting 300 m from Plaza Portoroz on the same strip of sand.",
+        "source_url": "https://www.portoroz.si/en"
+      },
+      {
+        "name": "Meduza Exclusive Beach",
+        "class": "hospitality",
+        "why": "A commercial beach club on the Portoroz waterfront, not a public natural beach. It also appears a second time as 'Plaza Meduza' 55 m away at tier 2 rank 9.",
+        "source_url": "https://www.portoroz.si/en"
+      },
+      {
+        "name": "park ob vili tartini",
+        "class": "park_or_area",
+        "why": "A public park by Vila Tartini on the Portoroz seafront. A park, ranked seventh among Slovenia's beaches and therefore inside tier 1.",
+        "source_url": "https://www.portoroz.si/en"
+      },
+      {
+        "name": "Playa de Ipanema Rio de Janeiro",
+        "class": "other",
+        "why": "Tier 2 rank 8. A Brazilian beach name pinned at 45.51526,13.59719 on the Portoroz waterfront. A junk or vandalised POI: the name references a place 9,000 km away and the geometry duplicates Portoroska plaza.",
+        "source_url": "https://www.wikidata.org/wiki/Q193836"
+      },
+      {
+        "name": "Plaza Meduza",
+        "class": "duplicate_of:Meduza Exclusive Beach",
+        "why": "Tier 2 rank 9, 55 m from the tier 1 row 'Meduza Exclusive Beach'. Same venue under a Slovene name.",
+        "source_url": "https://www.portoroz.si/en"
+      },
+      {
+        "name": "Portoroska plaza",
+        "class": "duplicate_of:Plaza Portoroz",
+        "why": "Tier 2 rank 11, 110 m from 'Plaza Portoroz'. The same municipal beach under an adjectival form of the same Slovene name.",
+        "source_url": "https://www.portoroz.si/en"
+      },
+      {
+        "name": "Portoroz & Piran",
+        "class": "town_or_village",
+        "why": "Tier 2 rank 12. Two town names joined by an ampersand, at 45.51340,13.59308 - the identical coordinate to Portoroska plaza. Not a beach name.",
+        "source_url": "https://www.portoroz.si/en"
+      },
+      {
+        "name": "Slovinsko, Strunjan",
+        "class": "duplicate_of:Plaza Strunjan",
+        "why": "Tier 2 rank 13. A country-plus-place label, not a beach name, 700 m from the row 'Plaza Strunjan'.",
+        "source_url": "https://www.parkstrunjan.si/en/"
+      },
+      {
+        "name": "Spiaggia FKK Canegra",
+        "class": "duplicate_of:Kanegra Beach",
+        "why": "Tier 2 rank 14, 20 m from the tier 1 'Kanegra Beach'. Italian spelling of the same naturist beach, and like it, in Croatia.",
+        "source_url": "https://www.camping.hr/campsites/naturist-kanegra"
+      },
+      {
+        "name": "VIP Kempinski deck Beach",
+        "class": "hospitality",
+        "why": "Tier 2 rank 15. The bathing deck of the Kempinski Palace Portoroz hotel, a paid hotel facility, indexed as a Slovenian beach.",
+        "source_url": "https://www.kempinski.com/en/palace-portoroz/"
+      },
+      {
+        "name": "Adriatic Sea",
+        "class": "other",
+        "why": "Tier 2 rank 17. The sea itself, given a point coordinate off Strunjan. Not a beach.",
+        "source_url": "https://en.wikipedia.org/wiki/Adriatic_Sea"
+      },
+      {
+        "name": "Adriatic Sea Slovenia",
+        "class": "duplicate_of:Adriatic Sea",
+        "why": "Tier 2 rank 18. A second copy of the sea, 1.6 km from the first.",
+        "source_url": "https://en.wikipedia.org/wiki/Adriatic_Sea"
+      }
+    ],
+    "missing": [
+      {
+        "name": "Mesecev zaliv (Moon Bay), Strunjan",
+        "qid": "Q64408060",
+        "lat": 45.538145,
+        "lon": 13.6118579,
+        "why": "Wikidata: 'bay in Strunjan, Slovenia'. The bay under the Strunjan cliffs, the highest flysch cliff on the whole Adriatic, inside Strunjan Landscape Park. It is the picture Slovenia's own coastal tourism uses, and it is absent from the file at every tier.",
+        "source_url": "https://www.wikidata.org/wiki/Q64408060",
+        "verified": true
+      },
+      {
+        "name": "Simonov zaliv (Simon Bay), Izola",
+        "qid": "Q64416090",
+        "lat": 45.532830555556,
+        "lon": 13.643944444444,
+        "why": "Izola's main sand beach and a Roman archaeological park. Izola contributes zero features to the file; every one of the 18 Slovenian beach rows is in Piran municipality or over the border in Croatia.",
+        "source_url": "https://www.wikidata.org/wiki/Q64416090",
+        "verified": true
+      },
+      {
+        "name": "Debeli rtic",
+        "qid": "Q5248048",
+        "lat": 45.59096111,
+        "lon": 13.71017222,
+        "why": "The cape at the northern end of the Slovenian coast in Ankaran, a natural monument with a marine reserve and the country's best known family bathing resort. Neither Ankaran nor Koper appears anywhere in the file.",
+        "source_url": "https://www.wikidata.org/wiki/Q5248048",
+        "verified": true
+      },
+      {
+        "name": "Fiesa beach",
+        "qid": null,
+        "lat": null,
+        "lon": null,
+        "why": "The small bay just north of Piran with the freshwater lagoon behind it, the walk-to beach from Piran old town. The only Wikidata item matching the label Fiesa (Q3890138) is described as a street in Portoroz, so no QID or coordinate is asserted for the beach.",
+        "source_url": "https://www.wikidata.org/wiki/Q3890138",
+        "verified": false
+      }
+    ],
+    "order": [
+      "Fourteen of the eighteen harvested Slovenian beach features are wrong. Only Lucija Beach, Plaza Portoroz, Plaza Pacug and Plaza Strunjan survive scrutiny, and two of those four are in tier 2.",
+      "Ranks 4 to 15 all carry one identical score of 0.808 and are ordered alphabetically after diacritic folding: Am Strand, Kanegra, Meduza, park ob vili, Playa de Ipanema, Plaza Meduza, Plaza Pacug, Portoroska, Portoroz &, Slovinsko, Spiaggia, VIP. The tier 1 cut at 7 therefore falls between 'park ob vili tartini' and 'Playa de Ipanema' for no reason other than the letter p.",
+      "Plaza Strunjan is at tier 2 rank 16 with score 0.653, below a hotel deck, a park, a sea and a Brazilian beach name. Strunjan is the one stretch of Slovenian coast that is genuinely distinctive and it is ranked sixteenth.",
+      "The entire tab describes a single 3 km resort strip. Piran itself, Izola, Koper, Ankaran and Debeli rtic contribute nothing."
+    ]
+  },
+  "mountains": {
+    "wrong": [
+      {
+        "name": "Monte Cocusso",
+        "class": "wrong_country",
+        "why": "Italian Wikipedia: 'Il monte Cocusso (Kokos in sloveno) e un rilievo montuoso al confine tra Italia e Slovenia', 672 m, in the Province of Trieste, with the summit point coinciding with the demarcation line. It is indexed under its Italian name and it is not a Slovenian mountain, let alone the country's second, in a file that does not contain Triglav.",
+        "source_url": "https://it.wikipedia.org/wiki/Monte_Cocusso"
+      }
+    ],
+    "missing": [
+      {
+        "name": "Triglav",
+        "qid": "Q1024",
+        "lat": 46.37833306,
+        "lon": 13.83666694,
+        "why": "2864 m, the highest mountain in Slovenia, the centre of the country's only national park, and the shape on the national flag and coat of arms. It is absent from the file at every tier. A Slovenian mountains tab without Triglav is not a Slovenian mountains tab.",
+        "source_url": "https://sl.wikipedia.org/wiki/Triglav",
+        "verified": true
+      },
+      {
+        "name": "Mangart",
+        "qid": "Q1890215",
+        "lat": 46.44,
+        "lon": 13.65388889,
+        "why": "2679 m, Slovenia's third highest, reached by the highest road in the country (Mangartska cesta), one of the most driven and photographed alpine points in Slovenia. Absent at every tier.",
+        "source_url": "https://en.wikipedia.org/wiki/Mangart",
+        "verified": true
+      },
+      {
+        "name": "Jalovec",
+        "qid": "Q763420",
+        "lat": 46.421554,
+        "lon": 13.679998,
+        "why": "2645 m, the pyramid above Planica and the emblem of the Slovenian Alpine Association. Absent at every tier.",
+        "source_url": "https://sl.wikipedia.org/wiki/Jalovec",
+        "verified": true
+      },
+      {
+        "name": "Prisojnik",
+        "qid": "Q238644",
+        "lat": 46.426002777778,
+        "lon": 13.769130555556,
+        "why": "2547 m above the Vrsic pass, famous for the Ajdovska deklica rock face and the great window. The file has Kranjska Gora entries (Skrlatica, Spik, Razor) but not Prisojnik.",
+        "source_url": "https://www.wikidata.org/wiki/Q238644",
+        "verified": true
+      },
+      {
+        "name": "Krn",
+        "qid": "Q1430355",
+        "lat": 46.26638889,
+        "lon": 13.65888889,
+        "why": "2244 m above the Soca valley, the Isonzo front summit and the main objective from Bovec and Kobarid. Absent at every tier, although the file lists Rombon and Svinjak in the same valley.",
+        "source_url": "https://en.wikipedia.org/wiki/Krn",
+        "verified": true
+      },
+      {
+        "name": "Smarna gora",
+        "qid": "Q936796",
+        "lat": 46.1297,
+        "lon": 14.4636,
+        "why": "669 m, Ljubljana's own hill and by a wide margin the most walked summit in Slovenia. Absent at every tier, so the capital contributes nothing to the mountains tab.",
+        "source_url": "https://www.wikidata.org/wiki/Q936796",
+        "verified": true
+      },
+      {
+        "name": "Velika planina",
+        "qid": "Q3112317",
+        "lat": 46.29550556,
+        "lon": 14.65351944,
+        "why": "The high shepherds' plateau above Kamnik with its herdsmen's huts, cable car served and one of the country's signature day trips. Absent at every tier despite ten Kamnik-Savinja Alps entries in tiers 1 and 2.",
+        "source_url": "https://en.wikipedia.org/wiki/Big_Pasture_Plateau",
+        "verified": true
+      },
+      {
+        "name": "Storzic",
+        "qid": "Q909526",
+        "lat": 46.35028,
+        "lon": 14.40472,
+        "why": "2132 m, the isolated pyramid over the Kranj basin, one of the most climbed 2000ers in Slovenia. Absent at every tier.",
+        "source_url": "https://www.wikidata.org/wiki/Q909526",
+        "verified": true
+      },
+      {
+        "name": "Nanos",
+        "qid": "Q1398778",
+        "lat": 45.79854444,
+        "lon": 14.06515833,
+        "why": "The karst plateau over Vipava, 1262 m, with the Vojkova koca hut. If the ranker wants a Karst entry near Vremscica and Kokos, Nanos is the one that belongs.",
+        "source_url": "https://en.wikipedia.org/wiki/Nanos_(plateau)",
+        "verified": true
+      },
+      {
+        "name": "Peca",
+        "qid": "Q177047",
+        "lat": 46.5053,
+        "lon": 14.7578,
+        "why": "2125 m on the Austrian border in the Karavanke, home of the King Matjaz legend and the underground bike mine. Absent at every tier.",
+        "source_url": "https://sl.wikipedia.org/wiki/Peca",
+        "verified": true
+      },
+      {
+        "name": "Kanin massif",
+        "qid": "Q3663438",
+        "lat": 46.360278,
+        "lon": 13.443611,
+        "why": "2587 m, Slovenia's highest ski area and the cable car above Bovec. Present in the file only as the obscure sub-feature 'Lopa, Kanin' at tier 2 rank 35; the massif itself and its summit are not.",
+        "source_url": "https://www.wikidata.org/wiki/Q3663438",
+        "verified": true
+      }
+    ],
+    "order": [
+      "Vremscica at rank 1 is a 1027 m karst hill above Divaca. It is a real mountain but placing it first in Slovenia, ahead of the entire Julian and Kamnik-Savinja range, is indefensible - and it only holds the slot because Triglav, Mangart, Jalovec and Prisojnik are not in the file at all.",
+      "Lubnik at rank 12 is a 1025 m local walk above Skofja Loka and outranks Skuta, Vogel, Rombon, Spik and Razor, all of which are in tier 2.",
+      "Tier 1 is eight-twelfths Kamnik-Savinja Alps clustered on Logar Valley (Ojstrica, Brana, Mrzla gora, Grintovec, Planjava, Kroficka, Olseva, plus Skuta just below). One valley owns two thirds of the country's top mountains while Triglav National Park contributes a single entry, Skrlatica at rank 10.",
+      "Kranjska Rinka and Mala Rinka at tier 2 ranks 24 and 25 both carry the wikipedia link en:Rinka Falls, a waterfall, so the mountain rows are being enriched from the wrong article.",
+      "Score ties are broken alphabetically here too (ranks 37-41, 49-54, 55-59, 65-82 are each one flat score in alphabetical order)."
+    ]
+  },
+  "counts_verdict": "18 beach features for a 46.6 km coastline is the right order of magnitude, but 7 tier 1 beaches is too many for what is in practice one resort bay, and two of the seven are in Croatia. A truthful tier 1 would be three or four spread over Piran, Strunjan, Izola and Ankaran. On the mountain side 82 features and 12 tier 1 is a reasonable size for an alpine country, but the count is meaningless while Triglav, Mangart, Jalovec, Prisojnik, Krn, Storzic, Peca, Smarna gora and Velika planina are all absent: the harvest has found the Kamnik-Savinja Alps and the Karst and missed the Julian Alps almost entirely.",
+  "top_pick_verdict": "No on both. top_mountain 'Vremscica', a 1027 m karst hill, must be Triglav (Q1024) - there is no second candidate for a Slovenian country card. top_beach 'Lucija Beach' is a real beach but is the least distinctive corner of the Portoroz strip; the country card should carry Mesecev zaliv at Strunjan (Q64408060) for the cliffs, or Piran/Portoroz if the rule is where people actually swim.",
+  "notes": "The designations field is wrong across this country: Slovenia has exactly one national park, Triglav, yet national_park is stamped on eleven Portoroz-area beach rows and on Lubnik, Olseva, Kroficka, Ojstrica, Brana, Mrzla gora and Planjava, none of which is in Triglav National Park. Vremscica and Monte Cocusso carry unesco, presumably leaked from the Skocjan Caves polygon. elevation_m is null for all 82 mountains, which is why a 672 m border hill outranks nothing and a 1027 m karst hill leads the country. Two of the fourteen wrong beach rows are outright in Croatia, so the country assignment step is using a bounding box rather than the border geometry."
+}

@@ -1,0 +1,299 @@
+{
+  "iso2": "BG",
+  "country": "Bulgaria",
+  "checked_at": "2026-08-17",
+  "beaches": {
+    "wrong": [
+      {
+        "name": "Arena Beach",
+        "class": "hospitality",
+        "why": "Tier 1 rank 2, i.e. the second best beach in Bulgaria. Arena Beach is a hotel and beach bar business in Sozopol ('Arena Beach & Hotel'), not a named beach.",
+        "source_url": "https://www.facebook.com/p/Arena-Beach-Hotel-100057614073047/"
+      },
+      {
+        "name": "Green Life Beach",
+        "class": "hospitality",
+        "why": "Tier 1 rank 8. Green Life Beach Resort is an apartment and hotel complex 50 m back from Kavatsite beach, with two pools, restaurants and shops. The row is the resort, not the sand.",
+        "source_url": "https://www.greenliferesorts.bg/en/sozopol/about-the-resort"
+      },
+      {
+        "name": "Harmani Beach Water Sport",
+        "class": "hospitality",
+        "why": "Tier 1 rank 9. A watersports rental operator on Harmanite beach. It also duplicates tier 1 rank 10 'Харманите (Harmanite)' 200 m away.",
+        "source_url": "https://www.openstreetmap.org/#map=17/42.4151/27.6992"
+      },
+      {
+        "name": "Каравани Aloha",
+        "class": "hospitality",
+        "why": "Tier 1 rank 12. 'Caravans Aloha', a caravan and camping site behind the Kavatsi dunes, listed as one of Bulgaria's twelve best beaches.",
+        "source_url": "https://www.openstreetmap.org/#map=16/42.3934/27.7055"
+      },
+      {
+        "name": "Cape Agalina",
+        "class": "other",
+        "why": "Tier 1 rank 5. Agalina is a rocky headland south of Sozopol, a cape, not a beach.",
+        "source_url": "https://www.openstreetmap.org/#map=15/42.3792/27.7241"
+      },
+      {
+        "name": "Hermanite Nudist Beach",
+        "class": "duplicate_of:Харманите (Harmanite)",
+        "why": "Tier 1 rank 11, 800 m from tier 1 rank 10 'Харманите (Harmanite)' and from tier 1 rank 9 'Harmani Beach Water Sport'. Three tier 1 slots for one Sozopol town beach, in two transliterations plus a business.",
+        "source_url": "https://www.openstreetmap.org/#map=16/42.4104/27.7038"
+      },
+      {
+        "name": "Budjaka Beach Sozopol",
+        "class": "duplicate_of:Small Beach \"Budjaka\"",
+        "why": "Tier 1 rank 4 duplicates tier 2 rank 25 'Small Beach \"Budjaka\"' on the same Budjaka peninsula (42.4023,27.7201 vs 42.4074,27.7144).",
+        "source_url": "https://www.openstreetmap.org/#map=16/42.4023/27.7201"
+      },
+      {
+        "name": "Beach Golden Fish",
+        "class": "duplicate_of:Плаж Градина - Златна рибка",
+        "why": "Tier 1 rank 3 is the English name of Zlatna Ribka; tier 2 rank 20 'Плаж Градина - Златна рибка' is the same beach in Bulgarian. Two rows, one strand north of Sozopol.",
+        "source_url": "https://www.openstreetmap.org/#map=15/42.4091/27.6725"
+      },
+      {
+        "name": "Orka Camp",
+        "class": "hospitality",
+        "why": "Tier 2 rank 18, well inside the top twenty shown for Bulgaria. A campsite, not a beach.",
+        "source_url": "https://www.openstreetmap.org/#map=16/42.4126/27.6566"
+      },
+      {
+        "name": "Скалите на Созопол (Sozopol Rocks)",
+        "class": "other",
+        "why": "Tier 2 rank 24. A rock formation on the Sozopol old town shore. Rocks are the opposite of what a Beaches tab promises.",
+        "source_url": "https://www.openstreetmap.org/#map=17/42.4255/27.6995"
+      },
+      {
+        "name": "Kavatsite",
+        "class": "duplicate_of:Каваците (Kavaci Beach)",
+        "why": "Kavatsi beach appears four times in tier 2 alone: 'Каваци-\"Акулски плаж\"' (r13), 'Каваците (Kavaci Beach)' (r14), 'Kavatsite' (r15) and 'Плаж Каваци (Kavatsi beach)' (r21). A fifth and sixth row, 'плаж Веселие (Veselie beach)' (r22) and 'Smokinya Beach' (r26), carry byte-identical coordinates 42.3854,27.7078.",
+        "source_url": "https://www.openstreetmap.org/#map=15/42.3984/27.7075"
+      }
+    ],
+    "missing": [
+      {
+        "name": "Sunny Beach",
+        "qid": "Q1011039",
+        "lat": 42.69306,
+        "lon": 27.70833,
+        "why": "Slanchev Bryag, the largest and most visited beach resort in Bulgaria, an 8 km sand bay. Absent from the file at every tier; the only string containing 'Sunny' is a tier 2 row called 'Amara Sunny Beach'.",
+        "source_url": "https://www.wikidata.org/wiki/Q1011039",
+        "verified": true
+      },
+      {
+        "name": "Golden Sands",
+        "qid": "Q1026748",
+        "lat": 43.285,
+        "lon": 28.04167,
+        "why": "Zlatni Pyasatsi, the second national beach resort, next to Varna and inside a nature park. Absent entirely.",
+        "source_url": "https://www.wikidata.org/wiki/Q1026748",
+        "verified": true
+      },
+      {
+        "name": "Albena",
+        "qid": "Q670939",
+        "lat": 43.36917,
+        "lon": 28.08111,
+        "why": "The third of Bulgaria's three flagship northern resorts, a Blue Flag beach at the edge of Baltata reserve. Absent entirely.",
+        "source_url": "https://www.wikidata.org/wiki/Q670939",
+        "verified": true
+      },
+      {
+        "name": "Bolata",
+        "qid": "Q4938959",
+        "lat": 43.38194,
+        "lon": 28.47083,
+        "why": "The small red-cliff cove below Cape Kaliakra, the most photographed beach on the northern coast. Present only at tier 2 ranks 48 and 50 ('Beach Bolata', 'Болата (Bolata)'), which is effectively invisible.",
+        "source_url": "https://www.wikidata.org/wiki/Q4938959",
+        "verified": true
+      },
+      {
+        "name": "Irakli",
+        "qid": "Q12060783",
+        "lat": 42.75083,
+        "lon": 27.88861,
+        "why": "The best known protected wild beach on the Bulgarian coast, a standard counterweight to the built resorts. Absent.",
+        "source_url": "https://www.wikidata.org/wiki/Q12060783",
+        "verified": true
+      },
+      {
+        "name": "Arkutino",
+        "qid": "Q779560",
+        "lat": 42.28028,
+        "lon": 27.74861,
+        "why": "Beach and Ramsar wetland reserve inside Ropotamo, one of the coast's signature dune systems. Absent.",
+        "source_url": "https://www.wikidata.org/wiki/Q779560",
+        "verified": true
+      },
+      {
+        "name": "Kamchiya",
+        "qid": "Q1461510",
+        "lat": 43.03333,
+        "lon": 27.88333,
+        "why": "The Kamchia river mouth beach and UNESCO biosphere longoz forest, a major and distinctive Bulgarian beach. Absent.",
+        "source_url": "https://www.wikidata.org/wiki/Q1461510",
+        "verified": true
+      },
+      {
+        "name": "Nesebar",
+        "qid": "Q193241",
+        "lat": 42.65951,
+        "lon": 27.72472,
+        "why": "UNESCO old town with the South Beach beside it; the one Bulgarian coastal name with world heritage status. Present only as a tier 2 row 'Аурелия плаж, Несебър' (rank 42). Note the parent brief already flagged Nesebar as a four-way duplicate elsewhere in the pipeline.",
+        "source_url": "https://www.wikidata.org/wiki/Q193241",
+        "verified": true
+      },
+      {
+        "name": "Krapets",
+        "qid": "Q1171403",
+        "lat": null,
+        "lon": null,
+        "why": "The long quiet sand beach of the far north coast towards Durankulak, a standard 'best wild beach' entry. Wikidata item exists but carries no P625, so no coordinate is asserted here.",
+        "source_url": "https://www.wikidata.org/wiki/Q1171403",
+        "verified": false
+      },
+      {
+        "name": "Silistar",
+        "qid": null,
+        "lat": null,
+        "lon": null,
+        "why": "Protected beach in the Strandzha south of Sinemorets, routinely named alongside Veleka as the finest on the coast. Could not confirm a Wikidata item, so it is recorded unverified.",
+        "source_url": null,
+        "verified": false
+      }
+    ],
+    "order": [
+      "Eleven of the twelve tier 1 beaches are within 5 km of Sozopol. Bulgaria's Beaches tab is a Sozopol tab. The entire northern coast (Varna, Golden Sands, Albena, Kaliakra, Shabla) and the entire central coast (Sunny Beach, Nesebar, Pomorie, Irakli) contribute nothing.",
+      "'Sinemorec, Veleka Beach' at rank 1 is correct and is the one row in this list I would defend without changes.",
+      "Ranks 2 to 12 all sit on the identical score 0.85, and so do thirteen tier 2 rows. The tier cut runs through the middle of a flat band and is therefore alphabetical noise: note tier 1 runs Arena, Beach Golden Fish, Budjaka, Cape Agalina, Central, Chaika, Green Life, Harmani, Харманите, Hermanite, Каравани, which is alphabetical order, not merit order.",
+      "The 'natural_monument' designation attached to every Sozopol row is what lifted the whole cluster to 0.85. One protected-area polygon is inflating a dozen unrelated businesses and duplicates."
+    ]
+  },
+  "mountains": {
+    "wrong": [
+      {
+        "name": "Шилигарника",
+        "class": "other",
+        "why": "Tier 1 rank 7. Shiligarnika is a ski piste and lift area at about 1,725 m above Bansko, with a chairlift base station, cafes, bars and a hotel. It is a ski zone locality, not a summit.",
+        "source_url": "https://visit.bg/patevoditel/planini-varhove/shiligarnika-646/"
+      },
+      {
+        "name": "Konarevo",
+        "class": "not_notable",
+        "why": "Tier 1 rank 2, presented as Bulgaria's second mountain. A minor locality name on the Pirin flank above Bansko (41.7732,23.4928) with no Wikipedia or Wikidata article as a peak, no elevation in the wire, and no standing in any Bulgarian mountain list.",
+        "source_url": "https://www.openstreetmap.org/#map=14/41.7732/23.4928"
+      },
+      {
+        "name": "Дуниното куче",
+        "class": "not_notable",
+        "why": "Tier 1 rank 4. A local micro-toponym ('Dunya's dog') on the Bansko side of Pirin. Not a recognised summit.",
+        "source_url": "https://www.openstreetmap.org/#map=14/41.8017/23.4073"
+      },
+      {
+        "name": "Църна могила",
+        "class": "not_notable",
+        "why": "Tier 1 rank 3. A low local mound name above Bansko, ranked third in a country that owns the highest peak in the Balkan peninsula.",
+        "source_url": "https://www.openstreetmap.org/#map=14/41.8006/23.4501"
+      },
+      {
+        "name": "Kulia",
+        "class": "duplicate_of:Калята",
+        "why": "Tier 1 ranks 5 and 6 are 'Калята' and 'Kulia', the Cyrillic and Latin forms of the same Pirin toponym Кулята. The two rows carry different coordinates (41.8073,23.4540 and 41.7973,23.4858) so the identity is not certain, but both are minor Bansko-side rises and neither belongs in a national top twelve.",
+        "source_url": "https://www.openstreetmap.org/#map=13/41.80/23.47"
+      }
+    ],
+    "missing": [
+      {
+        "name": "Musala",
+        "qid": "Q209341",
+        "lat": 42.179167,
+        "lon": 23.585278,
+        "why": "2,925 m, the highest mountain in Bulgaria and in the whole Balkan peninsula, in Rila. Completely absent from the 67 harvested Bulgarian mountains. This is the single worst omission in the group.",
+        "source_url": "https://www.wikidata.org/wiki/Q209341",
+        "verified": true
+      },
+      {
+        "name": "Vihren",
+        "qid": "Q1140684",
+        "lat": 41.766389,
+        "lon": 23.399444,
+        "why": "2,914 m, the highest peak of Pirin and the emblem of Pirin National Park. Absent, although six anonymous hills 5 to 8 km away above Bansko occupy tier 1 ranks 2 to 7 with 'unesco' designations borrowed from the same park.",
+        "source_url": "https://www.wikidata.org/wiki/Q1140684",
+        "verified": true
+      },
+      {
+        "name": "Kutelo",
+        "qid": "Q59836",
+        "lat": 41.776861,
+        "lon": 23.400028,
+        "why": "2,908 m, Bulgaria's third highest summit, on the Koncheto ridge next to Vihren. Absent.",
+        "source_url": "https://www.wikidata.org/wiki/Q59836",
+        "verified": true
+      },
+      {
+        "name": "Todorka",
+        "qid": "Q7812850",
+        "lat": 41.752722,
+        "lon": 23.431778,
+        "why": "2,746 m, the peak directly above Bansko and the mountain on every Bansko postcard and ski map. The harvest picked up six unnamed Bansko-side knolls and missed the one summit the town is known for.",
+        "source_url": "https://www.wikidata.org/wiki/Q7812850",
+        "verified": true
+      },
+      {
+        "name": "Botev Peak",
+        "qid": "Q894703",
+        "lat": 42.716667,
+        "lon": 24.933333,
+        "why": "2,376 m, the highest point of the Balkan range (Stara Planina) and of Central Balkan National Park. Absent, although the tier 1 rank 1 row Vezhen is from the same range 40 km west.",
+        "source_url": "https://www.wikidata.org/wiki/Q894703",
+        "verified": true
+      },
+      {
+        "name": "Cherni Vrah",
+        "qid": "Q849657",
+        "lat": 42.563611,
+        "lon": 23.278333,
+        "why": "2,290 m, the summit of Vitosha and Sofia's own mountain, reachable by chairlift from the capital. It IS in the file, at tier 2 rank 49, which is functionally missing.",
+        "source_url": "https://www.wikidata.org/wiki/Q849657",
+        "verified": true
+      },
+      {
+        "name": "Malyovitsa",
+        "qid": "Q210004",
+        "lat": 42.173861,
+        "lon": 23.363083,
+        "why": "2,729 m, the birthplace of Bulgarian alpinism and the gateway to the Seven Rila Lakes. Buried at tier 2 rank 18, below six Bansko knolls.",
+        "source_url": "https://www.wikidata.org/wiki/Q210004",
+        "verified": true
+      },
+      {
+        "name": "Shipka (peak)",
+        "qid": "Q134217",
+        "lat": 42.74833,
+        "lon": 25.32194,
+        "why": "1,329 m, the national memorial summit of the Shipka Pass, arguably the most visited mountain top in Bulgaria. Sitting at tier 2 rank 23.",
+        "source_url": "https://www.wikidata.org/wiki/Q134217",
+        "verified": true
+      },
+      {
+        "name": "Golyam Perelik",
+        "qid": "Q1548833",
+        "lat": 41.601111,
+        "lon": 24.574167,
+        "why": "2,191 m, the highest peak of the Rhodopes. At tier 2 rank 8, while its lower neighbours Golyam Persenk (2,091 m) and Malak Persenk are in tier 1 at ranks 14 and 17.",
+        "source_url": "https://www.wikidata.org/wiki/Q1548833",
+        "verified": true
+      }
+    ],
+    "order": [
+      "The ranking is not defensible at any level. Six of the top seven Bulgarian mountains are unnamed or micro-local rises within 8 km of one ski town, and the country's four highest summits (Musala, Vihren, Kutelo, Todorka) are not in the file at all.",
+      "Vezhen at rank 1 is a real Balkan-range peak (2,198 m) and would be a fine rank 8; as the national number one it is wrong.",
+      "Structural bug: tier 1 is not monotone in rank. Tier 1 holds ranks 1,2,3,4,5,6,7,14,17,24,40,47 while ranks 8 to 13 sit in tier 2. A tier 1 that contains rank 47 (Буная) but excludes rank 8 (Golyam Perelik) and rank 9 (Rilomanastirska Gora) is not a top-pick list; something is promoting rows by designation quota after ranking.",
+      "The 'unesco' designation on the six Bansko rows and 'natural_monument' on the Rhodope rows are doing all the scoring work. Designation is being read as fame."
+    ]
+  },
+  "counts_verdict": "The raw counts (52 beaches, 67 mountains) look plausible for Bulgaria, but the distribution makes them meaningless. Eleven of twelve tier 1 beaches are Sozopol, and six of twelve tier 1 mountains are unnamed rises above Bansko. Twelve and twelve are reasonable tier 1 sizes for a country with a 350 km coast and two 2,900 m ranges; the problem is entirely which twelve. If the duplicates were folded (Kavatsi x4, Harmanite x3, Budjaka x2, Golden Fish x2) the real beach count for Sozopol would be about six, not twenty.",
+  "top_pick_verdict": "top_beach 'Sinemorec, Veleka Beach' is correct and I would put it on the country card as is: the Veleka river mouth at Sinemorets is the most distinctive beach in Bulgaria. top_mountain 'Vezhen' is wrong. The country card mountain for Bulgaria is Musala (Q209341, 2,925 m), the highest peak in the Balkans, or Vihren (Q1140684) if you want the more dramatic silhouette. Neither is in the wire.",
+  "notes": "Two failure modes stack here. The first is monoculture: whatever picks tier 1 is drawing almost everything from one settlement per kind (Sozopol for beaches, Bansko for mountains), which suggests the ranking is dominated by a per-POI-cluster signal (bathing water polygon, protected area polygon) rather than fame. The second is that tier 1 for mountains is not rank-ordered, so the promotion step is broken independently of the score. Both are visible without leaving the file. Separately, the Sozopol tier 1 block is in strict alphabetical order at a tied score of 0.85, which means ties are being broken by name."
+}

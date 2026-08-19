@@ -1,0 +1,347 @@
+{
+  "iso2": "PL",
+  "country": "Poland",
+  "checked_at": "2026-08-17",
+  "beaches": {
+    "wrong": [
+      {
+        "name": "Apartamenty w Świnoujściu - www.baltic-plaza.pl",
+        "class": "hospitality",
+        "why": "A holiday-apartment advertisement, complete with a booking URL inside the feature name. It is not a beach at all, and it is ranked first in the country and shipped as Poland's top_beach in index.json. The coordinate (53.9192, 14.2575) reverse-geocodes to Promenada Historyczna, a pedestrian promenade in Świnoujście.",
+        "source_url": "https://www.openstreetmap.org/#map=18/53.9192/14.2575"
+      },
+      {
+        "name": "Bulwar J. Szymańskiego",
+        "class": "other",
+        "why": "A street name, not a beach: Bulwar Jana Szymańskiego is the harbour-side boulevard in Kołobrzeg. The bathing feature actually sitting at this coordinate is the official EEA bathing site 'Kołobrzeg Wschód Pomnik Zaślubin', so the row is a street-named stand-in for the Kołobrzeg east beach.",
+        "source_url": "https://www.openstreetmap.org/#map=18/54.1868/15.5576"
+      },
+      {
+        "name": "Baseny letnie w Toruniu",
+        "class": "lido_or_pool",
+        "why": "The MOSiR open-air summer swimming pools at ul. Szosa Bydgoska 3 in Toruń: two pool basins and a paddling pool with a slide, roughly 300 km from the sea. Exactly the Brockwell Lido failure mode. The row also carries no bathing-water class.",
+        "source_url": "https://www.mosirtorun.pl/?view=article&id=64&catid=9"
+      },
+      {
+        "name": "Plaża miejska Chwaliszewo",
+        "class": "other",
+        "why": "Poznań's urban Warta riverbank strip. The OSM object at the coordinate is KontenerART, a container bar and performance venue on the Wartostrada. It is an inland city event space with no bathing-water class; swimming in the Warta here is not a thing.",
+        "source_url": "https://www.openstreetmap.org/#map=18/52.4060/16.9449"
+      },
+      {
+        "name": "Plaża Kmiecie",
+        "class": "not_notable",
+        "why": "A patch of San riverbank in the Kmiecie district of Przemyśl, far inland in the south-east corner of the country. No bathing-water class, and the coordinate resolves to a residential building on Wybrzeże Ojca Świętego Jana Pawła II. Nothing that belongs in a national top ten.",
+        "source_url": "https://www.openstreetmap.org/#map=18/49.7822/22.7475"
+      },
+      {
+        "name": "Strand Ahlbeck",
+        "class": "wrong_country",
+        "why": "Ahlbeck is a district of Ostseebad Heringsdorf in Mecklenburg-Vorpommern, GERMANY (Wikidata Q149899, P17 = Germany). The coordinate reverse-geocodes to 'Kaiserbäder, Ahlbeck, Heringsdorf, Vorpommern-Greifswald, Mecklenburg-Vorpommern, 17419, Deutschland'. It is ranked 10th in Poland.",
+        "source_url": "https://www.wikidata.org/wiki/Q149899"
+      },
+      {
+        "name": "Ahlbeck FKK Strand",
+        "class": "wrong_country",
+        "why": "The German naturist beach at Ahlbeck. Coordinate (53.9290, 14.2260) reverse-geocodes to Kaiserbäder, Ahlbeck, Heringsdorf, Mecklenburg-Vorpommern, Deutschland. Ranked 11th in Poland.",
+        "source_url": "https://www.openstreetmap.org/#map=18/53.9290/14.2260"
+      },
+      {
+        "name": "Albeck",
+        "class": "wrong_country",
+        "why": "A misspelling of Ahlbeck. The coordinate resolves to a residential building on Alter Sportplatz in Ahlbeck, Heringsdorf, Germany. Tier 2 rank 12.",
+        "source_url": "https://www.openstreetmap.org/#map=18/53.9359/14.1947"
+      },
+      {
+        "name": "In-Ka's Strandoase",
+        "class": "hospitality",
+        "why": "A beach kiosk (OSM shop=kiosk) on the Ahlbeck promenade in Germany. Both a hospitality venue and in the wrong country. Tier 2 rank 13.",
+        "source_url": "https://www.openstreetmap.org/#map=18/53.9366/14.2034"
+      },
+      {
+        "name": "Strand Ahlbeck Usedom",
+        "class": "wrong_country",
+        "why": "The coordinate resolves to a hotel building at Dünenstraße 24, Ahlbeck, Heringsdorf, Germany. Tier 2 rank 18.",
+        "source_url": "https://www.openstreetmap.org/#map=18/53.9385/14.1968"
+      },
+      {
+        "name": "Usedom Strand Ahlbeck",
+        "class": "wrong_country",
+        "why": "Another Ahlbeck row; coordinate resolves to a track in Kaiserbäder, Ahlbeck, Heringsdorf, Germany. Tier 2 rank 25.",
+        "source_url": "https://www.openstreetmap.org/#map=18/53.9299/14.2217"
+      },
+      {
+        "name": "Strand Swinemünde",
+        "class": "duplicate_of:Plaża w Świnoujściu",
+        "why": "German exonym for the Świnoujście city beach, 100 m from the 'Plaża w Świnoujściu' row. Tier 2 rank 19.",
+        "source_url": "https://pl.wikipedia.org/wiki/Świnoujście"
+      },
+      {
+        "name": "Strand Von Swinemünde",
+        "class": "duplicate_of:Plaża w Świnoujściu",
+        "why": "Third German-language spelling of the same Świnoujście beach. Tier 2 rank 20.",
+        "source_url": "https://pl.wikipedia.org/wiki/Świnoujście"
+      },
+      {
+        "name": "Swinemünde Strand (Polen)",
+        "class": "duplicate_of:Plaża w Świnoujściu",
+        "why": "Fourth German-language spelling of the same beach, this one with a country disambiguator baked into the name. Tier 2 rank 21.",
+        "source_url": "https://pl.wikipedia.org/wiki/Świnoujście"
+      },
+      {
+        "name": "Świnoujście Strandpromenade",
+        "class": "duplicate_of:Plaża w Świnoujściu",
+        "why": "The promenade alongside the same beach, 40 m from the 'Apartamenty' row. Tier 2 rank 23.",
+        "source_url": "https://pl.wikipedia.org/wiki/Świnoujście"
+      },
+      {
+        "name": "Promenada Świnoujście",
+        "class": "duplicate_of:Plaża w Świnoujściu",
+        "why": "Polish-language twin of the row above: same promenade, same beach. Tier 2 rank 17.",
+        "source_url": "https://pl.wikipedia.org/wiki/Świnoujście"
+      },
+      {
+        "name": "Świnoujście",
+        "class": "town_or_village",
+        "why": "The city itself listed as a beach. Tier 2 rank 22.",
+        "source_url": "https://www.wikidata.org/wiki/Q102382"
+      },
+      {
+        "name": "Plaża Miejska",
+        "class": "duplicate_of:Plaża w Świnoujściu",
+        "why": "Generic 'city beach' with no locality in the name, 200 m from the Świnoujście beach row. Tier 2 rank 16.",
+        "source_url": "https://pl.wikipedia.org/wiki/Świnoujście"
+      },
+      {
+        "name": "Najdalej wysunięta na zachód polska plaża",
+        "class": "other",
+        "why": "The name is a descriptive caption, 'the westernmost Polish beach', not a place name. It is a signpost fact about the same Świnoujście strip. Tier 2 rank 14.",
+        "source_url": "https://www.openstreetmap.org/#map=18/53.9256/14.2300"
+      }
+    ],
+    "missing": [
+      {
+        "name": "Sopot beach (Plaża w Sopocie)",
+        "qid": null,
+        "lat": 54.4475,
+        "lon": 18.575,
+        "why": "Poland's best-known seaside resort, the Tricity's summer centre, and the site of Europe's longest wooden pier. It is absent from the file at every tier. Coordinate given is Molo w Sopocie (Wikidata Q3177824), which stands on the beach itself; OSM has no named beach polygon at Sopot, which is exactly why an OSM-name-driven harvester missed it.",
+        "source_url": "https://www.wikidata.org/wiki/Q3177824",
+        "verified": false
+      },
+      {
+        "name": "Łeba, Plaża A",
+        "qid": null,
+        "lat": 54.76833,
+        "lon": 17.55995,
+        "why": "The main beach of Łeba, the gateway resort to Słowiński National Park. Named beach polygon in OSM. Absent from the file at every tier.",
+        "source_url": "https://www.openstreetmap.org/#map=17/54.76833/17.55995",
+        "verified": true
+      },
+      {
+        "name": "Słowiński National Park shifting dunes",
+        "qid": "Q1572525",
+        "lat": 54.7032,
+        "lon": 17.3069,
+        "why": "A UNESCO biosphere reserve whose migrating sand dunes and empty Baltic shore are the single most distinctive piece of Polish coast. No row anywhere in the file. Coordinate is the park centroid from Wikidata, not a specific beach.",
+        "source_url": "https://www.wikidata.org/wiki/Q1572525",
+        "verified": true
+      },
+      {
+        "name": "Ustka, Plaża wschodnia",
+        "qid": null,
+        "lat": 54.59182,
+        "lon": 16.87933,
+        "why": "The east beach of Ustka, one of the busiest middle-coast resorts. Named beach polygon in OSM, absent from the file.",
+        "source_url": "https://www.openstreetmap.org/#map=17/54.59182/16.87933",
+        "verified": true
+      },
+      {
+        "name": "Gdańsk Brzeźno beach (Plaża strzeżona \"Dom Zdrojowy Brzeźno\")",
+        "qid": null,
+        "lat": 54.40932,
+        "lon": 18.63921,
+        "why": "Gdańsk's main city beach, in a metro area of over a million people. Named guarded-beach polygon in OSM. The file contains no Gdańsk beach at all.",
+        "source_url": "https://www.openstreetmap.org/#map=17/54.40932/18.63921",
+        "verified": true
+      },
+      {
+        "name": "Międzyzdroje beach",
+        "qid": null,
+        "lat": 53.92833,
+        "lon": 14.45056,
+        "why": "The main resort of Wolin island, next to Wolin National Park (Q620392), and a bigger beach destination than several rows that made tier 1. Coordinate is the town from Wikidata Q148615, not the beach polygon, since OSM has no named central beach here.",
+        "source_url": "https://www.wikidata.org/wiki/Q148615",
+        "verified": false
+      },
+      {
+        "name": "Krynica Morska beach (Vistula Spit)",
+        "qid": null,
+        "lat": 54.3825,
+        "lon": 19.44444,
+        "why": "The main resort of the Vistula Spit, with dune-backed beach on the open Baltic. Coordinate is the town from Wikidata Q935756, not the beach polygon.",
+        "source_url": "https://www.wikidata.org/wiki/Q935756",
+        "verified": false
+      },
+      {
+        "name": "Mielno beach",
+        "qid": null,
+        "lat": 54.26,
+        "lon": 16.06083,
+        "why": "A classic middle-coast resort town near Koszalin. Coordinate is the town from Wikidata Q1013119, not the beach polygon.",
+        "source_url": "https://www.wikidata.org/wiki/Q1013119",
+        "verified": false
+      }
+    ],
+    "order": [
+      "Rank 1 is an apartment advert with a URL in its name. Nothing below it can rescue a list that opens this way.",
+      "Rank 2 is a street name and rank 6 is a municipal swimming pool complex, both above every real sea beach except Świnoujście and Kołobrzeg.",
+      "Six of the top eleven rows (10, 11, 12, 13, 18, 25) are in Germany, on the Ahlbeck side of Usedom.",
+      "The single genuinely notable entry, Plaża w Świnoujściu, sits at rank 4 behind an advert, a street and a small Gdynia beach.",
+      "Duża Plaża - Bałtycka on the Hel peninsula is a real Baltic beach and is buried at tier 2 rank 26, below ten duplicate Świnoujście and German rows.",
+      "Plaża Gdynia Kolibki (rank 3), a small cliff-backed beach, outranks Kołobrzeg Zachód (rank 5), the beach of a far larger spa resort."
+    ]
+  },
+  "mountains": {
+    "wrong": [
+      {
+        "name": "Gerlachovský štít",
+        "class": "wrong_country",
+        "why": "The highest peak of Slovakia and of the whole Carpathian range, entirely inside Slovakia. Wikidata Q81213 gives P17 = Slovakia, and the coordinate reverse-geocodes to Vysoké Tatry, okres Poprad, Prešovský kraj, Slovensko. It is ranked 6th in Poland.",
+        "source_url": "https://www.wikidata.org/wiki/Q81213"
+      },
+      {
+        "name": "Luční hora",
+        "class": "wrong_country",
+        "why": "A Czech mountain in the Krkonoše (Wikidata Q1767298, P17 = Czech Republic, 1556 m). The coordinate reverse-geocodes to Špindlerův Mlýn, okres Trutnov, Česko. Ranked 12th in Poland, and simultaneously ranked 2nd in the Czech file.",
+        "source_url": "https://www.wikidata.org/wiki/Q1767298"
+      },
+      {
+        "name": "Krokiew",
+        "class": "other",
+        "why": "Wielka Krokiew (Wikidata Q1636036) is a ski-jumping hill in Zakopane, instance of 'ski jumping hill', opened 1925. It is a sports venue, not a summit, and it is ranked 7th among Poland's mountains.",
+        "source_url": "https://www.wikidata.org/wiki/Q1636036"
+      },
+      {
+        "name": "Igła Deotymy",
+        "class": "not_notable",
+        "why": "A limestone rock needle in the Prądnik valley of Ojców National Park, tagged natural=rock in OSM and instance of 'crag and tail' in Wikidata (Q11711513) with a single Wikipedia sitelink. A roadside rock formation ranked 8th nationally, above Świnica.",
+        "source_url": "https://www.wikidata.org/wiki/Q11711513"
+      },
+      {
+        "name": "Piłsudski's Mound",
+        "class": "other",
+        "why": "Kopiec Piłsudskiego is an artificial memorial earth mound in Las Wolski, Kraków, tagged tourism=viewpoint in OSM. A man-made monument, not a mountain. Tier 2 rank 38.",
+        "source_url": "https://www.openstreetmap.org/#map=17/50.0600/19.8472"
+      },
+      {
+        "name": "Kościuszko Mound",
+        "class": "other",
+        "why": "The second artificial memorial mound in Kraków, same family as the row above. Tier 2 rank 40.",
+        "source_url": "https://www.openstreetmap.org/#map=17/50.0549/19.8934"
+      },
+      {
+        "name": "Slavkovský štít",
+        "class": "wrong_country",
+        "why": "A 2452 m High Tatras peak entirely in Slovakia (Wikidata Q770572). Tier 2 rank 39 in the Polish list, while it is only tier 2 rank 21 in Slovakia's own list.",
+        "source_url": "https://www.wikidata.org/wiki/Q770572"
+      },
+      {
+        "name": "Zadný Gerlach",
+        "class": "wrong_country",
+        "why": "A subsidiary summit of the Gerlach massif in Slovakia. Tier 2 rank 41.",
+        "source_url": "https://www.wikidata.org/wiki/Q81213"
+      },
+      {
+        "name": "Predné Solisko",
+        "class": "wrong_country",
+        "why": "A Slovak High Tatras peak above Štrbské Pleso, carrying its Slovak name in the Polish list. Tier 2 rank 33.",
+        "source_url": "https://sk.wikipedia.org/wiki/Predné_Solisko"
+      }
+    ],
+    "missing": [
+      {
+        "name": "Tarnica",
+        "qid": "Q577655",
+        "lat": 49.06944,
+        "lon": 22.73806,
+        "why": "The highest peak of the Polish Bieszczady (1346 m) and the emblem of the whole south-east. Absent from the file at every tier, in a list of 101 Polish mountains.",
+        "source_url": "https://www.wikidata.org/wiki/Q577655",
+        "verified": true
+      },
+      {
+        "name": "Śnieżnik",
+        "qid": "Q1397501",
+        "lat": 50.2075,
+        "lon": 16.84694,
+        "why": "1423 m, the highest of the Eastern Sudetes and a border summit with Czechia (Králický Sněžník). Absent at every tier.",
+        "source_url": "https://www.wikidata.org/wiki/Q1397501",
+        "verified": true
+      },
+      {
+        "name": "Ślęża",
+        "qid": "Q387148",
+        "lat": 50.86502,
+        "lon": 16.70882,
+        "why": "718 m, the sacred mountain of Silesia and the landmark of the Wrocław region; Wikidata records it as instance of 'sacred mountain'. Absent at every tier.",
+        "source_url": "https://www.wikidata.org/wiki/Q387148",
+        "verified": true
+      },
+      {
+        "name": "Łysica",
+        "qid": "Q384265",
+        "lat": 50.9,
+        "lon": 20.9,
+        "why": "The highest point of the Świętokrzyskie mountains, the oldest range in Poland, inside Świętokrzyski National Park. Absent at every tier. Note the Wikidata coordinate is rounded to one decimal, so treat it as approximate.",
+        "source_url": "https://www.wikidata.org/wiki/Q384265",
+        "verified": true
+      },
+      {
+        "name": "Turbacz",
+        "qid": "Q7853729",
+        "lat": 49.5428,
+        "lon": 20.1039,
+        "why": "1310 m, the highest of the Gorce and one of the most walked summits in the Polish Carpathians. Absent at every tier.",
+        "source_url": "https://www.wikidata.org/wiki/Q7853729",
+        "verified": true
+      },
+      {
+        "name": "Trzy Korony",
+        "qid": "Q7849064",
+        "lat": 49.4136,
+        "lon": 20.4144,
+        "why": "982 m, the crown of Pieniny National Park above the Dunajec gorge and one of Poland's most photographed summits. It is absent from the Polish file and has instead been filed under Slovakia, where it appears twice in tier 1 (ranks 5 and 7). The coordinate reverse-geocodes to Krościenko nad Dunajcem, województwo małopolskie, Polska.",
+        "source_url": "https://www.wikidata.org/wiki/Q7849064",
+        "verified": true
+      },
+      {
+        "name": "Pilsko",
+        "qid": "Q1431424",
+        "lat": 49.52722,
+        "lon": 19.31833,
+        "why": "1557 m, the second highest of the Beskid Żywiecki and a major ski area. Absent at every tier.",
+        "source_url": "https://www.wikidata.org/wiki/Q1431424",
+        "verified": true
+      },
+      {
+        "name": "Skrzyczne",
+        "qid": "Q771297",
+        "lat": 49.68444,
+        "lon": 19.03028,
+        "why": "1257 m, the highest of the Beskid Śląski and the Szczyrk ski mountain. Absent at every tier.",
+        "source_url": "https://www.wikidata.org/wiki/Q771297",
+        "verified": true
+      }
+    ],
+    "order": [
+      "Rysy, the highest point of Poland, is ranked 4th, behind Kasprowy Wierch, a cable-car saddle summit.",
+      "Krokiew (a ski jump) at rank 7 and Igła Deotymy (a rock needle) at rank 8 outrank Świnica (rank 11), a genuine 2301 m Tatra peak.",
+      "Sněžka at rank 5 is the right feature, since the coordinate lands in Karpacz on the Polish side of a border summit, but it is shipped under its Czech name; Polish users expect Śnieżka.",
+      "'Kasprov vrch / Kasprowy Wierch' at rank 1 is a machine-merged bilingual string, not a name any Pole or Slovak would write.",
+      "Tier 2 is padded with three dozen minor Tatra kopy and czuby (Mała Kopa Królowa, Machajowa Czuba, Samkowa Czuba, Małe Uhrocie Kasprowe, Łomik) while Tarnica, Ślęża, Śnieżnik, Łysica, Turbacz, Pilsko and Skrzyczne are absent entirely."
+    ]
+  },
+  "counts_verdict": "Both counts are wrong in shape rather than volume. 25 beaches for a country with roughly 500 km of Baltic coast is far too few, and the composition is worse than the number: 22 of the 25 rows sit in one five-kilometre strip straddling Świnoujście and German Ahlbeck, six of them in Germany, and roughly ten of them are the same Świnoujście city beach under Polish, German and descriptive names. After dedupe, Poland ships about five distinct beaches and no Sopot, Łeba, Gdańsk, Ustka, Międzyzdroje, Mielno or Krynica Morska. 101 mountains is a generous number, but tier 2 is filled with minor Tatra shoulders while six of the country's canonical summits, one per range, are missing altogether. Tier 1 of 12 is defensible in size; its contents are not, with two Slovak or Czech peaks, a ski jump and a rock needle in it.",
+  "top_pick_verdict": "Both top picks fail. top_beach is 'Apartamenty w Świnoujściu - www.baltic-plaza.pl', a holiday-let advert with a booking URL in the name, which is the single worst row I found in this group and would be actively embarrassing on a country card. It should be Sopot, or the Hel peninsula and Łeba if the card wants scenery over resort life. top_mountain is 'Kasprov vrch / Kasprowy Wierch', a mashed bilingual string for a cable-car summit; Poland's card should carry Rysy as the highest point, or Giewont, which is the silhouette every Pole recognises.",
+  "notes": "Root cause visible in the data: the harvester is driven by OSM feature names and by Wikidata P31, and it does no country-of-coordinate check. Where OSM has many small named beach objects (the Świnoujście and Usedom promenade), the country list fills with a dozen names for one beach plus everything on the German side of the border; where OSM has no named beach polygon (Sopot, Międzyzdroje, Krynica Morska, Mielno all returned nothing for natural=beach or leisure=beach_resort), Poland's most famous resorts vanish. On the mountain side, Wikidata P31=mountain admits ski jumps, rock needles and artificial mounds, and border ridges are duplicated into both neighbours' lists (Luční hora appears in PL and CZ, Slavkovský štít in PL and SK). Every country claim above was checked by reverse-geocoding the exact coordinate the wire ships, so the admin area quoted is what the app would actually place the pin in."
+}

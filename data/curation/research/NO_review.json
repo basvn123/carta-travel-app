@@ -1,0 +1,227 @@
+{
+  "iso2": "NO",
+  "country": "Norway",
+  "checked_at": "2026-08-17",
+  "beaches": {
+    "wrong": [
+      {
+        "name": "Nordstrand bad",
+        "class": "lido_or_pool",
+        "why": "The only beach Norway ships (tier 2, rank 1, and the index top_beach). It is an urban bathing establishment in Oslo on the Indre Oslofjord, built around 1890 for patients of the Fageraas sanatorium and later extended with a restaurant, theatre hall, concert hall and bowling alley. It is a municipal badeplass in a residential Oslo suburb, not a beach a traveller would cross the country for, and it is the wrong single object to represent Norwegian beaches. Its record carries sources ['osm'] only and no bathing water class, unlike every SE/FI/DK beach.",
+        "source_url": "https://no.wikipedia.org/wiki/Nordstrand_bad"
+      }
+    ],
+    "missing": [
+      {
+        "name": "Hauklandstranda (Haukland Beach)",
+        "qid": "Q31079299",
+        "lat": 68.19799,
+        "lon": 13.52919,
+        "why": "Lofoten's flagship white sand beach, Blue Flag certified, named by Visit Norway among Europe's most beautiful. Wikidata classes it as a beach (P31 Q40080) but stores no coordinate, so the lat/lon here come from the OSM natural=beach way named Hauklandstranda, Vestvagoy.",
+        "source_url": "https://www.wikidata.org/wiki/Q31079299",
+        "verified": true
+      },
+      {
+        "name": "Uttakleivstranda (Uttakleiv Beach)",
+        "qid": null,
+        "lat": 68.21368,
+        "lon": 13.50829,
+        "why": "The beach next to Haukland on Vestvagoy, listed by Visit Norway as one of the beaches that draw visitors to Lofoten. No Wikidata item found for the beach itself; coordinates are the OSM natural=beach way named Uttakleivstranda, so it is marked unverified.",
+        "source_url": "https://www.visitnorway.com/things-to-do/family-fun/beaches/",
+        "verified": false
+      },
+      {
+        "name": "Kvalvika",
+        "qid": "Q11982594",
+        "lat": 68.079,
+        "lon": 13.08,
+        "why": "Bay on Moskenesoya, Lofoten, whose beach is one of Norway's best known hike-in beaches (from Fredvang). Wikidata item is the bay (P31 Q39594) with a coordinate.",
+        "source_url": "https://www.wikidata.org/wiki/Q11982594",
+        "verified": true
+      },
+      {
+        "name": "Bunes Beach (Bunesstranda)",
+        "qid": "Q123012698",
+        "lat": 67.9789,
+        "lon": 12.9636,
+        "why": "Beach on Moskenesoya reached by ferry to Vindstad and a walk over the pass; named by Visit Norway alongside Haukland and Ramberg as a Lofoten beach draw. Wikidata P31 Q40080 beach in Norway.",
+        "source_url": "https://www.wikidata.org/wiki/Q123012698",
+        "verified": true
+      },
+      {
+        "name": "Solastranden",
+        "qid": "Q12001793",
+        "lat": 58.88861,
+        "lon": 5.60111,
+        "why": "Two kilometre sand beach on Jaeren, minutes from Stavanger airport, the busiest bathing beach of southwest Norway and an obvious pick for a country whose beach tab is otherwise empty.",
+        "source_url": "https://www.wikidata.org/wiki/Q12001793",
+        "verified": true
+      },
+      {
+        "name": "Refviksanden",
+        "qid": "Q11997353",
+        "lat": 62.0021,
+        "lon": 5.0852,
+        "why": "Wide white sand beach on Vagsoy in Nordfjord, Wikidata P31 Q40080 beach in Vagsoy, Norway. Sits close to the Hoddevik catalogue destination that already exists in the app.",
+        "source_url": "https://www.wikidata.org/wiki/Q11997353",
+        "verified": true
+      },
+      {
+        "name": "Sjosanden",
+        "qid": "Q841461",
+        "lat": 58.02028,
+        "lon": 7.44917,
+        "why": "Mandal's 800 metre sand beach, the best known bathing beach of southern Norway.",
+        "source_url": "https://www.wikidata.org/wiki/Q841461",
+        "verified": true
+      },
+      {
+        "name": "Ersfjordstranda",
+        "qid": null,
+        "lat": 69.47882,
+        "lon": 17.39482,
+        "why": "Senja's signature beach with the National Tourist Route facilities. No Wikidata item found; the coordinate is the OSM object named Ersfjordstranda at Ersfjorden, Senja, so it is marked unverified.",
+        "source_url": "https://nominatim.openstreetmap.org/ui/search.html?q=Ersfjordstranda+Senja",
+        "verified": false
+      },
+      {
+        "name": "Orrestranda",
+        "qid": "Q12717551",
+        "lat": null,
+        "lon": null,
+        "why": "The longest sand beach on Jaeren and part of the Jaeren protected landscape. A Wikidata item exists and is placed in Norway (P17 Q20) but it carries no coordinate and no usable label, so coordinates are left null rather than guessed.",
+        "source_url": "https://www.wikidata.org/wiki/Q12717551",
+        "verified": false
+      }
+    ],
+    "order": [
+      "There is no ranking to defend: the country ships exactly one beach, in tier 2, and it is an Oslo bathing establishment.",
+      "Root cause is visible in the data. SE/FI/DK beach rows carry sources ['eea','osm'] and an EEA bathing water class (27/32, 32/34, 46/49 rows). Norway's single row carries sources ['osm'] and no water class, so the beach candidate pool is effectively the EEA bathing water join, which returns nothing for Norway. Until an OSM natural=beach plus Wikidata P31=Q40080 path is added, Norway will keep shipping an empty Beaches tab.",
+      "Hoddevik already exists as a catalogue destination (gem:hoddevik) and is a surf beach, yet no beach was harvested there. Same for Lofoten, where five Blue Flag or nationally famous beaches lie within 20 km of each other."
+    ]
+  },
+  "mountains": {
+    "wrong": [
+      {
+        "name": "Kjeragbolten",
+        "class": "duplicate_of:Kjerag",
+        "why": "Tier 1, rank 4, ranked one place above Kjerag itself at rank 5, 1.2 km away. Kjeragbolten is a boulder wedged in a crevice on the Kjerag massif, not a separate mountain. One mountain is occupying two of Norway's twelve tier 1 slots.",
+        "source_url": "https://en.wikipedia.org/wiki/Kjeragbolten"
+      },
+      {
+        "name": "Vestkapp",
+        "class": "viewpoint_not_summit",
+        "why": "Tier 2, rank 19. Vestkapp (Kjerringa) on Stadlandet is a coastal cape and plateau viewpoint reached by road, not a summit. It belongs on a viewpoints layer, not in a mountains ranking.",
+        "source_url": "https://no.wikipedia.org/wiki/Vestkapp"
+      },
+      {
+        "name": "Sverd i fjell",
+        "class": "other",
+        "why": "Tier 2, rank 77. A 1983 bronze monument of three swords driven into rock at Hafrsfjord, Stavanger. It is a sculpture, not a mountain; it entered the mountain list because its name contains fjell.",
+        "source_url": "https://en.wikipedia.org/wiki/Sverd_i_fjell"
+      }
+    ],
+    "missing": [
+      {
+        "name": "Galdhopiggen",
+        "qid": "Q203942",
+        "lat": 61.63644,
+        "lon": 8.31248,
+        "why": "At 2469 m the highest mountain in Norway and in Northern Europe, and a guided summer walk-up from Juvasshytta. A Norwegian mountains tab without it is not credible. Jotunheimen is represented only by Glittertinden (rank 9) and a string of unnamed Hellstugu and Memuru tops.",
+        "source_url": "https://en.wikipedia.org/wiki/Galdh%C3%B8piggen",
+        "verified": true
+      },
+      {
+        "name": "Trolltunga",
+        "qid": "Q1512593",
+        "lat": 60.13318,
+        "lon": 6.75472,
+        "why": "The single most photographed hike in Norway, above Ringedalsvatnet at Odda. Wikidata classes it as a rock formation (P31 Q1404150), the same category as Preikestolen and Kjeragbolten which the tab already carries, so the tab's own scope demands it.",
+        "source_url": "https://en.wikipedia.org/wiki/Trolltunga",
+        "verified": true
+      },
+      {
+        "name": "Besseggen",
+        "qid": "Q830100",
+        "lat": 61.50422,
+        "lon": 8.73196,
+        "why": "The most walked mountain ridge in Norway (Jotunheimen, boat from Gjendesheim), around 30,000 walkers a season, and completely absent while four unnamed Geiranger tops sit in tier 1.",
+        "source_url": "https://en.wikipedia.org/wiki/Besseggen",
+        "verified": true
+      },
+      {
+        "name": "Snohetta",
+        "qid": "Q979569",
+        "lat": 62.31984,
+        "lon": 9.26769,
+        "why": "2286 m, the highest peak of Dovrefjell and the mountain of the Dovrefjell-Sunndalsfjella national park and the Snohetta viewpoint pavilion.",
+        "source_url": "https://en.wikipedia.org/wiki/Sn%C3%B8hetta",
+        "verified": true
+      },
+      {
+        "name": "Stetind",
+        "qid": "Q1425694",
+        "lat": 68.16512,
+        "lon": 16.59261,
+        "why": "1392 m granite obelisk in Narvik municipality, voted Norway's national mountain in a 2002 national poll.",
+        "source_url": "https://en.wikipedia.org/wiki/Stetind",
+        "verified": true
+      },
+      {
+        "name": "Segla",
+        "qid": "Q31503316",
+        "lat": 69.5075,
+        "lon": 17.59472,
+        "why": "The sail shaped peak above Fjordgard on Senja, one of the most photographed mountains in northern Norway. Northern Norway is represented in tier 1 by nothing at all.",
+        "source_url": "https://www.wikidata.org/wiki/Q31503316",
+        "verified": true
+      },
+      {
+        "name": "Reinebringen",
+        "qid": "Q31652043",
+        "lat": 67.9261,
+        "lon": 13.07532,
+        "why": "The Lofoten viewpoint over Reine, rebuilt with 1566 Sherpa stone steps and now one of the busiest short hikes in Norway.",
+        "source_url": "https://www.wikidata.org/wiki/Q31652043",
+        "verified": true
+      },
+      {
+        "name": "Romsdalseggen",
+        "qid": "Q11998353",
+        "lat": 62.54804,
+        "lon": 7.74702,
+        "why": "The ridge walk above Andalsnes, the standard companion to Trollstigen, which is already a catalogue destination (gem:trollstigen) represented only by Store Trolltinden and Romsdalshornet.",
+        "source_url": "https://www.wikidata.org/wiki/Q11998353",
+        "verified": true
+      },
+      {
+        "name": "Store Skagastolstind (Storen)",
+        "qid": "Q1078075",
+        "lat": 61.4612,
+        "lon": 7.87194,
+        "why": "2405 m, Norway's third highest and the country's most storied climbing peak in Hurrungane, Jotunheimen.",
+        "source_url": "https://www.wikidata.org/wiki/Q1078075",
+        "verified": true
+      },
+      {
+        "name": "Skala",
+        "qid": "Q1958338",
+        "lat": 61.85278,
+        "lon": 6.96639,
+        "why": "1848 m above Loen in Nordfjord with the Skalatarnet stone tower, one of the classic long ascents in Western Norway and adjacent to the Loen Skylift.",
+        "source_url": "https://www.wikidata.org/wiki/Q1958338",
+        "verified": true
+      }
+    ],
+    "order": [
+      "Geographic clustering dominates tier 1. Seven of twelve tier 1 mountains sit within 8 km of Geiranger (Dalsnibba, Blahornet, Eidshornet, Saetertverrfjellet, Holedalsfjellet, plus Djupdalsegga and Steegga just below in tier 2). Blahornet, Eidshornet and Saetertverrfjellet all score exactly 0.980, which is the signature of a flag, not of fame.",
+      "The flag is UNESCO: 21 of the 116 Norwegian mountains carry sources ['osm','whc'] and they are exactly the Geirangerfjord tops. A world heritage polygon should not lift every knoll inside it above Galdhopiggen, Besseggen and Trolltunga, which are absent entirely.",
+      "Kjeragbolten (rank 4) above Kjerag (rank 5) is backwards and duplicated.",
+      "Floyen (rank 11) and Ulriken (rank 12), the two Bergen funicular and cable car hills, are defensible as attractions but not above the ten missing entries listed here.",
+      "Dalsnibba at rank 1 is a road accessible viewpoint at 1476 m. It is a fine top ten entry; it is not the mountain of Norway."
+    ]
+  },
+  "counts_verdict": "1 beach and 116 mountains is wrong on both sides. One beach for a country with roughly 100,000 km of coastline, Blue Flag beaches in Lofoten and Jaeren, and a surf destination already in the catalogue is a pipeline failure, not a reflection of Norway. 116 mountains is a reasonable raw pool, but tier 1 holding only 12 with 7 from one fjord is over-concentrated; a country this size should show 12 tier 1 mountains drawn from at least 8 different regions.",
+  "top_pick_verdict": "Both picks fail. top_beach 'Nordstrand bad' is an Oslo bathing establishment illustrated with a 1910 photograph; a Norway beach card should show Hauklandstranda or Uttakleivstranda in Lofoten. top_mountain 'Dalsnibba' is a road viewpoint; the country card should be Galdhopiggen (highest), Preikestolen (most recognisable) or Trolltunga.",
+  "notes": "Provenance tells the story: every beach in SE/FI/DK carries 'eea' in sources, Norway's single beach does not, so the beach layer is EEA-bound and Norway contributes no rows to that register. Second, the tab mixes summits with cliffs and rock formations (Preikestolen, Kjeragbolten) and with a monument (Sverd i fjell) and a rock arch (Kirkeporten, tier 2 rank 57 at Skarsvag); if the tab is 'mountains and viewpoints' that should be explicit, and monuments and entrenchments (Korthaugen Entrenchment, tier 2 rank 106) should still be filtered out. Third, elevation_m is null on every Norwegian feature, which removes the one signal that would have ranked Galdhopiggen and Glittertinden above a 400 m Bergen hill."
+}

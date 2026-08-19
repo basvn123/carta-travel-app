@@ -1,0 +1,63 @@
+{
+  "iso2": "MD",
+  "country": "Moldova",
+  "checked_at": "2026-08-17",
+  "beaches": {
+    "wrong": [],
+    "missing": [
+      {
+        "name": "Vadul lui Vodă",
+        "qid": "Q2621050",
+        "lat": 47.09167,
+        "lon": 29.07556,
+        "why": "Moldova is landlocked, so an empty sea-beach list is honest. But the country does have one nationally known bathing destination: the Dniester river beaches at Vadul lui Vodă, the traditional summer resort of Chișinău. The QID and coordinates given are for the town; I could not confirm a separate Wikidata item for the beach itself, so the beach entity is unverified.",
+        "source_url": "https://www.wikidata.org/wiki/Q2621050",
+        "verified": false
+      }
+    ],
+    "order": [
+      "There is nothing to order: the beach set is empty at every tier and top_beach is null.",
+      "An empty Beaches tab is the correct outcome for a landlocked country and should be rendered as a deliberate empty state, not as a zero-result page."
+    ]
+  },
+  "mountains": {
+    "wrong": [
+      {
+        "name": "Dealul Cârjoiu",
+        "class": "not_notable",
+        "why": "Not miscategorised (it is a genuine deal, a hill) but it is the country's top_mountain in the index while sitting only in tier 2 at score 0.40. It is an anonymous vineyard hill in the Cricova suburbs of Chișinău, with no article, no elevation in the wire and no national standing.",
+        "source_url": "https://www.openstreetmap.org/#map=13/47.1026/28.9466"
+      },
+      {
+        "name": "Dealul Grătieștilor",
+        "class": "not_notable",
+        "why": "Same picture: an unremarkable rise on the northern edge of Chișinău, presented as one of Moldova's three mountains.",
+        "source_url": "https://www.openstreetmap.org/#map=13/47.1183/28.8271"
+      },
+      {
+        "name": "Dealul Mănăstirei",
+        "class": "not_notable",
+        "why": "A hill on the southern side of Chișinău. All three harvested Moldovan 'mountains' are suburban Chișinău hills within 25 km of each other; none is a destination.",
+        "source_url": "https://www.openstreetmap.org/#map=13/46.9654/28.7908"
+      }
+    ],
+    "missing": [
+      {
+        "name": "Bălănești Hill",
+        "qid": "Q47940",
+        "lat": 47.21767,
+        "lon": 28.09167,
+        "why": "430 m, the highest point of Moldova, in the Codri uplands of Nisporeni district. It is the one natural elevation the country is known for and the only sensible top_mountain. Absent from the file.",
+        "source_url": "https://www.wikidata.org/wiki/Q47940",
+        "verified": true
+      }
+    ],
+    "order": [
+      "There is no tier 1 at all: all three mountains sit in tier 2 at an identical score of 0.40, so no ordering is expressed. The index nevertheless names 'Dealul Cârjoiu' as top_mountain, which means the country card is being fed from a tier 2 row.",
+      "With Bălănești Hill added, the order is trivially Bălănești first and everything else nowhere."
+    ]
+  },
+  "counts_verdict": "0 beaches is right for a landlocked country. 3 mountains is honest about Moldova's relief, which tops out at 430 m, but the three chosen are all suburban Chișinău hills and the one that matters, Bălănești, is absent, so the count is small in the wrong way. Moldova should arguably carry no Mountains tab at all rather than three anonymous hills; if it carries one, it needs exactly Bălănești plus perhaps the Codri and the Orheiul Vechi cliffs, which are landscape rather than summits.",
+  "top_pick_verdict": "No on both. top_beach is null, which is correct. top_mountain 'Dealul Cârjoiu' should not go on a country card: it is a nameless vineyard hill promoted from tier 2 because it was the only thing available. The correct pick is Bălănești Hill (Q47940). If the honest answer is that Moldova has no mountain worth a card, the card should show something else entirely (Orheiul Vechi, the Dniester bend, the Cricova cellars) rather than the least bad hill.",
+  "notes": "Moldova is the clean control case for the whole dataset: with only three rows and no tier 1, it shows that the promotion step will still hand the index a top_mountain drawn from tier 2 at score 0.40. Any country whose best score is below a floor should return null for its top pick rather than the best of a bad set, the way top_beach already correctly returns null here."
+}

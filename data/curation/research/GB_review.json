@@ -1,0 +1,309 @@
+{
+  "iso2": "GB",
+  "country": "United Kingdom",
+  "checked_at": "2026-08-17",
+  "beaches": {
+    "wrong": [
+      {
+        "name": "Brockwell Lido",
+        "class": "lido_or_pool",
+        "why": "A 50 m chlorinated outdoor swimming pool in Brockwell Park, Herne Hill, south London. No sea, no sand, no coast. It is ranked 2nd of the entire United Kingdom beach list.",
+        "source_url": "https://en.wikipedia.org/wiki/Brockwell_Lido"
+      },
+      {
+        "name": "Parliament Hill Lido",
+        "class": "lido_or_pool",
+        "why": "An unheated stainless-steel outdoor pool on Hampstead Heath, inner London, 60 km from the nearest coast. Ranked 3rd nationally.",
+        "source_url": "https://en.wikipedia.org/wiki/Parliament_Hill_Lido"
+      },
+      {
+        "name": "Saltdean Lido",
+        "class": "lido_or_pool",
+        "why": "A Grade II* listed 1938 art deco outdoor swimming pool at Saltdean near Brighton. It is a building, not a beach; high tier 2 at rank 6.",
+        "source_url": "https://en.wikipedia.org/wiki/Saltdean_Lido"
+      },
+      {
+        "name": "Carricknath Point to Porthbean Beach",
+        "class": "park_or_area",
+        "why": "This is the official name of a Site of Special Scientific Interest covering a stretch of the Roseland coast in Cornwall (Wikidata Q5046180, notified 2000), not the name of a beach anyone can be directed to. A conservation-designation string has been ingested as a place name.",
+        "source_url": "https://www.protectedplanet.net/carricknath-point-to-porthbean-beach-site-of-special-scientific-interest-gb"
+      },
+      {
+        "name": "Readymoney Cove Beach",
+        "class": "not_notable",
+        "why": "A small sheltered town cove on the edge of Fowey, Cornwall, roughly 100 m of sand. A genuine beach, but holding rank 4 of the United Kingdom above Fistral Beach and Portstewart Strand is not defensible.",
+        "source_url": "https://en.wikipedia.org/wiki/Readymoney_Cove"
+      },
+      {
+        "name": "Pendour Beach",
+        "class": "not_notable",
+        "why": "Pendour Cove below Zennor, west Cornwall, is a small rocky cove with no road access and very little sand; it holds rank 9 of a 13-beach national list while Rhossili Bay, Luskentyre and Porthcurno are absent from the file entirely.",
+        "source_url": "https://en.wikipedia.org/wiki/Zennor"
+      }
+    ],
+    "missing": [
+      {
+        "name": "Rhossili Bay",
+        "qid": "Q2148317",
+        "lat": 51.56856,
+        "lon": -4.2869,
+        "why": "Repeatedly named Britain's best beach; 5 km of sand under Rhossili Down on the Gower, the UK's first designated AONB. The app already carries 'Rhossili (Gower)' as an anchor destination and ships only Horton Beach, 6.4 km away, from it.",
+        "source_url": "https://www.wikidata.org/wiki/Q2148317",
+        "verified": true,
+        "note": "QID resolves to the village of Rhossili; the bay redirects to it on Wikipedia. Coordinates are the village."
+      },
+      {
+        "name": "Luskentyre Sands",
+        "qid": "Q19585980",
+        "lat": 57.884,
+        "lon": -6.944,
+        "why": "The white-shell beach on the west coast of the Isle of Harris, the single most reproduced beach image in Scotland. The app's own anchor is literally named 'Isle of Harris (Luskentyre)' and returns only two mountains, Clisham and Uisgneabhal Mor.",
+        "source_url": "https://www.wikidata.org/wiki/Q19585980",
+        "verified": true
+      },
+      {
+        "name": "Bamburgh Beach",
+        "qid": "Q805983",
+        "lat": 55.604,
+        "lon": -1.722,
+        "why": "Northumberland's signature beach beneath Bamburgh Castle; the whole English east coast is unrepresented in the file.",
+        "source_url": "https://www.wikidata.org/wiki/Q805983",
+        "verified": true,
+        "note": "QID and coordinates are the village of Bamburgh; the beach itself has no separate entity confirmed."
+      },
+      {
+        "name": "Holkham Bay",
+        "qid": "Q15224502",
+        "lat": 52.969,
+        "lon": 0.813,
+        "why": "The pine-backed sands of Holkham National Nature Reserve, Norfolk, the largest NNR in England and the best-known beach in East Anglia.",
+        "source_url": "https://www.wikidata.org/wiki/Q15224502",
+        "verified": true
+      },
+      {
+        "name": "Porthcurno",
+        "qid": "Q847176",
+        "lat": 50.043,
+        "lon": -5.654,
+        "why": "The white-sand cove below the Minack Theatre in west Cornwall, the most photographed beach in the county.",
+        "source_url": "https://www.wikidata.org/wiki/Q847176",
+        "verified": true
+      },
+      {
+        "name": "Kynance Cove",
+        "qid": "Q3817686",
+        "lat": 49.974,
+        "lon": -5.23,
+        "why": "Serpentine stacks and turquoise water on the Lizard, National Trust owned and one of the most visited beaches in the south west.",
+        "source_url": "https://www.wikidata.org/wiki/Q3817686",
+        "verified": true
+      },
+      {
+        "name": "Barafundle Bay",
+        "qid": "Q4858166",
+        "lat": 51.618206,
+        "lon": -4.904253,
+        "why": "Pembrokeshire Coast National Park's most celebrated beach, walk-in only from Stackpole Quay; the file's only Pembrokeshire entry is Whitesands.",
+        "source_url": "https://www.wikidata.org/wiki/Q4858166",
+        "verified": true
+      },
+      {
+        "name": "Woolacombe Sands",
+        "qid": "Q542671",
+        "lat": 51.172,
+        "lon": -4.207,
+        "why": "Three miles of Blue Flag sand in north Devon, one of the highest-footfall beaches in England.",
+        "source_url": "https://www.wikidata.org/wiki/Q542671",
+        "verified": true,
+        "note": "QID and coordinates are the village of Woolacombe."
+      },
+      {
+        "name": "West Wittering",
+        "qid": "Q659095",
+        "lat": 50.78064,
+        "lon": -0.89564,
+        "why": "The main sandy beach for London and the south east, Blue Flag, at the mouth of Chichester Harbour.",
+        "source_url": "https://www.wikidata.org/wiki/Q659095",
+        "verified": true,
+        "note": "QID and coordinates are the village and civil parish."
+      },
+      {
+        "name": "Sandwood Bay",
+        "qid": "Q167165",
+        "lat": 58.5396,
+        "lon": -5.0623,
+        "why": "The remote pink-sand bay in Sutherland, the most famous wild beach in mainland Scotland; the file contains no Scottish beach at all.",
+        "source_url": "https://www.wikidata.org/wiki/Q167165",
+        "verified": true
+      },
+      {
+        "name": "Ynys Llanddwyn / Newborough Beach",
+        "qid": null,
+        "lat": null,
+        "lon": null,
+        "why": "The app carries an anchor destination literally named 'Anglesey (Ynys Llanddwyn)' and returns from it a single mountain (Mynydd Bodafon) and zero beaches. Could not confirm a beach-specific QID, so listed unverified.",
+        "source_url": "https://en.wikipedia.org/wiki/Llanddwyn_Island",
+        "verified": false
+      },
+      {
+        "name": "Durdle Door beach",
+        "qid": null,
+        "lat": null,
+        "lon": null,
+        "why": "The app carries an anchor destination named 'Jurassic Coast (Durdle Door)' and returns from it a single mountain, Stonebarrow Hill, and zero beaches. Could not confirm a beach-specific QID, so listed unverified.",
+        "source_url": "https://en.wikipedia.org/wiki/Durdle_Door",
+        "verified": false
+      }
+    ],
+    "order": [
+      "Brockwell Lido at rank 2 and Parliament Hill Lido at rank 3 sit above Fistral Beach at rank 5, so two London swimming pools outrank the best-known surf beach in England.",
+      "Readymoney Cove Beach at rank 4 outranks Fistral Beach (rank 5) and Portstewart Strand (rank 8), the only Northern Irish entry and a National Trust Blue Flag strand.",
+      "Whitesands Beach at rank 1 is a genuine and defensible pick, but its score of 0.97 is only 0.025 above a chlorinated pool, which shows the score carries almost no signal about whether the feature is coastal.",
+      "The two lowest tier-2 rows (Carricknath Point to Porthbean Beach and Horton Beach) share an identical score of 0.687, so ties are being broken arbitrarily rather than by any quality signal.",
+      "All 13 UK beaches carry a null water class. The UK stopped reporting to the EEA bathing water directive after Brexit, so the EEA join contributes nothing here and the ranking falls back entirely on Wikipedia presence, which is exactly why London lidos with Wikipedia articles beat coastal beaches without them."
+    ]
+  },
+  "mountains": {
+    "wrong": [
+      {
+        "name": "Glastonbury Tor",
+        "class": "other",
+        "why": "Family: hill_landmark_not_mountain. A 158 m conical hill in Somerset topped by the roofless St Michael's Tower, a National Trust heritage site and pilgrimage landmark. It is ranked 1 of 223 and is the country's top_mountain in the index, above Ben Nevis (1,345 m) and Scafell Pike (978 m).",
+        "source_url": "https://en.wikipedia.org/wiki/Glastonbury_Tor"
+      },
+      {
+        "name": "Peak District National Park",
+        "class": "park_or_area",
+        "why": "A 1,437 km2 national park, not a summit. The stored coordinates 53.35,-1.83333 are the park centroid on open moor. Its actual high point, Kinder Scout, is separately present at tier 2 rank 14.",
+        "source_url": "https://en.wikipedia.org/wiki/Peak_District"
+      },
+      {
+        "name": "Glen Coe",
+        "class": "park_or_area",
+        "why": "A glen, that is a valley, in Lochaber. The stored coordinates 56.66778,-4.98667 sit on the valley floor, and the app's own anchor destination is also called 'Glen Coe' at 0 km, so the region is being listed as one of its own mountains. The summits are Bidean nam Bian and Buachaille Etive Mor, the latter already at tier 2 rank 18.",
+        "source_url": "https://en.wikipedia.org/wiki/Glen_Coe"
+      },
+      {
+        "name": "Bass Rock",
+        "class": "island",
+        "why": "A 107 m volcanic plug island in the Firth of Forth, 5 km offshore, reachable only by boat and closed to landing for most of the year because it holds the world's largest northern gannet colony. It is not walkable and it is not a mountain.",
+        "source_url": "https://en.wikipedia.org/wiki/Bass_Rock"
+      },
+      {
+        "name": "Les Platons",
+        "class": "wrong_country",
+        "why": "The 136 m high point of Jersey. Jersey is a British Crown Dependency and is not part of the United Kingdom, so it should not appear in a GB list at all. It is also a telecommunications mast site rather than a hill walk.",
+        "source_url": "https://en.wikipedia.org/wiki/Les_Platons"
+      },
+      {
+        "name": "Calton Hill",
+        "class": "viewpoint_not_summit",
+        "why": "A 103 m civic hill in central Edinburgh carrying the National Monument and the City Observatory. It is a viewpoint over the city, ranked at tier 2 rank 15 above Sgurr Alasdair, the highest of the Skye Cuillin, and above Buachaille Etive Mor.",
+        "source_url": "https://en.wikipedia.org/wiki/Calton_Hill"
+      },
+      {
+        "name": "Spidean Coire nan Clach (Beinn Eighe)",
+        "class": "duplicate_of:Beinn Eighe",
+        "why": "A subsidiary top of the Beinn Eighe ridge, carrying the same Wikipedia link (en:Beinn Eighe) as the parent entry at tier 2 rank 21.",
+        "source_url": "https://en.wikipedia.org/wiki/Beinn_Eighe"
+      },
+      {
+        "name": "Spidean Coire nan Clach (Beinn Eighe) - Coinneach Mhor",
+        "class": "duplicate_of:Beinn Eighe",
+        "why": "Third row for the same Torridon ridge, same Wikipedia link, at tier 2 rank 23. The parenthetical-plus-hyphen name is a raw OSM relation label, not a place name a user would recognise.",
+        "source_url": "https://en.wikipedia.org/wiki/Beinn_Eighe"
+      },
+      {
+        "name": "Spidean Coire nan Clach (Beinn Eighe) - Sail Mhor",
+        "class": "duplicate_of:Beinn Eighe",
+        "why": "Fourth row for the same Torridon ridge, same Wikipedia link, at tier 2 rank 24. Beinn Eighe therefore occupies four of the top 24 mountain slots for the entire United Kingdom.",
+        "source_url": "https://en.wikipedia.org/wiki/Beinn_Eighe"
+      }
+    ],
+    "missing": [
+      {
+        "name": "Snowdon / Yr Wyddfa",
+        "qid": "Q217142",
+        "lat": 53.06849722,
+        "lon": -4.07623056,
+        "why": "1,085 m, the highest mountain in Wales and the most climbed mountain in Britain, roughly 600,000 ascents a year. It does not appear anywhere in the GB file, in any tier. This is the single most serious omission in the country.",
+        "source_url": "https://www.wikidata.org/wiki/Q217142",
+        "verified": true
+      },
+      {
+        "name": "Slieve Donard",
+        "qid": "Q550163",
+        "lat": 54.180238,
+        "lon": -5.920898,
+        "why": "850 m, the highest mountain in Northern Ireland and the summit of the Mournes. The app already carries a 'Mourne Mountains' anchor destination and still does not have it.",
+        "source_url": "https://www.wikidata.org/wiki/Q550163",
+        "verified": true
+      },
+      {
+        "name": "Tryfan",
+        "qid": "Q3405438",
+        "lat": 53.11494,
+        "lon": -3.99753,
+        "why": "917 m in the Ogwen Valley, the best-known scramble in Britain and one of only a handful of British summits requiring hands. Absent from the file.",
+        "source_url": "https://www.wikidata.org/wiki/Q3405438",
+        "verified": true
+      },
+      {
+        "name": "Cadair Idris",
+        "qid": "Q774479",
+        "lat": 52.699828,
+        "lon": -3.908693,
+        "why": "893 m, southern Eryri's defining mountain and one of the three peaks of the Welsh 3000s region's most walked hills. Absent from the file.",
+        "source_url": "https://www.wikidata.org/wiki/Q774479",
+        "verified": true
+      },
+      {
+        "name": "Skiddaw",
+        "qid": "Q2292191",
+        "lat": 54.651,
+        "lon": -3.148,
+        "why": "931 m, the fourth highest fell in England and the mountain that frames Keswick; the Lake District is represented only by Scafell Pike and Helvellyn.",
+        "source_url": "https://www.wikidata.org/wiki/Q2292191",
+        "verified": true
+      },
+      {
+        "name": "Ben Lomond",
+        "qid": "Q816556",
+        "lat": 56.19063,
+        "lon": -4.63317,
+        "why": "974 m, the most southerly Munro and the busiest mountain in Scotland by ascent count. The app carries a 'Loch Lomond & Trossachs' anchor and still misses it.",
+        "source_url": "https://www.wikidata.org/wiki/Q816556",
+        "verified": true
+      },
+      {
+        "name": "Suilven",
+        "qid": "Q2731464",
+        "lat": 58.115,
+        "lon": -5.13707,
+        "why": "731 m, the most distinctive mountain silhouette in Scotland and the emblem of Assynt; absent although it is far more recognisable than most of the tier-1 list.",
+        "source_url": "https://www.wikidata.org/wiki/Q2731464",
+        "verified": true
+      },
+      {
+        "name": "Stac Pollaidh",
+        "qid": "Q3396239",
+        "lat": 58.044,
+        "lon": -5.2088111,
+        "why": "612 m, one of the most walked short hill days in the north west Highlands. Absent from the file.",
+        "source_url": "https://www.wikidata.org/wiki/Q3396239",
+        "verified": true
+      }
+    ],
+    "order": [
+      "Glastonbury Tor at rank 1 above Ben Nevis at rank 3 is the most damaging ordering error in the country. Britain's highest mountain is third behind a 158 m Somerset hill and Pen y Fan.",
+      "Arthur's Seat, a 251 m urban hill in Edinburgh, is rank 4, above Scafell Pike at rank 6 (978 m, highest in England) and Helvellyn at rank 11.",
+      "Ben Nevis should be rank 1 on any defensible ordering, whether by height, prominence or footfall.",
+      "Calton Hill (103 m, tier 2 rank 15) outranks Sgurr Alasdair (tier 2 rank 20, highest of the Cuillin) and Buachaille Etive Mor (tier 2 rank 18).",
+      "Cuilcagh at rank 8 is a legitimate entry (the Stairway to Heaven boardwalk), but it straddles the border with the Republic of Ireland and does not appear in the IE file, so a country-assignment rule should be made explicit either way.",
+      "Ranks 21 to 24 are four rows for one mountain, Beinn Eighe, which is what a top-24 list looks like when there is no name or geometry dedupe."
+    ]
+  },
+  "counts_verdict": "No, both counts are wrong in opposite directions. 13 beaches for the whole United Kingdom is a catastrophic under-count: England alone has roughly 400 designated bathing waters, plus Wales, Scotland and Northern Ireland, and three of the 13 shipped are swimming pools, so the app effectively ships nine or ten UK beaches. 223 mountains is a plausible raw volume but the composition is wrong: every feature in the file sits within 11.8 km of one of only 64 catalogue anchor cities, and that radius cap is the root cause of Snowdon, Slieve Donard, Skiddaw, Ben Lomond and Suilven being absent from the file entirely rather than merely mis-ranked. The tier-1 split of 5 beaches to 12 mountains is also backwards for a country whose Beaches tab needs the most help.",
+  "top_pick_verdict": "Half right. top_beach 'Whitesands Beach' is defensible: a real, Blue Flag grade Pembrokeshire surf beach in a national park, although Rhossili Bay or Luskentyre would make a stronger country card. top_mountain 'Glastonbury Tor' is not defensible at all and would embarrass the product on a country card; it should be Ben Nevis, or Yr Wyddfa if the card is optimising for recognition and footfall.",
+  "notes": "Root cause visible in the data: max near.km is 11.8 across all 236 GB features and every feature has a near anchor, so the harvest is a radius sweep around 64 catalogue destinations rather than a national sweep. Four of those anchors are named after beaches whose beaches are missing: 'Rhossili (Gower)' returns only Horton Beach, 'Isle of Harris (Luskentyre)' returns two mountains and no beach, 'Jurassic Coast (Durdle Door)' returns one hill, 'Anglesey (Ynys Llanddwyn)' returns one hill. Second root cause: zero of the 13 UK beaches carry a water class because the UK left EEA bathing-water reporting after Brexit, so the beach score collapses onto Wikipedia presence, which is precisely why three London lidos with Wikipedia articles are in the top 6. UK bathing-water classes are still published nationally by the Environment Agency (Swimfo), SEPA and NIEA and should be joined instead of the EEA feed."
+}

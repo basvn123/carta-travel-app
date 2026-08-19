@@ -1,0 +1,3294 @@
+{
+ "_generated_by": "per-country feature review 2026-08-17, data/curation/research/*_review.json",
+ "_purpose": "Force-include list for the natural-features pipeline. Every entry here MUST appear in its country's tier 1 for its kind after ranking. build_features.py seeds these by QID before the harvest, rank_features.py may reorder them but may not drop them, and validate_features.py fails the build when one is absent. Seeds also bypass the filter rules in features_filter_rules.json: a curated entry outranks a pattern.",
+ "_rules": [
+  "only entries the reviewer marked verified:true",
+  "every row carries a coordinate and a source URL",
+  "qid may be null only where no Wikidata item exists (12 rows, all HU and PL bathing beaches sourced from OSM)",
+  "every coordinate was re-tested against the country boundary (NUTS3 2021 / Natural Earth 50m) before inclusion; a border ridge summit such as Mont Blanc is deliberately seeded in both countries that claim it"
+ ],
+ "_counts": {
+  "countries": 43,
+  "entries": 434,
+  "beaches": 168,
+  "mountains": 266
+ },
+ "AD": {
+  "mountains": [
+   {
+    "name": "Coma Pedrosa (Pic de Coma Pedrosa)",
+    "qid": "Q62467",
+    "lat": 42.591806,
+    "lon": 1.44365,
+    "source_url": "https://www.wikidata.org/wiki/Q62467"
+   },
+   {
+    "name": "Pic de Casamanya",
+    "qid": "Q3030915",
+    "lat": 42.587,
+    "lon": 1.5703,
+    "source_url": "https://www.visitordino.com/es/que-hacer/@@route_view/pic-de-casamanya"
+   }
+  ]
+ },
+ "AL": {
+  "beaches": [
+   {
+    "name": "Gjipe Beach (Plazhi i Gjipese)",
+    "qid": "Q25567109",
+    "lat": 40.1436,
+    "lon": 19.6703,
+    "source_url": "https://en.wikipedia.org/wiki/Canyon_of_Gjipe"
+   }
+  ],
+  "mountains": [
+   {
+    "name": "Gjallica",
+    "qid": "Q944830",
+    "lat": 42.01,
+    "lon": 20.47,
+    "source_url": "https://www.wikidata.org/wiki/Q944830"
+   },
+   {
+    "name": "Mount Dajti",
+    "qid": "Q1157724",
+    "lat": 41.37,
+    "lon": 19.93,
+    "source_url": "https://www.wikidata.org/wiki/Q1157724"
+   },
+   {
+    "name": "Mount Korab (Maja e Korabit)",
+    "qid": "Q912579",
+    "lat": 41.7903,
+    "lon": 20.5467,
+    "source_url": "https://www.wikidata.org/wiki/Q912579"
+   },
+   {
+    "name": "Mount Tomorr",
+    "qid": "Q2305090",
+    "lat": 40.71,
+    "lon": 20.1333,
+    "source_url": "https://www.wikidata.org/wiki/Q2305090"
+   }
+  ]
+ },
+ "AT": {
+  "beaches": [
+   {
+    "name": "Gaensehaeufel",
+    "qid": "Q23256",
+    "lat": 48.22806,
+    "lon": 16.43056,
+    "source_url": "https://www.wikidata.org/wiki/Q23256"
+   },
+   {
+    "name": "Strandbad Alte Donau",
+    "qid": "Q1484483",
+    "lat": 48.242375,
+    "lon": 16.417472,
+    "source_url": "https://www.wikidata.org/wiki/Q1484483"
+   }
+  ],
+  "mountains": [
+   {
+    "name": "Grossglockner",
+    "qid": "Q3388",
+    "lat": 47.07487,
+    "lon": 12.69525,
+    "source_url": "https://www.wikidata.org/wiki/Q3388"
+   },
+   {
+    "name": "Grossvenediger",
+    "qid": "Q697907",
+    "lat": 47.10944,
+    "lon": 12.34556,
+    "source_url": "https://www.wikidata.org/wiki/Q697907"
+   },
+   {
+    "name": "Hoher Dachstein",
+    "qid": "Q686841",
+    "lat": 47.47528,
+    "lon": 13.60639,
+    "source_url": "https://www.wikidata.org/wiki/Q686841"
+   },
+   {
+    "name": "Kitzsteinhorn",
+    "qid": "Q668012",
+    "lat": 47.18778,
+    "lon": 12.68722,
+    "source_url": "https://www.wikidata.org/wiki/Q668012"
+   },
+   {
+    "name": "Rax",
+    "qid": "Q149533",
+    "lat": 47.68917,
+    "lon": 15.68833,
+    "source_url": "https://www.wikidata.org/wiki/Q149533"
+   },
+   {
+    "name": "Wildspitze",
+    "qid": "Q679277",
+    "lat": 46.88528,
+    "lon": 10.86722,
+    "source_url": "https://www.wikidata.org/wiki/Q679277"
+   }
+  ]
+ },
+ "BA": {
+  "beaches": [
+   {
+    "name": "Neum",
+    "qid": "Q320623",
+    "lat": 42.925,
+    "lon": 17.666667,
+    "source_url": "https://en.wikipedia.org/wiki/Neum"
+   }
+  ],
+  "mountains": [
+   {
+    "name": "Bjelasnica",
+    "qid": "Q879414",
+    "lat": 43.704,
+    "lon": 18.257,
+    "source_url": "https://en.wikipedia.org/wiki/Bjela%C5%A1nica"
+   },
+   {
+    "name": "Cvrsnica",
+    "qid": "Q1267542",
+    "lat": 43.616667,
+    "lon": 17.616667,
+    "source_url": "https://en.wikipedia.org/wiki/%C4%8Cvrsnica"
+   },
+   {
+    "name": "Jahorina",
+    "qid": "Q187944",
+    "lat": 43.726667,
+    "lon": 18.576944,
+    "source_url": "https://en.wikipedia.org/wiki/Jahorina"
+   },
+   {
+    "name": "Maglic (Bosnian summit, 2386 m)",
+    "qid": "Q837723",
+    "lat": 43.28111,
+    "lon": 18.73306,
+    "source_url": "https://en.wikipedia.org/wiki/Magli%C4%87_(mountain)"
+   },
+   {
+    "name": "Prenj",
+    "qid": "Q1276211",
+    "lat": 43.534806,
+    "lon": 17.904303,
+    "source_url": "https://en.wikipedia.org/wiki/Prenj"
+   },
+   {
+    "name": "Trebevic",
+    "qid": "Q612240",
+    "lat": 43.818611,
+    "lon": 18.46,
+    "source_url": "https://en.wikipedia.org/wiki/Trebevi%C4%87"
+   },
+   {
+    "name": "Treskavica",
+    "qid": "Q1508343",
+    "lat": 43.589722,
+    "lon": 18.355556,
+    "source_url": "https://en.wikipedia.org/wiki/Treskavica"
+   },
+   {
+    "name": "Vranica",
+    "qid": "Q1392085",
+    "lat": 43.966667,
+    "lon": 17.733333,
+    "source_url": "https://en.wikipedia.org/wiki/Vranica"
+   },
+   {
+    "name": "Zelengora",
+    "qid": "Q619701",
+    "lat": 43.354722,
+    "lon": 18.5675,
+    "source_url": "https://en.wikipedia.org/wiki/Zelengora"
+   }
+  ]
+ },
+ "BE": {
+  "beaches": [
+   {
+    "name": "Blankenberge",
+    "qid": "Q328104",
+    "lat": 51.313056,
+    "lon": 3.131944,
+    "source_url": "https://www.wikidata.org/wiki/Q328104"
+   },
+   {
+    "name": "De Panne",
+    "qid": "Q674954",
+    "lat": 51.101944,
+    "lon": 2.591667,
+    "source_url": "https://natuurenbos.be/natuurgebieden/de-westhoek"
+   },
+   {
+    "name": "Knokke-Heist",
+    "qid": "Q12988",
+    "lat": 51.342222,
+    "lon": 3.284722,
+    "source_url": "https://www.wikidata.org/wiki/Q12988"
+   },
+   {
+    "name": "Koksijde-Bad",
+    "qid": "Q15071300",
+    "lat": 51.117003,
+    "lon": 2.637117,
+    "source_url": "https://www.wikidata.org/wiki/Q15071300"
+   },
+   {
+    "name": "Middelkerke",
+    "qid": "Q492369",
+    "lat": 51.184722,
+    "lon": 2.819167,
+    "source_url": "https://www.wikidata.org/wiki/Q492369"
+   },
+   {
+    "name": "Nieuwpoort",
+    "qid": "Q623310",
+    "lat": 51.116667,
+    "lon": 2.75,
+    "source_url": "https://www.wikidata.org/wiki/Q623310"
+   },
+   {
+    "name": "Oostduinkerke",
+    "qid": "Q2314278",
+    "lat": 51.115833,
+    "lon": 2.681944,
+    "source_url": "https://www.wikidata.org/wiki/Q2314278"
+   },
+   {
+    "name": "Wenduine",
+    "qid": "Q498639",
+    "lat": 51.298056,
+    "lon": 3.0825,
+    "source_url": "https://www.wikidata.org/wiki/Q498639"
+   },
+   {
+    "name": "Zeebrugge",
+    "qid": "Q184383",
+    "lat": 51.330278,
+    "lon": 3.206389,
+    "source_url": "https://www.wikidata.org/wiki/Q184383"
+   }
+  ],
+  "mountains": [
+   {
+    "name": "Baraque de Fraiture",
+    "qid": "Q2183673",
+    "lat": 50.2494,
+    "lon": 5.7389,
+    "source_url": "https://www.wikidata.org/wiki/Q2183673"
+   },
+   {
+    "name": "Croix-Scaille",
+    "qid": "Q2528758",
+    "lat": 49.95083,
+    "lon": 4.84556,
+    "source_url": "https://www.wikidata.org/wiki/Q2528758"
+   },
+   {
+    "name": "Kemmelberg",
+    "qid": "Q209541",
+    "lat": 50.7792,
+    "lon": 2.8144,
+    "source_url": "https://www.wikidata.org/wiki/Q209541"
+   },
+   {
+    "name": "Koppenberg",
+    "qid": "Q1784123",
+    "lat": 50.8111,
+    "lon": 3.5778,
+    "source_url": "https://www.wikidata.org/wiki/Q1784123"
+   },
+   {
+    "name": "Mont de l'Enclus",
+    "qid": "Q2842559",
+    "lat": 50.7581,
+    "lon": 3.4934,
+    "source_url": "https://www.wikidata.org/wiki/Q2842559"
+   },
+   {
+    "name": "Mont Rigi",
+    "qid": "Q880713",
+    "lat": 50.511157,
+    "lon": 6.075358,
+    "source_url": "https://www.wikidata.org/wiki/Q880713"
+   },
+   {
+    "name": "Muur van Geraardsbergen",
+    "qid": "Q110540",
+    "lat": 50.7725,
+    "lon": 3.89,
+    "source_url": "https://www.wikidata.org/wiki/Q110540"
+   },
+   {
+    "name": "Paterberg",
+    "qid": "Q204334",
+    "lat": 50.7826,
+    "lon": 3.546,
+    "source_url": "https://www.wikidata.org/wiki/Q204334"
+   },
+   {
+    "name": "Rochers de Freÿ",
+    "qid": "Q3437625",
+    "lat": 50.22541,
+    "lon": 4.894023,
+    "source_url": "https://www.wikidata.org/wiki/Q3437625"
+   },
+   {
+    "name": "Weisser Stein",
+    "qid": "Q646452",
+    "lat": 50.4084,
+    "lon": 6.3695,
+    "source_url": "https://www.wikidata.org/wiki/Q646452"
+   }
+  ]
+ },
+ "BG": {
+  "beaches": [
+   {
+    "name": "Albena",
+    "qid": "Q670939",
+    "lat": 43.36917,
+    "lon": 28.08111,
+    "source_url": "https://www.wikidata.org/wiki/Q670939"
+   },
+   {
+    "name": "Arkutino",
+    "qid": "Q779560",
+    "lat": 42.28028,
+    "lon": 27.74861,
+    "source_url": "https://www.wikidata.org/wiki/Q779560"
+   },
+   {
+    "name": "Bolata",
+    "qid": "Q4938959",
+    "lat": 43.38194,
+    "lon": 28.47083,
+    "source_url": "https://www.wikidata.org/wiki/Q4938959"
+   },
+   {
+    "name": "Golden Sands",
+    "qid": "Q1026748",
+    "lat": 43.285,
+    "lon": 28.04167,
+    "source_url": "https://www.wikidata.org/wiki/Q1026748"
+   },
+   {
+    "name": "Irakli",
+    "qid": "Q12060783",
+    "lat": 42.75083,
+    "lon": 27.88861,
+    "source_url": "https://www.wikidata.org/wiki/Q12060783"
+   },
+   {
+    "name": "Kamchiya",
+    "qid": "Q1461510",
+    "lat": 43.03333,
+    "lon": 27.88333,
+    "source_url": "https://www.wikidata.org/wiki/Q1461510"
+   },
+   {
+    "name": "Nesebar",
+    "qid": "Q193241",
+    "lat": 42.65951,
+    "lon": 27.72472,
+    "source_url": "https://www.wikidata.org/wiki/Q193241"
+   },
+   {
+    "name": "Sunny Beach",
+    "qid": "Q1011039",
+    "lat": 42.69306,
+    "lon": 27.70833,
+    "source_url": "https://www.wikidata.org/wiki/Q1011039"
+   }
+  ],
+  "mountains": [
+   {
+    "name": "Botev Peak",
+    "qid": "Q894703",
+    "lat": 42.716667,
+    "lon": 24.933333,
+    "source_url": "https://www.wikidata.org/wiki/Q894703"
+   },
+   {
+    "name": "Cherni Vrah",
+    "qid": "Q849657",
+    "lat": 42.563611,
+    "lon": 23.278333,
+    "source_url": "https://www.wikidata.org/wiki/Q849657"
+   },
+   {
+    "name": "Golyam Perelik",
+    "qid": "Q1548833",
+    "lat": 41.601111,
+    "lon": 24.574167,
+    "source_url": "https://www.wikidata.org/wiki/Q1548833"
+   },
+   {
+    "name": "Kutelo",
+    "qid": "Q59836",
+    "lat": 41.776861,
+    "lon": 23.400028,
+    "source_url": "https://www.wikidata.org/wiki/Q59836"
+   },
+   {
+    "name": "Malyovitsa",
+    "qid": "Q210004",
+    "lat": 42.173861,
+    "lon": 23.363083,
+    "source_url": "https://www.wikidata.org/wiki/Q210004"
+   },
+   {
+    "name": "Musala",
+    "qid": "Q209341",
+    "lat": 42.179167,
+    "lon": 23.585278,
+    "source_url": "https://www.wikidata.org/wiki/Q209341"
+   },
+   {
+    "name": "Shipka (peak)",
+    "qid": "Q134217",
+    "lat": 42.74833,
+    "lon": 25.32194,
+    "source_url": "https://www.wikidata.org/wiki/Q134217"
+   },
+   {
+    "name": "Todorka",
+    "qid": "Q7812850",
+    "lat": 41.752722,
+    "lon": 23.431778,
+    "source_url": "https://www.wikidata.org/wiki/Q7812850"
+   },
+   {
+    "name": "Vihren",
+    "qid": "Q1140684",
+    "lat": 41.766389,
+    "lon": 23.399444,
+    "source_url": "https://www.wikidata.org/wiki/Q1140684"
+   }
+  ]
+ },
+ "CH": {
+  "beaches": [
+   {
+    "name": "Bains des Paquis",
+    "qid": "Q2879960",
+    "lat": 46.21036,
+    "lon": 6.15419,
+    "source_url": "https://www.wikidata.org/wiki/Q2879960"
+   },
+   {
+    "name": "Caumasee (Lag da Cauma)",
+    "qid": "Q692270",
+    "lat": 46.82028,
+    "lon": 9.29583,
+    "source_url": "https://www.wikidata.org/wiki/Q692270"
+   }
+  ],
+  "mountains": [
+   {
+    "name": "Brienzer Rothorn",
+    "qid": "Q15226",
+    "lat": 46.78694,
+    "lon": 8.04694,
+    "source_url": "https://www.wikidata.org/wiki/Q15226"
+   },
+   {
+    "name": "Dufourspitze (Monte Rosa)",
+    "qid": "Q3403",
+    "lat": 45.93683,
+    "lon": 7.86706,
+    "source_url": "https://www.wikidata.org/wiki/Q3403"
+   },
+   {
+    "name": "Finsteraarhorn",
+    "qid": "Q15127",
+    "lat": 46.53747,
+    "lon": 8.12603,
+    "source_url": "https://www.wikidata.org/wiki/Q15127"
+   },
+   {
+    "name": "Klein Matterhorn (Matterhorn Glacier Paradise)",
+    "qid": "Q675446",
+    "lat": 45.93833,
+    "lon": 7.72972,
+    "source_url": "https://www.wikidata.org/wiki/Q675446"
+   },
+   {
+    "name": "Niesen",
+    "qid": "Q16693",
+    "lat": 46.64611,
+    "lon": 7.6525,
+    "source_url": "https://www.wikidata.org/wiki/Q16693"
+   },
+   {
+    "name": "Piz Bernina",
+    "qid": "Q15132",
+    "lat": 46.38222,
+    "lon": 9.90806,
+    "source_url": "https://www.wikidata.org/wiki/Q15132"
+   },
+   {
+    "name": "Rigi",
+    "qid": "Q15291",
+    "lat": 47.05667,
+    "lon": 8.48556,
+    "source_url": "https://www.wikidata.org/wiki/Q15291"
+   },
+   {
+    "name": "Saentis",
+    "qid": "Q15224",
+    "lat": 47.24937,
+    "lon": 9.34331,
+    "source_url": "https://www.wikidata.org/wiki/Q15224"
+   },
+   {
+    "name": "Stanserhorn",
+    "qid": "Q16613",
+    "lat": 46.92972,
+    "lon": 8.34028,
+    "source_url": "https://www.wikidata.org/wiki/Q16613"
+   },
+   {
+    "name": "Weisshorn",
+    "qid": "Q15122",
+    "lat": 46.10167,
+    "lon": 7.71611,
+    "source_url": "https://www.wikidata.org/wiki/Q15122"
+   }
+  ]
+ },
+ "CY": {
+  "beaches": [
+   {
+    "name": "Coral Bay, Peyia",
+    "qid": "Q5169445",
+    "lat": 34.854,
+    "lon": 32.3695,
+    "source_url": "https://en.wikipedia.org/wiki/Coral_Bay,_Cyprus"
+   },
+   {
+    "name": "Fig Tree Bay, Protaras",
+    "qid": "Q15217662",
+    "lat": 35.0128,
+    "lon": 34.0589,
+    "source_url": "https://www.wikidata.org/wiki/Q15217662"
+   },
+   {
+    "name": "Konnos Beach (Konnos Bay)",
+    "qid": "Q109590319",
+    "lat": 34.9838,
+    "lon": 34.0696,
+    "source_url": "https://www.wikidata.org/wiki/Q109590319"
+   }
+  ],
+  "mountains": [
+   {
+    "name": "Mount Olympus (Chionistra), Troodos",
+    "qid": "Q819979",
+    "lat": 34.93639,
+    "lon": 32.86333,
+    "source_url": "https://en.wikipedia.org/wiki/Mount_Olympus_(Cyprus)"
+   }
+  ]
+ },
+ "CZ": {
+  "mountains": [
+   {
+    "name": "Boubín",
+    "qid": "Q594147",
+    "lat": 48.99111,
+    "lon": 13.81833,
+    "source_url": "https://www.wikidata.org/wiki/Q594147"
+   },
+   {
+    "name": "Ještěd",
+    "qid": "Q148998",
+    "lat": 50.73222,
+    "lon": 14.98528,
+    "source_url": "https://www.wikidata.org/wiki/Q148998"
+   },
+   {
+    "name": "Klínovec",
+    "qid": "Q1569913",
+    "lat": 50.39611,
+    "lon": 12.96778,
+    "source_url": "https://www.wikidata.org/wiki/Q1569913"
+   },
+   {
+    "name": "Lysá hora",
+    "qid": "Q1573557",
+    "lat": 49.54583,
+    "lon": 18.4475,
+    "source_url": "https://www.wikidata.org/wiki/Q1573557"
+   },
+   {
+    "name": "Milešovka",
+    "qid": "Q50482382",
+    "lat": 50.5549,
+    "lon": 13.93109,
+    "source_url": "https://www.wikidata.org/wiki/Q50482382"
+   },
+   {
+    "name": "Praděd",
+    "qid": "Q674016",
+    "lat": 50.08319,
+    "lon": 17.23086,
+    "source_url": "https://www.wikidata.org/wiki/Q674016"
+   },
+   {
+    "name": "Radhošť",
+    "qid": "Q1578621",
+    "lat": 49.49184,
+    "lon": 18.22279,
+    "source_url": "https://www.wikidata.org/wiki/Q1578621"
+   },
+   {
+    "name": "Říp",
+    "qid": "Q102079702",
+    "lat": 50.38653,
+    "lon": 14.28963,
+    "source_url": "https://www.wikidata.org/wiki/Q102079702"
+   },
+   {
+    "name": "Sněžka",
+    "qid": "Q617511",
+    "lat": 50.73611,
+    "lon": 15.74028,
+    "source_url": "https://www.wikidata.org/wiki/Q617511"
+   }
+  ]
+ },
+ "DE": {
+  "beaches": [
+   {
+    "name": "Darsser Ort / Weststrand (Darss)",
+    "qid": "Q1167034",
+    "lat": 54.48028,
+    "lon": 12.52361,
+    "source_url": "https://www.wikidata.org/wiki/Q1167034"
+   },
+   {
+    "name": "Ellenbogen, Sylt",
+    "qid": "Q878464",
+    "lat": 55.05222,
+    "lon": 8.42111,
+    "source_url": "https://www.wikidata.org/wiki/Q878464"
+   },
+   {
+    "name": "Kniepsand (Amrum)",
+    "qid": "Q20624",
+    "lat": 54.64056,
+    "lon": 8.32861,
+    "source_url": "https://www.wikidata.org/wiki/Q20624"
+   },
+   {
+    "name": "Rotes Kliff, Kampen (Sylt)",
+    "qid": "Q314716",
+    "lat": 54.95083,
+    "lon": 8.32417,
+    "source_url": "https://www.wikidata.org/wiki/Q314716"
+   }
+  ],
+  "mountains": [
+   {
+    "name": "Bastei",
+    "qid": "Q671486",
+    "lat": 50.96222,
+    "lon": 14.07139,
+    "source_url": "https://www.wikidata.org/wiki/Q671486"
+   },
+   {
+    "name": "Brocken",
+    "qid": "Q155721",
+    "lat": 51.80056,
+    "lon": 10.61722,
+    "source_url": "https://www.wikidata.org/wiki/Q155721"
+   },
+   {
+    "name": "Feldberg (Black Forest)",
+    "qid": "Q316401",
+    "lat": 47.87861,
+    "lon": 8.01111,
+    "source_url": "https://www.wikidata.org/wiki/Q316401"
+   },
+   {
+    "name": "Fichtelberg",
+    "qid": "Q164561",
+    "lat": 50.42861,
+    "lon": 12.95472,
+    "source_url": "https://www.wikidata.org/wiki/Q164561"
+   },
+   {
+    "name": "Grosser Arber",
+    "qid": "Q260073",
+    "lat": 49.11222,
+    "lon": 13.13444,
+    "source_url": "https://www.wikidata.org/wiki/Q260073"
+   },
+   {
+    "name": "Nebelhorn",
+    "qid": "Q696067",
+    "lat": 47.42167,
+    "lon": 10.3425,
+    "source_url": "https://www.wikidata.org/wiki/Q696067"
+   },
+   {
+    "name": "Watzmann",
+    "qid": "Q163919",
+    "lat": 47.55444,
+    "lon": 12.92194,
+    "source_url": "https://www.wikidata.org/wiki/Q163919"
+   },
+   {
+    "name": "Wendelstein",
+    "qid": "Q819671",
+    "lat": 47.70278,
+    "lon": 12.01222,
+    "source_url": "https://www.wikidata.org/wiki/Q819671"
+   },
+   {
+    "name": "Zugspitze",
+    "qid": "Q3375",
+    "lat": 47.42111,
+    "lon": 10.98528,
+    "source_url": "https://www.wikidata.org/wiki/Q3375"
+   }
+  ]
+ },
+ "DK": {
+  "beaches": [
+   {
+    "name": "Amager Strandpark",
+    "qid": "Q452470",
+    "lat": 55.65764,
+    "lon": 12.63921,
+    "source_url": "https://www.wikidata.org/wiki/Q452470"
+   },
+   {
+    "name": "Bellevue Strand (Klampenborg)",
+    "qid": "Q3375957",
+    "lat": 55.778,
+    "lon": 12.5923,
+    "source_url": "https://www.wikidata.org/wiki/Q3375957"
+   },
+   {
+    "name": "Blokhus",
+    "qid": "Q884930",
+    "lat": 57.25,
+    "lon": 9.5853,
+    "source_url": "https://www.visitdenmark.com/denmark/things-do/outdoor-nature/best-beaches"
+   },
+   {
+    "name": "Dueodde",
+    "qid": "Q2189435",
+    "lat": 54.9877,
+    "lon": 15.07941,
+    "source_url": "https://www.visitdenmark.com/denmark/things-do/outdoor-nature/best-beaches"
+   },
+   {
+    "name": "Grenen",
+    "qid": "Q1537592",
+    "lat": 57.7456,
+    "lon": 10.6469,
+    "source_url": "https://www.visitdenmark.com/denmark/destinations/jutland/north-jutland"
+   },
+   {
+    "name": "Henne Strand",
+    "qid": "Q660242",
+    "lat": 55.73856,
+    "lon": 8.1819,
+    "source_url": "https://www.wikidata.org/wiki/Q660242"
+   },
+   {
+    "name": "Lokken",
+    "qid": "Q1021910",
+    "lat": 57.3706,
+    "lon": 9.71667,
+    "source_url": "https://www.wikidata.org/wiki/Q1021910"
+   },
+   {
+    "name": "Marielyst",
+    "qid": "Q450216",
+    "lat": 54.6903,
+    "lon": 11.965,
+    "source_url": "https://www.wikidata.org/wiki/Q450216"
+   },
+   {
+    "name": "Saltum Strand",
+    "qid": "Q3543607",
+    "lat": 57.2719,
+    "lon": 9.6972,
+    "source_url": "https://www.wikidata.org/wiki/Q3543607"
+   },
+   {
+    "name": "Vejers Strand",
+    "qid": "Q12340620",
+    "lat": 55.626,
+    "lon": 8.124,
+    "source_url": "https://www.wikidata.org/wiki/Q12340620"
+   }
+  ],
+  "mountains": [
+   {
+    "name": "Dollerup Bakker",
+    "qid": "Q12308800",
+    "lat": 56.37385,
+    "lon": 9.32851,
+    "source_url": "https://www.wikidata.org/wiki/Q12308800"
+   },
+   {
+    "name": "Ejer Bavnehoj",
+    "qid": "Q185326",
+    "lat": 55.977033,
+    "lon": 9.83065,
+    "source_url": "https://www.wikidata.org/wiki/Q185326"
+   },
+   {
+    "name": "Himmelbjerget",
+    "qid": "Q1619098",
+    "lat": 56.10517,
+    "lon": 9.68503,
+    "source_url": "https://da.wikipedia.org/wiki/Himmelbjerget"
+   },
+   {
+    "name": "Mollehoj",
+    "qid": "Q689106",
+    "lat": 55.97746,
+    "lon": 9.82633,
+    "source_url": "https://www.wikidata.org/wiki/Q689106"
+   },
+   {
+    "name": "Mons Klint",
+    "qid": "Q1517331",
+    "lat": 54.96667,
+    "lon": 12.55,
+    "source_url": "https://da.wikipedia.org/wiki/M%C3%B8ns_Klint"
+   },
+   {
+    "name": "Rubjerg Knude",
+    "qid": "Q1971143",
+    "lat": 57.448892,
+    "lon": 9.774367,
+    "source_url": "https://www.wikidata.org/wiki/Q1971143"
+   },
+   {
+    "name": "Rytterknaegten",
+    "qid": "Q1128011",
+    "lat": 55.11165,
+    "lon": 14.88944,
+    "source_url": "https://www.wikidata.org/wiki/Q1128011"
+   },
+   {
+    "name": "Yding Skovhoj",
+    "qid": "Q529888",
+    "lat": 55.992778,
+    "lon": 9.795556,
+    "source_url": "https://www.wikidata.org/wiki/Q529888"
+   }
+  ]
+ },
+ "EE": {
+  "beaches": [
+   {
+    "name": "Narva-Jõesuu",
+    "qid": "Q723372",
+    "lat": 59.4625,
+    "lon": 28.04194,
+    "source_url": "https://www.wikidata.org/wiki/Q723372"
+   },
+   {
+    "name": "Pärnu Beach",
+    "qid": "Q21694719",
+    "lat": 58.37417,
+    "lon": 24.49528,
+    "source_url": "https://www.wikidata.org/wiki/Q21694719"
+   },
+   {
+    "name": "Ristna",
+    "qid": "Q4708074",
+    "lat": 58.94,
+    "lon": 22.05528,
+    "source_url": "https://www.wikidata.org/wiki/Q4708074"
+   },
+   {
+    "name": "Valgeranna",
+    "qid": "Q2026548",
+    "lat": 58.38778,
+    "lon": 24.39306,
+    "source_url": "https://www.wikidata.org/wiki/Q2026548"
+   }
+  ],
+  "mountains": [
+   {
+    "name": "Emumägi",
+    "qid": "Q3509259",
+    "lat": 58.93755,
+    "lon": 26.37409,
+    "source_url": "https://www.wikidata.org/wiki/Q3509259"
+   },
+   {
+    "name": "Suur Munamägi",
+    "qid": "Q504991",
+    "lat": 57.71404,
+    "lon": 27.06005,
+    "source_url": "https://www.wikidata.org/wiki/Q504991"
+   },
+   {
+    "name": "Väike Munamägi",
+    "qid": "Q12378956",
+    "lat": 58.03717,
+    "lon": 26.51315,
+    "source_url": "https://www.wikidata.org/wiki/Q12378956"
+   },
+   {
+    "name": "Vällamägi",
+    "qid": "Q15648039",
+    "lat": 57.73557,
+    "lon": 27.06649,
+    "source_url": "https://www.wikidata.org/wiki/Q15648039"
+   }
+  ]
+ },
+ "ES": {
+  "beaches": [
+   {
+    "name": "Cala Comte (Ibiza)",
+    "qid": "Q5018254",
+    "lat": 38.9625,
+    "lon": 1.22028,
+    "source_url": "https://www.wikidata.org/wiki/Q5018254"
+   },
+   {
+    "name": "Dunas de Maspalomas (Gran Canaria)",
+    "qid": "Q8770950",
+    "lat": 27.7417,
+    "lon": -15.5853,
+    "source_url": "https://es.wikipedia.org/wiki/Dunas_de_Maspalomas"
+   },
+   {
+    "name": "Playa de Bolonia",
+    "qid": "Q24024579",
+    "lat": 36.09,
+    "lon": -5.77,
+    "source_url": "https://es.wikipedia.org/wiki/Playa_de_Bolonia"
+   },
+   {
+    "name": "Playa de Las Teresitas (Tenerife)",
+    "qid": "Q2414727",
+    "lat": 28.51,
+    "lon": -16.19,
+    "source_url": "https://es.wikipedia.org/wiki/Playa_de_Las_Teresitas"
+   },
+   {
+    "name": "Playa de Macarella (Menorca)",
+    "qid": "Q11934484",
+    "lat": 39.94,
+    "lon": 3.94,
+    "source_url": "https://es.wikipedia.org/wiki/Playa_de_Macarella"
+   },
+   {
+    "name": "Playa de Rodas (Islas Cíes)",
+    "qid": "Q23993081",
+    "lat": 42.23,
+    "lon": -8.9,
+    "source_url": "https://es.wikipedia.org/wiki/Playa_de_Rodas"
+   },
+   {
+    "name": "Playa de Ses Illetes (Formentera)",
+    "qid": "Q6126237",
+    "lat": 38.75,
+    "lon": 1.4333,
+    "source_url": "https://www.wikidata.org/wiki/Q6126237"
+   },
+   {
+    "name": "Playa del Silencio (Asturias)",
+    "qid": "Q6078521",
+    "lat": 43.57,
+    "lon": -6.3,
+    "source_url": "https://es.wikipedia.org/wiki/Playa_del_Silencio"
+   }
+  ],
+  "mountains": [
+   {
+    "name": "Aneto",
+    "qid": "Q208081",
+    "lat": 42.63222,
+    "lon": 0.65778,
+    "source_url": "https://www.wikidata.org/wiki/Q208081"
+   },
+   {
+    "name": "Montserrat",
+    "qid": "Q732115",
+    "lat": 41.59167,
+    "lon": 1.83778,
+    "source_url": "https://www.wikidata.org/wiki/Q732115"
+   },
+   {
+    "name": "Mulhacén",
+    "qid": "Q209528",
+    "lat": 37.05333,
+    "lon": -3.31139,
+    "source_url": "https://www.wikidata.org/wiki/Q209528"
+   },
+   {
+    "name": "Naranjo de Bulnes (Picu Urriellu)",
+    "qid": "Q2636482",
+    "lat": 43.2,
+    "lon": -4.81667,
+    "source_url": "https://www.wikidata.org/wiki/Q2636482"
+   },
+   {
+    "name": "Peñalara",
+    "qid": "Q1478880",
+    "lat": 40.85,
+    "lon": -3.95,
+    "source_url": "https://www.wikidata.org/wiki/Q1478880"
+   },
+   {
+    "name": "Pico Almanzor",
+    "qid": "Q203353",
+    "lat": 40.24667,
+    "lon": -5.29778,
+    "source_url": "https://www.wikidata.org/wiki/Q203353"
+   },
+   {
+    "name": "Roque Nublo",
+    "qid": "Q1424835",
+    "lat": 27.97083,
+    "lon": -15.6125,
+    "source_url": "https://www.wikidata.org/wiki/Q1424835"
+   },
+   {
+    "name": "Teide",
+    "qid": "Q38954",
+    "lat": 28.27306,
+    "lon": -16.63944,
+    "source_url": "https://www.wikidata.org/wiki/Q38954"
+   }
+  ]
+ },
+ "FI": {
+  "beaches": [
+   {
+    "name": "Aurinkolahti",
+    "qid": "Q2871913",
+    "lat": 60.20222,
+    "lon": 25.15361,
+    "source_url": "https://www.wikidata.org/wiki/Q2871913"
+   },
+   {
+    "name": "Hietaniemi beach (Hietsu)",
+    "qid": "Q2041018",
+    "lat": 60.174167,
+    "lon": 24.906667,
+    "source_url": "https://www.wikidata.org/wiki/Q2041018"
+   },
+   {
+    "name": "Kalajoen Hiekkasarkat",
+    "qid": "Q18659766",
+    "lat": 64.239717,
+    "lon": 23.817433,
+    "source_url": "https://www.wikidata.org/wiki/Q18659766"
+   },
+   {
+    "name": "Yyteri Beach",
+    "qid": "Q120441350",
+    "lat": 61.563,
+    "lon": 21.5244,
+    "source_url": "https://www.visitfinland.com/en/product/a6e0f40d-5989-42da-9dd7-296b07ae2973/pori-yyteri-beach-soft-sand-and-the-warmth-of-the-sun/"
+   }
+  ],
+  "mountains": [
+   {
+    "name": "Aakenustunturi",
+    "qid": "Q1571816",
+    "lat": 67.69167,
+    "lon": 24.46556,
+    "source_url": "https://www.wikidata.org/wiki/Q1571816"
+   },
+   {
+    "name": "Halti",
+    "qid": "Q216035",
+    "lat": 69.32361,
+    "lon": 21.27833,
+    "source_url": "https://fi.wikipedia.org/wiki/Halti"
+   },
+   {
+    "name": "Iso-Syote",
+    "qid": "Q536744",
+    "lat": 65.62556,
+    "lon": 27.60444,
+    "source_url": "https://fi.wikipedia.org/wiki/Iso-Sy%C3%B6te"
+   },
+   {
+    "name": "Kiilopaa",
+    "qid": "Q11871352",
+    "lat": 68.34133,
+    "lon": 27.5025,
+    "source_url": "https://www.wikidata.org/wiki/Q11871352"
+   },
+   {
+    "name": "Rukatunturi",
+    "qid": "Q762945",
+    "lat": 66.16556,
+    "lon": 29.15167,
+    "source_url": "https://www.wikidata.org/wiki/Q762945"
+   },
+   {
+    "name": "Saana",
+    "qid": "Q1637507",
+    "lat": 69.04361,
+    "lon": 20.85611,
+    "source_url": "https://fi.wikipedia.org/wiki/Saana_(tunturi)"
+   },
+   {
+    "name": "Taivaskero (Pallastunturi)",
+    "qid": "Q3514086",
+    "lat": 68.075,
+    "lon": 24.05361,
+    "source_url": "https://www.wikidata.org/wiki/Q3514086"
+   },
+   {
+    "name": "Yllas (Yllastunturi)",
+    "qid": "Q1542451",
+    "lat": 67.56611,
+    "lon": 24.23306,
+    "source_url": "https://www.wikidata.org/wiki/Q1542451"
+   }
+  ]
+ },
+ "FO": {
+  "beaches": [
+   {
+    "name": "Tjornuvik beach",
+    "qid": "Q1093578",
+    "lat": 62.28806,
+    "lon": -7.14083,
+    "source_url": "https://www.wikidata.org/wiki/Q1093578"
+   }
+  ],
+  "mountains": [
+   {
+    "name": "Cape Enniberg",
+    "qid": "Q585416",
+    "lat": 62.38333,
+    "lon": -6.56667,
+    "source_url": "https://www.wikidata.org/wiki/Q585416"
+   },
+   {
+    "name": "Kirkjubour mountain (Kirkjuboreyn)",
+    "qid": "Q923452",
+    "lat": 61.9855,
+    "lon": -6.8129,
+    "source_url": "https://www.wikidata.org/wiki/Q923452"
+   },
+   {
+    "name": "Sornfelli",
+    "qid": "Q903953",
+    "lat": 62.08333,
+    "lon": -6.83333,
+    "source_url": "https://www.wikidata.org/wiki/Q903953"
+   },
+   {
+    "name": "Traelanipan and Sorvagsvatn",
+    "qid": "Q932408",
+    "lat": 62.05,
+    "lon": -7.23333,
+    "source_url": "https://www.wikidata.org/wiki/Q932408"
+   },
+   {
+    "name": "Villingadalsfjall",
+    "qid": "Q903556",
+    "lat": 62.3828,
+    "lon": -6.5685,
+    "source_url": "https://www.wikidata.org/wiki/Q903556"
+   }
+  ]
+ },
+ "FR": {
+  "beaches": [
+   {
+    "name": "Plage de l'Espiguette",
+    "qid": "Q3393664",
+    "lat": 43.5,
+    "lon": 4.12,
+    "source_url": "https://www.wikidata.org/wiki/Q3393664"
+   },
+   {
+    "name": "Plage de Pampelonne",
+    "qid": "Q1760862",
+    "lat": 43.227944,
+    "lon": 6.66853,
+    "source_url": "https://www.wikidata.org/wiki/Q1760862"
+   },
+   {
+    "name": "Plage de Saleccia",
+    "qid": "Q3390865",
+    "lat": 42.72646,
+    "lon": 9.20474,
+    "source_url": "https://www.wikidata.org/wiki/Q3390865"
+   },
+   {
+    "name": "Rondinara (Baie de Rondinara)",
+    "qid": "Q17621745",
+    "lat": 41.4701,
+    "lon": 9.26918,
+    "source_url": "https://www.wikidata.org/wiki/Q17621745"
+   }
+  ],
+  "mountains": [
+   {
+    "name": "Barre des Ecrins",
+    "qid": "Q30480",
+    "lat": 44.922161,
+    "lon": 6.359547,
+    "source_url": "https://www.wikidata.org/wiki/Q30480"
+   },
+   {
+    "name": "Mont Aiguille",
+    "qid": "Q1337859",
+    "lat": 44.841944,
+    "lon": 5.5525,
+    "source_url": "https://www.wikidata.org/wiki/Q1337859"
+   },
+   {
+    "name": "Mont Blanc",
+    "qid": "Q583",
+    "lat": 45.83278,
+    "lon": 6.865,
+    "source_url": "https://www.wikidata.org/wiki/Q583"
+   },
+   {
+    "name": "Montagne Sainte-Victoire",
+    "qid": "Q1518970",
+    "lat": 43.539167,
+    "lon": 5.645278,
+    "source_url": "https://www.wikidata.org/wiki/Q1518970"
+   },
+   {
+    "name": "Monte Cinto",
+    "qid": "Q1415428",
+    "lat": 42.37972,
+    "lon": 8.945833,
+    "source_url": "https://www.wikidata.org/wiki/Q1415428"
+   },
+   {
+    "name": "Pic du Canigou (Canigo)",
+    "qid": "Q6650",
+    "lat": 42.518902,
+    "lon": 2.45656,
+    "source_url": "https://www.wikidata.org/wiki/Q6650"
+   },
+   {
+    "name": "Vignemale",
+    "qid": "Q1348903",
+    "lat": 42.773889,
+    "lon": -0.1475,
+    "source_url": "https://www.wikidata.org/wiki/Q1348903"
+   }
+  ]
+ },
+ "GB": {
+  "beaches": [
+   {
+    "name": "Bamburgh Beach",
+    "qid": "Q805983",
+    "lat": 55.604,
+    "lon": -1.722,
+    "source_url": "https://www.wikidata.org/wiki/Q805983"
+   },
+   {
+    "name": "Barafundle Bay",
+    "qid": "Q4858166",
+    "lat": 51.618206,
+    "lon": -4.904253,
+    "source_url": "https://www.wikidata.org/wiki/Q4858166"
+   },
+   {
+    "name": "Holkham Bay",
+    "qid": "Q15224502",
+    "lat": 52.969,
+    "lon": 0.813,
+    "source_url": "https://www.wikidata.org/wiki/Q15224502"
+   },
+   {
+    "name": "Kynance Cove",
+    "qid": "Q3817686",
+    "lat": 49.974,
+    "lon": -5.23,
+    "source_url": "https://www.wikidata.org/wiki/Q3817686"
+   },
+   {
+    "name": "Luskentyre Sands",
+    "qid": "Q19585980",
+    "lat": 57.884,
+    "lon": -6.944,
+    "source_url": "https://www.wikidata.org/wiki/Q19585980"
+   },
+   {
+    "name": "Porthcurno",
+    "qid": "Q847176",
+    "lat": 50.043,
+    "lon": -5.654,
+    "source_url": "https://www.wikidata.org/wiki/Q847176"
+   },
+   {
+    "name": "Rhossili Bay",
+    "qid": "Q2148317",
+    "lat": 51.56856,
+    "lon": -4.2869,
+    "source_url": "https://www.wikidata.org/wiki/Q2148317"
+   },
+   {
+    "name": "Sandwood Bay",
+    "qid": "Q167165",
+    "lat": 58.5396,
+    "lon": -5.0623,
+    "source_url": "https://www.wikidata.org/wiki/Q167165"
+   },
+   {
+    "name": "West Wittering",
+    "qid": "Q659095",
+    "lat": 50.78064,
+    "lon": -0.89564,
+    "source_url": "https://www.wikidata.org/wiki/Q659095"
+   },
+   {
+    "name": "Woolacombe Sands",
+    "qid": "Q542671",
+    "lat": 51.172,
+    "lon": -4.207,
+    "source_url": "https://www.wikidata.org/wiki/Q542671"
+   }
+  ],
+  "mountains": [
+   {
+    "name": "Ben Lomond",
+    "qid": "Q816556",
+    "lat": 56.19063,
+    "lon": -4.63317,
+    "source_url": "https://www.wikidata.org/wiki/Q816556"
+   },
+   {
+    "name": "Cadair Idris",
+    "qid": "Q774479",
+    "lat": 52.699828,
+    "lon": -3.908693,
+    "source_url": "https://www.wikidata.org/wiki/Q774479"
+   },
+   {
+    "name": "Skiddaw",
+    "qid": "Q2292191",
+    "lat": 54.651,
+    "lon": -3.148,
+    "source_url": "https://www.wikidata.org/wiki/Q2292191"
+   },
+   {
+    "name": "Slieve Donard",
+    "qid": "Q550163",
+    "lat": 54.180238,
+    "lon": -5.920898,
+    "source_url": "https://www.wikidata.org/wiki/Q550163"
+   },
+   {
+    "name": "Snowdon / Yr Wyddfa",
+    "qid": "Q217142",
+    "lat": 53.068497,
+    "lon": -4.076231,
+    "source_url": "https://www.wikidata.org/wiki/Q217142"
+   },
+   {
+    "name": "Stac Pollaidh",
+    "qid": "Q3396239",
+    "lat": 58.044,
+    "lon": -5.208811,
+    "source_url": "https://www.wikidata.org/wiki/Q3396239"
+   },
+   {
+    "name": "Suilven",
+    "qid": "Q2731464",
+    "lat": 58.115,
+    "lon": -5.13707,
+    "source_url": "https://www.wikidata.org/wiki/Q2731464"
+   },
+   {
+    "name": "Tryfan",
+    "qid": "Q3405438",
+    "lat": 53.11494,
+    "lon": -3.99753,
+    "source_url": "https://www.wikidata.org/wiki/Q3405438"
+   }
+  ]
+ },
+ "GR": {
+  "beaches": [
+   {
+    "name": "Balos Lagoon, Crete",
+    "qid": "Q805498",
+    "lat": 35.582404,
+    "lon": 23.58853,
+    "source_url": "https://www.wikidata.org/wiki/Q805498"
+   },
+   {
+    "name": "Elafonisi Beach, Crete",
+    "qid": "Q53630572",
+    "lat": 35.27148,
+    "lon": 23.54083,
+    "source_url": "https://www.wikidata.org/wiki/Q53630572"
+   },
+   {
+    "name": "Koukounaries, Skiathos",
+    "qid": "Q53632903",
+    "lat": 39.14849,
+    "lon": 23.40186,
+    "source_url": "https://www.wikidata.org/wiki/Q53632903"
+   },
+   {
+    "name": "Myrtos Beach, Kefalonia",
+    "qid": "Q1259677",
+    "lat": 38.3429,
+    "lon": 20.5362,
+    "source_url": "https://en.wikipedia.org/wiki/Myrtos_Beach"
+   },
+   {
+    "name": "Navagio (Shipwreck Beach), Zakynthos",
+    "qid": "Q2460851",
+    "lat": 37.8596,
+    "lon": 20.6245,
+    "source_url": "https://en.wikipedia.org/wiki/Navagio"
+   },
+   {
+    "name": "Porto Katsiki, Lefkada",
+    "qid": "Q1132269",
+    "lat": 38.6025,
+    "lon": 20.54944,
+    "source_url": "https://www.wikidata.org/wiki/Q1132269"
+   },
+   {
+    "name": "Sarakiniko Beach, Milos",
+    "qid": "Q7423010",
+    "lat": 36.7427,
+    "lon": 24.45828,
+    "source_url": "https://www.wikidata.org/wiki/Q7423010"
+   }
+  ],
+  "mountains": [
+   {
+    "name": "Mount Athos",
+    "qid": "Q130321",
+    "lat": 40.15833,
+    "lon": 24.32722,
+    "source_url": "https://en.wikipedia.org/wiki/Mount_Athos"
+   },
+   {
+    "name": "Mount Ida (Psiloritis)",
+    "qid": "Q83659",
+    "lat": 35.22667,
+    "lon": 24.7725,
+    "source_url": "https://en.wikipedia.org/wiki/Mount_Ida_(Crete)"
+   },
+   {
+    "name": "Mount Olympus (Mytikas)",
+    "qid": "Q80344",
+    "lat": 40.08556,
+    "lon": 22.35861,
+    "source_url": "https://en.wikipedia.org/wiki/Mount_Olympus"
+   },
+   {
+    "name": "Mount Parnassus",
+    "qid": "Q105261",
+    "lat": 38.536,
+    "lon": 22.624,
+    "source_url": "https://en.wikipedia.org/wiki/Mount_Parnassus"
+   },
+   {
+    "name": "Smolikas",
+    "qid": "Q139362",
+    "lat": 40.08972,
+    "lon": 20.92611,
+    "source_url": "https://en.wikipedia.org/wiki/Smolikas"
+   },
+   {
+    "name": "Taygetus",
+    "qid": "Q515809",
+    "lat": 36.95354,
+    "lon": 22.34996,
+    "source_url": "https://en.wikipedia.org/wiki/Taygetus"
+   }
+  ]
+ },
+ "HR": {
+  "beaches": [
+   {
+    "name": "Sakarun",
+    "qid": "Q6961232",
+    "lat": 44.13387,
+    "lon": 14.87182,
+    "source_url": "https://www.wikidata.org/wiki/Q6961232"
+   },
+   {
+    "name": "Stiniva",
+    "qid": "Q12803521",
+    "lat": 43.01844,
+    "lon": 16.17104,
+    "source_url": "https://www.wikidata.org/wiki/Q12803521"
+   },
+   {
+    "name": "Zlatni Rat",
+    "qid": "Q1262826",
+    "lat": 43.255833,
+    "lon": 16.633889,
+    "source_url": "https://en.wikipedia.org/wiki/Zlatni_Rat"
+   },
+   {
+    "name": "Zrce",
+    "qid": "Q227190",
+    "lat": 44.54,
+    "lon": 14.915,
+    "source_url": "https://en.wikipedia.org/wiki/Zr%C4%87e"
+   }
+  ],
+  "mountains": [
+   {
+    "name": "Dinara",
+    "qid": "Q736047",
+    "lat": 44.062476,
+    "lon": 16.382909,
+    "source_url": "https://en.wikipedia.org/wiki/Dinara"
+   },
+   {
+    "name": "Medvednica (Sljeme)",
+    "qid": "Q743452",
+    "lat": 45.916667,
+    "lon": 15.966667,
+    "source_url": "https://en.wikipedia.org/wiki/Medvednica"
+   },
+   {
+    "name": "Risnjak",
+    "qid": "Q1519978",
+    "lat": 45.431389,
+    "lon": 14.621389,
+    "source_url": "https://en.wikipedia.org/wiki/Risnjak"
+   },
+   {
+    "name": "Ucka",
+    "qid": "Q1257749",
+    "lat": 45.25,
+    "lon": 14.2,
+    "source_url": "https://en.wikipedia.org/wiki/U%C4%8Dka"
+   }
+  ]
+ },
+ "HU": {
+  "beaches": [
+   {
+    "name": "Abádszalók strand (Lake Tisza)",
+    "qid": null,
+    "lat": 47.48215,
+    "lon": 20.58665,
+    "source_url": "https://www.openstreetmap.org/#map=17/47.48215/20.58665"
+   },
+   {
+    "name": "Aranyparti szabadstrand, Siófok",
+    "qid": null,
+    "lat": 46.92368,
+    "lon": 18.08598,
+    "source_url": "https://www.openstreetmap.org/#map=17/46.92368/18.08598"
+   },
+   {
+    "name": "Császtai strand, Révfülöp",
+    "qid": null,
+    "lat": 46.82282,
+    "lon": 17.62046,
+    "source_url": "https://www.openstreetmap.org/#map=17/46.82282/17.62046"
+   },
+   {
+    "name": "Északi Strand, Velence (Lake Velence)",
+    "qid": null,
+    "lat": 47.2381,
+    "lon": 18.63604,
+    "source_url": "https://www.openstreetmap.org/#map=17/47.2381/18.63604"
+   },
+   {
+    "name": "Fonyód, Városi szabadstrand",
+    "qid": null,
+    "lat": 46.74486,
+    "lon": 17.54395,
+    "source_url": "https://www.openstreetmap.org/#map=17/46.74486/17.54395"
+   },
+   {
+    "name": "Siófok Nagystrand",
+    "qid": null,
+    "lat": 46.91212,
+    "lon": 18.05246,
+    "source_url": "https://www.openstreetmap.org/#map=17/46.91212/18.05246"
+   },
+   {
+    "name": "Szigligeti Községi Strandfürdő",
+    "qid": null,
+    "lat": 46.78541,
+    "lon": 17.43755,
+    "source_url": "https://www.openstreetmap.org/#map=17/46.78541/17.43755"
+   },
+   {
+    "name": "Wesselényi strand, Balatonalmádi",
+    "qid": null,
+    "lat": 47.02584,
+    "lon": 18.01397,
+    "source_url": "https://www.openstreetmap.org/#map=17/47.02584/18.01397"
+   },
+   {
+    "name": "Zamárdi Nagystrand",
+    "qid": null,
+    "lat": 46.88458,
+    "lon": 17.93245,
+    "source_url": "https://www.openstreetmap.org/#map=17/46.88458/17.93245"
+   }
+  ],
+  "mountains": [
+   {
+    "name": "Badacsony",
+    "qid": "Q642172",
+    "lat": 46.80351,
+    "lon": 17.49584,
+    "source_url": "https://www.wikidata.org/wiki/Q642172"
+   },
+   {
+    "name": "Csóványos",
+    "qid": "Q876273",
+    "lat": 47.94889,
+    "lon": 18.94833,
+    "source_url": "https://www.wikidata.org/wiki/Q876273"
+   },
+   {
+    "name": "Dobogó-kő",
+    "qid": "Q907082",
+    "lat": 47.71996,
+    "lon": 18.89868,
+    "source_url": "https://www.wikidata.org/wiki/Q907082"
+   },
+   {
+    "name": "Galya-tető",
+    "qid": "Q747656",
+    "lat": 47.91667,
+    "lon": 19.9,
+    "source_url": "https://www.wikidata.org/wiki/Q747656"
+   },
+   {
+    "name": "Írott-kő",
+    "qid": "Q630494",
+    "lat": 47.35281,
+    "lon": 16.43369,
+    "source_url": "https://www.wikidata.org/wiki/Q630494"
+   },
+   {
+    "name": "Kékes",
+    "qid": "Q747618",
+    "lat": 47.87222,
+    "lon": 20.01278,
+    "source_url": "https://www.wikidata.org/wiki/Q747618"
+   }
+  ]
+ },
+ "IE": {
+  "beaches": [
+   {
+    "name": "Brittas Bay",
+    "qid": "Q4179009",
+    "lat": 52.88333,
+    "lon": -6.05,
+    "source_url": "https://www.wikidata.org/wiki/Q4179009"
+   },
+   {
+    "name": "Curracloe",
+    "qid": "Q3007699",
+    "lat": 52.3929,
+    "lon": -6.3885,
+    "source_url": "https://www.wikidata.org/wiki/Q3007699"
+   },
+   {
+    "name": "Inch Beach",
+    "qid": "Q111417107",
+    "lat": 52.12448,
+    "lon": -9.96834,
+    "source_url": "https://www.wikidata.org/wiki/Q111417107"
+   },
+   {
+    "name": "Keem Bay",
+    "qid": "Q6382837",
+    "lat": 53.968,
+    "lon": -10.1939,
+    "source_url": "https://www.wikidata.org/wiki/Q6382837"
+   }
+  ],
+  "mountains": [
+   {
+    "name": "Ben Bulben",
+    "qid": "Q816458",
+    "lat": 54.36667,
+    "lon": -8.46667,
+    "source_url": "https://www.wikidata.org/wiki/Q816458"
+   },
+   {
+    "name": "Carrauntoohil",
+    "qid": "Q503368",
+    "lat": 51.99889,
+    "lon": -9.74278,
+    "source_url": "https://www.wikidata.org/wiki/Q503368"
+   },
+   {
+    "name": "Croagh Patrick",
+    "qid": "Q628687",
+    "lat": 53.7595,
+    "lon": -9.6584,
+    "source_url": "https://www.wikidata.org/wiki/Q628687"
+   },
+   {
+    "name": "Galtymore",
+    "qid": "Q2333034",
+    "lat": 52.366,
+    "lon": -8.179,
+    "source_url": "https://www.wikidata.org/wiki/Q2333034"
+   },
+   {
+    "name": "Lugnaquilla",
+    "qid": "Q514648",
+    "lat": 52.966,
+    "lon": -6.463,
+    "source_url": "https://www.wikidata.org/wiki/Q514648"
+   },
+   {
+    "name": "Mount Brandon",
+    "qid": "Q1478911",
+    "lat": 52.2341,
+    "lon": -10.2543,
+    "source_url": "https://www.wikidata.org/wiki/Q1478911"
+   },
+   {
+    "name": "Mweelrea",
+    "qid": "Q1956300",
+    "lat": 53.636,
+    "lon": -9.831,
+    "source_url": "https://www.wikidata.org/wiki/Q1956300"
+   }
+  ]
+ },
+ "IS": {
+  "beaches": [
+   {
+    "name": "Breidamerkursandur (Diamond Beach)",
+    "qid": "Q14567939",
+    "lat": 63.9636,
+    "lon": -16.38624,
+    "source_url": "https://www.wikidata.org/wiki/Q14567939"
+   },
+   {
+    "name": "Djupalonssandur",
+    "qid": "Q5285420",
+    "lat": 64.75232,
+    "lon": -23.90132,
+    "source_url": "https://www.wikidata.org/wiki/Q5285420"
+   },
+   {
+    "name": "Reynisfjara",
+    "qid": "Q115641739",
+    "lat": 63.40494,
+    "lon": -19.06401,
+    "source_url": "https://www.wikidata.org/wiki/Q115641739"
+   }
+  ],
+  "mountains": [
+   {
+    "name": "Esja",
+    "qid": "Q116693",
+    "lat": 64.25,
+    "lon": -21.63333,
+    "source_url": "https://www.wikidata.org/wiki/Q116693"
+   },
+   {
+    "name": "Hekla",
+    "qid": "Q184975",
+    "lat": 63.99222,
+    "lon": -19.66583,
+    "source_url": "https://www.wikidata.org/wiki/Q184975"
+   },
+   {
+    "name": "Herdubreid",
+    "qid": "Q961546",
+    "lat": 65.17891,
+    "lon": -16.34732,
+    "source_url": "https://www.wikidata.org/wiki/Q961546"
+   },
+   {
+    "name": "Hvannadalshnjukur",
+    "qid": "Q140084",
+    "lat": 64.01583,
+    "lon": -16.67472,
+    "source_url": "https://www.wikidata.org/wiki/Q140084"
+   },
+   {
+    "name": "Kirkjufell",
+    "qid": "Q1547402",
+    "lat": 64.94104,
+    "lon": -23.30569,
+    "source_url": "https://www.wikidata.org/wiki/Q1547402"
+   },
+   {
+    "name": "Lomagnupur",
+    "qid": "Q1639686",
+    "lat": 63.96667,
+    "lon": -17.51667,
+    "source_url": "https://www.wikidata.org/wiki/Q1639686"
+   },
+   {
+    "name": "Snaefellsjokull",
+    "qid": "Q1315012",
+    "lat": 64.8,
+    "lon": -23.78333,
+    "source_url": "https://www.wikidata.org/wiki/Q1315012"
+   },
+   {
+    "name": "Vestrahorn",
+    "qid": "Q1774351",
+    "lat": 64.28,
+    "lon": -14.94,
+    "source_url": "https://www.wikidata.org/wiki/Q1774351"
+   }
+  ]
+ },
+ "IT": {
+  "beaches": [
+   {
+    "name": "Baia dei Turchi, Otranto",
+    "qid": "Q3633027",
+    "lat": 40.19231,
+    "lon": 18.46427,
+    "source_url": "https://www.wikidata.org/wiki/Q3633027"
+   },
+   {
+    "name": "Cala Goloritze",
+    "qid": "Q2933429",
+    "lat": 40.10793,
+    "lon": 9.68978,
+    "source_url": "https://www.wikidata.org/wiki/Q2933429"
+   },
+   {
+    "name": "Cala Mariolu",
+    "qid": "Q3649989",
+    "lat": 40.12333,
+    "lon": 9.67639,
+    "source_url": "https://www.wikidata.org/wiki/Q3649989"
+   },
+   {
+    "name": "Mondello, Palermo",
+    "qid": "Q1082173",
+    "lat": 38.19979,
+    "lon": 13.32679,
+    "source_url": "https://www.wikidata.org/wiki/Q1082173"
+   },
+   {
+    "name": "Punta Prosciutto, Porto Cesareo",
+    "qid": "Q18447974",
+    "lat": 40.29655,
+    "lon": 17.77854,
+    "source_url": "https://www.wikidata.org/wiki/Q18447974"
+   },
+   {
+    "name": "Scala dei Turchi, Realmonte",
+    "qid": "Q3951389",
+    "lat": 37.28993,
+    "lon": 13.47268,
+    "source_url": "https://www.wikidata.org/wiki/Q3951389"
+   },
+   {
+    "name": "Spiaggia della Pelosa, Stintino",
+    "qid": "Q33335398",
+    "lat": 40.966,
+    "lon": 8.20944,
+    "source_url": "https://www.wikidata.org/wiki/Q33335398"
+   }
+  ],
+  "mountains": [
+   {
+    "name": "Cinque Torri",
+    "qid": "Q933666",
+    "lat": 46.50925,
+    "lon": 12.05397,
+    "source_url": "https://www.wikidata.org/wiki/Q933666"
+   },
+   {
+    "name": "Corno Grande",
+    "qid": "Q636540",
+    "lat": 42.46917,
+    "lon": 13.56556,
+    "source_url": "https://www.wikidata.org/wiki/Q636540"
+   },
+   {
+    "name": "Gran Paradiso",
+    "qid": "Q1372",
+    "lat": 45.53333,
+    "lon": 7.26667,
+    "source_url": "https://www.wikidata.org/wiki/Q1372"
+   },
+   {
+    "name": "Marmolada",
+    "qid": "Q203241",
+    "lat": 46.42444,
+    "lon": 11.85,
+    "source_url": "https://www.wikidata.org/wiki/Q203241"
+   },
+   {
+    "name": "Mont Blanc / Monte Bianco",
+    "qid": "Q583",
+    "lat": 45.83278,
+    "lon": 6.865,
+    "source_url": "https://www.wikidata.org/wiki/Q583"
+   },
+   {
+    "name": "Monviso",
+    "qid": "Q1248",
+    "lat": 44.668531,
+    "lon": 7.09013,
+    "source_url": "https://www.wikidata.org/wiki/Q1248"
+   },
+   {
+    "name": "Mount Vesuvius",
+    "qid": "Q524",
+    "lat": 40.82261,
+    "lon": 14.42919,
+    "source_url": "https://www.wikidata.org/wiki/Q524"
+   },
+   {
+    "name": "Ortles / Ortler",
+    "qid": "Q650695",
+    "lat": 46.51056,
+    "lon": 10.54194,
+    "source_url": "https://www.wikidata.org/wiki/Q650695"
+   },
+   {
+    "name": "Sassolungo / Langkofel",
+    "qid": "Q1805312",
+    "lat": 46.524722,
+    "lon": 11.735278,
+    "source_url": "https://it.wikipedia.org/wiki/Sassolungo"
+   },
+   {
+    "name": "Stromboli (volcano)",
+    "qid": "Q31445600",
+    "lat": 38.79,
+    "lon": 15.21,
+    "source_url": "https://www.wikidata.org/wiki/Q31445600"
+   },
+   {
+    "name": "Tre Cime di Lavaredo",
+    "qid": "Q1257207",
+    "lat": 46.61861,
+    "lon": 12.30556,
+    "source_url": "https://www.wikidata.org/wiki/Q1257207"
+   }
+  ]
+ },
+ "LI": {
+  "mountains": [
+   {
+    "name": "Augstenberg (Schafaelpler)",
+    "qid": "Q4072361",
+    "lat": 47.08239,
+    "lon": 9.61011,
+    "source_url": "https://de.wikipedia.org/wiki/Augstenberg_(Liechtenstein)"
+   },
+   {
+    "name": "Falknis",
+    "qid": "Q75570",
+    "lat": 47.05053,
+    "lon": 9.56453,
+    "source_url": "https://www.wikidata.org/wiki/Q75570"
+   },
+   {
+    "name": "Naafkopf",
+    "qid": "Q666531",
+    "lat": 47.06071,
+    "lon": 9.60715,
+    "source_url": "https://www.wikidata.org/wiki/Q666531"
+   },
+   {
+    "name": "Rappenstein",
+    "qid": "Q4390062",
+    "lat": 47.07639,
+    "lon": 9.56667,
+    "source_url": "https://www.wikidata.org/wiki/Q4390062"
+   },
+   {
+    "name": "Vorder Grauspitz (Grauspitz)",
+    "qid": "Q665000",
+    "lat": 47.05278,
+    "lon": 9.58194,
+    "source_url": "https://www.wikidata.org/wiki/Q665000"
+   }
+  ]
+ },
+ "LT": {
+  "beaches": [
+   {
+    "name": "Curonian Spit",
+    "qid": "Q5595",
+    "lat": 55.27444,
+    "lon": 20.97083,
+    "source_url": "https://www.wikidata.org/wiki/Q5595"
+   },
+   {
+    "name": "Nida",
+    "qid": "Q1004306",
+    "lat": 55.30397,
+    "lon": 21.00532,
+    "source_url": "https://www.wikidata.org/wiki/Q1004306"
+   }
+  ],
+  "mountains": [
+   {
+    "name": "Aukštojas Hill",
+    "qid": "Q771431",
+    "lat": 54.52944,
+    "lon": 25.63444,
+    "source_url": "https://www.wikidata.org/wiki/Q771431"
+   },
+   {
+    "name": "Castle Hill (Gediminas Hill)",
+    "qid": "Q9283406",
+    "lat": 54.6867,
+    "lon": 25.2914,
+    "source_url": "https://www.wikidata.org/wiki/Q9283406"
+   },
+   {
+    "name": "Juozapinė Hill",
+    "qid": "Q1566132",
+    "lat": 54.52722,
+    "lon": 25.61944,
+    "source_url": "https://www.wikidata.org/wiki/Q1566132"
+   },
+   {
+    "name": "Ladakalnis",
+    "qid": "Q4252502",
+    "lat": 55.36636,
+    "lon": 25.99075,
+    "source_url": "https://www.wikidata.org/wiki/Q4252502"
+   },
+   {
+    "name": "Nagliai Nature Strict Reserve",
+    "qid": "Q20504110",
+    "lat": 55.47295,
+    "lon": 21.08995,
+    "source_url": "https://www.wikidata.org/wiki/Q20504110"
+   },
+   {
+    "name": "Rambynas",
+    "qid": "Q1793504",
+    "lat": 55.0875,
+    "lon": 22.02111,
+    "source_url": "https://www.wikidata.org/wiki/Q1793504"
+   },
+   {
+    "name": "Vecekrugas Dune",
+    "qid": "Q16475711",
+    "lat": 55.35444,
+    "lon": 21.03861,
+    "source_url": "https://www.wikidata.org/wiki/Q16475711"
+   }
+  ]
+ },
+ "LU": {
+  "mountains": [
+   {
+    "name": "Buurgplaatz",
+    "qid": "Q993417",
+    "lat": 50.161944,
+    "lon": 6.023611,
+    "source_url": "https://www.wikidata.org/wiki/Q993417"
+   },
+   {
+    "name": "Kneiff",
+    "qid": "Q24457",
+    "lat": 50.157317,
+    "lon": 6.036944,
+    "source_url": "https://www.wikidata.org/wiki/Q24457"
+   }
+  ]
+ },
+ "LV": {
+  "beaches": [
+   {
+    "name": "Bernāti",
+    "qid": "Q15218668",
+    "lat": 56.37917,
+    "lon": 20.98806,
+    "source_url": "https://www.wikidata.org/wiki/Q15218668"
+   },
+   {
+    "name": "Cape Kolka",
+    "qid": "Q1728331",
+    "lat": 57.75861,
+    "lon": 22.60417,
+    "source_url": "https://www.wikidata.org/wiki/Q1728331"
+   },
+   {
+    "name": "Jūrkalne",
+    "qid": "Q15229937",
+    "lat": 57.0,
+    "lon": 21.38333,
+    "source_url": "https://www.wikidata.org/wiki/Q15229937"
+   },
+   {
+    "name": "Majori",
+    "qid": "Q6738400",
+    "lat": 56.97472,
+    "lon": 23.79639,
+    "source_url": "https://www.wikidata.org/wiki/Q6738400"
+   },
+   {
+    "name": "Veczemju Cliffs",
+    "qid": "Q20406027",
+    "lat": 57.5894,
+    "lon": 24.3708,
+    "source_url": "https://www.wikidata.org/wiki/Q20406027"
+   }
+  ],
+  "mountains": [
+   {
+    "name": "Dzegužkalns",
+    "qid": "Q4160761",
+    "lat": 56.96139,
+    "lon": 24.06861,
+    "source_url": "https://www.wikidata.org/wiki/Q4160761"
+   },
+   {
+    "name": "Gaiziņkalns",
+    "qid": "Q1122342",
+    "lat": 56.87004,
+    "lon": 25.95936,
+    "source_url": "https://www.wikidata.org/wiki/Q1122342"
+   },
+   {
+    "name": "Lielais Liepukalns",
+    "qid": "Q770418",
+    "lat": 56.27083,
+    "lon": 27.65439,
+    "source_url": "https://www.wikidata.org/wiki/Q770418"
+   },
+   {
+    "name": "Zilaiskalns Hill",
+    "qid": "Q15220099",
+    "lat": 57.55361,
+    "lon": 25.21611,
+    "source_url": "https://www.wikidata.org/wiki/Q15220099"
+   }
+  ]
+ },
+ "MC": {
+  "beaches": [
+   {
+    "name": "Larvotto beach (Plage du Larvotto)",
+    "qid": "Q122942810",
+    "lat": 43.74603,
+    "lon": 7.43313,
+    "source_url": "https://www.wikidata.org/wiki/Q122942810"
+   }
+  ],
+  "mountains": [
+   {
+    "name": "Chemin des Revoires",
+    "qid": "Q1069352",
+    "lat": 43.732777,
+    "lon": 7.4125,
+    "source_url": "https://www.wikidata.org/wiki/Q1069352"
+   },
+   {
+    "name": "Rock of Monaco (Le Rocher)",
+    "qid": "Q3351922",
+    "lat": 43.73102,
+    "lon": 7.42516,
+    "source_url": "https://www.wikidata.org/wiki/Q3351922"
+   }
+  ]
+ },
+ "MD": {
+  "mountains": [
+   {
+    "name": "Bălănești Hill",
+    "qid": "Q47940",
+    "lat": 47.21767,
+    "lon": 28.09167,
+    "source_url": "https://www.wikidata.org/wiki/Q47940"
+   }
+  ]
+ },
+ "ME": {
+  "beaches": [
+   {
+    "name": "Ada Bojana",
+    "qid": "Q345872",
+    "lat": 41.8625,
+    "lon": 19.361111,
+    "source_url": "https://en.wikipedia.org/wiki/Ada_Bojana"
+   },
+   {
+    "name": "Mogren",
+    "qid": "Q92158398",
+    "lat": 42.27714,
+    "lon": 18.83274,
+    "source_url": "https://www.wikidata.org/wiki/Q92158398"
+   },
+   {
+    "name": "Sveti Stefan",
+    "qid": "Q844192",
+    "lat": 42.255833,
+    "lon": 18.891111,
+    "source_url": "https://en.wikipedia.org/wiki/Sveti_Stefan"
+   },
+   {
+    "name": "Velika Plaza (Ulcinj)",
+    "qid": "Q5659361",
+    "lat": 41.8925,
+    "lon": 19.2958,
+    "source_url": "https://en.wikipedia.org/wiki/Velika_Pla%C5%BEa"
+   }
+  ],
+  "mountains": [
+   {
+    "name": "Bjelasica",
+    "qid": "Q2721690",
+    "lat": 42.8666,
+    "lon": 19.6981,
+    "source_url": "https://en.wikipedia.org/wiki/Bjelasica"
+   },
+   {
+    "name": "Komovi",
+    "qid": "Q1226167",
+    "lat": 42.681667,
+    "lon": 19.645556,
+    "source_url": "https://en.wikipedia.org/wiki/Komovi"
+   },
+   {
+    "name": "Orjen",
+    "qid": "Q1757305",
+    "lat": 42.568889,
+    "lon": 18.548889,
+    "source_url": "https://en.wikipedia.org/wiki/Orjen"
+   },
+   {
+    "name": "Sinjajevina",
+    "qid": "Q3047008",
+    "lat": 42.958333,
+    "lon": 19.333333,
+    "source_url": "https://en.wikipedia.org/wiki/Sinjajevina"
+   },
+   {
+    "name": "Zla Kolata",
+    "qid": "Q2720697",
+    "lat": 42.484918,
+    "lon": 19.89605,
+    "source_url": "https://en.wikipedia.org/wiki/Zla_Kolata"
+   }
+  ]
+ },
+ "MK": {
+  "beaches": [
+   {
+    "name": "Lake Ohrid shoreline beaches",
+    "qid": "Q156258",
+    "lat": 41.03,
+    "lon": 20.72,
+    "source_url": "https://www.wikidata.org/wiki/Q156258"
+   }
+  ],
+  "mountains": [
+   {
+    "name": "Galicica (Magaro)",
+    "qid": "Q953691",
+    "lat": 40.94,
+    "lon": 20.81,
+    "source_url": "https://www.wikidata.org/wiki/Q953691"
+   },
+   {
+    "name": "Golem Korab (Mount Korab)",
+    "qid": "Q912579",
+    "lat": 41.7903,
+    "lon": 20.5467,
+    "source_url": "https://www.wikidata.org/wiki/Q912579"
+   },
+   {
+    "name": "Ljuboten",
+    "qid": "Q927599",
+    "lat": 42.21,
+    "lon": 21.12,
+    "source_url": "https://www.wikidata.org/wiki/Q927599"
+   },
+   {
+    "name": "Solunska Glava",
+    "qid": "Q12294161",
+    "lat": 41.7035,
+    "lon": 21.4039,
+    "source_url": "https://www.wikidata.org/wiki/Q12294161"
+   },
+   {
+    "name": "Titov Vrv",
+    "qid": "Q1638613",
+    "lat": 41.99,
+    "lon": 20.8,
+    "source_url": "https://www.wikidata.org/wiki/Q1638613"
+   }
+  ]
+ },
+ "MT": {
+  "beaches": [
+   {
+    "name": "Ghajn Tuffieha (Riviera Bay)",
+    "qid": "Q2005526",
+    "lat": 35.93222,
+    "lon": 14.34722,
+    "source_url": "https://www.wikidata.org/wiki/Q2005526"
+   },
+   {
+    "name": "Gnejna Bay",
+    "qid": "Q8080003",
+    "lat": 35.9242,
+    "lon": 14.3408,
+    "source_url": "https://www.wikidata.org/wiki/Q8080003"
+   },
+   {
+    "name": "Hondoq ir-Rummien, Qala, Gozo",
+    "qid": "Q8080010",
+    "lat": 36.02778,
+    "lon": 14.32194,
+    "source_url": "https://www.wikidata.org/wiki/Q8080010"
+   },
+   {
+    "name": "Ramla Bay / Ir-Ramla l-Hamra, Gozo",
+    "qid": "Q909059",
+    "lat": 36.062,
+    "lon": 14.283,
+    "source_url": "https://www.wikidata.org/wiki/Q909059"
+   },
+   {
+    "name": "San Blas Bay, Gozo",
+    "qid": "Q2219310",
+    "lat": 36.05694,
+    "lon": 14.3025,
+    "source_url": "https://www.wikidata.org/wiki/Q2219310"
+   }
+  ]
+ },
+ "NL": {
+  "beaches": [
+   {
+    "name": "Bergen aan Zee",
+    "qid": "Q770885",
+    "lat": 52.662222,
+    "lon": 4.6325,
+    "source_url": "https://www.wikidata.org/wiki/Q770885"
+   },
+   {
+    "name": "Bloemendaal aan Zee",
+    "qid": "Q2695652",
+    "lat": 52.402778,
+    "lon": 4.545278,
+    "source_url": "https://www.wikidata.org/wiki/Q2695652"
+   },
+   {
+    "name": "Cadzand-Bad",
+    "qid": "Q1025353",
+    "lat": 51.378333,
+    "lon": 3.388889,
+    "source_url": "https://www.wikidata.org/wiki/Q1025353"
+   },
+   {
+    "name": "De Koog (Texel)",
+    "qid": "Q517053",
+    "lat": 53.098333,
+    "lon": 4.766944,
+    "source_url": "https://www.wikidata.org/wiki/Q517053"
+   },
+   {
+    "name": "Egmond aan Zee",
+    "qid": "Q1616324",
+    "lat": 52.618611,
+    "lon": 4.624167,
+    "source_url": "https://www.wikidata.org/wiki/Q1616324"
+   },
+   {
+    "name": "Renesse",
+    "qid": "Q1024702",
+    "lat": 51.732222,
+    "lon": 3.773056,
+    "source_url": "https://www.wikidata.org/wiki/Q1024702"
+   },
+   {
+    "name": "Scheveningen",
+    "qid": "Q837211",
+    "lat": 52.108056,
+    "lon": 4.273056,
+    "source_url": "https://www.wikidata.org/wiki/Q837211"
+   },
+   {
+    "name": "Terschelling",
+    "qid": "Q204412",
+    "lat": 53.401111,
+    "lon": 5.331389,
+    "source_url": "https://www.wikidata.org/wiki/Q204412"
+   },
+   {
+    "name": "Wijk aan Zee",
+    "qid": "Q913649",
+    "lat": 52.493056,
+    "lon": 4.593611,
+    "source_url": "https://www.wikidata.org/wiki/Q913649"
+   },
+   {
+    "name": "Zandvoort",
+    "qid": "Q9980",
+    "lat": 52.375,
+    "lon": 4.535833,
+    "source_url": "https://www.wikidata.org/wiki/Q9980"
+   }
+  ],
+  "mountains": [
+   {
+    "name": "Amerongse Berg",
+    "qid": "Q470165",
+    "lat": 52.008092,
+    "lon": 5.482944,
+    "source_url": "https://www.wikidata.org/wiki/Q470165"
+   },
+   {
+    "name": "Gulperberg",
+    "qid": "Q1554374",
+    "lat": 50.814144,
+    "lon": 5.899536,
+    "source_url": "https://www.wikidata.org/wiki/Q1554374"
+   },
+   {
+    "name": "Holterberg",
+    "qid": "Q2659943",
+    "lat": 52.311283,
+    "lon": 6.418161,
+    "source_url": "https://www.wikidata.org/wiki/Q2659943"
+   },
+   {
+    "name": "Keutenberg",
+    "qid": "Q3113119",
+    "lat": 50.843008,
+    "lon": 5.873311,
+    "source_url": "https://www.wikidata.org/wiki/Q3113119"
+   },
+   {
+    "name": "Posbank",
+    "qid": "Q1855065",
+    "lat": 52.028611,
+    "lon": 6.021111,
+    "source_url": "https://www.wikidata.org/wiki/Q1855065"
+   },
+   {
+    "name": "Sint-Pietersberg",
+    "qid": "Q1754591",
+    "lat": 50.814444,
+    "lon": 5.685,
+    "source_url": "https://www.wikidata.org/wiki/Q1754591"
+   },
+   {
+    "name": "Tankenberg",
+    "qid": "Q944854",
+    "lat": 52.323333,
+    "lon": 6.955556,
+    "source_url": "https://www.wikidata.org/wiki/Q944854"
+   },
+   {
+    "name": "Vaalserberg",
+    "qid": "Q159860",
+    "lat": 50.754667,
+    "lon": 6.020833,
+    "source_url": "https://www.wikidata.org/wiki/Q159860"
+   },
+   {
+    "name": "Wageningse Berg",
+    "qid": "Q2420501",
+    "lat": 51.965,
+    "lon": 5.686111,
+    "source_url": "https://www.wikidata.org/wiki/Q2420501"
+   }
+  ]
+ },
+ "NO": {
+  "beaches": [
+   {
+    "name": "Bunes Beach (Bunesstranda)",
+    "qid": "Q123012698",
+    "lat": 67.9789,
+    "lon": 12.9636,
+    "source_url": "https://www.wikidata.org/wiki/Q123012698"
+   },
+   {
+    "name": "Hauklandstranda (Haukland Beach)",
+    "qid": "Q31079299",
+    "lat": 68.19799,
+    "lon": 13.52919,
+    "source_url": "https://www.wikidata.org/wiki/Q31079299"
+   },
+   {
+    "name": "Kvalvika",
+    "qid": "Q11982594",
+    "lat": 68.079,
+    "lon": 13.08,
+    "source_url": "https://www.wikidata.org/wiki/Q11982594"
+   },
+   {
+    "name": "Refviksanden",
+    "qid": "Q11997353",
+    "lat": 62.0021,
+    "lon": 5.0852,
+    "source_url": "https://www.wikidata.org/wiki/Q11997353"
+   },
+   {
+    "name": "Sjosanden",
+    "qid": "Q841461",
+    "lat": 58.02028,
+    "lon": 7.44917,
+    "source_url": "https://www.wikidata.org/wiki/Q841461"
+   },
+   {
+    "name": "Solastranden",
+    "qid": "Q12001793",
+    "lat": 58.88861,
+    "lon": 5.60111,
+    "source_url": "https://www.wikidata.org/wiki/Q12001793"
+   }
+  ],
+  "mountains": [
+   {
+    "name": "Besseggen",
+    "qid": "Q830100",
+    "lat": 61.50422,
+    "lon": 8.73196,
+    "source_url": "https://en.wikipedia.org/wiki/Besseggen"
+   },
+   {
+    "name": "Galdhopiggen",
+    "qid": "Q203942",
+    "lat": 61.63644,
+    "lon": 8.31248,
+    "source_url": "https://en.wikipedia.org/wiki/Galdh%C3%B8piggen"
+   },
+   {
+    "name": "Reinebringen",
+    "qid": "Q31652043",
+    "lat": 67.9261,
+    "lon": 13.07532,
+    "source_url": "https://www.wikidata.org/wiki/Q31652043"
+   },
+   {
+    "name": "Romsdalseggen",
+    "qid": "Q11998353",
+    "lat": 62.54804,
+    "lon": 7.74702,
+    "source_url": "https://www.wikidata.org/wiki/Q11998353"
+   },
+   {
+    "name": "Segla",
+    "qid": "Q31503316",
+    "lat": 69.5075,
+    "lon": 17.59472,
+    "source_url": "https://www.wikidata.org/wiki/Q31503316"
+   },
+   {
+    "name": "Skala",
+    "qid": "Q1958338",
+    "lat": 61.85278,
+    "lon": 6.96639,
+    "source_url": "https://www.wikidata.org/wiki/Q1958338"
+   },
+   {
+    "name": "Snohetta",
+    "qid": "Q979569",
+    "lat": 62.31984,
+    "lon": 9.26769,
+    "source_url": "https://en.wikipedia.org/wiki/Sn%C3%B8hetta"
+   },
+   {
+    "name": "Stetind",
+    "qid": "Q1425694",
+    "lat": 68.16512,
+    "lon": 16.59261,
+    "source_url": "https://en.wikipedia.org/wiki/Stetind"
+   },
+   {
+    "name": "Store Skagastolstind (Storen)",
+    "qid": "Q1078075",
+    "lat": 61.4612,
+    "lon": 7.87194,
+    "source_url": "https://www.wikidata.org/wiki/Q1078075"
+   },
+   {
+    "name": "Trolltunga",
+    "qid": "Q1512593",
+    "lat": 60.13318,
+    "lon": 6.75472,
+    "source_url": "https://en.wikipedia.org/wiki/Trolltunga"
+   }
+  ]
+ },
+ "PL": {
+  "beaches": [
+   {
+    "name": "Słowiński National Park shifting dunes",
+    "qid": "Q1572525",
+    "lat": 54.7032,
+    "lon": 17.3069,
+    "source_url": "https://www.wikidata.org/wiki/Q1572525"
+   },
+   {
+    "name": "Gdańsk Brzeźno beach (Plaża strzeżona \"Dom Zdrojowy Brzeźno\")",
+    "qid": null,
+    "lat": 54.40932,
+    "lon": 18.63921,
+    "source_url": "https://www.openstreetmap.org/#map=17/54.40932/18.63921"
+   },
+   {
+    "name": "Łeba, Plaża A",
+    "qid": null,
+    "lat": 54.76833,
+    "lon": 17.55995,
+    "source_url": "https://www.openstreetmap.org/#map=17/54.76833/17.55995"
+   },
+   {
+    "name": "Ustka, Plaża wschodnia",
+    "qid": null,
+    "lat": 54.59182,
+    "lon": 16.87933,
+    "source_url": "https://www.openstreetmap.org/#map=17/54.59182/16.87933"
+   }
+  ],
+  "mountains": [
+   {
+    "name": "Łysica",
+    "qid": "Q384265",
+    "lat": 50.9,
+    "lon": 20.9,
+    "source_url": "https://www.wikidata.org/wiki/Q384265"
+   },
+   {
+    "name": "Pilsko",
+    "qid": "Q1431424",
+    "lat": 49.52722,
+    "lon": 19.31833,
+    "source_url": "https://www.wikidata.org/wiki/Q1431424"
+   },
+   {
+    "name": "Skrzyczne",
+    "qid": "Q771297",
+    "lat": 49.68444,
+    "lon": 19.03028,
+    "source_url": "https://www.wikidata.org/wiki/Q771297"
+   },
+   {
+    "name": "Ślęża",
+    "qid": "Q387148",
+    "lat": 50.86502,
+    "lon": 16.70882,
+    "source_url": "https://www.wikidata.org/wiki/Q387148"
+   },
+   {
+    "name": "Śnieżnik",
+    "qid": "Q1397501",
+    "lat": 50.2075,
+    "lon": 16.84694,
+    "source_url": "https://www.wikidata.org/wiki/Q1397501"
+   },
+   {
+    "name": "Tarnica",
+    "qid": "Q577655",
+    "lat": 49.06944,
+    "lon": 22.73806,
+    "source_url": "https://www.wikidata.org/wiki/Q577655"
+   },
+   {
+    "name": "Trzy Korony",
+    "qid": "Q7849064",
+    "lat": 49.4136,
+    "lon": 20.4144,
+    "source_url": "https://www.wikidata.org/wiki/Q7849064"
+   },
+   {
+    "name": "Turbacz",
+    "qid": "Q7853729",
+    "lat": 49.5428,
+    "lon": 20.1039,
+    "source_url": "https://www.wikidata.org/wiki/Q7853729"
+   }
+  ]
+ },
+ "PT": {
+  "beaches": [
+   {
+    "name": "Ilha da Barreta (Ilha Deserta)",
+    "qid": "Q4863401",
+    "lat": 36.9611,
+    "lon": -7.8889,
+    "source_url": "https://pt.wikipedia.org/wiki/Ilha_da_Barreta"
+   },
+   {
+    "name": "Praia da Rocha",
+    "qid": "Q1752037",
+    "lat": 37.11667,
+    "lon": -8.53333,
+    "source_url": "https://pt.wikipedia.org/wiki/Praia_da_Rocha"
+   },
+   {
+    "name": "Praia da Ursa",
+    "qid": "Q10352678",
+    "lat": 38.79015,
+    "lon": -9.4924,
+    "source_url": "https://pt.wikipedia.org/wiki/Praia_da_Ursa"
+   },
+   {
+    "name": "Praia de Benagil",
+    "qid": "Q2895643",
+    "lat": 37.0875,
+    "lon": -8.42583,
+    "source_url": "https://pt.wikipedia.org/wiki/Praia_de_Benagil"
+   },
+   {
+    "name": "Praia de Odeceixe",
+    "qid": "Q7237779",
+    "lat": 37.44222,
+    "lon": -8.79778,
+    "source_url": "https://pt.wikipedia.org/wiki/Praia_de_Odeceixe"
+   },
+   {
+    "name": "Praia do Amado",
+    "qid": "Q10352935",
+    "lat": 37.16654,
+    "lon": -8.90455,
+    "source_url": "https://pt.wikipedia.org/wiki/Praia_do_Amado"
+   },
+   {
+    "name": "Praia do Camilo",
+    "qid": "Q10352972",
+    "lat": 37.08778,
+    "lon": -8.66866,
+    "source_url": "https://pt.wikipedia.org/wiki/Praia_do_Camilo"
+   },
+   {
+    "name": "Praia do Meco",
+    "qid": "Q10353038",
+    "lat": 38.48917,
+    "lon": -9.18372,
+    "source_url": "https://pt.wikipedia.org/wiki/Praia_do_Meco"
+   }
+  ],
+  "mountains": [
+   {
+    "name": "Cabo Girão",
+    "qid": "Q856866",
+    "lat": 32.66,
+    "lon": -17.01,
+    "source_url": "https://www.wikidata.org/wiki/Q856866"
+   },
+   {
+    "name": "Fóia",
+    "qid": "Q913368",
+    "lat": 37.31556,
+    "lon": -8.59417,
+    "source_url": "https://www.wikidata.org/wiki/Q913368"
+   },
+   {
+    "name": "Peneda-Gerês National Park",
+    "qid": "Q1473702",
+    "lat": 41.73,
+    "lon": -8.16,
+    "source_url": "https://www.wikidata.org/wiki/Q1473702"
+   },
+   {
+    "name": "Serra do Marão",
+    "qid": "Q976135",
+    "lat": 41.26722,
+    "lon": -7.8972,
+    "source_url": "https://www.wikidata.org/wiki/Q976135"
+   },
+   {
+    "name": "Torre (Serra da Estrela)",
+    "qid": "Q2746237",
+    "lat": 40.32187,
+    "lon": -7.61297,
+    "source_url": "https://pt.wikipedia.org/wiki/Torre_(Serra_da_Estrela)"
+   }
+  ]
+ },
+ "RO": {
+  "beaches": [
+   {
+    "name": "Corbu",
+    "qid": "Q5054198",
+    "lat": 44.45771,
+    "lon": 28.74875,
+    "source_url": "https://www.wikidata.org/wiki/Q5054198"
+   },
+   {
+    "name": "Costinești",
+    "qid": "Q12113675",
+    "lat": 43.95095,
+    "lon": 28.60122,
+    "source_url": "https://www.wikidata.org/wiki/Q12113675"
+   },
+   {
+    "name": "Eforie Nord",
+    "qid": "Q1296448",
+    "lat": 44.06389,
+    "lon": 28.63333,
+    "source_url": "https://www.wikidata.org/wiki/Q1296448"
+   },
+   {
+    "name": "Mamaia",
+    "qid": "Q854646",
+    "lat": 44.24639,
+    "lon": 28.62278,
+    "source_url": "https://www.wikidata.org/wiki/Q854646"
+   },
+   {
+    "name": "Sfântu Gheorghe",
+    "qid": "Q1187750",
+    "lat": 44.89651,
+    "lon": 29.5929,
+    "source_url": "https://www.wikidata.org/wiki/Q1187750"
+   },
+   {
+    "name": "Vadu",
+    "qid": "Q3623456",
+    "lat": 44.45062,
+    "lon": 28.73801,
+    "source_url": "https://www.wikidata.org/wiki/Q3623456"
+   }
+  ],
+  "mountains": [
+   {
+    "name": "Moldoveanu Peak",
+    "qid": "Q746524",
+    "lat": 45.59944,
+    "lon": 24.73621,
+    "source_url": "https://www.wikidata.org/wiki/Q746524"
+   },
+   {
+    "name": "Omu Peak",
+    "qid": "Q544244",
+    "lat": 45.4458,
+    "lon": 25.4564,
+    "source_url": "https://www.wikidata.org/wiki/Q544244"
+   },
+   {
+    "name": "Parângu Mare",
+    "qid": "Q897451",
+    "lat": 45.34028,
+    "lon": 23.54083,
+    "source_url": "https://www.wikidata.org/wiki/Q897451"
+   },
+   {
+    "name": "Piatra Craiului",
+    "qid": "Q1072058",
+    "lat": 45.53333,
+    "lon": 25.21667,
+    "source_url": "https://www.wikidata.org/wiki/Q1072058"
+   },
+   {
+    "name": "Toaca",
+    "qid": "Q31489285",
+    "lat": 46.97751,
+    "lon": 25.94994,
+    "source_url": "https://www.wikidata.org/wiki/Q31489285"
+   }
+  ]
+ },
+ "RS": {
+  "beaches": [
+   {
+    "name": "Ada Ciganlija",
+    "qid": "Q2321302",
+    "lat": 44.7833,
+    "lon": 20.4,
+    "source_url": "https://www.wikidata.org/wiki/Q2321302"
+   },
+   {
+    "name": "Strand, Novi Sad",
+    "qid": "Q3445520",
+    "lat": 45.2361,
+    "lon": 19.8481,
+    "source_url": "https://www.wikidata.org/wiki/Q3445520"
+   }
+  ],
+  "mountains": [
+   {
+    "name": "Avala",
+    "qid": "Q790075",
+    "lat": 44.69,
+    "lon": 20.5142,
+    "source_url": "https://www.wikidata.org/wiki/Q790075"
+   },
+   {
+    "name": "Crveni Cot",
+    "qid": "Q1102197",
+    "lat": 45.151,
+    "lon": 19.7113,
+    "source_url": "https://www.wikidata.org/wiki/Q1102197"
+   },
+   {
+    "name": "Midzor",
+    "qid": "Q962856",
+    "lat": 43.3939,
+    "lon": 22.6819,
+    "source_url": "https://www.wikidata.org/wiki/Q962856"
+   },
+   {
+    "name": "Rtanj",
+    "qid": "Q46047",
+    "lat": 43.7761,
+    "lon": 21.8933,
+    "source_url": "https://www.wikidata.org/wiki/Q46047"
+   },
+   {
+    "name": "Suva Planina (Trem)",
+    "qid": "Q1981857",
+    "lat": 43.18,
+    "lon": 22.18,
+    "source_url": "https://www.wikidata.org/wiki/Q1981857"
+   }
+  ]
+ },
+ "SE": {
+  "beaches": [
+   {
+    "name": "Ribersborgsstranden",
+    "qid": "Q7322335",
+    "lat": 55.60083,
+    "lon": 12.95861,
+    "source_url": "https://sv.wikipedia.org/wiki/Ribersborgsstranden"
+   },
+   {
+    "name": "Sandhammaren",
+    "qid": "Q2220749",
+    "lat": 55.3855,
+    "lon": 14.19738,
+    "source_url": "https://visitsweden.com/what-to-do/nature-outdoors/beaches-in-sweden/"
+   },
+   {
+    "name": "Sudersand",
+    "qid": "Q21044846",
+    "lat": 57.95213,
+    "lon": 19.25443,
+    "source_url": "https://www.wikidata.org/wiki/Q21044846"
+   },
+   {
+    "name": "Tofta strand",
+    "qid": "Q26197228",
+    "lat": 57.486444,
+    "lon": 18.126188,
+    "source_url": "https://www.wikidata.org/wiki/Q26197228"
+   },
+   {
+    "name": "Tylosand",
+    "qid": "Q2024098",
+    "lat": 56.65,
+    "lon": 12.73333,
+    "source_url": "https://visitsweden.com/where-to-go/southern-sweden/halland/"
+   },
+   {
+    "name": "Varamobaden",
+    "qid": "Q10712818",
+    "lat": 58.54919,
+    "lon": 15.00483,
+    "source_url": "https://www.wikidata.org/wiki/Q10712818"
+   }
+  ],
+  "mountains": [
+   {
+    "name": "Helags (Helagsfjallet)",
+    "qid": "Q1601691",
+    "lat": 62.90444,
+    "lon": 12.4525,
+    "source_url": "https://sv.wikipedia.org/wiki/Helags"
+   },
+   {
+    "name": "Kebnekaise",
+    "qid": "Q214011",
+    "lat": 67.9,
+    "lon": 18.51667,
+    "source_url": "https://sv.wikipedia.org/wiki/Kebnekaise"
+   },
+   {
+    "name": "Kullaberg",
+    "qid": "Q1791521",
+    "lat": 56.3,
+    "lon": 12.46667,
+    "source_url": "https://sv.wikipedia.org/wiki/Kullaberg"
+   },
+   {
+    "name": "Nuolja (Njulla)",
+    "qid": "Q1668760",
+    "lat": 68.3725,
+    "lon": 18.69833,
+    "source_url": "https://sv.wikipedia.org/wiki/Nuolja"
+   },
+   {
+    "name": "Sarektjakka",
+    "qid": "Q596485",
+    "lat": 67.43139,
+    "lon": 17.72139,
+    "source_url": "https://www.wikidata.org/wiki/Q596485"
+   },
+   {
+    "name": "Skuleberget",
+    "qid": "Q3486391",
+    "lat": 63.07475,
+    "lon": 18.34644,
+    "source_url": "https://sv.wikipedia.org/wiki/Skuleberget"
+   },
+   {
+    "name": "Snasahogarna",
+    "qid": "Q3299226",
+    "lat": 63.22855,
+    "lon": 12.34399,
+    "source_url": "https://www.wikidata.org/wiki/Q3299226"
+   },
+   {
+    "name": "Stadjan",
+    "qid": "Q10682836",
+    "lat": 61.91889,
+    "lon": 12.87889,
+    "source_url": "https://sv.wikipedia.org/wiki/St%C3%A4djan"
+   },
+   {
+    "name": "Sylarna",
+    "qid": "Q1510626",
+    "lat": 63.02,
+    "lon": 12.19861,
+    "source_url": "https://sv.wikipedia.org/wiki/Sylarna"
+   }
+  ]
+ },
+ "SI": {
+  "beaches": [
+   {
+    "name": "Debeli rtic",
+    "qid": "Q5248048",
+    "lat": 45.590961,
+    "lon": 13.710172,
+    "source_url": "https://www.wikidata.org/wiki/Q5248048"
+   },
+   {
+    "name": "Mesecev zaliv (Moon Bay), Strunjan",
+    "qid": "Q64408060",
+    "lat": 45.538145,
+    "lon": 13.611858,
+    "source_url": "https://www.wikidata.org/wiki/Q64408060"
+   },
+   {
+    "name": "Simonov zaliv (Simon Bay), Izola",
+    "qid": "Q64416090",
+    "lat": 45.532831,
+    "lon": 13.643944,
+    "source_url": "https://www.wikidata.org/wiki/Q64416090"
+   }
+  ],
+  "mountains": [
+   {
+    "name": "Jalovec",
+    "qid": "Q763420",
+    "lat": 46.421554,
+    "lon": 13.679998,
+    "source_url": "https://sl.wikipedia.org/wiki/Jalovec"
+   },
+   {
+    "name": "Kanin massif",
+    "qid": "Q3663438",
+    "lat": 46.360278,
+    "lon": 13.443611,
+    "source_url": "https://www.wikidata.org/wiki/Q3663438"
+   },
+   {
+    "name": "Krn",
+    "qid": "Q1430355",
+    "lat": 46.266389,
+    "lon": 13.658889,
+    "source_url": "https://en.wikipedia.org/wiki/Krn"
+   },
+   {
+    "name": "Mangart",
+    "qid": "Q1890215",
+    "lat": 46.44,
+    "lon": 13.653889,
+    "source_url": "https://en.wikipedia.org/wiki/Mangart"
+   },
+   {
+    "name": "Nanos",
+    "qid": "Q1398778",
+    "lat": 45.798544,
+    "lon": 14.065158,
+    "source_url": "https://en.wikipedia.org/wiki/Nanos_(plateau)"
+   },
+   {
+    "name": "Peca",
+    "qid": "Q177047",
+    "lat": 46.5053,
+    "lon": 14.7578,
+    "source_url": "https://sl.wikipedia.org/wiki/Peca"
+   },
+   {
+    "name": "Prisojnik",
+    "qid": "Q238644",
+    "lat": 46.426003,
+    "lon": 13.769131,
+    "source_url": "https://www.wikidata.org/wiki/Q238644"
+   },
+   {
+    "name": "Smarna gora",
+    "qid": "Q936796",
+    "lat": 46.1297,
+    "lon": 14.4636,
+    "source_url": "https://www.wikidata.org/wiki/Q936796"
+   },
+   {
+    "name": "Storzic",
+    "qid": "Q909526",
+    "lat": 46.35028,
+    "lon": 14.40472,
+    "source_url": "https://www.wikidata.org/wiki/Q909526"
+   },
+   {
+    "name": "Triglav",
+    "qid": "Q1024",
+    "lat": 46.378333,
+    "lon": 13.836667,
+    "source_url": "https://sl.wikipedia.org/wiki/Triglav"
+   },
+   {
+    "name": "Velika planina",
+    "qid": "Q3112317",
+    "lat": 46.295506,
+    "lon": 14.653519,
+    "source_url": "https://en.wikipedia.org/wiki/Big_Pasture_Plateau"
+   }
+  ]
+ },
+ "SK": {
+  "mountains": [
+   {
+    "name": "Baranec",
+    "qid": "Q3509342",
+    "lat": 49.17361,
+    "lon": 19.74139,
+    "source_url": "https://www.wikidata.org/wiki/Q3509342"
+   },
+   {
+    "name": "Chopok",
+    "qid": "Q1076258",
+    "lat": 48.94306,
+    "lon": 19.59306,
+    "source_url": "https://www.wikidata.org/wiki/Q1076258"
+   },
+   {
+    "name": "Ďumbier",
+    "qid": "Q341905",
+    "lat": 48.93661,
+    "lon": 19.64017,
+    "source_url": "https://www.wikidata.org/wiki/Q341905"
+   },
+   {
+    "name": "Kráľova hoľa",
+    "qid": "Q686513",
+    "lat": 48.88296,
+    "lon": 20.13911,
+    "source_url": "https://www.wikidata.org/wiki/Q686513"
+   },
+   {
+    "name": "Lomnický štít",
+    "qid": "Q1072105",
+    "lat": 49.2,
+    "lon": 20.21278,
+    "source_url": "https://www.wikidata.org/wiki/Q1072105"
+   },
+   {
+    "name": "Sitno",
+    "qid": "Q1621423",
+    "lat": 48.40306,
+    "lon": 18.8775,
+    "source_url": "https://www.wikidata.org/wiki/Q1621423"
+   },
+   {
+    "name": "Veľký Choč",
+    "qid": "Q3506100",
+    "lat": 49.15139,
+    "lon": 19.34278,
+    "source_url": "https://www.wikidata.org/wiki/Q3506100"
+   },
+   {
+    "name": "Veľký Rozsutec",
+    "qid": "Q2298346",
+    "lat": 49.23139,
+    "lon": 19.09861,
+    "source_url": "https://www.wikidata.org/wiki/Q2298346"
+   }
+  ]
+ },
+ "SM": {
+  "mountains": [
+   {
+    "name": "Monte Carlo",
+    "qid": "Q3498210",
+    "lat": 43.915,
+    "lon": 12.45556,
+    "source_url": "https://www.wikidata.org/wiki/Q3498210"
+   }
+  ]
+ },
+ "XK": {
+  "mountains": [
+   {
+    "name": "Bogicevica (Maja e Marjashit)",
+    "qid": "Q3299979",
+    "lat": 42.6,
+    "lon": 20.08,
+    "source_url": "https://www.wikidata.org/wiki/Q3299979"
+   },
+   {
+    "name": "Gjeravica (Djeravica)",
+    "qid": "Q341983",
+    "lat": 42.5328,
+    "lon": 20.1408,
+    "source_url": "https://www.wikidata.org/wiki/Q341983"
+   },
+   {
+    "name": "Hajla",
+    "qid": "Q2194967",
+    "lat": 42.7847,
+    "lon": 20.1385,
+    "source_url": "https://www.wikidata.org/wiki/Q2194967"
+   },
+   {
+    "name": "Koritnik",
+    "qid": "Q1164619",
+    "lat": 42.0833,
+    "lon": 20.5667,
+    "source_url": "https://www.wikidata.org/wiki/Q1164619"
+   },
+   {
+    "name": "Ljuboten (Luboten)",
+    "qid": "Q927599",
+    "lat": 42.21,
+    "lon": 21.12,
+    "source_url": "https://www.wikidata.org/wiki/Q927599"
+   }
+  ]
+ }
+}

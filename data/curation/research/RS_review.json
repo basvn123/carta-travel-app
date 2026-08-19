@@ -1,0 +1,162 @@
+{
+  "iso2": "RS",
+  "country": "Serbia",
+  "checked_at": "2026-08-17",
+  "beaches": {
+    "wrong": [],
+    "missing": [
+      {
+        "name": "Ada Ciganlija",
+        "qid": "Q2321302",
+        "lat": 44.7833,
+        "lon": 20.4,
+        "why": "Belgrade's river island and lake beach, the largest urban bathing site in the region and the default summer destination for the capital. The pipeline counts freshwater bathing beaches elsewhere (Strandbad Wannsee for Germany, Geneve-Plage for Switzerland, Strandbad Klagenfurt for Austria), so a zero-beach Serbia is a harvest gap, not a geographic fact.",
+        "source_url": "https://www.wikidata.org/wiki/Q2321302",
+        "verified": true
+      },
+      {
+        "name": "Strand, Novi Sad",
+        "qid": "Q3445520",
+        "lat": 45.2361,
+        "lon": 19.8481,
+        "why": "Wikidata describes it verbatim as a 'beach on the Danube in Novi Sad, Serbia'. It is the country's second city beach and one of the best known river beaches in Europe. Absent.",
+        "source_url": "https://www.wikidata.org/wiki/Q3445520",
+        "verified": true
+      },
+      {
+        "name": "Srebrno jezero (Silver Lake), Veliko Gradiste",
+        "qid": null,
+        "lat": null,
+        "lon": null,
+        "why": "A Danube oxbow marketed nationally as the 'Serbian sea', with a managed sand beach, and the closest thing Serbia has to a seaside resort. No Wikidata item confirmed, so left unverified rather than guessed.",
+        "source_url": null,
+        "verified": false
+      }
+    ],
+    "order": [
+      "No order to judge: the beach list is empty. The failure is the empty list."
+    ]
+  },
+  "mountains": {
+    "wrong": [
+      {
+        "name": "Vracar plateau",
+        "class": "town_or_village",
+        "why": "Rank 4. Wikidata Q962949 and the Wikipedia lead describe it as a plateau on top of Vracar Hill in Belgrade with an absolute height of 134 metres, an inner-city district best known for the temple of Saint Sava. It is an urban neighbourhood, not a mountain.",
+        "source_url": "https://en.wikipedia.org/wiki/Vra%C4%8Dar_plateau"
+      },
+      {
+        "name": "Cegar",
+        "class": "other",
+        "why": "Rank 5. The Wikipedia lead reads: 'Cegar is a location in Serbia where the Battle of Cegar Hill took place.' It is a 1809 battlefield memorial above Nis marked with a monument, ranked as a mountain because it carries a natural_monument designation. Same event-named family as North Macedonia's Meckin Kamen.",
+        "source_url": "https://en.wikipedia.org/wiki/%C4%8Cegar"
+      },
+      {
+        "name": "Trescovat",
+        "class": "wrong_country",
+        "why": "Rank 10. The coordinate 44.5642,22.0562 reverse-geocodes to Svinita, Mehedinti county, Romania. Trescovat is a Romanian volcanic neck in the Locvei Mountains on the left bank of the Danube in the Iron Gates; it was pulled into the Serbian file because it is 2.6 km from the catalogue point Lepenski Vir, which sits on the opposite bank.",
+        "source_url": "https://nominatim.openstreetmap.org/reverse?format=jsonv2&zoom=14&lat=44.5642&lon=22.0562"
+      },
+      {
+        "name": "Pancic's Peak",
+        "class": "duplicate_of:Pancicev vrh",
+        "why": "Rank 3 is the English form of rank 1. Both are Kopaonik's 2017 m summit and both carry the same Wikipedia link, en:Pancic's Peak. Their coordinates are 700 m apart.",
+        "source_url": "https://en.wikipedia.org/wiki/Pan%C4%8Di%C4%87%27s_Peak"
+      },
+      {
+        "name": "Panchichev vrh",
+        "class": "duplicate_of:Pancicev vrh",
+        "why": "A third copy of the same summit, transliterated without diacritics, at 43.2692,20.8237, 100 m from the rank 3 copy. Kopaonik's summit occupies three rows.",
+        "source_url": "https://en.wikipedia.org/wiki/Pan%C4%8Di%C4%87%27s_Peak"
+      },
+      {
+        "name": "Suvo Rudiste",
+        "class": "duplicate_of:Pancicev vrh",
+        "why": "Rank 12 at 43.2721,20.8195 is 400 m from the rank 1 summit row. Suvo Rudiste is the ski-resort plateau immediately below Pancicev vrh, so this is a fourth tier-1 slot spent on one 400 m stretch of Kopaonik.",
+        "source_url": "https://en.wikipedia.org/wiki/Suvo_Rudi%C5%A1te"
+      },
+      {
+        "name": "Strazilovo",
+        "class": "park_or_area",
+        "why": "Rank 8. Wikipedia describes it verbatim as 'a wooded valley in the Fruska Gora mountain, Serbia'. It is a picnic and excursion valley holding the grave of the poet Branko Radicevic, not a summit.",
+        "source_url": "https://en.wikipedia.org/wiki/Stra%C5%BEilovo"
+      },
+      {
+        "name": "Banovo brdo",
+        "class": "town_or_village",
+        "why": "A residential neighbourhood of Belgrade in the municipality of Cukarica. The name contains 'brdo' (hill), which is presumably what matched, but the feature is a city quarter.",
+        "source_url": "https://en.wikipedia.org/wiki/Banovo_Brdo"
+      },
+      {
+        "name": "Banjicki Vis",
+        "class": "town_or_village",
+        "why": "A Belgrade urban locality at Banjica, carried into the list on a natural_monument designation. Not a mountain.",
+        "source_url": "https://www.openstreetmap.org/#map=15/44.7582/20.4689"
+      },
+      {
+        "name": "Avala",
+        "class": "not_notable",
+        "why": "The row named Avala sits at 45.1766,19.9127 near Sremski Karlovci, on Fruska Gora. Serbia's actual Avala (Q790075, 511 m, with the Avala Tower and the Monument to the Unknown Hero) is at 44.69,20.5142, about 60 km south. The list therefore carries the famous name attached to an unrelated minor rise while the real Avala is missing.",
+        "source_url": "https://www.wikidata.org/wiki/Q790075"
+      }
+    ],
+    "missing": [
+      {
+        "name": "Midzor",
+        "qid": "Q962856",
+        "lat": 43.3939,
+        "lon": 22.6819,
+        "why": "The highest peak in Serbia at 2169 m, on the Stara Planina ridge shared with Bulgaria, and the anchor of the Stara Planina nature park. Absent from all 54 rows: Serbia's mountain tab does not contain Serbia's highest mountain.",
+        "source_url": "https://www.wikidata.org/wiki/Q962856",
+        "verified": true
+      },
+      {
+        "name": "Rtanj",
+        "qid": "Q46047",
+        "lat": 43.7761,
+        "lon": 21.8933,
+        "why": "1565 m, the near-perfect pyramid that is the most photographed and most mythologised mountain in the country. Absent.",
+        "source_url": "https://www.wikidata.org/wiki/Q46047",
+        "verified": true
+      },
+      {
+        "name": "Avala",
+        "qid": "Q790075",
+        "lat": 44.69,
+        "lon": 20.5142,
+        "why": "511 m, a protected area 16 km from central Belgrade with the Avala Tower and the Monument to the Unknown Hero; by visitor numbers the most climbed hill in Serbia. Absent at its real location while its name is attached to a Fruska Gora point.",
+        "source_url": "https://www.wikidata.org/wiki/Q790075",
+        "verified": true
+      },
+      {
+        "name": "Crveni Cot",
+        "qid": "Q1102197",
+        "lat": 45.151,
+        "lon": 19.7113,
+        "why": "538 m, the highest point of Fruska Gora national park. The file spends four tier-1 and tier-2 slots on unnamed Fruska Gora rises (Alibegovac, Karagaca, Vezirac, Beljevo) but omits the range's summit.",
+        "source_url": "https://www.wikidata.org/wiki/Q1102197",
+        "verified": true
+      },
+      {
+        "name": "Suva Planina (Trem)",
+        "qid": "Q1981857",
+        "lat": 43.18,
+        "lon": 22.18,
+        "why": "1810 m at Trem, the great limestone ridge above Nis and one of Serbia's classic hikes. Absent, although Nis is a catalogue city and supplied the Cegar memorial instead.",
+        "source_url": "https://www.wikidata.org/wiki/Q1981857",
+        "verified": true
+      }
+    ],
+    "order": [
+      "Rank 1 Pancicev vrh is a legitimate choice, but the same summit also occupies rank 3, rank 12 (Suvo Rudiste, 400 m away) and tier-2 rank 35. Four of the top thirty-five slots are one mountain top.",
+      "Rank 4 Vracar plateau (134 m, a Belgrade city district) and rank 5 Cegar (a battlefield memorial) sit above Radocelo and every real Serbian massif. Both should be removed, not reordered.",
+      "Rank 10 Trescovat is in Romania.",
+      "Ranks 7, 8 and 11 (Alibegovac, Strazilovo, Karagaca) are three minor Fruska Gora points, one of them a valley, while the range's own summit Crveni Cot is absent.",
+      "Serbia's highest mountain (Midzor) and its most iconic silhouette (Rtanj) are absent, so the ordering question is partly moot: the list cannot be defensibly ordered when the top of the field is missing.",
+      "Tier 2 collapses into two flat score bands, 0.682 across 21 rows and 0.307 across 13 rows, mostly unnamed hills near Mokra Gora, Zlatibor and Studenica. Below rank 20 nothing is ranked."
+    ]
+  },
+  "counts_verdict": "0 beaches is wrong on the pipeline's own terms: Ada Ciganlija and Strand are the two most used bathing beaches in the country and freshwater beaches are counted for Austria, Germany and Switzerland. 54 mountains is a reasonable number for Serbia but the wrong 54: the list is generated from catalogue anchors (Kopaonik, Mokra Gora, Zlatibor, Studenica, Sremski Karlovci, Djavolja Varos, Lepenski Vir), so it is dense in unnamed 600 to 800 m ridges around those seven points and empty everywhere else, including the whole of Stara Planina and Suva Planina in the east.",
+  "top_pick_verdict": "top_mountain 'Pancicev vrh' is acceptable but not the best card: it is the summit of Kopaonik, the country's main ski mountain, and it is a real, correctly located peak. It should still be deduplicated first, because the same peak appears three times under three spellings. If the card is meant to say 'this is Serbia's mountain', Midzor (Q962856, the country's highest) or Rtanj (Q46047, the most recognisable) are stronger. There is no top_beach; once harvested it should be Ada Ciganlija (Q2321302).",
+  "notes": "Three defects here are worth generalising. (1) Country assignment by nearest catalogue city puts a Romanian mountain in the Serbian file across the Danube at the Iron Gates; a point-in-polygon test against the national boundary, with a tolerance band only for genuine ridge-line border summits, fixes it. (2) The dedupe does not fold Cyrillic-to-Latin and diacritic-to-ASCII transliterations, so Pancicev vrh, Pancic's Peak and Panchichev vrh survive as three features; the same defect produced the Bulgarian Nesebar quadruplet. (3) 'natural_monument' as a designation is boosting urban and memorial sites (Vracar plateau, Cegar, Banovo brdo, Banjicki Vis) into tier 1; the designation should raise a score only for features that already pass a landform test, never substitute for one."
+}

@@ -1,0 +1,280 @@
+{
+  "iso2": "SE",
+  "country": "Sweden",
+  "checked_at": "2026-08-17",
+  "beaches": {
+    "wrong": [
+      {
+        "name": "Brf Kungsholms Strand 165",
+        "class": "other",
+        "why": "Tier 1, rank 5. This is a housing cooperative (bostadsrattsforening) at the address Kungsholms Strand 165 on Kungsholmen, Stockholm. OSM has a place=house object at exactly the snapshot coordinate 59.3382/18.0251. It is a residential building on a canal, not a beach.",
+        "source_url": "https://nominatim.openstreetmap.org/ui/search.html?q=Kungsholms+strand+165+Stockholm"
+      },
+      {
+        "name": "Battle of Marstrand",
+        "class": "other",
+        "why": "Tier 1, rank 6. This is a 1677 Dano-Norwegian siege of Marstrand during the Scanian War. A historical event article has been geocoded onto the town and admitted to the beaches ranking. The worst single entry in the Nordic group.",
+        "source_url": "https://en.wikipedia.org/wiki/Battle_of_Marstrand"
+      },
+      {
+        "name": "Strandstugan i sandskogen",
+        "class": "duplicate_of:Stranden - Ystad Sandskog",
+        "why": "Tier 1, rank 2, with a score identical to rank 1 (0.982) and sitting 1.3 km along the same continuous strand in front of Ystads sandskog nature reserve. Two tier 1 slots for one beach.",
+        "source_url": "https://sv.wikipedia.org/wiki/Ystads_sandskog"
+      },
+      {
+        "name": "Ryssvagen Strand",
+        "class": "duplicate_of:Ryssvagen, public beach",
+        "why": "Tier 2, ranks 16 and 17 are the same spot: 55.4346/13.8924 and 55.4348/13.8921, about 30 m apart, both scored 0.766. Pure duplicate.",
+        "source_url": "data/curation/wire_snapshot/SE.json"
+      },
+      {
+        "name": "Sandskogens Strand",
+        "class": "duplicate_of:Stranden - Ystad Sandskog",
+        "why": "Tier 2, rank 18. Another name for the same Ystad Sandskog strand, 300 m from Strandstugan i sandskogen.",
+        "source_url": "https://sv.wikipedia.org/wiki/Ystads_sandskog"
+      },
+      {
+        "name": "Stranden i Ystad",
+        "class": "duplicate_of:Stranden - Ystad Sandskog",
+        "why": "Tier 2, rank 20. Same beach again, 2.6 km from Ystad centre on the same shoreline.",
+        "source_url": "https://sv.wikipedia.org/wiki/Ystads_sandskog"
+      },
+      {
+        "name": "Tredje Bryggan, Ystad Strand",
+        "class": "duplicate_of:Stranden - Ystad Sandskog",
+        "why": "Tier 2, rank 22. Names the third jetty on the same Ystad beach; a jetty is not a separate beach.",
+        "source_url": "https://sv.wikipedia.org/wiki/Ystads_sandskog"
+      },
+      {
+        "name": "Ystad Beach",
+        "class": "duplicate_of:Stranden - Ystad Sandskog",
+        "why": "Tier 2, rank 23. The English name of the same strand. In total 11 of Sweden's 32 tiered beaches (Stranden - Ystad Sandskog, Strandstugan, Ryssvagen x2, Sandskogens Strand, Stranden i Ystad, Stranden Vid Fritidsbaren, Tredje Bryggan, Ystad Beach, Nybrostrand, Badhytten) describe one 6 km stretch of coast at Ystad.",
+        "source_url": "https://sv.wikipedia.org/wiki/Ystads_sandskog"
+      }
+    ],
+    "missing": [
+      {
+        "name": "Sandhammaren",
+        "qid": "Q2220749",
+        "lat": 55.3855,
+        "lon": 14.19738,
+        "why": "Repeatedly voted Sweden's best beach and the one beach every Swede would name; fine white sand and dunes on Osterlen. Absurdly, it lies in the same municipality as the Ystad cluster that fills eleven slots, and it is not in the list at all.",
+        "source_url": "https://visitsweden.com/what-to-do/nature-outdoors/beaches-in-sweden/",
+        "verified": true
+      },
+      {
+        "name": "Tylosand",
+        "qid": "Q2024098",
+        "lat": 56.65,
+        "lon": 12.73333,
+        "why": "Halmstad's long beach in Halland, the best known summer beach on the Swedish west coast and named by Visit Sweden as one of the country's most beautiful sandy shores. Coordinate from Wikidata (the Tylosand urban area).",
+        "source_url": "https://visitsweden.com/where-to-go/southern-sweden/halland/",
+        "verified": true
+      },
+      {
+        "name": "Ribersborgsstranden",
+        "qid": "Q7322335",
+        "lat": 55.60083,
+        "lon": 12.95861,
+        "why": "Malmo's 2.5 km city beach with the Kallbadhus, the beach of Sweden's third city, which has no beach in the list at all.",
+        "source_url": "https://sv.wikipedia.org/wiki/Ribersborgsstranden",
+        "verified": true
+      },
+      {
+        "name": "Sudersand",
+        "qid": "Q21044846",
+        "lat": 57.95213,
+        "lon": 19.25443,
+        "why": "Faro's long white sand beach, the classic Gotland beach. Gotland contributes zero beaches to the current list.",
+        "source_url": "https://www.wikidata.org/wiki/Q21044846",
+        "verified": true
+      },
+      {
+        "name": "Tofta strand",
+        "qid": "Q26197228",
+        "lat": 57.486444,
+        "lon": 18.126188,
+        "why": "The main summer beach south of Visby, Gotland's busiest bathing beach.",
+        "source_url": "https://www.wikidata.org/wiki/Q26197228",
+        "verified": true
+      },
+      {
+        "name": "Varamobaden",
+        "qid": "Q10712818",
+        "lat": 58.54919,
+        "lon": 15.00483,
+        "why": "Motala's beach on Vattern, the largest inland bathing beach in northern Europe and a fixture of Swedish summer. The list has no inland beach at all.",
+        "source_url": "https://www.wikidata.org/wiki/Q10712818",
+        "verified": true
+      },
+      {
+        "name": "Boda sand",
+        "qid": null,
+        "lat": 57.2574,
+        "lon": 17.04583,
+        "why": "Northern Oland's long sand beach and camping resort, the biggest beach destination on the island. No Wikidata item for the beach itself was found; the coordinate given is the Boda urban area (Q4452104), so the entry is unverified as a beach coordinate.",
+        "source_url": "https://www.wikidata.org/wiki/Q4452104",
+        "verified": false
+      },
+      {
+        "name": "Falsterbo and Skanor beaches",
+        "qid": "Q972113",
+        "lat": 55.39722,
+        "lon": 12.83889,
+        "why": "The Falsterbo peninsula in Skane carries Sweden's widest white sand beaches (Skanors ljung, Falsterbo strandbad). QID and coordinate given are for Falsterbo the locality, not a beach object, so unverified.",
+        "source_url": "https://visitsweden.com/where-to-go/southern-sweden/skane/skane-and-malmo-beaches/",
+        "verified": false
+      },
+      {
+        "name": "Ahus (Tappet)",
+        "qid": "Q127419",
+        "lat": 55.92861,
+        "lon": 14.295,
+        "why": "Long Baltic beach in Skane with the Tappet dunes at the Helge river mouth. QID and coordinate are for the locality of Ahus, not the beach, so unverified.",
+        "source_url": "https://www.wikidata.org/wiki/Q127419",
+        "verified": false
+      }
+    ],
+    "order": [
+      "Rank 1 and 2 are the same beach with the same score. Rank 5 is a housing cooperative. Rank 6 is a 17th century naval siege. Three of the top six tier 1 slots are indefensible.",
+      "Kattrumpan (rank 3) is a bathing spot named after a quarter of Kalmar and carries an image of Bastionen Regeringen, a bastion. It is a real EEA bathing site but it is not Sweden's third beach.",
+      "Marstrands Nakenbad (rank 12) is a naturist bathing rock; fine on a map layer, wrong in a national top twelve.",
+      "Geographic coverage rather than order is the deeper problem: the tiered list touches only Ystad, Kullaberg, Kalmar, Lulea, Vaxholm, Marstrand and Stockholm. Gotland, Halland, Malmo, Falsterbo, Oland and the whole Bohuslan coast contribute nothing.",
+      "Names are shipped raw from the EEA register: 'public beach Notviken', 'public beach Nyhamnslage,  bryggan', 'public beach Lerhamn, hamnpiren,' with double spaces and trailing commas."
+    ]
+  },
+  "mountains": {
+    "wrong": [
+      {
+        "name": "Mariaberget",
+        "class": "town_or_village",
+        "why": "Tier 1, rank 3. Mariaberget is an informal neighbourhood on north west Sodermalm in Stockholm, the area north of Hornsgatan between Torkel Knutssonsgatan and Pustegrand. An urban district, not a mountain, ranked third in Sweden.",
+        "source_url": "https://sv.wikipedia.org/wiki/Mariaberget"
+      },
+      {
+        "name": "Skinnarviksberget",
+        "class": "not_notable",
+        "why": "Tier 1, rank 5, and at 59.3202/18.0505 it is essentially the same rock as Mariaberget at rank 3 (about 100 m apart). It is a 53 m rock outcrop in Skinnarviksparken, Sodermalm, the highest natural point inside the Stockholm tolls and a picnic viewpoint. Not a mountain by any national standard.",
+        "source_url": "https://sv.wikipedia.org/wiki/Skinnarviksberget"
+      },
+      {
+        "name": "Kiirunavaara",
+        "class": "other",
+        "why": "Tier 1, rank 2. Kiirunavaara is the fell that holds Kirunagruvan, LKAB's iron ore operation and the world's largest underground iron mine, worked since the early 1900s. It is an active industrial site, not a mountain a traveller visits.",
+        "source_url": "https://sv.wikipedia.org/wiki/Kiirunavaara"
+      },
+      {
+        "name": "Mjalton",
+        "class": "island",
+        "why": "Tier 1, rank 7. Mjalton is an island and nature reserve in the High Coast, separated from the mainland by Mjaltosundet; it is Sweden's highest island because of the summit Bastutoberget at 236 m. The feature listed is the island, not the summit, and the High Coast's actual landmark mountain (Skuleberget) is absent.",
+        "source_url": "https://sv.wikipedia.org/wiki/Mj%C3%A4lt%C3%B6n"
+      },
+      {
+        "name": "Hoghall",
+        "class": "not_notable",
+        "why": "Tier 1, rank 8. Oland's highest point at 55 m above sea level, standing in a field about 500 m north of Hogsrum church next to Hoghall farm. Technically a high point, in practice farmland with no access, view or path.",
+        "source_url": "https://sv.wikipedia.org/wiki/H%C3%B6gh%C3%A4ll"
+      },
+      {
+        "name": "Observatoriekullen",
+        "class": "park_or_area",
+        "why": "Tier 2, rank 11. Observatoriekullen is the hill inside Observatorielunden, a city park in Vasastan, central Stockholm, on the Stockholm esker. A third Stockholm micro hill in the national mountains ranking.",
+        "source_url": "https://sv.wikipedia.org/wiki/Observatorielunden"
+      }
+    ],
+    "missing": [
+      {
+        "name": "Kebnekaise",
+        "qid": "Q214011",
+        "lat": 67.9,
+        "lon": 18.51667,
+        "why": "Sweden's highest mountain (about 2096 m) and the country's single most recognisable summit, with the STF Kebnekaise mountain station. Kiruna is already a catalogue destination (gem:kiruna) and is represented instead by an iron mine and a ski hill.",
+        "source_url": "https://sv.wikipedia.org/wiki/Kebnekaise",
+        "verified": true
+      },
+      {
+        "name": "Sarektjakka",
+        "qid": "Q596485",
+        "lat": 67.43139,
+        "lon": 17.72139,
+        "why": "2089 m massif at the heart of Sarek national park, the emblem of Swedish wilderness and part of the Laponia world heritage area.",
+        "source_url": "https://www.wikidata.org/wiki/Q596485",
+        "verified": true
+      },
+      {
+        "name": "Helags (Helagsfjallet)",
+        "qid": "Q1601691",
+        "lat": 62.90444,
+        "lon": 12.4525,
+        "why": "1797 m in Harjedalen, the highest mountain in Sweden south of the Arctic Circle and home to the country's southernmost glacier.",
+        "source_url": "https://sv.wikipedia.org/wiki/Helags",
+        "verified": true
+      },
+      {
+        "name": "Skuleberget",
+        "qid": "Q3486391",
+        "lat": 63.07475,
+        "lon": 18.34644,
+        "why": "The High Coast landmark at Docksta with the Skuleberget via ferrata, cable car and the Hogakusten visitor centre. The High Coast destination in the app is represented instead by Mjalton, Rammberget and Trollarviksberget.",
+        "source_url": "https://sv.wikipedia.org/wiki/Skuleberget",
+        "verified": true
+      },
+      {
+        "name": "Sylarna",
+        "qid": "Q1510626",
+        "lat": 63.02,
+        "lon": 12.19861,
+        "why": "The Syl massif in Jamtland, the classic fell hiking target reached from Storulvan, close to the Are destination already in the catalogue.",
+        "source_url": "https://sv.wikipedia.org/wiki/Sylarna",
+        "verified": true
+      },
+      {
+        "name": "Nuolja (Njulla)",
+        "qid": "Q1668760",
+        "lat": 68.3725,
+        "lon": 18.69833,
+        "why": "The fell above Abisko with the Aurora Sky Station chairlift, the midnight sun and northern lights viewpoint of Swedish Lapland. Abisko is part of the gem:kiruna destination label in the data.",
+        "source_url": "https://sv.wikipedia.org/wiki/Nuolja",
+        "verified": true
+      },
+      {
+        "name": "Kullaberg",
+        "qid": "Q1791521",
+        "lat": 56.3,
+        "lon": 12.46667,
+        "why": "The rocky ridge and nature reserve at Molle with the Kullen lighthouse and the Nimis sculpture. The app already has the destination gem:molle-kullaberg, but represents it with Gregers backar and Hakull, two minor knolls on the same ridge.",
+        "source_url": "https://sv.wikipedia.org/wiki/Kullaberg",
+        "verified": true
+      },
+      {
+        "name": "Snasahogarna",
+        "qid": "Q3299226",
+        "lat": 63.22855,
+        "lon": 12.34399,
+        "why": "The massif west of Are, the most walked fell group of Jamtland after Areskutan.",
+        "source_url": "https://www.wikidata.org/wiki/Q3299226",
+        "verified": true
+      },
+      {
+        "name": "Stadjan",
+        "qid": "Q10682836",
+        "lat": 61.91889,
+        "lon": 12.87889,
+        "why": "The cone shaped landmark of northern Dalarna in Stadjan-Nipfjallet nature reserve. Dalarna contributes no mountain at all to the current list.",
+        "source_url": "https://sv.wikipedia.org/wiki/St%C3%A4djan",
+        "verified": true
+      }
+    ],
+    "order": [
+      "Three of the eleven tier 1 mountains are Stockholm city hills (Mariaberget rank 3, Skinnarviksberget rank 5, and Observatoriekullen just below at tier 2 rank 11) while Kebnekaise, Sarek and Helags are absent. That is the clearest ranking failure in the group after Norway's Geiranger cluster.",
+      "Mariaberget (rank 3) and Skinnarviksberget (rank 5) are 100 m apart and are effectively the same rock, so two of the top five are one object.",
+      "Areskutan at rank 1 is defensible on visitor numbers (Sweden's biggest ski mountain) but the national card mountain is Kebnekaise.",
+      "Ramnefjall (rank 9) and Runnholmsbramen (rank 10) are unnamed coastal knolls near the Koster Islands with score 0.777, promoted by a national_park flag rather than by any fame signal.",
+      "Below rank 19 every remaining Swedish mountain shares the score 0.302, so the ranking has no discriminating signal left at all."
+    ]
+  },
+  "counts_verdict": "32 beaches and 28 mountains is too small and, worse, badly distributed. Sweden has 11 counties with significant coast; the tiered beach list covers seven places and gives one of them (Ystad) eleven of the 32 rows. 28 mountains for a country with a 2000 m alpine range, four mountain national parks and the whole Jamtland and Lapland fell country is far too few, and it spends three of them on Stockholm parks. A defensible shape would be roughly 60 to 80 beaches spread over Skane, Halland, Bohuslan, Gotland, Oland and the Norrland coast, and 50 or more mountains with Lapland and Jamtland dominant.",
+  "top_pick_verdict": "Neither pick would survive a Swedish reader. top_beach 'Stranden - Ystad Sandskog' is one of eleven names for the same strand; the country card belongs to Sandhammaren (repeatedly voted Sweden's best) or Tylosand. top_mountain 'Areskutan' is arguable on footfall, but the mountain on a Sweden card is Kebnekaise.",
+  "notes": "Image joins are wrong on several rows: Kattrumpan (a beach) is illustrated with Bastionen Regeringen Kalmar, a bastion. Names carry raw source artefacts ('public beach ' prefixes, trailing commas, 'Brf '). 'Waxholms Strand' (tier 1 rank 9) and 'Bogesunds Strand' (tier 1 rank 11) could not be confirmed as beaches in any source (no Wikidata item, no OSM natural=beach match); both read like property or development names and should be re-checked before they are shown. Five of the 32 beaches have no EEA row (sources ['osm'] only), and those five include Battle of Marstrand and Brf Kungsholms Strand 165, so an eea-row requirement alone would remove two of the three worst entries."
+}
