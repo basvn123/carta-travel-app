@@ -89,7 +89,7 @@ export function FriendsSpoke({ userId, pendingHandle }) {
     // something the account holder can act on, so the block is simply absent.
     fetchMyProfile(userId)
       .then((row) => { if (live && row?.handle) setMyHandle(row.handle); })
-      .catch(() => {});
+      .catch((err) => console.warn('[friends] could not read your handle:', err?.message || err));
     return () => { live = false; };
   }, [userId, t]);
 

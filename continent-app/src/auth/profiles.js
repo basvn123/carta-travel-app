@@ -41,6 +41,15 @@ export function handleProblem(handle) {
   return null;
 }
 
+/**
+ * Your own profile, or null when this project has no profiles table yet.
+ *
+ * Callers degrade quietly, because a traveller can do nothing about a missing
+ * handle. That quiet once hid a real fault: migration 011's policy called a
+ * function no client could execute, so every read returned 42501 and the
+ * handle simply never appeared. So a REFUSED read is not the same as an
+ * absent one, and says so where somebody will see it.
+ */
 export async function fetchMyProfile(userId) {
   if (!supabase || !userId) return null;
   const { data, error } = await supabase
@@ -48,7 +57,13 @@ export async function fetchMyProfile(userId) {
     .select('user_id, handle, display_name, avatar_emoji')
     .eq('user_id', userId)
     .maybeSingle();
-  if (error) throw error;
+  if (error) {
+    // 42501 is a broken grant or policy, never a missing row.
+    if (error.code === '42501') {
+      console.error('[profiles] read refused, check the RLS policy and its grants:', error.message);
+    }
+    throw error;
+  }
   return data || null;
 }
 

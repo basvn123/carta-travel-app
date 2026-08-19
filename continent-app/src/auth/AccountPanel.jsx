@@ -213,7 +213,7 @@ export function AccountPanel({
         setStoredHandle(row.handle || '');
         setHandle(row.handle || '');
       })
-      .catch(() => {});
+      .catch((err) => console.warn('[account] could not read your profile:', err?.message || err));
     return () => { live = false; };
   }, [user]);
 
