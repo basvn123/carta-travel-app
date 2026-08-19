@@ -57,7 +57,8 @@ await page.waitForTimeout(3000); // let the data payload + first render settle
 // errors. This is the net for the lazy-loaded planner tabs a build can't cover.
 await step('Trip planner tab', () => clickButton(/trip planner/i).then((t) => `clicked "${t}"`));
 await step('Day planner tab', () => clickButton(/day planner/i).then((t) => `clicked "${t}"`));
-await step('back to Map tab', () => clickButton(/^map$/i).then((t) => `clicked "${t}"`));
+// The map tab reads "Explore" in the chrome at every width.
+await step('back to Map tab', () => clickButton(/^explore$/i).then((t) => `clicked "${t}"`));
 // Best-effort: open a destination's detail panel to exercise the DetailPanel /
 // DetailBreakdown split. Doesn't fail the run (the results list may be collapsed
 // after tab-switching); it just logs whether the breakdown rendered.

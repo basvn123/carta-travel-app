@@ -143,7 +143,7 @@ try {
   await ctx.addInitScript(seedSession(PROJECT_REF, USER));
   const page = await ctx.newPage();
   await stubSupabase(page, state);
-  await page.goto(`${BASE}/?o=CRL&tab=home`);
+  await page.goto(`${BASE}/?o=CRL`);
   await page.locator('.account-avatar-btn').first().waitFor({ timeout: 120000 });
   await openPanel(page);
 
@@ -158,7 +158,7 @@ try {
   if (mono.trim() !== 'SO') fail(`monogram for Sam Okonkwo is "${mono}", expected SO`);
   if (!(await page.locator('.account-invite').count())) fail('the invite banner is missing');
   const menuRows = await page.locator('.account-menu-row').count();
-  if (menuRows !== 3) fail(`expected 3 help menu rows, found ${menuRows}`);
+  if (menuRows !== 4) fail(`expected 4 help menu rows, found ${menuRows}`);
   const rowBox = await page.locator('.account-menu-row').first().boundingBox();
   if (!rowBox || rowBox.height < 44) fail(`menu rows are ${rowBox?.height}px tall, under the 44px target`);
   if (await page.locator('#acct-name').count()) fail('the profile form leaks onto the hub');
@@ -336,6 +336,16 @@ try {
   ok(`${faqItems} questions, answers open one at a time`);
   await page.screenshot({ path: `${SHOTS}/account-faq.png` });
 
+  // ---- 8b. The data credits spoke. The licenses that ask for a visible
+  //          credit are answered here now that the front page is gone, so an
+  //          empty list is a compliance problem, not a cosmetic one.
+  await page.locator('.account-back').click();
+  await page.locator('.account-menu-row', { hasText: 'Data sources' }).click();
+  const creditLines = await page.locator('.account-credits li').allInnerTexts();
+  if (creditLines.length < 10) fail(`data sources spoke lists ${creditLines.length} credits`);
+  if (!creditLines.some((l) => /OpenStreetMap/.test(l))) fail('credits never name OpenStreetMap');
+  ok(`data sources: ${creditLines.length} credits, OpenStreetMap among them`);
+
   // ---- 9. The feedback spoke.
   console.log('8. feedback spoke');
   await page.locator('.account-back').click();
@@ -370,7 +380,7 @@ try {
   await ctxG.addInitScript(seedSession(PROJECT_REF, GOOGLE_USER));
   const pageG = await ctxG.newPage();
   await stubSupabase(pageG, state);
-  await pageG.goto(`${BASE}/?o=CRL&tab=home`);
+  await pageG.goto(`${BASE}/?o=CRL`);
   await pageG.locator('.account-avatar-btn').first().waitFor({ timeout: 120000 });
   await openPanel(pageG);
   await goToProfile(pageG);

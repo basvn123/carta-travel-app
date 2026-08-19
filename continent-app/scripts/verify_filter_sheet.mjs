@@ -330,7 +330,7 @@ await desk.addInitScript(() => {
 await desk.goto(URL, { waitUntil: 'domcontentloaded', timeout: 45000 });
 await desk.waitForTimeout(3000);
 try {
-  // The desktop shell can land on Home; the filter rows live on Explore, which
+  // The shell opens on Destinations; the filter rows live on Explore, which
   // is what the tab is called at every width now.
   const exploreTab = desk.locator('.header-nav-item', { hasText: /^\s*explore\s*$/i }).first();
   if (await exploreTab.isVisible().catch(() => false)) {

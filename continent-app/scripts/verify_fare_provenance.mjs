@@ -1,7 +1,7 @@
 // Headless verify for the fare provenance layer (FareProvenance.jsx):
 // freshness chips, estimate styling, "from" phrasing and the booking-site
-// warning, across the homepage, the results list, the destination sheet and
-// the trip itinerary.
+// warning, across the results list, the destination sheet and the trip
+// itinerary.
 //
 // No fare in the shipped data carries contract A fields yet, so the display
 // layer's ?provmock= seam supplies them per page load:
@@ -143,63 +143,10 @@ async function checkTrip(page, mock, tag) {
   await page.screenshot({ path: `${SHOTS}/prov-trip-${tag}.png`, fullPage: false });
 }
 
-/** Homepage: receipt flight lines + the deck's cheapest-three rows. The app
- *  lands on the Map tab, so walk over via the HOME nav button. */
-async function checkHome(page, mock, tag) {
-  await page.goto(`${BASE}/?o=CRL${mock ? `&provmock=${mock}` : ''}`);
-  await page.locator('.result-row, .home-page').first().waitFor({ timeout: 120000 });
-  for (const btn of await page.getByRole('button').all()) {
-    const txt = (await btn.innerText().catch(() => '')).trim();
-    if (/^home$/i.test(txt) && (await btn.isVisible().catch(() => false))) { await btn.click(); break; }
-  }
-  await page.locator('.home-receipt').waitFor({ timeout: 120000 });
-  await page.waitForTimeout(1000);
-
-  const fromWords = await count(page, '.home-prev .prov-from');
-  const tags = await count(page, '.home-receipt .fare-prov');
-  const body = await page.locator('.home-r-body').innerText();
-
-  if (!mock) {
-    // Since the estimate bands shipped, the receipt's pick can be GENUINELY
-    // estimate-priced with no mock: est chips are then correct, but only
-    // when the tilde rides the flight lines too, and an age chip can never
-    // appear without fields (only harvests and mocks produce observed_at).
-    const ageChips = await count(page, '.home-receipt .fare-prov-age');
-    const estChips = await count(page, '.home-receipt .fare-prov-est');
-    const tilde = /~€/.test(body);
-    if (ageChips > 0) fail(`[home ${tag}] age chips rendered with no fields`);
-    else ok(`[home ${tag}] no age chips without fields`);
-    if ((estChips > 0) !== tilde) {
-      fail(`[home ${tag}] est chip/tilde mismatch (chips ${estChips}, tilde ${tilde})`);
-    } else {
-      ok(`[home ${tag}] est styling consistent (${estChips > 0 ? 'genuinely estimated receipt' : 'quoted receipt, no chips'})`);
-    }
-    if (fromWords < 1) fail(`[home ${tag}] discovery rows carry no "from" word`);
-    else ok(`[home ${tag}] "from" phrasing on discovery rows (${fromWords})`);
-  } else if (mock.includes('est')) {
-    if (await count(page, '.home-receipt .fare-prov-est') < 1) fail(`[home ${tag}] est. chip missing on receipt flight lines`);
-    else ok(`[home ${tag}] est. chip on receipt flight lines`);
-    if (!/~/.test(body)) fail(`[home ${tag}] no tilde on estimated receipt lines`);
-    else ok(`[home ${tag}] tilde on estimated receipt lines`);
-    if (fromWords > 0) fail(`[home ${tag}] "from" phrasing kept on an estimate`);
-    else ok(`[home ${tag}] estimates drop the "from" word`);
-  } else {
-    // Mocked age: the receipt shows the age chip, UNLESS its fare is
-    // genuinely estimate-priced, in which case EST correctly replaces the
-    // age (an estimate has no observed_at). Some chip must always render.
-    const seenAges = await count(page, '.home-receipt .fare-prov-age');
-    const seenEsts = await count(page, '.home-receipt .fare-prov-est');
-    if (seenAges < 1 && seenEsts < 1) fail(`[home ${tag}] no chip at all on receipt flight lines`);
-    else ok(`[home ${tag}] receipt chips render (age ${seenAges}, est ${seenEsts}; est replaces age on an estimated fare)`);
-  }
-  await page.locator('#home-total').scrollIntoViewIfNeeded();
-  await page.screenshot({ path: `${SHOTS}/prov-home-${tag}.png` });
-}
-
 /** Map tab: results list rows, then a destination sheet's flight group. */
 async function checkBrowse(page, mock, tag) {
   await page.goto(`${BASE}/?o=CRL&t=plane${mock ? `&provmock=${mock}` : ''}`);
-  // The Home tab is the landing surface; move to the map.
+  // Every visit opens on Destinations; move to the map.
   for (const btn of await page.getByRole('button').all()) {
     const txt = (await btn.innerText().catch(() => '')).trim();
     if (/^map$/i.test(txt) && (await btn.isVisible().catch(() => false))) { await btn.click(); break; }
@@ -247,15 +194,12 @@ try {
   await probeSlice();
   const page = await newPage();
   // Baseline: no fields, nothing field-driven may render.
-  await checkHome(page, '', 'plain');
   await checkBrowse(page, '', 'plain');
   await checkTrip(page, '', 'plain');
   // A real quote with a known age and expiry.
-  await checkHome(page, 'age:3,exp:14', 'seen');
   await checkBrowse(page, 'age:3,exp:14', 'seen');
   await checkTrip(page, 'age:3,exp:14', 'seen');
   // A model estimate.
-  await checkHome(page, 'age:3,exp:14,est:1', 'est');
   await checkBrowse(page, 'age:3,exp:14,est:1', 'est');
   await checkTrip(page, 'age:3,exp:14,est:1', 'est');
   await browser.close();

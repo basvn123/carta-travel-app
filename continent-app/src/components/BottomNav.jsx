@@ -4,13 +4,11 @@ import { useI18n } from '../i18n/index.jsx';
 
 // Bottom navigation, MOBILE only (hidden by CSS on desktop, where the same
 // sections live in the AppHeader). Five slots around a raised central plus:
-// Destinations (the catalogue + published trips), Explore (the map), the plus
-// that opens the Trip planner / Day planner chooser, My trips (the saved-trips
-// panel) and Account (the account panel, which left the top bar on mobile so
-// the row over the map keeps its width for the filters). Home has no tab here
-// on purpose: the front page is a desktop entrance, and on a phone every bar
-// item already leads somewhere more useful. The homepage overlay sits BELOW
-// this bar (z-index), so tapping any item leaves it like any other tab switch.
+// Destinations (the catalogue + published trips, where every visit starts),
+// Explore (the map), the plus that opens the Trip planner / Day planner
+// chooser, My trips (the saved-trips panel) and Account (the account panel,
+// which left the top bar on mobile so the row over the map keeps its width
+// for the filters).
 export function BottomNav({
   activeTab, onChangeTab,
   savedOpen, onToggleSaved,

@@ -7,7 +7,7 @@
  * directly harvested carrier fares) are deliberately absent; the ledger is
  * the full record.
  *
- * Rendered by the Data sources block in the home footer (HomePage.jsx). The
+ * Rendered by Account > Data sources (auth/AccountPanel.jsx). The
  * credit lines stay in English on purpose: they are license notices naming
  * proper nouns, and a translated "© OpenStreetMap contributors" is a worse
  * credit, not a better one. The prose around the block (heading, lede) goes

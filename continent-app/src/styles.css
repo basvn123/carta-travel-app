@@ -1817,11 +1817,6 @@ input, select {
   margin-left: 1px;
 }
 
-/* The homepage lives in its own stylesheet: src/styles/home.css, on the
-   Carta design tokens in src/styles/tokens.css. It is a separate design
-   system from the app shell below (cool greys, Instrument Sans, no
-   shadows), so it is kept in its own file rather than mixed in here. */
-
 /* "Open this shared trip?" dialog (a trip arriving via a share link). */
 .share-trip-modal { max-width: 420px; padding: 26px 26px 22px; }
 .share-trip-name { font-size: 14px; color: var(--ink-soft); margin: 10px 0 0; }
@@ -4313,10 +4308,9 @@ input, select {
 }
 .panel.open { transform: translateX(0); }
 
-/* Account & Saved trips slide-overs can be opened FROM the homepage (nav,
-   footer, mobile BottomNav), so they must layer above it (.home-page, z 45)
-   while staying under the auth overlays (z 60). The destination detail
-   panel keeps the base z-index. */
+/* Account & Saved trips slide-overs open over whatever tab is showing, so
+   they layer above the tab bodies while staying under the auth overlays
+   (z 60). The destination detail panel keeps the base z-index. */
 .account-panel { z-index: 56; }
 
 /* ── The destination panel's identity bar ────────────────────────────────
@@ -17480,6 +17474,22 @@ button.ai-sched-main:focus-visible {
   padding: 0 2px 16px;
   font-size: 13.5px;
   line-height: 1.6;
+  color: var(--ink-soft);
+}
+
+/* Data credits (Account > Data sources). License notices, so they are set to
+   be read rather than decorated: a hairline list, one credit per row. */
+.account-credits {
+  list-style: none;
+  margin: 12px 0 0;
+  padding: 0;
+  border-top: 1px solid var(--rule-soft);
+}
+.account-credits li {
+  padding: 9px 2px;
+  border-bottom: 1px solid var(--rule-soft);
+  font-size: 12.5px;
+  line-height: 1.55;
   color: var(--ink-soft);
 }
 

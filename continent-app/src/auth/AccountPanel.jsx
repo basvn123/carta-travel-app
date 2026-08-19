@@ -2,10 +2,11 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useAuth } from './AuthContext.jsx';
 import {
   ArrowLeftIcon, CheckIcon, ChevronDownIcon, ChevronRightIcon, EyeIcon,
-  EyeOffIcon, FeedbackIcon, LockIcon, PersonIcon, QuestionIcon, ShareIcon,
-  ShieldIcon, SignOutIcon, SparkIcon, TrashIcon,
+  EyeOffIcon, FeedbackIcon, InfoIcon, LockIcon, PersonIcon, QuestionIcon,
+  ShareIcon, ShieldIcon, SignOutIcon, SparkIcon, TrashIcon,
 } from '../components/Icons.jsx';
 import { PrivacyPolicy } from '../components/PrivacyPolicy.jsx';
+import { ATTRIBUTIONS } from '../data/attribution.js';
 import { CountryFlag } from '../components/CountryFlag.jsx';
 import { PassModal } from '../components/PassModal.jsx';
 import { useEntitlement } from '../hooks/useEntitlement.js';
@@ -13,10 +14,10 @@ import { TIERS, daysLeft, canUpgrade, formatPrice } from '../lib/pricing.js';
 import { MIN_PASSWORD_LENGTH, passwordStrength } from '../lib/passwordStrength.js';
 import { useI18n } from '../i18n/index.jsx';
 
-// Account hub. The panel is a hub with three spokes rather than one long
+// Account hub. The panel is a hub with four spokes rather than one long
 // scroll: the hub answers "who am I, what do I hold, where do I get help",
-// and everything with a form on it (profile, FAQ, feedback) is a subview
-// behind its own back button. A settings screen earns that structure the
+// and everything longer than a row (profile, FAQ, feedback, data sources) is
+// a subview behind its own back button. A settings screen earns that structure the
 // moment it holds both a password form and a feedback box, because the person
 // who came to report a bug should never scroll past "Delete account" to do it.
 //
@@ -36,14 +37,14 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const CONTACT = 'bas.vannieuwenhuyse123@gmail.com';
 const SHARE_URL = 'https://carta-europetravel.com';
 
-// Reuses the homepage answers so the two FAQ surfaces cannot drift apart,
-// then adds the four questions that only make sense once you have an account.
+// The five general answers, then the four questions that only make sense once
+// you have an account. This is the only FAQ surface in the app.
 const FAQ_KEYS = [
-  ['home.faq1Q', 'home.faq1A'],
-  ['home.faq2Q', 'home.faq2A'],
-  ['home.faq3Q', 'home.faq3A'],
-  ['home.faq4Q', 'home.faq4A'],
-  ['home.faq5Q', 'home.faq5A'],
+  ['account.faq1Q', 'account.faq1A'],
+  ['account.faq2Q', 'account.faq2A'],
+  ['account.faq3Q', 'account.faq3A'],
+  ['account.faq4Q', 'account.faq4A'],
+  ['account.faq5Q', 'account.faq5A'],
   ['account.faq6Q', 'account.faq6A'],
   ['account.faq7Q', 'account.faq7A'],
   ['account.faq8Q', 'account.faq8A'],
@@ -148,7 +149,7 @@ export function AccountPanel({ onClose, onOpenAuth }) {
   const { t, lang, setLang, languages } = useI18n();
   const entitlement = useEntitlement();
   const panelRef = useRef(null);
-  const [view, setView] = useState('home'); // 'home' | 'profile' | 'faq' | 'feedback'
+  const [view, setView] = useState('home'); // 'home' | 'profile' | 'faq' | 'feedback' | 'data'
   const [passOpen, setPassOpen] = useState(false);
   const [privacyOpen, setPrivacyOpen] = useState(false);
 
@@ -351,6 +352,7 @@ export function AccountPanel({ onClose, onOpenAuth }) {
   const heading = view === 'profile' ? t('account.profileDetails')
     : view === 'faq' ? t('account.menuFaq')
     : view === 'feedback' ? t('account.feedbackTitle')
+    : view === 'data' ? t('account.menuData')
     : user ? (storedName || storedEmail) : t('account.preferences');
 
   return (
@@ -490,6 +492,7 @@ export function AccountPanel({ onClose, onOpenAuth }) {
               <MenuRow icon={<FeedbackIcon size={17} />} label={t('account.menuFeedback')} onClick={() => setView('feedback')} />
               <MenuRow icon={<QuestionIcon size={17} />} label={t('account.menuFaq')} onClick={() => setView('faq')} />
               <MenuRow icon={<ShieldIcon size={17} />} label={t('account.privacyPolicy')} onClick={() => setPrivacyOpen(true)} />
+              <MenuRow icon={<InfoIcon size={17} />} label={t('account.menuData')} onClick={() => setView('data')} />
             </div>
           </div>
         </>
@@ -668,6 +671,23 @@ export function AccountPanel({ onClose, onOpenAuth }) {
               </div>
             ))}
           </div>
+        </div>
+      )}
+
+      {/* Data credits. Every source whose license asks for a visible credit,
+          from src/data/attribution.js, which is derived from
+          docs/tos/data_licenses.md. This used to sit in the front page's
+          footer; the front page is gone, so the credits live here, where the
+          privacy policy already is. A hairline list rather than cards: the
+          licenses ask for legibility, not for decoration. */}
+      {view === 'data' && (
+        <div className="panel-section">
+          <p className="account-section-hint">{t('account.dataHint')}</p>
+          <ul className="account-credits">
+            {ATTRIBUTIONS.map((a) => (
+              <li key={a.source}>{a.credit}</li>
+            ))}
+          </ul>
         </div>
       )}
 

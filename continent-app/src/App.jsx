@@ -10,7 +10,6 @@ import { DestinationsTab } from './browse/DestinationsTab.jsx';
 import { ComparePanel } from './browse/ComparePanel.jsx';
 import { InfoIcon } from './components/Icons.jsx';
 import Logo from './components/Logo.jsx';
-import { HomePage } from './components/HomePage.jsx';
 
 // A failed dynamic import is almost always a stale bundle: the client is still
 // running an old index.html whose chunk hashes no longer exist on the server
@@ -81,7 +80,7 @@ import { useReach } from './lib/reach.js';
 const GUEST_KEY = 'continent.guestMode.v1';
 
 // The pass picker, reachable from chrome (the header's "See pricing" and the
-// homepage cards) rather than only from a spent allowance. Mounted only while
+// account panel) rather than only from a spent allowance. Mounted only while
 // open so the ai_status read happens when somebody actually looks at prices,
 // not on every app load.
 function GlobalPassModal({ signedIn, onClose, onSignIn }) {
@@ -137,7 +136,7 @@ function TravelApp() {
   const [guestMode, setGuestMode] = useState(
     () => typeof window !== 'undefined' && localStorage.getItem(GUEST_KEY) === '1'
   );
-  // The pass picker, opened from the header or the homepage pricing cards.
+  // The pass picker, opened from the header or the account panel.
   const [passOpen, setPassOpen] = useState(false);
   // Shown before any data/route decisions: sign in, create an account, or
   // continue as a guest. Skipped entirely when accounts aren't configured,
@@ -162,21 +161,22 @@ function TravelApp() {
     prevUserRef.current = user;
   }, [user]);
 
-  // Which top-level section is showing: Home (the front page), Map (the
-  // browse/search experience), Destinations (the catalogue + published
-  // trips), Trip planner, or Day planner. EVERY visit
-  // opens on Home, first or fiftieth: it is a tab like the others, it shows
-  // today's real prices, and the tabs to leave it are in the header and the
-  // bottom bar. (The localStorage mirror's remembered tab is deliberately
-  // ignored.)
+  // Which top-level section is showing: Destinations (the catalogue +
+  // published trips), Map (the browse/search experience), Trip planner, or
+  // Day planner. EVERY visit opens on Destinations, first or fiftieth: there
+  // is no marketing front page in front of the app any more, so the first
+  // thing anybody sees is real places. (The localStorage mirror's remembered
+  // tab is deliberately ignored.)
   // A query string, though, means the view was shared or reloaded, so it
   // decides which tab opens. The encoder omits `tab` for the map (it is the
   // URL's implicit default), so a link carrying filters but no tab is a map
-  // link, not a reason to drop someone on the front page.
+  // link. Links from the old front page (`tab=home`) land on Destinations,
+  // which is what replaced it.
   const urlTab = typeof window !== 'undefined' && !!window.location.search
-    ? (['home', 'map', 'places', 'trip', 'day'].includes(init.activeTab) ? init.activeTab : 'map')
+    ? (init.activeTab === 'home' ? 'places'
+      : (['map', 'places', 'trip', 'day'].includes(init.activeTab) ? init.activeTab : 'map'))
     : null;
-  const [activeTab, setActiveTab] = useState(urlTab || 'home');
+  const [activeTab, setActiveTab] = useState(urlTab || 'places');
 
   const [selectedId, setSelectedId] = useState(init.selectedId ?? null);
 
@@ -208,7 +208,7 @@ function TravelApp() {
 
   // Planner tabs mount on first visit and then stay alive (hidden) so a quick
   // look at another tab never wipes an in-progress plan.
-  const [visitedTabs, setVisitedTabs] = useState(() => new Set(['map', urlTab || 'map']));
+  const [visitedTabs, setVisitedTabs] = useState(() => new Set(['map', urlTab || 'places']));
   useEffect(() => {
     setVisitedTabs((prev) => (prev.has(activeTab) ? prev : new Set([...prev, activeTab])));
   }, [activeTab]);
@@ -289,24 +289,18 @@ function TravelApp() {
     try { return localStorage.getItem('carta.mapGuideDone') === '1'; } catch { return false; }
   });
 
-  // Nudges TripPlannerTab to open the guided wizard (homepage CTA): bumping
-  // the counter is the signal, the tab consumes it via an effect.
-  const [wizardLaunch, setWizardLaunch] = useState(0);
-
   // Escape closes the top-most dismissable surface (the shared-trip offer,
-  // then the destination detail, then the homepage falls through to the map).
-  // Gives keyboard users a way out that the click-outside backdrop alone
-  // never provided.
+  // then the destination detail). Gives keyboard users a way out that the
+  // click-outside backdrop alone never provided.
   useEffect(() => {
     const onKey = (e) => {
       if (e.key !== 'Escape') return;
       if (sharedTrip) { setSharedTrip(null); return; }
-      if (selectedId) { setSelectedId(null); return; }
-      if (activeTab === 'home') { setActiveTab('map'); }
+      if (selectedId) { setSelectedId(null); }
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [sharedTrip, selectedId, activeTab]);
+  }, [sharedTrip, selectedId]);
 
   // Let the user collapse the destinations list to give the map the full width.
   // On phones (<=768px) it starts collapsed so the map opens as big as possible;
@@ -352,9 +346,8 @@ function TravelApp() {
   }, []);
 
   // Drive mode with the question still open. The engine falls back to flight
-  // prices in this state (which is what the flights-first homepage wants), so
-  // it is the MAP tab that holds its results back: showing fares under a car
-  // toggle would answer a question nobody asked.
+  // prices in this state, so it is the MAP tab that holds its results back:
+  // showing fares under a car toggle would answer a question nobody asked.
   const driveHomeMissing = needsDriveHome(choices);
 
   // Bumping this counter opens the picker's popover. It fires the moment the
@@ -432,8 +425,8 @@ function TravelApp() {
     initialPriceRange: init.priceRange,
   });
 
-  // What the Map tab is allowed to show. Everything else (the homepage's pins
-  // and receipt) keeps the full priced set: those are fares, and they do not
+  // What the Map tab is allowed to show. Everything else (the Destinations
+  // tab's cards) keeps the full priced set: those are fares, and they do not
   // depend on the answer the map is waiting for.
   const mapPriced = driveHomeMissing ? noResults : priced;
   const mapUnreachable = (driveHomeMissing || topPick) ? noResults : unreachable;
@@ -537,8 +530,7 @@ function TravelApp() {
           user={user}
           onOpenAccount={() => setAccountOpen(true)}
           onSeePricing={() => setPassOpen(true)}
-          isHome={activeTab === 'home'}
-          onGoHome={() => setActiveTab('home')}
+          onBrandClick={() => { setSavedTripsOpen(false); setActiveTab('places'); }}
           activeTab={activeTab}
           onChangeTab={(key) => { setSavedTripsOpen(false); setActiveTab(key); }}
           savedOpen={savedTripsOpen}
@@ -655,42 +647,9 @@ function TravelApp() {
         </div>
       )}
 
-      {/* The homepage: a tab body like the map and the planners, sitting
-          under the same .app-header rather than over it, so leaving Home is
-          one tap on chrome that never moved. Every visit lands here, the
-          brand mark comes back any time, and the hero's search strip edits
-          the live app state so the CTA hand-off arrives on an already-priced
-          map. */}
-      {activeTab === 'home' && (
-        <HomePage
-          data={data}
-          choices={choices}
-          setChoices={setChoices}
-          onChangeOrigin={setOrigin}
-          departDate={departDate}
-          setDepartDate={setDepartDate}
-          returnDate={returnDate}
-          setReturnDate={setReturnDate}
-          dateBounds={dateBounds}
-          // Cheapest-first, so the landing page can take its receipt
-          // destination and its map pins straight off the front of it.
-          pricedAll={pricedAll}
-          totalCount={Object.keys(data.destinations).length}
-          countryCount={availableCountries.length}
-          onOpenAccount={() => setAccountOpen(true)}
-          onOpenPass={() => setPassOpen(true)}
-          onExplore={() => setActiveTab('map')}
-          onPlanTrip={() => {
-            setActiveTab('trip');
-            setWizardLaunch((n) => n + 1);
-          }}
-          onNavigate={(key) => { setSavedTripsOpen(false); setActiveTab(key); }}
-        />
-      )}
-
       {/* The map tab gets the same keep-alive as the planners: destroying it
           on every tab hop meant a full MapLibre teardown + rebuild (style,
-          tiles, WebGL context, ~1500 markers) on every return to Home. The
+          tiles, WebGL context, ~1500 markers) on every return to it. The
           wrapper div is unpositioned, so the absolutely-placed panels inside
           keep anchoring to .app exactly as before. */}
       {visitedTabs.has('map') && (
@@ -900,7 +859,6 @@ function TravelApp() {
               onOpenPlanConsumed={() => setPendingTripPlanId(null)}
               openSharedTrip={pendingSharedTrip}
               onSharedTripConsumed={() => setPendingSharedTrip(null)}
-              openWizardSignal={wizardLaunch}
               origin={choices.origin}
               onChangeOrigin={setOrigin}
               lifestyle={choices.lifestyle}

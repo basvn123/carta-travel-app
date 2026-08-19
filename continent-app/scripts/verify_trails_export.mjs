@@ -100,40 +100,40 @@ try {
       + 'so loadTrails() has to read the content type');
   }
 
-  // ---- 5. The footer credits.
+  // ---- 5. The data credits, which live in Account > Data sources now that
+  //         the front page (and its footer) is gone.
   const browser = await chromium.launch();
   const page = await browser.newPage({ viewport: { width: 1360, height: 900 } });
-  await page.goto(`${BASE}/?tab=home`);
+  await page.goto(BASE);
   try {
     await page.getByRole('button', { name: 'Continue without an account' }).click({ timeout: 15000 });
   } catch { /* auth not configured in this build */ }
-  await page.locator('.home-page').waitFor({ timeout: 120000 });
+  await page.locator('.account-avatar-btn').first().click({ timeout: 60000 });
+  await page.locator('.account-panel').waitFor({ timeout: 30000 });
+  await page.locator('.account-menu-row', { hasText: /data sources/i }).click({ timeout: 30000 });
 
-  const credits = page.locator('.home-credits-list li');
+  const credits = page.locator('.account-credits li');
   await credits.first().waitFor({ timeout: 30000 });
   const lines = await credits.allInnerTexts();
-  console.log(`footer renders ${lines.length} credit lines`);
+  console.log(`Account > Data sources renders ${lines.length} credit lines`);
   for (const name of ['OpenStreetMap', 'swisstopo', 'IGN', 'Kartverket', 'Copernicus']) {
-    if (!lines.some((l) => l.includes(name))) fail(`footer never credits ${name}`);
+    if (!lines.some((l) => l.includes(name))) fail(`credits never name ${name}`);
   }
-  const heading = await page.locator('.home-credits h3').innerText();
+  const heading = await page.locator('.account-heading').innerText();
   console.log(`  heading: ${JSON.stringify(heading)}`);
   console.log(`  first three: ${lines.slice(0, 3).map((l) => JSON.stringify(l)).join(' | ')}`);
+  await page.locator('.account-panel').screenshot({ path: `${SHOTS}/trails-credits.png` });
 
-  await page.locator('.home-credits').scrollIntoViewIfNeeded();
-  await page.locator('.home-credits').screenshot({ path: `${SHOTS}/trails-credits.png` });
-
-  // ---- 6. Narrow.
+  // ---- 6. Narrow. The panel is full-width on a phone, so the list has to sit
+  //         inside it without pushing the document sideways.
   await page.setViewportSize({ width: 380, height: 900 });
-  await page.locator('.home-credits').scrollIntoViewIfNeeded();
+  await page.waitForTimeout(400);
   const overflow = await page.evaluate(() =>
     document.documentElement.scrollWidth - document.documentElement.clientWidth);
   if (overflow > 0) fail(`${overflow}px of horizontal scroll at 380px`);
-  const cols = await page.evaluate(() => getComputedStyle(
-    document.querySelector('.home-credits-list')).gridTemplateColumns.split(' ').length);
-  if (cols !== 1) fail(`credit list keeps ${cols} columns at 380px`);
-  await page.locator('.home-credits').screenshot({ path: `${SHOTS}/trails-credits-380.png` });
-  console.log('380px: one column, no horizontal scroll');
+  await page.locator('.account-credits').scrollIntoViewIfNeeded();
+  await page.locator('.account-panel').screenshot({ path: `${SHOTS}/trails-credits-380.png` });
+  console.log('380px: credits readable, no horizontal scroll');
 
   await browser.close();
   console.log(process.exitCode ? 'DONE with failures' : 'PASS');
