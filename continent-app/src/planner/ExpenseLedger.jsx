@@ -1,7 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { eur } from '../lib/format.js';
 import { EUR_RATES, CURRENCIES } from '../lib/currency.js';
 import { useI18n } from '../i18n/index.jsx';
+import { readCrew, writeCrew } from '../auth/tripCrew.js';
+import { useAuth } from '../auth/AuthContext.jsx';
+import { fetchFriendLinks } from '../auth/friends.js';
 import { ReceiptIcon } from '../components/Icons.jsx';
 
 /**
@@ -23,11 +26,25 @@ const fmtAmount = (amount, currency) => (currency === 'EUR'
 
 export function ExpenseLedger({ extras, onChange, groupSize }) {
   const { t } = useI18n();
+  const { user } = useAuth();
   const n = Math.max(1, groupSize || 1);
-  const people = Array.from(
-    { length: n },
-    (_, i) => (extras.people?.[i] || '').trim() || t('extras.travellerN', { n: i + 1 }),
-  );
+
+  // Your accepted friends, as one-tap fills for the traveller slots. Guests
+  // and projects without migration 011 simply never see the chips.
+  const [friendOpts, setFriendOpts] = useState([]);
+  useEffect(() => {
+    if (!user) { setFriendOpts([]); return undefined; }
+    let live = true;
+    fetchFriendLinks(user.id)
+      .then((rows) => { if (live) setFriendOpts(rows.filter((r) => r.kind === 'friend')); })
+      .catch(() => {});
+    return () => { live = false; };
+  }, [user?.id]); // eslint-disable-line react-hooks/exhaustive-deps
+  // The roster is shared with the trip's record (see auth/tripCrew.js): a name
+  // typed into "who came" arrives here already filled in. Clamped to the group
+  // size, as it always was, so the chips and the balances stay one per head.
+  const crew = readCrew(extras, { groupSize: n }).slice(0, n);
+  const people = crew.map((c, i) => c.name.trim() || t('extras.travellerN', { n: i + 1 }));
   const expenses = extras.expenses || [];
 
   const [desc, setDesc] = useState('');
@@ -37,9 +54,24 @@ export function ExpenseLedger({ extras, onChange, groupSize }) {
   // null = everyone; a Set of indices once a chip is toggled off.
   const [sharerSet, setSharerSet] = useState(null);
 
+  // A friend lands in the first unnamed slot, carrying their account as well
+  // as their name. Typing a name stays exactly as good: linking is a
+  // shortcut, never a requirement.
+  const pickFriend = (f) => {
+    const full = readCrew(extras, { groupSize: n });
+    const slot = full.findIndex((c, i) => i < n && !c.name.trim());
+    if (slot === -1) return;
+    onChange(writeCrew(extras, full.map((c, j) => (
+      j === slot ? { ...c, name: f.displayName || f.handle, userId: f.userId } : c
+    ))));
+  };
+
   const renamePerson = (i, name) => {
-    const next = Array.from({ length: n }, (_, j) => (j === i ? name : (extras.people?.[j] ?? '')));
-    onChange({ ...extras, people: next });
+    // Read unclamped: a roster longer than the group size must survive being
+    // renamed, and position is what an already recorded expense points at.
+    const next = readCrew(extras, { groupSize: n })
+      .map((c, j) => (j === i ? { ...c, name } : c));
+    onChange(writeCrew(extras, next));
   };
 
   const toggleSharer = (i) => {
@@ -116,12 +148,35 @@ export function ExpenseLedger({ extras, onChange, groupSize }) {
             <input
               key={i}
               className="extras-input exp-person"
-              value={extras.people?.[i] ?? ''}
+              value={crew[i]?.name ?? ''}
               placeholder={t('extras.travellerN', { n: i + 1 })}
               onChange={(e) => renamePerson(i, e.target.value)}
               aria-label={t('extras.travellerN', { n: i + 1 })}
             />
           ))}
+          {(() => {
+            const taken = new Set(crew.map((c) => c.userId).filter(Boolean));
+            const hasSlot = crew.some((c) => !c.name.trim());
+            const options = friendOpts.filter((f) => !taken.has(f.userId));
+            if (!hasSlot || !options.length) return null;
+            return (
+              <div className="exp-friendrow">
+                <span className="pasttrip-sublabel">{t('saved.pastFromFriends')}</span>
+                <div className="pasttrip-friendchips">
+                  {options.map((f) => (
+                    <button
+                      key={f.userId}
+                      type="button"
+                      className="pasttrip-friendchip"
+                      onClick={() => pickFriend(f)}
+                    >
+                      {f.displayName || `@${f.handle}`}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            );
+          })()}
         </div>
       )}
 

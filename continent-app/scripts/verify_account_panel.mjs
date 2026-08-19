@@ -10,7 +10,9 @@
 //
 // What it checks:
 //   1. The hub: profile card seeded with the identity, invite banner, menu.
-//   2. Profile spoke: editable name/email, stated once, saves and confirms.
+//   2. Profile spoke: editable name/email, stated once, saves and confirms,
+//      plus the handle: seeded, normalised as you type, refused when it is
+//      too short, and reported as taken without naming who took it.
 //   3. The pass card sells the next tier instead of printing one word.
 //   4. Changing the password requires the current one (real re-auth call).
 //   5. Passwords revealable, measured live, floor at 8.
@@ -33,6 +35,10 @@ mkdirSync(SHOTS, { recursive: true });
 
 const PROJECT_REF = 'ntssxktaduxzpsmejwyv';
 const RIGHT_PASSWORD = 'correct-horse-battery';
+// The handle this traveller already holds, and one the stub will report as
+// belonging to somebody else.
+const SEEDED_HANDLE = 'sam_okonkwo';
+const TAKEN_HANDLE = 'lisbon';
 const USER = {
   id: '00000000-0000-4000-8000-000000000001',
   aud: 'authenticated',
@@ -108,6 +114,36 @@ async function stubSupabase(page, state) {
     return route.fulfill({ status: 200, contentType: 'application/json', body: '{}' });
   });
   await page.route('**/auth/v1/logout*', (route) => route.fulfill({ status: 204, body: '' }));
+
+  // public.profiles, added in migration 010. The GET seeds the handle field;
+  // the PATCH records what was written and refuses one reserved-in-this-test
+  // handle with the same 23505 a real unique violation returns, so the "that
+  // handle is taken" path is exercised rather than assumed.
+  await page.route('**/rest/v1/profiles*', async (route) => {
+    const method = route.request().method();
+    if (method === 'PATCH') {
+      const body = JSON.parse(route.request().postData() || '{}');
+      state.profileUpdates.push(body);
+      if (body.handle === TAKEN_HANDLE) {
+        return route.fulfill({
+          status: 409,
+          contentType: 'application/json',
+          body: JSON.stringify({
+            code: '23505',
+            message: 'duplicate key value violates unique constraint "profiles_handle_key"',
+            details: null, hint: null,
+          }),
+        });
+      }
+      state.profile = { ...state.profile, ...body };
+      return route.fulfill({ status: 204, body: '' });
+    }
+    return route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify(state.profile),
+    });
+  });
 }
 
 const seedSession = (ref, user) => `(() => {
@@ -134,7 +170,14 @@ async function goToProfile(page) {
 try {
   await waitForServer();
   const browser = await chromium.launch();
-  const state = { reauthAttempts: [], userUpdates: [], recoverCalls: 0 };
+  const state = {
+    reauthAttempts: [], userUpdates: [], recoverCalls: 0,
+    profileUpdates: [],
+    profile: {
+      user_id: USER.id, handle: SEEDED_HANDLE,
+      display_name: USER.user_metadata.full_name, avatar_emoji: null,
+    },
+  };
 
   const ctx = await browser.newContext({
     viewport: { width: 1360, height: 950 },
@@ -157,8 +200,13 @@ try {
   const mono = await page.locator('.account-hub-avatar').first().innerText();
   if (mono.trim() !== 'SO') fail(`monogram for Sam Okonkwo is "${mono}", expected SO`);
   if (!(await page.locator('.account-invite').count())) fail('the invite banner is missing');
+  // Five rows now: Friends sits with the account's own things, above the four
+  // help rows (feedback, FAQ, privacy, data sources).
   const menuRows = await page.locator('.account-menu-row').count();
-  if (menuRows !== 4) fail(`expected 4 help menu rows, found ${menuRows}`);
+  if (menuRows !== 5) fail(`expected 5 hub menu rows, found ${menuRows}`);
+  if (!await page.locator('.account-menu-row').filter({ hasText: 'Friends' }).count()) {
+    fail('the hub has no Friends row for a signed-in traveller');
+  }
   const rowBox = await page.locator('.account-menu-row').first().boundingBox();
   if (!rowBox || rowBox.height < 44) fail(`menu rows are ${rowBox?.height}px tall, under the 44px target`);
   if (await page.locator('#acct-name').count()) fail('the profile form leaks onto the hub');
@@ -209,9 +257,60 @@ try {
   if (!state.userUpdates.some((u) => u.data?.full_name === 'Sam O.')) fail('saving the profile sent no name update');
   ok('an edited name saves and confirms');
   await emailInput.fill('new@example.com');
-  await page.locator('.auth-hint').first().waitFor({ timeout: 5000 });
+  await page.locator('.auth-hint:not(.acct-handle-hint)').first().waitFor({ timeout: 5000 });
   ok('changing the email warns that it needs confirming first');
   await emailInput.fill(USER.email);
+
+  // ---- 3b. The handle: how another account will be able to find you.
+  console.log('3b. handle');
+  const handleInput = page.locator('#acct-handle');
+  if (!(await handleInput.count())) {
+    fail('the profile spoke shows no handle field');
+  } else {
+    if (await handleInput.inputValue() !== SEEDED_HANDLE) {
+      fail(`handle field is not seeded from the profile: ${await handleInput.inputValue()}`);
+    } else ok('the handle is seeded from the account');
+
+    // The @ belongs to the field, not to what you type, so it cannot be
+    // deleted and cannot be typed twice.
+    if (!(await page.locator('.acct-handle-at').count())) fail('no @ prefix on the handle field');
+
+    // Typed illegally, corrected in place rather than rejected after the fact.
+    await handleInput.fill('Sam Okonkwo!!');
+    if (await handleInput.inputValue() !== 'samokonkwo') {
+      fail(`the handle field did not normalise what was typed: ${await handleInput.inputValue()}`);
+    } else ok('capitals, spaces and punctuation are folded away as you type');
+
+    // Too short: caught before it ever reaches the database.
+    await handleInput.fill('ab');
+    await save.click();
+    await page.locator('.auth-error').first().waitFor({ timeout: 5000 });
+    let err = await page.locator('.auth-error').first().innerText();
+    if (!/at least 3/i.test(err)) fail(`a 2-character handle was not refused clearly: ${err}`);
+    else ok('a handle under 3 characters is refused inline');
+    if (state.profileUpdates.some((u) => u.handle === 'ab')) {
+      fail('the too-short handle was sent to the database anyway');
+    }
+
+    // Taken: said plainly, and without naming who holds it.
+    await handleInput.fill(TAKEN_HANDLE);
+    await save.click();
+    await page.waitForTimeout(600);
+    err = await page.locator('.auth-error').first().innerText();
+    if (!/taken/i.test(err)) fail(`a taken handle was not reported as taken: ${err}`);
+    else ok('a taken handle says so');
+    if (/@|owned|belongs|by /i.test(err)) fail(`the taken-handle error names who holds it: ${err}`);
+    else ok('and does not say whose it is');
+
+    // A free one saves.
+    await handleInput.fill('sam_travels');
+    await save.click();
+    await page.locator('.auth-notice-inline').first().waitFor({ timeout: 10000 });
+    if (!state.profileUpdates.some((u) => u.handle === 'sam_travels')) {
+      fail('a valid handle was never written');
+    } else ok('a free handle saves');
+    await page.screenshot({ path: `${SHOTS}/account-handle.png` });
+  }
 
   // ---- 4 & 5. Password: current required, measured, revealable, 8 not 6.
   console.log('4. password security');

@@ -54,6 +54,7 @@ import { OriginPicker } from './components/OriginPicker.jsx';
 import { PlaceSizeToggle } from './components/PlaceSizeToggle.jsx';
 import { loadInitialState } from './lib/urlState.js';
 import { readTripShareFromUrl, decodeTripShare } from './lib/shareLink.js';
+import { readShareTokenFromUrl, stripShareTokenFromUrl } from './auth/tripShares.js';
 import { readTrailFromUrl } from './lib/trails.js';
 import { loadTripDraft } from './planner/tripDraftStore.js';
 import { bindDayPlanCloud } from './planner/dayPlanSync.js';
@@ -61,6 +62,7 @@ import { AuthProvider, useAuth } from './auth/AuthContext.jsx';
 import { I18nProvider, useI18n } from './i18n/index.jsx';
 import { AuthModal } from './auth/AuthModal.jsx';
 import { AuthGate } from './auth/AuthGate.jsx';
+import { SharedTripView } from './auth/SharedTripView.jsx';
 import { ResetPasswordScreen } from './auth/ResetPasswordScreen.jsx';
 import { AccountPanel } from './auth/AccountPanel.jsx';
 import { SavedTripsPanel } from './auth/SavedTripsPanel.jsx';
@@ -227,6 +229,18 @@ function TravelApp() {
   // captured synchronously before useUrlSync's first URL write would drop it,
   // decoded async, then offered in a confirm dialog rather than silently
   // replacing whatever plan is already in the recipient's planner.
+  // A SAVED trip shared by token (#shared=<uuid>, see auth/tripShares.js).
+  // Unlike #trip=, the payload is not in the link: the token is fetched
+  // through get_shared_trip, which is what lets the owner withdraw it and what
+  // keeps the ledger and the booking references out of the reader's hands.
+  // Read once at startup for the same reason the trip hash is, and stripped
+  // from the address bar right away so a reload does not reopen it.
+  const [shareToken, setShareToken] = useState(() => readShareTokenFromUrl());
+  useEffect(() => {
+    if (shareToken) stripShareTokenFromUrl();
+    // Once only: stripping the hash must not be able to re-trigger the read.
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
   const [sharedTripRaw] = useState(() => readTripShareFromUrl());
   const [sharedTrip, setSharedTrip] = useState(null);
   const [pendingSharedTrip, setPendingSharedTrip] = useState(null);
@@ -465,6 +479,19 @@ function TravelApp() {
 
   if (recoveryMode) {
     return <ResetPasswordScreen />;
+  }
+
+  // A shared trip opens BEFORE the entry gate and before the session resolves,
+  // and that ordering is the feature: a share whose first screen asks the
+  // reader to sign up does not get opened. The token is the only credential
+  // this screen needs, so it never waits on auth.
+  if (shareToken) {
+    return (
+      <SharedTripView
+        token={shareToken}
+        onDismiss={() => setShareToken(null)}
+      />
+    );
   }
 
   // Resolve whether there's an existing session before deciding whether to

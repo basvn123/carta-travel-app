@@ -7,6 +7,7 @@ import { PlaneIcon } from '../components/TransportIcons.jsx';
 import { CountryFlag } from '../components/CountryFlag.jsx';
 import { eur } from '../lib/format.js';
 import { useI18n } from '../i18n/index.jsx';
+import { crewLabel } from './tripCrew.js';
 import { SPEND_CATS, spendSummary, spendPerPerson } from './pastTripMemory.js';
 
 /**
@@ -39,14 +40,20 @@ function Leg({ mode, t }) {
 }
 
 export function TripMemoryView({ memory, onEdit }) {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   if (!memory) return null;
 
   const places = memory.places || [];
   const legs = memory.legs || [];
-  const photos = memory.photos || [];
+  // Inline images only, mirroring the SQL projection's filter (migration
+  // 011). This view also renders FOREIGN payloads (a friend's trip, a share),
+  // and a remote src would make the viewer's browser call it: a tracking
+  // pixel reporting who looked. A data: URL cannot phone home.
+  const photos = (memory.photos || []).filter(
+    (p) => typeof p?.src === 'string' && p.src.startsWith('data:image/'),
+  );
   const highlights = (memory.highlights || []).filter(Boolean);
-  const companions = (memory.companions || []).filter(Boolean);
+  const crewLine = crewLabel(memory.crew, lang);
   const adults = Number(memory.travellers?.adults) || 0;
   const children = Number(memory.travellers?.children) || 0;
   const heads = adults + children;
@@ -122,14 +129,14 @@ export function TripMemoryView({ memory, onEdit }) {
         </div>
       )}
 
-      {(heads > 1 || companions.length > 0) && (
+      {(heads > 1 || crewLine) && (
         <div className="memo-block">
           <span className="memo-title">{t('saved.pastWho')}</span>
           <p className="memo-line">
             <PersonIcon size={12} />
             {t(heads === 1 ? 'saved.pastTraveller1' : 'saved.pastTravellerN', { n: heads })}
             {children > 0 && ` (${t(children === 1 ? 'saved.pastChild1' : 'saved.pastChildN', { n: children })})`}
-            {companions.length > 0 && `, ${companions.join(', ')}`}
+            {crewLine && `, ${crewLine}`}
           </p>
         </div>
       )}

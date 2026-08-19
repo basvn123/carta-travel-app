@@ -13,6 +13,7 @@ import { eur } from '../lib/format.js';
 import { lookupPlace } from '../lib/cityResearch.js';
 import { useI18n } from '../i18n/index.jsx';
 import { nightsBetween, nightsFor, moveNight, defaultPastLabel } from './pastTrip.js';
+import { crewLabel, newCrewMember } from './tripCrew.js';
 import {
   SPEND_CATS, TRIP_MODES, STAY_KINDS, MAX_PHOTOS, emptyMemory, spendSummary, spendPerPerson,
 } from './pastTripMemory.js';
@@ -132,8 +133,8 @@ function Stepper({ value, min = 0, max = 99, onChange, label }) {
   );
 }
 
-export function PastTripForm({ destinations, todayIso, busy, error, initial, onCancel, onSave }) {
-  const { t } = useI18n();
+export function PastTripForm({ destinations, todayIso, busy, error, initial, friends = [], onCancel, onSave }) {
+  const { t, lang } = useI18n();
   const [places, setPlaces] = useState(() => initial?.places || []);
   const [query, setQuery] = useState('');
   const [startDate, setStartDate] = useState(() => initial?.startDate || '');
@@ -292,7 +293,7 @@ export function PastTripForm({ destinations, todayIso, busy, error, initial, onC
   const heads = (Number(mem.travellers?.adults) || 0) + (Number(mem.travellers?.children) || 0);
   const whoSummary = [
     t(heads === 1 ? 'saved.pastTraveller1' : 'saved.pastTravellerN', { n: heads || 1 }),
-    mem.companions?.filter(Boolean).length ? mem.companions.filter(Boolean).join(', ') : '',
+    crewLabel(mem.crew, lang),
   ].filter(Boolean).join(', ');
   const modeSummary = [...new Set(legs.map((l) => l?.mode).filter(Boolean))]
     .map((m) => t(MODE_LABEL[m])).join(', ');
@@ -313,7 +314,7 @@ export function PastTripForm({ destinations, todayIso, busy, error, initial, onC
   const submit = () => {
     const cleaned = {
       ...mem,
-      companions: (mem.companions || []).map((c) => c.trim()).filter(Boolean),
+      crew: (mem.crew || []).map((c) => ({ ...c, name: c.name.trim() })),
       highlights: (mem.highlights || []).map((h) => h.trim()).filter(Boolean),
       legs: legs.slice(0, places.length + 1),
       places: places.map((p, i) => ({
@@ -495,28 +496,64 @@ export function PastTripForm({ destinations, todayIso, busy, error, initial, onC
             />
           </div>
           <span className="pasttrip-sublabel">{t('saved.pastCompanions')}</span>
-          {(mem.companions || []).map((name, i) => (
-            <div className="pasttrip-listrow" key={`c${i}`}>
+          {(mem.crew || []).map((member, i) => (
+            <div className="pasttrip-listrow" key={member.id}>
+              {member.userId && (
+                <span className="pasttrip-linked" title={t('saved.pastLinkedFriend')} aria-label={t('saved.pastLinkedFriend')}>
+                  <PersonIcon size={12} />
+                </span>
+              )}
               <input
                 className="pasttrip-input is-plain"
-                value={name}
+                value={member.name}
                 placeholder={t('saved.pastCompanionPlaceholder')}
                 onChange={(e) => patchMem({
-                  companions: (mem.companions || []).map((c, j) => (j === i ? e.target.value : c)),
+                  crew: (mem.crew || []).map((c, j) => (j === i ? { ...c, name: e.target.value } : c)),
                 })}
               />
               <button
                 className="pasttrip-ghost is-icon"
-                onClick={() => patchMem({ companions: (mem.companions || []).filter((_, j) => j !== i) })}
+                onClick={() => patchMem({ crew: (mem.crew || []).filter((_, j) => j !== i) })}
                 aria-label={t('saved.pastRemoveLine')}
               >
                 <TrashIcon size={13} />
               </button>
             </div>
           ))}
-          <button className="pasttrip-ghost" onClick={() => patchMem({ companions: [...(mem.companions || []), ''] })}>
+          <button
+            className="pasttrip-ghost"
+            onClick={() => patchMem({ crew: [...(mem.crew || []), newCrewMember(mem.crew)] })}
+          >
             <PlusIcon size={13} /> {t('saved.pastAddCompanion')}
           </button>
+          {/* Choosing a friend fills in the same row typing a name would, and
+              additionally records who they are. An unlinked person is not a
+              lesser entry: this is a shortcut, never a requirement. */}
+          {friends.length > 0 && (
+            <div className="pasttrip-friends">
+              <span className="pasttrip-sublabel">{t('saved.pastFromFriends')}</span>
+              <div className="pasttrip-friendchips">
+                {friends
+                  .filter((f) => !(mem.crew || []).some((c) => c.userId === f.userId))
+                  .map((f) => (
+                    <button
+                      key={f.userId}
+                      className="pasttrip-friendchip"
+                      onClick={() => patchMem({
+                        crew: [...(mem.crew || []), {
+                          ...newCrewMember(mem.crew),
+                          name: f.displayName || f.handle,
+                          userId: f.userId,
+                        }],
+                      })}
+                    >
+                      <PlusIcon size={11} />
+                      {f.displayName || `@${f.handle}`}
+                    </button>
+                  ))}
+              </div>
+            </div>
+          )}
         </Fold>
 
         <Fold

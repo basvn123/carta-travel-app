@@ -13,6 +13,10 @@ import { useEntitlement } from '../hooks/useEntitlement.js';
 import { TIERS, daysLeft, canUpgrade, formatPrice } from '../lib/pricing.js';
 import { MIN_PASSWORD_LENGTH, passwordStrength } from '../lib/passwordStrength.js';
 import { useI18n } from '../i18n/index.jsx';
+import {
+  fetchMyProfile, saveMyProfile, normaliseHandle, handleProblem, HANDLE_MAX,
+} from './profiles.js';
+import { FriendsSpoke } from './FriendsSpoke.jsx';
 
 // Account hub. The panel is a hub with four spokes rather than one long
 // scroll: the hub answers "who am I, what do I hold, where do I get help",
@@ -149,7 +153,7 @@ export function AccountPanel({ onClose, onOpenAuth }) {
   const { t, lang, setLang, languages } = useI18n();
   const entitlement = useEntitlement();
   const panelRef = useRef(null);
-  const [view, setView] = useState('home'); // 'home' | 'profile' | 'faq' | 'feedback' | 'data'
+  const [view, setView] = useState('home'); // 'home' | 'profile' | 'friends' | 'faq' | 'feedback' | 'data'
   const [passOpen, setPassOpen] = useState(false);
   const [privacyOpen, setPrivacyOpen] = useState(false);
 
@@ -158,6 +162,11 @@ export function AccountPanel({ onClose, onOpenAuth }) {
 
   const [name, setName] = useState(storedName);
   const [email, setEmail] = useState(storedEmail);
+  // The handle lives in public.profiles, not in the auth user, so it loads
+  // separately and saves separately. storedHandle is what the account actually
+  // holds; `handle` is what is in the field.
+  const [storedHandle, setStoredHandle] = useState('');
+  const [handle, setHandle] = useState('');
   const [profileError, setProfileError] = useState('');
   const [profileNotice, setProfileNotice] = useState('');
   const [profileBusy, setProfileBusy] = useState(false);
@@ -189,6 +198,23 @@ export function AccountPanel({ onClose, onOpenAuth }) {
     setProfileNotice('');
   }, [storedName, storedEmail]);
 
+  // The profile row is seeded by a trigger on signup, so it exists for every
+  // account. A project that has not run migration 010 yet simply has no
+  // handle to show, which is why a failure here is silent rather than an
+  // error: it is not something the account holder can act on.
+  useEffect(() => {
+    if (!user) { setStoredHandle(''); setHandle(''); return undefined; }
+    let live = true;
+    fetchMyProfile(user.id)
+      .then((row) => {
+        if (!live || !row) return;
+        setStoredHandle(row.handle || '');
+        setHandle(row.handle || '');
+      })
+      .catch(() => {});
+    return () => { live = false; };
+  }, [user]);
+
   // A subview keeps the hub's scroll position otherwise, and "page two opens
   // halfway down" reads as a rendering bug.
   useEffect(() => {
@@ -197,11 +223,12 @@ export function AccountPanel({ onClose, onOpenAuth }) {
 
   // Signing out while on the profile spoke leaves a form for nobody.
   useEffect(() => {
-    if (!user && view === 'profile') setView('home');
+    if (!user && (view === 'profile' || view === 'friends')) setView('home');
   }, [user, view]);
 
   const emailChanged = email.trim().toLowerCase() !== storedEmail.toLowerCase();
-  const profileDirty = name.trim() !== storedName || emailChanged;
+  const handleChanged = !!storedHandle && handle !== storedHandle;
+  const profileDirty = name.trim() !== storedName || emailChanged || handleChanged;
 
   const handleProfileSave = async (e) => {
     e.preventDefault();
@@ -211,8 +238,27 @@ export function AccountPanel({ onClose, onOpenAuth }) {
     const nextEmail = email.trim();
     if (!nextName) { setProfileError(t('account.errNameEmpty')); return; }
     if (!EMAIL_RE.test(nextEmail)) { setProfileError(t('account.errEmailInvalid')); return; }
+    if (handleChanged) {
+      const problem = handleProblem(handle);
+      if (problem) { setProfileError(t(problem)); return; }
+    }
     setProfileBusy(true);
     try {
+      // The handle goes first: it is the one field that can be refused by
+      // somebody else's choice, and failing after the email change had already
+      // been sent would leave the account half saved.
+      if (handleChanged) {
+        try {
+          await saveMyProfile(user.id, { handle });
+          setStoredHandle(handle);
+        } catch (err) {
+          // Taken, and that is all anybody is told. Who holds it is not the
+          // asker's business, and answering would make the lookup a directory.
+          setProfileError(t(err.code === 'HANDLE_TAKEN' ? 'profile.errHandleTaken' : 'profile.errHandleChars'));
+          setProfileBusy(false);
+          return;
+        }
+      }
       const { emailPending } = await updateProfile({
         fullName: nextName !== storedName ? nextName : undefined,
         email: emailChanged ? nextEmail : undefined,
@@ -350,6 +396,7 @@ export function AccountPanel({ onClose, onOpenAuth }) {
   const locale = { en: 'en-GB', nl: 'nl-NL', de: 'de-DE', fr: 'fr-FR', es: 'es-ES', it: 'it-IT' }[lang] || 'en-GB';
 
   const heading = view === 'profile' ? t('account.profileDetails')
+    : view === 'friends' ? t('friends.title')
     : view === 'faq' ? t('account.menuFaq')
     : view === 'feedback' ? t('account.feedbackTitle')
     : view === 'data' ? t('account.menuData')
@@ -485,6 +532,20 @@ export function AccountPanel({ onClose, onOpenAuth }) {
             </div>
           </div>
 
+          {/* Who you travel with. Account only, so it is simply absent for a
+              guest rather than a door that opens onto a sign-in prompt. */}
+          {user && (
+            <div className="panel-section">
+              <div className="account-menu">
+                <MenuRow
+                  icon={<PersonIcon size={17} />}
+                  label={t('friends.title')}
+                  onClick={() => setView('friends')}
+                />
+              </div>
+            </div>
+          )}
+
           {/* Help, in the order people need it: say something, look something
               up, read the fine print. All three work signed out. */}
           <div className="panel-section">
@@ -517,6 +578,25 @@ export function AccountPanel({ onClose, onOpenAuth }) {
                   onChange={(e) => setName(e.target.value)}
                 />
               </div>
+              {storedHandle && (
+                <div className="auth-field">
+                  <label className="auth-label" htmlFor="acct-handle">{t('profile.handle')}</label>
+                  <div className="acct-handle-row">
+                    <span className="acct-handle-at" aria-hidden="true">@</span>
+                    <input
+                      id="acct-handle"
+                      type="text"
+                      autoComplete="off"
+                      autoCapitalize="none"
+                      spellCheck="false"
+                      maxLength={HANDLE_MAX}
+                      value={handle}
+                      onChange={(e) => setHandle(normaliseHandle(e.target.value))}
+                    />
+                  </div>
+                  <div className="auth-hint acct-handle-hint">{t('profile.handleHint')}</div>
+                </div>
+              )}
               <div className="auth-field">
                 <label className="auth-label" htmlFor="acct-email">{t('account.email')}</label>
                 <input
@@ -651,6 +731,8 @@ export function AccountPanel({ onClose, onOpenAuth }) {
           </div>
         </>
       )}
+
+      {view === 'friends' && user && <FriendsSpoke userId={user.id} />}
 
       {view === 'faq' && (
         <div className="panel-section">

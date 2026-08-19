@@ -20,6 +20,7 @@
  * the ones a traveller typed into the ledger by hand.
  */
 import { loadTripExtras, persistTripExtras } from '../planner/dayPlanStore.js';
+import { readCrew, writeCrew } from './tripCrew.js';
 import { toEur } from '../lib/currency.js';
 
 export const MEMORY_VERSION = 1;
@@ -42,7 +43,10 @@ export function emptyMemory() {
     v: MEMORY_VERSION,
     places: [],
     travellers: { adults: 1, children: 0 },
-    companions: [],
+    // Who came. Hydrated from extras.people on load and written back there on
+    // save, so it is never stored inside the memory blob itself. See
+    // tripCrew.js for why the roster lives in extras rather than here.
+    crew: [],
     legs: [],
     spend: { currency: 'EUR' },
     rating: null,
@@ -57,16 +61,21 @@ export function emptyMemory() {
  *  trip has none, which is what separates a logged trip from a lived one. */
 export function loadMemory(planId) {
   if (!planId) return null;
-  const raw = loadTripExtras(planId)?.memory;
+  const extras = loadTripExtras(planId);
+  const raw = extras?.memory;
   if (!raw || typeof raw !== 'object') return null;
   const base = emptyMemory();
+  // `companions` was the old home of who came. readCrew still reads it, for
+  // trips filed before the roster moved, so drop it here rather than let two
+  // copies of the same list travel together and drift apart.
+  const { companions: _legacyCompanions, ...rest } = raw;
   return {
     ...base,
-    ...raw,
+    ...rest,
     travellers: { ...base.travellers, ...(raw.travellers || {}) },
     spend: { ...base.spend, ...(raw.spend || {}) },
     places: Array.isArray(raw.places) ? raw.places : [],
-    companions: Array.isArray(raw.companions) ? raw.companions : [],
+    crew: readCrew(extras, { memory: raw }),
     legs: Array.isArray(raw.legs) ? raw.legs : [],
     highlights: Array.isArray(raw.highlights) ? raw.highlights : [],
     photos: Array.isArray(raw.photos) ? raw.photos : [],
@@ -132,11 +141,12 @@ export function saveMemory(planId, memory, labels) {
   if (!planId) return;
   const extras = loadTripExtras(planId);
   const kept = (extras.expenses || []).filter((x) => x.src !== 'memory');
-  const people = memory.companions?.length ? memory.companions : (extras.people || []);
+  // The roster goes to extras.people, the one list the ledger also splits by,
+  // and is stripped from the blob so there is exactly one copy of it on disk.
+  const { crew, companions: _legacyCompanions, ...blob } = memory;
   persistTripExtras(planId, {
-    ...extras,
-    memory: { ...memory, v: MEMORY_VERSION },
-    people,
+    ...writeCrew(extras, crew),
+    memory: { ...blob, v: MEMORY_VERSION },
     expenses: [...kept, ...spendAsExpenses(memory, labels)],
   });
 }

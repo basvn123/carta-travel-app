@@ -3,7 +3,7 @@ import { useAuth } from './AuthContext.jsx';
 import { fetchSavedTrips, deleteTrip } from './tripStorage.js';
 import { fetchTripPlans, deleteTripPlan } from './tripPlanStorage.js';
 import { loadStandalonePlans, deleteStandalonePlan, loadAssignments, subscribeDayPlanStore } from '../planner/dayPlanStore.js';
-import { MapPinIcon, RouteIcon, ListDayIcon, PencilIcon, TrashIcon, MoreIcon, BookmarkIcon, CalendarIcon, CheckIcon, PlusIcon } from '../components/Icons.jsx';
+import { MapPinIcon, RouteIcon, ListDayIcon, PencilIcon, TrashIcon, MoreIcon, BookmarkIcon, CalendarIcon, CheckIcon, PlusIcon, LinkIcon } from '../components/Icons.jsx';
 import { PastTripForm } from './PastTripForm.jsx';
 import { TripMemoryView } from './TripMemoryView.jsx';
 import {
@@ -14,6 +14,10 @@ import {
   loadMemory, saveMemory, clearMemory, coverPhoto, memoryPoints, spendSummary, SPEND_CATS,
 } from './pastTripMemory.js';
 import { CountryFlag, CountryFlagStack, COUNTRY_ISO2 } from '../components/CountryFlag.jsx';
+import { crewLabel } from './tripCrew.js';
+import { TripSharePanel } from './TripSharePanel.jsx';
+import { FriendTripPanel } from './FriendTripPanel.jsx';
+import { fetchFriendLinks, listFriendTrips } from './friends.js';
 import { kindsForDest } from '../lib/trip_kinds.js';
 import { eur } from '../lib/format.js';
 import { useI18n } from '../i18n/index.jsx';
@@ -165,15 +169,17 @@ function CardMenu({ actions = [], onAskRemove, removeLabel }) {
               {a.label}
             </button>
           ))}
-          <button
-            role="menuitem"
-            className="saved-card-pop-item danger"
-            onClick={() => { setMenuOpen(false); onAskRemove(); }}
-            aria-label={removeLabel}
-          >
-            <TrashIcon size={14} />
-            {t('saved.remove')}
-          </button>
+          {onAskRemove && (
+            <button
+              role="menuitem"
+              className="saved-card-pop-item danger"
+              onClick={() => { setMenuOpen(false); onAskRemove(); }}
+              aria-label={removeLabel}
+            >
+              <TrashIcon size={14} />
+              {t('saved.remove')}
+            </button>
+          )}
         </div>
       )}
     </div>
@@ -331,9 +337,18 @@ function JourneyCard({ title, sub, img, whenChip, countries = [], dateLabel, dat
             {visited ? <CheckIcon size={13} /> : <CalendarIcon size={13} />}
           </span>
         </button>
-        <div className="uptrip-menu">
-          <CardMenu actions={actions} onAskRemove={() => setConfirming(true)} removeLabel={deleteLabel} />
-        </div>
+        {/* A card you do not own has nothing in this menu: no edits, and
+            certainly no Remove, which would read as deleting somebody else's
+            trip. Absent beats present-and-inert. */}
+        {(actions.length > 0 || onDelete) && (
+          <div className="uptrip-menu">
+            <CardMenu
+              actions={actions}
+              onAskRemove={onDelete ? () => setConfirming(true) : null}
+              removeLabel={deleteLabel}
+            />
+          </div>
+        )}
       </div>
       {footer && (
         <button className="saved-card-footer" onClick={footer.onClick} title={footer.title}>
@@ -396,7 +411,7 @@ function TravelLedger({ visitedCountries, visitedCities }) {
 // country and city ledger on top.
 export function SavedTripsPanel({ data, onClose, onLoadTrip, onLoadTripPlan, onOpenAuth, onOpenDayPlan, onGoToTab }) {
   const { user, configured } = useAuth();
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   const destinations = data?.destinations || {};
   const todayIso = localToday();
 
@@ -472,6 +487,33 @@ export function SavedTripsPanel({ data, onClose, onLoadTrip, onLoadTripPlan, onO
   // account), so a save bumps this to re-read them.
   const [memTick, setMemTick] = useState(0);
   const [openMemory, setOpenMemory] = useState('');
+  // Which trip has its share panel open. A trip plan only, never a device
+  // day plan: a share token references trip_plans, so a guest's own local
+  // trips have nothing to point at.
+  const [openShare, setOpenShare] = useState('');
+  // Friends, and the trips they have set to 'friends'. Both are account only
+  // and both fail quietly: a project without migration 011 simply has neither,
+  // which is not something the traveller can act on.
+  const [friends, setFriends] = useState([]);
+  const [friendTrips, setFriendTrips] = useState([]);
+  const [openFriendTrip, setOpenFriendTrip] = useState('');
+  // Visibility per own trip: local edits first, then the value the trip row
+  // came back with. Never a bare 'private' default while a real value exists,
+  // because a control that says "Only me" over a trip that is actually shown
+  // to friends misstates a security setting.
+  const [visById, setVisById] = useState({});
+
+  useEffect(() => {
+    if (!user) { setFriends([]); setFriendTrips([]); return undefined; }
+    let live = true;
+    fetchFriendLinks(user.id)
+      .then((rows) => { if (live) setFriends(rows.filter((r) => r.kind === 'friend')); })
+      .catch(() => {});
+    listFriendTrips()
+      .then((rows) => { if (live) setFriendTrips(rows); })
+      .catch(() => {});
+    return () => { live = false; };
+  }, [user]);
 
   // Spend categories in the reader's language, so the ledger rows a memory
   // writes are readable rather than machine keys.
@@ -774,12 +816,38 @@ export function SavedTripsPanel({ data, onClose, onLoadTrip, onLoadTripPlan, onO
   const memoryLine = (m) => {
     const spend = spendSummary(m);
     return [
+      // Who came leads: it is the most concrete thing a trip can say about
+      // itself, and the only line here that names anyone.
+      crewLabel(m.crew, lang),
       m.rating != null ? t('saved.pastRatedN', { n: m.rating }) : '',
       spend.any ? eur(spend.total) : '',
       m.photos?.length ? t(m.photos.length === 1 ? 'saved.pastPhotos1' : 'saved.pastPhotosN', { n: m.photos.length }) : '',
       m.story?.trim() ? t('saved.pastStoryWritten') : '',
     ].filter(Boolean).join(', ') || t('saved.pastSeeTrip');
   };
+
+  // "Share this trip" as a card menu action. Only for a saved trip plan, and
+  // only when signed in: the token hangs off trip_plans, so there is nothing
+  // for a guest's device-local trip to reference.
+  const shareAction = (planId) => (user ? {
+    key: 'share',
+    label: t('share.menu'),
+    icon: <LinkIcon size={14} />,
+    onClick: () => setOpenShare((cur) => (cur === planId ? '' : planId)),
+  } : null);
+
+  const sharePanelFor = (planId) => (openShare === planId && user
+    ? (
+      <TripSharePanel
+        userId={user.id}
+        tripPlanId={planId}
+        visibility={visById[planId]
+          || tripPlans.find((tp) => tp.id === planId)?.visibility
+          || 'private'}
+        onVisibility={(id, v) => setVisById((cur) => ({ ...cur, [id]: v }))}
+      />
+    )
+    : null);
 
   // Re-opening a logged trip in the form it was told in. The memory holds the
   // places (it is the only thing that knows an off-catalogue town), and the
@@ -944,8 +1012,8 @@ export function SavedTripsPanel({ data, onClose, onLoadTrip, onLoadTripPlan, onO
                   const plannedDays = countPlannedDays(p.id);
                   const parts = journeyParts(p);
                   return (
+                    <div className="saved-record-row" key={p.id}>
                     <JourneyCard
-                      key={p.id}
                       title={parts.title}
                       sub={parts.sub}
                       countries={parts.countries}
@@ -960,7 +1028,7 @@ export function SavedTripsPanel({ data, onClose, onLoadTrip, onLoadTripPlan, onO
                         label: t('saved.edit'),
                         icon: <PencilIcon size={14} />,
                         onClick: () => onLoadTripPlan && onLoadTripPlan({ id: p.id, edit: true }),
-                      }]}
+                      }, shareAction(p.id)].filter(Boolean)}
                       onDelete={() => handleDeleteTripPlan(p.id)}
                       deleteLabel={t('saved.removeItem', { name: p.label || t('saved.fallbackTrip') })}
                       footer={{
@@ -971,11 +1039,52 @@ export function SavedTripsPanel({ data, onClose, onLoadTrip, onLoadTripPlan, onO
                         onClick: () => onOpenDayPlan && onOpenDayPlan({ planId: p.id, stopIndex: 0, dayIndex: 0 }),
                       }}
                     />
+                    {sharePanelFor(p.id)}
+                    </div>
                   );
                 })}
               </div>
             )}
           </SavedSection>
+
+          {/* ── What friends are showing you. Their own trips, read only,
+                 and only the ones they set to 'friends'. Absent entirely when
+                 nobody has shared anything, rather than an empty shelf that
+                 says the feature exists. ── */}
+          {friendTrips.length > 0 && (
+            <SavedSection
+              title={t('friends.theirTrips')}
+              sub={t('friends.theirTripsSub')}
+              count={friendTrips.length}
+            >
+              <div className="saved-card-stack">
+                {friendTrips.map((ft) => {
+                  const showing = openFriendTrip === ft.tripPlanId;
+                  const who = ft.ownerName || `@${ft.ownerHandle}`;
+                  return (
+                    <div className="saved-record-row" key={ft.tripPlanId}>
+                      <JourneyCard
+                        title={ft.label || (ft.cities || []).join(', ')}
+                        sub={t('friends.byWhom', { who })}
+                        countries={ft.countries || []}
+                        img={resolveImage({
+                          ids: ft.destinationIds || [],
+                          cities: ft.cities || [],
+                          countries: ft.countries || [],
+                        })}
+                        dateLabel={t('saved.datesLabel')}
+                        dates={ft.startDate ? `${fmtDate(ft.startDate)} → ${fmtDateYear(ft.endDate)}` : ''}
+                        onOpen={() => setOpenFriendTrip(showing ? '' : ft.tripPlanId)}
+                        openTitle={t('friends.openTheirTrip')}
+                        actions={[]}
+                      />
+                      {showing && <FriendTripPanel planId={ft.tripPlanId} />}
+                    </div>
+                  );
+                })}
+              </div>
+            </SavedSection>
+          )}
 
           {/* ── Day plans: lighter commitments, lighter cards. ── */}
           <SavedSection
@@ -1079,6 +1188,7 @@ export function SavedTripsPanel({ data, onClose, onLoadTrip, onLoadTripPlan, onO
                 here rather than left out of the record. */}
             {pastOpen && (
               <PastTripForm
+                friends={friends}
                 key={pastEdit?.id || 'new'}
                 destinations={destinations}
                 todayIso={todayIso}
@@ -1134,6 +1244,7 @@ export function SavedTripsPanel({ data, onClose, onLoadTrip, onLoadTripPlan, onO
                               icon: <RouteIcon size={14} />,
                               onClick: () => onLoadTripPlan && onLoadTripPlan({ id: p.id, edit: true }),
                             },
+                            shareAction(p.id),
                           ].filter(Boolean)}
                           footer={mem ? {
                             label: memoryLine(mem),
@@ -1146,6 +1257,7 @@ export function SavedTripsPanel({ data, onClose, onLoadTrip, onLoadTripPlan, onO
                         {showing && mem && (
                           <TripMemoryView memory={mem} onEdit={() => openPastForm(editableFromPlan(p, mem))} />
                         )}
+                        {sharePanelFor(p.id)}
                       </div>
                     );
                   }

@@ -18843,3 +18843,491 @@ button.ai-sched-main:focus-visible {
   .panel-acc-chev,
   .dest-grip { transition: none; }
 }
+
+/* ── Sharing a saved trip (auth/TripSharePanel.jsx) ─────────────────────────
+   Opens under the trip's card, so it borrows the memory view's shape: no top
+   border, squared into the card above it. ───────────────────────────────── */
+.tshare {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: -6px 0 2px;
+  padding: 14px;
+  border: 1px solid var(--rule);
+  border-top: none;
+  border-radius: 0 0 14px 14px;
+  background: var(--bg-card);
+}
+.tshare-lede {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--ink-soft);
+}
+.tshare-scopes {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.tshare-scope {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 10px 12px;
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+  font-family: var(--ui);
+  color: var(--ink-soft);
+}
+.tshare-scope b { font-size: 13px; color: var(--ink); }
+.tshare-scope span { font-size: 11.5px; line-height: 1.4; }
+.tshare-scope:hover { border-color: var(--ink-mute); }
+.tshare-scope.on {
+  border-color: var(--accent);
+  background: var(--accent-bg);
+}
+.tshare-never {
+  margin: 0;
+  font-size: 11.5px;
+  line-height: 1.45;
+  color: var(--ink-mute);
+}
+.tshare-make {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  align-self: flex-start;
+  padding: 9px 16px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--accent);
+  color: #fff;
+  font-family: var(--ui);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.tshare-make:hover { background: var(--accent-soft); }
+.tshare-make:disabled { opacity: .6; cursor: default; }
+.tshare-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-top: 10px;
+  border-top: 1px solid var(--rule-soft);
+}
+.tshare-list-title {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+}
+.tshare-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.tshare-row-meta {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+.tshare-row-meta b { font-size: 12.5px; color: var(--ink); }
+.tshare-row-date {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink-mute);
+}
+.tshare-copy {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 11px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: transparent;
+  font-family: var(--ui);
+  font-size: 12px;
+  color: var(--ink-soft);
+  cursor: pointer;
+  white-space: nowrap;
+}
+.tshare-copy:hover { border-color: var(--ink); color: var(--ink); }
+.tshare-revoke {
+  display: inline-flex;
+  padding: 6px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--ink-mute);
+  cursor: pointer;
+}
+.tshare-revoke:hover { color: var(--danger); }
+
+@media (max-width: 460px) {
+  .tshare-scopes { grid-template-columns: 1fr; }
+}
+
+/* ── Somebody else's trip, opened from a link (auth/SharedTripView.jsx) ──── */
+.stview-overlay {
+  align-items: flex-start;
+  overflow-y: auto;
+  padding: 0;
+}
+.stview {
+  width: 100%;
+  max-width: 620px;
+  margin: 0 auto;
+  padding: 28px 20px 48px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.stview-brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.stview-brand-name {
+  font-family: var(--display);
+  font-size: 19px;
+  color: var(--ink);
+}
+.stview-kicker {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+}
+.stview-title {
+  margin: 0;
+  font-family: var(--display);
+  font-size: 27px;
+  line-height: 1.15;
+  color: var(--ink);
+}
+.stview-dates,
+.stview-loading {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  font-family: var(--mono);
+  font-size: 12.5px;
+  color: var(--ink-soft);
+}
+.stview-sub {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--ink-soft);
+}
+.stview-gone {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 32px 0;
+}
+.stview-stops {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin: 6px 0 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--rule-soft);
+}
+.stview-stop {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 11px 2px;
+  border-bottom: 1px solid var(--rule-soft);
+}
+.stview-stop-mark { display: inline-flex; color: var(--ink-mute); }
+.stview-stop-city { flex: 1; font-size: 14px; color: var(--ink); }
+.stview-stop-dates {
+  font-family: var(--mono);
+  font-size: 11.5px;
+  color: var(--ink-mute);
+  white-space: nowrap;
+}
+.stview-foot {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: flex-start;
+  margin-top: 18px;
+  padding-top: 18px;
+  border-top: 1px solid var(--rule-soft);
+}
+.stview-from { font-size: 12px; color: var(--ink-mute); }
+/* The memory view is built to sit under a card; standing alone it needs its
+   own top edge back. */
+.stview .memo {
+  margin: 6px 0 0;
+  border-top: 1px solid var(--rule);
+  border-radius: 14px;
+}
+
+/* ── The handle field in the profile spoke (auth/profiles.js) ────────────────
+   The @ sits inside the field's own border rather than beside it, so the
+   handle reads as one thing and the prefix cannot be typed over. ─────────── */
+.acct-handle-row {
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  background: var(--bg-card);
+  overflow: hidden;
+}
+.acct-handle-row:focus-within { border-color: var(--ink); }
+.acct-handle-at {
+  padding: 0 2px 0 11px;
+  font-family: var(--mono);
+  font-size: 14px;
+  color: var(--ink-mute);
+}
+.acct-handle-row input {
+  flex: 1;
+  min-width: 0;
+  padding: 10px 11px 10px 2px;
+  border: 0;
+  background: transparent;
+  font-family: var(--mono);
+  font-size: 14px;
+  color: var(--ink);
+}
+.acct-handle-row input:focus { outline: none; }
+
+/* ── Friends (auth/FriendsSpoke.jsx) ────────────────────────────────────────
+   A list of people is a list, so it gets hairlines rather than a card each. */
+.frn-find {
+  display: flex;
+  gap: 8px;
+  align-items: stretch;
+  margin-top: 8px;
+}
+.frn-find .acct-handle-row { flex: 1; min-width: 0; }
+.frn-find .auth-submit { width: auto; white-space: nowrap; }
+.frn-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--rule-soft);
+}
+.frn-row:last-child { border-bottom: 0; }
+.frn-face {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  flex: none;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  font-size: 15px;
+  color: var(--ink-mute);
+}
+.frn-who {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+.frn-who b {
+  font-size: 13.5px;
+  color: var(--ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.frn-handle {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink-mute);
+}
+.frn-acts {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: none;
+}
+.frn-yes,
+.frn-no {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-height: 32px;
+  padding: 6px 11px;
+  border-radius: 999px;
+  font-family: var(--ui);
+  font-size: 12px;
+  cursor: pointer;
+}
+.frn-yes {
+  border: 0;
+  background: var(--accent);
+  color: #fff;
+  font-weight: 600;
+}
+.frn-yes:hover { background: var(--accent-soft); }
+.frn-no {
+  border: 1px solid var(--rule);
+  background: transparent;
+  color: var(--ink-soft);
+}
+.frn-no:hover { border-color: var(--ink); color: var(--ink); }
+.frn-text { padding: 6px 12px; }
+.frn-found {
+  margin-top: 10px;
+  padding: 2px 12px;
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  background: var(--bg-card);
+}
+.frn-foot { margin-top: 12px; }
+
+/* ── Who can see this trip, at the head of the share panel ──────────────── */
+.tshare-vis {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--rule-soft);
+}
+.tshare-vis-title {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+}
+.tshare-vis-opts {
+  display: inline-flex;
+  align-self: flex-start;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.tshare-vis-opt {
+  padding: 7px 15px;
+  border: 0;
+  background: transparent;
+  font-family: var(--ui);
+  font-size: 12.5px;
+  color: var(--ink-soft);
+  cursor: pointer;
+}
+.tshare-vis-opt.on { background: var(--ink); color: var(--paper); }
+.tshare-vis-sub {
+  margin: 0;
+  font-size: 11.5px;
+  line-height: 1.45;
+  color: var(--ink-mute);
+}
+
+/* ── A friend's trip, opened under its card ─────────────────────────────── */
+.ftrip {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: -6px 0 2px;
+  padding: 14px;
+  border: 1px solid var(--rule);
+  border-top: none;
+  border-radius: 0 0 14px 14px;
+  background: var(--bg-card);
+}
+.ftrip-note {
+  margin: 0;
+  font-size: 13px;
+  color: var(--ink-mute);
+}
+.ftrip .stview-stops { margin-top: 0; }
+.ftrip .memo { margin: 4px 0 0; border-top: 1px solid var(--rule); border-radius: 14px; }
+
+/* ── Picking a friend into a past trip's crew (auth/PastTripForm.jsx) ────── */
+.pasttrip-friends {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 10px;
+}
+.pasttrip-friendchips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.pasttrip-friendchip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-height: 30px;
+  padding: 5px 11px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: transparent;
+  font-family: var(--ui);
+  font-size: 12px;
+  color: var(--ink-soft);
+  cursor: pointer;
+}
+.pasttrip-friendchip:hover { border-color: var(--ink); color: var(--ink); }
+.pasttrip-linked {
+  display: inline-flex;
+  flex: none;
+  color: var(--ink-mute);
+}
+
+/* ── A friend's trip inside the Friends spoke ───────────────────────────── */
+.frn-trip { margin-bottom: 8px; }
+.frn-trip-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 11px 12px;
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  background: var(--bg-card);
+  font-family: var(--ui);
+  text-align: left;
+  cursor: pointer;
+}
+.frn-trip-row:hover { border-color: var(--ink-mute); }
+.frn-trip-row.on { border-radius: 12px 12px 0 0; }
+.frn-trip-meta {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+.frn-trip-meta b {
+  font-size: 13.5px;
+  color: var(--ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.frn-trip-who { font-size: 11.5px; color: var(--ink-mute); }
+.frn-trip .ftrip { margin: 0; border-radius: 0 0 12px 12px; }
+
+/* ── Friend chips under the ledger's traveller slots ────────────────────── */
+.exp-friendrow {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  flex-basis: 100%;
+  margin-top: 2px;
+}
