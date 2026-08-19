@@ -1442,8 +1442,11 @@ export const de = {
 
   // friends: the people whose trips you can see (auth/friends.js)
   "friends.title": "Freunde",
+  "friends.yourHandle": "Dein Nutzername",
+  "friends.yourHandleHint": "Gib ihn jemandem, dann kann er dich hinzufügen.",
+  "friends.aboutTitle": "Wie Freunde funktionieren",
   "friends.addTitle": "Freund hinzufügen",
-  "friends.addHint": "Tippe den Nutzernamen ein, den sie dir gegeben haben. Es gibt kein Verzeichnis, also findet dich niemand ohne deinen Nutzernamen.",
+  "friends.addHint": "Tippe den Nutzernamen ein, den sie dir gegeben haben.",
   "friends.handlePlaceholder": "ihr_name",
   "friends.look": "Suchen",
   "friends.ask": "Anfragen",

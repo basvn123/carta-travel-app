@@ -19331,3 +19331,82 @@ button.ai-sched-main:focus-visible {
   flex-basis: 100%;
   margin-top: 2px;
 }
+
+/* ── Your own handle, at the head of the Friends page ───────────────────────
+   The thing you hand over to be added, so it leads the page rather than
+   hiding in the profile spoke. Mono: a handle is an identifier. ─────────── */
+.frn-me {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 8px;
+  padding: 10px 12px;
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  background: var(--bg-card);
+}
+.frn-me-handle {
+  flex: 1;
+  min-width: 0;
+  font-family: var(--mono);
+  font-size: 15px;
+  color: var(--ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.frn-me-copy {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  flex: none;
+  min-height: 32px;
+  padding: 6px 13px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: transparent;
+  font-family: var(--ui);
+  font-size: 12px;
+  color: var(--ink-soft);
+  cursor: pointer;
+}
+.frn-me-copy:hover { border-color: var(--ink); color: var(--ink); }
+
+/* ── How friends work, folded behind an icon ───────────────────────────── */
+.frn-head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.frn-about-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  margin-bottom: 6px;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ink-mute);
+  cursor: pointer;
+}
+.frn-about-btn:hover,
+.frn-about-btn.on { color: var(--ink); background: var(--paper-dim); }
+.frn-about {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 10px;
+  padding: 11px 13px;
+  border: 1px solid var(--rule-soft);
+  border-radius: 12px;
+  background: var(--paper-dim);
+}
+.frn-about p {
+  margin: 0;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--ink-soft);
+}

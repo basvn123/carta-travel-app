@@ -2040,8 +2040,11 @@ export const en = {
 
   // friends: the people whose trips you can see (auth/friends.js)
   "friends.title": "Friends",
+  "friends.yourHandle": "Your handle",
+  "friends.yourHandleHint": "Give this to someone and they can add you.",
+  "friends.aboutTitle": "How friends work",
   "friends.addTitle": "Add a friend",
-  "friends.addHint": "Type the handle they gave you. There is no directory to browse, so nobody finds you unless you hand out your handle.",
+  "friends.addHint": "Type the handle they gave you.",
   "friends.handlePlaceholder": "their_handle",
   "friends.look": "Look up",
   "friends.ask": "Ask",

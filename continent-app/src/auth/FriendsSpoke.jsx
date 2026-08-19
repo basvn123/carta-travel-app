@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { PersonIcon, CheckIcon, CloseIcon, SearchIcon, PlusIcon } from '../components/Icons.jsx';
+import {
+  PersonIcon, CheckIcon, CloseIcon, SearchIcon, PlusIcon, InfoIcon,
+} from '../components/Icons.jsx';
 import { useI18n } from '../i18n/index.jsx';
-import { findByHandle, normaliseHandle, handleProblem } from './profiles.js';
+import { findByHandle, normaliseHandle, handleProblem, fetchMyProfile } from './profiles.js';
 import {
   fetchFriendLinks, sendFriendRequest, acceptFriendRequest, removeFriendLink,
   listFriendTrips,
@@ -11,6 +13,11 @@ import { CountryFlagStack } from '../components/CountryFlag.jsx';
 
 /**
  * FriendsSpoke, the people whose trips you can see and who can see yours.
+ *
+ * Your own handle leads the page, because adding a friend needs it before it
+ * needs theirs: the usual first move is sending somebody your name, not
+ * receiving one. It used to live two screens away in the profile spoke, which
+ * made the one thing you had to hand over the hardest thing to find.
  *
  * You add somebody by typing the handle they gave you. There is no browsing,
  * no suggestions and no "people you may know", because all three are ways of
@@ -55,6 +62,11 @@ export function FriendsSpoke({ userId }) {
   // whole point of having friends here is seeing where they are going.
   const [trips, setTrips] = useState([]);
   const [openTrip, setOpenTrip] = useState('');
+  const [myHandle, setMyHandle] = useState('');
+  const [copied, setCopied] = useState(false);
+  // How this works and what stays private: one paragraph each, folded away
+  // behind an icon. It is worth saying and not worth saying every time.
+  const [aboutOpen, setAboutOpen] = useState(false);
 
   const reload = () => Promise.all([
     fetchFriendLinks(userId).then(setLinks),
@@ -73,8 +85,30 @@ export function FriendsSpoke({ userId }) {
     listFriendTrips()
       .then((rows) => { if (live) setTrips(rows); })
       .catch(() => {});
+    // A project without migration 010 has no handle to show, which is not
+    // something the account holder can act on, so the block is simply absent.
+    fetchMyProfile(userId)
+      .then((row) => { if (live && row?.handle) setMyHandle(row.handle); })
+      .catch(() => {});
     return () => { live = false; };
   }, [userId, t]);
+
+  // The tick is a confirmation, not a state: it has to clear itself or the
+  // next copy has nothing to report.
+  useEffect(() => {
+    if (!copied) return undefined;
+    const id = setTimeout(() => setCopied(false), 2500);
+    return () => clearTimeout(id);
+  }, [copied]);
+
+  const copyHandle = async () => {
+    try {
+      await navigator.clipboard.writeText(`@${myHandle}`);
+      setCopied(true);
+    } catch {
+      setError(t('share.copyFailed'));
+    }
+  };
 
   const search = async (e) => {
     e.preventDefault();
@@ -125,6 +159,22 @@ export function FriendsSpoke({ userId }) {
 
   return (
     <>
+      {myHandle && (
+        <div className="panel-section">
+          <div className="section-title section-title-iconed">
+            <PersonIcon size={12} /> {t('friends.yourHandle')}
+          </div>
+          <div className="frn-me">
+            <span className="frn-me-handle">@{myHandle}</span>
+            <button type="button" className="frn-me-copy" onClick={copyHandle}>
+              {copied ? <CheckIcon size={13} /> : null}
+              {copied ? t('share.copied') : t('share.copy')}
+            </button>
+          </div>
+          <p className="account-section-hint">{t('friends.yourHandleHint')}</p>
+        </div>
+      )}
+
       <div className="panel-section">
         <div className="section-title section-title-iconed">
           <SearchIcon size={12} /> {t('friends.addTitle')}
@@ -191,12 +241,28 @@ export function FriendsSpoke({ userId }) {
       )}
 
       <div className="panel-section">
-        <div className="section-title">{t('friends.yours', { n: friends.length })}</div>
+        <div className="frn-head">
+          <span className="section-title">{t('friends.yours', { n: friends.length })}</span>
+          <button
+            type="button"
+            className={`frn-about-btn${aboutOpen ? ' on' : ''}`}
+            onClick={() => setAboutOpen((v) => !v)}
+            aria-expanded={aboutOpen}
+            aria-label={t('friends.aboutTitle')}
+            title={t('friends.aboutTitle')}
+          >
+            <InfoIcon size={14} />
+          </button>
+        </div>
+        {aboutOpen && (
+          <div className="frn-about">
+            <p>{t('friends.noneYet')}</p>
+            <p>{t('friends.privacyNote')}</p>
+          </div>
+        )}
         {loading ? (
           <div className="footnote">{t('saved.loading')}</div>
-        ) : friends.length === 0 ? (
-          <p className="account-section-hint">{t('friends.noneYet')}</p>
-        ) : (
+        ) : friends.length === 0 ? null : (
           friends.map((l) => (
             <Person link={l} key={l.id}>
               <button type="button" className="frn-no frn-text" onClick={() => drop(l.id)}>
@@ -205,7 +271,6 @@ export function FriendsSpoke({ userId }) {
             </Person>
           ))
         )}
-        <p className="account-section-hint frn-foot">{t('friends.privacyNote')}</p>
       </div>
 
       {friends.length > 0 && (

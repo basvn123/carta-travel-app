@@ -1442,8 +1442,11 @@ export const nl = {
 
   // friends: the people whose trips you can see (auth/friends.js)
   "friends.title": "Vrienden",
+  "friends.yourHandle": "Jouw gebruikersnaam",
+  "friends.yourHandleHint": "Geef deze aan iemand en die kan je toevoegen.",
+  "friends.aboutTitle": "Hoe vrienden werken",
   "friends.addTitle": "Vriend toevoegen",
-  "friends.addHint": "Typ de gebruikersnaam die ze je gaven. Er is geen lijst om in te bladeren, dus niemand vindt je tenzij je je naam zelf doorgeeft.",
+  "friends.addHint": "Typ de gebruikersnaam die ze je gaven.",
   "friends.handlePlaceholder": "hun_naam",
   "friends.look": "Zoek op",
   "friends.ask": "Vraag",

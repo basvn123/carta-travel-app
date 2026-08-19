@@ -8,7 +8,9 @@
 // project.
 //
 //   1. A guest never sees the Friends row at all.
-//   2. The spoke opens, and lists incoming, outgoing and accepted separately.
+//   2. The spoke opens, leads with YOUR OWN handle (the thing you hand over
+//      to be added, copyable), and lists incoming, outgoing and accepted
+//      separately. The explanatory prose is folded behind an info icon.
 //   3. An unknown handle is refused without saying anything about who exists.
 //   4. A real handle can be asked, and the request is sent as pending, from
 //      this account, never as accepted.
@@ -196,7 +198,10 @@ const run = async () => {
     }],
   };
 
-  const ctx = await browser.newContext({ viewport: { width: 1360, height: 950 } });
+  const ctx = await browser.newContext({
+    viewport: { width: 1360, height: 950 },
+    permissions: ['clipboard-read', 'clipboard-write'],
+  });
   await ctx.addInitScript(seedSession(PROJECT_REF, ME));
   const page = await ctx.newPage();
   page.on('pageerror', (e) => fail(`page error: ${e.message}`));
@@ -210,6 +215,31 @@ const run = async () => {
   const row = page.locator('.account-menu-row, .account-menu button').filter({ hasText: 'Friends' }).first();
   await row.click({ timeout: 10000 });
   await page.locator('.frn-find').waitFor({ timeout: 10000 });
+
+  // Your own handle leads the page: adding a friend needs yours before theirs.
+  const me = page.locator('.frn-me-handle');
+  await me.waitFor({ timeout: 10000 });
+  if (await me.innerText() !== '@sam_okonkwo') {
+    fail(`the page does not show your own handle: ${await me.innerText()}`);
+  } else ok('your own handle leads the page');
+  await page.locator('.frn-me-copy').click();
+  await page.waitForTimeout(400);
+  const clip = await page.evaluate(() => navigator.clipboard.readText());
+  if (clip !== '@sam_okonkwo') fail(`copying your handle put "${clip}" on the clipboard`);
+  else ok('and copies with one tap');
+
+  // The two explanatory paragraphs are folded away until asked for.
+  const beforeInfo = await page.locator('.account-panel').innerText();
+  if (/yours alone|Nobody yet/i.test(beforeInfo)) {
+    fail('the explanatory prose is on the page before the info icon is used');
+  } else ok('the prose is folded away, not standing on the page');
+  await page.locator('.frn-about-btn').click();
+  await page.locator('.frn-about').waitFor({ timeout: 5000 });
+  const about = await page.locator('.frn-about').innerText();
+  if (!/yours alone/i.test(about)) fail('the info panel is missing the privacy note');
+  else if (!/Nobody yet/i.test(about)) fail('the info panel is missing the how-it-works line');
+  else ok('the info icon reveals both paragraphs');
+  await page.locator('.frn-about-btn').click();
   // The search form renders immediately; the links are still in flight. Wait
   // for a person to actually appear before reading the panel, or this races
   // and reports an empty spoke that is merely not loaded yet.
@@ -237,7 +267,9 @@ const run = async () => {
   else if (!/Sofie Vermeulen/.test(spokeTrips)) fail('the spoke trip does not say whose it is');
   else ok('their trips are on the friends page itself');
   await page.locator('.frn-trip-row').first().click();
-  await page.locator('.frn-trip .ftrip').waitFor({ timeout: 10000 });
+  // Wait for a STOP, not just the panel: .ftrip renders its loading line
+  // first, so waiting on the container reads the text a beat too early.
+  await page.locator('.frn-trip .stview-stop').first().waitFor({ timeout: 10000 });
   if (!/Lisbon/.test(await page.locator('.frn-trip .ftrip').innerText())) {
     fail('opening a trip on the friends page shows no stops');
   } else ok('a trip opens read-only right there');
