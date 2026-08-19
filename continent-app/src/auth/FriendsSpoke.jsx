@@ -9,6 +9,7 @@ import {
   listFriendTrips, buildFriendInviteUrl,
 } from './friends.js';
 import { FriendTripPanel } from './FriendTripPanel.jsx';
+import { FriendBadges } from './FriendBadges.jsx';
 import { CountryFlagStack } from '../components/CountryFlag.jsx';
 
 /**
@@ -67,14 +68,21 @@ export function FriendsSpoke({ userId, pendingHandle, destinations }) {
   // How this works and what stays private: one paragraph each, folded away
   // behind an icon. It is worth saying and not worth saying every time.
   const [aboutOpen, setAboutOpen] = useState(false);
+  // Bumped on every act on the graph, so the milestone row re-reads the
+  // ledger at exactly the moments a badge can have been awarded (migration
+  // 013 grants in the same transaction as the row that qualifies).
+  const [badgeBump, setBadgeBump] = useState(0);
 
-  const reload = () => Promise.all([
-    fetchFriendLinks(userId).then(setLinks),
-    // Accepting a request is exactly the moment their trips become visible.
-    listFriendTrips().then(setTrips).catch(() => {}),
-  ])
-    .catch(() => setError(t('friends.unavailable')))
-    .finally(() => setLoading(false));
+  const reload = () => {
+    setBadgeBump((k) => k + 1);
+    return Promise.all([
+      fetchFriendLinks(userId).then(setLinks),
+      // Accepting a request is exactly the moment their trips become visible.
+      listFriendTrips().then(setTrips).catch(() => {}),
+    ])
+      .catch(() => setError(t('friends.unavailable')))
+      .finally(() => setLoading(false));
+  };
 
   useEffect(() => {
     let live = true;
@@ -343,6 +351,8 @@ export function FriendsSpoke({ userId, pendingHandle, destinations }) {
           )}
         </div>
       )}
+
+      <FriendBadges userId={userId} friendCount={friends.length} refreshKey={badgeBump} />
     </>
   );
 }

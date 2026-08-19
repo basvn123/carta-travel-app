@@ -20032,3 +20032,123 @@ button.ai-sched-main:focus-visible {
   text-transform: uppercase;
   color: var(--ink-mute);
 }
+
+/* ── Friend milestones (auth/FriendBadges.jsx) ──────────────────────────────
+   Five medallions at the foot of the friends spoke. An earned one takes the
+   ochre seal treatment (--rate: warm like a mark on a map, the same reasoning
+   the rating token carries), a locked one is a muted dashed outline whose job
+   is to say, on a tap, what would earn it. The one counted badge wears a thin
+   progress ring fed by the friend list the spoke already fetched. */
+
+.fbadge-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+  margin-top: 2px;
+}
+.fbadge {
+  flex: 1 1 0;
+  min-width: 62px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 7px;
+  padding: 10px 4px 8px;
+  background: none;
+  border: 0;
+  border-radius: 12px;
+  cursor: pointer;
+  font: inherit;
+}
+.fbadge:hover,
+.fbadge.on { background: var(--paper-dim); }
+.fbadge-medal {
+  position: relative;
+  width: 46px;
+  height: 46px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  border: 1.5px dashed var(--rule);
+  color: var(--ink-mute);
+  opacity: .6;
+}
+.fbadge-earned .fbadge-medal {
+  border: 1.5px solid var(--rate);
+  background: var(--rate-bg);
+  color: var(--rate);
+  opacity: 1;
+}
+.fbadge-name {
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: .02em;
+  line-height: 1.25;
+  text-align: center;
+  color: var(--ink-mute);
+}
+.fbadge-earned .fbadge-name { color: var(--rate-soft); }
+.fbadge-count {
+  margin-top: -3px;
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--ink-mute);
+}
+
+/* The ring starts at 12 o'clock and clears the medal's edge by a pixel:
+   the svg is drawn in a 48-unit box and the negative inset scales it out. */
+.fbadge-ring {
+  position: absolute;
+  inset: -4px;
+  transform: rotate(-90deg);
+}
+.fbadge-ring circle {
+  fill: none;
+  stroke-width: 2.4;
+  stroke-linecap: round;
+}
+.fbadge-ring-track { stroke: var(--rule-soft); }
+.fbadge-ring-fill {
+  stroke: var(--rate);
+  transition: stroke-dashoffset .4s ease;
+}
+
+/* A badge that arrives during the visit pops once: a scale settle plus one
+   expanding halo (--rate at low alpha). Already-earned badges never animate,
+   so the pop only ever means "that thing you just did". */
+@keyframes fbadge-pop {
+  0% { transform: scale(.55); }
+  55% { transform: scale(1.12); }
+  100% { transform: scale(1); }
+}
+@keyframes fbadge-halo {
+  0% { box-shadow: 0 0 0 0 rgba(143, 90, 12, .35); }
+  100% { box-shadow: 0 0 0 15px rgba(143, 90, 12, 0); }
+}
+.fbadge-fresh .fbadge-medal {
+  animation: fbadge-pop .5s cubic-bezier(.2, 1.4, .4, 1), fbadge-halo .9s ease-out .15s;
+}
+
+.fbadge-about {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-top: 6px;
+  padding: 10px 12px;
+  background: var(--paper-dim);
+  border-radius: 12px;
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--ink-soft);
+}
+.fbadge-about b { font-size: 12px; color: var(--ink); }
+.fbadge-date {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--rate-soft);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fbadge-fresh .fbadge-medal { animation: none; }
+  .fbadge-ring-fill { transition: none; }
+}

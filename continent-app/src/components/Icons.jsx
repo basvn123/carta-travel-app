@@ -469,6 +469,15 @@ export function InfoIcon({ size = 15, className = '' }) {
   );
 }
 
+export function MedalIcon({ size = 15, className = '' }) {
+  return (
+    <Glyph size={size} className={className} label="Milestone">
+      <circle cx="12" cy="9" r="5.5" />
+      <path d="M8.8 13.6 7 21l5-2.7 5 2.7-1.8-7.4" />
+    </Glyph>
+  );
+}
+
 export function MountainIcon({ size = 15, className = '' }) {
   return (
     <Glyph size={size} className={className} label="Active">

@@ -6,7 +6,7 @@ import { useI18n } from '../i18n/index.jsx';
 import { TripMemoryView } from './TripMemoryView.jsx';
 import { foreignMemory } from './foreignTrip.js';
 import { ForeignTripPins } from './FriendTripPanel.jsx';
-import { fetchSharedTrip } from './tripShares.js';
+import { fetchSharedTrip, recordShareOpened } from './tripShares.js';
 
 /**
  * SharedTripView, somebody else's trip, opened from a link.
@@ -32,7 +32,13 @@ export function SharedTripView({ token, onDismiss, destinations }) {
   useEffect(() => {
     let live = true;
     fetchSharedTrip(token)
-      .then((trip) => { if (live) setState({ loading: false, trip }); })
+      .then((trip) => {
+        if (live) setState({ loading: false, trip });
+        // A load that showed something is an open worth recording: it is what
+        // earns the OWNER their local_guide milestone. Never awaited, and the
+        // screen does not change either way.
+        if (trip) recordShareOpened(token);
+      })
       // An unknown, revoked or expired token and a network failure land in the
       // same place on purpose. Distinguishing them would tell a visitor
       // something about the owner that the owner did not agree to.

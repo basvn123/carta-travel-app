@@ -200,3 +200,19 @@ export async function fetchSharedTrip(token) {
     payload: row.payload && typeof row.payload === 'object' ? row.payload : {},
   };
 }
+
+/**
+ * Tells the database this link was actually opened, which is what earns the
+ * owner their local_guide milestone (migration 013). get_shared_trip is
+ * stable and cannot write, so the reader's screen reports the open after a
+ * successful load. Fire and forget: nothing about the visitor's screen may
+ * depend on a badge being recorded, and a milestone is never worth an error.
+ */
+export async function recordShareOpened(token) {
+  if (SHARE_MOCK || !supabase || !token) return;
+  try {
+    await supabase.rpc('shared_trip_opened', { share_token: token });
+  } catch {
+    /* a project without migration 013, or a network blip: both fine */
+  }
+}
