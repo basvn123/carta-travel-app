@@ -47,6 +47,7 @@ import sys
 import urllib.request
 from collections import defaultdict
 from pathlib import Path
+from pipeline_io import atomic_write_json
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA = ROOT / "app_data" / "app_data.json"
@@ -387,7 +388,7 @@ def main():
                   f"hoods={len(rec['neighbourhoods'])} n={rec['n_listings']}"
                   + (f" peak x{peak}" if peak else ""))
 
-    OUT.write_text(json.dumps(anchors, indent=1, ensure_ascii=False), encoding="utf-8")
+    atomic_write_json(OUT, anchors, indent=1, ensure_ascii=False)
     print(f"\nwrote {OUT.name}: {len(anchors)} anchors from {len(DATASETS)} datasets")
 
 

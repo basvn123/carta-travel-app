@@ -22,6 +22,7 @@ Usage:
 import json
 import sys
 from pathlib import Path
+from pipeline_io import atomic_write_json
 
 ROOT = Path(__file__).resolve().parents[1]
 CACHE = ROOT / "cache" / "climate.json"
@@ -87,7 +88,7 @@ def patch(path: Path, cache: dict) -> None:
     ds["worldclim"] = DATA_SOURCE
     meta["schema_version"] = max(meta.get("schema_version", 0), 15)
 
-    path.write_text(json.dumps(data, indent=1, ensure_ascii=False), encoding="utf-8")
+    atomic_write_json(path, data, indent=1, ensure_ascii=False)
     coverage = f"{applied}/{len(dests)}"
     print(f"  {path.name}: climate on {coverage} dests "
           f"({path.stat().st_size / 1024 / 1024:.2f} MB)")

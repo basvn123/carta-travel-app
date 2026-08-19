@@ -36,6 +36,7 @@ import json
 import math
 import sys
 from pathlib import Path
+from pipeline_io import atomic_write_json
 
 ROOT = Path(__file__).resolve().parents[1]
 ANCHORS = ROOT / "cache" / "accommodation_city_anchors.json"
@@ -114,7 +115,7 @@ def patch(path, anchors):
     data = json.loads(path.read_text(encoding="utf-8"))
     dests = data.get("destinations", {})
     n = assign(dests, anchors)
-    path.write_text(json.dumps(data, indent=1, ensure_ascii=False), encoding="utf-8")
+    atomic_write_json(path, data, indent=1, ensure_ascii=False)
     print(f"  {path.name}: {n} destinations measured from Inside Airbnb (city-level)")
 
 

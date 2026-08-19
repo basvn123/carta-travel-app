@@ -26,6 +26,7 @@ import sys
 from pathlib import Path
 
 import beauty_layer
+from pipeline_io import atomic_write_json
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_TARGETS = [
@@ -65,7 +66,7 @@ def patch(path: Path) -> None:
     # Never downgrade: the images layer (=10) may already have run.
     meta["schema_version"] = max(meta.get("schema_version", 0), 9)
 
-    path.write_text(json.dumps(data, indent=1, ensure_ascii=False), encoding="utf-8")
+    atomic_write_json(path, data, indent=1, ensure_ascii=False)
 
     n = len(dests)
     n_unesco = sum(1 for d in dests.values() if d["beauty"]["unesco"])

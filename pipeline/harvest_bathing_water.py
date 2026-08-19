@@ -42,6 +42,7 @@ from math import radians
 from pathlib import Path
 
 import numpy as np
+from pipeline_io import atomic_write_json
 
 if sys.platform == "win32":
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
@@ -144,7 +145,7 @@ def load_sites(refresh):
     print(f"Downloading EEA WISE {YEAR} bathing-water sites (ArcGIS, paged)...")
     sites = download_sites()
     CACHE.parent.mkdir(exist_ok=True)
-    CACHE.write_text(json.dumps(sites, ensure_ascii=False), encoding="utf-8")
+    atomic_write_json(CACHE, sites, indent=None, ensure_ascii=False)
     print(f"EEA download: {len(sites)} sites -> cache/{CACHE.name}")
     return sites
 
@@ -255,7 +256,7 @@ def main():
         "radius_km": int(RADIUS_KM),
     }
 
-    MASTER.write_text(json.dumps(data, ensure_ascii=False), encoding="utf-8")
+    atomic_write_json(MASTER, data, indent=None, ensure_ascii=False)
     print(f"  wrote {MASTER}")
     print("done. Run `npm run data` (or dev/build) to ship it to the app.")
 

@@ -15,6 +15,7 @@ import sys
 from pathlib import Path
 
 import gem_category_overrides
+from pipeline_io import atomic_write_json
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_TARGETS = [
@@ -61,7 +62,7 @@ def patch(path: Path) -> None:
     vocab.update(used_tags)
     meta["categories"] = sorted(vocab)
 
-    path.write_text(json.dumps(data, indent=1, ensure_ascii=False), encoding="utf-8")
+    atomic_write_json(path, data, indent=1, ensure_ascii=False)
     print(f"  {path.name}: {len(overrides)} gem overrides, {n_changed} updated"
           + (f"; NOT FOUND: {missing}" if missing else ""))
 

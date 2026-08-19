@@ -19,6 +19,7 @@ import sys
 from pathlib import Path
 
 import toll_layer
+from pipeline_io import atomic_write_json
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_TARGETS = [
@@ -47,8 +48,7 @@ def patch(path: Path, index) -> None:
             dest.pop("driving_toll", None)
 
     meta.setdefault("car_model", {})["toll_model"] = toll_layer.TOLL_MODEL
-    path.write_text(json.dumps(data, indent=1, ensure_ascii=False),
-                    encoding="utf-8")
+    atomic_write_json(path, data, indent=1, ensure_ascii=False)
     print(f"  {path.name}: {with_block}/{n} destinations tolled "
           f"({path.stat().st_size / 1024 / 1024:.2f} MB)")
 

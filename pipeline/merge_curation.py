@@ -20,6 +20,7 @@ import time
 import urllib.parse
 import urllib.request
 from pathlib import Path
+from pipeline_io import atomic_write_json
 
 try:
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
@@ -200,7 +201,7 @@ def main():
               f"{len(cache[did]['items_full'])} items_full")
         time.sleep(0.5)
 
-    CACHE.write_text(json.dumps(cache, ensure_ascii=False, indent=1), encoding="utf-8")
+    atomic_write_json(CACHE, cache, indent=1, ensure_ascii=False)
     print(f"\nWrote {CACHE}")
 
 

@@ -34,6 +34,7 @@ Usage:
 import json
 import sys
 from pathlib import Path
+from pipeline_io import atomic_write_json
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_TARGETS = [
@@ -169,7 +170,7 @@ def main():
         data = json.loads(path.read_text(encoding="utf-8"))
         n, tiers, calibrated = process(data.get("destinations", {}))
         if not dry:
-            path.write_text(json.dumps(data, indent=1, ensure_ascii=False), encoding="utf-8")
+            atomic_write_json(path, data, indent=1, ensure_ascii=False)
         print(f"  {path.name}: {n} long-tail dests tiered  {dict(tiers)}  "
               f"ADR-calibrated {calibrated}"
               + ("  [DRY]" if dry else ""))

@@ -45,6 +45,7 @@ import urllib.request
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import date, timedelta
 from pathlib import Path
+from pipeline_io import atomic_write_json
 
 try:
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
@@ -128,7 +129,7 @@ def save_cache(cache, force=False):
         if not force and _dirty < SAVE_EVERY:
             return
         tmp = CACHE.with_suffix(".json.tmp")
-        tmp.write_text(json.dumps(cache, ensure_ascii=False), encoding="utf-8")
+        atomic_write_json(tmp, cache, indent=None, ensure_ascii=False)
         os.replace(tmp, CACHE)
         _dirty = 0
 

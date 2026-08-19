@@ -45,6 +45,7 @@ from pathlib import Path
 import numpy as np
 from shapely.geometry import shape, Point
 from shapely.strtree import STRtree
+from pipeline_io import atomic_write_json
 
 if sys.platform == "win32":
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
@@ -106,7 +107,7 @@ def load_nights(refresh):
         if best_val is not None:
             out[code] = {"nights": best_val, "year": best_year, "name": geo_lbl.get(code)}
     NIGHTS_CACHE.parent.mkdir(exist_ok=True)
-    NIGHTS_CACHE.write_text(json.dumps(out, ensure_ascii=False), encoding="utf-8")
+    atomic_write_json(NIGHTS_CACHE, out, indent=None, ensure_ascii=False)
     print(f"  nights: {len(out)} NUTS 3 regions with data -> cache/{NIGHTS_CACHE.name}")
     return out
 
@@ -260,7 +261,7 @@ def main():
         "used_for": "regional crowding tier (quiet..crowded) per destination",
     }
 
-    MASTER.write_text(json.dumps(data, ensure_ascii=False), encoding="utf-8")
+    atomic_write_json(MASTER, data, indent=None, ensure_ascii=False)
     print(f"  wrote {MASTER}")
     print("done. Run `npm run data` (or dev/build) to ship it to the app.")
 

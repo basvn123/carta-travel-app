@@ -456,14 +456,60 @@ cd continent-app && npm run data && npm run build
 node scripts/verify_place_classes.mjs
 ```
 
+### Fame coverage, and a lie the code was telling
+
+`harvest_pageviews` takes its article URL from `dest.image.page`, a by-product
+of the image harvest. A destination with no photograph therefore had no article
+and was skipped outright, so 61 places came back with fame 0 and tripped the
+rating gate. Never measured is not the same claim as nobody reads it.
+
+`resolve_dest_articles.py` fills that gap, and needed three routes because no
+one of them covers Europe: exact title (Varese, Algeciras), then search
+(`Keswick`, `Rochester`, `Chesterfield` and `Stamford` are DISAMBIGUATION pages
+carrying no coordinates, and search returns `Keswick, Cumbria`), then geosearch
+for names that match nothing (`Spilion` and its article `Spili Rethymnis` share
+no characters, being transliteration and Greek script). Every candidate is
+verified against the destination's own coordinates, which is what rejects
+`Stamford Bridge, East Riding of Yorkshire` for Stamford in Lincolnshire and
+`United Kingdom` for Rugby.
+
+Two bugs found while building it, both worth keeping in mind:
+
+- **A silent `except` recorded a rate limit as an absence.** Wikipedia returned
+  HTTP 429 partway through and every failure was swallowed and written down as
+  "this place has no article" - Varese, Algeciras and Luanco among them, towns
+  that plainly do. The resolver now retries with backoff and reports what it
+  could not reach, because a transient error must never be indistinguishable
+  from a real absence.
+- **A name-blind fallback let bigger neighbours steal the match.** Podgorzyn
+  was assigned the article for Jelenia Gora, Ciritei that for Piatra-Neamt.
+  Both are larger, both far more read, and their fame would have been recorded
+  as the small place's. An unrelated title is now accepted only from geosearch
+  and only within 3 km.
+
+All 61 are measured. Note `--all`: 336 destinations still store a Commons
+`File:` page as `image.page`, which is a photograph and not an article. Their
+fame is correct today because it was cached from earlier runs, but they cannot
+be refreshed until they are resolved.
+
+### Every pipeline write is now atomic
+
+67 call sites across 34 scripts converted from `write_text(json.dumps(...))` to
+`pipeline_io.atomic_write_json`. `indent` and `ensure_ascii` were made explicit
+at every site, because json.dumps defaults to `indent=None, ensure_ascii=True`
+while the atomic writer defaults to `indent=1, ensure_ascii=False`; letting
+that drift would have silently reformatted and re-encoded every cache in the
+repo.
+
 A note paid for in a destroyed cache: `harvest_images.py` checkpointed with
 `Path.write_text`, which truncates the target and then streams. When the disk
 filled mid-checkpoint it left a 0-byte file where 24,803 cached lookups had
 been (recovered from git). That call site, and the master and served-copy
 writes in `apply_rating_layer.py`, `apply_place_layer.py` and
 `apply_designations.py`, now use `pipeline_io.atomic_write_json`, which builds
-a temp file beside the target and renames it. **40 pipeline scripts still use
-the truncating pattern** and are one full disk away from the same loss.
+a temp file beside the target and renames it. That rename also retries: on
+Windows `os.replace` is refused whenever another process holds the target open,
+which killed a four-hour POI harvest at its very last write.
 
 ## Re-running the whole thing
 

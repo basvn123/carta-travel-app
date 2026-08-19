@@ -38,6 +38,7 @@ import unicodedata
 from pathlib import Path
 
 import numpy as np
+from pipeline_io import atomic_write_json
 
 ROOT = Path(__file__).resolve().parents[1]
 MASTER = ROOT / "app_data" / "app_data.json"
@@ -239,7 +240,7 @@ def assign(dry_run):
         "used_for": "maximal items_full sightseeing coverage across the full catalogue",
         "cap_per_dest": CAP_MERGED,
     }
-    MASTER.write_text(json.dumps(data, ensure_ascii=False), encoding="utf-8")
+    atomic_write_json(MASTER, data, indent=None, ensure_ascii=False)
     print(f"  wrote {MASTER}. Run `npm run data` to ship it.")
 
 

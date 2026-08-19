@@ -74,6 +74,7 @@ from pathlib import Path
 
 from env_local import load_env
 from resume_cache import ResumeCache
+from pipeline_io import atomic_write_json
 
 load_env()
 
@@ -404,7 +405,7 @@ def main():
     if not anchors and OUT.exists():
         print(f"0 anchors harvested; keeping the existing {OUT.name} untouched.")
         return 1
-    OUT.write_text(json.dumps(anchors, indent=1, ensure_ascii=False), encoding="utf-8")
+    atomic_write_json(OUT, anchors, indent=1, ensure_ascii=False)
     n3 = sum(1 for a in anchors if a.get("hotel3_night_eur"))
     n5 = sum(1 for a in anchors if a.get("hotel5_night_eur"))
     print(f"Wrote {len(anchors)} hotel city anchors ({n3} with a 3-star, "

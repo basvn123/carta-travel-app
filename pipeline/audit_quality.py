@@ -41,6 +41,7 @@ import sys
 import unicodedata
 from collections import Counter, defaultdict
 from pathlib import Path
+from pipeline_io import atomic_write_json
 
 if sys.platform == "win32":
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
@@ -347,8 +348,7 @@ def main():
     rep["rates"]["dist"] = {str(k): v for k, v in rep["rates"]["dist"].items()}
     rep["kinds"]["vocab"] = dict(rep["kinds"]["vocab"].most_common())
     OUT.parent.mkdir(exist_ok=True)
-    OUT.write_text(json.dumps(rep, indent=1, ensure_ascii=False),
-                   encoding="utf-8")
+    atomic_write_json(OUT, rep, indent=1, ensure_ascii=False)
     print(f"\nreport -> {OUT}")
 
 

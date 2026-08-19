@@ -44,6 +44,7 @@ from math import radians
 from pathlib import Path
 
 import numpy as np
+from pipeline_io import atomic_write_json
 
 if sys.platform == "win32":
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
@@ -237,7 +238,7 @@ def main():
         "used_for": "official population, settlement class and elevation per destination",
     }
 
-    MASTER.write_text(json.dumps(data, ensure_ascii=False), encoding="utf-8")
+    atomic_write_json(MASTER, data, indent=None, ensure_ascii=False)
     print(f"  wrote {MASTER}")
     print("done. Run `npm run data` (or dev/build) to ship it to the app.")
 

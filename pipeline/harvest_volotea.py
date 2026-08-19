@@ -52,6 +52,7 @@ Tuning via env:
 import json, os, sys, time, urllib.request, urllib.error, ssl, gzip
 from datetime import date
 from pathlib import Path
+from pipeline_io import atomic_write_json
 
 ROOT = Path(__file__).resolve().parents[1]
 CACHE_DIR = ROOT / "cache"
@@ -161,9 +162,7 @@ def date_chunks(start_iso, end_iso, n):
 def build_graph(limit=None):
     data = load_app_data()
     anchors = sorted(anchor_set(data))
-    AIRPORTS_CACHE.write_text(
-        json.dumps(_airport_meta(data, set(anchors)), ensure_ascii=False, indent=0),
-        encoding="utf-8")
+    atomic_write_json(AIRPORTS_CACHE, _airport_meta(data, set(anchors)), indent=0, ensure_ascii=False)
     meta = data["meta"]
     start, end = meta["start_date"], meta["end_date"]
     anchor_ok = set(anchors)
@@ -190,7 +189,7 @@ def build_graph(limit=None):
                     graph[o] = sorted(served)
                 done.add(o)
         out = dict(graph); out["_done"] = sorted(done)
-        GRAPH_CACHE.write_text(json.dumps(out, indent=0), encoding="utf-8")
+        atomic_write_json(GRAPH_CACHE, out, indent=0, ensure_ascii=True)
         print(f"  ...{min(i + DISCOVERY_BATCH, len(todo))}/{len(todo)} probed, "
               f"{len(graph)} origins with routes")
         time.sleep(DELAY_S)
@@ -261,11 +260,11 @@ def harvest(limit=None):
                         leg[day] = price
             calls[o] = True
         if n % 10 == 0 or n == len(todo):
-            FARE_CACHE.write_text(json.dumps(cache, indent=0), encoding="utf-8")
+            atomic_write_json(FARE_CACHE, cache, indent=0, ensure_ascii=True)
             print(f"  ...{n}/{len(todo)} origins fetched, {len(legs)} legs, flushed")
         time.sleep(DELAY_S)
 
-    FARE_CACHE.write_text(json.dumps(cache, indent=0), encoding="utf-8")
+    atomic_write_json(FARE_CACHE, cache, indent=0, ensure_ascii=True)
     print(f"harvest complete: {len(legs)} priced legs in cache")
 
 
@@ -357,7 +356,7 @@ def patch(dry_run=False):
         "days_undercut": tot_undercut,
         "harvested_from": date.today().isoformat(),
     }
-    APP_DATA.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
+    atomic_write_json(APP_DATA, data, indent=2, ensure_ascii=False)
     size_mb = APP_DATA.stat().st_size / 1e6
     print(f"patched Volotea fares: +{new_routes} new routes, {tot_added} day-prices added, "
           f"{tot_undercut} undercut existing, {tot_kept} kept")

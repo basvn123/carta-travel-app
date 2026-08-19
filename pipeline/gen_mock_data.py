@@ -9,6 +9,7 @@ from pathlib import Path
 
 # car_layer.py lives in the repo root (parent of continent-app/).
 import car_layer  # noqa: E402
+from pipeline_io import atomic_write_json
 
 random.seed(7)
 
@@ -336,6 +337,6 @@ payload = {
 
 out = Path(__file__).resolve().parents[1] / "continent-app" / "public" / "app_data.json"
 out.parent.mkdir(parents=True, exist_ok=True)
-out.write_text(json.dumps(payload, indent=1), encoding="utf-8")
+atomic_write_json(out, payload, indent=1, ensure_ascii=True)
 print(f"Wrote {out}  ({out.stat().st_size / 1024 / 1024:.2f} MB)")
 print(f"  {len(destinations)} destinations, {(END - START).days + 1} days per route")

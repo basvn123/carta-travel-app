@@ -33,6 +33,7 @@ import numpy as np
 import rasterio
 from rasterio.windows import from_bounds
 from pathlib import Path
+from pipeline_io import atomic_write_json
 
 ROOT = Path(__file__).resolve().parents[1]
 WC = ROOT / "cache" / "worldclim"
@@ -181,7 +182,7 @@ def main():
         cache[did] = build_record(tmin, tmax, prec, srad, lat, lon)
         ok += 1
 
-    CACHE.write_text(json.dumps(cache, ensure_ascii=False), encoding="utf-8")
+    atomic_write_json(CACHE, cache, indent=None, ensure_ascii=False)
     print(f"[wc] done: {ok} sampled, {sea} no-land-pixel, {miss} no-coords "
           f"-> {CACHE}")
 

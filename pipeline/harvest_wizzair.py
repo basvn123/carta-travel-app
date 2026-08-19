@@ -66,6 +66,7 @@ import json, os, re, sys, time, threading, urllib.request, urllib.error, ssl, gz
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import date, datetime, timedelta
 from pathlib import Path
+from pipeline_io import atomic_write_json
 
 ROOT = Path(__file__).resolve().parents[1]
 CACHE_DIR = ROOT / "cache"
@@ -156,7 +157,7 @@ def get_version(force=False):
     if not found:
         raise RuntimeError("could not discover Wizz API version from the site")
     version = found[-1]
-    META_CACHE.write_text(json.dumps({"version": version, "date": today}), encoding="utf-8")
+    atomic_write_json(META_CACHE, {"version": version, "date": today}, indent=None, ensure_ascii=True)
     print(f"  Wizz API version {version}")
     return version
 
@@ -181,7 +182,7 @@ def load_fx():
     rates = payload.get("rates") or {}
     if "EUR" not in rates:
         raise RuntimeError("FX feed missing EUR base")
-    FX_CACHE.write_text(json.dumps({"date": today, "rates": rates}), encoding="utf-8")
+    atomic_write_json(FX_CACHE, {"date": today, "rates": rates}, indent=None, ensure_ascii=True)
     print(f"  FX rates refreshed ({len(rates)} currencies)")
     return rates
 
@@ -235,9 +236,8 @@ def build_graph():
     # keep only edges to real (non-fake) stations we know
     known = set(airports)
     graph = {o: [d for d in dests if d in known] for o, dests in graph.items()}
-    AIRPORTS_CACHE.write_text(json.dumps(airports, ensure_ascii=False, indent=0),
-                              encoding="utf-8")
-    GRAPH_CACHE.write_text(json.dumps(graph, indent=0), encoding="utf-8")
+    atomic_write_json(AIRPORTS_CACHE, airports, indent=0, ensure_ascii=False)
+    atomic_write_json(GRAPH_CACHE, graph, indent=0, ensure_ascii=True)
     edges = sum(len(v) for v in graph.values())
     print(f"  {len(airports)} airports, {edges} directed edges "
           f"-> {GRAPH_CACHE.name}")
@@ -404,7 +404,7 @@ def harvest(limit=None, refresh_times=False):
             cache[key] = result
             done[0] += 1
             if done[0] % 50 == 0:
-                FARE_CACHE.write_text(json.dumps(cache, indent=0), encoding="utf-8")
+                atomic_write_json(FARE_CACHE, cache, indent=0, ensure_ascii=True)
                 print(f"  ...{done[0]}/{len(todo)} fetched, flushed")
         time.sleep(DELAY_S)
 
@@ -416,7 +416,7 @@ def harvest(limit=None, refresh_times=False):
             for _ in as_completed([ex.submit(run, job) for job in todo]):
                 pass
 
-    FARE_CACHE.write_text(json.dumps(cache, indent=0), encoding="utf-8")
+    atomic_write_json(FARE_CACHE, cache, indent=0, ensure_ascii=True)
     print(f"harvest complete: {len(cache) - 1} chunk-legs in cache")
 
 
@@ -596,7 +596,7 @@ def patch(dry_run=False):
         "days_with_schedule": tot_sched,
         "harvested_from": date.today().isoformat(),
     }
-    APP_DATA.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
+    atomic_write_json(APP_DATA, data, indent=2, ensure_ascii=False)
     size_mb = APP_DATA.stat().st_size / 1e6
     print(f"patched Wizz fares: +{new_routes} new routes, {tot_added} day-prices added, "
           f"{tot_undercut} undercut Ryanair, {tot_kept} kept, "

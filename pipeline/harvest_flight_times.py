@@ -38,6 +38,7 @@ import json, os, sys, time, threading, urllib.request, urllib.error
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import date
 from pathlib import Path
+from pipeline_io import atomic_write_json
 
 ROOT = Path(__file__).resolve().parents[1]
 CACHE_DIR = ROOT / "cache"
@@ -165,7 +166,7 @@ def harvest(origins_filter=None):
             cache[key] = result
             done[0] += 1
             if done[0] % 50 == 0:
-                TIMES_CACHE.write_text(json.dumps(cache, indent=0), encoding="utf-8")
+                atomic_write_json(TIMES_CACHE, cache, indent=0, ensure_ascii=True)
                 print(f"  ...{done[0]}/{len(todo)} fetched, flushed")
         time.sleep(DELAY_S)
 
@@ -178,7 +179,7 @@ def harvest(origins_filter=None):
             for _ in as_completed(futs):
                 pass
 
-    TIMES_CACHE.write_text(json.dumps(cache, indent=0), encoding="utf-8")
+    atomic_write_json(TIMES_CACHE, cache, indent=0, ensure_ascii=True)
     print(f"harvest complete: {len(cache)} leg-months in times cache")
 
 
@@ -227,7 +228,7 @@ def patch():
         "harvested_from": date.today().isoformat(),
     }
 
-    APP_DATA.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
+    atomic_write_json(APP_DATA, data, indent=2, ensure_ascii=False)
     size_mb = APP_DATA.stat().st_size / 1e6
     print(f"patched times: {n_pairs} (anchor,origin) pairs, {n_days} day-times")
     print(f"app_data.json is now {size_mb:.1f} MB")
