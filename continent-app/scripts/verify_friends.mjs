@@ -19,6 +19,8 @@
 //      Remove, which would read as deleting somebody else's trip.
 //   7. Privacy rule 2: a friend's trip names its crew but carries no account
 //      id behind any of them.
+//   7c. A friend's trip draws as a map, and the record counts alongside
+//       theirs without pretending to be a ranking.
 //   8. Mobile width: no sideways scroll, the Passes control survives both
 //      slide-overs, opening one closes the other, and the header's own
 //      Friends door lands on the friends spoke.
@@ -290,6 +292,17 @@ const run = async () => {
   if (!/Lisbon/.test(await page.locator('.frn-trip .ftrip').innerText())) {
     fail('opening a trip on the friends page shows no stops');
   } else ok('a trip opens read-only right there');
+
+  // A friend's trip is a shape on a map before it is a list of names. The
+  // fixture's memory carries real coordinates, so this needs no catalogue.
+  try {
+    await page.locator('.frn-trip .ftrip-map canvas').first().waitFor({ timeout: 20000 });
+    const box = await page.locator('.frn-trip .ftrip-map').boundingBox();
+    if (!box || box.height < 80) fail(`the friend trip map frame collapsed: ${JSON.stringify(box)}`);
+    else ok(`a friend trip draws a map, ${Math.round(box.height)}px tall`);
+  } catch {
+    fail('a friend trip rendered no map');
+  }
   await page.locator('.frn-trip-row').first().click();
   await page.screenshot({ path: `${SHOTS}/friends-spoke.png` });
 

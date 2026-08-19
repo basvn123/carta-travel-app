@@ -1000,3 +1000,25 @@ export function AreaIcon({ size = 15, className = '' }) {
     </Glyph>
   );
 }
+
+export function ExpandIcon({ size = 15, className = '' }) {
+  return (
+    <Glyph size={size} className={className} label="Expand">
+      <path d="M9 3H3v6" />
+      <path d="M15 21h6v-6" />
+      <path d="M21 9V3h-6" />
+      <path d="M3 15v6h6" />
+    </Glyph>
+  );
+}
+
+export function ShrinkIcon({ size = 15, className = '' }) {
+  return (
+    <Glyph size={size} className={className} label="Shrink">
+      <path d="M3 9h6V3" />
+      <path d="M21 15h-6v6" />
+      <path d="M15 3v6h6" />
+      <path d="M9 21v-6H3" />
+    </Glyph>
+  );
+}

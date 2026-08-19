@@ -3,6 +3,7 @@ import { LinkIcon, CheckIcon, TrashIcon } from '../components/Icons.jsx';
 import { useI18n } from '../i18n/index.jsx';
 import {
   fetchTripShares, createTripShare, revokeTripShare, buildShareUrl,
+  SHARE_DURATIONS, DEFAULT_SHARE_DAYS, daysLeft,
 } from './tripShares.js';
 import { setTripVisibility, VISIBILITIES } from './friends.js';
 
@@ -36,6 +37,9 @@ export function TripSharePanel({ userId, tripPlanId, visibility = 'private', onV
   const [error, setError] = useState('');
   const [copied, setCopied] = useState('');
   const [vis, setVis] = useState(visibility);
+  // Thirty days by default rather than forever: a link handed out for one
+  // conversation should not outlive it, and nobody comes back to tidy up.
+  const [days, setDays] = useState(DEFAULT_SHARE_DAYS);
 
   const pickVisibility = async (next) => {
     if (next === vis) return;
@@ -91,7 +95,7 @@ export function TripSharePanel({ userId, tripPlanId, visibility = 'private', onV
     setBusy(true);
     setError('');
     try {
-      const row = await createTripShare(userId, tripPlanId, scope);
+      const row = await createTripShare(userId, tripPlanId, scope, days);
       setLinks((cur) => [row, ...cur]);
       await copy(row.token);
     } catch {
@@ -155,6 +159,24 @@ export function TripSharePanel({ userId, tripPlanId, visibility = 'private', onV
         ))}
       </div>
 
+      <div className="tshare-life">
+        <span className="tshare-life-title">{t('share.lifeTitle')}</span>
+        <div className="tshare-life-opts" role="radiogroup" aria-label={t('share.lifeTitle')}>
+          {SHARE_DURATIONS.map((d) => (
+            <button
+              key={String(d)}
+              type="button"
+              role="radio"
+              aria-checked={days === d}
+              className={`tshare-life-opt${days === d ? ' on' : ''}`}
+              onClick={() => setDays(d)}
+            >
+              {d ? t('share.lifeDays', { n: d }) : t('share.lifeForever')}
+            </button>
+          ))}
+        </div>
+      </div>
+
       <p className="tshare-never">{t('share.neverIncluded')}</p>
 
       <button type="button" className="tshare-make" onClick={make} disabled={busy}>
@@ -171,7 +193,11 @@ export function TripSharePanel({ userId, tripPlanId, visibility = 'private', onV
             <div className="tshare-row" key={l.token}>
               <span className="tshare-row-meta">
                 <b>{t(l.scope === 'memory' ? 'share.scopeMemory' : 'share.scopeItinerary')}</b>
-                <span className="tshare-row-date">{t('share.madeOn', { date: fmtDate(l.created_at) })}</span>
+                <span className="tshare-row-date">
+                  {l.expires_at
+                    ? t('share.expiresIn', { n: Math.max(0, daysLeft(l.expires_at)) })
+                    : t('share.madeOn', { date: fmtDate(l.created_at) })}
+                </span>
               </span>
               <button
                 type="button"

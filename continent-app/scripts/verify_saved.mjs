@@ -53,6 +53,7 @@ const DAY_PLANS = [
 ];
 
 const fail = (msg) => { console.error('FAIL:', msg); process.exitCode = 1; };
+const ok = (msg) => console.log('  ok:', msg);
 
 // Past the entry gate and any first-run coach marks, into the app proper.
 const enterApp = async (page) => {
@@ -171,22 +172,47 @@ try {
   await full.waitForTimeout(700);
   await full.locator('.saved-trips-panel').screenshot({ path: `${SHOTS}/saved-visited-full.png` });
 
+  // ---- 3b. The record, next to what friends have shown you.
+  //
+  // Every number here comes from trips a friend already chose to show, so the
+  // block must never read as a ranking: a friend who has seen thirty countries
+  // and shares one trip appears as one, and presenting that as a score would
+  // turn a private choice into public pressure.
+  const compare = async (page) => {
+    const led = page.locator('.fledger');
+    if (!await led.count()) { fail('no friend comparison on the Visited tab'); return; }
+    const text = await led.innerText();
+    if (!/Sofie Vermeulen/.test(text) || !/Jonas Peeters/.test(text)) {
+      fail(`the comparison does not name both friends: ${text}`);
+    } else ok('the comparison lists each friend once, not each trip');
+    // Sofie shows Portugal and Austria, Jonas shows Italy, so the rows are 2
+    // and 1 and Sofie sorts first.
+    const nums = await led.locator('.fledger-row:not(.is-legend) .fledger-num').allInnerTexts();
+    const countries = nums.filter((_, i) => i % 2 === 0);
+    if (countries[1] !== '2' || countries[2] !== '1') {
+      fail(`friend country counts are wrong or unsorted: ${JSON.stringify(countries)}`);
+    } else ok('counts are per friend, deduped across their trips, most first');
+    if (!/not a ranking/i.test(text)) {
+      fail('the comparison does not say it is not a ranking');
+    } else ok('and it says plainly that it is not a ranking');
+  };
+
   // ---- 3. The account-only shapes, through the ?savedmock seam.
   const mock = await browser.newPage({ viewport: { width: 1360, height: 900 } });
   await mock.addInitScript(() => localStorage.setItem('carta.savedTripsTab', 'planned'));
   await mock.goto(`${BASE}/?savedmock`);
   await enterApp(mock);
   await openSaved(mock);
-  const upCards = await mock.locator('.uptrip-card').count();
+  const upCards = await mock.locator('.uptrip-card:not(.is-foreign)').count();
   if (upCards !== 1) fail(`expected 1 upcoming trip card, got ${upCards}`);
-  const upTitle = await mock.locator('.uptrip-title').innerText();
-  const upSub = await mock.locator('.uptrip-sub').innerText().catch(() => '');
+  const upTitle = await mock.locator('.uptrip-card:not(.is-foreign) .uptrip-title').innerText();
+  const upSub = await mock.locator('.uptrip-card:not(.is-foreign) .uptrip-sub').innerText().catch(() => '');
   if (!/Portugal/.test(upTitle)) fail(`upcoming card should headline the country, got "${upTitle}"`);
   if (!/Lisbon.*Porto/.test(upSub)) fail(`upcoming card cities line unexpected: "${upSub}"`);
-  const chip = await mock.locator('.uptrip-when').innerText();
+  const chip = await mock.locator('.uptrip-card:not(.is-foreign) .uptrip-when').innerText();
   if (!/In \d+ days/.test(chip)) fail(`countdown chip unexpected: "${chip}"`);
-  if (!(await mock.locator('.uptrip-flag').count())) fail('upcoming card is missing its corner flag badge');
-  if (!(await mock.locator('.uptrip-datelabel').count())) fail('upcoming card is missing its Dates label');
+  if (!(await mock.locator('.uptrip-card:not(.is-foreign) .uptrip-flag').count())) fail('upcoming card is missing its corner flag badge');
+  if (!(await mock.locator('.uptrip-card:not(.is-foreign) .uptrip-datelabel').count())) fail('upcoming card is missing its Dates label');
   await mock.waitForTimeout(900);
   await mock.locator('.saved-trips-panel').screenshot({ path: `${SHOTS}/saved-mock-planned.png` });
 
@@ -201,6 +227,7 @@ try {
   if (!/3\s*\/\s*43/.test((mockLedger[0] || '').replace(/\s+/g, ' '))) {
     fail(`mock countries ledger should read 3 / 43, got "${mockLedger[0]}"`);
   }
+  await compare(mock);
   const mockFlagNames = await mock.locator('.ledger2-flagname').allInnerTexts();
   for (const c of ['Austria', 'Belgium', 'Germany']) {
     if (!mockFlagNames.includes(c)) fail(`ledger flags miss ${c}: ${JSON.stringify(mockFlagNames)}`);

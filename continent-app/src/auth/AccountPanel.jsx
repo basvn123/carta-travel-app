@@ -147,6 +147,7 @@ function MenuRow({ icon, label, onClick }) {
 
 export function AccountPanel({
   onClose, onOpenAuth, initialView = 'home', onViewChange, pendingFriendHandle,
+  destinations,
 }) {
   const {
     user, hasPassword, signOut, updatePassword, reauthenticate,
@@ -726,7 +727,11 @@ export function AccountPanel({
       )}
 
       {view === 'friends' && user && (
-        <FriendsSpoke userId={user.id} pendingHandle={pendingFriendHandle} />
+        <FriendsSpoke
+          userId={user.id}
+          pendingHandle={pendingFriendHandle}
+          destinations={destinations}
+        />
       )}
 
       {view === 'faq' && (

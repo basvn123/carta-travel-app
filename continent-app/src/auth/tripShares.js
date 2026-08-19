@@ -24,6 +24,31 @@ import { supabase } from './../lib/supabaseClient.js';
  *  the owner says the trip cost them. Never the group's expense ledger. */
 export const SHARE_SCOPES = ['itinerary', 'memory'];
 
+/**
+ * How long a link stays open, in days. `null` is forever, and it is not the
+ * default: a link handed out for one conversation should not still work a year
+ * later, and nobody goes back to tidy up links they have forgotten about. The
+ * database has enforced expires_at since migration 009; this is what finally
+ * sets it.
+ */
+export const SHARE_DURATIONS = [7, 30, null];
+export const DEFAULT_SHARE_DAYS = 30;
+
+/** When a link runs out, or null when it never does. */
+export function expiryFor(days) {
+  if (!days) return null;
+  const d = new Date();
+  d.setDate(d.getDate() + days);
+  return d.toISOString();
+}
+
+/** Whole days left on a link, or null when it never expires. Negative would
+ *  mean already dead, which the list never shows. */
+export function daysLeft(expiresAt) {
+  if (!expiresAt) return null;
+  return Math.ceil((new Date(expiresAt) - Date.now()) / 86400000);
+}
+
 const PARAM = 'shared';
 
 /** The full link for a token. Kept in the hash, like the trip link already is,
@@ -62,26 +87,31 @@ export function stripShareTokenFromUrl() {
 
 /* ---- the owner's side ---- */
 
+/** The links that still work. An expired one is filtered out here as well as
+ *  refused by get_shared_trip, because a heading that says "links that still
+ *  work" must not list one that does not. */
 export async function fetchTripShares(tripPlanId) {
   const { data, error } = await supabase
     .from('trip_shares')
     .select('token, scope, created_at, expires_at, revoked_at')
     .eq('trip_plan_id', tripPlanId)
     .is('revoked_at', null)
+    .or(`expires_at.is.null,expires_at.gt.${new Date().toISOString()}`)
     .order('created_at', { ascending: false });
   if (error) throw error;
   return data || [];
 }
 
-export async function createTripShare(userId, tripPlanId, scope = 'itinerary') {
+export async function createTripShare(userId, tripPlanId, scope = 'itinerary', days = DEFAULT_SHARE_DAYS) {
   const { data, error } = await supabase
     .from('trip_shares')
     .insert({
       owner_id: userId,
       trip_plan_id: tripPlanId,
       scope: SHARE_SCOPES.includes(scope) ? scope : 'itinerary',
+      expires_at: expiryFor(SHARE_DURATIONS.includes(days) ? days : DEFAULT_SHARE_DAYS),
     })
-    .select('token, scope, created_at')
+    .select('token, scope, created_at, expires_at')
     .single();
   if (error) throw error;
   return data;

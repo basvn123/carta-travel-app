@@ -11,7 +11,8 @@
 //   3. A withdrawn link says so plainly instead of erroring or going blank.
 //   4. The reader never sees the ledger, the booking references or the notes,
 //      and a crew member is a name with no account attached.
-//   5. Mobile width: nothing scrolls sideways.
+//   5. The trip draws as a map, not only as a list of city names.
+//   6. Mobile width: nothing scrolls sideways.
 //
 // Uses the ?sharemock seam (auth/tripShares.js), so it needs no credentials.
 // Run from inside continent-app/:  node scripts/verify_trip_share.mjs
@@ -127,6 +128,18 @@ const run = async () => {
   });
   if (leakedIds) fail('the shared trip carries an account id behind a crew name');
   else ok('crew members are names, with no account attached');
+
+  // 5. A trip somebody took is a shape before it is a list. The fixture's
+  // memory carries real coordinates, so the pins draw without waiting on the
+  // reader's catalogue.
+  try {
+    await page.locator('.ftrip-map canvas').first().waitFor({ timeout: 20000 });
+    const box = await page.locator('.ftrip-map').boundingBox();
+    if (!box || box.height < 100) fail(`the map frame collapsed: ${JSON.stringify(box)}`);
+    else ok(`the shared trip draws a map, ${Math.round(box.height)}px tall`);
+  } catch {
+    fail('the shared trip rendered no map');
+  }
 
   await page.screenshot({ path: `${SHOTS}/share-view.png`, fullPage: true });
 

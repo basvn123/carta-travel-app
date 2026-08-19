@@ -4,7 +4,8 @@ import { CountryFlag } from '../components/CountryFlag.jsx';
 import { MapPinIcon, CalendarIcon } from '../components/Icons.jsx';
 import { useI18n } from '../i18n/index.jsx';
 import { TripMemoryView } from './TripMemoryView.jsx';
-import { readCrew } from './tripCrew.js';
+import { foreignMemory } from './foreignTrip.js';
+import { ForeignTripPins } from './FriendTripPanel.jsx';
 import { fetchSharedTrip } from './tripShares.js';
 
 /**
@@ -24,7 +25,7 @@ import { fetchSharedTrip } from './tripShares.js';
  * button is already conditional on an onEdit handler. Not passing one is what
  * makes this read only, and it means the two views can never drift apart.
  */
-export function SharedTripView({ token, onDismiss }) {
+export function SharedTripView({ token, onDismiss, destinations }) {
   const { t } = useI18n();
   const [state, setState] = useState({ loading: true, trip: null });
 
@@ -41,12 +42,7 @@ export function SharedTripView({ token, onDismiss }) {
 
   const trip = state.trip;
   const stops = trip?.stops || [];
-  const extras = trip?.payload?.extras || {};
-  // The crew arrives as extras.people, names only, exactly as loadMemory
-  // hydrates it for the owner's own copy.
-  const memory = extras.memory
-    ? { ...extras.memory, crew: readCrew(extras) }
-    : null;
+  const memory = foreignMemory(trip?.payload);
 
   const fmt = (iso) => {
     if (!iso) return '';
@@ -87,6 +83,8 @@ export function SharedTripView({ token, onDismiss }) {
                 <span>{fmt(first)} to {fmt(last)}</span>
               </p>
             )}
+
+            <ForeignTripPins stops={stops} memory={memory} destinations={destinations} />
 
             {stops.length > 0 && (
               <ol className="stview-stops">

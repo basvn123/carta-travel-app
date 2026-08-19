@@ -1,9 +1,10 @@
 import React, { lazy, Suspense, useEffect, useMemo, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { useAuth } from './AuthContext.jsx';
 import { fetchSavedTrips, deleteTrip } from './tripStorage.js';
 import { fetchTripPlans, deleteTripPlan } from './tripPlanStorage.js';
-import { loadStandalonePlans, deleteStandalonePlan, loadAssignments, subscribeDayPlanStore } from '../planner/dayPlanStore.js';
-import { MapPinIcon, RouteIcon, ListDayIcon, PencilIcon, TrashIcon, MoreIcon, BookmarkIcon, CalendarIcon, CheckIcon, PlusIcon, LinkIcon } from '../components/Icons.jsx';
+import { loadStandalonePlans, deleteStandalonePlan, loadAssignments, subscribeDayPlanStore, loadTripExtras, persistTripExtras } from '../planner/dayPlanStore.js';
+import { MapPinIcon, RouteIcon, ListDayIcon, PencilIcon, TrashIcon, MoreIcon, BookmarkIcon, CalendarIcon, CheckIcon, PlusIcon, LinkIcon, PersonIcon, ExpandIcon, ShrinkIcon } from '../components/Icons.jsx';
 import { PastTripForm } from './PastTripForm.jsx';
 import { TripMemoryView } from './TripMemoryView.jsx';
 import {
@@ -14,7 +15,7 @@ import {
   loadMemory, saveMemory, clearMemory, coverPhoto, memoryPoints, spendSummary, SPEND_CATS,
 } from './pastTripMemory.js';
 import { CountryFlag, CountryFlagStack, COUNTRY_ISO2 } from '../components/CountryFlag.jsx';
-import { crewLabel } from './tripCrew.js';
+import { crewLabel, crewInitials, namedCrew, newCrewMember, readCrew, writeCrew, MAX_CREW } from './tripCrew.js';
 import { TripSharePanel } from './TripSharePanel.jsx';
 import { FriendTripPanel } from './FriendTripPanel.jsx';
 import { fetchFriendLinks, listFriendTrips } from './friends.js';
@@ -61,6 +62,14 @@ const MOCK_FAVS = [
   { id: 'mf2', destination_id: 'OPO', city: 'Porto', country: 'Portugal', depart_date: addDaysIso(62), return_date: addDaysIso(65), created_at: addDaysIso(-30) },
   { id: 'mf3', destination_id: 'gem:bruges', city: 'Bruges', country: 'Belgium', created_at: addDaysIso(-45) },
 ];
+// Two friends showing three trips between them, so the ?savedmock seam can
+// render the comparison as well as the shelf.
+const MOCK_FRIEND_TRIPS = [
+  { ownerId: 'u-sofie', ownerHandle: 'sofie_v', ownerName: 'Sofie Vermeulen', tripPlanId: 'ft1', label: 'Two weeks in Portugal', startDate: addDaysIso(-90), endDate: addDaysIso(-80), cities: ['Lisbon', 'Porto'], countries: ['Portugal'], destinationIds: ['LIS', 'OPO'] },
+  { ownerId: 'u-sofie', ownerHandle: 'sofie_v', ownerName: 'Sofie Vermeulen', tripPlanId: 'ft2', label: 'Alpine summer', startDate: addDaysIso(-200), endDate: addDaysIso(-193), cities: ['Innsbruck'], countries: ['Austria'], destinationIds: ['INN'] },
+  { ownerId: 'u-jonas', ownerHandle: 'jonas', ownerName: 'Jonas Peeters', tripPlanId: 'ft3', label: 'A week in Rome', startDate: addDaysIso(-150), endDate: addDaysIso(-143), cities: ['Rome'], countries: ['Italy'], destinationIds: ['FCO'] },
+];
+
 const MOCK_PLANS = [
   { id: 'mp1', label: null, cities: ['Lisbon', 'Porto'], countries: ['Portugal'], start_date: addDaysIso(21), end_date: addDaysIso(27), destination_ids: ['LIS', 'OPO'] },
   { id: 'mp2', label: 'Autumn in Flanders', cities: ['Bruges'], countries: ['Belgium'], start_date: addDaysIso(-40), end_date: addDaysIso(-35), destination_ids: ['gem:bruges'] },
@@ -294,11 +303,129 @@ function FavCard({ trip, img, dates, kind, savedOn, onOpen, openTitle, onDelete,
   );
 }
 
+/**
+ * Who came, on the face of the card.
+ *
+ * A trip's crew was only reachable by opening the whole "add a past trip"
+ * form and scrolling to the companions fold, which is a long walk to write
+ * one name. This is the short way: the people already on the trip as a row of
+ * initials, and one plus that opens a friend list and a name field.
+ *
+ * It writes exactly what the form writes, `extras.people` through writeCrew,
+ * so a name added here is the same name the expense ledger splits by and the
+ * memory line reads back. Appending is the only edit offered, because the
+ * ledger stores `paidBy` as an index into this list (see tripCrew.js) and
+ * removal renumbers it. Removing a name you just mistyped is still allowed,
+ * from the row itself, where the consequence is visible.
+ */
+function CrewBar({ crew, friends, onAdd, onRemove }) {
+  const { t, lang } = useI18n();
+  const [open, setOpen] = useState(false);
+  const [typed, setTyped] = useState('');
+  const people = namedCrew(crew);
+  const avatars = crewInitials(crew, 4);
+  const full = people.length >= MAX_CREW;
+  // A friend already on the trip is not offered again: the chip would add a
+  // second row for the same person.
+  const pickable = (friends || []).filter((f) => !crew.some((c) => c.userId === f.userId));
+
+  const addTyped = () => {
+    const name = typed.trim();
+    if (!name) return;
+    onAdd({ ...newCrewMember(), name });
+    setTyped('');
+  };
+
+  return (
+    <div className={`uptrip-crew${open ? ' is-open' : ''}`}>
+      <div className="uptrip-crew-row">
+        {avatars.length > 0 && (
+          <span className="uptrip-crew-stack" aria-hidden="true">
+            {avatars.map((a) => (
+              <span className="uptrip-crew-dot" key={a.id} title={a.name}>{a.initials}</span>
+            ))}
+            {people.length > avatars.length && (
+              <span className="uptrip-crew-dot is-more">+{people.length - avatars.length}</span>
+            )}
+          </span>
+        )}
+        <span className="uptrip-crew-line">
+          {people.length ? crewLabel(crew, lang, 3) : t('saved.crewEmpty')}
+        </span>
+        {!full && (
+          <button
+            className="uptrip-crew-add"
+            onClick={() => setOpen((v) => !v)}
+            aria-expanded={open}
+            aria-label={t('saved.crewAdd')}
+            title={t('saved.crewAdd')}
+          >
+            <PlusIcon size={14} />
+          </button>
+        )}
+      </div>
+      {open && (
+        <div className="uptrip-crew-pop">
+          <span className="uptrip-crew-cap">{t('saved.crewTitle')}</span>
+          {pickable.length > 0 && (
+            <div className="uptrip-crew-chips">
+              {pickable.map((f) => (
+                <button
+                  key={f.userId}
+                  className="uptrip-crew-chip"
+                  onClick={() => onAdd({
+                    ...newCrewMember(),
+                    name: f.displayName || f.handle,
+                    userId: f.userId,
+                  })}
+                >
+                  <PlusIcon size={11} />
+                  {f.displayName || `@${f.handle}`}
+                </button>
+              ))}
+            </div>
+          )}
+          <div className="uptrip-crew-typerow">
+            <input
+              className="uptrip-crew-input"
+              value={typed}
+              placeholder={t('saved.crewName')}
+              onChange={(e) => setTyped(e.target.value)}
+              onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); addTyped(); } }}
+            />
+            <button className="uptrip-crew-save" onClick={addTyped} disabled={!typed.trim()}>
+              {t('saved.crewAddName')}
+            </button>
+          </div>
+          {people.length > 0 && (
+            <div className="uptrip-crew-list">
+              {crew.map((c, i) => (c.name?.trim() ? (
+                <span className="uptrip-crew-item" key={c.id}>
+                  {c.userId && <PersonIcon size={11} />}
+                  {c.name.trim()}
+                  <button
+                    className="uptrip-crew-drop"
+                    onClick={() => onRemove(i)}
+                    aria-label={t('saved.crewRemove', { name: c.name.trim() })}
+                    title={t('saved.crewRemove', { name: c.name.trim() })}
+                  >
+                    x
+                  </button>
+                </span>
+              ) : null))}
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
 /** The big journey card, shared by Planned and Visited: full-width photo, the
  *  country as the headline, its flag as a corner badge, dates under a small
  *  label, and one mark in the other corner saying which state it is in, a
  *  calendar for a commitment, a check for a memory. */
-function JourneyCard({ title, sub, img, whenChip, countries = [], dateLabel, dates, visited, onOpen, openTitle, actions, onDelete, deleteLabel, footer }) {
+function JourneyCard({ title, sub, img, whenChip, countries = [], dateLabel, dates, visited, foreign, onOpen, openTitle, actions, onDelete, deleteLabel, footer, crew }) {
   const [confirming, setConfirming] = useState(false);
 
   if (confirming) {
@@ -306,7 +433,7 @@ function JourneyCard({ title, sub, img, whenChip, countries = [], dateLabel, dat
   }
 
   return (
-    <div className={`uptrip-card${visited ? ' is-visited' : ''}`}>
+    <div className={`uptrip-card${visited ? ' is-visited' : ''}${foreign ? ' is-foreign' : ''}`}>
       <div className="uptrip-visual">
         <button className="uptrip-open" onClick={onOpen} title={openTitle}>
           <span
@@ -350,12 +477,83 @@ function JourneyCard({ title, sub, img, whenChip, countries = [], dateLabel, dat
           </div>
         )}
       </div>
+      {crew}
       {footer && (
         <button className="saved-card-footer" onClick={footer.onClick} title={footer.title}>
           <span>{footer.label}</span>
           <span className="saved-card-footer-go" aria-hidden="true">›</span>
         </button>
       )}
+    </div>
+  );
+}
+
+/**
+ * The record, next to what friends have shown you.
+ *
+ * Computed entirely from list_friend_trips, which is to say from trips each
+ * friend has already chosen to show you. No new query, no new permission, and
+ * nothing here that you could not already have counted by opening their trips
+ * one at a time.
+ *
+ * Which is exactly why it is NOT a leaderboard, and says so. A friend's number
+ * is what they show, not where they have been: somebody who has seen thirty
+ * countries and shares one trip appears as one country. Presenting that as a
+ * ranking would turn a private visibility choice into a public score, and
+ * quietly pressure people into sharing more than they meant to.
+ */
+function FriendLedger({ mine, friendTrips }) {
+  const { t } = useI18n();
+  const rows = useMemo(() => {
+    const by = new Map();
+    (friendTrips || []).forEach((ft) => {
+      const key = ft.ownerId;
+      if (!by.has(key)) {
+        by.set(key, {
+          key,
+          who: ft.ownerName || `@${ft.ownerHandle}`,
+          countries: new Set(),
+          cities: new Set(),
+          trips: 0,
+        });
+      }
+      const r = by.get(key);
+      r.trips += 1;
+      (ft.countries || []).forEach((c) => c && r.countries.add(c));
+      (ft.cities || []).forEach((c) => c && r.cities.add(c));
+    });
+    return [...by.values()]
+      .map((r) => ({ ...r, countries: r.countries.size, cities: r.cities.size }))
+      .sort((a, b) => b.countries - a.countries || b.cities - a.cities);
+  }, [friendTrips]);
+
+  if (rows.length === 0) return null;
+
+  return (
+    <div className="fledger">
+      <div className="fledger-head">
+        <span className="saved-section-title">{t('saved.alongside')}</span>
+      </div>
+      <p className="saved-section-sub">{t('saved.alongsideSub')}</p>
+      <div className="fledger-rows">
+        <div className="fledger-row is-me">
+          <span className="fledger-who">{t('saved.alongsideYou')}</span>
+          <span className="fledger-num">{mine.countries.length}</span>
+          <span className="fledger-num is-soft">{mine.cities.length}</span>
+        </div>
+        {rows.map((r) => (
+          <div className="fledger-row" key={r.key}>
+            <span className="fledger-who">{r.who}</span>
+            <span className="fledger-num">{r.countries}</span>
+            <span className="fledger-num is-soft">{r.cities}</span>
+          </div>
+        ))}
+        <div className="fledger-row is-legend">
+          <span className="fledger-who" />
+          <span className="fledger-num">{t('saved.visitedCountries')}</span>
+          <span className="fledger-num is-soft">{t('saved.visitedCities')}</span>
+        </div>
+      </div>
     </div>
   );
 }
@@ -495,15 +693,21 @@ export function SavedTripsPanel({ data, onClose, onLoadTrip, onLoadTripPlan, onO
   // and both fail quietly: a project without migration 011 simply has neither,
   // which is not something the traveller can act on.
   const [friends, setFriends] = useState([]);
-  const [friendTrips, setFriendTrips] = useState([]);
+  const [friendTrips, setFriendTrips] = useState(SAVED_MOCK ? MOCK_FRIEND_TRIPS : []);
   const [openFriendTrip, setOpenFriendTrip] = useState('');
   // Visibility per own trip: local edits first, then the value the trip row
   // came back with. Never a bare 'private' default while a real value exists,
   // because a control that says "Only me" over a trip that is actually shown
   // to friends misstates a security setting.
   const [visById, setVisById] = useState({});
+  // The record's map, blown up to the whole device. Off by default: a map that
+  // covers the screen the moment the tab opens hides the record it belongs to.
+  const [mapFull, setMapFull] = useState(false);
 
   useEffect(() => {
+    // The mock seam seeds both lists, so a guest running it must not have them
+    // wiped: SAVED_MOCK stands in for exactly the account this effect needs.
+    if (SAVED_MOCK) return undefined;
     if (!user) { setFriends([]); setFriendTrips([]); return undefined; }
     let live = true;
     fetchFriendLinks(user.id)
@@ -514,6 +718,16 @@ export function SavedTripsPanel({ data, onClose, onLoadTrip, onLoadTripPlan, onO
       .catch(() => {});
     return () => { live = false; };
   }, [user]);
+
+  // Escape leaves the full-screen map, the way it leaves every other overlay
+  // in the app. Bound only while it is open, so it never eats the key from
+  // the panel underneath.
+  useEffect(() => {
+    if (!mapFull) return undefined;
+    const onKey = (e) => { if (e.key === 'Escape') setMapFull(false); };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [mapFull]);
 
   // Spend categories in the reader's language, so the ledger rows a memory
   // writes are readable rather than machine keys.
@@ -826,6 +1040,35 @@ export function SavedTripsPanel({ data, onClose, onLoadTrip, onLoadTripPlan, onO
     ].filter(Boolean).join(', ') || t('saved.pastSeeTrip');
   };
 
+  // ── Who came, editable from the card itself. ──
+  // The roster is the same `extras.people` list the form and the expense
+  // ledger use, read straight off the store rather than out of a memory blob:
+  // a trip that was never written up as a memory still has people on it, and
+  // must still be able to say who.
+  const crewFor = (planId) => {
+    const extras = loadTripExtras(planId);
+    return readCrew(extras, { memory: extras.memory });
+  };
+  const writeCrewFor = (planId, next) => {
+    persistTripExtras(planId, writeCrew(loadTripExtras(planId), next));
+    setMemTick((n) => n + 1);
+  };
+  // Appending never moves an existing slot, so nothing an expense already
+  // points at changes meaning. Removal does renumber, which is why it lives
+  // behind the open list rather than on the card face.
+  const crewBarFor = (planId) => (
+    <CrewBar
+      crew={crewFor(planId)}
+      friends={friends}
+      onAdd={(member) => {
+        const cur = crewFor(planId);
+        if (namedCrew(cur).length >= MAX_CREW) return;
+        writeCrewFor(planId, [...cur, member]);
+      }}
+      onRemove={(i) => writeCrewFor(planId, crewFor(planId).filter((_, j) => j !== i))}
+    />
+  );
+
   // "Share this trip" as a card menu action. Only for a saved trip plan, and
   // only when signed in: the token hangs off trip_plans, so there is nothing
   // for a guest's device-local trip to reference.
@@ -1064,6 +1307,7 @@ export function SavedTripsPanel({ data, onClose, onLoadTrip, onLoadTripPlan, onO
                   return (
                     <div className="saved-record-row" key={ft.tripPlanId}>
                       <JourneyCard
+                        foreign
                         title={ft.label || (ft.cities || []).join(', ')}
                         sub={t('friends.byWhom', { who })}
                         countries={ft.countries || []}
@@ -1078,7 +1322,7 @@ export function SavedTripsPanel({ data, onClose, onLoadTrip, onLoadTripPlan, onO
                         openTitle={t('friends.openTheirTrip')}
                         actions={[]}
                       />
-                      {showing && <FriendTripPanel planId={ft.tripPlanId} />}
+                      {showing && <FriendTripPanel planId={ft.tripPlanId} destinations={destinations} />}
                     </div>
                   );
                 })}
@@ -1165,6 +1409,7 @@ export function SavedTripsPanel({ data, onClose, onLoadTrip, onLoadTripPlan, onO
                 visitedCountries={visited.countries}
                 visitedCities={visited.cities}
               />
+              <FriendLedger mine={visited} friendTrips={friendTrips} />
             </div>
           )}
 

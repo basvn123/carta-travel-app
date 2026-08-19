@@ -1477,4 +1477,13 @@ export const nl = {
   "share.visFailed": "Dat kon niet gewijzigd worden. Probeer opnieuw.",
   "saved.pastFromFriends": "Of kies een vriend",
   "saved.pastLinkedFriend": "Deze persoon heeft een Carta-account",
+
+  // link expiry, and the record next to what friends show you
+  "share.lifeTitle": "Hoe lang de link werkt",
+  "share.lifeDays": "{n} dagen",
+  "share.lifeForever": "Geen einddatum",
+  "share.expiresIn": "Werkt nog {n} dagen",
+  "saved.alongside": "Naast je vrienden",
+  "saved.alongsideSub": "Alleen de reizen die elke vriend je wilde tonen, dus dit is geen rangschikking.",
+  "saved.alongsideYou": "Jij",
 };

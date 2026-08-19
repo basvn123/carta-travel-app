@@ -1477,4 +1477,13 @@ export const it = {
   "share.visFailed": "Non è stato possibile cambiarlo. Riprova.",
   "saved.pastFromFriends": "Oppure scegli un amico",
   "saved.pastLinkedFriend": "Questa persona ha un account Carta",
+
+  // link expiry, and the record next to what friends show you
+  "share.lifeTitle": "Quanto dura il link",
+  "share.lifeDays": "{n} giorni",
+  "share.lifeForever": "Senza scadenza",
+  "share.expiresIn": "Funziona ancora {n} giorni",
+  "saved.alongside": "Accanto ai tuoi amici",
+  "saved.alongsideSub": "Solo i viaggi che ogni amico ha scelto di mostrarti, quindi non è una classifica.",
+  "saved.alongsideYou": "Tu",
 };

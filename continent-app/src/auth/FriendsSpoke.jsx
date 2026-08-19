@@ -49,7 +49,7 @@ function Person({ link, children }) {
   );
 }
 
-export function FriendsSpoke({ userId, pendingHandle }) {
+export function FriendsSpoke({ userId, pendingHandle, destinations }) {
   const { t } = useI18n();
   const [links, setLinks] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -336,7 +336,7 @@ export function FriendsSpoke({ userId, pendingHandle }) {
                       <CountryFlagStack countries={ft.countries} size={14} />
                     )}
                   </button>
-                  {showing && <FriendTripPanel planId={ft.tripPlanId} />}
+                  {showing && <FriendTripPanel planId={ft.tripPlanId} destinations={destinations} />}
                 </div>
               );
             })

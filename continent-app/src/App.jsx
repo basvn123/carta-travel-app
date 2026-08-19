@@ -521,6 +521,7 @@ function TravelApp() {
     return (
       <SharedTripView
         token={shareToken}
+        destinations={data?.destinations}
         onDismiss={() => setShareToken(null)}
       />
     );
@@ -995,6 +996,7 @@ function TravelApp() {
             initialView={accountView}
             onViewChange={setAccountView}
             pendingFriendHandle={pendingFriend}
+            destinations={data?.destinations}
             onClose={() => setAccountOpen(false)}
             onOpenAuth={() => { setAccountOpen(false); setAuthModalMode('signin'); setAuthModalOpen(true); }}
           />

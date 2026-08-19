@@ -9170,6 +9170,18 @@ input, select {
 .saved-trips-panel .panel-section { padding-top: 18px; padding-bottom: 18px; }
 .saved-trips-panel .saved-section-sub { margin-bottom: 12px; }
 
+/* One gutter, one left edge. The header carried the panel's own 16px inset
+   while every shelf below it used .panel-section's 28px, so "Saved trips",
+   the tab pill and the map each began on a different vertical. Nothing in the
+   panel now sets its own horizontal padding: both read this variable, so the
+   heading, the tabs, the map and every card share one line down the page. */
+.saved-trips-panel { --saved-gutter: 16px; }
+.saved-trips-panel .panel-header,
+.saved-trips-panel .panel-section {
+  padding-left: var(--saved-gutter);
+  padding-right: var(--saved-gutter);
+}
+
 /* An empty shelf should invite, not look like a broken upload zone. A dashed
    outline reads as "drop a file here"; a soft filled panel with one thing to
    press reads as "here is where this begins". */
@@ -19485,4 +19497,107 @@ button.ai-sched-main:focus-visible {
 .frn-me-handle { flex: 1 1 100%; }
 @media (min-width: 420px) {
   .frn-me-handle { flex: 1 1 auto; }
+}
+
+/* ── Somebody else's trip, as a shape before it is a list ────────────────────
+   The map leads both foreign-trip views. Same containment rule as the record
+   map: TripMap positions itself absolutely, so the frame has to give it a
+   height and reset its inset or fitBounds runs against a 34px canvas. ───── */
+.ftrip-map {
+  position: relative;
+  height: 200px;
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--paper-dim);
+}
+.ftrip-map .trip-map,
+.ftrip-map > div { position: absolute !important; inset: 0 !important; }
+.stview .ftrip-map { height: 260px; border-radius: 14px; }
+@media (max-width: 480px) {
+  .stview .ftrip-map { height: 210px; }
+}
+
+/* ── How long a link lives ──────────────────────────────────────────────── */
+.tshare-life {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+.tshare-life-title {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+}
+.tshare-life-opts {
+  display: inline-flex;
+  align-self: flex-start;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.tshare-life-opt {
+  padding: 6px 13px;
+  border: 0;
+  background: transparent;
+  font-family: var(--ui);
+  font-size: 12.5px;
+  color: var(--ink-soft);
+  cursor: pointer;
+  white-space: nowrap;
+}
+.tshare-life-opt.on { background: var(--ink); color: var(--paper); }
+
+/* ── Your record, next to what friends have shown you ───────────────────────
+   A list with hairlines, not cards: these are rows of one comparable fact,
+   and boxing each one would suggest they are objects to open. ──────────── */
+.fledger { margin-top: 18px; }
+.fledger-head { display: flex; align-items: center; gap: 6px; }
+.fledger-rows {
+  display: flex;
+  flex-direction: column;
+  margin-top: 8px;
+  border-top: 1px solid var(--rule-soft);
+}
+.fledger-row {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 14px;
+  align-items: center;
+  padding: 9px 2px;
+  border-bottom: 1px solid var(--rule-soft);
+}
+.fledger-row:last-child { border-bottom: 0; }
+.fledger-who {
+  font-size: 13px;
+  color: var(--ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.fledger-row.is-me .fledger-who { font-weight: 600; }
+.fledger-num {
+  min-width: 34px;
+  font-family: var(--mono);
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  color: var(--ink);
+}
+.fledger-num.is-soft { color: var(--ink-mute); }
+/* The legend is the column key, not a row of data, so it carries no rule and
+   states the two headings in the same places the numbers stand. */
+.fledger-row.is-legend {
+  padding-top: 6px;
+  border-bottom: 0;
+}
+.fledger-row.is-legend .fledger-num {
+  font-family: var(--ui);
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
 }

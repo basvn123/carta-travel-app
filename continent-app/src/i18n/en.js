@@ -2075,4 +2075,13 @@ export const en = {
   "share.visFailed": "That could not be changed. Try again.",
   "saved.pastFromFriends": "Or pick a friend",
   "saved.pastLinkedFriend": "This person has a Carta account",
+
+  // link expiry, and the record next to what friends show you
+  "share.lifeTitle": "How long the link works",
+  "share.lifeDays": "{n} days",
+  "share.lifeForever": "No end date",
+  "share.expiresIn": "Works for {n} more days",
+  "saved.alongside": "Alongside your friends",
+  "saved.alongsideSub": "Counting only the trips each friend chose to show you, so this is not a ranking.",
+  "saved.alongsideYou": "You",
 };
