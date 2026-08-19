@@ -211,7 +211,6 @@ export function FriendsSpoke({ userId, pendingHandle }) {
               {t('friends.share')}
             </button>
           </div>
-          <p className="account-section-hint">{t('friends.yourHandleHint')}</p>
         </div>
       )}
 
@@ -219,7 +218,6 @@ export function FriendsSpoke({ userId, pendingHandle }) {
         <div className="section-title section-title-iconed">
           <SearchIcon size={12} /> {t('friends.addTitle')}
         </div>
-        <p className="account-section-hint">{t('friends.addHint')}</p>
         <form className="frn-find" onSubmit={search}>
           <div className="acct-handle-row">
             <span className="acct-handle-at" aria-hidden="true">@</span>
