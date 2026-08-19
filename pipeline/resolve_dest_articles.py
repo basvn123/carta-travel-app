@@ -37,6 +37,7 @@ import re
 import sys
 import time
 import unicodedata
+import urllib.error
 import urllib.parse
 import urllib.request
 from pathlib import Path
@@ -124,6 +125,7 @@ def haversine(lat1, lon1, lat2, lon2):
 # A transient error must never be indistinguishable from a real absence.
 API_TRIES = 4
 API_BACKOFF_S = 2.0
+THROTTLE_BACKOFF_S = 20.0   # a 429 means slow down, not try again in a moment
 _api_errors = []
 
 
@@ -135,7 +137,18 @@ def _api(lang, params):
             req = urllib.request.Request(url, headers={"User-Agent": UA})
             with urllib.request.urlopen(req, timeout=40) as r:
                 return json.loads(r.read().decode("utf-8"))
-        except Exception as e:                       # throttling, 5xx, timeout
+        except urllib.error.HTTPError as e:
+            last = e
+            if e.code == 429:
+                # Wikipedia is asking us to stop, so stop properly. A 2 second
+                # nudge just earns another 429: sustained throttling needs a
+                # real pause, and Retry-After says how long when it is sent.
+                wait = float(e.headers.get("Retry-After") or 0) or (
+                    THROTTLE_BACKOFF_S * (attempt + 1))
+            else:
+                wait = API_BACKOFF_S * (attempt + 1)
+            time.sleep(wait)
+        except Exception as e:                       # 5xx, timeout, bad JSON
             last = e
             time.sleep(API_BACKOFF_S * (attempt + 1))
     _api_errors.append(f"{lang}: {type(last).__name__}: {last}")

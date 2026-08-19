@@ -33,12 +33,14 @@ So you schedule ONE weekly job and each layer self-selects how often it fires:
   weekly    fares (live Ryanair re-fetch, rolling window) + ship
   weekly    fare snapshot archive -> drift check -> model retrain -> estimates
   weekly    raw open-data mirror (src/ingestion: schedules, realtime, ADS-B)
-  monthly   fame (pageviews) -> beauty -> rating; flight times for covered origins
+  monthly   fame (pageviews) -> designations -> beauty -> place -> rating;
+            flight times for covered origins
   monthly   holiday calendars (demand catalysts for the estimation model)
   monthly   trails popularity (curation shortlists for the review queue)
   monthly   natural features: the beach and summit wire, rebuilt behind its gate
   quarterly open-data snapshots (crowding, bathing water, lodging) *
   quarterly trails ingest (Geofabrik hiking relations -> the trailslab lab)
+  quarterly coverage gaps (what Europe has that the catalogue does not)
   after     trails elevation + validation: no interval of their own; they are
             due when the task they depend on last succeeded more recently than
             they did (trails_ingest -> trails_elevation -> trails_validate).
@@ -931,22 +933,97 @@ def hero_audit_dry(ctx):
     return run_cmd([PY, "pipeline/audit_hero_images.py", "check"]) == 0
 
 
+# How many destinations may lack a resolvable Wikipedia article before the fame
+# step refuses to clear the pageviews cache. Small on purpose: a handful of
+# genuinely article-less places is normal, hundreds means the resolver did not
+# finish and the cache is the only copy of their fame.
+FAME_CLEAR_TOLERANCE = 15
+
+
+def _fame_measurable():
+    """(total destinations, how many have an article fame can be read from)."""
+    import json as _json
+    sys.path.insert(0, str(ROOT / "pipeline"))
+    try:
+        import harvest_pageviews as _hp
+        overrides = set(_hp.FAME_ARTICLE_OVERRIDES)
+    except Exception:
+        overrides = set()
+    try:
+        dests = _json.loads((ROOT / "app_data" / "app_data.json")
+                            .read_text(encoding="utf-8"))["destinations"]
+    except Exception:
+        return 0, 0
+    try:
+        articles = _json.loads((CACHE / "dest_articles.json")
+                               .read_text(encoding="utf-8"))
+    except Exception:
+        articles = {}
+    ok = 0
+    for did, d in dests.items():
+        page = (d.get("image") or {}).get("page") or ""
+        is_article = (".wikipedia.org/wiki/" in page
+                      and "commons.wikimedia.org" not in page)
+        if did in overrides or is_article or (articles.get(did) or {}).get("url"):
+            ok += 1
+    return len(dests), ok
+
+
 def fame_step(ctx):
-    """Refresh destination fame. The dest pageviews cache is never invalidated
-    by the harvester (it only fills missing ids), so to pick up drifted fame we
-    drop it first, then re-harvest, then re-derive beauty + rating."""
+    """Refresh destination fame, then everything downstream of it.
+
+    The pageviews cache is never invalidated by the harvester (it only fills
+    missing ids), so drifted fame is only picked up by deleting it first. That
+    deletion is also the dangerous part of this step: harvest_pageviews can
+    only fetch a destination that HAS a resolvable article, and 334 of them
+    store a Wikimedia Commons `File:` page in `image.page` - a photograph, not
+    an article. Clearing the cache without resolving those first silently drops
+    the fame of Bilbao, Ibiza, Alicante and 331 others, and nothing fails.
+    resolve_dest_articles runs first for exactly that reason.
+
+    The chain that follows was previously beauty -> rating, which skipped two
+    inputs the rating actually reads: `designations` feeds the acclaim term,
+    and `place.class` decides which per-class curve appeal_scale puts a
+    destination on. A monthly run that refreshed neither re-derived the rating
+    from stale versions of both.
+    """
+    if run_cmd([PY, "pipeline/resolve_dest_articles.py", "--all"]) != 0:
+        return False
+
+    # Only destroy the cache if we can actually refill it. resolve_dest_articles
+    # exits 0 even when Wikipedia rate-limits it, because a 429 is a temporary
+    # failure rather than a bad run - so "it succeeded" does NOT mean "every
+    # destination is now measurable". Deleting the cache on that assumption is
+    # precisely the bug this whole guard exists to prevent, one level up: the
+    # clear is unconditional, the refill is not, and the difference is silent.
+    #
+    # So the coverage is measured, and the clear only happens when a refill can
+    # actually replace what is being thrown away. Below the bar the refresh
+    # still runs, just additively: fame goes stale rather than missing, which is
+    # the better of the two failures.
+    total, measurable = _fame_measurable()
     pv = CACHE / "dest_pageviews.json"
-    if pv.exists():
-        try:
-            pv.unlink()
-            log("  cleared cache/dest_pageviews.json to force fresh fame")
-        except OSError as e:
-            log(f"  (could not clear pageviews cache: {e})")
-    if run_cmd([PY, "pipeline/harvest_pageviews.py", "dests"]) != 0:
-        return False
-    if run_cmd([PY, "pipeline/apply_beauty_layer.py"]) != 0:
-        return False
-    return run_cmd([PY, "pipeline/apply_rating_layer.py"]) == 0
+    if measurable >= total - FAME_CLEAR_TOLERANCE:
+        if pv.exists():
+            try:
+                pv.unlink()
+                log(f"  cleared cache/dest_pageviews.json ({measurable}/{total} "
+                    f"destinations resolvable) to force fresh fame")
+            except OSError as e:
+                log(f"  (could not clear pageviews cache: {e})")
+    else:
+        log(f"  KEEPING cache/dest_pageviews.json: only {measurable}/{total} "
+            f"destinations have a resolvable article, so a full refresh would "
+            f"drop fame for {total - measurable} of them. Refreshing additively; "
+            f"re-run resolve_dest_articles.py to clear the backlog.")
+    for step in (["pipeline/harvest_pageviews.py", "dests"],
+                 ["pipeline/apply_designations.py"],
+                 ["pipeline/apply_beauty_layer.py"],
+                 ["pipeline/apply_place_layer.py"],
+                 ["pipeline/apply_rating_layer.py"]):
+        if run_cmd([PY] + step) != 0:
+            return False
+    return True
 
 
 # --------------------------------------------------------------------------- #
@@ -1068,11 +1145,39 @@ TASKS = [
     },
     {
         "key": "fame",
-        "title": "Wikipedia fame -> beauty -> traveller rating",
+        "title": "Fame -> designations -> beauty -> place -> traveller rating",
         "cadence": "monthly",
         "writes_app_data": True,
         "run": fame_step,
-        "note": "fame is a rolling 12-mo average; monthly is plenty. Cheap, additive.",
+        "note": ("fame is a rolling 12-mo average; monthly is plenty. Resolves "
+                 "missing articles FIRST (the step deletes the pageviews cache, "
+                 "and a destination with no resolvable article silently loses "
+                 "its fame), then refreshes every input the rating reads: "
+                 "designations feed acclaim, place.class picks the appeal "
+                 "curve. apply_rating_layer last, and it REFUSES to write when "
+                 "its validation gate fails."),
+    },
+    {
+        "key": "coverage",
+        "title": "Coverage gaps: what Europe has that the catalogue does not",
+        "cadence": "quarterly",
+        "writes_app_data": False,
+        "soft": True,
+        "cmds": [
+            [PY, "pipeline/build_place_candidates.py"],
+            [PY, "pipeline/harvest_place_signals.py"],
+            [PY, "pipeline/score_place_candidates.py"],
+        ],
+        "note": ("docs/COVERAGE.md. Rebuilds data/reports/coverage/ (one ranked "
+                 "review sheet per country) and coverage_gaps.json. READ-ONLY "
+                 "with respect to the catalogue: it proposes, a human disposes. "
+                 "Promotion is deliberately NOT scheduled - "
+                 "promote_place_candidates writes a spec file and apply_new_gems "
+                 "inserts it, both run by hand, because adding destinations is "
+                 "an editorial act and a cron job should never make one. "
+                 "Quarterly because the gazetteer and the registers move slowly; "
+                 "the expensive part is the ~70 MB candidate rebuild (~75 s, no "
+                 "network) plus one Wikidata pass."),
     },
     {
         "key": "poi_significance",
