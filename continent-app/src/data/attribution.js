@@ -21,8 +21,8 @@ export const ATTRIBUTIONS = [
   {
     source: 'OpenStreetMap',
     license: 'ODbL 1.0',
-    credit: 'Map data, points of interest, nature areas and trail routes '
-      + '© OpenStreetMap contributors',
+    credit: 'Map data, points of interest, nature areas, parking locations '
+      + 'and trail routes © OpenStreetMap contributors',
   },
   {
     source: 'CARTO',
@@ -137,6 +137,11 @@ export const ATTRIBUTIONS = [
     source: 'transport.data.gouv.fr',
     license: 'ODbL 1.0',
     credit: 'French timetable data from transport.data.gouv.fr, SNCF',
+  },
+  {
+    source: 'Open-Meteo',
+    license: 'CC BY 4.0 (non-commercial API tier)',
+    credit: 'Live weather forecasts by Open-Meteo.com',
   },
   {
     source: 'Exchange Rate API',

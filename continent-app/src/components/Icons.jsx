@@ -1031,3 +1031,153 @@ export function ShrinkIcon({ size = 15, className = '' }) {
     </Glyph>
   );
 }
+
+/* ── Explore page: weather, packing, parking, events ─────────────────────── */
+
+export function SunIcon({ size = 15, className = '' }) {
+  return (
+    <Glyph size={size} className={className} label="Sunny">
+      <circle cx="12" cy="12" r="4.2" />
+      <path d="M12 2.8v2.4M12 18.8v2.4M2.8 12h2.4M18.8 12h2.4M5.5 5.5l1.7 1.7M16.8 16.8l1.7 1.7M18.5 5.5l-1.7 1.7M7.2 16.8l-1.7 1.7" />
+    </Glyph>
+  );
+}
+
+export function PartSunIcon({ size = 15, className = '' }) {
+  return (
+    <Glyph size={size} className={className} label="Partly cloudy">
+      <path d="M8.5 5.2v-2M3.6 7.5l1.4 1.4M2 12.5h2" />
+      <path d="M5.8 11.2a3.4 3.4 0 1 1 5.9-2.6" />
+      <path d="M8.5 19.5h8.7a3.3 3.3 0 0 0 .6-6.6 4.6 4.6 0 0 0-9-1 3.9 3.9 0 0 0-.3 7.6Z" />
+    </Glyph>
+  );
+}
+
+export function CloudIcon({ size = 15, className = '' }) {
+  return (
+    <Glyph size={size} className={className} label="Cloudy">
+      <path d="M7 18.5h9.7a3.8 3.8 0 0 0 .7-7.5 5.2 5.2 0 0 0-10.2-1.2A4.4 4.4 0 0 0 7 18.5Z" />
+    </Glyph>
+  );
+}
+
+export function FogIcon({ size = 15, className = '' }) {
+  return (
+    <Glyph size={size} className={className} label="Fog">
+      <path d="M7 13.5h10.2a3.4 3.4 0 0 0 .3-6.8 4.8 4.8 0 0 0-9.4-1A3.9 3.9 0 0 0 7 13.5Z" />
+      <path d="M5 17h14M7.5 20.5h9" />
+    </Glyph>
+  );
+}
+
+export function RainIcon({ size = 15, className = '' }) {
+  return (
+    <Glyph size={size} className={className} label="Rain">
+      <path d="M7 14.5h9.7a3.8 3.8 0 0 0 .7-7.4A5.2 5.2 0 0 0 7.2 5.8 4.4 4.4 0 0 0 7 14.5Z" />
+      <path d="M8.5 17.5 7.5 20M12.5 17.5l-1 2.5M16.5 17.5l-1 2.5" />
+    </Glyph>
+  );
+}
+
+export function DrizzleIcon({ size = 15, className = '' }) {
+  return (
+    <Glyph size={size} className={className} label="Drizzle">
+      <path d="M7 14.5h9.7a3.8 3.8 0 0 0 .7-7.4A5.2 5.2 0 0 0 7.2 5.8 4.4 4.4 0 0 0 7 14.5Z" />
+      <path d="M8.5 17.5v.01M12.5 18.5v.01M16.5 17.5v.01M10.5 20.5v.01M14.5 20.5v.01" />
+    </Glyph>
+  );
+}
+
+export function SnowIcon({ size = 15, className = '' }) {
+  return (
+    <Glyph size={size} className={className} label="Snow">
+      <path d="M12 4v16M5.1 8l13.8 8M18.9 8 5.1 16" />
+      <path d="M12 4l-1.8 1.8M12 4l1.8 1.8M12 20l-1.8-1.8M12 20l1.8-1.8" />
+    </Glyph>
+  );
+}
+
+export function StormIcon({ size = 15, className = '' }) {
+  return (
+    <Glyph size={size} className={className} label="Thunderstorm">
+      <path d="M7 13.5h9.7a3.8 3.8 0 0 0 .7-7.4A5.2 5.2 0 0 0 7.2 4.8 4.4 4.4 0 0 0 7 13.5Z" />
+      <path d="M12.5 13.5 10 17.5h3.4L11 21.5" />
+    </Glyph>
+  );
+}
+
+export function ParkingIcon({ size = 15, className = '' }) {
+  return (
+    <Glyph size={size} className={className} label="Parking">
+      <rect x="3.8" y="3.8" width="16.4" height="16.4" rx="3" />
+      <path d="M9.5 17V7.5h3.6a3 3 0 0 1 0 6H9.5" />
+    </Glyph>
+  );
+}
+
+export function MusicIcon({ size = 15, className = '' }) {
+  return (
+    <Glyph size={size} className={className} label="Events">
+      <path d="M9 18.2V5.6l10-2.1v12.6" />
+      <circle cx="6.6" cy="18.2" r="2.4" />
+      <circle cx="16.6" cy="16.1" r="2.4" />
+    </Glyph>
+  );
+}
+
+export function ShoeIcon({ size = 15, className = '' }) {
+  return (
+    <Glyph size={size} className={className} label="Walking shoes">
+      <path d="M3.5 16.5V9.8c1.8 1.2 3.4 1.2 4.7 0l8 4.2c2.6.6 4.3 1.7 4.3 2.5H3.5Z" />
+      <path d="M3.5 19h17M10.5 12l-1.3 1.6M13 13.4l-1.3 1.6" />
+    </Glyph>
+  );
+}
+
+export function SwimIcon({ size = 15, className = '' }) {
+  return (
+    <Glyph size={size} className={className} label="Swimwear">
+      <circle cx="16.5" cy="7" r="1.9" />
+      <path d="M3.5 13.5 9 9.8l4.5 3.4" />
+      <path d="M3.5 18.5c2-1.4 4-1.4 6 0s4 1.4 6 0 4-1.4 5 0" />
+    </Glyph>
+  );
+}
+
+export function PlugIcon({ size = 15, className = '' }) {
+  return (
+    <Glyph size={size} className={className} label="Adapter">
+      <path d="M9 3.5V8M15 3.5V8" />
+      <path d="M6.5 8h11v3.5a5.5 5.5 0 0 1-11 0V8Z" />
+      <path d="M12 17v3.5" />
+    </Glyph>
+  );
+}
+
+export function BottleIcon({ size = 15, className = '' }) {
+  return (
+    <Glyph size={size} className={className} label="Water bottle">
+      <path d="M10 3.5h4M10.5 3.5v3C8.8 8 8 9.5 8 11.5v6A2.5 2.5 0 0 0 10.5 20h3a2.5 2.5 0 0 0 2.5-2.5v-6c0-2-.8-3.5-2.5-5v-3" />
+      <path d="M8 13.5h8" />
+    </Glyph>
+  );
+}
+
+export function JacketIcon({ size = 15, className = '' }) {
+  return (
+    <Glyph size={size} className={className} label="Layers">
+      <path d="M9 4.5 5 7l-1.5 5 3 .8V20h11v-7.2l3-.8L19 7l-4-2.5a3.2 3.2 0 0 1-6 0Z" />
+      <path d="M12 8v12" />
+    </Glyph>
+  );
+}
+
+export function BackpackIcon({ size = 15, className = '' }) {
+  return (
+    <Glyph size={size} className={className} label="Daypack">
+      <path d="M9 6.5V5a3 3 0 0 1 6 0v1.5" />
+      <path d="M6.5 9.5a5.5 5.5 0 0 1 11 0V20h-11V9.5Z" />
+      <path d="M6.5 13.5h11M9.5 13.5v3" />
+    </Glyph>
+  );
+}

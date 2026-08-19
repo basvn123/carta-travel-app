@@ -1,14 +1,12 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo, Suspense, lazy } from 'react';
 import { AppHeader } from './components/AppHeader.jsx';
-import { FilterBar } from './browse/FilterBar.jsx';
 import { CategoryRail } from './browse/CategoryRail.jsx';
 import { BottomNav } from './components/BottomNav.jsx';
-import { DetailPanel } from './browse/DetailPanel.jsx';
+import { AnnouncementBar } from './components/AnnouncementBar.jsx';
+import { ExploreTab } from './browse/ExploreTab.jsx';
+import { ExplorePanel } from './browse/ExplorePanel.jsx';
 import { LifestylePanel } from './browse/LifestylePanel.jsx';
-import { ResultsList } from './browse/ResultsList.jsx';
 import { DestinationsTab } from './browse/DestinationsTab.jsx';
-import { ComparePanel } from './browse/ComparePanel.jsx';
-import { InfoIcon } from './components/Icons.jsx';
 import Logo from './components/Logo.jsx';
 
 // A failed dynamic import is almost always a stale bundle: the client is still
@@ -39,9 +37,9 @@ function lazyWithReload(factory) {
   });
 }
 
-// Code-split the map (maplibre-gl is by far the heaviest dependency) and the
-// two planner tabs, so the first paint only ships the browse UI shell.
-const MapView = lazyWithReload(() => import('./map/MapView.jsx').then((m) => ({ default: m.MapView })));
+// Code-split the two planner tabs (maplibre-gl rides along with them), so the
+// first paint only ships the browse UI shell. The Explore tab itself no
+// longer mounts a map at all.
 const TripPlannerTab = lazyWithReload(() => import('./planner/TripPlannerTab.jsx').then((m) => ({ default: m.TripPlannerTab })));
 const DayPlannerTab = lazyWithReload(() => import('./planner/DayPlannerTab.jsx').then((m) => ({ default: m.DayPlannerTab })));
 
@@ -49,9 +47,8 @@ const DayPlannerTab = lazyWithReload(() => import('./planner/DayPlannerTab.jsx')
 function TabFallback() {
   return <div className="loading-screen"><div className="pulse" /></div>;
 }
-import { tripDaysBetween, DEFAULT_LIFESTYLE, needsDriveHome } from './lib/runtime_pricing.js';
-import { OriginPicker } from './components/OriginPicker.jsx';
-import { PlaceSizeToggle } from './components/PlaceSizeToggle.jsx';
+import { tripDaysBetween, DEFAULT_LIFESTYLE } from './lib/runtime_pricing.js';
+import { computeIndices } from './lib/indices.js';
 import { loadInitialState } from './lib/urlState.js';
 import { readTripShareFromUrl, decodeTripShare } from './lib/shareLink.js';
 import { readShareTokenFromUrl, stripShareTokenFromUrl } from './auth/tripShares.js';
@@ -121,7 +118,7 @@ function TravelApp() {
 
   // Grouped UI state (see usePanelState / useFilterState).
   const {
-    compareOpen, setCompareOpen, authModalOpen, setAuthModalOpen,
+    authModalOpen, setAuthModalOpen,
     authModalMode, setAuthModalMode, accountOpen, setAccountOpen,
     savedTripsOpen, setSavedTripsOpen, lifestyleOpen, setLifestyleOpen,
   } = usePanelState();
@@ -293,8 +290,8 @@ function TravelApp() {
     if (pendingTrail) setActiveTab('places');
   }, [pendingTrail]);
 
-  // Stable identity: this lands on every ResultsList row, so a fresh function
-  // per render would defeat the list's React.memo.
+  // Stable identity: this lands on every Explore card, so a fresh function
+  // per render would defeat the card's React.memo.
   const toggleFav = useCallback((id) => setFavorites((prev) => {
     const next = new Set(prev);
     if (next.has(id)) next.delete(id); else next.add(id);
@@ -313,7 +310,7 @@ function TravelApp() {
   // URL, and applied to the filtered set so the list AND map narrow together.
   const [locationQuery, setLocationQuery] = useState('');
   // Debounced for the actual filter/map pipeline so every keystroke doesn't
-  // force MapView to reconcile markers; the input itself stays instant since
+  // force the grid to reconcile hundreds of cards; the input stays instant since
   // it reads `locationQuery`, not this.
   const [debouncedLocationQuery, setDebouncedLocationQuery] = useState('');
   useEffect(() => {
@@ -321,19 +318,6 @@ function TravelApp() {
     return () => clearTimeout(t);
   }, [locationQuery]);
 
-
-  // Persistent guidance pill anchored to the top bar. It's always available on
-  // the map tab so first-timers can re-open the "how this works" tip any time.
-  // The tip is collapsed to a small pill by default so it never crowds the map;
-  // tapping the pill expands the text in a popover that overlays the map rather
-  // than pushing it down.
-  const [mapGuideOpen, setMapGuideOpen] = useState(false);
-  // Once the visitor has clicked any destination they have "started": the
-  // START HERE pill has done its job and must not keep floating over the map.
-  // Persisted so it stays gone on the next visit too.
-  const [mapGuideDone, setMapGuideDone] = useState(() => {
-    try { return localStorage.getItem('carta.mapGuideDone') === '1'; } catch { return false; }
-  });
 
   // Escape closes the top-most dismissable surface (the shared-trip offer,
   // then the destination detail). Gives keyboard users a way out that the
@@ -348,27 +332,10 @@ function TravelApp() {
     return () => window.removeEventListener('keydown', onKey);
   }, [sharedTrip, selectedId]);
 
-  // Let the user collapse the destinations list to give the map the full width.
-  // On phones (<=768px) it starts collapsed so the map opens as big as possible;
-  // a "Destinations" pill (top-left) expands it back over the map. Desktop starts
-  // expanded since there's room for both side-by-side.
-  const [listCollapsed, setListCollapsed] = useState(
-    () => typeof window !== 'undefined' && window.innerWidth <= 768
-  );
-
-  // Stable so MapView's marker effect doesn't rebuild every render.
+  // Stable so every Explore card's memo survives parent re-renders.
   const openDetail = useCallback((id) => {
     setSelectedId(id);
-    setMapGuideOpen(false);
-    setMapGuideDone(true);
-    try { localStorage.setItem('carta.mapGuideDone', '1'); } catch { /* private mode */ }
   }, []);
-  const collapseList = useCallback(() => setListCollapsed(true), []);
-  const openCompare = useCallback(() => setCompareOpen(true), []);
-  // "Top picks" hides the unreachable set, and an unanswered "where do you
-  // drive from?" hides both sets; a fresh [] every render would re-render the
-  // memoized list/map for nothing, so keep one empty constant.
-  const noResults = useRef([]).current;
 
   // Fetch app_data.json, apply its defaults into `choices`, and derive the
   // fare-date bounds used to default/clamp the depart & return pickers.
@@ -390,24 +357,6 @@ function TravelApp() {
   const setDriveHome = useCallback((point) => {
     setChoices((prev) => ({ ...prev, drive_home: point || null }));
   }, []);
-
-  // Drive mode with the question still open. The engine falls back to flight
-  // prices in this state, so it is the MAP tab that holds its results back:
-  // showing fares under a car toggle would answer a question nobody asked.
-  const driveHomeMissing = needsDriveHome(choices);
-
-  // Bumping this counter opens the picker's popover. It fires the moment the
-  // question becomes blocking (switching to Drive with no town set) and again
-  // from the map's prompt, so the answer is never something to go hunting for.
-  const [originAsk, setOriginAsk] = useState(0);
-  const [originPopOpen, setOriginPopOpen] = useState(false);
-  useEffect(() => {
-    if (!driveHomeMissing) return;
-    setOriginAsk((n) => n + 1);
-    // The open destination card was priced under the old mode and the map it
-    // came from is now empty, so it cannot stay up behind the question.
-    setSelectedId(null);
-  }, [driveHomeMissing]);
 
   // Keep --filter-h in sync with the filter bar's real height. The bar uses
   // min-height + wraps its controls; everything below it is positioned at
@@ -457,12 +406,11 @@ function TravelApp() {
   // filter bar to show its quiet "no data yet" state instead of dead chips.
   const reachMinutes = useReach(choices.origin);
 
-  // Price every destination for the current dates/choices, then narrow that
-  // down through the location search, filter bar, and "top picks" shortcut.
+  // Price every destination for the current dates/choices. The Explore tab
+  // no longer reads fares at all; this keeps running for the Destinations
+  // tab's price chips and the URL contract (priceRange restore).
   const {
-    pricedAll, unreachableAll, availableCountries, priceBounds, priceHistogram,
-    priceRange, setPriceRange,
-    priced, unreachable, dealThreshold, stats,
+    pricedAll, availableCountries, priceRange, setPriceRange, priceBounds,
   } = useDestinationSearch({
     data, departDate, returnDate, choices: pricingChoices,
     locationQuery: debouncedLocationQuery, countryFilter, priceMode, tripKinds,
@@ -470,12 +418,6 @@ function TravelApp() {
     reachHours, reachMinutes,
     initialPriceRange: init.priceRange,
   });
-
-  // What the Map tab is allowed to show. Everything else (the Destinations
-  // tab's cards) keeps the full priced set: those are fares, and they do not
-  // depend on the answer the map is waiting for.
-  const mapPriced = driveHomeMissing ? noResults : priced;
-  const mapUnreachable = (driveHomeMissing || topPick) ? noResults : unreachable;
 
   // Keep the URL + localStorage in sync so the view is shareable and survives a
   // reload (debounced; runs only once data has loaded). See useUrlSync.
@@ -487,7 +429,7 @@ function TravelApp() {
 
   // Sync a signed-in user's filter/lifestyle preferences with their account,
   // and expose the "save"/"load a saved trip" actions.
-  const { handleSaveTrip, handleLoadTrip } = useAccountSync({
+  const { handleLoadTrip } = useAccountSync({
     user, cameFromUrl,
     // A departure airport restored from the URL/local mirror must survive the
     // account-settings pull, so a changed "flying from" stays put app-wide.
@@ -508,6 +450,13 @@ function TravelApp() {
   });
 
   const selectedDest = data && selectedId ? data.destinations[selectedId] : null;
+
+  // The Explore page's two price-level indices, computed once per dataset and
+  // shared by the grid and the open destination panel.
+  const exploreIndices = useMemo(
+    () => (data ? computeIndices(data.destinations) : null),
+    [data],
+  );
 
   if (recoveryMode) {
     return <ResetPasswordScreen />;
@@ -584,7 +533,7 @@ function TravelApp() {
   }
 
   return (
-    <div className={`app ${listCollapsed ? 'list-collapsed' : ''}`} onClick={() => setSelectedId(null)}>
+    <div className="app" onClick={() => setSelectedId(null)}>
       <div className="top-bar" ref={filterBarRef} onClick={(e) => e.stopPropagation()}>
         <AppHeader
           user={user}
@@ -597,82 +546,14 @@ function TravelApp() {
           onChangeTab={(key) => { setSavedTripsOpen(false); setActiveTab(key); }}
           savedOpen={savedTripsOpen}
           onToggleSaved={() => { setAccountOpen(false); setSavedTripsOpen((v) => !v); }}
-        >
-          {activeTab === 'map' && (
-            <FilterBar
-              data={data}
-              choices={choices}
-              setChoices={setChoices}
-              departDate={departDate}
-              setDepartDate={setDepartDate}
-              returnDate={returnDate}
-              setReturnDate={setReturnDate}
-              dateBounds={dateBounds}
-              stats={stats}
-              priceMode={priceMode}
-              setPriceMode={setPriceMode}
-              countryFilter={countryFilter}
-              setCountryFilter={setCountryFilter}
-              availableCountries={availableCountries}
-              priceRange={priceRange}
-              setPriceRange={setPriceRange}
-              priceBounds={priceBounds}
-              priceHistogram={priceHistogram}
-              setTripKinds={setTripKinds}
-              setBigOnly={setBigOnly}
-              ratingRange={ratingRange}
-              setRatingRange={setRatingRange}
-              gemOnly={gemOnly}
-              setGemOnly={setGemOnly}
-              unescoOnly={unescoOnly}
-              setUnescoOnly={setUnescoOnly}
-              topBeachOnly={topBeachOnly}
-              setTopBeachOnly={setTopBeachOnly}
-              topPick={topPick}
-              setTopPick={setTopPick}
-              reachHours={reachHours}
-              setReachHours={setReachHours}
-              reachAvailable={!!reachMinutes}
-              onOpenLifestyle={() => setLifestyleOpen(true)}
-            />
-          )}
-        </AppHeader>
+        />
 
         {/* Trip-kind categories as a full-width scrollable rail under the
-            header, Map tab only. Lives inside .top-bar so the ResizeObserver
-            folds its height into --filter-h and the map stays flush below. */}
+            header, Explore tab only. Lives inside .top-bar so the
+            ResizeObserver folds its height into --filter-h and the grid stays
+            flush below. */}
         {activeTab === 'map' && (
           <CategoryRail tripKinds={tripKinds} setTripKinds={setTripKinds} />
-        )}
-
-        {/* Guidance tip: a small floating pill anchored to the bottom-right of
-            the header. It's absolutely positioned, so its height is NOT folded
-            into --filter-h - the map fills the space right under the header and
-            the expanded text overlays the map instead of pushing it down.
-            Hidden while a slide-over panel is up: it would float on top of the
-            panel with nothing behind it to point at. */}
-        {activeTab === 'map' && !accountOpen && !savedTripsOpen && !mapGuideDone && (
-          <div className={`map-guide ${mapGuideOpen ? 'open' : ''}`} role="note">
-            <button
-              className="map-guide-toggle"
-              onClick={() => setMapGuideOpen((v) => !v)}
-              aria-expanded={mapGuideOpen}
-            >
-              <InfoIcon size={13} />
-              <span>{t('guide.startHere')}</span>
-              <span className="map-guide-caret" aria-hidden="true">▾</span>
-            </button>
-            {mapGuideOpen && (
-              <div className="map-guide-pop">
-                <p className="map-guide-text">
-                  {t('guide.text')}
-                </p>
-                <button className="map-guide-dismiss" onClick={() => setMapGuideOpen(false)}>
-                  {t('common.gotIt')}
-                </button>
-              </div>
-            )}
-          </div>
         )}
       </div>
 
@@ -709,162 +590,58 @@ function TravelApp() {
         </div>
       )}
 
-      {/* The map tab gets the same keep-alive as the planners: destroying it
-          on every tab hop meant a full MapLibre teardown + rebuild (style,
-          tiles, WebGL context, ~1500 markers) on every return to it. The
-          wrapper div is unpositioned, so the absolutely-placed panels inside
-          keep anchoring to .app exactly as before. */}
+      {/* The Explore tab: the catalogue as a readable grid, no map and no
+          fares. Keep-alive like the planners, so scroll position, the open
+          panel and the loaded images survive a tab hop. */}
       {visitedTabs.has('map') && (
         <div className={activeTab === 'map' ? undefined : 'tab-keep-hidden'}>
           <div onClick={(e) => e.stopPropagation()}>
-            <ResultsList
-              priced={mapPriced}
-              unreachable={mapUnreachable}
+            <ExploreTab
+              data={data}
               locationQuery={locationQuery}
               setLocationQuery={setLocationQuery}
-              priceMode={priceMode}
-              dealThreshold={dealThreshold}
-              selectedId={selectedId}
-              onSelect={openDetail}
-              favorites={favorites}
-              onToggleFav={toggleFav}
+              countryFilter={countryFilter}
+              setCountryFilter={setCountryFilter}
+              tripKinds={tripKinds}
+              ratingRange={ratingRange}
+              setRatingRange={setRatingRange}
+              gemOnly={gemOnly}
+              setGemOnly={setGemOnly}
+              unescoOnly={unescoOnly}
+              setUnescoOnly={setUnescoOnly}
+              topBeachOnly={topBeachOnly}
+              setTopBeachOnly={setTopBeachOnly}
+              bigOnly={bigOnly}
+              setBigOnly={setBigOnly}
+              topPick={topPick}
+              setTopPick={setTopPick}
+              reachHours={reachHours}
+              setReachHours={setReachHours}
+              reachAvailable={!!reachMinutes}
+              reachMinutes={reachMinutes}
               sortKey={sortKey}
               setSortKey={setSortKey}
               showFavOnly={showFavOnly}
               setShowFavOnly={setShowFavOnly}
-              onOpenCompare={openCompare}
-              reachableCount={pricedAll.length}
-              totalCount={Object.keys(data.destinations).length}
-              homeCity={data.meta?.origins?.[data.meta?.selected_origin]?.city || data.meta?.home_city || 'your airport'}
-              transportMode={choices.transport_mode || 'plane'}
-              needsDriveHome={driveHomeMissing}
-              onCollapse={collapseList}
-            />
-          </div>
-
-          {/* The map's own control row, floating just under the top panel and
-              tracking the left edge of the map (so it clears the destinations
-              gutter when that is open). Holds the list-reopen tab, only shown
-              when the list is collapsed, and the "travelling from" picker,
-              which needs the room here to ask a real question in Drive mode
-              rather than being a 12px pill lost in the header. */}
-          <div
-            /* pop-open lifts the strip over the top bar while the picker's
-               popover is down; see the z-index note on .map-toolrow. */
-            className={`map-toolrow ${originPopOpen ? 'pop-open' : ''}`}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <button
-              className="list-reopen"
-              onClick={() => setListCollapsed(false)}
-              title={t('results.showListTitle')}
-              aria-label={t('results.showListTitle')}
-            >
-              <span className="chev">›</span>
-              <span>{t('results.destinations')}</span>
-            </button>
-
-            <OriginPicker
-              data={data}
-              origin={choices.origin}
-              onChangeOrigin={setOrigin}
-              mode={choices.transport_mode === 'car' ? 'car' : 'plane'}
-              driveHome={choices.drive_home}
-              onChangeDriveHome={setDriveHome}
-              askOpen={originAsk}
-              onOpenChange={setOriginPopOpen}
-            />
-
-            {/* Cities only, or everything down to the villages. A map control
-                rather than a filter-tray field: at continental zoom a capital
-                and a hamlet are the same dot, and that is a question you ask
-                while looking at the map. */}
-            <PlaceSizeToggle bigOnly={bigOnly} onChange={setBigOnly} />
-          </div>
-
-          {/* Drive mode with no starting town: the map is empty on purpose, so
-              say so instead of leaving a blank continent behind. Only while the
-              picker is shut, though: the popover asks the same question, and
-              both on screen at once reads as a stutter. */}
-          {driveHomeMissing && !originPopOpen && (
-            <div className="drive-ask" onClick={(e) => e.stopPropagation()}>
-              <p className="drive-ask-title">{t('wizard.carFromLabel')}</p>
-              <p className="drive-ask-body">{t('origin.driveWhy')}</p>
-              <div className="drive-ask-actions">
-                <button className="drive-ask-btn" onClick={() => setOriginAsk((n) => n + 1)}>
-                  {t('origin.driveSetPoint')}
-                </button>
-                <button
-                  className="drive-ask-alt"
-                  onClick={() => setChoices((prev) => ({ ...prev, transport_mode: 'plane' }))}
-                >
-                  {t('origin.driveBackToFlights')}
-                </button>
-              </div>
-            </div>
-          )}
-
-          <Suspense fallback={null}>
-            <MapView
-              priced={mapPriced}
-              unreachable={mapUnreachable}
-              priceMode={priceMode}
-              groupSize={choices.group_size}
+              favorites={favorites}
+              onToggleFav={toggleFav}
               selectedId={selectedId}
               onSelect={openDetail}
-              dealThreshold={dealThreshold}
-              transportMode={choices.transport_mode || 'plane'}
-            />
-          </Suspense>
-
-          {data.meta?.is_mock && (
-            <div style={{
-              position: 'absolute', top: 'calc(var(--filter-h) + 12px)',
-              left: 'calc(var(--panel-w) + 16px)',
-              fontFamily: 'var(--mono)', fontSize: 10,
-              background: 'var(--accent-bg)', color: 'var(--accent)',
-              padding: '4px 10px', borderRadius: 999,
-              textTransform: 'uppercase', letterSpacing: '0.12em',
-              zIndex: 5, pointerEvents: 'none',
-            }}>
-              Mock data
-            </div>
-          )}
-
-          <div onClick={(e) => e.stopPropagation()}>
-            <DetailPanel
-              destination={selectedDest}
-              departDate={departDate}
-              returnDate={returnDate}
-              choices={choices}
-              setChoices={setChoices}
-              priceMode={priceMode}
-              onClose={() => setSelectedId(null)}
-              onOpenLifestyle={() => setLifestyleOpen(true)}
-              onSelect={openDetail}
-              data={data}
-              isFavorite={selectedId ? favorites.has(selectedId) : false}
-              onToggleFavorite={selectedId ? () => toggleFav(selectedId) : undefined}
-              onSaveTrip={authConfigured ? handleSaveTrip : undefined}
-              onShiftDates={(depart, ret) => { setDepartDate(depart); setReturnDate(ret); }}
+              indices={exploreIndices}
+              isMock={!!data.meta?.is_mock}
             />
           </div>
 
-          {compareOpen && favorites.size >= 2 && (
-            <div onClick={(e) => e.stopPropagation()}>
-              <ComparePanel
-                data={data}
-                favorites={favorites}
-                departDate={departDate}
-                returnDate={returnDate}
-                choices={choices}
-                priceMode={priceMode}
-                onClose={() => setCompareOpen(false)}
-                onSelect={(id) => { setCompareOpen(false); openDetail(id); }}
-                onToggleFav={toggleFav}
-              />
-            </div>
-          )}
+          <div onClick={(e) => e.stopPropagation()}>
+            <ExplorePanel
+              destination={selectedDest}
+              data={data}
+              indices={exploreIndices}
+              onClose={() => setSelectedId(null)}
+              isFavorite={selectedId ? favorites.has(selectedId) : false}
+              onToggleFavorite={selectedId ? () => toggleFav(selectedId) : undefined}
+            />
+          </div>
         </div>
       )}
 
@@ -1016,6 +793,10 @@ function TravelApp() {
           />
         </div>
       )}
+
+      {/* The site notice from site_config, switched on from the admin panel.
+          Renders nothing unless one is live, so it costs the layout nothing. */}
+      <AnnouncementBar />
 
       {emailConfirmed && (
         <div className="confirm-toast" role="status" onClick={(e) => e.stopPropagation()}>

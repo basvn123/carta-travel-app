@@ -59,16 +59,16 @@ await step('Trip planner tab', () => clickButton(/trip planner/i).then((t) => `c
 await step('Day planner tab', () => clickButton(/day planner/i).then((t) => `clicked "${t}"`));
 // The map tab reads "Explore" in the chrome at every width.
 await step('back to Map tab', () => clickButton(/^explore$/i).then((t) => `clicked "${t}"`));
-// Best-effort: open a destination's detail panel to exercise the DetailPanel /
-// DetailBreakdown split. Doesn't fail the run (the results list may be collapsed
-// after tab-switching); it just logs whether the breakdown rendered.
-await step('open a result detail (browse split, best-effort)', async () => {
+// Best-effort: open a destination card to exercise the Explore panel (the
+// info panel that replaced the fare breakdown when the map left this tab).
+// Doesn't fail the run; it just logs whether the panel rendered.
+await step('open a destination panel (best-effort)', async () => {
   try {
-    await page.waitForSelector('.result-row', { timeout: 8000 });
-    await page.locator('.result-row').first().click();
-    await page.waitForSelector('.cost-group', { timeout: 6000 });
-    return 'breakdown rendered';
-  } catch { return 'skipped (results not on the current view)'; }
+    await page.waitForSelector('.xcard-hit', { timeout: 8000 });
+    await page.locator('.xcard-hit').first().click();
+    await page.waitForSelector('.xp-indices', { timeout: 6000 });
+    return 'explore panel rendered';
+  } catch { return 'skipped (grid not on the current view)'; }
 });
 
 const totalErrors = errors.length;

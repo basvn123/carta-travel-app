@@ -1453,6 +1453,35 @@ TASKS = [
                  "tracking-param thumb URLs were caught."),
     },
     {
+        "key": "events",
+        "title": "Recurring events/festivals (Wikidata) -> public/destinfo",
+        "cadence": "monthly",
+        "writes_app_data": False,
+        "soft": True,
+        "cmds": [
+            [PY, "pipeline/harvest_events.py"],
+            [PY, "pipeline/export_destinfo.py"],
+        ],
+        "note": ("the Explore panel's events section. Full rebuild each run (a "
+                 "few minutes of WDQS queries); export_destinfo ships whatever "
+                 "both destinfo caches hold, so this also republishes parking."),
+    },
+    {
+        "key": "parking",
+        "title": "Best parking per destination (OSM Overpass) -> public/destinfo",
+        "cadence": "quarterly",
+        "writes_app_data": False,
+        "soft": True,
+        "cmds": [
+            [PY, "pipeline/harvest_parking.py"],
+            [PY, "pipeline/export_destinfo.py"],
+        ],
+        "note": ("the Explore panel's where-to-park section. Resumable batch "
+                 "harvest (~150 Overpass queries, 1-2 h); quarterly because car "
+                 "parks move slowly. Delete cache/parking_osm.json to force a "
+                 "from-scratch pass after a catalogue expansion."),
+    },
+    {
         "key": "activities",
         "title": "POIs / attractions (OpenTripMap+Wikivoyage+Wikipedia)",
         "cadence": "backfill",
