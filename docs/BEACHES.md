@@ -85,7 +85,11 @@ broke in three different ways:
 - **The caches are the snapshot.** Every stage reads `cache/beaches/*.json`
   when it can. With the caches in place, a rebuild produces identical wire
   files apart from the `generated_at` stamp. Delete one cache to re-query one
-  source.
+  source. They are LOCAL ONLY and gitignored: 159 MB rewritten whole on every
+  refresh does not belong in a 3 GB repository, and the LFS rule in
+  .gitattributes (`cache/*.json`) does not reach a subdirectory anyway. A fresh
+  clone therefore rebuilds from the sources, which is hours rather than
+  seconds, and produces the same wire from the same world.
 - **Every stage is deterministic.** Ranking sorts on score then id, the
   shortlist is cut by a documented pre score, ties break on the id, and no
   stage depends on dict ordering or on the clock.
