@@ -20,6 +20,7 @@ import {
 } from './profiles.js';
 import { FriendsSpoke } from './FriendsSpoke.jsx';
 import { useIsAdmin } from '../hooks/useIsAdmin.js';
+import { sendFeedback } from '../lib/feedback.js';
 
 // Account hub. The panel is a hub with four spokes rather than one long
 // scroll: the hub answers "who am I, what do I hold, where do I get help",
@@ -283,6 +284,10 @@ export function AccountPanel({
 
   const [openFaq, setOpenFaq] = useState(null);
   const [feedbackText, setFeedbackText] = useState('');
+  const [feedbackKind, setFeedbackKind] = useState('other');
+  const [feedbackBusy, setFeedbackBusy] = useState(false);
+  const [feedbackSent, setFeedbackSent] = useState(false);
+  const [feedbackErr, setFeedbackErr] = useState('');
   const [shareCopied, setShareCopied] = useState(false);
 
   // Re-seed the form when the account itself changes (sign out and back in as
@@ -550,12 +555,33 @@ export function AccountPanel({
     }
   };
 
-  // Feedback goes by email rather than into a database nobody reads: the
-  // mailto keeps the sender's address attached so they can get an answer.
-  const handleSendFeedback = () => {
+  // Feedback goes to the database, where the admin panel reads it. It used
+  // to be a mailto:, which did nothing at all on a device with no mail client
+  // configured and left no record when it failed. The mailto survives as the
+  // fallback for exactly that case: if the write is refused, the message the
+  // person already typed is not lost, it just travels the old way.
+  const mailtoFeedback = () => {
     const subject = encodeURIComponent(t('account.feedbackSubject'));
     const body = encodeURIComponent(feedbackText.trim());
     window.location.href = `mailto:${CONTACT}?subject=${subject}&body=${body}`;
+  };
+
+  const handleSendFeedback = async () => {
+    if (!feedbackText.trim() || feedbackBusy) return;
+    setFeedbackBusy(true);
+    setFeedbackErr('');
+    try {
+      await sendFeedback({ message: feedbackText.trim(), kind: feedbackKind });
+      setFeedbackSent(true);
+      setFeedbackText('');
+    } catch (e) {
+      if (e?.code === 'too_many') {
+        setFeedbackErr(t('account.feedbackTooMany'));
+      } else {
+        mailtoFeedback();
+      }
+    }
+    setFeedbackBusy(false);
   };
 
   const tier = TIERS[entitlement.tier] || TIERS.free;
@@ -1103,26 +1129,60 @@ export function AccountPanel({
 
       {view === 'feedback' && (
         <div className="panel-section">
-          <p className="account-section-hint">{t('account.feedbackHint')}</p>
-          <div className="auth-field">
-            <label className="auth-label" htmlFor="acct-feedback">{t('account.feedbackLabel')}</label>
-            <textarea
-              id="acct-feedback"
-              className="account-feedback-input"
-              rows={6}
-              value={feedbackText}
-              onChange={(e) => setFeedbackText(e.target.value)}
-              placeholder={t('account.feedbackPlaceholder')}
-            />
-          </div>
-          <button
-            className="auth-submit account-wide-btn"
-            disabled={!feedbackText.trim()}
-            onClick={handleSendFeedback}
-          >
-            {t('account.feedbackSend')}
-          </button>
-          <p className="auth-hint account-feedback-note">{t('account.feedbackNote', { email: CONTACT })}</p>
+          {feedbackSent ? (
+            <div className="account-feedback-done">
+              <CheckIcon size={18} />
+              <p>{t('account.feedbackThanks')}</p>
+              <button
+                type="button"
+                className="account-wide-btn admin-btn-secondary"
+                onClick={() => setFeedbackSent(false)}
+              >
+                {t('account.feedbackAgain')}
+              </button>
+            </div>
+          ) : (
+            <>
+              <p className="account-section-hint">{t('account.feedbackHint')}</p>
+              {/* What kind of message this is, so the inbox can be triaged
+                  without reading every one of them first. */}
+              <div className="admin-tone" role="radiogroup" aria-label={t('account.feedbackKind')}>
+                {['bug', 'idea', 'other'].map((k) => (
+                  <button
+                    key={k}
+                    type="button"
+                    role="radio"
+                    aria-checked={feedbackKind === k}
+                    className={`admin-tone-opt ${feedbackKind === k ? 'on' : ''}`}
+                    onClick={() => setFeedbackKind(k)}
+                  >
+                    {t(`account.feedbackKind.${k}`)}
+                  </button>
+                ))}
+              </div>
+              <div className="auth-field">
+                <label className="auth-label" htmlFor="acct-feedback">{t('account.feedbackLabel')}</label>
+                <textarea
+                  id="acct-feedback"
+                  className="account-feedback-input"
+                  rows={6}
+                  maxLength={4000}
+                  value={feedbackText}
+                  onChange={(e) => { setFeedbackText(e.target.value); setFeedbackErr(''); }}
+                  placeholder={t('account.feedbackPlaceholder')}
+                />
+              </div>
+              {feedbackErr && <p className="auth-error">{feedbackErr}</p>}
+              <button
+                className="auth-submit account-wide-btn"
+                disabled={!feedbackText.trim() || feedbackBusy}
+                onClick={handleSendFeedback}
+              >
+                {feedbackBusy ? t('account.pleaseWait') : t('account.feedbackSend')}
+              </button>
+              <p className="auth-hint account-feedback-note">{t('account.feedbackNote', { email: CONTACT })}</p>
+            </>
+          )}
         </div>
       )}
 

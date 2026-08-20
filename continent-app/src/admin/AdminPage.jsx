@@ -1,8 +1,9 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
-  adminAddNote, adminBanUser, adminDeleteUser, adminGetAudit, adminGetUser,
-  adminHealth, adminListUsers, adminMark, adminResetQuota, adminSetConfig,
-  adminSetTier, adminStats, adminUnbanUser,
+  adminAddNote, adminAnalytics, adminBanUser, adminDeleteUser, adminGetAudit,
+  adminGetUser, adminHealth, adminListFeedback, adminListUsers, adminMark,
+  adminResetQuota, adminSetConfig, adminSetFeedbackStatus, adminSetTier,
+  adminStats, adminUnbanUser,
 } from '../auth/admin.js';
 import { supabase } from '../lib/supabaseClient.js';
 import { useAuth } from '../auth/AuthContext.jsx';
@@ -32,7 +33,7 @@ import {
 // gate; the gate is in the database.
 
 const PAGE = 50;
-const SECTIONS = ['overview', 'users', 'site', 'audit'];
+const SECTIONS = ['overview', 'users', 'feedback', 'site', 'audit'];
 
 function fmtDate(iso) {
   if (!iso) return '';
@@ -61,6 +62,22 @@ function rowName(r) {
   return r.displayName || r.handle || r.email || r.id;
 }
 
+/** Four weeks of daily counts. Scaled to the busiest day, with that day's
+ *  figure written out, so the chart is never the only way to read it. */
+function Sparkbars({ series }) {
+  const top = Math.max(...series.map((d) => d.n || 0), 1);
+  return (
+    <div className="adminpage-spark" role="img"
+      aria-label={series.map((d) => `${d.day}: ${d.n}`).join(', ')}>
+      {series.map((d) => (
+        <span key={d.day} className="adminpage-sparkbar" title={`${d.day}: ${d.n}`}>
+          <span style={{ height: `${Math.max((d.n / top) * 100, d.n ? 8 : 2)}%` }} />
+        </span>
+      ))}
+    </div>
+  );
+}
+
 export function AdminPage({ onClose }) {
   const { t } = useI18n();
   const { user, hasPassword, reauthenticate, sendPasswordReset } = useAuth();
@@ -73,8 +90,19 @@ export function AdminPage({ onClose }) {
   const [section, setSection] = useState('overview');
   const [stats, setStats] = useState(null);
   const [health, setHealth] = useState(null);
+  const [analytics, setAnalytics] = useState(null);
   const [audit, setAudit] = useState(null);
   const [auditBusy, setAuditBusy] = useState(false);
+
+  const [feedback, setFeedback] = useState(null);
+  const [fbFilter, setFbFilter] = useState('new');
+  const [fbBusy, setFbBusy] = useState(false);
+
+  const [maintOn, setMaintOn] = useState(false);
+  const [maintText, setMaintText] = useState('');
+  const [maintBusy, setMaintBusy] = useState(false);
+  const [maintSaved, setMaintSaved] = useState(false);
+  const [maintErr, setMaintErr] = useState('');
 
   const [noticeOn, setNoticeOn] = useState(false);
   const [noticeText, setNoticeText] = useState('');
@@ -166,11 +194,19 @@ export function AdminPage({ onClose }) {
     setAuditBusy(false);
   }, []);
 
+  const loadFeedback = useCallback(async (status) => {
+    setFbBusy(true);
+    try { setFeedback(await adminListFeedback(status === 'all' ? null : status, 100, 0)); } catch { setFeedback(null); }
+    setFbBusy(false);
+  }, []);
+
   useEffect(() => {
     if (!unlocked) return;
     adminStats().then(setStats).catch(() => setStats(null));
     adminHealth().then(setHealth).catch(() => setHealth(null));
+    adminAnalytics().then(setAnalytics).catch(() => setAnalytics(null));
     loadAudit(25);
+    loadFeedback('new');
     if (supabase) {
       supabase.from('site_config').select('key,value').then(({ data }) => {
         for (const row of data || []) {
@@ -178,6 +214,10 @@ export function AdminPage({ onClose }) {
             setNoticeOn(!!row.value.enabled);
             setNoticeText(typeof row.value.text === 'string' ? row.value.text : '');
             setNoticeTone(row.value.tone === 'warn' ? 'warn' : 'info');
+          }
+          if (row.key === 'maintenance' && row.value && typeof row.value === 'object') {
+            setMaintOn(!!row.value.enabled);
+            setMaintText(typeof row.value.message === 'string' ? row.value.message : '');
           }
           if (row.key === 'features' && row.value && typeof row.value === 'object') {
             const clean = {};
@@ -189,7 +229,7 @@ export function AdminPage({ onClose }) {
         }
       });
     }
-  }, [unlocked, loadAudit]);
+  }, [unlocked, loadAudit, loadFeedback]);
 
   useEffect(() => {
     if (!unlocked) return undefined;
@@ -258,6 +298,24 @@ export function AdminPage({ onClose }) {
       loadAudit(25);
     } catch (e) { setNoticeErr(errText(e)); }
     setNoticeBusy(false);
+  };
+
+  const saveMaintenance = async () => {
+    setMaintBusy(true); setMaintErr(''); setMaintSaved(false);
+    try {
+      await adminSetConfig('maintenance', { enabled: maintOn, message: maintText.trim() });
+      setMaintSaved(true);
+      loadAudit(25);
+    } catch (e) { setMaintErr(errText(e)); }
+    setMaintBusy(false);
+  };
+
+  const setFeedbackStatus = async (id, status) => {
+    try {
+      await adminSetFeedbackStatus(id, status);
+      await loadFeedback(fbFilter);
+      adminAnalytics().then(setAnalytics).catch(() => {});
+    } catch { /* the row keeps its state, a retry is one click */ }
   };
 
   const saveFlags = async () => {
@@ -709,6 +767,91 @@ export function AdminPage({ onClose }) {
                   <p className="adminpage-err">{t('admin.statsFailed')}</p>
                 )}
 
+                {analytics && (
+                  <>
+                    <h2 className="adminpage-h2">{t('admin.activeTitle')}</h2>
+                    <p className="adminpage-muted">{t('admin.activeHint')}</p>
+                    <div className="adminpage-tiles">
+                      <div className="adminpage-tile"><b>{analytics.activeDay}</b><span>{t('admin.activeDay')}</span></div>
+                      <div className="adminpage-tile"><b>{analytics.activeWeek}</b><span>{t('admin.activeWeek')}</span></div>
+                      <div className="adminpage-tile"><b>{analytics.activeMonth}</b><span>{t('admin.activeMonth')}</span></div>
+                      <div className="adminpage-tile"><b>{analytics.neverSignedIn}</b><span>{t('admin.neverIn')}</span></div>
+                    </div>
+
+                    <div className="adminpage-cols">
+                      <section className="adminpage-card">
+                        <h3 className="adminpage-h3">{t('admin.signupsTitle')}</h3>
+                        {/* Four weeks of signups. A bar per day, scaled to the
+                            busiest one, with the count in mono underneath the
+                            peak so the shape is never the only information. */}
+                        <Sparkbars series={analytics.signups || []} />
+                        <p className="adminpage-muted">
+                          {t('admin.signupsTotal', {
+                            n: (analytics.signups || []).reduce((s, d) => s + (d.n || 0), 0),
+                          })}
+                        </p>
+                      </section>
+
+                      <section className="adminpage-card">
+                        <h3 className="adminpage-h3">{t('admin.providerTitle')}</h3>
+                        <p className="adminpage-muted">{t('admin.providerHint')}</p>
+                        <ul className="adminpage-bars">
+                          {(analytics.providers || []).map((p) => {
+                            const top = Math.max(...(analytics.providers || []).map((x) => x.n), 1);
+                            return (
+                              <li key={p.provider}>
+                                <span className="adminpage-barlabel">{p.provider}</span>
+                                <span className="adminpage-bartrack">
+                                  <span className="adminpage-barfill" style={{ width: `${(p.n / top) * 100}%` }} />
+                                </span>
+                                <span className="adminpage-barnum">{p.n}</span>
+                              </li>
+                            );
+                          })}
+                        </ul>
+                      </section>
+                    </div>
+
+                    <div className="adminpage-cols">
+                      <section className="adminpage-card">
+                        <h3 className="adminpage-h3">{t('admin.topDestsTitle')}</h3>
+                        <p className="adminpage-muted">{t('admin.topDestsHint')}</p>
+                        {(analytics.topDests || []).length === 0 ? (
+                          <p className="adminpage-muted">{t('admin.topNone')}</p>
+                        ) : (
+                          <ol className="adminpage-rank">
+                            {analytics.topDests.map((d) => (
+                              <li key={d.id}>
+                                <span className="adminpage-rankname">
+                                  {d.city || d.id}
+                                  {d.country && <em>{d.country}</em>}
+                                </span>
+                                <span className="adminpage-ranknum">{d.n}</span>
+                              </li>
+                            ))}
+                          </ol>
+                        )}
+                      </section>
+
+                      <section className="adminpage-card">
+                        <h3 className="adminpage-h3">{t('admin.topCountriesTitle')}</h3>
+                        {(analytics.topCountries || []).length === 0 ? (
+                          <p className="adminpage-muted">{t('admin.topNone')}</p>
+                        ) : (
+                          <ol className="adminpage-rank">
+                            {analytics.topCountries.map((c) => (
+                              <li key={c.country}>
+                                <span className="adminpage-rankname">{c.country}</span>
+                                <span className="adminpage-ranknum">{c.n}</span>
+                              </li>
+                            ))}
+                          </ol>
+                        )}
+                      </section>
+                    </div>
+                  </>
+                )}
+
                 <h2 className="adminpage-h2">{t('admin.recentTitle')}</h2>
                 {(audit?.rows || []).length === 0 ? (
                   <p className="adminpage-muted">{t('admin.auditEmpty')}</p>
@@ -836,9 +979,112 @@ export function AdminPage({ onClose }) {
               </>
             )}
 
+            {section === 'feedback' && (
+              <>
+                <h1 className="adminpage-h1">{t('admin.nav.feedback')}</h1>
+                <p className="adminpage-muted">{t('admin.feedbackHint')}</p>
+                <div className="adminpage-segment" role="radiogroup" aria-label={t('admin.nav.feedback')}>
+                  {['new', 'open', 'done', 'all'].map((s) => (
+                    <button
+                      key={s}
+                      type="button"
+                      role="radio"
+                      aria-checked={fbFilter === s}
+                      className={`adminpage-seg ${fbFilter === s ? 'on' : ''}`}
+                      onClick={() => { setFbFilter(s); loadFeedback(s); }}
+                    >
+                      {t(`admin.fb.${s}`)}
+                      {s === 'new' && feedback?.new ? ` (${feedback.new})` : ''}
+                    </button>
+                  ))}
+                </div>
+                {fbBusy && <p className="adminpage-muted">{t('account.pleaseWait')}</p>}
+                {!fbBusy && (feedback?.rows || []).length === 0 && (
+                  <p className="adminpage-muted">{t('admin.fbEmpty')}</p>
+                )}
+                <div className="adminpage-fblist">
+                  {(feedback?.rows || []).map((f) => (
+                    <article key={f.id} className="adminpage-fb">
+                      <header className="adminpage-fbhead">
+                        <span className={`adminpage-chip kind-${f.kind}`}>{t(`account.feedbackKind.${f.kind}`)}</span>
+                        <span className="adminpage-fbwho">
+                          {f.handle ? `@${f.handle}` : f.email || t('admin.fbAnon')}
+                        </span>
+                        <span className="adminpage-when">{fmtDateTime(f.createdAt)}</span>
+                        <span className={`adminpage-chip status-${f.status}`}>{t(`admin.fb.${f.status}`)}</span>
+                      </header>
+                      <p className="adminpage-fbmsg">{f.message}</p>
+                      {f.context && (
+                        <p className="adminpage-fbctx">
+                          {[f.context.path, f.context.viewport, f.context.lang]
+                            .filter(Boolean).join('  ')}
+                        </p>
+                      )}
+                      <div className="adminpage-row">
+                        {f.email && (
+                          <a
+                            className="adminpage-btn"
+                            href={`mailto:${f.email}?subject=${encodeURIComponent('Re: your Carta feedback')}`}
+                          >
+                            {t('admin.fbReply')}
+                          </a>
+                        )}
+                        {f.status !== 'open' && (
+                          <button type="button" className="adminpage-btn" onClick={() => setFeedbackStatus(f.id, 'open')}>
+                            {t('admin.fbMarkOpen')}
+                          </button>
+                        )}
+                        {f.status !== 'done' && (
+                          <button type="button" className="adminpage-btn" onClick={() => setFeedbackStatus(f.id, 'done')}>
+                            {t('admin.fbMarkDone')}
+                          </button>
+                        )}
+                        {f.userId && (
+                          <button type="button" className="adminpage-btn" onClick={() => { setSection('users'); openUser(f.userId); }}>
+                            {t('admin.fbOpenUser')}
+                          </button>
+                        )}
+                      </div>
+                    </article>
+                  ))}
+                </div>
+              </>
+            )}
+
             {section === 'site' && (
               <>
                 <h1 className="adminpage-h1">{t('admin.nav.site')}</h1>
+                <section className="adminpage-card adminpage-maint">
+                  <h3 className="adminpage-h3">{t('admin.maintTitle')}</h3>
+                  <p className="adminpage-muted">{t('admin.maintHint')}</p>
+                  <label className="adminpage-check">
+                    <input
+                      type="checkbox"
+                      checked={maintOn}
+                      onChange={(e) => { setMaintOn(e.target.checked); setMaintSaved(false); }}
+                    />
+                    <span>{t('admin.maintEnabled')}</span>
+                  </label>
+                  <textarea
+                    className="adminpage-textarea"
+                    rows={2}
+                    maxLength={500}
+                    value={maintText}
+                    placeholder={t('admin.maintPlaceholder')}
+                    onChange={(e) => { setMaintText(e.target.value); setMaintSaved(false); }}
+                  />
+                  {maintErr && <p className="adminpage-err">{maintErr}</p>}
+                  <button
+                    type="button"
+                    className={`adminpage-btn wide ${maintOn ? 'danger solid' : ''}`}
+                    disabled={maintBusy}
+                    onClick={saveMaintenance}
+                  >
+                    {maintBusy ? t('account.pleaseWait')
+                      : maintSaved ? t('admin.maintSaved')
+                      : maintOn ? t('admin.maintClose') : t('admin.maintOpen')}
+                  </button>
+                </section>
                 <div className="adminpage-cols">
                   <section className="adminpage-card">
                     <h3 className="adminpage-h3">{t('admin.noticeTitle')}</h3>

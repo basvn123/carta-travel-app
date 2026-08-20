@@ -18943,6 +18943,128 @@ button.ai-sched-main:focus-visible {
 .adminpage-lock-actions { display: flex; gap: 10px; margin-top: 18px; }
 .adminpage-lock-actions .adminpage-btn { flex: 1; }
 
+/* Four weeks of signups. Bars only, no axis: the total is written out
+   underneath, so the chart adds shape rather than carrying the number. */
+.adminpage-spark {
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 68px;
+  margin-bottom: 10px;
+}
+.adminpage-sparkbar {
+  flex: 1;
+  display: flex;
+  align-items: flex-end;
+  height: 100%;
+  min-width: 0;
+}
+.adminpage-sparkbar > span {
+  width: 100%;
+  border-radius: 2px 2px 0 0;
+  background: var(--accent-soft);
+}
+
+.adminpage-bars { list-style: none; margin: 0; padding: 0; }
+.adminpage-bars li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 0;
+}
+.adminpage-barlabel {
+  flex: none;
+  width: 74px;
+  font-family: var(--mono);
+  font-size: 11.5px;
+  color: var(--ink-soft);
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.adminpage-bartrack {
+  flex: 1;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--paper-dim);
+  overflow: hidden;
+}
+.adminpage-barfill { display: block; height: 100%; background: var(--accent); border-radius: 999px; }
+.adminpage-barnum {
+  flex: none;
+  min-width: 34px;
+  text-align: right;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+
+.adminpage-rank { list-style: none; margin: 0; padding: 0; counter-reset: rank; }
+.adminpage-rank li {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 7px 0;
+  border-top: 1px solid var(--rule-soft);
+  counter-increment: rank;
+}
+.adminpage-rank li:first-child { border-top: none; }
+.adminpage-rankname { font-size: 13.5px; color: var(--ink); }
+.adminpage-rankname::before {
+  content: counter(rank) '.';
+  display: inline-block;
+  width: 22px;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink-mute);
+}
+.adminpage-rankname em { font-style: normal; color: var(--ink-mute); font-size: 12px; margin-left: 6px; }
+.adminpage-ranknum {
+  font-family: var(--mono);
+  font-size: 12.5px;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+
+/* The feedback inbox. One card per message, because a message is a thing
+   somebody wrote and reading it is the point. */
+.adminpage-fblist { display: flex; flex-direction: column; gap: 12px; margin-top: 16px; }
+.adminpage-fb {
+  border: 1px solid var(--rule-soft);
+  border-radius: 10px;
+  background: var(--bg-card);
+  padding: 16px 18px;
+}
+.adminpage-fbhead {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+.adminpage-fbwho { font-family: var(--mono); font-size: 11.5px; color: var(--ink-soft); }
+.adminpage-fbmsg {
+  margin: 0 0 8px;
+  font-size: 14.5px;
+  line-height: 1.55;
+  color: var(--ink);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.adminpage-fbctx {
+  margin: 0 0 12px;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink-mute);
+  overflow-wrap: anywhere;
+}
+.adminpage-chip.kind-bug { border-color: var(--danger); color: var(--danger); }
+.adminpage-chip.kind-idea { border-color: var(--green); color: var(--green); }
+.adminpage-chip.status-new { border-color: var(--accent); color: var(--accent); }
+.adminpage-chip.status-done { color: var(--ink-mute); }
+.adminpage-maint { margin-top: 18px; }
+
 @media (max-width: 700px) {
   .adminpage-bar { gap: 10px; padding: 0 12px; }
   .adminpage-brand span { display: none; }
@@ -18954,6 +19076,68 @@ button.ai-sched-main:focus-visible {
   .adminpage-navbtn, .adminpage-btn, .adminpage-seg, .adminpage-search,
   .adminpage-table tbody tr, .adminpage-switch { transition: none; }
 }
+
+/* ---- Maintenance ------------------------------------------------------ */
+.maintenance {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: var(--paper);
+}
+.maintenance-card {
+  width: min(440px, 100%);
+  text-align: center;
+}
+.maintenance-title {
+  font-family: var(--display);
+  font-size: 26px;
+  font-weight: 600;
+  letter-spacing: -.02em;
+  color: var(--ink);
+  margin: 18px 0 8px;
+}
+.maintenance-body { font-size: 15px; line-height: 1.55; color: var(--ink-soft); margin: 0 0 20px; }
+.maintenance-retry {
+  min-height: 44px;
+  padding: 11px 22px;
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  background: var(--bg-card);
+  font-family: var(--ui);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink);
+  cursor: pointer;
+}
+.maintenance-retry:hover { border-color: var(--ink-soft); }
+.maintenance-strip {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 210;
+  padding: 5px 12px;
+  background: var(--danger);
+  color: #fff;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  text-align: center;
+  letter-spacing: .04em;
+}
+
+.account-feedback-done {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  color: var(--green);
+}
+.account-feedback-done p { margin: 0; font-size: 14.5px; color: var(--ink); line-height: 1.5; }
+.account-feedback-done .admin-btn-secondary { margin-top: 4px; }
 
 /* ---- Site notice banner ---------------------------------------------- */
 /* The live announcement from site_config. Floats bottom centre, under the

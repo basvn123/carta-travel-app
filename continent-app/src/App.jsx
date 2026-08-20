@@ -3,6 +3,7 @@ import { AppHeader } from './components/AppHeader.jsx';
 import { CategoryRail } from './browse/CategoryRail.jsx';
 import { BottomNav } from './components/BottomNav.jsx';
 import { AnnouncementBar } from './components/AnnouncementBar.jsx';
+import { MaintenanceGate } from './components/MaintenanceGate.jsx';
 import { ExploreTab } from './browse/ExploreTab.jsx';
 import { ExplorePanel } from './browse/ExplorePanel.jsx';
 import { LifestylePanel } from './browse/LifestylePanel.jsx';
@@ -104,7 +105,11 @@ export default function App() {
   return (
     <I18nProvider>
       <AuthProvider>
-        <TravelApp />
+        {/* Inside AuthProvider because the gate lets admins through, and it
+            cannot know who is asking before the session resolves. */}
+        <MaintenanceGate>
+          <TravelApp />
+        </MaintenanceGate>
       </AuthProvider>
     </I18nProvider>
   );

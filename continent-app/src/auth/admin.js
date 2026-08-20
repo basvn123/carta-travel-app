@@ -66,3 +66,11 @@ export const adminMark = (action, userId) =>
 // projects predate some of the satellite migrations, and a missing table
 // should read as a named gap rather than as a screen full of zeroes.
 export const adminHealth = () => call('admin_health');
+
+export const adminAnalytics = () => call('admin_analytics');
+
+export const adminListFeedback = (status, limit = 50, offset = 0) =>
+  call('admin_list_feedback', { p_status: status || null, p_limit: limit, p_offset: offset });
+
+export const adminSetFeedbackStatus = (id, status) =>
+  call('admin_set_feedback_status', { p_id: id, p_status: status });

@@ -234,6 +234,40 @@ async function stubSupabase(page, state, opts = {}) {
     state.siteConfig[body.p_key] = body.p_value;
     return json(route, { ok: true });
   });
+  await page.route('**/rest/v1/rpc/admin_analytics*', (route) => json(route, {
+    activeDay: 2, activeWeek: 5, activeMonth: 9, neverSignedIn: 1,
+    providers: [{ provider: 'email', n: 7 }, { provider: 'google', n: 3 }],
+    signups: Array.from({ length: 28 }, (_, i) => ({
+      day: `2026-07-${String((i % 28) + 1).padStart(2, '0')}`, n: i % 4,
+    })),
+    topDests: [
+      { id: 'lisbon', city: 'Lisbon', country: 'Portugal', n: 12 },
+      { id: 'rome', city: 'Rome', country: 'Italy', n: 8 },
+    ],
+    topCountries: [{ country: 'Portugal', n: 14 }, { country: 'Italy', n: 9 }],
+    feedback: { new: 1, total: 2 },
+  }));
+  await page.route('**/rest/v1/rpc/admin_list_feedback*', (route) => {
+    const body = JSON.parse(route.request().postData() || '{}');
+    state.fbCalls.push(body);
+    const rows = state.feedback.filter((f) => !body.p_status || f.status === body.p_status);
+    return json(route, {
+      total: rows.length,
+      new: state.feedback.filter((f) => f.status === 'new').length,
+      rows,
+    });
+  });
+  await page.route('**/rest/v1/rpc/admin_set_feedback_status*', (route) => {
+    const body = JSON.parse(route.request().postData() || '{}');
+    state.fbStatusCalls.push(body);
+    const row = state.feedback.find((f) => f.id === body.p_id);
+    if (row) row.status = body.p_status;
+    return json(route, { ok: true });
+  });
+  await page.route('**/rest/v1/rpc/submit_feedback*', (route) => {
+    state.submitCalls.push(JSON.parse(route.request().postData() || '{}'));
+    return json(route, { ok: true });
+  });
   await page.route('**/rest/v1/rpc/admin_get_audit*', (route) => json(route, {
     total: 2,
     rows: [
@@ -288,8 +322,23 @@ try {
     banCalls: [], unbanCalls: [], noteCalls: [], markCalls: [],
     deleted: new Set(), tiers: new Map(), banned: new Map(),
     history: [], missing: ['day_plans'], listFails: false,
+    fbCalls: [], fbStatusCalls: [], submitCalls: [],
+    feedback: [
+      {
+        id: 2, kind: 'bug', status: 'new', message: 'The Porto bus fare looked too low for August.',
+        email: 'zoe@example.com', handle: 'zoe_travels', userId: USERS[0].id,
+        context: { path: '/?tab=map', viewport: '390x844', lang: 'en-GB' },
+        createdAt: '2026-08-19T11:00:00Z',
+      },
+      {
+        id: 1, kind: 'idea', status: 'done', message: 'Please add night trains.',
+        email: null, handle: null, userId: null, context: null,
+        createdAt: '2026-08-15T09:00:00Z',
+      },
+    ],
     siteConfig: {
       announcement: { enabled: false, text: '', tone: 'info' },
+      maintenance: { enabled: false, message: '' },
       features: {},
     },
   };
@@ -323,12 +372,12 @@ try {
   await page.screenshot({ path: `${SHOTS}/admin-lock.png` });
   await page.locator('#admin-lock-input').fill(RIGHT_PASSWORD);
   await page.locator('button', { hasText: 'Open admin tools' }).click();
-  await page.locator('.adminpage-tiles').waitFor({ timeout: 15000 });
+  await page.locator('.adminpage-tiles').first().waitFor({ timeout: 15000 });
   ok('the lock refuses a wrong password by re-auth, and opens the page on the right one');
 
   // ---- 2. Overview, including what the database is missing.
   console.log('2. overview');
-  const tiles = await page.locator('.adminpage-tile').count();
+  const tiles = await page.locator('.adminpage-tiles').first().locator('.adminpage-tile').count();
   if (tiles !== 8) fail(`expected 8 tiles, found ${tiles}`);
   if ((await page.locator('.adminpage-tile b').first().innerText()).trim() !== '3') {
     fail('the accounts tile does not carry the stubbed count');
@@ -497,12 +546,73 @@ try {
   if (await bodyRows.count() !== 2) fail(`the deleted account still shows: ${await bodyRows.count()} rows`);
   ok('deletion needs the exact address, and the table drops the account');
 
+  // ---- 8b. Analytics on the overview.
+  console.log('8b. analytics');
+  await gotoSection(page, 'Overview');
+  await page.locator('.adminpage-spark').waitFor({ timeout: 10000 });
+  const bars = await page.locator('.adminpage-sparkbar').count();
+  if (bars !== 28) fail(`the signups chart has ${bars} bars, expected 28`);
+  const provs = await page.locator('.adminpage-bars li').allInnerTexts();
+  if (!provs.some((s) => /google/.test(s)) || !provs.some((s) => /email/.test(s))) {
+    fail(`the provider split is missing a row: ${JSON.stringify(provs)}`);
+  }
+  const ranks = await page.locator('.adminpage-rank').first().innerText();
+  if (!/Lisbon/.test(ranks)) fail('the most-planned destinations list is empty');
+  // The chart must never be the only way to read the number.
+  if (!/28 days/.test(await page.locator('.adminpage-card', { hasText: 'Signups' }).innerText())) {
+    fail('the signups chart states no total in words');
+  }
+  ok(`${bars} days of signups, the provider split, and the destination ranking`);
+  await page.screenshot({ path: `${SHOTS}/admin-analytics.png`, fullPage: true });
+
+  // ---- 8c. The feedback inbox.
+  console.log('8c. feedback inbox');
+  await gotoSection(page, 'Feedback');
+  await page.locator('.adminpage-fb').first().waitFor({ timeout: 10000 });
+  if (await page.locator('.adminpage-fb').count() !== 1) {
+    fail('the New filter does not show exactly the one new message');
+  }
+  const card = page.locator('.adminpage-fb').first();
+  if (!/Porto bus fare/.test(await card.innerText())) fail('the message body is not shown');
+  if (!/390x844/.test(await card.innerText())) fail('the context line is missing');
+  await page.locator('.adminpage-seg', { hasText: 'All' }).click();
+  await page.waitForTimeout(700);
+  if (await page.locator('.adminpage-fb').count() !== 2) fail('the All filter does not show both messages');
+  await page.locator('.adminpage-fb').first().locator('.adminpage-btn', { hasText: 'Mark done' }).click();
+  await page.waitForTimeout(800);
+  if (!state.fbStatusCalls.some((c) => c.p_status === 'done')) {
+    fail('marking a message done never reached the RPC');
+  }
+  ok('the inbox filters, shows the context, and marks a message done');
+
   // ---- 9. Site section.
   console.log('9. site');
   await gotoSection(page, 'Site');
-  await page.locator('.adminpage-check input').waitFor({ timeout: 10000 });
-  await page.locator('.adminpage-check input').check();
-  await page.locator('.adminpage-textarea').first().fill('Fares refresh tonight at 02:00');
+  await page.locator('.adminpage-maint').waitFor({ timeout: 10000 });
+
+  // Maintenance mode publishes its own shape, and is the one control on this
+  // page that turns the app off for everybody, so it reads as dangerous.
+  const maintCard = page.locator('.adminpage-maint');
+  await maintCard.locator('.adminpage-check input').check();
+  await maintCard.locator('.adminpage-textarea').fill('Back within the hour');
+  const maintBtn = maintCard.locator('.adminpage-btn');
+  if (!/danger/.test(await maintBtn.getAttribute('class'))) {
+    fail('closing the app does not read as a destructive action');
+  }
+  await maintBtn.click();
+  await page.waitForTimeout(800);
+  const mcfg = state.configCalls.find((c) => c.p_key === 'maintenance');
+  if (!mcfg?.p_value?.enabled || !/Back within the hour/.test(mcfg.p_value.message || '')) {
+    fail(`the maintenance payload is wrong: ${JSON.stringify(mcfg?.p_value)}`);
+  }
+  await maintCard.locator('.adminpage-check input').uncheck();
+  await maintBtn.click();
+  await page.waitForTimeout(800);
+  ok('maintenance mode publishes what the gate reads, and reads as dangerous');
+
+  const noticeCard = page.locator('.adminpage-card', { hasText: 'Site notice' });
+  await noticeCard.locator('.adminpage-check input').check();
+  await noticeCard.locator('.adminpage-textarea').fill('Fares refresh tonight at 02:00');
   await page.locator('.adminpage-seg', { hasText: 'Warning' }).click();
   await page.locator('.adminpage-btn', { hasText: 'Publish notice' }).click();
   await page.locator('.adminpage-btn', { hasText: 'Notice published' }).waitFor({ timeout: 6000 });
