@@ -42,6 +42,9 @@ function lazyWithReload(factory) {
 // longer mounts a map at all.
 const TripPlannerTab = lazyWithReload(() => import('./planner/TripPlannerTab.jsx').then((m) => ({ default: m.TripPlannerTab })));
 const DayPlannerTab = lazyWithReload(() => import('./planner/DayPlannerTab.jsx').then((m) => ({ default: m.DayPlannerTab })));
+// The back office. Lazy because it ships to one account in the whole user
+// base, and every traveller would otherwise pay for its bytes.
+const AdminPage = lazyWithReload(() => import('./admin/AdminPage.jsx').then((m) => ({ default: m.AdminPage })));
 
 // A quiet placeholder while a lazy chunk downloads (fast; usually one frame).
 function TabFallback() {
@@ -143,6 +146,7 @@ function TravelApp() {
   // remounts the panel on every such open: initialView only seeds state, so
   // without it a second press while the panel already stands open would do
   // nothing at all.
+  const [adminOpen, setAdminOpen] = useState(false);
   const [accountView, setAccountView] = useState('home');
   const [accountEntry, setAccountEntry] = useState(0);
   // Somebody's invite link (#friend=<handle>). Read once at startup, like
@@ -775,9 +779,21 @@ function TravelApp() {
             pendingFriendHandle={pendingFriend}
             destinations={data?.destinations}
             onClose={() => setAccountOpen(false)}
+            onOpenAdmin={() => setAdminOpen(true)}
             onOpenAuth={() => { setAccountOpen(false); setAuthModalMode('signin'); setAuthModalOpen(true); }}
           />
         </div>
+      )}
+
+      {/* The back office, over everything. It renders only for accounts on
+          the admin list, and every call it makes is re-checked server side,
+          so this flag is a door rather than a permission. */}
+      {adminOpen && (
+        <Suspense fallback={<TabFallback />}>
+          <div onClick={(e) => e.stopPropagation()}>
+            <AdminPage onClose={() => setAdminOpen(false)} />
+          </div>
+        </Suspense>
       )}
 
       {passOpen && (

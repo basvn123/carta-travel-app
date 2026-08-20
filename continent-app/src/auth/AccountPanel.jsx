@@ -19,7 +19,6 @@ import {
   fetchMyProfile, saveMyProfile, normaliseHandle, handleProblem, HANDLE_MAX,
 } from './profiles.js';
 import { FriendsSpoke } from './FriendsSpoke.jsx';
-import { AdminSpoke } from './AdminSpoke.jsx';
 import { useIsAdmin } from '../hooks/useIsAdmin.js';
 
 // Account hub. The panel is a hub with four spokes rather than one long
@@ -222,7 +221,7 @@ function MenuRow({ icon, label, onClick }) {
 
 export function AccountPanel({
   onClose, onOpenAuth, initialView = 'home', onViewChange, pendingFriendHandle,
-  destinations,
+  destinations, onOpenAdmin,
 }) {
   const {
     user, hasPassword, signOut, signOutOtherDevices, updatePassword, reauthenticate,
@@ -232,9 +231,9 @@ export function AccountPanel({
   const entitlement = useEntitlement();
   // Whether the staff door shows at all. A hint, not a gate: every admin RPC
   // re-checks membership on the server.
-  const { isAdmin, loading: adminLoading } = useIsAdmin();
+  const { isAdmin } = useIsAdmin();
   const panelRef = useRef(null);
-  const [view, setView] = useState(initialView); // 'home' | 'profile' | 'friends' | 'faq' | 'feedback' | 'data' | 'admin'
+  const [view, setView] = useState(initialView); // 'home' | 'profile' | 'friends' | 'faq' | 'feedback' | 'data'
   const [passOpen, setPassOpen] = useState(false);
   const [privacyOpen, setPrivacyOpen] = useState(false);
 
@@ -328,13 +327,10 @@ export function AccountPanel({
     panelRef.current?.scrollTo?.(0, 0);
   }, [view]);
 
-  // Signing out while on the profile spoke leaves a form for nobody. The
-  // admin spoke additionally bounces when privileges turn out to be absent,
-  // but only once the check has answered, so it does not flap while loading.
+  // Signing out while on the profile spoke leaves a form for nobody.
   useEffect(() => {
-    if (!user && (view === 'profile' || view === 'friends' || view === 'admin')) setView('home');
-    if (view === 'admin' && user && !adminLoading && !isAdmin) setView('home');
-  }, [user, view, isAdmin, adminLoading]);
+    if (!user && (view === 'profile' || view === 'friends')) setView('home');
+  }, [user, view]);
 
   const emailChanged = email.trim().toLowerCase() !== storedEmail.toLowerCase();
   const handleChanged = !!storedHandle && handle !== storedHandle;
@@ -571,7 +567,6 @@ export function AccountPanel({
     : view === 'faq' ? t('account.menuFaq')
     : view === 'feedback' ? t('account.feedbackTitle')
     : view === 'data' ? t('account.menuData')
-    : view === 'admin' ? t('account.menuAdmin')
     : user ? (storedName || storedEmail) : t('account.preferences');
 
   return (
@@ -709,9 +704,15 @@ export function AccountPanel({
           <div className="panel-section">
             <div className="account-menu">
               {/* The staff door. Rendered only for accounts on the admin
-                  list; for everybody else this row does not exist. */}
+                  list; for everybody else this row does not exist. It opens
+                  the back office as a full page rather than a spoke: a table
+                  of every account is not a thing you read in 440px. */}
               {user && isAdmin && (
-                <MenuRow icon={<LockIcon size={17} />} label={t('account.menuAdmin')} onClick={() => setView('admin')} />
+                <MenuRow
+                  icon={<LockIcon size={17} />}
+                  label={t('account.menuAdmin')}
+                  onClick={() => { onClose?.(); onOpenAdmin?.(); }}
+                />
               )}
               <MenuRow icon={<FeedbackIcon size={17} />} label={t('account.menuFeedback')} onClick={() => setView('feedback')} />
               <MenuRow icon={<QuestionIcon size={17} />} label={t('account.menuFaq')} onClick={() => setView('faq')} />
@@ -1060,8 +1061,6 @@ export function AccountPanel({
           destinations={destinations}
         />
       )}
-
-      {view === 'admin' && user && isAdmin && <AdminSpoke />}
 
       {view === 'faq' && (
         <div className="panel-section">

@@ -61,3 +61,8 @@ export const adminAddNote = (userId, note) =>
 
 export const adminMark = (action, userId) =>
   call('admin_mark', { p_action: action, p_target: userId });
+
+// Which tables the admin surface depends on are actually present. Older
+// projects predate some of the satellite migrations, and a missing table
+// should read as a named gap rather than as a screen full of zeroes.
+export const adminHealth = () => call('admin_health');

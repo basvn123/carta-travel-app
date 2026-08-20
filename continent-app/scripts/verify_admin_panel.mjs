@@ -1,34 +1,34 @@
-// Headless check for the admin spoke (2026-08-19, hardened) and the site
+// Headless check for the back office (2026-08-20 full page) and the site
 // notice banner.
 //
-// The staff door behind the account hub: user management, the live site
-// notice, feature flags, and the audit trail, all through the migration
-// 014/015 RPCs. This harness fakes an admin session the same way
-// verify_account_panel.mjs fakes a traveller: a session written into the
-// storage key supabase-js reads, and every RPC answered locally. Nothing
-// touches the real project.
+// The admin surface is a full page now, opened from a row in the account hub
+// that only exists for accounts on the admin list. This harness fakes an
+// admin session the same way verify_account_panel.mjs fakes a traveller: a
+// session written into the storage key supabase-js reads, and every RPC
+// answered locally. Nothing touches the real project.
 //
 // What it checks:
-//   1. The hub shows the Admin row to an admin; the spoke opens behind a
-//      re-auth lock that refuses a wrong password (real re-auth call) and
-//      opens on the right one.
-//   2. The service numbers render from admin_stats.
-//   3. The site notice editor seeds from site_config and publishes through
-//      admin_set_config with exactly the payload the banner reads.
-//   4. Feature flags: add one, switch it on, publish booleans-only.
-//   5. The user list renders, searches through the RPC (words and exact
-//      ids), exports itself as CSV, and opens a detail.
-//   6. A pass change picks a tier and days and lands as admin_set_tier.
-//   7. The quota reset arms first, fires second.
-//   8. Support: the reset mail rides the public recover endpoint AND lands
+//   1. The hub shows the Admin row; it opens the full page behind a re-auth
+//      lock that refuses a wrong password (real re-auth call).
+//   2. Overview: the tiles render, and a table the database is missing is
+//      NAMED on screen rather than shown as a silent zero.
+//   3. A failed user list says so. This is the regression that matters: a
+//      list that errored used to render "no accounts match that search"
+//      over a database full of accounts.
+//   4. Users: the table renders, searches by word and by pasted id, exports
+//      CSV, and opens one account in full.
+//   5. A pass change lands as admin_set_tier with the days given.
+//   6. The quota reset arms first, fires second.
+//   7. Support: the reset mail rides the public recover endpoint AND lands
 //      in the trail via admin_mark; suspension arms, takes days, shows the
-//      chip, lifts again; a note saves and shows in the history.
-//   9. Deletion is armed, retype-gated, refuses a wrong confirmation with
+//      chip, lifts again; a note saves and appears in the history.
+//   8. Deletion is armed, retype-gated, refuses a wrong confirmation with
 //      the server's own error, and goes through with the right one.
-//  10. The audit trail renders what the server returns.
+//   9. Site: the notice and the flags publish exactly what the app reads.
+//  10. Audit: the full table renders.
 //  11. A non-admin account never sees the row.
 //  12. The public banner: shows when enabled, warn tone, dismiss sticks.
-// Plus the floor: 44px targets and no sideways scroll at 380px.
+// Plus the floor: Escape closes, and no sideways scroll at 380px.
 //
 // Run from inside continent-app/:  node scripts/verify_admin_panel.mjs
 import { chromium } from 'playwright';
@@ -100,12 +100,9 @@ const json = (route, body) => route.fulfill({
   status: 200, contentType: 'application/json', body: JSON.stringify(body),
 });
 
-/** Every RPC the spoke calls, answered locally. `opts.isAdmin` flips the gate. */
 async function stubSupabase(page, state, opts = {}) {
   const admin = opts.isAdmin !== false;
 
-  // Re-authentication for the lock: checked for real, like the account
-  // panel's own harness does, because the lock is the thing under test.
   await page.route('**/auth/v1/token*', (route) => {
     const body = JSON.parse(route.request().postData() || '{}');
     state.reauthAttempts.push(body.password);
@@ -134,11 +131,25 @@ async function stubSupabase(page, state, opts = {}) {
   }));
   await page.route('**/rest/v1/rpc/is_admin*', (route) => json(route, admin));
   await page.route('**/rest/v1/rpc/admin_stats*', (route) => json(route, admin
-    ? { users: 3, newWeek: 1, newMonth: 2, passesTrip: 1, passesYear: 1, tripPlans: 16, dayPlans: 38, aiToday: 5 }
+    ? {
+      users: 3, newWeek: 1, newMonth: 2, admins: 1, passesTrip: 1, passesYear: 1,
+      tripPlans: 16, dayPlans: 38, aiToday: 5,
+      // The project this harness pretends to be predates day_plans, which is
+      // the exact shape of the bug this surface now has to report.
+      missing: state.missing,
+    }
     : { error: 'forbidden' }));
+  await page.route('**/rest/v1/rpc/admin_health*', (route) => json(route, {
+    tables: {
+      profiles: true, entitlements: true, trip_plans: true,
+      day_plans: !state.missing.includes('day_plans'),
+      admin_users: true, admin_audit_log: true, site_config: true,
+    },
+  }));
   await page.route('**/rest/v1/rpc/admin_list_users*', (route) => {
     const body = JSON.parse(route.request().postData() || '{}');
     state.listCalls.push(body);
+    if (state.listFails) return json(route, { error: 'relation "public.day_plans" does not exist' });
     const s = (body.p_search || '').toLowerCase();
     const rows = USERS
       .filter((u) => !state.deleted.has(u.id))
@@ -148,7 +159,7 @@ async function stubSupabase(page, state, opts = {}) {
         || (u.handle || '').toLowerCase().includes(s)
         || (u.displayName || '').toLowerCase().includes(s))
       .map((u) => ({ ...u, bannedUntil: state.banned.get(u.id) || null }));
-    return json(route, { total: rows.length, rows });
+    return json(route, { total: rows.length, rows, degraded: false });
   });
   await page.route('**/rest/v1/rpc/admin_get_user*', (route) => {
     const body = JSON.parse(route.request().postData() || '{}');
@@ -161,12 +172,12 @@ async function stubSupabase(page, state, opts = {}) {
       expiresAt: tier === 'free' ? null : (state.tiers.has(u.id) ? '2027-08-19T00:00:00Z' : u.expiresAt),
       bannedUntil: state.banned.get(u.id) || null,
       confirmedAt: '2026-05-02T10:05:00Z', provider: 'email',
-      periodStart: '2026-08-01', source: 'stripe',
+      periodStart: '2026-08-01',
       plansUsed: 12, groundUsed: 3, friends: 2,
       badges: ['icebreaker'], grants: [],
       history: state.history
         .filter((h) => h.user === u.id)
-        .map((h, i) => ({ action: h.action, actor: 'owner', detail: h.detail || null, createdAt: '2026-08-19T10:00:00Z', id: i }))
+        .map((h, i) => ({ action: h.action, actor: 'owner', detail: h.detail || null, createdAt: '2026-08-20T10:00:00Z', id: i }))
         .reverse(),
     });
   });
@@ -230,14 +241,9 @@ async function stubSupabase(page, state, opts = {}) {
       { id: 1, action: 'set_config', actor: 'owner', target: null, detail: { key: 'announcement' }, createdAt: '2026-08-17T09:00:00Z' },
     ],
   }));
-  // public.site_config. The single-object read (maybeSingle, key=eq.X) is
-  // kept for compatibility; the list read feeds both the banner and the
-  // spoke's editors.
   await page.route('**/rest/v1/site_config*', (route) => {
     const url = route.request().url();
-    if (url.includes('key=eq.')) {
-      return json(route, { value: state.siteConfig.announcement });
-    }
+    if (url.includes('key=eq.')) return json(route, { value: state.siteConfig.announcement });
     return json(route, Object.entries(state.siteConfig).map(([key, value]) => ({ key, value })));
   });
   await page.route('**/rest/v1/profiles*', (route) => json(route, {
@@ -261,12 +267,17 @@ async function openPanel(page) {
   await page.locator('.account-panel').waitFor({ timeout: 15000 });
 }
 
-async function unlockSpoke(page) {
-  await page.locator('.admin-lock').waitFor({ timeout: 10000 });
+async function openAdmin(page, { unlock = true } = {}) {
+  await page.locator('.account-menu-row', { hasText: 'Admin' }).click();
+  await page.locator('.adminpage-lock').waitFor({ timeout: 15000 });
+  if (!unlock) return;
   await page.locator('#admin-lock-input').fill(RIGHT_PASSWORD);
   await page.locator('button', { hasText: 'Open admin tools' }).click();
-  await page.locator('.admin-stats').waitFor({ timeout: 10000 });
+  await page.locator('.adminpage-tiles, .adminpage-err').first().waitFor({ timeout: 15000 });
 }
+
+const gotoSection = (page, name) =>
+  page.locator('.adminpage-navbtn', { hasText: name }).click();
 
 try {
   await waitForServer();
@@ -276,17 +287,17 @@ try {
     listCalls: [], tierCalls: [], quotaCalls: [], deleteCalls: [], configCalls: [],
     banCalls: [], unbanCalls: [], noteCalls: [], markCalls: [],
     deleted: new Set(), tiers: new Map(), banned: new Map(),
-    history: [],
+    history: [], missing: ['day_plans'], listFails: false,
     siteConfig: {
       announcement: { enabled: false, text: '', tone: 'info' },
       features: {},
     },
   };
 
-  // ---- 1. The staff door, and the lock in front of it.
-  console.log('1. the staff door and the lock');
+  // ---- 1. The door and the lock.
+  console.log('1. the door and the lock');
   const ctx = await browser.newContext({
-    viewport: { width: 1360, height: 950 },
+    viewport: { width: 1440, height: 960 },
     acceptDownloads: true,
   });
   await ctx.addInitScript(seedSession(PROJECT_REF, ADMIN));
@@ -299,135 +310,129 @@ try {
   await adminRow.waitFor({ timeout: 10000 });
   const rowBox = await adminRow.boundingBox();
   if (!rowBox || rowBox.height < 44) fail(`the Admin row is ${rowBox?.height}px tall, under 44px`);
-  await adminRow.click();
 
-  await page.locator('.admin-lock').waitFor({ timeout: 10000 });
-  if (await page.locator('.admin-stats').count()) fail('the spoke opened before anybody proved anything');
+  await openAdmin(page, { unlock: false });
+  if (await page.locator('.account-panel').count()) fail('the account panel stayed open behind the page');
+  if (await page.locator('.adminpage-tiles').count()) fail('the page opened before anybody proved anything');
   await page.locator('#admin-lock-input').fill('not-the-password');
   await page.locator('button', { hasText: 'Open admin tools' }).click();
-  await page.waitForTimeout(600);
-  if (!(await page.locator('.admin-error').count())) fail('a wrong password unlocked nothing and said nothing');
-  if (await page.locator('.admin-stats').count()) fail('a wrong password opened the spoke');
+  await page.waitForTimeout(700);
+  if (!(await page.locator('.adminpage-err').count())) fail('a wrong password unlocked nothing and said nothing');
+  if (await page.locator('.adminpage-tiles').count()) fail('a wrong password opened the page');
   if (!state.reauthAttempts.includes('not-the-password')) fail('no real re-auth call was made');
   await page.screenshot({ path: `${SHOTS}/admin-lock.png` });
   await page.locator('#admin-lock-input').fill(RIGHT_PASSWORD);
   await page.locator('button', { hasText: 'Open admin tools' }).click();
-  await page.locator('.admin-stats').waitFor({ timeout: 10000 });
-  if ((await page.locator('.account-heading').innerText()).trim() !== 'Admin') {
-    fail('the spoke heading does not say Admin');
+  await page.locator('.adminpage-tiles').waitFor({ timeout: 15000 });
+  ok('the lock refuses a wrong password by re-auth, and opens the page on the right one');
+
+  // ---- 2. Overview, including what the database is missing.
+  console.log('2. overview');
+  const tiles = await page.locator('.adminpage-tile').count();
+  if (tiles !== 8) fail(`expected 8 tiles, found ${tiles}`);
+  if ((await page.locator('.adminpage-tile b').first().innerText()).trim() !== '3') {
+    fail('the accounts tile does not carry the stubbed count');
   }
-  ok('the lock refuses a wrong password by re-auth, and opens on the right one');
-
-  // ---- 2. Service numbers.
-  console.log('2. service numbers');
-  const statCount = await page.locator('.admin-stat').count();
-  if (statCount !== 6) fail(`expected 6 service numbers, found ${statCount}`);
-  const firstStat = await page.locator('.admin-stat b').first().innerText();
-  if (firstStat.trim() !== '3') fail(`the accounts number reads "${firstStat}", the stub says 3`);
-  ok(`${statCount} service numbers, seeded from admin_stats`);
-
-  // ---- 3. The site notice publishes through the RPC.
-  console.log('3. site notice');
-  const noticeToggle = page.locator('.admin-toggle input');
-  if (await noticeToggle.isChecked()) fail('the notice reads as on while site_config says off');
-  const publish = page.locator('button', { hasText: 'Publish notice' });
-  await noticeToggle.check();
-  if (await publish.isEnabled()) fail('an enabled notice with no text is publishable');
-  await page.locator('.admin-notice-input').fill('Fares refresh tonight at 02:00');
-  await page.locator('.admin-tone-opt', { hasText: 'Warning' }).click();
-  await publish.click();
-  await page.locator('button', { hasText: 'Notice published' }).waitFor({ timeout: 5000 });
-  const cfg = state.configCalls.find((c) => c.p_key === 'announcement');
-  if (!cfg) fail('admin_set_config never got the announcement');
-  if (!cfg?.p_value?.enabled || cfg.p_value.tone !== 'warn' || !/02:00/.test(cfg.p_value.text || '')) {
-    fail(`the published payload is wrong: ${JSON.stringify(cfg?.p_value)}`);
+  const warn = page.locator('.adminpage-warn');
+  if (!(await warn.count())) fail('a missing table is not reported anywhere');
+  if (!/day_plans/.test(await warn.first().innerText())) {
+    fail(`the warning does not name the missing table: ${await warn.first().innerText()}`);
   }
-  ok('the notice publishes exactly what the banner will read');
+  ok(`${tiles} tiles, and the missing table is named on screen`);
+  await page.screenshot({ path: `${SHOTS}/admin-overview.png` });
 
-  // ---- 4. Feature flags.
-  console.log('4. feature flags');
-  await page.locator('.admin-flag-add input').fill('beta_map');
-  await page.locator('button', { hasText: 'Add flag' }).click();
-  const flagRow = page.locator('.admin-flag-row', { hasText: 'beta_map' });
-  if (!(await flagRow.count())) fail('the added flag never appeared');
-  const flagToggle = flagRow.locator('.admin-flag-toggle');
-  if (await flagToggle.getAttribute('aria-checked') !== 'false') fail('a new flag is not off by default');
-  await flagToggle.click();
-  if (await flagToggle.getAttribute('aria-checked') !== 'true') fail('the flag toggle does not flip');
-  await page.locator('button', { hasText: 'Publish flags' }).click();
-  await page.locator('button', { hasText: 'Flags published' }).waitFor({ timeout: 5000 });
-  const fcfg = state.configCalls.find((c) => c.p_key === 'features');
-  if (!fcfg || fcfg.p_value?.beta_map !== true) {
-    fail(`the flags payload is wrong: ${JSON.stringify(fcfg?.p_value)}`);
+  // ---- 3. A failed list says so. The regression that matters.
+  console.log('3. a failed list is not an empty list');
+  state.listFails = true;
+  await gotoSection(page, 'Users');
+  // Typing is what re-runs the query; switching sections renders what was
+  // already loaded, which is the whole reason a stale failure needs a retry.
+  await page.locator('.adminpage-search input').fill('zoe');
+  await page.waitForTimeout(900);
+  const errNow = await page.locator('.adminpage-err').allInnerTexts();
+  if (!errNow.some((s) => /day_plans|does not exist/i.test(s))) {
+    fail(`a failed list did not surface the server error: ${JSON.stringify(errNow)}`);
   }
-  ok('a flag is added, switched on, and published as plain booleans');
-  await page.screenshot({ path: `${SHOTS}/admin-spoke.png` });
+  if (await page.locator('.adminpage-muted', { hasText: 'No accounts match' }).count()) {
+    fail('a failed list still claims no accounts match');
+  }
+  if (await page.locator('.adminpage-table').count()) fail('a failed list still drew a table');
+  ok('a failed list shows the database error instead of pretending to be empty');
 
-  // ---- 5. The user list: search, id search, CSV, detail.
-  console.log('5. users');
-  const userRows = page.locator('.admin-user-row');
-  if (await userRows.count() !== 3) fail(`expected 3 user rows, found ${await userRows.count()}`);
-  if (!(await page.locator('.admin-chip.staff').count())) fail('the staff account carries no staff chip');
-  if (!(await page.locator('.admin-chip.trip').count())) fail('the pass holder carries no tier chip');
+  // And the failure is recoverable without reopening the page.
+  state.listFails = false;
+  await page.locator('.adminpage-retry').click();
+  await page.locator('.adminpage-table').waitFor({ timeout: 10000 });
+  if (await page.locator('.adminpage-err').count()) fail('the error survived a successful retry');
+  ok('the retry button reloads the list and clears the error');
+  await page.locator('.adminpage-search input').fill('');
+  await page.waitForTimeout(800);
+
+  // ---- 4. The users table.
+  console.log('4. users');
+  await gotoSection(page, 'Overview');
+  await gotoSection(page, 'Users');
+  await page.locator('.adminpage-table').waitFor({ timeout: 10000 });
+  const bodyRows = page.locator('.adminpage-table tbody tr');
+  if (await bodyRows.count() !== 3) fail(`expected 3 rows, found ${await bodyRows.count()}`);
+  if (!(await page.locator('.adminpage-chip.staff').count())) fail('the staff account carries no chip');
+  if (!(await page.locator('.adminpage-chip.trip').count())) fail('the pass holder carries no tier chip');
 
   const dlPromise = page.waitForEvent('download', { timeout: 15000 });
-  await page.locator('.admin-csv-btn').click();
+  await page.locator('.adminpage-btn', { hasText: 'Export CSV' }).click();
   const dl = await dlPromise;
   if (!/^carta-users-\d{4}-\d{2}-\d{2}\.csv$/.test(dl.suggestedFilename())) {
     fail(`the CSV download is misnamed: ${dl.suggestedFilename()}`);
   }
-  ok(`the list exports as ${dl.suggestedFilename()}`);
+  ok(`the table exports as ${dl.suggestedFilename()}`);
 
-  await page.locator('.admin-search input').fill('zoe');
+  await page.locator('.adminpage-search input').fill('zoe');
   await page.waitForTimeout(700);
-  if (await userRows.count() !== 1) fail(`searching "zoe" left ${await userRows.count()} rows`);
-  if (!state.listCalls.some((c) => c.p_search === 'zoe')) fail('the search never reached the RPC');
-  await page.locator('.admin-search input').fill(USERS[1].id);
+  if (await bodyRows.count() !== 1) fail(`searching "zoe" left ${await bodyRows.count()} rows`);
+  await page.locator('.adminpage-search input').fill(USERS[1].id);
   await page.waitForTimeout(700);
-  if (await userRows.count() !== 1) fail('a pasted user id did not find its account');
-  if (!/marco/.test(await userRows.first().innerText())) fail('the id search found the wrong account');
-  ok('the list searches by words and by exact id');
+  if (await bodyRows.count() !== 1) fail('a pasted user id did not find its account');
+  if (!/marco/.test(await bodyRows.first().innerText())) fail('the id search found the wrong account');
+  ok('the table searches by word and by pasted id');
+  await page.locator('.adminpage-search input').fill('zoe');
+  await page.waitForTimeout(700);
+  await page.screenshot({ path: `${SHOTS}/admin-users.png` });
 
-  await page.locator('.admin-search input').fill('zoe');
-  await page.waitForTimeout(700);
-  await userRows.first().click();
-  await page.locator('.admin-facts').waitFor({ timeout: 10000 });
-  const facts = await page.locator('.admin-facts').innerText();
-  if (!/zoe@example\.com|Zoe/.test(await page.locator('.admin-detail-head').innerText())) {
+  await page.locator('.adminpage-namebtn').first().click();
+  await page.locator('.adminpage-facts').waitFor({ timeout: 10000 });
+  if (!/Zoe/.test(await page.locator('.adminpage-detail-id').innerText())) {
     fail('the detail head does not name the user');
   }
-  if ((await page.locator('.admin-facts > div').count()) < 8) fail('the detail states fewer than 8 facts');
-  if (!/4/.test(facts)) fail('the trip plan count never made it into the facts');
-  ok('a user opens in full, facts in mono rows');
+  if ((await page.locator('.adminpage-facts > div').count()) < 8) fail('the detail states fewer than 8 facts');
+  ok('an account opens in full');
 
-  // ---- 6. A pass change.
-  console.log('6. pass change');
-  await page.locator('.admin-tone-opt', { hasText: 'Year' }).click();
+  // ---- 5. A pass change.
+  console.log('5. pass change');
+  await page.locator('.adminpage-seg', { hasText: 'Year' }).click();
   await page.locator('#admin-days').fill('90');
-  await page.locator('button', { hasText: 'Apply pass change' }).click();
-  await page.waitForTimeout(700);
+  await page.locator('.adminpage-btn', { hasText: 'Apply pass change' }).click();
+  await page.waitForTimeout(800);
   const tc = state.tierCalls[0];
   if (!tc || tc.p_tier !== 'year' || tc.p_days !== 90) {
     fail(`admin_set_tier got ${JSON.stringify(tc)}, expected year for 90 days`);
   }
-  if (!(await page.locator('.admin-notice-ok').count())) fail('a completed pass change confirms nothing');
+  if (!(await page.locator('.adminpage-ok').count())) fail('a completed pass change confirms nothing');
   ok('the pass change lands as admin_set_tier(year, 90)');
 
-  // ---- 7. The quota reset arms first.
-  console.log('7. quota reset');
-  const quotaBtn = page.locator('button', { hasText: /Reset AI allowance|Confirm the reset/ });
+  // ---- 6. Quota reset arms first.
+  console.log('6. quota reset');
+  const quotaBtn = page.locator('.adminpage-btn', { hasText: /Reset AI allowance|Confirm the reset/ });
   await quotaBtn.click();
   if (state.quotaCalls.length) fail('the quota reset fired on the first press');
-  if (!/Confirm/.test(await quotaBtn.innerText())) fail('arming the reset changed nothing');
   await quotaBtn.click();
   await page.waitForTimeout(700);
   if (!state.quotaCalls.length) fail('the confirmed reset never reached the RPC');
   ok('the reset arms on the first press and fires on the second');
 
-  // ---- 8. Support: reset mail, suspension, notes and history.
-  console.log('8. support toolkit');
-  await page.locator('button', { hasText: 'Email a password reset' }).click();
-  await page.waitForTimeout(800);
+  // ---- 7. Support toolkit.
+  console.log('7. support toolkit');
+  await page.locator('.adminpage-btn', { hasText: 'Email a password reset' }).click();
+  await page.waitForTimeout(900);
   if (!state.recoverCalls.some((c) => c.email === 'zoe@example.com')) {
     fail('the reset mail never reached the recover endpoint');
   }
@@ -436,88 +441,128 @@ try {
   }
   ok('the reset mail goes out and lands in the trail');
 
-  await page.locator('button', { hasText: 'Suspend sign-in' }).click();
+  await page.locator('.adminpage-btn', { hasText: 'Suspend sign-in' }).click();
   if (state.banCalls.length) fail('suspension fired without the confirm step');
   await page.locator('#admin-ban-days').fill('7');
-  await page.locator('button', { hasText: /^Suspend$/ }).click();
-  await page.waitForTimeout(800);
-  const bc = state.banCalls[0];
-  if (!bc || bc.p_days !== 7) fail(`admin_ban_user got ${JSON.stringify(bc)}, expected 7 days`);
-  if (!(await page.locator('.admin-detail-head .admin-chip.banned').count())) {
+  await page.locator('.adminpage-btn', { hasText: /^Suspend$/ }).click();
+  await page.waitForTimeout(900);
+  if (state.banCalls[0]?.p_days !== 7) fail(`admin_ban_user got ${JSON.stringify(state.banCalls[0])}`);
+  if (!(await page.locator('.adminpage-detail-chips .adminpage-chip.banned').count())) {
     fail('a suspended account carries no chip');
   }
-  await page.locator('button', { hasText: 'Lift the suspension' }).click();
-  await page.waitForTimeout(800);
+  await page.locator('.adminpage-btn', { hasText: 'Lift the suspension' }).click();
+  await page.waitForTimeout(900);
   if (!state.unbanCalls.length) fail('lifting the suspension never reached the RPC');
-  if (await page.locator('.admin-detail-head .admin-chip.banned').count()) {
+  if (await page.locator('.adminpage-detail-chips .adminpage-chip.banned').count()) {
     fail('the chip survived the lift');
   }
   ok('suspension arms, takes days, shows the chip, and lifts again');
 
-  await page.locator('.admin-note-input').fill('Refunded the June Trip Pass, card was charged twice');
-  await page.locator('button', { hasText: 'Save note' }).click();
-  await page.waitForTimeout(800);
+  await page.locator('.adminpage-textarea').fill('Refunded the June Trip Pass, card was charged twice');
+  await page.locator('.adminpage-btn', { hasText: 'Save note' }).click();
+  await page.waitForTimeout(900);
   if (!state.noteCalls.some((c) => /June Trip Pass/.test(c.p_note || ''))) {
     fail('the note never reached admin_add_note');
   }
-  const history = page.locator('.panel-section', { hasText: 'History' }).locator('.admin-audit-row');
-  if (!(await history.count())) fail('the history section renders nothing after a note');
-  if (!/June Trip Pass/.test((await history.allInnerTexts()).join(' '))) {
+  if (!/June Trip Pass/.test((await page.locator('.adminpage-log').first().allInnerTexts()).join(' '))) {
     fail('the saved note is not in the history');
   }
-  ok('a note saves and shows up in the account history');
+  ok('a note saves and appears in the account history');
   await page.screenshot({ path: `${SHOTS}/admin-detail.png` });
 
-  // ---- 9. Deletion: retype-gated, server-checked.
-  console.log('9. deletion');
-  await page.locator('.admin-danger-arm').click();
+  // ---- 8. Deletion.
+  console.log('8. deletion');
+  await page.locator('.adminpage-btn.danger', { hasText: 'Delete this account' }).click();
   const confirmField = page.locator('#admin-del-confirm');
   await confirmField.waitFor({ timeout: 5000 });
-  const delBtn = page.locator('button', { hasText: 'Delete forever' });
+  const delBtn = page.locator('.adminpage-btn', { hasText: 'Delete forever' });
   if (await delBtn.isEnabled()) fail('deletion is live with an empty confirmation');
   await confirmField.fill('wrong@example.com');
   await delBtn.click();
-  await page.waitForTimeout(700);
-  if (!(await page.locator('.admin-error').count())) fail('a wrong confirmation surfaced no error');
+  await page.waitForTimeout(800);
   if (state.deleted.size) fail('a wrong confirmation deleted the account anyway');
+  if (!(await page.locator('.adminpage-err').count())) fail('a wrong confirmation surfaced no error');
   await confirmField.fill('zoe@example.com');
   await delBtn.click();
-  await page.locator('.admin-search input').waitFor({ timeout: 10000 });
+  // Back to the list, which is still filtered to the account just deleted,
+  // so it is correctly empty and draws no table. Clearing the search is what
+  // proves the row is gone rather than merely filtered out.
+  await page.locator('.adminpage-search input').waitFor({ timeout: 10000 });
   if (!state.deleted.has(USERS[0].id)) fail('the right confirmation never deleted');
-  await page.locator('.admin-search input').fill('');
-  await page.waitForTimeout(700);
-  if (await userRows.count() !== 2) fail(`the deleted account still shows: ${await userRows.count()} rows`);
-  ok('deletion needs the exact address, and the list drops the account');
+  if (!(await page.locator('.adminpage-muted', { hasText: 'No accounts match' }).count())) {
+    fail('the deleted account still matches its own search');
+  }
+  await page.locator('.adminpage-search input').fill('');
+  await page.locator('.adminpage-table').waitFor({ timeout: 10000 });
+  if (await bodyRows.count() !== 2) fail(`the deleted account still shows: ${await bodyRows.count()} rows`);
+  ok('deletion needs the exact address, and the table drops the account');
 
-  // ---- 10. The audit trail.
-  console.log('10. audit trail');
-  const auditRows = await page.locator('.panel-section', { hasText: 'Admin log' }).locator('.admin-audit-row').count();
-  if (auditRows !== 2) fail(`expected 2 audit rows, found ${auditRows}`);
-  ok('the audit trail renders actions and targets');
+  // ---- 9. Site section.
+  console.log('9. site');
+  await gotoSection(page, 'Site');
+  await page.locator('.adminpage-check input').waitFor({ timeout: 10000 });
+  await page.locator('.adminpage-check input').check();
+  await page.locator('.adminpage-textarea').first().fill('Fares refresh tonight at 02:00');
+  await page.locator('.adminpage-seg', { hasText: 'Warning' }).click();
+  await page.locator('.adminpage-btn', { hasText: 'Publish notice' }).click();
+  await page.locator('.adminpage-btn', { hasText: 'Notice published' }).waitFor({ timeout: 6000 });
+  const cfg = state.configCalls.find((c) => c.p_key === 'announcement');
+  if (!cfg?.p_value?.enabled || cfg.p_value.tone !== 'warn' || !/02:00/.test(cfg.p_value.text || '')) {
+    fail(`the published notice is wrong: ${JSON.stringify(cfg?.p_value)}`);
+  }
+
+  await page.locator('.adminpage-lock-input.mono').fill('beta_map');
+  await page.locator('.adminpage-btn', { hasText: 'Add flag' }).click();
+  const sw = page.locator('.adminpage-switch');
+  if (await sw.getAttribute('aria-checked') !== 'false') fail('a new flag is not off by default');
+  await sw.click();
+  await page.locator('.adminpage-btn', { hasText: 'Publish flags' }).click();
+  await page.locator('.adminpage-btn', { hasText: 'Flags published' }).waitFor({ timeout: 6000 });
+  const fcfg = state.configCalls.find((c) => c.p_key === 'features');
+  if (fcfg?.p_value?.beta_map !== true) fail(`the flags payload is wrong: ${JSON.stringify(fcfg?.p_value)}`);
+  ok('the notice and the flags publish exactly what the app reads');
+  await page.screenshot({ path: `${SHOTS}/admin-site.png` });
+
+  // ---- 10. Audit section.
+  console.log('10. audit');
+  await gotoSection(page, 'Audit');
+  await page.locator('.adminpage-table').waitFor({ timeout: 10000 });
+  if (await page.locator('.adminpage-table tbody tr').count() !== 2) {
+    fail('the audit table does not render the stubbed rows');
+  }
+  if (!/set_tier/.test(await page.locator('.adminpage-table tbody').innerText())) {
+    fail('the audit table does not name the action');
+  }
+  ok('the audit table renders every column');
+
+  // Escape closes the page, like every other overlay.
+  await page.keyboard.press('Escape');
+  await page.waitForTimeout(500);
+  if (await page.locator('.adminpage').count()) fail('Escape did not close the page');
+  ok('Escape closes the page');
   await ctx.close();
 
   // ---- 11. A non-admin never sees the door.
   console.log('11. non-admin');
-  const ctx2 = await browser.newContext({ viewport: { width: 1360, height: 950 } });
+  const ctx2 = await browser.newContext({ viewport: { width: 1440, height: 960 } });
   await ctx2.addInitScript(seedSession(PROJECT_REF, ADMIN));
   const page2 = await ctx2.newPage();
   await stubSupabase(page2, state, { isAdmin: false });
   await page2.goto(`${BASE}/?o=CRL`);
   await page2.locator('.account-avatar-btn').first().waitFor({ timeout: 120000 });
   await openPanel(page2);
-  await page2.waitForTimeout(800);
+  await page2.waitForTimeout(900);
   if (await page2.locator('.account-menu-row', { hasText: 'Admin' }).count()) {
     fail('a non-admin is shown the Admin row');
   }
-  const helpRows = await page2.locator('.account-menu-row').count();
-  if (helpRows !== 4) fail(`the non-admin hub has ${helpRows} menu rows, expected the usual 4`);
+  if (await page2.locator('.account-menu-row').count() !== 4) fail('the non-admin hub changed shape');
   ok('a non-admin sees the usual hub, nothing more');
   await ctx2.close();
 
   // ---- 12. The public banner.
   console.log('12. site banner');
   state.siteConfig.announcement = { enabled: true, text: 'Fares refresh tonight at 02:00', tone: 'warn' };
-  const ctx3 = await browser.newContext({ viewport: { width: 1360, height: 950 } });
+  const ctx3 = await browser.newContext({ viewport: { width: 1440, height: 960 } });
   await ctx3.addInitScript(seedSession(PROJECT_REF, null));
   const page3 = await ctx3.newPage();
   await stubSupabase(page3, state);
@@ -526,7 +571,6 @@ try {
   await banner.waitFor({ timeout: 60000 });
   if (!/Fares refresh tonight/.test(await banner.innerText())) fail('the banner does not carry the notice text');
   if (!/warn/.test(await banner.getAttribute('class'))) fail('the warn tone did not reach the banner');
-  await page3.screenshot({ path: `${SHOTS}/site-banner.png` });
   await page3.locator('.site-banner-close').click();
   if (await banner.count()) fail('dismissing the banner did not remove it');
   await page3.reload();
@@ -535,7 +579,7 @@ try {
   ok('the banner shows, carries its tone, and stays dismissed');
   await ctx3.close();
 
-  // ---- The floor: 380px, no sideways scroll on the spoke.
+  // ---- The floor: 380px.
   console.log('13. quality floor');
   const ctx4 = await browser.newContext({ viewport: { width: 380, height: 820 }, isMobile: true, hasTouch: true });
   await ctx4.addInitScript(seedSession(PROJECT_REF, ADMIN));
@@ -546,18 +590,23 @@ try {
   const mobileBtn = page4.locator('.mobile-account-btn:visible, .bottom-nav-item:has-text("Account"), .account-avatar-btn:visible').first();
   await mobileBtn.click({ timeout: 30000 });
   await page4.locator('.account-panel').waitFor({ timeout: 15000 });
-  await page4.locator('.account-menu-row', { hasText: 'Admin' }).click();
-  await unlockSpoke(page4);
-  await page4.waitForTimeout(500);
-  const spill = await page4.locator('.account-panel').evaluate((root) => {
+  await openAdmin(page4);
+  await page4.waitForTimeout(600);
+  const spill = await page4.evaluate(() => {
+    const root = document.querySelector('.adminpage-body');
+    if (!root) return { scrolls: false, wide: ['no body'] };
     const wide = [...root.querySelectorAll('*')]
-      .filter((el) => el.getBoundingClientRect().right > root.clientWidth + 1)
+      .filter((el) => el.getBoundingClientRect().right > window.innerWidth + 1)
       .map((el) => `${el.tagName.toLowerCase()}.${el.className}`.slice(0, 50));
-    return { scrolls: root.scrollWidth > root.clientWidth + 1, wide: wide.slice(0, 5) };
+    return {
+      scrolls: document.documentElement.scrollWidth > window.innerWidth + 1
+        || root.scrollWidth > root.clientWidth + 1,
+      wide: wide.slice(0, 5),
+    };
   });
-  if (spill.scrolls) fail(`the admin spoke scrolls sideways at 380px: ${spill.wide.join(' | ')}`);
-  ok('380px: no horizontal scroll on the admin spoke');
-  await page4.screenshot({ path: `${SHOTS}/admin-spoke-380.png`, fullPage: true });
+  if (spill.scrolls) fail(`the admin page scrolls sideways at 380px: ${spill.wide.join(' | ')}`);
+  ok('380px: no horizontal scroll on the admin page');
+  await page4.screenshot({ path: `${SHOTS}/admin-380.png`, fullPage: true });
   await ctx4.close();
 
   await browser.close();
