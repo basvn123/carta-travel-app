@@ -62,6 +62,13 @@ EXTRA_CLASSES = ["Q543654"]         # Christmas market
 # traveller can attend. The English description names them reliably.
 ANCIENT_DESC = re.compile(r"\bancient\b|^roman (religious )?festival$|\bmythology\b", re.I)
 
+# The last resort for venue conflation the class tree cannot untangle: a town
+# hall that is ALSO tagged with its Christmas market's class sits in both the
+# structure and the event tree, so only its own words give it away.
+BUILDING_WORDS = re.compile(
+    r"\b(town hall|city hall|rathaus|district office|courthouse|"
+    r"government building|seat of (local )?government|office building)\b", re.I)
+
 # wd month entity -> month number
 MONTH_QID = {
     "Q108": 1, "Q109": 2, "Q110": 3, "Q118": 4, "Q119": 5, "Q120": 6,
@@ -111,36 +118,47 @@ def chunk_query(classes):
 
 
 def _tree_members(qids, root, chunk=200):
-    """Which of qids sit in root's P31/P279* tree. Best-effort per chunk."""
-    out = set()
+    """Which of qids sit in root's P31/P279* tree.
+
+    Returns (members, resolved): resolved holds every qid whose chunk query
+    actually answered. The caller MUST treat unresolved qids per its own
+    fail-safe direction; on 2026-08-19 a WDQS 502 streak silently emptied the
+    event-tree exception and the screen dropped 1,331 rows, most of them real
+    festivals.
+    """
+    out, resolved = set(), set()
     ids = sorted(qids)
     for i in range(0, len(ids), chunk):
-        values = " ".join(f"wd:{q}" for q in ids[i:i + chunk])
+        part = ids[i:i + chunk]
+        values = " ".join(f"wd:{q}" for q in part)
         rows = sparql(
             "SELECT DISTINCT ?item WHERE { VALUES ?item { " + values + " } "
             f"?item wdt:P31/wdt:P279* wd:{root} . }}")
         if rows is not None:
             out |= {r["item"]["value"].rsplit("/", 1)[-1] for r in rows}
-        time.sleep(1.0)
-    return out
+            resolved |= set(part)
+        time.sleep(3.0)
+    return out, resolved
 
 
 def venue_qids(qids):
-    """The subset of qids that are structures and NOT events: the town hall
-    that borrowed its market's class, the fairground.
+    """The subset of qids that are PROVEN structures and PROVEN non-events:
+    the town hall that borrowed its market's class, the fairground.
 
-    Screening the COLLECTED set afterwards is cheap and reliable; an inline
-    MINUS on the collection query proved expensive enough to time chunks out.
-    The event-tree exception matters because a Christmas market's own class
-    chain can wander into venue territory (market -> marketplace): a thing
-    that is both stays, a thing that is only a structure goes.
+    Fail-safe in both directions: an unanswered structures chunk keeps its
+    items (never marked structure), and an unanswered event-tree chunk keeps
+    its items too (a drop needs positive evidence on both questions). The
+    event-tree exception matters because a Christmas market's class chain can
+    wander into venue territory (market -> marketplace): a thing that is both
+    stays, a thing that is only a structure goes.
     """
-    structures = _tree_members(qids, "Q811979")
+    structures, _ = _tree_members(qids, "Q811979")
     if not structures:
         return set()
-    happenings = _tree_members(structures, "Q1656682")   # event
-    happenings |= _tree_members(structures - happenings, "Q1190554")  # occurrence
-    return structures - happenings
+    ev, ok1 = _tree_members(structures, "Q1656682")            # event
+    remaining = {q for q in structures if q in ok1 and q not in ev}
+    occ, ok2 = _tree_members(remaining, "Q1190554")            # occurrence
+    return {q for q in remaining if q in ok2 and q not in occ}
 
 
 def haversine_km(lat1, lon1, lat2, lon2):
@@ -163,11 +181,23 @@ def main():
     print(f"  {len(classes)} classes")
 
     events = {}   # qid -> merged row
-    for i in range(0, len(classes), CLASS_CHUNK):
-        chunk = classes[i:i + CLASS_CHUNK]
+
+    def collect(chunk):
+        """One VALUES chunk, split in half on failure: a lost chunk holding a
+        heavyweight class (music festival) once silently halved the harvest,
+        so a failure narrows the query instead of dropping the classes."""
         rows = sparql(chunk_query(chunk))
         if rows is None:
-            continue
+            if len(chunk) == 1:
+                print(f"    class {chunk[0]} kept failing, skipped")
+                return []
+            mid = len(chunk) // 2
+            return collect(chunk[:mid]) + collect(chunk[mid:])
+        return rows
+
+    for i in range(0, len(classes), CLASS_CHUNK):
+        chunk = classes[i:i + CLASS_CHUNK]
+        rows = collect(chunk)
         for r in rows:
             qid = r["item"]["value"].rsplit("/", 1)[-1]
             name = r.get("itemLabel", {}).get("value", "")
@@ -176,6 +206,8 @@ def main():
                 continue
             desc = r.get("desc", {}).get("value") or ""
             if ANCIENT_DESC.search(desc):
+                continue
+            if BUILDING_WORDS.search(name) or BUILDING_WORDS.search(desc):
                 continue
             ev = events.setdefault(qid, {
                 "qid": qid, "name": name,
