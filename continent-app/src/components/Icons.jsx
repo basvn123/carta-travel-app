@@ -588,6 +588,19 @@ export function BeachIcon({ size = 15, className = '' }) {
   );
 }
 
+/* A lake, drawn the way a lake is recognised: mountains behind, still water in
+   front. The beach glyph next to it in the rail is a parasol over a wave, so
+   the two never read as the same thing at 15 px. */
+export function LakeIcon({ size = 15, className = '' }) {
+  return (
+    <Glyph size={size} className={className} label="Lakes">
+      <path d="M2.5 13.5 8 5.5l3.6 5.2M9.8 13.5 15 7l6.5 9.5" />
+      <path d="M2.5 17.5c1.9-1.3 3.8-1.3 5.7 0s3.8 1.3 5.7 0 3.8-1.3 5.6 0" />
+      <path d="M4.5 20.8c1.6-1.1 3.2-1.1 4.8 0s3.2 1.1 4.8 0 3.2-1.1 4.7 0" />
+    </Glyph>
+  );
+}
+
 export function BallIcon({ size = 15, className = '' }) {
   return (
     <Glyph size={size} className={className} label="Sports">
@@ -931,6 +944,18 @@ export function BootIcon({ size = 15, className = '' }) {
       <path d="M7 4h5v5.5l4.5 3A5 5 0 0 1 19 16v3H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2Z" />
       <path d="M7 4v5.5h5" />
       <path d="M9 19v-2.5M12.5 19v-2.5M16 19v-2.5" />
+    </Glyph>
+  );
+}
+
+/** A walk that comes back to where it started: a closed circuit with the
+ *  trailhead marked on it. Used by the loops-only filter and the loop chip on
+ *  a trail card, so both say the same thing with the same shape. */
+export function LoopIcon({ size = 15, className = '' }) {
+  return (
+    <Glyph size={size} className={className} label="Loop">
+      <path d="M12 5.2c3.8 0 6.8 3 6.8 6.8S15.8 18.8 12 18.8 5.2 15.8 5.2 12 8.2 5.2 12 5.2Z" />
+      <circle cx="12" cy="5.2" r="1.9" fill="currentColor" stroke="none" />
     </Glyph>
   );
 }

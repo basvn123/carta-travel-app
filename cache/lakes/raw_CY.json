@@ -1,0 +1,1017 @@
+{
+ "country": "CY",
+ "harvested_at": "2026-08-20T18:02:07+00:00",
+ "n_wikidata": 30,
+ "n_seeded": 4,
+ "seed_missing": [],
+ "lakes": [
+  {
+   "wd": "Q4808219",
+   "name": "Asprokremmos Reservoir",
+   "name_local": "Τεχνητή Λίμνη Ασπρόκρεμμου",
+   "lat": 34.735475,
+   "lon": 32.559144,
+   "iso2": "CY",
+   "adm": "Phinikas",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 6,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Asprokremmos%20Reservoir%202.jpg",
+   "commons_cat": "Asprokremmos Reservoir",
+   "enwiki": "https://en.wikipedia.org/wiki/Asprokremmos_Dam",
+   "localwiki": "https://el.wikipedia.org/wiki/%CE%A4%CE%B5%CF%87%CE%BD%CE%B7%CF%84%CE%AE_%CE%9B%CE%AF%CE%BC%CE%BD%CE%B7_%CE%91%CF%83%CF%80%CF%81%CF%8C%CE%BA%CF%81%CE%B5%CE%BC%CE%BC%CE%BF%CF%85",
+   "area_km2": 2.59,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Cyprus"
+   ],
+   "key": "wd:Q4808219",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q5418789",
+   "name": "Evretou Reservoir",
+   "name_local": "Τεχνητή Λίμνη Ευρέτου",
+   "lat": 34.964444,
+   "lon": 32.471667,
+   "iso2": "CY",
+   "adm": "Evretou",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 5,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Evretou%20reservoir%20Cyprus%20%28173%29.jpg",
+   "commons_cat": "Evretou Reservoir",
+   "enwiki": "",
+   "localwiki": "https://el.wikipedia.org/wiki/%CE%A4%CE%B5%CF%87%CE%BD%CE%B7%CF%84%CE%AE_%CE%9B%CE%AF%CE%BC%CE%BD%CE%B7_%CE%95%CF%85%CF%81%CE%AD%CF%84%CE%BF%CF%85",
+   "area_km2": 1.25,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Cyprus"
+   ],
+   "key": "wd:Q5418789",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q6434705",
+   "name": "Kouris Reservoir",
+   "name_local": "Τεχνητή Λίμνη Κούρη",
+   "lat": 34.749545,
+   "lon": 32.924373,
+   "iso2": "CY",
+   "adm": "Kantou",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 4,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Kouris%20Dam%20-%20overflow%20day%208%20April%202012.jpg",
+   "commons_cat": "Kouris Reservoir",
+   "enwiki": "",
+   "localwiki": "https://el.wikipedia.org/wiki/%CE%A4%CE%B5%CF%87%CE%BD%CE%B7%CF%84%CE%AE_%CE%9B%CE%AF%CE%BC%CE%BD%CE%B7_%CE%9A%CE%BF%CF%8D%CF%81%CE%B7",
+   "area_km2": 3.6,
+   "depth_m": null,
+   "elev_m": 247,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Cyprus"
+   ],
+   "key": "wd:Q6434705",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "seed": {
+    "swim": "no",
+    "kind": "reservoir",
+    "why": "brief",
+    "note": "the island's largest dam, drinking water, swimming prohibited",
+    "name": "Kouris Reservoir"
+   }
+  },
+  {
+   "wd": "Q12880040",
+   "name": "Λίμνη Παραλιμνίου",
+   "name_local": "Λίμνη Παραλιμνίου",
+   "lat": 35.0383,
+   "lon": 33.9683,
+   "iso2": "CY",
+   "adm": "",
+   "types": [
+    "proposed site of community importance",
+    "Natura 2000 site",
+    "Special Protection Area",
+    "Special Area of Conservation",
+    "lake"
+   ],
+   "sitelinks": 6,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://el.wikipedia.org/wiki/%CE%9B%CE%AF%CE%BC%CE%BD%CE%B7_%CE%A0%CE%B1%CF%81%CE%B1%CE%BB%CE%B9%CE%BC%CE%BD%CE%AF%CE%BF%CF%85",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q12880040",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q22991968",
+   "name": "Achna Reservoir",
+   "name_local": "Τεχνητή Λίμνη Άχνας",
+   "lat": 35.0489,
+   "lon": 33.8025,
+   "iso2": "CY",
+   "adm": "Achna",
+   "types": [
+    "Natura 2000 site",
+    "reservoir"
+   ],
+   "sitelinks": 4,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://el.wikipedia.org/wiki/%CE%A4%CE%B5%CF%87%CE%BD%CE%B7%CF%84%CE%AE_%CE%9B%CE%AF%CE%BC%CE%BD%CE%B7_%CE%86%CF%87%CE%BD%CE%B1%CF%82",
+   "area_km2": 1.25,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q22991968",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q61740181",
+   "name": "Λίμνη Ορόκλινης",
+   "name_local": "Λίμνη Ορόκλινης",
+   "lat": 34.9659,
+   "lon": 33.65472,
+   "iso2": "CY",
+   "adm": "",
+   "types": [
+    "Natura 2000 site",
+    "lake"
+   ],
+   "sitelinks": 4,
+   "wd_img": "",
+   "commons_cat": "Oroklini Lake",
+   "enwiki": "",
+   "localwiki": "https://el.wikipedia.org/wiki/%CE%9B%CE%AF%CE%BC%CE%BD%CE%B7_%CE%9F%CF%81%CF%8C%CE%BA%CE%BB%CE%B9%CE%BD%CE%B7%CF%82",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q61740181",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q62027136",
+   "name": "Kannaviou Reservoir",
+   "name_local": "Τεχνητή Λίμνη Κανναβιού",
+   "lat": 34.929916,
+   "lon": 32.590819,
+   "iso2": "CY",
+   "adm": "Asproyia",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Kannaviou%20Reservoir%2C%20Cyprus%20-%20panoramio%20%2815%29.jpg",
+   "commons_cat": "Kannaviou Reservoir",
+   "enwiki": "",
+   "localwiki": "https://el.wikipedia.org/wiki/%CE%A4%CE%B5%CF%87%CE%BD%CE%B7%CF%84%CE%AE_%CE%9B%CE%AF%CE%BC%CE%BD%CE%B7_%CE%9A%CE%B1%CE%BD%CE%BD%CE%B1%CE%B2%CE%B9%CE%BF%CF%8D",
+   "area_km2": 0.926,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Cyprus"
+   ],
+   "key": "wd:Q62027136",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q62607262",
+   "name": "Kalavasos Reservoir",
+   "name_local": "Τεχνητή Λίμνη Καλαβασού",
+   "lat": 34.805002,
+   "lon": 33.259228,
+   "iso2": "CY",
+   "adm": "Vasa Kellakiou",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 2,
+   "wd_img": "",
+   "commons_cat": "Kalavasos Reservoir",
+   "enwiki": "",
+   "localwiki": "https://el.wikipedia.org/wiki/%CE%A4%CE%B5%CF%87%CE%BD%CE%B7%CF%84%CE%AE_%CE%9B%CE%AF%CE%BC%CE%BD%CE%B7_%CE%9A%CE%B1%CE%BB%CE%B1%CE%B2%CE%B1%CF%83%CE%BF%CF%8D",
+   "area_km2": 0.875,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Cyprus"
+   ],
+   "key": "wd:Q62607262",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q62618929",
+   "name": "Dipotamos Reservoir",
+   "name_local": "Τεχνητή Λίμνη Διπόταμου",
+   "lat": 34.854867,
+   "lon": 33.357804,
+   "iso2": "CY",
+   "adm": "Kato Lefkara",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Dhipotamos%20dam.jpg",
+   "commons_cat": "Dipotamos Reservoir",
+   "enwiki": "",
+   "localwiki": "https://el.wikipedia.org/wiki/%CE%A4%CE%B5%CF%87%CE%BD%CE%B7%CF%84%CE%AE_%CE%9B%CE%AF%CE%BC%CE%BD%CE%B7_%CE%94%CE%B9%CF%80%CF%8C%CF%84%CE%B1%CE%BC%CE%BF%CF%85",
+   "area_km2": 1.0,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Cyprus"
+   ],
+   "key": "wd:Q62618929",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q62663509",
+   "name": "Lefkara Reservoir",
+   "name_local": "Τεχνητή Λίμνη Λευκάρων",
+   "lat": 34.893655,
+   "lon": 33.293221,
+   "iso2": "CY",
+   "adm": "Pano Lefkara",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://el.wikipedia.org/wiki/%CE%A4%CE%B5%CF%87%CE%BD%CE%B7%CF%84%CE%AE_%CE%9B%CE%AF%CE%BC%CE%BD%CE%B7_%CE%9B%CE%B5%CF%85%CE%BA%CE%AC%CF%81%CF%89%CE%BD",
+   "area_km2": 0.65,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Cyprus"
+   ],
+   "key": "wd:Q62663509",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q62856371",
+   "name": "Germasogeia Reservoir",
+   "name_local": "Τεχνητή Λίμνη Γερμασόγειας",
+   "lat": 34.748072,
+   "lon": 33.087072,
+   "iso2": "CY",
+   "adm": "Foinikaria",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Yermasogeia%20Dam%2013.JPG",
+   "commons_cat": "Germasogeia Reservoir",
+   "enwiki": "",
+   "localwiki": "https://el.wikipedia.org/wiki/%CE%A4%CE%B5%CF%87%CE%BD%CE%B7%CF%84%CE%AE_%CE%9B%CE%AF%CE%BC%CE%BD%CE%B7_%CE%93%CE%B5%CF%81%CE%BC%CE%B1%CF%83%CF%8C%CE%B3%CE%B5%CE%B9%CE%B1%CF%82",
+   "area_km2": 1.1,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Cyprus"
+   ],
+   "key": "wd:Q62856371",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "seed": {
+    "swim": "no",
+    "kind": "reservoir",
+    "why": "brief",
+    "note": "water supply reservoir with a walking trail, no swimming",
+    "name": "Germasogeia Reservoir"
+   }
+  },
+  {
+   "wd": "Q62923206",
+   "name": "Polemidia Reservoir",
+   "name_local": "Τεχνητή Λίμνη Πολεμιδιών",
+   "lat": 34.720896,
+   "lon": 32.986922,
+   "iso2": "CY",
+   "adm": "Limassol Municipality",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Polemidia%20Reservoir%20%2810%29.jpg",
+   "commons_cat": "Polemidia Reservoir",
+   "enwiki": "",
+   "localwiki": "https://el.wikipedia.org/wiki/%CE%A4%CE%B5%CF%87%CE%BD%CE%B7%CF%84%CE%AE_%CE%9B%CE%AF%CE%BC%CE%BD%CE%B7_%CE%A0%CE%BF%CE%BB%CE%B5%CE%BC%CE%B9%CE%B4%CE%B9%CF%8E%CE%BD",
+   "area_km2": 0.11,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Cyprus"
+   ],
+   "key": "wd:Q62923206",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q76826052",
+   "name": "Mavrokolimpos Reservoir",
+   "name_local": "Τεχνητή Λίμνη Μαυροκόλυμπου",
+   "lat": 34.857502,
+   "lon": 32.408648,
+   "iso2": "CY",
+   "adm": "Kissonerga",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Mavrokolympos%20Reservoir%20161.JPG",
+   "commons_cat": "Mavrokolimpos Reservoir",
+   "enwiki": "",
+   "localwiki": "https://el.wikipedia.org/wiki/%CE%A4%CE%B5%CF%87%CE%BD%CE%B7%CF%84%CE%AE_%CE%9B%CE%AF%CE%BC%CE%BD%CE%B7_%CE%9C%CE%B1%CF%85%CF%81%CE%BF%CE%BA%CF%8C%CE%BB%CF%85%CE%BC%CF%80%CE%BF%CF%85",
+   "area_km2": 0.175,
+   "depth_m": null,
+   "elev_m": 70,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Cyprus"
+   ],
+   "key": "wd:Q76826052",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q81644936",
+   "name": "Arminou Reservoir",
+   "name_local": "Τεχνητή Λίμνη Αρμίνου",
+   "lat": 34.87727,
+   "lon": 32.737781,
+   "iso2": "CY",
+   "adm": "Agios Nikolaos",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 3,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/A%40a%20Arminou%20dam%20cyprus%20-%20panoramio.jpg",
+   "commons_cat": "Arminou Reservoir",
+   "enwiki": "",
+   "localwiki": "https://el.wikipedia.org/wiki/%CE%A4%CE%B5%CF%87%CE%BD%CE%B7%CF%84%CE%AE_%CE%9B%CE%AF%CE%BC%CE%BD%CE%B7_%CE%91%CF%81%CE%BC%CE%AF%CE%BD%CE%BF%CF%85",
+   "area_km2": 0.353,
+   "depth_m": null,
+   "elev_m": 436,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Cyprus"
+   ],
+   "key": "wd:Q81644936",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q81698527",
+   "name": "Argaka Reservoir",
+   "name_local": "Τεχνητή Λίμνη Αργάκας",
+   "lat": 35.048473,
+   "lon": 32.503142,
+   "iso2": "CY",
+   "adm": "Magounda",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://el.wikipedia.org/wiki/%CE%A4%CE%B5%CF%87%CE%BD%CE%B7%CF%84%CE%AE_%CE%9B%CE%AF%CE%BC%CE%BD%CE%B7_%CE%91%CF%81%CE%B3%CE%AC%CE%BA%CE%B1%CF%82",
+   "area_km2": 0.107,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Cyprus"
+   ],
+   "key": "wd:Q81698527",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q81704063",
+   "name": "Pomos Reservoir",
+   "name_local": "Τεχνητή Λίμνη Πωμού",
+   "lat": 35.143056,
+   "lon": 32.576061,
+   "iso2": "CY",
+   "adm": "Pomos",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://el.wikipedia.org/wiki/%CE%A4%CE%B5%CF%87%CE%BD%CE%B7%CF%84%CE%AE_%CE%9B%CE%AF%CE%BC%CE%BD%CE%B7_%CE%A0%CF%89%CE%BC%CE%BF%CF%8D",
+   "area_km2": 0.083,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Cyprus"
+   ],
+   "key": "wd:Q81704063",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q81843224",
+   "name": "Ayia Marina Reservoir",
+   "name_local": "Τεχνητή Λίμνη Αγίας Μαρίνας",
+   "lat": 35.11721,
+   "lon": 32.541601,
+   "iso2": "CY",
+   "adm": "Ayia Marina Chrysochous",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://el.wikipedia.org/wiki/%CE%A4%CE%B5%CF%87%CE%BD%CE%B7%CF%84%CE%AE_%CE%9B%CE%AF%CE%BC%CE%BD%CE%B7_%CE%91%CE%B3%CE%AF%CE%B1%CF%82_%CE%9C%CE%B1%CF%81%CE%AF%CE%BD%CE%B1%CF%82",
+   "area_km2": 0.033,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Cyprus"
+   ],
+   "key": "wd:Q81843224",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q81924287",
+   "name": "Vyzakia Reservoir",
+   "name_local": "Τεχνητή Λίμνη Βυζακιάς",
+   "lat": 35.061861,
+   "lon": 33.029008,
+   "iso2": "CY",
+   "adm": "Vyzakia",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://el.wikipedia.org/wiki/%CE%A4%CE%B5%CF%87%CE%BD%CE%B7%CF%84%CE%AE_%CE%9B%CE%AF%CE%BC%CE%BD%CE%B7_%CE%92%CF%85%CE%B6%CE%B1%CE%BA%CE%B9%CE%AC%CF%82",
+   "area_km2": 0.16,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q81924287",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q82316715",
+   "name": "Xyliatos Reservoir",
+   "name_local": "Τεχνητή Λίμνη Ξυλιάτου",
+   "lat": 35.008131,
+   "lon": 33.036997,
+   "iso2": "CY",
+   "adm": "Xyliatos",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://el.wikipedia.org/wiki/%CE%A4%CE%B5%CF%87%CE%BD%CE%B7%CF%84%CE%AE_%CE%9B%CE%AF%CE%BC%CE%BD%CE%B7_%CE%9E%CF%85%CE%BB%CE%B9%CE%AC%CF%84%CE%BF%CF%85",
+   "area_km2": 0.096,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Cyprus"
+   ],
+   "key": "wd:Q82316715",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q82523478",
+   "name": "Kalopanagiotis Reservoir",
+   "name_local": "Τεχνητή Λίμνη Καλοπαναγιώτη",
+   "lat": 35.004254,
+   "lon": 32.825973,
+   "iso2": "CY",
+   "adm": "Oikos",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://el.wikipedia.org/wiki/%CE%A4%CE%B5%CF%87%CE%BD%CE%B7%CF%84%CE%AE_%CE%9B%CE%AF%CE%BC%CE%BD%CE%B7_%CE%9A%CE%B1%CE%BB%CE%BF%CF%80%CE%B1%CE%BD%CE%B1%CE%B3%CE%B9%CF%8E%CF%84%CE%B7",
+   "area_km2": 0.047,
+   "depth_m": null,
+   "elev_m": 550,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Cyprus"
+   ],
+   "key": "wd:Q82523478",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q83288227",
+   "name": "Tamasos Reservoir",
+   "name_local": "Τεχνητή Λίμνη Ταμασού",
+   "lat": 35.014033,
+   "lon": 33.247771,
+   "iso2": "CY",
+   "adm": "Kampia",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://el.wikipedia.org/wiki/%CE%A4%CE%B5%CF%87%CE%BD%CE%B7%CF%84%CE%AE_%CE%9B%CE%AF%CE%BC%CE%BD%CE%B7_%CE%A4%CE%B1%CE%BC%CE%B1%CF%83%CE%BF%CF%8D",
+   "area_km2": 0.305,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Cyprus"
+   ],
+   "key": "wd:Q83288227",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q83295762",
+   "name": "Solea Reservoir",
+   "name_local": "Τεχνητή Λίμνη Σολέας",
+   "lat": 35.066792,
+   "lon": 32.90289,
+   "iso2": "CY",
+   "adm": "Linou",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://el.wikipedia.org/wiki/%CE%A4%CE%B5%CF%87%CE%BD%CE%B7%CF%84%CE%AE_%CE%9B%CE%AF%CE%BC%CE%BD%CE%B7_%CE%A3%CE%BF%CE%BB%CE%AD%CE%B1%CF%82",
+   "area_km2": 0.189,
+   "depth_m": null,
+   "elev_m": 361,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Cyprus"
+   ],
+   "key": "wd:Q83295762",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q83396721",
+   "name": "Klirou Reservoir",
+   "name_local": "Τεχνητή Λίμνη Κλήρου",
+   "lat": 35.032018,
+   "lon": 33.172871,
+   "iso2": "CY",
+   "adm": "Klirou",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Klirou%20Reservoir%2C%20Cyprus.jpg",
+   "commons_cat": "Klirou Reservoir",
+   "enwiki": "",
+   "localwiki": "https://el.wikipedia.org/wiki/%CE%A4%CE%B5%CF%87%CE%BD%CE%B7%CF%84%CE%AE_%CE%9B%CE%AF%CE%BC%CE%BD%CE%B7_%CE%9A%CE%BB%CE%AE%CF%81%CE%BF%CF%85",
+   "area_km2": 0.18,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Cyprus"
+   ],
+   "key": "wd:Q83396721",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q83479403",
+   "name": "Tsakistra Reservoir",
+   "name_local": "Τεχνητή Λίμνη Τσακίστρας",
+   "lat": 35.023393,
+   "lon": 32.70275,
+   "iso2": "CY",
+   "adm": "Tsakistra",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://el.wikipedia.org/wiki/%CE%A4%CE%B5%CF%87%CE%BD%CE%B7%CF%84%CE%AE_%CE%9B%CE%AF%CE%BC%CE%BD%CE%B7_%CE%A4%CF%83%CE%B1%CE%BA%CE%AF%CF%83%CF%84%CF%81%CE%B1%CF%82",
+   "area_km2": 0.015,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Cyprus"
+   ],
+   "key": "wd:Q83479403",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q22985616",
+   "name": "Prodromas",
+   "name_local": "",
+   "lat": 34.948611,
+   "lon": 32.845,
+   "iso2": "CY",
+   "adm": "Cyprus",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Prodromos%20Reservoir%2C%20Cyprus%20-%20panoramio%20%283%29.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": 1699,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q22985616",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q22988461",
+   "name": "Υδατοδεξαμενή Κουκλιών",
+   "name_local": "Υδατοδεξαμενή Κουκλιών",
+   "lat": 35.129167,
+   "lon": 33.756111,
+   "iso2": "CY",
+   "adm": "Famagusta District",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q22988461",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q22991930",
+   "name": "Xeros Potamos",
+   "name_local": "",
+   "lat": 34.73333,
+   "lon": 32.5625,
+   "iso2": "CY",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": 77,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q22991930",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q113153928",
+   "name": "Athalassa Lake",
+   "name_local": "Λίμνη Αθαλάσσας",
+   "lat": 35.12862,
+   "lon": 33.38753,
+   "iso2": "CY",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Athalassa%20lake%20park%20Nicosia%20Republic%20of%20Cyprus.JPG",
+   "commons_cat": "Athalassa Reservoir",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q113153928",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q113170061",
+   "name": "Mitsero Red Lake",
+   "name_local": "Κοκκινόλιμνη",
+   "lat": 35.036075,
+   "lon": 33.115864,
+   "iso2": "CY",
+   "adm": "",
+   "types": [
+    "Q2387901",
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Red%20lake%2C%20Mitsero%20mine%2C%20Mitsero%2C%20Cyprus%2001.jpg",
+   "commons_cat": "Red lake, Mitsero mine",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q113170061",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q139256338",
+   "name": "Blue Lagoon, Cape Greco, Cyprus",
+   "name_local": "",
+   "lat": 34.965272,
+   "lon": 34.0824,
+   "iso2": "CY",
+   "adm": "Agia Napa",
+   "types": [
+    "lagoon",
+    "bay"
+   ],
+   "sitelinks": 1,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Blue%20Lagoon%2C%20Cape%20Greco%2C%20Agia%20Napa%2C%20Kypr.jpg",
+   "commons_cat": "Blue Lagoon, Cape Greco, Cyprus",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q139256338",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q2915622",
+   "name": "Larnaca Salt Lake",
+   "name_local": "Αλυκή Λάρνακας",
+   "lat": 34.9,
+   "lon": 33.616667,
+   "iso2": "CY",
+   "adm": "Larnaca",
+   "types": [
+    "group of lakes"
+   ],
+   "sitelinks": 29,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Larnaca%2001-2017%20img29%20Salt%20Lake.jpg",
+   "commons_cat": "Larnaca salt lakes",
+   "enwiki": "https://en.wikipedia.org/wiki/Larnaca_Salt_Lake",
+   "localwiki": "https://el.wikipedia.org/wiki/%CE%91%CE%BB%CF%85%CE%BA%CE%AE_%CE%9B%CE%AC%CF%81%CE%BD%CE%B1%CE%BA%CE%B1%CF%82",
+   "area_km2": 15.85,
+   "depth_m": null,
+   "elev_m": 1,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Cyprus"
+   ],
+   "seed": {
+    "swim": "no",
+    "kind": "lake",
+    "why": "brief",
+    "note": "seasonal and protected, flamingos in winter, no swimming",
+    "name": "Larnaca Salt Lake"
+   },
+   "key": "wd:Q2915622",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q7103757",
+   "name": "Oroklini",
+   "name_local": "Ορόκλινη",
+   "lat": 34.98138,
+   "lon": 33.656476,
+   "iso2": "CY",
+   "adm": "Larnaca District",
+   "types": [
+    "community of Cyprus Republic"
+   ],
+   "sitelinks": 19,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/A%40a%20oroklini%20lake%20%28%CE%BB%CE%AF%CE%BC%CE%BD%CE%B7%20%CE%BF%CF%81%CF%8C%CE%BA%CE%BB%CE%B9%CE%BD%CE%B7%CF%82%29%20oroklini%20larnaca%20cy%20-%20panoramio.jpg",
+   "commons_cat": "Oroklini",
+   "enwiki": "https://en.wikipedia.org/wiki/Oroklini",
+   "localwiki": "https://el.wikipedia.org/wiki/%CE%9F%CF%81%CF%8C%CE%BA%CE%BB%CE%B9%CE%BD%CE%B7",
+   "area_km2": 15.214,
+   "depth_m": null,
+   "elev_m": 60,
+   "protected": [],
+   "part_of": [
+    "Larnaca District"
+   ],
+   "basin_countries": [],
+   "key": "wd:Q7103757",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "seed": {
+    "swim": "no",
+    "kind": "lake",
+    "why": "editorial",
+    "note": "Natura 2000 bird reserve with a hide",
+    "name": "Oroklini Lake"
+   }
+  }
+ ]
+}

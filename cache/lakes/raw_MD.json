@@ -1,0 +1,419 @@
+{
+ "country": "MD",
+ "harvested_at": "2026-08-20T18:27:40+00:00",
+ "n_wikidata": 13,
+ "n_seeded": 4,
+ "seed_missing": [],
+ "lakes": [
+  {
+   "wd": "Q571052",
+   "name": "Lake Beleu",
+   "name_local": "Lacul Beleu",
+   "lat": 45.594444,
+   "lon": 28.133056,
+   "iso2": "MD",
+   "adm": "Cahul District",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 5,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/O%20vedere%20naturala%20a%20lacului%20Beleu.jpg",
+   "commons_cat": "Beleu Lake",
+   "enwiki": "",
+   "localwiki": "https://ro.wikipedia.org/wiki/Lacul_Beleu",
+   "area_km2": 6.26,
+   "depth_m": 2.5,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q571052",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "seed": {
+    "swim": "no",
+    "kind": "lake",
+    "why": "editorial",
+    "note": "the Prutul de Jos Ramsar wetland, birds, not a bathing water",
+    "name": "Lake Beleu"
+   }
+  },
+  {
+   "wd": "Q2378710",
+   "name": "Ghidighici Reservoir",
+   "name_local": "Lacul de acumulare Ghidighici",
+   "lat": 47.1,
+   "lon": 28.713889,
+   "iso2": "MD",
+   "adm": "",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 8,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Ghidighici%2005.jpg",
+   "commons_cat": "Ghidighici Lake",
+   "enwiki": "https://en.wikipedia.org/wiki/Ghidighici_Reservoir",
+   "localwiki": "https://ro.wikipedia.org/wiki/Lacul_de_acumulare_Ghidighici",
+   "area_km2": 8.03,
+   "depth_m": 9.9,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q2378710",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "seed": {
+    "swim": "yes",
+    "kind": "reservoir",
+    "why": "editorial",
+    "note": "Chisinau's beach lake at Vatra",
+    "name": "Ghidighici Reservoir"
+   }
+  },
+  {
+   "wd": "Q2635906",
+   "name": "Lake Kahul",
+   "name_local": "Lacul Cahul",
+   "lat": 45.371444,
+   "lon": 28.396778,
+   "iso2": "MD",
+   "adm": "Reni Urban Hromada",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 14,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Lake%20Kahul%2004.jpg",
+   "commons_cat": "Lake Kahul",
+   "enwiki": "",
+   "localwiki": "https://ro.wikipedia.org/wiki/Lacul_Cahul",
+   "area_km2": 14.11,
+   "depth_m": 7.0,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [
+    "Lacurile dunărene din Ucraina"
+   ],
+   "basin_countries": [],
+   "key": "wd:Q2635906",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q2651567",
+   "name": "Cuciurgan Reservoir",
+   "name_local": "Lacul de acumulare Cuciurgan",
+   "lat": 46.6,
+   "lon": 29.966667,
+   "iso2": "MD",
+   "adm": "Administrative-Territorial Units of the Left Bank of the Dniester",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 11,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Kuchurgany%20reservoir1.jpg",
+   "commons_cat": "Cuciurgan Reservoir",
+   "enwiki": "https://en.wikipedia.org/wiki/Cuciurgan_Reservoir",
+   "localwiki": "https://ro.wikipedia.org/wiki/Lacul_de_acumulare_Cuciurgan",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Ukraine",
+    "Moldova"
+   ],
+   "key": "wd:Q2651567",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q2655738",
+   "name": "Dubăsari Reservoir",
+   "name_local": "Lacul de acumulare Dubăsari",
+   "lat": 47.299722,
+   "lon": 29.097778,
+   "iso2": "MD",
+   "adm": "Dubăsari District",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 6,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Dubasari%20reservoir%20%281980%29.%20%2819503898449%29.jpg",
+   "commons_cat": "Dubăsari Reservoir",
+   "enwiki": "",
+   "localwiki": "https://ro.wikipedia.org/wiki/Lacul_de_acumulare_Dub%C4%83sari",
+   "area_km2": 68.0,
+   "depth_m": 19.0,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q2655738",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "seed": {
+    "swim": "limited",
+    "kind": "reservoir",
+    "why": "editorial",
+    "note": "the Dniester reservoir",
+    "name": "Dubasari Reservoir"
+   }
+  },
+  {
+   "wd": "Q3272045",
+   "name": "Lacul de acumulare Costești-Stînca",
+   "name_local": "Lacul de acumulare Costești-Stînca",
+   "lat": 47.858333,
+   "lon": 27.233333,
+   "iso2": "MD",
+   "adm": "",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 6,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Plaja%20St%C3%A2nca2.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://ro.wikipedia.org/wiki/Lacul_de_acumulare_St%C3%A2nca%E2%80%93Coste%C8%99ti",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q3272045",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "seed": {
+    "swim": "limited",
+    "kind": "reservoir",
+    "why": "editorial",
+    "note": "on the Prut, shared with Romania, fishing and boats",
+    "name": "Costesti-Stanca Reservoir"
+   }
+  },
+  {
+   "wd": "Q4103149",
+   "name": "Valea Morilor lake",
+   "name_local": "lacul Valea Morilor",
+   "lat": 47.018333,
+   "lon": 28.812778,
+   "iso2": "MD",
+   "adm": "",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 6,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Parcul%20Valea%20morilor%20%282013%29%20%281%29.jpg",
+   "commons_cat": "Valea Morilor lake",
+   "enwiki": "",
+   "localwiki": "https://ro.wikipedia.org/wiki/Lacul_Valea_Morilor",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q4103149",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q12102338",
+   "name": "Lacul Dracele",
+   "name_local": "Lacul Dracele",
+   "lat": 45.799167,
+   "lon": 28.153333,
+   "iso2": "MD",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Lacul%20Drachele%2C%20satul%20Pascani%20Cahul.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://ro.wikipedia.org/wiki/Lacul_Dracele",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q12102338",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q12731888",
+   "name": "Lake Salas",
+   "name_local": "Lacul Sălaș",
+   "lat": 46.9139,
+   "lon": 29.4142,
+   "iso2": "MD",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 3,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Lacul%20S%C4%83la%C8%99.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://ro.wikipedia.org/wiki/Lacul_S%C4%83la%C8%99",
+   "area_km2": 3.65,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q12731888",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q16653023",
+   "name": "Lacul Manta",
+   "name_local": "Lacul Manta",
+   "lat": 45.803516,
+   "lon": 28.153979,
+   "iso2": "MD",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 4,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Lacul%20Manta%20s.%20Crihana%20Veche%20Cahul%20%283%29.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://ro.wikipedia.org/wiki/Lacul_Manta",
+   "area_km2": 21.0,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q16653023",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q19706988",
+   "name": "Lacul Roșu",
+   "name_local": "Lacul Roșu",
+   "lat": 46.65329,
+   "lon": 29.84528,
+   "iso2": "MD",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://ro.wikipedia.org/wiki/Lacul_Ro%C8%99u_(Republica_Moldova)",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q19706988",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q30247654",
+   "name": "Tarakliyskoye Vodokhranilishche",
+   "name_local": "Lacul Taraclia",
+   "lat": 45.97501,
+   "lon": 28.59398,
+   "iso2": "MD",
+   "adm": "Taraclia District",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 5,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://ro.wikipedia.org/wiki/Lacul_de_acumulare_Taraclia",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q30247654",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q30247652",
+   "name": "Lacul Liman",
+   "name_local": "Lacul Liman",
+   "lat": 46.79111,
+   "lon": 29.58917,
+   "iso2": "MD",
+   "adm": "Căușeni District",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q30247652",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  }
+ ]
+}

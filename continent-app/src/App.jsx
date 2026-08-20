@@ -59,6 +59,7 @@ import { readShareTokenFromUrl, stripShareTokenFromUrl } from './auth/tripShares
 import { readFriendHandleFromUrl, stripFriendHandleFromUrl } from './auth/friends.js';
 import { readTrailFromUrl } from './lib/trails.js';
 import { readBeachFromUrl } from './lib/beaches.js';
+import { readLakeFromUrl } from './lib/lakes.js';
 import { loadTripDraft } from './planner/tripDraftStore.js';
 import { bindDayPlanCloud } from './planner/dayPlanSync.js';
 import { AuthProvider, useAuth } from './auth/AuthContext.jsx';
@@ -308,6 +309,13 @@ function TravelApp() {
   useEffect(() => {
     if (pendingBeach) setActiveTab('places');
   }, [pendingBeach]);
+
+  // And a single LAKE (#lake=si-lake-bled-Q207302&lc=SI, see lib/lakes.js).
+  // Same hash, same reasons.
+  const [pendingLake, setPendingLake] = useState(() => readLakeFromUrl());
+  useEffect(() => {
+    if (pendingLake) setActiveTab('places');
+  }, [pendingLake]);
 
   // Stable identity: this lands on every Explore card, so a fresh function
   // per render would defeat the card's React.memo.
@@ -700,6 +708,8 @@ function TravelApp() {
             onOpenTrailConsumed={() => setPendingTrail(null)}
             openBeach={pendingBeach}
             onOpenBeachConsumed={() => setPendingBeach(null)}
+            openLake={pendingLake}
+            onOpenLakeConsumed={() => setPendingLake(null)}
           />
         </div>
       )}

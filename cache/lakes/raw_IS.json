@@ -1,0 +1,6175 @@
+{
+ "country": "IS",
+ "harvested_at": "2026-08-20T18:20:36+00:00",
+ "n_wikidata": 205,
+ "n_seeded": 7,
+ "seed_missing": [],
+ "lakes": [
+  {
+   "wd": "Q335859",
+   "name": "Þórisstaðavatn",
+   "name_local": "Þórisstaðavatn",
+   "lat": 64.440222,
+   "lon": -21.555646,
+   "iso2": "IS",
+   "adm": "Hvalfjarðarsveit",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/%C3%9E%C3%B3rissta%C3%B0avatn%20s.jpg",
+   "commons_cat": "Þórisstaðavatn",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": 1.37,
+   "depth_m": null,
+   "elev_m": 71,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q335859",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q784999",
+   "name": "Svínavatn",
+   "name_local": "Svínavatn",
+   "lat": 65.525674,
+   "lon": -20.036578,
+   "iso2": "IS",
+   "adm": "Húnabyggð",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 12,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Au%C3%B0k%C3%BAlukirkja%20vi%C3%B0%20Sv%C3%ADnavatn.jpg",
+   "commons_cat": "Svínavatn (Húnabyggð)",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": 12.0,
+   "depth_m": 38.5,
+   "elev_m": 123,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q784999",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q943482",
+   "name": "Grænalón",
+   "name_local": "Grænalón",
+   "lat": 64.166667,
+   "lon": -17.383333,
+   "iso2": "IS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 19,
+   "wd_img": "",
+   "commons_cat": "Grænalón",
+   "enwiki": "https://en.wikipedia.org/wiki/Gr%C3%A6nal%C3%B3n",
+   "localwiki": "",
+   "area_km2": 18.0,
+   "depth_m": 200.0,
+   "elev_m": 650,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Iceland"
+   ],
+   "key": "wd:Q943482",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q1121686",
+   "name": "Kvíslavatn",
+   "name_local": "Kvíslavatn",
+   "lat": 64.564444,
+   "lon": -18.571667,
+   "iso2": "IS",
+   "adm": "",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 17,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Lake%20Kv%C3%ADslavatn%20-%202013.08%20-%20panoramio.jpg",
+   "commons_cat": "",
+   "enwiki": "https://en.wikipedia.org/wiki/Kv%C3%ADslavatn",
+   "localwiki": "",
+   "area_km2": 20.0,
+   "depth_m": null,
+   "elev_m": 605,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Iceland"
+   ],
+   "key": "wd:Q1121686",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q1263494",
+   "name": "Hvítavatn",
+   "name_local": "Hvítavatn",
+   "lat": 64.118012,
+   "lon": -17.554744,
+   "iso2": "IS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 11,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "https://en.wikipedia.org/wiki/Hv%C3%ADtavatn",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Iceland"
+   ],
+   "key": "wd:Q1263494",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q1389751",
+   "name": "Papafjörður",
+   "name_local": "",
+   "lat": 64.321493,
+   "lon": -14.927303,
+   "iso2": "IS",
+   "adm": "Sveitarfélagið Hornafjörður",
+   "types": [
+    "lagoon"
+   ],
+   "sitelinks": 3,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Vestrahorn%20%40%20Fjar%C3%B0arhei%C3%B0i%2001.jpg",
+   "commons_cat": "Papafjörður",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": 0,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q1389751",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q1493826",
+   "name": "Hágöngulón",
+   "name_local": "Hágöngulón",
+   "lat": 64.597222,
+   "lon": -18.178611,
+   "iso2": "IS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 4,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Sylgj%C3%B6kull%20Hamarskriki%203%20Iceland.JPG",
+   "commons_cat": "",
+   "enwiki": "https://en.wikipedia.org/wiki/H%C3%A1g%C3%B6ngul%C3%B3n",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q1493826",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q2733171",
+   "name": "Uxavatn",
+   "name_local": "Uxavatn",
+   "lat": 64.435833,
+   "lon": -21.03,
+   "iso2": "IS",
+   "adm": "Borgarbyggð",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 3,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Uxavatn2011.JPG",
+   "commons_cat": "Uxavatn",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q2733171",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q3506394",
+   "name": "Svínavatn",
+   "name_local": "Svínavatn",
+   "lat": 65.206494,
+   "lon": -20.017806,
+   "iso2": "IS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q3506394",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q3506395",
+   "name": "Svínavatn",
+   "name_local": "Svínavatn",
+   "lat": 64.938698,
+   "lon": -22.236879,
+   "iso2": "IS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 3,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q3506395",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q6520217",
+   "name": "Leirvogsvatn",
+   "name_local": "Leirvogsvatn",
+   "lat": 64.196417,
+   "lon": -21.452784,
+   "iso2": "IS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 5,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Mosfellshei%C3%B0i7.jpg",
+   "commons_cat": "Leirvogsvatn",
+   "enwiki": "https://en.wikipedia.org/wiki/Leirvogsvatn",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q6520217",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q7071261",
+   "name": "Nyrðra-Vatnalautavatn",
+   "name_local": "Nyrðra-Vatnalautavatn",
+   "lat": 66.0284,
+   "lon": -21.890096,
+   "iso2": "IS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "https://en.wikipedia.org/wiki/Nyr%C3%B0ra-Vatnalautavatn",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Iceland"
+   ],
+   "key": "wd:Q7071261",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q18005466",
+   "name": "Litlisjór",
+   "name_local": "Litlisjór",
+   "lat": 64.1655,
+   "lon": -18.6674,
+   "iso2": "IS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": 9.2,
+   "depth_m": 16.5,
+   "elev_m": 587,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q18005466",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q18449859",
+   "name": "Vatnsdalsvatn",
+   "name_local": "Vatnsdalsvatn",
+   "lat": 65.605042,
+   "lon": -23.107352,
+   "iso2": "IS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Vatnsdalsvatn%20%280908%29.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q18449859",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q30005357",
+   "name": "Skriðuvatn",
+   "name_local": "",
+   "lat": 64.953333,
+   "lon": -14.640556,
+   "iso2": "IS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 3,
+   "wd_img": "",
+   "commons_cat": "Skriðuvatn",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q30005357",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q35703100",
+   "name": "Grænavatn",
+   "name_local": "",
+   "lat": 64.1374,
+   "lon": -18.707,
+   "iso2": "IS",
+   "adm": "Rangárþing ytra",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 3,
+   "wd_img": "",
+   "commons_cat": "Grænavatn (Rangárþing ytra)",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": 3.3,
+   "depth_m": 13.5,
+   "elev_m": 579,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q35703100",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q49310220",
+   "name": "Selvallavatn",
+   "name_local": "",
+   "lat": 64.94296,
+   "lon": -22.91473,
+   "iso2": "IS",
+   "adm": "Stykkishólmur",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 3,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Selvallavatn%2001.jpg",
+   "commons_cat": "Selvallavatn",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q49310220",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q511933",
+   "name": "Jökulsárlón",
+   "name_local": "Jökulsárlón",
+   "lat": 64.075677,
+   "lon": -16.229749,
+   "iso2": "IS",
+   "adm": "Sveitarfélagið Hornafjörður",
+   "types": [
+    "glacial lake",
+    "proglacial lake"
+   ],
+   "sitelinks": 37,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/J%C3%B6kuls%C3%A1rl%C3%B3n%20%283587109332%29.jpg",
+   "commons_cat": "Jökulsárlón",
+   "enwiki": "https://en.wikipedia.org/wiki/J%C3%B6kuls%C3%A1rl%C3%B3n",
+   "localwiki": "https://is.wikipedia.org/wiki/J%C3%B6kuls%C3%A1rl%C3%B3n",
+   "area_km2": 18.0,
+   "depth_m": 260.0,
+   "elev_m": null,
+   "protected": [
+    "Vatnajökull National Park"
+   ],
+   "part_of": [],
+   "basin_countries": [
+    "Iceland"
+   ],
+   "key": "wd:Q511933",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "seed": {
+    "swim": "no",
+    "kind": "lagoon",
+    "why": "editorial",
+    "haz": [
+     "cold_shock",
+     "currents"
+    ],
+    "note": "the glacier lagoon, icebergs and tidal currents, never a swimming water",
+    "name": "Jokulsarlon"
+   }
+  },
+  {
+   "wd": "Q536424",
+   "name": "Hreðavatn",
+   "name_local": "Hreðavatn",
+   "lat": 64.755027,
+   "lon": -21.58864,
+   "iso2": "IS",
+   "adm": "Borgarbyggð",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 17,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Hre%C3%B0avatn%202024.jpg",
+   "commons_cat": "Hreðavatn",
+   "enwiki": "https://en.wikipedia.org/wiki/Hre%C3%B0avatn",
+   "localwiki": "https://is.wikipedia.org/wiki/Hre%C3%B0avatn",
+   "area_km2": 1.3,
+   "depth_m": 20.0,
+   "elev_m": 56,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Iceland"
+   ],
+   "key": "wd:Q536424",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q555119",
+   "name": "Sultartangalón",
+   "name_local": "Sultartangalón",
+   "lat": 64.225215,
+   "lon": -19.428998,
+   "iso2": "IS",
+   "adm": "Skeiða- og Gnúpverjahreppur",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 22,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Sultartangal%C3%B3n%200036.jpg",
+   "commons_cat": "Sultartangalón",
+   "enwiki": "https://en.wikipedia.org/wiki/Sultartangal%C3%B3n",
+   "localwiki": "https://is.wikipedia.org/wiki/Sultartangal%C3%B3n",
+   "area_km2": 19.0,
+   "depth_m": null,
+   "elev_m": 297,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Iceland"
+   ],
+   "key": "wd:Q555119",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q330216",
+   "name": "Úlfljótsvatn",
+   "name_local": "Úlfljótsvatn",
+   "lat": 64.111101,
+   "lon": -21.035502,
+   "iso2": "IS",
+   "adm": "Southern Region",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 14,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Ulflotsvatn%20Lake%20Church%20and%20Power%20Plant.jpg",
+   "commons_cat": "Úlfljótsvatn",
+   "enwiki": "https://en.wikipedia.org/wiki/%C3%9Alflj%C3%B3tsvatn_(lake)",
+   "localwiki": "https://is.wikipedia.org/wiki/%C3%9Alflj%C3%B3tsvatn",
+   "area_km2": 2.45,
+   "depth_m": null,
+   "elev_m": 80,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Iceland"
+   ],
+   "key": "wd:Q330216",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q335432",
+   "name": "Þingvallavatn",
+   "name_local": "Þingvallavatn",
+   "lat": 64.188519,
+   "lon": -21.157322,
+   "iso2": "IS",
+   "adm": "Grímsnes- og Grafningshreppur",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 41,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/2008-05-25%2013%2034%2017%20Iceland-%C3%9Eingvellir.jpg",
+   "commons_cat": "Þingvallavatn",
+   "enwiki": "https://en.wikipedia.org/wiki/%C3%9Eingvallavatn",
+   "localwiki": "https://is.wikipedia.org/wiki/%C3%9Eingvallavatn",
+   "area_km2": 83.0,
+   "depth_m": 114.0,
+   "elev_m": 100,
+   "protected": [
+    "Thingvellir National Park"
+   ],
+   "part_of": [
+    "Thingvellir National Park"
+   ],
+   "basin_countries": [
+    "Iceland"
+   ],
+   "key": "wd:Q335432",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "seed": {
+    "swim": "no",
+    "kind": "lake",
+    "why": "brief",
+    "haz": [
+     "cold_shock"
+    ],
+    "note": "the rift lake; Silfra is dry suit diving only, no casual swimming",
+    "name": "Thingvallavatn"
+   }
+  },
+  {
+   "wd": "Q335940",
+   "name": "Þórisvatn",
+   "name_local": "Þórisvatn",
+   "lat": 64.300278,
+   "lon": -18.822222,
+   "iso2": "IS",
+   "adm": "Skaftárhreppur",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 32,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Hofsj%C3%B6kull%201%20Iceland.JPG",
+   "commons_cat": "Þórisvatn",
+   "enwiki": "https://en.wikipedia.org/wiki/%C3%9E%C3%B3risvatn",
+   "localwiki": "https://is.wikipedia.org/wiki/%C3%9E%C3%B3risvatn",
+   "area_km2": 88.0,
+   "depth_m": 113.0,
+   "elev_m": 576,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Iceland"
+   ],
+   "key": "wd:Q335940",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q388709",
+   "name": "Apavatn",
+   "name_local": "Apavatn",
+   "lat": 64.174906,
+   "lon": -20.656054,
+   "iso2": "IS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 24,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Laugarvatn01.jpg",
+   "commons_cat": "Apavatn",
+   "enwiki": "https://en.wikipedia.org/wiki/Apavatn",
+   "localwiki": "https://is.wikipedia.org/wiki/Apavatn",
+   "area_km2": 13.0,
+   "depth_m": 3.0,
+   "elev_m": 59,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Iceland"
+   ],
+   "key": "wd:Q388709",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q574165",
+   "name": "Kleifarvatn",
+   "name_local": "Kleifarvatn",
+   "lat": 63.926833,
+   "lon": -21.970223,
+   "iso2": "IS",
+   "adm": "Grindavíkurbær",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 24,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Lake%20Kleifarvatn%2C%20Iceland%20%2841495264840%29.jpg",
+   "commons_cat": "Kleifarvatn",
+   "enwiki": "https://en.wikipedia.org/wiki/Kleifarvatn",
+   "localwiki": "https://is.wikipedia.org/wiki/Kleifarvatn",
+   "area_km2": 9.0,
+   "depth_m": 97.0,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [
+    "Reykjanesfólkvangur"
+   ],
+   "basin_countries": [
+    "Iceland"
+   ],
+   "key": "wd:Q574165",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q612810",
+   "name": "Myrkavatn",
+   "name_local": "Myrkavatn",
+   "lat": 64.32723,
+   "lon": -21.241807,
+   "iso2": "IS",
+   "adm": "Kjósarhreppur",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 4,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://is.wikipedia.org/wiki/Myrkavatn",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": 419,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q612810",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q652328",
+   "name": "Fjallsárlón",
+   "name_local": "Fjallsárlón",
+   "lat": 64.021664,
+   "lon": -16.394816,
+   "iso2": "IS",
+   "adm": "Sveitarfélagið Hornafjörður",
+   "types": [
+    "proglacial lake"
+   ],
+   "sitelinks": 16,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Fjalls%C3%A1rl%C3%B3n01%28ms%29.jpg",
+   "commons_cat": "Fjallsárlón",
+   "enwiki": "https://en.wikipedia.org/wiki/Fjalls%C3%A1rl%C3%B3n",
+   "localwiki": "https://is.wikipedia.org/wiki/Fjalls%C3%A1rl%C3%B3n",
+   "area_km2": 4.0,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [
+    "Vatnajökull National Park"
+   ],
+   "part_of": [],
+   "basin_countries": [
+    "Iceland"
+   ],
+   "key": "wd:Q652328",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q653324",
+   "name": "Ljótipollur",
+   "name_local": "Ljótipollur",
+   "lat": 64.03532,
+   "lon": -18.998222,
+   "iso2": "IS",
+   "adm": "Rangárþing ytra",
+   "types": [
+    "maar",
+    "volcanic crater lake"
+   ],
+   "sitelinks": 5,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Lj%C3%B3tipollur%20%28Landmannalaugar%2C%20Islandia%29%20-%20panoramio.jpg",
+   "commons_cat": "Ljótipollur",
+   "enwiki": "",
+   "localwiki": "https://is.wikipedia.org/wiki/Lj%C3%B3tipollur",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": 722,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q653324",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q886946",
+   "name": "Blue Lagoon",
+   "name_local": "Bláa lónið",
+   "lat": 63.879199,
+   "lon": -22.445523,
+   "iso2": "IS",
+   "adm": "Grindavíkurbær",
+   "types": [
+    "lake",
+    "hot spring",
+    "thermal bath",
+    "outdoor swimming pool"
+   ],
+   "sitelinks": 41,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Blue%20Lagoon%202012-08-23%20%284%29.JPG",
+   "commons_cat": "Blue Lagoon",
+   "enwiki": "https://en.wikipedia.org/wiki/Blue_Lagoon_(geothermal_spa)",
+   "localwiki": "https://is.wikipedia.org/wiki/Bl%C3%A1a_l%C3%B3ni%C3%B0",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q886946",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "seed": {
+    "swim": "yes",
+    "kind": "geothermal",
+    "why": "editorial",
+    "note": "the most photographed water in Iceland, booked ahead, silica",
+    "name": "Blue Lagoon"
+   }
+  },
+  {
+   "wd": "Q887140",
+   "name": "Blöndulón",
+   "name_local": "Blöndulón",
+   "lat": 65.181389,
+   "lon": -19.649444,
+   "iso2": "IS",
+   "adm": "",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 20,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Bl%C3%B6ndul%C3%B3n%200094.jpg",
+   "commons_cat": "Blöndulón",
+   "enwiki": "https://en.wikipedia.org/wiki/Bl%C3%B6ndul%C3%B3n",
+   "localwiki": "https://is.wikipedia.org/wiki/Bl%C3%B6ndul%C3%B3n",
+   "area_km2": 57.0,
+   "depth_m": 39.0,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Iceland"
+   ],
+   "key": "wd:Q887140",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q75071",
+   "name": "Öskjuvatn",
+   "name_local": "Öskjuvatn",
+   "lat": 65.031029,
+   "lon": -16.74658,
+   "iso2": "IS",
+   "adm": "Þingeyjarsveit",
+   "types": [
+    "volcanic crater lake"
+   ],
+   "sitelinks": 22,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Askja.jpg",
+   "commons_cat": "Öskjuvatn",
+   "enwiki": "https://en.wikipedia.org/wiki/%C3%96skjuvatn",
+   "localwiki": "https://is.wikipedia.org/wiki/%C3%96skjuvatn",
+   "area_km2": 11.0,
+   "depth_m": 220.0,
+   "elev_m": 1053,
+   "protected": [
+    "Vatnajökull National Park"
+   ],
+   "part_of": [
+    "Askja"
+   ],
+   "basin_countries": [
+    "Iceland"
+   ],
+   "key": "wd:Q75071",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q174970",
+   "name": "Hálslón reservoir",
+   "name_local": "Hálslón",
+   "lat": 64.828983,
+   "lon": -15.867303,
+   "iso2": "IS",
+   "adm": "",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 8,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/KH2007-07-17-3468Wide.JPG",
+   "commons_cat": "Hálslón reservoir",
+   "enwiki": "https://en.wikipedia.org/wiki/H%C3%A1lsl%C3%B3n_Reservoir",
+   "localwiki": "https://is.wikipedia.org/wiki/H%C3%A1lsl%C3%B3n",
+   "area_km2": 57.0,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [
+    "Vatnajökull National Park"
+   ],
+   "part_of": [],
+   "basin_countries": [
+    "Iceland"
+   ],
+   "key": "wd:Q174970",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q212051",
+   "name": "Mývatn",
+   "name_local": "Mývatn",
+   "lat": 65.603646,
+   "lon": -17.012197,
+   "iso2": "IS",
+   "adm": "Þingeyjarsveit",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 46,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Myvatn-Skutustathagigar-26-2018-gje.jpg",
+   "commons_cat": "Mývatn",
+   "enwiki": "https://en.wikipedia.org/wiki/M%C3%BDvatn",
+   "localwiki": "https://is.wikipedia.org/wiki/M%C3%BDvatn",
+   "area_km2": 37.0,
+   "depth_m": 4.5,
+   "elev_m": 277,
+   "protected": [
+    "Mývatn"
+   ],
+   "part_of": [
+    "Diamond Circle"
+   ],
+   "basin_countries": [
+    "Iceland"
+   ],
+   "key": "wd:Q212051",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "seed": {
+    "swim": "yes",
+    "kind": "geothermal",
+    "why": "editorial",
+    "note": "the north's answer to the Blue Lagoon",
+    "name": "Myvatn Nature Baths"
+   }
+  },
+  {
+   "wd": "Q283536",
+   "name": "Langisjór",
+   "name_local": "Langisjór",
+   "lat": 64.174407,
+   "lon": -18.301916,
+   "iso2": "IS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 23,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Langisjor%202006.jpg",
+   "commons_cat": "Langisjór",
+   "enwiki": "https://en.wikipedia.org/wiki/Langisj%C3%B3r",
+   "localwiki": "https://is.wikipedia.org/wiki/Langisj%C3%B3r",
+   "area_km2": 26.0,
+   "depth_m": 73.5,
+   "elev_m": 670,
+   "protected": [
+    "Vatnajökull National Park"
+   ],
+   "part_of": [],
+   "basin_countries": [
+    "Iceland"
+   ],
+   "key": "wd:Q283536",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q1123643",
+   "name": "Frostastaðavatn",
+   "name_local": "Frostastaðavatn",
+   "lat": 64.018384,
+   "lon": -19.060995,
+   "iso2": "IS",
+   "adm": "Rangárþing ytra",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 19,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Frostasta%C3%B0avatn%203%28js%29.jpg",
+   "commons_cat": "Frostastaðavatn",
+   "enwiki": "https://en.wikipedia.org/wiki/Frostasta%C3%B0avatn",
+   "localwiki": "https://is.wikipedia.org/wiki/Frostasta%C3%B0avatn",
+   "area_km2": 2.6,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [
+    "Fjallabak natural reserve"
+   ],
+   "part_of": [],
+   "basin_countries": [
+    "Iceland"
+   ],
+   "key": "wd:Q1123643",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q1124746",
+   "name": "Hóp",
+   "name_local": "Hóp",
+   "lat": 65.543183,
+   "lon": -20.499173,
+   "iso2": "IS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 25,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/H%C3%B3pi%C3%B0%20775.jpg",
+   "commons_cat": "Hóp",
+   "enwiki": "https://en.wikipedia.org/wiki/H%C3%B3p_(Iceland)",
+   "localwiki": "https://is.wikipedia.org/wiki/H%C3%B3p",
+   "area_km2": null,
+   "depth_m": 9.0,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Iceland"
+   ],
+   "key": "wd:Q1124746",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q1124790",
+   "name": "Langavatn",
+   "name_local": "Langavatn",
+   "lat": 64.790533,
+   "lon": -21.780322,
+   "iso2": "IS",
+   "adm": "Borgarbyggð",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 4,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Islande%202.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://is.wikipedia.org/wiki/Langavatn_(M%C3%BDrum)",
+   "area_km2": 5.1,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q1124790",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q1332555",
+   "name": "Elliðavatn",
+   "name_local": "Elliðavatn",
+   "lat": 64.083333,
+   "lon": -21.783333,
+   "iso2": "IS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 22,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/A%20Sunset%20By%20A%20Lake-side%20%283072136330%29.jpg",
+   "commons_cat": "Elliðavatn",
+   "enwiki": "https://en.wikipedia.org/wiki/Elli%C3%B0avatn",
+   "localwiki": "https://is.wikipedia.org/wiki/Elli%C3%B0avatn",
+   "area_km2": 1.8,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Iceland"
+   ],
+   "key": "wd:Q1332555",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q1344692",
+   "name": "Lagarfljót",
+   "name_local": "Lagarfljót",
+   "lat": 65.369192,
+   "lon": -14.399346,
+   "iso2": "IS",
+   "adm": "",
+   "types": [
+    "glacial lake"
+   ],
+   "sitelinks": 26,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Iceland%20-%20panoramio%20%2846%29.jpg",
+   "commons_cat": "Lagarfljót",
+   "enwiki": "https://en.wikipedia.org/wiki/Lagarflj%C3%B3t",
+   "localwiki": "https://is.wikipedia.org/wiki/Lagarflj%C3%B3t",
+   "area_km2": 53.0,
+   "depth_m": 112.0,
+   "elev_m": 20,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Iceland"
+   ],
+   "key": "wd:Q1344692",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q1360555",
+   "name": "Hítarvatn",
+   "name_local": "Hítarvatn",
+   "lat": 64.883969,
+   "lon": -21.964084,
+   "iso2": "IS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 5,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://is.wikipedia.org/wiki/H%C3%ADtarvatn",
+   "area_km2": 7.6,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q1360555",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q1413838",
+   "name": "Laugarvatn",
+   "name_local": "Laugarvatn",
+   "lat": 64.211111,
+   "lon": -20.711111,
+   "iso2": "IS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 21,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Laugarvatn.jpg",
+   "commons_cat": "",
+   "enwiki": "https://en.wikipedia.org/wiki/Laugarvatn",
+   "localwiki": "https://is.wikipedia.org/wiki/Laugarvatn_(st%C3%B6%C3%B0uvatn)",
+   "area_km2": 2.14,
+   "depth_m": 2.0,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Iceland"
+   ],
+   "key": "wd:Q1413838",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q1416444",
+   "name": "Skorradalsvatn",
+   "name_local": "Skorradalsvatn",
+   "lat": 64.510534,
+   "lon": -21.411571,
+   "iso2": "IS",
+   "adm": "",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 21,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Skorradalsvatn%202004.jpg",
+   "commons_cat": "Skorradalsvatn",
+   "enwiki": "https://en.wikipedia.org/wiki/Skorradalsvatn",
+   "localwiki": "https://is.wikipedia.org/wiki/Skorradalsvatn",
+   "area_km2": 14.7,
+   "depth_m": 48.0,
+   "elev_m": 56,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Iceland"
+   ],
+   "key": "wd:Q1416444",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q1429607",
+   "name": "Hvítárvatn",
+   "name_local": "Hvítárvatn",
+   "lat": 64.61239,
+   "lon": -19.83714,
+   "iso2": "IS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 21,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/View%20by%20Hv%C3%ADt%C3%A1rnes%20Crossroads%20II.jpg",
+   "commons_cat": "Hvítárvatn",
+   "enwiki": "https://en.wikipedia.org/wiki/Hv%C3%ADt%C3%A1rvatn",
+   "localwiki": "https://is.wikipedia.org/wiki/Hv%C3%ADt%C3%A1rvatn",
+   "area_km2": 30.0,
+   "depth_m": 84.0,
+   "elev_m": 419,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Iceland"
+   ],
+   "key": "wd:Q1429607",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q1435393",
+   "name": "Kerið",
+   "name_local": "Kerið",
+   "lat": 64.0408,
+   "lon": -20.8847,
+   "iso2": "IS",
+   "adm": "Grímsnes- og Grafningshreppur",
+   "types": [
+    "volcanic crater",
+    "volcanic crater lake"
+   ],
+   "sitelinks": 22,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Kerid-08-Krater-1980-gje.jpg",
+   "commons_cat": "Kerið",
+   "enwiki": "https://en.wikipedia.org/wiki/Keri%C3%B0",
+   "localwiki": "https://is.wikipedia.org/wiki/Keri%C3%B0",
+   "area_km2": 0.05,
+   "depth_m": 55.0,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q1435393",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "seed": {
+    "swim": "no",
+    "kind": "crater",
+    "why": "editorial",
+    "note": "a red crater holding a green lake, entry fee, no swimming",
+    "name": "Kerid"
+   }
+  },
+  {
+   "wd": "Q35735695",
+   "name": "Langavatn",
+   "name_local": "Langavatn",
+   "lat": 64.11748,
+   "lon": -21.683843,
+   "iso2": "IS",
+   "adm": "Grafarholt og Úlfarsárdalur",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 3,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Langavatn.jpg",
+   "commons_cat": "Langavatn (Reykjavík area)",
+   "enwiki": "",
+   "localwiki": "https://is.wikipedia.org/wiki/Langavatn_(H%C3%B6fu%C3%B0borgarsv%C3%A6%C3%B0i)",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q35735695",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q49305708",
+   "name": "Meðalfellsvatn",
+   "name_local": "Meðalfellsvatn",
+   "lat": 64.31152,
+   "lon": -21.598588,
+   "iso2": "IS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 3,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Around%20Hvalfj%C3%B6r%C3%B0ur%202-18.jpg",
+   "commons_cat": "Meðalfellsvatn",
+   "enwiki": "",
+   "localwiki": "https://is.wikipedia.org/wiki/Me%C3%B0alfellsvatn",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q49305708",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q97258507",
+   "name": "Hlíðarvatn",
+   "name_local": "Hlíðarvatn",
+   "lat": 64.89674,
+   "lon": -22.164787,
+   "iso2": "IS",
+   "adm": "Ölfus",
+   "types": [
+    "lagoon"
+   ],
+   "sitelinks": 3,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Vista%20a%C3%A9rea%20del%20suroeste%20de%20Islandia%2C%202014-08-13%2C%20DD%20002.JPG",
+   "commons_cat": "Hlíðarvatn",
+   "enwiki": "",
+   "localwiki": "https://is.wikipedia.org/wiki/Hl%C3%AD%C3%B0arvatn_(Selvogi)",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q97258507",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q97259443",
+   "name": "Reynisvatn",
+   "name_local": "Reynisvatn",
+   "lat": 64.124048,
+   "lon": -21.732179,
+   "iso2": "IS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 3,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Reynisvatn.jpg",
+   "commons_cat": "Reynisvatn",
+   "enwiki": "https://en.wikipedia.org/wiki/Reynisvatn",
+   "localwiki": "https://is.wikipedia.org/wiki/Reynisvatn",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q97259443",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q104849627",
+   "name": "Víkingavatn",
+   "name_local": "Víkingavatn",
+   "lat": 66.105348,
+   "lon": -16.838742,
+   "iso2": "IS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 3,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Vikingavatn0271%20-%20Flickr%20-%20Ragnhild%20%26%20Neil%20Crawford.jpg",
+   "commons_cat": "Víkingavatn",
+   "enwiki": "https://en.wikipedia.org/wiki/V%C3%ADkingavatn",
+   "localwiki": "https://is.wikipedia.org/wiki/V%C3%ADkingavatn",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q104849627",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q106107342",
+   "name": "Djúpavatn",
+   "name_local": "Djúpavatn",
+   "lat": 63.921,
+   "lon": -22.093,
+   "iso2": "IS",
+   "adm": "Grindavíkurbær",
+   "types": [
+    "volcanic crater lake"
+   ],
+   "sitelinks": 3,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Lake%20Dj%C3%BApavatn%2C%20taken%20from%20the%20hiking%20trail%20Reykjavegur%2C%20Iceland%2006.jpg",
+   "commons_cat": "Djúpavatn",
+   "enwiki": "",
+   "localwiki": "https://is.wikipedia.org/wiki/Dj%C3%BApavatn",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q106107342",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q115652561",
+   "name": "Spákonuvatn",
+   "name_local": "Spákonuvatn",
+   "lat": 63.928267,
+   "lon": -22.108484,
+   "iso2": "IS",
+   "adm": "Grindavíkurbær",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 3,
+   "wd_img": "",
+   "commons_cat": "Spákonuvatn",
+   "enwiki": "",
+   "localwiki": "https://is.wikipedia.org/wiki/Sp%C3%A1konuvatn",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [
+    "Reykjanesfólkvangur"
+   ],
+   "basin_countries": [],
+   "key": "wd:Q115652561",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q907085",
+   "name": "Breiðárlón",
+   "name_local": "Breiðárlón",
+   "lat": 64.051087,
+   "lon": -16.364884,
+   "iso2": "IS",
+   "adm": "Sveitarfélagið Hornafjörður",
+   "types": [
+    "glacial lake"
+   ],
+   "sitelinks": 18,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Brei%C3%B0%C3%A1rl%C3%B3n%20og%20Brei%C3%B0amerkurj%C3%B6kull%200618.jpg",
+   "commons_cat": "Breiðárlón",
+   "enwiki": "https://en.wikipedia.org/wiki/Brei%C3%B0%C3%A1rl%C3%B3n",
+   "localwiki": "https://is.wikipedia.org/wiki/Brei%C3%B0%C3%A1rl%C3%B3n",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [
+    "Vatnajökull National Park"
+   ],
+   "part_of": [],
+   "basin_countries": [
+    "Iceland"
+   ],
+   "key": "wd:Q907085",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q945753",
+   "name": "Tjörnin",
+   "name_local": "Tjörnin",
+   "lat": 64.144531,
+   "lon": -21.942633,
+   "iso2": "IS",
+   "adm": "Reykjavík",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 33,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Tj%C3%B6rnin%2C%20Reykjavik.jpg",
+   "commons_cat": "Tjörnin",
+   "enwiki": "https://en.wikipedia.org/wiki/Tj%C3%B6rnin",
+   "localwiki": "https://is.wikipedia.org/wiki/Tj%C3%B6rnin",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": 16,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Iceland"
+   ],
+   "key": "wd:Q945753",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q3556395",
+   "name": "Vestmannsvatn",
+   "name_local": "Vestmannsvatn",
+   "lat": 65.79373,
+   "lon": -17.413714,
+   "iso2": "IS",
+   "adm": "Þingeyjarsveit",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 6,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/2008-05-21%2030%20Vestmannsvatn%20from%20Road%20845.jpg",
+   "commons_cat": "Vestmannsvatn",
+   "enwiki": "",
+   "localwiki": "https://is.wikipedia.org/wiki/Vestmannsvatn",
+   "area_km2": 2.5,
+   "depth_m": 10.0,
+   "elev_m": 26,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q3556395",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q3577035",
+   "name": "Ástjörn",
+   "name_local": "Ástjörn",
+   "lat": 66.033333,
+   "lon": -16.466667,
+   "iso2": "IS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 3,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Astjorn.jpg",
+   "commons_cat": "Ástjörn",
+   "enwiki": "",
+   "localwiki": "https://is.wikipedia.org/wiki/%C3%81stj%C3%B6rn_(sumarb%C3%BA%C3%B0ir)",
+   "area_km2": 0.25,
+   "depth_m": null,
+   "elev_m": 40,
+   "protected": [
+    "Vatnajökull National Park"
+   ],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q3577035",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q9174390",
+   "name": "Höfðavatn",
+   "name_local": "Höfðavatn",
+   "lat": 65.95685,
+   "lon": -19.442737,
+   "iso2": "IS",
+   "adm": "Skagafjörður",
+   "types": [
+    "lake",
+    "lagoon"
+   ],
+   "sitelinks": 5,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/H%C3%B6f%C3%B0avatn%20%280873%29.jpg",
+   "commons_cat": "",
+   "enwiki": "https://en.wikipedia.org/wiki/H%C3%B6f%C3%B0avatn",
+   "localwiki": "https://is.wikipedia.org/wiki/H%C3%B6f%C3%B0avatn",
+   "area_km2": 10.0,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Iceland"
+   ],
+   "key": "wd:Q9174390",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q14544633",
+   "name": "Vesturhópsvatn",
+   "name_local": "Vesturhópsvatn",
+   "lat": 65.468889,
+   "lon": -20.648611,
+   "iso2": "IS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 7,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/2008-05-18%2010%2036%2030%20Iceland-Vesturh%C3%B3psh%C3%B3lar.jpg",
+   "commons_cat": "Vesturhópsvatn",
+   "enwiki": "https://en.wikipedia.org/wiki/Vesturh%C3%B3psvatn",
+   "localwiki": "https://is.wikipedia.org/wiki/Vesturh%C3%B3psvatn",
+   "area_km2": 10.3,
+   "depth_m": null,
+   "elev_m": 19,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q14544633",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q14552532",
+   "name": "Víti Krafla",
+   "name_local": "Víti",
+   "lat": 65.71711,
+   "lon": -16.753802,
+   "iso2": "IS",
+   "adm": "Þingeyjarsveit",
+   "types": [
+    "volcanic crater lake"
+   ],
+   "sitelinks": 3,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Krafla%20Viti.jpg",
+   "commons_cat": "Víti (Krafla)",
+   "enwiki": "",
+   "localwiki": "https://is.wikipedia.org/wiki/V%C3%ADti_(Krafla)",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q14552532",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q15974302",
+   "name": "Húnavatn (lagoon)",
+   "name_local": "Húnavatn",
+   "lat": 65.583811,
+   "lon": -20.381863,
+   "iso2": "IS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 3,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://is.wikipedia.org/wiki/H%C3%BAnavatn",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q15974302",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q16419701",
+   "name": "Lambavatn",
+   "name_local": "Lambavatn",
+   "lat": 64.066867,
+   "lon": -18.301967,
+   "iso2": "IS",
+   "adm": "Rangárþing ytra",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Lambavatn%20%281%29.jpg",
+   "commons_cat": "Lambavatn",
+   "enwiki": "",
+   "localwiki": "https://is.wikipedia.org/wiki/Lambavatn",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q16419701",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q16419729",
+   "name": "Arnarvatn-Stóra",
+   "name_local": "Arnarvatn stóra",
+   "lat": 64.958333,
+   "lon": -20.328611,
+   "iso2": "IS",
+   "adm": "Northwestern Region",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 3,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/ArnarvatnMB%20%28cropped%29.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://is.wikipedia.org/wiki/Arnarvatn_st%C3%B3ra",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q16419729",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q16420392",
+   "name": "Bakkatjörn",
+   "name_local": "Bakkatjörn",
+   "lat": 64.156518,
+   "lon": -22.015851,
+   "iso2": "IS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://is.wikipedia.org/wiki/Bakkatj%C3%B6rn",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q16420392",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q16420408",
+   "name": "Ólafsfjarðarvatn",
+   "name_local": "Ólafsfjarðarvatn",
+   "lat": 66.056936,
+   "lon": -18.680685,
+   "iso2": "IS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/%C3%93lafsfjar%C3%B0arvatn%20%280845%29.jpg",
+   "commons_cat": "Ólafsfjarðarvatn",
+   "enwiki": "",
+   "localwiki": "https://is.wikipedia.org/wiki/%C3%93lafsfjar%C3%B0arvatn",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q16420408",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q16420563",
+   "name": "Baulárvallavatn",
+   "name_local": "Baulárvallavatn",
+   "lat": 64.910833,
+   "lon": -22.886389,
+   "iso2": "IS",
+   "adm": "Snæfellsbær",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 4,
+   "wd_img": "",
+   "commons_cat": "Baulárvallavatn",
+   "enwiki": "",
+   "localwiki": "https://is.wikipedia.org/wiki/Baul%C3%A1rvallavatn",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q16420563",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q16421812",
+   "name": "Bretavatn",
+   "name_local": "Bretavatn",
+   "lat": 64.688889,
+   "lon": -22.084722,
+   "iso2": "IS",
+   "adm": "Borgarbyggð",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 3,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Bretavatn%202024.jpg",
+   "commons_cat": "Bretavatn",
+   "enwiki": "",
+   "localwiki": "https://is.wikipedia.org/wiki/Bretavatn",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q16421812",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q16422415",
+   "name": "Miklavatn",
+   "name_local": "Miklavatn",
+   "lat": 66.073778,
+   "lon": -19.074751,
+   "iso2": "IS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Miklavatn%20%280869%29.jpg",
+   "commons_cat": "",
+   "enwiki": "https://en.wikipedia.org/wiki/Miklavatn_(Flj%C3%B3t)",
+   "localwiki": "https://is.wikipedia.org/wiki/Miklavatn_(Flj%C3%B3tum)",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q16422415",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q16422417",
+   "name": "Miklavatn",
+   "name_local": "Miklavatn",
+   "lat": 65.702206,
+   "lon": -19.577593,
+   "iso2": "IS",
+   "adm": "Northwestern Region",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 3,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Hraunam%C3%B6l.JPG",
+   "commons_cat": "",
+   "enwiki": "https://en.wikipedia.org/wiki/Miklavatn_(Skagafj%C3%B6r%C3%B0ur)",
+   "localwiki": "https://is.wikipedia.org/wiki/Miklavatn_(Skagafir%C3%B0i)",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q16422417",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q16423209",
+   "name": "Nykurtjörn",
+   "name_local": "Nykurtjörn",
+   "lat": 65.921109,
+   "lon": -18.635654,
+   "iso2": "IS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Nykurtj%C3%B6rn.jpg",
+   "commons_cat": "Nykurtjörn",
+   "enwiki": "",
+   "localwiki": "https://is.wikipedia.org/wiki/Nykurtj%C3%B6rn",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q16423209",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q16423350",
+   "name": "Oddastaðavatn",
+   "name_local": "Oddastaðavatn",
+   "lat": 64.904236,
+   "lon": -22.235169,
+   "iso2": "IS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 3,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://is.wikipedia.org/wiki/Oddasta%C3%B0avatn",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q16423350",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q16424118",
+   "name": "Flóðið",
+   "name_local": "Flóðið",
+   "lat": 65.48752,
+   "lon": -20.34131,
+   "iso2": "IS",
+   "adm": "Húnavatnshreppur",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 3,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Vatnsdalur%2002a.jpg",
+   "commons_cat": "Flóðið",
+   "enwiki": "",
+   "localwiki": "https://is.wikipedia.org/wiki/Fl%C3%B3%C3%B0i%C3%B0",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q16424118",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q16424168",
+   "name": "Rauðavatn",
+   "name_local": "Rauðavatn",
+   "lat": 64.108,
+   "lon": -21.7716,
+   "iso2": "IS",
+   "adm": "Grafarholt og Úlfarsárdalur",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 4,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Shadows%20in%20the%20Snow%20%283257171062%29.jpg",
+   "commons_cat": "Rauðavatn",
+   "enwiki": "https://en.wikipedia.org/wiki/Rau%C3%B0avatn",
+   "localwiki": "https://is.wikipedia.org/wiki/Rau%C3%B0avatn",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q16424168",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q16424343",
+   "name": "Reyðarvatn",
+   "name_local": "Reyðarvatn",
+   "lat": 64.484167,
+   "lon": -21.058611,
+   "iso2": "IS",
+   "adm": "Borgarbyggð",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://is.wikipedia.org/wiki/Rey%C3%B0arvatn",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q16424343",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q16425454",
+   "name": "Sigríðarstaðavatn",
+   "name_local": "Sigríðarstaðavatn",
+   "lat": 65.568539,
+   "lon": -20.633499,
+   "iso2": "IS",
+   "adm": "Húnaþing vestra",
+   "types": [
+    "lagoon"
+   ],
+   "sitelinks": 3,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Sigr%C3%AD%C3%B0arsta%C3%B0avatn%202023.jpg",
+   "commons_cat": "Sigríðarstaðavatn",
+   "enwiki": "",
+   "localwiki": "https://is.wikipedia.org/wiki/Sigr%C3%AD%C3%B0arsta%C3%B0avatn",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q16425454",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q16428080",
+   "name": "Hlíðarvatn",
+   "name_local": "Hlíðarvatn",
+   "lat": 64.898333,
+   "lon": -22.153056,
+   "iso2": "IS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 3,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://is.wikipedia.org/wiki/Hl%C3%AD%C3%B0arvatn_(Hnappadal)",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q16428080",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q16430612",
+   "name": "Álftavatn",
+   "name_local": "Álftavatn",
+   "lat": 63.854804,
+   "lon": -19.245738,
+   "iso2": "IS",
+   "adm": "Rangárþing ytra",
+   "types": [
+    "glacial lake"
+   ],
+   "sitelinks": 5,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/%C3%81lftavatn%20Lake%20in%20summer%202009%20%284%29.jpg",
+   "commons_cat": "Álftavatn",
+   "enwiki": "",
+   "localwiki": "https://is.wikipedia.org/wiki/%C3%81lftavatn",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q16430612",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q27468402",
+   "name": "Vífilsstaðavatn",
+   "name_local": "Vífilsstaðavatn",
+   "lat": 64.079232,
+   "lon": -21.872398,
+   "iso2": "IS",
+   "adm": "Garðabær",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 4,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Around%20Reykjav%C3%ADk%20-%20Aug%202018%2006.jpg",
+   "commons_cat": "Vífilsstaðavatn",
+   "enwiki": "",
+   "localwiki": "https://is.wikipedia.org/wiki/V%C3%ADfilssta%C3%B0avatn",
+   "area_km2": 0.3,
+   "depth_m": null,
+   "elev_m": 38,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q27468402",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q34798775",
+   "name": "Aðalmannsvatn",
+   "name_local": "Aðalmannsvatn",
+   "lat": 65.232453,
+   "lon": -19.436585,
+   "iso2": "IS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 3,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://is.wikipedia.org/wiki/A%C3%B0almannsvatn",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q34798775",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q1503138",
+   "name": "Sigöldulón",
+   "name_local": "Sigöldulón",
+   "lat": 64.152222,
+   "lon": -19.055278,
+   "iso2": "IS",
+   "adm": "",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 20,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Iceland%20%287699811%29.jpeg",
+   "commons_cat": "Krókslón",
+   "enwiki": "https://en.wikipedia.org/wiki/Sig%C3%B6ldul%C3%B3n",
+   "localwiki": "https://is.wikipedia.org/wiki/Kr%C3%B3ksl%C3%B3n",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": 600,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Iceland"
+   ],
+   "key": "wd:Q1503138",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q1521372",
+   "name": "Hvalvatn",
+   "name_local": "Hvalvatn",
+   "lat": 64.386981,
+   "lon": -21.158063,
+   "iso2": "IS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 19,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Iceland%20from%20above%20III%20%2815432758870%29.jpg",
+   "commons_cat": "Hvalvatn",
+   "enwiki": "https://en.wikipedia.org/wiki/Hvalvatn",
+   "localwiki": "https://is.wikipedia.org/wiki/Hvalvatn",
+   "area_km2": 4.1,
+   "depth_m": 160.0,
+   "elev_m": 378,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Iceland"
+   ],
+   "key": "wd:Q1521372",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q1568141",
+   "name": "Hafravatn",
+   "name_local": "Hafravatn",
+   "lat": 64.13003,
+   "lon": -21.66292,
+   "iso2": "IS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 7,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Hafravatn.JPG",
+   "commons_cat": "Hafravatn",
+   "enwiki": "https://en.wikipedia.org/wiki/Hafravatn",
+   "localwiki": "https://is.wikipedia.org/wiki/Hafravatn",
+   "area_km2": 1.02,
+   "depth_m": null,
+   "elev_m": 76,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q1568141",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q1568248",
+   "name": "Hagavatn",
+   "name_local": "Hagavatn",
+   "lat": 64.480351,
+   "lon": -20.285001,
+   "iso2": "IS",
+   "adm": "Bláskógabyggð",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 4,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Hagavatn.jpg",
+   "commons_cat": "Hagavatn",
+   "enwiki": "",
+   "localwiki": "https://is.wikipedia.org/wiki/Hagavatn",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q1568248",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q1616073",
+   "name": "Hestvatn",
+   "name_local": "Hestvatn",
+   "lat": 64.022191,
+   "lon": -20.705766,
+   "iso2": "IS",
+   "adm": "Grímsnes- og Grafningshreppur",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 9,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Hestvatn%20Hv%C3%ADt%C3%A1%203%20Iceland.JPG",
+   "commons_cat": "Hestvatn (Grímsnes)",
+   "enwiki": "",
+   "localwiki": "https://is.wikipedia.org/wiki/Hestvatn",
+   "area_km2": 6.8,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q1616073",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q1628322",
+   "name": "Hornafjörður",
+   "name_local": "Hornafjörður",
+   "lat": 64.26628,
+   "lon": -15.306987,
+   "iso2": "IS",
+   "adm": "Sveitarfélagið Hornafjörður",
+   "types": [
+    "lagoon"
+   ],
+   "sitelinks": 7,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Vatnajoekull%2001.jpg",
+   "commons_cat": "Hornafjörður",
+   "enwiki": "https://en.wikipedia.org/wiki/Hornafj%C3%B6r%C3%B0ur",
+   "localwiki": "https://is.wikipedia.org/wiki/Hornafj%C3%B6r%C3%B0ur",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q1628322",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q1722105",
+   "name": "Kaldalón",
+   "name_local": "Kaldalón",
+   "lat": 66.088336,
+   "lon": -22.382293,
+   "iso2": "IS",
+   "adm": "",
+   "types": [
+    "lagoon"
+   ],
+   "sitelinks": 6,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Drangaj%C3%B6kull.jpg",
+   "commons_cat": "Kaldalón",
+   "enwiki": "",
+   "localwiki": "https://is.wikipedia.org/wiki/Kaldal%C3%B3n",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q1722105",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q2291656",
+   "name": "Skarðsfjörður",
+   "name_local": "Skarðsfjörður",
+   "lat": 64.261929,
+   "lon": -15.096797,
+   "iso2": "IS",
+   "adm": "Sveitarfélagið Hornafjörður",
+   "types": [
+    "lagoon"
+   ],
+   "sitelinks": 4,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Skar%C3%B0sfj%C3%B6r%C3%B0ur%20%40%20Almannaskar%C3%B0.jpg",
+   "commons_cat": "Skarðsfjörður",
+   "enwiki": "",
+   "localwiki": "https://is.wikipedia.org/wiki/Skar%C3%B0sfj%C3%B6r%C3%B0ur",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q2291656",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q2536202",
+   "name": "Víti Askja",
+   "name_local": "Víti",
+   "lat": 65.046777,
+   "lon": -16.725911,
+   "iso2": "IS",
+   "adm": "Þingeyjarsveit",
+   "types": [
+    "volcanic crater lake"
+   ],
+   "sitelinks": 7,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/V%C3%ADti%20%C3%96skjuvatn%2002.jpg",
+   "commons_cat": "Víti (Askja)",
+   "enwiki": "",
+   "localwiki": "https://is.wikipedia.org/wiki/V%C3%ADti_(%C3%AD_%C3%96skju)",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": 1053,
+   "protected": [],
+   "part_of": [
+    "Askja",
+    "Dyngjufjöll"
+   ],
+   "basin_countries": [],
+   "key": "wd:Q2536202",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q2765758",
+   "name": "Ljósavatn",
+   "name_local": "Ljósavatn",
+   "lat": 65.701832,
+   "lon": -17.667836,
+   "iso2": "IS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 7,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/2008-05-18%2015%2035%2032%20Iceland-Lj%C3%B3savatn.jpg",
+   "commons_cat": "Ljósavatn",
+   "enwiki": "",
+   "localwiki": "https://is.wikipedia.org/wiki/Lj%C3%B3savatn",
+   "area_km2": 3.2,
+   "depth_m": 35.0,
+   "elev_m": 105,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q2765758",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q30005345",
+   "name": "Eiðavatn",
+   "name_local": "",
+   "lat": 65.4,
+   "lon": -14.35,
+   "iso2": "IS",
+   "adm": "Eastern Region",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q30005345",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q30005366",
+   "name": "Heiðarvatn",
+   "name_local": "",
+   "lat": 63.461667,
+   "lon": -18.986667,
+   "iso2": "IS",
+   "adm": "Mýrdalshreppur",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/2014-05-06%2019-59-13%20Iceland%20-%20V%C3%ADk%20V%C3%ADk%20%C3%AD%20M%C3%BDrdal%208h%20248%C2%B0.JPG",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q30005366",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q30005373",
+   "name": "Langavatn",
+   "name_local": "",
+   "lat": 64.13013,
+   "lon": -18.8142,
+   "iso2": "IS",
+   "adm": "Rangárþing ytra",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q30005373",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q33638680",
+   "name": "Bæjarvötn",
+   "name_local": "",
+   "lat": 65.725833,
+   "lon": -21.427222,
+   "iso2": "IS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q33638680",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q33639445",
+   "name": "Hraunvötn",
+   "name_local": "",
+   "lat": 64.201389,
+   "lon": -18.663333,
+   "iso2": "IS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q33639445",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q33639472",
+   "name": "Hundavötn",
+   "name_local": "",
+   "lat": 64.951667,
+   "lon": -19.776944,
+   "iso2": "IS",
+   "adm": "Iceland",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q33639472",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q33639501",
+   "name": "Hávaðavötn",
+   "name_local": "",
+   "lat": 64.919722,
+   "lon": -20.564167,
+   "iso2": "IS",
+   "adm": "Iceland",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q33639501",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q33639530",
+   "name": "Hólmlátursvötn",
+   "name_local": "",
+   "lat": 65.013333,
+   "lon": -22.045278,
+   "iso2": "IS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q33639530",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q33639846",
+   "name": "Krókatjarnir",
+   "name_local": "",
+   "lat": 64.379722,
+   "lon": -21.086944,
+   "iso2": "IS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q33639846",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q33644560",
+   "name": "Urriðavötn",
+   "name_local": "",
+   "lat": 65.739444,
+   "lon": -21.520556,
+   "iso2": "IS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q33644560",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q33644645",
+   "name": "Viðarvötn",
+   "name_local": "",
+   "lat": 66.233333,
+   "lon": -15.833333,
+   "iso2": "IS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q33644645",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q33645005",
+   "name": "Ódáðavötn",
+   "name_local": "",
+   "lat": 64.834167,
+   "lon": -14.744722,
+   "iso2": "IS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q33645005",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q33645050",
+   "name": "Þverárvötn",
+   "name_local": "",
+   "lat": 64.852778,
+   "lon": -20.992222,
+   "iso2": "IS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q33645050",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q33645085",
+   "name": "Þúfuvötn",
+   "name_local": "",
+   "lat": 64.541389,
+   "lon": -18.676667,
+   "iso2": "IS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q33645085",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q34798293",
+   "name": "Aravatn",
+   "name_local": "",
+   "lat": 66.025,
+   "lon": -20.171667,
+   "iso2": "IS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q34798293",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q34798331",
+   "name": "Arnarvatn",
+   "name_local": "",
+   "lat": 66.498611,
+   "lon": -16.127778,
+   "iso2": "IS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q34798331",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q34798338",
+   "name": "Arnarvatn-Litla",
+   "name_local": "",
+   "lat": 64.895,
+   "lon": -20.500278,
+   "iso2": "IS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q34798338",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q34800167",
+   "name": "Bergsvatn",
+   "name_local": "",
+   "lat": 65.248611,
+   "lon": -20.359167,
+   "iso2": "IS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q34800167",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q34800624",
+   "name": "Bjarnarvatn",
+   "name_local": "",
+   "lat": 65.868889,
+   "lon": -19.950278,
+   "iso2": "IS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q34800624",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q34801189",
+   "name": "Blönduvatn",
+   "name_local": "",
+   "lat": 65.153611,
+   "lon": -19.528611,
+   "iso2": "IS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q34801189",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q34801627",
+   "name": "Botnsvatn",
+   "name_local": "",
+   "lat": 66.0325,
+   "lon": -17.278333,
+   "iso2": "IS",
+   "adm": "Norðurþing",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "",
+   "commons_cat": "Botnsvatn",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q34801627",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q34802062",
+   "name": "Breiðarvatn",
+   "name_local": "",
+   "lat": 65.244167,
+   "lon": -21.645556,
+   "iso2": "IS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q34802062",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q34802361",
+   "name": "Brunnvatn",
+   "name_local": "",
+   "lat": 65.479167,
+   "lon": -17.383611,
+   "iso2": "IS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q34802361",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q35695215",
+   "name": "Efstadalsvatn",
+   "name_local": "",
+   "lat": 65.942778,
+   "lon": -22.670556,
+   "iso2": "IS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q35695215",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q35702789",
+   "name": "Gripdeild",
+   "name_local": "",
+   "lat": 65.21,
+   "lon": -15.443889,
+   "iso2": "IS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q35702789",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q35702811",
+   "name": "Grjótárvatn",
+   "name_local": "",
+   "lat": 64.780833,
+   "lon": -21.972222,
+   "iso2": "IS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q35702811",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q35703092",
+   "name": "Grænalón",
+   "name_local": "",
+   "lat": 63.998611,
+   "lon": -18.814167,
+   "iso2": "IS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q35703092",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q35703108",
+   "name": "Grænavatn",
+   "name_local": "",
+   "lat": 64.404753,
+   "lon": -19.589697,
+   "iso2": "IS",
+   "adm": "Hrunamannahreppur",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q35703108",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q35703116",
+   "name": "Grænavatn",
+   "name_local": "",
+   "lat": 64.460833,
+   "lon": -19.426944,
+   "iso2": "IS",
+   "adm": "Hrunamannahreppur",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q35703116",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q35703432",
+   "name": "Gufudalsvatn",
+   "name_local": "",
+   "lat": 65.57465,
+   "lon": -22.39477,
+   "iso2": "IS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q35703432",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q35704479",
+   "name": "Gæsavatn",
+   "name_local": "",
+   "lat": 66.1725,
+   "lon": -16.211389,
+   "iso2": "IS",
+   "adm": "Norðurþing",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q35704479",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q35704486",
+   "name": "Gæsavatn",
+   "name_local": "",
+   "lat": 63.509444,
+   "lon": -19.051944,
+   "iso2": "IS",
+   "adm": "Mýrdalshreppur",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q35704486",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q35704586",
+   "name": "Götuvatn",
+   "name_local": "",
+   "lat": 64.959722,
+   "lon": -22.177778,
+   "iso2": "IS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q35704586",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q35704653",
+   "name": "Hafralón",
+   "name_local": "",
+   "lat": 65.848333,
+   "lon": -15.586111,
+   "iso2": "IS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q35704653",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q35704678",
+   "name": "Hagavatn",
+   "name_local": "",
+   "lat": 65.360833,
+   "lon": -17.001111,
+   "iso2": "IS",
+   "adm": "Þingeyjarsveit",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q35704678",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q35705754",
+   "name": "Haugsvatn",
+   "name_local": "",
+   "lat": 65.741111,
+   "lon": -15.753889,
+   "iso2": "IS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q35705754",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q35705770",
+   "name": "Haukabrekkuvatn",
+   "name_local": "",
+   "lat": 64.984444,
+   "lon": -22.488333,
+   "iso2": "IS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q35705770",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q35705778",
+   "name": "Haukadalsvatn",
+   "name_local": "",
+   "lat": 65.053611,
+   "lon": -21.625278,
+   "iso2": "IS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "",
+   "commons_cat": "Haukadalsvatn",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q35705778",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q35705863",
+   "name": "Haukstjörn",
+   "name_local": "",
+   "lat": 64.499167,
+   "lon": -14.495556,
+   "iso2": "IS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q35705863",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q35706512",
+   "name": "Heiðarvatn",
+   "name_local": "",
+   "lat": 64.901944,
+   "lon": -14.597778,
+   "iso2": "IS",
+   "adm": "Múlaþing",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q35706512",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q35706567",
+   "name": "Helgavatn",
+   "name_local": "",
+   "lat": 64.3575,
+   "lon": -19.385556,
+   "iso2": "IS",
+   "adm": "Southern Region",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q35706567",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q35706681",
+   "name": "Helluvaðstjörn",
+   "name_local": "",
+   "lat": 65.573889,
+   "lon": -17.182222,
+   "iso2": "IS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q35706681",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q35707804",
+   "name": "Hnúksvatn",
+   "name_local": "",
+   "lat": 65.464167,
+   "lon": -14.803611,
+   "iso2": "IS",
+   "adm": "Múlaþing",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q35707804",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q35707812",
+   "name": "Hnúksvatn",
+   "name_local": "",
+   "lat": 65.166667,
+   "lon": -21.470278,
+   "iso2": "IS",
+   "adm": "Dalabyggð",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q35707812",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q35707820",
+   "name": "Hnútuvatn",
+   "name_local": "",
+   "lat": 64.650556,
+   "lon": -15.075,
+   "iso2": "IS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q35707820",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q35709637",
+   "name": "Hosuhlíðarvatn",
+   "name_local": "",
+   "lat": 65.561944,
+   "lon": -23.378056,
+   "iso2": "IS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q35709637",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q35709840",
+   "name": "Hrafnabjargarvatn",
+   "name_local": "",
+   "lat": 64.091944,
+   "lon": -19.297222,
+   "iso2": "IS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q35709840",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q35709849",
+   "name": "Hraunsfjarðarvatn",
+   "name_local": "",
+   "lat": 64.921944,
+   "lon": -22.933056,
+   "iso2": "IS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q35709849",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q35709866",
+   "name": "Hraunvatn",
+   "name_local": "",
+   "lat": 65.916111,
+   "lon": -20.086667,
+   "iso2": "IS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q35709866",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q35709875",
+   "name": "Hrófbergsvatn",
+   "name_local": "",
+   "lat": 65.743611,
+   "lon": -21.769722,
+   "iso2": "IS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q35709875",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q35710398",
+   "name": "Háfsvatn",
+   "name_local": "",
+   "lat": 65.231111,
+   "lon": -15.623889,
+   "iso2": "IS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q35710398",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q35710406",
+   "name": "Háleiksvatn",
+   "name_local": "",
+   "lat": 64.813611,
+   "lon": -21.895278,
+   "iso2": "IS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q35710406",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q35710591",
+   "name": "Hólmavatn",
+   "name_local": "",
+   "lat": 65.378611,
+   "lon": -15.281389,
+   "iso2": "IS",
+   "adm": "Múlaþing",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q35710591",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q35710599",
+   "name": "Hólmavatn",
+   "name_local": "",
+   "lat": 65.970833,
+   "lon": -15.420833,
+   "iso2": "IS",
+   "adm": "Langanesbyggð",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q35710599",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q35710607",
+   "name": "Hólmavatn",
+   "name_local": "",
+   "lat": 65.162778,
+   "lon": -20.949722,
+   "iso2": "IS",
+   "adm": "Húnaþing vestra",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q35710607",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q35710615",
+   "name": "Hólmavatn",
+   "name_local": "",
+   "lat": 65.673056,
+   "lon": -22.998333,
+   "iso2": "IS",
+   "adm": "Vesturbyggð",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q35710615",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q35710623",
+   "name": "Hólmavatn",
+   "name_local": "",
+   "lat": 64.778611,
+   "lon": -21.439722,
+   "iso2": "IS",
+   "adm": "Borgarbyggð",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q35710623",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q35710630",
+   "name": "Hólmavatn",
+   "name_local": "",
+   "lat": 64.804167,
+   "lon": -20.894722,
+   "iso2": "IS",
+   "adm": "Borgarbyggð",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q35710630",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q35710637",
+   "name": "Hólmavatn",
+   "name_local": "",
+   "lat": 65.243333,
+   "lon": -21.377778,
+   "iso2": "IS",
+   "adm": "Dalabyggð",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q35710637",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q35710669",
+   "name": "Höskuldsvatn",
+   "name_local": "",
+   "lat": 65.981667,
+   "lon": -17.1625,
+   "iso2": "IS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q35710669",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q35718613",
+   "name": "Kirkjufellsvatn",
+   "name_local": "",
+   "lat": 63.972222,
+   "lon": -18.926944,
+   "iso2": "IS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "",
+   "commons_cat": "Kirkjufellsvatn",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q35718613",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q49312493",
+   "name": "Svartárvatn",
+   "name_local": "",
+   "lat": 65.346944,
+   "lon": -17.233056,
+   "iso2": "IS",
+   "adm": "Þingeyjarsveit",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "",
+   "commons_cat": "Svartárvatn",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q49312493",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q106107081",
+   "name": "Grænavatn",
+   "name_local": "Grænavatn",
+   "lat": 63.917762,
+   "lon": -22.113432,
+   "iso2": "IS",
+   "adm": "Grindavíkurbær",
+   "types": [
+    "lake",
+    "maar"
+   ],
+   "sitelinks": 2,
+   "wd_img": "",
+   "commons_cat": "Grænavatn",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [
+    "Reykjanesfólkvangur"
+   ],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q106107081",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q16424472",
+   "name": "Réttarvatn",
+   "name_local": "Réttarvatn",
+   "lat": 64.941513,
+   "lon": -20.286142,
+   "iso2": "IS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://is.wikipedia.org/wiki/R%C3%A9ttarvatn",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q16424472",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q16426238",
+   "name": "Gvendarbrunnar",
+   "name_local": "Gvendarbrunnar",
+   "lat": 64.086174,
+   "lon": -21.733958,
+   "iso2": "IS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://is.wikipedia.org/wiki/Gvendarbrunnar",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q16426238",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q16428259",
+   "name": "Syðridalsvatn",
+   "name_local": "Syðridalsvatn",
+   "lat": 66.127487,
+   "lon": -23.242534,
+   "iso2": "IS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://is.wikipedia.org/wiki/Sy%C3%B0radalsvatn",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q16428259",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q31749440",
+   "name": "Mannabeinavatn",
+   "name_local": "Mannabeinavatn",
+   "lat": 65.052682,
+   "lon": -19.459119,
+   "iso2": "IS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://is.wikipedia.org/wiki/Mannabeinavatn",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q31749440",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q35708612",
+   "name": "Holtavörðuvatn",
+   "name_local": "Holtavörðuvatn",
+   "lat": 64.993611,
+   "lon": -21.083056,
+   "iso2": "IS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Holtav%C3%B6r%C3%B0uvatn%202025%20drone.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://is.wikipedia.org/wiki/Holtav%C3%B6r%C3%B0uvatn",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q35708612",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q35709858",
+   "name": "Hraunsvatn",
+   "name_local": "Hraunsvatn",
+   "lat": 65.568333,
+   "lon": -18.6025,
+   "iso2": "IS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://is.wikipedia.org/wiki/Hraunsvatn",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q35709858",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q38110900",
+   "name": "Ástjörn",
+   "name_local": "Ástjörn",
+   "lat": 64.051988,
+   "lon": -21.959179,
+   "iso2": "IS",
+   "adm": "Capital Region",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/%C3%81stj%C3%B6rn.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://is.wikipedia.org/wiki/%C3%81stj%C3%B6rn_(Hafnarfir%C3%B0i)",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q38110900",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q97258621",
+   "name": "Hvaleyrarvatn",
+   "name_local": "Hvaleyrarvatn",
+   "lat": 64.037078,
+   "lon": -21.92415,
+   "iso2": "IS",
+   "adm": "Hafnarfjörður",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Hvaleyrarvatn%202025.jpg",
+   "commons_cat": "Hvaleyrarvatn",
+   "enwiki": "",
+   "localwiki": "https://is.wikipedia.org/wiki/Hvaleyrarvatn",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q97258621",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q97259894",
+   "name": "Urriðavatn",
+   "name_local": "Urriðavatn",
+   "lat": 65.3091,
+   "lon": -14.4431,
+   "iso2": "IS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://is.wikipedia.org/wiki/Urri%C3%B0avatn_(Egilssta%C3%B0i)",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q97259894",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q35695223",
+   "name": "Efstafellsvatn",
+   "name_local": "",
+   "lat": 64.409722,
+   "lon": -15.443611,
+   "iso2": "IS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q35695223",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q35695407",
+   "name": "Eiríksvatn",
+   "name_local": "",
+   "lat": 64.45,
+   "lon": -21.15,
+   "iso2": "IS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q35695407",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q35695483",
+   "name": "Eiðisvatn",
+   "name_local": "",
+   "lat": 64.378056,
+   "lon": -21.808056,
+   "iso2": "IS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q35695483",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q35696166",
+   "name": "Eskihlíðarvatn",
+   "name_local": "",
+   "lat": 64.067778,
+   "lon": -19.124722,
+   "iso2": "IS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q35696166",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q35696299",
+   "name": "Eyjavatn",
+   "name_local": "",
+   "lat": 65.871389,
+   "lon": -15.498611,
+   "iso2": "IS",
+   "adm": "Langanesbyggð",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q35696299",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q35696306",
+   "name": "Eyjavatn",
+   "name_local": "",
+   "lat": 65.263056,
+   "lon": -19.880833,
+   "iso2": "IS",
+   "adm": "Húnabyggð",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q35696306",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q35698145",
+   "name": "Fljótavatn",
+   "name_local": "",
+   "lat": 66.428611,
+   "lon": -22.869167,
+   "iso2": "IS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q35698145",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q35698151",
+   "name": "Fljótsbotn",
+   "name_local": "",
+   "lat": 63.665556,
+   "lon": -18.266667,
+   "iso2": "IS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q35698151",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q35698294",
+   "name": "Flókatjörn",
+   "name_local": "",
+   "lat": 64.198056,
+   "lon": -20.446389,
+   "iso2": "IS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q35698294",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q35698875",
+   "name": "Fremra-Selvatn",
+   "name_local": "",
+   "lat": 65.866944,
+   "lon": -22.573889,
+   "iso2": "IS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q35698875",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q35699564",
+   "name": "Galtaból",
+   "name_local": "",
+   "lat": 65.265833,
+   "lon": -19.728333,
+   "iso2": "IS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q35699564",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q35699571",
+   "name": "Galtarvatn",
+   "name_local": "",
+   "lat": 65.195556,
+   "lon": -19.973333,
+   "iso2": "IS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q35699571",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q35700187",
+   "name": "Gedduvatn",
+   "name_local": "",
+   "lat": 65.719444,
+   "lon": -22.189444,
+   "iso2": "IS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q35700187",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q35700246",
+   "name": "Geldingavatn",
+   "name_local": "",
+   "lat": 65.476944,
+   "lon": -15.327222,
+   "iso2": "IS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q35700246",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q35717361",
+   "name": "Jökulvatn",
+   "name_local": "",
+   "lat": 64.189444,
+   "lon": -18.52,
+   "iso2": "IS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q35717361",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q35718032",
+   "name": "Kelduárvatn",
+   "name_local": "",
+   "lat": 64.683333,
+   "lon": -15.306111,
+   "iso2": "IS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q35718032",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q35718162",
+   "name": "Kerlingavatn",
+   "name_local": "",
+   "lat": 64.616667,
+   "lon": -21.983333,
+   "iso2": "IS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q35718162",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q35719250",
+   "name": "Kollumúlavatn",
+   "name_local": "",
+   "lat": 64.611111,
+   "lon": -15.151667,
+   "iso2": "IS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q35719250",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q35719603",
+   "name": "Kringluvatn",
+   "name_local": "",
+   "lat": 65.764167,
+   "lon": -17.224167,
+   "iso2": "IS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q35719603",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q35719840",
+   "name": "Krossaxlavatn",
+   "name_local": "",
+   "lat": 65.261944,
+   "lon": -21.503611,
+   "iso2": "IS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q35719840",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q35719979",
+   "name": "Krókavatn",
+   "name_local": "",
+   "lat": 65.518056,
+   "lon": -14.326667,
+   "iso2": "IS",
+   "adm": "Múlaþing",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q35719979",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q35719988",
+   "name": "Krókavatn",
+   "name_local": "",
+   "lat": 64.933333,
+   "lon": -20.816667,
+   "iso2": "IS",
+   "adm": "Húnaþing vestra",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q35719988",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q35720688",
+   "name": "Kálfborgarárvatn",
+   "name_local": "",
+   "lat": 65.501944,
+   "lon": -17.323333,
+   "iso2": "IS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q35720688",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q35735610",
+   "name": "Lambavatn",
+   "name_local": "",
+   "lat": 64.068333,
+   "lon": -18.300278,
+   "iso2": "IS",
+   "adm": "Skaftárhreppur",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q35735610",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q35735617",
+   "name": "Lambavatn",
+   "name_local": "",
+   "lat": 65.6,
+   "lon": -21.85,
+   "iso2": "IS",
+   "adm": "Strandabyggð",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q35735617",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q35735688",
+   "name": "Langavatn",
+   "name_local": "",
+   "lat": 64.972778,
+   "lon": -15.2725,
+   "iso2": "IS",
+   "adm": "Múlaþing",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q35735688",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q35735703",
+   "name": "Langavatn",
+   "name_local": "",
+   "lat": 65.826944,
+   "lon": -17.273611,
+   "iso2": "IS",
+   "adm": "Þingeyjarsveit",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q35735703",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q35735712",
+   "name": "Langavatn",
+   "name_local": "",
+   "lat": 65.946111,
+   "lon": -20.186667,
+   "iso2": "IS",
+   "adm": "Skagabyggð",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q35735712",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q35735720",
+   "name": "Langavatn",
+   "name_local": "",
+   "lat": 64.490556,
+   "lon": -20.525278,
+   "iso2": "IS",
+   "adm": "Bláskógabyggð",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q35735720",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q35736086",
+   "name": "Langhólmavatn",
+   "name_local": "",
+   "lat": 65.464444,
+   "lon": -15.356667,
+   "iso2": "IS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q35736086",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q35736869",
+   "name": "Laxárvatn",
+   "name_local": "",
+   "lat": 65.597778,
+   "lon": -20.181111,
+   "iso2": "IS",
+   "adm": "Húnabyggð",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q35736869",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q35736876",
+   "name": "Laxárvatn",
+   "name_local": "",
+   "lat": 66.030556,
+   "lon": -20.362778,
+   "iso2": "IS",
+   "adm": "Skagabyggð",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q35736876",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q35737238",
+   "name": "Leirvötn",
+   "name_local": "",
+   "lat": 65.241389,
+   "lon": -15.554444,
+   "iso2": "IS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q35737238",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q49309018",
+   "name": "Reyðarvatn",
+   "name_local": "",
+   "lat": 65.111111,
+   "lon": -18.522222,
+   "iso2": "IS",
+   "adm": "Skagafjörður",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q49309018",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q49310814",
+   "name": "Skorarvatn",
+   "name_local": "",
+   "lat": 66.256389,
+   "lon": -22.323333,
+   "iso2": "IS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q49310814",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q49311566",
+   "name": "Staðarvatn",
+   "name_local": "",
+   "lat": 66.328056,
+   "lon": -23.055556,
+   "iso2": "IS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q49311566",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q97260195",
+   "name": "Blávatn",
+   "name_local": "Blávatn",
+   "lat": 64.59519,
+   "lon": -20.879396,
+   "iso2": "IS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://is.wikipedia.org/wiki/Bl%C3%A1vatn",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q97260195",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q97502874",
+   "name": "Stíflisdalsvatn",
+   "name_local": "Stíflisdalsvatn",
+   "lat": 64.247508,
+   "lon": -21.321904,
+   "iso2": "IS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/St%C3%ADflisdalsvatn%20214126.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://is.wikipedia.org/wiki/St%C3%ADflisdalsvatn",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q97502874",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q115651961",
+   "name": "Kleppavatn",
+   "name_local": "Kleppavatn",
+   "lat": 64.79646,
+   "lon": -20.752756,
+   "iso2": "IS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://is.wikipedia.org/wiki/Kleppavatn",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q115651961",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q35710575",
+   "name": "Héðinsfjarðarvatn",
+   "name_local": "",
+   "lat": 66.119167,
+   "lon": -18.801667,
+   "iso2": "IS",
+   "adm": "",
+   "types": [
+    "lagoon"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q35710575",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q49316753",
+   "name": "Ölvesvatn",
+   "name_local": "",
+   "lat": 66.054167,
+   "lon": -20.196944,
+   "iso2": "IS",
+   "adm": "Skagafjörður",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q49316753",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q134292705",
+   "name": "Helgafellsvatn",
+   "name_local": "",
+   "lat": 65.039344,
+   "lon": -22.739178,
+   "iso2": "IS",
+   "adm": "Stykkishólmur",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Helgafellsvatn%20-%20view%20from%20Helgafell%2C%20Sn%C3%A6fellsnes%20peninsula%2C%20Iceland%2C%2020230505%201515%205256.jpg",
+   "commons_cat": "Helgafellsvatn",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q134292705",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q135088000",
+   "name": "Rekavíkurvatn",
+   "name_local": "",
+   "lat": 66.41592,
+   "lon": -23.03299,
+   "iso2": "IS",
+   "adm": "Ísafjarðarbær",
+   "types": [
+    "lagoon"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "Rekavíkurvatn",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q135088000",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q136402431",
+   "name": "Kaldbakstjarnir",
+   "name_local": "",
+   "lat": 66.021759,
+   "lon": -17.36689,
+   "iso2": "IS",
+   "adm": "Norðurþing",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "Kaldbakstjarnir",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q136402431",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q136439449",
+   "name": "Kaldá",
+   "name_local": "",
+   "lat": 64.022533,
+   "lon": -21.867138,
+   "iso2": "IS",
+   "adm": "Hafnarfjörður",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "Kaldá",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [
+    "Reykjanesfólkvangur"
+   ],
+   "basin_countries": [],
+   "key": "wd:Q136439449",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q136439576",
+   "name": "Grænavatn",
+   "name_local": "",
+   "lat": 63.88442,
+   "lon": -22.05473,
+   "iso2": "IS",
+   "adm": "Hafnarfjarðarkaupstaður",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "Grænavatn (Hafnarfjarðarkaupstaður)",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q136439576",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q114736535",
+   "name": "Landmannalaugar hut",
+   "name_local": "",
+   "lat": 63.990713,
+   "lon": -19.061439,
+   "iso2": "IS",
+   "adm": "Rangárþing ytra",
+   "types": [
+    "mountain hut"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Southern%20Region%2C%20Iceland%20-%20panoramio%20%2851%29.jpg",
+   "commons_cat": "Landmannalaugar hut",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": 550,
+   "protected": [
+    "Fjallabak natural reserve"
+   ],
+   "part_of": [],
+   "basin_countries": [],
+   "seed": {
+    "swim": "yes",
+    "kind": "geothermal",
+    "why": "brief",
+    "note": "highland hot river bathing, F road access only",
+    "name": "Landmannalaugar"
+   },
+   "key": "wd:Q114736535",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q168683",
+   "name": "Flúðir",
+   "name_local": "Flúðir",
+   "lat": 64.133,
+   "lon": -20.333,
+   "iso2": "IS",
+   "adm": "Hrunamannahreppur",
+   "types": [
+    "village"
+   ],
+   "sitelinks": 14,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Fl%C3%BA%C3%B0ir%2001b.jpg",
+   "commons_cat": "Flúðir",
+   "enwiki": "https://en.wikipedia.org/wiki/Fl%C3%BA%C3%B0ir",
+   "localwiki": "https://is.wikipedia.org/wiki/Fl%C3%BA%C3%B0ir",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q168683",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "seed": {
+    "swim": "yes",
+    "kind": "geothermal",
+    "why": "brief",
+    "note": "Fludir, the oldest swimming pool in Iceland, 38 to 40 C",
+    "name": "Secret Lagoon"
+   }
+  }
+ ]
+}

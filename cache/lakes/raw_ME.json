@@ -1,0 +1,772 @@
+{
+ "country": "ME",
+ "harvested_at": "2026-08-20T18:28:06+00:00",
+ "n_wikidata": 24,
+ "n_seeded": 5,
+ "seed_missing": [],
+ "lakes": [
+  {
+   "wd": "Q203811",
+   "name": "Lake Skadar",
+   "name_local": "Скадарско језеро",
+   "lat": 42.1814,
+   "lon": 19.309,
+   "iso2": "ME",
+   "adm": "",
+   "types": [
+    "lake",
+    "protected area",
+    "karst lake"
+   ],
+   "sitelinks": 54,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Skadarsko%20Jezero.jpg",
+   "commons_cat": "Lake Scutari",
+   "enwiki": "https://en.wikipedia.org/wiki/Lake_Skadar",
+   "localwiki": "https://sr.wikipedia.org/wiki/%D0%A1%D0%BA%D0%B0%D0%B4%D0%B0%D1%80%D1%81%D0%BA%D0%BE_%D1%98%D0%B5%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": 265.35,
+   "depth_m": 44.0,
+   "elev_m": 6,
+   "protected": [
+    "cryptodepression",
+    "Lake Shkodra and River Buna"
+   ],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q203811",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "seed": {
+    "swim": "yes",
+    "kind": "lake",
+    "why": "brief",
+    "note": "a national park of pelicans and boat trips, swimming at Murici",
+    "name": "Lake Skadar"
+   }
+  },
+  {
+   "wd": "Q15241345",
+   "name": "Lake Rujište",
+   "name_local": "",
+   "lat": 42.84,
+   "lon": 20.16,
+   "iso2": "ME",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "https://en.wikipedia.org/wiki/Lake_Ruji%C5%A1te",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q15241345",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q35701690",
+   "name": "Gornje Malo Blato",
+   "name_local": "",
+   "lat": 42.341667,
+   "lon": 19.166667,
+   "iso2": "ME",
+   "adm": "Montenegro",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q35701690",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q35712752",
+   "name": "Liverovići Lake",
+   "name_local": "",
+   "lat": 42.744722,
+   "lon": 19.061389,
+   "iso2": "ME",
+   "adm": "Montenegro",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "",
+   "commons_cat": "Liverovići Lake",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q35712752",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q85191526",
+   "name": "Kapetanovo jezero",
+   "name_local": "",
+   "lat": 42.814072,
+   "lon": 19.22929,
+   "iso2": "ME",
+   "adm": "Kolašin Municipality",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Kapetanovo%20Jezero%20-%20panoramio.jpg",
+   "commons_cat": "Kapetanovo jezero",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q85191526",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q104776909",
+   "name": "Lake Zogaj",
+   "name_local": "",
+   "lat": 41.922707,
+   "lon": 19.295728,
+   "iso2": "ME",
+   "adm": "Ulcinj Municipality",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Zogajske%20jezero%20-%20kalimery%20%28konstrukce%20na%20zvedani%20rybarskych.jpg",
+   "commons_cat": "Lake Zogaj",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q104776909",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q136080704",
+   "name": "Vražje Lake",
+   "name_local": "",
+   "lat": 43.084167,
+   "lon": 19.145556,
+   "iso2": "ME",
+   "adm": "Žabljak Municipality",
+   "types": [
+    "lake",
+    "glacial lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Vra%C5%BEje%20Lake.jpg",
+   "commons_cat": "",
+   "enwiki": "https://en.wikipedia.org/wiki/Vra%C5%BEje_Lake",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": 1411,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q136080704",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q137527603",
+   "name": "Škrčko Lakes",
+   "name_local": "",
+   "lat": 43.134922,
+   "lon": 19.01183,
+   "iso2": "ME",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "https://en.wikipedia.org/wiki/%C5%A0kr%C4%8Dko_Lakes",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q137527603",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q138313885",
+   "name": "Lake Pošćenje",
+   "name_local": "",
+   "lat": 43.091111,
+   "lon": 19.109444,
+   "iso2": "ME",
+   "adm": "",
+   "types": [
+    "glacial lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "https://en.wikipedia.org/wiki/Lake_Po%C5%A1%C4%87enje",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q138313885",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q1811764",
+   "name": "Trnovačko Lake",
+   "name_local": "Трновачко језеро",
+   "lat": 43.251667,
+   "lon": 18.726667,
+   "iso2": "ME",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 15,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Trnovacko%20jezero%2C%20Maglic.jpg",
+   "commons_cat": "Trnovačko jezero",
+   "enwiki": "https://en.wikipedia.org/wiki/Trnova%C4%8Dko_Lake",
+   "localwiki": "https://sr.wikipedia.org/wiki/%D0%A2%D1%80%D0%BD%D0%BE%D0%B2%D0%B0%D1%87%D0%BA%D0%BE_%D1%98%D0%B5%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": null,
+   "depth_m": 9.0,
+   "elev_m": 1517,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q1811764",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "seed": {
+    "swim": "limited",
+    "kind": "tarn",
+    "why": "editorial",
+    "haz": [
+     "cold_shock"
+    ],
+    "note": "the heart shaped lake under Maglic, a long walk in",
+    "name": "Trnovacko jezero"
+   }
+  },
+  {
+   "wd": "Q2097502",
+   "name": "Lake Piva",
+   "name_local": "Пивско језеро",
+   "lat": 43.166667,
+   "lon": 18.866667,
+   "iso2": "ME",
+   "adm": "Plužine Municipality",
+   "types": [
+    "lake",
+    "reservoir"
+   ],
+   "sitelinks": 12,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Piva%20Lake%201.JPG",
+   "commons_cat": "Piva Reservoir",
+   "enwiki": "https://en.wikipedia.org/wiki/Lake_Piva",
+   "localwiki": "https://sr.wikipedia.org/wiki/%D0%9F%D0%B8%D0%B2%D1%81%D0%BA%D0%BE_%D1%98%D0%B5%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": 12.5,
+   "depth_m": null,
+   "elev_m": 675,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q2097502",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "seed": {
+    "swim": "limited",
+    "kind": "reservoir",
+    "why": "brief",
+    "note": "a turquoise canyon reservoir, the road above it",
+    "name": "Piva Lake"
+   }
+  },
+  {
+   "wd": "Q11161015",
+   "name": "Lake Rikavacko",
+   "name_local": "Рикавачко језеро",
+   "lat": 42.570278,
+   "lon": 19.604444,
+   "iso2": "ME",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Rikavacko%20jezero%20od%20salasi%20Sirokar%2C%20vpravo%20vzadu%20hranicni%20vr.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://sr.wikipedia.org/wiki/%D0%A0%D0%B8%D0%BA%D0%B0%D0%B2%D0%B0%D1%87%D0%BA%D0%BE_%D1%98%D0%B5%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": 0.1178,
+   "depth_m": null,
+   "elev_m": 1313,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q11161015",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q11191843",
+   "name": "Lake Slano",
+   "name_local": "Слано језеро (Црна Гора)",
+   "lat": 42.761034,
+   "lon": 18.838256,
+   "iso2": "ME",
+   "adm": "Nikšić Municipality",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 6,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Lago%20Slansko%2C%20Montenegro%2C%202014-04-14%2C%20DD%2003.JPG",
+   "commons_cat": "Slano jezero (Montenegro)",
+   "enwiki": "",
+   "localwiki": "https://sr.wikipedia.org/wiki/%D0%A1%D0%BB%D0%B0%D0%BD%D0%BE_%D1%98%D0%B5%D0%B7%D0%B5%D1%80%D0%BE_(%D0%A6%D1%80%D0%BD%D0%B0_%D0%93%D0%BE%D1%80%D0%B0)",
+   "area_km2": 9.0,
+   "depth_m": 30.0,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q11191843",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q20436250",
+   "name": "Hridsko Jezero",
+   "name_local": "Hridsko jezero",
+   "lat": 42.571518,
+   "lon": 20.034768,
+   "iso2": "ME",
+   "adm": "Accursed Mountains",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Peaks%20of%20the%20Balkans%20-%20Hridsko%20Lake%2C%20Montenegro.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://sr.wikipedia.org/wiki/Hridsko_jezero",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": 2000,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q20436250",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q20575860",
+   "name": "Ulcinj Saltworks",
+   "name_local": "Улцињска солана",
+   "lat": 41.916667,
+   "lon": 19.283333,
+   "iso2": "ME",
+   "adm": "Ulcinj",
+   "types": [
+    "salt evaporation pond",
+    "protected area"
+   ],
+   "sitelinks": 9,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Saline%20Ulcinj%20Salinenfelder.JPG",
+   "commons_cat": "Ulcinj Salinas",
+   "enwiki": "",
+   "localwiki": "https://sr.wikipedia.org/wiki/%D0%A3%D0%BB%D1%86%D0%B8%D1%9A%D1%81%D0%BA%D0%B0_%D1%81%D0%BE%D0%BB%D0%B0%D0%BD%D0%B0",
+   "area_km2": 14.77,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q20575860",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q25425934",
+   "name": "Bukumirsko jezero",
+   "name_local": "Букумирско језеро",
+   "lat": 42.604722,
+   "lon": 19.554722,
+   "iso2": "ME",
+   "adm": "",
+   "types": [
+    "lake",
+    "glacial lake"
+   ],
+   "sitelinks": 4,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Bukumirsko%20jezero%2001.jpg",
+   "commons_cat": "Bukumirsko jezero",
+   "enwiki": "",
+   "localwiki": "https://sr.wikipedia.org/wiki/%D0%91%D1%83%D0%BA%D1%83%D0%BC%D0%B8%D1%80%D1%81%D0%BA%D0%BE_%D1%98%D0%B5%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": 0.0193,
+   "depth_m": null,
+   "elev_m": 1448,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q25425934",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q31185976",
+   "name": "Lake Krupac",
+   "name_local": "Крупачко језеро",
+   "lat": 42.800556,
+   "lon": 18.892222,
+   "iso2": "ME",
+   "adm": "Nikšić Municipality",
+   "types": [
+    "lake",
+    "reservoir"
+   ],
+   "sitelinks": 4,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Krupac%20%28Nik%C5%A1i%C4%87%29%2001.jpg",
+   "commons_cat": "Krupačko jezero",
+   "enwiki": "",
+   "localwiki": "https://sr.wikipedia.org/wiki/%D0%9A%D1%80%D1%83%D0%BF%D0%B0%D1%87%D0%BA%D0%BE_%D1%98%D0%B5%D0%B7%D0%B5%D1%80%D0%BE_(%D0%9D%D0%B8%D0%BA%D1%88%D0%B8%D1%9B)",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q31185976",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q44844707",
+   "name": "Lake Grahovo",
+   "name_local": "Граховско језеро",
+   "lat": 42.670833,
+   "lon": 18.63,
+   "iso2": "ME",
+   "adm": "Nikšić Municipality",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 4,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Grahovsko%20jezero.jpg",
+   "commons_cat": "Grahovo Lake",
+   "enwiki": "https://en.wikipedia.org/wiki/Lake_Grahovo",
+   "localwiki": "https://sr.wikipedia.org/wiki/%D0%93%D1%80%D0%B0%D1%85%D0%BE%D0%B2%D1%81%D0%BA%D0%BE_%D1%98%D0%B5%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Montenegro"
+   ],
+   "key": "wd:Q44844707",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q207468",
+   "name": "Bay of Kotor",
+   "name_local": "Бока Которска",
+   "lat": 42.45,
+   "lon": 18.67,
+   "iso2": "ME",
+   "adm": "Montenegro",
+   "types": [
+    "ria"
+   ],
+   "sitelinks": 54,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Kotor%20Bay%20of%20Kotor%2007.jpg",
+   "commons_cat": "Bay of Kotor",
+   "enwiki": "https://en.wikipedia.org/wiki/Bay_of_Kotor",
+   "localwiki": "https://sr.wikipedia.org/wiki/%D0%91%D0%BE%D0%BA%D0%B0_%D0%BA%D0%BE%D1%82%D0%BE%D1%80%D1%81%D0%BA%D0%B0",
+   "area_km2": null,
+   "depth_m": 60.0,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [
+    "Adriatic Sea"
+   ],
+   "basin_countries": [],
+   "key": "wd:Q207468",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q391306",
+   "name": "Lake Šas",
+   "name_local": "Шаско језеро",
+   "lat": 41.973611,
+   "lon": 19.330833,
+   "iso2": "ME",
+   "adm": "Ulcinj",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 13,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Sasko%20jesero.jpg",
+   "commons_cat": "Šasko jezero",
+   "enwiki": "https://en.wikipedia.org/wiki/Lake_%C5%A0as",
+   "localwiki": "https://sr.wikipedia.org/wiki/%D0%A8%D0%B0%D1%81%D0%BA%D0%BE_%D1%98%D0%B5%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": 5.5,
+   "depth_m": 7.8,
+   "elev_m": 1,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Montenegro"
+   ],
+   "key": "wd:Q391306",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q864390",
+   "name": "Lake Biograd",
+   "name_local": "Биоградско језеро",
+   "lat": 42.897778,
+   "lon": 19.600556,
+   "iso2": "ME",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 20,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Biogradsko%20Jezero.jpg",
+   "commons_cat": "Biogradsko jezero",
+   "enwiki": "https://en.wikipedia.org/wiki/Lake_Biograd",
+   "localwiki": "https://sr.wikipedia.org/wiki/%D0%91%D0%B8%D0%BE%D0%B3%D1%80%D0%B0%D0%B4%D1%81%D0%BA%D0%BE_%D1%98%D0%B5%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": 0.2285,
+   "depth_m": 4.5,
+   "elev_m": 1094,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Montenegro"
+   ],
+   "key": "wd:Q864390",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "seed": {
+    "swim": "no",
+    "kind": "lake",
+    "why": "editorial",
+    "note": "Biogradska Gora NP, one of Europe's last primeval forests, no swimming",
+    "name": "Biogradsko jezero"
+   }
+  },
+  {
+   "wd": "Q1140650",
+   "name": "Black Lake",
+   "name_local": "Црно језеро (Дурмитор)",
+   "lat": 43.143333,
+   "lon": 19.0875,
+   "iso2": "ME",
+   "adm": "Durmitor",
+   "types": [
+    "lake",
+    "glacial lake"
+   ],
+   "sitelinks": 25,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Crno%20jezero%202020.jpg",
+   "commons_cat": "Crno jezero",
+   "enwiki": "https://en.wikipedia.org/wiki/Black_Lake_(Montenegro)",
+   "localwiki": "https://sr.wikipedia.org/wiki/%D0%A6%D1%80%D0%BD%D0%BE_%D1%98%D0%B5%D0%B7%D0%B5%D1%80%D0%BE_(%D0%94%D1%83%D1%80%D0%BC%D0%B8%D1%82%D0%BE%D1%80)",
+   "area_km2": 0.515,
+   "depth_m": null,
+   "elev_m": 1416,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Montenegro"
+   ],
+   "key": "wd:Q1140650",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "seed": {
+    "swim": "limited",
+    "kind": "lake",
+    "why": "brief",
+    "haz": [
+     "cold_shock"
+    ],
+    "note": "Durmitor NP, glacial, cold, the walk around it",
+    "name": "Black Lake"
+   }
+  },
+  {
+   "wd": "Q1256107",
+   "name": "Lake Plav",
+   "name_local": "Плавско језеро",
+   "lat": 42.595833,
+   "lon": 19.925,
+   "iso2": "ME",
+   "adm": "Plav Municipality",
+   "types": [
+    "lake",
+    "glacial lake"
+   ],
+   "sitelinks": 25,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Lake%20Plav3.JPG",
+   "commons_cat": "Plavsko jezero",
+   "enwiki": "https://en.wikipedia.org/wiki/Lake_Plav",
+   "localwiki": "https://sr.wikipedia.org/wiki/%D0%9F%D0%BB%D0%B0%D0%B2%D1%81%D0%BA%D0%BE_%D1%98%D0%B5%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": 1.99,
+   "depth_m": 9.0,
+   "elev_m": 906,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Montenegro"
+   ],
+   "key": "wd:Q1256107",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q1293440",
+   "name": "Lake Visitor",
+   "name_local": "Виситорско језеро",
+   "lat": 42.625,
+   "lon": 19.88,
+   "iso2": "ME",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 10,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Visitorske%20jezero%20s%20drevarskou%20chatkou%2C%201800%20m.jpg",
+   "commons_cat": "Visitorsko jezero",
+   "enwiki": "https://en.wikipedia.org/wiki/Lake_Visitor",
+   "localwiki": "https://sr.wikipedia.org/wiki/%D0%92%D0%B8%D1%81%D0%B8%D1%82%D0%BE%D1%80%D1%81%D0%BA%D0%BE_%D1%98%D0%B5%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": 0.005,
+   "depth_m": null,
+   "elev_m": 1280,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Montenegro"
+   ],
+   "key": "wd:Q1293440",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  }
+ ]
+}

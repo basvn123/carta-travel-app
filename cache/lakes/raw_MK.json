@@ -1,0 +1,3891 @@
+{
+ "country": "MK",
+ "harvested_at": "2026-08-20T18:28:45+00:00",
+ "n_wikidata": 131,
+ "n_seeded": 4,
+ "seed_missing": [],
+ "lakes": [
+  {
+   "wd": "Q12273457",
+   "name": "Bogovinje Lake",
+   "name_local": "Боговињско Езеро",
+   "lat": 41.9505,
+   "lon": 20.7923,
+   "iso2": "MK",
+   "adm": "Bogovinje Municipality",
+   "types": [
+    "glacial lake"
+   ],
+   "sitelinks": 15,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/%D0%91%D0%BE%D0%B3%D0%BE%D0%B2%D0%B8%D1%9A%D1%81%D0%BA%D0%BE%20%D0%95%D0%B7%D0%B5%D1%80%D0%BE%2003.jpg",
+   "commons_cat": "Bogovinje Lake",
+   "enwiki": "https://en.wikipedia.org/wiki/Bogovinje_Lake",
+   "localwiki": "https://mk.wikipedia.org/wiki/%D0%91%D0%BE%D0%B3%D0%BE%D0%B2%D0%B8%D1%9A%D1%81%D0%BA%D0%BE_%D0%95%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": 0.0669,
+   "depth_m": null,
+   "elev_m": 1936,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q12273457",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q12277281",
+   "name": "Gratče Lake",
+   "name_local": "Гратче (езеро)",
+   "lat": 41.963431,
+   "lon": 22.407517,
+   "iso2": "MK",
+   "adm": "Kočani Municipality",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 4,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/%D0%95%D0%B7%D0%B5%D1%80%D0%BE%20%D0%93%D1%80%D0%B0%D1%82%D1%87%D0%B5.jpg",
+   "commons_cat": "Gratče Lake",
+   "enwiki": "",
+   "localwiki": "https://mk.wikipedia.org/wiki/%D0%93%D1%80%D0%B0%D1%82%D1%87%D0%B5_(%D0%B5%D0%B7%D0%B5%D1%80%D0%BE)",
+   "area_km2": 0.19,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q12277281",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q12291439",
+   "name": "Prilep Lake",
+   "name_local": "Прилепско Езеро",
+   "lat": 41.3875,
+   "lon": 21.598833,
+   "iso2": "MK",
+   "adm": "",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 3,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Prilep%20Lake.jpg",
+   "commons_cat": "Lake Prilep",
+   "enwiki": "",
+   "localwiki": "https://mk.wikipedia.org/wiki/%D0%9F%D1%80%D0%B8%D0%BB%D0%B5%D0%BF%D1%81%D0%BA%D0%BE_%D0%95%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": 0.54,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q12291439",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q12297071",
+   "name": "Турија",
+   "name_local": "Турија",
+   "lat": 41.570278,
+   "lon": 22.663056,
+   "iso2": "MK",
+   "adm": "",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 2,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://mk.wikipedia.org/wiki/%D0%A2%D1%83%D1%80%D0%B8%D1%98%D0%B0_(%D0%B5%D0%B7%D0%B5%D1%80%D0%BE)",
+   "area_km2": 0.16,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q12297071",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q12751073",
+   "name": "Lower Blateštica lake",
+   "name_local": "Долно Блатешко Езеро",
+   "lat": 42.153645,
+   "lon": 21.018648,
+   "iso2": "MK",
+   "adm": "",
+   "types": [
+    "glacial lake"
+   ],
+   "sitelinks": 4,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://mk.wikipedia.org/wiki/%D0%94%D0%BE%D0%BB%D0%BD%D0%BE_%D0%91%D0%BB%D0%B0%D1%82%D0%B5%D1%88%D0%BA%D0%BE_%D0%95%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q12751073",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q12758894",
+   "name": "Скакаличко Езеро",
+   "name_local": "Скакаличко Езеро",
+   "lat": 42.04977,
+   "lon": 20.76183,
+   "iso2": "MK",
+   "adm": "",
+   "types": [
+    "glacial lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/%D0%A1%D0%BA%D0%B0%D0%BA%D0%B0%D0%BB%D0%B8%D1%87%D0%BA%D0%BE%20%D0%95%D0%B7%D0%B5%D1%80%D0%BE.JPG",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://mk.wikipedia.org/wiki/%D0%A1%D0%BA%D0%B0%D0%BA%D0%B0%D0%BB%D0%B8%D1%87%D0%BA%D0%BE_%D0%95%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q12758894",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q12905490",
+   "name": "Vevčani Lake",
+   "name_local": "Вевчанско Eзеро",
+   "lat": 41.243222,
+   "lon": 20.532361,
+   "iso2": "MK",
+   "adm": "",
+   "types": [
+    "glacial lake"
+   ],
+   "sitelinks": 3,
+   "wd_img": "",
+   "commons_cat": "Vevčani Lake",
+   "enwiki": "",
+   "localwiki": "https://mk.wikipedia.org/wiki/%D0%92%D0%B5%D0%B2%D1%87%D0%B0%D0%BD%D1%81%D0%BA%D0%BE_%D0%95%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q12905490",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q12905767",
+   "name": "Karanikola Lake",
+   "name_local": "Голем Ѓол",
+   "lat": 42.0742,
+   "lon": 20.792044,
+   "iso2": "MK",
+   "adm": "",
+   "types": [
+    "glacial lake"
+   ],
+   "sitelinks": 4,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/%D0%9A%D0%B0%D1%80%D0%B0%D0%BD%D0%B8%D0%BA%D0%BE%D0%BB%D0%B8%D1%87%D0%BA%D0%BE%20%D0%95%D0%B7%D0%B5%D1%80%D0%BE.JPG",
+   "commons_cat": "Karanikola Lake",
+   "enwiki": "",
+   "localwiki": "https://mk.wikipedia.org/wiki/%D0%9A%D0%B0%D1%80%D0%B0%D0%BD%D0%B8%D0%BA%D0%BE%D0%BB%D0%B8%D1%87%D0%BA%D0%BE_%D0%95%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q12905767",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q12905814",
+   "name": "Горно Лабунишко Езеро",
+   "name_local": "Горно Лабунишко Езеро",
+   "lat": 41.266667,
+   "lon": 20.518917,
+   "iso2": "MK",
+   "adm": "",
+   "types": [
+    "glacial lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://mk.wikipedia.org/wiki/%D0%93%D0%BE%D1%80%D0%BD%D0%BE_%D0%9B%D0%B0%D0%B1%D1%83%D0%BD%D0%B8%D1%88%D0%BA%D0%BE_%D0%95%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": 285,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q12905814",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q12906324",
+   "name": "Selemli Lake",
+   "name_local": "Селемлиско Езеро",
+   "lat": 41.141944,
+   "lon": 22.613889,
+   "iso2": "MK",
+   "adm": "Bogdanci Municipality",
+   "types": [
+    "lake",
+    "reservoir"
+   ],
+   "sitelinks": 3,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/%D0%92%D0%B8%D0%BA%D0%B8%D0%B5%D0%BA%D1%81%D0%BF%D0%B5%D0%B4%D0%B8%D1%86%D0%B8%D1%98%D0%B0%20%D0%91%D0%BE%D1%98%D0%BC%D0%B8%D1%98%D0%B0%20165.jpg",
+   "commons_cat": "Selemli Lake",
+   "enwiki": "",
+   "localwiki": "https://mk.wikipedia.org/wiki/%D0%A1%D0%B5%D0%BB%D0%B5%D0%BC%D0%BB%D0%B8%D1%81%D0%BA%D0%BE_%D0%95%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": 135,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q12906324",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q12908121",
+   "name": "Лисиче",
+   "name_local": "Лисиче",
+   "lat": 41.6925,
+   "lon": 21.599444,
+   "iso2": "MK",
+   "adm": "Čaška Municipality",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 3,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/%D0%95%D0%B7%D0%B5%D1%80%D0%BE%D1%82%D0%BE%20%D0%9B%D0%B8%D1%81%D0%B8%D1%87%D0%B5.jpg",
+   "commons_cat": "Lake Lisiče",
+   "enwiki": "",
+   "localwiki": "https://mk.wikipedia.org/wiki/%D0%9B%D0%B8%D1%81%D0%B8%D1%87%D0%B5_(%D0%B5%D0%B7%D0%B5%D1%80%D0%BE)",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": 439,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q12908121",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q12908319",
+   "name": "Мал Ѓол",
+   "name_local": "Мал Ѓол",
+   "lat": 42.075156,
+   "lon": 20.787731,
+   "iso2": "MK",
+   "adm": "",
+   "types": [
+    "glacial lake"
+   ],
+   "sitelinks": 3,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Upper%20Karanikola%20lake.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://mk.wikipedia.org/wiki/%D0%9C%D0%B0%D0%BB_%D0%83%D0%BE%D0%BB",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q12908319",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q12908695",
+   "name": "Lake Mladost",
+   "name_local": "Младост",
+   "lat": 41.775408,
+   "lon": 21.758766,
+   "iso2": "MK",
+   "adm": "",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 3,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Veleshko%20Ezero%204.JPG",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://mk.wikipedia.org/wiki/%D0%9C%D0%BB%D0%B0%D0%B4%D0%BE%D1%81%D1%82_(%D0%B5%D0%B7%D0%B5%D1%80%D0%BE)",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q12908695",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q12910406",
+   "name": "Slatino Lake",
+   "name_local": "Слатинско Езеро",
+   "lat": 41.352222,
+   "lon": 20.848333,
+   "iso2": "MK",
+   "adm": "Debarca Municipality",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 3,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/%D0%A1%D0%BB%D0%B0%D1%82%D0%B8%D0%BD%D0%BE%20%D0%B8%20%D0%A1%D0%BB%D0%B0%D1%82%D0%B8%D0%BD%D1%81%D0%BA%D0%BE%20%D0%95%D0%B7%D0%B5%D1%80%D0%BE.jpg",
+   "commons_cat": "Slatino Lake",
+   "enwiki": "",
+   "localwiki": "https://mk.wikipedia.org/wiki/%D0%A1%D0%BB%D0%B0%D1%82%D0%B8%D0%BD%D1%81%D0%BA%D0%BE_%D0%95%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": 0.28,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "North Macedonia"
+   ],
+   "key": "wd:Q12910406",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q12912011",
+   "name": "Crno Ezero",
+   "name_local": "Црно Езеро (Шар Планина)",
+   "lat": 41.926111,
+   "lon": 20.792778,
+   "iso2": "MK",
+   "adm": "",
+   "types": [
+    "glacial lake"
+   ],
+   "sitelinks": 3,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/%D0%A6%D1%80%D0%BD%D0%BE%20%D0%95%D0%B7%D0%B5%D1%80%D0%BE%20%28%D0%A8%D0%B0%D1%80%20%D0%9F%D0%BB%D0%B0%D0%BD%D0%B8%D0%BD%D0%B0%29%2004.jpg",
+   "commons_cat": "Crno Ezero",
+   "enwiki": "",
+   "localwiki": "https://mk.wikipedia.org/wiki/%D0%A6%D1%80%D0%BD%D0%BE_%D0%95%D0%B7%D0%B5%D1%80%D0%BE_(%D0%A8%D0%B0%D1%80_%D0%9F%D0%BB%D0%B0%D0%BD%D0%B8%D0%BD%D0%B0)",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q12912011",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q15466731",
+   "name": "Great Pelister Lake",
+   "name_local": "Големо Пелистерско Езеро",
+   "lat": 40.967778,
+   "lon": 21.204722,
+   "iso2": "MK",
+   "adm": "",
+   "types": [
+    "glacial lake"
+   ],
+   "sitelinks": 3,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Golemo-Ezero-Pelisterski-Oci-MK.JPG",
+   "commons_cat": "Great Pelister Lake",
+   "enwiki": "",
+   "localwiki": "https://mk.wikipedia.org/wiki/%D0%93%D0%BE%D0%BB%D0%B5%D0%BC%D0%BE_%D0%9F%D0%B5%D0%BB%D0%B8%D1%81%D1%82%D0%B5%D1%80%D1%81%D0%BA%D0%BE_%D0%95%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q15466731",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q20565710",
+   "name": "Upper Dobrošte Lake",
+   "name_local": "Горно Доброшко Езеро",
+   "lat": 42.144722,
+   "lon": 21.009444,
+   "iso2": "MK",
+   "adm": "",
+   "types": [
+    "glacial lake"
+   ],
+   "sitelinks": 3,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/%D0%93%D0%BE%D1%80%D0%BD%D0%BE%20%D0%94%D0%BE%D0%B1%D1%80%D0%BE%D1%88%D0%BA%D0%BE%20%D0%95%D0%B7%D0%B5%D1%80%D0%BE.jpg",
+   "commons_cat": "Upper Dobrošte Lake",
+   "enwiki": "",
+   "localwiki": "https://mk.wikipedia.org/wiki/%D0%93%D0%BE%D1%80%D0%BD%D0%BE_%D0%94%D0%BE%D0%B1%D1%80%D0%BE%D1%88%D0%BA%D0%BE_%D0%95%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": 2314,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q20565710",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q20566667",
+   "name": "Lower Dobrošte Lake",
+   "name_local": "Долно Доброшко Езеро",
+   "lat": 42.143889,
+   "lon": 21.012778,
+   "iso2": "MK",
+   "adm": "",
+   "types": [
+    "glacial lake"
+   ],
+   "sitelinks": 3,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/%D0%94%D0%BE%D0%BB%D0%BD%D0%BE%20%D0%94%D0%BE%D0%B1%D1%80%D0%BE%D1%88%D0%BA%D0%BE%20%D0%95%D0%B7%D0%B5%D1%80%D0%BE%20%281%29.JPG",
+   "commons_cat": "Lower Dobrošte Lake",
+   "enwiki": "",
+   "localwiki": "https://mk.wikipedia.org/wiki/%D0%94%D0%BE%D0%BB%D0%BD%D0%BE_%D0%94%D0%BE%D0%B1%D1%80%D0%BE%D1%88%D0%BA%D0%BE_%D0%95%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q20566667",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q20567272",
+   "name": "Lake Mavrovica",
+   "name_local": "Мавровица",
+   "lat": 41.914444,
+   "lon": 21.983056,
+   "iso2": "MK",
+   "adm": "Sveti Nikole Municipality",
+   "types": [
+    "reservoir",
+    "artificial lake"
+   ],
+   "sitelinks": 3,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/%D0%9C%D0%B0%D0%B2%D1%80%D0%BE%D0%B2%D0%B8%D1%86%D0%B0%20%28%D0%B5%D0%B7%D0%B5%D1%80%D0%BE%29%20%2804%29.jpg",
+   "commons_cat": "Lake Mavrovica",
+   "enwiki": "https://en.wikipedia.org/wiki/Mavrovica",
+   "localwiki": "https://mk.wikipedia.org/wiki/%D0%9C%D0%B0%D0%B2%D1%80%D0%BE%D0%B2%D0%B8%D1%86%D0%B0",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q20567272",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q20570010",
+   "name": "Podgorci Lake",
+   "name_local": "Подгоречко Езеро",
+   "lat": 41.258639,
+   "lon": 20.521944,
+   "iso2": "MK",
+   "adm": "",
+   "types": [
+    "glacial lake"
+   ],
+   "sitelinks": 3,
+   "wd_img": "",
+   "commons_cat": "Podgorci Lake",
+   "enwiki": "",
+   "localwiki": "https://mk.wikipedia.org/wiki/%D0%9F%D0%BE%D0%B4%D0%B3%D0%BE%D1%80%D0%B5%D1%87%D0%BA%D0%BE_%D0%95%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q20570010",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q22090986",
+   "name": "Lake Topolnica",
+   "name_local": "Тополничко Езеро",
+   "lat": 41.675,
+   "lon": 22.375,
+   "iso2": "MK",
+   "adm": "Radoviš Municipality",
+   "types": [
+    "reservoir",
+    "tailings"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/%D0%A2%D0%BE%D0%BF%D0%BE%D0%BB%D0%BD%D0%B8%D1%87%D0%BA%D0%BE%20%D0%95%D0%B7%D0%B5%D1%80%D0%BE.jpg",
+   "commons_cat": "Lake Topolnica",
+   "enwiki": "",
+   "localwiki": "https://mk.wikipedia.org/wiki/%D0%A2%D0%BE%D0%BF%D0%BE%D0%BB%D0%BD%D0%B8%D1%87%D0%BA%D0%BE_%D0%95%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": 0.23,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q22090986",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q22253462",
+   "name": "Otošnica Lake",
+   "name_local": "Отошничко Езеро",
+   "lat": 42.211111,
+   "lon": 22.075278,
+   "iso2": "MK",
+   "adm": "Otošnica",
+   "types": [
+    "lake",
+    "reservoir"
+   ],
+   "sitelinks": 3,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/%D0%95%D0%BA%D1%81%D0%BF%D0%B5%D0%B4%D0%B8%D1%86%D0%B8%D1%98%D0%B0%D0%A0%D0%B0%D0%BD%D0%BA%D0%BE%D0%B2%D1%86%D0%B561.jpg",
+   "commons_cat": "Otošnica Lake",
+   "enwiki": "",
+   "localwiki": "https://mk.wikipedia.org/wiki/%D0%9E%D1%82%D0%BE%D1%88%D0%BD%D0%B8%D1%87%D0%BA%D0%BE_%D0%95%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "North Macedonia"
+   ],
+   "key": "wd:Q22253462",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q22810235",
+   "name": "Podles Lake",
+   "name_local": "Подлешко Езеро",
+   "lat": 41.531389,
+   "lon": 21.827222,
+   "iso2": "MK",
+   "adm": "Подлес",
+   "types": [
+    "lake",
+    "reservoir"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/%D0%95%D0%BA%D1%81%D0%BF%D0%B5%D0%B4%D0%B8%D1%86%D0%B8%D1%98%D0%B0%D0%93%D1%80%D0%B0%D0%B4%D1%81%D0%BA%D0%BE43.jpg",
+   "commons_cat": "Podles Lake",
+   "enwiki": "",
+   "localwiki": "https://mk.wikipedia.org/wiki/%D0%9F%D0%BE%D0%B4%D0%BB%D0%B5%D1%88%D0%BA%D0%BE_%D0%95%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "North Macedonia"
+   ],
+   "key": "wd:Q22810235",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q24192538",
+   "name": "Konče Lakes",
+   "name_local": "Конечки Езера",
+   "lat": 41.512778,
+   "lon": 22.391667,
+   "iso2": "MK",
+   "adm": "Konče Municipality",
+   "types": [
+    "lake",
+    "reservoir"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/%D0%95%D0%BA%D1%81%D0%BF%D0%B5%D0%B4%D0%B8%D1%86%D0%B8%D1%98%D0%B0%D0%9B%D0%B0%D0%BA%D0%B0%D0%B2%D0%B8%D1%87%D0%BA%D0%BE%2073%20%28cropped%29.jpg",
+   "commons_cat": "Konče Lakes",
+   "enwiki": "",
+   "localwiki": "https://mk.wikipedia.org/wiki/%D0%9A%D0%BE%D0%BD%D0%B5%D1%87%D0%BA%D0%B8_%D0%95%D0%B7%D0%B5%D1%80%D0%B0",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "North Macedonia"
+   ],
+   "key": "wd:Q24192538",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q25553764",
+   "name": "Мантово",
+   "name_local": "Мантово",
+   "lat": 41.569444,
+   "lon": 22.344167,
+   "iso2": "MK",
+   "adm": "",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 3,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/%D0%95%D0%B7%D0%B5%D1%80%D0%BE%20%D0%9C%D0%B0%D0%BD%D1%82%D0%BE%D0%B2%D0%BE.jpg",
+   "commons_cat": "Mantovo Lake",
+   "enwiki": "",
+   "localwiki": "https://mk.wikipedia.org/wiki/%D0%9C%D0%B0%D0%BD%D1%82%D0%BE%D0%B2%D0%BE",
+   "area_km2": 4.49,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q25553764",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q28170296",
+   "name": "Pišica Lake",
+   "name_local": "Пишичко Езеро",
+   "lat": 41.875556,
+   "lon": 22.2,
+   "iso2": "MK",
+   "adm": "Probištip Municipality",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/%D0%9F%D0%B8%D1%88%D0%B8%D1%87%D0%BA%D0%BE%20%D0%95%D0%B7%D0%B5%D1%80%D0%BE%202.jpg",
+   "commons_cat": "Pišica Lake",
+   "enwiki": "",
+   "localwiki": "https://mk.wikipedia.org/wiki/%D0%9F%D0%B8%D1%88%D0%B8%D1%87%D0%BA%D0%BE_%D0%95%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "North Macedonia"
+   ],
+   "key": "wd:Q28170296",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q31360721",
+   "name": "Требенишко Езеро",
+   "name_local": "Требенишко Езеро",
+   "lat": 41.207931,
+   "lon": 20.768369,
+   "iso2": "MK",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/%D0%A2%D1%80%D0%B5%D0%B1%D0%B5%D0%BD%D0%B8%D1%88%D0%BA%D0%BE%20%D0%95%D0%B7%D0%B5%D1%80%D0%BE%20%28%D0%91%D0%BE%D0%B1%D0%B0%D0%BD%D0%BE%29%2011.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://mk.wikipedia.org/wiki/%D0%A2%D1%80%D0%B5%D0%B1%D0%B5%D0%BD%D0%B8%D1%88%D0%BA%D0%BE_%D0%95%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q31360721",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q41785557",
+   "name": "Samevo Ezero Lake",
+   "name_local": "Самево Езеро",
+   "lat": 41.668889,
+   "lon": 20.559167,
+   "iso2": "MK",
+   "adm": "Mavrovo i Rostuše Municipality",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/%D0%A1%D0%B0%D0%BC%D0%B5%D0%B2%D0%BE%20%D0%95%D0%B7%D0%B5%D1%80%D0%BE%20%28%D0%95%D0%B7%D0%B5%D1%80%D1%87%D0%B5%29%2001.jpg",
+   "commons_cat": "Samevo Ezero Lake",
+   "enwiki": "",
+   "localwiki": "https://mk.wikipedia.org/wiki/%D0%A1%D0%B0%D0%BC%D0%B5%D0%B2%D0%BE_%D0%95%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": 1453,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q41785557",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q50427672",
+   "name": "Moklište Lake",
+   "name_local": "Моклишко Езеро",
+   "lat": 41.391667,
+   "lon": 22.0375,
+   "iso2": "MK",
+   "adm": "Kavadarci Municipality",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/%D0%9C%D0%BE%D0%BA%D0%BB%D0%B8%D1%88%D0%BA%D0%BE%20%D0%95%D0%B7%D0%B5%D1%80%D0%BE%203.jpg",
+   "commons_cat": "Moklište Lake",
+   "enwiki": "",
+   "localwiki": "https://mk.wikipedia.org/wiki/%D0%9C%D0%BE%D0%BA%D0%BB%D0%B8%D1%88%D0%BA%D0%BE_%D0%95%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": 545,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q50427672",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q61613173",
+   "name": "Belovodica Lake",
+   "name_local": "Беловодичко Езеро",
+   "lat": 41.335278,
+   "lon": 21.697222,
+   "iso2": "MK",
+   "adm": "Prilep Municipality",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/%D0%91%D0%B5%D0%BB%D0%BE%D0%B2%D0%BE%D0%B4%D0%B8%D1%87%D0%BA%D0%BE%20%D0%95%D0%B7%D0%B5%D1%80%D0%BE%202.jpg",
+   "commons_cat": "Belovodica Lake",
+   "enwiki": "",
+   "localwiki": "https://mk.wikipedia.org/wiki/%D0%91%D0%B5%D0%BB%D0%BE%D0%B2%D0%BE%D0%B4%D0%B8%D1%87%D0%BA%D0%BE_%D0%95%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "North Macedonia"
+   ],
+   "key": "wd:Q61613173",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q63157998",
+   "name": "Kundino Lake",
+   "name_local": "Кундинско Езеро",
+   "lat": 42.030556,
+   "lon": 22.155,
+   "iso2": "MK",
+   "adm": "Probištip Municipality",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 3,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/%D0%9A%D1%83%D0%BD%D0%B4%D0%B8%D0%BD%D1%81%D0%BA%D0%BE%20%D0%95%D0%B7%D0%B5%D1%80%D0%BE%2005.jpg",
+   "commons_cat": "Kundino Lake",
+   "enwiki": "",
+   "localwiki": "https://mk.wikipedia.org/wiki/%D0%9A%D1%83%D0%BD%D0%B4%D0%B8%D0%BD%D1%81%D0%BA%D0%BE_%D0%95%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": 0.0135,
+   "depth_m": null,
+   "elev_m": 745,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q63157998",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q64518352",
+   "name": "Orlovi Bari",
+   "name_local": "Орлови Бари",
+   "lat": 40.951803,
+   "lon": 21.209514,
+   "iso2": "MK",
+   "adm": "Bitola Municipality",
+   "types": [
+    "lake",
+    "glacial lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/%D0%9E%D1%80%D0%BB%D0%BE%D0%B2%D0%B8%20%D0%91%D0%B0%D1%80%D0%B8%2004.jpg",
+   "commons_cat": "Orlovi Bari",
+   "enwiki": "",
+   "localwiki": "https://mk.wikipedia.org/wiki/%D0%9E%D1%80%D0%BB%D0%BE%D0%B2%D0%B8_%D0%91%D0%B0%D1%80%D0%B8",
+   "area_km2": 0.0029,
+   "depth_m": null,
+   "elev_m": 2038,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q64518352",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q64547779",
+   "name": "Dimitrovo Lake",
+   "name_local": "Димитрово Езеро",
+   "lat": 40.972453,
+   "lon": 21.213122,
+   "iso2": "MK",
+   "adm": "Bitola Municipality",
+   "types": [
+    "lake",
+    "glacial lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/%D0%94%D0%B8%D0%BC%D0%B8%D1%82%D1%80%D0%BE%D0%B2%D0%BE%20%D0%95%D0%B7%D0%B5%D1%80%D0%BE%20%28%D0%9F%D0%B5%D0%BB%D0%B8%D1%81%D1%82%D0%B5%D1%80%29%2012.jpg",
+   "commons_cat": "Dimitrovo Lake",
+   "enwiki": "",
+   "localwiki": "https://mk.wikipedia.org/wiki/%D0%94%D0%B8%D0%BC%D0%B8%D1%82%D1%80%D0%BE%D0%B2%D0%BE_%D0%95%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": 0.0008,
+   "depth_m": null,
+   "elev_m": 2100,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q64547779",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q156258",
+   "name": "Lake Ohrid",
+   "name_local": "Охридско Езеро",
+   "lat": 41.033333,
+   "lon": 20.716667,
+   "iso2": "MK",
+   "adm": "",
+   "types": [
+    "lake",
+    "ancient lake"
+   ],
+   "sitelinks": 62,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Lake%20Ohrid%2C%20Macedonia-Albania%20viewed%20from%20a%20NASA%20satellite.jpg",
+   "commons_cat": "Lake Ohrid",
+   "enwiki": "https://en.wikipedia.org/wiki/Lake_Ohrid",
+   "localwiki": "https://mk.wikipedia.org/wiki/%D0%9E%D1%85%D1%80%D0%B8%D0%B4%D1%81%D0%BA%D0%BE_%D0%95%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": 349.0,
+   "depth_m": 288.7,
+   "elev_m": 695,
+   "protected": [],
+   "part_of": [
+    "Natural and Cultural Heritage of the Ohrid region"
+   ],
+   "basin_countries": [
+    "North Macedonia",
+    "Albania"
+   ],
+   "key": "wd:Q156258",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "seed": {
+    "swim": "yes",
+    "kind": "lake",
+    "why": "brief",
+    "note": "UNESCO, one of the oldest lakes on earth, beaches and boardwalks",
+    "name": "Lake Ohrid"
+   }
+  },
+  {
+   "wd": "Q158077",
+   "name": "Dojran Lake",
+   "name_local": "Дојранско Езеро",
+   "lat": 41.216667,
+   "lon": 22.75,
+   "iso2": "MK",
+   "adm": "Kilkis Municipality",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 44,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Dojran-Lake-MACEDONIA.JPG",
+   "commons_cat": "Lake Dojran",
+   "enwiki": "https://en.wikipedia.org/wiki/Doiran_Lake",
+   "localwiki": "https://mk.wikipedia.org/wiki/%D0%94%D0%BE%D1%98%D1%80%D0%B0%D0%BD%D1%81%D0%BA%D0%BE_%D0%95%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": 43.1,
+   "depth_m": 10.0,
+   "elev_m": 148,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Greece"
+   ],
+   "key": "wd:Q158077",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q204392",
+   "name": "Lake Prespa",
+   "name_local": "Преспанско Езеро",
+   "lat": 40.9,
+   "lon": 21.05,
+   "iso2": "MK",
+   "adm": "Pustec Municipality",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 59,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Lake%20Prespa%20Albania.jpg",
+   "commons_cat": "Lake Prespa",
+   "enwiki": "https://en.wikipedia.org/wiki/Lake_Prespa",
+   "localwiki": "https://mk.wikipedia.org/wiki/%D0%9F%D1%80%D0%B5%D1%81%D0%BF%D0%B0%D0%BD%D1%81%D0%BA%D0%BE_%D0%95%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": 273.0,
+   "depth_m": 54.0,
+   "elev_m": 853,
+   "protected": [
+    "Albanian Prespa Lakes"
+   ],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q204392",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q259515",
+   "name": "Lake Matka",
+   "name_local": "Матка",
+   "lat": 41.952238,
+   "lon": 21.298778,
+   "iso2": "MK",
+   "adm": "Saraj Municipality",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 12,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Lake%20Matka%202.jpg",
+   "commons_cat": "Lake Matka",
+   "enwiki": "https://en.wikipedia.org/wiki/Matka_(lake)",
+   "localwiki": "https://mk.wikipedia.org/wiki/%D0%9C%D0%B0%D1%82%D0%BA%D0%B0_(%D0%B5%D0%B7%D0%B5%D1%80%D0%BE)",
+   "area_km2": 50.0,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q259515",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "seed": {
+    "swim": "limited",
+    "kind": "reservoir",
+    "why": "brief",
+    "note": "Skopje's canyon reservoir, kayaking and the cave",
+    "name": "Matka Canyon"
+   }
+  },
+  {
+   "wd": "Q1181386",
+   "name": "Debar Lake",
+   "name_local": "Дебарско Езеро",
+   "lat": 41.483333,
+   "lon": 20.516667,
+   "iso2": "MK",
+   "adm": "Centar Župa Municipality",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 19,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/%D0%94%D0%B5%D0%B1%D0%B0%D1%80%D1%81%D0%BA%D0%BE%20%D0%95%D0%B7%D0%B5%D1%80%D0%BE%204.jpg",
+   "commons_cat": "Debar Lake",
+   "enwiki": "https://en.wikipedia.org/wiki/Debar_Lake",
+   "localwiki": "https://mk.wikipedia.org/wiki/%D0%94%D0%B5%D0%B1%D0%B0%D1%80%D1%81%D0%BA%D0%BE_%D0%95%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": 13.2,
+   "depth_m": null,
+   "elev_m": 580,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q1181386",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q1280860",
+   "name": "Kozjak Lake",
+   "name_local": "Козјак",
+   "lat": 41.809444,
+   "lon": 21.163889,
+   "iso2": "MK",
+   "adm": "",
+   "types": [
+    "lake",
+    "reservoir"
+   ],
+   "sitelinks": 9,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Kozyak-ot-foynik.jpg",
+   "commons_cat": "Kozjak Lake",
+   "enwiki": "",
+   "localwiki": "https://mk.wikipedia.org/wiki/%D0%9A%D0%BE%D0%B7%D1%98%D0%B0%D0%BA_(%D0%B5%D0%B7%D0%B5%D1%80%D0%BE)",
+   "area_km2": 13.5,
+   "depth_m": 135.0,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q1280860",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q1531789",
+   "name": "Lake Globočica",
+   "name_local": "Глобочица",
+   "lat": 41.336944,
+   "lon": 20.634167,
+   "iso2": "MK",
+   "adm": "Struga Municipality",
+   "types": [
+    "lake",
+    "reservoir"
+   ],
+   "sitelinks": 6,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/%D0%93%D0%BB%D0%BE%D0%B1%D0%BE%D1%87%D0%B8%D1%86%D0%B0%20%28%D0%B5%D0%B7%D0%B5%D1%80%D0%BE%29.JPG",
+   "commons_cat": "Lake Globočica",
+   "enwiki": "",
+   "localwiki": "https://mk.wikipedia.org/wiki/%D0%93%D0%BB%D0%BE%D0%B1%D0%BE%D1%87%D0%B8%D1%86%D0%B0_(%D0%B5%D0%B7%D0%B5%D1%80%D0%BE)",
+   "area_km2": 2.69,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "North Macedonia"
+   ],
+   "key": "wd:Q1531789",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q1772988",
+   "name": "Lake Streževo",
+   "name_local": "Стрежевско Езеро",
+   "lat": 41.145,
+   "lon": 21.198333,
+   "iso2": "MK",
+   "adm": "Bitola Municipality",
+   "types": [
+    "lake",
+    "reservoir"
+   ],
+   "sitelinks": 6,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/%D0%92%D0%B5%D0%BB%D0%BE%D0%B5%D0%BA%D1%81%D0%BF%D0%B5%D0%B4%D0%B8%D1%86%D0%B8%D1%98%D0%B0%20%D0%83%D0%B0%D0%B2%D0%B0%D1%82-%D0%9A%D0%BE%D0%BB%2004.jpg",
+   "commons_cat": "Lake Streževo",
+   "enwiki": "",
+   "localwiki": "https://mk.wikipedia.org/wiki/%D0%A1%D1%82%D1%80%D0%B5%D0%B6%D0%B5%D0%B2%D1%81%D0%BA%D0%BE_%D0%95%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": 7.5,
+   "depth_m": null,
+   "elev_m": 726,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "North Macedonia"
+   ],
+   "key": "wd:Q1772988",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q1785612",
+   "name": "Mavrovo Lake",
+   "name_local": "Мавровско Езеро",
+   "lat": 41.683333,
+   "lon": 20.75,
+   "iso2": "MK",
+   "adm": "Mavrovo i Rostuše Municipality",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 24,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/LakeMavrovo.jpg",
+   "commons_cat": "Mavrovo Lake",
+   "enwiki": "https://en.wikipedia.org/wiki/Mavrovo_Lake",
+   "localwiki": "https://mk.wikipedia.org/wiki/%D0%9C%D0%B0%D0%B2%D1%80%D0%BE%D0%B2%D1%81%D0%BA%D0%BE_%D0%95%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": 10.0,
+   "depth_m": 50.0,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "North Macedonia"
+   ],
+   "key": "wd:Q1785612",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "seed": {
+    "swim": "limited",
+    "kind": "reservoir",
+    "why": "editorial",
+    "note": "the half sunken church of St Nicholas, a national park",
+    "name": "Mavrovo Lake"
+   }
+  },
+  {
+   "wd": "Q3086506",
+   "name": "Tikveš Lake",
+   "name_local": "Тиквешко Езеро",
+   "lat": 41.3474,
+   "lon": 21.9661,
+   "iso2": "MK",
+   "adm": "Kavadarci Municipality",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 8,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Lake%20tikves%20sunset.JPG",
+   "commons_cat": "Tikveš Lake",
+   "enwiki": "",
+   "localwiki": "https://mk.wikipedia.org/wiki/%D0%A2%D0%B8%D0%BA%D0%B2%D0%B5%D1%88%D0%BA%D0%BE_%D0%95%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": null,
+   "depth_m": 100.0,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q3086506",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q3089331",
+   "name": "Berovo Lake",
+   "name_local": "Беровско Езеро",
+   "lat": 41.669,
+   "lon": 22.906,
+   "iso2": "MK",
+   "adm": "",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 12,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Berovo%20Lake2.jpg",
+   "commons_cat": "Berovo Lake",
+   "enwiki": "https://en.wikipedia.org/wiki/Berovo_Lake",
+   "localwiki": "https://mk.wikipedia.org/wiki/%D0%91%D0%B5%D1%80%D0%BE%D0%B2%D1%81%D0%BA%D0%BE_%D0%95%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": 0.57,
+   "depth_m": null,
+   "elev_m": 1000,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "North Macedonia"
+   ],
+   "key": "wd:Q3089331",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q3134325",
+   "name": "Липковско Езеро",
+   "name_local": "Липковско Езеро",
+   "lat": 42.1704,
+   "lon": 21.5704,
+   "iso2": "MK",
+   "adm": "",
+   "types": [
+    "lake",
+    "reservoir"
+   ],
+   "sitelinks": 6,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://mk.wikipedia.org/wiki/%D0%9B%D0%B8%D0%BF%D0%BA%D0%BE%D0%B2%D1%81%D0%BA%D0%BE_%D0%95%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": 478,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "North Macedonia"
+   ],
+   "key": "wd:Q3134325",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q3215242",
+   "name": "Lake Treska",
+   "name_local": "Треска (езеро)",
+   "lat": 41.9836,
+   "lon": 21.3128,
+   "iso2": "MK",
+   "adm": "Saraj Municipality",
+   "types": [
+    "lake",
+    "reservoir"
+   ],
+   "sitelinks": 3,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Saraj%20swimming%20pool.jpg",
+   "commons_cat": "Lake Treska",
+   "enwiki": "",
+   "localwiki": "https://mk.wikipedia.org/wiki/%D0%A2%D1%80%D0%B5%D1%81%D0%BA%D0%B0_(%D0%B5%D0%B7%D0%B5%D1%80%D0%BE)",
+   "area_km2": 0.136,
+   "depth_m": 3.0,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q3215242",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q3215447",
+   "name": "Глажња (езеро)",
+   "name_local": "Глажња (езеро)",
+   "lat": 42.1965,
+   "lon": 21.5457,
+   "iso2": "MK",
+   "adm": "",
+   "types": [
+    "lake",
+    "reservoir"
+   ],
+   "sitelinks": 4,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://mk.wikipedia.org/wiki/%D0%93%D0%BB%D0%B0%D0%B6%D1%9A%D0%B0_(%D0%B5%D0%B7%D0%B5%D1%80%D0%BE)",
+   "area_km2": 0.965,
+   "depth_m": null,
+   "elev_m": 588,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "North Macedonia"
+   ],
+   "key": "wd:Q3215447",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q3215463",
+   "name": "Kalimanci Lake",
+   "name_local": "Калиманци",
+   "lat": 41.993333,
+   "lon": 22.602778,
+   "iso2": "MK",
+   "adm": "Vinica Municipality",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 9,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Kalimanci.jpg",
+   "commons_cat": "Kalimanci Lake",
+   "enwiki": "",
+   "localwiki": "https://mk.wikipedia.org/wiki/%D0%9A%D0%B0%D0%BB%D0%B8%D0%BC%D0%B0%D0%BD%D1%86%D0%B8_(%D0%B5%D0%B7%D0%B5%D1%80%D0%BE)",
+   "area_km2": 4.23,
+   "depth_m": 80.0,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q3215463",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q3398697",
+   "name": "Pelister's Eyes",
+   "name_local": "Пелистерски Очи",
+   "lat": 40.9678,
+   "lon": 21.2044,
+   "iso2": "MK",
+   "adm": "",
+   "types": [
+    "glacial lake"
+   ],
+   "sitelinks": 7,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Golemo%20Ezero.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://mk.wikipedia.org/wiki/%D0%9F%D0%B5%D0%BB%D0%B8%D1%81%D1%82%D0%B5%D1%80%D1%81%D0%BA%D0%B8_%D0%9E%D1%87%D0%B8",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q3398697",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q11058229",
+   "name": "Водоча",
+   "name_local": "Водоча",
+   "lat": 41.416944,
+   "lon": 22.556389,
+   "iso2": "MK",
+   "adm": "Strumica Municipality",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Vodo%C4%8Dko.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://mk.wikipedia.org/wiki/%D0%92%D0%BE%D0%B4%D0%BE%D1%87%D0%B0_(%D0%B5%D0%B7%D0%B5%D1%80%D0%BE)",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q11058229",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q85987495",
+   "name": "Малокорапско Езеро",
+   "name_local": "Малокорапско Езеро",
+   "lat": 41.748427,
+   "lon": 20.521017,
+   "iso2": "MK",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/%D0%9C%D0%B0%D0%BB%20%D0%9A%D0%BE%D1%80%D0%B0%D0%B1%2001.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://mk.wikipedia.org/wiki/%D0%9C%D0%B0%D0%BB%D0%BE%D0%BA%D0%BE%D1%80%D0%B0%D0%BF%D1%81%D0%BA%D0%BE_%D0%95%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": 2310,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q85987495",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q104868499",
+   "name": "Lake Oslomej",
+   "name_local": "Осломејско Езеро",
+   "lat": 41.5525,
+   "lon": 21.0075,
+   "iso2": "MK",
+   "adm": "Kičevo Municipality",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/%D0%9E%D1%81%D0%BB%D0%BE%D0%BC%D0%B5%D1%98%D1%81%D0%BA%D0%BE%20%D0%95%D0%B7%D0%B5%D1%80%D0%BE.jpg",
+   "commons_cat": "Lake Oslomej",
+   "enwiki": "",
+   "localwiki": "https://mk.wikipedia.org/wiki/%D0%9E%D1%81%D0%BB%D0%BE%D0%BC%D0%B5%D1%98%D1%81%D0%BA%D0%BE_%D0%95%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q104868499",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q108536656",
+   "name": "Lake Dren",
+   "name_local": "Дренско Езеро",
+   "lat": 41.360833,
+   "lon": 22.255556,
+   "iso2": "MK",
+   "adm": "Demir Kapija Municipality",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/%D0%9F%D0%B0%D0%BD%D0%BE%D1%80%D0%B0%D0%BC%D0%B0%20%D0%BD%D0%B0%20%D0%94%D1%80%D0%B5%D0%BD%D1%81%D0%BA%D0%BE%20%D0%95%D0%B7%D0%B5%D1%80%D0%BE.jpg",
+   "commons_cat": "Lake Dren",
+   "enwiki": "",
+   "localwiki": "https://mk.wikipedia.org/wiki/%D0%94%D1%80%D0%B5%D0%BD%D1%81%D0%BA%D0%BE_%D0%95%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q108536656",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q108799482",
+   "name": "Lake Gabrovo",
+   "name_local": "Габрешко Езеро",
+   "lat": 41.268056,
+   "lon": 22.411667,
+   "iso2": "MK",
+   "adm": "Gevgelija Municipality",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/%D0%93%D0%B0%D0%B1%D1%80%D0%B5%D1%88%D0%BA%D0%BE%20%D0%95%D0%B7%D0%B5%D1%80%D0%BE.jpg",
+   "commons_cat": "Lake Gabrovo",
+   "enwiki": "",
+   "localwiki": "https://mk.wikipedia.org/wiki/%D0%93%D0%B0%D0%B1%D1%80%D0%B5%D1%88%D0%BA%D0%BE_%D0%95%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q108799482",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q108847261",
+   "name": "Lake Miravci",
+   "name_local": "Миравци",
+   "lat": 41.312778,
+   "lon": 22.404444,
+   "iso2": "MK",
+   "adm": "Gevgelija Municipality",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/%D0%95%D0%B7%D0%B5%D1%80%D0%BE%20%D0%9C%D0%B8%D1%80%D0%B0%D0%B2%D1%86%D0%B8%202.jpg",
+   "commons_cat": "Lake Miravci",
+   "enwiki": "",
+   "localwiki": "https://mk.wikipedia.org/wiki/%D0%9C%D0%B8%D1%80%D0%B0%D0%B2%D1%86%D0%B8_(%D0%B5%D0%B7%D0%B5%D1%80%D0%BE)",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q108847261",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q109289693",
+   "name": "Lake Lipa",
+   "name_local": "Липово Езеро",
+   "lat": 41.476944,
+   "lon": 22.245278,
+   "iso2": "MK",
+   "adm": "Negotino Municipality",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/%D0%9B%D0%B8%D0%BF%D0%BE%D0%B2%D0%BE%20%D0%95%D0%B7%D0%B5%D1%80%D0%BE%202.jpg",
+   "commons_cat": "Lake Lipa",
+   "enwiki": "",
+   "localwiki": "https://mk.wikipedia.org/wiki/%D0%9B%D0%B8%D0%BF%D0%BE%D0%B2%D0%BE_%D0%95%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q109289693",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q109643997",
+   "name": "Lake Rapeš",
+   "name_local": "Рапешко Езеро",
+   "lat": 41.112444,
+   "lon": 21.6435,
+   "iso2": "MK",
+   "adm": "Novaci Municipality",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/%D0%A0%D0%B0%D0%BF%D0%B5%D1%88%D0%BA%D0%BE%20%D0%95%D0%B7%D0%B5%D1%80%D0%BE.jpg",
+   "commons_cat": "Lake Rapeš",
+   "enwiki": "",
+   "localwiki": "https://mk.wikipedia.org/wiki/%D0%A0%D0%B0%D0%BF%D0%B5%D1%88%D0%BA%D0%BE_%D0%95%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q109643997",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q109744175",
+   "name": "Lake Meglenci",
+   "name_local": "Мегленско Езеро",
+   "lat": 41.078806,
+   "lon": 21.520667,
+   "iso2": "MK",
+   "adm": "Novaci Municipality",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/%D0%9C%D0%B5%D0%B3%D0%BB%D0%B5%D0%BD%D1%81%D0%BA%D0%BE%20%D0%95%D0%B7%D0%B5%D1%80%D0%BE%202.jpg",
+   "commons_cat": "Lake Meglenci",
+   "enwiki": "",
+   "localwiki": "https://mk.wikipedia.org/wiki/%D0%9C%D0%B5%D0%B3%D0%BB%D0%B5%D0%BD%D1%81%D0%BA%D0%BE_%D0%95%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q109744175",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q109744622",
+   "name": "Lake Suvodol",
+   "name_local": "Суводолско Езеро",
+   "lat": 41.0675,
+   "lon": 21.545833,
+   "iso2": "MK",
+   "adm": "Kočani Municipality",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/%D0%A1%D1%83%D0%B2%D0%BE%D0%B4%D0%BE%D0%BB%D1%81%D0%BA%D0%BE%20%D0%95%D0%B7%D0%B5%D1%80%D0%BE%203.jpg",
+   "commons_cat": "Lake Suvodol",
+   "enwiki": "",
+   "localwiki": "https://mk.wikipedia.org/wiki/%D0%A1%D1%83%D0%B2%D0%BE%D0%B4%D0%BE%D0%BB%D1%81%D0%BA%D0%BE_%D0%95%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q109744622",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q110089212",
+   "name": "Borino Lakes",
+   "name_local": "Борински Езера",
+   "lat": 41.439722,
+   "lon": 21.281944,
+   "iso2": "MK",
+   "adm": "Kruševo Municipality",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/%D0%91%D0%BE%D1%80%D0%B8%D0%BD%D1%81%D0%BA%D0%B8%20%D0%95%D0%B7%D0%B5%D1%80%D0%B0.jpg",
+   "commons_cat": "Borino Lakes",
+   "enwiki": "",
+   "localwiki": "https://mk.wikipedia.org/wiki/%D0%91%D0%BE%D1%80%D0%B8%D0%BD%D1%81%D0%BA%D0%B8_%D0%95%D0%B7%D0%B5%D1%80%D0%B0",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q110089212",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q111748945",
+   "name": "Lake Bučim",
+   "name_local": "Бучимско Езеро",
+   "lat": 41.648972,
+   "lon": 22.341528,
+   "iso2": "MK",
+   "adm": "Radoviš Municipality",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/%D0%91%D1%83%D1%87%D0%B8%D0%BC%D1%81%D0%BA%D0%BE%20%D0%95%D0%B7%D0%B5%D1%80%D0%BE%202.jpg",
+   "commons_cat": "Lake Bučim",
+   "enwiki": "",
+   "localwiki": "https://mk.wikipedia.org/wiki/%D0%91%D1%83%D1%87%D0%B8%D0%BC%D1%81%D0%BA%D0%BE_%D0%95%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q111748945",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q114964741",
+   "name": "Кнежевско Езеро",
+   "name_local": "Кнежевско Езеро",
+   "lat": 42.115278,
+   "lon": 22.316389,
+   "iso2": "MK",
+   "adm": "Kratovo Municipality",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/%D0%9F%D0%BE%D0%B3%D0%BB%D0%B5%D0%B4%20%D0%BD%D0%B0%20%D0%B5%D0%B7%D0%B5%D1%80%D0%BE%D1%82%D0%BE%20%D0%9A%D0%BD%D0%B5%D0%B6%D0%B5%D0%B2%D0%BE%202.jpg",
+   "commons_cat": "Lake Kneževo",
+   "enwiki": "",
+   "localwiki": "https://mk.wikipedia.org/wiki/%D0%9A%D0%BD%D0%B5%D0%B6%D0%B5%D0%B2%D1%81%D0%BA%D0%BE_%D0%95%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": 0.8,
+   "depth_m": null,
+   "elev_m": 1020,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q114964741",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q125258847",
+   "name": "Катунишко Езеро",
+   "name_local": "Катунишко Езеро",
+   "lat": 41.391944,
+   "lon": 22.037806,
+   "iso2": "MK",
+   "adm": "Kavadarci Municipality",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/%D0%9A%D0%B0%D1%82%D1%83%D0%BD%D0%B8%D1%88%D0%BA%D0%BE%20%D0%95%D0%B7%D0%B5%D1%80%D0%BE%202.jpg",
+   "commons_cat": "Katunište Lake",
+   "enwiki": "",
+   "localwiki": "https://mk.wikipedia.org/wiki/%D0%9A%D0%B0%D1%82%D1%83%D0%BD%D0%B8%D1%88%D0%BA%D0%BE_%D0%95%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q125258847",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q125547270",
+   "name": "Ѓопчелско Езеро",
+   "name_local": "Ѓопчелско Езеро",
+   "lat": 41.2525,
+   "lon": 22.661111,
+   "iso2": "MK",
+   "adm": "Dojran Municipality",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/%D0%83%D0%BE%D0%BF%D1%87%D0%B5%D0%BB%D1%81%D0%BA%D0%BE%20%D0%95%D0%B7%D0%B5%D1%80%D0%BE.jpg",
+   "commons_cat": "Lake Ǵopčeli",
+   "enwiki": "",
+   "localwiki": "https://mk.wikipedia.org/wiki/%D0%83%D0%BE%D0%BF%D1%87%D0%B5%D0%BB%D1%81%D0%BA%D0%BE_%D0%95%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q125547270",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q125886422",
+   "name": "Големо Црничанско Езеро",
+   "name_local": "Големо Црничанско Езеро",
+   "lat": 41.221389,
+   "lon": 22.678056,
+   "iso2": "MK",
+   "adm": "Dojran Municipality",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/%D0%93%D0%BE%D0%BB%D0%B5%D0%BC%D0%BE%20%D0%A6%D1%80%D0%BD%D0%B8%D1%87%D0%B0%D0%BD%D1%81%D0%BA%D0%BE%20%D0%95%D0%B7%D0%B5%D1%80%D0%BE.jpg",
+   "commons_cat": "Crničani Lakes",
+   "enwiki": "",
+   "localwiki": "https://mk.wikipedia.org/wiki/%D0%93%D0%BE%D0%BB%D0%B5%D0%BC%D0%BE_%D0%A6%D1%80%D0%BD%D0%B8%D1%87%D0%B0%D0%BD%D1%81%D0%BA%D0%BE_%D0%95%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q125886422",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q125886990",
+   "name": "Асанлиско Езеро",
+   "name_local": "Асанлиско Езеро",
+   "lat": 41.248056,
+   "lon": 22.690278,
+   "iso2": "MK",
+   "adm": "Dojran Municipality",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/%D0%90%D1%81%D0%B0%D0%BD%D0%BB%D0%B8%D1%81%D0%BA%D0%BE%20%D0%95%D0%B7%D0%B5%D1%80%D0%BE%202.jpg",
+   "commons_cat": "Asanli Lakes",
+   "enwiki": "",
+   "localwiki": "https://mk.wikipedia.org/wiki/%D0%90%D1%81%D0%B0%D0%BD%D0%BB%D0%B8%D1%81%D0%BA%D0%BE_%D0%95%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q125886990",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q125952151",
+   "name": "Чаушлиско Езеро",
+   "name_local": "Чаушлиско Езеро",
+   "lat": 41.265278,
+   "lon": 22.659444,
+   "iso2": "MK",
+   "adm": "Dojran Municipality",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/%D0%A7%D0%B0%D1%83%D1%88%D0%BB%D0%B8%D1%81%D0%BA%D0%BE%20%D0%95%D0%B7%D0%B5%D1%80%D0%BE.jpg",
+   "commons_cat": "Čaušli Lakes",
+   "enwiki": "",
+   "localwiki": "https://mk.wikipedia.org/wiki/%D0%A7%D0%B0%D1%83%D1%88%D0%BB%D0%B8%D1%81%D0%BA%D0%BE_%D0%95%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q125952151",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q137710987",
+   "name": "Пештанско Езеро",
+   "name_local": "Пештанско Езеро",
+   "lat": 41.271667,
+   "lon": 21.670556,
+   "iso2": "MK",
+   "adm": "Prilep Municipality",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/%D0%9F%D0%B5%D1%88%D1%82%D0%B0%D0%BD%D1%81%D0%BA%D0%BE%20%D0%95%D0%B7%D0%B5%D1%80%D0%BE.jpg",
+   "commons_cat": "Peštani Lake",
+   "enwiki": "",
+   "localwiki": "https://mk.wikipedia.org/wiki/%D0%9F%D0%B5%D1%88%D1%82%D0%B0%D0%BD%D1%81%D0%BA%D0%BE_%D0%95%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q137710987",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q137757769",
+   "name": "Писокалско Езеро",
+   "name_local": "Писокалско Езеро",
+   "lat": 41.248333,
+   "lon": 21.611944,
+   "iso2": "MK",
+   "adm": "Prilep Municipality",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/%D0%9F%D0%B8%D1%81%D0%BE%D0%BA%D0%B0%D0%BB%D1%81%D0%BA%D0%BE%20%D0%95%D0%B7%D0%B5%D1%80%D0%BE.jpg",
+   "commons_cat": "Pisokal Lake",
+   "enwiki": "",
+   "localwiki": "https://mk.wikipedia.org/wiki/%D0%9F%D0%B8%D1%81%D0%BE%D0%BA%D0%B0%D0%BB%D1%81%D0%BA%D0%BE_%D0%95%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q137757769",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q137840806",
+   "name": "Коњаревско Езеро",
+   "name_local": "Коњаревско Езеро",
+   "lat": 41.393528,
+   "lon": 22.955417,
+   "iso2": "MK",
+   "adm": "Novo Selo Municipality",
+   "types": [
+    "oxbow lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/%D0%9C%D1%80%D1%82%D0%B2%D0%B8%D1%86%D0%B0%20%D0%B4%D0%BE%D0%BB%D0%B6%20%D0%A1%D1%82%D1%80%D1%83%D0%BC%D0%B8%D1%86%D0%B0%20%D0%BA%D0%B0%D1%98%20%D0%9D%D0%BE%D0%B2%D0%BE%20%D0%9A%D0%BE%D1%9A%D0%B0%D1%80%D0%B5%D0%B2%D0%BE%202.jpg",
+   "commons_cat": "Novo Konjarevo Lake",
+   "enwiki": "",
+   "localwiki": "https://mk.wikipedia.org/wiki/%D0%9A%D0%BE%D1%9A%D0%B0%D1%80%D0%B5%D0%B2%D1%81%D0%BA%D0%BE_%D0%95%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q137840806",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q137847626",
+   "name": "Новоселско Езеро",
+   "name_local": "Новоселско Езеро",
+   "lat": 41.423611,
+   "lon": 22.887778,
+   "iso2": "MK",
+   "adm": "Novo Selo Municipality",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/%D0%9D%D0%BE%D0%B2%D0%BE%D1%81%D0%B5%D0%BB%D1%81%D0%BA%D0%BE%20%D0%95%D0%B7%D0%B5%D1%80%D0%BE.jpg",
+   "commons_cat": "Novo Selo Lake",
+   "enwiki": "",
+   "localwiki": "https://mk.wikipedia.org/wiki/%D0%9D%D0%BE%D0%B2%D0%BE%D1%81%D0%B5%D0%BB%D1%81%D0%BA%D0%BE_%D0%95%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q137847626",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q138763353",
+   "name": "Големо Братиндолско Езеро",
+   "name_local": "Големо Братиндолско Езеро",
+   "lat": 41.064722,
+   "lon": 21.2425,
+   "iso2": "MK",
+   "adm": "Bitola Municipality",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/%D0%93%D0%BE%D0%BB%D0%B5%D0%BC%D0%BE%20%D0%91%D1%80%D0%B0%D1%82%D0%B8%D0%BD%D0%B4%D0%BE%D0%BB%D1%81%D0%BA%D0%BE%20%D0%95%D0%B7%D0%B5%D1%80%D0%BE.jpg",
+   "commons_cat": "Bratindol Lakes",
+   "enwiki": "",
+   "localwiki": "https://mk.wikipedia.org/wiki/%D0%93%D0%BE%D0%BB%D0%B5%D0%BC%D0%BE_%D0%91%D1%80%D0%B0%D1%82%D0%B8%D0%BD%D0%B4%D0%BE%D0%BB%D1%81%D0%BA%D0%BE_%D0%95%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q138763353",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q139969139",
+   "name": "Ротинско Езеро",
+   "name_local": "Ротинско Езеро",
+   "lat": 41.053889,
+   "lon": 21.205278,
+   "iso2": "MK",
+   "adm": "Bitola Municipality",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/%D0%A0%D0%BE%D1%82%D0%B8%D0%BD%D1%81%D0%BA%D0%BE%20%D0%95%D0%B7%D0%B5%D1%80%D0%BE%202.jpg",
+   "commons_cat": "Rotino Lake",
+   "enwiki": "",
+   "localwiki": "https://mk.wikipedia.org/wiki/%D0%A0%D0%BE%D1%82%D0%B8%D0%BD%D1%81%D0%BA%D0%BE_%D0%95%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q139969139",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q20932221",
+   "name": "Калиманско Езеро",
+   "name_local": "Калиманско Езеро",
+   "lat": 41.994444,
+   "lon": 22.605833,
+   "iso2": "MK",
+   "adm": "North Macedonia",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": 516,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q20932221",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q20935877",
+   "name": "Дебарско Езеро",
+   "name_local": "Дебарско Езеро",
+   "lat": 41.483889,
+   "lon": 20.517222,
+   "iso2": "MK",
+   "adm": "North Macedonia",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": 570,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q20935877",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q20937035",
+   "name": "Езеро Козјак",
+   "name_local": "Езеро Козјак",
+   "lat": 41.7725,
+   "lon": 21.158611,
+   "iso2": "MK",
+   "adm": "North Macedonia",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": 409,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q20937035",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q12908352",
+   "name": "Мало Салаковско Езеро",
+   "name_local": "Мало Салаковско Езеро",
+   "lat": 41.757722,
+   "lon": 21.365056,
+   "iso2": "MK",
+   "adm": "",
+   "types": [
+    "glacial lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/%D0%9C%D0%B0%D0%BB%D0%BE%20%D0%A1%D0%B0%D0%BB%D0%B0%D0%BA%D0%BE%D0%B2%D1%81%D0%BA%D0%BE%20%D0%95%D0%B7%D0%B5%D1%80%D0%BE%2002.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://mk.wikipedia.org/wiki/%D0%9C%D0%B0%D0%BB%D0%BE_%D0%A1%D0%B0%D0%BB%D0%B0%D0%BA%D0%BE%D0%B2%D1%81%D0%BA%D0%BE_%D0%95%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q12908352",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q12910139",
+   "name": "Салаковски Езера",
+   "name_local": "Салаковски Езера",
+   "lat": 41.757641,
+   "lon": 21.364401,
+   "iso2": "MK",
+   "adm": "",
+   "types": [
+    "glacial lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/%D0%92%D0%B5%D0%BB%D0%BE%D0%B5%D0%BA%D1%81%D0%BF%D0%B5%D0%B4%D0%B8%D1%86%D0%B8%D0%B8%202017%2052.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://mk.wikipedia.org/wiki/%D0%A1%D0%B0%D0%BB%D0%B0%D0%BA%D0%BE%D0%B2%D1%81%D0%BA%D0%B8_%D0%95%D0%B7%D0%B5%D1%80%D0%B0",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": 2178,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q12910139",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q12910772",
+   "name": "Струговско Езеро",
+   "name_local": "Струговско Езеро",
+   "lat": 41.211944,
+   "lon": 21.188333,
+   "iso2": "MK",
+   "adm": "",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 1,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Ezero%20strugovo.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://mk.wikipedia.org/wiki/%D0%A1%D1%82%D1%80%D1%83%D0%B3%D0%BE%D0%B2%D1%81%D0%BA%D0%BE_%D0%95%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q12910772",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q20562635",
+   "name": "Јужно Гашово Езеро",
+   "name_local": "Јужно Гашово Езеро",
+   "lat": 41.635464,
+   "lon": 20.545996,
+   "iso2": "MK",
+   "adm": "",
+   "types": [
+    "glacial lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/%D0%A2%D1%80%D0%B5%D0%B1%D0%B8%D1%88%D0%BA%D0%B8%20%28%D0%93%D0%B0%D1%88%D0%BE%D0%B2%D0%B8%29%20%D0%95%D0%B7%D0%B5%D1%80%D0%B0%20%28%D0%94%D0%B5%D1%88%D0%B0%D1%82%29%2001.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://mk.wikipedia.org/wiki/%D0%88%D1%83%D0%B6%D0%BD%D0%BE_%D0%93%D0%B0%D1%88%D0%BE%D0%B2%D0%BE_%D0%95%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q20562635",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q20563928",
+   "name": "Belo Lake",
+   "name_local": "Бело Езеро",
+   "lat": 41.955556,
+   "lon": 20.776111,
+   "iso2": "MK",
+   "adm": "",
+   "types": [
+    "glacial lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Belo%20Ezero.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://mk.wikipedia.org/wiki/%D0%91%D0%B5%D0%BB%D0%BE_%D0%95%D0%B7%D0%B5%D1%80%D0%BE_(%D0%A8%D0%B0%D1%80_%D0%9F%D0%BB%D0%B0%D0%BD%D0%B8%D0%BD%D0%B0)",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q20563928",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q20565573",
+   "name": "Големо Салаковско Езеро",
+   "name_local": "Големо Салаковско Езеро",
+   "lat": 41.757667,
+   "lon": 21.365333,
+   "iso2": "MK",
+   "adm": "",
+   "types": [
+    "glacial lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/%D0%93%D0%BE%D0%BB%D0%B5%D0%BC%D0%BE%20%D0%A1%D0%B0%D0%BB%D0%B0%D0%BA%D0%BE%D0%B2%D1%81%D0%BA%D0%BE%20%D0%95%D0%B7%D0%B5%D1%80%D0%BE%2003.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://mk.wikipedia.org/wiki/%D0%93%D0%BE%D0%BB%D0%B5%D0%BC%D0%BE_%D0%A1%D0%B0%D0%BB%D0%B0%D0%BA%D0%BE%D0%B2%D1%81%D0%BA%D0%BE_%D0%95%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q20565573",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q20565703",
+   "name": "Горно Врачанско Езеро",
+   "name_local": "Горно Врачанско Езеро",
+   "lat": 41.892778,
+   "lon": 20.740833,
+   "iso2": "MK",
+   "adm": "",
+   "types": [
+    "glacial lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/%D0%93%D0%BE%D1%80%D0%BD%D0%BE%20%D0%92%D1%80%D0%B0%D1%87%D0%B0%D0%BD%D1%81%D0%BA%D0%BE%20%D0%95%D0%B7%D0%B5%D1%80%D0%BE%2002.JPG",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://mk.wikipedia.org/wiki/%D0%93%D0%BE%D1%80%D0%BD%D0%BE_%D0%92%D1%80%D0%B0%D1%87%D0%B0%D0%BD%D1%81%D0%BA%D0%BE_%D0%95%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q20565703",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q20566636",
+   "name": "Долно Врачанско Езеро",
+   "name_local": "Долно Врачанско Езеро",
+   "lat": 41.892222,
+   "lon": 20.741389,
+   "iso2": "MK",
+   "adm": "",
+   "types": [
+    "glacial lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/%D0%94%D0%BE%D0%BB%D0%BD%D0%BE%20%D0%92%D1%80%D0%B0%D1%87%D0%B0%D0%BD%D1%81%D0%BA%D0%BE%20%D0%95%D0%B7%D0%B5%D1%80%D0%BE%2011.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://mk.wikipedia.org/wiki/%D0%94%D0%BE%D0%BB%D0%BD%D0%BE_%D0%92%D1%80%D0%B0%D1%87%D0%B0%D0%BD%D1%81%D0%BA%D0%BE_%D0%95%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q20566636",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q20566720",
+   "name": "Долно Лабунишко Езеро",
+   "name_local": "Долно Лабунишко Езеро",
+   "lat": 41.267194,
+   "lon": 20.52275,
+   "iso2": "MK",
+   "adm": "",
+   "types": [
+    "glacial lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://mk.wikipedia.org/wiki/%D0%94%D0%BE%D0%BB%D0%BD%D0%BE_%D0%9B%D0%B0%D0%B1%D1%83%D0%BD%D0%B8%D1%88%D0%BA%D0%BE_%D0%95%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": 245,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q20566720",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q20568050",
+   "name": "Malo Ezero",
+   "name_local": "Мало Пелистерско Езеро",
+   "lat": 40.977475,
+   "lon": 21.186281,
+   "iso2": "MK",
+   "adm": "",
+   "types": [
+    "glacial lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Malo-Ezero-Pelisterski-Oci-MK.JPG",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://mk.wikipedia.org/wiki/%D0%9C%D0%B0%D0%BB%D0%BE_%D0%9F%D0%B5%D0%BB%D0%B8%D1%81%D1%82%D0%B5%D1%80%D1%81%D0%BA%D0%BE_%D0%95%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q20568050",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q20570007",
+   "name": "Северно Гашово Езеро",
+   "name_local": "Северно Гашово Езеро",
+   "lat": 41.635672,
+   "lon": 20.54599,
+   "iso2": "MK",
+   "adm": "",
+   "types": [
+    "glacial lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Vodite%20na%20Severnoto%20Gasovo%20Ezero%20na%20Deshat.JPG",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://mk.wikipedia.org/wiki/%D0%A1%D0%B5%D0%B2%D0%B5%D1%80%D0%BD%D0%BE_%D0%93%D0%B0%D1%88%D0%BE%D0%B2%D0%BE_%D0%95%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q20570007",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q20570572",
+   "name": "Krivošijsko Lake",
+   "name_local": "Кривошијско Езеро",
+   "lat": 41.985,
+   "lon": 20.783056,
+   "iso2": "MK",
+   "adm": "",
+   "types": [
+    "glacial lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/%D0%9A%D1%80%D0%B8%D0%B2%D0%BE%D1%88%D0%B8%D1%81%D0%BA%D0%BE%20%D0%95%D0%B7%D0%B5%D1%80%D0%BE%20%D0%BD%D0%B0%20%D0%A8%D0%B0%D1%80%20%D0%9F%D0%BB%D0%B0%D0%BD%D0%B8%D0%BD%D0%B0.JPG",
+   "commons_cat": "Krivošija Lake",
+   "enwiki": "",
+   "localwiki": "https://mk.wikipedia.org/wiki/%D0%9A%D1%80%D0%B8%D0%B2%D0%BE%D1%88%D0%B8%D1%98%D1%81%D0%BA%D0%BE_%D0%95%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": 2237,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q20570572",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q30087500",
+   "name": "Паљурци (езеро)",
+   "name_local": "Паљурци (езеро)",
+   "lat": 41.205556,
+   "lon": 22.622778,
+   "iso2": "MK",
+   "adm": "Bogdanci Municipality",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://mk.wikipedia.org/wiki/%D0%9F%D0%B0%D1%99%D1%83%D1%80%D1%86%D0%B8_(%D0%B5%D0%B7%D0%B5%D1%80%D0%BE)",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q30087500",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q54554252",
+   "name": "Бачилско Езеро",
+   "name_local": "Бачилско Езеро",
+   "lat": 41.724194,
+   "lon": 20.535806,
+   "iso2": "MK",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://mk.wikipedia.org/wiki/%D0%91%D0%B0%D1%87%D0%B8%D0%BB%D1%81%D0%BA%D0%BE_%D0%95%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q54554252",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q54554263",
+   "name": "Средно Езеро",
+   "name_local": "Средно Езеро",
+   "lat": 41.722722,
+   "lon": 20.535806,
+   "iso2": "MK",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://mk.wikipedia.org/wiki/%D0%A1%D1%80%D0%B5%D0%B4%D0%BD%D0%BE_%D0%95%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q54554263",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q54848840",
+   "name": "Долно Езеро",
+   "name_local": "Долно Езеро",
+   "lat": 41.722444,
+   "lon": 20.535778,
+   "iso2": "MK",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://mk.wikipedia.org/wiki/%D0%94%D0%BE%D0%BB%D0%BD%D0%BE_%D0%95%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q54848840",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q55006845",
+   "name": "Бабино Езеро",
+   "name_local": "Бабино Езеро",
+   "lat": 41.718,
+   "lon": 20.533944,
+   "iso2": "MK",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://mk.wikipedia.org/wiki/%D0%91%D0%B0%D0%B1%D0%B8%D0%BD%D0%BE_%D0%95%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q55006845",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q55191773",
+   "name": "Маруша",
+   "name_local": "Маруша",
+   "lat": 41.498444,
+   "lon": 20.628611,
+   "iso2": "MK",
+   "adm": "Debar Municipality",
+   "types": [
+    "glacial lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/%D0%95%D0%B7%D0%B5%D1%80%D0%BE%20%D0%9C%D0%B0%D1%80%D1%83%D1%88%D0%B0%20%D0%BD%D0%B0%20%D0%A1%D1%82%D0%BE%D0%B3%D0%BE%D0%B2%D0%BE%2008.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://mk.wikipedia.org/wiki/%D0%9C%D0%B0%D1%80%D1%83%D1%88%D0%B0_(%D0%B5%D0%B7%D0%B5%D1%80%D0%BE)",
+   "area_km2": 0.0002,
+   "depth_m": null,
+   "elev_m": 1908,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q55191773",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q64744066",
+   "name": "Сенечко Езеро",
+   "name_local": "Сенечко Езеро",
+   "lat": 41.670484,
+   "lon": 20.670826,
+   "iso2": "MK",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/%D0%A1%D0%B5%D0%BD%D0%B5%D1%87%D0%BA%D0%BE%20%D0%95%D0%B7%D0%B5%D1%80%D0%BE%2001.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://mk.wikipedia.org/wiki/%D0%A1%D0%B5%D0%BD%D0%B5%D1%87%D0%BA%D0%BE_%D0%95%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q64744066",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q110738739",
+   "name": "Бозовачко Eзеро",
+   "name_local": "Бозовачко Eзеро",
+   "lat": 42.065278,
+   "lon": 20.798611,
+   "iso2": "MK",
+   "adm": "Tetovo Municipality",
+   "types": [
+    "glacial lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://mk.wikipedia.org/wiki/%D0%91%D0%BE%D0%B7%D0%BE%D0%B2%D0%B0%D1%87%D0%BA%D0%BE_E%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": 0.0002,
+   "depth_m": null,
+   "elev_m": 2107,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q110738739",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q110755218",
+   "name": "Мало Црно Езеро",
+   "name_local": "Мало Црно Езеро",
+   "lat": 41.923889,
+   "lon": 20.791944,
+   "iso2": "MK",
+   "adm": "",
+   "types": [
+    "glacial lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://mk.wikipedia.org/wiki/%D0%9C%D0%B0%D0%BB%D0%BE_%D0%A6%D1%80%D0%BD%D0%BE_%D0%95%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": 2165,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q110755218",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q111632883",
+   "name": "Калин Камен (езеро)",
+   "name_local": "Калин Камен (езеро)",
+   "lat": 42.175556,
+   "lon": 22.421667,
+   "iso2": "MK",
+   "adm": "Kriva Palanka Municipality",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/%D0%9F%D0%BE%D0%B3%D0%BB%D0%B5%D0%B4%20%D0%BD%D0%B0%20%D0%B5%D0%B7%D0%B5%D1%80%D0%BE%D1%82%D0%BE%20%D0%9A%D0%B0%D0%BB%D0%B8%D0%BD%20%D0%9A%D0%B0%D0%BC%D0%B5%D0%BD%202.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://mk.wikipedia.org/wiki/%D0%9A%D0%B0%D0%BB%D0%B8%D0%BD_%D0%9A%D0%B0%D0%BC%D0%B5%D0%BD_(%D0%B5%D0%B7%D0%B5%D1%80%D0%BE)",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q111632883",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q4952972",
+   "name": "Boškov Most Hydro Power Plant",
+   "name_local": "",
+   "lat": 41.551514,
+   "lon": 20.614578,
+   "iso2": "MK",
+   "adm": "",
+   "types": [
+    "reservoir",
+    "hydroelectric power station"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "https://en.wikipedia.org/wiki/Bo%C5%A1kov_Most_Hydro_Power_Plant",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "North Macedonia"
+   ],
+   "key": "wd:Q4952972",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q12880819",
+   "name": "Great Prespa",
+   "name_local": "",
+   "lat": 40.911111,
+   "lon": 21.008333,
+   "iso2": "MK",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Ostrov%20Golem%20Grad%202013.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [
+    "Lake Prespa"
+   ],
+   "basin_countries": [],
+   "key": "wd:Q12880819",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "seed": {
+    "swim": "yes",
+    "kind": "lake",
+    "why": "brief",
+    "note": "Golem Grad island, birds, the sandy shore at Oteshevo",
+    "name": "Lake Prespa"
+   }
+  },
+  {
+   "wd": "Q20931952",
+   "name": "Тиквешко Езеро",
+   "name_local": "Тиквешко Езеро",
+   "lat": 41.356389,
+   "lon": 21.960556,
+   "iso2": "MK",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": 255,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q20931952",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q20932770",
+   "name": "Љиќен и Бард",
+   "name_local": "Љиќен и Бард",
+   "lat": 42.049722,
+   "lon": 20.761944,
+   "iso2": "MK",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": 2310,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q20932770",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q20933046",
+   "name": "Бело Езеро",
+   "name_local": "Бело Езеро",
+   "lat": 41.955556,
+   "lon": 20.776111,
+   "iso2": "MK",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": 2275,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q20933046",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q20933104",
+   "name": "Lipkovsko ezero",
+   "name_local": "",
+   "lat": 42.16944,
+   "lon": 21.57139,
+   "iso2": "MK",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": 491,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q20933104",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q20933105",
+   "name": "Глажњанско Езеро",
+   "name_local": "Глажњанско Езеро",
+   "lat": 42.195278,
+   "lon": 21.548056,
+   "iso2": "MK",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": 576,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q20933105",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q20933123",
+   "name": "Езеро Мавровица",
+   "name_local": "Езеро Мавровица",
+   "lat": 41.913056,
+   "lon": 21.983056,
+   "iso2": "MK",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": 371,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q20933123",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q20933141",
+   "name": "Прилепско Езеро",
+   "name_local": "Прилепско Езеро",
+   "lat": 41.387222,
+   "lon": 21.599444,
+   "iso2": "MK",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": 743,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q20933141",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q20933159",
+   "name": "Езеро Мантово",
+   "name_local": "Езеро Мантово",
+   "lat": 41.572222,
+   "lon": 22.339167,
+   "iso2": "MK",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": 395,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q20933159",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q20933160",
+   "name": "Езеро Турија",
+   "name_local": "Езеро Турија",
+   "lat": 41.569444,
+   "lon": 22.6625,
+   "iso2": "MK",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": 389,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q20933160",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q20933167",
+   "name": "Езеро Младост",
+   "name_local": "Езеро Младост",
+   "lat": 41.773333,
+   "lon": 21.761389,
+   "iso2": "MK",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": 242,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q20933167",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q20933254",
+   "name": "Боговињско Езеро",
+   "name_local": "Боговињско Езеро",
+   "lat": 41.950556,
+   "lon": 20.7925,
+   "iso2": "MK",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": 1943,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q20933254",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q20933989",
+   "name": "Беровско Езеро",
+   "name_local": "Беровско Езеро",
+   "lat": 41.668611,
+   "lon": 22.906389,
+   "iso2": "MK",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": 1066,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q20933989",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q20934163",
+   "name": "Мало Езеро",
+   "name_local": "Мало Езеро",
+   "lat": 42.075,
+   "lon": 20.787778,
+   "iso2": "MK",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": 2289,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q20934163",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q20934164",
+   "name": "Големо Езеро",
+   "name_local": "Големо Езеро",
+   "lat": 42.074167,
+   "lon": 20.792222,
+   "iso2": "MK",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": 2187,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q20934164",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q20934938",
+   "name": "Акумулација",
+   "name_local": "Акумулација",
+   "lat": 41.248056,
+   "lon": 22.690556,
+   "iso2": "MK",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": 232,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q20934938",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q20935544",
+   "name": "Палушко Езеро",
+   "name_local": "Палушко Езеро",
+   "lat": 41.205278,
+   "lon": 22.622222,
+   "iso2": "MK",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": 119,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q20935544",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q20935661",
+   "name": "Моклишко Езеро",
+   "name_local": "Моклишко Езеро",
+   "lat": 41.366944,
+   "lon": 22.061944,
+   "iso2": "MK",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": 545,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q20935661",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q20935683",
+   "name": "Кочанско Езеро",
+   "name_local": "Кочанско Езеро",
+   "lat": 41.963056,
+   "lon": 22.408611,
+   "iso2": "MK",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": 464,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q20935683",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q20935845",
+   "name": "Црно Езеро",
+   "name_local": "Црно Езеро",
+   "lat": 41.926111,
+   "lon": 20.793056,
+   "iso2": "MK",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": 2163,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q20935845",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q20935983",
+   "name": "Глобочичко Езеро",
+   "name_local": "Глобочичко Езеро",
+   "lat": 41.3,
+   "lon": 20.621111,
+   "iso2": "MK",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": 691,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q20935983",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q20936930",
+   "name": "Езеро",
+   "name_local": "Езеро",
+   "lat": 41.654167,
+   "lon": 21.176944,
+   "iso2": "MK",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": 772,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q20936930",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q20938709",
+   "name": "Езеро Слатино",
+   "name_local": "Езеро Слатино",
+   "lat": 41.353611,
+   "lon": 20.846389,
+   "iso2": "MK",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": 830,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q20938709",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q20943211",
+   "name": "Лабунишко Езеро",
+   "name_local": "Лабунишко Езеро",
+   "lat": 41.267222,
+   "lon": 20.522778,
+   "iso2": "MK",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": 1897,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q20943211",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q20943212",
+   "name": "Локва",
+   "name_local": "Локва",
+   "lat": 41.266667,
+   "lon": 20.518889,
+   "iso2": "MK",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": 1897,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q20943212",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q20943223",
+   "name": "Подгоречко Езеро",
+   "name_local": "Подгоречко Езеро",
+   "lat": 41.258611,
+   "lon": 20.521944,
+   "iso2": "MK",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": 1880,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q20943223",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q20949503",
+   "name": "Езерце",
+   "name_local": "Езерце",
+   "lat": 42.145,
+   "lon": 21.009444,
+   "iso2": "MK",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": 2251,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q20949503",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q22088283",
+   "name": "Езеро Суводол",
+   "name_local": "Езеро Суводол",
+   "lat": 41.0675,
+   "lon": 21.545556,
+   "iso2": "MK",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 0,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q22088283",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q22090082",
+   "name": "Bukri",
+   "name_local": "Букри",
+   "lat": 40.944722,
+   "lon": 21.505278,
+   "iso2": "MK",
+   "adm": "Bitola",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 0,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Bukri%20Bridge%20WWI.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": 572,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q22090082",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q34903068",
+   "name": "Lipkovsko ezero",
+   "name_local": "",
+   "lat": 42.16944,
+   "lon": 21.57139,
+   "iso2": "MK",
+   "adm": "",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q34903068",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q99293403",
+   "name": "Rotino Lake",
+   "name_local": "Ротинско Езеро",
+   "lat": 41.053889,
+   "lon": 21.205278,
+   "iso2": "MK",
+   "adm": "Rotino",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [
+    "Mavrovo National Park"
+   ],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q99293403",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q133154568",
+   "name": "Small Pelister Lake",
+   "name_local": "",
+   "lat": 40.9775,
+   "lon": 21.1863,
+   "iso2": "MK",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Malo-Ezero-Pelister-MK.JPG",
+   "commons_cat": "",
+   "enwiki": "https://en.wikipedia.org/wiki/Small_Pelister_Lake",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q133154568",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  }
+ ]
+}

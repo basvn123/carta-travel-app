@@ -1,0 +1,2893 @@
+{
+ "country": "RS",
+ "harvested_at": "2026-08-20T18:36:41+00:00",
+ "n_wikidata": 92,
+ "n_seeded": 7,
+ "seed_missing": [],
+ "lakes": [
+  {
+   "wd": "Q166971",
+   "name": "Zavoj Lake",
+   "name_local": "Завојско језеро",
+   "lat": 43.266667,
+   "lon": 22.633333,
+   "iso2": "RS",
+   "adm": "",
+   "types": [
+    "lake",
+    "reservoir"
+   ],
+   "sitelinks": 10,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/ZavojskoJezeroNov2012-01.JPG",
+   "commons_cat": "Zavoj Lake",
+   "enwiki": "https://en.wikipedia.org/wiki/Zavoj_Lake",
+   "localwiki": "https://sr.wikipedia.org/wiki/%D0%97%D0%B0%D0%B2%D0%BE%D1%98%D1%81%D0%BA%D0%BE_%D1%98%D0%B5%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": 5.53,
+   "depth_m": null,
+   "elev_m": 612,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q166971",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q207138",
+   "name": "Zlatar Lake",
+   "name_local": "Златарско језеро",
+   "lat": 43.508611,
+   "lon": 19.838611,
+   "iso2": "RS",
+   "adm": "",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 12,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/%D0%97%D0%BB%D0%B0%D1%82%D0%B0%D1%80%D1%81%D0%BA%D0%BE%20%D1%98%D0%B5%D0%B7%D0%B5%D1%80%D0%BE02.jpg",
+   "commons_cat": "Zlatar Lake",
+   "enwiki": "https://en.wikipedia.org/wiki/Zlatar_Lake",
+   "localwiki": "https://sr.wikipedia.org/wiki/%D0%97%D0%BB%D0%B0%D1%82%D0%B0%D1%80%D1%81%D0%BA%D0%BE_%D1%98%D0%B5%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": 7.25,
+   "depth_m": 75.0,
+   "elev_m": 880,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Serbia"
+   ],
+   "key": "wd:Q207138",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q231499",
+   "name": "Zvornik Lake",
+   "name_local": "Зворничко језеро",
+   "lat": 44.363889,
+   "lon": 19.118889,
+   "iso2": "RS",
+   "adm": "Mali Zvornik Municipality",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 21,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Zvorni%C4%8Dko%20Jezero%2006.jpg",
+   "commons_cat": "Zvornik Reservoir",
+   "enwiki": "https://en.wikipedia.org/wiki/Zvornik_Lake",
+   "localwiki": "https://sr.wikipedia.org/wiki/%D0%97%D0%B2%D0%BE%D1%80%D0%BD%D0%B8%D1%87%D0%BA%D0%BE_%D1%98%D0%B5%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": 13.0,
+   "depth_m": 28.0,
+   "elev_m": 140,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q231499",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q279300",
+   "name": "Belo jezero",
+   "name_local": "Бело језеро",
+   "lat": 45.293889,
+   "lon": 20.411389,
+   "iso2": "RS",
+   "adm": "Central Banat District",
+   "types": [
+    "lake",
+    "lagoon"
+   ],
+   "sitelinks": 7,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Lukino%20Selo%20%28%D0%9B%D1%83%D0%BA%D0%B8%D0%BD%D0%BE%20%D0%A1%D0%B5%D0%BB%D0%BE%29%2C%20Serbia.%20Fish%20ponds.%20-%20panoramio.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://sr.wikipedia.org/wiki/%D0%91%D0%B5%D0%BB%D0%BE_%D1%98%D0%B5%D0%B7%D0%B5%D1%80%D0%BE_(%D0%A1%D1%80%D0%B1%D0%B8%D1%98%D0%B0)",
+   "area_km2": 4.8,
+   "depth_m": 2.5,
+   "elev_m": 66,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q279300",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q810843",
+   "name": "Batllava Lake",
+   "name_local": "Батлавско језеро",
+   "lat": 42.821111,
+   "lon": 21.307778,
+   "iso2": "RS",
+   "adm": "Kosovo",
+   "types": [
+    "lake",
+    "reservoir"
+   ],
+   "sitelinks": 19,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Four%20colors%20-%20Lake%20Batllava.jpg",
+   "commons_cat": "Batllava Lake",
+   "enwiki": "https://en.wikipedia.org/wiki/Batllava_Lake",
+   "localwiki": "https://sr.wikipedia.org/wiki/%D0%91%D0%B0%D1%82%D0%BB%D0%B0%D0%B2%D1%81%D0%BA%D0%BE_%D1%98%D0%B5%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": 5.1,
+   "depth_m": null,
+   "elev_m": 642,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Kosovo"
+   ],
+   "key": "wd:Q810843",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q853607",
+   "name": "Garaško Lake",
+   "name_local": "Гарашко језеро",
+   "lat": 44.28828,
+   "lon": 20.47907,
+   "iso2": "RS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 5,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Jezero%20Gara%C5%A1i.jpg",
+   "commons_cat": "Garaško Lake",
+   "enwiki": "",
+   "localwiki": "https://sr.wikipedia.org/wiki/%D0%93%D0%B0%D1%80%D0%B0%D1%88%D0%BA%D0%BE_%D1%98%D0%B5%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": 0.65,
+   "depth_m": null,
+   "elev_m": 400,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q853607",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q895342",
+   "name": "Bovansko Jezero",
+   "name_local": "Бованско језеро",
+   "lat": 43.645,
+   "lon": 21.70858,
+   "iso2": "RS",
+   "adm": "",
+   "types": [
+    "reservoir",
+    "lagoon"
+   ],
+   "sitelinks": 8,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Bovan%20Lake.JPG",
+   "commons_cat": "Bovan Lake",
+   "enwiki": "",
+   "localwiki": "https://sr.wikipedia.org/wiki/%D0%91%D0%BE%D0%B2%D0%B0%D0%BD%D1%81%D0%BA%D0%BE_%D1%98%D0%B5%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": 5.0,
+   "depth_m": 50.0,
+   "elev_m": 250,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q895342",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q1279897",
+   "name": "Lake of Ledinci",
+   "name_local": "Лединачко језеро",
+   "lat": 45.165439,
+   "lon": 19.804523,
+   "iso2": "RS",
+   "adm": "",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 9,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Jezero01.jpg",
+   "commons_cat": "Lake Ledinci",
+   "enwiki": "https://en.wikipedia.org/wiki/Lake_Ledinci",
+   "localwiki": "https://sr.wikipedia.org/wiki/%D0%9B%D0%B5%D0%B4%D0%B8%D0%BD%D0%B0%D1%87%D0%BA%D0%BE_%D1%98%D0%B5%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": 0.04,
+   "depth_m": 50.0,
+   "elev_m": 290,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q1279897",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q1313598",
+   "name": "Lake Đerdap",
+   "name_local": "Ђердапско језеро",
+   "lat": 44.476421,
+   "lon": 22.161312,
+   "iso2": "RS",
+   "adm": "",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 8,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Breakthrough%20Iron%20Gate.JPG",
+   "commons_cat": "Iron Gate (Danube)",
+   "enwiki": "",
+   "localwiki": "https://sr.wikipedia.org/wiki/%D0%82%D0%B5%D1%80%D0%B4%D0%B0%D0%BF%D1%81%D0%BA%D0%BE_%D1%98%D0%B5%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q1313598",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q1479905",
+   "name": "Gazivoda Lake",
+   "name_local": "Газиводе",
+   "lat": 42.961667,
+   "lon": 20.566944,
+   "iso2": "RS",
+   "adm": "Kosovo",
+   "types": [
+    "lake",
+    "reservoir"
+   ],
+   "sitelinks": 26,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Jezero%20Gazivode.jpg",
+   "commons_cat": "Gazivode Lake",
+   "enwiki": "https://en.wikipedia.org/wiki/Gazivoda_Lake",
+   "localwiki": "https://sr.wikipedia.org/wiki/%D0%93%D0%B0%D0%B7%D0%B8%D0%B2%D0%BE%D0%B4%D0%B5_(%D1%98%D0%B5%D0%B7%D0%B5%D1%80%D0%BE)",
+   "area_km2": 11.9,
+   "depth_m": 105.0,
+   "elev_m": 694,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q1479905",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q1520663",
+   "name": "Radoniq Lake",
+   "name_local": "Радоњићко језеро",
+   "lat": 42.490556,
+   "lon": 20.416667,
+   "iso2": "RS",
+   "adm": "Kosovo and Metohija",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 15,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Liqeni%20i%20Radoniqit%20-%20panoramic.jpg",
+   "commons_cat": "Radoniq Lake",
+   "enwiki": "https://en.wikipedia.org/wiki/Radoniq_lake",
+   "localwiki": "https://sr.wikipedia.org/wiki/%D0%A0%D0%B0%D0%B4%D0%BE%D1%9A%D0%B8%D1%9B%D0%BA%D0%BE_%D1%98%D0%B5%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": 5.62,
+   "depth_m": null,
+   "elev_m": 451,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Kosovo"
+   ],
+   "key": "wd:Q1520663",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q1551157",
+   "name": "Gruža Lake",
+   "name_local": "Гружанско језеро",
+   "lat": 43.9261,
+   "lon": 20.6783,
+   "iso2": "RS",
+   "adm": "Šumadija District",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 10,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Gruzansko%20jezero%20sa%20Borackog%20krsa2.jpg",
+   "commons_cat": "Gruža Lake",
+   "enwiki": "https://en.wikipedia.org/wiki/Gru%C5%BEa_Lake",
+   "localwiki": "https://sr.wikipedia.org/wiki/%D0%93%D1%80%D1%83%D0%B6%D0%B0%D0%BD%D1%81%D0%BA%D0%BE_%D1%98%D0%B5%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": 9.19,
+   "depth_m": 30.0,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Serbia"
+   ],
+   "key": "wd:Q1551157",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q1561944",
+   "name": "Дуленско језеро",
+   "name_local": "Дуленско језеро",
+   "lat": 43.8781,
+   "lon": 20.9481,
+   "iso2": "RS",
+   "adm": "",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 3,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://sr.wikipedia.org/wiki/%D0%94%D1%83%D0%BB%D0%B5%D0%BD%D1%81%D0%BA%D0%BE_%D1%98%D0%B5%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": null,
+   "depth_m": 7.0,
+   "elev_m": 435,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q1561944",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q1938900",
+   "name": "Silver Lake",
+   "name_local": "Сребрно језеро",
+   "lat": 44.767778,
+   "lon": 21.400278,
+   "iso2": "RS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 10,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Srebrno%20jezero%2005.jpg",
+   "commons_cat": "Silver Lake, Serbia",
+   "enwiki": "https://en.wikipedia.org/wiki/Silver_Lake_(Serbia)",
+   "localwiki": "https://sr.wikipedia.org/wiki/%D0%A1%D1%80%D0%B5%D0%B1%D1%80%D0%BD%D0%BE_%D1%98%D0%B5%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Serbia"
+   ],
+   "key": "wd:Q1938900",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "seed": {
+    "swim": "yes",
+    "kind": "lake",
+    "why": "brief",
+    "note": "a Danube backwater sold as the Serbian sea",
+    "name": "Silver Lake"
+   }
+  },
+  {
+   "wd": "Q2140169",
+   "name": "Vlasina Lake",
+   "name_local": "Власинско језеро",
+   "lat": 42.7,
+   "lon": 22.333333,
+   "iso2": "RS",
+   "adm": "Serbia",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 19,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Lake%20Vlasina%2C%20Serbia%2C.jpg",
+   "commons_cat": "Vlasina Lake",
+   "enwiki": "https://en.wikipedia.org/wiki/Vlasina_Lake",
+   "localwiki": "https://sr.wikipedia.org/wiki/%D0%92%D0%BB%D0%B0%D1%81%D0%B8%D0%BD%D1%81%D0%BA%D0%BE_%D1%98%D0%B5%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": 16.0,
+   "depth_m": 10.3,
+   "elev_m": 1213,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Serbia"
+   ],
+   "key": "wd:Q2140169",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "seed": {
+    "swim": "limited",
+    "kind": "reservoir",
+    "why": "editorial",
+    "note": "1,200 m, the floating peat islands",
+    "name": "Vlasina Lake"
+   }
+  },
+  {
+   "wd": "Q2744326",
+   "name": "Ludaš Lake",
+   "name_local": "Лудошко језеро",
+   "lat": 46.1,
+   "lon": 19.82,
+   "iso2": "RS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 11,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Ludas%20Lake%20Sat.png",
+   "commons_cat": "Ludaš Lake",
+   "enwiki": "https://en.wikipedia.org/wiki/Luda%C5%A1_Lake",
+   "localwiki": "https://sr.wikipedia.org/wiki/%D0%9B%D1%83%D0%B4%D0%BE%D1%88%D0%BA%D0%BE_%D1%98%D0%B5%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": 3.28,
+   "depth_m": 2.5,
+   "elev_m": 93,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Serbia"
+   ],
+   "key": "wd:Q2744326",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q2812890",
+   "name": "Bela Crkva lakes",
+   "name_local": "Белоцркванска језера",
+   "lat": 44.894644,
+   "lon": 21.408226,
+   "iso2": "RS",
+   "adm": "Bela Crkva Municipality",
+   "types": [
+    "lake",
+    "reservoir",
+    "tourist destination"
+   ],
+   "sitelinks": 5,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Vracevgajsko%20jezero%20II.jpg",
+   "commons_cat": "Bela Crkva lakes",
+   "enwiki": "https://en.wikipedia.org/wiki/Bela_Crkva_lakes",
+   "localwiki": "https://sr.wikipedia.org/wiki/%D0%91%D0%B5%D0%BB%D0%BE%D1%86%D1%80%D0%BA%D0%B2%D0%B0%D0%BD%D1%81%D0%BA%D0%B0_%D1%98%D0%B5%D0%B7%D0%B5%D1%80%D0%B0",
+   "area_km2": 1.5,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q2812890",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q65200461",
+   "name": "Sukovo Lake",
+   "name_local": "Суковско језеро",
+   "lat": 43.05522,
+   "lon": 22.6498,
+   "iso2": "RS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://sr.wikipedia.org/wiki/%D0%A1%D1%83%D0%BA%D0%BE%D0%B2%D1%81%D0%BA%D0%BE_%D1%98%D0%B5%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q65200461",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q110045209",
+   "name": "Balta alu Šontu",
+   "name_local": "Балта алу Шонту",
+   "lat": 44.44156,
+   "lon": 22.1469,
+   "iso2": "RS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Prole%C4%87na%20idila%2CSpring%20idyll%20-%20panoramio.jpg",
+   "commons_cat": "Balta alu Šontu",
+   "enwiki": "",
+   "localwiki": "https://sr.wikipedia.org/wiki/%D0%91%D0%B0%D0%BB%D1%82%D0%B0_%D0%B0%D0%BB%D1%83_%D0%A8%D0%BE%D0%BD%D1%82%D1%83",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q110045209",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q121484312",
+   "name": "Glogovica Lake",
+   "name_local": "Глоговичко језеро",
+   "lat": 44.108333,
+   "lon": 22.289722,
+   "iso2": "RS",
+   "adm": "Zaječar City",
+   "types": [
+    "lake",
+    "reservoir"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/%D0%93%D0%BB%D0%BE%D0%B3%D0%BE%D0%B2%D0%B8%D1%87%D0%BA%D0%BE%20%D1%98%D0%B5%D0%B7%D0%B5%D1%80%D0%BE.jpg",
+   "commons_cat": "Glogovica Lake",
+   "enwiki": "",
+   "localwiki": "https://sr.wikipedia.org/wiki/%D0%93%D0%BB%D0%BE%D0%B3%D0%BE%D0%B2%D0%B8%D1%87%D0%BA%D0%BE_%D1%98%D0%B5%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": 0.01,
+   "depth_m": null,
+   "elev_m": 330,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q121484312",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q2940431",
+   "name": "Carska Bara",
+   "name_local": "Царска бара",
+   "lat": 45.263,
+   "lon": 20.399,
+   "iso2": "RS",
+   "adm": "Zrenjanin City",
+   "types": [
+    "lake",
+    "wetland",
+    "protected area"
+   ],
+   "sitelinks": 17,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Carska%20bara%2C%20Serbia.jpg",
+   "commons_cat": "Carska bara",
+   "enwiki": "https://en.wikipedia.org/wiki/Carska_Bara",
+   "localwiki": "https://sr.wikipedia.org/wiki/%D0%A6%D0%B0%D1%80%D1%81%D0%BA%D0%B0_%D0%B1%D0%B0%D1%80%D0%B0",
+   "area_km2": 47.26,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Serbia"
+   ],
+   "key": "wd:Q2940431",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q3109399",
+   "name": "Zaovine Lake",
+   "name_local": "Заовинско језеро",
+   "lat": 43.87,
+   "lon": 19.4,
+   "iso2": "RS",
+   "adm": "Regional Spatial Plan for Zlatibor and Moravica administrative district",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 9,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Jezero%20Zaovine1.jpg",
+   "commons_cat": "Zaovine Lake",
+   "enwiki": "https://en.wikipedia.org/wiki/Zaovine_Lake",
+   "localwiki": "https://sr.wikipedia.org/wiki/%D0%97%D0%B0%D0%BE%D0%B2%D0%B8%D0%BD%D1%81%D0%BA%D0%BE_%D1%98%D0%B5%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": 15.0,
+   "depth_m": null,
+   "elev_m": 892,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Serbia"
+   ],
+   "key": "wd:Q3109399",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "seed": {
+    "swim": "limited",
+    "kind": "reservoir",
+    "why": "brief",
+    "haz": [
+     "cold_shock"
+    ],
+    "note": "Tara NP, high and cold",
+    "name": "Zaovine"
+   }
+  },
+  {
+   "wd": "Q3215456",
+   "name": "Грошничко језеро",
+   "name_local": "Грошничко језеро",
+   "lat": 43.9258,
+   "lon": 20.8839,
+   "iso2": "RS",
+   "adm": "Kragujevac",
+   "types": [
+    "lake",
+    "reservoir"
+   ],
+   "sitelinks": 3,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/%D0%93%D1%80%D0%BE%D1%88%D0%BD%D0%B8%D1%87%D0%BA%D0%BE%20%D1%98%D0%B5%D0%B7%D0%B5%D1%80%D0%BE01.JPG",
+   "commons_cat": "Grošnica Lake",
+   "enwiki": "",
+   "localwiki": "https://sr.wikipedia.org/wiki/%D0%93%D1%80%D0%BE%D1%88%D0%BD%D0%B8%D1%87%D0%BA%D0%BE_%D1%98%D0%B5%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q3215456",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q3215524",
+   "name": "Lake Ribnica",
+   "name_local": "Рибничко језеро",
+   "lat": 43.6822,
+   "lon": 19.6769,
+   "iso2": "RS",
+   "adm": "",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 4,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Ribnicko%20jezero.jpg",
+   "commons_cat": "",
+   "enwiki": "https://en.wikipedia.org/wiki/Ribnica_Lake",
+   "localwiki": "https://sr.wikipedia.org/wiki/%D0%A0%D0%B8%D0%B1%D0%BD%D0%B8%D1%87%D0%BA%D0%BE_%D1%98%D0%B5%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": 10.0,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q3215524",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q3444519",
+   "name": "Zasavica",
+   "name_local": "Специјални резерват природе Засавица",
+   "lat": 44.9576,
+   "lon": 19.5264,
+   "iso2": "RS",
+   "adm": "",
+   "types": [
+    "lake",
+    "nature reserve"
+   ],
+   "sitelinks": 8,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Zasavica%20%283%29.JPG",
+   "commons_cat": "Zasavica",
+   "enwiki": "https://en.wikipedia.org/wiki/Zasavica_(bog)",
+   "localwiki": "https://sr.wikipedia.org/wiki/%D0%A1%D0%BF%D0%B5%D1%86%D0%B8%D1%98%D0%B0%D0%BB%D0%BD%D0%B8_%D1%80%D0%B5%D0%B7%D0%B5%D1%80%D0%B2%D0%B0%D1%82_%D0%BF%D1%80%D0%B8%D1%80%D0%BE%D0%B4%D0%B5_%D0%97%D0%B0%D1%81%D0%B0%D0%B2%D0%B8%D1%86%D0%B0",
+   "area_km2": 19.13,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Serbia"
+   ],
+   "key": "wd:Q3444519",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q7127675",
+   "name": "Palić Lake",
+   "name_local": "Палићко језеро",
+   "lat": 46.07,
+   "lon": 19.7475,
+   "iso2": "RS",
+   "adm": "North Bačka District",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 24,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Palic13.jpg",
+   "commons_cat": "Palić lake",
+   "enwiki": "https://en.wikipedia.org/wiki/Lake_Pali%C4%87",
+   "localwiki": "https://sr.wikipedia.org/wiki/%D0%9F%D0%B0%D0%BB%D0%B8%D1%9B%D0%BA%D0%BE_%D1%98%D0%B5%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": 3.8,
+   "depth_m": null,
+   "elev_m": 101,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Serbia"
+   ],
+   "key": "wd:Q7127675",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "seed": {
+    "swim": "yes",
+    "kind": "lake",
+    "why": "brief",
+    "note": "Subotica, the art nouveau spa resort on its shore",
+    "name": "Lake Palic"
+   }
+  },
+  {
+   "wd": "Q7348622",
+   "name": "Veliki Galijaš",
+   "name_local": "Велики Галијаш",
+   "lat": 44.832,
+   "lon": 20.437,
+   "iso2": "RS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 5,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "https://en.wikipedia.org/wiki/Veliki_Galija%C5%A1",
+   "localwiki": "https://sr.wikipedia.org/wiki/%D0%92%D0%B5%D0%BB%D0%B8%D0%BA%D0%B8_%D0%93%D0%B0%D0%BB%D0%B8%D1%98%D0%B0%D1%88",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Serbia"
+   ],
+   "key": "wd:Q7348622",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q7361170",
+   "name": "Rusanda",
+   "name_local": "Русанда",
+   "lat": 45.527778,
+   "lon": 20.304722,
+   "iso2": "RS",
+   "adm": "Zrenjanin",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 7,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Melenci-Rusanda%20lake.jpg",
+   "commons_cat": "Lake Rusanda",
+   "enwiki": "https://en.wikipedia.org/wiki/Rusanda",
+   "localwiki": "https://sr.wikipedia.org/wiki/%D0%A0%D1%83%D1%81%D0%B0%D0%BD%D0%B4%D0%B0_(%D1%81%D0%BB%D0%B0%D1%82%D0%B8%D0%BD%D1%81%D0%BA%D0%BE_%D1%81%D1%82%D0%B0%D0%BD%D0%B8%D1%88%D1%82%D0%B5)",
+   "area_km2": 4.0,
+   "depth_m": null,
+   "elev_m": 82,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Serbia"
+   ],
+   "key": "wd:Q7361170",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q11651575",
+   "name": "Шеловренац",
+   "name_local": "Шеловренац",
+   "lat": 45.0702,
+   "lon": 19.9988,
+   "iso2": "RS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://sr.wikipedia.org/wiki/%D0%A8%D0%B5%D0%BB%D0%BE%D0%B2%D1%80%D0%B5%D0%BD%D0%B0%D1%86",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q11651575",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q11651587",
+   "name": "Шатриначко језеро",
+   "name_local": "Шатриначко језеро",
+   "lat": 45.0752,
+   "lon": 19.915,
+   "iso2": "RS",
+   "adm": "",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/%D0%88%D0%B5%D0%B7%D0%B5%D1%80%D0%BE%20%D0%9C%D0%B5%D1%92%D0%B5%D1%88.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://sr.wikipedia.org/wiki/%D0%A8%D0%B0%D1%82%D1%80%D0%B8%D0%BD%D0%B0%D1%87%D0%BA%D0%BE_%D1%98%D0%B5%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q11651587",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q12747591",
+   "name": "Јаревац (језеро)",
+   "name_local": "Јаревац (језеро)",
+   "lat": 43.93194,
+   "lon": 19.51388,
+   "iso2": "RS",
+   "adm": "",
+   "types": [
+    "lake",
+    "reservoir"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Jezerce%20Jarevac%20%282%29.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://sr.wikipedia.org/wiki/%D0%88%D0%B0%D1%80%D0%B5%D0%B2%D0%B0%D1%86_(%D1%98%D0%B5%D0%B7%D0%B5%D1%80%D0%BE)",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q12747591",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q12747651",
+   "name": "Језеро Барје",
+   "name_local": "Језеро Барје",
+   "lat": 43.041667,
+   "lon": 21.615833,
+   "iso2": "RS",
+   "adm": "",
+   "types": [
+    "lake",
+    "reservoir"
+   ],
+   "sitelinks": 3,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Jezero%20Barje%2009.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://sr.wikipedia.org/wiki/%D0%91%D0%B0%D1%80%D1%98%D0%B5_(%D1%98%D0%B5%D0%B7%D0%B5%D1%80%D0%BE)",
+   "area_km2": 13.0,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q12747651",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q12747652",
+   "name": "Očaga",
+   "name_local": "Језеро Очага",
+   "lat": 44.390305,
+   "lon": 20.237065,
+   "iso2": "RS",
+   "adm": "",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 4,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Jezero%20O%C4%8Daga%2C%20Jezero%2C%2009.JPG",
+   "commons_cat": "Očaga lake",
+   "enwiki": "https://en.wikipedia.org/wiki/O%C4%8Daga",
+   "localwiki": "https://sr.wikipedia.org/wiki/%D0%9E%D1%87%D0%B0%D0%B3%D0%B0_(%D1%98%D0%B5%D0%B7%D0%B5%D1%80%D0%BE)",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q12747652",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q12747964",
+   "name": "Ћелије (језеро)",
+   "name_local": "Ћелије (језеро)",
+   "lat": 43.389556,
+   "lon": 21.163391,
+   "iso2": "RS",
+   "adm": "",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 3,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/%C4%86elije.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://sr.wikipedia.org/wiki/%D0%8B%D0%B5%D0%BB%D0%B8%D1%98%D0%B5_(%D1%98%D0%B5%D0%B7%D0%B5%D1%80%D0%BE)",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q12747964",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q12748082",
+   "name": "Ада Сафари",
+   "name_local": "Ада Сафари",
+   "lat": 44.792572,
+   "lon": 20.416394,
+   "iso2": "RS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 5,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Ada%20Safari.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://sr.wikipedia.org/wiki/%D0%90%D0%B4%D0%B0_%D1%81%D0%B0%D1%84%D0%B0%D1%80%D0%B8",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q12748082",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q7346904",
+   "name": "Široka Bara",
+   "name_local": "",
+   "lat": 44.931944,
+   "lon": 20.345833,
+   "iso2": "RS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 3,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "https://en.wikipedia.org/wiki/%C5%A0iroka_Bara",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Serbia"
+   ],
+   "key": "wd:Q7346904",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q12748252",
+   "name": "Aleksandrovačko Jezero",
+   "name_local": "Александровачко језеро",
+   "lat": 42.489444,
+   "lon": 21.898333,
+   "iso2": "RS",
+   "adm": "Vranje",
+   "types": [
+    "lake",
+    "reservoir",
+    "lagoon"
+   ],
+   "sitelinks": 4,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://sr.wikipedia.org/wiki/%D0%90%D0%BB%D0%B5%D0%BA%D1%81%D0%B0%D0%BD%D0%B4%D1%80%D0%BE%D0%B2%D0%B0%D1%87%D0%BA%D0%BE_%D1%98%D0%B5%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": 0.12,
+   "depth_m": null,
+   "elev_m": 400,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q12748252",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q12749214",
+   "name": "Bor Lake",
+   "name_local": "Борско језеро",
+   "lat": 44.0929,
+   "lon": 22.0126,
+   "iso2": "RS",
+   "adm": "",
+   "types": [
+    "lake",
+    "reservoir"
+   ],
+   "sitelinks": 6,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Bor%20lake.jpg",
+   "commons_cat": "Bor Lake",
+   "enwiki": "https://en.wikipedia.org/wiki/Bor_Lake",
+   "localwiki": "https://sr.wikipedia.org/wiki/%D0%91%D0%BE%D1%80%D1%81%D0%BA%D0%BE_%D1%98%D0%B5%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": 0.79,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q12749214",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q12754588",
+   "name": "Lisinsko jezero",
+   "name_local": "Лисина (Босилеград)",
+   "lat": 42.5536,
+   "lon": 22.3868,
+   "iso2": "RS",
+   "adm": "Bosilegrad Municipality",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 5,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/%D0%9B%D0%B8%D1%81%D0%B8%D0%BD%D1%81%D0%BA%D0%BE%20%D1%98%D0%B5%D0%B7%D0%B5%D1%80%D0%BE%20-%20Lisinsko%20Lake.JPG",
+   "commons_cat": "Lisinsko jezero",
+   "enwiki": "",
+   "localwiki": "https://sr.wikipedia.org/wiki/%D0%9B%D0%B8%D1%81%D0%B8%D0%BD%D0%B0_(%D1%98%D0%B5%D0%B7%D0%B5%D1%80%D0%BE)",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q12754588",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q12754983",
+   "name": "Марковачко језеро",
+   "name_local": "Марковачко језеро",
+   "lat": 44.389722,
+   "lon": 20.653889,
+   "iso2": "RS",
+   "adm": "",
+   "types": [
+    "lake",
+    "reservoir"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Markovacko%20jezero.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://sr.wikipedia.org/wiki/%D0%9C%D0%B0%D1%80%D0%BA%D0%BE%D0%B2%D0%B0%D1%87%D0%BA%D0%BE_%D1%98%D0%B5%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": 0.16,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q12754983",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q12756401",
+   "name": "Облачинско језеро",
+   "name_local": "Облачинско језеро",
+   "lat": 43.304722,
+   "lon": 21.678889,
+   "iso2": "RS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 3,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Morovic%20025.jpg",
+   "commons_cat": "Lakes of Merošina",
+   "enwiki": "",
+   "localwiki": "https://sr.wikipedia.org/wiki/%D0%9E%D0%B1%D0%BB%D0%B0%D1%87%D0%B8%D0%BD%D1%81%D0%BA%D0%BE_%D1%98%D0%B5%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": 280,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q12756401",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q12757660",
+   "name": "Potpeć Lake",
+   "name_local": "Потпећко језеро",
+   "lat": 43.513611,
+   "lon": 19.592778,
+   "iso2": "RS",
+   "adm": "Zlatibor District",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 5,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Potpe%C4%87ko%20jezero%20%28by%20Pudelek%29.JPG",
+   "commons_cat": "",
+   "enwiki": "https://en.wikipedia.org/wiki/Potpe%C4%87_Lake",
+   "localwiki": "https://sr.wikipedia.org/wiki/%D0%9F%D0%BE%D1%82%D0%BF%D0%B5%D1%9B%D0%BA%D0%BE_%D1%98%D0%B5%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": 7.0,
+   "depth_m": 40.0,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q12757660",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q12758116",
+   "name": "Radoinja Lake",
+   "name_local": "Радоињско језеро",
+   "lat": 43.525186,
+   "lon": 19.74448,
+   "iso2": "RS",
+   "adm": "",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Nova%20Varos%20Kokin%20Brod%20uvac%20river%20Radoinjsko%20Lake%20IMG%209943.JPG",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://sr.wikipedia.org/wiki/%D0%A0%D0%B0%D0%B4%D0%BE%D0%B8%D1%9A%D1%81%D0%BA%D0%BE_%D1%98%D0%B5%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q12758116",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q12758519",
+   "name": "Savsko Lake",
+   "name_local": "Савско језеро",
+   "lat": 44.7839,
+   "lon": 20.3901,
+   "iso2": "RS",
+   "adm": "",
+   "types": [
+    "artificial lake"
+   ],
+   "sitelinks": 3,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Ada%20Ciganlija%202.JPG",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://sr.wikipedia.org/wiki/%D0%A1%D0%B0%D0%B2%D1%81%D0%BA%D0%BE_%D1%98%D0%B5%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q12758519",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q12758768",
+   "name": "Semeteško jezero",
+   "name_local": "Семетешко језеро",
+   "lat": 43.297409,
+   "lon": 20.722977,
+   "iso2": "RS",
+   "adm": "Kopaonik National Park",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 4,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Semetesko%20jezero1.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://sr.wikipedia.org/wiki/%D0%A1%D0%B5%D0%BC%D0%B5%D1%82%D0%B5%D1%88%D0%BA%D0%BE_%D1%98%D0%B5%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": 900,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q12758768",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q12759843",
+   "name": "Sjeničko jezero",
+   "name_local": "Сјеничко језеро",
+   "lat": 43.416389,
+   "lon": 19.931111,
+   "iso2": "RS",
+   "adm": "",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 2,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://sr.wikipedia.org/wiki/%D0%A1%D1%98%D0%B5%D0%BD%D0%B8%D1%87%D0%BA%D0%BE_%D1%98%D0%B5%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": 5.7,
+   "depth_m": 108.0,
+   "elev_m": 985,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q12759843",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q13566191",
+   "name": "Lake Bubanj",
+   "name_local": "Језеро Бубањ",
+   "lat": 44.016944,
+   "lon": 20.925833,
+   "iso2": "RS",
+   "adm": "Kragujevac",
+   "types": [
+    "lake",
+    "reservoir"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Jezero%20Bubanj.JPG",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://sr.wikipedia.org/wiki/%D0%91%D1%83%D0%B1%D0%B0%D1%9A_(%D1%98%D0%B5%D0%B7%D0%B5%D1%80%D0%BE)",
+   "area_km2": 0.03,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q13566191",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q15990616",
+   "name": "Borkovac",
+   "name_local": "Борковац",
+   "lat": 45.04263,
+   "lon": 19.818435,
+   "iso2": "RS",
+   "adm": "Srem District",
+   "types": [
+    "lake",
+    "reservoir"
+   ],
+   "sitelinks": 3,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Katashborkovac.png",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://sr.wikipedia.org/wiki/%D0%91%D0%BE%D1%80%D0%BA%D0%BE%D0%B2%D0%B0%D1%86_(%D1%98%D0%B5%D0%B7%D0%B5%D1%80%D0%BE)",
+   "area_km2": 0.36,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q15990616",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q15994134",
+   "name": "Jovac Lake",
+   "name_local": "Јовачко језеро",
+   "lat": 42.64668,
+   "lon": 22.00501,
+   "iso2": "RS",
+   "adm": "Jovac, Vladičin Han",
+   "types": [
+    "lake",
+    "natural monument"
+   ],
+   "sitelinks": 4,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Jovacko%20jezero%2002.jpg",
+   "commons_cat": "Jovac Lake",
+   "enwiki": "",
+   "localwiki": "https://sr.wikipedia.org/wiki/%D0%88%D0%BE%D0%B2%D0%B0%D1%87%D0%BA%D0%BE_%D1%98%D0%B5%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q15994134",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q15997781",
+   "name": "Okanj",
+   "name_local": "Окањ",
+   "lat": 45.4723,
+   "lon": 20.3048,
+   "iso2": "RS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 4,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "https://en.wikipedia.org/wiki/Okanj",
+   "localwiki": "https://sr.wikipedia.org/wiki/%D0%9E%D0%BA%D0%B0%D1%9A",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [
+    "Tisza"
+   ],
+   "basin_countries": [],
+   "key": "wd:Q15997781",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q16011732",
+   "name": "Брестовачко језеро",
+   "name_local": "Брестовачко језеро",
+   "lat": 43.041667,
+   "lon": 21.615833,
+   "iso2": "RS",
+   "adm": "",
+   "types": [
+    "lake",
+    "reservoir"
+   ],
+   "sitelinks": 3,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Brestova%C4%8Dko%20jezero%203.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://sr.wikipedia.org/wiki/%D0%91%D1%80%D0%B5%D1%81%D1%82%D0%BE%D0%B2%D0%B0%D1%87%D0%BA%D0%BE_%D1%98%D0%B5%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": 0.08,
+   "depth_m": null,
+   "elev_m": 312,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q16011732",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q16084324",
+   "name": "Grlište Lake",
+   "name_local": "Грлишко језеро",
+   "lat": 43.813611,
+   "lon": 22.226667,
+   "iso2": "RS",
+   "adm": "Zaječar",
+   "types": [
+    "lake",
+    "reservoir"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/%D0%93%D1%80%D0%BB%D0%B8%D1%88%D0%BA%D0%BE%20%D1%98%D0%B5%D0%B7%D0%B5%D1%80%D0%BE.jpg",
+   "commons_cat": "Grlište Lake",
+   "enwiki": "",
+   "localwiki": "https://sr.wikipedia.org/wiki/%D0%93%D1%80%D0%BB%D0%B8%D1%88%D0%BA%D0%BE_%D1%98%D0%B5%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": 1.1,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q16084324",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q16897613",
+   "name": "Vrutci Lake",
+   "name_local": "Врутци",
+   "lat": 43.8561,
+   "lon": 19.6994,
+   "iso2": "RS",
+   "adm": "Vrutci",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 4,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Bioska%2C%20Serbia%20-%20panoramio%20%286%29.jpg",
+   "commons_cat": "Vrutci Lake",
+   "enwiki": "https://en.wikipedia.org/wiki/Lake_Vrutci",
+   "localwiki": "https://sr.wikipedia.org/wiki/%D0%92%D1%80%D1%83%D1%82%D1%86%D0%B8_(%D1%98%D0%B5%D0%B7%D0%B5%D1%80%D0%BE)",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": 700,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Serbia"
+   ],
+   "key": "wd:Q16897613",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q20435113",
+   "name": "Petnica Lake",
+   "name_local": "Петничко језеро",
+   "lat": 44.249881,
+   "lon": 19.925533,
+   "iso2": "RS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Petnica%202016.jpg",
+   "commons_cat": "Petnica Lake",
+   "enwiki": "",
+   "localwiki": "https://sr.wikipedia.org/wiki/%D0%9F%D0%B5%D1%82%D0%BD%D0%B8%D1%87%D0%BA%D0%BE_%D1%98%D0%B5%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q20435113",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q23198806",
+   "name": "Rovni Lake",
+   "name_local": "Ровни језеро",
+   "lat": 44.2411,
+   "lon": 19.7547,
+   "iso2": "RS",
+   "adm": "",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 4,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/%D0%A0%D0%BE%D0%B2%D0%BD%D0%B8%20%D0%88%D0%B5%D0%B7%D0%B5%D1%80%D0%BE.jpg",
+   "commons_cat": "The dam and reservoir Stubo - Rovni",
+   "enwiki": "https://en.wikipedia.org/wiki/Rovni_Lake",
+   "localwiki": "https://sr.wikipedia.org/wiki/%D0%A0%D0%BE%D0%B2%D0%BD%D0%B8_%D1%98%D0%B5%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q23198806",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q25458795",
+   "name": "Međuvršje Lake",
+   "name_local": "Језеро Међувршје",
+   "lat": 43.918611,
+   "lon": 20.221389,
+   "iso2": "RS",
+   "adm": "",
+   "types": [
+    "lake",
+    "reservoir"
+   ],
+   "sitelinks": 4,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Jezero%20Me%C4%91uvr%C5%A1je%20%285%29.jpg",
+   "commons_cat": "Međuvršje Lake",
+   "enwiki": "",
+   "localwiki": "https://sr.wikipedia.org/wiki/%D0%9C%D0%B5%D1%92%D1%83%D0%B2%D1%80%D1%88%D1%98%D0%B5_(%D1%98%D0%B5%D0%B7%D0%B5%D1%80%D0%BE)",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": 273,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q25458795",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q25464546",
+   "name": "Rakina bara",
+   "name_local": "Rakina bara",
+   "lat": 44.680734,
+   "lon": 20.393034,
+   "iso2": "RS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 5,
+   "wd_img": "",
+   "commons_cat": "Rakina Bara",
+   "enwiki": "https://en.wikipedia.org/wiki/Rakina_Bara",
+   "localwiki": "https://sr.wikipedia.org/wiki/Rakina_bara",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q25464546",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q25464638",
+   "name": "Врмџанско језеро",
+   "name_local": "Врмџанско језеро",
+   "lat": 43.741964,
+   "lon": 21.826393,
+   "iso2": "RS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 3,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/%D0%92%D1%80%D0%BC%D1%9F%D0%B0%D0%BD%D1%81%D0%BA%D0%BE%20%D1%98%D0%B5%D0%B7%D0%B5%D1%80%D0%BE.jpg",
+   "commons_cat": "Vrmdža Lake",
+   "enwiki": "",
+   "localwiki": "https://sr.wikipedia.org/wiki/%D0%92%D1%80%D0%BC%D1%9F%D0%B0%D0%BD%D1%81%D0%BA%D0%BE_%D1%98%D0%B5%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q25464638",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q29976844",
+   "name": "Veliko Blato",
+   "name_local": "Језеро Велико блато",
+   "lat": 44.862759,
+   "lon": 20.494819,
+   "iso2": "RS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 4,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "https://en.wikipedia.org/wiki/Veliko_Blato_(Serbia)",
+   "localwiki": "https://sr.wikipedia.org/wiki/%D0%92%D0%B5%D0%BB%D0%B8%D0%BA%D0%BE_%D0%B1%D0%BB%D0%B0%D1%82%D0%BE_(%D1%98%D0%B5%D0%B7%D0%B5%D1%80%D0%BE)",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q29976844",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q31181435",
+   "name": "Језеро Дубоки Поток",
+   "name_local": "Језеро Дубоки Поток",
+   "lat": 44.584444,
+   "lon": 20.438056,
+   "iso2": "RS",
+   "adm": "Barajevo City Municipality",
+   "types": [
+    "lake",
+    "reservoir",
+    "artificial lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Jezero%20Duboki%20Potok.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://sr.wikipedia.org/wiki/%D0%94%D1%83%D0%B1%D0%BE%D0%BA%D0%B8_%D0%BF%D0%BE%D1%82%D0%BE%D0%BA_(%D1%98%D0%B5%D0%B7%D0%B5%D1%80%D0%BE)",
+   "area_km2": 0.072,
+   "depth_m": null,
+   "elev_m": 160,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q31181435",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q31182621",
+   "name": "Sot Lake",
+   "name_local": "Сотско језеро",
+   "lat": 45.158277,
+   "lon": 19.335157,
+   "iso2": "RS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Sotsko%20jezero%20521.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://sr.wikipedia.org/wiki/%D0%A1%D0%BE%D1%82%D1%81%D0%BA%D0%BE_%D1%98%D0%B5%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q31182621",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q31183913",
+   "name": "Bela Reka Lake",
+   "name_local": "Језеро Бела река",
+   "lat": 44.3575,
+   "lon": 20.488611,
+   "iso2": "RS",
+   "adm": "Voždovac",
+   "types": [
+    "lake",
+    "reservoir"
+   ],
+   "sitelinks": 3,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "https://en.wikipedia.org/wiki/Bela_Reka_Lake",
+   "localwiki": "https://sr.wikipedia.org/wiki/%D0%91%D0%B5%D0%BB%D0%B0_%D1%80%D0%B5%D0%BA%D0%B0_(%D1%98%D0%B5%D0%B7%D0%B5%D1%80%D0%BE)",
+   "area_km2": 0.022,
+   "depth_m": null,
+   "elev_m": 200,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q31183913",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q31184090",
+   "name": "Топчидерска језера",
+   "name_local": "Топчидерска језера",
+   "lat": 44.778992,
+   "lon": 20.439334,
+   "iso2": "RS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Beograd%20Topcider%206.JPG",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://sr.wikipedia.org/wiki/%D0%A2%D0%BE%D0%BF%D1%87%D0%B8%D0%B4%D0%B5%D1%80%D1%81%D0%BA%D0%B0_%D1%98%D0%B5%D0%B7%D0%B5%D1%80%D0%B0",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q31184090",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q31186650",
+   "name": "Добродол",
+   "name_local": "Добродол",
+   "lat": 45.0444,
+   "lon": 19.9428,
+   "iso2": "RS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://sr.wikipedia.org/wiki/%D0%94%D0%BE%D0%B1%D1%80%D0%BE%D0%B4%D0%BE%D0%BB_(%D1%98%D0%B5%D0%B7%D0%B5%D1%80%D0%BE)",
+   "area_km2": 0.45,
+   "depth_m": 6.0,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q31186650",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q61123047",
+   "name": "Блачко језеро",
+   "name_local": "Блачко језеро",
+   "lat": 43.290278,
+   "lon": 21.291944,
+   "iso2": "RS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Blacko%20jezero%2C%20Blace%2005.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://sr.wikipedia.org/wiki/%D0%91%D0%BB%D0%B0%D1%87%D0%BA%D0%BE_%D1%98%D0%B5%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": 0.12,
+   "depth_m": null,
+   "elev_m": 385,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q61123047",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q62084104",
+   "name": "Smilovska lakes",
+   "name_local": "Смиловска језера",
+   "lat": 43.0408,
+   "lon": 22.5056,
+   "iso2": "RS",
+   "adm": "Dimitrovgrad",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/1%20Smilovska%20jezera%20%284%29.jpg",
+   "commons_cat": "Smilovska jezera",
+   "enwiki": "",
+   "localwiki": "https://sr.wikipedia.org/wiki/%D0%A1%D0%BC%D0%B8%D0%BB%D0%BE%D0%B2%D1%81%D0%BA%D0%B0_%D1%98%D0%B5%D0%B7%D0%B5%D1%80%D0%B0",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": 700,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q62084104",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q65199972",
+   "name": "Беровско језеро",
+   "name_local": "Беровско језеро",
+   "lat": 42.986667,
+   "lon": 22.587778,
+   "iso2": "RS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://sr.wikipedia.org/wiki/%D0%91%D0%B5%D1%80%D0%BE%D0%B2%D1%81%D0%BA%D0%BE_%D1%98%D0%B5%D0%B7%D0%B5%D1%80%D0%BE_(%D1%81%D0%BB%D0%B8%D0%B2_%D0%9D%D0%B8%D1%88%D0%B0%D0%B2%D0%B5)",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q65199972",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q65199997",
+   "name": "Ветренско језеро",
+   "name_local": "Ветренско језеро",
+   "lat": 42.919167,
+   "lon": 22.594722,
+   "iso2": "RS",
+   "adm": "Babušnica Municipality",
+   "types": [
+    "lake",
+    "reservoir"
+   ],
+   "sitelinks": 3,
+   "wd_img": "",
+   "commons_cat": "Vetrensko Lake",
+   "enwiki": "",
+   "localwiki": "https://sr.wikipedia.org/wiki/%D0%92%D0%B5%D1%82%D1%80%D0%B5%D0%BD%D1%81%D0%BA%D0%BE_%D1%98%D0%B5%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q65199997",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q6984568",
+   "name": "Nebeska Suza",
+   "name_local": "",
+   "lat": 43.454167,
+   "lon": 20.281111,
+   "iso2": "RS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "https://en.wikipedia.org/wiki/Nebeska_Suza",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Serbia"
+   ],
+   "key": "wd:Q6984568",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q16085619",
+   "name": "Ribničko Lake",
+   "name_local": "Рибничко језеро",
+   "lat": 43.683333,
+   "lon": 19.665556,
+   "iso2": "RS",
+   "adm": "",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 0,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Ribnicko%20jezero%2C%20in%20the%20fields.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q16085619",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q35712761",
+   "name": "Jezero Ćelije",
+   "name_local": "",
+   "lat": 43.392222,
+   "lon": 21.163056,
+   "iso2": "RS",
+   "adm": "Serbia",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q35712761",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q49307602",
+   "name": "Ostrovo",
+   "name_local": "",
+   "lat": 45.577222,
+   "lon": 20.355278,
+   "iso2": "RS",
+   "adm": "Serbia",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q49307602",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q79408240",
+   "name": "Lake Zuce",
+   "name_local": "Језеро Зуце",
+   "lat": 44.68121,
+   "lon": 20.55152,
+   "iso2": "RS",
+   "adm": "Zuce",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 0,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Jezero%20Zuce.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q79408240",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q102128024",
+   "name": "Златно језеро",
+   "name_local": "Златно језеро",
+   "lat": 44.44147,
+   "lon": 22.14679,
+   "iso2": "RS",
+   "adm": "Donji Milanovac",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 0,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q102128024",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q12750880",
+   "name": "Дивљанско језеро",
+   "name_local": "Дивљанско језеро",
+   "lat": 43.186667,
+   "lon": 22.303056,
+   "iso2": "RS",
+   "adm": "",
+   "types": [
+    "lake",
+    "reservoir"
+   ],
+   "sitelinks": 1,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Divljansko%20jezero1.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://sr.wikipedia.org/wiki/%D0%94%D0%B8%D0%B2%D1%99%D0%B0%D0%BD%D1%81%D0%BA%D0%BE_%D1%98%D0%B5%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": 0.08,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q12750880",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q12752007",
+   "name": "Lake Zlatibor",
+   "name_local": "Златиборско језеро",
+   "lat": 43.726111,
+   "lon": 19.700833,
+   "iso2": "RS",
+   "adm": "Čajetina Municipality",
+   "types": [
+    "lake",
+    "reservoir"
+   ],
+   "sitelinks": 1,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Zlatibor%20Lake.JPG",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://sr.wikipedia.org/wiki/%D0%97%D0%BB%D0%B0%D1%82%D0%B8%D0%B1%D0%BE%D1%80%D1%81%D0%BA%D0%BE_%D1%98%D0%B5%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": 940,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q12752007",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q16085919",
+   "name": "Sovinac Lake",
+   "name_local": "Совинско језеро",
+   "lat": 44.126944,
+   "lon": 22.355556,
+   "iso2": "RS",
+   "adm": "",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Reservoir%20Sovinac.jpg",
+   "commons_cat": "Sovinac Lake",
+   "enwiki": "",
+   "localwiki": "https://sr.wikipedia.org/wiki/%D0%A1%D0%BE%D0%B2%D0%B8%D0%BD%D1%81%D0%BA%D0%BE_%D1%98%D0%B5%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q16085919",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q16086083",
+   "name": "Šumarice lake",
+   "name_local": "Шумаричко језеро",
+   "lat": 44.030208,
+   "lon": 20.874491,
+   "iso2": "RS",
+   "adm": "",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 1,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/JezeroSumarice.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://sr.wikipedia.org/wiki/%D0%A8%D1%83%D0%BC%D0%B0%D1%80%D0%B8%D1%87%D0%BA%D0%BE_%D1%98%D0%B5%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q16086083",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q16087169",
+   "name": "Крајковачко језеро",
+   "name_local": "Крајковачко језеро",
+   "lat": 43.349167,
+   "lon": 21.625833,
+   "iso2": "RS",
+   "adm": "",
+   "types": [
+    "lake",
+    "reservoir"
+   ],
+   "sitelinks": 1,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/%D0%9A%D1%80%D0%B0%D1%98%D0%BA%D0%BE%D0%B2%D0%B0%D1%87%D0%BA%D0%BE%20%D1%98%D0%B5%D0%B7%D0%B5%D1%80%D0%BE.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://sr.wikipedia.org/wiki/%D0%9A%D1%80%D0%B0%D1%98%D0%BA%D0%BE%D0%B2%D0%B0%D1%87%D0%BA%D0%BE_%D1%98%D0%B5%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": 450,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q16087169",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q16087664",
+   "name": "Ovčar-Kablar Lake",
+   "name_local": "Овчарско-кабларско језеро",
+   "lat": 43.900556,
+   "lon": 20.178889,
+   "iso2": "RS",
+   "adm": "",
+   "types": [
+    "lake",
+    "reservoir",
+    "Проточно језеро"
+   ],
+   "sitelinks": 1,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/J26%20104%20Stau%20Ov%C4%8Dar%20Banja.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://sr.wikipedia.org/wiki/%D0%9E%D0%B2%D1%87%D0%B0%D1%80%D1%81%D0%BA%D0%BE-%D0%BA%D0%B0%D0%B1%D0%BB%D0%B0%D1%80%D1%81%D0%BA%D0%BE_%D1%98%D0%B5%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q16087664",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q25464691",
+   "name": "Језеро Трешња",
+   "name_local": "Језеро Трешња",
+   "lat": 44.605833,
+   "lon": 20.570278,
+   "iso2": "RS",
+   "adm": "",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 1,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Jezero%20Tre%C5%A1nja.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://sr.wikipedia.org/wiki/%D0%A2%D1%80%D0%B5%D1%88%D1%9A%D0%B0_(%D1%98%D0%B5%D0%B7%D0%B5%D1%80%D0%BE)",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q25464691",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q25464923",
+   "name": "Каменичко језеро",
+   "name_local": "Каменичко језеро",
+   "lat": 44.358611,
+   "lon": 19.716389,
+   "iso2": "RS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/%D0%9A%D0%B0%D0%BC%D0%B5%D0%BD%D0%B8%D1%87%D0%BA%D0%BE%20%D1%98%D0%B5%D0%B7%D0%B5%D1%80%D0%BE.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://sr.wikipedia.org/wiki/%D0%9A%D0%B0%D0%BC%D0%B5%D0%BD%D0%B8%D1%87%D0%BA%D0%BE_%D1%98%D0%B5%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": 1.7,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q25464923",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q31181922",
+   "name": "Zobnatičko jezero",
+   "name_local": "Zobnatičko jezero",
+   "lat": 45.8635,
+   "lon": 19.6198,
+   "iso2": "RS",
+   "adm": "Vojvodina",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Zobnatica%20Lake%20near%20Ba%C4%8Dka%20Topola%2C%20Serbia.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://sr.wikipedia.org/wiki/Zobnati%C4%8Dko_jezero",
+   "area_km2": 2.5,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q31181922",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q31182491",
+   "name": "Кусадачко језеро",
+   "name_local": "Кусадачко језеро",
+   "lat": 44.423333,
+   "lon": 20.824722,
+   "iso2": "RS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Manastir%20Pinosava%2C%20Kusadak%2020.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://sr.wikipedia.org/wiki/%D0%9A%D1%83%D1%81%D0%B0%D0%B4%D0%B0%D1%87%D0%BA%D0%BE_%D1%98%D0%B5%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q31182491",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q31182625",
+   "name": "Бурје",
+   "name_local": "Бурје",
+   "lat": 45.137222,
+   "lon": 19.396389,
+   "iso2": "RS",
+   "adm": "Šid Municipality",
+   "types": [
+    "lake",
+    "reservoir"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://sr.wikipedia.org/wiki/%D0%91%D1%80%D1%83%D1%98%D0%B5_(%D1%98%D0%B5%D0%B7%D0%B5%D1%80%D0%BE)",
+   "area_km2": 0.17,
+   "depth_m": null,
+   "elev_m": 110,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q31182625",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q31182628",
+   "name": "Мохарач",
+   "name_local": "Мохарач",
+   "lat": 45.128333,
+   "lon": 19.428611,
+   "iso2": "RS",
+   "adm": "Šid Municipality",
+   "types": [
+    "lake",
+    "reservoir"
+   ],
+   "sitelinks": 1,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Jezero%20Mohara%C4%8D%20824.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://sr.wikipedia.org/wiki/%D0%9C%D0%BE%D1%85%D0%B0%D1%80%D0%B0%D1%87",
+   "area_km2": 0.55,
+   "depth_m": null,
+   "elev_m": 123,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q31182628",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q31182629",
+   "name": "Врањеш",
+   "name_local": "Врањеш",
+   "lat": 45.0725,
+   "lon": 19.6125,
+   "iso2": "RS",
+   "adm": "Srem District",
+   "types": [
+    "lake",
+    "reservoir"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://sr.wikipedia.org/wiki/%D0%92%D1%80%D0%B0%D1%9A%D0%B5%D1%88",
+   "area_km2": 0.2,
+   "depth_m": null,
+   "elev_m": 112,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q31182629",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q31182634",
+   "name": "Бешеновачко језеро",
+   "name_local": "Бешеновачко језеро",
+   "lat": 45.104167,
+   "lon": 19.713333,
+   "iso2": "RS",
+   "adm": "",
+   "types": [
+    "lake",
+    "reservoir"
+   ],
+   "sitelinks": 1,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Fru%C5%A1ka%20gora%20-%20Be%C5%A1enova%C4%8Dko%20jezero%202.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://sr.wikipedia.org/wiki/%D0%91%D0%B5%D1%88%D0%B5%D0%BD%D0%BE%D0%B2%D0%B0%D1%87%D0%BA%D0%BE_%D1%98%D0%B5%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": 0.6,
+   "depth_m": null,
+   "elev_m": 181,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q31182634",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q31182637",
+   "name": "Љуковско језеро",
+   "name_local": "Љуковско језеро",
+   "lat": 45.046667,
+   "lon": 20.024167,
+   "iso2": "RS",
+   "adm": "Inđija Municipality",
+   "types": [
+    "lake",
+    "reservoir"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://sr.wikipedia.org/wiki/%D0%89%D1%83%D0%BA%D0%BE%D0%B2%D1%81%D0%BA%D0%BE_%D1%98%D0%B5%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": 0.35,
+   "depth_m": null,
+   "elev_m": 103,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q31182637",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q31182642",
+   "name": "Rgotina Lake",
+   "name_local": "Рготско језеро",
+   "lat": 44.003957,
+   "lon": 22.262896,
+   "iso2": "RS",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Rgotsko-jezero-4.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://sr.wikipedia.org/wiki/%D0%A0%D0%B3%D0%BE%D1%82%D1%81%D0%BA%D0%BE_%D1%98%D0%B5%D0%B7%D0%B5%D1%80%D0%BE",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q31182642",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q61133326",
+   "name": "Језеро Заова",
+   "name_local": "Језеро Заова",
+   "lat": 44.506111,
+   "lon": 21.270556,
+   "iso2": "RS",
+   "adm": "",
+   "types": [
+    "lake",
+    "reservoir"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://sr.wikipedia.org/wiki/%D0%97%D0%B0%D0%BE%D0%B2%D0%B0_(%D1%98%D0%B5%D0%B7%D0%B5%D1%80%D0%BE)",
+   "area_km2": 0.03,
+   "depth_m": null,
+   "elev_m": 240,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q61133326",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q114289276",
+   "name": "Bujdina Bara",
+   "name_local": "Бујдина бара",
+   "lat": 44.198425,
+   "lon": 21.729415,
+   "iso2": "RS",
+   "adm": "Žagubica Municipality",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://sr.wikipedia.org/wiki/%D0%91%D1%83%D1%98%D0%B4%D0%B8%D0%BD%D0%B0_%D0%B1%D0%B0%D1%80%D0%B0",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q114289276",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q1888646",
+   "name": "Uvac",
+   "name_local": "Увац",
+   "lat": 43.2889,
+   "lon": 19.9714,
+   "iso2": "RS",
+   "adm": "Sjenica Municipality",
+   "types": [
+    "human settlement",
+    "cadastral municipality of Serbia"
+   ],
+   "sitelinks": 12,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "https://en.wikipedia.org/wiki/Uvac,_Sjenica",
+   "localwiki": "https://sr.wikipedia.org/wiki/%D0%A3%D0%B2%D0%B0%D1%86_(%D0%A1%D1%98%D0%B5%D0%BD%D0%B8%D1%86%D0%B0)",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": 627,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "seed": {
+    "swim": "limited",
+    "kind": "reservoir",
+    "why": "brief",
+    "note": "the meanders and the griffon vultures, boat trips and the ice cave",
+    "name": "Uvac"
+   },
+   "key": "wd:Q1888646",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q2321302",
+   "name": "Ada Ciganlija",
+   "name_local": "Ада Циганлија",
+   "lat": 44.783333,
+   "lon": 20.4,
+   "iso2": "RS",
+   "adm": "Čukarica City Municipality",
+   "types": [
+    "peninsula"
+   ],
+   "sitelinks": 25,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Sava%20Lake%20%28%D0%A1%D0%B0%D0%B2%D1%81%D0%BA%D0%BE%20%D1%98%D0%B5%D0%B7%D0%B5%D1%80%D0%BE%29.jpg",
+   "commons_cat": "Ada Ciganlija",
+   "enwiki": "https://en.wikipedia.org/wiki/Ada_Ciganlija",
+   "localwiki": "https://sr.wikipedia.org/wiki/%D0%90%D0%B4%D0%B0_%D0%A6%D0%B8%D0%B3%D0%B0%D0%BD%D0%BB%D0%B8%D1%98%D0%B0",
+   "area_km2": 2.7,
+   "depth_m": 4.0,
+   "elev_m": 78,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Serbia"
+   ],
+   "seed": {
+    "swim": "yes",
+    "kind": "lake",
+    "why": "editorial",
+    "note": "Belgrade's river island lake, the city's summer",
+    "name": "Ada Ciganlija"
+   },
+   "key": "wd:Q2321302",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q2660178",
+   "name": "Perućac",
+   "name_local": "Перућац",
+   "lat": 43.9567,
+   "lon": 19.4242,
+   "iso2": "RS",
+   "adm": "Bajina Bašta Municipality",
+   "types": [
+    "human settlement",
+    "cadastral municipality of Serbia"
+   ],
+   "sitelinks": 15,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Peru%C4%87ac%20and%20the%20Drina%20river%20-%20%D0%9F%D0%B5%D1%80%D1%83%D1%9B%D0%B0%D1%86%20%D0%B8%20%D0%94%D1%80%D0%B8%D0%BD%D0%B0.JPG",
+   "commons_cat": "Perućac",
+   "enwiki": "https://en.wikipedia.org/wiki/Peru%C4%87ac",
+   "localwiki": "https://sr.wikipedia.org/wiki/%D0%9F%D0%B5%D1%80%D1%83%D1%9B%D0%B0%D1%86",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": 316,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q2660178",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "seed": {
+    "swim": "limited",
+    "kind": "reservoir",
+    "why": "brief",
+    "note": "Tara NP, the Drina house",
+    "name": "Lake Perucac"
+   }
+  }
+ ]
+}

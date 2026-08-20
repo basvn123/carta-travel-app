@@ -1,0 +1,122 @@
+{
+ "country": "SM",
+ "enriched_at": "2026-08-20T21:05:20+00:00",
+ "n_harvested": 1,
+ "lakes": [
+  {
+   "wd": "Q3825942",
+   "name": "Lago di Faetano",
+   "name_local": "Lago di Faetano",
+   "lat": 43.940627,
+   "lon": 12.51588,
+   "iso2": "SM",
+   "adm": "",
+   "types": [
+    "body of water"
+   ],
+   "sitelinks": 7,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Lago%20di%20Faetano.png",
+   "commons_cat": "",
+   "enwiki": "https://en.wikipedia.org/wiki/Lago_di_Faetano",
+   "localwiki": "https://it.wikipedia.org/wiki/Lago_di_Faetano",
+   "area_km2": 0.006,
+   "depth_m": null,
+   "elev_m": 37,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q3825942",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "seed": {
+    "swim": "no",
+    "kind": "lake",
+    "why": "editorial",
+    "note": "the republic's one lake, a fishing and walking pond at Faetano",
+    "name": "Lago di Faetano"
+   },
+   "protected_area": {
+    "name": "IT4090001 - ZSC - Riserva Naturale Orientata di Onferno",
+    "kind": "Habitat reserve",
+    "national_park": false,
+    "notable": true,
+    "km": 7.94
+   },
+   "base": {
+    "id": "gem:san-marino",
+    "city": "San Marino",
+    "country": "San Marino",
+    "km": 4.7
+   },
+   "climate": {
+    "source": "WorldClim 2.1 (1970-2000 normals, 5 arc-min)",
+    "t_mean": [
+     4.2,
+     5.4,
+     8.5,
+     11.8,
+     16.5,
+     20.5,
+     23.1,
+     23.0,
+     19.3,
+     14.6,
+     8.8,
+     5.2
+    ]
+   },
+   "prelim": 99.0,
+   "article": {
+    "lang": "en",
+    "title": "Lago di Faetano",
+    "facts": [
+     "fishing"
+    ],
+    "swim_text": "",
+    "chars": 271
+   },
+   "views60": 69,
+   "images": [
+    {
+     "file": "File:Lago di Faetano.png",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/f/fb/Lago_di_Faetano.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/f/fb/Lago_di_Faetano.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 873,
+     "license": "CC BY-SA 2.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+     "author": "OpenStreetMap",
+     "caption": "Mappa del Lago di faetano",
+     "page": "https://commons.wikimedia.org/wiki/File%3ALago_di_Faetano.png"
+    },
+    {
+     "file": "File:サンマリノ神社 本殿.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/%E3%82%B5%E3%83%B3%E3%83%9E%E3%83%AA%E3%83%8E%E7%A5%9E%E7%A4%BE_%E6%9C%AC%E6%AE%BF.jpg/1280px-%E3%82%B5%E3%83%B3%E3%83%9E%E3%83%AA%E3%83%8E%E7%A5%9E%E7%A4%BE_%E6%9C%AC%E6%AE%BF.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/0/0f/%E3%82%B5%E3%83%B3%E3%83%9E%E3%83%AA%E3%83%8E%E7%A5%9E%E7%A4%BE_%E6%9C%AC%E6%AE%BF.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC BY-SA 4.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+     "author": "東京ゆういち",
+     "caption": "サンマリノ神社の本殿",
+     "page": "https://commons.wikimedia.org/wiki/File%3A%E3%82%B5%E3%83%B3%E3%83%9E%E3%83%AA%E3%83%8E%E7%A5%9E%E7%A4%BE_%E6%9C%AC%E6%AE%BF.jpg"
+    },
+    {
+     "file": "File:サンマリノ神社 鳥居.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/af/%E3%82%B5%E3%83%B3%E3%83%9E%E3%83%AA%E3%83%8E%E7%A5%9E%E7%A4%BE_%E9%B3%A5%E5%B1%85.jpg/1280px-%E3%82%B5%E3%83%B3%E3%83%9E%E3%83%AA%E3%83%8E%E7%A5%9E%E7%A4%BE_%E9%B3%A5%E5%B1%85.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/a/af/%E3%82%B5%E3%83%B3%E3%83%9E%E3%83%AA%E3%83%8E%E7%A5%9E%E7%A4%BE_%E9%B3%A5%E5%B1%85.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC BY-SA 4.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+     "author": "東京ゆういち",
+     "caption": "サンマリノ神社の鳥居",
+     "page": "https://commons.wikimedia.org/wiki/File%3A%E3%82%B5%E3%83%B3%E3%83%9E%E3%83%AA%E3%83%8E%E7%A5%9E%E7%A4%BE_%E9%B3%A5%E5%B1%85.jpg"
+    }
+   ]
+  }
+ ]
+}

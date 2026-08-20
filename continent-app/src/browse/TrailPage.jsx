@@ -2,8 +2,8 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { loadTrail } from '../lib/trails.js';
-import { haversineKm, stopNameFromRef } from '../lib/trailCards.js';
-import { trailStory } from '../lib/trailStory.js';
+import { haversineKm, stopNameFromRef, trailRating } from '../lib/trailCards.js';
+import { trailStory, trailReasons } from '../lib/trailStory.js';
 import {
   routePoints, routeLength, nearestOnRoute, sliceRoute, remainingRelief,
   hikeTimeMin, isLoopRoute,
@@ -17,7 +17,8 @@ import { useI18n } from '../i18n/index.jsx';
 import {
   ArrowLeftIcon, ShareIcon, DownloadIcon, CompassIcon, RouteIcon, BootIcon,
   ClockIcon, MountainIcon, MapPinIcon, CheckIcon, ListDayIcon, CloseIcon,
-  ChevronRightIcon, LinkIcon,
+  ChevronRightIcon, LinkIcon, EyeIcon, SwimIcon, BeachIcon, CastleIcon,
+  BedIcon, BottleIcon, LoopIcon, StarIcon, CameraIcon,
 } from '../components/Icons.jsx';
 import { RatingBadge } from '../components/RatingBadge.jsx';
 import { isNum } from '../map/coords.js';
@@ -60,7 +61,56 @@ function token(name, fallback) {
 const STORY_ICONS = {
   route: RouteIcon, boot: BootIcon, clock: ClockIcon, mountain: MountainIcon,
   compass: CompassIcon, pin: MapPinIcon, check: CheckIcon, list: ListDayIcon,
+  // Added for the reason codes (lib/trailStory.js trailReasons).
+  eye: EyeIcon, water: SwimIcon, coast: BeachIcon, castle: CastleIcon,
+  hut: BedIcon, spring: BottleIcon, loop: LoopIcon, star: StarIcon,
+  camera: CameraIcon,
 };
+
+/**
+ * What the walk looks like: the photographs the photo pass found ON the route.
+ *
+ * Every frame was shot within 400 m of the line (pipeline/trails/
+ * trail_images.py), and they are ordered along the walk rather than by score,
+ * so scrolling the strip is roughly walking it. The distance marker under each
+ * one is the honest version of a caption: it says where you would be standing.
+ *
+ * Commons requires the licence and the author to travel with the file, so both
+ * ride on the frame itself and the whole strip carries the source line.
+ */
+function ViewStrip({ images, t }) {
+  const [open, setOpen] = useState(null);
+  if (!Array.isArray(images) || !images.length) return null;
+  return (
+    <section className="tpage-sec">
+      <h2 className="tpage-sec-title">{t('trails.viewsTitle')}</h2>
+      <div className="tpage-views">
+        {images.map((im, i) => (
+          <button
+            type="button"
+            key={im.u}
+            className="tpage-view"
+            onClick={() => setOpen(open === i ? null : i)}
+            aria-expanded={open === i}
+          >
+            <img src={im.u} alt={im.caption || im.title || ''} loading="lazy" />
+            {isNum(im.along_m) && (
+              <span className="tpage-view-at">
+                {t('trails.viewAt', { km: km1(im.along_m) })}
+              </span>
+            )}
+            {open === i && (
+              <span className="tpage-view-credit">
+                {[im.author, im.license].filter(Boolean).join(', ')}
+              </span>
+            )}
+          </button>
+        ))}
+      </div>
+      <p className="tpage-credit tpage-views-credit">{t('trails.viewsCredit')}</p>
+    </section>
+  );
+}
 
 /** The elevation profile as an instrument chart, with the walker's position on
  *  it while following. */
@@ -215,7 +265,15 @@ export function TrailPage({ card, onClose, onSelectDest }) {
   const pts = useMemo(() => routePoints(src.geometry), [src]);
   const lineM = useMemo(() => routeLength(pts), [pts]);
   const totalM = isNum(src.distance_m) ? src.distance_m : lineM;
-  const loop = pts.length ? isLoopRoute(pts) : null;
+  // The wire's own answer wins. curate.py decides it from the full-resolution
+  // geometry (or from the mapper's roundtrip tag, which knows about figures of
+  // eight that endpoints alone would miss), while isLoopRoute here can only
+  // read the card's line, simplified to 90 m for the placeholder sketch.
+  // Measuring it again from that is a worse answer to a question already
+  // answered. The fallback stays for a wire published before is_loop existed.
+  const loop = typeof src.is_loop === 'boolean'
+    ? src.is_loop
+    : (pts.length ? isLoopRoute(pts) : null);
   const start = pts.length ? pts[0] : null;
 
   const nearby = assoc.dest
@@ -231,6 +289,14 @@ export function TrailPage({ card, onClose, onSelectDest }) {
     () => trailStory(tr, detail, { t, loop, nearby }),
     [tr, detail, t, loop, nearby?.city, nearby?.km], // eslint-disable-line react-hooks/exhaustive-deps
   );
+  // Why this one. The card already carries the first three codes, so the
+  // section is populated on the first frame and simply lengthens when the
+  // detail file lands with the rest.
+  const why = useMemo(
+    () => trailReasons(detail?.reasons || tr.reasons, t),
+    [detail?.reasons, tr.reasons, t],
+  );
+  const rating = trailRating(detail || tr);
 
   const { fix, err: fixErr } = useLiveFix(follow);
   const onRoute = useMemo(
@@ -483,6 +549,15 @@ export function TrailPage({ card, onClose, onSelectDest }) {
               {isCityDay && assoc.dest?.rating && (
                 <RatingBadge rating={assoc.dest.rating} size="xs" showGem={false} />
               )}
+              {!isCityDay && rating && (
+                <RatingBadge rating={rating} size="xs" showGem={false} />
+              )}
+              {!isCityDay && loop && (
+                <span className="tpage-loop">
+                  <LoopIcon size={12} />
+                  {t('trails.loop')}
+                </span>
+              )}
             </div>
           </div>
 
@@ -495,6 +570,27 @@ export function TrailPage({ card, onClose, onSelectDest }) {
             {isCityDay && isNum(tr.n_stops) && <Fact label={t('trails.factStops')} value={String(tr.n_stops)} />}
             {diffKey && <Fact label={t('trails.factDifficulty')} value={t(diffKey)} word />}
           </div>
+
+          {/* The argument for the walk, before the machinery of taking it
+              away. Short on purpose: three to six measured claims, each one
+              checkable against the map, and every word composed through t()
+              from codes rather than shipped as English prose. */}
+          {why.length > 0 && (
+            <section className="tpage-sec tpage-why">
+              <h2 className="tpage-sec-title">{t('trails.whyTitle')}</h2>
+              <ul className="tpage-story">
+                {why.map((p) => {
+                  const Icon = STORY_ICONS[p.icon] || CheckIcon;
+                  return (
+                    <li key={p.key}>
+                      <span className="tpage-story-icon"><Icon size={14} /></span>
+                      <span>{p.text}</span>
+                    </li>
+                  );
+                })}
+              </ul>
+            </section>
+          )}
 
           {/* Everything you can do with the route, in one block under the
               facts. Taking it into the app you already walk with is the
@@ -521,15 +617,36 @@ export function TrailPage({ card, onClose, onSelectDest }) {
                   <span>{t('trails.follow')}</span>
                 </button>
               </div>
-              <p className="tpage-note">{t('trails.exportNote')}</p>
-              <p className="tpage-note">{t('trails.followNote')}</p>
             </>
           )}
+
+          {!follow && <ViewStrip images={detail?.images} t={t} />}
 
           {!isCityDay && detail?.elevation && (
             <section className="tpage-sec">
               <h2 className="tpage-sec-title">{t('trails.elevTitle')}</h2>
               <ElevationChart elevation={detail.elevation} atM={follow && onRoute ? onRoute.m : null} t={t} />
+            </section>
+          )}
+
+          {/* What you actually walk past, in the order you meet it. From the
+              OSM landmarks scenic.py measured against the line, so a name here
+              means the route passes within 250 m of it. */}
+          {!follow && Array.isArray(detail?.highlights) && detail.highlights.length > 0 && (
+            <section className="tpage-sec">
+              <h2 className="tpage-sec-title">{t('trails.seeTitle')}</h2>
+              <ol className="tpage-highlights">
+                {detail.highlights.map((h, i) => (
+                  <li key={`${h.name}-${i}`}>
+                    <span className="tpage-hl-name">{h.name}</span>
+                    <span className="tpage-hl-facts">
+                      <span>{t(`trails.kind_${h.kind}`)}</span>
+                      {isNum(h.ele_m) && <span>{Math.round(h.ele_m)} m</span>}
+                      {isNum(h.along_m) && <span>{t('trails.atKm', { km: km1(h.along_m) })}</span>}
+                    </span>
+                  </li>
+                ))}
+              </ol>
             </section>
           )}
 

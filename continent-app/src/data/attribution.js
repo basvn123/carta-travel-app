@@ -22,7 +22,8 @@ export const ATTRIBUTIONS = [
     source: 'OpenStreetMap',
     license: 'ODbL 1.0',
     credit: 'Map data, points of interest, nature areas, parking locations, '
-      + 'beaches and trail routes © OpenStreetMap contributors',
+      + 'beaches, lake shores, trail routes and the landmarks along them '
+      + '© OpenStreetMap contributors',
   },
   {
     source: 'CARTO',
@@ -42,7 +43,8 @@ export const ATTRIBUTIONS = [
   {
     source: 'Wikimedia Commons',
     license: 'Per-file (CC BY-SA, CC BY, public domain)',
-    credit: 'Photos from Wikimedia Commons, credited per image',
+    credit: 'Photos from Wikimedia Commons, including the trail photographs '
+      + 'shot along each route, credited per image',
   },
   {
     source: 'GeoNames',
@@ -67,12 +69,15 @@ export const ATTRIBUTIONS = [
   {
     source: 'European Environment Agency',
     license: 'EEA re-use policy (CC BY 4.0)',
-    credit: 'Bathing water quality from the European Environment Agency',
+    credit: 'Bathing water quality, and the official bathing sites that '
+      + 'decide whether a lake can be swum in, from the European Environment '
+      + 'Agency and the Member State authorities that report them',
   },
   {
     source: 'WorldClim',
     license: 'WorldClim 2.1 terms (citation required)',
-    credit: 'Climate normals from WorldClim 2.1 (Fick and Hijmans 2017)',
+    credit: 'Climate normals, and the estimated lake swimming season '
+      + 'modelled from them, from WorldClim 2.1 (Fick and Hijmans 2017)',
   },
   {
     source: 'OpenTripMap',

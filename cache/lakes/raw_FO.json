@@ -1,0 +1,591 @@
+{
+ "country": "FO",
+ "harvested_at": "2026-08-20T18:12:55+00:00",
+ "n_wikidata": 19,
+ "n_seeded": 3,
+ "seed_missing": [],
+ "lakes": [
+  {
+   "wd": "Q2030212",
+   "name": "Stóravatn",
+   "name_local": "Stóravatn",
+   "lat": 61.816389,
+   "lon": -6.754167,
+   "iso2": "FO",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 4,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/St%C3%B3ravatn%20aerial%202019%20b%20%28cropped%29.jpg",
+   "commons_cat": "Stóravatn, Sandoy",
+   "enwiki": "https://en.wikipedia.org/wiki/St%C3%B3ravatn",
+   "localwiki": "https://fo.wikipedia.org/wiki/St%C3%B3ravatn",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q2030212",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q20620847",
+   "name": "Ryskivatn",
+   "name_local": "Ryskivatn",
+   "lat": 61.4925,
+   "lon": -6.8605,
+   "iso2": "FO",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Ryskivatn%20V%C3%A1gur%20Faroe%20Islands.jpg",
+   "commons_cat": "Ryskivatn",
+   "enwiki": "",
+   "localwiki": "https://fo.wikipedia.org/wiki/Ryskivatn",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q20620847",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q20621793",
+   "name": "Vatnið",
+   "name_local": "Vatnið",
+   "lat": 61.4686,
+   "lon": -6.8329,
+   "iso2": "FO",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Vatni%C3%B0%20V%C3%A1gsei%C3%B0i%20V%C3%A1gur.jpg",
+   "commons_cat": "Vatnið (Vágur)",
+   "enwiki": "",
+   "localwiki": "https://fo.wikipedia.org/wiki/Vatni%C3%B0_(V%C3%A1gur)",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q20621793",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q302162",
+   "name": "Lake Leynar",
+   "name_local": "Leynavatn",
+   "lat": 62.128333,
+   "lon": -7.022778,
+   "iso2": "FO",
+   "adm": "Tórshavn Municipality",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 5,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Leynavatn.jpg",
+   "commons_cat": "",
+   "enwiki": "https://en.wikipedia.org/wiki/Lake_Leynar",
+   "localwiki": "https://fo.wikipedia.org/wiki/Leynavatn",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q302162",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q476699",
+   "name": "Fjallavatn",
+   "name_local": "Fjallavatn",
+   "lat": 62.1225,
+   "lon": -7.299167,
+   "iso2": "FO",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 20,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Fjallavatn.png",
+   "commons_cat": "",
+   "enwiki": "https://en.wikipedia.org/wiki/Fjallavatn",
+   "localwiki": "https://fo.wikipedia.org/wiki/Fjallavatn",
+   "area_km2": 1.02,
+   "depth_m": 59.0,
+   "elev_m": 80,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q476699",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "seed": {
+    "swim": "no",
+    "kind": "lake",
+    "why": "editorial",
+    "haz": [
+     "cold_shock"
+    ],
+    "note": "Vagar's second lake, a walk in over open moor",
+    "name": "Fjallavatn"
+   }
+  },
+  {
+   "wd": "Q932408",
+   "name": "Sørvágsvatn",
+   "name_local": "Sørvágsvatn",
+   "lat": 62.05,
+   "lon": -7.233333,
+   "iso2": "FO",
+   "adm": "Vága Municipality",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 32,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/S%C3%B8rv%C3%A1gsvatn%204.jpg",
+   "commons_cat": "Sørvágsvatn",
+   "enwiki": "https://en.wikipedia.org/wiki/S%C3%B8rv%C3%A1gsvatn",
+   "localwiki": "https://fo.wikipedia.org/wiki/S%C3%B8rv%C3%A1gsvatn",
+   "area_km2": 3.4,
+   "depth_m": 59.0,
+   "elev_m": 32,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q932408",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "seed": {
+    "swim": "no",
+    "kind": "lake",
+    "why": "editorial",
+    "haz": [
+     "cold_shock",
+     "cliffs"
+    ],
+    "note": "the lake that looks like it hangs over the ocean, the Faroes' one famous picture",
+    "name": "Sorvagsvatn"
+   }
+  },
+  {
+   "wd": "Q1187685",
+   "name": "Gróthúsvatn",
+   "name_local": "Gróthúsvatn",
+   "lat": 61.840278,
+   "lon": -6.833056,
+   "iso2": "FO",
+   "adm": "Sandur Municipality",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 5,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Grothusvatn%2C%20Sandoy%2C%20Faroe%20Islands.JPG",
+   "commons_cat": "Gróthúsvatn",
+   "enwiki": "",
+   "localwiki": "https://fo.wikipedia.org/wiki/Gr%C3%B3th%C3%BAsvatn",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q1187685",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q1257349",
+   "name": "Kirkjuvatn",
+   "name_local": "Kirkjuvatn",
+   "lat": 61.5299,
+   "lon": -6.8757,
+   "iso2": "FO",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 7,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Kirkjuvatn.%20F%C3%A1mjin.01.jpg",
+   "commons_cat": "Kirkjuvatn",
+   "enwiki": "https://en.wikipedia.org/wiki/Kirkjuvatn",
+   "localwiki": "https://fo.wikipedia.org/wiki/Kirkjuvatn",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q1257349",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q1257382",
+   "name": "Sandsvatn",
+   "name_local": "Sandsvatn",
+   "lat": 61.848306,
+   "lon": -6.819583,
+   "iso2": "FO",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 15,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Sandsvatn%20a%20Lake%20on%20Sandoy%20in%20the%20Faroe%20Islands.JPG",
+   "commons_cat": "Sandsvatn",
+   "enwiki": "https://en.wikipedia.org/wiki/Sandsvatn",
+   "localwiki": "https://fo.wikipedia.org/wiki/Sandsvatn",
+   "area_km2": 0.8,
+   "depth_m": 5.0,
+   "elev_m": 7,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q1257382",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q1322013",
+   "name": "Lake Toftir",
+   "name_local": "Toftavatn",
+   "lat": 62.095569,
+   "lon": -6.716337,
+   "iso2": "FO",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 9,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Toftavatn.jpg",
+   "commons_cat": "Toftavatn",
+   "enwiki": "https://en.wikipedia.org/wiki/Lake_Toftir",
+   "localwiki": "https://fo.wikipedia.org/wiki/Toftavatn",
+   "area_km2": 0.51,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q1322013",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "seed": {
+    "swim": "no",
+    "kind": "lake",
+    "why": "editorial",
+    "haz": [
+     "cold_shock"
+    ],
+    "note": "Eysturoy, an easy lakeside walk",
+    "name": "Toftavatn"
+   }
+  },
+  {
+   "wd": "Q1827912",
+   "name": "Lake Eiði",
+   "name_local": "Eiðisvatn",
+   "lat": 62.286111,
+   "lon": -7.052778,
+   "iso2": "FO",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 7,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Ei%C3%B0isvatn%2C%20Faroe%20Islands.JPG",
+   "commons_cat": "Eiðisvatn",
+   "enwiki": "https://en.wikipedia.org/wiki/Lake_Ei%C3%B0i",
+   "localwiki": "https://fo.wikipedia.org/wiki/Ei%C3%B0isvatn",
+   "area_km2": 0.47,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q1827912",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q12009121",
+   "name": "Vatnsnes lake",
+   "name_local": "",
+   "lat": 61.504969,
+   "lon": -6.814055,
+   "iso2": "FO",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q12009121",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q29100290",
+   "name": "Mýrarnar",
+   "name_local": "Mýrarnar",
+   "lat": 62.170833,
+   "lon": -7.083056,
+   "iso2": "FO",
+   "adm": "Vestmanna Municipality",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 0,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q29100290",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q29100329",
+   "name": "Mjauvøtn",
+   "name_local": "Mjauvøtn",
+   "lat": 62.126111,
+   "lon": -6.998889,
+   "iso2": "FO",
+   "adm": "Tórshavn Municipality",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 0,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q29100329",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q29100373",
+   "name": "Lomundaroyri",
+   "name_local": "",
+   "lat": 62.166667,
+   "lon": -7.15,
+   "iso2": "FO",
+   "adm": "Vestmanna Municipality",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 0,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q29100373",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q29100483",
+   "name": "Kvíandalsvatn",
+   "name_local": "Kvíandalsvatn",
+   "lat": 62.233333,
+   "lon": -6.933333,
+   "iso2": "FO",
+   "adm": "Runavík Municipality",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 0,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q29100483",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q29100728",
+   "name": "Heljareyge",
+   "name_local": "",
+   "lat": 62.166667,
+   "lon": -7.083333,
+   "iso2": "FO",
+   "adm": "Vestmanna Municipality",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 0,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q29100728",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q117160244",
+   "name": "Pollurin",
+   "name_local": "",
+   "lat": 62.2478,
+   "lon": -7.1878,
+   "iso2": "FO",
+   "adm": "Sunda Municipality",
+   "types": [
+    "lagoon"
+   ],
+   "sitelinks": 1,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Saksun%2C%20Blue%20lagoon.jpg",
+   "commons_cat": "Pollurin, Saksun",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q117160244",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q136455519",
+   "name": "Niðara Vatn",
+   "name_local": "",
+   "lat": 62.30463,
+   "lon": -7.08731,
+   "iso2": "FO",
+   "adm": "Eiði Municipality",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "Niðara Vatn",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q136455519",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  }
+ ]
+}

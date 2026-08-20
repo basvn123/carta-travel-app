@@ -118,15 +118,29 @@ def _bilinear(band, transform, lons, lats):
 
 
 class DemTiles:
-    """GLO-30 cells fetched into data/raw/dem/ with an in-memory LRU."""
+    """GLO-30 cells fetched into data/raw/dem/ with an in-memory LRU.
 
-    def __init__(self):
+    evict_gb bounds what this run leaves on disk. Europe-wide sampling wants
+    more 1x1 degree tiles than a laptop with 20 GB free can hold (the four
+    pilot countries alone already occupy 15.6 GB), and a full raw store is
+    only worth keeping when it will be re-read. Trips are processed in geohash
+    order, so a tile is used by a run of neighbouring routes and then never
+    again: once this run's downloads pass the budget, the least recently used
+    of them is deleted. Tiles that were already on disk before the run are
+    never touched, and a deleted tile simply re-downloads if something needs
+    it again."""
+
+    def __init__(self, evict_gb=None):
         self.base = ingest_config.env("DEM_BUCKET_URL", BUCKET_DEFAULT)
         self.session = PoliteSession(min_interval=0.25)
         self.store = None                      # RawStore made on first download
         self.cache = OrderedDict()             # (lon, lat) -> (band, transform)
         self.downloaded, self.cached, self.absent = set(), set(), set()
         self.bytes = 0
+        self.budget = int(evict_gb * 1e9) if evict_gb else None
+        self.on_disk = OrderedDict()           # name -> (path, size), this run
+        self.on_disk_bytes = 0
+        self.evicted = 0
 
     def _cached_path(self, name):
         root = ingest_config.DATA_DIR / "dem"
@@ -158,14 +172,45 @@ class DemTiles:
             return None
         path = self.store.save_response(f"{name}.tif", resp, url, note=ATTRIBUTION)
         self.downloaded.add(name)
-        self.bytes += path.stat().st_size
-        print(f"  tile {name}: {path.stat().st_size / 1e6:.0f} MB")
+        size = path.stat().st_size
+        self.bytes += size
+        print(f"  tile {name}: {size / 1e6:.0f} MB")
+        if self.budget is not None:
+            self.on_disk[name] = (path, size)
+            self.on_disk_bytes += size
+            self._evict()
         return path
+
+    def _evict(self):
+        """Drop this run's least recently used tiles until the budget holds.
+
+        A tile still decoded in the in-memory LRU is skipped: deleting the file
+        under it would not free the memory, and the next neighbouring route
+        would only pull it back down."""
+        live = {tile_name(*key) for key in self.cache}
+        while self.on_disk_bytes > self.budget and self.on_disk:
+            for name in list(self.on_disk):
+                if name in live:
+                    continue
+                path, size = self.on_disk.pop(name)
+                self.on_disk_bytes -= size
+                try:
+                    path.unlink()
+                    self.evicted += 1
+                except OSError:
+                    pass                            # already gone
+                break
+            else:
+                return                              # everything left is in use
 
     def _load(self, key):
         if key in self.cache:
             self.cache.move_to_end(key)
             return self.cache[key]
+        if self.budget is not None:
+            hot = tile_name(*key)
+            if hot in self.on_disk:
+                self.on_disk.move_to_end(hot)
         path = self._fetch(key)
         tile = None
         if path is not None:
@@ -539,17 +584,24 @@ def ensure_elevation_column(conn):
     conn.commit()
 
 
-def select_ids(conn, countries, refresh, limit, ids):
+def select_ids(conn, countries, refresh, limit, ids, curated=False):
     """Stale trips (no elevation yet, or 2D geometry changed since), in
-    geohash order so neighbouring trips hit the same DEM tiles."""
+    geohash order so neighbouring trips hit the same DEM tiles.
+
+    curated restricts the run to what curate.py picked. Sampling all 236,000
+    staged relations would download most of Europe's DEM and spend days on
+    routes nobody will ever open; the ~4,900 approved ones are the set the app
+    actually ships."""
     if ids:
         return ids
-    sql = """
+    where_curated = ("AND status IN ('approved', 'published')" if curated else "")
+    sql = f"""
         SELECT id FROM trips
         WHERE source = 'osm' AND country = ANY(%s)
           AND (%s OR elevation IS NULL
                OR elevation->>'geom_md5'
                   IS DISTINCT FROM md5(ST_AsBinary(ST_Force2D(geom))))
+          {where_curated}
         ORDER BY ST_GeoHash(ST_Centroid(geom), 5)
     """
     params = [countries, refresh]
@@ -626,6 +678,12 @@ def main():
                         help="comma-separated trip ids to process (debugging)")
     parser.add_argument("--top", type=int, default=12,
                         help="longest routes to print per country")
+    parser.add_argument("--curated", action="store_true",
+                        help="only trips curate.py approved, which is the set "
+                             "the app ships")
+    parser.add_argument("--evict-gb", type=float, default=0,
+                        help="cap what this run leaves in data/raw/dem, in GB. "
+                             "0 keeps every tile (the old behaviour)")
     args = parser.parse_args()
 
     countries = [c.strip().upper() for c in args.countries.split(",") if c.strip()]
@@ -633,7 +691,8 @@ def main():
 
     conn = connect()
     ensure_elevation_column(conn)
-    ids = select_ids(conn, countries, args.refresh, args.limit, ids_arg)
+    ids = select_ids(conn, countries, args.refresh, args.limit, ids_arg,
+                     curated=args.curated)
     if not ids:
         print("nothing to do: every selected trip already has a fresh profile "
               "(use --refresh to recompute)")
@@ -642,7 +701,7 @@ def main():
         return
     print(f"{len(ids)} trips to sample ({', '.join(countries)})")
 
-    tiles = DemTiles()
+    tiles = DemTiles(evict_gb=args.evict_gb or None)
     counts = Counter()
     records = []
     t0 = time.time()

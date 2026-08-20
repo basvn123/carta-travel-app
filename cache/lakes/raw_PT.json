@@ -1,0 +1,2770 @@
+{
+ "country": "PT",
+ "harvested_at": "2026-08-20T18:35:07+00:00",
+ "n_wikidata": 89,
+ "n_seeded": 7,
+ "seed_missing": [],
+ "lakes": [
+  {
+   "wd": "Q1800457",
+   "name": "Lagoa Rasa",
+   "name_local": "Lagoa Rasa",
+   "lat": 37.843139,
+   "lon": -25.779591,
+   "iso2": "PT",
+   "adm": "Sete Cidades",
+   "types": [
+    "volcanic crater lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/The%20S.%20Miguel%20island%20collection%20XCIV%20%2849342094502%29.jpg",
+   "commons_cat": "Lagoa Rasa (Sete Cidades)",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": 0.045,
+   "depth_m": null,
+   "elev_m": 565,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q1800457",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q1800481",
+   "name": "Lagoa dos Patos",
+   "name_local": "",
+   "lat": 39.436944,
+   "lon": -31.238333,
+   "iso2": "PT",
+   "adm": "Azores",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Azoren%20Flores%20Poco%20da%20Alagoinha.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": 0.013,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q1800481",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q18616171",
+   "name": "Alqueva Reservoir",
+   "name_local": "Albufeira de Alqueva",
+   "lat": 38.21553,
+   "lon": -7.48856,
+   "iso2": "PT",
+   "adm": "",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 5,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Albufeira%20do%20Alqueva%20-%20Portugal%20%2848347214211%29.jpg",
+   "commons_cat": "Alqueva Reservoir",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q18616171",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "seed": {
+    "swim": "yes",
+    "kind": "reservoir",
+    "why": "brief",
+    "note": "the largest artificial lake in western Europe, a dark sky reserve",
+    "name": "Barragem do Alqueva"
+   }
+  },
+  {
+   "wd": "Q34797775",
+   "name": "Albufeira de Vilar",
+   "name_local": "",
+   "lat": 40.95549,
+   "lon": -7.53691,
+   "iso2": "PT",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": 548,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q34797775",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q34797779",
+   "name": "Albufera do Alto Rabagao",
+   "name_local": "",
+   "lat": 41.74976,
+   "lon": -7.79058,
+   "iso2": "PT",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": 857,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q34797779",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q34799330",
+   "name": "Magos Reservoir",
+   "name_local": "Albufeira de Magos",
+   "lat": 38.99293,
+   "lon": -8.67994,
+   "iso2": "PT",
+   "adm": "",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Barragem%20de%20Magos%20-%20Portugal%20%283330938902%29.jpg",
+   "commons_cat": "Magos Reservoir",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": 21,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q34799330",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q34868684",
+   "name": "Santa Luzia Reservoir",
+   "name_local": "Albufeira de Santa Luzia",
+   "lat": 40.105556,
+   "lon": -7.843056,
+   "iso2": "PT",
+   "adm": "Coimbra",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Barragem%20de%20Santa%20Luzia%20-%20Portugal%20%2853097310598%29.jpg",
+   "commons_cat": "Albufeira de Santa Luzia",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q34868684",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q34868710",
+   "name": "Albufeira do Peso",
+   "name_local": "",
+   "lat": 38.838889,
+   "lon": -8.190278,
+   "iso2": "PT",
+   "adm": "Coruche",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q34868710",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q34918735",
+   "name": "Vale do Rossim Reservoir",
+   "name_local": "Albufeira de Vale do Rossim",
+   "lat": 40.399303,
+   "lon": -7.584997,
+   "iso2": "PT",
+   "adm": "Guarda",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 1,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Albufeira%20de%20Vale%20do%20Rossim%20-%20Portugal%20%281355586581%29.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q34918735",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q34919282",
+   "name": "Alvito Reservoir",
+   "name_local": "Albufeira do Alvito",
+   "lat": 38.29013,
+   "lon": -7.89665,
+   "iso2": "PT",
+   "adm": "",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 1,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Barrage%20Alvito%20S%C3%A9i.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q34919282",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q35724376",
+   "name": "Lagoa Azul",
+   "name_local": "",
+   "lat": 37.86667,
+   "lon": -25.78333,
+   "iso2": "PT",
+   "adm": "Sete Cidades",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Lagoa%20Azul%20-%20S.%20Miguel%20-%20A%C3%A7ores%20%2851383101666%29.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [
+    "Zona de Paisagem Protegida das Sete Cidades"
+   ],
+   "part_of": [
+    "Lagoa das Sete Cidades"
+   ],
+   "basin_countries": [],
+   "key": "wd:Q35724376",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q35724446",
+   "name": "Lagoa Comprida",
+   "name_local": "Lagoa Comprida",
+   "lat": 40.36039,
+   "lon": -7.64057,
+   "iso2": "PT",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Lagoa%20Comprida%2C%20Serra%20da%20Estrela%20%285547857331%29.jpg",
+   "commons_cat": "Lagoa Comprida (Serra da Estrela)",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q35724446",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "seed": {
+    "swim": "limited",
+    "kind": "reservoir",
+    "why": "brief",
+    "haz": [
+     "cold_shock"
+    ],
+    "note": "Serra da Estrela, high and cold",
+    "name": "Lagoa Comprida"
+   }
+  },
+  {
+   "wd": "Q35724469",
+   "name": "Lagoa de Ervedeira",
+   "name_local": "",
+   "lat": 39.930278,
+   "lon": -8.896111,
+   "iso2": "PT",
+   "adm": "Leiria",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q35724469",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q35724485",
+   "name": "Lagoa de Mira",
+   "name_local": "",
+   "lat": 40.45,
+   "lon": -8.797778,
+   "iso2": "PT",
+   "adm": "Coimbra",
+   "types": [
+    "lagoon"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q35724485",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q35724493",
+   "name": "Lagoa de Santo André",
+   "name_local": "",
+   "lat": 38.102778,
+   "lon": -8.791389,
+   "iso2": "PT",
+   "adm": "Setúbal",
+   "types": [
+    "lagoon"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [
+    "Natural Reserve of the Lagoons of Santo André and Santa Sancha"
+   ],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q35724493",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q35724509",
+   "name": "Lagoa dos Braços",
+   "name_local": "",
+   "lat": 40.243611,
+   "lon": -8.805,
+   "iso2": "PT",
+   "adm": "Coimbra",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q35724509",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q35724693",
+   "name": "Lagoa Salgada",
+   "name_local": "",
+   "lat": 38.2325,
+   "lon": -8.453056,
+   "iso2": "PT",
+   "adm": "Setúbal",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q35724693",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q43551868",
+   "name": "Aldeadávila Reservoir",
+   "name_local": "Albufeira de Aldeiadávila",
+   "lat": 41.223917,
+   "lon": -6.670417,
+   "iso2": "PT",
+   "adm": "Mogadouro",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 1,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Presa%20de%20Aldead%C3%A1vila.jpg",
+   "commons_cat": "Aldeadávila Reservoir",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": 3.68,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [
+    "International Douro Natural Park",
+    "Douro Internacional e Vale do Águeda",
+    "Douro Internacional"
+   ],
+   "basin_countries": [],
+   "key": "wd:Q43551868",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q43560800",
+   "name": "Saucelle Reservoir",
+   "name_local": "Albufeira de Saucelhe",
+   "lat": 41.075692,
+   "lon": -6.775303,
+   "iso2": "PT",
+   "adm": "Freixo de Espada à Cinta",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 1,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Arribes%20del%20Duero%20-%20Saucelle.JPG",
+   "commons_cat": "Saucelle Reservoir",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [
+    "International Douro Natural Park",
+    "Douro Internacional e Vale do Águeda",
+    "Douro Internacional",
+    "Região Demarcada do Douro (RDD)"
+   ],
+   "basin_countries": [],
+   "key": "wd:Q43560800",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q43562577",
+   "name": "Miranda Reservoir",
+   "name_local": "Albufeira de Miranda",
+   "lat": 41.517595,
+   "lon": -6.244138,
+   "iso2": "PT",
+   "adm": "Miranda do Douro",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 1,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/The%202.jpg",
+   "commons_cat": "Miranda Reservoir",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [
+    "International Douro Natural Park",
+    "Douro Internacional e Vale do Águeda",
+    "Douro Internacional"
+   ],
+   "basin_countries": [],
+   "key": "wd:Q43562577",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q43563251",
+   "name": "Picote Reservoir",
+   "name_local": "Albufeira de Picote",
+   "lat": 41.378236,
+   "lon": -6.347994,
+   "iso2": "PT",
+   "adm": "Miranda do Douro",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 1,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Embalse%20en%20los%20Arribes%20del%20Duero.JPG",
+   "commons_cat": "Picote Reservoir",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [
+    "International Douro Natural Park",
+    "Douro Internacional e Vale do Águeda",
+    "Douro Internacional"
+   ],
+   "basin_countries": [],
+   "key": "wd:Q43563251",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q43563904",
+   "name": "Bemposta Reservoir",
+   "name_local": "Albufeira de Bemposta",
+   "lat": 41.299258,
+   "lon": -6.462858,
+   "iso2": "PT",
+   "adm": "Mogadouro",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 1,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Albufeira%20da%20Bemposta%20-%20Portugal%20%281429981504%29.jpg",
+   "commons_cat": "Bemposta Reservoir",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [
+    "International Douro Natural Park",
+    "Douro Internacional e Vale do Águeda",
+    "Douro Internacional"
+   ],
+   "basin_countries": [],
+   "key": "wd:Q43563904",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q96760070",
+   "name": "Núcleo Museológico do Sal",
+   "name_local": "Salina do Corredor da Cobra, incluindo o Armazém de Sal e o Núcleo Museológico do Sal",
+   "lat": 40.111964,
+   "lon": -8.832942,
+   "iso2": "PT",
+   "adm": "Lavos",
+   "types": [
+    "museum",
+    "cultural heritage",
+    "salt evaporation pond"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Salina%20do%20Corredor%20da%20Cobra%2C%20incluindo%20o%20Armaz%C3%A9m%20de%20Sal%20e%20o%20N%C3%BAcleo%20Museol%C3%B3gico%20do%20Sal%2006.jpg",
+   "commons_cat": "Salina do Corredor da Cobra, incluindo o Armazém de Sal e o Núcleo Museológico do Sal",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q96760070",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q108094410",
+   "name": "Fonte e Lago do Gadanha",
+   "name_local": "Fonte e Lago do Gadanha",
+   "lat": 38.843739,
+   "lon": -7.587822,
+   "iso2": "PT",
+   "adm": "Estremoz (Santa Maria e Santo André)",
+   "types": [
+    "lake",
+    "cultural heritage",
+    "fountain"
+   ],
+   "sitelinks": 1,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Fountain%20in%20Estremoz%20%2836523465542%29.jpg",
+   "commons_cat": "Fonte e Lago do Gadanha",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q108094410",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q118611101",
+   "name": "Albufeira da Barragem do Arade",
+   "name_local": "",
+   "lat": 37.24,
+   "lon": -8.38,
+   "iso2": "PT",
+   "adm": "",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 1,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Albufeira%20da%20Barragem%20do%20Arade%20-%20Portugal%20%2810428003835%29.jpg",
+   "commons_cat": "Albufeira da Barragem do Arade",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": 1.82,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q118611101",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q130299006",
+   "name": "Salas River Reservoir",
+   "name_local": "albufeira do Salas",
+   "lat": 41.922175,
+   "lon": -7.937117,
+   "iso2": "PT",
+   "adm": "Randín, Calvos de Randín",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Albufeira%20de%20Salas%20-%20Portugal%20%285614490292%29.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q130299006",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q131414381",
+   "name": "Barragem do Pico da Urze",
+   "name_local": "Barragem do Pico da Urze",
+   "lat": 32.754269,
+   "lon": -17.1189,
+   "iso2": "PT",
+   "adm": "Madeira",
+   "types": [
+    "reservoir",
+    "pumped-storage power station"
+   ],
+   "sitelinks": 1,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Madeira-Paul%20de%20Serra-Barragem%20do%20Pico%20da%20Urze-03ASD.jpg",
+   "commons_cat": "Barragem do Pico da Urze",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q131414381",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q133295700",
+   "name": "Lago dos Cardeais",
+   "name_local": "Lago dos Cardeais",
+   "lat": 38.530417,
+   "lon": -8.01753,
+   "iso2": "PT",
+   "adm": "Nossa Senhora da Tourega e Nossa Senhora de Guadalupe",
+   "types": [
+    "lake",
+    "cultural heritage",
+    "reflecting pool",
+    "water reservoir"
+   ],
+   "sitelinks": 1,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Herdade%20da%20Mitra%20-%20Valverde%20-%20Portugal%20%2811307526634%29.jpg",
+   "commons_cat": "Lago dos Cardeais",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [
+    "Quinta do Paço de Valverde"
+   ],
+   "basin_countries": [],
+   "key": "wd:Q133295700",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q140371454",
+   "name": "Valeira Reservoir",
+   "name_local": "Albufeira da Valeira",
+   "lat": 41.146599,
+   "lon": -7.213042,
+   "iso2": "PT",
+   "adm": "São João da Pesqueira",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 1,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Miradouro%20de%20Casal%20de%20Loivos%204.jpg",
+   "commons_cat": "Valeira Reservoir",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [
+    "Alto Douro Wine Region"
+   ],
+   "basin_countries": [],
+   "key": "wd:Q140371454",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q140371455",
+   "name": "Pocinho Reservoir",
+   "name_local": "Albufeira de Pocinho",
+   "lat": 41.058724,
+   "lon": -7.004267,
+   "iso2": "PT",
+   "adm": "Figueira de Castelo Rodrigo",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 1,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Rio%20Douro%20em%20Portugal%20DSC01232%20%2815692666156%29%20edited.jpg",
+   "commons_cat": "Pocinho Reservoir",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [
+    "International Douro Natural Park",
+    "Douro Internacional e Vale do Águeda",
+    "Douro Internacional"
+   ],
+   "basin_countries": [],
+   "key": "wd:Q140371455",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q140371453",
+   "name": "Régua Reservoir",
+   "name_local": "Albufeira da Régua",
+   "lat": 41.173185,
+   "lon": -7.566261,
+   "iso2": "PT",
+   "adm": "Tabuaço",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 1,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/R%C3%A9gua%20Douro%203.JPG",
+   "commons_cat": "Régua Reservoir",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [
+    "Alto Douro Wine Region"
+   ],
+   "basin_countries": [],
+   "key": "wd:Q140371453",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q140371477",
+   "name": "Carrapatelo Reservoir",
+   "name_local": "Albufeira do Carrapatelo",
+   "lat": 41.119358,
+   "lon": -7.961408,
+   "iso2": "PT",
+   "adm": "Mesão Frio",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 1,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Paisagem%20Douro%20-%20Ermida%20%283776103028%29.jpg",
+   "commons_cat": "Carrapatelo Reservoir",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [
+    "Alto Douro Wine Region"
+   ],
+   "basin_countries": [],
+   "key": "wd:Q140371477",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q140371502",
+   "name": "Crestuma-Lever Reservoir",
+   "name_local": "Albufeira de Crestuma-Lever",
+   "lat": 41.04062,
+   "lon": -8.34725,
+   "iso2": "PT",
+   "adm": "Penafiel",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 1,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Rio%20Douro%20-%20Portugal%20%28577378009%29.jpg",
+   "commons_cat": "Crestuma-Lever Reservoir",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q140371502",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q178997",
+   "name": "Lagoa do Ilhéu de Vila Franca do Campo",
+   "name_local": "Lagoa do Ilhéu de Vila Franca do Campo",
+   "lat": 37.705567,
+   "lon": -25.442853,
+   "iso2": "PT",
+   "adm": "Azores",
+   "types": [
+    "volcanic crater lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Ilheu-de-Vila-Franca-Azores%202010%2001.jpg",
+   "commons_cat": "Ilhéu de Vila Franca",
+   "enwiki": "",
+   "localwiki": "https://pt.wikipedia.org/wiki/Lagoa_do_Ilh%C3%A9u_de_Vila_Franca_do_Campo",
+   "area_km2": 0.017,
+   "depth_m": null,
+   "elev_m": 0,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q178997",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q379557",
+   "name": "Aveiro Lagoon",
+   "name_local": "Ria de Aveiro",
+   "lat": 40.684874,
+   "lon": -8.655714,
+   "iso2": "PT",
+   "adm": "",
+   "types": [
+    "ria",
+    "site of community importance",
+    "Natura 2000 site"
+   ],
+   "sitelinks": 13,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Ria%20de%20Aveiro%20-%20Portugal%20%F0%9F%87%B5%F0%9F%87%B9%20%2855118312473%29.jpg",
+   "commons_cat": "Ria de Aveiro",
+   "enwiki": "https://en.wikipedia.org/wiki/Ria_de_Aveiro",
+   "localwiki": "https://pt.wikipedia.org/wiki/Ria_de_Aveiro",
+   "area_km2": 331.2749,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [
+    "North Atlantic Ocean"
+   ],
+   "basin_countries": [],
+   "key": "wd:Q379557",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q513089",
+   "name": "Lagoa de São Brás",
+   "name_local": "Lagoa de São Brás",
+   "lat": 37.792992,
+   "lon": -25.409717,
+   "iso2": "PT",
+   "adm": "Azores",
+   "types": [
+    "volcanic crater lake"
+   ],
+   "sitelinks": 3,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Lagoa%20de%20S%C3%A3o%20Br%C3%A1s.jpg",
+   "commons_cat": "Lagoa de São Brás",
+   "enwiki": "",
+   "localwiki": "https://pt.wikipedia.org/wiki/Lagoa_de_S%C3%A3o_Br%C3%A1s",
+   "area_km2": 0.064,
+   "depth_m": null,
+   "elev_m": 610,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q513089",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q658956",
+   "name": "Lake Carvao",
+   "name_local": "Lagoa do Carvão",
+   "lat": 37.824094,
+   "lon": -25.74195,
+   "iso2": "PT",
+   "adm": "Azores",
+   "types": [
+    "volcanic crater lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://pt.wikipedia.org/wiki/Lagoa_do_Carv%C3%A3o",
+   "area_km2": 0.006,
+   "depth_m": null,
+   "elev_m": 680,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q658956",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q931668",
+   "name": "Lagoa das Canas",
+   "name_local": "Lagoa das Canas",
+   "lat": 37.81297,
+   "lon": -25.726916,
+   "iso2": "PT",
+   "adm": "Azores",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://pt.wikipedia.org/wiki/Lagoa_das_Canas",
+   "area_km2": 0.0023,
+   "depth_m": null,
+   "elev_m": 560,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q931668",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q1063080",
+   "name": "Lagoa do Charco da Madeira",
+   "name_local": "Lagoa do Charco da Madeira",
+   "lat": 37.793453,
+   "lon": -25.673589,
+   "iso2": "PT",
+   "adm": "Azores",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Charco%20da%20Madeira.JPG",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://pt.wikipedia.org/wiki/Lagoa_do_Charco_da_Madeira",
+   "area_km2": 0.012,
+   "depth_m": null,
+   "elev_m": 200,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q1063080",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q1170192",
+   "name": "Lagoa da Caldeira",
+   "name_local": "Lagoa da Caldeira",
+   "lat": 38.58843,
+   "lon": -28.711581,
+   "iso2": "PT",
+   "adm": "Azores",
+   "types": [
+    "volcanic crater lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Caldeira%20faial%203.JPG",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://pt.wikipedia.org/wiki/Lagoa_da_Caldeira",
+   "area_km2": 0.1,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q1170192",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q1288768",
+   "name": "Lagoa da Lomba",
+   "name_local": "Lagoa da Lomba",
+   "lat": 39.425,
+   "lon": -31.188889,
+   "iso2": "PT",
+   "adm": "Azores",
+   "types": [
+    "volcanic crater lake"
+   ],
+   "sitelinks": 3,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Lagoa%20da%20Lomba%2C%20ilha%20das%20Flores%2C%20A%C3%A7ores.JPG",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://pt.wikipedia.org/wiki/Lagoa_da_Lomba",
+   "area_km2": 0.035,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q1288768",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q1354682",
+   "name": "Lagoa Funda das Lajes",
+   "name_local": "Lagoa Funda das Lajes",
+   "lat": 39.405942,
+   "lon": -31.217716,
+   "iso2": "PT",
+   "adm": "Azores",
+   "types": [
+    "volcanic crater lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Azoren%20%287%29.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://pt.wikipedia.org/wiki/Lagoa_Funda_das_Lajes",
+   "area_km2": 0.35,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q1354682",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q1369105",
+   "name": "Lagoa da Fajã de Santo Cristo",
+   "name_local": "Lagoa da Fajã de Santo Cristo",
+   "lat": 38.627264,
+   "lon": -27.929399,
+   "iso2": "PT",
+   "adm": "Azores",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 4,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Fal%C3%A9sia%20e%20parte%20da%20Lagoa%20da%20Caldeira%20de%20Santo%20Cristo%2C%20ilha%20de%20S%C3%A3o%20Jorge%2C%20A%C3%A7ores%2C%20Portugal.JPG",
+   "commons_cat": "Lagoa da Fajã de Santo Cristo",
+   "enwiki": "https://en.wikipedia.org/wiki/Lagoa_da_Faj%C3%A3_de_Santo_Cristo",
+   "localwiki": "https://pt.wikipedia.org/wiki/Lagoa_da_Faj%C3%A3_de_Santo_Cristo",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q1369105",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q1425158",
+   "name": "Santiago Lake",
+   "name_local": "Lagoa de Santiago",
+   "lat": 37.848333,
+   "lon": -25.773611,
+   "iso2": "PT",
+   "adm": "Azores",
+   "types": [
+    "volcanic crater lake"
+   ],
+   "sitelinks": 5,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Lago%20de%20Santiago%2C%20isla%20de%20San%20Miguel%2C%20Azores%2C%20Portugal%2C%202020-07-29%2C%20DD%2018.jpg",
+   "commons_cat": "Lagoa de Santiago",
+   "enwiki": "",
+   "localwiki": "https://pt.wikipedia.org/wiki/Lagoa_de_Santiago",
+   "area_km2": 0.255,
+   "depth_m": null,
+   "elev_m": 334,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q1425158",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q1425259",
+   "name": "Lagoa do Canário",
+   "name_local": "Lagoa do Canário",
+   "lat": 37.836056,
+   "lon": -25.759592,
+   "iso2": "PT",
+   "adm": "Azores",
+   "types": [
+    "volcanic crater lake"
+   ],
+   "sitelinks": 3,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Lagoa%20do%20Can%C3%A1rio.jpg",
+   "commons_cat": "Lagoa do Canário",
+   "enwiki": "",
+   "localwiki": "https://pt.wikipedia.org/wiki/Lagoa_do_Can%C3%A1rio",
+   "area_km2": 0.0175,
+   "depth_m": null,
+   "elev_m": 745,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q1425259",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q1475035",
+   "name": "Furnas Lake",
+   "name_local": "Lagoa das Furnas",
+   "lat": 37.758366,
+   "lon": -25.332756,
+   "iso2": "PT",
+   "adm": "Azores",
+   "types": [
+    "volcanic crater lake"
+   ],
+   "sitelinks": 7,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Lagoa%20das%20Furnas%2C%20ilha%20de%20S%C3%A3o%20Miguel%2C%20Arquip%C3%A9lago%20dos%20A%C3%A7ores%2C%20Portugal.JPG",
+   "commons_cat": "Lagoa das Furnas",
+   "enwiki": "",
+   "localwiki": "https://pt.wikipedia.org/wiki/Lagoa_das_Furnas",
+   "area_km2": 1.93,
+   "depth_m": null,
+   "elev_m": 281,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q1475035",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "seed": {
+    "swim": "no",
+    "kind": "crater",
+    "why": "editorial",
+    "note": "the cozido cooked in the ground, fumaroles, no swimming",
+    "name": "Lagoa das Furnas"
+   }
+  },
+  {
+   "wd": "Q1515751",
+   "name": "Sete Cidades Massif",
+   "name_local": "Caldeira das Sete Cidades",
+   "lat": 37.87,
+   "lon": -25.78,
+   "iso2": "PT",
+   "adm": "Azores",
+   "types": [
+    "volcano",
+    "mountain",
+    "volcanic crater lake"
+   ],
+   "sitelinks": 12,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Seven%20Cities%20Lake%20-%20Azores%20%28220320067%29.jpg",
+   "commons_cat": "Sete Cidades Massif",
+   "enwiki": "https://en.wikipedia.org/wiki/Sete_Cidades_Massif",
+   "localwiki": "https://pt.wikipedia.org/wiki/Caldeira_das_Sete_Cidades",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": 856,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q1515751",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q1526881",
+   "name": "Lagoa das Sete Cidades",
+   "name_local": "Lagoa das Sete Cidades",
+   "lat": 37.855278,
+   "lon": -25.786389,
+   "iso2": "PT",
+   "adm": "Azores",
+   "types": [
+    "volcanic crater lake"
+   ],
+   "sitelinks": 9,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Lagoa%20das%20Sete%20Cidades3.jpg",
+   "commons_cat": "Lagoa das Sete Cidades",
+   "enwiki": "https://en.wikipedia.org/wiki/Lagoa_das_Sete_Cidades",
+   "localwiki": "https://pt.wikipedia.org/wiki/Lagoa_das_Sete_Cidades",
+   "area_km2": 4.37,
+   "depth_m": null,
+   "elev_m": 259,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q1526881",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "seed": {
+    "swim": "limited",
+    "kind": "crater",
+    "why": "brief",
+    "note": "Sao Miguel, the green and blue crater lakes, swimming only in marked spots",
+    "name": "Lagoa das Sete Cidades"
+   }
+  },
+  {
+   "wd": "Q1534094",
+   "name": "Lagoa do Caldeirão Grande",
+   "name_local": "Lagoa do Caldeirão Grande",
+   "lat": 37.820964,
+   "lon": -25.747139,
+   "iso2": "PT",
+   "adm": "Relva",
+   "types": [
+    "volcanic crater lake"
+   ],
+   "sitelinks": 3,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Lagoa%20do%20Caldeir%C3%A3o%20Grande%20%281%29.jpg",
+   "commons_cat": "Lagoa do Caldeirão Grande",
+   "enwiki": "",
+   "localwiki": "https://pt.wikipedia.org/wiki/Lagoa_do_Caldeir%C3%A3o_Grande",
+   "area_km2": 0.0086,
+   "depth_m": null,
+   "elev_m": 750,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q1534094",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q1660145",
+   "name": "Lagoa Seca",
+   "name_local": "Lagoa Seca",
+   "lat": 39.445278,
+   "lon": -31.216111,
+   "iso2": "PT",
+   "adm": "Azores",
+   "types": [
+    "volcanic crater lake"
+   ],
+   "sitelinks": 3,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://pt.wikipedia.org/wiki/Lagoa_Seca_(Santa_Cruz_das_Flores)",
+   "area_km2": 0.02,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q1660145",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q1660997",
+   "name": "Lagoa dos Nenúfares",
+   "name_local": "Lagoa dos Nenúfares",
+   "lat": 37.755214,
+   "lon": -25.404886,
+   "iso2": "PT",
+   "adm": "Azores",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://pt.wikipedia.org/wiki/Lagoa_dos_Nen%C3%BAfares",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": 520,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q1660997",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q1800443",
+   "name": "Lagoa Branca",
+   "name_local": "Lagoa Branca",
+   "lat": 39.44882,
+   "lon": -31.225598,
+   "iso2": "PT",
+   "adm": "Azores",
+   "types": [
+    "volcanic crater lake"
+   ],
+   "sitelinks": 4,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Lagoa%20Branca%20Flores%20IMG%201461%2003.jpg",
+   "commons_cat": "Lagoa Branca",
+   "enwiki": "",
+   "localwiki": "https://pt.wikipedia.org/wiki/Lagoa_Branca",
+   "area_km2": 0.05,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q1800443",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q1800446",
+   "name": "Lagoa Funda",
+   "name_local": "Lagoa Funda (Cedros)",
+   "lat": 39.442391,
+   "lon": -31.225977,
+   "iso2": "PT",
+   "adm": "Azores",
+   "types": [
+    "volcanic crater lake"
+   ],
+   "sitelinks": 3,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Lagoa%20Funda%2C%20Sata%20Cruz%20das%20Flores%2C%20ilha%20das%20Flores%2C%20A%C3%A7ores.JPG",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://pt.wikipedia.org/wiki/Lagoa_Funda_(Cedros)",
+   "area_km2": 0.13,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q1800446",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q1800444",
+   "name": "Lagoa Comprida",
+   "name_local": "Lagoa Comprida",
+   "lat": 39.440933,
+   "lon": -31.221907,
+   "iso2": "PT",
+   "adm": "Azores",
+   "types": [
+    "volcanic crater lake"
+   ],
+   "sitelinks": 4,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Lagoa%20Comprida%20Flores.jpg",
+   "commons_cat": "Lagoa Comprida",
+   "enwiki": "",
+   "localwiki": "https://pt.wikipedia.org/wiki/Lagoa_Comprida",
+   "area_km2": 0.045,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q1800444",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q1800448",
+   "name": "Lagoa Funda",
+   "name_local": "Lagoa Funda",
+   "lat": 38.743189,
+   "lon": -27.323578,
+   "iso2": "PT",
+   "adm": "Azores",
+   "types": [
+    "volcanic crater lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://pt.wikipedia.org/wiki/Lagoa_Funda",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q1800448",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q1800454",
+   "name": "Lagoa Rasa",
+   "name_local": "Lagoa Rasa",
+   "lat": 39.409722,
+   "lon": -31.224306,
+   "iso2": "PT",
+   "adm": "Azores",
+   "types": [
+    "volcanic crater lake"
+   ],
+   "sitelinks": 3,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Azoren%20%287%29.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://pt.wikipedia.org/wiki/Lagoa_Rasa",
+   "area_km2": 0.1,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q1800454",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q1800456",
+   "name": "Lagoa Rasa",
+   "name_local": "Lagoa Rasa (Sete Cidades)",
+   "lat": 37.825108,
+   "lon": -25.751073,
+   "iso2": "PT",
+   "adm": "Azores",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 3,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Lagoa%20Rasa%2C%20Ponta%20Delgada%2C%20ilha%20de%20S%C3%A3o%20Miguel%2C%20A%C3%A7ores.JPG",
+   "commons_cat": "Lagoa Rasa (Feteiras)",
+   "enwiki": "",
+   "localwiki": "https://pt.wikipedia.org/wiki/Lagoa_Rasa_(Sete_Cidades)",
+   "area_km2": 0.03,
+   "depth_m": null,
+   "elev_m": 780,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q1800456",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q35724477",
+   "name": "Lagoa de Melides",
+   "name_local": "Lagoa de Melides",
+   "lat": 38.134444,
+   "lon": -8.782778,
+   "iso2": "PT",
+   "adm": "Setúbal",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://pt.wikipedia.org/wiki/Lagoa_de_Melides",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q35724477",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q64750749",
+   "name": "Covão dos Conchos",
+   "name_local": "Covão dos Conchos",
+   "lat": 40.3639,
+   "lon": -7.6109,
+   "iso2": "PT",
+   "adm": "Sabugueiro",
+   "types": [
+    "artificial lake"
+   ],
+   "sitelinks": 5,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Cov%C3%A3o%20dos%20conchos.jpg",
+   "commons_cat": "Covão dos Conchos",
+   "enwiki": "https://en.wikipedia.org/wiki/Cov%C3%A3o_dos_Conchos",
+   "localwiki": "https://pt.wikipedia.org/wiki/Cov%C3%A3o_dos_Conchos",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q64750749",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q130536607",
+   "name": "Albufeira de Monte Clérigo",
+   "name_local": "Albufeira de Monte Clérigo",
+   "lat": 37.496222,
+   "lon": -8.061583,
+   "iso2": "PT",
+   "adm": "Almodôvar",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://pt.wikipedia.org/wiki/Albufeira_de_Monte_Cl%C3%A9rigo",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q130536607",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q1800460",
+   "name": "Lagoa da Fajã dos Cubres",
+   "name_local": "Lagoa da Fajã dos Cubres",
+   "lat": 38.642028,
+   "lon": -27.966,
+   "iso2": "PT",
+   "adm": "Azores",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 5,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Lagoa%20da%20Faj%C3%A3%20dos%20Cubres%2C%20Calheta%2C%20ilha%20de%20S%C3%A3o%20Jorge%2C%20A%C3%A7ores.JPG",
+   "commons_cat": "Lagoa da Fajã dos Cubres",
+   "enwiki": "https://en.wikipedia.org/wiki/Lagoa_da_Faj%C3%A3_dos_Cubres",
+   "localwiki": "https://pt.wikipedia.org/wiki/Lagoa_da_Faj%C3%A3_dos_Cubres",
+   "area_km2": 0.0304,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q1800460",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q1800466",
+   "name": "Lagoa da Vila",
+   "name_local": "Lagoa da Vila",
+   "lat": 39.08555,
+   "lon": -28.004983,
+   "iso2": "PT",
+   "adm": "Azores",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://pt.wikipedia.org/wiki/Lagoa_da_Vila",
+   "area_km2": 0.0035,
+   "depth_m": null,
+   "elev_m": 10,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q1800466",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q1800467",
+   "name": "Lagoa das Achadas",
+   "name_local": "Lagoa das Achadas",
+   "lat": 37.814933,
+   "lon": -25.732486,
+   "iso2": "PT",
+   "adm": "Azores",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://pt.wikipedia.org/wiki/Lagoa_das_Achadas",
+   "area_km2": 0.0017,
+   "depth_m": null,
+   "elev_m": 540,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q1800467",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q1800464",
+   "name": "Lagoa da Prata (Ilha de São Miguel)",
+   "name_local": "Lagoa da Prata (Ilha de São Miguel)",
+   "lat": 37.806461,
+   "lon": -25.736908,
+   "iso2": "PT",
+   "adm": "Azores",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://pt.wikipedia.org/wiki/Lagoa_da_Prata_(Ilha_de_S%C3%A3o_Miguel)",
+   "area_km2": 0.004,
+   "depth_m": null,
+   "elev_m": 540,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q1800464",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q1800470",
+   "name": "Lagoa das Éguas",
+   "name_local": "Lagoa das Éguas",
+   "lat": 37.828494,
+   "lon": -25.754669,
+   "iso2": "PT",
+   "adm": "Azores",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 3,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Lagoa%20das%20%C3%89guas.jpg",
+   "commons_cat": "Lagoa das Éguas",
+   "enwiki": "",
+   "localwiki": "https://pt.wikipedia.org/wiki/Lagoa_das_%C3%89guas",
+   "area_km2": 0.003,
+   "depth_m": null,
+   "elev_m": 830,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q1800470",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q1800472",
+   "name": "Lagoa do Areeiro",
+   "name_local": "Lagoa do Areeiro",
+   "lat": 37.763019,
+   "lon": -25.427064,
+   "iso2": "PT",
+   "adm": "Azores",
+   "types": [
+    "volcanic crater lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://pt.wikipedia.org/wiki/Lagoa_do_Areeiro",
+   "area_km2": 0.0055,
+   "depth_m": null,
+   "elev_m": 630,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q1800472",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q1800473",
+   "name": "Lagoa do Caldeirão",
+   "name_local": "Lagoa do Caldeirão",
+   "lat": 39.712222,
+   "lon": -31.113472,
+   "iso2": "PT",
+   "adm": "Azores",
+   "types": [
+    "lake",
+    "volcanic crater lake"
+   ],
+   "sitelinks": 6,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Caldeir%C3%A3o%2C%20Caldeira%20Vulc%C3%A2nica%20com%20as%20suas%20respectivas%20lagoas%20da%20ilha%20do%20corvo%2C%20A%C3%A7ores%2C%20Portugal.jpg",
+   "commons_cat": "Caldeirão (Corvo)",
+   "enwiki": "",
+   "localwiki": "https://pt.wikipedia.org/wiki/Lagoa_do_Caldeir%C3%A3o",
+   "area_km2": 0.25,
+   "depth_m": null,
+   "elev_m": 11,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q1800473",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q1800476",
+   "name": "Lagoa do Congro",
+   "name_local": "Lagoa do Congro",
+   "lat": 37.756389,
+   "lon": -25.406944,
+   "iso2": "PT",
+   "adm": "Azores",
+   "types": [
+    "volcanic crater lake"
+   ],
+   "sitelinks": 3,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Lagoa%20do%20Congro%2C%20Ilha%20de%20S%C3%A3o%20Miguel%2C%20A%C3%A7ores%2C%20Portugal.JPG",
+   "commons_cat": "Lagoa do Congro",
+   "enwiki": "",
+   "localwiki": "https://pt.wikipedia.org/wiki/Lagoa_do_Congro",
+   "area_km2": 0.0435,
+   "depth_m": null,
+   "elev_m": 518,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q1800476",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q1800477",
+   "name": "Lagoa do Pau Pique",
+   "name_local": "Lagoa de Pau Pique",
+   "lat": 37.83201,
+   "lon": -25.745527,
+   "iso2": "PT",
+   "adm": "Azores",
+   "types": [
+    "volcanic crater lake"
+   ],
+   "sitelinks": 3,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Lagoa%20do%20pau%20pique.jpg",
+   "commons_cat": "Lagoa do Pau Pique",
+   "enwiki": "",
+   "localwiki": "https://pt.wikipedia.org/wiki/Lagoa_de_Pau_Pique",
+   "area_km2": 0.0015,
+   "depth_m": null,
+   "elev_m": 700,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q1800477",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q1800482",
+   "name": "Lagoa das Empadadas",
+   "name_local": "Lagoa Empadadas",
+   "lat": 37.825142,
+   "lon": -25.747817,
+   "iso2": "PT",
+   "adm": "Azores",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 3,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/SMG%20PDL%20LagoasEmpadadas%20Norte.jpg",
+   "commons_cat": "Lagoa das Empadadas",
+   "enwiki": "",
+   "localwiki": "https://pt.wikipedia.org/wiki/Lagoa_Empadadas",
+   "area_km2": 0.018,
+   "depth_m": null,
+   "elev_m": 760,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q1800482",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q1800480",
+   "name": "Lagoa do Fogo",
+   "name_local": "Lagoa do Fogo",
+   "lat": 37.763333,
+   "lon": -25.471389,
+   "iso2": "PT",
+   "adm": "Azores",
+   "types": [
+    "volcanic crater lake"
+   ],
+   "sitelinks": 11,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Sao%20Miguel%20-%20Lagoa%20do%20Fogo.jpg",
+   "commons_cat": "Lagoa do Fogo",
+   "enwiki": "https://en.wikipedia.org/wiki/Lagoa_do_Fogo",
+   "localwiki": "https://pt.wikipedia.org/wiki/Lagoa_do_Fogo",
+   "area_km2": 1.36,
+   "depth_m": null,
+   "elev_m": 575,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q1800480",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "seed": {
+    "swim": "limited",
+    "kind": "crater",
+    "why": "editorial",
+    "note": "Sao Miguel, a nature reserve, a steep walk down to the shore",
+    "name": "Lagoa do Fogo"
+   }
+  },
+  {
+   "wd": "Q1800558",
+   "name": "Lagoa de Óbidos",
+   "name_local": "Lagoa de Óbidos",
+   "lat": 39.40969,
+   "lon": -9.20775,
+   "iso2": "PT",
+   "adm": "Óbidos",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 4,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Lagoa%20de%20Obidos.jpg",
+   "commons_cat": "Lagoa de Óbidos",
+   "enwiki": "https://en.wikipedia.org/wiki/Lagoa_de_%C3%93bidos",
+   "localwiki": "https://pt.wikipedia.org/wiki/Lagoa_de_%C3%93bidos",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q1800558",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q1969741",
+   "name": "Ria Formosa",
+   "name_local": "Ria Formosa",
+   "lat": 36.9833,
+   "lon": -7.91667,
+   "iso2": "PT",
+   "adm": "Faro",
+   "types": [
+    "lagoon"
+   ],
+   "sitelinks": 11,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/RiaFormosaQtaLagoPortugal.JPG",
+   "commons_cat": "Ria Formosa",
+   "enwiki": "https://en.wikipedia.org/wiki/Ria_Formosa",
+   "localwiki": "https://pt.wikipedia.org/wiki/Ria_Formosa",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [
+    "Ria Formosa Nature Park"
+   ],
+   "part_of": [
+    "Gulf of Cádiz"
+   ],
+   "basin_countries": [],
+   "key": "wd:Q1969741",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q3897611",
+   "name": "Pateira de Fermentelos",
+   "name_local": "Pateira de Fermentelos",
+   "lat": 40.58,
+   "lon": -8.52,
+   "iso2": "PT",
+   "adm": "",
+   "types": [
+    "lake",
+    "lagoon"
+   ],
+   "sitelinks": 3,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Pateira%20de%20Fermentelos%20Aveiro%20%28599093168%29.jpg",
+   "commons_cat": "Pateira de Fermentelos",
+   "enwiki": "",
+   "localwiki": "https://pt.wikipedia.org/wiki/Pateira_de_Fermentelos",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": 9,
+   "protected": [],
+   "part_of": [
+    "Pateira de Fermentelos Lake and Águeda and Cértima Valleys"
+   ],
+   "basin_countries": [],
+   "key": "wd:Q3897611",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q7376576",
+   "name": "Lagoa da Pedreira",
+   "name_local": "Lagoa da Pedreira",
+   "lat": 41.394444,
+   "lon": -8.761111,
+   "iso2": "PT",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "https://en.wikipedia.org/wiki/Lagoa_da_Pedreira",
+   "localwiki": "https://pt.wikipedia.org/wiki/Lagoa_da_Pedreira",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q7376576",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q8775414",
+   "name": "Chança dam",
+   "name_local": "Barragem do Chança",
+   "lat": 37.558611,
+   "lon": -7.521111,
+   "iso2": "PT",
+   "adm": "Province of Huelva",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 3,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Barragem%20do%20Chan%C3%A7a.JPG",
+   "commons_cat": "Barragem do Chança",
+   "enwiki": "",
+   "localwiki": "https://pt.wikipedia.org/wiki/Barragem_do_Chan%C3%A7a",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q8775414",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q9019924",
+   "name": "Lagoa da Vela",
+   "name_local": "Lagoa da Vela",
+   "lat": 40.275139,
+   "lon": -8.791444,
+   "iso2": "PT",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 4,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Lagoa%20da%20Vela%20-%20nenufar.jpg",
+   "commons_cat": "Lagoa da Vela",
+   "enwiki": "",
+   "localwiki": "https://pt.wikipedia.org/wiki/Lagoa_da_Vela",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q9019924",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q10315722",
+   "name": "Lagoa Seca (Ilha do Pico)",
+   "name_local": "Lagoa Seca (Ilha do Pico)",
+   "lat": 38.456,
+   "lon": -28.246,
+   "iso2": "PT",
+   "adm": "Azores",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Lagoa%20Seca%20Pico%20Azoren.JPG",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://pt.wikipedia.org/wiki/Lagoa_Seca_(Ilha_do_Pico)",
+   "area_km2": 0.0052,
+   "depth_m": null,
+   "elev_m": 790,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q10315722",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q10315743",
+   "name": "Lagoa da Rosada",
+   "name_local": "Lagoa da Rosada",
+   "lat": 38.432778,
+   "lon": -28.185747,
+   "iso2": "PT",
+   "adm": "Azores",
+   "types": [
+    "volcanic crater lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Lagoa%20da%20Rosada%20Pico%20Azoren.JPG",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://pt.wikipedia.org/wiki/Lagoa_da_Rosada",
+   "area_km2": 0.0125,
+   "depth_m": null,
+   "elev_m": 909,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q10315743",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q10315783",
+   "name": "Lagoa do Caiado",
+   "name_local": "Lagoa do Caiado",
+   "lat": 38.455992,
+   "lon": -28.251343,
+   "iso2": "PT",
+   "adm": "Azores",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 5,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Lagoa%20do%20Caiado%20Pico%20Azoren.jpg",
+   "commons_cat": "Lagoa do Caiado",
+   "enwiki": "https://en.wikipedia.org/wiki/Lagoa_do_Caiado",
+   "localwiki": "https://pt.wikipedia.org/wiki/Lagoa_do_Caiado",
+   "area_km2": 0.0536,
+   "depth_m": null,
+   "elev_m": 810,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q10315783",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q10315786",
+   "name": "Lagoa do Capitão",
+   "name_local": "Lagoa do Capitão",
+   "lat": 38.487767,
+   "lon": -28.318614,
+   "iso2": "PT",
+   "adm": "Azores",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 3,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Lagoa%20do%20Capit%C3%A3o%2C%20Ribeirinha%2C%20concelho%20das%20Lajes%20do%20Pico%2C%20ilha%20do%20Pico%2C%20A%C3%A7ores%2C%20Portugal.JPG",
+   "commons_cat": "Lagoa do Capitão",
+   "enwiki": "",
+   "localwiki": "https://pt.wikipedia.org/wiki/Lagoa_do_Capit%C3%A3o",
+   "area_km2": 0.0288,
+   "depth_m": null,
+   "elev_m": 790,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q10315786",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q10315800",
+   "name": "Lagoa do Landroal",
+   "name_local": "Lagoa do Landroal",
+   "lat": 38.4575,
+   "lon": -28.267361,
+   "iso2": "PT",
+   "adm": "Azores",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Lagoa%20do%20Landroal%2C%20vista%20parcial%2C%20concelho%20das%20Lajes%20do%20Pico%2C%20ilha%20do%20Pico%2C%20A%C3%A7ores%2C%20Portugal.JPG",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://pt.wikipedia.org/wiki/Lagoa_do_Landroal",
+   "area_km2": 0.0064,
+   "depth_m": null,
+   "elev_m": 790,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q10315800",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q10315806",
+   "name": "Lagoa do Peixinho",
+   "name_local": "Lagoa do Peixinho",
+   "lat": 38.4345,
+   "lon": -28.174,
+   "iso2": "PT",
+   "adm": "Azores",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Lagoa%20do%20Peixinho%2C%20concelho%20das%20Lajes%20do%20Pico%2C%20ilha%20do%20Pico%2C%20A%C3%A7ores%2C%20Portugal.JPG",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://pt.wikipedia.org/wiki/Lagoa_do_Peixinho",
+   "area_km2": 0.025,
+   "depth_m": null,
+   "elev_m": 875,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q10315806",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q10315804",
+   "name": "Lagoa do Paúl",
+   "name_local": "Lagoa do Paul",
+   "lat": 38.428003,
+   "lon": -28.232819,
+   "iso2": "PT",
+   "adm": "Azores",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 3,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Lagoa%20do%20Paul%2C%20envolvencias%2C%20Concelho%20da%20Madalena%20do%20Pico%2C%20ilha%20do%20Pico%2C%20A%C3%A7ores%2C%20Portugal.JPG",
+   "commons_cat": "Lagoa do Paúl",
+   "enwiki": "",
+   "localwiki": "https://pt.wikipedia.org/wiki/Lagoa_do_Paul",
+   "area_km2": 0.035,
+   "depth_m": null,
+   "elev_m": 788,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q10315804",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q10360443",
+   "name": "Ria de Alvor",
+   "name_local": "Ria de Alvor",
+   "lat": 37.127056,
+   "lon": -8.619064,
+   "iso2": "PT",
+   "adm": "",
+   "types": [
+    "river",
+    "ria"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/AlvorRiver%20%283%29.JPG",
+   "commons_cat": "Ria de Alvor",
+   "enwiki": "",
+   "localwiki": "https://pt.wikipedia.org/wiki/Ria_de_Alvor",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [
+    "Gulf of Cádiz"
+   ],
+   "basin_countries": [],
+   "key": "wd:Q10360443",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q10366992",
+   "name": "Salinas da Fonte da Bica",
+   "name_local": "Salinas da Fonte da Bica",
+   "lat": 39.36394,
+   "lon": -8.94407,
+   "iso2": "PT",
+   "adm": "Rio Maior",
+   "types": [
+    "cultural heritage",
+    "salt evaporation pond",
+    "archaeological site"
+   ],
+   "sitelinks": 4,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Placa%20salinas.jpg",
+   "commons_cat": "Salinas da Fonte da Bica",
+   "enwiki": "",
+   "localwiki": "https://pt.wikipedia.org/wiki/Salinas_da_Fonte_da_Bica",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q10366992",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q19429422",
+   "name": "Cedillo Reservoir",
+   "name_local": "Barragem de Cedillo",
+   "lat": 39.665133,
+   "lon": -7.538672,
+   "iso2": "PT",
+   "adm": "Cáceres Province",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 0,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Albufeira%20da%20Barragem%20de%20Cedillo%2007.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q19429422",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q63378362",
+   "name": "Bertiandos and S. Pedro of Arcos Lagoons",
+   "name_local": "Lagoas de Bertiandos e de S. Pedro de Arcos",
+   "lat": 41.75,
+   "lon": -8.633333,
+   "iso2": "PT",
+   "adm": "Viana do Castelo",
+   "types": [
+    "lagoon",
+    "protected area"
+   ],
+   "sitelinks": 0,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": 3.46,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q63378362",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q117217056",
+   "name": "Salinas de Castro Marim",
+   "name_local": "Salinas de Castro Marim",
+   "lat": 37.213889,
+   "lon": -7.436085,
+   "iso2": "PT",
+   "adm": "Castro Marim",
+   "types": [
+    "cultural heritage",
+    "salt evaporation pond"
+   ],
+   "sitelinks": 1,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Salinas%20de%20Castro%20Marim%20-%20Portugal%20%2825197097930%29.jpg",
+   "commons_cat": "Salinas de Castro Marim",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q117217056",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q5049759",
+   "name": "Castelo do Bode Dam",
+   "name_local": "Barragem de Castelo do Bode",
+   "lat": 39.542778,
+   "lon": -8.319722,
+   "iso2": "PT",
+   "adm": "Martinchel",
+   "types": [
+    "dam",
+    "cultural heritage",
+    "hydroelectric power station"
+   ],
+   "sitelinks": 9,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Barragem%20Castelo%20Bode.JPG",
+   "commons_cat": "Barragem de Castelo de Bode",
+   "enwiki": "https://en.wikipedia.org/wiki/Castelo_do_Bode_Dam",
+   "localwiki": "https://pt.wikipedia.org/wiki/Barragem_de_Castelo_do_Bode",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": 121,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "seed": {
+    "swim": "yes",
+    "kind": "reservoir",
+    "why": "editorial",
+    "note": "the Zezere reservoir, the best known Portuguese inland beaches",
+    "name": "Barragem de Castelo do Bode"
+   },
+   "key": "wd:Q5049759",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q49324291",
+   "name": "Praia Fluvial do Alamal",
+   "name_local": "Praia Fluvial do Alamal",
+   "lat": 39.48821,
+   "lon": -7.96779,
+   "iso2": "PT",
+   "adm": "Gavião",
+   "types": [
+    "river beach"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Praia%20Fluvial%20do%20Alamal%20-%20Portugal%20%282851229066%29.jpg",
+   "commons_cat": "Praia Fluvial do Alamal",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "seed": {
+    "swim": "yes",
+    "kind": "river",
+    "why": "editorial",
+    "note": "one of the country's designated river beaches, on the Tagus",
+    "name": "Praia Fluvial do Alamal"
+   },
+   "key": "wd:Q49324291",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  }
+ ]
+}

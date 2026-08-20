@@ -20,6 +20,139 @@
  * page renders it as prose instead of throwing it away.
  */
 
+/**
+ * Reason codes to sentences: why this particular walk is worth the day.
+ *
+ * pipeline/trails/rate.py writes codes and numbers, never prose, and the
+ * sentence is built here through t(). That is what puts the explanation in all
+ * six UI languages, and it is also what keeps it honest: every line below is a
+ * restatement of something measured, so a claim like "three named summits, the
+ * highest at 2,410 m" can be checked against the map rather than admired.
+ *
+ * The codes come from open data only. There is no review text anywhere in this
+ * layer, because there is no review text anybody is allowed to give us.
+ *
+ * Ordered by rate.py strongest first, and the caller takes the first few: the
+ * point is an argument for the walk, not an inventory of it.
+ */
+const REASON_ICON = {
+  summits: 'mountain',
+  summit: 'mountain',
+  high: 'mountain',
+  bigClimb: 'mountain',
+  steady: 'mountain',
+  glacier: 'mountain',
+  gorge: 'mountain',
+  cave: 'mountain',
+  viewpoints: 'eye',
+  waterfall: 'water',
+  lakes: 'water',
+  coast: 'coast',
+  castle: 'castle',
+  ruins: 'castle',
+  monastery: 'castle',
+  lighthouse: 'pin',
+  huts: 'hut',
+  water: 'spring',
+  loop: 'loop',
+  dayOut: 'clock',
+  trek: 'clock',
+  waymarked: 'compass',
+  known: 'star',
+  photogenic: 'camera',
+  dense: 'eye',
+};
+
+/** A number the sentence can name, or nothing. Keeps "the highest at
+ *  undefined m" out of the UI when a peak carries no ele tag. */
+const num = (v) => (typeof v === 'number' && Number.isFinite(v) ? v : null);
+
+function reasonText(r, t) {
+  const { code } = r;
+  const name = (r.name || '').trim();
+  const n = num(r.n);
+  const ele = num(r.ele);
+  switch (code) {
+    case 'summits':
+      return ele && name
+        ? t('trails.whySummits', { n, name, m: ele })
+        : t('trails.whySummitsPlain', { n });
+    case 'summit':
+      if (!name) return null;
+      return ele ? t('trails.whySummit', { name, m: ele })
+        : t('trails.whySummitPlain', { name });
+    case 'viewpoints':
+      return t(n > 1 ? 'trails.whyViewpoints' : 'trails.whyViewpoint', { n });
+    case 'waterfall':
+      return name ? t('trails.whyWaterfall', { name })
+        : t('trails.whyWaterfallPlain', { n });
+    case 'glacier':
+      return name ? t('trails.whyGlacier', { name }) : null;
+    case 'gorge':
+      return name ? t('trails.whyGorge', { name }) : null;
+    case 'lakes':
+      return name && n === 1 ? t('trails.whyLake', { name })
+        : t('trails.whyLakes', { n });
+    case 'coast':
+      return t('trails.whyCoast');
+    case 'castle':
+      return name ? t('trails.whyCastle', { name }) : null;
+    case 'ruins':
+      return name ? t('trails.whyRuins', { name }) : null;
+    case 'monastery':
+      return name ? t('trails.whyMonastery', { name }) : null;
+    case 'lighthouse':
+      return name ? t('trails.whyLighthouse', { name }) : null;
+    case 'cave':
+      return name ? t('trails.whyCave', { name }) : null;
+    case 'bigClimb':
+      return t('trails.whyBigClimb', { m: num(r.m) });
+    case 'steady':
+      return t('trails.whySteady', { m: num(r.perKm) });
+    case 'high':
+      return t('trails.whyHigh', { m: num(r.m) });
+    case 'huts':
+      return t(n > 1 ? 'trails.whyHuts' : 'trails.whyHut', { n });
+    case 'water':
+      return t('trails.whyWater', { n });
+    case 'loop':
+      return t('trails.whyLoop');
+    case 'dayOut':
+      return t('trails.whyDayOut', { km: r.km });
+    case 'trek':
+      return t('trails.whyTrek', { km: r.km });
+    case 'waymarked':
+      return t(r.level === 'iwn' ? 'trails.whyWaymarkedIwn' : 'trails.whyWaymarkedNwn');
+    case 'known':
+      return t('trails.whyKnown');
+    case 'photogenic':
+      return t('trails.whyPhotogenic', { n });
+    case 'dense':
+      return t('trails.whyDense', { n });
+    default:
+      return null;
+  }
+}
+
+/**
+ * The "why this one" lines for a trail, from the wire's reason codes.
+ *
+ * reasons comes from the detail file when it has arrived and from the card
+ * otherwise, so the section is populated on the first frame and simply grows.
+ */
+export function trailReasons(reasons, t, limit = 6) {
+  const out = [];
+  const seen = new Set();
+  for (const r of Array.isArray(reasons) ? reasons : []) {
+    if (out.length >= limit) break;
+    const text = reasonText(r, t);
+    if (!text || seen.has(text)) continue;
+    seen.add(text);
+    out.push({ key: `${r.code}:${out.length}`, icon: REASON_ICON[r.code] || 'check', text });
+  }
+  return out;
+}
+
 const TEMPLATE_MARKS = [
   /DIN 33466/i,
   /hiking time rule/i,
@@ -141,6 +274,19 @@ export function trailStory(tr, detail = null, { t, loop = null, nearby = null } 
 
     const ref = (md.match(REF_RE) || [])[1];
     if (ref) add('signs', 'compass', t('trails.sSigns', { ref: ref.trim() }));
+
+    // Where the mapped route had short breaks in it, say so. The line the
+    // app draws and the GPX carries is continuous, but a few metres of it
+    // were joined in a straight line rather than mapped
+    // (pipeline/trails/splice.py), and a walker following it on the ground
+    // should know which claim is which.
+    const bridges = detail?.bridges;
+    if (bridges?.n) {
+      add('bridges', 'route', t(bridges.n > 1 ? 'trails.sBridges' : 'trails.sBridge', {
+        n: bridges.n,
+        m: Math.round(bridges.total_m ?? 0),
+      }));
+    }
 
     // Nothing here about the nearest town: "Getting to the start" says it
     // beside the start coordinates, measured from the trailhead rather than

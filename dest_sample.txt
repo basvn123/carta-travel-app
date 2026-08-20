@@ -1,0 +1,125 @@
+{
+ "id": "BRU",
+ "tier": "airport",
+ "iata": "BRU",
+ "city": "Brussels",
+ "country": "Belgium",
+ "iso2": "BE",
+ "lat": 50.9014,
+ "lon": 4.4844,
+ "categories": [
+  "city",
+  "historic",
+  "art",
+  "food",
+  "unesco"
+ ],
+ "tags": [],
+ "blurb": null,
+ "no_ryanair_route": false,
+ "anchor_airport": "BRU",
+ "transfer": null,
+ "costs": {
+  "meal_mid_eur": 40,
+  "meal_cheap_eur": 20,
+  "fastfood_eur": 10.5,
+  "drink_out_eur": 4.9,
+  "cocktail_eur": 10.8,
+  "coffee_eur": 3.7,
+  "grocery_day_eur": 13,
+  "club_entry_eur": 12,
+  "level": "country",
+  "price_source": "numbeo_direct"
+ },
+ "accommodation": {
+  "per_person_night_eur": 43.67,
+  "cleaning_per_person_eur": 21.84,
+  "entire_home_night_eur": 131,
+  "typical_capacity": 3,
+  "level": "city",
+  "price_source": "inside_airbnb_city",
+  "n_listings": 2956,
+  "captured": "2026-06-27",
+  "source_place": "Brussels",
+  "source_km": 0.1,
+  "capacity_buckets": {
+   "2": 108,
+   "3": 124,
+   "4": 151,
+   "5": 176,
+   "6": 218,
+   "7": 220,
+   "8": 273
+  },
+  "seasonality": [
+   0.912,
+   0.942,
+   1.014,
+   1.071,
+   1.096,
+   1.042,
+   0.968,
+   0.961,
+   0.968,
+   1.028,
+   0.979,
+   1.019
+  ],
+  "neighbourhoods": [
+   {
+    "name": "Bruxelles",
+    "night_eur": 139,
+    "cap": 3,
+    "n": 974
+   },
+   {
+    "name": "Ixelles",
+    "night_eur": 130,
+    "cap": 3,
+    "n": 398
+   },
+   {
+    "name": "Saint-Gilles",
+    "night_eur": 121,
+    "cap": 2,
+    "n": 307
+   },
+   {
+    "name": "Schaerbeek",
+    "night_eur": 125,
+    "cap": 3,
+    "n": 190
+   },
+   {
+    "name": "Anderlecht",
+    "night_eur": 134,
+    "cap": 4,
+    "n": 178
+   },
+   {
+    "name": "Etterbeek",
+    "night_eur": 119,
+    "cap": 3,
+    "n": 150
+   },
+   {
+    "name": "Forest",
+    "night_eur": 126,
+    "cap": 3,
+    "n": 145
+   },
+   {
+    "name": "Uccle",
+    "night_eur": 134,
+    "cap": 4,
+    "n": 118
+   },
+   {
+    "name": "Saint-Josse-ten-Noode",
+    "night_eur": 130,
+    "cap": 3,
+    "n": 101
+   },
+   {
+    "name": "Molenbeek-Saint-Jean",
+    "night_eur":

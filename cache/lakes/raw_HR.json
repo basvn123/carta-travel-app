@@ -1,0 +1,3236 @@
+{
+ "country": "HR",
+ "harvested_at": "2026-08-20T18:18:02+00:00",
+ "n_wikidata": 102,
+ "n_seeded": 7,
+ "seed_missing": [],
+ "lakes": [
+  {
+   "wd": "Q694089",
+   "name": "Lake Prokljan",
+   "name_local": "Prukljansko jezero",
+   "lat": 43.816667,
+   "lon": 15.866667,
+   "iso2": "HR",
+   "adm": "Bilice, Šibenik-Knin County",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 12,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Krka%20i%20Prokljansko%20jezero.jpg",
+   "commons_cat": "Prokljansko jezero",
+   "enwiki": "https://en.wikipedia.org/wiki/Lake_Prokljan",
+   "localwiki": "https://hr.wikipedia.org/wiki/Prukljansko_jezero",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": 0,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q694089",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q812712",
+   "name": "Baćina lakes",
+   "name_local": "Baćinska jezera",
+   "lat": 43.077222,
+   "lon": 17.418611,
+   "iso2": "HR",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 14,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Ba%C4%87inska%20Laghi%2C%20Croazia.jpg",
+   "commons_cat": "Baćinska jezera",
+   "enwiki": "https://en.wikipedia.org/wiki/Ba%C4%87ina_lakes",
+   "localwiki": "https://hr.wikipedia.org/wiki/Ba%C4%87inska_jezera",
+   "area_km2": 1.38,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q812712",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q820542",
+   "name": "Lake Dubrava",
+   "name_local": "Dubravsko jezero",
+   "lat": 46.316667,
+   "lon": 16.65,
+   "iso2": "HR",
+   "adm": "",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 11,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Dubravsko%20jezero%2C%20Prelog%20-%20istok.jpg",
+   "commons_cat": "Dubravsko jezero",
+   "enwiki": "https://en.wikipedia.org/wiki/Lake_Dubrava",
+   "localwiki": "https://hr.wikipedia.org/wiki/Dubravsko_jezero",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Croatia"
+   ],
+   "key": "wd:Q820542",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q865428",
+   "name": "Birina",
+   "name_local": "Birina",
+   "lat": 43.0575,
+   "lon": 17.4425,
+   "iso2": "HR",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Jezero%20Birina.JPG",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://hr.wikipedia.org/wiki/Birina",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q865428",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q882717",
+   "name": "Blue Lake",
+   "name_local": "Modro jezero",
+   "lat": 43.450556,
+   "lon": 17.21,
+   "iso2": "HR",
+   "adm": "Split-Dalmatia County",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 20,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Plavo%20jezero%20Imotski%202.JPG",
+   "commons_cat": "Blue Lake, Croatia",
+   "enwiki": "https://en.wikipedia.org/wiki/Blue_Lake_(Croatia)",
+   "localwiki": "https://hr.wikipedia.org/wiki/Modro_jezero",
+   "area_km2": null,
+   "depth_m": 90.0,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Croatia"
+   ],
+   "key": "wd:Q882717",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "seed": {
+    "swim": "yes",
+    "kind": "lake",
+    "why": "editorial",
+    "note": "Imotski, swimming in the sinkhole when the water is high",
+    "name": "Modro jezero"
+   }
+  },
+  {
+   "wd": "Q926981",
+   "name": "Lim bay",
+   "name_local": "Limski kanal",
+   "lat": 45.131667,
+   "lon": 13.668889,
+   "iso2": "HR",
+   "adm": "",
+   "types": [
+    "ria"
+   ],
+   "sitelinks": 22,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Lim%20bay%2C%20Croatia.jpg",
+   "commons_cat": "Lim (Croatia)",
+   "enwiki": "https://en.wikipedia.org/wiki/Lim_(Croatia)",
+   "localwiki": "https://hr.wikipedia.org/wiki/Limski_zaljev",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [
+    "Adriatic Sea"
+   ],
+   "basin_countries": [],
+   "key": "wd:Q926981",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q1254195",
+   "name": "Zmajevo oko",
+   "name_local": "Zmajevo oko",
+   "lat": 43.530556,
+   "lon": 15.959083,
+   "iso2": "HR",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 3,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Drachenaugensee.jpg",
+   "commons_cat": "Zmajevo oko",
+   "enwiki": "",
+   "localwiki": "https://hr.wikipedia.org/wiki/Zmajevo_oko_(jezero)",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q1254195",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q1623907",
+   "name": "Salt mine in Ston",
+   "name_local": "Solana u Stonu",
+   "lat": 42.8325,
+   "lon": 17.694722,
+   "iso2": "HR",
+   "adm": "",
+   "types": [
+    "salt evaporation pond"
+   ],
+   "sitelinks": 6,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Aerial%20image%20of%20the%20salt%20evaporation%20ponds%20in%20Ston%20%28view%20from%20the%20southwest%29.jpg",
+   "commons_cat": "Salt mine in Ston",
+   "enwiki": "",
+   "localwiki": "https://hr.wikipedia.org/wiki/Solana_u_Stonu",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q1623907",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q1625342",
+   "name": "Vransko Lake",
+   "name_local": "Vransko jezero",
+   "lat": 43.89,
+   "lon": 15.57,
+   "iso2": "HR",
+   "adm": "Pakoštane",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 19,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/20250916%20120102%20HDR.jpg",
+   "commons_cat": "Lake Vrana (Dalmatia)",
+   "enwiki": "https://en.wikipedia.org/wiki/Lake_Vrana_(Dalmatia)",
+   "localwiki": "https://hr.wikipedia.org/wiki/Vransko_jezero_(Dalmacija)",
+   "area_km2": 57.0,
+   "depth_m": 4.0,
+   "elev_m": 0,
+   "protected": [
+    "Nature Park Vransko Lake"
+   ],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q1625342",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "seed": {
+    "swim": "limited",
+    "kind": "lake",
+    "why": "editorial",
+    "note": "the largest natural lake in Croatia, a nature park, birds",
+    "name": "Vransko jezero"
+   }
+  },
+  {
+   "wd": "Q1668261",
+   "name": "Peruća Lake",
+   "name_local": "Perućko jezero",
+   "lat": 43.85,
+   "lon": 16.516667,
+   "iso2": "HR",
+   "adm": "",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 18,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Troglav%20Peruca.jpg",
+   "commons_cat": "Peruća Lake",
+   "enwiki": "https://en.wikipedia.org/wiki/Peru%C4%87a_Lake",
+   "localwiki": "https://hr.wikipedia.org/wiki/Peru%C4%87ko_jezero",
+   "area_km2": 15.0,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Croatia"
+   ],
+   "key": "wd:Q1668261",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q2143020",
+   "name": "Red Lake",
+   "name_local": "Crveno jezero",
+   "lat": 43.455,
+   "lon": 17.198333,
+   "iso2": "HR",
+   "adm": "Imotski",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 22,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/07%20Imotski%20Crveno%20Jezero%20%281%29.jpg",
+   "commons_cat": "Red Lake, Croatia",
+   "enwiki": "https://en.wikipedia.org/wiki/Red_Lake_(Croatia)",
+   "localwiki": "https://hr.wikipedia.org/wiki/Crveno_jezero",
+   "area_km2": null,
+   "depth_m": 287.0,
+   "elev_m": 522,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Croatia"
+   ],
+   "key": "wd:Q2143020",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "seed": {
+    "swim": "no",
+    "kind": "lake",
+    "why": "editorial",
+    "haz": [
+     "cliffs"
+    ],
+    "note": "Imotski, sheer 240 m collapse walls, no way down to the water",
+    "name": "Crveno jezero"
+   }
+  },
+  {
+   "wd": "Q2451527",
+   "name": "Lake Vrana",
+   "name_local": "Vransko jezero",
+   "lat": 44.8549,
+   "lon": 14.3852,
+   "iso2": "HR",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 16,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Vransko%20jez.%20na%20otoku%20Cresu.jpg",
+   "commons_cat": "Vrana Lake (Cres)",
+   "enwiki": "https://en.wikipedia.org/wiki/Lake_Vrana_(Cres)",
+   "localwiki": "https://hr.wikipedia.org/wiki/Vransko_jezero_(Cres)",
+   "area_km2": 5.8,
+   "depth_m": 84.0,
+   "elev_m": 13,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q2451527",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q3240980",
+   "name": "Karinsko more",
+   "name_local": "Karinsko more",
+   "lat": 44.14778,
+   "lon": 15.61361,
+   "iso2": "HR",
+   "adm": "Zadar County",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 14,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/%D0%93%D0%BE%D1%80%D1%9A%D0%B8%20%D0%9A%D0%B0%D1%80%D0%B8%D0%BD.JPG",
+   "commons_cat": "Karin Sea",
+   "enwiki": "https://en.wikipedia.org/wiki/Karin_Sea",
+   "localwiki": "https://hr.wikipedia.org/wiki/Karinsko_more",
+   "area_km2": null,
+   "depth_m": 11.0,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q3240980",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q3241044",
+   "name": "Novigrad Sea",
+   "name_local": "Novigradsko more",
+   "lat": 44.201389,
+   "lon": 15.521111,
+   "iso2": "HR",
+   "adm": "Zadar County",
+   "types": [
+    "lake",
+    "bay"
+   ],
+   "sitelinks": 14,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Paklenica%20and%20Novigrad.jpg",
+   "commons_cat": "Novigrad Sea",
+   "enwiki": "https://en.wikipedia.org/wiki/Novigrad_Sea",
+   "localwiki": "https://hr.wikipedia.org/wiki/Novigradsko_more",
+   "area_km2": 28.6,
+   "depth_m": 37.0,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q3241044",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q3436984",
+   "name": "Lake Krušćica",
+   "name_local": "Kruščica",
+   "lat": 44.689722,
+   "lon": 15.270833,
+   "iso2": "HR",
+   "adm": "",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 9,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Jezero%20Kru%C5%A1%C4%8Dica%20-%20panoramio.jpg",
+   "commons_cat": "Lake Krušćica",
+   "enwiki": "https://en.wikipedia.org/wiki/Lake_Kru%C5%A1%C4%87ica",
+   "localwiki": "https://hr.wikipedia.org/wiki/Kru%C5%A1%C4%8Dica_(jezero)",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q3436984",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q3445975",
+   "name": "Rijeka Dubrovačka",
+   "name_local": "Rijeka dubrovačka",
+   "lat": 42.66778,
+   "lon": 18.07833,
+   "iso2": "HR",
+   "adm": "",
+   "types": [
+    "ria"
+   ],
+   "sitelinks": 13,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Pogled%20s%20Golubova%20kamena%20na%20Rijeku%20dubrova%C4%8Dku.JPG",
+   "commons_cat": "Rijeka Dubrovačka",
+   "enwiki": "https://en.wikipedia.org/wiki/Rijeka_Dubrova%C4%8Dka",
+   "localwiki": "https://hr.wikipedia.org/wiki/Rijeka_dubrova%C4%8Dka",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q3445975",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q3451690",
+   "name": "Prošćansko jezero",
+   "name_local": "Prošćansko jezero",
+   "lat": 44.8615,
+   "lon": 15.6006,
+   "iso2": "HR",
+   "adm": "Lika-Senj County",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 7,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Plitvice%20Lakes%2C%20Proscansko%20jezero.JPG",
+   "commons_cat": "Prošćansko jezero",
+   "enwiki": "",
+   "localwiki": "https://hr.wikipedia.org/wiki/Pro%C5%A1%C4%87ansko_jezero",
+   "area_km2": 0.68,
+   "depth_m": 37.0,
+   "elev_m": 636,
+   "protected": [],
+   "part_of": [
+    "Plitvice Lakes National Park"
+   ],
+   "basin_countries": [
+    "Croatia"
+   ],
+   "key": "wd:Q3451690",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q3541891",
+   "name": "Ciginovac",
+   "name_local": "Ciginovac",
+   "lat": 44.87222,
+   "lon": 15.59528,
+   "iso2": "HR",
+   "adm": "Plitvička Jezera Municipality",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 6,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Plitvica%20Selo%2C%20Croatia%20-%20panoramio.jpg",
+   "commons_cat": "Ciginovac",
+   "enwiki": "",
+   "localwiki": "https://hr.wikipedia.org/wiki/Ciginovac",
+   "area_km2": 0.075,
+   "depth_m": 11.0,
+   "elev_m": 625,
+   "protected": [
+    "Plitvice Lakes National Park"
+   ],
+   "part_of": [
+    "Plitvice Lakes National Park"
+   ],
+   "basin_countries": [],
+   "key": "wd:Q3541891",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q3825969",
+   "name": "Lokvarsko jezero",
+   "name_local": "Lokvarsko jezero",
+   "lat": 45.367222,
+   "lon": 14.699444,
+   "iso2": "HR",
+   "adm": "Primorje-Gorski Kotar County",
+   "types": [
+    "lake",
+    "artificial lake"
+   ],
+   "sitelinks": 11,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/LokvarskoJezero1.jpg",
+   "commons_cat": "Lokvarsko jezero",
+   "enwiki": "https://en.wikipedia.org/wiki/Lake_Lokve",
+   "localwiki": "https://hr.wikipedia.org/wiki/Lokvarsko_jezero",
+   "area_km2": null,
+   "depth_m": 40.0,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q3825969",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q4103545",
+   "name": "Lake Varaždin",
+   "name_local": "Varaždinsko jezero",
+   "lat": 46.316667,
+   "lon": 16.4,
+   "iso2": "HR",
+   "adm": "",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 8,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Drava%20jezero%20-%20panoramio.jpg",
+   "commons_cat": "Varaždin Lake",
+   "enwiki": "https://en.wikipedia.org/wiki/Lake_Vara%C5%BEdin",
+   "localwiki": "https://hr.wikipedia.org/wiki/Vara%C5%BEdinsko_jezero",
+   "area_km2": 10.1,
+   "depth_m": null,
+   "elev_m": 158,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Croatia"
+   ],
+   "key": "wd:Q4103545",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q6476572",
+   "name": "Lake Lapovac",
+   "name_local": "Lapovac (jezero)",
+   "lat": 45.4667,
+   "lon": 18.1,
+   "iso2": "HR",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 3,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "https://en.wikipedia.org/wiki/Lake_Lapovac",
+   "localwiki": "https://hr.wikipedia.org/wiki/Lapovac_(jezero)",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Croatia"
+   ],
+   "key": "wd:Q6476572",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q6923790",
+   "name": "Kaluđerovac",
+   "name_local": "Kaluđerovac",
+   "lat": 44.901111,
+   "lon": 15.611111,
+   "iso2": "HR",
+   "adm": "Plitvička Jezera Municipality",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 4,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Kalu%C4%91erovac.jpg",
+   "commons_cat": "Kaluđerovac",
+   "enwiki": "",
+   "localwiki": "https://hr.wikipedia.org/wiki/Kalu%C4%91erovac_(jezero)",
+   "area_km2": 0.02,
+   "depth_m": 14.0,
+   "elev_m": 508,
+   "protected": [],
+   "part_of": [
+    "Plitvice Lakes National Park"
+   ],
+   "basin_countries": [
+    "Croatia"
+   ],
+   "key": "wd:Q6923790",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q7158726",
+   "name": "Milino jezero",
+   "name_local": "Milino jezero",
+   "lat": 44.8763,
+   "lon": 15.60978,
+   "iso2": "HR",
+   "adm": "Lika-Senj County",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 3,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Milino%20jezero.jpg",
+   "commons_cat": "Milino jezero",
+   "enwiki": "",
+   "localwiki": "https://hr.wikipedia.org/wiki/Milino_jezero",
+   "area_km2": 0.01,
+   "depth_m": 1.0,
+   "elev_m": 576,
+   "protected": [
+    "Plitvice Lakes National Park"
+   ],
+   "part_of": [
+    "Plitvice Lakes National Park"
+   ],
+   "basin_countries": [
+    "Croatia"
+   ],
+   "key": "wd:Q7158726",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q7178471",
+   "name": "Petnja",
+   "name_local": "Petnja",
+   "lat": 45.203889,
+   "lon": 17.954167,
+   "iso2": "HR",
+   "adm": "Sibinj",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 5,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Jezero%20Petnja.jpg",
+   "commons_cat": "Petnja",
+   "enwiki": "https://en.wikipedia.org/wiki/Petnja",
+   "localwiki": "https://hr.wikipedia.org/wiki/Petnja",
+   "area_km2": 0.28,
+   "depth_m": 8.2,
+   "elev_m": 149,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Croatia"
+   ],
+   "key": "wd:Q7178471",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q7210399",
+   "name": "Galovac",
+   "name_local": "Galovac",
+   "lat": 44.87494,
+   "lon": 15.60644,
+   "iso2": "HR",
+   "adm": "Lika-Senj County",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 6,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Plitvice%20Lakes%2C%20Galovac%20Waterfall.JPG",
+   "commons_cat": "Galovac",
+   "enwiki": "",
+   "localwiki": "https://hr.wikipedia.org/wiki/Galovac_(jezero)",
+   "area_km2": 0.125,
+   "depth_m": 25.0,
+   "elev_m": 585,
+   "protected": [],
+   "part_of": [
+    "Plitvice Lakes National Park"
+   ],
+   "basin_countries": [
+    "Croatia"
+   ],
+   "key": "wd:Q7210399",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q7364184",
+   "name": "Novakovića Brod",
+   "name_local": "Novakovića Brod",
+   "lat": 44.902289,
+   "lon": 15.609894,
+   "iso2": "HR",
+   "adm": "Plitvička Jezera Municipality",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 3,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Plitvice%2005%20-%20panoramio.jpg",
+   "commons_cat": "Novakovića Brod",
+   "enwiki": "",
+   "localwiki": "https://hr.wikipedia.org/wiki/Novakovi%C4%87a_Brod",
+   "area_km2": 0.003,
+   "depth_m": 4.5,
+   "elev_m": 504,
+   "protected": [],
+   "part_of": [
+    "Plitvice Lakes National Park"
+   ],
+   "basin_countries": [
+    "Croatia"
+   ],
+   "key": "wd:Q7364184",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q7677496",
+   "name": "Gavanovac",
+   "name_local": "Gavanovac",
+   "lat": 44.899167,
+   "lon": 15.611111,
+   "iso2": "HR",
+   "adm": "Plitvička Jezera Municipality",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 3,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Plitvice%20Lakes%20National%20Park%2064.JPG",
+   "commons_cat": "Gavanovac",
+   "enwiki": "",
+   "localwiki": "https://hr.wikipedia.org/wiki/Gavanovac",
+   "area_km2": 0.009,
+   "depth_m": 10.0,
+   "elev_m": 518,
+   "protected": [],
+   "part_of": [
+    "Plitvice Lakes National Park"
+   ],
+   "basin_countries": [
+    "Croatia"
+   ],
+   "key": "wd:Q7677496",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q8082839",
+   "name": "Šoderica",
+   "name_local": "Šoderica",
+   "lat": 46.237861,
+   "lon": 16.915811,
+   "iso2": "HR",
+   "adm": "Drenje",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 5,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Soderica1.jpg",
+   "commons_cat": "Šoderica",
+   "enwiki": "https://en.wikipedia.org/wiki/%C5%A0oderica",
+   "localwiki": "https://hr.wikipedia.org/wiki/%C5%A0oderica",
+   "area_km2": 1.5,
+   "depth_m": 20.0,
+   "elev_m": 128,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q8082839",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q11104157",
+   "name": "Batinovac",
+   "name_local": "Batinovac",
+   "lat": 44.87179,
+   "lon": 15.60327,
+   "iso2": "HR",
+   "adm": "Plitvička Jezera Municipality",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 5,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Elevation%20markers%20of%20Batinovac%20lake.jpg",
+   "commons_cat": "Batinovac",
+   "enwiki": "https://en.wikipedia.org/wiki/Batinovac",
+   "localwiki": "https://hr.wikipedia.org/wiki/Batinovac",
+   "area_km2": 0.015,
+   "depth_m": 6.0,
+   "elev_m": 610,
+   "protected": [
+    "Plitvice Lakes National Park"
+   ],
+   "part_of": [
+    "Plitvice Lakes National Park"
+   ],
+   "basin_countries": [
+    "Croatia"
+   ],
+   "key": "wd:Q11104157",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q11105029",
+   "name": "Okrugljak",
+   "name_local": "Okrugljak",
+   "lat": 44.87263,
+   "lon": 15.60054,
+   "iso2": "HR",
+   "adm": "Plitvička Jezera Municipality",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 3,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Okrugljak.jpg",
+   "commons_cat": "Okrugljak",
+   "enwiki": "",
+   "localwiki": "https://hr.wikipedia.org/wiki/Okrugljak_(jezero)",
+   "area_km2": 0.041,
+   "depth_m": 15.0,
+   "elev_m": 613,
+   "protected": [
+    "Plitvice Lakes National Park"
+   ],
+   "part_of": [
+    "Plitvice Lakes National Park"
+   ],
+   "basin_countries": [
+    "Croatia"
+   ],
+   "key": "wd:Q11105029",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q12627490",
+   "name": "Babića jezero",
+   "name_local": "Babića jezero",
+   "lat": 44.276389,
+   "lon": 16.179722,
+   "iso2": "HR",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 3,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Babi%C4%87a%20jezero.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://hr.wikipedia.org/wiki/Babi%C4%87a_jezero",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q12627490",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q12627523",
+   "name": "Bajer",
+   "name_local": "Bajer",
+   "lat": 45.309722,
+   "lon": 14.714444,
+   "iso2": "HR",
+   "adm": "Primorje-Gorski Kotar County",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 11,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Jezero%20BajerFu%C5%BEine.jpg",
+   "commons_cat": "Bajer",
+   "enwiki": "",
+   "localwiki": "https://hr.wikipedia.org/wiki/Bajer",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q12627523",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q65136965",
+   "name": "Raški zaljev",
+   "name_local": "Raški zaljev",
+   "lat": 44.992,
+   "lon": 14.074,
+   "iso2": "HR",
+   "adm": "Istria County",
+   "types": [
+    "bay",
+    "ria"
+   ],
+   "sitelinks": 4,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Zaljev%20Ra%C5%A1e%20Istra.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://hr.wikipedia.org/wiki/Ra%C5%A1ki_zaljev",
+   "area_km2": 11.73,
+   "depth_m": 44.0,
+   "elev_m": 0,
+   "protected": [],
+   "part_of": [
+    "Adriatic Sea"
+   ],
+   "basin_countries": [],
+   "key": "wd:Q65136965",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q104177760",
+   "name": "Modro oko",
+   "name_local": "Modro oko",
+   "lat": 43.0575,
+   "lon": 17.510556,
+   "iso2": "HR",
+   "adm": "Dubrovnik-Neretva County",
+   "types": [
+    "lake",
+    "protected area"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Modro%20oko.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://hr.wikipedia.org/wiki/Modro_oko_(jezero)",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q104177760",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q108776244",
+   "name": "Njivice (jezero)",
+   "name_local": "Njivice (jezero)",
+   "lat": 45.16942,
+   "lon": 14.56195,
+   "iso2": "HR",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://hr.wikipedia.org/wiki/Njivice_(jezero)",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q108776244",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q108860404",
+   "name": "Desne",
+   "name_local": "Desne",
+   "lat": 43.055556,
+   "lon": 17.518056,
+   "iso2": "HR",
+   "adm": "Dubrovnik-Neretva County",
+   "types": [
+    "lake",
+    "protected area"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Desansko%20jezero.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://hr.wikipedia.org/wiki/Desne_(jezero)",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q108860404",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q108860594",
+   "name": "Parila",
+   "name_local": "Parila",
+   "lat": 43.032222,
+   "lon": 17.453333,
+   "iso2": "HR",
+   "adm": "Dubrovnik-Neretva County",
+   "types": [
+    "lake",
+    "lagoon"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Laguna%20Parila.jpg",
+   "commons_cat": "Parila (Croatia)",
+   "enwiki": "",
+   "localwiki": "https://hr.wikipedia.org/wiki/Parila",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q108860594",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q111472100",
+   "name": "Visovac Lake",
+   "name_local": "Visovačko jezero",
+   "lat": 43.85776,
+   "lon": 15.974058,
+   "iso2": "HR",
+   "adm": "Skradin",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Crkva%20i%20samostan%20Majke%20od%20Milosti%20na%20Visovcu.jpg",
+   "commons_cat": "Visovac lake",
+   "enwiki": "",
+   "localwiki": "https://hr.wikipedia.org/wiki/Visova%C4%8Dko_jezero",
+   "area_km2": 7.9,
+   "depth_m": 55.0,
+   "elev_m": 41,
+   "protected": [
+    "Krka National Park"
+   ],
+   "part_of": [],
+   "basin_countries": [
+    "Croatia"
+   ],
+   "key": "wd:Q111472100",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q112121007",
+   "name": "Bačica",
+   "name_local": "Bačica",
+   "lat": 45.298694,
+   "lon": 17.362667,
+   "iso2": "HR",
+   "adm": "",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 2,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://hr.wikipedia.org/wiki/Ba%C4%8Dica",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q112121007",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q112707370",
+   "name": "Veliko vrilo",
+   "name_local": "Veliko vrilo (Glavaš)",
+   "lat": 43.976877,
+   "lon": 16.429889,
+   "iso2": "HR",
+   "adm": "Civljane",
+   "types": [
+    "lake",
+    "spring"
+   ],
+   "sitelinks": 3,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/The%20Eye%20of%20Cetina.jpg",
+   "commons_cat": "Izvor Cetine",
+   "enwiki": "",
+   "localwiki": "https://hr.wikipedia.org/wiki/Veliko_vrilo_(Glava%C5%A1)",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q112707370",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q114851279",
+   "name": "Bakranjuša",
+   "name_local": "Bakranjuša",
+   "lat": 44.871667,
+   "lon": 13.930278,
+   "iso2": "HR",
+   "adm": "",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 2,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://hr.wikipedia.org/wiki/Bakranju%C5%A1a",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q114851279",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q124312982",
+   "name": "Lake Štikada",
+   "name_local": "Štikada",
+   "lat": 44.298806,
+   "lon": 15.811172,
+   "iso2": "HR",
+   "adm": "Lovinac",
+   "types": [
+    "artificial lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/20250914%20152156%20HDR.jpg",
+   "commons_cat": "Štikada (lake)",
+   "enwiki": "",
+   "localwiki": "https://hr.wikipedia.org/wiki/%C5%A0tikada_(jezero)",
+   "area_km2": 3.34,
+   "depth_m": null,
+   "elev_m": 547,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q124312982",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q12628497",
+   "name": "Bukovnik",
+   "name_local": "Bukovnik",
+   "lat": 45.255149,
+   "lon": 15.208876,
+   "iso2": "HR",
+   "adm": "Ogulin",
+   "types": [
+    "artificial lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://hr.wikipedia.org/wiki/Bukovnik",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q12628497",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q12631723",
+   "name": "Gradinsko jezero",
+   "name_local": "Gradinsko jezero",
+   "lat": 44.87787,
+   "lon": 15.61157,
+   "iso2": "HR",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/01.11.2010.%20Plitvicka%20Jezera%20-%20panoramio%20%286%29.jpg",
+   "commons_cat": "Gradinsko jezero",
+   "enwiki": "",
+   "localwiki": "https://hr.wikipedia.org/wiki/Gradinsko_jezero",
+   "area_km2": 0.081,
+   "depth_m": 10.0,
+   "elev_m": 553,
+   "protected": [],
+   "part_of": [
+    "Plitvice Lakes National Park"
+   ],
+   "basin_countries": [
+    "Croatia"
+   ],
+   "key": "wd:Q12631723",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q12634812",
+   "name": "Kozjak",
+   "name_local": "Kozjak (jezero)",
+   "lat": 44.88639,
+   "lon": 15.61,
+   "iso2": "HR",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 6,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Jezero%20kozjak.jpg",
+   "commons_cat": "Kozjak (Plitvice)",
+   "enwiki": "",
+   "localwiki": "https://hr.wikipedia.org/wiki/Kozjak_(jezero)",
+   "area_km2": 0.815,
+   "depth_m": 47.0,
+   "elev_m": 535,
+   "protected": [],
+   "part_of": [
+    "Plitvice Lakes National Park"
+   ],
+   "basin_countries": [],
+   "key": "wd:Q12634812",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q12640216",
+   "name": "Potkoš",
+   "name_local": "Potkoš",
+   "lat": 45.301361,
+   "lon": 14.7335,
+   "iso2": "HR",
+   "adm": "Primorje-Gorski Kotar County",
+   "types": [
+    "artificial lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Jezero%20Potko%C5%A1.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://hr.wikipedia.org/wiki/Potko%C5%A1",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q12640216",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q12641281",
+   "name": "Ričice Lake",
+   "name_local": "Ričice (jezero)",
+   "lat": 43.502722,
+   "lon": 17.126472,
+   "iso2": "HR",
+   "adm": "Split-Dalmatia County",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Jezero%20Ri%C4%8Dice%20-%20panoramio%20%282%29.jpg",
+   "commons_cat": "Ričice Lake",
+   "enwiki": "",
+   "localwiki": "https://hr.wikipedia.org/wiki/Zeleno_jezero",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q12641281",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q12644525",
+   "name": "Veliko jezero (Mljet)",
+   "name_local": "Veliko jezero (Mljet)",
+   "lat": 42.779916,
+   "lon": 17.356002,
+   "iso2": "HR",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 5,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Veliki%20most.JPG",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://hr.wikipedia.org/wiki/Veliko_jezero_(Mljet)",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q12644525",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "seed": {
+    "swim": "yes",
+    "kind": "lagoon",
+    "why": "brief",
+    "note": "saltwater lakes in Mljet NP, swimming and the island monastery",
+    "name": "Mljet Lakes"
+   }
+  },
+  {
+   "wd": "Q16110792",
+   "name": "Veliki Burget",
+   "name_local": "Veliki Burget",
+   "lat": 44.87905,
+   "lon": 15.61411,
+   "iso2": "HR",
+   "adm": "Lika-Senj County",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 3,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Plitvice%20054%20Burgeti.jpg",
+   "commons_cat": "Veliki Burget",
+   "enwiki": "",
+   "localwiki": "https://hr.wikipedia.org/wiki/Veliki_Burget",
+   "area_km2": 0.001,
+   "depth_m": 2.0,
+   "elev_m": 545,
+   "protected": [
+    "Plitvice Lakes National Park"
+   ],
+   "part_of": [
+    "Plitvice Lakes National Park"
+   ],
+   "basin_countries": [
+    "Croatia"
+   ],
+   "key": "wd:Q16110792",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q16114791",
+   "name": "Milanovac",
+   "name_local": "Milanovac",
+   "lat": 44.896052,
+   "lon": 15.610467,
+   "iso2": "HR",
+   "adm": "Plitvička Jezera Municipality",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 3,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Parco%20Nazionale%20dei%20Laghi%20di%20Plitvice%20%2812%29.jpg",
+   "commons_cat": "Milanovac",
+   "enwiki": "",
+   "localwiki": "https://hr.wikipedia.org/wiki/Milanovac_(jezero)",
+   "area_km2": 0.03,
+   "depth_m": 18.0,
+   "elev_m": 524,
+   "protected": [],
+   "part_of": [
+    "Plitvice Lakes National Park"
+   ],
+   "basin_countries": [
+    "Croatia"
+   ],
+   "key": "wd:Q16114791",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q16115512",
+   "name": "Čiče",
+   "name_local": "Čiče",
+   "lat": 45.71103,
+   "lon": 16.09789,
+   "iso2": "HR",
+   "adm": "Velika Gorica",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 6,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Jezero%20%C4%8Ci%C4%8De.jpg",
+   "commons_cat": "Jezero Čiče",
+   "enwiki": "",
+   "localwiki": "https://hr.wikipedia.org/wiki/%C4%8Ci%C4%8De",
+   "area_km2": 0.9,
+   "depth_m": 50.0,
+   "elev_m": 97,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Croatia"
+   ],
+   "key": "wd:Q16115512",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q16115608",
+   "name": "Jezero Butoniga",
+   "name_local": "Butoniga",
+   "lat": 45.322781,
+   "lon": 13.930281,
+   "iso2": "HR",
+   "adm": "Buzet",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 8,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Jezero%20Butoniga.jpg",
+   "commons_cat": "Butoniga",
+   "enwiki": "",
+   "localwiki": "https://hr.wikipedia.org/wiki/Butoniga_(jezero)",
+   "area_km2": 2.45,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q16115608",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q16116893",
+   "name": "Jezero Sabljaki",
+   "name_local": "Sabljaci",
+   "lat": 45.22417,
+   "lon": 15.22972,
+   "iso2": "HR",
+   "adm": "Karlovac County",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 5,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Jezero%20Sabljaci2012.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://hr.wikipedia.org/wiki/Sabljaci",
+   "area_km2": 1.7,
+   "depth_m": null,
+   "elev_m": 318,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q16116893",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q25295427",
+   "name": "Kopačevsko jezero",
+   "name_local": "Kopačevsko jezero",
+   "lat": 45.602778,
+   "lon": 18.852778,
+   "iso2": "HR",
+   "adm": "Osijek-Baranja County",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 4,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Kopacki%20rit.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://hr.wikipedia.org/wiki/Kopa%C4%8Devsko_jezero",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q25295427",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q25301372",
+   "name": "Brljansko Jezero",
+   "name_local": "Brljansko jezero",
+   "lat": 44.006667,
+   "lon": 16.046667,
+   "iso2": "HR",
+   "adm": "Šibenik-Knin County",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://hr.wikipedia.org/wiki/Brljansko_jezero",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q25301372",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q25301398",
+   "name": "Vela Solina",
+   "name_local": "Vela Solina",
+   "lat": 43.710278,
+   "lon": 15.884444,
+   "iso2": "HR",
+   "adm": "Šibenik-Knin County",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 3,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://hr.wikipedia.org/wiki/Vela_Solina",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q25301398",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q25342385",
+   "name": "Trakošćan Lake",
+   "name_local": "Trakošćansko jezero",
+   "lat": 46.261,
+   "lon": 15.937,
+   "iso2": "HR",
+   "adm": "Bednja",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 6,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Jezero%20Trako%C5%A1%C4%87an.jpg",
+   "commons_cat": "Trakošćan Lake",
+   "enwiki": "https://en.wikipedia.org/wiki/Lake_Trako%C5%A1%C4%87an",
+   "localwiki": "https://hr.wikipedia.org/wiki/Trako%C5%A1%C4%87ansko_jezero",
+   "area_km2": 0.17,
+   "depth_m": 2.5,
+   "elev_m": 246,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Croatia"
+   ],
+   "key": "wd:Q25342385",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q25502017",
+   "name": "Sovsko jezero",
+   "name_local": "Sovsko jezero",
+   "lat": 45.289965,
+   "lon": 18.019341,
+   "iso2": "HR",
+   "adm": "Čaglin",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://hr.wikipedia.org/wiki/Sovsko_jezero",
+   "area_km2": 0.0036,
+   "depth_m": 10.0,
+   "elev_m": 330,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q25502017",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q25503258",
+   "name": "Mir lake",
+   "name_local": "Mir",
+   "lat": 43.886674,
+   "lon": 15.165816,
+   "iso2": "HR",
+   "adm": "Sali",
+   "types": [
+    "salt lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Dugi%20otok%20island.jpg",
+   "commons_cat": "Mir lake",
+   "enwiki": "",
+   "localwiki": "https://hr.wikipedia.org/wiki/Mir_(jezero)",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": 1,
+   "protected": [
+    "Telašćica"
+   ],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q25503258",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q26222955",
+   "name": "Prančevići",
+   "name_local": "Prančevići",
+   "lat": 43.553611,
+   "lon": 16.729444,
+   "iso2": "HR",
+   "adm": "Split-Dalmatia County",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://hr.wikipedia.org/wiki/Pran%C4%8Devi%C4%87i",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q26222955",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q26224786",
+   "name": "Lake Ormož",
+   "name_local": "Ormoško jezero",
+   "lat": 46.390556,
+   "lon": 16.172778,
+   "iso2": "HR",
+   "adm": "Varaždin County",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 8,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/ISS023-E-18089%20-%20View%20of%20Croatia.jpg",
+   "commons_cat": "Lake Ormož",
+   "enwiki": "https://en.wikipedia.org/wiki/Lake_Ormo%C5%BE",
+   "localwiki": "https://hr.wikipedia.org/wiki/Ormo%C5%A1ko_jezero",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q26224786",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q30345734",
+   "name": "Vlaška Lake",
+   "name_local": "Vlaška",
+   "lat": 43.048356,
+   "lon": 17.467088,
+   "iso2": "HR",
+   "adm": "Dubrovnik-Neretva County",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Jezero%20Vlaska%20%281%29.jpg",
+   "commons_cat": "Vlaška lake",
+   "enwiki": "",
+   "localwiki": "https://hr.wikipedia.org/wiki/Vla%C5%A1ka_(jezero)",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q30345734",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q31200685",
+   "name": "Kuti",
+   "name_local": "Kuti",
+   "lat": 42.954833,
+   "lon": 17.606333,
+   "iso2": "HR",
+   "adm": "Zažablje",
+   "types": [
+    "lake",
+    "protected area"
+   ],
+   "sitelinks": 4,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Kuti.jpg",
+   "commons_cat": "Kuti",
+   "enwiki": "",
+   "localwiki": "https://hr.wikipedia.org/wiki/Kuti_(jezero)",
+   "area_km2": 1.3,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Croatia"
+   ],
+   "key": "wd:Q31200685",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q8082912",
+   "name": "Šumbar Lake",
+   "name_local": "",
+   "lat": 45.6,
+   "lon": 15.733333,
+   "iso2": "HR",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "https://en.wikipedia.org/wiki/%C5%A0umbar_Lake",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q8082912",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q25287057",
+   "name": "Jezero Visovac",
+   "name_local": "",
+   "lat": 43.833333,
+   "lon": 16.0,
+   "iso2": "HR",
+   "adm": "Šibenik-Knin County",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q25287057",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q25295217",
+   "name": "Istirizna Jezero",
+   "name_local": "",
+   "lat": 45.566667,
+   "lon": 18.8,
+   "iso2": "HR",
+   "adm": "Osijek-Baranja County",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q25295217",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q25299010",
+   "name": "Crna Mlaka",
+   "name_local": "",
+   "lat": 45.616667,
+   "lon": 15.733333,
+   "iso2": "HR",
+   "adm": "Zagreb County",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q25299010",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q25300902",
+   "name": "Jezero Kuti",
+   "name_local": "",
+   "lat": 42.954444,
+   "lon": 17.606667,
+   "iso2": "HR",
+   "adm": "Dubrovnik-Neretva County",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q25300902",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q25301047",
+   "name": "Jezero Begovac",
+   "name_local": "",
+   "lat": 45.021389,
+   "lon": 15.408056,
+   "iso2": "HR",
+   "adm": "Karlovac County",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q25301047",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q26223166",
+   "name": "Mala Toka",
+   "name_local": "",
+   "lat": 45.304444,
+   "lon": 16.846667,
+   "iso2": "HR",
+   "adm": "Sisak-Moslavina County",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q26223166",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q26223177",
+   "name": "Malo jezero",
+   "name_local": "",
+   "lat": 44.87441,
+   "lon": 15.60228,
+   "iso2": "HR",
+   "adm": "Sisak-Moslavina County",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 3,
+   "wd_img": "",
+   "commons_cat": "Malo jezero (Plitvice)",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": 0.02,
+   "depth_m": 10.0,
+   "elev_m": 605,
+   "protected": [],
+   "part_of": [
+    "Plitvice Lakes National Park"
+   ],
+   "basin_countries": [
+    "Croatia"
+   ],
+   "key": "wd:Q26223177",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q26223470",
+   "name": "Galjipovac",
+   "name_local": "",
+   "lat": 43.479167,
+   "lon": 17.103056,
+   "iso2": "HR",
+   "adm": "Split-Dalmatia County",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q26223470",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q26224042",
+   "name": "Jezero Borovik",
+   "name_local": "",
+   "lat": 45.376667,
+   "lon": 18.191389,
+   "iso2": "HR",
+   "adm": "Osijek-Baranja County",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q26224042",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q26224256",
+   "name": "Jezero Birina",
+   "name_local": "",
+   "lat": 43.0575,
+   "lon": 17.4425,
+   "iso2": "HR",
+   "adm": "Dubrovnik-Neretva County",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q26224256",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q116952845",
+   "name": "Jarun Lake",
+   "name_local": "Jezero Jarun",
+   "lat": 45.781092,
+   "lon": 15.923457,
+   "iso2": "HR",
+   "adm": "Trešnjevka – jug",
+   "types": [
+    "artificial lake"
+   ],
+   "sitelinks": 4,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Jarun%20Lake%20aerial%20view.jpg",
+   "commons_cat": "Jarun Lake",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": 0.75,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Croatia"
+   ],
+   "key": "wd:Q116952845",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q12627739",
+   "name": "Bedekovčanska jezera",
+   "name_local": "Bedekovčanska jezera",
+   "lat": 46.038889,
+   "lon": 16.004444,
+   "iso2": "HR",
+   "adm": "Krapina-Zagorje County",
+   "types": [
+    "artificial lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Bedekov%C4%8Danska%20jezera.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://hr.wikipedia.org/wiki/Bedekov%C4%8Danska_jezera",
+   "area_km2": null,
+   "depth_m": 8.0,
+   "elev_m": 149,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q12627739",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q104519323",
+   "name": "Betonara",
+   "name_local": "Betonara",
+   "lat": 46.244444,
+   "lon": 16.880278,
+   "iso2": "HR",
+   "adm": "Đelekovec",
+   "types": [
+    "artificial lake",
+    "pond"
+   ],
+   "sitelinks": 1,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Betonara%20jezero1.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://hr.wikipedia.org/wiki/Betonara_(jezero)",
+   "area_km2": 0.04,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q104519323",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q115178781",
+   "name": "Kencel",
+   "name_local": "Kencel",
+   "lat": 46.237778,
+   "lon": 16.952222,
+   "iso2": "HR",
+   "adm": "",
+   "types": [
+    "artificial lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Kencel%20jezero4e.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://hr.wikipedia.org/wiki/Kencel",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q115178781",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q115308479",
+   "name": "Gabajeva Greda",
+   "name_local": "Gabajeva Greda",
+   "lat": 46.15,
+   "lon": 17.016667,
+   "iso2": "HR",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Gabajeva%20Greda%20Veliko%20jezero.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://hr.wikipedia.org/wiki/Gabajeva_Greda_(jezera)",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q115308479",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q115346260",
+   "name": "Torčec",
+   "name_local": "Torčec",
+   "lat": 46.2225,
+   "lon": 16.894167,
+   "iso2": "HR",
+   "adm": "",
+   "types": [
+    "artificial lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Tor%C4%8Dec%20jezero1.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://hr.wikipedia.org/wiki/Tor%C4%8Dec_(jezero)",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q115346260",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q115705909",
+   "name": "Ungerove grabe",
+   "name_local": "Ungerove grabe",
+   "lat": 46.232778,
+   "lon": 16.851944,
+   "iso2": "HR",
+   "adm": "",
+   "types": [
+    "artificial lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Ungerove%20grabe%201b.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://hr.wikipedia.org/wiki/Ungerove_grabe",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q115705909",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q124329022",
+   "name": "Čabraji",
+   "name_local": "Čabraji",
+   "lat": 46.09734,
+   "lon": 16.58605,
+   "iso2": "HR",
+   "adm": "",
+   "types": [
+    "lake",
+    "artificial lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://hr.wikipedia.org/wiki/%C4%8Cabraji_(jezero)",
+   "area_km2": 0.08,
+   "depth_m": null,
+   "elev_m": 149,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q124329022",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q124350883",
+   "name": "Palinića jezero",
+   "name_local": "Palinića jezero",
+   "lat": 42.99207,
+   "lon": 17.498322,
+   "iso2": "HR",
+   "adm": "",
+   "types": [
+    "lake",
+    "artificial lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Mihalj.JPG",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://hr.wikipedia.org/wiki/Palini%C4%87a_jezero",
+   "area_km2": 0.08,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q124350883",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q124364510",
+   "name": "Motičnjak",
+   "name_local": "Motičnjak",
+   "lat": 46.3075,
+   "lon": 16.386111,
+   "iso2": "HR",
+   "adm": "",
+   "types": [
+    "lake",
+    "artificial lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://hr.wikipedia.org/wiki/Moti%C4%8Dnjak",
+   "area_km2": 0.38,
+   "depth_m": null,
+   "elev_m": 162,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q124364510",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q130259482",
+   "name": "Tramvajica",
+   "name_local": "Tramvajica",
+   "lat": 46.257778,
+   "lon": 16.903056,
+   "iso2": "HR",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Tramvajica%20jezero.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://hr.wikipedia.org/wiki/Tramvajica",
+   "area_km2": 0.05,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q130259482",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q131314058",
+   "name": "Gornje Ledine",
+   "name_local": "Gornje Ledine",
+   "lat": 46.199444,
+   "lon": 16.935278,
+   "iso2": "HR",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Gornje%20Ledine1.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://hr.wikipedia.org/wiki/Gornje_Ledine",
+   "area_km2": 0.1,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q131314058",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q131323258",
+   "name": "Sporlin",
+   "name_local": "Sporlin",
+   "lat": 46.231667,
+   "lon": 16.926389,
+   "iso2": "HR",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Sporlin%20bara.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://hr.wikipedia.org/wiki/Sporlin",
+   "area_km2": 0.0007,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q131323258",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q131323269",
+   "name": "Ribnjak",
+   "name_local": "Ribnjak",
+   "lat": 46.241389,
+   "lon": 16.928333,
+   "iso2": "HR",
+   "adm": "",
+   "types": [
+    "lake",
+    "artificial lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Ribnjak%20jezero1.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://hr.wikipedia.org/wiki/Ribnjak_(jezero)",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q131323269",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q136094004",
+   "name": "Dezinfekcija",
+   "name_local": "Dezinfekcija",
+   "lat": 46.254722,
+   "lon": 16.909444,
+   "iso2": "HR",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Dezinfekcija%20jezero.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://hr.wikipedia.org/wiki/Dezinfekcija_(jezero)",
+   "area_km2": 0.09,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q136094004",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q136094017",
+   "name": "Vidak",
+   "name_local": "Vidak",
+   "lat": 46.2325,
+   "lon": 16.869444,
+   "iso2": "HR",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Vidak%20jezero.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://hr.wikipedia.org/wiki/Vidak_(jezero)",
+   "area_km2": 0.06,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q136094017",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q136094041",
+   "name": "Loka 1",
+   "name_local": "Loka 1",
+   "lat": 46.173889,
+   "lon": 16.95,
+   "iso2": "HR",
+   "adm": "Croatia",
+   "types": [
+    "artificial lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Loka1%20sl1.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://hr.wikipedia.org/wiki/Loka_1",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": 120,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q136094041",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q136094045",
+   "name": "Loka 2",
+   "name_local": "Loka 2",
+   "lat": 46.175833,
+   "lon": 16.948333,
+   "iso2": "HR",
+   "adm": "Croatia",
+   "types": [
+    "artificial lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/LOKA2%20b.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://hr.wikipedia.org/wiki/Loka_2",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": 120,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q136094045",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q136760356",
+   "name": "Jablanje",
+   "name_local": "Jablanje",
+   "lat": 46.203056,
+   "lon": 16.8925,
+   "iso2": "HR",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Jablanje%20jezero%201d.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://hr.wikipedia.org/wiki/Jablanje",
+   "area_km2": 0.007,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q136760356",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q25291916",
+   "name": "Jezero Parila",
+   "name_local": "",
+   "lat": 43.031111,
+   "lon": 17.450833,
+   "iso2": "HR",
+   "adm": "Dubrovnik-Neretva County",
+   "types": [
+    "lagoon"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q25291916",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q25302087",
+   "name": "Jezero Petnja",
+   "name_local": "",
+   "lat": 45.203611,
+   "lon": 17.952222,
+   "iso2": "HR",
+   "adm": "Brod-Posavina County",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q25302087",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q25311999",
+   "name": "Majmunovo Jezero",
+   "name_local": "",
+   "lat": 44.521944,
+   "lon": 15.989722,
+   "iso2": "HR",
+   "adm": "Lika-Senj County",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q25311999",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q25314450",
+   "name": "Crno Lake",
+   "name_local": "",
+   "lat": 44.520556,
+   "lon": 15.975278,
+   "iso2": "HR",
+   "adm": "Lika-Senj County",
+   "types": [
+    "intermittent lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q25314450",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q25327971",
+   "name": "Murtino Jezero",
+   "name_local": "",
+   "lat": 44.566944,
+   "lon": 15.702778,
+   "iso2": "HR",
+   "adm": "Lika-Senj County",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q25327971",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q26223213",
+   "name": "Sinokosno",
+   "name_local": "",
+   "lat": 45.168056,
+   "lon": 17.149722,
+   "iso2": "HR",
+   "adm": "Brod-Posavina County",
+   "types": [
+    "oxbow lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q26223213",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q55965148",
+   "name": "Veliko jezero",
+   "name_local": "Veliko jezero",
+   "lat": 44.87309,
+   "lon": 15.60212,
+   "iso2": "HR",
+   "adm": "Lika-Senj County",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Plitwice22.jpg",
+   "commons_cat": "Veliko jezero (Plitvice)",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": 0.015,
+   "depth_m": 8.0,
+   "elev_m": 607,
+   "protected": [
+    "Plitvice Lakes National Park"
+   ],
+   "part_of": [
+    "Plitvice Lakes National Park"
+   ],
+   "basin_countries": [
+    "Croatia"
+   ],
+   "key": "wd:Q55965148",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q55965229",
+   "name": "Vir",
+   "name_local": "Vir",
+   "lat": 44.87348,
+   "lon": 15.60315,
+   "iso2": "HR",
+   "adm": "Lika-Senj County",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "Vir (Plitvice)",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": 0.006,
+   "depth_m": 5.0,
+   "elev_m": 599,
+   "protected": [
+    "Plitvice Lakes National Park"
+   ],
+   "part_of": [
+    "Plitvice Lakes National Park"
+   ],
+   "basin_countries": [
+    "Croatia"
+   ],
+   "key": "wd:Q55965229",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q116192398",
+   "name": "Bundek",
+   "name_local": "Bundek",
+   "lat": 45.785278,
+   "lon": 15.987222,
+   "iso2": "HR",
+   "adm": "Zagreb",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 0,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Zagreb%20Bundek%2001.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": 0.05,
+   "depth_m": null,
+   "elev_m": 115,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q116192398",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q3501501",
+   "name": "Plitvička Jezera",
+   "name_local": "Plitvička Jezera",
+   "lat": 44.88077,
+   "lon": 15.621084,
+   "iso2": "HR",
+   "adm": "Lika-Senj County",
+   "types": [
+    "human settlement"
+   ],
+   "sitelinks": 5,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://hr.wikipedia.org/wiki/Plitvi%C4%8Dka_Jezera",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "seed": {
+    "swim": "no",
+    "kind": "lake",
+    "why": "brief",
+    "note": "UNESCO, sixteen terraced lakes, swimming banned throughout the park",
+    "name": "Plitvice Lakes"
+   },
+   "key": "wd:Q3501501",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q3511202",
+   "name": "Skradinski buk",
+   "name_local": "Skradinski buk",
+   "lat": 43.805726,
+   "lon": 15.963177,
+   "iso2": "HR",
+   "adm": "Dubravice, Skradin",
+   "types": [
+    "waterfall"
+   ],
+   "sitelinks": 7,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Skradinski%20buk%2001.JPG",
+   "commons_cat": "Skradinski buk",
+   "enwiki": "",
+   "localwiki": "https://hr.wikipedia.org/wiki/Skradinski_buk",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [
+    "Krka National Park"
+   ],
+   "part_of": [
+    "Krka",
+    "Krka National Park"
+   ],
+   "basin_countries": [],
+   "seed": {
+    "swim": "no",
+    "kind": "river",
+    "why": "brief",
+    "note": "Krka NP, swimming below the falls closed since 2021",
+    "name": "Skradinski Buk"
+   },
+   "key": "wd:Q3511202",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q2474730",
+   "name": "Cetina",
+   "name_local": "Cetina",
+   "lat": 43.95,
+   "lon": 16.416667,
+   "iso2": "HR",
+   "adm": "Civljane",
+   "types": [
+    "settlement in Croatia"
+   ],
+   "sitelinks": 13,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Crkva%20sv.%20Spasa%2CCetina%200187.jpg",
+   "commons_cat": "",
+   "enwiki": "https://en.wikipedia.org/wiki/Cetina,_Croatia",
+   "localwiki": "https://hr.wikipedia.org/wiki/Cetina_(Civljane)",
+   "area_km2": 61.7,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "seed": {
+    "swim": "limited",
+    "kind": "river",
+    "why": "brief",
+    "haz": [
+     "cold_shock",
+     "currents"
+    ],
+    "note": "rafting and the spring, cold",
+    "name": "Cetina"
+   },
+   "key": "wd:Q2474730",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  }
+ ]
+}

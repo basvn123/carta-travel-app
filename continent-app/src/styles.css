@@ -19270,6 +19270,14 @@ button.ai-sched-main:focus-visible {
   overflow: hidden;
   text-overflow: ellipsis;
 }
+/* Six categories, not five. At 390px the labels are 59px apart and
+   "Mountains" lost its last two letters to the ellipsis, so the rail tightens
+   on a narrow phone rather than scrolling: a brand new category nobody knows
+   about must not be the one that starts off screen. */
+@media (max-width: 430px) {
+  .places-cats { gap: 2px; }
+  .places-cat { padding: 9px 0 7px; font-size: 9.5px; }
+}
 .places-cat:hover { color: var(--ink); }
 .places-cat.on {
   background: var(--accent-bg);
@@ -20162,6 +20170,249 @@ button.ai-sched-main:focus-visible {
 }
 
 /* ══════════════════════════════════════════════════════════════════════════
+   The lake layer. Reuses the beach card and the beach page wholesale (the two
+   are the same shape: a photograph, a place, a score, a reason list) and adds
+   only the parts a lake has and a beach does not.
+
+   The swimming verdict is the reason this block exists at all. On a beach the
+   answer is always yes, so nothing has to say it. On a lake it is yes, only in
+   part, no, or nobody recorded a rule, and the difference between those four
+   is the single most useful thing on the page: Plitvice, Morskie Oko and half
+   the drinking water reservoirs of Europe are on exactly the lists that call
+   them beautiful. So the verdict rides on the card AND above the photograph
+   on the page.
+
+   Colour follows the pattern .water-badge already set: one --ink custom
+   property per tone, a 42 per cent border and a 9 per cent wash mixed from
+   it. The four hues are the ones that file already uses, so this adds no new
+   colour to the product.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.places-lcard-swim {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 2;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  color: #fff;
+  /* Opaque, not a blur. backdrop-filter would make every card in a long
+     scrolling list a containing block for its own descendants and cost a
+     compositor layer each, for a chip that is already legible on a scrim. */
+  background: var(--sw-ink);
+}
+.places-lcard-swim.swim-stop { --sw-ink: #cc4433; }
+.places-lcard-swim.swim-warn { --sw-ink: #c68a12; }
+.places-lcard-swim.swim-unknown { --sw-ink: #55606f; }
+
+/* The hidden gem chip on a card sits with the other tag chips, so it takes
+   their shape and only changes colour. It is a claim about the ranking, not
+   about the lake, which is why it never looks like the physical tags. */
+.places-bcard-tags .tag-gem {
+  background: color-mix(in srgb, var(--rate) 78%, transparent);
+}
+
+/* ── The lake page ──────────────────────────────────────────────────────── */
+
+/* The verdict, above the photograph, full width, never a small chip. */
+.lpage-swim {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 10px;
+  margin: 0 0 16px;
+  padding: 11px 13px;
+  border-radius: 10px;
+  border: 1px solid color-mix(in srgb, var(--sw-ink) 42%, transparent);
+  background: color-mix(in srgb, var(--sw-ink) 9%, transparent);
+}
+.lpage-swim-ok { --sw-ink: #2e9e5b; }
+.lpage-swim-warn { --sw-ink: #c68a12; }
+.lpage-swim-stop { --sw-ink: #cc4433; }
+.lpage-swim-unknown { --sw-ink: #55606f; }
+.lpage-swim-word {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--sw-ink);
+}
+.lpage-swim-src { font-size: 12.5px; color: var(--ink-soft); }
+.lpage-swim-season {
+  flex-basis: 100%;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--ink-soft);
+}
+
+/* The credit line is one flex item so the comma between the author and the
+   licence keeps its own spacing instead of inheriting the row's gap. */
+.lpage-credit-line {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lpage-gem {
+  padding: 2px 8px;
+  border-radius: 6px;
+  background: var(--rate-bg);
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--rate);
+}
+
+/* The three sub scores. Side by side and equal, because choosing between a
+   cold beautiful lake and a warm ordinary one is the actual decision, and one
+   blended number hides it. Mono on the figures: they are measured. */
+.lpage-subs {
+  /* Flex, not a three column grid. `activity` is withheld until the shore has
+     been swept, so the row is sometimes two tiles, and a fixed three column
+     grid left an empty grey cell that read as a rendering fault. */
+  display: flex;
+  gap: 1px;
+  margin: 0 0 22px;
+  padding: 0;
+  list-style: none;
+  border: 1px solid var(--rule-soft);
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--rule-soft);
+}
+.lpage-subs li {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 11px 6px 10px;
+  background: var(--paper);
+}
+.lpage-sub-n {
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 19px;
+  font-weight: 500;
+  color: var(--ink);
+}
+.lpage-sub-label {
+  font-size: 11px;
+  color: var(--ink-mute);
+  text-align: center;
+}
+
+/* Hazards, in their own block and never folded into the paragraph: a cold
+   shock warning that got trimmed off the end of a sentence is a warning that
+   was not given. */
+.lpage-hazards {
+  padding: 14px 15px;
+  border-radius: 10px;
+  border: 1px solid color-mix(in srgb, #c68a12 38%, transparent);
+  background: color-mix(in srgb, #c68a12 8%, transparent);
+}
+.lpage-hazards h2 {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 8px;
+  color: #8a5f0d;
+}
+.lpage-hazards h2 svg { flex: none; }
+.lpage-hazards ul { margin: 0; padding: 0; list-style: none; }
+.lpage-hazards li {
+  padding: 6px 0;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--ink-soft);
+}
+.lpage-hazards li + li { border-top: 1px solid color-mix(in srgb, #c68a12 22%, transparent); }
+
+/* The month strip. Twelve bars, the warm ones filled. An estimate, and the
+   note above it says so. */
+.lpage-months {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 3px;
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.lpage-months li {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+}
+.lpage-month-bar {
+  display: flex;
+  align-items: flex-end;
+  width: 100%;
+  height: 54px;
+  border-radius: 4px;
+  background: var(--paper-dim);
+  overflow: hidden;
+}
+.lpage-month-bar > span {
+  width: 100%;
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--ink-mute) 45%, transparent);
+}
+.lpage-months li.warm .lpage-month-bar > span {
+  background: color-mix(in srgb, #1f8fb0 78%, transparent);
+}
+.lpage-month-c {
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 10.5px;
+  color: var(--ink-mute);
+}
+.lpage-months li.warm .lpage-month-c { color: var(--ink); font-weight: 500; }
+.lpage-month-m {
+  font-size: 9.5px;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+}
+
+/* Walks from here: our own published trails wire, joined by bounding box. A
+   list of related facts, so hairlines rather than cards. */
+.lpage-walks ul { margin: 0; padding: 0; list-style: none; }
+.lpage-walks li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 0;
+  border-top: 1px solid var(--rule-soft);
+  font-size: 13.5px;
+  color: var(--ink);
+}
+.lpage-walks li:last-child { border-bottom: 1px solid var(--rule-soft); }
+.lpage-walks li svg { flex: none; color: var(--ink-mute); }
+.lpage-walks li span {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.lpage-walks li small {
+  flex: none;
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 11.5px;
+  color: var(--ink-mute);
+}
+
+@media (max-width: 420px) {
+  /* Twelve bars will not fit a narrow phone with a legible number under each,
+     so the figure goes and the bars stay: the shape of the season is the
+     point, and the exact degree is in the sentence above. */
+  .lpage-month-c { display: none; }
+  .lpage-month-bar { height: 44px; }
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
    The trail page: a published hike or city day as a page of its own, opened
    from a card in the Destinations tab or from a shared #trail= link. Replaced
    the old .tsheet dialog, which had nowhere to put a description, an export
@@ -20625,6 +20876,143 @@ button.ai-sched-main:focus-visible {
   font-size: 10.5px;
   line-height: 1.45;
   color: var(--ink-mute);
+}
+
+/* ── Why this walk ─────────────────────────────────────────────────────
+   Reuses .tpage-story wholesale: the reasons and the "what to expect"
+   lines are the same kind of thing (one measured fact per row) and giving
+   them two visual treatments would suggest one is worth more. What the
+   section adds is a tint, because this block is the argument for the walk
+   and the reader should find it without looking. */
+.tpage-why {
+  padding: 12px 14px 4px;
+  border: 1px solid var(--rule-soft);
+  border-radius: 12px;
+  background: var(--paper-dim);
+}
+.tpage-why .tpage-sec-title { margin-bottom: 4px; }
+.tpage-why .tpage-story li { border-top-color: var(--rule); }
+.tpage-why .tpage-story-icon { color: var(--accent); }
+
+/* Loop marker beside the title, matching the chip on the card. */
+.tpage-loop {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: var(--accent-bg);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+/* ── Views along the way ───────────────────────────────────────────────
+   A horizontal strip rather than a grid: the pictures are ordered along
+   the route, so scrolling them left to right is walking it. Snap points
+   keep a frame centred instead of leaving two half-photographs. */
+.tpage-views {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  padding-bottom: 4px;
+  margin: 0 -18px;
+  padding-left: 18px;
+  padding-right: 18px;
+  scrollbar-width: thin;
+}
+.tpage-view {
+  position: relative;
+  flex: 0 0 auto;
+  width: 232px;
+  height: 156px;
+  padding: 0;
+  border: none;
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--paper-dim);
+  scroll-snap-align: start;
+  cursor: pointer;
+}
+.tpage-view img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.tpage-view-at {
+  position: absolute;
+  left: 8px;
+  bottom: 8px;
+  padding: 2px 7px;
+  border-radius: 6px;
+  background: rgba(15, 18, 26, 0.66);
+  font-family: var(--mono);
+  font-size: 10.5px;
+  color: #fff;
+  font-variant-numeric: tabular-nums;
+}
+/* The credit only appears on tap. Commons requires it to travel with the
+   file, and it does: it is one tap away on every frame and the source line
+   under the strip covers the set. Burning it into every thumbnail would
+   make the strip unreadable as photographs. */
+.tpage-view-credit {
+  position: absolute;
+  inset: auto 0 0;
+  padding: 6px 8px;
+  background: rgba(15, 18, 26, 0.82);
+  font-size: 10px;
+  line-height: 1.35;
+  color: rgba(255, 255, 255, 0.92);
+  text-align: left;
+}
+.tpage-views-credit { margin-top: 8px; }
+
+/* ── What you walk past ────────────────────────────────────────────────
+   Numbered like the city-day stop list, because it is the same promise:
+   these are in the order you meet them. */
+.tpage-highlights { margin: 0; padding: 0 0 0 22px; }
+.tpage-highlights li { padding: 7px 0; border-top: 1px solid var(--rule-soft); }
+.tpage-highlights li:first-child { border-top: none; }
+.tpage-highlights li::marker {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--accent);
+}
+.tpage-hl-name { display: block; font-size: 13.5px; font-weight: 600; color: var(--ink); }
+.tpage-hl-facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  margin-top: 1px;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink-mute);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Trails filter rail ────────────────────────────────────────────────
+   The length chips carry no glyph (a number is its own picture), so they
+   lose the left inset .places-class reserves for one. The loop chip keeps
+   it, which is also what sets it apart from the four lengths beside it. */
+.places-bands .places-class { padding: 5px 12px; }
+.places-bands .places-loopchip { padding: 5px 12px 5px 5px; }
+.places-loopchip { margin-left: 4px; }
+
+/* Kind chips on a trip card sit on one line, so "Day hike" and "Loop"
+   read as one statement about the walk rather than as a stack. */
+.places-card-kinds {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 5px;
+}
+.places-card-loop {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  background: rgba(255, 255, 255, 0.26);
 }
 
 .tpage-toast {

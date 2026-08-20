@@ -1,0 +1,3832 @@
+{
+ "country": "AD",
+ "enriched_at": "2026-08-20T21:33:42+00:00",
+ "n_harvested": 31,
+ "lakes": [
+  {
+   "wd": "Q11979432",
+   "name": "Estanys de Juclar",
+   "name_local": "llac de Juclar",
+   "lat": 42.609722,
+   "lon": 1.716667,
+   "iso2": "AD",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 10,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Estany%20Segon%20de%20Juclar%20-%201.jpg",
+   "commons_cat": "Estanys de Juclar",
+   "enwiki": "",
+   "localwiki": "https://ca.wikipedia.org/wiki/Llac_de_Juclar",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": 2300,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q11979432",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "seed": {
+    "swim": "limited",
+    "kind": "tarn",
+    "why": "brief",
+    "haz": [
+     "cold_shock"
+    ],
+    "note": "high alpine tarn above 2,300 m, cold year round",
+    "name": "Estany de Juclar"
+   },
+   "base": {
+    "id": "gem:soldeu",
+    "city": "Soldeu (Vall d'Incles)",
+    "country": "Andorra",
+    "km": 5.4
+   },
+   "walks": [
+    {
+     "id": 25575,
+     "name": "HRP Étape 32",
+     "km": 12.5
+    },
+    {
+     "id": 62421,
+     "name": "HRP Variante 31.1",
+     "km": 9.5
+    }
+   ],
+   "n_walks": 2,
+   "climate": {
+    "source": "WorldClim 2.1 (1970-2000 normals, 5 arc-min)",
+    "t_mean": [
+     -5.6,
+     -5.0,
+     -3.0,
+     -1.0,
+     3.6,
+     8.0,
+     12.1,
+     12.3,
+     8.7,
+     3.9,
+     -1.2,
+     -3.9
+    ]
+   },
+   "prelim": 99.0,
+   "article": {
+    "lang": "ca",
+    "title": "Llac de Juclar",
+    "facts": [
+     "glacier"
+    ],
+    "swim_text": "",
+    "chars": 564
+   },
+   "views60": 174,
+   "images": [
+    {
+     "file": "File:Estanys de Juclar @ Collada de Juclar.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/Estanys_de_Juclar_%40_Collada_de_Juclar.jpg/1280px-Estanys_de_Juclar_%40_Collada_de_Juclar.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/b/b6/Estanys_de_Juclar_%40_Collada_de_Juclar.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC BY-SA 4.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+     "author": "Rémih",
+     "caption": "Les estanys de Juclar depuis la collada de Juclar, Canillo, Andorre",
+     "page": "https://commons.wikimedia.org/wiki/File%3AEstanys_de_Juclar_%40_Collada_de_Juclar.jpg"
+    },
+    {
+     "file": "File:Estanys de Juclar @ Collada de Juclar 01.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/81/Estanys_de_Juclar_%40_Collada_de_Juclar_01.jpg/1280px-Estanys_de_Juclar_%40_Collada_de_Juclar_01.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/8/81/Estanys_de_Juclar_%40_Collada_de_Juclar_01.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC BY-SA 4.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+     "author": "Rémih",
+     "caption": "Les estanys de Juclar depuis la collada de Juclar, Canillo, Andorre",
+     "page": "https://commons.wikimedia.org/wiki/File%3AEstanys_de_Juclar_%40_Collada_de_Juclar_01.jpg"
+    },
+    {
+     "file": "File:Estanys de Juclar @ Collada de Juclar 02.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a3/Estanys_de_Juclar_%40_Collada_de_Juclar_02.jpg/1280px-Estanys_de_Juclar_%40_Collada_de_Juclar_02.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/a/a3/Estanys_de_Juclar_%40_Collada_de_Juclar_02.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC BY-SA 4.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+     "author": "Rémih",
+     "caption": "Les estanys de Juclar depuis la collada de Juclar, Canillo, Andorre",
+     "page": "https://commons.wikimedia.org/wiki/File%3AEstanys_de_Juclar_%40_Collada_de_Juclar_02.jpg"
+    },
+    {
+     "file": "File:Alt de Juclar @ Collada de Juclar.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Alt_de_Juclar_%40_Collada_de_Juclar.jpg/1280px-Alt_de_Juclar_%40_Collada_de_Juclar.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/3/3a/Alt_de_Juclar_%40_Collada_de_Juclar.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC BY-SA 4.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+     "author": "Rémih",
+     "caption": "L'Alt de Juclar depuis la collada de Juclar, Canillo, Andorre",
+     "page": "https://commons.wikimedia.org/wiki/File%3AAlt_de_Juclar_%40_Collada_de_Juclar.jpg"
+    },
+    {
+     "file": "File:Estany Primer de Juclar - 1.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a1/Estany_Primer_de_Juclar_-_1.jpg/1280px-Estany_Primer_de_Juclar_-_1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/a/a1/Estany_Primer_de_Juclar_-_1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 345,
+     "license": "CC BY-SA 2.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+     "author": "Ferran Llorens",
+     "caption": "This is a a photo of a lake or pond in Andorra with id:",
+     "page": "https://commons.wikimedia.org/wiki/File%3AEstany_Primer_de_Juclar_-_1.jpg"
+    }
+   ],
+   "context": {
+    "peak": 17,
+    "waterfall": 3,
+    "viewpoint": 1,
+    "camp_site": 2,
+    "toilets": 1,
+    "cliff": 2,
+    "wood": 1
+   }
+  },
+  {
+   "wd": "Q9019969",
+   "name": "Estanys de Tristaina",
+   "name_local": "estanys de Tristaina",
+   "lat": 42.6397,
+   "lon": 1.4862,
+   "iso2": "AD",
+   "adm": "Ordino",
+   "types": [
+    "group of lakes"
+   ],
+   "sitelinks": 12,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Estany%20de%20tristaina%20de%20Baix%2002.JPG",
+   "commons_cat": "Estanys de Tristaina",
+   "enwiki": "",
+   "localwiki": "https://ca.wikipedia.org/wiki/Estanys_de_Tristaina",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": 2306,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "seed": {
+    "swim": "limited",
+    "kind": "tarn",
+    "why": "editorial",
+    "haz": [
+     "cold_shock"
+    ],
+    "note": "the three lakes walk, the Andorran picture everybody posts",
+    "name": "Estanys de Tristaina"
+   },
+   "key": "wd:Q9019969",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "protected_area": {
+    "name": "Parc Natural Comunal de les Valls del Comapedrosa",
+    "kind": "Protected area",
+    "national_park": false,
+    "notable": true,
+    "km": 6.01
+   },
+   "base": {
+    "id": "gem:arinsal",
+    "city": "Arinsal",
+    "country": "Andorra",
+    "km": 7.5
+   },
+   "climate": {
+    "source": "WorldClim 2.1 (1970-2000 normals, 5 arc-min)",
+    "t_mean": [
+     -6.0,
+     -5.4,
+     -3.5,
+     -1.6,
+     2.9,
+     7.4,
+     11.6,
+     11.9,
+     8.2,
+     3.3,
+     -1.7,
+     -4.4
+    ]
+   },
+   "prelim": 99.0,
+   "article": {
+    "lang": "ca",
+    "title": "Estanys de Tristaina",
+    "facts": [],
+    "swim_text": "",
+    "chars": 252
+   },
+   "views60": 352,
+   "images": [
+    {
+     "file": "File:Estany de tristaina de Baix 01.JPG",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Estany_de_tristaina_de_Baix_01.JPG/1280px-Estany_de_tristaina_de_Baix_01.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/5/52/Estany_de_tristaina_de_Baix_01.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 853,
+     "license": "CC BY-SA 2.5",
+     "license_url": "https://creativecommons.org/licenses/by-sa/2.5",
+     "author": "Josemanuel",
+     "caption": "The lake of Tristaina de Baix, near the Ordino-Arcalís ski-resort",
+     "page": "https://commons.wikimedia.org/wiki/File%3AEstany_de_tristaina_de_Baix_01.JPG"
+    },
+    {
+     "file": "File:Estany de tristaina de Baix 03.JPG",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/Estany_de_tristaina_de_Baix_03.JPG/1280px-Estany_de_tristaina_de_Baix_03.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/b/b3/Estany_de_tristaina_de_Baix_03.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 853,
+     "license": "CC BY-SA 2.5",
+     "license_url": "https://creativecommons.org/licenses/by-sa/2.5",
+     "author": "Josemanuel",
+     "caption": "The stream flowing out of the lake of Tristaina de Baix, near the Ordino-Arcalís ski-resort, Andorra",
+     "page": "https://commons.wikimedia.org/wiki/File%3AEstany_de_tristaina_de_Baix_03.JPG"
+    },
+    {
+     "file": "File:Estanys de Tristaina 02.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Estanys_de_Tristaina_02.jpg/1280px-Estanys_de_Tristaina_02.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/1/18/Estanys_de_Tristaina_02.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC BY-SA 4.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+     "author": "Jordi Gili",
+     "caption": "Estanys de Tristaina",
+     "page": "https://commons.wikimedia.org/wiki/File%3AEstanys_de_Tristaina_02.jpg"
+    },
+    {
+     "file": "File:Estanys de Tristaina 03.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Estanys_de_Tristaina_03.jpg/1280px-Estanys_de_Tristaina_03.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/2/2c/Estanys_de_Tristaina_03.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC BY-SA 4.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+     "author": "Jordi Gili",
+     "caption": "Estanys de Tristaina",
+     "page": "https://commons.wikimedia.org/wiki/File%3AEstanys_de_Tristaina_03.jpg"
+    },
+    {
+     "file": "File:Estanys de Tristaina 04.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7a/Estanys_de_Tristaina_04.jpg/1280px-Estanys_de_Tristaina_04.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/7/7a/Estanys_de_Tristaina_04.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC BY-SA 4.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+     "author": "Jordi Gili",
+     "caption": "Estanys de Tristaina",
+     "page": "https://commons.wikimedia.org/wiki/File%3AEstanys_de_Tristaina_04.jpg"
+    }
+   ],
+   "context": {
+    "peak": 12,
+    "viewpoint": 1,
+    "restaurant": 3,
+    "toilets": 1,
+    "canoe": 1,
+    "waterfall": 2,
+    "parking": 17,
+    "cliff": 13,
+    "wood": 5
+   }
+  },
+  {
+   "wd": "Q3215332",
+   "name": "Lake Engolasters",
+   "name_local": "estany d'Engolasters",
+   "lat": 42.5197,
+   "lon": 1.56861,
+   "iso2": "AD",
+   "adm": "Encamp",
+   "types": [
+    "glacial lake"
+   ],
+   "sitelinks": 15,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Estany%20d%27Engolasters%20-%2019.jpg",
+   "commons_cat": "Estany d'Engolasters",
+   "enwiki": "https://en.wikipedia.org/wiki/Lake_Engolasters",
+   "localwiki": "https://ca.wikipedia.org/wiki/Estany_d%27Engolasters",
+   "area_km2": 0.07,
+   "depth_m": null,
+   "elev_m": 1616,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Andorra"
+   ],
+   "key": "wd:Q3215332",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "seed": {
+    "swim": "no",
+    "kind": "reservoir",
+    "why": "brief",
+    "note": "hydroelectric reservoir, swimming discouraged and not provided for",
+    "name": "Lake Engolasters"
+   },
+   "protected_area": {
+    "name": "Vall del Madriu-Perafita-Claror",
+    "kind": "Protected area",
+    "national_park": false,
+    "notable": true,
+    "km": 5.46
+   },
+   "base": {
+    "id": "gem:madriu-valley",
+    "city": "Madriu-Perafita-Claror Valley",
+    "country": "Andorra",
+    "km": 3.5
+   },
+   "walks": [
+    {
+     "id": 62419,
+     "name": "Camí de l'Ossa",
+     "km": 33.9
+    },
+    {
+     "id": 39826,
+     "name": "El Camí IT1TR5 El Camí Capçaler: de Salzes a Balaguer",
+     "km": 83.5
+    },
+    {
+     "id": 62423,
+     "name": "Senda Pirenaica - E14",
+     "km": 15.0
+    }
+   ],
+   "n_walks": 5,
+   "climate": {
+    "source": "WorldClim 2.1 (1970-2000 normals, 5 arc-min)",
+    "t_mean": [
+     -1.3,
+     -0.5,
+     1.4,
+     3.3,
+     7.4,
+     11.5,
+     15.2,
+     15.4,
+     12.0,
+     7.4,
+     2.6,
+     0.1
+    ]
+   },
+   "prelim": 99.0,
+   "article": {
+    "lang": "en",
+    "title": "Lake Engolasters",
+    "facts": [
+     "dam",
+     "forest",
+     "glacier",
+     "mountains"
+    ],
+    "swim_text": "",
+    "chars": 804
+   },
+   "views60": 635,
+   "images": [
+    {
+     "file": "File:Lac d'Engolasters 01.JPG",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/60/Lac_d%27Engolasters_01.JPG/1280px-Lac_d%27Engolasters_01.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/6/60/Lac_d%27Engolasters_01.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC BY-SA 3.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+     "author": "Don-vip",
+     "caption": "Lac d'Engolasters, en partie gelé",
+     "page": "https://commons.wikimedia.org/wiki/File%3ALac_d%27Engolasters_01.JPG"
+    },
+    {
+     "file": "File:Lac d'Engolasters 02.JPG",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/34/Lac_d%27Engolasters_02.JPG/1280px-Lac_d%27Engolasters_02.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/3/34/Lac_d%27Engolasters_02.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC BY-SA 3.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+     "author": "Don-vip",
+     "caption": "Lac d'Engolasters, en partie gelé",
+     "page": "https://commons.wikimedia.org/wiki/File%3ALac_d%27Engolasters_02.JPG"
+    },
+    {
+     "file": "File:Encoro de Engolasters. Andorra 254.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/56/Encoro_de_Engolasters._Andorra_254.jpg/1280px-Encoro_de_Engolasters._Andorra_254.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/5/56/Encoro_de_Engolasters._Andorra_254.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 853,
+     "license": "CC BY-SA 3.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+     "author": "Luis Miguel Bugallo Sánchez (Lmbuga)",
+     "caption": "Dam of Engolasters, Andorra",
+     "page": "https://commons.wikimedia.org/wiki/File%3AEncoro_de_Engolasters._Andorra_254.jpg"
+    },
+    {
+     "file": "File:Engolasters.JPG",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Engolasters.JPG/1280px-Engolasters.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/8/83/Engolasters.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC BY-SA 3.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+     "author": "Shachar Geva",
+     "caption": "Engolasters Lake",
+     "page": "https://commons.wikimedia.org/wiki/File%3AEngolasters.JPG"
+    },
+    {
+     "file": "File:Estany d'Engolasters - 1.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Estany_d%27Engolasters_-_1.jpg/1280px-Estany_d%27Engolasters_-_1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/4/44/Estany_d%27Engolasters_-_1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 818,
+     "license": "CC BY-SA 2.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+     "author": "MARIA ROSA FERRE ✿",
+     "caption": "This is a a photo of a lake or pond in Andorra with id:",
+     "page": "https://commons.wikimedia.org/wiki/File%3AEstany_d%27Engolasters_-_1.jpg"
+    }
+   ],
+   "context": {
+    "restaurant": 3,
+    "hotel": 7,
+    "viewpoint": 4,
+    "toilets": 4,
+    "parking": 13,
+    "wood": 47,
+    "cliff": 4,
+    "swimming_pool": 1
+   }
+  },
+  {
+   "wd": "Q2477261",
+   "name": "Estany de les Truites",
+   "name_local": "Estany de les Truites",
+   "lat": 42.5776,
+   "lon": 1.4485,
+   "iso2": "AD",
+   "adm": "La Massana",
+   "types": [
+    "glacial lake"
+   ],
+   "sitelinks": 9,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Estany%20de%20les%20Truites%201.JPG",
+   "commons_cat": "Estany de les Truites",
+   "enwiki": "",
+   "localwiki": "https://ca.wikipedia.org/wiki/Estany_de_les_Truites",
+   "area_km2": 0.013,
+   "depth_m": null,
+   "elev_m": 2263,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q2477261",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "protected_area": {
+    "name": "Parc Natural Comunal de les Valls del Comapedrosa",
+    "kind": "Protected area",
+    "national_park": false,
+    "notable": true,
+    "km": 1.77
+   },
+   "base": {
+    "id": "gem:arinsal",
+    "city": "Arinsal",
+    "country": "Andorra",
+    "km": 3.0
+   },
+   "climate": {
+    "source": "WorldClim 2.1 (1970-2000 normals, 5 arc-min)",
+    "t_mean": [
+     -3.1,
+     -2.5,
+     -0.6,
+     1.2,
+     5.6,
+     9.8,
+     13.7,
+     14.0,
+     10.4,
+     5.6,
+     0.8,
+     -1.6
+    ]
+   },
+   "prelim": 6.648,
+   "article": {
+    "lang": "ca",
+    "title": "Estany de les Truites",
+    "facts": [],
+    "swim_text": "",
+    "chars": 224
+   },
+   "views60": 36,
+   "images": [
+    {
+     "file": "File:Estany de les Truites 2.JPG",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fb/Estany_de_les_Truites_2.JPG/1280px-Estany_de_les_Truites_2.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/f/fb/Estany_de_les_Truites_2.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC BY-SA 3.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+     "author": "Gertjan R.",
+     "caption": "Estany de les Truites, Arinsal, La Massana, Andorra",
+     "page": "https://commons.wikimedia.org/wiki/File%3AEstany_de_les_Truites_2.JPG"
+    },
+    {
+     "file": "File:Estany de les Truites - 1.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Estany_de_les_Truites_-_1.jpg/1280px-Estany_de_les_Truites_-_1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/9/9e/Estany_de_les_Truites_-_1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 720,
+     "license": "CC BY-SA 2.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+     "author": "Ferran Llorens",
+     "caption": "This is a a photo of a lake or pond in Andorra with id:",
+     "page": "https://commons.wikimedia.org/wiki/File%3AEstany_de_les_Truites_-_1.jpg"
+    },
+    {
+     "file": "File:Estany de les Truites - 2.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Estany_de_les_Truites_-_2.jpg/1280px-Estany_de_les_Truites_-_2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/6/6b/Estany_de_les_Truites_-_2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 720,
+     "license": "CC BY-SA 2.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+     "author": "Ferran Llorens",
+     "caption": "This is a a photo of a lake or pond in Andorra with id:",
+     "page": "https://commons.wikimedia.org/wiki/File%3AEstany_de_les_Truites_-_2.jpg"
+    },
+    {
+     "file": "File:Estany de les Truites - 3.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/86/Estany_de_les_Truites_-_3.jpg/1280px-Estany_de_les_Truites_-_3.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/8/86/Estany_de_les_Truites_-_3.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 720,
+     "license": "CC BY-SA 2.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+     "author": "Ferran Llorens",
+     "caption": "This is a a photo of a lake or pond in Andorra with id:",
+     "page": "https://commons.wikimedia.org/wiki/File%3AEstany_de_les_Truites_-_3.jpg"
+    },
+    {
+     "file": "File:Estany de les Truites - 4.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c6/Estany_de_les_Truites_-_4.jpg/1280px-Estany_de_les_Truites_-_4.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/c/c6/Estany_de_les_Truites_-_4.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 732,
+     "license": "CC BY-SA 2.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+     "author": "Ferran Llorens",
+     "caption": "This is a a photo of a lake or pond in Andorra with id:",
+     "page": "https://commons.wikimedia.org/wiki/File%3AEstany_de_les_Truites_-_4.jpg"
+    }
+   ],
+   "context": {
+    "peak": 7,
+    "cafe": 1,
+    "wood": 5,
+    "cliff": 1,
+    "nature_reserve": 1
+   }
+  },
+  {
+   "wd": "Q21329190",
+   "name": "Estany de la Bova",
+   "name_local": "",
+   "lat": 42.48972,
+   "lon": 1.65284,
+   "iso2": "AD",
+   "adm": "Escaldes-Engordany",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 4,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Estany%20de%20la%20Bova%20-%203.jpg",
+   "commons_cat": "Estany de la Bova",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": 0.025,
+   "depth_m": null,
+   "elev_m": 2411,
+   "protected": [
+    "Madriu-Perafita-Claror Valley"
+   ],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q21329190",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "protected_area": {
+    "name": "Vall del Madriu-Perafita-Claror",
+    "kind": "Protected area",
+    "national_park": false,
+    "notable": true,
+    "km": 3.91
+   },
+   "base": {
+    "id": "gem:madriu-valley",
+    "city": "Madriu-Perafita-Claror Valley",
+    "country": "Andorra",
+    "km": 4.7
+   },
+   "walks": [
+    {
+     "id": 62419,
+     "name": "Camí de l'Ossa",
+     "km": 33.9
+    },
+    {
+     "id": 39826,
+     "name": "El Camí IT1TR5 El Camí Capçaler: de Salzes a Balaguer",
+     "km": 83.5
+    },
+    {
+     "id": 30507,
+     "name": "European long distance path E7 - Andorra",
+     "km": 43.4
+    }
+   ],
+   "n_walks": 4,
+   "climate": {
+    "source": "WorldClim 2.1 (1970-2000 normals, 5 arc-min)",
+    "t_mean": [
+     -5.4,
+     -4.9,
+     -3.0,
+     -1.1,
+     3.4,
+     8.0,
+     12.0,
+     12.2,
+     8.5,
+     3.6,
+     -1.3,
+     -3.8
+    ]
+   },
+   "prelim": 6.151,
+   "images": [
+    {
+     "file": "File:Estany de la Bova - 2.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/Estany_de_la_Bova_-_2.jpg/1280px-Estany_de_la_Bova_-_2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/8/85/Estany_de_la_Bova_-_2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 853,
+     "license": "CC BY-SA 2.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+     "author": "Ferran Llorens",
+     "caption": "This is a a photo of a lake or pond in Andorra with id:",
+     "page": "https://commons.wikimedia.org/wiki/File%3AEstany_de_la_Bova_-_2.jpg"
+    },
+    {
+     "file": "File:Estany de la Bova - 4.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/81/Estany_de_la_Bova_-_4.jpg/1280px-Estany_de_la_Bova_-_4.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/8/81/Estany_de_la_Bova_-_4.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 853,
+     "license": "CC BY-SA 2.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+     "author": "Ferran Llorens",
+     "caption": "This is a a photo of a lake or pond in Andorra with id:",
+     "page": "https://commons.wikimedia.org/wiki/File%3AEstany_de_la_Bova_-_4.jpg"
+    },
+    {
+     "file": "File:Estany de la Bova - 5.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/Estany_de_la_Bova_-_5.jpg/1280px-Estany_de_la_Bova_-_5.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/4/41/Estany_de_la_Bova_-_5.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 853,
+     "license": "CC BY-SA 2.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+     "author": "Ferran Llorens",
+     "caption": "This is a a photo of a lake or pond in Andorra with id:",
+     "page": "https://commons.wikimedia.org/wiki/File%3AEstany_de_la_Bova_-_5.jpg"
+    },
+    {
+     "file": "File:Estany de la Bova - 3.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Estany_de_la_Bova_-_3.jpg/1280px-Estany_de_la_Bova_-_3.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/c/c1/Estany_de_la_Bova_-_3.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 853,
+     "license": "CC BY-SA 2.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+     "author": "Ferran Llorens",
+     "caption": "This is a a photo of a lake or pond in Andorra with id:",
+     "page": "https://commons.wikimedia.org/wiki/File%3AEstany_de_la_Bova_-_3.jpg"
+    },
+    {
+     "file": "File:Estany de la Bova - 1.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Estany_de_la_Bova_-_1.jpg/1280px-Estany_de_la_Bova_-_1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/e/e6/Estany_de_la_Bova_-_1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 443,
+     "license": "CC BY-SA 2.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+     "author": "Ferran Llorens",
+     "caption": "This is a a photo of a lake or pond in Andorra with id:",
+     "page": "https://commons.wikimedia.org/wiki/File%3AEstany_de_la_Bova_-_1.jpg"
+    }
+   ]
+  },
+  {
+   "wd": "Q21328903",
+   "name": "estany de Font Negra",
+   "name_local": "Estany de Font Negra",
+   "lat": 42.52915,
+   "lon": 1.73362,
+   "iso2": "AD",
+   "adm": "Porta",
+   "types": [
+    "glacial lake"
+   ],
+   "sitelinks": 6,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Estany%20de%20les%20Abelletes%20-%201.jpg",
+   "commons_cat": "Estany de les Abelletes",
+   "enwiki": "",
+   "localwiki": "https://ca.wikipedia.org/wiki/Estany_de_Font_Negra",
+   "area_km2": 0.0232,
+   "depth_m": null,
+   "elev_m": 2259,
+   "protected": [],
+   "part_of": [
+    "Andorra–France border"
+   ],
+   "basin_countries": [
+    "France",
+    "Andorra"
+   ],
+   "key": "wd:Q21328903",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "base": {
+    "id": "gem:soldeu",
+    "city": "Soldeu (Vall d'Incles)",
+    "country": "Andorra",
+    "km": 7.6
+   },
+   "walks": [
+    {
+     "id": 25575,
+     "name": "HRP Étape 32",
+     "km": 12.5
+    }
+   ],
+   "n_walks": 1,
+   "climate": {
+    "source": "WorldClim 2.1 (1970-2000 normals, 5 arc-min)",
+    "t_mean": [
+     -6.2,
+     -5.6,
+     -3.6,
+     -1.6,
+     3.0,
+     7.6,
+     11.7,
+     11.9,
+     8.2,
+     3.3,
+     -1.8,
+     -4.5
+    ]
+   },
+   "prelim": 6.138,
+   "article": {
+    "lang": "ca",
+    "title": "Estany de Font Negra",
+    "facts": [
+     "glacier"
+    ],
+    "swim_text": "",
+    "chars": 658
+   },
+   "views60": 46,
+   "images": [
+    {
+     "file": "File:GrandValira-PasDeLaCasa-FontNegre.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/GrandValira-PasDeLaCasa-FontNegre.jpg/1280px-GrandValira-PasDeLaCasa-FontNegre.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/3/3b/GrandValira-PasDeLaCasa-FontNegre.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC BY-SA 3.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+     "author": "Carlos Delgado",
+     "caption": "Pas de la Casa, in the Ski Resort Grand Valira, in Andorra. Some of the mountains in the background may be actually part of France.",
+     "page": "https://commons.wikimedia.org/wiki/File%3AGrandValira-PasDeLaCasa-FontNegre.jpg"
+    },
+    {
+     "file": "File:Estany de les Abelletes - 1.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/02/Estany_de_les_Abelletes_-_1.jpg/1280px-Estany_de_les_Abelletes_-_1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/0/02/Estany_de_les_Abelletes_-_1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 852,
+     "license": "CC BY-SA 2.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+     "author": "Ferran Llorens",
+     "caption": "This is a a photo of a lake or pond in Andorra with id:",
+     "page": "https://commons.wikimedia.org/wiki/File%3AEstany_de_les_Abelletes_-_1.jpg"
+    },
+    {
+     "file": "File:Pas de la Casa-Hivern.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/32/Pas_de_la_Casa-Hivern.jpg/1280px-Pas_de_la_Casa-Hivern.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/3/32/Pas_de_la_Casa-Hivern.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC BY-SA 3.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+     "author": "Carlos Delgado",
+     "caption": "Pas de la Casa, in Andorra. View from near summit of Pic d'Envalira.",
+     "page": "https://commons.wikimedia.org/wiki/File%3APas_de_la_Casa-Hivern.jpg"
+    },
+    {
+     "file": "File:Estany de les Abelletes - 2.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Estany_de_les_Abelletes_-_2.jpg/1280px-Estany_de_les_Abelletes_-_2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/2/2e/Estany_de_les_Abelletes_-_2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 852,
+     "license": "CC BY-SA 2.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+     "author": "Ferran Llorens",
+     "caption": "This is a a photo of a lake or pond in Andorra with id:",
+     "page": "https://commons.wikimedia.org/wiki/File%3AEstany_de_les_Abelletes_-_2.jpg"
+    },
+    {
+     "file": "File:Estany de les Abelletes - 3.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/Estany_de_les_Abelletes_-_3.jpg/1280px-Estany_de_les_Abelletes_-_3.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/7/72/Estany_de_les_Abelletes_-_3.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 852,
+     "license": "CC BY-SA 2.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+     "author": "Ferran Llorens",
+     "caption": "This is a a photo of a lake or pond in Andorra with id:",
+     "page": "https://commons.wikimedia.org/wiki/File%3AEstany_de_les_Abelletes_-_3.jpg"
+    }
+   ]
+  },
+  {
+   "wd": "Q21329550",
+   "name": "Estany Esbalçat",
+   "name_local": "Estany Esbalçat",
+   "lat": 42.64002,
+   "lon": 1.51371,
+   "iso2": "AD",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 5,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Estany%20Esbal%C3%A7at%20-%205.jpg",
+   "commons_cat": "Estany Esbalçat",
+   "enwiki": "",
+   "localwiki": "https://ca.wikipedia.org/wiki/Estany_Esbal%C3%A7at",
+   "area_km2": 0.018,
+   "depth_m": null,
+   "elev_m": 2278,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q21329550",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "protected_area": {
+    "name": "Parc Natural de la Vall de Sorteny",
+    "kind": "Protected area",
+    "national_park": false,
+    "notable": true,
+    "km": 5.71
+   },
+   "base": {
+    "id": "gem:arinsal",
+    "city": "Arinsal",
+    "country": "Andorra",
+    "km": 7.9
+   },
+   "climate": {
+    "source": "WorldClim 2.1 (1970-2000 normals, 5 arc-min)",
+    "t_mean": [
+     -5.0,
+     -4.4,
+     -2.5,
+     -0.6,
+     3.9,
+     8.3,
+     12.4,
+     12.6,
+     9.0,
+     4.2,
+     -0.8,
+     -3.4
+    ]
+   },
+   "prelim": 6.061,
+   "article": {
+    "lang": "ca",
+    "title": "Estany Esbalçat",
+    "facts": [
+     "glacier"
+    ],
+    "swim_text": "",
+    "chars": 254
+   },
+   "views60": 18,
+   "images": [
+    {
+     "file": "File:Estany Esbalçat - 2.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c9/Estany_Esbal%C3%A7at_-_2.jpg/1280px-Estany_Esbal%C3%A7at_-_2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/c/c9/Estany_Esbal%C3%A7at_-_2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 655,
+     "license": "CC BY-SA 2.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+     "author": "Ferran Llorens",
+     "caption": "This is a a photo of a lake or pond in Andorra with id:",
+     "page": "https://commons.wikimedia.org/wiki/File%3AEstany_Esbal%C3%A7at_-_2.jpg"
+    },
+    {
+     "file": "File:Estany Esbalçat - 3.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3d/Estany_Esbal%C3%A7at_-_3.jpg/1280px-Estany_Esbal%C3%A7at_-_3.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/3/3d/Estany_Esbal%C3%A7at_-_3.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 523,
+     "license": "CC BY-SA 2.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+     "author": "Ferran Llorens",
+     "caption": "This is a a photo of a lake or pond in Andorra with id:",
+     "page": "https://commons.wikimedia.org/wiki/File%3AEstany_Esbal%C3%A7at_-_3.jpg"
+    },
+    {
+     "file": "File:Estany Esbalçat - 4.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Estany_Esbal%C3%A7at_-_4.jpg/1280px-Estany_Esbal%C3%A7at_-_4.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/4/44/Estany_Esbal%C3%A7at_-_4.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 696,
+     "license": "CC BY-SA 2.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+     "author": "Ferran Llorens",
+     "caption": "This is a a photo of a lake or pond in Andorra with id:",
+     "page": "https://commons.wikimedia.org/wiki/File%3AEstany_Esbal%C3%A7at_-_4.jpg"
+    },
+    {
+     "file": "File:Estany Esbalçat 3.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fb/Estany_Esbal%C3%A7at_3.jpg/1280px-Estany_Esbal%C3%A7at_3.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/f/fb/Estany_Esbal%C3%A7at_3.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 720,
+     "license": "CC BY-SA 4.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+     "author": "Simonjoan",
+     "caption": "Estany Esbalçat amb el Pic de Fangasses a sobre i al fons el Pic de Font Blanca",
+     "page": "https://commons.wikimedia.org/wiki/File%3AEstany_Esbal%C3%A7at_3.jpg"
+    },
+    {
+     "file": "File:Estany Esbalçat 4.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/33/Estany_Esbal%C3%A7at_4.jpg/1280px-Estany_Esbal%C3%A7at_4.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/3/33/Estany_Esbal%C3%A7at_4.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 720,
+     "license": "CC BY-SA 4.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+     "author": "Simonjoan",
+     "caption": "Estany Esbalçat amb el Pic de Besalí al fons",
+     "page": "https://commons.wikimedia.org/wiki/File%3AEstany_Esbal%C3%A7at_4.jpg"
+    }
+   ]
+  },
+  {
+   "wd": "Q1934789",
+   "name": "Estany Negre",
+   "name_local": "Estany Negre",
+   "lat": 42.587917,
+   "lon": 1.437128,
+   "iso2": "AD",
+   "adm": "",
+   "types": [
+    "glacial lake"
+   ],
+   "sitelinks": 6,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Estany%20Negre%20Pic%20de%20Sanfonts%20Agulla%20de%20Baiau.JPG",
+   "commons_cat": "Estany Negre (la Massana)",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": 0.015,
+   "depth_m": null,
+   "elev_m": 2627,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q1934789",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "protected_area": {
+    "name": "Parc Natural Comunal de les Valls del Comapedrosa",
+    "kind": "Protected area",
+    "national_park": false,
+    "notable": true,
+    "km": 2.27
+   },
+   "base": {
+    "id": "gem:arinsal",
+    "city": "Arinsal",
+    "country": "Andorra",
+    "km": 4.3
+   },
+   "climate": {
+    "source": "WorldClim 2.1 (1970-2000 normals, 5 arc-min)",
+    "t_mean": [
+     -6.0,
+     -5.4,
+     -3.5,
+     -1.6,
+     2.9,
+     7.4,
+     11.6,
+     11.9,
+     8.2,
+     3.3,
+     -1.7,
+     -4.4
+    ]
+   },
+   "prelim": 5.838,
+   "images": [
+    {
+     "file": "File:Estany Negre 2.JPG",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Estany_Negre_2.JPG/1280px-Estany_Negre_2.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/c/cc/Estany_Negre_2.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "Public domain",
+     "license_url": "",
+     "author": "Public domainPublic domainfalsefalse\n\n\n\n  \n\nThis work has been released into the public domain by its author, Cars en tr",
+     "caption": "Het Estany Negre meer in Arinsal (La Massana, Andorra)",
+     "page": "https://commons.wikimedia.org/wiki/File%3AEstany_Negre_2.JPG"
+    },
+    {
+     "file": "File:Estany Negre 3.JPG",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/af/Estany_Negre_3.JPG/1280px-Estany_Negre_3.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/a/af/Estany_Negre_3.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC BY-SA 3.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+     "author": "Gertjan R.",
+     "caption": "Estany Negre in Arinsal, La Massana, Andorra",
+     "page": "https://commons.wikimedia.org/wiki/File%3AEstany_Negre_3.JPG"
+    },
+    {
+     "file": "File:Estany Negre 4.JPG",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d8/Estany_Negre_4.JPG/1280px-Estany_Negre_4.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/d/d8/Estany_Negre_4.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC BY-SA 3.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+     "author": "Gertjan R.",
+     "caption": "Estany Negre in Arinsal, La Massana, Andorra",
+     "page": "https://commons.wikimedia.org/wiki/File%3AEstany_Negre_4.JPG"
+    },
+    {
+     "file": "File:Estany Negre Pic de Sanfonts Agulla de Baiau.JPG",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/98/Estany_Negre_Pic_de_Sanfonts_Agulla_de_Baiau.JPG/1280px-Estany_Negre_Pic_de_Sanfonts_Agulla_de_Baiau.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/9/98/Estany_Negre_Pic_de_Sanfonts_Agulla_de_Baiau.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 1707,
+     "license": "CC BY-SA 3.0",
+     "license_url": "http://creativecommons.org/licenses/by-sa/3.0/",
+     "author": "JMiall",
+     "caption": "Estany Negre, Pic de Sanfonts &amp; Agulla de Baiau taken from the slopes of Coma Pedrosa, Andorra",
+     "page": "https://commons.wikimedia.org/wiki/File%3AEstany_Negre_Pic_de_Sanfonts_Agulla_de_Baiau.JPG"
+    },
+    {
+     "file": "File:Camí de pujada al Comapedrosa. 07.JPG",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/Cam%C3%AD_de_pujada_al_Comapedrosa._07.JPG/1280px-Cam%C3%AD_de_pujada_al_Comapedrosa._07.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/4/47/Cam%C3%AD_de_pujada_al_Comapedrosa._07.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 281,
+     "license": "CC BY-SA 3.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+     "author": "Isidro Jabato",
+     "caption": "This is a a photo of a natural area in Andorra with id:",
+     "page": "https://commons.wikimedia.org/wiki/File%3ACam%C3%AD_de_pujada_al_Comapedrosa._07.JPG"
+    }
+   ]
+  },
+  {
+   "wd": "Q21329591",
+   "name": "Estany de l'Estanyó",
+   "name_local": "Estany de l'Estanyó",
+   "lat": 42.60914,
+   "lon": 1.57817,
+   "iso2": "AD",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 4,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/L%27Estany%C3%B3%20-%209.jpg",
+   "commons_cat": "Estany de l'Estanyó",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": 0.013,
+   "depth_m": null,
+   "elev_m": 2340,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q21329591",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "protected_area": {
+    "name": "Parc Natural de la Vall de Sorteny",
+    "kind": "Protected area",
+    "national_park": false,
+    "notable": true,
+    "km": 1.15
+   },
+   "base": {
+    "id": "gem:canillo",
+    "city": "Canillo",
+    "country": "Andorra",
+    "km": 4.9
+   },
+   "walks": [
+    {
+     "id": 27840,
+     "name": "HRP Variante 30-31.1",
+     "km": 20.2
+    },
+    {
+     "id": 62421,
+     "name": "HRP Variante 31.1",
+     "km": 9.5
+    },
+    {
+     "id": 62423,
+     "name": "Senda Pirenaica - E14",
+     "km": 15.0
+    }
+   ],
+   "n_walks": 3,
+   "climate": {
+    "source": "WorldClim 2.1 (1970-2000 normals, 5 arc-min)",
+    "t_mean": [
+     -5.0,
+     -4.4,
+     -2.5,
+     -0.6,
+     3.9,
+     8.3,
+     12.4,
+     12.6,
+     9.0,
+     4.2,
+     -0.8,
+     -3.4
+    ]
+   },
+   "prelim": 5.751,
+   "images": [
+    {
+     "file": "File:L'Estanyó - 1.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/54/L%27Estany%C3%B3_-_1.jpg/1280px-L%27Estany%C3%B3_-_1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/5/54/L%27Estany%C3%B3_-_1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 853,
+     "license": "CC BY-SA 2.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+     "author": "Ferran Llorens",
+     "caption": "This is a a photo of a lake or pond in Andorra with id:",
+     "page": "https://commons.wikimedia.org/wiki/File%3AL%27Estany%C3%B3_-_1.jpg"
+    },
+    {
+     "file": "File:L'Estanyó - 3.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d6/L%27Estany%C3%B3_-_3.jpg/1280px-L%27Estany%C3%B3_-_3.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/d/d6/L%27Estany%C3%B3_-_3.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 825,
+     "license": "CC BY-SA 2.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+     "author": "Ferran Llorens",
+     "caption": "This is a a photo of a lake or pond in Andorra with id:",
+     "page": "https://commons.wikimedia.org/wiki/File%3AL%27Estany%C3%B3_-_3.jpg"
+    },
+    {
+     "file": "File:L'Estanyó - 4.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d7/L%27Estany%C3%B3_-_4.jpg/1280px-L%27Estany%C3%B3_-_4.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/d/d7/L%27Estany%C3%B3_-_4.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 853,
+     "license": "CC BY-SA 2.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+     "author": "Ferran Llorens",
+     "caption": "This is a a photo of a lake or pond in Andorra with id:",
+     "page": "https://commons.wikimedia.org/wiki/File%3AL%27Estany%C3%B3_-_4.jpg"
+    },
+    {
+     "file": "File:L'Estanyó - 5.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/L%27Estany%C3%B3_-_5.jpg/1280px-L%27Estany%C3%B3_-_5.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/4/4f/L%27Estany%C3%B3_-_5.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 847,
+     "license": "CC BY-SA 2.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+     "author": "Ferran Llorens",
+     "caption": "This is a a photo of a lake or pond in Andorra with id:",
+     "page": "https://commons.wikimedia.org/wiki/File%3AL%27Estany%C3%B3_-_5.jpg"
+    },
+    {
+     "file": "File:L'Estanyó - 6.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/L%27Estany%C3%B3_-_6.jpg/1280px-L%27Estany%C3%B3_-_6.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/2/29/L%27Estany%C3%B3_-_6.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 853,
+     "license": "CC BY-SA 2.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+     "author": "Ferran Llorens",
+     "caption": "This is a a photo of a lake or pond in Andorra with id:",
+     "page": "https://commons.wikimedia.org/wiki/File%3AL%27Estany%C3%B3_-_6.jpg"
+    }
+   ]
+  },
+  {
+   "wd": "Q21329944",
+   "name": "Estany dels Meners de la Coma",
+   "name_local": "Estany dels Meners de la Coma",
+   "lat": 42.62361,
+   "lon": 1.60882,
+   "iso2": "AD",
+   "adm": "Canillo",
+   "types": [
+    "glacial lake"
+   ],
+   "sitelinks": 4,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Estany%20Meners%20de%20la%20Coma%20des%20del%20Pic%20de%20Serrera.JPG",
+   "commons_cat": "Estany dels Meners de la Coma",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": 0.009,
+   "depth_m": null,
+   "elev_m": 2619,
+   "protected": [],
+   "part_of": [
+    "Vall de Ransol"
+   ],
+   "basin_countries": [],
+   "key": "wd:Q21329944",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "protected_area": {
+    "name": "Parc Natural de la Vall de Sorteny",
+    "kind": "Protected area",
+    "national_park": false,
+    "notable": true,
+    "km": 2.59
+   },
+   "base": {
+    "id": "gem:canillo",
+    "city": "Canillo",
+    "country": "Andorra",
+    "km": 6.3
+   },
+   "walks": [
+    {
+     "id": 27840,
+     "name": "HRP Variante 30-31.1",
+     "km": 20.2
+    },
+    {
+     "id": 62421,
+     "name": "HRP Variante 31.1",
+     "km": 9.5
+    }
+   ],
+   "n_walks": 2,
+   "climate": {
+    "source": "WorldClim 2.1 (1970-2000 normals, 5 arc-min)",
+    "t_mean": [
+     -5.8,
+     -5.2,
+     -3.2,
+     -1.3,
+     3.2,
+     7.7,
+     11.8,
+     12.0,
+     8.4,
+     3.6,
+     -1.5,
+     -4.1
+    ]
+   },
+   "prelim": 5.751,
+   "images": [
+    {
+     "file": "File:Estany Meners de la Coma des del Pic de Serrera.JPG",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/37/Estany_Meners_de_la_Coma_des_del_Pic_de_Serrera.JPG/1280px-Estany_Meners_de_la_Coma_des_del_Pic_de_Serrera.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/3/37/Estany_Meners_de_la_Coma_des_del_Pic_de_Serrera.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC BY-SA 3.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+     "author": "Seruba",
+     "caption": "This is a a photo of a lake or pond in Andorra with id:",
+     "page": "https://commons.wikimedia.org/wiki/File%3AEstany_Meners_de_la_Coma_des_del_Pic_de_Serrera.JPG"
+    },
+    {
+     "file": "File:Eristain Andre Maria Baldorba - Basajaun - San Juan - Baco 01.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/02/Eristain_Andre_Maria_Baldorba_-_Basajaun_-_San_Juan_-_Baco_01.jpg/1280px-Eristain_Andre_Maria_Baldorba_-_Basajaun_-_San_Juan_-_Baco_01.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/0/02/Eristain_Andre_Maria_Baldorba_-_Basajaun_-_San_Juan_-_Baco_01.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 853,
+     "license": "CC BY-SA 4.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+     "author": "Ksarasola",
+     "caption": "Painting of the church of Santa María de Eristain in Valdorba (Navarre). It is located at the apse of the central arch. It is medieval, from the 14th century or earlier according to the Prince of Vian",
+     "page": "https://commons.wikimedia.org/wiki/File%3AEristain_Andre_Maria_Baldorba_-_Basajaun_-_San_Juan_-_Baco_01.jpg"
+    },
+    {
+     "file": "File:Refuge - panoramio.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/57/Refuge_-_panoramio.jpg/1280px-Refuge_-_panoramio.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/5/57/Refuge_-_panoramio.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC BY 3.0",
+     "license_url": "https://creativecommons.org/licenses/by/3.0",
+     "author": "LaMaWieze",
+     "caption": "Refuge",
+     "page": "https://commons.wikimedia.org/wiki/File%3ARefuge_-_panoramio.jpg"
+    },
+    {
+     "file": "File:Eristain Andre Maria Baldorba - Basajaun - San Juan - Baco 02.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/af/Eristain_Andre_Maria_Baldorba_-_Basajaun_-_San_Juan_-_Baco_02.jpg/1280px-Eristain_Andre_Maria_Baldorba_-_Basajaun_-_San_Juan_-_Baco_02.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/a/af/Eristain_Andre_Maria_Baldorba_-_Basajaun_-_San_Juan_-_Baco_02.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 1920,
+     "license": "CC BY-SA 4.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+     "author": "Ksarasola",
+     "caption": "Painting of the church of Santa María de Eristain in Valdorba (Navarre). It is located at the apse of the central arch. It is medieval, from the 14th century or earlier according to the Prince of Vian",
+     "page": "https://commons.wikimedia.org/wiki/File%3AEristain_Andre_Maria_Baldorba_-_Basajaun_-_San_Juan_-_Baco_02.jpg"
+    }
+   ]
+  },
+  {
+   "wd": "Q21329797",
+   "name": "Estany de l'Illa",
+   "name_local": "",
+   "lat": 42.49788,
+   "lon": 1.65983,
+   "iso2": "AD",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 4,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Estany%20de%20l%27Illa%20-%201.jpg",
+   "commons_cat": "",
+   "enwiki": "https://en.wikipedia.org/wiki/Estany_de_l%27Illa",
+   "localwiki": "",
+   "area_km2": 0.13,
+   "depth_m": null,
+   "elev_m": 2515,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q21329797",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "protected_area": {
+    "name": "Vall del Madriu-Perafita-Claror",
+    "kind": "Protected area",
+    "national_park": false,
+    "notable": true,
+    "km": 4.77
+   },
+   "base": {
+    "id": "gem:madriu-valley",
+    "city": "Madriu-Perafita-Claror Valley",
+    "country": "Andorra",
+    "km": 5.3
+   },
+   "walks": [
+    {
+     "id": 39826,
+     "name": "El Camí IT1TR5 El Camí Capçaler: de Salzes a Balaguer",
+     "km": 83.5
+    },
+    {
+     "id": 62419,
+     "name": "Camí de l'Ossa",
+     "km": 33.9
+    },
+    {
+     "id": 30507,
+     "name": "European long distance path E7 - Andorra",
+     "km": 43.4
+    }
+   ],
+   "n_walks": 4,
+   "climate": {
+    "source": "WorldClim 2.1 (1970-2000 normals, 5 arc-min)",
+    "t_mean": [
+     -5.4,
+     -4.9,
+     -3.0,
+     -1.1,
+     3.4,
+     8.0,
+     12.0,
+     12.2,
+     8.5,
+     3.6,
+     -1.3,
+     -3.8
+    ]
+   },
+   "prelim": 5.651,
+   "article": {
+    "lang": "en",
+    "title": "Estany de l'Illa",
+    "facts": [
+     "dam",
+     "glacier",
+     "hiking",
+     "islands"
+    ],
+    "swim_text": "",
+    "chars": 584
+   },
+   "views60": 93,
+   "images": [
+    {
+     "file": "File:Refugi de L'Illa - vista envolvente - panoramio.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3d/Refugi_de_L%27Illa_-_vista_envolvente_-_panoramio.jpg/1280px-Refugi_de_L%27Illa_-_vista_envolvente_-_panoramio.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/3/3d/Refugi_de_L%27Illa_-_vista_envolvente_-_panoramio.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC BY-SA 3.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+     "author": "Bernardo Reis",
+     "caption": "Refugi de L'Illa - vista envolvente",
+     "page": "https://commons.wikimedia.org/wiki/File%3ARefugi_de_L%27Illa_-_vista_envolvente_-_panoramio.jpg"
+    },
+    {
+     "file": "File:Estany de l'Illa - 1.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/17/Estany_de_l%27Illa_-_1.jpg/1280px-Estany_de_l%27Illa_-_1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/1/17/Estany_de_l%27Illa_-_1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 501,
+     "license": "CC BY-SA 2.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+     "author": "Ferran Llorens",
+     "caption": "This is a a photo of a lake or pond in Andorra with id:",
+     "page": "https://commons.wikimedia.org/wiki/File%3AEstany_de_l%27Illa_-_1.jpg"
+    },
+    {
+     "file": "File:Vista de Estany de L'Illa - A Caminho do Pic de Pessons - panoramio.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/42/Vista_de_Estany_de_L%27Illa_-_A_Caminho_do_Pic_de_Pessons_-_panoramio.jpg/1280px-Vista_de_Estany_de_L%27Illa_-_A_Caminho_do_Pic_de_Pessons_-_panoramio.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/4/42/Vista_de_Estany_de_L%27Illa_-_A_Caminho_do_Pic_de_Pessons_-_panoramio.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 853,
+     "license": "CC BY-SA 3.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+     "author": "Bernardo Reis",
+     "caption": "Vista de Estany de L'Illa - A Caminho do Pic de Pessons",
+     "page": "https://commons.wikimedia.org/wiki/File%3AVista_de_Estany_de_L%27Illa_-_A_Caminho_do_Pic_de_Pessons_-_panoramio.jpg"
+    }
+   ],
+   "context": {
+    "peak": 8
+   }
+  },
+  {
+   "wd": "Q2781227",
+   "name": "Estanys Forcats",
+   "name_local": "Estanys Forcats",
+   "lat": 42.6002,
+   "lon": 1.44734,
+   "iso2": "AD",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 8,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Estanys%20Forcats%20001.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://ca.wikipedia.org/wiki/Estanys_Forcats",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": 2361,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q2781227",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "protected_area": {
+    "name": "Parc Natural Comunal de les Valls del Comapedrosa",
+    "kind": "Protected area",
+    "national_park": false,
+    "notable": true,
+    "km": 1.98
+   },
+   "base": {
+    "id": "gem:arinsal",
+    "city": "Arinsal",
+    "country": "Andorra",
+    "km": 4.4
+   },
+   "climate": {
+    "source": "WorldClim 2.1 (1970-2000 normals, 5 arc-min)",
+    "t_mean": [
+     -6.0,
+     -5.4,
+     -3.5,
+     -1.6,
+     2.9,
+     7.4,
+     11.6,
+     11.9,
+     8.2,
+     3.3,
+     -1.7,
+     -4.4
+    ]
+   },
+   "prelim": 5.627,
+   "article": {
+    "lang": "ca",
+    "title": "Estanys Forcats",
+    "facts": [
+     "glacier"
+    ],
+    "swim_text": "",
+    "chars": 277
+   },
+   "views60": 55,
+   "images": [
+    {
+     "file": "File:Estanys Forcats des de la Roca Entravessada (agost 2008) - panoramio.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a3/Estanys_Forcats_des_de_la_Roca_Entravessada_%28agost_2008%29_-_panoramio.jpg/1280px-Estanys_Forcats_des_de_la_Roca_Entravessada_%28agost_2008%29_-_panoramio.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/a/a3/Estanys_Forcats_des_de_la_Roca_Entravessada_%28agost_2008%29_-_panoramio.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC BY-SA 3.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+     "author": "EliziR",
+     "caption": "Estanys Forcats des de la Roca Entravessada (agost 2008)",
+     "page": "https://commons.wikimedia.org/wiki/File%3AEstanys_Forcats_des_de_la_Roca_Entravessada_%28agost_2008%29_-_panoramio.jpg"
+    },
+    {
+     "file": "File:Estanys Forcats (agost 2008) - panoramio.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Estanys_Forcats_%28agost_2008%29_-_panoramio.jpg/1280px-Estanys_Forcats_%28agost_2008%29_-_panoramio.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/4/4c/Estanys_Forcats_%28agost_2008%29_-_panoramio.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC BY-SA 3.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+     "author": "EliziR",
+     "caption": "Estanys Forcats (agost 2008)",
+     "page": "https://commons.wikimedia.org/wiki/File%3AEstanys_Forcats_%28agost_2008%29_-_panoramio.jpg"
+    },
+    {
+     "file": "File:Estanys Forcats 001.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/4/4b/Estanys_Forcats_001.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/4/4b/Estanys_Forcats_001.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC BY-SA 3.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+     "author": "Solde",
+     "caption": "Estanys Forcats des del camí a la collada dels Estanys Forcats.",
+     "page": "https://commons.wikimedia.org/wiki/File%3AEstanys_Forcats_001.jpg"
+    },
+    {
+     "file": "File:Estanys Forcats (agost 2008) - panoramio (1).jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7a/Estanys_Forcats_%28agost_2008%29_-_panoramio_%281%29.jpg/1280px-Estanys_Forcats_%28agost_2008%29_-_panoramio_%281%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/7/7a/Estanys_Forcats_%28agost_2008%29_-_panoramio_%281%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 1707,
+     "license": "CC BY-SA 3.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+     "author": "EliziR",
+     "caption": "Estanys Forcats (agost 2008)",
+     "page": "https://commons.wikimedia.org/wiki/File%3AEstanys_Forcats_%28agost_2008%29_-_panoramio_%281%29.jpg"
+    },
+    {
+     "file": "File:Refugi d'Estanys Forcats - panoramio.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/8/82/Refugi_d%27Estanys_Forcats_-_panoramio.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/8/82/Refugi_d%27Estanys_Forcats_-_panoramio.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC BY-SA 3.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+     "author": "simonjoan",
+     "caption": "Refugi d'Estanys Forcats",
+     "page": "https://commons.wikimedia.org/wiki/File%3ARefugi_d%27Estanys_Forcats_-_panoramio.jpg"
+    }
+   ],
+   "context": {
+    "peak": 14,
+    "cliff": 5,
+    "nature_reserve": 1
+   }
+  },
+  {
+   "wd": "Q2064512",
+   "name": "Estanys de Montmantell",
+   "name_local": "Estanys de Montmantell",
+   "lat": 42.60381,
+   "lon": 1.46704,
+   "iso2": "AD",
+   "adm": "La Massana",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 6,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Estanyons%20inferiors%20de%20Montamantell%20i%20vista%20general.jpg",
+   "commons_cat": "Estanys de Montmantell",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [
+    "Parc Natural Comunal de les Valls del Comapedrosa"
+   ],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q2064512",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "protected_area": {
+    "name": "Parc Natural Comunal de les Valls del Comapedrosa",
+    "kind": "Protected area",
+    "national_park": false,
+    "notable": true,
+    "km": 1.77
+   },
+   "base": {
+    "id": "gem:arinsal",
+    "city": "Arinsal",
+    "country": "Andorra",
+    "km": 3.8
+   },
+   "climate": {
+    "source": "WorldClim 2.1 (1970-2000 normals, 5 arc-min)",
+    "t_mean": [
+     -6.0,
+     -5.4,
+     -3.5,
+     -1.6,
+     2.9,
+     7.4,
+     11.6,
+     11.9,
+     8.2,
+     3.3,
+     -1.7,
+     -4.4
+    ]
+   },
+   "prelim": 5.538,
+   "images": [
+    {
+     "file": "File:Les Canaletes (agost 2008) - panoramio.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Les_Canaletes_%28agost_2008%29_-_panoramio.jpg/1280px-Les_Canaletes_%28agost_2008%29_-_panoramio.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/4/4b/Les_Canaletes_%28agost_2008%29_-_panoramio.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC BY-SA 3.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+     "author": "EliziR",
+     "caption": "Les Canaletes (agost 2008)",
+     "page": "https://commons.wikimedia.org/wiki/File%3ALes_Canaletes_%28agost_2008%29_-_panoramio.jpg"
+    },
+    {
+     "file": "File:Refugi d'Estanys Forcats - panoramio.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/8/82/Refugi_d%27Estanys_Forcats_-_panoramio.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/8/82/Refugi_d%27Estanys_Forcats_-_panoramio.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC BY-SA 3.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+     "author": "simonjoan",
+     "caption": "Refugi d'Estanys Forcats",
+     "page": "https://commons.wikimedia.org/wiki/File%3ARefugi_d%27Estanys_Forcats_-_panoramio.jpg"
+    }
+   ]
+  },
+  {
+   "wd": "Q21332181",
+   "name": "Estanys de l'Angonella",
+   "name_local": "Estanys de l'Angonella",
+   "lat": 42.608857,
+   "lon": 1.480206,
+   "iso2": "AD",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 6,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Estanys%20de%20l%27Angonella%20-%2017.jpg",
+   "commons_cat": "Estanys de l'Angonella",
+   "enwiki": "",
+   "localwiki": "https://ca.wikipedia.org/wiki/Estanys_de_l%27Angonella",
+   "area_km2": 0.02,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q21332181",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "protected_area": {
+    "name": "Parc Natural Comunal de les Valls del Comapedrosa",
+    "kind": "Protected area",
+    "national_park": false,
+    "notable": true,
+    "km": 2.64
+   },
+   "base": {
+    "id": "gem:arinsal",
+    "city": "Arinsal",
+    "country": "Andorra",
+    "km": 4.1
+   },
+   "climate": {
+    "source": "WorldClim 2.1 (1970-2000 normals, 5 arc-min)",
+    "t_mean": [
+     -6.0,
+     -5.4,
+     -3.5,
+     -1.6,
+     2.9,
+     7.4,
+     11.6,
+     11.9,
+     8.2,
+     3.3,
+     -1.7,
+     -4.4
+    ]
+   },
+   "prelim": 5.538,
+   "article": {
+    "lang": "ca",
+    "title": "Estanys de l'Angonella",
+    "facts": [],
+    "swim_text": "",
+    "chars": 107
+   },
+   "views60": 38,
+   "images": [
+    {
+     "file": "File:Estanys de l'Angonella - 1.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Estanys_de_l%27Angonella_-_1.jpg/1280px-Estanys_de_l%27Angonella_-_1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/c/c7/Estanys_de_l%27Angonella_-_1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 852,
+     "license": "CC BY-SA 2.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+     "author": "Ferran Llorens",
+     "caption": "This is a a photo of a lake or pond in Andorra with id:",
+     "page": "https://commons.wikimedia.org/wiki/File%3AEstanys_de_l%27Angonella_-_1.jpg"
+    },
+    {
+     "file": "File:Estanys de l'Angonella - 2.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/03/Estanys_de_l%27Angonella_-_2.jpg/1280px-Estanys_de_l%27Angonella_-_2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/0/03/Estanys_de_l%27Angonella_-_2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 852,
+     "license": "CC BY-SA 2.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+     "author": "Ferran Llorens",
+     "caption": "This is a a photo of a lake or pond in Andorra with id:",
+     "page": "https://commons.wikimedia.org/wiki/File%3AEstanys_de_l%27Angonella_-_2.jpg"
+    },
+    {
+     "file": "File:Estanys de l'Angonella - 3.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Estanys_de_l%27Angonella_-_3.jpg/1280px-Estanys_de_l%27Angonella_-_3.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/b/b2/Estanys_de_l%27Angonella_-_3.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 852,
+     "license": "CC BY-SA 2.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+     "author": "Ferran Llorens",
+     "caption": "This is a a photo of a lake or pond in Andorra with id:",
+     "page": "https://commons.wikimedia.org/wiki/File%3AEstanys_de_l%27Angonella_-_3.jpg"
+    },
+    {
+     "file": "File:Estanys de l'Angonella - 4.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Estanys_de_l%27Angonella_-_4.jpg/1280px-Estanys_de_l%27Angonella_-_4.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/4/43/Estanys_de_l%27Angonella_-_4.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 852,
+     "license": "CC BY-SA 2.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+     "author": "Ferran Llorens",
+     "caption": "This is a a photo of a lake or pond in Andorra with id:",
+     "page": "https://commons.wikimedia.org/wiki/File%3AEstanys_de_l%27Angonella_-_4.jpg"
+    },
+    {
+     "file": "File:Estanys de l'Angonella - 5.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Estanys_de_l%27Angonella_-_5.jpg/1280px-Estanys_de_l%27Angonella_-_5.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/9/9e/Estanys_de_l%27Angonella_-_5.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 852,
+     "license": "CC BY-SA 2.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+     "author": "Ferran Llorens",
+     "caption": "This is a a photo of a lake or pond in Andorra with id:",
+     "page": "https://commons.wikimedia.org/wiki/File%3AEstanys_de_l%27Angonella_-_5.jpg"
+    }
+   ]
+  },
+  {
+   "wd": "Q21330009",
+   "name": "Estany Mort",
+   "name_local": "Estany Mort",
+   "lat": 42.624444,
+   "lon": 1.621944,
+   "iso2": "AD",
+   "adm": "Canillo",
+   "types": [
+    "glacial lake"
+   ],
+   "sitelinks": 3,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Estany%20Mort.jpg",
+   "commons_cat": "Estany Mort (Coma de Ransol)",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": 2512,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q21330009",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "protected_area": {
+    "name": "Parc Natural de la Vall de Sorteny",
+    "kind": "Protected area",
+    "national_park": false,
+    "notable": true,
+    "km": 3.66
+   },
+   "base": {
+    "id": "gem:soldeu",
+    "city": "Soldeu (Vall d'Incles)",
+    "country": "Andorra",
+    "km": 6.5
+   },
+   "walks": [
+    {
+     "id": 27840,
+     "name": "HRP Variante 30-31.1",
+     "km": 20.2
+    },
+    {
+     "id": 62421,
+     "name": "HRP Variante 31.1",
+     "km": 9.5
+    }
+   ],
+   "n_walks": 2,
+   "climate": {
+    "source": "WorldClim 2.1 (1970-2000 normals, 5 arc-min)",
+    "t_mean": [
+     -5.8,
+     -5.2,
+     -3.2,
+     -1.3,
+     3.2,
+     7.7,
+     11.8,
+     12.0,
+     8.4,
+     3.6,
+     -1.5,
+     -4.1
+    ]
+   },
+   "prelim": 5.494,
+   "images": [
+    {
+     "file": "File:Estany Mort 2.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fc/Estany_Mort_2.jpg/1280px-Estany_Mort_2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/f/fc/Estany_Mort_2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC BY-SA 4.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+     "author": "Oriol PV",
+     "caption": "This is a a photo of a lake or pond in Andorra with id:",
+     "page": "https://commons.wikimedia.org/wiki/File%3AEstany_Mort_2.jpg"
+    },
+    {
+     "file": "File:Estany Mort.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/f/fb/Estany_Mort.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/f/fb/Estany_Mort.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC BY-SA 3.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+     "author": "Simonjoan",
+     "caption": "Alta vall de Ransol (Canillo)",
+     "page": "https://commons.wikimedia.org/wiki/File%3AEstany_Mort.jpg"
+    },
+    {
+     "file": "File:Eristain Andre Maria Baldorba - Basajaun - San Juan - Baco 01.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/02/Eristain_Andre_Maria_Baldorba_-_Basajaun_-_San_Juan_-_Baco_01.jpg/1280px-Eristain_Andre_Maria_Baldorba_-_Basajaun_-_San_Juan_-_Baco_01.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/0/02/Eristain_Andre_Maria_Baldorba_-_Basajaun_-_San_Juan_-_Baco_01.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 853,
+     "license": "CC BY-SA 4.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+     "author": "Ksarasola",
+     "caption": "Painting of the church of Santa María de Eristain in Valdorba (Navarre). It is located at the apse of the central arch. It is medieval, from the 14th century or earlier according to the Prince of Vian",
+     "page": "https://commons.wikimedia.org/wiki/File%3AEristain_Andre_Maria_Baldorba_-_Basajaun_-_San_Juan_-_Baco_01.jpg"
+    },
+    {
+     "file": "File:Refuge - panoramio.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/57/Refuge_-_panoramio.jpg/1280px-Refuge_-_panoramio.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/5/57/Refuge_-_panoramio.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC BY 3.0",
+     "license_url": "https://creativecommons.org/licenses/by/3.0",
+     "author": "LaMaWieze",
+     "caption": "Refuge",
+     "page": "https://commons.wikimedia.org/wiki/File%3ARefuge_-_panoramio.jpg"
+    },
+    {
+     "file": "File:Eristain Andre Maria Baldorba - Basajaun - San Juan - Baco 02.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/af/Eristain_Andre_Maria_Baldorba_-_Basajaun_-_San_Juan_-_Baco_02.jpg/1280px-Eristain_Andre_Maria_Baldorba_-_Basajaun_-_San_Juan_-_Baco_02.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/a/af/Eristain_Andre_Maria_Baldorba_-_Basajaun_-_San_Juan_-_Baco_02.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 1920,
+     "license": "CC BY-SA 4.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+     "author": "Ksarasola",
+     "caption": "Painting of the church of Santa María de Eristain in Valdorba (Navarre). It is located at the apse of the central arch. It is medieval, from the 14th century or earlier according to the Prince of Vian",
+     "page": "https://commons.wikimedia.org/wiki/File%3AEristain_Andre_Maria_Baldorba_-_Basajaun_-_San_Juan_-_Baco_02.jpg"
+    }
+   ]
+  },
+  {
+   "wd": "Q21329992",
+   "name": "Estany de Montmalús",
+   "name_local": "Estany de Montmalús",
+   "lat": 42.49712,
+   "lon": 1.68314,
+   "iso2": "AD",
+   "adm": "Encamp",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 5,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Estanys%20de%20Montmal%C3%BAs%20-%201.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://ca.wikipedia.org/wiki/Estany_de_Montmal%C3%BAs",
+   "area_km2": 0.112,
+   "depth_m": 21.0,
+   "elev_m": 2435,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q21329992",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "protected_area": {
+    "name": "Vall del Madriu-Perafita-Claror",
+    "kind": "Protected area",
+    "national_park": false,
+    "notable": true,
+    "km": 6.53
+   },
+   "base": {
+    "id": "gem:madriu-valley",
+    "city": "Madriu-Perafita-Claror Valley",
+    "country": "Andorra",
+    "km": 7.2
+   },
+   "walks": [
+    {
+     "id": 39826,
+     "name": "El Camí IT1TR5 El Camí Capçaler: de Salzes a Balaguer",
+     "km": 83.5
+    },
+    {
+     "id": 62419,
+     "name": "Camí de l'Ossa",
+     "km": 33.9
+    }
+   ],
+   "n_walks": 2,
+   "climate": {
+    "source": "WorldClim 2.1 (1970-2000 normals, 5 arc-min)",
+    "t_mean": [
+     -5.1,
+     -4.6,
+     -2.7,
+     -0.8,
+     3.7,
+     8.2,
+     12.2,
+     12.4,
+     8.8,
+     3.9,
+     -1.0,
+     -3.5
+    ]
+   },
+   "prelim": 5.461,
+   "article": {
+    "lang": "ca",
+    "title": "Estany de Montmalús",
+    "facts": [
+     "glacier"
+    ],
+    "swim_text": "",
+    "chars": 995
+   },
+   "views60": 50,
+   "images": [
+    {
+     "file": "File:Refugi de Montmalus - panoramio.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/6/65/Refugi_de_Montmalus_-_panoramio.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/6/65/Refugi_de_Montmalus_-_panoramio.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC BY-SA 3.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+     "author": "simonjoan",
+     "caption": "Refugi de Montmalus",
+     "page": "https://commons.wikimedia.org/wiki/File%3ARefugi_de_Montmalus_-_panoramio.jpg"
+    },
+    {
+     "file": "File:Estanys de Montmalús - 1.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Estanys_de_Montmal%C3%BAs_-_1.jpg/1280px-Estanys_de_Montmal%C3%BAs_-_1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/8/87/Estanys_de_Montmal%C3%BAs_-_1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 703,
+     "license": "CC BY-SA 2.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+     "author": "Ferran Llorens",
+     "caption": "This is a a photo of a lake or pond in Andorra with id:",
+     "page": "https://commons.wikimedia.org/wiki/File%3AEstanys_de_Montmal%C3%BAs_-_1.jpg"
+    }
+   ]
+  },
+  {
+   "wd": "Q21330127",
+   "name": "Estanys de Perafita",
+   "name_local": "Estanys de Perafita",
+   "lat": 42.46809,
+   "lon": 1.59046,
+   "iso2": "AD",
+   "adm": "Escaldes-Engordany",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 4,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Andorra%201991%2003.jpg",
+   "commons_cat": "Estanys de Perafita",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [
+    "Madriu-Perafita-Claror Valley"
+   ],
+   "part_of": [
+    "Vall de Perafita"
+   ],
+   "basin_countries": [],
+   "key": "wd:Q21330127",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "protected_area": {
+    "name": "Vall del Madriu-Perafita-Claror",
+    "kind": "Protected area",
+    "national_park": false,
+    "notable": true,
+    "km": 1.88
+   },
+   "base": {
+    "id": "gem:madriu-valley",
+    "city": "Madriu-Perafita-Claror Valley",
+    "country": "Andorra",
+    "km": 3.0
+   },
+   "walks": [
+    {
+     "id": 30507,
+     "name": "European long distance path E7 - Andorra",
+     "km": 43.4
+    },
+    {
+     "id": 27736,
+     "name": "GR 7 - Andorra",
+     "km": 43.4
+    },
+    {
+     "id": 62419,
+     "name": "Camí de l'Ossa",
+     "km": 33.9
+    }
+   ],
+   "n_walks": 4,
+   "climate": {
+    "source": "WorldClim 2.1 (1970-2000 normals, 5 arc-min)",
+    "t_mean": [
+     -5.4,
+     -4.9,
+     -3.0,
+     -1.1,
+     3.4,
+     8.0,
+     12.0,
+     12.2,
+     8.5,
+     3.6,
+     -1.3,
+     -3.8
+    ]
+   },
+   "prelim": 5.451,
+   "images": [
+    {
+     "file": "File:Andorra 1991 03.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/1/19/Andorra_1991_03.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/1/19/Andorra_1991_03.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 833,
+     "license": "CC BY-SA 4.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+     "author": "LBM1948",
+     "caption": "Perafita Valley from Coll de Vista. Andorra",
+     "page": "https://commons.wikimedia.org/wiki/File%3AAndorra_1991_03.jpg"
+    },
+    {
+     "file": "File:Estany Petit de la Pera P1030329 - P1030332.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/Estany_Petit_de_la_Pera_P1030329_-_P1030332.jpg/1280px-Estany_Petit_de_la_Pera_P1030329_-_P1030332.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/e/e3/Estany_Petit_de_la_Pera_P1030329_-_P1030332.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 372,
+     "license": "CC BY-SA 3.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+     "author": "Pere López",
+     "caption": "This is a a photo of a natural area in Catalonia, Spain, with id:",
+     "page": "https://commons.wikimedia.org/wiki/File%3AEstany_Petit_de_la_Pera_P1030329_-_P1030332.jpg"
+    }
+   ]
+  },
+  {
+   "wd": "Q21330594",
+   "name": "Estany de Baix",
+   "name_local": "Estany de Baix",
+   "lat": 42.58763,
+   "lon": 1.70382,
+   "iso2": "AD",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 4,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Estany%20de%20Baix%20-%201.jpg",
+   "commons_cat": "Estany de Baix",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": 0.015,
+   "depth_m": null,
+   "elev_m": 2325,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q21330594",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "base": {
+    "id": "gem:soldeu",
+    "city": "Soldeu (Vall d'Incles)",
+    "country": "Andorra",
+    "km": 3.2
+   },
+   "walks": [
+    {
+     "id": 25575,
+     "name": "HRP Étape 32",
+     "km": 12.5
+    },
+    {
+     "id": 62421,
+     "name": "HRP Variante 31.1",
+     "km": 9.5
+    }
+   ],
+   "n_walks": 2,
+   "climate": {
+    "source": "WorldClim 2.1 (1970-2000 normals, 5 arc-min)",
+    "t_mean": [
+     -5.6,
+     -5.0,
+     -3.0,
+     -1.0,
+     3.6,
+     8.0,
+     12.1,
+     12.3,
+     8.7,
+     3.9,
+     -1.2,
+     -3.9
+    ]
+   },
+   "prelim": 5.351,
+   "images": [
+    {
+     "file": "File:Estany de Baix - 2.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Estany_de_Baix_-_2.jpg/1280px-Estany_de_Baix_-_2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/a/a6/Estany_de_Baix_-_2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 720,
+     "license": "CC BY-SA 2.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+     "author": "Ferran Llorens",
+     "caption": "This is a a photo of a lake or pond in Andorra with id:",
+     "page": "https://commons.wikimedia.org/wiki/File%3AEstany_de_Baix_-_2.jpg"
+    },
+    {
+     "file": "File:Estany de Baix - 3.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/03/Estany_de_Baix_-_3.jpg/1280px-Estany_de_Baix_-_3.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/0/03/Estany_de_Baix_-_3.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 481,
+     "license": "CC BY-SA 2.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+     "author": "Ferran Llorens",
+     "caption": "This is a a photo of a lake or pond in Andorra with id:",
+     "page": "https://commons.wikimedia.org/wiki/File%3AEstany_de_Baix_-_3.jpg"
+    },
+    {
+     "file": "File:Estany de Baix - 4.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/Estany_de_Baix_-_4.jpg/1280px-Estany_de_Baix_-_4.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/0/04/Estany_de_Baix_-_4.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 720,
+     "license": "CC BY-SA 2.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+     "author": "Ferran Llorens",
+     "caption": "This is a a photo of a lake or pond in Andorra with id:",
+     "page": "https://commons.wikimedia.org/wiki/File%3AEstany_de_Baix_-_4.jpg"
+    },
+    {
+     "file": "File:Estany de Baix - 5.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/Estany_de_Baix_-_5.jpg/1280px-Estany_de_Baix_-_5.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/9/90/Estany_de_Baix_-_5.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 652,
+     "license": "CC BY-SA 2.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+     "author": "Ferran Llorens",
+     "caption": "This is a a photo of a lake or pond in Andorra with id:",
+     "page": "https://commons.wikimedia.org/wiki/File%3AEstany_de_Baix_-_5.jpg"
+    },
+    {
+     "file": "File:Estany de Baix - 6.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c9/Estany_de_Baix_-_6.jpg/1280px-Estany_de_Baix_-_6.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/c/c9/Estany_de_Baix_-_6.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 858,
+     "license": "CC BY-SA 2.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+     "author": "Ferran Llorens",
+     "caption": "This is a a photo of a lake or pond in Andorra with id:",
+     "page": "https://commons.wikimedia.org/wiki/File%3AEstany_de_Baix_-_6.jpg"
+    }
+   ]
+  },
+  {
+   "wd": "Q21329468",
+   "name": "Estany de Creussans",
+   "name_local": "Estany de Creussans",
+   "lat": 42.63484,
+   "lon": 1.47697,
+   "iso2": "AD",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 6,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Estany%20de%20Creussans%201.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://ca.wikipedia.org/wiki/Estany_de_Creussans",
+   "area_km2": 0.013,
+   "depth_m": null,
+   "elev_m": 2442,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q21329468",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "protected_area": {
+    "name": "Parc Natural Comunal de les Valls del Comapedrosa",
+    "kind": "Protected area",
+    "national_park": false,
+    "notable": true,
+    "km": 5.31
+   },
+   "base": {
+    "id": "gem:arinsal",
+    "city": "Arinsal",
+    "country": "Andorra",
+    "km": 7.0
+   },
+   "climate": {
+    "source": "WorldClim 2.1 (1970-2000 normals, 5 arc-min)",
+    "t_mean": [
+     -6.0,
+     -5.4,
+     -3.5,
+     -1.6,
+     2.9,
+     7.4,
+     11.6,
+     11.9,
+     8.2,
+     3.3,
+     -1.7,
+     -4.4
+    ]
+   },
+   "prelim": 5.338,
+   "article": {
+    "lang": "ca",
+    "title": "Estany de Creussans",
+    "facts": [],
+    "swim_text": "",
+    "chars": 537
+   },
+   "views60": 7,
+   "images": [
+    {
+     "file": "File:Estany de Creussans.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/Estany_de_Creussans.jpg/1280px-Estany_de_Creussans.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/4/4a/Estany_de_Creussans.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 343,
+     "license": "CC BY-SA 4.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+     "author": "Rauletemunoz",
+     "caption": "Estanque de Creussans en Ordino-Arcalís",
+     "page": "https://commons.wikimedia.org/wiki/File%3AEstany_de_Creussans.jpg"
+    },
+    {
+     "file": "File:PicCreussans.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/03/PicCreussans.jpg/1280px-PicCreussans.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/0/03/PicCreussans.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 720,
+     "license": "CC BY-SA 4.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+     "author": "Austral Lights",
+     "caption": "Pic de Creussans",
+     "page": "https://commons.wikimedia.org/wiki/File%3APicCreussans.jpg"
+    },
+    {
+     "file": "File:Estany de Creussans 1.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/Estany_de_Creussans_1.jpg/1280px-Estany_de_Creussans_1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/1/11/Estany_de_Creussans_1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 720,
+     "license": "CC BY-SA 4.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+     "author": "Simonjoan",
+     "caption": "Estany de Creussans des del camí cap al Pic de Cabanyó",
+     "page": "https://commons.wikimedia.org/wiki/File%3AEstany_de_Creussans_1.jpg"
+    },
+    {
+     "file": "File:Estanys de Tristaina 02.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Estanys_de_Tristaina_02.jpg/1280px-Estanys_de_Tristaina_02.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/1/18/Estanys_de_Tristaina_02.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC BY-SA 4.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+     "author": "Jordi Gili",
+     "caption": "Estanys de Tristaina",
+     "page": "https://commons.wikimedia.org/wiki/File%3AEstanys_de_Tristaina_02.jpg"
+    },
+    {
+     "file": "File:Estanys de Tristaina 03.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Estanys_de_Tristaina_03.jpg/1280px-Estanys_de_Tristaina_03.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/2/2c/Estanys_de_Tristaina_03.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC BY-SA 4.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+     "author": "Jordi Gili",
+     "caption": "Estanys de Tristaina",
+     "page": "https://commons.wikimedia.org/wiki/File%3AEstanys_de_Tristaina_03.jpg"
+    }
+   ]
+  },
+  {
+   "wd": "Q21330406",
+   "name": "Estany de Serra Mitjana",
+   "name_local": "Estany de Serra Mitjana",
+   "lat": 42.4751,
+   "lon": 1.6116,
+   "iso2": "AD",
+   "adm": "Escaldes-Engordany",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Estany%20de%20Serra%20Mitjana.jpg",
+   "commons_cat": "Estany de Serra Mitjana",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": 2299,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q21330406",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "protected_area": {
+    "name": "Vall del Madriu-Perafita-Claror",
+    "kind": "Protected area",
+    "national_park": false,
+    "notable": true,
+    "km": 0.62
+   },
+   "base": {
+    "id": "gem:madriu-valley",
+    "city": "Madriu-Perafita-Claror Valley",
+    "country": "Andorra",
+    "km": 2.5
+   },
+   "walks": [
+    {
+     "id": 30507,
+     "name": "European long distance path E7 - Andorra",
+     "km": 43.4
+    },
+    {
+     "id": 27736,
+     "name": "GR 7 - Andorra",
+     "km": 43.4
+    },
+    {
+     "id": 62419,
+     "name": "Camí de l'Ossa",
+     "km": 33.9
+    }
+   ],
+   "n_walks": 4,
+   "climate": {
+    "source": "WorldClim 2.1 (1970-2000 normals, 5 arc-min)",
+    "t_mean": [
+     -5.4,
+     -4.9,
+     -3.0,
+     -1.1,
+     3.4,
+     8.0,
+     12.0,
+     12.2,
+     8.5,
+     3.6,
+     -1.3,
+     -3.8
+    ]
+   },
+   "prelim": 5.163,
+   "images": [
+    {
+     "file": "File:Estany de Serra Mitjana.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f8/Estany_de_Serra_Mitjana.jpg/1280px-Estany_de_Serra_Mitjana.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/f/f8/Estany_de_Serra_Mitjana.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC BY-SA 4.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+     "author": "Catalaalatac",
+     "caption": "Estany de Serra Mitjana (2.299 m), situat a la Raconada de la Maiana, a la vall del Madriu. A dalt la carena,  Pic del Sirvent (2.750 m).",
+     "page": "https://commons.wikimedia.org/wiki/File%3AEstany_de_Serra_Mitjana.jpg"
+    }
+   ]
+  },
+  {
+   "wd": "Q115579665",
+   "name": "els Estanyons",
+   "name_local": "els Estanyons",
+   "lat": 42.474892,
+   "lon": 1.624214,
+   "iso2": "AD",
+   "adm": "Escaldes-Engordany",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Els%20Estanyons%20%28Vall%20del%20Madriu%29.jpg",
+   "commons_cat": "Els Estanyons",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": 2271,
+   "protected": [
+    "Madriu-Perafita-Claror Valley"
+   ],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q115579665",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "protected_area": {
+    "name": "Vall del Madriu-Perafita-Claror",
+    "kind": "Protected area",
+    "national_park": false,
+    "notable": true,
+    "km": 1.49
+   },
+   "base": {
+    "id": "gem:madriu-valley",
+    "city": "Madriu-Perafita-Claror Valley",
+    "country": "Andorra",
+    "km": 3.2
+   },
+   "walks": [
+    {
+     "id": 30507,
+     "name": "European long distance path E7 - Andorra",
+     "km": 43.4
+    },
+    {
+     "id": 27736,
+     "name": "GR 7 - Andorra",
+     "km": 43.4
+    },
+    {
+     "id": 62419,
+     "name": "Camí de l'Ossa",
+     "km": 33.9
+    }
+   ],
+   "n_walks": 4,
+   "climate": {
+    "source": "WorldClim 2.1 (1970-2000 normals, 5 arc-min)",
+    "t_mean": [
+     -5.4,
+     -4.9,
+     -3.0,
+     -1.1,
+     3.4,
+     8.0,
+     12.0,
+     12.2,
+     8.5,
+     3.6,
+     -1.3,
+     -3.8
+    ]
+   },
+   "prelim": 5.097,
+   "images": [
+    {
+     "file": "File:Els Estanyons (Vall del Madriu).jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Els_Estanyons_%28Vall_del_Madriu%29.jpg/1280px-Els_Estanyons_%28Vall_del_Madriu%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/8/8e/Els_Estanyons_%28Vall_del_Madriu%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC BY-SA 4.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+     "author": "Catalaalatac",
+     "caption": "Els Estanyons, també coneguts de manera redundant com els Estanys dels Estanyons, vistos des de molt a prop del cim del Tossal Bovinar. Són un conjunt d'estanys situats a la vall del Madriu. Es troben",
+     "page": "https://commons.wikimedia.org/wiki/File%3AEls_Estanyons_%28Vall_del_Madriu%29.jpg"
+    }
+   ]
+  },
+  {
+   "wd": "Q2793742",
+   "name": "Basses de l'Estany Negre",
+   "name_local": "Basses de l'Estany Negre",
+   "lat": 42.584944,
+   "lon": 1.435608,
+   "iso2": "AD",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 5,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Basses%20de%20l%27Estany%20Negre.JPG",
+   "commons_cat": "Basses de l'Estany Negre",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q2793742",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "protected_area": {
+    "name": "Parc Natural Comunal de les Valls del Comapedrosa",
+    "kind": "Protected area",
+    "national_park": false,
+    "notable": true,
+    "km": 2.42
+   },
+   "base": {
+    "id": "gem:arinsal",
+    "city": "Arinsal",
+    "country": "Andorra",
+    "km": 4.3
+   },
+   "climate": {
+    "source": "WorldClim 2.1 (1970-2000 normals, 5 arc-min)",
+    "t_mean": [
+     -6.0,
+     -5.4,
+     -3.5,
+     -1.6,
+     2.9,
+     7.4,
+     11.6,
+     11.9,
+     8.2,
+     3.3,
+     -1.7,
+     -4.4
+    ]
+   },
+   "prelim": 4.961,
+   "images": [
+    {
+     "file": "File:Basses de l'Estany Negre - 2020.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Basses_de_l%27Estany_Negre_-_2020.jpg/1280px-Basses_de_l%27Estany_Negre_-_2020.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/5/5a/Basses_de_l%27Estany_Negre_-_2020.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 853,
+     "license": "CC BY-SA 4.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+     "author": "Austral Lights",
+     "caption": "Le pic de Coma Pedrosa au dessus des Basses de l'Estany Negre",
+     "page": "https://commons.wikimedia.org/wiki/File%3ABasses_de_l%27Estany_Negre_-_2020.jpg"
+    },
+    {
+     "file": "File:Basses de l'Estany Negre.JPG",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/32/Basses_de_l%27Estany_Negre.JPG/1280px-Basses_de_l%27Estany_Negre.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/3/32/Basses_de_l%27Estany_Negre.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC BY-SA 3.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+     "author": "Gertjan R.",
+     "caption": "Basses de l'Estany Negre, Arinsal, La Massana, Andorra",
+     "page": "https://commons.wikimedia.org/wiki/File%3ABasses_de_l%27Estany_Negre.JPG"
+    },
+    {
+     "file": "File:Refugi de Comapedrosa - panoramio.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/b/b2/Refugi_de_Comapedrosa_-_panoramio.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/b/b2/Refugi_de_Comapedrosa_-_panoramio.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC BY-SA 3.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+     "author": "simonjoan",
+     "caption": "Refugi de Comapedrosa",
+     "page": "https://commons.wikimedia.org/wiki/File%3ARefugi_de_Comapedrosa_-_panoramio.jpg"
+    },
+    {
+     "file": "File:Camí de pujada al Comapedrosa. 06.JPG",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/06/Cam%C3%AD_de_pujada_al_Comapedrosa._06.JPG/1280px-Cam%C3%AD_de_pujada_al_Comapedrosa._06.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/0/06/Cam%C3%AD_de_pujada_al_Comapedrosa._06.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 720,
+     "license": "CC BY-SA 3.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+     "author": "Isidro Jabato",
+     "caption": "This is a a photo of a natural area in Andorra with id:",
+     "page": "https://commons.wikimedia.org/wiki/File%3ACam%C3%AD_de_pujada_al_Comapedrosa._06.JPG"
+    }
+   ]
+  },
+  {
+   "wd": "Q21330258",
+   "name": "Estany Primer",
+   "name_local": "Estany Primer",
+   "lat": 42.52509,
+   "lon": 1.68853,
+   "iso2": "AD",
+   "adm": "Canillo",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 3,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Estany%20Primer%20de%20Pessons%2020240830%20n03.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": 0.027,
+   "depth_m": null,
+   "elev_m": 2299,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q21330258",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "base": {
+    "id": "gem:soldeu",
+    "city": "Soldeu (Vall d'Incles)",
+    "country": "Andorra",
+    "km": 6.0
+   },
+   "walks": [
+    {
+     "id": 25575,
+     "name": "HRP Étape 32",
+     "km": 12.5
+    }
+   ],
+   "n_walks": 1,
+   "climate": {
+    "source": "WorldClim 2.1 (1970-2000 normals, 5 arc-min)",
+    "t_mean": [
+     -6.2,
+     -5.6,
+     -3.6,
+     -1.6,
+     3.0,
+     7.6,
+     11.7,
+     11.9,
+     8.2,
+     3.3,
+     -1.8,
+     -4.5
+    ]
+   },
+   "prelim": 4.194,
+   "images": [
+    {
+     "file": "File:Estany Primer de Pessons 20240830 n01.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/31/Estany_Primer_de_Pessons_20240830_n01.jpg/1280px-Estany_Primer_de_Pessons_20240830_n01.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/3/31/Estany_Primer_de_Pessons_20240830_n01.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC BY 4.0",
+     "license_url": "https://creativecommons.org/licenses/by/4.0",
+     "author": "Marie-Lan Taÿ Pamart",
+     "caption": "First of the Pessons lakes in Encamp, Andorra",
+     "page": "https://commons.wikimedia.org/wiki/File%3AEstany_Primer_de_Pessons_20240830_n01.jpg"
+    },
+    {
+     "file": "File:Estany Primer de Pessons 20240830 n02.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Estany_Primer_de_Pessons_20240830_n02.jpg/1280px-Estany_Primer_de_Pessons_20240830_n02.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/f/f6/Estany_Primer_de_Pessons_20240830_n02.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC BY 4.0",
+     "license_url": "https://creativecommons.org/licenses/by/4.0",
+     "author": "Marie-Lan Taÿ Pamart",
+     "caption": "First of the Pessons lakes in Encamp, Andorra",
+     "page": "https://commons.wikimedia.org/wiki/File%3AEstany_Primer_de_Pessons_20240830_n02.jpg"
+    },
+    {
+     "file": "File:Estany Primer de Pessons 20240830 n03.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/48/Estany_Primer_de_Pessons_20240830_n03.jpg/1280px-Estany_Primer_de_Pessons_20240830_n03.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/4/48/Estany_Primer_de_Pessons_20240830_n03.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC BY 4.0",
+     "license_url": "https://creativecommons.org/licenses/by/4.0",
+     "author": "Marie-Lan Taÿ Pamart",
+     "caption": "First of the Pessons lakes in Encamp, Andorra",
+     "page": "https://commons.wikimedia.org/wiki/File%3AEstany_Primer_de_Pessons_20240830_n03.jpg"
+    },
+    {
+     "file": "File:Montmalús març 2026.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Montmal%C3%BAs_mar%C3%A7_2026.jpg/1280px-Montmal%C3%BAs_mar%C3%A7_2026.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/a/ab/Montmal%C3%BAs_mar%C3%A7_2026.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 958,
+     "license": "CC0",
+     "license_url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+     "author": "Alan Mattingly",
+     "caption": "The Collade de Montmalús is just to the left of the mountain.",
+     "page": "https://commons.wikimedia.org/wiki/File%3AMontmal%C3%BAs_mar%C3%A7_2026.jpg"
+    }
+   ]
+  },
+  {
+   "wd": "Q21330004",
+   "name": "Estany Moreno",
+   "name_local": "Estany Moreno",
+   "lat": 42.515044,
+   "lon": 1.638053,
+   "iso2": "AD",
+   "adm": "Encamp",
+   "types": [
+    "glacial lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "",
+   "commons_cat": "Estany Moreno",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": 2368,
+   "protected": [],
+   "part_of": [
+    "Ensagents"
+   ],
+   "basin_countries": [],
+   "key": "wd:Q21330004",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "protected_area": {
+    "name": "Vall del Madriu-Perafita-Claror",
+    "kind": "Protected area",
+    "national_park": false,
+    "notable": true,
+    "km": 4.68
+   },
+   "base": {
+    "id": "gem:madriu-valley",
+    "city": "Madriu-Perafita-Claror Valley",
+    "country": "Andorra",
+    "km": 4.2
+   },
+   "walks": [
+    {
+     "id": 39826,
+     "name": "El Camí IT1TR5 El Camí Capçaler: de Salzes a Balaguer",
+     "km": 83.5
+    },
+    {
+     "id": 62419,
+     "name": "Camí de l'Ossa",
+     "km": 33.9
+    },
+    {
+     "id": 30507,
+     "name": "European long distance path E7 - Andorra",
+     "km": 43.4
+    }
+   ],
+   "n_walks": 4,
+   "climate": {
+    "source": "WorldClim 2.1 (1970-2000 normals, 5 arc-min)",
+    "t_mean": [
+     -4.7,
+     -4.1,
+     -2.0,
+     -0.1,
+     4.3,
+     8.7,
+     12.6,
+     12.8,
+     9.2,
+     4.4,
+     -0.5,
+     -3.1
+    ]
+   },
+   "prelim": 4.063,
+   "images": [
+    {
+     "file": "File:Estany Moreno.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/8/8a/Estany_Moreno.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/8/8a/Estany_Moreno.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 720,
+     "license": "CC BY-SA 4.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+     "author": "Oriol PV",
+     "caption": "This is a a photo of a lake or pond in Andorra with id:",
+     "page": "https://commons.wikimedia.org/wiki/File%3AEstany_Moreno.jpg"
+    },
+    {
+     "file": "File:Refugi d'Ensagents - panoramio.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/d/d5/Refugi_d%27Ensagents_-_panoramio.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/d/d5/Refugi_d%27Ensagents_-_panoramio.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC BY-SA 3.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+     "author": "simonjoan",
+     "caption": "Refugi d'Ensagents",
+     "page": "https://commons.wikimedia.org/wiki/File%3ARefugi_d%27Ensagents_-_panoramio.jpg"
+    }
+   ]
+  },
+  {
+   "wd": "Q115610558",
+   "name": "Estanys de Ransol",
+   "name_local": "Estanys de Ransol",
+   "lat": 42.618864,
+   "lon": 1.617325,
+   "iso2": "AD",
+   "adm": "Canillo",
+   "types": [
+    "glacial lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Ransol%20III.jpg",
+   "commons_cat": "Estanys de Ransol",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [
+    "Vall de Ransol"
+   ],
+   "basin_countries": [],
+   "key": "wd:Q115610558",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "protected_area": {
+    "name": "Parc Natural de la Vall de Sorteny",
+    "kind": "Protected area",
+    "national_park": false,
+    "notable": true,
+    "km": 3.25
+   },
+   "base": {
+    "id": "gem:canillo",
+    "city": "Canillo",
+    "country": "Andorra",
+    "km": 5.9
+   },
+   "walks": [
+    {
+     "id": 27840,
+     "name": "HRP Variante 30-31.1",
+     "km": 20.2
+    },
+    {
+     "id": 62421,
+     "name": "HRP Variante 31.1",
+     "km": 9.5
+    }
+   ],
+   "n_walks": 2,
+   "climate": {
+    "source": "WorldClim 2.1 (1970-2000 normals, 5 arc-min)",
+    "t_mean": [
+     -5.8,
+     -5.2,
+     -3.2,
+     -1.3,
+     3.2,
+     7.7,
+     11.8,
+     12.0,
+     8.4,
+     3.6,
+     -1.5,
+     -4.1
+    ]
+   },
+   "prelim": 3.997,
+   "images": [
+    {
+     "file": "File:Ransol III.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Ransol_III.jpg/1280px-Ransol_III.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/3/3b/Ransol_III.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC BY-SA 3.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+     "author": "Itus",
+     "caption": "This is a a photo of a natural area in Andorra with id:",
+     "page": "https://commons.wikimedia.org/wiki/File%3ARansol_III.jpg"
+    },
+    {
+     "file": "File:Eristain Andre Maria Baldorba - Basajaun - San Juan - Baco 01.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/02/Eristain_Andre_Maria_Baldorba_-_Basajaun_-_San_Juan_-_Baco_01.jpg/1280px-Eristain_Andre_Maria_Baldorba_-_Basajaun_-_San_Juan_-_Baco_01.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/0/02/Eristain_Andre_Maria_Baldorba_-_Basajaun_-_San_Juan_-_Baco_01.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 853,
+     "license": "CC BY-SA 4.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+     "author": "Ksarasola",
+     "caption": "Painting of the church of Santa María de Eristain in Valdorba (Navarre). It is located at the apse of the central arch. It is medieval, from the 14th century or earlier according to the Prince of Vian",
+     "page": "https://commons.wikimedia.org/wiki/File%3AEristain_Andre_Maria_Baldorba_-_Basajaun_-_San_Juan_-_Baco_01.jpg"
+    },
+    {
+     "file": "File:Refuge - panoramio.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/57/Refuge_-_panoramio.jpg/1280px-Refuge_-_panoramio.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/5/57/Refuge_-_panoramio.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC BY 3.0",
+     "license_url": "https://creativecommons.org/licenses/by/3.0",
+     "author": "LaMaWieze",
+     "caption": "Refuge",
+     "page": "https://commons.wikimedia.org/wiki/File%3ARefuge_-_panoramio.jpg"
+    },
+    {
+     "file": "File:Eristain Andre Maria Baldorba - Basajaun - San Juan - Baco 02.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/af/Eristain_Andre_Maria_Baldorba_-_Basajaun_-_San_Juan_-_Baco_02.jpg/1280px-Eristain_Andre_Maria_Baldorba_-_Basajaun_-_San_Juan_-_Baco_02.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/a/af/Eristain_Andre_Maria_Baldorba_-_Basajaun_-_San_Juan_-_Baco_02.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 1920,
+     "license": "CC BY-SA 4.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+     "author": "Ksarasola",
+     "caption": "Painting of the church of Santa María de Eristain in Valdorba (Navarre). It is located at the apse of the central arch. It is medieval, from the 14th century or earlier according to the Prince of Vian",
+     "page": "https://commons.wikimedia.org/wiki/File%3AEristain_Andre_Maria_Baldorba_-_Basajaun_-_San_Juan_-_Baco_02.jpg"
+    }
+   ]
+  },
+  {
+   "wd": "Q21329237",
+   "name": "Estany de les Canals Roges",
+   "name_local": "",
+   "lat": 42.585833,
+   "lon": 1.710278,
+   "iso2": "AD",
+   "adm": "Canillo",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "",
+   "commons_cat": "Estany de les Canals Roges",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": 2407,
+   "protected": [],
+   "part_of": [
+    "El Siscaró"
+   ],
+   "basin_countries": [],
+   "key": "wd:Q21329237",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "base": {
+    "id": "gem:soldeu",
+    "city": "Soldeu (Vall d'Incles)",
+    "country": "Andorra",
+    "km": 3.7
+   },
+   "walks": [
+    {
+     "id": 25575,
+     "name": "HRP Étape 32",
+     "km": 12.5
+    },
+    {
+     "id": 62421,
+     "name": "HRP Variante 31.1",
+     "km": 9.5
+    }
+   ],
+   "n_walks": 2,
+   "climate": {
+    "source": "WorldClim 2.1 (1970-2000 normals, 5 arc-min)",
+    "t_mean": [
+     -5.6,
+     -5.0,
+     -3.0,
+     -1.0,
+     3.6,
+     8.0,
+     12.1,
+     12.3,
+     8.7,
+     3.9,
+     -1.2,
+     -3.9
+    ]
+   },
+   "prelim": 3.663,
+   "images": [
+    {
+     "file": "File:Estany de les Canals Roges.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/Estany_de_les_Canals_Roges.jpg/1280px-Estany_de_les_Canals_Roges.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/4/4a/Estany_de_les_Canals_Roges.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC BY-SA 4.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+     "author": "Catalaalatac",
+     "caption": "Estany de les Canals Roges, situats a una alçada de 2.407 m a l'antic circ glacial del Siscaró. Es troba a la parròquia de Canillo, a Andorra.",
+     "page": "https://commons.wikimedia.org/wiki/File%3AEstany_de_les_Canals_Roges.jpg"
+    },
+    {
+     "file": "File:Refugi de Siscaro - panoramio.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/0/08/Refugi_de_Siscaro_-_panoramio.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/0/08/Refugi_de_Siscaro_-_panoramio.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC BY-SA 3.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+     "author": "simonjoan",
+     "caption": "Refugi de Siscaro",
+     "page": "https://commons.wikimedia.org/wiki/File%3ARefugi_de_Siscaro_-_panoramio.jpg"
+    },
+    {
+     "file": "File:Panoràmica des de la Tossa del Cap del Siscaró.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/Panor%C3%A0mica_des_de_la_Tossa_del_Cap_del_Siscar%C3%B3.jpg/1280px-Panor%C3%A0mica_des_de_la_Tossa_del_Cap_del_Siscar%C3%B3.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/b/b6/Panor%C3%A0mica_des_de_la_Tossa_del_Cap_del_Siscar%C3%B3.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 406,
+     "license": "CC BY-SA 4.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+     "author": "Catalaalatac",
+     "caption": "Panoràmica des de la Tossa del Cap del Siscaró (2.819 m).",
+     "page": "https://commons.wikimedia.org/wiki/File%3APanor%C3%A0mica_des_de_la_Tossa_del_Cap_del_Siscar%C3%B3.jpg"
+    }
+   ]
+  },
+  {
+   "wd": "Q21330259",
+   "name": "Estany Primer",
+   "name_local": "Estany Primer",
+   "lat": 42.610278,
+   "lon": 1.717778,
+   "iso2": "AD",
+   "adm": "Canillo",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Estany%20Primer%20de%20Juclar%20-%203.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q21330259",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "base": {
+    "id": "gem:soldeu",
+    "city": "Soldeu (Vall d'Incles)",
+    "country": "Andorra",
+    "km": 5.6
+   },
+   "walks": [
+    {
+     "id": 25575,
+     "name": "HRP Étape 32",
+     "km": 12.5
+    },
+    {
+     "id": 62421,
+     "name": "HRP Variante 31.1",
+     "km": 9.5
+    }
+   ],
+   "n_walks": 2,
+   "climate": {
+    "source": "WorldClim 2.1 (1970-2000 normals, 5 arc-min)",
+    "t_mean": [
+     -5.6,
+     -5.0,
+     -3.0,
+     -1.0,
+     3.6,
+     8.0,
+     12.1,
+     12.3,
+     8.7,
+     3.9,
+     -1.2,
+     -3.9
+    ]
+   },
+   "prelim": 3.163,
+   "images": [
+    {
+     "file": "File:Estany Primer de Juclar - 3.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/Estany_Primer_de_Juclar_-_3.jpg/1280px-Estany_Primer_de_Juclar_-_3.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/6/67/Estany_Primer_de_Juclar_-_3.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 852,
+     "license": "CC BY-SA 2.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+     "author": "Ferran Llorens",
+     "caption": "This is a a photo of a lake or pond in Andorra with id:",
+     "page": "https://commons.wikimedia.org/wiki/File%3AEstany_Primer_de_Juclar_-_3.jpg"
+    },
+    {
+     "file": "File:Le grand lac et le deuxième lac de Fontargente (Ariège).jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c0/Le_grand_lac_et_le_deuxi%C3%A8me_lac_de_Fontargente_%28Ari%C3%A8ge%29.jpg/1280px-Le_grand_lac_et_le_deuxi%C3%A8me_lac_de_Fontargente_%28Ari%C3%A8ge%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/c/c0/Le_grand_lac_et_le_deuxi%C3%A8me_lac_de_Fontargente_%28Ari%C3%A8ge%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 857,
+     "license": "CC BY-SA 2.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+     "author": "PierreG_09",
+     "caption": "Du port de Fontargente, vue sur deux des étangs de Fontargente. Le deuxième lac (2148 m) a une superficie de 6,2 ha.",
+     "page": "https://commons.wikimedia.org/wiki/File%3ALe_grand_lac_et_le_deuxi%C3%A8me_lac_de_Fontargente_%28Ari%C3%A8ge%29.jpg"
+    },
+    {
+     "file": "File:Pic Nègre de Joclar @ Collada de Juclar 01.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/ba/Pic_N%C3%A8gre_de_Joclar_%40_Collada_de_Juclar_01.jpg/1280px-Pic_N%C3%A8gre_de_Joclar_%40_Collada_de_Juclar_01.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/b/ba/Pic_N%C3%A8gre_de_Joclar_%40_Collada_de_Juclar_01.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC BY-SA 4.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+     "author": "Rémih",
+     "caption": "Le pic Nègre de Joclar depuis la collada de Juclar, Canillo, Andorre",
+     "page": "https://commons.wikimedia.org/wiki/File%3APic_N%C3%A8gre_de_Joclar_%40_Collada_de_Juclar_01.jpg"
+    },
+    {
+     "file": "File:Pic d'Escobes @ Collada de Juclar 02.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/Pic_d%27Escobes_%40_Collada_de_Juclar_02.jpg/1280px-Pic_d%27Escobes_%40_Collada_de_Juclar_02.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/1/11/Pic_d%27Escobes_%40_Collada_de_Juclar_02.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC BY-SA 4.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+     "author": "Rémih",
+     "caption": "Le pic d'Escobes depuis la collada de Juclar, Canillo, Andorre",
+     "page": "https://commons.wikimedia.org/wiki/File%3APic_d%27Escobes_%40_Collada_de_Juclar_02.jpg"
+    },
+    {
+     "file": "File:Pic de la Tossa de Juclar @ Collada de Juclar.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ef/Pic_de_la_Tossa_de_Juclar_%40_Collada_de_Juclar.jpg/1280px-Pic_de_la_Tossa_de_Juclar_%40_Collada_de_Juclar.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/e/ef/Pic_de_la_Tossa_de_Juclar_%40_Collada_de_Juclar.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC BY-SA 4.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+     "author": "Rémih",
+     "caption": "Le pic de la Tossa de Juclar depuis la collada de Juclar, Canillo, Andorre",
+     "page": "https://commons.wikimedia.org/wiki/File%3APic_de_la_Tossa_de_Juclar_%40_Collada_de_Juclar.jpg"
+    }
+   ]
+  },
+  {
+   "wd": "Q21330283",
+   "name": "Bassa del Racó",
+   "name_local": "Bassa del Racó",
+   "lat": 42.619167,
+   "lon": 1.498889,
+   "iso2": "AD",
+   "adm": "Ordino",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": 2296,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q21330283",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "protected_area": {
+    "name": "Parc Natural Comunal de les Valls del Comapedrosa",
+    "kind": "Protected area",
+    "national_park": false,
+    "notable": true,
+    "km": 4.45
+   },
+   "base": {
+    "id": "gem:arinsal",
+    "city": "Arinsal",
+    "country": "Andorra",
+    "km": 5.4
+   },
+   "climate": {
+    "source": "WorldClim 2.1 (1970-2000 normals, 5 arc-min)",
+    "t_mean": [
+     -6.0,
+     -5.4,
+     -3.5,
+     -1.6,
+     2.9,
+     7.4,
+     11.6,
+     11.9,
+     8.2,
+     3.3,
+     -1.7,
+     -4.4
+    ]
+   },
+   "prelim": 2.397,
+   "images": [
+    {
+     "file": "File:Ordino-Arcalis 2.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Ordino-Arcalis_2.jpg/1280px-Ordino-Arcalis_2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/c/c3/Ordino-Arcalis_2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 719,
+     "license": "CC BY-SA 4.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+     "author": "Rauletemunoz",
+     "caption": "Caballo comiendo en la subida de Ordino-Arcalís",
+     "page": "https://commons.wikimedia.org/wiki/File%3AOrdino-Arcalis_2.jpg"
+    },
+    {
+     "file": "File:Pic de l'Albeille (2).jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Pic_de_l%27Albeille_%282%29.jpg/1280px-Pic_de_l%27Albeille_%282%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/a/a6/Pic_de_l%27Albeille_%282%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 398,
+     "license": "CC BY-SA 4.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+     "author": "Krzysztof Golik",
+     "caption": "Pic de l'Albeille (2788 m) on the border of France and Andorra – seen from Arcalís Ski Center in Ordino parish, Andorra",
+     "page": "https://commons.wikimedia.org/wiki/File%3APic_de_l%27Albeille_%282%29.jpg"
+    },
+    {
+     "file": "File:Ordino (42881761134).jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d6/Ordino_%2842881761134%29.jpg/1280px-Ordino_%2842881761134%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/d/d6/Ordino_%2842881761134%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 853,
+     "license": "CC BY-SA 2.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+     "author": "Kent Wang from Barcelona, Spain",
+     "caption": "The Riu de les Planes flowing down the mountainside near Arcalís",
+     "page": "https://commons.wikimedia.org/wiki/File%3AOrdino_%2842881761134%29.jpg"
+    },
+    {
+     "file": "File:Ordino (41791308260).jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/63/Ordino_%2841791308260%29.jpg/1280px-Ordino_%2841791308260%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/6/63/Ordino_%2841791308260%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 853,
+     "license": "CC BY-SA 2.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+     "author": "Kent Wang from Barcelona, Spain",
+     "caption": "Ordino",
+     "page": "https://commons.wikimedia.org/wiki/File%3AOrdino_%2841791308260%29.jpg"
+    },
+    {
+     "file": "File:Ordino (29729093958).jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Ordino_%2829729093958%29.jpg/1280px-Ordino_%2829729093958%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/e/ec/Ordino_%2829729093958%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 853,
+     "license": "CC BY-SA 2.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+     "author": "Kent Wang from Barcelona, Spain",
+     "caption": "Ordino",
+     "page": "https://commons.wikimedia.org/wiki/File%3AOrdino_%2829729093958%29.jpg"
+    }
+   ]
+  },
+  {
+   "wd": "Q21330260",
+   "name": "Estany Primer",
+   "name_local": "Estany Primer",
+   "lat": 42.63721,
+   "lon": 1.49019,
+   "iso2": "AD",
+   "adm": "Ordino",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q21330260",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "protected_area": {
+    "name": "Parc Natural Comunal de les Valls del Comapedrosa",
+    "kind": "Protected area",
+    "national_park": false,
+    "notable": true,
+    "km": 5.86
+   },
+   "base": {
+    "id": "gem:arinsal",
+    "city": "Arinsal",
+    "country": "Andorra",
+    "km": 7.3
+   },
+   "climate": {
+    "source": "WorldClim 2.1 (1970-2000 normals, 5 arc-min)",
+    "t_mean": [
+     -6.0,
+     -5.4,
+     -3.5,
+     -1.6,
+     2.9,
+     7.4,
+     11.6,
+     11.9,
+     8.2,
+     3.3,
+     -1.7,
+     -4.4
+    ]
+   },
+   "prelim": 2.163,
+   "images": [
+    {
+     "file": "File:Andorra2008.JPG",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Andorra2008.JPG/1280px-Andorra2008.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/d/dd/Andorra2008.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC BY-SA 3.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+     "author": "Bromr",
+     "caption": "Mountains in Andorra. Described as \"Nabij La Coma (2220 meter), La Massana, Andorra\" on nl:Andorra",
+     "page": "https://commons.wikimedia.org/wiki/File%3AAndorra2008.JPG"
+    },
+    {
+     "file": "File:PicCreussans.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/03/PicCreussans.jpg/1280px-PicCreussans.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/0/03/PicCreussans.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 720,
+     "license": "CC BY-SA 4.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+     "author": "Austral Lights",
+     "caption": "Pic de Creussans",
+     "page": "https://commons.wikimedia.org/wiki/File%3APicCreussans.jpg"
+    },
+    {
+     "file": "File:Mi casa.... Los Pirineos 5.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/Mi_casa...._Los_Pirineos_5.jpg/1280px-Mi_casa...._Los_Pirineos_5.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/b/b7/Mi_casa...._Los_Pirineos_5.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC BY-SA 4.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+     "author": "Yayuba",
+     "caption": "My house.... The Pyrenees",
+     "page": "https://commons.wikimedia.org/wiki/File%3AMi_casa...._Los_Pirineos_5.jpg"
+    },
+    {
+     "file": "File:Mi casa.... Los Pirineos 4.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/Mi_casa...._Los_Pirineos_4.jpg/1280px-Mi_casa...._Los_Pirineos_4.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/8/85/Mi_casa...._Los_Pirineos_4.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC BY-SA 4.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+     "author": "Yayuba",
+     "caption": "My house... The Pyrenees",
+     "page": "https://commons.wikimedia.org/wiki/File%3AMi_casa...._Los_Pirineos_4.jpg"
+    },
+    {
+     "file": "File:Pic de l'Albeille (2).jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Pic_de_l%27Albeille_%282%29.jpg/1280px-Pic_de_l%27Albeille_%282%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/a/a6/Pic_de_l%27Albeille_%282%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 398,
+     "license": "CC BY-SA 4.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+     "author": "Krzysztof Golik",
+     "caption": "Pic de l'Albeille (2788 m) on the border of France and Andorra – seen from Arcalís Ski Center in Ordino parish, Andorra",
+     "page": "https://commons.wikimedia.org/wiki/File%3APic_de_l%27Albeille_%282%29.jpg"
+    }
+   ]
+  },
+  {
+   "wd": "Q21330008",
+   "name": "Estany Mort",
+   "name_local": "Estany Mort",
+   "lat": 42.579167,
+   "lon": 1.714444,
+   "iso2": "AD",
+   "adm": "Canillo",
+   "types": [
+    "glacial lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q21330008",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "base": {
+    "id": "gem:soldeu",
+    "city": "Soldeu (Vall d'Incles)",
+    "country": "Andorra",
+    "km": 3.9
+   },
+   "walks": [
+    {
+     "id": 25575,
+     "name": "HRP Étape 32",
+     "km": 12.5
+    },
+    {
+     "id": 62421,
+     "name": "HRP Variante 31.1",
+     "km": 9.5
+    }
+   ],
+   "n_walks": 2,
+   "climate": {
+    "source": "WorldClim 2.1 (1970-2000 normals, 5 arc-min)",
+    "t_mean": [
+     -6.2,
+     -5.6,
+     -3.6,
+     -1.6,
+     3.0,
+     7.6,
+     11.7,
+     11.9,
+     8.2,
+     3.3,
+     -1.8,
+     -4.5
+    ]
+   },
+   "prelim": 2.063,
+   "images": [
+    {
+     "file": "File:Vall del Riu de Sant Josep amb boira al fons vist des del Coll Dret.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/7/7a/Vall_del_Riu_de_Sant_Josep_amb_boira_al_fons_vist_des_del_Coll_Dret.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/7/7a/Vall_del_Riu_de_Sant_Josep_amb_boira_al_fons_vist_des_del_Coll_Dret.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 964,
+     "license": "Public domain",
+     "license_url": "",
+     "author": "Lluís Marià Vidal i Carreras",
+     "caption": "Imatge",
+     "page": "https://commons.wikimedia.org/wiki/File%3AVall_del_Riu_de_Sant_Josep_amb_boira_al_fons_vist_des_del_Coll_Dret.jpg"
+    },
+    {
+     "file": "File:Vall del Riu de Sant Josep amb boira al fons vist des del Coll Dret (Restored).jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/7/7c/Vall_del_Riu_de_Sant_Josep_amb_boira_al_fons_vist_des_del_Coll_Dret_%28Restored%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/7/7c/Vall_del_Riu_de_Sant_Josep_amb_boira_al_fons_vist_des_del_Coll_Dret_%28Restored%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 980,
+     "license": "Public domain",
+     "license_url": "",
+     "author": "Lluís Marià Vidal i Carreras",
+     "caption": "Imatge",
+     "page": "https://commons.wikimedia.org/wiki/File%3AVall_del_Riu_de_Sant_Josep_amb_boira_al_fons_vist_des_del_Coll_Dret_%28Restored%29.jpg"
+    }
+   ]
+  },
+  {
+   "wd": "Q21329321",
+   "name": "Bassot dels Clots de Massat",
+   "name_local": "Bassot dels Clots de Massat",
+   "lat": 42.568333,
+   "lon": 1.696111,
+   "iso2": "AD",
+   "adm": "Canillo",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q21329321",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "base": {
+    "id": "gem:soldeu",
+    "city": "Soldeu (Vall d'Incles)",
+    "country": "Andorra",
+    "km": 2.6
+   },
+   "walks": [
+    {
+     "id": 25575,
+     "name": "HRP Étape 32",
+     "km": 12.5
+    },
+    {
+     "id": 62421,
+     "name": "HRP Variante 31.1",
+     "km": 9.5
+    }
+   ],
+   "n_walks": 2,
+   "climate": {
+    "source": "WorldClim 2.1 (1970-2000 normals, 5 arc-min)",
+    "t_mean": [
+     -6.2,
+     -5.6,
+     -3.6,
+     -1.6,
+     3.0,
+     7.6,
+     11.7,
+     11.9,
+     8.2,
+     3.3,
+     -1.8,
+     -4.5
+    ]
+   },
+   "prelim": 1.597,
+   "images": [
+    {
+     "file": "File:Andorra (9277047099).jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Andorra_%289277047099%29.jpg/1280px-Andorra_%289277047099%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/a/a2/Andorra_%289277047099%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 870,
+     "license": "CC BY 2.0",
+     "license_url": "https://creativecommons.org/licenses/by/2.0",
+     "author": "Pedro de Carvalho Ponchio from Atlanta, United States of America",
+     "caption": "The CG-2 main road leading to Soldeu in Andorra.",
+     "page": "https://commons.wikimedia.org/wiki/File%3AAndorra_%289277047099%29.jpg"
+    },
+    {
+     "file": "File:Vall del Riu de Sant Josep amb boira al fons vist des del Coll Dret.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/7/7a/Vall_del_Riu_de_Sant_Josep_amb_boira_al_fons_vist_des_del_Coll_Dret.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/7/7a/Vall_del_Riu_de_Sant_Josep_amb_boira_al_fons_vist_des_del_Coll_Dret.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 964,
+     "license": "Public domain",
+     "license_url": "",
+     "author": "Lluís Marià Vidal i Carreras",
+     "caption": "Imatge",
+     "page": "https://commons.wikimedia.org/wiki/File%3AVall_del_Riu_de_Sant_Josep_amb_boira_al_fons_vist_des_del_Coll_Dret.jpg"
+    },
+    {
+     "file": "File:Vall del Riu de Sant Josep amb boira al fons vist des del Coll Dret (Restored).jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/7/7c/Vall_del_Riu_de_Sant_Josep_amb_boira_al_fons_vist_des_del_Coll_Dret_%28Restored%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/7/7c/Vall_del_Riu_de_Sant_Josep_amb_boira_al_fons_vist_des_del_Coll_Dret_%28Restored%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 980,
+     "license": "Public domain",
+     "license_url": "",
+     "author": "Lluís Marià Vidal i Carreras",
+     "caption": "Imatge",
+     "page": "https://commons.wikimedia.org/wiki/File%3AVall_del_Riu_de_Sant_Josep_amb_boira_al_fons_vist_des_del_Coll_Dret_%28Restored%29.jpg"
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,149 @@
+{
+ "country": "MT",
+ "harvested_at": "2026-08-20T18:30:07+00:00",
+ "n_wikidata": 2,
+ "n_seeded": 3,
+ "seed_missing": [],
+ "lakes": [
+  {
+   "wd": "Q1639436",
+   "name": "Dwejra Inland Sea",
+   "name_local": "Il-Qawra",
+   "lat": 36.05374,
+   "lon": 14.19121,
+   "iso2": "MT",
+   "adm": "",
+   "types": [
+    "lagoon",
+    "natural arch"
+   ],
+   "sitelinks": 15,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Dwejra%20Inland%20Sea%20Tunnel%201.jpg",
+   "commons_cat": "Inland Sea, Gozo",
+   "enwiki": "https://en.wikipedia.org/wiki/Inland_Sea,_Gozo",
+   "localwiki": "https://mt.wikipedia.org/wiki/Dwejra",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": 31,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q1639436",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q573993",
+   "name": "Blue Lagoon",
+   "name_local": "",
+   "lat": 36.01417,
+   "lon": 14.32333,
+   "iso2": "MT",
+   "adm": "",
+   "types": [
+    "lagoon"
+   ],
+   "sitelinks": 6,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Blue%20Lagoon%20and%20Cominotto.JPG",
+   "commons_cat": "Blue Lagoon (Malta)",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [
+    "Malta"
+   ],
+   "basin_countries": [],
+   "key": "wd:Q573993",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "seed": {
+    "swim": "yes",
+    "kind": "lagoon",
+    "why": "brief",
+    "note": "Comino. Malta has no natural lakes, so its water body is a sea lagoon; extremely crowded in summer",
+    "name": "Blue Lagoon"
+   }
+  },
+  {
+   "wd": "Q1058683",
+   "name": "Chadwick Lakes",
+   "name_local": "Wied il-Qlejgħa",
+   "lat": 35.891944,
+   "lon": 14.39,
+   "iso2": "MT",
+   "adm": "Mtarfa",
+   "types": [
+    "valley"
+   ],
+   "sitelinks": 9,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/ChadwickLakes.jpg",
+   "commons_cat": "Chadwick Lakes",
+   "enwiki": "https://en.wikipedia.org/wiki/Chadwick_Lakes",
+   "localwiki": "https://mt.wikipedia.org/wiki/Wied_il-Qlejg%C4%A7a",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": 118,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "seed": {
+    "swim": "no",
+    "kind": "reservoir",
+    "why": "editorial",
+    "note": "a seasonal chain of dammed pools in a valley, winter and spring only",
+    "name": "Chadwick Lakes"
+   },
+   "key": "wd:Q1058683",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q1405535",
+   "name": "Għadira Nature Reserve",
+   "name_local": "",
+   "lat": 35.969763,
+   "lon": 14.347107,
+   "iso2": "MT",
+   "adm": "Mellieħa",
+   "types": [
+    "nature reserve"
+   ],
+   "sitelinks": 5,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/GhadiraNatureReserveMarshes.jpg",
+   "commons_cat": "Għadira Nature Reserve",
+   "enwiki": "https://en.wikipedia.org/wiki/G%C4%A7adira",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "seed": {
+    "swim": "no",
+    "kind": "lagoon",
+    "why": "editorial",
+    "note": "the island's main freshwater wetland, birds, no access to the water",
+    "name": "Ghadira Nature Reserve"
+   },
+   "key": "wd:Q1405535",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  }
+ ]
+}

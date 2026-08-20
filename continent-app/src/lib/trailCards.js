@@ -1,13 +1,20 @@
 /**
  * trailCards.js, the join between the published trails wire and the catalogue.
  *
- * The wire deliberately carries no images, ratings or prices (export_wire.py
- * keeps it a produced work of route data). Everything visual comes from the
- * app's own catalogue instead: a composed city day names its anchor
- * destination outright, a drawn hike gets the nearest catalogue place within
- * a sane radius. That association supplies the card photo, the rating chip,
- * the from-price and the beach/mountain theming, all from data the app has
- * already shipped.
+ * A composed city day names its anchor destination outright; a drawn hike gets
+ * the nearest catalogue place within a sane radius. That association supplies
+ * the from-price and the beach/mountain theming, plus the city photo behind a
+ * city day, which really is a picture of what that day is about.
+ *
+ * A HIKE no longer borrows anything visual. The wire now carries the trail's
+ * own photograph (pipeline/trails/trail_images.py, Wikimedia Commons, shot
+ * within 400 m of the route line) and its own rating (pipeline/trails/rate.py,
+ * open signals only). Before that existed, a hike showed the hero image of
+ * whatever town happened to be nearest, which is how Bulgaria's list came to
+ * illustrate mountain routes with a townhouse in Septemvri and a beach at
+ * Sozopol. A photograph of somewhere else is worse than no photograph: it
+ * answers "what does this walk look like" with a confident lie. A hike with no
+ * picture of its own now shows its route glyph and says nothing.
  */
 import { matchesAnyKind } from './trip_kinds.js';
 
@@ -33,10 +40,7 @@ export function tripCentre(tr) {
   return bboxCentre(tr.bbox);
 }
 
-// A hike further than this from any catalogue place shows its route, not a
-// borrowed photo: a town's hero image 50 km away says nothing about the trail.
-const PHOTO_MAX_KM = 35;
-// Association radius for rating/price/theme context.
+// Association radius for price/theme context and for naming the nearest town.
 const ASSOC_MAX_KM = 80;
 
 /** Nearest entry of a prebuilt dest index, or null outside maxKm. */
@@ -49,27 +53,56 @@ export function nearestDest(destIndex, lat, lon, maxKm = ASSOC_MAX_KM) {
   return best ? { dest: best, km: bestKm } : null;
 }
 
+/** The trail's own photograph, taken on the route. Null for a trail the photo
+ *  pass found nothing usable for, which is not the same as "use a town". */
+export function tripPhoto(tr) {
+  return tr?.img?.u || null;
+}
+
+/**
+ * The trail rating in the shape RatingBadge reads: { score, tier }.
+ *
+ * The wire ships a bare 0-10 number. The badge colours itself from `tier`, and
+ * without one every trail would render at rt-0, the greyest chip on the scale,
+ * including a country's best walk. These are the catalogue's own cutoffs
+ * (pipeline/rating_layer.py TIER_CUTOFFS), reused deliberately so an 8.9 means
+ * the same shade of confidence whether it is a town or a trail.
+ *
+ * A trail rating is scored WITHIN its country though, where a destination
+ * rating is scored across Europe. Same scale, different reference class, which
+ * is the honest way to rank a Dutch dune walk against Dutch walks.
+ */
+const TRAIL_TIER_CUTOFFS = [[8.7, 3], [7.8, 2], [6.9, 1]];
+
+export function trailRating(tr) {
+  const score = tr?.rating;
+  if (typeof score !== 'number') return null;
+  const tier = TRAIL_TIER_CUTOFFS.find(([min]) => score >= min)?.[1] ?? 0;
+  return { score, tier };
+}
+
 /**
  * Associate one wire trip with the catalogue: the anchor destination for a
  * city day, the nearest place for a hike. Returns
- *   { dest, km, photoUrl }  (any of them null when nothing qualifies)
+ *   { dest, destId, km, photoUrl }  (any of them null when nothing qualifies)
+ *
+ * photoUrl is the trail's own Commons photograph for a hike, and the anchor
+ * city's hero for a city day. It is never a nearby town's hero on a hike.
  */
 export function associateTrip(tr, destinations, destIndex) {
+  const own = tripPhoto(tr);
   if (tr.category === 'citytrip' && tr.anchor?.dest && destinations[tr.anchor.dest]) {
     const dest = destinations[tr.anchor.dest];
-    return { dest, destId: tr.anchor.dest, km: 0, photoUrl: dest.image?.url || null };
+    return {
+      dest, destId: tr.anchor.dest, km: 0,
+      photoUrl: own || dest.image?.url || null,
+    };
   }
   const c = tripCentre(tr);
-  if (!c) return { dest: null, destId: null, km: null, photoUrl: null };
-  const near = nearestDest(destIndex, c.lat, c.lon);
-  if (!near) return { dest: null, destId: null, km: null, photoUrl: null };
+  const near = c ? nearestDest(destIndex, c.lat, c.lon) : null;
+  if (!near) return { dest: null, destId: null, km: null, photoUrl: own };
   const full = destinations[near.dest.id] || near.dest;
-  return {
-    dest: full,
-    destId: near.dest.id,
-    km: near.km,
-    photoUrl: near.km <= PHOTO_MAX_KM ? (full.image?.url || null) : null,
-  };
+  return { dest: full, destId: near.dest.id, km: near.km, photoUrl: own };
 }
 
 /** 'beach' / 'mountains' membership for the themed category tabs. */
@@ -80,6 +113,32 @@ export function tripThemes(tr, assocDest) {
     || assocDest?.beauty?.top_beach) themes.add('beach');
   if (matchesAnyKind(cats, ['mountains']) || (tr.ascent_m ?? 0) >= 600) themes.add('mountains');
   return themes;
+}
+
+/**
+ * Distance bands for the Trails filter, in metres.
+ *
+ * The same five bands curate.py fills its per-country quota with, so the chips
+ * a traveller taps map onto slices the list is actually built to contain: no
+ * band can come back empty because the selection over-favoured one length.
+ *
+ * Phrased as "how long is my afternoon", because that is the question. Nobody
+ * opens a hiking list thinking in metres, but everybody knows whether they
+ * have two hours or a whole day.
+ */
+export const DISTANCE_BANDS = [
+  { key: 'short', labelKey: 'trails.bandShort', min: 0, max: 5000 },
+  { key: 'half', labelKey: 'trails.bandHalf', min: 5000, max: 10000 },
+  { key: 'day', labelKey: 'trails.bandDay', min: 10000, max: 20000 },
+  { key: 'long', labelKey: 'trails.bandLong', min: 20000, max: 40000 },
+  { key: 'trek', labelKey: 'trails.bandTrek', min: 40000, max: Infinity },
+];
+
+/** Which band a trip falls in, or null when it carries no distance. */
+export function tripBand(tr) {
+  const m = tr?.distance_m;
+  if (typeof m !== 'number') return null;
+  return DISTANCE_BANDS.find((b) => m >= b.min && m < b.max)?.key ?? null;
 }
 
 /** i18n key for the small kind chip on a card. */

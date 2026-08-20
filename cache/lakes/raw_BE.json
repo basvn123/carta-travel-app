@@ -1,0 +1,2052 @@
+{
+ "country": "BE",
+ "harvested_at": "2026-08-20T18:00:02+00:00",
+ "n_wikidata": 66,
+ "n_seeded": 5,
+ "seed_missing": [],
+ "lakes": [
+  {
+   "wd": "Q1993163",
+   "name": "Hazewinkel",
+   "name_local": "Hazewinkel",
+   "lat": 51.066111,
+   "lon": 4.391111,
+   "iso2": "BE",
+   "adm": "Willebroek",
+   "types": [
+    "artificial lake",
+    "rowing and canoeing venue"
+   ],
+   "sitelinks": 9,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Willebroek%20Hazewinkel%2022-01-2012%2015-50-53.png",
+   "commons_cat": "Hazewinkel",
+   "enwiki": "https://en.wikipedia.org/wiki/Hazewinkel",
+   "localwiki": "https://nl.wikipedia.org/wiki/Hazewinkel_(roeibaan)",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q1993163",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q2070988",
+   "name": "Grand Large",
+   "name_local": "Grand Large",
+   "lat": 50.471389,
+   "lon": 3.936111,
+   "iso2": "BE",
+   "adm": "Mons",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 8,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Mons%20Grand%20Large%202006%20044.jpg",
+   "commons_cat": "Grand Large, Mons (Hainaut)",
+   "enwiki": "https://en.wikipedia.org/wiki/Grand_Large",
+   "localwiki": "https://nl.wikipedia.org/wiki/Grand_Large_(Belgi%C3%AB)",
+   "area_km2": 0.4,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Belgium"
+   ],
+   "key": "wd:Q2070988",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q2094247",
+   "name": "Lake Nisramont",
+   "name_local": "Meer van Nisramont",
+   "lat": 50.1445,
+   "lon": 5.6685,
+   "iso2": "BE",
+   "adm": "Houffalize",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 7,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/0%20Nisramont%20-%20Barrage%20%281%29.JPG",
+   "commons_cat": "Lac de Nisramont",
+   "enwiki": "https://en.wikipedia.org/wiki/Lake_Nisramont",
+   "localwiki": "https://nl.wikipedia.org/wiki/Meer_van_Nisramont",
+   "area_km2": 0.47,
+   "depth_m": null,
+   "elev_m": 285,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Belgium"
+   ],
+   "key": "wd:Q2094247",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q2116352",
+   "name": "Watersportbaan",
+   "name_local": "Watersportbaan",
+   "lat": 51.04917,
+   "lon": 3.69194,
+   "iso2": "BE",
+   "adm": "Ghent",
+   "types": [
+    "artificial lake",
+    "rowing and canoeing venue"
+   ],
+   "sitelinks": 4,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Watersportbaan%20gent1.JPG",
+   "commons_cat": "Watersportbaan",
+   "enwiki": "https://en.wikipedia.org/wiki/Watersportbaan",
+   "localwiki": "https://nl.wikipedia.org/wiki/Watersportbaan",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q2116352",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q2213505",
+   "name": "Turfven",
+   "name_local": "Turfven",
+   "lat": 51.054442,
+   "lon": 5.546794,
+   "iso2": "BE",
+   "adm": "Oudsbergen",
+   "types": [
+    "Natura 2000 site",
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Turfven.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://nl.wikipedia.org/wiki/Turfven",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [
+    "Hoge Kempen National Park",
+    "Mangelbeek en heide- en vengebieden tussen Houthalen en Gruitrode",
+    "Ophovenderheide"
+   ],
+   "basin_countries": [],
+   "key": "wd:Q2213505",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q2268951",
+   "name": "De Gavers, West Flanders",
+   "name_local": "De Gavers",
+   "lat": 50.841111,
+   "lon": 3.315833,
+   "iso2": "BE",
+   "adm": "Deerlijk",
+   "types": [
+    "provincial domain",
+    "nature area",
+    "lake"
+   ],
+   "sitelinks": 3,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/DeGaversHerfst.jpg",
+   "commons_cat": "De Gavers, West Flanders",
+   "enwiki": "",
+   "localwiki": "https://nl.wikipedia.org/wiki/Provinciedomein_De_Gavers",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q2268951",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q2340432",
+   "name": "Putse Moer",
+   "name_local": "Putse Moer",
+   "lat": 51.38105,
+   "lon": 4.429292,
+   "iso2": "BE",
+   "adm": "Province of Antwerp",
+   "types": [
+    "nature area",
+    "lake"
+   ],
+   "sitelinks": 5,
+   "wd_img": "",
+   "commons_cat": "Putse Moer",
+   "enwiki": "",
+   "localwiki": "https://nl.wikipedia.org/wiki/Putse_Moer",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": 21,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q2340432",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q2347208",
+   "name": "Damvallei",
+   "name_local": "Damvallei",
+   "lat": 51.0528,
+   "lon": 3.8153,
+   "iso2": "BE",
+   "adm": "Destelbergen",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Damvalleimeer%20te%20Destelbergen%2020-08-2010%2015-11-24.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://nl.wikipedia.org/wiki/Damvallei",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q2347208",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q2357022",
+   "name": "Rauwse Meer",
+   "name_local": "Rauwse Meer",
+   "lat": 51.225163,
+   "lon": 5.200825,
+   "iso2": "BE",
+   "adm": "Mol",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Centrale%20faciliteiten%20kempensemeren.JPG",
+   "commons_cat": "Rauwse Meer",
+   "enwiki": "",
+   "localwiki": "https://nl.wikipedia.org/wiki/Rauwse_Meer",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q2357022",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q2363216",
+   "name": "wells of ekeren",
+   "name_local": "Ekerse Putten",
+   "lat": 51.282672,
+   "lon": 4.398864,
+   "iso2": "BE",
+   "adm": "Antwerp",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://nl.wikipedia.org/wiki/Ekerse_Putten",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q2363216",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q2390760",
+   "name": "Lake Neufchâteau",
+   "name_local": "Meer van Neufchâteau",
+   "lat": 49.836111,
+   "lon": 5.427778,
+   "iso2": "BE",
+   "adm": "Neufchâteau",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 6,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Lac%20neufchateau.jpg",
+   "commons_cat": "",
+   "enwiki": "https://en.wikipedia.org/wiki/Lake_Neufch%C3%A2teau",
+   "localwiki": "https://nl.wikipedia.org/wiki/Meer_van_Neufch%C3%A2teau",
+   "area_km2": 0.04,
+   "depth_m": null,
+   "elev_m": 395,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Belgium"
+   ],
+   "key": "wd:Q2390760",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q2422228",
+   "name": "Lake of Love",
+   "name_local": "Minnewater",
+   "lat": 51.199598,
+   "lon": 3.224065,
+   "iso2": "BE",
+   "adm": "Bruges",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 7,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Lake%20of%20Love.jpg",
+   "commons_cat": "Minnewater (Bruges)",
+   "enwiki": "",
+   "localwiki": "https://nl.wikipedia.org/wiki/Minnewater",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q2422228",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q2454272",
+   "name": "De Hoge Dijken",
+   "name_local": "De Hoge Dijken",
+   "lat": 51.1764,
+   "lon": 3.0486,
+   "iso2": "BE",
+   "adm": "Oudenburg",
+   "types": [
+    "nature area",
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Hoge%20Dijken%20R03.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://nl.wikipedia.org/wiki/De_Hoge_Dijken",
+   "area_km2": 0.52,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q2454272",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q2475871",
+   "name": "Eglegemvijver",
+   "name_local": "Eglegemvijver",
+   "lat": 51.008383,
+   "lon": 4.449397,
+   "iso2": "BE",
+   "adm": "Zemst",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Egleghemvijver.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://nl.wikipedia.org/wiki/Eglegemvijver",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q2475871",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q2544471",
+   "name": "Schulensmeer",
+   "name_local": "Schulensmeer",
+   "lat": 50.961389,
+   "lon": 5.147222,
+   "iso2": "BE",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 5,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Schulensmeer%2C%20Belgium.jpg",
+   "commons_cat": "Schulensmeer",
+   "enwiki": "",
+   "localwiki": "https://nl.wikipedia.org/wiki/Schulensmeer",
+   "area_km2": 0.95,
+   "depth_m": 8.0,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q2544471",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q2572524",
+   "name": "Leeuwenhof",
+   "name_local": "Leeuwenhof",
+   "lat": 51.06722,
+   "lon": 3.65627,
+   "iso2": "BE",
+   "adm": "Ghent",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/20120303%20Leeuwenhof%20%280007%29.jpg",
+   "commons_cat": "Leeuwenhof (Ghent)",
+   "enwiki": "",
+   "localwiki": "https://nl.wikipedia.org/wiki/Leeuwenhof_(Drongen)",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q2572524",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q2632521",
+   "name": "De Nekker",
+   "name_local": "De Nekker",
+   "lat": 51.024108,
+   "lon": 4.503472,
+   "iso2": "BE",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://nl.wikipedia.org/wiki/De_Nekker",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q2632521",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q2702921",
+   "name": "Heerenlaak",
+   "name_local": "Heerenlaak",
+   "lat": 51.098967,
+   "lon": 5.815378,
+   "iso2": "BE",
+   "adm": "Maaseik",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Jachthaven%20Heerenlaak.JPG",
+   "commons_cat": "Heerenlaak",
+   "enwiki": "",
+   "localwiki": "https://nl.wikipedia.org/wiki/Heerenlaak",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q2702921",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q2885430",
+   "name": "Lake Ry de Rome",
+   "name_local": "Meer van de Ry de Rome",
+   "lat": 50.022222,
+   "lon": 4.537778,
+   "iso2": "BE",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 6,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/RY%20DE%20ROME.jpg",
+   "commons_cat": "Lake Ry de Rome",
+   "enwiki": "https://en.wikipedia.org/wiki/Lake_Ry_de_Rome",
+   "localwiki": "https://nl.wikipedia.org/wiki/Meer_van_de_Ry_de_Rome",
+   "area_km2": 0.25,
+   "depth_m": 35.0,
+   "elev_m": 290,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Belgium"
+   ],
+   "key": "wd:Q2885430",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q2906583",
+   "name": "Ruiterskuilen",
+   "name_local": "Ruiterskuilen",
+   "lat": 51.0483,
+   "lon": 5.542914,
+   "iso2": "BE",
+   "adm": "Oudsbergen",
+   "types": [
+    "Natura 2000 site",
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Duinengordel-ruiterskuilen1.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://nl.wikipedia.org/wiki/Ruiterskuilen",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [
+    "Hoge Kempen National Park",
+    "Mangelbeek en heide- en vengebieden tussen Houthalen en Gruitrode",
+    "Ophovenderheide"
+   ],
+   "basin_countries": [],
+   "key": "wd:Q2906583",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q2933818",
+   "name": "Zwartven",
+   "name_local": "Zwartven",
+   "lat": 51.3,
+   "lon": 5.5,
+   "iso2": "BE",
+   "adm": "Oudsbergen",
+   "types": [
+    "marsh",
+    "lake"
+   ],
+   "sitelinks": 4,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://nl.wikipedia.org/wiki/Zwartven_(Oudsbergen)",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": 34,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q2933818",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q3215575",
+   "name": "Lake Virelles",
+   "name_local": "Meer van Virelles",
+   "lat": 50.072222,
+   "lon": 4.343056,
+   "iso2": "BE",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 9,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/MeervanVirelles.JPG",
+   "commons_cat": "Lac de Virelles",
+   "enwiki": "https://en.wikipedia.org/wiki/Lake_Virelles",
+   "localwiki": "https://nl.wikipedia.org/wiki/Meer_van_Virelles",
+   "area_km2": 1.25,
+   "depth_m": null,
+   "elev_m": 204,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Belgium"
+   ],
+   "key": "wd:Q3215575",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q3370008",
+   "name": "Ganzepoot",
+   "name_local": "Ganzepoot",
+   "lat": 51.134722,
+   "lon": 2.756389,
+   "iso2": "BE",
+   "adm": "Nieuwpoort",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 6,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Nieuwpoort%20-%20Name%20stone%201914-1918.jpg",
+   "commons_cat": "Ganzepoot",
+   "enwiki": "https://en.wikipedia.org/wiki/Ganzepoot",
+   "localwiki": "https://nl.wikipedia.org/wiki/Ganzepoot_(Nieuwpoort)",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q3370008",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q13438810",
+   "name": "Bergerven",
+   "name_local": "Bergerven",
+   "lat": 51.06616,
+   "lon": 5.69238,
+   "iso2": "BE",
+   "adm": "Maaseik",
+   "types": [
+    "nature area",
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Bergerven%20120930.jpg",
+   "commons_cat": "Bergerven",
+   "enwiki": "",
+   "localwiki": "https://nl.wikipedia.org/wiki/Bergerven",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [
+    "Hoge Kempen National Park",
+    "Itterbeek met Brand, Jagersborg en Schootsheide en Bergerven"
+   ],
+   "basin_countries": [],
+   "key": "wd:Q13438810",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q165395",
+   "name": "Dam of the Vesdre",
+   "name_local": "Weserstuwdam",
+   "lat": 50.616667,
+   "lon": 6.092222,
+   "iso2": "BE",
+   "adm": "Eupen",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 12,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Eupen002.jpg",
+   "commons_cat": "Wesertalsperre",
+   "enwiki": "https://en.wikipedia.org/wiki/Lake_Eupen",
+   "localwiki": "https://nl.wikipedia.org/wiki/Vesderstuwdam",
+   "area_km2": 1.26,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Belgium"
+   ],
+   "key": "wd:Q165395",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q320702",
+   "name": "Lake Robertville",
+   "name_local": "Meer van Robertville",
+   "lat": 50.45,
+   "lon": 6.113611,
+   "iso2": "BE",
+   "adm": "Waimes",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 11,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Robertville%20JPG01.jpg",
+   "commons_cat": "Lac de Robertville",
+   "enwiki": "https://en.wikipedia.org/wiki/Lake_Robertville",
+   "localwiki": "https://nl.wikipedia.org/wiki/Meer_van_Robertville",
+   "area_km2": 0.62,
+   "depth_m": 54.5,
+   "elev_m": 498,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Belgium"
+   ],
+   "key": "wd:Q320702",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "seed": {
+    "swim": "yes",
+    "kind": "reservoir",
+    "why": "brief",
+    "note": "Ardennes reservoir with a beach",
+    "name": "Lac de Robertville"
+   }
+  },
+  {
+   "wd": "Q470432",
+   "name": "Lake Bütgenbach",
+   "name_local": "Meer van Bütgenbach",
+   "lat": 50.4275,
+   "lon": 6.227778,
+   "iso2": "BE",
+   "adm": "Bütgenbach",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 10,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Staumauer%20Butgenbach%2002.JPG",
+   "commons_cat": "Stausee Bütgenbach",
+   "enwiki": "https://en.wikipedia.org/wiki/Lake_B%C3%BCtgenbach",
+   "localwiki": "https://nl.wikipedia.org/wiki/Meer_van_B%C3%BCtgenbach",
+   "area_km2": 1.2,
+   "depth_m": null,
+   "elev_m": 550,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Belgium"
+   ],
+   "key": "wd:Q470432",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "seed": {
+    "swim": "yes",
+    "kind": "reservoir",
+    "why": "brief",
+    "note": "Ardennes, swimming and sailing",
+    "name": "Lac de Butgenbach"
+   }
+  },
+  {
+   "wd": "Q539055",
+   "name": "Kraenepoel",
+   "name_local": "Kraenepoel",
+   "lat": 51.07611,
+   "lon": 3.48028,
+   "iso2": "BE",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 4,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/20090111%20Kraenepoel%20%280088%29.jpg",
+   "commons_cat": "Kraenepoel",
+   "enwiki": "",
+   "localwiki": "https://nl.wikipedia.org/wiki/Kraenepoel",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q539055",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q617270",
+   "name": "Eau d'Heure lakes",
+   "name_local": "Meren van de Eau d'Heure",
+   "lat": 50.188611,
+   "lon": 4.385556,
+   "iso2": "BE",
+   "adm": "",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 10,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Barrages%20de%20l%27Eau%20d%27Heure%3B%20Lac%20de%20l%27Eau%20d%27heure%20vu%20du%20barrage%20de%20Falemprise.jpg",
+   "commons_cat": "Lacs de l'Eau d'Heure",
+   "enwiki": "https://en.wikipedia.org/wiki/Eau_d%27Heure_lakes",
+   "localwiki": "https://nl.wikipedia.org/wiki/Meren_van_de_Eau_d%27Heure",
+   "area_km2": 6.17,
+   "depth_m": 43.0,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Belgium"
+   ],
+   "key": "wd:Q617270",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "seed": {
+    "swim": "yes",
+    "kind": "reservoir",
+    "why": "brief",
+    "note": "the largest Belgian water body, watersports and a supervised swim zone",
+    "name": "Lacs de l'Eau d'Heure"
+   }
+  },
+  {
+   "wd": "Q660847",
+   "name": "Meer van Bambois",
+   "name_local": "Meer van Bambois",
+   "lat": 50.36889,
+   "lon": 4.68417,
+   "iso2": "BE",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Fosses-la-Ville%20%28Bambois%29%20Ja1.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://nl.wikipedia.org/wiki/Meer_van_Bambois",
+   "area_km2": 0.33,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q660847",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q724805",
+   "name": "Donkmeer",
+   "name_local": "Donkmeer",
+   "lat": 51.042222,
+   "lon": 3.977222,
+   "iso2": "BE",
+   "adm": "Berlare",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 6,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/View%20of%20Donkmeer%20from%20a%20hot%20air%20balloon%2C%20Berlare%2C%202026%20%282%29.jpg",
+   "commons_cat": "Donkmeer",
+   "enwiki": "https://en.wikipedia.org/wiki/Donkmeer",
+   "localwiki": "https://nl.wikipedia.org/wiki/Donkmeer",
+   "area_km2": 0.86,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Belgium"
+   ],
+   "key": "wd:Q724805",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "seed": {
+    "swim": "yes",
+    "kind": "lake",
+    "why": "editorial",
+    "note": "Berlare, the largest natural lake in Flanders, rowing boats and eel restaurants. Stands in for the Zilvermeer at Mol, which is the better known swimming lake and has no Wikidata item at all, so it can carry neither a coordinate nor a photograph",
+    "name": "Donkmeer"
+   }
+  },
+  {
+   "wd": "Q764863",
+   "name": "Lake Genval",
+   "name_local": "Meer van Genval",
+   "lat": 50.728889,
+   "lon": 4.519444,
+   "iso2": "BE",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 11,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Genval%20Lac1a.JPG",
+   "commons_cat": "Lake Genval",
+   "enwiki": "https://en.wikipedia.org/wiki/Lake_Genval",
+   "localwiki": "https://nl.wikipedia.org/wiki/Meer_van_Genval",
+   "area_km2": 0.18,
+   "depth_m": null,
+   "elev_m": 55,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Belgium"
+   ],
+   "key": "wd:Q764863",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q1073360",
+   "name": "Ixelles Ponds",
+   "name_local": "Vijvers van Elsene",
+   "lat": 50.823611,
+   "lon": 4.373333,
+   "iso2": "BE",
+   "adm": "Ixelles",
+   "types": [
+    "lake",
+    "park"
+   ],
+   "sitelinks": 9,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Ixelles%20%28Bruxelles%29%20Les%20%C3%A9tangs.JPG",
+   "commons_cat": "Ixelles Ponds",
+   "enwiki": "https://en.wikipedia.org/wiki/Ixelles_Ponds",
+   "localwiki": "https://nl.wikipedia.org/wiki/Vijvers_van_Elsene",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q1073360",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q1129678",
+   "name": "Lake Warfaaz",
+   "name_local": "Meer van Warfaaz",
+   "lat": 50.502778,
+   "lon": 5.889444,
+   "iso2": "BE",
+   "adm": "Spa",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 7,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Lac%20de%20Warfaaz3.jpg",
+   "commons_cat": "Lac de Warfaaz",
+   "enwiki": "https://en.wikipedia.org/wiki/Lake_Warfaaz",
+   "localwiki": "https://nl.wikipedia.org/wiki/Meer_van_Warfaaz",
+   "area_km2": 0.08,
+   "depth_m": null,
+   "elev_m": 295,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Belgium"
+   ],
+   "key": "wd:Q1129678",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q1818342",
+   "name": "Grote Geule",
+   "name_local": "Grote Geule",
+   "lat": 51.2841,
+   "lon": 4.1718,
+   "iso2": "BE",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 4,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Veenlens.jpg",
+   "commons_cat": "Grote Geule",
+   "enwiki": "",
+   "localwiki": "https://nl.wikipedia.org/wiki/Grote_Geule",
+   "area_km2": 0.22,
+   "depth_m": null,
+   "elev_m": 2,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q1818342",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q1867247",
+   "name": "Dikkebusvijver",
+   "name_local": "Dikkebusvijver",
+   "lat": 50.81861,
+   "lon": 2.84444,
+   "iso2": "BE",
+   "adm": "Ypres",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 3,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Dikkebus%20-%20Dikkebusvijver%202.jpg",
+   "commons_cat": "Dikkebusvijver",
+   "enwiki": "",
+   "localwiki": "https://nl.wikipedia.org/wiki/Dikkebusvijver",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q1867247",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q1882317",
+   "name": "Maasplassen",
+   "name_local": "Maasplassen",
+   "lat": 51.16944,
+   "lon": 5.91389,
+   "iso2": "BE",
+   "adm": "Roermond",
+   "types": [
+    "nature area",
+    "lake"
+   ],
+   "sitelinks": 5,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Boterakkerplas%20Kessenich.jpg",
+   "commons_cat": "Maasplassen",
+   "enwiki": "",
+   "localwiki": "https://nl.wikipedia.org/wiki/Maasplassen",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q1882317",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q1933210",
+   "name": "Lac de la Vierre",
+   "name_local": "Meer van de Vierre",
+   "lat": 49.7338,
+   "lon": 5.377593,
+   "iso2": "BE",
+   "adm": "Ciney",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Stuwmeer%20vierre.jpeg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://nl.wikipedia.org/wiki/Meer_van_de_Vierre",
+   "area_km2": 0.35,
+   "depth_m": null,
+   "elev_m": 395,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q1933210",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q1978259",
+   "name": "Zillebekevijver",
+   "name_local": "Zillebekevijver",
+   "lat": 50.83722,
+   "lon": 2.91,
+   "iso2": "BE",
+   "adm": "Ypres",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Zillebeke%20-%20Zillebekevijver%201.jpg",
+   "commons_cat": "Zillebekevijver",
+   "enwiki": "",
+   "localwiki": "https://nl.wikipedia.org/wiki/Zillebekevijver",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q1978259",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q20107824",
+   "name": "Casinoweiher",
+   "name_local": "Casinovijver",
+   "lat": 50.710886,
+   "lon": 6.012978,
+   "iso2": "BE",
+   "adm": "Kelmis",
+   "types": [
+    "pond",
+    "lake"
+   ],
+   "sitelinks": 3,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Kelmis%20-%20Kasinoweiher%202.JPG",
+   "commons_cat": "Casinoweiher",
+   "enwiki": "",
+   "localwiki": "https://nl.wikipedia.org/wiki/Casinovijver",
+   "area_km2": 0.05,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q20107824",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q21771393",
+   "name": "Vijvers van Bellefroid",
+   "name_local": "Vijvers van Bellefroid",
+   "lat": 50.90566,
+   "lon": 4.70249,
+   "iso2": "BE",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://nl.wikipedia.org/wiki/Vijvers_van_Bellefroid",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": 11,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q21771393",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q23993492",
+   "name": "Meer van Keerbergen",
+   "name_local": "Meer van Keerbergen",
+   "lat": 51.007125,
+   "lon": 4.672836,
+   "iso2": "BE",
+   "adm": "Keerbergen",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://nl.wikipedia.org/wiki/Meer_van_Keerbergen",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q23993492",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q47001258",
+   "name": "Meer van Heist",
+   "name_local": "Meer van Heist",
+   "lat": 51.335472,
+   "lon": 3.255583,
+   "iso2": "BE",
+   "adm": "Knokke-Heist",
+   "types": [
+    "artificial lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Belgie%20Knokke-Heist%20Duinbergen%20Meer%20van%20Heist.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://nl.wikipedia.org/wiki/Meer_van_Heist",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q47001258",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q56234934",
+   "name": "Zegemeer",
+   "name_local": "Zegemeer",
+   "lat": 51.345344,
+   "lon": 3.280867,
+   "iso2": "BE",
+   "adm": "Knokke-Heist",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Drijvende%20beeldengroep%20Ode%20aan%20de%20vrouw%2C%20Zegemeer%2C%20Knokke%20%28Knokke-Heist%29.jpg",
+   "commons_cat": "Zegemeer",
+   "enwiki": "",
+   "localwiki": "https://nl.wikipedia.org/wiki/Zegemeer",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q56234934",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q67604479",
+   "name": "Ven onder de Berg",
+   "name_local": "Ven onder de Berg",
+   "lat": 50.966667,
+   "lon": 5.65,
+   "iso2": "BE",
+   "adm": "Maasmechelen",
+   "types": [
+    "Natura 2000 site",
+    "nature reserve",
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://nl.wikipedia.org/wiki/Ven_onder_de_Berg",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [
+    "Mechelse heide en vallei van de Ziepbeek"
+   ],
+   "basin_countries": [],
+   "key": "wd:Q67604479",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q85311175",
+   "name": "Brandven",
+   "name_local": "Brandven",
+   "lat": 51.178356,
+   "lon": 5.731875,
+   "iso2": "BE",
+   "adm": "Kinrooi",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://nl.wikipedia.org/wiki/Brandven",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q85311175",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q85311204",
+   "name": "Teuneven",
+   "name_local": "Teuneven",
+   "lat": 51.181517,
+   "lon": 5.745494,
+   "iso2": "BE",
+   "adm": "Kinrooi",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://nl.wikipedia.org/wiki/Teuneven",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q85311204",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q98642638",
+   "name": "Broekven",
+   "name_local": "Broekven",
+   "lat": 51.0483,
+   "lon": 5.542914,
+   "iso2": "BE",
+   "adm": "Oudsbergen",
+   "types": [
+    "mere"
+   ],
+   "sitelinks": 1,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Broekven.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://nl.wikipedia.org/wiki/Broekven",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [
+    "Natura 2000",
+    "Mangelbeek en heide- en vengebieden tussen Houthalen en Gruitrode"
+   ],
+   "basin_countries": [],
+   "key": "wd:Q98642638",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q125983694",
+   "name": "Cloedtse Put",
+   "name_local": "Cloedtse Put",
+   "lat": 51.182339,
+   "lon": 3.216242,
+   "iso2": "BE",
+   "adm": "Bruges",
+   "types": [
+    "pond",
+    "kolk"
+   ],
+   "sitelinks": 1,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Giant%20wheel%20Boudewjinpark%2005.JPG",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://nl.wikipedia.org/wiki/Cloedtse_Put",
+   "area_km2": 0.06,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [
+    "Boudewijn Seapark"
+   ],
+   "basin_countries": [],
+   "key": "wd:Q125983694",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q136684929",
+   "name": "Spuikom",
+   "name_local": "Spuikom",
+   "lat": 51.22837,
+   "lon": 2.953644,
+   "iso2": "BE",
+   "adm": "Ostend",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "",
+   "commons_cat": "Spuikom (Ostend)",
+   "enwiki": "",
+   "localwiki": "https://nl.wikipedia.org/wiki/Spuikom_(Oostende)",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q136684929",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q16508539",
+   "name": "Lac de Messancy",
+   "name_local": "",
+   "lat": 49.583,
+   "lon": 5.817,
+   "iso2": "BE",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Lac%20de%20Messancy%20-%20juin%202013%20-%20%286%29.JPG",
+   "commons_cat": "Lac de Messancy",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": 2.5,
+   "depth_m": null,
+   "elev_m": 280,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q16508539",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q17373262",
+   "name": "Lake Gileppe",
+   "name_local": "Meer van Gileppe",
+   "lat": 50.585556,
+   "lon": 5.99,
+   "iso2": "BE",
+   "adm": "",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 6,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Gileppelac.JPG",
+   "commons_cat": "Barrage de la Gileppe",
+   "enwiki": "https://en.wikipedia.org/wiki/Lake_Gileppe",
+   "localwiki": "",
+   "area_km2": 1.3,
+   "depth_m": null,
+   "elev_m": 305,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Belgium"
+   ],
+   "key": "wd:Q17373262",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q21763346",
+   "name": "Stappensven",
+   "name_local": "",
+   "lat": 51.4089,
+   "lon": 4.44268,
+   "iso2": "BE",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": 15,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q21763346",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q21767245",
+   "name": "Kleine Weel",
+   "name_local": "",
+   "lat": 51.28333,
+   "lon": 4.18333,
+   "iso2": "BE",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": 1,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q21767245",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q21767614",
+   "name": "Grote Weel",
+   "name_local": "",
+   "lat": 51.27939,
+   "lon": 4.18681,
+   "iso2": "BE",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": 1,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q21767614",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q21767849",
+   "name": "Hofstademeer",
+   "name_local": "",
+   "lat": 50.9853,
+   "lon": 4.50836,
+   "iso2": "BE",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": 5,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q21767849",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q21768765",
+   "name": "Étang des Épioux",
+   "name_local": "",
+   "lat": 49.756111,
+   "lon": 5.298056,
+   "iso2": "BE",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q21768765",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q21769143",
+   "name": "Groot Gat",
+   "name_local": "",
+   "lat": 51.3,
+   "lon": 4.26667,
+   "iso2": "BE",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": 4,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q21769143",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q21770339",
+   "name": "Blankaart",
+   "name_local": "",
+   "lat": 50.98425,
+   "lon": 2.85871,
+   "iso2": "BE",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q21770339",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q21770367",
+   "name": "Étang de Boiron",
+   "name_local": "",
+   "lat": 49.990833,
+   "lon": 4.902222,
+   "iso2": "BE",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q21770367",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q21771830",
+   "name": "Lac de la Plate Taille",
+   "name_local": "",
+   "lat": 50.18393,
+   "lon": 4.36303,
+   "iso2": "BE",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": 247,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q21771830",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q21771863",
+   "name": "Lac des Herbieres",
+   "name_local": "",
+   "lat": 50.46133,
+   "lon": 3.79217,
+   "iso2": "BE",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": 19,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q21771863",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q24560694",
+   "name": "put van ekeren",
+   "name_local": "put van ekeren",
+   "lat": 51.2825,
+   "lon": 4.390278,
+   "iso2": "BE",
+   "adm": "Antwerp",
+   "types": [
+    "artificial lake",
+    "recreational dive site"
+   ],
+   "sitelinks": 0,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [
+    "wells of ekeren"
+   ],
+   "basin_countries": [],
+   "key": "wd:Q24560694",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q56854583",
+   "name": "lake in Bois de la Cambre",
+   "name_local": "meer in Ter Kamerenbos",
+   "lat": 50.804008,
+   "lon": 4.383016,
+   "iso2": "BE",
+   "adm": "Brussels",
+   "types": [
+    "artificial lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Bois%20de%20la%20Cambre.Chalet%20Robinson%202017.jpg",
+   "commons_cat": "Pond in Bois de la Cambre/Ter Kamerenbos",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": 0.06,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q56854583",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q57316998",
+   "name": "Thommer Weiher",
+   "name_local": "Thommer Weiher",
+   "lat": 50.220834,
+   "lon": 6.058708,
+   "iso2": "BE",
+   "adm": "Burg-Reuland",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Thommen-Thommer%20Weiher%20%287%29.jpg",
+   "commons_cat": "Thommer Weiher",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q57316998",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q106364052",
+   "name": "Bootjesven",
+   "name_local": "",
+   "lat": 51.408842,
+   "lon": 4.8268,
+   "iso2": "BE",
+   "adm": "",
+   "types": [
+    "mere"
+   ],
+   "sitelinks": 0,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Eiland%20in%20bootjesven.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [
+    "Wortel Kolonie"
+   ],
+   "basin_countries": [],
+   "key": "wd:Q106364052",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q2905240",
+   "name": "Blaarmeersen",
+   "name_local": "Blaarmeersen",
+   "lat": 51.04417,
+   "lon": 3.68806,
+   "iso2": "BE",
+   "adm": "Ghent",
+   "types": [
+    "recreation area"
+   ],
+   "sitelinks": 4,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Strandoblaarmeersen.JPG",
+   "commons_cat": "Blaarmeersen",
+   "enwiki": "",
+   "localwiki": "https://nl.wikipedia.org/wiki/Blaarmeersen",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "seed": {
+    "swim": "yes",
+    "kind": "lake",
+    "why": "brief",
+    "note": "Ghent's quarry lake recreation park",
+    "name": "Blaarmeersen"
+   },
+   "key": "wd:Q2905240",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  }
+ ]
+}

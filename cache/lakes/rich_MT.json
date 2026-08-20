@@ -1,0 +1,646 @@
+{
+ "country": "MT",
+ "enriched_at": "2026-08-20T21:02:46+00:00",
+ "n_harvested": 4,
+ "lakes": [
+  {
+   "wd": "Q573993",
+   "name": "Blue Lagoon",
+   "name_local": "",
+   "lat": 36.01417,
+   "lon": 14.32333,
+   "iso2": "MT",
+   "adm": "",
+   "types": [
+    "lagoon"
+   ],
+   "sitelinks": 6,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Blue%20Lagoon%20and%20Cominotto.JPG",
+   "commons_cat": "Blue Lagoon (Malta)",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [
+    "Malta"
+   ],
+   "basin_countries": [],
+   "key": "wd:Q573993",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "seed": {
+    "swim": "yes",
+    "kind": "lagoon",
+    "why": "brief",
+    "note": "Comino. Malta has no natural lakes, so its water body is a sea lagoon; extremely crowded in summer",
+    "name": "Blue Lagoon"
+   },
+   "water": {
+    "class": "Excellent",
+    "class_prev": "Excellent",
+    "site": "BLUE LAGOON",
+    "type": "Coastal",
+    "km": 0.09,
+    "sites": 5,
+    "excellent": 5
+   },
+   "protected_area": {
+    "name": "Ir-Riserva Naturali tal-Għadira",
+    "kind": "Protected area",
+    "national_park": false,
+    "notable": true,
+    "km": 5.27
+   },
+   "base": {
+    "id": "gem:comino",
+    "city": "Comino",
+    "country": "Malta",
+    "km": 1.2
+   },
+   "walks": [
+    {
+     "id": 62409,
+     "name": "Comino Walk",
+     "km": 5.8
+    },
+    {
+     "id": 62407,
+     "name": "Ħondoq ir-Rummien Walk",
+     "km": 10.8
+    },
+    {
+     "id": 62408,
+     "name": "Daħlet Qorrot Walk",
+     "km": 11.3
+    }
+   ],
+   "n_walks": 5,
+   "climate": {
+    "source": "WorldClim 2.1 (1970-2000 normals, 5 arc-min)",
+    "t_mean": [
+     12.8,
+     12.6,
+     13.4,
+     15.2,
+     18.7,
+     22.7,
+     25.1,
+     26.0,
+     24.1,
+     21.0,
+     17.3,
+     14.3
+    ]
+   },
+   "prelim": 99.0,
+   "images": [
+    {
+     "file": "File:Blue Lagoon panorama (6222878608).jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/63/Blue_Lagoon_panorama_%286222878608%29.jpg/1280px-Blue_Lagoon_panorama_%286222878608%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/6/63/Blue_Lagoon_panorama_%286222878608%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 255,
+     "license": "CC BY-SA 2.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+     "author": "Shepard4711",
+     "caption": "Not really happy with how this turned out - there were just too many people moving about and the sun from the right destroyed the lighting. Oh well, tried to salvage it as best as I could. :-)",
+     "page": "https://commons.wikimedia.org/wiki/File%3ABlue_Lagoon_panorama_%286222878608%29.jpg"
+    },
+    {
+     "file": "File:Blue Lagoon and Cominotto.JPG",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Blue_Lagoon_and_Cominotto.JPG/1280px-Blue_Lagoon_and_Cominotto.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/3/3e/Blue_Lagoon_and_Cominotto.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC BY-SA 3.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+     "author": "Erik1980",
+     "caption": "The Blue Lagoon and Cominotto island",
+     "page": "https://commons.wikimedia.org/wiki/File%3ABlue_Lagoon_and_Cominotto.JPG"
+    },
+    {
+     "file": "File:Blue Lagoon (Malta) 15.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/81/Blue_Lagoon_%28Malta%29_15.jpg/1280px-Blue_Lagoon_%28Malta%29_15.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/8/81/Blue_Lagoon_%28Malta%29_15.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 853,
+     "license": "CC BY 4.0",
+     "license_url": "https://creativecommons.org/licenses/by/4.0",
+     "author": "Joseolgon",
+     "caption": "Blue Lagoon (Malta)",
+     "page": "https://commons.wikimedia.org/wiki/File%3ABlue_Lagoon_%28Malta%29_15.jpg"
+    },
+    {
+     "file": "File:Blue Lagoon (Malta) 17.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Blue_Lagoon_%28Malta%29_17.jpg/1280px-Blue_Lagoon_%28Malta%29_17.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/c/cd/Blue_Lagoon_%28Malta%29_17.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 853,
+     "license": "CC BY 4.0",
+     "license_url": "https://creativecommons.org/licenses/by/4.0",
+     "author": "Joseolgon",
+     "caption": "Blue Lagoon (Malta)",
+     "page": "https://commons.wikimedia.org/wiki/File%3ABlue_Lagoon_%28Malta%29_17.jpg"
+    },
+    {
+     "file": "File:Blue Lagoon (Malta) 16.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/Blue_Lagoon_%28Malta%29_16.jpg/1280px-Blue_Lagoon_%28Malta%29_16.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/5/55/Blue_Lagoon_%28Malta%29_16.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 853,
+     "license": "CC BY 4.0",
+     "license_url": "https://creativecommons.org/licenses/by/4.0",
+     "author": "Joseolgon",
+     "caption": "Blue Lagoon (Malta)",
+     "page": "https://commons.wikimedia.org/wiki/File%3ABlue_Lagoon_%28Malta%29_16.jpg"
+    }
+   ]
+  },
+  {
+   "wd": "Q1058683",
+   "name": "Chadwick Lakes",
+   "name_local": "Wied il-Qlejgħa",
+   "lat": 35.891944,
+   "lon": 14.39,
+   "iso2": "MT",
+   "adm": "Mtarfa",
+   "types": [
+    "valley"
+   ],
+   "sitelinks": 9,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/ChadwickLakes.jpg",
+   "commons_cat": "Chadwick Lakes",
+   "enwiki": "https://en.wikipedia.org/wiki/Chadwick_Lakes",
+   "localwiki": "https://mt.wikipedia.org/wiki/Wied_il-Qlejg%C4%A7a",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": 118,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "seed": {
+    "swim": "no",
+    "kind": "reservoir",
+    "why": "editorial",
+    "note": "a seasonal chain of dammed pools in a valley, winter and spring only",
+    "name": "Chadwick Lakes"
+   },
+   "key": "wd:Q1058683",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "protected_area": {
+    "name": "Ġonna tal-Buskett",
+    "kind": "National park",
+    "national_park": true,
+    "notable": false,
+    "km": 3.77
+   },
+   "base": {
+    "id": "gem:mdina",
+    "city": "Mdina",
+    "country": "Malta",
+    "km": 1.4
+   },
+   "walks": [
+    {
+     "id": 62404,
+     "name": "British Military Walk",
+     "km": 7.6
+    },
+    {
+     "id": 62393,
+     "name": "Baħrija Walk",
+     "km": 14.9
+    },
+    {
+     "id": 62392,
+     "name": "Mdina Walk",
+     "km": 9.6
+    }
+   ],
+   "n_walks": 7,
+   "climate": {
+    "source": "WorldClim 2.1 (1970-2000 normals, 5 arc-min)",
+    "t_mean": [
+     12.2,
+     12.1,
+     13.1,
+     15.0,
+     18.6,
+     22.6,
+     25.2,
+     25.9,
+     23.8,
+     20.5,
+     16.7,
+     13.7
+    ]
+   },
+   "prelim": 99.0,
+   "article": {
+    "lang": "en",
+    "title": "Chadwick Lakes",
+    "facts": [
+     "islands"
+    ],
+    "swim_text": "",
+    "chars": 413
+   },
+   "views60": 287,
+   "images": [
+    {
+     "file": "File:Chadwick Lakes at sunset Malta.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d2/Chadwick_Lakes_at_sunset_Malta.jpg/1280px-Chadwick_Lakes_at_sunset_Malta.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/d/d2/Chadwick_Lakes_at_sunset_Malta.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 1790,
+     "license": "CC BY-SA 4.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+     "author": "Marika Caruana",
+     "caption": "",
+     "page": "https://commons.wikimedia.org/wiki/File%3AChadwick_Lakes_at_sunset_Malta.jpg"
+    },
+    {
+     "file": "File:Butterfly in Chadwick Lakes.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Butterfly_in_Chadwick_Lakes.jpg/1280px-Butterfly_in_Chadwick_Lakes.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/3/3b/Butterfly_in_Chadwick_Lakes.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 853,
+     "license": "CC BY-SA 4.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+     "author": "Daniel Spiteri",
+     "caption": "Butterfly in Chadwick Lakes, Malta",
+     "page": "https://commons.wikimedia.org/wiki/File%3AButterfly_in_Chadwick_Lakes.jpg"
+    },
+    {
+     "file": "File:Chadwick Lakes - Central Area Malta 1.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d5/Chadwick_Lakes_-_Central_Area_Malta_1.jpg/1280px-Chadwick_Lakes_-_Central_Area_Malta_1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/d/d5/Chadwick_Lakes_-_Central_Area_Malta_1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC BY-SA 4.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+     "author": "Plutoworld",
+     "caption": "Chadwick Lakes - Central Area Malta 1",
+     "page": "https://commons.wikimedia.org/wiki/File%3AChadwick_Lakes_-_Central_Area_Malta_1.jpg"
+    },
+    {
+     "file": "File:Chadwick Lakes - Central Area Malta 2.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Chadwick_Lakes_-_Central_Area_Malta_2.jpg/1280px-Chadwick_Lakes_-_Central_Area_Malta_2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/5/53/Chadwick_Lakes_-_Central_Area_Malta_2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC BY-SA 4.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+     "author": "Plutoworld",
+     "caption": "Chadwick Lakes - Central Area Malta 2",
+     "page": "https://commons.wikimedia.org/wiki/File%3AChadwick_Lakes_-_Central_Area_Malta_2.jpg"
+    },
+    {
+     "file": "File:Chadwick Lakes and sky.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Chadwick_Lakes_and_sky.jpg/1280px-Chadwick_Lakes_and_sky.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/1/15/Chadwick_Lakes_and_sky.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC BY-SA 4.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+     "author": "Status Post",
+     "caption": "Chadwick Lakes in Malta",
+     "page": "https://commons.wikimedia.org/wiki/File%3AChadwick_Lakes_and_sky.jpg"
+    }
+   ]
+  },
+  {
+   "wd": "Q1405535",
+   "name": "Għadira Nature Reserve",
+   "name_local": "",
+   "lat": 35.969763,
+   "lon": 14.347107,
+   "iso2": "MT",
+   "adm": "Mellieħa",
+   "types": [
+    "nature reserve"
+   ],
+   "sitelinks": 5,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/GhadiraNatureReserveMarshes.jpg",
+   "commons_cat": "Għadira Nature Reserve",
+   "enwiki": "https://en.wikipedia.org/wiki/G%C4%A7adira",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "seed": {
+    "swim": "no",
+    "kind": "lagoon",
+    "why": "editorial",
+    "note": "the island's main freshwater wetland, birds, no access to the water",
+    "name": "Ghadira Nature Reserve"
+   },
+   "key": "wd:Q1405535",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "water": {
+    "class": "Excellent",
+    "class_prev": "Excellent",
+    "site": "IL-BAJJA TAL-MELLIEHA OPPOSITE MAXIMA",
+    "type": "Coastal",
+    "km": 0.35,
+    "sites": 10,
+    "excellent": 9
+   },
+   "protected_area": {
+    "name": "Ir-Riserva Naturali tal-Għadira",
+    "kind": "Protected area",
+    "national_park": false,
+    "notable": true,
+    "km": 0.12
+   },
+   "base": {
+    "id": "gem:mellie-a",
+    "city": "Mellieħa",
+    "country": "Malta",
+    "km": 2.0
+   },
+   "walks": [
+    {
+     "id": 62386,
+     "name": "Watch Tower Walk",
+     "km": 15.7
+    },
+    {
+     "id": 62383,
+     "name": "MMV Tour 4",
+     "km": 6.7
+    },
+    {
+     "id": 62409,
+     "name": "Comino Walk",
+     "km": 5.8
+    }
+   ],
+   "n_walks": 3,
+   "climate": {
+    "source": "WorldClim 2.1 (1970-2000 normals, 5 arc-min)",
+    "t_mean": [
+     12.8,
+     12.7,
+     13.6,
+     15.4,
+     18.9,
+     22.9,
+     25.4,
+     26.2,
+     24.2,
+     21.0,
+     17.3,
+     14.3
+    ]
+   },
+   "prelim": 99.0,
+   "article": {
+    "lang": "en",
+    "title": "Għadira",
+    "facts": [
+     "protected"
+    ],
+    "swim_text": "",
+    "chars": 628
+   },
+   "views60": 126,
+   "images": [
+    {
+     "file": "File:Chameleon in Għadira Nature Reserve, Malta.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4d/Chameleon_in_G%C4%A7adira_Nature_Reserve%2C_Malta.jpg/1280px-Chameleon_in_G%C4%A7adira_Nature_Reserve%2C_Malta.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/4/4d/Chameleon_in_G%C4%A7adira_Nature_Reserve%2C_Malta.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 1024,
+     "license": "CC BY-SA 4.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+     "author": "John Cummings",
+     "caption": "Chameleon in Għadira Nature Reserve, Malta",
+     "page": "https://commons.wikimedia.org/wiki/File%3AChameleon_in_G%C4%A7adira_Nature_Reserve%2C_Malta.jpg"
+    },
+    {
+     "file": "File:Chameleon at Għadira Nature Reserve, Malta.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/Chameleon_at_G%C4%A7adira_Nature_Reserve%2C_Malta.jpg/1280px-Chameleon_at_G%C4%A7adira_Nature_Reserve%2C_Malta.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/c/cb/Chameleon_at_G%C4%A7adira_Nature_Reserve%2C_Malta.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 1024,
+     "license": "CC BY-SA 4.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+     "author": "John Cummings",
+     "caption": "Chameleon at Għadira Nature Reserve, Malta",
+     "page": "https://commons.wikimedia.org/wiki/File%3AChameleon_at_G%C4%A7adira_Nature_Reserve%2C_Malta.jpg"
+    },
+    {
+     "file": "File:Bird Hide, Ghadira Nature Reserve, Mellieha, Malta-DSC04605.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/Bird_Hide%2C_Ghadira_Nature_Reserve%2C_Mellieha%2C_Malta-DSC04605.jpg/1280px-Bird_Hide%2C_Ghadira_Nature_Reserve%2C_Mellieha%2C_Malta-DSC04605.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/9/97/Bird_Hide%2C_Ghadira_Nature_Reserve%2C_Mellieha%2C_Malta-DSC04605.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 898,
+     "license": "CC BY-SA 4.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+     "author": "Arjuno3",
+     "caption": "Inside the Bird Hide, Għadira Nature Reserve, Mellieħa, Malta",
+     "page": "https://commons.wikimedia.org/wiki/File%3ABird_Hide%2C_Ghadira_Nature_Reserve%2C_Mellieha%2C_Malta-DSC04605.jpg"
+    },
+    {
+     "file": "File:Ghadira Wetland Reserve (6956279415).jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/57/Ghadira_Wetland_Reserve_%286956279415%29.jpg/1280px-Ghadira_Wetland_Reserve_%286956279415%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/5/57/Ghadira_Wetland_Reserve_%286956279415%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 853,
+     "license": "CC BY 2.0",
+     "license_url": "https://creativecommons.org/licenses/by/2.0",
+     "author": "Tony Hisgett from Birmingham, UK",
+     "caption": "Ghadira Wetland Reserve",
+     "page": "https://commons.wikimedia.org/wiki/File%3AGhadira_Wetland_Reserve_%286956279415%29.jpg"
+    },
+    {
+     "file": "File:Għadira Nature Reserve hide, Malta.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/G%C4%A7adira_Nature_Reserve_hide%2C_Malta.jpg/1280px-G%C4%A7adira_Nature_Reserve_hide%2C_Malta.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/f/f2/G%C4%A7adira_Nature_Reserve_hide%2C_Malta.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 888,
+     "license": "CC BY-SA 4.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+     "author": "John Cummings",
+     "caption": "Għadira Nature Reserve hide, Malta",
+     "page": "https://commons.wikimedia.org/wiki/File%3AG%C4%A7adira_Nature_Reserve_hide%2C_Malta.jpg"
+    }
+   ]
+  },
+  {
+   "wd": "Q1639436",
+   "name": "Dwejra Inland Sea",
+   "name_local": "Il-Qawra",
+   "lat": 36.05374,
+   "lon": 14.19121,
+   "iso2": "MT",
+   "adm": "",
+   "types": [
+    "lagoon",
+    "natural arch"
+   ],
+   "sitelinks": 15,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Dwejra%20Inland%20Sea%20Tunnel%201.jpg",
+   "commons_cat": "Inland Sea, Gozo",
+   "enwiki": "https://en.wikipedia.org/wiki/Inland_Sea,_Gozo",
+   "localwiki": "https://mt.wikipedia.org/wiki/Dwejra",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": 31,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q1639436",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "water": {
+    "class": "Excellent",
+    "class_prev": "Excellent",
+    "site": "DWEJRA INLAND SEA",
+    "type": "Coastal",
+    "km": 0.03,
+    "sites": 1,
+    "excellent": 1
+   },
+   "base": {
+    "id": "gem:gozo",
+    "city": "Gozo",
+    "country": "Malta",
+    "km": 5.3
+   },
+   "walks": [
+    {
+     "id": 62415,
+     "name": "Church Trail - Gozo North/North-West",
+     "km": 2.6
+    },
+    {
+     "id": 62412,
+     "name": "Ta' Ġurdan Walk",
+     "km": 10.2
+    },
+    {
+     "id": 62413,
+     "name": "Church Trail - Gozo Central/South",
+     "km": 7.3
+    }
+   ],
+   "n_walks": 5,
+   "climate": {
+    "source": "WorldClim 2.1 (1970-2000 normals, 5 arc-min)",
+    "t_mean": [
+     12.7,
+     12.5,
+     13.3,
+     15.1,
+     18.7,
+     22.7,
+     25.2,
+     26.0,
+     24.1,
+     20.8,
+     17.1,
+     14.2
+    ]
+   },
+   "prelim": 8.538,
+   "article": {
+    "lang": "en",
+    "title": "Inland Sea, Gozo",
+    "facts": [
+     "beach",
+     "cliffs",
+     "fishing",
+     "islands",
+     "shallow",
+     "turquoise"
+    ],
+    "swim_text": "",
+    "chars": 1087
+   },
+   "views60": 1767,
+   "images": [
+    {
+     "file": "File:Dwejra-04-Inland Sea-Durchbruch zum Meer-1989-gje.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3d/Dwejra-04-Inland_Sea-Durchbruch_zum_Meer-1989-gje.jpg/1280px-Dwejra-04-Inland_Sea-Durchbruch_zum_Meer-1989-gje.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/3/3d/Dwejra-04-Inland_Sea-Durchbruch_zum_Meer-1989-gje.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 832,
+     "license": "CC BY-SA 4.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+     "author": "Gerd Eichmann",
+     "caption": "Dwejra on Gozo in Malta",
+     "page": "https://commons.wikimedia.org/wiki/File%3ADwejra-04-Inland_Sea-Durchbruch_zum_Meer-1989-gje.jpg"
+    },
+    {
+     "file": "File:Gozo Inlandsea and Cave.JPG",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Gozo_Inlandsea_and_Cave.JPG/1280px-Gozo_Inlandsea_and_Cave.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/f/f2/Gozo_Inlandsea_and_Cave.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 851,
+     "license": "CC BY-SA 3.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+     "author": "Wusel007",
+     "caption": "Inland Sea on Island Gozo with connection to the Sea",
+     "page": "https://commons.wikimedia.org/wiki/File%3AGozo_Inlandsea_and_Cave.JPG"
+    },
+    {
+     "file": "File:Inland Sea Gozo Malta 2014 1.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/db/Inland_Sea_Gozo_Malta_2014_1.jpg/1280px-Inland_Sea_Gozo_Malta_2014_1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/d/db/Inland_Sea_Gozo_Malta_2014_1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 746,
+     "license": "CC BY-SA 3.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+     "author": "Karelj",
+     "caption": "View from boat on lagoon caled Inland Sea with tunnel in rocks to the open sea on Gozo island, Malta",
+     "page": "https://commons.wikimedia.org/wiki/File%3AInland_Sea_Gozo_Malta_2014_1.jpg"
+    },
+    {
+     "file": "File:Cliffs in Dwejra Bay(26402822626).jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Cliffs_in_Dwejra_Bay%2826402822626%29.jpg/1280px-Cliffs_in_Dwejra_Bay%2826402822626%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/c/c5/Cliffs_in_Dwejra_Bay%2826402822626%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 852,
+     "license": "CC BY-SA 2.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+     "author": "portengaround",
+     "caption": "Cliffs in Dwejra Bay on Gozo in Malta.",
+     "page": "https://commons.wikimedia.org/wiki/File%3ACliffs_in_Dwejra_Bay%2826402822626%29.jpg"
+    },
+    {
+     "file": "File:Gozo Inland Sea Luzzu.JPG",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cf/Gozo_Inland_Sea_Luzzu.JPG/1280px-Gozo_Inland_Sea_Luzzu.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/c/cf/Gozo_Inland_Sea_Luzzu.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC BY-SA 4.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+     "author": "TeWeBs",
+     "caption": "A Luzzu boat on the Inland Sea on Gozo. With such boats, sightseeing trips are made on the lake and through the natural Inland Sea Tunnel to the open sea.",
+     "page": "https://commons.wikimedia.org/wiki/File%3AGozo_Inland_Sea_Luzzu.JPG"
+    }
+   ]
+  }
+ ]
+}

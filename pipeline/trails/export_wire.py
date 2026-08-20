@@ -68,10 +68,19 @@ REVIEWS_DDL = ROOT / "tools" / "trailslab" / "initdb" / "04_trip_reviews.sql"
 REVIEWER = "pipeline:trails_export"
 
 # Douglas-Peucker tolerance in metres, applied in EPSG:3035 so it means the
-# same thing from Marseille to Tromso. 20 m keeps a trail's shape honest well
-# past the zoom where a whole route fits the screen, and is far below the
-# 30 m DEM step the elevation figures come from.
-SIMPLIFY_M = 20.0
+# same thing from Marseille to Tromso.
+#
+# 20 m was right when a country shipped 13 routes. At 150 it is not: France
+# carried 44 routes in 692 KB, so the same tolerance over a full list would
+# make the browser fetch well over 2 MB before it can draw a single card.
+#
+# The line in the country file is a PLACEHOLDER. It exists so the trail page
+# can sketch the route in the moment between the card being tapped and
+# trip/{id}.json arriving, after which the full-resolution geometry replaces
+# it and is what the map, the GPX and the follow maths all use. 90 m is
+# invisible at the zoom where a whole route fits the screen and cuts the
+# country files by roughly four fifths.
+SIMPLIFY_M = 90.0
 
 # Wire coordinate precision. 5 decimals is about 1.1 m of longitude at the
 # equator and less further north: below the simplification tolerance, so it
@@ -97,6 +106,12 @@ ELEVATION_KEYS = ("profile", "step_m", "ele_min_m", "ele_max_m",
 # ST_Multi on both: simplifying a single-part route hands back a LineString,
 # and a wire whose geometry type depends on how many parts a trail happens to
 # have would make every consumer branch. Always MultiLineString.
+# Publishes the REPAIRED geometry when there is a fresh accepted one, which is
+# how a route whose relation had a seven metre break ships as the continuous
+# line it is on the ground. `eff` resolves that once and every geometry
+# expression below reads it, so the extent, the placeholder line, the
+# full-resolution line and the point count can never disagree about which
+# geometry this trip is.
 TRIPS_SQL = """
     SELECT t.id, t.country, t.category::text, t.title, t.description_md,
            t.distance_m, t.ascent_m, t.descent_m, t.duration_min,
@@ -104,17 +119,29 @@ TRIPS_SQL = """
            t.source, t.license, t.attribution_text,
            t.quality_score, t.status::text, t.updated_at,
            t.raw_tags, t.elevation,
-           ST_NPoints(t.geom) AS n_full,
-           ST_XMin(t.geom), ST_YMin(t.geom), ST_XMax(t.geom), ST_YMax(t.geom),
+           t.rating, t.rating_parts, t.is_loop, t.loop_source, t.highlights,
+           eff.info AS repair_info,
+           ST_NPoints(eff.geom) AS n_full,
+           ST_XMin(eff.geom), ST_YMin(eff.geom),
+           ST_XMax(eff.geom), ST_YMax(eff.geom),
            ST_AsGeoJSON(
                ST_Multi(ST_Force2D(ST_Transform(ST_SimplifyPreserveTopology(
-                   ST_Transform(t.geom, 3035), %(tol)s), 4326))),
+                   ST_Transform(eff.geom, 3035), %(tol)s), 4326))),
                %(wire_dp)s) AS wire_geom,
-           ST_AsGeoJSON(ST_Multi(t.geom), %(full_dp)s) AS full_geom
+           ST_AsGeoJSON(ST_Multi(eff.geom), %(full_dp)s) AS full_geom
     FROM trips t
+    CROSS JOIN LATERAL (
+        SELECT COALESCE(r.geom, t.geom) AS geom, r.repair_info AS info
+        FROM (SELECT 1) one
+        LEFT JOIN trip_repairs r
+          ON r.trip_id = t.id AND r.repaired
+         AND r.repair_info->>'source_geom_md5'
+             = md5(ST_AsBinary(ST_Force2D(t.geom)))
+    ) eff
     WHERE t.status::text = ANY(%(statuses)s)
       AND (%(countries)s::text[] IS NULL OR t.country = ANY(%(countries)s))
-    ORDER BY t.country, t.category, t.quality_score DESC NULLS LAST, t.id
+    ORDER BY t.country, t.category, t.rating DESC NULLS LAST,
+             t.quality_score DESC NULLS LAST, t.id
 """
 
 TRIP_COLS = ("id", "country", "category", "title", "description",
@@ -122,6 +149,8 @@ TRIP_COLS = ("id", "country", "category", "title", "description",
              "difficulty", "sac_scale", "network",
              "source", "license", "attribution_text",
              "quality", "status", "updated_at", "raw_tags", "elevation",
+             "rating", "rating_parts", "is_loop", "loop_source", "highlights",
+             "repair_info",
              "n_full", "xmin", "ymin", "xmax", "ymax",
              "wire_geom", "full_geom")
 
@@ -143,6 +172,78 @@ def published_ids(conn):
     with conn.cursor() as cur:
         cur.execute("SELECT id FROM trips WHERE status = 'published'::trip_status")
         return {r[0] for r in cur.fetchall()}
+
+
+COMMONS_CREDIT = ("Photographs from Wikimedia Commons, "
+                  "per-file licences on record")
+
+# Commons' Artist field is free-form wikitext, and a good number of uploads
+# put the licence there instead of a name: "This file is available under the
+# Creative Commons ...". Printed as an author under a photograph that reads
+# as nonsense, and worse, it looks like we mangled the credit. When the field
+# is not a name we ship no author and let the licence line stand alone, which
+# is what the licence actually requires when no author is asserted.
+NOT_A_NAME_RE = re.compile(
+    r"^\s*(this file|the (copyright|original)|available under|licen[cs]ed?|"
+    r"creative commons|public domain|unknown|no machine[- ]readable)", re.I)
+LICENCE_BLURB_RE = re.compile(
+    r"available under|creative commons attribution|gnu free documentation",
+    re.I)
+
+
+def clean_author(raw):
+    """The photographer's name, or None when the field is not one."""
+    text = " ".join(str(raw or "").split())
+    if not text or len(text) > 120:
+        return None
+    if NOT_A_NAME_RE.match(text) or LICENCE_BLURB_RE.search(text):
+        return None
+    return text
+
+
+# The MediaWiki imageinfo API appends its own campaign tracking to every
+# thumbnail URL it hands back ("?utm_source=commons.wikimedia.org&
+# utm_campaign=imageinfo&..."). It is theirs, not ours, it says nothing about
+# the file, and shipping it puts a tracking query string in front of every
+# reader. The bare thumbnail URL serves the identical image.
+UTM_RE = re.compile(r"[?&]utm_[^&]*")
+
+
+def clean_url(url):
+    if not url:
+        return url
+    cleaned = UTM_RE.sub("", str(url))
+    # Removing the first parameter can leave a dangling separator.
+    return cleaned.replace("?&", "?").rstrip("?&")
+
+
+def fetch_images(conn, ids):
+    """Ranked photographs per trip, hero first.
+
+    Only rows the photo pass ranked: the citytrip layer stores unranked
+    candidates in the same table and those are borrowed city pictures, which
+    is exactly what this layer exists to stop showing on a trail."""
+    if not ids:
+        return {}
+    out = defaultdict(list)
+    with conn.cursor() as cur:
+        cur.execute("""
+            SELECT subject_id, rank, url, title, author, license, license_url,
+                   source_url, width, height, caption, along_m
+            FROM images
+            WHERE subject_type = 'trip' AND subject_id = ANY(%s)
+              AND rank IS NOT NULL
+            ORDER BY subject_id, rank""", (ids,))
+        for (tid, rank, url, title, author, lic, lic_url, page, w, h,
+             caption, along_m) in cur.fetchall():
+            out[tid].append({
+                "u": clean_url(url), "w": w, "h": h, "rank": rank,
+                "title": (title or "").replace("File:", ""),
+                "author": clean_author(author), "license": lic,
+                "license_url": lic_url or None, "page": page,
+                "caption": caption or None, "along_m": along_m,
+            })
+    return out
 
 
 def fetch_stops(conn, ids):
@@ -248,6 +349,47 @@ def elevation_of(raw):
     return {k: raw[k] for k in ELEVATION_KEYS if raw.get(k) is not None}
 
 
+# How many reasons a card carries. The list shows one or two; the page
+# shows the lot, and it reads them from the detail file.
+WIRE_REASONS = 3
+
+
+def reasons_of(rating_parts, limit=None):
+    """The reason codes rate.py wrote, trimmed for the wire.
+
+    Codes and numbers only. The sentence is composed in the app through t(),
+    so it lands in six languages instead of being frozen in English here."""
+    reasons = (rating_parts or {}).get("reasons") or []
+    return reasons[:limit] if limit else reasons
+
+
+def bridges_of(repair_info):
+    """How much of a published line was joined rather than mapped."""
+    info = repair_info or {}
+    if info.get("method") != "straight-splice" or not info.get("bridges"):
+        return None
+    return {
+        "n": int(info["bridges"]),
+        "max_m": info.get("max_bridge_m"),
+        "total_m": info.get("total_bridge_m"),
+    }
+
+
+def highlights_of(raw):
+    """The named things on the line, in walking order, for the detail file."""
+    features = (raw or {}).get("features") or []
+    if not features:
+        return None
+    return [{
+        "kind": f.get("kind"),
+        "name": f.get("name"),
+        "ele_m": f.get("ele_m"),
+        "along_m": f.get("along_m"),
+        "lat": f.get("lat"),
+        "lon": f.get("lon"),
+    } for f in features]
+
+
 def wire_item(t, n_stops):
     """One trip as the country file carries it: enough to list it, filter it,
     draw it and credit it, and a pointer to the rest."""
@@ -269,6 +411,18 @@ def wire_item(t, n_stops):
         "attribution_text": t["attribution_text"],
         "detail": f"/trails/trip/{t['id']}.json",
     }
+    if t.get("rating") is not None:
+        item["rating"] = float(t["rating"])
+    if t.get("is_loop") is not None:
+        item["is_loop"] = bool(t["is_loop"])
+    reasons = reasons_of(t.get("rating_parts"), WIRE_REASONS)
+    if reasons:
+        item["reasons"] = reasons
+    # The hero, and only the hero. A card shows one picture; the gallery is
+    # part of the detail file, which is fetched when the trail is opened.
+    hero = (t.get("images") or [None])[0]
+    if hero:
+        item["img"] = {"u": hero["u"], "w": hero["w"], "h": hero["h"]}
     if n_stops:
         item["n_stops"] = n_stops
     anchor = anchor_of(t["raw_tags"])
@@ -305,6 +459,28 @@ def detail_item(t, stops, generated_at):
     elevation = elevation_of(t["elevation"])
     if elevation:
         out["elevation"] = elevation
+    if t.get("rating") is not None:
+        out["rating"] = float(t["rating"])
+        out["rating_model"] = (t.get("rating_parts") or {}).get("model")
+        out["rating_parts"] = (t.get("rating_parts") or {}).get("components")
+    if t.get("is_loop") is not None:
+        out["is_loop"] = bool(t["is_loop"])
+        out["loop_source"] = t.get("loop_source")
+    reasons = reasons_of(t.get("rating_parts"))
+    if reasons:
+        out["reasons"] = reasons
+    highlights = highlights_of(t.get("highlights"))
+    if highlights:
+        out["highlights"] = highlights
+    # A straight connector is a claim about ground nobody checked, so it is
+    # said out loud rather than smoothed over (pipeline/trails/splice.py).
+    bridges = bridges_of(t.get("repair_info"))
+    if bridges:
+        out["bridges"] = bridges
+    images = t.get("images") or []
+    if images:
+        out["images"] = images
+        out["image_credit"] = COMMONS_CREDIT
     if stops:
         out["stops"] = stops
     return out
@@ -312,14 +488,20 @@ def detail_item(t, stops, generated_at):
 
 def country_file(country, items, generated_at, tolerance):
     counts = Counter(i["category"] for i in items)
+    credits = {i["attribution_text"] for i in items if i["attribution_text"]}
+    if any(i.get("img") for i in items):
+        credits.add(COMMONS_CREDIT)
+    n_loops = sum(1 for i in items if i.get("is_loop"))
     return {
         "country": country,
         "generated_at": generated_at,
         "simplify_m": tolerance,
         "n_trips": len(items),
         "counts": dict(sorted(counts.items())),
-        "attribution": sorted({i["attribution_text"] for i in items
-                               if i["attribution_text"]}),
+        # What a filter can offer before the file is read: the app uses these
+        # to decide whether a loop chip is worth showing for this country.
+        "n_loops": n_loops,
+        "attribution": sorted(credits),
         "trips": items,
     }
 
@@ -459,7 +641,13 @@ def main():
             print(f"  SKIPPED [{t['id']}] {t['title'][:48]}: {t['skipped']}")
         trips = [t for t in trips if not t.get("skipped")]
 
-    stops = fetch_stops(conn, [t["id"] for t in trips])
+    trip_ids = [t["id"] for t in trips]
+    stops = fetch_stops(conn, trip_ids)
+    images = fetch_images(conn, trip_ids)
+    for t in trips:
+        t["images"] = images.get(t["id"], [])
+    n_shot = sum(1 for t in trips if t["images"])
+    print(f"  {n_shot} of {len(trips)} trip(s) carry a photograph of the route")
     live_ids = published_ids(conn)
     conn.commit()
     conn.close()

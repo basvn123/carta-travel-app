@@ -1,0 +1,137 @@
+{
+ "country": "LI",
+ "harvested_at": "2026-08-20T18:22:50+00:00",
+ "n_wikidata": 4,
+ "n_seeded": 1,
+ "seed_missing": [],
+ "lakes": [
+  {
+   "wd": "Q63646543",
+   "name": "Spörry-Weiher",
+   "name_local": "Spörry-Weiher",
+   "lat": 47.152,
+   "lon": 9.53307,
+   "iso2": "LI",
+   "adm": "",
+   "types": [
+    "artificial lake"
+   ],
+   "sitelinks": 0,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q63646543",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q156543",
+   "name": "Gampriner Seele",
+   "name_local": "Gampriner Seele",
+   "lat": 47.225,
+   "lon": 9.509167,
+   "iso2": "LI",
+   "adm": "Liechtenstein",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 18,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Gampriner%20Seele.jpg",
+   "commons_cat": "Gampriner Seelein",
+   "enwiki": "https://en.wikipedia.org/wiki/Gampriner_Seele",
+   "localwiki": "https://de.wikipedia.org/wiki/Gampriner_Seelein",
+   "area_km2": 0.026,
+   "depth_m": null,
+   "elev_m": 435,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Liechtenstein"
+   ],
+   "key": "wd:Q156543",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q15056466",
+   "name": "Gänglesee",
+   "name_local": "Gänglesee",
+   "lat": 47.107085,
+   "lon": 9.577705,
+   "iso2": "LI",
+   "adm": "Liechtenstein",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Gaenglesee01.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://de.wikipedia.org/wiki/G%C3%A4nglesee",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": 1301,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q15056466",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "seed": {
+    "swim": "limited",
+    "kind": "reservoir",
+    "why": "brief",
+    "haz": [
+     "cold_shock"
+    ],
+    "note": "Steg, the principality's one mountain reservoir",
+    "name": "Ganglesee"
+   }
+  },
+  {
+   "wd": "Q21041916",
+   "name": "Stausee Steg",
+   "name_local": "Stausee Steg",
+   "lat": 47.1095,
+   "lon": 9.57678,
+   "iso2": "LI",
+   "adm": "Liechtenstein",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Steg%2C%20Liechtenstein.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://de.wikipedia.org/wiki/Stausee_Steg",
+   "area_km2": 0.32,
+   "depth_m": null,
+   "elev_m": 1295,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q21041916",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  }
+ ]
+}

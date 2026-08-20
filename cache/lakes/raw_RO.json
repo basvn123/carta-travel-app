@@ -1,0 +1,5040 @@
+{
+ "country": "RO",
+ "harvested_at": "2026-08-20T18:35:48+00:00",
+ "n_wikidata": 169,
+ "n_seeded": 6,
+ "seed_missing": [],
+ "lakes": [
+  {
+   "wd": "Q302019",
+   "name": "Lacul Zănoaga Mare",
+   "name_local": "Lacul Zănoaga Mare",
+   "lat": 45.346111,
+   "lon": 22.822222,
+   "iso2": "RO",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Lacul%20Z%C4%83noaga.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://ro.wikipedia.org/wiki/Lacul_Z%C4%83noaga_Mare",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q302019",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q511976",
+   "name": "Lake Vidraru",
+   "name_local": "Lacul Vidraru",
+   "lat": 45.383333,
+   "lon": 24.633333,
+   "iso2": "RO",
+   "adm": "",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 17,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Llac%20Vidraru.jpg",
+   "commons_cat": "Vidraru Lake",
+   "enwiki": "https://en.wikipedia.org/wiki/Lake_Vidraru",
+   "localwiki": "https://ro.wikipedia.org/wiki/Lacul_Vidraru",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Romania"
+   ],
+   "key": "wd:Q511976",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "seed": {
+    "swim": "limited",
+    "kind": "reservoir",
+    "why": "brief",
+    "note": "on the Transfagarasan, the dam and the statue",
+    "name": "Lake Vidraru"
+   }
+  },
+  {
+   "wd": "Q599713",
+   "name": "Vidra Lake",
+   "name_local": "Barajul Vidra",
+   "lat": 45.430556,
+   "lon": 23.733333,
+   "iso2": "RO",
+   "adm": "Vâlcea County",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 8,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/RO%20VL%20Vidra%2031.jpg",
+   "commons_cat": "Vidra Dam",
+   "enwiki": "https://en.wikipedia.org/wiki/Vidra_Lake",
+   "localwiki": "https://ro.wikipedia.org/wiki/Barajul_Vidra",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Romania"
+   ],
+   "key": "wd:Q599713",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q641189",
+   "name": "Lake Sinoe",
+   "name_local": "Lacul Sinoe",
+   "lat": 44.633333,
+   "lon": 28.883333,
+   "iso2": "RO",
+   "adm": "Romania",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 9,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Danube%20delta%20Landsat%202000.jpeg",
+   "commons_cat": "",
+   "enwiki": "https://en.wikipedia.org/wiki/Lake_Sinoe",
+   "localwiki": "https://ro.wikipedia.org/wiki/Limanul_Sinoe",
+   "area_km2": null,
+   "depth_m": 1.6,
+   "elev_m": 0,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Romania"
+   ],
+   "key": "wd:Q641189",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q665510",
+   "name": "Lake Siutghiol",
+   "name_local": "Lacul Siutghiol",
+   "lat": 44.246389,
+   "lon": 28.6,
+   "iso2": "RO",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 19,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Lake%20Siutghiol.jpg",
+   "commons_cat": "Lake Siutghiol",
+   "enwiki": "https://en.wikipedia.org/wiki/Lake_Siutghiol",
+   "localwiki": "https://ro.wikipedia.org/wiki/Limanul_Siutghiol",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Romania"
+   ],
+   "key": "wd:Q665510",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q794973",
+   "name": "Bâlea Lak",
+   "name_local": "Lacul Bâlea",
+   "lat": 45.602,
+   "lon": 24.617,
+   "iso2": "RO",
+   "adm": "Cârțișoara",
+   "types": [
+    "glacial lake"
+   ],
+   "sitelinks": 22,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Baleasee.jpg",
+   "commons_cat": "Bâlea Lake",
+   "enwiki": "https://en.wikipedia.org/wiki/B%C3%A2lea_Lake",
+   "localwiki": "https://ro.wikipedia.org/wiki/Lacul_B%C3%A2lea",
+   "area_km2": 0.0465,
+   "depth_m": 11.3,
+   "elev_m": 2034,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Romania"
+   ],
+   "key": "wd:Q794973",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "seed": {
+    "swim": "no",
+    "kind": "tarn",
+    "why": "editorial",
+    "haz": [
+     "cold_shock"
+    ],
+    "note": "2,034 m on the Transfagarasan, the ice hotel in winter",
+    "name": "Balea Lake"
+   }
+  },
+  {
+   "wd": "Q851764",
+   "name": "Bucura Lake",
+   "name_local": "Lacul Bucura",
+   "lat": 45.358333,
+   "lon": 22.875,
+   "iso2": "RO",
+   "adm": "Râu de Mori",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 20,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Lacul%20Bucura%2C%20Lacul%20Ana%20a%20Lacul%20Bucurelu.jpg",
+   "commons_cat": "Lacul Bucura",
+   "enwiki": "https://en.wikipedia.org/wiki/Bucura_Lake",
+   "localwiki": "https://ro.wikipedia.org/wiki/Lacul_Bucura",
+   "area_km2": 0.105,
+   "depth_m": 16.0,
+   "elev_m": 2040,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Romania"
+   ],
+   "key": "wd:Q851764",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q854060",
+   "name": "Lake Izvorul Muntelui",
+   "name_local": "Lacul Izvorul Muntelui",
+   "lat": 47.019589,
+   "lon": 26.054081,
+   "iso2": "RO",
+   "adm": "Walloon Region",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 18,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Baraj%20Bicaz%20vedere%20spre%20lacul%20Izvorul%20Muntelui.jpg",
+   "commons_cat": "Bicaz Lake",
+   "enwiki": "https://en.wikipedia.org/wiki/Lake_Izvorul_Muntelui",
+   "localwiki": "https://ro.wikipedia.org/wiki/Lacul_Izvorul_Muntelui",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Romania"
+   ],
+   "key": "wd:Q854060",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "seed": {
+    "swim": "limited",
+    "kind": "reservoir",
+    "why": "editorial",
+    "note": "the largest Romanian reservoir, Ceahlau above it",
+    "name": "Lacul Izvorul Muntelui"
+   }
+  },
+  {
+   "wd": "Q855254",
+   "name": "Bözödi Lake",
+   "name_local": "Barajul Bezid",
+   "lat": 46.4175,
+   "lon": 24.87833,
+   "iso2": "RO",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 3,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/B%C3%B6z%C3%B6di-t%C3%B33.jpg",
+   "commons_cat": "Bözödi Lake",
+   "enwiki": "",
+   "localwiki": "https://ro.wikipedia.org/wiki/Barajul_Bezid",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q855254",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q873977",
+   "name": "Cinciș Lake",
+   "name_local": "Lacul Cinciș",
+   "lat": 45.690833,
+   "lon": 22.858056,
+   "iso2": "RO",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 3,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Cincis%20Lake.jpg",
+   "commons_cat": "Cinciș Lake",
+   "enwiki": "",
+   "localwiki": "https://ro.wikipedia.org/wiki/Lacul_Cinci%C8%99",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q873977",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q874738",
+   "name": "Lacul Știucilor",
+   "name_local": "Lacul Știucilor",
+   "lat": 46.966971,
+   "lon": 23.900928,
+   "iso2": "RO",
+   "adm": "Fizeșu Gherlii",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 3,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/RO%20CJ%20Lacul%20Stiucilor%20%287%29.JPG",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://ro.wikipedia.org/wiki/Lacul_%C8%98tiucilor",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q874738",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q924912",
+   "name": "Lake Sfânta Ana",
+   "name_local": "Lacul Sfânta Ana",
+   "lat": 46.126389,
+   "lon": 25.888056,
+   "iso2": "RO",
+   "adm": "",
+   "types": [
+    "volcanic crater lake"
+   ],
+   "sitelinks": 19,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Szent%20Anna-t%C3%B3-1.jpg",
+   "commons_cat": "Lake Saint Anne",
+   "enwiki": "https://en.wikipedia.org/wiki/Lake_Sf%C3%A2nta_Ana",
+   "localwiki": "https://ro.wikipedia.org/wiki/Lacul_Sf%C3%A2nta_Ana",
+   "area_km2": 0.193,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Romania"
+   ],
+   "key": "wd:Q924912",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "seed": {
+    "swim": "limited",
+    "kind": "crater",
+    "why": "brief",
+    "note": "the only crater lake in Romania, protected, rules change by season",
+    "name": "Lacul Sfanta Ana"
+   }
+  },
+  {
+   "wd": "Q1029508",
+   "name": "Red Lake",
+   "name_local": "Lacul Roșu",
+   "lat": 46.78931,
+   "lon": 25.7869,
+   "iso2": "RO",
+   "adm": "Lacu Roșu",
+   "types": [
+    "lake",
+    "landslide-dammed lake"
+   ],
+   "sitelinks": 14,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/800px-Gyilkost%C3%B3%204.jpg",
+   "commons_cat": "Red Lake (Romania)",
+   "enwiki": "https://en.wikipedia.org/wiki/Red_Lake_(Romania)",
+   "localwiki": "https://ro.wikipedia.org/wiki/Lacul_Ro%C8%99u",
+   "area_km2": 0.114,
+   "depth_m": 16.0,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Romania"
+   ],
+   "key": "wd:Q1029508",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "seed": {
+    "swim": "no",
+    "kind": "lake",
+    "why": "brief",
+    "note": "the drowned forest, boats only, no swimming",
+    "name": "Lacul Rosu"
+   }
+  },
+  {
+   "wd": "Q1148231",
+   "name": "Morii Lake",
+   "name_local": "Lacul Morii",
+   "lat": 44.455556,
+   "lon": 26.025278,
+   "iso2": "RO",
+   "adm": "Bucharest",
+   "types": [
+    "reservoir",
+    "artificial lake"
+   ],
+   "sitelinks": 8,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Lacul%20Morii.png",
+   "commons_cat": "Lacul Morii",
+   "enwiki": "https://en.wikipedia.org/wiki/Lacul_Morii",
+   "localwiki": "https://ro.wikipedia.org/wiki/Lacul_Morii",
+   "area_km2": 2.46,
+   "depth_m": 7.0,
+   "elev_m": 78,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Romania"
+   ],
+   "key": "wd:Q1148231",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q1175336",
+   "name": "Lake Ursu",
+   "name_local": "Lacul Ursu și arboretele de pe sărături",
+   "lat": 46.60611,
+   "lon": 25.08528,
+   "iso2": "RO",
+   "adm": "",
+   "types": [
+    "nature reserve",
+    "salt lake"
+   ],
+   "sitelinks": 5,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Sovata%202.jpg",
+   "commons_cat": "Lake Ursu",
+   "enwiki": "",
+   "localwiki": "https://ro.wikipedia.org/wiki/Lacul_Ursu_%C8%99i_arboretele_de_pe_s%C4%83r%C4%83turi",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q1175336",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q1541429",
+   "name": "Lake Techirghiol",
+   "name_local": "Lacul Techirghiol",
+   "lat": 44.041667,
+   "lon": 28.633333,
+   "iso2": "RO",
+   "adm": "Constanța County",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 16,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Lacul%20Techirghiol.png",
+   "commons_cat": "Techirghiol Lagoon",
+   "enwiki": "https://en.wikipedia.org/wiki/Lake_Techirghiol",
+   "localwiki": "https://ro.wikipedia.org/wiki/Lacul_Techirghiol",
+   "area_km2": 11.6,
+   "depth_m": 9.0,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Romania"
+   ],
+   "key": "wd:Q1541429",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "seed": {
+    "swim": "yes",
+    "kind": "lake",
+    "why": "brief",
+    "note": "a hypersaline therapeutic lake, the black mud, floating like the Dead Sea",
+    "name": "Techirghiol"
+   }
+  },
+  {
+   "wd": "Q2271982",
+   "name": "Lake Cișmigiu",
+   "name_local": "Lacul Cișmigiu",
+   "lat": 44.437917,
+   "lon": 26.090341,
+   "iso2": "RO",
+   "adm": "Sector 1",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 11,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Cismigiu.jpg",
+   "commons_cat": "Lake Cișmigiu",
+   "enwiki": "https://en.wikipedia.org/wiki/Lake_Ci%C8%99migiu",
+   "localwiki": "https://ro.wikipedia.org/wiki/Lacul_Ci%C8%99migiu",
+   "area_km2": 0.295,
+   "depth_m": 2.0,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Romania"
+   ],
+   "key": "wd:Q2271982",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q2349738",
+   "name": "Lake Razelm",
+   "name_local": "Lacul Razim",
+   "lat": 44.826667,
+   "lon": 28.984722,
+   "iso2": "RO",
+   "adm": "Tulcea County",
+   "types": [
+    "lagoon"
+   ],
+   "sitelinks": 25,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Argamum.jpg",
+   "commons_cat": "Lake Razelm",
+   "enwiki": "https://en.wikipedia.org/wiki/Lake_Razelm",
+   "localwiki": "https://ro.wikipedia.org/wiki/Limanul_Razim",
+   "area_km2": 394.0,
+   "depth_m": 3.0,
+   "elev_m": 0,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Romania"
+   ],
+   "key": "wd:Q2349738",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q2747597",
+   "name": "Lake Herăstrău",
+   "name_local": "Lacul Herăstrău",
+   "lat": 44.47532,
+   "lon": 26.08207,
+   "iso2": "RO",
+   "adm": "Bucharest",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 10,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Panorama%20herastrau1.jpg",
+   "commons_cat": "Herăstrău Lake, Bucharest",
+   "enwiki": "https://en.wikipedia.org/wiki/Lake_Her%C4%83str%C4%83u",
+   "localwiki": "https://ro.wikipedia.org/wiki/Lacul_Her%C4%83str%C4%83u",
+   "area_km2": 0.74,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q2747597",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q3107107",
+   "name": "Lake Snagov",
+   "name_local": "Lacul Snagov",
+   "lat": 44.73,
+   "lon": 26.18,
+   "iso2": "RO",
+   "adm": "Snagov",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 11,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Snagov%20water%20lilies.jpg",
+   "commons_cat": "Snagov Lake",
+   "enwiki": "https://en.wikipedia.org/wiki/Lake_Snagov",
+   "localwiki": "https://ro.wikipedia.org/wiki/Lacul_Snagov",
+   "area_km2": 5.75,
+   "depth_m": 11.0,
+   "elev_m": 120,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Romania"
+   ],
+   "key": "wd:Q3107107",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q3214777",
+   "name": "Lake Băneasa",
+   "name_local": "Lacul Băneasa",
+   "lat": 44.4923,
+   "lon": 26.0719,
+   "iso2": "RO",
+   "adm": "",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 8,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Lacul%20B%C4%83neasa%20%28est%29%3B%20oct%202007.jpg",
+   "commons_cat": "Lake Băneasa",
+   "enwiki": "https://en.wikipedia.org/wiki/Lake_B%C4%83neasa",
+   "localwiki": "https://ro.wikipedia.org/wiki/Lacul_B%C4%83neasa",
+   "area_km2": 0.4,
+   "depth_m": 3.0,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Romania"
+   ],
+   "key": "wd:Q3214777",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q3214854",
+   "name": "Lake Dâmbovița",
+   "name_local": "Lacul Dâmbovița",
+   "lat": 44.458321,
+   "lon": 26.006849,
+   "iso2": "RO",
+   "adm": "Bucharest",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 7,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Map-Dambovita-Lake-Navsat.jpg",
+   "commons_cat": "",
+   "enwiki": "https://en.wikipedia.org/wiki/Lake_D%C3%A2mbovi%C8%9Ba",
+   "localwiki": "https://ro.wikipedia.org/wiki/Lacul_D%C3%A2mbovi%C8%9Ba",
+   "area_km2": 0.55,
+   "depth_m": null,
+   "elev_m": 78,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Romania"
+   ],
+   "key": "wd:Q3214854",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q3214882",
+   "name": "Lake Floreasca",
+   "name_local": "Lacul Floreasca",
+   "lat": 44.47008,
+   "lon": 26.10158,
+   "iso2": "RO",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 6,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/2012.05.08%20Lacul%20Floreasca%20stitch9%2BGIMP.jpg",
+   "commons_cat": "Lake Floreasca",
+   "enwiki": "https://en.wikipedia.org/wiki/Lake_Floreasca",
+   "localwiki": "https://ro.wikipedia.org/wiki/Lacul_Floreasca",
+   "area_km2": 0.7,
+   "depth_m": 5.0,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q3214882",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q3214894",
+   "name": "Lake Fundeni",
+   "name_local": "Lacul Fundeni",
+   "lat": 44.451122,
+   "lon": 26.161194,
+   "iso2": "RO",
+   "adm": "Sector 2",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 6,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Colentina%20Lake%20NavSat.jpg",
+   "commons_cat": "",
+   "enwiki": "https://en.wikipedia.org/wiki/Lake_Fundeni",
+   "localwiki": "https://ro.wikipedia.org/wiki/Lacul_Fundeni",
+   "area_km2": 0.35,
+   "depth_m": 5.0,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Romania"
+   ],
+   "key": "wd:Q3214894",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q3272045",
+   "name": "Lacul de acumulare Costești-Stînca",
+   "name_local": "Lacul de acumulare Costești-Stînca",
+   "lat": 47.858333,
+   "lon": 27.233333,
+   "iso2": "RO",
+   "adm": "",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 6,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Plaja%20St%C3%A2nca2.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://ro.wikipedia.org/wiki/Lacul_de_acumulare_St%C3%A2nca%E2%80%93Coste%C8%99ti",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q3272045",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q4829457",
+   "name": "Avrig Lake",
+   "name_local": "Lacul Avrig",
+   "lat": 45.578495,
+   "lon": 24.481992,
+   "iso2": "RO",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 4,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Gory%20Fogaraskie%20%28Fagaras%20Mountains%29%2025.jpg",
+   "commons_cat": "Avrig Lake",
+   "enwiki": "https://en.wikipedia.org/wiki/Avrig_Lake",
+   "localwiki": "https://ro.wikipedia.org/wiki/Lacul_Avrig",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Romania"
+   ],
+   "key": "wd:Q4829457",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q5551525",
+   "name": "Lake Tașaul",
+   "name_local": "Lacul Tașaul",
+   "lat": 44.35,
+   "lon": 28.613333,
+   "iso2": "RO",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 8,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Ta%C8%99aul%20Lake.jpg",
+   "commons_cat": "",
+   "enwiki": "https://en.wikipedia.org/wiki/Lake_Ta%C8%99aul",
+   "localwiki": "https://ro.wikipedia.org/wiki/Limanul_Ta%C8%99aul",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Romania"
+   ],
+   "key": "wd:Q5551525",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q6272651",
+   "name": "Lake Siriu",
+   "name_local": "Lacul Siriu",
+   "lat": 45.5,
+   "lon": 26.25,
+   "iso2": "RO",
+   "adm": "Buzău County",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 5,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Siriu%20Lake.jpg",
+   "commons_cat": "Siriu Lake",
+   "enwiki": "https://en.wikipedia.org/wiki/Lake_Siriu",
+   "localwiki": "https://ro.wikipedia.org/wiki/Lacul_Siriu",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Romania"
+   ],
+   "key": "wd:Q6272651",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q6469069",
+   "name": "Lacul Vulturilor",
+   "name_local": "Lacul Vulturilor",
+   "lat": 45.508611,
+   "lon": 26.135556,
+   "iso2": "RO",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 4,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "https://en.wikipedia.org/wiki/Lacul_Vulturilor",
+   "localwiki": "https://ro.wikipedia.org/wiki/Lacul_Vulturilor",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Romania"
+   ],
+   "key": "wd:Q6469069",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q6478343",
+   "name": "Lake Vârșolț",
+   "name_local": "Lacul Vârșolț",
+   "lat": 47.180278,
+   "lon": 22.915556,
+   "iso2": "RO",
+   "adm": "Sălaj County",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 3,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "https://en.wikipedia.org/wiki/Lake_V%C3%A2r%C8%99ol%C8%9B",
+   "localwiki": "https://ro.wikipedia.org/wiki/Lacul_V%C3%A2r%C8%99ol%C8%9B",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q6478343",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q6684848",
+   "name": "Lotru-Ciunget Hydroelectric Power Station",
+   "name_local": "Centrala Hidroelectrică Lotru-Ciunget",
+   "lat": 45.447211,
+   "lon": 23.768339,
+   "iso2": "RO",
+   "adm": "Vâlcea County",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 4,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "https://en.wikipedia.org/wiki/Lotru-Ciunget_Hydroelectric_Power_Station",
+   "localwiki": "https://ro.wikipedia.org/wiki/Centrala_hidroelectric%C4%83_Lotru-Ciunget",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Romania"
+   ],
+   "key": "wd:Q6684848",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q10998051",
+   "name": "Lacul Călcescu",
+   "name_local": "Lacul Călcescu",
+   "lat": 45.350425,
+   "lon": 23.612238,
+   "iso2": "RO",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://ro.wikipedia.org/wiki/Lacul_C%C4%83lcescu",
+   "area_km2": null,
+   "depth_m": 10.0,
+   "elev_m": 1934,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q10998051",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q12731832",
+   "name": "Lake Amara",
+   "name_local": "Lacul Amara, Ialomița",
+   "lat": 44.60721,
+   "lon": 27.33707,
+   "iso2": "RO",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 15,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Lacul%20Amara.JPG",
+   "commons_cat": "Lacul Amara",
+   "enwiki": "https://en.wikipedia.org/wiki/Lake_Amara",
+   "localwiki": "https://ro.wikipedia.org/wiki/Lacul_Amara,_Ialomi%C8%9Ba",
+   "area_km2": 1.32,
+   "depth_m": 3.0,
+   "elev_m": 30,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Romania"
+   ],
+   "key": "wd:Q12731832",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q12731833",
+   "name": "Aroneanu Lake",
+   "name_local": "Lacul Aroneanu",
+   "lat": 47.19983,
+   "lon": 27.59276,
+   "iso2": "RO",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "",
+   "commons_cat": "Aroneanu Lake",
+   "enwiki": "",
+   "localwiki": "https://ro.wikipedia.org/wiki/Lacul_Aroneanu",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q12731833",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q12731842",
+   "name": "Bolboci Reservoir",
+   "name_local": "Lacul Bolboci",
+   "lat": 45.346225,
+   "lon": 25.427972,
+   "iso2": "RO",
+   "adm": "Moroeni",
+   "types": [
+    "reservoir",
+    "artificial lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Lacul%20Bolboci%20-%20panoramio%20%281%29.jpg",
+   "commons_cat": "Bolboci Lake",
+   "enwiki": "",
+   "localwiki": "https://ro.wikipedia.org/wiki/Lacul_Bolboci",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [
+    "Bucegi Natural Park"
+   ],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q12731842",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q12731843",
+   "name": "Lake Buftea",
+   "name_local": "Lacul Buftea",
+   "lat": 44.57,
+   "lon": 25.93,
+   "iso2": "RO",
+   "adm": "Buftea",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Lacul%20Buftea-vedere%20de%20pe%20pontonul%20domeniului%20Stirbei-panorama%20din%207%20imagini%20asamblate%20cu%20GIMP.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://ro.wikipedia.org/wiki/Lacul_Buftea",
+   "area_km2": 3.07,
+   "depth_m": 8.0,
+   "elev_m": 106,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q12731843",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q12731840",
+   "name": "Lake Bugeac",
+   "name_local": "Lacul Bugeac",
+   "lat": 44.083333,
+   "lon": 27.438889,
+   "iso2": "RO",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 4,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "https://en.wikipedia.org/wiki/Lake_Bugeac",
+   "localwiki": "https://ro.wikipedia.org/wiki/Lacul_Bugeac",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q12731840",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q12731850",
+   "name": "Brateș Lake",
+   "name_local": "Lacul Brateș",
+   "lat": 45.480767,
+   "lon": 28.070878,
+   "iso2": "RO",
+   "adm": "Galați",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 5,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Sunrise%20on%20Brates%20Lake%20-%20Rasarit%20pe%20Lacul%20Brates%20-%20panoramio.jpg",
+   "commons_cat": "Brateș Lake",
+   "enwiki": "",
+   "localwiki": "https://ro.wikipedia.org/wiki/Lacul_Brate%C8%99",
+   "area_km2": 24.0,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Romania"
+   ],
+   "key": "wd:Q12731850",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q12731849",
+   "name": "Lacul Bistreț",
+   "name_local": "Lacul Bistreț",
+   "lat": 43.876834,
+   "lon": 23.563686,
+   "iso2": "RO",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://ro.wikipedia.org/wiki/Lacul_Bistre%C8%9B",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q12731849",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q12731855",
+   "name": "Ciurbești Lake",
+   "name_local": "Lacul Ciurbești",
+   "lat": 47.08307,
+   "lon": 27.53071,
+   "iso2": "RO",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "",
+   "commons_cat": "Ciurbești Lake",
+   "enwiki": "",
+   "localwiki": "https://ro.wikipedia.org/wiki/Lacul_Ciurbe%C8%99ti",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q12731855",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q12731860",
+   "name": "Lake Grivița",
+   "name_local": "Lacul Grivița",
+   "lat": 44.4959,
+   "lon": 26.0544,
+   "iso2": "RO",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 5,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Grivi%C8%9Ba%20Lake%2C%20Bucharest%20in%20July%202015.jpg",
+   "commons_cat": "",
+   "enwiki": "https://en.wikipedia.org/wiki/Lake_Grivi%C8%9Ba",
+   "localwiki": "https://ro.wikipedia.org/wiki/Lacul_Grivi%C8%9Ba",
+   "area_km2": 0.53,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q12731860",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q12731883",
+   "name": "Lake Străulești",
+   "name_local": "Lacul Străulești",
+   "lat": 44.5039,
+   "lon": 26.0203,
+   "iso2": "RO",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://ro.wikipedia.org/wiki/Lacul_Str%C4%83ule%C8%99ti",
+   "area_km2": 0.33,
+   "depth_m": 5.0,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q12731883",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q12731880",
+   "name": "Lacul Pantelimon",
+   "name_local": "Lacul Pantelimon",
+   "lat": 44.4478,
+   "lon": 26.1914,
+   "iso2": "RO",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://ro.wikipedia.org/wiki/Lacul_Pantelimon",
+   "area_km2": 2.6,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q12731880",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q12731886",
+   "name": "Lake Sărulești",
+   "name_local": "Lacul Sărulești",
+   "lat": 44.41028,
+   "lon": 26.65167,
+   "iso2": "RO",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Lac%20Sarulesti.png",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://ro.wikipedia.org/wiki/Lacul_S%C4%83rule%C8%99ti",
+   "area_km2": 4.5,
+   "depth_m": 11.0,
+   "elev_m": 2,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q12731886",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q12731887",
+   "name": "Surduc Lake",
+   "name_local": "Lacul Surduc",
+   "lat": 45.757778,
+   "lon": 22.145833,
+   "iso2": "RO",
+   "adm": "Fârdea",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 5,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/RO%20TM%20Surduc%204.jpg",
+   "commons_cat": "Surduc Lake",
+   "enwiki": "https://en.wikipedia.org/wiki/Lake_Surduc",
+   "localwiki": "https://ro.wikipedia.org/wiki/Lacul_Surduc",
+   "area_km2": 3.57,
+   "depth_m": null,
+   "elev_m": 195,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q12731887",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q12731889",
+   "name": "Lake Tei",
+   "name_local": "Lacul Tei",
+   "lat": 44.4664,
+   "lon": 26.1208,
+   "iso2": "RO",
+   "adm": "Bucharest",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 3,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Barajul%20care%20desparte%20lacul%20Floreasca%20de%20lacul%20Tei.jpg",
+   "commons_cat": "Lake Tei",
+   "enwiki": "",
+   "localwiki": "https://ro.wikipedia.org/wiki/Lacul_Tei",
+   "area_km2": 0.8,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q12731889",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q12737039",
+   "name": "Ochiul Beiului",
+   "name_local": "Ochiul Beiului",
+   "lat": 44.936047,
+   "lon": 21.790283,
+   "iso2": "RO",
+   "adm": "Caraș-Severin County",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 3,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Ochiul%20Bei%20-%20Romania%20-%20Landscape%20photography%20%2836595339891%29.jpg",
+   "commons_cat": "Ochiul Beiului",
+   "enwiki": "",
+   "localwiki": "https://ro.wikipedia.org/wiki/Ochiul_Beiului",
+   "area_km2": 0.0003,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q12737039",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q13224702",
+   "name": "Lake Plumbuita",
+   "name_local": "Lacul Plumbuita",
+   "lat": 44.4749,
+   "lon": 26.1337,
+   "iso2": "RO",
+   "adm": "Bucharest",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 3,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Lacul%20Plumbuita%20%C8%99i%20Lacul%20Tei%20bgiu.jpg",
+   "commons_cat": "Plumbuita Lake",
+   "enwiki": "",
+   "localwiki": "https://ro.wikipedia.org/wiki/Lacul_Plumbuita",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [
+    "Plumbuita Park"
+   ],
+   "basin_countries": [],
+   "key": "wd:Q13224702",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q13534398",
+   "name": "Lake Tarnița",
+   "name_local": "Lacul Tarnița",
+   "lat": 46.721111,
+   "lon": 23.278056,
+   "iso2": "RO",
+   "adm": "Cluj County",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 4,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/RO%20CJ%20Tarnita%20lake%207.jpg",
+   "commons_cat": "Tarnița Lake",
+   "enwiki": "https://en.wikipedia.org/wiki/Lake_Tarni%C8%9Ba",
+   "localwiki": "https://ro.wikipedia.org/wiki/Lacul_Tarni%C8%9Ba",
+   "area_km2": 2.15,
+   "depth_m": 70.0,
+   "elev_m": 525,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Romania"
+   ],
+   "key": "wd:Q13534398",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q14947829",
+   "name": "Grindul și Lacul Răducu",
+   "name_local": "Grindul și Lacul Răducu",
+   "lat": 45.2475,
+   "lon": 29.473611,
+   "iso2": "RO",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/CA%20Rosetti.JPG",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://ro.wikipedia.org/wiki/Grindul_%C8%99i_Lacul_R%C4%83ducu",
+   "area_km2": 25.0,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q14947829",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q14948053",
+   "name": "Lacul Nebunu",
+   "name_local": "Lacul Nebunu",
+   "lat": 45.262778,
+   "lon": 28.991111,
+   "iso2": "RO",
+   "adm": "Tulcea County",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 3,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/RO%20TL%20Lacul%20Nebunu.JPG",
+   "commons_cat": "Lacul Nebunu",
+   "enwiki": "",
+   "localwiki": "https://ro.wikipedia.org/wiki/Lacul_Nebunu",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q14948053",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q14956215",
+   "name": "Lacul Rotundu",
+   "name_local": "Lacul Rotundu",
+   "lat": 45.233056,
+   "lon": 28.516111,
+   "iso2": "RO",
+   "adm": "Tulcea County",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Isaccea%2C%20west%2001.JPG",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://ro.wikipedia.org/wiki/Lacul_Rotundu",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q14956215",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q15030971",
+   "name": "Sărăturile Murighiol",
+   "name_local": "Sărăturile Murighiol",
+   "lat": 45.032222,
+   "lon": 29.148889,
+   "iso2": "RO",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://ro.wikipedia.org/wiki/S%C4%83r%C4%83turile_Murighiol",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q15030971",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q15063367",
+   "name": "Lacul Belciug",
+   "name_local": "Lacul Belciug",
+   "lat": 44.952778,
+   "lon": 29.427222,
+   "iso2": "RO",
+   "adm": "Tulcea County",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Sfantu%20Gheorghe%20%28Tulcea%29%20from%20space.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://ro.wikipedia.org/wiki/Lacul_Belciug",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q15063367",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q15076858",
+   "name": "Lacul Potcoava",
+   "name_local": "Lacul Potcoava",
+   "lat": 45.160556,
+   "lon": 29.253333,
+   "iso2": "RO",
+   "adm": "Tulcea County",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://ro.wikipedia.org/wiki/Lacul_Potcoava",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q15076858",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q15709199",
+   "name": "Lacul Capra",
+   "name_local": "Lacul Capra",
+   "lat": 45.600549,
+   "lon": 24.627684,
+   "iso2": "RO",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 4,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Lacul%20Capra.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://ro.wikipedia.org/wiki/Lacul_Capra",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q15709199",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q15712189",
+   "name": "Colentina Lake",
+   "name_local": "Lacul Colentina",
+   "lat": 44.5039,
+   "lon": 26.0203,
+   "iso2": "RO",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 3,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Colentina%20Lake%20NavSat.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://ro.wikipedia.org/wiki/Lacul_Colentina",
+   "area_km2": 0.29,
+   "depth_m": 5.0,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q15712189",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q15725195",
+   "name": "Tineretului lake",
+   "name_local": "Lacul Tineretului",
+   "lat": 44.4041,
+   "lon": 26.1063,
+   "iso2": "RO",
+   "adm": "Bucharest",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 3,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Parcul%20Tineretului1.JPG",
+   "commons_cat": "",
+   "enwiki": "https://en.wikipedia.org/wiki/Lake_Tineretului",
+   "localwiki": "https://ro.wikipedia.org/wiki/Lacul_Tineretului",
+   "area_km2": 0.13,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [
+    "Tineretului Park"
+   ],
+   "basin_countries": [],
+   "key": "wd:Q15725195",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q18538892",
+   "name": "Lacul Cetățele",
+   "name_local": "Lacul Cetățele",
+   "lat": 47.213333,
+   "lon": 24.144389,
+   "iso2": "RO",
+   "adm": "Bistrița-Năsăud County",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://ro.wikipedia.org/wiki/Lacul_Cet%C4%83%C8%9Bele",
+   "area_km2": null,
+   "depth_m": 4.8,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q18538892",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q18539789",
+   "name": "Dorobanț Lake",
+   "name_local": "Lacul Dorobanț",
+   "lat": 44.21374,
+   "lon": 26.96071,
+   "iso2": "RO",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "",
+   "commons_cat": "Dorobanț Lake",
+   "enwiki": "",
+   "localwiki": "https://ro.wikipedia.org/wiki/Lacul_Doroban%C8%9B",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q18539789",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q18541225",
+   "name": "Colibița Lake",
+   "name_local": "Lacul Colibița",
+   "lat": 47.171315,
+   "lon": 24.899193,
+   "iso2": "RO",
+   "adm": "Bistrița Bârgăului",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 4,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/PANORAMA-Colibi%C8%9Ba.JPG",
+   "commons_cat": "Colibița Lake",
+   "enwiki": "",
+   "localwiki": "https://ro.wikipedia.org/wiki/Lacul_Colibi%C8%9Ba",
+   "area_km2": 3.14,
+   "depth_m": null,
+   "elev_m": 830,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q18541225",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q18541231",
+   "name": "Lacul Dracului",
+   "name_local": "Lacul Dracului, Caraș-Severin",
+   "lat": 44.8643,
+   "lon": 21.8128,
+   "iso2": "RO",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "https://en.wikipedia.org/wiki/Lacul_Dracului",
+   "localwiki": "https://ro.wikipedia.org/wiki/Lacul_Dracului,_Cara%C8%99-Severin",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q18541231",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q18541229",
+   "name": "Lake Căldărușani",
+   "name_local": "Lacul Căldărușani",
+   "lat": 44.67116,
+   "lon": 26.27895,
+   "iso2": "RO",
+   "adm": "Ilfov County",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 3,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Caldarusani%20Lake.jpg",
+   "commons_cat": "Lake Căldărușani",
+   "enwiki": "",
+   "localwiki": "https://ro.wikipedia.org/wiki/Lacul_C%C4%83ld%C4%83ru%C8%99ani",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q18541229",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q18541242",
+   "name": "Lacul Rat",
+   "name_local": "Lacul Rat",
+   "lat": 46.29167,
+   "lon": 25.1375,
+   "iso2": "RO",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://ro.wikipedia.org/wiki/Lacul_Rat",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q18541242",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q18549561",
+   "name": "Scropoasa Reservoir",
+   "name_local": "Lacul Scropoasa",
+   "lat": 45.311145,
+   "lon": 25.419935,
+   "iso2": "RO",
+   "adm": "Brașov County",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Scropoasa%20Reservoir%2C%20Romania.02.jpg",
+   "commons_cat": "Scropoasa Lake",
+   "enwiki": "",
+   "localwiki": "https://ro.wikipedia.org/wiki/Lacul_Scropoasa",
+   "area_km2": 0.057,
+   "depth_m": null,
+   "elev_m": 1197,
+   "protected": [
+    "Bucegi Natural Park"
+   ],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q18549561",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q21012755",
+   "name": "Învârtita Lake",
+   "name_local": "Învârtita",
+   "lat": 45.337564,
+   "lon": 24.782494,
+   "iso2": "RO",
+   "adm": "Nucșoara",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Invartita-lac.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://ro.wikipedia.org/wiki/Lacul_%C3%8Env%C3%A2rtita",
+   "area_km2": 0.022,
+   "depth_m": 5.0,
+   "elev_m": 780,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q21012755",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q23827026",
+   "name": "Lacul Cătușa",
+   "name_local": "Lacul Cătușa",
+   "lat": 45.422036,
+   "lon": 27.998813,
+   "iso2": "RO",
+   "adm": "Galați",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 3,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Viaductul%20Siderurgic.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://ro.wikipedia.org/wiki/Lacul_C%C4%83tu%C8%99a",
+   "area_km2": 0.3,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q23827026",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q29939935",
+   "name": "Lake Auster",
+   "name_local": "Lacul Auster",
+   "lat": 45.872594,
+   "lon": 24.065049,
+   "iso2": "RO",
+   "adm": "Sibiu County",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 5,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Lacul%20Auster1.JPG",
+   "commons_cat": "",
+   "enwiki": "https://en.wikipedia.org/wiki/Lacul_Auster",
+   "localwiki": "https://ro.wikipedia.org/wiki/Lacul_Auster",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q29939935",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q98086394",
+   "name": "Lacul Valea lui Iovan",
+   "name_local": "Lacul Valea lui Iovan",
+   "lat": 45.16676,
+   "lon": 22.740037,
+   "iso2": "RO",
+   "adm": "",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Lacul%20Cerna%20Iovan.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://ro.wikipedia.org/wiki/Lacul_Valea_lui_Iovan",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q98086394",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q1313598",
+   "name": "Lake Đerdap",
+   "name_local": "",
+   "lat": 44.476421,
+   "lon": 22.161312,
+   "iso2": "RO",
+   "adm": "",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 8,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Breakthrough%20Iron%20Gate.JPG",
+   "commons_cat": "Iron Gate (Danube)",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q1313598",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q7311762",
+   "name": "Remeți Hydroelectric Power Station",
+   "name_local": "",
+   "lat": 46.830833,
+   "lon": 22.683917,
+   "iso2": "RO",
+   "adm": "",
+   "types": [
+    "lake",
+    "hydroelectric power station"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/RO%20CJ%20Valea%20Draganului%2014.jpg",
+   "commons_cat": "",
+   "enwiki": "https://en.wikipedia.org/wiki/Reme%C8%9Bi_Hydroelectric_Power_Station",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Romania"
+   ],
+   "key": "wd:Q7311762",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q7349794",
+   "name": "Ruieni Hydroelectric Power Station",
+   "name_local": "",
+   "lat": 45.409472,
+   "lon": 22.346444,
+   "iso2": "RO",
+   "adm": "",
+   "types": [
+    "lake",
+    "hydroelectric power station"
+   ],
+   "sitelinks": 2,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "https://en.wikipedia.org/wiki/Ruieni_Hydroelectric_Power_Station",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Romania"
+   ],
+   "key": "wd:Q7349794",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q12714019",
+   "name": "Lake Ceauru",
+   "name_local": "",
+   "lat": 44.95459,
+   "lon": 23.16012,
+   "iso2": "RO",
+   "adm": "",
+   "types": [
+    "artificial lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "https://en.wikipedia.org/wiki/Lake_Ceauru_(project)",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q12714019",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q16508662",
+   "name": "IOR Lake",
+   "name_local": "Lacul IOR",
+   "lat": 44.4228,
+   "lon": 26.1559,
+   "iso2": "RO",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Lacul%20Titan.JPG",
+   "commons_cat": "Lake Titan",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q16508662",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q17339961",
+   "name": "Lake Lebedelor",
+   "name_local": "",
+   "lat": 44.439138,
+   "lon": 26.089031,
+   "iso2": "RO",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 3,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Lebedelor.jpg",
+   "commons_cat": "",
+   "enwiki": "https://en.wikipedia.org/wiki/Lacul_Lebedelor",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q17339961",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q24066105",
+   "name": "Lake Văcărești",
+   "name_local": "",
+   "lat": 44.401411,
+   "lon": 26.131239,
+   "iso2": "RO",
+   "adm": "Bucharest",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 6,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Lake%20vacaresti.jpg",
+   "commons_cat": "Lake Văcărești",
+   "enwiki": "https://en.wikipedia.org/wiki/Lake_V%C4%83c%C4%83re%C8%99ti",
+   "localwiki": "",
+   "area_km2": 1.89,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [
+    "Văcărești Nature Park"
+   ],
+   "basin_countries": [],
+   "key": "wd:Q24066105",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q30592727",
+   "name": "Lake Golovița",
+   "name_local": "",
+   "lat": 44.714167,
+   "lon": 28.776667,
+   "iso2": "RO",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 3,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "https://en.wikipedia.org/wiki/Lake_Golovi%C8%9Ba",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q30592727",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q35721679",
+   "name": "Lake Babadag",
+   "name_local": "Lacul Babadag",
+   "lat": 44.9,
+   "lon": 28.783333,
+   "iso2": "RO",
+   "adm": "Romania",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Lacul%20Babadag.JPG",
+   "commons_cat": "Lake Babadag",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q35721679",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q35721723",
+   "name": "Lacul Furtuna",
+   "name_local": "Lacul Furtuna",
+   "lat": 45.216667,
+   "lon": 29.116667,
+   "iso2": "RO",
+   "adm": "Tulcea County",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Lacul%20Furtuna%20-%202024-09-26%20-%2001.jpg",
+   "commons_cat": "Lacul Furtuna",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": 9.775,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q35721723",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q35721787",
+   "name": "Lacul Oltina",
+   "name_local": "",
+   "lat": 44.166667,
+   "lon": 27.633333,
+   "iso2": "RO",
+   "adm": "Oltina",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Lake%20Oltina%202025-08-12%20Sentinel-2%20L2A%20True%20color.jpg",
+   "commons_cat": "",
+   "enwiki": "https://en.wikipedia.org/wiki/Lake_Oltina",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q35721787",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q35734087",
+   "name": "Lake Pantelimon",
+   "name_local": "",
+   "lat": 44.43678,
+   "lon": 26.21398,
+   "iso2": "RO",
+   "adm": "Pantelimon",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 3,
+   "wd_img": "",
+   "commons_cat": "Lake Pantelimon",
+   "enwiki": "https://en.wikipedia.org/wiki/Lake_Pantelimon",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q35734087",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q65040386",
+   "name": "Stiol Lake",
+   "name_local": "",
+   "lat": 47.57274,
+   "lon": 24.81333,
+   "iso2": "RO",
+   "adm": "Maramureș County",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Stiol%20Lake%20Romania.JPG",
+   "commons_cat": "",
+   "enwiki": "https://en.wikipedia.org/wiki/Stiol_Lake",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q65040386",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q12721459",
+   "name": "Balta Șoimoș",
+   "name_local": "Balta Șoimoș",
+   "lat": 46.10306,
+   "lon": 21.72417,
+   "iso2": "RO",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Balta%20Soimos%202014.JPG",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://ro.wikipedia.org/wiki/Balta_%C8%98oimo%C8%99",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q12721459",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q12721522",
+   "name": "Poiana Uzului Reservoir",
+   "name_local": "Lacul Poiana Uzului",
+   "lat": 46.330833,
+   "lon": 26.375833,
+   "iso2": "RO",
+   "adm": "Bacău County",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://ro.wikipedia.org/wiki/Lacul_Poiana_Uzului",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q12721522",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q12730254",
+   "name": "Iezerul Ighiel",
+   "name_local": "Iezerul Ighiel",
+   "lat": 46.18333,
+   "lon": 23.35667,
+   "iso2": "RO",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://ro.wikipedia.org/wiki/Iezerul_Ighiel",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q12730254",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q12731848",
+   "name": "Lacul Balătău",
+   "name_local": "Lacul Balătău",
+   "lat": 46.517,
+   "lon": 26.717,
+   "iso2": "RO",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://ro.wikipedia.org/wiki/Lacul_B%C4%83l%C4%83t%C4%83u",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q12731848",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q12731852",
+   "name": "Lacul Cicoș",
+   "name_local": "Lacul Cicoș",
+   "lat": 47.35944,
+   "lon": 22.15583,
+   "iso2": "RO",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://ro.wikipedia.org/wiki/Lacul_Cico%C8%99",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q12731852",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q12731861",
+   "name": "Lacul Dunăreni",
+   "name_local": "Lacul Dunăreni",
+   "lat": 44.19306,
+   "lon": 27.77306,
+   "iso2": "RO",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://ro.wikipedia.org/wiki/Lacul_Dun%C4%83reni",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q12731861",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q12731866",
+   "name": "Lacul Gălățui",
+   "name_local": "Lacul Gălățui",
+   "lat": 44.230177,
+   "lon": 27.117227,
+   "iso2": "RO",
+   "adm": "",
+   "types": [
+    "lake",
+    "Natura 2000 site"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://ro.wikipedia.org/wiki/Lacul_G%C4%83l%C4%83%C8%9Bui",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q12731866",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q12731867",
+   "name": "Lacul Hârtop I",
+   "name_local": "Lacul Hârtop I",
+   "lat": 45.5875,
+   "lon": 24.84444,
+   "iso2": "RO",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://ro.wikipedia.org/wiki/Lacul_H%C3%A2rtop_I",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q12731867",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q12731872",
+   "name": "Lacul Izbiceni",
+   "name_local": "Lacul Izbiceni",
+   "lat": 43.86417,
+   "lon": 24.64861,
+   "iso2": "RO",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://ro.wikipedia.org/wiki/Lacul_Izbiceni",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q12731872",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q12731882",
+   "name": "Lacul Strejești",
+   "name_local": "Lacul Strejești",
+   "lat": 44.55083,
+   "lon": 24.32361,
+   "iso2": "RO",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://ro.wikipedia.org/wiki/Lacul_Streje%C8%99ti",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q12731882",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q12731894",
+   "name": "Lacul Zârna",
+   "name_local": "Lacul Zârna",
+   "lat": 45.58889,
+   "lon": 24.86139,
+   "iso2": "RO",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://ro.wikipedia.org/wiki/Lacul_Z%C3%A2rna",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q12731894",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q12731892",
+   "name": "Lacul Vaduri",
+   "name_local": "Lacul Vaduri",
+   "lat": 46.93556,
+   "lon": 26.24222,
+   "iso2": "RO",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://ro.wikipedia.org/wiki/Lacul_Vaduri",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q12731892",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q12731902",
+   "name": "Țigănești Lake",
+   "name_local": "Lacul Țigănești",
+   "lat": 45.457778,
+   "lon": 25.438889,
+   "iso2": "RO",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://ro.wikipedia.org/wiki/Lacul_%C8%9Aig%C4%83ne%C8%99ti",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": 2050,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q12731902",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q12742747",
+   "name": "Tăul Zânelor",
+   "name_local": "Tăul Zânelor",
+   "lat": 47.11889,
+   "lon": 24.99333,
+   "iso2": "RO",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/T%C4%83ul%20Z%C3%A2nelor%20%282%29.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://ro.wikipedia.org/wiki/T%C4%83ul_Z%C3%A2nelor",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q12742747",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q18537674",
+   "name": "Balta Amară",
+   "name_local": "Balta Amară",
+   "lat": 45.22778,
+   "lon": 27.3,
+   "iso2": "RO",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://ro.wikipedia.org/wiki/Balta_Amar%C4%83",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q18537674",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q18537675",
+   "name": "Balta Cilieni - Băilești",
+   "name_local": "Balta Cilieni - Băilești",
+   "lat": 44.04444,
+   "lon": 23.28444,
+   "iso2": "RO",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://ro.wikipedia.org/wiki/Balta_Cilieni_-_B%C4%83ile%C8%99ti",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q18537675",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q18537676",
+   "name": "Balta Lată",
+   "name_local": "Balta Lată",
+   "lat": 43.81194,
+   "lon": 23.02444,
+   "iso2": "RO",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://ro.wikipedia.org/wiki/Balta_Lat%C4%83",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q18537676",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q18537677",
+   "name": "Balta Rovina",
+   "name_local": "Balta Rovina",
+   "lat": 46.40611,
+   "lon": 21.87306,
+   "iso2": "RO",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://ro.wikipedia.org/wiki/Balta_Rovina",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q18537677",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q18539162",
+   "name": "Complexul lacustru Preajba-Făcăi",
+   "name_local": "Complexul lacustru Preajba-Făcăi",
+   "lat": 44.27139,
+   "lon": 23.82556,
+   "iso2": "RO",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://ro.wikipedia.org/wiki/Complexul_lacustru_Preajba-F%C4%83c%C4%83i",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q18539162",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q18541222",
+   "name": "Babadag",
+   "name_local": "Babadag",
+   "lat": 44.919134,
+   "lon": 28.76739,
+   "iso2": "RO",
+   "adm": "Babadag",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://ro.wikipedia.org/wiki/Lacul_Babadag",
+   "area_km2": 23.7,
+   "depth_m": 3.1,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q18541222",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q18541230",
+   "name": "Călțun Lake",
+   "name_local": "Lacul Călțun",
+   "lat": 45.581449,
+   "lon": 24.572751,
+   "iso2": "RO",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/RO%20AG%20Caltun%20lake%20from%20Laitel%20peak.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://ro.wikipedia.org/wiki/Lacul_C%C4%83l%C8%9Bun",
+   "area_km2": 0.0078,
+   "depth_m": 11.8,
+   "elev_m": 2135,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q18541230",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q18541228",
+   "name": "Lacul Cuejdel",
+   "name_local": "Lacul Cuejdel",
+   "lat": 47.03222,
+   "lon": 26.21944,
+   "iso2": "RO",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://ro.wikipedia.org/wiki/Lacul_Cuejdel",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q18541228",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q18541241",
+   "name": "Lacul Pângărați",
+   "name_local": "Lacul Pângărați",
+   "lat": 46.92528,
+   "lon": 26.20056,
+   "iso2": "RO",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://ro.wikipedia.org/wiki/Lacul_P%C3%A2ng%C4%83ra%C8%9Bi",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q18541241",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q18544135",
+   "name": "Lacul Dracului",
+   "name_local": "Lacul Dracului",
+   "lat": 46.54917,
+   "lon": 25.58528,
+   "iso2": "RO",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://ro.wikipedia.org/wiki/Lacul_Dracului",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q18544135",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q18547410",
+   "name": "Rezervația Balta Neagră",
+   "name_local": "Rezervația Balta Neagră",
+   "lat": 43.84028,
+   "lon": 22.88667,
+   "iso2": "RO",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://ro.wikipedia.org/wiki/Rezerva%C8%9Bia_Balta_Neagr%C4%83",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q18547410",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q18547462",
+   "name": "Lacul Rodeanu",
+   "name_local": "Lacul Rodeanu",
+   "lat": 44.78167,
+   "lon": 26.48444,
+   "iso2": "RO",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://ro.wikipedia.org/wiki/Lacul_Rodeanu",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q18547462",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q18548194",
+   "name": "Strachina Lake",
+   "name_local": "Lacul Strachina",
+   "lat": 44.675278,
+   "lon": 27.576667,
+   "iso2": "RO",
+   "adm": "Ialomița County",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://ro.wikipedia.org/wiki/Lacul_Strachina",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q18548194",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q18548802",
+   "name": "Tăul fără fund de la Băgău",
+   "name_local": "Tăul fără fund de la Băgău",
+   "lat": 46.33056,
+   "lon": 23.80861,
+   "iso2": "RO",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://ro.wikipedia.org/wiki/T%C4%83ul_f%C4%83r%C4%83_fund_de_la_B%C4%83g%C4%83u",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q18548802",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q19705069",
+   "name": "Lacul Crapina",
+   "name_local": "Lacul Crapina",
+   "lat": 45.346906,
+   "lon": 28.260764,
+   "iso2": "RO",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://ro.wikipedia.org/wiki/Lacul_Crapina",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q19705069",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q19706684",
+   "name": "Lacul Jijila",
+   "name_local": "Lacul Jijila",
+   "lat": 45.334347,
+   "lon": 28.129828,
+   "iso2": "RO",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://ro.wikipedia.org/wiki/Lacul_Jijila",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q19706684",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q19709584",
+   "name": "Lacul Traian",
+   "name_local": "Lacul Traian",
+   "lat": 45.027439,
+   "lon": 28.204797,
+   "iso2": "RO",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://ro.wikipedia.org/wiki/Lacul_Traian",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q19709584",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q1253091",
+   "name": "Lacul Reci",
+   "name_local": "Lacul Reci",
+   "lat": 45.830928,
+   "lon": 25.958717,
+   "iso2": "RO",
+   "adm": "Covasna County",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q1253091",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q6475988",
+   "name": "Lake Ghioroc",
+   "name_local": "",
+   "lat": 46.1517,
+   "lon": 21.5774,
+   "iso2": "RO",
+   "adm": "Ghioroc",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "https://en.wikipedia.org/wiki/Lake_Ghioroc",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Romania"
+   ],
+   "key": "wd:Q6475988",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q7349800",
+   "name": "Râul Mare Hydroelectric Power Station",
+   "name_local": "",
+   "lat": 45.338931,
+   "lon": 22.721439,
+   "iso2": "RO",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "https://en.wikipedia.org/wiki/R%C3%A2ul_Mare_Hydroelectric_Power_Station",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Romania"
+   ],
+   "key": "wd:Q7349800",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q7349811",
+   "name": "Mărișelu Hydroelectric Power Station",
+   "name_local": "",
+   "lat": 46.732167,
+   "lon": 23.350806,
+   "iso2": "RO",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "https://en.wikipedia.org/wiki/M%C4%83ri%C8%99elu_Hydroelectric_Power_Station",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Romania"
+   ],
+   "key": "wd:Q7349811",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q7352102",
+   "name": "Nehoiașu Hydro Power Plant",
+   "name_local": "",
+   "lat": 45.4427,
+   "lon": 26.3055,
+   "iso2": "RO",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "https://en.wikipedia.org/wiki/Nehoia%C8%99u_Hydro_Power_Plant",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Romania"
+   ],
+   "key": "wd:Q7352102",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q7372569",
+   "name": "Lake Prisaca",
+   "name_local": "",
+   "lat": 44.9311,
+   "lon": 22.4503,
+   "iso2": "RO",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "https://en.wikipedia.org/wiki/Lake_Prisaca",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Romania"
+   ],
+   "key": "wd:Q7372569",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q23827023",
+   "name": "Lacul Dobroești",
+   "name_local": "Lacul Dobroești",
+   "lat": 44.447783,
+   "lon": 26.191449,
+   "iso2": "RO",
+   "adm": "Sector 2",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://ro.wikipedia.org/wiki/Lacul_Dobroe%C8%99ti",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q23827023",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q28726082",
+   "name": "Trei Ape",
+   "name_local": "Trei Ape",
+   "lat": 45.214,
+   "lon": 22.143,
+   "iso2": "RO",
+   "adm": "",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://ro.wikipedia.org/wiki/Trei_Ape",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q28726082",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q102109338",
+   "name": "Lake Mozacu",
+   "name_local": "Lacul Mozacu",
+   "lat": 44.591741,
+   "lon": 25.174302,
+   "iso2": "RO",
+   "adm": "Argeș County",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://ro.wikipedia.org/wiki/Lacul_Mozacu",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q102109338",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q106239695",
+   "name": "Podrăgel Lake",
+   "name_local": "Lacul Podrăgel",
+   "lat": 45.608297,
+   "lon": 24.674181,
+   "iso2": "RO",
+   "adm": "Sibiu County",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://ro.wikipedia.org/wiki/Lacul_Podr%C4%83gel",
+   "area_km2": 0.007,
+   "depth_m": 3.9,
+   "elev_m": 2030,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q106239695",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q110127459",
+   "name": "Lacul Lighet",
+   "name_local": "Lacul Lighet",
+   "lat": 47.440076,
+   "lon": 23.876424,
+   "iso2": "RO",
+   "adm": "Târgu Lăpuș",
+   "types": [
+    "artificial lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Lacul%20Lighet.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://ro.wikipedia.org/wiki/Lacul_Lighet",
+   "area_km2": 0.04,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q110127459",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q110127456",
+   "name": "Lacul Curiacul",
+   "name_local": "Lacul Curiacul",
+   "lat": 45.130038,
+   "lon": 25.725701,
+   "iso2": "RO",
+   "adm": "Câmpina",
+   "types": [
+    "natural lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://ro.wikipedia.org/wiki/Lacul_Curiacul",
+   "area_km2": 0.0107,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q110127456",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q111079690",
+   "name": "Urlea Lake",
+   "name_local": "Lacul Urlea",
+   "lat": 45.595438,
+   "lon": 24.838769,
+   "iso2": "RO",
+   "adm": "Brașov County",
+   "types": [
+    "glacial lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://ro.wikipedia.org/wiki/Lacul_Urlea",
+   "area_km2": 0.02,
+   "depth_m": null,
+   "elev_m": 2170,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q111079690",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q113291245",
+   "name": "Lacul Turcești",
+   "name_local": "Lacul Turcești",
+   "lat": 44.839233,
+   "lon": 24.861395,
+   "iso2": "RO",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Turce%C8%99ti%20Lake%20%282%29.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://ro.wikipedia.org/wiki/Lacul_Turce%C8%99ti",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q113291245",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q24699117",
+   "name": "Laguna albastră",
+   "name_local": "Laguna albastră",
+   "lat": 46.889906,
+   "lon": 23.289081,
+   "iso2": "RO",
+   "adm": "Aghireșu",
+   "types": [
+    "artificial lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Laguna%20albastr%C4%83.jpg",
+   "commons_cat": "Laguna albastră, Aghireșu",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q24699117",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q29939942",
+   "name": "Lake Brâncoveanu",
+   "name_local": "",
+   "lat": 45.8719,
+   "lon": 24.0656,
+   "iso2": "RO",
+   "adm": "Sibiu County",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "https://en.wikipedia.org/wiki/Lake_Br%C3%A2ncoveanu",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q29939942",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q29939947",
+   "name": "Lake Rândunica",
+   "name_local": "",
+   "lat": 45.87306,
+   "lon": 24.06646,
+   "iso2": "RO",
+   "adm": "Sibiu County",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "https://en.wikipedia.org/wiki/Lake_R%C3%A2ndunica",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q29939947",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q29939949",
+   "name": "Lake Mâțelor",
+   "name_local": "",
+   "lat": 45.87707,
+   "lon": 24.06848,
+   "iso2": "RO",
+   "adm": "Sibiu County",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "https://en.wikipedia.org/wiki/Lake_M%C3%A2%C8%9Belor",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q29939949",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q29939954",
+   "name": "Lacul cu Nămol",
+   "name_local": "",
+   "lat": 45.8741,
+   "lon": 24.06473,
+   "iso2": "RO",
+   "adm": "Sibiu County",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "https://en.wikipedia.org/wiki/Lacul_cu_N%C4%83mol",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q29939954",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q29939953",
+   "name": "Lake Gura Minei",
+   "name_local": "",
+   "lat": 45.8732,
+   "lon": 24.0648,
+   "iso2": "RO",
+   "adm": "Sibiu County",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "https://en.wikipedia.org/wiki/Lake_Gura_Minei",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q29939953",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q30624306",
+   "name": "Lake Pânzelor",
+   "name_local": "",
+   "lat": 45.87696,
+   "lon": 24.06699,
+   "iso2": "RO",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "https://en.wikipedia.org/wiki/Lake_P%C3%A2nzelor",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q30624306",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q30625613",
+   "name": "Lake Avram Iancu-Ocnița",
+   "name_local": "",
+   "lat": 45.8747,
+   "lon": 24.0666,
+   "iso2": "RO",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "https://en.wikipedia.org/wiki/Lake_Avram_Iancu-Ocni%C8%9Ba",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q30625613",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q30626044",
+   "name": "Lake Horea",
+   "name_local": "",
+   "lat": 45.876998,
+   "lon": 24.063268,
+   "iso2": "RO",
+   "adm": "",
+   "types": [
+    "salt lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "https://en.wikipedia.org/wiki/Lake_Horea",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q30626044",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q30688038",
+   "name": "Lacul Vrăjitoarelor",
+   "name_local": "",
+   "lat": 45.880278,
+   "lon": 24.074722,
+   "iso2": "RO",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "https://en.wikipedia.org/wiki/Lacul_Vr%C4%83jitoarelor",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q30688038",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q31909307",
+   "name": "Balta Albă",
+   "name_local": "",
+   "lat": 45.283333,
+   "lon": 27.333333,
+   "iso2": "RO",
+   "adm": "Romania",
+   "types": [
+    "lagoon"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": 24,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q31909307",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q31909310",
+   "name": "Balta Amara",
+   "name_local": "",
+   "lat": 45.233333,
+   "lon": 27.3,
+   "iso2": "RO",
+   "adm": "Romania",
+   "types": [
+    "lagoon"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": 28,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q31909310",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q31909323",
+   "name": "Balta Cătușa",
+   "name_local": "",
+   "lat": 45.416667,
+   "lon": 28.0,
+   "iso2": "RO",
+   "adm": "Romania",
+   "types": [
+    "lagoon"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": 4,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q31909323",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q31909343",
+   "name": "Balta Jirlăul",
+   "name_local": "",
+   "lat": 45.166667,
+   "lon": 27.216667,
+   "iso2": "RO",
+   "adm": "Romania",
+   "types": [
+    "lagoon"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": 38,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q31909343",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q31909340",
+   "name": "Balta Jilavei",
+   "name_local": "",
+   "lat": 44.766667,
+   "lon": 26.533333,
+   "iso2": "RO",
+   "adm": "Romania",
+   "types": [
+    "lagoon"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": 59,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q31909340",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q31909350",
+   "name": "Balta Maglavitul",
+   "name_local": "",
+   "lat": 44.033333,
+   "lon": 23.083333,
+   "iso2": "RO",
+   "adm": "Romania",
+   "types": [
+    "lagoon"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": 31,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q31909350",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q31909354",
+   "name": "Balta Mare",
+   "name_local": "",
+   "lat": 44.11,
+   "lon": 22.935556,
+   "iso2": "RO",
+   "adm": "Mehedinți County",
+   "types": [
+    "lagoon"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": 29,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q31909354",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q31909360",
+   "name": "Balta Obretin",
+   "name_local": "",
+   "lat": 45.183333,
+   "lon": 29.3,
+   "iso2": "RO",
+   "adm": "Romania",
+   "types": [
+    "lagoon"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q31909360",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q35721696",
+   "name": "Lacul Chichinețu",
+   "name_local": "",
+   "lat": 44.8,
+   "lon": 27.266667,
+   "iso2": "RO",
+   "adm": "Romania",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q35721696",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q35721712",
+   "name": "Lacul Dranov",
+   "name_local": "",
+   "lat": 44.866667,
+   "lon": 29.2,
+   "iso2": "RO",
+   "adm": "Romania",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q35721712",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q35721730",
+   "name": "Lacul Fundata",
+   "name_local": "",
+   "lat": 44.59487,
+   "lon": 27.17803,
+   "iso2": "RO",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q35721730",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q35721737",
+   "name": "Lacul Gargalâc",
+   "name_local": "",
+   "lat": 44.36667,
+   "lon": 28.65,
+   "iso2": "RO",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q35721737",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q35721745",
+   "name": "Lacul Gheorghe Lazăr",
+   "name_local": "",
+   "lat": 44.59976,
+   "lon": 27.42977,
+   "iso2": "RO",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q35721745",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q35721754",
+   "name": "Lacul Ianca",
+   "name_local": "",
+   "lat": 45.15,
+   "lon": 27.5,
+   "iso2": "RO",
+   "adm": "Romania",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q35721754",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q35721762",
+   "name": "Lacul Istria",
+   "name_local": "",
+   "lat": 44.55,
+   "lon": 28.733333,
+   "iso2": "RO",
+   "adm": "Romania",
+   "types": [
+    "lagoon"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q35721762",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q35721770",
+   "name": "Lacul Lumina",
+   "name_local": "",
+   "lat": 45.09279,
+   "lon": 29.49801,
+   "iso2": "RO",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q35721770",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q35721778",
+   "name": "Lacul Mânăstrii",
+   "name_local": "",
+   "lat": 44.7275,
+   "lon": 26.061944,
+   "iso2": "RO",
+   "adm": "Bucharest",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q35721778",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q35721795",
+   "name": "Lacul Periteașca Mare",
+   "name_local": "",
+   "lat": 44.75,
+   "lon": 29.083333,
+   "iso2": "RO",
+   "adm": "Romania",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q35721795",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q35721802",
+   "name": "Lacul Plopul",
+   "name_local": "",
+   "lat": 45.166667,
+   "lon": 27.55,
+   "iso2": "RO",
+   "adm": "Romania",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q35721802",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q35721827",
+   "name": "Lacul Strachina",
+   "name_local": "Lacul Strachina",
+   "lat": 44.68333,
+   "lon": 27.58333,
+   "iso2": "RO",
+   "adm": "",
+   "types": [
+    "lake",
+    "Natura 2000 site"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q35721827",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q35721835",
+   "name": "Lacul Suhaia",
+   "name_local": "",
+   "lat": 43.73439,
+   "lon": 25.20126,
+   "iso2": "RO",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q35721835",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q35721844",
+   "name": "Lacul Tabacarie",
+   "name_local": "",
+   "lat": 44.20937,
+   "lon": 28.63711,
+   "iso2": "RO",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q35721844",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q35721852",
+   "name": "Lacul Tătarul",
+   "name_local": "",
+   "lat": 44.816667,
+   "lon": 27.433333,
+   "iso2": "RO",
+   "adm": "Romania",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q35721852",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q35721860",
+   "name": "Lacul Tătarului",
+   "name_local": "",
+   "lat": 44.341667,
+   "lon": 26.350278,
+   "iso2": "RO",
+   "adm": "Călărași County",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q35721860",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q35721869",
+   "name": "Lacul Velichi Merhei",
+   "name_local": "",
+   "lat": 45.333333,
+   "lon": 29.416667,
+   "iso2": "RO",
+   "adm": "Romania",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q35721869",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q35730247",
+   "name": "Lake Cernica",
+   "name_local": "",
+   "lat": 44.4339,
+   "lon": 26.24076,
+   "iso2": "RO",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q35730247",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q35731612",
+   "name": "Lake Grivița",
+   "name_local": "",
+   "lat": 44.49941,
+   "lon": 26.04554,
+   "iso2": "RO",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 0,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q35731612",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q35734983",
+   "name": "Lake Tei",
+   "name_local": "",
+   "lat": 44.46635,
+   "lon": 26.12118,
+   "iso2": "RO",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q35734983",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q61084992",
+   "name": "Brădișor Reservoir",
+   "name_local": "lacul de acumulare Brădișor",
+   "lat": 45.353823,
+   "lon": 24.078349,
+   "iso2": "RO",
+   "adm": "",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 0,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q61084992",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q106239942",
+   "name": "Podrăgel Lake",
+   "name_local": "",
+   "lat": 45.608304,
+   "lon": 24.674267,
+   "iso2": "RO",
+   "adm": "Sibiu County",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 0,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q106239942",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q106546091",
+   "name": "Geamăna Lake",
+   "name_local": "",
+   "lat": 46.33194,
+   "lon": 23.21437,
+   "iso2": "RO",
+   "adm": "Alba County",
+   "types": [
+    "lake",
+    "landfill"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [
+    "Roșia Poieni copper mine"
+   ],
+   "basin_countries": [],
+   "key": "wd:Q106546091",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q130631991",
+   "name": "Hăneşti Lake",
+   "name_local": "Lacul Hăneşti",
+   "lat": 47.916667,
+   "lon": 26.975556,
+   "iso2": "RO",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 0,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q130631991",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  }
+ ]
+}

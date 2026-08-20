@@ -1,0 +1,121 @@
+{
+ "country": "LU",
+ "harvested_at": "2026-08-20T18:24:37+00:00",
+ "n_wikidata": 3,
+ "n_seeded": 3,
+ "seed_missing": [],
+ "lakes": [
+  {
+   "wd": "Q1883344",
+   "name": "lac d'Echternach",
+   "name_local": "lac d'Echternach",
+   "lat": 49.80028,
+   "lon": 6.41139,
+   "iso2": "LU",
+   "adm": "Echternach",
+   "types": [
+    "lake",
+    "recreation area"
+   ],
+   "sitelinks": 4,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Iechterncher%20S%C3%A9i%20beta%20w%202-5.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://fr.wikipedia.org/wiki/Lac_d%27Echternach",
+   "area_km2": 0.3,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q1883344",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "seed": {
+    "swim": "limited",
+    "kind": "lake",
+    "why": "editorial",
+    "note": "the recreation lake beside the Mullerthal trails",
+    "name": "Echternach Lake"
+   }
+  },
+  {
+   "wd": "Q2621998",
+   "name": "Upper Sûre Lake",
+   "name_local": "lac de la Haute-Sûre",
+   "lat": 49.9,
+   "lon": 5.866667,
+   "iso2": "LU",
+   "adm": "Canton of Wiltz",
+   "types": [
+    "lake",
+    "reservoir"
+   ],
+   "sitelinks": 16,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Leifreg%202.JPG",
+   "commons_cat": "Lac de la Haute-Sûre (reservoir)",
+   "enwiki": "https://en.wikipedia.org/wiki/Upper_S%C3%BBre_Lake",
+   "localwiki": "https://fr.wikipedia.org/wiki/Lac_de_la_Haute-S%C3%BBre_(lac)",
+   "area_km2": 3.8,
+   "depth_m": null,
+   "elev_m": 366,
+   "protected": [
+    "Upper Sûre Natural Park"
+   ],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q2621998",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "seed": {
+    "swim": "limited",
+    "kind": "reservoir",
+    "why": "brief",
+    "note": "a drinking water reservoir: swimming only in the designated zones at Lultzhausen, Insenborn and Liefrange",
+    "name": "Upper Sure Lake"
+   }
+  },
+  {
+   "wd": "Q60082124",
+   "name": "Lakes of Weiswampach",
+   "name_local": "lacs de Weiswampach",
+   "lat": 50.138753,
+   "lon": 6.064983,
+   "iso2": "LU",
+   "adm": "Canton of Clervaux",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 3,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/WEISWAMPACH%2C%20Oesling%2C%20Luxembourg.jpg",
+   "commons_cat": "Lake of Weiswampach",
+   "enwiki": "",
+   "localwiki": "https://fr.wikipedia.org/wiki/Lacs_de_Weiswampach",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q60082124",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "seed": {
+    "swim": "yes",
+    "kind": "lake",
+    "why": "editorial",
+    "note": "the north's swimming lakes",
+    "name": "Weiswampach Lakes"
+   }
+  }
+ ]
+}

@@ -41,7 +41,14 @@ check('places tab opens from the bar', await page.locator('.places-tab').isVisib
 
 // ── Category bar ──
 const cats = page.locator('.places-cat');
-check('five category tabs render', await cats.count() === 5, String(await cats.count()));
+// Six since the Lakes layer shipped: General, Trips, Trails, Beaches, Lakes,
+// Mountains. Asserted by NAME rather than by count, so the next category to
+// arrive does not fail this check for existing.
+const catNames = (await cats.allInnerTexts()).map((s) => s.trim().toLowerCase());
+check('every category tab renders',
+  ['general', 'trips', 'trails', 'beaches', 'lakes', 'mountains']
+    .every((n) => catNames.some((c) => c.startsWith(n.slice(0, 5)))),
+  catNames.join(', '));
 check('General starts active', /general/i.test(await page.locator('.places-cat.on').innerText().catch(() => '')));
 
 // ── General: country flag cards first ──

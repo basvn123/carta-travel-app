@@ -1,0 +1,43 @@
+AD  beach=None                                   mountain=Pic de l'Estanyó
+AL  beach=Palase Beach                           mountain=Maja Jezercë
+AT  beach=Strandbad Klagenfurt                   mountain=Schlossberg
+BA  beach=None                                   mountain=Crnogorski Maglić
+BE  beach=Bredene Beach                          mountain=Baraque Michel
+BG  beach=Sinemorec, Veleka Beach                mountain=Vezhen
+CH  beach=Genève-Plage                           mountain=Eiger
+CY  beach=Nissi beach                            mountain=Kyrenia Mountains
+CZ  beach=None                                   mountain=Petřín
+DE  beach=Strandbad Wannsee                      mountain=Lorelei
+DK  beach=Bellevue Strand                        mountain=Aborrebjerg
+EE  beach=Pirita Beach                           mountain=Võllamägi
+ES  beach=Es Trenc Beach                         mountain=Roque de Agando
+FI  beach=Hamarin Ranta                          mountain=Ounasvaara
+FO  beach=None                                   mountain=Slættaratindur
+FR  beach=Plage Valentin                         mountain=Puy de Dôme
+GB  beach=Whitesands Beach                       mountain=Glastonbury Tor
+GR  beach=Voidokilia beach                       mountain=Pnyx
+HR  beach=Lokrum Beaches                         mountain=Battle of Gvozd Mountain
+HU  beach=Annabella Strand                       mountain=Gellért Hill
+IE  beach=Barleycove Beach                       mountain=Diamond Hill
+IS  beach=None                                   mountain=Eyjafjallajökull volcano
+IT  beach=Spiaggia di Calamosche                 mountain=Mount Etna
+LI  beach=None                                   mountain=Drei Schwestern
+LT  beach=Baltijos Pajuris                       mountain=Parnidis dune
+LU  beach=Lultzhausen-Plage                      mountain=Napoléonsgaard
+LV  beach=Pelēkā Kāpa                            mountain=Baltā māja
+MC  beach=Eden Plage Mala                        mountain=Mont Agel
+MD  beach=None                                   mountain=Dealul Cârjoiu
+ME  beach=Jaz Beach                              mountain=Bobotov Kuk
+MK  beach=None                                   mountain=Mechkin Kamen
+MT  beach=Golden Beach                           mountain=Ta' Dmejrek
+NL  beach=Domburg Strand Watertoren West         mountain=Cauberg
+NO  beach=Nordstrand bad                         mountain=Dalsnibba
+PL  beach=Apartamenty w Świnoujściu - www.baltic mountain=Kasprov vrch / Kasprowy Wierch
+PT  beach=Praia do Guincho                       mountain=Pico Ruivo
+RO  beach=Vama Veche Beach                       mountain=Peleaga
+RS  beach=None                                   mountain=Pančićev vrh
+SE  beach=Stranden - Ystad Sandskog              mountain=Åreskutan
+SI  beach=Lucija Beach                           mountain=Vremščica
+SK  beach=None                                   mountain=Rysy
+SM  beach=None                                   mountain=Monte Titano
+XK  beach=None                                   mountain=Kopranik

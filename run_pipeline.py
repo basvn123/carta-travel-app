@@ -39,6 +39,7 @@ So you schedule ONE weekly job and each layer self-selects how often it fires:
   monthly   trails popularity (curation shortlists for the review queue)
   monthly   natural features: the beach and summit wire, rebuilt behind its gate
   quarterly beaches: the named coves of Europe, scored and photographed
+  quarterly lakes: the best water bodies, scored, with a swimming verdict
   quarterly open-data snapshots (crowding, bathing water, lodging) *
   quarterly trails ingest (Geofabrik hiking relations -> the trailslab lab)
   quarterly coverage gaps (what Europe has that the catalogue does not)
@@ -1048,6 +1049,31 @@ def guard_beaches():
     return True, "beach stages present, EEA bathing water cached"
 
 
+def guard_lakes():
+    """The lake layer needs its own scripts, the EEA bathing water cache and
+    the WorldClim rasters.
+
+    Both caches degrade quietly rather than loudly if they are missing, which
+    is what a guard is for. Without the EEA cache every lake loses its water
+    class AND its count of official bathing sites, which is the strongest
+    evidence this layer has that swimming somewhere is lawful. Without
+    WorldClim there is no swimming season at all, so a lake page loses the one
+    number a traveller reads first."""
+    missing = [s for s in ("water_sources.py", "seed_lakes.py",
+                           "harvest_lakes.py", "enrich_lakes.py",
+                           "lake_index.py", "export_lakes.py", "build_lakes.py")
+               if not (ROOT / "pipeline" / "lakes" / s).exists()]
+    if missing:
+        return False, f"pipeline/lakes is missing {', '.join(missing)}"
+    if not (CACHE / "eea_bathing_water.json").exists():
+        return False, ("cache/eea_bathing_water.json is missing; run the "
+                       "`bathing` task first, it decides the swimming verdict")
+    if not (CACHE / "worldclim" / "wc2.1_5m_tmax_07.tif").exists():
+        return False, ("cache/worldclim is missing; run the `climate` task "
+                       "first, the swimming season is modelled from it")
+    return True, "lake stages present, EEA bathing water and WorldClim cached"
+
+
 # Each task: key, title, cadence, writes_app_data, and either cmds or run.
 #   cadence         weekly | monthly | quarterly | after | backfill
 #                   (after = event-driven, see `after`; backfill = --only only)
@@ -1281,6 +1307,31 @@ TASKS = [
                  "re-harvesting."),
     },
     {
+        "key": "lakes",
+        "title": "Lakes: the best water bodies in Europe -> public/lakes",
+        "cadence": "quarterly",
+        "writes_app_data": False,
+        "writes_wire": True,
+        "soft": True,
+        "cmds": [[PY, "pipeline/lakes/build_lakes.py"]],
+        "guard": guard_lakes,
+        "note": ("the Lakes category on the Destinations tab: lakes, "
+                 "reservoirs, lagoons, tarns and crater lakes, each with three "
+                 "sub scores (setting, swimming, things to do) and a SWIMMING "
+                 "VERDICT. Three stages in one command (harvest -> enrich -> "
+                 "export), each cached per country in cache/lakes, so a warm "
+                 "re-run is seconds and produces the same wire. A cold build "
+                 "is a few hours, most of it Wikimedia rather than Overpass: "
+                 "unlike the beach layer this one never sweeps a country for "
+                 "geometry, it takes the two bounded Wikidata passes and then "
+                 "asks Overpass only what is AROUND each shortlisted lake. "
+                 "Quarterly, and by hand after the `bathing` task lands a new "
+                 "EEA season or after pipeline/lakes/seed_lakes.py changes, "
+                 "since the seed carries the swimming rules that override "
+                 "every machine signal. The export validates before it writes "
+                 "anything, so a failure leaves the previous wire standing."),
+    },
+    {
         "key": "flight_times",
         "title": "Departure/arrival times for already-covered origins",
         "cadence": "monthly",
@@ -1359,12 +1410,25 @@ TASKS = [
         "writes_app_data": False,
         "soft": True,
         "guard": guard_trailslab_up,
-        "cmds": [[PY, "pipeline/trails/elevation.py"]],
+        "cmds": [[PY, "pipeline/trails/elevation.py",
+                  "--countries",
+                  "AL,AD,AT,BE,BA,BG,HR,CY,CZ,DK,EE,FI,FR,DE,GB,GR,HU,IS,IE,IT,"
+                  "XK,LV,LI,LT,LU,MK,MT,MD,MC,ME,NL,NO,PL,PT,RO,RS,SK,SI,ES,SE,"
+                  "CH,TR,UA",
+                  "--curated", "--evict-gb", "4"],
+                 [PY, "pipeline/trails/splice.py", "--sync-only"]],
         "note": ("geometry-change driven twice over: the task is due after an "
                  "ingest, and the script itself only samples trips whose "
                  "elevation is missing or whose 2D geometry hash moved, so an "
-                 "ingest that changed nothing costs one query. DEM tiles are "
-                 "cached under data/raw/dem."),
+                 "ingest that changed nothing costs one query. --curated keeps "
+                 "it to what trails_curate approved: sampling all ~236k staged "
+                 "relations would pull most of Europe's DEM for routes nobody "
+                 "can open. --evict-gb 4 bounds what the run leaves in "
+                 "data/raw/dem, which already holds 15.6 GB for the four pilot "
+                 "countries and would otherwise fill the disk. The splice "
+                 "--sync-only step after it is not optional: this pass "
+                 "measures the ORIGINAL relation, so a spliced trip would "
+                 "otherwise state a length shorter than the line it ships."),
     },
     {
         "key": "trails_validate",
@@ -1416,6 +1480,96 @@ TASKS = [
                  "in the newest quality and portal signals, which is why it "
                  "sits after trails_validate in this list. Writes a "
                  "curation_rank row per trip for the review queue's ordering."),
+    },
+    {
+        "key": "trails_splice",
+        "title": "Trails: bridge the short breaks in otherwise whole relations",
+        "cadence": "monthly",
+        "writes_app_data": False,
+        "soft": True,
+        "guard": guard_trailslab_up,
+        "cmds": [[PY, "pipeline/trails/splice.py"]],
+        "note": ("joins parts separated only by breaks short enough to be "
+                 "mapping artefacts (every gap under 300 m, at most 8, under "
+                 "750 m in total) and stores the joined line in trip_repairs, "
+                 "so the continuity gate can pass a route whose relation lost "
+                 "a ten metre connector at a road crossing. Recovered ~10,000 "
+                 "routes including the Walker's Haute Route, which was being "
+                 "refused over a SEVEN metre break. Runs before trails_curate, "
+                 "which is what decides whether a recovered route earns a "
+                 "place. Anything with a real gap stays out."),
+    },
+    {
+        "key": "trails_curate",
+        "title": "Trails: per-country shortlist, loop-first, continuity gated",
+        "cadence": "after",
+        "after": ["trails_splice"],
+        "writes_app_data": False,
+        "soft": True,
+        "guard": guard_trailslab_up,
+        "cmds": [[PY, "pipeline/trails/curate.py"]],
+        "note": ("picks up to 150 routes per country out of the ~236k staged: "
+                 "hard continuity gate (one merged segment, zero gaps, so no "
+                 "published GPX can teleport), route families collapsed to "
+                 "one slot, loops filled first, then distance-band quotas, "
+                 "with the country's famous routes guaranteed a share. "
+                 "Demotes anything published that no longer survives "
+                 "re-selection. Runs after trails_popularity, whose rank it "
+                 "reads. Re-run it whenever the ingest brings new relations."),
+    },
+    {
+        "key": "trails_scenic",
+        "title": "Trails: scenic landmarks along the curated routes (Overpass)",
+        "cadence": "after",
+        "after": ["trails_curate"],
+        "writes_app_data": False,
+        "soft": True,
+        "guard": guard_trailslab_up,
+        "cmds": [[PY, "pipeline/trails/scenic.py"]],
+        "note": ("one Overpass sweep per 1.5 degree cell the curated routes "
+                 "touch, deduped across countries, then a spatial join that "
+                 "writes each route's highlight list and its scenic density. "
+                 "Cells are cached on disk, so a re-run after a curation pass "
+                 "only fetches the cells the new routes reach. Probes the "
+                 "mirrors first and skips the dead ones."),
+    },
+    {
+        "key": "trails_images",
+        "title": "Trails: Commons photographs taken on the route",
+        "cadence": "after",
+        "after": ["trails_curate", "trails_scenic"],
+        "writes_app_data": False,
+        "soft": True,
+        "guard": guard_trailslab_up,
+        "cmds": [[PY, "pipeline/trails/trail_images.py"]],
+        "note": ("geosearches Commons at points along each route and at the "
+                 "landmarks scenic.py found, keeps only frames shot within "
+                 "400 m of the line, and ranks a hero plus a gallery spread "
+                 "ALONG the walk. Skips routes that already have photographs, "
+                 "so it resumes for free. This is what stopped trail cards "
+                 "borrowing the nearest town's hero image."),
+    },
+    {
+        "key": "trails_rate",
+        "title": "Trails: published 0-10 rating and its reason codes",
+        "cadence": "after",
+        "after": ["trails_curate", "trails_scenic", "trails_images"],
+        "writes_app_data": False,
+        "soft": True,
+        "guard": guard_trailslab_up,
+        "cmds": [
+            [PY, "pipeline/trails/rate.py"],
+            [PY, "pipeline/trails/export_wire.py", "--countries",
+             "AL,AD,AT,BE,BA,BG,HR,CY,CZ,DK,EE,FI,FR,DE,GB,GR,HU,IS,IE,IT,"
+             "XK,LV,LI,LT,LU,MK,MT,MD,MC,ME,NL,NO,PL,PT,RO,RS,SK,SI,ES,SE,"
+             "CH,TR,UA"],
+        ],
+        "note": ("last in the chain, because the rating reads every earlier "
+                 "pass: scenic density, DEM relief, photograph count, "
+                 "designation, prominence and loop shape, each converted to "
+                 "its WITHIN-COUNTRY percentile so a Dutch walk is ranked "
+                 "against Dutch walks. Exports straight after, since the wire "
+                 "order is the rating order the app renders."),
     },
 
     # ---- backfill / on catalogue growth: MANUAL (--only), coverage-guarded ---- #

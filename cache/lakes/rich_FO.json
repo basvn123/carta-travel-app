@@ -1,0 +1,1896 @@
+{
+ "country": "FO",
+ "enriched_at": "2026-08-20T20:57:22+00:00",
+ "n_harvested": 19,
+ "lakes": [
+  {
+   "wd": "Q476699",
+   "name": "Fjallavatn",
+   "name_local": "Fjallavatn",
+   "lat": 62.1225,
+   "lon": -7.299167,
+   "iso2": "FO",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 20,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Fjallavatn.png",
+   "commons_cat": "",
+   "enwiki": "https://en.wikipedia.org/wiki/Fjallavatn",
+   "localwiki": "https://fo.wikipedia.org/wiki/Fjallavatn",
+   "area_km2": 1.02,
+   "depth_m": 59.0,
+   "elev_m": 80,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q476699",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "seed": {
+    "swim": "no",
+    "kind": "lake",
+    "why": "editorial",
+    "haz": [
+     "cold_shock"
+    ],
+    "note": "Vagar's second lake, a walk in over open moor",
+    "name": "Fjallavatn"
+   },
+   "base": {
+    "id": "FAE",
+    "city": "Vágar (Faroe Islands)",
+    "country": "Faroe Islands",
+    "km": 4.9
+   },
+   "climate": {
+    "source": "WorldClim 2.1 (1970-2000 normals, 5 arc-min)",
+    "t_mean": [
+     3.0,
+     3.1,
+     3.5,
+     4.7,
+     6.8,
+     8.7,
+     10.3,
+     10.6,
+     9.1,
+     7.1,
+     4.7,
+     3.6
+    ]
+   },
+   "prelim": 99.0,
+   "article": {
+    "lang": "en",
+    "title": "Fjallavatn",
+    "facts": [
+     "islands"
+    ],
+    "swim_text": "",
+    "chars": 120
+   },
+   "views60": 208,
+   "images": [
+    {
+     "file": "File:Víkar, Faroe Islands.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/9/96/V%C3%ADkar%2C_Faroe_Islands.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/9/96/V%C3%ADkar%2C_Faroe_Islands.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 853,
+     "license": "CC BY-SA 2.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+     "author": "Ulrich Latzenhofer",
+     "caption": "Blick von Viðvík auf den Nordwesten von Vágar, insbesondere auf den 1833 gegründeten, aber wegen seiner Unzugänglichkeit schon 1914 verlassenen Ort Víkar.",
+     "page": "https://commons.wikimedia.org/wiki/File%3AV%C3%ADkar%2C_Faroe_Islands.jpg"
+    }
+   ]
+  },
+  {
+   "wd": "Q1322013",
+   "name": "Lake Toftir",
+   "name_local": "Toftavatn",
+   "lat": 62.095569,
+   "lon": -6.716337,
+   "iso2": "FO",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 9,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Toftavatn.jpg",
+   "commons_cat": "Toftavatn",
+   "enwiki": "https://en.wikipedia.org/wiki/Lake_Toftir",
+   "localwiki": "https://fo.wikipedia.org/wiki/Toftavatn",
+   "area_km2": 0.51,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q1322013",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "seed": {
+    "swim": "no",
+    "kind": "lake",
+    "why": "editorial",
+    "haz": [
+     "cold_shock"
+    ],
+    "note": "Eysturoy, an easy lakeside walk",
+    "name": "Toftavatn"
+   },
+   "base": {
+    "id": "gem:torshavn",
+    "city": "Tórshavn",
+    "country": "Faroe Islands",
+    "km": 9.8
+   },
+   "climate": {
+    "source": "WorldClim 2.1 (1970-2000 normals, 5 arc-min)",
+    "t_mean": [
+     3.5,
+     3.6,
+     4.0,
+     5.0,
+     7.3,
+     9.2,
+     10.9,
+     11.2,
+     9.6,
+     7.6,
+     5.2,
+     4.1
+    ]
+   },
+   "prelim": 99.0,
+   "article": {
+    "lang": "en",
+    "title": "Lake Toftir",
+    "facts": [
+     "islands"
+    ],
+    "swim_text": "",
+    "chars": 299
+   },
+   "views60": 96,
+   "images": [
+    {
+     "file": "File:Toftavatn.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Toftavatn.jpg/1280px-Toftavatn.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/3/30/Toftavatn.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 798,
+     "license": "CC BY-SA 3.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+     "author": "Torbenbrinker",
+     "caption": "Lake Toftavatn, Faroe Islands",
+     "page": "https://commons.wikimedia.org/wiki/File%3AToftavatn.jpg"
+    },
+    {
+     "file": "File:Skálafjørður.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Sk%C3%A1lafj%C3%B8r%C3%B0ur.jpg/1280px-Sk%C3%A1lafj%C3%B8r%C3%B0ur.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/6/6e/Sk%C3%A1lafj%C3%B8r%C3%B0ur.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 853,
+     "license": "CC BY-SA 4.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+     "author": "Renno Hokwerda",
+     "caption": "Aerial picture of the Skálafjørður, looking from Toftir (football stadium in the lower left corner) looking north. You can see Toftavatn lake (centre-right) and the villages Strendur, Toftir, Runavík,",
+     "page": "https://commons.wikimedia.org/wiki/File%3ASk%C3%A1lafj%C3%B8r%C3%B0ur.jpg"
+    }
+   ]
+  },
+  {
+   "wd": "Q932408",
+   "name": "Sørvágsvatn",
+   "name_local": "Sørvágsvatn",
+   "lat": 62.05,
+   "lon": -7.233333,
+   "iso2": "FO",
+   "adm": "Vága Municipality",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 32,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/S%C3%B8rv%C3%A1gsvatn%204.jpg",
+   "commons_cat": "Sørvágsvatn",
+   "enwiki": "https://en.wikipedia.org/wiki/S%C3%B8rv%C3%A1gsvatn",
+   "localwiki": "https://fo.wikipedia.org/wiki/S%C3%B8rv%C3%A1gsvatn",
+   "area_km2": 3.4,
+   "depth_m": 59.0,
+   "elev_m": 32,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q932408",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "seed": {
+    "swim": "no",
+    "kind": "lake",
+    "why": "editorial",
+    "haz": [
+     "cold_shock",
+     "cliffs"
+    ],
+    "note": "the lake that looks like it hangs over the ocean, the Faroes' one famous picture",
+    "name": "Sorvagsvatn"
+   },
+   "base": {
+    "id": "FAE",
+    "city": "Vágar (Faroe Islands)",
+    "country": "Faroe Islands",
+    "km": 4.3
+   },
+   "climate": {
+    "source": "WorldClim 2.1 (1970-2000 normals, 5 arc-min)",
+    "t_mean": [
+     3.0,
+     3.2,
+     3.8,
+     5.0,
+     7.2,
+     9.3,
+     10.8,
+     11.1,
+     9.4,
+     7.4,
+     4.8,
+     3.7
+    ]
+   },
+   "prelim": 99.0,
+   "article": {
+    "lang": "en",
+    "title": "Sørvágsvatn",
+    "facts": [
+     "islands"
+    ],
+    "swim_text": "",
+    "chars": 355
+   },
+   "views60": 0,
+   "images": [
+    {
+     "file": "File:Sorvagsvatn 01.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c6/Sorvagsvatn_01.jpg/1280px-Sorvagsvatn_01.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/c/c6/Sorvagsvatn_01.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 836,
+     "license": "CC BY 2.0",
+     "license_url": "https://creativecommons.org/licenses/by/2.0",
+     "author": "Stig Nygaard from Copenhagen, Denmark",
+     "caption": "Sørvágsvatn",
+     "page": "https://commons.wikimedia.org/wiki/File%3ASorvagsvatn_01.jpg"
+    },
+    {
+     "file": "File:Sorvagsvatn 02.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Sorvagsvatn_02.jpg/1280px-Sorvagsvatn_02.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/5/5a/Sorvagsvatn_02.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 767,
+     "license": "CC BY 2.0",
+     "license_url": "https://creativecommons.org/licenses/by/2.0",
+     "author": "Stig Nygaard from Copenhagen, Denmark",
+     "caption": "Sørvágsvatn",
+     "page": "https://commons.wikimedia.org/wiki/File%3ASorvagsvatn_02.jpg"
+    },
+    {
+     "file": "File:Sørvágsvatn, Faroe Islands.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/26/S%C3%B8rv%C3%A1gsvatn%2C_Faroe_Islands.jpg/1280px-S%C3%B8rv%C3%A1gsvatn%2C_Faroe_Islands.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/2/26/S%C3%B8rv%C3%A1gsvatn%2C_Faroe_Islands.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 856,
+     "license": "CC BY 2.0",
+     "license_url": "https://creativecommons.org/licenses/by/2.0",
+     "author": "DavideGorla",
+     "caption": "Sørvágsvatn, Faroe Islands",
+     "page": "https://commons.wikimedia.org/wiki/File%3AS%C3%B8rv%C3%A1gsvatn%2C_Faroe_Islands.jpg"
+    },
+    {
+     "file": "File:Sørvágsvatn (Unsplash).jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c4/S%C3%B8rv%C3%A1gsvatn_%28Unsplash%29.jpg/1280px-S%C3%B8rv%C3%A1gsvatn_%28Unsplash%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/c/c4/S%C3%B8rv%C3%A1gsvatn_%28Unsplash%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 853,
+     "license": "CC0",
+     "license_url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+     "author": "Adrihani Rashid adrihani",
+     "caption": "Sørvágsvatn, Faroe Islands",
+     "page": "https://commons.wikimedia.org/wiki/File%3AS%C3%B8rv%C3%A1gsvatn_%28Unsplash%29.jpg"
+    },
+    {
+     "file": "File:Sørvágsvatn 2.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/S%C3%B8rv%C3%A1gsvatn_2.jpg/1280px-S%C3%B8rv%C3%A1gsvatn_2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/1/13/S%C3%B8rv%C3%A1gsvatn_2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 853,
+     "license": "CC BY-SA 4.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+     "author": "kallerna",
+     "caption": "Sørvágsvatn seen from Trælanípan, Vágar, Faroe Islands.",
+     "page": "https://commons.wikimedia.org/wiki/File%3AS%C3%B8rv%C3%A1gsvatn_2.jpg"
+    }
+   ]
+  },
+  {
+   "wd": "Q1257382",
+   "name": "Sandsvatn",
+   "name_local": "Sandsvatn",
+   "lat": 61.848306,
+   "lon": -6.819583,
+   "iso2": "FO",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 15,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Sandsvatn%20a%20Lake%20on%20Sandoy%20in%20the%20Faroe%20Islands.JPG",
+   "commons_cat": "Sandsvatn",
+   "enwiki": "https://en.wikipedia.org/wiki/Sandsvatn",
+   "localwiki": "https://fo.wikipedia.org/wiki/Sandsvatn",
+   "area_km2": 0.8,
+   "depth_m": 5.0,
+   "elev_m": 7,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q1257382",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "base": {
+    "id": "gem:torshavn",
+    "city": "Tórshavn",
+    "country": "Faroe Islands",
+    "km": 18.3
+   },
+   "climate": {
+    "source": "WorldClim 2.1 (1970-2000 normals, 5 arc-min)",
+    "t_mean": [
+     3.6,
+     3.6,
+     3.9,
+     4.9,
+     7.1,
+     9.0,
+     10.6,
+     10.9,
+     9.3,
+     7.4,
+     5.1,
+     4.1
+    ]
+   },
+   "prelim": 6.888,
+   "article": {
+    "lang": "en",
+    "title": "Sandsvatn",
+    "facts": [
+     "fishing",
+     "islands"
+    ],
+    "swim_text": "",
+    "chars": 486
+   },
+   "views60": 93,
+   "images": [
+    {
+     "file": "File:Sandsvatn a Lake on Sandoy in the Faroe Islands.JPG",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/56/Sandsvatn_a_Lake_on_Sandoy_in_the_Faroe_Islands.JPG/1280px-Sandsvatn_a_Lake_on_Sandoy_in_the_Faroe_Islands.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/5/56/Sandsvatn_a_Lake_on_Sandoy_in_the_Faroe_Islands.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC BY-SA 3.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+     "author": "EileenSanda",
+     "caption": "Sandsvatn is a lake in Sandoy island in the Faroe Islands. Sandsvatn is the third largest lake in the Faroe Islands. The lake is located north of the village Sandur and south of the village Skopun. Th",
+     "page": "https://commons.wikimedia.org/wiki/File%3ASandsvatn_a_Lake_on_Sandoy_in_the_Faroe_Islands.JPG"
+    },
+    {
+     "file": "File:Inni í Dal Sandoy Faroe Islands July 2012.JPG",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d7/Inni_%C3%AD_Dal_Sandoy_Faroe_Islands_July_2012.JPG/1280px-Inni_%C3%AD_Dal_Sandoy_Faroe_Islands_July_2012.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/d/d7/Inni_%C3%AD_Dal_Sandoy_Faroe_Islands_July_2012.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC BY-SA 3.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+     "author": "EileenSanda",
+     "caption": "Inni í Dal (in the Valley) on Sandoy, Faroe Islands, is a place where the football stadium of B71 Sandoy is located along with the school and the new sports hall. The school is for children from all o",
+     "page": "https://commons.wikimedia.org/wiki/File%3AInni_%C3%AD_Dal_Sandoy_Faroe_Islands_July_2012.JPG"
+    },
+    {
+     "file": "File:Het Inni í Dal B71 Sandoy IMG 20210804 115125765.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Het_Inni_%C3%AD_Dal_B71_Sandoy_IMG_20210804_115125765.jpg/1280px-Het_Inni_%C3%AD_Dal_B71_Sandoy_IMG_20210804_115125765.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/5/52/Het_Inni_%C3%AD_Dal_B71_Sandoy_IMG_20210804_115125765.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC BY-SA 4.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+     "author": "Timmietovenaar",
+     "caption": "Het Inni í Dal complex van B71 op Sandoy, Faeröer eilanden.",
+     "page": "https://commons.wikimedia.org/wiki/File%3AHet_Inni_%C3%AD_Dal_B71_Sandoy_IMG_20210804_115125765.jpg"
+    },
+    {
+     "file": "File:Het Inni í Dal B71 Sandoy IMG 20210804 115007816 HDR.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/62/Het_Inni_%C3%AD_Dal_B71_Sandoy_IMG_20210804_115007816_HDR.jpg/1280px-Het_Inni_%C3%AD_Dal_B71_Sandoy_IMG_20210804_115007816_HDR.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/6/62/Het_Inni_%C3%AD_Dal_B71_Sandoy_IMG_20210804_115007816_HDR.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC BY-SA 4.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+     "author": "Timmietovenaar",
+     "caption": "Het Inni í Dal complex van B71 op Sandoy, Faeröer eilanden.",
+     "page": "https://commons.wikimedia.org/wiki/File%3AHet_Inni_%C3%AD_Dal_B71_Sandoy_IMG_20210804_115007816_HDR.jpg"
+    },
+    {
+     "file": "File:Het Inni í Dal B71 Sandoy IMG 20210804 114913475.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4d/Het_Inni_%C3%AD_Dal_B71_Sandoy_IMG_20210804_114913475.jpg/1280px-Het_Inni_%C3%AD_Dal_B71_Sandoy_IMG_20210804_114913475.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/4/4d/Het_Inni_%C3%AD_Dal_B71_Sandoy_IMG_20210804_114913475.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC BY-SA 4.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+     "author": "Timmietovenaar",
+     "caption": "Het Inni í Dal complex van B71 op Sandoy, Faeröer eilanden.",
+     "page": "https://commons.wikimedia.org/wiki/File%3AHet_Inni_%C3%AD_Dal_B71_Sandoy_IMG_20210804_114913475.jpg"
+    }
+   ]
+  },
+  {
+   "wd": "Q1257349",
+   "name": "Kirkjuvatn",
+   "name_local": "Kirkjuvatn",
+   "lat": 61.5299,
+   "lon": -6.8757,
+   "iso2": "FO",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 7,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Kirkjuvatn.%20F%C3%A1mjin.01.jpg",
+   "commons_cat": "Kirkjuvatn",
+   "enwiki": "https://en.wikipedia.org/wiki/Kirkjuvatn",
+   "localwiki": "https://fo.wikipedia.org/wiki/Kirkjuvatn",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q1257349",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "base": {
+    "id": "gem:suduroy",
+    "city": "Suðuroy",
+    "country": "Faroe Islands",
+    "km": 1.4
+   },
+   "climate": {
+    "source": "WorldClim 2.1 (1970-2000 normals, 5 arc-min)",
+    "t_mean": [
+     3.4,
+     3.3,
+     3.5,
+     4.4,
+     6.4,
+     8.3,
+     9.8,
+     10.2,
+     8.8,
+     7.0,
+     4.9,
+     3.9
+    ]
+   },
+   "prelim": 6.091,
+   "article": {
+    "lang": "en",
+    "title": "Kirkjuvatn",
+    "facts": [
+     "church",
+     "islands"
+    ],
+    "swim_text": "",
+    "chars": 602
+   },
+   "views60": 62,
+   "images": [
+    {
+     "file": "File:Kirkjuvatn. Fámjin.01.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Kirkjuvatn._F%C3%A1mjin.01.jpg/1280px-Kirkjuvatn._F%C3%A1mjin.01.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/2/2f/Kirkjuvatn._F%C3%A1mjin.01.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 852,
+     "license": "CC BY-SA 3.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+     "author": "Erik Christensen",
+     "caption": "Kirkjuvatn is a lake in Suðuroy, Faroe Islands. The lake is located just north of the village Fámjin, which is located on the west coast of Suðuroy.",
+     "page": "https://commons.wikimedia.org/wiki/File%3AKirkjuvatn._F%C3%A1mjin.01.jpg"
+    },
+    {
+     "file": "File:Fámjin.11.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/F%C3%A1mjin.11.jpg/1280px-F%C3%A1mjin.11.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/e/ec/F%C3%A1mjin.11.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 857,
+     "license": "CC BY-SA 3.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+     "author": "Erik Christensen",
+     "caption": "Village Fámjin, Suðuroy, Faroe Islands",
+     "page": "https://commons.wikimedia.org/wiki/File%3AF%C3%A1mjin.11.jpg"
+    }
+   ]
+  },
+  {
+   "wd": "Q1827912",
+   "name": "Lake Eiði",
+   "name_local": "Eiðisvatn",
+   "lat": 62.286111,
+   "lon": -7.052778,
+   "iso2": "FO",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 7,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Ei%C3%B0isvatn%2C%20Faroe%20Islands.JPG",
+   "commons_cat": "Eiðisvatn",
+   "enwiki": "https://en.wikipedia.org/wiki/Lake_Ei%C3%B0i",
+   "localwiki": "https://fo.wikipedia.org/wiki/Ei%C3%B0isvatn",
+   "area_km2": 0.47,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q1827912",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "base": {
+    "id": "gem:gjogv",
+    "city": "Gjógv",
+    "country": "Faroe Islands",
+    "km": 7.2
+   },
+   "climate": {
+    "source": "WorldClim 2.1 (1970-2000 normals, 5 arc-min)",
+    "t_mean": [
+     2.5,
+     2.4,
+     2.7,
+     3.8,
+     6.2,
+     8.1,
+     9.8,
+     10.1,
+     8.4,
+     6.3,
+     3.9,
+     3.1
+    ]
+   },
+   "prelim": 6.091,
+   "article": {
+    "lang": "en",
+    "title": "Lake Eiði",
+    "facts": [
+     "islands"
+    ],
+    "swim_text": "",
+    "chars": 591
+   },
+   "views60": 131,
+   "images": [
+    {
+     "file": "File:Eiðisvatn, Faroe Islands.JPG",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/Ei%C3%B0isvatn%2C_Faroe_Islands.JPG/1280px-Ei%C3%B0isvatn%2C_Faroe_Islands.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/0/0f/Ei%C3%B0isvatn%2C_Faroe_Islands.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 852,
+     "license": "CC BY-SA 3.0",
+     "license_url": "http://creativecommons.org/licenses/by-sa/3.0/",
+     "author": "Erik Christensen, Porkeri (Contact at the Danish Wikipedia)",
+     "caption": "Eiðisvatn, storage lake south of Eiði at Eysturoy, Faroe Islands.",
+     "page": "https://commons.wikimedia.org/wiki/File%3AEi%C3%B0isvatn%2C_Faroe_Islands.JPG"
+    },
+    {
+     "file": "File:Eiði from Eiðiskollur.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Ei%C3%B0i_from_Ei%C3%B0iskollur.jpg/1280px-Ei%C3%B0i_from_Ei%C3%B0iskollur.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/8/8c/Ei%C3%B0i_from_Ei%C3%B0iskollur.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 759,
+     "license": "CC BY-SA 4.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+     "author": "kallerna",
+     "caption": "Eiði seen from Eiðiskollur.",
+     "page": "https://commons.wikimedia.org/wiki/File%3AEi%C3%B0i_from_Ei%C3%B0iskollur.jpg"
+    }
+   ]
+  },
+  {
+   "wd": "Q2030212",
+   "name": "Stóravatn",
+   "name_local": "Stóravatn",
+   "lat": 61.816389,
+   "lon": -6.754167,
+   "iso2": "FO",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 4,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/St%C3%B3ravatn%20aerial%202019%20b%20%28cropped%29.jpg",
+   "commons_cat": "Stóravatn, Sandoy",
+   "enwiki": "https://en.wikipedia.org/wiki/St%C3%B3ravatn",
+   "localwiki": "https://fo.wikipedia.org/wiki/St%C3%B3ravatn",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q2030212",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "base": {
+    "id": "gem:torshavn",
+    "city": "Tórshavn",
+    "country": "Faroe Islands",
+    "km": 21.8
+   },
+   "climate": {
+    "source": "WorldClim 2.1 (1970-2000 normals, 5 arc-min)",
+    "t_mean": [
+     4.3,
+     4.1,
+     4.4,
+     5.2,
+     7.2,
+     9.0,
+     10.5,
+     11.0,
+     9.7,
+     7.9,
+     5.8,
+     4.8
+    ]
+   },
+   "prelim": 5.551,
+   "article": {
+    "lang": "en",
+    "title": "Stóravatn",
+    "facts": [
+     "islands"
+    ],
+    "swim_text": "",
+    "chars": 226
+   },
+   "views60": 0,
+   "images": [
+    {
+     "file": "File:Stóravatn aerial 2019 b (cropped).jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/St%C3%B3ravatn_aerial_2019_b_%28cropped%29.jpg/1280px-St%C3%B3ravatn_aerial_2019_b_%28cropped%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/a/a5/St%C3%B3ravatn_aerial_2019_b_%28cropped%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 718,
+     "license": "CC BY-SA 4.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+     "author": "kallerna",
+     "caption": "Sandur seen from a helicopter: Stóravatn and Litlavatn, Skálavík in the background.",
+     "page": "https://commons.wikimedia.org/wiki/File%3ASt%C3%B3ravatn_aerial_2019_b_%28cropped%29.jpg"
+    }
+   ]
+  },
+  {
+   "wd": "Q1187685",
+   "name": "Gróthúsvatn",
+   "name_local": "Gróthúsvatn",
+   "lat": 61.840278,
+   "lon": -6.833056,
+   "iso2": "FO",
+   "adm": "Sandur Municipality",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 5,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Grothusvatn%2C%20Sandoy%2C%20Faroe%20Islands.JPG",
+   "commons_cat": "Gróthúsvatn",
+   "enwiki": "",
+   "localwiki": "https://fo.wikipedia.org/wiki/Gr%C3%B3th%C3%BAsvatn",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q1187685",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "base": {
+    "id": "gem:torshavn",
+    "city": "Tórshavn",
+    "country": "Faroe Islands",
+    "km": 19.3
+   },
+   "climate": {
+    "source": "WorldClim 2.1 (1970-2000 normals, 5 arc-min)",
+    "t_mean": [
+     3.6,
+     3.6,
+     3.9,
+     4.9,
+     7.1,
+     9.0,
+     10.6,
+     10.9,
+     9.3,
+     7.4,
+     5.1,
+     4.1
+    ]
+   },
+   "prelim": 4.961,
+   "article": {
+    "lang": "fo",
+    "title": "Gróthúsvatn",
+    "facts": [],
+    "swim_text": "",
+    "chars": 256
+   },
+   "views60": 20,
+   "images": [
+    {
+     "file": "File:Grothusvatn, Sandoy, Faroe Islands.JPG",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/Grothusvatn%2C_Sandoy%2C_Faroe_Islands.JPG/1280px-Grothusvatn%2C_Sandoy%2C_Faroe_Islands.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/d/d1/Grothusvatn%2C_Sandoy%2C_Faroe_Islands.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC BY-SA 3.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+     "author": "Eileen Sandá",
+     "caption": "Gróthúsvatn is a lake in the Faroe Islands, on the island Sandoy. It is located in Grótvík, which is on the south coast, just west of the main village of Sandoy, Sandur. Gróthúsvatn is 0,2 sq. km. It ",
+     "page": "https://commons.wikimedia.org/wiki/File%3AGrothusvatn%2C_Sandoy%2C_Faroe_Islands.JPG"
+    },
+    {
+     "file": "File:Í Trøðum, Sandoy 2005.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/3/38/%C3%8D_Tr%C3%B8%C3%B0um%2C_Sandoy_2005.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/3/38/%C3%8D_Tr%C3%B8%C3%B0um%2C_Sandoy_2005.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 851,
+     "license": "CC BY-SA 3.0",
+     "license_url": "http://creativecommons.org/licenses/by-sa/3.0/",
+     "author": "",
+     "caption": "",
+     "page": "https://commons.wikimedia.org/wiki/File%3A%C3%8D_Tr%C3%B8%C3%B0um%2C_Sandoy_2005.jpg"
+    }
+   ]
+  },
+  {
+   "wd": "Q302162",
+   "name": "Lake Leynar",
+   "name_local": "Leynavatn",
+   "lat": 62.128333,
+   "lon": -7.022778,
+   "iso2": "FO",
+   "adm": "Tórshavn Municipality",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 5,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Leynavatn.jpg",
+   "commons_cat": "",
+   "enwiki": "https://en.wikipedia.org/wiki/Lake_Leynar",
+   "localwiki": "https://fo.wikipedia.org/wiki/Leynavatn",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q302162",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "base": {
+    "id": "gem:vestmanna",
+    "city": "Vestmanna",
+    "country": "Faroe Islands",
+    "km": 8.1
+   },
+   "climate": {
+    "source": "WorldClim 2.1 (1970-2000 normals, 5 arc-min)",
+    "t_mean": [
+     2.4,
+     2.4,
+     3.0,
+     4.3,
+     6.7,
+     8.8,
+     10.5,
+     10.6,
+     8.8,
+     6.7,
+     4.2,
+     3.1
+    ]
+   },
+   "prelim": 4.861,
+   "article": {
+    "lang": "en",
+    "title": "Lake Leynar",
+    "facts": [
+     "islands"
+    ],
+    "swim_text": "",
+    "chars": 379
+   },
+   "views60": 63,
+   "images": [
+    {
+     "file": "File:Leynar, Isole Faroe - panoramio.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/Leynar%2C_Isole_Faroe_-_panoramio.jpg/1280px-Leynar%2C_Isole_Faroe_-_panoramio.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/7/78/Leynar%2C_Isole_Faroe_-_panoramio.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC BY-SA 3.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+     "author": "patano",
+     "caption": "Leynar, Isole Faroe",
+     "page": "https://commons.wikimedia.org/wiki/File%3ALeynar%2C_Isole_Faroe_-_panoramio.jpg"
+    },
+    {
+     "file": "File:Leynarvegur, Isole Faroe - panoramio.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Leynarvegur%2C_Isole_Faroe_-_panoramio.jpg/1280px-Leynarvegur%2C_Isole_Faroe_-_panoramio.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/2/29/Leynarvegur%2C_Isole_Faroe_-_panoramio.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC BY-SA 3.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+     "author": "patano",
+     "caption": "Leynarvegur, Isole Faroe",
+     "page": "https://commons.wikimedia.org/wiki/File%3ALeynarvegur%2C_Isole_Faroe_-_panoramio.jpg"
+    },
+    {
+     "file": "File:Kvívík.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dc/Kv%C3%ADv%C3%ADk.jpg/1280px-Kv%C3%ADv%C3%ADk.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/d/dc/Kv%C3%ADv%C3%ADk.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 399,
+     "license": "CC BY 2.0",
+     "license_url": "https://creativecommons.org/licenses/by/2.0",
+     "author": "Maciej Brencz",
+     "caption": "Kvívík, Faroe Islands.",
+     "page": "https://commons.wikimedia.org/wiki/File%3AKv%C3%ADv%C3%ADk.jpg"
+    },
+    {
+     "file": "File:Streymoy, Isole Faroe - panoramio.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Streymoy%2C_Isole_Faroe_-_panoramio.jpg/1280px-Streymoy%2C_Isole_Faroe_-_panoramio.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/0/05/Streymoy%2C_Isole_Faroe_-_panoramio.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 975,
+     "license": "CC BY-SA 3.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+     "author": "patano",
+     "caption": "Streymoy, Isole Faroe",
+     "page": "https://commons.wikimedia.org/wiki/File%3AStreymoy%2C_Isole_Faroe_-_panoramio.jpg"
+    },
+    {
+     "file": "File:Frammi í Dal.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/aa/Frammi_%C3%AD_Dal.jpg/1280px-Frammi_%C3%AD_Dal.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/a/aa/Frammi_%C3%AD_Dal.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC BY-SA 3.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+     "author": "Pietro",
+     "caption": "Road 40",
+     "page": "https://commons.wikimedia.org/wiki/File%3AFrammi_%C3%AD_Dal.jpg"
+    }
+   ]
+  },
+  {
+   "wd": "Q20620847",
+   "name": "Ryskivatn",
+   "name_local": "Ryskivatn",
+   "lat": 61.4925,
+   "lon": -6.8605,
+   "iso2": "FO",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Ryskivatn%20V%C3%A1gur%20Faroe%20Islands.jpg",
+   "commons_cat": "Ryskivatn",
+   "enwiki": "",
+   "localwiki": "https://fo.wikipedia.org/wiki/Ryskivatn",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q20620847",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "base": {
+    "id": "gem:suduroy",
+    "city": "Suðuroy",
+    "country": "Faroe Islands",
+    "km": 4.6
+   },
+   "climate": {
+    "source": "WorldClim 2.1 (1970-2000 normals, 5 arc-min)",
+    "t_mean": [
+     3.7,
+     3.6,
+     3.8,
+     4.6,
+     6.5,
+     8.4,
+     9.9,
+     10.2,
+     9.0,
+     7.3,
+     5.2,
+     4.2
+    ]
+   },
+   "prelim": 4.163,
+   "article": {
+    "lang": "fo",
+    "title": "Ryskivatn",
+    "facts": [],
+    "swim_text": "",
+    "chars": 1174
+   },
+   "views60": 0,
+   "images": [
+    {
+     "file": "File:Ryskivatn Suduroy Faroe Islands.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Ryskivatn_Suduroy_Faroe_Islands.jpg/1280px-Ryskivatn_Suduroy_Faroe_Islands.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/e/e4/Ryskivatn_Suduroy_Faroe_Islands.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC BY-SA 3.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+     "author": "EileenSanda",
+     "caption": "Ryskivatn is a lake in the island Suðuroy in the Faroe Islands. It is located up in the mountains north-west of Vágur. The water from this lake and some other lakes which are further up in the mountai",
+     "page": "https://commons.wikimedia.org/wiki/File%3ARyskivatn_Suduroy_Faroe_Islands.jpg"
+    },
+    {
+     "file": "File:Ryskivatn Vágur Faroe Islands.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/Ryskivatn_V%C3%A1gur_Faroe_Islands.jpg/1280px-Ryskivatn_V%C3%A1gur_Faroe_Islands.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/9/97/Ryskivatn_V%C3%A1gur_Faroe_Islands.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC BY-SA 3.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+     "author": "EileenSanda",
+     "caption": "Ryskivatn is a lake in the island Suðuroy in the Faroe Islands. It is located up in the mountains north-west of Vágur. The water from this lake and some other lakes which are further up in the mountai",
+     "page": "https://commons.wikimedia.org/wiki/File%3ARyskivatn_V%C3%A1gur_Faroe_Islands.jpg"
+    },
+    {
+     "file": "File:Elverkið í Botni.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/26/Elverki%C3%B0_%C3%AD_Botni.jpg/1280px-Elverki%C3%B0_%C3%AD_Botni.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/2/26/Elverki%C3%B0_%C3%AD_Botni.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC BY-SA 3.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+     "author": "EileenSanda",
+     "caption": "The hydro-electric powerplant in Botni was built in 1920-21, ready to use in 1921. The people in Vágur celebrated the opening of this first electric power plant in the Faroes on 18 July 1921. The mayo",
+     "page": "https://commons.wikimedia.org/wiki/File%3AElverki%C3%B0_%C3%AD_Botni.jpg"
+    }
+   ]
+  },
+  {
+   "wd": "Q20621793",
+   "name": "Vatnið",
+   "name_local": "Vatnið",
+   "lat": 61.4686,
+   "lon": -6.8329,
+   "iso2": "FO",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Vatni%C3%B0%20V%C3%A1gsei%C3%B0i%20V%C3%A1gur.jpg",
+   "commons_cat": "Vatnið (Vágur)",
+   "enwiki": "",
+   "localwiki": "https://fo.wikipedia.org/wiki/Vatni%C3%B0_(V%C3%A1gur)",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q20621793",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "base": {
+    "id": "gem:suduroy",
+    "city": "Suðuroy",
+    "country": "Faroe Islands",
+    "km": 7.3
+   },
+   "climate": {
+    "source": "WorldClim 2.1 (1970-2000 normals, 5 arc-min)",
+    "t_mean": [
+     3.7,
+     3.6,
+     3.9,
+     4.7,
+     6.7,
+     8.6,
+     10.0,
+     10.4,
+     9.1,
+     7.3,
+     5.2,
+     4.2
+    ]
+   },
+   "prelim": 4.163,
+   "article": {
+    "lang": "fo",
+    "title": "Vatnið (Vágur)",
+    "facts": [],
+    "swim_text": "",
+    "chars": 619
+   },
+   "views60": 0,
+   "images": [
+    {
+     "file": "File:Vatnið Vágseiði Vágur.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/6/68/Vatni%C3%B0_V%C3%A1gsei%C3%B0i_V%C3%A1gur.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/6/68/Vatni%C3%B0_V%C3%A1gsei%C3%B0i_V%C3%A1gur.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC BY-SA 4.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+     "author": "EileenSanda",
+     "caption": "Vágur is a village in Suðuroy, Faroe Islands. The population is around 1350.",
+     "page": "https://commons.wikimedia.org/wiki/File%3AVatni%C3%B0_V%C3%A1gsei%C3%B0i_V%C3%A1gur.jpg"
+    },
+    {
+     "file": "File:Gamla Skúla, Vágur 2004.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fc/Gamla_Sk%C3%BAla%2C_V%C3%A1gur_2004.jpg/1280px-Gamla_Sk%C3%BAla%2C_V%C3%A1gur_2004.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/f/fc/Gamla_Sk%C3%BAla%2C_V%C3%A1gur_2004.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 852,
+     "license": "CC BY-SA 3.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+     "author": "Erik Christensen",
+     "caption": "Vágur - Suðuroy - Faroe Islands",
+     "page": "https://commons.wikimedia.org/wiki/File%3AGamla_Sk%C3%BAla%2C_V%C3%A1gur_2004.jpg"
+    },
+    {
+     "file": "File:Vágur.Suðuroy.2.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/V%C3%A1gur.Su%C3%B0uroy.2.jpg/1280px-V%C3%A1gur.Su%C3%B0uroy.2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/4/4f/V%C3%A1gur.Su%C3%B0uroy.2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 857,
+     "license": "CC BY-SA 3.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+     "author": "Erik Christensen",
+     "caption": "Vágseiði, old landing place, west, Vágur, Suðuroy, Faroe Islands",
+     "page": "https://commons.wikimedia.org/wiki/File%3AV%C3%A1gur.Su%C3%B0uroy.2.jpg"
+    },
+    {
+     "file": "File:FaroeBoats Grindabatar from Vagur.JPG",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/FaroeBoats_Grindabatar_from_Vagur.JPG/1280px-FaroeBoats_Grindabatar_from_Vagur.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/b/b5/FaroeBoats_Grindabatar_from_Vagur.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "Public domain",
+     "license_url": "",
+     "author": "Eileen Sandá",
+     "caption": "On this photo there are seven so-called Grindabátar or Faroe Boats from the village Vágur in Suðuroy, Faroe Islands. There are 10 of these boats in Vágur. The oldest one is Gjógvarábáturin, which was ",
+     "page": "https://commons.wikimedia.org/wiki/File%3AFaroeBoats_Grindabatar_from_Vagur.JPG"
+    },
+    {
+     "file": "File:Heltnarnar Vagur Suduroy Faroe Islands.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/16/Heltnarnar_Vagur_Suduroy_Faroe_Islands.jpg/1280px-Heltnarnar_Vagur_Suduroy_Faroe_Islands.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/1/16/Heltnarnar_Vagur_Suduroy_Faroe_Islands.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC BY-SA 3.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+     "author": "EileenSanda",
+     "caption": "Heltnarnar is a skerry or rocky reef on Vágseiði west of the village Vágur, Faroe Islands. Vágur is a village on the southernmost island, Suðuroy (South Island). The sea is often rough around the sker",
+     "page": "https://commons.wikimedia.org/wiki/File%3AHeltnarnar_Vagur_Suduroy_Faroe_Islands.jpg"
+    }
+   ]
+  },
+  {
+   "wd": "Q117160244",
+   "name": "Pollurin",
+   "name_local": "",
+   "lat": 62.2478,
+   "lon": -7.1878,
+   "iso2": "FO",
+   "adm": "Sunda Municipality",
+   "types": [
+    "lagoon"
+   ],
+   "sitelinks": 1,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Saksun%2C%20Blue%20lagoon.jpg",
+   "commons_cat": "Pollurin, Saksun",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q117160244",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "base": {
+    "id": "gem:saksun",
+    "city": "Saksun",
+    "country": "Faroe Islands",
+    "km": 0.6
+   },
+   "climate": {
+    "source": "WorldClim 2.1 (1970-2000 normals, 5 arc-min)",
+    "t_mean": [
+     2.6,
+     2.5,
+     2.6,
+     3.6,
+     5.8,
+     7.7,
+     9.4,
+     9.8,
+     8.2,
+     6.2,
+     4.0,
+     3.1
+    ]
+   },
+   "prelim": 3.297,
+   "images": [
+    {
+     "file": "File:Pollurin, Saksun 2008 a.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/22/Pollurin%2C_Saksun_2008_a.jpg/1280px-Pollurin%2C_Saksun_2008_a.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/2/22/Pollurin%2C_Saksun_2008_a.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 853,
+     "license": "CC BY 2.0",
+     "license_url": "https://creativecommons.org/licenses/by/2.0",
+     "author": "Stig Nygaard",
+     "caption": "Saksun",
+     "page": "https://commons.wikimedia.org/wiki/File%3APollurin%2C_Saksun_2008_a.jpg"
+    },
+    {
+     "file": "File:Pollurin, Saksun 2008 b.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Pollurin%2C_Saksun_2008_b.jpg/1280px-Pollurin%2C_Saksun_2008_b.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/9/9a/Pollurin%2C_Saksun_2008_b.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 853,
+     "license": "CC BY 2.0",
+     "license_url": "https://creativecommons.org/licenses/by/2.0",
+     "author": "Stig Nygaard",
+     "caption": "Saksun",
+     "page": "https://commons.wikimedia.org/wiki/File%3APollurin%2C_Saksun_2008_b.jpg"
+    },
+    {
+     "file": "File:Saksun, Blue lagoon.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Saksun%2C_Blue_lagoon.jpg/1280px-Saksun%2C_Blue_lagoon.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/4/45/Saksun%2C_Blue_lagoon.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC BY-SA 4.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+     "author": "Drega05",
+     "caption": "Faroe Islands, Saksun",
+     "page": "https://commons.wikimedia.org/wiki/File%3ASaksun%2C_Blue_lagoon.jpg"
+    },
+    {
+     "file": "File:Off Saksun, Faroe Islands.JPG",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Off_Saksun%2C_Faroe_Islands.JPG/1280px-Off_Saksun%2C_Faroe_Islands.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/8/8c/Off_Saksun%2C_Faroe_Islands.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 852,
+     "license": "CC BY-SA 3.0",
+     "license_url": "http://creativecommons.org/licenses/by-sa/3.0/",
+     "author": "Erik Christensen, Porkeri (Contact at the Danish Wikipedia)",
+     "caption": "Off Saksun on Streymoy, Faroe Islands",
+     "page": "https://commons.wikimedia.org/wiki/File%3AOff_Saksun%2C_Faroe_Islands.JPG"
+    },
+    {
+     "file": "File:Saksun, Faroe Islands (2).JPG",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d8/Saksun%2C_Faroe_Islands_%282%29.JPG/1280px-Saksun%2C_Faroe_Islands_%282%29.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/d/d8/Saksun%2C_Faroe_Islands_%282%29.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 852,
+     "license": "CC BY-SA 3.0",
+     "license_url": "http://creativecommons.org/licenses/by-sa/3.0/",
+     "author": "Erik Christensen, Porkeri (Contact at the Danish Wikipedia)",
+     "caption": "Saksun on Streymoy, Faroe Islands",
+     "page": "https://commons.wikimedia.org/wiki/File%3ASaksun%2C_Faroe_Islands_%282%29.JPG"
+    }
+   ]
+  },
+  {
+   "wd": "Q136455519",
+   "name": "Niðara Vatn",
+   "name_local": "",
+   "lat": 62.30463,
+   "lon": -7.08731,
+   "iso2": "FO",
+   "adm": "Eiði Municipality",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "Niðara Vatn",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q136455519",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "base": {
+    "id": "gem:saksun",
+    "city": "Saksun",
+    "country": "Faroe Islands",
+    "km": 7.7
+   },
+   "climate": {
+    "source": "WorldClim 2.1 (1970-2000 normals, 5 arc-min)",
+    "t_mean": [
+     2.8,
+     2.7,
+     3.0,
+     4.2,
+     6.5,
+     8.4,
+     10.1,
+     10.4,
+     8.7,
+     6.6,
+     4.2,
+     3.4
+    ]
+   },
+   "prelim": 2.197,
+   "images": [
+    {
+     "file": "File:Isthmus of Eiði, Faroe Islands.JPG",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Isthmus_of_Ei%C3%B0i%2C_Faroe_Islands.JPG/1280px-Isthmus_of_Ei%C3%B0i%2C_Faroe_Islands.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/8/87/Isthmus_of_Ei%C3%B0i%2C_Faroe_Islands.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 852,
+     "license": "CC BY-SA 3.0",
+     "license_url": "http://creativecommons.org/licenses/by-sa/3.0/",
+     "author": "Erik Christensen, Porkeri (Contact at the Danish Wikipedia)",
+     "caption": "Eiði in Eysturoy, Faroe Islands.",
+     "page": "https://commons.wikimedia.org/wiki/File%3AIsthmus_of_Ei%C3%B0i%2C_Faroe_Islands.JPG"
+    },
+    {
+     "file": "File:Isthmus of Eiði, Faroe Islands (2).JPG",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/Isthmus_of_Ei%C3%B0i%2C_Faroe_Islands_%282%29.JPG/1280px-Isthmus_of_Ei%C3%B0i%2C_Faroe_Islands_%282%29.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/8/80/Isthmus_of_Ei%C3%B0i%2C_Faroe_Islands_%282%29.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 852,
+     "license": "CC BY-SA 3.0",
+     "license_url": "http://creativecommons.org/licenses/by-sa/3.0/",
+     "author": "Erik Christensen, Porkeri (Contact at the Danish Wikipedia)",
+     "caption": "Isthmus at football field of Eiði in Eysturoy, Faroe Islands.",
+     "page": "https://commons.wikimedia.org/wiki/File%3AIsthmus_of_Ei%C3%B0i%2C_Faroe_Islands_%282%29.JPG"
+    },
+    {
+     "file": "File:Färöer Eysturoy 06.JPG",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fc/F%C3%A4r%C3%B6er_Eysturoy_06.JPG/1280px-F%C3%A4r%C3%B6er_Eysturoy_06.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/f/fc/F%C3%A4r%C3%B6er_Eysturoy_06.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 961,
+     "license": "CC BY-SA 4.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+     "author": "Zairon",
+     "caption": "Landscape on the Island of Eysturoy, Faroe Islands",
+     "page": "https://commons.wikimedia.org/wiki/File%3AF%C3%A4r%C3%B6er_Eysturoy_06.JPG"
+    },
+    {
+     "file": "File:Eiði. Eysturoy.1.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/37/Ei%C3%B0i._Eysturoy.1.jpg/1280px-Ei%C3%B0i._Eysturoy.1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/3/37/Ei%C3%B0i._Eysturoy.1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 857,
+     "license": "CC BY-SA 3.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+     "author": "Erik Christensen",
+     "caption": "Campsite in Eiði, Eysturoy, Faroe Islands",
+     "page": "https://commons.wikimedia.org/wiki/File%3AEi%C3%B0i._Eysturoy.1.jpg"
+    },
+    {
+     "file": "File:Eiði from Eiðiskollur.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Ei%C3%B0i_from_Ei%C3%B0iskollur.jpg/1280px-Ei%C3%B0i_from_Ei%C3%B0iskollur.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/8/8c/Ei%C3%B0i_from_Ei%C3%B0iskollur.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 759,
+     "license": "CC BY-SA 4.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+     "author": "kallerna",
+     "caption": "Eiði seen from Eiðiskollur.",
+     "page": "https://commons.wikimedia.org/wiki/File%3AEi%C3%B0i_from_Ei%C3%B0iskollur.jpg"
+    }
+   ]
+  },
+  {
+   "wd": "Q12009121",
+   "name": "Vatnsnes lake",
+   "name_local": "",
+   "lat": 61.504969,
+   "lon": -6.814055,
+   "iso2": "FO",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q12009121",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "base": {
+    "id": "gem:suduroy",
+    "city": "Suðuroy",
+    "country": "Faroe Islands",
+    "km": 3.7
+   },
+   "climate": {
+    "source": "WorldClim 2.1 (1970-2000 normals, 5 arc-min)",
+    "t_mean": [
+     3.7,
+     3.5,
+     3.8,
+     4.7,
+     6.6,
+     8.6,
+     10.0,
+     10.4,
+     9.0,
+     7.2,
+     5.1,
+     4.2
+    ]
+   },
+   "prelim": 1.297,
+   "images": []
+  },
+  {
+   "wd": "Q29100728",
+   "name": "Heljareyge",
+   "name_local": "",
+   "lat": 62.166667,
+   "lon": -7.083333,
+   "iso2": "FO",
+   "adm": "Vestmanna Municipality",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 0,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q29100728",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "base": {
+    "id": "gem:vestmanna",
+    "city": "Vestmanna",
+    "country": "Faroe Islands",
+    "km": 4.5
+   },
+   "climate": {
+    "source": "WorldClim 2.1 (1970-2000 normals, 5 arc-min)",
+    "t_mean": [
+     2.6,
+     2.6,
+     3.2,
+     4.5,
+     6.9,
+     8.9,
+     10.6,
+     10.8,
+     9.0,
+     6.9,
+     4.3,
+     3.3
+    ]
+   },
+   "prelim": 0.5,
+   "images": [
+    {
+     "file": "File:Vestmanna, Faroe Islands - 53941698810.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Vestmanna%2C_Faroe_Islands_-_53941698810.jpg/1280px-Vestmanna%2C_Faroe_Islands_-_53941698810.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/a/a4/Vestmanna%2C_Faroe_Islands_-_53941698810.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC BY 2.0",
+     "license_url": "https://creativecommons.org/licenses/by/2.0",
+     "author": "Rick McCharles",
+     "caption": "Vestmanna, Faroe Islands",
+     "page": "https://commons.wikimedia.org/wiki/File%3AVestmanna%2C_Faroe_Islands_-_53941698810.jpg"
+    }
+   ]
+  },
+  {
+   "wd": "Q29100483",
+   "name": "Kvíandalsvatn",
+   "name_local": "Kvíandalsvatn",
+   "lat": 62.233333,
+   "lon": -6.933333,
+   "iso2": "FO",
+   "adm": "Runavík Municipality",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 0,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q29100483",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "base": {
+    "id": "gem:gjogv",
+    "city": "Gjógv",
+    "country": "Faroe Islands",
+    "km": 10.2
+   },
+   "climate": {
+    "source": "WorldClim 2.1 (1970-2000 normals, 5 arc-min)",
+    "t_mean": [
+     2.3,
+     2.3,
+     2.8,
+     4.0,
+     6.5,
+     8.5,
+     10.2,
+     10.4,
+     8.6,
+     6.4,
+     3.9,
+     3.0
+    ]
+   },
+   "prelim": 0.5,
+   "images": [
+    {
+     "file": "File:Faroe Islands, Eysturoy, Funningsfjørður (01), village and harbor.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/Faroe_Islands%2C_Eysturoy%2C_Funningsfj%C3%B8r%C3%B0ur_%2801%29%2C_village_and_harbor.jpg/1280px-Faroe_Islands%2C_Eysturoy%2C_Funningsfj%C3%B8r%C3%B0ur_%2801%29%2C_village_and_harbor.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/a/a7/Faroe_Islands%2C_Eysturoy%2C_Funningsfj%C3%B8r%C3%B0ur_%2801%29%2C_village_and_harbor.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 786,
+     "license": "CC BY-SA 4.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+     "author": "Vincent van Zeijst",
+     "caption": "The village of Funningsfjørður and its harbor (on Eysturoy, Faroe islands).",
+     "page": "https://commons.wikimedia.org/wiki/File%3AFaroe_Islands%2C_Eysturoy%2C_Funningsfj%C3%B8r%C3%B0ur_%2801%29%2C_village_and_harbor.jpg"
+    },
+    {
+     "file": "File:Faroe Islands, Eysturoy, Funningsfjørður (02), waterfront scene.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/Faroe_Islands%2C_Eysturoy%2C_Funningsfj%C3%B8r%C3%B0ur_%2802%29%2C_waterfront_scene.jpg/1280px-Faroe_Islands%2C_Eysturoy%2C_Funningsfj%C3%B8r%C3%B0ur_%2802%29%2C_waterfront_scene.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/6/65/Faroe_Islands%2C_Eysturoy%2C_Funningsfj%C3%B8r%C3%B0ur_%2802%29%2C_waterfront_scene.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 850,
+     "license": "CC BY-SA 4.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+     "author": "Vincent van Zeijst",
+     "caption": "Houses at the waterfront in Funningsfjørður (on Eysturoy, Faroe Islands).",
+     "page": "https://commons.wikimedia.org/wiki/File%3AFaroe_Islands%2C_Eysturoy%2C_Funningsfj%C3%B8r%C3%B0ur_%2802%29%2C_waterfront_scene.jpg"
+    },
+    {
+     "file": "File:Faroe Islands, Eysturoy, Funningsfjørður (03), harbor scene.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Faroe_Islands%2C_Eysturoy%2C_Funningsfj%C3%B8r%C3%B0ur_%2803%29%2C_harbor_scene.jpg/1280px-Faroe_Islands%2C_Eysturoy%2C_Funningsfj%C3%B8r%C3%B0ur_%2803%29%2C_harbor_scene.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/8/87/Faroe_Islands%2C_Eysturoy%2C_Funningsfj%C3%B8r%C3%B0ur_%2803%29%2C_harbor_scene.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 850,
+     "license": "CC BY-SA 4.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+     "author": "Vincent van Zeijst",
+     "caption": "Harbor scene with a small trawler (FD453) in Funningsfjørður (on Eysturoy, Faroe Islands).",
+     "page": "https://commons.wikimedia.org/wiki/File%3AFaroe_Islands%2C_Eysturoy%2C_Funningsfj%C3%B8r%C3%B0ur_%2803%29%2C_harbor_scene.jpg"
+    },
+    {
+     "file": "File:Faroe Islands, Eysturoy, Funningsfjørður (04), harbor scene.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/Faroe_Islands%2C_Eysturoy%2C_Funningsfj%C3%B8r%C3%B0ur_%2804%29%2C_harbor_scene.jpg/1280px-Faroe_Islands%2C_Eysturoy%2C_Funningsfj%C3%B8r%C3%B0ur_%2804%29%2C_harbor_scene.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/3/38/Faroe_Islands%2C_Eysturoy%2C_Funningsfj%C3%B8r%C3%B0ur_%2804%29%2C_harbor_scene.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 850,
+     "license": "CC BY-SA 4.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+     "author": "Vincent van Zeijst",
+     "caption": "Harbor scene with two old faroese boats in Funningsfjørður (on Eysturoy, Faroe Islands).",
+     "page": "https://commons.wikimedia.org/wiki/File%3AFaroe_Islands%2C_Eysturoy%2C_Funningsfj%C3%B8r%C3%B0ur_%2804%29%2C_harbor_scene.jpg"
+    },
+    {
+     "file": "File:Faroe Islands, Eysturoy, Funningsfjørður (05), the village.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ed/Faroe_Islands%2C_Eysturoy%2C_Funningsfj%C3%B8r%C3%B0ur_%2805%29%2C_the_village.jpg/1280px-Faroe_Islands%2C_Eysturoy%2C_Funningsfj%C3%B8r%C3%B0ur_%2805%29%2C_the_village.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/e/ed/Faroe_Islands%2C_Eysturoy%2C_Funningsfj%C3%B8r%C3%B0ur_%2805%29%2C_the_village.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 850,
+     "license": "CC BY-SA 4.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+     "author": "Vincent van Zeijst",
+     "caption": "The village of Funningsfjørður on the fjord of the same name (on Eysturoy, Faroe Islands).",
+     "page": "https://commons.wikimedia.org/wiki/File%3AFaroe_Islands%2C_Eysturoy%2C_Funningsfj%C3%B8r%C3%B0ur_%2805%29%2C_the_village.jpg"
+    }
+   ]
+  },
+  {
+   "wd": "Q29100373",
+   "name": "Lomundaroyri",
+   "name_local": "",
+   "lat": 62.166667,
+   "lon": -7.15,
+   "iso2": "FO",
+   "adm": "Vestmanna Municipality",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 0,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q29100373",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "base": {
+    "id": "gem:vestmanna",
+    "city": "Vestmanna",
+    "country": "Faroe Islands",
+    "km": 1.4
+   },
+   "climate": {
+    "source": "WorldClim 2.1 (1970-2000 normals, 5 arc-min)",
+    "t_mean": [
+     2.1,
+     2.1,
+     2.5,
+     3.8,
+     6.3,
+     8.3,
+     10.1,
+     10.2,
+     8.3,
+     6.2,
+     3.7,
+     2.8
+    ]
+   },
+   "prelim": 0.5,
+   "images": [
+    {
+     "file": "File:Vestmanna, Faroe Islands (7).JPG",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/Vestmanna%2C_Faroe_Islands_%287%29.JPG/1280px-Vestmanna%2C_Faroe_Islands_%287%29.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/9/95/Vestmanna%2C_Faroe_Islands_%287%29.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 824,
+     "license": "CC BY-SA 3.0",
+     "license_url": "http://creativecommons.org/licenses/by-sa/3.0/",
+     "author": "Erik Christensen, Porkeri (Contact at the Danish Wikipedia)",
+     "caption": "Faroe boats of Vestmanna on Streymoy, Faroe Islands",
+     "page": "https://commons.wikimedia.org/wiki/File%3AVestmanna%2C_Faroe_Islands_%287%29.JPG"
+    },
+    {
+     "file": "File:Vestmanna, Faroe Islands (9).JPG",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/Vestmanna%2C_Faroe_Islands_%289%29.JPG/1280px-Vestmanna%2C_Faroe_Islands_%289%29.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/a/a7/Vestmanna%2C_Faroe_Islands_%289%29.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 842,
+     "license": "CC BY-SA 3.0",
+     "license_url": "http://creativecommons.org/licenses/by-sa/3.0/",
+     "author": "Erik Christensen, Porkeri (Contact at the Danish Wikipedia)",
+     "caption": "Power plant of Vestmanna on Streymoy, Faroe Islands",
+     "page": "https://commons.wikimedia.org/wiki/File%3AVestmanna%2C_Faroe_Islands_%289%29.JPG"
+    },
+    {
+     "file": "File:Streymoy Vestmanna 6.JPG",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Streymoy_Vestmanna_6.JPG/1280px-Streymoy_Vestmanna_6.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/3/3b/Streymoy_Vestmanna_6.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 961,
+     "license": "CC BY-SA 4.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+     "author": "Zairon",
+     "caption": "Vestmanna, Streymoy Island, Faroe Islands",
+     "page": "https://commons.wikimedia.org/wiki/File%3AStreymoy_Vestmanna_6.JPG"
+    },
+    {
+     "file": "File:Is03133-Vestmanna.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Is03133-Vestmanna.jpg/1280px-Is03133-Vestmanna.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/b/b5/Is03133-Vestmanna.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 851,
+     "license": "CC BY 4.0",
+     "license_url": "https://creativecommons.org/licenses/by/4.0",
+     "author": "PanWoyteczek",
+     "caption": "Vestmanna town on the Streymoy Island, Faroe Islands",
+     "page": "https://commons.wikimedia.org/wiki/File%3AIs03133-Vestmanna.jpg"
+    },
+    {
+     "file": "File:Vestmanna by Maciej Brencz.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/Vestmanna_by_Maciej_Brencz.jpg/1280px-Vestmanna_by_Maciej_Brencz.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/6/66/Vestmanna_by_Maciej_Brencz.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 851,
+     "license": "CC BY 2.0",
+     "license_url": "https://creativecommons.org/licenses/by/2.0",
+     "author": "Macbre",
+     "caption": "Vestmanna in Streymoy in the Faroe Islands.",
+     "page": "https://commons.wikimedia.org/wiki/File%3AVestmanna_by_Maciej_Brencz.jpg"
+    }
+   ]
+  },
+  {
+   "wd": "Q29100329",
+   "name": "Mjauvøtn",
+   "name_local": "Mjauvøtn",
+   "lat": 62.126111,
+   "lon": -6.998889,
+   "iso2": "FO",
+   "adm": "Tórshavn Municipality",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 0,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q29100329",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "base": {
+    "id": "gem:vestmanna",
+    "city": "Vestmanna",
+    "country": "Faroe Islands",
+    "km": 9.3
+   },
+   "climate": {
+    "source": "WorldClim 2.1 (1970-2000 normals, 5 arc-min)",
+    "t_mean": [
+     2.3,
+     2.3,
+     2.7,
+     3.9,
+     6.3,
+     8.4,
+     10.1,
+     10.2,
+     8.5,
+     6.4,
+     3.9,
+     3.0
+    ]
+   },
+   "prelim": 0.5,
+   "images": [
+    {
+     "file": "File:Group of Faroe people at Trangisvaag. (4558229871).jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/Group_of_Faroe_people_at_Trangisvaag._%284558229871%29.jpg/1280px-Group_of_Faroe_people_at_Trangisvaag._%284558229871%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/2/2b/Group_of_Faroe_people_at_Trangisvaag._%284558229871%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 982,
+     "license": "No restrictions",
+     "license_url": "https://www.flickr.com/commons/usage/",
+     "author": "Cornell University Library",
+     "caption": "Collection: Icelandic and Faroese Photographs of Frederick W.W. Howell, Cornell University Library\nTitle: Group of Faroe people at Trangisvaag.\nDate: ca. 1900\nPlace: Trangisvaag (Faroe Islands)\nMedium",
+     "page": "https://commons.wikimedia.org/wiki/File%3AGroup_of_Faroe_people_at_Trangisvaag._%284558229871%29.jpg"
+    },
+    {
+     "file": "File:Trangisvaag, Church and village. (4558243837).jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Trangisvaag%2C_Church_and_village._%284558243837%29.jpg/1280px-Trangisvaag%2C_Church_and_village._%284558243837%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/a/ab/Trangisvaag%2C_Church_and_village._%284558243837%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 927,
+     "license": "No restrictions",
+     "license_url": "https://www.flickr.com/commons/usage/",
+     "author": "Cornell University Library",
+     "caption": "Collection: Icelandic and Faroese Photographs of Frederick W.W. Howell, Cornell University Library\nTitle: Trangisvaag, Church and village.\nDate: ca. 1900\nPlace: Trangisvaag (Faroe Islands)\nMedium: col",
+     "page": "https://commons.wikimedia.org/wiki/File%3ATrangisvaag%2C_Church_and_village._%284558243837%29.jpg"
+    },
+    {
+     "file": "File:Trangisvaag (west). (4558916436).jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/75/Trangisvaag_%28west%29._%284558916436%29.jpg/1280px-Trangisvaag_%28west%29._%284558916436%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/7/75/Trangisvaag_%28west%29._%284558916436%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 918,
+     "license": "No restrictions",
+     "license_url": "https://www.flickr.com/commons/usage/",
+     "author": "Cornell University Library",
+     "caption": "Collection: Icelandic and Faroese Photographs of Frederick W.W. Howell, Cornell University Library\nTitle: Trangisvaag (west).\nDate: ca. 1900\nPlace: Trangisvaag (Faroe Islands)\nMedium: collodion print\n",
+     "page": "https://commons.wikimedia.org/wiki/File%3ATrangisvaag_%28west%29._%284558916436%29.jpg"
+    },
+    {
+     "file": "File:Kirkebø near Tórshavn. (4558292213).jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/Kirkeb%C3%B8_near_T%C3%B3rshavn._%284558292213%29.jpg/1280px-Kirkeb%C3%B8_near_T%C3%B3rshavn._%284558292213%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/6/69/Kirkeb%C3%B8_near_T%C3%B3rshavn._%284558292213%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 928,
+     "license": "No restrictions",
+     "license_url": "https://www.flickr.com/commons/usage/",
+     "author": "Cornell University Library",
+     "caption": "Collection: Icelandic and Faroese Photographs of Frederick W.W. Howell, Cornell University Library\nTitle: Kirkebø near Tórshavn.\nDate: ca. 1900\nPlace: Kirkebø (Faroe Islands)\nMedium: collodion print\nR",
+     "page": "https://commons.wikimedia.org/wiki/File%3AKirkeb%C3%B8_near_T%C3%B3rshavn._%284558292213%29.jpg"
+    }
+   ]
+  },
+  {
+   "wd": "Q29100290",
+   "name": "Mýrarnar",
+   "name_local": "Mýrarnar",
+   "lat": 62.170833,
+   "lon": -7.083056,
+   "iso2": "FO",
+   "adm": "Vestmanna Municipality",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 0,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q29100290",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "base": {
+    "id": "gem:vestmanna",
+    "city": "Vestmanna",
+    "country": "Faroe Islands",
+    "km": 4.6
+   },
+   "climate": {
+    "source": "WorldClim 2.1 (1970-2000 normals, 5 arc-min)",
+    "t_mean": [
+     2.6,
+     2.6,
+     3.2,
+     4.5,
+     6.9,
+     8.9,
+     10.6,
+     10.8,
+     9.0,
+     6.9,
+     4.3,
+     3.3
+    ]
+   },
+   "prelim": 0.5,
+   "images": [
+    {
+     "file": "File:Vestmanna, Faroe Islands - 53941698810.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Vestmanna%2C_Faroe_Islands_-_53941698810.jpg/1280px-Vestmanna%2C_Faroe_Islands_-_53941698810.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/a/a4/Vestmanna%2C_Faroe_Islands_-_53941698810.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC BY 2.0",
+     "license_url": "https://creativecommons.org/licenses/by/2.0",
+     "author": "Rick McCharles",
+     "caption": "Vestmanna, Faroe Islands",
+     "page": "https://commons.wikimedia.org/wiki/File%3AVestmanna%2C_Faroe_Islands_-_53941698810.jpg"
+    }
+   ]
+  }
+ ]
+}

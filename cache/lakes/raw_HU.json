@@ -1,0 +1,3450 @@
+{
+ "country": "HU",
+ "harvested_at": "2026-08-20T18:18:49+00:00",
+ "n_wikidata": 115,
+ "n_seeded": 5,
+ "seed_missing": [],
+ "lakes": [
+  {
+   "wd": "Q6383",
+   "name": "Lake Balaton",
+   "name_local": "Balaton",
+   "lat": 46.85,
+   "lon": 17.72,
+   "iso2": "HU",
+   "adm": "Hungary",
+   "types": [
+    "lake",
+    "geographical small region of Hungary",
+    "rift lake",
+    "Q11727006",
+    "Natura 2000 site"
+   ],
+   "sitelinks": 97,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Balatonlelle%2C%20Balaton%2C%2049.jpg",
+   "commons_cat": "Balaton",
+   "enwiki": "https://en.wikipedia.org/wiki/Lake_Balaton",
+   "localwiki": "https://hu.wikipedia.org/wiki/Balaton",
+   "area_km2": 592.0,
+   "depth_m": 12.5,
+   "elev_m": 104,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Hungary"
+   ],
+   "key": "wd:Q6383",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "seed": {
+    "swim": "yes",
+    "kind": "lake",
+    "why": "brief",
+    "note": "the warmest large lake in central Europe, shallow, family swimming",
+    "name": "Lake Balaton"
+   }
+  },
+  {
+   "wd": "Q249992",
+   "name": "Lake Hévíz",
+   "name_local": "Hévízi-tó",
+   "lat": 46.787222,
+   "lon": 17.193056,
+   "iso2": "HU",
+   "adm": "Balatonfüred",
+   "types": [
+    "hot lake"
+   ],
+   "sitelinks": 32,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Medicinal%20Bath%20H%C3%A9v%C3%ADz%2001.jpg",
+   "commons_cat": "Lake Hévíz",
+   "enwiki": "https://en.wikipedia.org/wiki/Lake_H%C3%A9v%C3%ADz",
+   "localwiki": "https://hu.wikipedia.org/wiki/H%C3%A9v%C3%ADzi-t%C3%B3",
+   "area_km2": 0.0475,
+   "depth_m": 38.0,
+   "elev_m": null,
+   "protected": [
+    "Lake Hévíz Protected Area"
+   ],
+   "part_of": [
+    "Balaton Uplands Cultural Landscape"
+   ],
+   "basin_countries": [
+    "Hungary"
+   ],
+   "key": "wd:Q249992",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "seed": {
+    "swim": "yes",
+    "kind": "geothermal",
+    "why": "editorial",
+    "note": "the largest thermal lake in Europe you can swim in, 24 to 38 C",
+    "name": "Lake Heviz"
+   }
+  },
+  {
+   "wd": "Q535617",
+   "name": "Lake Orfű",
+   "name_local": "Orfűi-tó",
+   "lat": 46.143611,
+   "lon": 18.153611,
+   "iso2": "HU",
+   "adm": "",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 5,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Orf%C5%B1%20l%C3%A9gifot%C3%B3.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://hu.wikipedia.org/wiki/Orf%C5%B1i-t%C3%B3",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q535617",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "seed": {
+    "swim": "yes",
+    "kind": "reservoir",
+    "why": "editorial",
+    "note": "the Mecsek hills, swimming and camping",
+    "name": "Lake Orfu"
+   }
+  },
+  {
+   "wd": "Q721786",
+   "name": "Lake Dombay",
+   "name_local": "Dombay-tó",
+   "lat": 46.146861,
+   "lon": 18.397611,
+   "iso2": "HU",
+   "adm": "",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 6,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Lake%20Dombay%202.JPG",
+   "commons_cat": "Lake Dombay",
+   "enwiki": "https://en.wikipedia.org/wiki/Lake_Dombay",
+   "localwiki": "https://hu.wikipedia.org/wiki/Dombay-t%C3%B3",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Hungary"
+   ],
+   "key": "wd:Q721786",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q6396",
+   "name": "Neusiedl Lake",
+   "name_local": "Fertő",
+   "lat": 47.833333,
+   "lon": 16.75,
+   "iso2": "HU",
+   "adm": "Győr-Moson-Sopron County",
+   "types": [
+    "steppe lake",
+    "endorheic lake",
+    "Natura 2000 site"
+   ],
+   "sitelinks": 62,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Neusiedler%20See%20im%20Winter.jpg",
+   "commons_cat": "Lake Neusiedl",
+   "enwiki": "https://en.wikipedia.org/wiki/Lake_Neusiedl",
+   "localwiki": "https://hu.wikipedia.org/wiki/Fert%C5%91",
+   "area_km2": 315.0,
+   "depth_m": 1.8,
+   "elev_m": 115,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q6396",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q831616",
+   "name": "Lake Öreg",
+   "name_local": "Öreg-tó",
+   "lat": 47.639167,
+   "lon": 18.329444,
+   "iso2": "HU",
+   "adm": "Tata",
+   "types": [
+    "artificial lake"
+   ],
+   "sitelinks": 12,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Sunset%20%28%C3%96reg-t%C3%B3%29.jpg",
+   "commons_cat": "Öreg-tó",
+   "enwiki": "https://en.wikipedia.org/wiki/Lake_%C3%96reg",
+   "localwiki": "https://hu.wikipedia.org/wiki/%C3%96reg-t%C3%B3",
+   "area_km2": 2.69,
+   "depth_m": 5.0,
+   "elev_m": 129,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q831616",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q847072",
+   "name": "Lake Velence",
+   "name_local": "Velencei-tó",
+   "lat": 47.208333,
+   "lon": 18.6,
+   "iso2": "HU",
+   "adm": "Fejér County",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 28,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Velence%20Lake%20Hungary.jpg",
+   "commons_cat": "Lake Velence",
+   "enwiki": "https://en.wikipedia.org/wiki/Lake_Velence",
+   "localwiki": "https://hu.wikipedia.org/wiki/Velencei-t%C3%B3",
+   "area_km2": 24.9,
+   "depth_m": 2.0,
+   "elev_m": 100,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Hungary"
+   ],
+   "key": "wd:Q847072",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "seed": {
+    "swim": "yes",
+    "kind": "lake",
+    "why": "brief",
+    "note": "warm and shallow, close to Budapest",
+    "name": "Lake Velence"
+   }
+  },
+  {
+   "wd": "Q855460",
+   "name": "Büdös-szék",
+   "name_local": "Büdös-szék",
+   "lat": 46.546111,
+   "lon": 20.034167,
+   "iso2": "HU",
+   "adm": "Pusztaszer",
+   "types": [
+    "salt lake"
+   ],
+   "sitelinks": 3,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://hu.wikipedia.org/wiki/B%C3%BCd%C3%B6s-sz%C3%A9k",
+   "area_km2": 0.6,
+   "depth_m": null,
+   "elev_m": 85,
+   "protected": [],
+   "part_of": [
+    "Pusztaszeri Tájvédelmi Körzet"
+   ],
+   "basin_countries": [],
+   "key": "wd:Q855460",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q904268",
+   "name": "Lake Deseda",
+   "name_local": "Deseda",
+   "lat": 46.4064,
+   "lon": 17.8147,
+   "iso2": "HU",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 4,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Desedacivertanlegi.jpg",
+   "commons_cat": "Deseda",
+   "enwiki": "https://en.wikipedia.org/wiki/Lake_Deseda",
+   "localwiki": "https://hu.wikipedia.org/wiki/Deseda",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Hungary"
+   ],
+   "key": "wd:Q904268",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q912703",
+   "name": "Dávodi Földvári-tó természetvédelmi terület",
+   "name_local": "Dávodi Földvári-tó természetvédelmi terület",
+   "lat": 46.002392,
+   "lon": 18.862838,
+   "iso2": "HU",
+   "adm": "Dávod",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://hu.wikipedia.org/wiki/D%C3%A1vodi_F%C3%B6ldv%C3%A1ri-t%C3%B3_term%C3%A9szetv%C3%A9delmi_ter%C3%BClet",
+   "area_km2": 0.743,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q912703",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q942033",
+   "name": "Lake Fehér",
+   "name_local": "szegedi Fehér-tó",
+   "lat": 46.3263,
+   "lon": 20.0984,
+   "iso2": "HU",
+   "adm": "Csongrád-Csanád County",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 7,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Szegedi%20Feh%C3%A9r-t%C3%B3%2C%20Csongr%C3%A1d1.jpg",
+   "commons_cat": "",
+   "enwiki": "https://en.wikipedia.org/wiki/Lake_Feh%C3%A9r_(Szeged)",
+   "localwiki": "https://hu.wikipedia.org/wiki/Szegedi_Feh%C3%A9r-t%C3%B3",
+   "area_km2": 50.0,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [
+    "Pusztaszeri Tájvédelmi Körzet"
+   ],
+   "basin_countries": [],
+   "key": "wd:Q942033",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q986825",
+   "name": "Lake Déllő",
+   "name_local": "Déllő-tó",
+   "lat": 46.9114,
+   "lon": 19.6898,
+   "iso2": "HU",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 3,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "https://en.wikipedia.org/wiki/Lake_D%C3%A9ll%C5%91",
+   "localwiki": "https://hu.wikipedia.org/wiki/D%C3%A9ll%C5%91-t%C3%B3",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Hungary"
+   ],
+   "key": "wd:Q986825",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q997741",
+   "name": "Fehérvárcsurgó reservoir",
+   "name_local": "Fehérvárcsurgói-víztározó",
+   "lat": 47.285278,
+   "lon": 18.247222,
+   "iso2": "HU",
+   "adm": "",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Feh%C3%A9rv%C3%A1rcsurg%C3%B3i%20v%C3%ADzt%C3%A1roz%C3%B3.JPG",
+   "commons_cat": "Fehérvárcsurgó reservoir",
+   "enwiki": "",
+   "localwiki": "https://hu.wikipedia.org/wiki/Feh%C3%A9rv%C3%A1rcsurg%C3%B3i-v%C3%ADzt%C3%A1roz%C3%B3",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q997741",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q1008256",
+   "name": "Lake Garancsi",
+   "name_local": "Garancsi-tó",
+   "lat": 47.6234,
+   "lon": 18.8072,
+   "iso2": "HU",
+   "adm": "Tinnye",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 6,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/150802%20Garancsi%20t%C3%B3%20%2819%29.JPG",
+   "commons_cat": "",
+   "enwiki": "https://en.wikipedia.org/wiki/Lake_Garancsi",
+   "localwiki": "https://hu.wikipedia.org/wiki/Garancsi-t%C3%B3",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Hungary"
+   ],
+   "key": "wd:Q1008256",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q1031271",
+   "name": "Gébárti Lake",
+   "name_local": "Gébárti-tó",
+   "lat": 46.864036,
+   "lon": 16.816378,
+   "iso2": "HU",
+   "adm": "Zalaegerszeg",
+   "types": [
+    "reservoir",
+    "fish pond"
+   ],
+   "sitelinks": 2,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://hu.wikipedia.org/wiki/G%C3%A9b%C3%A1rti-t%C3%B3",
+   "area_km2": 0.31,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q1031271",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q1031860",
+   "name": "Lake Gőtés",
+   "name_local": "Gőtés-tó",
+   "lat": 47.595556,
+   "lon": 19.041111,
+   "iso2": "HU",
+   "adm": "Budapest District III",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 4,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Budapest%20G%C5%91t%C3%A9s-t%C3%B3%20k%C3%B6rny%C3%A9ke.jpg",
+   "commons_cat": "Gőtés-tó",
+   "enwiki": "https://en.wikipedia.org/wiki/Lake_G%C5%91t%C3%A9s",
+   "localwiki": "https://hu.wikipedia.org/wiki/G%C5%91t%C3%A9s-t%C3%B3",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Hungary"
+   ],
+   "key": "wd:Q1031860",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q1051426",
+   "name": "Lake Szelid",
+   "name_local": "Szelidi-tó természetvédelmi terület",
+   "lat": 46.631389,
+   "lon": 19.048889,
+   "iso2": "HU",
+   "adm": "Dunapataj",
+   "types": [
+    "lake",
+    "nature reserve"
+   ],
+   "sitelinks": 17,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Szelidi-t%C3%B3%2C%20a%20T%C3%B3%20vend%C3%A9gl%C5%91%20terasz%C3%A1r%C3%B3l%20n%C3%A9zve.%20Fortepan%2021781.jpg",
+   "commons_cat": "Szelidi-tó",
+   "enwiki": "https://en.wikipedia.org/wiki/Lake_Szelid",
+   "localwiki": "https://hu.wikipedia.org/wiki/Szelidi-t%C3%B3_term%C3%A9szetv%C3%A9delmi_ter%C3%BClet",
+   "area_km2": 6.53,
+   "depth_m": 4.0,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [
+    "Kiskunság National Park"
+   ],
+   "basin_countries": [],
+   "key": "wd:Q1051426",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q26230952",
+   "name": "Környei-tó",
+   "name_local": "Környei-tó",
+   "lat": 47.543611,
+   "lon": 18.328333,
+   "iso2": "HU",
+   "adm": "Környe",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q26230952",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q26230995",
+   "name": "Tiva-tó",
+   "name_local": "Tiva-tó",
+   "lat": 45.983333,
+   "lon": 17.566667,
+   "iso2": "HU",
+   "adm": "Somogy County",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q26230995",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q26231347",
+   "name": "Riha-tó",
+   "name_local": "",
+   "lat": 46.012222,
+   "lon": 18.765556,
+   "iso2": "HU",
+   "adm": "Baranya County",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q26231347",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q26231414",
+   "name": "Sáros-szék",
+   "name_local": "Sáros-szék",
+   "lat": 46.28333,
+   "lon": 19.98333,
+   "iso2": "HU",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q26231414",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q26231538",
+   "name": "Matkó Lake",
+   "name_local": "Matkói-tó",
+   "lat": 46.8,
+   "lon": 19.683333,
+   "iso2": "HU",
+   "adm": "Bács-Kiskun County",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q26231538",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q26231612",
+   "name": "Nádas-tó",
+   "name_local": "Nádas-tó",
+   "lat": 46.8,
+   "lon": 19.66667,
+   "iso2": "HU",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q26231612",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q131838593",
+   "name": "Gyömrői fürdőtó",
+   "name_local": "Gyömrői fürdőtó",
+   "lat": 47.435278,
+   "lon": 19.398611,
+   "iso2": "HU",
+   "adm": "Gyömrő",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Hungary%2C%20Gy%C3%B6mr%C5%91%2C%20a%20T%C3%B3f%C3%BCrd%C5%91%2001.jpg",
+   "commons_cat": "Tófürdő, Gyömrő",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q131838593",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q1072359",
+   "name": "Lake Tisza",
+   "name_local": "Tisza-tó",
+   "lat": 47.6,
+   "lon": 20.666667,
+   "iso2": "HU",
+   "adm": "Heves County",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 32,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Tisza-t%C3%B3.jpg",
+   "commons_cat": "Tisza-tó",
+   "enwiki": "https://en.wikipedia.org/wiki/Lake_Tisza",
+   "localwiki": "https://hu.wikipedia.org/wiki/Tisza-t%C3%B3",
+   "area_km2": 127.0,
+   "depth_m": 17.0,
+   "elev_m": 83,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Hungary"
+   ],
+   "key": "wd:Q1072359",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "seed": {
+    "swim": "yes",
+    "kind": "reservoir",
+    "why": "brief",
+    "note": "kayaking and birdlife, designated swim areas",
+    "name": "Lake Tisza"
+   }
+  },
+  {
+   "wd": "Q1109106",
+   "name": "Király-tó",
+   "name_local": "Király-tó",
+   "lat": 46.94194,
+   "lon": 19.39639,
+   "iso2": "HU",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 3,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://hu.wikipedia.org/wiki/Kir%C3%A1ly-t%C3%B3",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q1109106",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q1126452",
+   "name": "Outer lake (Tihany)",
+   "name_local": "Külső-tó",
+   "lat": 46.9141,
+   "lon": 17.8652,
+   "iso2": "HU",
+   "adm": "Veszprém County",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 6,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/KulsoToTihany.jpg",
+   "commons_cat": "Outer lake (Tihany)",
+   "enwiki": "",
+   "localwiki": "https://hu.wikipedia.org/wiki/K%C3%BCls%C5%91-t%C3%B3",
+   "area_km2": 0.67,
+   "depth_m": null,
+   "elev_m": 116,
+   "protected": [],
+   "part_of": [
+    "Balaton Uplands National Park"
+   ],
+   "basin_countries": [],
+   "key": "wd:Q1126452",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q1160330",
+   "name": "Lázbérc Reservoir",
+   "name_local": "Lázbérci-víztározó",
+   "lat": 48.207222,
+   "lon": 20.464444,
+   "iso2": "HU",
+   "adm": "Borsod-Abaúj-Zemplén County",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Magyarorsz%C3%A1g%2C%20L%C3%A1zb%C3%A9rci%20v%C3%ADzt%C3%A1rol%C3%B3.jpg",
+   "commons_cat": "Lázbérci víztároló",
+   "enwiki": "",
+   "localwiki": "https://hu.wikipedia.org/wiki/L%C3%A1zb%C3%A9rci-v%C3%ADzt%C3%A1roz%C3%B3",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q1160330",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q1164335",
+   "name": "Lake Malomvölgy",
+   "name_local": "Malomvölgyi-tó",
+   "lat": 46.006496,
+   "lon": 18.201934,
+   "iso2": "HU",
+   "adm": "Pécs",
+   "types": [
+    "artificial lake"
+   ],
+   "sitelinks": 3,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/M%C3%A1lomi%20t%C3%B3%20001.jpg",
+   "commons_cat": "Lake Malomvölgy",
+   "enwiki": "",
+   "localwiki": "https://hu.wikipedia.org/wiki/Malomv%C3%B6lgyi-t%C3%B3",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q1164335",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q1175526",
+   "name": "Megyer-hegyi Tarn",
+   "name_local": "Megyer-hegyi Tengerszem Természetvédelmi Terület",
+   "lat": 48.357303,
+   "lon": 21.573286,
+   "iso2": "HU",
+   "adm": "Sárospatak",
+   "types": [
+    "lake",
+    "nature reserve"
+   ],
+   "sitelinks": 3,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Megyer-hegyi%20tengerszem.jpg",
+   "commons_cat": "Megyer-hegy, Sárospatak",
+   "enwiki": "",
+   "localwiki": "https://hu.wikipedia.org/wiki/Megyer-hegyi_Tengerszem_Term%C3%A9szetv%C3%A9delmi_Ter%C3%BClet",
+   "area_km2": 0.0107,
+   "depth_m": 6.5,
+   "elev_m": 290,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q1175526",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q1215492",
+   "name": "Lake Naplás",
+   "name_local": "Naplás-tó",
+   "lat": 47.509444,
+   "lon": 19.246389,
+   "iso2": "HU",
+   "adm": "Budapest District XVII",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 5,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Naplas%20Panorama.jpg",
+   "commons_cat": "Naplás Lake",
+   "enwiki": "https://en.wikipedia.org/wiki/Lake_Napl%C3%A1s",
+   "localwiki": "https://hu.wikipedia.org/wiki/Napl%C3%A1s-t%C3%B3",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q1215492",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q1216649",
+   "name": "Szeged regatta basin",
+   "name_local": "Nemzeti Kajak-kenu és Evezős Olimpiai Központ",
+   "lat": 46.24,
+   "lon": 20.0758,
+   "iso2": "HU",
+   "adm": "Szeged",
+   "types": [
+    "rowing and canoeing venue",
+    "artificial lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://hu.wikipedia.org/wiki/Nemzeti_Kajak-kenu_%C3%A9s_Evez%C5%91s_Olimpiai_K%C3%B6zpont",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q1216649",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q1219384",
+   "name": "Nyirkai-Hany",
+   "name_local": "Nyirkai-Hany",
+   "lat": 47.700278,
+   "lon": 17.19,
+   "iso2": "HU",
+   "adm": "Csorna",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/L%C3%A9gi%20felv%C3%A9tel%20a%20Nyirkai-Hany%20mocs%C3%A1rr%C3%B3l.jpg",
+   "commons_cat": "Nyirkai-Hany",
+   "enwiki": "",
+   "localwiki": "https://hu.wikipedia.org/wiki/Nyirkai-Hany",
+   "area_km2": 4.19,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [
+    "Fertő-Hanság National Park"
+   ],
+   "basin_countries": [],
+   "key": "wd:Q1219384",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q1228101",
+   "name": "Lake Palatinus",
+   "name_local": "Palatinus-tó",
+   "lat": 47.728056,
+   "lon": 18.740556,
+   "iso2": "HU",
+   "adm": "Esztergom",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 13,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Palatinus%20to.jpg",
+   "commons_cat": "Palatinus-tó",
+   "enwiki": "https://en.wikipedia.org/wiki/Lake_Palatinus",
+   "localwiki": "https://hu.wikipedia.org/wiki/Palatinus-t%C3%B3",
+   "area_km2": 0.32,
+   "depth_m": 12.0,
+   "elev_m": 124,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Hungary"
+   ],
+   "key": "wd:Q1228101",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q1314941",
+   "name": "Lake Sárkány",
+   "name_local": "Sárkány-tó",
+   "lat": 46.987778,
+   "lon": 18.546111,
+   "iso2": "HU",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "https://en.wikipedia.org/wiki/Lake_S%C3%A1rk%C3%A1ny",
+   "localwiki": "https://hu.wikipedia.org/wiki/S%C3%A1rk%C3%A1ny-t%C3%B3",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Hungary"
+   ],
+   "key": "wd:Q1314941",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q1315111",
+   "name": "Sástó",
+   "name_local": "Sástó",
+   "lat": 47.843868,
+   "lon": 19.956714,
+   "iso2": "HU",
+   "adm": "Gyöngyös",
+   "types": [
+    "lake",
+    "quarter"
+   ],
+   "sitelinks": 3,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Matrafured-sasto-3.jpg",
+   "commons_cat": "Sástó",
+   "enwiki": "",
+   "localwiki": "https://hu.wikipedia.org/wiki/S%C3%A1st%C3%B3",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q1315111",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q1315401",
+   "name": "Sós-tó",
+   "name_local": "Székesfehérvári Sós-tó",
+   "lat": 47.169632,
+   "lon": 18.417285,
+   "iso2": "HU",
+   "adm": "Székesfehérvár",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 3,
+   "wd_img": "",
+   "commons_cat": "Sós-tó, Székesfehérvár",
+   "enwiki": "",
+   "localwiki": "https://hu.wikipedia.org/wiki/S%C3%B3st%C3%B3_Term%C3%A9szetv%C3%A9delmi_Ter%C3%BClet",
+   "area_km2": 2.18,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q1315401",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q1321615",
+   "name": "Tiszavasvári Fehér-szik Természetvédelmi Terület",
+   "name_local": "Tiszavasvári Fehér-szik Természetvédelmi Terület",
+   "lat": 47.966894,
+   "lon": 21.422839,
+   "iso2": "HU",
+   "adm": "Tiszavasvári",
+   "types": [
+    "lake",
+    "nature reserve"
+   ],
+   "sitelinks": 1,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Tiszavasvari%20-%20panoramio%20%284%29.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://hu.wikipedia.org/wiki/Tiszavasv%C3%A1ri_Feh%C3%A9r-szik_Term%C3%A9szetv%C3%A9delmi_Ter%C3%BClet",
+   "area_km2": 1.65,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [
+    "Hortobágy National Park"
+   ],
+   "basin_countries": [],
+   "key": "wd:Q1321615",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q1400922",
+   "name": "Vajai-tó Természetvédelmi Terület",
+   "name_local": "Vajai-tó Természetvédelmi Terület",
+   "lat": 47.982105,
+   "lon": 22.151513,
+   "iso2": "HU",
+   "adm": "Vaja",
+   "types": [
+    "lake",
+    "nature reserve",
+    "floating island"
+   ],
+   "sitelinks": 1,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Vaja%205.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://hu.wikipedia.org/wiki/Vajai-t%C3%B3_Term%C3%A9szetv%C3%A9delmi_Ter%C3%BClet",
+   "area_km2": 0.778,
+   "depth_m": null,
+   "elev_m": 130,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q1400922",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q1473625",
+   "name": "Őszeszéki-tó",
+   "name_local": "Őszeszéki-tó",
+   "lat": 46.401667,
+   "lon": 19.984167,
+   "iso2": "HU",
+   "adm": "Balástya",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 4,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/%C5%90szesz%C3%A9ki-t%C3%B3%20-%20l%C3%A9gi%20fot%C3%B3.jpg",
+   "commons_cat": "Őszeszéki-tó",
+   "enwiki": "",
+   "localwiki": "https://hu.wikipedia.org/wiki/%C5%90szesz%C3%A9ki-t%C3%B3",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q1473625",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q2665499",
+   "name": "Lake Vadkert",
+   "name_local": "Vadkerti-tó",
+   "lat": 46.615278,
+   "lon": 19.393056,
+   "iso2": "HU",
+   "adm": "Bács-Kiskun County",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 14,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Soltvadkert%2C%20Vadkerti-t%C3%B3%2C%20Sunburst%20%28121548497%29.jpg",
+   "commons_cat": "",
+   "enwiki": "https://en.wikipedia.org/wiki/Lake_Vadkert",
+   "localwiki": "https://hu.wikipedia.org/wiki/Vadkerti-t%C3%B3",
+   "area_km2": 0.7,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q2665499",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q12627551",
+   "name": "Lake Baláta",
+   "name_local": "Baláta-tó",
+   "lat": 46.31,
+   "lon": 17.203056,
+   "iso2": "HU",
+   "adm": "Kaszó",
+   "types": [
+    "lake",
+    "nature reserve"
+   ],
+   "sitelinks": 4,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Kasz%C3%B3%2C%20Bal%C3%A1ta-t%C3%B3%2001.jpg",
+   "commons_cat": "Baláta-tó",
+   "enwiki": "",
+   "localwiki": "https://hu.wikipedia.org/wiki/Bal%C3%A1ta-t%C3%B3",
+   "area_km2": 4.48,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q12627551",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q12639655",
+   "name": "Lake Pécs",
+   "name_local": "Pécsi-tó",
+   "lat": 46.155,
+   "lon": 18.138056,
+   "iso2": "HU",
+   "adm": "",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 5,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Orrfue%20panorama.jpg",
+   "commons_cat": "Lake Pécs",
+   "enwiki": "https://en.wikipedia.org/wiki/Lake_P%C3%A9cs",
+   "localwiki": "https://hu.wikipedia.org/wiki/P%C3%A9csi-t%C3%B3",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q12639655",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q12816772",
+   "name": "Vértó",
+   "name_local": "Vértó",
+   "lat": 46.27361,
+   "lon": 20.14417,
+   "iso2": "HU",
+   "adm": "Szeged",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Szeged%20V%C3%A9rt%C3%B3.jpg",
+   "commons_cat": "Vértó (Szeged)",
+   "enwiki": "",
+   "localwiki": "https://hu.wikipedia.org/wiki/V%C3%A9rt%C3%B3_(Szeged)",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q12816772",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q14915983",
+   "name": "Markaz Reservoir",
+   "name_local": "Markazi-víztározó",
+   "lat": 47.81736,
+   "lon": 20.06807,
+   "iso2": "HU",
+   "adm": "Markaz",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 4,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Markaz%20from%20castle%20ruins.jpg",
+   "commons_cat": "Markaz Reservoir",
+   "enwiki": "",
+   "localwiki": "https://hu.wikipedia.org/wiki/Markazi-v%C3%ADzt%C3%A1roz%C3%B3",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q14915983",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q15054321",
+   "name": "Belső-tó",
+   "name_local": "Belső-tó",
+   "lat": 46.9081,
+   "lon": 17.8813,
+   "iso2": "HU",
+   "adm": "Veszprém County",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 8,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/BelsoToTihany.jpg",
+   "commons_cat": "Belső-tó",
+   "enwiki": "",
+   "localwiki": "https://hu.wikipedia.org/wiki/Bels%C5%91-t%C3%B3",
+   "area_km2": 0.28,
+   "depth_m": null,
+   "elev_m": 129,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q15054321",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q15631447",
+   "name": "Zichy-tó",
+   "name_local": "Zichy-tó",
+   "lat": 47.138272,
+   "lon": 18.676839,
+   "iso2": "HU",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Zichy-t%C3%B3%2C%20Zichy%C3%BAjfalu%2005.jpg",
+   "commons_cat": "Zichy-tó",
+   "enwiki": "",
+   "localwiki": "https://hu.wikipedia.org/wiki/Zichy-t%C3%B3",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q15631447",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q18122223",
+   "name": "Hámori Lake",
+   "name_local": "Hámori-tó",
+   "lat": 48.099999,
+   "lon": 20.616667,
+   "iso2": "HU",
+   "adm": "Hámor",
+   "types": [
+    "lake",
+    "reservoir"
+   ],
+   "sitelinks": 5,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/HamoriLake07.jpg",
+   "commons_cat": "Hámori-tó",
+   "enwiki": "",
+   "localwiki": "https://hu.wikipedia.org/wiki/H%C3%A1mori-t%C3%B3",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q18122223",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q20438788",
+   "name": "Rétszilas Lakes Natural Reserve",
+   "name_local": "Rétszilasi-tavak Természetvédelmi Terület",
+   "lat": 46.841128,
+   "lon": 18.575807,
+   "iso2": "HU",
+   "adm": "Rétszilas",
+   "types": [
+    "lake",
+    "nature reserve"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://hu.wikipedia.org/wiki/R%C3%A9tszilasi-tavak_Term%C3%A9szetv%C3%A9delmi_Ter%C3%BClet",
+   "area_km2": 14.94,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [
+    "Danube-Ipoly National Park"
+   ],
+   "basin_countries": [],
+   "key": "wd:Q20438788",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q20439127",
+   "name": "Slötyi",
+   "name_local": "Slötyi",
+   "lat": 47.607,
+   "lon": 18.908055,
+   "iso2": "HU",
+   "adm": "Pilisszentiván",
+   "types": [
+    "quarry lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Befagyott%20Sl%C3%B6tyi.JPG",
+   "commons_cat": "Slötyi, Pilisszentiván",
+   "enwiki": "",
+   "localwiki": "https://hu.wikipedia.org/wiki/Sl%C3%B6tyi",
+   "area_km2": 0.035,
+   "depth_m": 7.0,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q20439127",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q20439415",
+   "name": "Gátéri Fehér-tó",
+   "name_local": "Gátéri Fehér-tó",
+   "lat": 46.640556,
+   "lon": 19.983611,
+   "iso2": "HU",
+   "adm": "Hungary",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 3,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://hu.wikipedia.org/wiki/G%C3%A1t%C3%A9ri_Feh%C3%A9r-t%C3%B3",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q20439415",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q20439841",
+   "name": "Lake Jági, Pilisszentiván",
+   "name_local": "Jági-tó",
+   "lat": 47.60766,
+   "lon": 18.87903,
+   "iso2": "HU",
+   "adm": "Pilisszentiván",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/J%C3%A1gi-t%C3%B3%20%C5%91sszel.jpg",
+   "commons_cat": "Lake Jági, Pilisszentiván",
+   "enwiki": "",
+   "localwiki": "https://hu.wikipedia.org/wiki/J%C3%A1gi-t%C3%B3",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q20439841",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q20439946",
+   "name": "Jenői-tó",
+   "name_local": "Jenői-tó",
+   "lat": 47.92926,
+   "lon": 19.06719,
+   "iso2": "HU",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 3,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://hu.wikipedia.org/wiki/Jen%C5%91i-t%C3%B3",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q20439946",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q26228560",
+   "name": "Rakaca Reservoir",
+   "name_local": "Rakaca-víztározó",
+   "lat": 48.45,
+   "lon": 20.78333,
+   "iso2": "HU",
+   "adm": "",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 4,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Rakaca-v%C3%ADzt%C3%A1roz%C3%B3.jpg",
+   "commons_cat": "Rakaca Reservoir",
+   "enwiki": "",
+   "localwiki": "https://hu.wikipedia.org/wiki/Rakaca-v%C3%ADzt%C3%A1roz%C3%B3",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q26228560",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q26230209",
+   "name": "Biharugra Fishponds",
+   "name_local": "Biharugrai-halastavak",
+   "lat": 46.936788,
+   "lon": 21.594562,
+   "iso2": "HU",
+   "adm": "Biharugra",
+   "types": [
+    "lake",
+    "marsh",
+    "floodplain lake"
+   ],
+   "sitelinks": 4,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://hu.wikipedia.org/wiki/Biharugrai-halastavak",
+   "area_km2": 0.0279,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [
+    "Körös-Maros National Park"
+   ],
+   "basin_countries": [],
+   "key": "wd:Q26230209",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q26233522",
+   "name": "Hársas-tó",
+   "name_local": "Hársas-tó",
+   "lat": 46.93623,
+   "lon": 16.31156,
+   "iso2": "HU",
+   "adm": "Szentgotthárd",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 3,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/H%C3%A1rsas%20t%C3%B3%20-%20panoramio.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://hu.wikipedia.org/wiki/H%C3%A1rsas-t%C3%B3_(Szentgotth%C3%A1rd)",
+   "area_km2": 0.174,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q26233522",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q26233539",
+   "name": "Csórréti-víztározó",
+   "name_local": "Csórréti-víztározó",
+   "lat": 47.88711,
+   "lon": 19.95675,
+   "iso2": "HU",
+   "adm": "Gyöngyössolymos",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 4,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://hu.wikipedia.org/wiki/Cs%C3%B3rr%C3%A9ti-v%C3%ADzt%C3%A1roz%C3%B3",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q26233539",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q26258965",
+   "name": "Házirét reservoir",
+   "name_local": "Háziréti-víztározó",
+   "lat": 47.610789,
+   "lon": 18.952044,
+   "iso2": "HU",
+   "adm": "",
+   "types": [
+    "reservoir",
+    "water reservoir"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/130818%20H%C3%A1zi-r%C3%A9ti%20t%C3%B3%20%2815%29.jpg",
+   "commons_cat": "Háziréti-víztározó",
+   "enwiki": "",
+   "localwiki": "https://hu.wikipedia.org/wiki/H%C3%A1zir%C3%A9ti-v%C3%ADzt%C3%A1roz%C3%B3",
+   "area_km2": 0.2922,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q26258965",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q28453674",
+   "name": "Maconka Reservoir",
+   "name_local": "Maconkai-víztározó",
+   "lat": 47.99429,
+   "lon": 19.8468,
+   "iso2": "HU",
+   "adm": "Bátonyterenye",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Maconkai-v%C3%ADzt%C3%A1roz%C3%B3%206.jpg",
+   "commons_cat": "Maconka Reservoir",
+   "enwiki": "",
+   "localwiki": "https://hu.wikipedia.org/wiki/Maconkai-v%C3%ADzt%C3%A1roz%C3%B3",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q28453674",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q28722718",
+   "name": "Határrét reservoir",
+   "name_local": "Határréti-víztározó",
+   "lat": 47.645472,
+   "lon": 18.910872,
+   "iso2": "HU",
+   "adm": "",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Hat%C3%A1rr%C3%A9ti-v%C3%ADzt%C3%A1roz%C3%B3%2007.jpg",
+   "commons_cat": "Határréti-víztározó",
+   "enwiki": "",
+   "localwiki": "https://hu.wikipedia.org/wiki/Hat%C3%A1rr%C3%A9ti-v%C3%ADzt%C3%A1roz%C3%B3",
+   "area_km2": 0.079,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q28722718",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q61362761",
+   "name": "Karolina-külfejtés",
+   "name_local": "Karolina-külfejtés",
+   "lat": 46.1088,
+   "lon": 18.2411,
+   "iso2": "HU",
+   "adm": "Pécs",
+   "types": [
+    "quarry lake",
+    "surface mine"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/A%20Mecseki%20K%C5%91sz%C3%A9n%20Form%C3%A1ci%C3%B3%20Karolina-k%C3%BClfejt%C3%A9se%202001-ben.JPG",
+   "commons_cat": "Karolina-külfejtés",
+   "enwiki": "",
+   "localwiki": "https://hu.wikipedia.org/wiki/Karolina-k%C3%BClfejt%C3%A9s",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q61362761",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q65218116",
+   "name": "Omszk-tó",
+   "name_local": "Omszk-tó",
+   "lat": 47.6175,
+   "lon": 19.061667,
+   "iso2": "HU",
+   "adm": "Budakalász",
+   "types": [
+    "quarry lake"
+   ],
+   "sitelinks": 4,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Omszki%20t%C3%B3%20-%20panoramio.jpg",
+   "commons_cat": "Omszk-tó",
+   "enwiki": "",
+   "localwiki": "https://hu.wikipedia.org/wiki/Omszk-t%C3%B3",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q65218116",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q84511078",
+   "name": "Városliget Lake",
+   "name_local": "Városligeti-tó",
+   "lat": 47.515167,
+   "lon": 19.081361,
+   "iso2": "HU",
+   "adm": "Zugló",
+   "types": [
+    "artificial lake"
+   ],
+   "sitelinks": 3,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/V%C3%A1rosligeti%20t%C3%B3%20-%20panoramio.jpg",
+   "commons_cat": "Városligeti lake",
+   "enwiki": "",
+   "localwiki": "https://hu.wikipedia.org/wiki/V%C3%A1rosligeti-t%C3%B3",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q84511078",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q95160613",
+   "name": "Lake Barátúr",
+   "name_local": "Barátúri-tó",
+   "lat": 46.195528,
+   "lon": 18.169806,
+   "iso2": "HU",
+   "adm": "Magyarszék",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Bar%C3%A1t%C3%BAr.jpg",
+   "commons_cat": "Lake Barátúr",
+   "enwiki": "",
+   "localwiki": "https://hu.wikipedia.org/wiki/Bar%C3%A1t%C3%BAri-t%C3%B3",
+   "area_km2": 0.535,
+   "depth_m": null,
+   "elev_m": 153,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q95160613",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q106108479",
+   "name": "Szilas lake",
+   "name_local": "Szilas-tó",
+   "lat": 47.558944,
+   "lon": 19.137694,
+   "iso2": "HU",
+   "adm": "Budapest",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Szilas%20lake%202021-03-21.jpg",
+   "commons_cat": "Szilas lake",
+   "enwiki": "",
+   "localwiki": "https://hu.wikipedia.org/wiki/Szilas-t%C3%B3",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q106108479",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q111153528",
+   "name": "Cseres Lake",
+   "name_local": "Cseres-tó",
+   "lat": 47.808611,
+   "lon": 19.023611,
+   "iso2": "HU",
+   "adm": "Kisoroszi",
+   "types": [
+    "quarry lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Kisoroszi%2C%20p%C3%ADskovna.JPG",
+   "commons_cat": "Cseres-tó (Kisoroszi)",
+   "enwiki": "",
+   "localwiki": "https://hu.wikipedia.org/wiki/Cseres-t%C3%B3",
+   "area_km2": 0.067,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q111153528",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q111239048",
+   "name": "Rudabányai bányató",
+   "name_local": "Rudabányai bányató",
+   "lat": 48.393515,
+   "lon": 20.637564,
+   "iso2": "HU",
+   "adm": "Rudabánya",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 3,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Rudab%C3%A1nyai%20b%C3%A1nyat%C3%B3%201.jpg",
+   "commons_cat": "Rudabánya bányató (Felsőtelekes)",
+   "enwiki": "",
+   "localwiki": "https://hu.wikipedia.org/wiki/Rudab%C3%A1nyai_b%C3%A1nyat%C3%B3",
+   "area_km2": 0.0614,
+   "depth_m": 35.0,
+   "elev_m": 236,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q111239048",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q26228551",
+   "name": "Rádi-tó",
+   "name_local": "Rádi-tó",
+   "lat": 48.1,
+   "lon": 21.8,
+   "iso2": "HU",
+   "adm": "Szabolcs-Szatmár-Bereg County",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q26228551",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q26228594",
+   "name": "Rózsa-szék",
+   "name_local": "Rózsa-szék",
+   "lat": 46.3,
+   "lon": 20.03333,
+   "iso2": "HU",
+   "adm": "Csongrád-Csanád County",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q26228594",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q26228642",
+   "name": "Solymos-tó",
+   "name_local": "Solymos-tó",
+   "lat": 48.116667,
+   "lon": 21.433333,
+   "iso2": "HU",
+   "adm": "Szabolcs-Szatmár-Bereg County",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q26228642",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q26228665",
+   "name": "Sós-tó",
+   "name_local": "Sós-tó",
+   "lat": 48.00371,
+   "lon": 21.72804,
+   "iso2": "HU",
+   "adm": "Szabolcs-Szatmár-Bereg County",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q26228665",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q26231614",
+   "name": "Nádas-tó",
+   "name_local": "Nádas-tó",
+   "lat": 47.09566,
+   "lon": 18.91775,
+   "iso2": "HU",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q26231614",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q26231615",
+   "name": "Nádas-tó",
+   "name_local": "Nádas-tó",
+   "lat": 47.77337,
+   "lon": 17.55461,
+   "iso2": "HU",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q26231615",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q26231630",
+   "name": "Nagy Csukás-tó",
+   "name_local": "Nagy Csukás-tó",
+   "lat": 46.58333,
+   "lon": 19.25,
+   "iso2": "HU",
+   "adm": "Bács-Kiskun County",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q26231630",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q26231731",
+   "name": "Nyálas-tó",
+   "name_local": "Nyálas-tó",
+   "lat": 46.85,
+   "lon": 17.633333,
+   "iso2": "HU",
+   "adm": "Veszprém County",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q26231731",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q26231849",
+   "name": "Öreg-tó",
+   "name_local": "Öreg-tó",
+   "lat": 46.74224,
+   "lon": 17.59843,
+   "iso2": "HU",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q26231849",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q26231945",
+   "name": "Kis-Széksóstó",
+   "name_local": "Kis-Széksóstó",
+   "lat": 46.2,
+   "lon": 19.966667,
+   "iso2": "HU",
+   "adm": "Csongrád-Csanád County",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q26231945",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q26231988",
+   "name": "Kondás-tó",
+   "name_local": "Kondás-tó",
+   "lat": 48.055833,
+   "lon": 19.1675,
+   "iso2": "HU",
+   "adm": "Nógrád County",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q26231988",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q26233158",
+   "name": "Lake Cseke",
+   "name_local": "Cseke-tó",
+   "lat": 47.650556,
+   "lon": 18.335,
+   "iso2": "HU",
+   "adm": "Tata",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q26233158",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q26233203",
+   "name": "Csikós Lake",
+   "name_local": "Csikós-tó",
+   "lat": 48.061667,
+   "lon": 19.166667,
+   "iso2": "HU",
+   "adm": "Nógrád County",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q26233203",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q26228666",
+   "name": "Sós-tó",
+   "name_local": "Sós-tó",
+   "lat": 48.1,
+   "lon": 21.483333,
+   "iso2": "HU",
+   "adm": "Szabolcs-Szatmár-Bereg County",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q26228666",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q26228673",
+   "name": "Sós Víz",
+   "name_local": "",
+   "lat": 47.383333,
+   "lon": 21.6,
+   "iso2": "HU",
+   "adm": "Hajdú-Bihar County",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q26228673",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q26229115",
+   "name": "Lajos-tó",
+   "name_local": "",
+   "lat": 46.633333,
+   "lon": 20.366667,
+   "iso2": "HU",
+   "adm": "Csongrád-Csanád County",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q26229115",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q26229207",
+   "name": "Morotva",
+   "name_local": "",
+   "lat": 48.116667,
+   "lon": 21.45,
+   "iso2": "HU",
+   "adm": "Szabolcs-Szatmár-Bereg County",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q26229207",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q26229281",
+   "name": "Nádas-tó",
+   "name_local": "Nádas-tó",
+   "lat": 48.15,
+   "lon": 21.416667,
+   "iso2": "HU",
+   "adm": "Borsod-Abaúj-Zemplén County",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q26229281",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q26229291",
+   "name": "Nagyszeg",
+   "name_local": "",
+   "lat": 48.133333,
+   "lon": 21.616667,
+   "iso2": "HU",
+   "adm": "Szabolcs-Szatmár-Bereg County",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q26229291",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q26229564",
+   "name": "Kakasszéki-tó",
+   "name_local": "",
+   "lat": 46.55,
+   "lon": 20.583333,
+   "iso2": "HU",
+   "adm": "Hungary",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q26229564",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q26229574",
+   "name": "Kapitány-tó",
+   "name_local": "Kapitány-tó",
+   "lat": 48.15,
+   "lon": 21.433333,
+   "iso2": "HU",
+   "adm": "Szabolcs-Szatmár-Bereg County",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q26229574",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q26230310",
+   "name": "Csizmás-tó",
+   "name_local": "Csizmás-tó",
+   "lat": 47.016667,
+   "lon": 20.016667,
+   "iso2": "HU",
+   "adm": "Pest County",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q26230310",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q26230323",
+   "name": "Csukás-tó",
+   "name_local": "Csukás-tó",
+   "lat": 46.666667,
+   "lon": 20.016667,
+   "iso2": "HU",
+   "adm": "Csongrád-Csanád County",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q26230323",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q26230393",
+   "name": "Fehér-tó",
+   "name_local": "Fehér-tó",
+   "lat": 46.338056,
+   "lon": 20.095,
+   "iso2": "HU",
+   "adm": "Csongrád-Csanád County",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q26230393",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q26230741",
+   "name": "Sörös-tó",
+   "name_local": "Sörös-tó",
+   "lat": 47.01438,
+   "lon": 19.61219,
+   "iso2": "HU",
+   "adm": "Lajosmizse",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q26230741",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q26233255",
+   "name": "Csukás-tó",
+   "name_local": "Csukás-tó",
+   "lat": 46.040833,
+   "lon": 17.467778,
+   "iso2": "HU",
+   "adm": "Somogy County",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q26233255",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q1321471",
+   "name": "Tisza-tavi madárrezervátum",
+   "name_local": "Tisza-tavi madárrezervátum",
+   "lat": 47.666364,
+   "lon": 20.718131,
+   "iso2": "HU",
+   "adm": "Poroszló",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 1,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Lake%20Tisza%204.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://hu.wikipedia.org/wiki/Tisza-tavi_mad%C3%A1rrezerv%C3%A1tum",
+   "area_km2": 34.76,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [
+    "Hortobágy National Park"
+   ],
+   "basin_countries": [],
+   "key": "wd:Q1321471",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q25466068",
+   "name": "Bányató",
+   "name_local": "Bányató",
+   "lat": 46.410833,
+   "lon": 20.949444,
+   "iso2": "HU",
+   "adm": "Mezőkovácsháza",
+   "types": [
+    "quarry lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://hu.wikipedia.org/wiki/B%C3%A1nyat%C3%B3_(Mez%C5%91kov%C3%A1csh%C3%A1za)",
+   "area_km2": 0.0353,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q25466068",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q51332506",
+   "name": "Kotró",
+   "name_local": "Kotró",
+   "lat": 46.246667,
+   "lon": 16.988333,
+   "iso2": "HU",
+   "adm": "Gyékényes",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://hu.wikipedia.org/wiki/Kotr%C3%B3",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q51332506",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q56599385",
+   "name": "Jávor-tó",
+   "name_local": "Jávor-tó",
+   "lat": 47.714028,
+   "lon": 19.0195,
+   "iso2": "HU",
+   "adm": "Szentendre",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://hu.wikipedia.org/wiki/J%C3%A1vor-t%C3%B3",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q56599385",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q56690772",
+   "name": "Pannónia Lake",
+   "name_local": "Pannónia-tó",
+   "lat": 47.654167,
+   "lon": 19.066389,
+   "iso2": "HU",
+   "adm": "Szentendre",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Pann%C3%B3nia-t%C3%B3.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://hu.wikipedia.org/wiki/Pann%C3%B3nia-t%C3%B3",
+   "area_km2": 0.1941,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q56690772",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q60154662",
+   "name": "Lake Fehér at Kardoskút",
+   "name_local": "Kardoskúti Fehér-tó",
+   "lat": 46.469654,
+   "lon": 20.618883,
+   "iso2": "HU",
+   "adm": "Békés County",
+   "types": [
+    "lake",
+    "Ramsar site"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://hu.wikipedia.org/wiki/Kardosk%C3%BAti_Feh%C3%A9r-t%C3%B3",
+   "area_km2": 4.92,
+   "depth_m": null,
+   "elev_m": 85,
+   "protected": [],
+   "part_of": [
+    "Körös-Maros National Park"
+   ],
+   "basin_countries": [],
+   "key": "wd:Q60154662",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q60715833",
+   "name": "Upper Kiskunság Alkaline Lakes",
+   "name_local": "Felső-kiskunsági-tavak",
+   "lat": 46.829082,
+   "lon": 19.197769,
+   "iso2": "HU",
+   "adm": "Fülöpszállás",
+   "types": [
+    "lake",
+    "marsh"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://hu.wikipedia.org/wiki/Fels%C5%91-kiskuns%C3%A1gi-tavak",
+   "area_km2": 73.938,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [
+    "Kiskunság National Park"
+   ],
+   "basin_countries": [],
+   "key": "wd:Q60715833",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q66310118",
+   "name": "Vadása-tó",
+   "name_local": "Vadása-tó",
+   "lat": 46.8775,
+   "lon": 16.551389,
+   "iso2": "HU",
+   "adm": "Hegyhátszentjakab",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Hegyh%C3%A1tszentjakab%2C%20Vad%C3%A1sa-t%C3%B3.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://hu.wikipedia.org/wiki/Vad%C3%A1sa-t%C3%B3",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q66310118",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q94911438",
+   "name": "Hásságyi-tó",
+   "name_local": "Hásságyi-tó",
+   "lat": 46.029278,
+   "lon": 18.387389,
+   "iso2": "HU",
+   "adm": "Hásságy",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 1,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/H%C3%A1ss%C3%A1gy%2C%20H%C3%A1ss%C3%A1gyi-t%C3%B3%20-%202020.%2004.%2029.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://hu.wikipedia.org/wiki/H%C3%A1ss%C3%A1gyi-t%C3%B3",
+   "area_km2": 0.48,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q94911438",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q112301181",
+   "name": "Tiszaroffi árapasztó tározó",
+   "name_local": "Tiszaroffi árapasztó tározó",
+   "lat": 47.352222,
+   "lon": 20.489722,
+   "iso2": "HU",
+   "adm": "Tiszaroff",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://hu.wikipedia.org/wiki/Tiszaroffi_%C3%A1rapaszt%C3%B3_t%C3%A1roz%C3%B3",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q112301181",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q113126556",
+   "name": "Hodos holtág",
+   "name_local": "Hodos holtág",
+   "lat": 47.96365,
+   "lon": 22.839025,
+   "iso2": "HU",
+   "adm": "",
+   "types": [
+    "oxbow lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://hu.wikipedia.org/wiki/Hodos_holt%C3%A1g",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q113126556",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q130606252",
+   "name": "Belsőszusz tó",
+   "name_local": "Belsőszusz tó",
+   "lat": 47.841012,
+   "lon": 19.218778,
+   "iso2": "HU",
+   "adm": "Nógrád County",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Bels%C5%91szusz%20t%C3%B3.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://hu.wikipedia.org/wiki/Bels%C5%91szusz_t%C3%B3",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q130606252",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q137596239",
+   "name": "Tarcali bányató",
+   "name_local": "Tarcali bányató",
+   "lat": 48.1273,
+   "lon": 21.35885,
+   "iso2": "HU",
+   "adm": "Tarcal",
+   "types": [
+    "quarry lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Tarcali%20b%C3%A1nyat%C3%B3%201.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://hu.wikipedia.org/wiki/Tarcali_b%C3%A1nyat%C3%B3",
+   "area_km2": 0.0172,
+   "depth_m": 10.0,
+   "elev_m": 160,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q137596239",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q137596492",
+   "name": "Kistokaji bányató",
+   "name_local": "Kistokaji bányató",
+   "lat": 48.034732,
+   "lon": 20.843022,
+   "iso2": "HU",
+   "adm": "Kistokaj",
+   "types": [
+    "quarry lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Kistokaji%20t%C3%B3.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://hu.wikipedia.org/wiki/Kistokaji-t%C3%B3",
+   "area_km2": 0.109,
+   "depth_m": null,
+   "elev_m": 100,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q137596492",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q26229524",
+   "name": "Hortobágyi víztároló",
+   "name_local": "Hortobágyi víztároló",
+   "lat": 47.566667,
+   "lon": 21.166667,
+   "iso2": "HU",
+   "adm": "Hajdú-Bihar County",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q26229524",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q26233559",
+   "name": "Bilabara",
+   "name_local": "Bilabara",
+   "lat": 46.016111,
+   "lon": 19.157778,
+   "iso2": "HU",
+   "adm": "Bács-Kiskun County",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q26233559",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q95568182",
+   "name": "Zalaszentgróti I. számú halastó",
+   "name_local": "Zalaszentgróti I. számú halastó",
+   "lat": 46.941944,
+   "lon": 17.086222,
+   "iso2": "HU",
+   "adm": "Zalaszentgrót",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 0,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Zalaszentgr%C3%B3t%2C%20Zalaszentgr%C3%B3ti%20I.%20sz%C3%A1m%C3%BA%20halast%C3%B3%20-%202019.%2008.%2019.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": 0.051,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q95568182",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q95569520",
+   "name": "Zalaszentgróti II. számú halastó",
+   "name_local": "Zalaszentgróti II. számú halastó",
+   "lat": 46.943944,
+   "lon": 17.087988,
+   "iso2": "HU",
+   "adm": "Zalaszentgrót",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 0,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": 0.023,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q95569520",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q133804767",
+   "name": "Füzes-tó",
+   "name_local": "Füzes-tó",
+   "lat": 46.748172,
+   "lon": 17.738596,
+   "iso2": "HU",
+   "adm": "Látrány",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/A%20F%C3%BCzes%20t%C3%B3.jpg",
+   "commons_cat": "Lake Füzes (Látrány)",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": 0.02,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q133804767",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q134296122",
+   "name": "Lake Zalacsány",
+   "name_local": "Zalacsányi-tó",
+   "lat": 46.8064,
+   "lon": 17.08606,
+   "iso2": "HU",
+   "adm": "Zalacsány",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Zalacs%C3%A1nyi-t%C3%B3%202025%20a.jpg",
+   "commons_cat": "Zalacsányi-tó",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": 0.13,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q134296122",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q135705556",
+   "name": "Bregyó-tó",
+   "name_local": "Bregyó-tó",
+   "lat": 47.202871,
+   "lon": 18.396767,
+   "iso2": "HU",
+   "adm": "Székesfehérvár",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 0,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q135705556",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  },
+  {
+   "wd": "Q141108427",
+   "name": "Lake Borostyán",
+   "name_local": "Borostyán-tó",
+   "lat": 46.85615,
+   "lon": 16.56796,
+   "iso2": "HU",
+   "adm": "Zalalövő",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 0,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Borosty%C3%A1n-t%C3%B3%20%284%29.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": 0.2,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q141108427",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {}
+  }
+ ]
+}

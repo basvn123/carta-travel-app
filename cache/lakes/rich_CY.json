@@ -1,0 +1,3580 @@
+{
+ "country": "CY",
+ "enriched_at": "2026-08-20T20:56:09+00:00",
+ "n_harvested": 32,
+ "lakes": [
+  {
+   "wd": "Q62856371",
+   "name": "Germasogeia Reservoir",
+   "name_local": "Τεχνητή Λίμνη Γερμασόγειας",
+   "lat": 34.748072,
+   "lon": 33.087072,
+   "iso2": "CY",
+   "adm": "Foinikaria",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Yermasogeia%20Dam%2013.JPG",
+   "commons_cat": "Germasogeia Reservoir",
+   "enwiki": "",
+   "localwiki": "https://el.wikipedia.org/wiki/%CE%A4%CE%B5%CF%87%CE%BD%CE%B7%CF%84%CE%AE_%CE%9B%CE%AF%CE%BC%CE%BD%CE%B7_%CE%93%CE%B5%CF%81%CE%BC%CE%B1%CF%83%CF%8C%CE%B3%CE%B5%CE%B9%CE%B1%CF%82",
+   "area_km2": 1.1,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Cyprus"
+   ],
+   "key": "wd:Q62856371",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "seed": {
+    "swim": "no",
+    "kind": "reservoir",
+    "why": "brief",
+    "note": "water supply reservoir with a walking trail, no swimming",
+    "name": "Germasogeia Reservoir"
+   },
+   "base": {
+    "id": "gem:limassol",
+    "city": "Limassol",
+    "country": "Cyprus",
+    "km": 9.1
+   },
+   "walks": [
+    {
+     "id": 62724,
+     "name": "Kyparissia Grand Circular Trail",
+     "km": 14.0
+    }
+   ],
+   "n_walks": 1,
+   "climate": {
+    "source": "WorldClim 2.1 (1970-2000 normals, 5 arc-min)",
+    "t_mean": [
+     11.7,
+     11.8,
+     13.4,
+     17.0,
+     20.6,
+     24.5,
+     27.1,
+     27.4,
+     25.3,
+     22.1,
+     17.0,
+     13.4
+    ]
+   },
+   "prelim": 99.0,
+   "article": {
+    "lang": "el",
+    "title": "Τεχνητή Λίμνη Γερμασόγειας",
+    "facts": [],
+    "swim_text": "",
+    "chars": 81
+   },
+   "views60": 0,
+   "images": [
+    {
+     "file": "File:Germasogeia Reservoir 03.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/27/Germasogeia_Reservoir_03.jpg/1280px-Germasogeia_Reservoir_03.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/2/27/Germasogeia_Reservoir_03.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC BY-SA 4.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+     "author": "Xaris333",
+     "caption": "Germasogeia Reservoir.",
+     "page": "https://commons.wikimedia.org/wiki/File%3AGermasogeia_Reservoir_03.jpg"
+    },
+    {
+     "file": "File:Germasogeia Reservoir 02.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c4/Germasogeia_Reservoir_02.jpg/1280px-Germasogeia_Reservoir_02.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/c/c4/Germasogeia_Reservoir_02.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC BY-SA 4.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+     "author": "Xaris333",
+     "caption": "Germasogeia Reservoir.",
+     "page": "https://commons.wikimedia.org/wiki/File%3AGermasogeia_Reservoir_02.jpg"
+    },
+    {
+     "file": "File:Germasogeia Reservoir 01.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f1/Germasogeia_Reservoir_01.jpg/1280px-Germasogeia_Reservoir_01.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/f/f1/Germasogeia_Reservoir_01.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC BY-SA 4.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+     "author": "Xaris333",
+     "caption": "Germasogeia Reservoir.",
+     "page": "https://commons.wikimedia.org/wiki/File%3AGermasogeia_Reservoir_01.jpg"
+    },
+    {
+     "file": "File:Germasogeia Reservoir 04.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/Germasogeia_Reservoir_04.jpg/1280px-Germasogeia_Reservoir_04.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/c/c8/Germasogeia_Reservoir_04.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC BY-SA 4.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+     "author": "Xaris333",
+     "caption": "Germasogeia Reservoir.",
+     "page": "https://commons.wikimedia.org/wiki/File%3AGermasogeia_Reservoir_04.jpg"
+    },
+    {
+     "file": "File:Germasogeia Reservoir 05.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/Germasogeia_Reservoir_05.jpg/1280px-Germasogeia_Reservoir_05.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/3/38/Germasogeia_Reservoir_05.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC BY-SA 4.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+     "author": "Xaris333",
+     "caption": "Germasogeia Reservoir.",
+     "page": "https://commons.wikimedia.org/wiki/File%3AGermasogeia_Reservoir_05.jpg"
+    }
+   ]
+  },
+  {
+   "wd": "Q6434705",
+   "name": "Kouris Reservoir",
+   "name_local": "Τεχνητή Λίμνη Κούρη",
+   "lat": 34.749545,
+   "lon": 32.924373,
+   "iso2": "CY",
+   "adm": "Kantou",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 4,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Kouris%20Dam%20-%20overflow%20day%208%20April%202012.jpg",
+   "commons_cat": "Kouris Reservoir",
+   "enwiki": "",
+   "localwiki": "https://el.wikipedia.org/wiki/%CE%A4%CE%B5%CF%87%CE%BD%CE%B7%CF%84%CE%AE_%CE%9B%CE%AF%CE%BC%CE%BD%CE%B7_%CE%9A%CE%BF%CF%8D%CF%81%CE%B7",
+   "area_km2": 3.6,
+   "depth_m": null,
+   "elev_m": 247,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Cyprus"
+   ],
+   "key": "wd:Q6434705",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "seed": {
+    "swim": "no",
+    "kind": "reservoir",
+    "why": "brief",
+    "note": "the island's largest dam, drinking water, swimming prohibited",
+    "name": "Kouris Reservoir"
+   },
+   "base": {
+    "id": "gem:kourion",
+    "city": "Kourion",
+    "country": "Cyprus",
+    "km": 10.1
+   },
+   "climate": {
+    "source": "WorldClim 2.1 (1970-2000 normals, 5 arc-min)",
+    "t_mean": [
+     11.3,
+     11.5,
+     13.2,
+     16.7,
+     20.3,
+     24.1,
+     26.7,
+     26.9,
+     24.8,
+     21.6,
+     16.7,
+     13.0
+    ]
+   },
+   "prelim": 99.0,
+   "article": {
+    "lang": "el",
+    "title": "Τεχνητή Λίμνη Κούρη",
+    "facts": [],
+    "swim_text": "",
+    "chars": 271
+   },
+   "views60": 0,
+   "images": [
+    {
+     "file": "File:Kouris Reservoir' spillway 03.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Kouris_Reservoir%27_spillway_03.jpg/1280px-Kouris_Reservoir%27_spillway_03.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/8/89/Kouris_Reservoir%27_spillway_03.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC BY-SA 4.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+     "author": "Xaris333",
+     "caption": "Kouris Reservoir's spillway.",
+     "page": "https://commons.wikimedia.org/wiki/File%3AKouris_Reservoir%27_spillway_03.jpg"
+    },
+    {
+     "file": "File:Kouris Reservoir' spillway 02.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Kouris_Reservoir%27_spillway_02.jpg/1280px-Kouris_Reservoir%27_spillway_02.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/e/e7/Kouris_Reservoir%27_spillway_02.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC BY-SA 4.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+     "author": "Xaris333",
+     "caption": "Kouris Reservoir's spillway.",
+     "page": "https://commons.wikimedia.org/wiki/File%3AKouris_Reservoir%27_spillway_02.jpg"
+    },
+    {
+     "file": "File:Kouris Reservoir' spillway 01.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/Kouris_Reservoir%27_spillway_01.jpg/1280px-Kouris_Reservoir%27_spillway_01.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/8/80/Kouris_Reservoir%27_spillway_01.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC BY-SA 4.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+     "author": "Xaris333",
+     "caption": "Kouris Reservoir's spillway.",
+     "page": "https://commons.wikimedia.org/wiki/File%3AKouris_Reservoir%27_spillway_01.jpg"
+    },
+    {
+     "file": "File:Kouris Reservoir' spillway 05.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/50/Kouris_Reservoir%27_spillway_05.jpg/1280px-Kouris_Reservoir%27_spillway_05.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/5/50/Kouris_Reservoir%27_spillway_05.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC BY-SA 4.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+     "author": "Xaris333",
+     "caption": "Kouris Reservoir's spillway.",
+     "page": "https://commons.wikimedia.org/wiki/File%3AKouris_Reservoir%27_spillway_05.jpg"
+    },
+    {
+     "file": "File:Kouris Reservoir' spillway 04.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/42/Kouris_Reservoir%27_spillway_04.jpg/1280px-Kouris_Reservoir%27_spillway_04.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/4/42/Kouris_Reservoir%27_spillway_04.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC BY-SA 4.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+     "author": "Xaris333",
+     "caption": "Kouris Reservoir's spillway.",
+     "page": "https://commons.wikimedia.org/wiki/File%3AKouris_Reservoir%27_spillway_04.jpg"
+    }
+   ]
+  },
+  {
+   "wd": "Q2915622",
+   "name": "Larnaca Salt Lake",
+   "name_local": "Αλυκή Λάρνακας",
+   "lat": 34.9,
+   "lon": 33.616667,
+   "iso2": "CY",
+   "adm": "Larnaca",
+   "types": [
+    "group of lakes"
+   ],
+   "sitelinks": 29,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Larnaca%2001-2017%20img29%20Salt%20Lake.jpg",
+   "commons_cat": "Larnaca salt lakes",
+   "enwiki": "https://en.wikipedia.org/wiki/Larnaca_Salt_Lake",
+   "localwiki": "https://el.wikipedia.org/wiki/%CE%91%CE%BB%CF%85%CE%BA%CE%AE_%CE%9B%CE%AC%CF%81%CE%BD%CE%B1%CE%BA%CE%B1%CF%82",
+   "area_km2": 15.85,
+   "depth_m": null,
+   "elev_m": 1,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Cyprus"
+   ],
+   "seed": {
+    "swim": "no",
+    "kind": "lake",
+    "why": "brief",
+    "note": "seasonal and protected, flamingos in winter, no swimming",
+    "name": "Larnaca Salt Lake"
+   },
+   "key": "wd:Q2915622",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "water": {
+    "class": "Excellent",
+    "class_prev": "Excellent",
+    "site": "KASTELLA",
+    "type": "Coastal",
+    "km": 2.12,
+    "sites": 5,
+    "excellent": 5
+   },
+   "protected_area": {
+    "name": "Αλυκές Λάρνακας",
+    "kind": "Protected area",
+    "national_park": false,
+    "notable": true,
+    "km": 2.64
+   },
+   "base": {
+    "id": "LCA",
+    "city": "Larnaca",
+    "country": "Cyprus",
+    "km": 2.1
+   },
+   "climate": {
+    "source": "WorldClim 2.1 (1970-2000 normals, 5 arc-min)",
+    "t_mean": [
+     11.6,
+     11.9,
+     13.6,
+     17.3,
+     21.2,
+     25.2,
+     27.9,
+     28.3,
+     26.1,
+     22.6,
+     17.5,
+     13.8
+    ]
+   },
+   "prelim": 99.0,
+   "article": {
+    "lang": "en",
+    "title": "Larnaca Salt Lake",
+    "facts": [
+     "islands",
+     "protected",
+     "turquoise"
+    ],
+    "swim_text": "",
+    "chars": 2799
+   },
+   "views60": 1710,
+   "images": [
+    {
+     "file": "File:2022 03 Larnaca Salt Lake 2.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/2022_03_Larnaca_Salt_Lake_2.jpg/1280px-2022_03_Larnaca_Salt_Lake_2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/6/67/2022_03_Larnaca_Salt_Lake_2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC0",
+     "license_url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+     "author": "Qasinka",
+     "caption": "Larnaca Salt Lake",
+     "page": "https://commons.wikimedia.org/wiki/File%3A2022_03_Larnaca_Salt_Lake_2.jpg"
+    },
+    {
+     "file": "File:2022 03 Larnaca Salt Lake 1.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/61/2022_03_Larnaca_Salt_Lake_1.jpg/1280px-2022_03_Larnaca_Salt_Lake_1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/6/61/2022_03_Larnaca_Salt_Lake_1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC0",
+     "license_url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+     "author": "Qasinka",
+     "caption": "Larnaca Salt Lake (as seen from Pattichio Park)",
+     "page": "https://commons.wikimedia.org/wiki/File%3A2022_03_Larnaca_Salt_Lake_1.jpg"
+    },
+    {
+     "file": "File:2022 03 Larnaca Salt Lake 4.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dc/2022_03_Larnaca_Salt_Lake_4.jpg/1280px-2022_03_Larnaca_Salt_Lake_4.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/d/dc/2022_03_Larnaca_Salt_Lake_4.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC0",
+     "license_url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+     "author": "Qasinka",
+     "caption": "Larnaca salt Lake with Hala Sultan Mosque",
+     "page": "https://commons.wikimedia.org/wiki/File%3A2022_03_Larnaca_Salt_Lake_4.jpg"
+    },
+    {
+     "file": "File:Larnaca Salt Lake (8010196949).jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Larnaca_Salt_Lake_%288010196949%29.jpg/1280px-Larnaca_Salt_Lake_%288010196949%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/e/ea/Larnaca_Salt_Lake_%288010196949%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC BY 2.0",
+     "license_url": "https://creativecommons.org/licenses/by/2.0",
+     "author": "Michal Osmenda from Brussels, Belgium",
+     "caption": "Larnaca Salt Lake",
+     "page": "https://commons.wikimedia.org/wiki/File%3ALarnaca_Salt_Lake_%288010196949%29.jpg"
+    },
+    {
+     "file": "File:Larnaca Salt Lake (8010218470).jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Larnaca_Salt_Lake_%288010218470%29.jpg/1280px-Larnaca_Salt_Lake_%288010218470%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/5/5a/Larnaca_Salt_Lake_%288010218470%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC BY 2.0",
+     "license_url": "https://creativecommons.org/licenses/by/2.0",
+     "author": "Michal Osmenda from Brussels, Belgium",
+     "caption": "Larnaca Salt Lake",
+     "page": "https://commons.wikimedia.org/wiki/File%3ALarnaca_Salt_Lake_%288010218470%29.jpg"
+    }
+   ]
+  },
+  {
+   "wd": "Q7103757",
+   "name": "Oroklini",
+   "name_local": "Ορόκλινη",
+   "lat": 34.98138,
+   "lon": 33.656476,
+   "iso2": "CY",
+   "adm": "Larnaca District",
+   "types": [
+    "community of Cyprus Republic"
+   ],
+   "sitelinks": 19,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/A%40a%20oroklini%20lake%20%28%CE%BB%CE%AF%CE%BC%CE%BD%CE%B7%20%CE%BF%CF%81%CF%8C%CE%BA%CE%BB%CE%B9%CE%BD%CE%B7%CF%82%29%20oroklini%20larnaca%20cy%20-%20panoramio.jpg",
+   "commons_cat": "Oroklini",
+   "enwiki": "https://en.wikipedia.org/wiki/Oroklini",
+   "localwiki": "https://el.wikipedia.org/wiki/%CE%9F%CF%81%CF%8C%CE%BA%CE%BB%CE%B9%CE%BD%CE%B7",
+   "area_km2": 15.214,
+   "depth_m": null,
+   "elev_m": 60,
+   "protected": [],
+   "part_of": [
+    "Larnaca District"
+   ],
+   "basin_countries": [],
+   "key": "wd:Q7103757",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "seed": {
+    "swim": "no",
+    "kind": "lake",
+    "why": "editorial",
+    "note": "Natura 2000 bird reserve with a hide",
+    "name": "Oroklini Lake"
+   },
+   "water": {
+    "class": "Excellent",
+    "class_prev": "Excellent",
+    "site": "PERIPTERO",
+    "type": "Coastal",
+    "km": 1.92,
+    "sites": 6,
+    "excellent": 6
+   },
+   "base": {
+    "id": "LCA",
+    "city": "Larnaca",
+    "country": "Cyprus",
+    "km": 7.9
+   },
+   "climate": {
+    "source": "WorldClim 2.1 (1970-2000 normals, 5 arc-min)",
+    "t_mean": [
+     11.2,
+     11.5,
+     13.3,
+     17.2,
+     21.2,
+     25.3,
+     28.1,
+     28.5,
+     26.1,
+     22.5,
+     17.2,
+     13.5
+    ]
+   },
+   "prelim": 99.0,
+   "article": {
+    "lang": "el",
+    "title": "Ορόκλινη",
+    "facts": [],
+    "swim_text": "",
+    "chars": 115
+   },
+   "views60": 741,
+   "images": [
+    {
+     "file": "File:Oroklini, Cyprus, view from hill to Larnaca.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0d/Oroklini%2C_Cyprus%2C_view_from_hill_to_Larnaca.jpg/1280px-Oroklini%2C_Cyprus%2C_view_from_hill_to_Larnaca.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/0/0d/Oroklini%2C_Cyprus%2C_view_from_hill_to_Larnaca.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC0",
+     "license_url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+     "author": "Gerda Arendt",
+     "caption": "Oroklini, Cyprus, view from hill to Larnaca",
+     "page": "https://commons.wikimedia.org/wiki/File%3AOroklini%2C_Cyprus%2C_view_from_hill_to_Larnaca.jpg"
+    },
+    {
+     "file": "File:Oroklini, Cyprus, view from hill to setting sun.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4d/Oroklini%2C_Cyprus%2C_view_from_hill_to_setting_sun.jpg/1280px-Oroklini%2C_Cyprus%2C_view_from_hill_to_setting_sun.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/4/4d/Oroklini%2C_Cyprus%2C_view_from_hill_to_setting_sun.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC0",
+     "license_url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+     "author": "Gerda Arendt",
+     "caption": "Oroklini, Cyprus, view from hill to setting sun",
+     "page": "https://commons.wikimedia.org/wiki/File%3AOroklini%2C_Cyprus%2C_view_from_hill_to_setting_sun.jpg"
+    },
+    {
+     "file": "File:Oroklini, Cyprus, view west from trail to viewpoint.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/63/Oroklini%2C_Cyprus%2C_view_west_from_trail_to_viewpoint.jpg/1280px-Oroklini%2C_Cyprus%2C_view_west_from_trail_to_viewpoint.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/6/63/Oroklini%2C_Cyprus%2C_view_west_from_trail_to_viewpoint.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC0",
+     "license_url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+     "author": "Gerda Arendt",
+     "caption": "Oroklini, Cyprus, view west from trail to viewpoint",
+     "page": "https://commons.wikimedia.org/wiki/File%3AOroklini%2C_Cyprus%2C_view_west_from_trail_to_viewpoint.jpg"
+    },
+    {
+     "file": "File:Oroklini, Cyprus, view noth from trail to viewpoint.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c6/Oroklini%2C_Cyprus%2C_view_noth_from_trail_to_viewpoint.jpg/1280px-Oroklini%2C_Cyprus%2C_view_noth_from_trail_to_viewpoint.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/c/c6/Oroklini%2C_Cyprus%2C_view_noth_from_trail_to_viewpoint.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC0",
+     "license_url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+     "author": "Gerda Arendt",
+     "caption": "Oroklini, Cyprus, view west from trail to viewpoint",
+     "page": "https://commons.wikimedia.org/wiki/File%3AOroklini%2C_Cyprus%2C_view_noth_from_trail_to_viewpoint.jpg"
+    },
+    {
+     "file": "File:Oroklini, Cyprus, view west from viewpoint.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/Oroklini%2C_Cyprus%2C_view_west_from_viewpoint.jpg/1280px-Oroklini%2C_Cyprus%2C_view_west_from_viewpoint.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/f/f4/Oroklini%2C_Cyprus%2C_view_west_from_viewpoint.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC0",
+     "license_url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+     "author": "Gerda Arendt",
+     "caption": "Oroklini, Cyprus, view west from viewpoint",
+     "page": "https://commons.wikimedia.org/wiki/File%3AOroklini%2C_Cyprus%2C_view_west_from_viewpoint.jpg"
+    }
+   ]
+  },
+  {
+   "wd": "Q4808219",
+   "name": "Asprokremmos Reservoir",
+   "name_local": "Τεχνητή Λίμνη Ασπρόκρεμμου",
+   "lat": 34.735475,
+   "lon": 32.559144,
+   "iso2": "CY",
+   "adm": "Phinikas",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 6,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Asprokremmos%20Reservoir%202.jpg",
+   "commons_cat": "Asprokremmos Reservoir",
+   "enwiki": "https://en.wikipedia.org/wiki/Asprokremmos_Dam",
+   "localwiki": "https://el.wikipedia.org/wiki/%CE%A4%CE%B5%CF%87%CE%BD%CE%B7%CF%84%CE%AE_%CE%9B%CE%AF%CE%BC%CE%BD%CE%B7_%CE%91%CF%83%CF%80%CF%81%CF%8C%CE%BA%CF%81%CE%B5%CE%BC%CE%BC%CE%BF%CF%85",
+   "area_km2": 2.59,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Cyprus"
+   ],
+   "key": "wd:Q4808219",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "base": {
+    "id": "gem:petra-tou-romiou",
+    "city": "Petra tou Romiou (Aphrodite's Rock)",
+    "country": "Cyprus",
+    "km": 10.1
+   },
+   "climate": {
+    "source": "WorldClim 2.1 (1970-2000 normals, 5 arc-min)",
+    "t_mean": [
+     12.1,
+     12.2,
+     13.6,
+     16.6,
+     19.9,
+     23.5,
+     25.9,
+     26.2,
+     24.4,
+     21.5,
+     17.1,
+     13.8
+    ]
+   },
+   "prelim": 6.438,
+   "article": {
+    "lang": "en",
+    "title": "Asprokremmos Dam",
+    "facts": [
+     "dam"
+    ],
+    "swim_text": "",
+    "chars": 454
+   },
+   "views60": 141,
+   "images": [
+    {
+     "file": "File:Asprokremmos Reservoir 1.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/Asprokremmos_Reservoir_1.jpg/1280px-Asprokremmos_Reservoir_1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/a/a7/Asprokremmos_Reservoir_1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC BY-SA 4.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+     "author": "Peter in s",
+     "caption": "Asprokremmos Reservoir",
+     "page": "https://commons.wikimedia.org/wiki/File%3AAsprokremmos_Reservoir_1.jpg"
+    },
+    {
+     "file": "File:Asprokremmos Reservoir 2.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/01/Asprokremmos_Reservoir_2.jpg/1280px-Asprokremmos_Reservoir_2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/0/01/Asprokremmos_Reservoir_2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC BY-SA 4.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+     "author": "Peter in s",
+     "caption": "Asprokremmos Reservoir",
+     "page": "https://commons.wikimedia.org/wiki/File%3AAsprokremmos_Reservoir_2.jpg"
+    },
+    {
+     "file": "File:Asprokremmos Reservoir 3.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Asprokremmos_Reservoir_3.jpg/1280px-Asprokremmos_Reservoir_3.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/5/5c/Asprokremmos_Reservoir_3.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC BY-SA 4.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+     "author": "Peter in s",
+     "caption": "Asprokremmos Reservoir",
+     "page": "https://commons.wikimedia.org/wiki/File%3AAsprokremmos_Reservoir_3.jpg"
+    },
+    {
+     "file": "File:Asprokremmos Reservoir 7.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/ba/Asprokremmos_Reservoir_7.jpg/1280px-Asprokremmos_Reservoir_7.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/b/ba/Asprokremmos_Reservoir_7.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC BY-SA 4.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+     "author": "Peter in s",
+     "caption": "Asprokremmos Reservoir",
+     "page": "https://commons.wikimedia.org/wiki/File%3AAsprokremmos_Reservoir_7.jpg"
+    },
+    {
+     "file": "File:Asprokremmos Reservoir 8.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9d/Asprokremmos_Reservoir_8.jpg/1280px-Asprokremmos_Reservoir_8.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/9/9d/Asprokremmos_Reservoir_8.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC BY-SA 4.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+     "author": "Peter in s",
+     "caption": "Asprokremmos Reservoir",
+     "page": "https://commons.wikimedia.org/wiki/File%3AAsprokremmos_Reservoir_8.jpg"
+    }
+   ]
+  },
+  {
+   "wd": "Q61740181",
+   "name": "Λίμνη Ορόκλινης",
+   "name_local": "Λίμνη Ορόκλινης",
+   "lat": 34.9659,
+   "lon": 33.65472,
+   "iso2": "CY",
+   "adm": "",
+   "types": [
+    "Natura 2000 site",
+    "lake"
+   ],
+   "sitelinks": 4,
+   "wd_img": "",
+   "commons_cat": "Oroklini Lake",
+   "enwiki": "",
+   "localwiki": "https://el.wikipedia.org/wiki/%CE%9B%CE%AF%CE%BC%CE%BD%CE%B7_%CE%9F%CF%81%CF%8C%CE%BA%CE%BB%CE%B9%CE%BD%CE%B7%CF%82",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q61740181",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "water": {
+    "class": "Excellent",
+    "class_prev": "Excellent",
+    "site": "PETROGEFYRO",
+    "type": "Coastal",
+    "km": 0.77,
+    "sites": 6,
+    "excellent": 6
+   },
+   "protected_area": {
+    "name": "Εθνικού Δασικού Πάρκου Ριζοελιάς",
+    "kind": "Protected area",
+    "national_park": false,
+    "notable": true,
+    "km": 7.89
+   },
+   "base": {
+    "id": "LCA",
+    "city": "Larnaca",
+    "country": "Cyprus",
+    "km": 6.2
+   },
+   "climate": {
+    "source": "WorldClim 2.1 (1970-2000 normals, 5 arc-min)",
+    "t_mean": [
+     11.2,
+     11.5,
+     13.3,
+     17.2,
+     21.2,
+     25.3,
+     28.1,
+     28.5,
+     26.1,
+     22.5,
+     17.2,
+     13.5
+    ]
+   },
+   "prelim": 5.851,
+   "article": {
+    "lang": "el",
+    "title": "Λίμνη Ορόκλινης",
+    "facts": [],
+    "swim_text": "",
+    "chars": 222
+   },
+   "views60": 37,
+   "images": [
+    {
+     "file": "File:Rozhledna Flamingo spot spot, Oroklini, Kypr.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Rozhledna_Flamingo_spot_spot%2C_Oroklini%2C_Kypr.jpg/1280px-Rozhledna_Flamingo_spot_spot%2C_Oroklini%2C_Kypr.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/f/fa/Rozhledna_Flamingo_spot_spot%2C_Oroklini%2C_Kypr.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 961,
+     "license": "CC BY-SA 4.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+     "author": "Fry72, Karel Frydrýšek",
+     "caption": "Rozhledna Flamingo spot spot, Oroklini, Kypr",
+     "page": "https://commons.wikimedia.org/wiki/File%3ARozhledna_Flamingo_spot_spot%2C_Oroklini%2C_Kypr.jpg"
+    },
+    {
+     "file": "File:И местная полиция - panoramio.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/%D0%98_%D0%BC%D0%B5%D1%81%D1%82%D0%BD%D0%B0%D1%8F_%D0%BF%D0%BE%D0%BB%D0%B8%D1%86%D0%B8%D1%8F_-_panoramio.jpg/1280px-%D0%98_%D0%BC%D0%B5%D1%81%D1%82%D0%BD%D0%B0%D1%8F_%D0%BF%D0%BE%D0%BB%D0%B8%D1%86%D0%B8%D1%8F_-_panoramio.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/3/3e/%D0%98_%D0%BC%D0%B5%D1%81%D1%82%D0%BD%D0%B0%D1%8F_%D0%BF%D0%BE%D0%BB%D0%B8%D1%86%D0%B8%D1%8F_-_panoramio.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC BY 3.0",
+     "license_url": "https://creativecommons.org/licenses/by/3.0",
+     "author": "karel291",
+     "caption": "и местная полиция",
+     "page": "https://commons.wikimedia.org/wiki/File%3A%D0%98_%D0%BC%D0%B5%D1%81%D1%82%D0%BD%D0%B0%D1%8F_%D0%BF%D0%BE%D0%BB%D0%B8%D1%86%D0%B8%D1%8F_-_panoramio.jpg"
+    },
+    {
+     "file": "File:Напрочь заросший канал - panoramio.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f9/%D0%9D%D0%B0%D0%BF%D1%80%D0%BE%D1%87%D1%8C_%D0%B7%D0%B0%D1%80%D0%BE%D1%81%D1%88%D0%B8%D0%B9_%D0%BA%D0%B0%D0%BD%D0%B0%D0%BB_-_panoramio.jpg/1280px-%D0%9D%D0%B0%D0%BF%D1%80%D0%BE%D1%87%D1%8C_%D0%B7%D0%B0%D1%80%D0%BE%D1%81%D1%88%D0%B8%D0%B9_%D0%BA%D0%B0%D0%BD%D0%B0%D0%BB_-_panoramio.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/f/f9/%D0%9D%D0%B0%D0%BF%D1%80%D0%BE%D1%87%D1%8C_%D0%B7%D0%B0%D1%80%D0%BE%D1%81%D1%88%D0%B8%D0%B9_%D0%BA%D0%B0%D0%BD%D0%B0%D0%BB_-_panoramio.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC BY 3.0",
+     "license_url": "https://creativecommons.org/licenses/by/3.0",
+     "author": "karel291",
+     "caption": "напрочь заросший канал",
+     "page": "https://commons.wikimedia.org/wiki/File%3A%D0%9D%D0%B0%D0%BF%D1%80%D0%BE%D1%87%D1%8C_%D0%B7%D0%B0%D1%80%D0%BE%D1%81%D1%88%D0%B8%D0%B9_%D0%BA%D0%B0%D0%BD%D0%B0%D0%BB_-_panoramio.jpg"
+    },
+    {
+     "file": "File:Дворик у соселнего отеля - panoramio.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/%D0%94%D0%B2%D0%BE%D1%80%D0%B8%D0%BA_%D1%83_%D1%81%D0%BE%D1%81%D0%B5%D0%BB%D0%BD%D0%B5%D0%B3%D0%BE_%D0%BE%D1%82%D0%B5%D0%BB%D1%8F_-_panoramio.jpg/1280px-%D0%94%D0%B2%D0%BE%D1%80%D0%B8%D0%BA_%D1%83_%D1%81%D0%BE%D1%81%D0%B5%D0%BB%D0%BD%D0%B5%D0%B3%D0%BE_%D0%BE%D1%82%D0%B5%D0%BB%D1%8F_-_panoramio.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/8/8e/%D0%94%D0%B2%D0%BE%D1%80%D0%B8%D0%BA_%D1%83_%D1%81%D0%BE%D1%81%D0%B5%D0%BB%D0%BD%D0%B5%D0%B3%D0%BE_%D0%BE%D1%82%D0%B5%D0%BB%D1%8F_-_panoramio.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC BY 3.0",
+     "license_url": "https://creativecommons.org/licenses/by/3.0",
+     "author": "karel291",
+     "caption": "дворик у соселнего отеля",
+     "page": "https://commons.wikimedia.org/wiki/File%3A%D0%94%D0%B2%D0%BE%D1%80%D0%B8%D0%BA_%D1%83_%D1%81%D0%BE%D1%81%D0%B5%D0%BB%D0%BD%D0%B5%D0%B3%D0%BE_%D0%BE%D1%82%D0%B5%D0%BB%D1%8F_-_panoramio.jpg"
+    },
+    {
+     "file": "File:Oroklini, Cyprus - panoramio (3).jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/Oroklini%2C_Cyprus_-_panoramio_%283%29.jpg/1280px-Oroklini%2C_Cyprus_-_panoramio_%283%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/e/e1/Oroklini%2C_Cyprus_-_panoramio_%283%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 853,
+     "license": "CC BY 3.0",
+     "license_url": "https://creativecommons.org/licenses/by/3.0",
+     "author": "Максим Улитин",
+     "caption": "Oroklini, Cyprus",
+     "page": "https://commons.wikimedia.org/wiki/File%3AOroklini%2C_Cyprus_-_panoramio_%283%29.jpg"
+    }
+   ]
+  },
+  {
+   "wd": "Q5418789",
+   "name": "Evretou Reservoir",
+   "name_local": "Τεχνητή Λίμνη Ευρέτου",
+   "lat": 34.964444,
+   "lon": 32.471667,
+   "iso2": "CY",
+   "adm": "Evretou",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 5,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Evretou%20reservoir%20Cyprus%20%28173%29.jpg",
+   "commons_cat": "Evretou Reservoir",
+   "enwiki": "",
+   "localwiki": "https://el.wikipedia.org/wiki/%CE%A4%CE%B5%CF%87%CE%BD%CE%B7%CF%84%CE%AE_%CE%9B%CE%AF%CE%BC%CE%BD%CE%B7_%CE%95%CF%85%CF%81%CE%AD%CF%84%CE%BF%CF%85",
+   "area_km2": 1.25,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Cyprus"
+   ],
+   "key": "wd:Q5418789",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "base": {
+    "id": "gem:polis-akamas",
+    "city": "Polis & Akamas",
+    "country": "Cyprus",
+    "km": 8.4
+   },
+   "walks": [
+    {
+     "id": 62685,
+     "name": "Anerades Nature Trail (red)",
+     "km": 2.0
+    }
+   ],
+   "n_walks": 1,
+   "climate": {
+    "source": "WorldClim 2.1 (1970-2000 normals, 5 arc-min)",
+    "t_mean": [
+     9.7,
+     10.0,
+     11.7,
+     15.2,
+     18.8,
+     22.7,
+     25.4,
+     25.6,
+     23.3,
+     19.8,
+     15.1,
+     11.4
+    ]
+   },
+   "prelim": 5.761,
+   "article": {
+    "lang": "el",
+    "title": "Τεχνητή Λίμνη Ευρέτου",
+    "facts": [],
+    "swim_text": "",
+    "chars": 300
+   },
+   "views60": 0,
+   "images": [
+    {
+     "file": "File:Evretou-reservoir-b.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/Evretou-reservoir-b.jpg/1280px-Evretou-reservoir-b.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/b/b3/Evretou-reservoir-b.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 853,
+     "license": "CC BY-SA 4.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+     "author": "Mboesch",
+     "caption": "Evretou Reservoir",
+     "page": "https://commons.wikimedia.org/wiki/File%3AEvretou-reservoir-b.jpg"
+    },
+    {
+     "file": "File:Evretou-reservoir-c.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3d/Evretou-reservoir-c.jpg/1280px-Evretou-reservoir-c.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/3/3d/Evretou-reservoir-c.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 853,
+     "license": "CC BY-SA 4.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+     "author": "Mboesch",
+     "caption": "Evretou Reservoir with ruins of Evretou village",
+     "page": "https://commons.wikimedia.org/wiki/File%3AEvretou-reservoir-c.jpg"
+    },
+    {
+     "file": "File:Evretou-reservoir-a.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d9/Evretou-reservoir-a.jpg/1280px-Evretou-reservoir-a.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/d/d9/Evretou-reservoir-a.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 853,
+     "license": "CC BY-SA 4.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+     "author": "Mboesch",
+     "caption": "Evretou Reservoir",
+     "page": "https://commons.wikimedia.org/wiki/File%3AEvretou-reservoir-a.jpg"
+    },
+    {
+     "file": "File:Evretou Dam.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/01/Evretou_Dam.jpg/1280px-Evretou_Dam.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/0/01/Evretou_Dam.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 848,
+     "license": "CC BY 3.0",
+     "license_url": "https://creativecommons.org/licenses/by/3.0",
+     "author": "Богдан Митронов-Слоб…",
+     "caption": "Reservoir, Cyprus",
+     "page": "https://commons.wikimedia.org/wiki/File%3AEvretou_Dam.jpg"
+    },
+    {
+     "file": "File:Evretou Dam, Paphos, Cyprus - panoramio.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Evretou_Dam%2C_Paphos%2C_Cyprus_-_panoramio.jpg/1280px-Evretou_Dam%2C_Paphos%2C_Cyprus_-_panoramio.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/3/3a/Evretou_Dam%2C_Paphos%2C_Cyprus_-_panoramio.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 862,
+     "license": "CC BY 3.0",
+     "license_url": "https://creativecommons.org/licenses/by/3.0",
+     "author": "Богдан Митронов-Слоб…",
+     "caption": "Evretou Dam, Paphos, Cyprus",
+     "page": "https://commons.wikimedia.org/wiki/File%3AEvretou_Dam%2C_Paphos%2C_Cyprus_-_panoramio.jpg"
+    }
+   ]
+  },
+  {
+   "wd": "Q139256338",
+   "name": "Blue Lagoon, Cape Greco, Cyprus",
+   "name_local": "",
+   "lat": 34.965272,
+   "lon": 34.0824,
+   "iso2": "CY",
+   "adm": "Agia Napa",
+   "types": [
+    "lagoon",
+    "bay"
+   ],
+   "sitelinks": 1,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Blue%20Lagoon%2C%20Cape%20Greco%2C%20Agia%20Napa%2C%20Kypr.jpg",
+   "commons_cat": "Blue Lagoon, Cape Greco, Cyprus",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q139256338",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "water": {
+    "class": "Excellent",
+    "class_prev": "Excellent",
+    "site": "KONNOS",
+    "type": "Coastal",
+    "km": 2.34,
+    "sites": 1,
+    "excellent": 1
+   },
+   "protected_area": {
+    "name": "Εθνικό Πάρκο Κάβο Γκρέκο",
+    "kind": "National park",
+    "national_park": true,
+    "notable": false,
+    "km": 1.65
+   },
+   "base": {
+    "id": "gem:protaras",
+    "city": "Protaras",
+    "country": "Cyprus",
+    "km": 5.7
+   },
+   "climate": {
+    "source": "WorldClim 2.1 (1970-2000 normals, 5 arc-min)",
+    "t_mean": [
+     11.1,
+     11.6,
+     13.4,
+     16.7,
+     20.4,
+     24.2,
+     26.7,
+     27.0,
+     25.0,
+     21.5,
+     17.1,
+     13.5
+    ]
+   },
+   "prelim": 5.447,
+   "images": [
+    {
+     "file": "File:Blue Lagoon, Cape Greco, Agia Napa, Kypr.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Blue_Lagoon%2C_Cape_Greco%2C_Agia_Napa%2C_Kypr.jpg/1280px-Blue_Lagoon%2C_Cape_Greco%2C_Agia_Napa%2C_Kypr.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/d/d4/Blue_Lagoon%2C_Cape_Greco%2C_Agia_Napa%2C_Kypr.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 961,
+     "license": "CC BY-SA 4.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+     "author": "Fry72, Karel Frydrýšek",
+     "caption": "Modrá laguna (Blue Lagoon), Cape Greco, Agia Napa, Kypr",
+     "page": "https://commons.wikimedia.org/wiki/File%3ABlue_Lagoon%2C_Cape_Greco%2C_Agia_Napa%2C_Kypr.jpg"
+    },
+    {
+     "file": "File:Cape Greco, Cyprus, Blue lagoon, yellow flowers.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Cape_Greco%2C_Cyprus%2C_Blue_lagoon%2C_yellow_flowers.jpg/1280px-Cape_Greco%2C_Cyprus%2C_Blue_lagoon%2C_yellow_flowers.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/c/cc/Cape_Greco%2C_Cyprus%2C_Blue_lagoon%2C_yellow_flowers.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC0",
+     "license_url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+     "author": "Gerda Arendt",
+     "caption": "Cape Greco, Cyprus, Blue lagoon, yellow flowers",
+     "page": "https://commons.wikimedia.org/wiki/File%3ACape_Greco%2C_Cyprus%2C_Blue_lagoon%2C_yellow_flowers.jpg"
+    },
+    {
+     "file": "File:Cape Greco, Cyprus, Blue lagoon, white flowers.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Cape_Greco%2C_Cyprus%2C_Blue_lagoon%2C_white_flowers.jpg/1280px-Cape_Greco%2C_Cyprus%2C_Blue_lagoon%2C_white_flowers.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/b/b5/Cape_Greco%2C_Cyprus%2C_Blue_lagoon%2C_white_flowers.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 963,
+     "license": "CC0",
+     "license_url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+     "author": "Gerda Arendt",
+     "caption": "Cape Greco, Cyprus, Blue lagoon, white flowers",
+     "page": "https://commons.wikimedia.org/wiki/File%3ACape_Greco%2C_Cyprus%2C_Blue_lagoon%2C_white_flowers.jpg"
+    },
+    {
+     "file": "File:Cape Greco, Cyprus, Blue lagoon, cross on hill.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Cape_Greco%2C_Cyprus%2C_Blue_lagoon%2C_cross_on_hill.jpg/1280px-Cape_Greco%2C_Cyprus%2C_Blue_lagoon%2C_cross_on_hill.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/f/f6/Cape_Greco%2C_Cyprus%2C_Blue_lagoon%2C_cross_on_hill.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC0",
+     "license_url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+     "author": "Gerda Arendt",
+     "caption": "Cape Greco, Cyprus, Blue lagoon, cross on hill",
+     "page": "https://commons.wikimedia.org/wiki/File%3ACape_Greco%2C_Cyprus%2C_Blue_lagoon%2C_cross_on_hill.jpg"
+    },
+    {
+     "file": "File:Cape Greco, Agii Anargiri nature trail, view to chapel.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fb/Cape_Greco%2C_Agii_Anargiri_nature_trail%2C_view_to_chapel.jpg/1280px-Cape_Greco%2C_Agii_Anargiri_nature_trail%2C_view_to_chapel.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/f/fb/Cape_Greco%2C_Agii_Anargiri_nature_trail%2C_view_to_chapel.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC0",
+     "license_url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+     "author": "Gerda Arendt",
+     "caption": "Cape Greco, Agii Anargiri nature trail, view to chapel",
+     "page": "https://commons.wikimedia.org/wiki/File%3ACape_Greco%2C_Agii_Anargiri_nature_trail%2C_view_to_chapel.jpg"
+    }
+   ]
+  },
+  {
+   "wd": "Q62618929",
+   "name": "Dipotamos Reservoir",
+   "name_local": "Τεχνητή Λίμνη Διπόταμου",
+   "lat": 34.854867,
+   "lon": 33.357804,
+   "iso2": "CY",
+   "adm": "Kato Lefkara",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Dhipotamos%20dam.jpg",
+   "commons_cat": "Dipotamos Reservoir",
+   "enwiki": "",
+   "localwiki": "https://el.wikipedia.org/wiki/%CE%A4%CE%B5%CF%87%CE%BD%CE%B7%CF%84%CE%AE_%CE%9B%CE%AF%CE%BC%CE%BD%CE%B7_%CE%94%CE%B9%CF%80%CF%8C%CF%84%CE%B1%CE%BC%CE%BF%CF%85",
+   "area_km2": 1.0,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Cyprus"
+   ],
+   "key": "wd:Q62618929",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "base": {
+    "id": "gem:lefkara",
+    "city": "Lefkara",
+    "country": "Cyprus",
+    "km": 4.8
+   },
+   "walks": [
+    {
+     "id": 62777,
+     "name": "Pano Lefkara Kato Drys Trail",
+     "km": 2.5
+    }
+   ],
+   "n_walks": 1,
+   "climate": {
+    "source": "WorldClim 2.1 (1970-2000 normals, 5 arc-min)",
+    "t_mean": [
+     10.1,
+     10.2,
+     12.0,
+     16.1,
+     20.1,
+     24.3,
+     27.3,
+     27.7,
+     25.1,
+     21.5,
+     15.9,
+     12.1
+    ]
+   },
+   "prelim": 4.963,
+   "article": {
+    "lang": "el",
+    "title": "Τεχνητή Λίμνη Διπόταμου",
+    "facts": [],
+    "swim_text": "",
+    "chars": 79
+   },
+   "views60": 0,
+   "images": [
+    {
+     "file": "File:Dhipotamos dam.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b0/Dhipotamos_dam.jpg/1280px-Dhipotamos_dam.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/b/b0/Dhipotamos_dam.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "Public domain",
+     "license_url": "",
+     "author": "Elnuko",
+     "caption": "Dhipotamos dam, Cyprus (water level less than 1% of normal level)",
+     "page": "https://commons.wikimedia.org/wiki/File%3ADhipotamos_dam.jpg"
+    }
+   ]
+  },
+  {
+   "wd": "Q113153928",
+   "name": "Athalassa Lake",
+   "name_local": "Λίμνη Αθαλάσσας",
+   "lat": 35.12862,
+   "lon": 33.38753,
+   "iso2": "CY",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Athalassa%20lake%20park%20Nicosia%20Republic%20of%20Cyprus.JPG",
+   "commons_cat": "Athalassa Reservoir",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q113153928",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "protected_area": {
+    "name": "Εθνικό Πάρκο Αθαλάσσας",
+    "kind": "National park",
+    "national_park": true,
+    "notable": false,
+    "km": 1.6
+   },
+   "base": {
+    "id": "gem:nicosia",
+    "city": "Nicosia",
+    "country": "Cyprus",
+    "km": 5.3
+   },
+   "climate": {
+    "source": "WorldClim 2.1 (1970-2000 normals, 5 arc-min)",
+    "t_mean": [
+     10.5,
+     10.5,
+     12.3,
+     16.8,
+     21.0,
+     25.5,
+     28.9,
+     29.5,
+     26.7,
+     22.8,
+     16.6,
+     12.6
+    ]
+   },
+   "prelim": 4.563,
+   "images": [
+    {
+     "file": "File:Lake at Athalassa Park, Nicosia, Cyprus.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/Lake_at_Athalassa_Park%2C_Nicosia%2C_Cyprus.jpg/1280px-Lake_at_Athalassa_Park%2C_Nicosia%2C_Cyprus.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/4/41/Lake_at_Athalassa_Park%2C_Nicosia%2C_Cyprus.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC0",
+     "license_url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+     "author": "DanielMichaelPerry",
+     "caption": "Lake at Athalassa National Forest Park in the Aglantzia Municipality of Nicosia, Republic of Cyprus.",
+     "page": "https://commons.wikimedia.org/wiki/File%3ALake_at_Athalassa_Park%2C_Nicosia%2C_Cyprus.jpg"
+    },
+    {
+     "file": "File:Strovolos Industrial Area, Strovolos, Cyprus - panoramio (1).jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7a/Strovolos_Industrial_Area%2C_Strovolos%2C_Cyprus_-_panoramio_%281%29.jpg/1280px-Strovolos_Industrial_Area%2C_Strovolos%2C_Cyprus_-_panoramio_%281%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/7/7a/Strovolos_Industrial_Area%2C_Strovolos%2C_Cyprus_-_panoramio_%281%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 853,
+     "license": "CC BY 3.0",
+     "license_url": "https://creativecommons.org/licenses/by/3.0",
+     "author": "Максим Улитин",
+     "caption": "Strovolos Industrial Area, Strovolos, Cyprus",
+     "page": "https://commons.wikimedia.org/wiki/File%3AStrovolos_Industrial_Area%2C_Strovolos%2C_Cyprus_-_panoramio_%281%29.jpg"
+    },
+    {
+     "file": "File:Strovolos Industrial Area, Strovolos, Cyprus - panoramio (2).jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Strovolos_Industrial_Area%2C_Strovolos%2C_Cyprus_-_panoramio_%282%29.jpg/1280px-Strovolos_Industrial_Area%2C_Strovolos%2C_Cyprus_-_panoramio_%282%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/3/3a/Strovolos_Industrial_Area%2C_Strovolos%2C_Cyprus_-_panoramio_%282%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 853,
+     "license": "CC BY 3.0",
+     "license_url": "https://creativecommons.org/licenses/by/3.0",
+     "author": "Максим Улитин",
+     "caption": "Strovolos Industrial Area, Strovolos, Cyprus",
+     "page": "https://commons.wikimedia.org/wiki/File%3AStrovolos_Industrial_Area%2C_Strovolos%2C_Cyprus_-_panoramio_%282%29.jpg"
+    },
+    {
+     "file": "File:Strovolos Industrial Area, Strovolos, Cyprus - panoramio (3).jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f0/Strovolos_Industrial_Area%2C_Strovolos%2C_Cyprus_-_panoramio_%283%29.jpg/1280px-Strovolos_Industrial_Area%2C_Strovolos%2C_Cyprus_-_panoramio_%283%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/f/f0/Strovolos_Industrial_Area%2C_Strovolos%2C_Cyprus_-_panoramio_%283%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 853,
+     "license": "CC BY 3.0",
+     "license_url": "https://creativecommons.org/licenses/by/3.0",
+     "author": "Максим Улитин",
+     "caption": "Strovolos Industrial Area, Strovolos, Cyprus",
+     "page": "https://commons.wikimedia.org/wiki/File%3AStrovolos_Industrial_Area%2C_Strovolos%2C_Cyprus_-_panoramio_%283%29.jpg"
+    },
+    {
+     "file": "File:Small White (219669941).jpeg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bf/Small_White_%28219669941%29.jpeg/1280px-Small_White_%28219669941%29.jpeg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/b/bf/Small_White_%28219669941%29.jpeg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 1280,
+     "license": "CC0",
+     "license_url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+     "author": "Christos Zoumides",
+     "caption": "500px provided description: Pieris rapae (Linnaeus, 1758), aka the small white, is butterfly species of the Pieridae family. It is widespread across Europe, North and South Africa, and Asia. In appear",
+     "page": "https://commons.wikimedia.org/wiki/File%3ASmall_White_%28219669941%29.jpeg"
+    }
+   ]
+  },
+  {
+   "wd": "Q62923206",
+   "name": "Polemidia Reservoir",
+   "name_local": "Τεχνητή Λίμνη Πολεμιδιών",
+   "lat": 34.720896,
+   "lon": 32.986922,
+   "iso2": "CY",
+   "adm": "Limassol Municipality",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Polemidia%20Reservoir%20%2810%29.jpg",
+   "commons_cat": "Polemidia Reservoir",
+   "enwiki": "",
+   "localwiki": "https://el.wikipedia.org/wiki/%CE%A4%CE%B5%CF%87%CE%BD%CE%B7%CF%84%CE%AE_%CE%9B%CE%AF%CE%BC%CE%BD%CE%B7_%CE%A0%CE%BF%CE%BB%CE%B5%CE%BC%CE%B9%CE%B4%CE%B9%CF%8E%CE%BD",
+   "area_km2": 0.11,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Cyprus"
+   ],
+   "key": "wd:Q62923206",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "protected_area": {
+    "name": "Εθνικό Δασικό Πάρκο Πολεμιδιών",
+    "kind": "Protected area",
+    "national_park": false,
+    "notable": false,
+    "km": 1.87
+   },
+   "base": {
+    "id": "gem:limassol",
+    "city": "Limassol",
+    "country": "Cyprus",
+    "km": 7.3
+   },
+   "climate": {
+    "source": "WorldClim 2.1 (1970-2000 normals, 5 arc-min)",
+    "t_mean": [
+     11.3,
+     11.5,
+     13.2,
+     16.7,
+     20.3,
+     24.1,
+     26.7,
+     26.9,
+     24.8,
+     21.6,
+     16.7,
+     13.0
+    ]
+   },
+   "prelim": 4.563,
+   "article": {
+    "lang": "el",
+    "title": "Τεχνητή Λίμνη Πολεμιδιών",
+    "facts": [],
+    "swim_text": "",
+    "chars": 79
+   },
+   "views60": 0,
+   "images": [
+    {
+     "file": "File:Polemidia Reservoir (1).jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d2/Polemidia_Reservoir_%281%29.jpg/1280px-Polemidia_Reservoir_%281%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/d/d2/Polemidia_Reservoir_%281%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC BY-SA 4.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+     "author": "Xaris333",
+     "caption": "Polemidia Reservoir.",
+     "page": "https://commons.wikimedia.org/wiki/File%3APolemidia_Reservoir_%281%29.jpg"
+    },
+    {
+     "file": "File:Polemidia Reservoir (2).jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Polemidia_Reservoir_%282%29.jpg/1280px-Polemidia_Reservoir_%282%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/3/35/Polemidia_Reservoir_%282%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC BY-SA 4.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+     "author": "Xaris333",
+     "caption": "Polemidia Reservoir.",
+     "page": "https://commons.wikimedia.org/wiki/File%3APolemidia_Reservoir_%282%29.jpg"
+    },
+    {
+     "file": "File:Polemidia Reservoir (3).jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/99/Polemidia_Reservoir_%283%29.jpg/1280px-Polemidia_Reservoir_%283%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/9/99/Polemidia_Reservoir_%283%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC BY-SA 4.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+     "author": "Xaris333",
+     "caption": "Polemidia Reservoir.",
+     "page": "https://commons.wikimedia.org/wiki/File%3APolemidia_Reservoir_%283%29.jpg"
+    },
+    {
+     "file": "File:Polemidia Reservoir (4).jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/Polemidia_Reservoir_%284%29.jpg/1280px-Polemidia_Reservoir_%284%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/1/13/Polemidia_Reservoir_%284%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC BY-SA 4.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+     "author": "Xaris333",
+     "caption": "Polemidia Reservoir.",
+     "page": "https://commons.wikimedia.org/wiki/File%3APolemidia_Reservoir_%284%29.jpg"
+    },
+    {
+     "file": "File:Polemidia Reservoir (7).jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/Polemidia_Reservoir_%287%29.jpg/1280px-Polemidia_Reservoir_%287%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/0/0c/Polemidia_Reservoir_%287%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC BY-SA 4.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+     "author": "Xaris333",
+     "caption": "Polemidia Reservoir.",
+     "page": "https://commons.wikimedia.org/wiki/File%3APolemidia_Reservoir_%287%29.jpg"
+    }
+   ]
+  },
+  {
+   "wd": "Q81644936",
+   "name": "Arminou Reservoir",
+   "name_local": "Τεχνητή Λίμνη Αρμίνου",
+   "lat": 34.87727,
+   "lon": 32.737781,
+   "iso2": "CY",
+   "adm": "Agios Nikolaos",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 3,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/A%40a%20Arminou%20dam%20cyprus%20-%20panoramio.jpg",
+   "commons_cat": "Arminou Reservoir",
+   "enwiki": "",
+   "localwiki": "https://el.wikipedia.org/wiki/%CE%A4%CE%B5%CF%87%CE%BD%CE%B7%CF%84%CE%AE_%CE%9B%CE%AF%CE%BC%CE%BD%CE%B7_%CE%91%CF%81%CE%BC%CE%AF%CE%BD%CE%BF%CF%85",
+   "area_km2": 0.353,
+   "depth_m": null,
+   "elev_m": 436,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Cyprus"
+   ],
+   "key": "wd:Q81644936",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "base": {
+    "id": "gem:troodos",
+    "city": "Troodos Mountains",
+    "country": "Cyprus",
+    "km": 9.8
+   },
+   "climate": {
+    "source": "WorldClim 2.1 (1970-2000 normals, 5 arc-min)",
+    "t_mean": [
+     7.8,
+     8.2,
+     10.1,
+     13.9,
+     17.7,
+     21.7,
+     24.5,
+     24.7,
+     22.2,
+     18.5,
+     13.4,
+     9.6
+    ]
+   },
+   "prelim": 4.494,
+   "article": {
+    "lang": "el",
+    "title": "Τεχνητή Λίμνη Αρμίνου",
+    "facts": [],
+    "swim_text": "",
+    "chars": 234
+   },
+   "views60": 0,
+   "images": [
+    {
+     "file": "File:Arminou Reservoir, Cyprus - panoramio (16).jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Arminou_Reservoir%2C_Cyprus_-_panoramio_%2816%29.jpg/1280px-Arminou_Reservoir%2C_Cyprus_-_panoramio_%2816%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/2/23/Arminou_Reservoir%2C_Cyprus_-_panoramio_%2816%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 853,
+     "license": "CC BY 3.0",
+     "license_url": "https://creativecommons.org/licenses/by/3.0",
+     "author": "Dm Bsg",
+     "caption": "Arminou Reservoir, Cyprus",
+     "page": "https://commons.wikimedia.org/wiki/File%3AArminou_Reservoir%2C_Cyprus_-_panoramio_%2816%29.jpg"
+    },
+    {
+     "file": "File:Arminou Reservoir, Cyprus - panoramio (18).jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/51/Arminou_Reservoir%2C_Cyprus_-_panoramio_%2818%29.jpg/1280px-Arminou_Reservoir%2C_Cyprus_-_panoramio_%2818%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/5/51/Arminou_Reservoir%2C_Cyprus_-_panoramio_%2818%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 853,
+     "license": "CC BY 3.0",
+     "license_url": "https://creativecommons.org/licenses/by/3.0",
+     "author": "Dm Bsg",
+     "caption": "Arminou Reservoir, Cyprus",
+     "page": "https://commons.wikimedia.org/wiki/File%3AArminou_Reservoir%2C_Cyprus_-_panoramio_%2818%29.jpg"
+    },
+    {
+     "file": "File:Arminou Reservoir, Cyprus - panoramio (21).jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Arminou_Reservoir%2C_Cyprus_-_panoramio_%2821%29.jpg/1280px-Arminou_Reservoir%2C_Cyprus_-_panoramio_%2821%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/2/29/Arminou_Reservoir%2C_Cyprus_-_panoramio_%2821%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 853,
+     "license": "CC BY 3.0",
+     "license_url": "https://creativecommons.org/licenses/by/3.0",
+     "author": "Dm Bsg",
+     "caption": "Arminou Reservoir, Cyprus",
+     "page": "https://commons.wikimedia.org/wiki/File%3AArminou_Reservoir%2C_Cyprus_-_panoramio_%2821%29.jpg"
+    },
+    {
+     "file": "File:Arminou Reservoir, Cyprus - panoramio (23).jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/Arminou_Reservoir%2C_Cyprus_-_panoramio_%2823%29.jpg/1280px-Arminou_Reservoir%2C_Cyprus_-_panoramio_%2823%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/f/f3/Arminou_Reservoir%2C_Cyprus_-_panoramio_%2823%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 853,
+     "license": "CC BY 3.0",
+     "license_url": "https://creativecommons.org/licenses/by/3.0",
+     "author": "Dm Bsg",
+     "caption": "Arminou Reservoir, Cyprus",
+     "page": "https://commons.wikimedia.org/wiki/File%3AArminou_Reservoir%2C_Cyprus_-_panoramio_%2823%29.jpg"
+    },
+    {
+     "file": "File:Arminou Reservoir, Cyprus - panoramio.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/Arminou_Reservoir%2C_Cyprus_-_panoramio.jpg/1280px-Arminou_Reservoir%2C_Cyprus_-_panoramio.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/9/95/Arminou_Reservoir%2C_Cyprus_-_panoramio.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 853,
+     "license": "CC BY 3.0",
+     "license_url": "https://creativecommons.org/licenses/by/3.0",
+     "author": "Dm Bsg",
+     "caption": "Arminou Reservoir, Cyprus",
+     "page": "https://commons.wikimedia.org/wiki/File%3AArminou_Reservoir%2C_Cyprus_-_panoramio.jpg"
+    }
+   ]
+  },
+  {
+   "wd": "Q62027136",
+   "name": "Kannaviou Reservoir",
+   "name_local": "Τεχνητή Λίμνη Κανναβιού",
+   "lat": 34.929916,
+   "lon": 32.590819,
+   "iso2": "CY",
+   "adm": "Asproyia",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Kannaviou%20Reservoir%2C%20Cyprus%20-%20panoramio%20%2815%29.jpg",
+   "commons_cat": "Kannaviou Reservoir",
+   "enwiki": "",
+   "localwiki": "https://el.wikipedia.org/wiki/%CE%A4%CE%B5%CF%87%CE%BD%CE%B7%CF%84%CE%AE_%CE%9B%CE%AF%CE%BC%CE%BD%CE%B7_%CE%9A%CE%B1%CE%BD%CE%BD%CE%B1%CE%B2%CE%B9%CE%BF%CF%8D",
+   "area_km2": 0.926,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Cyprus"
+   ],
+   "key": "wd:Q62027136",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "base": {
+    "id": "gem:polis-akamas",
+    "city": "Polis & Akamas",
+    "country": "Cyprus",
+    "km": 18.4
+   },
+   "walks": [
+    {
+     "id": 62667,
+     "name": "Arnies Nature Trail",
+     "km": 3.7
+    },
+    {
+     "id": 62739,
+     "name": "Moutti ton Anemon Trail",
+     "km": 3.7
+    }
+   ],
+   "n_walks": 2,
+   "climate": {
+    "source": "WorldClim 2.1 (1970-2000 normals, 5 arc-min)",
+    "t_mean": [
+     6.3,
+     6.9,
+     9.0,
+     13.0,
+     16.8,
+     20.8,
+     23.7,
+     23.8,
+     21.2,
+     17.3,
+     12.2,
+     8.3
+    ]
+   },
+   "prelim": 4.463,
+   "article": {
+    "lang": "el",
+    "title": "Τεχνητή Λίμνη Κανναβιού",
+    "facts": [],
+    "swim_text": "",
+    "chars": 289
+   },
+   "views60": 0,
+   "images": [
+    {
+     "file": "File:Kannaviou Reservoir, Cyprus - panoramio (1).jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Kannaviou_Reservoir%2C_Cyprus_-_panoramio_%281%29.jpg/1280px-Kannaviou_Reservoir%2C_Cyprus_-_panoramio_%281%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/1/15/Kannaviou_Reservoir%2C_Cyprus_-_panoramio_%281%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 854,
+     "license": "CC BY 3.0",
+     "license_url": "https://creativecommons.org/licenses/by/3.0",
+     "author": "Dmitry Panov",
+     "caption": "Kannaviou Reservoir, Cyprus",
+     "page": "https://commons.wikimedia.org/wiki/File%3AKannaviou_Reservoir%2C_Cyprus_-_panoramio_%281%29.jpg"
+    },
+    {
+     "file": "File:Kannaviou Reservoir, Cyprus - panoramio (2).jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/76/Kannaviou_Reservoir%2C_Cyprus_-_panoramio_%282%29.jpg/1280px-Kannaviou_Reservoir%2C_Cyprus_-_panoramio_%282%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/7/76/Kannaviou_Reservoir%2C_Cyprus_-_panoramio_%282%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 854,
+     "license": "CC BY 3.0",
+     "license_url": "https://creativecommons.org/licenses/by/3.0",
+     "author": "Dmitry Panov",
+     "caption": "Kannaviou Reservoir, Cyprus",
+     "page": "https://commons.wikimedia.org/wiki/File%3AKannaviou_Reservoir%2C_Cyprus_-_panoramio_%282%29.jpg"
+    },
+    {
+     "file": "File:Kannaviou Reservoir - panoramio.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/Kannaviou_Reservoir_-_panoramio.jpg/1280px-Kannaviou_Reservoir_-_panoramio.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/2/2d/Kannaviou_Reservoir_-_panoramio.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 843,
+     "license": "CC BY 3.0",
+     "license_url": "https://creativecommons.org/licenses/by/3.0",
+     "author": "Богдан Митронов-Слоб…",
+     "caption": "Kannaviou Reservoir",
+     "page": "https://commons.wikimedia.org/wiki/File%3AKannaviou_Reservoir_-_panoramio.jpg"
+    },
+    {
+     "file": "File:Kannaviou Reservoir - panoramio (1).jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/Kannaviou_Reservoir_-_panoramio_%281%29.jpg/1280px-Kannaviou_Reservoir_-_panoramio_%281%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/7/78/Kannaviou_Reservoir_-_panoramio_%281%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 867,
+     "license": "CC BY 3.0",
+     "license_url": "https://creativecommons.org/licenses/by/3.0",
+     "author": "Богдан Митронов-Слоб…",
+     "caption": "Kannaviou Reservoir",
+     "page": "https://commons.wikimedia.org/wiki/File%3AKannaviou_Reservoir_-_panoramio_%281%29.jpg"
+    },
+    {
+     "file": "File:Kannaviou Reservoir - panoramio (2).jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Kannaviou_Reservoir_-_panoramio_%282%29.jpg/1280px-Kannaviou_Reservoir_-_panoramio_%282%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/f/f2/Kannaviou_Reservoir_-_panoramio_%282%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 848,
+     "license": "CC BY 3.0",
+     "license_url": "https://creativecommons.org/licenses/by/3.0",
+     "author": "Богдан Митронов-Слоб…",
+     "caption": "Kannaviou Reservoir",
+     "page": "https://commons.wikimedia.org/wiki/File%3AKannaviou_Reservoir_-_panoramio_%282%29.jpg"
+    }
+   ]
+  },
+  {
+   "wd": "Q83396721",
+   "name": "Klirou Reservoir",
+   "name_local": "Τεχνητή Λίμνη Κλήρου",
+   "lat": 35.032018,
+   "lon": 33.172871,
+   "iso2": "CY",
+   "adm": "Klirou",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Klirou%20Reservoir%2C%20Cyprus.jpg",
+   "commons_cat": "Klirou Reservoir",
+   "enwiki": "",
+   "localwiki": "https://el.wikipedia.org/wiki/%CE%A4%CE%B5%CF%87%CE%BD%CE%B7%CF%84%CE%AE_%CE%9B%CE%AF%CE%BC%CE%BD%CE%B7_%CE%9A%CE%BB%CE%AE%CF%81%CE%BF%CF%85",
+   "area_km2": 0.18,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Cyprus"
+   ],
+   "key": "wd:Q83396721",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "base": {
+    "id": "gem:lefkara",
+    "city": "Lefkara",
+    "country": "Cyprus",
+    "km": 22.1
+   },
+   "walks": [
+    {
+     "id": 62823,
+     "name": "Nature Trail \"Pikrovrisi tis Merikas\"",
+     "km": 3.9
+    }
+   ],
+   "n_walks": 1,
+   "climate": {
+    "source": "WorldClim 2.1 (1970-2000 normals, 5 arc-min)",
+    "t_mean": [
+     9.3,
+     9.4,
+     11.3,
+     15.6,
+     19.8,
+     24.2,
+     27.4,
+     27.8,
+     25.0,
+     21.1,
+     15.3,
+     11.3
+    ]
+   },
+   "prelim": 4.463,
+   "article": {
+    "lang": "el",
+    "title": "Τεχνητή Λίμνη Κλήρου",
+    "facts": [],
+    "swim_text": "",
+    "chars": 138
+   },
+   "views60": 0,
+   "images": [
+    {
+     "file": "File:Klirou Reservoir, Cyprus.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Klirou_Reservoir%2C_Cyprus.jpg/1280px-Klirou_Reservoir%2C_Cyprus.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/e/ec/Klirou_Reservoir%2C_Cyprus.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC BY-SA 4.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+     "author": "Pavlos1988",
+     "caption": "Klirou reservoir in Nicosia District, Cyprus near the villages of Klirou and Malounta.",
+     "page": "https://commons.wikimedia.org/wiki/File%3AKlirou_Reservoir%2C_Cyprus.jpg"
+    },
+    {
+     "file": "File:A@a Klirou - Malounta - Akaki Dam4 Cyprus - panoramio.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/f/ff/A%40a_Klirou_-_Malounta_-_Akaki_Dam4_Cyprus_-_panoramio.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/f/ff/A%40a_Klirou_-_Malounta_-_Akaki_Dam4_Cyprus_-_panoramio.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 790,
+     "license": "CC BY-SA 3.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+     "author": "An. Antoniou",
+     "caption": "a@a Klirou - Malounta - Akaki Dam4 Cyprus",
+     "page": "https://commons.wikimedia.org/wiki/File%3AA%40a_Klirou_-_Malounta_-_Akaki_Dam4_Cyprus_-_panoramio.jpg"
+    },
+    {
+     "file": "File:A@a Klirou - Malounta - Akaki Dam5 Cyprus - panoramio.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/4/41/A%40a_Klirou_-_Malounta_-_Akaki_Dam5_Cyprus_-_panoramio.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/4/41/A%40a_Klirou_-_Malounta_-_Akaki_Dam5_Cyprus_-_panoramio.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 739,
+     "license": "CC BY-SA 3.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+     "author": "An. Antoniou",
+     "caption": "a@a Klirou - Malounta - Akaki Dam5 Cyprus",
+     "page": "https://commons.wikimedia.org/wiki/File%3AA%40a_Klirou_-_Malounta_-_Akaki_Dam5_Cyprus_-_panoramio.jpg"
+    },
+    {
+     "file": "File:A@a Klirou - Malounta - Akaki Dam6 Cyprus - panoramio.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/6/6c/A%40a_Klirou_-_Malounta_-_Akaki_Dam6_Cyprus_-_panoramio.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/6/6c/A%40a_Klirou_-_Malounta_-_Akaki_Dam6_Cyprus_-_panoramio.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 1005,
+     "license": "CC BY-SA 3.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+     "author": "An. Antoniou",
+     "caption": "a@a Klirou - Malounta - Akaki Dam6 Cyprus",
+     "page": "https://commons.wikimedia.org/wiki/File%3AA%40a_Klirou_-_Malounta_-_Akaki_Dam6_Cyprus_-_panoramio.jpg"
+    },
+    {
+     "file": "File:A@a Klirou - Malounta - Akaki Dam7 Cyprus - panoramio.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/9/99/A%40a_Klirou_-_Malounta_-_Akaki_Dam7_Cyprus_-_panoramio.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/9/99/A%40a_Klirou_-_Malounta_-_Akaki_Dam7_Cyprus_-_panoramio.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 928,
+     "license": "CC BY-SA 3.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+     "author": "An. Antoniou",
+     "caption": "a@a Klirou - Malounta - Akaki Dam7 Cyprus",
+     "page": "https://commons.wikimedia.org/wiki/File%3AA%40a_Klirou_-_Malounta_-_Akaki_Dam7_Cyprus_-_panoramio.jpg"
+    }
+   ]
+  },
+  {
+   "wd": "Q76826052",
+   "name": "Mavrokolimpos Reservoir",
+   "name_local": "Τεχνητή Λίμνη Μαυροκόλυμπου",
+   "lat": 34.857502,
+   "lon": 32.408648,
+   "iso2": "CY",
+   "adm": "Kissonerga",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Mavrokolympos%20Reservoir%20161.JPG",
+   "commons_cat": "Mavrokolimpos Reservoir",
+   "enwiki": "",
+   "localwiki": "https://el.wikipedia.org/wiki/%CE%A4%CE%B5%CF%87%CE%BD%CE%B7%CF%84%CE%AE_%CE%9B%CE%AF%CE%BC%CE%BD%CE%B7_%CE%9C%CE%B1%CF%85%CF%81%CE%BF%CE%BA%CF%8C%CE%BB%CF%85%CE%BC%CF%80%CE%BF%CF%85",
+   "area_km2": 0.175,
+   "depth_m": null,
+   "elev_m": 70,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Cyprus"
+   ],
+   "key": "wd:Q76826052",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "base": {
+    "id": "gem:pegeia",
+    "city": "Pégeia",
+    "country": "Cyprus",
+    "km": 3.8
+   },
+   "walks": [
+    {
+     "id": 62681,
+     "name": "Agiasma Nature Trail",
+     "km": 2.3
+    }
+   ],
+   "n_walks": 1,
+   "climate": {
+    "source": "WorldClim 2.1 (1970-2000 normals, 5 arc-min)",
+    "t_mean": [
+     10.5,
+     10.7,
+     12.3,
+     15.6,
+     19.1,
+     22.8,
+     25.3,
+     25.5,
+     23.5,
+     20.2,
+     15.7,
+     12.2
+    ]
+   },
+   "prelim": 4.463,
+   "article": {
+    "lang": "el",
+    "title": "Τεχνητή Λίμνη Μαυροκόλυμπου",
+    "facts": [],
+    "swim_text": "",
+    "chars": 241
+   },
+   "views60": 0,
+   "images": [
+    {
+     "file": "File:Mavrokolympos Dam 157.JPG",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6a/Mavrokolympos_Dam_157.JPG/1280px-Mavrokolympos_Dam_157.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/6/6a/Mavrokolympos_Dam_157.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC BY-SA 3.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+     "author": "RHaworth",
+     "caption": "The Mavrokolympos Dam and mountains, in Paphos District, Cyprus.",
+     "page": "https://commons.wikimedia.org/wiki/File%3AMavrokolympos_Dam_157.JPG"
+    },
+    {
+     "file": "File:Mavrokolympos Reservoir 161.JPG",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/99/Mavrokolympos_Reservoir_161.JPG/1280px-Mavrokolympos_Reservoir_161.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/9/99/Mavrokolympos_Reservoir_161.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 721,
+     "license": "CC BY-SA 3.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+     "author": "RHaworth",
+     "caption": "The Mavrokolympos Reservoir in Paphos District, Cyprus. The dam is on the right.",
+     "page": "https://commons.wikimedia.org/wiki/File%3AMavrokolympos_Reservoir_161.JPG"
+    },
+    {
+     "file": "File:Mavrokolympos Dam 160.JPG",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/Mavrokolympos_Dam_160.JPG/1280px-Mavrokolympos_Dam_160.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/8/8b/Mavrokolympos_Dam_160.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC BY-SA 3.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+     "author": "RHaworth",
+     "caption": "The Mavrokolympos Dam in Paphos District, Cyprus.",
+     "page": "https://commons.wikimedia.org/wiki/File%3AMavrokolympos_Dam_160.JPG"
+    }
+   ]
+  },
+  {
+   "wd": "Q22985616",
+   "name": "Prodromas",
+   "name_local": "",
+   "lat": 34.948611,
+   "lon": 32.845,
+   "iso2": "CY",
+   "adm": "Cyprus",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Prodromos%20Reservoir%2C%20Cyprus%20-%20panoramio%20%283%29.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": 1699,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q22985616",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "protected_area": {
+    "name": "Εθνικό Δασικό Πάρκο Τροόδους",
+    "kind": "Protected area",
+    "national_park": false,
+    "notable": true,
+    "km": 3.28
+   },
+   "base": {
+    "id": "gem:troodos",
+    "city": "Troodos Mountains",
+    "country": "Cyprus",
+    "km": 3.7
+   },
+   "walks": [
+    {
+     "id": 62727,
+     "name": "Prodromos Zoumi Nature Trail",
+     "km": 3.5
+    },
+    {
+     "id": 62728,
+     "name": "Prodromos Nature Trail 1 to 2",
+     "km": 2.6
+    },
+    {
+     "id": 62654,
+     "name": "Artemis Trail",
+     "km": 7.2
+    }
+   ],
+   "n_walks": 13,
+   "climate": {
+    "source": "WorldClim 2.1 (1970-2000 normals, 5 arc-min)",
+    "t_mean": [
+     2.5,
+     3.2,
+     5.6,
+     10.1,
+     14.3,
+     18.3,
+     21.2,
+     21.2,
+     18.3,
+     14.0,
+     8.8,
+     4.6
+    ]
+   },
+   "prelim": 4.263,
+   "images": [
+    {
+     "file": "File:Prodromos Reservoir - panoramio.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Prodromos_Reservoir_-_panoramio.jpg/1280px-Prodromos_Reservoir_-_panoramio.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/6/68/Prodromos_Reservoir_-_panoramio.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 855,
+     "license": "CC BY 3.0",
+     "license_url": "https://creativecommons.org/licenses/by/3.0",
+     "author": "Dmitry Panov",
+     "caption": "Prodromos Reservoir",
+     "page": "https://commons.wikimedia.org/wiki/File%3AProdromos_Reservoir_-_panoramio.jpg"
+    },
+    {
+     "file": "File:Prodromos Reservoir, Cyprus - panoramio.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f1/Prodromos_Reservoir%2C_Cyprus_-_panoramio.jpg/1280px-Prodromos_Reservoir%2C_Cyprus_-_panoramio.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/f/f1/Prodromos_Reservoir%2C_Cyprus_-_panoramio.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 853,
+     "license": "CC BY 3.0",
+     "license_url": "https://creativecommons.org/licenses/by/3.0",
+     "author": "Dm Bsg",
+     "caption": "Prodromos Reservoir, Cyprus",
+     "page": "https://commons.wikimedia.org/wiki/File%3AProdromos_Reservoir%2C_Cyprus_-_panoramio.jpg"
+    },
+    {
+     "file": "File:Prodromos Reservoir, Cyprus - panoramio (1).jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Prodromos_Reservoir%2C_Cyprus_-_panoramio_%281%29.jpg/1280px-Prodromos_Reservoir%2C_Cyprus_-_panoramio_%281%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/5/5f/Prodromos_Reservoir%2C_Cyprus_-_panoramio_%281%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 829,
+     "license": "CC BY 3.0",
+     "license_url": "https://creativecommons.org/licenses/by/3.0",
+     "author": "Dm Bsg",
+     "caption": "Prodromos Reservoir, Cyprus",
+     "page": "https://commons.wikimedia.org/wiki/File%3AProdromos_Reservoir%2C_Cyprus_-_panoramio_%281%29.jpg"
+    },
+    {
+     "file": "File:Prodromos Reservoir, Cyprus - panoramio (2).jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Prodromos_Reservoir%2C_Cyprus_-_panoramio_%282%29.jpg/1280px-Prodromos_Reservoir%2C_Cyprus_-_panoramio_%282%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/1/1b/Prodromos_Reservoir%2C_Cyprus_-_panoramio_%282%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 853,
+     "license": "CC BY 3.0",
+     "license_url": "https://creativecommons.org/licenses/by/3.0",
+     "author": "Dm Bsg",
+     "caption": "Prodromos Reservoir, Cyprus",
+     "page": "https://commons.wikimedia.org/wiki/File%3AProdromos_Reservoir%2C_Cyprus_-_panoramio_%282%29.jpg"
+    },
+    {
+     "file": "File:Prodromos Reservoir, Cyprus - panoramio (3).jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Prodromos_Reservoir%2C_Cyprus_-_panoramio_%283%29.jpg/1280px-Prodromos_Reservoir%2C_Cyprus_-_panoramio_%283%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/e/e4/Prodromos_Reservoir%2C_Cyprus_-_panoramio_%283%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 853,
+     "license": "CC BY 3.0",
+     "license_url": "https://creativecommons.org/licenses/by/3.0",
+     "author": "Dm Bsg",
+     "caption": "Prodromos Reservoir, Cyprus",
+     "page": "https://commons.wikimedia.org/wiki/File%3AProdromos_Reservoir%2C_Cyprus_-_panoramio_%283%29.jpg"
+    }
+   ]
+  },
+  {
+   "wd": "Q113170061",
+   "name": "Mitsero Red Lake",
+   "name_local": "Κοκκινόλιμνη",
+   "lat": 35.036075,
+   "lon": 33.115864,
+   "iso2": "CY",
+   "adm": "",
+   "types": [
+    "Q2387901",
+    "lake"
+   ],
+   "sitelinks": 2,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Red%20lake%2C%20Mitsero%20mine%2C%20Mitsero%2C%20Cyprus%2001.jpg",
+   "commons_cat": "Red lake, Mitsero mine",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q113170061",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "base": {
+    "id": "gem:lefkara",
+    "city": "Lefkara",
+    "country": "Cyprus",
+    "km": 25.6
+   },
+   "walks": [
+    {
+     "id": 62823,
+     "name": "Nature Trail \"Pikrovrisi tis Merikas\"",
+     "km": 3.9
+    }
+   ],
+   "n_walks": 1,
+   "climate": {
+    "source": "WorldClim 2.1 (1970-2000 normals, 5 arc-min)",
+    "t_mean": [
+     9.0,
+     9.1,
+     11.0,
+     15.3,
+     19.4,
+     23.7,
+     26.9,
+     27.3,
+     24.5,
+     20.6,
+     14.9,
+     10.9
+    ]
+   },
+   "prelim": 4.063,
+   "images": [
+    {
+     "file": "File:Red lake, Mitsero mine, Mitsero, Cyprus 02.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Red_lake%2C_Mitsero_mine%2C_Mitsero%2C_Cyprus_02.jpg/1280px-Red_lake%2C_Mitsero_mine%2C_Mitsero%2C_Cyprus_02.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/3/3a/Red_lake%2C_Mitsero_mine%2C_Mitsero%2C_Cyprus_02.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 961,
+     "license": "CC BY-SA 4.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+     "author": "Fry72, Karel Frydrýšek",
+     "caption": "Red lake, Mitsero mine, Mitsero, Cyprus 2023",
+     "page": "https://commons.wikimedia.org/wiki/File%3ARed_lake%2C_Mitsero_mine%2C_Mitsero%2C_Cyprus_02.jpg"
+    },
+    {
+     "file": "File:Red lake, Mitsero mine, Mitsero, Cyprus 01.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Red_lake%2C_Mitsero_mine%2C_Mitsero%2C_Cyprus_01.jpg/1280px-Red_lake%2C_Mitsero_mine%2C_Mitsero%2C_Cyprus_01.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/8/87/Red_lake%2C_Mitsero_mine%2C_Mitsero%2C_Cyprus_01.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 961,
+     "license": "CC BY-SA 4.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+     "author": "Fry72, Karel Frydrýšek",
+     "caption": "Red lake, Mitsero mine, Mitsero, Cyprus",
+     "page": "https://commons.wikimedia.org/wiki/File%3ARed_lake%2C_Mitsero_mine%2C_Mitsero%2C_Cyprus_01.jpg"
+    },
+    {
+     "file": "File:Red lake, Mitsero mine, Mitsero, Cyprus 03.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Red_lake%2C_Mitsero_mine%2C_Mitsero%2C_Cyprus_03.jpg/1280px-Red_lake%2C_Mitsero_mine%2C_Mitsero%2C_Cyprus_03.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/b/b5/Red_lake%2C_Mitsero_mine%2C_Mitsero%2C_Cyprus_03.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 961,
+     "license": "CC BY-SA 4.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+     "author": "Fry72, Karel Frydrýšek",
+     "caption": "Red lake, Mitsero mine, Mitsero, Cyprus",
+     "page": "https://commons.wikimedia.org/wiki/File%3ARed_lake%2C_Mitsero_mine%2C_Mitsero%2C_Cyprus_03.jpg"
+    }
+   ]
+  },
+  {
+   "wd": "Q62607262",
+   "name": "Kalavasos Reservoir",
+   "name_local": "Τεχνητή Λίμνη Καλαβασού",
+   "lat": 34.805002,
+   "lon": 33.259228,
+   "iso2": "CY",
+   "adm": "Vasa Kellakiou",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 2,
+   "wd_img": "",
+   "commons_cat": "Kalavasos Reservoir",
+   "enwiki": "",
+   "localwiki": "https://el.wikipedia.org/wiki/%CE%A4%CE%B5%CF%87%CE%BD%CE%B7%CF%84%CE%AE_%CE%9B%CE%AF%CE%BC%CE%BD%CE%B7_%CE%9A%CE%B1%CE%BB%CE%B1%CE%B2%CE%B1%CF%83%CE%BF%CF%8D",
+   "area_km2": 0.875,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Cyprus"
+   ],
+   "key": "wd:Q62607262",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "protected_area": {
+    "name": "Μικρο-Αποθεμα Φυτου",
+    "kind": "Nature reserve",
+    "national_park": false,
+    "notable": false,
+    "km": 3.73
+   },
+   "base": {
+    "id": "gem:choirokoitia",
+    "city": "Choirokoitía",
+    "country": "Cyprus",
+    "km": 7.0
+   },
+   "climate": {
+    "source": "WorldClim 2.1 (1970-2000 normals, 5 arc-min)",
+    "t_mean": [
+     10.8,
+     10.9,
+     12.5,
+     16.4,
+     20.2,
+     24.2,
+     27.0,
+     27.4,
+     25.1,
+     21.7,
+     16.4,
+     12.7
+    ]
+   },
+   "prelim": 3.463,
+   "article": {
+    "lang": "el",
+    "title": "Τεχνητή Λίμνη Καλαβασού",
+    "facts": [],
+    "swim_text": "",
+    "chars": 100
+   },
+   "views60": 0,
+   "images": [
+    {
+     "file": "File:Kalavasos Reservoir kz01.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/Kalavasos_Reservoir_kz01.jpg/1280px-Kalavasos_Reservoir_kz01.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/1/12/Kalavasos_Reservoir_kz01.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 853,
+     "license": "CC BY-SA 4.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+     "author": "Krzysztof Ziarnek, Kenraiz",
+     "caption": "Kalavasos Dam in Cyprus",
+     "page": "https://commons.wikimedia.org/wiki/File%3AKalavasos_Reservoir_kz01.jpg"
+    },
+    {
+     "file": "File:Kalavasos Reservoir kz02.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Kalavasos_Reservoir_kz02.jpg/1280px-Kalavasos_Reservoir_kz02.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/4/45/Kalavasos_Reservoir_kz02.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 853,
+     "license": "CC BY-SA 4.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+     "author": "Krzysztof Ziarnek, Kenraiz",
+     "caption": "Kalavasos Reservoir in Cyprus",
+     "page": "https://commons.wikimedia.org/wiki/File%3AKalavasos_Reservoir_kz02.jpg"
+    },
+    {
+     "file": "File:Kalavasos Reservoir kz03.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fb/Kalavasos_Reservoir_kz03.jpg/1280px-Kalavasos_Reservoir_kz03.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/f/fb/Kalavasos_Reservoir_kz03.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 853,
+     "license": "CC BY-SA 4.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+     "author": "Krzysztof Ziarnek, Kenraiz",
+     "caption": "Kalavasos Reservoir in Cyprus",
+     "page": "https://commons.wikimedia.org/wiki/File%3AKalavasos_Reservoir_kz03.jpg"
+    },
+    {
+     "file": "File:Kalavasos Reservoir kz05.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/Kalavasos_Reservoir_kz05.jpg/1280px-Kalavasos_Reservoir_kz05.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/1/12/Kalavasos_Reservoir_kz05.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 853,
+     "license": "CC BY-SA 4.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+     "author": "Krzysztof Ziarnek, Kenraiz",
+     "caption": "Kalavasos Reservoir in Cyprus",
+     "page": "https://commons.wikimedia.org/wiki/File%3AKalavasos_Reservoir_kz05.jpg"
+    },
+    {
+     "file": "File:Kalavasos Reservoir kz04.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Kalavasos_Reservoir_kz04.jpg/1280px-Kalavasos_Reservoir_kz04.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/6/6f/Kalavasos_Reservoir_kz04.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 853,
+     "license": "CC BY-SA 4.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+     "author": "Krzysztof Ziarnek, Kenraiz",
+     "caption": "Kalavasos Reservoir in Cyprus",
+     "page": "https://commons.wikimedia.org/wiki/File%3AKalavasos_Reservoir_kz04.jpg"
+    }
+   ]
+  },
+  {
+   "wd": "Q12880040",
+   "name": "Λίμνη Παραλιμνίου",
+   "name_local": "Λίμνη Παραλιμνίου",
+   "lat": 35.0383,
+   "lon": 33.9683,
+   "iso2": "CY",
+   "adm": "",
+   "types": [
+    "proposed site of community importance",
+    "Natura 2000 site",
+    "Special Protection Area",
+    "Special Area of Conservation",
+    "lake"
+   ],
+   "sitelinks": 6,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://el.wikipedia.org/wiki/%CE%9B%CE%AF%CE%BC%CE%BD%CE%B7_%CE%A0%CE%B1%CF%81%CE%B1%CE%BB%CE%B9%CE%BC%CE%BD%CE%AF%CE%BF%CF%85",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q12880040",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "protected_area": {
+    "name": "Εθνικό Δασικό Πάρκο Άγιος Νίκανδρο",
+    "kind": "Protected area",
+    "national_park": false,
+    "notable": false,
+    "km": 5.54
+   },
+   "base": {
+    "id": "gem:paralimni",
+    "city": "Paralímni",
+    "country": "Cyprus",
+    "km": 1.2
+   },
+   "climate": {
+    "source": "WorldClim 2.1 (1970-2000 normals, 5 arc-min)",
+    "t_mean": [
+     10.8,
+     11.4,
+     13.2,
+     16.8,
+     20.7,
+     24.7,
+     27.3,
+     27.4,
+     25.2,
+     21.4,
+     16.8,
+     13.1
+    ]
+   },
+   "prelim": 3.338,
+   "article": {
+    "lang": "el",
+    "title": "Λίμνη Παραλιμνίου",
+    "facts": [
+     "protected"
+    ],
+    "swim_text": "",
+    "chars": 238
+   },
+   "views60": 62,
+   "images": [
+    {
+     "file": "File:FamagustaDistrict 01-2017 img01 Paralimni StGeorge Old Church.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d2/FamagustaDistrict_01-2017_img01_Paralimni_StGeorge_Old_Church.jpg/1280px-FamagustaDistrict_01-2017_img01_Paralimni_StGeorge_Old_Church.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/d/d2/FamagustaDistrict_01-2017_img01_Paralimni_StGeorge_Old_Church.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 720,
+     "license": "FAL",
+     "license_url": "http://artlibre.org/licence/lal/en",
+     "author": "A.Savin",
+     "caption": "Old church of St. George in Paralimni, Cyprus",
+     "page": "https://commons.wikimedia.org/wiki/File%3AFamagustaDistrict_01-2017_img01_Paralimni_StGeorge_Old_Church.jpg"
+    },
+    {
+     "file": "File:FamagustaDistrict 01-2017 img02 Paralimni StGeorge Metropolitan Church.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/FamagustaDistrict_01-2017_img02_Paralimni_StGeorge_Metropolitan_Church.jpg/1280px-FamagustaDistrict_01-2017_img02_Paralimni_StGeorge_Metropolitan_Church.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/3/30/FamagustaDistrict_01-2017_img02_Paralimni_StGeorge_Metropolitan_Church.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 1280,
+     "license": "FAL",
+     "license_url": "http://artlibre.org/licence/lal/en",
+     "author": "A.Savin",
+     "caption": "St. George Metropolitan Church in Paralimni, Cyprus",
+     "page": "https://commons.wikimedia.org/wiki/File%3AFamagustaDistrict_01-2017_img02_Paralimni_StGeorge_Metropolitan_Church.jpg"
+    }
+   ]
+  },
+  {
+   "wd": "Q22991968",
+   "name": "Achna Reservoir",
+   "name_local": "Τεχνητή Λίμνη Άχνας",
+   "lat": 35.0489,
+   "lon": 33.8025,
+   "iso2": "CY",
+   "adm": "Achna",
+   "types": [
+    "Natura 2000 site",
+    "reservoir"
+   ],
+   "sitelinks": 4,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://el.wikipedia.org/wiki/%CE%A4%CE%B5%CF%87%CE%BD%CE%B7%CF%84%CE%AE_%CE%9B%CE%AF%CE%BC%CE%BD%CE%B7_%CE%86%CF%87%CE%BD%CE%B1%CF%82",
+   "area_km2": 1.25,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q22991968",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "base": {
+    "id": "gem:egkomi",
+    "city": "Égkomi",
+    "country": "Cyprus",
+    "km": 14.6
+   },
+   "climate": {
+    "source": "WorldClim 2.1 (1970-2000 normals, 5 arc-min)",
+    "t_mean": [
+     10.7,
+     11.3,
+     13.1,
+     16.9,
+     21.0,
+     25.2,
+     28.0,
+     28.2,
+     25.7,
+     21.9,
+     16.9,
+     13.2
+    ]
+   },
+   "prelim": 3.251,
+   "article": {
+    "lang": "el",
+    "title": "Τεχνητή Λίμνη Άχνας",
+    "facts": [],
+    "swim_text": "",
+    "chars": 77
+   },
+   "views60": 22,
+   "images": [
+    {
+     "file": "File:Площадка молодняка - panoramio.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/73/%D0%9F%D0%BB%D0%BE%D1%89%D0%B0%D0%B4%D0%BA%D0%B0_%D0%BC%D0%BE%D0%BB%D0%BE%D0%B4%D0%BD%D1%8F%D0%BA%D0%B0_-_panoramio.jpg/1280px-%D0%9F%D0%BB%D0%BE%D1%89%D0%B0%D0%B4%D0%BA%D0%B0_%D0%BC%D0%BE%D0%BB%D0%BE%D0%B4%D0%BD%D1%8F%D0%BA%D0%B0_-_panoramio.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/7/73/%D0%9F%D0%BB%D0%BE%D1%89%D0%B0%D0%B4%D0%BA%D0%B0_%D0%BC%D0%BE%D0%BB%D0%BE%D0%B4%D0%BD%D1%8F%D0%BA%D0%B0_-_panoramio.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC BY 3.0",
+     "license_url": "https://creativecommons.org/licenses/by/3.0",
+     "author": "karel291",
+     "caption": "площадка молодняка",
+     "page": "https://commons.wikimedia.org/wiki/File%3A%D0%9F%D0%BB%D0%BE%D1%89%D0%B0%D0%B4%D0%BA%D0%B0_%D0%BC%D0%BE%D0%BB%D0%BE%D0%B4%D0%BD%D1%8F%D0%BA%D0%B0_-_panoramio.jpg"
+    },
+    {
+     "file": "File:У озера - panoramio (2).jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/76/%D0%A3_%D0%BE%D0%B7%D0%B5%D1%80%D0%B0_-_panoramio_%282%29.jpg/1280px-%D0%A3_%D0%BE%D0%B7%D0%B5%D1%80%D0%B0_-_panoramio_%282%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/7/76/%D0%A3_%D0%BE%D0%B7%D0%B5%D1%80%D0%B0_-_panoramio_%282%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC BY 3.0",
+     "license_url": "https://creativecommons.org/licenses/by/3.0",
+     "author": "karel291",
+     "caption": "у озера",
+     "page": "https://commons.wikimedia.org/wiki/File%3A%D0%A3_%D0%BE%D0%B7%D0%B5%D1%80%D0%B0_-_panoramio_%282%29.jpg"
+    },
+    {
+     "file": "File:Танцплощадка - panoramio.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/%D0%A2%D0%B0%D0%BD%D1%86%D0%BF%D0%BB%D0%BE%D1%89%D0%B0%D0%B4%D0%BA%D0%B0_-_panoramio.jpg/1280px-%D0%A2%D0%B0%D0%BD%D1%86%D0%BF%D0%BB%D0%BE%D1%89%D0%B0%D0%B4%D0%BA%D0%B0_-_panoramio.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/e/e7/%D0%A2%D0%B0%D0%BD%D1%86%D0%BF%D0%BB%D0%BE%D1%89%D0%B0%D0%B4%D0%BA%D0%B0_-_panoramio.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC BY 3.0",
+     "license_url": "https://creativecommons.org/licenses/by/3.0",
+     "author": "karel291",
+     "caption": "танцплощадка",
+     "page": "https://commons.wikimedia.org/wiki/File%3A%D0%A2%D0%B0%D0%BD%D1%86%D0%BF%D0%BB%D0%BE%D1%89%D0%B0%D0%B4%D0%BA%D0%B0_-_panoramio.jpg"
+    },
+    {
+     "file": "File:Детишки и зверушки - panoramio.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/94/%D0%94%D0%B5%D1%82%D0%B8%D1%88%D0%BA%D0%B8_%D0%B8_%D0%B7%D0%B2%D0%B5%D1%80%D1%83%D1%88%D0%BA%D0%B8_-_panoramio.jpg/1280px-%D0%94%D0%B5%D1%82%D0%B8%D1%88%D0%BA%D0%B8_%D0%B8_%D0%B7%D0%B2%D0%B5%D1%80%D1%83%D1%88%D0%BA%D0%B8_-_panoramio.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/9/94/%D0%94%D0%B5%D1%82%D0%B8%D1%88%D0%BA%D0%B8_%D0%B8_%D0%B7%D0%B2%D0%B5%D1%80%D1%83%D1%88%D0%BA%D0%B8_-_panoramio.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC BY 3.0",
+     "license_url": "https://creativecommons.org/licenses/by/3.0",
+     "author": "karel291",
+     "caption": "детишки и зверушки",
+     "page": "https://commons.wikimedia.org/wiki/File%3A%D0%94%D0%B5%D1%82%D0%B8%D1%88%D0%BA%D0%B8_%D0%B8_%D0%B7%D0%B2%D0%B5%D1%80%D1%83%D1%88%D0%BA%D0%B8_-_panoramio.jpg"
+    },
+    {
+     "file": "File:Ослики, парковка - panoramio.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/%D0%9E%D1%81%D0%BB%D0%B8%D0%BA%D0%B8%2C_%D0%BF%D0%B0%D1%80%D0%BA%D0%BE%D0%B2%D0%BA%D0%B0_-_panoramio.jpg/1280px-%D0%9E%D1%81%D0%BB%D0%B8%D0%BA%D0%B8%2C_%D0%BF%D0%B0%D1%80%D0%BA%D0%BE%D0%B2%D0%BA%D0%B0_-_panoramio.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/1/13/%D0%9E%D1%81%D0%BB%D0%B8%D0%BA%D0%B8%2C_%D0%BF%D0%B0%D1%80%D0%BA%D0%BE%D0%B2%D0%BA%D0%B0_-_panoramio.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 720,
+     "license": "CC BY 3.0",
+     "license_url": "https://creativecommons.org/licenses/by/3.0",
+     "author": "karel291",
+     "caption": "ослики, парковка",
+     "page": "https://commons.wikimedia.org/wiki/File%3A%D0%9E%D1%81%D0%BB%D0%B8%D0%BA%D0%B8%2C_%D0%BF%D0%B0%D1%80%D0%BA%D0%BE%D0%B2%D0%BA%D0%B0_-_panoramio.jpg"
+    }
+   ]
+  },
+  {
+   "wd": "Q62663509",
+   "name": "Lefkara Reservoir",
+   "name_local": "Τεχνητή Λίμνη Λευκάρων",
+   "lat": 34.893655,
+   "lon": 33.293221,
+   "iso2": "CY",
+   "adm": "Pano Lefkara",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://el.wikipedia.org/wiki/%CE%A4%CE%B5%CF%87%CE%BD%CE%B7%CF%84%CE%AE_%CE%9B%CE%AF%CE%BC%CE%BD%CE%B7_%CE%9B%CE%B5%CF%85%CE%BA%CE%AC%CF%81%CF%89%CE%BD",
+   "area_km2": 0.65,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Cyprus"
+   ],
+   "key": "wd:Q62663509",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "protected_area": {
+    "name": "Εθνικό Δασικό Πάρκο Μαχαιράς",
+    "kind": "Nature reserve",
+    "national_park": false,
+    "notable": false,
+    "km": 7.23
+   },
+   "base": {
+    "id": "gem:lefkara",
+    "city": "Lefkara",
+    "country": "Cyprus",
+    "km": 3.2
+   },
+   "walks": [
+    {
+     "id": 62777,
+     "name": "Pano Lefkara Kato Drys Trail",
+     "km": 2.5
+    }
+   ],
+   "n_walks": 1,
+   "climate": {
+    "source": "WorldClim 2.1 (1970-2000 normals, 5 arc-min)",
+    "t_mean": [
+     8.9,
+     9.0,
+     10.9,
+     15.0,
+     19.0,
+     23.2,
+     26.2,
+     26.6,
+     24.0,
+     20.2,
+     14.7,
+     10.9
+    ]
+   },
+   "prelim": 2.397,
+   "article": {
+    "lang": "el",
+    "title": "Τεχνητή Λίμνη Λευκάρων",
+    "facts": [],
+    "swim_text": "",
+    "chars": 95
+   },
+   "views60": 0,
+   "images": [
+    {
+     "file": "File:ISS034-E-62747 - View of Earth.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/ISS034-E-62747_-_View_of_Earth.jpg/1280px-ISS034-E-62747_-_View_of_Earth.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/b/b3/ISS034-E-62747_-_View_of_Earth.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 850,
+     "license": "Public domain",
+     "license_url": "",
+     "author": "Earth Science and Remote Sensing Unit, Lyndon B. Johnson Space Center",
+     "caption": "View of Earth taken during ISS Expedition 34.",
+     "page": "https://commons.wikimedia.org/wiki/File%3AISS034-E-62747_-_View_of_Earth.jpg"
+    }
+   ]
+  },
+  {
+   "wd": "Q82523478",
+   "name": "Kalopanagiotis Reservoir",
+   "name_local": "Τεχνητή Λίμνη Καλοπαναγιώτη",
+   "lat": 35.004254,
+   "lon": 32.825973,
+   "iso2": "CY",
+   "adm": "Oikos",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://el.wikipedia.org/wiki/%CE%A4%CE%B5%CF%87%CE%BD%CE%B7%CF%84%CE%AE_%CE%9B%CE%AF%CE%BC%CE%BD%CE%B7_%CE%9A%CE%B1%CE%BB%CE%BF%CF%80%CE%B1%CE%BD%CE%B1%CE%B3%CE%B9%CF%8E%CF%84%CE%B7",
+   "area_km2": 0.047,
+   "depth_m": null,
+   "elev_m": 550,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Cyprus"
+   ],
+   "key": "wd:Q82523478",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "base": {
+    "id": "gem:troodos",
+    "city": "Troodos Mountains",
+    "country": "Cyprus",
+    "km": 9.8
+   },
+   "walks": [
+    {
+     "id": 62715,
+     "name": "Kalopanagiotis Viewpoint Trail",
+     "km": 4.5
+    },
+    {
+     "id": 62745,
+     "name": "Kalopanagiotis Vineyard Trail",
+     "km": 4.7
+    },
+    {
+     "id": 62680,
+     "name": "Ariadni Nature Trail",
+     "km": 3.2
+    }
+   ],
+   "n_walks": 7,
+   "climate": {
+    "source": "WorldClim 2.1 (1970-2000 normals, 5 arc-min)",
+    "t_mean": [
+     7.7,
+     8.0,
+     10.0,
+     14.0,
+     18.0,
+     22.1,
+     25.0,
+     25.2,
+     22.5,
+     18.6,
+     13.4,
+     9.5
+    ]
+   },
+   "prelim": 2.297,
+   "article": {
+    "lang": "el",
+    "title": "Τεχνητή Λίμνη Καλοπαναγιώτη",
+    "facts": [],
+    "swim_text": "",
+    "chars": 163
+   },
+   "views60": 0,
+   "images": [
+    {
+     "file": "File:Beautiful Troodos mountains - panoramio.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/06/Beautiful_Troodos_mountains_-_panoramio.jpg/1280px-Beautiful_Troodos_mountains_-_panoramio.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/0/06/Beautiful_Troodos_mountains_-_panoramio.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC BY 3.0",
+     "license_url": "https://creativecommons.org/licenses/by/3.0",
+     "author": "Georgy Papantoniou",
+     "caption": "Beautiful Troodos mountains",
+     "page": "https://commons.wikimedia.org/wiki/File%3ABeautiful_Troodos_mountains_-_panoramio.jpg"
+    },
+    {
+     "file": "File:Nicosia District, Cyprus - panoramio (25).jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ed/Nicosia_District%2C_Cyprus_-_panoramio_%2825%29.jpg/1280px-Nicosia_District%2C_Cyprus_-_panoramio_%2825%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/e/ed/Nicosia_District%2C_Cyprus_-_panoramio_%2825%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 853,
+     "license": "CC BY 3.0",
+     "license_url": "https://creativecommons.org/licenses/by/3.0",
+     "author": "Максим Улитин",
+     "caption": "Nicosia District, Cyprus",
+     "page": "https://commons.wikimedia.org/wiki/File%3ANicosia_District%2C_Cyprus_-_panoramio_%2825%29.jpg"
+    },
+    {
+     "file": "File:Kalopanayiotis, Cyprus - panoramio.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Kalopanayiotis%2C_Cyprus_-_panoramio.jpg/1280px-Kalopanayiotis%2C_Cyprus_-_panoramio.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/2/29/Kalopanayiotis%2C_Cyprus_-_panoramio.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 853,
+     "license": "CC BY 3.0",
+     "license_url": "https://creativecommons.org/licenses/by/3.0",
+     "author": "Максим Улитин",
+     "caption": "Kalopanayiotis, Cyprus",
+     "page": "https://commons.wikimedia.org/wiki/File%3AKalopanayiotis%2C_Cyprus_-_panoramio.jpg"
+    },
+    {
+     "file": "File:Kalopanayiotis, Cyprus - panoramio (1).jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/Kalopanayiotis%2C_Cyprus_-_panoramio_%281%29.jpg/1280px-Kalopanayiotis%2C_Cyprus_-_panoramio_%281%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/8/88/Kalopanayiotis%2C_Cyprus_-_panoramio_%281%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 853,
+     "license": "CC BY 3.0",
+     "license_url": "https://creativecommons.org/licenses/by/3.0",
+     "author": "Максим Улитин",
+     "caption": "Kalopanayiotis, Cyprus",
+     "page": "https://commons.wikimedia.org/wiki/File%3AKalopanayiotis%2C_Cyprus_-_panoramio_%281%29.jpg"
+    },
+    {
+     "file": "File:Кипр - panoramio (2).jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/%D0%9A%D0%B8%D0%BF%D1%80_-_panoramio_%282%29.jpg/1280px-%D0%9A%D0%B8%D0%BF%D1%80_-_panoramio_%282%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/f/f3/%D0%9A%D0%B8%D0%BF%D1%80_-_panoramio_%282%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 962,
+     "license": "CC BY 3.0",
+     "license_url": "https://creativecommons.org/licenses/by/3.0",
+     "author": "Дмитрий Мозжухин",
+     "caption": "Кипр",
+     "page": "https://commons.wikimedia.org/wiki/File%3A%D0%9A%D0%B8%D0%BF%D1%80_-_panoramio_%282%29.jpg"
+    }
+   ]
+  },
+  {
+   "wd": "Q81698527",
+   "name": "Argaka Reservoir",
+   "name_local": "Τεχνητή Λίμνη Αργάκας",
+   "lat": 35.048473,
+   "lon": 32.503142,
+   "iso2": "CY",
+   "adm": "Magounda",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://el.wikipedia.org/wiki/%CE%A4%CE%B5%CF%87%CE%BD%CE%B7%CF%84%CE%AE_%CE%9B%CE%AF%CE%BC%CE%BD%CE%B7_%CE%91%CF%81%CE%B3%CE%AC%CE%BA%CE%B1%CF%82",
+   "area_km2": 0.107,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Cyprus"
+   ],
+   "key": "wd:Q81698527",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "base": {
+    "id": "gem:polis-akamas",
+    "city": "Polis & Akamas",
+    "country": "Cyprus",
+    "km": 6.6
+   },
+   "walks": [
+    {
+     "id": 62692,
+     "name": "Argaka Nature Trail (long)",
+     "km": 9.7
+    }
+   ],
+   "n_walks": 1,
+   "climate": {
+    "source": "WorldClim 2.1 (1970-2000 normals, 5 arc-min)",
+    "t_mean": [
+     8.7,
+     9.0,
+     10.8,
+     14.5,
+     18.2,
+     22.2,
+     25.0,
+     25.2,
+     22.7,
+     19.1,
+     14.2,
+     10.5
+    ]
+   },
+   "prelim": 1.997,
+   "article": {
+    "lang": "el",
+    "title": "Τεχνητή Λίμνη Αργάκας",
+    "facts": [],
+    "swim_text": "",
+    "chars": 222
+   },
+   "views60": 0,
+   "images": []
+  },
+  {
+   "wd": "Q81843224",
+   "name": "Ayia Marina Reservoir",
+   "name_local": "Τεχνητή Λίμνη Αγίας Μαρίνας",
+   "lat": 35.11721,
+   "lon": 32.541601,
+   "iso2": "CY",
+   "adm": "Ayia Marina Chrysochous",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://el.wikipedia.org/wiki/%CE%A4%CE%B5%CF%87%CE%BD%CE%B7%CF%84%CE%AE_%CE%9B%CE%AF%CE%BC%CE%BD%CE%B7_%CE%91%CE%B3%CE%AF%CE%B1%CF%82_%CE%9C%CE%B1%CF%81%CE%AF%CE%BD%CE%B1%CF%82",
+   "area_km2": 0.033,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Cyprus"
+   ],
+   "key": "wd:Q81843224",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "base": {
+    "id": "gem:polis-akamas",
+    "city": "Polis & Akamas",
+    "country": "Cyprus",
+    "km": 13.6
+   },
+   "walks": [
+    {
+     "id": 62691,
+     "name": "Symvoulos Nature Trail",
+     "km": 12.8
+    }
+   ],
+   "n_walks": 1,
+   "climate": {
+    "source": "WorldClim 2.1 (1970-2000 normals, 5 arc-min)",
+    "t_mean": [
+     10.2,
+     10.3,
+     11.9,
+     15.4,
+     19.0,
+     22.9,
+     25.7,
+     25.9,
+     23.6,
+     20.2,
+     15.5,
+     12.0
+    ]
+   },
+   "prelim": 1.997,
+   "article": {
+    "lang": "el",
+    "title": "Τεχνητή Λίμνη Αγίας Μαρίνας",
+    "facts": [],
+    "swim_text": "",
+    "chars": 126
+   },
+   "views60": 0,
+   "images": []
+  },
+  {
+   "wd": "Q81704063",
+   "name": "Pomos Reservoir",
+   "name_local": "Τεχνητή Λίμνη Πωμού",
+   "lat": 35.143056,
+   "lon": 32.576061,
+   "iso2": "CY",
+   "adm": "Pomos",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://el.wikipedia.org/wiki/%CE%A4%CE%B5%CF%87%CE%BD%CE%B7%CF%84%CE%AE_%CE%9B%CE%AF%CE%BC%CE%BD%CE%B7_%CE%A0%CF%89%CE%BC%CE%BF%CF%8D",
+   "area_km2": 0.083,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Cyprus"
+   ],
+   "key": "wd:Q81704063",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "base": {
+    "id": "gem:polis-akamas",
+    "city": "Polis & Akamas",
+    "country": "Cyprus",
+    "km": 17.8
+   },
+   "walks": [
+    {
+     "id": 62790,
+     "name": "Μονοπάτι της φύσης Παχύαμμος",
+     "km": 3.8
+    },
+    {
+     "id": 62691,
+     "name": "Symvoulos Nature Trail",
+     "km": 12.8
+    }
+   ],
+   "n_walks": 2,
+   "climate": {
+    "source": "WorldClim 2.1 (1970-2000 normals, 5 arc-min)",
+    "t_mean": [
+     10.2,
+     10.3,
+     11.9,
+     15.4,
+     19.0,
+     22.9,
+     25.7,
+     25.9,
+     23.6,
+     20.2,
+     15.5,
+     12.0
+    ]
+   },
+   "prelim": 1.997,
+   "article": {
+    "lang": "el",
+    "title": "Τεχνητή Λίμνη Πωμού",
+    "facts": [],
+    "swim_text": "",
+    "chars": 101
+   },
+   "views60": 21,
+   "images": []
+  },
+  {
+   "wd": "Q83295762",
+   "name": "Solea Reservoir",
+   "name_local": "Τεχνητή Λίμνη Σολέας",
+   "lat": 35.066792,
+   "lon": 32.90289,
+   "iso2": "CY",
+   "adm": "Linou",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://el.wikipedia.org/wiki/%CE%A4%CE%B5%CF%87%CE%BD%CE%B7%CF%84%CE%AE_%CE%9B%CE%AF%CE%BC%CE%BD%CE%B7_%CE%A3%CE%BF%CE%BB%CE%AD%CE%B1%CF%82",
+   "area_km2": 0.189,
+   "depth_m": null,
+   "elev_m": 361,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Cyprus"
+   ],
+   "key": "wd:Q83295762",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "base": {
+    "id": "gem:troodos",
+    "city": "Troodos Mountains",
+    "country": "Cyprus",
+    "km": 17.9
+   },
+   "walks": [
+    {
+     "id": 62735,
+     "name": "Agios Theodoros Asinou Nature Trail",
+     "km": 5.5
+    },
+    {
+     "id": 62736,
+     "name": "Asinou Mouti tou Dia Trail",
+     "km": 3.4
+    }
+   ],
+   "n_walks": 2,
+   "climate": {
+    "source": "WorldClim 2.1 (1970-2000 normals, 5 arc-min)",
+    "t_mean": [
+     8.3,
+     8.6,
+     10.5,
+     14.6,
+     18.5,
+     22.7,
+     25.6,
+     25.9,
+     23.2,
+     19.4,
+     14.0,
+     10.2
+    ]
+   },
+   "prelim": 1.997,
+   "article": {
+    "lang": "el",
+    "title": "Τεχνητή Λίμνη Σολέας",
+    "facts": [],
+    "swim_text": "",
+    "chars": 140
+   },
+   "views60": 10,
+   "images": [
+    {
+     "file": "File:Η θέα από τον Προφήτη Ηλία - panoramio.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/6/61/%CE%97_%CE%B8%CE%AD%CE%B1_%CE%B1%CF%80%CF%8C_%CF%84%CE%BF%CE%BD_%CE%A0%CF%81%CE%BF%CF%86%CE%AE%CF%84%CE%B7_%CE%97%CE%BB%CE%AF%CE%B1_-_panoramio.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/6/61/%CE%97_%CE%B8%CE%AD%CE%B1_%CE%B1%CF%80%CF%8C_%CF%84%CE%BF%CE%BD_%CE%A0%CF%81%CE%BF%CF%86%CE%AE%CF%84%CE%B7_%CE%97%CE%BB%CE%AF%CE%B1_-_panoramio.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC BY 3.0",
+     "license_url": "https://creativecommons.org/licenses/by/3.0",
+     "author": "Nikos Konstantinidis",
+     "caption": "Η θέα από τον Προφήτη Ηλία",
+     "page": "https://commons.wikimedia.org/wiki/File%3A%CE%97_%CE%B8%CE%AD%CE%B1_%CE%B1%CF%80%CF%8C_%CF%84%CE%BF%CE%BD_%CE%A0%CF%81%CE%BF%CF%86%CE%AE%CF%84%CE%B7_%CE%97%CE%BB%CE%AF%CE%B1_-_panoramio.jpg"
+    },
+    {
+     "file": "File:Φλάσου - panoramio.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/a/a8/%CE%A6%CE%BB%CE%AC%CF%83%CE%BF%CF%85_-_panoramio.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/a/a8/%CE%A6%CE%BB%CE%AC%CF%83%CE%BF%CF%85_-_panoramio.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC BY 3.0",
+     "license_url": "https://creativecommons.org/licenses/by/3.0",
+     "author": "Nikos Konstantinidis",
+     "caption": "Φλάσου",
+     "page": "https://commons.wikimedia.org/wiki/File%3A%CE%A6%CE%BB%CE%AC%CF%83%CE%BF%CF%85_-_panoramio.jpg"
+    }
+   ]
+  },
+  {
+   "wd": "Q83288227",
+   "name": "Tamasos Reservoir",
+   "name_local": "Τεχνητή Λίμνη Ταμασού",
+   "lat": 35.014033,
+   "lon": 33.247771,
+   "iso2": "CY",
+   "adm": "Kampia",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://el.wikipedia.org/wiki/%CE%A4%CE%B5%CF%87%CE%BD%CE%B7%CF%84%CE%AE_%CE%9B%CE%AF%CE%BC%CE%BD%CE%B7_%CE%A4%CE%B1%CE%BC%CE%B1%CF%83%CE%BF%CF%8D",
+   "area_km2": 0.305,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Cyprus"
+   ],
+   "key": "wd:Q83288227",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "base": {
+    "id": "gem:lefkara",
+    "city": "Lefkara",
+    "country": "Cyprus",
+    "km": 17.2
+   },
+   "walks": [
+    {
+     "id": 62800,
+     "name": "Agios Onoufrios - Kapedes Trail",
+     "km": 4.7
+    }
+   ],
+   "n_walks": 1,
+   "climate": {
+    "source": "WorldClim 2.1 (1970-2000 normals, 5 arc-min)",
+    "t_mean": [
+     9.3,
+     9.4,
+     11.3,
+     15.6,
+     19.8,
+     24.2,
+     27.4,
+     27.8,
+     25.0,
+     21.1,
+     15.3,
+     11.3
+    ]
+   },
+   "prelim": 1.997,
+   "article": {
+    "lang": "el",
+    "title": "Τεχνητή Λίμνη Ταμασού",
+    "facts": [],
+    "swim_text": "",
+    "chars": 140
+   },
+   "views60": 21,
+   "images": [
+    {
+     "file": "File:TAMASOS DAM sunset - panoramio.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/TAMASOS_DAM_sunset_-_panoramio.jpg/1280px-TAMASOS_DAM_sunset_-_panoramio.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/3/35/TAMASOS_DAM_sunset_-_panoramio.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC BY-SA 3.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+     "author": "ppupos",
+     "caption": "TAMASOS DAM  sunset",
+     "page": "https://commons.wikimedia.org/wiki/File%3ATAMASOS_DAM_sunset_-_panoramio.jpg"
+    },
+    {
+     "file": "File:TAMASOS DAM panoramic - panoramio.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/TAMASOS_DAM_panoramic_-_panoramio.jpg/1280px-TAMASOS_DAM_panoramic_-_panoramio.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/8/85/TAMASOS_DAM_panoramic_-_panoramio.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC BY-SA 3.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+     "author": "ppupos",
+     "caption": "TAMASOS DAM panoramic!",
+     "page": "https://commons.wikimedia.org/wiki/File%3ATAMASOS_DAM_panoramic_-_panoramio.jpg"
+    },
+    {
+     "file": "File:Fragma . pera orinis - panoramio.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/af/Fragma_._pera_orinis_-_panoramio.jpg/1280px-Fragma_._pera_orinis_-_panoramio.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/a/af/Fragma_._pera_orinis_-_panoramio.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC BY-SA 3.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+     "author": "ppupos",
+     "caption": "fragma . pera orinis",
+     "page": "https://commons.wikimedia.org/wiki/File%3AFragma_._pera_orinis_-_panoramio.jpg"
+    },
+    {
+     "file": "File:FRAGMA piso plevra - panoramio.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/FRAGMA_piso_plevra_-_panoramio.jpg/1280px-FRAGMA_piso_plevra_-_panoramio.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/2/2e/FRAGMA_piso_plevra_-_panoramio.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC BY-SA 3.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+     "author": "ppupos",
+     "caption": "FRAGMA piso plevra",
+     "page": "https://commons.wikimedia.org/wiki/File%3AFRAGMA_piso_plevra_-_panoramio.jpg"
+    },
+    {
+     "file": "File:RIVER - panoramio.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fc/RIVER_-_panoramio.jpg/1280px-RIVER_-_panoramio.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/f/fc/RIVER_-_panoramio.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC BY-SA 3.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+     "author": "ppupos",
+     "caption": "RIVER",
+     "page": "https://commons.wikimedia.org/wiki/File%3ARIVER_-_panoramio.jpg"
+    }
+   ]
+  },
+  {
+   "wd": "Q83479403",
+   "name": "Tsakistra Reservoir",
+   "name_local": "Τεχνητή Λίμνη Τσακίστρας",
+   "lat": 35.023393,
+   "lon": 32.70275,
+   "iso2": "CY",
+   "adm": "Tsakistra",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://el.wikipedia.org/wiki/%CE%A4%CE%B5%CF%87%CE%BD%CE%B7%CF%84%CE%AE_%CE%9B%CE%AF%CE%BC%CE%BD%CE%B7_%CE%A4%CF%83%CE%B1%CE%BA%CE%AF%CF%83%CF%84%CF%81%CE%B1%CF%82",
+   "area_km2": 0.015,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Cyprus"
+   ],
+   "key": "wd:Q83479403",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "base": {
+    "id": "gem:troodos",
+    "city": "Troodos Mountains",
+    "country": "Cyprus",
+    "km": 16.8
+   },
+   "walks": [
+    {
+     "id": 62734,
+     "name": "Dodeka Anemoi Tripylos Trail",
+     "km": 2.6
+    },
+    {
+     "id": 62733,
+     "name": "Cedar Valley Trail",
+     "km": 3.0
+    }
+   ],
+   "n_walks": 2,
+   "climate": {
+    "source": "WorldClim 2.1 (1970-2000 normals, 5 arc-min)",
+    "t_mean": [
+     6.4,
+     6.9,
+     9.0,
+     13.1,
+     17.0,
+     21.1,
+     24.1,
+     24.2,
+     21.5,
+     17.5,
+     12.3,
+     8.3
+    ]
+   },
+   "prelim": 1.997,
+   "article": {
+    "lang": "el",
+    "title": "Τεχνητή Λίμνη Τσακίστρας",
+    "facts": [],
+    "swim_text": "",
+    "chars": 218
+   },
+   "views60": 0,
+   "images": []
+  },
+  {
+   "wd": "Q82316715",
+   "name": "Xyliatos Reservoir",
+   "name_local": "Τεχνητή Λίμνη Ξυλιάτου",
+   "lat": 35.008131,
+   "lon": 33.036997,
+   "iso2": "CY",
+   "adm": "Xyliatos",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://el.wikipedia.org/wiki/%CE%A4%CE%B5%CF%87%CE%BD%CE%B7%CF%84%CE%AE_%CE%9B%CE%AF%CE%BC%CE%BD%CE%B7_%CE%9E%CF%85%CE%BB%CE%B9%CE%AC%CF%84%CE%BF%CF%85",
+   "area_km2": 0.096,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [
+    "Cyprus"
+   ],
+   "key": "wd:Q82316715",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "base": {
+    "id": "gem:troodos",
+    "city": "Troodos Mountains",
+    "country": "Cyprus",
+    "km": 21.2
+   },
+   "walks": [
+    {
+     "id": 62660,
+     "name": "Panayia Tou Araka to Stavros Tou Ayiasmati",
+     "km": 7.2
+    }
+   ],
+   "n_walks": 1,
+   "climate": {
+    "source": "WorldClim 2.1 (1970-2000 normals, 5 arc-min)",
+    "t_mean": [
+     8.7,
+     8.9,
+     10.8,
+     15.0,
+     19.1,
+     23.3,
+     26.4,
+     26.7,
+     24.0,
+     20.1,
+     14.6,
+     10.7
+    ]
+   },
+   "prelim": 1.997,
+   "article": {
+    "lang": "el",
+    "title": "Τεχνητή Λίμνη Ξυλιάτου",
+    "facts": [],
+    "swim_text": "",
+    "chars": 142
+   },
+   "views60": 55,
+   "images": [
+    {
+     "file": "File:Fragma XILIATOU - panoramio.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Fragma_XILIATOU_-_panoramio.jpg/1280px-Fragma_XILIATOU_-_panoramio.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/5/5e/Fragma_XILIATOU_-_panoramio.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC BY-SA 3.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+     "author": "ppupos",
+     "caption": "fragma XILIATOU",
+     "page": "https://commons.wikimedia.org/wiki/File%3AFragma_XILIATOU_-_panoramio.jpg"
+    }
+   ]
+  },
+  {
+   "wd": "Q81924287",
+   "name": "Vyzakia Reservoir",
+   "name_local": "Τεχνητή Λίμνη Βυζακιάς",
+   "lat": 35.061861,
+   "lon": 33.029008,
+   "iso2": "CY",
+   "adm": "Vyzakia",
+   "types": [
+    "reservoir"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://el.wikipedia.org/wiki/%CE%A4%CE%B5%CF%87%CE%BD%CE%B7%CF%84%CE%AE_%CE%9B%CE%AF%CE%BC%CE%BD%CE%B7_%CE%92%CF%85%CE%B6%CE%B1%CE%BA%CE%B9%CE%AC%CF%82",
+   "area_km2": 0.16,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q81924287",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "base": {
+    "id": "gem:troodos",
+    "city": "Troodos Mountains",
+    "country": "Cyprus",
+    "km": 24.0
+   },
+   "climate": {
+    "source": "WorldClim 2.1 (1970-2000 normals, 5 arc-min)",
+    "t_mean": [
+     8.7,
+     8.9,
+     10.8,
+     15.0,
+     19.1,
+     23.3,
+     26.4,
+     26.7,
+     24.0,
+     20.1,
+     14.6,
+     10.7
+    ]
+   },
+   "prelim": 1.697,
+   "article": {
+    "lang": "el",
+    "title": "Τεχνητή Λίμνη Βυζακιάς",
+    "facts": [],
+    "swim_text": "",
+    "chars": 79
+   },
+   "views60": 13,
+   "images": []
+  },
+  {
+   "wd": "Q22991930",
+   "name": "Xeros Potamos",
+   "name_local": "",
+   "lat": 34.73333,
+   "lon": 32.5625,
+   "iso2": "CY",
+   "adm": "",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": 77,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q22991930",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "base": {
+    "id": "gem:petra-tou-romiou",
+    "city": "Petra tou Romiou (Aphrodite's Rock)",
+    "country": "Cyprus",
+    "km": 9.7
+   },
+   "climate": {
+    "source": "WorldClim 2.1 (1970-2000 normals, 5 arc-min)",
+    "t_mean": [
+     12.1,
+     12.2,
+     13.6,
+     16.6,
+     19.9,
+     23.5,
+     25.9,
+     26.2,
+     24.4,
+     21.5,
+     17.1,
+     13.8
+    ]
+   },
+   "prelim": 1.297,
+   "images": [
+    {
+     "file": "File:Asprokremmos Dam1.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/Asprokremmos_Dam1.jpg/1280px-Asprokremmos_Dam1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/a/ac/Asprokremmos_Dam1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 960,
+     "license": "CC BY-SA 4.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+     "author": "יאיר ליברמן",
+     "caption": "Asprokremmos_Dam",
+     "page": "https://commons.wikimedia.org/wiki/File%3AAsprokremmos_Dam1.jpg"
+    }
+   ]
+  },
+  {
+   "wd": "Q22988461",
+   "name": "Υδατοδεξαμενή Κουκλιών",
+   "name_local": "Υδατοδεξαμενή Κουκλιών",
+   "lat": 35.129167,
+   "lon": 33.756111,
+   "iso2": "CY",
+   "adm": "Famagusta District",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 1,
+   "wd_img": "",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q22988461",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "base": {
+    "id": "gem:egkomi",
+    "city": "Égkomi",
+    "country": "Cyprus",
+    "km": 12.1
+   },
+   "climate": {
+    "source": "WorldClim 2.1 (1970-2000 normals, 5 arc-min)",
+    "t_mean": [
+     10.9,
+     11.4,
+     13.3,
+     17.1,
+     21.2,
+     25.5,
+     28.3,
+     28.6,
+     26.0,
+     22.1,
+     17.1,
+     13.2
+    ]
+   },
+   "prelim": 1.097,
+   "images": []
+  }
+ ]
+}

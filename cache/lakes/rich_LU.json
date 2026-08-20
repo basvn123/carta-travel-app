@@ -1,0 +1,485 @@
+{
+ "country": "LU",
+ "enriched_at": "2026-08-20T21:01:28+00:00",
+ "n_harvested": 3,
+ "lakes": [
+  {
+   "wd": "Q60082124",
+   "name": "Lakes of Weiswampach",
+   "name_local": "lacs de Weiswampach",
+   "lat": 50.138753,
+   "lon": 6.064983,
+   "iso2": "LU",
+   "adm": "Canton of Clervaux",
+   "types": [
+    "lake"
+   ],
+   "sitelinks": 3,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/WEISWAMPACH%2C%20Oesling%2C%20Luxembourg.jpg",
+   "commons_cat": "Lake of Weiswampach",
+   "enwiki": "",
+   "localwiki": "https://fr.wikipedia.org/wiki/Lacs_de_Weiswampach",
+   "area_km2": null,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q60082124",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "seed": {
+    "swim": "yes",
+    "kind": "lake",
+    "why": "editorial",
+    "note": "the north's swimming lakes",
+    "name": "Weiswampach Lakes"
+   },
+   "water": {
+    "class": "Excellent",
+    "class_prev": "Excellent",
+    "site": "LAC DE WEISWAMPACH-ZONE 2",
+    "type": "Lake",
+    "km": 0.03,
+    "sites": 4,
+    "excellent": 4
+   },
+   "protected_area": {
+    "name": "Conzefenn",
+    "kind": "Nature reserve",
+    "national_park": false,
+    "notable": false,
+    "km": 1.78
+   },
+   "base": {
+    "id": "gem:clervaux",
+    "city": "Clervaux",
+    "country": "Luxembourg",
+    "km": 10.1
+   },
+   "walks": [
+    {
+     "id": 63330,
+     "name": "Eislek Pad Kalborn",
+     "km": 9.0
+    }
+   ],
+   "n_walks": 1,
+   "climate": {
+    "source": "WorldClim 2.1 (1970-2000 normals, 5 arc-min)",
+    "t_mean": [
+     0.4,
+     0.8,
+     3.9,
+     6.7,
+     11.4,
+     14.0,
+     16.2,
+     16.2,
+     12.8,
+     8.5,
+     3.8,
+     1.5
+    ]
+   },
+   "prelim": 99.0,
+   "article": {
+    "lang": "fr",
+    "title": "Lacs de Weiswampach",
+    "facts": [],
+    "swim_text": "",
+    "chars": 96
+   },
+   "views60": 211,
+   "images": [
+    {
+     "file": "File:Oberer See Weiswampach 01.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/82/Oberer_See_Weiswampach_01.jpg/1280px-Oberer_See_Weiswampach_01.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/8/82/Oberer_See_Weiswampach_01.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 824,
+     "license": "CC BY-SA 3.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+     "author": "MMFE",
+     "caption": "The superior lake of Weiswampach",
+     "page": "https://commons.wikimedia.org/wiki/File%3AOberer_See_Weiswampach_01.jpg"
+    },
+    {
+     "file": "File:Unterer See Weiswampach 01.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Unterer_See_Weiswampach_01.jpg/1280px-Unterer_See_Weiswampach_01.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/b/b5/Unterer_See_Weiswampach_01.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 821,
+     "license": "CC BY-SA 3.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+     "author": "MMFE",
+     "caption": "The inferior lake of Weiswampach",
+     "page": "https://commons.wikimedia.org/wiki/File%3AUnterer_See_Weiswampach_01.jpg"
+    },
+    {
+     "file": "File:Unterer See Weiswampach 02.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Unterer_See_Weiswampach_02.jpg/1280px-Unterer_See_Weiswampach_02.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/5/5a/Unterer_See_Weiswampach_02.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 769,
+     "license": "CC BY-SA 3.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+     "author": "MMFE",
+     "caption": "The inferior lake of Weiswampach",
+     "page": "https://commons.wikimedia.org/wiki/File%3AUnterer_See_Weiswampach_02.jpg"
+    },
+    {
+     "file": "File:Weiswampach Wämper Séi 101.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Weiswampach_W%C3%A4mper_S%C3%A9i_101.jpg/1280px-Weiswampach_W%C3%A4mper_S%C3%A9i_101.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/c/cc/Weiswampach_W%C3%A4mper_S%C3%A9i_101.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 720,
+     "license": "CC BY-SA 4.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+     "author": "GilPe",
+     "caption": "Commune de Weiswampach, Lac de Weiswampach (Wämper Séi)",
+     "page": "https://commons.wikimedia.org/wiki/File%3AWeiswampach_W%C3%A4mper_S%C3%A9i_101.jpg"
+    },
+    {
+     "file": "File:Weiswampach Wämper Séi 102.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/Weiswampach_W%C3%A4mper_S%C3%A9i_102.jpg/1280px-Weiswampach_W%C3%A4mper_S%C3%A9i_102.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/0/09/Weiswampach_W%C3%A4mper_S%C3%A9i_102.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 720,
+     "license": "CC BY-SA 4.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+     "author": "GilPe",
+     "caption": "Commune de Weiswampach, Lac de Weiswampach (Wämper Séi)",
+     "page": "https://commons.wikimedia.org/wiki/File%3AWeiswampach_W%C3%A4mper_S%C3%A9i_102.jpg"
+    }
+   ]
+  },
+  {
+   "wd": "Q2621998",
+   "name": "Upper Sûre Lake",
+   "name_local": "lac de la Haute-Sûre",
+   "lat": 49.9,
+   "lon": 5.866667,
+   "iso2": "LU",
+   "adm": "Canton of Wiltz",
+   "types": [
+    "lake",
+    "reservoir"
+   ],
+   "sitelinks": 16,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Leifreg%202.JPG",
+   "commons_cat": "Lac de la Haute-Sûre (reservoir)",
+   "enwiki": "https://en.wikipedia.org/wiki/Upper_S%C3%BBre_Lake",
+   "localwiki": "https://fr.wikipedia.org/wiki/Lac_de_la_Haute-S%C3%BBre_(lac)",
+   "area_km2": 3.8,
+   "depth_m": null,
+   "elev_m": 366,
+   "protected": [
+    "Upper Sûre Natural Park"
+   ],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q2621998",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "seed": {
+    "swim": "limited",
+    "kind": "reservoir",
+    "why": "brief",
+    "note": "a drinking water reservoir: swimming only in the designated zones at Lultzhausen, Insenborn and Liefrange",
+    "name": "Upper Sure Lake"
+   },
+   "water": {
+    "class": "Excellent",
+    "class_prev": "Excellent",
+    "site": "LAC DE LA HAUTE SURE-FUUSSEFELD",
+    "type": "Lake",
+    "km": 0.32,
+    "sites": 6,
+    "excellent": 6
+   },
+   "protected_area": {
+    "name": "Réserve naturelle Vallée de la Haute-Sûre - Bruch/Pont Misère",
+    "kind": "Nature reserve",
+    "national_park": false,
+    "notable": true,
+    "km": 6.82
+   },
+   "base": {
+    "id": "gem:esch-sur-sure",
+    "city": "Esch-sur-Sûre",
+    "country": "Luxembourg",
+    "km": 5.0
+   },
+   "walks": [
+    {
+     "id": 63109,
+     "name": "Old Auto-Pédestre Lifrange",
+     "km": 4.7
+    },
+    {
+     "id": 63364,
+     "name": "LH 3",
+     "km": 5.4
+    },
+    {
+     "id": 63363,
+     "name": "LH 2",
+     "km": 4.8
+    }
+   ],
+   "n_walks": 6,
+   "climate": {
+    "source": "WorldClim 2.1 (1970-2000 normals, 5 arc-min)",
+    "t_mean": [
+     0.6,
+     1.2,
+     4.3,
+     7.0,
+     11.6,
+     14.4,
+     16.5,
+     16.5,
+     13.0,
+     8.8,
+     4.0,
+     1.7
+    ]
+   },
+   "prelim": 99.0,
+   "article": {
+    "lang": "fr",
+    "title": "Lac de la Haute-Sûre (lac)",
+    "facts": [
+     "drinking_water"
+    ],
+    "swim_text": "",
+    "chars": 717
+   },
+   "views60": 1089,
+   "images": [
+    {
+     "file": "File:Lac de la Haute-Sûre, Luxembourg 2012.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/93/Lac_de_la_Haute-S%C3%BBre%2C_Luxembourg_2012.jpg/1280px-Lac_de_la_Haute-S%C3%BBre%2C_Luxembourg_2012.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/9/93/Lac_de_la_Haute-S%C3%BBre%2C_Luxembourg_2012.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 853,
+     "license": "CC BY 3.0",
+     "license_url": "https://creativecommons.org/licenses/by/3.0",
+     "author": "TRANOS APOSTOLOS",
+     "caption": "Lac de la Haute-Sûre, Luxembourg 2012",
+     "page": "https://commons.wikimedia.org/wiki/File%3ALac_de_la_Haute-S%C3%BBre%2C_Luxembourg_2012.jpg"
+    },
+    {
+     "file": "File:Aerial View of Upper Sûre Lake (Stauséi Uewersauer) in May 2018.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Aerial_View_of_Upper_S%C3%BBre_Lake_%28Staus%C3%A9i_Uewersauer%29_in_May_2018.jpg/1280px-Aerial_View_of_Upper_S%C3%BBre_Lake_%28Staus%C3%A9i_Uewersauer%29_in_May_2018.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/2/29/Aerial_View_of_Upper_S%C3%BBre_Lake_%28Staus%C3%A9i_Uewersauer%29_in_May_2018.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 1316,
+     "license": "CC BY-SA 4.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+     "author": "Bdx",
+     "caption": "Aerial View of Upper Sûre Lake (Stauséi Uewersauer) in May 2018.",
+     "page": "https://commons.wikimedia.org/wiki/File%3AAerial_View_of_Upper_S%C3%BBre_Lake_%28Staus%C3%A9i_Uewersauer%29_in_May_2018.jpg"
+    },
+    {
+     "file": "File:Lac de la Haute Sure - panoramio.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Lac_de_la_Haute_Sure_-_panoramio.jpg/1280px-Lac_de_la_Haute_Sure_-_panoramio.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/0/0a/Lac_de_la_Haute_Sure_-_panoramio.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 853,
+     "license": "CC BY 3.0",
+     "license_url": "https://creativecommons.org/licenses/by/3.0",
+     "author": "Martin D.",
+     "caption": "Lac de la Haute Sure",
+     "page": "https://commons.wikimedia.org/wiki/File%3ALac_de_la_Haute_Sure_-_panoramio.jpg"
+    },
+    {
+     "file": "File:Lac de la Haute Sure - panoramio (1).jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Lac_de_la_Haute_Sure_-_panoramio_%281%29.jpg/1280px-Lac_de_la_Haute_Sure_-_panoramio_%281%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/7/7f/Lac_de_la_Haute_Sure_-_panoramio_%281%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 853,
+     "license": "CC BY 3.0",
+     "license_url": "https://creativecommons.org/licenses/by/3.0",
+     "author": "Martin D.",
+     "caption": "Lac de la Haute Sure",
+     "page": "https://commons.wikimedia.org/wiki/File%3ALac_de_la_Haute_Sure_-_panoramio_%281%29.jpg"
+    },
+    {
+     "file": "File:Lac de la Haute Sure - panoramio (2).jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/Lac_de_la_Haute_Sure_-_panoramio_%282%29.jpg/1280px-Lac_de_la_Haute_Sure_-_panoramio_%282%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/5/55/Lac_de_la_Haute_Sure_-_panoramio_%282%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 853,
+     "license": "CC BY-SA 3.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+     "author": "Martin D.",
+     "caption": "Lac de la Haute Sure",
+     "page": "https://commons.wikimedia.org/wiki/File%3ALac_de_la_Haute_Sure_-_panoramio_%282%29.jpg"
+    }
+   ]
+  },
+  {
+   "wd": "Q1883344",
+   "name": "lac d'Echternach",
+   "name_local": "lac d'Echternach",
+   "lat": 49.80028,
+   "lon": 6.41139,
+   "iso2": "LU",
+   "adm": "Echternach",
+   "types": [
+    "lake",
+    "recreation area"
+   ],
+   "sitelinks": 4,
+   "wd_img": "http://commons.wikimedia.org/wiki/Special:FilePath/Iechterncher%20S%C3%A9i%20beta%20w%202-5.jpg",
+   "commons_cat": "",
+   "enwiki": "",
+   "localwiki": "https://fr.wikipedia.org/wiki/Lac_d%27Echternach",
+   "area_km2": 0.3,
+   "depth_m": null,
+   "elev_m": null,
+   "protected": [],
+   "part_of": [],
+   "basin_countries": [],
+   "key": "wd:Q1883344",
+   "sources": [
+    "wikidata"
+   ],
+   "osm_id": "",
+   "osm_tags": {},
+   "seed": {
+    "swim": "limited",
+    "kind": "lake",
+    "why": "editorial",
+    "note": "the recreation lake beside the Mullerthal trails",
+    "name": "Echternach Lake"
+   },
+   "water": {
+    "class": "Excellent",
+    "class_prev": "Good",
+    "site": "LAC D'ECHTERNACH - PONTON GRANDE ÎLE",
+    "type": "Lake",
+    "km": 0.21,
+    "sites": 3,
+    "excellent": 2
+   },
+   "protected_area": {
+    "name": "Kelterdell und Kuckuckslay bei Echternachbrück",
+    "kind": "Habitat reserve",
+    "national_park": false,
+    "notable": true,
+    "km": 2.42
+   },
+   "base": {
+    "id": "gem:echternach",
+    "city": "Echternach & Mullerthal",
+    "country": "Luxembourg",
+    "km": 1.5
+   },
+   "walks": [
+    {
+     "id": 63317,
+     "name": "M3",
+     "km": 4.0
+    }
+   ],
+   "n_walks": 1,
+   "climate": {
+    "source": "WorldClim 2.1 (1970-2000 normals, 5 arc-min)",
+    "t_mean": [
+     1.0,
+     1.7,
+     5.0,
+     7.9,
+     12.5,
+     15.3,
+     17.4,
+     17.4,
+     13.7,
+     9.2,
+     4.5,
+     2.2
+    ]
+   },
+   "prelim": 99.0,
+   "article": {
+    "lang": "fr",
+    "title": "Lac d'Echternach",
+    "facts": [],
+    "swim_text": "",
+    "chars": 111
+   },
+   "views60": 289,
+   "images": [
+    {
+     "file": "File:Lac D'Echternach, AUG2016.jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/Lac_D%27Echternach%2C_AUG2016.jpg/1280px-Lac_D%27Echternach%2C_AUG2016.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/b/b9/Lac_D%27Echternach%2C_AUG2016.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 853,
+     "license": "CC BY-SA 4.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+     "author": "Wauteurz",
+     "caption": "Picture of Lac D'Echternach, an artificial lake near Echternach, Luxembourg",
+     "page": "https://commons.wikimedia.org/wiki/File%3ALac_D%27Echternach%2C_AUG2016.jpg"
+    },
+    {
+     "file": "File:Echternach, Lac (101).jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f1/Echternach%2C_Lac_%28101%29.jpg/1280px-Echternach%2C_Lac_%28101%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/f/f1/Echternach%2C_Lac_%28101%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 591,
+     "license": "CC BY-SA 4.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+     "author": "GilPe",
+     "caption": "Vue sur le Lac d'Echternach.",
+     "page": "https://commons.wikimedia.org/wiki/File%3AEchternach%2C_Lac_%28101%29.jpg"
+    },
+    {
+     "file": "File:Echternach, Lac (102).jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Echternach%2C_Lac_%28102%29.jpg/1280px-Echternach%2C_Lac_%28102%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/5/52/Echternach%2C_Lac_%28102%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 591,
+     "license": "CC BY-SA 4.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+     "author": "GilPe",
+     "caption": "Vue sur le Lac d'Echternach.",
+     "page": "https://commons.wikimedia.org/wiki/File%3AEchternach%2C_Lac_%28102%29.jpg"
+    },
+    {
+     "file": "File:Echternach 09-2024, Jeu gonflable (101).jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Echternach_09-2024%2C_Jeu_gonflable_%28101%29.jpg/1280px-Echternach_09-2024%2C_Jeu_gonflable_%28101%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/5/53/Echternach_09-2024%2C_Jeu_gonflable_%28101%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 720,
+     "license": "CC BY-SA 4.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+     "author": "GilPe",
+     "caption": "3e Journée nationale de la sécurité civile du CGDIS au Lac d'Echternach (22.09.2024). Jeux gonflables.",
+     "page": "https://commons.wikimedia.org/wiki/File%3AEchternach_09-2024%2C_Jeu_gonflable_%28101%29.jpg"
+    },
+    {
+     "file": "File:Echternach 09-2024, Jeu gonflable (102).jpg",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Echternach_09-2024%2C_Jeu_gonflable_%28102%29.jpg/1280px-Echternach_09-2024%2C_Jeu_gonflable_%28102%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "full": "https://upload.wikimedia.org/wikipedia/commons/4/4c/Echternach_09-2024%2C_Jeu_gonflable_%28102%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "w": 1280,
+     "h": 720,
+     "license": "CC BY-SA 4.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+     "author": "GilPe",
+     "caption": "3e Journée nationale de la sécurité civile du CGDIS au Lac d'Echternach (22.09.2024). Jeux gonflables.",
+     "page": "https://commons.wikimedia.org/wiki/File%3AEchternach_09-2024%2C_Jeu_gonflable_%28102%29.jpg"
+    }
+   ]
+  }
+ ]
+}
