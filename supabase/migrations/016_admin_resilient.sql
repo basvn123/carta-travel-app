@@ -322,8 +322,12 @@ begin
   v_counts := public.admin_user_counts(p_user);
 
   begin
+    -- requester_id / addressee_id, as migration 011 named them. Spelled
+    -- wrong here once, and because this block swallows its own errors the
+    -- only symptom was a friend count that always read zero.
     select count(*) into v_friends from public.friendships f
-     where (f.requester = p_user or f.addressee = p_user) and f.status = 'accepted';
+     where (f.requester_id = p_user or f.addressee_id = p_user)
+       and f.status = 'accepted';
   exception when others then v_friends := 0;
   end;
 

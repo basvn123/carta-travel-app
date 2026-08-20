@@ -291,7 +291,7 @@ begin
     'tripPlans',   (select count(*) from public.trip_plans t where t.user_id = p_user),
     'dayPlans',    (select count(*) from public.day_plans d where d.user_id = p_user),
     'friends',     (select count(*) from public.friendships f
-                     where (f.requester = p_user or f.addressee = p_user)
+                     where (f.requester_id = p_user or f.addressee_id = p_user)
                        and f.status = 'accepted'),
     'badges',      (select coalesce(jsonb_agg(a.badge order by a.earned_at), '[]'::jsonb)
                      from public.user_achievements a where a.user_id = p_user),
