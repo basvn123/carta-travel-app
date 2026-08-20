@@ -168,7 +168,8 @@ EN = {
     "beach.whyResortStrip": "It is a developed beach, with {n} hotels, bars "
                             "and restaurants within a few minutes of the sand.",
     "beach.whyQuiet": "It stays quiet.",
-    "beach.whyServices": "{list} are within a few minutes of the sand.",
+    "beach.whyServices": "There are {list} within a few minutes of the sand.",
+    "beach.whyServices1": "There is {list} within a few minutes of the sand.",
     "beach.whyLifeguard": "Lifeguards work it in season.",
     "beach.whyNudist": "Part of it is naturist.",
     "beach.whyWheelchair": "There is step free access down to the sand.",
@@ -354,7 +355,8 @@ NL = {
                             "bars en restaurants op een paar minuten van het "
                             "zand.",
     "beach.whyQuiet": "Het blijft rustig.",
-    "beach.whyServices": "{list} liggen op een paar minuten van het zand.",
+    "beach.whyServices": "Er zijn {list} op een paar minuten van het zand.",
+    "beach.whyServices1": "Er is {list} op een paar minuten van het zand.",
     "beach.whyLifeguard": "In het seizoen staat er strandwacht.",
     "beach.whyNudist": "Een deel ervan is naturistisch.",
     "beach.whyWheelchair": "Er is drempelvrije toegang tot het zand.",
@@ -535,7 +537,8 @@ DE = {
     "beach.whyResortStrip": "Es ist ein bebauter Strand, mit {n} Hotels, Bars "
                             "und Restaurants wenige Minuten vom Sand.",
     "beach.whyQuiet": "Er bleibt ruhig.",
-    "beach.whyServices": "{list} liegen wenige Minuten vom Sand.",
+    "beach.whyServices": "Es gibt {list} wenige Minuten vom Sand.",
+    "beach.whyServices1": "Es gibt {list} wenige Minuten vom Sand.",
     "beach.whyLifeguard": "In der Saison ist Rettungsschwimmer im Dienst.",
     "beach.whyNudist": "Ein Teil davon ist FKK.",
     "beach.whyWheelchair": "Es gibt einen stufenlosen Zugang zum Sand.",
@@ -718,7 +721,8 @@ FR = {
     "beach.whyResortStrip": "C'est une plage amenagee, avec {n} hotels, bars "
                             "et restaurants a quelques minutes du sable.",
     "beach.whyQuiet": "Elle reste calme.",
-    "beach.whyServices": "{list} sont a quelques minutes du sable.",
+    "beach.whyServices": "Il y a {list} a quelques minutes du sable.",
+    "beach.whyServices1": "Il y a {list} a quelques minutes du sable.",
     "beach.whyLifeguard": "Elle est surveillee en saison.",
     "beach.whyNudist": "Une partie est naturiste.",
     "beach.whyWheelchair": "Un acces sans marche descend jusqu'au sable.",
@@ -899,7 +903,8 @@ ES = {
     "beach.whyResortStrip": "Es una playa urbanizada, con {n} hoteles, bares y "
                             "restaurantes a pocos minutos de la arena.",
     "beach.whyQuiet": "Se mantiene tranquila.",
-    "beach.whyServices": "{list} estan a pocos minutos de la arena.",
+    "beach.whyServices": "Hay {list} a pocos minutos de la arena.",
+    "beach.whyServices1": "Hay {list} a pocos minutos de la arena.",
     "beach.whyLifeguard": "Tiene socorrista en temporada.",
     "beach.whyNudist": "Una parte es nudista.",
     "beach.whyWheelchair": "Hay acceso sin escalones hasta la arena.",
@@ -1082,7 +1087,8 @@ IT = {
     "beach.whyResortStrip": "E una spiaggia attrezzata, con {n} hotel, bar e "
                             "ristoranti a pochi minuti dalla sabbia.",
     "beach.whyQuiet": "Resta tranquilla.",
-    "beach.whyServices": "{list} sono a pochi minuti dalla sabbia.",
+    "beach.whyServices": "Ci sono {list} a pochi minuti dalla sabbia.",
+    "beach.whyServices1": "C'e {list} a pochi minuti dalla sabbia.",
     "beach.whyLifeguard": "In stagione c'e il bagnino.",
     "beach.whyNudist": "Una parte e naturista.",
     "beach.whyWheelchair": "C'e un accesso senza gradini fino alla sabbia.",

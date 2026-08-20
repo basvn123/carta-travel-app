@@ -155,11 +155,18 @@ export function beachWhy(beach, t, max) {
     const key = keyFor(WHY_KEY, reason);
     if (!key) continue;
     const params = { ...reason };
-    if (reason.k === 'services') params.list = serviceList(reason.list, t);
-    const line = t(key, params);
+    let sentence = key;
+    if (reason.k === 'services') {
+      params.list = serviceList(reason.list, t);
+      // One service is not "there are". English needs the singular verb and
+      // Italian needs a different one again, so the count picks the key
+      // rather than the code trying to conjugate.
+      if (Number(reason.n) === 1) sentence = 'beach.whyServices1';
+    }
+    const line = t(sentence, params);
     // A key with no catalogue entry falls back to the key itself, which must
     // never reach the page as a sentence.
-    if (!line || line === key) continue;
+    if (!line || line === sentence) continue;
     out.push(line);
     if (max && out.length >= max) break;
   }
