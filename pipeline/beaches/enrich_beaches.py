@@ -74,7 +74,11 @@ BATHING_MAX_KM = 2.5     # a bathing water further out is not this beach's
 PROTECTED_MAX_KM = 6.0
 DEST_MAX_KM = 90.0
 CONTEXT_RADIUS_M = 400
-OSM_BATCH = 30           # beaches per Overpass request
+OSM_BATCH = 12           # beaches per Overpass request
+# Twelve, not thirty. Each beach in a batch adds five spatial lookups, so
+# thirty is a 150 clause query, and on a loaded endpoint that is the
+# difference between an answer and a 504. Italy spent twenty five minutes
+# failing every mirror at thirty and went through at twelve.
 WIKI_BATCH = 20          # titles per MediaWiki request
 
 

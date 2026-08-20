@@ -133,16 +133,20 @@ def wire_images(beach):
 
 
 def access_of(beach):
+    """How you get there, and ONLY when something actually says so.
+
+    A car park within 400 m used to count as road access. It does not: the car
+    park above Navagio sits on the clifftop 200 m over a cove reachable only by
+    boat, and the page told people to drive there. Proximity is not a route, so
+    the parking stays in `services` (where "within a few minutes of the sand"
+    is true) and this field answers only what the article states."""
     facts = set((beach.get("article") or {}).get("facts") or [])
-    ctx = beach.get("context") or {}
     if "boat_only" in facts:
         return "boat"
     if "steps" in facts:
         return "steps"
     if "hike_in" in facts:
         return "hike"
-    if ctx.get("parking"):
-        return "road"
     return ""
 
 
