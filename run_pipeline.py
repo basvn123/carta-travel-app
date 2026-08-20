@@ -38,6 +38,7 @@ So you schedule ONE weekly job and each layer self-selects how often it fires:
   monthly   holiday calendars (demand catalysts for the estimation model)
   monthly   trails popularity (curation shortlists for the review queue)
   monthly   natural features: the beach and summit wire, rebuilt behind its gate
+  quarterly beaches: the named coves of Europe, scored and photographed
   quarterly open-data snapshots (crowding, bathing water, lodging) *
   quarterly trails ingest (Geofabrik hiking relations -> the trailslab lab)
   quarterly coverage gaps (what Europe has that the catalogue does not)
@@ -1029,6 +1030,24 @@ def fame_step(ctx):
 # --------------------------------------------------------------------------- #
 # Task registry
 # --------------------------------------------------------------------------- #
+def guard_beaches():
+    """The beach layer needs its own scripts and the EEA bathing water cache.
+
+    Without the cache the water component silently falls back to the country
+    default for every beach, which does not fail, it just quietly scores worse
+    beaches higher. That is exactly the kind of degradation a guard is for."""
+    missing = [s for s in ("sources.py", "harvest_beaches.py",
+                           "enrich_beaches.py", "beauty_index.py",
+                           "export_beaches.py", "build_beaches.py")
+               if not (ROOT / "pipeline" / "beaches" / s).exists()]
+    if missing:
+        return False, f"pipeline/beaches is missing {', '.join(missing)}"
+    if not (CACHE / "eea_bathing_water.json").exists():
+        return False, ("cache/eea_bathing_water.json is missing; run the "
+                       "`bathing` task first, water quality is 16% of the score")
+    return True, "beach stages present, EEA bathing water cached"
+
+
 # Each task: key, title, cadence, writes_app_data, and either cmds or run.
 #   cadence         weekly | monthly | quarterly | after | backfill
 #                   (after = event-driven, see `after`; backfill = --only only)
@@ -1237,6 +1256,29 @@ TASKS = [
                  "public/app_data.json + activities_full.json, so it sees the "
                  "last ship's POI layer, one run behind a poi_significance "
                  "that fires in the same run."),
+    },
+    {
+        "key": "beaches",
+        "title": "Beaches: named coves + the beauty index -> public/beaches",
+        "cadence": "quarterly",
+        "writes_app_data": False,
+        "writes_wire": True,
+        "soft": True,
+        "cmds": [[PY, "pipeline/beaches/build_beaches.py"]],
+        "guard": guard_beaches,
+        "note": ("the Beaches category on the Destinations tab. Three stages "
+                 "in one command (harvest -> enrich -> export), each cached "
+                 "per country in cache/beaches, so a re-run with the caches "
+                 "in place is seconds and produces the same wire. A COLD "
+                 "build is a few hours, nearly all of it waiting politely on "
+                 "Overpass: one country query each, then one context query "
+                 "per 30 shortlisted beaches. Quarterly because coastlines "
+                 "and coves move slowly; run it by hand after the `bathing` "
+                 "task lands a new EEA season, since water quality is 16 per "
+                 "cent of the score. The export validates before it writes "
+                 "anything, so a failure leaves the previous wire standing. "
+                 "Delete cache/beaches/rich_*.json to re-photograph without "
+                 "re-harvesting."),
     },
     {
         "key": "flight_times",

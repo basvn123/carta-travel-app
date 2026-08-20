@@ -19808,6 +19808,360 @@ button.ai-sched-main:focus-visible {
 }
 
 /* ══════════════════════════════════════════════════════════════════════════
+   Beaches: the published beach layer (pipeline/beaches) on the Destinations
+   tab, and the page one card opens.
+
+   The card is a photograph with three things over it, and they are chosen
+   because a beach is picked differently from a city: where it is (the pin,
+   which is the first question a beach photograph raises), what makes it worth
+   the drive (up to three reason chips from the index), and the score. No
+   price, no stay tier, no size glyph. None of those decide a beach.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/* The line above the list: how many beaches, in how many countries. A number
+   rather than an adjective, and the only place the tab explains itself. */
+.places-beachhead {
+  grid-column: 1 / -1;
+  margin: 2px 2px 0;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--ink-soft);
+}
+
+.places-bcard {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 172px;
+  border-radius: 14px;
+  overflow: hidden;
+  background: var(--paper-dim);
+  text-align: left;
+}
+.places-bcard:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+.places-bcard:hover .places-card-img { transform: scale(1.03); }
+
+.places-bcard-where {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 4px;
+  font-size: 11.5px;
+  color: rgba(255, 255, 255, 0.9);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.places-bcard-where svg { flex: none; opacity: .9; }
+
+.places-bcard-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 7px;
+}
+.places-bcard-tags span {
+  padding: 2px 8px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.18);
+  font-size: 10.5px;
+  font-weight: 600;
+  color: #fff;
+  white-space: nowrap;
+}
+
+/* ── The beach page ─────────────────────────────────────────────────────
+   Shares the trail page's shell (.tpage: fixed overlay, bar, scroller) and
+   nothing else. No map: the page is opened from a list and read on a phone,
+   and a map library to draw one pin would be the heaviest thing on it. */
+
+.bpage-wrap {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 14px 16px 48px;
+}
+
+/* Where it is, first thing on the page. A link, because the only thing anyone
+   wants to do with a coordinate is open it somewhere that can drive them
+   there. */
+.bpage-where {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 12px;
+  border: 1px solid var(--rule-soft);
+  border-radius: 10px;
+  background: var(--bg-card);
+  font-size: 12.5px;
+  color: var(--ink-soft);
+  text-decoration: none;
+}
+.bpage-where:hover { border-color: var(--accent-soft); color: var(--ink); }
+.bpage-where svg:first-child { flex: none; color: var(--accent); }
+.bpage-where-text {
+  flex: 1;
+  min-width: 0;
+  font-weight: 600;
+  color: var(--ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.bpage-where-coord {
+  flex: none;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink-mute);
+  font-variant-numeric: tabular-nums;
+}
+@media (max-width: 480px) {
+  .bpage-where-coord { display: none; }
+}
+
+.bpage-head { margin: 16px 0 12px; }
+.bpage-name {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-family: var(--display);
+  font-size: 27px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  color: var(--ink);
+}
+.bpage-flag { flex: none; border-radius: 2px; }
+.bpage-local {
+  margin-top: 3px;
+  font-size: 13px;
+  color: var(--ink-mute);
+}
+.bpage-scorerow {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-top: 10px;
+}
+.bpage-band { font-size: 13px; font-weight: 600; color: var(--ink-soft); }
+
+/* ── Photographs. One large, the rest as a strip under it. ── */
+.bpage-gallery { margin: 0 0 18px; }
+.bpage-shot {
+  display: block;
+  width: 100%;
+  aspect-ratio: 3 / 2;
+  object-fit: cover;
+  border-radius: 12px;
+  background: var(--paper-dim);
+}
+.bpage-strip {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  gap: 6px;
+  margin-top: 6px;
+}
+.bpage-thumb {
+  position: relative;
+  height: 62px;
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--paper-dim);
+  opacity: .72;
+  transition: opacity .15s ease;
+}
+.bpage-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.bpage-thumb.on { opacity: 1; box-shadow: inset 0 0 0 2px var(--accent); }
+.bpage-thumb:hover { opacity: 1; }
+.bpage-thumb:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+
+.bpage-credit {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 7px;
+  font-size: 11px;
+  color: var(--ink-mute);
+}
+.bpage-credit svg { flex: none; }
+.bpage-credit a { color: var(--ink-mute); text-decoration: none; }
+.bpage-credit a:hover { color: var(--ink-soft); text-decoration: underline; }
+
+/* ── The reasons, as chips and then as prose ── */
+.bpage-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0 0 18px;
+  padding: 0;
+  list-style: none;
+}
+.bpage-tags li {
+  padding: 4px 10px;
+  border: 1px solid var(--rule-soft);
+  border-radius: 7px;
+  background: var(--bg-card);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+
+.bpage-wrap section { margin-bottom: 24px; }
+.bpage-wrap section h2 {
+  margin-bottom: 8px;
+  font-family: var(--display);
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+.bpage-lede {
+  font-size: 15px;
+  line-height: 1.55;
+  font-weight: 600;
+  color: var(--ink);
+}
+.bpage-prose {
+  margin-top: 8px;
+  font-size: 14.5px;
+  line-height: 1.62;
+  color: var(--ink-soft);
+}
+.bpage-for { margin-top: 10px; font-size: 13px; color: var(--ink-soft); }
+.bpage-for b { color: var(--ink); }
+
+/* ── What is there. A run of facts is a list with hairlines, not cards. ── */
+.bpage-facts dl { margin: 0; }
+.bpage-fact {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  padding: 9px 0;
+  border-top: 1px solid var(--rule-soft);
+}
+.bpage-fact:last-child { border-bottom: 1px solid var(--rule-soft); }
+.bpage-fact dt {
+  flex: none;
+  width: 132px;
+  font-size: 12.5px;
+  color: var(--ink-mute);
+}
+.bpage-fact dd {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+  font-size: 13.5px;
+  color: var(--ink);
+}
+.bpage-fact dd.mono {
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+}
+.bpage-fact dd small {
+  display: block;
+  margin-top: 2px;
+  font-size: 11.5px;
+  color: var(--ink-mute);
+}
+
+/* ── The score, shown as its parts. The number is only worth as much as the
+      reader's ability to check it. ── */
+.bpage-note {
+  margin-bottom: 12px;
+  font-size: 12px;
+  line-height: 1.55;
+  color: var(--ink-mute);
+}
+.bpage-bars { margin: 0; padding: 0; list-style: none; }
+.bpage-bars li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 5px 0;
+}
+.bpage-bar-label {
+  flex: none;
+  width: 132px;
+  font-size: 12.5px;
+  color: var(--ink-soft);
+}
+.bpage-bar-track {
+  flex: 1;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--paper-dim);
+  overflow: hidden;
+}
+.bpage-bar-fill {
+  display: block;
+  height: 100%;
+  border-radius: 3px;
+  background: var(--rate);
+}
+.bpage-bar-n {
+  flex: none;
+  width: 26px;
+  font-family: var(--mono);
+  font-size: 11.5px;
+  text-align: right;
+  color: var(--ink-mute);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Where to sleep near it: the one link back into the priced catalogue. */
+.bpage-base {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  margin-bottom: 24px;
+  padding: 12px 14px;
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  background: var(--bg-card);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink);
+  text-align: left;
+}
+.bpage-base:hover { border-color: var(--accent-soft); }
+.bpage-base small {
+  display: block;
+  margin-top: 2px;
+  font-size: 11.5px;
+  font-weight: 400;
+  color: var(--ink-mute);
+}
+.bpage-base svg { flex: none; color: var(--ink-mute); }
+
+.bpage-sources ul { margin: 0; padding: 0; list-style: none; }
+.bpage-sources li { padding: 5px 0; }
+.bpage-sources a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--accent);
+  text-decoration: none;
+}
+.bpage-sources a:hover { text-decoration: underline; }
+.bpage-attrib {
+  margin-top: 10px;
+  font-size: 11px;
+  line-height: 1.6;
+  color: var(--ink-mute);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .places-bcard .places-card-img,
+  .bpage-thumb { transition: none; }
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
    The trail page: a published hike or city day as a page of its own, opened
    from a card in the Destinations tab or from a shared #trail= link. Replaced
    the old .tsheet dialog, which had nowhere to put a description, an export

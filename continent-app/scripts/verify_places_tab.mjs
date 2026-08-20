@@ -123,14 +123,19 @@ await page.screenshot({ path: 'shots/places-page-hike.png' });
 await page.locator('.tpage-back').click();
 await page.waitForTimeout(400);
 
-// ── Beaches and Mountains: themed slices ──
+// ── Beaches: its own published layer now, not a slice of the trips. The
+//    category has no country dropdown and no trip cards at all; see
+//    scripts/verify_beaches.mjs for the layer itself. ──
 await page.locator('.places-cat', { hasText: /beaches/i }).click();
-await page.waitForTimeout(1500);
-const beachCards = await page.locator('.places-tcard').count();
-check('beaches category filters the trips', beachCards >= 1, `${beachCards} cards`);
+await page.waitForTimeout(2000);
+const beachCards = await page.locator('.places-bcard').count();
+check('beaches category shows published beaches', beachCards >= 1, `${beachCards} cards`);
+check('beaches category drops the country dropdown', await page.locator('.places-country').count() === 0);
 await page.screenshot({ path: 'shots/places-beaches.png' });
 
 await page.locator('.places-cat', { hasText: /mountains/i }).click();
+await page.waitForTimeout(1200);
+await page.locator('.places-country').selectOption('AL');
 await page.waitForTimeout(1500);
 const mtnCards = await page.locator('.places-tcard').count();
 check('mountains category filters the trips', mtnCards >= 1, `${mtnCards} cards`);

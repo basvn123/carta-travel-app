@@ -33,7 +33,6 @@ const cap = (s) => (s ? s.charAt(0).toUpperCase() + s.slice(1) : '');
 const WHY_KEY = {
   sandColour: (r) => `beach.whySand${cap(r.colour)}`,
   surface: (r) => `beach.whySurface${cap(r.surface)}`,
-  water: (r) => `beach.whyWater${cap(r.class)}`,
   cliffs: 'beach.whyCliffs',
   dunes: 'beach.whyDunes',
   pines: 'beach.whyPines',
@@ -132,9 +131,12 @@ function keyFor(map, reason) {
 export function beachHeadline(beach, t, countryName) {
   const surface = beach.surface ? t(`beach.surfaceWord${cap(beach.surface)}`) : '';
   const place = beach.region || (beach.base && beach.base.city) || countryName || '';
+  // Nothing to say beyond the name, which the heading above has already
+  // said. An empty lede is better than a sentence that only repeats it.
+  if (!surface && !place) return '';
   const key = surface
     ? (place ? 'beach.headSurfacePlace' : 'beach.headSurface')
-    : (place ? 'beach.headPlace' : 'beach.headBare');
+    : 'beach.headPlace';
   return t(key, { name: beach.name, surface, place });
 }
 
@@ -145,6 +147,11 @@ export function beachHeadline(beach, t, countryName) {
 export function beachWhy(beach, t, max) {
   const out = [];
   for (const reason of beach.why || []) {
+    // The opening line already said "is a sand beach", so the bare surface
+    // reason would follow it with "It is a sand beach." A COLOURED surface
+    // still earns its sentence: "sand beach" and "its sand is white" are two
+    // different things to know.
+    if (reason.k === 'surface' && beach.surface) continue;
     const key = keyFor(WHY_KEY, reason);
     if (!key) continue;
     const params = { ...reason };

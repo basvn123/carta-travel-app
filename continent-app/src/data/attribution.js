@@ -21,8 +21,8 @@ export const ATTRIBUTIONS = [
   {
     source: 'OpenStreetMap',
     license: 'ODbL 1.0',
-    credit: 'Map data, points of interest, nature areas, parking locations '
-      + 'and trail routes © OpenStreetMap contributors',
+    credit: 'Map data, points of interest, nature areas, parking locations, '
+      + 'beaches and trail routes © OpenStreetMap contributors',
   },
   {
     source: 'CARTO',

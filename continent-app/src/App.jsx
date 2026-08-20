@@ -58,6 +58,7 @@ import { readTripShareFromUrl, decodeTripShare } from './lib/shareLink.js';
 import { readShareTokenFromUrl, stripShareTokenFromUrl } from './auth/tripShares.js';
 import { readFriendHandleFromUrl, stripFriendHandleFromUrl } from './auth/friends.js';
 import { readTrailFromUrl } from './lib/trails.js';
+import { readBeachFromUrl } from './lib/beaches.js';
 import { loadTripDraft } from './planner/tripDraftStore.js';
 import { bindDayPlanCloud } from './planner/dayPlanSync.js';
 import { AuthProvider, useAuth } from './auth/AuthContext.jsx';
@@ -298,6 +299,15 @@ function TravelApp() {
   useEffect(() => {
     if (pendingTrail) setActiveTab('places');
   }, [pendingTrail]);
+
+  // A single BEACH shared as a link (#beach=gr-navagio-Q1234&bc=GR, see
+  // lib/beaches.js), read the same way and for the same reasons: the hash
+  // carries nothing else, so opening someone else's beach leaves the
+  // recipient's own dates, origin and lifestyle exactly where they were.
+  const [pendingBeach, setPendingBeach] = useState(() => readBeachFromUrl());
+  useEffect(() => {
+    if (pendingBeach) setActiveTab('places');
+  }, [pendingBeach]);
 
   // Stable identity: this lands on every Explore card, so a fresh function
   // per render would defeat the card's React.memo.
@@ -688,6 +698,8 @@ function TravelApp() {
             onChangeDriveHome={setDriveHome}
             openTrail={pendingTrail}
             onOpenTrailConsumed={() => setPendingTrail(null)}
+            openBeach={pendingBeach}
+            onOpenBeachConsumed={() => setPendingBeach(null)}
           />
         </div>
       )}

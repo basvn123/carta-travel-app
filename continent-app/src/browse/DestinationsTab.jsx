@@ -4,6 +4,8 @@ import { CountryFlag } from '../components/CountryFlag.jsx';
 import { eur } from '../lib/format.js';
 import { fareProv, estPrefix, FromWord } from '../components/FareProvenance.jsx';
 import { loadTrails, loadTrailsIndex } from '../lib/trails.js';
+import { loadBeachIndex, loadBeaches, loadTopBeaches } from '../lib/beaches.js';
+import { beachTags, beachRating } from '../lib/beachStory.js';
 import { associateTrip, haversineKm, tripCentre, tripKindKey, tripThemes } from '../lib/trailCards.js';
 import { useI18n } from '../i18n/index.jsx';
 import { OriginPicker } from '../components/OriginPicker.jsx';
@@ -55,6 +57,9 @@ const NEAR_MAX_ROWS = 80;
 
 // Lazy: the page imports maplibre-gl, which stays out of the main bundle.
 const TrailPage = lazy(() => import('./TrailPage.jsx').then((m) => ({ default: m.TrailPage })));
+// Lazy for symmetry, not for weight: the beach page carries no map, but it is
+// only ever reached by tapping a card, so it can arrive then.
+const BeachPage = lazy(() => import('./BeachPage.jsx').then((m) => ({ default: m.BeachPage })));
 
 const norm = (s) => String(s || '')
   .toLowerCase()
@@ -230,6 +235,51 @@ function TripCard({ card, km, onOpen, t }) {
   );
 }
 
+/**
+ * One published beach as a photo card.
+ *
+ * Different from every other card on this tab, because a beach is chosen for
+ * different reasons: no price, no size glyph, no from-line. What it carries
+ * instead is where it is (the pin, which is the question a beach photograph
+ * always raises), the beauty score, and up to three of the reasons the index
+ * scored it that way, so the list can be read as an argument rather than as a
+ * gallery.
+ */
+function BeachCard({ beach, km, countryName, onOpen, t }) {
+  const shot = beach.images?.[0];
+  const tags = beachTags(beach, t, km == null ? 3 : 2);
+  const place = [beach.region, countryName].filter(Boolean).join(', ');
+  return (
+    <button className="places-bcard" onClick={() => onOpen(beach)}>
+      {shot
+        ? <img className="places-card-img" src={shot.u} alt="" loading="lazy" />
+        : <span className="places-card-img places-card-noimg" aria-hidden="true" />}
+      <span className="places-card-scrim" aria-hidden="true" />
+      {km != null && (
+        <span className="places-card-km">{t('places.kmAway', { km: Math.round(km) })}</span>
+      )}
+      <span className="places-card-overlay">
+        <span className="places-card-main">
+          <span className="places-card-name">{beach.name}</span>
+          <span className="places-bcard-where">
+            <MapPinIcon size={12} />
+            {place}
+          </span>
+          {tags.length > 0 && (
+            <span className="places-bcard-tags">
+              {tags.map((tag) => <span key={tag.code}>{tag.label}</span>)}
+            </span>
+          )}
+        </span>
+        <span className="places-card-right">
+          <RatingBadge rating={beachRating(beach, t)} size="xs" showGem={false} />
+          <ChevronRightIcon size={15} className="places-card-chev" />
+        </span>
+      </span>
+    </button>
+  );
+}
+
 /** One country as a photo card: its best-rated place as the cover, the flag
  *  small beside the name. Real photography, never a stretched flag. */
 function CountryCard({ cc, name, sub, img, onPick }) {
@@ -260,6 +310,7 @@ export function DestinationsTab({
   stayTier = 'home', onOpenLifestyle,
   origin, onChangeOrigin, transportMode = 'plane', driveHome = null, onChangeDriveHome,
   openTrail = null, onOpenTrailConsumed,
+  openBeach = null, onOpenBeachConsumed,
 }) {
   const { t, lang } = useI18n();
   const scrollRef = useRef(null);
@@ -304,6 +355,15 @@ export function DestinationsTab({
   const [countryTrips, setCountryTrips] = useState(null);
   const [trailsLoading, setTrailsLoading] = useState(false);
 
+  // Beaches: the capped Europe wide ranking the tab opens on, the index that
+  // says which countries have any, and whichever country files a search or a
+  // location has pulled in on top of them.
+  const [beachIndex, setBeachIndex] = useState(null);
+  const [topBeaches, setTopBeaches] = useState(null);
+  const [countryBeaches, setCountryBeaches] = useState({});   // cc -> rows
+  const [beachesLoading, setBeachesLoading] = useState(false);
+  const [pageBeach, setPageBeach] = useState(null);
+
   useEffect(() => {
     let live = true;
     loadTrailsIndex().then((idx) => { if (live) setTrailsIndex(idx); });
@@ -347,7 +407,11 @@ export function DestinationsTab({
     return () => document.removeEventListener('mousedown', onDoc);
   }, [suggOpen]);
 
-  const isTripCat = cat !== 'general';
+  // Beaches are their own layer now, not a slice of the published trips, so
+  // they are deliberately NOT a trip category: no country index, no origin,
+  // no stay tier, no price sorts. Everything on that tab is about the beach.
+  const isBeachCat = cat === 'beaches';
+  const isTripCat = cat !== 'general' && !isBeachCat;
   const trailsCountry = nearPlace ? nearPlace.iso2 : country;
   useEffect(() => {
     if (!isTripCat || !trailsCountry) { setCountryTrips(null); return undefined; }
@@ -670,8 +734,110 @@ export function DestinationsTab({
       .sort((a, b) => a.name.localeCompare(b.name));
   }, [isTripCat, trailsIndex, cat, countryName]);
 
+  // ── Beaches: the published beach layer ───────────────────────────────
+
+  // Deliberately NOT guarded on beachesLoading, and beachesLoading is
+  // deliberately not a dependency. Setting it re-renders, a re-render with it
+  // in the dependency list re-runs the effect, the cleanup marks the first
+  // fetch stale, and the reply that arrives is thrown away by a run that has
+  // already returned early: the list would sit on its loading dots forever.
+  // `topBeaches` is the only thing that says the work is done.
+  useEffect(() => {
+    if (!isBeachCat || topBeaches) return undefined;
+    let live = true;
+    setBeachesLoading(true);
+    Promise.all([loadBeachIndex(), loadTopBeaches()]).then(([idx, top]) => {
+      if (!live) return;
+      setBeachIndex(idx);
+      setTopBeaches(top || []);
+      setBeachesLoading(false);
+    });
+    return () => { live = false; };
+  }, [isBeachCat, topBeaches]);
+
+  // Which countries have beaches at all. The tab never offers one that does
+  // not: the export gate decides, so Andorra cannot appear here by having a
+  // trip published in it, which is exactly how it used to.
+  const beachCountries = useMemo(() => {
+    const set = new Set((beachIndex?.countries || []).map((c) => c.cc));
+    return set;
+  }, [beachIndex]);
+
+  // The country a typed word points at, so "croatia" or "HR" widens the list
+  // from the capped European ranking to all 120 Croatian beaches. This is what
+  // replaces the country dropdown on this tab.
+  const queryCountry = useMemo(() => {
+    if (!isBeachCat || !q || q.length < 2) return null;
+    for (const cc of beachCountries) {
+      if (norm(cc) === q || norm(countryName(cc)).startsWith(q)) return cc;
+    }
+    return null;
+  }, [isBeachCat, q, beachCountries, countryName]);
+
+  // Full country files are pulled in only when something asks for one: a
+  // country named in the search, or the country a searched address sits in.
+  const wantBeachCountry = queryCountry
+    || (nearPlace && beachCountries.has(nearPlace.iso2) ? nearPlace.iso2 : null);
+
+  useEffect(() => {
+    if (!isBeachCat || !wantBeachCountry || countryBeaches[wantBeachCountry]) return undefined;
+    let live = true;
+    loadBeaches(wantBeachCountry).then((rows) => {
+      if (!live) return;
+      setCountryBeaches((cur) => ({ ...cur, [wantBeachCountry]: rows || [] }));
+    });
+    return () => { live = false; };
+  }, [isBeachCat, wantBeachCountry, countryBeaches]);
+
+  const beachRows = useMemo(() => {
+    if (!isBeachCat || !topBeaches) return null;
+    // One country asked for wins outright: its own file is the complete list
+    // for that country, where the European ranking only ever held its best.
+    const loaded = wantBeachCountry ? countryBeaches[wantBeachCountry] : null;
+    let pool = loaded || topBeaches;
+    // Measuring from an address is the one case where the country file is not
+    // the whole answer: a beach 30 km away can be over a border, and "nearest
+    // beaches to here" that stops at customs is a worse answer than a longer
+    // list. The European ranking is folded in, deduped by id.
+    if (loaded && nearPlace) {
+      const have = new Set(loaded.map((b) => b.id));
+      pool = [...loaded, ...topBeaches.filter((b) => !have.has(b.id))];
+    }
+    let rows = pool;
+    if (q && !queryCountry) {
+      rows = rows.filter((b) => norm(b.name).includes(q)
+        || norm(b.nameLocal || '').includes(q)
+        || norm(b.region || '').includes(q)
+        || norm(countryName(b.cc)).includes(q));
+    }
+    if (nearPlace) {
+      return rows
+        .map((b) => ({ b, km: haversineKm(nearPlace.lat, nearPlace.lon, b.lat, b.lon) }))
+        .sort((x, y) => x.km - y.km)
+        .slice(0, NEAR_MAX_ROWS);
+    }
+    return rows.map((b) => ({ b, km: null }));
+  }, [isBeachCat, topBeaches, countryBeaches, wantBeachCountry, q, queryCountry,
+    nearPlace, countryName]);
+
+  // A shared #beach= link, opened once its country file has landed.
+  useEffect(() => {
+    if (!openBeach) return;
+    setCat('beaches');
+    setQuery('');
+    setNearPlace(null);
+    loadBeaches(openBeach.cc).then((rows) => {
+      const hit = (rows || []).find((b) => b.id === openBeach.id);
+      if (hit) setPageBeach(hit);
+      setCountryBeaches((cur) => ({ ...cur, [openBeach.cc]: rows || [] }));
+    });
+    onOpenBeachConsumed?.();
+  }, [openBeach, onOpenBeachConsumed]);
+
   // New filter result: collapse the window and go back to the top.
-  const rowCount = cat === 'general' ? destRows.length : (tripRows?.length ?? 0);
+  const rowCount = cat === 'general' ? destRows.length
+    : isBeachCat ? (beachRows?.length ?? 0)
+      : (tripRows?.length ?? 0);
   useEffect(() => {
     setVisible(PAGE);
     scrollRef.current?.scrollTo?.(0, 0);
@@ -717,7 +883,14 @@ export function DestinationsTab({
   // Trails carry no price and no rating: a hike is free and is not scored, so
   // the origin, the stay tier and the rating/price/A-Z sorts have nothing to
   // act on here. Distance from a searched city still orders them.
-  const showPriceChrome = cat !== 'trails';
+  //
+  // Beaches drop the same chrome and the country dropdown with it. A beach is
+  // not priced, is not slept in, and is ranked by its own index, so a "priced
+  // from Brussels" line and a "dorm bed" tier over the list would be answering
+  // a question nobody asked on this tab. The country a traveller wants is
+  // reachable by typing its name into the one search field.
+  const showPriceChrome = cat !== 'trails' && !isBeachCat;
+  const showCountryPicker = !isBeachCat;
 
   return (
     <div className="places-tab" ref={scrollRef}>
@@ -821,17 +994,19 @@ export function DestinationsTab({
               </div>
             )}
           </div>
-          <select
-            className="places-country"
-            value={country}
-            onChange={(e) => { setCountry(e.target.value); setNearPlace(null); }}
-            aria-label={t('places.allCountries')}
-          >
-            <option value="">{t('places.allCountries')}</option>
-            {availableCountries.map(([cc, name]) => (
-              <option key={cc} value={cc}>{name}</option>
-            ))}
-          </select>
+          {showCountryPicker && (
+            <select
+              className="places-country"
+              value={country}
+              onChange={(e) => { setCountry(e.target.value); setNearPlace(null); }}
+              aria-label={t('places.allCountries')}
+            >
+              <option value="">{t('places.allCountries')}</option>
+              {availableCountries.map(([cc, name]) => (
+                <option key={cc} value={cc}>{name}</option>
+              ))}
+            </select>
+          )}
           {/* Where the trip starts: the flight (or the drive) is the biggest
               line in every price on this tab, and it changes with the airport,
               so the origin these figures were priced from is named here and
@@ -970,6 +1145,69 @@ export function DestinationsTab({
           </div>
         )}
 
+        {/* Beaches. No country index in front of the list: the tab opens on
+            the beaches themselves, ranked across Europe, because "show me a
+            beach" is the request and a page of flags is not an answer to it.
+            Typing a country's name swaps the capped European ranking for that
+            country's full list. */}
+        {isBeachCat && (
+          <div className="places-list">
+            {beachesLoading && <p className="places-empty">{'…'}</p>}
+
+            {!beachesLoading && beachRows && (
+              beachRows.length > 0
+                ? (
+                  <>
+                    {!q && !nearPlace && beachIndex && (
+                      <p className="places-beachhead">
+                        {t(beachIndex.countries.length === 1
+                          ? 'beach.listHead1' : 'beach.listHead', {
+                          n: fmt(beachIndex.total),
+                          countries: beachIndex.countries.length,
+                        })}
+                      </p>
+                    )}
+                    {queryCountry && !nearPlace && (
+                      <p className="places-beachhead">
+                        {t('beach.countryHead', {
+                          country: countryName(queryCountry),
+                          n: fmt(beachRows.length),
+                        })}
+                      </p>
+                    )}
+                    {beachRows.slice(0, visible).map(({ b, km }) => (
+                      <BeachCard
+                        key={b.id}
+                        beach={b}
+                        km={km}
+                        countryName={countryName(b.cc)}
+                        onOpen={setPageBeach}
+                        t={t}
+                      />
+                    ))}
+                  </>
+                )
+                : (
+                  <p className="places-empty">
+                    {nearPlace
+                      ? t('beach.noneNear', { city: nearPlace.name })
+                      : t('beach.noneMatch')}
+                  </p>
+                )
+            )}
+
+            {!beachesLoading && !beachRows && (
+              <p className="places-empty">{t('beach.notPublished')}</p>
+            )}
+
+            {visible < (beachRows?.length ?? 0) && (
+              <div ref={sentinelRef} className="places-sentinel" aria-hidden="true" style={{ height: 1 }} />
+            )}
+
+            {beachRows?.length > 0 && <p className="places-credit">{t('beach.credit')}</p>}
+          </div>
+        )}
+
         {isTripCat && (
           <div className="places-list">
             {showCountryIndex && (
@@ -1025,6 +1263,17 @@ export function DestinationsTab({
             card={pageCard}
             onClose={() => setPageCard(null)}
             onSelectDest={(id) => { setPageCard(null); onSelectDest(id); }}
+          />
+        </Suspense>
+      )}
+
+      {pageBeach && (
+        <Suspense fallback={null}>
+          <BeachPage
+            beach={pageBeach}
+            countryName={countryName(pageBeach.cc)}
+            onClose={() => setPageBeach(null)}
+            onSelectDest={(id) => { setPageBeach(null); onSelectDest(id); }}
           />
         </Suspense>
       )}

@@ -65,6 +65,23 @@ export function loadBeachIndex() {
   });
 }
 
+/**
+ * The best beaches in Europe, best first, with a per country cap so the list
+ * is a tour of the continent rather than a page of Greek islands.
+ *
+ * This is what the tab opens on, and it is its own file for a reason: ranking
+ * the whole continent client side would mean fetching every country, several
+ * megabytes, before a single card could be drawn. One capped file answers
+ * "show me the most beautiful beaches" in one request; picking a country or
+ * searching for one loads that country's full list on top of it.
+ */
+export function loadTopBeaches() {
+  return cached('/beaches/top.json').then((raw) => {
+    if (!raw || !Array.isArray(raw.beaches)) return null;
+    return raw.beaches.filter((b) => b && b.id);
+  });
+}
+
 /** Every published beach in one country, best first. Null when there is no
  *  file to read, which for this layer means "no beaches here". */
 export function loadBeaches(country) {

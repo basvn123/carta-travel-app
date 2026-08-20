@@ -42,20 +42,31 @@ const fmtCoord = (n) => (Number.isFinite(n) ? n.toFixed(4) : '');
  *  author, source, licence. Everything the file did not carry is dropped
  *  rather than filled with "unknown". */
 function ImageCredit({ image, t }) {
-  if (!image) return null;
-  const parts = [];
-  if (image.by) parts.push(image.by);
-  if (image.lic) parts.push(image.lic);
-  if (!parts.length) return null;
+  if (!image || (!image.by && !image.lic)) return null;
+  // Commons artist fields arrive with stray whitespace and trailing commas
+  // often enough that trimming here is cheaper than reharvesting when one
+  // slips through: "7alaskan , CC BY-SA 3.0" was the first one shipped.
+  const by = String(image.by || '').trim();
+  const lic = String(image.lic || '').trim();
   return (
     <p className="bpage-credit">
       <CameraIcon size={12} />
-      <a href={image.page} target="_blank" rel="noopener noreferrer">
-        {parts.join(', ')}
-      </a>
-      {image.licUrl && (
-        <a className="bpage-credit-lic" href={image.licUrl} target="_blank" rel="noopener noreferrer">
-          {t('beach.licence')}
+      {by && (
+        <a href={image.page} target="_blank" rel="noopener noreferrer">
+          {by}
+        </a>
+      )}
+      {by && lic && ', '}
+      {lic && (image.licUrl
+        ? (
+          <a href={image.licUrl} target="_blank" rel="noopener noreferrer">
+            {lic}
+          </a>
+        )
+        : <span>{lic}</span>)}
+      {!by && (
+        <a href={image.page} target="_blank" rel="noopener noreferrer">
+          {t('beach.photos')}
         </a>
       )}
     </p>
