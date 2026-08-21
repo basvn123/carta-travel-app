@@ -253,6 +253,12 @@ That re-resolves only what is still outstanding and rewrites the cache.
   album and a given name before it is a Bosnian river. Seed searches are
   qualified with the kind and the country name, and river seeds get a 160 km
   coordinate tolerance because Wikidata puts a river's point at its source.
+- **A "skip this source" flag must not also discard that source's cache.**
+  `--no-images` put the REUSE of already cached photographs inside the same
+  `if images:` block as the fetching, so a shore sweep started with
+  `--no-images` rewrote Andorra's and Albania's caches with no pictures in
+  them, and both countries silently vanished from the next export. The switch
+  controls the network. It has never controlled the data.
 - **Overpass batches must not hold neighbours.** The shore sweep assigns each
   returned element to the nearest lake of the batch, so two lakes 3 km apart
   in one batch would share every marina between them. `split_batches()` deals
