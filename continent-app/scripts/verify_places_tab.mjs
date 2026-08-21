@@ -83,13 +83,23 @@ await page.waitForTimeout(800);
 const p1 = await page.locator('.places-dcard .places-card-price').first().innerText().catch(() => '');
 check('price sort resorts the cards', /€/.test(p1), p1);
 
-// ── Trips: country photo index, then citytrip cards ──
+// ── Trips: the day rail, then the drawn city walks ──
+//
+// The category now opens on the composed multi-day itineraries (the published
+// trip layer, see verify_trips.mjs). The one-day city walks this block covers
+// are what the "1" chip on the day rail reaches, so that is how it gets there.
 await page.locator('.places-country').selectOption('');
 await page.waitForTimeout(600);
 await page.locator('.places-cat', { hasText: /^trips$/i }).click();
-await page.waitForTimeout(1200);
+await page.waitForTimeout(1600);
+check('trips category opens on the composed itineraries',
+  await page.locator('.places-icard').count() > 0);
+check('the day rail is there', await page.locator('.places-days').isVisible());
+await page.locator('.places-days .places-class')
+  .filter({ has: page.locator('.places-class-label:text-is("1")') }).first().click();
+await page.waitForTimeout(1600);
 const tripIdx = await page.locator('.places-ccard').count();
-check('trips category shows the published-country index', tripIdx > 5, `${tripIdx} countries`);
+check('one day shows the published-country index', tripIdx > 5, `${tripIdx} countries`);
 await page.locator('.places-country').selectOption('AL');
 await page.waitForTimeout(1500);
 const tcards = await page.locator('.places-tcard').count();
@@ -140,12 +150,19 @@ check('beaches category shows published beaches', beachCards >= 1, `${beachCards
 check('beaches category drops the country dropdown', await page.locator('.places-country').count() === 0);
 await page.screenshot({ path: 'shots/places-beaches.png' });
 
+// Mountains drops the country dropdown like Beaches and Lakes do, and narrows
+// by typing the country instead. This block used to drive the dropdown, which
+// has not existed here since the mountain layer shipped.
 await page.locator('.places-cat', { hasText: /mountains/i }).click();
-await page.waitForTimeout(1200);
-await page.locator('.places-country').selectOption('AL');
-await page.waitForTimeout(1500);
-const mtnCards = await page.locator('.places-tcard').count();
-check('mountains category filters the trips', mtnCards >= 1, `${mtnCards} cards`);
+await page.waitForTimeout(1600);
+check('mountains category drops the country dropdown',
+  await page.locator('.places-country').count() === 0);
+await page.locator('.places-search input').fill('Albania');
+await page.waitForTimeout(1600);
+const mtnCards = await page.locator('.places-mcard, .places-bcard, .places-tcard').count();
+check('mountains category narrows by typed country', mtnCards >= 1, `${mtnCards} cards`);
+await page.locator('.places-search input').fill('');
+await page.waitForTimeout(800);
 await page.screenshot({ path: 'shots/places-mountains.png' });
 
 // ── Near search: suggestions then closest-first ──

@@ -1101,6 +1101,31 @@ def guard_mountains():
                        "the national high points alone")
     return True, "mountain stages present, Wikidata spine cached"
 
+def guard_trips():
+    """The trip layer needs its own scripts and the catalogue master.
+
+    The master is the spine: ratings, city centre coordinates, accommodation
+    anchors, climate normals and the POI shortlists all come from it, and
+    without it there is nothing to compose. The Wikivoyage route cache is NOT
+    guarded on purpose: the layer ships without it, composing on distance and
+    quality alone, and the trips it produces then carry no editorialRoute
+    reason. That is a documented, visible degradation rather than a failure,
+    and the harvest inside build_trips.py rebuilds it anyway."""
+    missing = [s for s in ("trip_sources.py", "trip_model.py",
+                           "harvest_routes.py", "compose_trips.py",
+                           "validate_trips.py", "export_trips.py",
+                           "build_trips.py")
+               if not (ROOT / "pipeline" / "trips" / s).exists()]
+    if missing:
+        return False, f"pipeline/trips is missing {', '.join(missing)}"
+    if not APP_DATA.exists():
+        return False, "app_data/app_data.json is missing; there is nothing to compose"
+    routes = CACHE / "trips" / "routes.json"
+    if not routes.exists():
+        return True, ("trip stages present; no Wikivoyage route cache yet, so "
+                      "the harvest will run cold (a few minutes)")
+    return True, "trip stages present, catalogue master and route graph cached"
+
 
 # Each task: key, title, cadence, writes_app_data, and either cmds or run.
 #   cadence         weekly | monthly | quarterly | after | backfill
@@ -1387,6 +1412,35 @@ TASKS = [
                  "fill the access layer in later with enrich_peaks.py "
                  "--context-only; the export validates before it writes "
                  "anything, so a failure leaves the previous wire standing."),
+    },
+    {
+        "key": "trips",
+        "title": "Trips: ready-made itineraries of 2 to 14 days -> public/trips",
+        "cadence": "monthly",
+        "writes_app_data": False,
+        "writes_wire": True,
+        "soft": True,
+        "cmds": [[PY, "pipeline/trips/build_trips.py"]],
+        "guard": guard_trips,
+        "note": ("the Trips half of the Explore tab: a traveller says how many "
+                 "days they have and where, and gets itineraries that were "
+                 "composed and checked offline rather than generated on the "
+                 "spot. Three shapes, which are the three real shapes a "
+                 "European trip takes: one base with days out from it, a chain "
+                 "of two to five bases joined by trains the app's own "
+                 "estimator agrees run, and a car loop that returns to where "
+                 "it started. Three stages in one command (harvest Wikivoyage "
+                 "-> compose -> validate and export), cached in cache/trips, "
+                 "so a warm re-run is about three minutes and produces the "
+                 "same wire. Monthly, because it reads the ratings, the "
+                 "accommodation anchors and the POI shortlists, and a trip is "
+                 "only as current as those. Run it by hand after a rating "
+                 "recalibration or an accommodation refresh. Every trip goes "
+                 "through ten hard checks before it is written and the export "
+                 "prints what it dropped and why, so a rule that starts "
+                 "quietly deleting a country shows up in the run rather than "
+                 "in the app as an empty page. A failure leaves the previous "
+                 "wire standing."),
     },
     {
         "key": "flight_times",

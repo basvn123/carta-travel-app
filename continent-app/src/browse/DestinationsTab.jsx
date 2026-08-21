@@ -12,6 +12,12 @@ import {
   loadMountainIndex, loadMountains, loadTopMountains,
 } from '../lib/mountains.js';
 import {
+  loadTripIndex, loadTrips, loadTopTrips, rankTrips,
+} from '../lib/trips.js';
+import {
+  tripHeadline, shapeLabel, transportLabel, seasonLabel, tripTags, cardThumb,
+} from '../lib/tripStory.js';
+import {
   mountainTags, mountainRating, isLiftServed, liftLabel,
   isHiddenGem as isMountainGem,
 } from '../lib/mountainStory.js';
@@ -83,6 +89,8 @@ const TrailPage = lazy(() => import('./TrailPage.jsx').then((m) => ({ default: m
 const BeachPage = lazy(() => import('./BeachPage.jsx').then((m) => ({ default: m.BeachPage })));
 const LakePage = lazy(() => import('./LakePage.jsx').then((m) => ({ default: m.LakePage })));
 const MountainPage = lazy(() => import('./MountainPage.jsx').then((m) => ({ default: m.MountainPage })));
+// The itinerary page mounts TripMap, and TripMap pulls in maplibre-gl.
+const TripPage = lazy(() => import('./TripPage.jsx').then((m) => ({ default: m.TripPage })));
 
 const norm = (s) => String(s || '')
   .toLowerCase()
@@ -124,6 +132,12 @@ function geoLines(r) {
     rest: parts.slice(2).join(', '),
   };
 }
+
+// How long the trip is, which is the first thing a traveller knows and the
+// last thing the catalogue could answer. 1 is the drawn one-day city walk from
+// the content lab; everything above it is a composed itinerary from
+// pipeline/trips. `null` is "any length".
+const TRIP_DAYS = [1, 2, 3, 4, 5, 6, 7, 8, 10, 12, 14];
 
 const CATS = [
   { key: 'general', Icon: SkylineIcon, labelKey: 'places.catGeneral' },
@@ -463,6 +477,95 @@ function CountryCard({ cc, name, sub, img, onPick }) {
   );
 }
 
+/**
+ * One composed itinerary as a card.
+ *
+ * The photograph is the town the trip OPENS in, so a grid of Italian trips
+ * does not lead with the Trevi Fountain three times. The line under the route
+ * is what you would actually stand in front of rather than a composed
+ * sentence: with a reason vocabulary this small the sentences came out
+ * identical on every card, and the named sights never do.
+ */
+/**
+ * One composed itinerary as a card, in this tab's own photo-card grammar.
+ *
+ * The photograph is the town the trip OPENS in, so a list of Italian trips
+ * does not lead with the Trevi Fountain three times. The line above the cost
+ * is what you would actually stand in front of rather than a composed
+ * sentence: with a reason vocabulary this small the sentences came out
+ * identical on every card, and the named sights never do.
+ *
+ * A trip carries more facts than a beach, so unlike .places-tcard it is not
+ * all laid over the photograph: the name, the length and the score sit on the
+ * image, everything else in a body strip under it, where it stays readable.
+ */
+const ItinCard = React.memo(function ItinCard({ tr, km, onOpen, t }) {
+  const tags = tripTags(tr, t, 2);
+  const season = seasonLabel(tr, t);
+  const warned = (tr.warned || []).length;
+  return (
+    <button className="places-icard" onClick={() => onOpen(tr)}>
+      <span className="itin-card-media">
+        {tr.img
+          ? <img className="places-card-img" src={cardThumb(tr.img.url)} alt="" loading="lazy" />
+          : (
+            <span className="places-card-img places-card-noimg" aria-hidden="true">
+              <RouteIcon size={26} />
+            </span>
+          )}
+        <span className="places-card-scrim" aria-hidden="true" />
+        <span className="itin-card-badges">
+          <span className="itin-card-days">
+            <b>{tr.days}</b> {t(tr.days === 1 ? 'trip.dayWord' : 'trip.daysWord')}
+          </span>
+          {tr.nearFit && <span className="itin-card-near">{t('trip.nearFit')}</span>}
+          {km != null && (
+            <span className="itin-card-near">{t('trip.kmAway', { km: Math.round(km) })}</span>
+          )}
+        </span>
+        <span className="itin-card-head">
+          <span className="itin-card-name">{tripHeadline(tr, t)}</span>
+          <span className="itin-card-score">{tr.score.toFixed(1)}</span>
+        </span>
+      </span>
+
+      <span className="itin-card-body">
+        <span className="itin-card-route">
+          {tr.cities.map((c, i) => (
+            <React.Fragment key={`${c.city}-${i}`}>
+              {i > 0 && <span className="itin-card-arrow" aria-hidden="true">&rsaquo;</span>}
+              <span className="itin-card-city">
+                <CountryFlag country={c.cc} size={10} />
+                {c.city}
+                <span className="itin-card-n">{c.n}</span>
+              </span>
+            </React.Fragment>
+          ))}
+        </span>
+        <span className="itin-card-meta">
+          <span className="itin-card-chip">{transportLabel(tr, t)}</span>
+          <span className="itin-card-chip">{shapeLabel(tr, t)}</span>
+          {tags.map((tag) => (
+            <span key={tag.code} className="itin-card-chip on">{tag.label}</span>
+          ))}
+        </span>
+        {tr.sights?.length > 0 && (
+          <span className="itin-card-sights">{tr.sights.join(', ')}</span>
+        )}
+        <span className="itin-card-foot">
+          <span className="itin-card-cost">{t('trip.perDay', { eur: eur(tr.cost.per_day_eur) })}</span>
+          {season && <span>{season}</span>}
+          <span className={`itin-card-checks ${warned ? 'warn' : ''}`}>
+            {warned
+              ? t(warned === 1 ? 'trip.checkOne' : 'trip.checkMany', { n: warned })
+              : t('trip.checkClean')}
+          </span>
+        </span>
+      </span>
+    </button>
+  );
+});
+
 export function DestinationsTab({
   data, pricedAll, priceMode = 'total', availableCountries = [], onSelectDest,
   stayTier = 'home', onOpenLifestyle,
@@ -471,6 +574,7 @@ export function DestinationsTab({
   openBeach = null, onOpenBeachConsumed,
   openLake = null, onOpenLakeConsumed,
   openMountain = null, onOpenMountainConsumed,
+  openTrip = null, onOpenTripConsumed, onOpenTripInPlanner,
 }) {
   const { t, lang } = useI18n();
   const scrollRef = useRef(null);
@@ -494,6 +598,13 @@ export function DestinationsTab({
   const [trailSort, setTrailSort] = useState({ key: 'rating', dir: -1 });
   const [visible, setVisible] = useState(PAGE);
   const [pageCard, setPageCard] = useState(null);    // enriched trip card or null
+  // The Trips category asks one question: how many days. 1 means the drawn
+  // city walks, 2 and up mean a composed itinerary, null means any length.
+  const [itinDays, setItinDays] = useState(null);
+  const [itinIndex, setItinIndex] = useState(undefined);   // undefined = loading
+  const [itinTop, setItinTop] = useState(null);
+  const [itinCountryRows, setItinCountryRows] = useState(null);
+  const [pageItin, setPageItin] = useState(null);
   // A shared #trail= link: { id, country } until the country file has loaded
   // and the card it names can be opened.
   const [wantedTrail, setWantedTrail] = useState(null);
@@ -959,6 +1070,80 @@ export function DestinationsTab({
       .filter((c) => c.n > 0)
       .sort((a, b) => a.name.localeCompare(b.name));
   }, [isTripCat, trailsIndex, cat, countryName]);
+
+
+  // ── Trips: the composed itineraries (pipeline/trips) ──────────────────
+  //
+  // Two artifacts on purpose, the same split the beach, lake and mountain
+  // layers use: /trips/top.json is the Europe-wide ranking, capped per country
+  // so one country cannot fill the page, and /trips/{CC}.json is everything
+  // touching that country. Ranking the continent in the browser would mean
+  // fetching forty three files before drawing a card.
+  const isItinCat = cat === 'trips' && itinDays !== 1;
+
+  useEffect(() => {
+    if (!isItinCat || itinIndex !== undefined) return undefined;
+    let live = true;
+    Promise.all([loadTripIndex(), loadTopTrips()]).then(([ix, top]) => {
+      if (!live) return;
+      setItinIndex(ix);
+      setItinTop(top || []);
+    });
+    return () => { live = false; };
+  }, [isItinCat, itinIndex]);
+
+  const itinCountry = nearPlace ? nearPlace.iso2 : country;
+
+  useEffect(() => {
+    if (!isItinCat || !itinCountry) { setItinCountryRows(null); return undefined; }
+    let live = true;
+    setItinCountryRows(null);
+    loadTrips(itinCountry).then((rows) => { if (live) setItinCountryRows(rows || []); });
+    return () => { live = false; };
+  }, [isItinCat, itinCountry]);
+
+  // A shared #itin= link: open it once its detail is reachable. The card is
+  // only a hint here, because TripPage loads the full trip by id anyway.
+  useEffect(() => {
+    if (!openTrip) return;
+    setCat('trips');
+    setItinDays(null);
+    setPageItin({ id: openTrip.id });
+    onOpenTripConsumed?.();
+  }, [openTrip]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const itinRows = useMemo(() => {
+    if (!isItinCat) return null;
+    const source = itinCountry ? itinCountryRows : itinTop;
+    if (!source) return null;
+    let rows = rankTrips(source, { days: itinDays });
+    if (q) {
+      rows = rows.filter((tr) => norm(tr.cities.map((c) => c.city).join(' ')).includes(q)
+        || tr.cities.some((c) => norm(c.city).includes(q)));
+    }
+    if (nearPlace) {
+      return rows
+        .map((tr) => ({ tr, km: haversineKm(nearPlace.lat, nearPlace.lon, tr.lat, tr.lon) }))
+        .filter((r) => Number.isFinite(r.km))
+        .sort((a, b) => a.km - b.km)
+        .slice(0, NEAR_MAX_ROWS);
+    }
+    return rows.map((tr) => ({ tr, km: null }));
+  }, [isItinCat, itinCountry, itinCountryRows, itinTop, itinDays, q, nearPlace]);
+
+  // Which day counts can actually be answered here, so a length nobody
+  // composed is greyed out rather than offered and returning nothing.
+  const itinDayCounts = useMemo(() => {
+    const out = new Map();
+    if (cat !== 'trips') return out;
+    // 1 is the city walks, which the trails index counts separately.
+    const walks = (trailsIndex?.countries || []).reduce((n, c) => (
+      n + (itinCountry && c.country !== itinCountry ? 0 : (c.counts?.citytrip || 0))), 0);
+    if (walks) out.set(1, walks);
+    const source = itinCountry ? itinCountryRows : itinTop;
+    for (const tr of source || []) out.set(tr.days, (out.get(tr.days) || 0) + 1);
+    return out;
+  }, [cat, itinCountry, itinCountryRows, itinTop, trailsIndex]);
 
   // ── Beaches: the published beach layer ───────────────────────────────
 
@@ -1538,6 +1723,38 @@ export function DestinationsTab({
             row of its own, because "two hours, and a loop" is one thought.
             It is hidden entirely in a country that has no loops published, so
             the chip never offers an empty list. */}
+        {/* The Trips category's one question: how long have you got. 1 is a
+            drawn city walk, everything above it a composed itinerary. */}
+        {cat === 'trips' && (
+          <div className="places-classes places-days" role="group" aria-label={t('trip.askDays')}>
+            <button
+              type="button"
+              className={`places-class ${itinDays === null ? 'on' : ''}`}
+              aria-pressed={itinDays === null}
+              onClick={() => setItinDays(null)}
+            >
+              <span className="places-class-label">{t('trip.anyLength')}</span>
+            </button>
+            {TRIP_DAYS.map((n) => {
+              const count = itinDayCounts.get(n) || 0;
+              const on = itinDays === n;
+              return (
+                <button
+                  key={n}
+                  type="button"
+                  className={`places-class ${on ? 'on' : ''}`}
+                  aria-pressed={on}
+                  disabled={!count && !on}
+                  onClick={() => setItinDays(on ? null : n)}
+                >
+                  <span className="places-class-label places-days-n">{n}</span>
+                  <span className="places-class-n">{fmt(count)}</span>
+                </button>
+              );
+            })}
+          </div>
+        )}
+
         {cat === 'trails' && !showCountryIndex && trailFacets && trailFacets.total > 0 && (
           <div className="places-classes places-bands" role="group" aria-label={t('trails.lengthLabel')}>
             {DISTANCE_BANDS.map(({ key, labelKey }) => {
@@ -1877,7 +2094,49 @@ export function DestinationsTab({
           </div>
         )}
 
-        {isTripCat && (
+        {isItinCat && (
+          <div className="places-list">
+            {itinRows === null && <p className="places-empty">{'\u2026'}</p>}
+
+            {itinRows && itinRows.length > 0 && (
+              <>
+                {!q && !nearPlace && (
+                  <p className="places-beachhead">
+                    {itinCountry
+                      ? t('trip.countryHead', {
+                        country: countryName(itinCountry), n: fmt(itinRows.length),
+                      })
+                      // The count is what is ON SCREEN, not what the wire
+                      // holds: reporting the catalogue total here said "1,525
+                      // trips" over a list of twenty eight.
+                      : t('trip.europeHead', { n: fmt(itinRows.length) })}
+                  </p>
+                )}
+                {itinRows.slice(0, visible).map(({ tr, km }) => (
+                  <ItinCard key={tr.id} tr={tr} km={km} onOpen={setPageItin} t={t} />
+                ))}
+              </>
+            )}
+
+            {itinRows && itinRows.length === 0 && (
+              <p className="places-empty">
+                {nearPlace
+                  ? t('places.noneNear', { city: nearPlace.name })
+                  : itinDays
+                    ? t('trip.emptyDays', { n: itinDays })
+                    : t('trip.emptyAll')}
+              </p>
+            )}
+
+            {itinRows && visible < itinRows.length && (
+              <div ref={sentinelRef} className="places-sentinel" aria-hidden="true" style={{ height: 1 }} />
+            )}
+
+            {itinRows?.length > 0 && <p className="places-credit">{t('trip.credit')}</p>}
+          </div>
+        )}
+
+        {isTripCat && !isItinCat && (
           <div className="places-list">
             {showCountryIndex && (
               <>
@@ -1932,6 +2191,18 @@ export function DestinationsTab({
             card={pageCard}
             onClose={() => setPageCard(null)}
             onSelectDest={(id) => { setPageCard(null); onSelectDest(id); }}
+          />
+        </Suspense>
+      )}
+
+      {pageItin && (
+        <Suspense fallback={null}>
+          <TripPage
+            trip={pageItin}
+            data={data}
+            onClose={() => setPageItin(null)}
+            onOpenInPlanner={onOpenTripInPlanner}
+            onSelectDest={(id) => { setPageItin(null); onSelectDest(id); }}
           />
         </Suspense>
       )}

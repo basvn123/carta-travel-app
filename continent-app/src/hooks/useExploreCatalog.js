@@ -2,7 +2,8 @@ import { useMemo } from 'react';
 import { matchesAnyKind } from '../lib/trip_kinds.js';
 import { isFullRatingRange } from '../lib/rating.js';
 import { isBigPlace } from '../lib/placeSize.js';
-import { computeIndices } from '../lib/indices.js';
+import { computeCosts } from '../lib/costIndex.js';
+import { duplicateHeroes } from '../lib/heroImage.js';
 
 // Accent- and case-insensitive text key, so "malaga" matches "Málaga".
 function normalize(s) {
@@ -46,13 +47,15 @@ function dedupeGateways(rows) {
 
 /**
  * The Explore page's catalogue: every destination projected once (no pricing,
- * the page's whole point is that it works without a fare), the two
- * price-level indices attached, then narrowed by search, country, trip kind,
- * rating band, the highlight toggles, place size and travel time, and sorted.
+ * the page's whole point is that it works without a fare), the euro-a-day
+ * cost row attached, then narrowed by search, country, trip kind, rating
+ * band, the highlight toggles, place size and travel time, and sorted.
  *
- * Sort keys: 'beauty' (rating, the default), 'stay' and 'food' (cheapest
- * index first), 'name', 'country'. A legacy stored 'price' key lands on
- * 'beauty' rather than crashing a restored URL.
+ * Sort keys: 'beauty' (rating, the default), 'cost' (cheapest day first),
+ * 'name', 'country'. The retired 'price', 'stay' and 'food' keys all land
+ * somewhere sensible rather than crashing a restored URL or a synced account:
+ * 'price' on 'beauty', 'stay' and 'food' on 'cost', which is the question
+ * both of them were really asking.
  */
 export function useExploreCatalog({
   data, locationQuery, countryFilter, tripKinds,
@@ -67,8 +70,16 @@ export function useExploreCatalog({
   const reachCutoffMin = reachActive ? reachHours * 60 : Infinity;
 
   const indices = useMemo(
-    () => providedIndices || (data ? computeIndices(data.destinations) : new Map()),
+    () => providedIndices || (data ? computeCosts(data.destinations) : new Map()),
     [providedIndices, data],
+  );
+
+  // One photograph cannot stand for two places. Where the wire hands the same
+  // Commons file to several destinations, only the best-known of them keeps
+  // it and the rest fall back to the typographic placeholder.
+  const dupHeroes = useMemo(
+    () => (data ? duplicateHeroes(data.destinations) : new Set()),
+    [data],
   );
 
   const all = useMemo(() => {
@@ -91,16 +102,18 @@ export function useExploreCatalog({
         place: d.place || null,
         bathing_water: d.bathing_water || null,
         crowding: d.crowding || null,
-        image: d.image?.url || null,
+        image: dupHeroes.has(destId) ? null : (d.image?.url || null),
         climate: d.climate || null,
-        stayIx: ix.stay ?? null,
-        foodIx: ix.food ?? null,
-        stayLevel: ix.stayLevel || null,
-        foodLevel: ix.foodLevel || null,
+        cost: ix,
+        // The card's one line is composed from these, not shipped ready-made:
+        // most of the catalogue's blurbs are category counts (placeStory.js).
+        // Both are passed by reference, so the grid copies no strings.
+        blurb: d.blurb || null,
+        activities: d.activities || null,
       });
     }
     return dedupeGateways(rows);
-  }, [data, indices]);
+  }, [data, indices, dupHeroes]);
 
   const availableCountries = useMemo(() => {
     const map = new Map();
@@ -136,10 +149,11 @@ export function useExploreCatalog({
     // favorites only re-filters while the shortlist view is on (favDep).
   }, [all, q, countryFilter, tripKinds, ratingActive, rLo, rHi, gemOnly,
     unescoOnly, topBeachOnly, bigOnly, showFavOnly, favDep,
-    reachActive, reachCutoffMin, reachMinutes]); // eslint-disable-line react-hooks/exhaustive-deps
+    reachActive, reachCutoffMin, reachMinutes]);
 
   const rows = useMemo(() => {
-    const key = sortKey === 'price' ? 'beauty' : (sortKey || 'beauty');
+    const raw = sortKey || 'beauty';
+    const key = raw === 'price' ? 'beauty' : (raw === 'stay' || raw === 'food') ? 'cost' : raw;
     const ratingVal = (p) => (p.rating?.score ?? p.beauty?.score ?? 0);
     // "Top rated N" trims BEFORE the sort, so the shortcut picks the set and
     // the sort chips still decide the order of what is left.
@@ -148,8 +162,13 @@ export function useExploreCatalog({
       : [...filtered];
     if (key === 'name') base.sort((a, b) => a.city.localeCompare(b.city));
     else if (key === 'country') base.sort((a, b) => a.country.localeCompare(b.country) || ratingVal(b) - ratingVal(a));
-    else if (key === 'stay') base.sort((a, b) => (b.stayIx ?? -1) - (a.stayIx ?? -1) || ratingVal(b) - ratingVal(a));
-    else if (key === 'food') base.sort((a, b) => (b.foodIx ?? -1) - (a.foodIx ?? -1) || ratingVal(b) - ratingVal(a));
+    else if (key === 'cost') {
+      // Cheapest day first. A destination with no figure sorts last rather
+      // than sorting as free, which is exactly the mistake the old
+      // percentile index made with a harvested zero.
+      const dayOf = (p) => (p.cost?.dayEur ?? Infinity);
+      base.sort((a, b) => dayOf(a) - dayOf(b) || ratingVal(b) - ratingVal(a));
+    }
     else base.sort((a, b) => ratingVal(b) - ratingVal(a));
     return base;
   }, [filtered, sortKey, topPick]);

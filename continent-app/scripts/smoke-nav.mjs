@@ -66,7 +66,8 @@ await step('open a destination panel (best-effort)', async () => {
   try {
     await page.waitForSelector('.xcard-hit', { timeout: 8000 });
     await page.locator('.xcard-hit').first().click();
-    await page.waitForSelector('.xp-indices', { timeout: 6000 });
+    // The 0-10 index block became the euro-a-day cost receipt (costIndex.js).
+    await page.waitForSelector('.cost-receipt', { timeout: 6000 });
     return 'explore panel rendered';
   } catch { return 'skipped (grid not on the current view)'; }
 });

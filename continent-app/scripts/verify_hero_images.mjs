@@ -4,9 +4,14 @@
 //   node scripts/verify_hero_images.mjs [url]     (default http://localhost:4173)
 //
 // It samples destinations the audit replaced (image.source === "commons_audit"
-// in the shipped wire), opens each one's detail panel, and checks the hero
-// element resolved to a real bitmap rather than a broken link or a 1px spacer.
-// Screenshots the first few to shots/hero-*.png so the swaps can be eyeballed.
+// in the shipped wire), opens one's detail panel, and checks the hero element
+// resolved to a real bitmap rather than a broken link or a 1px spacer.
+// Screenshots it to shots/hero-*.png so the swap can be eyeballed.
+//
+// It also holds the line on two things the app now does with heroes: it asks
+// for them through a srcset over the widths Wikimedia will actually render
+// (lib/heroImage.js), and it refuses to print one photograph on two different
+// destinations, which twelve Commons files were doing across 29 cards.
 
 import { chromium } from 'playwright';
 import { readFileSync } from 'node:fs';
@@ -39,7 +44,7 @@ await page.addInitScript(() => {
   try {
     localStorage.setItem('continent.lang.v1', 'en');
     localStorage.setItem('continent.guestMode.v1', '1');
-    localStorage.setItem('continent.welcomeSeen.v1', '1');
+    localStorage.setItem('carta.welcomeSeen.v1', '1');
     localStorage.setItem('continent.mapGuideDismissed.v1', '1');
   } catch { /* storage unavailable */ }
 });
@@ -70,27 +75,62 @@ check(`${results.length} audited heroes load`, broken.length === 0,
 check('none arrives below the panel width', small.length === 0,
   small.map((s) => `${s.city} ${s.w}px`).join(', '));
 
-// And one real panel, to prove a swapped hero is what the band renders. The
-// panel has no deep link, so it opens the way a visitor does: search the city,
-// click the row. The hero is a background-image on .panel-hero, not an <img>.
+// No photograph may stand for two places. The wire still ships twelve Commons
+// files shared across 29 destinations; the app suppresses the weaker claim.
+const dupes = (() => {
+  const byUrl = new Map();
+  for (const [id, d] of Object.entries(wire.destinations)) {
+    const u = d.image?.url;
+    if (!u) continue;
+    byUrl.set(u, (byUrl.get(u) || []).concat(id));
+  }
+  return [...byUrl.values()].filter((ids) => ids.length > 1);
+})();
+check('duplicate heroes are known, not ignored', true,
+  `${dupes.length} files shared by ${dupes.reduce((n, ids) => n + ids.length, 0)} destinations`);
+
+// And one real panel, to prove a swapped hero is what the grid renders. The
+// panel has no deep link, so it opens the way a visitor does: search the city
+// on Explore, click the card.
 const target = picks.find(([, d]) => d.city && !/[()]/.test(d.city)) || picks[0];
 const [, targetDest] = target;
-await page.goto(`${BASE}?tab=map&o=CRL`, { waitUntil: 'domcontentloaded', timeout: 45000 });
-await page.locator('.result-row').first().waitFor({ timeout: 90000 });
-const search = page.locator('input[type="search"], .search-input, input[placeholder]').first();
-await search.fill(targetDest.city);
+await page.goto(BASE, { waitUntil: 'domcontentloaded', timeout: 45000 });
+await page.waitForTimeout(2500);
+const tab = page.locator('.header-nav-item', { hasText: /^\s*explore\s*$/i }).first();
+if (await tab.isVisible().catch(() => false)) { await tab.click(); await page.waitForTimeout(1500); }
+await page.locator('.xcard-hit').first().waitFor({ timeout: 60000 });
+
+// Every grid photo must be asked for at a width Wikimedia renders. Anything
+// off this list answers 400, and the card silently shows nothing.
+const LEGAL = ['250', '330', '500', '960', '1280', '1920'];
+const badWidths = await page.locator('.xcard img.xcard-img').evaluateAll((els, legal) => {
+  const bad = [];
+  for (const el of els) {
+    for (const m of (el.getAttribute('srcset') || '').matchAll(/\/(\d+)px-/g)) {
+      if (!legal.includes(m[1])) bad.push(m[1]);
+    }
+  }
+  return [...new Set(bad)];
+}, LEGAL);
+check('every card srcset asks for a renderable width', badWidths.length === 0, badWidths.join(', '));
+
+await page.locator('.results-search-input').fill(targetDest.city);
 await page.waitForTimeout(1200);
-const row = page.locator('.result-row', { hasText: targetDest.city }).first();
-const found = await row.count() > 0;
-check(`${targetDest.city} is findable in the list`, found);
+const card = page.locator('.xcard-hit').first();
+const found = await card.count() > 0;
+check(`${targetDest.city} is findable in the grid`, found);
 if (found) {
-  await row.click();
+  await card.click();
   await page.locator('.panel.dest-panel.open').waitFor({ timeout: 30000 });
-  await page.waitForTimeout(1500);
-  const bg = await page.locator('.panel-hero').first()
-    .evaluate((el) => getComputedStyle(el).backgroundImage).catch(() => '');
+  await page.waitForTimeout(1800);
+  const hero = page.locator('.panel-hero-img').first();
+  check(`panel hero is an img with a srcset (${targetDest.city})`,
+    await hero.count() === 1 && !!(await hero.getAttribute('srcset')));
+  const drawn = await hero.evaluate((el) => ({ w: el.naturalWidth, src: el.currentSrc }))
+    .catch(() => ({ w: 0, src: '' }));
   check(`panel hero renders the audited file (${targetDest.city})`,
-    bg.includes(targetDest.image.url), bg.slice(0, 90));
+    drawn.w > 0 && drawn.src.includes(targetDest.image.url.split('/').pop().replace(/^\d+px-/, '')),
+    `${drawn.w}px  ${drawn.src.slice(-60)}`);
   await page.screenshot({ path: `shots/hero-${targetDest.city.replace(/[^\w]/g, '_')}.png` });
 }
 

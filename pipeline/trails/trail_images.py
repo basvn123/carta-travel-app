@@ -32,9 +32,12 @@ Usage, from the repo root (DB up: cd tools/trailslab && docker compose up -d):
     python pipeline/trails/trail_images.py
     python pipeline/trails/trail_images.py --countries SI --verbose
     python pipeline/trails/trail_images.py --refresh --countries MT
+    python pipeline/trails/trail_images.py --rescore    # offline re-rank
 """
 
 import argparse
+import json
+import os
 import re
 import sys
 import time
@@ -67,6 +70,56 @@ PROBES_MIN, PROBES_MAX, PROBE_EVERY_M = 4, 10, 3_500
 # they get their own probes on top of the evenly spaced ones.
 HIGHLIGHT_PROBES = 6
 WORKERS = 6
+
+# Every candidate a route's probes turned up, kept on disk.
+#
+# Scoring is the part that gets tuned, and tuning it used to mean asking
+# Commons for 30,000 files again: two and a half hours of somebody else's
+# bandwidth to answer a question we already had the data for. With this, a
+# scoring change is `--rescore` and costs nothing but local CPU. Only the
+# fields the scorer and the writer read are stored, so the whole cache is
+# tens of megabytes rather than hundreds.
+CACHE_DIR = ROOT / "cache" / "trails" / "photos"
+CACHE_KEEP = ("url", "thumburl", "thumbwidth", "thumbheight", "width", "height")
+CACHE_META = ("LicenseShortName", "LicenseUrl", "Artist", "ImageDescription")
+
+
+def cache_path(tid):
+    return CACHE_DIR / f"{int(tid)}.json"
+
+
+def cache_read(tid):
+    try:
+        return json.loads(cache_path(tid).read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return None
+
+
+def cache_write(tid, cands):
+    """Store the candidates, trimmed to what scoring and writing need."""
+    CACHE_DIR.mkdir(parents=True, exist_ok=True)
+    slim = []
+    for c in cands:
+        info = c.get("info") or {}
+        meta = info.get("extmetadata") or {}
+        slim.append({
+            "title": c["title"],
+            "lat": c.get("lat"), "lon": c.get("lon"),
+            "info": {
+                **{k: info.get(k) for k in CACHE_KEEP if info.get(k) is not None},
+                # Truncated: the scorer reads the first 200 characters of the
+                # description and the writer ships 280, but Commons hands back
+                # whole HTML paragraphs, which took the cache from the tens of
+                # megabytes intended to about 50 KB per route.
+                "extmetadata": {
+                    k: {"value": str((meta.get(k) or {}).get("value") or "")[:400]}
+                    for k in CACHE_META if meta.get(k)},
+            },
+        })
+    tmp = cache_path(tid).with_suffix(".json.tmp")
+    tmp.write_text(json.dumps(slim, ensure_ascii=False), encoding="utf-8")
+    os.replace(tmp, cache_path(tid))
+
 
 IMAGE_PROPS = {
     "prop": "imageinfo",
@@ -102,14 +155,56 @@ BINOMIAL_RE = re.compile(r"\(\s*[A-Z][a-z]{3,}\s+[a-z]{4,}\s*\)")
 
 # Words that say the frame is the landscape rather than an object in it.
 GOOD_WORDS = re.compile(
-    r"\b(view|vista|panorama|aussicht|blick|utsikt|vue|vista|paesaggio|"
-    r"landscape|landschaft|paysage|scenery|valley|tal|vallee|valle|"
-    r"summit|peak|gipfel|sommet|cima|vrh|ridge|grat|crete|"
+    r"\b(view|views|vista|panorama|panoramic|aussicht|ausblick|blick|utsikt|"
+    r"vue|paesaggio|landscape|landschaft|paysage|scenery|scenic|"
+    r"valley|tal|vallee|valle|dolina|"
+    r"summit|peak|gipfel|sommet|cima|vrh|szczyt|ridge|grat|crete|arete|"
     r"trail|path|weg|pfad|sentier|sentiero|senda|pot|staza|track|"
-    r"hike|wandern|randonnee|lake|see|lac|lago|jezero|waterfall|"
-    r"wasserfall|cascade|cascata|gorge|schlucht|canyon|coast|cliff|"
-    r"glacier|gletscher|mountain|berg|montagne|montagna|fjord|hut|huette)\b",
+    r"hike|hiking|wandern|wanderweg|randonnee|"
+    r"lake|see|lac|lago|jezero|jezioro|waterfall|wasserfall|cascade|cascata|"
+    r"gorge|schlucht|canyon|coast|coastline|cliff|cliffs|klippen|"
+    r"glacier|gletscher|mountain|mountains|berg|berge|montagne|montagna|"
+    r"fjord|moor|heath|heide|forest|wald|foret|bosco|meadow|alm|"
+    r"sunrise|sunset|dawn|dusk)\b",
     re.I)
+
+# Words that say the frame is one built thing, photographed as the subject.
+#
+# This is the fix for France showing a WALL for the Trophee d'Auguste and a
+# village procession for Via Alpina R161: both were genuinely shot on the
+# route, so proximity alone cleared them, and nothing in the scoring knew the
+# difference between "the view from the path" and "the object beside it".
+#
+# A penalty, never a veto. A castle or a monastery IS a reason to walk a
+# route, and scenic.py already treats them as highlights; the name-match and
+# highlight bonuses can still outweigh this. What it stops is an anonymous
+# church winning the hero slot over a valley.
+OBJECT_WORDS = re.compile(
+    r"\b(church|chapel|kirche|kapelle|kostel|kaple|cerkev|crkva|kirke|kyrka|"
+    r"iglesia|ermita|chiesa|eglise|kosciol|cerkiew|basilica|cathedral|dom|"
+    r"monument|statue|denkmal|memorial|pomnik|spomenik|bust|"
+    r"fountain|brunnen|fontaine|fontana|well|"
+    r"gate|portal|door|tuer|window|fenster|facade|fassade|wall|mauer|mur|"
+    r"roof|dach|staircase|treppe|stairs|balcony|"
+    r"house|haus|maison|casa|villa|farm|hof|barn|scheune|mill|muehle|moulin|"
+    r"hotel|restaurant|cafe|inn|gasthaus|shop|laden|"
+    r"museum|exhibit|gallery|library|school|schule|"
+    r"station|bahnhof|gare|stazione|airport|bridge|bruecke|pont|tunnel|"
+    r"cemetery|friedhof|cimetiere|grave|tombstone)\b", re.I)
+
+# People, events and machines. A parade on the route is a photograph of the
+# day rather than of the walk, and it dates badly. Vehicles are here because
+# the first tightened run put an "Alfa Romeo Giulia Spider" in a French
+# gallery: it was photographed on the road the trail crosses, which satisfies
+# proximity and says nothing whatever about walking there.
+PEOPLE_WORDS = re.compile(
+    r"\b(procession|parade|festival|fest|fiesta|feria|market|markt|marche|"
+    r"wedding|hochzeit|concert|race|marathon|rally|competition|"
+    r"crowd|group|team|portrait|selfie|children|kinder|dancers|"
+    r"ceremony|celebration|protest|demonstration|"
+    r"car|cars|auto|voiture|automobile|alfa|ferrari|porsche|mercedes|"
+    r"motorcycle|motorrad|scooter|bus|tram|lorry|truck|lkw|"
+    r"locomotive|wagon|aircraft|airplane|helicopter|boat|yacht|ferry)\b", re.I)
 
 
 def fold(text):
@@ -362,22 +457,50 @@ def score_image(cand, row):
     score = 0.0
     # Proximity is the whole claim: this is a picture of the trail because it
     # was taken on the trail. Full marks within 80 m, fading to nothing at the
-    # candidate limit.
-    score += 2.4 * max(0.0, 1.0 - (off_m / CANDIDATE_M)) ** 0.7
+    # candidate limit. Slightly below its original weight, because proximity
+    # alone was letting a wall on the path beat a valley just off it.
+    score += 2.0 * max(0.0, 1.0 - (off_m / CANDIDATE_M)) ** 0.7
+
+    # Framing. Aspect ratio is the cheapest honest signal for "is this a view
+    # or a thing": a photographer framing a landscape turns the camera
+    # sideways, and a photographer framing a church tower does not. Graded
+    # rather than a flat "wider than tall", so a 16:9 panorama outranks a
+    # barely-landscape 5:4 snapshot, and portrait is actively penalised.
+    ratio = width / height if height else 1.0
+    if ratio >= 1.7:
+        score += 1.3
+    elif ratio >= 1.25:
+        score += 0.85
+    elif ratio >= 0.95:
+        score += 0.05                     # square, says nothing either way
+    else:
+        score -= 0.9                      # portrait: an object, a person or a tower
+
     folded = fold(bare)
+    caption = fold(strip_html(((info.get("extmetadata") or {})
+                               .get("ImageDescription") or {}).get("value", "")))
+    text = folded + " " + caption[:200]
+
     name_tokens = {w for w in re.split(r"[^a-z0-9]+", fold(row.get("title") or ""))
                    if len(w) >= 4}
     if name_tokens and any(w in folded for w in name_tokens):
         score += 1.6
-    if GOOD_WORDS.search(folded):
-        score += 1.0
+    if GOOD_WORDS.search(text):
+        score += 1.3
     for f in ((row.get("highlights") or {}).get("features") or []):
         token = fold(f.get("name") or "")
         if len(token) >= 4 and token in folded:
             score += 0.9
             break
-    if width > height:
-        score += 0.8                      # a hero card is a landscape crop
+
+    # Subject penalties. Read on the file name AND the uploader's description,
+    # because plenty of files are named "IMG_4821" and described "the parish
+    # church seen from the square".
+    if OBJECT_WORDS.search(text):
+        score -= 1.1
+    if PEOPLE_WORDS.search(text):
+        score -= 1.4
+
     if width >= 2000:
         score += 0.4
     if "panoramio" in folded:
@@ -408,6 +531,23 @@ def subject_key(title):
 # still earns its place. At three or more, spread beats quantity.
 MIN_GALLERY = 3
 
+# The two acceptance bars, swept against the cached French candidates rather
+# than guessed (that is what --rescore and the candidate cache are for):
+#
+#   bar    routes with a photo   hero is an object   hero is a view
+#   0.6 / 0.0     138 / 144            6%                 59%
+#   1.2 / 2.0     134 / 144            4%                 60%
+#   1.2 / 2.4     129 / 144            4%                 63%
+#
+# 1.2 / 2.0 is where the curve turns: it removes a third of the object heroes
+# for four routes of coverage, and everything past it costs five routes per
+# three points. The hero bar is the stricter of the two on purpose. A weak
+# picture in the gallery is a weak picture; a weak picture as the hero is what
+# the whole card says the walk looks like, and no picture is better than a
+# misleading one.
+MIN_SCORE = 1.2
+MIN_HERO_SCORE = 2.0
+
 
 def pick(cands, row):
     """Hero plus a gallery that walks the route.
@@ -426,7 +566,7 @@ def pick(cands, row):
     seen_subjects = {}
     for c in cands:
         s = score_image(c, row)
-        if s <= 0.6:
+        if s < MIN_SCORE:
             continue
         c["score"] = s
         key = subject_key(c["title"])
@@ -443,6 +583,10 @@ def pick(cands, row):
     if not scored:
         return []
     scored.sort(key=lambda c: -c["score"])
+    # Nothing here is good enough to speak for the walk, so the card keeps its
+    # route glyph and says nothing, which is the honest answer.
+    if scored[0]["score"] < MIN_HERO_SCORE:
+        return []
     hero = scored[0]
     picked = [hero]
     total = max(1.0, float(row.get("distance_m") or 1))
@@ -540,11 +684,53 @@ def curated_countries(conn):
         return [r[0] for r in cur.fetchall()]
 
 
+def rescore(conn, countries, limit=0, verbose=False):
+    """Re-rank every route that has cached candidates, offline.
+
+    Deliberately re-picks from the FULL candidate list rather than reordering
+    what was published: a scoring change that demotes the old hero has to be
+    able to promote a file that never made the gallery."""
+    with conn.cursor() as cur:
+        cur.execute("""
+            SELECT t.id FROM trips t
+            WHERE t.category = 'hike' AND t.status IN ('approved', 'published')
+              AND t.country = ANY(%s)
+            ORDER BY t.country, t.id""", (countries,))
+        ids = [r[0] for r in cur.fetchall()]
+    ids = [i for i in ids if cache_path(i).exists()]
+    if limit:
+        ids = ids[:limit]
+    if not ids:
+        print("no cached candidates yet; run the harvest once first")
+        return
+    print(f"re-scoring {len(ids):,} route(s) from cache")
+    rows = {r["id"]: r for r in load_rows(conn, ids)}
+    counts = Counter()
+    for n, tid in enumerate(ids, 1):
+        row = rows.get(tid)
+        cands = cache_read(tid)
+        if not row or not cands:
+            continue
+        measure(conn, tid, cands)
+        picked = pick(cands, row)
+        wrote = store(conn, tid, picked) if picked else 0
+        counts["images"] += wrote
+        counts["with_photos" if wrote else "no_photo"] += 1
+        if n % 500 == 0 or n == len(ids):
+            print(f"  {n}/{len(ids)}, {counts['images']:,} photographs",
+                  flush=True)
+    print(f"\n{counts['images']:,} photographs on {counts['with_photos']:,} "
+          f"routes; {counts['no_photo']:,} routes had nothing that scored")
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     ap.add_argument("--countries", help="comma separated ISO2")
     ap.add_argument("--refresh", action="store_true",
                     help="re-shoot routes that already have photographs")
+    ap.add_argument("--rescore", action="store_true",
+                    help="re-rank from the cached candidates, no Commons "
+                         "traffic at all. Use after changing score_image().")
     ap.add_argument("--limit", type=int, default=0)
     ap.add_argument("--verbose", action="store_true")
     args = ap.parse_args()
@@ -553,6 +739,9 @@ def main():
     with connect() as conn:
         countries = ([c.strip().upper() for c in args.countries.split(",") if c.strip()]
                      if args.countries else curated_countries(conn))
+        if args.rescore:
+            rescore(conn, countries, args.limit, args.verbose)
+            return
         if args.refresh:
             with conn.cursor() as cur:
                 cur.execute("""
@@ -595,6 +784,7 @@ def main():
                     print(f"    {row['id']} failed: {str(exc)[:90]}")
                     counts["failed"] += 1
                     continue
+                cache_write(row["id"], cands)
                 measure(conn, row["id"], cands)
                 picked = pick(cands, row)
                 n = store(conn, row["id"], picked) if picked else 0

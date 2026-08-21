@@ -24,9 +24,15 @@ Three phases, each resumable and each safe to run on its own:
   patch  hand over to harvest_images.patch() so both app_data files pick the
          new images up.
 
+  dupes  a fourth pass, independent of the other three: one photograph
+         standing for two DIFFERENT places. Not the same thing as a repeat,
+         because four London airport records sharing one skyline is correct.
+         See dupes() for how the two are told apart.
+
 Run:  python audit_hero_images.py            # check -> fix -> patch
       python audit_hero_images.py check      # classify only, no writes to data
       python audit_hero_images.py fix        # replace what the last check flagged
+      python audit_hero_images.py dupes      # re-photograph the wrong-place repeats
       python audit_hero_images.py patch      # cache -> app_data
       python audit_hero_images.py stats      # last report, no network
 
@@ -44,6 +50,7 @@ a report that says which one is a report you can act on.
 Everything ASCII-clean (no emoji/dingbats) per project convention.
 """
 import json
+import math
 import re
 import sys
 import time
@@ -555,8 +562,24 @@ def lead_image(lang, en_title):
     return file_title_from_url(src)
 
 
-def best_replacement(d, meta_cache):
-    """The best photograph we can find for this destination, or None."""
+def best_replacement(d, meta_cache, exclude=(), coords_only=False):
+    """The best photograph we can find for this destination, or None.
+
+    `exclude` is a set of File: titles this destination may not be given. It
+    is how the dupes pass stops a place being handed back the photograph it is
+    being taken off, and stops it minting a fresh duplicate on the way out.
+
+    `coords_only` throws away the article ladder and searches the destination's
+    own coordinates instead. The dupes pass needs it, and the reason is worth
+    stating: a destination that ended up with another place's photograph got
+    there through an ambiguous NAME, so its article association is the one
+    thing about it that is known to be wrong. Devil's Bridge in Wales and
+    Devil's Bridge in Bulgaria share a Wikipedia disambiguation page, and Spa
+    in Belgium had a Commons file page for a Bath photograph where its article
+    should be. Asked the normal way they are offered "Devil's Bridge
+    Nettleden" and "Couples Bath Spa": the same collision, twice. Asked by
+    coordinate they are offered "Pontarfynach - Devil's Bridge, Powys, Wales"
+    and "Thermes de Spa"."""
     city, country = d.get("city"), d.get("country")
     page = (d.get("image") or {}).get("page")
     stored_title = None
@@ -570,6 +593,13 @@ def best_replacement(d, meta_cache):
     titles = [t for t in dict.fromkeys([own_title, stored_title]) if t]
     lat = d.get("city_lat") if d.get("city_lat") is not None else d.get("lat")
     lon = d.get("city_lon") if d.get("city_lon") is not None else d.get("lon")
+
+    if coords_only:
+        # Distance order IS the ranking here, so it is passed as `rank`: the
+        # nearest photograph of a place is the likeliest to be of that place.
+        near = geosearch_images(lat, lon, radius=6000, limit=40)
+        ordered = [(t, {"rank": i}) for i, t in enumerate(near)]
+        return _rank_and_pick(ordered, d, meta_cache, exclude)
 
     # 1. The lead image of the local-language article, then the English one.
     leads = []
@@ -590,12 +620,21 @@ def best_replacement(d, meta_cache):
     ordered = [(t, {"lead": True}) for t in leads] \
         + [(t, {"rank": i}) for i, t in enumerate(article)] \
         + [(t, {}) for t in nearby if t not in leads and t not in article]
+    return _rank_and_pick(ordered, d, meta_cache, exclude)
+
+
+def _rank_and_pick(ordered, d, meta_cache, exclude=()):
+    """Score a candidate list, reject the junk, return the winner or None."""
+    city, country = d.get("city"), d.get("country")
     if not ordered:
         return None
 
     commons_meta([t for t, _ in ordered], meta_cache)
+    excl = {fold(re.sub(r"^File:", "", x)) for x in (exclude or ())}
     ranked = []
     for c, how in ordered:
+        if fold(re.sub(r"^File:", "", c)) in excl:
+            continue                      # already someone else's photograph
         meta = meta_cache.get(c)
         if not meta or classify(c, meta):
             continue                      # a fix may never be another map
@@ -695,6 +734,113 @@ def fix(dests, report, dry_run=False, limit=None, only=None):
     return report
 
 
+# Two records this close together are one place under two names (Rhodes and
+# Rodos are one harbour), whatever they are called, and they may share a
+# photograph. Comfortably wider than any city's spread of airports.
+SAME_PLACE_KM = 30.0
+
+
+def _place_key(d):
+    city = re.sub(r"\s*\([^)]*\)\s*$", "", d.get("city") or "").strip().lower()
+    return fold(city) + "|" + (d.get("iso2") or "")
+
+
+def _km(a, b):
+    def pt(d):
+        return (d.get("city_lat", d.get("lat")), d.get("city_lon", d.get("lon")))
+    lat1, lon1 = pt(a)
+    lat2, lon2 = pt(b)
+    if None in (lat1, lon1, lat2, lon2):
+        return 1e9
+    r = 6371.0
+    p1, p2 = math.radians(lat1), math.radians(lat2)
+    dp, dl = math.radians(lat2 - lat1), math.radians(lon2 - lon1)
+    h = math.sin(dp / 2) ** 2 + math.cos(p1) * math.cos(p2) * math.sin(dl / 2) ** 2
+    return 2 * r * math.asin(math.sqrt(h))
+
+
+def dupes(dests, dry_run=False, only=None):
+    """One photograph standing for two DIFFERENT places.
+
+    Most repeats in the catalogue are not errors. London's skyline fronts
+    Heathrow, Gatwick, Luton and Stansted because those are four airport
+    records for one city, and the app's grid merges them into one card anyway.
+    What IS an error is one file fronting two places: the shipped catalogue has
+    the Roman Baths at Bath fronting the Belgian town of Spa (a name match, not
+    a photograph of Spa), and one Devil's Bridge borrowing the other's picture
+    across Bulgaria and Wales.
+
+    A repeat is only called an error when the two records differ by BOTH the
+    place key the app's own gateway merge uses AND by more than SAME_PLACE_KM,
+    so a town carried under two spellings keeps its photograph.
+
+    The best-known claimant keeps the file, because a photograph that has to
+    stand for one of several places should stand for the one a reader will
+    recognise it as. Everyone else goes back through best_replacement with that
+    file excluded.
+    """
+    meta_cache = load_json(META_CACHE, {}) or {}
+    img_cache = load_json(IMG_CACHE, {}) or {}
+
+    by_url = {}
+    for did, d in dests.items():
+        url = (d.get("image") or {}).get("url")
+        if url:
+            by_url.setdefault(url, []).append(did)
+
+    losers = []
+    for url, ids in by_url.items():
+        if len(ids) < 2:
+            continue
+        if len({_place_key(dests[i]) for i in ids}) < 2:
+            continue                       # one city, several gateways: fine
+        keeper = max(ids, key=lambda i: ((dests[i].get("rating") or {}).get("fame") or 0))
+        for i in ids:
+            if i == keeper:
+                continue
+            if _place_key(dests[i]) == _place_key(dests[keeper]):
+                continue
+            if _km(dests[i], dests[keeper]) < SAME_PLACE_KM:
+                continue                   # same place, two spellings
+            losers.append((i, keeper, url))
+
+    if only:
+        losers = [row for row in losers if row[0] in only]
+    if not losers:
+        print("No photograph is standing for two different places.")
+        return
+
+    print("%d destination(s) are showing another place's photograph:" % len(losers))
+    fixed, kept = [], []
+    for n, (did, keeper, url) in enumerate(losers, 1):
+        d = dests[did]
+        held = file_title_from_url(url)
+        print("  [%d/%d] %s (%s) is using %s's %s"
+              % (n, len(losers), d.get("city"), d.get("country"),
+                 dests[keeper].get("city"), readable(held) if held else url))
+        rep = best_replacement(d, meta_cache, exclude={held} if held else (),
+                               coords_only=True)
+        if not rep:
+            kept.append(did)
+            print("          nothing better found; the app shows the placeholder")
+            continue
+        img_cache[did] = {k: rep[k] for k in ("title", "url", "thumb", "original", "source")}
+        fixed.append({"id": did, "city": d.get("city"), "country": d.get("country"),
+                      "from": url, "to": rep["thumb"], "file": rep["title"],
+                      "score": rep["score"], "shared_with": keeper})
+        print("          -> %s (%s)" % (rep["title"], rep["score"]))
+
+    if not dry_run:
+        atomic_write_json(META_CACHE, meta_cache)
+        atomic_write_json(IMG_CACHE, img_cache)
+        report = load_json(REPORT, None) or {}
+        report["dupes"] = {"generated": date.today().isoformat(),
+                           "fixed": fixed, "unfixed": kept}
+        atomic_write_json(REPORT, report)
+    print("Replaced %d, left standing %d%s"
+          % (len(fixed), len(kept), " (dry run, nothing written)" if dry_run else ""))
+
+
 def stats():
     report = load_json(REPORT, None)
     if not report:
@@ -788,6 +934,14 @@ def main():
 
     data = load_json(PRIMARY)
     dests = data.get("destinations", {})
+
+    if cmd == "dupes":
+        dupes(dests, dry_run=dry, only=only)
+        if not dry:
+            sys.path.insert(0, str(Path(__file__).resolve().parent))
+            import harvest_images
+            harvest_images.patch()
+        return
 
     report = None
     if cmd in ("all", "check"):

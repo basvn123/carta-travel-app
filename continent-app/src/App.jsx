@@ -52,7 +52,7 @@ function TabFallback() {
   return <div className="loading-screen"><div className="pulse" /></div>;
 }
 import { tripDaysBetween, DEFAULT_LIFESTYLE } from './lib/runtime_pricing.js';
-import { computeIndices } from './lib/indices.js';
+import { computeCosts } from './lib/costIndex.js';
 import { loadInitialState } from './lib/urlState.js';
 import { readTripShareFromUrl, decodeTripShare } from './lib/shareLink.js';
 import { readShareTokenFromUrl, stripShareTokenFromUrl } from './auth/tripShares.js';
@@ -61,6 +61,7 @@ import { readTrailFromUrl } from './lib/trails.js';
 import { readBeachFromUrl } from './lib/beaches.js';
 import { readLakeFromUrl } from './lib/lakes.js';
 import { readMountainFromUrl } from './lib/mountains.js';
+import { readTripFromUrl } from './lib/trips.js';
 import { loadTripDraft } from './planner/tripDraftStore.js';
 import { bindDayPlanCloud } from './planner/dayPlanSync.js';
 import { AuthProvider, useAuth } from './auth/AuthContext.jsx';
@@ -324,6 +325,32 @@ function TravelApp() {
     if (pendingMountain) setActiveTab('places');
   }, [pendingMountain]);
 
+  // A shared TRIP link (#itin=at-salzburg-vienna-chain-5d, see lib/trips.js),
+  // read once at startup and handed to the Destinations tab, exactly like a
+  // shared trail, beach, lake or mountain. The hash carries nothing else, so
+  // opening someone else's itinerary leaves the recipient's own dates, origin
+  // and lifestyle where they were.
+  const [pendingTrip, setPendingTrip] = useState(() => readTripFromUrl());
+  useEffect(() => {
+    if (pendingTrip) setActiveTab('places');
+  }, [pendingTrip]);
+
+  // A published itinerary handed to the trip planner, where every stop, night
+  // and date stays editable. It goes in through the same door a shared trip
+  // uses, so the planner needs no new code path for it.
+  const openTripInPlanner = useCallback((trip) => {
+    const stops = (trip.stops || [])
+      .map((st) => ({ destinationId: st.dest, nights: st.nights, activities: [] }))
+      .filter((st) => st.destinationId && st.nights);
+    if (!stops.length) return;
+    setPendingSharedTrip({
+      stops,
+      label: trip.name || '',
+      transportPref: trip.transport === 'car' ? 'owncar' : 'public',
+    });
+    setActiveTab('trip');
+  }, []);
+
   // Stable identity: this lands on every Explore card, so a fresh function
   // per render would defeat the card's React.memo.
   const toggleFav = useCallback((id) => setFavorites((prev) => {
@@ -488,7 +515,7 @@ function TravelApp() {
   // The Explore page's two price-level indices, computed once per dataset and
   // shared by the grid and the open destination panel.
   const exploreIndices = useMemo(
-    () => (data ? computeIndices(data.destinations) : null),
+    () => (data ? computeCosts(data.destinations) : null),
     [data],
   );
 
@@ -672,6 +699,7 @@ function TravelApp() {
               data={data}
               indices={exploreIndices}
               onClose={() => setSelectedId(null)}
+              onSelect={openDetail}
               isFavorite={selectedId ? favorites.has(selectedId) : false}
               onToggleFavorite={selectedId ? () => toggleFav(selectedId) : undefined}
             />
@@ -719,6 +747,9 @@ function TravelApp() {
             onOpenLakeConsumed={() => setPendingLake(null)}
             openMountain={pendingMountain}
             onOpenMountainConsumed={() => setPendingMountain(null)}
+            openTrip={pendingTrip}
+            onOpenTripConsumed={() => setPendingTrip(null)}
+            onOpenTripInPlanner={openTripInPlanner}
           />
         </div>
       )}

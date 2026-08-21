@@ -196,6 +196,34 @@ them and tiers them, which is a produced work in the sense the trails export
 uses, but the names and coordinates inside it are still OpenStreetMap's. Treat
 the wire as an ODbL extract until that review happens.
 
+## 9. Composed trips (pipeline/trips)
+
+The trip layer publishes multi day itineraries to `continent-app/public/trips`.
+It introduces no new external source: everything it reads is already in the
+sections above. What is new is the USE, which is what this section records.
+
+| Source and use | What is used | Licence | Attribution required | Share-alike | Where it is credited |
+|---|---|---|---|---|---|
+| Wikivoyage Go next graph (`pipeline/trips/harvest_routes.py` -> `cache/trips/routes.json`) | Which places an editor lists as the onward journey from here: the LINK STRUCTURE and the wikilink targets, resolved onto catalogue ids. No prose is stored or shown. Drives which bases a chain may join, and the `editorialRoute` reason code | CC BY-SA 4.0 | Yes | Only if prose is ever used; link structure and article class are facts | `attribution` block in `/trips/index.json`, rendered in Account > Data sources |
+| Wikivoyage itinerary articles (same harvest) | Article title, URL, article status class and the ordered list of places the article links. Shown as "It follows the Brenner Pass" with a link to the article. The TITLE is quoted; nothing else is | CC BY-SA 4.0 | Yes | No: a title plus a link is a reference, not a derivative of the text | Named in the trip page's `follows` line, which links straight to the article; plus the index `attribution` block |
+| Wikivoyage Get in sections (same harvest) | A boolean per mode (does the arrivals section mention a rail station, a ferry, an airport), never the text | CC BY-SA 4.0 | Yes | No, the booleans are facts | Index `attribution` block |
+| Wikivoyage article status (`{{guidecity}}`, `{{starcity}}`) | A quality weight on a base, and the `no_written_guide` warning | CC BY-SA 4.0 | Yes | No, the class is a fact | Index `attribution` block |
+| Eurostat tourist nights per NUTS3 (`cache/eurostat_nights_nuts3.json`, already harvested for the crowding layer) | A demand CHECK on a base: does anyone actually go to this region. Never ranked on alone | CC BY 4.0 | Yes | No | Existing Eurostat credit, widened to name the use |
+| Catalogue master (`app_data/app_data.json`) | Ratings, coordinates, categories, climate normals, accommodation anchors, designations, hero photographs and the POI shortlists. Each of those carries its own row in sections 5 and 8 | Mixed, per row above | Per row above | Per row above | Per row above |
+| Wikimedia Commons photographs | The hero on every stop and the photograph beside every named sight, spliced to a 500 px thumbnail. The export gate rejects any image URL whose host is not a Wikimedia one, so a file whose licence was never resolved cannot reach the wire | Per file | Yes | Per file | Existing Commons credit; the per-file obligation is follow-up item 1, unchanged |
+
+What the layer deliberately does NOT do, and why it matters here:
+
+- It writes no prose. Every sentence on a trip card or a trip page is composed
+  in the app from reason codes through `t()` (`continent-app/src/lib/tripStory.js`),
+  so there is no generated text with an unclear provenance, and the six
+  translations stay honest.
+- It stores no third-party itinerary text. A Wikivoyage itinerary contributes
+  its title, its URL and which of its stops resolve onto the catalogue. The
+  route Carta ships is composed independently and merely CORROBORATED against
+  it, which is why `namedRoute` is worth only 0.4 of a point.
+- It calls no paid API and warehouses nothing from one.
+
 ## MISSING attributions, follow-up list
 
 Cleared on 2026-08-11 by the footer pass. The app renders a Data sources

@@ -1,7 +1,9 @@
-// Headless verify for the Explore tab v2: the map is gone, the grid answers
-// with the two 0-10 indices instead of fares, one Filters sheet serves every
-// width, and the destination panel carries the info sections (around, when,
-// weather, parking, events, packing).
+// Headless verify for the Explore tab v3: the map is gone, the grid answers
+// with a euro-a-day figure (the two 0-10 "cheapness" indices are retired, see
+// lib/costIndex.js), one Filters sheet serves every width, and the
+// destination panel carries the info sections (cost receipt, around + locator
+// map, worth pairing with, when, weather, how the score is built, parking,
+// packing).
 //
 //   node scripts/verify_explore.mjs [url]      (default http://localhost:4173)
 //
@@ -56,10 +58,35 @@ try {
     return !!el && el.complete && el.naturalWidth > 0;
   }, null, { timeout: 12000 }).then(() => true).catch(() => false);
   check('spliced card thumb actually loads', imgOk);
-  const ixCount = await page.locator('.xcard-ix').count();
-  check('every card shows the two indices', ixCount >= cards * 2 - 2, `${ixCount} meters`);
+  // The retired 0-10 meters must be gone, and every card must carry the euro
+  // figure that replaced them (lib/costIndex.js explains the swap in full).
+  check('the 0-10 cheapness meters are gone', await page.locator('.xcard-ix').count() === 0);
+  const costCount = await page.locator('.xcard-cost').count();
+  check('every card shows a euro-a-day figure', costCount >= cards - 2, `${costCount}/${cards}`);
+  const litSegs = await page.locator('.xcard-cost .cost-gauge .cost-seg.on').count();
+  check('the cost gauge fills', litSegs >= cards, `${litSegs} lit segments`);
   const cardText = await page.locator('.xcard').first().innerText();
-  check('no euro price on a card', !/€/.test(cardText), cardText.replace(/\n/g, ' | ').slice(0, 80));
+  check('the card names a price in euros', /€\d/.test(cardText), cardText.replace(/\n/g, ' | ').slice(0, 90));
+
+  // The srcset must offer widths Wikimedia actually renders. An unlisted
+  // width answers 400, which is exactly how this breaks silently.
+  const srcset = await page.locator('.xcard img.xcard-img').first().getAttribute('srcset');
+  const widths = (srcset || '').match(/(\d+)px-/g) || [];
+  const legalW = ['250px-', '330px-', '500px-', '960px-', '1280px-', '1920px-'];
+  check('card srcset uses renderable Wikimedia widths',
+    widths.length >= 2 && widths.every((w) => legalW.includes(w)),
+    srcset ? widths.join(' ') : 'no srcset');
+
+  // The hover explanation, and WCAG 1.4.13's dismissible requirement.
+  await page.locator('.xcard').first().hover();
+  await page.waitForTimeout(350);
+  const previewOpen = await page.locator('.xcard-preview').count() === 1;
+  check('hovering a card explains it', previewOpen);
+  if (previewOpen) await page.screenshot({ path: 'shots/explore-hover.png' });
+  await page.keyboard.press('Escape');
+  await page.waitForTimeout(250);
+  check('Escape dismisses the preview (WCAG 1.4.13)',
+    await page.locator('.xcard-preview').count() === 0);
 
   // The retired fare-era controls must be gone from this tab.
   check('no depart/return fields', await page.locator('.row-date-fields').count() === 0);
@@ -88,15 +115,27 @@ try {
   const panel = page.locator('.dest-panel.open');
   check('panel opens', await panel.isVisible());
   const panelText = await panel.innerText();
-  check('panel shows the indices block', await panel.locator('.xp-indices').count() === 1);
+  check('panel shows the cost receipt', await panel.locator('.cost-receipt').count() === 1);
+  check('receipt totals a day in euros', /€\d/.test(await panel.locator('.cost-total-eur').innerText()));
+  check('receipt states where the number came from', await panel.locator('.cost-source').innerText().then((x) => x.length > 12));
   check('panel has what-is-around', /what is around/i.test(panelText));
+  check('panel has the worth-pairing list', await panel.locator('.xp-near').count() >= 1);
+  check('panel explains the score', await panel.locator('.rate-parts .rate-part').count() >= 2);
   check('panel has when-to-go', /when to go/i.test(panelText));
   check('panel has weather section', /weather this week/i.test(panelText));
   check('panel has parking section', /where to park/i.test(panelText));
-  check('panel has events section', /events and festivals/i.test(panelText));
+  // Events render only when there ARE events: an empty section that
+  // apologises for being empty is not a section worth a reader's attention.
+  check('no empty events apology', !/no recurring events on record/i.test(panelText));
   check('panel has packing section', /what to bring/i.test(panelText));
   check('panel shows POI rows', await panel.locator('.xp-poi').count() >= 3);
   check('packing list has items', await panel.locator('.xp-pack').count() >= 2);
+  // The locator map is lazy; give maplibre a moment to mount its canvas.
+  await page.waitForTimeout(2500);
+  check('panel pins the place on a real map', await panel.locator('.place-map canvas').count() === 1);
+  check('the map names the town', await panel.locator('.pm-pin-name').count() >= 1);
+  const pw = await panel.boundingBox();
+  check('panel is a reading surface, not a strip', pw && pw.width >= 460, `${Math.round(pw?.width || 0)}px wide`);
   // The live forecast (network) and the destinfo layer (built?) get a longer leash.
   await page.waitForTimeout(3000);
   const weatherDays = await panel.locator('.xp-wday').count();

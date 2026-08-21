@@ -1,23 +1,39 @@
 import React from 'react';
-import { RatingBadge, HiddenGemTag } from '../components/RatingBadge.jsx';
+import { ScoreChip, HiddenGemTag, tierClass } from '../components/RatingBadge.jsx';
 import { WaterQualityBadge, swimRelevant } from '../components/WaterQualityBadge.jsx';
 import { CountryFlag } from '../components/CountryFlag.jsx';
-import { knownFor } from '../lib/knownFor.js';
 import { fmtMonthRanges } from './ClimateStrip.jsx';
 import { useExploreCatalog } from '../hooks/useExploreCatalog.js';
 import { ExploreFilterSheet } from './ExploreFilterSheet.jsx';
 import { useI18n } from '../i18n/index.jsx';
 import { count } from '../lib/format.js';
 import { isFullRatingRange, FULL_RATING_RANGE } from '../lib/rating.js';
-import { FilterIcon, BedIcon, DiningIcon, CalendarIcon } from '../components/Icons.jsx';
+import { FilterIcon, CalendarIcon, CameraIcon, ClockIcon } from '../components/Icons.jsx';
+import { HeroImage } from '../components/HeroImage.jsx';
+import { CostLine } from '../components/CostSummary.jsx';
+import { visitLength } from '../lib/nearby.js';
+import { placeSights } from '../lib/placeStory.js';
+import { knownFor } from '../lib/knownFor.js';
 
 /**
  * The Explore page, after the map: the whole catalogue as a photo-forward
  * grid a person can actually read. Instead of an all-in trip price (the fare
  * pipeline is retired from this page), every card answers four things at a
- * glance: what is this place, how good is it (the 0-10 rating), how cheap is
- * it to sleep there and to eat there (two 0-10 indices, 10 = cheapest in the
- * catalogue), and when to go. Opening a card slides in the ExplorePanel.
+ * glance: what is this place, how good is it (the rating, and the tier seal
+ * that says what the number means), what a day there costs one person in
+ * euros, and when to go. Opening a card slides in the ExplorePanel.
+ *
+ * The card used to end in two 0-10 "cheapness" meters. They are gone, and
+ * lib/costIndex.js documents why in full: with 88 distinct food baskets across
+ * 3,038 destinations, a one-decimal rank was a country flag wearing a
+ * measurement's clothes, and a harvested zero made Geneva the cheapest place
+ * in Europe to sleep. A euro figure is smaller, plainer and true.
+ *
+ * Hovering a card opens a preview with the things the card cannot fit: what
+ * to see, how long to stay, the cost split. It follows WCAG 1.4.13, so it is
+ * dismissible with Escape, survives the pointer travelling into it, and opens
+ * on keyboard focus as well as hover. It never opens on touch, where hover
+ * does not exist and the tap already opens the full panel.
  *
  * Filters live behind ONE Filters button on every width, opening the same
  * modal sheet the phone always had. The trip-kind rail above the grid keeps
@@ -39,53 +55,118 @@ function Star({ filled }) {
 
 const SORTS = [
   { key: 'beauty', labelKey: 'sort.rating' },
-  { key: 'stay', labelKey: 'explore.sortStay' },
-  { key: 'food', labelKey: 'explore.sortFood' },
+  { key: 'cost', labelKey: 'explore.sortCost' },
   { key: 'name', labelKey: 'sort.az' },
   { key: 'country', labelKey: 'sort.country' },
 ];
 
-// A grid card is ~300 css px wide; the hero wire ships Wikipedia's 960px
-// rendering. Splicing the thumb path down cuts the grid's image bytes to
-// roughly a third. 500 because Wikimedia thumbs now come in FIXED sizes only
-// (an arbitrary 640 answers 400 "Use thumbnail sizes listed on w.wiki/GHai");
-// 500 is on the list and covers a 300 px card to 1.7x DPR.
-const cardThumb = (url) => (url && url.includes('/960px-') ? url.replace('/960px-', '/500px-') : url);
+// How wide the grid draws a card, so the browser can pick a thumbnail instead
+// of downloading Wikimedia's 960px rendering for a 300px slot. The widths in
+// the srcset are a fixed list Wikimedia will actually render (heroImage.js).
+const CARD_SIZES = '(max-width: 768px) 45vw, (max-width: 1180px) 30vw, 280px';
 
-/** A tiny labelled 0-10 meter for the card foot. */
-function MiniIndex({ icon: Icon, value, label }) {
-  if (value == null) return null;
+/**
+ * The hover preview: what the card cannot fit.
+ *
+ * WCAG 1.4.13 has three requirements for content shown on hover and this
+ * meets all three. Dismissible: Escape closes it without moving the pointer.
+ * Hoverable: it is a child of the card, so travelling into it keeps the card
+ * hovered and the preview open, with no "safe triangle" needed. Persistent:
+ * nothing times it out, it closes when the pointer or the focus leaves.
+ */
+// A card clamps its one line to two rows. Past roughly this many characters
+// the reader is losing words, and repeating the line in the preview earns its
+// space; below it, repeating would just say the same thing twice.
+const CLAMP_CHARS = 72;
+
+function CardPreview({ p, t }) {
+  const stay = visitLength(p);
+  const sights = placeSights(p, 3);
+  const lead = knownFor(p);
+  const clamped = lead.length > CLAMP_CHARS;
   return (
-    <span className="xcard-ix" title={label} aria-label={`${label}: ${value.toFixed(1)}`}>
-      <Icon size={12} />
-      <span className="xcard-ix-track" aria-hidden="true">
-        <span className={`xcard-ix-fill ${value >= 7 ? 'good' : ''}`} style={{ width: `${value * 10}%` }} />
-      </span>
-      <span className={`xcard-ix-val ${value >= 7 ? 'good' : ''}`}>{value.toFixed(1)}</span>
-    </span>
+    <div className="xcard-preview" role="tooltip">
+      {clamped && <p className="xcard-preview-lead">{lead}</p>}
+      {sights.length > 0 && (
+        <p className="xcard-preview-row">
+          <CameraIcon size={11} />
+          <span>{sights.join(', ')}</span>
+        </p>
+      )}
+      {stay && (
+        <p className="xcard-preview-row">
+          <ClockIcon size={11} />
+          <span>{t(stay.key, { n: stay.n })}</span>
+        </p>
+      )}
+      {p.cost?.dayEur != null && (
+        <p className="xcard-preview-cost">
+          {t('cost.dayTitle', {
+            bed: `€${Math.round(p.cost.stayEur)}`,
+            food: `€${Math.round(p.cost.foodEur)}`,
+          })}
+        </p>
+      )}
+    </div>
   );
 }
 
 const ExploreCard = React.memo(function ExploreCard({ p, selected, fav, onSelect, onToggleFav, t }) {
   const kf = knownFor(p);
   const best = p.climate?.best?.length ? fmtMonthRanges(p.climate.best) : null;
+  const [preview, setPreview] = React.useState(false);
+
+  // Escape closes the preview without the pointer having to move, which is
+  // the "dismissible" half of WCAG 1.4.13.
+  React.useEffect(() => {
+    if (!preview) return undefined;
+    const onKey = (e) => { if (e.key === 'Escape') setPreview(false); };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [preview]);
+
+  // Mouse only. On touch there is no hover, and a tap already opens the panel:
+  // making the first tap mean "preview" would cost every phone user a second
+  // tap to get anywhere.
+  const onEnter = (e) => { if (e.pointerType === 'mouse') setPreview(true); };
+
   return (
-    <div className={`xcard ${selected ? 'selected' : ''}`}>
-      <button className="xcard-hit" onClick={() => onSelect(p.id)} aria-label={t('explore.openDest', { city: p.city })}>
+    <div
+      className={`xcard ${selected ? 'selected' : ''} ${preview ? 'previewing' : ''}`}
+      onPointerEnter={onEnter}
+      onPointerLeave={() => setPreview(false)}
+    >
+      <button
+        className="xcard-hit"
+        onClick={() => onSelect(p.id)}
+        onFocus={() => setPreview(true)}
+        onBlur={() => setPreview(false)}
+        aria-label={t('explore.openDest', { city: p.city })}
+      >
         <span className="xcard-media">
-          {p.image
-            ? <img className="xcard-img" src={cardThumb(p.image)} alt="" loading="lazy" />
-            : <span className="xcard-img xcard-noimg" aria-hidden="true" />}
+          <HeroImage
+            url={p.image}
+            city={p.city}
+            iso2={p.iso2}
+            className="xcard-img"
+            maxWidth={500}
+            sizes={CARD_SIZES}
+          />
           {best && (
             <span className="xcard-best" title={t('explore.bestMonthsTitle')}>
               <CalendarIcon size={11} /> {best}
             </span>
           )}
+          {/* The seal, not the number, is what a tier means. It shows only
+              where the model actually awarded one, so it stays a signal. */}
+          {p.rating?.label && (
+            <span className={`xcard-seal ${tierClass(p.rating)}`}>{p.rating.label}</span>
+          )}
         </span>
         <span className="xcard-body">
           <span className="xcard-name-row">
             <span className="xcard-name">{p.city}</span>
-            <RatingBadge rating={p.rating} size="xs" showGem={false} />
+            <ScoreChip rating={p.rating} size="xs" />
           </span>
           <span className="xcard-sub">
             <CountryFlag country={p.iso2} size={11} />
@@ -97,8 +178,7 @@ const ExploreCard = React.memo(function ExploreCard({ p, selected, fav, onSelect
           </span>
           {kf && <span className="xcard-known">{kf}</span>}
           <span className="xcard-foot">
-            <MiniIndex icon={BedIcon} value={p.stayIx} label={t('explore.ixStay')} />
-            <MiniIndex icon={DiningIcon} value={p.foodIx} label={t('explore.ixFood')} />
+            <CostLine cost={p.cost} t={t} />
           </span>
         </span>
       </button>
@@ -110,6 +190,7 @@ const ExploreCard = React.memo(function ExploreCard({ p, selected, fav, onSelect
       >
         <Star filled={fav} />
       </button>
+      {preview && <CardPreview p={p} t={t} />}
     </div>
   );
 });
@@ -217,7 +298,9 @@ export function ExploreTab({
               {SORTS.map((s) => (
                 <button
                   key={s.key}
-                  className={(sortKey === s.key || (s.key === 'beauty' && sortKey === 'price')) ? 'on' : ''}
+                  className={(sortKey === s.key
+                    || (s.key === 'beauty' && sortKey === 'price')
+                    || (s.key === 'cost' && (sortKey === 'stay' || sortKey === 'food'))) ? 'on' : ''}
                   onClick={() => setSortKey(s.key)}
                 >
                   {t(s.labelKey)}
@@ -254,7 +337,7 @@ export function ExploreTab({
           {rows.length === 0
             ? (showFavOnly ? t('results.emptyFav') : t('results.empty'))
             : t(rows.length === 1 ? 'explore.countOne' : 'explore.countMany', { n: count(rows.length) })}
-          {rows.length > 0 && <span className="explore-legend">{t('explore.ixLegend')}</span>}
+          {rows.length > 0 && <span className="explore-legend">{t('explore.costLegend')}</span>}
           {isMock && <span className="explore-mock">Mock data</span>}
         </p>
 

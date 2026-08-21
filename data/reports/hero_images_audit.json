@@ -8597,5 +8597,31 @@
   "gem:pirot-centralni-trg",
   "gem:markov-grad",
   "gem:bendorf"
- ]
+ ],
+ "dupes": {
+  "generated": "2026-08-21",
+  "fixed": [
+   {
+    "id": "gem:spa-belgium",
+    "city": "Spa",
+    "country": "Belgium",
+    "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/Roman_Baths_in_Bath_Spa%2C_England_-_July_2006.jpg/960px-Roman_Baths_in_Bath_Spa%2C_England_-_July_2006.jpg",
+    "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Spa_JPG01.jpg/960px-Spa_JPG01.jpg",
+    "file": "Spa JPG01",
+    "score": 9.5,
+    "shared_with": "gem:bath"
+   },
+   {
+    "id": "gem:devils-bridge-wales",
+    "city": "Devil's Bridge",
+    "country": "United Kingdom",
+    "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/50/Park_-_panoramio_%2896%29.jpg/960px-Park_-_panoramio_%2896%29.jpg",
+    "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Pontarfynach_-_Devil%27s_Bridge%2C_Powys%2C_Wales_06.jpg/960px-Pontarfynach_-_Devil%27s_Bridge%2C_Powys%2C_Wales_06.jpg",
+    "file": "Pontarfynach - Devil's Bridge, Powys, Wales 06",
+    "score": 8.5,
+    "shared_with": "gem:devils-bridge-ardino"
+   }
+  ],
+  "unfixed": []
+ }
 }

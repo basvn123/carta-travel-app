@@ -40,7 +40,9 @@ export const ATTRIBUTIONS = [
   {
     source: 'Wikivoyage',
     license: 'CC BY-SA 4.0',
-    credit: 'Travel guide extracts from Wikivoyage, CC BY-SA 4.0',
+    credit: 'Travel guide extracts, the onward-journey links and the named '
+      + 'itineraries behind the ready-made trips, from Wikivoyage, '
+      + 'CC BY-SA 4.0',
   },
   {
     source: 'Wikimedia Commons',
@@ -61,7 +63,9 @@ export const ATTRIBUTIONS = [
   {
     source: 'Eurostat',
     license: 'CC BY 4.0',
-    credit: 'Tourism statistics © European Union, Eurostat',
+    credit: 'Tourism statistics, including the visitor nights behind the '
+      + 'crowding levels and the trip demand check, '
+      + '© European Union, Eurostat',
   },
   {
     source: 'EuroGeographics',

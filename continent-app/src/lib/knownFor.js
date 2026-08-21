@@ -9,6 +9,7 @@
  * destination ever shows an empty space. No em dashes anywhere.
  */
 import { swimRelevant } from '../components/WaterQualityBadge.jsx';
+import { placeLine, isTemplateBlurb } from './placeStory.js';
 
 const KNOWN_FOR = {
   // Belgium
@@ -305,13 +306,27 @@ const CAT_WORDS = {
   luxury: 'A luxury escape', city: 'A city break', capital: 'A capital city',
 };
 
-/** The short "what is this place known for" line for a destination.
- *  Curated line first, then the gem blurb, then a category fallback. */
+/**
+ * The short "what is this place known for" line for a destination.
+ *
+ * The ladder, best first:
+ *   1. the hand-written line (260 destinations)
+ *   2. a pipeline blurb that actually says something specific
+ *   3. the named sights, composed (lib/placeStory.js). This is what stops
+ *      "known for its landmark and historical building and church cathedral"
+ *      appearing on 235 cards at once.
+ *   4. the templated blurb after all, if nothing else survived
+ *   5. a category line, so no card is ever blank
+ */
 export function knownFor(dest) {
   if (!dest) return '';
   const curated = KNOWN_FOR[dest.id] || KNOWN_FOR[dest.iata];
   if (curated) return curated;
-  if (dest.blurb && dest.blurb.trim()) return dest.blurb.trim();
+  const blurb = dest.blurb && dest.blurb.trim() ? dest.blurb.trim() : '';
+  if (blurb && !isTemplateBlurb(blurb)) return blurb;
+  const composed = placeLine(dest);
+  if (composed) return composed;
+  if (blurb) return blurb;
   const cats = dest.categories || [];
   const word = cats.map((c) => CAT_WORDS[c]).find(Boolean);
   const lead = word || 'Worth a stop';

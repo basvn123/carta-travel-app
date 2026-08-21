@@ -22465,6 +22465,7 @@ button.ai-sched-main:focus-visible {
   box-shadow: var(--shadow-card);
   border-color: var(--rule);
   transform: translateY(-1px);
+  z-index: 2;
 }
 .xcard.selected { border-color: var(--accent); box-shadow: var(--shadow-card); }
 .xcard-hit {
@@ -22493,12 +22494,45 @@ button.ai-sched-main:focus-visible {
   transition: transform .35s ease;
 }
 .xcard:hover .xcard-img { transform: scale(1.03); }
-.xcard-noimg {
-  background:
-    radial-gradient(circle at 30% 30%, var(--paper) 0 2px, transparent 2px),
-    radial-gradient(circle at 70% 60%, var(--paper) 0 2px, transparent 2px),
-    var(--paper-dim);
+/* No usable photo (none harvested, or the one on file already stands for a
+   better-known place). A hole in a photo grid reads as a broken page, so the
+   slot says which place it is instead of saying nothing. */
+.hero-blank {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  width: 100%;
+  height: 100%;
+  background: var(--paper-dim);
+  color: var(--ink-mute);
 }
+.hero-blank-mark {
+  font-family: var(--display);
+  font-size: 23px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+.xp-near-img.hero-blank { gap: 3px; }
+.xp-near-img.hero-blank .hero-blank-mark { font-size: 12px; }
+
+/* The tier seal. The score is a number; this is what the number MEANS, and
+   it shows only on the 35% of the catalogue the model actually awarded a
+   tier, which is what keeps it a signal rather than a sticker. */
+.xcard-seal {
+  position: absolute;
+  left: 8px; top: 8px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.93);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: var(--ink-soft);
+  box-shadow: var(--shadow-1);
+}
+.xcard-seal.rt-2 { color: var(--rate); }
+.xcard-seal.rt-3 { background: var(--rate); color: var(--paper); }
 .xcard-best {
   position: absolute;
   left: 8px; bottom: 8px;
@@ -22578,78 +22612,362 @@ button.ai-sched-main:focus-visible {
   border-top: 1px solid var(--rule-soft);
 }
 
-/* The 0-10 index meter, card size. 10 = cheapest in the catalogue. */
-.xcard-ix {
+/* ── Cost: a euro figure and the five-step gauge that gives it a scale.
+      "EUR 71 a day" means nothing to a reader who does not already know what
+      Europe costs, and the whole point of a comparison page is that they do
+      not. Five segments is Portugal against Switzerland without either having
+      to be named.
+
+      Colour is used as data, never as decoration. The cheapest band is green
+      because pointing at the cheapest option is the one thing this product
+      exists to do; the priciest is the accent; the three in between are ink.
+      A five-colour ramp would turn a measurement into a mood. ── */
+.cost-gauge {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 2px;
+  flex: none;
+}
+.cost-seg {
+  display: block;
+  width: 4px;
+  height: 10px;
+  border-radius: 1px;
+  background: var(--rule-soft);
+}
+.cost-seg.on { background: var(--ink-mute); }
+.cost-gauge.cheapest .cost-seg.on { background: var(--green); }
+.cost-gauge.dearest .cost-seg.on { background: var(--accent); }
+
+.xcard-cost {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
-  flex: 1 1 0;
+  gap: 7px;
   min-width: 0;
+}
+.xcard-cost-eur {
+  font-size: 13.5px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+}
+.xcard-cost-unit {
+  font-size: 11.5px;
   color: var(--ink-mute);
 }
-.xcard-ix-track {
-  flex: 1 1 auto;
-  height: 4px;
-  min-width: 22px;
-  border-radius: 2px;
-  background: var(--paper-dim);
+
+/* ── The hover preview: what the card cannot fit, over the top of the photo.
+      It covers the media box exactly and no more, so it is never clipped by
+      the grid and never runs off the bottom of the viewport the way a
+      popover anchored under the card would on the last row.
+
+      pointer-events: none is doing real work. The card stays clickable
+      through it, and because the pointer is still inside the card the
+      preview does not vanish when you move onto it, which is WCAG 1.4.13's
+      "hoverable" requirement met by geometry instead of by a safe triangle. ── */
+.xcard-preview {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  z-index: 3;
+  aspect-ratio: 16 / 9.6;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 5px;
+  padding: 11px 13px 12px;
+  overflow: hidden;
+  pointer-events: none;
+  color: #fff;
+  /* A legibility scrim, not decoration: the photo stays readable underneath,
+     so hovering annotates the place rather than hiding it. Same device the
+     panel hero already uses. */
+  background: linear-gradient(
+    to top,
+    rgba(15, 23, 42, 0.93) 0%,
+    rgba(15, 23, 42, 0.86) 46%,
+    rgba(15, 23, 42, 0.34) 100%
+  );
+  animation: xcard-preview-in .13s ease-out;
+}
+@keyframes xcard-preview-in { from { opacity: 0; } to { opacity: 1; } }
+.xcard-preview-lead {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
   overflow: hidden;
 }
-.xcard-ix-fill {
-  display: block;
-  height: 100%;
-  border-radius: 2px;
-  background: var(--ink-mute);
-}
-.xcard-ix-fill.good { background: var(--green); }
-.xcard-ix-val {
-  font-family: var(--mono);
+.xcard-preview-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
   font-size: 11px;
+  color: rgba(255, 255, 255, 0.84);
+}
+.xcard-preview-row span {
+  /* Two lines, not an ellipsis: three sight names rarely fit one line at card
+     width, and half a name is worth less than a second row. */
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}
+.xcard-preview-row svg { flex: none; opacity: 0.75; }
+.xcard-preview-cost {
+  margin: 2px 0 0;
+  padding-top: 6px;
+  border-top: 1px solid rgba(255, 255, 255, 0.22);
+  font-family: var(--mono);
+  font-size: 10.5px;
+  font-variant-numeric: tabular-nums;
+  color: rgba(255, 255, 255, 0.9);
+}
+@media (prefers-reduced-motion: reduce) {
+  .xcard-preview { animation: none; }
+}
+
+/* ── Panel: the cost receipt. Same shape as the trip receipt everywhere else
+      in the product, so a reader who has read one can read them all. The
+      footer is not a disclaimer, it is the reason to believe the numbers. ── */
+.cost-receipt { margin-top: 2px; }
+.cost-row {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--rule-soft);
+}
+.cost-row-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12.5px;
+  color: var(--ink-soft);
+}
+.cost-row-label svg { flex: none; color: var(--ink-mute); }
+.cost-row-eur {
+  min-width: 46px;
+  text-align: right;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+}
+.cost-total {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  align-items: baseline;
+  gap: 12px;
+  margin-top: 1px;
+  padding-top: 11px;
+  border-top: 2px solid var(--ink);
+}
+.cost-total-label { font-size: 12.5px; font-weight: 600; color: var(--ink); }
+.cost-total-band { font-size: 11.5px; color: var(--ink-mute); }
+.cost-total-band.cheapest { color: var(--green); font-weight: 600; }
+.cost-total-band.dearest { color: var(--accent); font-weight: 600; }
+.cost-total-eur {
+  font-size: 23px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+}
+.cost-note, .cost-source {
+  margin: 8px 0 0;
+  font-size: 11px;
+  line-height: 1.45;
+  color: var(--ink-mute);
+}
+.cost-source { margin-top: 3px; }
+
+/* ── Panel: the locator map. maplibre-gl.css loads lazily and lands after
+      this file, so the pin's transform lives on an INNER element: maplibre
+      rewrites the marker root's inline transform on every frame. ── */
+.place-map {
+  width: 100%;
+  margin-bottom: 11px;
+  border: 1px solid var(--rule-soft);
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--paper-dim);
+}
+.place-map-wait { border-style: dashed; }
+.pm-pin-in {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 9px 3px 6px;
+  border-radius: 999px;
+  background: var(--bg-card);
+  border: 1px solid var(--rule);
+  box-shadow: var(--shadow-1);
+  white-space: nowrap;
+}
+.pm-pin-dot { width: 8px; height: 8px; border-radius: 50%; flex: none; }
+.pm-pin-name { font-size: 11.5px; font-weight: 600; color: var(--ink); }
+.pm-poi-in {
+  display: block;
+  width: 9px; height: 9px;
+  border-radius: 50%;
+  background: var(--ink-soft);
+  border: 2px solid var(--paper);
+  box-shadow: 0 0 0 1px rgba(15, 23, 42, 0.2);
+}
+
+/* ── Panel: what else is within a day's reach. Every row opens a real
+      catalogue destination, so a suggestion is never a dead end. ── */
+.xp-nearby { list-style: none; margin: 0; padding: 0; }
+.xp-near {
+  display: grid;
+  grid-template-columns: 48px 1fr auto;
+  align-items: center;
+  gap: 11px;
+  width: 100%;
+  padding: 7px 0;
+  border-bottom: 1px solid var(--rule-soft);
+  text-align: left;
+  background: none;
+  border-left: none; border-right: none; border-top: none;
+  cursor: pointer;
+}
+.xp-near:disabled { cursor: default; }
+.xp-near-img {
+  width: 48px; height: 36px;
+  border-radius: 5px;
+  object-fit: cover;
+  background: var(--paper-dim);
+}
+.xp-near-main { min-width: 0; }
+.xp-near-name {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.xp-near-sub {
+  display: block;
+  font-size: 11px;
+  color: var(--ink-mute);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.xp-near-km {
+  font-size: 12px;
   font-variant-numeric: tabular-nums;
   color: var(--ink-soft);
 }
-.xcard-ix-val.good { color: var(--green); font-weight: 600; }
+.xp-near:hover:not(:disabled) .xp-near-name { color: var(--accent); }
+.xp-near:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
-/* ── Panel: the indices block under the identity card. ── */
-.xp-indices { margin-top: 12px; display: grid; gap: 7px; }
-.xp-index {
+/* ── Panel: how the score is built. A number is a verdict; this is the
+      argument, at the model's own published weights. ── */
+.rate-scale { margin: 4px 0 14px; }
+.rate-scale-track {
+  position: relative;
+  height: 6px;
+  margin: 22px 6px 9px;
+  border-radius: 3px;
+  background: var(--paper-dim);
+}
+.rate-scale-tick {
+  position: absolute;
+  top: -4px;
+  width: 1px;
+  height: 14px;
+  background: var(--rule);
+}
+.rate-scale-me { position: absolute; top: -19px; transform: translateX(-50%); }
+.rate-scale-me-val {
+  display: inline-block;
+  padding: 1px 6px;
+  border-radius: 4px;
+  background: var(--ink-soft);
+  color: var(--paper);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+.rate-scale-me.rt-2 .rate-scale-me-val,
+.rate-scale-me.rt-3 .rate-scale-me-val { background: var(--rate); }
+.rate-scale-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px 14px;
+  font-size: 10.5px;
+  color: var(--ink-mute);
+}
+.rate-scale-leg .mono { color: var(--ink-soft); }
+.rate-parts { list-style: none; margin: 0; padding: 0; display: grid; gap: 7px; }
+.rate-part {
   display: grid;
-  grid-template-columns: 118px 1fr 34px;
+  grid-template-columns: 134px 1fr 30px;
   align-items: center;
   gap: 10px;
 }
-.xp-index-label {
-  display: inline-flex;
-  align-items: center;
+.rate-part-name {
+  display: flex;
+  align-items: baseline;
   gap: 6px;
   font-size: 12px;
   color: var(--ink-soft);
 }
-.xp-index-track {
+.rate-part-weight { font-size: 10px; color: var(--ink-mute); }
+.rate-part-track {
   height: 6px;
   border-radius: 3px;
   background: var(--paper-dim);
   overflow: hidden;
 }
-.xp-index-fill {
+.rate-part-fill {
   display: block;
   height: 100%;
   border-radius: 3px;
-  background: var(--ink-mute);
+  background: var(--rate-soft);
 }
-.xp-index-fill.good { background: var(--green); }
-.xp-index-val {
-  font-family: var(--mono);
-  font-size: 12.5px;
-  font-variant-numeric: tabular-nums;
+.rate-part-val {
   text-align: right;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
   color: var(--ink);
 }
-.xp-index-val.good { color: var(--green); font-weight: 600; }
-.xp-index-note {
-  margin: 2px 0 0;
+.rate-break-note {
+  margin: 11px 0 0;
   font-size: 11px;
+  line-height: 1.45;
   color: var(--ink-mute);
+}
+
+/* The hero is an <img> now, not a background, so it can carry a srcset and
+   stop the panel downloading a 1280px photo onto a phone. */
+.panel-hero-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.section-title-aside {
+  margin-left: auto;
+  font-size: 10.5px;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--ink-mute);
+}
+
+/* The Explore panel is a reading surface, not a receipt strip: it carries a
+   map, a photo, a cost breakdown and four lists. 440px was set for the
+   fare-era panel and is too narrow for any of that. Desktop only; the phone
+   keeps its bottom sheet. */
+@media (min-width: 769px) {
+  .panel.dest-panel.explore-panel { width: clamp(460px, 44vw, 720px); }
+  .explore-panel .dest-panel-scroll { scrollbar-gutter: stable; }
+  .explore-panel .panel-hero { height: 248px; }
 }
 
 /* ── Panel: what is around. ── */
@@ -22848,11 +23166,21 @@ button.ai-sched-main:focus-visible {
   .explore-grid { grid-template-columns: repeat(auto-fill, minmax(168px, 1fr)); gap: 10px; }
   .explore-search { flex-basis: 100%; max-width: none; }
   .explore-toolbar-right { margin-left: 0; }
-  .xcard-known { display: none; }
+  /* The one line stays on phones. It was hidden when it was a category word
+     ("A beach town"); now it names actual sights, and a phone has no hover to
+     fall back on, so it is the only explanation a phone reader gets. */
+  .xcard-known {
+    -webkit-line-clamp: 2;
+    margin-top: 5px;
+    font-size: 11px;
+    line-height: 1.36;
+    min-height: 30px;
+  }
   .xcard-name { font-size: 14.5px; }
   .xcard-body { padding: 9px 10px 10px; }
   .xcard-foot { gap: 8px; margin-top: 7px; padding-top: 7px; }
-  .xp-index { grid-template-columns: 96px 1fr 32px; }
+  .rate-part { grid-template-columns: 108px 1fr 28px; }
+  .cost-total-eur { font-size: 21px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .xcard, .xcard-img, .xcard-star { transition: none; }
@@ -22871,3 +23199,459 @@ button.ai-sched-main:focus-visible {
   .explore-sort::-webkit-scrollbar { display: none; }
   .explore-sort button { white-space: nowrap; flex-shrink: 0; }
 }
+
+/* TRIPS-LAYER-START */
+/* -------------------------------------------------------------------------
+   Trips: the composed itineraries in the Destinations tab's Trips category,
+   and the page one opens to.
+
+   The category already existed and showed the drawn one-day city walks. The
+   day rail is what tells the two apart: 1 is a walk, 2 and up is a composed
+   itinerary from pipeline/trips. The rail reuses .places-classes and the card
+   reuses .places-card, because a trip and a beach are the same kind of object
+   on this tab and giving trips their own look would read as a bolted-on
+   product.
+   ------------------------------------------------------------------------- */
+
+/* The day rail. Mono numerals, because a day count is a measured figure. */
+.places-days .places-class { min-width: 44px; justify-content: center; }
+.places-days-n {
+  font-family: var(--mono);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* The itinerary card: this tab's photo-card grammar, plus a body strip.
+   .places-card-img is absolutely positioned at inset 0, so it needs a
+   positioned parent to fill. Without one it escaped the card, covered the day
+   rail and swallowed every click on the page. */
+.places-icard {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  border-radius: 14px;
+  overflow: hidden;
+  background: var(--bg-card);
+  border: 1px solid var(--rule-soft);
+  text-align: left;
+  transition: box-shadow .18s, border-color .18s;
+}
+.places-icard:hover { box-shadow: var(--shadow-card); border-color: var(--rule); }
+.places-icard:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.itin-card-media {
+  position: relative;
+  display: block;
+  height: 132px;
+  overflow: hidden;
+  background: var(--paper-dim);
+}
+.places-icard:hover .places-card-img { transform: scale(1.03); }
+.itin-card-badges {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+.itin-card-days {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, .72);
+  color: #fff;
+  font-size: 11.5px;
+}
+.itin-card-days b { font-family: var(--mono); font-weight: 600; }
+.itin-card-near {
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: rgba(248, 246, 240, .92);
+  color: var(--ink-soft);
+  font-size: 10.5px;
+  font-weight: 600;
+}
+.itin-card-head {
+  position: absolute;
+  left: 11px;
+  right: 11px;
+  bottom: 9px;
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+}
+.itin-card-name {
+  flex: 1;
+  min-width: 0;
+  font-family: var(--display);
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.22;
+  color: #fff;
+}
+.itin-card-score {
+  flex: none;
+  padding: 2px 8px;
+  border-radius: 8px;
+  background: var(--rate-bg);
+  color: var(--rate);
+  font-family: var(--mono);
+  font-size: 12.5px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.itin-card-body { display: block; padding: 10px 12px 12px; }
+.itin-card-route {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 6px;
+  font-size: 12.5px;
+  color: var(--ink-soft);
+}
+.itin-card-city { display: inline-flex; align-items: center; gap: 4px; }
+.itin-card-n { font-family: var(--mono); font-size: 10.5px; color: var(--ink-mute); }
+.itin-card-arrow { color: var(--ink-mute); }
+.itin-card-meta { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; }
+.itin-card-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border: 1px solid var(--rule-soft);
+  border-radius: 999px;
+  font-size: 11px;
+  color: var(--ink-mute);
+}
+.itin-card-chip.on {
+  border-color: var(--accent-bg);
+  background: var(--accent-bg);
+  color: var(--accent);
+}
+.itin-card-sights {
+  display: -webkit-box;
+  margin-top: 8px;
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: var(--ink-soft);
+  overflow: hidden;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+.itin-card-foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 12px;
+  margin-top: 9px;
+  padding-top: 8px;
+  border-top: 1px solid var(--rule-soft);
+  font-size: 11.5px;
+  color: var(--ink-mute);
+}
+.itin-card-cost {
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+  font-weight: 500;
+}
+.itin-card-checks { margin-left: auto; }
+.itin-card-checks.warn { color: var(--rate); }
+
+/* The trip page. Reuses .tpage chrome; these are the trip-only parts. */
+.itin-hero { position: relative; height: 260px; }
+/* !important is load order, not taste, and the same trap .tpage-map documents:
+   maplibre-gl.css arrives with the lazy chunk AFTER styles.css, same
+   specificity, later sheet wins. Without it the map drew in a strip down the
+   right of the hero with paper beside it. */
+.itin-hero .trip-map {
+  position: absolute !important;
+  inset: 0 !important;
+}
+/* A month range is longer than a mono cell, and clipping "Best May-Sep" to
+   "Best May-Se" is worse than letting it wrap onto a second line. */
+.itin-facts .tpage-fact-val.is-word { white-space: normal; }
+.itin-map-wait {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 20px;
+  background: var(--paper-dim);
+  font-size: 13px;
+  color: var(--ink-mute);
+  text-align: center;
+}
+.itin-sub { flex-wrap: wrap; gap: 6px 12px; }
+.itin-country { display: inline-flex; align-items: center; gap: 5px; }
+.itin-themes { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 9px; }
+.itin-theme {
+  padding: 2px 9px;
+  border: 1px solid var(--rule-soft);
+  border-radius: 999px;
+  font-size: 11.5px;
+  color: var(--ink-mute);
+}
+.itin-fact { display: flex; flex-direction: column; gap: 1px; }
+.itin-fact-icon { color: var(--ink-mute); margin-bottom: 3px; }
+.itin-use {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  width: 100%;
+  height: 44px;
+  margin-top: 14px;
+  border-radius: 10px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 14.5px;
+  font-weight: 600;
+}
+.itin-use:hover { background: var(--accent-soft); }
+.itin-use:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+.itin-copied { margin-top: 8px; font-size: 12.5px; color: var(--green); }
+
+.itin-why { margin: 0; padding-left: 18px; }
+.itin-why li { margin-bottom: 5px; font-size: 13.5px; line-height: 1.5; color: var(--ink-soft); }
+.itin-follows { display: flex; align-items: center; gap: 6px; margin-top: 8px; font-size: 12.5px; }
+.itin-follows a { color: var(--accent); }
+
+/* The route: a numbered list of beds with the moves between them. */
+.itin-route { list-style: none; margin: 0; padding: 0; }
+.itin-stop {
+  position: relative;
+  border: 1px solid var(--rule-soft);
+  border-radius: 12px;
+  background: var(--bg-card);
+  overflow: hidden;
+}
+.itin-stop.on { border-color: var(--accent); }
+.itin-stop-hit {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 9px 11px;
+  text-align: left;
+}
+.itin-stop-no {
+  flex: none;
+  width: 22px;
+  height: 22px;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  background: var(--ink);
+  color: var(--paper);
+  font-family: var(--mono);
+  font-size: 11.5px;
+  font-weight: 600;
+}
+.itin-stop-img {
+  flex: none;
+  width: 54px;
+  height: 44px;
+  object-fit: cover;
+  border-radius: 8px;
+  display: block;
+}
+.itin-sight-noimg { background: var(--paper-dim); }
+.itin-stop-text { flex: 1; min-width: 0; }
+.itin-stop-name {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 14.5px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.itin-stop-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 5px;
+  margin-top: 3px;
+  font-size: 11.5px;
+  color: var(--ink-mute);
+}
+.itin-dot { width: 3px; height: 3px; border-radius: 999px; background: var(--rule); }
+.itin-stop-open {
+  position: absolute;
+  top: 9px;
+  right: 11px;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--accent);
+}
+.itin-around {
+  list-style: none;
+  margin: 0;
+  padding: 0 11px 11px 43px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+}
+.itin-around li {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  color: var(--ink-soft);
+}
+.itin-around svg { color: var(--ink-mute); }
+.itin-around-km { font-family: var(--mono); font-size: 10.5px; color: var(--ink-mute); }
+.itin-leg {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin: 4px 0 4px 22px;
+  padding: 5px 0 5px 12px;
+  border-left: 2px solid var(--rule);
+  font-size: 12.5px;
+  color: var(--ink-soft);
+}
+.itin-leg svg { color: var(--ink-mute); }
+.itin-leg-home { color: var(--ink-mute); }
+.itin-est {
+  margin-left: auto;
+  font-size: 10.5px;
+  color: var(--ink-mute);
+  text-transform: uppercase;
+  letter-spacing: .07em;
+}
+
+/* Days out from a single base. */
+.itin-outs { display: grid; gap: 10px; }
+@media (min-width: 620px) {
+  .itin-outs { grid-template-columns: 1fr 1fr; }
+}
+.itin-out {
+  display: flex;
+  gap: 10px;
+  padding: 9px;
+  border: 1px solid var(--rule-soft);
+  border-radius: 12px;
+  background: var(--bg-card);
+}
+.itin-out-img { flex: none; width: 74px; height: 74px; object-fit: cover; border-radius: 9px; }
+.itin-out-body { min-width: 0; }
+.itin-out-head { display: flex; align-items: center; gap: 7px; }
+.itin-out-name { font-size: 14px; font-weight: 600; color: var(--ink); }
+.itin-out-meta {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 3px;
+  font-size: 11.5px;
+  color: var(--ink-mute);
+}
+.itin-out-sights {
+  list-style: none;
+  margin: 6px 0 0;
+  padding: 0;
+  font-size: 12px;
+  color: var(--ink-soft);
+}
+.itin-out-sights li { margin-bottom: 2px; }
+
+/* Day by day. */
+.itin-days { list-style: none; margin: 0; padding: 0; }
+.itin-day { padding: 12px 0; border-top: 1px solid var(--rule-soft); }
+.itin-day:first-child { border-top: none; padding-top: 0; }
+.itin-day-head { display: flex; align-items: center; gap: 9px; }
+.itin-day-no {
+  flex: none;
+  width: 24px;
+  height: 24px;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  background: var(--paper-dim);
+  color: var(--ink-soft);
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 600;
+}
+.itin-day.is-daytrip .itin-day-no { background: var(--accent-bg); color: var(--accent); }
+.itin-day.is-travel .itin-day-no { background: var(--rate-bg); color: var(--rate); }
+.itin-day-title { font-size: 14.5px; font-weight: 600; color: var(--ink); }
+.itin-day-leg {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 7px 0 0 33px;
+  font-size: 12.5px;
+  color: var(--ink-soft);
+}
+.itin-day-note { margin: 7px 0 0 33px; font-size: 12.5px; color: var(--ink-mute); }
+.itin-sights { list-style: none; margin: 9px 0 0 33px; padding: 0; display: grid; gap: 8px; }
+.itin-sight { display: flex; gap: 9px; align-items: flex-start; }
+.itin-sight-img { flex: none; width: 56px; height: 42px; object-fit: cover; border-radius: 7px; }
+.itin-sight-text { min-width: 0; }
+.itin-sight-name { display: block; font-size: 13.5px; font-weight: 600; color: var(--ink); }
+.itin-sight-desc { display: block; margin-top: 1px; font-size: 12px; color: var(--ink-mute); }
+
+/* What it costs, as a receipt rather than a headline number. */
+.itin-cost { list-style: none; margin: 0; padding: 0; }
+.itin-cost li {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 7px 0;
+  border-bottom: 1px solid var(--rule-soft);
+  font-size: 13.5px;
+  color: var(--ink-soft);
+}
+.itin-cost li b {
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+}
+.itin-cost-sum { border-bottom: none; border-top: 2px solid var(--ink); font-weight: 600; }
+
+/* What was checked. The block that makes the rest believable. */
+.itin-check-pass {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 13.5px;
+  color: var(--ink);
+}
+.itin-check-pass svg { color: var(--green); }
+.itin-check-clean { margin-top: 6px; font-size: 13px; color: var(--ink-mute); }
+.itin-warns { list-style: none; margin: 10px 0 0; padding: 0; display: grid; gap: 7px; }
+.itin-warns li {
+  display: flex;
+  gap: 7px;
+  align-items: flex-start;
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: var(--ink-soft);
+}
+.itin-warns svg { flex: none; margin-top: 2px; color: var(--rate); }
+
+.itin-gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 10px;
+}
+.itin-shot { margin: 0; }
+.itin-shot img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: 10px;
+  display: block;
+}
+.itin-shot figcaption { margin-top: 4px; font-size: 11.5px; color: var(--ink-mute); }
+
+@media (max-width: 720px) {
+  .itin-hero { height: 200px; }
+  .itin-sights { margin-left: 0; }
+  .itin-day-leg, .itin-day-note { margin-left: 0; }
+}
+/* TRIPS-LAYER-END */

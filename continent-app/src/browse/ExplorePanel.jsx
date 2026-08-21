@@ -5,36 +5,62 @@ import { WaterQualityBadge, swimRelevant } from '../components/WaterQualityBadge
 import { CrowdingBadge, crowdBadgeWorthShowing } from '../components/CrowdingBadge.jsx';
 import { ClimateStrip, MONTHS_SHORT, fmtMonthRanges } from './ClimateStrip.jsx';
 import { TrailsNearby } from '../components/TrailsNearby.jsx';
+import { HeroImage } from '../components/HeroImage.jsx';
+import { CostReceipt } from '../components/CostSummary.jsx';
+import { RatingBreakdown } from './RatingBreakdown.jsx';
 import { safeUrl } from '../lib/format.js';
 import { fetchActivitiesFull } from '../lib/appData.js';
 import { useDestInfo, mapsNavUrl, mapsSearchUrl } from '../lib/destInfo.js';
 import { useForecast } from '../lib/weather.js';
 import { packingList, packMonth } from '../lib/packing.js';
-import { cheapestStayMonths } from '../lib/indices.js';
+import { cheapestStayMonths } from '../lib/costIndex.js';
+import { nearbyPlaces, visitLength, haversineKm } from '../lib/nearby.js';
 import { useI18n } from '../i18n/index.jsx';
 import {
   InfoIcon, TreeIcon, PersonIcon, CalendarIcon, MapPinIcon, CameraIcon,
   ParkingIcon, MusicIcon, SunIcon, PartSunIcon, CloudIcon, FogIcon,
-  RainIcon, DrizzleIcon, SnowIcon, StormIcon,
+  RainIcon, DrizzleIcon, SnowIcon, StormIcon, ClockIcon, CompassIcon,
   ShoeIcon, SwimIcon, BootIcon, PlugIcon, BottleIcon, JacketIcon,
-  BackpackIcon, BedIcon, DiningIcon, CheckIcon,
+  BackpackIcon, ReceiptIcon, StarIcon, CheckIcon,
 } from '../components/Icons.jsx';
 
 /**
- * The Explore page's destination panel: what a place IS, not what it costs.
- * Replaces the fare receipt that used to live here (DetailPanel), now that
- * the Explore page has stepped away from all-in trip pricing.
+ * The Explore page's destination panel: what a place IS, not what it costs to
+ * fly to. Replaces the fare receipt that used to live here (DetailPanel), now
+ * that the Explore page has stepped away from all-in trip pricing.
  *
- * Top to bottom: identity (photo, score, what it is known for), the two
- * price-level indices, what is around (the POI layer), when to go (climate
- * normals + the stay-seasonality months + crowding), this week's weather
- * (live, Open-Meteo), where to park (OSM harvest), what to pack (derived),
- * and the recurring events Wikidata knows. Every section states its source
- * or its absence; nothing renders an invented value.
+ * The order is the order a person decides in, which is not the order the data
+ * arrived in:
+ *
+ *   identity      the photo, the name, the score and its tier
+ *   what a day    the cost receipt: bed, food, the day, and where those
+ *   costs         numbers came from. The product's core claim, said in euros
+ *                 rather than in a 0-10 index that could not carry it
+ *                 (see lib/costIndex.js for the full reckoning)
+ *   about         the guide lead, how long the place is worth, its nature
+ *   where it is   a real map with the town pinned and its sights on it,
+ *                 followed by the sights as a list you can navigate to
+ *   what is near  the other catalogue destinations worth pairing with it,
+ *                 with the distance, because "what else is around" is the
+ *                 question that actually turns a place into a trip
+ *   when to go    climate normals, the cheap months, the crowd fact
+ *   this week     the live forecast
+ *   the score     how the rating was built, at the model's own weights
+ *   practical     parking, events, what to pack
+ *
+ * Every section states its source or its absence, and a section with nothing
+ * to say is not rendered at all. An empty block that apologises for being
+ * empty is worse than no block: it spends a reader's attention to tell them
+ * nothing, and it makes the sections that DO have data look less trustworthy
+ * by association.
  *
  * The phone bottom-sheet mechanics (half/full snap, drag grip) are carried
  * over from the old panel unchanged.
  */
+
+// maplibre and its stylesheet stay out of the Explore bundle until a reader
+// actually opens a destination.
+const PlaceMap = React.lazy(() => import('./PlaceMap.jsx'));
 
 const WEATHER_GLYPH = {
   sun: SunIcon, partsun: PartSunIcon, cloud: CloudIcon, fog: FogIcon,
@@ -48,52 +74,31 @@ const PACK_GLYPH = {
 };
 
 // "City, 1.2M" style line from the GeoNames slice (population + settlement).
+// A population of 0 is a missing measurement, not a ghost town, so it is left
+// out rather than printed.
 const popLine = (g) => {
   if (!g) return '';
   const settle = g.settlement ? g.settlement.charAt(0).toUpperCase() + g.settlement.slice(1) : '';
   const n = g.population;
-  const pop = n == null ? ''
+  const pop = !(n > 0) ? ''
     : n >= 1_000_000 ? `${(n / 1e6).toFixed(1).replace(/\.0$/, '')}M`
     : n >= 10_000 ? `${Math.round(n / 1000)}k`
     : n.toLocaleString('en-GB');
   return [settle, pop].filter(Boolean).join(', ');
 };
 
-function haversineKm(lat1, lon1, lat2, lon2) {
-  const R = 6371;
-  const p1 = (lat1 * Math.PI) / 180;
-  const p2 = (lat2 * Math.PI) / 180;
-  const dp = ((lat2 - lat1) * Math.PI) / 180;
-  const dl = ((lon2 - lon1) * Math.PI) / 180;
-  const a = Math.sin(dp / 2) ** 2 + Math.cos(p1) * Math.cos(p2) * Math.sin(dl / 2) ** 2;
-  return 2 * R * Math.asin(Math.sqrt(a));
-}
-
 const fmtDist = (m) => (m >= 950 ? `${(m / 1000).toFixed(1)} km` : `${Math.round(m / 10) * 10} m`);
+const fmtKm = (km) => (km < 0.95 ? `${Math.round((km * 1000) / 10) * 10} m` : `${km.toFixed(1)} km`);
 
 // "Rome (Fiumicino)" -> "Rome": the gateway parenthetical was fare-era
 // routing detail, and this panel is about the place.
 const baseCity = (name) => (name || '').replace(/\s*\([^)]*\)\s*$/, '').trim();
 
-/** One index meter: label, 0-10 mono value, and a track whose fill says how
- *  cheap this place ranks against the whole catalogue. */
-function IndexMeter({ icon: Icon, label, value, level, t }) {
-  if (value == null) return null;
-  return (
-    <div className="xp-index" title={level === 'country' ? t('explore.ixCountryLevel') : t('explore.ixCityLevel')}>
-      <span className="xp-index-label"><Icon size={13} /> {label}</span>
-      <span className="xp-index-track" aria-hidden="true">
-        <span className={`xp-index-fill ${value >= 7 ? 'good' : ''}`} style={{ width: `${value * 10}%` }} />
-      </span>
-      <span className={`xp-index-val ${value >= 7 ? 'good' : ''}`}>{value.toFixed(1)}</span>
-    </div>
-  );
-}
-
-function SectionTitle({ icon: Icon, children }) {
+function SectionTitle({ icon: Icon, children, aside }) {
   return (
     <div className="section-title section-title-iconed">
       {Icon && <Icon size={12} />} {children}
+      {aside && <span className="section-title-aside">{aside}</span>}
     </div>
   );
 }
@@ -129,7 +134,7 @@ function ParkingSpot({ spot, kind, t }) {
   );
 }
 
-export function ExplorePanel({ destination, data, indices, onClose, isFavorite, onToggleFavorite }) {
+export function ExplorePanel({ destination, data, indices, onClose, isFavorite, onToggleFavorite, onSelect }) {
   const { t, lang } = useI18n();
 
   // Phone bottom sheet: half snap on open, drag the grip between half, full
@@ -210,18 +215,26 @@ export function ExplorePanel({ destination, data, indices, onClose, isFavorite, 
     return () => { live = false; };
   }, [destination?.id]);
 
+  // The other catalogue places worth pairing with this one. One linear scan
+  // of 3,038 rows, so it is memoised on the destination rather than cached.
+  const nearby = React.useMemo(
+    () => (destination && data ? nearbyPlaces(destination, data.destinations) : []),
+    [destination, data],
+  );
+
   if (!destination) {
     return <div className="panel dest-panel" aria-hidden="true" />;
   }
 
   const image = destination.image;
-  const ix = indices?.get?.(destination.id) || {};
+  const cost = indices?.get?.(destination.id) || null;
   const aboutLine = popLine(destination.geonames);
   const kf = knownFor(destination);
   const cheapMonths = cheapestStayMonths(destination);
   const month = packMonth(destination);
   const packs = packingList(destination, month);
   const city = baseCity(destination.city);
+  const stayLen = visitLength(destination);
   // A gateway record can carry the AIRPORT's Wikivoyage lead ("... is the
   // main airport of Rome"), which is the wrong About for a destination page.
   const guideText = destination.guide?.text
@@ -248,7 +261,7 @@ export function ExplorePanel({ destination, data, indices, onClose, isFavorite, 
   return (
     <div
       ref={sheetRef}
-      className={`panel dest-panel open ${dragging ? 'dragging' : ''}`}
+      className={`panel dest-panel explore-panel open ${dragging ? 'dragging' : ''}`}
       style={isNarrow && sheetH != null ? { height: sheetH } : undefined}
     >
       <div
@@ -282,7 +295,16 @@ export function ExplorePanel({ destination, data, indices, onClose, isFavorite, 
 
       <div className="dest-panel-scroll" ref={scrollRef}>
         {image?.url && (
-          <div className="panel-hero" style={{ backgroundImage: `url(${image.url})` }}>
+          <div className="panel-hero">
+            <HeroImage
+              url={image.url}
+              city={city}
+              iso2={destination.iso2}
+              className="panel-hero-img"
+              maxWidth={1280}
+              sizes="(max-width: 768px) 100vw, 720px"
+              eager
+            />
             <div className="panel-hero-shade" />
             {safeUrl(image.page) && (
               <a className="panel-hero-credit" href={safeUrl(image.page)} target="_blank" rel="noreferrer"
@@ -313,13 +335,6 @@ export function ExplorePanel({ destination, data, indices, onClose, isFavorite, 
             </div>
           )}
 
-          {/* The two indices this page shows instead of a trip price. */}
-          <div className="xp-indices">
-            <IndexMeter icon={BedIcon} label={t('explore.ixStay')} value={ix.stay} level={ix.stayLevel} t={t} />
-            <IndexMeter icon={DiningIcon} label={t('explore.ixFood')} value={ix.food} level={ix.foodLevel} t={t} />
-            <p className="xp-index-note">{t('explore.ixNote')}</p>
-          </div>
-
           <div className="panel-action-row">
             {onToggleFavorite && (
               <button
@@ -347,8 +362,16 @@ export function ExplorePanel({ destination, data, indices, onClose, isFavorite, 
           </div>
         </div>
 
-        {/* About: the guide lead and the nearest protected nature. */}
-        {(guideText || destination.nature?.nearest?.name) && (
+        {/* What a day here costs, in euros, with its provenance. */}
+        {cost?.dayEur != null && (
+          <div className="dsheet-card">
+            <SectionTitle icon={ReceiptIcon}>{t('cost.title')}</SectionTitle>
+            <CostReceipt cost={cost} t={t} />
+          </div>
+        )}
+
+        {/* About: the guide lead, how long the place is worth, its nature. */}
+        {(guideText || stayLen || destination.nature?.nearest?.name) && (
           <div className="dsheet-card">
             <SectionTitle icon={InfoIcon}>{t('detail.aboutTitle', { city })}</SectionTitle>
             {guideText && (
@@ -359,6 +382,12 @@ export function ExplorePanel({ destination, data, indices, onClose, isFavorite, 
                     target="_blank" rel="noreferrer">{t('detail.readGuide')}</a></>
                 )}
               </p>
+            )}
+            {stayLen && (
+              <div className="panel-about-fact">
+                <ClockIcon size={13} />
+                <span>{t(stayLen.key, { n: stayLen.n })}</span>
+              </div>
             )}
             {destination.nature?.nearest?.name && (
               <div className="panel-about-fact">
@@ -373,10 +402,14 @@ export function ExplorePanel({ destination, data, indices, onClose, isFavorite, 
           </div>
         )}
 
-        {/* What is around: the measured POI layer, walk-scale, with a map
-            link per sight. */}
+        {/* Where it is, and what is in walking reach of the centre. The map
+            carries the same sights the list below it does, so a reader can
+            see whether they cluster or sprawl before reading a single name. */}
         <div className="dsheet-card">
           <SectionTitle icon={CameraIcon}>{t('explore.aroundTitle')}</SectionTitle>
+          <React.Suspense fallback={<div className="place-map place-map-wait" style={{ height: 208 }} />}>
+            <PlaceMap lat={lat} lon={lon} city={city} pois={topPois} />
+          </React.Suspense>
           {pois == null ? (
             <p className="footnote">{'…'}</p>
           ) : topPois.length === 0 ? (
@@ -391,7 +424,7 @@ export function ExplorePanel({ destination, data, indices, onClose, isFavorite, 
                       <span className="xp-poi-name">{p.name}</span>
                       <span className="xp-poi-sub">
                         {p.kind && <span>{p.kind}</span>}
-                        {km != null && <span className="mono">{km < 0.95 ? `${Math.round(km * 1000 / 10) * 10} m` : `${km.toFixed(1)} km`}</span>}
+                        {km != null && <span className="mono">{fmtKm(km)}</span>}
                       </span>
                     </span>
                     {p.lat != null && (
@@ -414,6 +447,43 @@ export function ExplorePanel({ destination, data, indices, onClose, isFavorite, 
           <TrailsNearby destination={destination} />
         </div>
 
+        {/* What else is within a day's reach, from the same catalogue, so
+            every suggestion is a place you can open and price. */}
+        {nearby.length > 0 && (
+          <div className="dsheet-card">
+            <SectionTitle icon={CompassIcon}>{t('explore.nearbyTitle')}</SectionTitle>
+            <ul className="xp-nearby">
+              {nearby.map((n) => (
+                <li key={n.id}>
+                  <button
+                    type="button"
+                    className="xp-near"
+                    onClick={() => onSelect?.(n.id)}
+                    disabled={!onSelect}
+                  >
+                    <HeroImage
+                      url={n.image}
+                      city={n.city}
+                      iso2={n.iso2}
+                      className="xp-near-img"
+                      maxWidth={250}
+                      sizes="64px"
+                    />
+                    <span className="xp-near-main">
+                      <span className="xp-near-name">{n.city}</span>
+                      <span className="xp-near-sub">
+                        {n.rating?.label || n.country}
+                      </span>
+                    </span>
+                    <span className="xp-near-km mono">{Math.round(n.km)} km</span>
+                  </button>
+                </li>
+              ))}
+            </ul>
+            <p className="xp-source">{t('explore.nearbyNote')}</p>
+          </div>
+        )}
+
         {/* When to go: climate normals, the stay-price seasonality and the
             crowding fact, all independent of any fare. */}
         <div className="dsheet-card">
@@ -434,34 +504,43 @@ export function ExplorePanel({ destination, data, indices, onClose, isFavorite, 
         </div>
 
         {/* This week, live. States its source; renders nothing invented. */}
-        <div className="dsheet-card">
-          <SectionTitle icon={SunIcon}>{t('explore.weatherTitle')}</SectionTitle>
-          {forecast === undefined ? (
-            <p className="footnote">{'…'}</p>
-          ) : forecast === null ? (
-            <p className="footnote">{t('explore.weatherFail')}</p>
-          ) : (
-            <>
-              <div className="xp-weather">
-                {forecast.map((d) => {
-                  const Glyph = WEATHER_GLYPH[d.kind] || CloudIcon;
-                  return (
-                    <div key={d.date} className="xp-wday" title={`${d.date}`}>
-                      <span className="xp-wday-name">{fmtDay(d.date)}</span>
-                      <Glyph size={17} className="xp-wday-icon" />
-                      <span className="xp-wday-hi">{d.hi != null ? `${Math.round(d.hi)}°` : ''}</span>
-                      <span className="xp-wday-lo">{d.lo != null ? `${Math.round(d.lo)}°` : ''}</span>
-                      {d.rainPct != null && d.rainPct >= 30 && (
-                        <span className="xp-wday-rain mono">{`${d.rainPct}%`}</span>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-              <p className="xp-source">{t('explore.weatherCredit')}</p>
-            </>
-          )}
-        </div>
+        {forecast !== null && (
+          <div className="dsheet-card">
+            <SectionTitle icon={SunIcon}>{t('explore.weatherTitle')}</SectionTitle>
+            {forecast === undefined ? (
+              <p className="footnote">{'…'}</p>
+            ) : (
+              <>
+                <div className="xp-weather">
+                  {forecast.map((d) => {
+                    const Glyph = WEATHER_GLYPH[d.kind] || CloudIcon;
+                    return (
+                      <div key={d.date} className="xp-wday" title={`${d.date}`}>
+                        <span className="xp-wday-name">{fmtDay(d.date)}</span>
+                        <Glyph size={17} className="xp-wday-icon" />
+                        <span className="xp-wday-hi">{d.hi != null ? `${Math.round(d.hi)}°` : ''}</span>
+                        <span className="xp-wday-lo">{d.lo != null ? `${Math.round(d.lo)}°` : ''}</span>
+                        {d.rainPct != null && d.rainPct >= 30 && (
+                          <span className="xp-wday-rain mono">{`${d.rainPct}%`}</span>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+                <p className="xp-source">{t('explore.weatherCredit')}</p>
+              </>
+            )}
+          </div>
+        )}
+
+        {/* How the score was built. The number on the card is a verdict; this
+            is the argument behind it, at the model's own published weights. */}
+        {destination.rating?.score != null && (
+          <div className="dsheet-card">
+            <SectionTitle icon={StarIcon}>{t('rating.title')}</SectionTitle>
+            <RatingBreakdown rating={destination.rating} meta={data?.meta} t={t} />
+          </div>
+        )}
 
         {/* Where to park. The key ask: a concrete spot, its fee fact, and a
             navigation link, from the OSM harvest. */}
@@ -486,16 +565,12 @@ export function ExplorePanel({ destination, data, indices, onClose, isFavorite, 
           )}
         </div>
 
-        {/* Events and festivals Wikidata knows for this place. */}
-        <div className="dsheet-card">
-          <SectionTitle icon={MusicIcon}>{t('explore.eventsTitle')}</SectionTitle>
-          {info === undefined ? (
-            <p className="footnote">{'…'}</p>
-          ) : info?.missing ? (
-            <p className="footnote">{t('explore.eventsNotBuilt')}</p>
-          ) : events.length === 0 ? (
-            <p className="footnote">{t('explore.eventsNone')}</p>
-          ) : (
+        {/* Events and festivals Wikidata knows for this place. Rendered only
+            when there are some: a section whose whole content is "there are
+            none" is a section that should not be on the page. */}
+        {events.length > 0 && (
+          <div className="dsheet-card">
+            <SectionTitle icon={MusicIcon}>{t('explore.eventsTitle')}</SectionTitle>
             <ul className="xp-events">
               {events.map((e) => (
                 <li key={e.name} className="xp-event">
@@ -515,8 +590,8 @@ export function ExplorePanel({ destination, data, indices, onClose, isFavorite, 
                 </li>
               ))}
             </ul>
-          )}
-        </div>
+          </div>
+        )}
 
         {/* What to bring, derived from the month's climate and the place's
             character. The caption names the month it packed for. */}
