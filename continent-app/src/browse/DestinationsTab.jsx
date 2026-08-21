@@ -9,6 +9,13 @@ import { beachTags, beachRating } from '../lib/beachStory.js';
 import { loadLakeIndex, loadLakes, loadTopLakes } from '../lib/lakes.js';
 import { lakeTags, lakeRating, lakeSwim, isHiddenGem } from '../lib/lakeStory.js';
 import {
+  loadMountainIndex, loadMountains, loadTopMountains,
+} from '../lib/mountains.js';
+import {
+  mountainTags, mountainRating, isLiftServed, liftLabel,
+  isHiddenGem as isMountainGem,
+} from '../lib/mountainStory.js';
+import {
   associateTrip, haversineKm, tripCentre, tripKindKey, tripThemes,
   DISTANCE_BANDS, tripBand, trailRating,
 } from '../lib/trailCards.js';
@@ -34,7 +41,12 @@ import {
  *   Beaches    the published beach layer (pipeline/beaches)
  *   Lakes      the published lake layer (pipeline/lakes): lakes, reservoirs,
  *              lagoons, tarns and crater lakes, each with a swimming verdict
- *   Mountains  the mountain-flavoured slice of the published trips
+ *   Mountains  the published mountain layer (pipeline/mountains): summits,
+ *              volcanoes, ridges, sea cliffs and lowland high points, each
+ *              with the way to the top on it. It used to be the
+ *              mountain-flavoured slice of the published hikes, which meant
+ *              the Mountains tab showed trails and never showed the
+ *              Matterhorn.
  *
  * Trips are published one country at a time, so the four trip categories
  * browse country first: flag cards from the index until a country (or a
@@ -70,6 +82,7 @@ const TrailPage = lazy(() => import('./TrailPage.jsx').then((m) => ({ default: m
 // only ever reached by tapping a card, so it can arrive then.
 const BeachPage = lazy(() => import('./BeachPage.jsx').then((m) => ({ default: m.BeachPage })));
 const LakePage = lazy(() => import('./LakePage.jsx').then((m) => ({ default: m.LakePage })));
+const MountainPage = lazy(() => import('./MountainPage.jsx').then((m) => ({ default: m.MountainPage })));
 
 const norm = (s) => String(s || '')
   .toLowerCase()
@@ -370,6 +383,61 @@ function LakeCard({ lake, km, countryName, onOpen, t }) {
   );
 }
 
+/**
+ * One published mountain as a photo card.
+ *
+ * The beach card's shape with two additions, and neither is decoration. The
+ * height rides under the name in mono, because it is the first thing anybody
+ * asks about a mountain and it is a measured fact. And a mountain you can
+ * ride to the top of says so in the corner, in the same place the lake card
+ * puts its swimming verdict, because "can I get up it without walking" is the
+ * question that decides whether this is a morning out or an expedition.
+ */
+function MountainCard({ mountain, km, countryName, onOpen, t, lang }) {
+  const shot = mountain.images?.[0];
+  const tags = mountainTags(mountain, t, km == null ? 3 : 2);
+  const place = [mountain.range, countryName].filter(Boolean).join(', ');
+  const ride = isLiftServed(mountain);
+  return (
+    <button className="places-bcard places-mcard" onClick={() => onOpen(mountain)}>
+      {shot
+        ? <img className="places-card-img" src={shot.u} alt="" loading="lazy" />
+        : <span className="places-card-img places-card-noimg" aria-hidden="true" />}
+      <span className="places-card-scrim" aria-hidden="true" />
+      {km != null && (
+        <span className="places-card-km">{t('places.kmAway', { km: Math.round(km) })}</span>
+      )}
+      {ride && (
+        <span className="places-lcard-swim places-mcard-way">{liftLabel(mountain, t)}</span>
+      )}
+      <span className="places-card-overlay">
+        <span className="places-card-main">
+          <span className="places-card-name">{mountain.name}</span>
+          <span className="places-bcard-where">
+            <MapPinIcon size={12} />
+            {place}
+            {mountain.ele != null && (
+              <span className="places-mcard-ele">
+                {Math.round(mountain.ele).toLocaleString(lang)} m
+              </span>
+            )}
+          </span>
+          {tags.length > 0 && (
+            <span className="places-bcard-tags">
+              {tags.map((tag) => <span key={tag.code}>{tag.label}</span>)}
+              {isMountainGem(mountain) && <span className="tag-gem">{t('mtn.hiddenGem')}</span>}
+            </span>
+          )}
+        </span>
+        <span className="places-card-right">
+          <RatingBadge rating={mountainRating(mountain, t)} size="xs" showGem={false} />
+          <ChevronRightIcon size={15} className="places-card-chev" />
+        </span>
+      </span>
+    </button>
+  );
+}
+
 /** One country as a photo card: its best-rated place as the cover, the flag
  *  small beside the name. Real photography, never a stretched flag. */
 function CountryCard({ cc, name, sub, img, onPick }) {
@@ -402,6 +470,7 @@ export function DestinationsTab({
   openTrail = null, onOpenTrailConsumed,
   openBeach = null, onOpenBeachConsumed,
   openLake = null, onOpenLakeConsumed,
+  openMountain = null, onOpenMountainConsumed,
 }) {
   const { t, lang } = useI18n();
   const scrollRef = useRef(null);
@@ -470,6 +539,16 @@ export function DestinationsTab({
   const [lakesLoading, setLakesLoading] = useState(false);
   const [pageLake, setPageLake] = useState(null);
 
+  // Mountains: the same three artifacts again. `liftOnly` is this layer's one
+  // filter, and it exists because it is the question the tab is most often
+  // opened with: show me the mountains I can ride to the top of.
+  const [mountainIndex, setMountainIndex] = useState(null);
+  const [topMountains, setTopMountains] = useState(null);
+  const [countryMountains, setCountryMountains] = useState({});   // cc -> rows
+  const [mountainsLoading, setMountainsLoading] = useState(false);
+  const [pageMountain, setPageMountain] = useState(null);
+  const [liftOnly, setLiftOnly] = useState(false);
+
   useEffect(() => {
     let live = true;
     loadTrailsIndex().then((idx) => { if (live) setTrailsIndex(idx); });
@@ -518,7 +597,8 @@ export function DestinationsTab({
   // no stay tier, no price sorts. Everything on that tab is about the beach.
   const isBeachCat = cat === 'beaches';
   const isLakeCat = cat === 'lakes';
-  const isTripCat = cat !== 'general' && !isBeachCat && !isLakeCat;
+  const isMountainCat = cat === 'mountains';
+  const isTripCat = cat !== 'general' && !isBeachCat && !isLakeCat && !isMountainCat;
   const trailsCountry = nearPlace ? nearPlace.iso2 : country;
   useEffect(() => {
     if (!isTripCat || !trailsCountry) { setCountryTrips(null); return undefined; }
@@ -1081,21 +1161,129 @@ export function DestinationsTab({
     onOpenLakeConsumed?.();
   }, [openLake, onOpenLakeConsumed]);
 
+  // ── Mountains: the published mountain layer ──────────────────────────
+  //
+  // Third layer, third time this shape, and the same trap avoided the same
+  // way: `topMountains` is what says the work is done, never the loading flag.
+  useEffect(() => {
+    if (!isMountainCat || topMountains) return undefined;
+    let live = true;
+    setMountainsLoading(true);
+    Promise.all([loadMountainIndex(), loadTopMountains()]).then(([idx, top]) => {
+      if (!live) return;
+      setMountainIndex(idx);
+      setTopMountains(top || []);
+      setMountainsLoading(false);
+    });
+    return () => { live = false; };
+  }, [isMountainCat, topMountains]);
+
+  const mountainCountries = useMemo(
+    () => new Set((mountainIndex?.countries || []).map((c) => c.cc)),
+    [mountainIndex],
+  );
+
+  const queryMountainCountry = useMemo(() => {
+    if (!isMountainCat || !q || q.length < 2) return null;
+    for (const cc of mountainCountries) {
+      if (norm(cc) === q || norm(countryName(cc)).startsWith(q)) return cc;
+    }
+    return null;
+  }, [isMountainCat, q, mountainCountries, countryName]);
+
+  const wantMountainCountry = queryMountainCountry
+    || (nearPlace && mountainCountries.has(nearPlace.iso2) ? nearPlace.iso2 : null);
+
+  useEffect(() => {
+    if (!isMountainCat || !wantMountainCountry
+      || countryMountains[wantMountainCountry]) return undefined;
+    let live = true;
+    loadMountains(wantMountainCountry).then((rows) => {
+      if (!live) return;
+      setCountryMountains((cur) => ({ ...cur, [wantMountainCountry]: rows || [] }));
+    });
+    return () => { live = false; };
+  }, [isMountainCat, wantMountainCountry, countryMountains]);
+
+  const mountainRows = useMemo(() => {
+    if (!isMountainCat || !topMountains) return null;
+    const loaded = wantMountainCountry ? countryMountains[wantMountainCountry] : null;
+    let pool = loaded || topMountains;
+    // Measuring from an address is the one case where the country file is not
+    // the whole answer: a border summit sits in two countries and a
+    // nearest-first list that stops at customs is a worse answer.
+    if (loaded && nearPlace) {
+      const have = new Set(loaded.map((m) => m.id));
+      pool = [...loaded, ...topMountains.filter((m) => !have.has(m.id))];
+    }
+    let rows = pool;
+    if (liftOnly) rows = rows.filter(isLiftServed);
+    if (q && !queryMountainCountry) {
+      rows = rows.filter((m) => norm(m.name).includes(q)
+        || norm(m.nameLocal || '').includes(q)
+        || norm(m.range || '').includes(q)
+        || norm(countryName(m.cc)).includes(q));
+    }
+    if (nearPlace) {
+      return rows
+        .map((m) => ({ b: m, km: haversineKm(nearPlace.lat, nearPlace.lon, m.lat, m.lon) }))
+        .sort((x, y) => x.km - y.km)
+        .slice(0, NEAR_MAX_ROWS);
+    }
+    return rows.map((m) => ({ b: m, km: null }));
+  }, [isMountainCat, topMountains, countryMountains, wantMountainCountry, q,
+    queryMountainCountry, nearPlace, countryName, liftOnly]);
+
+  // How many of the rows on screen you can ride to the top of, so the chip can
+  // carry its own count and grey itself out instead of leading to an empty
+  // list. Counted BEFORE the chip is applied, which is what lets the number
+  // stay still while it is tapped.
+  const liftCount = useMemo(() => {
+    if (!isMountainCat || !topMountains) return 0;
+    const loaded = wantMountainCountry ? countryMountains[wantMountainCountry] : null;
+    return (loaded || topMountains).filter(isLiftServed).length;
+  }, [isMountainCat, topMountains, countryMountains, wantMountainCountry]);
+
+  const absentMountainCountry = useMemo(() => {
+    if (!isMountainCat || !q || q.length < 2 || !mountainIndex) return null;
+    for (const cc of Object.keys(mountainIndex.absent || {})) {
+      if (norm(cc) === q || norm(countryName(cc)).startsWith(q)) return cc;
+    }
+    return null;
+  }, [isMountainCat, q, mountainIndex, countryName]);
+
+  // A shared #mtn= link, opened once its country file has landed.
+  useEffect(() => {
+    if (!openMountain) return;
+    setCat('mountains');
+    setQuery('');
+    setNearPlace(null);
+    loadMountains(openMountain.cc).then((rows) => {
+      const hit = (rows || []).find((m) => m.id === openMountain.id);
+      if (hit) setPageMountain(hit);
+      setCountryMountains((cur) => ({ ...cur, [openMountain.cc]: rows || [] }));
+    });
+    onOpenMountainConsumed?.();
+  }, [openMountain, onOpenMountainConsumed]);
+
   // New filter result: collapse the window and go back to the top.
   const rowCount = cat === 'general' ? destRows.length
     : isBeachCat ? (beachRows?.length ?? 0)
       : isLakeCat ? (lakeRows?.length ?? 0)
-        : (tripRows?.length ?? 0);
+        : isMountainCat ? (mountainRows?.length ?? 0)
+          : (tripRows?.length ?? 0);
   useEffect(() => {
     setVisible(PAGE);
     scrollRef.current?.scrollTo?.(0, 0);
-  }, [cat, country, q, nearPlace, sort, classes, trailSort, bands, loopsOnly]);
+  }, [cat, country, q, nearPlace, sort, classes, trailSort, bands, loopsOnly,
+    liftOnly]);
 
   // Walk-shape filters belong to the Trails list and to nothing else. Leaving
   // them set while the traveller browses Trips would silently hide rows on a
   // tab whose chips are not even on screen to explain why.
   useEffect(() => {
     if (cat !== 'trails') { setBands([]); setLoopsOnly(false); }
+    if (cat !== 'mountains') setLiftOnly(false);
   }, [cat]);
 
   useEffect(() => {
@@ -1157,10 +1345,11 @@ export function DestinationsTab({
   // a question nobody asked on this tab. The country a traveller wants is
   // reachable by typing its name into the one search field.
   //
-  // Lakes drop it too, and for the same reasons: a lake is not priced, is not
-  // slept in, and is ranked by its own index.
-  const showPriceChrome = cat !== 'trails' && !isBeachCat && !isLakeCat;
-  const showCountryPicker = !isBeachCat && !isLakeCat;
+  // Lakes and mountains drop it too, and for the same reasons: neither is
+  // priced, neither is slept in, and both are ranked by their own index.
+  const showPriceChrome = cat !== 'trails' && !isBeachCat && !isLakeCat
+    && !isMountainCat;
+  const showCountryPicker = !isBeachCat && !isLakeCat && !isMountainCat;
 
   return (
     <div className="places-tab" ref={scrollRef}>
@@ -1603,6 +1792,91 @@ export function DestinationsTab({
           </div>
         )}
 
+        {/* One chip, and it is the question this tab is most often opened
+            with: show me the mountains I can ride to the top of. It carries
+            its own count and greys itself out rather than leading to an empty
+            list, the same rule the trail length chips follow. */}
+        {isMountainCat && mountainRows && liftCount > 0 && (
+          <div className="places-classes places-bands" role="group" aria-label={t('mtn.chipLabel')}>
+            <button
+              type="button"
+              className={`places-class ${liftOnly ? 'on' : ''}`}
+              aria-pressed={liftOnly}
+              onClick={() => setLiftOnly((v) => !v)}
+            >
+              <span className="places-class-label">{t('mtn.chipLift')}</span>
+              <span className="places-class-n">{fmt(liftCount)}</span>
+            </button>
+          </div>
+        )}
+
+        {/* Mountains. Same shape as beaches and lakes: no country index in
+            front of the list, because "show me a mountain" is the request and
+            a page of flags is not an answer to it. Typing a country's name
+            swaps the capped European ranking for that country's full list. */}
+        {isMountainCat && (
+          <div className="places-list">
+            {mountainsLoading && <p className="places-empty">{'…'}</p>}
+
+            {!mountainsLoading && mountainRows && (
+              mountainRows.length > 0
+                ? (
+                  <>
+                    {!q && !nearPlace && mountainIndex && (
+                      <p className="places-beachhead">
+                        {t(mountainIndex.countries.length === 1
+                          ? 'mtn.listHead1' : 'mtn.listHead', {
+                          n: fmt(mountainIndex.total),
+                          countries: mountainIndex.countries.length,
+                        })}
+                      </p>
+                    )}
+                    {queryMountainCountry && !nearPlace && (
+                      <p className="places-beachhead">
+                        {t('mtn.countryHead', {
+                          country: countryName(queryMountainCountry),
+                          n: fmt(mountainRows.length),
+                        })}
+                      </p>
+                    )}
+                    {mountainRows.slice(0, visible).map(({ b, km }) => (
+                      <MountainCard
+                        key={b.id}
+                        mountain={b}
+                        km={km}
+                        countryName={countryName(b.cc)}
+                        onOpen={setPageMountain}
+                        t={t}
+                        lang={lang}
+                      />
+                    ))}
+                  </>
+                )
+                : (
+                  <p className="places-empty">
+                    {liftOnly
+                      ? t('mtn.noneLift')
+                      : nearPlace
+                        ? t('mtn.noneNear', { city: nearPlace.name })
+                        : absentMountainCountry
+                          ? t('mtn.noneCountry', { country: countryName(absentMountainCountry) })
+                          : t('mtn.noneMatch')}
+                  </p>
+                )
+            )}
+
+            {!mountainsLoading && !mountainRows && (
+              <p className="places-empty">{t('mtn.notPublished')}</p>
+            )}
+
+            {visible < (mountainRows?.length ?? 0) && (
+              <div ref={sentinelRef} className="places-sentinel" aria-hidden="true" style={{ height: 1 }} />
+            )}
+
+            {mountainRows?.length > 0 && <p className="places-credit">{t('mtn.credit')}</p>}
+          </div>
+        )}
+
         {isTripCat && (
           <div className="places-list">
             {showCountryIndex && (
@@ -1681,6 +1955,17 @@ export function DestinationsTab({
             warmC={lakeIndex?.model?.warm_c ?? 18}
             onClose={() => setPageLake(null)}
             onSelectDest={(id) => { setPageLake(null); onSelectDest(id); }}
+          />
+        </Suspense>
+      )}
+
+      {pageMountain && (
+        <Suspense fallback={null}>
+          <MountainPage
+            mountain={pageMountain}
+            countryName={countryName(pageMountain.cc)}
+            onClose={() => setPageMountain(null)}
+            onSelectDest={(id) => { setPageMountain(null); onSelectDest(id); }}
           />
         </Suspense>
       )}

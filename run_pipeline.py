@@ -40,6 +40,7 @@ So you schedule ONE weekly job and each layer self-selects how often it fires:
   monthly   natural features: the beach and summit wire, rebuilt behind its gate
   quarterly beaches: the named coves of Europe, scored and photographed
   quarterly lakes: the best water bodies, scored, with a swimming verdict
+  quarterly mountains: the summits worth travelling for, and how you get up
   quarterly open-data snapshots (crowding, bathing water, lodging) *
   quarterly trails ingest (Geofabrik hiking relations -> the trailslab lab)
   quarterly coverage gaps (what Europe has that the catalogue does not)
@@ -1074,6 +1075,33 @@ def guard_lakes():
     return True, "lake stages present, EEA bathing water and WorldClim cached"
 
 
+def guard_mountains():
+    """The mountain layer needs its own scripts and the Wikidata spine.
+
+    The spine is the one input that is not re-queried: cache/features_wikidata
+    .json already holds every Wikidata mountain in these countries with its
+    elevation, prominence and sitelink count, and re-harvesting it would cost
+    hours to arrive at the same rows. Without it a build still runs, but it
+    falls back to the seed and the P610 high points alone, which is a few
+    hundred mountains instead of a few thousand. That is exactly the kind of
+    quiet degradation a guard is for.
+
+    Overpass is deliberately NOT guarded. It is the flakiest source in the
+    layer and the layer is designed to ship without it (see build_peaks.py),
+    so a missing access sweep is a documented state rather than a failure."""
+    missing = [s for s in ("peak_sources.py", "seed_peaks.py",
+                           "harvest_peaks.py", "enrich_peaks.py",
+                           "peak_index.py", "export_peaks.py", "build_peaks.py")
+               if not (ROOT / "pipeline" / "mountains" / s).exists()]
+    if missing:
+        return False, f"pipeline/mountains is missing {', '.join(missing)}"
+    if not (CACHE / "features_wikidata.json").exists():
+        return False, ("cache/features_wikidata.json is missing; without the "
+                       "Wikidata spine the layer falls back to the seed and "
+                       "the national high points alone")
+    return True, "mountain stages present, Wikidata spine cached"
+
+
 # Each task: key, title, cadence, writes_app_data, and either cmds or run.
 #   cadence         weekly | monthly | quarterly | after | backfill
 #                   (after = event-driven, see `after`; backfill = --only only)
@@ -1329,6 +1357,35 @@ TASKS = [
                  "EEA season or after pipeline/lakes/seed_lakes.py changes, "
                  "since the seed carries the swimming rules that override "
                  "every machine signal. The export validates before it writes "
+                 "anything, so a failure leaves the previous wire standing."),
+    },
+    {
+        "key": "mountains",
+        "title": "Mountains: the summits worth travelling for -> public/mountains",
+        "cadence": "quarterly",
+        "writes_app_data": False,
+        "writes_wire": True,
+        "soft": True,
+        "cmds": [[PY, "pipeline/mountains/build_peaks.py"]],
+        "guard": guard_mountains,
+        "note": ("the Mountains category on the Destinations tab: summits, "
+                 "volcanoes, ridges, sea cliffs and lowland high points, each "
+                 "with three sub scores (scenery, getting up, what is at the "
+                 "top) and the WAY UP on it, which is the question most people "
+                 "bring to this tab. Three stages in one command (harvest -> "
+                 "enrich -> export), each cached per country in "
+                 "cache/mountains, so a warm re-run is seconds and produces "
+                 "the same wire. The harvest re-queries almost nothing: the "
+                 "Wikidata spine is already on disk from the features build, "
+                 "and only the P610 high points, the thin-country hill pass "
+                 "and the unresolved seed entries go over the network. A cold "
+                 "build is a few hours, most of it Commons photographs. "
+                 "Quarterly, and by hand after pipeline/mountains/seed_peaks.py "
+                 "changes, since the seed is what pins the mountains fame does "
+                 "not find and the lift-served viewpoints that are nobody's "
+                 "highest. If Overpass is down, run it with --no-context and "
+                 "fill the access layer in later with enrich_peaks.py "
+                 "--context-only; the export validates before it writes "
                  "anything, so a failure leaves the previous wire standing."),
     },
     {

@@ -60,6 +60,7 @@ import { readFriendHandleFromUrl, stripFriendHandleFromUrl } from './auth/friend
 import { readTrailFromUrl } from './lib/trails.js';
 import { readBeachFromUrl } from './lib/beaches.js';
 import { readLakeFromUrl } from './lib/lakes.js';
+import { readMountainFromUrl } from './lib/mountains.js';
 import { loadTripDraft } from './planner/tripDraftStore.js';
 import { bindDayPlanCloud } from './planner/dayPlanSync.js';
 import { AuthProvider, useAuth } from './auth/AuthContext.jsx';
@@ -316,6 +317,12 @@ function TravelApp() {
   useEffect(() => {
     if (pendingLake) setActiveTab('places');
   }, [pendingLake]);
+
+  // And a single MOUNTAIN (#mtn=ch-matterhorn-Q1090&mc=CH, lib/mountains.js).
+  const [pendingMountain, setPendingMountain] = useState(() => readMountainFromUrl());
+  useEffect(() => {
+    if (pendingMountain) setActiveTab('places');
+  }, [pendingMountain]);
 
   // Stable identity: this lands on every Explore card, so a fresh function
   // per render would defeat the card's React.memo.
@@ -710,6 +717,8 @@ function TravelApp() {
             onOpenBeachConsumed={() => setPendingBeach(null)}
             openLake={pendingLake}
             onOpenLakeConsumed={() => setPendingLake(null)}
+            openMountain={pendingMountain}
+            onOpenMountainConsumed={() => setPendingMountain(null)}
           />
         </div>
       )}

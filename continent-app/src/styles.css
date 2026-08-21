@@ -20412,6 +20412,84 @@ button.ai-sched-main:focus-visible {
   .lpage-month-bar { height: 44px; }
 }
 
+/* ── The mountain page ──────────────────────────────────────────────────── */
+
+/* The way up, above the photograph, full width, never a small chip. Same
+   shape as the lake page's swimming verdict and for the same reason: it is
+   the field the reader came for, so it cannot be something you scroll past.
+   Three tones, and none of them is a warning colour, because "you have to
+   walk" is not a hazard. */
+.mpage-way {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 10px;
+  margin: 0 0 16px;
+  padding: 11px 13px;
+  border-radius: 10px;
+  border: 1px solid color-mix(in srgb, var(--way-ink) 42%, transparent);
+  background: color-mix(in srgb, var(--way-ink) 9%, transparent);
+}
+.mpage-way-ride { --way-ink: #2e9e5b; }
+.mpage-way-near { --way-ink: #55606f; }
+.mpage-way-foot { --way-ink: #55606f; }
+.mpage-way-word {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--way-ink);
+}
+/* The lift's own name is a proper noun off the map, so it reads as a name
+   rather than as part of the sentence. */
+.mpage-way-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+.mpage-way-src { font-size: 12.5px; color: var(--ink-soft); }
+.mpage-way-note {
+  flex-basis: 100%;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--ink-soft);
+}
+
+/* Height beside the score. Mono, because it is measured. */
+.mpage-height {
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 13px;
+  color: var(--ink-soft);
+}
+
+/* The line under the hazards that sends the reader to a local forecast. Not
+   small print: it is the most important sentence in the block. */
+.mpage-check {
+  margin: 10px 0 0;
+  font-size: 12.5px;
+  line-height: 1.6;
+  font-weight: 600;
+  color: #8a5f0d;
+}
+
+/* The card's height and way up, on one line under the name. */
+.places-mcard-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  font-size: 12px;
+  color: var(--ink-mute);
+}
+.places-mcard-ele {
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+}
+/* The way-up chip on a mountain card. Exactly the corner badge the lake card
+   uses for its swimming verdict, in the one tone that layer never needed: the
+   lake chip only ever appears to say no, and this one only ever appears to
+   say yes, you can ride to the top. */
+.places-mcard-way { --sw-ink: #2e9e5b; }
+
 /* ══════════════════════════════════════════════════════════════════════════
    The trail page: a published hike or city day as a page of its own, opened
    from a card in the Destinations tab or from a shared #trail= link. Replaced

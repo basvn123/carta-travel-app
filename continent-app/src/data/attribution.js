@@ -22,7 +22,8 @@ export const ATTRIBUTIONS = [
     source: 'OpenStreetMap',
     license: 'ODbL 1.0',
     credit: 'Map data, points of interest, nature areas, parking locations, '
-      + 'beaches, lake shores, trail routes and the landmarks along them '
+      + 'beaches, lake shores, trail routes, mountain lifts, huts and '
+      + 'summits, and the landmarks along them '
       + '© OpenStreetMap contributors',
   },
   {
@@ -33,7 +34,8 @@ export const ATTRIBUTIONS = [
   {
     source: 'Wikipedia',
     license: 'CC BY-SA 4.0',
-    credit: 'City descriptions from Wikipedia, CC BY-SA 4.0',
+    credit: 'City descriptions from Wikipedia, and the facts behind the '
+      + 'mountain pages, CC BY-SA 4.0',
   },
   {
     source: 'Wikivoyage',
@@ -43,8 +45,8 @@ export const ATTRIBUTIONS = [
   {
     source: 'Wikimedia Commons',
     license: 'Per-file (CC BY-SA, CC BY, public domain)',
-    credit: 'Photos from Wikimedia Commons, including the trail photographs '
-      + 'shot along each route, credited per image',
+    credit: 'Photos from Wikimedia Commons, including the trail, beach, lake '
+      + 'and mountain galleries, credited per image',
   },
   {
     source: 'GeoNames',
