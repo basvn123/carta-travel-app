@@ -8,9 +8,14 @@ breaks that promise on the first screen.
 A beach is published when all of these hold:
 
   it has photographs        at least MIN_IMAGES freely licensed pictures that
-                            passed the relevance filter. A beach we cannot
-                            show is a row of text, and the tab is not a
-                            gazetteer.
+                            each EVIDENCE being of this beach, and at least one
+                            of them strongly: the curated Wikidata image,
+                            membership of its Commons category, or its name in
+                            the file. A geotag within 250 m on a file that
+                            calls itself coastal can fill the later slots but
+                            cannot be all a beach is shown by. A beach we
+                            cannot show is a row of text, and a beach shown
+                            with a picture of the next cove is worse.
   it has a real name        something beyond the local word for "beach". "Plage"
                             is not a destination.
   it clears the floor       MIN_SCORE on the beauty index, so the tail of
@@ -80,6 +85,14 @@ ATTRIBUTION = {
 }
 
 
+# Evidence strong enough to say the picture is of THIS beach rather than of
+# the shoreline it sits on. A geotag plus a coastal word is good enough to sit
+# in the second or third slot, not good enough to be the only thing a beach is
+# shown by: in Ksamil, eight beach club strips inside one bay each ended up
+# with a photograph of the bay.
+STRONG_EVIDENCE = ("p18", "cat", "name")
+
+
 def clean_url(url):
     """Strip the Commons API's own tracking parameters.
 
@@ -113,9 +126,43 @@ def small_url(url):
     return re.sub(r"/\d+px-", f"/{CARD_PX}px-", url, count=1)
 
 
-def wire_images(beach):
+# A last subject filter, re-applied here rather than only in the enrich stage.
+# The vocabulary of "things that stand near a beach but are not it" only ever
+# grows, and every addition would otherwise mean re-photographing 4,000
+# beaches: a cemetery beside Kilmurvey Beach passed the name test because the
+# file is honestly called "Cemetery, Kilmurvey Beach". Running it again over
+# the cached picks makes the list a cheap knob.
+REJECT_SUBJECT_RE = re.compile(
+    r"(cemetery|graveyard|churchyard|war grave|memorial|"
+    r"playground|ruin|ruins|castle|church|chapel|monastery|cathedral|"
+    r"mosque|synagogue|monument|statue|museum|library|school|hospital|"
+    r"station|airport|factory|windmill|market|parking|car park|"
+    r"roadworks|construction|portrait|selfie|wedding|funeral|"
+    r"information board|noticeboard|plaque)", re.I)
+
+
+def usable_images(beach):
+    """The picks that still pass, in the order they will be shown."""
     out = []
     for img in beach.get("images") or []:
+        name = str(img.get("file") or "")
+        if name.startswith("File:"):
+            name = name[5:]
+        if REJECT_SUBJECT_RE.search(name) and img.get("evidence") != "p18":
+            continue
+        out.append(img)
+    return sorted(out, key=lambda i: (i.get("evidence") not in STRONG_EVIDENCE,
+                                      -(i.get("score") or 0),
+                                      i.get("file") or ""))
+
+
+def wire_images(beach):
+    out = []
+    # Strongly evidenced pictures first, best score inside each group. The
+    # card shows images[0] and nothing else, so the one picture most people
+    # ever see of a beach is never the one held up only by a geotag, even
+    # where the geotagged shot happens to be the wider and prettier frame.
+    for img in usable_images(beach):
         url = clean_url(img.get("url"))
         if not url:
             continue
@@ -128,6 +175,12 @@ def wire_images(beach):
             "lic": (img.get("license") or "").strip(),
             "licUrl": img.get("license_url") or "",
             "page": img.get("page") or "",
+            # WHY this picture is on this beach: p18 (the curated Wikidata
+            # image), cat (in the beach's Commons category), name (the beach
+            # is named in the file), geo (taken within 250 m and describing
+            # itself as coastal). It rides in the wire so the claim can be
+            # audited from the outside rather than trusted.
+            "ev": img.get("evidence") or "",
         })
     return out
 
@@ -233,7 +286,10 @@ def wire_beach(beach, comps, score10, tier, reasons):
 
 def publishable(beach):
     """The gate, minus the score (which needs the whole country first)."""
-    if len(beach.get("images") or []) < MIN_IMAGES:
+    images = usable_images(beach)
+    if len(images) < MIN_IMAGES:
+        return False
+    if not any(i.get("evidence") in STRONG_EVIDENCE for i in images):
         return False
     if not name_tokens(beach.get("name")):
         return False
@@ -316,6 +372,12 @@ def validate(rows):
                 bad.append(f"{where}: image is not https")
             if not img.get("lic"):
                 bad.append(f"{where}: an image carries no licence")
+            # No evidence, no publication. This is the check that would have
+            # caught "Playground in Kustermann-Park.jpg" standing in for a
+            # beach, and it is cheap enough to run on every row every time.
+            if img.get("ev") not in ("p18", "cat", "name", "geo"):
+                bad.append(f"{where}: an image has no evidence of being this "
+                           f"beach ({img.get('ev') or 'none'})")
         if not row["credit"]:
             bad.append(f"{where}: no attribution")
         if not row["why"]:
@@ -480,6 +542,16 @@ def main():
             encoding="utf-8")
         if args.verbose:
             print(f"  {cc}: -> {path.name} ({path.stat().st_size // 1024} KB)")
+    # A country that stops qualifying leaves its file behind, and a stale
+    # {CC}.json is still reachable: index.json will not list it, but the app
+    # fetches per country by code the moment somebody types that country's
+    # name. Prune, the same way pipeline/trails/export_wire.py prunes details.
+    for path in out_dir.glob("[A-Z][A-Z].json"):
+        if path.stem not in by_country:
+            path.unlink()
+            if args.verbose:
+                print(f"  pruned {path.name} (no longer publishable)")
+
     (out_dir / "index.json").write_text(
         json.dumps(payload, ensure_ascii=False, separators=(",", ":")),
         encoding="utf-8")

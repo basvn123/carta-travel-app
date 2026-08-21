@@ -62,6 +62,26 @@ check('lifestyle tier is gone on Beaches', await page.locator('.places-lifestyle
 check('price and A-Z sorts are gone on Beaches', await page.locator('.places-sort').count() === 0);
 check('the search field stays', await page.locator('.places-search input').count() === 1);
 
+// ── Every published photograph must evidence being of its beach ──
+// The wire itself, not the rendered page: this is a data claim, and the
+// cheapest place to catch "a playground stood in for a beach" is here.
+const wire = await page.evaluate(async () => {
+  const r = await fetch('/beaches/top.json');
+  return r.ok ? r.json() : null;
+});
+if (wire) {
+  const shots = wire.beaches.flatMap((b) => (b.images || []).map((i) => ({ b, i })));
+  const unevidenced = shots.filter(({ i }) => !['p18', 'cat', 'name', 'geo'].includes(i.ev));
+  check('every published photograph carries its evidence', unevidenced.length === 0,
+    unevidenced.length ? `${unevidenced.length} of ${shots.length} without` : `${shots.length} photographs`);
+  const byKind = shots.reduce((acc, { i }) => { acc[i.ev] = (acc[i.ev] || 0) + 1; return acc; }, {});
+  check('most photographs are name or category matched',
+    ((byKind.name || 0) + (byKind.cat || 0) + (byKind.p18 || 0)) >= shots.length * 0.7,
+    JSON.stringify(byKind));
+} else {
+  check('the beach wire is readable', false);
+}
+
 // ── Beaches, not a country index ──
 const flagCards = await page.locator('.places-ccard').count();
 check('no country flag index on Beaches', flagCards === 0, `${flagCards} flag cards`);

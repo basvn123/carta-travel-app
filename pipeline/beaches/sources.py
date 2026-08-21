@@ -80,6 +80,11 @@ MIN_INTERVAL = {
     # client on those harder than the plain API budget suggests.
     "commons.wikimedia.org": 0.4,
     "wikimedia.org": 0.25,
+    # Thumbnails, not queries. upload.wikimedia.org is a CDN serving static
+    # files, which costs Wikimedia far less than an imageinfo generator, and
+    # the lake layer's pixel probe fetches one per candidate. Its own budget,
+    # so downloading pictures never eats into the API's gap.
+    "upload.wikimedia.org": 0.15,
 }
 DEFAULT_INTERVAL = 0.35
 _last_call = {}

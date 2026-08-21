@@ -213,19 +213,41 @@ park centroid within 3 km earns "it is on the coast of X, a national park"
 score. Before that gate existed, a beach 5 km from a park was told it was in
 one.
 
-### Photographs, and the cove that has none
+### Photographs: proximity is not depiction
 
-Three passes, in order: the Commons category on the Wikidata item, a name
-search pinned to the coordinate with `nearcoord`, and, only when those come up
-short, a plain geosearch within 300 m. The first two are precise but they only
-find beaches somebody has NAMED a file after, which on the first Albanian run
-was 22 of 141. The third fixes exactly the case this layer exists for, the
-small unnamed cove, by moving the relevance test from the file name to where
-the camera stood.
+A photograph may only be published if something EVIDENCES that it shows this
+beach. The first version accepted anything geotagged within 300 m, and an audit
+of the published wire found 41 per cent of pictures never named their beach
+anywhere: a playground, castle ruins, a reed bed, a museum ship and a village
+square, all real photographs taken a few hundred metres from a beach and all
+useless on a card that promises the beach.
 
-It has one failure mode, and the export handles it: eight named beaches inside
-one bay (Ksamil) all borrow the same photograph. A lead photograph already used
-by a better scoring beach retires the row, so the best of the cluster keeps the
+Four kinds of evidence, and the kind each picture earned ships in the wire as
+`images[].ev`, so the claim can be audited from outside:
+
+| `ev` | What it means |
+|---|---|
+| `p18` | The Wikidata main image. Somebody curated it for this beach |
+| `cat` | A member of the beach's own Commons category |
+| `name` | The beach's distinctive name is in the file's title, description or categories |
+| `geo` | Taken within 250 m AND describing itself as coastal, which is what separates "the sea at Ksamil" from "playground in Kustermann-Park" |
+
+Nothing else is publishable, the export's validate step fails the build on any
+row whose picture lacks one, and at least ONE picture per beach has to be
+strongly evidenced (`p18`, `cat` or `name`). A geotag can fill the second and
+third slots but cannot be all a beach is shown by: in Ksamil, eight beach club
+strips inside one bay each ended up illustrated by a photograph of the bay. On top of the gate, files are rejected for
+being portrait (a person, not a view), under 1000 px, or titled as something
+that merely stands near a beach (a church, a car park, a noticeboard, an
+insect), and ranked up for aerials, panoramas, wide frames and coastal words.
+
+The cost is deliberate: beaches whose only photographs were of the car park no
+longer publish at all. Fewer beaches with true pictures beats more beaches with
+pictures of something else.
+
+The old failure mode is still handled at export: eight named beaches inside one
+bay all borrowing the same photograph. A lead photograph already used by a
+better scoring beach retires the row, so the best of the cluster keeps the
 picture and the name.
 
 Card thumbnails are 500 px because upload.wikimedia.org serves only a fixed

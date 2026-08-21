@@ -263,13 +263,91 @@ def prelim_score(b):
 
 # ---------------------------------------------------------------------------
 # Wikimedia Commons: the photographs
+#
+# The rule this section is built around: a photograph may only be published if
+# something EVIDENCES that it shows this beach. Not "was taken near it".
+#
+# The first version accepted anything geotagged within 300 m, and 41 per cent
+# of published pictures turned out not to name their beach anywhere. The
+# sample included a playground, castle ruins, a reed bed and a village square,
+# all perfectly real photographs taken a few hundred metres from a beach and
+# all useless on a card that promises the beach. Proximity is not depiction.
+#
+# So every candidate has to earn one of four kinds of evidence, and the kind
+# it earned rides into the wire on the image row:
+#
+#   p18   the Wikidata main image of this beach: somebody curated it
+#   cat   a member of the beach's own Commons category
+#   name  the beach's distinctive name in the file's title, description or
+#         categories
+#   geo   geotagged within GEO_STRICT_M AND carrying a coastal word of its
+#         own, which is what separates "the sea at Ksamil" from "playground in
+#         Kustermann-Park"
+#
+# Nothing else is publishable, and a beach with fewer than MIN_IMAGES survivors
+# is dropped by the export gate. Fewer beaches with true pictures beats more
+# beaches with pictures of the car park.
 # ---------------------------------------------------------------------------
+
+IMAGE_PROPS = {
+    "prop": "imageinfo",
+    "iiprop": "url|size|extmetadata",
+    "iiurlwidth": 1280,
+    "iiextmetadatafilter": "LicenseShortName|LicenseUrl|Artist|ImageDescription"
+                           "|Categories|ObjectName",
+}
+
+# Tight on purpose. 4 km used to be the name-search radius and it let a photo
+# of the village of the same name stand in for its beach.
+NAME_NEAR_KM = 2
+GEO_STRICT_M = 250
+
+MIN_IMAGE_W = 1000          # a card is 500 px wide on a 2x screen
+MAX_PORTRAIT = 1.15         # h/w above this is a person or an object, not a view
+
+# Words that make a file about the coast, in the languages the layer harvests.
+# Used two ways: as the corroboration a geotagged file needs, and as a small
+# ranking bonus everywhere else.
+COASTAL_RE = re.compile(
+    r"\b(beach|beaches|strand|strande|straende|playa|platja|praia|plage|"
+    r"spiaggia|spiagge|cala|caleta|calanque|paralia|plaza|plazha|plaz|pludmale|"
+    r"ranta|sandur|bay|cove|coast|coastline|shore|shoreline|seaside|sea|"
+    r"seascape|ocean|meer|mer|mare|mar|kust|kyst|rannik|zatoka|more|kalliot)\b",
+    re.I)
+
+# A view of the beach, rather than a thing that happens to stand on one.
+VIEW_RE = re.compile(
+    r"\b(aerial|drone|from above|birds?[- ]eye|panorama|panoramic|view|views|"
+    r"vista|viewpoint|overlook|looking|skyline|landscape|seen from)\b", re.I)
+
+# Rejected outright: the file is of something else that stands near a beach.
+# Kept tight and word bounded, because half of these words also appear in
+# perfectly good beach photographs as a background detail. The test runs on
+# the TITLE only for that reason, never on the description.
+NOT_A_VIEW_RE = re.compile(
+    r"\b(playground|spielplatz|ruin|ruins|ruiny|ruine|castle|schloss|zamek|"
+    r"church|kirche|kosciol|chapel|monastery|cathedral|mosque|synagogue|"
+    r"monument|memorial|statue|museum|library|school|hospital|station|"
+    r"bahnhof|airport|factory|windmill|watermill|market|markt|shop|store|"
+    r"menu|restaurant interior|hotel room|bedroom|kitchen|toilet|wc|"
+    r"parking|car park|roadworks|construction|baustelle|excavation|"
+    r"portrait|selfie|wedding|funeral|concert|festival|parade|match|"
+    r"football|stadium|racing|regatta start|scoreboard|"
+    r"information board|infotafel|noticeboard|plaque|milestone|"
+    r"reed|schilf|mushroom|fungus|beetle|spider|butterfly|moth|"
+    r"flower|blossom|orchid|lichen|moss)\b", re.I)
+
+# Conditions nobody chooses a beach for. Not rejected, just ranked down: a
+# storm photograph is still that beach.
+POOR_CONDITION_RE = re.compile(
+    r"\b(storm|sturm|flood|litter|rubbish|garbage|pollution|oil spill|"
+    r"snow|schnee|ice|frozen|fog|nebel|night|nacht|construction)\b", re.I)
 
 BAD_FILE_RE = re.compile(
     r"\.(svg|pdf|tif|tiff|ogv|webm|ogg|mid|djvu)$|"
     r"\b(map|karte|carte|mapa|plan|blazon|coat[ _]of[ _]arms|flag|logo|"
     r"diagram|chart|graph|sign|schild|panneau|stamp|briefmarke|poster|"
-    r"screenshot|portrait|grave|tomb)\b", re.I)
+    r"screenshot|grave|tomb)\b", re.I)
 
 # Species pages get filed under the beach they were photographed on, so a
 # search for Elafonissi returns a spider. Two capitalised Latin looking words
@@ -287,43 +365,35 @@ def commons_filename(url_or_name):
     return text.replace("_", " ").strip()
 
 
-IMAGE_PROPS = {
-    "prop": "imageinfo",
-    "iiprop": "url|size|extmetadata",
-    "iiurlwidth": 1280,
-    "iiextmetadatafilter": "LicenseShortName|LicenseUrl|Artist|ImageDescription",
-}
+def strip_html(text):
+    return re.sub(r"<[^>]+>", "", text or "").strip()
 
-# How close a photograph has to have been taken for its subject to be this
-# beach even when nothing in its title says so. 300 m is about the length of a
-# cove: at that range, on a coast, the camera was pointed at the water.
-GEO_NEAR_M = 300
+
+def _meta(info, key):
+    meta = info.get("extmetadata") or {}
+    return strip_html((meta.get(key) or {}).get("value", ""))
+
+
+def _haystack(title, info):
+    """Everything the file says about itself: title, caption, categories."""
+    return " ".join([
+        title,
+        _meta(info, "ObjectName"),
+        _meta(info, "ImageDescription"),
+        _meta(info, "Categories").replace("|", " "),
+    ])
 
 
 def image_candidates(beach, lang):
-    """Commons files that plausibly show THIS beach, best first.
+    """Commons files that might show THIS beach, each tagged with how it was
+    found, because how it was found is most of the evidence.
 
-    Three passes, all anchored on the coordinate.
-
-    The Commons category and the name-plus-nearcoord search are the precise
-    ones: a name search alone returns every Playa de la Concha in the Spanish
-    speaking world, and nearcoord pins it to this one. But they only find
-    beaches somebody has NAMED a file after, which on the first Albanian run
-    was 22 of 141: the small coves, the ones this layer exists to surface,
-    have photographs on Commons under the name of the bay, the village or the
-    photographer's holiday.
-
-    So the third pass is a plain geosearch with a tight radius, and the
-    relevance test moves from the file name to the camera position. Whatever
-    it returns is still scored and filtered by score_image()."""
+    Four passes in falling order of trust: the Wikidata main image, the
+    beach's own Commons category, a name search pinned to the coordinate, and
+    a tight geosearch. Everything is still filtered by score_image()."""
     seen, out = set(), []
-    queries = []
-    for name in (beach.get("name"), beach.get("name_local")):
-        if name and fold(name) not in {fold(q) for q in queries}:
-            queries.append(name)
-    cat = beach.get("commons_cat")
 
-    def collect(params, near=False):
+    def collect(params, source):
         try:
             data = mediawiki(params, api=COMMONS_API)
         except (SourceError, ValueError):
@@ -332,95 +402,137 @@ def image_candidates(beach, lang):
             title = page.get("title") or ""
             if title in seen:
                 continue
-            seen.add(title)
             info = (page.get("imageinfo") or [{}])[0]
             if not info.get("url"):
                 continue
-            out.append({"title": title, "info": info, "near": near})
+            seen.add(title)
+            out.append({"title": title, "info": info, "source": source})
 
+    # 1. The Wikidata main image (P18). Somebody chose this one to represent
+    #    the beach, which is a stronger statement than any search can make,
+    #    and until now the harvest collected it and nothing read it.
+    p18 = commons_filename(beach.get("wd_img"))
+    if p18:
+        collect({"titles": f"File:{p18}", **IMAGE_PROPS}, "p18")
+
+    cat = beach.get("commons_cat")
     if cat:
         collect({"generator": "categorymembers", "gcmtitle": f"Category:{cat}",
-                 "gcmtype": "file", "gcmlimit": 12, **IMAGE_PROPS})
+                 "gcmtype": "file", "gcmlimit": 12, **IMAGE_PROPS}, "cat")
+
+    queries = []
+    for name in (beach.get("name"), beach.get("name_local")):
+        if name and fold(name) not in {fold(q) for q in queries}:
+            queries.append(name)
     for name in queries[:2]:
         collect({"generator": "search", "gsrnamespace": 6, "gsrlimit": 10,
                  "gsrsearch": f"{name} filetype:bitmap "
-                              f"nearcoord:4km,{beach['lat']},{beach['lon']}",
-                 **IMAGE_PROPS})
-        if len(out) >= IMAGES_WANTED + 3:
-            break
-    if len(out) < IMAGES_WANTED:
-        collect({"generator": "geosearch", "ggsnamespace": 6,
-                 "ggscoord": f"{beach['lat']}|{beach['lon']}",
-                 "ggsradius": GEO_NEAR_M, "ggslimit": 12, **IMAGE_PROPS},
-                near=True)
+                              f"nearcoord:{NAME_NEAR_KM}km,"
+                              f"{beach['lat']},{beach['lon']}",
+                 **IMAGE_PROPS}, "search")
+
+    # 4. The small cove nobody named a file after. This pass only produces
+    #    publishable candidates when the file describes itself as coastal, so
+    #    it is worth running even when the others already found something.
+    collect({"generator": "geosearch", "ggsnamespace": 6,
+             "ggscoord": f"{beach['lat']}|{beach['lon']}",
+             "ggsradius": GEO_STRICT_M, "ggslimit": 12, **IMAGE_PROPS}, "geo")
     return out
 
 
+def image_evidence(cand, beach):
+    """Which of the four evidence kinds this file earns, or "" for none.
+
+    This is the gate. Everything below it is only ordering."""
+    if cand["source"] == "p18":
+        return "p18"
+    title = cand["title"][5:] if cand["title"].startswith("File:") else cand["title"]
+    hay = fold(_haystack(title, cand["info"]))
+    tokens = name_tokens(beach.get("name")) | name_tokens(beach.get("name_local"))
+    if tokens and any(t in hay for t in tokens):
+        return "name"
+    if cand["source"] == "cat":
+        return "cat"
+    if cand["source"] == "geo" and COASTAL_RE.search(hay):
+        return "geo"
+    # A name search hit that never names the beach is a coincidence of words.
+    return ""
+
+
 def score_image(cand, beach):
-    """How likely this file is to be a usable photograph OF the beach."""
+    """How good a VIEW of the beach this is, once it has cleared the gate.
+
+    Returns -1 for anything that must not be published, so the caller can sort
+    and cut in one pass."""
     title = cand["title"][5:] if cand["title"].startswith("File:") else cand["title"]
     info = cand["info"]
+
+    evidence = image_evidence(cand, beach)
+    if not evidence:
+        return -1, ""
     if BAD_FILE_RE.search(title) or SPECIES_RE.match(title):
-        return -1
+        return -1, ""
+    # The subject test runs on the title only. Half these words turn up in the
+    # description of a perfectly good beach photograph as background detail.
+    if NOT_A_VIEW_RE.search(title) and evidence != "p18":
+        return -1, ""
+    licence = _meta(info, "LicenseShortName")
+    if not licence or re.search(r"fair use|non[- ]free|copyright", licence, re.I):
+        return -1, ""
+
     width, height = info.get("width") or 0, info.get("height") or 0
-    if width < 800 or height < 500:
-        return -1
+    if width < MIN_IMAGE_W or height < 500:
+        return -1, ""
+    if height > width * MAX_PORTRAIT:
+        return -1, ""              # a portrait crop is a person, not a view
+
+    hay = _haystack(title, info)
+    folded = fold(hay)
     score = 0.0
-    tokens = name_tokens(beach.get("name")) | name_tokens(beach.get("name_local"))
-    folded = fold(title)
-    if tokens and any(t in folded for t in tokens):
-        score += 3.0
-    if re.search(r"\b(beach|strand|playa|praia|plage|spiaggia|cala|plaza|"
-                 r"paralia|bay|cove|coast|kust)\b", folded):
+    score += {"p18": 4.0, "cat": 2.2, "name": 2.6, "geo": 1.4}[evidence]
+    if COASTAL_RE.search(hay):
+        score += 1.2
+    if VIEW_RE.search(hay):
         score += 1.0
-    # Taken within GEO_NEAR_M of the beach. On a coast that is close enough to
-    # be the beach even when the file name says nothing, which is the only way
-    # an unnamed cove ever gets a picture. Worth less than a name match on
-    # purpose: it is the weaker claim, and it loses to one when both exist.
-    if cand.get("near"):
-        score += 1.6
+    ratio = width / max(1, height)
+    if ratio >= 1.4:
+        score += 0.8               # a wide frame is a view of somewhere
     if width >= 2000:
-        score += 0.6
-    if width > height:
-        score += 0.8                     # a hero card is a landscape crop
-    if "panoramio" in folded:
-        score -= 0.4                     # bulk import, often mediocre
-    if re.search(r"\b(aerial|from above|drone|panorama)\b", folded):
         score += 0.5
-    return score
-
-
-def strip_html(text):
-    return re.sub(r"<[^>]+>", "", text or "").strip()
+    if POOR_CONDITION_RE.search(hay):
+        score -= 1.5
+    if "panoramio" in folded:
+        score -= 0.3               # bulk import, mediocre on average
+    return score, evidence
 
 
 def pick_images(beach, lang):
+    """Up to IMAGES_WANTED photographs of this beach, best view first."""
     cands = image_candidates(beach, lang)
-    ranked = sorted(((score_image(c, beach), c) for c in cands),
-                    key=lambda pair: -pair[0])
+    scored = []
+    for cand in cands:
+        score, evidence = score_image(cand, beach)
+        if score >= 0:
+            scored.append((score, evidence, cand))
+    # Sort on score, then on the file name, so a re-run with the same answers
+    # produces the same four pictures in the same order.
+    scored.sort(key=lambda row: (-row[0], row[2]["title"]))
+
     picked = []
-    for score, cand in ranked:
-        if score < 1.0 or len(picked) >= IMAGES_WANTED:
-            continue
+    for score, evidence, cand in scored[:IMAGES_WANTED]:
         info = cand["info"]
-        meta = info.get("extmetadata") or {}
-
-        def meta_val(key):
-            return strip_html((meta.get(key) or {}).get("value", ""))
-
-        licence = meta_val("LicenseShortName")
-        if re.search(r"fair use|non[- ]free|copyright", licence, re.I):
-            continue
         picked.append({
             "file": cand["title"],
             "url": info.get("thumburl") or info.get("url"),
             "full": info.get("url"),
             "w": info.get("thumbwidth") or info.get("width"),
             "h": info.get("thumbheight") or info.get("height"),
-            "license": licence,
-            "license_url": meta_val("LicenseUrl"),
-            "author": meta_val("Artist")[:120],
-            "caption": meta_val("ImageDescription")[:200],
+            "license": _meta(info, "LicenseShortName"),
+            "license_url": _meta(info, "LicenseUrl"),
+            "author": _meta(info, "Artist")[:120],
+            "caption": _meta(info, "ImageDescription")[:200],
+            "evidence": evidence,
+            "score": round(score, 2),
             "page": "https://commons.wikimedia.org/wiki/"
                     + urllib.parse.quote(cand["title"].replace(" ", "_")),
         })
@@ -604,7 +716,8 @@ def coastal_guess(beach, bathing):
 
 
 def enrich_country(cc, shortlist_n=SHORTLIST, refresh=False, bathing=None,
-                   protected=None, dests=None, images=True, context=True):
+                   protected=None, dests=None, images=True, context=True,
+                   refresh_images=False):
     raw = load_cache(STAGE_IN, cc)
     if not raw or not raw.get("beaches"):
         print(f"  {cc}: nothing harvested")
@@ -662,7 +775,7 @@ def enrich_country(cc, shortlist_n=SHORTLIST, refresh=False, bathing=None,
         todo_img = []
         for b in short:
             was = previous.get(b["key"]) or {}
-            if was.get("images") is not None and not refresh:
+            if was.get("images") is not None and not (refresh or refresh_images):
                 b["images"] = was["images"]
             else:
                 todo_img.append(b)
@@ -722,6 +835,11 @@ def main():
     parser.add_argument("--refresh", action="store_true")
     parser.add_argument("--no-images", action="store_true",
                         help="skip Commons, for a quick structural run")
+    parser.add_argument("--refresh-images", action="store_true",
+                        help="re-run the photograph pass only, keeping the "
+                             "article facts and the Overpass ground truth. "
+                             "This is the one to use after changing what "
+                             "counts as a picture OF the beach.")
     parser.add_argument("--no-context", action="store_true",
                         help="skip the Overpass ground truth pass, so this can "
                              "run alongside a harvest without fighting it for "
@@ -742,7 +860,8 @@ def main():
             enrich_country(cc, shortlist_n=args.shortlist, refresh=args.refresh,
                            bathing=bathing, protected=protected, dests=dests,
                            images=not args.no_images,
-                           context=not args.no_context)
+                           context=not args.no_context,
+                           refresh_images=args.refresh_images)
         except KeyboardInterrupt:
             raise
         except Exception as exc:
