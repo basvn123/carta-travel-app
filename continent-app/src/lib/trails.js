@@ -18,6 +18,7 @@
  * trails yet, which is most of them.
  */
 import { useEffect, useState } from 'react';
+import { applyOverrides, applyOverride, overridesReady } from './overrides.js';
 
 const COUNTRY_RE = /^[A-Z]{2}$/;
 
@@ -60,22 +61,27 @@ export function loadTrailsIndex() {
 export function loadTrails(country) {
   const cc = String(country || '').toUpperCase();
   if (!COUNTRY_RE.test(cc)) return Promise.resolve(null);
-  return cached(`/trails/${cc}.json`).then((raw) => {
-    if (!raw || !Array.isArray(raw.trips)) return null;
-    // A trip with no line cannot be drawn and cannot be measured on the map,
-    // so it never reaches a caller that assumes both.
-    return raw.trips.filter((t) => t && t.id && t.geometry
-      && Array.isArray(t.geometry.coordinates)
-      && t.geometry.coordinates.length > 0);
-  });
+  return Promise.all([cached(`/trails/${cc}.json`), overridesReady()])
+    .then(([raw]) => {
+      if (!raw || !Array.isArray(raw.trips)) return null;
+      // A trip with no line cannot be drawn and cannot be measured on the map,
+      // so it never reaches a caller that assumes both.
+      const rows = raw.trips.filter((t) => t && t.id && t.geometry
+        && Array.isArray(t.geometry.coordinates)
+        && t.geometry.coordinates.length > 0);
+      // Trails carry one `img` string rather than an images array.
+      return applyOverrides('trail', rows, { imageKey: 'img' });
+    });
 }
 
 /** One trip in full, for the detail view: full-resolution geometry, the whole
  *  description, the elevation profile and the stops. */
 export function loadTrail(id) {
   if (!Number.isInteger(Number(id))) return Promise.resolve(null);
-  return cached(`/trails/trip/${Number(id)}.json`)
-    .then((raw) => (raw && raw.id ? raw : null));
+  return Promise.all([cached(`/trails/trip/${Number(id)}.json`), overridesReady()])
+    .then(([raw]) => (raw && raw.id
+      ? applyOverride('trail', raw, { imageKey: 'img' })
+      : null));
 }
 
 /**

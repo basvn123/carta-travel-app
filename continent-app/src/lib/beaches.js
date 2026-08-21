@@ -20,6 +20,7 @@
  * published reads: null, never an error.
  */
 import { useEffect, useState } from 'react';
+import { applyOverrides, overridesReady } from './overrides.js';
 
 const COUNTRY_RE = /^[A-Z]{2}$/;
 
@@ -76,10 +77,11 @@ export function loadBeachIndex() {
  * searching for one loads that country's full list on top of it.
  */
 export function loadTopBeaches() {
-  return cached('/beaches/top.json').then((raw) => {
-    if (!raw || !Array.isArray(raw.beaches)) return null;
-    return raw.beaches.filter((b) => b && b.id);
-  });
+  return Promise.all([cached('/beaches/top.json'), overridesReady()])
+    .then(([raw]) => {
+      if (!raw || !Array.isArray(raw.beaches)) return null;
+      return applyOverrides('beach', raw.beaches.filter((b) => b && b.id));
+    });
 }
 
 /** Every published beach in one country, best first. Null when there is no
@@ -87,11 +89,16 @@ export function loadTopBeaches() {
 export function loadBeaches(country) {
   const cc = String(country || '').toUpperCase();
   if (!COUNTRY_RE.test(cc)) return Promise.resolve(null);
-  return cached(`/beaches/${cc}.json`).then((raw) => {
-    if (!raw || !Array.isArray(raw.beaches)) return null;
-    return raw.beaches.filter((b) => b && b.id && Number.isFinite(b.lat)
-      && Number.isFinite(b.lon));
-  });
+  // The overrides ride along with the file rather than being applied by
+  // the caller, so every screen that reads this layer sees the corrected
+  // catalogue and no screen has to remember to ask.
+  return Promise.all([cached(`/beaches/${cc}.json`), overridesReady()])
+    .then(([raw]) => {
+      if (!raw || !Array.isArray(raw.beaches)) return null;
+      const rows = raw.beaches.filter((b) => b && b.id && Number.isFinite(b.lat)
+        && Number.isFinite(b.lon));
+      return applyOverrides('beach', rows);
+    });
 }
 
 /** The beaches of several countries at once, flattened and re-ranked. Used by

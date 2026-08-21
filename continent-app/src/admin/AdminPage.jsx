@@ -2,8 +2,8 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   adminAddNote, adminAnalytics, adminBanUser, adminDeleteUser, adminGetAudit,
   adminGetUser, adminHealth, adminListFeedback, adminListUsers, adminMark,
-  adminResetQuota, adminSetConfig, adminSetFeedbackStatus, adminSetTier,
-  adminStats, adminUnbanUser,
+  adminListOverrides, adminResetQuota, adminSetConfig, adminSetFeedbackStatus,
+  adminSetTier, adminStats, adminUnbanUser,
 } from '../auth/admin.js';
 import { supabase } from '../lib/supabaseClient.js';
 import { useAuth } from '../auth/AuthContext.jsx';
@@ -12,6 +12,7 @@ import { TIERS } from '../lib/pricing.js';
 import {
   AlertIcon, ArrowLeftIcon, DownloadIcon, LockIcon, SearchIcon,
 } from '../components/Icons.jsx';
+import { ContentSection } from './ContentSection.jsx';
 
 // The back office, as a page rather than a drawer.
 //
@@ -33,7 +34,7 @@ import {
 // gate; the gate is in the database.
 
 const PAGE = 50;
-const SECTIONS = ['overview', 'users', 'feedback', 'site', 'audit'];
+const SECTIONS = ['overview', 'users', 'content', 'feedback', 'site', 'audit'];
 
 function fmtDate(iso) {
   if (!iso) return '';
@@ -93,6 +94,8 @@ export function AdminPage({ onClose }) {
   const [analytics, setAnalytics] = useState(null);
   const [audit, setAudit] = useState(null);
   const [auditBusy, setAuditBusy] = useState(false);
+
+  const [overrides, setOverrides] = useState([]);
 
   const [feedback, setFeedback] = useState(null);
   const [fbFilter, setFbFilter] = useState('new');
@@ -194,6 +197,13 @@ export function AdminPage({ onClose }) {
     setAuditBusy(false);
   }, []);
 
+  const loadOverrides = useCallback(async () => {
+    try {
+      const res = await adminListOverrides(null);
+      setOverrides(res.rows || []);
+    } catch { setOverrides([]); }
+  }, []);
+
   const loadFeedback = useCallback(async (status) => {
     setFbBusy(true);
     try { setFeedback(await adminListFeedback(status === 'all' ? null : status, 100, 0)); } catch { setFeedback(null); }
@@ -207,6 +217,7 @@ export function AdminPage({ onClose }) {
     adminAnalytics().then(setAnalytics).catch(() => setAnalytics(null));
     loadAudit(25);
     loadFeedback('new');
+    loadOverrides();
     if (supabase) {
       supabase.from('site_config').select('key,value').then(({ data }) => {
         for (const row of data || []) {
@@ -229,7 +240,7 @@ export function AdminPage({ onClose }) {
         }
       });
     }
-  }, [unlocked, loadAudit, loadFeedback]);
+  }, [unlocked, loadAudit, loadFeedback, loadOverrides]);
 
   useEffect(() => {
     if (!unlocked) return undefined;
@@ -977,6 +988,14 @@ export function AdminPage({ onClose }) {
                   </button>
                 )}
               </>
+            )}
+
+            {section === 'content' && (
+              <ContentSection
+                overrides={overrides}
+                onOverridesChanged={async () => { await loadOverrides(); loadAudit(25); }}
+                errText={errText}
+              />
             )}
 
             {section === 'feedback' && (

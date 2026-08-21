@@ -19077,6 +19077,172 @@ button.ai-sched-main:focus-visible {
   .adminpage-table tbody tr, .adminpage-switch { transition: none; }
 }
 
+/* ---- Content review, 2026-08-20 -------------------------------------- */
+/* The catalogue as travellers see it, read from the very same wire files the
+   app reads. A photo grid, because the thing being reviewed IS the photo. */
+.adminpage-contentbar {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin: 14px 0 18px;
+}
+.adminpage-contentbar .adminpage-search { margin: 0; max-width: 320px; }
+.adminpage-contentbar .adminpage-count { margin: 0; }
+.adminpage-select {
+  min-height: 44px;
+  padding: 10px 12px;
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  background: var(--bg-card);
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--ink);
+}
+.adminpage-select:focus { outline: none; border-color: var(--accent); }
+
+.adminpage-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 14px;
+}
+.adminpage-card2 {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  padding: 0 0 12px;
+  border: 1px solid var(--rule-soft);
+  border-radius: 10px;
+  background: var(--bg-card);
+  font-family: var(--ui);
+  text-align: left;
+  cursor: pointer;
+  overflow: hidden;
+  transition: border-color .15s;
+}
+.adminpage-card2:hover { border-color: var(--ink-soft); }
+.adminpage-card2.edited { border-color: var(--accent); }
+.adminpage-card2.hiddenitem { opacity: .5; }
+.adminpage-thumb {
+  position: relative;
+  display: block;
+  aspect-ratio: 3 / 2;
+  background: var(--paper-dim);
+}
+.adminpage-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.adminpage-nothumb {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink-mute);
+}
+.adminpage-editedflag {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  padding: 2px 7px;
+  border-radius: 4px;
+  background: var(--accent);
+  color: #fff;
+  font-family: var(--mono);
+  font-size: 9.5px;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+}
+.adminpage-cardname {
+  padding: 0 12px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1.35;
+}
+.adminpage-cardmeta {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 0 12px;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  color: var(--ink-mute);
+  min-width: 0;
+}
+.adminpage-cardmeta b { color: var(--rate); font-size: 12px; font-variant-numeric: tabular-nums; }
+.adminpage-cardmeta code { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* The editor, as a modal over the grid: correcting one entry is a task you
+   finish, not a panel you leave open beside the shelf. */
+.adminpage-editor {
+  position: fixed;
+  inset: 0;
+  z-index: 210;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 40px 20px;
+  overflow-y: auto;
+  background: rgba(15, 23, 42, .45);
+}
+.adminpage-editorbox {
+  width: min(560px, 100%);
+  padding: 24px 26px 26px;
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  background: var(--bg-card);
+}
+.adminpage-editorname {
+  margin: 0 0 16px;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.adminpage-editorname code {
+  display: block;
+  margin-top: 3px;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  font-weight: 400;
+  color: var(--ink-mute);
+  overflow-wrap: anywhere;
+}
+.adminpage-editorpreview {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+.adminpage-editorpreview figure { margin: 0; }
+.adminpage-editorpreview figcaption {
+  margin-bottom: 5px;
+  font-family: var(--mono);
+  font-size: 9.5px;
+  text-transform: uppercase;
+  letter-spacing: .12em;
+  color: var(--ink-soft);
+}
+.adminpage-editorpreview img,
+.adminpage-editorpreview .adminpage-nothumb {
+  width: 100%;
+  aspect-ratio: 3 / 2;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid var(--rule-soft);
+  background: var(--paper-dim);
+}
+.adminpage-editorbox .adminpage-lock-input { margin-bottom: 4px; }
+.adminpage-fine { font-size: 11.5px; margin-bottom: 12px; }
+.adminpage-editoractions { margin-top: 18px; justify-content: flex-end; }
+
+@media (max-width: 700px) {
+  .adminpage-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
+  .adminpage-editor { padding: 16px 12px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .adminpage-card2 { transition: none; }
+}
+
 /* ---- Maintenance ------------------------------------------------------ */
 .maintenance {
   position: fixed;

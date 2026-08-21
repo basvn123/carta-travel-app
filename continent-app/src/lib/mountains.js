@@ -23,6 +23,7 @@
  * how a country with nothing published reads: null, never an error.
  */
 import { useEffect, useState } from 'react';
+import { applyOverrides, overridesReady } from './overrides.js';
 
 const COUNTRY_RE = /^[A-Z]{2}$/;
 
@@ -79,10 +80,11 @@ export function loadMountainIndex() {
  * before a single card could be drawn.
  */
 export function loadTopMountains() {
-  return cached('/mountains/top.json').then((raw) => {
-    if (!raw || !Array.isArray(raw.mountains)) return null;
-    return raw.mountains.filter((m) => m && m.id);
-  });
+  return Promise.all([cached('/mountains/top.json'), overridesReady()])
+    .then(([raw]) => {
+      if (!raw || !Array.isArray(raw.mountains)) return null;
+      return applyOverrides('mountain', raw.mountains.filter((m) => m && m.id));
+    });
 }
 
 /** Every published mountain in one country, best first. Null when there is no
@@ -90,11 +92,16 @@ export function loadTopMountains() {
 export function loadMountains(country) {
   const cc = String(country || '').toUpperCase();
   if (!COUNTRY_RE.test(cc)) return Promise.resolve(null);
-  return cached(`/mountains/${cc}.json`).then((raw) => {
-    if (!raw || !Array.isArray(raw.mountains)) return null;
-    return raw.mountains.filter((m) => m && m.id && Number.isFinite(m.lat)
-      && Number.isFinite(m.lon));
-  });
+  // The overrides ride along with the file rather than being applied by
+  // the caller, so every screen that reads this layer sees the corrected
+  // catalogue and no screen has to remember to ask.
+  return Promise.all([cached(`/mountains/${cc}.json`), overridesReady()])
+    .then(([raw]) => {
+      if (!raw || !Array.isArray(raw.mountains)) return null;
+      const rows = raw.mountains.filter((m) => m && m.id && Number.isFinite(m.lat)
+        && Number.isFinite(m.lon));
+      return applyOverrides('mountain', rows);
+    });
 }
 
 /** The mountains of several countries at once, flattened and re-ranked. */

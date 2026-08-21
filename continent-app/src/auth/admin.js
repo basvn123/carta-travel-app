@@ -74,3 +74,14 @@ export const adminListFeedback = (status, limit = 50, offset = 0) =>
 
 export const adminSetFeedbackStatus = (id, status) =>
   call('admin_set_feedback_status', { p_id: id, p_status: status });
+
+// Catalogue corrections over the static wire layers (beaches, lakes,
+// mountains, trails, destinations). An empty patch clears the override and
+// restores whatever the pipeline says.
+export const adminSetOverride = (layer, itemId, patch, note = null) =>
+  call('admin_set_override', {
+    p_layer: layer, p_item: String(itemId), p_patch: patch, p_note: note,
+  });
+
+export const adminListOverrides = (layer = null) =>
+  call('admin_list_overrides', { p_layer: layer });

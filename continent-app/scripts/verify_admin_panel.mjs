@@ -24,7 +24,9 @@
 //      chip, lifts again; a note saves and appears in the history.
 //   8. Deletion is armed, retype-gated, refuses a wrong confirmation with
 //      the server's own error, and goes through with the right one.
-//   9. Site: the notice and the flags publish exactly what the app reads.
+//   8d. Content: the layer loads from the real wire file, an http image is
+//      refused a preview, a correction saves, and reverting clears it.
+//   9. Site: maintenance, the notice and the flags publish what the app reads.
 //  10. Audit: the full table renders.
 //  11. A non-admin account never sees the row.
 //  12. The public banner: shows when enabled, warn tone, dismiss sticks.
@@ -268,6 +270,25 @@ async function stubSupabase(page, state, opts = {}) {
     state.submitCalls.push(JSON.parse(route.request().postData() || '{}'));
     return json(route, { ok: true });
   });
+  await page.route('**/rest/v1/rpc/admin_list_overrides*', (route) => {
+    state.ovListCalls.push(JSON.parse(route.request().postData() || '{}'));
+    return json(route, {
+      rows: state.overrides,
+      counts: state.overrides.reduce((a, o) => ({ ...a, [o.layer]: (a[o.layer] || 0) + 1 }), {}),
+    });
+  });
+  await page.route('**/rest/v1/rpc/admin_set_override*', (route) => {
+    const body = JSON.parse(route.request().postData() || '{}');
+    state.ovSetCalls.push(body);
+    const i = state.overrides.findIndex((o) => o.layer === body.p_layer && o.itemId === body.p_item);
+    if (!body.p_patch || Object.keys(body.p_patch).length === 0) {
+      if (i >= 0) state.overrides.splice(i, 1);
+      return json(route, { ok: true, cleared: true });
+    }
+    const row = { layer: body.p_layer, itemId: body.p_item, patch: body.p_patch, note: body.p_note, updatedAt: '2026-08-20T12:00:00Z', by: 'owner' };
+    if (i >= 0) state.overrides[i] = row; else state.overrides.push(row);
+    return json(route, { ok: true });
+  });
   await page.route('**/rest/v1/rpc/admin_get_audit*', (route) => json(route, {
     total: 2,
     rows: [
@@ -323,6 +344,7 @@ try {
     deleted: new Set(), tiers: new Map(), banned: new Map(),
     history: [], missing: ['day_plans'], listFails: false,
     fbCalls: [], fbStatusCalls: [], submitCalls: [],
+    ovListCalls: [], ovSetCalls: [], overrides: [],
     feedback: [
       {
         id: 2, kind: 'bug', status: 'new', message: 'The Porto bus fare looked too low for August.',
@@ -584,6 +606,82 @@ try {
     fail('marking a message done never reached the RPC');
   }
   ok('the inbox filters, shows the context, and marks a message done');
+
+  // ---- 8d. Content review: the catalogue as travellers see it.
+  // Deliberately NOT stubbed. A service worker serves public/, so page.route
+  // never sees these requests anyway, and reading the real wire file is the
+  // stronger test: the grid shows exactly what a traveller is shown.
+  console.log('8d. content review');
+  await gotoSection(page, 'Content');
+  await page.locator('.adminpage-grid').waitFor({ timeout: 15000 });
+  const cards = page.locator('.adminpage-card2');
+  const nCards = await cards.count();
+  if (nCards < 2) fail(`the beaches layer rendered ${nCards} cards from the real wire file`);
+  if (!(await cards.first().locator('img').count())) fail('the first beach card shows no photograph');
+  const firstId = (await cards.first().locator('code').innerText()).trim();
+  const firstName = (await cards.first().locator('.adminpage-cardname').innerText()).trim();
+  if (!firstId || !firstName) fail('a card is missing its id or its name');
+  ok(`${nCards} beaches from the real wire file, photographed and named (${firstName})`);
+
+  // Switching layer reloads from that layer's own index and files.
+  await page.locator('.adminpage-seg', { hasText: 'Mountains' }).click();
+  await page.locator('.adminpage-grid').waitFor({ timeout: 15000 });
+  await page.waitForTimeout(900);
+  const mtnCards = await page.locator('.adminpage-card2').count();
+  if (mtnCards < 1) fail('the mountains layer rendered nothing');
+  ok(`switching layer reloads: ${mtnCards} mountains`);
+  await page.locator('.adminpage-seg', { hasText: 'Beaches' }).click();
+  await page.locator('.adminpage-grid').waitFor({ timeout: 15000 });
+  await page.waitForTimeout(900);
+
+  await page.locator('.adminpage-card2').first().click();
+  await page.locator('.adminpage-editorbox').waitFor({ timeout: 10000 });
+  // http is refused by the page's own CSP, so the editor must not preview one
+  // as though it would work.
+  await page.locator('#ov-image').fill('http://insecure.example/a.jpg');
+  await page.waitForTimeout(250);
+  if (await page.locator('.adminpage-editorpreview img').count() > 1) {
+    fail('an http URL was previewed as if it would load');
+  }
+  await page.locator('#ov-image').fill('https://upload.wikimedia.org/better.jpg');
+  await page.waitForTimeout(300);
+  if (await page.locator('.adminpage-editorpreview img').count() !== 2) {
+    fail('a valid https URL was not previewed beside the original');
+  }
+  ok('the editor previews an https replacement and refuses to preview http');
+
+  await page.locator('#ov-name').fill('A corrected name');
+  await page.locator('#ov-note').fill('old photo showed the car park');
+  await page.locator('.adminpage-btn', { hasText: 'Save correction' }).click();
+  await page.waitForTimeout(1000);
+  const ov = state.ovSetCalls[0];
+  if (!ov || ov.p_layer !== 'beach') fail(`admin_set_override got the wrong layer: ${JSON.stringify(ov)}`);
+  if (ov.p_item !== firstId) fail(`the override targeted ${ov.p_item}, the card says ${firstId}`);
+  if (ov.p_patch?.image !== 'https://upload.wikimedia.org/better.jpg'
+      || ov.p_patch?.name !== 'A corrected name') {
+    fail(`the patch is wrong: ${JSON.stringify(ov?.p_patch)}`);
+  }
+  if (!/car park/.test(ov.p_note || '')) fail('the note never reached the server');
+  ok('a correction saves the image, the name and the note against the real id');
+
+  await page.waitForTimeout(500);
+  if (!(await page.locator('.adminpage-card2.edited').count())) {
+    fail('the corrected entry is not marked as edited');
+  }
+  await page.locator('.adminpage-card2.edited').first().click();
+  await page.locator('.adminpage-editorbox').waitFor({ timeout: 10000 });
+  if (await page.locator('#ov-image').inputValue() !== 'https://upload.wikimedia.org/better.jpg') {
+    fail('the editor does not reopen with the saved correction');
+  }
+  await page.locator('.adminpage-btn', { hasText: 'Revert to the pipeline' }).click();
+  await page.waitForTimeout(1000);
+  const rev = state.ovSetCalls[state.ovSetCalls.length - 1];
+  if (!rev || Object.keys(rev.p_patch || {}).length !== 0) {
+    fail(`revert did not send an empty patch: ${JSON.stringify(rev)}`);
+  }
+  if (state.overrides.length !== 0) fail('the override survived the revert');
+  ok('reverting sends the empty patch that clears the override');
+  await page.screenshot({ path: `${SHOTS}/admin-content.png`, fullPage: true });
 
   // ---- 9. Site section.
   console.log('9. site');
