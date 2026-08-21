@@ -356,6 +356,19 @@ def harvest_cells(conn, cells, verbose=False, refresh=False, shard=None):
 # MultiLineString by construction (curate.py gates on merged_segments = 1),
 # so GeometryN(geom, 1) is the whole walk. The distance test runs on geography
 # so the radius means metres everywhere from Crete to Tromso.
+#
+# The `&&` line is what makes this finish. ST_DWithin on a GEOGRAPHY cast
+# cannot use the GiST index on scenic_pois.geom, which is a geometry index, so
+# the join degraded to a sequential scan over 800,000 landmarks PER ROUTE: the
+# first attempt linked twelve routes in ten minutes. Overlapping the plain
+# geometry against an expanded envelope first uses the index and leaves the
+# exact metric test with a handful of candidates.
+#
+# DEG_PAD is the envelope in degrees. 0.02 covers DENSITY_M at every European
+# latitude: 600 m of longitude is widest in degrees at the top of Norway, where
+# one degree is only about 38 km, giving 0.016. Too generous costs nothing (the
+# geography test still decides); too tight would silently drop landmarks in the
+# north, which is exactly the kind of bug that never shows up in Slovenia.
 HIGHLIGHTS_SQL = """
     WITH route AS (
         SELECT id, ST_Force2D(ST_GeometryN(geom, 1)) AS line,
@@ -368,9 +381,12 @@ HIGHLIGHTS_SQL = """
            ST_Y(p.geom), ST_X(p.geom)
     FROM route r
     JOIN scenic_pois p
-      ON ST_DWithin(p.geom::geography, r.line::geography, %(radius)s)
+      ON p.geom && ST_Expand(r.line, %(pad)s)
+     AND ST_DWithin(p.geom::geography, r.line::geography, %(radius)s)
     ORDER BY r.id, along_m
 """
+
+DEG_PAD = 0.02
 
 
 def link_country(conn, cc, verbose=False):
@@ -385,7 +401,8 @@ def link_country(conn, cc, verbose=False):
         return 0
     near = defaultdict(list)
     with conn.cursor() as cur:
-        cur.execute(HIGHLIGHTS_SQL, {"ids": ids, "radius": DENSITY_M})
+        cur.execute(HIGHLIGHTS_SQL,
+                    {"ids": ids, "radius": DENSITY_M, "pad": DEG_PAD})
         for (tid, kind, name, ele, wd, off_m, along_m, lat, lon) in cur.fetchall():
             near[tid].append({
                 "kind": kind, "name": name, "ele_m": ele, "wikidata": wd,
