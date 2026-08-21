@@ -152,7 +152,25 @@ OFF_SUBJECT = re.compile(
     r"mushroom|lichen|caterpillar|bird of|passerine|"
     r"plaque|street sign|signpost|road sign|number plate|"
     r"interior of|exhibit|showcase|display case|"
-    r"grave|tombstone|cemetery|gravestone)\b", re.I)
+    r"grave|tombstone|cemetery|gravestone|"
+    r"bomber|fighter aircraft|warplane|biplane|helicopter|"
+    r"locomotive|steam engine)\b", re.I)
+
+# Subjects that are never a destination hero, recognised from the file's
+# CATEGORIES rather than its name, because the name is often just a code
+# ("11.07.16 Rovaniemi Sr1 3022" is a locomotive and says so nowhere).
+#
+# Every phrase here was read off a file this pipeline actually mis-picked.
+# The tempting general rule, "a category shaped like a Latin binomial is a
+# species", was measured against the 90,285 categories in the cache and
+# matched 1,657 of them: "With insignia", "Extracted images", "Pirot
+# fortress", "Antiparos castle". It is not in here for that reason.
+OFF_CATS = re.compile(
+    r"\b(air force|aviation museum|aircraft|bomber|squadron|airliner|"
+    r"rail transport|trains at|train stations|locomotive|railcar|"
+    r"rolling stock|multiple units|class sr\d|"
+    r"flora of|fauna of|insects of|birds of|fungi of|"
+    r"taxa |species of )", re.I)
 
 # Real photographs of the place that still make a poor first impression: a bus
 # in service, a golf course, a retail park. These lose to any postcard, but a
@@ -253,7 +271,10 @@ def commons_meta(titles, cache, use_cache=True):
     A title may be prefixed "<lang>@" for a file uploaded to that language
     edition rather than Commons; those are asked of their own wiki."""
     todo = [t for t in dict.fromkeys(titles)
-            if t and (not use_cache or t not in cache)]
+            if t and (not use_cache or t not in cache
+                      # A record written before coordinates were collected
+                      # cannot answer the place question, so it is re-asked.
+                      or (cache.get(t) is not None and "co" not in cache[t]))]
     by_api = {}
     for t in todo:
         lang, sep, bare = t.partition("@")
@@ -286,9 +307,17 @@ def _meta_batch(api, pairs, cache):
         data = fetch(api, {
             "action": "query", "format": "json", "formatversion": "2",
             "titles": "|".join(chunk),
-            "prop": "imageinfo",
+            "prop": "imageinfo|coordinates",
             "iiprop": "size|mime|extmetadata|url",
-            "iiextmetadatafilter": "Categories|ObjectName",
+            "iiextmetadatafilter": "Categories|ObjectName|Assessments",
+            # Both the camera position and the object position, when the
+            # uploader gave either. This is the only evidence on Commons that
+            # answers "is this photograph OF this place" rather than "is it
+            # NAMED like this place", which is the question name collisions
+            # sail straight through.
+            "coprop": "type|globe",
+            "coprimary": "all",
+            "colimit": "max",
         })
         query = (data or {}).get("query") or {}
         # The API answers under its own normalisation ("File:A b.jpg"), so keep
@@ -301,6 +330,11 @@ def _meta_batch(api, pairs, cache):
             info = (p.get("imageinfo") or [{}])[0]
             ext = info.get("extmetadata") or {}
             cats = (ext.get("Categories") or {}).get("value") or ""
+            # Earth coordinates only: Commons also carries Moon and Mars.
+            coords = [[c.get("lat"), c.get("lon")] for c in (p.get("coordinates") or [])
+                      if c.get("globe", "earth") == "earth"
+                      and isinstance(c.get("lat"), (int, float))
+                      and isinstance(c.get("lon"), (int, float))]
             rec = {
                 "mime": info.get("mime"),
                 "width": info.get("width"),
@@ -309,6 +343,10 @@ def _meta_batch(api, pairs, cache):
                 "name": (ext.get("ObjectName") or {}).get("value") or readable(title),
                 "descurl": info.get("descriptionurl"),
                 "url": info.get("url"),
+                # [] means "asked, none published"; a missing key means the
+                # record predates this field and must be asked again.
+                "co": coords,
+                "assess": (ext.get("Assessments") or {}).get("value") or "",
             }
             # Store under the cache key the caller asked with (which carries
             # the "<lang>@" prefix for a local upload), plus the raw and
@@ -324,7 +362,74 @@ def _meta_batch(api, pairs, cache):
     return cache
 
 
-def classify(file_title, meta, url=None):
+# How far a photograph may sit from its destination and still be a
+# photograph OF it. A town's own pictures cluster inside a couple of km; the
+# allowance is wide because a destination's coordinate is one point and a
+# place is not, and because a hilltop view of a town is taken from outside it.
+# `area` destinations (the Amalfi Coast, the Dolomites) are whole regions.
+PLACE_KM = 30.0
+AREA_KM = 70.0
+
+# Past this, the photograph is not of this place and no destination is big
+# enough to argue otherwise. The split matters because the two bands need
+# different handling, which a single threshold got wrong:
+#
+#   30 to 300 km   ambiguous, and mostly innocent. The catalogue's areas,
+#                  counties and gateway airports really do spread this far:
+#                  the Cotswolds, Kerry, Val d'Orcia and Tenerife North all
+#                  flagged at 34 to 64 km with perfectly good photographs.
+#                  Reported as `far_coord`, never auto-replaced.
+#   over 300 km    certain. Guadalajara in Spain was showing Guadalajara in
+#                  Mexico (9,344 km), Camp Adventure Forest in Denmark was
+#                  showing the Canton Tower (8,595 km), Edessa in Greece was
+#                  showing Urfa Castle, Frankfurt an der Oder was showing
+#                  Frankfurt am Main. Auto-replaced.
+#
+# Commons carries wrong coordinates too (Venezia aerial view is geotagged in
+# Zakynthos, 1,110 km out), so this band will occasionally re-pick a photo
+# that was fine. That costs little: the replacement is drawn from the
+# destination's OWN curated view pool, so Venice gets another Venice.
+CERTAIN_KM = 300.0
+
+
+def dest_km_limit(d):
+    return AREA_KM if (d.get("place") or {}).get("class") == "area" else PLACE_KM
+
+
+def dest_point(d):
+    lat = d.get("city_lat") if d.get("city_lat") is not None else d.get("lat")
+    lon = d.get("city_lon") if d.get("city_lon") is not None else d.get("lon")
+    return lat, lon
+
+
+def photo_km(meta, d):
+    """Km from the destination to the nearest coordinate the file publishes,
+    or None when the file publishes none (about three files in four)."""
+    if not meta:
+        return None
+    co = meta.get("co")
+    if not co:
+        return None
+    lat, lon = dest_point(d)
+    if lat is None or lon is None:
+        return None
+    best = None
+    for c in co:
+        k = _km_pts(lat, lon, c[0], c[1])
+        if best is None or k < best:
+            best = k
+    return best
+
+
+def _km_pts(lat1, lon1, lat2, lon2):
+    r = 6371.0
+    p1, p2 = math.radians(lat1), math.radians(lat2)
+    dp, dl = math.radians(lat2 - lat1), math.radians(lon2 - lon1)
+    h = math.sin(dp / 2) ** 2 + math.cos(p1) * math.cos(p2) * math.sin(dl / 2) ** 2
+    return 2 * r * math.asin(math.sqrt(h))
+
+
+def classify(file_title, meta, url=None, dest=None):
     """Empty list = a usable hero. Otherwise the reasons it is not."""
     reasons = []
     name = readable(file_title)
@@ -348,6 +453,10 @@ def classify(file_title, meta, url=None):
             reasons.append(tag)
     if HISTORICAL.search(label) or any(HISTORICAL.search(c) for c in cats):
         reasons.append("historical")
+    # A flower, an insect or a locomotive is a true photograph taken at the
+    # right coordinate and still the wrong picture of a town.
+    if any(OFF_CATS.search(c) for c in cats):
+        reasons.append("off_subject")
     w, h = meta.get("width") or 0, meta.get("height") or 0
     if w and h:
         if w < MIN_W or h < MIN_H:
@@ -357,6 +466,12 @@ def classify(file_title, meta, url=None):
             reasons.append("strip")
         elif ar < MIN_AR:
             reasons.append("portrait")
+    # The place test. Only ever fires when the file publishes a coordinate, so
+    # it never guesses: silence here means "not proven wrong", not "verified".
+    if dest is not None:
+        km = photo_km(meta, dest)
+        if km is not None and km > dest_km_limit(dest):
+            reasons.append("wrong_place" if km > CERTAIN_KM else "far_coord")
     return sorted(set(reasons))
 
 
@@ -392,7 +507,7 @@ def check(dests, limit=None, only=None):
         d = dests[did]
         meta = meta_cache.get(title) if title else None
         url = (d.get("image") or {}).get("url")
-        reasons = classify(title, meta, url) if title else ["not_wikimedia"]
+        reasons = classify(title, meta, url, dest=d) if title else ["not_wikimedia"]
         if not reasons:
             continue
         for r in reasons:
@@ -406,6 +521,7 @@ def check(dests, limit=None, only=None):
             "width": (meta or {}).get("width"),
             "height": (meta or {}).get("height"),
             "url": (d.get("image") or {}).get("url"),
+            "km": (lambda k: None if k is None else round(k))(photo_km(meta, d)),
         })
     flagged.sort(key=lambda r: (r["reasons"], r["city"] or ""))
 
@@ -430,6 +546,54 @@ def check(dests, limit=None, only=None):
 
 
 # ── fix ─────────────────────────────────────────────────────────────────────
+# Commons category conventions for "photographs of this place worth looking
+# at", best first. These are human-curated: somebody decided each member is a
+# VIEW of the place rather than a detail inside it, which is the judgement no
+# keyword heuristic makes reliably. Coverage is good (13 of 16 sampled European
+# places had "Views of X", several with over a hundred files).
+VIEW_CATS = [
+    "Views of {}",
+    "Aerial photographs of {}",
+    "Panoramics of {}",
+    "Cityscape of {}",
+    "Skylines of {}",
+]
+
+# How many files to pull from each category. Commons returns category members
+# in ALPHABETICAL order, which carries no quality information at all, so the
+# pool has to be deep enough that the good photograph is inside it and the
+# scorer can find it. Ronda's "Views of" category holds 139 files and its
+# first dozen alphabetically are somebody's 1971 holiday slides.
+CAT_LIMIT = 140
+
+
+def category_images(cat_title, limit=CAT_LIMIT):
+    """File titles in a Commons category, or [] when it does not exist."""
+    data = fetch(COMMONS_API, {
+        "action": "query", "format": "json", "formatversion": "2",
+        "list": "categorymembers",
+        "cmtitle": cat_title,
+        "cmtype": "file",
+        "cmlimit": str(limit),
+    })
+    return [m["title"] for m in ((data or {}).get("query") or {}).get("categorymembers", [])]
+
+
+def view_candidates(city, limit=CAT_LIMIT):
+    """Everything the curated view categories hold for this place name."""
+    base = re.sub(r"\s*\(.*?\)\s*", "", city or "").strip()
+    if not base:
+        return []
+    out = []
+    for pat in VIEW_CATS:
+        for t in category_images("Category:" + pat.format(base), limit):
+            if t not in out:
+                out.append(t)
+        if len(out) >= limit:
+            break
+    return out[:limit]
+
+
 def article_images(page_url, city):
     """Every file used in the destination's own Wikipedia article. The lead
     photo is nearly always among them, and everything here is at least about
@@ -465,11 +629,18 @@ def geosearch_images(lat, lon, radius=8000, limit=40):
     return [p.get("title") for p in pages if p.get("title")]
 
 
-def score_candidate(title, meta, city, country, rank=None, lead=False):
+def score_candidate(title, meta, city, country, rank=None, lead=False,
+                    dest=None, view=False):
     """Higher is better. Nothing here is clever: it prefers big landscape
     photographs that name the place, from the position an editor already
     chose. `rank` is the file's position in the article (0 = first), `lead`
-    marks the article's own lead image."""
+    marks the article's own lead image.
+
+    `view` marks a candidate that came out of a curated "Views of X" category,
+    which is a human saying this photograph shows the place rather than
+    something inside it. `dest` turns on the distance term: a photograph whose
+    published coordinate sits in the town is worth more than one that names the
+    town, because names collide and coordinates do not."""
     label = readable(title) + " " + (meta.get("name") or "")
     # "SaynBendorfBahnhof3" hides every word from a -anchored pattern: no
     # boundary before the hump, none before the sequence number either.
@@ -485,9 +656,14 @@ def score_candidate(title, meta, city, country, rank=None, lead=False):
         s += 2
     if fold(country or "") in cats:
         s += 0.5
-    if "quality images" in cats or "featured pictures" in cats:
+    # Commons' own assessments, from the Assessments field or the categories
+    # that back it. A featured picture went through a community vote.
+    assess = fold(meta.get("assess") or "")
+    if "featured" in assess or "featured pictures" in cats:
+        s += 3
+    elif "quality" in assess or "quality images" in cats:
         s += 2
-    if "valued images" in cats:
+    elif "valued" in assess or "valued images" in cats:
         s += 1
     w, h = meta.get("width") or 0, meta.get("height") or 0
     if w >= 2400:
@@ -501,6 +677,26 @@ def score_candidate(title, meta, city, country, rank=None, lead=False):
         s += 0.5
     if SAFE_HINTS.search(label):
         s += 1
+    # Somebody filed this under "Views of <place>". That is the exact
+    # judgement a hero needs and no keyword can make.
+    if view:
+        s += 3.5
+    if VIEW_WORDS.search(label):
+        s += 1.5
+    # Distance, when the file says where it was taken. Inside the place beats
+    # naming the place; far outside it is disqualifying rather than merely
+    # unattractive, which _rank_and_pick enforces separately.
+    if dest is not None:
+        km = photo_km(meta, dest)
+        if km is not None:
+            if km <= 2:
+                s += 3
+            elif km <= 8:
+                s += 2
+            elif km <= dest_km_limit(dest):
+                s += 0.5
+            else:
+                s -= 12
     # Somebody already decided this photo introduces the place. That beats
     # every heuristic below it.
     if lead:
@@ -510,9 +706,22 @@ def score_candidate(title, meta, city, country, rank=None, lead=False):
     if OFF_SUBJECT.search(label) or any(
             OFF_SUBJECT.search(c) for c in re.split(r"[;|]", meta.get("cats") or "")):
         s -= 6
-    if WEAK_SUBJECT.search(label):
+    # Categories as well as the name: a bus depot rarely says so in its
+    # filename, and the whole reason this file has a category vocabulary is
+    # that filenames on Commons are frequently just a camera's serial number.
+    if WEAK_SUBJECT.search(label) or any(
+            WEAK_SUBJECT.search(c) for c in re.split(r"[;|]", meta.get("cats") or "")):
         s -= 3.5
     return s
+
+
+# Words that mark a photograph as a view OF a place rather than a detail
+# inside it. Deliberately small: the curated categories do the real work, this
+# only helps where they do not exist.
+VIEW_WORDS = re.compile(
+    r"\b(view|views|vista|panorama|panoramic|panoramica|skyline|cityscape|"
+    r"townscape|aerial|from above|overlook|seen from|vue|vista de|ansicht|"
+    r"uitzicht|widok|vy over)\b", re.I)
 
 
 # country iso2 -> the Wikipedia edition that writes about it best. Same table
@@ -597,9 +806,20 @@ def best_replacement(d, meta_cache, exclude=(), coords_only=False):
     if coords_only:
         # Distance order IS the ranking here, so it is passed as `rank`: the
         # nearest photograph of a place is the likeliest to be of that place.
+        # Deliberately not a wide net. Widening it to 9 km and 120 files was
+        # tried and measured worse: Venice fell from a San Marco panorama to a
+        # monument to Carlo Goldoni, Rovaniemi to a locomotive. More noise
+        # reaches the scorer than signal, and the nearest hundred photographs
+        # of a town centre are mostly doorways.
         near = geosearch_images(lat, lon, radius=6000, limit=40)
         ordered = [(t, {"rank": i}) for i, t in enumerate(near)]
         return _rank_and_pick(ordered, d, meta_cache, exclude)
+
+    # 0. The curated view categories. A photograph somebody filed under
+    #    "Views of Ronda" is a view of Ronda, decided by a human, and that is
+    #    the whole question a hero has to get right. This did not exist before
+    #    and it is why the ladder starts at 0.
+    views = view_candidates(city)
 
     # 1. The lead image of the local-language article, then the English one.
     leads = []
@@ -615,11 +835,29 @@ def best_replacement(d, meta_cache, exclude=(), coords_only=False):
             if t not in leads and t not in article:
                 article.append(t)
     # 3. Only if those come up empty: whatever was photographed nearby.
-    nearby = geosearch_images(lat, lon) if len(leads) + len(article) < 4 else []
+    thin = len(views) + len(leads) + len(article) < 4
+    nearby = geosearch_images(lat, lon) if thin else []
 
-    ordered = [(t, {"lead": True}) for t in leads] \
-        + [(t, {"rank": i}) for i, t in enumerate(article)] \
-        + [(t, {}) for t in nearby if t not in leads and t not in article]
+    seen = set()
+    ordered = []
+    for t in views:
+        # No `rank`: these arrive alphabetically, and pretending that is a
+        # preference order would hand the hero to whoever titled their file
+        # with a leading digit. The scorer decides among them on merit.
+        ordered.append((t, {"view": True}))
+        seen.add(t)
+    for t in leads:
+        if t not in seen:
+            ordered.append((t, {"lead": True}))
+            seen.add(t)
+    for i, t in enumerate(article):
+        if t not in seen:
+            ordered.append((t, {"rank": i}))
+            seen.add(t)
+    for t in nearby:
+        if t not in seen:
+            ordered.append((t, {}))
+            seen.add(t)
     return _rank_and_pick(ordered, d, meta_cache, exclude)
 
 
@@ -636,10 +874,15 @@ def _rank_and_pick(ordered, d, meta_cache, exclude=()):
         if fold(re.sub(r"^File:", "", c)) in excl:
             continue                      # already someone else's photograph
         meta = meta_cache.get(c)
-        if not meta or classify(c, meta):
+        # `dest=d` makes the place test binding on CANDIDATES too, not only on
+        # the hero already in the file: a replacement that publishes a
+        # coordinate in the wrong country is rejected outright rather than
+        # merely scored down, which is how Urfa Castle reached Edessa.
+        if not meta or classify(c, meta, dest=d):
             continue                      # a fix may never be another map
         ranked.append((score_candidate(c, meta, city, country,
-                                       rank=how.get("rank"), lead=how.get("lead", False)),
+                                       rank=how.get("rank"), lead=how.get("lead", False),
+                                       dest=d, view=how.get("view", False)),
                        c, meta))
     if not ranked:
         return None
@@ -687,12 +930,29 @@ def fix(dests, report, dry_run=False, limit=None, only=None):
     meta_cache = load_json(META_CACHE, {}) or {}
     img_cache = load_json(IMG_CACHE, {}) or {}
 
-    targets = [f["id"] for f in report.get("flagged", [])] + list(report.get("missing", []))
+    # `far_coord` on its own is a question, not a verdict: it is how the
+    # areas, counties and gateway airports flag (the Cotswolds at 47 km, Kerry
+    # at 64, Val d'Orcia at 34), and their photographs are fine. Replacing a
+    # good hero on that evidence would do more harm than the flag prevents, so
+    # those wait for human eyes. Anything flagged for a second reason as well
+    # is still a target.
+    targets = [f["id"] for f in report.get("flagged", [])
+               if f.get("reasons") != ["far_coord"]] + list(report.get("missing", []))
     if only:
         targets = [t for t in targets if t in only]
     if limit:
         targets = targets[:limit]
     print(f"Looking for better heroes: {len(targets)} destinations")
+
+    # Which targets got here because the photograph was of somewhere else.
+    # For those the place NAME is the thing that is broken, so the name-based
+    # ladder must not be used to repair it: asked the normal way, Guadalajara
+    # in Spain was offered the Hospicio Cabanas in Guadalajara MEXICO, Fano in
+    # Denmark was offered the Malatestiana fortress in Fano ITALY, and Scilla
+    # was offered Scilla bifolia, the plant, for a second time. Coordinates
+    # cannot be fooled by a name, so those are repaired by coordinate.
+    by_coord = {f["id"] for f in report.get("flagged", [])
+                if "wrong_place" in (f.get("reasons") or [])}
 
     fixed, kept = [], []
     for n, did in enumerate(targets, 1):
@@ -700,7 +960,7 @@ def fix(dests, report, dry_run=False, limit=None, only=None):
         if not d:
             continue
         old = (d.get("image") or {}).get("url")
-        rep = best_replacement(d, meta_cache)
+        rep = best_replacement(d, meta_cache, coords_only=did in by_coord)
         if not rep:
             kept.append(did)
             print(f"  [{n}/{len(targets)}] --   {d.get('city')}: nothing better found")

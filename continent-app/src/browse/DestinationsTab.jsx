@@ -2,7 +2,8 @@ import React, { lazy, Suspense, useEffect, useMemo, useRef, useState } from 'rea
 import { RatingBadge } from '../components/RatingBadge.jsx';
 import { CountryFlag } from '../components/CountryFlag.jsx';
 import { eur } from '../lib/format.js';
-import { fareProv, estPrefix, FromWord } from '../components/FareProvenance.jsx';
+import { fareProv, estPrefix } from '../components/FareProvenance.jsx';
+import { HeroImage } from '../components/HeroImage.jsx';
 import { loadTrails, loadTrailsIndex } from '../lib/trails.js';
 import { loadBeachIndex, loadBeaches, loadTopBeaches } from '../lib/beaches.js';
 import { beachTags, beachRating } from '../lib/beachStory.js';
@@ -194,9 +195,19 @@ function DestCard({ p, km, priceMode, onSelect, t }) {
   const cls = CLASSES.find((c) => c.key === CLASS_OF.get(p.place?.class));
   return (
     <button className="places-dcard" onClick={() => onSelect(p.id)}>
-      {p.image
-        ? <img className="places-card-img" src={p.image} alt="" loading="lazy" />
-        : <span className="places-card-img places-card-noimg" aria-hidden="true" />}
+      {/* One column on a phone, two above 640px, and the card is 150px tall.
+          Asking for the wire's 960px rendering meant every card downloaded
+          three to five times the pixels it drew. lib/heroImage.js owns the
+          width list, because Wikimedia answers 400 for anything off it. */}
+      <HeroImage
+        url={p.image}
+        city={p.city}
+        iso2={p.iso2}
+        className="places-card-img"
+        maxWidth={960}
+        sizes="(max-width: 639px) 96vw, (max-width: 1180px) 48vw, 560px"
+        ratio={[16, 8]}
+      />
       <span className="places-card-scrim" aria-hidden="true" />
       {km != null && (
         <span className="places-card-km">{t('places.kmAway', { km: Math.round(km) })}</span>
@@ -216,7 +227,6 @@ function DestCard({ p, km, priceMode, onSelect, t }) {
         </span>
         <span className="places-card-right">
           <span className="places-card-price">
-            {!prov?.est && <FromWord />}
             {`${estPrefix(prov)}${eur(priceMode === 'pp' ? p.pp : p.total)}`}
             {priceMode === 'pp' && <small>/pp</small>}
           </span>
@@ -290,7 +300,6 @@ function TripCard({ card, km, onOpen, t }) {
           )}
           {isCityDay && price && (
             <span className="places-card-price">
-              <FromWord />
               {eur(price.pp)}
               <small>/pp</small>
             </span>
@@ -457,9 +466,17 @@ function MountainCard({ mountain, km, countryName, onOpen, t, lang }) {
 function CountryCard({ cc, name, sub, img, onPick }) {
   return (
     <button className="places-ccard" onClick={() => onPick(cc)}>
-      {img
-        ? <img className="places-card-img" src={img} alt="" loading="lazy" />
-        : <span className="places-card-img places-card-noimg" aria-hidden="true" />}
+      {/* 92px tall and ~360 css px wide: the 960px rendering the wire carries
+          is roughly nine times the pixels this draws. */}
+      <HeroImage
+        url={img}
+        city={name}
+        iso2={cc}
+        className="places-card-img"
+        maxWidth={500}
+        sizes="(max-width: 639px) 96vw, (max-width: 1180px) 48vw, 560px"
+        ratio={[16, 4]}
+      />
       <span className="places-card-scrim" aria-hidden="true" />
       <span className="places-card-overlay">
         <span className="places-card-main">
@@ -1848,7 +1865,7 @@ export function DestinationsTab({
                   key={c.cc}
                   cc={c.cc}
                   name={c.name}
-                  sub={`${t('places.placesCount', { n: fmt(c.n) })}${Number.isFinite(c.min) ? `, ${t('places.fromPrice', { price: eur(c.min) })}` : ''}`}
+                  sub={t('places.placesCount', { n: fmt(c.n) })}
                   img={countryCover.get(c.cc)?.img || null}
                   onPick={(cc) => setCountry(cc)}
                 />
