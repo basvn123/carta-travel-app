@@ -80,6 +80,10 @@ WORKERS = 6
 # fields the scorer and the writer read are stored, so the whole cache is
 # tens of megabytes rather than hundreds.
 CACHE_DIR = ROOT / "cache" / "trails" / "photos"
+# title -> [category names]. One shared file rather than per route, because a
+# popular file turns up in a dozen routes' candidate lists and its categories
+# are a property of the file, not of the walk.
+CATEGORY_CACHE = ROOT / "cache" / "trails" / "photo_categories.json"
 CACHE_KEEP = ("url", "thumburl", "thumbwidth", "thumbheight", "width", "height")
 CACHE_META = ("LicenseShortName", "LicenseUrl", "Artist", "ImageDescription")
 
@@ -119,6 +123,88 @@ def cache_write(tid, cands):
     tmp = cache_path(tid).with_suffix(".json.tmp")
     tmp.write_text(json.dumps(slim, ensure_ascii=False), encoding="utf-8")
     os.replace(tmp, cache_path(tid))
+
+
+# How many titles one categories request may ask about. 50 is the MediaWiki
+# limit for anonymous clients, and it turns 122,000 candidate files into 2,446
+# requests: about eight minutes, once, against a cache that then answers every
+# later scoring change for free.
+CATEGORY_BATCH = 50
+
+
+def load_categories():
+    try:
+        return json.loads(CATEGORY_CACHE.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return {}
+
+
+def save_categories(table):
+    CATEGORY_CACHE.parent.mkdir(parents=True, exist_ok=True)
+    tmp = CATEGORY_CACHE.with_suffix(".json.tmp")
+    tmp.write_text(json.dumps(table, ensure_ascii=False), encoding="utf-8")
+    os.replace(tmp, CATEGORY_CACHE)
+
+
+# Pace for the categories endpoint, seconds between batches.
+#
+# The shared MediaWiki client paces at 0.2 s, which is right for a geosearch
+# and far too fast for this: fifty titles with cllimit=max is a much heavier
+# query and Commons answered with a wall of 429s. Half a second turns 2,446
+# batches into about twenty minutes, which is the polite price of asking one
+# big question once instead of many small ones forever.
+CATEGORY_PACE_S = 1.2
+# Only the candidates actually in contention get a category lookup. Asking
+# about all 122,256 cached files was both slow and rude: Commons answered with
+# a wall of 429s, and the great majority of those files cannot reach a gallery
+# slot on any other signal, so their categories would never change a pick. The
+# top dozen per route covers every file a category bonus could realistically
+# lift into the hero slot, and cuts the work by roughly two thirds.
+CATEGORY_TOP_N = 12
+# Save this often, so a run interrupted at batch 2,000 does not start again
+# at batch zero.
+CATEGORY_SAVE_EVERY = 100
+
+
+def fetch_categories(titles, table, verbose=False):
+    """Fill `table` with the Commons categories of every title not in it.
+
+    Categories are the best subject signal Commons has. A filename can be
+    IMG_4821 and a description can be empty, but somebody has almost always
+    filed the photograph under "Category:Hiking trails in Tyrol" or
+    "Category:Churches in Wallonia", and that is exactly the distinction this
+    pass exists to make. The peer-reviewed quality categories ride along:
+    "Quality images" and "Featured pictures on Wikimedia Commons" are the
+    closest thing to an objective "this is a good photograph" that free data
+    offers."""
+    todo = [t for t in titles if t not in table]
+    if not todo:
+        return 0
+    done = 0
+    for start in range(0, len(todo), CATEGORY_BATCH):
+        batch = todo[start:start + CATEGORY_BATCH]
+        time.sleep(CATEGORY_PACE_S)
+        try:
+            data = mediawiki({"titles": "|".join(batch),
+                              "prop": "categories", "cllimit": "max",
+                              "clshow": "!hidden"}, api=COMMONS_API)
+        except (SourceError, ValueError, KeyError):
+            continue
+        for page in (data.get("query") or {}).get("pages") or []:
+            title = page.get("title")
+            if not title:
+                continue
+            table[title] = [c["title"].replace("Category:", "")
+                            for c in (page.get("categories") or [])]
+        for t in batch:
+            table.setdefault(t, [])       # asked and answered, even if empty
+        done += len(batch)
+        batch_no = start // CATEGORY_BATCH
+        if batch_no and batch_no % CATEGORY_SAVE_EVERY == 0:
+            save_categories(table)
+        if verbose or batch_no % 100 == 0:
+            print(f"  categories {done}/{len(todo)}", flush=True)
+    return done
 
 
 IMAGE_PROPS = {
@@ -205,6 +291,71 @@ PEOPLE_WORDS = re.compile(
     r"car|cars|auto|voiture|automobile|alfa|ferrari|porsche|mercedes|"
     r"motorcycle|motorrad|scooter|bus|tram|lorry|truck|lkw|"
     r"locomotive|wagon|aircraft|airplane|helicopter|boat|yacht|ferry)\b", re.I)
+
+
+# Commons categories that say the photograph IS the landscape.
+CATEGORY_GOOD = re.compile(
+    r"(hiking|hiking trails|trails|footpaths|wanderweg|sentiers|"
+    r"mountains|mountain|peaks|summits|gipfel|"
+    r"landscapes|landscape|landschaften|paysages|paesaggi|"
+    r"views |views of|viewpoints|panoramas|aussichts|"
+    r"valleys|glaciers|gorges|canyons|waterfalls|"
+    r"lakes|rivers of|coast|coastline|cliffs|beaches|"
+    r"national park|nature reserve|natural park|naturpark|"
+    r"forests|moorland|heathland|alpine|"
+    r"sunrises|sunsets)", re.I)
+
+# Categories that say the photograph is a thing beside the path.
+CATEGORY_BAD = re.compile(
+    r"(church|churches|chapel|chapels|cathedral|basilica|monaster|abbey|"
+    r"interiors|altars|stained glass|frescoes|"
+    r"buildings|houses|architecture|facades|doors|windows|roofs|"
+    r"monuments|statues|sculptures|memorials|plaques|"
+    r"museums|libraries|schools|hospitals|"
+    r"railway stations|bus stations|airports|"
+    r"automobiles|cars |motorcycles|buses|trams|locomotives|aircraft|"
+    r"cemeteries|graves|tombs|"
+    r"people of|men |women |children|portraits|festivals|processions|"
+    r"street|streets|signs|signage|maps of|coats of arms)", re.I)
+
+# Peer review, and the only objective quality signal free data offers.
+CATEGORY_QUALITY = re.compile(
+    r"(quality images|featured pictures|valued images|"
+    r"pictures of the year|wiki loves earth|wiki loves monuments)", re.I)
+
+# Classes of image that can NEVER be a photograph of a walk, whatever else
+# they score. Vetoes rather than penalties, because no combination of other
+# signals should be able to rescue them.
+#
+# This is the single worst thing the layer was shipping and it took the
+# category pass to see it. Commons holds thousands of ISS Earth-observation
+# frames, and every one carries the coordinates of the ground it shows, so a
+# geosearch along an alpine path returns photographs taken from orbit. They
+# then scored WELL: "ISS053-E-58586 - View of Earth.jpg" is landscape framed,
+# enormous, and the word "View" earned it the view bonus. 415 of 12,170
+# published frames were these, orthophoto rasters, or 360 degree spherical
+# panoramas that render as a distorted smear in a card.
+#
+# Ordinary panoramas are deliberately NOT here: a wide shot from a ridge is
+# exactly what this layer wants. Only the equirectangular and spherical ones,
+# which are a projection rather than a picture, are refused.
+JUNK_CATEGORY = re.compile(
+    r"(earth (viewed|seen|observed) from space|"
+    r"iss expedition|crew earth observations|astronaut photography|"
+    r"satellite (images|imagery|pictures)|images by nasa|"
+    r"orthophoto|aerial survey|"
+    r"from mapillary|mapillary$|"
+    r"360.{0,4} panoramas?|spherical panoramas?|equirectangular)", re.I)
+
+# The same classes recognised from the file name, for the files Commons has
+# not categorised. "ISS065-E-295085" is the ISS frame naming scheme and
+# "DOP20" is the German orthophoto product code.
+JUNK_FILE_RE = re.compile(
+    r"^iss\d{3}-e-\d+|"
+    r"\bdop_?\d{2}\w*|\b(orthophoto|luftbild[- ]senkrecht)\b|"
+    r"\b(spherical|equirectangular)\b|"
+    r"\b360.{0,3}(panorama|photo|view)\b|"
+    r"\bview of earth\b", re.I)
 
 
 def fold(text):
@@ -407,6 +558,15 @@ def candidates_for(row, verbose=False):
 # Database pass: measure against the line, then score
 # ---------------------------------------------------------------------------
 
+# The scenic kinds whose presence makes a photograph likely to BE a view
+# rather than to contain an object. A camera standing on a summit or at a
+# marked viewpoint is pointed at the landscape; that is what the tag is for.
+VIEW_KINDS = ("peak", "volcano", "viewpoint", "waterfall", "glacier",
+              "gorge", "arch", "lake", "beach")
+# Envelope for the nearest-landmark lookup, in degrees. Generous on purpose:
+# the exact metric distance comes back with the row and scoring decides.
+VIEW_PAD_DEG = 0.01
+
 MEASURE_SQL = """
     WITH route AS (
         SELECT ST_Force2D(ST_GeometryN(geom, 1)) AS line,
@@ -420,8 +580,20 @@ MEASURE_SQL = """
     )
     SELECT s.k,
            ST_Distance(s.geom::geography, r.line::geography) AS off_m,
-           ST_LineLocatePoint(r.line, s.geom) * r.len AS along_m
-    FROM shot s CROSS JOIN route r
+           ST_LineLocatePoint(r.line, s.geom) * r.len AS along_m,
+           v.kind AS view_kind,
+           v.dist AS view_m
+    FROM shot s
+    CROSS JOIN route r
+    LEFT JOIN LATERAL (
+        SELECT p.kind,
+               ST_Distance(p.geom::geography, s.geom::geography) AS dist
+        FROM scenic_pois p
+        WHERE p.geom && ST_Expand(s.geom, %(pad)s)
+          AND p.kind = ANY(%(kinds)s)
+        ORDER BY p.geom <-> s.geom
+        LIMIT 1
+    ) v ON true
 """
 
 
@@ -433,19 +605,79 @@ def measure(conn, tid, cands):
     if not pts:
         return
     with conn.cursor() as cur:
-        cur.execute(MEASURE_SQL, {"tid": tid, "pts": json.dumps(pts)})
-        for k, off_m, along_m in cur.fetchall():
+        cur.execute(MEASURE_SQL, {"tid": tid, "pts": json.dumps(pts),
+                                  "pad": VIEW_PAD_DEG,
+                                  "kinds": list(VIEW_KINDS)})
+        for k, off_m, along_m, view_kind, view_m in cur.fetchall():
             cands[k]["off_m"] = off_m
             cands[k]["along_m"] = along_m
+            cands[k]["view_kind"] = view_kind
+            cands[k]["view_m"] = view_m
 
 
-def score_image(cand, row):
+# How close the camera has to have stood to a summit, viewpoint or waterfall
+# for that to say anything about where it was pointed.
+VIEW_NEAR_M = 180
+VIEW_FAR_M = 400
+# For the last-resort evidence rule: close enough that the camera was standing
+# on the path rather than merely in the same field.
+VIEW_ON_PATH_M = 120
+
+
+def view_evidence(cand, row, cats):
+    """Is there any positive reason to believe this frame is a VIEW?
+
+    Four independent claims, any one of which counts: Commons filed it under a
+    landscape category, the file name or caption says so, the camera stood at a
+    summit or viewpoint, or the file is named after this route or a landmark on
+    it. A photograph with none of these may still be perfectly good, and it can
+    still fill a gallery slot; what it cannot do is become the hero, because
+    the hero is what the card claims the walk looks like."""
+    bare = cand["title"][5:] if cand["title"].startswith("File:") else cand["title"]
+    folded = fold(bare)
+    if JUNK_FILE_RE.search(bare) or any(JUNK_CATEGORY.search(c) for c in cats):
+        return False
+    if any(CATEGORY_GOOD.search(c) for c in cats):
+        return True
+    if GOOD_WORDS.search(folded):
+        return True
+    view_m = cand.get("view_m")
+    if view_m is not None and view_m <= VIEW_FAR_M:
+        return True
+    tokens = {w for w in re.split(r"[^a-z0-9]+", fold(row.get("title") or ""))
+              if len(w) >= 4}
+    if tokens and any(w in folded for w in tokens):
+        return True
+
+    # Last resort, and the one that keeps coverage honest rather than merely
+    # high: a landscape-shaped frame taken right ON the path, whose name and
+    # caption say nothing about a building, a vehicle or a crowd, and which
+    # Commons has not filed under one either. Most of Europe's forest and
+    # moorland walks are photographed by people who name the file IMG_2231 and
+    # add no category at all, and refusing every one of those cost 605 routes
+    # their picture for no gain in truthfulness.
+    info = cand.get("info") or {}
+    width, height = info.get("width") or 0, info.get("height") or 0
+    off_m = cand.get("off_m")
+    caption = fold(strip_html(((info.get("extmetadata") or {})
+                               .get("ImageDescription") or {}).get("value", "")))
+    text = folded + " " + caption[:200]
+    clean = not (OBJECT_WORDS.search(text) or PEOPLE_WORDS.search(text)
+                 or any(CATEGORY_BAD.search(c) for c in cats))
+    on_path = off_m is not None and off_m <= VIEW_ON_PATH_M
+    landscape = height and (width / height) >= 1.3
+    return bool(clean and on_path and landscape)
+
+
+def score_image(cand, row, categories=None):
     """How likely this file is to be a usable photograph OF this walk."""
     title = cand["title"]
     bare = title[5:] if title.startswith("File:") else title
     info = cand["info"]
     if (BAD_FILE_RE.search(bare) or SPECIES_RE.match(bare)
-            or BINOMIAL_RE.search(bare)):
+            or BINOMIAL_RE.search(bare) or JUNK_FILE_RE.search(bare)):
+        return -1
+    if any(JUNK_CATEGORY.search(c) for c in (categories or [])):
         return -1
     width, height = info.get("width") or 0, info.get("height") or 0
     if width < 800 or height < 500:
@@ -501,6 +733,28 @@ def score_image(cand, row):
     if PEOPLE_WORDS.search(text):
         score -= 1.4
 
+    # Where the camera stood. A frame shot at a summit, a marked viewpoint or a
+    # waterfall is pointed at the landscape almost by definition, and unlike
+    # every word-based signal this one cannot be fooled by a filename. The
+    # landmarks come from scenic.py, so this costs nothing but a spatial join.
+    view_m = cand.get("view_m")
+    if view_m is not None:
+        if view_m <= VIEW_NEAR_M:
+            score += 1.1
+        elif view_m <= VIEW_FAR_M:
+            score += 0.5
+
+    # Commons categories: the strongest subject signal available, because a
+    # human filed the photograph under what it shows rather than under what
+    # the uploader happened to call the file.
+    cats = categories or []
+    if any(CATEGORY_QUALITY.search(c) for c in cats):
+        score += 1.5                      # peer reviewed as a good photograph
+    if any(CATEGORY_GOOD.search(c) for c in cats):
+        score += 1.4
+    if any(CATEGORY_BAD.search(c) for c in cats):
+        score -= 1.6
+
     if width >= 2000:
         score += 0.4
     if "panoramio" in folded:
@@ -549,7 +803,7 @@ MIN_SCORE = 1.2
 MIN_HERO_SCORE = 2.0
 
 
-def pick(cands, row):
+def pick(cands, row, categories=None):
     """Hero plus a gallery that walks the route.
 
     Best-first would hand back six photographs of the same famous viewpoint,
@@ -562,13 +816,16 @@ def pick(cands, row):
     from every side) and another with four at 410 m. Slice diversity alone did
     not stop it, because an unconditional pad filled the leftover slots with
     exactly the duplicates the slices had just rejected."""
+    cats = categories or {}
     scored = []
     seen_subjects = {}
     for c in cands:
-        s = score_image(c, row)
+        c_cats = cats.get(c["title"]) or []
+        s = score_image(c, row, c_cats)
         if s < MIN_SCORE:
             continue
         c["score"] = s
+        c["is_view"] = view_evidence(c, row, c_cats)
         key = subject_key(c["title"])
         # One frame per subject, the best one.
         if key and key in seen_subjects:
@@ -582,12 +839,17 @@ def pick(cands, row):
         scored.append(c)
     if not scored:
         return []
-    scored.sort(key=lambda c: -c["score"])
-    # Nothing here is good enough to speak for the walk, so the card keeps its
-    # route glyph and says nothing, which is the honest answer.
-    if scored[0]["score"] < MIN_HERO_SCORE:
+    # The hero has to be a view, not merely the best-scoring frame near the
+    # path. Prefer the strongest candidate that carries view evidence; if none
+    # does, the card keeps its route glyph and says nothing, which is the
+    # honest answer to "what does this walk look like".
+    scored.sort(key=lambda c: (not c["is_view"], -c["score"]))
+    if not scored[0]["is_view"] or scored[0]["score"] < MIN_HERO_SCORE:
         return []
     hero = scored[0]
+    # Everything after the hero ranks on score alone, so a good frame with no
+    # view wording still fills a gallery slot.
+    scored[1:] = sorted(scored[1:], key=lambda c: -c["score"])
     picked = [hero]
     total = max(1.0, float(row.get("distance_m") or 1))
     slots = IMAGES_WANTED - 1
@@ -684,6 +946,37 @@ def curated_countries(conn):
         return [r[0] for r in cur.fetchall()]
 
 
+def contested_titles(conn, countries, verbose=False):
+    """The candidate files that could plausibly win a slot on some route.
+
+    Scored WITHOUT categories (that is the thing being fetched), so this is
+    the pre-category ranking; the top CATEGORY_TOP_N of each route is kept.
+    A file below that cannot be lifted into the hero slot by the category
+    bonus alone, so its categories would be bought and never read."""
+    with conn.cursor() as cur:
+        cur.execute("""
+            SELECT id FROM trips
+            WHERE category = 'hike' AND status IN ('approved', 'published')
+              AND country = ANY(%s)""", (countries,))
+        ids = [r[0] for r in cur.fetchall()]
+    ids = [i for i in ids if cache_path(i).exists()]
+    rows = {r["id"]: r for r in load_rows(conn, ids)}
+    titles = set()
+    for n, tid in enumerate(ids, 1):
+        row = rows.get(tid)
+        cands = cache_read(tid)
+        if not row or not cands:
+            continue
+        measure(conn, tid, cands)
+        ranked = sorted(((score_image(c, row), c) for c in cands),
+                        key=lambda pair: -pair[0])[:CATEGORY_TOP_N]
+        titles.update(c["title"] for sc, c in ranked if sc > 0)
+        if verbose and n % 500 == 0:
+            print(f"  shortlisted {n}/{len(ids)} routes, "
+                  f"{len(titles):,} files", flush=True)
+    return sorted(titles)
+
+
 def rescore(conn, countries, limit=0, verbose=False):
     """Re-rank every route that has cached candidates, offline.
 
@@ -703,7 +996,9 @@ def rescore(conn, countries, limit=0, verbose=False):
     if not ids:
         print("no cached candidates yet; run the harvest once first")
         return
-    print(f"re-scoring {len(ids):,} route(s) from cache")
+    cat_table = load_categories()
+    print(f"re-scoring {len(ids):,} route(s) from cache "
+          f"({len(cat_table):,} files have categories)")
     rows = {r["id"]: r for r in load_rows(conn, ids)}
     counts = Counter()
     for n, tid in enumerate(ids, 1):
@@ -712,8 +1007,12 @@ def rescore(conn, countries, limit=0, verbose=False):
         if not row or not cands:
             continue
         measure(conn, tid, cands)
-        picked = pick(cands, row)
-        wrote = store(conn, tid, picked) if picked else 0
+        picked = pick(cands, row, cat_table)
+        # Always store, even with nothing picked: store() clears the route's
+        # existing rows first, and a stricter pass has to be able to REMOVE a
+        # photograph it no longer endorses. Skipping the call on an empty pick
+        # left 758 routes showing frames the new rules had just rejected.
+        wrote = store(conn, tid, picked)
         counts["images"] += wrote
         counts["with_photos" if wrote else "no_photo"] += 1
         if n % 500 == 0 or n == len(ids):
@@ -728,6 +1027,10 @@ def main():
     ap.add_argument("--countries", help="comma separated ISO2")
     ap.add_argument("--refresh", action="store_true",
                     help="re-shoot routes that already have photographs")
+    ap.add_argument("--categories", action="store_true",
+                    help="fetch Commons categories for every cached candidate "
+                         "and stop. One pass, then every later --rescore reads "
+                         "them for free.")
     ap.add_argument("--rescore", action="store_true",
                     help="re-rank from the cached candidates, no Commons "
                          "traffic at all. Use after changing score_image().")
@@ -739,6 +1042,18 @@ def main():
     with connect() as conn:
         countries = ([c.strip().upper() for c in args.countries.split(",") if c.strip()]
                      if args.countries else curated_countries(conn))
+        if args.categories:
+            titles = contested_titles(conn, countries, args.verbose)
+            table = load_categories()
+            print(f"{len(titles):,} unique candidate files, "
+                  f"{len(table):,} already known")
+            try:
+                fetch_categories(sorted(titles), table, args.verbose)
+            finally:
+                save_categories(table)
+            got = sum(1 for t in titles if table.get(t))
+            print(f"categories on {got:,} of {len(titles):,} files")
+            return
         if args.rescore:
             rescore(conn, countries, args.limit, args.verbose)
             return
@@ -764,6 +1079,7 @@ def main():
         print(f"{len(ids):,} routes to photograph across {len(countries)} "
               f"countries")
         rows = load_rows(conn, ids)
+        cat_table = load_categories()
 
         counts = Counter()
         by_country = defaultdict(lambda: [0, 0])
@@ -786,8 +1102,8 @@ def main():
                     continue
                 cache_write(row["id"], cands)
                 measure(conn, row["id"], cands)
-                picked = pick(cands, row)
-                n = store(conn, row["id"], picked) if picked else 0
+                picked = pick(cands, row, cat_table)
+                n = store(conn, row["id"], picked)
                 counts["images"] += n
                 by_country[row["country"]][1] += 1
                 if n:
