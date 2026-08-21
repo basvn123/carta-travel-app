@@ -554,6 +554,11 @@ const ItinCard = React.memo(function ItinCard({ tr, km, onOpen, t }) {
         )}
         <span className="itin-card-foot">
           <span className="itin-card-cost">{t('trip.perDay', { eur: eur(tr.cost.per_day_eur) })}</span>
+          {tr.alsoDays?.length > 0 && (
+            <span className="itin-card-also">
+              {t('trip.alsoDays', { days: tr.alsoDays.join(', ') })}
+            </span>
+          )}
           {season && <span>{season}</span>}
           <span className={`itin-card-checks ${warned ? 'warn' : ''}`}>
             {warned

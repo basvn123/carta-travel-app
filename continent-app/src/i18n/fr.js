@@ -2298,6 +2298,7 @@ export const fr = {
   "trip.countryHead": "{n} voyages en {country}, les meilleurs d'abord",
   "trip.europeHead": "{n} voyages, le meilleur de chaque pays",
   "trip.credit": "Composes et verifies a partir du catalogue, de Wikivoyage et d'OpenStreetMap. Les prix sont des estimations pour deux personnes.",
+  "trip.alsoDays": "aussi {days} jours",
   /* TRIP-KEYS-END */
 
   "explore.sortCost": "Journée la moins chère",

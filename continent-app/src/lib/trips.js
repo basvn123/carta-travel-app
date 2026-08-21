@@ -153,7 +153,7 @@ export const ARCHETYPES = ['base', 'chain', 'loop'];
 export function rankTrips(trips, { days = null, shapes = null, themes = null } = {}) {
   const wantShapes = shapes && shapes.length ? new Set(shapes) : null;
   const wantThemes = themes && themes.length ? new Set(themes) : null;
-  return (trips || [])
+  const rows = (trips || [])
     .map((t) => ({ t, fit: days ? daysFit(t, days) : 2 }))
     .filter(({ t, fit }) => {
       if (days && fit === 0) return false;
@@ -164,6 +164,23 @@ export function rankTrips(trips, { days = null, shapes = null, themes = null } =
     .sort((a, b) => (b.fit - a.fit) || (b.t.score - a.t.score)
       || a.t.id.localeCompare(b.t.id))
     .map(({ t, fit }) => (fit === 2 ? t : { ...t, nearFit: true }));
+
+  // With no length asked for, the same route comes back once per day count it
+  // was composed at: "Naples and Rome" at five, six, seven and ten days, four
+  // times over with one photograph between them. They are the same trip to
+  // anyone reading the page, so the best-scoring length stands for the rest
+  // and the card says which other lengths exist.
+  if (days) return rows;
+  const seen = new Map();
+  for (const t of rows) {
+    const key = `${t.archetype}|${t.cities.map((c) => c.city).join('>')}`;
+    const kept = seen.get(key);
+    if (kept) kept.alsoDays.push(t.days);
+    else seen.set(key, { ...t, alsoDays: [] });
+  }
+  return [...seen.values()].map((t) => (t.alsoDays.length
+    ? { ...t, alsoDays: t.alsoDays.sort((a, b) => a - b) }
+    : t));
 }
 
 /** Which day counts this set of trips can actually answer. */

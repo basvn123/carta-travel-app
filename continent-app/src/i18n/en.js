@@ -3116,6 +3116,7 @@ export const en = {
   'trip.countryHead': '{n} trips in {country}, best first',
   'trip.europeHead': 'Showing {n} trips, the best of every country',
   'trip.credit': 'Composed and checked from the catalogue, Wikivoyage and OpenStreetMap. Prices are estimates for two people sharing.',
+  'trip.alsoDays': 'also {days} days',
   /* TRIP-KEYS-END */
 
   /* ── Cost: euros a day, replacing the two 0-10 cheapness indices ── */

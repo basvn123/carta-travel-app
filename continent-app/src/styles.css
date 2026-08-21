@@ -23358,6 +23358,7 @@ button.ai-sched-main:focus-visible {
   color: var(--ink);
   font-weight: 500;
 }
+.itin-card-also { font-family: var(--mono); font-size: 10.5px; }
 .itin-card-checks { margin-left: auto; }
 .itin-card-checks.warn { color: var(--rate); }
 

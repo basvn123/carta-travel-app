@@ -2298,6 +2298,7 @@ export const nl = {
   "trip.countryHead": "{n} reizen in {country}, beste eerst",
   "trip.europeHead": "{n} reizen, het beste van elk land",
   "trip.credit": "Samengesteld en gecontroleerd uit de catalogus, Wikivoyage en OpenStreetMap. Prijzen zijn schattingen voor twee personen samen.",
+  "trip.alsoDays": "ook {days} dagen",
   /* TRIP-KEYS-END */
 
   "explore.sortCost": "Goedkoopste dag",
