@@ -220,9 +220,20 @@ export function TripPage({ trip: card, data, onClose, onOpenInPlanner, onSelectD
         </div>
 
         <div className="tpage-col">
-          {failed && <p className="places-empty">{t('trip.detailGone')}</p>}
+          {/* The card came from a list that has since been re-exported: the id
+              it names no longer has a detail file. Nothing below can be drawn
+              from a card alone, so the page stops here and offers the way
+              back rather than half-rendering around the hole. */}
+          {failed && (
+            <div className="itin-gone">
+              <p>{t('trip.detailGone')}</p>
+              <button type="button" className="itin-gone-back" onClick={onClose}>
+                {t('trip.back')}
+              </button>
+            </div>
+          )}
 
-          {ready && (
+          {ready && !failed && (
           <div className="tpage-facts itin-facts">
             <Fact icon={CalendarIcon} value={trip.days} label={t('trip.factDays')} />
             <Fact icon={BedIcon} value={trip.nights} label={t('trip.factNights')} />

@@ -23504,6 +23504,28 @@ button.ai-sched-main:focus-visible {
 .itin-use:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
 .itin-copied { margin-top: 8px; font-size: 12.5px; color: var(--green); }
 
+.itin-gone {
+  margin: 24px 0;
+  padding: 20px;
+  border: 1px dashed var(--rule);
+  border-radius: 12px;
+  text-align: center;
+  font-size: 13.5px;
+  color: var(--ink-soft);
+}
+.itin-gone-back {
+  margin-top: 12px;
+  height: 38px;
+  padding: 0 18px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: var(--bg-card);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.itin-gone-back:hover { border-color: var(--ink); }
+
 .itin-why { margin: 0; padding-left: 18px; }
 .itin-why li { margin-bottom: 5px; font-size: 13.5px; line-height: 1.5; color: var(--ink-soft); }
 .itin-follows { display: flex; align-items: center; gap: 6px; margin-top: 8px; font-size: 12.5px; }
