@@ -147,8 +147,11 @@ try {
   await page.locator('.guide-next').click();
   await page.waitForTimeout(2500);
 
-  // Pick a trip and read the transport section.
+  // Pick a trip and read the transport section. Waiting for the card rather
+  // than counting it: the country files load over the network, and a run that
+  // counted zero silently skipped a third of this pass.
   const first = page.locator('.wtrip').first();
+  await first.waitFor({ timeout: 20000 }).catch(() => {});
   if (await first.count()) {
     await first.click();
     await page.waitForTimeout(2500);
