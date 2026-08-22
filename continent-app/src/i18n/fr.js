@@ -1654,8 +1654,6 @@ export const fr = {
   "trails.whyDense": "Beaucoup a voir, {n} reperes tout pres du trace",
 
   // Lakes (the published lake layer, pipeline/lakes)
-  "lake.listHead1": "{n} lacs, les meilleurs d'abord. Tapez un nom de pays pour voir toutes ses eaux.",
-  "lake.listHead": "{n} lacs, retenues et lagunes dans {countries} pays, les meilleurs d'abord. Tapez un nom de pays pour voir toutes ses eaux.",
   "lake.countryHead": "{n} en {country}, les meilleurs d'abord",
   "lake.noneNear": "Aucun lac publie pres de {city}",
   "lake.noneMatch": "Aucun lac ne correspond. Essayez un nom de pays.",
@@ -1853,8 +1851,6 @@ export const fr = {
 
   /* BEACH-KEYS-START */
   // ── Beaches: the published beach layer (pipeline/beaches) ─────────
-  'beach.listHead1': '{n} plages, les meilleures d\'abord. Tapez un nom de pays pour sa liste complete.',
-  'beach.listHead': '{n} plages dans {countries} pays, les meilleures d\'abord. Tapez un nom de pays pour sa liste complete.',
   'beach.countryHead': '{n} plages en {country}, les meilleures d\'abord',
   'beach.noneNear': 'Aucune plage publiee pres de {city}',
   'beach.noneMatch': 'Aucune plage ne correspond. Essayez un nom de pays.',
@@ -2016,8 +2012,6 @@ export const fr = {
 
   /* MOUNTAIN-KEYS-START */
   // -- Montagnes: la couche publiée (pipeline/mountains) --------------
-  "mtn.listHead": "{n} montagnes dans {countries} pays, les meilleures en tête. Tapez le nom d'un pays pour voir toutes ses montagnes.",
-  "mtn.listHead1": "{n} montagnes, les meilleures en tête. Tapez le nom d'un pays pour voir toutes ses montagnes.",
   "mtn.countryHead": "{n} montagnes en {country}, les meilleures en tête",
   "mtn.noneNear": "Aucune montagne publiée près de {city}",
   "mtn.noneCountry": "Rien n'a encore passé la sélection en {country}",

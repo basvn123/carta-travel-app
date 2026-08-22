@@ -2451,8 +2451,6 @@ export const en = {
   "trails.whyDense": "Dense with things to look at, {n} landmarks near the line",
 
   // Lakes (the published lake layer, pipeline/lakes)
-  "lake.listHead1": "{n} lakes, best first. Type a country name to see all of its water.",
-  "lake.listHead": "{n} lakes, reservoirs and lagoons across {countries} countries, best first. Type a country name to see all of its water.",
   "lake.countryHead": "{n} in {country}, best first",
   "lake.noneNear": "No published lake near {city}",
   "lake.noneMatch": "No lake matches that. Try a country name.",
@@ -2650,8 +2648,6 @@ export const en = {
 
   /* BEACH-KEYS-START */
   // ── Beaches: the published beach layer (pipeline/beaches) ─────────
-  'beach.listHead1': '{n} beaches, best first. Type a country name to see all of its beaches.',
-  'beach.listHead': '{n} beaches across {countries} countries, best first. Type a country name to see all of its beaches.',
   'beach.countryHead': '{n} beaches in {country}, best first',
   'beach.noneNear': 'No published beach near {city}',
   'beach.noneMatch': 'No beach matches that. Try a country name.',
@@ -2817,8 +2813,6 @@ export const en = {
   // (lib/mountainStory.js). Nothing in this block is a route description
   // and nothing in it upgrades a difficulty: what the data said is what the
   // sentence says, and the hazard block sends the reader to a local forecast.
-  'mtn.listHead': '{n} mountains across {countries} countries, best first. Type a country name to see all of its mountains.',
-  'mtn.listHead1': '{n} mountains, best first. Type a country name to see all of its mountains.',
   'mtn.countryHead': '{n} mountains in {country}, best first',
   'mtn.noneNear': 'No published mountain near {city}',
   'mtn.noneCountry': 'Nothing has cleared the gate in {country} yet',

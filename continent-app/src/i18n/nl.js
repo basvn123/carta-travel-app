@@ -1654,8 +1654,6 @@ export const nl = {
   "trails.whyDense": "Veel te zien, {n} bezienswaardigheden vlak bij de route",
 
   // Lakes (the published lake layer, pipeline/lakes)
-  "lake.listHead1": "{n} meren, beste eerst. Typ een landnaam om al het water van dat land te zien.",
-  "lake.listHead": "{n} meren, stuwmeren en lagunes in {countries} landen, beste eerst. Typ een landnaam om al het water van dat land te zien.",
   "lake.countryHead": "{n} in {country}, beste eerst",
   "lake.noneNear": "Geen gepubliceerd meer bij {city}",
   "lake.noneMatch": "Geen meer komt overeen. Probeer een landnaam.",
@@ -1853,8 +1851,6 @@ export const nl = {
 
   /* BEACH-KEYS-START */
   // ── Beaches: the published beach layer (pipeline/beaches) ─────────
-  'beach.listHead1': '{n} stranden, beste eerst. Typ een landnaam voor de volledige lijst van dat land.',
-  'beach.listHead': '{n} stranden in {countries} landen, beste eerst. Typ een landnaam voor de volledige lijst van dat land.',
   'beach.countryHead': '{n} stranden in {country}, beste eerst',
   'beach.noneNear': 'Geen gepubliceerd strand in de buurt van {city}',
   'beach.noneMatch': 'Geen strand komt overeen. Probeer een landnaam.',
@@ -2016,8 +2012,6 @@ export const nl = {
 
   /* MOUNTAIN-KEYS-START */
   // -- Bergen: de gepubliceerde berglaag (pipeline/mountains) -----------
-  "mtn.listHead": "{n} bergen in {countries} landen, beste eerst. Typ een landnaam om alle bergen van dat land te zien.",
-  "mtn.listHead1": "{n} bergen, beste eerst. Typ een landnaam om alle bergen van dat land te zien.",
   "mtn.countryHead": "{n} bergen in {country}, beste eerst",
   "mtn.noneNear": "Geen gepubliceerde berg in de buurt van {city}",
   "mtn.noneCountry": "In {country} heeft nog niets de selectie gehaald",

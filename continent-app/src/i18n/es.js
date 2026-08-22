@@ -1654,8 +1654,6 @@ export const es = {
   "trails.whyDense": "Mucho que ver, {n} puntos de interes junto al trazado",
 
   // Lakes (the published lake layer, pipeline/lakes)
-  "lake.listHead1": "{n} lagos, los mejores primero. Escribe el nombre de un pais para ver todas sus aguas.",
-  "lake.listHead": "{n} lagos, embalses y lagunas en {countries} paises, los mejores primero. Escribe el nombre de un pais para ver todas sus aguas.",
   "lake.countryHead": "{n} en {country}, los mejores primero",
   "lake.noneNear": "Ningun lago publicado cerca de {city}",
   "lake.noneMatch": "Ningun lago coincide. Prueba con el nombre de un pais.",
@@ -1853,8 +1851,6 @@ export const es = {
 
   /* BEACH-KEYS-START */
   // ── Beaches: the published beach layer (pipeline/beaches) ─────────
-  'beach.listHead1': '{n} playas, las mejores primero. Escribe un pais para ver su lista completa.',
-  'beach.listHead': '{n} playas en {countries} paises, las mejores primero. Escribe un pais para ver su lista completa.',
   'beach.countryHead': '{n} playas en {country}, las mejores primero',
   'beach.noneNear': 'No hay playa publicada cerca de {city}',
   'beach.noneMatch': 'Ninguna playa coincide. Prueba con un pais.',
@@ -2016,8 +2012,6 @@ export const es = {
 
   /* MOUNTAIN-KEYS-START */
   // -- Montañas: la capa publicada (pipeline/mountains) ---------------
-  "mtn.listHead": "{n} montañas en {countries} países, las mejores primero. Escribe el nombre de un país para ver todas las suyas.",
-  "mtn.listHead1": "{n} montañas, las mejores primero. Escribe el nombre de un país para ver todas las suyas.",
   "mtn.countryHead": "{n} montañas en {country}, las mejores primero",
   "mtn.noneNear": "No hay ninguna montaña publicada cerca de {city}",
   "mtn.noneCountry": "En {country} todavía no ha pasado nada el filtro",

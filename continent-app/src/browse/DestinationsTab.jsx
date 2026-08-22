@@ -1917,15 +1917,6 @@ export function DestinationsTab({
               beachRows.length > 0
                 ? (
                   <>
-                    {!q && !nearPlace && beachIndex && (
-                      <p className="places-beachhead">
-                        {t(beachIndex.countries.length === 1
-                          ? 'beach.listHead1' : 'beach.listHead', {
-                          n: fmt(beachIndex.total),
-                          countries: beachIndex.countries.length,
-                        })}
-                      </p>
-                    )}
                     {queryCountry && !nearPlace && (
                       <p className="places-beachhead">
                         {t('beach.countryHead', {
@@ -1979,15 +1970,6 @@ export function DestinationsTab({
               lakeRows.length > 0
                 ? (
                   <>
-                    {!q && !nearPlace && lakeIndex && (
-                      <p className="places-beachhead">
-                        {t(lakeIndex.countries.length === 1
-                          ? 'lake.listHead1' : 'lake.listHead', {
-                          n: fmt(lakeIndex.total),
-                          countries: lakeIndex.countries.length,
-                        })}
-                      </p>
-                    )}
                     {queryLakeCountry && !nearPlace && (
                       <p className="places-beachhead">
                         {t('lake.countryHead', {
@@ -2061,15 +2043,6 @@ export function DestinationsTab({
               mountainRows.length > 0
                 ? (
                   <>
-                    {!q && !nearPlace && mountainIndex && (
-                      <p className="places-beachhead">
-                        {t(mountainIndex.countries.length === 1
-                          ? 'mtn.listHead1' : 'mtn.listHead', {
-                          n: fmt(mountainIndex.total),
-                          countries: mountainIndex.countries.length,
-                        })}
-                      </p>
-                    )}
                     {queryMountainCountry && !nearPlace && (
                       <p className="places-beachhead">
                         {t('mtn.countryHead', {
