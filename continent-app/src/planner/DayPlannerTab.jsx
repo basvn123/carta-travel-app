@@ -2191,6 +2191,18 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
     }
   }, [newStayPoint]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // Every landing step after the first is built around the chosen stay: the
+  // date question names it, the explore map is centred on it, the chat plans
+  // from it. Starting a plan (or cancelling an edit) clears that answer while
+  // the plan itself is on screen, so coming back to the landing used to land
+  // on a step whose subject no longer existed: no map, no picks, nothing but
+  // a dead "Start planning" button. Losing the stay sends the flow back to
+  // the question that asks for one, which is also the only step that lists
+  // the day plans already saved.
+  useEffect(() => {
+    if (!newStayPoint && landingStep !== 'stay') setLandingStep('stay');
+  }, [newStayPoint, landingStep]);
+
   const cancelEditOnMap = () => {
     const id = editingPlanId;
     setEditingPlanId(null);

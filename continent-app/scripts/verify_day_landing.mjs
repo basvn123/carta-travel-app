@@ -204,6 +204,28 @@ try {
     else ok(`fork: ${fork.filled}/2 filled, badge ${fork.tagSize}px`);
     await page.screenshot({ path: `${SHOTS}/day-how-${size.name}.png` });
 
+    // 5b. Pick places, start the plan, then come back. Starting a plan clears
+    //     the chosen stay, and every step past the first is built around that
+    //     stay, so the flow has to be back on question 1 (the only step that
+    //     also lists saved day plans). Parked on "how" it rendered an empty
+    //     page holding one dead "Start planning" button.
+    await page.locator('.day-flow-card').nth(1).click();
+    await page.locator('.day-explore-search-input').waitFor({ timeout: 30000 });
+    await page.locator('.day-explore-search-input').fill('Tivoli');
+    await page.locator('.day-explore-search-result').first().click({ timeout: 15000 });
+    await page.locator('.guide-city-side-add').first().click({ timeout: 15000 });
+    await page.locator('.day-build-btn').click();
+    await page.locator('.trip-newtrip-btn').first().click({ timeout: 30000 });
+    const back = await page.evaluate(() => ({
+      count: document.querySelector('.day-flow-stepcount')?.textContent.trim() || '',
+      question: !!document.querySelector('.day-flow-search'),
+      saved: document.querySelectorAll('.day-flow-saved .trip-saved-item').length,
+      stranded: !!document.querySelector('.day-build') && !document.querySelector('.day-explore'),
+    }));
+    if (back.stranded) fail(`${size.name}: back from a plan lands on the stayless build screen`);
+    else if (!back.count.endsWith('1 of 3') || !back.question) fail(`${size.name}: back from a plan lands on "${back.count}", no stay question`);
+    else ok(`back from a plan: ${back.count}, ${back.saved} saved plan(s) listed`);
+
     await ctx.close();
   }
 
