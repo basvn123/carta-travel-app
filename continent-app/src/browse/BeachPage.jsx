@@ -122,7 +122,7 @@ export function BeachPage({ beach, countryName, onClose, onSelectDest }) {
   const mapsUrl = trailheadDirectionsUrl(beach.lat, beach.lon);
   const onShare = async () => {
     const how = await shareTrailLink(beach.name, beachShareUrl(beach));
-    if (how === 'copied') setToast(t('trails.linkCopied'));
+    if (how === 'copied') setToast(t('trip.linkCopied'));
   };
 
   const facts = [

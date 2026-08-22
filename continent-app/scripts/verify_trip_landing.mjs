@@ -1,6 +1,7 @@
 // Headless verify for the trip planner landing: the tab opens straight on the
-// three "what are you looking for" options, with no locator map, no bottom
-// sheet and no modal backdrop, and the app header still on screen.
+// first question of the one flow (what is already booked, where from, when,
+// who), with no locator map, no bottom sheet and no modal backdrop, and the
+// app header still on screen.
 //
 //   node scripts/verify_trip_landing.mjs [url]   (default http://localhost:4173)
 //
@@ -53,29 +54,35 @@ async function openPlanner(width, height) {
 {
   const page = await openPlanner(1440, 900);
   check('planner opens on the guide', await page.locator('.trip-planner-blank').isVisible().catch(() => false));
-  check('three options are on screen', await page.locator('.guide-path').count() === 3, String(await page.locator('.guide-path').count()));
-  check('the question is the page title', /looking for/i.test(await page.locator('.guide-title').first().innerText().catch(() => '')));
+  check('it opens on step one, not a chooser', await page.locator('.guide-path').count() === 0
+    && /set up your trip/i.test(await page.locator('.guide-title').first().innerText().catch(() => '')));
+  check('the first question is what is already booked',
+    await page.locator('.guide-booked-bit').count() === 2, String(await page.locator('.guide-booked-bit').count()));
   check('no locator map', await page.locator('.trip-map').count() === 0);
   check('no bottom sheet', await page.locator('.trip-sheet').count() === 0);
   check('no modal backdrop', await page.locator('.guide-overlay').count() === 0);
   check('inline shell renders', await page.locator('.guide-inline').isVisible().catch(() => false));
   check('app header still visible', await page.locator('.top-bar').isVisible().catch(() => false));
-  check('no empty footer band', await page.locator('.guide-foot').count() === 0);
-  check('no duplicate header strip', await page.locator('.guide-head').count() === 0);
-  const box = await page.locator('.guide-path').first().boundingBox();
+  check('the step rail is up from the first screen', await page.locator('.wiz-steps').isVisible().catch(() => false));
+  check('four steps when nothing is booked', await page.locator('.wiz-step').count() === 4,
+    String(await page.locator('.wiz-step').count()));
+  check('no back button on the first screen', await page.locator('.guide-foot-actions .guide-back').count() === 0);
+  const box = await page.locator('.guide-booked-bit').first().boundingBox();
   const bar = await page.locator('.top-bar').boundingBox();
   check('cards sit below the header', box && bar && box.y > bar.y + bar.height - 2, JSON.stringify({ card: box?.y, bar: bar && bar.y + bar.height }));
   await page.screenshot({ path: 'shots/trip-landing-desktop.png' });
 
-  // Picking an option moves on to the first question, with the step rail.
-  await page.locator('.guide-path').first().click();
-  await page.waitForTimeout(1500);
-  check('picking a path advances', await page.locator('.wiz-steps').isVisible().catch(() => false));
-  check('step view keeps the app header', await page.locator('.top-bar').isVisible().catch(() => false));
-  check('step view has a back route', await page.locator('.guide-foot .guide-back').isVisible().catch(() => false));
+  // Booking the beds drops the country step: three steps, and the third
+  // screen is the traveller's own list.
+  await page.locator('.guide-booked-bit', { hasText: /where you sleep/i }).click();
+  await page.waitForTimeout(500);
+  check('booked stays drop a step', await page.locator('.wiz-step').count() === 3,
+    String(await page.locator('.wiz-step').count()));
+  await page.locator('.guide-booked-bit', { hasText: /where you sleep/i }).click();
+  await page.waitForTimeout(500);
+  check('unticking brings it back', await page.locator('.wiz-step').count() === 4);
 
   // ── Where step: photo cards by default, map one tap away ──
-  // Step 1 is Trip basics now: pick a quick date range, then move on to Where.
   const days = page.locator('.cal-day:not(.disabled):not(.outside)');
   await days.nth(3).click();
   await days.nth(9).click();
@@ -90,7 +97,7 @@ async function openPlanner(width, height) {
   const withPhoto = await page.locator('.guide-ccard img.guide-ccard-img').count();
   check('cards carry photographs', withPhoto > 30, `${withPhoto} of ${await cards.count()}`);
   check('cards carry no blurb', await page.locator('.guide-ccard .guide-country-sub, .guide-ccard p').count() === 0);
-  await page.locator('.guide-ccard').first().click();
+  await page.locator('.guide-ccard-pick').first().click();
   await page.waitForTimeout(400);
   check('picking a country marks the card', await page.locator('.guide-ccard.on').count() === 1);
   check('picking a country enables Next', await page.locator('.guide-next').isEnabled());
@@ -110,13 +117,11 @@ async function openPlanner(width, height) {
 // ── Phone ──
 {
   const page = await openPlanner(390, 844);
-  check('phone: three options', await page.locator('.guide-path').count() === 3);
+  check('phone: opens on the first question', await page.locator('.guide-booked-bit').count() === 2);
   check('phone: no launcher card over a map', await page.locator('.trip-launcher').count() === 0);
   const scrollW = await page.evaluate(() => document.documentElement.scrollWidth);
   check('phone: no horizontal scroll', scrollW <= 390, String(scrollW));
   await page.screenshot({ path: 'shots/trip-landing-phone.png' });
-  await page.locator('.guide-path').first().click();
-  await page.waitForTimeout(1500);
   const pdays = page.locator('.cal-day:not(.disabled):not(.outside)');
   await pdays.nth(3).click();
   await pdays.nth(9).click();

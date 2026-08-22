@@ -50,8 +50,8 @@ const guest = page.getByText(/continue without an account/i).first();
 if (await guest.isVisible().catch(() => false)) { await guest.click(); await page.waitForTimeout(1200); }
 await page.locator('button', { hasText: /trip planner/i }).first().click();
 await page.waitForTimeout(2000);
-await page.locator('.guide-path').first().click(); // Carta plans it start to end
-await page.waitForTimeout(1200);
+// No chooser any more: the planner opens on step one.
+await page.waitForTimeout(600);
 
 // ── Step 1: Trip basics ──
 check('step 1 is Trip basics', /set up your trip/i.test(await page.locator('.guide-title').first().innerText().catch(() => '')));

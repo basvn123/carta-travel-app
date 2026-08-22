@@ -170,7 +170,7 @@ export function MountainPage({ mountain, countryName, onClose, onSelectDest }) {
   const mapsUrl = trailheadDirectionsUrl(mountain.lat, mountain.lon);
   const onShare = async () => {
     const how = await shareTrailLink(mountain.name, mountainShareUrl(mountain));
-    if (how === 'copied') setToast(t('trails.linkCopied'));
+    if (how === 'copied') setToast(t('trip.linkCopied'));
   };
 
   const facts = [

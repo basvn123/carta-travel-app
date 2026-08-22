@@ -14089,6 +14089,10 @@ input, select {
 .trip-wizard-modal.wiz-mid .guide-body { display: flex; flex-direction: column; }
 .trip-wizard-modal.wiz-form .guide-canvas,
 .trip-wizard-modal.wiz-mid .guide-canvas { margin-block: auto; }
+/* A list that grows as you add to it starts at the top: centring it left a
+   third of the screen empty above two stops and then crept upward as a third
+   was added. */
+.trip-wizard-modal.wiz-top .guide-canvas { margin-block: 0 auto; }
 
 /* ── Step 0: what are you looking for? ───────────────────────────────────
    Three feature cards side by side. A full-width bar with tiny text in the
@@ -15165,18 +15169,25 @@ input, select {
 .guide-inline-field { display: flex; align-items: center; gap: 10px; flex: none; }
 .guide-inline-field .trip-field-label { margin: 0; white-space: nowrap; }
 /* The quiet variant of the "let Carta decide" CTA: an offer, not the headline. */
+/* The escape hatch on the country step, sized to its own words. Full width
+   and dashed, it was the loudest thing under the title and read as a drop
+   zone; picking countries is the job of that screen and this is the offer to
+   skip it. */
 .guide-design-btn-quiet {
-  flex: 1 1 240px;
+  flex: 0 1 auto;
+  width: auto;
+  max-width: 100%;
+  padding: 9px 13px;
   background: var(--paper);
   color: var(--ink);
-  border: 1px dashed var(--accent);
+  border: 1px solid var(--rule);
   box-shadow: none;
 }
+.guide-design-btn-quiet:hover { border-color: var(--accent); }
 .guide-design-btn-quiet .guide-design-spark,
 .guide-design-btn-quiet svg { color: var(--accent); }
 .guide-design-btn-quiet small { color: var(--ink-mute); }
-.guide-design-btn-quiet:hover { background: var(--accent-bg); opacity: 1; }
-.guide-design-btn-quiet.on { background: var(--accent-bg); border-style: solid; }
+.guide-design-btn-quiet.on { background: var(--accent-bg); border-color: var(--accent); }
 
 /* Step 3: what changing the departure airport actually buys, in the space the
    picker used to leave blank. */
@@ -24548,4 +24559,1268 @@ button.ai-sched-main:focus-visible {
 @media (prefers-reduced-motion: reduce) {
   .wtrip, .wmode-btn, .tleg-mode, .guide-ccard-info { transition: none; }
 }
+
+/* ── Step one: what is already booked ──────────────────────────────────
+   Two toggles, not a chooser screen. The old wizard made the traveller
+   classify their own trip before it had asked them anything; this asks the
+   same thing as one question among the others, and takes questions away
+   rather than sending them down a different wizard. */
+.guide-booked-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.guide-booked-bit {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 13px;
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  background: var(--paper);
+  text-align: left;
+  transition: border-color .15s, background .15s;
+}
+.guide-booked-bit:hover { border-color: var(--accent-soft); }
+.guide-booked-bit.on { border-color: var(--accent); background: var(--accent-bg); }
+.guide-booked-bit:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.guide-booked-icon { display: flex; flex: none; color: var(--ink-mute); }
+.guide-booked-bit.on .guide-booked-icon { color: var(--accent); }
+.guide-booked-text { min-width: 0; }
+.guide-booked-text b { display: block; font-size: 14px; font-weight: 600; }
+.guide-booked-text small { display: block; font-size: 11.5px; line-height: 1.4; color: var(--ink-mute); }
+.guide-booked-bit .guide-mode-check { position: absolute; top: 8px; right: 8px; }
+.guide-booked-card .guide-note { margin-top: 10px; }
+
+@media (max-width: 719px) {
+  .guide-booked-grid { grid-template-columns: 1fr; }
+}
+
+
+/* ═════════ Day workspace: map on top, three tabs under it ═════════
+   The open day plan is one screen with two halves. The map carries the day
+   (the route, the pins, and only the two facts a traveller wants without
+   scrolling: where they sleep, and what a local would tell them). The sheet
+   under it answers one question at a time: what am I doing today, what else
+   could I do, where is the paperwork.
+   ────────────────────────────────────────────────────────────────── */
+
+/* ---- The map's own furniture ---- */
+
+.dayws-overlay {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  right: 12px;
+  z-index: 6;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  pointer-events: none;
+}
+.dayws-overlay > * { pointer-events: auto; }
+
+.dayws-top {
+  width: 100%;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+/* One spec for both map-bar controls: same height, same paper, same hairline,
+   so the two corners read as one row and not as two unrelated widgets. */
+.dayws-stay-btn,
+.dayws-tips-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 42px;
+  padding: 6px 13px;
+  border: 1px solid var(--rule);
+  border-radius: 14px;
+  background: rgba(248, 246, 240, 0.9);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.10), 0 8px 24px rgba(15, 23, 42, 0.05);
+  color: var(--ink);
+  text-align: left;
+  transition: border-color .14s, background .14s;
+}
+.dayws-stay-btn:hover:not(:disabled),
+.dayws-tips-btn:hover { border-color: var(--ink-soft); }
+.dayws-stay-btn:focus-visible,
+.dayws-tips-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.dayws-stay-btn svg,
+.dayws-tips-btn svg { flex: none; color: var(--ink-mute); }
+.dayws-stay-btn:disabled { cursor: default; }
+
+.dayws-stay { position: relative; min-width: 0; max-width: min(62%, 340px); }
+.dayws-stay-btn { max-width: 100%; }
+.dayws-stay-text { min-width: 0; display: flex; flex-direction: column; }
+.dayws-stay-text small {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+  line-height: 1.3;
+}
+.dayws-stay-text b {
+  font-size: 13.5px;
+  font-weight: 600;
+  line-height: 1.25;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dayws-stay-panel {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  width: min(94vw, 360px);
+  padding: 12px;
+  border: 1px solid var(--rule);
+  border-radius: 14px;
+  background: var(--paper);
+  box-shadow: var(--shadow-2);
+  z-index: 3;
+}
+.dayws-stay-search {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 0 4px 0 10px;
+  height: 40px;
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  background: var(--bg-card);
+}
+.dayws-stay-search svg { flex: none; color: var(--ink-mute); }
+.dayws-stay-search input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  background: none;
+  font-size: 13.5px;
+}
+.dayws-stay-search input:focus { outline: none; }
+.dayws-stay-find {
+  flex: none;
+  height: 30px;
+  padding: 0 12px;
+  border-radius: 8px;
+  background: var(--ink-fill);
+  color: #fff;
+  font-size: 12.5px;
+  font-weight: 600;
+}
+.dayws-stay-find:disabled { opacity: 0.45; cursor: default; }
+.dayws-stay-results { margin-top: 8px; display: flex; flex-direction: column; }
+.dayws-stay-result {
+  padding: 9px 10px;
+  border-radius: 8px;
+  text-align: left;
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--ink-soft);
+}
+.dayws-stay-result:hover { background: var(--paper-dim); color: var(--ink); }
+.dayws-stay-none { margin-top: 8px; font-size: 12.5px; color: var(--ink-mute); }
+.dayws-stay-clear {
+  margin-top: 8px;
+  font-size: 12px;
+  color: var(--ink-mute);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.dayws-stay-clear:hover { color: var(--danger); }
+.dayws-stay-panel .daytrip-transport { margin-top: 12px; }
+
+.dayws-tips { position: relative; flex: none; }
+.dayws-tips-btn svg { color: var(--rate); }
+.dayws-tips.open .dayws-tips-btn { border-color: var(--ink-soft); }
+.dayws-tips-label { font-size: 13px; font-weight: 600; white-space: nowrap; }
+
+.dayws-tips-panel {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  width: min(94vw, 380px);
+  max-height: min(64vh, 520px);
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--rule);
+  border-radius: 14px;
+  background: var(--paper);
+  box-shadow: var(--shadow-2);
+  z-index: 3;
+}
+.dayws-tips-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 12px 12px 10px 14px;
+  border-bottom: 1px solid var(--rule-soft);
+}
+.dayws-tips-head h3 { font-family: var(--display); font-size: 15.5px; font-weight: 500; }
+.dayws-tips-close {
+  display: flex;
+  width: 26px; height: 26px;
+  align-items: center; justify-content: center;
+  border-radius: 8px;
+  color: var(--ink-mute);
+}
+.dayws-tips-close:hover { background: var(--paper-dim); color: var(--ink); }
+.dayws-tips-body { overflow-y: auto; padding: 4px 14px 14px; }
+.dayws-tips-sec { padding-top: 12px; }
+.dayws-tips-sec + .dayws-tips-sec { margin-top: 12px; border-top: 1px solid var(--rule-soft); }
+.dayws-tips-sub {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+  margin-bottom: 8px;
+}
+.dayws-tips-intro { font-size: 13px; line-height: 1.5; color: var(--ink-soft); margin-bottom: 8px; }
+.dayws-tips-foot {
+  display: flex;
+  gap: 6px;
+  margin-top: 9px;
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--ink-mute);
+}
+.dayws-tips-foot svg { flex: none; margin-top: 2px; }
+
+.dayws-tip-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 9px 0;
+  border-top: 1px solid var(--rule-soft);
+}
+.dayws-tip-row:first-of-type { border-top: none; }
+.dayws-tip-body { flex: 1; min-width: 0; }
+.dayws-tip-name {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  font-size: 13.5px;
+  font-weight: 600;
+}
+.dayws-tip-tag {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  color: var(--ink-mute);
+}
+.dayws-tip-star { display: inline-flex; color: var(--rate); }
+.dayws-tip-note {
+  display: block;
+  margin-top: 2px;
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: var(--ink-soft);
+}
+.dayws-tip-add {
+  flex: none;
+  width: 28px; height: 28px;
+  border: 1px solid var(--rule);
+  border-radius: 9px;
+  color: var(--ink-soft);
+  font-size: 15px;
+  line-height: 1;
+}
+.dayws-tip-add:hover { border-color: var(--accent); color: var(--accent); }
+.dayws-tip-add.on { background: var(--accent); border-color: var(--accent); color: #fff; }
+.dayws-tip-row.added .dayws-tip-name { color: var(--ink-soft); }
+
+/* The pin filters live in the same overlay column, so they can never land on
+   top of the two bars above them. */
+.day-map-tools-inline {
+  position: static;
+  top: auto; left: auto; right: auto;
+  max-width: 100%;
+}
+
+/* ---- The Carta bot ---- */
+
+.dayws-bot {
+  position: absolute;
+  right: 14px;
+  z-index: 8;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+}
+.dayws-bot-fab {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 46px;
+  padding: 0 17px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  box-shadow: 0 3px 12px rgba(224, 90, 71, 0.32), 0 10px 28px rgba(15, 23, 42, 0.14);
+  transition: background .14s, transform .14s;
+}
+.dayws-bot-fab:hover { background: var(--accent-soft); }
+.dayws-bot-fab:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+.dayws-bot.open .dayws-bot-fab { background: var(--ink-fill); }
+.dayws-bot-fab-label { white-space: nowrap; }
+
+.dayws-bot-menu {
+  width: min(88vw, 300px);
+  padding: 6px;
+  border: 1px solid var(--rule);
+  border-radius: 14px;
+  background: var(--paper);
+  box-shadow: var(--shadow-2);
+}
+.dayws-bot-head {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 9px 10px 10px;
+  border-bottom: 1px solid var(--rule-soft);
+  margin-bottom: 4px;
+}
+.dayws-bot-avatar {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 26px; height: 26px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #fff;
+}
+.dayws-bot-head b { display: block; font-size: 13.5px; font-weight: 600; }
+.dayws-bot-head small { display: block; font-family: var(--mono); font-size: 10.5px; color: var(--ink-mute); }
+.dayws-bot-item {
+  display: flex;
+  width: 100%;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 9px 10px;
+  border-radius: 10px;
+  text-align: left;
+}
+.dayws-bot-item:hover { background: var(--paper-dim); }
+.dayws-bot-item svg { flex: none; margin-top: 2px; color: var(--ink-mute); }
+.dayws-bot-item b { display: block; font-size: 13.5px; font-weight: 600; }
+.dayws-bot-item small { display: block; font-size: 11.5px; line-height: 1.4; color: var(--ink-mute); }
+
+/* ---- Day bar and tabs, at the top of the sheet ---- */
+
+.dayws-daybar {
+  flex-shrink: 0;
+  padding: 10px 20px 2px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+.dayws-city-add {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.dayws-city-add > *:first-child { flex: 1; min-width: 0; }
+
+.dayws-tabs {
+  flex-shrink: 0;
+  display: flex;
+  gap: 2px;
+  padding: 8px 20px 0;
+  border-bottom: 1px solid var(--rule);
+}
+.dayws-tab {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 9px 6px 10px;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-mute);
+  transition: color .14s, border-color .14s;
+}
+.dayws-tab svg { flex: none; }
+.dayws-tab:hover { color: var(--ink-soft); }
+.dayws-tab.on { color: var(--ink); border-bottom-color: var(--accent); }
+.dayws-tab:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+.dayws-tab-count {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  font-variant-numeric: tabular-nums;
+  padding: 1px 5px;
+  border-radius: 999px;
+  background: var(--paper-dim);
+  color: var(--ink-soft);
+}
+.dayws-tab.on .dayws-tab-count { background: var(--accent-bg); color: var(--accent); }
+
+.dayws-back { margin-top: 22px; }
+
+/* ---- Tab 1: today's plan ---- */
+
+.dayp { padding-top: 12px; }
+.dayp-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+.dayp-bar-count {
+  flex: 1;
+  font-family: var(--mono);
+  font-size: 11.5px;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.03em;
+  color: var(--ink-mute);
+  text-align: center;
+}
+.dayp-pop { position: relative; flex: none; }
+.dayp-round {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px; height: 42px;
+  border: 1px solid var(--rule);
+  border-radius: 50%;
+  background: var(--bg-card);
+  color: var(--ink-soft);
+  transition: border-color .14s, background .14s, color .14s;
+}
+.dayp-round:hover { border-color: var(--ink-soft); color: var(--ink); }
+.dayp-round:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.dayp-round.on { background: var(--ink-fill); border-color: var(--ink-fill); color: #fff; }
+.dayp-round-primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+.dayp-round-primary:hover { background: var(--accent-soft); border-color: var(--accent-soft); color: #fff; }
+
+.dayp-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  width: min(84vw, 272px);
+  padding: 6px;
+  border: 1px solid var(--rule);
+  border-radius: 14px;
+  background: var(--paper);
+  box-shadow: var(--shadow-2);
+  z-index: 4;
+}
+.dayp-menu-end { left: auto; right: 0; }
+.dayp-menu-item {
+  display: flex;
+  width: 100%;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 9px 10px;
+  border-radius: 10px;
+  text-align: left;
+  color: var(--ink);
+  text-decoration: none;
+}
+.dayp-menu-item:hover { background: var(--paper-dim); }
+.dayp-menu-item svg { flex: none; margin-top: 2px; color: var(--ink-mute); }
+.dayp-menu-item b { display: block; font-size: 13.5px; font-weight: 600; }
+.dayp-menu-item small { display: block; font-size: 11.5px; line-height: 1.4; color: var(--ink-mute); }
+.dayp-menu-small { padding: 7px 10px; }
+.dayp-menu-small b { font-size: 12.5px; font-weight: 500; color: var(--ink-soft); }
+.dayp-menu-rule { height: 1px; background: var(--rule-soft); margin: 5px 8px; }
+
+.dayp-summary {
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--ink-soft);
+  padding: 10px 12px;
+  border-left: 2px solid var(--accent);
+  background: var(--paper-dim);
+  border-radius: 0 10px 10px 0;
+  margin-bottom: 14px;
+}
+
+/* The route itself. A dotted rail joins the stops, so the list reads as one
+   walk rather than as four unrelated cards. */
+.dayr-list { list-style: none; }
+.dayr-row {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 9px 0;
+}
+.dayr-row::before {
+  content: '';
+  position: absolute;
+  left: 23px;
+  top: 50px;
+  bottom: -4px;
+  border-left: 2px dotted var(--rule);
+}
+.dayr-row.last::before { display: none; }
+.dayr-mark { position: relative; flex: none; width: 48px; height: 48px; }
+.dayr-mark .day-thumb {
+  width: 48px; height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--bg-card);
+  box-shadow: 0 1px 4px rgba(15, 23, 42, 0.14);
+}
+.dayr-mark .day-thumb-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--paper-dim);
+  color: var(--ink-mute);
+}
+.dayr-no {
+  position: absolute;
+  right: -3px;
+  bottom: -3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: var(--accent);
+  border: 2px solid var(--paper);
+  color: #fff;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.dayr-body { flex: 1; min-width: 0; }
+.dayr-name {
+  display: block;
+  font-size: 14.5px;
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--ink);
+}
+/* Inline, so on a name that wraps to two lines the star follows the last
+   word instead of floating out at the right edge of the row. */
+.dayr-must { display: inline-flex; margin-left: 5px; vertical-align: -1px; color: var(--rate); }
+.dayr-kind {
+  display: block;
+  margin-top: 2px;
+  font-size: 12px;
+  color: var(--ink-mute);
+}
+.dayr-tools { flex: none; display: flex; gap: 2px; opacity: 0.55; transition: opacity .14s; }
+.dayr-row:hover .dayr-tools,
+.dayr-row:focus-within .dayr-tools { opacity: 1; }
+.dayr-tool {
+  width: 26px; height: 26px;
+  border-radius: 8px;
+  color: var(--ink-mute);
+  font-size: 13px;
+  line-height: 1;
+}
+.dayr-tool:hover:not(:disabled) { background: var(--paper-dim); color: var(--ink); }
+.dayr-tool:disabled { opacity: 0.3; cursor: default; }
+.dayr-tool-del:hover { color: var(--danger); }
+/* The pin was tapped: ring its row once so the two agree. */
+.dayr-row.flash {
+  background: var(--accent-bg);
+  border-radius: 12px;
+  padding-left: 8px;
+  padding-right: 8px;
+  margin-left: -8px;
+  margin-right: -8px;
+}
+
+.dayp-finds { margin-top: 18px; padding-top: 12px; border-top: 1px solid var(--rule-soft); }
+.dayp-finds-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+  margin-bottom: 8px;
+}
+.dayp-find { padding: 6px 0; }
+.dayp-find b { display: block; font-size: 13.5px; font-weight: 600; }
+.dayp-find small { display: block; font-size: 12px; line-height: 1.45; color: var(--ink-soft); }
+
+.dayp-clear-hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 16px;
+  padding: 9px 14px;
+  border: 1px dashed var(--rule);
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+.dayp-clear-hint:hover { border-color: var(--accent); color: var(--accent); }
+
+/* Empty day: name the space, give the action. */
+.dayp-empty { text-align: center; padding: 26px 4px 8px; }
+.dayp-empty-glyph {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px; height: 52px;
+  border-radius: 50%;
+  background: var(--paper-dim);
+  color: var(--ink-mute);
+  margin-bottom: 12px;
+}
+.dayp-empty h3 { font-family: var(--display); font-size: 19px; font-weight: 500; }
+.dayp-empty p {
+  max-width: 34ch;
+  margin: 6px auto 0;
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--ink-soft);
+}
+.dayp-empty-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 9px;
+  margin-top: 16px;
+}
+.dayp-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 44px;
+  padding: 0 18px;
+  border-radius: 12px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+}
+.dayp-cta:hover { background: var(--accent-soft); }
+.dayp-cta-ghost {
+  background: transparent;
+  border: 1px solid var(--rule);
+  color: var(--ink);
+}
+.dayp-cta-ghost:hover { background: var(--paper-dim); border-color: var(--ink-soft); }
+.dayp-ready {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  width: 100%;
+  margin-top: 18px;
+  padding: 12px 14px;
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  background: var(--bg-card);
+  text-align: left;
+}
+.dayp-ready:hover { border-color: var(--accent); }
+.dayp-ready-ico {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 34px; height: 34px;
+  border-radius: 10px;
+  background: var(--accent-bg);
+  color: var(--accent);
+}
+.dayp-ready-text { min-width: 0; }
+.dayp-ready-text b { display: block; font-size: 13.5px; font-weight: 600; }
+.dayp-ready-text small { display: block; font-family: var(--mono); font-size: 11px; color: var(--ink-mute); }
+
+/* ---- Tab 2: add more ---- */
+
+.daya { padding-top: 12px; }
+.daya-modes {
+  display: flex;
+  gap: 3px;
+  padding: 3px;
+  border-radius: 12px;
+  background: var(--paper-dim);
+  margin-bottom: 14px;
+}
+.daya-mode {
+  flex: 1;
+  padding: 9px 8px;
+  border-radius: 9px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-mute);
+  transition: background .14s, color .14s;
+}
+.daya-mode.on { background: var(--bg-card); color: var(--ink); box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08); }
+.daya-mode:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+
+.daya-lead, .daya-empty, .daya-thin {
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--ink-mute);
+  margin-bottom: 12px;
+}
+.daya-empty { margin: 14px 0; }
+
+.daya-ready {
+  padding: 14px;
+  border: 1px solid var(--rule);
+  border-radius: 14px;
+  background: var(--bg-card);
+  margin-bottom: 10px;
+}
+.daya-ready.rec { border-color: var(--accent); }
+.daya-ready-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 5px;
+}
+.daya-ready-title { font-family: var(--display); font-size: 16px; color: var(--ink); }
+.daya-ready-tag {
+  flex: none;
+  font-size: 10.5px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--accent-bg);
+  color: var(--accent);
+}
+.daya-ready-desc { font-size: 13px; line-height: 1.5; color: var(--ink-soft); }
+.daya-ready-stats {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-top: 9px;
+  font-family: var(--mono);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-mute);
+}
+.daya-sep { width: 1px; height: 11px; background: var(--rule); flex: none; }
+.daya-ready-names {
+  margin-top: 8px;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--ink-soft);
+}
+.daya-ready-use {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 12px;
+  height: 38px;
+  padding: 0 15px;
+  border-radius: 10px;
+  background: var(--ink-fill);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+}
+.daya-ready-use:hover { background: var(--ink); }
+.daya-ready.rec .daya-ready-use { background: var(--accent); }
+.daya-ready.rec .daya-ready-use:hover { background: var(--accent-soft); }
+
+.daya-ask {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  width: 100%;
+  margin-top: 6px;
+  padding: 12px 14px;
+  border: 1px dashed var(--rule);
+  border-radius: 12px;
+  text-align: left;
+}
+.daya-ask:hover { border-color: var(--accent); }
+.daya-ask svg { flex: none; color: var(--accent); }
+.daya-ask b { display: block; font-size: 13.5px; font-weight: 600; }
+.daya-ask small { display: block; font-size: 11.5px; color: var(--ink-mute); }
+
+.daya-search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 44px;
+  padding: 0 8px 0 12px;
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  background: var(--bg-card);
+  margin-bottom: 12px;
+}
+.daya-search svg { flex: none; color: var(--ink-mute); }
+.daya-search input { flex: 1; min-width: 0; border: none; background: none; font-size: 14px; }
+.daya-search input:focus { outline: none; }
+.daya-search-clear {
+  flex: none;
+  width: 28px; height: 28px;
+  border-radius: 8px;
+  color: var(--ink-mute);
+  font-size: 17px;
+  line-height: 1;
+}
+.daya-search-clear:hover { background: var(--paper-dim); color: var(--ink); }
+
+.daya-picks {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  margin-bottom: 12px;
+}
+.daya-picks::-webkit-scrollbar { display: none; }
+.daya-pick {
+  flex: none;
+  height: 32px;
+  padding: 0 13px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  white-space: nowrap;
+  transition: background .14s, border-color .14s, color .14s;
+}
+.daya-pick:hover { border-color: var(--ink-soft); color: var(--ink); }
+.daya-pick.on { background: var(--ink-fill); border-color: var(--ink-fill); color: #fff; }
+.daya-pick:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* A browsable place: the photo earns its space, and the sentence beside it
+   says what the place actually is. */
+.daya-card {
+  border: 1px solid var(--rule);
+  border-radius: 14px;
+  background: var(--bg-card);
+  overflow: hidden;
+  margin-bottom: 10px;
+  transition: border-color .14s, box-shadow .14s;
+}
+.daya-card.focused { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-bg); }
+.daya-card.added { border-color: var(--rule-soft); background: var(--paper-dim); }
+.daya-card-main {
+  display: flex;
+  width: 100%;
+  gap: 12px;
+  padding: 12px;
+  text-align: left;
+}
+.daya-shot { flex: none; }
+.daya-shot .day-thumb {
+  width: 92px; height: 92px;
+  border-radius: 10px;
+  object-fit: cover;
+}
+.daya-shot .day-thumb-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--paper-dim);
+  color: var(--ink-mute);
+}
+.daya-text { flex: 1; min-width: 0; }
+.daya-name {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  font-size: 14.5px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+.daya-must {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: var(--rate-bg);
+  color: var(--rate);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+.daya-kind { display: block; margin-top: 2px; font-size: 11.5px; color: var(--ink-mute); }
+.daya-blurb {
+  display: block;
+  margin-top: 6px;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--ink-soft);
+}
+.daya-note {
+  display: block;
+  margin-top: 5px;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  color: var(--ink-mute);
+}
+.daya-card-foot {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 0 12px 12px;
+}
+.daya-more {
+  margin-right: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  color: var(--ink-mute);
+  text-decoration: none;
+}
+.daya-more:hover { color: var(--ink); text-decoration: underline; text-underline-offset: 2px; }
+.daya-add {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 34px;
+  padding: 0 14px;
+  border: 1px solid var(--accent);
+  border-radius: 10px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 12.5px;
+  font-weight: 600;
+}
+.daya-add:hover { background: var(--accent-soft); border-color: var(--accent-soft); }
+.daya-add.on {
+  background: transparent;
+  border-color: var(--rule);
+  color: var(--ink-soft);
+}
+.daya-add.on:hover { border-color: var(--danger); color: var(--danger); }
+.daya-add:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+
+.daya-custom-add {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  width: 100%;
+  justify-content: center;
+  padding: 11px 14px;
+  border: 1px dashed var(--accent);
+  border-radius: 12px;
+  color: var(--accent);
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+.daya-custom-add:hover { background: var(--accent-bg); }
+.daya-custom-add:disabled { opacity: 0.6; cursor: default; }
+.daya-spin {
+  width: 13px; height: 13px;
+  border: 2px solid var(--accent-bg);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: daya-spin .8s linear infinite;
+}
+@keyframes daya-spin { to { transform: rotate(360deg); } }
+
+.daya-sugg {
+  padding: 11px 13px;
+  border: 1px solid var(--rule-soft);
+  border-radius: 12px;
+  background: var(--paper-dim);
+  margin-bottom: 12px;
+}
+.daya-sugg-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+  margin-bottom: 6px;
+}
+.daya-sugg-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 7px 0;
+  text-align: left;
+  border-top: 1px solid var(--rule-soft);
+}
+.daya-sugg-row:first-of-type { border-top: none; }
+.daya-sugg-text { flex: 1; min-width: 0; }
+.daya-sugg-text b { display: block; font-size: 13px; font-weight: 600; }
+.daya-sugg-text small { display: block; font-size: 11.5px; color: var(--ink-mute); }
+.daya-sugg-add {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px; height: 26px;
+  border-radius: 8px;
+  border: 1px solid var(--rule);
+  color: var(--ink-soft);
+}
+.daya-sugg-row:hover .daya-sugg-add { border-color: var(--accent); color: var(--accent); }
+
+.daya-far { margin-top: 18px; padding-top: 12px; border-top: 1px solid var(--rule-soft); }
+.daya-far-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+  margin-bottom: 10px;
+}
+.daya-more-btn {
+  display: block;
+  width: 100%;
+  padding: 11px;
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  margin-bottom: 10px;
+}
+.daya-more-btn:hover { border-color: var(--ink-soft); color: var(--ink); }
+.daya-tip {
+  display: flex;
+  gap: 7px;
+  margin-top: 14px;
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--ink-mute);
+}
+.daya-tip svg { flex: none; margin-top: 2px; }
+
+/* ---- Tab 3: files and notes ---- */
+
+.dayf { padding-top: 14px; }
+.dayf-block + .dayf-block { margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--rule-soft); }
+.dayf-head { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.dayf-head h3 { font-family: var(--display); font-size: 16px; font-weight: 500; }
+.dayf-count {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  font-variant-numeric: tabular-nums;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: var(--paper-dim);
+  color: var(--ink-soft);
+}
+.dayf-sub, .dayf-note {
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--ink-mute);
+}
+.dayf-note { display: flex; gap: 7px; margin-top: 10px; }
+.dayf-note svg { flex: none; margin-top: 2px; }
+.dayf-problem {
+  margin-top: 10px;
+  padding: 9px 12px;
+  border-radius: 10px;
+  background: var(--accent-bg);
+  color: var(--danger-dark);
+  font-size: 12.5px;
+  line-height: 1.45;
+}
+
+.dayf-drop {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 8px;
+  padding: 20px 16px;
+  border: 1px dashed var(--rule);
+  border-radius: 14px;
+  background: var(--paper-dim);
+  transition: border-color .14s, background .14s;
+}
+.dayf-drop.over { border-color: var(--accent); background: var(--accent-bg); }
+.dayf-drop.busy { opacity: 0.7; }
+.dayf-drop-glyph {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px; height: 38px;
+  border-radius: 50%;
+  background: var(--bg-card);
+  color: var(--ink-mute);
+}
+.dayf-drop-lead { max-width: 38ch; font-size: 12.5px; line-height: 1.5; color: var(--ink-soft); }
+.dayf-browse {
+  height: 38px;
+  padding: 0 16px;
+  border-radius: 10px;
+  background: var(--ink-fill);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+}
+.dayf-browse:hover { background: var(--ink); }
+.dayf-browse:disabled { opacity: 0.55; cursor: default; }
+
+.dayf-list { list-style: none; margin-top: 12px; }
+.dayf-row {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 9px 0;
+  border-top: 1px solid var(--rule-soft);
+}
+.dayf-row:first-child { border-top: none; }
+.dayf-glyph {
+  position: relative;
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px; height: 40px;
+  border-radius: 10px;
+  background: var(--paper-dim);
+  color: var(--ink-mute);
+  overflow: hidden;
+}
+.dayf-shot {
+  position: absolute;
+  inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+}
+.dayf-info { flex: 1; min-width: 0; }
+.dayf-name {
+  display: block;
+  font-size: 13.5px;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.dayf-meta {
+  display: block;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-mute);
+}
+.dayf-act {
+  flex: none;
+  width: 32px; height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9px;
+  color: var(--ink-mute);
+}
+.dayf-act:hover { background: var(--paper-dim); color: var(--ink); }
+.dayf-act-del:hover { color: var(--danger); }
+
+.dayf-notes {
+  width: 100%;
+  padding: 11px 13px;
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  background: var(--bg-card);
+  font-family: var(--ui);
+  font-size: 13.5px;
+  line-height: 1.55;
+  resize: vertical;
+}
+.dayf-notes:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+
+/* ---- Responsive ---- */
+
+@media (max-width: 768px) {
+  /* The map is half the point of this screen, so the sheet opens at a height
+     that leaves it visible. Dragging the grip overrides this with an inline
+     height, which is remembered from then on. */
+  .day-ws .trip-sheet { height: 58%; }
+  /* Room under the last row for the floating Carta button to sit over. */
+  .day-ws .trip-sheet-scroll { padding-bottom: 76px; }
+  .dayws-daybar { padding: 9px 15px 2px; }
+  .dayws-tabs { padding: 6px 15px 0; }
+  .dayws-tab { font-size: 12.5px; gap: 5px; }
+  .dayws-bot { right: 12px; }
+  .dayws-bot-fab { height: 42px; padding: 0 14px; font-size: 13px; }
+  .daya-shot .day-thumb { width: 76px; height: 76px; }
+}
+
+/* Phones: the bot floats in the bottom right of the sheet, where a thumb
+   already is. .trip-planner-screen already stops above the bottom nav, so the
+   offset is measured from the sheet's own bottom edge, not the viewport's. */
+@media (max-width: 768px) {
+  .dayws-bot { bottom: 14px; }
+}
+
+@media (min-width: 769px) {
+  .dayws-overlay {
+    left: calc(var(--panel-w) + 14px);
+    right: 14px;
+  }
+  .dayws-bot { bottom: 18px; }
+  .dayws-stay { max-width: 340px; }
+}
+
+/* Very narrow phones: the two map bars stack rather than squeeze. */
+@media (max-width: 420px) {
+  .dayws-tips-label { display: none; }
+  .dayws-tips-btn { padding: 6px 11px; }
+  .dayws-stay { max-width: calc(100% - 58px); }
+  .dayp-empty-actions .dayp-cta { flex: 1 1 100%; justify-content: center; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .daya-spin { animation: none; }
+  .dayws-stay-btn, .dayws-tips-btn, .dayp-round, .daya-card, .daya-pick,
+  .dayws-tab, .dayf-drop, .dayws-bot-fab, .daya-mode, .dayr-tools {
+    transition: none;
+  }
+}
+
+.guide-when-reopen {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 10px;
+  padding: 8px 12px;
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  background: var(--paper);
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+.guide-when-reopen:hover { border-color: var(--accent); color: var(--accent); }
+.guide-when-reopen svg { color: var(--ink-mute); }
+
 /* PLANNER-V2-END */

@@ -45,8 +45,8 @@ async function openWizard(width, height) {
     await page.locator('.plan-chooser-item').first().click();
   }
   await page.waitForTimeout(1500);
-  await page.locator('.guide-path').first().click(); // Carta plans it start to end
-  await page.waitForTimeout(1200);
+  // The planner opens straight on step one; nothing to choose first.
+  await page.waitForTimeout(800);
   return page;
 }
 
@@ -278,6 +278,49 @@ try {
   await page.close();
 } catch (e) {
   check('phone pass ran to the end', false, String(e).slice(0, 140));
+}
+
+// ── Travel already booked ─────────────────────────────────────────────────
+// The other half of the one flow: saying the way there is held swaps "how do
+// you get there" for "where does it put you down", and the country it lands
+// in is ticked for you.
+try {
+  const page = await openWizard(1440, 1000);
+  await page.locator('.guide-booked-bit', { hasText: /travel there/i }).click();
+  await page.waitForTimeout(500);
+  check('the booked answer says what changes',
+    /where it puts you down/i.test(await page.locator('.guide-booked-card .guide-note').innerText()));
+  const heads = (await page.locator('.guide-card-head').allInnerTexts()).join(' / ');
+  check('it asks where you land', /land/i.test(heads), heads);
+  check('and asks it after where you leave from',
+    heads.indexOf('start') < heads.indexOf('land'), heads);
+
+  const days = page.locator('.cal-day:not(.disabled):not(.outside)');
+  await days.nth(2).click();
+  await page.waitForTimeout(250);
+  await days.nth(8).click();
+  await page.waitForTimeout(400);
+  check('dates alone do not let you past', await page.locator('.guide-next').isDisabled());
+
+  const landCard = page.locator('.guide-card', { hasText: /where do you land/i });
+  await landCard.locator('input.guide-search').fill('Salzburg');
+  await page.waitForTimeout(900);
+  await page.locator('.guide-city-btn').first().click();
+  await page.waitForTimeout(600);
+  check('naming the arrival opens the way on', await page.locator('.guide-next').isEnabled());
+  await landCard.locator('.tleg-mode', { hasText: /^flight$/i }).click();
+  await page.waitForTimeout(300);
+  await page.screenshot({ path: 'shots/planner2-booked-travel.png', fullPage: true });
+
+  await page.locator('.guide-next').click();
+  await page.waitForTimeout(2000);
+  const chips = (await page.locator('.guide-picked-chip').allInnerTexts()).join(', ');
+  check('the country you land in is already ticked', /austria/i.test(chips), chips);
+  const recap = await page.locator('.guide-recap').innerText().catch(() => '');
+  check('the recap repeats the arrival back', /salzburg/i.test(recap), recap.replace(/\s+/g, ' ').slice(0, 90));
+  await page.close();
+} catch (e) {
+  check('booked-travel pass ran to the end', false, String(e).slice(0, 140));
 }
 
 await browser.close();

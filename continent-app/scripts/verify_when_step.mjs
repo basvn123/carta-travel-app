@@ -38,8 +38,7 @@ async function toWhenStep(width, height, fakeNow) {
   if (await top.isVisible().catch(() => false)) await top.click();
   else { await page.locator('.bottom-nav-plus').click(); await page.waitForTimeout(500); await page.locator('.plan-chooser-item').first().click(); }
   await page.waitForTimeout(2000);
-  await page.locator('.guide-path').first().click();   // Carta plans it start to end
-  await page.waitForTimeout(1200);                      // dates live on Trip basics now
+  await page.waitForTimeout(1000);   // dates live on Trip basics, which is step one
   return page;
 }
 

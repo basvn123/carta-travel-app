@@ -153,7 +153,7 @@ export function LakePage({ lake, countryName, onClose, onSelectDest, warmC = 18 
   const mapsUrl = trailheadDirectionsUrl(lake.lat, lake.lon);
   const onShare = async () => {
     const how = await shareTrailLink(lake.name, lakeShareUrl(lake));
-    if (how === 'copied') setToast(t('trails.linkCopied'));
+    if (how === 'copied') setToast(t('trip.linkCopied'));
   };
 
   const size = lake.size || {};
