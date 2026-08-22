@@ -36,6 +36,9 @@ pipeline/lakes/
                        the swimming rules that override every machine signal
   harvest_lakes.py     stage 1  Wikidata + the seed  -> cache/lakes/raw_CC.json
   enrich_lakes.py      stage 2  the shortlist, in full -> cache/lakes/rich_CC.json
+  lake_images.py       is this photograph OF this lake, and is it the one to
+                       lead with: the subject gate, the pixel probe, the beauty
+                       score borrowed from Commons' own reviewers
   lake_index.py        the model: six components, three sub scores, the swimming
                        rule, the season estimate, the hazards, the reasons
   export_lakes.py      stage 3  score, gate, fill the country floor, validate
@@ -194,6 +197,28 @@ as a source rescued lakes the image gate had dropped; re-photographing all
 3,809 shortlisted water bodies to reach them would have been hours of
 somebody else's bandwidth for nothing.
 
+`--photos-published` re-shoots the lakes already in `public/lakes`, and only
+those. The strict picker costs about fifteen requests a lake, so running it
+over the whole 3,809 shortlist to improve 1,125 published cards would be an
+hour of Wikimedia's bandwidth spent on rows nobody will ever open.
+
+A COLD build needs neither flag: `build_lakes.py` photographs every
+shortlisted lake with the strict picker in one pass, so every picture it
+publishes carries its evidence. The two flags exist for improving a cache that
+already exists, and there the published set is a moving target: tightening the
+picker drops some lakes and lets others in, so converging takes
+
+```
+python pipeline/lakes/enrich_lakes.py --photos-published --no-context
+python pipeline/lakes/export_lakes.py
+python pipeline/lakes/enrich_lakes.py --photos-published --no-context
+python pipeline/lakes/export_lakes.py
+```
+
+The second round only re-shoots the lakes the first round's export promoted,
+so it is short. `scripts/verify_lakes.mjs` asserts the end state: every
+published photograph names the evidence that let it in.
+
 `--context-published` sweeps the shore only for the lakes already in
 `public/lakes`, which on a warm re-run is about a quarter of the shortlist and
 all of what a traveller actually sees. The shore sweep is the expensive half
@@ -201,6 +226,75 @@ of the stage (one Overpass query per twelve lakes, radius in kilometres,
 against an endpoint that answers 504 whenever it is busy), and three quarters
 of a full sweep is spent on lakes the export gate drops. On a cold build there
 is no wire to read and the flag is a no-op.
+
+### Making sure a photograph is of the lake
+
+`lake_images.py` holds three gates, in the order they cost. They exist because
+the first build was not strict enough: nine per cent of published lead
+photographs did not carry their own lake's name, and among them were a
+memorial plaque in Hungary, a monument to the liberators of Rezekne, a sports
+hall in Flanders and a photograph of Greece taken from the International Space
+Station. All four arrived the same way, through a blind Commons geosearch,
+because "near the water" is not "of the water".
+
+**Subject, from metadata.** Free, and it does the heavy lifting. A file is
+accepted only when something ASSERTS it is this lake, and the strength of that
+assertion becomes its evidence tier, which also drives the ranking:
+
+| tier | what it means |
+|---|---|
+| `p18` | Wikidata: a person stated this image depicts this item |
+| `title` | the file is named after the lake and nothing else |
+| `viewcat` | it sits in "Views of X" or "Panoramics of X" on Commons |
+| `category` | it sits in the lake's category tree |
+| `name` | the lake is mentioned somewhere in the file name |
+
+A geosearch hit that reaches none of those tiers is refused outright. On top
+of that sits a vocabulary of what a lake photograph is not (maps, plaques,
+monuments, coats of arms, interiors, aircraft, satellite imagery, species
+close-ups), matched against the title, the categories AND the description,
+because Commons file names are very often silent and the categories never are.
+
+**Composition, from pixels.** One 500 px thumbnail per surviving candidate.
+The probe measures colour in the lower 60 per cent of the frame: how much of
+it reads as water, how much as vegetation, whether it is snow-bright or shot
+in the dark. This gate may NOT overrule `p18` or `title`, because those are
+humans stating what the picture is and the probe is a heuristic that rejects
+the grey moorland water of the Faroes. It may overrule `name` and `category`,
+which is the tier that admits the bar, the hotel terrace and the car park that
+happen to name the lake they stand on.
+
+**Beauty, from Commons itself.** Commons runs peer review and records the
+verdict as a category: Quality images, Featured pictures, Valued images. Those
+are humans saying "this is a good photograph", for free, and nothing computed
+here comes close. Underneath them the picker reads the view subcategories, the
+shape of the frame, and penalties for the wrong season, the dark, and a
+subject standing in front of the water rather than in it.
+
+Three measurements were taken and thrown away, and all three are worth
+recording so nobody spends the afternoon again.
+
+- A **texture** based water detector does not work. Toftavatn, a genuine
+  Faroese lake, came back smoother than a Flemish sports hall, and the
+  Attersee came back rougher than a memorial plaque.
+- A **"flat overcast water"** clause keyed on low saturation does not work,
+  because grey is grey. It passed a plaque at 0.94 and a sports hall wall at
+  0.96, which is the whole set of files the gate exists to stop.
+- **Printed ink saturation** does not separate an information board from a
+  lake. The most saturated file in the sample was an aerial photograph of
+  Lake Bled, at 0.38, and the board was 0.17: deep blue water is about as
+  pure a colour as printers use.
+
+What survives is one measurement: how much of the lower 60 per cent of the
+frame reads as water, plus two narrow rejects for snow-bright and near-black
+frames.
+
+**A known miss.** A photograph of an information board standing beside a lake
+still passes every gate, because its metadata describes the lake (its
+categories, its description and its title all name it) and its printed map of
+the lake reads as water. "Naturerlebnis Schwendisee.jpeg" is the example.
+Detecting a photograph of a sign is a real classification problem rather than
+a heuristic, so it is left undone and written down here instead.
 
 ### How many photographs a lake needs
 

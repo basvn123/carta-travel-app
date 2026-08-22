@@ -201,13 +201,58 @@ def lead_score(img, lake):
     return score
 
 
-def wire_images(lake):
+def backfill_why(img, lake):
+    """Evidence for a picture whose cache entry predates the strict picker.
+
+    lake_images.py stamps `why` on everything it selects, but a cache written
+    before it exists has pictures with no stamp at all, and Oedter See shipped
+    five of them: files plainly titled "Oedter See Pano 20201018.jpg", passing
+    the lake level gate on their names, arriving with an empty evidence field
+    that the headless check then failed on. Recomputing here from what the
+    export can still see costs nothing and lets an old cache heal itself
+    rather than needing a re-photograph."""
+    title = str(img.get("file") or "")
+    if title.startswith("File:"):
+        title = title[5:]
+    p18 = commons_filename(lake.get("wd_img"))
+    if p18 and title == p18:
+        return "p18"
+    tokens = (name_tokens(lake.get("name"))
+              | name_tokens(lake.get("name_local"))
+              | name_tokens((lake.get("seed") or {}).get("name")))
+    if tokens and any(t in fold(title) for t in tokens):
+        return "name"
+    return ""
+
+
+def usable_images(lake):
+    """[(picture, evidence)] for the pictures that may actually be published.
+
+    One list, used by both the gate and the wire, so a lake can never be
+    published on the strength of pictures the wire then drops."""
     out = []
     for img in lake.get("images") or []:
-        url = clean_url(img.get("url"))
-        if not url:
+        if not clean_url(img.get("url")):
             continue
+        why = img.get("why") or backfill_why(img, lake)
+        # No evidence, no publication. An unstamped picture that cannot be
+        # explained after the fact is one nobody can defend on the page.
+        if not why:
+            continue
+        out.append((img, why))
+    return out
+
+
+def wire_images(lake):
+    out = []
+    for img, why in usable_images(lake):
+        url = clean_url(img.get("url"))
         out.append({
+            # The evidence that let this picture in: p18, title, viewcat,
+            # category or name. Shipped because it is the one field that says
+            # WHY a photograph is on this page, and the headless check asserts
+            # on it (see scripts/verify_lakes.mjs).
+            "why": why,
             "u": small_url(url),
             "big": url,
             "w": img.get("w"),
@@ -221,7 +266,15 @@ def wire_images(lake):
             "lic": (img.get("license") or "").strip(),
             "licUrl": img.get("license_url") or "",
             "page": img.get("page") or "",
-            "_lead": lead_score(img, lake),
+            # The enrich stage now scores every picture with the full evidence
+            # it had in hand (lake_images.py): the tier of the claim, Commons'
+            # own review categories, and what the pixels showed. That is
+            # strictly more than this stage can see from a file name, so its
+            # number wins wherever it exists. lead_score stays for caches
+            # written before the strict picker, so an old cache still orders
+            # sensibly instead of arriving in whatever order it was stored in.
+            "_lead": img["score"] if img.get("score") is not None
+                     else lead_score(img, lake),
         })
     # Stable: equal scores keep the enrich stage's own order.
     out.sort(key=lambda i: -i["_lead"])
@@ -395,7 +448,7 @@ def evidenced_image(lake):
 
 def publishable(lake):
     """The gate, minus the score (which needs the whole country first)."""
-    images = lake.get("images") or []
+    images = usable_images(lake)
     if not images:
         return False
     if len(images) < MIN_IMAGES and not evidenced_image(lake):
@@ -693,7 +746,21 @@ def main():
     for cc in countries:
         if cc in by_country:
             continue
-        absent[cc] = seed_lakes.NO_WATER.get(cc, "nothing cleared the gate")
+        if cc in seed_lakes.NO_WATER:
+            absent[cc] = seed_lakes.NO_WATER[cc]
+            continue
+        # "Nothing cleared the gate" is true and unhelpful. Say WHICH gate,
+        # because the two cases want different work: no water body at all is a
+        # harvest problem, and water bodies with no usable photograph is a
+        # Commons problem that no amount of re-scoring will fix. San Marino is
+        # the second kind: the only Wikidata image of its one lake is a map.
+        pool = pools.get(cc) or []
+        if not pool:
+            absent[cc] = "nothing harvested"
+        elif not any(lake.get("images") for lake in pool):
+            absent[cc] = "no photograph of any of its water bodies"
+        else:
+            absent[cc] = "nothing cleared the gate"
 
     index.sort(key=lambda c: -c["n"])
     payload = {

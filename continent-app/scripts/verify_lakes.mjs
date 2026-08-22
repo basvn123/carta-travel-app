@@ -69,6 +69,8 @@ try {
     let unlabelledTemps = [];
     let noImages = [];
     let soloImages = 0;
+    const EVIDENCE = ['p18', 'title', 'viewcat', 'category', 'name'];
+    let unevidenced = [];
     for (const c of index.countries || []) {
       const path = `${WIRE}/${c.cc}.json`;
       if (!existsSync(path)) { bad.push(`${c.cc}: no file`); continue; }
@@ -84,6 +86,14 @@ try {
         // Wikidata P18 or a file named after it); zero never is.
         if (!(lake.images || []).length) noImages.push(lake.id);
         else if (lake.images.length === 1) soloImages += 1;
+        // Every photograph has to carry the evidence that let it in. A blank
+        // `why` means it arrived through a blind geosearch that nothing
+        // corroborated, which is the exact failure the strict picker exists
+        // to stop: plaques, monuments, sports halls and a photograph of
+        // Greece taken from the International Space Station.
+        for (const img of lake.images || []) {
+          if (!EVIDENCE.includes(img.why)) unevidenced.push(`${lake.id}:${img.why || 'none'}`);
+        }
       }
     }
     check('every country file matches its index row', bad.length === 0, bad.slice(0, 3).join(' | '));
@@ -94,6 +104,8 @@ try {
     check('single photograph lakes stay the exception',
       soloImages <= Math.max(30, Math.round(rows * 0.08)),
       `${soloImages} of ${rows}`);
+    check('every photograph names the evidence that let it in',
+      unevidenced.length === 0, unevidenced.slice(0, 3).join(', '));
     check('a lake that forbids swimming scores nothing for swimming',
       noSwimScored.length === 0, noSwimScored.slice(0, 3).join(', '));
     check('no temperature series ships without its estimate flag',

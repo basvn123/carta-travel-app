@@ -61,9 +61,10 @@ HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 
 from water_sources import (COMMONS_API, SourceError, haversine_km,  # noqa: E402
-                           load_cache, mediawiki, overpass, save_cache,
-                           wikipedia_api)
+                           load_cache, mediawiki, overpass, request,
+                           save_cache, wikipedia_api)
 from harvest_lakes import COUNTRIES, LOCAL_LANG, fold, name_tokens  # noqa: E402
+import lake_images  # noqa: E402
 
 ROOT = HERE.parents[1]
 CACHE = ROOT / "cache"
@@ -474,24 +475,29 @@ def prelim_score(lake):
 # Wikimedia Commons: the photographs
 # ---------------------------------------------------------------------------
 
-BAD_FILE_RE = re.compile(
-    r"\.(svg|pdf|tif|tiff|ogv|webm|ogg|mid|djvu)$|"
-    r"\b(map|karte|carte|mapa|plan|blazon|coat[ _]of[ _]arms|flag|logo|"
-    r"diagram|chart|graph|bathymetr|profile|sign|schild|panneau|stamp|"
-    r"briefmarke|poster|screenshot|portrait|grave|tomb)\b", re.I)
-SPECIES_RE = re.compile(r"^[A-Z][a-z]{3,}\s+[a-z]{4,}\b")
-
+# Every image query asks for the CATEGORIES too, and they are the reason this
+# stage got strict. A Commons file name is very often silent ("01 Soline.jpg")
+# and its categories never are: they say what the picture is of ("Views of
+# Lake Bled", "Panoramics of Lake Bled"), what it is not ("Aircraft in
+# Slovenia", "Memorials in Hungary"), and whether Commons' own reviewers
+# thought it was any good ("Quality images", "Featured pictures on Wikimedia
+# Commons"). All of that arrives in the same request that was already being
+# made. See lake_images.py for what is done with it.
 IMAGE_PROPS = {
-    "prop": "imageinfo",
+    "prop": "imageinfo|categories",
     "iiprop": "url|size|extmetadata",
     "iiurlwidth": 1280,
-    "iiextmetadatafilter": "LicenseShortName|LicenseUrl|Artist|ImageDescription",
+    "iiextmetadatafilter": "LicenseShortName|LicenseUrl|Artist|ImageDescription"
+                           "|ObjectName",
+    "cllimit": 500,
+    "clshow": "!hidden",
 }
 
-LAKE_WORD_RE = re.compile(
-    r"\b(lake|see|meer|loch|lough|llyn|lago|laghi|lac|lacul|lagoa|laguna|"
-    r"lagoon|jezero|jezioro|ezero|jarv|jarvi|vatn|vann|sjo|embalse|barragem|"
-    r"pleso|stausee|reservoir|shore|panorama|sunset|reflect)\b", re.I)
+# How many surviving candidates get a thumbnail downloaded and looked at. The
+# pixel probe is one HTTP request each, so it runs only on the shortlist of
+# the shortlist: the files that already passed the subject gate, in beauty
+# order.
+PIXEL_PROBE_MAX = 7
 
 
 def commons_filename(url_or_name):
@@ -538,7 +544,7 @@ def image_candidates(lake, lang):
         near_m = max(near_m, 3500)
     cat = lake.get("commons_cat")
 
-    def collect(params, near=False, pinned=False):
+    def collect(params, near=False, pinned=False, from_cat=False):
         try:
             data = mediawiki(params, api=COMMONS_API)
         except (SourceError, ValueError):
@@ -551,23 +557,44 @@ def image_candidates(lake, lang):
             info = (page.get("imageinfo") or [{}])[0]
             if not info.get("url"):
                 continue
-            out.append({"title": title, "info": info, "near": near,
-                        "pinned": pinned})
+            out.append({
+                "title": title, "info": info, "near": near, "pinned": pinned,
+                "from_cat": from_cat,
+                "cats": [c.get("title", "").replace("Category:", "")
+                         for c in (page.get("categories") or [])],
+            })
 
     p18 = commons_filename(lake.get("wd_img"))
     if p18:
         collect({"titles": p18, **IMAGE_PROPS}, pinned=True)
     if cat:
+        # Commons files the good pictures in subcategories, and names them
+        # after what they show: "Views of Lake Bled", "Panoramics of Lake
+        # Bled", "Aerial views of Lake Bled with Bled Island", "Sunsets over
+        # ...". Those are precisely the photographs a card wants, sorted for
+        # us by the people who uploaded them, so they are read FIRST and the
+        # parent category second.
+        for sub in view_subcategories(cat):
+            collect({"generator": "categorymembers",
+                     "gcmtitle": f"Category:{sub}", "gcmtype": "file",
+                     "gcmlimit": 12, **IMAGE_PROPS}, from_cat="viewcat")
+            if len(out) >= IMAGES_WANTED + 8:
+                break
         collect({"generator": "categorymembers", "gcmtitle": f"Category:{cat}",
-                 "gcmtype": "file", "gcmlimit": 20, **IMAGE_PROPS})
+                 "gcmtype": "file", "gcmlimit": 20, **IMAGE_PROPS},
+                from_cat=True)
     for name in queries[:2]:
+        if len(out) >= IMAGES_WANTED + 8:
+            break
         collect({"generator": "search", "gsrnamespace": 6, "gsrlimit": 14,
                  "gsrsearch": f"{name} filetype:bitmap "
                               f"nearcoord:{max(2, int(radius_km * 2))}km,"
                               f"{lake['lat']},{lake['lon']}",
                  **IMAGE_PROPS})
-        if len(out) >= IMAGES_WANTED + 6:
-            break
+    # The blind geosearch stays, and it is the weakest source by a distance:
+    # everything it returns has to earn its place through the subject gate,
+    # which refuses anything nothing names. It is kept because for a small
+    # lake with no Commons category it is the only source there is.
     if len(out) < IMAGES_WANTED + 2:
         collect({"generator": "geosearch", "ggsnamespace": 6,
                  "ggscoord": f"{lake['lat']}|{lake['lon']}",
@@ -576,66 +603,88 @@ def image_candidates(lake, lang):
     return out
 
 
-def score_image(cand, lake):
-    """How likely this file is to be a usable photograph OF the lake."""
-    title = cand["title"][5:] if cand["title"].startswith("File:") else cand["title"]
-    info = cand["info"]
-    if BAD_FILE_RE.search(title) or SPECIES_RE.match(title):
-        return -1
-    width, height = info.get("width") or 0, info.get("height") or 0
-    # A P18 is a curated statement that this image depicts this item, so it
-    # clears the size floor that exists to throw out thumbnails and icons
-    # found by a blind search. It still has to be a photograph.
-    if cand.get("pinned"):
-        return 4.0 if width >= 400 and height >= 300 else -1
-    if width < 800 or height < 500:
-        return -1
-    score = 0.0
-    tokens = (name_tokens(lake.get("name")) | name_tokens(lake.get("name_local"))
-              | name_tokens((lake.get("seed") or {}).get("name")))
-    folded = fold(title)
-    if tokens and any(t in folded for t in tokens):
-        score += 3.0
-        # A file NAMED after the lake is a photograph of the lake. A file that
-        # mentions it three words in is usually a photograph of something else
-        # with the lake behind it, which is how Lake Ohrid's hero card became a
-        # snowfield ("Magaro, Mountain Galichica, in the background Ohrid
-        # lake"). Position is the cheapest signal that separates the two.
-        head = " ".join(folded.split()[:3])
-        if any(t in head for t in tokens):
-            score += 1.2
-    if re.search(r"\b(in the background|background|seen from|from the summit|"
-                 r"from mount|view towards)\b", folded):
-        score -= 1.6
-    if LAKE_WORD_RE.search(folded):
-        score += 1.0
-    if cand.get("near"):
-        score += 1.4
-    if width >= 2000:
-        score += 0.6
-    if width > height:
-        score += 0.8                    # a hero card is a landscape crop
-    if "panoramio" in folded:
-        score -= 0.4
-    if re.search(r"\b(aerial|from above|drone|panorama|view)\b", folded):
-        score += 0.5
-    if re.search(r"\b(winter|snow|ice|frozen|gefroren)\b", folded):
-        score -= 0.5                    # true, and not what the card is for
-    return score
+def view_subcategories(cat, limit=3):
+    """Subcategories of a lake's Commons category that hold VIEWS of it.
+
+    Commons is a filing system maintained by people who care, and it already
+    separates "Views of Lake Bled" from "Boats on Lake Bled" and "Maps of Lake
+    Bled". Asking for the subcategories costs one request and points the
+    picker straight at the pictures somebody else already decided were the
+    scenic ones."""
+    try:
+        data = mediawiki({"generator": "categorymembers",
+                          "gcmtitle": f"Category:{cat}", "gcmtype": "subcat",
+                          "gcmlimit": 50}, api=COMMONS_API)
+    except (SourceError, ValueError):
+        return []
+    names = [(p.get("title") or "").replace("Category:", "")
+             for p in (data.get("query") or {}).get("pages") or []]
+    wanted = [n for n in names if lake_images.VIEW_WORD.search(n)]
+    # Longest last: "Views of X" beats "Views of X from the north shore in
+    # winter", and the shorter name is almost always the broader category.
+    wanted.sort(key=len)
+    return wanted[:limit]
+
+
+def lake_tokens(lake):
+    return (name_tokens(lake.get("name"))
+            | name_tokens(lake.get("name_local"))
+            | name_tokens((lake.get("seed") or {}).get("name")))
 
 
 def strip_html(text):
     return re.sub(r"<[^>]+>", "", text or "").strip()
 
 
-def pick_images(lake, lang):
-    cands = image_candidates(lake, lang)
-    ranked = sorted(((score_image(c, lake), c) for c in cands),
-                    key=lambda pair: -pair[0])
-    picked = []
-    for score, cand in ranked:
-        if score < 1.0 or len(picked) >= IMAGES_WANTED:
+MIN_W, MIN_H = 800, 500
+PINNED_MIN_W, PINNED_MIN_H = 400, 300
+
+
+def big_enough(cand):
+    """A P18 clears the size floor that exists to throw out the thumbnails and
+    icons a blind search returns. It still has to be a photograph."""
+    info = cand.get("info") or {}
+    width, height = info.get("width") or 0, info.get("height") or 0
+    if cand.get("pinned"):
+        return width >= PINNED_MIN_W and height >= PINNED_MIN_H
+    return width >= MIN_W and height >= MIN_H
+
+
+def pick_images(lake, lang, probe=True):
+    """The photographs of this lake, best first.
+
+    Three gates, cheapest first, and the order matters because only the last
+    one costs a download.
+
+      subject   does anything ASSERT this file is this lake, and is it a
+                photograph of a place rather than of a plaque
+      beauty    Commons' own review categories, then the ones that describe a
+                view, then shape and size
+      pixels    the top few get their thumbnail looked at, and a passing
+                mention that turns out to be a photograph of a car park is
+                dropped
+
+    Every picture keeps the evidence that let it in, so a reviewer reading the
+    cache can see why it is there."""
+    tokens = lake_tokens(lake)
+    kept = []
+    for cand in image_candidates(lake, lang):
+        if not big_enough(cand):
             continue
+        ok, evidence = lake_images.subject_verdict(cand, tokens)
+        if not ok:
+            continue
+        # A file pulled out of "Views of <lake>" keeps that as its evidence:
+        # somebody filed it there precisely because it is a view of the water.
+        if evidence == "category" and cand.get("from_cat") == "viewcat":
+            evidence = "viewcat"
+        cand["evidence"] = evidence
+        cand["score"] = lake_images.beauty_score(cand, tokens, evidence)
+        kept.append(cand)
+    kept.sort(key=lambda c: -c["score"])
+
+    picked = []
+    for cand in kept[:PIXEL_PROBE_MAX if probe else IMAGES_WANTED]:
         info = cand["info"]
         meta = info.get("extmetadata") or {}
 
@@ -644,6 +693,18 @@ def pick_images(lake, lang):
 
         licence = meta_val("LicenseShortName")
         if re.search(r"fair use|non[- ]free|copyright", licence, re.I):
+            continue
+
+        seen_pixels = None
+        if probe:
+            try:
+                seen_pixels = lake_images.probe_pixels(
+                    request(info.get("thumburl") or info.get("url"), timeout=45))
+            except (SourceError, ValueError, OSError):
+                seen_pixels = None
+        accepted, delta, why = lake_images.pixel_verdict(seen_pixels,
+                                                         cand["evidence"])
+        if not accepted and lake_images.pixel_veto_applies(cand["evidence"]):
             continue
         picked.append({
             "file": cand["title"],
@@ -657,7 +718,15 @@ def pick_images(lake, lang):
             "caption": meta_val("ImageDescription")[:200],
             "page": "https://commons.wikimedia.org/wiki/"
                     + urllib.parse.quote(cand["title"].replace(" ", "_")),
+            # Kept so the export stage can order without re-deriving anything,
+            # and so a human can audit a choice without re-running the stage.
+            "why": cand["evidence"],
+            "score": round(cand["score"] + delta, 3),
+            "seen": seen_pixels,
         })
+        if len(picked) >= IMAGES_WANTED:
+            break
+    picked.sort(key=lambda i: -i["score"])
     return picked
 
 
@@ -907,7 +976,8 @@ def split_batches(lakes, size=OSM_BATCH):
 
 def enrich_country(cc, shortlist_n=SHORTLIST, refresh=False, bathing=None,
                    protected=None, dests=None, images=True, context=True,
-                   rephotograph=0, context_published=False):
+                   rephotograph=0, context_published=False,
+                   photos_published=False):
     raw = load_cache(STAGE_IN, cc)
     if not raw or not raw.get("lakes"):
         print(f"  {cc}: nothing harvested")
@@ -980,6 +1050,7 @@ def enrich_country(cc, shortlist_n=SHORTLIST, refresh=False, bathing=None,
             lake["images"] = was["images"]
 
     if images:
+        shipping = published_ids(cc) if photos_published else None
         todo_img = []
         for lake in short:
             was = previous.get(lake["key"]) or {}
@@ -991,6 +1062,13 @@ def enrich_country(cc, shortlist_n=SHORTLIST, refresh=False, bathing=None,
             # 3,809 to reach them would have been two and a half hours of
             # somebody else's bandwidth for nothing.
             thin = rephotograph and len(kept or []) < rephotograph
+            # `photos_published` re-shoots the lakes a traveller can actually
+            # see, and only those. The strict picker costs about fifteen
+            # requests a lake, so running it over the whole 3,809 shortlist to
+            # improve 1,125 published cards would be an hour of Wikimedia's
+            # bandwidth spent on rows nobody will ever open.
+            if photos_published and shipping is not None:
+                thin = thin or lake.get("wd") in shipping
             if kept is not None and not refresh and not thin:
                 lake["images"] = kept
             else:
@@ -1061,6 +1139,12 @@ def main():
                              "alone. Use after a change to the candidate "
                              "rules; --rephotograph 2 targets exactly what "
                              "the export gate drops")
+    parser.add_argument("--photos-published", action="store_true",
+                        help="re-photograph the lakes already in "
+                             "continent-app/public/lakes, and only "
+                             "those. Use after a change to the image "
+                             "rules: it improves every card a traveller "
+                             "can reach without re-shooting the tail")
     parser.add_argument("--context-published", action="store_true",
                         help="sweep the shore only for the lakes already "
                              "in continent-app/public/lakes, which on a "
@@ -1088,7 +1172,8 @@ def main():
                            images=not args.no_images,
                            context=not args.no_context,
                            rephotograph=args.rephotograph,
-                           context_published=args.context_published)
+                           context_published=args.context_published,
+                           photos_published=args.photos_published)
         except KeyboardInterrupt:
             raise
         except Exception as exc:
