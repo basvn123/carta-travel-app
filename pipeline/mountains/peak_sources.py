@@ -41,6 +41,16 @@ CONTACT = _mod.CONTACT
 _mod.UA = f"CartaMountains/1.0 (https://carta-europetravel.com; {CONTACT})"
 _mod.CACHE = ROOT / "cache" / "mountains"
 
+# Slower than the shared default, and deliberately.
+#
+# The strict image gate asks Commons more questions per mountain than the
+# beach or lake layers ask per subject: the article's own files, sixty
+# category members, two name searches. At the shared 0.4 s pace with four
+# workers that earned a steady stream of HTTP 429s, and every one of those
+# costs a 12 second backoff, so the polite pace is also the faster one.
+_mod.MIN_INTERVAL["commons.wikimedia.org"] = 0.75
+_mod.MIN_INTERVAL["wikimedia.org"] = 0.4
+
 CACHE = _mod.CACHE
 UA = _mod.UA
 

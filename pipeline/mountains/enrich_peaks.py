@@ -10,11 +10,14 @@ are, one source each and one cache file per country.
         British hills, so a unitless read is a wrong read), the Commons
         category, the range it belongs to, the classes it is an instance of,
         the protected area it stands in, and the Wikipedia titles.
-  Photographs.       Up to six freely licensed pictures per mountain, chosen
-        by relevance rather than by whatever the geosearch returned first. A
-        mountain is a thing you look at, so the app shows a gallery and this
-        is where the gallery comes from. The gate downstream refuses to
-        publish a mountain we cannot show.
+  Photographs.       Up to six freely licensed pictures per mountain, and
+        relevance is a GATE rather than a score: a file is only considered if
+        Wikidata pins it, the mountain's own Commons category holds it, its
+        Wikipedia article uses it, or its name is in the file's title,
+        object name or description. Beauty is then led by Commons' own
+        quality and featured assessments, which is a photographer's verdict
+        rather than a regex. The gate downstream refuses to publish a
+        mountain we cannot show.
   Wikipedia.         Pageviews as the fame signal the brief asks for, and the
         FACTS in the article as reason codes: glacier, via ferrata, cable
         car, national park, first ascent. Never the prose. Facts are not
@@ -87,7 +90,7 @@ IMAGES_WANTED = 6        # a mountain is a thing you look at: it gets a gallery
 # workers simply never reached that ceiling, because each query spends most of
 # its time waiting on the answer. Andorra took twelve minutes at two workers,
 # which over 43 countries is most of a day.
-IMAGE_WORKERS = 4
+IMAGE_WORKERS = 3
 DETAIL_CHUNK = 70
 WIKI_BATCH = 20
 OSM_BATCH = 20
@@ -385,28 +388,99 @@ def details_for(peaks, cc):
 # Wikimedia Commons: the photographs
 # ---------------------------------------------------------------------------
 
+# Nothing without EVIDENCE that it shows this mountain, and the file's own
+# Commons categories are what provide it.
+#
+# The first version of this ranked candidates by plausibility and took the top
+# six, which meant a mountain with three good photographs got three good ones
+# and three car parks. 30 per cent of the published gallery had no connection
+# to its mountain at all: "Skiing in Andorra", "Road CS-240 at Coll d'Ordino",
+# "Andorra la Vella". Every one of them was a geosearch hit, which only ever
+# proves that somebody stood near the summit, not that they pointed the camera
+# at it.
+#
+# So relevance is now a gate rather than a score. A file is a candidate only
+# if one of these says it depicts this mountain:
+#
+#   pinned     Wikidata's P18 for this item
+#   category   the file sits in the mountain's own Commons category, which is
+#              a human filing it under this subject
+#   article    the file is used in the mountain's Wikipedia article
+#   named      the mountain's name is in the file name, its ObjectName or its
+#              description
+#
+# and beauty is scored on top of that, led by Commons' own assessments:
+# a Featured Picture or a Quality Image of the right mountain is precisely
+# "the actual beautiful view of that mountain", judged by photographers rather
+# than by a regex.
+
+# Not a photograph, or not of a landscape. Extension first, then the subjects
+# that keep turning up in a mountain's own category.
 BAD_FILE_RE = re.compile(
-    r"\.(svg|pdf|tif|tiff|ogv|webm|ogg|mid|djvu)$|"
+    r"\.(svg|pdf|tif|tiff|ogv|webm|ogg|oga|mid|djvu|gif|xcf)$|"
     r"\b(map|karte|carte|mapa|topo|plan|blazon|coat[ _]of[ _]arms|flag|logo|"
-    r"diagram|chart|graph|profile|section|sign|schild|panneau|stamp|"
-    r"briefmarke|poster|screenshot|portrait|grave|tomb|monument to)\b", re.I)
+    r"diagram|chart|graph|profile|cross[ _]section|sign|signpost|schild|"
+    r"panneau|stamp|briefmarke|poster|screenshot|portrait|grave|tomb|"
+    r"monument to|memorial|plaque|inscription|logo|banner|icon|"
+    r"timetable|fahrplan|ticket|brochure|leaflet|book|page|manuscript|"
+    r"painting|gemalde|engraving|lithograph|drawing|sketch|etching|"
+    r"postcard 19|anno 18|18\d\d|19[0-2]\d)\b", re.I)
+
+# A binomial species name at the start of a file is a plant or an animal
+# photographed on the mountain, which is a fine picture and the wrong subject.
 SPECIES_RE = re.compile(r"^[A-Z][a-z]{3,}\s+[a-z]{4,}\b")
+
+# What is ON a mountain rather than what the mountain looks like. Penalised
+# hard rather than rejected: a cable car station or a summit cross is a real
+# part of some of these places and belongs in a gallery, just never first.
+ON_IT_RE = re.compile(
+    r"observator|telescope|museum|refuge|refugio|rifugio|h[uü]tte|\bhut\b|"
+    r"chapel|kapelle|church|\bcross\b|kreuz|croce|monument|antenna|mast|"
+    r"transmitter|sender|restaurant|\bcafe\b|terrace|hotel|parking|car park|"
+    r"cabin|kabine|gondel|chairlift|sessellift|piste|ski (?:slope|lift|run)|"
+    r"skilift|talstation|bergstation|station|tunnel|bunker|fort|"
+    r"summit (?:book|register|marker|stone|pole)|trig point|cairn", re.I)
+
+# Somewhere else entirely: a town, a road, a ski resort, an interior. These
+# are what a blind geosearch returns, and they are rejected outright.
+NOT_IT_RE = re.compile(
+    r"\b(town|village|city|centre|center|street|road|highway|motorway|"
+    r"autobahn|bridge|railway station|airport|hotel room|interior|inside|"
+    r"museum|shop|market|restaurant interior|church interior|cemetery|"
+    r"school|hospital|factory|quarry|mine|dam|wind farm|solar|"
+    r"ski resort|skigebiet|ski area|apres|piste map|slopes of the resort)\b",
+    re.I)
 
 IMAGE_PROPS = {
     "prop": "imageinfo",
     "iiprop": "url|size|extmetadata",
     "iiurlwidth": 1280,
-    "iiextmetadatafilter": "LicenseShortName|LicenseUrl|Artist|ImageDescription",
+    # Categories and Assessments are the two that turned this from a guess
+    # into a check. Categories say what the file is filed under; Assessments
+    # carry Commons' own "quality", "featured", "valued" verdicts.
+    "iiextmetadatafilter": ("LicenseShortName|LicenseUrl|Artist|"
+                            "ImageDescription|ObjectName|Categories|"
+                            "Assessments"),
 }
 
-# Words that say a photograph is OF a mountain rather than merely near one.
+# Words that say a photograph is of a landscape rather than of an object.
 PEAK_WORD_RE = re.compile(
     r"\b(mount|mountain|peak|summit|berg|spitze|gipfel|horn|kogel|massif|"
     r"monte|cima|punta|corno|sasso|pizzo|pic|puy|aiguille|dent|pico|sierra|"
     r"vrh|planina|gora|hora|szczyt|hegy|varf|maja|tunturi|fjell|fjellet|"
     r"fjall|tind|topp|beinn|sgurr|mynydd|jokull|fell|volcano|vulkan|crater|"
-    r"north face|nordwand|ridge|glacier|panorama|sunrise|sunset|alpenglow|"
-    r"seen from|view of|from the)\b", re.I)
+    r"north face|nordwand|ridge|glacier|face|wall|massiv)\b", re.I)
+
+# What a beautiful view of a mountain is called. Every one of these is a
+# photographer describing the light or the vantage point rather than the
+# object, which is what separates a picture worth putting on a card from a
+# documentation shot.
+BEAUTY_RE = re.compile(
+    r"\b(sunrise|sunset|alpenglow|alpengluhen|golden hour|dawn|dusk|"
+    r"morning light|evening light|panorama|panoramic|aerial|from the air|"
+    r"drone|reflection|reflected|mirror|seen from|view of|view from|"
+    r"vista|scenic|landscape|first light|moonrise|milky way|starry|"
+    r"autumn|foliage|bloom|clouds|sea of clouds|nebelmeer|fog|mist)\b", re.I)
 
 
 def commons_filename(url_or_name):
@@ -424,10 +498,9 @@ def commons_filename(url_or_name):
     return f"File:{text}" if text and not text.startswith("File:") else text
 
 
-# How wide to look for photographs, by what kind of thing this is. A summit
-# photograph is usually geotagged where the photographer STOOD, which for a
-# mountain is a valley away, so the circle is wide. A lowland hill or a sea
-# cliff is small and specific and a wide circle would collect the next town.
+# How wide to look for photographs, by what kind of thing this is. Only the
+# LAST pass uses it now, and that pass can no longer publish anything on its
+# own, so the radius is a way of finding named files rather than a claim.
 GEO_RADIUS_M = {
     "peak": 5000, "volcano": 6000, "massif": 8000, "ridge": 6000,
     "plateau": 7000, "cliff": 2500, "rock": 2500, "hill": 2500,
@@ -452,27 +525,61 @@ def kind_hint(peak):
     return "peak"
 
 
-def image_candidates(peak):
-    """Commons files that plausibly show THIS mountain, best first.
-
-    Four passes, strongest claim first. P18 is a curated statement that this
-    picture depicts this item. A Commons CATEGORY is the second strongest and
-    matters far more for mountains than it did for lakes: a famous summit has
-    a category with two hundred photographs in it, and the category is the
-    only place the good ones reliably are. Then a name search pinned to the
-    coordinate, because a bare name search returns every Schwarzhorn in the
-    Alps, and last a geosearch."""
-    seen, out = set(), []
-    queries = []
+def peak_names(peak):
+    """Every name this mountain answers to, for matching against a file."""
+    out = []
     for name in (peak.get("name"), peak.get("name_local"),
                  (peak.get("seed") or {}).get("name")):
-        if name and fold(name) not in {fold(q) for q in queries}:
-            queries.append(name)
-    near_m = GEO_RADIUS_M.get(kind_hint(peak), 5000)
-    if peak.get("seed"):
-        near_m = int(near_m * 1.4)
+        if name and fold(name) not in {fold(n) for n in out}:
+            out.append(name)
+    for alt in (peak.get("seed") or {}).get("alt") or []:
+        if fold(alt) not in {fold(n) for n in out}:
+            out.append(alt)
+    return out
 
-    def collect(params, near=False, pinned=False, cat=False):
+
+def peak_tokens(peak):
+    tokens = set()
+    for name in peak_names(peak):
+        tokens |= name_tokens(name)
+    return tokens
+
+
+def article_files(peak, lang):
+    """The files the mountain's own Wikipedia article uses.
+
+    An editor chose these to illustrate this subject, which is a statement
+    about the picture that no coordinate can make. The chrome that every
+    article carries (Commons logos, flags, stub icons, locator maps, the
+    spoken-article audio) is stripped by BAD_FILE_RE downstream."""
+    titles = [t for t in (peak.get("wiki_en"), peak.get("wiki_local")) if t]
+    if not titles:
+        return []
+    out = []
+    for i, title in enumerate(titles[:2]):
+        api = wikipedia_api("en" if i == 0 and peak.get("wiki_en") else lang)
+        try:
+            data = mediawiki({"prop": "images", "imlimit": 60,
+                              "titles": title}, api=api)
+        except (SourceError, ValueError):
+            continue
+        for page in (data.get("query") or {}).get("pages") or []:
+            for img in page.get("images") or []:
+                name = img.get("title") or ""
+                if name and name not in out and not BAD_FILE_RE.search(name):
+                    out.append(name)
+    return out[:24]
+
+
+def image_candidates(peak, lang):
+    """Files that some source SAYS depict this mountain, best evidence first.
+
+    Five passes, and the last one is the only one that cannot stand on its
+    own: a geosearch hit has to carry the mountain's name somewhere before
+    score_image will look at it."""
+    seen, out = set(), []
+
+    def collect(params, source):
         try:
             data = mediawiki(params, api=COMMONS_API)
         except (SourceError, ValueError):
@@ -485,142 +592,267 @@ def image_candidates(peak):
             info = (page.get("imageinfo") or [{}])[0]
             if not info.get("url"):
                 continue
-            out.append({"title": title, "info": info, "near": near,
-                        "pinned": pinned, "cat": cat})
+            out.append({"title": title, "info": info, "source": source})
 
     p18 = commons_filename(peak.get("wd_img"))
     if p18:
-        collect({"titles": p18, **IMAGE_PROPS}, pinned=True)
+        collect({"titles": p18, **IMAGE_PROPS}, "pinned")
+
+    files = article_files(peak, lang)
+    for i in range(0, len(files), 25):
+        collect({"titles": "|".join(files[i:i + 25]), **IMAGE_PROPS}, "article")
+
     cat = peak.get("commons_cat")
     if cat:
+        # 60 rather than 30: the API returns category members alphabetically,
+        # so a small window is a window onto the letter A. Teide's category
+        # opens with eleven photographs of the observatory.
         collect({"generator": "categorymembers", "gcmtitle": f"Category:{cat}",
-                 "gcmtype": "file", "gcmlimit": 30, **IMAGE_PROPS}, cat=True)
-    for name in queries[:2]:
+                 "gcmtype": "file", "gcmlimit": 60, **IMAGE_PROPS}, "category")
+
+    # The name searches only run when the passes above left the ranking thin.
+    # A mountain whose own category returned sixty files does not need them,
+    # and every skipped query is a query Commons does not have to answer.
+    for name in (peak_names(peak)[:2] if len(out) < 26 else []):
         collect({"generator": "search", "gsrnamespace": 6, "gsrlimit": 16,
                  "gsrsearch": f"{name} filetype:bitmap "
                               f"nearcoord:25km,{peak['lat']},{peak['lon']}",
-                 **IMAGE_PROPS})
-        if len(out) >= IMAGES_WANTED + 8:
-            break
+                 **IMAGE_PROPS}, "search")
+
     if len(out) < IMAGES_WANTED + 4:
+        near_m = GEO_RADIUS_M.get(kind_hint(peak), 5000)
         collect({"generator": "geosearch", "ggsnamespace": 6,
                  "ggscoord": f"{peak['lat']}|{peak['lon']}",
-                 "ggsradius": near_m, "ggslimit": 24, **IMAGE_PROPS},
-                near=True)
+                 "ggsradius": near_m, "ggslimit": 24, **IMAGE_PROPS}, "geo")
     return out
-
-
-def score_image(cand, peak):
-    """How likely this file is to be a usable photograph OF the mountain."""
-    title = cand["title"][5:] if cand["title"].startswith("File:") else cand["title"]
-    info = cand["info"]
-    if BAD_FILE_RE.search(title) or SPECIES_RE.match(title):
-        return -1
-    width, height = info.get("width") or 0, info.get("height") or 0
-    # A P18 outranks everything computable here, and 4.5 was not enough.
-    #
-    # It is the single strongest statement anybody has made about which
-    # picture shows this item: a human put it on the Wikidata entity and it is
-    # what Wikipedia leads with. Scored mid table it lost to whatever the
-    # Commons category happened to return first, which is alphabetical, which
-    # is how Spain's Teide ended up illustrated by "At Teide Observatory 2019
-    # 054" while "Teide von Nordosten", 7,897 pixels of the mountain itself,
-    # was not picked at all.
-    if cand.get("pinned"):
-        return 9.0 if width >= 400 and height >= 300 else -1
-    if width < 800 or height < 500:
-        return -1
-    score = 0.0
-    tokens = (name_tokens(peak.get("name")) | name_tokens(peak.get("name_local"))
-              | name_tokens((peak.get("seed") or {}).get("name")))
-    folded = fold(title)
-    if tokens and any(t in folded for t in tokens):
-        score += 3.0
-        # A file NAMED after the mountain is a photograph of the mountain. A
-        # file that mentions it three words in is usually a photograph of
-        # something else with the mountain behind it.
-        head = " ".join(folded.split()[:3])
-        if any(t in head for t in tokens):
-            score += 1.2
-    if cand.get("cat"):
-        score += 2.2          # somebody filed this under this mountain
-    if re.search(r"\b(in the background|hintergrund|sfondo)\b", folded):
-        score -= 1.6
-    # A view FROM the summit is a fine third picture and a poor first one: it
-    # shows everything except the mountain the card is about.
-    if re.search(r"\b(from the summit|view from|blick vom|panorama from|"
-                 r"gipfelblick|vom gipfel)\b", folded):
-        score -= 0.7
-    if PEAK_WORD_RE.search(folded):
-        score += 0.9
-    # A geosearch hit is a photograph taken AT the coordinate, which on a lake
-    # shore means a picture of the lake and on a summit means a picture of
-    # whatever is built up there: the mast, the sign, the terrace. Worth
-    # something, worth much less than it was.
-    if cand.get("near"):
-        score += 0.4
-    if width >= 2000:
-        score += 0.6
-    if width > height:
-        score += 0.8                    # a hero card is a landscape crop
-    if "panoramio" in folded:
-        score -= 0.4
-    if re.search(r"\b(aerial|drone|panorama|reflection|alpenglow|sunrise|"
-                 r"sunset)\b", folded):
-        score += 0.5
-    # Snow is not a defect on a mountain the way it was on a lake, so there is
-    # no winter penalty here. A ski lift photograph is, though: it is a
-    # picture of a machine.
-    if re.search(r"\b(chairlift|sessellift|gondola cabin|piste|ski slope|"
-                 r"skilift|seilbahn kabine)\b", folded):
-        score -= 0.5
-    return score
 
 
 def strip_html(text):
     return re.sub(r"<[^>]+>", "", text or "").strip()
 
 
-def pick_images(peak):
-    cands = image_candidates(peak)
+def _meta(info, key):
+    return strip_html(((info.get("extmetadata") or {}).get(key) or {})
+                      .get("value", ""))
+
+
+def category_match(cand, peak):
+    """How strongly this file's Commons categories say it depicts this
+    mountain: "own", "token" or "".
+
+    The distinction earns its keep. A file filed in the mountain's OWN
+    category is a human saying "this is a picture of this"; a file whose
+    categories merely share a word with the name is a much weaker claim, and
+    treating the two the same is how Andorra's Tossal de la Llosada came to be
+    illustrated by a photograph of Andorra la Vella. So "own" is evidence and
+    "token" is only a nudge on top of evidence somebody else provided."""
+    cats = _meta(cand["info"], "Categories")
+    if not cats:
+        return ""
+    tokens = peak_tokens(peak)
+    if not tokens:
+        return ""
+    own = fold(peak.get("commons_cat") or "")
+    weak = ""
+    for cat in cats.split("|"):
+        folded = fold(cat)
+        if own and folded == own:
+            return "own"
+        # A category NAMED for the mountain counts as its own, since Commons
+        # splits big subjects ("Matterhorn from the north", "Cervino").
+        cat_tokens = {t for t in folded.split() if len(t) > 2}
+        if tokens & cat_tokens:
+            weak = "own" if name_tokens(cat) and name_tokens(cat) <= tokens else "token"
+            if weak == "own":
+                return "own"
+    return weak
+
+
+def named_for(cand, peak):
+    """Whether the mountain's name appears in the file's own text."""
+    tokens = peak_tokens(peak)
+    if not tokens:
+        return False
+    title = cand["title"][5:] if cand["title"].startswith("File:") else cand["title"]
+    haystack = " ".join([
+        fold(title),
+        fold(_meta(cand["info"], "ObjectName")),
+        fold(_meta(cand["info"], "ImageDescription"))[:400],
+    ])
+    return any(t in haystack for t in tokens)
+
+
+ASSESSMENT_VALUE = {"featured": 3.0, "quality": 2.0, "valued": 1.2}
+
+
+def score_image(cand, peak):
+    """How well this file works as a photograph of this mountain, or -1.
+
+    Evidence first: without it the file is not scored at all, whatever it
+    looks like. Then beauty, led by Commons' own assessments."""
+    title = cand["title"][5:] if cand["title"].startswith("File:") else cand["title"]
+    info = cand["info"]
+    if BAD_FILE_RE.search(title) or SPECIES_RE.match(title):
+        return -1
+    width, height = info.get("width") or 0, info.get("height") or 0
+    if width < 640 or height < 400:
+        return -1
+
+    folded = fold(title)
+    described = fold(_meta(info, "ImageDescription"))[:400]
+    cat = category_match(cand, peak)
+    named = named_for(cand, peak)
+    from_article = cand["source"] == "article"
+    # A P18 is the item's own picture, and it is still only as good as the
+    # person who added it. Wikidata gives Tossal de la Llosada a photograph
+    # called "Skiing in Andorra", which is a statement about a country. So a
+    # pinned file has to look like it is about this mountain before it is
+    # trusted: named for it, filed under it, or at least calling itself a
+    # summit, a face, a glacier or a ridge.
+    pinned = cand["source"] == "pinned" and (
+        named or cat == "own" or bool(PEAK_WORD_RE.search(folded)))
+
+    # THE GATE. A file with none of these is somebody standing near the
+    # mountain, and this layer does not publish those any more.
+    if not (pinned or cat == "own" or named or from_article):
+        return -1
+    if NOT_IT_RE.search(folded) or NOT_IT_RE.search(described):
+        return -1
+
+    if pinned and named:
+        score = 9.0
+    elif pinned:
+        # Filed under the mountain but never named for it. Commons is honest
+        # here and still not saying what a reader wants: "Skiing in Andorra"
+        # sits in Category:Tossal de la Llosada because the ridge is in the
+        # frame behind the piste. Usable, never the lead.
+        score = 5.0
+    else:
+        score = 0.0
+        if cat == "own":
+            score += 3.0
+        elif cat == "token":
+            score += 1.2
+        if from_article:
+            score += 2.6
+        if named:
+            score += 2.4
+            head = " ".join(folded.split()[:3])
+            if any(t in head for t in peak_tokens(peak)):
+                score += 1.0     # named after the mountain, not mentioning it
+
+    # Commons' own verdict on the photograph, which is the closest thing to a
+    # human saying "this one is beautiful".
+    for word in (_meta(info, "Assessments") or "").split("|"):
+        score += ASSESSMENT_VALUE.get(word.strip().lower(), 0.0)
+
+    if PEAK_WORD_RE.search(folded):
+        score += 0.6
+    if BEAUTY_RE.search(folded) or BEAUTY_RE.search(described):
+        score += 0.9
+    if ON_IT_RE.search(folded):
+        score -= 2.0
+    if re.search(r"\b(in the background|hintergrund|sfondo)\b", folded):
+        score -= 1.6
+    # A view FROM the summit is a fine third picture and a poor first one: it
+    # shows everything except the mountain the card is about.
+    if re.search(r"\b(from the summit|view from the top|vom gipfel|"
+                 r"gipfelblick|blick vom)\b", folded):
+        score -= 1.2
+
+    # Shape and size. A card is a landscape crop, and an extreme panorama
+    # crops to a stripe of nothing.
+    if width > height:
+        score += 0.8
+    elif height > width * 1.2:
+        score -= 0.8
+    aspect = width / height if height else 0
+    if aspect > 3.2:
+        score -= 0.8
+    if width >= 2400:
+        score += 0.5
+    elif width >= 1600:
+        score += 0.3
+    if "panoramio" in folded:
+        score -= 0.3
+    return score
+
+
+# What a picked file has to score. Set where it is because the gate above
+# already decided relevance: this is the line between a photograph worth
+# showing and one that is merely of the right mountain.
+PICK_FLOOR = 2.2
+
+
+def pick_images(peak, lang="en"):
+    cands = image_candidates(peak, lang)
     ranked = sorted(((score_image(c, peak), c) for c in cands),
                     key=lambda pair: -pair[0])
-    picked, seen_author = [], {}
+    # How many pictures in one gallery may rest on category filing alone.
+    #
+    # Two. A file that never names the mountain and is not in its article got
+    # in because somebody filed it under the subject, which on Commons is as
+    # true of "the mountain is the subject" as of "the mountain is on the
+    # skyline behind the piste". One or two of those add angles to a gallery;
+    # six of them are a gallery about somewhere else.
+    weak_left = 2
+    picked, seen_author, seen_key = [], {}, set()
     for score, cand in ranked:
-        if score < 1.0 or len(picked) >= IMAGES_WANTED:
+        if score < PICK_FLOOR or len(picked) >= IMAGES_WANTED:
+            continue
+        strong = (cand["source"] == "article" or named_for(cand, peak))
+        if not strong and weak_left <= 0:
             continue
         info = cand["info"]
-        meta = info.get("extmetadata") or {}
-
-        def meta_val(key):
-            return strip_html((meta.get(key) or {}).get("value", ""))
-
-        licence = meta_val("LicenseShortName")
+        licence = _meta(info, "LicenseShortName")
         if re.search(r"fair use|non[- ]free|copyright", licence, re.I):
             continue
-        author = meta_val("Artist")[:120]
+        author = _meta(info, "Artist")[:120]
         # One photographer's whole afternoon is not a gallery. Two per author,
         # so a set of six is a set of angles rather than a contact sheet.
         if author:
             seen_author[author] = seen_author.get(author, 0) + 1
             if seen_author[author] > 2:
                 continue
+        # Nor is one photograph uploaded twice under two names: Commons is
+        # full of "X.jpg" and "X (cropped).jpg".
+        key = re.sub(r"\b(cropped|crop|edit|edited|retouched|small|large|"
+                     r"version|copy)\b", "", fold(cand["title"])).strip()
+        if key in seen_key:
+            continue
+        seen_key.add(key)
+        if not strong:
+            weak_left -= 1
         picked.append({
+            "named": bool(named_for(cand, peak)),
             "file": cand["title"],
             "url": info.get("thumburl") or info.get("url"),
             "full": info.get("url"),
             "w": info.get("thumbwidth") or info.get("width"),
             "h": info.get("thumbheight") or info.get("height"),
             "license": licence,
-            "license_url": meta_val("LicenseUrl"),
+            "license_url": _meta(info, "LicenseUrl"),
             "author": author,
-            "caption": meta_val("ImageDescription")[:200],
-            "pinned": bool(cand.get("pinned")),
+            "caption": _meta(info, "ImageDescription")[:200],
+            "pinned": cand["source"] == "pinned",
+            "why": cand["source"],
+            "stars": _meta(info, "Assessments"),
+            "score": round(score, 2),
             "page": "https://commons.wikimedia.org/wiki/"
                     + urllib.parse.quote(cand["title"].replace(" ", "_")),
         })
-    return picked
 
+    # A gallery has to be CARRIED by a photograph that names this mountain or
+    # illustrates its article. Category membership is not enough on its own,
+    # and neither is a bare Wikidata pin, because both are true of a picture
+    # that merely has the mountain somewhere in it: "Skiing in Andorra" is
+    # filed under Tossal de la Llosada and is a photograph of a piste, and
+    # "Andorra la Vella" is filed under it too and is a photograph of a town.
+    # Without a carrying picture this mountain has no gallery, and the export
+    # gate drops it rather than showing somebody else's view under its name.
+    if not any(i["named"] or i["why"] == "article" for i in picked):
+        return []
+    return picked
 
 # ---------------------------------------------------------------------------
 # Wikipedia: facts and pageviews, never prose
@@ -1192,7 +1424,8 @@ def enrich_country(cc, refresh=False, dests=None, images=True, context=True,
     if images:
         print("    photographs")
         with ThreadPoolExecutor(max_workers=IMAGE_WORKERS) as pool:
-            for peak, shots in zip(peaks, pool.map(pick_images, peaks)):
+            shots_for = pool.map(lambda pk: pick_images(pk, lang), peaks)
+            for peak, shots in zip(peaks, shots_for):
                 peak["images"] = shots
         have = sum(1 for p in peaks if len(p.get("images") or []) >= 2)
         print(f"      {have}/{len(peaks)} with two or more")

@@ -116,6 +116,54 @@ dozen ski hills, because you cannot walk up it. Nobody goes to Zermatt to stand
 on the summit. Where a lift or a road puts you on the mountain, the climbing
 grade is somebody else's problem.
 
+## Photographs, and why relevance is a gate
+
+The first build ranked candidates by plausibility and took the top six, so a
+mountain with three good photographs got three good ones and three car parks.
+An audit of the published wire found 30 per cent of gallery images with no
+connection to their mountain at all: "Skiing in Andorra", "Road CS-240 at Coll
+d'Ordino", "Andorra la Vella". Every one was a geosearch hit, which proves
+only that somebody stood near the summit.
+
+So a file is a candidate only when a source says it depicts THIS mountain:
+
+| Evidence | What it is | Can it carry a gallery |
+|---|---|---|
+| `pinned` | Wikidata's P18 for the item | only when it also names the mountain |
+| `article` | used in the mountain's own Wikipedia article | yes |
+| `named` | the name is in the title, ObjectName or description | yes |
+| `category` | filed in the mountain's own Commons category | no, and at most two per gallery |
+
+Everything else is rejected, whatever it looks like.
+
+After the gate, 98 per cent of published images name their mountain in the
+file title, the object name or the description, against 70 per cent before it,
+and 29 geosearch hits survive out of 3,718 images. 478 rows lost their gallery
+entirely and are no longer published, which is the point: a mountain nobody
+has photographed is better absent than illustrated by somewhere else.
+
+Beauty is scored on top of that, and the strongest signal is not mine:
+Commons publishes **quality**, **featured** and **valued** assessments per
+file, and `imageinfo` returns them in the same request as the licence. A
+Featured Picture of the right mountain is exactly "the actual beautiful view",
+judged by photographers. After that come the words a photographer uses for
+light and vantage point (sunrise, alpenglow, reflection, sea of clouds, seen
+from), landscape aspect and resolution, against penalties for what merely
+stands on a mountain (masts, huts, summit crosses, cable car cabins, car
+parks) and outright rejection for somewhere else entirely (towns, roads, ski
+resorts, interiors).
+
+Two rules stop a bad source from winning, and both were written against a real
+failure:
+
+- **A Wikidata pin that never names the mountain drops to a supporting slot.**
+  Tossal de la Llosada's P18 is `Skiing in Andorra.jpg`.
+- **A gallery must be carried by a named or article picture.** Commons filing
+  is loose enough that a photograph of the town of Andorra la Vella sits in
+  Category:Tossal de la Llosada, because the ridge is on the skyline. A
+  mountain with no carrying picture publishes nothing, and the export gate
+  drops it rather than showing somebody else's view under its name.
+
 ## The way up, and where the claim comes from
 
 `lift_of()` in peak_index.py, and the wire always records `src`:

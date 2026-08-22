@@ -125,6 +125,11 @@ def clean_url(url):
 # 960 are not, and 500 is what the rest of this repo ships.
 CARD_PX = 500
 
+# How many pictures in one gallery may rest on category filing alone, and how
+# short the gallery has to be for them to be worth having at all.
+WEAK_SLOTS = 2
+WEAK_UNTIL = 3
+
 
 def small_url(url):
     if not url or "/thumb/" not in url:
@@ -141,20 +146,39 @@ def small_url(url):
 BACKDROP_RE = re.compile(
     r"in the background|hintergrund|from the summit|vom gipfel|view from|"
     r"blick vom|panorama from|seen from the", re.I)
+# The machinery, in the languages these files are actually named in. Czechia's
+# card led with "Snezka-stanice-lanovky-a-vyhled", a photograph of a cable car
+# station with the mountain underneath it, and an English-only pattern had no
+# way to know that.
 MACHINE_RE = re.compile(
     r"cabin|kabine|chairlift|sessellift|piste|ski slope|skilift|"
-    r"station building|talstation|bergstation", re.I)
+    r"station building|talstation|bergstation|\bstation\b|stanice|"
+    r"lanovk|seilbahn|funivia|funicolare|telepherique|teleferic|telecabine|"
+    r"telesiege|kolejka|wyciag|zubacka|zahnradbahn|cremagliera|pylon|"
+    r"\bmast\b|\bcable\b|drahtseil|gondola|gondel", re.I)
 # Things that STAND on the mountain. Every one of these is a real photograph
 # of the right place and a poor first picture of a mountain: Spain's card led
 # with "At Teide Observatory 2019 054" until this line existed.
 ON_IT_RE = re.compile(
     r"observator|telescope|museum|refuge|refugio|rifugio|h[uü]tte|\bhut\b|"
-    r"chapel|kapelle|church|\bcross\b|kreuz|monument|antenna|mast|"
-    r"restaurant|\bsign\b|schild|marker|plaque", re.I)
+    r"bouda|chata|schronisko|koca|menedekhaz|"
+    r"chapel|kapelle|church|kostel|\bcross\b|kreuz|kriz|croce|monument|"
+    r"antenna|vysilac|transmitter|restaurant|restaurace|\bsign\b|schild|"
+    r"marker|plaque|terrace|terasa", re.I)
+
+
+# Commons' own verdict on a photograph, which is the closest thing this
+# pipeline has to a human saying "that one is beautiful".
+STAR_VALUE = {"featured": 3.0, "quality": 2.0, "valued": 1.2}
 
 
 def lead_score(img, peak):
-    """How well this file works as the one picture on a card."""
+    """How well this file works as the one picture on a card.
+
+    Reads the evidence the enrich stage recorded (why it was picked, whether
+    it names the mountain, what Commons thinks of it) before falling back to
+    the file name, because by the time a file reaches here the question is no
+    longer "is this the right mountain" but "is this the best picture of it"."""
     title = str(img.get("file") or "")
     if title.startswith("File:"):
         title = title[5:]
@@ -162,10 +186,14 @@ def lead_score(img, peak):
                     unicodedata.normalize("NFKD", title.lower()))
     tokens = name_tokens(peak.get("name")) | name_tokens(peak.get("name_local"))
     score = 0.0
+    for word in str(img.get("stars") or "").split("|"):
+        score += STAR_VALUE.get(word.strip().lower(), 0.0)
+    if img.get("why") == "article":
+        score += 1.0                    # an editor chose it to illustrate this
     head = " ".join(folded.split()[:3])
     if tokens and any(t in head for t in tokens):
         score += 2.0                    # the file is NAMED after the mountain
-    elif tokens and any(t in folded for t in tokens):
+    elif img.get("named") or (tokens and any(t in folded for t in tokens)):
         score += 0.6
     if img.get("pinned"):
         score += 2.5                    # Wikidata says this depicts it
@@ -204,12 +232,35 @@ def wire_images(peak):
             "licUrl": img.get("license_url") or "",
             "page": img.get("page") or "",
             "_lead": lead_score(img, peak),
+            # Strong means somebody said this file is OF this mountain: it
+            # names it, or the mountain's own article uses it, or Wikidata
+            # pinned it and it names the mountain too.
+            "_strong": bool(img.get("named") or img.get("why") == "article"
+                            or (img.get("pinned") and img.get("named"))),
         })
     # Stable: equal scores keep the enrich stage's own order.
     out.sort(key=lambda i: -i["_lead"])
+
+    # A gallery is allowed at most WEAK_SLOTS pictures that never name the
+    # mountain, and only while it is still short.
+    #
+    # Those come in on category filing alone, which on Commons is as true of
+    # "the mountain is the subject" as of "the mountain is on the skyline", so
+    # they are worth one or two slots on a mountain with nothing else and
+    # worth none at all on a mountain with six photographs of its own. Filtered
+    # here rather than in the enrich stage because the cache already holds the
+    # evidence, so tightening this costs no Commons request.
+    kept, weak = [], 0
     for img in out:
+        strong = img.pop("_strong")
+        if not strong:
+            if len(kept) >= WEAK_UNTIL or weak >= WEAK_SLOTS:
+                continue
+            weak += 1
+        kept.append(img)
+    for img in kept:
         img.pop("_lead")
-    return out
+    return kept
 
 
 def peak_id(peak):
