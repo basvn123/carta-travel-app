@@ -57,7 +57,11 @@ check('country flag cards render', ccards > 20, `${ccards} flag cards`);
 const firstCc = await page.locator('.places-ccard .places-card-name').first().innerText().catch(() => '');
 check('flag cards carry the country name', firstCc.trim().length > 1, firstCc);
 const ccSub = await page.locator('.places-ccard .places-card-sub').first().innerText().catch(() => '');
-check('flag cards carry places count and from-price', /places/.test(ccSub) && /€/.test(ccSub), ccSub);
+// The from-price came off the flag card before 6ff2192e and has stayed off
+// through two later commits: browse surfaces no longer quote a fare, and the
+// count is what the card is for. This check followed the price for a while
+// after the code stopped showing one.
+check('flag cards carry the places count', /places/.test(ccSub), ccSub);
 await page.screenshot({ path: 'shots/places-general-countries.png' });
 
 // ── General: pick a country -> photo cards + sort chips ──
@@ -94,9 +98,8 @@ await page.locator('.places-cat', { hasText: /^trips$/i }).click();
 await page.waitForTimeout(1600);
 check('trips category opens on the composed itineraries',
   await page.locator('.places-icard').count() > 0);
-check('the day rail is there', await page.locator('.places-days').isVisible());
-await page.locator('.places-days .places-class')
-  .filter({ has: page.locator('.places-class-label:text-is("1")') }).first().click();
+check('the day slider is there', await page.locator('.trip-slider-input').isVisible());
+await page.locator('.trip-slider-input').fill('1');
 await page.waitForTimeout(1600);
 const tripIdx = await page.locator('.places-ccard').count();
 check('one day shows the published-country index', tripIdx > 5, `${tripIdx} countries`);
@@ -214,9 +217,13 @@ await desk.locator('.origin-opt').first().click();
 await desk.waitForTimeout(2500);
 check('picking an origin names it on the button', /barcelona/i.test(await originBtn.innerText().catch(() => '')),
   (await originBtn.innerText().catch(() => '')).replace(/\n/g, ' '));
+// The flag card no longer carries a price, so what proves the origin landed
+// is the button naming it (checked just above) and the priced cards inside a
+// country, not this subtitle. Kept as a smoke check that the list survives an
+// origin change rather than as a price assertion.
 const afterOrigin = await desk.locator('.places-ccard .places-card-sub').first().innerText().catch(() => '');
-check('catalogue prices follow the origin', beforeOrigin !== afterOrigin && /€/.test(afterOrigin),
-  `${beforeOrigin} -> ${afterOrigin}`);
+check('the catalogue still lists countries after an origin change',
+  /places/.test(afterOrigin), `${beforeOrigin} -> ${afterOrigin}`);
 await desk.screenshot({ path: 'shots/places-origin.png' });
 
 // ── The trips index lost its intro paragraph ─────────────────────────────

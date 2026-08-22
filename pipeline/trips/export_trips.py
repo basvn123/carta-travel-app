@@ -34,6 +34,7 @@ Usage, from the repo root:
 """
 
 import argparse
+import re
 import shutil
 import sys
 from collections import Counter, defaultdict
@@ -46,29 +47,91 @@ sys.path.insert(0, str(HERE))
 import compose_trips as C  # noqa: E402
 import validate_trips as V  # noqa: E402
 from trip_sources import (  # noqa: E402
-    ATTRIBUTION, MODEL_VERSION, TRIP_CACHE, WIRE_DIR, load_catalogue,
+    ATTRIBUTION, MODEL_VERSION, ROOT, TRIP_CACHE, WIRE_DIR, load_catalogue,
     load_json, write_json)
 
-TOP_PER_COUNTRY = 6
-TOP_TOTAL = 240
+TOP_PER_COUNTRY = 9
+TOP_PER_PACE = 3      # of those nine, at most three of any one pace
+TOP_PER_SCALE = 6     # and at most six of either size
+TOP_TOTAL = 400
 GALLERY_MAX = 5
 
 
 # ------------------------------------------------------------------- the card
 
-def hero_of(trip):
-    """The photograph a card leads with: the town the trip OPENS in.
+def load_hero_flags():
+    """Destinations whose own hero photograph the audit does not trust.
 
-    Leading with the best rated stop instead put the Trevi Fountain on both
-    "Naples and Rome" and "Florence and Rome", and a grid with the same
-    photograph twice reads as a template rather than as a catalogue. The first
-    stop is also the one a reader is deciding whether to fly to.
+    pipeline/audit_hero_images.py writes data/reports/hero_images_audit.json
+    with a reason per flagged destination (map, emblem, tiny, historical,
+    portrait, collage, svg, off_subject, far_coord). A trip should not lead
+    with any of them, and it never has to: it has other stops and every stop
+    has photographed sights.
     """
-    for s in trip["stops"]:
-        if s.get("img"):
-            return {"url": s["img"], "credit": s.get("img_credit"),
-                    "page": s.get("img_page"), "city": s["city"]}
-    return None
+    raw = load_json(ROOT / "data" / "reports" / "hero_images_audit.json") or {}
+    bad = set(raw.get("missing") or [])
+    for row in raw.get("flagged") or []:
+        if row.get("id"):
+            bad.add(row["id"])
+    return bad
+
+
+def hero_candidates(trip, flags):
+    """Every photograph this trip could lead with, best first.
+
+    Route order rather than rating order: the town the trip opens in is the
+    one a reader is deciding whether to fly to, and leading with the
+    best-rated stop put the Trevi Fountain on every Roman itinerary.
+    """
+    out = []
+    for st in trip["stops"]:
+        if st.get("img") and st["dest"] not in flags:
+            out.append({"url": st["img"], "credit": st.get("img_credit"),
+                        "page": st.get("img_page"), "city": st["city"]})
+    for dt in trip["daytrips"]:
+        if dt.get("img") and dt["dest"] not in flags:
+            out.append({"url": dt["img"], "city": dt["city"]})
+    # A sight's own photograph is a fine hero and is never a coat of arms,
+    # because the POI shortlist already dropped those.
+    for st in trip["stops"]:
+        for h in st["highlights"]:
+            if h.get("img"):
+                out.append({"url": h["img"], "credit": h.get("name"),
+                            "city": st["city"], "name": h.get("name")})
+    # Last resort: a flagged hero still beats a grey block.
+    for st in trip["stops"]:
+        if st.get("img"):
+            out.append({"url": st["img"], "credit": st.get("img_credit"),
+                        "page": st.get("img_page"), "city": st["city"],
+                        "weak": True})
+    return [c for c in out if _photo_ok(c["url"])]
+
+
+# Wordmarks, seals and vector emblems are not photographs of a place. Mirrors
+# trip_model._usable_photo so the two agree about what a picture is.
+_BADGE = re.compile(
+    "(logo|wordmark|coat[_ ]of[_ ]arms|wappen|seal[_ ]of|emblem|escudo|"
+    "blason|stemma|[.]svg)", re.I)
+
+
+def _photo_ok(url):
+    return bool(url) and not _BADGE.search(url)
+
+
+def hero_of(trip, flags=frozenset(), used=None):
+    """The photograph this trip leads with, avoiding ones already on the page."""
+    cands = hero_candidates(trip, flags)
+    if not cands:
+        return None
+    if used is not None:
+        for c in cands:
+            if c["url"] not in used:
+                used.add(c["url"])
+                return c
+    first = cands[0]
+    if used is not None:
+        used.add(first["url"])
+    return first
 
 
 def gallery_of(trip):
@@ -128,7 +191,7 @@ def centre_of(trip):
     return round(sum(lats) / len(lats), 4), round(sum(lons) / len(lons), 4)
 
 
-def to_card(trip):
+def to_card(trip, flags=frozenset(), used=None):
     """What a grid of trips needs, and nothing that only the page needs."""
     lat, lon = centre_of(trip)
     return {
@@ -137,6 +200,8 @@ def to_card(trip):
         "countries": trip["countries"],
         "abroad": trip.get("daytrip_countries") or [],
         "archetype": trip["archetype"],
+        "scale": trip.get("scale", "icons"),
+        "pace": trip.get("pace", "balanced"),
         "days": trip["days"],
         "nights": trip["nights"],
         "score": trip["score"],
@@ -151,7 +216,7 @@ def to_card(trip):
                    for s in trip["stops"]],
         "outs": [{"city": t["city"], "cc": t["iso2"], "min": t["minutes"],
                   "mode": t["mode"]} for t in trip["daytrips"]],
-        "img": hero_of(trip),
+        "img": hero_of(trip, flags, used),
         "sights": headline_sights(trip),
         "why": trip["why"][:4],
         "warned": trip["checks"]["warned"],
@@ -161,11 +226,11 @@ def to_card(trip):
     }
 
 
-def to_detail(trip):
+def to_detail(trip, flags=frozenset()):
     """The full trip, as the page reads it."""
     out = dict(trip)
     out["gallery"] = gallery_of(trip)
-    out["hero"] = hero_of(trip)
+    out["hero"] = hero_of(trip, flags)
     lat, lon = centre_of(trip)
     out["lat"], out["lon"] = lat, lon
     out["model"] = MODEL_VERSION
@@ -175,6 +240,7 @@ def to_detail(trip):
 # ----------------------------------------------------------------- the export
 
 def export(trips, dropped, stats, *, dry_run=False, only=None):
+    flags = load_hero_flags()
     now = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     by_cc = defaultdict(list)
     for t in trips:
@@ -196,7 +262,10 @@ def export(trips, dropped, stats, *, dry_run=False, only=None):
     countries = []
     for cc in sorted(by_cc):
         rows = sorted(by_cc[cc], key=lambda t: (-t["score"], t["days"], t["id"]))
-        cards = [to_card(t) for t in rows]
+        # `used` is per country file, so one page never leads with the same
+        # photograph twice even when a dozen trips open in the same city.
+        used = set()
+        cards = [to_card(t, flags, used) for t in rows]
         cover = next((c["img"] for c in cards if c["img"]), None)
         countries.append({
             "cc": cc,
@@ -216,16 +285,29 @@ def export(trips, dropped, stats, *, dry_run=False, only=None):
     if not dry_run:
         for t in trips:
             write_json(WIRE_DIR / "trip" / ("%s.json" % t["id"]),
-                       to_detail(t), compact=True)
+                       to_detail(t, flags), compact=True)
 
     # The Europe wide opening page, capped per country.
+    # Capped per country AND per pace and scale within it. Ranked on score
+    # alone the Europe list came out 88% balanced and 80% icons, because
+    # balanced carries a deliberate scoring nudge, and the two controls that
+    # customise a trip had nothing to offer on the opening page.
     per_cc = Counter()
+    per_kind = Counter()
+    top_used = set()
     top = []
     for t in sorted(trips, key=lambda x: (-x["score"], x["id"])):
-        if per_cc[t["cc"]] >= TOP_PER_COUNTRY:
+        cc = t["cc"]
+        if per_cc[cc] >= TOP_PER_COUNTRY:
             continue
-        per_cc[t["cc"]] += 1
-        top.append(to_card(t))
+        if per_kind[(cc, t.get("pace"))] >= TOP_PER_PACE:
+            continue
+        if per_kind[(cc, t.get("scale"))] >= TOP_PER_SCALE:
+            continue
+        per_cc[cc] += 1
+        per_kind[(cc, t.get("pace"))] += 1
+        per_kind[(cc, t.get("scale"))] += 1
+        top.append(to_card(t, flags, top_used))
         if len(top) >= TOP_TOTAL:
             break
 

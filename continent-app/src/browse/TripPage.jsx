@@ -6,6 +6,7 @@ import {
   BootIcon, SunIcon, PlusIcon,
 } from '../components/Icons.jsx';
 import { CountryFlag } from '../components/CountryFlag.jsx';
+import { srcSetFor, fallbackSrc } from '../lib/heroImage.js';
 import { RatingBadge } from '../components/RatingBadge.jsx';
 import { useI18n } from '../i18n/index.jsx';
 import { eur } from '../lib/format.js';
@@ -57,15 +58,34 @@ function Fact({ icon: Icon, value, label, word = false }) {
   );
 }
 
-/** One named sight, with its photograph and its one line of description. */
-function Sight({ poi }) {
+/**
+ * One named sight: its photograph, its one line, and a way to read more.
+ *
+ * The Wikipedia link was already in the wire and rendered nowhere, which made
+ * it pure weight. It is the natural next question a day plan raises, so it
+ * becomes the sight's name rather than being dropped.
+ */
+function Sight({ poi, t }) {
   return (
     <li className="itin-sight">
       {poi.img
         ? <img className="itin-sight-img" src={cardThumb(poi.img)} alt="" loading="lazy" />
         : <span className="itin-sight-img itin-sight-noimg" aria-hidden="true" />}
       <span className="itin-sight-text">
-        <span className="itin-sight-name">{poi.name}</span>
+        {poi.wiki ? (
+          <a
+            className="itin-sight-name itin-sight-link"
+            href={poi.wiki}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={(e) => e.stopPropagation()}
+            title={t('trip.readMore', { name: poi.name })}
+          >
+            {poi.name}
+          </a>
+        ) : (
+          <span className="itin-sight-name">{poi.name}</span>
+        )}
         {poi.desc && <span className="itin-sight-desc">{poi.desc}</span>}
       </span>
     </li>
@@ -133,6 +153,9 @@ export function TripPage({ trip: card, data, onClose, onOpenInPlanner, onSelectD
     ? { season: detail.season.best, seasonBasis: detail.season.basis }
     : (card.season ? card : { season: [] }), t);
   const themes = (trip.themes || []).map((x) => themeLabel(x, t)).filter(Boolean);
+  // The card already carries the chosen photograph, so it paints
+  // immediately and the detail does not change it.
+  const hero = detail?.hero || card.img || null;
 
   return (
     <div className="tpage itin-page" role="dialog" aria-modal="true">
@@ -151,32 +174,35 @@ export function TripPage({ trip: card, data, onClose, onOpenInPlanner, onSelectD
       </div>
 
       <div className="tpage-scroll">
-        <div className="tpage-hero itin-hero">
-          {detail ? (
-            <Suspense fallback={<div className="itin-map-wait" />}>
-              <TripMap
-                stops={pins}
-                padBottom={0}
-                fitPadding={40}
-                fitMaxZoom={9}
-                scrollZoom={false}
-                selectedIndex={selected}
-                onSelectStop={setSelected}
-              />
-            </Suspense>
+        {/* The photograph leads. A map of two dots and a dashed line is a poor
+            advertisement for a fortnight, and it says nothing the card did
+            not; it moves down to The route, where the reader has a question
+            for it. */}
+        <div className="itin-photohero">
+          {hero ? (
+            <img
+              className="itin-photohero-img"
+              src={fallbackSrc(hero.url, 1280)}
+              srcSet={srcSetFor(hero.url, 1280)}
+              sizes="100vw"
+              alt=""
+            />
           ) : (
-            <div className="itin-map-wait">
-              {failed ? t('trip.detailGone') : t('trip.loading')}
-            </div>
+            <span className="itin-photohero-img itin-photohero-none" aria-hidden="true" />
           )}
-        </div>
-
-        <div className="tpage-col">
-          <div className="tpage-head">
-            <h1 className="tpage-title">
+          <span className="itin-photohero-scrim" aria-hidden="true" />
+          <div className="itin-photohero-text">
+            {themes.length > 0 && (
+              <div className="itin-themes">
+                {themes.slice(0, 4).map((th) => (
+                  <span key={th} className="itin-theme">{th}</span>
+                ))}
+              </div>
+            )}
+            <h1 className="itin-photohero-title">
               {ready ? tripHeadline(trip, t) : t('trip.loading')}
             </h1>
-            <div className="tpage-sub itin-sub">
+            <div className="itin-photohero-sub">
               {(trip.countries || []).map((cc) => (
                 <span key={cc} className="itin-country">
                   <CountryFlag country={cc} size={12} />
@@ -184,15 +210,17 @@ export function TripPage({ trip: card, data, onClose, onOpenInPlanner, onSelectD
                 </span>
               ))}
               {trip.score != null && (
-                <RatingBadge rating={{ score: trip.score }} size="xs" showGem={false} />
+                <span className="itin-photohero-score">{trip.score.toFixed(1)}</span>
               )}
             </div>
-            {themes.length > 0 && (
-              <div className="itin-themes">
-                {themes.map((th) => <span key={th} className="itin-theme">{th}</span>)}
-              </div>
-            )}
           </div>
+          {hero?.credit && (
+            <span className="itin-photohero-credit">{hero.credit}</span>
+          )}
+        </div>
+
+        <div className="tpage-col">
+          {failed && <p className="places-empty">{t('trip.detailGone')}</p>}
 
           {ready && (
           <div className="tpage-facts itin-facts">
@@ -240,6 +268,19 @@ export function TripPage({ trip: card, data, onClose, onOpenInPlanner, onSelectD
           {detail && (
             <section className="tpage-sec">
               <h2 className="tpage-sec-title">{t('trip.routeTitle')}</h2>
+              <div className="itin-map">
+                <Suspense fallback={<div className="itin-map-wait" />}>
+                  <TripMap
+                    stops={pins}
+                    padBottom={0}
+                    fitPadding={40}
+                    fitMaxZoom={9}
+                    scrollZoom={false}
+                    selectedIndex={selected}
+                    onSelectStop={setSelected}
+                  />
+                </Suspense>
+              </div>
               <ol className="itin-route">
                 {detail.stops.map((s, i) => (
                   <React.Fragment key={s.dest}>
@@ -372,7 +413,7 @@ export function TripPage({ trip: card, data, onClose, onOpenInPlanner, onSelectD
                       )}
                       {items.length > 0 && (
                         <ul className="itin-sights">
-                          {items.map((p) => <Sight key={p.name} poi={p} />)}
+                          {items.map((p) => <Sight key={p.name} poi={p} t={t} />)}
                         </ul>
                       )}
                       {items.length === 0 && day.kind === 'depart' && (

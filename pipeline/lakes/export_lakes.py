@@ -225,6 +225,25 @@ def backfill_why(img, lake):
     return ""
 
 
+# A floor that applies to EVERY picture, including a Wikidata P18.
+#
+# The enrich stage exempts P18 from the pixel probe, because P18 is a person
+# stating that this image depicts this item and the probe is a heuristic that
+# rejects grey moorland water. That exemption is right for the marginal cases
+# and wrong for the absolute ones: the P18 for Haarrijnseplas is a photograph
+# of an information board on a fence, and Schwendisee's is another board, and
+# neither has any water in the frame at all.
+#
+# So one floor is cleared by nobody's assertion. It sits well below the tier
+# floors in lake_images (0.12, and 0.28 for a passing mention) so that it only
+# ever catches "no water whatsoever": Toftavatn, the Faroese lake that
+# motivated the P18 exemption in the first place, probes at 0.063 and stays.
+#
+# Enforced here rather than upstream because the probe is already stored with
+# every picture, so it costs no request and needs no re-photographing.
+HARD_WATER_FLOOR = 0.045
+
+
 def usable_images(lake):
     """[(picture, evidence)] for the pictures that may actually be published.
 
@@ -238,6 +257,9 @@ def usable_images(lake):
         # No evidence, no publication. An unstamped picture that cannot be
         # explained after the fact is one nobody can defend on the page.
         if not why:
+            continue
+        seen = img.get("seen")
+        if seen and seen.get("water", 1.0) < HARD_WATER_FLOOR:
             continue
         out.append((img, why))
     return out
@@ -804,6 +826,22 @@ def main():
             encoding="utf-8")
         if args.verbose:
             print(f"  {cc}: -> {path.name} ({path.stat().st_size // 1024} KB)")
+
+    # A country that stops publishing has to lose its file, not keep the last
+    # one it had. San Marino dropped out when the strict image gate refused
+    # its only Wikidata picture (a map of the lake), the index correctly
+    # listed it under `absent`, and SM.json sat on disk still serving the map:
+    # the app fetches a country file by name, so nothing in the index was
+    # stopping it. Only countries in THIS run's scope are swept, so
+    # `--countries SI` can never delete anybody else's wire.
+    for cc in countries:
+        if cc in by_country:
+            continue
+        stale = out_dir / f"{cc}.json"
+        if stale.exists():
+            stale.unlink()
+            print(f"  {cc}: no longer published, removed {stale.name}")
+
     (out_dir / "index.json").write_text(
         json.dumps(payload, ensure_ascii=False, separators=(",", ":")),
         encoding="utf-8")

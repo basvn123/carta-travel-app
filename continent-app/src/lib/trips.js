@@ -150,13 +150,17 @@ export const ARCHETYPES = ['base', 'chain', 'loop'];
  * five day ones. Under that it is the score, which already carries the
  * checks.
  */
-export function rankTrips(trips, { days = null, shapes = null, themes = null } = {}) {
+export function rankTrips(trips, {
+  days = null, shapes = null, themes = null, pace = null, scale = null,
+} = {}) {
   const wantShapes = shapes && shapes.length ? new Set(shapes) : null;
   const wantThemes = themes && themes.length ? new Set(themes) : null;
   const rows = (trips || [])
     .map((t) => ({ t, fit: days ? daysFit(t, days) : 2 }))
     .filter(({ t, fit }) => {
       if (days && fit === 0) return false;
+      if (pace && t.pace !== pace) return false;
+      if (scale && t.scale !== scale) return false;
       if (wantShapes && !wantShapes.has(t.archetype)) return false;
       if (wantThemes && !(t.themes || []).some((x) => wantThemes.has(x))) return false;
       return true;
@@ -173,7 +177,7 @@ export function rankTrips(trips, { days = null, shapes = null, themes = null } =
   if (days) return rows;
   const seen = new Map();
   for (const t of rows) {
-    const key = `${t.archetype}|${t.cities.map((c) => c.city).join('>')}`;
+    const key = `${t.archetype}|${t.pace}|${t.scale}|${t.cities.map((c) => c.city).join('>')}`;
     const kept = seen.get(key);
     if (kept) kept.alsoDays.push(t.days);
     else seen.set(key, { ...t, alsoDays: [] });

@@ -139,6 +139,20 @@ function geoLines(r) {
 // the content lab; everything above it is a composed itinerary from
 // pipeline/trips. `null` is "any length".
 const TRIP_DAYS = [1, 2, 3, 4, 5, 6, 7, 8, 10, 12, 14];
+const TRIP_MAX_DAYS = 14;
+
+// How hard the trip works, and how big the places on it are. Both are things
+// the composer BUILT differently rather than labels over one set: relaxed and
+// packed are different routes, and so are icons and hidden.
+const TRIP_PACES = [
+  { key: 'relaxed', labelKey: 'trip.paceRelaxed' },
+  { key: 'balanced', labelKey: 'trip.paceBalanced' },
+  { key: 'packed', labelKey: 'trip.pacePacked' },
+];
+const TRIP_SCALES = [
+  { key: 'icons', labelKey: 'trip.scaleIcons' },
+  { key: 'hidden', labelKey: 'trip.scaleHidden' },
+];
 
 const CATS = [
   { key: 'general', Icon: SkylineIcon, labelKey: 'places.catGeneral' },
@@ -623,6 +637,8 @@ export function DestinationsTab({
   // The Trips category asks one question: how many days. 1 means the drawn
   // city walks, 2 and up mean a composed itinerary, null means any length.
   const [itinDays, setItinDays] = useState(null);
+  const [itinPace, setItinPace] = useState(null);     // null = any pace
+  const [itinScale, setItinScale] = useState(null);   // null = both
   const [itinIndex, setItinIndex] = useState(undefined);   // undefined = loading
   const [itinTop, setItinTop] = useState(null);
   const [itinCountryRows, setItinCountryRows] = useState(null);
@@ -1138,7 +1154,9 @@ export function DestinationsTab({
     if (!isItinCat) return null;
     const source = itinCountry ? itinCountryRows : itinTop;
     if (!source) return null;
-    let rows = rankTrips(source, { days: itinDays });
+    let rows = rankTrips(source, {
+      days: itinDays, pace: itinPace, scale: itinScale,
+    });
     if (q) {
       rows = rows.filter((tr) => norm(tr.cities.map((c) => c.city).join(' ')).includes(q)
         || tr.cities.some((c) => norm(c.city).includes(q)));
@@ -1151,21 +1169,22 @@ export function DestinationsTab({
         .slice(0, NEAR_MAX_ROWS);
     }
     return rows.map((tr) => ({ tr, km: null }));
-  }, [isItinCat, itinCountry, itinCountryRows, itinTop, itinDays, q, nearPlace]);
+  }, [isItinCat, itinCountry, itinCountryRows, itinTop, itinDays, itinPace,
+    itinScale, q, nearPlace]);
 
   // Which day counts can actually be answered here, so a length nobody
   // composed is greyed out rather than offered and returning nothing.
-  const itinDayCounts = useMemo(() => {
-    const out = new Map();
-    if (cat !== 'trips') return out;
-    // 1 is the city walks, which the trails index counts separately.
-    const walks = (trailsIndex?.countries || []).reduce((n, c) => (
-      n + (itinCountry && c.country !== itinCountry ? 0 : (c.counts?.citytrip || 0))), 0);
-    if (walks) out.set(1, walks);
+  const itinFacets = useMemo(() => {
+    const pace = new Map();
+    const scale = new Map();
     const source = itinCountry ? itinCountryRows : itinTop;
-    for (const tr of source || []) out.set(tr.days, (out.get(tr.days) || 0) + 1);
-    return out;
-  }, [cat, itinCountry, itinCountryRows, itinTop, trailsIndex]);
+    for (const tr of source || []) {
+      if (itinDays && !rankTrips([tr], { days: itinDays }).length) continue;
+      pace.set(tr.pace, (pace.get(tr.pace) || 0) + 1);
+      scale.set(tr.scale, (scale.get(tr.scale) || 0) + 1);
+    }
+    return { pace, scale };
+  }, [itinCountry, itinCountryRows, itinTop, itinDays]);
 
   // ── Beaches: the published beach layer ───────────────────────────────
 
@@ -1745,35 +1764,88 @@ export function DestinationsTab({
             row of its own, because "two hours, and a loop" is one thought.
             It is hidden entirely in a country that has no loops published, so
             the chip never offers an empty list. */}
-        {/* The Trips category's one question: how long have you got. 1 is a
-            drawn city walk, everything above it a composed itinerary. */}
+        {/* The Trips category's controls. One slider for the length, then
+            how hard the trip works and how big the places on it are. */}
         {cat === 'trips' && (
-          <div className="places-classes places-days" role="group" aria-label={t('trip.askDays')}>
-            <button
-              type="button"
-              className={`places-class ${itinDays === null ? 'on' : ''}`}
-              aria-pressed={itinDays === null}
-              onClick={() => setItinDays(null)}
-            >
-              <span className="places-class-label">{t('trip.anyLength')}</span>
-            </button>
-            {TRIP_DAYS.map((n) => {
-              const count = itinDayCounts.get(n) || 0;
-              const on = itinDays === n;
-              return (
-                <button
-                  key={n}
-                  type="button"
-                  className={`places-class ${on ? 'on' : ''}`}
-                  aria-pressed={on}
-                  disabled={!count && !on}
-                  onClick={() => setItinDays(on ? null : n)}
-                >
-                  <span className="places-class-label places-days-n">{n}</span>
-                  <span className="places-class-n">{fmt(count)}</span>
-                </button>
-              );
-            })}
+          <div className="places-tripbar">
+            <label className="trip-slider">
+              <span className="trip-slider-head">
+                <span className="trip-slider-label">
+                  {itinDays === null
+                    ? t('trip.anyLength')
+                    : t(itinDays === 1 ? 'trip.oneDay' : 'trip.nDays', { n: itinDays })}
+                </span>
+                <span className="trip-slider-count">
+                  {t(itinRows && itinRows.length === 1 ? 'trip.countOne' : 'trip.countMany',
+                    { n: fmt(itinRows ? itinRows.length : 0) })}
+                </span>
+              </span>
+              <input
+                type="range"
+                className="trip-slider-input"
+                min="0"
+                max={TRIP_MAX_DAYS}
+                step="1"
+                value={itinDays === null ? 0 : itinDays}
+                aria-label={t('trip.askDays')}
+                aria-valuetext={itinDays === null
+                  ? t('trip.anyLength')
+                  : t(itinDays === 1 ? 'trip.oneDay' : 'trip.nDays', { n: itinDays })}
+                onChange={(e) => {
+                  const v = Number(e.target.value);
+                  setItinDays(v === 0 ? null : v);
+                }}
+              />
+              {/* 0 is "any length", so the scale starts at the word rather
+                  than at a number nobody asked for. */}
+              <span className="trip-slider-ticks" aria-hidden="true">
+                <span>{t('trip.anyShort')}</span>
+                <span>1</span>
+                <span>7</span>
+                <span>{TRIP_MAX_DAYS}</span>
+              </span>
+            </label>
+
+            <div className="trip-toggles">
+              <div className="places-classes" role="group" aria-label={t('trip.askPace')}>
+                {TRIP_PACES.map(({ key, labelKey }) => {
+                  const n = itinFacets.pace.get(key) || 0;
+                  const on = itinPace === key;
+                  return (
+                    <button
+                      key={key}
+                      type="button"
+                      className={`places-class ${on ? 'on' : ''}`}
+                      aria-pressed={on}
+                      disabled={!n && !on}
+                      onClick={() => setItinPace(on ? null : key)}
+                    >
+                      <span className="places-class-label">{t(labelKey)}</span>
+                      <span className="places-class-n">{fmt(n)}</span>
+                    </button>
+                  );
+                })}
+              </div>
+              <div className="places-classes" role="group" aria-label={t('trip.askScale')}>
+                {TRIP_SCALES.map(({ key, labelKey }) => {
+                  const n = itinFacets.scale.get(key) || 0;
+                  const on = itinScale === key;
+                  return (
+                    <button
+                      key={key}
+                      type="button"
+                      className={`places-class ${on ? 'on' : ''}`}
+                      aria-pressed={on}
+                      disabled={!n && !on}
+                      onClick={() => setItinScale(on ? null : key)}
+                    >
+                      <span className="places-class-label">{t(labelKey)}</span>
+                      <span className="places-class-n">{fmt(n)}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
           </div>
         )}
 
@@ -2095,18 +2167,8 @@ export function DestinationsTab({
 
             {itinRows && itinRows.length > 0 && (
               <>
-                {!q && !nearPlace && (
-                  <p className="places-beachhead">
-                    {itinCountry
-                      ? t('trip.countryHead', {
-                        country: countryName(itinCountry), n: fmt(itinRows.length),
-                      })
-                      // The count is what is ON SCREEN, not what the wire
-                      // holds: reporting the catalogue total here said "1,525
-                      // trips" over a list of twenty eight.
-                      : t('trip.europeHead', { n: fmt(itinRows.length) })}
-                  </p>
-                )}
+                {/* No count line here: the slider already carries the number,
+                    and saying it twice was one sentence too many. */}
                 {itinRows.slice(0, visible).map(({ tr, km }) => (
                   <ItinCard key={tr.id} tr={tr} km={km} onOpen={setPageItin} t={t} />
                 ))}

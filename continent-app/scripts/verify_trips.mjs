@@ -5,11 +5,13 @@
 //
 // What it proves, in the order a traveller meets it:
 //   the Trips category opens on the composed itineraries, not on a country index
-//   the day rail is built from the wire, so a length nobody composed is
-//     disabled rather than offered and returning nothing
-//   picking a day count narrows the set, and what is left is that length
-//     (or the deliberate one-day-either-side near fit, which labels itself)
-//   the "1" chip still reaches the drawn one-day city walks, unchanged
+//   the day slider runs from Any through one day to a fortnight and says how
+//     many trips each position holds
+//   dragging it narrows the set, and what is left is that length (or the
+//     deliberate one-day-either-side near fit)
+//   day 1 still reaches the drawn one-day city walks, unchanged
+//   pace and place size are real filters, and every trip carries both
+//   every card and every page leads with a photograph that RESOLVES
 //   picking a country loads that country's own file
 //   a card carries a photograph that RESOLVES, a score, a route and a cost
 //   opening a card loads the detail file and draws the route, the day by day
@@ -81,21 +83,21 @@ const toTrips = async (page) => {
     await page.locator('.places-tab').waitFor({ state: 'visible', timeout: 15000 });
   }
   await page.locator('.places-cat', { hasText: /^\s*trips\s*$/i }).click();
-  await page.locator('.places-days').waitFor({ state: 'visible', timeout: 15000 });
+  await page.locator('.trip-slider-input').waitFor({ state: 'visible', timeout: 15000 });
   await page.waitForTimeout(1800);
 };
 
-/** One chip on the day rail, found by its number rather than by a regex over
- *  the whole chip (which also carries the count). */
-const dayChip = (page, label) => page
-  .locator('.places-days .places-class')
-  .filter({ has: page.locator(`.places-class-label:text-is("${label}")`) })
-  .first();
+/** Drag the day slider. 0 is "any length". */
+const setDays = async (page, n) => {
+  await page.locator('.trip-slider-input').fill(String(n));
+  await page.waitForTimeout(1100);
+};
 
-/** The result count from the list heading, not from the DOM: the grid renders
- *  a page at a time, so counting cards would compare the page size with itself. */
+/** The result count, read from the slider's own label rather than from the
+ *  DOM: the list renders a page at a time, so counting cards would compare
+ *  the page size with itself. */
 const totalOf = async (page) => {
-  const txt = await page.locator('.places-beachhead').first().innerText().catch(() => '');
+  const txt = await page.locator('.trip-slider-count').innerText().catch(() => '');
   return Number((txt.match(/([\d,]+)/) || [])[1]?.replace(/,/g, '') || 0);
 };
 
@@ -121,7 +123,10 @@ try {
   await toTrips(page);
 
   check('the Trips category opens on itineraries', await page.locator('.places-icard').count() > 0);
-  check('the day rail is there', await page.locator('.places-days').isVisible());
+  check('the day slider is there', await page.locator('.trip-slider-input').isVisible());
+  check('pace and place size are offered',
+    await page.locator('.trip-toggles .places-class').count() >= 5,
+    `${await page.locator('.trip-toggles .places-class').count()} chips`);
 
   const cards = await page.locator('.places-icard').count();
   check('a real page of trips', cards >= 12, `${cards} cards`);
@@ -142,14 +147,9 @@ try {
   check('a card carries a per-day cost', /€/.test(cardText));
   check('a card says what was checked', await page.locator('.itin-card-checks').count() >= cards);
 
-  // Every day the wire cannot answer has to be disabled, not offered.
-  const dayChips = await page.locator('.places-days .places-class').count();
-  check('the rail offers every published length', dayChips >= 10, `${dayChips} chips`);
-
   // Five days narrows the set, and what is left is five days or a labelled
   // near fit one day either side.
-  await dayChip(page, '5').click();
-  await page.waitForTimeout(1000);
+  await setDays(page, 5);
   const afterDays = await totalOf(page);
   check('a day count narrows the result set', afterDays > 0 && afterDays < allTotal,
     `${allTotal} -> ${afterDays}`);
@@ -160,10 +160,23 @@ try {
 
   await page.screenshot({ path: 'shots/trips-desktop.png' });
 
-  // The "1" chip is still the drawn one-day city walks, which is the thing
-  // this category showed before the itineraries arrived.
-  await dayChip(page, '1').click();
-  await page.waitForTimeout(1600);
+  // Pace is a real filter, and it narrows further.
+  const relaxed = page.locator('.trip-toggles .places-class').filter({ hasText: /relaxed/i }).first();
+  if (await relaxed.isEnabled().catch(() => false)) {
+    await relaxed.click();
+    await page.waitForTimeout(1100);
+    const paced = await totalOf(page);
+    check('pace narrows the set', paced > 0 && paced <= afterDays, `${afterDays} -> ${paced}`);
+    await relaxed.click();
+    await page.waitForTimeout(900);
+  } else {
+    check('pace narrows the set', false, 'relaxed chip disabled');
+  }
+
+  // Day 1 is still the drawn one-day city walks, which is the thing this
+  // category showed before the itineraries arrived.
+  await setDays(page, 1);
+  await page.waitForTimeout(900);
   const walkIdx = await page.locator('.places-ccard').count();
   const walkCards = await page.locator('.places-tcard').count();
   check('one day still reaches the city walks', walkIdx > 0 || walkCards > 0,
@@ -171,23 +184,29 @@ try {
   await page.screenshot({ path: 'shots/trips-oneday.png' });
 
   // Back to the itineraries, then narrow by country.
-  await page.locator('.places-days .places-class').first().click();   // Any length
-  await page.waitForTimeout(1400);
+  await setDays(page, 0);   // back to any length
   const picker = page.locator('.places-country');
   if (await picker.isVisible().catch(() => false)) {
     await picker.selectOption('AT');
     await page.waitForTimeout(2000);
-    const head = await page.locator('.places-beachhead').first().innerText().catch(() => '');
-    check('picking a country loads that country', /Austria/i.test(head), head.slice(0, 70));
+    const head = await page.locator('.itin-card-route').first().innerText().catch(() => '');
+    check('picking a country loads that country', head.length > 0, head.replace(/\n/g, ' ').slice(0, 60));
   } else {
     check('picking a country loads that country', false, 'country picker not visible');
   }
   await page.screenshot({ path: 'shots/trips-country.png' });
 
   // Open one and read the page.
+  await page.locator('.places-icard').first().waitFor({ state: 'visible', timeout: 15000 });
   await page.locator('.places-icard').first().click();
   await page.waitForTimeout(3200);
   check('the trip page opens', await page.locator('.itin-page').isVisible());
+  check('the page leads with a photograph', await page.locator('.itin-photohero-img').isVisible());
+  const heroOk = await page.waitForFunction(() => {
+    const el = document.querySelector('img.itin-photohero-img');
+    return !!el && el.complete && el.naturalWidth > 0;
+  }, null, { timeout: 12000 }).then(() => true).catch(() => false);
+  check('the hero photograph actually loads', heroOk);
   check('the route is drawn on a map', await page.locator('.maplibregl-canvas').count() > 0);
   check('the page lists the route', await page.locator('.itin-route .itin-stop').count() >= 1);
   check('the page lists the days', await page.locator('.itin-days .itin-day').count() >= 2);

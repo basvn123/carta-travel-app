@@ -108,6 +108,9 @@ const WHY_KEY = {
   // night still gets trips, and the page says that is what happened rather
   // than presenting a short list as a considered shortlist.
   thinCoverage: 'trip.whyThinCoverage',
+  paceRelaxed: 'trip.whyPaceRelaxed',
+  pacePacked: 'trip.whyPacePacked',
+  offTheBeatenTrack: 'trip.whyOffTheBeatenTrack',
 };
 
 // Short chip labels for the card, where a sentence will not fit.
@@ -120,6 +123,9 @@ const TAG_KEY = {
   namedRoute: 'trip.tagNamedRoute',
   lightTravel: 'trip.tagLightTravel',
   oneBed: 'trip.tagOneBed',
+  paceRelaxed: 'trip.tagRelaxed',
+  pacePacked: 'trip.tagPacked',
+  offTheBeatenTrack: 'trip.tagHidden',
 };
 
 function keyFor(map, reason) {

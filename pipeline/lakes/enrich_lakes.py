@@ -1068,7 +1068,19 @@ def enrich_country(cc, shortlist_n=SHORTLIST, refresh=False, bathing=None,
             # improve 1,125 published cards would be an hour of Wikimedia's
             # bandwidth spent on rows nobody will ever open.
             if photos_published and shipping is not None:
-                thin = thin or lake.get("wd") in shipping
+                # Only lakes the CURRENT picker has not seen. Every picture it
+                # chooses carries the evidence that let it in, so a missing
+                # `why` is exactly "this was picked by the old rules".
+                #
+                # Written this way so the flag converges instead of looping:
+                # tightening the picker changes which lakes get published, so
+                # the published set is a moving target and the pass has to be
+                # run twice. If the second run re-shot all 1,080 published
+                # lakes again rather than the handful the first export
+                # promoted, converging would cost another four hours. Use
+                # --refresh when the rules change and everything must be redone.
+                stale = not kept or kept[0].get("why") is None
+                thin = thin or (stale and lake.get("wd") in shipping)
             if kept is not None and not refresh and not thin:
                 lake["images"] = kept
             else:

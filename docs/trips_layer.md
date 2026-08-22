@@ -36,16 +36,50 @@ That category already existed and showed one thing: the 215 drawn one-day city
 walks from the content lab. It now answers the question a traveller arrives
 with, "how many days have I got", with the day count as the control:
 
-| Chip | What it shows |
+One **slider**, from Any through one day to a fortnight, with the number of
+matching trips under the handle so the catalogue visibly thins out rather than
+being discovered by landing on an empty page.
+
+| Position | What it shows |
 |---|---|
+| Any | every composed itinerary, best first |
 | `1` | the drawn city walks, unchanged, with their real route and geometry |
 | `2` to `14` | the composed multi-day itineraries from `pipeline/trips` |
-| any length | every composed itinerary, best first |
 
 Nothing is lost and nothing is duplicated: a one-day walk and a five-day
 itinerary are different objects answering the same question at different
-lengths, and the day rail is what tells them apart. Each chip carries its own
-count, so a length nobody composed is greyed out rather than offered.
+lengths, and the slider is what tells them apart. A length nobody composed
+(9, 11, 13) still answers, through the deliberate one-day-either-side fit.
+
+## Pace and scale: the two customisations
+
+Both are dimensions the composer **builds differently**, not filters over one
+set, which is why each is a separate pass and why the catalogue has 2,900
+trips rather than 1,500.
+
+| Pace | Nights per base | Bases per day | Sights a day | Longest leg |
+|---|---|---|---|---|
+| relaxed | 3 minimum | one per 4 days | 3 | 3.5 h |
+| balanced | 2 minimum | one per 3 days | 4 | 5 h |
+| packed | 2 minimum | one per 2.2 days | 6 | 5 h |
+
+Given seven days in Austria, relaxed builds Salzburg and Vienna with three
+nights each; packed builds Vienna, Salzburg and Innsbruck. Different routes,
+not one route relabelled. Where two paces genuinely converge (relaxed and
+balanced both want two bases for a week) the identical itinerary is collapsed
+and the better-standing pace keeps it.
+
+| Scale | Seeds from | May pass through |
+|---|---|---|
+| icons | metro and city, rating 7.2+ | metro, city, town |
+| hidden | town, village and area, rating 6.6+ | city, town, village, area, never a metro |
+
+The pool matters as much as the seed: a route seeded in Hallstatt that ended
+in Vienna was an icons trip that happened to start somewhere small.
+
+A country with fewer than four eligible bases runs one pass instead of six.
+Liechtenstein has a single base, and splitting it by scale published nothing
+at all.
 
 ## The three shapes
 
@@ -183,6 +217,16 @@ door a shared trip uses, so every stop, night and date stays editable.
   card, covered the day rail and swallowed every click on the page. Headless
   Playwright reported it as "img intercepts pointer events", which is exactly
   what a person would have hit with a mouse.
+- **Every trip must have a photograph, and no two on a page the same.** The
+  hero is picked from a ranked pool (stops in route order, then day trips,
+  then each stop's best photographed sight), skipping the 83 destinations
+  `audit_hero_images.py` flags as maps, emblems, engravings or portraits, and
+  skipping anything already used in that country file. It is a hard check, so
+  a trip with nothing to lead with does not ship.
+- **The trip page leads with the photograph, not the map.** A map of two dots
+  and a dashed line is the right illustration for a hike and the wrong one for
+  a fortnight; it moved down into "The route", where the reader has a question
+  for it.
 - **`landmass_of` knows islands, not gulfs.** Tallinn to Helsinki is 82 km of
   Gulf of Finland and about 700 km of road, and both stops read as "the
   continent", so the estimator offered it as a 64 minute train. `SEA_PAIRS`

@@ -63,6 +63,60 @@ BASE_DAYS = [2, 3, 4, 5, 6]
 CHAIN_DAYS = [4, 5, 6, 7, 8, 10, 12, 14]
 LOOP_DAYS = [6, 7, 8, 10, 12, 14]
 
+# How hard the trip works. Applied to the SHAPE of the itinerary, not to a
+# label on it: given the same seven days, relaxed builds two bases and packed
+# builds four, so the two are different routes rather than one route twice.
+PACES = {
+    "relaxed": {
+        "core_bonus": 2,   # slow days the base holds on its own
+        "min_nights": 3,      # sleep somewhere long enough to stop unpacking
+        "max_stops": 3,
+        "daytrips": 2,
+        "poi_per_day": 3,
+        "leg_h": 3.5,         # no travel day longer than an afternoon
+        "score": 0.0,
+    },
+    "balanced": {
+        "core_bonus": 0,   # slow days the base holds on its own
+        "min_nights": 2,
+        "max_stops": 5,
+        "daytrips": 4,
+        "poi_per_day": 4,
+        "leg_h": 5.0,
+        "score": 0.15,        # the shape most people actually want
+    },
+    "packed": {
+        "core_bonus": -1,   # slow days the base holds on its own
+        "min_nights": 2,
+        "max_stops": 5,
+        "daytrips": 5,
+        "poi_per_day": 6,
+        "leg_h": 5.0,
+        "score": 0.0,
+    },
+}
+
+# How big the places are. Two genuinely different trips through one country:
+# the cities everyone has heard of, and everywhere else.
+SCALES = {
+    "icons": {
+        "seed_classes": {"metro", "city"},
+        # The pool matters as much as the seed: a route of famous cities may
+        # pass through a town, but a village on it is a different trip.
+        "pool_classes": {"metro", "city", "town"},
+        "min_seed": 7.2,
+    },
+    "hidden": {
+        "seed_classes": {"town", "village", "area"},
+        # No metros. Seeding in Hallstatt and finishing in Vienna was an
+        # icons trip that happened to start somewhere small.
+        "pool_classes": {"city", "town", "village", "area"},
+        # A smaller place clears a lower bar to open a trip, or "hidden" would
+        # only ever be the handful of towns that rate like cities.
+        "min_seed": 6.6,
+    },
+}
+
 MIN_BASE_SCORE = 6.2         # below this a place is a stop, not a base
 THIN_BASE_SCORE = 4.2        # the floor for a country that has nothing else
 MIN_BASES_FOR_A_COUNTRY = 4  # under this, the floor above takes over
@@ -74,7 +128,7 @@ CHAIN_GOOD_LEG_H = 2.5       # under this the move costs only a morning
 LOOP_MAX_LEG_H = 3.5         # behind the wheel, in one go
 LOOP_MAX_DAILY_DRIVE_H = 2.6 # averaged over the whole loop
 BEAM_WIDTH = 8
-KEEP_PER_CELL = 3            # trips kept per country, archetype and day count
+KEEP_PER_CELL = 3            # per country, archetype, length, scale and pace
 MAX_DAYTRIPS_PER_BASE = 4
 DAYTRIP_BEARING_SPREAD = 55  # degrees; two days out closer than this compete
 
@@ -165,6 +219,8 @@ def _dedupe_same_city(bases):
 # ---------------------------------------------------------------- day trips
 
 def daytrips_for(base, cat, ctx, want=MAX_DAYTRIPS_PER_BASE):
+    # `want` comes from the pace: a relaxed week goes out twice, a packed
+    # one five times.
     """The best days out from one base, spread around the compass.
 
     Two day trips in the same direction compete for the same day, and a week
@@ -221,7 +277,7 @@ def editorial_bonus(a_id, b_id, ctx):
     return 0.0
 
 
-def extend_score(prev, cand, ctx, mode):
+def extend_score(prev, cand, ctx, mode, leg_cap=None):
     """Value of adding `cand` after `prev`, or None when the leg does not work."""
     lg = M.leg(prev["d"], cand["d"])
     if not lg.get("ok"):
@@ -229,7 +285,7 @@ def extend_score(prev, cand, ctx, mode):
     if lg["km"] < BASE_SEPARATION_KM:
         return None
     hours = lg["car_hours"] if mode == "car" else lg["public_hours"]
-    cap = LOOP_MAX_LEG_H if mode == "car" else CHAIN_MAX_LEG_H
+    cap = LOOP_MAX_LEG_H if mode == "car" else (leg_cap or CHAIN_MAX_LEG_H)
     if hours > cap:
         return None
 
@@ -245,7 +301,7 @@ def extend_score(prev, cand, ctx, mode):
     return score, lg
 
 
-def search_routes(seeds, pool, ctx, *, mode, max_stops, want=BEAM_WIDTH):
+def search_routes(seeds, pool, ctx, *, mode, max_stops, want=BEAM_WIDTH, leg_cap=None):
     """Beam search over base sequences. Returns [(stops, legs, score)]."""
     beams = [([s], [], s["score"]) for s in seeds]
     finished = []
@@ -266,7 +322,7 @@ def search_routes(seeds, pool, ctx, *, mode, max_stops, want=BEAM_WIDTH):
                                      s["d"]["lat"], s["d"]["lon"]) or 0) < BASE_SEPARATION_KM
                        for s in stops):
                     continue
-                res = extend_score(last, cand, ctx, mode)
+                res = extend_score(last, cand, ctx, mode, leg_cap)
                 if not res:
                     continue
                 add, lg = res
@@ -281,7 +337,7 @@ def search_routes(seeds, pool, ctx, *, mode, max_stops, want=BEAM_WIDTH):
 
 # ----------------------------------------------------------- nights and days
 
-def spread_nights(stops, nights):
+def spread_nights(stops, nights, pace=None):
     """Give each base at least two nights, the rest by how much it holds.
 
     A one night stop is a train change with a bed in it. The only exception is
@@ -289,14 +345,19 @@ def spread_nights(stops, nights):
     selected as a base in the first place.
     """
     n = len(stops)
+    floor = (pace or {}).get("min_nights", MIN_NIGHTS_PER_BASE)
     caps = [M.max_nights(s["d"]) for s in stops]
-    if nights < n * MIN_NIGHTS_PER_BASE or any(c < MIN_NIGHTS_PER_BASE for c in caps):
+    # A relaxed trip asks for three nights a base, which a village cannot give.
+    # Rather than bend the cap, the route simply is not offered at that pace.
+    caps = [max(c, floor) if s["d"].get("place_class") in ("metro", "city") else c
+            for c, s in zip(caps, stops)]
+    if nights < n * floor or any(c < floor for c in caps):
         return None
     if nights > sum(caps):
         # This route cannot absorb this many nights without parking someone in
         # a village for half a week. That is a different route's job.
         return None
-    out = [MIN_NIGHTS_PER_BASE] * n
+    out = [floor] * n
     left = nights - sum(out)
     weights = [max(0.5, s["days"]) for s in stops]
     order = sorted(range(n), key=lambda i: -weights[i])
@@ -380,7 +441,8 @@ def fill_day_items(days, stops, pools):
 
 # ------------------------------------------------------------- trip assembly
 
-def assemble(stops, legs, nights, daytrips, archetype, days_total, cat, ctx):
+def assemble(stops, legs, nights, daytrips, archetype, days_total, cat, ctx,
+             scale='icons', pace='balanced', pc=None):
     """One finished trip, ready to be scored and validated."""
     dests = [s["d"] for s in stops]
     cc = dests[0]["iso2"]
@@ -390,7 +452,8 @@ def assemble(stops, legs, nights, daytrips, archetype, days_total, cat, ctx):
                                                want=4))
     # The highlight list is built first and the plan is dealt out of it, so a
     # day can never name a sight the wire does not carry.
-    pools = [M.top_pois(s["d"], want=max(4, min(12, 3 + 2 * nights[i])))
+    per_day = (pc or PACES["balanced"])["poi_per_day"]
+    pools = [M.top_pois(s["d"], want=max(4, min(16, 2 + per_day * nights[i])))
              for i, s in enumerate(stops)]
     plan = fill_day_items(
         build_days(stops, nights, legs, daytrips, archetype), stops, pools)
@@ -421,6 +484,8 @@ def assemble(stops, legs, nights, daytrips, archetype, days_total, cat, ctx):
 
     trip = {
         "archetype": archetype,
+        "scale": scale,
+        "pace": pace,
         "days": days_total,
         "nights": sum(nights),
         "cc": cc,
@@ -504,7 +569,11 @@ def _poi_wire(p):
 
 def _trip_id(trip):
     cities = "-".join(slug(s["city"]) for s in trip["stops"][:3])
-    return "%s-%s-%s-%sd" % (trip["cc"].lower(), cities, trip["archetype"], trip["days"])
+    suffix = "" if trip.get("pace") in (None, "balanced") else "-" + trip["pace"]
+    if trip.get("scale") == "hidden":
+        suffix += "-hidden"
+    return "%s-%s-%s-%sd%s" % (trip["cc"].lower(), cities, trip["archetype"],
+                               trip["days"], suffix)
 
 
 def _trip_name(trip, cat):
@@ -530,6 +599,10 @@ def _trip_name(trip, cat):
 
 
 # ------------------------------------------------------------------- scoring
+
+# Days per base the pace is aiming at. A relaxed fortnight is three towns; a
+# packed one is six.
+PACE_DAYS_PER_STOP = {"relaxed": 4.0, "balanced": 3.0, "packed": 2.2}
 
 # Most distinguishing first, most generic last.
 WHY_ORDER = [
@@ -617,6 +690,16 @@ def score_trip(trip, stops, legs, daytrips, ctx):
         why.append({"k": "season", "months": trip["season"]["best"]})
     if any(s.get("thin") for s in stops):
         why.append({"k": "thinCoverage", "country": stops[0]["d"]["country"]})
+    score += PACES.get(trip.get("pace") or "balanced", {}).get("score", 0.0)
+    # How many bases this pace wants for this many days. Without it, relaxed
+    # and packed both kept the same two-stop route and differed only in a word.
+    if trip["archetype"] != "base":
+        ideal = trip["days"] / PACE_DAYS_PER_STOP[trip.get("pace") or "balanced"]
+        score -= abs(len(stops) - ideal) * 0.55
+    if trip.get("pace") and trip["pace"] != "balanced":
+        why.append({"k": "pace" + trip["pace"].capitalize()})
+    if trip.get("scale") == "hidden":
+        why.append({"k": "offTheBeatenTrack"})
 
     # A card shows the first two reasons, so what leads has to be what makes
     # THIS trip different. Emitted in narrative order, every card in Italy
@@ -665,22 +748,31 @@ CROSS_BORDER_KM = 320
 
 
 def compose_country(cc, cat, ctx, bases_by_cc, verbose=False):
+    """Every trip this country can honestly offer, across scale and pace.
+
+    Six passes rather than one: two scales (the cities everyone knows, and
+    everywhere else) times three paces (relaxed, balanced, packed). They are
+    separate passes rather than filters because each one changes the route
+    itself, so the same country and the same seven days come back as six
+    different trips rather than one trip wearing six labels.
+    """
     bases = bases_by_cc.get(cc) or []
     if not bases:
         return [], {"reason": "no_eligible_bases"}
-    seeds = [b for b in bases if b["score"] >= MIN_SEED_SCORE][:18] or bases[:6]
     # The coverage floor. Ranking the whole continent on one scale starves
     # Moldova, Malta and the Faroes, which is a fact about the scale rather
     # than about those countries: they have four good places each and the
-    # scale was built for France. A country with almost nothing gets its
-    # seeds taken from the top of its own list instead, and every trip it
-    # produces carries a thinCoverage reason so the page can say so.
-    thin = bool(bases and bases[0].get("thin"))
-    if thin or not seeds:
-        seeds = bases[:6]
+    # scale was built for France.
+    # Thin means "too few places to split by scale", which is a bigger set
+    # than "the coverage floor was applied". Liechtenstein has one base: the
+    # floor never fired because relaxing the score found nothing extra, and
+    # then icons and hidden each filtered that one base away and the country
+    # published nothing at all.
+    thin = bool(bases and bases[0].get("thin")) or len(bases) < MIN_BASES_FOR_A_COUNTRY
 
     # The pool is this country's bases plus the strong ones just over the
     # border, which is what lets a route be honest about geography.
+    anchor = bases[:8]
     pool = list(bases[:70])
     foreign = []
     for other_cc, others in bases_by_cc.items():
@@ -690,65 +782,107 @@ def compose_country(cc, cat, ctx, bases_by_cc, verbose=False):
             if b["score"] < MIN_SEED_SCORE:
                 continue
             near = min((haversine_km(b["d"]["lat"], b["d"]["lon"],
-                                     s["d"]["lat"], s["d"]["lon"]) or 9e9)
-                       for s in seeds)
+                                     a["d"]["lat"], a["d"]["lon"]) or 9e9)
+                       for a in anchor)
             if near <= CROSS_BORDER_KM:
                 foreign.append(b)
     foreign.sort(key=lambda b: -b["score"])
     pool.extend(foreign[:20])
-    if verbose:
-        print("  %s: %s eligible bases, %s seeds, %s over the border"
-              % (cc, len(bases), len(seeds), len(foreign[:20])))
 
     daytrip_cache = {}
 
-    def trips_of(b):
-        if b["d"]["id"] not in daytrip_cache:
-            daytrip_cache[b["d"]["id"]] = daytrips_for(b, cat, ctx)
-        return daytrip_cache[b["d"]["id"]]
+    def trips_of(b, want):
+        """Days out from one base, cached at the widest ask and sliced down."""
+        key = b["d"]["id"]
+        if key not in daytrip_cache:
+            daytrip_cache[key] = daytrips_for(b, cat, ctx, want=MAX_DAYTRIPS_WIDE)
+        return daytrip_cache[key][:want]
 
     out = []
+    # A thin country runs one pass, not two: with the same seeds on both, the
+    # scale split would only produce the same routes under two labels.
+    scales = {"icons": SCALES["icons"]} if thin else SCALES
+    for scale, sc in scales.items():
+        seeds = _seeds_for(bases, sc, thin)
+        if not seeds:
+            continue
+        scale_pool = pool if thin else [
+            b for b in pool if b["d"].get("place_class") in sc["pool_classes"]]
+        if verbose:
+            print("  %s/%s: %s seeds, %s in the pool"
+                  % (cc, scale, len(seeds), len(scale_pool)))
+        for pace, pc in PACES.items():
+            out.extend(_compose_pass(seeds, scale_pool, cat, ctx, scale, pace, pc))
+
+    kept = rank_and_cap(out)
+    return kept, {"eligible": len(bases), "candidates": len(out), "kept": len(kept)}
+
+
+def _seeds_for(bases, sc, thin):
+    """The places a trip of this scale may open on.
+
+    A country with almost nothing ignores the scale split entirely: Moldova
+    has four places worth a night and dividing them into icons and hidden
+    leaves nothing on either side.
+    """
+    if thin:
+        return bases[:6]
+    rows = [b for b in bases
+            if b["d"].get("place_class") in sc["seed_classes"]
+            and b["score"] >= sc["min_seed"]]
+    return rows[:18]
+
+
+def _compose_pass(seeds, pool, cat, ctx, scale, pace, pc):
+    """One (scale, pace) pass: single bases, chains and loops."""
+    out = []
+    tag = {"scale": scale, "pace": pace}
 
     # --- one base, days out from it ---------------------------------------
     for b in seeds:
-        outs = trips_of(b)
+        outs = _daytrips_cached(b, cat, ctx)[:pc["daytrips"]]
         for days in BASE_DAYS:
             if days > M.max_base_days(b["d"]):
                 continue
             nights = days - 1
-            core = max(1, min(int(round(b["days"])), days))
+            # A relaxed short break still wants its nights in one place, so
+            # the floor applies to a single base trip too.
+            if nights < pc["min_nights"] and days > 2:
+                continue
+            # How many days the base fills by itself before anyone goes out.
+            # A relaxed trip counts slow days as content, which is the whole
+            # point of it; a packed one gives one back so it travels more.
+            core = max(1, min(int(round(b["days"])) + pc["core_bonus"], days))
             want_out = max(0, days - core)
             picked = outs[:min(want_out, len(outs))]
-            # A base has to be able to fill the days it is offered for, out of
-            # its own depth plus the days out it can reach. Without this a
-            # village with one square becomes a six day holiday.
+            # A base has to fill the days it is offered for, out of its own
+            # depth plus the days out it can reach.
             if core + len(picked) < days:
                 continue
-            trip = assemble([b], [], [nights], picked, "base", days, cat, ctx)
-            out.append(trip)
+            out.append(assemble([b], [], [nights], picked, "base", days,
+                                cat, ctx, **tag, pc=pc))
 
     # --- a chain of bases --------------------------------------------------
-    routes = search_routes(seeds, pool, ctx, mode="public", max_stops=5)
+    routes = search_routes(seeds, pool, ctx, mode="public",
+                           max_stops=pc["max_stops"], leg_cap=pc["leg_h"])
     for stops, legs, _ in routes:
         for days in CHAIN_DAYS:
-            nights = spread_nights(stops, days - 1)
+            nights = spread_nights(stops, days - 1, pc)
             if not nights:
                 continue
-            # A day count that leaves a base with more nights than it holds is
-            # better served by the shorter version of the same route.
             if any(nights[i] > stops[i]["days"] + 2 for i in range(len(stops))):
                 continue
-            out.append(assemble(stops, legs, nights, [], "chain", days, cat, ctx))
+            out.append(assemble(stops, legs, nights, [], "chain", days,
+                                cat, ctx, **tag, pc=pc))
 
     # --- a loop by car -----------------------------------------------------
-    loops = search_routes(seeds, pool, ctx, mode="car", max_stops=6)
+    loops = search_routes(seeds, pool, ctx, mode="car",
+                          max_stops=min(6, pc["max_stops"] + 1))
     for stops, legs, _ in loops:
         if len(stops) < 3:
             continue
-        # A loop has to earn the car. Antwerp, Amsterdam and Bruges are forty
-        # minutes apart on an excellent railway, so offering the same three
-        # cities again with a rental car attached was two identical cards on
-        # one page. A loop ships when it reaches something the train does not.
+        # A loop has to earn the car: on an excellent railway it is the same
+        # three cities again with a rental attached.
         if not _loop_earns_it(stops, legs):
             continue
         home = M.leg(stops[-1]["d"], stops[0]["d"])
@@ -758,15 +892,27 @@ def compose_country(cc, cat, ctx, bases_by_cc, verbose=False):
         for days in LOOP_DAYS:
             if drive_h / days > LOOP_MAX_DAILY_DRIVE_H:
                 continue
-            nights = spread_nights(stops, days - 1)
+            nights = spread_nights(stops, days - 1, pc)
             if not nights:
                 continue
-            trip = assemble(stops, legs + [home], nights, [], "loop", days, cat, ctx)
+            trip = assemble(stops, legs + [home], nights, [], "loop", days,
+                            cat, ctx, **tag, pc=pc)
             trip["returns_to"] = stops[0]["d"]["id"]
             out.append(trip)
+    return out
 
-    kept = rank_and_cap(out)
-    return kept, {"eligible": len(bases), "candidates": len(out), "kept": len(kept)}
+
+# Day trips are expensive to work out and do not depend on the pace, so they
+# are computed once per base at the widest ask and sliced per pass.
+MAX_DAYTRIPS_WIDE = 5
+_DAYTRIPS = {}
+
+
+def _daytrips_cached(b, cat, ctx):
+    key = b["d"]["id"]
+    if key not in _DAYTRIPS:
+        _DAYTRIPS[key] = daytrips_for(b, cat, ctx, want=MAX_DAYTRIPS_WIDE)
+    return _DAYTRIPS[key]
 
 
 def rank_and_cap(trips):
@@ -776,12 +922,29 @@ def rank_and_cap(trips):
     reading the page, so the weaker one goes, and each cell keeps entries that
     open on different towns so a country's list is a tour of the country.
     """
+    # Two paces can converge. Over seven days relaxed wants 1.75 bases and
+    # balanced 2.33, so both land on the same two cities with the same nights,
+    # and the only difference left is how many sights the day plan lists. That
+    # is not worth a second card, so the identical ones collapse and the pace
+    # with the best standing wins.
+    exact = {}
+    for t in trips:
+        key = (t["archetype"], t["days"],
+               tuple(s["dest"] for s in t["stops"]),
+               tuple(s["nights"] for s in t["stops"]),
+               tuple(sorted(d["dest"] for d in t["daytrips"])))
+        kept = exact.get(key)
+        if not kept or t["score"] > kept["score"]:
+            exact[key] = t
+    trips = list(exact.values())
+
     by_cell = defaultdict(list)
     for t in trips:
         # Cross border routes get their own cells. Sharing one, they either
         # crowded out every domestic route (a capital next door usually rates
         # higher than a second city) or never appeared at all.
-        by_cell[(t["archetype"], t["days"], len(t["countries"]) > 1)].append(t)
+        by_cell[(t["archetype"], t["days"], t["scale"], t["pace"],
+                 len(t["countries"]) > 1)].append(t)
     kept = []
     for cell, rows in sorted(by_cell.items()):
         rows.sort(key=lambda t: (-t["score"], t["id"]))

@@ -193,6 +193,22 @@ def check_enough_to_do(trip, cat):
     return None
 
 
+def check_hero(trip, cat):
+    """A trip with no photograph to lead with does not ship.
+
+    Every stop is required to have one already, but the hero can still come
+    out empty when every candidate is a wordmark or a flagged file, and a card
+    with a grey block where the photograph goes is not worth publishing.
+    """
+    for st in trip["stops"]:
+        if st.get("img"):
+            return None
+        for h in st["highlights"]:
+            if h.get("img"):
+                return None
+    return "no_photograph_to_lead_with"
+
+
 def check_images(trip, cat):
     """Every photograph comes from a host whose licence we actually checked."""
     urls = [s.get("img") for s in trip["stops"]]
@@ -226,6 +242,7 @@ HARD_CHECKS = [
     ("daytrips", check_daytrips),
     ("plan", check_plan),
     ("enough_to_do", check_enough_to_do),
+    ("hero", check_hero),
     ("images", check_images),
     ("cost", check_cost),
 ]
