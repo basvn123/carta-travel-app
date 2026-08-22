@@ -17,6 +17,10 @@
   --ink:          #0f172a;
   --ink-soft:     #414b5e;
   --ink-mute:     #7d8393;
+  /* The fill behind an ACTIVE control. One step off --ink, which is body text
+     and reads as pure black when a whole button is painted with it. Still
+     11:1 against --paper, so white labels stay well past AA. */
+  --ink-fill:     #2b3446;
   --rule:         #ccc7b8;
   --rule-soft:    #e2ded1;       /* hairlines inside a card, where --rule is too loud */
   --accent:       #e05a47;       /* terracotta: actions, alerts, the live route */
@@ -178,7 +182,7 @@ input, select {
   transition: color .15s, background .15s;
 }
 .header-nav-item:hover { color: var(--ink); background: var(--paper-dim); }
-.header-nav-item.active { color: var(--paper); background: var(--ink); }
+.header-nav-item.active { color: var(--paper); background: var(--ink-fill); }
 .header-nav-icon { flex-shrink: 0; }
 
 /* On a narrow desktop window the labelled tabs would crowd the brand and
@@ -4980,7 +4984,7 @@ input, select {
   transition: background .15s, color .15s;
 }
 .panel-segment button:hover { color: var(--ink); }
-.panel-segment button.seg-on { background: var(--ink); color: var(--paper); }
+.panel-segment button.seg-on { background: var(--ink-fill); color: var(--paper); }
 .panel-segment button small { color: inherit; opacity: 0.7; }
 
 /* ─── Dual-handle range slider ─── */
@@ -5193,8 +5197,8 @@ input, select {
   color: var(--ink);
 }
 .chip.on {
-  background: var(--ink);
-  border-color: var(--ink);
+  background: var(--ink-fill);
+  border-color: var(--ink-fill);
   color: var(--paper);
 }
 
@@ -5965,8 +5969,8 @@ input, select {
 }
 .chip:hover { border-color: var(--ink); color: var(--ink); }
 .chip.on {
-  background: var(--ink);
-  border-color: var(--ink);
+  background: var(--ink-fill);
+  border-color: var(--ink-fill);
   color: var(--paper);
 }
 
@@ -6374,6 +6378,31 @@ input, select {
   overflow-y: auto;
 }
 
+/* Explore opens Lifestyle as a right-hand drawer over a scrim, so the grid it
+   reprices stays visible behind it and the reader keeps their place. Every
+   other tab keeps the left-hand panel the map layout was built around. */
+.accom-panel.from-right {
+  left: auto;
+  right: 0;
+  border-right: none;
+  border-left: 1px solid var(--rule);
+  width: clamp(360px, 34vw, 520px);
+  box-shadow: var(--shadow-2);
+  z-index: 41;
+}
+.lifestyle-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  background: rgba(15, 23, 42, 0.28);
+  animation: lifestyle-scrim-in .16s ease-out;
+}
+@keyframes lifestyle-scrim-in { from { opacity: 0; } to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .lifestyle-scrim { animation: none; } }
+@media (max-width: 768px) {
+  .accom-panel.from-right { width: 100vw; }
+}
+
 .accom-panel .panel-header {
   position: sticky;
   top: 0;
@@ -6408,7 +6437,9 @@ input, select {
 }
 /* Breathing room between the eating & drinking steppers - they read as one
    dense block without it. */
-.lifestyle-food .stepper + .stepper { margin-top: 14px; }
+/* The +/- steppers sit close enough that a mis-tap changes the wrong line.
+   Nothing here is dense enough to need 14px. */
+.lifestyle-food .stepper + .stepper { margin-top: 20px; }
 
 /* Type selector - three big buttons */
 
@@ -7413,7 +7444,7 @@ input, select {
   transition: background .15s, color .15s;
 }
 .results-sort button:hover { color: var(--ink); }
-.results-sort button.on { background: var(--ink); color: var(--paper); }
+.results-sort button.on { background: var(--ink-fill); color: var(--paper); }
 .results-sort .sort-arrow {
   margin-left: 3px;
   font-size: 10px;
@@ -22386,12 +22417,21 @@ button.ai-sched-main:focus-visible {
 }
 
 /* ── Toolbar: search, sort, the one Filters door, the shortlist toggle. ── */
+/* One bordered row, not four floating groups. Search, sort, Lifestyle,
+   Filters and the shortlist are a single instrument: read apart they look like
+   five unrelated widgets that happen to share a line. */
 .explore-toolbar {
   display: flex;
   align-items: center;
   gap: 10px;
   flex-wrap: wrap;
+  padding: 10px 12px;
+  border: 1px solid var(--rule-soft);
+  border-radius: 14px;
+  background: var(--bg-card);
+  box-shadow: var(--shadow-1);
 }
+.explore-toolbar .results-search { background: var(--paper-dim); }
 .explore-search {
   flex: 1 1 240px;
   max-width: 400px;
@@ -22427,11 +22467,58 @@ button.ai-sched-main:focus-visible {
 }
 .explore-fav { height: 34px; }
 
+/* Lifestyle: the same pill grammar as Filters, one shade warmer, because it
+   changes what the numbers MEAN rather than which rows are listed. It carries
+   its setting in the label so the assumption behind every euro figure on the
+   page is legible without opening anything. */
+.explore-lifestyle-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 34px;
+  max-width: 260px;
+  padding: 0 13px;
+  border: 1px solid var(--accent-line, var(--rule));
+  border-radius: 999px;
+  background: var(--accent-bg);
+  color: var(--accent);
+  font-size: 12.5px;
+  font-weight: 600;
+  transition: border-color .15s, background .15s;
+}
+.explore-lifestyle-btn:hover { border-color: var(--accent); }
+.explore-lifestyle-btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+.explore-lifestyle-btn svg { flex: none; }
+.explore-lifestyle-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 /* What the grid shows, in one sentence, count in mono. */
+/* The result count is a fact about the page, so it gets a badge rather than
+   sitting as loose grey prose against the grid. The legend beside it stays
+   prose, because it is a sentence rather than a measurement. */
 .explore-count {
-  margin: 10px 2px 0;
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+  margin: 14px 2px 0;
   font-size: 12.5px;
   color: var(--ink-mute);
+}
+.explore-count-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: var(--paper-dim);
+  color: var(--ink-soft);
+  font-size: 12px;
+  font-weight: 600;
 }
 .explore-count .mono, .explore-count b { font-family: var(--mono); }
 .explore-mock {
@@ -22775,6 +22862,34 @@ button.ai-sched-main:focus-visible {
   font-variant-numeric: tabular-nums;
   color: var(--ink);
 }
+/* What the three figures above assumed, with the control that changes it.
+   A price a reader cannot trace back to a setting is a price they have to
+   take on faith, and this receipt exists precisely not to ask that. */
+.cost-assumes {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin: 10px 0 0;
+  padding-top: 9px;
+  border-top: 1px solid var(--rule-soft);
+  font-size: 11.5px;
+  color: var(--ink-soft);
+}
+.cost-assumes span { flex: 1; min-width: 0; }
+.cost-assumes-edit {
+  flex: none;
+  padding: 0;
+  background: none;
+  border: none;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--accent);
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.cost-assumes-edit:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
 .cost-note, .cost-source {
   margin: 8px 0 0;
   font-size: 11px;
@@ -23163,6 +23278,10 @@ button.ai-sched-main:focus-visible {
 /* ── Grid breakpoints. ── */
 @media (max-width: 768px) {
   .explore-wrap { padding: 10px 14px calc(30px + env(safe-area-inset-bottom, 0px)); }
+  /* Let the shortlist share a row with Lifestyle and Filters instead of
+     wrapping onto a fourth line of its own. */
+  .explore-toolbar { padding: 9px 10px; gap: 8px; }
+  .explore-lifestyle-btn { max-width: 156px; padding: 0 11px; }
   .explore-grid { grid-template-columns: repeat(auto-fill, minmax(168px, 1fr)); gap: 10px; }
   .explore-search { flex-basis: 100%; max-width: none; }
   .explore-toolbar-right { margin-left: 0; }
@@ -23213,13 +23332,51 @@ button.ai-sched-main:focus-visible {
    product.
    ------------------------------------------------------------------------- */
 
-/* The day rail. Mono numerals, because a day count is a measured figure. */
-.places-days .places-class { min-width: 44px; justify-content: center; }
-.places-days-n {
-  font-family: var(--mono);
-  font-size: 13px;
-  font-variant-numeric: tabular-nums;
+/* The Trips controls: one slider for the length, then how busy and how big. */
+.places-tripbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 14px 22px;
+  margin-top: 12px;
 }
+.trip-slider {
+  flex: 1 1 260px;
+  min-width: 220px;
+  max-width: 360px;
+  display: block;
+}
+.trip-slider-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 4px;
+}
+.trip-slider-label { font-size: 13.5px; font-weight: 600; color: var(--ink); }
+.trip-slider-count {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-mute);
+}
+.trip-slider-input {
+  width: 100%;
+  height: 22px;
+  margin: 0;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+.trip-slider-input:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.trip-slider-ticks {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--ink-mute);
+}
+.trip-toggles { display: flex; flex-wrap: wrap; gap: 8px 16px; }
+.trip-toggles .places-classes { margin-top: 0; }
 
 /* The itinerary card: this tab's photo-card grammar, plus a body strip.
    .places-card-img is absolutely positioned at inset 0, so it needs a
@@ -23363,12 +23520,110 @@ button.ai-sched-main:focus-visible {
 .itin-card-checks.warn { color: var(--rate); }
 
 /* The trip page. Reuses .tpage chrome; these are the trip-only parts. */
+
+/* The photograph the page leads with, name and score over a scrim. */
+.itin-photohero {
+  position: relative;
+  height: 340px;
+  overflow: hidden;
+  background: var(--paper-dim);
+}
+@media (max-width: 720px) {
+  .itin-photohero { height: 240px; }
+}
+.itin-photohero-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.itin-photohero-none { background: var(--paper-dim); }
+.itin-photohero-scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(15, 23, 42, 0.82) 0%, rgba(15, 23, 42, 0.10) 58%);
+  pointer-events: none;
+}
+/* Aligned to .tpage-col, not to the viewport: the title sat hard against the
+   left edge while everything under it began 240 px in. */
+.itin-photohero-text {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 0 18px 18px;
+}
+@media (max-width: 720px) {
+  .itin-photohero-text { padding: 0 16px 14px; }
+}
+.itin-photohero-title {
+  margin: 6px 0 0;
+  font-family: var(--display);
+  font-size: clamp(22px, 3.4vw, 34px);
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  color: #fff;
+}
+.itin-photohero-sub {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 14px;
+  margin-top: 8px;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.9);
+}
+.itin-photohero-score {
+  padding: 2px 9px;
+  border-radius: 8px;
+  background: var(--rate-bg);
+  color: var(--rate);
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.itin-photohero-credit {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  max-width: 45%;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.5);
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 10px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.itin-photohero .itin-themes { margin-top: 0; }
+.itin-photohero .itin-theme {
+  border-color: rgba(255, 255, 255, 0.45);
+  color: #fff;
+}
+
+/* The map, now inside The route rather than standing in for the hero. */
+.itin-map {
+  position: relative;
+  height: 260px;
+  margin-bottom: 12px;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--rule-soft);
+}
 .itin-hero { position: relative; height: 260px; }
 /* !important is load order, not taste, and the same trap .tpage-map documents:
    maplibre-gl.css arrives with the lazy chunk AFTER styles.css, same
    specificity, later sheet wins. Without it the map drew in a strip down the
    right of the hero with paper beside it. */
-.itin-hero .trip-map {
+.itin-hero .trip-map,
+.itin-map .trip-map {
   position: absolute !important;
   inset: 0 !important;
 }
@@ -23595,6 +23850,8 @@ button.ai-sched-main:focus-visible {
 .itin-sight-text { min-width: 0; }
 .itin-sight-name { display: block; font-size: 13.5px; font-weight: 600; color: var(--ink); }
 .itin-sight-desc { display: block; margin-top: 1px; font-size: 12px; color: var(--ink-mute); }
+.itin-sight-link { color: var(--ink); text-decoration: none; }
+.itin-sight-link:hover { color: var(--accent); text-decoration: underline; }
 
 /* What it costs, as a receipt rather than a headline number. */
 .itin-cost { list-style: none; margin: 0; padding: 0; }
@@ -23656,3 +23913,759 @@ button.ai-sched-main:focus-visible {
   .itin-day-leg, .itin-day-note { margin-left: 0; }
 }
 /* TRIPS-LAYER-END */
+
+/* ══════════════════════════════════════════════════════════════════════════
+   Trip planner v2: countries you read, trips you pick, travel you book
+   elsewhere.
+
+   Three screens changed shape when Carta stopped pricing transport:
+
+     Where   the country cards lost their fare badge and their all-in line,
+             and gained a brief that opens beside the grid (what to visit,
+             what to do, what a day costs)
+     Trips   two columns of published itineraries, across countries and
+             inside one, over the shortlist that built them
+     Travel  every leg of the chosen trip with its links out and one field
+             for what it actually cost
+
+   Everything here is the app's own vocabulary: warm paper, terracotta for
+   the live choice, mono for anything measured, 14px cards, hairlines
+   between rows rather than boxes inside boxes.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/* ── Where: the card is a div now, so both its actions are real buttons ── */
+.guide-ccard-pick {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  text-align: left;
+  border-radius: inherit;
+  overflow: hidden;
+}
+.guide-ccard-pick:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+/* The second action on a card that is otherwise one big target: quiet, in
+   the corner, and only as loud as it needs to be to be found. */
+.guide-ccard-info {
+  position: absolute;
+  left: 8px;
+  top: 8px;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 9px;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.62);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1;
+  transition: background .15s;
+}
+.guide-ccard-info:hover { background: rgba(15, 23, 42, 0.86); }
+.guide-ccard-info:focus-visible { outline: 2px solid #fff; outline-offset: 1px; }
+.guide-ccard.reading { border-color: var(--accent); }
+.guide-ccard.reading .guide-ccard-info { background: var(--accent); }
+
+/* The shortlist, visible in both views and one tap from being undone. */
+.guide-picked-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 2px 0 10px;
+}
+.guide-picked-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 8px 5px 6px;
+  border: 1px solid var(--accent);
+  border-radius: 999px;
+  background: var(--accent-bg);
+  color: var(--ink);
+  font-size: 12.5px;
+  font-weight: 600;
+}
+.guide-picked-chip:hover { background: var(--accent); color: #fff; }
+.guide-picked-x { font-size: 14px; line-height: 1; opacity: .7; }
+
+/* Opening a brief splits the width; closing it gives the grid the room back. */
+.guide-where.has-brief {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 372px;
+  gap: 20px;
+  align-items: start;
+}
+
+/* ── The country brief ─────────────────────────────────────────────────── */
+.cbrief {
+  position: sticky;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  max-height: min(78vh, 760px);
+  border: 1px solid var(--rule);
+  border-radius: 14px;
+  background: var(--paper);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+}
+.cbrief-head {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 13px 14px;
+  border-bottom: 1px solid var(--rule-soft);
+  background: var(--paper-dim);
+}
+.cbrief-flag { width: 22px; height: 15px; object-fit: cover; border-radius: 2px; flex: none; }
+.cbrief-title {
+  flex: 1;
+  min-width: 0;
+  font-family: var(--display);
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 1.2;
+}
+.cbrief-close {
+  width: 26px; height: 26px;
+  border-radius: 50%;
+  font-size: 18px;
+  line-height: 1;
+  color: var(--ink-mute);
+}
+.cbrief-close:hover { background: var(--paper); color: var(--ink); }
+.cbrief-body { overflow-y: auto; padding: 4px 14px 10px; }
+.cbrief-sect { padding: 12px 0; border-bottom: 1px solid var(--rule-soft); }
+.cbrief-sect:last-child { border-bottom: none; }
+.cbrief-h {
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+  margin-bottom: 8px;
+}
+
+/* What a day costs: the headline figure, then the two baskets it is made of. */
+.cbrief-day { display: flex; align-items: baseline; gap: 9px; flex-wrap: wrap; }
+.cbrief-day-val {
+  font-family: var(--mono);
+  font-size: 27px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+.cbrief-day-label { font-size: 12.5px; color: var(--ink-soft); }
+.cbrief-band {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: var(--paper-dim);
+  border: 1px solid var(--rule-soft);
+  font-style: normal;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+.cbrief-band.b0, .cbrief-band.b1 { color: var(--green); border-color: #c3d2ba; }
+.cbrief-band.b3, .cbrief-band.b4 { color: var(--rate-soft); border-color: #e0cba4; }
+.cbrief-figs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
+.cbrief-fig {
+  padding: 8px 10px;
+  border: 1px solid var(--rule-soft);
+  border-radius: 10px;
+  background: var(--paper-dim);
+}
+.cbrief-fig-label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  color: var(--ink-mute);
+}
+.cbrief-fig-label svg { color: var(--ink-mute); }
+.cbrief-fig-val {
+  display: block;
+  margin-top: 3px;
+  font-family: var(--mono);
+  font-size: 16px;
+  font-variant-numeric: tabular-nums;
+}
+.cbrief-fig-sub { display: block; font-size: 10.5px; color: var(--ink-mute); }
+.cbrief-note { margin-top: 8px; font-size: 11.5px; line-height: 1.5; color: var(--ink-mute); }
+
+/* Places, as a list with hairlines: a run of related facts, not five cards. */
+.cbrief-list { list-style: none; }
+.cbrief-place {
+  display: flex;
+  gap: 9px;
+  padding: 8px 0;
+  border-top: 1px solid var(--rule-soft);
+}
+.cbrief-place:first-child { border-top: none; padding-top: 0; }
+.cbrief-thumb {
+  width: 52px; height: 42px;
+  flex: none;
+  object-fit: cover;
+  border-radius: 8px;
+  background: var(--paper-dim);
+}
+.cbrief-thumb-none { border: 1px solid var(--rule-soft); }
+.cbrief-place-text { min-width: 0; }
+.cbrief-place-text b {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13.5px;
+  font-weight: 600;
+}
+.cbrief-place-text small {
+  display: block;
+  margin-top: 2px;
+  font-size: 11.5px;
+  line-height: 1.45;
+  color: var(--ink-soft);
+}
+.cbrief-rate {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  color: var(--rate-soft);
+}
+
+.cbrief-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.cbrief-chip {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 4px;
+  padding: 4px 9px;
+  border: 1px solid var(--rule-soft);
+  border-radius: 999px;
+  background: var(--paper-dim);
+  font-size: 11.5px;
+  color: var(--ink-soft);
+}
+.cbrief-chip b { font-family: var(--mono); font-size: 12px; color: var(--ink); }
+.cbrief-line {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  margin-top: 8px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--ink-soft);
+}
+.cbrief-line svg { flex: none; margin-top: 2px; color: var(--ink-mute); }
+.cbrief-tips { list-style: none; display: grid; gap: 7px; }
+.cbrief-tips li {
+  display: flex;
+  gap: 6px;
+  font-size: 11.5px;
+  line-height: 1.5;
+  color: var(--ink-soft);
+}
+.cbrief-tips svg { flex: none; margin-top: 2px; color: var(--ink-mute); }
+
+.cbrief-foot { padding: 10px 14px; border-top: 1px solid var(--rule-soft); background: var(--paper-dim); }
+.cbrief-add {
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 11px 14px;
+  border-radius: 11px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+}
+.cbrief-add:hover { background: var(--accent-soft); }
+.cbrief-add.on { background: var(--paper); color: var(--ink-soft); border: 1px solid var(--rule); }
+
+/* ── Ready-made or built: the fork, as one control ─────────────────────── */
+.wmode {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.wmode-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 13px;
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  background: var(--paper);
+  text-align: left;
+  transition: border-color .15s, box-shadow .15s;
+}
+.wmode-btn svg { flex: none; color: var(--ink-mute); }
+.wmode-btn:hover { border-color: var(--rule); box-shadow: var(--shadow-1); }
+.wmode-btn.on { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+.wmode-btn.on svg { color: var(--accent); }
+.wmode-text { min-width: 0; }
+.wmode-text b { display: block; font-size: 14px; font-weight: 600; }
+.wmode-text small { display: block; font-size: 11.5px; color: var(--ink-mute); line-height: 1.4; }
+
+/* ── The two columns of ready-made trips ──────────────────────────────── */
+.wready-tools {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+.wready-chips { display: flex; flex-wrap: wrap; gap: 6px; flex: 1; min-width: 0; }
+.wready-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 8px 5px 6px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: var(--paper);
+  font-size: 12.5px;
+  font-weight: 600;
+}
+.wready-chip.on { border-color: var(--accent); background: var(--accent-bg); }
+.wready-chip:hover { background: var(--accent); color: #fff; }
+.wready-chip-x { font-size: 14px; line-height: 1; opacity: .7; }
+.wready-view { width: min(100%, 220px); margin-bottom: 0; flex: none; }
+.wready-map { margin-bottom: 14px; }
+.wready-map .cpm { height: min(42vh, 420px); margin-bottom: 0; }
+
+.wready-split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  align-items: start;
+}
+.wready-col { min-width: 0; }
+.wready-col-head { display: flex; align-items: center; gap: 8px; }
+.wready-col-title {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-family: var(--display);
+  font-size: 16px;
+  font-weight: 600;
+}
+.wready-col-title svg { color: var(--accent); }
+.wready-col-n {
+  font-family: var(--mono);
+  font-size: 11.5px;
+  color: var(--ink-mute);
+  font-variant-numeric: tabular-nums;
+}
+.wready-col-sub { margin: 2px 0 10px; font-size: 12px; color: var(--ink-mute); line-height: 1.45; }
+.wready-grid { display: grid; gap: 10px; }
+
+.wready-note {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  flex-wrap: wrap;
+  margin-top: 14px;
+  font-size: 12px;
+  color: var(--ink-mute);
+}
+.wready-note svg { color: var(--ink-mute); flex: none; }
+.wready-link {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.wready-own { margin-top: 8px; }
+.wready-empty {
+  padding: 22px;
+  border: 1px dashed var(--rule);
+  border-radius: 14px;
+  background: var(--paper-dim);
+  text-align: center;
+}
+.wready-empty p { font-size: 13.5px; color: var(--ink-soft); }
+.wready-empty-actions { display: flex; justify-content: center; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+
+/* One published trip, as a card: photograph, then the facts under it. */
+.wtrip {
+  display: block;
+  width: 100%;
+  text-align: left;
+  border: 1px solid var(--rule-soft);
+  border-radius: 14px;
+  background: var(--paper);
+  overflow: hidden;
+  transition: border-color .15s, box-shadow .15s;
+}
+.wtrip:hover { border-color: var(--rule); box-shadow: var(--shadow-1); }
+.wtrip:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.wtrip.on { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+.wtrip-media { position: relative; display: block; height: 128px; }
+.wtrip-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.wtrip-noimg {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--paper-dim);
+  color: var(--ink-mute);
+}
+.wtrip-scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(15, 23, 42, 0.78) 0%, rgba(15, 23, 42, 0.12) 62%, rgba(15, 23, 42, 0) 100%);
+}
+.wtrip-days {
+  position: absolute;
+  top: 8px; left: 8px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.66);
+  color: #fff;
+  font-size: 11px;
+}
+.wtrip-days b { font-family: var(--mono); font-size: 12px; }
+.wtrip-check {
+  position: absolute;
+  top: 8px; right: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #fff;
+}
+.wtrip-name {
+  position: absolute;
+  left: 10px; right: 10px; bottom: 9px;
+  font-family: var(--display);
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.25;
+  color: #fff;
+}
+.wtrip-body { display: block; padding: 9px 11px 11px; }
+.wtrip-route { display: flex; flex-wrap: wrap; align-items: center; gap: 5px; }
+.wtrip-city {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12.5px;
+  font-weight: 600;
+}
+.wtrip-n {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--ink-mute);
+  font-variant-numeric: tabular-nums;
+}
+.wtrip-arrow { color: var(--ink-mute); }
+.wtrip-meta { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 7px; }
+.wtrip-chip {
+  padding: 3px 7px;
+  border: 1px solid var(--rule-soft);
+  border-radius: 999px;
+  font-size: 11px;
+  color: var(--ink-soft);
+}
+.wtrip-chip.on { border-color: var(--accent); color: var(--accent); }
+.wtrip-sights {
+  display: block;
+  margin-top: 7px;
+  font-size: 11.5px;
+  line-height: 1.45;
+  color: var(--ink-mute);
+}
+.wtrip-foot {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--rule-soft);
+  font-size: 11.5px;
+  color: var(--ink-mute);
+}
+.wtrip-cost { font-family: var(--mono); color: var(--ink); font-variant-numeric: tabular-nums; }
+
+/* The trip once it is chosen, with the way there under it. */
+.wpicked {
+  margin-top: 18px;
+  padding: 14px 16px 16px;
+  border: 1px solid var(--accent);
+  border-radius: 14px;
+  background: var(--paper);
+  box-shadow: var(--shadow-card);
+}
+.wpicked-head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.wpicked-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.wpicked-name { flex: 1; min-width: 0; font-family: var(--display); font-size: 17px; font-weight: 600; }
+.wpicked-stops { display: flex; flex-wrap: wrap; gap: 7px; margin: 12px 0 4px; }
+.wpicked-i {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 17px; height: 17px;
+  border-radius: 50%;
+  background: var(--ink);
+  color: var(--paper);
+  font-family: var(--mono);
+  font-size: 10px;
+}
+.wpicked-date { font-family: var(--mono); font-size: 10.5px; color: var(--ink-mute); }
+
+/* ── What the algorithm did with the cities ───────────────────────────── */
+.wroute {
+  margin-bottom: 14px;
+  padding: 12px 14px;
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  background: var(--paper-dim);
+}
+.wroute-head { display: flex; align-items: center; gap: 9px; flex-wrap: wrap; }
+.wroute-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--ink);
+}
+.wroute-label svg { color: var(--accent); }
+.wroute-saved {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--green);
+  font-variant-numeric: tabular-nums;
+}
+.wroute-line { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 8px; }
+.wroute-stop {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 5px;
+  padding: 4px 8px;
+  border: 1px solid var(--rule-soft);
+  border-radius: 999px;
+  background: var(--paper);
+  font-size: 12.5px;
+  font-weight: 600;
+}
+.wroute-stop b {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+}
+.wroute-arrow { color: var(--ink-mute); }
+.wroute-foot {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 9px;
+  font-size: 11.5px;
+  color: var(--ink-mute);
+}
+.wroute-fact { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+.wroute-warn { display: inline-flex; align-items: center; gap: 5px; color: var(--accent); }
+.wroute-apply {
+  margin-left: auto;
+  padding: 6px 11px;
+  border: 1px solid var(--accent);
+  border-radius: 9px;
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 600;
+}
+.wroute-apply:hover { background: var(--accent); color: #fff; }
+
+/* ── Getting there, and back ──────────────────────────────────────────── */
+.tlegs {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--rule);
+}
+.tlegs-title {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-family: var(--display);
+  font-size: 16px;
+  font-weight: 600;
+}
+.tlegs-title svg { color: var(--accent); }
+.tlegs-sub { margin-top: 3px; font-size: 12.5px; line-height: 1.5; color: var(--ink-soft); }
+
+/* One anchor date for the whole trip: this is the control the relative-time
+   model exists for. */
+.tlegs-shift {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 12px 0;
+  padding: 9px 12px;
+  border: 1px solid var(--rule-soft);
+  border-radius: 11px;
+  background: var(--paper-dim);
+}
+.tlegs-shift-label { font-size: 12px; font-weight: 600; }
+.tlegs-shift-ctl { display: inline-flex; align-items: center; gap: 4px; }
+.tlegs-shift-btn {
+  width: 30px; height: 30px;
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  background: var(--paper);
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--ink-soft);
+}
+.tlegs-shift-btn:hover { border-color: var(--accent); color: var(--accent); }
+.tlegs-shift-date {
+  min-width: 92px;
+  text-align: center;
+  font-family: var(--mono);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+.tlegs-shift-note { font-size: 11.5px; color: var(--ink-mute); flex: 1; min-width: 140px; }
+
+.tlegs-list { display: grid; gap: 10px; }
+.tleg {
+  padding: 11px 13px;
+  border: 1px solid var(--rule-soft);
+  border-radius: 12px;
+  background: var(--paper);
+}
+.tleg.answered { border-color: var(--rule); }
+.tleg-head { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.tleg-route { display: inline-flex; align-items: baseline; gap: 7px; flex-wrap: wrap; font-size: 14px; }
+.tleg-arrow { color: var(--ink-mute); }
+.tleg-date {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--mono);
+  font-size: 11.5px;
+  color: var(--ink-mute);
+  font-variant-numeric: tabular-nums;
+}
+.tleg-modes { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 9px; }
+.tleg-mode {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 11px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: var(--paper);
+  font-size: 12.5px;
+  color: var(--ink-soft);
+  transition: border-color .15s, color .15s, background .15s;
+}
+.tleg-mode svg { color: var(--ink-mute); }
+.tleg-mode:hover { border-color: var(--accent); }
+.tleg-mode.on { border-color: var(--accent); background: var(--accent-bg); color: var(--ink); font-weight: 600; }
+.tleg-mode.on svg { color: var(--accent); }
+
+.tleg-links { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 9px; }
+.tleg-links-label { font-size: 11.5px; color: var(--ink-mute); }
+.tleg-link {
+  padding: 5px 10px;
+  border: 1px solid var(--rule);
+  border-radius: 9px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink);
+  text-decoration: none;
+}
+.tleg-link:hover { border-color: var(--accent); color: var(--accent); }
+
+.tleg-paid { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
+.tleg-field { display: block; }
+.tleg-field-wide { flex: 1; min-width: 160px; }
+.tleg-field-label { display: block; font-size: 11px; color: var(--ink-mute); margin-bottom: 3px; }
+.tleg-input-wrap {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--rule);
+  border-radius: 9px;
+  background: var(--paper);
+  padding-left: 9px;
+}
+.tleg-cur { font-family: var(--mono); font-size: 13px; color: var(--ink-mute); }
+.tleg-input {
+  width: 92px;
+  padding: 8px 9px;
+  border: none;
+  background: none;
+  font-family: var(--mono);
+  font-size: 13.5px;
+  font-variant-numeric: tabular-nums;
+  outline: none;
+}
+.tleg-text {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid var(--rule);
+  border-radius: 9px;
+  background: var(--paper);
+  font-size: 13px;
+  outline: none;
+}
+.tleg-input:focus-visible, .tleg-text:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+
+.tlegs-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 2px solid var(--ink);
+}
+.tlegs-total-label { display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; color: var(--ink-soft); }
+.tlegs-total { font-family: var(--mono); font-size: 18px; font-variant-numeric: tabular-nums; }
+
+/* ── Narrow ───────────────────────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .guide-where.has-brief { grid-template-columns: minmax(0, 1fr); }
+  /* On one column the brief goes ABOVE the grid: it opened because a card was
+     tapped, and an answer that lands below a 43-card grid is an answer nobody
+     sees. */
+  .guide-where.has-brief .cbrief { order: -1; position: static; max-height: none; }
+  .wready-split { grid-template-columns: minmax(0, 1fr); gap: 22px; }
+  .wmode { grid-template-columns: 1fr; }
+}
+@media (max-width: 719px) {
+  .cbrief-figs { grid-template-columns: 1fr; }
+  .wready-view { width: 100%; }
+  .wready-map .cpm { height: 46vh; }
+  .tleg-field-wide { min-width: 120px; }
+  .tlegs-shift { gap: 8px; }
+  .tlegs-shift-note { min-width: 100%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .wtrip, .wmode-btn, .tleg-mode, .guide-ccard-info { transition: none; }
+}
+/* PLANNER-V2-END */

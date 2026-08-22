@@ -73,7 +73,7 @@ function CostRow({ icon: Icon, label, eur, band }) {
  * The footer is not a disclaimer, it is the measurement's provenance, and it
  * is the reason to believe the three numbers above it.
  */
-export function CostReceipt({ cost, t }) {
+export function CostReceipt({ cost, t, lifestyleLabel, onOpenLifestyle }) {
   if (!cost || cost.dayEur == null) return null;
   const bandWord = t(BAND_KEY[cost.dayBand]);
 
@@ -105,7 +105,20 @@ export function CostReceipt({ cost, t }) {
         <span className={`cost-total-band ${BAND_CLASS[cost.dayBand]}`}>{bandWord}</span>
         <span className="cost-total-eur mono">{eurDay(cost.dayEur)}</span>
       </div>
-      <p className="cost-note">{t('cost.basis')}</p>
+      {/* What the three numbers above assume, with the door to change it. A
+          price the reader cannot trace back to a setting is a price they have
+          to take on faith, and this whole receipt exists not to ask that. */}
+      {lifestyleLabel && (
+        <p className="cost-assumes">
+          <span>{lifestyleLabel}</span>
+          {onOpenLifestyle && (
+            <button type="button" className="cost-assumes-edit" onClick={onOpenLifestyle}>
+              {t('cost.editLifestyle')}
+            </button>
+          )}
+        </p>
+      )}
+      {cost.tierFallback && <p className="cost-source">{t('cost.tierFallback')}</p>}
       <p className="cost-source">{provenance()}</p>
     </div>
   );

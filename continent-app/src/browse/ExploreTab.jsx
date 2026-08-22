@@ -8,7 +8,8 @@ import { ExploreFilterSheet } from './ExploreFilterSheet.jsx';
 import { useI18n } from '../i18n/index.jsx';
 import { count } from '../lib/format.js';
 import { isFullRatingRange, FULL_RATING_RANGE } from '../lib/rating.js';
-import { FilterIcon, CalendarIcon, CameraIcon, ClockIcon } from '../components/Icons.jsx';
+import { FilterIcon, CalendarIcon, CameraIcon, ClockIcon, PiggyIcon } from '../components/Icons.jsx';
+import { matchProfile, PROFILE_LABEL_KEYS } from './LifestylePanel.jsx';
 import { HeroImage } from '../components/HeroImage.jsx';
 import { CostLine } from '../components/CostSummary.jsx';
 import { visitLength } from '../lib/nearby.js';
@@ -213,6 +214,7 @@ export function ExploreTab({
   selectedId, onSelect,
   indices,
   isMock = false,
+  choices, onOpenLifestyle,
 }) {
   const { t } = useI18n();
   const [sheetOpen, setSheetOpen] = React.useState(false);
@@ -263,6 +265,15 @@ export function ExploreTab({
 
   const favSet = favorites || new Set();
 
+  // What the Lifestyle pill says: the preset in force and the bed it assumes,
+  // which between them move every euro figure on the page. A comma, never a
+  // bullet, because this app has no middot separators.
+  const profileKey = matchProfile(choices?.lifestyle || {});
+  const lifestyleLabel = [
+    profileKey ? t(PROFILE_LABEL_KEYS[profileKey]) : t('lifestyle.custom'),
+    t(`stay.${choices?.stay_tier || 'home'}`),
+  ].join(', ');
+
   return (
     <div className="explore-tab" ref={scrollRef}>
       <div className="explore-wrap">
@@ -308,6 +319,24 @@ export function ExploreTab({
               ))}
             </div>
 
+            {/* Lifestyle belongs beside Filters because they are one sentence:
+                Filters decides WHICH places are listed, Lifestyle decides what
+                the euro figure on each of them means. The label carries the
+                current setting so a reader can see what the prices assume
+                without opening anything. */}
+            {onOpenLifestyle && (
+              <button
+                type="button"
+                className="explore-lifestyle-btn"
+                onClick={onOpenLifestyle}
+                aria-haspopup="dialog"
+                title={t('lifestyle.exploreHint')}
+              >
+                <PiggyIcon size={14} />
+                <span className="explore-lifestyle-label">{lifestyleLabel}</span>
+              </button>
+            )}
+
             <button
               type="button"
               className={`explore-filter-btn ${activeFilters > 0 ? 'has-active' : ''}`}
@@ -334,9 +363,11 @@ export function ExploreTab({
         {/* What the grid currently shows, as a sentence with the number in
             mono: the same honesty contract as the filter sheet's footer. */}
         <p className="explore-count">
-          {rows.length === 0
-            ? (showFavOnly ? t('results.emptyFav') : t('results.empty'))
-            : t(rows.length === 1 ? 'explore.countOne' : 'explore.countMany', { n: count(rows.length) })}
+          <span className="explore-count-badge">
+            {rows.length === 0
+              ? (showFavOnly ? t('results.emptyFav') : t('results.empty'))
+              : t(rows.length === 1 ? 'explore.countOne' : 'explore.countMany', { n: count(rows.length) })}
+          </span>
           {rows.length > 0 && <span className="explore-legend">{t('explore.costLegend')}</span>}
           {isMock && <span className="explore-mock">Mock data</span>}
         </p>

@@ -77,6 +77,23 @@ try {
     widths.length >= 2 && widths.every((w) => legalW.includes(w)),
     srcset ? widths.join(' ') : 'no srcset');
 
+  // The Lifestyle control has to be present AND has to move the prices: a
+  // control that changes nothing is worse than no control at all.
+  check('Lifestyle sits beside Filters', await page.locator('.explore-lifestyle-btn').count() === 1);
+  const priceText = () => page.locator('.xcard-cost-eur').allInnerTexts();
+  const beforeLs = (await priceText()).slice(0, 8).join(' ');
+  await page.locator('.explore-lifestyle-btn').click();
+  await page.waitForTimeout(800);
+  check('Lifestyle opens as a right-hand drawer', await page.locator('.accom-panel.from-right').count() === 1);
+  check('the grid behind it stays reachable through a scrim', await page.locator('.lifestyle-scrim').count() === 1);
+  const bp = page.locator('.accom-panel button', { hasText: /^Backpacker$/ }).first();
+  if (await bp.count()) { await bp.click(); await page.waitForTimeout(700); }
+  await page.keyboard.press('Escape');
+  await page.locator('.lifestyle-scrim').click({ position: { x: 120, y: 400 } }).catch(() => {});
+  await page.waitForTimeout(700);
+  const afterLs = (await priceText()).slice(0, 8).join(' ');
+  check('changing Lifestyle reprices the grid', beforeLs !== afterLs, `${beforeLs} -> ${afterLs}`);
+
   // The hover explanation, and WCAG 1.4.13's dismissible requirement.
   await page.locator('.xcard').first().hover();
   await page.waitForTimeout(350);
@@ -116,6 +133,10 @@ try {
   check('panel opens', await panel.isVisible());
   const panelText = await panel.innerText();
   check('panel shows the cost receipt', await panel.locator('.cost-receipt').count() === 1);
+  // The receipt has to say what it assumed. A price a reader cannot trace
+  // back to a setting is a price they must take on faith.
+  const assumes = await panel.locator('.cost-assumes').innerText().catch(() => '');
+  check('receipt names the lifestyle it priced for', /priced for/i.test(assumes), assumes.slice(0, 60));
   check('receipt totals a day in euros', /€\d/.test(await panel.locator('.cost-total-eur').innerText()));
   check('receipt states where the number came from', await panel.locator('.cost-source').innerText().then((x) => x.length > 12));
   check('panel has what-is-around', /what is around/i.test(panelText));

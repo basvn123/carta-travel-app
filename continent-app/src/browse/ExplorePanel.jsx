@@ -7,6 +7,7 @@ import { ClimateStrip, MONTHS_SHORT, fmtMonthRanges } from './ClimateStrip.jsx';
 import { TrailsNearby } from '../components/TrailsNearby.jsx';
 import { HeroImage } from '../components/HeroImage.jsx';
 import { CostReceipt } from '../components/CostSummary.jsx';
+import { matchProfile, PROFILE_LABEL_KEYS } from './LifestylePanel.jsx';
 import { RatingBreakdown } from './RatingBreakdown.jsx';
 import { safeUrl } from '../lib/format.js';
 import { fetchActivitiesFull } from '../lib/appData.js';
@@ -134,7 +135,10 @@ function ParkingSpot({ spot, kind, t }) {
   );
 }
 
-export function ExplorePanel({ destination, data, indices, onClose, isFavorite, onToggleFavorite, onSelect }) {
+export function ExplorePanel({
+  destination, data, indices, onClose, isFavorite, onToggleFavorite, onSelect,
+  choices, onOpenLifestyle,
+}) {
   const { t, lang } = useI18n();
 
   // Phone bottom sheet: half snap on open, drag the grip between half, full
@@ -228,6 +232,13 @@ export function ExplorePanel({ destination, data, indices, onClose, isFavorite, 
 
   const image = destination.image;
   const cost = indices?.get?.(destination.id) || null;
+  // The receipt says what it assumed, in the same words the Explore toolbar
+  // pill uses, so the two never look like separate settings.
+  const profileKey = matchProfile(choices?.lifestyle || {});
+  const lifestyleLine = t('cost.atLifestyle', {
+    profile: profileKey ? t(PROFILE_LABEL_KEYS[profileKey]) : t('lifestyle.custom'),
+    stay: t(`stay.${cost?.stayTier || choices?.stay_tier || 'home'}`).toLowerCase(),
+  });
   const aboutLine = popLine(destination.geonames);
   const kf = knownFor(destination);
   const cheapMonths = cheapestStayMonths(destination);
@@ -366,7 +377,12 @@ export function ExplorePanel({ destination, data, indices, onClose, isFavorite, 
         {cost?.dayEur != null && (
           <div className="dsheet-card">
             <SectionTitle icon={ReceiptIcon}>{t('cost.title')}</SectionTitle>
-            <CostReceipt cost={cost} t={t} />
+            <CostReceipt
+              cost={cost}
+              t={t}
+              lifestyleLabel={lifestyleLine}
+              onOpenLifestyle={onOpenLifestyle}
+            />
           </div>
         )}
 

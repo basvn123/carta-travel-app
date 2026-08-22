@@ -49,7 +49,7 @@ const PROFILES = {
 
 // Display keys for the profile names above; the PROFILES keys stay as logic
 // keys (matchProfile / setProfile) and are resolved to text at render time.
-const PROFILE_LABEL_KEYS = {
+export const PROFILE_LABEL_KEYS = {
   Backpacker: 'lifestyle.profileBackpacker',
   Easygoing: 'lifestyle.profileEasygoing',
   Foodie: 'lifestyle.profileFoodie',
@@ -78,7 +78,10 @@ function toCadence(ls, target) {
   return out;
 }
 
-function matchProfile(ls) {
+/** The preset a lifestyle currently equals, or null when it has been tuned
+ *  by hand. Exported so the Explore toolbar can name what is set without
+ *  keeping a second copy of the table. */
+export function matchProfile(ls) {
   const wk = toCadence(ls, 'week');
   for (const [name, p] of Object.entries(PROFILES)) {
     const keys = PERIOD_FIELDS.map((f) => f.key);
@@ -87,7 +90,7 @@ function matchProfile(ls) {
   return null;
 }
 
-export function LifestylePanel({ choices, setChoices, onClose, data }) {
+export function LifestylePanel({ choices, setChoices, onClose, data, side = 'left' }) {
   const { t } = useI18n();
   const ls = choices.lifestyle || {};
   const cadence = ls.cadence || 'week';
@@ -108,7 +111,7 @@ export function LifestylePanel({ choices, setChoices, onClose, data }) {
   const maxFor = (key) => PERIOD_FIELDS.find((f) => f.key === key).max[cadence];
 
   return (
-    <div className="accom-panel open">
+    <div className={`accom-panel open${side === 'right' ? ' from-right' : ''}`}>
       <button className="panel-close" onClick={onClose} aria-label={t('lifestyle.close')}>x</button>
 
       <div className="panel-header">

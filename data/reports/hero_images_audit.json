@@ -15,7 +15,9 @@
    "off_subject": 4,
    "portrait": 3,
    "collage": 3
-  }
+  },
+  "fixed": 467,
+  "unfixed": 0
  },
  "missing": [
   "gem:spisska-stara-ves",
@@ -2206,15 +2208,6 @@
    "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Centrum_Almere_Stad%2C_Almere%2C_Netherlands_-_panoramio.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original/960px-Centrum_Almere_Stad%2C_Almere%2C_Netherlands_-_panoramio.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
    "file": "Centrum Almere Stad, Almere, Netherlands - panoramio",
    "score": 7.0
-  },
-  {
-   "id": "gem:baden",
-   "city": "Baden",
-   "country": "Switzerland",
-   "from": "https://upload.wikimedia.org/wikipedia/commons/6/65/Baden-1803-1819.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
-   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/16/Festung_Schloss_Hohenbaden.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original/960px-Festung_Schloss_Hohenbaden.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
-   "file": "Festung Schloss Hohenbaden",
-   "score": 9.15
   },
   {
    "id": "gem:belle-ile",
@@ -5311,6 +5304,34 @@
    "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/84/Rio_Tejo_-_Vila_Franca_de_Xira_-_Portugal_%2842416075861%29.jpg/960px-Rio_Tejo_-_Vila_Franca_de_Xira_-_Portugal_%2842416075861%29.jpg",
    "file": "Rio Tejo - Vila Franca de Xira - Portugal (42416075861)",
    "score": 12.0
+  },
+  {
+   "id": "gem:baden",
+   "city": "Baden",
+   "country": "Switzerland",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/16/Festung_Schloss_Hohenbaden.jpg/960px-Festung_Schloss_Hohenbaden.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/Baden_Obere-Gasse-13-19_20130927_03.JPG/960px-Baden_Obere-Gasse-13-19_20130927_03.JPG",
+   "file": "Baden Obere-Gasse-13-19 20130927 03",
+   "score": 12.65
+  },
+  {
+   "id": "gem:lark-hill",
+   "city": "Lark Hill",
+   "country": "United Kingdom",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/BedZED_2007.jpg/960px-BedZED_2007.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/The_Garrison_Church_of_St_Alban_the_Martyr%2C_The_Patchway%2C_Larkhill_-_geograph.org.uk_-_5289021.jpg/960px-The_Garrison_Church_of_St_Alban_the_Martyr%2C_The_Patchway%2C_Larkhill_-_geograph.org.uk_-_5289021.jpg",
+   "file": "The Garrison Church of St Alban the Martyr, The Patchway, Larkhill - geograph.org.uk - 5289021",
+   "score": 7.0
+  },
+  {
+   "id": "gem:starigrad",
+   "city": "Starigrad",
+   "country": "Croatia",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Fortica_at_Sunset.jpg/960px-Fortica_at_Sunset.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/be/Starigrad_Paklenica_Hafen_02.JPG/960px-Starigrad_Paklenica_Hafen_02.JPG",
+   "file": "Starigrad Paklenica Hafen 02",
+   "score": 11.95
   }
- ]
+ ],
+ "unfixed": []
 }

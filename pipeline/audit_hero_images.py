@@ -33,6 +33,7 @@ Run:  python audit_hero_images.py            # check -> fix -> patch
       python audit_hero_images.py check      # classify only, no writes to data
       python audit_hero_images.py fix        # replace what the last check flagged
       python audit_hero_images.py dupes      # re-photograph the wrong-place repeats
+      python audit_hero_images.py fix --only ID --by-coord   # repair by coordinate
       python audit_hero_images.py patch      # cache -> app_data
       python audit_hero_images.py stats      # last report, no network
 
@@ -926,7 +927,7 @@ def _thumb_url(original_url, fname):
     return f"{base}/thumb/{h1}/{h2}/{name}/{THUMB_PX}px-{name}"
 
 
-def fix(dests, report, dry_run=False, limit=None, only=None):
+def fix(dests, report, dry_run=False, limit=None, only=None, force_coord=False):
     meta_cache = load_json(META_CACHE, {}) or {}
     img_cache = load_json(IMG_CACHE, {}) or {}
 
@@ -936,8 +937,12 @@ def fix(dests, report, dry_run=False, limit=None, only=None):
     # good hero on that evidence would do more harm than the flag prevents, so
     # those wait for human eyes. Anything flagged for a second reason as well
     # is still a target.
+    # An explicit --only is an operator naming destinations by hand, so the
+    # far_coord hold-back does not apply to it: that band exists to stop
+    # UNATTENDED replacement, not to argue with somebody who has looked.
+    hold_far = not only
     targets = [f["id"] for f in report.get("flagged", [])
-               if f.get("reasons") != ["far_coord"]] + list(report.get("missing", []))
+               if not (hold_far and f.get("reasons") == ["far_coord"])]         + list(report.get("missing", []))
     if only:
         targets = [t for t in targets if t in only]
     if limit:
@@ -953,6 +958,12 @@ def fix(dests, report, dry_run=False, limit=None, only=None):
     # cannot be fooled by a name, so those are repaired by coordinate.
     by_coord = {f["id"] for f in report.get("flagged", [])
                 if "wrong_place" in (f.get("reasons") or [])}
+    # --by-coord forces the coordinate ladder for whatever --only names. The
+    # 30-to-300 km band is reviewed by hand rather than auto-fixed (a photo of
+    # the Cliffs of Moher is 43 km from Galway and entirely correct), so when
+    # that review does find a real error, this is how it gets repaired.
+    if force_coord and only:
+        by_coord |= set(only)
 
     fixed, kept = [], []
     for n, did in enumerate(targets, 1):
@@ -1184,6 +1195,7 @@ def main():
             val = a.split("=", 1)[1] if "=" in a else args[args.index(a) + 1]
             only = set(val.split(","))
     dry = "--dry-run" in args
+    force_coord = "--by-coord" in args
 
     if cmd == "stats":
         stats()
@@ -1211,7 +1223,8 @@ def main():
         if not report:
             print("Nothing to fix: run check first.")
             return
-        report = fix(dests, report, dry_run=dry, limit=limit, only=only)
+        report = fix(dests, report, dry_run=dry, limit=limit, only=only,
+                     force_coord=force_coord)
     if cmd in ("all", "fix") and not dry:
         sheet(report)
     if cmd in ("all", "patch") and not dry:

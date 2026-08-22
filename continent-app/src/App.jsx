@@ -514,9 +514,13 @@ function TravelApp() {
 
   // The Explore page's two price-level indices, computed once per dataset and
   // shared by the grid and the open destination panel.
+  // Recomputed whenever the Lifestyle panel changes a stay tier, a party
+  // size or a single frequency. That is 3,038 destinations repriced in about
+  // 7 ms, which is why there is no loading state anywhere near it: the grid
+  // simply renders the new numbers on the next frame.
   const exploreIndices = useMemo(
-    () => (data ? computeCosts(data.destinations) : null),
-    [data],
+    () => (data ? computeCosts(data.destinations, choices) : null),
+    [data, choices],
   );
 
   if (recoveryMode) {
@@ -689,6 +693,8 @@ function TravelApp() {
               selectedId={selectedId}
               onSelect={openDetail}
               indices={exploreIndices}
+              choices={choices}
+              onOpenLifestyle={() => setLifestyleOpen(true)}
               isMock={!!data.meta?.is_mock}
             />
           </div>
@@ -698,6 +704,8 @@ function TravelApp() {
               destination={selectedDest}
               data={data}
               indices={exploreIndices}
+              choices={choices}
+              onOpenLifestyle={() => setLifestyleOpen(true)}
               onClose={() => setSelectedId(null)}
               onSelect={openDetail}
               isFavorite={selectedId ? favorites.has(selectedId) : false}
@@ -712,7 +720,14 @@ function TravelApp() {
           has to open over whichever tab asked for it. */}
       {lifestyleOpen && (
         <div onClick={(e) => e.stopPropagation()}>
+          {/* On Explore the panel is a right-hand drawer over a scrim, so the
+              grid it reprices stays visible behind it. Everywhere else it
+              keeps the left-hand position the map layout was built around. */}
+          {activeTab === 'map' && (
+            <div className="lifestyle-scrim" onClick={() => setLifestyleOpen(false)} aria-hidden="true" />
+          )}
           <LifestylePanel
+            side={activeTab === 'map' ? 'right' : 'left'}
             choices={choices}
             setChoices={setChoices}
             onClose={() => setLifestyleOpen(false)}
