@@ -2122,61 +2122,6 @@ input, select {
   color: var(--ink-soft);
 }
 
-/* Step 3 - pick your Ryanair route */
-.guide-route-list { display: flex; flex-direction: column; gap: 8px; }
-.guide-route {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 10px 12px;
-  border: 1px solid var(--rule);
-  border-radius: 12px;
-  background: var(--paper);
-  text-align: left;
-  width: 100%;
-  transition: border-color .15s, background .15s;
-}
-.guide-route:hover { border-color: var(--ink-soft); }
-.guide-route.on { border-color: var(--accent); background: var(--accent-bg); }
-.guide-route-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
-.guide-route-city {
-  display: flex; align-items: center; gap: 8px;
-  font-family: var(--display);
-  font-size: 15px;
-  color: var(--ink);
-}
-.guide-route-sub {
-  display: inline-flex; align-items: center; gap: 4px;
-  font-family: var(--mono);
-  font-size: 10.5px;
-  color: var(--ink-mute);
-}
-.guide-route-warn {
-  display: inline-flex; align-items: center; gap: 4px;
-  font-size: 11px;
-  color: #b3402a;
-}
-.guide-route-fare { text-align: right; flex-shrink: 0; display: flex; flex-direction: column; }
-.guide-route-fare b { font-family: var(--mono); font-size: 15px; color: var(--ink); }
-.guide-route-fare small { font-family: var(--mono); font-size: 9.5px; color: var(--ink-mute); }
-.guide-route-breakdown { opacity: 0.8; }
-.guide-route.on .guide-route-fare b { color: var(--accent); }
-
-/* Flight quality chips: Carta's pick / Cheapest / Fastest. */
-.guide-route-badge {
-  display: inline-flex; align-items: center; gap: 3px;
-  padding: 2px 7px;
-  border-radius: 999px;
-  font-family: var(--mono);
-  font-size: 8.5px;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  white-space: nowrap;
-}
-.guide-route-badge.pick { background: var(--accent); color: #fff; }
-.guide-route-badge.cheap { background: rgba(58, 157, 107, 0.14); color: #2c7d54; }
-.guide-route-badge.fast { background: rgba(43, 108, 176, 0.12); color: #2b6cb0; }
-
 /* Getting-there: fly/car switch + the car option's reach notes. */
 .guide-origin-row {
   display: flex; align-items: center; gap: 10px;
@@ -14523,119 +14468,7 @@ input, select {
 .guide-style-card small { font-size: 11.5px; color: var(--ink-soft); line-height: 1.4; }
 .guide-style-card .guide-mode-check { position: absolute; top: 8px; right: 8px; }
 
-/* ── Where cards: the live pricing badges ───────────────────────────────
-   Transit facts ride the photo as compact mono chips; the all-in estimate
-   joins the city count line. The cheapest way in is tinted terracotta. */
-.guide-ccard-badges {
-  display: flex;
-  gap: 5px;
-  margin-bottom: 5px;
-}
-.guide-ccard-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 2.5px 8px;
-  border-radius: 999px;
-  background: rgba(15, 23, 42, 0.55);
-  color: #fff;
-  font-family: var(--mono);
-  font-size: 10.5px;
-  white-space: nowrap;
-  backdrop-filter: blur(2px);
-}
-.guide-ccard-badge.lead { background: var(--accent); }
-/* The card's second line is the all-in estimate, on its own. */
 .guide-ccard-n { white-space: nowrap; }
-
-/* ── Getting there: compared modes + the airport matrix ────────────────
-   The fly/drive cards carry their own numbers and the cheapest/fastest tags,
-   so the choice is a comparison, not a preference poll. */
-/* Two rows, in this order, on both cards: what it costs and how long it
-   takes, then what is remarkable about it. Wrapping them into one run put the
-   drive's duration on its own line and the flight's tags on theirs, so the
-   pair never read as a comparison. */
-.guide-mode-facts {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  margin-top: 8px;
-}
-/* The price leads, the duration sits under it. Side by side they fit on the
-   flight card and wrapped on the drive's, so the two cards read at different
-   rhythms depending on how long the journey happened to be. */
-.guide-mode-price {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-/* A price and a duration are each one token, never broken mid-figure. */
-.guide-mode-price b,
-.guide-mode-price span { white-space: nowrap; }
-.guide-mode-facts b { font-family: var(--mono); font-size: 12px; }
-.guide-mode-facts span { font-family: var(--mono); font-size: 10.5px; color: var(--ink-mute); }
-.guide-mode-tags { display: flex; gap: 5px; flex-wrap: wrap; }
-.guide-mode-tag {
-  font-style: normal;
-  font-family: var(--mono);
-  font-size: 9px;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  padding: 1.5px 6px;
-  border-radius: 999px;
-  background: var(--accent-bg);
-  color: var(--accent);
-  white-space: nowrap;
-}
-.guide-drive-card { max-width: 620px; }
-.guide-drive-facts {
-  display: flex;
-  gap: 22px;
-  flex-wrap: wrap;
-}
-.guide-drive-facts span { display: flex; flex-direction: column; gap: 1px; }
-.guide-drive-facts b { font-family: var(--mono); font-size: 15px; }
-.guide-drive-facts small { font-size: 11px; color: var(--ink-mute); }
-
-.guide-airport-matrix {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 12px;
-  margin-bottom: 14px;
-}
-.guide-airport-group {
-  border: 1px solid var(--rule);
-  border-radius: 12px;
-  background: var(--bg-card);
-  padding: 10px 12px;
-}
-.guide-airport-group-head {
-  display: flex;
-  align-items: baseline;
-  gap: 7px;
-  padding-bottom: 7px;
-  border-bottom: 1px dashed var(--rule-soft);
-}
-.guide-airport-group-head svg { align-self: center; color: var(--accent); }
-.guide-airport-group-head b { font-size: 13px; }
-.guide-airport-group-code { font-family: var(--mono); font-size: 10.5px; color: var(--ink-mute); }
-.guide-airport-group-head small { font-family: var(--mono); font-size: 10px; color: var(--ink-mute); }
-.guide-airport-group-from { margin-left: auto; font-size: 11px; color: var(--ink-soft); white-space: nowrap; }
-.guide-airport-group-from b { font-family: var(--mono); font-size: 12px; }
-.guide-airport-group-rows { display: flex; flex-direction: column; }
-.guide-airport-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  padding: 6px 4px;
-  border-radius: 7px;
-  font-size: 12.5px;
-  text-align: left;
-}
-.guide-airport-row b { font-family: var(--mono); font-size: 12px; }
-.guide-airport-row:hover { background: var(--paper-dim); }
-.guide-airport-row.on { background: var(--accent-bg); color: var(--accent); }
 
 /* ── Stay: curated route templates ─────────────────────────────────────
    Each card IS a designed route (cities, nights, road km), one tap to take. */
@@ -23949,22 +23782,25 @@ button.ai-sched-main:focus-visible {
    the corner, and only as loud as it needs to be to be found. */
 .guide-ccard-info {
   position: absolute;
-  left: 8px;
-  top: 8px;
+  left: 7px;
+  top: 7px;
   z-index: 2;
   display: inline-flex;
   align-items: center;
-  gap: 5px;
-  padding: 5px 9px;
+  gap: 4px;
+  padding: 4px 8px;
   border-radius: 999px;
-  background: rgba(15, 23, 42, 0.62);
-  color: #fff;
-  font-size: 11px;
+  background: rgba(15, 23, 42, 0.42);
+  color: rgba(255, 255, 255, 0.92);
+  font-size: 10.5px;
   font-weight: 600;
   line-height: 1;
-  transition: background .15s;
+  transition: background .15s, color .15s;
 }
-.guide-ccard-info:hover { background: rgba(15, 23, 42, 0.86); }
+.guide-ccard-info:hover, .guide-ccard-pick:hover ~ .guide-ccard-info {
+  background: rgba(15, 23, 42, 0.86);
+  color: #fff;
+}
 .guide-ccard-info:focus-visible { outline: 2px solid #fff; outline-offset: 1px; }
 .guide-ccard.reading { border-color: var(--accent); }
 .guide-ccard.reading .guide-ccard-info { background: var(--accent); }
@@ -24114,7 +23950,13 @@ button.ai-sched-main:focus-visible {
   border-radius: 8px;
   background: var(--paper-dim);
 }
-.cbrief-thumb-none { border: 1px solid var(--rule-soft); }
+.cbrief-thumb-none {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--rule-soft);
+  color: var(--ink-mute);
+}
 .cbrief-place-text { min-width: 0; }
 .cbrief-place-text b {
   display: flex;
@@ -24267,6 +24109,19 @@ button.ai-sched-main:focus-visible {
 }
 .wready-col-sub { margin: 2px 0 10px; font-size: 12px; color: var(--ink-mute); line-height: 1.45; }
 .wready-grid { display: grid; gap: 10px; }
+
+.wready-more {
+  width: 100%;
+  margin-top: 10px;
+  padding: 9px 12px;
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  background: var(--paper);
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+.wready-more:hover { border-color: var(--accent); color: var(--accent); }
 
 .wready-note {
   display: flex;
@@ -24615,8 +24470,11 @@ button.ai-sched-main:focus-visible {
 }
 .tleg-cur { font-family: var(--mono); font-size: 13px; color: var(--ink-mute); }
 .tleg-input {
-  width: 92px;
-  padding: 8px 9px;
+  width: 88px;
+  padding: 8px 9px 8px 6px;
+  /* A stepper on a fare is nonsense: nobody nudges 180 euro one euro at a
+     time, and the arrows eat the width the figure needs. */
+  appearance: textfield;
   border: none;
   background: none;
   font-family: var(--mono);

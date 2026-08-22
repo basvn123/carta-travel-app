@@ -1,8 +1,12 @@
-// Headless verify for the origin-first wizard refactor: Trip basics (address
-// -> nearby airports, dates, party, travel style), the Where step's live
-// pricing badges, the Getting-there airport matrix with cheapest/fastest
-// tags, curated Stay templates, the daily-spend estimate line, and the
+// Headless verify for the origin-first wizard: Trip basics (address -> nearby
+// airports, dates, party, travel style), the Where step, the curated Stay
+// templates on the build-your-own path, the daily-spend estimate line, and the
 // plannerStore draft that survives it all.
+//
+// The fare badges, the Getting-there airport matrix and the return-flight step
+// this script used to check are gone: Carta no longer prices anyone's
+// transport. The flow that replaced them has its own script,
+// scripts/verify_planner_v2_flow.mjs.
 //
 //   node scripts/verify_planner_v2.mjs [url]   (default http://localhost:4173)
 //
@@ -91,7 +95,9 @@ const lsLink = page.locator('.guide-lifestyle-link');
 check('lifestyle panel link offered', await lsLink.isVisible());
 await lsLink.click();
 await page.waitForTimeout(900);
-check('link opens the lifestyle panel', await page.locator('.lifestyle-panel, .slideover, [class*="lifestyle"]').first().isVisible().catch(() => false));
+// By a control the panel actually owns: [class*="lifestyle"] also matches the
+// Explore tab's own hidden button, which is what this used to catch instead.
+check('link opens the lifestyle panel', await page.locator('.lifestyle-stay-chips').first().isVisible().catch(() => false));
 await page.keyboard.press('Escape');
 await page.waitForTimeout(700);
 const closeLs = page.locator('.panel-close, .lifestyle-close').first();
@@ -101,23 +107,15 @@ check('next unlocks with dates set', await page.locator('.guide-next').isEnabled
 await page.locator('.guide-next').click();
 await page.waitForTimeout(1800);
 
-// ── Step 2: Where, with the pricing matrix ──
+// ── Step 2: Where ──
 check('step 2 is Where', /where are we going/i.test(await page.locator('.guide-title').first().innerText().catch(() => '')));
-await page.waitForTimeout(2500); // fare slices for the nearby airports
-const badgeCount = await page.locator('.guide-ccard-badges').count();
-check('country cards carry transit badges', badgeCount >= 10, String(badgeCount));
+await page.waitForTimeout(1200);
 const estCount = await page.locator('.guide-ccard-n').count();
-check('country cards carry all-in estimates', estCount >= 10, String(estCount));
+check('country cards carry a cost line', estCount >= 10, String(estCount));
 const cardLine = await page.locator('.guide-ccard-n').first().innerText();
-check('estimate reads "from X pp all-in"', /^from .+ pp all-in$/.test(cardLine.trim()), cardLine);
+check('the line is what a day costs there', /a day|places/i.test(cardLine.trim()), cardLine);
+check('no transit badge survives on a card', await page.locator('.guide-ccard-badges').count() === 0);
 check('no city count on the cards', !/\d+ cities/i.test(await page.locator('.guide-cgrid').innerText()));
-check('no badge legend paragraph', await page.locator('.guide-matrix-note').count() === 0);
-// A duration is one token: "22 h 24 min" must not break across two lines.
-const badgeWraps = await page.locator('.guide-ccard-badge').evaluateAll((els) => els.filter((e) => {
-  const lh = parseFloat(getComputedStyle(e).lineHeight) || 14;
-  return e.getBoundingClientRect().height > lh * 1.6;
-}).length);
-check('transit badges stay on one line', badgeWraps === 0, `${badgeWraps} wrapped`);
 // The picking CTA and the search field belong together.
 const gap = await page.evaluate(() => {
   const cta = document.querySelector('.guide-where-tools');
@@ -128,51 +126,16 @@ const gap = await page.evaluate(() => {
 check('CTA and search sit close', gap != null && gap <= 16, `${gap}px`);
 check('recap carries origin + party', /ghent/i.test(await page.locator('.guide-recap').innerText().catch(() => '')) && /3 travellers/i.test(await page.locator('.guide-recap').innerText().catch(() => '')));
 await page.screenshot({ path: 'shots/planner-v2-where.png' });
-await page.locator('.guide-ccard', { hasText: 'France' }).first().click();
+await page.locator('.guide-ccard', { hasText: 'France' }).first().locator('.guide-ccard-pick').click();
 await page.waitForTimeout(400);
 await page.locator('.guide-next').click();
+await page.waitForTimeout(2500);
+
+// ── Step 3: build your own, where the curated templates live ──
+await page.locator('.wmode-btn').nth(1).click();
 await page.waitForTimeout(2000);
 
-// ── Step 3: Getting there ──
-check('fly card carries a compared price', /pp return/i.test(await page.locator('.guide-mode-card').first().innerText()));
-const tagText = await page.locator('.guide-mode-cards').innerText();
-check('cheapest/fastest tags present', /cheapest|fastest/i.test(tagText));
-// Both mode cards keep one rhythm: a numbers row, then a tag row, each
-// figure unbroken, and the two cards the same height.
-const modeGeom = await page.locator('.guide-mode-card').evaluateAll((els) => els.map((e) => {
-  const price = e.querySelector('.guide-mode-price');
-  const lh = price ? (parseFloat(getComputedStyle(price).lineHeight) || 15) : 0;
-  return {
-    h: Math.round(e.getBoundingClientRect().height),
-    priceRows: price ? Math.round(price.getBoundingClientRect().height / lh) : 0,
-  };
-}));
-check('mode cards match in height', new Set(modeGeom.map((m) => m.h)).size === 1, JSON.stringify(modeGeom));
-check('both cards run the same rhythm', new Set(modeGeom.map((m) => m.priceRows)).size === 1, JSON.stringify(modeGeom));
-const figureWraps = await page.locator('.guide-mode-price > *').evaluateAll((els) => els.filter((e) => {
-  const lh = parseFloat(getComputedStyle(e).lineHeight) || 14;
-  return e.getBoundingClientRect().height > lh * 1.6;
-}).length);
-check('no figure breaks mid-line', figureWraps === 0, `${figureWraps} wrapped`);
-check('step names the departure place', /oostakker|ghent|gent/i.test(await page.locator('.guide-sub').first().innerText().catch(() => '')));
-await page.locator('.guide-stay-view button', { hasText: /^list$/i }).click();
-await page.waitForTimeout(800);
-const groups = await page.locator('.guide-airport-group').count();
-check('airport matrix groups departures', groups >= 2, String(groups));
-await page.screenshot({ path: 'shots/planner-v2-matrix.png' });
-// Pick a flight from the SECOND departure airport: the pair must be pickable
-// and the row must show as selected.
-const secondGroupRow = page.locator('.guide-airport-group').nth(1).locator('.guide-airport-row').first();
-const rowCity = (await secondGroupRow.innerText()).split('\n')[0];
-await secondGroupRow.click();
-await page.waitForTimeout(800);
-check('a pair from another airport is pickable', await page.locator('.guide-airport-row.on').count() === 1, rowCity);
-check('route rows name the departure airport', /[A-Z]{3}\s*→\s*[A-Z]{3}/.test(await page.locator('.guide-route-list').innerText().catch(() => '')));
-await page.locator('.guide-next').click();
-await page.waitForTimeout(1500);
-
-// ── Step 4: Stay, curated templates ──
-check('step 4 is Stay', /sleep|stay/i.test(await page.locator('.guide-title').first().innerText().catch(() => '')));
+check('step 3 becomes Stay', /sleep|stay/i.test(await page.locator('.guide-title').first().innerText().catch(() => '')));
 const tpl = page.locator('.guide-template');
 const tplCount = await tpl.count();
 check('curated templates offered', tplCount >= 1, String(tplCount));
@@ -186,17 +149,11 @@ if (tplCount > 0) {
 }
 check('estimate includes daily spending', /food & fun/i.test(await page.locator('.guide-estimate-band').innerText().catch(() => '')));
 
-// ── Steps 5+6: Getting home, Finish, and the planned overview ──
+// ── Step 4: Finish, and the planned overview ──
 await page.locator('.guide-next').click();
 await page.waitForTimeout(2000);
-const onHome = /fly home|home/i.test(await page.locator('.guide-title').first().innerText().catch(() => ''));
-if (onHome) {
-  const homeRow = page.locator('.guide-route, .guide-side-idle-row').first();
-  if (await homeRow.isVisible().catch(() => false)) { await homeRow.click(); await page.waitForTimeout(600); }
-  await page.locator('.guide-next').click();
-  await page.waitForTimeout(1500);
-}
-check('reaches the Finish step', /last touches|fly home/i.test(await page.locator('.guide-title').first().innerText().catch(() => '')));
+check('reaches the Finish step', /last touches/i.test(await page.locator('.guide-title').first().innerText().catch(() => '')));
+check('the finish step asks how you get there', await page.locator('.tlegs').isVisible().catch(() => false));
 await page.screenshot({ path: 'shots/planner-v2-finish.png' });
 const arrange = page.locator('.guide-next', { hasText: /arrange/i }).last();
 if (await arrange.isVisible().catch(() => false)) {
@@ -212,7 +169,8 @@ check('store: origin is Ghent', draft?.origin?.name?.toLowerCase().includes('ghe
 check('store: nearby airports saved', (draft?.nearbyAirports?.length || 0) >= 3, String(draft?.nearbyAirports?.length));
 check('store: travelers + style saved', draft?.travelers?.adults === 2 && draft?.travelers?.children === 1 && draft?.travelers?.lifestyle === 'budget', JSON.stringify(draft?.travelers));
 check('store: dates saved', draft?.travelDates?.durationNights === 7, JSON.stringify(draft?.travelDates));
-check('store: transit is a flight pair', draft?.selectedTransit?.type === 'flight' && /^[A-Z]{3}$/.test(draft?.selectedTransit?.departureAirport || ''), JSON.stringify(draft?.selectedTransit));
+// Nothing has been said about transport yet, and Carta invents none.
+check('store: transit stays empty until the traveller says', draft?.selectedTransit == null, JSON.stringify(draft?.selectedTransit));
 check('store: stops mirror the route', (draft?.stops?.length || 0) >= 2 && draft.stops.every((x) => x.nights > 0 && x.cityName), String(draft?.stops?.length));
 
 await browser.close();

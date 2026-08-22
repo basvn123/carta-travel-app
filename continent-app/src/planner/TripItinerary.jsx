@@ -17,6 +17,27 @@ import { fareProv, flightProv, estPrefix, FareTag, BookingNote } from '../compon
 import { useI18n } from '../i18n/index.jsx';
 import { SparkIcon, TrainIcon, BusIcon, CarIcon, FerryIcon, BedIcon, ReceiptIcon, ShareIcon, DownloadIcon, LuggageIcon, MapPinIcon, RouteIcon, CalendarIcon, LinkIcon, ChevronDownIcon } from '../components/Icons.jsx';
 import { PlaneIcon } from '../components/TransportIcons.jsx';
+import { TRAVEL_MODE_LABEL } from '../lib/transportLinks.js';
+
+// How the traveller told us they get there and home. Carta prices none of it,
+// so these two helpers exist to say what THEY said rather than assume a plane:
+// the wizard has asked for the mode since it stopped picking flights, and a
+// trip saved before that carries no mode, which is what 'fly' means here.
+const OWN_TRAVEL_ICON = {
+  fly: PlaneIcon, train: TrainIcon, bus: BusIcon, car: CarIcon, ferry: FerryIcon,
+};
+
+function OwnTravelIcon({ mode, size = 12 }) {
+  const Icon = OWN_TRAVEL_ICON[mode] || PlaneIcon;
+  return <Icon size={size} />;
+}
+
+/** "Train, Trenitalia", or just "Train" when no operator was named. */
+function ownTravelHow(flight, t) {
+  const how = t(TRAVEL_MODE_LABEL[flight?.mode] || 'trip.modeFly');
+  const who = (flight?.airline || '').trim();
+  return who ? `${how}, ${who}` : how;
+}
 
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
@@ -356,7 +377,7 @@ export function TripItinerary({
     bookingRows.push({ key: 'flight-out', label: `${t('extras.flightOut')}: ${t('itin.fromTo', { a: flight.origin, b: flight.into_anchor })}`, estimate: (flight.into_fare_eur || 0) * groupSize });
     bookingRows.push({ key: 'flight-home', label: `${t('extras.flightHome')}: ${t('itin.fromTo', { a: flight.out_anchor, b: flight.origin })}`, estimate: (flight.out_of_fare_eur || 0) * groupSize });
   } else if (flight?.own) {
-    bookingRows.push({ key: 'flight', label: flight.airline ? `${t('extras.ownFlight')}: ${flight.airline}` : t('extras.ownFlight'), estimate: flight.cost_total || null });
+    bookingRows.push({ key: 'flight', label: `${t('itin.ownTravelIn')}: ${ownTravelHow(flight, t)}`, estimate: flight.cost_total || null });
   }
   stopDetails.forEach((s, i) => {
     if (!s.dest) return;
@@ -488,8 +509,10 @@ export function TripItinerary({
           )}
           {flight?.own && (
             <div className="itin-flight-row">
-              <PlaneIcon size={12} />
-              <span>{flight.airline ? <>{t('itin.flyInWith')} <b>{flight.airline}</b></> : <b>{t('itin.ownFlightIn')}</b>}</span>
+              <OwnTravelIcon mode={flight.mode} size={12} />
+              <span>
+                {t('itin.ownTravelIn')} <b>{ownTravelHow(flight, t)}</b>
+              </span>
               <small>{fmtLong(flight.out_date || stopDetails[0]?.arriveDate)}</small>
             </div>
           )}
@@ -555,8 +578,10 @@ export function TripItinerary({
           )}
           {flight?.own && (
             <div className="itin-flight-row">
-              <PlaneIcon size={12} />
-              <span>{flight.airline ? <>{t('itin.flyHomeWith')} <b>{flight.airline}</b></> : <b>{t('itin.ownFlightHome')}</b>}</span>
+              <OwnTravelIcon mode={flight.mode} size={12} />
+              <span>
+                {t('itin.ownTravelHome')} <b>{ownTravelHow(flight, t)}</b>
+              </span>
               <small>{fmtLong(flight.ret_date || stopDetails[stopDetails.length - 1]?.departDate)}</small>
             </div>
           )}
@@ -598,7 +623,7 @@ export function TripItinerary({
                     {flight?.own && (
                       <div className="trip-total-row">
                         <span className="lbl">
-                          <PlaneIcon size={11} /> {t('itin.flight')}{flight.airline ? ` (${flight.airline})` : ''}
+                          <OwnTravelIcon mode={flight.mode} size={11} /> {ownTravelHow(flight, t)}
                           <small>
                             {flight.out_date ? `${fmtLong(flight.out_date)}${flight.ret_date ? ` → ${fmtLong(flight.ret_date)}` : ''}, ` : ''}
                             {flight.cost_total ? t('itin.bookedOtherGroup') : t('itin.bookedOtherNoFare')}

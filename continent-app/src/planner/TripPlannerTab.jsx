@@ -549,8 +549,6 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
         <GuidedTripWizard
           inline
           data={data}
-          origin={origin}
-          onChangeOrigin={onChangeOrigin}
           stayTier={tp.stayTier}
           lifestyle={lifestyle}
           onOpenLifestyle={onOpenLifestyle}
@@ -1126,7 +1124,7 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
       )}
 
       {wizardOpen && (
-        <GuidedTripWizard data={data} origin={origin} onChangeOrigin={onChangeOrigin} stayTier={tp.stayTier} lifestyle={lifestyle} onOpenLifestyle={onOpenLifestyle} onCancel={() => setWizardOpen(false)} onComplete={handleWizardComplete} />
+        <GuidedTripWizard data={data} stayTier={tp.stayTier} lifestyle={lifestyle} onOpenLifestyle={onOpenLifestyle} onCancel={() => setWizardOpen(false)} onComplete={handleWizardComplete} />
       )}
     </div>
   );

@@ -9,6 +9,7 @@
  */
 
 import { eur, flightTimes } from './format.js';
+import { ownTravelWord } from './transportLinks.js';
 import { flightReasonLabel, baggageLabel } from './trip_planner_pricing.js';
 
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -51,7 +52,7 @@ export function tripSummaryText({ label, stopDetails, flight, anchorLegs, driveL
   if (first?.arriveDate) lines.push(`${fmtLong(first.arriveDate)} to ${fmtLong(last?.departDate)}`);
   lines.push('');
   if (flight?.combinable) lines.push(`Fly ${flight.origin} to ${flight.into_anchor}${timesSuffix(flight.into_time)}`);
-  if (flight?.own) lines.push(flight.airline ? `Flight with ${flight.airline}${flight.out_date ? `, ${fmtLong(flight.out_date)}` : ''}${flight.cost_total ? ` (${eur(flight.cost_total)})` : ''}` : 'Your own flight (another airline)');
+  if (flight?.own) lines.push(`${ownTravelWord(flight)}, booked yourself${flight.out_date ? `, ${fmtLong(flight.out_date)}` : ''}${flight.cost_total ? ` (${eur(flight.cost_total)})` : ''}`);
   if (flight?.driving && driveLegs?.out) lines.push(`Drive out${driveLegs.from ? ` from ${driveLegs.from}` : ''} to ${first?.dest?.city} (${driveLegs.out.road_km} km)`);
   if (anchorLegs?.in?.ground_total) lines.push(`Then ${anchorLegs.anchor?.city} to ${first?.dest?.city} by ${modeWord(anchorLegs.in.mode)}`);
   stopDetails.forEach((s, i) => {
@@ -104,9 +105,8 @@ function tripPrintHtml({ label, stopDetails, dayPlan = [], flight, legs = [], an
   if (flight?.combinable) {
     rows.push(`<tr><td>Flight out: ${esc(flight.origin)} &rarr; ${esc(flight.into_anchor)}</td><td>${esc(eur(flight.into_fare_eur * groupSize))}</td></tr>`);
   } else if (flight?.own) {
-    const airlineLbl = flight.airline ? ` (${esc(flight.airline)})` : '';
     const when = flight.out_date ? `, ${esc(fmtLong(flight.out_date))}${flight.ret_date ? ` &rarr; ${esc(fmtLong(flight.ret_date))}` : ''}` : '';
-    rows.push(`<tr><td>Flight${airlineLbl}: booked yourself${when}</td><td>${flight.cost_total ? esc(eur(flight.cost_total)) : '&mdash;'}</td></tr>`);
+    rows.push(`<tr><td>${esc(ownTravelWord(flight))}: booked yourself${when}</td><td>${flight.cost_total ? esc(eur(flight.cost_total)) : '&mdash;'}</td></tr>`);
   } else if (flight && !flight.driving && !tripHasCar) {
     rows.push(`<tr><td colspan="2" class="note">Flights: ${esc(flightReasonLabel(flight.reason))}</td></tr>`);
   }
@@ -218,13 +218,13 @@ function tripPrintHtml({ label, stopDetails, dayPlan = [], flight, legs = [], an
 
   <h2>Route</h2>
   ${flight?.combinable ? `<div class="stop">Fly <b>${esc(flight.origin)} &rarr; ${esc(flight.into_anchor)}</b> <span class="when">${esc(fmtLong(first?.arriveDate) + timesSuffix(flight.into_time))}</span></div>` : ''}
-  ${flight?.own ? `<div class="stop">${flight.airline ? `Fly in with <b>${esc(flight.airline)}</b>` : '<b>Your own flight in</b>'} <span class="when">${esc(fmtLong(flight.out_date || first?.arriveDate))}</span></div>` : ''}
+  ${flight?.own ? `<div class="stop">Getting there: <b>${esc(ownTravelWord(flight))}</b> <span class="when">${esc(fmtLong(flight.out_date || first?.arriveDate))}</span></div>` : ''}
   ${flight?.driving && driveLegs?.out ? `<div class="stop">Drive out${driveLegs.from ? ` from <b>${esc(driveLegs.from)}</b>` : ''} to <b>${esc(first?.dest?.city)}</b> <span class="when">${driveLegs.out.road_km} km</span></div>` : ''}
   ${stopDetails.map((s, i) => `
     <div class="stop">${i + 1}. <b>${esc(s.dest?.city)}, ${esc(s.dest?.country)}</b>
     <span class="when">${esc(fmtLong(s.arriveDate))} &rarr; ${esc(fmtLong(s.departDate))}, ${s.nights} ${s.nights === 1 ? 'night' : 'nights'}</span></div>`).join('')}
   ${flight?.combinable ? `<div class="stop">Fly home <b>${esc(flight.out_anchor)} &rarr; ${esc(flight.origin)}</b> <span class="when">${esc(fmtLong(last?.departDate) + timesSuffix(flight.out_of_time))}</span></div>` : ''}
-  ${flight?.own && flight.ret_date ? `<div class="stop">${flight.airline ? `Fly home with <b>${esc(flight.airline)}</b>` : '<b>Your own flight home</b>'} <span class="when">${esc(fmtLong(flight.ret_date))}</span></div>` : ''}
+  ${flight?.own && flight.ret_date ? `<div class="stop">Getting home: <b>${esc(ownTravelWord(flight))}</b> <span class="when">${esc(fmtLong(flight.ret_date))}</span></div>` : ''}
   ${flight?.driving && driveLegs?.home ? `<div class="stop">Drive home from <b>${esc(last?.dest?.city)}</b> <span class="when">${driveLegs.home.road_km} km</span></div>` : ''}
 
   ${rows.length ? `<h2>Estimated costs</h2>

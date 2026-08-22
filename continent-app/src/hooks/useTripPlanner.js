@@ -18,10 +18,12 @@ import { loadRestorableDraft, persistTripDraft, clearTripDraft } from '../planne
 
 const DEFAULT_STOP_NIGHTS = 2;
 
-// The two ways between stops Carta cannot price from its own data: an
-// intra-trip flight and an island ferry. They only ever exist because the
-// traveller told us they booked one.
-const OWN_LEG_MODES = new Set(['fly', 'ferry']);
+// A hop the traveller paid for themselves. Flights and island ferries are the
+// two Carta cannot price at all, but the set is all five modes on purpose: the
+// wizard now asks what every leg cost, and a fare somebody actually paid beats
+// an estimate of the same journey. An own entry replaces the estimate for that
+// mode and leaves the other modes priced, so switching back is still one tap.
+const OWN_LEG_MODES = new Set(['fly', 'ferry', 'train', 'bus', 'car']);
 
 /** Airport-transfer choice as { in, out }. Accepts the legacy single-string
  *  shape from older drafts/saved trips (one mode for both directions). */
@@ -351,6 +353,9 @@ export function useTripPlanner(data, countryInsights = null, preferredStayTier =
       return {
         own: true,
         airline: ownFlight.airline || '',
+        // How they actually travel there. Older drafts and saved trips carry
+        // no mode because the only answer used to be a flight.
+        mode: ownFlight.mode || 'fly',
         cost_total: round2(ownFlight.costTotal || 0),
         out_date: ownFlight.outDate || null,
         ret_date: ownFlight.retDate || null,

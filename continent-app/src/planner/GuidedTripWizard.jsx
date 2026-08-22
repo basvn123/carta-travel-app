@@ -10,16 +10,20 @@ import {
   cityTier, cityCompanions, designStays,
 } from '../lib/tripGuide.js';
 import { knownForFacts } from '../lib/knownFor.js';
-import { gemScore, BAGGAGE_OPTIONS, baggageFeePerLeg } from '../lib/trip_planner_pricing.js';
+import { gemScore, BAGGAGE_OPTIONS } from '../lib/trip_planner_pricing.js';
+import { monthOptions } from '../lib/wizardFlights.js';
 import {
-  flyInOptions, flyHomeOptions, monthOptions, orderStaysFromAnchor, flightMeta, fmtFlightDuration, flightBadges,
-} from '../lib/wizardFlights.js';
-import { cheapestStartDates } from '../lib/tripCostOptimizer.js';
-import {
-  TRAVEL_STYLES, STYLE_BY_KEY, styleLifestyle, nearbyAirports, loadFareSlices,
-  flyInOptionsMulti, dedupeByArrival, groupByDeparture, driveOption, countryTransitMatrix,
+  TRAVEL_STYLES, STYLE_BY_KEY, styleLifestyle, nearbyAirports,
 } from '../lib/wizardTransit.js';
 import { plannerStore } from './plannerStore.js';
+import { CountryBrief } from './CountryBrief.jsx';
+import { ReadyTripsStep } from './ReadyTripsStep.jsx';
+import { TravelLegsSection, travelTotal } from './TravelLegsSection.jsx';
+import { TRAVEL_MODE_LABEL } from '../lib/transportLinks.js';
+import { buildCountryBriefs } from '../lib/countryBrief.js';
+import { planRoute, routeOrder } from '../lib/cartaRoute.js';
+import { loadTrip } from '../lib/trips.js';
+import { tripHeadline } from '../lib/tripStory.js';
 import {
   carAdvice, legTransportOptions, airportTransferOptions, preferredPublicMode,
 } from '../lib/transport.js';
@@ -34,6 +38,7 @@ import {
   CameraIcon, CastleIcon, BeachIcon,
   LeafIcon, ScaleIcon, BoltIcon, StarIcon, RouteIcon, BedIcon, MapPinIcon,
   CalendarIcon, PersonIcon, DiamondIcon, DotIcon, LuggageIcon, ChevronRightIcon, LifestyleIcon,
+  SuitcaseIcon,
 } from '../components/Icons.jsx';
 import { PlaneIcon } from '../components/TransportIcons.jsx';
 import { OriginPicker } from '../components/OriginPicker.jsx';
@@ -73,6 +78,43 @@ const OWN_BOOKED_MODES = new Set(['fly', 'ferry']);
 // anything rendered from an SVG (which on Commons is nearly always a diagram).
 const NON_PHOTO_IMG = /coat[_-]of[_-]arms|wappen|blason|escudo|flag|[_-]map[._]|position[_-]of|locator|karte|seal|emblem|logo|\.svg/i;
 
+/**
+ * The fork in the full path, as one control: take a trip somebody already
+ * composed and checked, or pick the cities and let the algorithm route them.
+ *
+ * It sits at the top of the step rather than being a step of its own, because
+ * it is not a question with consequences: both answers lead to the same
+ * summary, and changing your mind costs one tap and loses nothing.
+ */
+function BuildModeSwitch({ mode, onMode, t }) {
+  return (
+    <div className="wmode" role="group" aria-label={t('wizard.buildModeLabel')}>
+      <button
+        className={`wmode-btn ${mode === 'ready' ? 'on' : ''}`}
+        onClick={() => onMode('ready')}
+        aria-pressed={mode === 'ready'}
+      >
+        <SuitcaseIcon size={15} />
+        <span className="wmode-text">
+          <b>{t('wizard.modeReady')}</b>
+          <small>{t('wizard.modeReadySub')}</small>
+        </span>
+      </button>
+      <button
+        className={`wmode-btn ${mode === 'custom' ? 'on' : ''}`}
+        onClick={() => onMode('custom')}
+        aria-pressed={mode === 'custom'}
+      >
+        <SparkIcon size={15} />
+        <span className="wmode-text">
+          <b>{t('wizard.modeCustom')}</b>
+          <small>{t('wizard.modeCustomSub')}</small>
+        </span>
+      </button>
+    </div>
+  );
+}
+
 // The three ways into the wizard, how much is already booked decides how many
 // questions Carta still gets to ask.
 const PATHS = [
@@ -101,19 +143,22 @@ const PATHS = [
 // maps each to its translated display label.
 const PATH_STEPS = {
   // Origin-first: who travels, from where and when is ONE context question,
-  // answered before any destination, so every card the traveller sees after
-  // it carries a real price from their own door.
-  full: ['Trip basics', 'Where', 'Getting there', 'Stay', 'Getting home', 'Finish'],
+  // answered before any destination. The third step is the fork: a ready-made
+  // trip off the shelf, or a route Carta builds around cities you choose.
+  // Both end on the same summary, and neither picks a flight any more.
+  full: ['Trip basics', 'Where', 'Trips', 'Finish'],
   landed: ['Arrival', 'Stay', 'Finish'],
   booked: ['Your trip'],
 };
+// The full path's third step, per build mode. Same position, same length, so
+// the step rail never jumps when the traveller changes their mind.
+const FULL_STEP3 = { ready: 'Trips', custom: 'Stay' };
 const STEP_LABEL_KEYS = {
   'Trip basics': 'wizard.stepBasics',
   'Where': 'wizard.stepWhere',
   'When': 'wizard.stepWhen',
-  'Getting there': 'wizard.stepGettingThere',
+  'Trips': 'wizard.stepTrips',
   'Stay': 'wizard.stepStay',
-  'Getting home': 'wizard.stepGettingHome',
   'Finish': 'wizard.stepFinish',
   'Arrival': 'wizard.stepArrival',
   'Your trip': 'wizard.stepYourTrip',
@@ -171,8 +216,11 @@ const BADGE_LABELS = {
 // page, sitting under the app header instead of covering it. There is nothing
 // behind it to go back to, so it loses the backdrop, the close button and the
 // header strip on the opening question.
+// The app's departure airport used to arrive here as a prop, because picking a
+// flight switched it. Nothing in the wizard chooses a flight any more, so it
+// does not take it and does not change it.
 export function GuidedTripWizard({
-  data, origin, onChangeOrigin, onCancel, onComplete, stayTier = 'home', inline = false,
+  data, onCancel, onComplete, stayTier = 'home', inline = false,
   lifestyle = null, onOpenLifestyle = null,
 }) {
   const { t } = useI18n();
@@ -226,26 +274,39 @@ export function GuidedTripWizard({
   const [countryQuery, setCountryQuery] = useState('');
   const [countryQuizOpen, setCountryQuizOpen] = useState(false);
   const [vibes, setVibes] = useState(() => new Set());
+  // Which country's brief is open beside the grid. One at a time: this is a
+  // reading panel, and two of them would be a comparison table nobody asked
+  // for.
+  const [briefCountry, setBriefCountry] = useState('');
+  // 'ready' takes a published itinerary off the shelf; 'custom' picks cities
+  // and lets the Carta algorithm route them.
+  const [buildMode, setBuildMode] = useState('ready');
+  const [tripPick, setTripPick] = useState(null);     // the chosen trip card
+  const [tripDetail, setTripDetail] = useState(null); // its stops, once loaded
+  const [tripLoading, setTripLoading] = useState(false);
+  const [tripMissing, setTripMissing] = useState(0);  // stops not in the catalogue
+  // What the traveller says the moving about costs, per leg:
+  // { [legKey]: { mode, service, eur } }. Carta prices none of it.
+  const [travelValues, setTravelValues] = useState({});
+  // The published trip this plan IS, when there is one. Everything downstream
+  // reads this rather than (buildMode, tripPick) so the two can never disagree.
+  const readyTrip = buildMode === 'ready' ? tripPick : null;
+  // Driving there in their own car is the one transport answer that changes
+  // how the whole trip is planned and priced, so it is read back out of the
+  // answers rather than asked for twice.
+  const drivingThere = travelValues.out?.mode === 'car';
   const [dateMode, setDateMode] = useState('exact'); // 'exact' | 'flex'
   const [flexPad, setFlexPad] = useState(false);     // exact dates, +-2 days wiggle
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [flexNights, setFlexNights] = useState(7);
   const [flexMonth, setFlexMonth] = useState(''); // '' = any month
-  // 'fly' = Ryanair route pick, 'car' = drive, 'other' = the traveller books
-  // their own flight with another airline (Carta plans stays + ground only).
-  const [arriveMode, setArriveMode] = useState('fly');
-  const [flyInId, setFlyInId] = useState('');
   // When the traveller flies with another airline (arriveMode/landedMode ==
   // 'other'), they tell Carta which airline and what the fare cost so the
   // overview can include it instead of pricing a Ryanair flight they aren't
   // taking. Cost is the total return fare for the whole party, in EUR.
   const [ownAirline, setOwnAirline] = useState('');
   const [ownFlightCost, setOwnFlightCost] = useState('');
-  // When those booked flights actually fly (full path only; the landed path
-  // already asks "day you land"). The outbound date anchors the whole trip.
-  const [ownOutDate, setOwnOutDate] = useState('');
-  const [ownRetDate, setOwnRetDate] = useState('');
   // Where a car trip starts ("where do you drive from?"): typed by the
   // traveller, geocoded via Nominatim on an explicit search action. Everything
   // downstream (drive out/home legs, totals) prices from this point.
@@ -253,15 +314,9 @@ export function GuidedTripWizard({
   const [carFrom, setCarFrom] = useState(null); // { name, lat, lon }
   const [carFromResults, setCarFromResults] = useState([]);
   const [carFromBusy, setCarFromBusy] = useState(false);
-  const [flightView, setFlightView] = useState('map'); // 'map' | 'list'
   // How the Where step shows the catalogue. Photo cards first: a country reads
   // faster from a picture of it than from its outline on a basemap.
   const [whereView, setWhereView] = useState('list'); // 'list' | 'map'
-  const [showAllRoutes, setShowAllRoutes] = useState(false);
-  // The return flight home, picked AFTER the stays are pinned (its own step),
-  // so the traveller flies out of the airport that suits where their trip ends.
-  const [returnFlyId, setReturnFlyId] = useState('');
-  const [returnFlightView, setReturnFlightView] = useState('map'); // 'map' | 'list'
   const [nights, setNights] = useState({});      // { [id]: nights }
   const [order, setOrder] = useState([]);        // included city ids, pick order
   const [staySearch, setStaySearch] = useState('');
@@ -367,33 +422,19 @@ export function GuidedTripWizard({
     }
     return list;
   }, [originPoint?.lat, originPoint?.lon, data, originCode]); // eslint-disable-line react-hooks/exhaustive-deps
-  // The per-origin fare slices for those airports; fetchFares caches, so a
-  // step revisit costs nothing. Multi-airport pricing waits on these.
-  const [fareSlices, setFareSlices] = useState({});
-  useEffect(() => {
-    if (path !== 'full' || nearAirports.length === 0) return undefined;
-    let alive = true;
-    loadFareSlices(nearAirports.map((a) => a.iata)).then((sl) => {
-      if (!alive) return;
-      const clean = {};
-      for (const [k, v] of Object.entries(sl)) if (v) clean[k] = v;
-      setFareSlices(clean);
-    });
-    return () => { alive = false; };
-  }, [path, nearAirports]);
-  const slicesReady = Object.keys(fareSlices).length > 0;
-  const airportKm = useMemo(() => Object.fromEntries(nearAirports.map((a) => [a.iata, a.km])), [nearAirports]);
   // What a bed costs follows the travel style, not the app-wide lifestyle
   // panel; the panel's tier still stands when the style says nothing.
   const effectiveStayTier = STYLE_BY_KEY[travelStyle]?.stayTier || stayTier;
 
-  // The steps for this path. "Getting home" (the return-flight pick) only
-  // applies when the traveller is actually flying, so it's dropped for a
-  // drive/own-flight trip, no empty step to click through.
+  // The steps for this path. On the full path the third one is the fork:
+  // "Trips" offers the published itineraries, "Stay" builds a route out of
+  // cities the traveller picks. Swapping between them keeps the step number,
+  // so the rail below the header never renumbers under anyone's hand.
   const steps = useMemo(() => {
     const s = path ? PATH_STEPS[path] : [];
-    return s.filter((x) => x !== 'Getting home' || arriveMode === 'fly');
-  }, [path, arriveMode]);
+    if (path !== 'full') return s;
+    return s.map((x) => (x === 'Trips' ? FULL_STEP3[buildMode] || 'Trips' : x));
+  }, [path, buildMode]);
 
   // Which step is which, per path (so the render below reads by NAME).
   const stepName = path ? steps[step - 1] : null;
@@ -414,101 +455,25 @@ export function GuidedTripWizard({
   // dropped `flyIn` to null everywhere else, which handed the planner a null
   // anchor and left ground-only first/last stops (gems like Toledo) with no
   // priceable flight, the "no single flight plan" dead end.
-  const routeOptions = useMemo(() => {
-    if (path !== 'full' || arriveMode !== 'fly' || countries.size === 0) return [];
-    // Across every airport near the departure address when the slices are in;
-    // the single-origin picker remains the fallback so the step never blanks.
-    if (slicesReady) {
-      return flyInOptionsMulti(destinations, countries, fareSlices, {
-        startDate: dateMode === 'exact' ? startDate : '',
-        flexMonth: dateMode === 'flex' ? flexMonth : '',
-        notBefore: dateMin,
-        airportKm,
-      });
-    }
-    return flyInOptions(destinations, countries, {
-      startDate: dateMode === 'exact' ? startDate : '',
-      flexMonth: dateMode === 'flex' ? flexMonth : '',
-      notBefore: dateMin,
-    }).map((o) => ({ ...o, key: `${o.origin}:${o.id}` }));
-  }, [path, arriveMode, destinations, countries, dateMode, startDate, flexMonth, dateMin,
-    slicesReady, fareSlices, airportKm]);
-  // Selection is a (departure, arrival) PAIR: the same arrival airport can be
-  // reached from two home airports at two prices, and both must be pickable.
-  const flyIn = routeOptions.find((o) => o.key === flyInId) || null;
-  // The app prices everything from ONE origin at a time, so picking a flight
-  // from a different nearby airport switches the app origin with it: the
-  // planner, the return-flight step and the receipt all follow.
-  useEffect(() => {
-    if (flyIn && onChangeOrigin && flyIn.origin && flyIn.origin !== originCode) {
-      onChangeOrigin(flyIn.origin);
-    }
-  }, [flyIn?.origin]); // eslint-disable-line react-hooks/exhaustive-deps
   const arrivalDest = arrivalId ? destinations[arrivalId] : null;
-  const anchorDest = path === 'landed'
-    ? arrivalDest
-    : (arriveMode === 'fly' && flyIn ? flyIn.dest : null);
-  const anchorId = path === 'landed' ? arrivalId : (arriveMode === 'fly' && flyIn ? flyIn.id : null);
-  const badges = useMemo(
-    () => flightBadges(routeOptions.slice(0, 40), data?.meta?.origins),
-    [routeOptions, data],
-  );
+  // Only the landed path has an arrival anchor now: on the full path the
+  // traveller books their own way in, so Carta is not told which airport it is
+  // and never invents one.
+  const anchorDest = path === 'landed' ? arrivalDest : null;
+  const anchorId = path === 'landed' ? arrivalId : null;
 
-  // ---- The Where step's live pricing matrix ------------------------------
-  // Per country: cheapest flight across the nearby airports, the drive, and
-  // an all-in per-person estimate at the chosen style. Estimates from the
-  // same models the receipt uses; the cards say "≈" because they are.
-  const whereMatrix = useMemo(() => {
-    if (path !== 'full' || stepName !== 'Where' || !slicesReady) return null;
-    return countryTransitMatrix(allCountries, destinations, fareSlices, {
-      from: originPoint ? { lat: originPoint.lat, lon: originPoint.lon } : null,
-      nights: windowNights || flexNights || 7,
-      groupSize,
-      styleKey: travelStyle,
-      startDate: dateMode === 'exact' ? startDate : '',
-      flexMonth: dateMode === 'flex' ? flexMonth : '',
-      notBefore: dateMin,
-      meta: data?.meta,
-      lifestyle,
-    });
-  }, [path, stepName, slicesReady, allCountries, destinations, fareSlices,
-    originPoint?.lat, originPoint?.lon, windowNights, flexNights, groupSize, travelStyle,
-    dateMode, startDate, flexMonth, dateMin, data, lifestyle]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  // ---- Drive vs fly, compared once, on the Getting-there step ------------
-  // The drive to the first chosen country's flagship city, priced by the
-  // app's own car model, so the two mode cards carry real numbers.
-  const driveCompare = useMemo(() => {
-    if (path !== 'full' || stepName !== 'Getting there' || !originPoint) return null;
-    const first = selectedCountries[0];
-    const top = first?.cities?.[0]?.dest;
-    if (!top) return null;
-    return driveOption(data?.meta, originPoint, top, groupSize);
-  }, [path, stepName, originPoint?.lat, originPoint?.lon, selectedCountries, groupSize, data]); // eslint-disable-line react-hooks/exhaustive-deps
-  const cheapestFly = routeOptions.length ? routeOptions[0] : null;
-  // Tags the spec's data model carries (isCheapest / isFastest), computed
-  // honestly: round-trip fly vs round-trip drive per person; flight time vs
-  // one-way drive time.
-  const flyPP = cheapestFly ? cheapestFly.sort_eur * 2 : null;
-  const drivePP = driveCompare ? driveCompare.per_person : null;
-  const flyMinutes = cheapestFly ? (flightMeta(cheapestFly, data?.meta?.origins)?.min ?? null) : null;
-  const modeTags = {
-    fly: {
-      cheapest: flyPP != null && (drivePP == null || flyPP <= drivePP),
-      fastest: flyMinutes != null && driveCompare ? (flyMinutes / 60) < driveCompare.drive_hours_one_way : Boolean(flyMinutes != null && !driveCompare),
-    },
-    car: {
-      cheapest: drivePP != null && (flyPP == null || drivePP < flyPP),
-      fastest: driveCompare && flyMinutes != null ? driveCompare.drive_hours_one_way <= (flyMinutes / 60) : false,
-    },
-  };
-  // The airport matrix: every (departure airport, arrival) fare, grouped per
-  // departure airport, so "fly from Brussels or from Charleroi?" is answered
-  // with prices instead of a hunch.
-  const airportGroups = useMemo(
-    () => (slicesReady && routeOptions.length ? groupByDeparture(routeOptions, nearAirports) : []),
-    [slicesReady, routeOptions, nearAirports],
+  // ---- What each country actually costs and holds ------------------------
+  // The Where step used to paint a flight fare and an all-in total on every
+  // card. Both moved with the calendar rather than with the country, and they
+  // crowded out the two figures that ARE about the place: a bed and a day of
+  // eating out. Transport is booked outside Carta now, so the cards carry the
+  // catalogue's own measurements instead (lib/countryBrief.js).
+  const countryBriefs = useMemo(
+    () => buildCountryBriefs(destinations, countryInsights),
+    [destinations, countryInsights],
   );
+  const openBrief = briefCountry ? countryBriefs.get(briefCountry) || null : null;
+
 
   // ---- Curated multi-stop templates for the Stay step --------------------
   // Duration-fitted route shapes (pair / triangle / grand tour), each a real
@@ -533,8 +498,9 @@ export function GuidedTripWizard({
         totalNights: n,
         maxStops: d.stops,
         mustIncludeIds: [],
-        // ownCarChosen is declared further down (after canNext); same rule.
-        transport: (path === 'landed' ? landedMode === 'car' : arriveMode === 'car') ? 'owncar' : 'auto',
+        // ownCarChosen is declared further down (after canNext); this is the
+        // same answer read straight off the state it comes from.
+        transport: (path === 'landed' ? landedMode === 'car' : drivingThere) ? 'owncar' : 'auto',
       });
       if (picks.length < 2) continue;
       const sig = picks.map((x) => x.id).join('|');
@@ -551,7 +517,7 @@ export function GuidedTripWizard({
     }
     return out;
   }, [path, stepName, stayStyle, includedIds.length, windowNights, flexNights,
-    destinations, countries, anchorDest, anchorId, landedMode, arriveMode]); // eslint-disable-line react-hooks/exhaustive-deps
+    destinations, countries, anchorDest, anchorId, landedMode, drivingThere]); // eslint-disable-line react-hooks/exhaustive-deps
   const applyTemplate = (tpl) => {
     const nextNights = {};
     tpl.picks.forEach((x) => { nextNights[x.id] = x.nights; });
@@ -567,54 +533,153 @@ export function GuidedTripWizard({
   // LAST stop, then offer the airports you can fly home from near it. The exact
   // return date is the start plus the nights actually planned; when flexible we
   // fall back to the cheapest stored return.
-  const orderedIncludedIds = useMemo(
-    () => orderStaysFromAnchor(includedIds, destinations, anchorDest),
-    [includedIds, destinations, anchorDest],
-  );
-  const lastStopDest = orderedIncludedIds.length
-    ? destinations[orderedIncludedIds[orderedIncludedIds.length - 1]] : null;
-  const returnDate = dateMode === 'exact' && startDate && totalNights
-    ? addDays(startDate, totalNights) : '';
-  const homeOptions = useMemo(() => {
-    if (stepName !== 'Getting home' || arriveMode !== 'fly' || !flyIn) return [];
-    return flyHomeOptions(destinations, {
-      origin: flyIn.origin,
-      lastDest: lastStopDest,
-      returnDate,
-      flexMonth: dateMode === 'flex' ? flexMonth : '',
-      outAnchorId: flyIn.id,
-      notBefore: dateMin,
+  // The Carta algorithm decides the order (lib/cartaRoute.js: nearest
+  // neighbour, then 2-opt and Or-opt to untangle it). A published trip is
+  // exempt: pipeline/trips already sequenced it and re-routing someone else's
+  // checked itinerary would only invent a different one.
+  const orderedIncludedIds = useMemo(() => {
+    if (readyTrip) return includedIds;
+    return routeOrder(includedIds, destinations, {
+      start: anchorDest && anchorDest.lat != null
+        ? { lat: anchorDest.lat, lon: anchorDest.lon }
+        : (originPoint ? { lat: originPoint.lat, lon: originPoint.lon } : null),
+      fixFirst: Boolean(anchorId && includedIds[0] === anchorId),
     });
-  }, [stepName, arriveMode, flyIn, destinations, lastStopDest, returnDate, dateMode, flexMonth, dateMin]);
-  const flyHome = homeOptions.find((o) => o.id === returnFlyId) || null;
-  // The chosen home airport as a plain destination, resolvable on ANY step
-  // (homeOptions only exists on the return step); used by the recap + finish.
-  const flyHomeDest = arriveMode === 'fly' && returnFlyId ? destinations[returnFlyId] : null;
+  }, [readyTrip, includedIds, destinations, anchorDest, anchorId, originPoint?.lat, originPoint?.lon]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Rough driving reach per selected country: straight-line to the country's
-  // centroid with the app's road-detour factor. Not shown as advice any more,
-  // it only scales the fuel-and-tolls line in the running estimate below.
-  const driveNotes = useMemo(() => {
-    if (!originRec || originRec.lat == null) return [];
-    return selectedCountries.map((c) => {
-      const km = haversineKm(originRec.lat, originRec.lon, c.centroid.lat, c.centroid.lon);
-      if (km == null) return null;
-      const roadKm = Math.round(km * 1.3);
-      return { country: c.country, iso2: c.iso2, km: roadKm, hours: Math.round((roadKm / 90) * 10) / 10 };
-    }).filter(Boolean);
-  }, [selectedCountries, originRec]);
-
-  // The return-flight option list only exists while its step is showing (a
-  // deliberate perf gate), but the running estimate needs the chosen fare on
-  // every later step too, so cache it the moment it's picked.
-  const [returnFareCache, setReturnFareCache] = useState(null); // { id, eur }
+  // ---- A published trip, taken off the shelf ------------------------------
+  // The card carries enough to choose by; the stops, their nights and their
+  // coordinates arrive with the detail file. Loading it IS accepting it: the
+  // stays become this wizard's stays, so the summary, the route and the
+  // hand-over to the planner all work exactly as they do for a built trip.
   useEffect(() => {
-    if (flyHome) {
-      setReturnFareCache({ id: flyHome.id, eur: flyHome.ret_exact_eur ?? flyHome.ret_cheapest?.eur ?? null });
-    } else if (!returnFlyId) {
-      setReturnFareCache(null);
+    if (!tripPick) { setTripDetail(null); setTripMissing(0); return undefined; }
+    let live = true;
+    setTripLoading(true);
+    loadTrip(tripPick.id).then((detail) => {
+      if (!live) return;
+      setTripLoading(false);
+      if (!detail) { setTripDetail(null); return; }
+      setTripDetail(detail);
+      const stops = (detail.stops || []).filter((s) => destinations[s.dest]);
+      setTripMissing((detail.stops || []).length - stops.length);
+      const nextNights = {};
+      stops.forEach((s) => { nextNights[s.dest] = Math.max(1, s.nights || 1); });
+      setNights(nextNights);
+      setOrder(stops.map((s) => s.dest));
+    });
+    return () => { live = false; };
+  }, [tripPick?.id, destinations]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // ---- The trip as dates: one anchor, everything else relative to it ------
+  // Nothing below stores a calendar date of its own. Move the start and the
+  // whole itinerary moves with it, which is what makes "that flight is forty
+  // euros cheaper two days later" a one-tap change instead of a re-plan.
+  const tripStartDate = startDate
+    || (flexMonth ? laterISO(`${flexMonth}-05`, dateMin) : dateMin) || '';
+  const stopDates = useMemo(() => {
+    const out = [];
+    let cursor = 0;
+    for (const id of orderedIncludedIds) {
+      out.push({
+        id,
+        arrive: tripStartDate ? addDays(tripStartDate, cursor) : '',
+        nights: nights[id] || 0,
+      });
+      cursor += nights[id] || 0;
     }
-  }, [flyHome, returnFlyId]);
+    return out;
+  }, [orderedIncludedIds, nights, tripStartDate]);
+
+  // Where the trip leaves from, as a point the link builders understand.
+  const homePoint = useMemo(() => ({
+    city: originPlace?.name || originCity,
+    country: null,
+    iso2: originPlace?.iso2 || originRec?.iso2 || null,
+    lat: originPoint?.lat ?? null,
+    lon: originPoint?.lon ?? null,
+    iata: nearAirports[0]?.iata || originCode || null,
+  }), [originPlace, originCity, originRec, originPoint?.lat, originPoint?.lon, nearAirports, originCode]);
+
+  const pointOf = (id) => {
+    const d = destinations[id];
+    if (!d) return null;
+    return {
+      city: String(d.city || '').replace(/\s*\([^)]*\)\s*$/, ''),
+      country: d.country,
+      iso2: d.iso2,
+      lat: d.city_lat ?? d.lat,
+      lon: d.city_lon ?? d.lon,
+      iata: d.iata || null,
+      anchorIata: d.anchor_airport || null,
+    };
+  };
+
+  // Every hop of the trip, in order: out from home, stop to stop, home again.
+  const travelLegs = useMemo(() => {
+    if (!stopDates.length || !homePoint) return [];
+    const legs = [];
+    const first = pointOf(stopDates[0].id);
+    const lastRow = stopDates[stopDates.length - 1];
+    const last = pointOf(lastRow.id);
+    const endDate = tripStartDate ? addDays(tripStartDate, totalNights) : '';
+    if (first) {
+      legs.push({
+        key: 'out', kind: 'out', from: homePoint, to: first,
+        date: stopDates[0].arrive,
+        // A return search is what most people actually buy, so the outbound
+        // link carries the way home too when both ends are flown.
+        returnDate: endDate,
+      });
+    }
+    for (let i = 0; i < stopDates.length - 1; i += 1) {
+      const a = pointOf(stopDates[i].id);
+      const b = pointOf(stopDates[i + 1].id);
+      if (a && b) legs.push({ key: `leg${i}`, kind: 'inter', index: i, from: a, to: b, date: stopDates[i + 1].arrive });
+    }
+    if (last) {
+      legs.push({ key: 'back', kind: 'back', from: last, to: homePoint, date: endDate });
+    }
+    return legs;
+  }, [stopDates, homePoint, tripStartDate, totalNights, destinations]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const setTravelLeg = (key, patch) => {
+    setTravelValues((prev) => ({ ...prev, [key]: { ...prev[key], ...patch } }));
+  };
+  const travelSpend = travelTotal(travelValues);
+
+  // ---- The Carta algorithm, on the cities the traveller chose -------------
+  // Order and nights in one call. It runs live on the Stay step so the panel
+  // can say what it did before the traveller commits to it, and it runs again
+  // in finish() so the trip that reaches the planner IS the routed one.
+  const cartaPlan = useMemo(() => {
+    if (readyTrip || includedIds.length < 2) return null;
+    return planRoute({
+      ids: includedIds,
+      destinations,
+      totalNights: windowNights || totalNights || includedIds.length,
+      start: anchorDest && anchorDest.lat != null
+        ? { lat: anchorDest.lat, lon: anchorDest.lon }
+        : (originPoint ? { lat: originPoint.lat, lon: originPoint.lon } : null),
+      fixFirst: Boolean(anchorId && includedIds[0] === anchorId),
+      pace,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [readyTrip, includedIds, destinations, windowNights, totalNights, anchorDest, anchorId,
+    originPoint?.lat, originPoint?.lon, pace]);
+  const nightsDiffer = Boolean(cartaPlan)
+    && cartaPlan.order.some((id) => (nights[id] || 0) !== cartaPlan.nights[id]);
+  const applyCartaNights = () => {
+    if (!cartaPlan) return;
+    const next = { ...nights };
+    for (const id of includedIds) next[id] = 0;
+    for (const id of cartaPlan.order) next[id] = cartaPlan.nights[id];
+    // These nights are now a decision, not a placeholder, so adding a city
+    // afterwards must not silently re-split them into equal shares.
+    setAutoNightIds(new Set());
+    setNights(next);
+    setOrder(cartaPlan.order);
+  };
 
   const [estimateOpen, setEstimateOpen] = useState(false);
 
@@ -774,7 +839,7 @@ export function GuidedTripWizard({
       totalNights: windowNights || 5,
       maxStops: stayStyle === 'single' ? 1 : (quizStops || null),
       mustIncludeIds: [...quizMust],
-      transport: (arriveMode === 'car' || landedMode === 'car') ? 'owncar' : 'auto',
+      transport: ownCarChosen ? 'owncar' : 'auto',
     });
     if (!picks.length) return;
     const nextNights = {};
@@ -829,23 +894,18 @@ export function GuidedTripWizard({
     || (stepName === 'Trip basics' && (dateMode === 'flex'
       ? flexNights >= 1
       : Boolean(startDate && endDate && windowNights > 0)))
-    || (stepName === 'Getting there' && (arriveMode === 'car' || arriveMode === 'other' || flyIn != null))
+    || (stepName === 'Trips' && Boolean(tripPick && tripDetail))
     || (stepName === 'Arrival' && Boolean(arrivalId && startDate && flexNights >= 1))
     || (stepName === 'Stay' && includedIds.length > 0)
-    || (stepName === 'Getting home' && (flyHome != null || homeOptions.length === 0))
     || stepName === 'Finish'
   );
 
-  // Choosing to arrive by car implies driving between stops too (they'll have
-  // the car); still changeable per leg in the planner.
-  const pickArriveMode = (mode) => {
-    setArriveMode(mode);
-    if (mode === 'car') setFlyInId('');
-  };
-
   // One truth for "this trip is their own car" across both paths: it gates the
   // rental-car advice, asks where they drive from, and skips flight pricing.
-  const ownCarChosen = path === 'landed' ? landedMode === 'car' : arriveMode === 'car';
+  // Driving your own car changes the advice, the legs and the pricing, so it
+  // is read from wherever that answer was actually given: the landed path
+  // still asks it outright, the full path infers it from the way out.
+  const ownCarChosen = path === 'landed' ? landedMode === 'car' : drivingThere;
 
   // One inline calendar, two ends. A click with no start yet (or a complete
   // range, or a date before the current start) begins a new range; the next
@@ -886,19 +946,16 @@ export function GuidedTripWizard({
     setEndDate('');
     setFlexNights(7);
     setFlexMonth('');
-    setArriveMode('fly');
-    setFlyInId('');
     setOwnAirline('');
     setOwnFlightCost('');
-    setOwnOutDate('');
-    setOwnRetDate('');
+    setBuildMode('ready');
+    setTripPick(null);
+    setTripDetail(null);
+    setTravelValues({});
+    setBriefCountry('');
     setCarFromQuery('');
     setCarFrom(null);
     setCarFromResults([]);
-    setFlightView('map');
-    setShowAllRoutes(false);
-    setReturnFlyId('');
-    setReturnFlightView('map');
     setNights({});
     setOrder([]);
     setAutoNightIds(new Set());
@@ -955,7 +1012,10 @@ export function GuidedTripWizard({
   // defaults to its per-leg pick (or the car they arrive with) and every leg
   // stays adjustable in the planner.
   const finish = () => {
-    const orderedIds = orderStaysFromAnchor(includedIds, destinations, anchorDest);
+    // A published trip keeps the order pipeline/trips composed for it; a trip
+    // the traveller built gets routed by the Carta algorithm one last time, so
+    // what reaches the planner is the sequence, not the click order.
+    const orderedIds = readyTrip ? includedIds : orderedIncludedIds;
     // Days start EMPTY on purpose: sights are chosen in the Day planner
     // ("Plan this day"), not pre-stuffed here, a pre-filled "2 to visit" on
     // every date read as a commitment nobody made.
@@ -965,76 +1025,79 @@ export function GuidedTripWizard({
       activities: [],
     }));
 
+    // One anchor date, everything else relative to it. Nothing reprices dates
+    // any more: Carta holds no fare to shop for a cheaper day with, and the
+    // traveller shifts the whole trip themselves from the transport section.
     let start = (path === 'landed' || dateMode === 'exact') ? startDate : '';
-    const canRepriceDates = path === 'full' && arriveMode === 'fly' && stops.length > 0;
-    if (canRepriceDates && (dateMode === 'flex' || (flexPad && start))) {
-      // Flight pricing keys off the first/last stop's own routes; when those
-      // are ground-only gems, price via the chosen fly-in instead.
-      const flyable = (id) => Object.keys(destinations[id]?.routes || {}).length > 0;
-      const priceIds = orderedIds.slice();
-      if (flyIn) {
-        if (!flyable(priceIds[0])) priceIds[0] = flyIn.id;
-        if (!flyable(priceIds[priceIds.length - 1])) priceIds[priceIds.length - 1] = flyIn.id;
-      }
-      const res = cheapestStartDates(
-        priceIds.map((id) => ({ destinationId: id })),
-        destinations, totalNights, groupSize, '', { limit: 60 },
-      );
-      let candidates = res.candidates;
-      if (dateMode === 'flex' && flexMonth) {
-        candidates = candidates.filter((c) => c.start.startsWith(flexMonth));
-      }
-      if (dateMode === 'exact' && flexPad && start) {
-        // "My dates can shift +-2 days": keep the chosen start unless a real
-        // fare within the wiggle room beats it.
-        const lo = addDays(start, -2);
-        const hi = addDays(start, 2);
-        candidates = candidates.filter((c) => c.start >= lo && c.start <= hi);
-      }
-      start = candidates[0]?.start || start || flyIn?.cheapest?.date || '';
-    }
-    // Booked own flights fly on a known day: that day IS the trip start.
-    if (path === 'full' && arriveMode === 'other' && ownOutDate) start = ownOutDate;
-    // Car trips (or no fare data at all) still need a concrete start date.
+    if (path === 'landed' && landedMode === 'other' && startDate) start = startDate;
     // The 5th of a flexible month is in the past when that month is THIS
     // month, so the floor applies here too.
     if (!start) start = flexMonth ? laterISO(`${flexMonth}-05`, dateMin) : (dateMin || '');
+    const end = start && totalNights ? addDays(start, totalNights) : null;
 
     const label = path === 'landed' && arrivalDest
       ? arrivalDest.country
-      : selectedCountries.map((c) => c.country).slice(0, 2).join(' & ');
+      : (readyTrip ? tripHeadline(readyTrip, t)
+        : selectedCountries.map((c) => c.country).slice(0, 2).join(' & '));
+
+    // What the traveller told us about the way there and the way home, in the
+    // shape the planner already understands: one own-travel record for the
+    // outbound and return together, and a per-leg mode and price for the hops
+    // in between. A figure they typed always beats an estimate.
+    const out = travelValues.out || {};
+    const back = travelValues.back || {};
+    const legModes = {};
+    const ownLegs = {};
+    for (const leg of travelLegs) {
+      if (leg.kind !== 'inter') continue;
+      const v = travelValues[leg.key];
+      if (!v?.mode) continue;
+      legModes[leg.index] = v.mode;
+      const paid = Math.max(0, Math.round(Number(String(v.eur ?? '').replace(',', '.')) || 0));
+      if (paid > 0) ownLegs[leg.index] = { mode: v.mode, eur: paid };
+    }
+    const paidOut = Math.max(0, Math.round(Number(String(out.eur ?? '').replace(',', '.')) || 0));
+    const paidBack = Math.max(0, Math.round(Number(String(back.eur ?? '').replace(',', '.')) || 0));
+    const ownTravel = path === 'full'
+      ? {
+        airline: [out.service, back.service].map((s) => (s || '').trim()).filter(Boolean).join(' / '),
+        mode: out.mode || back.mode || 'fly',
+        costTotal: paidOut + paidBack,
+        outDate: start || null,
+        retDate: end,
+      }
+      : null;
 
     onComplete({
       startDate: start,
       groupSize,
       stayTier: effectiveStayTier,
-      transport: (arriveMode === 'car' || landedMode === 'car') ? 'owncar' : 'auto',
+      // Driving there means driving between the stops too, which is what
+      // 'owncar' tells the planner. Everything else leaves each leg open.
+      transport: (drivingThere || landedMode === 'car') ? 'owncar' : 'auto',
       pace,
       baggage,
-      anchorId: path === 'landed' ? (landedMode === 'car' ? null : arrivalId) : (arriveMode === 'fly' && flyIn ? flyIn.id : null),
-      // The exact departure airport the traveller picked for their fly-in, so
-      // the overview prices the same inbound flight (same origin) they saw here.
-      anchorOrigin: arriveMode === 'fly' && flyIn ? flyIn.origin : null,
-      // The airport they chose to fly HOME from (its own "Getting home" step,
-      // after the stays were pinned), so the return leg matches too.
-      returnAnchorId: flyHomeDest ? returnFlyId : null,
-      // Flying with another airline (not Ryanair): carry the airline name and
-      // the fare the traveller entered so the overview shows their real flight
-      // instead of a Ryanair fare. Present whenever they chose "other", even
-      // with blank fields, that's the signal to skip Ryanair pricing.
-      ownFlight: (path === 'landed' ? landedMode === 'other' : arriveMode === 'other')
-        ? {
-          airline: ownAirline.trim(),
-          costTotal: Math.max(0, Math.round(Number(ownFlightCost) || 0)),
-          // When the flights fly: the landed path's "day you land" is the
-          // outbound day; the full path asks both days explicitly.
-          outDate: (path === 'landed' ? startDate : ownOutDate) || null,
-          retDate: (path === 'landed' ? null : ownRetDate) || null,
-        }
-        : null,
+      anchorId: path === 'landed' ? (landedMode === 'car' ? null : arrivalId) : null,
+      anchorOrigin: null,
+      returnAnchorId: null,
+      // Carta prices no flight on the full path any more, so this is always
+      // set there: it is both the traveller's own figure and the signal to
+      // stop pricing one. The landed path keeps its own answer.
+      ownFlight: path === 'landed'
+        ? (landedMode === 'other'
+          ? {
+            airline: ownAirline.trim(),
+            costTotal: Math.max(0, Math.round(Number(ownFlightCost) || 0)),
+            outDate: startDate || null,
+            retDate: null,
+          }
+          : null)
+        : ownTravel,
       // Where an own-car trip starts, so the planner prices the drive out and
       // home from the traveller's own door, not the origin airport.
-      carHome: ownCarChosen ? carFrom : null,
+      carHome: drivingThere ? (originPlace || carFrom) : (landedMode === 'car' ? carFrom : null),
+      legModes,
+      ownLegs,
       label,
       stops,
     });
@@ -1207,7 +1270,7 @@ export function GuidedTripWizard({
       if (!im) return;
       legs.push({ label, eur: im.eur_total, km: inter.road_km, mode: key, hours: im.hours });
     };
-    const flying = path === 'landed' ? landedMode !== 'car' : arriveMode !== 'car';
+    const flying = !ownCarChosen;
     if (flying && anchorDest && anchorId && anchorId !== stops[0].id) {
       transfer(anchorDest, stops[0].dest, t('wizard.legFromAirport', { from: anchorDest.city, city: stops[0].dest.city }));
     }
@@ -1230,17 +1293,11 @@ export function GuidedTripWizard({
       legs.push({ label: t('wizard.legBetween', { a: a.city, b: b.city }), eur: m.eur_total, km: opts.road_km, mode: key, hours: m.hours });
     }
 
-    // Last stay to the airport you fly home from.
-    const last = stops[stops.length - 1];
-    if (flying && flyHomeDest && returnFlyId && returnFlyId !== last.id) {
-      transfer(last.dest, flyHomeDest, t('wizard.legToAirport', { from: last.dest.city, city: flyHomeDest.city }));
-    }
-
     if (!legs.length) return null;
     const total = legs.reduce((s, l) => s + (l.eur || 0), 0);
     return { legs, total };
-  }, [path, includedIds, orderedIncludedIds, destinations, anchorDest, anchorId, arriveMode, landedMode,
-    flyHomeDest, returnFlyId, ownCarChosen, groupSize, countryInsights, data]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [path, includedIds, orderedIncludedIds, destinations, anchorDest, anchorId, landedMode,
+    ownCarChosen, groupSize, countryInsights, data]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // ---- Running price estimate, alive on every step ----------------------
   // Every choice that adds cost adds a line the moment it's made (flight,
@@ -1253,31 +1310,13 @@ export function GuidedTripWizard({
     if (!path || path === 'booked') return null;
     const gs = Math.max(1, groupSize || 1);
     const lines = [];
-    const flying = (path === 'landed' ? landedMode : arriveMode);
-    if (flying === 'fly' && flyIn) {
-      const pp = flyIn.exact_eur ?? flyIn.cheapest?.eur ?? null;
-      if (pp != null) {
-        lines.push({ key: 'flyIn', label: `Flight out to ${flyIn.dest?.city || 'your arrival city'}`, eur: pp * gs, sub: `${eur(pp)} pp one-way` });
-      }
+    // Getting there is the traveller's own number now, on every path: Carta
+    // holds no fare for it, so the only honest line is the one they typed.
+    if (path === 'landed' && landedMode === 'other' && Number(ownFlightCost) > 0) {
+      lines.push({ key: 'ownFlight', label: t('wizard.estOwnFlight', { airline: ownAirline || t('wizard.ownFlight') }), eur: Number(ownFlightCost), sub: t('wizard.estYouEntered') });
     }
-    if (flying === 'fly' && returnFareCache?.eur != null && returnFlyId) {
-      lines.push({ key: 'flyHome', label: `Flight home from ${destinations[returnFareCache.id]?.city || 'your last stop'}`, eur: returnFareCache.eur * gs, sub: `${eur(returnFareCache.eur)} pp one-way` });
-    }
-    if (flying === 'other' && Number(ownFlightCost) > 0) {
-      lines.push({ key: 'ownFlight', label: `Your ${ownAirline || 'own'} flights`, eur: Number(ownFlightCost), sub: 'the fare you entered, whole party' });
-    }
-    if (flying === 'fly' && baggage !== 'cabin' && (flyIn || returnFlyId)) {
-      const legs = (flyIn ? 1 : 0) + (returnFlyId ? 1 : 0);
-      const fee = baggageFeePerLeg(baggage) * gs * legs;
-      if (fee > 0) lines.push({ key: 'bags', label: 'Bags', eur: fee, sub: `${eur(baggageFeePerLeg(baggage))} pp per flight` });
-    }
-    if (flying === 'car' && driveNotes.length > 0) {
-      // Rough scale check only: fuel + tolls out and home to the first chosen
-      // country, at the app's average consumption and toll rates. The planner
-      // prices the real route once the stops are pinned.
-      const km = driveNotes[0].km;
-      const cost = Math.round(km * 2 * 0.14);
-      lines.push({ key: 'drive', label: 'Drive there & home (fuel + tolls, rough)', eur: cost, sub: `~${km} km each way` });
+    if (path === 'full' && travelSpend > 0) {
+      lines.push({ key: 'travel', label: t('wizard.estTravel'), eur: travelSpend, sub: t('wizard.estYouEntered') });
     }
     if (includedIds.length > 0) {
       let stayTotal = 0;
@@ -1316,7 +1355,11 @@ export function GuidedTripWizard({
         });
       }
     }
-    if (groundLegs) {
+    // Carta still estimates the hops for a traveller who only told us where
+    // they landed. On the full path the traveller answers every leg
+    // themselves, and an estimate beside their own figure would be the same
+    // journey counted twice.
+    if (groundLegs && path === 'landed') {
       lines.push({
         key: 'ground',
         label: `Getting between your stops, ${groundLegs.legs.length} ${groundLegs.legs.length === 1 ? 'leg' : 'legs'}`,
@@ -1327,8 +1370,8 @@ export function GuidedTripWizard({
     if (!lines.length) return null;
     const total = lines.reduce((s, l) => s + l.eur, 0);
     return { lines, total, gs };
-  }, [path, arriveMode, landedMode, flyIn, returnFareCache, returnFlyId, ownFlightCost, ownAirline,
-    baggage, driveNotes, includedIds, nights, totalNights, destinations, groupSize, groundLegs,
+  }, [path, landedMode, ownFlightCost, ownAirline, travelSpend,
+    includedIds, nights, totalNights, destinations, groupSize, groundLegs,
     travelStyle, data, effectiveStayTier, lifestyle]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // What the last answer did to the total. estBump is a counter used as a React
@@ -1470,59 +1513,6 @@ export function GuidedTripWizard({
     return map;
   }, [includedIds, destinations]);
 
-  // The interesting places around a picked flight: the sell for choosing it.
-  // Ranked to surface a genuine MIX, the small cozy villages and hidden gems
-  // close by, not only the big famous cities an hour or two away. Proximity and
-  // character (gem/hidden-gem) count heavily so nearby charm isn't buried under
-  // a distant metropolis's raw rating.
-  const nearbyForFlight = useMemo(() => {
-    if (!flyIn || !flyIn.dest || flyIn.dest.lat == null) return [];
-    const a = flyIn.dest;
-    return Object.entries(destinations)
-      .filter(([id, d]) => id !== flyIn.id && d.lat != null && d.city !== a.city)
-      .map(([id, d]) => ({ id, dest: d, km: Math.round(haversineKm(a.lat, a.lon, d.lat, d.lon)) }))
-      .filter((x) => x.km != null && x.km <= NEARBY_KM)
-      .map((x) => {
-        const d = x.dest;
-        const appeal = d.rating?.score ?? d.beauty?.score ?? 0;
-        const proximity = 1 - x.km / NEARBY_KM; // 1 right next door, 0 at the edge
-        const score = appeal
-          + proximity * 3.5                    // strongly prefer what's actually close
-          + (d.tier === 'gem' ? 1.2 : 0)       // small towns and villages, not just airports
-          + (d.rating?.hidden_gem ? 1.1 : 0);  // pull the cozy hidden gems up the list
-        return { ...x, score };
-      })
-      .sort((a2, b2) => b2.score - a2.score)
-      .slice(0, 8);
-  }, [flyIn, destinations]);
-  const nearbyAdvice = useMemo(() => {
-    if (!nearbyForFlight.length) return null;
-    return carAdvice(nearbyForFlight.map((x) => x.dest), groupSize, countryInsights);
-  }, [nearbyForFlight, groupSize, countryInsights]);
-
-  // A fuller, data-driven "what's in this region" line for the arrival panel,   // the texture the one-line blurb can't carry: how much small-town character
-  // and heritage sits within a short drive of where you land.
-  const flightRegion = useMemo(() => {
-    if (!flyIn?.dest || !nearbyForFlight.length) return null;
-    const d = flyIn.dest;
-    const gemN = nearbyForFlight.filter((x) => x.dest.tier === 'gem').length;
-    const hiddenN = nearbyForFlight.filter((x) => x.dest.rating?.hidden_gem).length;
-    const cityN = nearbyForFlight.length - gemN;
-    const unescoN = nearbyForFlight.filter((x) => x.dest.beauty?.unesco).length
-      + (d.beauty?.unesco ? 1 : 0);
-    const pieces = [];
-    if (gemN) {
-      pieces.push(t(gemN === 1 ? 'wizard.smallTownOne' : 'wizard.smallTowns', { n: gemN })
-        + (hiddenN ? t(hiddenN === 1 ? 'wizard.oneHiddenGem' : 'wizard.hiddenGems', { n: hiddenN }) : ''));
-    }
-    if (cityN) pieces.push(t(cityN === 1 ? 'wizard.largerCityOne' : 'wizard.largerCities', { n: cityN }));
-    if (!pieces.length) return null;
-    const list = pieces.length === 2 ? t('wizard.listPlus', { a: pieces[0], b: pieces[1] }) : pieces[0];
-    let s = t('wizard.withinTwoHours', { city: d.city, list });
-    if (unescoN) s += ` ${t(unescoN === 1 ? 'wizard.unescoOne' : 'wizard.unescoMany', { n: unescoN })}`;
-    return s;
-  }, [flyIn, nearbyForFlight, t]);
-
   // Arrival-city matches for the "travel is booked" path.
   const arrivalMatches = useMemo(() => {
     const aq = arrivalQuery.trim().toLowerCase();
@@ -1566,28 +1556,6 @@ export function GuidedTripWizard({
     );
   };
 
-  const visibleRoutes = showAllRoutes ? routeOptions : routeOptions.slice(0, ROUTES_PREVIEW);
-
-  // The traveller shouldn't sit on a stale fly-in that no longer exists after
-  // going back to change dates/countries.
-  useEffect(() => {
-    if (flyInId && stepName === 'Getting there' && routeOptions.length && !routeOptions.some((o) => o.key === flyInId)) {
-      setFlyInId('');
-    }
-  }, [routeOptions, flyInId, stepName]);
-
-  // Default the return flight to the nearest home airport (top of the list) the
-  // moment the step opens, and drop a pick that no longer fits after the stays
-  // or dates changed, so the step is never blank and never stale.
-  useEffect(() => {
-    if (stepName !== 'Getting home') return;
-    if (homeOptions.length && (!returnFlyId || !homeOptions.some((o) => o.id === returnFlyId))) {
-      setReturnFlyId(homeOptions[0].id);
-    } else if (!homeOptions.length && returnFlyId) {
-      setReturnFlyId('');
-    }
-  }, [stepName, homeOptions, returnFlyId]);
-
   // Landing somewhere pins that country onto the trip, so the Stay step has a
   // region to talk about (more countries can still be added by search).
   useEffect(() => {
@@ -1622,13 +1590,13 @@ export function GuidedTripWizard({
     } else if (dateMode === 'flex') {
       recapChips.push({ Icon: CalendarIcon, text: `${flexNights} ${t('wizard.nights')}, ${flexMonth ? months.find((m) => m.key === flexMonth)?.label || flexMonth : t('wizard.cheapestMonth')}` });
     }
-    if (path === 'full' && stepName !== 'Getting there') {
-      if (arriveMode === 'fly' && flyIn) recapChips.push({ Icon: PlaneIcon, text: t('wizard.flyIntoRecap', { city: flyIn.dest.city }) });
-      if (arriveMode === 'car') recapChips.push({ Icon: CarIcon, text: t('wizard.goingByCar') });
-      if (arriveMode === 'other') recapChips.push({ Icon: PlaneIcon, text: t('wizard.ownFlight') });
-    }
-    if (path === 'full' && stepName === 'Finish' && flyHomeDest) {
-      recapChips.push({ Icon: PlaneIcon, text: t('wizard.flyHomeRecap', { city: flyHomeDest.city }) });
+    // How they get there is their own answer now, so the recap repeats it back
+    // rather than naming an airport Carta chose.
+    if (path === 'full' && travelValues.out?.mode) {
+      recapChips.push({
+        Icon: travelValues.out.mode === 'car' ? CarIcon : RouteIcon,
+        text: t(TRAVEL_MODE_LABEL[travelValues.out.mode]),
+      });
     }
     if ((stepName === 'Stay' || stepName === 'Finish') && stayStyle === 'single') {
       recapChips.push({ Icon: BedIcon, text: t('wizard.oneHomeBaseChip') });
@@ -1657,26 +1625,17 @@ export function GuidedTripWizard({
       },
       travelers: { adults, children: kids, lifestyle: travelStyle },
       selectedDestination: [...countries][0] || null,
-      selectedTransit: flyIn
+      // How they told us they are getting there, and what they said it cost.
+      // Carta no longer shops for a fare, so there is no cheapest or fastest
+      // to claim and the store carries neither.
+      selectedTransit: travelValues.out?.mode
         ? {
-          type: 'flight',
-          providerOrRoute: `${flyIn.origin}-${flyIn.anchor}`,
-          departureAirport: flyIn.origin,
-          arrivalAirport: flyIn.anchor,
-          durationMinutes: flightMeta(flyIn, data?.meta?.origins)?.min || 0,
-          estimatedCostEur: flyIn.sort_eur,
-          isCheapest: routeOptions.length > 0 && routeOptions[0].key === flyIn.key,
-          isFastest: modeTags.fly.fastest,
+          type: travelValues.out.mode === 'car' ? 'drive' : travelValues.out.mode,
+          providerOrRoute: (travelValues.out.service || '').trim() || null,
+          estimatedCostEur: Math.max(0, Math.round(Number(String(travelValues.out.eur ?? '').replace(',', '.')) || 0)),
+          enteredByTraveller: true,
         }
-        : (arriveMode === 'car' && driveCompare
-          ? {
-            type: 'drive',
-            durationMinutes: Math.round(driveCompare.drive_hours_one_way * 60),
-            estimatedCostEur: driveCompare.total,
-            isCheapest: modeTags.car.cheapest,
-            isFastest: modeTags.car.fastest,
-          }
-          : null),
+        : null,
       stops: includedIds.map((id, i) => {
         const d = destinations[id];
         const nightly = d ? nightlyFor(id, d) : null;
@@ -1692,7 +1651,7 @@ export function GuidedTripWizard({
     });
     if (stayStyle === 'single') plannerStore.setItineraryType('single');
   }, [path, originPlace, nearAirports, dateMode, startDate, endDate, windowNights, flexNights,
-    flexMonth, adults, kids, travelStyle, countries, flyIn, arriveMode, includedIds, nights,
+    flexMonth, adults, kids, travelStyle, countries, travelValues, includedIds, nights,
     stayStyle]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // A new step starts at its own top. Without this the body keeps the previous
@@ -1708,9 +1667,8 @@ export function GuidedTripWizard({
   // On phones the map fills the screen, so the briefing panel that a pin tap
   // populates sits below the fold, it reads as "nothing happened". Nudge the
   // panel into view on selection (narrow screens only; desktop shows both).
-  const flightSideRef = useRef(null);
-  const returnSideRef = useRef(null);
   const citySideRef = useRef(null);
+  const tripPickRef = useRef(null);
   const scrollPanelIntoView = (el) => {
     if (!el || typeof window === 'undefined') return;
     if (!window.matchMedia?.('(max-width: 700px)').matches) return;
@@ -1718,14 +1676,13 @@ export function GuidedTripWizard({
     requestAnimationFrame(() => el.scrollIntoView({ behavior: 'smooth', block: 'nearest' }));
   };
   useEffect(() => {
-    if (stepName === 'Getting there' && flyInId) scrollPanelIntoView(flightSideRef.current);
-  }, [flyInId, stepName]);
-  useEffect(() => {
     if (stepName === 'Stay' && focusedId) scrollPanelIntoView(citySideRef.current);
   }, [focusedId, stepName]);
+  // Picking a trip drops a whole section in under the grid; on a phone that is
+  // entirely below the fold, so it reads as nothing having happened.
   useEffect(() => {
-    if (stepName === 'Getting home' && returnFlyId) scrollPanelIntoView(returnSideRef.current);
-  }, [returnFlyId, stepName]);
+    if (stepName === 'Trips' && tripPick) scrollPanelIntoView(tripPickRef.current);
+  }, [tripPick?.id, stepName]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Airline + fare inputs shown whenever the traveller flies with an airline
   // other than Ryanair (both the full-path and landed-path "other" branches).
@@ -1759,18 +1716,6 @@ export function GuidedTripWizard({
           />
         </label>
       </div>
-      {path === 'full' && (
-        <div className="guide-when-dates">
-          <label className="trip-field">
-            <span className="trip-field-label">{t('wizard.ownFlightOutLabel')}</span>
-            <DateField value={ownOutDate} min={dateMin} max={dateMax} onChange={setOwnOutDate} placeholder={t('wizard.arrivalDate')} />
-          </label>
-          <label className="trip-field">
-            <span className="trip-field-label">{t('wizard.ownFlightRetLabel')}</span>
-            <DateField value={ownRetDate} min={ownOutDate || dateMin} max={dateMax} onChange={setOwnRetDate} placeholder={t('wizard.arrivalDate')} />
-          </label>
-        </div>
-      )}
       <p className="guide-note"><InfoIcon size={11} /> {t('wizard.ownFlightCostHint')}</p>
     </div>
   );
@@ -1844,15 +1789,18 @@ export function GuidedTripWizard({
     return `${flexNights} ${t('wizard.nights')}, ${when}`;
   })();
   const summaryTransport = (() => {
-    const mode = path === 'landed' ? landedMode : arriveMode;
-    if (mode === 'car') return t('wizard.goingByCar');
-    if (mode === 'other') return ownAirline.trim() || t('wizard.ownFlight');
-    if (flyIn) {
-      return flyHomeDest && flyHomeDest.city !== flyIn.dest.city
-        ? `${flyIn.dest.city} → ${flyHomeDest.city}`
-        : flyIn.dest.city;
+    if (path === 'landed') {
+      if (landedMode === 'car') return t('wizard.goingByCar');
+      return ownAirline.trim() || t('wizard.ownFlight');
     }
-    return t('wizard.fly');
+    // The full path no longer picks anyone's flight, so this says what THEY
+    // said: the way out, named, and the service if they named one.
+    const out = travelValues.out || {};
+    if (out.mode) {
+      const how = t(TRAVEL_MODE_LABEL[out.mode]);
+      return out.service?.trim() ? `${how}, ${out.service.trim()}` : how;
+    }
+    return t('wizard.transportNotSaid');
   })();
 
   // ---- How much canvas each step deserves --------------------------------
@@ -1865,9 +1813,8 @@ export function GuidedTripWizard({
   //   wide - only where a map genuinely earns the room
   const layout = (() => {
     if (!path) return 'mid';
-    if (stepName === 'Where' || stepName === 'Stay') return 'wide';
-    if (stepName === 'Getting there') return arriveMode === 'fly' && routeOptions.length > 0 ? 'wide' : 'form';
-    if (stepName === 'Getting home') return homeOptions.length > 0 ? 'wide' : 'form';
+    // Two columns of trip cards need the room as much as a map does.
+    if (stepName === 'Where' || stepName === 'Stay' || stepName === 'Trips') return 'wide';
     if (stepName === 'Finish') return 'mid';
     // The booked path is a route, not a question: a stop row carries a city,
     // its dates, its nights and a remove, and its connector carries a mode
@@ -2041,8 +1988,10 @@ export function GuidedTripWizard({
               {/* One screen, two ways to read it: photo cards or the map of
                   Europe, switched by the toggle below. Side by side, each half
                   got half a screen and the cards were too small to carry a
-                  photograph; as views they each get the whole width. */}
-              <div className="guide-where">
+                  photograph; as views they each get the whole width. Opening a
+                  country's brief is the one thing that splits the width, and
+                  only for as long as it is open. */}
+              <div className={`guide-where ${openBrief ? 'has-brief' : ''}`}>
                 <div className="guide-where-col">
                   {/* One number does not need a card of its own. People sits
                       on one line beside the "not sure?" escape hatch, and the
@@ -2135,6 +2084,26 @@ export function GuidedTripWizard({
                     )}
                   </div>
 
+                  {/* The shortlist itself, in both views. Nothing on this
+                      screen is a commitment, so what has been ticked has to
+                      stay visible and one tap from being unticked. */}
+                  {countries.size > 0 && (
+                    <div className="guide-picked-row">
+                      {allCountries.filter((c) => countries.has(c.country)).map((c) => (
+                        <button
+                          key={c.country}
+                          className="guide-picked-chip"
+                          onClick={() => toggleCountry(c.country)}
+                          title={t('ready.dropCountry', { country: c.country })}
+                        >
+                          <Flag iso2={c.iso2} className="guide-flag-img-sm" />
+                          {c.country}
+                          <span className="guide-picked-x" aria-hidden="true">×</span>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+
                   <div className="guide-datemode guide-stay-view guide-where-view">
                     <button className={whereView === 'map' ? 'on' : ''} onClick={() => setWhereView('map')}>{t('wizard.map')}</button>
                     <button className={whereView === 'list' ? 'on' : ''} onClick={() => setWhereView('list')}>{t('wizard.list')}</button>
@@ -2145,49 +2114,43 @@ export function GuidedTripWizard({
                       {shownCountries.map((c) => {
                         const on = countries.has(c.country);
                         const img = countryCovers.get(c.country);
+                        const b = countryBriefs.get(c.country);
+                        // Two real buttons rather than one nested in another:
+                        // the card picks the country, the corner button opens
+                        // what is in it.
                         return (
-                          <button
-                            key={c.country}
-                            className={`guide-ccard ${on ? 'on' : ''}`}
-                            onClick={() => toggleCountry(c.country)}
-                            aria-pressed={on}
-                          >
-                            {img
-                              ? <img className="guide-ccard-img" src={img} alt="" loading="lazy" />
-                              : <span className="guide-ccard-img guide-ccard-noimg" aria-hidden="true" />}
-                            <span className="guide-ccard-scrim" aria-hidden="true" />
-                            {on && <span className="guide-ccard-check"><CheckIcon size={12} /></span>}
-                            <span className="guide-ccard-overlay">
-                              {(() => {
-                                const m = whereMatrix?.get(c.country);
-                                if (!m || (!m.flight && !m.drive)) return null;
-                                return (
-                                  <span className="guide-ccard-badges">
-                                    {m.flight && (
-                                      <span className={`guide-ccard-badge ${m.transit === 'fly' ? 'lead' : ''}`}>
-                                        <PlaneIcon size={10} /> {eur(m.flight.eur)}
-                                      </span>
-                                    )}
-                                    {m.drive && (
-                                      <span className={`guide-ccard-badge ${m.transit === 'drive' ? 'lead' : ''}`}>
-                                        <CarIcon size={10} /> {fmtHours(m.drive.hours)}
-                                      </span>
-                                    )}
-                                  </span>
-                                );
-                              })()}
-                              <span className="guide-ccard-name">
-                                <Flag iso2={c.iso2} className="guide-flag-img-sm" />
-                                {c.country}
+                          <div key={c.country} className={`guide-ccard ${on ? 'on' : ''} ${briefCountry === c.country ? 'reading' : ''}`}>
+                            <button
+                              className="guide-ccard-pick"
+                              onClick={() => toggleCountry(c.country)}
+                              aria-pressed={on}
+                              aria-label={c.country}
+                            >
+                              {img
+                                ? <img className="guide-ccard-img" src={img} alt="" loading="lazy" />
+                                : <span className="guide-ccard-img guide-ccard-noimg" aria-hidden="true" />}
+                              <span className="guide-ccard-scrim" aria-hidden="true" />
+                              {on && <span className="guide-ccard-check"><CheckIcon size={12} /></span>}
+                              <span className="guide-ccard-overlay">
+                                <span className="guide-ccard-name">
+                                  <Flag iso2={c.iso2} className="guide-flag-img-sm" />
+                                  {c.country}
+                                </span>
+                                <span className="guide-ccard-n">
+                                  {b?.dayEur != null
+                                    ? t('brief.cardDay', { price: eur(Math.round(b.dayEur)), n: b.nPlaces })
+                                    : t('brief.cardPlaces', { n: c.cities.length })}
+                                </span>
                               </span>
-                              {(() => {
-                                const m = whereMatrix?.get(c.country);
-                                return m?.total_pp != null
-                                  ? <span className="guide-ccard-n">{t('wizard.allInFrom', { price: eur(m.total_pp) })}</span>
-                                  : null;
-                              })()}
-                            </span>
-                          </button>
+                            </button>
+                            <button
+                              className="guide-ccard-info"
+                              onClick={() => setBriefCountry(briefCountry === c.country ? '' : c.country)}
+                              aria-expanded={briefCountry === c.country}
+                            >
+                              <InfoIcon size={11} /> {t('brief.whatsThere')}
+                            </button>
+                          </div>
                         );
                       })}
                       {shownCountries.length === 0 && (
@@ -2200,7 +2163,82 @@ export function GuidedTripWizard({
                     </div>
                   )}
                 </div>
+
+                {/* The country, opened: what to visit, what to do, what a day
+                    costs. Inline beside the grid, never a floating layer. */}
+                {openBrief && (
+                  <CountryBrief
+                    brief={openBrief}
+                    picked={countries.has(openBrief.country)}
+                    onToggle={toggleCountry}
+                    onClose={() => setBriefCountry('')}
+                  />
+                )}
               </div>
+            </>
+          )}
+
+          {/* ---- FULL PATH: Trips, the ready-made half ----
+              Two columns because it is two different holidays: several
+              countries strung together, or one country in depth. Under the
+              chosen trip, how you actually get there, and what it cost. */}
+          {stepName === 'Trips' && (
+            <>
+              <h2 className="guide-title">{t('wizard.tripsTitle')}</h2>
+              <BuildModeSwitch mode={buildMode} onMode={setBuildMode} t={t} />
+
+              <ReadyTripsStep
+                countries={countries}
+                allCountries={allCountries}
+                windowNights={windowNights}
+                selectedId={tripPick?.id || null}
+                onPick={(trip) => setTripPick(trip.id === tripPick?.id ? null : trip)}
+                onToggleCountry={toggleCountry}
+                onBuildOwn={() => setBuildMode('custom')}
+              />
+
+              {tripPick && (
+                <div className="wpicked" ref={tripPickRef}>
+                  <div className="wpicked-head">
+                    <span className="wpicked-label"><CheckIcon size={12} /> {t('ready.yourTrip')}</span>
+                    <b className="wpicked-name">{tripHeadline(tripPick, t)}</b>
+                    <button className="guide-answered-edit" onClick={() => setTripPick(null)}>
+                      {t('ready.pickAnother')}
+                    </button>
+                  </div>
+
+                  {tripLoading && <p className="guide-empty">{t('ready.loadingTrip')}</p>}
+
+                  {tripDetail && (
+                    <>
+                      <div className="wpicked-stops">
+                        {stopDates.map((s, i) => destinations[s.id] && (
+                          <div className="guide-final-stop" key={s.id}>
+                            <span className="wpicked-i">{i + 1}</span>
+                            <b>{destinations[s.id].city}</b>
+                            <Flag iso2={destinations[s.id].iso2} className="guide-flag-img-sm" />
+                            <span>{s.nights} {s.nights === 1 ? t('wizard.night') : t('wizard.nights')}</span>
+                            {s.arrive && <small className="wpicked-date">{fmtDate(s.arrive)}</small>}
+                          </div>
+                        ))}
+                      </div>
+                      {tripMissing > 0 && (
+                        <p className="guide-empty">{t('ready.stopsMissing', { n: tripMissing })}</p>
+                      )}
+                      <TravelLegsSection
+                        legs={travelLegs}
+                        values={travelValues}
+                        onChange={setTravelLeg}
+                        adults={adults}
+                        startDate={tripStartDate}
+                        onSetStart={(d) => { setStartDate(d); setDateMode('exact'); if (totalNights) setEndDate(addDays(d, totalNights)); }}
+                        dateMin={dateMin}
+                        dateMax={dateMax}
+                      />
+                    </>
+                  )}
+                </div>
+              )}
             </>
           )}
 
@@ -2544,341 +2582,53 @@ export function GuidedTripWizard({
             </>
           )}
 
-          {/* ---- FULL PATH: Getting there ---- */}
-          {stepName === 'Getting there' && (
-            <>
-              <h2 className="guide-title">{t('wizard.gettingTitle')}</h2>
-              <p className="guide-sub">
-                {t('wizard.gettingSub', { city: originPoint?.name || originCity })}
-              </p>
-
-              {/* Two ways to get there, so two cards: a two-way segmented
-                  control stretched across the screen said nothing about what
-                  either option means. */}
-              <div className="guide-mode-cards">
-                <button
-                  className={`guide-mode-card ${arriveMode === 'fly' ? 'on' : ''}`}
-                  onClick={() => pickArriveMode('fly')}
-                  aria-pressed={arriveMode === 'fly'}
-                >
-                  <span className="guide-mode-icon"><PlaneIcon size={22} /></span>
-                  <span className="guide-mode-text">
-                    <b>{t('wizard.fly')}</b>
-                    <small>{t('wizard.flySub')}</small>
-                    {flyPP != null && (
-                      <span className="guide-mode-facts">
-                        <span className="guide-mode-price">
-                          <b>{t('wizard.rtFromPP', { price: eur(flyPP) })}</b>
-                          {flyMinutes != null && <span>~{fmtFlightDuration(flyMinutes)}</span>}
-                        </span>
-                        {(modeTags.fly.cheapest || modeTags.fly.fastest) && (
-                          <span className="guide-mode-tags">
-                            {modeTags.fly.cheapest && <em className="guide-mode-tag">{t('wizard.tagCheapest')}</em>}
-                            {modeTags.fly.fastest && <em className="guide-mode-tag">{t('wizard.tagFastest')}</em>}
-                          </span>
-                        )}
-                      </span>
-                    )}
-                  </span>
-                  {arriveMode === 'fly' && <span className="guide-mode-check"><CheckIcon size={12} /></span>}
-                </button>
-                <button
-                  className={`guide-mode-card ${arriveMode === 'car' ? 'on' : ''}`}
-                  onClick={() => pickArriveMode('car')}
-                  aria-pressed={arriveMode === 'car'}
-                >
-                  <span className="guide-mode-icon"><CarIcon size={22} /></span>
-                  <span className="guide-mode-text">
-                    <b>{t('wizard.car')}</b>
-                    <small>{t('wizard.carSub')}</small>
-                    {driveCompare && (
-                      <span className="guide-mode-facts">
-                        <span className="guide-mode-price">
-                          <b>{t('wizard.rtFromPP', { price: eur(driveCompare.per_person) })}</b>
-                          <span>~{fmtHours(driveCompare.drive_hours_one_way)} {t('wizard.driveOneWay')}</span>
-                        </span>
-                        {(modeTags.car.cheapest || modeTags.car.fastest) && (
-                          <span className="guide-mode-tags">
-                            {modeTags.car.cheapest && <em className="guide-mode-tag">{t('wizard.tagCheapest')}</em>}
-                            {modeTags.car.fastest && <em className="guide-mode-tag">{t('wizard.tagFastest')}</em>}
-                          </span>
-                        )}
-                      </span>
-                    )}
-                  </span>
-                  {arriveMode === 'car' && <span className="guide-mode-check"><CheckIcon size={12} /></span>}
-                </button>
-              </div>
-
-              {/* The single-airport switcher earns its row only while the
-                  multi-airport matrix has nothing to compare: with two or
-                  more departure airports priced, the matrix IS the switcher. */}
-              {arriveMode === 'fly' && airportGroups.length <= 1 && onChangeOrigin && data?.meta?.origins && Object.keys(data.meta.origins).length > 0 && (
-                <div className="guide-card guide-origin-card">
-                  <div className="guide-origin-row">
-                    <span className="guide-origin-label"><PlaneIcon size={11} /> {t('wizard.flyingFrom')}</span>
-                    <OriginPicker data={data} origin={origin ?? originCode} onChangeOrigin={onChangeOrigin} />
-                    {/* What changing this airport actually buys you, in the
-                        space the picker used to leave blank. */}
-                    {routeOptions.length > 0 && (
-                      <span className="guide-origin-facts">
-                        <span className="guide-origin-fact">
-                          <b>{routeOptions.length}</b> {routeOptions.length === 1 ? t('wizard.routeOne') : t('wizard.routeMany')}
-                        </span>
-                        <span className="guide-origin-fact">
-                          {t('wizard.fromFare')} <b>{eur(Math.min(...routeOptions.map((o) => (o.has_exact ? o.exact_eur : o.cheapest.eur))))}</b>
-                        </span>
-                      </span>
-                    )}
-                  </div>
-                </div>
-              )}
-
-              {arriveMode === 'other' ? (
-                <div className="guide-noflight">
-                  <p className="guide-sub">
-                    <CheckIcon size={12} /> {t('wizard.ownFlightNote')}
-                  </p>
-                  {ownFlightFields}
-                  <button className="guide-back guide-noflight-back" onClick={() => setArriveMode('fly')}>
-                    ← {t('wizard.lookAtRyanair')}
-                  </button>
-                </div>
-              ) : arriveMode === 'car' ? (
-                <>
-                  {/* Asking where they drive from is the whole question here;
-                      the numbers under it come from the app's own car model. */}
-                  {carFromField}
-                  {driveCompare && (
-                    <div className="guide-card guide-drive-card">
-                      <div className="guide-card-head"><CarIcon size={14} /> {t('wizard.driveDetailHead')}</div>
-                      <div className="guide-drive-facts">
-                        <span><b>{driveCompare.road_km} km</b> <small>{t('wizard.driveEachWay')}</small></span>
-                        <span><b>~{fmtHours(driveCompare.drive_hours_one_way)}</b> <small>{t('wizard.driveOneWay')}</small></span>
-                        <span><b>{eur(driveCompare.fuel_total)}</b> <small>{t('wizard.driveFuelRt')}</small></span>
-                        <span><b>{eur(driveCompare.toll_total)}</b> <small>{t('wizard.driveTollsRt')}</small></span>
-                        {driveCompare.cars > 1 && <span><b>{driveCompare.cars}</b> <small>{t('wizard.driveCars')}</small></span>}
-                      </div>
-                      {driveCompare.toll_notes && driveCompare.toll_notes.length > 0 && (
-                        <p className="guide-note">{driveCompare.toll_notes.join(', ')}</p>
-                      )}
-                    </div>
-                  )}
-                </>
-              ) : routeOptions.length === 0 ? (
-                <div className="guide-noflight">
-                  <p className="guide-empty">
-                    <AlertIcon size={12} /> {t('wizard.noFaresFrom', { city: originCity })}
-                    {dateMode === 'exact' && startDate ? t('wizard.onDate', { date: fmtDate(startDate) }) : t('wizard.forThisPeriod')}.
-                  </p>
-                  <p className="guide-sub">
-                    {t('wizard.noFaresAdvice')}
-                  </p>
-                  <button className="guide-back guide-noflight-back" onClick={() => goStep(step - 2)}>← {t('wizard.changeMyDates')}</button>
-                </div>
-              ) : (
-                <>
-                  <div className="guide-datemode guide-stay-view">
-                    <button className={flightView === 'map' ? 'on' : ''} onClick={() => setFlightView('map')}>{t('wizard.map')}</button>
-                    <button className={flightView === 'list' ? 'on' : ''} onClick={() => setFlightView('list')}>{t('wizard.list')}</button>
-                  </div>
-
-                  {flightView === 'map' ? (
-                    <div className="guide-flight-wrap">
-                      <FlightPickerMap
-                        options={dedupeByArrival(routeOptions).map((o) => ({
-                          // One pin per arrival airport; the pin picks that
-                          // arrival's cheapest (departure, arrival) pair.
-                          id: o.key,
-                          city: o.dest.city,
-                          lat: o.dest.lat,
-                          lon: o.dest.lon,
-                          eurLabel: eur(o.has_exact ? o.exact_eur : o.cheapest.eur),
-                          selected: flyIn ? flyIn.id === o.id : false,
-                        }))}
-                        origin={originPoint && originPoint.lat != null ? { lat: originPoint.lat, lon: originPoint.lon, city: originPoint.name || originCity } : null}
-                        onPick={(key) => setFlyInId(flyInId === key ? '' : key)}
-                      />
-                      <div className="guide-flight-side" ref={flightSideRef}>
-                        {!flyIn ? (
-                          // Same idea as the stay panel: an untouched briefing
-                          // column earns its space by offering the cheapest
-                          // fares as one-tap shortcuts into the map pick.
-                          <div className="guide-side-idle">
-                            <div className="guide-side-idle-head">
-                              <PlaneIcon size={16} />
-                              <p>{t('wizard.tapPlaneHint')}</p>
-                            </div>
-                            <div className="guide-stay-group-title">{t('wizard.cheapestRightNow')}</div>
-                            <div className="guide-side-idle-list">
-                              {dedupeByArrival(routeOptions).slice(0, 4).map((o) => (
-                                <button key={o.key} className="guide-side-idle-row" onClick={() => setFlyInId(o.key)}>
-                                  <CityThumb dest={o.dest} className="guide-nearby-thumb" />
-                                  <span className="guide-side-idle-text">
-                                    <b>{o.dest.city}</b>
-                                    <small>{t('wizard.flyIntoList', { anchor: o.anchor })}</small>
-                                  </span>
-                                  <b className="guide-side-idle-fare">{eur(o.has_exact ? o.exact_eur : o.cheapest.eur)}</b>
-                                </button>
-                              ))}
-                            </div>
-                          </div>
-                        ) : (
-                          <>
-                            <div className="guide-flight-side-head">
-                              <CityThumb dest={flyIn.dest} className="guide-city-thumb" />
-                              <div className="guide-flight-side-title">
-                                <b>{flyIn.dest.city} <Flag iso2={flyIn.dest.iso2} className="guide-flag-img-sm" /></b>
-                                <small>
-                                  <PlaneIcon size={9} /> {t('wizard.pairRoute', { from: flyIn.origin, anchor: flyIn.anchor })}
-                                  {(() => { const m = flightMeta(flyIn, data?.meta?.origins); return m ? t('wizard.flightDur', { dur: fmtFlightDuration(m.min) }) : ''; })()}
-                                  {t('wizard.farePP', { fare: eur(flyIn.has_exact ? flyIn.exact_eur : flyIn.cheapest.eur) })}
-                                </small>
-                                {dateMode === 'flex' && flyIn.cheapest && (
-                                  <small className="guide-flight-side-date">
-                                    <CalendarIcon size={9} /> {t('wizard.flexDepartDate', { date: fmtDate(flyIn.cheapest.date, true) })}
-                                  </small>
-                                )}
-                                {!flyIn.has_exact && dateMode === 'exact' && flyIn.cheapest && (
-                                  <small className="guide-route-warn">
-                                    <AlertIcon size={9} /> {t('wizard.noFareForDate', { date: fmtDate(startDate, true), date2: fmtDate(flyIn.cheapest.date, true) })}
-                                  </small>
-                                )}
-                              </div>
-                            </div>
-                            {flyIn.dest.rating?.score != null && (
-                              <div className="guide-flight-side-rating">
-                                <ScoreChip rating={flyIn.dest.rating} size="xs" />
-                                {flyIn.dest.rating.hidden_gem && <HiddenGemTag />}
-                              </div>
-                            )}
-                            <p className="guide-flight-side-desc">{cityInsight(flyIn.dest)}</p>
-                            {flightRegion && (
-                              <p className="guide-flight-side-region"><MapPinIcon size={11} /> {flightRegion}</p>
-                            )}
-                            {nearbyAdvice && nearbyAdvice.verdict !== 'no' && (
-                              <p className="guide-flight-side-car">
-                                <CarIcon size={11} /> {nearbyAdvice.verdict === 'yes'
-                                  ? t('wizard.carRecommendedArea')
-                                  : t('wizard.carHelpsArea')}
-                              </p>
-                            )}
-                            {nearbyForFlight.length > 0 && (
-                              <>
-                                <div className="guide-stay-group-title">{t('wizard.interestingAround')}</div>
-                                <div className="guide-nearby-list">
-                                  {nearbyForFlight.map(({ id, dest, km }) => (
-                                    <div className="guide-nearby" key={id}>
-                                      <CityThumb dest={dest} className="guide-nearby-thumb" />
-                                      <div className="guide-nearby-info">
-                                        <div className="guide-nearby-name">
-                                          {dest.city}
-                                          {dest.rating?.score != null && <ScoreChip rating={dest.rating} size="xs" />}
-                                          {dest.rating?.hidden_gem && <HiddenGemTag />}
-                                        </div>
-                                        <div className="guide-nearby-sub">{t('wizard.kmFromPlace', { km, place: flyIn.anchor })} {cityInsight(dest)}</div>
-                                      </div>
-                                    </div>
-                                  ))}
-                                </div>
-                              </>
-                            )}
-                          </>
-                        )}
-                      </div>
-                    </div>
-                  ) : (
-                    <>
-                      {/* The airport matrix: the same fares, grouped by the
-                          airport you would LEAVE from, so "Brussels or
-                          Charleroi?" is answered with prices side by side. */}
-                      {airportGroups.length > 1 && (
-                        <div className="guide-airport-matrix">
-                          {airportGroups.map((g) => (
-                            <div key={g.iata} className="guide-airport-group">
-                              <div className="guide-airport-group-head">
-                                <PlaneIcon size={12} />
-                                <b>{g.airport.name || g.iata}</b>
-                                <span className="guide-airport-group-code">{g.iata}</span>
-                                {g.airport.km != null && <small>{g.airport.km} km</small>}
-                                <span className="guide-airport-group-from">{t('wizard.fromFare')} <b>{eur(g.cheapest)}</b></span>
-                              </div>
-                              <div className="guide-airport-group-rows">
-                                {g.rows.slice(0, 4).map((o) => (
-                                  <button
-                                    key={o.key}
-                                    className={`guide-airport-row ${flyInId === o.key ? 'on' : ''}`}
-                                    onClick={() => setFlyInId(flyInId === o.key ? '' : o.key)}
-                                    aria-pressed={flyInId === o.key}
-                                  >
-                                    <span className="guide-airport-row-city">{o.dest.city}</span>
-                                    <b>{eur(o.sort_eur)}</b>
-                                  </button>
-                                ))}
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                      <div className="guide-route-list">
-                        {visibleRoutes.map((o) => {
-                          const meta = flightMeta(o, data?.meta?.origins);
-                          const badge = badges[o.id] ? BADGE_LABELS[badges[o.id]] : null;
-                          return (
-                            <button
-                              key={o.key}
-                              className={`guide-route ${flyInId === o.key ? 'on' : ''}`}
-                              onClick={() => setFlyInId(flyInId === o.key ? '' : o.key)}
-                              aria-pressed={flyInId === o.key}
-                            >
-                              <CityThumb dest={o.dest} className="guide-city-thumb" />
-                              <span className="guide-route-main">
-                                <span className="booked-stop-city">
-                                  {o.dest.city}
-                                  <Flag iso2={o.dest.iso2} className="guide-flag-img-sm" />
-                                  {badge && <span className={`guide-route-badge ${badge.cls}`}>{badge.cls === 'pick' && <SparkIcon size={9} />}{t(badge.labelKey)}</span>}
-                                </span>
-                                <span className="booked-stop-sub">
-                                  <PlaneIcon size={10} /> {t('wizard.pairRoute', { from: o.origin, anchor: o.anchor })}
-                                  {meta ? t('wizard.flightDur', { dur: fmtFlightDuration(meta.min) }) : ''}
-                                </span>
-                                {!o.has_exact && dateMode === 'exact' && o.cheapest && (
-                                  <span className="guide-route-warn">
-                                    <AlertIcon size={10} /> {t('wizard.noFareStored', { date: fmtDate(startDate, true), date2: fmtDate(o.cheapest.date, true) })}
-                                  </span>
-                                )}
-                              </span>
-                              <span className="guide-route-fare">
-                                <b>{eur(o.has_exact ? o.exact_eur : o.cheapest.eur)}</b>
-                                <small>
-                                  {o.has_exact ? t('wizard.perPerson') : t('wizard.datePerPerson', { date: fmtDate(o.cheapest.date, true) })}
-                                </small>
-                              </span>
-                            </button>
-                          );
-                        })}
-                      </div>
-                      {!showAllRoutes && routeOptions.length > ROUTES_PREVIEW && (
-                        <button className="guide-show-more" onClick={() => setShowAllRoutes(true)}>
-                          {t('wizard.showAllRoutesN', { n: routeOptions.length })}
-                        </button>
-                      )}
-                    </>
-                  )}
-                </>
-              )}
-            </>
-          )}
-
           {/* ---- Stay (full + landed) ---- */}
           {stepName === 'Stay' && (
             <>
               <h2 className="guide-title">{t('wizard.stayTitle')}</h2>
+              {path === 'full' && <BuildModeSwitch mode={buildMode} onMode={setBuildMode} t={t} />}
               <p className="guide-sub">
                 {anchorDest
                   ? t(path === 'landed' && landedMode === 'car' ? 'wizard.stayIntroArrive' : 'wizard.stayIntroLand', { city: anchorDest.city })
                   : t('wizard.stayIntroFree')}
               </p>
+
+              {/* What the algorithm did with the cities, said out loud. The
+                  order is not a suggestion the traveller has to accept: it is
+                  already the order the trip will be built in, so the panel
+                  reports rather than asks, and offers the one thing worth
+                  choosing, whether the nights get shared out too. */}
+              {cartaPlan && (
+                <div className="wroute">
+                  <div className="wroute-head">
+                    <span className="wroute-label"><SparkIcon size={12} /> {t('route.title')}</span>
+                    {cartaPlan.kmSaved > 20 && (
+                      <span className="wroute-saved">{t('route.saved', { km: cartaPlan.kmSaved })}</span>
+                    )}
+                  </div>
+                  <div className="wroute-line">
+                    {cartaPlan.order.map((id, i) => destinations[id] && (
+                      <React.Fragment key={id}>
+                        {i > 0 && <span className="wroute-arrow" aria-hidden="true">&rsaquo;</span>}
+                        <span className="wroute-stop">
+                          {destinations[id].city}
+                          <b>{cartaPlan.nights[id]}</b>
+                        </span>
+                      </React.Fragment>
+                    ))}
+                  </div>
+                  <div className="wroute-foot">
+                    <span className="wroute-fact">{t('route.km', { km: cartaPlan.km })}</span>
+                    <span className="wroute-fact">{t('route.hours', { h: Math.round(cartaPlan.hours) })}</span>
+                    {cartaPlan.crowded && <span className="wroute-warn"><AlertIcon size={11} /> {t('route.crowded')}</span>}
+                    {nightsDiffer && (
+                      <button className="wroute-apply" onClick={applyCartaNights}>
+                        {t('route.applyNights')}
+                      </button>
+                    )}
+                  </div>
+                </div>
+              )}
 
               {/* One base, or changing stays? Decides how Carta designs.
                   Once stops are on the board the question is answered, so the
@@ -3245,138 +2995,31 @@ export function GuidedTripWizard({
             </>
           )}
 
-          {/* ---- FULL PATH: Getting home (return flight, after the stays) ---- */}
-          {stepName === 'Getting home' && (
-            <>
-              <h2 className="guide-title">{t('wizard.gettingHomeTitle')}</h2>
-              <p className="guide-sub">
-                {lastStopDest
-                  ? t('wizard.gettingHomeSub', { last: lastStopDest.city, city: originCity })
-                  : t('wizard.gettingHomeSubFree', { city: originCity })}
-              </p>
-
-              {homeOptions.length === 0 ? (
-                <div className="guide-noflight">
-                  <p className="guide-empty">
-                    <AlertIcon size={12} /> {t('wizard.noReturnFrom', { city: originCity })}
-                  </p>
-                  <p className="guide-sub">{t('wizard.noReturnAdvice')}</p>
-                </div>
-              ) : (
-                <>
-                  <div className="guide-datemode guide-stay-view">
-                    <button className={returnFlightView === 'map' ? 'on' : ''} onClick={() => setReturnFlightView('map')}>{t('wizard.map')}</button>
-                    <button className={returnFlightView === 'list' ? 'on' : ''} onClick={() => setReturnFlightView('list')}>{t('wizard.list')}</button>
-                  </div>
-
-                  {returnFlightView === 'map' ? (
-                    <div className="guide-flight-wrap guide-flight-wrap-home">
-                      <FlightPickerMap
-                        options={homeOptions.map((o) => ({
-                          id: o.id,
-                          city: o.dest.city,
-                          lat: o.dest.lat,
-                          lon: o.dest.lon,
-                          eurLabel: eur(o.has_exact ? o.ret_exact_eur : o.ret_cheapest.eur),
-                          selected: o.id === returnFlyId,
-                        }))}
-                        origin={lastStopDest && lastStopDest.lat != null ? { lat: lastStopDest.lat, lon: lastStopDest.lon, city: lastStopDest.city } : null}
-                        onPick={(id) => setReturnFlyId(id)}
-                      />
-                      <div className="guide-flight-side" ref={returnSideRef}>
-                        {!flyHome ? (
-                          <div className="guide-flight-side-empty">
-                            <PlaneIcon size={16} />
-                            <p>{t('wizard.tapHomeHint')}</p>
-                          </div>
-                        ) : (
-                          <>
-                            <div className="guide-flight-side-head">
-                              <CityThumb dest={flyHome.dest} className="guide-city-thumb" />
-                              <div className="guide-flight-side-title">
-                                <b>{flyHome.dest.city} <Flag iso2={flyHome.dest.iso2} className="guide-flag-img-sm" /></b>
-                                {/* One scannable line: route, fare, distance.
-                                    It used to run "from SJJ home to Charleroi"
-                                    across two stacked fragments. */}
-                                <small>
-                                  <PlaneIcon size={9} /> {t('wizard.homeFromTo', { anchor: flyHome.anchor, city: originCity })}
-                                  {t('wizard.farePP', { fare: eur(flyHome.has_exact ? flyHome.ret_exact_eur : flyHome.ret_cheapest.eur) })}
-                                  {flyHome.km != null && lastStopDest
-                                    ? `, ${t('wizard.kmFromLastPlain', { km: flyHome.km, last: lastStopDest.city })}`
-                                    : ''}
-                                </small>
-                                {flyHome.is_out_anchor && (
-                                  <small className="guide-flight-side-breakdown">{t('wizard.roundTripNote')}</small>
-                                )}
-                                {dateMode === 'flex' && flyHome.ret_cheapest && (
-                                  <small className="guide-flight-side-date">
-                                    <CalendarIcon size={9} /> {t('wizard.flexReturnDate', { date: fmtDate(flyHome.ret_cheapest.date, true) })}
-                                  </small>
-                                )}
-                                {!flyHome.has_exact && dateMode === 'exact' && flyHome.ret_cheapest && (
-                                  <small className="guide-route-warn">
-                                    <AlertIcon size={9} /> {t('wizard.noFareForDate', { date: fmtDate(returnDate, true), date2: fmtDate(flyHome.ret_cheapest.date, true) })}
-                                  </small>
-                                )}
-                              </div>
-                            </div>
-                            {flyHome.dest.rating?.score != null && (
-                              <div className="guide-flight-side-rating">
-                                <ScoreChip rating={flyHome.dest.rating} size="xs" />
-                                {flyHome.dest.rating.hidden_gem && <HiddenGemTag />}
-                              </div>
-                            )}
-                            <p className="guide-flight-side-desc">{cityInsight(flyHome.dest)}</p>
-                          </>
-                        )}
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="guide-route-list">
-                      {homeOptions.map((o) => (
-                        <button
-                          key={o.id}
-                          className={`guide-route ${returnFlyId === o.id ? 'on' : ''}`}
-                          onClick={() => setReturnFlyId(o.id)}
-                          aria-pressed={returnFlyId === o.id}
-                        >
-                          <CityThumb dest={o.dest} className="guide-city-thumb" />
-                          <span className="guide-route-main">
-                            <span className="booked-stop-city">
-                              {o.dest.city}
-                              <Flag iso2={o.dest.iso2} className="guide-flag-img-sm" />
-                              {o.is_out_anchor && <span className="guide-route-badge pick">{t('wizard.roundTripBadge')}</span>}
-                            </span>
-                            <span className="booked-stop-sub">
-                              <PlaneIcon size={10} /> {t('wizard.homeFromList', { anchor: o.anchor })}
-                              {o.km != null ? t('wizard.kmAway', { km: o.km }) : ''}
-                            </span>
-                            {!o.has_exact && dateMode === 'exact' && o.ret_cheapest && (
-                              <span className="guide-route-warn">
-                                <AlertIcon size={10} /> {t('wizard.noFareStored', { date: fmtDate(returnDate, true), date2: fmtDate(o.ret_cheapest.date, true) })}
-                              </span>
-                            )}
-                          </span>
-                          <span className="guide-route-fare">
-                            <b>{eur(o.has_exact ? o.ret_exact_eur : o.ret_cheapest.eur)}</b>
-                            <small>
-                              {o.has_exact ? t('wizard.perPerson') : t('wizard.datePerPerson', { date: fmtDate(o.ret_cheapest.date, true) })}
-                            </small>
-                          </span>
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                </>
-              )}
-            </>
-          )}
-
           {/* ---- Finish (full + landed) ---- */}
           {stepName === 'Finish' && (
             <>
-              <h2 className="guide-title">Last touches</h2>
-              <p className="guide-sub">Carta picks the best way between your stops; every leg stays adjustable in the planner.</p>
+              <h2 className="guide-title">{t('wizard.finishTitle')}</h2>
+              <p className="guide-sub">
+                {path === 'full' ? t('wizard.finishSubFull') : t('wizard.finishSubLanded')}
+              </p>
+
+              {/* A route the traveller built themselves still has to get to
+                  the first stop and home from the last. Same section as the
+                  ready-made trips step, same answers, same links; it appears
+                  here rather than there because a built route only exists
+                  once the cities are chosen. */}
+              {path === 'full' && buildMode === 'custom' && travelLegs.length > 0 && (
+                <TravelLegsSection
+                  legs={travelLegs}
+                  values={travelValues}
+                  onChange={setTravelLeg}
+                  adults={adults}
+                  startDate={tripStartDate}
+                  onSetStart={(d) => { setStartDate(d); setDateMode('exact'); if (totalNights) setEndDate(addDays(d, totalNights)); }}
+                  dateMin={dateMin}
+                  dateMax={dateMax}
+                />
+              )}
 
               {ownCarChosen ? (
                 // They bring their own car: never pitch a rental at them, just
@@ -3403,10 +3046,10 @@ export function GuidedTripWizard({
                 </div>
               )}
 
-              {/* Ryanair baggage - the seat fares are seat-only, so ask what each
-                  traveller carries and add it to the flight cost. Only relevant
-                  when Carta is booking the flights. */}
-              {((path === 'full' && arriveMode === 'fly') || (path === 'landed' && landedMode !== 'car')) && (
+              {/* Ryanair baggage: the seat fares are seat-only, so ask what each
+                  traveller carries and add it to the flight cost. Only the
+                  landed path still prices a flight, so only it still asks. */}
+              {path === 'landed' && landedMode !== 'car' && (
                 <>
                   <h3 className="guide-subtitle"><LuggageIcon size={13} /> Baggage per person</h3>
                   <div className="guide-transport-grid">
@@ -3471,7 +3114,7 @@ export function GuidedTripWizard({
                   {/* How you actually move between those stops, priced. The
                       old receipt jumped straight from stays to the total and
                       left every ground leg silently unpaid. */}
-                  {groundLegs && (
+                  {groundLegs && path === 'landed' && (
                     <div className="guide-summary-legs">
                       <div className="guide-stay-group-title">{t('wizard.gettingAround')}</div>
                       {groundLegs.legs.map((l, i) => (
@@ -3709,16 +3352,6 @@ export function GuidedTripWizard({
               {!path ? null : stepName === 'Your trip' ? (
                 <button className="guide-next" onClick={finishBooked} disabled={!bookedStart || bookedStops.length === 0}>
                   Show my trip overview →
-                </button>
-              ) : stepName === 'Getting there' && arriveMode === 'fly' && routeOptions.length === 0 ? (
-                // No Ryanair route: the way forward is booking your own flight.
-                // Switch the step to the "own flight" view in place (don't skip
-                // ahead) so the traveller can name their airline and fare first.
-                <button
-                  className="guide-next"
-                  onClick={() => setArriveMode('other')}
-                >
-                  I fly with another airline →
                 </button>
               ) : step < steps.length ? (
                 <button className="guide-next" onClick={() => goStep(step + 1)} disabled={!canNext}>Next</button>
