@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useI18n } from '../i18n/index.jsx';
 import { DAY_STYLES } from './dayDraft.js';
 import { stopPhaseLabels } from './daySchedule.js';
@@ -58,13 +58,13 @@ const NUDGES = [
  */
 export function AiDayPlanModal({
   city, dayNumber, dateISO, groupSize, signedIn, onRun, onApply, onFallback, onClose,
-  entitlement, onOpenPass,
+  entitlement, onOpenPass, preset = null,
 }) {
   const { t } = useI18n();
-  const [vibe, setVibe] = useState('mix');
-  const [pace, setPace] = useState('balanced');
+  const [vibe, setVibe] = useState(preset?.vibe || 'mix');
+  const [pace, setPace] = useState(preset?.pace || 'balanced');
   const [hills, setHills] = useState(false);
-  const [freeText, setFreeText] = useState('');
+  const [freeText, setFreeText] = useState(preset?.freeText || '');
   const [date, setDate] = useState(dateISO || '');
   const [people, setPeople] = useState(Math.max(1, Math.min(20, groupSize || 2)));
   const [wantEvents, setWantEvents] = useState(false);
@@ -100,6 +100,17 @@ export function AiDayPlanModal({
     // the counter under the button is not a generation behind.
     entitlement?.refresh?.();
   };
+
+  // A predefined ask from the Carta bot arrives as a whole request, not as a
+  // form to fill in: it opens straight into generating. Guests never auto-run,
+  // because the generator is the signed-in path and they would watch a spinner
+  // fail; they get the questions and the built-in planner instead.
+  const autoRan = useRef(false);
+  useEffect(() => {
+    if (autoRan.current || !preset?.autoRun || !signedIn) return;
+    autoRan.current = true;
+    generate('');
+  }, [preset, signedIn]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const chipRow = (label, options, activeKey, onPick) => (
     <div className="carta-plan-row">

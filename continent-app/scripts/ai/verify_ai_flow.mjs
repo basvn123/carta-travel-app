@@ -148,7 +148,7 @@ await page.getByText('Ghent AI flow').first().click({ timeout: 8000 });
 await page.waitForTimeout(2500);
 
 // ---- generate ----
-await page.locator('.day-ai-hero').first().click();
+await page.locator('.dayp-empty .dayp-cta').first().click();
 await page.waitForTimeout(500);
 check('signed-in state: generate button offered',
   (await page.getByRole('button', { name: /generate my day/i }).count()) === 1);
@@ -208,9 +208,8 @@ await page.waitForTimeout(2500);
 check('modal closed after import', (await page.locator('.ai-plan-card').count()) === 0);
 check('catalogue stops became numbered map pins', (await tripPins()) >= 3);
 check('discovery pin on the map', (await page.locator('.dem-pin.ai-disc').count()) >= 1);
-await page.locator('.day-plan-collapse .day-collapse-head').first().click().catch(() => {});
 await page.waitForTimeout(800);
-check('schedule card kept in the rail', await page.locator('.ai-day-panel').isVisible().catch(() => false));
+check('the bot summary rides the plan', await page.locator('.dayp-summary').isVisible().catch(() => false));
 await page.screenshot({ path: `${SHOTS}/f4-imported.png` });
 
 await browser.close();

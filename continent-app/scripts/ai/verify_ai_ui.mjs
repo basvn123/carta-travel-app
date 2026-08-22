@@ -1,7 +1,7 @@
 // Headless verify for the AI day planner UI. Two scenarios against a running
 // `vite preview` (default http://localhost:4173):
 //
-//   A. fresh day: the "Let AI plan day 1" button opens the modal; as a guest
+//   A. fresh day: the empty day's "Ask Carta" button opens the modal; as a guest
 //      the sign-in note + built-in-planner fallback shows, and using it
 //      actually drafts the day (numbered pins + timeline appear).
 //   B. applied AI schedule (injected into localStorage the way applyAiResult
@@ -74,10 +74,17 @@ async function boot(browser, { viewport, withAiState }) {
   });
   await page.goto(URL, { waitUntil: 'domcontentloaded', timeout: 45000 });
   await page.waitForTimeout(2500);
-  // Into the Day planner, open the seeded plan.
-  for (const btn of await page.getByRole('button').all()) {
-    const t = (await btn.innerText().catch(() => '')).trim();
-    if (/day planner/i.test(t) && (await btn.isVisible().catch(() => false))) { await btn.click(); break; }
+  // Into the Day planner, open the seeded plan. On phones there is no header
+  // nav: both planners live behind the bottom bar's raised plus.
+  const plus = page.locator('.bottom-nav-plus');
+  if (await plus.isVisible().catch(() => false)) {
+    await plus.click();
+    await page.locator('.plan-chooser-item').nth(1).click();
+  } else {
+    for (const btn of await page.getByRole('button').all()) {
+      const t = (await btn.innerText().catch(() => '')).trim();
+      if (/day planner/i.test(t) && (await btn.isVisible().catch(() => false))) { await btn.click(); break; }
+    }
   }
   await page.waitForTimeout(1200);
   await page.getByText('Brussels AI test').first().click({ timeout: 8000 });
@@ -97,8 +104,8 @@ const browser = await chromium.launch();
 {
   const page = await boot(browser, { viewport: { width: 1440, height: 900 }, withAiState: false });
   await page.screenshot({ path: `${SHOTS}/a1-day-empty.png` });
-  const aiBtn = page.locator('.day-ai-hero').first();
-  check('A: AI hero CTA on empty day', await aiBtn.isVisible().catch(() => false));
+  const aiBtn = page.locator('.dayp-empty .dayp-cta').first();
+  check('A: Ask Carta leads the empty day', await aiBtn.isVisible().catch(() => false));
   // The route picker is gone: no second "ready-made route" call to action.
   check('A: ready-made route picker removed',
     (await page.getByRole('button', { name: /ready-made route/i }).count()) === 0);
@@ -122,11 +129,10 @@ const browser = await chromium.launch();
   await page.screenshot({ path: `${SHOTS}/a2b-modal-filled.png` });
   await page.getByRole('button', { name: /built-in planner/i }).first().click();
   await page.waitForTimeout(4000); // fallback draft fetches activities_full
-  // "Today's plan" is a collapsed accordion; open it to reach the timeline.
-  await page.locator('.day-plan-collapse .day-collapse-head').first().click().catch(() => {});
+  // The workspace opens on today's plan, so the route list is right there.
   await page.waitForTimeout(800);
-  const stops = await page.locator('.day-timeline').count();
-  check('A: fallback drafted the day (timeline present)', stops > 0);
+  const stops = await page.locator('.dayr-list').count();
+  check('A: fallback drafted the day (route list present)', stops > 0);
   await page.screenshot({ path: `${SHOTS}/a3-fallback-applied.png` });
   await page.close();
 }
@@ -134,17 +140,14 @@ const browser = await chromium.launch();
 /* ---- B: applied AI schedule + discovery pin, desktop ---- */
 {
   const page = await boot(browser, { viewport: { width: 1440, height: 900 }, withAiState: true });
-  await page.locator('.day-plan-collapse .day-collapse-head').first().click().catch(() => {});
   await page.waitForTimeout(800);
-  check('B: AI schedule card renders', await page.locator('.ai-day-panel').isVisible().catch(() => false));
-  // Since the v20 redesign the bot card is a HEADER (summary + totals); its
-  // stops lay into the one timeline and its reasons ride the rows, so that
-  // is where they are asserted (the collapse is already open, one click up).
-  check('B: bot stops laid into the timeline', (await page.locator('.day-timeline-row').count()) >= 3);
-  check('B: bot reasons ride the timeline rows', (await page.locator('.day-assigned-note.from-ai').count()) >= 1);
+  check('B: the bot summary renders', await page.locator('.dayp-summary').isVisible().catch(() => false));
+  // The bot's own listing is gone: its stops ARE the route list, and what
+  // it had to say about the day is the one summary line above them.
+  check('B: bot stops laid into the route list', (await page.locator('.dayr-row').count()) >= 3);
   check('B: discovery pin on map', (await page.locator('.dem-pin.ai-disc').count()) >= 1);
   check('B: numbered route pins on map', (await page.locator('.trip-pin').count()) >= 3);
-  check('B: AI re-plan button present', await page.getByRole('button', { name: /re-plan day/i }).first().isVisible().catch(() => false));
+  check('B: the Carta bot is reachable from the map', await page.locator('.dayws-bot-fab').first().isVisible().catch(() => false));
   await page.screenshot({ path: `${SHOTS}/b1-applied-desktop.png` });
   await page.close();
 }
@@ -153,17 +156,19 @@ const browser = await chromium.launch();
 {
   const page = await boot(browser, { viewport: { width: 390, height: 844 }, withAiState: true });
   check('C: mobile discovery pin on map', (await page.locator('.dem-pin.ai-disc').count()) >= 1);
-  await page.locator('.day-plan-collapse .day-collapse-head').first().click().catch(() => {});
   await page.waitForTimeout(800);
   await page.screenshot({ path: `${SHOTS}/c1-applied-mobile.png` });
-  const replan = page.getByRole('button', { name: /re-plan day/i }).first();
-  if (await replan.isVisible().catch(() => false)) {
-    await replan.click();
+  // Re-planning is the Carta bot's first predefined ask, reachable from
+  // the map on every tab rather than from one button inside the plan.
+  const fab = page.locator('.dayws-bot-fab').first();
+  if (await fab.isVisible().catch(() => false)) {
+    await fab.click();
+    await page.locator('.dayws-bot-item').first().click();
     await page.waitForTimeout(600);
     check('C: mobile modal opens and fits', await page.locator('.ai-plan-card').isVisible().catch(() => false));
     await page.screenshot({ path: `${SHOTS}/c2-modal-mobile.png` });
   } else {
-    check('C: mobile re-plan button reachable', false);
+    check('C: mobile Carta bot reachable', false);
   }
   await page.close();
 }

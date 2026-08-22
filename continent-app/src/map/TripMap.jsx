@@ -128,7 +128,7 @@ function routeArrowImage(px = 26) {
  * `cooperativeGestures` makes the wheel scroll the page unless ctrl is held,
  * which is what an embedded map inside a scrolling panel wants.
  */
-export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedIndex = null, routeGeometry = null, routeSegments = null, showRoute = true, focus = null, pois = null, onPoiClick = null, onViewChange = null, fitMaxZoom = 7.5, fitPadding = null, scrollZoom = true, easeToSelected = true, countryFills = null, photoZoom = null, zoomControls = false, cooperativeGestures = false, mapLocale = null }) {
+export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedIndex = null, routeGeometry = null, routeSegments = null, showRoute = true, focus = null, flyTo = null, pois = null, onPoiClick = null, onViewChange = null, fitMaxZoom = 7.5, fitPadding = null, scrollZoom = true, easeToSelected = true, countryFills = null, photoZoom = null, zoomControls = false, cooperativeGestures = false, mapLocale = null }) {
   const containerRef = useRef(null);
   const mapRef = useRef(null);
   const markersRef = useRef([]);
@@ -568,6 +568,22 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
     map._drawTrip = draw;
     if (readyRef.current) draw();
   }, [stops, padBottom, routeGeometry, routeSegments, showRoute, focus?.lat, focus?.lon, pois != null, fitMaxZoom, fitPadding]);
+
+  // Glide to one place without reframing the route: "how far is this from
+  // today's walk?" is answered by moving the camera, not by refitting the
+  // bounds (which would throw the planned route off screen). Each request
+  // bumps flyTo.k, so asking for the same place twice still moves the map.
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !hasLngLat(flyTo)) return;
+    const go = () => map.easeTo({
+      center: [flyTo.lon, flyTo.lat],
+      zoom: flyTo.zoom ?? 14,
+      duration: window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches ? 0 : 650,
+    });
+    if (readyRef.current) go();
+    else map.once('load', go);
+  }, [flyTo?.k]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Filled countries (the travel record): the shapes load on first use only,
   // so every other map in the app pays nothing for this layer.

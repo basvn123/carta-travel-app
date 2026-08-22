@@ -1126,10 +1126,10 @@ export function draftDays({ items, numDays, interests, paceKey, dwellFn, stopsMa
 // different lens. The traveller's answers rank them, they pick one, and the
 // picked route lands as ordinary assignments, fully modifiable afterwards.
 export const ROUTE_THEMES = [
-  { key: 'icons', title: 'The icons', desc: 'The highest-rated must-sees, the route first-timers dream of', interests: [], styles: ['classic', 'mix'] },
-  { key: 'culture', title: 'Culture & museums', desc: 'Museums, churches and the finest architecture', interests: ['museums', 'culture', 'architecture'], styles: ['culture'] },
-  { key: 'outdoors', title: 'Nature & views', desc: 'Parks, water, viewpoints and the prettiest corners outdoors', interests: ['outdoors', 'beaches', 'photo'], styles: ['active'] },
-  { key: 'flavour', title: 'Markets & local flavour', desc: 'Markets, food spots and the squares locals actually use', interests: ['food', 'shopping'], styles: ['foodie'] },
+  { key: 'icons', title: 'The icons', desc: 'The highest-rated must-sees, the route first-timers dream of.', interests: [], styles: ['classic', 'mix'] },
+  { key: 'culture', title: 'Culture & museums', desc: 'Museums, churches and the finest architecture.', interests: ['museums', 'culture', 'architecture'], styles: ['culture'] },
+  { key: 'outdoors', title: 'Nature & views', desc: 'Parks, water, viewpoints and the prettiest corners outdoors.', interests: ['outdoors', 'beaches', 'photo'], styles: ['active'] },
+  { key: 'flavour', title: 'Markets & local flavour', desc: 'Markets, food spots and the squares locals actually use.', interests: ['food', 'shopping'], styles: ['foodie'] },
 ];
 
 /**
