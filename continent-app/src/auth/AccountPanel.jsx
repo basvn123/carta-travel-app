@@ -588,12 +588,17 @@ export function AccountPanel({
   const upgrade = TIERS.trip;
   const locale = { en: 'en-GB', nl: 'nl-NL', de: 'de-DE', fr: 'fr-FR', es: 'es-ES', it: 'it-IT' }[lang] || 'en-GB';
 
+  // The hub used to title itself with your own name, and then the card
+  // directly under it said the same name again with the email beneath. Two
+  // lines of the same fact, and the serif one pushed the card a screen-inch
+  // down from the row carrying Passes. The card is the better of the two, so
+  // signed in the hub goes straight to it. Every spoke keeps its title.
   const heading = view === 'profile' ? t('account.profileDetails')
     : view === 'friends' ? t('friends.title')
     : view === 'faq' ? t('account.menuFaq')
     : view === 'feedback' ? t('account.feedbackTitle')
     : view === 'data' ? t('account.menuData')
-    : user ? (storedName || storedEmail) : t('account.preferences');
+    : user ? null : t('account.preferences');
 
   return (
     <div className="panel open account-panel" ref={panelRef}>
@@ -601,7 +606,7 @@ export function AccountPanel({
           scrolling panel it was positioned against the content box, so it slid
           out of sight the moment anybody scrolled and the panel had no visible
           way out at the bottom, which is where the delete section is. */}
-      <div className="panel-header">
+      <div className={`panel-header${heading ? '' : ' account-header-bare'}`}>
         <button className="panel-close" onClick={onClose} aria-label={t('account.close')}>x</button>
         {view === 'home' ? (
           <div className="panel-tag">{t('account.tag')}</div>
@@ -610,7 +615,7 @@ export function AccountPanel({
             <ArrowLeftIcon size={13} /> {t('account.tag')}
           </button>
         )}
-        <h2 className="panel-city account-heading">{heading}</h2>
+        {heading && <h2 className="panel-city account-heading">{heading}</h2>}
       </div>
 
       {view === 'home' && (

@@ -1990,7 +1990,7 @@ export function DestinationsTab({
               className={`places-cat ${cat === key ? 'on' : ''}`}
               onClick={() => switchCat(key)}
             >
-              <Icon size={17} />
+              <Icon size={16} />
               <span>{t(labelKey)}</span>
             </button>
           ))}
