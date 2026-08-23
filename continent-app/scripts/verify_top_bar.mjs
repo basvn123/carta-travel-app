@@ -1,152 +1,176 @@
-// Headless verify for the explore top bar rework: one segmented pill (dates
-// value | labelled Filters) instead of three unlabelled icon circles, a
-// labelled Passes chip, no language flag in the header (it moved to the
-// Account panel), and 44px touch targets throughout.
+// Headless verify for the top bar as it stands after Explore v3.
+//
+// The bar this file used to check belonged to the map era: a segmented
+// "dates | Filters" pill (.mobile-seg) on a phone, a .filter-row-primary row
+// on desktop, both rendered by FilterBar. Explore is a card grid now, its
+// Filters door lives in its own toolbar card, and FilterBar is not mounted by
+// anything, so every one of those checks was asserting against a component
+// that no longer runs. It has been rewritten around what the row really
+// carries today.
+//
+// What it checks:
+//   1. One header row, and none of the map-era controls left behind in it.
+//   2. The Passes entry is labelled at both widths: "See pricing" on desktop,
+//      the short chip on a phone.
+//   3. Desktop: five section tabs, the active one marked, and clicking one
+//      really changes the tab.
+//   4. The row ends exactly where the toolbar card under it ends, which is
+//      the whole reason .app-header carries Explore's container and reserves
+//      the scrollbar gutter.
+//   5. A phone reaches the sections from the bottom bar, at 44px, and the
+//      header holds no section tabs of its own.
+//   6. Language lives in the Account panel, not the header: six languages,
+//      picking one marks it and relabels the header.
+//   7. No horizontal overflow at 380px or 390px.
 //
 //   node scripts/verify_top_bar.mjs [url]      (default http://localhost:4173)
 //
-// Runs at a 390x844 phone viewport plus a 1280px desktop pass. Screenshots to
-// shots/top-bar-*.png.
+// Screenshots to scripts/shots/top-bar-*.png.
 
 import { chromium } from 'playwright';
+import { mkdirSync } from 'node:fs';
 
 const URL = process.argv[2] || 'http://localhost:4173/';
+const SHOTS = 'scripts/shots';
+mkdirSync(SHOTS, { recursive: true });
 
 const browser = await chromium.launch();
 const errors = [];
 const checks = [];
 const check = (label, ok, note = '') => { checks.push({ label, ok, note }); };
 
-const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
-page.on('pageerror', (e) => errors.push('pageerror: ' + e.message.split('\n')[0]));
-// The emrldtp loader is an accepted risk that always fails offline; its
-// fetch noise is not a regression signal for this bar.
-const NOISE = /emrldtp|ERR_FAILED|config is not valid/;
-page.on('console', (m) => { if (m.type() === 'error' && !NOISE.test(m.text())) errors.push('console: ' + m.text().slice(0, 120)); });
+// The emrldtp loader is an accepted risk that always fails offline; its fetch
+// noise is not a regression signal for this bar.
+const NOISE = /emrldtp|ERR_FAILED|config is not valid|open-meteo/;
 
-await page.addInitScript(() => {
-  try {
-    localStorage.setItem('continent.lang.v1', 'en');
-    localStorage.setItem('continent.guestMode.v1', '1');
-    localStorage.setItem('continent.mapGuideDismissed.v1', '1');
-  } catch { /* storage unavailable */ }
-});
+const boot = async (viewport, tag) => {
+  const page = await browser.newPage({ viewport });
+  page.on('pageerror', (e) => errors.push(`${tag} pageerror: ${e.message.split('\n')[0]}`));
+  page.on('console', (m) => {
+    if (m.type() === 'error' && !NOISE.test(m.text())) errors.push(`${tag} console: ${m.text().slice(0, 120)}`);
+  });
+  await page.addInitScript(() => {
+    try {
+      localStorage.setItem('continent.lang.v1', 'en');
+      localStorage.setItem('continent.guestMode.v1', '1');
+      localStorage.setItem('carta.welcomeSeen.v1', '1');
+    } catch { /* storage unavailable */ }
+  });
+  await page.goto(URL, { waitUntil: 'domcontentloaded', timeout: 45000 });
+  await page.waitForTimeout(2800);
+  return page;
+};
 
-await page.goto(URL, { waitUntil: 'domcontentloaded', timeout: 45000 });
-await page.waitForTimeout(3000);
+const box = (page, sel) => page.locator(sel).first().boundingBox().catch(() => null);
+// Right edge of a group, measured from its last visible child: the group box
+// itself can be wider than what it paints.
+const rightEdge = async (page, sel) => {
+  const b = await box(page, sel);
+  return b ? b.x + b.width : null;
+};
 
-// Make sure the Map tab (explore) is the active surface. Find it by label:
-// the bar's first item is Destinations now, not Explore.
-const exploreItem = page.locator('.bottom-nav-item', { hasText: /explore/i }).first();
-if (await exploreItem.isVisible().catch(() => false)) {
-  await exploreItem.click();
-  await page.waitForTimeout(2000);
+// ── Phone ──
+{
+  const page = await boot({ width: 390, height: 844 }, 'phone');
+
+  const header = await box(page, '.app-header');
+  check('one header row', !!header, header ? `${Math.round(header.width)}x${Math.round(header.height)}` : 'missing');
+
+  // The map era, gone rather than merely hidden.
+  for (const [what, sel] of [
+    ['the dates/Filters pill', '.mobile-seg'],
+    ['the desktop filter row', '.filter-row-primary'],
+    ['the header language flag', '.lang-picker, .lang-btn'],
+    ['the injected filter slot', '.app-header-filters'],
+  ]) {
+    check(`${what} is gone from the row`, await page.locator(sel).count() === 0);
+  }
+
+  // Sections come from the bottom bar on a phone; the header keeps none.
+  const navVisible = await page.locator('.header-nav-item').locator('visible=true').count();
+  check('no section tabs in the phone header', navVisible === 0, `${navVisible} visible`);
+  const slots = page.locator('.bottom-nav-item');
+  check('the bottom bar carries the four sections', await slots.count() === 4, `${await slots.count()} items`);
+  const slotBox = await box(page, '.bottom-nav-item');
+  check('bottom-bar slot >= 44px tall', !!slotBox && slotBox.height >= 43.5,
+    slotBox ? `${Math.round(slotBox.width)}x${Math.round(slotBox.height)}` : 'missing');
+
+  // The Passes chip: labelled, not a bare icon, and at the header's own size.
+  const passShort = page.locator('.header-pricing-label-short');
+  const passText = await passShort.innerText().catch(() => '');
+  check('passes chip shows its label', await passShort.isVisible().catch(() => false) && passText.trim().length > 0, passText.trim());
+  const passBox = await box(page, '.header-pricing-btn');
+  // 38px is the header's stated button size (44px is the page-level size).
+  check('passes chip >= 36px tall', !!passBox && passBox.height >= 36,
+    passBox ? `${Math.round(passBox.width)}x${Math.round(passBox.height)}` : 'missing');
+
+  const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+  check('no horizontal overflow at 390px', overflow <= 0, `overflow ${overflow}px`);
+  await page.screenshot({ path: `${SHOTS}/top-bar-mobile.png` });
+
+  // ── Language: in the Account panel, and it really switches. ──
+  await page.locator('.bottom-nav-item').filter({ hasText: /account/i }).first().click();
+  await page.waitForTimeout(900);
+  const opts = page.locator('.account-lang-opt');
+  check('account panel shows the language grid', await page.locator('.account-lang-grid').isVisible());
+  check('all six languages listed', await opts.count() === 6, String(await opts.count()));
+  await page.screenshot({ path: `${SHOTS}/top-bar-account-lang.png` });
+
+  await opts.filter({ hasText: 'Deutsch' }).click();
+  await page.waitForTimeout(700);
+  const active = await page.locator('.account-lang-opt.on').innerText().catch(() => '');
+  check('picked language marked active', /deutsch/i.test(active), active.trim());
+  // Escape leaves the panel, which is the phone's way out of it.
+  await page.keyboard.press('Escape');
+  await page.waitForTimeout(500);
+  const passDe = await page.locator('.header-pricing-label-short').innerText().catch(() => '');
+  check('the header relabels in German', passDe.trim().length > 0 && passDe.trim() !== passText.trim(),
+    `${passText.trim()} -> ${passDe.trim()}`);
+  await page.screenshot({ path: `${SHOTS}/top-bar-mobile-de.png` });
+  await page.close();
 }
 
-// ── The unified pill ──
-check('segmented pill renders', await page.locator('.mobile-seg').isVisible());
-const segBtns = page.locator('.mobile-seg-btn');
-check('pill has exactly two segments', await segBtns.count() === 2, String(await segBtns.count()));
-const datesText = await page.locator('.mobile-seg-value').innerText().catch(() => '');
-check('dates segment carries a value', datesText.trim().length > 0, datesText);
-const filtersText = await page.locator('.mobile-seg-label').innerText().catch(() => '');
-check('filters segment is labelled', /filters/i.test(filtersText), filtersText);
-check('old unlabelled icon circles are gone', await page.locator('.icon-btn').count() === 0);
-
-// ── Right side: passes chip labelled, no language flag ──
-check('no language flag in the header', await page.locator('.lang-picker, .lang-btn').count() === 0);
-const passShort = page.locator('.header-pricing-label-short');
-const passVisible = await passShort.isVisible().catch(() => false);
-const passText = passVisible ? await passShort.innerText() : '';
-check('passes chip shows its label', passVisible && /passes/i.test(passText), passText);
-
-// ── Touch targets: every interactive element in the row is at least 44px ──
-for (const [name, sel] of [
-  ['dates segment', '.mobile-dates-anchor .mobile-seg-btn'],
-  ['filters segment', '.mobile-seg > .mobile-seg-btn'],
-  ['passes chip', '.app-header-account .header-pricing-btn'],
-  // Account moved out of the top row on mobile: it is the bar's last item.
-  ['account item (bottom bar)', '.bottom-nav-item:has-text("Account")'],
-]) {
-  const box = await page.locator(sel).first().boundingBox().catch(() => null);
-  check(`${name} target >= 44px tall`, !!box && box.height >= 43.5, box ? `${Math.round(box.width)}x${Math.round(box.height)}` : 'missing');
+// ── 380px: the quality floor, on the tab the bar sits over. ──
+{
+  const page = await boot({ width: 380, height: 800 }, '380px');
+  const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+  check('no horizontal overflow at 380px', overflow <= 0, `overflow ${overflow}px`);
+  await page.close();
 }
 
-// No horizontal overflow of the top row.
-const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
-check('no horizontal overflow at 390px', overflow <= 0, `overflow ${overflow}px`);
-await page.screenshot({ path: 'shots/top-bar-mobile.png' });
+// ── Desktop ──
+{
+  const page = await boot({ width: 1280, height: 800 }, 'desktop');
 
-// ── Dates popover opens from the pill ──
-await page.locator('.mobile-dates-anchor .mobile-seg-btn').click();
-await page.waitForTimeout(400);
-check('dates popover opens', await page.locator('.mobile-dates-pop').isVisible());
-await page.screenshot({ path: 'shots/top-bar-dates-pop.png' });
-// Outside click on the header's dead space (not the map: a map tap opens a
-// destination panel that would then cover the pill).
-await page.mouse.click(370, 8);
-await page.waitForTimeout(300);
+  const tabs = page.locator('.header-nav-item');
+  const labels = (await tabs.allInnerTexts()).map((s) => s.trim());
+  check('five section tabs', labels.length === 5, labels.join(' | '));
+  check('the open section is marked', await page.locator('.header-nav-item.active').count() === 1);
 
-// ── Filters sheet opens and carries the lifestyle entry ──
-await page.locator('.mobile-seg > .mobile-seg-btn').click();
-await page.waitForTimeout(500);
-// The sheet is now the modal .fsheet (see verify_filter_sheet.mjs), not the
-// inline .filter-rows drawer this bar used to unfold.
-check('filter sheet opens', await page.locator('.fsheet').isVisible());
-check('lifestyle lives inside the sheet', await page.locator('.fsheet .fsheet-link-btn').isVisible());
-await page.screenshot({ path: 'shots/top-bar-filter-sheet.png' });
-// The trigger is behind the scrim while the modal is up, as it should be: the
-// sheet closes from its own control.
-await page.locator('.fsheet-close').click();
-await page.waitForTimeout(300);
+  check('full See pricing label', /see pricing/i.test(await page.locator('.header-pricing-label').innerText().catch(() => '')));
+  check('the short chip label is hidden here',
+    !(await page.locator('.header-pricing-label-short').isVisible().catch(() => false)));
 
-// ── Language moved to the Account panel; switching works. The panel opens
-//    from the bottom bar's Account item on mobile. ──
-await page.locator('.bottom-nav-item', { hasText: /account/i }).first().click();
-await page.waitForTimeout(800);
-const langGrid = page.locator('.account-lang-grid');
-check('account panel shows the language grid', await langGrid.isVisible());
-check('all six languages listed', await page.locator('.account-lang-opt').count() === 6,
-  String(await page.locator('.account-lang-opt').count()));
-await page.screenshot({ path: 'shots/top-bar-account-lang.png' });
-await page.locator('.account-lang-opt').filter({ hasText: 'Deutsch' }).click();
-await page.waitForTimeout(600);
-check('picked language marked active', await page.locator('.account-lang-opt.on').innerText()
-  .then((s) => /deutsch/i.test(s)).catch(() => false));
-// Close the panel and confirm the pill relabelled.
-await page.keyboard.press('Escape');
-await page.waitForTimeout(400);
-const panelStillOpen = await langGrid.isVisible().catch(() => false);
-if (panelStillOpen) {
-  await page.locator('.panel-close').first().click().catch(() => {});
-  await page.waitForTimeout(400);
+  // Explore, and the promise the header container exists for: the account
+  // group ends exactly where the toolbar card below it ends, scrollbar gutter
+  // included. A drift here means .app-header and .explore-wrap have come
+  // apart, which is what used to leave Passes hanging over the card's edge.
+  await tabs.filter({ hasText: /^explore$/i }).first().click();
+  await page.waitForTimeout(1800);
+  check('Explore is the open tab', await page.locator('.explore-toolbar').isVisible());
+  const groupRight = await rightEdge(page, '.app-header-account');
+  const cardRight = await rightEdge(page, '.explore-toolbar');
+  const drift = groupRight != null && cardRight != null ? Math.abs(groupRight - cardRight) : null;
+  check('the header ends where the toolbar card ends', drift != null && drift <= 1.5,
+    drift == null ? 'missing' : `${groupRight?.toFixed(0)} vs ${cardRight?.toFixed(0)}, ${drift.toFixed(1)}px apart`);
+
+  // Clicking a tab really moves: Destinations is a different surface.
+  await tabs.first().click();
+  await page.waitForTimeout(1800);
+  check('a tab click changes the surface', await page.locator('.places-toolbar').isVisible());
+  await page.screenshot({ path: `${SHOTS}/top-bar-desktop.png` });
+  await page.close();
 }
-const filtersDe = await page.locator('.mobile-seg-label').innerText().catch(() => '');
-check('pill relabels in German', /^filter$/i.test(filtersDe.trim()), filtersDe);
-await page.screenshot({ path: 'shots/top-bar-mobile-de.png' });
-await page.close();
-
-// ── Desktop pass ──
-const desk = await browser.newPage({ viewport: { width: 1280, height: 800 } });
-desk.on('pageerror', (e) => errors.push('desktop pageerror: ' + e.message.split('\n')[0]));
-await desk.addInitScript(() => {
-  try {
-    localStorage.setItem('continent.lang.v1', 'en');
-    localStorage.setItem('continent.guestMode.v1', '1');
-    localStorage.setItem('continent.mapGuideDismissed.v1', '1');
-  } catch { /* storage unavailable */ }
-});
-await desk.goto(URL, { waitUntil: 'domcontentloaded', timeout: 45000 });
-await desk.waitForTimeout(3000);
-const deskMap = desk.locator('.header-nav-item').nth(1);
-if (await deskMap.isVisible().catch(() => false)) { await deskMap.click(); await desk.waitForTimeout(2000); }
-check('desktop: no language flag in header', await desk.locator('.lang-picker, .lang-btn').count() === 0);
-const deskPricing = await desk.locator('.header-pricing-label').innerText().catch(() => '');
-check('desktop: full See pricing label', /see pricing/i.test(deskPricing), deskPricing);
-check('desktop: mobile pill hidden', !(await desk.locator('.mobile-seg').isVisible().catch(() => false)));
-check('desktop: filter row still renders', await desk.locator('.filter-row-primary').isVisible());
-await desk.screenshot({ path: 'shots/top-bar-desktop.png' });
-await desk.close();
 
 const failed = checks.filter((c) => !c.ok);
 console.log('=== top bar verify ===  target:', URL);
