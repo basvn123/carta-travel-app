@@ -1995,8 +1995,6 @@ export const en = {
 
   // Explore tab v2: the grid, the indices, the destination panel
   'explore.sortAria': 'Sort the destinations',
-  'explore.countOne': 'Showing 1 place',
-  'explore.countMany': 'Showing {n} places',
   'explore.openDest': 'Open {city}',
   'explore.bestMonthsTitle': 'Best months to visit, from 30 years of climate normals',
   'explore.openMaps': 'Open in Google Maps',

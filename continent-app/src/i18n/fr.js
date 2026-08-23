@@ -1526,8 +1526,6 @@ export const fr = {
 
   // Explore tab v2
   'explore.sortAria': 'Trier les destinations',
-  'explore.countOne': 'Affiche 1 lieu',
-  'explore.countMany': 'Affiche {n} lieux',
   'explore.openDest': 'Ouvrir {city}',
   'explore.bestMonthsTitle': 'Meilleurs mois pour venir, sur 30 ans de normales climatiques',
   'explore.openMaps': 'Ouvrir dans Google Maps',

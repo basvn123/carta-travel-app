@@ -22267,11 +22267,11 @@ button.ai-sched-main:focus-visible {
 .explore-toolbar {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   flex-wrap: wrap;
-  padding: 10px 12px;
+  padding: 14px 16px;
   border: 1px solid var(--rule-soft);
-  border-radius: 14px;
+  border-radius: 16px;
   background: var(--bg-card);
   box-shadow: var(--shadow-1);
 }
@@ -22281,61 +22281,64 @@ button.ai-sched-main:focus-visible {
   max-width: 400px;
   min-width: 180px;
 }
+.explore-search .results-search-input { padding: 11px 34px 11px 38px; font-size: 14px; }
+.explore-search .results-search-icon { left: 13px; }
 .explore-toolbar-right {
   display: flex;
   align-items: center;
   gap: 10px;
+  row-gap: 12px;
   flex-wrap: wrap;
   margin-left: auto;
 }
 .explore-sort { flex-wrap: wrap; }
+.explore-sort button { padding: 7px 14px; font-size: 12.5px; }
+/* Filters is the one primary action in this row, the door to everything
+   else that can narrow the list, so it carries the accent fill rather than
+   an outline. Lifestyle only reshapes what the euro figures mean, so it
+   stays a neutral pill beside it. */
 .explore-filter-btn {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  height: 34px;
-  padding: 0 13px;
-  border: 1px solid var(--rule);
+  height: 36px;
+  padding: 0 14px;
+  border: 1px solid var(--accent);
   border-radius: 999px;
-  background: var(--bg-card);
+  background: var(--accent);
   font-size: 12.5px;
   font-weight: 600;
-  color: var(--ink-soft);
-  transition: border-color .15s, color .15s, background .15s;
+  color: #fff;
+  transition: background .15s, border-color .15s;
 }
-.explore-filter-btn:hover { border-color: var(--ink); color: var(--ink); }
-.explore-filter-btn.has-active {
-  border-color: var(--accent);
-  color: var(--accent);
-  background: var(--accent-bg);
-}
-.explore-fav { height: 34px; }
+.explore-filter-btn:hover { background: var(--accent-soft); border-color: var(--accent-soft); }
+.explore-filter-btn .filter-tray-badge { background: var(--paper); color: var(--accent); }
+.explore-fav { height: 36px; padding: 0 12px; }
 
-/* Lifestyle: the same pill grammar as Filters, one shade warmer, because it
-   changes what the numbers MEAN rather than which rows are listed. It carries
-   its setting in the label so the assumption behind every euro figure on the
-   page is legible without opening anything. */
+/* Lifestyle: a neutral pill, one shade off the page, because it changes what
+   the numbers MEAN rather than which rows are listed; the accent belongs to
+   Filters, the one primary door in this row. */
 .explore-lifestyle-btn {
   display: inline-flex;
   align-items: center;
   gap: 7px;
-  height: 34px;
+  height: 36px;
   max-width: 260px;
-  padding: 0 13px;
-  border: 1px solid var(--accent-line, var(--rule));
+  padding: 0 14px;
+  border: 1px solid var(--rule);
   border-radius: 999px;
-  background: var(--accent-bg);
-  color: var(--accent);
+  background: var(--paper-dim);
+  color: var(--ink-soft);
   font-size: 12.5px;
   font-weight: 600;
-  transition: border-color .15s, background .15s;
+  transition: border-color .15s, background .15s, color .15s;
 }
-.explore-lifestyle-btn:hover { border-color: var(--accent); }
+.explore-lifestyle-btn:hover { border-color: var(--ink-mute); color: var(--ink); }
 .explore-lifestyle-btn:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
 }
-.explore-lifestyle-btn svg { flex: none; }
+.explore-lifestyle-btn svg { flex: none; color: var(--accent); }
 .explore-lifestyle-label {
   overflow: hidden;
   text-overflow: ellipsis;
@@ -22390,12 +22393,13 @@ button.ai-sched-main:focus-visible {
   border: 1px solid var(--rule-soft);
   border-radius: 12px;
   overflow: hidden;
-  transition: box-shadow .18s, border-color .18s, transform .18s;
+  transition: box-shadow .22s cubic-bezier(.16,1,.3,1), border-color .22s,
+    transform .22s cubic-bezier(.16,1,.3,1);
 }
 .xcard:hover {
-  box-shadow: var(--shadow-card);
+  box-shadow: var(--shadow-card), 0 16px 32px rgba(15, 23, 42, 0.16);
   border-color: var(--rule);
-  transform: translateY(-1px);
+  transform: translateY(-3px) scale(1.015);
   z-index: 2;
 }
 .xcard.selected { border-color: var(--accent); box-shadow: var(--shadow-card); }
@@ -22453,6 +22457,7 @@ button.ai-sched-main:focus-visible {
 .xcard-seal {
   position: absolute;
   left: 8px; top: 8px;
+  z-index: 2;
   padding: 3px 8px;
   border-radius: 4px;
   background: rgba(255, 255, 255, 0.93);
@@ -22467,6 +22472,7 @@ button.ai-sched-main:focus-visible {
 .xcard-best {
   position: absolute;
   left: 8px; bottom: 8px;
+  z-index: 2;
   display: inline-flex;
   align-items: center;
   gap: 5px;
@@ -22478,7 +22484,11 @@ button.ai-sched-main:focus-visible {
   font-size: 10.5px;
   letter-spacing: 0.02em;
   backdrop-filter: blur(3px);
+  transition: opacity .15s ease;
 }
+/* The season badge repeats as a row inside the full-card preview once it
+   opens, so it steps aside rather than doubling the fact. */
+.xcard.previewing .xcard-best { opacity: 0; }
 .xcard-star {
   position: absolute;
   top: 8px; right: 8px;
@@ -22587,47 +22597,104 @@ button.ai-sched-main:focus-visible {
   color: var(--ink-mute);
 }
 
-/* ── The hover preview: what the card cannot fit, over the top of the photo.
-      It covers the media box exactly and no more, so it is never clipped by
-      the grid and never runs off the bottom of the viewport the way a
-      popover anchored under the card would on the last row.
+/* ── The hover preview: what the card cannot fit, over the WHOLE card, not
+      just the photo. The real name/rating/country underneath get fully
+      covered once the preview reaches down over the body, so the preview
+      repeats them at its own head rather than leaving the card looking
+      like it lost its title.
 
       pointer-events: none is doing real work. The card stays clickable
       through it, and because the pointer is still inside the card the
       preview does not vanish when you move onto it, which is WCAG 1.4.13's
-      "hoverable" requirement met by geometry instead of by a safe triangle. ── */
+      "hoverable" requirement met by geometry instead of by a safe triangle.
+
+      The seal and the star keep their own stacking (z-index 2, set beside
+      them) so they stay legible on top of the scrim exactly where they sit
+      on the plain card, instead of getting buried under it. ── */
 .xcard-preview {
   position: absolute;
-  top: 0; left: 0; right: 0;
-  z-index: 3;
-  aspect-ratio: 16 / 9.6;
+  inset: 0;
+  z-index: 1;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  gap: 5px;
-  padding: 11px 13px 12px;
+  gap: 4px;
+  /* Top padding clears the seal and the star (they sit at top:8px, roughly
+     28px tall): the content column is bottom-anchored and grows upward, so
+     without this reserve a long card runs its own title straight under
+     them. */
+  padding: 36px 14px 12px;
   overflow: hidden;
   pointer-events: none;
   color: #fff;
-  /* A legibility scrim, not decoration: the photo stays readable underneath,
-     so hovering annotates the place rather than hiding it. Same device the
-     panel hero already uses. */
-  background: linear-gradient(
-    to top,
-    rgba(15, 23, 42, 0.93) 0%,
-    rgba(15, 23, 42, 0.86) 46%,
-    rgba(15, 23, 42, 0.34) 100%
-  );
-  animation: xcard-preview-in .13s ease-out;
+  /* Fully solid, not a fade: this now replaces the card's own text rather
+     than annotating the photo beside it, so it has to fully mask what is
+     underneath. Even a few percent of transparency let the real name and
+     price show through as a faint double-exposure behind the new text. */
+  background: rgb(13, 18, 30);
+  animation: xcard-preview-in .22s cubic-bezier(.16, 1, .3, 1);
 }
-@keyframes xcard-preview-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes xcard-preview-in {
+  from { opacity: 0; transform: scale(0.97); }
+  to { opacity: 1; transform: scale(1); }
+}
+/* Each row cascades in a beat behind the last, so the preview reads as
+   unfolding rather than switching on. */
+.xcard-preview > * {
+  animation: xcard-preview-row-in .3s cubic-bezier(.16, 1, .3, 1) both;
+}
+.xcard-preview > *:nth-child(1) { animation-delay: 0ms; }
+.xcard-preview > *:nth-child(2) { animation-delay: 20ms; }
+.xcard-preview > *:nth-child(3) { animation-delay: 40ms; }
+.xcard-preview > *:nth-child(4) { animation-delay: 60ms; }
+.xcard-preview > *:nth-child(5) { animation-delay: 80ms; }
+.xcard-preview > *:nth-child(6) { animation-delay: 100ms; }
+.xcard-preview > *:nth-child(n+7) { animation-delay: 120ms; }
+@keyframes xcard-preview-row-in {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: none; }
+}
+.xcard-preview-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+.xcard-preview-name {
+  font-family: var(--display);
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+/* rt-0/rt-1 chips are tuned for a paper background (transparent or pale
+   fill, a muted ink border); on the preview's dark scrim that reads as
+   nearly invisible, so they get a legible dark-theme fill here. */
+.xcard-preview-head .score-chip.rt-0,
+.xcard-preview-head .score-chip.rt-1 {
+  background: rgba(255, 255, 255, 0.16);
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.32);
+}
+.xcard-preview-sub {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  font-size: 11.5px;
+  color: rgba(255, 255, 255, 0.72);
+}
 .xcard-preview-lead {
   margin: 0;
   font-size: 12px;
   line-height: 1.4;
+  color: rgba(255, 255, 255, 0.88);
   display: -webkit-box;
   -webkit-box-orient: vertical;
-  -webkit-line-clamp: 3;
+  -webkit-line-clamp: 2;
   overflow: hidden;
 }
 .xcard-preview-row {
@@ -22647,17 +22714,48 @@ button.ai-sched-main:focus-visible {
   overflow: hidden;
 }
 .xcard-preview-row svg { flex: none; opacity: 0.75; }
+/* The same bed/food receipt the destination panel uses, retuned for a dark
+   scrim and a fraction of the room: no provenance line, tighter rows. */
 .xcard-preview-cost {
-  margin: 2px 0 0;
+  margin: 0;
   padding-top: 6px;
   border-top: 1px solid rgba(255, 255, 255, 0.22);
-  font-family: var(--mono);
-  font-size: 10.5px;
-  font-variant-numeric: tabular-nums;
+}
+.xcard-preview-cost .cost-receipt { margin-top: 0; }
+.xcard-preview-cost .cost-row {
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  padding: 3px 0;
+  border-bottom-color: rgba(255, 255, 255, 0.16);
+}
+.xcard-preview-cost .cost-row-label {
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.78);
+}
+.xcard-preview-cost .cost-row-label svg { color: rgba(255, 255, 255, 0.6); }
+.xcard-preview-cost .cost-row-eur { font-size: 12px; color: #fff; }
+.xcard-preview-cost .cost-total {
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  margin-top: 1px;
+  padding-top: 7px;
+  border-top: 2px solid rgba(255, 255, 255, 0.55);
+}
+.xcard-preview-cost .cost-total-label {
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: 11.5px;
   color: rgba(255, 255, 255, 0.9);
 }
+.xcard-preview-cost .cost-total-band { color: rgba(255, 255, 255, 0.65); white-space: nowrap; }
+.xcard-preview-cost .cost-total-band.cheapest { color: var(--green); }
+.xcard-preview-cost .cost-total-eur { font-size: 19px; color: #fff; }
 @media (prefers-reduced-motion: reduce) {
-  .xcard-preview { animation: none; }
+  .xcard-preview, .xcard-preview > * { animation: none; }
 }
 
 /* ── Panel: the cost receipt. Same shape as the trip receipt everywhere else
@@ -23124,8 +23222,8 @@ button.ai-sched-main:focus-visible {
   .explore-wrap { padding: 10px 14px calc(30px + env(safe-area-inset-bottom, 0px)); }
   /* Let the shortlist share a row with Lifestyle and Filters instead of
      wrapping onto a fourth line of its own. */
-  .explore-toolbar { padding: 9px 10px; gap: 8px; }
-  .explore-lifestyle-btn { max-width: 156px; padding: 0 11px; }
+  .explore-toolbar { padding: 12px; gap: 10px; }
+  .explore-lifestyle-btn { max-width: 156px; padding: 0 12px; }
   .explore-grid { grid-template-columns: repeat(auto-fill, minmax(168px, 1fr)); gap: 10px; }
   .explore-search { flex-basis: 100%; max-width: none; }
   .explore-toolbar-right { margin-left: 0; }
@@ -23144,12 +23242,23 @@ button.ai-sched-main:focus-visible {
   .xcard-foot { gap: 8px; margin-top: 7px; padding-top: 7px; }
   .rate-part { grid-template-columns: 108px 1fr 28px; }
   .cost-total-eur { font-size: 21px; }
+  /* A narrow card is a short card: the name, the country and the receipt
+     are what a hover cannot afford to lose, so the description and the
+     sights/stay/season facts drop first rather than force a wrap that
+     pushes the receipt half off the bottom of the card. */
+  /* Trimmed to name, country and the receipt, so there is less of it than
+     the full desktop version; centring it (rather than the desktop's
+     bottom anchor) keeps that shorter stack looking placed, not stranded
+     under a lot of empty scrim. */
+  .xcard-preview { justify-content: center; padding: 32px 11px 10px; gap: 8px; }
+  .xcard-preview-lead, .xcard-preview-row { display: none; }
+  .xcard-preview-name { font-size: 15px; }
+  .xcard-preview-cost .cost-total-band { display: none; }
 }
 @media (prefers-reduced-motion: reduce) {
   .xcard, .xcard-img, .xcard-star { transition: none; }
 }
-.explore-legend { margin-left: 10px; color: var(--ink-mute); }
-@media (max-width: 768px) { .explore-legend { display: block; margin-left: 0; margin-top: 2px; } }
+.explore-legend { color: var(--ink-mute); }
 /* Phone: the sort pills scroll sideways instead of wrapping to a ragged
    second line inside the pill group. */
 @media (max-width: 768px) {

@@ -6,12 +6,11 @@ import { fmtMonthRanges } from './ClimateStrip.jsx';
 import { useExploreCatalog } from '../hooks/useExploreCatalog.js';
 import { ExploreFilterSheet } from './ExploreFilterSheet.jsx';
 import { useI18n } from '../i18n/index.jsx';
-import { count } from '../lib/format.js';
 import { isFullRatingRange, FULL_RATING_RANGE } from '../lib/rating.js';
 import { FilterIcon, CalendarIcon, CameraIcon, ClockIcon, PiggyIcon } from '../components/Icons.jsx';
 import { matchProfile, PROFILE_LABEL_KEYS } from './LifestylePanel.jsx';
 import { HeroImage } from '../components/HeroImage.jsx';
-import { CostLine } from '../components/CostSummary.jsx';
+import { CostLine, CostReceipt } from '../components/CostSummary.jsx';
 import { visitLength } from '../lib/nearby.js';
 import { placeSights } from '../lib/placeStory.js';
 import { knownFor } from '../lib/knownFor.js';
@@ -67,7 +66,13 @@ const SORTS = [
 const CARD_SIZES = '(max-width: 768px) 45vw, (max-width: 1180px) 30vw, 280px';
 
 /**
- * The hover preview: what the card cannot fit.
+ * The hover preview: what the card cannot fit, now over the whole card
+ * rather than just the photo. It repeats the name and rating that the real
+ * card body carries underneath (that body is fully covered once the preview
+ * spans the card, not just the image), then adds what a glance at the grid
+ * cannot show: the season, the sights, how long the place is worth, and the
+ * same bed/food receipt the destination panel uses, so a reader who has read
+ * one can read the other.
  *
  * WCAG 1.4.13 has three requirements for content shown on hover and this
  * meets all three. Dismissible: Escape closes it without moving the pointer.
@@ -75,38 +80,43 @@ const CARD_SIZES = '(max-width: 768px) 45vw, (max-width: 1180px) 30vw, 280px';
  * hovered and the preview open, with no "safe triangle" needed. Persistent:
  * nothing times it out, it closes when the pointer or the focus leaves.
  */
-// A card clamps its one line to two rows. Past roughly this many characters
-// the reader is losing words, and repeating the line in the preview earns its
-// space; below it, repeating would just say the same thing twice.
-const CLAMP_CHARS = 72;
-
-function CardPreview({ p, t }) {
+function CardPreview({ p, t, best }) {
   const stay = visitLength(p);
   const sights = placeSights(p, 3);
   const lead = knownFor(p);
-  const clamped = lead.length > CLAMP_CHARS;
   return (
     <div className="xcard-preview" role="tooltip">
-      {clamped && <p className="xcard-preview-lead">{lead}</p>}
+      <div className="xcard-preview-head">
+        <span className="xcard-preview-name">{p.city}</span>
+        <ScoreChip rating={p.rating} size="xs" />
+      </div>
+      <p className="xcard-preview-sub">
+        <CountryFlag country={p.iso2} size={11} />
+        <span>{p.country}</span>
+      </p>
+      {lead && <p className="xcard-preview-lead">{lead}</p>}
       {sights.length > 0 && (
         <p className="xcard-preview-row">
-          <CameraIcon size={11} />
+          <CameraIcon size={12} />
           <span>{sights.join(', ')}</span>
         </p>
       )}
       {stay && (
         <p className="xcard-preview-row">
-          <ClockIcon size={11} />
+          <ClockIcon size={12} />
           <span>{t(stay.key, { n: stay.n })}</span>
         </p>
       )}
-      {p.cost?.dayEur != null && (
-        <p className="xcard-preview-cost">
-          {t('cost.dayTitle', {
-            bed: `€${Math.round(p.cost.stayEur)}`,
-            food: `€${Math.round(p.cost.foodEur)}`,
-          })}
+      {best && (
+        <p className="xcard-preview-row">
+          <CalendarIcon size={12} />
+          <span>{best}</span>
         </p>
+      )}
+      {p.cost?.dayEur != null && (
+        <div className="xcard-preview-cost">
+          <CostReceipt cost={p.cost} t={t} compact />
+        </div>
       )}
     </div>
   );
@@ -191,7 +201,7 @@ const ExploreCard = React.memo(function ExploreCard({ p, selected, fav, onSelect
       >
         <Star filled={fav} />
       </button>
-      {preview && <CardPreview p={p} t={t} />}
+      {preview && <CardPreview p={p} t={t} best={best} />}
     </div>
   );
 });
@@ -360,15 +370,14 @@ export function ExploreTab({
           </div>
         </div>
 
-        {/* What the grid currently shows, as a sentence with the number in
-            mono: the same honesty contract as the filter sheet's footer. */}
         <p className="explore-count">
-          <span className="explore-count-badge">
-            {rows.length === 0
-              ? (showFavOnly ? t('results.emptyFav') : t('results.empty'))
-              : t(rows.length === 1 ? 'explore.countOne' : 'explore.countMany', { n: count(rows.length) })}
-          </span>
-          {rows.length > 0 && <span className="explore-legend">{t('explore.costLegend')}</span>}
+          {rows.length === 0
+            ? (
+              <span className="explore-count-badge">
+                {showFavOnly ? t('results.emptyFav') : t('results.empty')}
+              </span>
+            )
+            : <span className="explore-legend">{t('explore.costLegend')}</span>}
           {isMock && <span className="explore-mock">Mock data</span>}
         </p>
 

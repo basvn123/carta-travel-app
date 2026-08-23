@@ -73,7 +73,7 @@ function CostRow({ icon: Icon, label, eur, band }) {
  * The footer is not a disclaimer, it is the measurement's provenance, and it
  * is the reason to believe the three numbers above it.
  */
-export function CostReceipt({ cost, t, lifestyleLabel, onOpenLifestyle }) {
+export function CostReceipt({ cost, t, lifestyleLabel, onOpenLifestyle, compact = false }) {
   if (!cost || cost.dayEur == null) return null;
   const bandWord = t(BAND_KEY[cost.dayBand]);
 
@@ -118,8 +118,8 @@ export function CostReceipt({ cost, t, lifestyleLabel, onOpenLifestyle }) {
           )}
         </p>
       )}
-      {cost.tierFallback && <p className="cost-source">{t('cost.tierFallback')}</p>}
-      <p className="cost-source">{provenance()}</p>
+      {!compact && cost.tierFallback && <p className="cost-source">{t('cost.tierFallback')}</p>}
+      {!compact && <p className="cost-source">{provenance()}</p>}
     </div>
   );
 }

@@ -1526,8 +1526,6 @@ export const nl = {
 
   // Explore tab v2
   'explore.sortAria': 'Sorteer de bestemmingen',
-  'explore.countOne': 'Toont 1 plek',
-  'explore.countMany': 'Toont {n} plekken',
   'explore.openDest': 'Open {city}',
   'explore.bestMonthsTitle': 'Beste maanden om te gaan, uit 30 jaar klimaatdata',
   'explore.openMaps': 'Open in Google Maps',
