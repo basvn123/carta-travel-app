@@ -83,16 +83,16 @@ try {
     const page = await browser.newPage({ viewport });
     await seed(page);
     if (!(await page.locator('.saved-map').count())) { fail(`${name}: the record has no map to align`); continue; }
+    // The overline and the serif title are gone (the bottom bar already says
+    // My trips), so the pill is the top of the column now.
     const edges = {
-      tag: await left(page, '.saved-panel-header .panel-tag'),
-      heading: await left(page, '.saved-panel-header .account-heading'),
       pill: await left(page, '.saved-tabs'),
       map: await left(page, '.saved-map'),
       record: await left(page, '.saved-section.is-big .saved-section-title'),
     };
     const spread = Math.max(...Object.values(edges)) - Math.min(...Object.values(edges));
     if (spread > 1.5) fail(`${name}: left edges disagree by ${spread.toFixed(1)}px ${JSON.stringify(edges)}`);
-    else ok(`${name}: tag, heading, tabs, map and record share one left edge (${edges.map.toFixed(0)}px)`);
+    else ok(`${name}: tabs, map and record share one left edge (${edges.map.toFixed(0)}px)`);
 
     // ---- 2. The map expands to the whole device.
     const small = await page.locator('.saved-map').boundingBox();

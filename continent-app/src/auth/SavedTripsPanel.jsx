@@ -722,11 +722,21 @@ export function SavedTripsPanel({ data, onClose, onLoadTrip, onLoadTripPlan, onO
   // Escape leaves the full-screen map, the way it leaves every other overlay
   // in the app. Bound only while it is open, so it never eats the key from
   // the panel underneath.
+  //
+  // In the CAPTURE phase, and it stops the event there. App keeps its own
+  // Escape stack on window (shared trip, then Account, then My trips), and
+  // that listener is registered first, so one press used to close the big map
+  // AND the panel behind it in the same tick: you asked to leave the map and
+  // landed back on Explore. While this dialog is up the key belongs to it.
   useEffect(() => {
     if (!mapFull) return undefined;
-    const onKey = (e) => { if (e.key === 'Escape') setMapFull(false); };
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
+    const onKey = (e) => {
+      if (e.key !== 'Escape') return;
+      e.stopPropagation();
+      setMapFull(false);
+    };
+    window.addEventListener('keydown', onKey, true);
+    return () => window.removeEventListener('keydown', onKey, true);
   }, [mapFull]);
 
   // Spend categories in the reader's language, so the ledger rows a memory
@@ -1174,10 +1184,12 @@ export function SavedTripsPanel({ data, onClose, onLoadTrip, onLoadTripPlan, onO
       <button className="panel-close" onClick={onClose} aria-label={t('saved.close')}>x</button>
 
       <div className="panel-header saved-panel-header">
-        <div className="panel-tag">{t('saved.tag')}</div>
-        <h2 className="panel-city account-heading">{t('saved.title')}</h2>
-        {/* Three states of travelling, one mutually exclusive choice: the
-            shortlist of wishes, the calendar of commitments, the record. */}
+        {/* No overline and no serif title. You arrive here from a bottom-bar
+            slot already labelled My trips, so the two lines only repeated it
+            and pushed the tabs down past the Passes row. The tablist keeps
+            the title as its accessible name. Three states of travelling, one
+            mutually exclusive choice: the shortlist of wishes, the calendar
+            of commitments, the record. */}
         <div className="panel-segment saved-tabs" role="tablist" aria-label={t('saved.title')}>
           <button
             role="tab"
