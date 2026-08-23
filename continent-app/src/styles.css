@@ -21949,7 +21949,28 @@ button.ai-sched-main:focus-visible {
 @media (max-width: 768px) {
   .app-header { z-index: 57; }
   .account-panel,
-  .saved-trips-panel { top: 56px; }
+  .saved-trips-panel {
+    top: 56px;
+    /* Read as a tab, not as a sheet laid over one. Explore is the model:
+       .explore-tab is one page of paper starting under the header with no
+       rule and no shadow, and on a phone these two are reached the same way,
+       from the bottom bar. The slide-over's border and drop shadow drew a
+       hard seam under the Passes row and darkened the band above it, which
+       is the only reason the header looked like a different colour: both
+       surfaces are --paper. Desktop keeps the sheet chrome, where these
+       really do float over the tab behind them. */
+    border: none;
+    box-shadow: none;
+  }
+  /* No cross either. The bottom bar is the way out on a phone (the same
+     five slots that opened the panel), and Explore does not carry one. It
+     stays on desktop, where the bar is hidden and the cross is the only
+     door back. */
+  .account-panel .panel-close,
+  .saved-trips-panel .panel-close { display: none; }
+  /* The gutter the cross used to need goes back to the shared one, so the
+     heading starts on the same vertical as everything under it. */
+  .account-panel .panel-header { padding-right: 16px; }
 }
 
 /* ── Friends: its own door in the top row, beside Passes ────────────────── */

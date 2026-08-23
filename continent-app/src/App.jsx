@@ -381,17 +381,21 @@ function TravelApp() {
 
 
   // Escape closes the top-most dismissable surface (the shared-trip offer,
-  // then the destination detail). Gives keyboard users a way out that the
-  // click-outside backdrop alone never provided.
+  // then Account / My trips, then the destination detail). Gives keyboard
+  // users a way out that the click-outside backdrop alone never provided, and
+  // it is the exit those two slide-overs rely on now that their cross is
+  // desktop-only.
   useEffect(() => {
     const onKey = (e) => {
       if (e.key !== 'Escape') return;
       if (sharedTrip) { setSharedTrip(null); return; }
+      if (accountOpen) { setAccountOpen(false); return; }
+      if (savedTripsOpen) { setSavedTripsOpen(false); return; }
       if (selectedId) { setSelectedId(null); }
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [sharedTrip, selectedId]);
+  }, [sharedTrip, accountOpen, savedTripsOpen, selectedId]);
 
   // Stable so every Explore card's memo survives parent re-renders.
   const openDetail = useCallback((id) => {
