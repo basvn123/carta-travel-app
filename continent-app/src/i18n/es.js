@@ -2313,7 +2313,6 @@ export const es = {
   /* TRIP-KEYS-END */
 
   "explore.sortCost": "Día más barato",
-  "explore.costLegend": "Cifras de las tarjetas: lo que cuesta un día a una persona, según tu Lifestyle.",
   "explore.nearbyTitle": "Combina bien con",
   "explore.nearbyNote": "Lugares valorados a menos de 110 km en línea recta.",
   "explore.stayHalfDay": "Con medio día basta aquí",
@@ -2594,5 +2593,39 @@ export const es = {
   "dayws.customTitle": "Tu propio lugar, añadido por ti a este plan",
   "dayws.customApproxTitle": "Tu propio lugar. No se pudo ubicar con precisión, así que aparece en el centro",
   "wizard.changeDates": "Cambiar las fechas",
+
+  /* DETAIL-PANEL-FULLSCREEN-KEYS */
+  "explore.highlightsTitle": "Lo mejor del destino",
+  "explore.highlightsAll": "Ver todas las fotos",
+  "explore.highlightsFewer": "Mostrar menos",
+  "explore.sightsTitle": "Lugares y zonas",
+  "explore.insightsTitle": "Claves del viaje",
+  "explore.furtherTitle": "Explorar más {city}",
+  "explore.furtherFlights": "Buscar vuelos",
+  "explore.furtherStays": "Buscar alojamiento",
+  "explore.furtherNote": "Ambos abren una búsqueda en otro sitio. Carta no vende billetes ni habitaciones.",
+  "detail.backToList": "Volver a la lista",
+  /* DESTINATIONS-FILTERS-KEYS */
+  "mtn.filterLabel": "Qué tipo de montaña",
+  "mtn.chipWalk": "Subir andando",
+  "mtn.chipClimb": "Escalada",
+  "mtn.chipVolcano": "Volcán",
+  "mtn.chipGlacier": "Glaciar",
+  "mtn.chipHighpoint": "Techo del país",
+  "mtn.noneChips": "Ninguna montaña coincide. Toca otra vez para ampliar la lista.",
+  "lake.filterLabel": "Qué buscas",
+  "lake.chipSwim": "Se puede nadar",
+  "lake.chipWater": "Agua excelente",
+  "lake.chipBeach": "Playa en la orilla",
+  "lake.chipMountains": "En la montaña",
+  "lake.noneChips": "Ningún lago coincide. Toca otra vez para ampliar la lista.",
+  "beach.filterLabel": "Qué buscas",
+  "beach.chipWater": "Agua excelente",
+  "beach.chipQuiet": "Sin urbanizar",
+  "beach.chipLifeguard": "Socorrista",
+  "beach.noneChips": "Ninguna playa coincide. Toca otra vez para ampliar la lista.",
+  "trip.lengthLabel": "Duración del viaje",
+  "trip.lengthUnit": "días",
+  "places.filterGroup": "Afinar la lista",
   /* PLANNER-V2-KEYS-END */
 };

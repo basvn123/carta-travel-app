@@ -5,6 +5,7 @@ import { CountryFlag } from '../components/CountryFlag.jsx';
 import { fmtMonthRanges } from './ClimateStrip.jsx';
 import { useExploreCatalog } from '../hooks/useExploreCatalog.js';
 import { ExploreFilterSheet } from './ExploreFilterSheet.jsx';
+import { CategoryRail } from './CategoryRail.jsx';
 import { useI18n } from '../i18n/index.jsx';
 import { isFullRatingRange, FULL_RATING_RANGE } from '../lib/rating.js';
 import { FilterIcon, CalendarIcon, CameraIcon, ClockIcon, PiggyIcon } from '../components/Icons.jsx';
@@ -210,7 +211,7 @@ export function ExploreTab({
   data,
   locationQuery, setLocationQuery,
   countryFilter, setCountryFilter,
-  tripKinds,
+  tripKinds, setTripKinds,
   ratingRange, setRatingRange,
   gemOnly, setGemOnly,
   unescoOnly, setUnescoOnly,
@@ -287,8 +288,13 @@ export function ExploreTab({
   return (
     <div className="explore-tab" ref={scrollRef}>
       <div className="explore-wrap">
-        {/* The control row: search, sort, the one Filters door, shortlist. */}
+        {/* Every control in one card: the kind cards, then search, sort, the
+            one Filters door and the shortlist. The kind rail used to be a
+            full-bleed band under the header, which read as a second piece of
+            chrome; inside the card it is plainly the first of the four ways
+            to narrow the same list. */}
         <div className="explore-toolbar">
+          <CategoryRail tripKinds={tripKinds} setTripKinds={setTripKinds} />
           <div className="results-search explore-search">
             <svg className="results-search-icon" width="15" height="15" viewBox="0 0 24 24"
               fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
@@ -329,57 +335,64 @@ export function ExploreTab({
               ))}
             </div>
 
-            {/* Lifestyle belongs beside Filters because they are one sentence:
-                Filters decides WHICH places are listed, Lifestyle decides what
-                the euro figure on each of them means. The label carries the
-                current setting so a reader can see what the prices assume
-                without opening anything. */}
-            {onOpenLifestyle && (
+            {/* Filters first: it is the one primary door in this row (decides
+                WHICH places are listed), so it leads. Lifestyle follows right
+                after it because the two are one sentence: Lifestyle decides
+                what the euro figure on each listed place means, and its
+                label carries the current setting so a reader can see what
+                the prices assume without opening anything. */}
+            <div className="explore-chips">
               <button
                 type="button"
-                className="explore-lifestyle-btn"
-                onClick={onOpenLifestyle}
+                className={`explore-filter-btn ${activeFilters > 0 ? 'has-active' : ''}`}
+                onClick={() => setSheetOpen(true)}
                 aria-haspopup="dialog"
-                title={t('lifestyle.exploreHint')}
               >
-                <PiggyIcon size={14} />
-                <span className="explore-lifestyle-label">{lifestyleLabel}</span>
+                <FilterIcon size={14} />
+                <span>{t('filter.filters')}</span>
+                {activeFilters > 0 && <span className="filter-tray-badge">{activeFilters}</span>}
               </button>
-            )}
 
-            <button
-              type="button"
-              className={`explore-filter-btn ${activeFilters > 0 ? 'has-active' : ''}`}
-              onClick={() => setSheetOpen(true)}
-              aria-haspopup="dialog"
-            >
-              <FilterIcon size={14} />
-              <span>{t('filter.filters')}</span>
-              {activeFilters > 0 && <span className="filter-tray-badge">{activeFilters}</span>}
-            </button>
+              {onOpenLifestyle && (
+                <button
+                  type="button"
+                  className="explore-lifestyle-btn"
+                  onClick={onOpenLifestyle}
+                  aria-haspopup="dialog"
+                  title={t('lifestyle.exploreHint')}
+                >
+                  <PiggyIcon size={14} />
+                  <span className="explore-lifestyle-label">{lifestyleLabel}</span>
+                </button>
+              )}
 
-            <button
-              className={`fav-filter explore-fav ${showFavOnly ? 'on' : ''}`}
-              onClick={() => setShowFavOnly(!showFavOnly)}
-              title={t('results.showShortlist')}
-              aria-pressed={showFavOnly}
-            >
-              <Star filled={showFavOnly} />
-              <span>{favSet.size}</span>
-            </button>
+              <button
+                className={`fav-filter explore-fav ${showFavOnly ? 'on' : ''}`}
+                onClick={() => setShowFavOnly(!showFavOnly)}
+                title={t('results.showShortlist')}
+                aria-pressed={showFavOnly}
+              >
+                <Star filled={showFavOnly} />
+                <span>{favSet.size}</span>
+              </button>
+            </div>
           </div>
         </div>
 
-        <p className="explore-count">
-          {rows.length === 0
-            ? (
+        {/* Only when there is something to say. The cards carry a euro figure
+            and the Lifestyle chip above states what it assumes, so a standing
+            line explaining them was restating what the reader can already
+            see. */}
+        {(rows.length === 0 || isMock) && (
+          <p className="explore-count">
+            {rows.length === 0 && (
               <span className="explore-count-badge">
                 {showFavOnly ? t('results.emptyFav') : t('results.empty')}
               </span>
-            )
-            : <span className="explore-legend">{t('explore.costLegend')}</span>}
-          {isMock && <span className="explore-mock">Mock data</span>}
-        </p>
+            )}
+            {isMock && <span className="explore-mock">Mock data</span>}
+          </p>
+        )}
 
         <div className="explore-grid">
           {rows.slice(0, visible).map((p) => (

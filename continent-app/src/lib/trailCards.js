@@ -55,6 +55,9 @@ export function nearestDest(destIndex, lat, lon, maxKm = ASSOC_MAX_KM) {
 
 /** The trail's own photograph, taken on the route. Null for a trail the photo
  *  pass found nothing usable for, which is not the same as "use a town". */
+// How far a borrowed photograph may travel to stand in for a walk.
+const NEAR_PHOTO_KM = 25;
+
 export function tripPhoto(tr) {
   return tr?.img?.u || null;
 }
@@ -96,13 +99,27 @@ export function associateTrip(tr, destinations, destIndex) {
     return {
       dest, destId: tr.anchor.dest, km: 0,
       photoUrl: own || dest.image?.url || null,
+      photoOf: own ? null : dest.city,
     };
   }
   const c = tripCentre(tr);
   const near = c ? nearestDest(destIndex, c.lat, c.lon) : null;
-  if (!near) return { dest: null, destId: null, km: null, photoUrl: own };
+  if (!near) return { dest: null, destId: null, km: null, photoUrl: own, photoOf: null };
   const full = destinations[near.dest.id] || near.dest;
-  return { dest: full, destId: near.dest.id, km: near.km, photoUrl: own };
+  // A third of the walks in the wire have no photograph of their own, and a
+  // grey placeholder in a list of photographs reads as a broken card. The
+  // nearest place's hero fills the gap, and `photoOf` is what stops it being
+  // a lie: the card says which place the picture is of, so nobody reads it as
+  // a photograph of the path. Only from close by, because "the nearest town"
+  // 60 km across a range is not the same landscape.
+  const borrow = !own && near.km <= NEAR_PHOTO_KM ? (full.image?.url || null) : null;
+  return {
+    dest: full,
+    destId: near.dest.id,
+    km: near.km,
+    photoUrl: own || borrow,
+    photoOf: borrow ? full.city : null,
+  };
 }
 
 /** 'beach' / 'mountains' membership for the themed category tabs. */

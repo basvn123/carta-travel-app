@@ -71,6 +71,36 @@ const sortChips = await page.locator('.places-sort').count();
 check('sort chips appear once filtered', sortChips === 3, String(sortChips));
 const dcards = await page.locator('.places-dcard').count();
 check('destination photo cards render', dcards > 5, `${dcards} cards`);
+// The photo card frame. A wide card crops its photograph to a horizontal
+// band, and centred, that band is roofs, the near bank and the car park. The
+// crop is pulled above the middle so the skyline, the ridge and the spire come
+// back. Asserted as a ratio and as a focus, because a future height tweak that
+// widened the box further without moving the crop would quietly bring the
+// roofs back.
+const frame = await page.evaluate(() => {
+  const imgs = [...document.querySelectorAll('.places-dcard .places-card-img')]
+    .filter((n) => n.tagName === 'IMG' && n.naturalWidth);
+  if (!imgs.length) return null;
+  const vis = imgs.map((n) => {
+    const r = n.getBoundingClientRect();
+    const box = r.width / r.height;
+    const nat = n.naturalWidth / n.naturalHeight;
+    return box > nat ? nat / box : box / nat;
+  });
+  const r = imgs[0].getBoundingClientRect();
+  const focus = getComputedStyle(imgs[0]).objectPosition;
+  return {
+    box: r.width / r.height,
+    avg: vis.reduce((a, v) => a + v, 0) / vis.length,
+    n: vis.length,
+    focus,
+  };
+});
+check('cards keep the wide frame',
+  !!frame && Math.abs(frame.box - 2.4) < 0.15, frame ? frame.box.toFixed(2) + ':1' : 'no loaded photo');
+check('the crop sits above the middle of the photograph',
+  !!frame && /(3[0-9]|4[0-2])(\.\d+)?%$/.test((frame.focus || '').split(' ')[1] || ''),
+  frame ? frame.focus : '');
 const dImg = await page.locator('.places-dcard .places-card-img').first().getAttribute('src').catch(() => '');
 check('destination cards carry a real image', /upload\.wikimedia|^http/.test(dImg || ''), (dImg || '').slice(0, 60));
 const dPrice = await page.locator('.places-dcard .places-card-price').first().innerText().catch(() => '');
@@ -150,16 +180,20 @@ await page.locator('.places-cat', { hasText: /beaches/i }).click();
 await page.waitForTimeout(2000);
 const beachCards = await page.locator('.places-bcard').count();
 check('beaches category shows published beaches', beachCards >= 1, `${beachCards} cards`);
-check('beaches category drops the country dropdown', await page.locator('.places-country').count() === 0);
+check('beaches category carries the country picker', await page.locator('.places-country').count() === 1);
 await page.screenshot({ path: 'shots/places-beaches.png' });
 
-// Mountains drops the country dropdown like Beaches and Lakes do, and narrows
-// by typing the country instead. This block used to drive the dropdown, which
-// has not existed here since the mountain layer shipped.
+// Mountains carries the country picker like every other tab now, and still
+// narrows by a typed country name, which is the path this block drives.
 await page.locator('.places-cat', { hasText: /mountains/i }).click();
 await page.waitForTimeout(1600);
-check('mountains category drops the country dropdown',
-  await page.locator('.places-country').count() === 0);
+check('mountains category carries the country picker',
+  await page.locator('.places-country').count() === 1);
+// The layer's own chips: the two ways up lead, and each carries its count.
+const mtnChips = await page.locator('.places-facets .places-class').allInnerTexts();
+check('mountain chips offer the ways up and the kinds',
+  mtnChips.length >= 5 && /walk/i.test(mtnChips.join(' ')) && /climb/i.test(mtnChips.join(' ')),
+  mtnChips.join(' | ').split(String.fromCharCode(10)).join(' '));
 await page.locator('.places-search input').fill('Albania');
 await page.waitForTimeout(1600);
 const mtnCards = await page.locator('.places-mcard, .places-bcard, .places-tcard').count();
@@ -167,6 +201,32 @@ check('mountains category narrows by typed country', mtnCards >= 1, `${mtnCards}
 await page.locator('.places-search input').fill('');
 await page.waitForTimeout(800);
 await page.screenshot({ path: 'shots/places-mountains.png' });
+
+// ── A picture on every card, on every category ──
+// The tab is a wall of photographs, so one grey hole reads as a broken card
+// rather than as missing data. Three sources answer for it: the item's own
+// photograph, the nearest catalogue place's (labelled on the card), and for a
+// walk with neither, the shape of the walk drawn from its own geometry.
+const blanks = [];
+for (const [blankCat, blankRe] of [['general', /^general/i], ['trips', /^trips$/i],
+  ['trails', /trails/i], ['beaches', /beaches/i], ['lakes', /^lakes$/i],
+  ['mountains', /mountains/i]]) {
+  await page.locator('.places-cat', { hasText: blankRe }).first().click();
+  await page.waitForTimeout(2600);
+  const seen = await page.evaluate(() => {
+    const cards = [...document.querySelectorAll(
+      '.places-dcard, .places-ccard, .places-tcard, .places-bcard, .places-icard')];
+    return {
+      n: cards.length,
+      blank: cards.filter((c) => c.querySelector('.hero-blank, .places-card-noimg')).length,
+    };
+  });
+  if (seen.blank) blanks.push(`${blankCat}: ${seen.blank} of ${seen.n}`);
+}
+check('every card carries a picture', blanks.length === 0,
+  blanks.length ? blanks.join(', ') : 'no blank cards on any category');
+await page.locator('.places-cat', { hasText: /^general/i }).first().click();
+await page.waitForTimeout(1500);
 
 // ── Near search: suggestions then closest-first ──
 await page.locator('.places-cat', { hasText: /general/i }).click();

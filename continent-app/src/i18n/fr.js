@@ -2313,7 +2313,6 @@ export const fr = {
   /* TRIP-KEYS-END */
 
   "explore.sortCost": "Journée la moins chère",
-  "explore.costLegend": "Montants sur les cartes : ce qu'une journée coûte à une personne, selon vos réglages Lifestyle.",
   "explore.nearbyTitle": "À combiner avec",
   "explore.nearbyNote": "Lieux notés dans un rayon de 110 km à vol d'oiseau.",
   "explore.stayHalfDay": "Une demi-journée suffit ici",
@@ -2594,5 +2593,39 @@ export const fr = {
   "dayws.customTitle": "Votre propre lieu, ajouté par vous à ce plan",
   "dayws.customApproxTitle": "Votre propre lieu. Il n'a pas pu être localisé précisément, il est donc placé au centre-ville",
   "wizard.changeDates": "Changer les dates",
+
+  /* DETAIL-PANEL-FULLSCREEN-KEYS */
+  "explore.highlightsTitle": "Points forts",
+  "explore.highlightsAll": "Voir toutes les photos",
+  "explore.highlightsFewer": "Afficher moins",
+  "explore.sightsTitle": "Sites et quartiers",
+  "explore.insightsTitle": "Ce qu’il faut savoir",
+  "explore.furtherTitle": "Explorer {city} plus loin",
+  "explore.furtherFlights": "Chercher des vols",
+  "explore.furtherStays": "Trouver un logement",
+  "explore.furtherNote": "Les deux ouvrent une recherche sur un autre site. Carta ne vend ni billets ni chambres.",
+  "detail.backToList": "Retour à la liste",
+  /* DESTINATIONS-FILTERS-KEYS */
+  "mtn.filterLabel": "Quel type de montagne",
+  "mtn.chipWalk": "Montée à pied",
+  "mtn.chipClimb": "Escalade",
+  "mtn.chipVolcano": "Volcan",
+  "mtn.chipGlacier": "Glacier",
+  "mtn.chipHighpoint": "Point culminant du pays",
+  "mtn.noneChips": "Aucune montagne ne correspond. Touchez de nouveau un choix pour élargir la liste.",
+  "lake.filterLabel": "Ce que vous cherchez",
+  "lake.chipSwim": "Baignade possible",
+  "lake.chipWater": "Eau excellente",
+  "lake.chipBeach": "Plage sur la rive",
+  "lake.chipMountains": "En montagne",
+  "lake.noneChips": "Aucun lac ne correspond. Touchez de nouveau un choix pour élargir la liste.",
+  "beach.filterLabel": "Ce que vous cherchez",
+  "beach.chipWater": "Eau excellente",
+  "beach.chipQuiet": "Rien de construit",
+  "beach.chipLifeguard": "Surveillance",
+  "beach.noneChips": "Aucune plage ne correspond. Touchez de nouveau un choix pour élargir la liste.",
+  "trip.lengthLabel": "Durée du voyage",
+  "trip.lengthUnit": "jours",
+  "places.filterGroup": "Affiner la liste",
   /* PLANNER-V2-KEYS-END */
 };

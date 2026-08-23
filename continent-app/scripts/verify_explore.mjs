@@ -199,8 +199,16 @@ try {
 
   await page.locator('.xcard-hit').first().click();
   await page.waitForTimeout(2000);
-  check('phone panel opens as bottom sheet', await page.locator('.dest-panel.open').isVisible());
-  check('phone panel has the grip', await page.locator('.dest-grip').isVisible());
+  check('phone panel opens', await page.locator('.dest-panel.open').isVisible());
+  // It is a page now, not a sheet: full bleed, no grip, one cross.
+  // scripts/verify_detail_sheet.mjs owns the rest of that contract.
+  const pbox = await page.locator('.dest-panel.open').boundingBox();
+  check('phone panel covers the screen',
+    !!pbox && pbox.x === 0 && pbox.y === 0 && pbox.width === 390,
+    pbox ? Math.round(pbox.width) + 'x' + Math.round(pbox.height) : 'no box');
+  check('phone panel has one cross and no grip',
+    await page.locator('.dest-grip').count() === 0
+    && await page.locator('.dest-panel .panel-close').isVisible());
   await page.screenshot({ path: 'shots/explore-panel-phone.png' });
   await page.close();
 } catch (e) {

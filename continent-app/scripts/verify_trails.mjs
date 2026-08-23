@@ -96,14 +96,14 @@ check('every trail photograph comes from Commons',
 await page.screenshot({ path: `shots/trails-${CC.toLowerCase()}-list.png`, fullPage: false });
 
 // ── The length filter ────────────────────────────────────────────────────
-const bandChips = page.locator('.places-bands .places-class').filter({ hasNotText: /loops/i });
+const bandChips = page.locator('.places-facets .places-class').filter({ hasNotText: /loops/i });
 const nBands = await bandChips.count();
 check('length band chips render', nBands >= 4, `${nBands} bands`);
 const bandLabel = await bandChips.first().innerText().catch(() => '');
 check('band chips carry a count', /\d/.test(bandLabel), bandLabel.replace(/\n/g, ' '));
 
 // Tap the shortest band and confirm the list actually shortens to short walks.
-const shortChip = page.locator('.places-bands .places-class', { hasText: /under 5 km/i }).first();
+const shortChip = page.locator('.places-facets .places-class', { hasText: /under 5 km/i }).first();
 await shortChip.click();
 await page.waitForTimeout(900);
 const afterBand = await page.locator('.places-tcard').count();
@@ -238,7 +238,7 @@ await phone.locator('.places-country').selectOption(CC);
 await phone.waitForTimeout(2500);
 check('phone: trail cards render', await phone.locator('.places-tcard').count() > 5);
 check('phone: the filter rail is there',
-  await phone.locator('.places-bands .places-class').count() >= 4);
+  await phone.locator('.places-facets .places-class').count() >= 4);
 const overflow = await phone.evaluate(
   () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
 );

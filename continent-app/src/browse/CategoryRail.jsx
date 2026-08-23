@@ -59,7 +59,7 @@ export function CategoryRail({ tripKinds, setTripKinds }) {
               onClick={() => toggle(k.key)}
               aria-pressed={on}
             >
-              {Icon && <Icon size={15} className="kind-rail-icon" />}
+              {Icon && <Icon size={22} className="kind-rail-icon" />}
               <span>{t(`kind.${k.key}`)}</span>
             </button>
           );

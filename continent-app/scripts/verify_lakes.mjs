@@ -157,8 +157,8 @@ check('General still carries the country picker', await page.locator('.places-co
 await page.locator('.places-cat', { hasText: /^lakes$/i }).click();
 await page.waitForTimeout(2500);
 
-// ── The controls that do not belong on this tab ──
-check('country dropdown is gone on Lakes', await page.locator('.places-country').count() === 0);
+// ── The controls this tab carries, and the ones it does not ──
+check('country picker is on Lakes', await page.locator('.places-country').count() === 1);
 check('priced-from picker is gone on Lakes', await page.locator('.places-controls .origin-btn').count() === 0);
 check('lifestyle tier is gone on Lakes', await page.locator('.places-lifestyle').count() === 0);
 check('price and A-Z sorts are gone on Lakes', await page.locator('.places-sort').count() === 0);
@@ -169,6 +169,25 @@ check('no country flag index on Lakes', await page.locator('.places-ccard').coun
 const cards = page.locator('.places-lcard');
 const nCards = await cards.count();
 check('lake cards render', nCards >= 3, `${nCards} cards`);
+
+// ── The swimming chip, which is what this layer is for ──
+// A list that promises beautiful water has to be able to show only the water
+// you may get into, so the chip leads the row and carries its own count.
+const swimChip = page.locator('.places-facets .places-class', { hasText: /swim/i }).first();
+const hasSwim = await swimChip.count() > 0;
+check('the swimming chip is offered', hasSwim, hasSwim ? await swimChip.innerText() : 'no chip');
+if (hasSwim) {
+  await swimChip.click();
+  await page.waitForTimeout(1500);
+  const left = await page.locator('.places-lcard').count();
+  const warned = await page.locator('.places-lcard .places-lcard-swim').count();
+  // Anything but "yes" earns a coloured verdict chip on the card, so a list
+  // filtered to swimmable water must carry none of them.
+  check('the swimming filter leaves only water you may swim in',
+    left > 0 && warned === 0, `${left} lakes, ${warned} with a warning chip`);
+  await swimChip.click();
+  await page.waitForTimeout(1200);
+}
 
 const cardImg = await cards.first().locator('.places-card-img').getAttribute('src').catch(() => '');
 check('cards carry a real photograph', /^https:\/\/upload\.wikimedia\.org/.test(cardImg || ''),

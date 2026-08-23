@@ -68,10 +68,27 @@ const browser = await chromium.launch();
   const chipCount = await page.locator('.kind-rail-chip:not(.kind-rail-clear)').count();
   check('phone: nine kind chips', chipCount === 9, `found ${chipCount}`);
 
-  const scroll = await page.locator('.kind-rail-scroll').evaluate((el) => ({
-    scrollable: el.scrollWidth > el.clientWidth,
-  })).catch(() => null);
-  check('phone: rail overflows horizontally (scrollable)', !!scroll?.scrollable);
+  // The rail lives inside the Explore toolbar card now and wraps into equal
+  // rows instead of scrolling sideways, so every row has to end exactly where
+  // the search field under it does. A sideways scroller hid whatever did not
+  // fit; rows show the whole vocabulary at once.
+  const railFit = await page.evaluate(() => {
+    const el = document.querySelector('.kind-rail-scroll');
+    const search = document.querySelector('.explore-search');
+    if (!el || !search) return null;
+    const a = el.getBoundingClientRect(); const b = search.getBoundingClientRect();
+    return {
+      scrollable: el.scrollWidth > el.clientWidth + 1,
+      inCard: !!el.closest('.explore-toolbar'),
+      dLeft: Math.abs(a.left - b.left),
+      dRight: Math.abs(a.right - b.right),
+    };
+  });
+  check('phone: rail sits inside the toolbar card', !!railFit?.inCard);
+  check('phone: rail wraps into rows, never scrolls sideways', railFit?.scrollable === false);
+  check('phone: rail rows line up with the search field',
+    !!railFit && railFit.dLeft < 2 && railFit.dRight < 2,
+    railFit ? `dL=${railFit.dLeft.toFixed(1)} dR=${railFit.dRight.toFixed(1)}` : 'missing nodes');
 
   const chipBox = await page.locator('.kind-rail-chip').first().boundingBox();
   check('phone: chip height >= 36px', !!chipBox && chipBox.height >= 36, `h=${chipBox?.height}`);
@@ -86,8 +103,8 @@ const browser = await chromium.launch();
   // sheet's primary action carries the live count, so it is the cheapest
   // honest read of "did the filter bite".
   const shownCount = async () => {
-    await page.locator('.mobile-seg > .mobile-seg-btn').click();
-    await page.locator('.fsheet').waitFor({ timeout: 15000 });
+    await page.locator('.explore-filter-btn').click();
+    await page.locator('.fsheet-explore').waitFor({ timeout: 15000 });
     await page.waitForTimeout(500);
     const txt = await page.locator('.fsheet-apply').innerText();
     await page.keyboard.press('Escape');
@@ -108,7 +125,8 @@ const browser = await chromium.launch();
   // The Filters badge is for what the sheet holds. Trip style is not in there
   // any more (the rail IS the control), so a badge for it would point at a
   // sheet where the thing being counted cannot be found.
-  const segCount = await page.locator('.mobile-seg-count').textContent().catch(() => null);
+  const segCount = await page.locator('.explore-filter-btn .filter-tray-badge')
+    .textContent().catch(() => null);
   check('phone: the Filters badge stays out of it', segCount == null, `badge=${segCount}`);
   check('phone: clear chip appears', await page.locator('.kind-rail-clear').count() === 1);
   await page.screenshot({ path: 'shots/category-rail-phone-on.png' });
@@ -138,19 +156,35 @@ const browser = await chromium.launch();
 
   check('desktop: rail renders', await page.locator('.kind-rail').count() === 1);
 
-  // The rail's height must be folded into --filter-h so the map is not covered.
+  // The rail moved out of .top-bar and into the toolbar card, so it is no
+  // longer chrome whose height --filter-h has to account for: it scrolls away
+  // with the grid like every other control in that card.
+  // On a wide screen the search field shares its row with the sorts and the
+  // chips, so the card's own content box is what the rail has to span, not
+  // the field. (On a phone they are the same thing, which is what the phone
+  // pass above checks.)
   const geom = await page.evaluate(() => {
     const rail = document.querySelector('.kind-rail');
-    const topBar = document.querySelector('.top-bar');
-    const fh = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--filter-h'));
-    return rail && topBar ? { railBottom: rail.getBoundingClientRect().bottom, topBarH: topBar.offsetHeight, fh } : null;
+    const card = document.querySelector('.explore-toolbar');
+    const search = document.querySelector('.explore-search');
+    if (!rail || !card || !search) return null;
+    const a = rail.getBoundingClientRect();
+    const c = card.getBoundingClientRect();
+    const cs = getComputedStyle(card);
+    return {
+      inCard: !!rail.closest('.explore-toolbar'),
+      inTopBar: !!rail.closest('.top-bar'),
+      dLeft: Math.abs(a.left - (c.left + parseFloat(cs.paddingLeft) + parseFloat(cs.borderLeftWidth))),
+      dRight: Math.abs(a.right - (c.right - parseFloat(cs.paddingRight) - parseFloat(cs.borderRightWidth))),
+      aboveSearch: a.bottom <= search.getBoundingClientRect().top + 1,
+    };
   });
-  check('desktop: --filter-h includes the rail', !!geom && Math.abs(geom.fh - geom.topBarH) < 2,
-    geom ? `fh=${geom.fh} topBar=${geom.topBarH}` : 'missing nodes');
-
-  const allin = page.locator('.legend-allin');
-  check('desktop: legend states the all-inclusive price', await allin.count() === 1,
-    (await allin.textContent().catch(() => '')) || '');
+  check('desktop: rail lives in the toolbar card, not the top bar',
+    !!geom && geom.inCard && !geom.inTopBar);
+  check('desktop: rail sits directly above the search field', !!geom && geom.aboveSearch);
+  check('desktop: rail rows span the card exactly',
+    !!geom && geom.dLeft < 2 && geom.dRight < 2,
+    geom ? `dL=${geom.dLeft.toFixed(1)} dR=${geom.dRight.toFixed(1)}` : 'missing nodes');
 
   await page.screenshot({ path: 'shots/category-rail-desktop.png' });
 

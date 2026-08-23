@@ -2313,7 +2313,6 @@ export const nl = {
   /* TRIP-KEYS-END */
 
   "explore.sortCost": "Goedkoopste dag",
-  "explore.costLegend": "Bedragen op de kaartjes: wat een dag een persoon kost, zoals je Lifestyle hebt ingesteld.",
   "explore.nearbyTitle": "Goed te combineren met",
   "explore.nearbyNote": "Beoordeelde plaatsen binnen 110 km hemelsbreed.",
   "explore.stayHalfDay": "Een halve dag is hier genoeg",
@@ -2594,5 +2593,39 @@ export const nl = {
   "dayws.customTitle": "Je eigen plek, door jou aan dit plan toegevoegd",
   "dayws.customApproxTitle": "Je eigen plek. Die kon niet precies worden vastgezet en staat daarom op het centrum",
   "wizard.changeDates": "Data wijzigen",
+
+  /* DETAIL-PANEL-FULLSCREEN-KEYS */
+  "explore.highlightsTitle": "Hoogtepunten",
+  "explore.highlightsAll": "Alle foto's",
+  "explore.highlightsFewer": "Minder tonen",
+  "explore.sightsTitle": "Bezienswaardigheden",
+  "explore.insightsTitle": "Inzichten",
+  "explore.furtherTitle": "{city} verder verkennen",
+  "explore.furtherFlights": "Vluchten zoeken",
+  "explore.furtherStays": "Een plek om te slapen",
+  "explore.furtherNote": "Beide openen een zoekopdracht op een andere site. Carta verkoopt geen tickets of kamers.",
+  "detail.backToList": "Terug naar de lijst",
+  /* DESTINATIONS-FILTERS-KEYS */
+  "mtn.filterLabel": "Wat voor berg",
+  "mtn.chipWalk": "Naar boven lopen",
+  "mtn.chipClimb": "Klimmen",
+  "mtn.chipVolcano": "Vulkaan",
+  "mtn.chipGlacier": "Gletsjer",
+  "mtn.chipHighpoint": "Hoogste van het land",
+  "mtn.noneChips": "Geen berg past bij die keuze. Tik er nog een keer op voor een bredere lijst.",
+  "lake.filterLabel": "Wat je zoekt",
+  "lake.chipSwim": "Je kunt zwemmen",
+  "lake.chipWater": "Uitstekend water",
+  "lake.chipBeach": "Strand aan de oever",
+  "lake.chipMountains": "In de bergen",
+  "lake.noneChips": "Geen meer past bij die keuze. Tik er nog een keer op voor een bredere lijst.",
+  "beach.filterLabel": "Wat je zoekt",
+  "beach.chipWater": "Uitstekend water",
+  "beach.chipQuiet": "Onbebouwd",
+  "beach.chipLifeguard": "Strandwacht",
+  "beach.noneChips": "Geen strand past bij die keuze. Tik er nog een keer op voor een bredere lijst.",
+  "trip.lengthLabel": "Reisduur",
+  "trip.lengthUnit": "dagen",
+  "places.filterGroup": "Lijst verfijnen",
   /* PLANNER-V2-KEYS-END */
 };

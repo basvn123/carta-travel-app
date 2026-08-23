@@ -153,8 +153,8 @@ check('General still carries the country picker', await page.locator('.places-co
 await page.locator('.places-cat', { hasText: /^mountains$/i }).click();
 await page.waitForTimeout(2500);
 
-// ── The controls that do not belong on this tab ──
-check('country dropdown is gone on Mountains', await page.locator('.places-country').count() === 0);
+// ── The controls this tab carries, and the ones it does not ──
+check('country picker is on Mountains', await page.locator('.places-country').count() === 1);
 check('priced-from picker is gone on Mountains', await page.locator('.places-controls .origin-btn').count() === 0);
 check('lifestyle tier is gone on Mountains', await page.locator('.places-lifestyle').count() === 0);
 check('the search field stays', await page.locator('.places-search input').count() === 1);
@@ -190,7 +190,9 @@ check('the list is ranked best first',
   nums.slice(0, 5).join(', '));
 
 // ── The lift chip, which is why most people open this tab ──
-const chip = page.locator('.places-bands .places-class').first();
+// It is one of six now (walk up, lift, climb, volcano, glacier, high point)
+// and they live in the toolbar card rather than loose on the page.
+const chip = page.locator('.places-facets .places-class', { hasText: /lift/i }).first();
 if (await chip.count()) {
   const chipLabel = await chip.innerText();
   check('the lift chip is offered', /lift/i.test(chipLabel), chipLabel.replace(/\n/g, ' '));

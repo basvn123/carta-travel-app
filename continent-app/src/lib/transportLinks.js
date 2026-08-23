@@ -214,3 +214,32 @@ export function ownTravelWord(flight) {
   const who = (flight?.airline || '').trim();
   return who ? `${word}, ${who}` : word;
 }
+
+/* ── Handing over from a destination page ──────────────────────────────────
+   The links above all describe a LEG: two places and a date. A reader on a
+   destination page has neither an origin nor dates, so these two are searches
+   rather than deep links, and they say so on the page. They exist because the
+   question a good destination page ends on is "so how do I actually go", and
+   the answer Carta gives everywhere else is to hand the traveller over rather
+   than to pretend it sells anything.
+
+   No partner id and no affiliate wrapper on either: an unattributed public
+   URL that works is worth more than an attributed one that needs keys this
+   fork may not have. ────────────────────────────────────────────────────── */
+
+/** Skyscanner's undated "flights to" page for a city, by IATA where the
+ *  catalogue has one, by name where it does not. */
+export function flightSearchLink({ iata, city }) {
+  if (IATA.test(iata || '')) {
+    return `https://www.skyscanner.net/transport/flights-to/${iata.toLowerCase()}/`;
+  }
+  const slug = citySlug(city);
+  return slug ? `https://www.skyscanner.net/transport/flights-to/${slug}/` : null;
+}
+
+/** Booking.com's plain search for a town, which takes a written place name. */
+export function staySearchLink({ city, country }) {
+  const where = [city, country].filter(Boolean).join(', ');
+  if (!where) return null;
+  return `https://www.booking.com/searchresults.html?ss=${encodeURIComponent(where)}`;
+}

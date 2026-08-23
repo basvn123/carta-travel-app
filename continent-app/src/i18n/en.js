@@ -3002,7 +3002,6 @@ export const en = {
 
   /* ── Cost: euros a day, replacing the two 0-10 cheapness indices ── */
   "explore.sortCost": "Cheapest day",
-  "explore.costLegend": "Card figures: what a day costs one person, the way you set Lifestyle.",
   "explore.nearbyTitle": "Worth pairing with",
   "explore.nearbyNote": "Rated places within 110 km, straight-line distance.",
   "explore.stayHalfDay": "Half a day is enough here",
@@ -3283,5 +3282,39 @@ export const en = {
   "dayws.customTitle": "Your own place, added to this plan by you",
   "dayws.customApproxTitle": "Your own place. It could not be pinned exactly, so it sits on the city centre",
   "wizard.changeDates": "Change the dates",
+
+  /* DETAIL-PANEL-FULLSCREEN-KEYS */
+  "explore.highlightsTitle": "Destination highlights",
+  "explore.highlightsAll": "See all photos",
+  "explore.highlightsFewer": "Show fewer",
+  "explore.sightsTitle": "Sights and areas",
+  "explore.insightsTitle": "Trip insights",
+  "explore.furtherTitle": "Explore {city} further",
+  "explore.furtherFlights": "Search flights",
+  "explore.furtherStays": "Find a place to stay",
+  "explore.furtherNote": "Both open a search on another site. Carta does not sell tickets or rooms.",
+  "detail.backToList": "Back to the list",
+  /* DESTINATIONS-FILTERS-KEYS */
+  "mtn.filterLabel": "What kind of mountain",
+  "mtn.chipWalk": "Walk up",
+  "mtn.chipClimb": "Climb it",
+  "mtn.chipVolcano": "Volcano",
+  "mtn.chipGlacier": "Glacier",
+  "mtn.chipHighpoint": "Country high point",
+  "mtn.noneChips": "No mountain matches those chips. Tap one again to widen the list.",
+  "lake.filterLabel": "What you want from it",
+  "lake.chipSwim": "You can swim",
+  "lake.chipWater": "Excellent water",
+  "lake.chipBeach": "Beach on the shore",
+  "lake.chipMountains": "In the mountains",
+  "lake.noneChips": "No lake matches those chips. Tap one again to widen the list.",
+  "beach.filterLabel": "What you want from it",
+  "beach.chipWater": "Excellent water",
+  "beach.chipQuiet": "Nothing built on it",
+  "beach.chipLifeguard": "Lifeguard",
+  "beach.noneChips": "No beach matches those chips. Tap one again to widen the list.",
+  "trip.lengthLabel": "Trip length",
+  "trip.lengthUnit": "days",
+  "places.filterGroup": "Narrow the list",
   /* PLANNER-V2-KEYS-END */
 };

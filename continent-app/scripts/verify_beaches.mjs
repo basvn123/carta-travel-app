@@ -55,8 +55,11 @@ check('General still carries the country picker', await page.locator('.places-co
 await page.locator('.places-cat', { hasText: /beaches/i }).click();
 await page.waitForTimeout(2500);
 
-// ── The controls the brief asked to be taken off this tab ──
-check('country dropdown is gone on Beaches', await page.locator('.places-country').count() === 0);
+// ── The controls this tab carries, and the ones it does not ──
+// The country picker is one of the first: it used to be on three tabs out of
+// six, and on the other three the only way to reach a country was to type its
+// name into the search field and hope the match landed.
+check('country picker is on Beaches', await page.locator('.places-country').count() === 1);
 check('priced-from picker is gone on Beaches', await page.locator('.places-controls .origin-btn').count() === 0);
 check('lifestyle tier is gone on Beaches', await page.locator('.places-lifestyle').count() === 0);
 check('price and A-Z sorts are gone on Beaches', await page.locator('.places-sort').count() === 0);

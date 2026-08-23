@@ -110,19 +110,33 @@ input, select {
   z-index: 25;
   display: flex;
   flex-direction: column;
+  /* The band carries the page ground full width; the header inside it is
+     constrained. One colour, no rule under it: the tabs below start at
+     --filter-h rather than scrolling beneath this row, so there is nothing
+     for a divider or a blur to separate it from. */
+  background: var(--paper);
+  /* This row does not scroll, but the panels under it do. Reserving their
+     scrollbar's gutter here too is what keeps the header's container the
+     same width as theirs, so Passes and Account line up with the cards
+     rather than sitting a scrollbar's width further right. */
+  padding-right: var(--sbw, 0px);
 }
 
 .app-header {
   display: flex;
   align-items: center;
   gap: 16px;
-  padding: 9px 20px;
-  background: rgba(245, 241, 232, 0.92);
-  backdrop-filter: blur(12px) saturate(140%);
-  border-bottom: 1px solid var(--rule);
-  /* The filter tray hangs from this row and cannot leave it (backdrop-filter
-     makes the header a stacking context), so the header itself has to out-rank
-     the map guide pill below it (z 24). Otherwise the tip floats on top of the
+  /* The same container as .explore-wrap underneath (1180 wide, 24px gutter),
+     so Passes and Friends end exactly where the toolbar card does instead of
+     at the window edge. */
+  width: 100%;
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 9px 24px;
+  background: none;
+  /* The filter tray hangs from this row and cannot leave it (this pair makes
+     the header a stacking context), so the header itself has to out-rank the
+     map guide pill below it (z 24). Otherwise the tip floats on top of the
      panel the reader just opened. */
   position: relative;
   z-index: 25;
@@ -229,44 +243,54 @@ input, select {
   margin-left: auto;
 }
 
-/* Trip-kind category rail: a full-width band directly under the header on the
-   Map tab. Same translucent panel as the header so the two read as one unit;
-   sits inside .top-bar, so its height folds into --filter-h. */
+/* Trip-kind categories: the first row inside the Explore toolbar card, above
+   the search field. It used to be a full-bleed translucent band under the
+   header, which read as a second piece of chrome rather than as one of the
+   four ways to narrow the same list.
+
+   A grid, not a scrolling flex row: equal columns mean each row spans the
+   card exactly, so the block lines up flush with the search field under it
+   instead of ending wherever the ninth card happens to fall. Five columns
+   puts the nine kinds on two rows (and the tenth, the reset, fills the
+   gap). */
 .kind-rail {
-  background: rgba(245, 241, 232, 0.92);
-  backdrop-filter: blur(12px) saturate(140%);
-  border-bottom: 1px solid var(--rule);
+  flex-basis: 100%;
+  min-width: 0;
 }
 .kind-rail-scroll {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  padding: 8px 14px;
-  overflow-x: auto;
-  scrollbar-width: none;
-  overscroll-behavior-x: contain;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 8px;
 }
-.kind-rail-scroll::-webkit-scrollbar { display: none; }
+/* One card per kind: the glyph on top, the word under it. Reading a row of
+   pictures is faster than reading a row of words, and stacking the two lets
+   the icon be big enough to actually recognise. */
 .kind-rail-chip {
-  display: inline-flex;
+  display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 7px;
-  flex-shrink: 0;
-  height: 38px;
-  padding: 0 14px;
-  border-radius: 999px;
-  border: 1px solid var(--rule);
-  /* Transparent, so the rail reads as one band with the header above it: the
-     white pills used to float as a second layer of cards over the alabaster. */
-  background: transparent;
+  justify-content: center;
+  gap: 5px;
+  min-width: 0;
+  padding: 9px 6px;
+  border-radius: 10px;
+  border: 1px solid var(--rule-soft);
+  background: var(--paper);
   font-family: var(--ui);
-  font-size: 12.5px;
+  font-size: 11.5px;
   font-weight: 600;
   color: var(--ink-soft);
-  white-space: nowrap;
   transition: color .15s, background .15s, border-color .15s;
 }
-.kind-rail-chip:hover { color: var(--ink); background: var(--paper-dim); border-color: var(--ink-mute); }
+/* The label rides whatever column width is left: ellipsis rather than a
+   wrap, so every card in the grid stays exactly the same height. */
+.kind-rail-chip > span {
+  max-width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.kind-rail-chip:hover { color: var(--ink); border-color: var(--ink-mute); }
 .kind-rail-chip.on {
   color: var(--paper);
   background: var(--ink);
@@ -274,14 +298,23 @@ input, select {
 }
 .kind-rail-icon { flex-shrink: 0; opacity: .85; }
 .kind-rail-chip.on .kind-rail-icon { opacity: 1; }
+/* Reset, not a category: it stays a plain control so it never reads as a
+   tenth thing you could be looking for. */
 .kind-rail-clear {
+  justify-content: center;
+  min-width: 0;
   border-style: dashed;
   background: none;
   color: var(--ink-mute);
 }
 .kind-rail-clear:hover { color: var(--danger); background: none; }
-@media (max-width: 768px) {
-  .kind-rail-scroll { padding: 7px 10px; }
+/* A phone cannot hold five legible columns (at 390px that is a 62px card,
+   narrower than the word "Mountains"), so it drops to three and takes a
+   third row. Every row still spans the card exactly, which is the part
+   that matters. */
+@media (max-width: 560px) {
+  .kind-rail-scroll { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+  .kind-rail-chip { padding: 8px 5px; font-size: 11px; }
 }
 
 @media (max-width: 768px) {
@@ -292,11 +325,11 @@ input, select {
     padding: 0;
     gap: 0;
     align-items: flex-start;   /* account stays top-aligned when the sheet opens */
-    /* No blur here: backdrop-filter turns this header into the containing
-       block for position: fixed children, which pinned the centered calendar
-       dialog to the 56px bar (half of it off-screen). The background is 92%
-       opaque, so losing the blur is invisible. */
-    background: rgba(245, 241, 232, 0.97);
+    /* The band above paints the ground; this row stays transparent so the two
+       cannot drift apart. No blur either: backdrop-filter would turn this
+       header into the containing block for position: fixed children, which
+       once pinned the centered calendar dialog to the 56px bar. */
+    background: none;
     backdrop-filter: none;
   }
   .app-header-brand { display: none; }
@@ -306,7 +339,9 @@ input, select {
     display: flex;
     align-items: center;
     gap: 4px;
-    padding: 0 10px;
+    /* Right gutter matches .explore-wrap's on this width, so the chips end
+       level with the toolbar card below rather than 4px inside it. */
+    padding: 0 14px 0 10px;
     height: 56px;
     min-height: 56px;
   }
@@ -3903,7 +3938,7 @@ input, select {
        containing block), so it is told how tall the rail is instead. Without
        this the rail's chips paint over the tray's first row, which is where
        the Budget and Quality captions live. */
-    top: calc(100% + 10px + var(--kind-rail-h, 0px));
+    top: calc(100% + 10px);
     left: 0; right: 0;
     z-index: 30;
     /* Fully opaque: at even 2% transparency the results rows and price pills
@@ -4267,35 +4302,45 @@ input, select {
    qualifier, above the hero and pinned. Everything below it scrolls, so the
    answer to "which place am I reading about" is never more than a glance
    away, however deep into the receipt you are. */
+/* It floats over the photograph until the photograph has gone, then it
+   becomes a real bar with the place's name in it. Two states, one element, so
+   the cross is in the same place at every scroll position: a full screen
+   surface whose only exit scrolls away is a trap. */
 .dsheet-bar {
-  position: sticky;
-  top: 0;
-  z-index: 3;
-  background: var(--paper);
-  border-bottom: 1px solid var(--rule);
-  /* Symmetric side padding, so the centred title stays centred with the close
-     button sitting over the right gutter. */
-  padding: 13px 52px 12px;
-}
-.dsheet-bar .panel-tag { text-align: center; margin-bottom: 7px; }
-.dsheet-bar-title {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  z-index: 6;
   display: flex;
   align-items: center;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 9px;
+  gap: 10px;
+  min-height: 56px;
+  padding: 10px 14px 10px 18px;
+  padding-top: calc(10px + env(safe-area-inset-top, 0px));
+  background: transparent;
+  border-bottom: 1px solid transparent;
+  pointer-events: none;   /* the photograph underneath stays draggable */
+  transition: background .18s ease, border-color .18s ease;
 }
-/* Scoped past .dest-panel's own compaction rules further down the file (which
-   set the old header's 33px city and pushed the close button to top: 26px). */
-.dest-panel .dsheet-bar .panel-city {
-  font-size: 25px;
+.dsheet-bar.is-stuck {
+  background: var(--paper);
+  border-bottom-color: var(--rule);
+}
+.dsheet-bar-name {
+  flex: 1;
   min-width: 0;
-  max-width: 100%;
+  font-family: var(--display);
+  font-size: 19px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap;
+  opacity: 0;
+  transform: translateY(4px);
+  transition: opacity .18s ease, transform .18s ease;
 }
-.dest-panel .dsheet-bar .panel-close { top: 13px; right: 14px; }
+.dsheet-bar.is-stuck .dsheet-bar-name { opacity: 1; transform: none; }
 
 /* The card under the hero: country, what the place is known for, the badges
    the bar leaves out, and the two save actions. */
@@ -4304,21 +4349,36 @@ input, select {
   padding: 14px 16px 13px;
   z-index: 1;
 }
+/* The way out. Over the hero it is a dark disc, because it is sitting on a
+   photograph and nothing else on it can be relied on for contrast; under the
+   bar it becomes a quiet outlined button like every other control. 38px, so
+   it is a thumb target rather than a pixel-hunt. */
 .panel-close {
-  position: absolute;
-  top: 14px; right: 16px;
-  z-index: 3;                 /* sit above the sticky bar's own content */
-  width: 30px; height: 30px;
+  flex: none;
+  margin-left: auto;
+  pointer-events: auto;
+  width: 38px; height: 38px;
   display: flex; align-items: center; justify-content: center;
   border-radius: 50%;
-  border: 1px solid var(--rule);
-  background: var(--paper);
-  font-size: 17px;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  background: rgba(26, 26, 26, 0.55);
   line-height: 1;
-  color: var(--ink-soft);
+  color: #fff;
+  cursor: pointer;
   transition: background .15s, color .15s, border-color .15s;
 }
-.panel-close:hover { background: var(--paper-dim); color: var(--ink); border-color: var(--ink-soft); }
+.panel-close:hover { background: rgba(26, 26, 26, 0.72); }
+.panel-close:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.dsheet-bar.is-stuck .panel-close {
+  border-color: var(--rule);
+  background: var(--paper);
+  color: var(--ink-soft);
+}
+.dsheet-bar.is-stuck .panel-close:hover {
+  background: var(--paper-dim);
+  color: var(--ink);
+  border-color: var(--ink-soft);
+}
 
 .panel-tag {
   font-family: var(--mono);
@@ -7955,9 +8015,167 @@ input, select {
   backdrop-filter: blur(2px);
 }
 .panel-hero-credit:hover { background: rgba(26, 26, 26, 0.62); }
-/* With a hero above it, the first card lifts over the photo's fade so the two
-   read as one composition rather than a picture with a box under it. */
-.panel-header.has-hero { margin-top: -26px; }
+/* ── The identity card ────────────────────────────────────────────────────
+   One object: the photograph, the verdict over it, and under it the name, the
+   country, what the place is known for and the two things you can do with it.
+   It used to be three pieces (a bar, a loose hero, a header card), which read
+   as three things about three subjects. */
+.xp-hero-card {
+  position: relative;
+  margin: 0 14px 12px;
+  border: 1px solid var(--rule);
+  border-radius: 16px;
+  background: var(--paper);
+  box-shadow: var(--shadow-1);
+  overflow: hidden;
+}
+.xp-hero-card .panel-hero { border-radius: 0; }
+/* A deeper top on the card's own hero: two chips and a cross sit up there and
+   a photograph of a white facade gives neither of them anything to stand on. */
+.xp-hero-card .panel-hero-shade {
+  background: linear-gradient(
+    to bottom,
+    rgba(26, 26, 26, 0.42) 0%,
+    rgba(26, 26, 26, 0.10) 26%,
+    rgba(245, 241, 232, 0) 62%,
+    var(--paper) 100%
+  );
+}
+/* The score and the crowding warning ride at the top of the photograph,
+   opposite the cross, where the shade is darkest. At the bottom they sat in
+   the fade that dissolves the picture into the card and the warning chip lost
+   its contrast exactly where it mattered. */
+.xp-hero-badges {
+  position: absolute;
+  left: 12px;
+  top: 12px;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  flex-wrap: wrap;
+  max-width: calc(100% - 24px);
+}
+.xp-hero-badges.is-inline { position: static; margin-bottom: 8px; }
+/* On a photograph the badges cannot borrow the page's ground, so they bring
+   their own: the crowding chip's 9 per cent wash is invisible over a white
+   facade, and a chip nobody can read is a warning nobody gets. */
+.xp-hero-badges:not(.is-inline) > * { box-shadow: 0 1px 8px rgba(26, 26, 26, 0.3); }
+.xp-hero-badges:not(.is-inline) .crowd-badge {
+  background: rgba(255, 255, 255, 0.94);
+  border-color: color-mix(in srgb, var(--cr-ink) 55%, transparent);
+}
+.xp-hero-card .panel-header { padding: 14px 16px 15px; }
+.xp-hero-card .panel-city {
+  display: block;
+  font-size: 30px;
+  line-height: 1.08;
+}
+.xp-hero-card .panel-country { margin-top: 5px; }
+.xp-hero-card .panel-rating-row { margin-top: 9px; }
+.xp-hero-card .panel-knownfor { margin: 9px 0 0; }
+/* How long the place is worth, said where the decision is made rather than
+   two screens down among the facts. */
+.xp-hero-stay {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 8px 0 0;
+  font-size: 12.5px;
+  color: var(--ink-soft);
+}
+.xp-hero-stay svg { flex: none; color: var(--ink-mute); }
+.xp-hero-card .panel-action-row { margin-top: 13px; }
+
+/* With a hero above it, the header sits directly under the photograph: the
+   old negative margin lifted a separate card over a separate picture, and
+   there is only one card now. */
+.panel-header.has-hero { margin-top: 0; }
+
+/* ── Destination highlights: the place in its own photographs ─────────────
+   A scrolling strip by default and a grid when the reader asks for all of
+   them, because six thumbnails answer "what does it look like" and
+   twenty four answer "show me everything", and those are different questions.
+   The captions are the sights' own names, so the strip doubles as a list of
+   what there is to see. */
+.xp-shots {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  scroll-snap-type: x proximity;
+  padding-bottom: 4px;
+  scrollbar-width: thin;
+}
+.xp-shots.is-all {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(118px, 1fr));
+  overflow: visible;
+}
+.xp-shot {
+  flex: 0 0 132px;
+  margin: 0;
+  scroll-snap-align: start;
+  min-width: 0;
+}
+.xp-shots.is-all .xp-shot { flex: none; }
+.xp-shot img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: 10px;
+  background: var(--paper-dim);
+}
+.xp-shot figcaption {
+  margin-top: 5px;
+  font-size: 11px;
+  line-height: 1.35;
+  color: var(--ink-soft);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.xp-shots-toggle {
+  padding: 0;
+  border: 0;
+  background: none;
+  font-family: var(--ui);
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--accent);
+  cursor: pointer;
+}
+.xp-shots-toggle:hover { text-decoration: underline; }
+
+/* ── The handover, at the foot of the page ────────────────────────────────
+   Two outbound searches, side by side, neither pretending to be a price. */
+.xp-further-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.xp-further-btn {
+  flex: 1 1 150px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 11px 14px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: var(--paper);
+  font-family: var(--ui);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+  text-decoration: none;
+  transition: border-color .15s, background .15s;
+}
+.xp-further-btn:hover { border-color: var(--accent-soft); background: var(--accent-bg); }
+.xp-further-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.xp-further-btn svg { flex: none; color: var(--accent); }
 
 /* ── Cards: the panel is a stack of them ─────────────────────────────────
    One bounded object per card (identity, price, receipt, guide), inset from
@@ -19276,6 +19494,10 @@ button.ai-sched-main:focus-visible {
   top: var(--filter-h);
   left: 0; right: 0; bottom: var(--bottom-nav-h);
   overflow-y: auto;
+  /* Always hold the scrollbar's gutter, so the column keeps one width
+     whether the list is long or short, and matches the top bar (which
+     reserves the same via --sbw). */
+  scrollbar-gutter: stable;
   background: var(--paper);
 }
 .places-wrap {
@@ -19284,11 +19506,35 @@ button.ai-sched-main:focus-visible {
   padding: 12px 24px calc(32px + env(safe-area-inset-bottom, 0px));
 }
 
-/* Five category tabs: icon above a tiny label, the active one on the warm
-   accent tile. General is the catalogue; the other four browse the wire. */
-.places-cats {
+/* ── The toolbar: one card holding every control this tab has. ──
+   The categories, the search field, the sorts, the Filters door and the
+   chips used to sit loose on the page ground in five separate bands, which
+   read as five unrelated widgets that happened to share a background. This
+   is the same instrument Explore carries, in the same order, so a reader who
+   has used one has already used the other. */
+.places-toolbar {
   display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+  padding: 14px 16px;
+  border: 1px solid var(--rule-soft);
+  border-radius: 16px;
+  background: var(--bg-card);
+  box-shadow: var(--shadow-1);
+}
+
+/* Six category tabs: icon above a tiny label, the active one on the warm
+   accent tile. General is the catalogue; the other five browse the wire.
+   A grid rather than a flex row, like Explore's kind rail: equal columns mean
+   the block ends flush with the search field under it. */
+.places-cats {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
   gap: 6px;
+  flex-basis: 100%;
+  min-width: 0;
 }
 .places-cat {
   flex: 1;
@@ -19298,12 +19544,13 @@ button.ai-sched-main:focus-visible {
   gap: 4px;
   min-width: 0;
   padding: 9px 2px 7px;
-  border: 1px solid transparent;
+  border: 1px solid var(--rule-soft);
   border-radius: 10px;
+  background: var(--paper);
   font-size: 10.5px;
   font-weight: 600;
   color: var(--ink-soft);
-  transition: color .15s, background .15s;
+  transition: color .15s, background .15s, border-color .15s;
 }
 .places-cat span {
   max-width: 100%;
@@ -19316,8 +19563,16 @@ button.ai-sched-main:focus-visible {
    on a narrow phone rather than scrolling: a brand new category nobody knows
    about must not be the one that starts off screen. */
 @media (max-width: 430px) {
-  .places-cats { gap: 2px; }
+  .places-cats { gap: 4px; }
   .places-cat { padding: 9px 0 7px; font-size: 9.5px; }
+}
+/* A phone cannot hold six legible columns (at 390px that is a 58px card,
+   narrower than the word "Mountains"), so the rail drops to three and takes a
+   second row. Every row still spans the card exactly. The rest of the phone
+   toolbar rules live in the two width blocks further down this sheet, which
+   already own those widths and would otherwise override anything set here. */
+@media (max-width: 560px) {
+  .places-cats { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
 .places-cat:hover { color: var(--ink); }
 .places-cat.on {
@@ -19410,43 +19665,106 @@ button.ai-sched-main:focus-visible {
   .places-class, .places-class-dot { transition: none; }
 }
 
-/* Sort chips: one active at a time, the arrow says which way it runs. */
+/* Sort: one segmented control rather than a row of separate pills, because
+   the four are one choice and only one of them can be on. The arrow says
+   which way the active one runs. */
 .places-sorts {
-  display: flex;
-  gap: 8px;
-  margin-top: 12px;
+  display: inline-flex;
+  gap: 2px;
+  padding: 3px;
+  border-radius: 999px;
+  background: var(--paper-dim);
 }
 .places-sort {
   display: inline-flex;
   align-items: center;
   gap: 5px;
   padding: 7px 14px;
-  border: 1px solid var(--rule);
-  border-radius: 9px;
-  background: var(--bg-card);
-  font-size: 12px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  background: none;
+  font-size: 12.5px;
   font-weight: 600;
   color: var(--ink-soft);
-  transition: color .15s, background .15s, border-color .15s;
+  white-space: nowrap;
+  transition: color .15s, background .15s;
 }
 .places-sort:hover { color: var(--ink); }
 .places-sort.on {
-  background: var(--accent-bg);
-  border-color: var(--accent-soft);
-  color: var(--ink);
+  background: var(--ink-fill);
+  color: var(--paper);
 }
+.places-sort.on .places-sort-dir { color: var(--paper); }
 .places-sort-dir { font-family: var(--mono); font-size: 11px; color: var(--accent); }
 
 .places-controls {
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
   gap: 10px;
-  margin-top: 12px;
+  flex-basis: 100%;
+  min-width: 0;
 }
-/* Search takes the full width and the three controls that decide what is
-   listed and how it is priced sit in one row beneath it. Four controls on one
-   line squeezed the placeholder to three words. */
-.places-search { position: relative; flex: 1 1 100%; min-width: 0; }
+/* Search leads the row and takes what is left of it; the sorts and the
+   Filters group sit to its right and wrap under it on a narrow screen. */
+.places-search {
+  position: relative;
+  flex: 1 1 240px;
+  max-width: 400px;
+  min-width: 180px;
+}
+.places-toolbar-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  row-gap: 12px;
+  flex-wrap: wrap;
+  margin-left: auto;
+}
+/* Filters, the country, the origin and the stay tier as one group, so a wrap
+   breaks after the sorts rather than splitting this group's own members. */
+.places-chips {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+/* Filters is the one primary door in the row, the way to everything else
+   that can narrow the list, so it carries the accent fill. Everything beside
+   it stays a neutral pill. */
+.places-filter-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 38px;
+  padding: 0 14px;
+  border: 1px solid var(--accent);
+  border-radius: 999px;
+  background: var(--accent);
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #fff;
+  transition: background .15s, border-color .15s;
+}
+.places-filter-btn:hover { background: var(--accent-soft); border-color: var(--accent-soft); }
+.places-filter-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.places-filter-btn .filter-tray-badge { background: var(--paper); color: var(--accent); }
+
+/* What this tab narrows by, under a hairline in the same card: a chip that
+   changes WHICH rows are listed is the same kind of control as the search
+   field above it, and it used to sit outside the card entirely. */
+.places-facets {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 10px 18px;
+  flex-basis: 100%;
+  min-width: 0;
+  padding-top: 12px;
+  border-top: 1px solid var(--rule-soft);
+}
+.places-facets .places-classes { margin-top: 0; }
+.places-facets .trip-slider { flex: 1 1 100%; max-width: 420px; }
 .places-search-icon {
   position: absolute;
   left: 12px; top: 50%;
@@ -19498,15 +19816,26 @@ button.ai-sched-main:focus-visible {
   color: var(--ink-soft);
 }
 .places-country {
-  height: 42px;
-  max-width: 44%;
+  height: 38px;
+  max-width: 190px;
   padding: 0 10px;
   border: 1px solid var(--rule);
-  border-radius: 10px;
-  background: var(--bg-card);
-  font-size: 13px;
-  color: var(--ink);
+  border-radius: 999px;
+  background: var(--paper-dim);
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--ink-soft);
 }
+.places-country:hover { border-color: var(--ink-mute); color: var(--ink); }
+/* A chip in the sheet carries the same count its twin in the toolbar does,
+   so the two rows say the same thing about the same filter. */
+.fchip-n {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  font-variant-numeric: tabular-nums;
+  opacity: .7;
+}
+.places-country:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 /* The departure the prices were computed from. The shared OriginPicker wears
    its map pill by default, so it takes the row's 42px shell here. */
 .places-controls .origin-btn {
@@ -19638,23 +19967,46 @@ button.ai-sched-main:focus-visible {
   background: var(--paper-dim);
   text-align: left;
 }
-.places-dcard { height: 150px; }
-.places-ccard { height: 92px; }
-.places-tcard { height: 158px; }
+
+/* The card heights, as ratios rather than pixels so a phone card and a two
+   column desktop card crop identically.
+
+   These are the shipped heights (92px for a country, 150px for a place, 158
+   for a trail, at ~360px wide) expressed as the boxes they actually were. A
+   3:2 frame showed 89 per cent of each photograph against 65 here, but it
+   also made the page two and a half screens longer, and a list you scroll
+   past is worth less than a crop. What pays for the crop instead is
+   --card-focus below. */
+.places-dcard { aspect-ratio: 12 / 5; }
+.places-ccard { aspect-ratio: 4 / 1; }
+.places-tcard { aspect-ratio: 9 / 4; }
 .places-dcard:focus-visible, .places-ccard:focus-visible, .places-tcard:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
 }
 
+/* Where a wide card crops its photograph.
+ *
+ * A 12:5 box over a 3:2 photograph keeps a horizontal band and throws away
+ * the rest, and centred, that band is the middle of the frame: roofs, the
+ * near bank, the car park. What people recognise a place by sits ABOVE the
+ * middle, because that is where a photographer puts a skyline, a ridge or a
+ * spire. Measured against the shipped centre crop on the country index, 38
+ * per cent is where the church, the mountains and the towers come back.
+ *
+ * Beaches, lakes and mountains keep their own value: on water the subject is
+ * the water, and pulling the crop up on a beach card buys sky. */
 .places-card-img {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: 50% var(--card-focus, 38%);
   display: block;
   transition: transform .3s ease;
 }
+.places-bcard .places-card-img { --card-focus: 48%; }
 .places-dcard:hover .places-card-img,
 .places-ccard:hover .places-card-img,
 .places-tcard:hover .places-card-img { transform: scale(1.03); }
@@ -19665,14 +20017,73 @@ button.ai-sched-main:focus-visible {
   background: var(--paper-dim);
   color: var(--ink-mute);
 }
+
+/* The walk drawn as itself, for the third of the wire that ships without a
+   photograph and has no town close enough to borrow one from. A drawing, not
+   a fake photograph: paper ground, one accent line, no chrome. */
+.places-card-shape {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background:
+    radial-gradient(circle at 30% 20%, var(--paper) 0%, var(--paper-dim) 70%);
+}
+.places-card-shape svg {
+  width: 100%;
+  height: 100%;
+}
+.places-card-shape path {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+  opacity: .85;
+}
+
+/* When the picture is the nearest town's rather than the walk's own, the
+   card says so. Unlabelled it would be a claim about the path. */
+.places-card-photoof {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 2;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: rgba(26, 26, 26, 0.55);
+  font-size: 10.5px;
+  font-weight: 600;
+  color: #fff;
+  white-space: nowrap;
+  max-width: 55%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+/* The veil the overlay text sits on. Both stops moved with the 3:2 frame: the
+   old ramp was a straight fade over the top 62 per cent of a 150px strip, and
+   on a 240px card that same fade greyed out half the photograph. This one is
+   DARKER where the text actually is, the bottom quarter, and clears by the
+   halfway line, so the card gains contrast under the name and loses the haze
+   over the sky. */
 .places-card-scrim {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to top, rgba(26, 26, 26, 0.78) 0%, rgba(26, 26, 26, 0.06) 62%);
+  background: linear-gradient(to top,
+    rgba(26, 26, 26, 0.82) 0%,
+    rgba(26, 26, 26, 0.62) 18%,
+    rgba(26, 26, 26, 0.20) 34%,
+    rgba(26, 26, 26, 0) 48%);
   pointer-events: none;
 }
+/* A country card carries one name and one count, so its veil can stop sooner
+   still. */
 .places-ccard .places-card-scrim {
-  background: linear-gradient(to top, rgba(26, 26, 26, 0.72) 0%, rgba(26, 26, 26, 0.12) 70%);
+  background: linear-gradient(to top,
+    rgba(26, 26, 26, 0.80) 0%,
+    rgba(26, 26, 26, 0.52) 15%,
+    rgba(26, 26, 26, 0.12) 30%,
+    rgba(26, 26, 26, 0) 42%);
 }
 
 /* The small flag sits beside the country name on the cover photo. */
@@ -19836,17 +20247,31 @@ button.ai-sched-main:focus-visible {
 
 @media (max-width: 768px) {
   .places-wrap { padding-left: 16px; padding-right: 16px; }
-  .places-country { max-width: 40%; }
+  .places-toolbar { padding: 12px; gap: 10px; }
+  .places-search { flex: 1 1 100%; max-width: none; }
+  .places-toolbar-right { margin-left: 0; width: 100%; }
+  .places-sorts { width: 100%; }
+  .places-sort { flex: 1; justify-content: center; padding: 7px 6px; }
+  .places-country { flex: 1 1 130px; max-width: none; }
 }
 @media (max-width: 480px) {
   /* Stacked: every control takes the full width, the origin pill included, so
-     the column reads as one set rather than three widths. */
-  .places-controls { flex-direction: column; }
-  .places-country { max-width: none; }
+     the column reads as one set rather than three widths.
+
+     flex: none on the field is not a tidy-up. In a COLUMN flex container the
+     basis is a height, so the search wrapper inherited its 240px basis as a
+     240px tall box with the input floating in the middle of it. */
+  .places-controls { flex-direction: column; align-items: stretch; }
+  .places-search { flex: none; width: 100%; min-width: 0; }
+  .places-toolbar-right { flex-direction: column; align-items: stretch; }
+  .places-chips { width: 100%; }
+  .places-filter-btn { flex: 1 1 120px; justify-content: center; }
+  .places-country { max-width: none; flex: 1 1 130px; }
   .places-controls .origin-picker { width: 100%; }
   .places-controls .origin-btn { width: 100%; }
   .places-controls .origin-btn-label { flex: 1; }
   .places-lifestyle { width: 100%; }
+  .trip-slider { max-width: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -19881,7 +20306,8 @@ button.ai-sched-main:focus-visible {
   position: relative;
   display: block;
   width: 100%;
-  height: 172px;
+  /* The photo-card frame, see .places-dcard. */
+  aspect-ratio: 25 / 12;
   border-radius: 14px;
   overflow: hidden;
   background: var(--paper-dim);
@@ -21182,9 +21608,6 @@ button.ai-sched-main:focus-visible {
   overscroll-behavior: contain;
 }
 
-/* Grip: rendered always, shown only in the phone sheet layout below. */
-.dest-grip-hit { display: none; }
-
 /* ── Fold: the animated collapse behind the cost groups and the about
       accordion. The body stays mounted; grid-rows animates the height and
       visibility keeps the closed content out of the tab order. ── */
@@ -21243,8 +21666,7 @@ button.ai-sched-main:focus-visible {
 
 /* ── Header compaction: same content, less air, so price and dates arrive
       a full screen earlier. Scoped to the destination panel only. ── */
-.dest-panel .panel-hero { height: 172px; }
-.dest-panel .panel-header { padding: 16px 22px 12px; }
+.dest-panel .panel-hero { height: 210px; }
 /* Three tabs in a 440px panel: tight enough that none of them wraps onto a
    second line, at every width. A tab label broken in half reads as a fault. */
 .dest-panel .panel-tabs .tab {
@@ -21271,49 +21693,44 @@ button.ai-sched-main:focus-visible {
 .cost-group-head:active { background: var(--rule); }
 .panel-acc-head:active .panel-acc-title { color: var(--ink-soft); }
 
-/* ── Phone layout: the panel becomes a bottom sheet over the map. Opens at
-      a half snap (the tapped pin stays visible), drags to full or away. ── */
+/* ── Phone layout: the panel is a page over the whole device ──────────────
+      It used to be a bottom sheet: a half snap on open, a grip to drag it
+      taller, a fling to dismiss. Two thirds of a phone screen for a surface
+      that carries fourteen sections meant everything below the first card
+      started life off the bottom of the screen, and the only way out was a
+      gesture nobody is told about. So it covers the screen, the bottom bar
+      included, and the cross in its own bar is the way back. ── */
 @media (max-width: 768px) {
   .panel.dest-panel {
-    top: auto;
-    height: min(62dvh, 560px);
-    max-height: calc(100% - var(--bottom-nav-h) - 10px);
-    border: 1px solid var(--rule);
-    border-bottom: none;
-    border-radius: 18px 18px 0 0;
-    box-shadow: 0 -8px 30px rgba(26, 26, 26, 0.18);
-    transform: translateY(112%);
-    transition: transform .32s cubic-bezier(0.2, 0.9, 0.3, 1), height .26s cubic-bezier(0.4, 0, 0.2, 1);
+    position: fixed;
+    inset: 0;
+    top: 0; right: 0; bottom: 0; left: 0;
+    width: 100%;
+    max-width: none;
+    height: 100dvh;
+    max-height: none;
+    /* Over the bottom nav (50) and the header (57), under the auth overlays
+       (60): while a destination is open it IS the screen. */
+    z-index: 58;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    transform: translateY(100%);
+    transition: transform .3s cubic-bezier(0.2, 0.9, 0.3, 1);
   }
   .panel.dest-panel.open { transform: translateY(0); }
-  .panel.dest-panel.dragging { transition: none; }
 
-  .dest-grip-hit {
-    display: block;
-    flex-shrink: 0;
-    padding: 9px 0 7px;
-    cursor: ns-resize;
-    touch-action: none;
-    user-select: none;
+  .dest-panel-scroll {
+    /* The bar floats over the top of the scroller, so the page has to start
+       under it and end above the phone's own home indicator. */
+    padding-bottom: calc(18px + env(safe-area-inset-bottom, 0px));
   }
-  .dest-grip {
-    width: 42px;
-    height: 4px;
-    border-radius: 2px;
-    background: var(--rule);
-    margin: 0 auto;
-    transition: background .15s, width .15s;
-  }
-  .dest-grip-hit:active .dest-grip { background: var(--ink-mute); width: 52px; }
-
-  .panel.dest-panel .panel-close { top: 26px; }
-  .dest-panel .panel-hero { height: 148px; }
-  /* The bar is the sheet's first row, under the grip: name at a size that
-     leaves the score and the badge on the same line as it. */
-  .dest-panel .dsheet-bar { padding: 8px 46px 10px; }
-  .dest-panel .dsheet-bar .panel-city { font-size: 21px; }
-  .dest-panel .dsheet-bar .panel-close { top: 8px; right: 12px; }
+  .dest-panel .panel-hero { height: 232px; }
+  .xp-hero-card { margin: 0 12px 12px; }
   .dsheet-card { margin-left: 12px; margin-right: 12px; }
+  /* Clear of the floating bar: the hero starts at the top of the page, so the
+     first card carries the inset instead of the scroller. */
+  .dest-panel-scroll > .xp-hero-card:first-child { margin-top: 0; }
   /* Three tabs on a 390px screen: they scroll rather than wrap into a
      three-line block that pushes the receipt off the sheet. */
   .dest-panel .panel-tabs {
@@ -21362,10 +21779,11 @@ button.ai-sched-main:focus-visible {
 
 @media (prefers-reduced-motion: reduce) {
   .panel.dest-panel,
+  .dsheet-bar,
+  .dsheet-bar-name,
   .acc-fold,
   .cost-group-caret,
-  .panel-acc-chev,
-  .dest-grip { transition: none; }
+  .panel-acc-chev { transition: none; }
 }
 
 /* ── Sharing a saved trip (auth/TripSharePanel.jsx) ─────────────────────────
@@ -22008,7 +22426,7 @@ button.ai-sched-main:focus-visible {
      the glyph yet. Both chips tighten instead, which is what actually makes
      them fit next to each other on a 390px screen. */
   .header-friends-btn { padding: 0 9px; gap: 5px; font-size: 12px; }
-  .app-header-account { gap: 6px; padding: 0 8px; }
+  .app-header-account { gap: 6px; padding: 0 14px 0 8px; }
   .app-header-account .header-pricing-btn { padding: 0 10px; }
 }
 
@@ -22273,6 +22691,9 @@ button.ai-sched-main:focus-visible {
   top: var(--filter-h);
   left: 0; right: 0; bottom: var(--bottom-nav-h);
   overflow-y: auto;
+  /* See .places-tab: the gutter is reserved unconditionally so the toolbar
+     card lines up with the top bar above it. */
+  scrollbar-gutter: stable;
   background: var(--paper);
 }
 .explore-wrap {
@@ -22296,7 +22717,10 @@ button.ai-sched-main:focus-visible {
   background: var(--bg-card);
   box-shadow: var(--shadow-1);
 }
-.explore-toolbar .results-search { background: var(--paper-dim); }
+/* The fill belongs to the INPUT, which is the thing with the rounded border.
+   Painting it on the wrapper too left a square beige rectangle poking out
+   past the pill's corners. */
+.explore-toolbar .results-search { background: none; margin-top: 0; }
 .explore-search {
   flex: 1 1 240px;
   max-width: 400px;
@@ -22311,6 +22735,15 @@ button.ai-sched-main:focus-visible {
   row-gap: 12px;
   flex-wrap: wrap;
   margin-left: auto;
+}
+/* Filters, Lifestyle and the shortlist star as one group, so the mobile
+   rule below can break the row after the sort pills without the group's
+   own members splitting across two lines first. */
+.explore-chips {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 .explore-sort { flex-wrap: wrap; }
 .explore-sort button { padding: 7px 14px; font-size: 12.5px; }
@@ -23238,16 +23671,38 @@ button.ai-sched-main:focus-visible {
   }
 }
 
+/* ── Toolbar: below the width where all five controls fit one line, it
+      becomes three deterministic rows instead of wrapping organically:
+      search, then the sort pills, then Filters/Lifestyle/the star. Left to
+      wrap on its own, the groups pack until they run out of room and only
+      the overflow breaks, so the split lands somewhere different at every
+      in-between width and the search field is left stranded beside a gap. ── */
+@media (max-width: 1100px) {
+  .explore-search { flex-basis: 100%; max-width: none; }
+  /* The right group has to span the row too, not shrink to its contents:
+     its own children measure their 100% against IT, so without this the
+     two rows below stop short of the search field's right edge. */
+  .explore-toolbar-right { flex-basis: 100%; min-width: 0; margin-left: 0; }
+  .explore-sort, .explore-chips { flex-basis: 100%; }
+  /* Each row then fills its width rather than trailing off: the sort pills
+     share it evenly, and Lifestyle takes whatever Filters and the star
+     leave, so every row ends flush with the search field above it. */
+  .explore-sort button { flex: 1; text-align: center; }
+  /* Filters and the star hold their size; Lifestyle absorbs the row and
+     gives width back (min-width: 0 lets it shrink past its label, which
+     then ellipses). Without that the label keeps the button too wide on a
+     narrow phone and the star is pushed onto a row of its own. */
+  .explore-chips { flex-wrap: nowrap; min-width: 0; }
+  .explore-filter-btn, .explore-fav { flex: none; }
+  .explore-lifestyle-btn { flex: 1; min-width: 0; max-width: none; }
+}
+
 /* ── Grid breakpoints. ── */
 @media (max-width: 768px) {
   .explore-wrap { padding: 10px 14px calc(30px + env(safe-area-inset-bottom, 0px)); }
-  /* Let the shortlist share a row with Lifestyle and Filters instead of
-     wrapping onto a fourth line of its own. */
   .explore-toolbar { padding: 12px; gap: 10px; }
-  .explore-lifestyle-btn { max-width: 156px; padding: 0 12px; }
+  .explore-lifestyle-btn { padding: 0 12px; }
   .explore-grid { grid-template-columns: repeat(auto-fill, minmax(168px, 1fr)); gap: 10px; }
-  .explore-search { flex-basis: 100%; max-width: none; }
-  .explore-toolbar-right { margin-left: 0; }
   /* The one line stays on phones. It was hidden when it was a category word
      ("A beach town"); now it names actual sights, and a phone has no hover to
      fall back on, so it is the only explanation a phone reader gets. */
@@ -23279,18 +23734,18 @@ button.ai-sched-main:focus-visible {
 @media (prefers-reduced-motion: reduce) {
   .xcard, .xcard-img, .xcard-star { transition: none; }
 }
-.explore-legend { color: var(--ink-mute); }
-/* Phone: the sort pills scroll sideways instead of wrapping to a ragged
-   second line inside the pill group. */
+/* Phone: the four sorts still share one full-width row, so they trade
+   padding for the width the labels need. They used to be flex-shrink: 0 in
+   a sideways scroller, which at 390px pushed the group nine pixels past the
+   card's right edge and out of line with the search field above it. */
 @media (max-width: 768px) {
-  .explore-sort {
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    max-width: 100%;
-    scrollbar-width: none;
+  .explore-sort { flex-wrap: nowrap; max-width: 100%; }
+  .explore-sort button {
+    min-width: 0;
+    padding: 7px 4px;
+    font-size: 11.5px;
+    white-space: nowrap;
   }
-  .explore-sort::-webkit-scrollbar { display: none; }
-  .explore-sort button { white-space: nowrap; flex-shrink: 0; }
 }
 
 /* TRIPS-LAYER-START */
@@ -23315,8 +23770,8 @@ button.ai-sched-main:focus-visible {
   margin-top: 12px;
 }
 .trip-slider {
-  flex: 1 1 260px;
-  min-width: 220px;
+  flex: 1 1 280px;
+  min-width: 240px;
   max-width: 360px;
   display: block;
 }
@@ -23327,7 +23782,26 @@ button.ai-sched-main:focus-visible {
   gap: 10px;
   margin-bottom: 4px;
 }
-.trip-slider-label { font-size: 13.5px; font-weight: 600; color: var(--ink); }
+/* The control says what it measures, then what it is set to. It used to say
+   only the value, so a slider reading "7 days" never said that seven was the
+   thing being chosen. */
+.trip-slider-label {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 7px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+}
+.trip-slider-label b {
+  font-size: 13.5px;
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--ink);
+}
 .trip-slider-count {
   font-family: var(--mono);
   font-size: 11px;
@@ -23342,12 +23816,35 @@ button.ai-sched-main:focus-visible {
   cursor: pointer;
 }
 .trip-slider-input:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+/* An axis, not four words spaced evenly. Laid out with space-between, "7"
+   sat a third of the way along a track where seven of fourteen days is the
+   halfway point, so every label but the first and last named a value two days
+   from where it stood. Each tick is now placed at its own value, in the
+   coordinates the thumb travels in: the track runs from half a thumb in to
+   half a thumb short of the end, which is what the 9px term corrects for. */
 .trip-slider-ticks {
-  display: flex;
-  justify-content: space-between;
+  position: relative;
+  display: block;
+  height: 15px;
   font-family: var(--mono);
   font-size: 10px;
+  font-variant-numeric: tabular-nums;
   color: var(--ink-mute);
+}
+.trip-slider-tick {
+  position: absolute;
+  top: 0;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  transition: color .15s;
+}
+.trip-slider-tick.on { color: var(--accent); font-weight: 600; }
+/* The end ticks pull inside the track rather than centring on it, so neither
+   the word at 0 nor the unit at 14 hangs off the edge of the card. */
+.trip-slider-tick:first-child { transform: none; }
+.trip-slider-tick:last-child { transform: translateX(-100%); }
+@media (prefers-reduced-motion: reduce) {
+  .trip-slider-tick { transition: none; }
 }
 .trip-toggles { display: flex; flex-wrap: wrap; gap: 8px 16px; }
 .trip-toggles .places-classes { margin-top: 0; }
@@ -23373,7 +23870,11 @@ button.ai-sched-main:focus-visible {
 .itin-card-media {
   position: relative;
   display: block;
-  height: 132px;
+  /* The photo-card frame, see .places-dcard. flex: none because the card is a
+     column flex and the body strip under the photo would otherwise squeeze
+     the ratio back out of it. */
+  aspect-ratio: 30 / 11;
+  flex: none;
   overflow: hidden;
   background: var(--paper-dim);
 }

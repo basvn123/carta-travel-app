@@ -16,14 +16,16 @@ import { useForecast } from '../lib/weather.js';
 import { packingList, packMonth } from '../lib/packing.js';
 import { cheapestStayMonths } from '../lib/costIndex.js';
 import { nearbyPlaces, visitLength, haversineKm } from '../lib/nearby.js';
+import { flightSearchLink, staySearchLink } from '../lib/transportLinks.js';
 import { useI18n } from '../i18n/index.jsx';
 import {
   InfoIcon, TreeIcon, PersonIcon, CalendarIcon, MapPinIcon, CameraIcon,
   ParkingIcon, MusicIcon, SunIcon, PartSunIcon, CloudIcon, FogIcon,
   RainIcon, DrizzleIcon, SnowIcon, StormIcon, ClockIcon, CompassIcon,
   ShoeIcon, SwimIcon, BootIcon, PlugIcon, BottleIcon, JacketIcon,
-  BackpackIcon, ReceiptIcon, StarIcon, CheckIcon,
+  BackpackIcon, ReceiptIcon, StarIcon, CheckIcon, BedIcon,
 } from '../components/Icons.jsx';
+import { PlaneIcon } from '../components/TransportIcons.jsx';
 
 /**
  * The Explore page's destination panel: what a place IS, not what it costs to
@@ -141,64 +143,48 @@ export function ExplorePanel({
 }) {
   const { t, lang } = useI18n();
 
-  // Phone bottom sheet: half snap on open, drag the grip between half, full
-  // and closed. Desktop keeps the fixed side panel and hides the grip.
-  const [isNarrow, setIsNarrow] = React.useState(
-    () => typeof window !== 'undefined' && window.matchMedia('(max-width: 768px)').matches,
-  );
-  const [sheetH, setSheetH] = React.useState(null);
-  const [dragging, setDragging] = React.useState(false);
-  const sheetRef = React.useRef(null);
+  // The panel is a page, not a drawer you have to hold. On a phone it covers
+  // the screen; on a desktop it stays the side panel the map layout is built
+  // around. Either way there is one way out and it is always on screen: the
+  // cross in the bar.
+  //
+  // What used to be here was a bottom sheet with a half snap, a drag grip and
+  // a fling-to-dismiss. It was 60 lines of pointer arithmetic to reach content
+  // that is now simply on screen, and the half snap meant everything below the
+  // first card began its life off the bottom of the phone.
+  const panelRef = React.useRef(null);
   const scrollRef = React.useRef(null);
-  const dragRef = React.useRef(null);
+  const closeRef = React.useRef(null);
+  // Whether the reader has scrolled past the photograph. The bar is
+  // transparent over the hero and solid under it, so the cross never sits on
+  // an unpredictable background.
+  const [stuck, setStuck] = React.useState(false);
+  const [showAllShots, setShowAllShots] = React.useState(false);
 
   React.useEffect(() => {
-    if (typeof window === 'undefined') return undefined;
-    const mq = window.matchMedia('(max-width: 768px)');
-    const onChange = (e) => setIsNarrow(e.matches);
-    mq.addEventListener('change', onChange);
-    return () => mq.removeEventListener('change', onChange);
-  }, []);
-
-  React.useEffect(() => {
-    setSheetH(null);
+    setStuck(false);
+    setShowAllShots(false);
     if (scrollRef.current) scrollRef.current.scrollTop = 0;
   }, [destination?.id]);
 
-  const snapPoints = () => {
-    const sheet = sheetRef.current;
-    const parent = sheet?.offsetParent;
-    if (!sheet || !parent) return null;
-    const bottomGap = parent.clientHeight - sheet.offsetTop - sheet.offsetHeight;
-    const full = parent.clientHeight - bottomGap - 10;
-    const half = Math.min(Math.round(full * 0.62), 560);
-    return { half, full };
-  };
-  const onGripDown = (e) => {
-    const sheet = sheetRef.current;
-    if (!sheet) return;
-    dragRef.current = { startY: e.clientY, startH: sheet.offsetHeight, moved: false, snaps: snapPoints() };
-    setDragging(true);
-    try { e.currentTarget.setPointerCapture(e.pointerId); } catch { /* older browsers */ }
-  };
-  const onGripMove = (e) => {
-    const st = dragRef.current;
-    if (!st || !st.snaps) return;
-    const dy = st.startY - e.clientY;
-    if (Math.abs(dy) > 4) st.moved = true;
-    setSheetH(Math.max(80, Math.min(st.snaps.full, st.startH + dy)));
-  };
-  const onGripUp = (e) => {
-    const st = dragRef.current;
-    dragRef.current = null;
-    setDragging(false);
-    try { e.currentTarget.releasePointerCapture(e.pointerId); } catch { /* older browsers */ }
-    if (!st || !st.snaps) return;
-    const { half, full } = st.snaps;
-    const h = sheetRef.current?.offsetHeight || half;
-    if (!st.moved) { setSheetH(h > (half + full) / 2 ? half : full); return; }
-    if (h < half * 0.55) { setSheetH(null); onClose?.(); return; }
-    setSheetH(h > (half + full) / 2 ? full : half);
+  // Escape closes it, on every width. A full screen surface with no keyboard
+  // way out is a trap for anyone not using a touchscreen.
+  React.useEffect(() => {
+    if (!destination) return undefined;
+    const onKey = (e) => {
+      if (e.key !== 'Escape') return;
+      // A dropdown or a lightbox inside the panel answers for its own Escape.
+      if (panelRef.current?.querySelector('.dropdown-menu')) return;
+      e.stopPropagation();
+      onClose?.();
+    };
+    document.addEventListener('keydown', onKey, true);
+    return () => document.removeEventListener('keydown', onKey, true);
+  }, [destination, onClose]);
+
+  const onScroll = (e) => {
+    const next = e.currentTarget.scrollTop > 120;
+    setStuck((cur) => (cur === next ? cur : next));
   };
 
   // Lazy layers: the country's parking/events file, this week's weather, the
@@ -218,6 +204,18 @@ export function ExplorePanel({
     });
     return () => { live = false; };
   }, [destination?.id]);
+
+  // The photographs the sights themselves carry, best-rated first and deduped
+  // by file: the same Commons image fronts two entries often enough (a church
+  // and its square) that a strip without this shows the same picture twice.
+  const shots = React.useMemo(() => {
+    const seen = new Set();
+    return (pois || [])
+      .filter((p) => p.img && p.name)
+      .sort((a, b) => (b.rate ?? 0) - (a.rate ?? 0))
+      .filter((p) => (seen.has(p.img) ? false : seen.add(p.img)))
+      .slice(0, 24);
+  }, [pois]);
 
   // The other catalogue places worth pairing with this one. One linear scan
   // of 3,038 rows, so it is memoised on the destination rather than cached.
@@ -259,6 +257,12 @@ export function ExplorePanel({
     .sort((a, b) => (b.rate ?? 0) - (a.rate ?? 0) || (b.heritage === true) - (a.heritage === true))
     .slice(0, 10);
 
+
+  // Where the page hands over. Both are searches rather than deep links: a
+  // destination page knows the place and nothing else, no origin and no dates.
+  const flightsHref = flightSearchLink({ iata: destination.iata, city });
+  const staysHref = staySearchLink({ city, country: destination.country });
+
   const parking = info && !info.missing ? info.parking : null;
   const events = info && !info.missing ? (info.events || []) : [];
 
@@ -271,161 +275,172 @@ export function ExplorePanel({
 
   return (
     <div
-      ref={sheetRef}
-      className={`panel dest-panel explore-panel open ${dragging ? 'dragging' : ''}`}
-      style={isNarrow && sheetH != null ? { height: sheetH } : undefined}
+      ref={panelRef}
+      className="panel dest-panel explore-panel open"
+      role="dialog"
+      aria-modal="true"
+      aria-label={city}
     >
-      <div
-        className="dest-grip-hit"
-        onPointerDown={onGripDown}
-        onPointerMove={onGripMove}
-        onPointerUp={onGripUp}
-        onPointerCancel={onGripUp}
-        aria-hidden="true"
-      >
-        <div className="dest-grip" />
-      </div>
-
-      {/* Identity bar: sticky, so the name and score survive the scroll. */}
-      <div className="dsheet-bar">
-        <div className="panel-tag">{t('detail.tag')}</div>
-        <button className="panel-close" onClick={onClose} aria-label={t('detail.close')}>
-          <svg width="12" height="12" viewBox="0 0 24 24" aria-hidden="true"
+      {/* The bar: transparent over the photograph, solid once the reader has
+          scrolled past it, and carrying the name only while the hero's own
+          name is off screen. The cross never moves, which is the whole point
+          of it being here rather than on the picture. */}
+      <div className={`dsheet-bar ${stuck ? 'is-stuck' : ''}`}>
+        <span className="dsheet-bar-name">{city}</span>
+        <button
+          className="panel-close"
+          onClick={onClose}
+          ref={closeRef}
+          aria-label={t('detail.close')}
+          title={t('detail.backToList')}
+        >
+          <svg width="15" height="15" viewBox="0 0 24 24" aria-hidden="true"
             fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
             <path d="M5 5l14 14M19 5L5 19" />
           </svg>
         </button>
-        <div className="dsheet-bar-title">
-          {destination.rating?.score != null && <ScoreChip rating={destination.rating} size="lg" />}
-          <h2 className="panel-city">{city}</h2>
-          {crowdBadgeWorthShowing(destination) && (
-            <CrowdingBadge crowding={destination.crowding} t={t} size="lg" />
-          )}
-        </div>
       </div>
 
-      <div className="dest-panel-scroll" ref={scrollRef}>
-        {image?.url && (
-          <div className="panel-hero">
-            <HeroImage
-              url={image.url}
-              city={city}
-              iso2={destination.iso2}
-              className="panel-hero-img"
-              maxWidth={1280}
-              sizes="(max-width: 768px) 100vw, 720px"
-              eager
-            />
-            <div className="panel-hero-shade" />
-            {safeUrl(image.page) && (
-              <a className="panel-hero-credit" href={safeUrl(image.page)} target="_blank" rel="noreferrer"
-                title={image.credit ? t('detail.wikipediaCredit', { credit: image.credit }) : t('detail.wikipediaSource')}>
-                Wikipedia
-              </a>
-            )}
-          </div>
-        )}
-
-        <div className={`panel-header dsheet-card ${image?.url ? 'has-hero' : ''}`}>
-          <div className="panel-country">
-            {destination.country}
-            {aboutLine && <span className="panel-via">{aboutLine}</span>}
-          </div>
-          {kf && <div className="panel-knownfor">{kf}</div>}
-          {(destination.rating?.label || destination.rating?.hidden_gem || swimRelevant(destination)) && (
-            <div className="panel-rating-row">
-              {destination.rating?.label && (
-                <span className={`rating-label ${tierClass(destination.rating)}`}>
-                  {destination.rating.label}
-                </span>
-              )}
-              {destination.rating?.hidden_gem && <HiddenGemTag size="lg" />}
-              {swimRelevant(destination) && (
-                <WaterQualityBadge bathing={destination.bathing_water} t={t} size="lg" />
+      <div className="dest-panel-scroll" ref={scrollRef} onScroll={onScroll}>
+        {/* Identity: the photograph, the verdict on it, and underneath, in one
+            card, what the place is and the two things you can do with it. */}
+        <div className="xp-hero-card">
+          {image?.url && (
+            <div className="panel-hero">
+              <HeroImage
+                url={image.url}
+                city={city}
+                iso2={destination.iso2}
+                className="panel-hero-img"
+                maxWidth={1280}
+                sizes="(max-width: 768px) 100vw, 720px"
+                eager
+              />
+              <div className="panel-hero-shade" />
+              <div className="xp-hero-badges">
+                {destination.rating?.score != null && <ScoreChip rating={destination.rating} size="lg" />}
+                {crowdBadgeWorthShowing(destination) && (
+                  <CrowdingBadge crowding={destination.crowding} t={t} size="lg" />
+                )}
+              </div>
+              {safeUrl(image.page) && (
+                <a className="panel-hero-credit" href={safeUrl(image.page)} target="_blank" rel="noreferrer"
+                  title={image.credit ? t('detail.wikipediaCredit', { credit: image.credit }) : t('detail.wikipediaSource')}>
+                  Wikipedia
+                </a>
               )}
             </div>
           )}
 
-          <div className="panel-action-row">
-            {onToggleFavorite && (
-              <button
-                className={`panel-fav ${isFavorite ? 'on' : ''}`}
-                onClick={onToggleFavorite}
-                aria-label={isFavorite ? t('detail.removeShortlist') : t('detail.addShortlist')}
-              >
-                <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"
-                  fill={isFavorite ? 'currentColor' : 'none'}
-                  stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round">
-                  <polygon points="12 2 15.1 8.6 22 9.3 16.8 14 18.3 21 12 17.3 5.7 21 7.2 14 2 9.3 8.9 8.6" />
-                </svg>
-                <span>{isFavorite ? t('detail.shortlisted') : t('detail.shortlist')}</span>
-              </button>
+          <div className={`panel-header ${image?.url ? 'has-hero' : ''}`}>
+            {!image?.url && destination.rating?.score != null && (
+              <div className="xp-hero-badges is-inline">
+                <ScoreChip rating={destination.rating} size="lg" />
+                {crowdBadgeWorthShowing(destination) && (
+                  <CrowdingBadge crowding={destination.crowding} t={t} size="lg" />
+                )}
+              </div>
             )}
-            <a
-              className="panel-fav xp-open-maps"
-              href={mapsSearchUrl(lat, lon)}
-              target="_blank"
-              rel="noreferrer"
-            >
-              <MapPinIcon size={15} />
-              <span>{t('explore.openMaps')}</span>
-            </a>
+            <h2 className="panel-city">{city}</h2>
+            <div className="panel-country">
+              {destination.country}
+              {aboutLine && <span className="panel-via">{aboutLine}</span>}
+            </div>
+            {(destination.rating?.label || destination.rating?.hidden_gem || swimRelevant(destination)) && (
+              <div className="panel-rating-row">
+                {destination.rating?.label && (
+                  <span className={`rating-label ${tierClass(destination.rating)}`}>
+                    {destination.rating.label}
+                  </span>
+                )}
+                {destination.rating?.hidden_gem && <HiddenGemTag size="lg" />}
+                {swimRelevant(destination) && (
+                  <WaterQualityBadge bathing={destination.bathing_water} t={t} size="lg" />
+                )}
+              </div>
+            )}
+            {kf && <p className="panel-knownfor">{kf}</p>}
+            {stayLen && (
+              <p className="xp-hero-stay">
+                <ClockIcon size={13} />
+                <span>{t(stayLen.key, { n: stayLen.n })}</span>
+              </p>
+            )}
+
+            <div className="panel-action-row">
+              {onToggleFavorite && (
+                <button
+                  className={`panel-fav ${isFavorite ? 'on' : ''}`}
+                  onClick={onToggleFavorite}
+                  aria-label={isFavorite ? t('detail.removeShortlist') : t('detail.addShortlist')}
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"
+                    fill={isFavorite ? 'currentColor' : 'none'}
+                    stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round">
+                    <polygon points="12 2 15.1 8.6 22 9.3 16.8 14 18.3 21 12 17.3 5.7 21 7.2 14 2 9.3 8.9 8.6" />
+                  </svg>
+                  <span>{isFavorite ? t('detail.shortlisted') : t('detail.shortlist')}</span>
+                </button>
+              )}
+              <a
+                className="panel-fav xp-open-maps"
+                href={mapsSearchUrl(lat, lon)}
+                target="_blank"
+                rel="noreferrer"
+              >
+                <MapPinIcon size={15} />
+                <span>{t('explore.openMaps')}</span>
+              </a>
+            </div>
           </div>
         </div>
 
-        {/* What a day here costs, in euros, with its provenance. */}
-        {cost?.dayEur != null && (
+        {/* The place in photographs, from the sights themselves rather than
+            from one hero the eye has already read. Only where the harvest
+            found more than a couple: two thumbnails is a gap, not a gallery. */}
+        {shots.length >= 3 && (
           <div className="dsheet-card">
-            <SectionTitle icon={ReceiptIcon}>{t('cost.title')}</SectionTitle>
-            <CostReceipt
-              cost={cost}
-              t={t}
-              lifestyleLabel={lifestyleLine}
-              onOpenLifestyle={onOpenLifestyle}
-            />
+            <SectionTitle
+              icon={CameraIcon}
+              aside={(
+                <button
+                  type="button"
+                  className="xp-shots-toggle"
+                  onClick={() => setShowAllShots((v) => !v)}
+                >
+                  {showAllShots ? t('explore.highlightsFewer') : t('explore.highlightsAll')}
+                </button>
+              )}
+            >
+              {t('explore.highlightsTitle')}
+            </SectionTitle>
+            <div className={`xp-shots ${showAllShots ? 'is-all' : ''}`}>
+              {(showAllShots ? shots : shots.slice(0, 6)).map((p) => (
+                <figure className="xp-shot" key={p.img}>
+                  <img src={p.img} alt="" loading="lazy" />
+                  <figcaption>{p.name}</figcaption>
+                </figure>
+              ))}
+            </div>
           </div>
         )}
 
-        {/* About: the guide lead, how long the place is worth, its nature. */}
-        {(guideText || stayLen || destination.nature?.nearest?.name) && (
-          <div className="dsheet-card">
-            <SectionTitle icon={InfoIcon}>{t('detail.aboutTitle', { city })}</SectionTitle>
-            {guideText && (
-              <p className="panel-about-guide">
-                {guideText}
-                {safeUrl(destination.guide.url) && (
-                  <> <a className="panel-about-guide-link" href={safeUrl(destination.guide.url)}
-                    target="_blank" rel="noreferrer">{t('detail.readGuide')}</a></>
-                )}
-              </p>
-            )}
-            {stayLen && (
-              <div className="panel-about-fact">
-                <ClockIcon size={13} />
-                <span>{t(stayLen.key, { n: stayLen.n })}</span>
-              </div>
-            )}
-            {destination.nature?.nearest?.name && (
-              <div className="panel-about-fact">
-                <TreeIcon size={13} />
-                <span>
-                  {t('detail.nearestNature')}: {destination.nature.nearest.name}
-                  {destination.nature.nearest.kind ? ` (${destination.nature.nearest.kind})` : ''}
-                  {destination.nature.nearest.dist_km != null ? `, ${destination.nature.nearest.dist_km} km` : ''}
-                </span>
-              </div>
-            )}
-          </div>
-        )}
 
-        {/* Where it is, and what is in walking reach of the centre. The map
-            carries the same sights the list below it does, so a reader can
-            see whether they cluster or sprawl before reading a single name. */}
+
+        {/* Where it is. Its own card, because the map answers a different
+            question from the list under it: whether the sights cluster or
+            sprawl, which is what decides whether the place is a walking day. */}
         <div className="dsheet-card">
-          <SectionTitle icon={CameraIcon}>{t('explore.aroundTitle')}</SectionTitle>
+          <SectionTitle icon={MapPinIcon}>{t('explore.sightsTitle')}</SectionTitle>
           <React.Suspense fallback={<div className="place-map place-map-wait" style={{ height: 208 }} />}>
             <PlaceMap lat={lat} lon={lon} city={city} pois={topPois} />
           </React.Suspense>
+        </div>
+
+        {/* What is in walking reach of the centre, named, with a way to
+            navigate to each one. */}
+        <div className="dsheet-card">
+          <SectionTitle icon={CompassIcon}>{t('explore.aroundTitle')}</SectionTitle>
           {pois == null ? (
             <p className="footnote">{'…'}</p>
           ) : topPois.length === 0 ? (
@@ -549,15 +564,51 @@ export function ExplorePanel({
           </div>
         )}
 
-        {/* How the score was built. The number on the card is a verdict; this
-            is the argument behind it, at the model's own published weights. */}
-        {destination.rating?.score != null && (
+
+        {/* What a day here costs, in euros, with its provenance. */}
+        {cost?.dayEur != null && (
           <div className="dsheet-card">
-            <SectionTitle icon={StarIcon}>{t('rating.title')}</SectionTitle>
-            <RatingBreakdown rating={destination.rating} meta={data?.meta} t={t} />
+            <SectionTitle icon={ReceiptIcon}>{t('cost.title')}</SectionTitle>
+            <CostReceipt
+              cost={cost}
+              t={t}
+              lifestyleLabel={lifestyleLine}
+              onOpenLifestyle={onOpenLifestyle}
+            />
           </div>
         )}
-
+        {/* Trip insights: the argument behind the score, then the two facts
+            that decide how long a stay is worth. The score used to hold a
+            card of its own two screens further down, where nobody who had
+            already read the number went looking for it. */}
+        {(destination.rating?.score != null || guideText || stayLen
+          || destination.nature?.nearest?.name) && (
+          <div className="dsheet-card">
+            <SectionTitle icon={StarIcon}>{t('explore.insightsTitle')}</SectionTitle>
+            {destination.rating?.score != null && (
+              <RatingBreakdown rating={destination.rating} meta={data?.meta} t={t} />
+            )}
+            {guideText && (
+              <p className="panel-about-guide">
+                {guideText}
+                {safeUrl(destination.guide.url) && (
+                  <> <a className="panel-about-guide-link" href={safeUrl(destination.guide.url)}
+                    target="_blank" rel="noreferrer">{t('detail.readGuide')}</a></>
+                )}
+              </p>
+            )}
+            {destination.nature?.nearest?.name && (
+              <div className="panel-about-fact">
+                <TreeIcon size={13} />
+                <span>
+                  {t('detail.nearestNature')}: {destination.nature.nearest.name}
+                  {destination.nature.nearest.kind ? ` (${destination.nature.nearest.kind})` : ''}
+                  {destination.nature.nearest.dist_km != null ? `, ${destination.nature.nearest.dist_km} km` : ''}
+                </span>
+              </div>
+            )}
+          </div>
+        )}
         {/* Where to park. The key ask: a concrete spot, its fee fact, and a
             navigation link, from the OSM harvest. */}
         <div className="dsheet-card">
@@ -629,6 +680,31 @@ export function ExplorePanel({
               );
             })}
           </div>
+        </div>
+
+        {/* Where the page hands over. Carta prices a trip and plans it; the
+            tickets and the rooms live with the people who sell them, which is
+            the same arrangement lib/transportLinks.js documents for every leg
+            of a plan. Neither of these is a deep link: a destination page has
+            no origin and no dates, so they open a search and the line under
+            them says so. */}
+        <div className="dsheet-card xp-further">
+          <SectionTitle icon={CompassIcon}>{t('explore.furtherTitle', { city })}</SectionTitle>
+          <div className="xp-further-row">
+            {flightsHref && (
+              <a className="xp-further-btn" href={flightsHref} target="_blank" rel="noreferrer noopener">
+                <PlaneIcon size={15} />
+                <span>{t('explore.furtherFlights')}</span>
+              </a>
+            )}
+            {staysHref && (
+              <a className="xp-further-btn" href={staysHref} target="_blank" rel="noreferrer noopener">
+                <BedIcon size={15} />
+                <span>{t('explore.furtherStays')}</span>
+              </a>
+            )}
+          </div>
+          <p className="xp-source">{t('explore.furtherNote')}</p>
         </div>
       </div>
     </div>

@@ -2313,7 +2313,6 @@ export const it = {
   /* TRIP-KEYS-END */
 
   "explore.sortCost": "Giornata più economica",
-  "explore.costLegend": "Cifre sulle schede: quanto costa una giornata a persona, secondo il tuo Lifestyle.",
   "explore.nearbyTitle": "Da abbinare a",
   "explore.nearbyNote": "Luoghi valutati entro 110 km in linea d'aria.",
   "explore.stayHalfDay": "Qui basta mezza giornata",
@@ -2594,5 +2593,39 @@ export const it = {
   "dayws.customTitle": "Un luogo tuo, aggiunto da te a questo piano",
   "dayws.customApproxTitle": "Un luogo tuo. Non è stato possibile posizionarlo con precisione, quindi resta sul centro",
   "wizard.changeDates": "Cambia le date",
+
+  /* DETAIL-PANEL-FULLSCREEN-KEYS */
+  "explore.highlightsTitle": "Punti forti",
+  "explore.highlightsAll": "Vedi tutte le foto",
+  "explore.highlightsFewer": "Mostra meno",
+  "explore.sightsTitle": "Luoghi e quartieri",
+  "explore.insightsTitle": "Da sapere",
+  "explore.furtherTitle": "Esplora ancora {city}",
+  "explore.furtherFlights": "Cerca voli",
+  "explore.furtherStays": "Trova dove dormire",
+  "explore.furtherNote": "Entrambi aprono una ricerca su un altro sito. Carta non vende biglietti o camere.",
+  "detail.backToList": "Torna all'elenco",
+  /* DESTINATIONS-FILTERS-KEYS */
+  "mtn.filterLabel": "Che tipo di montagna",
+  "mtn.chipWalk": "Si sale a piedi",
+  "mtn.chipClimb": "Arrampicata",
+  "mtn.chipVolcano": "Vulcano",
+  "mtn.chipGlacier": "Ghiacciaio",
+  "mtn.chipHighpoint": "Cima più alta del paese",
+  "mtn.noneChips": "Nessuna montagna corrisponde. Tocca di nuovo per allargare l'elenco.",
+  "lake.filterLabel": "Cosa cerchi",
+  "lake.chipSwim": "Si può nuotare",
+  "lake.chipWater": "Acqua eccellente",
+  "lake.chipBeach": "Spiaggia sulla riva",
+  "lake.chipMountains": "In montagna",
+  "lake.noneChips": "Nessun lago corrisponde. Tocca di nuovo per allargare l'elenco.",
+  "beach.filterLabel": "Cosa cerchi",
+  "beach.chipWater": "Acqua eccellente",
+  "beach.chipQuiet": "Non edificata",
+  "beach.chipLifeguard": "Bagnino",
+  "beach.noneChips": "Nessuna spiaggia corrisponde. Tocca di nuovo per allargare l'elenco.",
+  "trip.lengthLabel": "Durata del viaggio",
+  "trip.lengthUnit": "giorni",
+  "places.filterGroup": "Restringi l'elenco",
   /* PLANNER-V2-KEYS-END */
 };

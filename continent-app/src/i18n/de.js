@@ -2313,7 +2313,6 @@ export const de = {
   /* TRIP-KEYS-END */
 
   "explore.sortCost": "Günstigster Tag",
-  "explore.costLegend": "Beträge auf den Karten: was ein Tag eine Person kostet, so wie du Lifestyle eingestellt hast.",
   "explore.nearbyTitle": "Gut zu kombinieren mit",
   "explore.nearbyNote": "Bewertete Orte im Umkreis von 110 km Luftlinie.",
   "explore.stayHalfDay": "Ein halber Tag reicht hier",
@@ -2594,5 +2593,39 @@ export const de = {
   "dayws.customTitle": "Dein eigener Ort, von dir zu diesem Plan hinzugefügt",
   "dayws.customApproxTitle": "Dein eigener Ort. Er ließ sich nicht genau verorten und liegt daher im Zentrum",
   "wizard.changeDates": "Daten ändern",
+
+  /* DETAIL-PANEL-FULLSCREEN-KEYS */
+  "explore.highlightsTitle": "Highlights",
+  "explore.highlightsAll": "Alle Fotos",
+  "explore.highlightsFewer": "Weniger zeigen",
+  "explore.sightsTitle": "Sehenswürdigkeiten",
+  "explore.insightsTitle": "Gut zu wissen",
+  "explore.furtherTitle": "{city} weiter erkunden",
+  "explore.furtherFlights": "Flüge suchen",
+  "explore.furtherStays": "Unterkunft finden",
+  "explore.furtherNote": "Beide öffnen eine Suche auf einer anderen Seite. Carta verkauft keine Tickets und keine Zimmer.",
+  "detail.backToList": "Zurück zur Liste",
+  /* DESTINATIONS-FILTERS-KEYS */
+  "mtn.filterLabel": "Welche Art Berg",
+  "mtn.chipWalk": "Zu Fuß hinauf",
+  "mtn.chipClimb": "Klettern",
+  "mtn.chipVolcano": "Vulkan",
+  "mtn.chipGlacier": "Gletscher",
+  "mtn.chipHighpoint": "Höchster des Landes",
+  "mtn.noneChips": "Kein Berg passt dazu. Tippe noch einmal darauf, um die Liste zu weiten.",
+  "lake.filterLabel": "Was du suchst",
+  "lake.chipSwim": "Baden erlaubt",
+  "lake.chipWater": "Ausgezeichnetes Wasser",
+  "lake.chipBeach": "Strand am Ufer",
+  "lake.chipMountains": "In den Bergen",
+  "lake.noneChips": "Kein See passt dazu. Tippe noch einmal darauf, um die Liste zu weiten.",
+  "beach.filterLabel": "Was du suchst",
+  "beach.chipWater": "Ausgezeichnetes Wasser",
+  "beach.chipQuiet": "Unbebaut",
+  "beach.chipLifeguard": "Rettungsschwimmer",
+  "beach.noneChips": "Kein Strand passt dazu. Tippe noch einmal darauf, um die Liste zu weiten.",
+  "trip.lengthLabel": "Reisedauer",
+  "trip.lengthUnit": "Tage",
+  "places.filterGroup": "Liste eingrenzen",
   /* PLANNER-V2-KEYS-END */
 };

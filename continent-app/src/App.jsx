@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo, Suspense, lazy } from 'react';
 import { AppHeader } from './components/AppHeader.jsx';
-import { CategoryRail } from './browse/CategoryRail.jsx';
 import { BottomNav } from './components/BottomNav.jsx';
 import { AnnouncementBar } from './components/AnnouncementBar.jsx';
 import { MaintenanceGate } from './components/MaintenanceGate.jsx';
@@ -423,6 +422,31 @@ function TravelApp() {
     setChoices((prev) => ({ ...prev, drive_home: point || null }));
   }, []);
 
+  // How much width the scrollbar takes out of a tab panel. The panels
+  // (.explore-tab, .places-tab) scroll and the top bar does not, so wherever
+  // the scrollbar is a real gutter rather than a macOS-style overlay, the bar
+  // was that much wider than the cards inside those panels and the Passes
+  // chip overhung the toolbar's right edge.
+  //
+  // Measured off the panel that is actually on screen rather than a synthetic
+  // probe: a detached test div reports the platform default, which is not
+  // always what the panel gets, and the hidden panels behind a tab hop
+  // measure zero. The panels reserve the gutter unconditionally
+  // (scrollbar-gutter: stable), so the number does not move when a list grows
+  // past one screen.
+  useEffect(() => {
+    const apply = () => {
+      let gutter = 0;
+      for (const el of document.querySelectorAll('.explore-tab, .places-tab')) {
+        if (el.offsetWidth > 0) { gutter = el.offsetWidth - el.clientWidth; break; }
+      }
+      document.documentElement.style.setProperty('--sbw', `${gutter}px`);
+    };
+    apply();
+    window.addEventListener('resize', apply);
+    return () => window.removeEventListener('resize', apply);
+  }, [activeTab]);
+
   // Keep --filter-h in sync with the filter bar's real height. The bar uses
   // min-height + wraps its controls; everything below it is positioned at
   // top: var(--filter-h), so measuring the bar keeps the map/panels flush no
@@ -440,12 +464,6 @@ function TravelApp() {
     if (!el || typeof ResizeObserver === 'undefined') return;
     const apply = () => {
       document.documentElement.style.setProperty('--filter-h', `${el.offsetHeight}px`);
-      // The category rail's own height, so the header's filter tray can drop
-      // clear of it. The tray is trapped inside .app-header (backdrop-filter
-      // makes it a stacking context AND a containing block), so it cannot
-      // simply be told to sit under the whole bar.
-      const rail = el.querySelector('.kind-rail');
-      document.documentElement.style.setProperty('--kind-rail-h', `${rail ? rail.offsetHeight : 0}px`);
     };
     apply();
     const ro = new ResizeObserver(apply);
@@ -617,13 +635,6 @@ function TravelApp() {
           onToggleSaved={() => { setAccountOpen(false); setSavedTripsOpen((v) => !v); }}
         />
 
-        {/* Trip-kind categories as a full-width scrollable rail under the
-            header, Explore tab only. Lives inside .top-bar so the
-            ResizeObserver folds its height into --filter-h and the grid stays
-            flush below. */}
-        {activeTab === 'map' && (
-          <CategoryRail tripKinds={tripKinds} setTripKinds={setTripKinds} />
-        )}
       </div>
 
       {/* A trip arrived via share link: offer it, never silently apply it. */}
@@ -672,6 +683,7 @@ function TravelApp() {
               countryFilter={countryFilter}
               setCountryFilter={setCountryFilter}
               tripKinds={tripKinds}
+              setTripKinds={setTripKinds}
               ratingRange={ratingRange}
               setRatingRange={setRatingRange}
               gemOnly={gemOnly}
