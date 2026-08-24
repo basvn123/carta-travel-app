@@ -245,6 +245,12 @@ const COUNTRY_CARD_BOX = 2.6;
 const COVER_FIT_OK = 0.62;
 const COVER_FIT_GAIN = 0.12;
 const COVER_RATING_GIVE = 0.35;
+/* A cover under this keeps less than half its frame, which is not a crop any
+   more, it is a fragment: Albania opened on a church with the top of its own
+   tower cut off. At that point the rule stops defending the rating and starts
+   defending the picture, so it may reach three times as far down the list. */
+const COVER_FIT_BAD = 0.55;
+const COVER_RATING_GIVE_BAD = 1.2;
 const fitsBox = (ratio, box) => (ratio > box ? box / ratio : ratio / box);
 
 const CATS = [
@@ -1094,7 +1100,8 @@ export function DestinationsTab({
       const top = rows[0];
       let pick = top;
       if (top.fit < COVER_FIT_OK) {
-        const better = rows.filter((r) => r.score >= top.score - COVER_RATING_GIVE
+        const give = top.fit < COVER_FIT_BAD ? COVER_RATING_GIVE_BAD : COVER_RATING_GIVE;
+        const better = rows.filter((r) => r.score >= top.score - give
           && r.fit >= top.fit + COVER_FIT_GAIN);
         if (better.length) pick = better[0];   // already rating-sorted
       }

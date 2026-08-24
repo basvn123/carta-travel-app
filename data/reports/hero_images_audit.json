@@ -16,7 +16,7 @@
    "portrait": 3,
    "collage": 3
   },
-  "fixed": 467,
+  "fixed": 468,
   "unfixed": 0
  },
  "missing": [
@@ -5331,6 +5331,15 @@
    "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/be/Starigrad_Paklenica_Hafen_02.JPG/960px-Starigrad_Paklenica_Hafen_02.JPG",
    "file": "Starigrad Paklenica Hafen 02",
    "score": 11.95
+  },
+  {
+   "id": "gem:appenzell",
+   "city": "Appenzell",
+   "country": "Switzerland",
+   "from": "https://commons.wikimedia.org/wiki/Special:FilePath/Schw%C3%A4galp.jpg?width=960",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Aerial_View_of_Appenzell_14.02.2008_14-45-40.JPG/960px-Aerial_View_of_Appenzell_14.02.2008_14-45-40.JPG",
+   "file": "Aerial View of Appenzell 14.02.2008 14-45-40",
+   "score": 15.5
   }
  ],
  "unfixed": []
