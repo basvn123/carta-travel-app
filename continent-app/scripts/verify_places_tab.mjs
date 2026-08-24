@@ -52,6 +52,35 @@ check('every category tab renders',
 check('General starts active', /general/i.test(await page.locator('.places-cat.on').innerText().catch(() => '')));
 
 // ── General: country flag cards first ──
+// The covers are chosen for the box they are cropped into, not by rating
+// alone: at the old 4:1 the average catalogue photograph kept 37 per cent of
+// its frame and the index read as a row of doorways and roofs. Asserted as the
+// share of frame the rendered covers actually keep, which is the thing the
+// reader sees; a future box change that forgets the picker fails here.
+const coverFit = await page.evaluate(async () => {
+  const cards = [...document.querySelectorAll('.places-ccard')];
+  for (const c of cards.slice(0, 12)) {
+    const img = c.querySelector('img');
+    if (img) img.loading = 'eager';
+  }
+  await new Promise((r) => setTimeout(r, 2500));
+  let sum = 0; let n = 0; let worst = 1;
+  for (const c of cards) {
+    const img = c.querySelector('img');
+    const r = c.getBoundingClientRect();
+    if (!img || !img.naturalWidth || !r.height) continue;
+    const nat = img.naturalWidth / img.naturalHeight;
+    const box = r.width / r.height;
+    const vis = Math.min(nat, box) / Math.max(nat, box);
+    sum += vis; n += 1;
+    if (vis < worst) worst = vis;
+  }
+  return { avg: n ? sum / n : 0, n, worst };
+});
+check('country covers keep most of their frame',
+  coverFit.n >= 6 && coverFit.avg > 0.6 && coverFit.worst > 0.4,
+  `avg ${Math.round(coverFit.avg * 100)}%, worst ${Math.round(coverFit.worst * 100)}% over ${coverFit.n}`);
+
 const ccards = await page.locator('.places-ccard').count();
 check('country flag cards render', ccards > 20, `${ccards} flag cards`);
 const firstCc = await page.locator('.places-ccard .places-card-name').first().innerText().catch(() => '');

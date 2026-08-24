@@ -226,6 +226,27 @@ function TripLengthSlider({ days, setDays, n, t, fmt }) {
   );
 }
 
+/**
+ * The shape a country card crops to, and the three numbers that decide when a
+ * better-shaped photograph is worth a lower-rated place.
+ *
+ * fitsBox() is the fraction of a photograph that survives object-fit: cover in
+ * a given box: 1 when the two shapes agree, 0.38 for a 3:2 photograph in a 4:1
+ * strip. COVER_FIT_OK is the point above which a cover is left alone whatever
+ * else is available. COVER_FIT_GAIN is how much better a challenger has to be
+ * before it is worth swapping (below it the swap costs rating and buys
+ * nothing anyone would notice), and COVER_RATING_GIVE is how much rating the
+ * swap may cost. That last one is deliberately mean: at 0.8 the rule handed
+ * Italy to Mount Etna and Portugal to Sintra, which are better photographs of
+ * places nobody thinks of first when they think of the country. A cover is an
+ * identity before it is a picture.
+ */
+const COUNTRY_CARD_BOX = 2.6;
+const COVER_FIT_OK = 0.62;
+const COVER_FIT_GAIN = 0.12;
+const COVER_RATING_GIVE = 0.35;
+const fitsBox = (ratio, box) => (ratio > box ? box / ratio : ratio / box);
+
 const CATS = [
   { key: 'general', Icon: SkylineIcon, labelKey: 'places.catGeneral' },
   { key: 'trips', Icon: SuitcaseIcon, labelKey: 'places.catTrips' },
@@ -675,8 +696,8 @@ function CountryCard({ cc, name, sub, img, onPick, onAskCover = null }) {
   }, [img, onAskCover, cc]);
   return (
     <button className="places-ccard" onClick={() => onPick(cc)}>
-      {/* A 4:1 strip, ~360 css px wide and ~90 tall, so a retina screen wants
-          720 across. The ladder runs to 960 and the browser picks. */}
+      {/* A 2.6:1 strip, ~360 css px wide and ~138 tall, so a retina screen
+          wants 720 across. The ladder runs to 960 and the browser picks. */}
       <HeroImage
         url={img}
         city={name}
@@ -684,7 +705,7 @@ function CountryCard({ cc, name, sub, img, onPick, onAskCover = null }) {
         className="places-card-img"
         maxWidth={960}
         sizes="(max-width: 639px) 96vw, (max-width: 1180px) 48vw, 560px"
-        ratio={[4, 1]}
+        ratio={[26, 10]}
       />
       <span className="places-card-scrim" aria-hidden="true" />
       <span className="places-card-overlay">
@@ -911,6 +932,8 @@ export function DestinationsTab({
   const [beachChips, setBeachChips] = useState([]);
   // The Filters door. One sheet on every width, the same as Explore's.
   const [sheetOpen, setSheetOpen] = useState(false);
+  // The Filters sheet hangs off this button on a pointer screen.
+  const filterBtnRef = useRef(null);
 
   useEffect(() => {
     let live = true;
@@ -1018,26 +1041,66 @@ export function DestinationsTab({
     return m;
   }, [pricedAll]);
 
-  // Country card covers: the best-rated place of each country supplies the
-  // photo, so the index shows real photography rather than a stretched flag.
-  //
-  // Read from the whole catalogue rather than from the priced list, which is
-  // what left Iceland with a grey card: it has twenty one photographed places
-  // and no fare from this origin, so it was absent from `pricedAll` and the
-  // cover lookup came back empty.
+  /**
+   * Country card covers.
+   *
+   * A country card is a strip, and a strip crops. Measured over the 3,021
+   * heroes whose shape the wire now carries (pipeline/apply_image_dims.py),
+   * the average photograph keeps 37 per cent of its frame in this box and
+   * only 136 of them are 2:1 or wider, which is why picking the cover by
+   * rating alone put a doorway, a roof and a stone shed on the index: those
+   * ARE the best-rated places, photographed close up.
+   *
+   * So the cover is chosen for the box as well as for the place. The rule is
+   * deliberately conservative, because the cover is also an identity: the
+   * best-rated place keeps the card unless a near-peer survives the crop
+   * MATERIALLY better, and then the highest-rated of those peers wins rather
+   * than the widest. Bulgaria swaps a monastery arcade for the Seven Rila
+   * Lakes; Slovenia keeps Lake Bled, because nothing near it is enough of an
+   * improvement to be worth not being Lake Bled.
+   *
+   * Read from the whole catalogue rather than from the priced list, which is
+   * what left Iceland with a grey card: it has twenty one photographed places
+   * and no fare from this origin, so it was absent from `pricedAll` and the
+   * cover lookup came back empty.
+   */
   const countryCover = useMemo(() => {
-    const m = new Map();
+    const byCc = new Map();
     for (const p of Object.values(data.destinations || {})) {
       // The catalogue carries the hero as an object, the priced rows carry it
       // as a bare URL (useExploreCatalog flattens it), and HeroImage wants the
       // URL.
       const url = p.image?.url || (typeof p.image === 'string' ? p.image : null);
       if (!url) continue;
-      const score = p.rating?.score ?? 0;
-      const cur = m.get(p.iso2);
-      if (!cur || score > cur.score) m.set(p.iso2, { img: url, score });
+      const w = p.image?.w;
+      const h = p.image?.h;
+      const row = {
+        img: url,
+        score: p.rating?.score ?? 0,
+        // How much of the frame the strip keeps. Unknown shapes are scored as
+        // the commonest one, 3:2, so a missing measurement neither wins nor
+        // loses the card on its own.
+        fit: fitsBox(w && h ? w / h : 1.5, COUNTRY_CARD_BOX),
+      };
+      const list = byCc.get(p.iso2);
+      if (list) list.push(row); else byCc.set(p.iso2, [row]);
     }
-    return m;
+    const out = new Map();
+    for (const [cc, rows] of byCc) {
+      // Rating first, then the crop: two places rated the same are ranked by
+      // which of them survives the strip, which is how Cyprus stopped opening
+      // on snowy trees when a harbour with the same 6.9 was sitting behind it.
+      rows.sort((a, b) => (b.score - a.score) || (b.fit - a.fit));
+      const top = rows[0];
+      let pick = top;
+      if (top.fit < COVER_FIT_OK) {
+        const better = rows.filter((r) => r.score >= top.score - COVER_RATING_GIVE
+          && r.fit >= top.fit + COVER_FIT_GAIN);
+        if (better.length) pick = better[0];   // already rating-sorted
+      }
+      out.set(cc, pick);
+    }
+    return out;
   }, [data]);
 
   // Turkey and Ukraine publish walks and have no catalogue destination at all,
@@ -2111,9 +2174,11 @@ export function DestinationsTab({
             <div className="places-chips">
               <button
                 type="button"
+                ref={filterBtnRef}
                 className={`places-filter-btn ${activeFilters > 0 ? 'has-active' : ''}`}
                 onClick={() => setSheetOpen(true)}
                 aria-haspopup="dialog"
+                aria-expanded={sheetOpen}
               >
                 <FilterIcon size={14} />
                 <span>{t('filter.filters')}</span>
@@ -2592,6 +2657,7 @@ export function DestinationsTab({
       {sheetOpen && (
         <PlacesFilterSheet
           onClose={() => setSheetOpen(false)}
+          anchorRef={filterBtnRef}
           groups={facetGroups}
           country={country}
           setCountry={(cc) => { setCountry(cc); setNearPlace(null); }}

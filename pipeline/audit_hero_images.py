@@ -944,7 +944,14 @@ def fix(dests, report, dry_run=False, limit=None, only=None, force_coord=False):
     targets = [f["id"] for f in report.get("flagged", [])
                if not (hold_far and f.get("reasons") == ["far_coord"])]         + list(report.get("missing", []))
     if only:
-        targets = [t for t in targets if t in only]
+        # An --only that names a destination the last check did NOT flag is
+        # still a target. The classifier answers "is this a photograph", and a
+        # photograph can be perfectly valid and still be the wrong one: a shed
+        # in the Madriu valley is a real photo of a real place and a poor
+        # picture of Andorra. Naming it by hand is how that gets repaired.
+        named = [t for t in only if t in dests]
+        targets = [t for t in targets if t in only] + [
+            t for t in named if t not in targets]
     if limit:
         targets = targets[:limit]
     print(f"Looking for better heroes: {len(targets)} destinations")

@@ -4,6 +4,7 @@ import { Dropdown } from '../components/Dropdown.jsx';
 import { CloseIcon } from '../components/Icons.jsx';
 import { count } from '../lib/format.js';
 import { useI18n } from '../i18n/index.jsx';
+import { useAnchoredSheet } from './sheetAnchor.js';
 
 /**
  * The Destinations filters, in the shape Explore already uses: one modal
@@ -29,6 +30,7 @@ import { useI18n } from '../i18n/index.jsx';
  */
 export function PlacesFilterSheet({
   onClose,
+  anchorRef,
   groups = [],
   country, setCountry, countryOptions = [],
   extra = null,
@@ -40,6 +42,9 @@ export function PlacesFilterSheet({
   const sheetRef = React.useRef(null);
   const panelRef = React.useRef(null);
   const closeRef = React.useRef(null);
+  // Hangs off the Filters button on a pointer screen, stays a bottom sheet on
+  // a phone. See sheetAnchor.js.
+  const anchor = useAnchoredSheet(anchorRef);
 
   // Focus trap + Escape, the same contract the Explore sheet keeps.
   React.useEffect(() => {
@@ -99,14 +104,19 @@ export function PlacesFilterSheet({
 
   return createPortal(
     <div
-      className="fsheet-scrim"
+      className={`fsheet-scrim${anchor ? ' is-anchored' : ''}`}
       ref={sheetRef}
       onMouseDown={(e) => { if (e.target === sheetRef.current) onClose(); }}
     >
       <div
-        className="fsheet fsheet-explore fsheet-places"
+        className={`fsheet fsheet-explore fsheet-places${anchor ? ' is-anchored' : ''}`}
         ref={panelRef}
+        style={anchor || undefined}
         role="dialog"
+        /* Still aria-modal even when it looks like a menu: focus is trapped
+           inside it and the invisible scrim swallows every click behind it,
+           so the page really is inert. Saying otherwise would promise a
+           screen reader an exit that is not there. */
         aria-modal="true"
         aria-labelledby="pfsheet-title"
       >

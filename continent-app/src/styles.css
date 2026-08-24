@@ -110,29 +110,41 @@ input, select {
   z-index: 25;
   display: flex;
   flex-direction: column;
-  /* The band carries the page ground full width; the header inside it is
-     constrained. One colour, no rule under it: the tabs below start at
-     --filter-h rather than scrolling beneath this row, so there is nothing
-     for a divider or a blur to separate it from. */
-  background: var(--paper);
+  /* Chrome, not page. The bar used to carry the page ground and no rule,
+     which on a wide screen left the brand and the tabs floating in the
+     middle of an unbroken field of paper with nothing to say where the app
+     frame ended and the content began. It is white on the alabaster ground
+     now, closed by one hairline: the same move every travel site this was
+     measured against makes (Wanderlog, Relive, Skyscanner all separate the
+     bar from the page), and enough contrast to read as a bar without
+     turning into a slab. */
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--rule-soft);
   /* This row does not scroll, but the panels under it do. Reserving their
-     scrollbar's gutter here too is what keeps the header's container the
-     same width as theirs, so Passes and Account line up with the cards
-     rather than sitting a scrollbar's width further right. */
+     scrollbar's gutter here keeps the bar's content area the same width as
+     theirs, so the right-hand gutter matches the left one on screen instead
+     of being a scrollbar narrower. */
   padding-right: var(--sbw, 0px);
 }
 
+/* Three zones, full bleed: the brand and the sections pinned to the left
+   gutter, the account cluster pinned to the right, and whatever width the
+   window has left over spent as empty space in the middle.
+
+   It used to sit in Explore's 1180px container, centred. On a 1920px screen
+   that put the wordmark 394px in from the edge, with 370px of empty ground
+   either side of the bar and the tabs adrift in the middle of the window,
+   while the content column below it was a different width again (780px on
+   Destinations), so the two never agreed anyway. A page frame belongs to the
+   window; only the content inside it belongs to a column. */
 .app-header {
   display: flex;
   align-items: center;
-  gap: 16px;
-  /* The same container as .explore-wrap underneath (1180 wide, 24px gutter),
-     so Passes and Friends end exactly where the toolbar card does instead of
-     at the window edge. */
+  gap: 20px;
   width: 100%;
-  max-width: 1180px;
-  margin: 0 auto;
-  padding: 9px 24px;
+  max-width: none;
+  margin: 0;
+  padding: 9px 28px;
   background: none;
   /* The filter tray hangs from this row and cannot leave it (this pair makes
      the header a stacking context), so the header itself has to out-rank the
@@ -173,13 +185,16 @@ input, select {
   margin-left: 8px;
 }
 
-/* Section tabs next to the brand (Map / Trip planner / Day planner / Saved
-   trips). Desktop-only: below 768px they collapse and BottomNav takes over. */
+/* Section tabs next to the brand (Destinations / Explore / Trip planner /
+   Day planner / Saved trips). Desktop-only: below 768px they collapse and
+   BottomNav takes over. They sit against the brand rather than centred, so
+   the left zone reads as one thing: who this is, then where you can go. */
 .header-nav {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: 2px;
   flex-shrink: 0;
+  margin-right: auto;
 }
 .header-nav-item {
   display: inline-flex;
@@ -199,9 +214,20 @@ input, select {
 .header-nav-item.active { color: var(--paper); background: var(--ink-fill); }
 .header-nav-icon { flex-shrink: 0; }
 
-/* On a narrow desktop window the labelled tabs would crowd the brand and
-   account button; keep icon-only pills (titles still tooltip). */
-@media (min-width: 769px) and (max-width: 1000px) {
+/* Fitting the row on a narrow desktop window, in two steps rather than one
+   cliff. The bar is a single line at every width: it must never wrap into
+   two, which is what happened around 1100px when the labelled tabs, the
+   brand and the account cluster all wanted their full size at once.
+   1. Tighten first: the tabs lose padding and the wordmark loses its
+      strapline, which buys about 90px without losing a single word.
+   2. Then drop the words: icon-only pills, titles still on hover. */
+@media (min-width: 769px) and (max-width: 1180px) {
+  .app-header { gap: 14px; padding: 9px 20px; }
+  .app-header-brand .brand-sub { display: none; }
+  .app-header-brand .brand-divider { margin-left: 4px; }
+  .header-nav-item { padding: 8px 10px; }
+}
+@media (min-width: 769px) and (max-width: 1060px) {
   .header-nav-label { display: none; }
   .header-nav-item { padding: 9px; }
 }
@@ -238,7 +264,9 @@ input, select {
 .app-header-account {
   display: flex;
   align-items: center;
-  gap: 16px; /* breathing room between the From picker and the account button */
+  /* One cluster, not three separate controls: 16px read as three things that
+     happened to end up beside each other. */
+  gap: 8px;
   flex-shrink: 0;
   margin-left: auto;
 }
@@ -5494,6 +5522,37 @@ input, select {
 
 @keyframes fsheet-scrim-in { from { opacity: 0; } to { opacity: 1; } }
 @keyframes fsheet-in { from { transform: translateY(100%); } to { transform: translateY(0); } }
+
+/* ── The same sheet, hung off its button on a pointer screen ──
+   One component serves every width, which is right for the content and was
+   wrong for the shape: on a 1920px window a 560px panel rose from the bottom
+   edge with a grab handle on top and the whole page dimmed behind it, to
+   change one country. Given coordinates by sheetAnchor.js it becomes what it
+   should have been there, a menu under the control that opened it: no scrim
+   over the page, no handle to grab, and the list you are filtering still
+   visible beside it. The phone keeps the bottom sheet. */
+.fsheet-scrim.is-anchored {
+  display: block;
+  background: none;
+  animation: none;
+}
+.fsheet.is-anchored {
+  position: fixed;
+  width: auto;             /* the hook sets width/top/left/max-height inline */
+  max-width: none;
+  border: 1px solid var(--rule);
+  border-radius: 14px;
+  box-shadow: 0 18px 48px -22px rgba(15, 23, 42, 0.45), 0 2px 6px rgba(15, 23, 42, 0.06);
+  animation: fsheet-pop .16s ease-out;
+}
+@keyframes fsheet-pop {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+/* The handle is a touch affordance and the drag it advertises is bound to
+   touch pointers only, so on a menu it would be a lie. */
+.fsheet.is-anchored .fsheet-grab { display: none; }
+.fsheet.is-anchored .fsheet-head { padding-top: 12px; touch-action: auto; }
 
 @media (prefers-reduced-motion: reduce) {
   .fsheet, .fsheet-scrim { animation: none; transition: none; }
@@ -20002,7 +20061,13 @@ button.ai-sched-main:focus-visible {
    past is worth less than a crop. What pays for the crop instead is
    --card-focus below. */
 .places-dcard { aspect-ratio: 12 / 5; }
-.places-ccard { aspect-ratio: 4 / 1; }
+/* The country strip was 4:1, and at that shape the average catalogue
+   photograph keeps 37 per cent of its frame: measured over the 3,021 heroes
+   whose size the wire now carries, only 136 are 2:1 or wider, so no choice of
+   picture could rescue it and the index read as a row of doorways and roofs.
+   2.6:1 keeps 58 per cent of a 3:2 photograph, and is still a shade wider
+   than the destination card under it. */
+.places-ccard { aspect-ratio: 2.6 / 1; }
 .places-tcard { aspect-ratio: 9 / 4; }
 .places-dcard:focus-visible, .places-ccard:focus-visible, .places-tcard:focus-visible {
   outline: 2px solid var(--accent);

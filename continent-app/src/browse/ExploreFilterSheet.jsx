@@ -6,6 +6,7 @@ import { CloseIcon } from '../components/Icons.jsx';
 import { count } from '../lib/format.js';
 import { useI18n } from '../i18n/index.jsx';
 import { DualRange } from '../components/FilterControls.jsx';
+import { useAnchoredSheet } from './sheetAnchor.js';
 import { RATING_MIN, RATING_MAX } from '../lib/rating.js';
 
 const REACH_STEPS = [3, 5, 8, 12];
@@ -70,6 +71,7 @@ function ChoiceChips({ value, onChange, options, ariaLabel, columns, narrowFrom 
 
 export function ExploreFilterSheet({
   onClose,
+  anchorRef,
   countryFilter, setCountryFilter, availableCountries,
   ratingRange, setRatingRange,
   gemOnly, setGemOnly,
@@ -85,6 +87,9 @@ export function ExploreFilterSheet({
   const sheetRef = React.useRef(null);
   const panelRef = React.useRef(null);
   const closeRef = React.useRef(null);
+  // On a pointer screen this hangs off the Filters button instead of rising
+  // from the bottom edge behind a dimmed page. See sheetAnchor.js.
+  const anchor = useAnchoredSheet(anchorRef);
   const [rLo, rHi] = ratingRange;
   const ratingNarrowed = !(rLo === RATING_MIN && rHi === RATING_MAX);
 
@@ -151,14 +156,19 @@ export function ExploreFilterSheet({
 
   return createPortal(
     <div
-      className="fsheet-scrim"
+      className={`fsheet-scrim${anchor ? ' is-anchored' : ''}`}
       ref={sheetRef}
       onMouseDown={(e) => { if (e.target === sheetRef.current) onClose(); }}
     >
       <div
-        className="fsheet fsheet-explore"
+        className={`fsheet fsheet-explore${anchor ? ' is-anchored' : ''}`}
         ref={panelRef}
+        style={anchor || undefined}
         role="dialog"
+        /* Still aria-modal even when it looks like a menu: focus is trapped
+           inside it and the invisible scrim swallows every click behind it,
+           so the page really is inert. Saying otherwise would promise a
+           screen reader an exit that is not there. */
         aria-modal="true"
         aria-labelledby="fsheet-title"
       >

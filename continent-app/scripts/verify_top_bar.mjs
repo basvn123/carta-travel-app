@@ -14,9 +14,9 @@
 //      the short chip on a phone.
 //   3. Desktop: five section tabs, the active one marked, and clicking one
 //      really changes the tab.
-//   4. The row ends exactly where the toolbar card under it ends, which is
-//      the whole reason .app-header carries Explore's container and reserves
-//      the scrollbar gutter.
+//   4. The bar is a full-bleed page frame: brand pinned to the left gutter,
+//      account cluster to the right, both gutters equal, and one single row
+//      at every desktop width down to 800px.
 //   5. A phone reaches the sections from the bottom bar, at 44px, and the
 //      header holds no section tabs of its own.
 //   6. Language lives in the Account panel, not the header: six languages,
@@ -151,18 +151,37 @@ const rightEdge = async (page, sel) => {
   check('the short chip label is hidden here',
     !(await page.locator('.header-pricing-label-short').isVisible().catch(() => false)));
 
-  // Explore, and the promise the header container exists for: the account
-  // group ends exactly where the toolbar card below it ends, scrollbar gutter
-  // included. A drift here means .app-header and .explore-wrap have come
-  // apart, which is what used to leave Passes hanging over the card's edge.
+  // The bar is a page frame, so it belongs to the window, not to a content
+  // column: full bleed, brand pinned to the left gutter, account cluster
+  // pinned to the right, and the two gutters equal. It used to sit in
+  // Explore's 1180px container, which on a wide screen left the wordmark
+  // hundreds of pixels in from the edge with the tabs adrift in the middle.
   await tabs.filter({ hasText: /^explore$/i }).first().click();
   await page.waitForTimeout(1800);
   check('Explore is the open tab', await page.locator('.explore-toolbar').isVisible());
-  const groupRight = await rightEdge(page, '.app-header-account');
-  const cardRight = await rightEdge(page, '.explore-toolbar');
-  const drift = groupRight != null && cardRight != null ? Math.abs(groupRight - cardRight) : null;
-  check('the header ends where the toolbar card ends', drift != null && drift <= 1.5,
-    drift == null ? 'missing' : `${groupRight?.toFixed(0)} vs ${cardRight?.toFixed(0)}, ${drift.toFixed(1)}px apart`);
+  const hdrBox = await box(page, '.app-header');
+  const brandBox = await box(page, '.app-header-brand');
+  const acctRight = await rightEdge(page, '.app-header-account');
+  const leftGutter = hdrBox && brandBox ? brandBox.x - hdrBox.x : null;
+  const rightGutter = hdrBox && acctRight != null ? (hdrBox.x + hdrBox.width) - acctRight : null;
+  check('the bar spans the window', !!hdrBox && hdrBox.x === 0 && hdrBox.width >= 1280 - 20,
+    hdrBox ? `${Math.round(hdrBox.x)}..${Math.round(hdrBox.x + hdrBox.width)} of 1280` : 'missing');
+  check('the brand is pinned to the left gutter', leftGutter != null && leftGutter <= 40,
+    leftGutter == null ? 'missing' : `${leftGutter.toFixed(0)}px in`);
+  check('both gutters are the same', leftGutter != null && rightGutter != null && Math.abs(leftGutter - rightGutter) <= 1.5,
+    leftGutter == null || rightGutter == null ? 'missing' : `left ${leftGutter.toFixed(0)} / right ${rightGutter.toFixed(0)}`);
+  // One line at every desktop width: the tabs give up their padding, then
+  // their labels, rather than the row wrapping into two bands.
+  let wrapped = [];
+  for (const w of [1400, 1200, 1100, 1040, 900, 800]) {
+    await page.setViewportSize({ width: w, height: 800 });
+    await page.waitForTimeout(220);
+    const h = await box(page, '.app-header');
+    if (!h || h.height > 80) wrapped.push(`${w}px`);
+  }
+  check('the bar stays one row from 800px up', wrapped.length === 0, wrapped.join(', ') || 'no wrap at any width');
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.waitForTimeout(300);
 
   // Clicking a tab really moves: Destinations is a different surface.
   await tabs.first().click();

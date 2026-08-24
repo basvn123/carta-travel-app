@@ -229,6 +229,8 @@ export function ExploreTab({
 }) {
   const { t } = useI18n();
   const [sheetOpen, setSheetOpen] = React.useState(false);
+  // The Filters sheet hangs off this button on a pointer screen.
+  const filterBtnRef = React.useRef(null);
   const [visible, setVisible] = React.useState(PAGE);
   const sentinelRef = React.useRef(null);
   const scrollRef = React.useRef(null);
@@ -344,9 +346,11 @@ export function ExploreTab({
             <div className="explore-chips">
               <button
                 type="button"
+                ref={filterBtnRef}
                 className={`explore-filter-btn ${activeFilters > 0 ? 'has-active' : ''}`}
                 onClick={() => setSheetOpen(true)}
                 aria-haspopup="dialog"
+                aria-expanded={sheetOpen}
               >
                 <FilterIcon size={14} />
                 <span>{t('filter.filters')}</span>
@@ -416,6 +420,7 @@ export function ExploreTab({
       {sheetOpen && (
         <ExploreFilterSheet
           onClose={() => setSheetOpen(false)}
+          anchorRef={filterBtnRef}
           countryFilter={countryFilter}
           setCountryFilter={setCountryFilter}
           availableCountries={availableCountries}
