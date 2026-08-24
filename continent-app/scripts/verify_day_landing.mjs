@@ -61,27 +61,29 @@ try {
     const page = await ctx.newPage();
     await seed(page);
     await page.goto(`${BASE}/?tab=day&o=CRL`);
-    await page.locator('.day-flow-steps').waitFor({ timeout: 120000 });
+    await page.locator('.day-flow-top .wiz-steps').waitFor({ timeout: 120000 });
     await page.waitForTimeout(700);
 
     // 1. The rail is present and readable on step 1, not from step 2 onward.
+    //    It is the trip planner's rail now (.wiz-steps, shared classes), so
+    //    the three pills and their connectors became three named segments.
     const rail = await page.evaluate(() => {
-      const dots = [...document.querySelectorAll('.day-flow-step-dot')];
-      const on = document.querySelector('.day-flow-step-dot.on');
-      const count = document.querySelector('.day-flow-stepcount');
-      const upcoming = dots.find((d) => d.disabled);
-      const cs = upcoming ? getComputedStyle(upcoming) : null;
+      const steps = [...document.querySelectorAll('.day-flow-top .wiz-step')];
+      const on = document.querySelector('.day-flow-top .wiz-step.now');
+      const count = document.querySelector('.day-flow-top .shape-head-step');
+      const upcoming = steps.find((d) => d.classList.contains('todo'));
+      const cs = upcoming ? getComputedStyle(upcoming.querySelector('.wiz-step-name')) : null;
       return {
-        dots: dots.length,
-        rails: document.querySelectorAll('.day-flow-step-rail').length,
-        onIsFirst: on === dots[0],
+        dots: steps.length,
+        named: steps.every((d) => (d.querySelector('.wiz-step-name')?.textContent || '').trim().length > 0),
+        onIsFirst: on === steps[0],
         count: count ? count.textContent.trim() : '',
         upcomingColor: cs ? cs.color : '',
         visible: on ? on.getBoundingClientRect().top >= 0 : false,
       };
     });
-    if (rail.dots !== 3) fail(`${size.name}: expected 3 step pills, got ${rail.dots}`);
-    if (rail.rails !== 2) fail(`${size.name}: expected 2 connectors, got ${rail.rails}`);
+    if (rail.dots !== 3) fail(`${size.name}: expected 3 steps in the rail, got ${rail.dots}`);
+    if (!rail.named) fail(`${size.name}: a step in the rail has no name`);
     if (!rail.onIsFirst) fail(`${size.name}: step 1 is not the active step on the landing screen`);
     if (!/1/.test(rail.count)) fail(`${size.name}: no "step 1 of 3" counter, got "${rail.count}"`);
     if (!rail.visible) fail(`${size.name}: the rail is off screen on step 1`);
@@ -217,7 +219,7 @@ try {
     await page.locator('.day-build-btn').click();
     await page.locator('.trip-newtrip-btn').first().click({ timeout: 30000 });
     const back = await page.evaluate(() => ({
-      count: document.querySelector('.day-flow-stepcount')?.textContent.trim() || '',
+      count: document.querySelector('.day-flow-top .shape-head-step')?.textContent.trim() || '',
       question: !!document.querySelector('.day-flow-search'),
       saved: document.querySelectorAll('.day-flow-saved .trip-saved-item').length,
       stranded: !!document.querySelector('.day-build') && !document.querySelector('.day-explore'),

@@ -242,18 +242,50 @@ for (const [blankCat, blankRe] of [['general', /^general/i], ['trips', /^trips$/
   ['mountains', /mountains/i]]) {
   await page.locator('.places-cat', { hasText: blankRe }).first().click();
   await page.waitForTimeout(2600);
-  const seen = await page.evaluate(() => {
+  const seen = await page.evaluate(async () => {
     const cards = [...document.querySelectorAll(
       '.places-dcard, .places-ccard, .places-tcard, .places-bcard, .places-icard')];
+    for (const c of cards.slice(0, 12)) {
+      const img = c.querySelector('img');
+      if (img) img.loading = 'eager';
+    }
+    await new Promise((r) => setTimeout(r, 2200));
+    // A placeholder AND a picture that did not load. The second is the one
+    // that hides: an image blocked by the served CSP, or a dead file, is still
+    // an <img> with a src, and it counted as a picture until it was looked at.
+    let broke = 0;
+    for (const c of cards.slice(0, 12)) {
+      const img = c.querySelector('img');
+      if (img && img.complete && img.naturalWidth === 0) broke += 1;
+    }
     return {
       n: cards.length,
       blank: cards.filter((c) => c.querySelector('.hero-blank, .places-card-noimg')).length,
+      broke,
     };
   });
-  if (seen.blank) blanks.push(`${blankCat}: ${seen.blank} of ${seen.n}`);
+  if (seen.blank) blanks.push(`${blankCat}: ${seen.blank} placeholders of ${seen.n}`);
+  if (seen.broke) blanks.push(`${blankCat}: ${seen.broke} pictures failed to load`);
 }
 check('every card carries a picture', blanks.length === 0,
   blanks.length ? blanks.join(', ') : 'no blank cards on any category');
+
+// Every hero URL must be on the one host the served CSP allows images from.
+// The dev server sends no CSP at all, so this cannot be seen by looking: the
+// thirteen heroes pointing at commons.wikimedia.org/Special:FilePath rendered
+// perfectly here and were blank grey cards in production.
+const heroHosts = await page.evaluate(async () => {
+  const r = await fetch('/app_data.json');
+  const j = await r.json();
+  const bad = [];
+  for (const [id, d] of Object.entries(j.destinations || {})) {
+    const u = d.image?.url;
+    if (u && !u.startsWith('https://upload.wikimedia.org/')) bad.push(id);
+  }
+  return { bad: bad.slice(0, 5), n: bad.length };
+});
+check('every hero URL is on the host the CSP allows',
+  heroHosts.n === 0, heroHosts.n ? `${heroHosts.n}: ${heroHosts.bad.join(', ')}` : 'all on upload.wikimedia.org');
 await page.locator('.places-cat', { hasText: /^general/i }).first().click();
 await page.waitForTimeout(1500);
 
@@ -290,7 +322,10 @@ check('desktop: places tab reachable', await desk.locator('.places-tab').isVisib
 const deskCols = await desk.locator('.places-list').evaluate(
   (el) => getComputedStyle(el).gridTemplateColumns.split(' ').length,
 ).catch(() => 0);
-check('desktop: cards flow in two columns', deskCols === 2, `${deskCols} columns`);
+// Three across on a desktop window: the tab moved off its 780px strip onto
+// the same 1180px column Explore uses, which fits three cards at the width
+// where the 2.6:1 photograph still reads as a photograph.
+check('desktop: cards flow in three columns', deskCols === 3, `${deskCols} columns`);
 await desk.screenshot({ path: 'shots/places-desktop.png' });
 
 // ── Priced from: the origin every price here was computed from ──────────

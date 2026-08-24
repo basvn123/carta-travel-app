@@ -108,11 +108,20 @@ const BOOKED_BITS = [
   { key: 'stays', Icon: BedIcon, labelKey: 'wizard.bookedStays', subKey: 'wizard.bookedStaysSub' },
 ];
 
-// The third step's real name, which is what the rail shows and what the
+// The four opening questions, one per step: what is already booked, where the
+// trip leaves from, when, and who is coming. They were one screen with four
+// stacked cards, which put the Next button below the fold and told the rail
+// nothing about what the wizard was actually going to ask.
+const BASICS_STEPS = ['Booked', 'From', 'When', 'Who'];
+
+// The step after those, whose real name is what the rail shows and what the
 // render switches on: your own stays, a published trip, or the city picker.
 const STEP3 = { stays: 'Stays', ready: 'Trips', custom: 'Stay' };
 const STEP_LABEL_KEYS = {
-  'Trip basics': 'wizard.stepBasics',
+  'Booked': 'wizard.stepBooked',
+  'From': 'wizard.stepFrom',
+  'When': 'wizard.stepWhen',
+  'Who': 'wizard.stepWho',
   'Where': 'wizard.stepWhere',
   'Trips': 'wizard.stepTrips',
   'Stay': 'wizard.stepStay',
@@ -372,9 +381,10 @@ export function GuidedTripWizard({
     const third = booked.stays ? STEP3.stays : (STEP3[buildMode] || 'Trips');
     // Someone who has already booked their beds has chosen their cities, so
     // the country picker has nothing left to ask them.
+    // The four opening questions are four steps, not one scrolling screen.
     return booked.stays
-      ? ['Trip basics', third, 'Finish']
-      : ['Trip basics', 'Where', third, 'Finish'];
+      ? [...BASICS_STEPS, third, 'Finish']
+      : [...BASICS_STEPS, 'Where', third, 'Finish'];
   }, [booked.stays, buildMode]);
 
   // Which step is which (so the render below reads by NAME).
@@ -837,11 +847,15 @@ export function GuidedTripWizard({
   };
 
   const canNext = (
-    (stepName === 'Trip basics' && (dateMode === 'flex'
+    // Nothing booked is a valid answer, and so is no home address: those two
+    // steps never block.
+    stepName === 'Booked'
+    || stepName === 'Who'
+    // Saying the travel is booked means saying where it puts you down.
+    || (stepName === 'From' && (!booked.travel || Boolean(arrivalId)))
+    || (stepName === 'When' && (dateMode === 'flex'
       ? flexNights >= 1
-      : Boolean(startDate && endDate && windowNights > 0))
-      // Saying the travel is booked means saying where it puts you down.
-      && (!booked.travel || Boolean(arrivalId)))
+      : Boolean(startDate && endDate && windowNights > 0)))
     || (stepName === 'Where' && countries.size > 0)
     || (stepName === 'Trips' && Boolean(tripPick && tripDetail))
     || (stepName === 'Stay' && includedIds.length > 0)
@@ -1582,7 +1596,7 @@ export function GuidedTripWizard({
       onClick={inline ? undefined : handleCancel}
     >
       <div
-        className={`guide-modal trip-wizard-modal wiz-${layout} ${inline ? 'wiz-inline' : ''} ${stepName === 'Trip basics' ? 'wiz-when' : ''} ${stepName === 'Stays' ? 'wiz-top' : ''} ${stepDir === 'back' ? 'wiz-back' : ''}`}
+        className={`guide-modal trip-wizard-modal wiz-${layout} ${inline ? 'wiz-inline' : ''} ${stepName === 'When' ? 'wiz-when' : ''} ${stepName === 'Stays' ? 'wiz-top' : ''} ${stepDir === 'back' ? 'wiz-back' : ''}`}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header + progress: same one-step-at-a-time header the day planner's
@@ -1969,15 +1983,20 @@ export function GuidedTripWizard({
               the travel style are ONE context question, answered before any
               destination, so every card afterwards carries a price from the
               traveller's own door. */}
-          {stepName === 'Trip basics' && (
+          {/* One question per step, the way the day planner asks its three.
+              These four used to be one screen you scrolled: what is booked,
+              where you leave from, when, and who is coming, stacked as four
+              cards with the Next button somewhere below the fold. Each is now
+              its own stop on the rail, so the rail says what is still to come
+              and every screen holds one answer. */}
+          {stepName === 'Booked' && (
             <>
-              <h2 className="guide-title">{t('wizard.basicsTitle')}</h2>
+              <h2 className="guide-title">{t('wizard.alreadyBooked')}</h2>
 
               {/* The question that shapes the rest of the flow. It is first
                   because every answer below it, and every screen after it,
                   reads differently once something is already held. */}
               <div className="guide-card guide-booked-card">
-                <div className="guide-card-head"><CheckIcon size={14} /> {t('wizard.alreadyBooked')}</div>
                 <div className="guide-booked-grid">
                   {BOOKED_BITS.map((b) => (
                     <button
@@ -2002,12 +2021,17 @@ export function GuidedTripWizard({
                         : t('wizard.bookedNothing')}
                 </p>
               </div>
+            </>
+          )}
+
+          {stepName === 'From' && (
+            <>
+              <h2 className="guide-title">{t('wizard.originLabel')}</h2>
 
               {/* Where does the trip leave from? A typed address unlocks
                   every airport within 200 km; skipping it keeps the app's
                   own departure airport, so the step never blocks. */}
               <div className="guide-card guide-origin-home-card">
-                <div className="guide-card-head"><MapPinIcon size={14} /> {t('wizard.originLabel')}</div>
                 {originPlace ? (
                   <div className="guide-origin-picked">
                     <div className="guide-origin-picked-main">
@@ -2070,6 +2094,7 @@ export function GuidedTripWizard({
                   </div>
                 )}
               </div>
+
 
               {/* Travel booked: the one thing Carta then needs is where it
                   puts you down, and how, because that decides the transfer
@@ -2148,6 +2173,12 @@ export function GuidedTripWizard({
                   </div>
                 </div>
               )}
+            </>
+          )}
+
+          {stepName === 'When' && (
+            <>
+              <h2 className="guide-title">{t('wizard.whenLabel')}</h2>
 
               {/* Every date control sits on one card: floating single-line
                   inputs across a wide screen read as unrelated fragments, a
@@ -2249,11 +2280,16 @@ export function GuidedTripWizard({
                   </>
                 )}
               </div>
+            </>
+          )}
+
+          {stepName === 'Who' && (
+            <>
+              <h2 className="guide-title">{t('wizard.partyLabel')}</h2>
 
               {/* Who travels, and in what style. One card: the two answers
                   price every bed and every day downstream. */}
               <div className="guide-card guide-party-card">
-                <div className="guide-card-head"><PersonIcon size={14} /> {t('wizard.partyLabel')}</div>
                 <div className="guide-party-row">
                   <div className="guide-inline-field">
                     <span className="trip-field-label">{t('wizard.adults')}</span>

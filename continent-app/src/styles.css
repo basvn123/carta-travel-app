@@ -9409,15 +9409,10 @@ input, select {
 .saved-card-footer:hover { background: var(--accent-bg); color: var(--accent); }
 .saved-card-footer-go { font-size: 15px; line-height: 1; color: var(--ink-mute); }
 .saved-card-footer:hover .saved-card-footer-go { color: var(--accent); }
-/* Desktop: the Saved-trips overview gets the same modern, roomy treatment as
-   mobile - a wider sheet, breathing space between sections, larger cards -
-   instead of being squeezed into the narrow docked column. */
+/* Desktop: breathing space between sections and larger cards. The width that
+   used to live here (min(560px, 46vw), a docked column) is gone: the panel
+   takes the whole screen from 769px up, see the block further down. */
 @media (min-width: 881px) {
-  .panel.saved-trips-panel {
-    width: min(560px, 46vw);
-    padding-left: 28px;
-    padding-right: 28px;
-  }
   .saved-trips-panel .saved-section { margin-bottom: 14px; }
   .saved-trips-panel .saved-card-stack { gap: 12px; }
   .saved-trips-panel .saved-card-main { padding: 15px 4px 15px 16px; }
@@ -9442,6 +9437,32 @@ input, select {
 .saved-trips-panel .panel-section {
   padding-left: var(--saved-gutter);
   padding-right: var(--saved-gutter);
+}
+
+/* ── Desktop: the record is a section, not a drawer ──
+   My trips arrived as a 440px slide-over pinned to the right edge, so the
+   longest list in the app read in a column narrower than a phone while two
+   thirds of the window sat behind it showing whatever tab you happened to
+   leave. It takes the whole screen now, exactly as it does on a phone, with
+   its contents on the same 1180px column every other tab uses.
+
+   No cross either, for the same reason the phone has none: this is a
+   destination you navigate to, and the way out is the header (press Saved
+   trips again, or any other tab) or Escape. A cross would be the only close
+   control in the app that closes a page rather than an overlay. */
+@media (min-width: 769px) {
+  .panel.saved-trips-panel {
+    left: 0;
+    width: auto;
+    max-width: none;
+    border-left: none;
+    box-shadow: none;
+    /* The centred column, expressed as the panel's own gutter so every child
+       inherits it: header, tabs, map and cards keep one left edge. */
+    padding-left: max(28px, calc((100% - 1180px) / 2));
+    padding-right: max(28px, calc((100% - 1180px) / 2));
+  }
+  .saved-trips-panel .panel-close { display: none; }
 }
 
 /* An empty shelf should invite, not look like a broken upload zone. A dashed
@@ -14288,7 +14309,11 @@ input, select {
      mid  - card decks and the trip summary
      wide - only where a map earns the room */
 .trip-wizard-modal { --wiz-max: 1060px; }
-.trip-wizard-modal.wiz-form { --wiz-max: 780px; }
+/* 880, not 780: every form step is one question now, so the column carries
+   a single card and a 780px measure left a 1600px screen mostly empty around
+   it. Wide enough for the two-column answers (booked bits, travel styles) to
+   breathe, still short enough to read as one glance. */
+.trip-wizard-modal.wiz-form { --wiz-max: 880px; }
 .trip-wizard-modal.wiz-mid { --wiz-max: 1060px; }
 .trip-wizard-modal.wiz-wide { --wiz-max: 1560px; }
 
@@ -16486,9 +16511,11 @@ button.ai-sched-main:focus-visible {
   padding: 0;
   overflow-y: auto;
 }
+/* Matches the trip planner's form column, so the two planners ask their
+   questions at the same width. */
 .day-flow {
   width: 100%;
-  max-width: 780px;
+  max-width: 880px;
   min-height: 100%;
   display: flex;
   flex-direction: column;
@@ -16497,65 +16524,19 @@ button.ai-sched-main:focus-visible {
 /* The manual step hosts the wide explore map, so it drops the reading width. */
 .day-flow-manual { max-width: 1400px; }
 
-/* Step rail + help affordance */
+/* Step rail + help affordance. The rail itself is the trip planner's
+   (.wiz-steps, same classes, same file), so the two planners read as one
+   product; what is left here is the band it sits in. The pill rail this
+   replaced (.day-flow-step-dot and its connectors) is gone. */
 .day-flow-top {
-  display: flex;
-  align-items: center;
-  gap: 12px;
   margin-bottom: 26px;
+  padding-bottom: 2px;
+  border-bottom: 1px solid var(--rule);
 }
-.day-flow-steps { display: flex; align-items: center; gap: 0; flex: 1 1 auto; min-width: 0; }
-/* The connector between two pills. Three separate pills read as three
-   unrelated chips; joined, they read as a journey with a position on it,
-   which is the whole job of a progress rail on the FIRST screen. */
-.day-flow-step-rail {
-  flex: 0 1 26px;
-  min-width: 10px;
-  height: 2px;
-  border-radius: 2px;
-  background: var(--rule-soft);
-  transition: background 0.2s ease;
-}
-.day-flow-step-rail.done { background: var(--accent); }
-.day-flow-step-dot {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  margin: 0 4px;
-  padding: 6px 12px 6px 7px;
-  border: 1px solid var(--rule);
-  border-radius: 999px;
-  background: transparent;
-  color: var(--ink-soft);
-  font-size: 12px;
-  cursor: default;
-  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
-}
-/* Upcoming steps are still part of the map of the journey, so they stay
-   legible rather than fading to a hint of grey. */
-.day-flow-step-dot:disabled { color: var(--ink-mute); border-color: var(--rule-soft); }
-.day-flow-stepcount {
-  flex: 0 0 auto;
-  font-family: var(--mono);
-  font-size: 11px;
-  font-variant-numeric: tabular-nums;
-  color: var(--ink-soft);
-  white-space: nowrap;
-}
-.day-flow-step-dot.done { cursor: pointer; color: var(--ink-soft); }
-.day-flow-step-dot.done:hover { border-color: var(--accent); color: var(--accent); }
-.day-flow-step-dot.on { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 600; }
-.day-flow-step-num {
-  width: 20px; height: 20px;
-  flex: 0 0 auto;
-  border-radius: 50%;
-  background: var(--paper-dim);
-  color: var(--ink-soft);
-  font-size: 11px; font-weight: 700;
-  display: inline-flex; align-items: center; justify-content: center;
-}
-.day-flow-step-dot.on .day-flow-step-num { background: rgba(255,255,255,0.22); color: #fff; }
-.day-flow-step-dot.done .day-flow-step-num { background: #e2f0e6; color: #1f6b41; }
+/* The help button rides the title line, where the wizard keeps its close. */
+.day-flow-top .shape-head-title { padding-right: 0; }
+.day-flow-top .day-flow-help { margin-left: auto; }
+.day-flow-top .wiz-steps { margin-top: 8px; }
 .day-flow-help {
   flex: 0 0 auto;
   width: 34px; height: 34px;
@@ -17250,10 +17231,12 @@ button.ai-sched-main:focus-visible {
   .day-flow { padding: 14px 14px 30px; }
   .day-flow-q { font-size: 23px; }
   .day-flow-cards { grid-template-columns: 1fr; }
-  .day-flow-step-label { display: none; }
-  /* With the label hidden the dot was a ~32px circle, under the 44px minimum
-     a thumb needs to hit a back-navigation target reliably. Square it up. */
-  .day-flow-step-dot { padding: 0; min-width: 44px; min-height: 44px; justify-content: center; }
+  /* The shared rail drops its names on a phone because the trip planner has
+     seven of them. The day planner has three, and "Stay", "When" and "How"
+     fit a 110px segment with room to spare, so here they stay: three bare
+     numbers would say nothing about what the flow is going to ask. */
+  .day-flow-top .wiz-step-name { display: block; font-size: 11px; }
+  .day-flow-top .wiz-step-btn { justify-content: flex-start; padding-left: 4px; }
   /* The six popular cities stacked one-per-row pushed the map a full screen
      down, so "tap a city on the map" pointed at something below the fold. Two
      columns halves that stack and brings the map back up; the map already
@@ -19575,8 +19558,12 @@ button.ai-sched-main:focus-visible {
   scrollbar-gutter: stable;
   background: var(--paper);
 }
+/* The same 1180px column Explore uses. At 780 the catalogue was a narrow
+   strip down the middle of a 1920px screen with a third of the window empty
+   on either side, and the toolbar card above it was narrower than the header
+   it sits under. */
 .places-wrap {
-  max-width: 780px;
+  max-width: 1180px;
   margin: 0 auto;
   padding: 12px 24px calc(32px + env(safe-area-inset-bottom, 0px));
 }
@@ -20032,6 +20019,11 @@ button.ai-sched-main:focus-visible {
 }
 @media (min-width: 640px) {
   .places-list { grid-template-columns: 1fr 1fr; }
+}
+/* Three across once the column is wide enough to keep a card above ~370px,
+   which is where the 2.6:1 photo strip still reads as a photograph. */
+@media (min-width: 1040px) {
+  .places-list { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
 .places-list > .places-empty,
 .places-list > .places-credit,

@@ -50,18 +50,43 @@ async function openWizard(width, height) {
   return page;
 }
 
-/** Trip basics -> Where: fill a window of dates so the day filter has a number. */
-async function toWhereStep(page) {
-  const days = page.locator('.cal-day:not(.disabled):not(.outside)');
-  const n = await days.count();
-  if (n > 8) {
-    await days.nth(2).click();
-    await page.waitForTimeout(300);
-    await days.nth(8).click(); // six nights
-    await page.waitForTimeout(400);
+const nextStep = async (page) => {
+  await page.locator('.guide-next').first().click();
+  await page.waitForTimeout(1100);
+};
+
+/** Pick a window of nights on the When step.
+ *  A phone shows ONE month, so late in a month there can be fewer selectable
+ *  days left than the window needs (on the 24th, eight). Turn the page first
+ *  when that happens, or the run silently leaves the step unanswered and dies
+ *  on a disabled Next further down. */
+const pickWindow = async (page, from = 2, to = 8) => {
+  const sel = '.cal-day:not(.disabled):not(.outside)';
+  if (await page.locator(sel).count() <= to) {
+    const fwd = page.getByRole('button', { name: 'Next month' }).first();
+    if (await fwd.count() && !(await fwd.isDisabled())) {
+      await fwd.click();
+      await page.waitForTimeout(500);
+    }
   }
-  await page.locator('.guide-next').click();
-  await page.waitForTimeout(1200);
+  const days = page.locator(sel);
+  if (await days.count() <= to) return false;
+  await days.nth(from).click();
+  await page.waitForTimeout(300);
+  await days.nth(to).click();
+  await page.waitForTimeout(400);
+  return true;
+};
+
+/** The four opening questions (Booked, From, When, Who) through to Where.
+ *  Only one of them needs an answer: a window of dates, so the day filter on
+ *  the country cards has a number to work with. */
+async function toWhereStep(page) {
+  await nextStep(page);   // Booked: nothing held is a valid answer
+  await nextStep(page);   // From: the app's own airport will do
+  await pickWindow(page);  // six nights
+  await nextStep(page);   // When
+  await nextStep(page);   // Who: two adults, standard, unchanged
 }
 
 // ── Desktop ───────────────────────────────────────────────────────────────
@@ -293,17 +318,17 @@ try {
   await page.waitForTimeout(500);
   check('the booked answer says what changes',
     /where it puts you down/i.test(await page.locator('.guide-booked-card .guide-note').innerText()));
-  const heads = (await page.locator('.guide-card-head').allInnerTexts()).join(' / ');
-  check('it asks where you land', /land/i.test(heads), heads);
-  check('and asks it after where you leave from',
-    heads.indexOf('start') < heads.indexOf('land'), heads);
+  await nextStep(page);
 
-  const days = page.locator('.cal-day:not(.disabled):not(.outside)');
-  await days.nth(2).click();
-  await page.waitForTimeout(250);
-  await days.nth(8).click();
-  await page.waitForTimeout(400);
-  check('dates alone do not let you past', await page.locator('.guide-next').isDisabled());
+  // The From step carries both halves of the same question, in order: where
+  // you leave from as the step's title, where the booked travel puts you down
+  // as the card under it.
+  const fromScreen = (await page.locator('.guide-canvas').innerText()).replace(/\s+/g, ' ');
+  check('it asks where you land', /land/i.test(fromScreen), fromScreen.slice(0, 120));
+  check('and asks it after where you leave from',
+    fromScreen.search(/where does your trip start/i) < fromScreen.search(/where do you land/i), fromScreen.slice(0, 120));
+  check('saying travel is booked holds the step until you name the arrival',
+    await page.locator('.guide-next').isDisabled());
 
   const landCard = page.locator('.guide-card', { hasText: /where do you land/i });
   await landCard.locator('input.guide-search').fill('Salzburg');
@@ -315,8 +340,11 @@ try {
   await page.waitForTimeout(300);
   await page.screenshot({ path: 'shots/planner2-booked-travel.png', fullPage: true });
 
-  await page.locator('.guide-next').click();
-  await page.waitForTimeout(2000);
+  await nextStep(page);   // From -> When
+  await pickWindow(page);
+  await nextStep(page);   // When -> Who
+  await nextStep(page);   // Who -> Where
+  await page.waitForTimeout(1200);
   const chips = (await page.locator('.guide-picked-chip').allInnerTexts()).join(', ');
   check('the country you land in is already ticked', /austria/i.test(chips), chips);
   const recap = await page.locator('.guide-recap').innerText().catch(() => '');

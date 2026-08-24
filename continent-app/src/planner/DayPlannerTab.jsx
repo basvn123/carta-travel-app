@@ -2574,40 +2574,49 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
               The rail is on screen from the FIRST question, not from the
               second: a progress indicator that appears halfway through tells
               the traveller where they are only once they no longer need it. */}
+          {/* The same rail the trip planner wears, down to the class names:
+              the step you are on named in full above it, "step x of n" beside
+              that, and one segment per step underlined in the accent. Two
+              planners that ask the same kind of question should not answer in
+              two different visual languages, and the pills this replaced said
+              nothing about what was still coming. */}
           <div className="day-flow-top">
-            <nav className="day-flow-steps" aria-label={t('day.progressAria')}>
-              {FLOW.map((s, i) => (
-                <React.Fragment key={s.key}>
-                  {/* The connector is what makes three pills read as one
-                      journey with a position on it. */}
-                  {i > 0 && (
-                    <span className={`day-flow-step-rail${i <= flowIdx ? ' done' : ''}`} aria-hidden="true" />
-                  )}
-                  <button
-                    type="button"
-                    className={`day-flow-step-dot${i === flowIdx ? ' on' : ''}${i < flowIdx ? ' done' : ''}`}
-                    onClick={() => { if (i < flowIdx) setLandingStep(s.key); }}
-                    disabled={i > flowIdx}
-                    aria-current={i === flowIdx ? 'step' : undefined}
-                  >
-                    <span className="day-flow-step-num">{i < flowIdx ? '✓' : i + 1}</span>
-                    <span className="day-flow-step-label">{t(s.labelKey)}</span>
-                  </button>
-                </React.Fragment>
-              ))}
-            </nav>
-            <span className="day-flow-stepcount">
-              {t('day.stepXofN', { x: flowIdx + 1, n: FLOW.length })}
-            </span>
-            <button
-              className="day-flow-help"
-              onClick={() => setHowToOpen((v) => !v)}
-              aria-expanded={howToOpen}
-              aria-label={t('day.howItWorks')}
-              title={t('day.howItWorks')}
-            >
-              <InfoIcon size={16} />
-            </button>
+            <div className="shape-head-title">
+              {t(FLOW[flowIdx].labelKey)}
+              <span className="shape-head-step">
+                {t('day.stepXofN', { x: flowIdx + 1, n: FLOW.length })}
+              </span>
+              <button
+                className="day-flow-help"
+                onClick={() => setHowToOpen((v) => !v)}
+                aria-expanded={howToOpen}
+                aria-label={t('day.howItWorks')}
+                title={t('day.howItWorks')}
+              >
+                <InfoIcon size={16} />
+              </button>
+            </div>
+            <ol className="wiz-steps" aria-label={t('day.progressAria')}>
+              {FLOW.map((s, i) => {
+                const state = i < flowIdx ? 'done' : i === flowIdx ? 'now' : 'todo';
+                return (
+                  <li key={s.key} className={`wiz-step ${state}`}>
+                    <button
+                      type="button"
+                      className="wiz-step-btn"
+                      onClick={() => { if (state === 'done') setLandingStep(s.key); }}
+                      disabled={state !== 'done'}
+                      aria-current={state === 'now' ? 'step' : undefined}
+                    >
+                      <span className="wiz-step-mark">
+                        {state === 'done' ? <CheckIcon size={10} /> : i + 1}
+                      </span>
+                      <span className="wiz-step-name">{t(s.labelKey)}</span>
+                    </button>
+                  </li>
+                );
+              })}
+            </ol>
           </div>
           {howToOpen && (
             <div className="day-flow-help-card">

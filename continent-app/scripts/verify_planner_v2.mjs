@@ -53,8 +53,22 @@ await page.waitForTimeout(2000);
 // No chooser any more: the planner opens on step one.
 await page.waitForTimeout(600);
 
-// ── Step 1: Trip basics ──
-check('step 1 is Trip basics', /set up your trip/i.test(await page.locator('.guide-title').first().innerText().catch(() => '')));
+// The opening questions are one per step now (Booked, From, When, Who), so
+// this walk advances between the cards it used to scroll past. Every check
+// below is the same check, taken on the step that now owns the card.
+const nextStep = async () => {
+  await page.locator('.guide-next').first().click();
+  await page.waitForTimeout(1100);
+};
+
+// ── Step 1: Booked ──
+check('step 1 asks what is booked', /booked already/i.test(await page.locator('.guide-title').first().innerText().catch(() => '')));
+check('the rail names every step', (await page.locator('.wiz-step-name').allInnerTexts()).length >= 6,
+  (await page.locator('.wiz-step-name').allInnerTexts()).join(' | '));
+await nextStep();
+
+// ── Step 2: From ──
+check('step 2 asks where the trip starts', /where does your trip start/i.test(await page.locator('.guide-title').first().innerText().catch(() => '')));
 check('origin card renders', await page.locator('.guide-origin-home-card').isVisible());
 
 await page.locator('.guide-origin-home-card input.guide-search').fill('Ghent');
@@ -67,13 +81,20 @@ const chips = await page.locator('.guide-airport-chip').allInnerTexts();
 check('airports within 200 km listed', chips.length >= 3, `${chips.length}: ${chips.slice(0, 3).join(' | ')}`);
 check('chips carry distances', chips.every((c) => /\d+\s*km/.test(c)));
 
-// Dates: a 7-night window.
+await nextStep();
+
+// ── Step 3: When. A 7-night window. ──
+check('step 3 asks when', /when are you going/i.test(await page.locator('.guide-title').first().innerText().catch(() => '')));
 const days = page.locator('.cal-day:not(.disabled):not(.outside)');
 await days.nth(3).click();
 await days.nth(10).click();
 await page.waitForTimeout(300);
 
-// Party: 2 adults + 1 child, budget style.
+check('next unlocks with dates set', await page.locator('.guide-next').isEnabled());
+await nextStep();
+
+// ── Step 4: Who. 2 adults + 1 child, budget style. ──
+check('step 4 asks who travels', /who travels/i.test(await page.locator('.guide-title').first().innerText().catch(() => '')));
 await page.locator('.guide-party-card .guide-people').nth(1).locator('button').nth(1).click(); // +1 child
 await page.waitForTimeout(200);
 check('children note is honest', /full travellers/i.test(await page.locator('.guide-party-card').innerText()));
@@ -103,12 +124,11 @@ await page.waitForTimeout(700);
 const closeLs = page.locator('.panel-close, .lifestyle-close').first();
 if (await closeLs.isVisible().catch(() => false)) { await closeLs.click(); await page.waitForTimeout(500); }
 await page.screenshot({ path: 'shots/planner-v2-basics.png' });
-check('next unlocks with dates set', await page.locator('.guide-next').isEnabled());
 await page.locator('.guide-next').click();
 await page.waitForTimeout(1800);
 
-// ── Step 2: Where ──
-check('step 2 is Where', /where are we going/i.test(await page.locator('.guide-title').first().innerText().catch(() => '')));
+// ── Step 5: Where ──
+check('the next step is Where', /where are we going/i.test(await page.locator('.guide-title').first().innerText().catch(() => '')));
 await page.waitForTimeout(1200);
 const estCount = await page.locator('.guide-ccard-n').count();
 check('country cards carry a cost line', estCount >= 10, String(estCount));
