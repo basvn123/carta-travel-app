@@ -45,6 +45,7 @@ Usage, from the repo root:
 """
 
 import argparse
+import importlib.util
 import json
 import re
 import statistics
@@ -58,6 +59,19 @@ sys.path.insert(0, str(HERE))
 from sources import haversine_km, load_cache  # noqa: E402
 from harvest_beaches import COUNTRIES, name_tokens  # noqa: E402
 import beauty_index as bi  # noqa: E402
+
+# The lake layer's card-shape helpers, loaded by path the way enrich_beaches
+# already loads them: beach, lake and peak cards are the same 25/12 crop, so
+# the frame thresholds live in one file.
+_LAKE_IMAGES = HERE.parents[1] / "pipeline" / "lakes" / "lake_images.py"
+if "carta_lake_images" in sys.modules:
+    lake_images = sys.modules["carta_lake_images"]
+else:
+    _lake_spec = importlib.util.spec_from_file_location("carta_lake_images",
+                                                        _LAKE_IMAGES)
+    lake_images = importlib.util.module_from_spec(_lake_spec)
+    sys.modules["carta_lake_images"] = lake_images
+    _lake_spec.loader.exec_module(lake_images)
 
 ROOT = HERE.parents[1]
 OUT_DIR = ROOT / "continent-app" / "public" / "beaches"
@@ -182,7 +196,11 @@ def wire_images(beach):
             # audited from the outside rather than trusted.
             "ev": img.get("evidence") or "",
         })
-    return out
+    # Inside the leading evidence tier only, prefer a lead that survives the
+    # card crop. The rule above is untouched: a geotagged shot never overtakes
+    # an evidenced one for being the wider frame. This chooses between equals.
+    return lake_images.lead_by_fit(out, lambda i: (i.get("w"), i.get("h")),
+                                   tier=lambda i: i.get("ev"))
 
 
 def access_of(beach):
@@ -404,9 +422,17 @@ def dedupe(rows):
     never going to be told apart on a card anyway."""
     kept, leads = [], set()
     for row in rows:
-        lead = row["images"][0]["u"] if row["images"] else None
-        if lead and lead in leads:
+        # A beach with photographs of its own keeps its place on the next one
+        # nobody else is leading with, at the same evidence standing. Only a
+        # beach whose every picture already belongs to a better scoring
+        # neighbour retires, which is the Ksamil case this rule was written
+        # for: there, the eight rows genuinely have nothing of their own.
+        images = lake_images.reseat_lead(row.get("images") or [], leads,
+                                         tier=lambda i: i.get("ev"))
+        if images is None:
             continue
+        row["images"] = images
+        lead = images[0]["u"] if images else None
         if any(haversine_km(row["lat"], row["lon"], other["lat"], other["lon"])
                <= DUPLICATE_KM for other in kept):
             continue

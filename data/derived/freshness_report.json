@@ -1,6 +1,6 @@
 {
  "meta": {
-  "generated_at": "2026-08-19T17:44:41+00:00",
+  "generated_at": "2026-08-27T07:37:24+00:00",
   "fares_dir": "continent-app/public/fares",
   "n_origins": 286,
   "day_prices_by_source": {
@@ -29,9 +29,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "AAR": {
    "file": "AAR.json",
@@ -44,9 +44,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "ABZ": {
    "file": "ABZ.json",
@@ -60,9 +60,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "ACE": {
    "file": "ACE.json",
@@ -77,9 +77,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "AES": {
    "file": "AES.json",
@@ -92,9 +92,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "AGA": {
    "file": "AGA.json",
@@ -108,9 +108,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "AGP": {
    "file": "AGP.json",
@@ -126,9 +126,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 3.0,
-   "priority": 20.1
+   "priority": 42.9
   },
   "AHO": {
    "file": "AHO.json",
@@ -143,9 +143,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "AJA": {
    "file": "AJA.json",
@@ -158,9 +158,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "ALC": {
    "file": "ALC.json",
@@ -176,9 +176,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 3.0,
-   "priority": 20.1
+   "priority": 42.9
   },
   "AMM": {
    "file": "AMM.json",
@@ -192,9 +192,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "AMS": {
    "file": "AMS.json",
@@ -208,9 +208,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 3.0,
-   "priority": 20.1
+   "priority": 42.9
   },
   "AOI": {
    "file": "AOI.json",
@@ -225,9 +225,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "ARN": {
    "file": "ARN.json",
@@ -242,9 +242,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 2.0,
-   "priority": 13.4
+   "priority": 28.6
   },
   "ATH": {
    "file": "ATH.json",
@@ -259,9 +259,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 3.0,
-   "priority": 20.1
+   "priority": 42.9
   },
   "AUH": {
    "file": "AUH.json",
@@ -274,9 +274,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "AYT": {
    "file": "AYT.json",
@@ -289,9 +289,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "BBU": {
    "file": "BBU.json",
@@ -305,9 +305,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "BCM": {
    "file": "BCM.json",
@@ -320,9 +320,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "BCN": {
    "file": "BCN.json",
@@ -337,9 +337,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 3.0,
-   "priority": 20.1
+   "priority": 42.9
   },
   "BDS": {
    "file": "BDS.json",
@@ -354,9 +354,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "BEG": {
    "file": "BEG.json",
@@ -369,9 +369,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 2.0,
-   "priority": 13.4
+   "priority": 28.6
   },
   "BEM": {
    "file": "BEM.json",
@@ -383,9 +383,9 @@
    "newest_o": "2026-08-05",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 14.7,
+   "age_days": 22.3,
    "popularity": 1.0,
-   "priority": 14.7
+   "priority": 22.3
   },
   "BER": {
    "file": "BER.json",
@@ -400,9 +400,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 3.0,
-   "priority": 20.1
+   "priority": 42.9
   },
   "BES": {
    "file": "BES.json",
@@ -415,9 +415,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "BFS": {
    "file": "BFS.json",
@@ -430,9 +430,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "BGO": {
    "file": "BGO.json",
@@ -445,9 +445,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "BGY": {
    "file": "BGY.json",
@@ -462,9 +462,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 3.0,
-   "priority": 20.1
+   "priority": 42.9
   },
   "BHX": {
    "file": "BHX.json",
@@ -478,9 +478,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 2.0,
-   "priority": 13.4
+   "priority": 28.6
   },
   "BIA": {
    "file": "BIA.json",
@@ -493,9 +493,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "BIO": {
    "file": "BIO.json",
@@ -509,9 +509,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "BIQ": {
    "file": "BIQ.json",
@@ -524,9 +524,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "BJV": {
    "file": "BJV.json",
@@ -539,9 +539,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "BLL": {
    "file": "BLL.json",
@@ -554,9 +554,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "BLQ": {
    "file": "BLQ.json",
@@ -571,9 +571,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 2.0,
-   "priority": 13.4
+   "priority": 28.6
   },
   "BNX": {
    "file": "BNX.json",
@@ -587,9 +587,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "BOD": {
    "file": "BOD.json",
@@ -603,9 +603,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 2.0,
-   "priority": 13.4
+   "priority": 28.6
   },
   "BOH": {
    "file": "BOH.json",
@@ -618,9 +618,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "BOJ": {
    "file": "BOJ.json",
@@ -634,9 +634,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "BRE": {
    "file": "BRE.json",
@@ -649,9 +649,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "BRI": {
    "file": "BRI.json",
@@ -666,9 +666,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 2.0,
-   "priority": 13.4
+   "priority": 28.6
   },
   "BRQ": {
    "file": "BRQ.json",
@@ -681,9 +681,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "BRS": {
    "file": "BRS.json",
@@ -696,9 +696,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 2.0,
-   "priority": 13.4
+   "priority": 28.6
   },
   "BRU": {
    "file": "BRU.json",
@@ -712,9 +712,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 3.0,
-   "priority": 20.1
+   "priority": 42.9
   },
   "BSL": {
    "file": "BSL.json",
@@ -728,9 +728,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 2.0,
-   "priority": 13.4
+   "priority": 28.6
   },
   "BTS": {
    "file": "BTS.json",
@@ -744,9 +744,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "BUD": {
    "file": "BUD.json",
@@ -760,9 +760,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 3.0,
-   "priority": 20.1
+   "priority": 42.9
   },
   "BVA": {
    "file": "BVA.json",
@@ -777,9 +777,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 2.0,
-   "priority": 13.4
+   "priority": 28.6
   },
   "BVE": {
    "file": "BVE.json",
@@ -792,9 +792,9 @@
    "newest_o": "2026-08-05",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 14.7,
+   "age_days": 22.3,
    "popularity": 1.0,
-   "priority": 14.7
+   "priority": 22.3
   },
   "BZG": {
    "file": "BZG.json",
@@ -807,9 +807,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "BZR": {
    "file": "BZR.json",
@@ -821,9 +821,9 @@
    "newest_o": "2026-08-05",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 14.7,
+   "age_days": 22.3,
    "popularity": 1.0,
-   "priority": 14.7
+   "priority": 22.3
   },
   "CAG": {
    "file": "CAG.json",
@@ -837,9 +837,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "CCF": {
    "file": "CCF.json",
@@ -851,9 +851,9 @@
    "newest_o": "2026-08-05",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 14.7,
+   "age_days": 22.3,
    "popularity": 1.0,
-   "priority": 14.7
+   "priority": 22.3
   },
   "CDT": {
    "file": "CDT.json",
@@ -867,9 +867,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "CFU": {
    "file": "CFU.json",
@@ -884,9 +884,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "CGN": {
    "file": "CGN.json",
@@ -900,9 +900,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 3.0,
-   "priority": 20.1
+   "priority": 42.9
   },
   "CHQ": {
    "file": "CHQ.json",
@@ -916,9 +916,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "CIA": {
    "file": "CIA.json",
@@ -932,9 +932,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 3.0,
-   "priority": 20.1
+   "priority": 42.9
   },
   "CIY": {
    "file": "CIY.json",
@@ -947,9 +947,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "CLJ": {
    "file": "CLJ.json",
@@ -963,9 +963,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "CLY": {
    "file": "CLY.json",
@@ -978,9 +978,9 @@
    "newest_o": "2026-08-07",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 12.7,
+   "age_days": 20.3,
    "popularity": 1.0,
-   "priority": 12.7
+   "priority": 20.3
   },
   "CND": {
    "file": "CND.json",
@@ -993,9 +993,9 @@
    "newest_o": "2026-08-07",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 12.7,
+   "age_days": 20.3,
    "popularity": 1.0,
-   "priority": 12.7
+   "priority": 20.3
   },
   "CPH": {
    "file": "CPH.json",
@@ -1010,9 +1010,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 3.0,
-   "priority": 20.1
+   "priority": 42.9
   },
   "CRA": {
    "file": "CRA.json",
@@ -1025,9 +1025,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "CRL": {
    "file": "CRL.json",
@@ -1042,9 +1042,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 3.0,
-   "priority": 20.1
+   "priority": 42.9
   },
   "CRV": {
    "file": "CRV.json",
@@ -1057,9 +1057,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "CTA": {
    "file": "CTA.json",
@@ -1074,9 +1074,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 2.0,
-   "priority": 13.4
+   "priority": 28.6
   },
   "CUF": {
    "file": "CUF.json",
@@ -1089,9 +1089,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "CWL": {
    "file": "CWL.json",
@@ -1104,9 +1104,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "DBV": {
    "file": "DBV.json",
@@ -1121,9 +1121,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 2.0,
-   "priority": 13.4
+   "priority": 28.6
   },
   "DEB": {
    "file": "DEB.json",
@@ -1136,9 +1136,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "DLE": {
    "file": "DLE.json",
@@ -1150,9 +1150,9 @@
    "newest_o": "2026-08-05",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 14.7,
+   "age_days": 22.3,
    "popularity": 1.0,
-   "priority": 14.7
+   "priority": 22.3
   },
   "DLM": {
    "file": "DLM.json",
@@ -1166,9 +1166,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "DTM": {
    "file": "DTM.json",
@@ -1181,9 +1181,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "DUB": {
    "file": "DUB.json",
@@ -1196,9 +1196,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 3.0,
-   "priority": 20.1
+   "priority": 42.9
   },
   "DXB": {
    "file": "DXB.json",
@@ -1211,9 +1211,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "EDI": {
    "file": "EDI.json",
@@ -1226,9 +1226,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 2.0,
-   "priority": 13.4
+   "priority": 28.6
   },
   "EFL": {
    "file": "EFL.json",
@@ -1243,9 +1243,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "EGC": {
    "file": "EGC.json",
@@ -1257,9 +1257,9 @@
    "newest_o": "2026-08-05",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 14.7,
+   "age_days": 22.3,
    "popularity": 1.0,
-   "priority": 14.7
+   "priority": 22.3
   },
   "EIN": {
    "file": "EIN.json",
@@ -1273,9 +1273,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 3.0,
-   "priority": 20.1
+   "priority": 42.9
   },
   "EMA": {
    "file": "EMA.json",
@@ -1288,9 +1288,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "ESB": {
    "file": "ESB.json",
@@ -1303,9 +1303,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "ESU": {
    "file": "ESU.json",
@@ -1318,9 +1318,9 @@
    "newest_o": "2026-08-07",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 12.7,
+   "age_days": 20.3,
    "popularity": 1.0,
-   "priority": 12.7
+   "priority": 20.3
   },
   "EVN": {
    "file": "EVN.json",
@@ -1333,9 +1333,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "EXT": {
    "file": "EXT.json",
@@ -1348,9 +1348,9 @@
    "newest_o": "2026-08-07",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 12.7,
+   "age_days": 20.3,
    "popularity": 1.0,
-   "priority": 12.7
+   "priority": 20.3
   },
   "FAO": {
    "file": "FAO.json",
@@ -1365,9 +1365,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 2.0,
-   "priority": 13.4
+   "priority": 28.6
   },
   "FCO": {
    "file": "FCO.json",
@@ -1382,9 +1382,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 3.0,
-   "priority": 20.1
+   "priority": 42.9
   },
   "FDH": {
    "file": "FDH.json",
@@ -1398,9 +1398,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "FEZ": {
    "file": "FEZ.json",
@@ -1413,9 +1413,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "FKB": {
    "file": "FKB.json",
@@ -1429,9 +1429,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "FMM": {
    "file": "FMM.json",
@@ -1445,9 +1445,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "FMO": {
    "file": "FMO.json",
@@ -1460,9 +1460,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "FNC": {
    "file": "FNC.json",
@@ -1476,9 +1476,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "FNI": {
    "file": "FNI.json",
@@ -1490,9 +1490,9 @@
    "newest_o": "2026-08-05",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 14.7,
+   "age_days": 22.3,
    "popularity": 1.0,
-   "priority": 14.7
+   "priority": 22.3
   },
   "FRL": {
    "file": "FRL.json",
@@ -1505,9 +1505,9 @@
    "newest_o": "2026-08-07",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 12.7,
+   "age_days": 20.3,
    "popularity": 1.0,
-   "priority": 12.7
+   "priority": 20.3
   },
   "FSC": {
    "file": "FSC.json",
@@ -1520,9 +1520,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "FUE": {
    "file": "FUE.json",
@@ -1536,9 +1536,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "GDN": {
    "file": "GDN.json",
@@ -1552,9 +1552,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 2.0,
-   "priority": 13.4
+   "priority": 28.6
   },
   "GHV": {
    "file": "GHV.json",
@@ -1567,9 +1567,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "GLA": {
    "file": "GLA.json",
@@ -1583,9 +1583,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 2.0,
-   "priority": 13.4
+   "priority": 28.6
   },
   "GNB": {
    "file": "GNB.json",
@@ -1598,9 +1598,9 @@
    "newest_o": "2026-08-05",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 14.7,
+   "age_days": 22.3,
    "popularity": 1.0,
-   "priority": 14.7
+   "priority": 22.3
   },
   "GOA": {
    "file": "GOA.json",
@@ -1614,9 +1614,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "GOT": {
    "file": "GOT.json",
@@ -1630,9 +1630,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 2.0,
-   "priority": 13.4
+   "priority": 28.6
   },
   "GRO": {
    "file": "GRO.json",
@@ -1645,9 +1645,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "GRX": {
    "file": "GRX.json",
@@ -1660,9 +1660,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "GYD": {
    "file": "GYD.json",
@@ -1675,9 +1675,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "HAM": {
    "file": "HAM.json",
@@ -1691,9 +1691,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 2.0,
-   "priority": 13.4
+   "priority": 28.6
   },
   "HAU": {
    "file": "HAU.json",
@@ -1706,9 +1706,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "HBE": {
    "file": "HBE.json",
@@ -1720,9 +1720,9 @@
    "newest_o": "2026-08-05",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 14.7,
+   "age_days": 22.3,
    "popularity": 1.0,
-   "priority": 14.7
+   "priority": 22.3
   },
   "HEL": {
    "file": "HEL.json",
@@ -1735,9 +1735,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 2.0,
-   "priority": 13.4
+   "priority": 28.6
   },
   "HER": {
    "file": "HER.json",
@@ -1751,9 +1751,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "HHN": {
    "file": "HHN.json",
@@ -1767,9 +1767,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 2.0,
-   "priority": 13.4
+   "priority": 28.6
   },
   "HRG": {
    "file": "HRG.json",
@@ -1782,9 +1782,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "IAS": {
    "file": "IAS.json",
@@ -1798,9 +1798,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "IBZ": {
    "file": "IBZ.json",
@@ -1814,9 +1814,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 2.0,
-   "priority": 13.4
+   "priority": 28.6
   },
   "INI": {
    "file": "INI.json",
@@ -1830,9 +1830,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "IST": {
    "file": "IST.json",
@@ -1845,9 +1845,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "JED": {
    "file": "JED.json",
@@ -1860,9 +1860,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "JMK": {
    "file": "JMK.json",
@@ -1876,9 +1876,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "JSI": {
    "file": "JSI.json",
@@ -1892,9 +1892,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "JTR": {
    "file": "JTR.json",
@@ -1908,9 +1908,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "KEF": {
    "file": "KEF.json",
@@ -1923,9 +1923,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "KGS": {
    "file": "KGS.json",
@@ -1938,9 +1938,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "KIR": {
    "file": "KIR.json",
@@ -1953,9 +1953,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "KLU": {
    "file": "KLU.json",
@@ -1968,9 +1968,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "KLX": {
    "file": "KLX.json",
@@ -1984,9 +1984,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "KRK": {
    "file": "KRK.json",
@@ -2000,9 +2000,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 3.0,
-   "priority": 20.1
+   "priority": 42.9
   },
   "KSC": {
    "file": "KSC.json",
@@ -2016,9 +2016,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "KTW": {
    "file": "KTW.json",
@@ -2032,9 +2032,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "KUN": {
    "file": "KUN.json",
@@ -2048,9 +2048,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 2.0,
-   "priority": 13.4
+   "priority": 28.6
   },
   "KUT": {
    "file": "KUT.json",
@@ -2063,9 +2063,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "LBA": {
    "file": "LBA.json",
@@ -2079,9 +2079,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "LBC": {
    "file": "LBC.json",
@@ -2094,9 +2094,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "LCA": {
    "file": "LCA.json",
@@ -2110,9 +2110,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "LCJ": {
    "file": "LCJ.json",
@@ -2125,9 +2125,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "LDE": {
    "file": "LDE.json",
@@ -2140,9 +2140,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "LDY": {
    "file": "LDY.json",
@@ -2154,9 +2154,9 @@
    "newest_o": "2026-08-05",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 14.7,
+   "age_days": 22.3,
    "popularity": 1.0,
-   "priority": 14.7
+   "priority": 22.3
   },
   "LEI": {
    "file": "LEI.json",
@@ -2170,9 +2170,9 @@
    "newest_o": "2026-08-07",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 12.7,
+   "age_days": 20.3,
    "popularity": 1.0,
-   "priority": 12.7
+   "priority": 20.3
   },
   "LGW": {
    "file": "LGW.json",
@@ -2186,9 +2186,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 3.0,
-   "priority": 20.1
+   "priority": 42.9
   },
   "LIG": {
    "file": "LIG.json",
@@ -2201,9 +2201,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "LIL": {
    "file": "LIL.json",
@@ -2216,9 +2216,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "LIS": {
    "file": "LIS.json",
@@ -2232,9 +2232,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 3.0,
-   "priority": 20.1
+   "priority": 42.9
   },
   "LJU": {
    "file": "LJU.json",
@@ -2247,9 +2247,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "LMP": {
    "file": "LMP.json",
@@ -2262,9 +2262,9 @@
    "newest_o": "2026-08-07",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 12.7,
+   "age_days": 20.3,
    "popularity": 1.0,
-   "priority": 12.7
+   "priority": 20.3
   },
   "LNZ": {
    "file": "LNZ.json",
@@ -2277,9 +2277,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "LPA": {
    "file": "LPA.json",
@@ -2293,9 +2293,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "LPL": {
    "file": "LPL.json",
@@ -2309,9 +2309,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 2.0,
-   "priority": 13.4
+   "priority": 28.6
   },
   "LRH": {
    "file": "LRH.json",
@@ -2324,9 +2324,9 @@
    "newest_o": "2026-08-07",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 12.7,
+   "age_days": 20.3,
    "popularity": 1.0,
-   "priority": 12.7
+   "priority": 20.3
   },
   "LTN": {
    "file": "LTN.json",
@@ -2340,9 +2340,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 3.0,
-   "priority": 20.1
+   "priority": 42.9
   },
   "LUX": {
    "file": "LUX.json",
@@ -2355,9 +2355,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "LUZ": {
    "file": "LUZ.json",
@@ -2371,9 +2371,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "LWN": {
    "file": "LWN.json",
@@ -2386,9 +2386,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "LXS": {
    "file": "LXS.json",
@@ -2400,9 +2400,9 @@
    "newest_o": "2026-08-05",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 14.7,
+   "age_days": 22.3,
    "popularity": 1.0,
-   "priority": 14.7
+   "priority": 22.3
   },
   "LYS": {
    "file": "LYS.json",
@@ -2415,9 +2415,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 2.0,
-   "priority": 13.4
+   "priority": 28.6
   },
   "MAD": {
    "file": "MAD.json",
@@ -2431,9 +2431,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 3.0,
-   "priority": 20.1
+   "priority": 42.9
   },
   "MAH": {
    "file": "MAH.json",
@@ -2447,9 +2447,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "MAN": {
    "file": "MAN.json",
@@ -2462,9 +2462,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 3.0,
-   "priority": 20.1
+   "priority": 42.9
   },
   "MLA": {
    "file": "MLA.json",
@@ -2478,9 +2478,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 2.0,
-   "priority": 13.4
+   "priority": 28.6
   },
   "MLH": {
    "file": "MLH.json",
@@ -2493,9 +2493,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "MME": {
    "file": "MME.json",
@@ -2507,9 +2507,9 @@
    "newest_o": "2026-08-05",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 14.7,
+   "age_days": 22.3,
    "popularity": 1.0,
-   "priority": 14.7
+   "priority": 22.3
   },
   "MMX": {
    "file": "MMX.json",
@@ -2523,9 +2523,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "MRS": {
    "file": "MRS.json",
@@ -2538,9 +2538,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 2.0,
-   "priority": 13.4
+   "priority": 28.6
   },
   "MST": {
    "file": "MST.json",
@@ -2553,9 +2553,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "MXP": {
    "file": "MXP.json",
@@ -2569,9 +2569,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 3.0,
-   "priority": 20.1
+   "priority": 42.9
   },
   "NAP": {
    "file": "NAP.json",
@@ -2585,9 +2585,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 3.0,
-   "priority": 20.1
+   "priority": 42.9
   },
   "NCE": {
    "file": "NCE.json",
@@ -2601,9 +2601,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 2.0,
-   "priority": 13.4
+   "priority": 28.6
   },
   "NCL": {
    "file": "NCL.json",
@@ -2616,9 +2616,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "NDR": {
    "file": "NDR.json",
@@ -2631,9 +2631,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "NOC": {
    "file": "NOC.json",
@@ -2646,9 +2646,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "NQY": {
    "file": "NQY.json",
@@ -2660,9 +2660,9 @@
    "newest_o": "2026-08-05",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 14.7,
+   "age_days": 22.3,
    "popularity": 1.0,
-   "priority": 14.7
+   "priority": 22.3
   },
   "NRN": {
    "file": "NRN.json",
@@ -2675,9 +2675,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "NTE": {
    "file": "NTE.json",
@@ -2690,9 +2690,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 2.0,
-   "priority": 13.4
+   "priority": 28.6
   },
   "NUE": {
    "file": "NUE.json",
@@ -2706,9 +2706,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "NWI": {
    "file": "NWI.json",
@@ -2720,9 +2720,9 @@
    "newest_o": "2026-08-05",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 14.7,
+   "age_days": 22.3,
    "popularity": 1.0,
-   "priority": 14.7
+   "priority": 22.3
   },
   "NYO": {
    "file": "NYO.json",
@@ -2735,9 +2735,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 2.0,
-   "priority": 13.4
+   "priority": 28.6
   },
   "OHD": {
    "file": "OHD.json",
@@ -2750,9 +2750,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "OLB": {
    "file": "OLB.json",
@@ -2766,9 +2766,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "OMR": {
    "file": "OMR.json",
@@ -2781,9 +2781,9 @@
    "newest_o": "2026-08-07",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 12.7,
+   "age_days": 20.3,
    "popularity": 1.0,
-   "priority": 12.7
+   "priority": 20.3
   },
   "OPO": {
    "file": "OPO.json",
@@ -2797,9 +2797,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 3.0,
-   "priority": 20.1
+   "priority": 42.9
   },
   "ORK": {
    "file": "ORK.json",
@@ -2812,9 +2812,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 2.0,
-   "priority": 13.4
+   "priority": 28.6
   },
   "ORY": {
    "file": "ORY.json",
@@ -2827,9 +2827,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "OSI": {
    "file": "OSI.json",
@@ -2841,9 +2841,9 @@
    "newest_o": "2026-08-05",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 14.7,
+   "age_days": 22.3,
    "popularity": 1.0,
-   "priority": 14.7
+   "priority": 22.3
   },
   "OSL": {
    "file": "OSL.json",
@@ -2857,9 +2857,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 2.0,
-   "priority": 13.4
+   "priority": 28.6
   },
   "OSR": {
    "file": "OSR.json",
@@ -2872,9 +2872,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "OTP": {
    "file": "OTP.json",
@@ -2888,9 +2888,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 2.0,
-   "priority": 13.4
+   "priority": 28.6
   },
   "OUD": {
    "file": "OUD.json",
@@ -2903,9 +2903,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "OVD": {
    "file": "OVD.json",
@@ -2918,9 +2918,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "OZZ": {
    "file": "OZZ.json",
@@ -2932,9 +2932,9 @@
    "newest_o": "2026-08-05",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 14.7,
+   "age_days": 22.3,
    "popularity": 1.0,
-   "priority": 14.7
+   "priority": 22.3
   },
   "PAD": {
    "file": "PAD.json",
@@ -2947,9 +2947,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "PDV": {
    "file": "PDV.json",
@@ -2963,9 +2963,9 @@
    "newest_o": "2026-08-07",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 12.7,
+   "age_days": 20.3,
    "popularity": 1.0,
-   "priority": 12.7
+   "priority": 20.3
   },
   "PED": {
    "file": "PED.json",
@@ -2978,9 +2978,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "PEG": {
    "file": "PEG.json",
@@ -2994,9 +2994,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "PFO": {
    "file": "PFO.json",
@@ -3010,9 +3010,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "PGF": {
    "file": "PGF.json",
@@ -3025,9 +3025,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "PIK": {
    "file": "PIK.json",
@@ -3040,9 +3040,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "PIS": {
    "file": "PIS.json",
@@ -3054,9 +3054,9 @@
    "newest_o": "2026-08-05",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 14.7,
+   "age_days": 22.3,
    "popularity": 1.0,
-   "priority": 14.7
+   "priority": 22.3
   },
   "PLQ": {
    "file": "PLQ.json",
@@ -3070,9 +3070,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "PMF": {
    "file": "PMF.json",
@@ -3085,9 +3085,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "PMI": {
    "file": "PMI.json",
@@ -3101,9 +3101,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 3.0,
-   "priority": 20.1
+   "priority": 42.9
   },
   "PMO": {
    "file": "PMO.json",
@@ -3117,9 +3117,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 2.0,
-   "priority": 13.4
+   "priority": 28.6
   },
   "POZ": {
    "file": "POZ.json",
@@ -3133,9 +3133,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 2.0,
-   "priority": 13.4
+   "priority": 28.6
   },
   "PRG": {
    "file": "PRG.json",
@@ -3149,9 +3149,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 3.0,
-   "priority": 20.1
+   "priority": 42.9
   },
   "PRN": {
    "file": "PRN_.json",
@@ -3164,9 +3164,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "PSA": {
    "file": "PSA.json",
@@ -3180,9 +3180,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 2.0,
-   "priority": 13.4
+   "priority": 28.6
   },
   "PSR": {
    "file": "PSR.json",
@@ -3196,9 +3196,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "PUY": {
    "file": "PUY.json",
@@ -3211,9 +3211,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "PVK": {
    "file": "PVK.json",
@@ -3226,9 +3226,9 @@
    "newest_o": "2026-08-07",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 12.7,
+   "age_days": 20.3,
    "popularity": 1.0,
-   "priority": 12.7
+   "priority": 20.3
   },
   "QSR": {
    "file": "QSR.json",
@@ -3241,9 +3241,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "RAK": {
    "file": "RAK.json",
@@ -3257,9 +3257,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "RBA": {
    "file": "RBA.json",
@@ -3272,9 +3272,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "RDO": {
    "file": "RDO.json",
@@ -3287,9 +3287,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "RDZ": {
    "file": "RDZ.json",
@@ -3301,9 +3301,9 @@
    "newest_o": "2026-08-05",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 14.7,
+   "age_days": 22.3,
    "popularity": 1.0,
-   "priority": 14.7
+   "priority": 22.3
   },
   "REG": {
    "file": "REG.json",
@@ -3316,9 +3316,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "REU": {
    "file": "REU.json",
@@ -3331,9 +3331,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "RHO": {
    "file": "RHO.json",
@@ -3347,9 +3347,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "RIX": {
    "file": "RIX.json",
@@ -3362,9 +3362,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 2.0,
-   "priority": 13.4
+   "priority": 28.6
   },
   "RJK": {
    "file": "RJK.json",
@@ -3378,9 +3378,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "RMF": {
    "file": "RMF.json",
@@ -3393,9 +3393,9 @@
    "newest_o": "2026-08-07",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 12.7,
+   "age_days": 20.3,
    "popularity": 1.0,
-   "priority": 12.7
+   "priority": 20.3
   },
   "RMI": {
    "file": "RMI.json",
@@ -3409,9 +3409,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "RMO": {
    "file": "RMO.json",
@@ -3424,9 +3424,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "RMU": {
    "file": "RMU.json",
@@ -3439,9 +3439,9 @@
    "newest_o": "2026-08-07",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 12.7,
+   "age_days": 20.3,
    "popularity": 1.0,
-   "priority": 12.7
+   "priority": 20.3
   },
   "RVN": {
    "file": "RVN.json",
@@ -3454,9 +3454,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "RZE": {
    "file": "RZE.json",
@@ -3470,9 +3470,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "SBZ": {
    "file": "SBZ.json",
@@ -3484,9 +3484,9 @@
    "newest_o": "2026-08-05",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 14.7,
+   "age_days": 22.3,
    "popularity": 1.0,
-   "priority": 14.7
+   "priority": 22.3
   },
   "SCN": {
    "file": "SCN.json",
@@ -3499,9 +3499,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "SCQ": {
    "file": "SCQ.json",
@@ -3515,9 +3515,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "SCV": {
    "file": "SCV.json",
@@ -3530,9 +3530,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "SDR": {
    "file": "SDR.json",
@@ -3546,9 +3546,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "SFT": {
    "file": "SFT.json",
@@ -3561,9 +3561,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "SJJ": {
    "file": "SJJ.json",
@@ -3577,9 +3577,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "SKG": {
    "file": "SKG.json",
@@ -3593,9 +3593,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 2.0,
-   "priority": 13.4
+   "priority": 28.6
   },
   "SKP": {
    "file": "SKP.json",
@@ -3608,9 +3608,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "SNN": {
    "file": "SNN.json",
@@ -3623,9 +3623,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 2.0,
-   "priority": 13.4
+   "priority": 28.6
   },
   "SOF": {
    "file": "SOF.json",
@@ -3639,9 +3639,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 2.0,
-   "priority": 13.4
+   "priority": 28.6
   },
   "SPU": {
    "file": "SPU.json",
@@ -3655,9 +3655,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 2.0,
-   "priority": 13.4
+   "priority": 28.6
   },
   "SPX": {
    "file": "SPX.json",
@@ -3670,9 +3670,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "SSH": {
    "file": "SSH.json",
@@ -3685,9 +3685,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "STN": {
    "file": "STN.json",
@@ -3700,9 +3700,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 3.0,
-   "priority": 20.1
+   "priority": 42.9
   },
   "STR": {
    "file": "STR.json",
@@ -3715,9 +3715,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 2.0,
-   "priority": 13.4
+   "priority": 28.6
   },
   "SUF": {
    "file": "SUF.json",
@@ -3731,9 +3731,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "SUJ": {
    "file": "SUJ.json",
@@ -3745,9 +3745,9 @@
    "newest_o": "2026-08-05",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 14.7,
+   "age_days": 22.3,
    "popularity": 1.0,
-   "priority": 14.7
+   "priority": 22.3
   },
   "SVG": {
    "file": "SVG.json",
@@ -3760,9 +3760,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "SVQ": {
    "file": "SVQ.json",
@@ -3776,9 +3776,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 2.0,
-   "priority": 13.4
+   "priority": 28.6
   },
   "SZG": {
    "file": "SZG.json",
@@ -3791,9 +3791,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "SZY": {
    "file": "SZY.json",
@@ -3805,9 +3805,9 @@
    "newest_o": "2026-08-05",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 14.7,
+   "age_days": 22.3,
    "popularity": 1.0,
-   "priority": 14.7
+   "priority": 22.3
   },
   "SZZ": {
    "file": "SZZ.json",
@@ -3821,9 +3821,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "TAT": {
    "file": "TAT.json",
@@ -3835,9 +3835,9 @@
    "newest_o": "2026-08-05",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 14.7,
+   "age_days": 22.3,
    "popularity": 1.0,
-   "priority": 14.7
+   "priority": 22.3
   },
   "TFS": {
    "file": "TFS.json",
@@ -3851,9 +3851,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "TGD": {
    "file": "TGD.json",
@@ -3867,9 +3867,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "TGM": {
    "file": "TGM.json",
@@ -3881,9 +3881,9 @@
    "newest_o": "2026-08-05",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 14.7,
+   "age_days": 22.3,
    "popularity": 1.0,
-   "priority": 14.7
+   "priority": 22.3
   },
   "TIA": {
    "file": "TIA.json",
@@ -3897,9 +3897,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "TKU": {
    "file": "TKU.json",
@@ -3912,9 +3912,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "TLL": {
    "file": "TLL.json",
@@ -3928,9 +3928,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 2.0,
-   "priority": 13.4
+   "priority": 28.6
   },
   "TLS": {
    "file": "TLS.json",
@@ -3943,9 +3943,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 2.0,
-   "priority": 13.4
+   "priority": 28.6
   },
   "TLV": {
    "file": "TLV.json",
@@ -3958,9 +3958,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "TNG": {
    "file": "TNG.json",
@@ -3973,9 +3973,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "TOS": {
    "file": "TOS.json",
@@ -3988,9 +3988,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "TPS": {
    "file": "TPS.json",
@@ -4003,9 +4003,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "TRD": {
    "file": "TRD.json",
@@ -4018,9 +4018,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "TRF": {
    "file": "TRF.json",
@@ -4034,9 +4034,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 2.0,
-   "priority": 13.4
+   "priority": 28.6
   },
   "TRN": {
    "file": "TRN.json",
@@ -4050,9 +4050,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "TRS": {
    "file": "TRS.json",
@@ -4066,9 +4066,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "TSF": {
    "file": "TSF.json",
@@ -4082,9 +4082,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 2.0,
-   "priority": 13.4
+   "priority": 28.6
   },
   "TSR": {
    "file": "TSR.json",
@@ -4097,9 +4097,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "TTU": {
    "file": "TTU.json",
@@ -4112,9 +4112,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "TUF": {
    "file": "TUF.json",
@@ -4126,9 +4126,9 @@
    "newest_o": "2026-08-05",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 14.7,
+   "age_days": 22.3,
    "popularity": 1.0,
-   "priority": 14.7
+   "priority": 22.3
   },
   "TZL": {
    "file": "TZL.json",
@@ -4141,9 +4141,9 @@
    "newest_o": "2026-08-07",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 12.7,
+   "age_days": 20.3,
    "popularity": 1.0,
-   "priority": 12.7
+   "priority": 20.3
   },
   "VAR": {
    "file": "VAR.json",
@@ -4157,9 +4157,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "VCE": {
    "file": "VCE.json",
@@ -4173,9 +4173,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 2.0,
-   "priority": 13.4
+   "priority": 28.6
   },
   "VIE": {
    "file": "VIE.json",
@@ -4188,9 +4188,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 3.0,
-   "priority": 20.1
+   "priority": 42.9
   },
   "VIL": {
    "file": "VIL.json",
@@ -4203,9 +4203,9 @@
    "newest_o": "2026-08-07",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 12.7,
+   "age_days": 20.3,
    "popularity": 1.0,
-   "priority": 12.7
+   "priority": 20.3
   },
   "VIT": {
    "file": "VIT.json",
@@ -4218,9 +4218,9 @@
    "newest_o": "2026-08-07",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 12.7,
+   "age_days": 20.3,
    "popularity": 1.0,
-   "priority": 12.7
+   "priority": 20.3
   },
   "VLC": {
    "file": "VLC.json",
@@ -4234,9 +4234,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 3.0,
-   "priority": 20.1
+   "priority": 42.9
   },
   "VNO": {
    "file": "VNO.json",
@@ -4250,9 +4250,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 2.0,
-   "priority": 13.4
+   "priority": 28.6
   },
   "VOL": {
    "file": "VOL.json",
@@ -4264,9 +4264,9 @@
    "newest_o": "2026-08-05",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 14.7,
+   "age_days": 22.3,
    "popularity": 1.0,
-   "priority": 14.7
+   "priority": 22.3
   },
   "VRN": {
    "file": "VRN.json",
@@ -4280,9 +4280,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "VST": {
    "file": "VST.json",
@@ -4295,9 +4295,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "VXO": {
    "file": "VXO.json",
@@ -4310,9 +4310,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "WAW": {
    "file": "WAW.json",
@@ -4326,9 +4326,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 3.0,
-   "priority": 20.1
+   "priority": 42.9
   },
   "WMI": {
    "file": "WMI.json",
@@ -4342,9 +4342,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 3.0,
-   "priority": 20.1
+   "priority": 42.9
   },
   "WRO": {
    "file": "WRO.json",
@@ -4358,9 +4358,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 2.0,
-   "priority": 13.4
+   "priority": 28.6
   },
   "XCR": {
    "file": "XCR.json",
@@ -4372,9 +4372,9 @@
    "newest_o": "2026-08-05",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 14.7,
+   "age_days": 22.3,
    "popularity": 1.0,
-   "priority": 14.7
+   "priority": 22.3
   },
   "ZAD": {
    "file": "ZAD.json",
@@ -4388,9 +4388,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "ZAG": {
    "file": "ZAG.json",
@@ -4403,9 +4403,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 2.0,
-   "priority": 13.4
+   "priority": 28.6
   },
   "ZAZ": {
    "file": "ZAZ.json",
@@ -4419,9 +4419,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   },
   "ZTH": {
    "file": "ZTH.json",
@@ -4435,9 +4435,9 @@
    "newest_o": "2026-08-13",
    "oldest_o": "2026-08-05",
    "basis": "o",
-   "age_days": 6.7,
+   "age_days": 14.3,
    "popularity": 1.0,
-   "priority": 6.7
+   "priority": 14.3
   }
  },
  "trails": {
@@ -4462,7 +4462,7 @@
    "dry_run": false,
    "policy": "below 60 a published trip is demoted to needs_review and reopened in the review queue; it is never unpublished, rejected or deleted",
    "source": "data/derived/trails_freshness.json",
-   "age_days": 8.1
+   "age_days": 15.7
   },
   "countries": {
    "CH": {

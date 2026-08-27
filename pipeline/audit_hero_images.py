@@ -192,6 +192,19 @@ MIN_W, MIN_H = 800, 450
 # A 5:1 strip or a tall portrait both crop badly into the panel's 16:9 band.
 MAX_AR, MIN_AR = 3.2, 0.62
 
+# The frame the RANKING prefers, which is wider than the band the flags
+# tolerate: the .places-dcard hero crops to 12/5, and best_replacement should
+# hand it a photograph that fills that crop. The flags above are untouched on
+# purpose: 0.62 and 3.2 decide what is broken, this only decides what is
+# preferred among candidates that are not.
+HERO_FRAME_AR = 12 / 5
+
+# Squarer than this and the 12/5 crop keeps under 55% of the frame's shape,
+# the same crop survival cut the country cover picker refuses at. Not broken
+# the way a portrait is, so it gets its own reason: fix() only swaps a hero
+# flagged narrow alone when the replacement actually clears this bar.
+NARROW_AR = HERO_FRAME_AR * 0.55
+
 PHOTO_MIME = {"image/jpeg", "image/png", "image/webp"}
 
 
@@ -467,6 +480,8 @@ def classify(file_title, meta, url=None, dest=None):
             reasons.append("strip")
         elif ar < MIN_AR:
             reasons.append("portrait")
+        elif ar < NARROW_AR:
+            reasons.append("narrow")
     # The place test. Only ever fires when the file publishes a coordinate, so
     # it never guesses: silence here means "not proven wrong", not "verified".
     if dest is not None:
@@ -672,10 +687,15 @@ def score_candidate(title, meta, city, country, rank=None, lead=False,
     elif w >= 1600:
         s += 1
     ar = (w / h) if h else 0
-    if 1.25 <= ar <= 2.1:          # the shape the panel's hero band wants
-        s += 1.5
-    elif 1.0 <= ar < 1.25:
-        s += 0.5
+    # How much of the photograph survives the 12/5 card crop: a strong
+    # preference near the frame's own shape, a little credit for any other
+    # landscape, a real penalty for portraits. classify() already rejected the
+    # extremes, so no shape is disqualified here.
+    if ar >= 1.0:
+        fit = min(ar, HERO_FRAME_AR) / max(ar, HERO_FRAME_AR)
+        s += 1.5 if fit >= 0.62 else 0.5
+    elif ar:
+        s -= 1.5
     if SAFE_HINTS.search(label):
         s += 1
     # Somebody filed this under "Views of <place>". That is the exact
@@ -906,6 +926,11 @@ def _rank_and_pick(ordered, d, meta_cache, exclude=()):
         "original": _clean(meta.get("url")),
         "source": "commons_audit",
         "score": round(score, 2),
+        # The winner's shape, carried out so fix() can hold a narrow-only
+        # swap to the fit bar without a cache lookup: "title" above is the
+        # readable name, not the File: key the meta cache is filed under.
+        "w": meta.get("width") or 0,
+        "h": meta.get("height") or 0,
     }
 
 
@@ -943,6 +968,8 @@ def fix(dests, report, dry_run=False, limit=None, only=None, force_coord=False):
     hold_far = not only
     targets = [f["id"] for f in report.get("flagged", [])
                if not (hold_far and f.get("reasons") == ["far_coord"])]         + list(report.get("missing", []))
+    reasons_of = {f["id"]: f.get("reasons") or []
+                  for f in report.get("flagged", [])}
     if only:
         # An --only that names a destination the last check did NOT flag is
         # still a target. The classifier answers "is this a photograph", and a
@@ -983,6 +1010,16 @@ def fix(dests, report, dry_run=False, limit=None, only=None, force_coord=False):
             kept.append(did)
             print(f"  [{n}/{len(targets)}] --   {d.get('city')}: nothing better found")
             continue
+        # A hero whose only sin is being squarish keeps its place unless the
+        # replacement genuinely fills the 12/5 crop: trading one narrow
+        # photograph for another is churn, not repair.
+        if reasons_of.get(did) == ["narrow"]:
+            rw, rh = rep.get("w") or 0, rep.get("h") or 0
+            if not (rw and rh) or (rw / rh) < NARROW_AR:
+                kept.append(did)
+                print(f"  [{n}/{len(targets)}] --   {d.get('city')}: "
+                      "no wider photograph found, narrow hero kept")
+                continue
         img_cache[did] = {k: rep[k] for k in ("title", "url", "thumb", "original", "source")}
         fixed.append({
             "id": did, "city": d.get("city"), "country": d.get("country"),

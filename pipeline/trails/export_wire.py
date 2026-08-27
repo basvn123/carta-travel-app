@@ -60,6 +60,32 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from db import connect  # noqa: E402  (also puts pipeline/ on sys.path)
 from validate import PILOT_COUNTRIES  # noqa: E402
 
+# The lake layer's card-shape helpers, loaded by path as the beach, peak and
+# trip layers load them. The frame here is the 9/4 .places-tcard strip.
+import importlib.util  # noqa: E402
+
+_LAKE_IMAGES = ROOT / "pipeline" / "lakes" / "lake_images.py"
+if "carta_lake_images" in sys.modules:
+    lake_images = sys.modules["carta_lake_images"]
+else:
+    _lake_spec = importlib.util.spec_from_file_location("carta_lake_images",
+                                                        _LAKE_IMAGES)
+    lake_images = importlib.util.module_from_spec(_lake_spec)
+    sys.modules["carta_lake_images"] = lake_images
+    _lake_spec.loader.exec_module(lake_images)
+
+TRAIL_CARD_AR = 9 / 4
+
+
+def card_images(trip):
+    """The trip's ranked photographs, with a card-shaped one leading.
+
+    Rank order is preserved for everything else, and no picture is dropped:
+    this only decides which of them the card crops."""
+    return lake_images.lead_by_fit(list(trip.get("images") or []),
+                                   lambda i: (i.get("w"), i.get("h")),
+                                   frame_ar=TRAIL_CARD_AR)
+
 OUT_DIR = ROOT / "continent-app" / "public" / "trails"
 REVIEWS_DDL = ROOT / "tools" / "trailslab" / "initdb" / "04_trip_reviews.sql"
 
@@ -420,7 +446,13 @@ def wire_item(t, n_stops):
         item["reasons"] = reasons
     # The hero, and only the hero. A card shows one picture; the gallery is
     # part of the detail file, which is fetched when the trail is opened.
-    hero = (t.get("images") or [None])[0]
+    #
+    # The rank the photo pass assigned is a judgement about the photograph and
+    # says nothing about the shape of the card it lands in (.places-tcard, a
+    # 9/4 strip). Where the best-ranked shot is a tall or a panoramic frame
+    # and another ranked shot of the same walk fills the card, that one leads:
+    # the gallery keeps every picture, and the reader is not shown a sliver.
+    hero = (card_images(t) or [None])[0]
     if hero:
         item["img"] = {"u": hero["u"], "w": hero["w"], "h": hero["h"]}
     if n_stops:

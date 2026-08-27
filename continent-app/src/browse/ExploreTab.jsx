@@ -1,4 +1,6 @@
 import React from 'react';
+import { createPortal } from 'react-dom';
+import { useIsDesktop } from '../hooks/useIsDesktop.js';
 import { ScoreChip, HiddenGemTag, tierClass } from '../components/RatingBadge.jsx';
 import { WaterQualityBadge, swimRelevant } from '../components/WaterQualityBadge.jsx';
 import { CountryFlag } from '../components/CountryFlag.jsx';
@@ -8,8 +10,10 @@ import { ExploreFilterSheet } from './ExploreFilterSheet.jsx';
 import { CategoryRail } from './CategoryRail.jsx';
 import { useI18n } from '../i18n/index.jsx';
 import { isFullRatingRange, FULL_RATING_RANGE } from '../lib/rating.js';
-import { FilterIcon, CalendarIcon, CameraIcon, ClockIcon, PiggyIcon } from '../components/Icons.jsx';
-import { matchProfile, PROFILE_LABEL_KEYS } from './LifestylePanel.jsx';
+import {
+  FilterIcon, CalendarIcon, CameraIcon, ClockIcon, InfoIcon,
+} from '../components/Icons.jsx';
+import { LifestyleButton } from './LifestyleButton.jsx';
 import { HeroImage } from '../components/HeroImage.jsx';
 import { CostLine, CostReceipt } from '../components/CostSummary.jsx';
 import { visitLength } from '../lib/nearby.js';
@@ -22,7 +26,8 @@ import { knownFor } from '../lib/knownFor.js';
  * pipeline is retired from this page), every card answers four things at a
  * glance: what is this place, how good is it (the rating, and the tier seal
  * that says what the number means), what a day there costs one person in
- * euros, and when to go. Opening a card slides in the ExplorePanel.
+ * euros, and when to go. Opening a card opens the full-screen
+ * DestinationPage, rendered from the dossier contract.
  *
  * The card used to end in two 0-10 "cheapness" meters. They are gone, and
  * lib/costIndex.js documents why in full: with 88 distinct food baskets across
@@ -126,13 +131,21 @@ function CardPreview({ p, t, best }) {
 const ExploreCard = React.memo(function ExploreCard({ p, selected, fav, onSelect, onToggleFav, t }) {
   const kf = knownFor(p);
   const best = p.climate?.best?.length ? fmtMonthRanges(p.climate.best) : null;
-  const [preview, setPreview] = React.useState(false);
+  // Two doors to one preview: hover follows the pointer, the info button
+  // pins it open until it is clicked again. Held apart because the pointer
+  // is always over the card at the moment the button is clicked, and a
+  // single flag made the click fight the hover it arrived through.
+  const [hovered, setHovered] = React.useState(false);
+  const [pinned, setPinned] = React.useState(false);
+  const preview = hovered || pinned;
 
   // Escape closes the preview without the pointer having to move, which is
   // the "dismissible" half of WCAG 1.4.13.
   React.useEffect(() => {
     if (!preview) return undefined;
-    const onKey = (e) => { if (e.key === 'Escape') setPreview(false); };
+    const onKey = (e) => {
+      if (e.key === 'Escape') { setHovered(false); setPinned(false); }
+    };
     document.addEventListener('keydown', onKey);
     return () => document.removeEventListener('keydown', onKey);
   }, [preview]);
@@ -140,19 +153,19 @@ const ExploreCard = React.memo(function ExploreCard({ p, selected, fav, onSelect
   // Mouse only. On touch there is no hover, and a tap already opens the panel:
   // making the first tap mean "preview" would cost every phone user a second
   // tap to get anywhere.
-  const onEnter = (e) => { if (e.pointerType === 'mouse') setPreview(true); };
+  const onEnter = (e) => { if (e.pointerType === 'mouse') setHovered(true); };
 
   return (
     <div
       className={`xcard ${selected ? 'selected' : ''} ${preview ? 'previewing' : ''}`}
       onPointerEnter={onEnter}
-      onPointerLeave={() => setPreview(false)}
+      onPointerLeave={() => setHovered(false)}
     >
       <button
         className="xcard-hit"
         onClick={() => onSelect(p.id)}
-        onFocus={() => setPreview(true)}
-        onBlur={() => setPreview(false)}
+        onFocus={() => setHovered(true)}
+        onBlur={() => setHovered(false)}
         aria-label={t('explore.openDest', { city: p.city })}
       >
         <span className="xcard-media">
@@ -163,6 +176,7 @@ const ExploreCard = React.memo(function ExploreCard({ p, selected, fav, onSelect
             className="xcard-img"
             maxWidth={500}
             sizes={CARD_SIZES}
+            ratio={[5, 3]}
           />
           {best && (
             <span className="xcard-best" title={t('explore.bestMonthsTitle')}>
@@ -174,6 +188,23 @@ const ExploreCard = React.memo(function ExploreCard({ p, selected, fav, onSelect
           {p.rating?.label && (
             <span className={`xcard-seal ${tierClass(p.rating)}`}>{p.rating.label}</span>
           )}
+          {/* Desktop only (CSS): the card is nearly all photograph there, so
+              the name, the rating and the day price ride the picture on a
+              scrim, the way every photo card on Destinations already reads.
+              On a phone the body below carries them and this never shows. */}
+          <span className="xcard-overlay">
+            <span className="xcard-overlay-top">
+              <span className="xcard-overlay-name">{p.city}</span>
+              <ScoreChip rating={p.rating} size="xs" />
+            </span>
+            <span className="xcard-overlay-sub">
+              <CountryFlag country={p.iso2} size={11} />
+              <span>{p.country}</span>
+            </span>
+            <span className="xcard-overlay-foot">
+              <CostLine cost={p.cost} t={t} />
+            </span>
+          </span>
         </span>
         <span className="xcard-body">
           <span className="xcard-name-row">
@@ -202,6 +233,18 @@ const ExploreCard = React.memo(function ExploreCard({ p, selected, fav, onSelect
       >
         <Star filled={fav} />
       </button>
+      {/* Desktop only (CSS): the explanation the card body used to state
+          lives behind this button now, so the photograph keeps the room.
+          It toggles the same preview that hover opens. */}
+      <button
+        className="xcard-info"
+        onClick={() => setPinned((v) => !v)}
+        aria-expanded={preview}
+        aria-label={t('explore.moreInfo')}
+        title={t('explore.moreInfo')}
+      >
+        <InfoIcon size={15} />
+      </button>
       {preview && <CardPreview p={p} t={t} best={best} />}
     </div>
   );
@@ -209,6 +252,7 @@ const ExploreCard = React.memo(function ExploreCard({ p, selected, fav, onSelect
 
 export function ExploreTab({
   data,
+  isActive = true,
   locationQuery, setLocationQuery,
   countryFilter, setCountryFilter,
   tripKinds, setTripKinds,
@@ -278,17 +322,130 @@ export function ExploreTab({
 
   const favSet = favorites || new Set();
 
-  // What the Lifestyle pill says: the preset in force and the bed it assumes,
-  // which between them move every euro figure on the page. A comma, never a
-  // bullet, because this app has no middot separators.
-  const profileKey = matchProfile(choices?.lifestyle || {});
-  const lifestyleLabel = [
-    profileKey ? t(PROFILE_LABEL_KEYS[profileKey]) : t('lifestyle.custom'),
-    t(`stay.${choices?.stay_tier || 'home'}`),
-  ].join(', ');
+  // Desktop chrome: the search field portals into the app header's slot and
+  // the controls stand in the left panel; the phone keeps the toolbar card.
+  // Only the active tab may claim the slot, because both browse tabs stay
+  // mounted (keep-alive) and two portals into one div would interleave.
+  const isDesktop = useIsDesktop();
+  const [headerSlot, setHeaderSlot] = React.useState(null);
+  React.useEffect(() => {
+    if (isDesktop && isActive) setHeaderSlot(document.getElementById('header-search-slot'));
+    else setHeaderSlot(null);
+  }, [isDesktop, isActive]);
+
+  // The same controls drawn twice, phone toolbar and desktop side panel:
+  // one renderer each, so the two can never drift apart.
+  const searchField = (
+    <div className="results-search explore-search">
+      <svg className="results-search-icon" width="15" height="15" viewBox="0 0 24 24"
+        fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
+        <circle cx="11" cy="11" r="7" />
+        <line x1="21" y1="21" x2="16.65" y2="16.65" />
+      </svg>
+      <input
+        type="text"
+        className="results-search-input"
+        placeholder={t('results.searchPlaceholder')}
+        value={locationQuery}
+        onChange={(e) => setLocationQuery(e.target.value)}
+        aria-label={t('results.searchAria')}
+      />
+      {locationQuery && (
+        <button
+          className="results-search-clear"
+          onClick={() => setLocationQuery('')}
+          aria-label={t('results.clearSearch')}
+        >
+          ×
+        </button>
+      )}
+    </div>
+  );
+
+  const renderSorts = (cls) => SORTS.map((s) => {
+    const on = sortKey === s.key
+      || (s.key === 'beauty' && sortKey === 'price')
+      || (s.key === 'cost' && (sortKey === 'stay' || sortKey === 'food'));
+    return (
+      <button
+        key={s.key}
+        className={`${cls} ${on ? 'on' : ''}`.trim()}
+        onClick={() => setSortKey(s.key)}
+      >
+        {t(s.labelKey)}
+      </button>
+    );
+  });
+
+  // The sheet anchors to whichever Filters door is actually on screen: the
+  // side panel's on desktop, the toolbar card's on a phone.
+  const renderFilterBtn = (cls, isSide) => (
+    <button
+      type="button"
+      ref={isSide === isDesktop ? filterBtnRef : undefined}
+      className={`explore-filter-btn ${cls} ${activeFilters > 0 ? 'has-active' : ''}`.trim()}
+      onClick={() => setSheetOpen(true)}
+      aria-haspopup="dialog"
+      aria-expanded={sheetOpen}
+    >
+      <FilterIcon size={14} />
+      <span>{t('filter.filters')}</span>
+      {activeFilters > 0 && <span className="filter-tray-badge">{activeFilters}</span>}
+    </button>
+  );
+
+  // One shared component, so this door looks the same here, on Destinations
+  // and in the account hub. The tint is the accent's, not the page's, because
+  // every euro figure in the grid below comes out of it.
+  const renderLifestyle = (cls) => (
+    <LifestyleButton
+      stayTier={choices?.stay_tier}
+      lifestyle={choices?.lifestyle}
+      onClick={onOpenLifestyle}
+      className={cls}
+    />
+  );
+
+  const renderFav = (cls) => (
+    <button
+      className={`fav-filter explore-fav ${cls} ${showFavOnly ? 'on' : ''}`.trim()}
+      onClick={() => setShowFavOnly(!showFavOnly)}
+      title={t('results.showShortlist')}
+      aria-pressed={showFavOnly}
+    >
+      <Star filled={showFavOnly} />
+      <span>{favSet.size}</span>
+    </button>
+  );
 
   return (
-    <div className="explore-tab" ref={scrollRef}>
+    <div className="explore-shell">
+      {headerSlot && createPortal(searchField, headerSlot)}
+
+      {/* Desktop-only left panel (CSS hides it under 769px): the trip kinds
+          as a card grid under the brand, then the sorts, the Filters door,
+          Lifestyle and the shortlist, with one hairline to the panel's
+          right. The phone keeps the toolbar card below instead. */}
+      <aside className="side-panel explore-side" aria-label={t('filter.filters')}>
+        <div className="side-block">
+          <p className="side-label">{t('side.categories')}</p>
+          <CategoryRail tripKinds={tripKinds} setTripKinds={setTripKinds} />
+        </div>
+        <div className="side-block">
+          <p className="side-label">{t('side.refine')}</p>
+          <div className="side-group" role="group" aria-label={t('explore.sortAria')}>
+            <p className="side-sub">{t('places.sortLabel')}</p>
+            <div className="side-sorts">{renderSorts('side-sort')}</div>
+          </div>
+          <div className="side-group side-actions">
+            {renderFilterBtn('side-filter', true)}
+            {onOpenLifestyle && renderLifestyle('side-lifestyle')}
+            {renderFav('side-fav')}
+          </div>
+        </div>
+      </aside>
+
+      <div className="explore-tab" ref={scrollRef}>
       <div className="explore-wrap">
         {/* Every control in one card: the kind cards, then search, sort, the
             one Filters door and the shortlist. The kind rail used to be a
@@ -297,44 +454,13 @@ export function ExploreTab({
             to narrow the same list. */}
         <div className="explore-toolbar">
           <CategoryRail tripKinds={tripKinds} setTripKinds={setTripKinds} />
-          <div className="results-search explore-search">
-            <svg className="results-search-icon" width="15" height="15" viewBox="0 0 24 24"
-              fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
-              <circle cx="11" cy="11" r="7" />
-              <line x1="21" y1="21" x2="16.65" y2="16.65" />
-            </svg>
-            <input
-              type="text"
-              className="results-search-input"
-              placeholder={t('results.searchPlaceholder')}
-              value={locationQuery}
-              onChange={(e) => setLocationQuery(e.target.value)}
-              aria-label={t('results.searchAria')}
-            />
-            {locationQuery && (
-              <button
-                className="results-search-clear"
-                onClick={() => setLocationQuery('')}
-                aria-label={t('results.clearSearch')}
-              >
-                ×
-              </button>
-            )}
-          </div>
+          {/* Inline on a phone; on desktop the same field has portalled into
+              the app header and this renders nothing. */}
+          {!headerSlot && searchField}
 
           <div className="explore-toolbar-right">
             <div className="results-sort explore-sort" role="group" aria-label={t('explore.sortAria')}>
-              {SORTS.map((s) => (
-                <button
-                  key={s.key}
-                  className={(sortKey === s.key
-                    || (s.key === 'beauty' && sortKey === 'price')
-                    || (s.key === 'cost' && (sortKey === 'stay' || sortKey === 'food'))) ? 'on' : ''}
-                  onClick={() => setSortKey(s.key)}
-                >
-                  {t(s.labelKey)}
-                </button>
-              ))}
+              {renderSorts('')}
             </div>
 
             {/* Filters first: it is the one primary door in this row (decides
@@ -344,41 +470,9 @@ export function ExploreTab({
                 label carries the current setting so a reader can see what
                 the prices assume without opening anything. */}
             <div className="explore-chips">
-              <button
-                type="button"
-                ref={filterBtnRef}
-                className={`explore-filter-btn ${activeFilters > 0 ? 'has-active' : ''}`}
-                onClick={() => setSheetOpen(true)}
-                aria-haspopup="dialog"
-                aria-expanded={sheetOpen}
-              >
-                <FilterIcon size={14} />
-                <span>{t('filter.filters')}</span>
-                {activeFilters > 0 && <span className="filter-tray-badge">{activeFilters}</span>}
-              </button>
-
-              {onOpenLifestyle && (
-                <button
-                  type="button"
-                  className="explore-lifestyle-btn"
-                  onClick={onOpenLifestyle}
-                  aria-haspopup="dialog"
-                  title={t('lifestyle.exploreHint')}
-                >
-                  <PiggyIcon size={14} />
-                  <span className="explore-lifestyle-label">{lifestyleLabel}</span>
-                </button>
-              )}
-
-              <button
-                className={`fav-filter explore-fav ${showFavOnly ? 'on' : ''}`}
-                onClick={() => setShowFavOnly(!showFavOnly)}
-                title={t('results.showShortlist')}
-                aria-pressed={showFavOnly}
-              >
-                <Star filled={showFavOnly} />
-                <span>{favSet.size}</span>
-              </button>
+              {renderFilterBtn('', false)}
+              {onOpenLifestyle && renderLifestyle('')}
+              {renderFav('')}
             </div>
           </div>
         </div>
@@ -444,6 +538,7 @@ export function ExploreTab({
           resultCount={rows.length}
         />
       )}
+      </div>
     </div>
   );
 }

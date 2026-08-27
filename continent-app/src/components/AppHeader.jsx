@@ -96,10 +96,10 @@ export function AppHeader({
       {children && <div className="app-header-filters">{children}</div>}
 
       <div className="app-header-account">
-        {/* Passes entry: full "See pricing" wording on desktop, a compact
-            labelled chip on mobile. The language picker left this row for the
-            Account panel: switching languages is rare, the row over the map
-            is not the place to spend width on it. */}
+        {/* Passes entry: the "Get a pass" chip everywhere now, filled on
+            desktop where it is the bar's one call to action. The language
+            picker left this row for the Account panel: switching languages is
+            rare, the row over the map is not the place to spend width on it. */}
         {onSeePricing && (
           <button
             className="header-pricing-btn"
@@ -111,6 +111,12 @@ export function AppHeader({
             <span className="header-pricing-label-short">{t('header.passes')}</span>
           </button>
         )}
+        {/* Desktop only (CSS hides it below 769px): the active tab's search
+            field portals itself in here, so "search any city, town or
+            address" lives in the bar the way a departure board's one input
+            does, and the tab below keeps every result. Empty on the planner
+            tabs, where there is nothing to search. */}
+        <div className="header-search-slot" id="header-search-slot" />
         {/* Friends is its own door, not a row buried in the account panel:
             seeing who you travel with is a place you go, not a setting you
             change. It lives in this group rather than with the section tabs

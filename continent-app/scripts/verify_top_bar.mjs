@@ -147,9 +147,16 @@ const rightEdge = async (page, sel) => {
   check('five section tabs', labels.length === 5, labels.join(' | '));
   check('the open section is marked', await page.locator('.header-nav-item.active').count() === 1);
 
-  check('full See pricing label', /see pricing/i.test(await page.locator('.header-pricing-label').innerText().catch(() => '')));
-  check('the short chip label is hidden here',
-    !(await page.locator('.header-pricing-label-short').isVisible().catch(() => false)));
+  // Desktop chrome v4: the bar's one filled action says "Get a pass" at
+  // every width; the long "See pricing" wording retired with the white bar.
+  check('the pass chip shows Get a pass',
+    await page.locator('.header-pricing-label-short').isVisible().catch(() => false));
+  check('the long pricing label is hidden here',
+    !(await page.locator('.header-pricing-label').isVisible().catch(() => false)));
+  check('the pass chip wears the accent',
+    (await page.locator('.header-pricing-btn').evaluate((el) => getComputedStyle(el).backgroundColor)) === 'rgb(224, 90, 71)');
+  check('the active tab carries the underline',
+    (await page.locator('.header-nav-item.active').evaluate((el) => getComputedStyle(el, '::after').height)) === '3px');
 
   // The bar is a page frame, so it belongs to the window, not to a content
   // column: full bleed, brand pinned to the left gutter, account cluster
@@ -158,7 +165,9 @@ const rightEdge = async (page, sel) => {
   // hundreds of pixels in from the edge with the tabs adrift in the middle.
   await tabs.filter({ hasText: /^explore$/i }).first().click();
   await page.waitForTimeout(1800);
-  check('Explore is the open tab', await page.locator('.explore-toolbar').isVisible());
+  // The desktop surface is the side panel now; the toolbar card is the
+  // phone's arrangement of the same controls.
+  check('Explore is the open tab', await page.locator('.explore-side').isVisible());
   const hdrBox = await box(page, '.app-header');
   const brandBox = await box(page, '.app-header-brand');
   const acctRight = await rightEdge(page, '.app-header-account');
@@ -186,7 +195,7 @@ const rightEdge = async (page, sel) => {
   // Clicking a tab really moves: Destinations is a different surface.
   await tabs.first().click();
   await page.waitForTimeout(1800);
-  check('a tab click changes the surface', await page.locator('.places-toolbar').isVisible());
+  check('a tab click changes the surface', await page.locator('.places-side').isVisible());
   await page.screenshot({ path: `${SHOTS}/top-bar-desktop.png` });
   await page.close();
 }

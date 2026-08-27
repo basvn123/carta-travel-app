@@ -118,7 +118,7 @@ await lsLink.click();
 await page.waitForTimeout(900);
 // By a control the panel actually owns: [class*="lifestyle"] also matches the
 // Explore tab's own hidden button, which is what this used to catch instead.
-check('link opens the lifestyle panel', await page.locator('.lifestyle-stay-chips').first().isVisible().catch(() => false));
+check('link opens the lifestyle panel', await page.locator('.lifestyle-panel .ls-tiles').first().isVisible().catch(() => false));
 await page.keyboard.press('Escape');
 await page.waitForTimeout(700);
 const closeLs = page.locator('.panel-close, .lifestyle-close').first();

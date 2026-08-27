@@ -34,6 +34,7 @@ Usage, from the repo root:
 """
 
 import argparse
+import importlib.util
 import re
 import shutil
 import sys
@@ -49,6 +50,24 @@ import validate_trips as V  # noqa: E402
 from trip_sources import (  # noqa: E402
     ATTRIBUTION, MODEL_VERSION, ROOT, TRIP_CACHE, WIRE_DIR, load_catalogue,
     load_json, write_json)
+
+# The lake layer's card-shape helpers, loaded by path the way the beach and
+# peak layers load them. The frame differs (a trip card crops to 30/11, not
+# 25/12) and is passed in; the rule for choosing between equals is the same.
+_LAKE_IMAGES = ROOT / "pipeline" / "lakes" / "lake_images.py"
+if "carta_lake_images" in sys.modules:
+    lake_images = sys.modules["carta_lake_images"]
+else:
+    _lake_spec = importlib.util.spec_from_file_location("carta_lake_images",
+                                                        _LAKE_IMAGES)
+    lake_images = importlib.util.module_from_spec(_lake_spec)
+    sys.modules["carta_lake_images"] = lake_images
+    _lake_spec.loader.exec_module(lake_images)
+
+# .itin-card-media in continent-app/src/styles.css: wider than the 12/5 the
+# destination cards these photographs are borrowed FROM are cropped to, which
+# is why a hero that suits a place page can still arrive here as a band.
+TRIP_CARD_AR = 30 / 11
 
 TOP_PER_COUNTRY = 9
 TOP_PER_PACE = 3      # of those nine, at most three of any one pace
@@ -82,29 +101,85 @@ def hero_candidates(trip, flags):
     Route order rather than rating order: the town the trip opens in is the
     one a reader is deciding whether to fly to, and leading with the
     best-rated stop put the Trevi Fountain on every Roman itinerary.
+
+    `band` records WHY each candidate is where it is, so a later shape
+    preference can choose between equals without reaching across the order
+    this function exists to impose.
     """
     out = []
     for st in trip["stops"]:
         if st.get("img") and st["dest"] not in flags:
             out.append({"url": st["img"], "credit": st.get("img_credit"),
-                        "page": st.get("img_page"), "city": st["city"]})
+                        "page": st.get("img_page"), "city": st["city"],
+                        "band": "stop"})
     for dt in trip["daytrips"]:
         if dt.get("img") and dt["dest"] not in flags:
-            out.append({"url": dt["img"], "city": dt["city"]})
+            # The caption names what the reader is looking at, and a day trip
+            # photograph is a photograph of the day trip's town. Without this
+            # the 329 cards that lead with one were the only photographs on
+            # the site with nothing written under them.
+            out.append({"url": dt["img"],
+                        "credit": dt.get("img_credit") or dt.get("city"),
+                        "city": dt["city"], "band": "daytrip"})
     # A sight's own photograph is a fine hero and is never a coat of arms,
     # because the POI shortlist already dropped those.
     for st in trip["stops"]:
         for h in st["highlights"]:
             if h.get("img"):
                 out.append({"url": h["img"], "credit": h.get("name"),
-                            "city": st["city"], "name": h.get("name")})
+                            "city": st["city"], "name": h.get("name"),
+                            "band": "sight"})
     # Last resort: a flagged hero still beats a grey block.
     for st in trip["stops"]:
         if st.get("img"):
             out.append({"url": st["img"], "credit": st.get("img_credit"),
                         "page": st.get("img_page"), "city": st["city"],
-                        "weak": True})
+                        "weak": True, "band": "weak"})
     return [c for c in out if _photo_ok(c["url"])]
+
+
+# {Commons file title -> (w, h)} for the photographs this layer borrows.
+# Trips carry no dimensions of their own: a stop's picture is the catalogue
+# destination's hero and a sight's is a POI thumbnail, so the sizes have to be
+# read back from where they came from. Built once per run, on demand.
+_DIMS = None
+
+
+def image_dims():
+    """Sizes for the borrowed photographs, keyed by Commons file title.
+
+    Two sources, both already on disk: the master's destination heroes (which
+    apply_image_dims measured) and cache/hero_image_meta.json, which holds the
+    Commons metadata for every file the hero audit has ever looked at. A URL
+    nothing knows the size of is left unmeasured rather than guessed at."""
+    global _DIMS
+    if _DIMS is not None:
+        return _DIMS
+    _DIMS = {}
+    meta = load_json(ROOT / "cache" / "hero_image_meta.json") or {}
+    for title, rec in meta.items():
+        if isinstance(rec, dict) and rec.get("width") and rec.get("height"):
+            _DIMS[_file_key(title)] = (rec["width"], rec["height"])
+    for dest in (load_catalogue() or {}).get("destinations", {}).values():
+        img = dest.get("image") or {}
+        if img.get("url") and img.get("w") and img.get("h"):
+            _DIMS[_file_key(img["url"])] = (img["w"], img["h"])
+    return _DIMS
+
+
+def _file_key(text):
+    """The Commons file name behind a URL or a "File:Name" title, lowercased.
+
+    A thumbnail URL repeats the name after the width, so the last path segment
+    is the file either way once the NNNpx- prefix is off."""
+    name = str(text or "").split("?", 1)[0].rsplit("/", 1)[-1]
+    name = re.sub(r"^\d+px-", "", name)
+    name = re.sub(r"^File:", "", name, flags=re.I)
+    return name.replace("_", " ").strip().lower()
+
+
+def _dims_of(cand):
+    return image_dims().get(_file_key(cand.get("url")), (None, None))
 
 
 # Wordmarks, seals and vector emblems are not photographs of a place. Mirrors
@@ -115,14 +190,60 @@ _BADGE = re.compile(
 
 
 def _photo_ok(url):
-    return bool(url) and not _BADGE.search(url)
+    # Special:FilePath is a commons.wikimedia.org redirect, and the served CSP
+    # allows images from upload.wikimedia.org only, so a card leading with one
+    # renders BLANK in production while looking right in the wire. It is not a
+    # photograph this layer can use, whatever it is a picture of.
+    return (bool(url) and not _BADGE.search(url)
+            and "Special:FilePath" not in url)
+
+
+def _sight_of_the_same_town(cands):
+    """When the town's own photograph cannot survive the card crop, lead with
+    a photograph of something IN that town.
+
+    lead_by_fit will not cross bands, and it is right not to: a sight beating
+    a town on shape alone is how every Roman itinerary ended up fronted by the
+    Trevi Fountain. This is the one crossing worth making, because it does not
+    change the answer to "where does this trip go": the picture is still of the
+    opening town, taken of something in it rather than of its skyline. Only
+    when the lead genuinely fails the crop, and only for a sight that clearly
+    passes."""
+    if not cands:
+        return cands
+    lead = cands[0]
+    bar = lake_images.fit_bar(TRIP_CARD_AR)
+    fit = lake_images.aspect_fit(*_dims_of(lead), TRIP_CARD_AR)
+    if fit is None or fit >= bar:
+        return cands
+    best, best_fit = None, fit
+    for c in cands:
+        if c.get("band") != "sight" or c.get("city") != lead.get("city"):
+            continue
+        f = lake_images.aspect_fit(*_dims_of(c), TRIP_CARD_AR)
+        if f is not None and f >= bar and f > best_fit:
+            best, best_fit = c, f
+    if best is None:
+        return cands
+    return [best] + [c for c in cands if c is not best]
 
 
 def hero_of(trip, flags=frozenset(), used=None):
-    """The photograph this trip leads with, avoiding ones already on the page."""
+    """The photograph this trip leads with, avoiding ones already on the page.
+
+    The trip card is a 30/11 strip, wider than the 12/5 the same photograph
+    fills on a destination card, so a portrait or a squarish hero that reads
+    well on a place page arrives here as its middle third. Inside one band of
+    the route order, and never across bands, a picture that survives that crop
+    is preferred: the opening town still leads, it just leads with the frame
+    that fits."""
     cands = hero_candidates(trip, flags)
     if not cands:
         return None
+    cands = lake_images.lead_by_fit(cands, _dims_of,
+                                    tier=lambda c: c.get("band"),
+                                    frame_ar=TRIP_CARD_AR)
+    cands = _sight_of_the_same_town(cands)
     if used is not None:
         for c in cands:
             if c["url"] not in used:

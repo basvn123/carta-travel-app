@@ -403,7 +403,7 @@ def n_probes(distance_m):
     return max(PROBES_MIN, min(PROBES_MAX, n))
 
 
-def fetch_targets(conn, countries, refresh):
+def fetch_targets(conn, countries, refresh, missing=False):
     """Curated routes this run should search, longest first so the big treks
     (which need the most probes) are not left to the tail of the run.
 
@@ -416,8 +416,20 @@ def fetch_targets(conn, countries, refresh):
     but the previous run's misses being retried in country order.
 
     --refresh ignores both, which is how you re-shoot after changing the
-    scoring or after Commons has had time to gain new uploads."""
-    having = "" if refresh else """
+    scoring or after Commons has had time to gain new uploads.
+
+    --missing-only keeps the first exclusion and drops the second: the
+    periodic retry of exactly the routes that have no photograph, without
+    re-shooting the ones that do. Commons grows; the empty answers age."""
+    if missing:
+        having = """
+        AND NOT EXISTS (SELECT 1 FROM images i
+                        WHERE i.subject_type = 'trip' AND i.subject_id = t.id
+                          AND i.rank IS NOT NULL)"""
+    elif refresh:
+        having = ""
+    else:
+        having = """
         AND NOT EXISTS (SELECT 1 FROM images i
                         WHERE i.subject_type = 'trip' AND i.subject_id = t.id
                           AND i.rank IS NOT NULL)
@@ -1027,6 +1039,10 @@ def main():
     ap.add_argument("--countries", help="comma separated ISO2")
     ap.add_argument("--refresh", action="store_true",
                     help="re-shoot routes that already have photographs")
+    ap.add_argument("--missing-only", action="store_true",
+                    help="retry only the routes with no photograph, ignoring "
+                         "the empty-search markers a previous run left; the "
+                         "periodic second ask, since Commons grows")
     ap.add_argument("--categories", action="store_true",
                     help="fetch Commons categories for every cached candidate "
                          "and stop. One pass, then every later --rescore reads "
@@ -1057,7 +1073,9 @@ def main():
         if args.rescore:
             rescore(conn, countries, args.limit, args.verbose)
             return
-        if args.refresh:
+        if args.refresh or args.missing_only:
+            # A missing-only retry that finds nothing again re-stamps its
+            # marker on the way out, so the ordinary run stays cheap.
             with conn.cursor() as cur:
                 cur.execute("""
                     DELETE FROM validation_runs v
@@ -1069,7 +1087,7 @@ def main():
             conn.commit()
             if cleared:
                 print(f"cleared {cleared:,} previous empty-search markers")
-        ids = fetch_targets(conn, countries, args.refresh)
+        ids = fetch_targets(conn, countries, args.refresh, args.missing_only)
         if args.limit:
             ids = ids[:args.limit]
         if not ids:

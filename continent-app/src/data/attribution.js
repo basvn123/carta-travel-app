@@ -80,10 +80,21 @@ export const ATTRIBUTIONS = [
       + 'Agency and the Member State authorities that report them',
   },
   {
+    source: 'NASA POWER',
+    license: 'US Government work (no restriction; acknowledgement appreciated)',
+    credit: 'Climate normals from the NASA POWER project, NASA Langley '
+      + 'Research Center (power.larc.nasa.gov)',
+  },
+  {
+    source: 'UNESCO World Heritage Centre',
+    license: 'UNESCO WHC terms of use (verify)',
+    credit: 'World Heritage designations from the UNESCO World Heritage List',
+  },
+  {
     source: 'WorldClim',
     license: 'WorldClim 2.1 terms (citation required)',
-    credit: 'Climate normals, and the estimated lake swimming season '
-      + 'modelled from them, from WorldClim 2.1 (Fick and Hijmans 2017)',
+    credit: 'The estimated lake swimming season is modelled from WorldClim '
+      + '2.1 normals (Fick and Hijmans 2017)',
   },
   {
     source: 'OpenTripMap',

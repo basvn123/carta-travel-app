@@ -1,13 +1,14 @@
 {
- "generated": "2026-08-21",
+ "generated": "2026-08-25",
  "counts": {
   "destinations": 3038,
   "with_image": 3035,
   "missing": 3,
-  "flagged": 83,
+  "flagged": 115,
   "by_reason": {
+   "narrow": 59,
    "tiny": 33,
-   "far_coord": 21,
+   "far_coord": 18,
    "historical": 16,
    "map": 13,
    "svg": 9,
@@ -16,7 +17,7 @@
    "portrait": 3,
    "collage": 3
   },
-  "fixed": 468,
+  "fixed": 647,
   "unfixed": 0
  },
  "missing": [
@@ -31,7 +32,8 @@
    "country": "Greece",
    "file": "Kassiopi Montage 2025",
    "reasons": [
-    "collage"
+    "collage",
+    "narrow"
    ],
    "width": 3264,
    "height": 3264,
@@ -44,11 +46,12 @@
    "country": "Italy",
    "file": "Senigallia-collage",
    "reasons": [
-    "collage"
+    "collage",
+    "narrow"
    ],
    "width": 2000,
    "height": 2000,
-   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d2/Senigallia-collage.jpg/960px-Senigallia-collage.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d2/Senigallia-collage.jpg/960px-Senigallia-collage.jpg",
    "km": null
   },
   {
@@ -57,7 +60,8 @@
    "country": "Serbia",
    "file": "Svilajnac collage",
    "reasons": [
-    "collage"
+    "collage",
+    "narrow"
    ],
    "width": 1024,
    "height": 1433,
@@ -80,6 +84,22 @@
    "km": null
   },
   {
+   "id": "gem:lappi",
+   "city": "Lappi",
+   "country": "Finland",
+   "file": "Lappi.vaakuna",
+   "reasons": [
+    "emblem",
+    "narrow",
+    "svg",
+    "tiny"
+   ],
+   "width": 500,
+   "height": 586,
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/50/Lappi.vaakuna.svg/960px-Lappi.vaakuna.svg.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+   "km": null
+  },
+  {
    "id": "gem:tenno",
    "city": "Tenno",
    "country": "Italy",
@@ -90,7 +110,7 @@
    ],
    "width": 900,
    "height": 600,
-   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/Flag_of_the_Japanese_Emperor.svg/960px-Flag_of_the_Japanese_Emperor.svg.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/Flag_of_the_Japanese_Emperor.svg/960px-Flag_of_the_Japanese_Emperor.svg.png",
    "km": null
   },
   {
@@ -106,21 +126,6 @@
    "width": 512,
    "height": 341,
    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/56/Bandera_de_Garrucha_%28Almer%C3%ADa%29.svg/960px-Bandera_de_Garrucha_%28Almer%C3%ADa%29.svg.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
-   "km": null
-  },
-  {
-   "id": "gem:lappi",
-   "city": "Lappi",
-   "country": "Finland",
-   "file": "Lappi.vaakuna",
-   "reasons": [
-    "emblem",
-    "svg",
-    "tiny"
-   ],
-   "width": 500,
-   "height": 586,
-   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/50/Lappi.vaakuna.svg/960px-Lappi.vaakuna.svg.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
    "km": null
   },
   {
@@ -148,19 +153,6 @@
    "height": 2962,
    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/%CE%91%CE%BB%CE%B1%CF%84%CF%89%CF%81%CF%85%CF%87%CE%B5%CE%AF%CE%B1_%CE%92%CE%B9%CE%B5%CE%BB%CE%AF%CF%84%CF%83%CE%BA%CE%B1_5021.jpg/960px-%CE%91%CE%BB%CE%B1%CF%84%CF%89%CF%81%CF%85%CF%87%CE%B5%CE%AF%CE%B1_%CE%92%CE%B9%CE%B5%CE%BB%CE%AF%CF%84%CF%83%CE%BA%CE%B1_5021.jpg",
    "km": 61
-  },
-  {
-   "id": "gem:baden",
-   "city": "Baden",
-   "country": "Switzerland",
-   "file": "Festung Schloss Hohenbaden",
-   "reasons": [
-    "far_coord"
-   ],
-   "width": 4608,
-   "height": 3456,
-   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/16/Festung_Schloss_Hohenbaden.jpg/960px-Festung_Schloss_Hohenbaden.jpg",
-   "km": 145
   },
   {
    "id": "gem:choustnikovo-hradiste",
@@ -267,19 +259,6 @@
    "km": 64
   },
   {
-   "id": "gem:lark-hill",
-   "city": "Lark Hill",
-   "country": "United Kingdom",
-   "file": "BedZED 2007",
-   "reasons": [
-    "far_coord"
-   ],
-   "width": 3008,
-   "height": 2000,
-   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/BedZED_2007.jpg/960px-BedZED_2007.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
-   "km": 117
-  },
-  {
    "id": "gem:marzamemi",
    "city": "Marzamemi",
    "country": "Italy",
@@ -345,19 +324,6 @@
    "km": 202
   },
   {
-   "id": "gem:starigrad",
-   "city": "Starigrad",
-   "country": "Croatia",
-   "file": "Fortica at Sunset",
-   "reasons": [
-    "far_coord"
-   ],
-   "width": 2248,
-   "height": 3000,
-   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Fortica_at_Sunset.jpg/960px-Fortica_at_Sunset.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
-   "km": 138
-  },
-  {
    "id": "gem:viareggio",
    "city": "Viareggio",
    "country": "Italy",
@@ -369,6 +335,21 @@
    "height": 3607,
    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/Italy_-_Viareggio.jpg/960px-Italy_-_Viareggio.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
    "km": 183
+  },
+  {
+   "id": "gem:coleford",
+   "city": "Coleford",
+   "country": "United Kingdom",
+   "file": "Colefordchurch",
+   "reasons": [
+    "far_coord",
+    "narrow",
+    "tiny"
+   ],
+   "width": 480,
+   "height": 640,
+   "url": "https://upload.wikimedia.org/wikipedia/commons/1/1a/Colefordchurch.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+   "km": 63
   },
   {
    "id": "gem:ejby",
@@ -383,46 +364,6 @@
    "height": 3744,
    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/Ejby_Station_TRS.jpg/960px-Ejby_Station_TRS.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
    "km": 136
-  },
-  {
-   "id": "gem:coleford",
-   "city": "Coleford",
-   "country": "United Kingdom",
-   "file": "Colefordchurch",
-   "reasons": [
-    "far_coord",
-    "tiny"
-   ],
-   "width": 480,
-   "height": 640,
-   "url": "https://upload.wikimedia.org/wikipedia/commons/1/1a/Colefordchurch.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
-   "km": 63
-  },
-  {
-   "id": "gem:alingsas",
-   "city": "Alingsås",
-   "country": "Sweden",
-   "file": "Bysten av Jonas Alströmer på Stora torget i Alingsås, den 8 maj 2006. Den uppfördes av Aron Sandberg och invigdes den 2 juni 1905",
-   "reasons": [
-    "historical"
-   ],
-   "width": 1536,
-   "height": 2048,
-   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Bysten_av_Jonas_Alstr%C3%B6mer_p%C3%A5_Stora_torget_i_Alings%C3%A5s%2C_den_8_maj_2006._Den_uppf%C3%B6rdes_av_Aron_Sandberg_och_invigdes_den_2_juni_1905.JPG/960px-Bysten_av_Jonas_Alstr%C3%B6mer_p%C3%A5_Stora_torget_i_Alings%C3%A5s%2C_den_8_maj_2006._Den_uppf%C3%B6rdes_av_Aron_Sandberg_och_invigdes_den_2_juni_1905.JPG?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
-   "km": null
-  },
-  {
-   "id": "gem:bard",
-   "city": "Bard",
-   "country": "Italy",
-   "file": "Benjamin West - The Bard - Google Art Project",
-   "reasons": [
-    "historical"
-   ],
-   "width": 2095,
-   "height": 2976,
-   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Benjamin_West_-_The_Bard_-_Google_Art_Project.jpg/960px-Benjamin_West_-_The_Bard_-_Google_Art_Project.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
-   "km": null
   },
   {
    "id": "gem:cambron-saint-vincent",
@@ -503,19 +444,6 @@
    "km": null
   },
   {
-   "id": "gem:levi",
-   "city": "Levi (Lapland)",
-   "country": "Finland",
-   "file": "Simeon Levi Slay Sichemites (5752777)",
-   "reasons": [
-    "historical"
-   ],
-   "width": 2489,
-   "height": 3743,
-   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Simeon_Levi_Slay_Sichemites_%285752777%29.jpg/960px-Simeon_Levi_Slay_Sichemites_%285752777%29.jpg",
-   "km": null
-  },
-  {
    "id": "gem:peniscola",
    "city": "Peñíscola",
    "country": "Spain",
@@ -555,26 +483,14 @@
    "km": null
   },
   {
-   "id": "gem:tremiti-islands",
-   "city": "Tremiti Islands",
-   "country": "Italy",
-   "file": "Tremiti 1999 -Isola di San Nicola - Santa Maria a Mare- by-RaBoe 001",
-   "reasons": [
-    "historical"
-   ],
-   "width": 1280,
-   "height": 1024,
-   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/31/Tremiti_1999_-Isola_di_San_Nicola_-_Santa_Maria_a_Mare-_by-RaBoe_001.jpg/960px-Tremiti_1999_-Isola_di_San_Nicola_-_Santa_Maria_a_Mare-_by-RaBoe_001.jpg",
-   "km": null
-  },
-  {
    "id": "gem:bihac-una",
    "city": "Bihać & Una Falls",
    "country": "Bosnia and Herzegovina",
    "file": "Western Bosnia 1994",
    "reasons": [
     "historical",
-    "map"
+    "map",
+    "narrow"
    ],
    "width": 942,
    "height": 1422,
@@ -589,11 +505,68 @@
    "reasons": [
     "historical",
     "map",
+    "narrow",
     "svg"
    ],
    "width": 2000,
    "height": 1922,
-   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/Roussillon_in_France_%281789%29.svg/960px-Roussillon_in_France_%281789%29.svg.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/Roussillon_in_France_%281789%29.svg/960px-Roussillon_in_France_%281789%29.svg.png",
+   "km": null
+  },
+  {
+   "id": "gem:alingsas",
+   "city": "Alingsås",
+   "country": "Sweden",
+   "file": "Bysten av Jonas Alströmer på Stora torget i Alingsås, den 8 maj 2006. Den uppfördes av Aron Sandberg och invigdes den 2 juni 1905",
+   "reasons": [
+    "historical",
+    "narrow"
+   ],
+   "width": 1536,
+   "height": 2048,
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Bysten_av_Jonas_Alstr%C3%B6mer_p%C3%A5_Stora_torget_i_Alings%C3%A5s%2C_den_8_maj_2006._Den_uppf%C3%B6rdes_av_Aron_Sandberg_och_invigdes_den_2_juni_1905.JPG/960px-Bysten_av_Jonas_Alstr%C3%B6mer_p%C3%A5_Stora_torget_i_Alings%C3%A5s%2C_den_8_maj_2006._Den_uppf%C3%B6rdes_av_Aron_Sandberg_och_invigdes_den_2_juni_1905.JPG?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+   "km": null
+  },
+  {
+   "id": "gem:bard",
+   "city": "Bard",
+   "country": "Italy",
+   "file": "Benjamin West - The Bard - Google Art Project",
+   "reasons": [
+    "historical",
+    "narrow"
+   ],
+   "width": 2095,
+   "height": 2976,
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Benjamin_West_-_The_Bard_-_Google_Art_Project.jpg/960px-Benjamin_West_-_The_Bard_-_Google_Art_Project.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+   "km": null
+  },
+  {
+   "id": "gem:levi",
+   "city": "Levi (Lapland)",
+   "country": "Finland",
+   "file": "Simeon Levi Slay Sichemites (5752777)",
+   "reasons": [
+    "historical",
+    "narrow"
+   ],
+   "width": 2489,
+   "height": 3743,
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Simeon_Levi_Slay_Sichemites_%285752777%29.jpg/960px-Simeon_Levi_Slay_Sichemites_%285752777%29.jpg",
+   "km": null
+  },
+  {
+   "id": "gem:tremiti-islands",
+   "city": "Tremiti Islands",
+   "country": "Italy",
+   "file": "Tremiti 1999 -Isola di San Nicola - Santa Maria a Mare- by-RaBoe 001",
+   "reasons": [
+    "historical",
+    "narrow"
+   ],
+   "width": 1280,
+   "height": 1024,
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/31/Tremiti_1999_-Isola_di_San_Nicola_-_Santa_Maria_a_Mare-_by-RaBoe_001.jpg/960px-Tremiti_1999_-Isola_di_San_Nicola_-_Santa_Maria_a_Mare-_by-RaBoe_001.jpg",
    "km": null
   },
   {
@@ -606,46 +579,7 @@
    ],
    "width": 1200,
    "height": 790,
-   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f8/Battle_of_Waterloo_map.png/960px-Battle_of_Waterloo_map.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
-   "km": null
-  },
-  {
-   "id": "gem:beara-peninsula",
-   "city": "Beara Peninsula",
-   "country": "Ireland",
-   "file": "Beara Peninsula",
-   "reasons": [
-    "map"
-   ],
-   "width": 908,
-   "height": 1159,
-   "url": "https://upload.wikimedia.org/wikipedia/commons/6/65/Beara_Peninsula.PNG",
-   "km": null
-  },
-  {
-   "id": "gem:castro-caldelas",
-   "city": "Castro Caldelas",
-   "country": "Spain",
-   "file": "Situacion Castro Caldelas",
-   "reasons": [
-    "map"
-   ],
-   "width": 956,
-   "height": 1008,
-   "url": "https://upload.wikimedia.org/wikipedia/commons/a/a3/Situacion_Castro_Caldelas.PNG?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
-   "km": null
-  },
-  {
-   "id": "gem:kington",
-   "city": "Kington",
-   "country": "United Kingdom",
-   "file": "Map of the Telephone Dialling Codes in the United Kingdom",
-   "reasons": [
-    "map"
-   ],
-   "width": 4349,
-   "height": 5587,
-   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3d/Map_of_the_Telephone_Dialling_Codes_in_the_United_Kingdom.png/960px-Map_of_the_Telephone_Dialling_Codes_in_the_United_Kingdom.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f8/Battle_of_Waterloo_map.png/960px-Battle_of_Waterloo_map.png",
    "km": null
   },
   {
@@ -658,7 +592,111 @@
    ],
    "width": 1281,
    "height": 878,
-   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Map_CZ_-_district_Louny.PNG/960px-Map_CZ_-_district_Louny.PNG?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Map_CZ_-_district_Louny.PNG/960px-Map_CZ_-_district_Louny.PNG",
+   "km": null
+  },
+  {
+   "id": "gem:beara-peninsula",
+   "city": "Beara Peninsula",
+   "country": "Ireland",
+   "file": "Beara Peninsula",
+   "reasons": [
+    "map",
+    "narrow"
+   ],
+   "width": 908,
+   "height": 1159,
+   "url": "https://upload.wikimedia.org/wikipedia/commons/6/65/Beara_Peninsula.PNG",
+   "km": null
+  },
+  {
+   "id": "gem:castro-caldelas",
+   "city": "Castro Caldelas",
+   "country": "Spain",
+   "file": "Situacion Castro Caldelas",
+   "reasons": [
+    "map",
+    "narrow"
+   ],
+   "width": 956,
+   "height": 1008,
+   "url": "https://upload.wikimedia.org/wikipedia/commons/a/a3/Situacion_Castro_Caldelas.PNG?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+   "km": null
+  },
+  {
+   "id": "gem:kington",
+   "city": "Kington",
+   "country": "United Kingdom",
+   "file": "Map of the Telephone Dialling Codes in the United Kingdom",
+   "reasons": [
+    "map",
+    "narrow"
+   ],
+   "width": 4349,
+   "height": 5587,
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3d/Map_of_the_Telephone_Dialling_Codes_in_the_United_Kingdom.png/960px-Map_of_the_Telephone_Dialling_Codes_in_the_United_Kingdom.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+   "km": null
+  },
+  {
+   "id": "gem:riedenburg",
+   "city": "Riedenburg",
+   "country": "Germany",
+   "file": "Riedenburg in KEH",
+   "reasons": [
+    "map",
+    "narrow",
+    "svg",
+    "tiny"
+   ],
+   "width": 576,
+   "height": 664,
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Riedenburg_in_KEH.svg/960px-Riedenburg_in_KEH.svg.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+   "km": null
+  },
+  {
+   "id": "gem:tipova",
+   "city": "Tipova Cave Monastery",
+   "country": "Moldova",
+   "file": "Rezina district, MDA",
+   "reasons": [
+    "map",
+    "narrow",
+    "svg",
+    "tiny"
+   ],
+   "width": 228,
+   "height": 279,
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Rezina_district%2C_MDA.svg/960px-Rezina_district%2C_MDA.svg.png",
+   "km": null
+  },
+  {
+   "id": "gem:dannewerk",
+   "city": "Dannewerk",
+   "country": "Germany",
+   "file": "Dannewerk in SL",
+   "reasons": [
+    "map",
+    "narrow",
+    "tiny"
+   ],
+   "width": 347,
+   "height": 363,
+   "url": "https://upload.wikimedia.org/wikipedia/commons/8/8d/Dannewerk_in_SL.PNG?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+   "km": null
+  },
+  {
+   "id": "gem:male-brezno",
+   "city": "Malé Březno",
+   "country": "Czechia",
+   "file": "Unetice culture map",
+   "reasons": [
+    "map",
+    "narrow",
+    "tiny"
+   ],
+   "width": 174,
+   "height": 228,
+   "url": "https://upload.wikimedia.org/wikipedia/commons/3/3f/Unetice_culture_map.png",
    "km": null
   },
   {
@@ -677,50 +715,6 @@
    "km": null
   },
   {
-   "id": "gem:riedenburg",
-   "city": "Riedenburg",
-   "country": "Germany",
-   "file": "Riedenburg in KEH",
-   "reasons": [
-    "map",
-    "svg",
-    "tiny"
-   ],
-   "width": 576,
-   "height": 664,
-   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Riedenburg_in_KEH.svg/960px-Riedenburg_in_KEH.svg.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
-   "km": null
-  },
-  {
-   "id": "gem:tipova",
-   "city": "Tipova Cave Monastery",
-   "country": "Moldova",
-   "file": "Rezina district, MDA",
-   "reasons": [
-    "map",
-    "svg",
-    "tiny"
-   ],
-   "width": 228,
-   "height": 279,
-   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Rezina_district%2C_MDA.svg/960px-Rezina_district%2C_MDA.svg.png",
-   "km": null
-  },
-  {
-   "id": "gem:dannewerk",
-   "city": "Dannewerk",
-   "country": "Germany",
-   "file": "Dannewerk in SL",
-   "reasons": [
-    "map",
-    "tiny"
-   ],
-   "width": 347,
-   "height": 363,
-   "url": "https://upload.wikimedia.org/wikipedia/commons/8/8d/Dannewerk_in_SL.PNG?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
-   "km": null
-  },
-  {
    "id": "gem:fischland-darss",
    "city": "Fischland-Darß-Zingst",
    "country": "Germany",
@@ -735,17 +729,543 @@
    "km": null
   },
   {
-   "id": "gem:male-brezno",
-   "city": "Malé Březno",
-   "country": "Czechia",
-   "file": "Unetice culture map",
+   "id": "gem:achicourt",
+   "city": "Achicourt",
+   "country": "France",
+   "file": "Moulin00tonemapped",
    "reasons": [
-    "map",
+    "narrow"
+   ],
+   "width": 2048,
+   "height": 3072,
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Moulin00tonemapped.jpg/960px-Moulin00tonemapped.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+   "km": null
+  },
+  {
+   "id": "gem:altamura",
+   "city": "Altamura",
+   "country": "Italy",
+   "file": "Altamura, basilica cattedrale palatina di s.m. assunta, 01",
+   "reasons": [
+    "narrow"
+   ],
+   "width": 3041,
+   "height": 2819,
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/82/Altamura%2C_basilica_cattedrale_palatina_di_s.m._assunta%2C_01.jpg/960px-Altamura%2C_basilica_cattedrale_palatina_di_s.m._assunta%2C_01.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+   "km": null
+  },
+  {
+   "id": "gem:ansouis",
+   "city": "Ansouis",
+   "country": "France",
+   "file": "Ansouis 1",
+   "reasons": [
+    "narrow"
+   ],
+   "width": 1200,
+   "height": 1600,
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Ansouis_1.jpg/960px-Ansouis_1.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+   "km": null
+  },
+  {
+   "id": "gem:bridgwater",
+   "city": "Bridgwater",
+   "country": "United Kingdom",
+   "file": "An angel appears (geograph 3719583)",
+   "reasons": [
+    "narrow"
+   ],
+   "width": 1704,
+   "height": 2304,
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/63/An_angel_appears_%28geograph_3719583%29.jpg/960px-An_angel_appears_%28geograph_3719583%29.jpg",
+   "km": 0
+  },
+  {
+   "id": "gem:bruhl",
+   "city": "Brühl",
+   "country": "Germany",
+   "file": "MJK 68238 Daniel Brühl (Berlinale 2020)",
+   "reasons": [
+    "narrow"
+   ],
+   "width": 2526,
+   "height": 3789,
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/MJK_68238_Daniel_Br%C3%BChl_%28Berlinale_2020%29.jpg/960px-MJK_68238_Daniel_Br%C3%BChl_%28Berlinale_2020%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+   "km": null
+  },
+  {
+   "id": "gem:bueu",
+   "city": "Bueu",
+   "country": "Spain",
+   "file": "Casa do Concello de Bueu",
+   "reasons": [
+    "narrow"
+   ],
+   "width": 2590,
+   "height": 3238,
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/60/Casa_do_Concello_de_Bueu.JPG/960px-Casa_do_Concello_de_Bueu.JPG",
+   "km": null
+  },
+  {
+   "id": "gem:burriana",
+   "city": "Burriana",
+   "country": "Spain",
+   "file": "Campanar de borriana",
+   "reasons": [
+    "narrow"
+   ],
+   "width": 2736,
+   "height": 3648,
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Campanar_de_borriana.JPG/960px-Campanar_de_borriana.JPG",
+   "km": 0
+  },
+  {
+   "id": "gem:haut-koenigsbourg",
+   "city": "Château du Haut-Koenigsbourg",
+   "country": "France",
+   "file": "Château du Haut-Koenigsbourg (755 m) (Orschwiller) (19) edited (1)",
+   "reasons": [
+    "narrow"
+   ],
+   "width": 3240,
+   "height": 4500,
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6a/Ch%C3%A2teau_du_Haut-Koenigsbourg_%28755_m%29_%28Orschwiller%29_%2819%29_edited_%281%29.jpg/960px-Ch%C3%A2teau_du_Haut-Koenigsbourg_%28755_m%29_%28Orschwiller%29_%2819%29_edited_%281%29.jpg",
+   "km": 0
+  },
+  {
+   "id": "gem:crest",
+   "city": "Crest",
+   "country": "France",
+   "file": "La tour de Crest, propriété de la famille Chabrières, photo prise de l'hôpital-hospice (34331852930)",
+   "reasons": [
+    "narrow"
+   ],
+   "width": 2640,
+   "height": 3451,
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/La_tour_de_Crest%2C_propri%C3%A9t%C3%A9_de_la_famille_Chabri%C3%A8res%2C_photo_prise_de_l%27h%C3%B4pital-hospice_%2834331852930%29.jpg/960px-La_tour_de_Crest%2C_propri%C3%A9t%C3%A9_de_la_famille_Chabri%C3%A8res%2C_photo_prise_de_l%27h%C3%B4pital-hospice_%2834331852930%29.jpg",
+   "km": 0
+  },
+  {
+   "id": "gem:crooked-forest",
+   "city": "Crooked Forest",
+   "country": "Poland",
+   "file": "Crooked Forest",
+   "reasons": [
+    "narrow"
+   ],
+   "width": 1718,
+   "height": 2255,
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Crooked_Forest.jpg/960px-Crooked_Forest.jpg",
+   "km": null
+  },
+  {
+   "id": "gem:flamborough-head",
+   "city": "Flamborough Head",
+   "country": "United Kingdom",
+   "file": "Chalk Tower Flamborough Head 058031",
+   "reasons": [
+    "narrow"
+   ],
+   "width": 1200,
+   "height": 1600,
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/Chalk_Tower_Flamborough_Head_058031.jpg/960px-Chalk_Tower_Flamborough_Head_058031.jpg",
+   "km": 0
+  },
+  {
+   "id": "gem:golden-circle",
+   "city": "Golden Circle (Þingvellir)",
+   "country": "Iceland",
+   "file": "Strokkur",
+   "reasons": [
+    "narrow"
+   ],
+   "width": 2304,
+   "height": 3456,
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Strokkur.jpg/960px-Strokkur.jpg",
+   "km": null
+  },
+  {
+   "id": "gem:great-malvern",
+   "city": "Great Malvern",
+   "country": "United Kingdom",
+   "file": "GreatMalvern Glass4",
+   "reasons": [
+    "narrow"
+   ],
+   "width": 1671,
+   "height": 1671,
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/84/GreatMalvern_Glass4.JPG/960px-GreatMalvern_Glass4.JPG",
+   "km": null
+  },
+  {
+   "id": "gem:garsnas",
+   "city": "Gärsnäs",
+   "country": "Sweden",
+   "file": "Swedish castle Gärsnäs",
+   "reasons": [
+    "narrow"
+   ],
+   "width": 1131,
+   "height": 1508,
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/42/Swedish_castle_G%C3%A4rsn%C3%A4s.jpg/960px-Swedish_castle_G%C3%A4rsn%C3%A4s.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+   "km": 2
+  },
+  {
+   "id": "gem:hoxter",
+   "city": "Höxter",
+   "country": "Germany",
+   "file": "Rathaus Höxter",
+   "reasons": [
+    "narrow"
+   ],
+   "width": 1400,
+   "height": 1180,
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Rathaus_H%C3%B6xter.png/960px-Rathaus_H%C3%B6xter.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+   "km": 0
+  },
+  {
+   "id": "gem:labastide-murat",
+   "city": "Labastide-Murat",
+   "country": "France",
+   "file": "Labastide Murat - Mairie - W",
+   "reasons": [
+    "narrow"
+   ],
+   "width": 1944,
+   "height": 2592,
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d6/Labastide_Murat_-_Mairie_-_W.JPG/960px-Labastide_Murat_-_Mairie_-_W.JPG?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+   "km": null
+  },
+  {
+   "id": "gem:liechtensteinklamm",
+   "city": "Liechtensteinklamm",
+   "country": "Austria",
+   "file": "Liechtensteinklamm 14",
+   "reasons": [
+    "narrow"
+   ],
+   "width": 2586,
+   "height": 3440,
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Liechtensteinklamm_14.JPG/960px-Liechtensteinklamm_14.JPG",
+   "km": null
+  },
+  {
+   "id": "gem:lorsch",
+   "city": "Lorsch",
+   "country": "Germany",
+   "file": "Lorsch Rathaus 01",
+   "reasons": [
+    "narrow"
+   ],
+   "width": 2168,
+   "height": 3180,
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f1/Lorsch_Rathaus_01.jpg/960px-Lorsch_Rathaus_01.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+   "km": 0
+  },
+  {
+   "id": "gem:loudun",
+   "city": "Loudun",
+   "country": "France",
+   "file": "La tour carrée (Loudun, 86) - 07",
+   "reasons": [
+    "narrow"
+   ],
+   "width": 3000,
+   "height": 4000,
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/La_tour_carr%C3%A9e_%28Loudun%2C_86%29_-_07.jpg/960px-La_tour_carr%C3%A9e_%28Loudun%2C_86%29_-_07.jpg",
+   "km": null
+  },
+  {
+   "id": "gem:low-tatras",
+   "city": "Low Tatras (Jasná)",
+   "country": "Slovakia",
+   "file": "Low Tatras - blue trail",
+   "reasons": [
+    "narrow"
+   ],
+   "width": 2218,
+   "height": 1774,
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Low_Tatras_-_blue_trail.jpg/960px-Low_Tatras_-_blue_trail.jpg",
+   "km": 6
+  },
+  {
+   "id": "gem:marco-de-canavezes",
+   "city": "Marco de Canavezes",
+   "country": "Portugal",
+   "file": "Siza Vieira na Exponor",
+   "reasons": [
+    "narrow"
+   ],
+   "width": 1414,
+   "height": 1885,
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/54/Siza_Vieira_na_Exponor.JPG/960px-Siza_Vieira_na_Exponor.JPG?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+   "km": null
+  },
+  {
+   "id": "gem:midsland",
+   "city": "Midsland",
+   "country": "Netherlands",
+   "file": "Kruiskerk in Midsland op Terschelling -01",
+   "reasons": [
+    "narrow"
+   ],
+   "width": 3216,
+   "height": 4288,
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/Kruiskerk_in_Midsland_op_Terschelling_-01.jpg/960px-Kruiskerk_in_Midsland_op_Terschelling_-01.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+   "km": 0
+  },
+  {
+   "id": "gem:pelister",
+   "city": "Pelister National Park",
+   "country": "North Macedonia",
+   "file": "Pelister 01",
+   "reasons": [
+    "narrow"
+   ],
+   "width": 1920,
+   "height": 2560,
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/Pelister_01.jpg/960px-Pelister_01.jpg",
+   "km": null
+  },
+  {
+   "id": "gem:polis-akamas",
+   "city": "Polis & Akamas",
+   "country": "Cyprus",
+   "file": "Apostle Andreas Orthodox Church, Polis, Cyprus 02",
+   "reasons": [
+    "narrow"
+   ],
+   "width": 3502,
+   "height": 3228,
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/Apostle_Andreas_Orthodox_Church%2C_Polis%2C_Cyprus_02.jpg/960px-Apostle_Andreas_Orthodox_Church%2C_Polis%2C_Cyprus_02.jpg",
+   "km": 1
+  },
+  {
+   "id": "gem:ravda",
+   "city": "Ravda",
+   "country": "Bulgaria",
+   "file": "Ravda Aurelia beach",
+   "reasons": [
+    "narrow"
+   ],
+   "width": 2800,
+   "height": 2128,
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a8/Ravda_Aurelia_beach.jpg/960px-Ravda_Aurelia_beach.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+   "km": null
+  },
+  {
+   "id": "gem:sainte-suzanne",
+   "city": "Sainte-Suzanne",
+   "country": "France",
+   "file": "Hôtel-de-ville-de-Sainte-Suzanne",
+   "reasons": [
+    "narrow"
+   ],
+   "width": 2592,
+   "height": 3888,
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fd/H%C3%B4tel-de-ville-de-Sainte-Suzanne.JPG/960px-H%C3%B4tel-de-ville-de-Sainte-Suzanne.JPG?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+   "km": null
+  },
+  {
+   "id": "gem:saltaire",
+   "city": "Saltaire",
+   "country": "United Kingdom",
+   "file": "Congregational Church - Saltaire - Inside",
+   "reasons": [
+    "narrow"
+   ],
+   "width": 2325,
+   "height": 2000,
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/Congregational_Church_-_Saltaire_-_Inside.jpg/960px-Congregational_Church_-_Saltaire_-_Inside.jpg",
+   "km": 1
+  },
+  {
+   "id": "gem:spitz",
+   "city": "Spitz",
+   "country": "Austria",
+   "file": "Un chien Spitz allemand",
+   "reasons": [
+    "narrow"
+   ],
+   "width": 1336,
+   "height": 1146,
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/Un_chien_Spitz_allemand.jpg/960px-Un_chien_Spitz_allemand.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+   "km": null
+  },
+  {
+   "id": "gem:turenne",
+   "city": "Turenne",
+   "country": "France",
+   "file": "Tomb of Turenne in the Dôme des Invalides",
+   "reasons": [
+    "narrow"
+   ],
+   "width": 2657,
+   "height": 3803,
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/Tomb_of_Turenne_in_the_D%C3%B4me_des_Invalides.jpg/960px-Tomb_of_Turenne_in_the_D%C3%B4me_des_Invalides.jpg",
+   "km": null
+  },
+  {
+   "id": "gem:val-di-funes",
+   "city": "Val di Funes",
+   "country": "Italy",
+   "file": "Villnoess eisacktal",
+   "reasons": [
+    "narrow"
+   ],
+   "width": 1041,
+   "height": 1191,
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Villnoess_eisacktal.jpg/960px-Villnoess_eisacktal.jpg",
+   "km": null
+  },
+  {
+   "id": "gem:vindeln",
+   "city": "Vindeln",
+   "country": "Sweden",
+   "file": "Vindelns kyrka-20080727",
+   "reasons": [
+    "narrow"
+   ],
+   "width": 2500,
+   "height": 2300,
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Vindelns_kyrka-20080727.jpg/960px-Vindelns_kyrka-20080727.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+   "km": null
+  },
+  {
+   "id": "gem:wei-enburg-in-bayern",
+   "city": "Weißenburg in Bayern",
+   "country": "Germany",
+   "file": "GER Weißenburg in Bayern, Altes Rathaus 0010",
+   "reasons": [
+    "narrow"
+   ],
+   "width": 2976,
+   "height": 3597,
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f7/GER_Wei%C3%9Fenburg_in_Bayern%2C_Altes_Rathaus_0010.jpg/960px-GER_Wei%C3%9Fenburg_in_Bayern%2C_Altes_Rathaus_0010.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+   "km": null
+  },
+  {
+   "id": "gem:winchcombe",
+   "city": "Winchcombe",
+   "country": "United Kingdom",
+   "file": "Winchcombecr",
+   "reasons": [
+    "narrow"
+   ],
+   "width": 1585,
+   "height": 1975,
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Winchcombecr.jpg/960px-Winchcombecr.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+   "km": null
+  },
+  {
+   "id": "gem:woodstock",
+   "city": "Woodstock",
+   "country": "United Kingdom",
+   "file": "Woodstock poster",
+   "reasons": [
+    "narrow"
+   ],
+   "width": 5052,
+   "height": 6991,
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/Woodstock_poster.jpg/960px-Woodstock_poster.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+   "km": null
+  },
+  {
+   "id": "gem:zdar",
+   "city": "Žďár",
+   "country": "Czechia",
+   "file": "Věkové složení obyvatelstva ČR 2024",
+   "reasons": [
+    "narrow"
+   ],
+   "width": 1014,
+   "height": 914,
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/V%C4%9Bkov%C3%A9_slo%C5%BEen%C3%AD_obyvatelstva_%C4%8CR_2024.png/960px-V%C4%9Bkov%C3%A9_slo%C5%BEen%C3%AD_obyvatelstva_%C4%8CR_2024.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+   "km": null
+  },
+  {
+   "id": "gem:windsor",
+   "city": "Windsor",
+   "country": "United Kingdom",
+   "file": "Badge of the House of Windsor",
+   "reasons": [
+    "narrow",
+    "svg",
     "tiny"
    ],
-   "width": 174,
-   "height": 228,
-   "url": "https://upload.wikimedia.org/wikipedia/commons/3/3f/Unetice_culture_map.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+   "width": 564,
+   "height": 715,
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/73/Badge_of_the_House_of_Windsor.svg/960px-Badge_of_the_House_of_Windsor.svg.png",
+   "km": null
+  },
+  {
+   "id": "gem:alpujarras-pampaneira",
+   "city": "Alpujarras (Pampaneira)",
+   "country": "Spain",
+   "file": "La Alpujarra",
+   "reasons": [
+    "narrow",
+    "tiny"
+   ],
+   "width": 462,
+   "height": 423,
+   "url": "https://upload.wikimedia.org/wikipedia/commons/f/fe/La_Alpujarra.png",
+   "km": null
+  },
+  {
+   "id": "gem:germoe",
+   "city": "Germoe",
+   "country": "United Kingdom",
+   "file": "St Germoe's Chair - geograph.org.uk - 174294",
+   "reasons": [
+    "narrow",
+    "tiny"
+   ],
+   "width": 480,
+   "height": 640,
+   "url": "https://upload.wikimedia.org/wikipedia/commons/e/e8/St_Germoe%27s_Chair_-_geograph.org.uk_-_174294.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+   "km": 0
+  },
+  {
+   "id": "gem:grazie",
+   "city": "Grazie",
+   "country": "Italy",
+   "file": "en@File:Grazie.album",
+   "reasons": [
+    "narrow",
+    "tiny"
+   ],
+   "width": 300,
+   "height": 300,
+   "url": "https://upload.wikimedia.org/wikipedia/en/d/de/Grazie.album.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+   "km": null
+  },
+  {
+   "id": "gem:hook-head",
+   "city": "Hook Head",
+   "country": "Ireland",
+   "file": "Lighthouse HookHead CtyWexford IRE",
+   "reasons": [
+    "narrow",
+    "tiny"
+   ],
+   "width": 459,
+   "height": 720,
+   "url": "https://upload.wikimedia.org/wikipedia/commons/8/87/Lighthouse_HookHead_CtyWexford_IRE.jpg",
+   "km": null
+  },
+  {
+   "id": "gem:pravia",
+   "city": "Pravia",
+   "country": "Spain",
+   "file": "Ayuntamientopravia",
+   "reasons": [
+    "narrow",
+    "tiny"
+   ],
+   "width": 210,
+   "height": 209,
+   "url": "https://upload.wikimedia.org/wikipedia/commons/2/2d/Ayuntamientopravia.PNG?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
    "km": null
   },
   {
@@ -828,20 +1348,6 @@
    "km": null
   },
   {
-   "id": "gem:windsor",
-   "city": "Windsor",
-   "country": "United Kingdom",
-   "file": "Badge of the House of Windsor",
-   "reasons": [
-    "svg",
-    "tiny"
-   ],
-   "width": 564,
-   "height": 715,
-   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/73/Badge_of_the_House_of_Windsor.svg/960px-Badge_of_the_House_of_Windsor.svg.png",
-   "km": null
-  },
-  {
    "id": "gem:achill-island",
    "city": "Achill Island (Keem Bay)",
    "country": "Ireland",
@@ -855,19 +1361,6 @@
    "km": null
   },
   {
-   "id": "gem:alpujarras-pampaneira",
-   "city": "Alpujarras (Pampaneira)",
-   "country": "Spain",
-   "file": "La Alpujarra",
-   "reasons": [
-    "tiny"
-   ],
-   "width": 462,
-   "height": 423,
-   "url": "https://upload.wikimedia.org/wikipedia/commons/f/fe/La_Alpujarra.png",
-   "km": null
-  },
-  {
    "id": "gem:brienzwiler",
    "city": "Brienzwiler",
    "country": "Switzerland",
@@ -877,7 +1370,7 @@
    ],
    "width": 502,
    "height": 333,
-   "url": "https://upload.wikimedia.org/wikipedia/commons/9/99/Picswiss_BE-91-36_Freilichtmuseum_Ballenberg-.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/9/99/Picswiss_BE-91-36_Freilichtmuseum_Ballenberg-.jpg",
    "km": null
   },
   {
@@ -918,45 +1411,6 @@
    "height": 428,
    "url": "https://upload.wikimedia.org/wikipedia/commons/b/b0/Cwm_Elan_in_autumn_-_geograph.org.uk_-_1043096.jpg",
    "km": 8
-  },
-  {
-   "id": "gem:germoe",
-   "city": "Germoe",
-   "country": "United Kingdom",
-   "file": "St Germoe's Chair - geograph.org.uk - 174294",
-   "reasons": [
-    "tiny"
-   ],
-   "width": 480,
-   "height": 640,
-   "url": "https://upload.wikimedia.org/wikipedia/commons/e/e8/St_Germoe%27s_Chair_-_geograph.org.uk_-_174294.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
-   "km": 0
-  },
-  {
-   "id": "gem:grazie",
-   "city": "Grazie",
-   "country": "Italy",
-   "file": "en@File:Grazie.album",
-   "reasons": [
-    "tiny"
-   ],
-   "width": 300,
-   "height": 300,
-   "url": "https://upload.wikimedia.org/wikipedia/en/d/de/Grazie.album.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
-   "km": null
-  },
-  {
-   "id": "gem:hook-head",
-   "city": "Hook Head",
-   "country": "Ireland",
-   "file": "Lighthouse HookHead CtyWexford IRE",
-   "reasons": [
-    "tiny"
-   ],
-   "width": 459,
-   "height": 720,
-   "url": "https://upload.wikimedia.org/wikipedia/commons/8/87/Lighthouse_HookHead_CtyWexford_IRE.jpg",
-   "km": null
   },
   {
    "id": "gem:kornati",
@@ -1035,19 +1489,6 @@
    "height": 475,
    "url": "https://upload.wikimedia.org/wikipedia/commons/5/5f/Morpeth_Castle_Gatehouse.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
    "km": 1
-  },
-  {
-   "id": "gem:pravia",
-   "city": "Pravia",
-   "country": "Spain",
-   "file": "Ayuntamientopravia",
-   "reasons": [
-    "tiny"
-   ],
-   "width": 210,
-   "height": 209,
-   "url": "https://upload.wikimedia.org/wikipedia/commons/2/2d/Ayuntamientopravia.PNG?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
-   "km": null
   },
   {
    "id": "gem:quin",
@@ -1155,15 +1596,6 @@
    "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Burgas_Cathedral_2018-05-14_08.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original/960px-Burgas_Cathedral_2018-05-14_08.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
    "file": "Burgas Cathedral 2018-05-14 08",
    "score": 8.05
-  },
-  {
-   "id": "gem:burnley",
-   "city": "Burnley",
-   "country": "United Kingdom",
-   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/51/Burnley_Montage.jpg/960px-Burnley_Montage.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
-   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Hammerton_Street_Burnley_2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original/960px-Hammerton_Street_Burnley_2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
-   "file": "Hammerton Street Burnley 2",
-   "score": 6.9
   },
   {
    "id": "gem:eger",
@@ -1290,15 +1722,6 @@
    "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/El_Tapon%2C_Matalasca%C3%B1as_-_panoramio.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original/960px-El_Tapon%2C_Matalasca%C3%B1as_-_panoramio.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
    "file": "El Tapon, Matalascañas - panoramio",
    "score": 8.6
-  },
-  {
-   "id": "gem:miskolc",
-   "city": "Miskolc",
-   "country": "Hungary",
-   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/Miskolc_Montage.jpg/960px-Miskolc_Montage.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
-   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4d/AlmassyMansion_Miskolc_01.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original/960px-AlmassyMansion_Miskolc_01.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
-   "file": "AlmassyMansion Miskolc 01",
-   "score": 7.0
   },
   {
    "id": "MJT",
@@ -1742,15 +2165,6 @@
    "score": 9.0
   },
   {
-   "id": "gem:bueu",
-   "city": "Bueu",
-   "country": "Spain",
-   "from": "https://upload.wikimedia.org/wikipedia/commons/b/b3/Situacion_Bueu.PNG?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
-   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/60/Casa_do_Concello_de_Bueu.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original/960px-Casa_do_Concello_de_Bueu.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
-   "file": "Casa do Concello de Bueu",
-   "score": 8.5
-  },
-  {
    "id": "gem:bukkszentkereszt",
    "city": "Bükkszentkereszt",
    "country": "Hungary",
@@ -1758,15 +2172,6 @@
    "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f0/Temeto%2C_Bukkszentkereszt-01.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original/960px-Temeto%2C_Bukkszentkereszt-01.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
    "file": "Temeto, Bukkszentkereszt-01",
    "score": 11.5
-  },
-  {
-   "id": "gem:cambados",
-   "city": "Cambados",
-   "country": "Spain",
-   "from": "https://upload.wikimedia.org/wikipedia/commons/8/8a/Situacion_Cambados.PNG",
-   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/07/Convento_de_San_Francisco%2C_Cambados%2C_Pontevedra%2C_Espa%C3%B1a%2C_2015-09-23%2C_DD_26.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original/960px-Convento_de_San_Francisco%2C_Cambados%2C_Pontevedra%2C_Espa%C3%B1a%2C_2015-09-23%2C_DD_26.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
-   "file": "Convento de San Francisco, Cambados, Pontevedra, España, 2015-09-23, DD 26",
-   "score": 9.3
   },
   {
    "id": "gem:chios",
@@ -1832,15 +2237,6 @@
    "score": 8.8
   },
   {
-   "id": "gem:o-grove",
-   "city": "O Grove",
-   "country": "Spain",
-   "from": "https://upload.wikimedia.org/wikipedia/commons/7/75/Situacion_O_Grove.PNG?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
-   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/O_Grove_Concello_01-02.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original/960px-O_Grove_Concello_01-02.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
-   "file": "O Grove Concello 01-02",
-   "score": 10.5
-  },
-  {
    "id": "gem:ponza",
    "city": "Ponza",
    "country": "Italy",
@@ -1866,15 +2262,6 @@
    "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/AlleeR%C3%BCgen1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original/960px-AlleeR%C3%BCgen1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
    "file": "AlleeRügen1",
    "score": 7.65
-  },
-  {
-   "id": "gem:samaria-gorge",
-   "city": "Samaria Gorge",
-   "country": "Greece",
-   "from": "https://upload.wikimedia.org/wikipedia/commons/9/9c/Landkarte_Westkreta.jpg",
-   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d5/Samaria2r.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original/960px-Samaria2r.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
-   "file": "Samaria2r",
-   "score": 8.0
   },
   {
    "id": "gem:samso",
@@ -1983,15 +2370,6 @@
    "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/da/Hadrian%27s_Wall_Vallum_-_2007-05-19.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original/960px-Hadrian%27s_Wall_Vallum_-_2007-05-19.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
    "file": "Hadrian's Wall Vallum - 2007-05-19",
    "score": 7.5
-  },
-  {
-   "id": "gem:langemark",
-   "city": "Langemark",
-   "country": "Belgium",
-   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/LangemarkLocation.svg/960px-LangemarkLocation.svg.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
-   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/LangemarkChurch.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original/960px-LangemarkChurch.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
-   "file": "LangemarkChurch",
-   "score": 9.0
   },
   {
    "id": "gem:mitte",
@@ -2120,15 +2498,6 @@
    "score": 8.1
   },
   {
-   "id": "gem:mechernich",
-   "city": "Mechernich",
-   "country": "Germany",
-   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/db/Mechernich_in_EU.svg/960px-Mechernich_in_EU.svg.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
-   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/Mechernich-Vussem_Aqu%C3%A4duktbr%C3%BCcke.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original/960px-Mechernich-Vussem_Aqu%C3%A4duktbr%C3%BCcke.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
-   "file": "Mechernich-Vussem Aquäduktbrücke",
-   "score": 6.95
-  },
-  {
    "id": "gem:meersburg",
    "city": "Meersburg",
    "country": "Germany",
@@ -2136,15 +2505,6 @@
    "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f8/Bodensee%2C_Meersburg%2C_reger_Schiffsverkehr_und_die_Nagelfluhkette_im_Allg%C3%A4u.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original/960px-Bodensee%2C_Meersburg%2C_reger_Schiffsverkehr_und_die_Nagelfluhkette_im_Allg%C3%A4u.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
    "file": "Bodensee, Meersburg, reger Schiffsverkehr und die Nagelfluhkette im Allgäu",
    "score": 8.45
-  },
-  {
-   "id": "gem:ravensburg",
-   "city": "Ravensburg",
-   "country": "Germany",
-   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Ravensburg_in_RV.svg/960px-Ravensburg_in_RV.svg.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
-   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/Ravensburg_Blaserturm_Waaghaus_Rathaus.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original/960px-Ravensburg_Blaserturm_Waaghaus_Rathaus.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
-   "file": "Ravensburg Blaserturm Waaghaus Rathaus",
-   "score": 6.0
   },
   {
    "id": "gem:san-vicente-de-la-barquera",
@@ -2190,15 +2550,6 @@
    "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d9/Castelo_Vila_Vicosa1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original/960px-Castelo_Vila_Vicosa1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
    "file": "Castelo Vila Vicosa1",
    "score": 8.0
-  },
-  {
-   "id": "gem:winsum",
-   "city": "Winsum",
-   "country": "Netherlands",
-   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Map_-_NL_-_Municipality_code_0053_%282009%29.svg/960px-Map_-_NL_-_Municipality_code_0053_%282009%29.svg.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
-   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/Overzicht_linker_zijgevel_-_Winsum_-_20364317_-_RCE.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original/960px-Overzicht_linker_zijgevel_-_Winsum_-_20364317_-_RCE.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
-   "file": "Overzicht linker zijgevel - Winsum - 20364317 - RCE",
-   "score": 8.25
   },
   {
    "id": "gem:almere-stad",
@@ -2669,15 +3020,6 @@
    "score": 8.1
   },
   {
-   "id": "gem:almagro",
-   "city": "Almagro",
-   "country": "Spain",
-   "from": "https://upload.wikimedia.org/wikipedia/commons/7/70/Diego_de_Almagro.JPG?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
-   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Estatua_de_Diego_de_Almagro_en_Almagro_%28Espa%C3%B1a%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original/960px-Estatua_de_Diego_de_Almagro_en_Almagro_%28Espa%C3%B1a%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
-   "file": "Estatua de Diego de Almagro en Almagro (España)",
-   "score": 5.5
-  },
-  {
    "id": "gem:alpbach",
    "city": "Alpbach",
    "country": "Austria",
@@ -2777,24 +3119,6 @@
    "score": 8.0
   },
   {
-   "id": "gem:bridgwater",
-   "city": "Bridgwater",
-   "country": "United Kingdom",
-   "from": "https://upload.wikimedia.org/wikipedia/commons/2/24/Bridgwater_cornexchange_staute_and_church.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
-   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/63/An_angel_appears_%28geograph_3719583%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original/960px-An_angel_appears_%28geograph_3719583%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
-   "file": "An angel appears (geograph 3719583)",
-   "score": 5.5
-  },
-  {
-   "id": "gem:burriana",
-   "city": "Burriana",
-   "country": "Spain",
-   "from": "https://upload.wikimedia.org/wikipedia/commons/f/f3/Borrianadesdelaire.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
-   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Campanar_de_borriana.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original/960px-Campanar_de_borriana.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
-   "file": "Campanar de borriana",
-   "score": 6.5
-  },
-  {
    "id": "gem:cadiz",
    "city": "Cadiz",
    "country": "Spain",
@@ -2820,24 +3144,6 @@
    "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/63/BibCallantsoog.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original/960px-BibCallantsoog.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
    "file": "BibCallantsoog",
    "score": 9.65
-  },
-  {
-   "id": "CWL",
-   "city": "Cardiff",
-   "country": "United Kingdom",
-   "from": "https://upload.wikimedia.org/wikipedia/commons/1/1f/Cardiff_Bay_WMC.jpg",
-   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b0/71_Bridge_Street_%281%29%2C_Cardiff_city_centre.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original/960px-71_Bridge_Street_%281%29%2C_Cardiff_city_centre.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
-   "file": "71 Bridge Street (1), Cardiff city centre",
-   "score": 8.65
-  },
-  {
-   "id": "gem:cesena",
-   "city": "Cesena",
-   "country": "Italy",
-   "from": "https://upload.wikimedia.org/wikipedia/commons/8/8b/Panorama_di_Cesena_e_le_sue_colline.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
-   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d8/Cesena_-_Comune_di_Cesena_-_Centro_Storico_%282%29_-_2023-09-21_22-59-57_001.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original/960px-Cesena_-_Comune_di_Cesena_-_Centro_Storico_%282%29_-_2023-09-21_22-59-57_001.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
-   "file": "Cesena - Comune di Cesena - Centro Storico (2) - 2023-09-21 22-59-57 001",
-   "score": 11.5
   },
   {
    "id": "gem:chepstow",
@@ -3110,15 +3416,6 @@
    "score": 13.0
   },
   {
-   "id": "gem:great-malvern",
-   "city": "Great Malvern",
-   "country": "United Kingdom",
-   "from": "https://upload.wikimedia.org/wikipedia/commons/e/e1/The_top_of_Church_Street._-_geograph.org.uk_-_56973.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
-   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/84/GreatMalvern_Glass4.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original/960px-GreatMalvern_Glass4.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
-   "file": "GreatMalvern Glass4",
-   "score": 5.65
-  },
-  {
    "id": "gem:guerande",
    "city": "Guérande",
    "country": "France",
@@ -3153,15 +3450,6 @@
    "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Henley-on-Thames_%2C_Bridge_-_geograph.org.uk_-_4084214.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original/960px-Henley-on-Thames_%2C_Bridge_-_geograph.org.uk_-_4084214.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
    "file": "Henley-on-Thames , Bridge - geograph.org.uk - 4084214",
    "score": 9.1
-  },
-  {
-   "id": "gem:hossegor",
-   "city": "Hossegor",
-   "country": "France",
-   "from": "https://upload.wikimedia.org/wikipedia/commons/7/77/Hossegor_June_2006.jpg",
-   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/PlageHossegore.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original/960px-PlageHossegore.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
-   "file": "PlageHossegore",
-   "score": 10.5
   },
   {
    "id": "gem:huskvarna",
@@ -3209,15 +3497,6 @@
    "score": 6.0
   },
   {
-   "id": "gem:kezmarok",
-   "city": "Kežmarok",
-   "country": "Slovakia",
-   "from": "https://upload.wikimedia.org/wikipedia/commons/0/0e/Kezmarok11.jpg",
-   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Basilica_of_the_Exaltation_of_the_Holy_Cross%2C_Ke%C5%BEmarok1.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original/960px-Basilica_of_the_Exaltation_of_the_Holy_Cross%2C_Ke%C5%BEmarok1.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
-   "file": "Basilica of the Exaltation of the Holy Cross, Kežmarok1",
-   "score": 8.0
-  },
-  {
    "id": "gem:kilsyth",
    "city": "Kilsyth",
    "country": "United Kingdom",
@@ -3227,15 +3506,6 @@
    "score": 7.95
   },
   {
-   "id": "gem:kingston-upon-thames",
-   "city": "Kingston upon Thames",
-   "country": "United Kingdom",
-   "from": "https://upload.wikimedia.org/wikipedia/commons/f/f1/Kingston_Market_Square.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
-   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7d/Church_Street%2C_Kingston-upon-Thames.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original/960px-Church_Street%2C_Kingston-upon-Thames.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
-   "file": "Church Street, Kingston-upon-Thames",
-   "score": 8.3
-  },
-  {
    "id": "gem:kortrijk",
    "city": "Kortrijk",
    "country": "Belgium",
@@ -3243,15 +3513,6 @@
    "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/Broeltorens%2C_Kortrijk_%28DSCF9278%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original/960px-Broeltorens%2C_Kortrijk_%28DSCF9278%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
    "file": "Broeltorens, Kortrijk (DSCF9278)",
    "score": 12.5
-  },
-  {
-   "id": "gem:kremnica",
-   "city": "Kremnica",
-   "country": "Slovakia",
-   "from": "https://upload.wikimedia.org/wikipedia/commons/1/10/Kremnica_v_zime.jpg",
-   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f5/K%C3%B6rm%C3%B6cb%C3%A1nya-view2.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original/960px-K%C3%B6rm%C3%B6cb%C3%A1nya-view2.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
-   "file": "Körmöcbánya-view2",
-   "score": 10.5
   },
   {
    "id": "gem:lake-cerknica",
@@ -3272,15 +3533,6 @@
    "score": 12.0
   },
   {
-   "id": "gem:le-locle",
-   "city": "Le Locle",
-   "country": "Switzerland",
-   "from": "https://upload.wikimedia.org/wikipedia/commons/e/e2/Le_Locle_Kath_Kirche.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
-   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c6/2003-Le-Locle-Kath-Kirche.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original/960px-2003-Le-Locle-Kath-Kirche.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
-   "file": "2003-Le-Locle-Kath-Kirche",
-   "score": 9.0
-  },
-  {
    "id": "gem:ledbury",
    "city": "Ledbury",
    "country": "United Kingdom",
@@ -3288,15 +3540,6 @@
    "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/51/Ledbury_Market_House_%283610782139%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original/960px-Ledbury_Market_House_%283610782139%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
    "file": "Ledbury Market House (3610782139)",
    "score": 6.6
-  },
-  {
-   "id": "gem:lefkara",
-   "city": "Lefkara",
-   "country": "Cyprus",
-   "from": "https://upload.wikimedia.org/wikipedia/commons/9/9e/Lefkaritiko.jpg",
-   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/27/LefkaraLace_closeup.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original/960px-LefkaraLace_closeup.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
-   "file": "LefkaraLace closeup",
-   "score": 5.55
   },
   {
    "id": "gem:lillafured",
@@ -3315,15 +3558,6 @@
    "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8f/LogarskaDolina.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original/960px-LogarskaDolina.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
    "file": "LogarskaDolina",
    "score": 10.0
-  },
-  {
-   "id": "gem:loudun",
-   "city": "Loudun",
-   "country": "France",
-   "from": "https://upload.wikimedia.org/wikipedia/commons/9/9e/Loudun_Porte_Martray.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
-   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/La_tour_carr%C3%A9e_%28Loudun%2C_86%29_-_07.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original/960px-La_tour_carr%C3%A9e_%28Loudun%2C_86%29_-_07.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
-   "file": "La tour carrée (Loudun, 86) - 07",
-   "score": 10.5
   },
   {
    "id": "LDE",
@@ -3515,15 +3749,6 @@
    "score": 12.0
   },
   {
-   "id": "gem:palmanova",
-   "city": "Palmanova",
-   "country": "Italy",
-   "from": "https://upload.wikimedia.org/wikipedia/commons/0/06/Cinta_muraria_di_Palmanova.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
-   "to": "https://upload.wikimedia.org/wikipedia/it/c/c5/Palmanova_aerea.jpg?utm_source=it.wikipedia.org&utm_campaign=imageinfo&utm_content=original",
-   "file": "Palmanova aerea",
-   "score": 9.0
-  },
-  {
    "id": "gem:pic-du-midi",
    "city": "Pic du Midi de Bigorre",
    "country": "France",
@@ -3576,15 +3801,6 @@
    "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1d/Poitiers_panorama_01.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original/960px-Poitiers_panorama_01.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
    "file": "Poitiers panorama 01",
    "score": 12.5
-  },
-  {
-   "id": "gem:porto-ercole",
-   "city": "Porto Ercole",
-   "country": "Italy",
-   "from": "https://upload.wikimedia.org/wikipedia/commons/2/2d/Panorama_Porto_Ercole.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
-   "to": "https://upload.wikimedia.org/wikipedia/it/4/43/Porto_Ercole_e_Cala_Galera.jpg?utm_source=it.wikipedia.org&utm_campaign=imageinfo&utm_content=original",
-   "file": "Porto Ercole e Cala Galera",
-   "score": 10.5
   },
   {
    "id": "gem:portrush",
@@ -3648,15 +3864,6 @@
    "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/60/Gr%C3%A5tt_trehus_i_Ris%C3%B8r.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original/960px-Gr%C3%A5tt_trehus_i_Ris%C3%B8r.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
    "file": "Grått trehus i Risør",
    "score": 7.5
-  },
-  {
-   "id": "gem:saltaire",
-   "city": "Saltaire",
-   "country": "United Kingdom",
-   "from": "https://upload.wikimedia.org/wikipedia/commons/b/b5/Saltaire_Salts_Mill_1.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
-   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/Congregational_Church_-_Saltaire_-_Inside.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original/960px-Congregational_Church_-_Saltaire_-_Inside.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
-   "file": "Congregational Church - Saltaire - Inside",
-   "score": 8.8
   },
   {
    "id": "gem:sandwood-bay",
@@ -3756,15 +3963,6 @@
    "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Bar_at_Marine_Hotel%2C_Stonehaven.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original/960px-Bar_at_Marine_Hotel%2C_Stonehaven.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
    "file": "Bar at Marine Hotel, Stonehaven",
    "score": 9.65
-  },
-  {
-   "id": "gem:stony-stratford",
-   "city": "Stony Stratford",
-   "country": "United Kingdom",
-   "from": "https://upload.wikimedia.org/wikipedia/commons/4/43/Market_Place_-_geograph.org.uk_-_569863.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
-   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bb/Stony_Stratford_Church.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original/960px-Stony_Stratford_Church.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
-   "file": "Stony Stratford Church",
-   "score": 8.9
   },
   {
    "id": "gem:strumica",
@@ -3875,15 +4073,6 @@
    "score": 13.5
   },
   {
-   "id": "gem:treviso",
-   "city": "Treviso",
-   "country": "Italy",
-   "from": "https://upload.wikimedia.org/wikipedia/commons/2/2b/Treviso_views.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
-   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a1/Piazza_dei_Signori_e_Palazzo_dei_Trecento.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original/960px-Piazza_dei_Signori_e_Palazzo_dei_Trecento.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
-   "file": "Piazza dei Signori e Palazzo dei Trecento",
-   "score": 10.5
-  },
-  {
    "id": "VLL",
    "city": "Valladolid",
    "country": "Spain",
@@ -3927,24 +4116,6 @@
    "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6a/1682Sankt_Petri_kyrka_V%C3%A4stervik.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original/960px-1682Sankt_Petri_kyrka_V%C3%A4stervik.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
    "file": "1682Sankt Petri kyrka Västervik",
    "score": 12.0
-  },
-  {
-   "id": "gem:waterford",
-   "city": "Waterford",
-   "country": "Ireland",
-   "from": "https://upload.wikimedia.org/wikipedia/commons/b/be/Waterford_collage2.jpg",
-   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/Christ_Church_Cathedral%2C_Waterford%2C_2021-06-01.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original/960px-Christ_Church_Cathedral%2C_Waterford%2C_2021-06-01.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
-   "file": "Christ Church Cathedral, Waterford, 2021-06-01",
-   "score": 9.15
-  },
-  {
-   "id": "gem:wells-somerset",
-   "city": "Wells",
-   "country": "United Kingdom",
-   "from": "https://commons.wikimedia.org/wiki/Special:FilePath/Aerial_view_of_Wells.jpg?width=960",
-   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/02/A_Lidar_View_of_the_City_of_Wells.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original/960px-A_Lidar_View_of_the_City_of_Wells.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
-   "file": "A Lidar View of the City of Wells",
-   "score": 8.1
   },
   {
    "id": "gem:winterberg",
@@ -4226,15 +4397,6 @@
    "score": 11.5
   },
   {
-   "id": "gem:crest",
-   "city": "Crest",
-   "country": "France",
-   "from": null,
-   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/La_tour_de_Crest%2C_propri%C3%A9t%C3%A9_de_la_famille_Chabri%C3%A8res%2C_photo_prise_de_l%27h%C3%B4pital-hospice_%2834331852930%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original/960px-La_tour_de_Crest%2C_propri%C3%A9t%C3%A9_de_la_famille_Chabri%C3%A8res%2C_photo_prise_de_l%27h%C3%B4pital-hospice_%2834331852930%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
-   "file": "La tour de Crest, propriété de la famille Chabrières, photo prise de l'hôpital-hospice (34331852930)",
-   "score": 6.5
-  },
-  {
    "id": "gem:dubravice",
    "city": "Dubravice",
    "country": "Croatia",
@@ -4287,15 +4449,6 @@
    "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Church_and_street%2C_Corofin_-_geograph.org.uk_-_5919090.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original/960px-Church_and_street%2C_Corofin_-_geograph.org.uk_-_5919090.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
    "file": "Church and street, Corofin - geograph.org.uk - 5919090",
    "score": 8.0
-  },
-  {
-   "id": "gem:hajduszoboszlo",
-   "city": "Hajdúszoboszló",
-   "country": "Hungary",
-   "from": null,
-   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Hajd%C3%BAszoboszl%C3%B3%2C_reform%C3%A1tus_templom_2022_01.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original/960px-Hajd%C3%BAszoboszl%C3%B3%2C_reform%C3%A1tus_templom_2022_01.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
-   "file": "Hajdúszoboszló, református templom 2022 01",
-   "score": 10.5
   },
   {
    "id": "gem:luanco",
@@ -4413,15 +4566,6 @@
    "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0d/Lacco_Ameno_Ischia.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original/960px-Lacco_Ameno_Ischia.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
    "file": "Lacco Ameno Ischia",
    "score": 7.0
-  },
-  {
-   "id": "gem:nykoping",
-   "city": "Nyköping",
-   "country": "Sweden",
-   "from": "https://upload.wikimedia.org/wikipedia/commons/2/2e/Nykoping.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
-   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/ce/Brandholmen_Nyk%C3%B6ping.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original/960px-Brandholmen_Nyk%C3%B6ping.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
-   "file": "Brandholmen Nyköping",
-   "score": 8.65
   },
   {
    "id": "gem:oberammergau",
@@ -4568,15 +4712,6 @@
    "score": 10.5
   },
   {
-   "id": "gem:garmen",
-   "city": "Garmen",
-   "country": "Bulgaria",
-   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/Saint_George_churche%2C_Gurmen_E4.jpg/960px-Saint_George_churche%2C_Gurmen_E4.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
-   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/82/Garmen_E2.jpg/960px-Garmen_E2.jpg",
-   "file": "Garmen E2",
-   "score": 10.0
-  },
-  {
    "id": "GDN",
    "city": "Gdansk",
    "country": "Poland",
@@ -4694,15 +4829,6 @@
    "score": 14.0
   },
   {
-   "id": "gem:oswestry",
-   "city": "Oswestry",
-   "country": "United Kingdom",
-   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Llwyd_Mansion_1604_Oswestry_%288689969578%29.jpg/960px-Llwyd_Mansion_1604_Oswestry_%288689969578%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
-   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/01/Christ_Church%2C_Oswestry.jpg/960px-Christ_Church%2C_Oswestry.jpg",
-   "file": "Christ Church, Oswestry",
-   "score": 11.3
-  },
-  {
    "id": "gem:randers",
    "city": "Randers",
    "country": "Denmark",
@@ -4782,15 +4908,6 @@
    "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Exhibition_area_at_The_Gobbins_Visitor_Centre.JPG/960px-Exhibition_area_at_The_Gobbins_Visitor_Centre.JPG",
    "file": "Exhibition area at The Gobbins Visitor Centre",
    "score": 9.25
-  },
-  {
-   "id": "gem:turenne",
-   "city": "Turenne",
-   "country": "France",
-   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/Henri_de_la_Tour_d%27Auvergne%2C_Vicomte_de_Turenne_by_Circle_of_Philippe_de_Champaigne.jpg/960px-Henri_de_la_Tour_d%27Auvergne%2C_Vicomte_de_Turenne_by_Circle_of_Philippe_de_Champaigne.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
-   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/Tomb_of_Turenne_in_the_D%C3%B4me_des_Invalides.jpg/960px-Tomb_of_Turenne_in_the_D%C3%B4me_des_Invalides.jpg",
-   "file": "Tomb of Turenne in the Dôme des Invalides",
-   "score": 5.5
   },
   {
    "id": "gem:vlieland",
@@ -5117,24 +5234,6 @@
    "score": 7.0
   },
   {
-   "id": "gem:hoek",
-   "city": "Hoek",
-   "country": "Netherlands",
-   "from": null,
-   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/20080801_Church_Anjum_NL.jpg/960px-20080801_Church_Anjum_NL.jpg",
-   "file": "20080801 Church Anjum NL",
-   "score": 7.0
-  },
-  {
-   "id": "gem:fulwood",
-   "city": "Fulwood",
-   "country": "United Kingdom",
-   "from": null,
-   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/View_across_the_fields_to_Castle_Dyke_Lodge_-_geograph.org.uk_-_5763069.jpg/960px-View_across_the_fields_to_Castle_Dyke_Lodge_-_geograph.org.uk_-_5763069.jpg",
-   "file": "View across the fields to Castle Dyke Lodge - geograph.org.uk - 5763069",
-   "score": 7.0
-  },
-  {
    "id": "gem:ligourion",
    "city": "Ligourión",
    "country": "Greece",
@@ -5340,6 +5439,1959 @@
    "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Aerial_View_of_Appenzell_14.02.2008_14-45-40.JPG/960px-Aerial_View_of_Appenzell_14.02.2008_14-45-40.JPG",
    "file": "Aerial View of Appenzell 14.02.2008 14-45-40",
    "score": 15.5
+  },
+  {
+   "id": "gem:aalen",
+   "city": "Aalen",
+   "country": "Germany",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/Aalen_Joseph.jpg/960px-Aalen_Joseph.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Aalen_im_K%C3%A4lblesrain_-_panoramio.jpg/960px-Aalen_im_K%C3%A4lblesrain_-_panoramio.jpg",
+   "file": "Aalen im Kälblesrain - panoramio",
+   "score": 12.5
+  },
+  {
+   "id": "gem:airolo",
+   "city": "Airolo",
+   "country": "Switzerland",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Airlonia2.jpg/960px-Airlonia2.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f1/Blick_auf_Airolo_im_Ticino.jpg/960px-Blick_auf_Airolo_im_Ticino.jpg",
+   "file": "Blick auf Airolo im Ticino",
+   "score": 13.5
+  },
+  {
+   "id": "gem:alfeld",
+   "city": "Alfeld",
+   "country": "Germany",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/Alfeld_Rathaus_1_2005.jpg/960px-Alfeld_Rathaus_1_2005.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/Alfeld_Marktstrasse_1_2005.jpg/960px-Alfeld_Marktstrasse_1_2005.jpg",
+   "file": "Alfeld Marktstrasse 1 2005",
+   "score": 7.8
+  },
+  {
+   "id": "gem:almagro",
+   "city": "Almagro",
+   "country": "Spain",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Estatua_de_Diego_de_Almagro_en_Almagro_%28Espa%C3%B1a%29.jpg/960px-Estatua_de_Diego_de_Almagro_en_Almagro_%28Espa%C3%B1a%29.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ae/Vista_general_de_una_parte_de_la_Plaza_Mayor_de_Almagro_-_panoramio.jpg/960px-Vista_general_de_una_parte_de_la_Plaza_Mayor_de_Almagro_-_panoramio.jpg",
+   "file": "Vista general de una parte de la Plaza Mayor de Almagro - panoramio",
+   "score": 13.0
+  },
+  {
+   "id": "gem:almelo",
+   "city": "Almelo",
+   "country": "Netherlands",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Koornmarkt_Almelo.JPG/960px-Koornmarkt_Almelo.JPG",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Almelo%2C_sculptuur_van_een_vogel_bij_het_Marktplein_IMG_5768_2020-05-31_13.14.jpg/960px-Almelo%2C_sculptuur_van_een_vogel_bij_het_Marktplein_IMG_5768_2020-05-31_13.14.jpg",
+   "file": "Almelo, sculptuur van een vogel bij het Marktplein IMG 5768 2020-05-31 13.14",
+   "score": 13.6
+  },
+  {
+   "id": "gem:apuseni-scarisoara",
+   "city": "Apuseni (Scarisoara Ice Cave)",
+   "country": "Romania",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Trascaucasa.jpg/960px-Trascaucasa.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a3/Arieseni_27.jpg/960px-Arieseni_27.jpg",
+   "file": "Arieseni 27",
+   "score": 8.8
+  },
+  {
+   "id": "gem:aquileia",
+   "city": "Aquileia",
+   "country": "Italy",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/21/Basilica_Patriarcale_%28Aquileia%29_-_Exterior.jpg/960px-Basilica_Patriarcale_%28Aquileia%29_-_Exterior.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Basilica_Aquileia_1.JPG/960px-Basilica_Aquileia_1.JPG",
+   "file": "Basilica Aquileia 1",
+   "score": 10.5
+  },
+  {
+   "id": "gem:astorga",
+   "city": "Astorga",
+   "country": "Spain",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/Astorga_Cathedral_Fa%C3%A7ade.jpg/960px-Astorga_Cathedral_Fa%C3%A7ade.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/Astorga_64_by-dpc.jpg/960px-Astorga_64_by-dpc.jpg",
+   "file": "Astorga 64 by-dpc",
+   "score": 14.0
+  },
+  {
+   "id": "gem:auvillar",
+   "city": "Auvillar",
+   "country": "France",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/France_-_Auvillar_-_Porte_de_l%27horloge_-_2006-01-15.JPG/960px-France_-_Auvillar_-_Porte_de_l%27horloge_-_2006-01-15.JPG",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/Auvillar_center.JPG/960px-Auvillar_center.JPG",
+   "file": "Auvillar center",
+   "score": 7.0
+  },
+  {
+   "id": "gem:avallon",
+   "city": "Avallon",
+   "country": "France",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/be/Avallon-Tour_de_l%27Horloge_depuis_la_place_de_la_Coll%C3%A9giale_Saint-Lazare.jpg/960px-Avallon-Tour_de_l%27Horloge_depuis_la_place_de_la_Coll%C3%A9giale_Saint-Lazare.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Avallon_010.jpg/960px-Avallon_010.jpg",
+   "file": "Avallon 010",
+   "score": 8.15
+  },
+  {
+   "id": "gem:aveiro",
+   "city": "Aveiro",
+   "country": "Portugal",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Canal_Central_de_Aveiro_em_Setembro_2025_-_Foto_07.jpg/960px-Canal_Central_de_Aveiro_em_Setembro_2025_-_Foto_07.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a1/Ilha_Dos_Puxadoiros_%2847261194681%29_%28cropped%29.jpg/960px-Ilha_Dos_Puxadoiros_%2847261194681%29_%28cropped%29.jpg",
+   "file": "Ilha Dos Puxadoiros (47261194681) (cropped)",
+   "score": 13.5
+  },
+  {
+   "id": "gem:avernes",
+   "city": "Avernes",
+   "country": "France",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/21/Avernes_et_l%27Aubette_de_Meulan.JPG/960px-Avernes_et_l%27Aubette_de_Meulan.JPG",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d9/Avernes_%2895%29%2C_mairie%2C_Grande_rue.jpg/960px-Avernes_%2895%29%2C_mairie%2C_Grande_rue.jpg",
+   "file": "Avernes (95), mairie, Grande rue",
+   "score": 14.0
+  },
+  {
+   "id": "gem:aylesbury",
+   "city": "Aylesbury",
+   "country": "United Kingdom",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/79/Buckinghamshire_County_Hall%2C_Aylesbury.jpg/960px-Buckinghamshire_County_Hall%2C_Aylesbury.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Aylesbury_Sewage_Works_-_geograph.org.uk_-_3558984.jpg/960px-Aylesbury_Sewage_Works_-_geograph.org.uk_-_3558984.jpg",
+   "file": "Aylesbury Sewage Works - geograph.org.uk - 3558984",
+   "score": 12.5
+  },
+  {
+   "id": "BCM",
+   "city": "Bacau",
+   "country": "Romania",
+   "from": "https://upload.wikimedia.org/wikipedia/en/thumb/c/c6/Catedrala_Bacau.jpg/960px-Catedrala_Bacau.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/ro/b/b3/Catedrala_Bacau_%288370387867%29.jpg",
+   "file": "Catedrala Bacau (8370387867)",
+   "score": 15.0
+  },
+  {
+   "id": "gem:bad-durkheim",
+   "city": "Bad Dürkheim",
+   "country": "Germany",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f8/Gasse_Bad_Duerkheim.jpg/960px-Gasse_Bad_Duerkheim.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/19/Ausblick_Riesenrad_Wurstmarkt_Bad_Durkheim15092018_1.png/960px-Ausblick_Riesenrad_Wurstmarkt_Bad_Durkheim15092018_1.png",
+   "file": "Ausblick Riesenrad Wurstmarkt Bad Durkheim15092018 1",
+   "score": 13.5
+  },
+  {
+   "id": "gem:bad-ems",
+   "city": "Bad Ems",
+   "country": "Germany",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/Buildings_in_Bad_Ems%2C_Germany.jpg/960px-Buildings_in_Bad_Ems%2C_Germany.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fe/Bad_Ems%2C_Germany_-_Panorama_narrow.jpg/960px-Bad_Ems%2C_Germany_-_Panorama_narrow.jpg",
+   "file": "Bad Ems, Germany - Panorama narrow",
+   "score": 16.5
+  },
+  {
+   "id": "gem:bad-langensalza",
+   "city": "Bad Langensalza",
+   "country": "Germany",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/81/Altstadt_Bad_Langensalza2.JPG/960px-Altstadt_Bad_Langensalza2.JPG",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Friederikenschl%C3%B6sschen_Bad_Langensalza.JPG/960px-Friederikenschl%C3%B6sschen_Bad_Langensalza.JPG",
+   "file": "Friederikenschlösschen Bad Langensalza",
+   "score": 8.5
+  },
+  {
+   "id": "gem:bad-reichenhall",
+   "city": "Bad Reichenhall",
+   "country": "Germany",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/REI_Rathausplatz-1_07.jpg/960px-REI_Rathausplatz-1_07.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/32/REI_Alte_Saline_01.jpg/960px-REI_Alte_Saline_01.jpg",
+   "file": "REI Alte Saline 01",
+   "score": 7.0
+  },
+  {
+   "id": "gem:bad-salzuflen",
+   "city": "Bad Salzuflen",
+   "country": "Germany",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/71/Salzuflen_Lange_Str.jpg/960px-Salzuflen_Lange_Str.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/BadSalzuflen_TrasseB_2008-05-24_P7121.JPG/960px-BadSalzuflen_TrasseB_2008-05-24_P7121.JPG",
+   "file": "BadSalzuflen TrasseB 2008-05-24 P7121",
+   "score": 13.5
+  },
+  {
+   "id": "gem:bad-schandau",
+   "city": "Bad Schandau",
+   "country": "Germany",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/af/Bad_schandau.jpg/960px-Bad_schandau.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/Bad_Schandau_-_HDR_Panorama_-_panoramio.jpg/960px-Bad_Schandau_-_HDR_Panorama_-_panoramio.jpg",
+   "file": "Bad Schandau - HDR Panorama - panoramio",
+   "score": 16.5
+  },
+  {
+   "id": "gem:balatonlelle",
+   "city": "Balatonlelle",
+   "country": "Hungary",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Balatonlelle%2C_Kishegy%2C_Szt._Don%C3%A1t_k%C3%A1plona_2.JPG/960px-Balatonlelle%2C_Kishegy%2C_Szt._Don%C3%A1t_k%C3%A1plona_2.JPG",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/View_toward_Z%C3%A1nka%2C_2018_Balatonlelle.jpg/960px-View_toward_Z%C3%A1nka%2C_2018_Balatonlelle.jpg",
+   "file": "View toward Zánka, 2018 Balatonlelle",
+   "score": 16.5
+  },
+  {
+   "id": "gem:barth",
+   "city": "Barth",
+   "country": "Germany",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/Barth_%28MV%29_-_Marktplatz_%26_Marienkirche_%282022%29.jpg/960px-Barth_%28MV%29_-_Marktplatz_%26_Marienkirche_%282022%29.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/Klosterbarth.jpg/960px-Klosterbarth.jpg",
+   "file": "Klosterbarth",
+   "score": 8.55
+  },
+  {
+   "id": "gem:bath",
+   "city": "Bath",
+   "country": "United Kingdom",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/Roman_Baths_in_Bath_Spa%2C_England_-_July_2006.jpg/960px-Roman_Baths_in_Bath_Spa%2C_England_-_July_2006.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Pulteney_Bridge%2C_Bath_-_panoramio_%281%29.jpg/960px-Pulteney_Bridge%2C_Bath_-_panoramio_%281%29.jpg",
+   "file": "Pulteney Bridge, Bath - panoramio (1)",
+   "score": 15.0
+  },
+  {
+   "id": "gem:blackpool",
+   "city": "Blackpool",
+   "country": "United Kingdom",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Blackpool_tower_and_illuminations.jpg/960px-Blackpool_tower_and_illuminations.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Blackpool%2C_The_Beach_-_geograph.org.uk_-_1991287.jpg/960px-Blackpool%2C_The_Beach_-_geograph.org.uk_-_1991287.jpg",
+   "file": "Blackpool, The Beach - geograph.org.uk - 1991287",
+   "score": 11.65
+  },
+  {
+   "id": "BOO",
+   "city": "Bodø",
+   "country": "Norway",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/62/Bod%C3%B8_Town_Hall%2C_South_view_20150608_1.jpg/960px-Bod%C3%B8_Town_Hall%2C_South_view_20150608_1.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/98/Panoramic_of_Bod%C3%B8_01.jpg/960px-Panoramic_of_Bod%C3%B8_01.jpg",
+   "file": "Panoramic of Bodø 01",
+   "score": 14.5
+  },
+  {
+   "id": "gem:borsh",
+   "city": "Borsh",
+   "country": "Albania",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Borsh_Albania_Burg.JPG/960px-Borsh_Albania_Burg.JPG",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/Albanian_Riviera.jpg/960px-Albanian_Riviera.jpg",
+   "file": "Albanian Riviera",
+   "score": 6.15
+  },
+  {
+   "id": "gem:brasov",
+   "city": "Brașov & Bran",
+   "country": "Romania",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Bran_Roumanie.jpg/960px-Bran_Roumanie.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c9/Bran_seen_from_Bran_Castle.jpg/960px-Bran_seen_from_Bran_Castle.jpg",
+   "file": "Bran seen from Bran Castle",
+   "score": 8.75
+  },
+  {
+   "id": "gem:briancon",
+   "city": "Briançon",
+   "country": "France",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Coll%C3%A9giale_Notre-Dame-et-Saint-Nicolas_de_Brian%C3%A7on.jpg/960px-Coll%C3%A9giale_Notre-Dame-et-Saint-Nicolas_de_Brian%C3%A7on.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/96/Brian%C3%A7on_depuis_la_citadelle_c%C3%B4t%C3%A9_Lautaret_%28septembre_2024%29.JPG/960px-Brian%C3%A7on_depuis_la_citadelle_c%C3%B4t%C3%A9_Lautaret_%28septembre_2024%29.JPG",
+   "file": "Briançon depuis la citadelle côté Lautaret (septembre 2024)",
+   "score": 12.5
+  },
+  {
+   "id": "gem:brihuega",
+   "city": "Brihuega",
+   "country": "Spain",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Brihuega_Ayuntamiento.jpg/960px-Brihuega_Ayuntamiento.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Brihuega%2C_01.JPG/960px-Brihuega%2C_01.JPG",
+   "file": "Brihuega, 01",
+   "score": 10.5
+  },
+  {
+   "id": "gem:briksdalsbreen",
+   "city": "Briksdalsbreen",
+   "country": "Norway",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/01/Briksdalsbreen_2015.JPG/960px-Briksdalsbreen_2015.JPG",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/db/Briksdalsbreen_with_glacial_lake%2C_Sogn_og_Fjordane%2C_Norway%2C_2013_June.jpg/960px-Briksdalsbreen_with_glacial_lake%2C_Sogn_og_Fjordane%2C_Norway%2C_2013_June.jpg",
+   "file": "Briksdalsbreen with glacial lake, Sogn og Fjordane, Norway, 2013 June",
+   "score": 17.5
+  },
+  {
+   "id": "BDS",
+   "city": "Brindisi",
+   "country": "Italy",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/49/Brindisi_-_monumento_al_Marinaio_d%27Italia_-_202109012300_3.jpeg/960px-Brindisi_-_monumento_al_Marinaio_d%27Italia_-_202109012300_3.jpeg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Brindisi_luglio_2024d.jpg/960px-Brindisi_luglio_2024d.jpg",
+   "file": "Brindisi luglio 2024d",
+   "score": 10.0
+  },
+  {
+   "id": "gem:burg-eltz",
+   "city": "Burg Eltz",
+   "country": "Germany",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Le_ch%C3%A2teau_d%27Eltz_%28Burg_Eltz%29_en_allemagne_%28cropped%29.jpg/960px-Le_ch%C3%A2teau_d%27Eltz_%28Burg_Eltz%29_en_allemagne_%28cropped%29.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Wierschem%2C_Burg_Eltz%2C_2012-08_CN-01.jpg/960px-Wierschem%2C_Burg_Eltz%2C_2012-08_CN-01.jpg",
+   "file": "Wierschem, Burg Eltz, 2012-08 CN-01",
+   "score": 17.5
+  },
+  {
+   "id": "gem:burnley",
+   "city": "Burnley",
+   "country": "United Kingdom",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Hammerton_Street_Burnley_2.jpg/960px-Hammerton_Street_Burnley_2.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Town_Hall%2C_Burnley.jpg/960px-Town_Hall%2C_Burnley.jpg",
+   "file": "Town Hall, Burnley",
+   "score": 8.5
+  },
+  {
+   "id": "gem:caen",
+   "city": "Caen",
+   "country": "France",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/3/35/France_Caen_Trinite_c.JPG",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f5/Abbaye_aux_Dames%2C_Caen%2C_Lower_Normandy%2C_France_-_panoramio_%281%29.jpg/960px-Abbaye_aux_Dames%2C_Caen%2C_Lower_Normandy%2C_France_-_panoramio_%281%29.jpg",
+   "file": "Abbaye aux Dames, Caen, Lower Normandy, France - panoramio (1)",
+   "score": 13.0
+  },
+  {
+   "id": "gem:cambados",
+   "city": "Cambados",
+   "country": "Spain",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/07/Convento_de_San_Francisco%2C_Cambados%2C_Pontevedra%2C_Espa%C3%B1a%2C_2015-09-23%2C_DD_26.jpg/960px-Convento_de_San_Francisco%2C_Cambados%2C_Pontevedra%2C_Espa%C3%B1a%2C_2015-09-23%2C_DD_26.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/Vista_de_Cambados%2C_Pontevedra%2C_Espa%C3%B1a%2C_2015-09-23%2C_DD_31.JPG/960px-Vista_de_Cambados%2C_Pontevedra%2C_Espa%C3%B1a%2C_2015-09-23%2C_DD_31.JPG",
+   "file": "Vista de Cambados, Pontevedra, España, 2015-09-23, DD 31",
+   "score": 15.5
+  },
+  {
+   "id": "gem:cambrai",
+   "city": "Cambrai",
+   "country": "France",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/63/H%C3%B4tel_de_ville_de_Cambrai_%2818387%29.jpg/960px-H%C3%B4tel_de_ville_de_Cambrai_%2818387%29.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Porte_Notre-Dame_de_Cambrai.jpg/960px-Porte_Notre-Dame_de_Cambrai.jpg",
+   "file": "Porte Notre-Dame de Cambrai",
+   "score": 12.5
+  },
+  {
+   "id": "gem:campiglia-marittima",
+   "city": "Campiglia Marittima",
+   "country": "Italy",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/IMG_0018_Palazzo_Pretorio_Campiglia_Marittima.JPG/960px-IMG_0018_Palazzo_Pretorio_Campiglia_Marittima.JPG",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/CampigliaMarittimaPanorama1.JPG/960px-CampigliaMarittimaPanorama1.JPG",
+   "file": "CampigliaMarittimaPanorama1",
+   "score": 16.0
+  },
+  {
+   "id": "CWL",
+   "city": "Cardiff",
+   "country": "United Kingdom",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b0/71_Bridge_Street_%281%29%2C_Cardiff_city_centre.jpg/960px-71_Bridge_Street_%281%29%2C_Cardiff_city_centre.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/Cardiff_view.jpg/960px-Cardiff_view.jpg",
+   "file": "Cardiff view",
+   "score": 16.5
+  },
+  {
+   "id": "gem:carloforte",
+   "city": "Carloforte",
+   "country": "Italy",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cf/Carloforte.jpg/960px-Carloforte.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ed/Carloforte%2C_Isola_di_San_Pietro%2C_Carbonia-Iglesias%2C_Sardinia%2C_Italy_-_panoramio_%281%29.jpg/960px-Carloforte%2C_Isola_di_San_Pietro%2C_Carbonia-Iglesias%2C_Sardinia%2C_Italy_-_panoramio_%281%29.jpg",
+   "file": "Carloforte, Isola di San Pietro, Carbonia-Iglesias, Sardinia, Italy - panoramio (1)",
+   "score": 15.5
+  },
+  {
+   "id": "gem:carrara",
+   "city": "Carrara",
+   "country": "Italy",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/Carrara%2C_veduta_verso_il_centro_storico%2C_avenza_e_il_mare_da_via_salita_sponda_04.jpg/960px-Carrara%2C_veduta_verso_il_centro_storico%2C_avenza_e_il_mare_da_via_salita_sponda_04.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Carrara%2C_veduta_verso_il_centro_storico%2C_avenza_e_il_mare_da_via_salita_sponda_03.jpg/960px-Carrara%2C_veduta_verso_il_centro_storico%2C_avenza_e_il_mare_da_via_salita_sponda_03.jpg",
+   "file": "Carrara, veduta verso il centro storico, avenza e il mare da via salita sponda 03",
+   "score": 14.0
+  },
+  {
+   "id": "gem:cascata-delle-marmore",
+   "city": "Cascata delle Marmore",
+   "country": "Italy",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/49/Aerial_image_of_Cascata_delle_Marmore_%28view_from_the_northwest%29.jpg/960px-Aerial_image_of_Cascata_delle_Marmore_%28view_from_the_northwest%29.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9f/Incredible_rainbow_over_the_waterfall.jpg/960px-Incredible_rainbow_over_the_waterfall.jpg",
+   "file": "Incredible rainbow over the waterfall",
+   "score": 7.65
+  },
+  {
+   "id": "gem:cesena",
+   "city": "Cesena",
+   "country": "Italy",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d8/Cesena_-_Comune_di_Cesena_-_Centro_Storico_%282%29_-_2023-09-21_22-59-57_001.jpg/960px-Cesena_-_Comune_di_Cesena_-_Centro_Storico_%282%29_-_2023-09-21_22-59-57_001.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/50/CESENA-3497.jpg/960px-CESENA-3497.jpg",
+   "file": "CESENA-3497",
+   "score": 13.0
+  },
+  {
+   "id": "gem:chauvigny",
+   "city": "Chauvigny",
+   "country": "France",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/ChauvignyVueGenerale.jpg/960px-ChauvignyVueGenerale.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/27/Chauvigny%2C_Vienne_86.jpg/960px-Chauvigny%2C_Vienne_86.jpg",
+   "file": "Chauvigny, Vienne 86",
+   "score": 14.0
+  },
+  {
+   "id": "gem:cherbourg",
+   "city": "Cherbourg",
+   "country": "France",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/Cherbourg.jpg/960px-Cherbourg.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/FranceNormandieCherbourgVueGenerale.jpg/960px-FranceNormandieCherbourgVueGenerale.jpg",
+   "file": "FranceNormandieCherbourgVueGenerale",
+   "score": 12.0
+  },
+  {
+   "id": "gem:chiemsee",
+   "city": "Chiemsee (Herrenchiemsee)",
+   "country": "Germany",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/50/LakeChiemsee.jpg/960px-LakeChiemsee.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Aerial_image_of_the_Chiemsee_%28view_from_the_southwest%29.jpg/960px-Aerial_image_of_the_Chiemsee_%28view_from_the_southwest%29.jpg",
+   "file": "Aerial image of the Chiemsee (view from the southwest)",
+   "score": 17.5
+  },
+  {
+   "id": "gem:chippenham",
+   "city": "Chippenham",
+   "country": "United Kingdom",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6a/St_Andrew%27s_Chippenham.JPG/960px-St_Andrew%27s_Chippenham.JPG",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Chippenham_Church_%28Saint_Andrew%29_%2849419633733%29.jpg/960px-Chippenham_Church_%28Saint_Andrew%29_%2849419633733%29.jpg",
+   "file": "Chippenham Church (Saint Andrew) (49419633733)",
+   "score": 11.0
+  },
+  {
+   "id": "gem:cingoli",
+   "city": "Cingoli",
+   "country": "Italy",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ef/Cingoli_-_Palazzo_Comunale_%28Townhall%29.jpg/960px-Cingoli_-_Palazzo_Comunale_%28Townhall%29.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/Cingoli%2C_porta_pia_01.jpg/960px-Cingoli%2C_porta_pia_01.jpg",
+   "file": "Cingoli, porta pia 01",
+   "score": 11.0
+  },
+  {
+   "id": "gem:cirencester",
+   "city": "Cirencester",
+   "country": "United Kingdom",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fe/Castle_Street_Cirencester.jpg/960px-Castle_Street_Cirencester.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Roman_Amphitheatre_Cirencester.jpg/960px-Roman_Amphitheatre_Cirencester.jpg",
+   "file": "Roman Amphitheatre Cirencester",
+   "score": 10.0
+  },
+  {
+   "id": "gem:clonakilty",
+   "city": "Clonakilty (Inchydoney)",
+   "country": "Ireland",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/3/3f/Clonakilty2.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Clonakilty_Town_Hall%2C_Kent_Street_-_geograph.org.uk_-_2193089.jpg/960px-Clonakilty_Town_Hall%2C_Kent_Street_-_geograph.org.uk_-_2193089.jpg",
+   "file": "Clonakilty Town Hall, Kent Street - geograph.org.uk - 2193089",
+   "score": 10.1
+  },
+  {
+   "id": "gem:clovelly",
+   "city": "Clovelly",
+   "country": "United Kingdom",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Clovelly_04.jpg/960px-Clovelly_04.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/74/Clovelly_-_Harbour02.jpg/960px-Clovelly_-_Harbour02.jpg",
+   "file": "Clovelly - Harbour02",
+   "score": 9.5
+  },
+  {
+   "id": "gem:cobh",
+   "city": "Cobh",
+   "country": "Ireland",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Cobhgallery.jpg/960px-Cobhgallery.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/62/Cobh_-_West_View_Also_Known_Locally_As_The_%22Deck_Of_Cards%22_%287163932673%29.jpg/960px-Cobh_-_West_View_Also_Known_Locally_As_The_%22Deck_Of_Cards%22_%287163932673%29.jpg",
+   "file": "Cobh - West View Also Known Locally As The \"Deck Of Cards\" (7163932673)",
+   "score": 16.5
+  },
+  {
+   "id": "gem:cordoba",
+   "city": "Córdoba",
+   "country": "Spain",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/73/C%C3%B3rdoba_aerial_2.jpg/960px-C%C3%B3rdoba_aerial_2.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Centro_Hist%C3%B3rico%2C_16.9_--_2023_--_C%C3%B3rdoba%2C_Espa%C3%B1a.jpg/960px-Centro_Hist%C3%B3rico%2C_16.9_--_2023_--_C%C3%B3rdoba%2C_Espa%C3%B1a.jpg",
+   "file": "Centro Histórico, 16.9 -- 2023 -- Córdoba, España",
+   "score": 13.9
+  },
+  {
+   "id": "gem:de-panne",
+   "city": "De Panne",
+   "country": "Belgium",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/P1100853_Centre_ville_De_Panne.JPG/960px-P1100853_Centre_ville_De_Panne.JPG",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bd/De_Panne_Dunes_et_plage.jpg/960px-De_Panne_Dunes_et_plage.jpg",
+   "file": "De Panne Dunes et plage",
+   "score": 6.75
+  },
+  {
+   "id": "gem:deauville",
+   "city": "Deauville",
+   "country": "France",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fb/Deauville_2008_PD_12.JPG/960px-Deauville_2008_PD_12.JPG",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/France-000638_-_Grand_Casino_%2814974258481%29.jpg/960px-France-000638_-_Grand_Casino_%2814974258481%29.jpg",
+   "file": "France-000638 - Grand Casino (14974258481)",
+   "score": 13.5
+  },
+  {
+   "id": "gem:den-helder",
+   "city": "Den Helder",
+   "country": "Netherlands",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/Den_Helder%2C_watertoren_2006-08-06_10.28.JPG/960px-Den_Helder%2C_watertoren_2006-08-06_10.28.JPG",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/Den_Helder_-_Marsdiep_-_Ferry_%27Dr._Wagemaker%27_-_View_SW_towards_Den_Helder.jpg/960px-Den_Helder_-_Marsdiep_-_Ferry_%27Dr._Wagemaker%27_-_View_SW_towards_Den_Helder.jpg",
+   "file": "Den Helder - Marsdiep - Ferry 'Dr. Wagemaker' - View SW towards Den Helder",
+   "score": 15.5
+  },
+  {
+   "id": "gem:detmold",
+   "city": "Detmold",
+   "country": "Germany",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Detmold_Schloss01.jpg/960px-Detmold_Schloss01.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/TH_OWL_in_Detmold.jpg/960px-TH_OWL_in_Detmold.jpg",
+   "file": "TH OWL in Detmold",
+   "score": 7.5
+  },
+  {
+   "id": "gem:diepenheim",
+   "city": "Diepenheim",
+   "country": "Netherlands",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f8/Diepenheim%2C_huize_Diepenheim_RM12880_foto6_2013-04-22_11.41.jpg/960px-Diepenheim%2C_huize_Diepenheim_RM12880_foto6_2013-04-22_11.41.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/Diepenheim%2C_Huis_Diepenheim_RM12880_foto6_2015-08-22_10.20.jpg/960px-Diepenheim%2C_Huis_Diepenheim_RM12880_foto6_2015-08-22_10.20.jpg",
+   "file": "Diepenheim, Huis Diepenheim RM12880 foto6 2015-08-22 10.20",
+   "score": 17.5
+  },
+  {
+   "id": "gem:diever",
+   "city": "Diever",
+   "country": "Netherlands",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/Sint-Pancratiuskerk_Diever.jpg/960px-Sint-Pancratiuskerk_Diever.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/P1020295Brink_Diever.JPG/960px-P1020295Brink_Diever.JPG",
+   "file": "P1020295Brink Diever",
+   "score": 14.5
+  },
+  {
+   "id": "gem:domburg",
+   "city": "Domburg",
+   "country": "Netherlands",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/Domburg_Town.png/960px-Domburg_Town.png",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9c/NIMH_-_2011_-_2867_-_Aerial_photograph_of_Domburg_Walcheren%2C_The_Netherlands.jpg/960px-NIMH_-_2011_-_2867_-_Aerial_photograph_of_Domburg_Walcheren%2C_The_Netherlands.jpg",
+   "file": "<div class=\"fn\">\nDomburg Walcheren</div>",
+   "score": 12.0
+  },
+  {
+   "id": "gem:donaueschingen",
+   "city": "Donaueschingen",
+   "country": "Germany",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Donaueschingen_Lammplatz_und_Stadtkirche_%282025%29.jpg/960px-Donaueschingen_Lammplatz_und_Stadtkirche_%282025%29.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Donaueschingen.JPG/960px-Donaueschingen.JPG",
+   "file": "Donaueschingen",
+   "score": 6.05
+  },
+  {
+   "id": "gem:echternach",
+   "city": "Echternach & Mullerthal",
+   "country": "Luxembourg",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Mullerthal.jpg/960px-Mullerthal.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ae/Echternach_-_Rue_de_la_Montagne_-_View_East_on_Peter-Paul_Church.jpg/960px-Echternach_-_Rue_de_la_Montagne_-_View_East_on_Peter-Paul_Church.jpg",
+   "file": "Echternach - Rue de la Montagne - View East on Peter-Paul Church",
+   "score": 9.0
+  },
+  {
+   "id": "gem:engelberg",
+   "city": "Engelberg (Titlis)",
+   "country": "Switzerland",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/Engelberg.jpg/960px-Engelberg.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Engelberg_02.JPG/960px-Engelberg_02.JPG",
+   "file": "Engelberg 02",
+   "score": 16.0
+  },
+  {
+   "id": "gem:eslohe",
+   "city": "Eslohe",
+   "country": "Germany",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/Eslohe-Fachwerkhaus2-Asio.JPG/960px-Eslohe-Fachwerkhaus2-Asio.JPG",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Eslohe_Sauerland_Ost_869_pk.jpg/960px-Eslohe_Sauerland_Ost_869_pk.jpg",
+   "file": "Eslohe Sauerland Ost 869 pk",
+   "score": 8.1
+  },
+  {
+   "id": "gem:eslov",
+   "city": "Eslöv",
+   "country": "Sweden",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/49/Esl%C3%B6vs_bibliotek-1.jpg/960px-Esl%C3%B6vs_bibliotek-1.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Silo_i_Esl%C3%B6v-2.jpg/960px-Silo_i_Esl%C3%B6v-2.jpg",
+   "file": "Silo i Eslöv-2",
+   "score": 7.9
+  },
+  {
+   "id": "gem:esztergom",
+   "city": "Esztergom",
+   "country": "Hungary",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/EsztergomMontage2.JPG/960px-EsztergomMontage2.JPG",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/View_from_Esztergom_Basilica_-_panoramio_%283%29.jpg/960px-View_from_Esztergom_Basilica_-_panoramio_%283%29.jpg",
+   "file": "View from Esztergom Basilica - panoramio (3)",
+   "score": 16.0
+  },
+  {
+   "id": "gem:faaborg",
+   "city": "Faaborg",
+   "country": "Denmark",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/T%C3%A5rngade%2C_Faaborg_2021.jpg/960px-T%C3%A5rngade%2C_Faaborg_2021.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c6/Views_of_Faaborg.jpg/960px-Views_of_Faaborg.jpg",
+   "file": "Views of Faaborg",
+   "score": 15.0
+  },
+  {
+   "id": "gem:fanal-madeira",
+   "city": "Fanal Forest (Madeira)",
+   "country": "Portugal",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f7/Dracaena_draco.jpg/960px-Dracaena_draco.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/20190928_161709_Richtone%28HDR%29.jpg/960px-20190928_161709_Richtone%28HDR%29.jpg",
+   "file": "20190928 161709 Richtone(HDR)",
+   "score": 6.0
+  },
+  {
+   "id": "gem:finale-ligure",
+   "city": "Finale Ligure (Finalborgo)",
+   "country": "Italy",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Finalborgo4.jpg/960px-Finalborgo4.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Finale_Ligure_SV_%28panorama_da_Capra_Zoppa_direzione_levante%29_-_panoramio.jpg/960px-Finale_Ligure_SV_%28panorama_da_Capra_Zoppa_direzione_levante%29_-_panoramio.jpg",
+   "file": "Finale Ligure SV (panorama da Capra Zoppa direzione levante) - panoramio",
+   "score": 16.0
+  },
+  {
+   "id": "gem:fredericia",
+   "city": "Fredericia",
+   "country": "Denmark",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/64/Landsoldaten_-_panoramio.jpg/960px-Landsoldaten_-_panoramio.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Fredericia_harbour.9.ajb.jpg/960px-Fredericia_harbour.9.ajb.jpg",
+   "file": "Fredericia harbour.9.ajb",
+   "score": 15.0
+  },
+  {
+   "id": "gem:freiburg",
+   "city": "Freiburg im Breisgau",
+   "country": "Germany",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Freiburg_im_Breisgau_M%C3%BCnster.jpg/960px-Freiburg_im_Breisgau_M%C3%BCnster.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/01/Aerial_View_-_Freiburg_im_Breisgau-JVA.jpg/960px-Aerial_View_-_Freiburg_im_Breisgau-JVA.jpg",
+   "file": "Aerial View - Freiburg im Breisgau-JVA",
+   "score": 18.5
+  },
+  {
+   "id": "gem:fulwood",
+   "city": "Fulwood",
+   "country": "United Kingdom",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/View_across_the_fields_to_Castle_Dyke_Lodge_-_geograph.org.uk_-_5763069.jpg/960px-View_across_the_fields_to_Castle_Dyke_Lodge_-_geograph.org.uk_-_5763069.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Fields_beside_Hangram_Lane_-_geograph.org.uk_-_7153423.jpg/960px-Fields_beside_Hangram_Lane_-_geograph.org.uk_-_7153423.jpg",
+   "file": "Fields beside Hangram Lane - geograph.org.uk - 7153423",
+   "score": 7.5
+  },
+  {
+   "id": "gem:gamzigrad",
+   "city": "Gamzigrad",
+   "country": "Serbia",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fc/Romuliana%2C_from_air.jpg/960px-Romuliana%2C_from_air.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Gamzigrad_-_Felix_Romuliana_%28by_Pudelek%29_5_-_East_Gate.JPG/960px-Gamzigrad_-_Felix_Romuliana_%28by_Pudelek%29_5_-_East_Gate.JPG",
+   "file": "Gamzigrad - Felix Romuliana (by Pudelek) 5 - East Gate",
+   "score": 9.5
+  },
+  {
+   "id": "gem:garmen",
+   "city": "Garmen",
+   "country": "Bulgaria",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/82/Garmen_E2.jpg/960px-Garmen_E2.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f8/Garmen_E8.jpg/960px-Garmen_E8.jpg",
+   "file": "Garmen E8",
+   "score": 6.95
+  },
+  {
+   "id": "gem:gdynia",
+   "city": "Gdynia",
+   "country": "Poland",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/00_sea_towers_%28April_2018%29.jpg/960px-00_sea_towers_%28April_2018%29.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/Gdynia-centrum.jpg/960px-Gdynia-centrum.jpg",
+   "file": "Gdynia-centrum",
+   "score": 15.5
+  },
+  {
+   "id": "gem:genarp",
+   "city": "Genarp",
+   "country": "Sweden",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Genarps_kyrka%2C_exteri%C3%B6r_9.jpg/960px-Genarps_kyrka%2C_exteri%C3%B6r_9.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f5/J%C3%A4rnv%C3%A4gsstationen_i_Genarp%2C_sedermera_f%C3%B6rskola.jpg/960px-J%C3%A4rnv%C3%A4gsstationen_i_Genarp%2C_sedermera_f%C3%B6rskola.jpg",
+   "file": "Järnvägsstationen i Genarp, sedermera förskola",
+   "score": 15.0
+  },
+  {
+   "id": "gem:gijon",
+   "city": "Gijón",
+   "country": "Spain",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/3/34/Xix%C3%B3n_dende_l%27aire_%28cropped%29.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Gij%C3%B3n%2C_Asturias_%285981647256%29.jpg/960px-Gij%C3%B3n%2C_Asturias_%285981647256%29.jpg",
+   "file": "Gijón, Asturias (5981647256)",
+   "score": 14.0
+  },
+  {
+   "id": "gem:godalming",
+   "city": "Godalming",
+   "country": "United Kingdom",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/The_Pepperpot%2C_High_Street%2C_Godalming%2C_Surrey_03.jpg/960px-The_Pepperpot%2C_High_Street%2C_Godalming%2C_Surrey_03.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/7%2C_8_and_9_Deanery_Place%2C_Godalming%2C_Surrey.jpg/960px-7%2C_8_and_9_Deanery_Place%2C_Godalming%2C_Surrey.jpg",
+   "file": "7, 8 and 9 Deanery Place, Godalming, Surrey",
+   "score": 11.8
+  },
+  {
+   "id": "gem:golem",
+   "city": "Golem",
+   "country": "Albania",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f1/Golem_%E2%80%93_Mikol%C3%A1%C5%A1_Ale%C5%A1_%28Star%C3%A9_pov%C4%9Bsti_%C4%8Desk%C3%A9%29.jpg/960px-Golem_%E2%80%93_Mikol%C3%A1%C5%A1_Ale%C5%A1_%28Star%C3%A9_pov%C4%9Bsti_%C4%8Desk%C3%A9%29.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Mdm._Tussauds_Prag_8.jpg/960px-Mdm._Tussauds_Prag_8.jpg",
+   "file": "Mdm. Tussauds Prag 8",
+   "score": 5.75
+  },
+  {
+   "id": "gem:gotha",
+   "city": "Gotha",
+   "country": "Germany",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fb/Gotha.JPG/960px-Gotha.JPG",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/92/Panorama_vom_B%C3%BCrgerturm_Gotha_SB.jpg/960px-Panorama_vom_B%C3%BCrgerturm_Gotha_SB.jpg",
+   "file": "Panorama vom Bürgerturm Gotha SB",
+   "score": 13.0
+  },
+  {
+   "id": "gem:gouwsluis",
+   "city": "Gouwsluis",
+   "country": "Netherlands",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e9/Agema2.jpg/960px-Agema2.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/Prins_Hendrikstraat_bij_128%2C_Alphen_aan_den_Rijn.jpg/960px-Prins_Hendrikstraat_bij_128%2C_Alphen_aan_den_Rijn.jpg",
+   "file": "Prins Hendrikstraat bij 128, Alphen aan den Rijn",
+   "score": 6.5
+  },
+  {
+   "id": "gem:great-yarmouth",
+   "city": "Great Yarmouth",
+   "country": "United Kingdom",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Great_Yarmouth_collage2.png/960px-Great_Yarmouth_collage2.png",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/af/Aerial_View_of_Great_Yarmouth.jpg/960px-Aerial_View_of_Great_Yarmouth.jpg",
+   "file": "Aerial View of Great Yarmouth",
+   "score": 15.0
+  },
+  {
+   "id": "gem:grolloo",
+   "city": "Grolloo",
+   "country": "Netherlands",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/f/f5/Waterstaatskerk_van_Grolloo.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/Grolloo_Hervormde_Pastorie.JPG/960px-Grolloo_Hervormde_Pastorie.JPG",
+   "file": "Grolloo Hervormde Pastorie",
+   "score": 9.75
+  },
+  {
+   "id": "gem:gyor",
+   "city": "Győr",
+   "country": "Hungary",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e2/Gy%C5%91r_montage1.jpg/960px-Gy%C5%91r_montage1.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/de/A_Gy%C5%91r-Moson-Sopron_megyei_Rend%C5%91r_F%C5%91kapit%C3%A1nys%C3%A1g_kik%C3%B6t%C5%91_%C3%A9s_a_Dunapart_Rezidencia%2C_2018_Gy%C5%91r.jpg/960px-A_Gy%C5%91r-Moson-Sopron_megyei_Rend%C5%91r_F%C5%91kapit%C3%A1nys%C3%A1g_kik%C3%B6t%C5%91_%C3%A9s_a_Dunapart_Rezidencia%2C_2018_Gy%C5%91r.jpg",
+   "file": "A Győr-Moson-Sopron megyei Rendőr Főkapitányság kikötő és a Dunapart Rezidencia, 2018 Győr",
+   "score": 13.5
+  },
+  {
+   "id": "gem:haarlem",
+   "city": "Haarlem",
+   "country": "Netherlands",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/19/HaarlemGroteMarkt1.JPG/960px-HaarlemGroteMarkt1.JPG",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/07/View_of_Haarlem_from_%27t_Kopje.jpg/960px-View_of_Haarlem_from_%27t_Kopje.jpg",
+   "file": "View of Haarlem from 't Kopje",
+   "score": 14.5
+  },
+  {
+   "id": "gem:hajduszoboszlo",
+   "city": "Hajdúszoboszló",
+   "country": "Hungary",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Hajd%C3%BAszoboszl%C3%B3%2C_reform%C3%A1tus_templom_2022_01.jpg/960px-Hajd%C3%BAszoboszl%C3%B3%2C_reform%C3%A1tus_templom_2022_01.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a1/Hajd%C3%BAszoboszl%C3%B3_f%C3%BCrd%C5%91komplexum_l%C3%A9gi_fot%C3%B3.jpg/960px-Hajd%C3%BAszoboszl%C3%B3_f%C3%BCrd%C5%91komplexum_l%C3%A9gi_fot%C3%B3.jpg",
+   "file": "Hajdúszoboszló fürdőkomplexum légi fotó",
+   "score": 14.0
+  },
+  {
+   "id": "gem:hoek",
+   "city": "Hoek",
+   "country": "Netherlands",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/20080801_Church_Anjum_NL.jpg/960px-20080801_Church_Anjum_NL.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/06/Leeuwarden_-_panoramio_-_L-BBE_%286%29.jpg/960px-Leeuwarden_-_panoramio_-_L-BBE_%286%29.jpg",
+   "file": "Leeuwarden - panoramio - L-BBE (6)",
+   "score": 6.5
+  },
+  {
+   "id": "gem:hokksund",
+   "city": "Hokksund",
+   "country": "Norway",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/34/Haug_kirke.jpg/960px-Haug_kirke.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Hokksund_stasjon_front.jpg/960px-Hokksund_stasjon_front.jpg",
+   "file": "Hokksund stasjon front",
+   "score": 13.0
+  },
+  {
+   "id": "gem:horezu",
+   "city": "Horezu Monastery",
+   "country": "Romania",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Horezu_bis_man_SV.jpg/960px-Horezu_bis_man_SV.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/32/Manastyr_Horezu_%282%29SM.jpg/960px-Manastyr_Horezu_%282%29SM.jpg",
+   "file": "Manastyr Horezu (2)SM",
+   "score": 13.5
+  },
+  {
+   "id": "gem:horsens",
+   "city": "Horsens",
+   "country": "Denmark",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Horsens_old_center.JPG/960px-Horsens_old_center.JPG",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bb/Horsens_-_Vor_Frelser_Kirke_%282%29.JPG/960px-Horsens_-_Vor_Frelser_Kirke_%282%29.JPG",
+   "file": "Horsens - Vor Frelser Kirke (2)",
+   "score": 14.0
+  },
+  {
+   "id": "gem:hossegor",
+   "city": "Hossegor",
+   "country": "France",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/PlageHossegore.jpg/960px-PlageHossegore.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Hossegor_beach_statue.jpg/960px-Hossegor_beach_statue.jpg",
+   "file": "Hossegor beach statue",
+   "score": 10.0
+  },
+  {
+   "id": "gem:hradec-kralove",
+   "city": "Hradec Králové",
+   "country": "Czechia",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e5/Hradec_Kr%C3%A1lov%C3%A9_%28K%C3%B6niggr%C3%A4tz%29_-_Velk%C3%A9_n%C3%A1m%C4%9Bst%C3%AD.jpg/960px-Hradec_Kr%C3%A1lov%C3%A9_%28K%C3%B6niggr%C3%A4tz%29_-_Velk%C3%A9_n%C3%A1m%C4%9Bst%C3%AD.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/Katedrala_sv._Ducha_Hradec_Kralove_%E2%80%93_letecky_pohled.jpg/960px-Katedrala_sv._Ducha_Hradec_Kralove_%E2%80%93_letecky_pohled.jpg",
+   "file": "Katedrala sv. Ducha Hradec Kralove – letecky pohled",
+   "score": 14.0
+  },
+  {
+   "id": "gem:iserlohn",
+   "city": "Iserlohn",
+   "country": "Germany",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/9/9a/Iserlohn-Bauernkirche1-Asio.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Aerial_image_of_the_Iserlohn_prison_%28view_from_the_southwest%29.jpg/960px-Aerial_image_of_the_Iserlohn_prison_%28view_from_the_southwest%29.jpg",
+   "file": "Aerial image of the Iserlohn prison (view from the southwest)",
+   "score": 14.5
+  },
+  {
+   "id": "IOM",
+   "city": "Isle of Man",
+   "country": "United Kingdom",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Cmglee_Douglas_Isle_of_Man_aerial_view.jpg/960px-Cmglee_Douglas_Isle_of_Man_aerial_view.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/Isle_of_Man_Peel_Castle.jpg/960px-Isle_of_Man_Peel_Castle.jpg",
+   "file": "Isle of Man Peel Castle",
+   "score": 6.5
+  },
+  {
+   "id": "gem:jajce",
+   "city": "Jajce",
+   "country": "Bosnia and Herzegovina",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/a/a3/Jajce_%28kola%C5%BE%29.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Jajce_vodopad.jpg/960px-Jajce_vodopad.jpg",
+   "file": "Jajce vodopad",
+   "score": 12.0
+  },
+  {
+   "id": "gem:jastarnia",
+   "city": "Jastarnia",
+   "country": "Poland",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/Jastarnia_kosciol.jpg/960px-Jastarnia_kosciol.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Jastarnia%2C_schron_bojowy_S%C4%99p_%28WLZ14%29.jpg/960px-Jastarnia%2C_schron_bojowy_S%C4%99p_%28WLZ14%29.jpg",
+   "file": "Jastarnia, schron bojowy Sęp (WLZ14)",
+   "score": 13.25
+  },
+  {
+   "id": "gem:jaen",
+   "city": "Jaén",
+   "country": "Spain",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/Parador_de_Ja%C3%A9n_5.jpg/960px-Parador_de_Ja%C3%A9n_5.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1f/Carretera_de_Madrid_de_Ja%C3%A9n.jpg/960px-Carretera_de_Madrid_de_Ja%C3%A9n.jpg",
+   "file": "Carretera de Madrid de Jaén",
+   "score": 13.5
+  },
+  {
+   "id": "gem:jelling",
+   "city": "Jelling",
+   "country": "Denmark",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fb/Jelling_Kommune.jpg/960px-Jelling_Kommune.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f8/Jelling_-_kirken_set_fra_Gorms_H%C3%B8j.JPG/960px-Jelling_-_kirken_set_fra_Gorms_H%C3%B8j.JPG",
+   "file": "Jelling - kirken set fra Gorms Høj",
+   "score": 15.0
+  },
+  {
+   "id": "gem:jyvaskyla",
+   "city": "Jyväskylä",
+   "country": "Finland",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3d/Jyv%C3%A4skyl%C3%A4_collage2.jpg/960px-Jyv%C3%A4skyl%C3%A4_collage2.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1f/Jyv%C3%A4skyl%C3%A4_harbour_pier.jpg/960px-Jyv%C3%A4skyl%C3%A4_harbour_pier.jpg",
+   "file": "Jyväskylä harbour pier",
+   "score": 17.0
+  },
+  {
+   "id": "gem:jonkoping",
+   "city": "Jönköping",
+   "country": "Sweden",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d5/Kollagej%C3%B6nk%C3%B6ping.jpg/960px-Kollagej%C3%B6nk%C3%B6ping.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Slottskajen%2C_J%C3%B6nk%C3%B6ping.JPG/960px-Slottskajen%2C_J%C3%B6nk%C3%B6ping.JPG",
+   "file": "Slottskajen, Jönköping",
+   "score": 13.5
+  },
+  {
+   "id": "gem:kempten-allgau",
+   "city": "Kempten (Allgäu)",
+   "country": "Germany",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/Basilika_St._Lorenz_Kempten_%28Foto_Hilarmont%29.jpg/960px-Basilika_St._Lorenz_Kempten_%28Foto_Hilarmont%29.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d5/Residenz_und_St._Lorenz_Kempten.jpg/960px-Residenz_und_St._Lorenz_Kempten.jpg",
+   "file": "Residenz und St. Lorenz Kempten",
+   "score": 7.0
+  },
+  {
+   "id": "gem:kezmarok",
+   "city": "Kežmarok",
+   "country": "Slovakia",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Basilica_of_the_Exaltation_of_the_Holy_Cross%2C_Ke%C5%BEmarok1.JPG/960px-Basilica_of_the_Exaltation_of_the_Holy_Cross%2C_Ke%C5%BEmarok1.JPG",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b0/L%C3%A1tk%C3%A9p_-_panoramio_%287%29.jpg/960px-L%C3%A1tk%C3%A9p_-_panoramio_%287%29.jpg",
+   "file": "Látkép - panoramio (7)",
+   "score": 12.0
+  },
+  {
+   "id": "gem:kingston-upon-thames",
+   "city": "Kingston upon Thames",
+   "country": "United Kingdom",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7d/Church_Street%2C_Kingston-upon-Thames.jpg/960px-Church_Street%2C_Kingston-upon-Thames.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/af/Kingston_riverside_sunset.jpg/960px-Kingston_riverside_sunset.jpg",
+   "file": "Kingston riverside sunset",
+   "score": 9.0
+  },
+  {
+   "id": "gem:kitzbuhel",
+   "city": "Kitzbühel",
+   "country": "Austria",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/06/Kitzbuehel03.JPG/960px-Kitzbuehel03.JPG",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/Kitzb%C3%BChel_in_the_morning%2C_view_from_Schloss_Lebenberg_Hotel_-_panoramio.jpg/960px-Kitzb%C3%BChel_in_the_morning%2C_view_from_Schloss_Lebenberg_Hotel_-_panoramio.jpg",
+   "file": "Kitzbühel in the morning, view from Schloss Lebenberg Hotel - panoramio",
+   "score": 16.5
+  },
+  {
+   "id": "gem:kongsvinger",
+   "city": "Kongsvinger",
+   "country": "Norway",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/Nybrua_og_festningen.png/960px-Nybrua_og_festningen.png",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/07/Tr%C3%A5stadberget_from_south.jpg/960px-Tr%C3%A5stadberget_from_south.jpg",
+   "file": "Tråstadberget from south",
+   "score": 7.5
+  },
+  {
+   "id": "gem:konopiste",
+   "city": "Konopiště",
+   "country": "Czechia",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Pohled_na_Konopi%C5%A1t%C4%9B_a_sochy_%28001%29.JPG/960px-Pohled_na_Konopi%C5%A1t%C4%9B_a_sochy_%28001%29.JPG",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/Konopiste_CZ_02.jpg/960px-Konopiste_CZ_02.jpg",
+   "file": "Konopiste CZ 02",
+   "score": 10.3
+  },
+  {
+   "id": "gem:korcula",
+   "city": "Korčula",
+   "country": "Croatia",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Kor%C4%8Dula_Old_Town%2C_Croatia_%282024%29.jpg/960px-Kor%C4%8Dula_Old_Town%2C_Croatia_%282024%29.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/Korcula_City.jpg/960px-Korcula_City.jpg",
+   "file": "Korcula City",
+   "score": 10.5
+  },
+  {
+   "id": "gem:kremnica",
+   "city": "Kremnica",
+   "country": "Slovakia",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f5/K%C3%B6rm%C3%B6cb%C3%A1nya-view2.JPG/960px-K%C3%B6rm%C3%B6cb%C3%A1nya-view2.JPG",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/37/Kremnica_Slovakia.jpg/960px-Kremnica_Slovakia.jpg",
+   "file": "Kremnica Slovakia",
+   "score": 13.0
+  },
+  {
+   "id": "gem:kristiansand",
+   "city": "Kristiansand",
+   "country": "Norway",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/a/a5/Kvadraturen-01.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Kjos_hovedg%C3%A5rd.jpg/960px-Kjos_hovedg%C3%A5rd.jpg",
+   "file": "Kjos hovedgård",
+   "score": 10.0
+  },
+  {
+   "id": "gem:la-roche-guyon",
+   "city": "La Roche-Guyon",
+   "country": "France",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/76/La_Roche-Guyon_-_Rue01.jpg/960px-La_Roche-Guyon_-_Rue01.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/75/Vue_de_la_Roche-Guyon.jpg/960px-Vue_de_la_Roche-Guyon.jpg",
+   "file": "Vue de la Roche-Guyon",
+   "score": 15.0
+  },
+  {
+   "id": "gem:langemark",
+   "city": "Langemark",
+   "country": "Belgium",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/LangemarkChurch.jpg/960px-LangemarkChurch.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/27/Flanders_fields_at_Langemark-Poelkapelle_2.JPG/960px-Flanders_fields_at_Langemark-Poelkapelle_2.JPG",
+   "file": "Flanders fields at Langemark-Poelkapelle 2",
+   "score": 8.8
+  },
+  {
+   "id": "gem:lausanne",
+   "city": "Lausanne",
+   "country": "Switzerland",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Lausanne_Wiki.jpg/960px-Lausanne_Wiki.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f0/Lausanne_vue_du_cr%C3%AAt_de_Montriond_%281%29.jpg/960px-Lausanne_vue_du_cr%C3%AAt_de_Montriond_%281%29.jpg",
+   "file": "Lausanne vue du crêt de Montriond (1)",
+   "score": 15.0
+  },
+  {
+   "id": "gem:le-locle",
+   "city": "Le Locle",
+   "country": "Switzerland",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c6/2003-Le-Locle-Kath-Kirche.jpg/960px-2003-Le-Locle-Kath-Kirche.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/Le_Locle%2C_Zenith_1.JPG/960px-Le_Locle%2C_Zenith_1.JPG",
+   "file": "Le Locle, Zenith 1",
+   "score": 9.5
+  },
+  {
+   "id": "gem:lecce",
+   "city": "Lecce",
+   "country": "Italy",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/76/Lecce_-_Santa_Croce_-_16.jpg/960px-Lecce_-_Santa_Croce_-_16.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/de/Italien_360%C2%B0_Panorama_2022_Altstadt_Lecce_Restaurant.jpg/960px-Italien_360%C2%B0_Panorama_2022_Altstadt_Lecce_Restaurant.jpg",
+   "file": "Italien 360° Panorama 2022 Altstadt Lecce Restaurant",
+   "score": 16.0
+  },
+  {
+   "id": "gem:leek",
+   "city": "Leek",
+   "country": "United Kingdom",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/63/Leek_on_white_background_-_0947.jpg/960px-Leek_on_white_background_-_0947.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b1/Leeks_and_Thyme.jpg/960px-Leeks_and_Thyme.jpg",
+   "file": "Leeks and Thyme",
+   "score": 7.4
+  },
+  {
+   "id": "gem:lefkara",
+   "city": "Lefkara",
+   "country": "Cyprus",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/27/LefkaraLace_closeup.jpg/960px-LefkaraLace_closeup.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1f/Mountain_above_Lefkara.jpg/960px-Mountain_above_Lefkara.jpg",
+   "file": "Mountain above Lefkara",
+   "score": 10.0
+  },
+  {
+   "id": "gem:leicester",
+   "city": "Leicester",
+   "country": "United Kingdom",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/32/Leicester_Clock_Tower_wide_view.jpg/960px-Leicester_Clock_Tower_wide_view.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Curve_Leicester_full_panorama.jpg/960px-Curve_Leicester_full_panorama.jpg",
+   "file": "Curve Leicester full panorama",
+   "score": 16.0
+  },
+  {
+   "id": "gem:leon",
+   "city": "Leon",
+   "country": "Spain",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/d/d0/Catedral_G%C3%B3tica_de_Le%C3%B3n_edited.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/La_Casa_de_los_Botines_de_Antonio_Gaud%C3%AD_en_Le%C3%B3n_edited.jpg/960px-La_Casa_de_los_Botines_de_Antonio_Gaud%C3%AD_en_Le%C3%B3n_edited.jpg",
+   "file": "La Casa de los Botines de Antonio Gaudí en León edited",
+   "score": 10.5
+  },
+  {
+   "id": "gem:leuven",
+   "city": "Leuven",
+   "country": "Belgium",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/92/Tafelrond_Leuven_-_385956_-_onroerenderfgoed.jpg/960px-Tafelrond_Leuven_-_385956_-_onroerenderfgoed.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/42148_relict_hertogelijke_burcht_keizersberg_leuven.jpg/960px-42148_relict_hertogelijke_burcht_keizersberg_leuven.jpg",
+   "file": "42148 relict hertogelijke burcht keizersberg leuven",
+   "score": 14.0
+  },
+  {
+   "id": "gem:lidkoping",
+   "city": "Lidköping",
+   "country": "Sweden",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Gamla_R%C3%A5dhuset_p%C3%A5_Nya_stadens_torg_i_Lidk%C3%B6ping%2C_den_9_maj_2006%2C_bild_1.JPG/960px-Gamla_R%C3%A5dhuset_p%C3%A5_Nya_stadens_torg_i_Lidk%C3%B6ping%2C_den_9_maj_2006%2C_bild_1.JPG",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/Lidk%C3%B6pings_R%C3%A5dhus_01.jpg/960px-Lidk%C3%B6pings_R%C3%A5dhus_01.jpg",
+   "file": "Lidköpings Rådhus 01",
+   "score": 15.5
+  },
+  {
+   "id": "gem:limerick",
+   "city": "Limerick",
+   "country": "Ireland",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/Limerickcitycollage3.jpg/960px-Limerickcitycollage3.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/75/King_John%27s_Castle%2C_Limerick_-_geograph.org.uk_-_5943945.jpg/960px-King_John%27s_Castle%2C_Limerick_-_geograph.org.uk_-_5943945.jpg",
+   "file": "King John's Castle, Limerick - geograph.org.uk - 5943945",
+   "score": 15.0
+  },
+  {
+   "id": "gem:ljungby",
+   "city": "Ljungby",
+   "country": "Sweden",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/Ljungby_Storgatan.JPG/960px-Ljungby_Storgatan.JPG",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/db/Ljungby_Garvaren.jpg/960px-Ljungby_Garvaren.jpg",
+   "file": "Ljungby Garvaren",
+   "score": 9.4
+  },
+  {
+   "id": "gem:llandeilo",
+   "city": "Llandeilo",
+   "country": "United Kingdom",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1f/St_Teilo%27s_Church%2C_Llandeilo.jpg/960px-St_Teilo%27s_Church%2C_Llandeilo.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d7/Colourful_houses_above_Llandeilo_bridge_-_geograph.org.uk_-_2225416.jpg/960px-Colourful_houses_above_Llandeilo_bridge_-_geograph.org.uk_-_2225416.jpg",
+   "file": "Colourful houses above Llandeilo bridge - geograph.org.uk - 2225416",
+   "score": 11.45
+  },
+  {
+   "id": "gem:loon-op-zand",
+   "city": "Loon op Zand",
+   "country": "Netherlands",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Kaatsheuvel_molen_De_Eendragt.jpg/960px-Kaatsheuvel_molen_De_Eendragt.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/NIMH_-_2155_013863_-_Aerial_photograph_of_Loon_op_Zand%2C_The_Netherlands.jpg/960px-NIMH_-_2155_013863_-_Aerial_photograph_of_Loon_op_Zand%2C_The_Netherlands.jpg",
+   "file": "<div class=\"fn\">\nLoon op Zand</div>",
+   "score": 12.0
+  },
+  {
+   "id": "gem:malbork",
+   "city": "Malbork",
+   "country": "Poland",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/98/Castillo_de_Malbork%2C_Polonia%2C_2013-05-19%2C_DD_05.jpg/960px-Castillo_de_Malbork%2C_Polonia%2C_2013-05-19%2C_DD_05.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Malbork_zamek_i_miasto.jpg/960px-Malbork_zamek_i_miasto.jpg",
+   "file": "Malbork zamek i miasto",
+   "score": 15.5
+  },
+  {
+   "id": "gem:mamaia-sat",
+   "city": "Mamaia-Sat",
+   "country": "Romania",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/N%C4%83vodari%2C_Buna_Vestire%2C_1.jpeg/960px-N%C4%83vodari%2C_Buna_Vestire%2C_1.jpeg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Mamaia_Sat%2C_biserica_ortodox%C4%83%2C_1.jpeg/960px-Mamaia_Sat%2C_biserica_ortodox%C4%83%2C_1.jpeg",
+   "file": "Mamaia Sat, biserica ortodoxă, 1",
+   "score": 9.1
+  },
+  {
+   "id": "MAN",
+   "city": "Manchester",
+   "country": "United Kingdom",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Tower_Blocks_over_Knott_Mill%2C_geograph_6866152_by_David_Dixon.jpg/960px-Tower_Blocks_over_Knott_Mill%2C_geograph_6866152_by_David_Dixon.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/79/Cranes_over_the_Manchester_Skyline%2C_geograph_5726997_by_Anthony_Parkes.jpg/960px-Cranes_over_the_Manchester_Skyline%2C_geograph_5726997_by_Anthony_Parkes.jpg",
+   "file": "Cranes over the Manchester Skyline, geograph 5726997 by Anthony Parkes",
+   "score": 16.0
+  },
+  {
+   "id": "gem:marais-poitevin",
+   "city": "Marais Poitevin",
+   "country": "France",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/MaraisPoitevin.jpg/960px-MaraisPoitevin.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Marais-poitevin_boats.jpg/960px-Marais-poitevin_boats.jpg",
+   "file": "Marais-poitevin boats",
+   "score": 7.75
+  },
+  {
+   "id": "gem:marbella",
+   "city": "Marbella",
+   "country": "Spain",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b1/Captivating_Views_of_Old_Town_Marbella.jpg/960px-Captivating_Views_of_Old_Town_Marbella.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/ARIAL_VIEW_OF_MARBELLA%2C_SPAIN_FROM_AYUNTAMIENTO_DE_MARBELLA_-_panoramio.jpg/960px-ARIAL_VIEW_OF_MARBELLA%2C_SPAIN_FROM_AYUNTAMIENTO_DE_MARBELLA_-_panoramio.jpg",
+   "file": "ARIAL VIEW OF MARBELLA, SPAIN FROM AYUNTAMIENTO DE MARBELLA - panoramio",
+   "score": 15.5
+  },
+  {
+   "id": "MRS",
+   "city": "Marseille",
+   "country": "France",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a1/Notre-Dame_de_la_Garde_aerial_view_2020.jpeg/960px-Notre-Dame_de_la_Garde_aerial_view_2020.jpeg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/92/Morning_view_over_Marseille_-_panoramio.jpg/960px-Morning_view_over_Marseille_-_panoramio.jpg",
+   "file": "Morning view over Marseille - panoramio",
+   "score": 14.5
+  },
+  {
+   "id": "gem:mechernich",
+   "city": "Mechernich",
+   "country": "Germany",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/Mechernich-Vussem_Aqu%C3%A4duktbr%C3%BCcke.jpg/960px-Mechernich-Vussem_Aqu%C3%A4duktbr%C3%BCcke.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/50/Aerial_image_of_Burg_Satzvey_%28view_from_the_east%29.jpg/960px-Aerial_image_of_Burg_Satzvey_%28view_from_the_east%29.jpg",
+   "file": "Aerial image of Burg Satzvey (view from the east)",
+   "score": 12.5
+  },
+  {
+   "id": "gem:merida",
+   "city": "Merida",
+   "country": "Spain",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/25/Temple_of_Diana_in_M%C3%A9rida.jpg/960px-Temple_of_Diana_in_M%C3%A9rida.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/37/M%C3%A9rida_-_Anfiteatro_-_02_-_Panor%C3%A1mica.jpg/960px-M%C3%A9rida_-_Anfiteatro_-_02_-_Panor%C3%A1mica.jpg",
+   "file": "Mérida - Anfiteatro - 02 - Panorámica",
+   "score": 10.5
+  },
+  {
+   "id": "gem:middelburg",
+   "city": "Middelburg",
+   "country": "Netherlands",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/03/Middelburg_Stadhuis_01.JPG/960px-Middelburg_Stadhuis_01.JPG",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Middelburg_Dam_en_Prins_Hendrikdok._Zeeland.jpg/960px-Middelburg_Dam_en_Prins_Hendrikdok._Zeeland.jpg",
+   "file": "Middelburg Dam en Prins Hendrikdok. Zeeland",
+   "score": 12.5
+  },
+  {
+   "id": "gem:minden",
+   "city": "Minden",
+   "country": "Germany",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/MI_-_Rathaus.jpg/960px-MI_-_Rathaus.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/61/2010-05-21_Minden_Bahnhofskaserne_%288%29.jpg/960px-2010-05-21_Minden_Bahnhofskaserne_%288%29.jpg",
+   "file": "2010-05-21 Minden Bahnhofskaserne (8)",
+   "score": 11.0
+  },
+  {
+   "id": "gem:miskolc",
+   "city": "Miskolc",
+   "country": "Hungary",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4d/AlmassyMansion_Miskolc_01.jpg/960px-AlmassyMansion_Miskolc_01.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/2515-%C3%B6s_mell%C3%A9k%C3%BAt_Miskolc_k%C3%B6zel%C3%A9ben.jpg/960px-2515-%C3%B6s_mell%C3%A9k%C3%BAt_Miskolc_k%C3%B6zel%C3%A9ben.jpg",
+   "file": "2515-ös mellékút Miskolc közelében",
+   "score": 13.0
+  },
+  {
+   "id": "gem:monschau",
+   "city": "Monschau",
+   "country": "Germany",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/Burg_Monschau_2.jpg/960px-Burg_Monschau_2.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f7/View_of_Monschau_from_the_Schlossberg_viewpoint%2C_2005.jpg/960px-View_of_Monschau_from_the_Schlossberg_viewpoint%2C_2005.jpg",
+   "file": "View of Monschau from the Schlossberg viewpoint, 2005",
+   "score": 15.0
+  },
+  {
+   "id": "gem:moulins-le-carbonnel",
+   "city": "Moulins-le-Carbonnel",
+   "country": "France",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/FrancePaysDeLaLoireMoulinsLeCarbonnelEglise.jpg/960px-FrancePaysDeLaLoireMoulinsLeCarbonnelEglise.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Moulins-le-Carbonnel_%28Sarthe%29_mairie.jpg/960px-Moulins-le-Carbonnel_%28Sarthe%29_mairie.jpg",
+   "file": "Moulins-le-Carbonnel (Sarthe) mairie",
+   "score": 11.0
+  },
+  {
+   "id": "gem:naantali",
+   "city": "Naantali",
+   "country": "Finland",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c6/Kuvakollaasi_Naantalista.jpg/960px-Kuvakollaasi_Naantalista.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/63/Naantalin_kaupungintalo_ja_tori%2C_Naantali%2C_12.7.2011_%285%29.JPG/960px-Naantalin_kaupungintalo_ja_tori%2C_Naantali%2C_12.7.2011_%285%29.JPG",
+   "file": "Naantalin kaupungintalo ja tori, Naantali, 12.7.2011 (5)",
+   "score": 15.5
+  },
+  {
+   "id": "gem:nauders",
+   "city": "Nauders",
+   "country": "Austria",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fc/846_Blick-auf-Nauders.JPG/960px-846_Blick-auf-Nauders.JPG",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/79/Schloss_naudersberg_2.JPG/960px-Schloss_naudersberg_2.JPG",
+   "file": "Schloss naudersberg 2",
+   "score": 10.5
+  },
+  {
+   "id": "gem:newbury",
+   "city": "Newbury",
+   "country": "United Kingdom",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/19/Newbury-clocktower-2018.jpg/960px-Newbury-clocktower-2018.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ef/Almshouses%2C_14-21_West_Mills%2C_Newbury.jpg/960px-Almshouses%2C_14-21_West_Mills%2C_Newbury.jpg",
+   "file": "Almshouses, 14-21 West Mills, Newbury",
+   "score": 10.8
+  },
+  {
+   "id": "gem:nideggen",
+   "city": "Nideggen",
+   "country": "Germany",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/62/Nideggen-Z%C3%BClpicher_Tor-CTH.JPG/960px-Nideggen-Z%C3%BClpicher_Tor-CTH.JPG",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/20160719_Nideggen_01.jpg/960px-20160719_Nideggen_01.jpg",
+   "file": "20160719 Nideggen 01",
+   "score": 12.5
+  },
+  {
+   "id": "gem:nieuwpoort",
+   "city": "Nieuwpoort",
+   "country": "Belgium",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/17/Belfry_of_Nieuwpoort_%28DSCF9870%29.jpg/960px-Belfry_of_Nieuwpoort_%28DSCF9870%29.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Nieuwpoort_-_Hendrik-Geeraertplein.jpg/960px-Nieuwpoort_-_Hendrik-Geeraertplein.jpg",
+   "file": "Nieuwpoort - Hendrik-Geeraertplein",
+   "score": 10.5
+  },
+  {
+   "id": "gem:nottingham",
+   "city": "Nottingham",
+   "country": "United Kingdom",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/Nottingham_Council_House_on_Coronation_Day_-_geograph.org.uk_-_7477109.jpg/960px-Nottingham_Council_House_on_Coronation_Day_-_geograph.org.uk_-_7477109.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Skyline_from_Nottingham_Castle_%28Explored%29_%2839549369155%29.jpg/960px-Skyline_from_Nottingham_Castle_%28Explored%29_%2839549369155%29.jpg",
+   "file": "Skyline from Nottingham Castle (Explored) (39549369155)",
+   "score": 13.5
+  },
+  {
+   "id": "gem:noyers",
+   "city": "Noyers",
+   "country": "France",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/df/Noyers_mairie.jpg/960px-Noyers_mairie.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Noyers-sur-Serein_%C3%A9glise_%283%29.jpg/960px-Noyers-sur-Serein_%C3%A9glise_%283%29.jpg",
+   "file": "Noyers-sur-Serein église (3)",
+   "score": 15.0
+  },
+  {
+   "id": "gem:nykoping",
+   "city": "Nyköping",
+   "country": "Sweden",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/ce/Brandholmen_Nyk%C3%B6ping.jpg/960px-Brandholmen_Nyk%C3%B6ping.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/98/Culturum_i_Nyk%C3%B6ping.jpg/960px-Culturum_i_Nyk%C3%B6ping.jpg",
+   "file": "Culturum i Nyköping",
+   "score": 10.45
+  },
+  {
+   "id": "gem:nordlingen",
+   "city": "Nördlingen",
+   "country": "Germany",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/N%C3%B6rdlingenDanielBlickS%C3%BCden.jpg/960px-N%C3%B6rdlingenDanielBlickS%C3%BCden.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/93/N%C3%B6rdlingen_-_panoramio_%2812%29.jpg/960px-N%C3%B6rdlingen_-_panoramio_%2812%29.jpg",
+   "file": "Nördlingen - panoramio (12)",
+   "score": 13.5
+  },
+  {
+   "id": "gem:o-grove",
+   "city": "O Grove",
+   "country": "Spain",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/O_Grove_Concello_01-02.jpg/960px-O_Grove_Concello_01-02.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Costa_de_San_Vicente%2C_El_Grove%2C_Pontevedra%2C_Espa%C3%B1a%2C_2015-09-23%2C_DD_81.JPG/960px-Costa_de_San_Vicente%2C_El_Grove%2C_Pontevedra%2C_Espa%C3%B1a%2C_2015-09-23%2C_DD_81.JPG",
+   "file": "Costa de San Vicente, El Grove, Pontevedra, España, 2015-09-23, DD 81",
+   "score": 9.65
+  },
+  {
+   "id": "gem:odense",
+   "city": "Odense",
+   "country": "Denmark",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/03/Odense_-_Sankt_Knuds_kirke_2005-07-16.jpeg/960px-Odense_-_Sankt_Knuds_kirke_2005-07-16.jpeg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d6/OUH_udsigt_-_panoramio.jpg/960px-OUH_udsigt_-_panoramio.jpg",
+   "file": "OUH udsigt - panoramio",
+   "score": 10.5
+  },
+  {
+   "id": "gem:orihuela",
+   "city": "Orihuela",
+   "country": "Spain",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1c/Conjunto_hist%C3%B3rico_de_Orihuela.jpg/960px-Conjunto_hist%C3%B3rico_de_Orihuela.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1c/View_at_Museo_de_la_Reconquista_de_Moros_y_Cristianos_in_Orihuela%2C_Alicante%2C_Spain%2C_2022_January.jpg/960px-View_at_Museo_de_la_Reconquista_de_Moros_y_Cristianos_in_Orihuela%2C_Alicante%2C_Spain%2C_2022_January.jpg",
+   "file": "View at Museo de la Reconquista de Moros y Cristianos in Orihuela, Alicante, Spain, 2022 January",
+   "score": 15.5
+  },
+  {
+   "id": "gem:ostrava",
+   "city": "Ostrava",
+   "country": "Czechia",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/2/22/Ostravakolaz.png",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Ostrava_View_2009_1.JPG/960px-Ostrava_View_2009_1.JPG",
+   "file": "Ostrava View 2009 1",
+   "score": 13.0
+  },
+  {
+   "id": "gem:oswestry",
+   "city": "Oswestry",
+   "country": "United Kingdom",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/01/Christ_Church%2C_Oswestry.jpg/960px-Christ_Church%2C_Oswestry.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0d/Parish_Church_of_St._Oswald_%288688848815%29.jpg/960px-Parish_Church_of_St._Oswald_%288688848815%29.jpg",
+   "file": "Parish Church of St. Oswald (8688848815)",
+   "score": 8.5
+  },
+  {
+   "id": "gem:otley",
+   "city": "Otley",
+   "country": "United Kingdom",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e2/Otley_Market_Place_clock_7_August_2017.jpg/960px-Otley_Market_Place_clock_7_August_2017.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/View_of_Otley_from_Otley_Chevin%2C_West_Yorkshire_%281%29_-_2023-04-07.jpg/960px-View_of_Otley_from_Otley_Chevin%2C_West_Yorkshire_%281%29_-_2023-04-07.jpg",
+   "file": "View of Otley from Otley Chevin, West Yorkshire (1) - 2023-04-07",
+   "score": 16.0
+  },
+  {
+   "id": "gem:palinuro",
+   "city": "Palinuro (Cilento)",
+   "country": "Italy",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/26/Palinuro_dintorni.JPG/960px-Palinuro_dintorni.JPG",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Palinuro-grotta-azzurra-02.JPG/960px-Palinuro-grotta-azzurra-02.JPG",
+   "file": "Palinuro-grotta-azzurra-02",
+   "score": 8.45
+  },
+  {
+   "id": "gem:palmanova",
+   "city": "Palmanova",
+   "country": "Italy",
+   "from": "https://upload.wikimedia.org/wikipedia/it/c/c5/Palmanova_aerea.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Palmanova_Befestigungsring_1.JPG/960px-Palmanova_Befestigungsring_1.JPG",
+   "file": "Palmanova Befestigungsring 1",
+   "score": 7.0
+  },
+  {
+   "id": "PNA",
+   "city": "Pamplona",
+   "country": "Spain",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Monumento_a_los_Fueros_%28Pamplona%29.jpg/960px-Monumento_a_los_Fueros_%28Pamplona%29.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/View_of_Pamplona_%281%29.jpg/960px-View_of_Pamplona_%281%29.jpg",
+   "file": "View of Pamplona (1)",
+   "score": 18.5
+  },
+  {
+   "id": "gem:passau",
+   "city": "Passau",
+   "country": "Germany",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4d/PassauCollection2025.jpg/960px-PassauCollection2025.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/Aerial_image_of_Passau.jpg/960px-Aerial_image_of_Passau.jpg",
+   "file": "Aerial image of Passau",
+   "score": 18.5
+  },
+  {
+   "id": "gem:penrith",
+   "city": "Penrith",
+   "country": "United Kingdom",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/af/Penrith_Clock_Tower_-_geograph.org.uk_-_6420446.jpg/960px-Penrith_Clock_Tower_-_geograph.org.uk_-_6420446.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/22/1138256_Penrith_Castle%2C_seen_from_the_North_Penrith_20240527_0001.jpg/960px-1138256_Penrith_Castle%2C_seen_from_the_North_Penrith_20240527_0001.jpg",
+   "file": "1138256 Penrith Castle, seen from the North Penrith 20240527 0001",
+   "score": 12.15
+  },
+  {
+   "id": "gem:picos-de-europa",
+   "city": "Picos de Europa (Potes & Fuente De)",
+   "country": "Spain",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/02/Picu_Urriellu.jpg/960px-Picu_Urriellu.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/22/SotresPanorama.jpg/960px-SotresPanorama.jpg",
+   "file": "SotresPanorama",
+   "score": 12.5
+  },
+  {
+   "id": "gem:pistoia",
+   "city": "Pistoia",
+   "country": "Italy",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8d/Pistoia_Cathedral_facade_and_bell_tower_01.jpg/960px-Pistoia_Cathedral_facade_and_bell_tower_01.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Campanile_Pistoia.jpg/960px-Campanile_Pistoia.jpg",
+   "file": "Campanile Pistoia",
+   "score": 14.0
+  },
+  {
+   "id": "gem:plitvice",
+   "city": "Plitvice Lakes",
+   "country": "Croatia",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/39/View_in_Plitvice_Lakes_National_Park.jpg/960px-View_in_Plitvice_Lakes_National_Park.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Aerial_view_of_the_lake_Pro%C5%A1%C4%87ansko_Jezero_in_Plitvice_Lakes_National_Park%2C_Croatia_%2848607637016%29.jpg/960px-Aerial_view_of_the_lake_Pro%C5%A1%C4%87ansko_Jezero_in_Plitvice_Lakes_National_Park%2C_Croatia_%2848607637016%29.jpg",
+   "file": "Aerial view of the lake Prošćansko Jezero in Plitvice Lakes National Park, Croatia (48607637016)",
+   "score": 16.5
+  },
+  {
+   "id": "gem:porto-ercole",
+   "city": "Porto Ercole",
+   "country": "Italy",
+   "from": "https://upload.wikimedia.org/wikipedia/it/4/43/Porto_Ercole_e_Cala_Galera.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/Porto_Ercole_-_Vista_fortezza_dalla_rocca.JPG/960px-Porto_Ercole_-_Vista_fortezza_dalla_rocca.JPG",
+   "file": "Porto Ercole - Vista fortezza dalla rocca",
+   "score": 8.0
+  },
+  {
+   "id": "gem:ptuj",
+   "city": "Ptuj",
+   "country": "Slovenia",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/63/Ptuj_Town_Hall.jpg/960px-Ptuj_Town_Hall.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/73/Ptuj_town_in_Slovenia_oldest_city_in_Slovenia._Panoramic_view_over_Old_Town_and_castle_with_a_reflection_in_Drava_River_%2852699587092%29.jpg/960px-Ptuj_town_in_Slovenia_oldest_city_in_Slovenia._Panoramic_view_over_Old_Town_and_castle_with_a_reflection_in_Drava_River_%2852699587092%29.jpg",
+   "file": "Ptuj town in Slovenia oldest city in Slovenia. Panoramic view over Old Town and castle with a reflection in Drava River (52699587092)",
+   "score": 16.0
+  },
+  {
+   "id": "gem:puy-du-fou",
+   "city": "Puy du Fou",
+   "country": "France",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/Le_Secret_de_la_Lance.jpg/960px-Le_Secret_de_la_Lance.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/82/Le_signe_du_triomphe.jpg/960px-Le_signe_du_triomphe.jpg",
+   "file": "Le signe du triomphe",
+   "score": 9.0
+  },
+  {
+   "id": "gem:ravensburg",
+   "city": "Ravensburg",
+   "country": "Germany",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/Ravensburg_Blaserturm_Waaghaus_Rathaus.jpg/960px-Ravensburg_Blaserturm_Waaghaus_Rathaus.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Aerial_image_of_the_Ravensburg_prison_%28view_from_the_southeast%29.jpg/960px-Aerial_image_of_the_Ravensburg_prison_%28view_from_the_southeast%29.jpg",
+   "file": "Aerial image of the Ravensburg prison (view from the southeast)",
+   "score": 15.5
+  },
+  {
+   "id": "gem:reading",
+   "city": "Reading",
+   "country": "United Kingdom",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/99/Muse_reading_Louvre_CA2220_%28cropped%29.jpg/960px-Muse_reading_Louvre_CA2220_%28cropped%29.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Az_girl_reading_a_book._e-citizen.jpg/960px-Az_girl_reading_a_book._e-citizen.jpg",
+   "file": "Az girl reading a book. e-citizen",
+   "score": 7.45
+  },
+  {
+   "id": "gem:requena",
+   "city": "Requena",
+   "country": "Spain",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/ReqMVendimia.JPG/960px-ReqMVendimia.JPG",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/ComunidadValenciana_Requena3_tango7174.jpg/960px-ComunidadValenciana_Requena3_tango7174.jpg",
+   "file": "ComunidadValenciana Requena3 tango7174",
+   "score": 12.0
+  },
+  {
+   "id": "gem:rocca-calascio",
+   "city": "Rocca Calascio",
+   "country": "Italy",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/31/Rocca_Calascio_06_2023.jpg/960px-Rocca_Calascio_06_2023.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/06/Calascio_und_Rocca_Calascio.JPG/960px-Calascio_und_Rocca_Calascio.JPG",
+   "file": "Calascio und Rocca Calascio",
+   "score": 13.5
+  },
+  {
+   "id": "gem:ruthin",
+   "city": "Ruthin",
+   "country": "United Kingdom",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/St_Peter%27s_Square%2C_Ruthin%2C_North_Wales.jpg/960px-St_Peter%27s_Square%2C_Ruthin%2C_North_Wales.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7a/Town_Hall_%28Neuadd_y_Dref%29%2C_Ruthin_%28Rhuthun%29%2C_Denbighshire%2C_North_Wales.JPG/960px-Town_Hall_%28Neuadd_y_Dref%29%2C_Ruthin_%28Rhuthun%29%2C_Denbighshire%2C_North_Wales.JPG",
+   "file": "Town Hall (Neuadd y Dref), Ruthin (Rhuthun), Denbighshire, North Wales",
+   "score": 9.5
+  },
+  {
+   "id": "gem:saffron-walden",
+   "city": "Saffron Walden",
+   "country": "United Kingdom",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/St_Marys_Church%2C_Saffron_Walden.jpg/960px-St_Marys_Church%2C_Saffron_Walden.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Saffron_Walden_market_square.jpg/960px-Saffron_Walden_market_square.jpg",
+   "file": "Saffron Walden market square",
+   "score": 9.3
+  },
+  {
+   "id": "gem:saint-etienne",
+   "city": "Saint-Étienne",
+   "country": "France",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/Saint_Etienne_views.png/960px-Saint_Etienne_views.png",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/2018-02_saint-%C3%A9tienne_snow_drone_02.jpg/960px-2018-02_saint-%C3%A9tienne_snow_drone_02.jpg",
+   "file": "2018-02 saint-étienne snow drone 02",
+   "score": 14.0
+  },
+  {
+   "id": "gem:samaria-gorge",
+   "city": "Samaria Gorge",
+   "country": "Greece",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d5/Samaria2r.jpg/960px-Samaria2r.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/Walkers_in_the_Samari%C3%A1_Gorge_-_2022-07-25.jpg/960px-Walkers_in_the_Samari%C3%A1_Gorge_-_2022-07-25.jpg",
+   "file": "Walkers in the Samariá Gorge - 2022-07-25",
+   "score": 6.05
+  },
+  {
+   "id": "gem:savennieres",
+   "city": "Savennières",
+   "country": "France",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8d/P1290021_Savenni%C3%A8res_eglise_St-Pierre-St-Romain_rwk2.jpg/960px-P1290021_Savenni%C3%A8res_eglise_St-Pierre-St-Romain_rwk2.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/Panorama_du_bourg_historique_de_Savenni%C3%A8res.jpg/960px-Panorama_du_bourg_historique_de_Savenni%C3%A8res.jpg",
+   "file": "Panorama du bourg historique de Savennières",
+   "score": 15.0
+  },
+  {
+   "id": "gem:sixt-fer-a-cheval",
+   "city": "Sixt-Fer-à-Cheval",
+   "country": "France",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/50/Sixt.JPG/960px-Sixt.JPG",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a3/L%27Echarny%2C_Le_Crot_and_Sixt-Fer-%C3%A0-Cheval_from_les_Praz_de_Commune%2C_2008.jpg/960px-L%27Echarny%2C_Le_Crot_and_Sixt-Fer-%C3%A0-Cheval_from_les_Praz_de_Commune%2C_2008.jpg",
+   "file": "L'Echarny, Le Crot and Sixt-Fer-à-Cheval from les Praz de Commune, 2008",
+   "score": 13.0
+  },
+  {
+   "id": "gem:slagelse",
+   "city": "Slagelse",
+   "country": "Denmark",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/34/Sankt_Mikkels_Kirke_Slagelse_Denmark.jpg/960px-Sankt_Mikkels_Kirke_Slagelse_Denmark.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7a/Slagelse_Station%2C_Denmark.jpg/960px-Slagelse_Station%2C_Denmark.jpg",
+   "file": "Slagelse Station, Denmark",
+   "score": 10.5
+  },
+  {
+   "id": "gem:sligo",
+   "city": "Sligo",
+   "country": "Ireland",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/Sligo_Borough_Council.jpg/960px-Sligo_Borough_Council.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bb/Sligo_Cathedral_of_the_Immaculate_Conception_2013_09_14.jpg/960px-Sligo_Cathedral_of_the_Immaculate_Conception_2013_09_14.jpg",
+   "file": "Sligo Cathedral of the Immaculate Conception 2013 09 14",
+   "score": 10.0
+  },
+  {
+   "id": "gem:benbulbin-sligo",
+   "city": "Sligo (Benbulbin)",
+   "country": "Ireland",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/Sligo_Borough_Council.jpg/960px-Sligo_Borough_Council.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bb/Sligo_Cathedral_of_the_Immaculate_Conception_2013_09_14.jpg/960px-Sligo_Cathedral_of_the_Immaculate_Conception_2013_09_14.jpg",
+   "file": "Sligo Cathedral of the Immaculate Conception 2013 09 14",
+   "score": 7.5
+  },
+  {
+   "id": "SOF",
+   "city": "Sofia",
+   "country": "Bulgaria",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/be/Russian_church_%2837591925970%29.jpg/960px-Russian_church_%2837591925970%29.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/Sofia_University_panorama_2.jpg/960px-Sofia_University_panorama_2.jpg",
+   "file": "Sofia University panorama 2",
+   "score": 18.0
+  },
+  {
+   "id": "gem:soldeu",
+   "city": "Soldeu (Vall d'Incles)",
+   "country": "Andorra",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/AndorraSoldeuView.JPG/960px-AndorraSoldeuView.JPG",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/800px-Soldeu.jpg/960px-800px-Soldeu.jpg",
+   "file": "800px-Soldeu",
+   "score": 8.5
+  },
+  {
+   "id": "gem:stafford",
+   "city": "Stafford",
+   "country": "United Kingdom",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/84/Staffordshire_Shire_Hall.jpg/960px-Staffordshire_Shire_Hall.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/42/Coll%C3%A9giale_Sainte_Marie_de_Stafford_03.JPG/960px-Coll%C3%A9giale_Sainte_Marie_de_Stafford_03.JPG",
+   "file": "Collégiale Sainte Marie de Stafford 03",
+   "score": 11.5
+  },
+  {
+   "id": "gem:stony-stratford",
+   "city": "Stony Stratford",
+   "country": "United Kingdom",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bb/Stony_Stratford_Church.jpg/960px-Stony_Stratford_Church.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/01/Horsefair_Green%2C_Stony_Stratford_-_geograph.org.uk_-_2305795.jpg/960px-Horsefair_Green%2C_Stony_Stratford_-_geograph.org.uk_-_2305795.jpg",
+   "file": "Horsefair Green, Stony Stratford - geograph.org.uk - 2305795",
+   "score": 9.65
+  },
+  {
+   "id": "SUJ",
+   "city": "Suceava",
+   "country": "Romania",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1c/Palatul_Administrativ_din_Suceava_%281%29.jpg/960px-Palatul_Administrativ_din_Suceava_%281%29.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Palatul_Administrativ_din_Suceava_%282%29.jpg/960px-Palatul_Administrativ_din_Suceava_%282%29.jpg",
+   "file": "Palatul Administrativ din Suceava (2)",
+   "score": 11.0
+  },
+  {
+   "id": "gem:szczawnica",
+   "city": "Szczawnica",
+   "country": "Poland",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bb/Szczawnica%2C_wyci%C4%85g_krzes%C5%82kowy_na_Palenic%C4%99_%28HB4%29.jpg/960px-Szczawnica%2C_wyci%C4%85g_krzes%C5%82kowy_na_Palenic%C4%99_%28HB4%29.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9d/PL_Szczawnica_Plac_Dietla_1.JPG/960px-PL_Szczawnica_Plac_Dietla_1.JPG",
+   "file": "PL Szczawnica Plac Dietla 1",
+   "score": 12.0
+  },
+  {
+   "id": "gem:szentendre",
+   "city": "Szentendre",
+   "country": "Hungary",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Szentendre_montage1.jpg/960px-Szentendre_montage1.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/40/View_from_Bart%C3%B3k_B%C3%A9la_street._Preobrazsenszka_church_-_Szentendre.JPG/960px-View_from_Bart%C3%B3k_B%C3%A9la_street._Preobrazsenszka_church_-_Szentendre.JPG",
+   "file": "View from Bartók Béla street. Preobrazsenszka church - Szentendre",
+   "score": 14.5
+  },
+  {
+   "id": "gem:selestat",
+   "city": "Sélestat",
+   "country": "France",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/Selestat_Tour_de_l%E2%80%99horloge.jpg/960px-Selestat_Tour_de_l%E2%80%99horloge.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Panorama_depuis_le_ch%C3%A2teau_du_Haut-Koenigsbourg_-_ville_%28S%C3%A9lestat%29.jpg/960px-Panorama_depuis_le_ch%C3%A2teau_du_Haut-Koenigsbourg_-_ville_%28S%C3%A9lestat%29.jpg",
+   "file": "Panorama depuis le château du Haut-Koenigsbourg - ville (Sélestat)",
+   "score": 15.0
+  },
+  {
+   "id": "gem:tarnow",
+   "city": "Tarnow",
+   "country": "Poland",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f1/Ratusz_w_Tarnowie_-_01.jpg/960px-Ratusz_w_Tarnowie_-_01.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Budynek_Miejskiej_Kasy_Oszcz%C4%99dno%C5%9Bciowej_w_Tarnowie_-_18.jpg/960px-Budynek_Miejskiej_Kasy_Oszcz%C4%99dno%C5%9Bciowej_w_Tarnowie_-_18.jpg",
+   "file": "Budynek Miejskiej Kasy Oszczędnościowej w Tarnowie - 18",
+   "score": 10.75
+  },
+  {
+   "id": "gem:thann",
+   "city": "Thann",
+   "country": "France",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e5/CollegialeDeThannOeilDeLaSorciere.jpg/960px-CollegialeDeThannOeilDeLaSorciere.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c6/Coll%C3%A9giale_Saint-Thi%C3%A9baut_%28Thann%29_%282%29.jpg/960px-Coll%C3%A9giale_Saint-Thi%C3%A9baut_%28Thann%29_%282%29.jpg",
+   "file": "Collégiale Saint-Thiébaut (Thann) (2)",
+   "score": 16.0
+  },
+  {
+   "id": "gem:tintagel",
+   "city": "Tintagel",
+   "country": "United Kingdom",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/84/Tintagel_Castle_-_geograph.org.uk_-_2417082.jpg/960px-Tintagel_Castle_-_geograph.org.uk_-_2417082.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/Around_Tintagel%2C_Cornwall_%28461181%29_%289458675814%29.jpg/960px-Around_Tintagel%2C_Cornwall_%28461181%29_%289458675814%29.jpg",
+   "file": "Around Tintagel, Cornwall (461181) (9458675814)",
+   "score": 11.5
+  },
+  {
+   "id": "TLS",
+   "city": "Toulouse",
+   "country": "France",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f7/Toulouse_-_vue_du_Vieux_Toulouse_depuis_St_Sernin_06.jpg/960px-Toulouse_-_vue_du_Vieux_Toulouse_depuis_St_Sernin_06.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/Aerial_view_-_Z%C3%A9nith_Toulouse_M%C3%A9tropole.jpg/960px-Aerial_view_-_Z%C3%A9nith_Toulouse_M%C3%A9tropole.jpg",
+   "file": "Aerial view - Zénith Toulouse Métropole",
+   "score": 16.0
+  },
+  {
+   "id": "TPS",
+   "city": "Trapani",
+   "country": "Italy",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/0/04/Trapani_from_erice.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Trapani_BW_2025-04-30_12-08-03.jpg/960px-Trapani_BW_2025-04-30_12-08-03.jpg",
+   "file": "Trapani BW 2025-04-30 12-08-03",
+   "score": 16.0
+  },
+  {
+   "id": "gem:trelleborg",
+   "city": "Trelleborg",
+   "country": "Sweden",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/be/Trelleborg%2C_Springbrunnen_und_Turm_%282008-07-27%29.JPG/960px-Trelleborg%2C_Springbrunnen_und_Turm_%282008-07-27%29.JPG",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Hamn_Trelleborg.jpg/960px-Hamn_Trelleborg.jpg",
+   "file": "Hamn Trelleborg",
+   "score": 10.1
+  },
+  {
+   "id": "gem:treuchtlingen",
+   "city": "Treuchtlingen",
+   "country": "Germany",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/62/Treuchtlingen_Rathaus_001.JPG/960px-Treuchtlingen_Rathaus_001.JPG",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e2/Auernheim_vSO.jpg/960px-Auernheim_vSO.jpg",
+   "file": "Auernheim vSO",
+   "score": 10.5
+  },
+  {
+   "id": "gem:treviso",
+   "city": "Treviso",
+   "country": "Italy",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a1/Piazza_dei_Signori_e_Palazzo_dei_Trecento.jpg/960px-Piazza_dei_Signori_e_Palazzo_dei_Trecento.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/%28Treviso%29_Museo_Bailo.jpg/960px-%28Treviso%29_Museo_Bailo.jpg",
+   "file": "(Treviso) Museo Bailo",
+   "score": 14.0
+  },
+  {
+   "id": "gem:vadstena",
+   "city": "Vadstena",
+   "country": "Sweden",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/c/c5/R%C3%A5dhuset_i_Vadstena%2C_juni_2005.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a1/0223Vadstena_slott.jpg/960px-0223Vadstena_slott.jpg",
+   "file": "0223Vadstena slott",
+   "score": 11.0
+  },
+  {
+   "id": "gem:vallon-pont-d-arc",
+   "city": "Vallon-Pont-d'Arc",
+   "country": "France",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/db/060806_Vallon-Pt_d%27Arc301.jpg/960px-060806_Vallon-Pt_d%27Arc301.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/ba/Pont_d%27Arc_HDR.jpg/960px-Pont_d%27Arc_HDR.jpg",
+   "file": "Pont d'Arc HDR",
+   "score": 10.5
+  },
+  {
+   "id": "gem:valmiera",
+   "city": "Valmiera",
+   "country": "Latvia",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/44_%D0%9B%D0%B0_%D0%92%D0%B0%D0%BB%D0%BC%D0%B8%D0%B5%D1%80%D0%B0.jpg/960px-44_%D0%9B%D0%B0_%D0%92%D0%B0%D0%BB%D0%BC%D0%B8%D0%B5%D1%80%D0%B0.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/Valmieras_Sv%C4%93t%C4%81_S%C4%ABma%C5%86a_luter%C4%81%C5%86u_bazn%C4%ABca%2C_Valmiera%2C_Latvija_-_panoramio_%281%29.jpg/960px-Valmieras_Sv%C4%93t%C4%81_S%C4%ABma%C5%86a_luter%C4%81%C5%86u_bazn%C4%ABca%2C_Valmiera%2C_Latvija_-_panoramio_%281%29.jpg",
+   "file": "Valmieras Svētā Sīmaņa luterāņu baznīca, Valmiera, Latvija - panoramio (1)",
+   "score": 14.0
+  },
+  {
+   "id": "gem:veenhuizen",
+   "city": "Veenhuizen",
+   "country": "Netherlands",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Overzicht_met_op_de_voorgrond_een_vijver_-_Veenhuizen_-_20343639_-_RCE.jpg/960px-Overzicht_met_op_de_voorgrond_een_vijver_-_Veenhuizen_-_20343639_-_RCE.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/Het_Nationaal_Gevangenismuseum.jpg/960px-Het_Nationaal_Gevangenismuseum.jpg",
+   "file": "Het Nationaal Gevangenismuseum",
+   "score": 8.45
+  },
+  {
+   "id": "gem:vejle",
+   "city": "Vejle",
+   "country": "Denmark",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/96/B%C3%B8lgen%2C_Vejle_2022.jpg/960px-B%C3%B8lgen%2C_Vejle_2022.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e2/Mary%27s%2C_Vejle_rooftop_view.jpg/960px-Mary%27s%2C_Vejle_rooftop_view.jpg",
+   "file": "Mary's, Vejle rooftop view",
+   "score": 16.0
+  },
+  {
+   "id": "gem:vernet-les-bains",
+   "city": "Vernet-les-Bains",
+   "country": "France",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Vernet_les_bains_eglise_IMG_2180.JPG/960px-Vernet_les_bains_eglise_IMG_2180.JPG",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/Foundation_stone_Anglican_church_Vernet-les-Bains.jpg/960px-Foundation_stone_Anglican_church_Vernet-les-Bains.jpg",
+   "file": "Foundation stone Anglican church Vernet-les-Bains",
+   "score": 11.45
+  },
+  {
+   "id": "gem:vila-real-de-santo-antonio",
+   "city": "Vila Real de Santo António",
+   "country": "Portugal",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/27/Vila_Real_Main_Square_01.jpg/960px-Vila_Real_Main_Square_01.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d9/Cacela_Velha_-_Portugal_%F0%9F%87%B5%F0%9F%87%B9_%2854680059842%29.jpg/960px-Cacela_Velha_-_Portugal_%F0%9F%87%B5%F0%9F%87%B9_%2854680059842%29.jpg",
+   "file": "Cacela Velha - Portugal 🇵🇹 (54680059842)",
+   "score": 8.5
+  },
+  {
+   "id": "gem:viljandi",
+   "city": "Viljandi",
+   "country": "Estonia",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c4/Viljandi_raekoda_2014.jpg/960px-Viljandi_raekoda_2014.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f5/Elamu_Viljandis_Tallinna_16.jpg/960px-Elamu_Viljandis_Tallinna_16.jpg",
+   "file": "Elamu Viljandis Tallinna 16",
+   "score": 14.3
+  },
+  {
+   "id": "gem:vimoutiers",
+   "city": "Vimoutiers",
+   "country": "France",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e5/%C3%89glise_Notre-Dame_de_Vimoutiers.jpg/960px-%C3%89glise_Notre-Dame_de_Vimoutiers.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/37/H%C3%B4tel_de_ville_de_Vimoutiers.jpg/960px-H%C3%B4tel_de_ville_de_Vimoutiers.jpg",
+   "file": "Hôtel de ville de Vimoutiers",
+   "score": 12.0
+  },
+  {
+   "id": "gem:viseu",
+   "city": "Viseu",
+   "country": "Portugal",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/64/S%C3%A9_de_Viseu_IMG_20141226_155323-Pano_%2836162491774%29.jpg/960px-S%C3%A9_de_Viseu_IMG_20141226_155323-Pano_%2836162491774%29.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/S%C3%A9_de_Viseu_-_Portugal_%2853217028697%29.jpg/960px-S%C3%A9_de_Viseu_-_Portugal_%2853217028697%29.jpg",
+   "file": "Sé de Viseu - Portugal (53217028697)",
+   "score": 13.0
+  },
+  {
+   "id": "gem:visoki-decani",
+   "city": "Visoki Dečani",
+   "country": "Kosovo",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0d/Manastir_Visoki_De%C4%8Dani_%28%D0%9C%D0%B0%D0%BD%D0%B0%D1%81%D1%82%D0%B8%D1%80_%D0%92%D0%B8%D1%81%D0%BE%D0%BA%D0%B8_%D0%94%D0%B5%D1%87%D0%B0%D0%BD%D0%B8%29_-_by_Pudelek..jpg/960px-Manastir_Visoki_De%C4%8Dani_%28%D0%9C%D0%B0%D0%BD%D0%B0%D1%81%D1%82%D0%B8%D1%80_%D0%92%D0%B8%D1%81%D0%BE%D0%BA%D0%B8_%D0%94%D0%B5%D1%87%D0%B0%D0%BD%D0%B8%29_-_by_Pudelek..jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/92/8._Manastiri_i_De%C3%A7anit.JPG/960px-8._Manastiri_i_De%C3%A7anit.JPG",
+   "file": "8. Manastiri i Deçanit",
+   "score": 8.0
+  },
+  {
+   "id": "gem:visegrad",
+   "city": "Višegrad",
+   "country": "Bosnia and Herzegovina",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/a/ab/Vi%C5%A1egrad.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/Me%C4%91e%C4%91a_%E2%80%93_Drina_View.jpg/960px-Me%C4%91e%C4%91a_%E2%80%93_Drina_View.jpg",
+   "file": "Međeđa – Drina View",
+   "score": 6.5
+  },
+  {
+   "id": "gem:waterford",
+   "city": "Waterford",
+   "country": "Ireland",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/Christ_Church_Cathedral%2C_Waterford%2C_2021-06-01.jpg/960px-Christ_Church_Cathedral%2C_Waterford%2C_2021-06-01.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Tall-ships-waterford.jpg/960px-Tall-ships-waterford.jpg",
+   "file": "Tall-ships-waterford",
+   "score": 6.5
+  },
+  {
+   "id": "gem:wedde",
+   "city": "Wedde",
+   "country": "Netherlands",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9c/Kerk_van_Wedde.jpg/960px-Kerk_van_Wedde.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1c/Wedderborg.jpg/960px-Wedderborg.jpg",
+   "file": "Wedderborg",
+   "score": 12.5
+  },
+  {
+   "id": "gem:wells-somerset",
+   "city": "Wells",
+   "country": "United Kingdom",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/02/A_Lidar_View_of_the_City_of_Wells.jpg/960px-A_Lidar_View_of_the_City_of_Wells.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/99/Wells%2C_High_Street_%285%29_-_geograph.org.uk_-_3520177.jpg/960px-Wells%2C_High_Street_%285%29_-_geograph.org.uk_-_3520177.jpg",
+   "file": "Wells, High Street (5) - geograph.org.uk - 3520177",
+   "score": 11.0
+  },
+  {
+   "id": "gem:winsum",
+   "city": "Winsum",
+   "country": "Netherlands",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/Overzicht_linker_zijgevel_-_Winsum_-_20364317_-_RCE.jpg/960px-Overzicht_linker_zijgevel_-_Winsum_-_20364317_-_RCE.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/56/Overzicht_van_de_ligging_kerk_ten_opzichte_van_de_pastorie_-_Winsum_-_20530301_-_RCE.jpg/960px-Overzicht_van_de_ligging_kerk_ten_opzichte_van_de_pastorie_-_Winsum_-_20530301_-_RCE.jpg",
+   "file": "Overzicht van de ligging kerk ten opzichte van de pastorie - Winsum - 20530301 - RCE",
+   "score": 7.9
+  },
+  {
+   "id": "gem:wipperfurth",
+   "city": "Wipperfürth",
+   "country": "Germany",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/Wipperf%C3%BCrth_Evangelische_Kirche.jpg/960px-Wipperf%C3%BCrth_Evangelische_Kirche.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/Aerial_image_of_the_Wipperf%C3%BCrth-Neye_airfield.jpg/960px-Aerial_image_of_the_Wipperf%C3%BCrth-Neye_airfield.jpg",
+   "file": "Aerial image of the Wipperfürth-Neye airfield",
+   "score": 15.5
+  },
+  {
+   "id": "gem:xanten",
+   "city": "Xanten",
+   "country": "Germany",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Xanten_markt_Norbertbrunnen_02.jpg/960px-Xanten_markt_Norbertbrunnen_02.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dc/Amphitheater_Xanten.jpg/960px-Amphitheater_Xanten.jpg",
+   "file": "Amphitheater Xanten",
+   "score": 9.65
+  },
+  {
+   "id": "gem:zalaegerszeg",
+   "city": "Zalaegerszeg",
+   "country": "Hungary",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8f/R._k._pl%C3%A9b%C3%A1niatemplom_%2811066._sz%C3%A1m%C3%BA_m%C5%B1eml%C3%A9k%29_4.jpg/960px-R._k._pl%C3%A9b%C3%A1niatemplom_%2811066._sz%C3%A1m%C3%BA_m%C5%B1eml%C3%A9k%29_4.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Zalaegerszeg_tv-tower_2019_01.jpg/960px-Zalaegerszeg_tv-tower_2019_01.jpg",
+   "file": "Zalaegerszeg tv-tower 2019 01",
+   "score": 12.5
+  },
+  {
+   "id": "gem:zermatt",
+   "city": "Zermatt",
+   "country": "Switzerland",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/1_zermatt_evening_2022.jpg/960px-1_zermatt_evening_2022.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/3804_-_Winkelmatten_-_Matterhorn_viewed_from_Gornergratbahn.JPG/960px-3804_-_Winkelmatten_-_Matterhorn_viewed_from_Gornergratbahn.JPG",
+   "file": "3804 - Winkelmatten - Matterhorn viewed from Gornergratbahn",
+   "score": 8.45
+  },
+  {
+   "id": "gem:orebro",
+   "city": "Örebro",
+   "country": "Sweden",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bf/%C3%96rebro_slott_May_2014_01.jpg/960px-%C3%96rebro_slott_May_2014_01.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/View_of_central_%C3%96rebro_from_Svampen%2C_June_2022.jpg/960px-View_of_central_%C3%96rebro_from_Svampen%2C_June_2022.jpg",
+   "file": "View of central Örebro from Svampen, June 2022",
+   "score": 16.5
+  },
+  {
+   "id": "gem:thorsmork",
+   "city": "Þórsmörk",
+   "country": "Iceland",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/%C3%9E%C3%B3rsm%C3%B6rk_from_Valahn%C3%BAksb%C3%B3l_20090607.jpg/960px-%C3%9E%C3%B3rsm%C3%B6rk_from_Valahn%C3%BAksb%C3%B3l_20090607.jpg",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/%C3%9E%C3%B3rsm%C3%B6rk.jpeg/960px-%C3%9E%C3%B3rsm%C3%B6rk.jpeg",
+   "file": "Þórsmörk",
+   "score": 14.5
+  },
+  {
+   "id": "gem:ceske-budejovice",
+   "city": "České Budějovice",
+   "country": "Czechia",
+   "from": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/Ceske_Budejovice_kolaz.png/960px-Ceske_Budejovice_kolaz.png",
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d2/8.8.20_4_Ceske_Budejovice_Sunset_1_%2850209010141%29.jpg/960px-8.8.20_4_Ceske_Budejovice_Sunset_1_%2850209010141%29.jpg",
+   "file": "8.8.20 4 Ceske Budejovice Sunset 1 (50209010141)",
+   "score": 14.5
+  },
+  {
+   "id": "gem:spisska-stara-ves",
+   "city": "Spišská Stará Ves",
+   "country": "Slovakia",
+   "from": null,
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/061_01_Spi%C5%A1sk%C3%A1_Star%C3%A1_Ves%2C_Slovakia_-_panoramio.jpg/960px-061_01_Spi%C5%A1sk%C3%A1_Star%C3%A1_Ves%2C_Slovakia_-_panoramio.jpg",
+   "file": "061 01 Spišská Stará Ves, Slovakia - panoramio",
+   "score": 10.55
+  },
+  {
+   "id": "gem:raksta",
+   "city": "Raksta",
+   "country": "Sweden",
+   "from": null,
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Albysj%C3%B6n%2C_Tyres%C3%B6%2C_2007-06-24%2C_view_northeast_along_the_bay_Nyforsviken.jpeg/960px-Albysj%C3%B6n%2C_Tyres%C3%B6%2C_2007-06-24%2C_view_northeast_along_the_bay_Nyforsviken.jpeg",
+   "file": "Albysjön, Tyresö, 2007-06-24, view northeast along the bay Nyforsviken",
+   "score": 9.5
+  },
+  {
+   "id": "gem:zalakaros",
+   "city": "Zalakaros",
+   "country": "Hungary",
+   "from": null,
+   "to": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ee/Zalakaros_church.JPG/960px-Zalakaros_church.JPG",
+   "file": "Zalakaros church",
+   "score": 13.0
   }
  ],
  "unfixed": []

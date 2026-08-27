@@ -61,7 +61,7 @@ await page.waitForTimeout(2500);
 // name into the search field and hope the match landed.
 check('country picker is on Beaches', await page.locator('.places-country').count() === 1);
 check('priced-from picker is gone on Beaches', await page.locator('.places-controls .origin-btn').count() === 0);
-check('lifestyle tier is gone on Beaches', await page.locator('.places-lifestyle').count() === 0);
+check('lifestyle tier is gone on Beaches', await page.locator('.lifestyle-btn:visible').count() === 0);
 check('price and A-Z sorts are gone on Beaches', await page.locator('.places-sort').count() === 0);
 check('the search field stays', await page.locator('.places-search input').count() === 1);
 

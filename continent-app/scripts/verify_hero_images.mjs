@@ -121,7 +121,7 @@ const found = await card.count() > 0;
 check(`${targetDest.city} is findable in the grid`, found);
 if (found) {
   await card.click();
-  await page.locator('.panel.dest-panel.open').waitFor({ timeout: 30000 });
+  await page.locator('.destp').waitFor({ timeout: 30000 });
   await page.waitForTimeout(1800);
   const hero = page.locator('.panel-hero-img').first();
   check(`panel hero is an img with a srcset (${targetDest.city})`,

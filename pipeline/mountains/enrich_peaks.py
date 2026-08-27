@@ -53,6 +53,7 @@ ASCII clean, no em dashes, per project convention.
 """
 
 import argparse
+import importlib.util
 import json
 import math
 import re
@@ -73,6 +74,21 @@ from harvest_peaks import (COUNTRY_QID, LOCAL_LANG, fold,  # noqa: E402
                            name_tokens, qid_of)
 
 ROOT = HERE.parents[1]
+
+# The lake layer's shared card-shape term, loaded by path the way peak_sources
+# loads the beach clients: the cards this layer feeds are the same 25/12 crop
+# as the lake and beach cards, and the thresholds should live in one file.
+# lake_images imports nothing heavy at module level, so this costs nothing.
+_LAKE_IMAGES = ROOT / "pipeline" / "lakes" / "lake_images.py"
+if "carta_lake_images" in sys.modules:
+    lake_images = sys.modules["carta_lake_images"]
+else:
+    _lake_spec = importlib.util.spec_from_file_location("carta_lake_images",
+                                                        _LAKE_IMAGES)
+    lake_images = importlib.util.module_from_spec(_lake_spec)
+    sys.modules["carta_lake_images"] = lake_images
+    _lake_spec.loader.exec_module(lake_images)
+
 CACHE = ROOT / "cache"
 DEST_INDEX = CACHE / "mountains" / "dest_index.json"
 BEACH_DEST_INDEX = CACHE / "beaches" / "dest_index.json"
@@ -760,15 +776,14 @@ def score_image(cand, peak):
                  r"gipfelblick|blick vom)\b", folded):
         score -= 1.2
 
-    # Shape and size. A card is a landscape crop, and an extreme panorama
-    # crops to a stripe of nothing.
-    if width > height:
-        score += 0.8
-    elif height > width * 1.2:
-        score -= 0.8
-    aspect = width / height if height else 0
-    if aspect > 3.2:
-        score -= 0.8
+    # Shape and size. The card is the shared 25/12 crop, so the shared helper
+    # decides: photographs near that frame get a nudge, portraits and extreme
+    # strips lose hard, and the shapes that crop to garbage whatever else is
+    # right about them are refused outright.
+    shape_reject, fit_delta = lake_images.aspect_term(width, height)
+    if shape_reject:
+        return -1
+    score += fit_delta
     if width >= 2400:
         score += 0.5
     elif width >= 1600:
@@ -800,7 +815,8 @@ def pick_images(peak, lang="en"):
     for score, cand in ranked:
         if score < PICK_FLOOR or len(picked) >= IMAGES_WANTED:
             continue
-        strong = (cand["source"] == "article" or named_for(cand, peak))
+        named = named_for(cand, peak)
+        strong = (cand["source"] == "article" or named)
         if not strong and weak_left <= 0:
             continue
         info = cand["info"]
@@ -823,8 +839,25 @@ def pick_images(peak, lang="en"):
         seen_key.add(key)
         if not strong:
             weak_left -= 1
+        # WHY this file is on this mountain, in the vocabulary the beach wire
+        # already ships as "ev": p18 (Wikidata pinned it), name (named for the
+        # mountain), article (its own article uses it), cat (filed in its own
+        # category). Recorded here at pick time so the export can publish the
+        # claim without re-deriving it; caches enriched before this field
+        # existed derive it there instead.
+        if cand["source"] == "pinned":
+            evidence = "p18"
+        elif named:
+            evidence = "name"
+        elif cand["source"] == "article":
+            evidence = "article"
+        elif category_match(cand, peak) == "own":
+            evidence = "cat"
+        else:
+            evidence = "geo"
         picked.append({
-            "named": bool(named_for(cand, peak)),
+            "named": named,
+            "evidence": evidence,
             "file": cand["title"],
             "url": info.get("thumburl") or info.get("url"),
             "full": info.get("url"),
@@ -1214,6 +1247,47 @@ def context_only(cc):
     return rich
 
 
+def views_only(cc):
+    """Refill the pageview counts on a country that is already enriched.
+
+    Pageviews are half the acclaim term, and unlike everything else this layer
+    stores they can come back EMPTY without an error: the API answers with the
+    article and simply omits the pageviews block when it is under load, and a
+    long sweep that spends two hours being rate limited collects a lot of
+    those. The result is silent and expensive, because acclaim is normalised
+    per country: 46 of Austria's 62 peaks lost their counts in one refresh, so
+    Piz Buin scored 4.5 on 28 sitelinks and no views while a minor summit with
+    its counts intact scored 5.1 and published in its place.
+
+    Nothing else is touched, and a peak whose count comes back empty again
+    keeps whatever it had, so running this twice can only improve the cache.
+    """
+    rich = load_cache(STAGE_OUT, cc)
+    if rich is None or not rich.get("peaks"):
+        print(f"  {cc}: nothing enriched yet")
+        return None
+    peaks = rich["peaks"]
+    todo = [p for p in peaks
+            if not p.get("views_en") and not p.get("views_local")]
+    if not todo:
+        print(f"  {cc}: pageviews already complete")
+        return rich
+    before = {id(p): (p.get("views_en") or 0, p.get("views_local") or 0)
+              for p in todo}
+    print(f"  {cc}: {len(todo)} peaks without pageviews")
+    wikipedia_facts(todo, cc)
+    filled = sum(1 for p in todo
+                 if (p.get("views_en") or 0, p.get("views_local") or 0)
+                 != before[id(p)])
+    if not filled:
+        print(f"  {cc}: nothing came back, cache left alone")
+        return rich
+    save_cache(STAGE_OUT, cc, rich)
+    have = sum(1 for p in peaks if p.get("views_en") or p.get("views_local"))
+    print(f"  {cc}: filled {filled}, now {have}/{len(peaks)} with pageviews")
+    return rich
+
+
 def resync_seeds(cc):
     """Re-apply the harvest's seed pins to a rich cache already on disk.
 
@@ -1467,6 +1541,10 @@ def main():
     parser.add_argument("--context-only", action="store_true",
                         help="run only the Overpass pass over what is "
                              "already enriched")
+    parser.add_argument("--views-only", action="store_true",
+                        help="refill pageview counts that came back empty "
+                             "(they can, silently, under rate limiting, and "
+                             "they carry half the acclaim score)")
     args = parser.parse_args()
 
     from harvest_peaks import COUNTRIES
@@ -1483,6 +1561,9 @@ def main():
                 continue
             if args.context_only:
                 context_only(cc)
+                continue
+            if args.views_only:
+                views_only(cc)
                 continue
             enrich_country(cc, refresh=args.refresh, dests=dests,
                            images=not args.no_images,

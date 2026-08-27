@@ -110,7 +110,7 @@ try {
   } catch { /* auth not configured in this build */ }
   await page.locator('.account-avatar-btn').first().click({ timeout: 60000 });
   await page.locator('.account-panel').waitFor({ timeout: 30000 });
-  await page.locator('.account-menu-row', { hasText: /data sources/i }).click({ timeout: 30000 });
+  await page.locator('.account-nav:visible', { hasText: /data sources/i }).click({ timeout: 30000 });
 
   const credits = page.locator('.account-credits li');
   await credits.first().waitFor({ timeout: 30000 });

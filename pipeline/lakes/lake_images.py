@@ -299,10 +299,10 @@ def beauty_score(cand, tokens, evidence=""):
         score -= 1.6
 
     if width and height:
-        if width > height:
-            score += 0.6                # a card is a landscape crop
-        if height > width * 1.15:
-            score -= 0.8                # a portrait crop of something tall
+        # Shape, measured against the card rather than against "landscape".
+        # The frame is 25/12, so the question is how much of the photograph
+        # survives that crop, and aspect_term answers it for every layer.
+        score += aspect_term(width, height)[1]
         if width >= 2000:
             score += 0.4
         if width < 1000:
@@ -310,6 +310,138 @@ def beauty_score(cand, tokens, evidence=""):
     if "panoramio" in folded_title:
         score -= 0.4                    # bulk import, often mediocre
     return round(score, 3)
+
+
+# ---------------------------------------------------------------------------
+# Shape: how a frame survives the card's crop
+# ---------------------------------------------------------------------------
+
+# The beach, lake and mountain cards all crop to 25/12, about 2.08:1, with the
+# crop anchored just below centre. A photograph near that shape ships almost
+# whole; a portrait loses most of itself; a 4:1 strip becomes a smear. One
+# helper for every layer, loaded by path from the others, so the thresholds
+# move together or not at all.
+FRAME_AR = 25.0 / 12.0
+FIT_GOOD = 0.62        # min(ar, frame) / max(ar, frame) at or above this
+AR_HARD_MIN = 0.62     # taller than this crops to a sliver of the subject
+AR_HARD_MAX = 4.0      # and so does a strip wider than this
+STRIP_FROM = 3.2       # above this the crop keeps a ribbon of the picture
+FIT_BONUS = 0.6
+PORTRAIT_PENALTY = 1.5
+STRIP_PENALTY = 1.5
+
+
+def aspect_fit(width, height, frame_ar=FRAME_AR):
+    """How well this frame fills the card, 1.0 for a perfect match, or None
+    when the dimensions are unknown."""
+    if not width or not height:
+        return None
+    ratio = width / height
+    return min(ratio, frame_ar) / max(ratio, frame_ar)
+
+
+def aspect_term(width, height, frame_ar=FRAME_AR):
+    """(reject, delta) for a candidate's shape against the card.
+
+    A modest bonus when the frame roughly fills the card, a strong penalty for
+    portraits and extreme strips, and a hard reject only at the shapes that
+    crop to garbage whatever else is right about the file. Unknown dimensions
+    pass untouched: the metadata gates decide relevance, this only orders what
+    they admitted."""
+    if not width or not height:
+        return False, 0.0
+    ratio = width / height
+    if ratio < AR_HARD_MIN or ratio > AR_HARD_MAX:
+        return True, 0.0
+    delta = 0.0
+    if min(ratio, frame_ar) / max(ratio, frame_ar) >= FIT_GOOD:
+        delta += FIT_BONUS
+    if ratio < 1.0:
+        delta -= PORTRAIT_PENALTY
+    elif ratio > STRIP_FROM:
+        delta -= STRIP_PENALTY
+    return False, round(delta, 3)
+
+
+# The commonest shape a photograph is taken in, and the reason the bar below
+# is not a constant: a 3:2 picture fills 0.72 of the 25/12 card and only 0.55
+# of the 30/11 itinerary strip, so a fixed 0.62 would mean "no ordinary
+# photograph qualifies" on the wider frame and nothing would ever be promoted.
+# The bar is what a 3:2 photograph achieves in the frame being asked about,
+# capped at FIT_GOOD so the narrow frames keep the threshold they were tuned
+# with.
+REFERENCE_AR = 1.5
+
+
+def fit_bar(frame_ar):
+    baseline = min(REFERENCE_AR, frame_ar) / max(REFERENCE_AR, frame_ar)
+    return min(FIT_GOOD, baseline)
+
+
+def lead_by_fit(rows, wh, tier=None, frame_ar=FRAME_AR, fit_min=None):
+    """Reorder a published picture list so a card shaped photograph leads.
+
+    The card crops images[0] into the frame and shows nothing else, so a lead
+    that survives the crop badly IS what a reader sees of the place: a 4:1
+    panorama of a lake becomes a blue band, a near square becomes its middle
+    third. Every layer already sorts its pictures by how well the file is
+    evidenced and then by quality, and this does not argue with either. It
+    only reaches inside the leading evidence tier, and only when the lead
+    fails the crop and another picture of the same standing passes it, so
+    nothing is ever traded down to buy a shape.
+
+    `wh` returns (width, height) for a row, `tier` the evidence class that may
+    not be weakened. Rows whose size is unknown are left where they are: an
+    unmeasurable file is not evidence of a bad crop."""
+    if len(rows) < 2:
+        return rows
+    if fit_min is None:
+        fit_min = fit_bar(frame_ar)
+    lead = rows[0]
+    lead_fit = aspect_fit(*wh(lead), frame_ar)
+    if lead_fit is None or lead_fit >= fit_min:
+        return rows
+    lead_tier = tier(lead) if tier else None
+    best, best_fit = None, lead_fit
+    for row in rows[1:]:
+        if tier and tier(row) != lead_tier:
+            continue                    # a weaker claim is not an upgrade
+        fit = aspect_fit(*wh(row), frame_ar)
+        if fit is not None and fit >= fit_min and fit > best_fit:
+            best, best_fit = row, fit
+    if best is None:
+        return rows
+    return [best] + [r for r in rows if r is not best]
+
+
+def reseat_lead(images, taken, key=lambda i: i.get("u"), tier=None):
+    """A lead photograph nobody else on the page is already leading with.
+
+    The three shoreline exporters all drop a row whose lead picture is another
+    row's, and the reason is sound: a minor top or a small tarn with no file
+    of its own borrows a photograph taken nearby, and a ridge of five under
+    one picture is five rows saying the same thing. Dropping the whole row is
+    too blunt for the other case, where a place has its own photographs and
+    merely AGREES with a neighbour about which is the best of them. Piz Buin,
+    Prenj, Rheinwaldhorn and Kutelo all vanished that way while lower scoring
+    summits published.
+
+    So: the row keeps its place on its own second picture, at the same
+    evidence standing as the first, and only a row whose every photograph
+    already belongs to somebody else is dropped. Returns the reordered list,
+    the list unchanged, or None to mean "nothing of its own is left"."""
+    if not images:
+        return images
+    if key(images[0]) not in taken:
+        return images
+    want = tier(images[0]) if tier else None
+    for idx, img in enumerate(images):
+        if key(img) in taken:
+            continue
+        if tier and tier(img) != want:
+            continue                    # a weaker claim is not a lead
+        return [img] + [x for k, x in enumerate(images) if k != idx]
+    return None
 
 
 # ---------------------------------------------------------------------------
@@ -385,10 +517,18 @@ def probe_pixels(data):
     # One colour across the whole frame, which is a plate rather than a place.
     spread = float(np.asarray(arr, dtype="float32").reshape(-1, 3).std(axis=0).mean())
 
+    # The frame the colour test cannot read: grey, mid-lit, neither blue nor
+    # green. An overcast Baltic shore and a black and white photograph both
+    # land here, and so does a concrete wall, which is why this is only ever
+    # reported, never counted as water. water_verdict decides what to do with
+    # it, and the shoreline layers answer that differently.
+    gray_px = (sat < 0.12) & (lum > 25) & (lum <= 195)
+
     return {
         "water": round(float(water.mean()), 3),
         "veg": round(float(veg.mean()), 3),
         "dark": round(float(dark.mean()), 3),
+        "gray": round(float(gray_px.mean()), 3),
         "pale": bool(bright_flat.mean() > 0.55),
         "plain": bool(spread < 11.0),
         "rgb": [int(round(float(c.mean()))) for c in (red, grn, blu)],
@@ -418,14 +558,31 @@ def pixel_veto_applies(evidence):
     return evidence in PIXEL_CAN_VETO
 
 
-def pixel_verdict(probe, evidence=""):
-    """(accepted, delta, why). A narrow hard reject, then a soft preference.
+# A bottom this grey, with no vegetation in it, is a frame the colour test
+# cannot read rather than a frame with no water in it. See GREY_ABSTAIN use
+# in water_verdict: only the beach layer asks for it.
+GREY_ABSTAIN = 0.72
+GREY_ABSTAIN_VEG = 0.05
 
-    Narrow on purpose, and narrower than the first attempt. The metadata gate
-    is what guarantees the file is of this lake. This one exists to catch the
-    plaque, the sports hall and the snowfield that happen to carry the lake's
-    name, and a strict rule here would throw away the honest photograph taken
-    from among the trees."""
+
+def water_verdict(probe, min_water, abstain_on_grey=False):
+    """(accepted, delta, why) against a caller-chosen water floor.
+
+    The shoreline layers share the probe and not the floor. A lake view is
+    mostly water; a beach photograph is legitimately mostly sand with a strip
+    of sea along the top of the lower frame; so the beach layer calls this
+    with a lower floor rather than borrowing a lake's idea of enough.
+
+    `abstain_on_grey` is the beach layer's answer to the one blind spot this
+    probe has and documents: water is recognised by colour, so an overcast
+    North Sea and any black and white photograph read as no water at all. On
+    a Baltic or Danish coast that is most of the good pictures, and vetoing
+    them cost a hundred real beaches their cards. When the bottom of the
+    frame is overwhelmingly grey AND carries no vegetation, this returns
+    "accepted, no bonus": the test is saying it cannot tell, not that the
+    picture is wrong, so the metadata evidence decides and a photograph with
+    visible blue water still outranks it. The vetoes above still apply, and a
+    street or a park still fails on its vegetation."""
     if probe is None:
         return True, 0.0, ""            # unreadable, fall back to metadata
     if probe["plain"]:
@@ -434,13 +591,16 @@ def pixel_verdict(probe, evidence=""):
         return False, 0.0, "snow or a blown highlight, not water"
     if probe["dark"] > 0.6:
         return False, 0.0, "shot in the dark"
-    floor = WEAK_MIN_WATER if evidence in WEAK_TIERS else MIN_WATER_FRAC
-    if probe["water"] < floor:
+    if probe["water"] < min_water:
+        if (abstain_on_grey
+                and probe.get("gray", 0.0) >= GREY_ABSTAIN
+                and probe["veg"] < GREY_ABSTAIN_VEG):
+            return True, 0.0, "grey frame, the colour test abstains"
         return False, 0.0, "not enough water in the lower frame"
 
     delta = 0.0
     if probe["water"] >= 0.55:
-        delta += 1.2                    # the lake IS the picture
+        delta += 1.2                    # the water IS the picture
     elif probe["water"] >= 0.30:
         delta += 0.8
     elif probe["water"] >= 0.18:
@@ -448,3 +608,15 @@ def pixel_verdict(probe, evidence=""):
     if probe["veg"] > 0.45:
         delta -= 0.6                    # mostly a photograph of a shore
     return True, round(delta, 3), ""
+
+
+def pixel_verdict(probe, evidence=""):
+    """(accepted, delta, why). A narrow hard reject, then a soft preference.
+
+    Narrow on purpose, and narrower than the first attempt. The metadata gate
+    is what guarantees the file is of this lake. This one exists to catch the
+    plaque, the sports hall and the snowfield that happen to carry the lake's
+    name, and a strict rule here would throw away the honest photograph taken
+    from among the trees."""
+    floor = WEAK_MIN_WATER if evidence in WEAK_TIERS else MIN_WATER_FRAC
+    return water_verdict(probe, floor)

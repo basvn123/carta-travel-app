@@ -671,6 +671,13 @@ def pick_images(lake, lang, probe=True):
     for cand in image_candidates(lake, lang):
         if not big_enough(cand):
             continue
+        info = cand.get("info") or {}
+        # A shape that crops to garbage in the 25/12 card is refused before
+        # anything else is asked of it. The soft preference for frames that
+        # fit lives in beauty_score, through the same helper.
+        if lake_images.aspect_term(info.get("width") or 0,
+                                   info.get("height") or 0)[0]:
+            continue
         ok, evidence = lake_images.subject_verdict(cand, tokens)
         if not ok:
             continue

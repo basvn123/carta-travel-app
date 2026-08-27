@@ -63,6 +63,7 @@ sys.path.insert(0, str(HERE))
 from water_sources import haversine_km, load_cache  # noqa: E402
 from harvest_lakes import COUNTRIES, fold, name_tokens  # noqa: E402
 import lake_index as li  # noqa: E402
+import lake_images  # noqa: E402
 import seed_lakes  # noqa: E402
 
 ROOT = HERE.parents[1]
@@ -302,7 +303,13 @@ def wire_images(lake):
     out.sort(key=lambda i: -i["_lead"])
     for img in out:
         img.pop("_lead")
-    return out
+    # Then, and only inside the leading evidence tier, let a picture that
+    # survives the card crop lead. The scores above rank how well a file is
+    # evidenced and reviewed, which is the right question and not the only
+    # one: the card shows images[0] cropped to 25:12, so a panorama that
+    # wins on merit still reaches the reader as a blue band.
+    return lake_images.lead_by_fit(out, lambda i: (i.get("w"), i.get("h")),
+                                   tier=lambda i: i.get("why"))
 
 
 def services_of(lake):
@@ -603,9 +610,15 @@ def dedupe(rows):
     five end up with the same picture."""
     kept, leads = [], set()
     for row in rows:
-        lead = row["images"][0]["u"] if row["images"] else None
-        if lead and lead in leads:
+        # A lake with pictures of its own keeps its place on the next one
+        # nobody else is leading with; only a lake whose every picture is
+        # already somebody else's is dropped as a borrowed view.
+        images = lake_images.reseat_lead(row.get("images") or [], leads,
+                                         tier=lambda i: i.get("why"))
+        if images is None:
             continue
+        row["images"] = images
+        lead = images[0]["u"] if images else None
         if any(haversine_km(row["lat"], row["lon"], other["lat"], other["lon"])
                <= DUPLICATE_KM for other in kept):
             continue

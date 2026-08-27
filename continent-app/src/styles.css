@@ -6508,11 +6508,205 @@ input, select {
   opacity: 1;
   color: var(--ink-mute);
 }
-/* Breathing room between the eating & drinking steppers - they read as one
-   dense block without it. */
-/* The +/- steppers sit close enough that a mis-tap changes the wrong line.
-   Nothing here is dense enough to need 14px. */
-.lifestyle-food .stepper + .stepper { margin-top: 20px; }
+/* ══════════════════════════════════════════════════════════════════════════
+   Lifestyle panel
+   Two questions, asked as two grids of tiles: where you sleep and how you eat
+   and drink. It was six wrapped chips, six more wrapped chips and six open
+   steppers under two mono paragraphs, which is a form, not a choice.
+
+   The tiles are the Destinations category card verbatim (.side-cat): quiet
+   --paper-dim until one is on, then the full accent. Same product, same one
+   way "selected" reads. The panel ground stays --paper throughout, header
+   included, so nothing in here stands on white.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.lifestyle-panel .panel-header { padding-bottom: 16px; }
+.lifestyle-panel .panel-city { margin-bottom: 6px; }
+
+/* One line under the title, in sans, doing the work the two mono paragraphs
+   used to. Prose is never mono here: mono carries measured facts. */
+.lifestyle-sub {
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--ink-soft);
+  max-width: 46ch;
+}
+
+/* Section heading. Plain sentence case, no icon and no tiny-caps: the tiles
+   below are already the loud thing, and an iconed overline over a grid of
+   iconed tiles is two decorations doing one job. */
+.ls-head {
+  margin-bottom: 11px;
+  font-size: 13.5px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+
+.ls-tiles {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+.ls-tiles-3 { grid-template-columns: repeat(3, 1fr); }
+
+.ls-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-width: 0;
+  min-height: 74px;
+  padding: 12px 5px 11px;
+  border: 1px solid var(--rule-soft);
+  border-radius: 10px;
+  background: var(--paper-dim);
+  font-family: inherit;
+  font-size: 11.5px;
+  font-weight: 600;
+  line-height: 1.25;
+  text-align: center;
+  color: var(--ink-soft);
+  transition: color .15s, background .15s, border-color .15s;
+}
+.ls-tile svg { flex: none; color: var(--ink-mute); transition: color .15s; }
+.ls-tile span {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.ls-tile:hover { color: var(--ink); border-color: var(--rule); }
+.ls-tile:hover svg { color: var(--ink-soft); }
+.ls-tile.on {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+.ls-tile.on svg { color: #fff; }
+.ls-tile:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* Which hotel, asked only once a hotel is the answer, so the four ways to
+   sleep stay four tiles wide instead of six. The row is tinted rather than
+   bare, which is what marks it as belonging to the tile above it. */
+.ls-grades {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+  padding: 9px 11px;
+  border: 1px solid var(--accent-soft);
+  border-radius: 10px;
+  background: var(--accent-bg);
+}
+.ls-grades-label {
+  margin-right: 2px;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+.ls-grade {
+  padding: 5px 11px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.72);
+  font-family: inherit;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  white-space: nowrap;
+  transition: background .15s, color .15s, border-color .15s;
+}
+.ls-grade:hover { color: var(--ink); border-color: var(--accent-soft); }
+.ls-grade.on { background: var(--accent); border-color: var(--accent); color: #fff; }
+.ls-grade:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* The honest small print, in sans and in one line. */
+.ls-note {
+  margin-top: 10px;
+  font-size: 11.5px;
+  line-height: 1.5;
+  color: var(--ink-mute);
+}
+
+/* The six counts, closed. A preset answers this for almost everybody, and
+   open they were most of the panel's height. */
+.ls-tune-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  padding: 11px 13px;
+  border: 1px solid var(--rule-soft);
+  border-radius: 10px;
+  background: var(--paper-dim);
+  font-family: inherit;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  transition: color .15s, border-color .15s;
+}
+.ls-tune-btn:hover { color: var(--ink); border-color: var(--rule); }
+.ls-tune-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.ls-tune-btn .ls-tune-chev { flex: none; color: var(--ink-mute); transition: transform .15s; }
+.ls-tune-btn.open { color: var(--ink); }
+.ls-tune-btn.open .ls-tune-chev { transform: rotate(180deg); }
+@media (prefers-reduced-motion: reduce) {
+  .ls-tune-btn .ls-tune-chev { transition: none; }
+}
+
+.ls-tune { margin-top: 14px; }
+/* Two colours in this panel, beige and terracotta. .panel-segment's default
+   active fill is --ink-fill, which is right in the map's dark chrome and a
+   third colour in here, so the cadence toggle takes the accent like every
+   other "on" state on this screen. It is also a secondary control sitting
+   under a disclosure, so it gives up the 12px padding it uses elsewhere. */
+.ls-tune .lifestyle-cadence { width: 100%; margin-bottom: 16px; border-color: var(--rule-soft); }
+.ls-tune .lifestyle-cadence button { padding: 8px 12px; font-size: 12.5px; font-weight: 600; }
+.ls-tune .lifestyle-cadence button.seg-on { background: var(--accent); color: #fff; }
+
+/* One line per count: name on the left, the stepper on the right. Stacked
+   (the panel's old shape) each count took three lines, and the per-week hint
+   under every one of them repeated what the toggle above says once. */
+.lifestyle-food .stepper {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.lifestyle-food .stepper-label { flex: 1; min-width: 0; }
+.lifestyle-food .stepper-controls { flex: none; }
+/* Hairlines rather than 20px of air: a run of related facts is divided by
+   rules, and one-line rows this close need the rule to stay separate. */
+.lifestyle-food .stepper + .stepper {
+  margin-top: 11px;
+  padding-top: 11px;
+  border-top: 1px solid var(--rule-soft);
+}
+
+/* Two abreast on a phone, where the panel is the full 390px. Four sleep tiles
+   read as 2x2 and the six habits as 3x2, which is the shape the tiles were
+   drawn for. */
+@media (max-width: 480px) {
+  .ls-tiles { grid-template-columns: repeat(2, 1fr); }
+  .ls-tiles-3 { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* The account hub's lifestyle row states what it is set to on its right
+   edge, the way the pass row states its expiry: a setting you can read
+   without opening it is a setting people keep correct. */
+.account-menu-value {
+  margin-left: auto;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--accent);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 55%;
+}
 
 /* Type selector - three big buttons */
 
@@ -18039,7 +18233,18 @@ button.ai-sched-main:focus-visible {
 .account-menu-label { flex: 1; font-size: 14px; font-weight: 500; color: var(--ink); }
 
 /* FAQ accordion: a hairline list, one answer open at a time. The question is
-   a full-width button so the whole row is the target, not just the chevron. */
+   a full-width button so the whole row is the target, not just the chevron.
+   The answers are grouped under four labels, so a reader hunting for one of
+   them skips three headings rather than scanning fourteen questions. */
+.account-faq-group + .account-faq-group { margin-top: 22px; }
+.account-faq-grouplabel {
+  margin: 0 0 6px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+}
 .account-faq { border-top: 1px solid var(--rule); }
 .account-faq-item { border-bottom: 1px solid var(--rule); }
 .account-faq-q {
@@ -18065,6 +18270,9 @@ button.ai-sched-main:focus-visible {
   line-height: 1.6;
   color: var(--ink-soft);
 }
+/* The way out of the FAQ when the FAQ has not answered it. */
+.account-faq-foot { margin-top: 24px; }
+.account-faq-foot .account-wide-btn { display: flex; align-items: center; justify-content: center; gap: 8px; }
 
 /* Data credits (Account > Data sources). License notices, so they are set to
    be read rather than decorated: a hairline list, one credit per row. */
@@ -19920,25 +20128,9 @@ button.ai-sched-main:focus-visible {
 .places-controls .origin-btn-from { display: block; }
 .places-controls .origin-btn-label b { max-width: none; }
 
-/* The stay tier every price on this tab was computed at; opens the lifestyle
-   panel. Same 38px shell as everything else in the row so it reads as one
-   bar. */
-.places-lifestyle {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  height: 38px;
-  padding: 0 12px;
-  border: 1px solid var(--rule);
-  border-radius: 10px;
-  background: var(--bg-card);
-  font-size: 13px;
-  color: var(--ink-soft);
-  white-space: nowrap;
-  cursor: pointer;
-}
-.places-lifestyle:hover { border-color: var(--accent-soft); color: var(--ink); }
-.places-lifestyle b { font-weight: 600; color: var(--ink); }
+/* The lifestyle door lives in .lifestyle-btn (one rule set for every tab);
+   this only gives it the 38px shell the rest of this bar uses. */
+.places-controls .lifestyle-btn { height: 38px; border-radius: 10px; }
 
 /* Near-search suggestions, anchored under the input. */
 .places-sugg {
@@ -20360,12 +20552,12 @@ button.ai-sched-main:focus-visible {
   .places-controls .origin-btn { width: 100%; }
   .places-controls .origin-btn-label { flex: 1; min-width: 0; }
   .places-controls .origin-btn-label b { max-width: 100%; }
-  .places-lifestyle { flex: 1 1 140px; min-width: 0; overflow: hidden; }
-  .places-lifestyle b { overflow: hidden; text-overflow: ellipsis; }
+  .places-controls .lifestyle-btn { flex: 1 1 140px; min-width: 0; max-width: none; overflow: hidden; }
   /* The bed already says which kind of fact this is, so on a phone the word
      "Lifestyle" gives up its room to the answer: "Entire place" reads,
-     "Lifestyle Entire ..." does not. */
-  .places-lifestyle-label { display: none; }
+     "Lifestyle Entire ..." does not. The habits go with it. */
+  .places-controls .lifestyle-btn .lifestyle-btn-label,
+  .places-controls .lifestyle-btn .lifestyle-btn-vibe { display: none; }
   .trip-slider { max-width: none; }
 }
 
@@ -22864,34 +23056,61 @@ button.ai-sched-main:focus-visible {
 .explore-filter-btn .filter-tray-badge { background: var(--paper); color: var(--accent); }
 .explore-fav { height: 36px; padding: 0 12px; }
 
-/* Lifestyle: a neutral pill, one shade off the page, because it changes what
-   the numbers MEAN rather than which rows are listed; the accent belongs to
-   Filters, the one primary door in this row. */
-.explore-lifestyle-btn {
+/* ─── The lifestyle door ───
+   One button, drawn the same on Destinations, on Explore and in the account
+   hub, because it is one setting. It used to be a neutral pill a shade off
+   the page on both tabs, which is why nobody opened it while every euro
+   figure on those tabs came out of it. It now carries the accent as a TINT,
+   not a fill: Filters stays the one filled primary in the row (it decides
+   which places are listed), and this reads as the second thing in the row
+   worth pressing rather than as chrome.
+
+   Label order is what it sets, then what it is set to: "Lifestyle" in
+   --ink-soft, the bed in --ink at 600, the habits trailing in --accent. The
+   habits give up their room first where the row is tight. */
+.lifestyle-btn {
   display: inline-flex;
   align-items: center;
   gap: 7px;
   height: 36px;
-  max-width: 260px;
-  padding: 0 14px;
-  border: 1px solid var(--rule);
+  max-width: 300px;
+  padding: 0 13px;
+  border: 1px solid var(--accent-soft);
   border-radius: 999px;
-  background: var(--paper-dim);
+  background: var(--accent-bg);
   color: var(--ink-soft);
   font-size: 12.5px;
   font-weight: 600;
+  white-space: nowrap;
   transition: border-color .15s, background .15s, color .15s;
 }
-.explore-lifestyle-btn:hover { border-color: var(--ink-mute); color: var(--ink); }
-.explore-lifestyle-btn:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
-}
-.explore-lifestyle-btn svg { flex: none; color: var(--accent); }
-.explore-lifestyle-label {
+.lifestyle-btn:hover { border-color: var(--accent); background: var(--accent-bg); color: var(--ink); }
+.lifestyle-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.lifestyle-btn .lifestyle-btn-icon { flex: none; color: var(--accent); }
+.lifestyle-btn-label { color: var(--ink-soft); font-weight: 500; }
+.lifestyle-btn-bed {
+  font-weight: 600;
+  color: var(--ink);
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap;
+  min-width: 0;
+}
+.lifestyle-btn-vibe {
+  color: var(--accent);
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+/* Before the bed, a hairline so the two answers do not read as one phrase. */
+.lifestyle-btn-vibe::before {
+  content: '';
+  display: inline-block;
+  width: 1px;
+  height: 11px;
+  margin-right: 7px;
+  vertical-align: -1px;
+  background: var(--accent-soft);
 }
 
 /* What the grid shows, in one sentence, count in mono. */
@@ -23789,14 +24008,15 @@ button.ai-sched-main:focus-visible {
      narrow phone and the star is pushed onto a row of its own. */
   .explore-chips { flex-wrap: nowrap; min-width: 0; }
   .explore-filter-btn, .explore-fav { flex: none; }
-  .explore-lifestyle-btn { flex: 1; min-width: 0; max-width: none; }
+  .explore-chips .lifestyle-btn { flex: 1; min-width: 0; max-width: none; }
+  .explore-chips .lifestyle-btn .lifestyle-btn-label { display: none; }
 }
 
 /* ── Grid breakpoints. ── */
 @media (max-width: 768px) {
   .explore-wrap { padding: 8px 14px calc(30px + env(safe-area-inset-bottom, 0px)); }
   .explore-toolbar { padding: 10px; gap: 8px; }
-  .explore-lifestyle-btn { padding: 0 12px; }
+  .explore-chips .lifestyle-btn { padding: 0 11px; gap: 6px; }
   .explore-grid { grid-template-columns: repeat(auto-fill, minmax(168px, 1fr)); gap: 10px; }
   /* The one line stays on phones. It was hidden when it was a category word
      ("A beach town"); now it names actual sights, and a phone has no hover to
@@ -26538,3 +26758,1774 @@ button.ai-sched-main:focus-visible {
 .guide-when-reopen svg { color: var(--ink-mute); }
 
 /* PLANNER-V2-END */
+
+/* ==========================================================================
+   Desktop browse chrome v4: paper bar, red underline, left filter panel
+   (Destinations + Explore only; every rule below either sits in a
+   min-width media block or styles an element CSS keeps hidden on phones,
+   so the phone layout is untouched.)
+
+   The shape of it: the top bar stops being a white slab and joins the page
+   ground, with the active section carrying a short accent underline; every
+   control that narrows or orders the list leaves the toolbar card for a
+   panel standing on the left under the brand, closed by one hairline; the
+   search field rides in the bar itself (a portal from the active tab); and
+   the one colour an active control wears is the full accent. No pure white
+   anywhere on these two pages.
+   ========================================================================== */
+
+/* The shells wrap each browse tab. On a phone they are invisible
+   (display: contents) and the tab keeps its own absolute layout. */
+.places-shell, .explore-shell { display: contents; }
+.side-panel { display: none; }
+.header-search-slot { display: none; }
+
+/* The photo-forward Explore card furniture: built into the DOM at every
+   width, shown only on desktop. */
+.xcard-overlay {
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  z-index: 1;
+  display: none;
+  flex-direction: column;
+  gap: 2px;
+  padding: 36px 12px 11px;
+  background: linear-gradient(180deg, rgba(15, 23, 42, 0) 0%, rgba(15, 23, 42, 0.74) 82%);
+}
+.xcard-overlay-top {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+.xcard-overlay-name {
+  font-family: var(--display);
+  font-size: 16.5px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+/* Low-tier score chips assume a light card; on the scrim they get the same
+   translucent treatment the hover preview already uses. */
+.xcard-overlay-top .score-chip.rt-0,
+.xcard-overlay-top .score-chip.rt-1 {
+  background: rgba(255, 255, 255, 0.16);
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.32);
+}
+.xcard-overlay-sub {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11.5px;
+  color: rgba(255, 255, 255, 0.78);
+}
+.xcard-overlay-foot { margin-top: 3px; }
+.xcard-overlay-foot .xcard-cost-eur { color: #fff; }
+.xcard-overlay-foot .xcard-cost-unit { color: rgba(255, 255, 255, 0.7); }
+/* The door to the explanation the card body used to state: under the
+   shortlist star, same size, same disc. */
+.xcard-info {
+  position: absolute;
+  top: 44px; right: 8px;
+  z-index: 2;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  background: rgba(248, 246, 240, 0.92);
+  color: var(--ink-soft);
+  transition: transform .15s, color .15s;
+}
+.xcard-info:hover { transform: scale(1.08); color: var(--ink); }
+.xcard.previewing .xcard-info { color: var(--accent); }
+.xcard-info:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) {
+  .xcard-info { transition: none; }
+}
+
+@media (min-width: 769px) {
+  /* ── The bar: same ground as the page, active tab underlined. ── */
+  .top-bar {
+    background: var(--paper);
+    border-bottom-color: var(--rule-soft);
+  }
+  .app-header-brand .brand-sub { display: none; }
+  .app-header-brand .brand-divider { display: none; }
+  .header-nav { gap: 4px; }
+  .header-nav-item {
+    position: relative;
+    margin: 0 8px;
+    padding: 10px 4px;
+    border-radius: 0;
+    font-family: var(--ui);
+    font-size: 13.5px;
+    font-weight: 600;
+    text-transform: none;
+    letter-spacing: 0;
+    color: var(--ink-soft);
+  }
+  .header-nav-item:hover { background: none; color: var(--ink); }
+  .header-nav-item.active { background: none; color: var(--ink); }
+  .header-nav-item.active::after {
+    content: '';
+    position: absolute;
+    left: 2px; right: 2px; bottom: 2px;
+    height: 3px;
+    border-radius: 999px;
+    background: var(--accent);
+  }
+  /* Words, not glyphs: the mock bar is text-only, and the underline needs a
+     word to sit under. Overrides the icon-only fallback further up. */
+  .header-nav-icon { display: none; }
+  .header-nav-label { display: inline; }
+
+  /* Get a pass: the one filled action in the bar. */
+  .header-pricing-btn {
+    border-color: var(--accent);
+    background: var(--accent);
+    color: #fff;
+    font-weight: 600;
+    box-shadow: none;
+  }
+  .header-pricing-btn svg { color: #fff; }
+  .header-pricing-btn:hover {
+    border-color: var(--accent-soft);
+    background: var(--accent-soft);
+    color: #fff;
+  }
+  .header-pricing-label { display: none; }
+  .header-pricing-label-short { display: inline; }
+
+  /* Friends folds to its icon; the avatar already says who. */
+  .header-friends-btn { width: 38px; padding: 0; justify-content: center; }
+  .header-friends-label { display: none; }
+  .account-avatar-btn { padding: 4px; box-shadow: none; }
+  .account-avatar-label { display: none; }
+
+  /* The search field the active browse tab portals in. */
+  .header-search-slot {
+    display: flex;
+    flex: 0 1 320px;
+    min-width: 150px;
+  }
+  .header-search-slot:empty { display: none; }
+  .header-search-slot .places-search,
+  .header-search-slot .results-search {
+    flex: 1;
+    min-width: 0;
+    max-width: none;
+    margin: 0;
+    position: relative;
+  }
+  .header-search-slot .places-search input {
+    height: 38px;
+    border-radius: 999px;
+    border-color: var(--rule);
+    background: var(--paper-dim);
+  }
+  .header-search-slot .places-search input:focus {
+    outline: none;
+    border-color: var(--ink);
+    background: var(--paper);
+    box-shadow: 0 0 0 3px var(--accent-bg);
+  }
+  /* The suggestion list needs more room than the field: hang it from the
+     right edge so it grows leftwards into the bar's empty middle. */
+  .header-search-slot .places-sugg {
+    left: auto;
+    right: 0;
+    width: 430px;
+    max-width: calc(100vw - 48px);
+  }
+
+  /* ── The shells: side panel plus scrolling content, one hairline. ── */
+  .places-shell, .explore-shell {
+    display: flex;
+    align-items: stretch;
+    position: absolute;
+    top: var(--filter-h);
+    left: 0; right: 0; bottom: 0;
+    background: var(--paper);
+  }
+  .places-shell .places-tab,
+  .explore-shell .explore-tab {
+    position: relative;
+    top: auto; left: auto; right: auto; bottom: auto;
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+  .side-panel {
+    display: block;
+    flex: 0 0 264px;
+    width: 264px;
+    overflow-y: auto;
+    padding: 18px 18px 28px 28px;
+    border-right: 1px solid var(--rule);
+    background: var(--paper);
+  }
+
+  /* The toolbar cards fold away: everything they held now stands in the
+     panel (and the search in the bar). This is also what retires the
+     origin picker from this page, as the desktop design asks. */
+  .places-toolbar { display: none; }
+  .explore-toolbar { display: none; }
+
+  /* ── Panel furniture. ── */
+  .side-label {
+    margin: 0 0 10px;
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--ink-mute);
+  }
+  .side-block + .side-block {
+    margin-top: 22px;
+    padding-top: 18px;
+    border-top: 1px solid var(--rule-soft);
+  }
+  .side-group + .side-group { margin-top: 16px; }
+  .side-sub {
+    margin: 0 0 7px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--ink-mute);
+  }
+
+  /* Category cards, two abreast: quiet tiles until one is on, and then the
+     full accent, which is the one way "selected" reads on this page. */
+  .side-cats { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .side-cat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+    padding: 13px 4px 11px;
+    border: 1px solid var(--rule-soft);
+    border-radius: 10px;
+    background: var(--paper-dim);
+    font-size: 11.5px;
+    font-weight: 600;
+    color: var(--ink-soft);
+    transition: color .15s, background .15s, border-color .15s;
+  }
+  .side-cat span {
+    max-width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+  .side-cat:hover { color: var(--ink); border-color: var(--rule); }
+  .side-cat.on { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .side-cat.on svg { color: #fff; }
+  .side-cat:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  /* Explore's trip kinds wear the same tiles in the panel. */
+  .side-panel .kind-rail-scroll { grid-template-columns: 1fr 1fr; gap: 8px; }
+  .side-panel .kind-rail-chip {
+    padding: 13px 4px 11px;
+    border-radius: 10px;
+    background: var(--paper-dim);
+    font-size: 11.5px;
+  }
+  .side-panel .kind-rail-chip.on {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+  }
+  .side-panel .kind-rail-clear {
+    grid-column: 1 / -1;
+    flex-direction: row;
+    padding: 8px;
+  }
+
+  /* Sorts as a stack of rows; the active one carries the accent and its
+     direction arrow rides the right edge. */
+  .side-sorts { display: flex; flex-direction: column; gap: 6px; }
+  .side-sort {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid var(--rule-soft);
+    border-radius: 10px;
+    background: var(--paper-dim);
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--ink-soft);
+    text-align: left;
+    transition: color .15s, background .15s, border-color .15s;
+  }
+  .side-sort:hover { color: var(--ink); border-color: var(--rule); }
+  .side-sort.on { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .side-sort.on .places-sort-dir { color: #fff; }
+  .side-sort:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  /* The country, full width of the panel. */
+  .side-country { width: 100%; max-width: none; border-radius: 10px; }
+
+  /* Facet chips: the toolbar's own chips, stacked, and never on white. */
+  .side-facets .places-classes { margin-top: 0; gap: 6px; }
+  .side-facets .places-classes + .places-classes { margin-top: 10px; }
+  .side-panel .places-class { background: var(--paper-dim); }
+  .side-panel .places-class.on {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+  }
+  .side-panel .places-class.on .places-class-dot {
+    background: rgba(255, 255, 255, 0.2);
+    color: #fff;
+  }
+  .side-panel .places-class.on .places-class-n { color: rgba(255, 255, 255, 0.85); }
+  .side-facets .trip-slider { flex: 1 1 100%; max-width: none; }
+
+  /* Lifestyle, Filters and the shortlist as full-width panel rows. */
+  .side-actions { display: flex; flex-direction: column; gap: 8px; }
+  .side-panel .lifestyle-btn {
+    width: 100%;
+    max-width: none;
+    height: auto;
+    padding: 10px 12px;
+    border-radius: 10px;
+    justify-content: flex-start;
+    white-space: normal;
+  }
+  /* The panel has the width for all three parts, so nothing is dropped: the
+     bed keeps the first line and the habits take a second, indented under
+     the label. The hairline separator is a same-line device, so it goes. */
+  .side-panel .lifestyle-btn { flex-wrap: wrap; row-gap: 1px; }
+  .side-panel .lifestyle-btn .lifestyle-btn-vibe {
+    flex: 1 0 100%;
+    margin-left: 22px;   /* icon + gap, so it starts under the label */
+    text-align: left;    /* a button centres its text; this line must not */
+    font-weight: 500;
+  }
+  .side-panel .lifestyle-btn .lifestyle-btn-vibe::before { display: none; }
+  .side-filter { width: 100%; justify-content: center; border-radius: 10px; }
+  .side-fav {
+    width: 100%;
+    justify-content: center;
+    padding: 9px;
+    border-radius: 10px;
+    background: var(--paper-dim);
+  }
+
+  /* ── No pure white on these pages. ── */
+  .places-tab .places-search input,
+  .places-tab .places-country,
+  .side-panel .places-country { background: var(--paper-dim); }
+  .places-tab .places-sugg, .header-search-slot .places-sugg { background: var(--paper); }
+
+  /* ── Explore cards: nearly all photograph. ── */
+  .xcard { background: var(--paper); }
+  .xcard-media { aspect-ratio: 4 / 3; }
+  .xcard-body { display: none; }
+  .xcard-best { display: none; }
+  .xcard-overlay { display: flex; }
+  .xcard-info { display: inline-flex; }
+  .explore-grid { grid-template-columns: repeat(auto-fill, minmax(252px, 1fr)); }
+}
+
+/* The panel's own reset, on the refine label's right edge. Desktop-only by
+   construction: the label only exists inside .side-panel. */
+@media (min-width: 769px) {
+  .side-label { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+  .side-clear {
+    font-family: var(--ui);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0;
+    text-transform: none;
+    color: var(--accent);
+  }
+  .side-clear:hover { color: var(--accent-soft); }
+  .side-clear:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+}
+
+/* Two nits the first screenshots caught: the pass chip must stay one line,
+   and no panel row may stand on pure white. */
+@media (min-width: 769px) {
+  .header-pricing-btn { white-space: nowrap; }
+  /* The panel row keeps the accent tint the toolbar pill has: it is the one
+     control in this column that changes what every euro figure MEANS, and a
+     --paper-dim row here is exactly the invisibility this pass fixes. */
+  .side-panel .lifestyle-btn { background: var(--accent-bg); }
+}
+
+/* One line at every desktop width, same promise the old bar kept: on a
+   narrow desktop window the row tightens in two steps instead of wrapping.
+   First everything gives up spare padding, then the wordmark stands down
+   and the logo holds the corner alone. */
+@media (min-width: 769px) and (max-width: 1120px) {
+  .app-header { gap: 10px; padding: 9px 16px; }
+  .header-nav { gap: 0; }
+  .header-nav-item { margin: 0 2px; font-size: 12.5px; }
+  .header-search-slot { flex: 0 1 180px; min-width: 110px; }
+  .header-pricing-btn { padding: 0 10px; }
+}
+@media (min-width: 769px) and (max-width: 910px) {
+  .app-header { gap: 8px; }
+  .app-header-brand { gap: 0; }
+  .app-header-brand .brand-text { display: none; }
+  .header-nav-item { font-size: 12px; }
+}
+
+/* Wrapping is decided on flex-basis, not on the shrunken size, so on the
+   narrowest desktop step the slot's base width has to come down too. */
+@media (min-width: 769px) and (max-width: 910px) {
+  .header-search-slot { flex-basis: 110px; }
+}
+
+/* ─── Trips overview map: every listed trip pinned on one card at the head of
+   the Trips list, and the same map at device size once expanded. Same embed
+   contract as the saved-trips map: TripMap lays itself out full-bleed beside
+   a side panel, so pin it to this frame with force, or fitBounds runs against
+   a 34px canvas and no-ops. ─── */
+.places-list > .trips-map { grid-column: 1 / -1; }
+.trips-map {
+  position: relative;
+  height: 220px;
+  border: 1px solid var(--rule);
+  border-radius: 14px;
+  overflow: hidden;
+  background: var(--paper-dim);
+}
+.trips-map .trip-map,
+.trips-map > div { position: absolute !important; inset: 0 !important; }
+.trips-map-loading { position: absolute; inset: 0; background: var(--paper-dim); }
+.trips-map-expand {
+  position: absolute;
+  left: 10px;
+  bottom: 10px;
+  z-index: 2;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--rule);
+  border-radius: 9px;
+  background: rgba(248, 246, 240, 0.94);
+  color: var(--ink);
+  cursor: pointer;
+  transition: background .15s, color .15s, border-color .15s;
+}
+.trips-map-expand:hover { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+
+.tripsmap-full {
+  position: fixed;
+  inset: 0;
+  z-index: 400;
+  background: var(--paper);
+}
+/* The map fills the layer; the bar floats over it so no pixel of the list's
+   geography is spent on chrome. */
+.tripsmap-full-map { position: absolute; inset: 0; }
+.tripsmap-full-map .trip-map,
+.tripsmap-full-map > div { position: absolute !important; inset: 0 !important; }
+.tripsmap-full-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: calc(12px + env(safe-area-inset-top)) 14px 12px;
+  pointer-events: none;
+}
+.tripsmap-full-title {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding: 7px 13px;
+  border-radius: 999px;
+  background: rgba(248, 246, 240, 0.94);
+  font-family: var(--display);
+  font-size: 16px;
+  color: var(--ink);
+}
+/* The way out never wraps or shrinks: on a phone the title gives up its
+   width first. */
+.tripsmap-full-close {
+  pointer-events: auto;
+  flex: none;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 14px;
+  border: 1px solid var(--ink);
+  border-radius: 999px;
+  background: var(--ink);
+  font-family: var(--ui);
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--paper);
+  cursor: pointer;
+  transition: background .15s, border-color .15s;
+}
+.tripsmap-full-close:hover { background: var(--accent); border-color: var(--accent); }
+/* MapLibre parks its zoom stack top-right, exactly where Close sits: drop
+   the stack below the bar rather than move the way out of the corner. */
+.tripsmap-full .maplibregl-ctrl-top-right {
+  top: calc(52px + env(safe-area-inset-top));
+}
+
+/* Desktop: the roomier column lets the geography breathe. */
+@media (min-width: 881px) {
+  .trips-map { height: 280px; }
+}
+
+/* ==========================================================================
+   Mobile browse chrome v4: the phone face of the same design language the
+   desktop shell already wears. Paper ground only (no white cards), the
+   brand back in the bar with its mark, controls in hairline-divided bands
+   instead of a floating card, category tiles in one thumb-scrollable row
+   each wearing a small accent tick, the full accent on anything selected,
+   and photo-forward cards two abreast. Destinations and Explore only.
+   ========================================================================== */
+@media (max-width: 768px) {
+  /* ── The bar: Carta and its mark on the left, the chips on the right. ── */
+  .top-bar { background: var(--paper); }
+  .app-header { align-items: center; }
+  .app-header-brand {
+    display: flex;
+    gap: 8px;
+    padding: 8px 0 8px 14px;
+  }
+  .app-header-brand .brand-mark { width: 32px; height: 32px; }
+  .app-header-brand .brand-name { font-size: 22px; color: var(--accent); }
+  .app-header-brand .brand-sub { display: none; }
+  .app-header-brand .brand-divider { display: none; }
+  .header-friends-btn svg { color: var(--accent); }
+
+  /* ── The bottom panel: red tabs, the accent tick marks where you are. ── */
+  .bottom-nav {
+    background: var(--paper);
+    border-top: 1px solid var(--rule-soft);
+  }
+  .bottom-nav-item { color: var(--accent-soft); }
+  .bottom-nav-item:hover { color: var(--accent); }
+  .bottom-nav-item.active { color: var(--accent); }
+
+  /* ── Destinations: the toolbar card becomes bands on the ground. ── */
+  .places-wrap { padding-top: 8px; }
+  .places-toolbar {
+    padding: 0 0 12px;
+    border: none;
+    border-radius: 0;
+    background: none;
+    box-shadow: none;
+    gap: 0;
+    border-bottom: 1px solid var(--rule-soft);
+  }
+  /* One thumb row of category tiles, each carrying the small accent tick
+     the mock puts over every tab. The row scrolls; the sixth tile peeking
+     past the edge is what says so. */
+  .places-cats {
+    display: flex;
+    overflow-x: auto;
+    gap: 7px;
+    padding: 3px 2px 12px;
+    border-bottom: 1px solid var(--rule-soft);
+    scrollbar-width: none;
+  }
+  .places-cats::-webkit-scrollbar { display: none; }
+  .places-cat {
+    position: relative;
+    flex: 0 0 auto;
+    width: 78px;
+    padding: 12px 4px 8px;
+    border: 1px solid var(--rule-soft);
+    border-radius: 10px;
+    background: var(--paper-dim);
+    font-size: 10.5px;
+  }
+  .places-cat::before {
+    content: '';
+    position: absolute;
+    top: 5px; left: 50%;
+    transform: translateX(-50%);
+    width: 14px; height: 2px;
+    border-radius: 2px;
+    background: var(--accent);
+  }
+  .places-cat.on { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .places-cat.on svg { color: #fff; }
+  .places-cat.on::before { background: rgba(255, 255, 255, 0.7); }
+
+  .places-controls { padding-top: 12px; gap: 10px; }
+  .places-search input {
+    height: 42px;
+    border-radius: 999px;
+    border-color: var(--rule);
+    background: var(--paper-dim);
+  }
+  /* Filters and the country as one compact row, the lifestyle pill under
+     them; the sorts, when a list is open, as a full-width segmented band. */
+  .places-toolbar-right { gap: 8px; }
+  .places-sorts { display: flex; width: 100%; }
+  .places-sort { flex: 1 1 0; justify-content: center; }
+  .places-sort.on { background: var(--accent); color: #fff; }
+  .places-sort.on .places-sort-dir { color: #fff; }
+  .places-chips { width: 100%; gap: 8px; }
+  .places-filter-btn { flex: 1 1 0; min-width: 0; justify-content: center; height: 42px; }
+  .places-chips .places-country {
+    flex: 1 1 0;
+    min-width: 0;
+    max-width: none;
+    height: 42px;
+    background: var(--paper-dim);
+  }
+  .places-chips .lifestyle-btn { flex: 1 1 100%; justify-content: center; }
+  .places-facets { padding-top: 12px; }
+
+  /* ── Cards, two abreast: bigger photographs, the facts on the scrim. ── */
+  .places-list { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .places-dcard, .places-ccard, .places-tcard, .places-bcard {
+    aspect-ratio: 16 / 11;
+    border-radius: 12px;
+  }
+  /* A composed itinerary carries a route, chips and a cost line: half a
+     column cannot hold that, so it keeps the full row. */
+  .places-icard { grid-column: 1 / -1; }
+  .places-card-overlay {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 2px;
+    padding: 8px 10px;
+  }
+  .places-card-name { font-size: 14.5px; }
+  .places-card-sub { font-size: 10.5px; margin-top: 1px; }
+  .places-card-right { flex-direction: row; align-items: center; gap: 6px; }
+  .places-card-chev { display: none; }
+  .places-card-price { font-size: 12.5px; }
+  /* Reason chips need more width than half a column gives; the layer pages
+     still carry them in full. */
+  .places-bcard-tags { display: none; }
+
+  /* ── Explore: the same bands, the same tiles, the same cards. ── */
+  .explore-wrap { padding-top: 8px; }
+  .explore-toolbar {
+    padding: 0 0 12px;
+    border: none;
+    border-radius: 0;
+    background: none;
+    box-shadow: none;
+    gap: 0;
+    border-bottom: 1px solid var(--rule-soft);
+  }
+  .explore-toolbar .kind-rail {
+    border-bottom: 1px solid var(--rule-soft);
+    padding-bottom: 12px;
+  }
+  .explore-toolbar .kind-rail-scroll {
+    display: flex;
+    overflow-x: auto;
+    gap: 7px;
+    padding: 3px 2px 0;
+    scrollbar-width: none;
+  }
+  .explore-toolbar .kind-rail-scroll::-webkit-scrollbar { display: none; }
+  .explore-toolbar .kind-rail-chip {
+    position: relative;
+    flex: 0 0 auto;
+    width: 78px;
+    padding: 12px 4px 8px;
+    border-radius: 10px;
+    background: var(--paper-dim);
+    font-size: 10.5px;
+  }
+  .explore-toolbar .kind-rail-chip::before {
+    content: '';
+    position: absolute;
+    top: 5px; left: 50%;
+    transform: translateX(-50%);
+    width: 14px; height: 2px;
+    border-radius: 2px;
+    background: var(--accent);
+  }
+  .explore-toolbar .kind-rail-chip.on {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+  }
+  .explore-toolbar .kind-rail-chip.on::before { background: rgba(255, 255, 255, 0.7); }
+  .explore-toolbar .kind-rail-clear::before { display: none; }
+
+  .explore-toolbar .results-search { width: 100%; padding-top: 12px; }
+  .explore-search { flex: 1 1 100%; max-width: none; }
+  .explore-search .results-search-input { height: 42px; }
+  .explore-toolbar-right { width: 100%; margin-left: 0; padding-top: 10px; gap: 8px; }
+  .explore-sort { display: flex; width: 100%; }
+  .explore-sort button { flex: 1 1 0; padding: 8px 4px; }
+  .results-sort button.on { background: var(--accent); color: #fff; }
+  .explore-chips { width: 100%; gap: 8px; }
+  .explore-filter-btn { flex: 1 1 0; justify-content: center; height: 40px; }
+  .explore-chips .lifestyle-btn { flex: 2 1 0; min-width: 0; justify-content: center; }
+  .explore-fav { height: 40px; }
+
+  /* The Explore card is nearly all photograph on the phone too: the body
+     folds away and the scrim carries the name, the country, the rating and
+     the euros a day, exactly as the desktop card reads. */
+  .explore-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .xcard { background: var(--paper); }
+  .xcard-media { aspect-ratio: 16 / 12; }
+  .xcard-body { display: none; }
+  .xcard-best { display: none; }
+  .xcard-overlay { display: flex; padding: 26px 9px 9px; }
+  .xcard-overlay-name { font-size: 13.5px; }
+  .xcard-overlay-sub { font-size: 10.5px; }
+  .xcard-seal { font-size: 9px; padding: 2px 6px; }
+  .xcard-star { width: 27px; height: 27px; }
+}
+
+/* ============================================================ */
+/* The full-screen destination page (.destp).                    */
+/*                                                               */
+/* Replaces the Explore side panel: a destination now opens as a */
+/* page over the whole app, on every width, rendered from the    */
+/* dossier contract (public/dossier). Phone exits by the back    */
+/* arrow, desktop by the cross, both by Escape. The PDF export   */
+/* renders from the same contract in lib/destinationPdf.js.      */
+/* ============================================================ */
+
+.destp {
+  position: fixed;
+  inset: 0;
+  z-index: 240;
+  display: flex;
+  flex-direction: column;
+  background: var(--paper);
+}
+
+.destp-bar {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 52px;
+  padding: 0 10px;
+  border-bottom: 1px solid var(--rule-soft);
+  background: var(--paper);
+}
+.destp-back {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  color: var(--ink);
+}
+.destp-back:hover { background: var(--paper-dim); }
+.destp-bar-name {
+  flex: 1;
+  min-width: 0;
+  font-family: var(--display);
+  font-size: 14.5px;
+  font-weight: 600;
+  color: var(--ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  opacity: 0;
+  transition: opacity .18s ease;
+}
+.destp-bar.is-stuck .destp-bar-name { opacity: 1; }
+.destp-bar-actions { display: flex; align-items: center; gap: 8px; }
+.destp-bar-btn {
+  height: 32px;
+  padding: 0 12px;
+  border-radius: 8px;
+  border: 1px solid var(--rule);
+  background: var(--bg-card);
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.destp-bar-btn:hover { background: var(--paper-dim); }
+.destp-close { position: static; }
+/* Phone: the back arrow is the exit. Desktop: the cross is. Never both. */
+@media (max-width: 720px) { .destp-close { display: none; } }
+@media (min-width: 721px) { .destp-back { display: none; } }
+
+.destp-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+}
+
+/* ── The gallery: five-plus photographs, swiped on touch, arrowed on
+      desktop. Heights bound so one portrait shot cannot take the page. ── */
+.destp-gallery {
+  position: relative;
+  height: clamp(240px, 38vh, 430px);
+  background: var(--paper-dim);
+  border-bottom: 1px solid var(--rule-soft);
+}
+.destp-gallery.is-blank { display: flex; align-items: stretch; }
+.destp-gallery-track {
+  display: flex;
+  gap: 6px;
+  height: 100%;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+.destp-gallery-track::-webkit-scrollbar { display: none; }
+.destp-slide {
+  position: relative;
+  flex: none;
+  height: 100%;
+  margin: 0;
+  scroll-snap-align: start;
+}
+.destp-slide img {
+  display: block;
+  height: 100%;
+  width: auto;
+  max-width: 92vw;
+  object-fit: cover;
+}
+/* Phone: one photograph at a time, full width, like a photo pager. */
+@media (max-width: 720px) {
+  .destp-slide { width: 100%; }
+  .destp-slide img { width: 100%; max-width: none; }
+}
+.destp-slide-credit {
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(15, 23, 42, 0.45);
+  color: #fff;
+  font-size: 12px;
+  text-decoration: none;
+}
+.destp-slide-credit:hover { background: rgba(15, 23, 42, 0.7); }
+.destp-gallery-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--bg-card);
+  border: 1px solid var(--rule);
+  box-shadow: var(--shadow-1);
+  color: var(--ink);
+  z-index: 2;
+}
+.destp-gallery-arrow.is-prev { left: 12px; }
+.destp-gallery-arrow.is-next { right: 12px; }
+.destp-gallery-arrow:disabled { opacity: 0.35; }
+@media (max-width: 720px) { .destp-gallery-arrow { display: none; } }
+.destp-gallery-count {
+  position: absolute;
+  left: 12px;
+  bottom: 10px;
+  padding: 2px 9px;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.55);
+  color: #fff;
+  font-size: 11px;
+}
+
+/* ── The head: name, country, lead, badges on the left; the PDF button
+      and the two quieter actions on the right. ── */
+.destp-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px 22px;
+  flex-wrap: wrap;
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 18px 16px 14px;
+  width: 100%;
+}
+.destp-head-main { min-width: 0; max-width: 640px; }
+.destp-city {
+  font-family: var(--display);
+  font-size: clamp(27px, 4.4vw, 40px);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.05;
+  margin: 0;
+  color: var(--ink);
+}
+.destp-country { font-size: 14px; color: var(--ink-soft); margin-top: 3px; }
+.destp-lead {
+  font-family: var(--display);
+  font-size: 15.5px;
+  line-height: 1.5;
+  color: var(--ink-soft);
+  margin: 9px 0 0;
+}
+.destp-badge-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+.destp-visit {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  color: var(--ink-mute);
+}
+.destp-head-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.destp-pdf {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 40px;
+  padding: 0 16px;
+  border-radius: 10px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 13.5px;
+  font-weight: 600;
+  border: none;
+}
+.destp-pdf:hover { filter: brightness(0.94); }
+.destp-pdf:disabled { opacity: 0.6; }
+
+/* ── The body: one reading column on phones, main + side on desktop. ── */
+.destp-grid {
+  width: 100%;
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 0 16px 44px;
+}
+.destp-grid .dsheet-card { margin: 0 0 14px; }
+@media (min-width: 1020px) {
+  .destp-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 400px;
+    gap: 0 18px;
+    align-items: start;
+  }
+}
+.destp-col { min-width: 0; }
+
+.destp-about { font-size: 14px; line-height: 1.65; color: var(--ink); margin: 0 0 8px; }
+
+/* Map layer toggle: one map, three honest layers. */
+.destp-layers { display: flex; gap: 6px; margin: 0 0 10px; flex-wrap: wrap; }
+.destp-layer {
+  height: 30px;
+  padding: 0 12px;
+  border-radius: 999px;
+  border: 1px solid var(--rule);
+  background: var(--bg-card);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.destp-layer .mono { font-size: 10.5px; color: var(--ink-mute); }
+.destp-layer.on { background: var(--ink-fill); border-color: var(--ink-fill); color: var(--paper); }
+.destp-layer.on .mono { color: var(--paper); opacity: 0.75; }
+
+.dmap { border-radius: 10px; overflow: hidden; }
+
+/* Map pins. The transform lives on the INNER element: maplibre rewrites the
+   marker root's inline transform every frame (see DestMap.jsx header). */
+.dmap-pin { cursor: default; }
+.dmap-pin-in {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 2px 8px 2px 3px;
+  border-radius: 999px;
+  background: var(--bg-card);
+  border: 1px solid var(--rule);
+  box-shadow: var(--shadow-1);
+  white-space: nowrap;
+}
+.dmap-pin-n {
+  width: 17px;
+  height: 17px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.dmap-pin-name { font-size: 11px; font-weight: 600; color: var(--ink); }
+.dmap-pin-name .mono { color: var(--ink-mute); font-weight: 500; }
+.dmap-pin-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 2px solid var(--paper);
+  flex: none;
+  margin-left: 3px;
+}
+.dmap-pin.is-nature .dmap-pin-dot { background: #3d7a4e; }
+/* Declutter demotions, same contract as map/coords.js expects. */
+.dmap-pin.is-tight .dmap-pin-name { display: none; }
+.dmap-pin.is-tight .dmap-pin-in { padding: 2px 3px; }
+.dmap-pin.is-dot .dmap-pin-in { padding: 1px; border: none; background: none; box-shadow: none; }
+.dmap-pin.is-dot .dmap-pin-name, .dmap-pin.is-dot .dmap-pin-n { display: none; }
+.dmap-pin.is-dot::after {
+  content: '';
+  display: block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--ink-soft);
+  border: 2px solid var(--paper);
+}
+
+/* Highlight cards under the map, numbered to match the pins. */
+/* 160px + a 12px gap needs 332px of card interior, and a 390px phone gives
+   330px. Two columns lost to two pixels, so every highlight got a full-width
+   card and the page ran to 9,750px of scroll. 140px keeps the pair. */
+.destp-hls {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 12px 10px;
+  margin-top: 12px;
+}
+.destp-hl {
+  position: relative;
+  margin: 0;
+  min-width: 0;
+}
+.destp-hl img,
+.destp-hl-blank {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+  border-radius: 10px;
+  background: var(--paper-dim);
+  color: var(--ink-mute);
+  border: 1px solid var(--rule-soft);
+}
+.destp-hl figcaption { padding: 6px 2px 0; }
+.destp-hl-name {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1.3;
+}
+.destp-hl-n {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #fff;
+  font-size: 9.5px;
+  margin-right: 6px;
+  vertical-align: 1px;
+}
+.destp-hl-sub {
+  display: flex;
+  gap: 8px;
+  font-size: 10.5px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+  margin-top: 2px;
+}
+.destp-hl-fact {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--ink-soft);
+  margin-top: 3px;
+}
+.destp-hl-link { position: absolute; inset: 0 0 auto 0; aspect-ratio: 16 / 10; border-radius: 10px; }
+.destp-hl-link:hover { background: rgba(15, 23, 42, 0.05); }
+
+/* Things to do. */
+.destp-dos { list-style: none; margin: 0; padding: 0; }
+.destp-do {
+  display: flex;
+  gap: 11px;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--rule-soft);
+}
+.destp-do:last-child { border-bottom: none; }
+.destp-do-type {
+  flex: none;
+  margin-top: 2px;
+  height: fit-content;
+  padding: 2px 8px;
+  border-radius: 5px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  background: var(--paper-dim);
+  color: var(--ink-soft);
+  border: 1px solid var(--rule-soft);
+}
+.destp-do-type.is-trail { background: #e8f0e6; color: #3d6b42; border-color: #d2e0cf; }
+.destp-do-type.is-festival { background: var(--rate-bg); color: var(--rate); border-color: var(--rate-soft); }
+.destp-do-type.is-swim { background: #e2eef2; color: #2c6376; border-color: #cbdfe6; }
+.destp-do-main { min-width: 0; }
+.destp-do-name { font-size: 13.5px; font-weight: 600; color: var(--ink); }
+.destp-do-name a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+.destp-do-ref {
+  font: inherit;
+  font-weight: 600;
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  padding: 0;
+  background: none;
+  border: none;
+  text-align: left;
+}
+.destp-do-detail { display: block; font-size: 12.5px; color: var(--ink-soft); line-height: 1.5; margin-top: 1px; }
+.destp-do-meta { display: flex; gap: 12px; flex-wrap: wrap; font-size: 11px; color: var(--ink-mute); margin-top: 3px; }
+.destp-do-evidence { color: var(--rate); font-weight: 600; }
+.destp-book-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+
+/* Day trips. */
+.destp-trips {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: 10px;
+}
+.destp-trip {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px;
+  border-radius: 10px;
+  border: 1px solid var(--rule-soft);
+  background: var(--bg-card);
+  text-align: left;
+  min-width: 0;
+}
+.destp-trip:hover { border-color: var(--rule); box-shadow: var(--shadow-1); }
+.destp-trip img,
+.destp-trip-blank {
+  width: 66px;
+  height: 50px;
+  flex: none;
+  object-fit: cover;
+  border-radius: 7px;
+  background: var(--paper-dim);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink-mute);
+}
+.destp-trip-main { min-width: 0; }
+.destp-trip-name {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.destp-trip-sub { display: flex; gap: 8px; flex-wrap: wrap; font-size: 11px; color: var(--ink-mute); margin-top: 2px; }
+.destp-trip-why { color: var(--ink-soft); }
+
+/* Insider tips: the ochre card, because a tip is a measured finding here,
+   not an alert. */
+.destp-tips { background: var(--rate-bg); border-color: var(--rate-soft); }
+.destp-tip-list { list-style: none; margin: 0; padding: 0; }
+.destp-tip-list li {
+  position: relative;
+  padding: 5px 0 5px 16px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--ink);
+}
+.destp-tip-list li::before {
+  content: '';
+  position: absolute;
+  left: 2px;
+  top: 12px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--rate);
+}
+
+/* Nearby nature rows. */
+.destp-nature { list-style: none; margin: 0; padding: 0; }
+.destp-nat {
+  display: grid;
+  grid-template-columns: 52px 1fr auto;
+  align-items: center;
+  gap: 11px;
+  width: 100%;
+  padding: 7px 0;
+  border: none;
+  background: none;
+  text-align: left;
+  border-bottom: 1px solid var(--rule-soft);
+}
+.destp-nature li:last-child .destp-nat { border-bottom: none; }
+.destp-nat img,
+.destp-nat-blank {
+  width: 52px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: 8px;
+  background: var(--paper-dim);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink-mute);
+}
+.destp-nat-main { min-width: 0; }
+.destp-nat-name {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.destp-nat-sub { display: flex; gap: 8px; font-size: 11px; color: var(--ink-mute); margin-top: 1px; }
+.destp-nat-km { font-size: 11.5px; color: var(--ink-soft); }
+.destp-nat:hover .destp-nat-name { color: var(--accent); }
+
+/* Parking rows with their navigation deeplinks. */
+.destp-park-list { list-style: none; margin: 0; padding: 0; }
+.destp-park {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--rule-soft);
+}
+.destp-park:last-child { border-bottom: none; }
+.destp-park-main { min-width: 0; }
+.destp-park-name { display: block; font-size: 13px; font-weight: 600; color: var(--ink); }
+.destp-park-sub { display: flex; gap: 10px; flex-wrap: wrap; font-size: 11px; color: var(--ink-mute); margin-top: 2px; }
+.destp-park-free { color: var(--green); font-weight: 600; }
+.destp-park-nav { display: flex; gap: 6px; flex: none; }
+.destp-park-nav a {
+  display: inline-flex;
+  align-items: center;
+  height: 28px;
+  padding: 0 10px;
+  border-radius: 7px;
+  border: 1px solid var(--rule);
+  background: var(--bg-card);
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--ink);
+  text-decoration: none;
+}
+.destp-park-nav a:hover { background: var(--paper-dim); }
+
+.destp-further { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.destp-events { margin-top: 10px; }
+
+.destp-credits {
+  font-size: 11px;
+  color: var(--ink-mute);
+  line-height: 1.6;
+  margin: 4px 2px 0;
+}
+.destp-credits a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+
+@media (max-width: 720px) {
+  .destp-head { padding: 14px 14px 10px; }
+  .destp-grid { padding: 0 14px 96px; }
+  .destp-head-actions { width: 100%; }
+  .destp-pdf { flex: 1; justify-content: center; }
+}
+
+/* UNESCO chip in the destination head: ochre, because a designation is a
+   measured standing, not an action or a warning. */
+.destp-unesco {
+  display: inline-flex;
+  align-items: center;
+  height: 24px;
+  padding: 0 10px;
+  border-radius: 999px;
+  background: var(--rate-bg);
+  border: 1px solid var(--rate-soft);
+  color: var(--rate);
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+/* Evidence lines in "best things to do". The web sweep earns the ochre of a
+   measured finding; the open-data derivation is a quieter grey, because two
+   institutions listing something is real but weaker than twenty guides
+   naming it, and the type should not claim otherwise. */
+.destp-do-evidence.is-open {
+  color: var(--ink-mute);
+  font-weight: 500;
+}
+
+/* Day trip cards carry the score and the one line that says why, so the card
+   is a recommendation rather than a distance. */
+.destp-trip-head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+.destp-trip-score {
+  flex: none;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--rate);
+  background: var(--rate-bg);
+  border-radius: 4px;
+  padding: 1px 6px;
+}
+.destp-trip-why {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  font-size: 11.5px;
+  line-height: 1.45;
+  color: var(--ink-soft);
+  margin-top: 3px;
+}
+.destp-trip { align-items: flex-start; }
+.destp-trip img, .destp-trip-blank { align-self: center; }
+
+/* Festivals: the date is the headline, because "there is a film festival"
+   answers nothing on its own. */
+.destp-fests { list-style: none; margin: 0; padding: 0; }
+.destp-fest {
+  display: flex;
+  gap: 12px;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--rule-soft);
+}
+.destp-fest:last-child { border-bottom: none; }
+.destp-fest-when {
+  flex: none;
+  width: 68px;
+  text-align: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--rate);
+  background: var(--rate-bg);
+  border-radius: 6px;
+  padding: 4px 6px;
+  height: fit-content;
+}
+.destp-fest-when.is-undated {
+  color: var(--ink-mute);
+  background: var(--paper-dim);
+  font-weight: 500;
+}
+.destp-fest-main { min-width: 0; }
+.destp-fest-name { display: block; font-size: 13px; font-weight: 600; color: var(--ink); }
+.destp-fest-name a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+.destp-fest-what { display: block; font-size: 11.5px; color: var(--ink-soft); line-height: 1.45; margin-top: 1px; }
+
+/* ==========================================================================
+   My trips and Account, browse chrome v4
+
+   The two account-side pages were the last surfaces still speaking the old
+   language: My trips wore a dark segmented pill (--ink-fill, a third colour
+   on a page that has two), and Account was still a 440px slide-over pinned to
+   the right edge of a 1920px screen, holding white cards on a beige app.
+
+   Both now read exactly as Destinations and Explore do. Desktop: a full
+   screen page with the navigation standing in a 264px panel on the left,
+   closed by one hairline, and the content on a centred column beside it.
+   Phone: the same page on the paper ground, its controls in a band of tiles
+   divided by hairlines, each tile carrying the small accent tick. Selected is
+   the full accent in both, everywhere, and nothing stands on pure white.
+   ========================================================================== */
+
+/* No pure white on these two pages either. Every card in here reads
+   --bg-card; redefining it once at the root of each page repaints the lot,
+   rather than fifteen scattered rules drifting one at a time. */
+.saved-shell, .account-shell { --bg-card: var(--paper-dim); }
+
+/* The shells wrap each page. On a phone they are invisible and the panel
+   keeps its own full-bleed layout; on desktop they become the two-column
+   frame. Same contract as .places-shell and .explore-shell. */
+.saved-shell, .account-shell { display: contents; }
+
+/* Labels set like the filter panel's, so a heading means the same thing on
+   every page: mono, 10px, 0.14em. The colour stays --ink-soft, which is the
+   contrast fix this panel already carries and 8.1:1 rather than 3.4:1. */
+.saved-shell .section-title,
+.account-shell .section-title,
+.account-shell .panel-tag,
+.account-shell .auth-label,
+.account-shell .account-back {
+  font-size: 10px;
+  letter-spacing: 0.14em;
+}
+
+/* The one filled action on these pages wears the accent, the way Get a pass
+   does in the bar. Scoped to the two shells: the same class is the ink button
+   in the auth modal and on the map, which are not this design. */
+.account-shell .auth-submit,
+.saved-shell .saved-empty-cta {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+.account-shell .auth-submit:hover:not(:disabled),
+.saved-shell .saved-empty-cta:hover {
+  background: var(--accent-soft);
+  border-color: var(--accent-soft);
+}
+/* Deleting an account is the one control in the app that keeps its own
+   colour, and the quiet Save is deliberately not a primary. */
+.account-shell .auth-submit.auth-submit-quiet {
+  background: var(--paper);
+  border-color: var(--rule);
+  color: var(--ink);
+}
+.account-shell .auth-submit.auth-submit-quiet:hover:not(:disabled) {
+  background: var(--paper-dim);
+  border-color: var(--ink);
+}
+.account-shell .auth-submit.auth-submit-quiet:disabled {
+  color: var(--ink-mute);
+  border-color: var(--rule-soft);
+}
+
+/* Fields stand on the dim ground and lift to paper when they are being
+   typed into, which is the way round every field on Destinations and Explore
+   works. They were the other way round here: a paper field on a paper page,
+   going dim under the cursor. The 10px corner is this design's radius; 6px
+   was the old chrome's. */
+.account-shell .auth-field input,
+.account-shell .account-feedback-input {
+  border-radius: 10px;
+  background: var(--paper-dim);
+}
+.account-shell .auth-field input:focus,
+.account-shell .account-feedback-input:focus {
+  outline: none;
+  border-color: var(--accent);
+  background: var(--paper);
+  box-shadow: 0 0 0 3px var(--accent-bg);
+}
+.account-shell .auth-submit,
+.account-shell .account-invite-btn,
+.account-shell .book-btn { border-radius: 10px; }
+
+/* A door with nothing on it. The route out of the FAQ was a bare line of text
+   with an icon, because .account-wide-btn only ever set a width. Given no
+   other button class, it takes the outlined shape the panel's other quiet
+   actions wear. */
+.account-shell button.account-wide-btn:not(.auth-submit):not(.book-btn):not(.admin-btn-secondary) {
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  background: var(--paper-dim);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+  transition: border-color .15s, color .15s;
+}
+.account-shell button.account-wide-btn:not(.auth-submit):not(.book-btn):not(.admin-btn-secondary):hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* Cards on a beige ground need a beige card and a quieter hairline, and a
+   hover that is lighter than the card rather than the same colour as it. */
+.saved-shell .saved-empty-mark { background: var(--paper); }
+.account-shell .account-profile-card,
+.account-shell .account-signin-card,
+.account-shell .account-pass-card,
+.account-shell .account-menu { border-color: var(--rule-soft); }
+.account-shell .account-profile-card:hover,
+.account-shell .account-menu-row:hover { background: var(--paper); }
+
+/* Language: a tile like every other tile, and the full accent when it is the
+   one in use. A tinted chip was the last "selected" state in the app that did
+   not look like the rest of them. */
+.account-shell .account-lang-opt {
+  border-color: var(--rule-soft);
+  background: var(--paper-dim);
+}
+.account-shell .account-lang-opt:hover { border-color: var(--rule); color: var(--ink); }
+.account-shell .account-lang-opt.on {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: #fff;
+}
+.account-shell .account-lang-opt.on svg { color: #fff; }
+.account-shell .account-lang-opt:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* ───────── Desktop: the page, the rail, the column ───────── */
+
+@media (min-width: 769px) {
+  .saved-shell, .account-shell {
+    display: flex;
+    align-items: stretch;
+    position: absolute;
+    top: var(--filter-h);
+    left: 0; right: 0; bottom: 0;
+    z-index: 56;
+    background: var(--paper);
+  }
+  /* The slide-over stops sliding: it is a page now, so it gives up the
+     translate, the drop shadow and the left border, and takes whatever width
+     the rail leaves it. */
+  .saved-shell > .panel,
+  .account-shell > .panel {
+    position: relative;
+    top: auto; left: auto; right: auto; bottom: auto;
+    z-index: auto;
+    flex: 1 1 auto;
+    min-width: 0;
+    width: auto;
+    max-width: none;
+    border: none;
+    box-shadow: none;
+    transform: none;
+  }
+  /* The centred column is measured on the CONTENT, never as padding on the
+     page. A percentage padding resolves against the containing block, which
+     is now the shell rather than the window, so the old
+     `calc((100% - 1180px) / 2)` counted the rail's 264px twice and took a
+     seventh of the record map's width off with it, dropping the map below
+     the zoom at which its pins carry photographs. Centring each block inside
+     the panel is measured against the panel, which is what was meant.
+
+     My trips keeps the 1180px column it shares with the browse tabs. A
+     settings page is read rather than scanned, so Account takes a column
+     measured for prose and forms instead. */
+  .saved-shell > .panel.saved-trips-panel,
+  .account-shell > .panel.account-panel {
+    padding-left: 0;
+    padding-right: 0;
+  }
+  .saved-shell > .panel .panel-header,
+  .saved-shell > .panel .panel-section,
+  .account-shell > .panel .panel-header,
+  .account-shell > .panel .panel-section {
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .saved-shell > .panel .panel-header,
+  .saved-shell > .panel .panel-section { max-width: 1180px; }
+  /* 24px, the gutter .places-wrap and .explore-wrap already stand on, so all
+     four pages begin their content on the same line in from the panel. */
+  .saved-trips-panel { --saved-gutter: 24px; }
+  .account-shell > .panel .panel-header,
+  .account-shell > .panel .panel-section {
+    max-width: 808px;
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+
+  /* The panel names the page, so the content stops naming it too: with the
+     rail up, the "Account" overline above the profile card was the same word
+     twice, one under the other. */
+  .account-shell .panel-tag { display: none; }
+  .account-shell .panel-header.account-header-bare + .panel-section { padding-top: 22px; }
+
+  /* The way out is the header (press the tab again) or Escape, exactly as it
+     is on a phone and on My trips. A cross would be the only close control in
+     the app that closes a page rather than an overlay. */
+  .account-panel .panel-close { display: none; }
+  /* The rail says where you are, so the back link has nothing left to add. */
+  .account-shell .account-back { display: none; }
+  /* And the hub's help rows fold away, the way the browse toolbars do the
+     moment the panel appears: one set of doors, never two. */
+  .account-shell .account-help-section { display: none; }
+  /* My trips keeps its tabs in the rail for the same reason. */
+  .saved-trips-panel .saved-tabs { display: none; }
+
+  /* The rail's rows. Modelled on .side-sort: a quiet tile until it is the
+     page you are on, and then the full accent. */
+  .side-nav { display: flex; flex-direction: column; gap: 6px; }
+  .side-navrow {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    width: 100%;
+    padding: 9px 12px;
+    border: 1px solid var(--rule-soft);
+    border-radius: 10px;
+    background: var(--paper-dim);
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--ink-soft);
+    text-align: left;
+    transition: color .15s, background .15s, border-color .15s;
+  }
+  .side-navrow svg { flex: none; }
+  .side-navrow span {
+    min-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+  .side-navrow:hover { color: var(--ink); border-color: var(--rule); }
+  .side-navrow.on { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .side-navrow.on svg { color: #fff; }
+  .side-navrow:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  /* My trips: three states of travelling, one under the other. The browse
+     panels put six categories in a 2-up grid; three tabs read better as
+     rows, and the count rides the right edge where a count belongs. */
+  .saved-side .side-cats { grid-template-columns: 1fr; gap: 6px; }
+  .saved-side .side-cat {
+    flex-direction: row;
+    align-items: center;
+    gap: 9px;
+    padding: 9px 12px;
+    font-size: 12.5px;
+  }
+  .saved-side .side-cat span { flex: 1; text-align: left; }
+  .saved-side .side-cat small {
+    flex: none;
+    min-width: 20px;
+    padding: 1px 6px;
+    border-radius: 999px;
+    background: var(--paper);
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+    color: var(--ink-soft);
+    text-align: center;
+  }
+  .saved-side .side-cat.on small { background: rgba(255, 255, 255, 0.22); color: #fff; }
+}
+
+/* Narrow desktop windows: the rail is worth less than the content beside it,
+   so it gives up width first, in the same two steps the header takes. */
+@media (min-width: 769px) and (max-width: 1120px) {
+  .saved-side, .account-side { flex-basis: 216px; width: 216px; padding-left: 16px; }
+}
+
+/* ───────── Phone: the same page, banded ───────── */
+
+@media (max-width: 768px) {
+  /* The header stops being a block of air above a dark pill and becomes the
+     first band of the page: tiles, then one hairline. */
+  .saved-trips-panel .panel-header.saved-panel-header {
+    padding-top: 8px;
+    padding-bottom: 0;
+  }
+  .saved-tabs {
+    display: flex;
+    gap: 7px;
+    margin-top: 0;
+    padding: 3px 0 12px;
+    border-bottom: 1px solid var(--rule-soft);
+  }
+  .saved-cat {
+    position: relative;
+    flex: 1 1 0;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    padding: 13px 4px 9px;
+    border: 1px solid var(--rule-soft);
+    border-radius: 10px;
+    background: var(--paper-dim);
+    font-size: 10.5px;
+    font-weight: 600;
+    color: var(--ink-soft);
+    transition: color .15s, background .15s, border-color .15s;
+  }
+  /* The small accent tick every tab on this app wears. */
+  .saved-cat::before {
+    content: '';
+    position: absolute;
+    top: 5px; left: 50%;
+    transform: translateX(-50%);
+    width: 14px; height: 2px;
+    border-radius: 2px;
+    background: var(--accent);
+  }
+  .saved-cat span {
+    max-width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+  /* The count as a corner badge: a third line under the tile would push the
+     label off, and the tick owns the top centre. */
+  .saved-cat small {
+    position: absolute;
+    top: 5px; right: 5px;
+    min-width: 16px;
+    padding: 0 4px;
+    border-radius: 999px;
+    background: var(--paper);
+    font-family: var(--mono);
+    font-size: 9.5px;
+    line-height: 1.7;
+    font-variant-numeric: tabular-nums;
+    color: var(--ink-soft);
+    text-align: center;
+  }
+  .saved-cat.on { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .saved-cat.on svg { color: #fff; }
+  .saved-cat.on::before { background: rgba(255, 255, 255, 0.7); }
+  .saved-cat.on small { background: rgba(255, 255, 255, 0.22); color: #fff; }
+  .saved-cat:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  /* Account: the rule between sections softens to the hairline the browse
+     bands use, so the page reads as one sheet rather than a stack of slabs. */
+  .account-shell .panel-section { border-bottom-color: var(--rule-soft); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .side-navrow, .saved-cat { transition: none; }
+}

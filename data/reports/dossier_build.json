@@ -1,0 +1,193 @@
+{
+ "generated_at": "2026-08-27T07:32:29Z",
+ "built": 3038,
+ "written": 635,
+ "avg_gallery": 6.84,
+ "avg_gallery_print": 6.69,
+ "avg_highlights": 11.9,
+ "merged_duplicates": 11499,
+ "avg_do": 4.88,
+ "n_with_licence_refusals": 1115,
+ "refusals_sample": {
+  "ALC": [
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/17/Tossal-plantagral.jpg/500px-Tossal-plantagral.jpg",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/d/d7/Alicante.museoasegurada.jpg",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/17/Tossal-plantagral.jpg/960px-Tossal-plantagral.jpg",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/d/d7/Alicante.museoasegurada.jpg",
+    "why": "licence"
+   }
+  ],
+  "REU": [
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/en/thumb/b/b3/Huracancondor.jpg/500px-Huracancondor.jpg",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/en/thumb/b/b3/Huracancondor.jpg/960px-Huracancondor.jpg",
+    "why": "licence"
+   }
+  ],
+  "GRO": [
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/Fachada_del_Museu_Arqueologia_de_Catalunya.jpg/500px-Fachada_del_Museu_Arqueologia_de_Catalunya.jpg",
+    "why": "licence"
+   }
+  ],
+  "MJV": [
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/c/ce/Museo_Arqueologico_de_Murcia.jpg",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/c/ce/Museo_Arqueologico_de_Murcia.jpg",
+    "why": "licence"
+   }
+  ],
+  "VIT": [
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/Museo_de_Bellas_Artes_de_Vitoria.JPG/500px-Museo_de_Bellas_Artes_de_Vitoria.JPG",
+    "why": "licence"
+   }
+  ],
+  "ACE": [
+   {
+    "url": "https://commons.wikimedia.org/wiki/Special:FilePath/Lanzarote%20Jardin%20de%20Cactus%20Kaktusgarten.jpg?width=960",
+    "why": "licence"
+   },
+   {
+    "url": "https://commons.wikimedia.org/wiki/Special:FilePath/Lanzarote%20Jardin%20de%20Cactus%20Kaktusgarten.jpg?width=960",
+    "why": "licence"
+   }
+  ],
+  "FUE": [
+   {
+    "url": "https://commons.wikimedia.org/wiki/Special:FilePath/Faro%20de%20La%20Entallada%20Tuineje%20Fuerteventura.jpg?width=960",
+    "why": "not_a_photograph"
+   }
+  ],
+  "TFN": [
+   {
+    "url": "https://commons.wikimedia.org/wiki/Special:FilePath/Anaga.jpg?width=960",
+    "why": "licence"
+   }
+  ],
+  "SPC": [
+   {
+    "url": "https://commons.wikimedia.org/wiki/Special:FilePath/Roque%20de%20los%20Muchachos%20view1.jpg?width=960",
+    "why": "licence"
+   },
+   {
+    "url": "https://commons.wikimedia.org/wiki/Special:FilePath/Roque%20de%20los%20Muchachos%20view1.jpg?width=960",
+    "why": "licence"
+   }
+  ],
+  "CAG": [
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/Cagliari_burg_elefantenturm.jpg/500px-Cagliari_burg_elefantenturm.jpg",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/Cagliari_burg_elefantenturm.jpg/960px-Cagliari_burg_elefantenturm.jpg",
+    "why": "licence"
+   }
+  ],
+  "REG": [
+   {
+    "url": "https://commons.wikimedia.org/wiki/Special:FilePath/Reggio%20Calabria%20cartolina%20Duomo%20900.jpg?width=960",
+    "why": "not_a_photograph"
+   }
+  ],
+  "LMP": [
+   {
+    "url": "https://commons.wikimedia.org/wiki/Special:FilePath/Spiaggia-dei-conigli2.jpg?width=960",
+    "why": "not_a_photograph"
+   }
+  ],
+  "PSR": [
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Scorcio_Basilica_dei_sette_dolori_pescara.jpg/500px-Scorcio_Basilica_dei_sette_dolori_pescara.jpg",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Scorcio_Basilica_dei_sette_dolori_pescara.jpg/960px-Scorcio_Basilica_dei_sette_dolori_pescara.jpg",
+    "why": "licence"
+   }
+  ],
+  "CUF": [
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/6/6b/Gelas.jpg",
+    "why": "not_a_photograph"
+   }
+  ],
+  "GOA": [
+   {
+    "url": "https://commons.wikimedia.org/wiki/Special:FilePath/Genoa%20conference%201922.jpg?width=960",
+    "why": "licence"
+   }
+  ],
+  "LMZ": [
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/b/b2/PanoramaLamezia.jpg",
+    "why": "not_a_photograph"
+   }
+  ],
+  "OPO": [
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/8/8d/Oporto-S-Francisco-IPPAR1.jpg",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/ba/Igreja_da_Serra_do_Pilar_por_Rodrigo_Tetsuo_Argenton_%2802%29.jpg/500px-Igreja_da_Serra_do_Pilar_por_Rodrigo_Tetsuo_Argenton_%2802%29.jpg",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/8/8d/Oporto-S-Francisco-IPPAR1.jpg",
+    "why": "licence"
+   }
+  ],
+  "FAO": [
+   {
+    "url": "https://commons.wikimedia.org/wiki/Special:FilePath/EstadioAlgarve.JPG?width=960",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/GovernoCivilFaro.JPG/500px-GovernoCivilFaro.JPG",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/GovernoCivilFaro.JPG/960px-GovernoCivilFaro.JPG",
+    "why": "licence"
+   }
+  ],
+  "PDL": [
+   {
+    "url": "https://commons.wikimedia.org/wiki/Special:FilePath/Lagoa%20do%20Fogo.jpg?width=960",
+    "why": "licence"
+   },
+   {
+    "url": "https://commons.wikimedia.org/wiki/Special:FilePath/Lagoa%20do%20Fogo.jpg?width=960",
+    "why": "licence"
+   }
+  ],
+  "TER": [
+   {
+    "url": "https://commons.wikimedia.org/wiki/Special:FilePath/Terceira%20CathedralAngra.jpg?width=960",
+    "why": "licence"
+   },
+   {
+    "url": "https://commons.wikimedia.org/wiki/Special:FilePath/Terceira%20CathedralAngra.jpg?width=960",
+    "why": "licence"
+   }
+  ]
+ }
+}

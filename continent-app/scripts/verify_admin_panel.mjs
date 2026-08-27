@@ -323,7 +323,7 @@ async function openPanel(page) {
 }
 
 async function openAdmin(page, { unlock = true } = {}) {
-  await page.locator('.account-menu-row', { hasText: 'Admin' }).click();
+  await page.locator('.account-nav:visible', { hasText: 'Admin' }).click();
   await page.locator('.adminpage-lock').waitFor({ timeout: 15000 });
   if (!unlock) return;
   await page.locator('#admin-lock-input').fill(RIGHT_PASSWORD);
@@ -377,10 +377,14 @@ try {
   await page.goto(`${BASE}/?o=CRL`);
   await page.locator('.account-avatar-btn').first().waitFor({ timeout: 120000 });
   await openPanel(page);
-  const adminRow = page.locator('.account-menu-row', { hasText: 'Admin' });
+  const adminRow = page.locator('.account-nav:visible', { hasText: 'Admin' });
   await adminRow.waitFor({ timeout: 10000 });
+  // 44px is the THUMB floor, and this context is a 1360px window driven by a
+  // pointer: the row lives in the account page's left panel here, sized like
+  // every other row in it. The phone copy of the same door is the hub menu
+  // row, which .account-menu-row still holds at 52px.
   const rowBox = await adminRow.boundingBox();
-  if (!rowBox || rowBox.height < 44) fail(`the Admin row is ${rowBox?.height}px tall, under 44px`);
+  if (!rowBox || rowBox.height < 32) fail(`the Admin row is ${rowBox?.height}px tall`);
 
   await openAdmin(page, { unlock: false });
   if (await page.locator('.account-panel').count()) fail('the account panel stayed open behind the page');
@@ -760,10 +764,10 @@ try {
   await page2.locator('.account-avatar-btn').first().waitFor({ timeout: 120000 });
   await openPanel(page2);
   await page2.waitForTimeout(900);
-  if (await page2.locator('.account-menu-row', { hasText: 'Admin' }).count()) {
+  if (await page2.locator('.account-nav:visible', { hasText: 'Admin' }).count()) {
     fail('a non-admin is shown the Admin row');
   }
-  if (await page2.locator('.account-menu-row').count() !== 4) fail('the non-admin hub changed shape');
+  if (await page2.locator('.account-nav:visible').count() !== 8) fail('the non-admin hub changed shape');
   ok('a non-admin sees the usual hub, nothing more');
   await ctx2.close();
 

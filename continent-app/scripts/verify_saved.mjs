@@ -78,8 +78,13 @@ const openSaved = async (page) => {
 };
 
 const TAB_INDEX = { favorites: 0, planned: 1, visited: 2 };
+// The three tabs are drawn twice from one renderer (browse chrome v4): a tile
+// row inside the header on a phone, a column in the left panel on desktop,
+// with CSS showing one arrangement or the other. :visible picks whichever
+// this viewport is actually showing.
+const tabButtons = (page) => page.locator('.saved-tab:visible');
 const pickTab = async (page, which) => {
-  await page.locator('.saved-tabs button').nth(TAB_INDEX[which]).click();
+  await tabButtons(page).nth(TAB_INDEX[which]).click();
   await page.waitForTimeout(400);
 };
 
@@ -92,8 +97,14 @@ try {
   await empty.goto(BASE);
   await enterApp(empty);
   await openSaved(empty);
-  const tabs = await empty.locator('.saved-tabs button').count();
-  if (tabs !== 3) fail(`expected 3 segmented tabs, got ${tabs}`);
+  const tabs = await tabButtons(empty).count();
+  if (tabs !== 3) fail(`expected 3 tabs, got ${tabs}`);
+  // Desktop: the tabs stand in the left panel, and the selected one wears the
+  // full accent rather than the dark segment fill this page used to carry.
+  if (!(await empty.locator('.saved-side').isVisible())) fail('no left panel on desktop My trips');
+  const onBg = await empty.locator('.saved-side .side-cat.on').first()
+    .evaluate((el) => getComputedStyle(el).backgroundColor).catch(() => '');
+  if (onBg !== 'rgb(224, 90, 71)') fail(`the selected tab is ${onBg}, not the accent`);
   const dashed = await empty.evaluate(() => [...document.querySelectorAll('.saved-empty')]
     .map((el) => getComputedStyle(el).borderStyle).filter((s) => s.includes('dashed')).length);
   if (dashed) fail(`${dashed} empty state(s) still drawn with a dashed border`);
@@ -248,15 +259,22 @@ try {
   const gestureHint = await mock.locator('.maplibregl-cooperative-gesture-screen').innerText().catch(() => '');
   if (!/ctrl/i.test(gestureHint)) fail(`plain wheel over the map should explain itself, got "${gestureHint}"`);
 
-  // Every pin carries the city's photo, revealed one zoom step past the frame.
-  const photos = await mock.locator('.saved-map .trip-pin-photo').evaluateAll(
+  // Every pin builds a photo of its city, revealed one zoom step past the
+  // frame. The URL is deferred until the photo zoom actually holds, so this
+  // reads it AFTER the zoom step rather than at the opening frame: whether it
+  // had already hydrated by then only ever said whether the painted country
+  // shapes landed before the first fit or after it, which is a race.
+  const photoBgs = () => mock.locator('.saved-map .trip-pin-photo').evaluateAll(
     (els) => els.map((e) => getComputedStyle(e).backgroundImage));
-  if (photos.length !== mockPins) fail(`expected a photo on each of ${mockPins} pins, got ${photos.length}`);
-  if (photos.some((b) => !/^url\(/.test(b))) fail(`a record pin has no photo: ${JSON.stringify(photos)}`);
+  if ((await photoBgs()).length !== mockPins) {
+    fail(`expected a photo on each of ${mockPins} pins, got ${(await photoBgs()).length}`);
+  }
   if (await mock.locator('.saved-map .trip-map.pins-photo').count()) fail('photos should be hidden at the opening frame');
   await mock.locator('.saved-map .maplibregl-ctrl-zoom-in').click();
   await mock.waitForTimeout(1100);
   if (!(await mock.locator('.saved-map .trip-map.pins-photo').count())) fail('one zoom step in should reveal the photo pins');
+  const photos = await photoBgs();
+  if (photos.some((b) => !/^url\(/.test(b))) fail(`a record pin has no photo: ${JSON.stringify(photos)}`);
   const pinNames = await mock.locator('.saved-map .trip-pin-label').allInnerTexts();
   for (const c of ['Munich', 'Salzburg', 'Bruges']) {
     if (!pinNames.includes(c)) fail(`photo pins miss ${c}: ${JSON.stringify(pinNames)}`);

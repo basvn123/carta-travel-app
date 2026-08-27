@@ -1,4 +1,4 @@
-// Headless verify for the Destinations tab v2 (.places-tab): five category
+﻿// Headless verify for the Destinations tab v2 (.places-tab): five category
 // tabs (General, Trips, Trails, Beaches, Mountains), photo cards everywhere,
 // country flag cards as the index, sort chips, and the trip sheet with the
 // route drawn on a real map.
@@ -85,16 +85,15 @@ const ccards = await page.locator('.places-ccard').count();
 check('country flag cards render', ccards > 20, `${ccards} flag cards`);
 const firstCc = await page.locator('.places-ccard .places-card-name').first().innerText().catch(() => '');
 check('flag cards carry the country name', firstCc.trim().length > 1, firstCc);
-const ccSub = await page.locator('.places-ccard .places-card-sub').first().innerText().catch(() => '');
-// The from-price came off the flag card before 6ff2192e and has stayed off
-// through two later commits: browse surfaces no longer quote a fare, and the
-// count is what the card is for. This check followed the price for a while
-// after the code stopped showing one.
-check('flag cards carry the places count', /places/.test(ccSub), ccSub);
+// The count line is gone too (mobile chrome v4): "21 places" answered a
+// question nobody browsing a wall of countries was asking. The card is the
+// photograph, the flag and the name, nothing else.
+check('flag cards carry no count line',
+  await page.locator('.places-ccard .places-card-sub').count() === 0);
 await page.screenshot({ path: 'shots/places-general-countries.png' });
 
 // ── General: pick a country -> photo cards + sort chips ──
-await page.locator('.places-country').selectOption('IT');
+await page.locator('.places-country:visible').selectOption('IT');
 await page.waitForTimeout(1200);
 const sortChips = await page.locator('.places-sort').count();
 check('sort chips appear once filtered', sortChips === 3, String(sortChips));
@@ -125,8 +124,10 @@ const frame = await page.evaluate(() => {
     focus,
   };
 });
-check('cards keep the wide frame',
-  !!frame && Math.abs(frame.box - 2.4) < 0.15, frame ? frame.box.toFixed(2) + ':1' : 'no loaded photo');
+// Mobile chrome v4: two cards abreast in a 16:11 frame, so the photograph
+// is a picture rather than a band. (The desktop keeps its wider strip.)
+check('cards keep the 16:11 phone frame',
+  !!frame && Math.abs(frame.box - 16 / 11) < 0.1, frame ? frame.box.toFixed(2) + ':1' : 'no loaded photo');
 check('the crop sits above the middle of the photograph',
   !!frame && /(3[0-9]|4[0-2])(\.\d+)?%$/.test((frame.focus || '').split(' ')[1] || ''),
   frame ? frame.focus : '');
@@ -151,18 +152,18 @@ check('price sort resorts the cards', /€/.test(p1), p1);
 // The category now opens on the composed multi-day itineraries (the published
 // trip layer, see verify_trips.mjs). The one-day city walks this block covers
 // are what the "1" chip on the day rail reaches, so that is how it gets there.
-await page.locator('.places-country').selectOption('');
+await page.locator('.places-country:visible').selectOption('');
 await page.waitForTimeout(600);
 await page.locator('.places-cat', { hasText: /^trips$/i }).click();
 await page.waitForTimeout(1600);
 check('trips category opens on the composed itineraries',
   await page.locator('.places-icard').count() > 0);
-check('the day slider is there', await page.locator('.trip-slider-input').isVisible());
-await page.locator('.trip-slider-input').fill('1');
+check('the day slider is there', await page.locator('.trip-slider-input:visible').isVisible());
+await page.locator('.trip-slider-input:visible').fill('1');
 await page.waitForTimeout(1600);
 const tripIdx = await page.locator('.places-ccard').count();
 check('one day shows the published-country index', tripIdx > 5, `${tripIdx} countries`);
-await page.locator('.places-country').selectOption('AL');
+await page.locator('.places-country:visible').selectOption('AL');
 await page.waitForTimeout(1500);
 const tcards = await page.locator('.places-tcard').count();
 check('citytrip cards render for Albania', tcards >= 3, `${tcards} cards`);
@@ -209,7 +210,7 @@ await page.locator('.places-cat', { hasText: /beaches/i }).click();
 await page.waitForTimeout(2000);
 const beachCards = await page.locator('.places-bcard').count();
 check('beaches category shows published beaches', beachCards >= 1, `${beachCards} cards`);
-check('beaches category carries the country picker', await page.locator('.places-country').count() === 1);
+check('beaches category carries the country picker', await page.locator('.places-country:visible').count() === 1);
 await page.screenshot({ path: 'shots/places-beaches.png' });
 
 // Mountains carries the country picker like every other tab now, and still
@@ -217,7 +218,7 @@ await page.screenshot({ path: 'shots/places-beaches.png' });
 await page.locator('.places-cat', { hasText: /mountains/i }).click();
 await page.waitForTimeout(1600);
 check('mountains category carries the country picker',
-  await page.locator('.places-country').count() === 1);
+  await page.locator('.places-country:visible').count() === 1);
 // The layer's own chips: the two ways up lead, and each carries its count.
 const mtnChips = await page.locator('.places-facets .places-class').allInnerTexts();
 check('mountain chips offer the ways up and the kinds',
@@ -328,52 +329,43 @@ const deskCols = await desk.locator('.places-list').evaluate(
 check('desktop: cards flow in three columns', deskCols === 3, `${deskCols} columns`);
 await desk.screenshot({ path: 'shots/places-desktop.png' });
 
-// ── Priced from: the origin every price here was computed from ──────────
-const originBtn = desk.locator('.places-controls .origin-btn');
-check('priced-from picker sits in the controls row', await originBtn.isVisible().catch(() => false),
-  (await originBtn.innerText().catch(() => '')).replace(/\n/g, ' '));
-const beforeOrigin = await desk.locator('.places-ccard .places-card-sub').first().innerText().catch(() => '');
-await originBtn.click();
-await desk.waitForTimeout(500);
-await desk.locator('.origin-search').fill('Barcelona');
-await desk.waitForTimeout(600);
-await desk.locator('.origin-opt').first().click();
-await desk.waitForTimeout(2500);
-check('picking an origin names it on the button', /barcelona/i.test(await originBtn.innerText().catch(() => '')),
-  (await originBtn.innerText().catch(() => '')).replace(/\n/g, ' '));
-// The flag card no longer carries a price, so what proves the origin landed
-// is the button naming it (checked just above) and the priced cards inside a
-// country, not this subtitle. Kept as a smoke check that the list survives an
-// origin change rather than as a price assertion.
-const afterOrigin = await desk.locator('.places-ccard .places-card-sub').first().innerText().catch(() => '');
-check('the catalogue still lists countries after an origin change',
-  /places/.test(afterOrigin), `${beforeOrigin} -> ${afterOrigin}`);
-await desk.screenshot({ path: 'shots/places-origin.png' });
+// ── Priced from: retired from this page's desktop chrome ────────────────
+// Desktop chrome v4 moved every control into the left panel and left the
+// origin picker out of it on purpose: the origin still governs the prices
+// (the map's From picker and the phone toolbar still set it), but a
+// "priced from" pill was one control too many on the browse surface.
+check('no origin picker on the desktop page',
+  (await desk.locator('.places-tab .origin-btn:visible').count()) === 0);
+// The desktop chrome that replaced it: search in the header, the category
+// tiles and the filter panel on the left.
+check('desktop: search rides in the header',
+  await desk.locator('.header-search-slot .places-search input').isVisible().catch(() => false));
+check('desktop: the side panel stands', await desk.locator('.places-side').isVisible().catch(() => false));
 
 // ── The trips index lost its intro paragraph ─────────────────────────────
-await desk.locator('.places-cat', { hasText: /^trips$/i }).click();
+await desk.locator('.side-cat', { hasText: /^trips$/i }).click();
 await desk.waitForTimeout(1200);
 check('trips index carries no intro paragraph', await desk.locator('.places-intro').count() === 0);
-await desk.locator('.places-cat', { hasText: /general/i }).click();
+await desk.locator('.side-cat', { hasText: /general/i }).click();
 await desk.waitForTimeout(800);
 
 // ── Lifestyle: the stay tier every price here was computed at ────────────
-const pill = desk.locator('.places-lifestyle');
+const pill = desk.locator('.places-side .lifestyle-btn:visible');
 check('lifestyle pill sits in the controls row', await pill.isVisible().catch(() => false));
 check('pill names the current stay tier', /entire place/i.test(await pill.innerText().catch(() => '')),
   (await pill.innerText().catch(() => '')).replace(/\n/g, ' '));
 // Brussels, one of the cities with measured tiers, so the dorm price is a
 // real number rather than the entire-place fallback every village shows.
-await desk.locator('.places-country').selectOption('BE');
+await desk.locator('.places-country:visible').selectOption('BE');
 await desk.waitForTimeout(1200);
 const bru = desk.locator('.places-dcard', { hasText: 'Brussels' }).first();
 const priceBefore = await bru.locator('.places-card-price').innerText().catch(() => '');
 await pill.click();
 await desk.waitForTimeout(700);
 check('lifestyle panel opens over the destinations tab',
-  await desk.locator('.accom-panel .lifestyle-stay-chips').isVisible().catch(() => false));
+  await desk.locator('.lifestyle-panel .ls-tiles').first().isVisible().catch(() => false));
 await desk.screenshot({ path: 'shots/places-lifestyle.png' });
-await desk.locator('.lifestyle-stay-chips .chip', { hasText: 'Dorm bed' }).first().click();
+await desk.locator('.lifestyle-panel .ls-tile', { hasText: 'Dorm bed' }).first().click();
 await desk.waitForTimeout(1500);
 const priceAfter = await bru.locator('.places-card-price').innerText().catch(() => '');
 check('catalogue prices follow the stay tier', priceBefore !== priceAfter && /€/.test(priceAfter),

@@ -4,7 +4,7 @@ import { BottomNav } from './components/BottomNav.jsx';
 import { AnnouncementBar } from './components/AnnouncementBar.jsx';
 import { MaintenanceGate } from './components/MaintenanceGate.jsx';
 import { ExploreTab } from './browse/ExploreTab.jsx';
-import { ExplorePanel } from './browse/ExplorePanel.jsx';
+import { DestinationPage } from './browse/DestinationPage.jsx';
 import { LifestylePanel } from './browse/LifestylePanel.jsx';
 import { DestinationsTab } from './browse/DestinationsTab.jsx';
 import Logo from './components/Logo.jsx';
@@ -57,6 +57,7 @@ import { readTripShareFromUrl, decodeTripShare } from './lib/shareLink.js';
 import { readShareTokenFromUrl, stripShareTokenFromUrl } from './auth/tripShares.js';
 import { readFriendHandleFromUrl, stripFriendHandleFromUrl } from './auth/friends.js';
 import { readTrailFromUrl } from './lib/trails.js';
+import { readDestFromUrl } from './lib/dossier.js';
 import { readBeachFromUrl } from './lib/beaches.js';
 import { readLakeFromUrl } from './lib/lakes.js';
 import { readMountainFromUrl } from './lib/mountains.js';
@@ -301,6 +302,16 @@ function TravelApp() {
   useEffect(() => {
     if (pendingTrail) setActiveTab('places');
   }, [pendingTrail]);
+
+  // A single DESTINATION shared as a link (#dest=gem:valbona, see
+  // lib/dossier.js): read once at startup, then the full-screen destination
+  // page opens over whichever tab loads. Same contract as the trail hash: it
+  // carries nothing else, so the recipient's own state survives.
+  const [pendingDest] = useState(() => readDestFromUrl());
+  useEffect(() => {
+    if (pendingDest) setSelectedId(pendingDest);
+    // Once, at boot: the hash was already stripped by the reader.
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // A single BEACH shared as a link (#beach=gr-navagio-Q1234&bc=GR, see
   // lib/beaches.js), read the same way and for the same reasons: the hash
@@ -678,6 +689,7 @@ function TravelApp() {
           <div onClick={(e) => e.stopPropagation()}>
             <ExploreTab
               data={data}
+              isActive={activeTab === 'map'}
               locationQuery={locationQuery}
               setLocationQuery={setLocationQuery}
               countryFilter={countryFilter}
@@ -715,19 +727,6 @@ function TravelApp() {
             />
           </div>
 
-          <div onClick={(e) => e.stopPropagation()}>
-            <ExplorePanel
-              destination={selectedDest}
-              data={data}
-              indices={exploreIndices}
-              choices={choices}
-              onOpenLifestyle={() => setLifestyleOpen(true)}
-              onClose={() => setSelectedId(null)}
-              onSelect={openDetail}
-              isFavorite={selectedId ? favorites.has(selectedId) : false}
-              onToggleFavorite={selectedId ? () => toggleFav(selectedId) : undefined}
-            />
-          </div>
         </div>
       )}
 
@@ -759,11 +758,13 @@ function TravelApp() {
         <div className={activeTab === 'places' ? undefined : 'tab-keep-hidden'} onClick={(e) => e.stopPropagation()}>
           <DestinationsTab
             data={data}
+            isActive={activeTab === 'places'}
             pricedAll={pricedAll}
             priceMode={priceMode}
             availableCountries={availableCountries}
-            onSelectDest={(id) => { setActiveTab('map'); openDetail(id); }}
+            onSelectDest={openDetail}
             stayTier={choices.stay_tier || 'home'}
+            lifestyle={choices.lifestyle}
             onOpenLifestyle={() => setLifestyleOpen(true)}
             origin={choices.origin}
             onChangeOrigin={setOrigin}
@@ -827,6 +828,38 @@ function TravelApp() {
         </div>
       )}
 
+      {/* The full-screen destination page, hoisted above the tab blocks so it
+          opens over Explore AND Destinations without a tab hop. Renders from
+          the dossier contract; the PDF export renders from the same file. */}
+      {selectedDest && (
+        <div onClick={(e) => e.stopPropagation()}>
+          <DestinationPage
+            destination={selectedDest}
+            data={data}
+            indices={exploreIndices}
+            choices={choices}
+            onOpenLifestyle={() => setLifestyleOpen(true)}
+            onClose={() => setSelectedId(null)}
+            onSelect={openDetail}
+            isFavorite={selectedId ? favorites.has(selectedId) : false}
+            onToggleFavorite={selectedId ? () => toggleFav(selectedId) : undefined}
+            onOpenFeature={(layer, ref) => {
+              setSelectedId(null);
+              if (layer === 'trails') setPendingTrail({ id: Number(ref.id), country: ref.cc });
+              else if (layer === 'beaches') setPendingBeach({ id: String(ref.id), cc: ref.cc });
+              else if (layer === 'lakes') setPendingLake({ id: String(ref.id), cc: ref.cc });
+              else if (layer === 'mountains') setPendingMountain({ id: String(ref.id), cc: ref.cc });
+              setActiveTab('places');
+            }}
+            onOpenItin={(id) => {
+              setSelectedId(null);
+              setPendingTrip({ id });
+              setActiveTab('places');
+            }}
+          />
+        </div>
+      )}
+
       <div onClick={(e) => e.stopPropagation()}>
         <BottomNav
           activeTab={activeTab}
@@ -878,6 +911,9 @@ function TravelApp() {
             destinations={data?.destinations}
             onClose={() => setAccountOpen(false)}
             onOpenAdmin={() => setAdminOpen(true)}
+            onOpenLifestyle={() => { setAccountOpen(false); setLifestyleOpen(true); }}
+            stayTier={choices.stay_tier || 'home'}
+            lifestyle={choices.lifestyle}
             onOpenAuth={() => { setAccountOpen(false); setAuthModalMode('signin'); setAuthModalOpen(true); }}
           />
         </div>

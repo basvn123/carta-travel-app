@@ -322,3 +322,104 @@ cannot carry are per-feature, and belong in the features UI itself:
 - the per-photo credit from the feature's own `image` object:
   `image.author`, `image.licence` and `image.licence_url`, which is exactly
   the per-file obligation follow-up item 1 has been open on since 2026-08-11.
+
+## Destination dossiers and the PDF export (2026-08-25)
+
+The dossier layer (`pipeline/dossier/`, wire at `continent-app/public/dossier/`)
+recombines sources already in this ledger: OpenStreetMap (parking, trails,
+nearby features), Wikidata (highlight reconciliation, events), Wikivoyage
+(intro body, quoted with source link, CC BY-SA), OpenTripMap (highlight
+spine), Wikimedia Commons (all photographs), EEA (bathing class), JRC and
+Eurostat (crowding), CARTO and OpenStreetMap (the printed map image). No new
+source, but a new obligation:
+
+- **A PDF is redistribution.** The on-screen footer credit does not discharge
+  attribution once the file is on a stranger's laptop, so every exported
+  guide ends with a credits page listing each photograph's author, licence
+  and Commons file page, plus the data credit block. This is rendered from
+  the dossier's own `credits[]` and per-image TASL, never from a lookup.
+- **The image gate** (`build_dossier.py` + `fill_licences.py`): an image
+  ships in the PDF only with a resolved redistribution-safe licence AND a
+  named author where the licence requires one (`ok_print`). NC, ND and
+  permission-only files are refused. Unresolved TASL means the panel may
+  still show the photo with its Commons link, but the PDF will not carry it.
+- Booking and search deeplinks in the dossier (Google Flights, Skyscanner,
+  Booking.com, Airbnb, GetYourGuide, Viator, Google Maps, Waze, Apple Maps)
+  are outbound links, not ingested data; no licence obligation attaches.
+
+## Resolutions, 2026-08-26 (dossier spec section 11)
+
+Three of the open items above are now closed in code:
+
+| Source | What we take | License | Attribution required | Share-alike | Where attributed today |
+|---|---|---|---|---|---|
+| NASA POWER climatology API (`pipeline/harvest_climate_power.py`) | 12-month climate normals (T2M, T2M_RANGE, precipitation, solar) per destination, 2001-2020, lapse-corrected to destination elevation | US Government work: no use restriction; NASA asks for an acknowledgement | No (given anyway) | No | Account > Data sources; dossier `credits[]` and the PDF credits page wherever normals print |
+| Open-Meteo elevation API (Copernicus DEM GLO-90, same harvester) | One ground elevation per destination for the lapse correction | CC BY 4.0 (Copernicus DEM) | Covered by the existing Copernicus credit | No | Copernicus GLO row above |
+| UNESCO World Heritage Centre list XML (`pipeline/harvest_unesco_whc.py` -> `cache/unesco_whc.json`) | Site name, category, region, per-country coordinates for inscribed properties | UNESCO WHC terms of use (verify wording on the syndication page) | Yes | No | `attribution.js` entry added; dossier `credits[]` where a designation is shown |
+
+- **WorldClim scope (open risk item): resolved for the wire.** `dest.climate`
+  now comes from NASA POWER (see `apply_climate.py` header); WorldClim values
+  no longer ship in `app_data.json` nor in any exported PDF. The rasters stay
+  on disk for one remaining consumer, the lakes swim-season model, which is a
+  derived scalar and is now the only thing the WorldClim credit covers.
+  Retire that too when the lakes layer next rebuilds.
+- **Item 6 (UNESCO provenance): resolved.** `harvest_unesco_whc.py` is the
+  harvester the tree was missing; the fresh official harvest reproduces 95
+  percent of the old file's keys (the rest are renamed sites and 2025-26
+  inscriptions), previous file kept at `cache/unesco_whc_prev.json`, and the
+  ready-to-paste `attribution.js` entry below is now actually pasted.
+- **Viator / GetYourGuide affiliate ids:** the dossier stores bare URLs;
+  `src/lib/activityAffiliates.js` decorates them at render time from
+  `VITE_GYG_PARTNER_ID` / `VITE_VIATOR_PID` (same env pattern as omio.js and
+  affiliate.js). Until those are set every link stays a plain search: no
+  obligation, no tracking. Outbound affiliate links carry no data-licence
+  obligation either way.
+
+### S4 research sweep: complete for tier 2+ (2026-08-26)
+
+The "best things to do" evidence pass now covers **237 destination files
+across all 230 tier 2+ places** (every one validated by `research_do.py`: each
+shipped item names at least three distinct registrable domains, no source
+prose is stored, and every detail sentence is composed from facts). That is
+1,566 web-evidenced items; the other 13,229 come from the keyless open-data
+tier in `derive_do.py`, which is labelled separately in the UI and never
+conflated with this one.
+
+Thirty five files were originally built from a pool too small for the sweep's
+own standard, because they were researched by fetching known guide pages
+rather than searching. All of them have been re-searched and deepened: the
+smallest pool in the set is now eight publishers and the median is twenty two,
+`thin_sources` in `data/reports/dossier_research.json` is empty, and no item
+claims more corroboration than its file can show.
+
+**What counts as one publisher** is now a single definition,
+`pipeline/dossier/common.publisher`, imported by the harvester and by the
+validator that judges its output. It folds country editions together
+(`tripadvisor.co.za` and `.de` are `tripadvisor.com`) and drops the
+aggregators the automated sweep already refused, because a site republishing
+what its users typed is not a second opinion. Before this the two halves of
+the sweep disagreed: a hand-written file counted domains `web_sweep.py` would
+have thrown away, so "named by 8 of 14 guides" meant different things
+depending on which path produced the file. `research_do.py` now enforces it,
+along with two gaps nothing was checking: an item citing a URL absent from its
+own `sources`, and `n_usable_sources` exceeding what the file actually lists.
+
+The copyright position is unchanged and is the reason the format looks the
+way it does: the web decides WHICH things matter and in what order, and never
+supplies the words. What we store per item is a name, our own sentence, a
+count of corroborating domains and up to three source URLs. A fact
+corroborated by three independent publishers is a fact about the world, not
+anyone's expression, and "named by 23 of 40 guides" is a citation rather than
+a quotation.
+
+Booking and official links inside a research file are URLs that were actually
+seen in results; nothing is synthesised. They are outbound links, so no data
+licence attaches, and `src/lib/activityAffiliates.js` is what decorates the
+GetYourGuide and Viator ones once partner ids exist.
+
+The sweep is now part of the monthly `dossier` task rather than something run
+by hand: `web_sweep.py --all --if-configured` runs before the build, does
+nothing at all when no search key is set, and picks up any destination with no
+research file the day one is. `plan_research.py --copy-siblings` fills
+multi-airport places, `research_do.py` refuses anything that misses the gate,
+and `audit.py --strict` closes the task.

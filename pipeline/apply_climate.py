@@ -32,8 +32,15 @@ DEFAULT_TARGETS = [
 ]
 
 CLIMATE_MODEL = {
-    "source": "WorldClim 2.1 (1970-2000 normals, 5 arc-min)",
-    "period": "1970-2000",
+    # NASA POWER replaced WorldClim 2.1 on 2026-08-26: WorldClim's licence is
+    # non-commercial only, and the destination dossier now redistributes the
+    # monthly values inside exported PDFs. POWER is US-government open data,
+    # covers every land coordinate (so the old 39 percent gap closes), and its
+    # 2001-2020 window is a truer "what will it be like" than 1970-2000.
+    # Values are lapse-corrected from the MERRA-2 cell's mean elevation to the
+    # destination's own (6.5 C/km, capped 5 C) - see harvest_climate_power.py.
+    "source": "NASA POWER (MERRA-2), 2001-2020 climatology, lapse-corrected",
+    "period": "2001-2020",
     "vars": ["t_high", "t_low", "t_mean", "precip_mm", "comfort"],
     "comfort": {
         "range": "0-100",
@@ -46,8 +53,8 @@ CLIMATE_MODEL = {
 }
 
 DATA_SOURCE = {
-    "provider": "WorldClim 2.1 (Fick & Hijmans 2017)",
-    "license": "Free for academic and other uses; attribution requested",
+    "provider": "NASA POWER project, NASA Langley Research Center",
+    "license": "US Government work; no use restriction, acknowledgement appreciated",
     "used_for": "per-destination 12-month climate normals + tourist comfort index",
 }
 
@@ -84,8 +91,9 @@ def patch(path: Path, cache: dict) -> None:
 
     meta["climate_model"] = CLIMATE_MODEL
     ds = meta.setdefault("data_sources", {})
-    ds.pop("open_meteo", None)  # superseded by the bulk raster source
-    ds["worldclim"] = DATA_SOURCE
+    ds.pop("open_meteo", None)   # superseded (live forecasts keep their own credit)
+    ds.pop("worldclim", None)    # superseded by NASA POWER, licence-safe for PDFs
+    ds["nasa_power"] = DATA_SOURCE
     meta["schema_version"] = max(meta.get("schema_version", 0), 15)
 
     atomic_write_json(path, data, indent=1, ensure_ascii=False)

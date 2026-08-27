@@ -63,7 +63,7 @@ const openSaved = async (page) => {
 
 // Visited is the third segment of the panel's tab strip.
 const openVisited = async (page) => {
-  await page.locator('.saved-tabs button').nth(2).click();
+  await page.locator('.saved-tab:visible').nth(2).click();
   await page.waitForTimeout(400);
 };
 

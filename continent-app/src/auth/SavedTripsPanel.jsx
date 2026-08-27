@@ -1179,8 +1179,46 @@ export function SavedTripsPanel({ data, onClose, onLoadTrip, onLoadTripPlan, onO
     />
   );
 
+  // Three states of travelling, drawn from one renderer and shown twice: a
+  // row of tiles on a phone, a column in the desktop panel under the brand.
+  // Destinations and Explore are built the same way, and for the same reason:
+  // two arrangements of one control cannot drift apart if the source only
+  // holds one of them.
+  const TABS = [
+    { key: 'favorites', Icon: BookmarkIcon, labelKey: 'saved.tabFavorites', n: authed && !loading ? trips.length : 0 },
+    { key: 'planned', Icon: CalendarIcon, labelKey: 'saved.tabPlanned', n: plannedCount },
+    { key: 'visited', Icon: CheckIcon, labelKey: 'saved.tabVisited', n: pastCount },
+  ];
+  const renderTabs = (cls) => TABS.map(({ key, Icon, labelKey, n }) => (
+    <button
+      key={key}
+      role="tab"
+      aria-selected={tab === key}
+      className={`saved-tab ${cls} ${tab === key ? 'on' : ''}`}
+      onClick={() => pickTab(key)}
+    >
+      <Icon size={16} />
+      <span>{t(labelKey)}</span>
+      {n > 0 && <small>{n}</small>}
+    </button>
+  ));
+
   return (
-    <div className="panel open account-panel saved-trips-panel">
+    <div className="saved-shell">
+      {/* Desktop-only left panel (CSS hides it under 769px), the same column
+          Destinations and Explore stand their filters in: the three states of
+          travelling under one mono label, closed by one hairline on its right.
+          The phone keeps the tile row inside the header below. */}
+      <aside className="side-panel saved-side" aria-label={t('saved.title')}>
+        <div className="side-block">
+          <p className="side-label">{t('saved.title')}</p>
+          <div className="side-cats" role="tablist" aria-label={t('saved.title')}>
+            {renderTabs('side-cat')}
+          </div>
+        </div>
+      </aside>
+
+      <div className="panel open account-panel saved-trips-panel">
       <button className="panel-close" onClick={onClose} aria-label={t('saved.close')}>x</button>
 
       <div className="panel-header saved-panel-header">
@@ -1190,34 +1228,8 @@ export function SavedTripsPanel({ data, onClose, onLoadTrip, onLoadTripPlan, onO
             the title as its accessible name. Three states of travelling, one
             mutually exclusive choice: the shortlist of wishes, the calendar
             of commitments, the record. */}
-        <div className="panel-segment saved-tabs" role="tablist" aria-label={t('saved.title')}>
-          <button
-            role="tab"
-            aria-selected={tab === 'favorites'}
-            className={tab === 'favorites' ? 'seg-on' : ''}
-            onClick={() => pickTab('favorites')}
-          >
-            {t('saved.tabFavorites')}
-            {authed && !loading && trips.length > 0 && <small>{trips.length}</small>}
-          </button>
-          <button
-            role="tab"
-            aria-selected={tab === 'planned'}
-            className={tab === 'planned' ? 'seg-on' : ''}
-            onClick={() => pickTab('planned')}
-          >
-            {t('saved.tabPlanned')}
-            {plannedCount > 0 && <small>{plannedCount}</small>}
-          </button>
-          <button
-            role="tab"
-            aria-selected={tab === 'visited'}
-            className={tab === 'visited' ? 'seg-on' : ''}
-            onClick={() => pickTab('visited')}
-          >
-            {t('saved.tabVisited')}
-            {pastCount > 0 && <small>{pastCount}</small>}
-          </button>
+        <div className="saved-tabs" role="tablist" aria-label={t('saved.title')}>
+          {renderTabs('saved-cat')}
         </div>
       </div>
 
@@ -1623,6 +1635,7 @@ export function SavedTripsPanel({ data, onClose, onLoadTrip, onLoadTripPlan, onO
           </SavedSection>
         </>
       )}
+      </div>
     </div>
   );
 }

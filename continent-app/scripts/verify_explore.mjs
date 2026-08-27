@@ -79,14 +79,16 @@ try {
 
   // The Lifestyle control has to be present AND has to move the prices: a
   // control that changes nothing is worse than no control at all.
-  check('Lifestyle sits beside Filters', await page.locator('.explore-lifestyle-btn').count() === 1);
-  const priceText = () => page.locator('.xcard-cost-eur').allInnerTexts();
+  // The control renders twice since desktop chrome v4 (toolbar card for the
+  // phone, side panel for desktop); exactly one may be on screen at a time.
+  check('one Lifestyle control on screen', await page.locator('.explore-shell .lifestyle-btn:visible').count() === 1);
+  const priceText = () => page.locator('.xcard-cost-eur:visible').allInnerTexts();
   const beforeLs = (await priceText()).slice(0, 8).join(' ');
-  await page.locator('.explore-lifestyle-btn').click();
+  await page.locator('.explore-shell .lifestyle-btn:visible').first().click();
   await page.waitForTimeout(800);
   check('Lifestyle opens as a right-hand drawer', await page.locator('.accom-panel.from-right').count() === 1);
   check('the grid behind it stays reachable through a scrim', await page.locator('.lifestyle-scrim').count() === 1);
-  const bp = page.locator('.accom-panel button', { hasText: /^Backpacker$/ }).first();
+  const bp = page.locator('.lifestyle-panel .ls-tile', { hasText: /^Backpacker$/ }).first();
   if (await bp.count()) { await bp.click(); await page.waitForTimeout(700); }
   await page.keyboard.press('Escape');
   await page.locator('.lifestyle-scrim').click({ position: { x: 120, y: 400 } }).catch(() => {});
@@ -114,7 +116,7 @@ try {
   check('no desktop filter tray', await page.locator('.filter-tray').count() === 0);
 
   // One Filters door, and it opens the SHEET on desktop too.
-  await page.locator('.explore-filter-btn').click();
+  await page.locator('.explore-filter-btn:visible').first().click();
   await page.waitForTimeout(600);
   check('desktop Filters opens the sheet', await page.locator('.fsheet-explore').isVisible());
   check('sheet is a modal dialog', await page.locator('.fsheet-explore').getAttribute('aria-modal') === 'true');
@@ -126,50 +128,27 @@ try {
 
   await page.screenshot({ path: 'shots/explore-desktop.png', fullPage: false });
 
-  // ── Open a destination panel and walk its sections ──
+  // ── Open a destination: it is the full-screen page now. The deep contract
+  // (gallery, highlights, PDF, parking deeplinks) lives in
+  // scripts/verify_destination_page.mjs; this pass only proves the door. ──
   await page.locator('.xcard-hit').first().click();
   await page.waitForTimeout(2500);
-  const panel = page.locator('.dest-panel.open');
-  check('panel opens', await panel.isVisible());
-  const panelText = await panel.innerText();
-  check('panel shows the cost receipt', await panel.locator('.cost-receipt').count() === 1);
+  const panel = page.locator('.destp');
+  check('destination page opens', await panel.isVisible());
+  check('page shows the cost receipt', await panel.locator('.cost-receipt').count() === 1);
   // The receipt has to say what it assumed. A price a reader cannot trace
   // back to a setting is a price they must take on faith.
   const assumes = await panel.locator('.cost-assumes').innerText().catch(() => '');
   check('receipt names the lifestyle it priced for', /priced for/i.test(assumes), assumes.slice(0, 60));
   check('receipt totals a day in euros', /€\d/.test(await panel.locator('.cost-total-eur').innerText()));
-  check('receipt states where the number came from', await panel.locator('.cost-source').innerText().then((x) => x.length > 12));
-  check('panel has what-is-around', /what is around/i.test(panelText));
-  check('panel has the worth-pairing list', await panel.locator('.xp-near').count() >= 1);
-  check('panel explains the score', await panel.locator('.rate-parts .rate-part').count() >= 2);
-  check('panel has when-to-go', /when to go/i.test(panelText));
-  check('panel has weather section', /weather this week/i.test(panelText));
-  check('panel has parking section', /where to park/i.test(panelText));
-  // Events render only when there ARE events: an empty section that
-  // apologises for being empty is not a section worth a reader's attention.
-  check('no empty events apology', !/no recurring events on record/i.test(panelText));
-  check('panel has packing section', /what to bring/i.test(panelText));
-  check('panel shows POI rows', await panel.locator('.xp-poi').count() >= 3);
-  check('packing list has items', await panel.locator('.xp-pack').count() >= 2);
-  // The locator map is lazy; give maplibre a moment to mount its canvas.
+  const panelText = await panel.innerText();
+  check('page has when-to-go', /when to go/i.test(panelText));
+  check('page has explore-further', /explore .* further/i.test(panelText));
   await page.waitForTimeout(2500);
-  check('panel pins the place on a real map', await panel.locator('.place-map canvas').count() === 1);
-  check('the map names the town', await panel.locator('.pm-pin-name').count() >= 1);
-  const pw = await panel.boundingBox();
-  check('panel is a reading surface, not a strip', pw && pw.width >= 460, `${Math.round(pw?.width || 0)}px wide`);
-  // The live forecast (network) and the destinfo layer (built?) get a longer leash.
-  await page.waitForTimeout(3000);
-  const weatherDays = await panel.locator('.xp-wday').count();
-  check('live forecast rendered 7 days', weatherDays === 7, `${weatherDays} days`);
-  const hasParkRow = await panel.locator('.xp-park').count();
-  const parkNote = (await panel.locator('.dsheet-card', { hasText: /where to park/i }).innerText()).slice(0, 90);
-  check('parking answered (spot or honest empty)', hasParkRow > 0 || /not been gathered|no public parking/i.test(parkNote), parkNote.replace(/\n/g, ' | '));
+  check('page pins the place on a real map', await panel.locator('.dmap canvas').count() >= 1);
   await page.screenshot({ path: 'shots/explore-panel-desktop.png' });
-
-  // Scroll the panel through its sections for a second shot.
-  await panel.locator('.dest-panel-scroll').evaluate((el) => { el.scrollTop = el.scrollHeight * 0.55; });
+  await page.keyboard.press('Escape');
   await page.waitForTimeout(400);
-  await page.screenshot({ path: 'shots/explore-panel-desktop-2.png' });
   await page.close();
 } catch (e) {
   check('desktop pass ran', false, String(e).split('\n')[0]);
@@ -189,7 +168,7 @@ try {
   const gridBox = await page.locator('.explore-grid').boundingBox();
   check('no horizontal scroll', gridBox && gridBox.width <= 390, `grid ${Math.round(gridBox?.width || 0)}px`);
 
-  await page.locator('.explore-filter-btn').click();
+  await page.locator('.explore-filter-btn:visible').first().click();
   await page.waitForTimeout(600);
   check('phone Filters opens the same sheet', await page.locator('.fsheet-explore').isVisible());
   await page.screenshot({ path: 'shots/explore-filters-phone.png' });
@@ -199,16 +178,14 @@ try {
 
   await page.locator('.xcard-hit').first().click();
   await page.waitForTimeout(2000);
-  check('phone panel opens', await page.locator('.dest-panel.open').isVisible());
-  // It is a page now, not a sheet: full bleed, no grip, one cross.
-  // scripts/verify_detail_sheet.mjs owns the rest of that contract.
-  const pbox = await page.locator('.dest-panel.open').boundingBox();
-  check('phone panel covers the screen',
+  check('phone destination page opens', await page.locator('.destp').isVisible());
+  // Full bleed, back arrow as the exit; the rest of the contract lives in
+  // scripts/verify_destination_page.mjs.
+  const pbox = await page.locator('.destp').boundingBox();
+  check('phone page covers the screen',
     !!pbox && pbox.x === 0 && pbox.y === 0 && pbox.width === 390,
     pbox ? Math.round(pbox.width) + 'x' + Math.round(pbox.height) : 'no box');
-  check('phone panel has one cross and no grip',
-    await page.locator('.dest-grip').count() === 0
-    && await page.locator('.dest-panel .panel-close').isVisible());
+  check('phone page exits by the back arrow', await page.locator('.destp-back').isVisible());
   await page.screenshot({ path: 'shots/explore-panel-phone.png' });
   await page.close();
 } catch (e) {

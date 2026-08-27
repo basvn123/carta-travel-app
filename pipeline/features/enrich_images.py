@@ -1110,7 +1110,8 @@ def load_cache():
 # --------------------------------------------------------------------------- #
 # selection and apply
 # --------------------------------------------------------------------------- #
-def select(features, cache, kind, country, limit, refresh, redecide=False):
+def select(features, cache, kind, country, limit, refresh, redecide=False,
+           missing=False, ids=None):
     """Which features this run resolves. A limited run takes a round robin over
     (country, kind) rather than the head of the list, so a 200-feature test run
     is not 200 Spanish beaches.
@@ -1118,11 +1119,22 @@ def select(features, cache, kind, country, limit, refresh, redecide=False):
     --redecide is confined to features the ledger already holds. Letting it
     reach the rest would write a refusal for a feature nobody has ever looked
     up, which is the one thing this pipeline must never do: an unasked question
-    is not a no."""
+    is not a no.
+
+    --missing-only is the periodic retry of the refusals: features the ledger
+    has looked up and holds no image for. Commons grows, so a "no" from last
+    season is worth asking again without re-walking the 6,400 that already
+    have their photograph."""
     rows = [f for f in features
             if (not kind or f["kind"] == kind)
             and (not country or f["iso2"] == country.upper())]
-    if redecide:
+    if ids is not None:
+        rows = [f for f in rows if f["id"] in ids]
+    if missing:
+        ledger = cache["features"]
+        rows = [f for f in rows
+                if f["id"] in ledger and not ledger[f["id"]].get("image")]
+    elif redecide:
         rows = [f for f in rows if f["id"] in cache["features"]]
     elif not refresh:
         rows = [f for f in rows if f["id"] not in cache["features"]]
@@ -1258,6 +1270,14 @@ def main():
     parser.add_argument("--redecide", action="store_true",
                         help="re-run the gates over the cached lookups, no "
                              "network, for when a gate changes")
+    parser.add_argument("--missing-only", action="store_true",
+                        help="re-ask Commons only for the features the ledger "
+                             "holds no image for; the periodic retry of the "
+                             "refusals, since Commons grows")
+    parser.add_argument("--ids", metavar="FILE",
+                        help="JSON list of feature ids to confine the run to; "
+                             "how a targeted retry (say, the wire's imageless "
+                             "627) avoids walking the whole raw pool")
     parser.add_argument("--report", action="store_true",
                         help="apply the ledger and report, no network")
     args = parser.parse_args()
@@ -1274,12 +1294,17 @@ def main():
         global OFFLINE
         OFFLINE = args.redecide
         ctx = build_context(stamp, cache)
+        wanted_ids = None
+        if args.ids:
+            with open(args.ids, encoding="utf-8") as fh:
+                wanted_ids = set(json.load(fh))
         todo = select(features, cache, args.kind, args.country, args.limit,
-                      args.refresh, args.redecide)
+                      args.refresh, args.redecide, args.missing_only,
+                      wanted_ids)
         log(f"[images] {len(features)} features, {len(cache['features'])} "
             f"already resolved, {len(todo)} to walk"
             f"{' from cache only' if OFFLINE else ''}")
-        if args.refresh:
+        if args.refresh or args.missing_only:
             # A refresh means the answers are stale, not just the decision, so
             # the feature's remembered queries go with it.
             stale = {f["id"] for f in todo}
@@ -1287,7 +1312,8 @@ def main():
                         if k.split("|")[0] in stale]:
                 cache["queries"].pop(key)
         if not OFFLINE:
-            prefetch(todo, ctx, cache["features"], args.refresh)
+            prefetch(todo, ctx, cache["features"],
+                     args.refresh or args.missing_only)
         for i, f in enumerate(todo, 1):
             cache["features"][f["id"]] = resolve(f, ctx,
                                                  cache["features"].get(f["id"]))

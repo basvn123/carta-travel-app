@@ -350,7 +350,7 @@ const run = async () => {
     .filter({ hasText: /^(Saved trips|My trips)$/ }).locator('visible=true').first();
   await trips.click({ timeout: 20000 });
   await page.locator('.saved-trips-panel').waitFor({ timeout: 12000 });
-  await page.locator('.saved-tabs button').nth(1).click();
+  await page.locator('.saved-tab:visible').nth(1).click();
   await page.waitForTimeout(600);
 
   const panel = await page.locator('.saved-trips-panel').innerText();

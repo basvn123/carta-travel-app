@@ -1,4 +1,4 @@
-// Headless verify for the Destinations search box: one field that finds both
+﻿// Headless verify for the Destinations search box: one field that finds both
 // a catalogue city and any location on earth (a village Carta does not price,
 // a postcode, a home address), then ranks the catalogue by distance from it.
 //
@@ -168,7 +168,7 @@ check('the two towns either side of it lead the list', /ghent/i.test(firstFew) &
 await page.screenshot({ path: 'shots/places-search-address.png' });
 
 // ── 3. Trips and trails follow the same anchor ──
-await page.locator('.places-cat', { hasText: /^trails$/i }).click();
+await page.locator('.places-cat:visible, .side-cat:visible', { hasText: /^trails$/i }).click();
 await page.waitForTimeout(2500);
 const trailKm = (await page.locator('.places-tcard .places-card-km').allInnerTexts())
   .map((s) => parseInt(s.replace(/\D+/g, ''), 10));
@@ -181,7 +181,7 @@ check(
 await page.screenshot({ path: 'shots/places-search-trails.png' });
 
 // ── 4. The keyboard path: type, Enter to search, Enter to take the top hit ──
-await page.locator('.places-cat', { hasText: /general/i }).click();
+await page.locator('.places-cat:visible, .side-cat:visible', { hasText: /general/i }).click();
 await page.waitForTimeout(600);
 await page.locator('.places-nearclear').click();
 await page.waitForTimeout(400);

@@ -56,7 +56,7 @@ const openSaved = async (page) => {
   await page.waitForTimeout(600);
 };
 const openRecord = async (page) => {
-  await page.locator('.saved-tabs button').nth(2).click();
+  await page.locator('.saved-tab:visible').nth(2).click();
   await page.waitForTimeout(900);
 };
 const seed = async (page) => {
@@ -84,12 +84,16 @@ try {
     await seed(page);
     if (!(await page.locator('.saved-map').count())) { fail(`${name}: the record has no map to align`); continue; }
     // The overline and the serif title are gone (the bottom bar already says
-    // My trips), so the pill is the top of the column now.
+    // My trips), so on a phone the tile row is the top of the column. On
+    // desktop the tabs stand in the left panel instead (browse chrome v4),
+    // where their left edge belongs to the panel, not to this column, so only
+    // what is actually in the column is measured.
+    const inColumn = page.locator('.saved-trips-panel .saved-tab:visible');
     const edges = {
-      pill: await left(page, '.saved-tabs'),
       map: await left(page, '.saved-map'),
       record: await left(page, '.saved-section.is-big .saved-section-title'),
     };
+    if (await inColumn.count()) edges.pill = await left(page, '.saved-trips-panel .saved-tab:visible');
     const spread = Math.max(...Object.values(edges)) - Math.min(...Object.values(edges));
     if (spread > 1.5) fail(`${name}: left edges disagree by ${spread.toFixed(1)}px ${JSON.stringify(edges)}`);
     else ok(`${name}: tabs, map and record share one left edge (${edges.map.toFixed(0)}px)`);

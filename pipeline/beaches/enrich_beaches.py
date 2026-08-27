@@ -43,6 +43,7 @@ Usage, from the repo root:
 
 import argparse
 import concurrent.futures
+import importlib.util
 import json
 import math
 import re
@@ -55,9 +56,23 @@ HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 
 from sources import (COMMONS_API, SourceError, haversine_km,  # noqa: E402
-                     load_cache, mediawiki, overpass, save_cache,
+                     load_cache, mediawiki, overpass, request, save_cache,
                      wikipedia_api)
 from harvest_beaches import COUNTRIES, LOCAL_LANG, fold, name_tokens  # noqa: E402
+
+# The lake layer's image lore, loaded by path the same way the mountain layer
+# loads this layer's clients (pipeline/mountains/peak_sources.py): every layer
+# names its modules inside its own folder, so whichever directory happened to
+# sit first on sys.path would decide what a bare `import lake_images` meant.
+# What this layer wants from it is the pixel probe (a beach card must show
+# water, and only pixels can prove there is any) and the shared card-shape
+# term, so the thresholds live in exactly one file.
+_LAKE_IMAGES = HERE.parent / "lakes" / "lake_images.py"
+_lake_spec = importlib.util.spec_from_file_location("carta_lake_images",
+                                                    _LAKE_IMAGES)
+lake_images = importlib.util.module_from_spec(_lake_spec)
+sys.modules["carta_lake_images"] = lake_images
+_lake_spec.loader.exec_module(lake_images)
 
 ROOT = HERE.parents[1]
 CACHE = ROOT / "cache"
@@ -303,7 +318,21 @@ NAME_NEAR_KM = 2
 GEO_STRICT_M = 250
 
 MIN_IMAGE_W = 1000          # a card is 500 px wide on a 2x screen
-MAX_PORTRAIT = 1.15         # h/w above this is a person or an object, not a view
+# Shape is judged by lake_images.aspect_term against the shared 25/12 card
+# frame: a hard reject only at the extremes that crop to garbage, a strong
+# penalty for portraits and strips, a nudge for the frames that fit.
+
+# The pixel probe, borrowed whole from the lake layer: one small thumbnail per
+# surviving candidate, and the question is whether the lower frame holds any
+# water at all. The floor sits well below the lake's 0.12 because a beach
+# photograph is legitimately mostly sand with a strip of sea, so what this
+# refuses is the file with NO water band anywhere in the lower frame, which is
+# the car park, the dune walk and the village square. The Wikidata P18 is
+# exempt from the veto, exactly as it is for lakes: a person stated that
+# picture depicts this beach.
+BEACH_MIN_WATER = 0.07
+PIXEL_PROBE_MAX = 6         # thumbs fetched per beach, IMAGES_WANTED survive
+PROBE_PX = 500              # a width upload.wikimedia.org actually serves
 
 # Words that make a file about the coast, in the languages the layer harvests.
 # Used two ways: as the corroboration a geotagged file needs, and as a small
@@ -483,8 +512,9 @@ def score_image(cand, beach):
     width, height = info.get("width") or 0, info.get("height") or 0
     if width < MIN_IMAGE_W or height < 500:
         return -1, ""
-    if height > width * MAX_PORTRAIT:
-        return -1, ""              # a portrait crop is a person, not a view
+    shape_reject, fit_delta = lake_images.aspect_term(width, height)
+    if shape_reject:
+        return -1, ""              # crops to garbage in the 25/12 card
 
     hay = _haystack(title, info)
     folded = fold(hay)
@@ -494,9 +524,9 @@ def score_image(cand, beach):
         score += 1.2
     if VIEW_RE.search(hay):
         score += 1.0
-    ratio = width / max(1, height)
-    if ratio >= 1.4:
-        score += 0.8               # a wide frame is a view of somewhere
+    # The card frame preference: photographs near 25/12 fill the hero slot,
+    # portraits and strips fight it, and comparable pictures now sort by that.
+    score += fit_delta
     if width >= 2000:
         score += 0.5
     if POOR_CONDITION_RE.search(hay):
@@ -506,8 +536,32 @@ def score_image(cand, beach):
     return score, evidence
 
 
-def pick_images(beach, lang):
-    """Up to IMAGES_WANTED photographs of this beach, best view first."""
+def probe_url(info):
+    """The small thumbnail the pixel probe downloads.
+
+    The API was asked for 1280 px thumbs, which are the right size to publish
+    and four times the download the probe needs, so the width in the thumb
+    path is swapped for PROBE_PX. Only fixed widths are served, and 500 is on
+    the list; anything that is not a thumb is fetched as it is. The API's own
+    utm tracking parameters come off first, per the standing repo rule about
+    editing Commons thumb paths."""
+    url = (info.get("thumburl") or info.get("url") or "").split("?", 1)[0]
+    if "/thumb/" in url:
+        url = re.sub(r"/\d+px-", f"/{PROBE_PX}px-", url, count=1)
+    return url
+
+
+def pick_images(beach, lang, probe=True):
+    """Up to IMAGES_WANTED photographs of this beach, best view first.
+
+    Two passes, cheapest first. The metadata gate (score_image) decides which
+    files EVIDENCE being of this beach; then the top few get their thumbnail
+    looked at by the lake layer's probe, and a candidate with no water band in
+    the lower frame is dropped unless it is the Wikidata P18. That is the gate
+    that tells "the sea at Ksamil" from a true photograph of the promenade,
+    and it is why a beach named in a car park file no longer leads a card.
+    The probe result rides into the cache as `seen`, so a re-run that keeps
+    the cached picks never fetches the thumbnail again."""
     cands = image_candidates(beach, lang)
     scored = []
     for cand in cands:
@@ -519,8 +573,19 @@ def pick_images(beach, lang):
     scored.sort(key=lambda row: (-row[0], row[2]["title"]))
 
     picked = []
-    for score, evidence, cand in scored[:IMAGES_WANTED]:
+    for score, evidence, cand in scored[:PIXEL_PROBE_MAX if probe else IMAGES_WANTED]:
         info = cand["info"]
+        seen_pixels, delta = None, 0.0
+        if probe:
+            try:
+                seen_pixels = lake_images.probe_pixels(
+                    request(probe_url(info), timeout=45))
+            except (SourceError, ValueError, OSError):
+                seen_pixels = None
+            accepted, delta, _why = lake_images.water_verdict(
+                seen_pixels, BEACH_MIN_WATER, abstain_on_grey=True)
+            if not accepted and evidence != "p18":
+                continue
         picked.append({
             "file": cand["title"],
             "url": info.get("thumburl") or info.get("url"),
@@ -532,10 +597,17 @@ def pick_images(beach, lang):
             "author": _meta(info, "Artist")[:120],
             "caption": _meta(info, "ImageDescription")[:200],
             "evidence": evidence,
-            "score": round(score, 2),
+            "score": round(score + delta, 2),
+            # What the probe measured, kept in the cache like the lake layer
+            # keeps it: the export can be audited without a re-fetch, and a
+            # re-run that reuses these picks never downloads the thumb again.
+            "seen": seen_pixels,
             "page": "https://commons.wikimedia.org/wiki/"
                     + urllib.parse.quote(cand["title"].replace(" ", "_")),
         })
+        if len(picked) >= IMAGES_WANTED:
+            break
+    picked.sort(key=lambda i: -i["score"])
     return picked
 
 
@@ -717,7 +789,7 @@ def coastal_guess(beach, bathing):
 
 def enrich_country(cc, shortlist_n=SHORTLIST, refresh=False, bathing=None,
                    protected=None, dests=None, images=True, context=True,
-                   refresh_images=False):
+                   refresh_images=False, rephotograph=0):
     raw = load_cache(STAGE_IN, cc)
     if not raw or not raw.get("beaches"):
         print(f"  {cc}: nothing harvested")
@@ -775,7 +847,16 @@ def enrich_country(cc, shortlist_n=SHORTLIST, refresh=False, bathing=None,
         todo_img = []
         for b in short:
             was = previous.get(b["key"]) or {}
-            if was.get("images") is not None and not (refresh or refresh_images):
+            # `rephotograph` re-shoots ONLY the beaches that came back thin,
+            # which is what makes a change to the picture rules affordable:
+            # the full pass is seven hours of Wikimedia's bandwidth, and after
+            # the grey water abstention was added the beaches that needed
+            # asking again were the hundred the pixel gate had emptied, not
+            # all 4,700. --rephotograph 2 targets exactly what the export
+            # gate drops, the same lever pipeline/lakes/enrich_lakes.py has.
+            thin = rephotograph and len(was.get("images") or []) < rephotograph
+            if (was.get("images") is not None
+                    and not (refresh or refresh_images) and not thin):
                 b["images"] = was["images"]
             else:
                 todo_img.append(b)
@@ -840,6 +921,11 @@ def main():
                              "article facts and the Overpass ground truth. "
                              "This is the one to use after changing what "
                              "counts as a picture OF the beach.")
+    parser.add_argument("--rephotograph", type=int, default=0, metavar="N",
+                        help="re-shoot only the beaches now holding fewer "
+                             "than N photographs, leaving the rest of the "
+                             "cache alone; --rephotograph 2 targets exactly "
+                             "the beaches the export gate drops")
     parser.add_argument("--no-context", action="store_true",
                         help="skip the Overpass ground truth pass, so this can "
                              "run alongside a harvest without fighting it for "
@@ -861,7 +947,8 @@ def main():
                            bathing=bathing, protected=protected, dests=dests,
                            images=not args.no_images,
                            context=not args.no_context,
-                           refresh_images=args.refresh_images)
+                           refresh_images=args.refresh_images,
+                           rephotograph=args.rephotograph)
         except KeyboardInterrupt:
             raise
         except Exception as exc:

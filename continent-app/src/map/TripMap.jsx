@@ -243,6 +243,27 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
     // Above a threshold a plain pin is worth more than a dot: it becomes the
     // place's own photograph. The class rides the container so pins built
     // later inherit the current zoom state without a second pass.
+    //
+    // The deferred photo URLs (see the pin build) become real backgrounds
+    // only once the photo zoom has HELD for a beat: the framing sequence
+    // computes its threshold before the camera starts moving, so the class
+    // can be on for a single frame while the map still stands at its
+    // pre-frame zoom, and hydrating on that flicker would fetch every
+    // photograph of a map nobody zoomed.
+    let hydrateTimer = 0;
+    const hydratePinPhotos = () => {
+      const el = containerRef.current;
+      if (!el || !el.classList.contains('pins-photo')) return;
+      // Mid-flight the class may still be about to turn off (the threshold
+      // was computed for where the camera is going, not where it is), so a
+      // moving camera reschedules instead of fetching: hydrate only once
+      // the map has landed with the photo zoom still in force.
+      if (map.isMoving()) { hydrateTimer = setTimeout(hydratePinPhotos, 250); return; }
+      el.querySelectorAll('.trip-pin-photo[data-img]').forEach((ph) => {
+        ph.style.backgroundImage = `url("${ph.dataset.img}")`;
+        delete ph.dataset.img;
+      });
+    };
     const syncPinZoom = () => {
       const el = containerRef.current;
       const abs = photoZoomRef.current;
@@ -253,6 +274,10 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
       const want = map.getZoom() >= at;
       if (want === el.classList.contains('pins-photo')) return;
       el.classList.toggle('pins-photo', want);
+      if (want) {
+        clearTimeout(hydrateTimer);
+        hydrateTimer = setTimeout(hydratePinPhotos, 250);
+      }
       // Pins just changed size: re-spread them against the new separation.
       spreadStopPins();
       declutterRef.current?.rerun();
@@ -386,6 +411,7 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
 
     return () => {
       declutterRef.current = null;
+      clearTimeout(hydrateTimer);
       stopDeclutter();
       ro?.disconnect();
       map.remove();
@@ -479,7 +505,16 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
           if (withPhoto) {
             const photo = document.createElement('span');
             photo.className = 'trip-pin-photo';
-            photo.style.backgroundImage = `url("${p.img}")`;
+            // Deferred: browsers fetch a background image even while the
+            // element is invisible, and the trips overview pins hundreds of
+            // places at continent zoom. The URL waits in a data attribute
+            // until the zoom that shows photos (syncPinZoom hydrates it);
+            // a pin built while the map is already zoomed in paints at once.
+            if (containerRef.current?.classList.contains('pins-photo')) {
+              photo.style.backgroundImage = `url("${p.img}")`;
+            } else {
+              photo.dataset.img = p.img;
+            }
             const label = document.createElement('span');
             label.className = 'trip-pin-label';
             label.textContent = p.city || '';

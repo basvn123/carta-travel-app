@@ -1,4 +1,6 @@
 import React, { lazy, Suspense, useEffect, useMemo, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
+import { useIsDesktop } from '../hooks/useIsDesktop.js';
 import { RatingBadge } from '../components/RatingBadge.jsx';
 import { CountryFlag } from '../components/CountryFlag.jsx';
 import { eur } from '../lib/format.js';
@@ -30,13 +32,15 @@ import {
   DISTANCE_BANDS, tripBand, trailRating,
 } from '../lib/trailCards.js';
 import { useI18n } from '../i18n/index.jsx';
-import { OriginPicker } from '../components/OriginPicker.jsx';
 import { geocodeAddress, reverseGeocode } from '../lib/geocode.js';
 import {
   SearchIcon, ChevronRightIcon, RouteIcon, SkylineIcon, SuitcaseIcon, BootIcon,
-  BeachIcon, MountainIcon, BedIcon, MapPinIcon, CrosshairIcon,
+  BeachIcon, MountainIcon, MapPinIcon, CrosshairIcon,
   CityIcon, TownIcon, VillageIcon, AreaIcon, LoopIcon, LakeIcon, FilterIcon,
+  ExpandIcon, ShrinkIcon,
 } from '../components/Icons.jsx';
+import { hasLngLat } from '../map/coords.js';
+import { LifestyleButton } from './LifestyleButton.jsx';
 
 /**
  * The Destinations tab: the whole catalogue and every published trip as a
@@ -95,6 +99,15 @@ const LakePage = lazy(() => import('./LakePage.jsx').then((m) => ({ default: m.L
 const MountainPage = lazy(() => import('./MountainPage.jsx').then((m) => ({ default: m.MountainPage })));
 // The itinerary page mounts TripMap, and TripMap pulls in maplibre-gl.
 const TripPage = lazy(() => import('./TripPage.jsx').then((m) => ({ default: m.TripPage })));
+// The Trips overview card reuses the same TripMap, lazily for the same
+// reason: maplibre-gl stays out of the main bundle until a map is on screen.
+const TripsOverviewMap = lazy(() => import('../map/TripMap.jsx').then((m) => ({ default: m.TripMap })));
+
+// Framing margins for the trips overview map, module-level so their identity
+// is stable: TripMap redraws every pin when `fitPadding` changes, and an
+// inline object would change on every keystroke in the search field.
+const TRIPS_MAP_FIT = { top: 24, left: 24, right: 24, bottom: 24 };
+const TRIPS_MAP_FIT_FULL = { top: 84, left: 28, right: 28, bottom: 56 };
 
 const norm = (s) => String(s || '')
   .toLowerCase()
@@ -696,7 +709,7 @@ function MountainCard({ mountain, km, countryName, onOpen, t, lang }) {
 
 /** One country as a photo card: its best-rated place as the cover, the flag
  *  small beside the name. Real photography, never a stretched flag. */
-function CountryCard({ cc, name, sub, img, onPick, onAskCover = null }) {
+function CountryCard({ cc, name, sub = null, img, onPick, onAskCover = null }) {
   useEffect(() => {
     if (!img && onAskCover) onAskCover(cc);
   }, [img, onAskCover, cc]);
@@ -720,7 +733,10 @@ function CountryCard({ cc, name, sub, img, onPick, onAskCover = null }) {
             <CountryFlag country={cc} size={13} className="places-card-flag" />
             {name}
           </span>
-          <span className="places-card-sub"><span>{sub}</span></span>
+          {/* No count line: "21 places" answered a question nobody browsing
+              a wall of countries was asking, and the cleaner card reads
+              better. The name and the photograph are the whole message. */}
+          {sub && <span className="places-card-sub"><span>{sub}</span></span>}
         </span>
         <span className="places-card-right">
           <ChevronRightIcon size={15} className="places-card-chev" />
@@ -837,9 +853,8 @@ const ItinCard = React.memo(function ItinCard({ tr, km, onOpen, t }) {
 });
 
 export function DestinationsTab({
-  data, pricedAll, priceMode = 'total', availableCountries = [], onSelectDest,
-  stayTier = 'home', onOpenLifestyle,
-  origin, onChangeOrigin, transportMode = 'plane', driveHome = null, onChangeDriveHome,
+  data, isActive = true, pricedAll, priceMode = 'total', availableCountries = [], onSelectDest,
+  stayTier = 'home', lifestyle, onOpenLifestyle,
   openTrail = null, onOpenTrailConsumed,
   openBeach = null, onOpenBeachConsumed,
   openLake = null, onOpenLakeConsumed,
@@ -877,6 +892,10 @@ export function DestinationsTab({
   const [itinTop, setItinTop] = useState(null);
   const [itinCountryRows, setItinCountryRows] = useState(null);
   const [pageItin, setPageItin] = useState(null);
+  // The trips overview map, blown up to the whole device. Off by default: a
+  // map that covers the screen the moment the category opens hides the list
+  // it belongs to.
+  const [tripsMapFull, setTripsMapFull] = useState(false);
   // A shared #trail= link: { id, country } until the country file has loaded
   // and the card it names can be opened.
   const [wantedTrail, setWantedTrail] = useState(null);
@@ -946,6 +965,22 @@ export function DestinationsTab({
     loadTrailsIndex().then((idx) => { if (live) setTrailsIndex(idx); });
     return () => { live = false; };
   }, []);
+
+  // Escape leaves the full-screen trips map, the way it leaves every other
+  // overlay. In the CAPTURE phase, and it stops the event there: App keeps its
+  // own Escape stack on window (Account, then My trips), that listener is
+  // registered first, and one press would otherwise close the big map AND the
+  // panel behind it in the same tick. While this dialog is up the key is its.
+  useEffect(() => {
+    if (!tripsMapFull) return undefined;
+    const onKey = (e) => {
+      if (e.key !== 'Escape') return;
+      e.stopPropagation();
+      setTripsMapFull(false);
+    };
+    window.addEventListener('keydown', onKey, true);
+    return () => window.removeEventListener('keydown', onKey, true);
+  }, [tripsMapFull]);
 
   // A shared link names one trip in one country: browse that country's trails
   // so the card exists, then open its page (below, once the file has landed).
@@ -1493,6 +1528,71 @@ export function DestinationsTab({
     }
     return { pace, scale };
   }, [itinCountry, itinCountryRows, itinTop, itinDays]);
+
+  // ── The trips overview map: every listed trip as a pin ────────────────
+  //
+  // Built from the SAME filtered rows the cards below render, so the country
+  // filter, the day rail, the pace chips and a near-search all filter the
+  // pins too. Both trip modes feed it: the composed itineraries pin at the
+  // route's own centre, a one-day city walk at its anchor. Every point goes
+  // through hasLngLat first, because one NaN coordinate reaching MapLibre
+  // blanks the whole app.
+  const tripsMapStops = useMemo(() => {
+    if (cat !== 'trips') return [];
+    if (isItinCat) {
+      return (itinRows || [])
+        .filter(({ tr }) => hasLngLat(tr))
+        .map(({ tr }) => ({
+          lat: tr.lat,
+          lon: tr.lon,
+          city: tr.cities?.[0]?.city || '',
+          plain: true,
+          // Zoomed in, the pin wears the town the trip opens in.
+          img: tr.img?.url ? cardThumb(tr.img.url) : null,
+          open: () => setPageItin(tr),
+        }));
+    }
+    return (tripRows || [])
+      .map(({ c }) => {
+        const ctr = tripCentre(c.tr);
+        if (!hasLngLat(ctr)) return null;
+        return {
+          lat: ctr.lat,
+          lon: ctr.lon,
+          city: c.tr.name,
+          plain: true,
+          img: c.assoc.photoUrl || null,
+          open: () => setPageCard(c),
+        };
+      })
+      .filter(Boolean);
+  }, [cat, isItinCat, itinRows, tripRows]);
+
+  // MapLibre states the cooperative-gesture rule in its own overlay, in the
+  // traveller's language.
+  const tripsMapLocale = useMemo(() => ({
+    'CooperativeGesturesHandler.WindowsHelpText': t('map.ctrlZoom'),
+    'CooperativeGesturesHandler.MacHelpText': t('map.cmdZoom'),
+    'CooperativeGesturesHandler.MobileHelpText': t('map.twoFingers'),
+  }), [t]);
+
+  // Everything both copies of the overview map agree on. The frame differs
+  // (a card, or the whole device), the data never does. Tapping a pin opens
+  // that trip, which means leaving the big map first: a page opening behind
+  // a full-screen map would look like nothing happened.
+  const tripsMapProps = {
+    stops: tripsMapStops,
+    showRoute: false,
+    scrollZoom: true,
+    zoomControls: true,
+    mapLocale: tripsMapLocale,
+    photoZoom: 6,
+    easeToSelected: false,
+    padBottom: 0,
+    fitMaxZoom: 7,
+    fitPadding: TRIPS_MAP_FIT,
+    onSelectStop: (i) => { setTripsMapFull(false); tripsMapStops[i]?.open(); },
+  };
 
   // ── Beaches: the published beach layer ───────────────────────────────
 
@@ -2043,8 +2143,284 @@ export function DestinationsTab({
     ? (!showCountryIndex && !nearPlace && showTripRows)
     : (!showCountryIndex && showPriceChrome);
 
+  // ── Desktop chrome ────────────────────────────────────────────────────
+  //
+  // On a desktop screen this tab's controls leave the toolbar card and take
+  // the shape a reader of paper maps expects: the search field rides in the
+  // app header (portalled into the slot AppHeader always renders), and
+  // everything that narrows the list stands in a panel on the left, under
+  // the brand. On a phone nothing moves: the toolbar card stays exactly as
+  // it was, and CSS shows one arrangement or the other.
+  const isDesktop = useIsDesktop();
+  const [headerSlot, setHeaderSlot] = useState(null);
+  useEffect(() => {
+    // After commit, so the header's slot exists even on the app's first
+    // render. Only the ACTIVE tab may claim it: both browse tabs stay
+    // mounted (keep-alive), and two portals into one slot would interleave.
+    if (isDesktop && isActive) setHeaderSlot(document.getElementById('header-search-slot'));
+    else setHeaderSlot(null);
+  }, [isDesktop, isActive]);
+
+  // The same controls drawn twice, phone toolbar and desktop side panel:
+  // one renderer each, so the two can never drift apart.
+  const renderCats = (cls) => CATS.map(({ key, Icon, labelKey }) => (
+    <button
+      key={key}
+      role="tab"
+      aria-selected={cat === key}
+      className={`${cls} ${cat === key ? 'on' : ''}`}
+      onClick={() => switchCat(key)}
+    >
+      <Icon size={16} />
+      <span>{t(labelKey)}</span>
+    </button>
+  ));
+
+  const renderSortButtons = (cls) => sortDefs.map(({ key, labelKey }) => {
+    const cur = cat === 'trails' ? trailSort : sort;
+    const on = cat === 'trails' ? cur.key === key : (!nearPlace && cur.key === key);
+    return (
+      <button
+        key={key}
+        className={`${cls} ${on ? 'on' : ''}`}
+        onClick={() => {
+          if (cat === 'trails') { toggleTrailSort(key); return; }
+          setNearPlace(null);
+          toggleSort(key);
+        }}
+      >
+        {t(labelKey)}
+        {on && <span className="places-sort-dir">{cur.dir === 1 ? '↑' : '↓'}</span>}
+      </button>
+    );
+  });
+
+  const renderCountry = (cls) => (
+    <select
+      className={cls}
+      value={country}
+      onChange={(e) => { setCountry(e.target.value); setNearPlace(null); }}
+      aria-label={t('places.allCountries')}
+    >
+      <option value="">{t('places.allCountries')}</option>
+      {countryOptions.map(([cc, name]) => (
+        <option key={cc} value={cc}>{name}</option>
+      ))}
+    </select>
+  );
+
+  // The same door Explore draws, from the same component: this tab prices
+  // every card at the traveller's own bed and habits, so the control that
+  // sets them cannot look different here.
+  const renderLifestyle = (cls) => (
+    <LifestyleButton
+      stayTier={stayTier}
+      lifestyle={lifestyle}
+      onClick={onOpenLifestyle}
+      className={cls}
+    />
+  );
+
+  const renderFacetGroups = () => facetGroups.map((g) => (
+    <div
+      key={g.key}
+      className="places-classes"
+      role="group"
+      aria-label={g.label}
+    >
+      {g.options.map((o) => (
+        <button
+          key={o.key}
+          type="button"
+          className={`places-class ${o.cls || ''} ${o.on ? 'on' : ''}`}
+          aria-pressed={o.on}
+          disabled={o.disabled}
+          onClick={() => g.onToggle(o.key)}
+        >
+          {o.Icon && (
+            <span className="places-class-dot" aria-hidden="true">
+              <o.Icon size={16} />
+            </span>
+          )}
+          <span className="places-class-label">{o.label}</span>
+          {o.n != null && <span className="places-class-n">{fmt(o.n)}</span>}
+        </button>
+      ))}
+    </div>
+  ));
+
+  // The search field, built once. It renders inline in the phone toolbar and
+  // portals into the app header on desktop; the suggestion list rides with it.
+  const searchField = (
+    <div className="places-search" ref={searchRef}>
+      <SearchIcon size={15} className="places-search-icon" />
+      <input
+        type="text"
+        value={query}
+        onChange={(e) => { setQuery(e.target.value); setSuggOpen(true); }}
+        onFocus={() => setSuggOpen(true)}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') { e.preventDefault(); onSearchEnter(); }
+          else if (e.key === 'Escape') setSuggOpen(false);
+        }}
+        placeholder={t('places.searchDest')}
+        aria-label={t('places.searchDest')}
+      />
+      {canLocate && (
+        <button
+          type="button"
+          className="places-locate"
+          onClick={useMyLocation}
+          disabled={locBusy}
+          aria-busy={locBusy || undefined}
+          title={t('places.useMyLocation')}
+          aria-label={t('places.useMyLocation')}
+        >
+          {locBusy
+            ? <span className="places-locate-spin" aria-hidden="true" />
+            : <CrosshairIcon size={16} />}
+        </button>
+      )}
+      {suggOpen && (suggestions.length > 0 || canGeo) && (
+        <div className="places-sugg" role="listbox">
+          {/* Two groups, headed only once the second one exists: the
+              places Carta prices, then anywhere else on the map. */}
+          {suggestions.length > 0 && geoHits && geoHits.length > 0 && (
+            <p className="places-sugg-head">{t('places.suggCatalogue')}</p>
+          )}
+          {suggestions.map((d) => (
+            <button key={d.id} className="places-sugg-item" onClick={() => pickDest(d)}>
+              <span className="places-sugg-city">{d.city}</span>
+              <span className="places-sugg-country">{d.country}</span>
+            </button>
+          ))}
+          {canGeo && !geoHits && (
+            <button
+              type="button"
+              className="places-sugg-item places-sugg-any"
+              onClick={runGeoSearch}
+              disabled={geoBusy}
+            >
+              <span className="places-sugg-city">
+                <MapPinIcon size={13} />
+                {geoBusy ? t('places.searchingAny') : t('places.searchAny', { q: term })}
+              </span>
+              {!geoBusy && <span className="places-sugg-country">{t('places.searchAnyHint')}</span>}
+            </button>
+          )}
+          {geoHits && geoHits.length > 0 && (
+            <>
+              <p className="places-sugg-head">{t('places.suggAnywhere')}</p>
+              {geoHits.map((r, i) => {
+                const { title, rest } = geoLines(r);
+                return (
+                  <button
+                    key={`${r.lat},${r.lon},${i}`}
+                    className="places-sugg-item is-geo"
+                    onClick={() => pickGeo(r)}
+                  >
+                    <span className="places-sugg-city">
+                      <MapPinIcon size={13} />
+                      {title}
+                    </span>
+                    <span className="places-sugg-country">{rest}</span>
+                  </button>
+                );
+              })}
+            </>
+          )}
+          {geoHits && geoHits.length === 0 && (
+            <p className="places-sugg-note">{t('places.anywhereNone')}</p>
+          )}
+        </div>
+      )}
+    </div>
+  );
+
+  // The overview card at the head of the trips list: every pinned trip on one
+  // small map, with the door to the device-sized copy. While the big map is
+  // up this frame keeps its height but drops its map: only one MapLibre
+  // instance is ever alive, which is the expensive thing here, and both are
+  // built from the same tripsMapProps so neither can drift.
+  const tripsMapCard = tripsMapStops.length > 0 && (
+    <div className="trips-map" role="group" aria-label={t('trip.mapTitle')}>
+      {!tripsMapFull && (
+        <Suspense fallback={<div className="trips-map-loading" aria-hidden="true" />}>
+          <TripsOverviewMap {...tripsMapProps} cooperativeGestures />
+        </Suspense>
+      )}
+      <button
+        type="button"
+        className="trips-map-expand"
+        onClick={() => setTripsMapFull(true)}
+        aria-label={t('trip.mapExpand')}
+        title={t('trip.mapExpand')}
+      >
+        <ExpandIcon size={15} />
+      </button>
+    </div>
+  );
+
   return (
-    <div className="places-tab" ref={scrollRef}>
+    <div className="places-shell">
+      {headerSlot && createPortal(searchField, headerSlot)}
+
+      {/* Desktop-only left panel (CSS hides it under 769px): the categories
+          as a card grid under the brand, then everything that narrows or
+          orders the list, standing on the page ground with one hairline to
+          its right. The phone keeps the toolbar card below instead. */}
+      <aside className="side-panel places-side" aria-label={t('filter.filters')}>
+        <div className="side-block">
+          <p className="side-label">{t('side.categories')}</p>
+          <div className="side-cats" role="tablist">{renderCats('side-cat')}</div>
+        </div>
+        <div className="side-block">
+          <p className="side-label">
+            {t('side.refine')}
+            {activeFilters > 0 && (
+              <button type="button" className="side-clear" onClick={resetAll}>
+                {t('filter.reset')}
+              </button>
+            )}
+          </p>
+          {showSorts && sortDefs.length > 0 && (
+            <div className="side-group" role="group" aria-label={t('places.sortLabel')}>
+              <p className="side-sub">{t('places.sortLabel')}</p>
+              <div className="side-sorts">{renderSortButtons('side-sort')}</div>
+            </div>
+          )}
+          {countryOptions.length > 0 && (
+            <div className="side-group">
+              <p className="side-sub">{t('places.allCountries')}</p>
+              {renderCountry('places-country side-country')}
+            </div>
+          )}
+          {(facetGroups.length > 0 || cat === 'trips') && (
+            <div className="side-group side-facets">
+              {cat === 'trips' && (
+                <TripLengthSlider
+                  days={itinDays}
+                  setDays={setItinDays}
+                  n={itinRows ? itinRows.length : 0}
+                  t={t}
+                  fmt={fmt}
+                />
+              )}
+              {renderFacetGroups()}
+            </div>
+          )}
+          {/* No "Lifestyle" caption above it: the button says the word
+              itself, and a heading that repeats its own button is text the
+              reader has to skip. */}
+          {showPriceChrome && onOpenLifestyle && (
+            <div className="side-group">
+              {renderLifestyle('side-lifestyle')}
+            </div>
+          )}
+        </div>
+      </aside>
+
+      <div className="places-tab" ref={scrollRef}>
       <div className="places-wrap">
         {/* Every control in one card, the same instrument Explore carries:
             the category cards, then search, then the sorts and the one
@@ -2052,104 +2428,13 @@ export function DestinationsTab({
             they looked like five unrelated widgets sharing a background. */}
         <div className="places-toolbar">
         <div className="places-cats" role="tablist">
-          {CATS.map(({ key, Icon, labelKey }) => (
-            <button
-              key={key}
-              role="tab"
-              aria-selected={cat === key}
-              className={`places-cat ${cat === key ? 'on' : ''}`}
-              onClick={() => switchCat(key)}
-            >
-              <Icon size={16} />
-              <span>{t(labelKey)}</span>
-            </button>
-          ))}
+          {renderCats('places-cat')}
         </div>
 
         <div className="places-controls">
-          <div className="places-search" ref={searchRef}>
-            <SearchIcon size={15} className="places-search-icon" />
-            <input
-              type="text"
-              value={query}
-              onChange={(e) => { setQuery(e.target.value); setSuggOpen(true); }}
-              onFocus={() => setSuggOpen(true)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') { e.preventDefault(); onSearchEnter(); }
-                else if (e.key === 'Escape') setSuggOpen(false);
-              }}
-              placeholder={t('places.searchDest')}
-              aria-label={t('places.searchDest')}
-            />
-            {canLocate && (
-              <button
-                type="button"
-                className="places-locate"
-                onClick={useMyLocation}
-                disabled={locBusy}
-                aria-busy={locBusy || undefined}
-                title={t('places.useMyLocation')}
-                aria-label={t('places.useMyLocation')}
-              >
-                {locBusy
-                  ? <span className="places-locate-spin" aria-hidden="true" />
-                  : <CrosshairIcon size={16} />}
-              </button>
-            )}
-            {suggOpen && (suggestions.length > 0 || canGeo) && (
-              <div className="places-sugg" role="listbox">
-                {/* Two groups, headed only once the second one exists: the
-                    places Carta prices, then anywhere else on the map. */}
-                {suggestions.length > 0 && geoHits && geoHits.length > 0 && (
-                  <p className="places-sugg-head">{t('places.suggCatalogue')}</p>
-                )}
-                {suggestions.map((d) => (
-                  <button key={d.id} className="places-sugg-item" onClick={() => pickDest(d)}>
-                    <span className="places-sugg-city">{d.city}</span>
-                    <span className="places-sugg-country">{d.country}</span>
-                  </button>
-                ))}
-                {canGeo && !geoHits && (
-                  <button
-                    type="button"
-                    className="places-sugg-item places-sugg-any"
-                    onClick={runGeoSearch}
-                    disabled={geoBusy}
-                  >
-                    <span className="places-sugg-city">
-                      <MapPinIcon size={13} />
-                      {geoBusy ? t('places.searchingAny') : t('places.searchAny', { q: term })}
-                    </span>
-                    {!geoBusy && <span className="places-sugg-country">{t('places.searchAnyHint')}</span>}
-                  </button>
-                )}
-                {geoHits && geoHits.length > 0 && (
-                  <>
-                    <p className="places-sugg-head">{t('places.suggAnywhere')}</p>
-                    {geoHits.map((r, i) => {
-                      const { title, rest } = geoLines(r);
-                      return (
-                        <button
-                          key={`${r.lat},${r.lon},${i}`}
-                          className="places-sugg-item is-geo"
-                          onClick={() => pickGeo(r)}
-                        >
-                          <span className="places-sugg-city">
-                            <MapPinIcon size={13} />
-                            {title}
-                          </span>
-                          <span className="places-sugg-country">{rest}</span>
-                        </button>
-                      );
-                    })}
-                  </>
-                )}
-                {geoHits && geoHits.length === 0 && (
-                  <p className="places-sugg-note">{t('places.anywhereNone')}</p>
-                )}
-              </div>
-            )}
-          </div>
+          {/* Inline on a phone; on desktop the same field has portalled into
+              the app header and this renders nothing. */}
+          {!headerSlot && searchField}
           {/* Sorts, the Filters door, the country, where the prices start
               from and what they assume: one row, in that order. Filters
               leads because it is the one control that decides WHICH rows are
@@ -2157,24 +2442,7 @@ export function DestinationsTab({
           <div className="places-toolbar-right">
             {showSorts && sortDefs.length > 0 && (
               <div className="places-sorts" role="group" aria-label={t('places.sortLabel')}>
-                {sortDefs.map(({ key, labelKey }) => {
-                  const cur = cat === 'trails' ? trailSort : sort;
-                  const on = cat === 'trails' ? cur.key === key : (!nearPlace && cur.key === key);
-                  return (
-                    <button
-                      key={key}
-                      className={`places-sort ${on ? 'on' : ''}`}
-                      onClick={() => {
-                        if (cat === 'trails') { toggleTrailSort(key); return; }
-                        setNearPlace(null);
-                        toggleSort(key);
-                      }}
-                    >
-                      {t(labelKey)}
-                      {on && <span className="places-sort-dir">{cur.dir === 1 ? '\u2191' : '\u2193'}</span>}
-                    </button>
-                  );
-                })}
+                {renderSortButtons('places-sort')}
               </div>
             )}
 
@@ -2195,49 +2463,14 @@ export function DestinationsTab({
               {/* Every tab has a country now, including the three published
                   layers where the only way in used to be typing its name
                   into the search field and hoping the match landed. */}
-              {countryOptions.length > 0 && (
-                <select
-                  className="places-country"
-                  value={country}
-                  onChange={(e) => { setCountry(e.target.value); setNearPlace(null); }}
-                  aria-label={t('places.allCountries')}
-                >
-                  <option value="">{t('places.allCountries')}</option>
-                  {countryOptions.map(([cc, name]) => (
-                    <option key={cc} value={cc}>{name}</option>
-                  ))}
-                </select>
-              )}
-          {/* Where the trip starts: the flight (or the drive) is the biggest
-              line in every price on this tab, and it changes with the airport,
-              so the origin these figures were priced from is named here and
-              switchable without a trip to the map. */}
-          {showPriceChrome && onChangeOrigin && (
-            <OriginPicker
-              data={data}
-              origin={origin}
-              onChangeOrigin={onChangeOrigin}
-              mode={transportMode === 'car' ? 'car' : 'plane'}
-              driveHome={driveHome}
-              onChangeDriveHome={onChangeDriveHome}
-              fromLabel={t('places.pricedFrom')}
-            />
-          )}
+              {countryOptions.length > 0 && renderCountry('places-country')}
+          {/* No "priced from" chip any more, on any width: the origin still
+              governs the prices (the map's From picker sets it), but naming
+              it here was one control too many on the browse surface. */}
           {/* Every price on this tab is a whole trip at the traveller's own
               stay tier, so the tier it was priced at belongs on screen beside
               the numbers, and one tap opens the panel that changes it. */}
-          {showPriceChrome && onOpenLifestyle && (
-            <button
-              type="button"
-              className="places-lifestyle"
-              onClick={onOpenLifestyle}
-              title={t('filter.setLifestyleTitle')}
-            >
-              <BedIcon size={15} />
-              <span className="places-lifestyle-label">{t('filter.lifestyle')}</span>
-              <b>{t(`stay.${stayTier}`)}</b>
-            </button>
-          )}
+          {showPriceChrome && onOpenLifestyle && renderLifestyle('')}
             </div>
           </div>
         </div>
@@ -2257,33 +2490,7 @@ export function DestinationsTab({
                 fmt={fmt}
               />
             )}
-            {facetGroups.map((g) => (
-              <div
-                key={g.key}
-                className="places-classes"
-                role="group"
-                aria-label={g.label}
-              >
-                {g.options.map((o) => (
-                  <button
-                    key={o.key}
-                    type="button"
-                    className={`places-class ${o.cls || ''} ${o.on ? 'on' : ''}`}
-                    aria-pressed={o.on}
-                    disabled={o.disabled}
-                    onClick={() => g.onToggle(o.key)}
-                  >
-                    {o.Icon && (
-                      <span className="places-class-dot" aria-hidden="true">
-                        <o.Icon size={16} />
-                      </span>
-                    )}
-                    <span className="places-class-label">{o.label}</span>
-                    {o.n != null && <span className="places-class-n">{fmt(o.n)}</span>}
-                  </button>
-                ))}
-              </div>
-            ))}
+            {renderFacetGroups()}
           </div>
         )}
         </div>
@@ -2310,7 +2517,6 @@ export function DestinationsTab({
                   key={c.cc}
                   cc={c.cc}
                   name={c.name}
-                  sub={t('places.placesCount', { n: fmt(c.n) })}
                   img={countryCover.get(c.cc)?.img || null}
                   onPick={(cc) => setCountry(cc)}
                 />
@@ -2522,6 +2728,7 @@ export function DestinationsTab({
 
         {isItinCat && (
           <div className="places-list">
+            {tripsMapCard}
             {itinRows === null && <p className="places-empty">{'\u2026'}</p>}
 
             {itinRows && itinRows.length > 0 && (
@@ -2554,6 +2761,7 @@ export function DestinationsTab({
 
         {isTripCat && !isItinCat && (
           <div className="places-list">
+            {tripsMapCard}
             {showCountryIndex && (
               <>
                 {tripCountries.map((c) => (
@@ -2561,7 +2769,6 @@ export function DestinationsTab({
                     key={c.cc}
                     cc={c.cc}
                     name={c.name}
-                    sub={t('places.tripsCount', { n: fmt(c.n) })}
                     img={countryCover.get(c.cc)?.img || wireCovers[c.cc] || null}
                     onAskCover={countryCover.get(c.cc) ? null : askCover}
                     onPick={(cc) => setCountry(cc)}
@@ -2601,6 +2808,40 @@ export function DestinationsTab({
           </div>
         )}
       </div>
+
+      {/* The overview map at device size. Portalled to <body> on purpose: an
+          ancestor with a transform or backdrop-filter would become the
+          containing block for position:fixed and pin this layer to the list
+          column instead of the screen. Out here it also drops
+          cooperativeGestures, because a map that owns the whole device
+          should answer a pinch directly. */}
+      {tripsMapFull && tripsMapStops.length > 0 && createPortal(
+        <div className="tripsmap-full" role="dialog" aria-label={t('trip.mapTitle')}>
+          <div className="tripsmap-full-map">
+            <Suspense fallback={<div className="trips-map-loading" aria-hidden="true" />}>
+              <TripsOverviewMap
+                {...tripsMapProps}
+                fitMaxZoom={9}
+                fitPadding={TRIPS_MAP_FIT_FULL}
+              />
+            </Suspense>
+          </div>
+          <div className="tripsmap-full-bar">
+            <span className="tripsmap-full-title">{t('trip.mapTitle')}</span>
+            <button
+              type="button"
+              className="tripsmap-full-close"
+              onClick={() => setTripsMapFull(false)}
+              aria-label={t('trip.mapShrink')}
+              title={t('trip.mapShrink')}
+            >
+              <ShrinkIcon size={15} />
+              <span>{t('trip.mapShrink')}</span>
+            </button>
+          </div>
+        </div>,
+        document.body,
+      )}
 
       {pageCard && (
         <Suspense fallback={null}>
@@ -2674,6 +2915,7 @@ export function DestinationsTab({
           resultCount={rowCount}
         />
       )}
+      </div>
     </div>
   );
 }

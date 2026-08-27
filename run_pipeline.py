@@ -1032,7 +1032,7 @@ def fame_step(ctx):
 # --------------------------------------------------------------------------- #
 # Task registry
 # --------------------------------------------------------------------------- #
-def guard_beaches():
+def guard_beaches(ctx=None):
     """The beach layer needs its own scripts and the EEA bathing water cache.
 
     Without the cache the water component silently falls back to the country
@@ -1050,7 +1050,7 @@ def guard_beaches():
     return True, "beach stages present, EEA bathing water cached"
 
 
-def guard_lakes():
+def guard_lakes(ctx=None):
     """The lake layer needs its own scripts, the EEA bathing water cache and
     the WorldClim rasters.
 
@@ -1075,7 +1075,7 @@ def guard_lakes():
     return True, "lake stages present, EEA bathing water and WorldClim cached"
 
 
-def guard_mountains():
+def guard_mountains(ctx=None):
     """The mountain layer needs its own scripts and the Wikidata spine.
 
     The spine is the one input that is not re-queried: cache/features_wikidata
@@ -1101,7 +1101,7 @@ def guard_mountains():
                        "the national high points alone")
     return True, "mountain stages present, Wikidata spine cached"
 
-def guard_trips():
+def guard_trips(ctx=None):
     """The trip layer needs its own scripts and the catalogue master.
 
     The master is the spine: ratings, city centre coordinates, accommodation
@@ -1127,6 +1127,60 @@ def guard_trips():
     return True, "trip stages present, catalogue master and route graph cached"
 
 
+def dossier_audit_dry(ctx):
+    """The read-only half of the dossier task, for --dry-run: run the same gate
+    the real task ends on, over the dossiers that are shipped right now.
+
+    audit.py reads continent-app/public/dossier and writes one thing, its own
+    report under data/reports. It builds nothing and touches no wire, so the
+    plan can answer the only question worth asking before a monthly rebuild:
+    are the files currently in front of readers passing every hard check?"""
+    d = CONTINENT / "public" / "dossier"
+    if not d.exists() or not any(d.glob("*.json")):
+        log("  no continent-app/public/dossier yet: a real run would build it "
+            "first, so there is nothing to audit")
+        return False
+    log("  dry-run probe: auditing the shipped dossiers, building nothing")
+    return run_cmd([PY, "pipeline/dossier/audit.py", "--strict"]) == 0
+
+
+def guard_dossier(ctx=None):
+    """The dossier contract is a JOIN, so it is only as good as its inputs.
+
+    It reads the shipped wires rather than any database: app_data for the
+    catalogue and its ratings, activities_full for the rated things a place
+    has, and the layer wires for the nature join. Missing app_data means there
+    is nothing to build at all; missing activities means every dossier still
+    builds but arrives without the one section a reader came for.
+
+    The landmark cache is deliberately NOT guarded. The first run of this task
+    creates it (three hours, resumable), and refusing to start until it exists
+    would mean the task could never bootstrap itself on a new machine. Same for
+    the research cache: no file is a documented state, not a failure, because
+    the open-data tier covers every destination without one."""
+    missing = [s for s in ("common.py", "derive_do.py", "build_dossier.py",
+                           "fill_licences.py", "harvest_landmarks.py",
+                           "reclassify_landmarks.py", "harvest_city_intros.py",
+                           "fix_airport_listings.py", "harvest_event_dates.py",
+                           "plan_research.py", "research_do.py", "web_sweep.py",
+                           "audit.py")
+               if not (ROOT / "pipeline" / "dossier" / s).exists()]
+    if missing:
+        return False, f"pipeline/dossier is missing {', '.join(missing)}"
+    pub = CONTINENT / "public"
+    if not (pub / "app_data.json").exists():
+        return False, ("continent-app/public/app_data.json is missing; the "
+                       "dossier builds off the shipped wires, not the master")
+    if not (pub / "activities_full.json").exists():
+        return False, ("continent-app/public/activities_full.json is missing; "
+                       "every dossier would ship without its things to do")
+    if not (CACHE / "dossier" / "landmarks.json").exists():
+        return True, ("dossier stages present; no landmark cache yet, so the "
+                      "Wikidata harvest runs cold (about three hours, "
+                      "resumable, shardable with --shard/--of)")
+    return True, "dossier stages present, wires and landmark cache on disk"
+
+
 # Each task: key, title, cadence, writes_app_data, and either cmds or run.
 #   cadence         weekly | monthly | quarterly | after | backfill
 #                   (after = event-driven, see `after`; backfill = --only only)
@@ -1138,7 +1192,10 @@ def guard_trips():
 #                      the new files never reach dist
 #   run(ctx)->bool  custom step (preferred where logic is needed)
 #   cmds            list of argv lists, run in order; any non-zero fails the task
-#   guard(ctx)      optional; (ok, reason). ok=False SKIPS (not a failure)
+#   guard(ctx)      optional; (ok, reason). ok=False SKIPS (not a failure).
+#                   It is CALLED with ctx, so declare ctx even when unused
+#                   (`def guard_x(ctx=None)`): the call is not wrapped, so a
+#                   zero-arg guard raises TypeError and takes down the run.
 #   dry_run(ctx)    optional read-only probe executed under --dry-run
 #   soft            failures are logged and retried next run, never block the ship
 #   note            printed reminder (e.g. "bump the YEAR first")
@@ -1702,14 +1759,31 @@ TASKS = [
     },
     {
         "key": "climate",
-        "title": "WorldClim climate normals (new dests)",
+        "title": "NASA POWER climate normals (full catalogue)",
         "cadence": "backfill",
         "writes_app_data": True,
         "cmds": [
-            [PY, "pipeline/harvest_climate_worldclim.py"],
+            [PY, "pipeline/harvest_climate_power.py"],
             [PY, "pipeline/apply_climate.py"],
         ],
-        "note": "needs cache/worldclim/*.tif + rasterio; fixed 1970-2000 normals (static).",
+        "note": ("switched from WorldClim 2.1 on 2026-08-26: WorldClim is "
+                 "non-commercial-only and the dossier PDFs redistribute the "
+                 "monthly values. POWER is US-gov open data, one small call "
+                 "per dest, resumable memo in cache/climate_power_raw.json. "
+                 "harvest_climate_worldclim.py stays for reference only."),
+    },
+    {
+        "key": "unesco",
+        "title": "UNESCO World Heritage list refresh",
+        "cadence": "quarterly",
+        "soft": True,
+        "cmds": [
+            [PY, "pipeline/harvest_unesco_whc.py"],
+        ],
+        "note": ("provenance for cache/unesco_whc.json (ledger item 6, closed "
+                 "2026-08-26). Consumers (rating/beauty/features/trips) pick "
+                 "the file up on their own cadences; new inscriptions land in "
+                 "July, so quarterly is enough."),
     },
     {
         "key": "guide",
@@ -1758,6 +1832,29 @@ TASKS = [
                  "build: node scripts/verify_hero_images.mjs - it samples the "
                  "audited heroes and loads each one, which is how the spliced "
                  "tracking-param thumb URLs were caught."),
+    },
+    {
+        "key": "image_audit",
+        "title": "Cross-layer image audit: every wire, one set of checks",
+        "cadence": "weekly",
+        "writes_app_data": False,
+        "soft": True,
+        "cmds": [
+            [PY, "pipeline/images/fix_url_queries.py"],
+            [PY, "pipeline/images/audit_all.py", "--probe", "20"],
+        ],
+        "note": ("sweep over destinations, features, beaches, lakes, "
+                 "mountains, trips and trails: URL shape, thumb widths, frame "
+                 "fit against the real card CSS, licence/credit/evidence "
+                 "contracts, coverage, country covers, cross-layer duplicate "
+                 "files, plus a sampled HTTP probe (content-type, not status: "
+                 "the SPA fallback answers 200 with HTML). The wash step first "
+                 "strips Commons tracking params (idempotent, byte-identical "
+                 "image); every other finding is only reported. Report at "
+                 "data/reports/image_audit.json, flagged entries eyeballable "
+                 "at data/reports/image_audit_sheet.html; deeper fixes belong "
+                 "to each layer's own harvester, Special:FilePath rot to "
+                 "pipeline/images/fix_special_filepath.py."),
     },
     {
         "key": "events",
@@ -1859,6 +1956,64 @@ TASKS = [
             [PY, "pipeline/enrich_must_descs.py"],
         ],
         "note": "all additive (never null); heavy Wikipedia sweeps - run after activities.",
+    },
+    {
+        "key": "dossier",
+        "title": "Destination dossiers: the per-destination contract for panel + PDF",
+        "cadence": "monthly",
+        "writes_wire": True,
+        "soft": True,
+        "cmds": [
+            # Sources first: landmarks and city intros are what let a remote
+            # village say anything and stop a gateway describing its airport.
+            [PY, "pipeline/dossier/harvest_landmarks.py"],
+            [PY, "pipeline/dossier/reclassify_landmarks.py"],
+            [PY, "pipeline/dossier/harvest_city_intros.py"],
+            [PY, "pipeline/dossier/fix_airport_listings.py"],
+            [PY, "pipeline/dossier/harvest_event_dates.py"],
+            [PY, "pipeline/export_destinfo.py"],
+            # Research settles BEFORE the build, or a sweep lands one run late:
+            # the sibling fill and the validator have to happen while the build
+            # can still read what they produced. web_sweep is a no-op without a
+            # key, which is why it can sit on the critical path unconditionally.
+            [PY, "pipeline/dossier/web_sweep.py", "--all", "--if-configured"],
+            [PY, "pipeline/dossier/plan_research.py", "--tier", "2", "--copy-siblings"],
+            [PY, "pipeline/dossier/research_do.py"],
+            # Then the build-fill-build sandwich, then the gate.
+            [PY, "pipeline/dossier/build_dossier.py", "--all"],
+            [PY, "pipeline/dossier/fill_licences.py"],
+            [PY, "pipeline/dossier/build_dossier.py", "--all"],
+            [PY, "pipeline/dossier/audit.py", "--strict"],
+        ],
+        "guard": guard_dossier,
+        "dry_run": dossier_audit_dry,
+        "note_landmarks": ("harvest_landmarks.py is the slow one, about three "
+                           "hours single-threaded for the full catalogue. It "
+                           "is resumable and shardable: run four workers with "
+                           "--shard i --of 4 --out cache/dossier/landmarks_s{i}"
+                           ".json and then --merge them, which brings it under "
+                           "an hour. Never point two workers at one --out; each "
+                           "writes the whole cache atomically and they clobber."),
+        "note_sweep": ("things-to-do evidence has two tiers and the UI labels "
+                       "which is which. derive_do.py is a MODULE, imported by "
+                       "build_dossier, so the open tier (>=2 independent "
+                       "institutions) is derived for all 3,038 on every build "
+                       "with nothing to schedule. The web tier (>=3 distinct "
+                       "registrable domains) is web_sweep.py, which needs "
+                       "CARTA_SEARCH_KEY; with --if-configured an unset key is "
+                       "a no-op rather than a failure, so the stage is safe to "
+                       "keep on the critical path and starts working the day a "
+                       "key exists. It only researches destinations with no "
+                       "file yet, so a wave written by hand is never redone. "
+                       "research_do.py validates both and reports coverage."),
+        "note": ("public/dossier/{id}.json: highlights (deduped + retyped), gallery "
+                 "with per-image TASL, intro, things to do, nearby nature join, day "
+                 "trips, parking with nav deeplinks, tips, credits. Runs offline off "
+                 "the shipped wires except fill_licences (Commons extmetadata) - so "
+                 "run AFTER images/activities/features tasks. The build-fill-build "
+                 "sandwich is deliberate: the first pass discovers which images lack "
+                 "TASL, the fill resolves them, the second pass flips ok_print. "
+                 "Unchanged content keeps its content_hash, so re-runs are cheap."),
     },
 ]
 TASK_BY_KEY = {t["key"]: t for t in TASKS}

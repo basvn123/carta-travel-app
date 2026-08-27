@@ -125,3 +125,6 @@ data/derived/tp_fares.json
 # which ARE tracked. The scored output that people actually read is small and
 # committed: data/reports/coverage/ and coverage_gaps.json.
 data/derived/place_candidates.json
+
+# Personal Claude Code overrides (the shared skills in .claude/skills/ stay tracked)
+.claude/settings.local.json

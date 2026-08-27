@@ -2,8 +2,9 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useAuth } from './AuthContext.jsx';
 import {
   ArrowLeftIcon, CheckIcon, ChevronDownIcon, ChevronRightIcon, CloseIcon, EyeIcon,
-  EyeOffIcon, FeedbackIcon, InfoIcon, LockIcon, PencilIcon, PersonIcon, QuestionIcon,
-  ShareIcon, ShieldIcon, SignOutIcon, SparkIcon, TrashIcon,
+  EyeOffIcon, FeedbackIcon, FriendsIcon, HomeIcon, InfoIcon, LockIcon, PencilIcon,
+  PersonIcon, QuestionIcon, PiggyIcon, ShareIcon, ShieldIcon, SignOutIcon, SparkIcon,
+  TrashIcon,
 } from '../components/Icons.jsx';
 import { PrivacyPolicy } from '../components/PrivacyPolicy.jsx';
 import { ATTRIBUTIONS } from '../data/attribution.js';
@@ -20,6 +21,7 @@ import {
 } from './profiles.js';
 import { FriendsSpoke } from './FriendsSpoke.jsx';
 import { useIsAdmin } from '../hooks/useIsAdmin.js';
+import { matchProfile, PROFILE_LABEL_KEYS } from '../browse/LifestylePanel.jsx';
 import { sendFeedback } from '../lib/feedback.js';
 
 // Account hub. The panel is a hub with four spokes rather than one long
@@ -45,19 +47,57 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const CONTACT = 'bas.vannieuwenhuyse123@gmail.com';
 const SHARE_URL = 'https://carta-europetravel.com';
 
-// The five general answers, then the four questions that only make sense once
-// you have an account. This is the only FAQ surface in the app.
-const FAQ_KEYS = [
-  ['account.faq1Q', 'account.faq1A'],
-  ['account.faq2Q', 'account.faq2A'],
-  ['account.faq3Q', 'account.faq3A'],
-  ['account.faq4Q', 'account.faq4A'],
-  ['account.faq5Q', 'account.faq5A'],
-  ['account.faq6Q', 'account.faq6A'],
-  ['account.faq7Q', 'account.faq7A'],
-  ['account.faq8Q', 'account.faq8A'],
-  ['account.faq9Q', 'account.faq9A'],
+// The FAQ, in four groups. Fourteen flat rows is a wall; grouped, a reader
+// scanning for "why did the price change" never reads past the heading that
+// is not theirs. Order runs outward-in: what the product is, then what its
+// numbers mean, then planning, then the account, because the questions a
+// first-time visitor has are the ones the earlier groups answer.
+//
+// Answers that quote a figure interpolate it (FAQ_VARS below) rather than
+// spelling it out, so a pass price or a catalogue size can never drift away
+// from the value the rest of the app renders.
+const FAQ_GROUPS = [
+  {
+    labelKey: 'account.faqGroup1',
+    items: [['account.faq1Q', 'account.faq1A'], ['account.faq2Q', 'account.faq2A'],
+      ['account.faq3Q', 'account.faq3A'], ['account.faq4Q', 'account.faq4A']],
+  },
+  {
+    labelKey: 'account.faqGroup2',
+    items: [['account.faq5Q', 'account.faq5A'], ['account.faq6Q', 'account.faq6A'],
+      ['account.faq7Q', 'account.faq7A']],
+  },
+  {
+    labelKey: 'account.faqGroup3',
+    items: [['account.faq8Q', 'account.faq8A'], ['account.faq9Q', 'account.faq9A'],
+      ['account.faq10Q', 'account.faq10A']],
+  },
+  {
+    labelKey: 'account.faqGroup4',
+    items: [['account.faq11Q', 'account.faq11A'], ['account.faq12Q', 'account.faq12A'],
+      ['account.faq13Q', 'account.faq13A'], ['account.faq14Q', 'account.faq14A']],
+  },
 ];
+
+/** Every figure the answers quote, read from the same sources the product
+ *  renders elsewhere: the loaded catalogue and lib/pricing.js. A count that
+ *  cannot be read yet falls back to the shipped catalogue size rather than
+ *  rendering "{n}" at the traveller. */
+function faqVars(destinations) {
+  const n = Array.isArray(destinations)
+    ? destinations.length
+    : (destinations && typeof destinations === 'object' ? Object.keys(destinations).length : 0);
+  return {
+    n: (n || 3038).toLocaleString('en-GB'),
+    freePlans: TIERS.free.aiPlans,
+    tripPlans: TIERS.trip.aiPlans,
+    tripGround: TIERS.trip.grounded,
+    tripPrice: formatPrice(TIERS.trip.priceCents),
+    yearPlans: TIERS.year.aiPlans,
+    yearGround: TIERS.year.grounded,
+    yearPrice: formatPrice(TIERS.year.priceCents),
+  };
+}
 
 /** Initials for the avatar disc. Two letters from a name, one from an email,
  *  because a coloured circle with nothing in it reads as a broken image. */
@@ -210,11 +250,12 @@ function PasswordChecklist({ password }) {
 }
 
 /** One row of the hub menu: icon, label, chevron. A real button, 52px tall. */
-function MenuRow({ icon, label, onClick }) {
+function MenuRow({ icon, label, value, onClick }) {
   return (
-    <button type="button" className="account-menu-row" onClick={onClick}>
+    <button type="button" className="account-nav account-menu-row" onClick={onClick}>
       <span className="account-menu-icon">{icon}</span>
       <span className="account-menu-label">{label}</span>
+      {value && <span className="account-menu-value">{value}</span>}
       <ChevronRightIcon size={16} className="account-menu-chev" />
     </button>
   );
@@ -222,7 +263,7 @@ function MenuRow({ icon, label, onClick }) {
 
 export function AccountPanel({
   onClose, onOpenAuth, initialView = 'home', onViewChange, pendingFriendHandle,
-  destinations, onOpenAdmin,
+  destinations, onOpenAdmin, onOpenLifestyle, stayTier = 'home', lifestyle,
 }) {
   const {
     user, hasPassword, signOut, signOutOtherDevices, updatePassword, reauthenticate,
@@ -240,6 +281,15 @@ export function AccountPanel({
 
   const storedName = user?.user_metadata?.full_name?.trim() || '';
   const storedEmail = user?.email || '';
+
+  // What the lifestyle row states without being opened: the bed and the
+  // habits, the two answers that move every price in the app. A comma, never
+  // a bullet, because this app has no middot separators.
+  const lifestyleProfile = matchProfile(lifestyle || {});
+  const lifestyleSummary = [
+    t(`stay.${stayTier || 'home'}`),
+    lifestyleProfile ? t(PROFILE_LABEL_KEYS[lifestyleProfile]) : t('lifestyle.custom'),
+  ].join(', ');
 
   const [name, setName] = useState(storedName);
   const [email, setEmail] = useState(storedEmail);
@@ -282,7 +332,10 @@ export function AccountPanel({
   const [deleteBusy, setDeleteBusy] = useState(false);
   const [deleteError, setDeleteError] = useState('');
 
+  // The open question is keyed by its i18n key, not its index: with the
+  // answers grouped, an index is only unique within one group.
   const [openFaq, setOpenFaq] = useState(null);
+  const faqFigures = useMemo(() => faqVars(destinations), [destinations]);
   const [feedbackText, setFeedbackText] = useState('');
   const [feedbackKind, setFeedbackKind] = useState('other');
   const [feedbackBusy, setFeedbackBusy] = useState(false);
@@ -600,7 +653,53 @@ export function AccountPanel({
     : view === 'data' ? t('account.menuData')
     : user ? null : t('account.preferences');
 
+  // The panel's spokes as one list, drawn twice: as the hub's menu rows on a
+  // phone, and as the desktop rail that stands where Destinations and Explore
+  // stand their filters. Two arrangements of one set of doors cannot drift
+  // apart while the source only holds one of them. `go` is what the row does;
+  // `view` is what makes it read as the page you are on.
+  const NAV = [
+    { key: 'home', group: 'account', view: 'home', Icon: HomeIcon, label: t('account.menuOverview'), go: () => setView('home') },
+    user && { key: 'profile', group: 'account', view: 'profile', Icon: PersonIcon, label: t('account.profileDetails'), go: () => setView('profile') },
+    user && { key: 'friends', group: 'account', view: 'friends', Icon: FriendsIcon, label: t('friends.title'), go: () => setView('friends') },
+    user && isAdmin && { key: 'admin', group: 'account', Icon: LockIcon, label: t('account.menuAdmin'), go: () => { onClose?.(); onOpenAdmin?.(); } },
+    { key: 'feedback', group: 'help', view: 'feedback', Icon: FeedbackIcon, label: t('account.menuFeedback'), go: () => setView('feedback') },
+    { key: 'faq', group: 'help', view: 'faq', Icon: QuestionIcon, label: t('account.menuFaq'), go: () => setView('faq') },
+    { key: 'privacy', group: 'help', Icon: ShieldIcon, label: t('account.privacyPolicy'), go: () => setPrivacyOpen(true) },
+    { key: 'data', group: 'help', view: 'data', Icon: InfoIcon, label: t('account.menuData'), go: () => setView('data') },
+  ].filter(Boolean);
+
+  const renderNav = (group, cls) => NAV.filter((r) => r.group === group).map(
+    ({ key, view: v, Icon, label, go }) => (
+      <button
+        key={key}
+        type="button"
+        className={`account-nav ${cls} ${v && view === v ? 'on' : ''}`}
+        aria-current={v && view === v ? 'page' : undefined}
+        onClick={go}
+      >
+        <Icon size={16} />
+        <span>{label}</span>
+      </button>
+    ),
+  );
+
   return (
+    <div className="account-shell">
+      {/* Desktop-only left panel (CSS hides it under 769px). It carries the
+          navigation the hub's help menu carries on a phone, which is why that
+          menu folds away at the same width: one set of doors, never two. */}
+      <aside className="side-panel account-side" aria-label={t('account.tag')}>
+        <div className="side-block">
+          <p className="side-label">{t('side.account')}</p>
+          <div className="side-nav">{renderNav('account', 'side-navrow')}</div>
+        </div>
+        <div className="side-block">
+          <p className="side-label">{t('side.help')}</p>
+          <div className="side-nav">{renderNav('help', 'side-navrow')}</div>
+        </div>
+      </aside>
+
     <div className="panel open account-panel" ref={panelRef}>
       {/* The close button lives INSIDE the sticky header. As a child of the
           scrolling panel it was positioned against the content box, so it slid
@@ -707,6 +806,23 @@ export function AccountPanel({
             </div>
           </div>
 
+          {/* How this person travels, the setting behind every euro figure
+              the app prints. It used to be reachable only from the two browse
+              tabs, which made it read like a filter; it is a preference, and
+              preferences live here too. Works signed out. */}
+          {onOpenLifestyle && (
+            <div className="panel-section">
+              <div className="account-menu">
+                <MenuRow
+                  icon={<PiggyIcon size={17} />}
+                  label={t('filter.lifestyle')}
+                  value={lifestyleSummary}
+                  onClick={() => { onClose?.(); onOpenLifestyle(); }}
+                />
+              </div>
+            </div>
+          )}
+
           {/* App language, moved here from the top bar: switching it is a
               once-per-person action, so it lives with the other settings
               instead of spending header width. Works signed out. */}
@@ -732,8 +848,8 @@ export function AccountPanel({
 
           {/* Help, in the order people need it: say something, look something
               up, read the fine print. All three work signed out. */}
-          <div className="panel-section">
-            <div className="account-menu">
+          <div className="panel-section account-help-section">
+            <div className="account-menu account-menu-help">
               {/* The staff door. Rendered only for accounts on the admin
                   list; for everybody else this row does not exist. It opens
                   the back office as a full page rather than a spoke: a table
@@ -1096,21 +1212,34 @@ export function AccountPanel({
       {view === 'faq' && (
         <div className="panel-section">
           <p className="account-section-hint">{t('account.faqHint')}</p>
-          <div className="account-faq">
-            {FAQ_KEYS.map(([qKey, aKey], i) => (
-              <div key={qKey} className={`account-faq-item${openFaq === i ? ' open' : ''}`}>
-                <button
-                  type="button"
-                  className="account-faq-q"
-                  aria-expanded={openFaq === i}
-                  onClick={() => setOpenFaq(openFaq === i ? null : i)}
-                >
-                  <span>{t(qKey)}</span>
-                  <ChevronDownIcon size={15} className="account-faq-chev" />
-                </button>
-                {openFaq === i && <p className="account-faq-a">{t(aKey)}</p>}
+          {FAQ_GROUPS.map((group) => (
+            <div key={group.labelKey} className="account-faq-group">
+              <h3 className="account-faq-grouplabel">{t(group.labelKey)}</h3>
+              <div className="account-faq">
+                {group.items.map(([qKey, aKey]) => (
+                  <div key={qKey} className={`account-faq-item${openFaq === qKey ? ' open' : ''}`}>
+                    <button
+                      type="button"
+                      className="account-faq-q"
+                      aria-expanded={openFaq === qKey}
+                      onClick={() => setOpenFaq(openFaq === qKey ? null : qKey)}
+                    >
+                      <span>{t(qKey)}</span>
+                      <ChevronDownIcon size={15} className="account-faq-chev" />
+                    </button>
+                    {openFaq === qKey && <p className="account-faq-a">{t(aKey, faqFigures)}</p>}
+                  </div>
+                ))}
               </div>
-            ))}
+            </div>
+          ))}
+          {/* The FAQ can only ever answer the questions we thought of, so it
+              ends by pointing at the one route that handles the rest. */}
+          <div className="account-faq-foot">
+            <p className="account-section-hint">{t('account.faqMore')}</p>
+            <button type="button" className="account-wide-btn" onClick={() => setView('feedback')}>
+              <FeedbackIcon size={16} /> {t('account.faqMoreBtn')}
+            </button>
           </div>
         </div>
       )}
@@ -1201,6 +1330,7 @@ export function AccountPanel({
           onSignIn={() => { setPassOpen(false); onOpenAuth?.(); }}
         />
       )}
+    </div>
     </div>
   );
 }

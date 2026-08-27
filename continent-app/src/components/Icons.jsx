@@ -1206,3 +1206,28 @@ export function BackpackIcon({ size = 15, className = '' }) {
     </Glyph>
   );
 }
+
+/* Bunk bed: the dorm tier in the lifestyle panel, so a shared room reads
+   apart from the single bed BedIcon draws for a private room. */
+export function BunkIcon({ size = 15, className = '' }) {
+  return (
+    <Glyph size={size} className={className} label="Dorm bed">
+      <path d="M4 4.5v15M20 4.5v15" />
+      <path d="M4 11h16M4 8h11a2 2 0 0 1 2 2v1" />
+      <path d="M4 19h16M4 16h11a2 2 0 0 1 2 2v1" />
+    </Glyph>
+  );
+}
+
+/* Hotel: a fronted building, distinct from HomeIcon's pitched roof, so the
+   four ways to sleep stay readable as four different things. */
+export function HotelIcon({ size = 15, className = '' }) {
+  return (
+    <Glyph size={size} className={className} label="Hotel">
+      <path d="M4.5 20.5V6.2a1.2 1.2 0 0 1 1.2-1.2h12.6a1.2 1.2 0 0 1 1.2 1.2v14.3" />
+      <path d="M3 20.5h18" />
+      <path d="M8.5 8.5h2M13.5 8.5h2M8.5 12h2M13.5 12h2" />
+      <path d="M10 20.5v-4h4v4" />
+    </Glyph>
+  );
+}

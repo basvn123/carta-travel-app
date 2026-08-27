@@ -18,7 +18,8 @@
 //   5. Passwords revealable, measured live, floor at 8.
 //   6. Forgot password reaches the reset mail.
 //   7. Sign out sits clear of the delete button; deletion is red and gated.
-//   8. FAQ spoke: nine questions, answers open on tap.
+//   8. FAQ spoke: fourteen questions in four groups, answers open on tap,
+//      figures interpolated from pricing.js, no retired fare copy left.
 //   9. Feedback spoke: the send button stays off until there is a message.
 //  10. Google-only accounts get the email route, never a password form.
 // Plus the quality floor: 44px targets, label contrast, 380px clean.
@@ -172,6 +173,24 @@ async function goToProfile(page) {
   await page.locator('#acct-name').waitFor({ timeout: 10000 });
 }
 
+// Browse chrome v4: the spokes are drawn twice from one list, as the hub's
+// menu rows on a phone and as the left panel's rows on desktop, with CSS
+// showing one arrangement or the other. :visible picks whichever this
+// viewport has, so one helper walks the panel at every width.
+const navRow = (page, label) => page.locator('.account-nav:visible', { hasText: label });
+async function goTo(page, label) {
+  await navRow(page, label).first().click();
+  await page.waitForTimeout(300);
+}
+// Back to the hub. The phone has the back control in the header; desktop has
+// Overview standing at the head of the panel.
+async function goHome(page) {
+  const back = page.locator('.account-back:visible');
+  if (await back.count()) await back.first().click();
+  else await goTo(page, 'Overview');
+  await page.locator('.account-profile-card').waitFor({ timeout: 5000 });
+}
+
 try {
   await waitForServer();
   const browser = await chromium.launch();
@@ -208,13 +227,24 @@ try {
   // Four help rows: feedback, FAQ, privacy, data sources. Friends is NOT among
   // them; it has its own door in the header (see verify_friends.mjs), because
   // seeing who you travel with is a place you go, not a setting you change.
-  const menuRows = await page.locator('.account-menu-row').count();
-  if (menuRows !== 4) fail(`expected 4 help menu rows, found ${menuRows}`);
+  // Counted by label rather than by row total: Lifestyle joined the hub as a
+  // preference row in its own section, and a bare count could not tell the
+  // two apart.
+  const menuLabels = await page.locator('.account-nav:visible').allInnerTexts();
+  const menuRows = menuLabels.length;
+  for (const label of ['Send feedback', 'Common questions', 'Privacy', 'Data sources']) {
+    if (!menuLabels.some((l) => l.includes(label))) fail(`the panel has no "${label}" row`);
+  }
   if (await page.locator('.account-menu-row').filter({ hasText: 'Friends' }).count()) {
     fail('Friends is back in the account hub, competing with its header door');
   }
-  const rowBox = await page.locator('.account-menu-row').first().boundingBox();
-  if (!rowBox || rowBox.height < 44) fail(`menu rows are ${rowBox?.height}px tall, under the 44px target`);
+  const rowBox = await page.locator('.account-nav:visible').first().boundingBox();
+  if (!rowBox || rowBox.height < 34) fail(`navigation rows are ${rowBox?.height}px tall`);
+  // Two colours on this page, beige and terracotta: the page you are on wears
+  // the full accent, exactly as a selected filter does on Destinations.
+  const railOn = await page.locator('.account-side .side-navrow.on').first()
+    .evaluate((el) => getComputedStyle(el).backgroundColor).catch(() => '');
+  if (railOn !== 'rgb(224, 90, 71)') fail(`the current page in the panel is ${railOn}, not the accent`);
   if (await page.locator('#acct-name').count()) fail('the profile form leaks onto the hub');
   ok(`hub: profile card (SO), invite banner, ${menuRows} menu rows at ${Math.round(rowBox.height)}px`);
 
@@ -546,28 +576,48 @@ try {
 
   // ---- 8. Back to the hub, then the FAQ spoke.
   console.log('7. faq spoke');
-  await page.locator('.account-back').click();
-  await page.locator('.account-profile-card').waitFor({ timeout: 5000 });
-  ok('the back control returns to the hub');
-  await page.locator('.account-menu-row', { hasText: 'Common questions' }).click();
+  await goHome(page);
+  ok('the panel returns to the hub');
+  await goTo(page, 'Common questions');
   const faqItems = await page.locator('.account-faq-item').count();
-  if (faqItems !== 9) fail(`expected 9 FAQ entries, found ${faqItems}`);
+  if (faqItems !== 14) fail(`expected 14 FAQ entries, found ${faqItems}`);
+  const groups = await page.locator('.account-faq-grouplabel').allInnerTexts();
+  if (groups.length !== 4) fail(`expected 4 FAQ group headings, found ${groups.length}`);
   if (await page.locator('.account-faq-a').count()) fail('an answer is open before anything was tapped');
   const firstQ = page.locator('.account-faq-q').first();
   await firstQ.click();
   if (await firstQ.getAttribute('aria-expanded') !== 'true') fail('the opened question does not say aria-expanded');
   const answer = await page.locator('.account-faq-a').first().innerText();
   if (answer.length < 40) fail(`the first answer is suspiciously short: "${answer}"`);
-  await page.locator('.account-faq-q').nth(5).click();
+  // The catalogue size is interpolated, so an unresolved placeholder here means
+  // the answer is quoting a variable name at the traveller.
+  if (/\{\w+\}/.test(answer)) fail(`an unfilled placeholder survived into an answer: "${answer}"`);
+  // Open a question in a later group: the open row is keyed by its i18n key,
+  // and an index-keyed accordion would open two rows at once here.
+  await page.locator('.account-faq-group').nth(3).locator('.account-faq-q').first().click();
   if (await page.locator('.account-faq-a').count() !== 1) fail('two answers are open at once');
-  ok(`${faqItems} questions, answers open one at a time`);
+  // The pass answer has to quote the shipped prices, never a rounded retelling.
+  const passQ = page.locator('.account-faq-q', { hasText: 'What does a pass add?' });
+  await passQ.click();
+  const passA = await page.locator('.account-faq-item.open .account-faq-a').innerText();
+  for (const figure of ['€6.99', '€14.99', '60', '40', '300', '120']) {
+    if (!passA.includes(figure)) fail(`the pass answer never names ${figure}: "${passA}"`);
+  }
+  // Carta stopped pricing flights; an answer that still sells fares is a lie
+  // about the product, which is the failure this FAQ exists to avoid.
+  const allAnswers = (await page.locator('.account-faq-q').allInnerTexts()).join(' ');
+  for (const stale of ['Ryanair', 'Wizz', 'on the map']) {
+    if (allAnswers.includes(stale)) fail(`a question still describes the retired fare map: ${stale}`);
+  }
+  if (!(await page.locator('.account-faq-foot button').count())) fail('the FAQ has no route to feedback');
+  ok(`${faqItems} questions in ${groups.length} groups, one answer at a time, figures interpolated`);
   await page.screenshot({ path: `${SHOTS}/account-faq.png` });
 
   // ---- 8b. The data credits spoke. The licenses that ask for a visible
   //          credit are answered here now that the front page is gone, so an
   //          empty list is a compliance problem, not a cosmetic one.
-  await page.locator('.account-back').click();
-  await page.locator('.account-menu-row', { hasText: 'Data sources' }).click();
+  await goHome(page);
+  await goTo(page, 'Data sources');
   const creditLines = await page.locator('.account-credits li').allInnerTexts();
   if (creditLines.length < 10) fail(`data sources spoke lists ${creditLines.length} credits`);
   if (!creditLines.some((l) => /OpenStreetMap/.test(l))) fail('credits never name OpenStreetMap');
@@ -575,8 +625,8 @@ try {
 
   // ---- 9. The feedback spoke.
   console.log('8. feedback spoke');
-  await page.locator('.account-back').click();
-  await page.locator('.account-menu-row', { hasText: 'Send feedback' }).click();
+  await goHome(page);
+  await goTo(page, 'Send feedback');
   const feedbackBox = page.locator('#acct-feedback');
   await feedbackBox.waitFor({ timeout: 5000 });
   const sendBtn = page.locator('button', { hasText: 'Send by email' });
@@ -588,12 +638,19 @@ try {
 
   // ---- Quality floor on the hub.
   console.log('9. quality floor');
-  await page.locator('.account-back').click();
-  const closeBox = await page.locator('.account-panel .panel-close').boundingBox();
-  if (closeBox.width < 44 || closeBox.height < 44) {
-    fail(`close button is ${Math.round(closeBox.width)}x${Math.round(closeBox.height)}, under 44px`);
+  await goHome(page);
+  // Account is a page on desktop now, not a slide-over, so it carries no
+  // cross: the way out is the header (press the avatar again) or Escape, the
+  // same two doors My trips has. A cross would be the only close control in
+  // the app that closes a page rather than an overlay.
+  if (await page.locator('.account-panel .panel-close:visible').count()) {
+    fail('the desktop account page still carries a cross');
   }
-  ok(`close button is ${Math.round(closeBox.width)}x${Math.round(closeBox.height)}`);
+  await page.keyboard.press('Escape');
+  await page.waitForTimeout(400);
+  if (await page.locator('.account-panel').count()) fail('Escape did not close the account page');
+  await openPanel(page);
+  ok('no cross on the page, and Escape is the way out');
 
   // ---- 10. A Google-only account has no password. Every password control
   // must step aside for the email route, and deletion must still ask.
@@ -653,6 +710,11 @@ try {
   });
   const hubSpill = await spillCheck();
   if (hubSpill.scrolls) fail(`the hub scrolls sideways at 380px: ${hubSpill.wide.join(' | ')}`);
+  // Where a thumb is the input, the 44px floor holds: the hub's rows are the
+  // phone's copy of the doors the desktop page stands in its left panel.
+  const thumbRow = await page2.locator('.account-menu-row:visible').first().boundingBox();
+  if (!thumbRow || thumbRow.height < 44) fail(`hub rows are ${thumbRow?.height}px on a phone, under 44px`);
+  ok(`the hub's rows are ${Math.round(thumbRow.height)}px under a thumb`);
   await page2.screenshot({ path: `${SHOTS}/account-hub-380.png`, fullPage: true });
   await page2.locator('.account-profile-card').click();
   await page2.locator('#acct-name').waitFor({ timeout: 10000 });

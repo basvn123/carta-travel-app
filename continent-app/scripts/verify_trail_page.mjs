@@ -68,7 +68,7 @@ const cards = await page.locator('.places-tcard').count();
 check('trail cards render for Albania', cards >= 3, `${cards} cards`);
 check('no rating/price/A-Z chips on trails', await page.locator('.places-sort').count() === 0);
 check('no priced-from origin picker on trails', await page.locator('.places-controls .origin-btn').count() === 0);
-check('no lifestyle pill on trails', await page.locator('.places-lifestyle').count() === 0);
+check('no lifestyle pill on trails', await page.locator('.lifestyle-btn:visible').count() === 0);
 check('cards carry no clipped summary', await page.locator('.places-tcard-summary').count() === 0);
 const cardText = await page.locator('.places-tcard').first().innerText();
 check('card is facts only, no prose', !/waymarked|route in AL/i.test(cardText), cardText.replace(/\n/g, ' ').slice(0, 70));

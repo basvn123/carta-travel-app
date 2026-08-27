@@ -52,6 +52,7 @@ ASCII clean, no em dashes, per project convention.
 """
 
 import argparse
+import importlib.util
 import json
 import re
 import statistics
@@ -70,6 +71,19 @@ from harvest_peaks import (COUNTRIES, COUNTRY_QID, fold,  # noqa: E402
 import peak_index as pi  # noqa: E402
 
 ROOT = HERE.parents[1]
+
+# The lake layer's card-shape helpers, loaded by path exactly as
+# enrich_peaks.py loads them: peaks, lakes and beaches all feed the same 25/12
+# card, so the frame thresholds live in one file rather than three.
+_LAKE_IMAGES = ROOT / "pipeline" / "lakes" / "lake_images.py"
+if "carta_lake_images" in sys.modules:
+    lake_images = sys.modules["carta_lake_images"]
+else:
+    _lake_spec = importlib.util.spec_from_file_location("carta_lake_images",
+                                                        _LAKE_IMAGES)
+    lake_images = importlib.util.module_from_spec(_lake_spec)
+    sys.modules["carta_lake_images"] = lake_images
+    _lake_spec.loader.exec_module(lake_images)
 OUT_DIR = ROOT / "continent-app" / "public" / "mountains"
 
 # How many photographs a mountain needs to be publishable. Two, unless one of
@@ -211,12 +225,62 @@ def lead_score(img, peak):
     return score
 
 
+# The evidence vocabulary, the same key the beach wire ships as "ev". These
+# are the claims a file can make about its mountain; "unk" is what a legacy
+# cache row degrades to when nothing recorded or derivable supports one.
+REAL_EVIDENCE = ("p18", "name", "article", "cat", "geo")
+
+# Rows where a re-enriched cache (one that records evidence) still produced a
+# gallery with none. Collected during wiring, merged into the validation
+# failures in main for the rows that actually publish: that is the beaches'
+# strictness, applied only where the cache can honestly answer the question.
+EV_FAILURES = []
+
+
+def image_evidence(img, tokens):
+    """(evidence, recorded) for one cached image.
+
+    The enrich stage now records `evidence` at pick time. Every cache enriched
+    before that records none, and re-photographing 43 countries to add a tag
+    would be absurd, so a missing tag is derived from what those caches DID
+    keep: the Wikidata pin, the named flag, the source that found the file,
+    and finally the mountain's own tokens in the Commons file name (folded
+    through harvest_peaks.fold, whose table covers the letters NFKD leaves
+    alone: o-slash, ae, l-stroke, eth, thorn). A file that supports nothing is
+    tagged "unk" and counted, never dropped: a legacy cache is a cache, not a
+    bug."""
+    recorded = img.get("evidence")
+    if recorded in REAL_EVIDENCE:
+        return recorded, True
+    if img.get("pinned"):
+        return "p18", False
+    if img.get("named"):
+        return "name", False
+    if img.get("why") == "article":
+        return "article", False
+    if img.get("why") == "category":
+        return "cat", False
+    title = str(img.get("file") or "")
+    if title.startswith("File:"):
+        title = title[5:]
+    if tokens and any(t in fold(title) for t in tokens):
+        return "name", False
+    return "unk", False
+
+
 def wire_images(peak):
+    tokens = name_tokens(peak.get("name")) | name_tokens(peak.get("name_local"))
+    source_imgs = peak.get("images") or []
+    # Whether the cache this row came from records evidence at all. Legacy
+    # caches do not, and they are tolerated: derived below, warned about in
+    # the export summary, never fatal.
+    re_enriched = any("evidence" in img for img in source_imgs)
     out = []
-    for img in peak.get("images") or []:
+    for img in source_imgs:
         url = clean_url(img.get("url"))
         if not url:
             continue
+        ev, ev_recorded = image_evidence(img, tokens)
         out.append({
             "u": small_url(url),
             "big": url,
@@ -231,6 +295,11 @@ def wire_images(peak):
             "lic": (img.get("license") or "").strip(),
             "licUrl": img.get("license_url") or "",
             "page": img.get("page") or "",
+            # WHY this picture is on this mountain, same key as the beach
+            # wire, so the claim can be audited from the outside rather than
+            # trusted. "unk" marks a legacy cache row nothing supports.
+            "ev": ev,
+            "_rec": ev_recorded,
             "_lead": lead_score(img, peak),
             # Strong means somebody said this file is OF this mountain: it
             # names it, or the mountain's own article uses it, or Wikidata
@@ -260,7 +329,19 @@ def wire_images(peak):
         kept.append(img)
     for img in kept:
         img.pop("_lead")
-    return kept
+    # Full strictness only where the cache can honestly answer: a re-enriched
+    # cache that records evidence and still hands over a gallery where nothing
+    # carries any is the beaches' abort case. A legacy cache, which records
+    # nothing, only ever warns.
+    if re_enriched and kept and not any(i["ev"] in REAL_EVIDENCE for i in kept):
+        EV_FAILURES.append((peak_id(peak),
+                            f"{peak['cc']}/{peak_id(peak)}: cache records "
+                            f"image evidence and no kept image carries any"))
+    # Last, inside the leading evidence tier only, prefer a lead that survives
+    # the card crop: the card shows kept[0] cropped to 25:12, and a summit
+    # panorama that wins on merit still reaches the reader as a thin ridge.
+    return lake_images.lead_by_fit(kept, lambda i: (i.get("w"), i.get("h")),
+                                   tier=lambda i: i.get("ev"))
 
 
 def peak_id(peak):
@@ -554,9 +635,15 @@ def dedupe(rows):
     under the same picture."""
     kept, leads = [], set()
     for row in rows:
-        lead = row["images"][0]["u"] if row["images"] else None
-        if lead and lead in leads:
+        # A summit with photographs of its own keeps its place on the next one
+        # nobody else is leading with; only a summit whose every picture is
+        # already somebody else's is dropped as a borrowed view.
+        images = lake_images.reseat_lead(row.get("images") or [], leads,
+                                         tier=lambda i: i.get("ev"))
+        if images is None:
             continue
+        row["images"] = images
+        lead = images[0]["u"] if images else None
         if any(haversine_km(row["lat"], row["lon"], other["lat"], other["lon"])
                <= DUPLICATE_KM for other in kept):
             continue
@@ -684,11 +771,40 @@ def main():
     # writing afterwards is the whole point: a gate that fires after half the
     # files are on disk has not gated anything.
     failures = validate(published)
+    # The evidence gate's own failures, filtered to the rows that actually
+    # publish: a spare that never reached the wire cannot stop the export.
+    pub_ids = {r["id"] for r in published}
+    failures += [msg for rid, msg in EV_FAILURES if rid in pub_ids]
     if failures:
         for line in failures[:20]:
             print(f"  FAIL {line}")
         print(f"[mountains] {len(failures)} validation failures, nothing written")
         raise SystemExit(1)
+
+    # The evidence ledger over what is about to ship, and the point where the
+    # private recorded/derived marker leaves the rows. Derived evidence is
+    # normal for a legacy cache; "unk" is counted and warned about, and goes
+    # away for a country the day its cache is re-enriched.
+    ev_stats = {"recorded": 0, "derived": 0, "unk": 0}
+    ev_kinds = {}
+    for row in published:
+        for img in row["images"]:
+            recorded = img.pop("_rec", False)
+            ev_kinds[img["ev"]] = ev_kinds.get(img["ev"], 0) + 1
+            if recorded:
+                ev_stats["recorded"] += 1
+            elif img["ev"] == "unk":
+                ev_stats["unk"] += 1
+            else:
+                ev_stats["derived"] += 1
+    kinds = ", ".join(f"{k} {v}" for k, v in sorted(ev_kinds.items()))
+    print(f"[mountains] image evidence: {ev_stats['recorded']} recorded, "
+          f"{ev_stats['derived']} derived, {ev_stats['unk']} unknown "
+          f"({kinds})")
+    if ev_stats["unk"]:
+        print(f"[mountains] WARNING: {ev_stats['unk']} published images carry "
+              f"no derivable evidence (ev=unk); re-enrich those countries to "
+              f"record it")
 
     # The Europe wide opening page, taken from what was just published so it
     # can never disagree with the country files. One row per MOUNTAIN: a

@@ -1,20 +1,30 @@
 import React from 'react';
 import { DEFAULT_LIFESTYLE, offeredStayTiers } from '../lib/runtime_pricing.js';
-import { BedIcon, DiningIcon, LifestyleIcon } from '../components/Icons.jsx';
+import {
+  BedIcon, BunkIcon, HomeIcon, HotelIcon,
+  BackpackIcon, LeafIcon, DiningIcon, CoffeeIcon, MusicIcon, FriendsIcon,
+  ChevronDownIcon,
+} from '../components/Icons.jsx';
+import { SLEEP_GROUPS, HOTEL_GRADES, sleepGroupOf } from '../lib/sleepGroups.js';
 import { useI18n } from '../i18n/index.jsx';
 
 /**
- * Lifestyle settings panel, slides in from the left.
+ * Lifestyle settings panel.
  *
- * The user describes how their vacation looks: where they sleep (dorm bed
- * through hotel room) and how they eat and drink (dinners, casual meals, fast
- * food, bar drinks, club nights, self-catered days). Each is priced at the
- * chosen destination's real local rates inside the trip breakdown. Profile
- * presets set the eating and drinking side at once (e.g. a young group that
- * goes clubbing).
+ * Two questions decide every euro figure in the app, so the panel asks them
+ * as two grids of tiles rather than as rows of text: where you sleep, and how
+ * you eat and drink. The six frequencies behind the second answer are still
+ * editable, but they now sit inside a closed disclosure, because a preset
+ * covers almost everybody and six steppers on open was most of the panel.
+ *
+ * Tiles borrow the Destinations category card exactly: a quiet --paper-dim
+ * tile until it is on, then the full accent. That is the one way "selected"
+ * reads on the browse tabs, and the panel is the same product.
  *
  * The stay tier is the same `choices.stay_tier` the filter bar carries, so
- * every priced surface (map labels, receipt, compare, trip planner) follows it.
+ * every priced surface (map labels, receipt, compare, trip planner) follows
+ * it. Hotels are one tile with a star row underneath rather than three tiles
+ * of their own, so the four ways to sleep stay four choices wide.
  *
  * Frequencies can be read per-week or per-day via the cadence toggle. The six
  * period-counts are stored in whatever cadence is active; switching cadence
@@ -37,7 +47,7 @@ const PERIOD_FIELDS = [
 // preset in its native weekly cadence (a weekly rate like 5 dinners/week can't
 // be shown faithfully as a per-day integer, so the panel snaps back to per-week
 // - this keeps the priced spend exactly equal to the preset and lets the active
-// chip highlight correctly).
+// tile highlight correctly).
 const PROFILES = {
   Backpacker:      { cadence: 'week', dinners_per_week: 1, lunches_per_week: 3, fastfood_per_week: 4, drinks_per_week: 4,  club_nights_per_week: 0, coffees_per_day: 0, self_catered_days_per_week: 5 },
   Easygoing:       { ...DEFAULT_LIFESTYLE },
@@ -57,6 +67,20 @@ export const PROFILE_LABEL_KEYS = {
   Nightlife: 'lifestyle.profileNightlife',
   Family: 'lifestyle.profileFamily',
 };
+
+// One glyph per preset, so the grid is scannable before it is read.
+const PROFILE_ICONS = {
+  Backpacker: BackpackIcon,
+  Easygoing: LeafIcon,
+  Foodie: DiningIcon,
+  'Cafe & culture': CoffeeIcon,
+  Nightlife: MusicIcon,
+  Family: FriendsIcon,
+};
+
+// One glyph per way to sleep. The table itself lives in lib/sleepGroups.js
+// so the headless harness can import it without a JSX loader.
+const SLEEP_ICONS = { dorm: BunkIcon, private: BedIcon, home: HomeIcon, hotel: HotelIcon };
 
 const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
 
@@ -94,11 +118,11 @@ export function LifestylePanel({ choices, setChoices, onClose, data, side = 'lef
   const { t } = useI18n();
   const ls = choices.lifestyle || {};
   const cadence = ls.cadence || 'week';
-  const per = cadence === 'day' ? t('lifestyle.hintPerDay') : t('lifestyle.hintPerWeek');
 
   const setLs = (patch) => setChoices({ ...choices, lifestyle: { ...ls, ...patch } });
   const setProfile = (name) => setChoices({ ...choices, lifestyle: { ...PROFILES[name] } });
   const setCadence = (c) => setChoices({ ...choices, lifestyle: toCadence(ls, c) });
+  const setTier = (tier) => setChoices({ ...choices, stay_tier: tier });
   const active = matchProfile(ls);
 
   // Only the tiers this dataset measured (apply_stay_tiers.py writes
@@ -108,76 +132,138 @@ export function LifestylePanel({ choices, setChoices, onClose, data, side = 'lef
   const stayTiers = React.useMemo(() => offeredStayTiers(data?.meta), [data?.meta]);
   const stayTier = choices.stay_tier || 'home';
 
+  // The tiles this dataset can actually offer, each carrying its own offered
+  // grades. A group with nothing measured never renders.
+  const sleepTiles = React.useMemo(() => SLEEP_GROUPS
+    .map((g) => ({ ...g, Icon: SLEEP_ICONS[g.key], offered: g.tiers.filter((k) => stayTiers.includes(k)) }))
+    .filter((g) => g.offered.length > 0), [stayTiers]);
+
+  const activeGroup = sleepGroupOf(stayTier);
+  const hotelTile = sleepTiles.find((g) => g.key === 'hotel');
+  const hotelGrades = hotelTile
+    ? HOTEL_GRADES.filter((h) => hotelTile.offered.includes(h.tier))
+    : [];
+
+  // Picking a tile keeps the grade already chosen inside it, and otherwise
+  // lands on that tile's first offered grade (3-star for hotels, which is the
+  // grade most people mean by "a hotel").
+  const pickGroup = (g) => {
+    if (g.offered.includes(stayTier)) return;
+    setTier(g.offered[0]);
+  };
+
+  // The steppers open closed: a preset above already answers this for almost
+  // everybody, and six steppers on open were most of the panel.
+  const [tuned, setTuned] = React.useState(false);
+
   const maxFor = (key) => PERIOD_FIELDS.find((f) => f.key === key).max[cadence];
 
   return (
-    <div className={`accom-panel open${side === 'right' ? ' from-right' : ''}`}>
+    <div className={`accom-panel lifestyle-panel open${side === 'right' ? ' from-right' : ''}`}>
       <button className="panel-close" onClick={onClose} aria-label={t('lifestyle.close')}>x</button>
 
       <div className="panel-header">
         <div className="panel-tag">{t('lifestyle.tag')}</div>
         <h2 className="panel-city">{t('lifestyle.title')}</h2>
+        <p className="lifestyle-sub">{t('lifestyle.sub')}</p>
       </div>
 
-      {stayTiers.length > 1 && (
+      {sleepTiles.length > 1 && (
         <div className="panel-section">
-          <div className="section-title section-title-iconed"><BedIcon size={12} /> {t('lifestyle.stay')}</div>
-          <div className="kind-chips lifestyle-stay-chips">
-            {stayTiers.map((k) => (
+          <div className="ls-head">{t('lifestyle.stay')}</div>
+          <div className="ls-tiles" role="group" aria-label={t('lifestyle.stay')}>
+            {sleepTiles.map(({ key, labelKey, Icon, offered }) => (
               <button
-                key={k}
-                className={`chip ${stayTier === k ? 'on' : ''}`}
-                onClick={() => setChoices({ ...choices, stay_tier: k })}
+                key={key}
+                type="button"
+                className={`ls-tile ${activeGroup === key ? 'on' : ''}`}
+                aria-pressed={activeGroup === key}
+                onClick={() => pickGroup({ key, offered })}
               >
-                {t(`stay.${k}`)}
+                <Icon size={22} />
+                <span>{t(labelKey)}</span>
               </button>
             ))}
           </div>
-          <p className="footnote">{t('lifestyle.stayNote')}</p>
+
+          {/* Which hotel, asked only once a hotel is the answer. */}
+          {activeGroup === 'hotel' && hotelGrades.length > 1 && (
+            <div className="ls-grades" role="group" aria-label={t('lifestyle.hotelGrade')}>
+              <span className="ls-grades-label">{t('lifestyle.hotelGrade')}</span>
+              {hotelGrades.map(({ tier, labelKey }) => (
+                <button
+                  key={tier}
+                  type="button"
+                  className={`ls-grade ${stayTier === tier ? 'on' : ''}`}
+                  aria-pressed={stayTier === tier}
+                  onClick={() => setTier(tier)}
+                >
+                  {t(labelKey)}
+                </button>
+              ))}
+            </div>
+          )}
+
+          <p className="ls-note">{t('lifestyle.stayNote')}</p>
         </div>
       )}
 
       <div className="panel-section">
-        <div className="section-title section-title-iconed"><LifestyleIcon size={12} /> {t('lifestyle.profile')}</div>
-        <div className="kind-chips">
-          {Object.keys(PROFILES).map((name) => (
-            <button
-              key={name}
-              className={`chip ${active === name ? 'on' : ''}`}
-              onClick={() => setProfile(name)}
-            >
-              {t(PROFILE_LABEL_KEYS[name] || name)}
-            </button>
-          ))}
+        <div className="ls-head">{t('lifestyle.profile')}</div>
+        <div className="ls-tiles ls-tiles-3" role="group" aria-label={t('lifestyle.profile')}>
+          {Object.keys(PROFILES).map((name) => {
+            const Icon = PROFILE_ICONS[name];
+            return (
+              <button
+                key={name}
+                type="button"
+                className={`ls-tile ${active === name ? 'on' : ''}`}
+                aria-pressed={active === name}
+                onClick={() => setProfile(name)}
+              >
+                <Icon size={20} />
+                <span>{t(PROFILE_LABEL_KEYS[name] || name)}</span>
+              </button>
+            );
+          })}
         </div>
+        {!active && <p className="ls-note">{t('lifestyle.customNote')}</p>}
       </div>
 
+      {/* The six counts behind the preset. Closed by default; opening it is
+          what makes the preset above a starting point rather than the only
+          answer. */}
       <div className="panel-section lifestyle-food">
-        <div className="lifestyle-section-head">
-          <div className="section-title section-title-iconed"><DiningIcon size={12} /> {t('lifestyle.eatingDrinking')}</div>
-          <div className="panel-segment lifestyle-cadence">
-            <button className={cadence === 'week' ? 'seg-on' : ''} onClick={() => setCadence('week')}>{t('lifestyle.perWeek')}</button>
-            <button className={cadence === 'day' ? 'seg-on' : ''} onClick={() => setCadence('day')}>{t('lifestyle.perDay')}</button>
-          </div>
-        </div>
-        <Stepper label={t('lifestyle.dinnersOut')} hint={per} value={ls.dinners_per_week ?? 0}
-          onChange={(v) => setLs({ dinners_per_week: v })} min={0} max={maxFor('dinners_per_week')} />
-        <Stepper label={t('lifestyle.casualMeals')} hint={per} value={ls.lunches_per_week ?? 0}
-          onChange={(v) => setLs({ lunches_per_week: v })} min={0} max={maxFor('lunches_per_week')} />
-        <Stepper label={t('lifestyle.fastFood')} hint={per} value={ls.fastfood_per_week ?? 0}
-          onChange={(v) => setLs({ fastfood_per_week: v })} min={0} max={maxFor('fastfood_per_week')} />
-        <Stepper label={t('lifestyle.cookAtHome')} hint={per} value={ls.self_catered_days_per_week ?? 0}
-          onChange={(v) => setLs({ self_catered_days_per_week: v })} min={0} max={maxFor('self_catered_days_per_week')} />
-        <Stepper label={t('lifestyle.drinksAtBars')} hint={per} value={ls.drinks_per_week ?? 0}
-          onChange={(v) => setLs({ drinks_per_week: v })} min={0} max={maxFor('drinks_per_week')} />
-        <Stepper label={t('lifestyle.clubNights')} hint={per} value={ls.club_nights_per_week ?? 0}
-          onChange={(v) => setLs({ club_nights_per_week: v })} min={0} max={maxFor('club_nights_per_week')} />
-      </div>
+        <button
+          type="button"
+          className={`ls-tune-btn ${tuned ? 'open' : ''}`}
+          aria-expanded={tuned}
+          onClick={() => setTuned(!tuned)}
+        >
+          <span>{t('lifestyle.fineTune')}</span>
+          <ChevronDownIcon size={16} className="ls-tune-chev" />
+        </button>
 
-      <div className="panel-section">
-        <p className="footnote">
-          {t('lifestyle.footnote')}
-        </p>
+        {tuned && (
+          <div className="ls-tune">
+            <div className="panel-segment lifestyle-cadence">
+              <button className={cadence === 'week' ? 'seg-on' : ''} onClick={() => setCadence('week')}>{t('lifestyle.perWeek')}</button>
+              <button className={cadence === 'day' ? 'seg-on' : ''} onClick={() => setCadence('day')}>{t('lifestyle.perDay')}</button>
+            </div>
+            <Stepper label={t('lifestyle.dinnersOut')} value={ls.dinners_per_week ?? 0}
+              onChange={(v) => setLs({ dinners_per_week: v })} min={0} max={maxFor('dinners_per_week')} />
+            <Stepper label={t('lifestyle.casualMeals')} value={ls.lunches_per_week ?? 0}
+              onChange={(v) => setLs({ lunches_per_week: v })} min={0} max={maxFor('lunches_per_week')} />
+            <Stepper label={t('lifestyle.fastFood')} value={ls.fastfood_per_week ?? 0}
+              onChange={(v) => setLs({ fastfood_per_week: v })} min={0} max={maxFor('fastfood_per_week')} />
+            <Stepper label={t('lifestyle.cookAtHome')} value={ls.self_catered_days_per_week ?? 0}
+              onChange={(v) => setLs({ self_catered_days_per_week: v })} min={0} max={maxFor('self_catered_days_per_week')} />
+            <Stepper label={t('lifestyle.drinksAtBars')} value={ls.drinks_per_week ?? 0}
+              onChange={(v) => setLs({ drinks_per_week: v })} min={0} max={maxFor('drinks_per_week')} />
+            <Stepper label={t('lifestyle.clubNights')} value={ls.club_nights_per_week ?? 0}
+              onChange={(v) => setLs({ club_nights_per_week: v })} min={0} max={maxFor('club_nights_per_week')} />
+          </div>
+        )}
       </div>
     </div>
   );
