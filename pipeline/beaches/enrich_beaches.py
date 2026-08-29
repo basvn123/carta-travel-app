@@ -809,6 +809,36 @@ def enrich_country(cc, shortlist_n=SHORTLIST, refresh=False, bathing=None,
     short = beaches[:shortlist_n]
     print(f"  {cc}: {len(beaches)} harvested, enriching {len(short)}")
 
+    # What the previous cache already knows, carried across before any phase
+    # runs. This list is rebuilt from the HARVEST cache every time, so anything
+    # a phase decides not to fetch again has to be copied here or the rewritten
+    # cache simply loses it.
+    #
+    # Straight out of the lake layer's scar tissue (docs/LAKES.md), and there
+    # are two holes here rather than one:
+    #
+    #   photographs   the reuse sat inside the `if images:` branch, so
+    #                 --no-images meant "throw the pictures away" rather than
+    #                 "do not fetch new ones". A context-only sweep emptied a
+    #                 country and it vanished from the next export, because the
+    #                 gate wants two photographs.
+    #   article facts an article is only ever fetched for a beach the previous
+    #                 cache has NO article for, and nothing copied the ones it
+    #                 did have. So every warm re-run stripped the facts and the
+    #                 pageviews off exactly the beaches that had them, which is
+    #                 how 429 of the 788 wiki-linked beaches in cache/beaches
+    #                 ended up with a Wikipedia link and no facts behind it.
+    #
+    # A switch controls the network. It has never controlled the data.
+    for b in short:
+        was = previous.get(b["key"]) or {}
+        if was.get("article") is not None:
+            b["article"] = was["article"]
+        if was.get("views60") is not None:
+            b["views60"] = max(b.get("views60") or 0, was["views60"])
+        if was.get("images") is not None:
+            b["images"] = was["images"]
+
     # 1. Article facts and pageviews, one batch per wiki.
     lang = LOCAL_LANG.get(cc, "en")
     for wiki_lang, field in (("en", "enwiki"), (lang, "localwiki")):

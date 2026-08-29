@@ -90,6 +90,21 @@ broke in three different ways:
   .gitattributes (`cache/*.json`) does not reach a subdirectory anyway. A fresh
   clone therefore rebuilds from the sources, which is hours rather than
   seconds, and produces the same wire from the same world.
+- **A switch controls the network, never the data.** `enrich_country` rebuilds
+  its list from the HARVEST cache every run, so everything a phase decides not
+  to fetch again has to be copied from the previous rich cache before the
+  phases start. Two holes lived here until 2026-08-29 and both silently
+  deleted work: the reuse of cached photographs sat inside the `if images:`
+  branch, so `--no-images`, which is the normal way to sweep Overpass without
+  fighting Commons for slots, wrote a cache with no pictures in it and those
+  beaches then failed the two photograph gate at the next export. And an
+  article is only ever fetched for a beach the previous cache has no article
+  for, while nothing copied the ones it did have, so every warm re-run stripped
+  the facts and the pageviews off exactly the beaches that had them. That is
+  how 429 of the 788 wiki-linked beaches in `cache/beaches` came to hold a
+  Wikipedia link with no facts behind it. Both are carried across up front now.
+  The facts heal themselves on the next enrich run, which sees them missing and
+  fetches them, and beach scores move up a little when they land.
 - **Every stage is deterministic.** Ranking sorts on score then id, the
   shortlist is cut by a documented pre score, ties break on the id, and no
   stage depends on dict ordering or on the clock.
