@@ -105,7 +105,8 @@ def hero_eligible(image):
 def pick(images, *, beauty_of=lambda i: i.get("beauty"),
          cluster_of=lambda i: i.get("cluster"),
          aspect_class=lambda i: i.get("aspect_class"),
-         month_of=lambda i: i.get("month")):
+         month_of=lambda i: i.get("month"),
+         hero_ok=hero_eligible):
     """(hero, gallery) from one row's surviving candidates.
 
     hero    argmax(beauty + P18 bonus) among hero-eligible images. None
@@ -125,7 +126,7 @@ def pick(images, *, beauty_of=lambda i: i.get("beauty"),
     candidates = [(contest(img), img) for img in images]
     eligible = sorted(
         ((s, img) for s, img in candidates
-         if s is not None and hero_eligible(img)),
+         if s is not None and hero_ok(img)),
         key=lambda pair: -pair[0])
     hero = eligible[0][1] if eligible else None
 

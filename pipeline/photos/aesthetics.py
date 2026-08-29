@@ -18,7 +18,7 @@ Models, and the licences that chose them:
       because it decorrelates the first. The published weights are Keras;
       this box runs torch. The loader looks for a converted checkpoint at
       models/nima_mobilenet.pth and DEGRADES TO NONE without it, and
-      select.py renormalises the beauty weights over what answered
+      selection.py renormalises the beauty weights over what answered
       (invariant 6). Converting the weights is an open item in PHOTOS.md.
 
   pyiqa / IQA-PyTorch is not imported anywhere in this package and must
@@ -145,7 +145,7 @@ def _load_head():
 
 def _load_nima():
     """The optional second opinion. None, silently, when the converted
-    checkpoint is absent: select.py renormalises, nothing else changes."""
+    checkpoint is absent: selection.py renormalises, nothing else changes."""
     global _nima
     if _nima is not None:
         return _nima if _nima != "missing" else None

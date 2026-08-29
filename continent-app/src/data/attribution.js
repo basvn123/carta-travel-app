@@ -51,6 +51,17 @@ export const ATTRIBUTIONS = [
       + 'and mountain galleries, credited per image',
   },
   {
+    source: 'Geograph Britain and Ireland',
+    license: 'CC BY-SA 2.0',
+    credit: 'Photographs of Great Britain and Ireland from Geograph '
+      + '(geograph.org.uk), credited per image',
+  },
+  {
+    source: 'Mapillary',
+    license: 'CC BY-SA 4.0',
+    credit: 'Street-level imagery from Mapillary, credited per image',
+  },
+  {
     source: 'GeoNames',
     license: 'CC BY 4.0',
     credit: 'Population and settlement data from GeoNames (geonames.org)',
@@ -64,8 +75,9 @@ export const ATTRIBUTIONS = [
     source: 'Eurostat',
     license: 'CC BY 4.0',
     credit: 'Tourism statistics, including the visitor nights behind the '
-      + 'crowding levels and the trip demand check, '
-      + '© European Union, Eurostat',
+      + 'crowding levels and the trip demand check, and the NUTS and LAU '
+      + 'region boundaries behind region pages and coverage, '
+      + '© European Union, Eurostat/GISCO',
   },
   {
     source: 'EuroGeographics',
@@ -77,7 +89,28 @@ export const ATTRIBUTIONS = [
     license: 'EEA re-use policy (CC BY 4.0)',
     credit: 'Bathing water quality, and the official bathing sites that '
       + 'decide whether a lake can be swum in, from the European Environment '
-      + 'Agency and the Member State authorities that report them',
+      + 'Agency and the Member State authorities that report them; coastal '
+      + 'stretches cut from the EEA coastline for analysis, and the EEA '
+      + 'biogeographical regions and WISE river basin districts',
+  },
+  {
+    source: 'ONS Open Geography',
+    license: 'Open Government Licence v3.0',
+    credit: 'UK region boundaries (International Territorial Levels) from '
+      + 'the Office for National Statistics, contains OS data '
+      + '© Crown copyright and database right 2025',
+  },
+  {
+    source: 'GMBA Mountain Inventory',
+    license: 'CC BY 4.0',
+    credit: 'Mountain range outlines and hierarchy from the GMBA Mountain '
+      + 'Inventory v2.0 (Snethlage et al. 2022, EarthEnv)',
+  },
+  {
+    source: 'geoBoundaries',
+    license: 'Mixed per release (ODbL, public domain)',
+    credit: 'Administrative boundaries for Ukraine, Moldova and the '
+      + 'microstates from geoBoundaries (Runfola et al. 2020)',
   },
   {
     source: 'NASA POWER',

@@ -9,7 +9,7 @@ Two passes, cheapest first:
            a different day, the postcard angle everybody shoots. Runs only
            on the pHash survivors, on vectors the cache already holds.
 
-The output is clusters. Selection (select.py) keeps the top-scoring
+The output is clusters. Selection (selection.py) keeps the top-scoring
 representative per cluster, so a gallery is one photograph per view.
 
 imagehash is used when installed; a numpy DCT fallback computes the same

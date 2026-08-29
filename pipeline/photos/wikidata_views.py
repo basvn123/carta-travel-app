@@ -18,7 +18,7 @@ Precedence after P18, per the brief:
 
 Every file returned here enters the funnel at evidence tier `p18`: the
 claim is the same kind of claim. The relevance rejector stays P18-exempt
-for them too, and the softened precedence in select.py (bonus, not
+for them too, and the softened precedence in selection.py (bonus, not
 autowin) applies unchanged.
 
 ASCII clean, no em dashes, per project convention.

@@ -27,7 +27,7 @@ once.
                    Commons metadata, and the overcast probe.
     dedupe.py      pHash buckets, then CLIP-cosine clusters, so a gallery
                    of four is four views rather than four crops of one.
-    select.py      the beauty score, hero eligibility and gallery
+    selection.py      the beauty score, hero eligibility and gallery
                    composition rules, plus the model block a layer embeds
                    in its index.json.
     commons.py     the wider Commons funnel: category recursion, the

@@ -72,6 +72,23 @@ import peak_index as pi  # noqa: E402
 
 ROOT = HERE.parents[1]
 
+
+def photo_rank_block():
+    """The photo engine's ranking model (pipeline/photos/selection.py),
+    loaded by path like every cross-layer module. The gallery order in
+    this wire was produced by it, so it ships with the data."""
+    try:
+        if "carta_photo_selection" not in sys.modules:
+            spec = importlib.util.spec_from_file_location(
+                "carta_photo_selection",
+                ROOT / "pipeline" / "photos" / "selection.py")
+            mod = importlib.util.module_from_spec(spec)
+            sys.modules["carta_photo_selection"] = mod
+            spec.loader.exec_module(mod)
+        return sys.modules["carta_photo_selection"].MODEL
+    except Exception:
+        return None
+
 # The lake layer's card-shape helpers, loaded by path exactly as
 # enrich_peaks.py loads them: peaks, lakes and beaches all feed the same 25/12
 # card, so the frame thresholds live in one file rather than three.
@@ -307,8 +324,14 @@ def wire_images(peak):
             "_strong": bool(img.get("named") or img.get("why") == "article"
                             or (img.get("pinned") and img.get("named"))),
         })
-    # Stable: equal scores keep the enrich stage's own order.
-    out.sort(key=lambda i: -i["_lead"])
+    # Stable: equal scores keep the enrich stage's own order. A rescored
+    # row (pipeline/photos/rescore.py) already encodes the whole ranking in
+    # its cache order: beauty hero first, vetoed files last, one image per
+    # dedupe cluster ahead of its twins, the P18 bonus applied. That is
+    # strictly more than lead_score can see, so the cache order stands
+    # wherever the beauty engine has spoken.
+    if not any(img.get("beauty") is not None for img in source_imgs):
+        out.sort(key=lambda i: -i["_lead"])
 
     # A gallery is allowed at most WEAK_SLOTS pictures that never name the
     # mountain, and only while it is still short.
@@ -435,6 +458,11 @@ def wire_peak(peak, comps, score10, tier, reasons, expected):
         "images": images,
         "credit": credits_of(peak),
     }
+    row["t"] = "r"
+    # Stored by enrich (assign.stamp_rows), read back here: the export never
+    # recomputes an assignment, so it never needs the spine loadable.
+    if peak.get("rg"):
+        row["rg"] = peak["rg"]
     # The other name, when there is one. Never a repeat of what was just
     # published, and never Wikidata's English label when that is what the row
     # is already called.
@@ -571,6 +599,139 @@ def provenance(countries):
     return out
 
 
+def _region_quotas():
+    """pipeline/regions/quotas.py under a neutral name. Loaded lazily and
+    tolerated missing: an export on a clone without the region spine skips
+    the quota step rather than refusing to ship."""
+    mod = sys.modules.get("carta_region_quotas")
+    if mod is None:
+        path = HERE.parents[1] / "pipeline" / "regions" / "quotas.py"
+        try:
+            spec = importlib.util.spec_from_file_location("carta_region_quotas",
+                                                          path)
+            mod = importlib.util.module_from_spec(spec)
+            sys.modules["carta_region_quotas"] = mod
+            spec.loader.exec_module(mod)
+        except Exception:
+            return None
+    return mod
+
+
+def region_key(row):
+    """The unit a mountain is budgeted in: its GMBA range, its NUTS3 region
+    where no range contains it (a lone hill on a plain), the country as a
+    last resort."""
+    rg = row.get("rg") or {}
+    return rg.get("ra") or rg.get("n3") or row["cc"]
+
+
+def quota_ordered(rows, qmod):
+    """Step 3 of the gate: the region quota. Rows are grouped per range,
+    ranked within their group, cut at the group's quota, then re-ordered so
+    every range's first pick outranks any range's second. The country cap
+    that follows trims the Alps' fortieth peak before the Jura's third."""
+    if qmod is None or not qmod.has_data():
+        print("  region quotas unavailable, quota step skipped")
+        return rows
+    groups = {}
+    for row in rows:
+        groups.setdefault(region_key(row), []).append(row)
+    ranked = []
+    for key, group in groups.items():
+        try:
+            target = qmod.published_target(key, "mountain")
+        except KeyError:
+            target = len(group)
+        if target <= 0:
+            # Not applicable is a statement about quotas, never a ban.
+            target = len(group)
+        for rank, row in enumerate(sorted(group, key=lambda r: -r["score"])):
+            if rank >= target:
+                break
+            ranked.append((rank, -row["score"], row["id"], row))
+    ranked.sort(key=lambda t: t[:3])
+    return [row for _, _, _, row in ranked]
+
+
+def wire_listed(peak):
+    """A listed card: verified to exist, named, deduped, in region, and NOT
+    scored. The score key is absent rather than null, which is the only
+    reliable way to guarantee the app cannot render a number nobody earned."""
+    images = wire_images(peak)[:2]
+    for img in images:
+        img.pop("_rec", None)  # the private marker never reaches the wire
+    row = {
+        "id": peak_id(peak),
+        "name": display_name(peak),
+        "cc": peak["cc"],
+        "kind": pi.kind_of(peak),
+        "lat": round(peak["lat"], 6),
+        "lon": round(peak["lon"], 6),
+        "t": "l",
+        "why": [{"k": "unrated_coverage"}],
+        "images": images,
+        "credit": credits_of(peak),
+    }
+    if peak.get("rg"):
+        row["rg"] = peak["rg"]
+    if peak.get("wd"):
+        row["wd"] = peak["wd"]
+    if peak.get("ele") is not None:
+        row["ele"] = peak["ele"]
+    return row
+
+
+def region_floor_fill(rated, pool, qmod):
+    """Step 4 of the gate, the REGION floor (the country floor above only
+    ever adds scored rows and stays as it was). For any applicable region
+    the gates left empty, the best remaining candidate is promoted to tier
+    'l': no score in the wire, one evidenced photograph preferred but not
+    demanded of a row whose whole job is to keep a page honest about what
+    exists."""
+    if qmod is None or not qmod.has_data():
+        return []
+    have = {}
+    for row in rated:
+        n3 = (row.get("rg") or {}).get("n3")
+        if n3:
+            have[n3] = have.get(n3, 0) + 1
+    pools = {}
+    for peak, comps, score10 in pool:
+        n3 = (peak.get("rg") or {}).get("n3")
+        if not n3 or have.get(n3):
+            continue
+        pools.setdefault(n3, []).append((peak, score10))
+    listed = []
+    for n3, cands in pools.items():
+        if not qmod.applicable(n3, "mountain"):
+            continue
+        room = qmod.floor(n3, "mountain")
+        cands.sort(key=lambda t: (0 if evidenced_image(t[0]) else 1, -t[1]))
+        for peak, _score in cands[:room]:
+            listed.append(wire_listed(peak))
+    return listed
+
+
+def validate_listed(rows):
+    """Listed rows have their own bar: real name, real place, no score of
+    any spelling, and any image still carries its licence."""
+    bad = []
+    for row in rows:
+        where = f"{row['cc']}/{row['id']}"
+        if "score" in row or "tier" in row or "comp" in row:
+            bad.append(f"{where}: listed row carries a score key")
+        if not row["name"].strip():
+            bad.append(f"{where}: no name")
+        if not (-90 <= row["lat"] <= 90) or not (-180 <= row["lon"] <= 180):
+            bad.append(f"{where}: coordinates off the earth")
+        for img in row.get("images") or []:
+            if not img.get("lic"):
+                bad.append(f"{where}: an image carries no licence")
+            if "_rec" in img:
+                bad.append(f"{where}: a private image marker reached the wire")
+    return bad
+
+
 def validate(rows):
     """The gate's own self-check, run over what is about to be written.
 
@@ -620,6 +781,14 @@ def validate(rows):
         # the weakest claim. Anything stronger from that source is a bug.
         if lift and lift.get("src") == "wiki" and lift.get("kind") != "liftsNearby":
             bad.append(f"{where}: {lift.get('kind')} claimed from an article mention")
+        if row.get("t") != "r":
+            bad.append(f"{where}: rated row without t='r'")
+        # Every published row carries its region block. A row whose rg has
+        # no n3 is the documented handful outside the admin spine (the h4
+        # cell still places it); a row with no rg at all was never stamped.
+        if not row.get("rg"):
+            bad.append(f"{where}: no region assignment (run "
+                       f"pipeline/oneoff/backfill_regions.py)")
     return bad
 
 
@@ -689,9 +858,12 @@ def main():
 
     out_dir = Path(args.out)
     generated = datetime.now(timezone.utc).isoformat(timespec="seconds")
+    qmod = _region_quotas()
     index = []
     published = []
+    listed_all = []
     by_country = {}
+    listed_by_country = {}
     filled = {}
     total = 0
     credits = set()
@@ -700,13 +872,23 @@ def main():
         scored = scored_by_cc.get(cc) or []
         if not scored:
             continue
-        rows, spare = [], []
+        rows, spare, unrated_pool = [], [], []
         for peak, comps, score10 in sorted(scored,
                                            key=lambda t: (-t[2], t[0]["name"])):
+            # The photo gate no longer deletes the pool before the floor can
+            # reach it. This is the standing COUNTRY_FLOOR=8 bug: the floor
+            # relaxed the score, but publishable() had already emptied the
+            # spare list of every peak short a photograph, so Lithuania sat
+            # at 4 mountains with a floor of 8. A named peak inside its
+            # country now falls through to the region floor as a listed
+            # candidate instead of vanishing.
             if not publishable(peak, cc):
+                if name_tokens(peak.get("name")) and in_country(peak, cc):
+                    unrated_pool.append((peak, comps, score10))
                 continue
             reasons = pi.reasons_for(peak, comps)
             if not reasons:
+                unrated_pool.append((peak, comps, score10))
                 continue
             row = wire_peak(peak, comps, score10, pi.tier_for(score10),
                             reasons, expectation(comps["acclaim"]))
@@ -730,7 +912,9 @@ def main():
                 # that. The score still decides the ORDER and the cap still
                 # decides how many.
                 spare.append(row)
-        rows = dedupe(rows)[:args.max_per_country]
+        rows = dedupe(rows)
+        rows = quota_ordered(rows, qmod)[:args.max_per_country]
+        rows.sort(key=lambda r: -r["score"])
 
         if len(rows) < args.floor and spare:
             room = args.floor - len(rows)
@@ -740,13 +924,29 @@ def main():
             if extra:
                 filled[cc] = len(extra)
                 rows = rows + extra
-        if not rows:
+
+        # The REGION floor: applicable regions the gates left empty get
+        # their best remaining candidate as a listed row, no score shipped.
+        listed = region_floor_fill(rows, unrated_pool, qmod)
+        if not rows and not listed:
             if args.verbose:
                 print(f"  {cc}: nothing clears the gate")
+            continue
+        if not rows:
+            listed_by_country[cc] = listed
+            listed_all.extend(listed)
+            for row in listed:
+                credits.update(row["credit"])
+            by_country[cc] = []
             continue
 
         for row in rows:
             credits.update(row["credit"])
+        for row in listed:
+            credits.update(row["credit"])
+        if listed:
+            listed_by_country[cc] = listed
+            listed_all.extend(listed)
         published.extend(rows)
         total += len(rows)
         cover = next((r["images"][0]["u"] for r in rows if r["images"]), "")
@@ -761,6 +961,8 @@ def main():
         })
         if filled.get(cc):
             index[-1]["filled"] = filled[cc]
+        if listed:
+            index[-1]["listed"] = len(listed)
         by_country[cc] = rows
         if args.dry_run or args.verbose:
             note = f" [+{filled[cc]} to reach the floor]" if filled.get(cc) else ""
@@ -770,7 +972,7 @@ def main():
     # Validate BEFORE anything is written. Scoring every country first and
     # writing afterwards is the whole point: a gate that fires after half the
     # files are on disk has not gated anything.
-    failures = validate(published)
+    failures = validate(published) + validate_listed(listed_all)
     # The evidence gate's own failures, filtered to the rows that actually
     # publish: a spare that never reached the wire cannot stop the export.
     pub_ids = {r["id"] for r in published}
@@ -842,6 +1044,10 @@ def main():
             "version": pi.MODEL_VERSION,
             "weights": pi.WEIGHTS,
             "standout_bonus": pi.STANDOUT_BONUS,
+            # The photo engine that ordered every gallery in this wire
+            # (pipeline/photos/selection.py), shipped with the data so a
+            # reader can see which weights picked each hero (invariant 2).
+            "photo_rank": photo_rank_block(),
             "sub_scores": list(pi.SUB_SCORES),
             "tier_cutoffs": pi.TIER_CUTOFFS,
             "min_score": args.min_score,
@@ -850,6 +1056,9 @@ def main():
                                "this mountain (a Wikidata P18 or a file named "
                                "after it)",
             "country_floor": args.floor,
+            # The region quota model ships with the data (invariant 2).
+            "region_quota": (qmod.model_block()
+                             if qmod is not None and qmod.has_data() else None),
             "season_model": "Snow free months estimated from elevation and "
                             "latitude, not from a forecast or a lift "
                             "operator's calendar. Estimated, not measured.",
@@ -868,10 +1077,15 @@ def main():
     out_dir.mkdir(parents=True, exist_ok=True)
     for cc, rows in by_country.items():
         path = out_dir / f"{cc}.json"
-        path.write_text(json.dumps(
-            {"country": cc, "generated_at": generated, "n": len(rows),
-             "mountains": rows}, ensure_ascii=False, separators=(",", ":")),
-            encoding="utf-8")
+        envelope = {"country": cc, "generated_at": generated, "n": len(rows),
+                    "mountains": rows}
+        # A separate array, not a flag inside the main one: a screen has to
+        # opt in to showing unscored rows, and they can never interleave
+        # into a ranked list by accident.
+        if listed_by_country.get(cc):
+            envelope["listed"] = listed_by_country[cc]
+        path.write_text(json.dumps(envelope, ensure_ascii=False,
+                                   separators=(",", ":")), encoding="utf-8")
         if args.verbose:
             print(f"  {cc}: -> {path.name} ({path.stat().st_size // 1024} KB)")
     (out_dir / "index.json").write_text(
