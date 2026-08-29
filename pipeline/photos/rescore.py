@@ -93,10 +93,22 @@ def assessment_from_stars(stars):
     return 0.0
 
 
+def probe_url(url):
+    """The 500 px derivative of a Commons thumb URL, for scoring.
+
+    CLIP embeds at 224 px and the pixel reads all downscale first, so the
+    1280 px card asset buys nothing here and costs five times the
+    bandwidth. 500 is on Commons' served-width list (widths off that list
+    answer 400)."""
+    if url and "/thumb/" in url:
+        return re.sub(r"/\d+px-", "/500px-", url, count=1)
+    return url
+
+
 def score_one(img, category, evidence_field):
     """Fill beauty fields on one cached image record, in place. Returns
     the fetched bytes (for dedupe hashing) or None."""
-    url = img.get("url") or img.get("full") or ""
+    url = probe_url(img.get("url") or img.get("full") or "")
     data = fetch(url) if url else None
     emb = None
     if data is not None:
@@ -199,7 +211,10 @@ def rescore_country(layer, cc, dry_run=False):
     changed = vetoed_n = scored_n = 0
     for row in rows:
         images = row.get("images") or []
-        if not images:
+        # One image reorders to nothing and the transition rule would not
+        # drop it either way, so a single-image row costs the engine
+        # nothing until the funnel widens it.
+        if len(images) < 2:
             continue
         before = [i.get("file") or i.get("url") for i in images]
         for img in images:

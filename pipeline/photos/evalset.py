@@ -56,7 +56,11 @@ def _hero_url(row):
     imgs = row.get("images") or []
     if imgs:
         return imgs[0].get("u") or imgs[0].get("big") or ""
-    return row.get("img") or ""
+    img = row.get("img") or ""
+    # The trail wire ships img as an object; the hero is its display URL.
+    if isinstance(img, dict):
+        img = img.get("u") or img.get("url") or img.get("big") or ""
+    return img if isinstance(img, str) else ""
 
 
 def build():

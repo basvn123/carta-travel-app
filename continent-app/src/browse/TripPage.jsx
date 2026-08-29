@@ -11,6 +11,7 @@ import { RatingBadge } from '../components/RatingBadge.jsx';
 import { useI18n } from '../i18n/index.jsx';
 import { eur } from '../lib/format.js';
 import { loadTrip, tripShareUrl } from '../lib/trips.js';
+import { creditFor } from '../lib/imageCredit.js';
 import {
   tripHeadline, transportLabel, seasonLabel, tripWhy, tripWarnings,
   dayTitle, legLine, themeLabel, cardThumb, countryNames,
@@ -59,6 +60,48 @@ function Fact({ icon: Icon, value, label, word = false }) {
 }
 
 /**
+ * A sight's thumbnail, carrying its own credit. The photographs are CC
+ * licensed and each owes its author a name: the tooltip names them the
+ * way the destination page's slides do, and the image links its Commons
+ * file page, which states the full licence. Credits come from the
+ * poi_credits.json sidecar (lib/imageCredit.js), loaded lazily on the
+ * first sight anybody actually sees.
+ */
+function SightImg({ img }) {
+  const [credit, setCredit] = useState(null);
+  useEffect(() => {
+    let live = true;
+    creditFor(img).then((c) => { if (live) setCredit(c); });
+    return () => { live = false; };
+  }, [img]);
+  const label = credit && (credit.by || credit.lic)
+    ? [credit.by, credit.lic].filter(Boolean).join(', ')
+    : '';
+  const image = (
+    <img
+      className="itin-sight-img"
+      src={cardThumb(img)}
+      alt=""
+      loading="lazy"
+      title={label}
+    />
+  );
+  if (!credit || !credit.page) return image;
+  return (
+    <a
+      style={{ display: 'contents' }}
+      href={credit.page}
+      target="_blank"
+      rel="noopener noreferrer"
+      title={label || 'Wikimedia Commons'}
+      onClick={(e) => e.stopPropagation()}
+    >
+      {image}
+    </a>
+  );
+}
+
+/**
  * One named sight: its photograph, its one line, and a way to read more.
  *
  * The Wikipedia link was already in the wire and rendered nowhere, which made
@@ -69,7 +112,7 @@ function Sight({ poi, t }) {
   return (
     <li className="itin-sight">
       {poi.img
-        ? <img className="itin-sight-img" src={cardThumb(poi.img)} alt="" loading="lazy" />
+        ? <SightImg img={poi.img} />
         : <span className="itin-sight-img itin-sight-noimg" aria-hidden="true" />}
       <span className="itin-sight-text">
         {poi.wiki ? (
