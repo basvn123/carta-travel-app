@@ -6463,9 +6463,15 @@ input, select {
   box-shadow: var(--shadow-2);
   z-index: 41;
 }
+/* The scrim dims the grid the drawer reprices, and stops at the bar. It used
+   to cover the window (inset: 0) and out-rank .top-bar (z-index 25), so with
+   Lifestyle open the section tabs were behind it: pressing Trip planner only
+   dismissed the panel and you had to press it twice. The bar is permanent
+   chrome, the same way .trip-planner-screen and .account-shell treat it. */
 .lifestyle-scrim {
   position: fixed;
-  inset: 0;
+  top: var(--filter-h, 0px);
+  left: 0; right: 0; bottom: 0;
   z-index: 40;
   background: rgba(15, 23, 42, 0.28);
   animation: lifestyle-scrim-in .16s ease-out;
@@ -8700,6 +8706,14 @@ input, select {
   transition: border-color .15s, background .15s;
 }
 .account-avatar-btn:hover { border-color: var(--ink); background: var(--paper-dim); }
+/* On the account page. The bar has to say so: the section tabs give up their
+   underline while a page stands over them, and nothing else in the row would
+   otherwise mark where you are. */
+.account-avatar-btn.on {
+  border-color: var(--ink);
+  background: var(--ink);
+}
+.account-avatar-btn.on .account-avatar-label { color: var(--paper); }
 .account-avatar {
   display: flex;
   align-items: center;

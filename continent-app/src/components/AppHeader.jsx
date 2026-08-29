@@ -16,13 +16,17 @@ const NAV_ITEMS = [
   { key: 'day', labelKey: 'nav.day', Icon: ListDayIcon },
 ];
 
-function AccountButton({ user, onOpenAccount }) {
+function AccountButton({ user, onOpenAccount, accountOpen }) {
   const { t } = useI18n();
   const fullName = user?.user_metadata?.full_name?.trim();
   const initial = (fullName || user?.email || '?')[0].toUpperCase();
+  // Pressed state, and a second press closes: on desktop the account page has
+  // no cross of its own (see .account-panel .panel-close), so this button is
+  // its only door, both ways.
   return (
     <button
-      className="account-avatar-btn"
+      className={`account-avatar-btn${accountOpen ? ' on' : ''}`}
+      aria-pressed={accountOpen}
       onClick={onOpenAccount}
       title={user ? (fullName || user.email) : t('header.accountTitle')}
     >
@@ -46,7 +50,7 @@ function AccountButton({ user, onOpenAccount }) {
 // floats over the map itself, level with the Destinations pill (see
 // .map-toolrow in App), where it has room to state the question it is asking.
 export function AppHeader({
-  user, onOpenAccount, onSeePricing, onOpenFriends, friendsOpen,
+  user, onOpenAccount, accountOpen, onSeePricing, onOpenFriends, friendsOpen,
   onBrandClick,
   activeTab, onChangeTab,
   savedOpen, onToggleSaved,
@@ -68,13 +72,16 @@ export function AppHeader({
         <div className="brand-divider" aria-hidden="true" />
       </button>
 
-      {/* Desktop-only section switch (BottomNav covers this below 768px). */}
+      {/* Desktop-only section switch (BottomNav covers this below 768px).
+          A page laid over a tab (My trips, Account) takes the active state
+          away from it: the bar marks what is actually on screen, which is the
+          same rule BottomNav follows. */}
       <nav className="header-nav" aria-label="Sections">
         {NAV_ITEMS.map(({ key, labelKey, Icon }) => (
           <button
             key={key}
-            className={`header-nav-item ${activeTab === key && !savedOpen ? 'active' : ''}`}
-            aria-current={activeTab === key && !savedOpen ? 'page' : undefined}
+            className={`header-nav-item ${activeTab === key && !savedOpen && !accountOpen ? 'active' : ''}`}
+            aria-current={activeTab === key && !savedOpen && !accountOpen ? 'page' : undefined}
             onClick={() => onChangeTab(key)}
             title={t(labelKey)}
           >
@@ -83,7 +90,7 @@ export function AppHeader({
           </button>
         ))}
         <button
-          className={`header-nav-item ${savedOpen ? 'active' : ''}`}
+          className={`header-nav-item ${savedOpen && !accountOpen ? 'active' : ''}`}
           aria-pressed={savedOpen}
           onClick={onToggleSaved}
           title={t('nav.saved')}
@@ -132,7 +139,7 @@ export function AppHeader({
             <span className="header-friends-label">{t('friends.title')}</span>
           </button>
         )}
-        <AccountButton user={user} onOpenAccount={onOpenAccount} />
+        <AccountButton user={user} onOpenAccount={onOpenAccount} accountOpen={accountOpen} />
       </div>
     </div>
   );

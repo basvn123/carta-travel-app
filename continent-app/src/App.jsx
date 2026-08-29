@@ -182,6 +182,44 @@ function TravelApp() {
     setAccountEntry((n) => n + 1);
     setAccountOpen(true);
   };
+  // Account and Friends are doors, not one-way streets: pressing the control
+  // that opened a page closes it again, the way the phone's bottom bar has
+  // always behaved. On desktop this is the ONLY affordance, since the panel
+  // gives up its cross there (see .account-panel .panel-close) on the promise
+  // that the header can be pressed a second time.
+  //
+  // The avatar is the door to the whole page, not to one spoke inside it, so
+  // a second press closes it whichever spoke is showing; the rail is how you
+  // move between spokes. Friends is the exception, because it is a second
+  // door onto the same page: it only closes the page it itself opened.
+  const toggleAccount = () => (accountOpen ? setAccountOpen(false) : openAccountAt('home'));
+  const toggleFriends = () => (accountOpen && accountView === 'friends'
+    ? setAccountOpen(false)
+    : openAccountAt('friends'));
+
+  // One door into a section, whatever pressed it: the header tabs, the brand
+  // mark, the phone's bottom bar and the empty-shelf links all land on the
+  // tab AND clear whatever was standing over it. Account and My trips are
+  // full-height pages on desktop (z-index 56, everything below the bar), so a
+  // switch that left one open moved the underline to Explore while Explore
+  // stayed hidden behind the account page: the tab said one thing and the
+  // screen said another. Lifestyle goes with them, since every tab that can
+  // reprice from it carries its own button.
+  //
+  // Stable: the handovers further down take it as a dependency, and every
+  // setter it closes over is a useState setter.
+  const goToTab = useCallback((key) => {
+    setSavedTripsOpen(false);
+    setAccountOpen(false);
+    setLifestyleOpen(false);
+    setActiveTab(key);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  // My trips is the fifth door in the same row, so it clears the same things.
+  const toggleSaved = () => {
+    setAccountOpen(false);
+    setLifestyleOpen(false);
+    setSavedTripsOpen((v) => !v);
+  };
   // Shown before any data/route decisions: sign in, create an account, or
   // continue as a guest. Skipped entirely when accounts aren't configured,
   // once already signed in, or once guest mode has been chosen before.
@@ -358,8 +396,8 @@ function TravelApp() {
       label: trip.name || '',
       transportPref: trip.transport === 'car' ? 'owncar' : 'public',
     });
-    setActiveTab('trip');
-  }, []);
+    goToTab('trip');
+  }, [goToTab]);
 
   // Stable identity: this lands on every Explore card, so a fresh function
   // per render would defeat the card's React.memo.
@@ -445,18 +483,28 @@ function TravelApp() {
   // measure zero. The panels reserve the gutter unconditionally
   // (scrollbar-gutter: stable), so the number does not move when a list grows
   // past one screen.
+  //
+  // Nothing measurable means nothing to write, rather than zero: the planner
+  // tabs have no scrolling panel at all, and neither does the first render,
+  // before the data lands. Writing 0 in those two cases made the bar's right
+  // edge jump the gutter's width on every hop to a planner and back, and left
+  // the Passes chip overhanging on the very first paint until the first tab
+  // switch corrected it. `data` is in the deps for the second half of that:
+  // the panels only exist once it has arrived.
+  const dataReady = !!data;
   useEffect(() => {
     const apply = () => {
-      let gutter = 0;
+      let gutter = null;
       for (const el of document.querySelectorAll('.explore-tab, .places-tab')) {
         if (el.offsetWidth > 0) { gutter = el.offsetWidth - el.clientWidth; break; }
       }
+      if (gutter === null) return;
       document.documentElement.style.setProperty('--sbw', `${gutter}px`);
     };
     apply();
     window.addEventListener('resize', apply);
     return () => window.removeEventListener('resize', apply);
-  }, [activeTab]);
+  }, [activeTab, dataReady]);
 
   // Keep --filter-h in sync with the filter bar's real height. The bar uses
   // min-height + wraps its controls; everything below it is positioned at
@@ -635,15 +683,16 @@ function TravelApp() {
       <div className="top-bar" ref={filterBarRef} onClick={(e) => e.stopPropagation()}>
         <AppHeader
           user={user}
-          onOpenAccount={() => openAccountAt('home')}
-          onOpenFriends={() => openAccountAt('friends')}
+          onOpenAccount={toggleAccount}
+          accountOpen={accountOpen}
+          onOpenFriends={toggleFriends}
           friendsOpen={accountOpen && accountView === 'friends'}
           onSeePricing={() => setPassOpen(true)}
-          onBrandClick={() => { setSavedTripsOpen(false); setActiveTab('places'); }}
+          onBrandClick={() => goToTab('places')}
           activeTab={activeTab}
-          onChangeTab={(key) => { setSavedTripsOpen(false); setActiveTab(key); }}
+          onChangeTab={goToTab}
           savedOpen={savedTripsOpen}
-          onToggleSaved={() => { setAccountOpen(false); setSavedTripsOpen((v) => !v); }}
+          onToggleSaved={toggleSaved}
         />
 
       </div>
@@ -668,7 +717,7 @@ function TravelApp() {
                 onClick={() => {
                   setPendingSharedTrip(sharedTrip);
                   setSharedTrip(null);
-                  setActiveTab('trip');
+                  goToTab('trip');
                 }}
               >
                 {t('share.open')}
@@ -808,7 +857,7 @@ function TravelApp() {
               stayTier={choices.stay_tier || 'home'}
               onPlanDay={(target) => {
                 setPendingDayPlanId(target); // { planId|null, stopIndex, dayIndex }
-                setActiveTab('day');
+                goToTab('day');
               }}
             />
           </Suspense>
@@ -849,12 +898,12 @@ function TravelApp() {
               else if (layer === 'beaches') setPendingBeach({ id: String(ref.id), cc: ref.cc });
               else if (layer === 'lakes') setPendingLake({ id: String(ref.id), cc: ref.cc });
               else if (layer === 'mountains') setPendingMountain({ id: String(ref.id), cc: ref.cc });
-              setActiveTab('places');
+              goToTab('places');
             }}
             onOpenItin={(id) => {
               setSelectedId(null);
               setPendingTrip({ id });
-              setActiveTab('places');
+              goToTab('places');
             }}
           />
         </div>
@@ -863,11 +912,11 @@ function TravelApp() {
       <div onClick={(e) => e.stopPropagation()}>
         <BottomNav
           activeTab={activeTab}
-          onChangeTab={(key) => { setSavedTripsOpen(false); setAccountOpen(false); setActiveTab(key); }}
+          onChangeTab={goToTab}
           savedOpen={savedTripsOpen}
-          onToggleSaved={() => { setAccountOpen(false); setSavedTripsOpen((v) => !v); }}
+          onToggleSaved={toggleSaved}
           accountOpen={accountOpen}
-          onToggleAccount={() => (accountOpen ? setAccountOpen(false) : openAccountAt('home'))}
+          onToggleAccount={toggleAccount}
         />
       </div>
 
@@ -881,22 +930,19 @@ function TravelApp() {
             onClose={() => setSavedTripsOpen(false)}
             onLoadTrip={(trip) => {
               handleLoadTrip(trip);
-              setSavedTripsOpen(false);
-              setActiveTab('map'); // the loaded trip opens as a map detail panel
+              goToTab('map'); // the loaded trip opens as a map detail panel
             }}
             onOpenAuth={() => { setSavedTripsOpen(false); setAuthModalMode('signin'); setAuthModalOpen(true); }}
             /* An empty shelf offers the tab that fills it, so "nothing here
                yet" comes with somewhere to go. */
-            onGoToTab={(key) => { setSavedTripsOpen(false); setActiveTab(key); }}
+            onGoToTab={goToTab}
             onOpenDayPlan={(id) => {
-              setSavedTripsOpen(false);
               setPendingDayPlanId(id);
-              setActiveTab('day');
+              goToTab('day');
             }}
             onLoadTripPlan={(id) => {
-              setSavedTripsOpen(false);
               setPendingTripPlanId(id);
-              setActiveTab('trip');
+              goToTab('trip');
             }}
           />
         </div>
