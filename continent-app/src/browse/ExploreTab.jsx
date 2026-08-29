@@ -9,6 +9,7 @@ import { useExploreCatalog } from '../hooks/useExploreCatalog.js';
 import { ExploreFilterSheet } from './ExploreFilterSheet.jsx';
 import { CategoryRail } from './CategoryRail.jsx';
 import { useI18n } from '../i18n/index.jsx';
+import { GuidesStrip } from '../community/GuidesStrip.jsx';
 import { isFullRatingRange, FULL_RATING_RANGE } from '../lib/rating.js';
 import {
   FilterIcon, CalendarIcon, CameraIcon, ClockIcon, InfoIcon,
@@ -269,7 +270,7 @@ export function ExploreTab({
   selectedId, onSelect,
   indices,
   isMock = false,
-  choices, onOpenLifestyle,
+  choices, onOpenLifestyle, onOpenGuides,
 }) {
   const { t } = useI18n();
   const [sheetOpen, setSheetOpen] = React.useState(false);
@@ -476,6 +477,13 @@ export function ExploreTab({
             </div>
           </div>
         </div>
+
+        {/* The one community surface on a browse tab: a real count of what
+            people have published, and one door. No preview carousel, because
+            the priced destinations below are why anybody opened this tab and
+            a new feature does not get to push them under the fold. Absent
+            entirely when nothing is published. */}
+        <GuidesStrip onOpen={onOpenGuides} />
 
         {/* Only when there is something to say. The cards carry a euro figure
             and the Lifestyle chip above states what it assumes, so a standing

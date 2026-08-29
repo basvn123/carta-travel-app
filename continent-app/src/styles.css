@@ -22411,6 +22411,71 @@ button.ai-sched-main:focus-visible {
   gap: 6px;
   flex: none;
 }
+/* What a person is DOING, under their name: a plan they published, never a
+   state they are in. The date half is mono because it is a measured fact and
+   the place half is not, which is the app's rule everywhere else too. */
+.frn-fact {
+  margin-top: 1px;
+  font-size: 11.5px;
+  color: var(--ink-soft);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.frn-fact-when {
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-mute);
+}
+/* A count beside a heading is a measured number, so it is set like one rather
+   than folded into the uppercased title text. */
+.frn-count {
+  margin-left: 7px;
+  font-family: var(--mono);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0;
+  color: var(--ink-mute);
+}
+/* Empty states are invitations. The plain one names the space; the one with
+   an action hands over the button that fills it. Neither apologises. */
+.frn-empty {
+  margin: 10px 0 2px;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--ink-soft);
+}
+.frn-empty-act {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  margin-top: 8px;
+  padding: 14px;
+  border: 1px dashed var(--rule);
+  border-radius: 12px;
+}
+.frn-empty-act p {
+  margin: 0;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--ink-soft);
+}
+.frn-empty-btn {
+  display: inline-flex;
+  align-items: center;
+  min-height: 34px;
+  padding: 7px 14px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: var(--bg-card);
+  font-family: var(--ui);
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--ink);
+  cursor: pointer;
+}
+.frn-empty-btn:hover { border-color: var(--ink); }
 .frn-yes,
 .frn-no {
   display: inline-flex;
@@ -22454,7 +22519,11 @@ button.ai-sched-main:focus-visible {
   padding-bottom: 12px;
   border-bottom: 1px solid var(--rule-soft);
 }
-.tshare-vis-title {
+/* The co-planner block shares these two treatments, and says so here rather
+   than borrowing the visibility control's class names in the markup: one
+   selector answering for two blocks is how a restyle breaks the other one. */
+.tshare-vis-title,
+.coplan-title {
   font-size: 11px;
   font-weight: 600;
   letter-spacing: .06em;
@@ -22478,7 +22547,8 @@ button.ai-sched-main:focus-visible {
   cursor: pointer;
 }
 .tshare-vis-opt.on { background: var(--ink); color: var(--paper); }
-.tshare-vis-sub {
+.tshare-vis-sub,
+.coplan-sub {
   margin: 0;
   font-size: 11.5px;
   line-height: 1.45;
@@ -22568,7 +22638,45 @@ button.ai-sched-main:focus-visible {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.frn-trip-who { font-size: 11.5px; color: var(--ink-mute); }
+.frn-trip-who {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  font-size: 11.5px;
+  color: var(--ink-mute);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+/* When it last moved, so the shelf reads as a change log. Mono: it is a
+   measured interval, not prose. */
+.frn-trip-when {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  color: var(--ink-mute);
+}
+.frn-trip-dates {
+  margin-top: 2px;
+  font-family: var(--mono);
+  font-size: 11.5px;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-soft);
+}
+/* NEW is a status, not an action and not a measure, so it takes neither the
+   accent (which means "press this") nor a fresh hue. The ochre seal is what
+   this app already uses for a quiet mark. */
+.frn-trip-new {
+  margin-left: 7px;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: var(--rate-bg);
+  font-family: var(--ui);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--rate);
+  vertical-align: 1px;
+}
 .frn-trip .ftrip { margin: 0; border-radius: 0 0 12px 12px; }
 
 /* ── Friend chips under the ledger's traveller slots ────────────────────── */
@@ -22740,16 +22848,26 @@ button.ai-sched-main:focus-visible {
   flex: none;
   min-height: 32px;
   padding: 6px 13px;
-  border: 0;
+  border: 1px solid var(--rule);
   border-radius: 999px;
-  background: var(--accent);
+  background: transparent;
   font-family: var(--ui);
   font-size: 12px;
   font-weight: 600;
-  color: #fff;
+  color: var(--ink-soft);
   cursor: pointer;
 }
-.frn-me-share:hover { background: var(--accent-soft); }
+.frn-me-share:hover { border-color: var(--ink); color: var(--ink); }
+/* ONE accent per view. Accepting a request is the page's primary whenever one
+   is waiting, because it answers a question somebody asked. Inviting takes the
+   accent only in the one state where growing the graph really is the job:
+   nothing pending and nobody added yet. */
+.frn-me-share.primary {
+  border-color: transparent;
+  background: var(--accent);
+  color: #fff;
+}
+.frn-me-share.primary:hover { background: var(--accent-soft); border-color: transparent; }
 .frn-me { flex-wrap: wrap; }
 .frn-me-handle { flex: 1 1 100%; }
 @media (min-width: 420px) {
@@ -28542,4 +28660,525 @@ button.ai-sched-main:focus-visible {
 
 @media (prefers-reduced-motion: reduce) {
   .side-navrow, .saved-cat { transition: none; }
+}
+
+
+/* == Published guides (community/GuidesPanel.jsx) ==========================
+   A gallery of DOCUMENTS, so the units here are objects and get borders,
+   while the route inside one is a list and gets hairlines. Photographs come
+   from the reader's own catalogue, never from a stranger's payload.
+   ========================================================================= */
+.guides-panel { z-index: 1200; }
+
+/* The door on Explore and at the foot of the friends page. One real count,
+   one action, and it removes itself when there is nothing to open. */
+.gld-strip {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 14px;
+  padding: 11px 14px;
+  border: 1px solid var(--rule-soft);
+  border-radius: 12px;
+  background: var(--bg-card);
+}
+.gld-strip-icon { display: inline-flex; flex: none; color: var(--ink-mute); }
+.gld-strip-text {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+  font-size: 12.5px;
+  color: var(--ink-soft);
+}
+/* A count is a measured fact, so it is set like one. */
+.gld-strip-n {
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  color: var(--ink);
+}
+.gld-strip-btn {
+  flex: none;
+  min-height: 32px;
+  padding: 6px 13px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: transparent;
+  font-family: var(--ui);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  cursor: pointer;
+}
+.gld-strip-btn:hover { border-color: var(--ink); color: var(--ink); }
+.frn-guides { padding-top: 0; }
+
+/* The gallery. ONE column, and the card runs across rather than down.
+   A two-up grid of photo tiles is a shape for a page; this lives in a 440px
+   slide-over, where two columns left every title truncated mid-word. Across,
+   a card holds its full title, its route, its facts and its byline at 380px
+   and at 440px alike. */
+.gld-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+.gld-card {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  gap: 0;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid var(--rule);
+  border-radius: 14px;
+  background: var(--bg-card);
+  font-family: var(--ui);
+  text-align: left;
+  cursor: pointer;
+}
+.gld-card:hover { border-color: var(--ink-mute); }
+.gld-card:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.gld-card-photo {
+  position: relative;
+  display: block;
+  flex: none;
+  width: 116px;
+  align-self: stretch;
+  background: var(--paper-dim);
+}
+.gld-card-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.gld-card-nophoto {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  color: var(--ink-mute);
+}
+.gld-card-flags {
+  position: absolute;
+  right: 6px;
+  top: 6px;
+  display: inline-flex;
+  padding: 3px 6px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.92);
+}
+.gld-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  flex: 1;
+  min-width: 0;
+  padding: 11px 13px 11px 12px;
+}
+/* Two lines before it truncates: a guide's title is the one thing on the card
+   that carries what it is about, so clipping it at 20 characters made every
+   card read the same. */
+.gld-card-title {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  font-size: 13.5px;
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--ink);
+}
+.gld-card-route {
+  font-size: 12px;
+  color: var(--ink-soft);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+/* Nights and season are measured facts. Comma separated, never a middot. */
+.gld-card-facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+  margin-top: 2px;
+  font-family: var(--mono);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-mute);
+}
+.gld-card-by {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 5px;
+  font-size: 11.5px;
+  color: var(--ink-mute);
+}
+
+/* One guide, opened. */
+.gld-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 10px;
+  padding: 5px 11px 5px 8px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: transparent;
+  font-family: var(--ui);
+  font-size: 12px;
+  color: var(--ink-soft);
+  cursor: pointer;
+}
+.gld-back:hover { border-color: var(--ink); color: var(--ink); }
+.gld-back-chev { transform: rotate(90deg); }
+.gld-title {
+  margin: 0 0 6px;
+  font-family: var(--display);
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 1.25;
+  color: var(--ink);
+}
+.gld-byline {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 12px;
+  margin-bottom: 12px;
+}
+.gld-by {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12.5px;
+  color: var(--ink-soft);
+}
+.gld-meta {
+  font-family: var(--mono);
+  font-size: 11.5px;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-mute);
+}
+.gld-copy {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 34px;
+  padding: 7px 14px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: transparent;
+  font-family: var(--ui);
+  font-size: 12.5px;
+  color: var(--ink-soft);
+  cursor: pointer;
+}
+.gld-copy:hover { border-color: var(--ink); color: var(--ink); }
+.gld-map {
+  position: relative;
+  height: 210px;
+  overflow: hidden;
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+}
+/* The route is a list of related facts, so hairlines rather than a card each. */
+.gld-stops {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.gld-stop {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--rule-soft);
+}
+.gld-stop:last-child { border-bottom: 0; }
+.gld-stop-mark { display: inline-flex; flex: none; color: var(--ink-mute); }
+.gld-stop-city {
+  flex: 1;
+  min-width: 0;
+  font-size: 13.5px;
+  color: var(--ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.gld-stop-nights {
+  flex: none;
+  font-family: var(--mono);
+  font-size: 11.5px;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-mute);
+}
+.gld-story {
+  margin: 0;
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: var(--ink-soft);
+  white-space: pre-wrap;
+}
+.gld-highlights {
+  margin: 0;
+  padding-left: 18px;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--ink-soft);
+}
+/* What a published guide never carries, said once at the foot rather than
+   asked to be taken on trust. */
+.gld-note {
+  margin: 0;
+  padding-top: 12px;
+  border-top: 1px solid var(--rule-soft);
+  font-size: 11.5px;
+  line-height: 1.55;
+  color: var(--ink-mute);
+}
+.gld-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+.gld-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-height: 30px;
+  padding: 5px 12px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: transparent;
+  font-family: var(--ui);
+  font-size: 12px;
+  color: var(--ink-soft);
+  cursor: pointer;
+}
+.gld-chip:hover { border-color: var(--ink-mute); }
+.gld-chip.on {
+  border-color: transparent;
+  background: var(--ink-fill);
+  color: #fff;
+}
+@media (prefers-reduced-motion: reduce) {
+  .gld-card, .gld-chip, .gld-strip-btn { transition: none; }
+}
+
+
+/* == Co-planners (auth/coplanners.js, TripSharePanel, FriendsSpoke) ========
+   Who else may edit one trip. A list of people, so hairlines, and it sits
+   inside the same panel that answers "who can see this": one screen, one
+   subject. The sub-line states what a co-planner gets and what stays with
+   its owner, because a control that shares without saying what it shares is
+   the thing this whole layer exists to avoid.
+   ========================================================================= */
+.tshare-coplan {
+  margin: 0 0 16px;
+  padding: 14px;
+  border: 1px solid var(--rule-soft);
+  border-radius: 12px;
+  background: var(--bg-card);
+}
+.coplan-title { display: block; margin-bottom: 4px; }
+.coplan-sub { margin-bottom: 10px; }
+.coplan-list { margin-bottom: 10px; }
+.coplan-row {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--rule-soft);
+}
+.coplan-row:last-child { border-bottom: 0; }
+.coplan-who {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+.coplan-who b {
+  font-size: 13px;
+  color: var(--ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+/* Asked, or editing. A state, so it takes the ochre seal rather than the
+   accent, which in this app means "press this". */
+.coplan-state {
+  font-size: 11px;
+  color: var(--ink-mute);
+}
+.coplan-ask {
+  display: flex;
+  gap: 8px;
+  align-items: stretch;
+}
+.coplan-pick {
+  flex: 1;
+  min-width: 0;
+  min-height: 36px;
+  padding: 7px 10px;
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  background: var(--paper);
+  font-family: var(--ui);
+  font-size: 12.5px;
+  color: var(--ink);
+}
+.coplan-pick:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.coplan-ask-btn {
+  flex: none;
+  min-height: 36px;
+  padding: 7px 15px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: transparent;
+  font-family: var(--ui);
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  cursor: pointer;
+}
+.coplan-ask-btn:hover:not(:disabled) { border-color: var(--ink); color: var(--ink); }
+.coplan-ask-btn:disabled { opacity: 0.5; cursor: default; }
+/* A trip somebody else owns, in a list of your own. It says whose it is
+   rather than looking identical to the ones you can delete. */
+.uptrip-coplan {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 3px;
+  font-size: 11px;
+  color: var(--rate-soft);
+}
+
+/* ---- Region layer: travel band dividers and the region page ---------- */
+/* A band divider is a rule in the list, not a card: it says "everything
+   below this line is a day trip away" and nothing else. Full width in the
+   card grid, hairline under the label, same ink as the near header. */
+.places-bandhead {
+  grid-column: 1 / -1;
+  margin: 14px 2px 0;
+  padding-bottom: 4px;
+  border-bottom: 1px solid var(--rule-soft);
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--ink-soft);
+}
+
+/* The region page: one full screen record, same shell as the other pages. */
+.rgnp {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  overflow-y: auto;
+  background: var(--paper);
+}
+.rgnp-inner {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 18px 20px 64px;
+}
+.rgnp-back {
+  border: 0;
+  background: none;
+  padding: 8px 4px;
+  font-size: 15px;
+  cursor: pointer;
+  color: var(--ink);
+}
+.rgnp-kind {
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--ink-soft);
+}
+.rgnp h1 {
+  margin: 2px 0 14px;
+  font-size: 26px;
+  line-height: 1.15;
+}
+.rgnp-sect {
+  margin: 22px 2px 8px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.rgnp-list {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+@media (min-width: 700px) {
+  .rgnp-list { grid-template-columns: 1fr 1fr; }
+}
+.rgnp-card {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  text-align: left;
+  border: 1px solid var(--rule-soft);
+  border-radius: 10px;
+  padding: 8px;
+  background: var(--bg-card);
+  cursor: pointer;
+}
+.rgnp-card img {
+  width: 84px;
+  height: 63px;
+  object-fit: cover;
+  border-radius: 6px;
+  flex: none;
+  background: var(--paper-dim);
+}
+.rgnp-card-noimg {
+  width: 84px;
+  height: 63px;
+  border-radius: 6px;
+  flex: none;
+  background: var(--paper-dim);
+}
+.rgnp-card-name {
+  font-weight: 600;
+  font-size: 15px;
+}
+.rgnp-card-sub {
+  font-size: 12.5px;
+  color: var(--ink-soft);
+}
+/* The listed card is a DIFFERENT kind of thing, and it looks like one: a
+   dashed border where rated cards have a solid one, and a plain chip where
+   they have a score. Never a grey 0.0, never a dash where a number lives. */
+.rgnp-card.rgnp-listed {
+  border-style: dashed;
+}
+.rgnp-listed-chip {
+  display: inline-block;
+  margin-top: 2px;
+  padding: 1px 7px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  font-size: 11.5px;
+  color: var(--ink-soft);
+}
+.rgnp-neigh {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.rgnp-neigh button {
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  background: none;
+  padding: 6px 10px;
+  font-size: 13px;
+  cursor: pointer;
+  color: var(--ink);
 }

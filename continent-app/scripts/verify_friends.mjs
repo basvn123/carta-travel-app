@@ -21,6 +21,19 @@
 //      id behind any of them.
 //   7c. A friend's trip draws as a map, and the record counts alongside
 //       theirs without pretending to be a ranking.
+//   9. The page is about PLANS: every person row carries a fact drawn from
+//      the trips that person is showing, and the shelf of those trips reads
+//      newest first with a mark on what moved since the last visit.
+//  10. ONE accent: while a request is waiting, Accept is the only terracotta
+//      control on the page and inviting is quiet.
+//  11. The empty shelf is an invitation with the action attached, not a
+//      sentence explaining a mechanism.
+//  12. Co-planning: an invitation to help plan somebody's trip is answerable
+//      here, and says what joining does and does not share.
+//  13. The owner half: the share panel offers ONLY friends as co-planners
+//      (migration 020's insert policy accepts nobody else), names what a
+//      co-planner may and may not do, and a trip somebody else owns offers
+//      neither Remove nor the invite block.
 //   8. Mobile width: no sideways scroll, the Passes control survives both
 //      slide-overs, opening one closes the other, and the header's own
 //      Friends door lands on the friends spoke.
@@ -54,6 +67,13 @@ const ANA = { user_id: '00000000-0000-4000-8000-0000000000a3', handle: 'ana_r', 
 // z-index), so `.account-panel` matches BOTH slide-overs. Anything asserting
 // about the account panel alone uses ACCOUNT_PANEL below.
 const ACCOUNT_PANEL = '.account-panel:not(.saved-trips-panel)';
+
+// Relative time is only rendered inside four weeks, and the New mark is
+// relative to the last visit, so both fixtures are stamped at run time.
+const RECENT = new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString();
+const OLDER = new Date(Date.now() - 9 * 24 * 60 * 60 * 1000).toISOString();
+// Seeded as the last visit: after Sofie's trip moved, before Ana's.
+const LAST_SEEN = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
 
 const isUp = async () => {
   try { return (await fetch(BASE)).ok; } catch { return false; }
@@ -131,6 +151,18 @@ async function stub(page, state) {
     return json(r, state.links);
   });
 
+  // A plan of MY OWN, so the share panel (and its co-planner block) has
+  // something to open. Registered after the catch-all, which Playwright tries
+  // in reverse order, so this wins.
+  await page.route('**/rest/v1/trip_plans*', (r) => {
+    if (r.request().method() !== 'GET') return json(r, [], 204);
+    return json(r, state.tripPlans);
+  });
+  await page.route('**/rest/v1/trip_plan_stops*', (r) => {
+    if (r.request().method() !== 'GET') return json(r, [], 204);
+    return json(r, state.tripStops);
+  });
+  await page.route('**/rest/v1/trip_shares*', (r) => json(r, []));
   await page.route('**/rest/v1/rpc/list_friend_trips*', (r) => json(r, state.friendTrips));
   await page.route('**/rest/v1/rpc/get_friend_trip*', (r) => json(r, [{
     trip_plan_id: 'ftrip-1',
@@ -161,6 +193,7 @@ async function stub(page, state) {
 
 const seedSession = (ref, user) => `(() => {
   localStorage.setItem('continent.guestMode.v1', '1');
+  localStorage.setItem('carta.friends.lastSeen', ${JSON.stringify(LAST_SEEN)});
   localStorage.setItem('carta.welcomeSeen', '1');
   localStorage.setItem('carta.mapGuideDone', '1');
   localStorage.setItem('sb-${ref}-auth-token', JSON.stringify({
@@ -199,11 +232,29 @@ const run = async () => {
       { id: 'f2', requester_id: ME.id, addressee_id: JONAS.user_id, status: 'pending', created_at: '2026-08-02T00:00:00Z' },
       { id: 'f3', requester_id: ANA.user_id, addressee_id: ME.id, status: 'accepted', created_at: '2026-07-01T00:00:00Z' },
     ],
+    tripPlans: [{
+      id: 'myplan-1', user_id: ME.id, label: 'Spring in Seville',
+      visibility: 'private', created_at: '2026-08-01T00:00:00Z',
+      updated_at: '2026-08-01T00:00:00Z', published_at: null,
+    }],
+    tripStops: [{
+      trip_plan_id: 'myplan-1', position: 0, city: 'Seville', country: 'Spain',
+      destination_id: 'SVQ', arrive_date: '2099-04-02', depart_date: '2099-04-08',
+    }],
     friendTrips: [{
       owner_id: SOFIE.user_id, owner_handle: SOFIE.handle, owner_name: SOFIE.display_name, owner_emoji: null,
       trip_plan_id: 'ftrip-1', label: 'Two weeks in Portugal',
       start_date: '2026-06-02', end_date: '2026-06-09',
       cities: ['Lisbon', 'Porto'], countries: ['Portugal'], destination_ids: ['LIS', 'OPO'],
+      updated_at: OLDER,
+    }, {
+      // Ana is the ACCEPTED friend, so hers is the row that must carry a fact.
+      // Touched two hours ago, which is what makes the shelf a change log.
+      owner_id: ANA.user_id, owner_handle: ANA.handle, owner_name: ANA.display_name, owner_emoji: null,
+      trip_plan_id: 'ftrip-2', label: 'A weekend in Ghent',
+      start_date: '2099-09-03', end_date: '2099-09-09',
+      cities: ['Ghent'], countries: ['Belgium'], destination_ids: ['GNE'],
+      updated_at: RECENT,
     }],
   };
 
@@ -304,6 +355,65 @@ const run = async () => {
     fail('a friend trip rendered no map');
   }
   await page.locator('.frn-trip-row').first().click();
+
+  /* ---- 9. The page is about plans, and people are its index ---- */
+  const anaRow = page.locator('.frn-row').filter({ hasText: 'Ana Rocha' }).first();
+  const anaFact = await anaRow.locator('.frn-fact').innerText().catch(() => '');
+  if (!/Ghent/.test(anaFact)) {
+    fail(`the accepted friend's row says nothing about what she is doing: "${anaFact}"`);
+  } else if (!/September/i.test(anaFact)) {
+    fail(`the row names the place but not the window: "${anaFact}"`);
+  } else ok(`a person row carries a PLAN, not a state: "${anaFact}"`);
+  // The window is a measured fact and is set as one.
+  if (!await anaRow.locator('.frn-fact-when').count()) {
+    fail('the date window on a person row is not set in the mono face');
+  } else ok('and its dates are set in mono, like every other figure here');
+  // Nothing on this page may claim to know where somebody IS.
+  const spokeAll = await page.locator(ACCOUNT_PANEL).innerText();
+  for (const [what, re] of [
+    ['a presence state', /\bonline\b|last seen/i],
+    ['a current location', /currently in|current location/i],
+    ['an invented score', /profile score|global rank|% match/i],
+  ]) {
+    if (re.test(spokeAll)) fail(`the friends page shows ${what}`);
+  }
+  ok('no presence, no current location, no invented score');
+
+  // The shelf is a change log: newest first, and marked when it moved after
+  // the last visit.
+  const firstTrip = await page.locator('.frn-trip-row').first().innerText();
+  if (!/Ghent/.test(firstTrip)) {
+    fail(`the shelf is not newest first: it leads with "${firstTrip.replace(/\n/g, ' | ')}"`);
+  } else ok('the shelf reads newest first');
+  const newMarks = await page.locator('.frn-trip-new').count();
+  if (newMarks !== 1) fail(`${newMarks} trips are marked New, expected exactly the one that moved`);
+  else ok('exactly the trip that moved since the last visit is marked New');
+  if (!/hours? ago/i.test(firstTrip)) {
+    fail(`the shelf does not say when a trip moved: "${firstTrip.replace(/\n/g, ' | ')}"`);
+  } else ok('and each row says how long ago it moved');
+  // One action per row, not three.
+  const rowBtns = await page.locator('.frn-trip').first().locator('button').count();
+  if (rowBtns !== 1) fail(`a trip row carries ${rowBtns} buttons, expected exactly 1`);
+  else ok('one action per trip, not a row of them');
+
+  /* ---- 10. One accent while a request is waiting ---- */
+  const accented = await page.evaluate(() => {
+    const panel = document.querySelector('.account-panel:not(.saved-trips-panel)');
+    if (!panel) return [];
+    const accent = getComputedStyle(document.documentElement)
+      .getPropertyValue('--accent').trim().toLowerCase();
+    const hex = (c) => {
+      const m = c.match(/\d+/g);
+      if (!m) return '';
+      return '#' + m.slice(0, 3).map((n) => Number(n).toString(16).padStart(2, '0')).join('');
+    };
+    return [...panel.querySelectorAll('button')]
+      .filter((b) => b.offsetParent !== null && hex(getComputedStyle(b).backgroundColor) === accent)
+      .map((b) => b.innerText.trim().slice(0, 20));
+  });
+  if (accented.length !== 1 || !/accept/i.test(accented[0] || '')) {
+    fail(`the accent is on ${JSON.stringify(accented)}, expected Accept alone`);
+  } else ok('one accent on the page, and it is the question waiting on you');
   await page.screenshot({ path: `${SHOTS}/friends-spoke.png` });
 
   /* ---- 3 and 4. Looking somebody up ---- */
@@ -405,6 +515,96 @@ const run = async () => {
   else ok('and the handle is stripped from the address bar');
   await inviteCtx.close();
 
+  /* ---- 11. The empty shelf hands over an action ---- */
+  const emptyState = { ...state, friendTrips: [], links: state.links };
+  const emptyCtx = await browser.newContext({ viewport: { width: 1360, height: 950 } });
+  await emptyCtx.addInitScript(seedSession(PROJECT_REF, ME));
+  const ep = await emptyCtx.newPage();
+  await stub(ep, emptyState);
+  await ep.goto(`${BASE}/?o=CRL`);
+  await ep.locator('.header-friends-btn').click({ timeout: 60000 });
+  await ep.locator('.frn-empty-act').waitFor({ timeout: 20000 });
+  const emptyBtn = ep.locator('.frn-empty-btn');
+  if (!await emptyBtn.count()) {
+    fail('the empty shelf explains a mechanism and offers nothing to press');
+  } else ok(`the empty shelf hands over an action: "${await emptyBtn.innerText()}"`);
+  await emptyBtn.click();
+  await ep.locator('.saved-trips-panel').waitFor({ timeout: 12000 });
+  ok('and that action opens My trips, where a trip can be shown');
+  await emptyCtx.close();
+
+  /* ---- 12. Being asked to co-plan somebody's trip ---- */
+  const coCtx = await browser.newContext({ viewport: { width: 1360, height: 950 } });
+  await coCtx.addInitScript(seedSession(PROJECT_REF, ME));
+  const cp = await coCtx.newPage();
+  cp.on('pageerror', (e) => fail(`page error on the co-plan band: ${e.message}`));
+  await stub(cp, state);
+  await cp.goto(`${BASE}/?o=CRL&coplanmock=some`);
+  await cp.locator('.header-friends-btn').click({ timeout: 60000 });
+  await cp.locator('.frn-find').waitFor({ timeout: 20000 });
+  await cp.waitForTimeout(900);
+  const co = await cp.locator(ACCOUNT_PANEL).innerText();
+  for (const [what, re] of [
+    ['the invitation', /asked to help plan \(1\)/i],
+    ['the trip', /Ten days in the Alps/],
+    ['who asked', /From Sofie Vermeulen/i],
+    ['the way in', /\bJoin\b/],
+  ]) {
+    if (!re.test(co)) fail(`the co-plan band is missing ${what}`);
+  }
+  ok('an invitation to co-plan is answerable on the friends page');
+  // A control that shares without saying what it shares is the whole problem.
+  if (!/does not share/i.test(co)) {
+    fail('the co-plan band does not say what joining leaves with its owner');
+  } else ok('and it states what joining does NOT share');
+  await cp.screenshot({ path: `${SHOTS}/friends-coplan.png` });
+  await coCtx.close();
+
+  /* ---- 13. The owner half of co-planning ---- */
+  const ownCtx = await browser.newContext({ viewport: { width: 1360, height: 950 } });
+  await ownCtx.addInitScript(seedSession(PROJECT_REF, ME));
+  const op = await ownCtx.newPage();
+  op.on('pageerror', (e) => fail(`page error on the share panel: ${e.message}`));
+  await stub(op, state);
+  await op.goto(`${BASE}/?o=CRL&coplanmock=none`);
+  const myTrips = op.locator('.header-nav-item, .bottom-nav-item')
+    .filter({ hasText: /^(Saved trips|My trips)$/ }).locator('visible=true').first();
+  await myTrips.click({ timeout: 60000 });
+  await op.locator('.saved-trips-panel').waitFor({ timeout: 15000 });
+  await op.locator('.saved-tab:visible').nth(1).click();
+  await op.locator('.uptrip-card').first().waitFor({ timeout: 15000 });
+  // Open the share panel through its card menu, the way a person would.
+  await op.locator('.uptrip-menu button').first().click();
+  await op.locator('.card-menu-item, .cardmenu-item, [role="menuitem"]')
+    .filter({ hasText: /share/i }).first().click({ timeout: 10000 });
+  await op.locator('.tshare-coplan').waitFor({ timeout: 15000 });
+
+  const co2 = await op.locator('.tshare-coplan').innerText();
+  if (!/route/i.test(co2) || !/cannot delete/i.test(co2)) {
+    fail(`the co-planner block does not say what a co-planner may and may not do: "${co2.replace(/\n/g, ' | ').slice(0, 200)}"`);
+  } else ok('the co-planner block states what it hands over, and what it does not');
+  // Only friends. Sofie was accepted earlier in this run's fixture, Ana is an
+  // accepted friend; Jonas is only an outgoing request and must not appear.
+  const picks = await op.locator('.coplan-pick option').allInnerTexts();
+  if (picks.some((p) => /Jonas/.test(p))) {
+    fail(`the picker offers somebody who is not a friend: ${JSON.stringify(picks)}`);
+  } else if (!picks.some((p) => /Ana Rocha/.test(p))) {
+    fail(`the picker does not offer an accepted friend: ${JSON.stringify(picks)}`);
+  } else ok('only accepted friends can be asked to co-plan');
+
+  // The third visibility exists and says what publishing means.
+  const vis = await op.locator('.tshare-vis').innerText();
+  if (!/Anyone/i.test(vis)) fail('the trip cannot be published as a guide');
+  else ok('a trip can be published to the guides gallery');
+  await op.locator('.tshare-vis-opt').filter({ hasText: /^Anyone$/ }).click();
+  await op.waitForTimeout(400);
+  const visSub = await op.locator('.tshare-vis .tshare-vis-sub').innerText();
+  if (!/never do|dates/i.test(visSub)) {
+    fail(`publishing does not say what travels and what does not: "${visSub}"`);
+  } else ok('and publishing states what travels and what never does');
+  await op.screenshot({ path: `${SHOTS}/friends-share-coplan.png` });
+  await ownCtx.close();
+
   /* ---- 8a. The header's own Friends door, on a wide screen ---- */
   const deskCtx = await browser.newContext({ viewport: { width: 1360, height: 950 } });
   await deskCtx.addInitScript(seedSession(PROJECT_REF, ME));
@@ -413,7 +613,14 @@ const run = async () => {
   await dp.goto(`${BASE}/?o=CRL`);
   const friendsBtn = dp.locator('.header-friends-btn');
   await friendsBtn.waitFor({ timeout: 120000 });
-  if (!/Friends/i.test(await friendsBtn.innerText())) fail('the header Friends button has no label');
+  // Above 769px the browse chrome folds this door to its icon on purpose
+  // (styles.css, the min-width: 769px block), because the left rail already
+  // names it. So the desktop check is that it still HAS a name, not that the
+  // name is painted: an icon-only control with no accessible name is the
+  // actual defect this guards against.
+  const deskName = (await friendsBtn.getAttribute('title'))
+    || (await friendsBtn.getAttribute('aria-label')) || '';
+  if (!/Friends/i.test(deskName)) fail(`the header Friends button has no accessible name: "${deskName}"`);
   else ok('the header carries a labelled Friends door');
   await friendsBtn.click();
   await dp.locator('.frn-find').waitFor({ timeout: 15000 });

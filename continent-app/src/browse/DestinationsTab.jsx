@@ -33,6 +33,7 @@ import {
 } from '../lib/trailCards.js';
 import { useI18n } from '../i18n/index.jsx';
 import { geocodeAddress, reverseGeocode } from '../lib/geocode.js';
+import { bandChip, bandBreak, scopeForRows } from '../lib/regions.js';
 import {
   SearchIcon, ChevronRightIcon, RouteIcon, SkylineIcon, SuitcaseIcon, BootIcon,
   BeachIcon, MountainIcon, MapPinIcon, CrosshairIcon,
@@ -420,7 +421,7 @@ function DestCard({ p, km, priceMode, onSelect, t }) {
       />
       <span className="places-card-scrim" aria-hidden="true" />
       {km != null && (
-        <span className="places-card-km">{t('places.kmAway', { km: Math.round(km) })}</span>
+        <span className="places-card-km">{bandChip(km, t)}</span>
       )}
       {cls && (
         <span className="places-card-class" role="img" aria-label={t(cls.labelKey)}>
@@ -507,7 +508,7 @@ function TripCard({ card, km, onOpen, t }) {
       <TrailPicture tr={tr} assoc={assoc} />
       <span className="places-card-scrim" aria-hidden="true" />
       {km != null && (
-        <span className="places-card-km">{t('places.kmAway', { km: Math.round(km) })}</span>
+        <span className="places-card-km">{bandChip(km, t)}</span>
       )}
       <span className="places-card-overlay">
         <span className="places-card-main">
@@ -578,7 +579,7 @@ function BeachCard({ beach, km, countryName, onOpen, t }) {
         : <span className="places-card-img places-card-noimg" aria-hidden="true" />}
       <span className="places-card-scrim" aria-hidden="true" />
       {km != null && (
-        <span className="places-card-km">{t('places.kmAway', { km: Math.round(km) })}</span>
+        <span className="places-card-km">{bandChip(km, t)}</span>
       )}
       <span className="places-card-overlay">
         <span className="places-card-main">
@@ -624,7 +625,7 @@ function LakeCard({ lake, km, countryName, onOpen, t }) {
         : <span className="places-card-img places-card-noimg" aria-hidden="true" />}
       <span className="places-card-scrim" aria-hidden="true" />
       {km != null && (
-        <span className="places-card-km">{t('places.kmAway', { km: Math.round(km) })}</span>
+        <span className="places-card-km">{bandChip(km, t)}</span>
       )}
       {swim.rule !== 'yes' && (
         <span className={`places-lcard-swim swim-${swim.tone}`}>{swim.label}</span>
@@ -674,7 +675,7 @@ function MountainCard({ mountain, km, countryName, onOpen, t, lang }) {
         : <span className="places-card-img places-card-noimg" aria-hidden="true" />}
       <span className="places-card-scrim" aria-hidden="true" />
       {km != null && (
-        <span className="places-card-km">{t('places.kmAway', { km: Math.round(km) })}</span>
+        <span className="places-card-km">{bandChip(km, t)}</span>
       )}
       {ride && (
         <span className="places-lcard-swim places-mcard-way">{liftLabel(mountain, t)}</span>
@@ -801,7 +802,7 @@ const ItinCard = React.memo(function ItinCard({ tr, km, onOpen, t }) {
           </span>
           {tr.nearFit && <span className="itin-card-near">{t('trip.nearFit')}</span>}
           {km != null && (
-            <span className="itin-card-near">{t('trip.kmAway', { km: Math.round(km) })}</span>
+            <span className="itin-card-near">{bandChip(km, t)}</span>
           )}
         </span>
         <span className="itin-card-head">
@@ -2499,15 +2500,41 @@ export function DestinationsTab({
             asked for it. Cleared as soon as anything is typed. */}
         {locErr && <p className="places-locate-err" role="status">{locErr}</p>}
 
-        {nearPlace && (
-          <div className="places-nearhead">
-            <span className="places-nearname">{t('places.nearHead', { city: nearPlace.name })}</span>
-            {nearPlace.sub && <span className="places-nearsub">{nearPlace.sub}</span>}
-            <button className="places-nearclear" onClick={() => setNearPlace(null)}>
-              {t('places.clearNear')}
-            </button>
-          </div>
-        )}
+        {nearPlace && (() => {
+          // The scope ladder: the header is composed from the scope that
+          // actually answered, decided by the NEAREST row. "Near Knokke"
+          // only ever sits above things that are near Knokke; when the
+          // closest result is a day out, or three regions over, the header
+          // says so instead. Rows themselves carry band chips, and band
+          // rules divide the list, so a far row can never render under a
+          // near heading.
+          const kmRows = (cat === 'beaches' ? beachRows
+            : cat === 'lakes' ? lakeRows
+              : cat === 'mountains' ? mountainRows
+                : cat === 'trails' ? tripRows
+                  : cat === 'trips' ? itinRows
+                    : destRows) || [];
+          const scope = scopeForRows(kmRows.map((x) => ({
+            km: x.km,
+            region: (x.b || x.p || x.tr || (x.c && x.c.tr) || {}).region || null,
+          })));
+          const head = scope.scope === 'nearby' || scope.scope === 'none'
+            ? t('places.nearHead', { city: nearPlace.name })
+            : scope.scope === 'day_trip'
+              ? t('scope.daytripHead', { city: nearPlace.name })
+              : scope.regionName
+                ? t('scope.farRegionHead', { city: nearPlace.name, region: scope.regionName })
+                : t('scope.farHead', { city: nearPlace.name, km: Math.round(scope.km || 0) });
+          return (
+            <div className="places-nearhead" data-scope={scope.scope}>
+              <span className="places-nearname">{head}</span>
+              {nearPlace.sub && <span className="places-nearsub">{nearPlace.sub}</span>}
+              <button className="places-nearclear" onClick={() => setNearPlace(null)}>
+                {t('places.clearNear')}
+              </button>
+            </div>
+          );
+        })()}
 
         {cat === 'general' && (
           <div className="places-list">
@@ -2523,8 +2550,13 @@ export function DestinationsTab({
               ))
               : (
                 <>
-                  {destRows.slice(0, visible).map(({ p, km }) => (
-                    <DestCard key={p.id} p={p} km={km} priceMode={priceMode} onSelect={onSelectDest} t={t} />
+                  {destRows.slice(0, visible).map(({ p, km }, i) => (
+                    <React.Fragment key={p.id}>
+                      {bandBreak(destRows, i) && (
+                        <p className="places-bandhead">{t(bandBreak(destRows, i))}</p>
+                      )}
+                      <DestCard p={p} km={km} priceMode={priceMode} onSelect={onSelectDest} t={t} />
+                    </React.Fragment>
                   ))}
                   {/* Nothing matched the text, which is exactly the case where
                       the typed thing is a location rather than a destination:
@@ -2576,15 +2608,19 @@ export function DestinationsTab({
                         })}
                       </p>
                     )}
-                    {beachRows.slice(0, visible).map(({ b, km }) => (
-                      <BeachCard
-                        key={b.id}
-                        beach={b}
-                        km={km}
-                        countryName={countryName(b.cc)}
-                        onOpen={setPageBeach}
-                        t={t}
-                      />
+                    {beachRows.slice(0, visible).map(({ b, km }, i) => (
+                      <React.Fragment key={b.id}>
+                        {bandBreak(beachRows, i) && (
+                          <p className="places-bandhead">{t(bandBreak(beachRows, i))}</p>
+                        )}
+                        <BeachCard
+                          beach={b}
+                          km={km}
+                          countryName={countryName(b.cc)}
+                          onOpen={setPageBeach}
+                          t={t}
+                        />
+                      </React.Fragment>
                     ))}
                   </>
                 )
@@ -2631,15 +2667,19 @@ export function DestinationsTab({
                         })}
                       </p>
                     )}
-                    {lakeRows.slice(0, visible).map(({ b, km }) => (
-                      <LakeCard
-                        key={b.id}
-                        lake={b}
-                        km={km}
-                        countryName={countryName(b.cc)}
-                        onOpen={setPageLake}
-                        t={t}
-                      />
+                    {lakeRows.slice(0, visible).map(({ b, km }, i) => (
+                      <React.Fragment key={b.id}>
+                        {bandBreak(lakeRows, i) && (
+                          <p className="places-bandhead">{t(bandBreak(lakeRows, i))}</p>
+                        )}
+                        <LakeCard
+                          lake={b}
+                          km={km}
+                          countryName={countryName(b.cc)}
+                          onOpen={setPageLake}
+                          t={t}
+                        />
+                      </React.Fragment>
                     ))}
                   </>
                 )
@@ -2688,16 +2728,20 @@ export function DestinationsTab({
                         })}
                       </p>
                     )}
-                    {mountainRows.slice(0, visible).map(({ b, km }) => (
-                      <MountainCard
-                        key={b.id}
-                        mountain={b}
-                        km={km}
-                        countryName={countryName(b.cc)}
-                        onOpen={setPageMountain}
-                        t={t}
-                        lang={lang}
-                      />
+                    {mountainRows.slice(0, visible).map(({ b, km }, i) => (
+                      <React.Fragment key={b.id}>
+                        {bandBreak(mountainRows, i) && (
+                          <p className="places-bandhead">{t(bandBreak(mountainRows, i))}</p>
+                        )}
+                        <MountainCard
+                          mountain={b}
+                          km={km}
+                          countryName={countryName(b.cc)}
+                          onOpen={setPageMountain}
+                          t={t}
+                          lang={lang}
+                        />
+                      </React.Fragment>
                     ))}
                   </>
                 )
@@ -2735,8 +2779,13 @@ export function DestinationsTab({
               <>
                 {/* No count line here: the slider already carries the number,
                     and saying it twice was one sentence too many. */}
-                {itinRows.slice(0, visible).map(({ tr, km }) => (
-                  <ItinCard key={tr.id} tr={tr} km={km} onOpen={setPageItin} t={t} />
+                {itinRows.slice(0, visible).map(({ tr, km }, i) => (
+                  <React.Fragment key={tr.id}>
+                    {bandBreak(itinRows, i) && (
+                      <p className="places-bandhead">{t(bandBreak(itinRows, i))}</p>
+                    )}
+                    <ItinCard tr={tr} km={km} onOpen={setPageItin} t={t} />
+                  </React.Fragment>
                 ))}
               </>
             )}
@@ -2784,8 +2833,13 @@ export function DestinationsTab({
 
             {!showCountryIndex && !trailsLoading && tripRows && (
               tripRows.length > 0
-                ? tripRows.slice(0, visible).map(({ c, km }) => (
-                  <TripCard key={c.tr.id} card={c} km={km} onOpen={setPageCard} t={t} />
+                ? tripRows.slice(0, visible).map(({ c, km }, i) => (
+                  <React.Fragment key={c.tr.id}>
+                    {bandBreak(tripRows, i) && (
+                      <p className="places-bandhead">{t(bandBreak(tripRows, i))}</p>
+                    )}
+                    <TripCard card={c} km={km} onOpen={setPageCard} t={t} />
+                  </React.Fragment>
                 ))
                 : (
                   <p className="places-empty">

@@ -1032,6 +1032,27 @@ def fame_step(ctx):
 # --------------------------------------------------------------------------- #
 # Task registry
 # --------------------------------------------------------------------------- #
+def guard_regions(ctx=None):
+    """The region spine needs its module and its sources on disk, or a
+    network to fetch them. A missing GeoPackage does not fail the OTHER
+    layers (enrich degrades to a warning and exports skip the quota step),
+    but the coverage audit and the region wire are this task's whole
+    output, so they refuse to run on nothing."""
+    missing = [s for s in ("region_sources.py", "build_regions.py",
+                           "assign.py", "quotas.py", "coasts.py",
+                           "seed_coasts.py", "opportunity.py", "coverage.py",
+                           "export_regions.py")
+               if not (ROOT / "pipeline" / "regions" / s).exists()]
+    if missing:
+        return False, f"pipeline/regions is missing {', '.join(missing)}"
+    try:
+        import geopandas  # noqa: F401
+        import h3  # noqa: F401
+    except ImportError as exc:
+        return False, f"regions needs geopandas and h3 ({exc})"
+    return True, "region stages present"
+
+
 def guard_beaches(ctx=None):
     """The beach layer needs its own scripts and the EEA bathing water cache.
 
@@ -1498,6 +1519,32 @@ TASKS = [
                  "quietly deleting a country shows up in the run rather than "
                  "in the app as an empty page. A failure leaves the previous "
                  "wire standing."),
+    },
+    {
+        "key": "regions",
+        "title": "Regions: the spine, quotas, coverage audit -> public/region",
+        "cadence": "quarterly",
+        "writes_app_data": False,
+        "writes_wire": True,
+        "soft": True,
+        "cmds": [
+            [PY, "pipeline/regions/build_regions.py", "--skip-fetch"],
+            [PY, "pipeline/regions/coverage.py"],
+            [PY, "pipeline/regions/export_regions.py", "--all"],
+        ],
+        "guard": guard_regions,
+        "note": ("the unit between beach and country. build_regions "
+                 "normalises NUTS/ITL/geoBoundaries, the coastal stretches, "
+                 "GMBA ranges, basins and biogeo into cache/regions/"
+                 "regions.gpkg and recomputes the opportunity measures; "
+                 "coverage writes public/coverage.json plus the backlog CSVs "
+                 "in reports/ (every deficit joined to the candidates the "
+                 "gate rejected and why); export_regions writes the region "
+                 "pages. --skip-fetch on the scheduled run: the sources "
+                 "change yearly, delete cache/regions/src to refresh them. "
+                 "Sits AFTER the beach, lake, mountain and trip tasks in "
+                 "this list on purpose: the audit reads the wire that "
+                 "actually shipped."),
     },
     {
         "key": "flight_times",

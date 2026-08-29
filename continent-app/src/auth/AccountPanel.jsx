@@ -263,7 +263,8 @@ function MenuRow({ icon, label, value, onClick }) {
 
 export function AccountPanel({
   onClose, onOpenAuth, initialView = 'home', onViewChange, pendingFriendHandle,
-  destinations, onOpenAdmin, onOpenLifestyle, stayTier = 'home', lifestyle,
+  destinations, onOpenAdmin, onOpenLifestyle, onOpenSaved, onOpenGuides,
+  stayTier = 'home', lifestyle,
 }) {
   const {
     user, hasPassword, signOut, signOutOtherDevices, updatePassword, reauthenticate,
@@ -1206,6 +1207,8 @@ export function AccountPanel({
           userId={user.id}
           pendingHandle={pendingFriendHandle}
           destinations={destinations}
+          onOpenSaved={onOpenSaved}
+          onOpenGuides={onOpenGuides}
         />
       )}
 

@@ -1,10 +1,25 @@
 import { supabase } from '../lib/supabaseClient.js';
 
+/**
+ * Every trip this account can open: its own, and any it has accepted an
+ * invitation to co-plan (migration 020).
+ *
+ * There is deliberately NO .eq('user_id', userId) here any more. The row
+ * policy on trip_plans is the authority on what this account may see, and a
+ * client-side filter on top of it could only ever be a SECOND, quieter answer
+ * to the same question, which is how the two drift. Before migration 020 the
+ * policy is owner-only and this returns exactly what it always did.
+ *
+ * Each row is flagged coplan when somebody else owns it, because a
+ * co-planner may edit the route and may not delete the trip, publish it or
+ * change who it is shown to, and the panel has to know which controls to
+ * offer. The database refuses those three regardless; the flag is so the UI
+ * does not offer a button that would do nothing.
+ */
 export async function fetchTripPlans(userId) {
   const { data, error } = await supabase
     .from('trip_plans')
     .select('*')
-    .eq('user_id', userId)
     .order('created_at', { ascending: false });
   if (error) throw error;
   const plans = data || [];
@@ -18,10 +33,29 @@ export async function fetchTripPlans(userId) {
     .order('position', { ascending: true });
   const byPlan = {};
   (stops || []).forEach((s) => { (byPlan[s.trip_plan_id] = byPlan[s.trip_plan_id] || []).push(s); });
+
+  // Whose trip it is, for the ones that are not yours. Only asked when there
+  // is somebody to name, and only ever answerable for people you have a link
+  // with, since that is all the profiles policy shows (migration 011). A
+  // co-planner is necessarily an accepted friend, so this always resolves.
+  const otherIds = [...new Set(plans.filter((p) => p.user_id !== userId).map((p) => p.user_id))];
+  const owners = new Map();
+  if (otherIds.length) {
+    const { data: profs } = await supabase
+      .from('profiles')
+      .select('user_id, handle, display_name')
+      .in('user_id', otherIds);
+    (profs || []).forEach((pr) => {
+      owners.set(pr.user_id, pr.display_name || `@${pr.handle}`);
+    });
+  }
+
   return plans.map((p) => {
     const ss = byPlan[p.id] || [];
     return {
       ...p,
+      coplan: Boolean(userId) && p.user_id !== userId,
+      ownerName: owners.get(p.user_id) || '',
       start_date: ss[0]?.arrive_date || null,
       end_date: ss.length ? ss[ss.length - 1].depart_date : null,
       cities: ss.map((s) => s.city).filter(Boolean),
@@ -66,10 +100,35 @@ export async function deleteTripPlan(id) {
   if (error) throw error;
 }
 
-// Replaces the full stop list for a trip plan. Trip plans have only a
-// handful of stops, so delete-and-reinsert is simpler and cheap, no need
-// for granular per-stop update plumbing.
+/** Who a plan belongs to. One indexed read, so the invariant below can be
+ *  worked out here rather than trusted from the caller. Falls back to the
+ *  caller's own id when the row cannot be read, which is the pre-020
+ *  behaviour and is always right for a trip you own. */
+async function planOwnerId(tripPlanId, fallback) {
+  const { data, error } = await supabase
+    .from('trip_plans')
+    .select('user_id')
+    .eq('id', tripPlanId)
+    .maybeSingle();
+  if (error || !data?.user_id) return fallback;
+  return data.user_id;
+}
+
+/**
+ * Replaces the full stop list for a trip plan.
+ *
+ * THE user_id ON EVERY STOP IS THE PLAN OWNER'S, never the writer's. The
+ * owner's own select policy filters on the stop's user_id, so a stop a
+ * co-planner wrote under their own id would be invisible to the person whose
+ * trip it is: they would watch a city get added and see nothing. Migration
+ * 020's insert check enforces the same rule from the other side, so the two
+ * cannot drift.
+ *
+ * Trip plans have only a handful of stops, so delete-and-reinsert is simpler
+ * and cheap, no need for granular per-stop update plumbing.
+ */
 export async function saveTripPlanStops(tripPlanId, userId, stops) {
+  const ownerId = await planOwnerId(tripPlanId, userId);
   const { error: deleteError } = await supabase
     .from('trip_plan_stops')
     .delete()
@@ -80,7 +139,7 @@ export async function saveTripPlanStops(tripPlanId, userId, stops) {
 
   const rows = stops.map((stop, index) => ({
     trip_plan_id: tripPlanId,
-    user_id: userId,
+    user_id: ownerId,
     position: index,
     destination_id: stop.destinationId,
     city: stop.city,

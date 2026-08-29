@@ -41,6 +41,9 @@ const cap = (s) => (s ? s.charAt(0).toUpperCase() + s.slice(1) : '');
 // the opening line has already said what kind of mountain this is. They still
 // earn a chip through TAG_KEY.
 const WHY_KEY = {
+  // The listed tier's one honest line: shipped by the region
+  // programme's floor fill, never by a scored row.
+  unrated_coverage: 'region.listedNote',
   height: 'mtn.whyHeight',
   highpoint: 'mtn.whyHighpoint',
   prominence: 'mtn.whyProminence',

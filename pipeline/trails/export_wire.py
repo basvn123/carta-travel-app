@@ -416,6 +416,53 @@ def highlights_of(raw):
     } for f in features]
 
 
+def _regions_assign():
+    """pipeline/regions/assign.py under a neutral name, loaded on first use.
+    The trails store is the lab database, so this layer's assignment happens
+    at export where the geometry is in hand; a clone without the region
+    spine still exports, its rows just ship without rg until the spine is
+    built."""
+    mod = sys.modules.get("carta_regions_assign")
+    if mod is None:
+        path = ROOT / "pipeline" / "regions" / "assign.py"
+        try:
+            spec = importlib.util.spec_from_file_location("carta_regions_assign",
+                                                          path)
+            mod = importlib.util.module_from_spec(spec)
+            sys.modules["carta_regions_assign"] = mod
+            spec.loader.exec_module(mod)
+        except Exception:
+            return None
+    return mod
+
+
+_RG_WARNED = [False]
+
+
+def rg_of(t):
+    """The region block for one route: midpoint of its length owns it, per
+    the assignment contract for lines. Falls back to nothing, never to a
+    guess."""
+    mod = _regions_assign()
+    if mod is None:
+        return None
+    wire = t.get("wire") or []
+    if isinstance(wire, dict):  # a GeoJSON geometry rather than bare arrays
+        wire = wire.get("coordinates") or []
+    coords = [(pt[1], pt[0]) for part in wire for pt in part]
+    if len(coords) < 2:
+        return None
+    try:
+        line = mod.assign_line(coords, sample_km=8.0)
+        return mod.wire_rg(line.ids)
+    except Exception as exc:
+        if not _RG_WARNED[0]:
+            print(f"  rg unavailable ({type(exc).__name__}: {exc}), "
+                  f"trails ship without region ids")
+            _RG_WARNED[0] = True
+        return None
+
+
 def wire_item(t, n_stops):
     """One trip as the country file carries it: enough to list it, filter it,
     draw it and credit it, and a pointer to the rest."""
@@ -437,6 +484,9 @@ def wire_item(t, n_stops):
         "attribution_text": t["attribution_text"],
         "detail": f"/trails/trip/{t['id']}.json",
     }
+    rg = rg_of(t)
+    if rg:
+        item["rg"] = rg
     if t.get("rating") is not None:
         item["rating"] = float(t["rating"])
     if t.get("is_loop") is not None:

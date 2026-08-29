@@ -31,6 +31,9 @@ const cap = (s) => (s ? s.charAt(0).toUpperCase() + s.slice(1) : '');
 // language, and translating a bare adjective produces the wrong gender in
 // half of them.
 const WHY_KEY = {
+  // The listed tier's one honest line: shipped by the region
+  // programme's floor fill, never by a scored row.
+  unrated_coverage: 'region.listedNote',
   sandColour: (r) => `beach.whySand${cap(r.colour)}`,
   surface: (r) => `beach.whySurface${cap(r.surface)}`,
   cliffs: 'beach.whyCliffs',

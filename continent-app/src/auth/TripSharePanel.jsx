@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { LinkIcon, CheckIcon, TrashIcon } from '../components/Icons.jsx';
+import { LinkIcon, CheckIcon, TrashIcon, PersonIcon } from '../components/Icons.jsx';
 import { useI18n } from '../i18n/index.jsx';
 import {
   fetchTripShares, createTripShare, revokeTripShare, buildShareUrl,
   SHARE_DURATIONS, DEFAULT_SHARE_DAYS, daysLeft,
 } from './tripShares.js';
-import { setTripVisibility, VISIBILITIES } from './friends.js';
+import { setTripVisibility, fetchFriendLinks } from './friends.js';
+import { listTripCoplanners, inviteCoplanner, removeCoplanner } from './coplanners.js';
 
 /**
  * TripSharePanel, handing one saved trip to somebody as a read-only link.
@@ -28,7 +29,136 @@ import { setTripVisibility, VISIBILITIES } from './friends.js';
  * links are independent: a private trip can still have a live link out, which
  * is exactly why the links below are listed even when visibility is private.
  */
-export function TripSharePanel({ userId, tripPlanId, visibility = 'private', onVisibility }) {
+/**
+ * Who can see this trip, as three answers rather than as permission levels.
+ *
+ * The third one publishes. It is the only option here that puts something in
+ * front of strangers, so it is the only one whose sub-line has to say exactly
+ * what does and does not travel: migration 019 narrows the friend projection
+ * for a public reader (no dates, no crew, no spend), and a control that
+ * publishes without saying so would be the whole problem.
+ *
+ * 'link' is absent on purpose. A share token is handed to one person and is
+ * managed by the list further down this panel, so it is not a third state of
+ * the same question.
+ */
+const VIS_OPTS = [
+  { key: 'private', labelKey: 'share.visPrivate', subKey: 'share.visPrivateSub' },
+  { key: 'friends', labelKey: 'share.visFriends', subKey: 'share.visFriendsSub' },
+  { key: 'public', labelKey: 'guides.publish', subKey: 'guides.publishSub' },
+];
+
+
+/**
+ * CoplannerBlock, who else may edit this trip.
+ *
+ * Only friends appear in the picker, because migration 020's insert policy
+ * only accepts a friend and a control that offers what the database refuses
+ * is a control that lies. Only the owner sees this block at all.
+ *
+ * The sub-line says exactly what a co-planner gets and what they do not, in
+ * the same voice the visibility control above uses, because "Collaborate" on
+ * its own is the kind of button people press without knowing what they just
+ * handed over.
+ */
+function CoplannerBlock({ userId, tripPlanId, t }) {
+  const [people, setPeople] = useState([]);
+  const [friends, setFriends] = useState([]);
+  const [pick, setPick] = useState('');
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState('');
+
+  const reload = () => listTripCoplanners(tripPlanId).then(setPeople).catch(() => {});
+
+  useEffect(() => {
+    let live = true;
+    listTripCoplanners(tripPlanId).then((rows) => { if (live) setPeople(rows); }).catch(() => {});
+    fetchFriendLinks(userId)
+      .then((rows) => { if (live) setFriends(rows.filter((l) => l.kind === 'friend')); })
+      .catch(() => {});
+    return () => { live = false; };
+  }, [tripPlanId, userId]);
+
+  const onTrip = new Set(people.map((p) => p.userId));
+  const canAsk = friends.filter((f) => !onTrip.has(f.userId));
+
+  const invite = async () => {
+    if (!pick) return;
+    setBusy(true);
+    setError('');
+    try {
+      await inviteCoplanner(tripPlanId, userId, pick);
+      setPick('');
+      await reload();
+    } catch (err) {
+      setError(t(err.code === 'ALREADY_ON_TRIP' ? 'coplan.errAlready' : 'coplan.failed'));
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const drop = async (who) => {
+    setError('');
+    try { await removeCoplanner(tripPlanId, who); await reload(); } catch { setError(t('coplan.failed')); }
+  };
+
+  return (
+    <div className="tshare-coplan">
+      <span className="coplan-title">{t('coplan.title')}</span>
+      <p className="coplan-sub">{t('coplan.sub')}</p>
+
+      {people.length > 0 && (
+        <div className="coplan-list">
+          {people.map((p) => (
+            <div className="coplan-row" key={p.userId}>
+              <span className="frn-face" aria-hidden="true">
+                {p.avatarEmoji || <PersonIcon size={14} />}
+              </span>
+              <span className="coplan-who">
+                <b>{p.displayName || `@${p.handle}`}</b>
+                <span className="coplan-state">
+                  {t(p.status === 'accepted' ? 'coplan.stateOn' : 'coplan.statePending')}
+                </span>
+              </span>
+              <button type="button" className="frn-no frn-text" onClick={() => drop(p.userId)}>
+                {t(p.status === 'accepted' ? 'coplan.remove' : 'friends.cancel')}
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {canAsk.length > 0 ? (
+        <div className="coplan-ask">
+          <select
+            className="coplan-pick"
+            value={pick}
+            onChange={(e) => setPick(e.target.value)}
+            aria-label={t('coplan.pickLabel')}
+          >
+            <option value="">{t('coplan.pickLabel')}</option>
+            {canAsk.map((f) => (
+              <option key={f.userId} value={f.userId}>
+                {f.displayName || `@${f.handle}`}
+              </option>
+            ))}
+          </select>
+          <button type="button" className="coplan-ask-btn" onClick={invite} disabled={!pick || busy}>
+            {busy ? t('account.pleaseWait') : t('coplan.invite')}
+          </button>
+        </div>
+      ) : (
+        <p className="tshare-never">{t(friends.length ? 'coplan.allAsked' : 'coplan.needFriend')}</p>
+      )}
+
+      {error && <div className="auth-error">{error}</div>}
+    </div>
+  );
+}
+
+export function TripSharePanel({
+  userId, tripPlanId, visibility = 'private', onVisibility, canInvite = true,
+}) {
   const { t, lang } = useI18n();
   const [scope, setScope] = useState('itinerary');
   const [links, setLinks] = useState([]);
@@ -40,6 +170,8 @@ export function TripSharePanel({ userId, tripPlanId, visibility = 'private', onV
   // Thirty days by default rather than forever: a link handed out for one
   // conversation should not outlive it, and nobody comes back to tidy up.
   const [days, setDays] = useState(DEFAULT_SHARE_DAYS);
+
+  const subKey = (VIS_OPTS.find((o) => o.key === vis) || VIS_OPTS[0]).subKey;
 
   const pickVisibility = async (next) => {
     if (next === vis) return;
@@ -120,23 +252,23 @@ export function TripSharePanel({ userId, tripPlanId, visibility = 'private', onV
       <div className="tshare-vis">
         <span className="tshare-vis-title">{t('share.visTitle')}</span>
         <div className="tshare-vis-opts" role="radiogroup" aria-label={t('share.visTitle')}>
-          {VISIBILITIES.filter((v) => v !== 'link').map((v) => (
+          {VIS_OPTS.map((o) => (
             <button
-              key={v}
+              key={o.key}
               type="button"
               role="radio"
-              aria-checked={vis === v}
-              className={`tshare-vis-opt${vis === v ? ' on' : ''}`}
-              onClick={() => pickVisibility(v)}
+              aria-checked={vis === o.key}
+              className={`tshare-vis-opt${vis === o.key ? ' on' : ''}`}
+              onClick={() => pickVisibility(o.key)}
             >
-              {t(v === 'private' ? 'share.visPrivate' : 'share.visFriends')}
+              {t(o.labelKey)}
             </button>
           ))}
         </div>
-        <p className="tshare-vis-sub">
-          {t(vis === 'friends' ? 'share.visFriendsSub' : 'share.visPrivateSub')}
-        </p>
+        <p className="tshare-vis-sub">{t(subKey)}</p>
       </div>
+
+      {canInvite && <CoplannerBlock userId={userId} tripPlanId={tripPlanId} t={t} />}
 
       <p className="tshare-lede">{t('share.lede')}</p>
 

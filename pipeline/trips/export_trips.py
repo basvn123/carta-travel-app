@@ -312,11 +312,41 @@ def centre_of(trip):
     return round(sum(lats) / len(lats), 4), round(sum(lons) / len(lons), 4)
 
 
+def _regions_assign():
+    """pipeline/regions/assign.py under a neutral name, loaded on first use.
+    A trip's rg comes from its centre at export time; a clone without the
+    region spine still exports, its rows just ship without rg."""
+    mod = sys.modules.get("carta_regions_assign")
+    if mod is None:
+        path = HERE.parents[1] / "pipeline" / "regions" / "assign.py"
+        try:
+            spec = importlib.util.spec_from_file_location("carta_regions_assign",
+                                                          path)
+            mod = importlib.util.module_from_spec(spec)
+            sys.modules["carta_regions_assign"] = mod
+            spec.loader.exec_module(mod)
+        except Exception:
+            return None
+    return mod
+
+
+def rg_of(lat, lon):
+    mod = _regions_assign()
+    if mod is None:
+        return None
+    try:
+        return mod.wire_rg(mod.assign_point(lat, lon))
+    except Exception:
+        return None
+
+
 def to_card(trip, flags=frozenset(), used=None):
     """What a grid of trips needs, and nothing that only the page needs."""
     lat, lon = centre_of(trip)
+    rg = rg_of(lat, lon)
     return {
         "id": trip["id"],
+        **({"rg": rg} if rg else {}),
         "cc": trip["cc"],
         "countries": trip["countries"],
         "abroad": trip.get("daytrip_countries") or [],

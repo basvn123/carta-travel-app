@@ -1117,6 +1117,7 @@ export function SavedTripsPanel({ data, onClose, onLoadTrip, onLoadTripPlan, onO
           || tripPlans.find((tp) => tp.id === planId)?.visibility
           || 'private'}
         onVisibility={(id, v) => setVisById((cur) => ({ ...cur, [id]: v }))}
+        canInvite={!tripPlans.find((tp) => tp.id === planId)?.coplan}
       />
     )
     : null);
@@ -1315,8 +1316,18 @@ export function SavedTripsPanel({ data, onClose, onLoadTrip, onLoadTripPlan, onO
                         icon: <PencilIcon size={14} />,
                         onClick: () => onLoadTripPlan && onLoadTripPlan({ id: p.id, edit: true }),
                       }, shareAction(p.id)].filter(Boolean)}
-                      onDelete={() => handleDeleteTripPlan(p.id)}
+                      /* A trip you co-plan is one you may edit and may not
+                         delete: the delete policy stays owner-only (migration
+                         020), so offering Remove here would offer a button
+                         that quietly does nothing. */
+                      onDelete={p.coplan ? null : () => handleDeleteTripPlan(p.id)}
                       deleteLabel={t('saved.removeItem', { name: p.label || t('saved.fallbackTrip') })}
+                      crew={p.coplan ? (
+                        <div className="uptrip-coplan">
+                          <PersonIcon size={11} />
+                          {t('coplan.ownedBy', { who: p.ownerName || t('saved.fallbackTrip') })}
+                        </div>
+                      ) : undefined}
                       footer={{
                         label: plannedDays > 0
                           ? t(plannedDays === 1 ? 'saved.plannedDays1' : 'saved.plannedDaysN', { n: plannedDays })

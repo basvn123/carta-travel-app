@@ -18,6 +18,13 @@ osmium>=4.0
 shapely>=2.0
 # pipeline/trails/elevation.py: Copernicus GLO-30 COG sampling
 rasterio>=1.4
+
+# pipeline/regions: the region spine (build_regions.py reads and writes the
+# GeoPackage, assign.py answers point-to-region, opportunity.py bulk joins)
+geopandas>=1.0
+pyogrio>=0.10
+# pipeline/regions/assign.py: the H3 backstop cells (r3/r4/r5)
+h3>=4.0
 # pipeline/trails/describe.py: Claude API as a rewriter over a facts block.
 # Only needed for --provider claude; --provider gemini is plain REST.
 anthropic>=0.69

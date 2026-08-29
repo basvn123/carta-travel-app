@@ -132,6 +132,11 @@ export async function listFriendTrips() {
     cities: r.cities || [],
     countries: r.countries || [],
     destinationIds: r.destination_ids || [],
+    // When the owner last touched it, which is what lets the shelf read as a
+    // change log ("shared 2 days ago", a New mark on what moved) rather than
+    // as a static list. Absent until migration 019 widens the function, and
+    // the caller says nothing rather than guessing when it is.
+    updatedAt: r.updated_at || null,
   }));
 }
 
@@ -195,7 +200,11 @@ export function stripFriendHandleFromUrl() {
 
 /* ---- who a trip is shown to ---- */
 
-export const VISIBILITIES = ['private', 'friends', 'link'];
+/** Who a trip is shown to. 'link' is a token handed to one person and is not
+ *  offered as a radio option; 'public' publishes the trip to the guides
+ *  gallery under the owner's handle (migration 019), through a projection
+ *  strictly narrower than the one a friend gets. */
+export const VISIBILITIES = ['private', 'friends', 'link', 'public'];
 
 export async function setTripVisibility(tripPlanId, visibility) {
   if (!VISIBILITIES.includes(visibility)) throw new Error('unknown visibility');

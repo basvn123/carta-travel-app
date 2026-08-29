@@ -56,9 +56,16 @@ import { loadInitialState } from './lib/urlState.js';
 import { readTripShareFromUrl, decodeTripShare } from './lib/shareLink.js';
 import { readShareTokenFromUrl, stripShareTokenFromUrl } from './auth/tripShares.js';
 import { readFriendHandleFromUrl, stripFriendHandleFromUrl } from './auth/friends.js';
+import { readGuideIdFromUrl, stripGuideIdFromUrl } from './community/guides.js';
+
+// The guides gallery streams in on demand: it is a whole browse surface
+// plus the trip map, and most sessions never open it.
+const GuidesPanel = lazy(() => import('./community/GuidesPanel.jsx').then((m) => ({ default: m.GuidesPanel })));
+const RegionPage = lazy(() => import('./browse/RegionPage.jsx').then((m) => ({ default: m.RegionPage })));
 import { readTrailFromUrl } from './lib/trails.js';
 import { readDestFromUrl } from './lib/dossier.js';
 import { readBeachFromUrl } from './lib/beaches.js';
+import { readRegionFromUrl } from './lib/regions.js';
 import { readLakeFromUrl } from './lib/lakes.js';
 import { readMountainFromUrl } from './lib/mountains.js';
 import { readTripFromUrl } from './lib/trips.js';
@@ -176,7 +183,29 @@ function TravelApp() {
     setAccountOpen(true);
   }, [pendingFriend, user]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // The published guides gallery, and a direct link to one of them
+  // (#guide=<id>). Same rule as every other hash this app answers: read once
+  // at startup, acted on, then stripped from the bar. A guide is readable
+  // signed out, so this deliberately does not wait for an account.
+  const [guidesOpen, setGuidesOpen] = useState(false);
+  const [pendingGuide, setPendingGuide] = useState(() => readGuideIdFromUrl());
+  useEffect(() => {
+    if (!pendingGuide) return;
+    stripGuideIdFromUrl();
+    setAccountOpen(false);
+    setSavedTripsOpen(false);
+    setGuidesOpen(true);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const openGuides = () => {
+    setAccountOpen(false);
+    setSavedTripsOpen(false);
+    setPendingGuide('');
+    setGuidesOpen(true);
+  };
+
   const openAccountAt = (view) => {
+    setGuidesOpen(false);
     setSavedTripsOpen(false);
     setAccountView(view);
     setAccountEntry((n) => n + 1);
@@ -373,6 +402,11 @@ function TravelApp() {
     if (pendingMountain) setActiveTab('places');
   }, [pendingMountain]);
 
+  // A shared REGION link (#region=COAST:ES-LUZ-CADIZ, see lib/regions.js).
+  // Not a tab: the region page is a hoisted overlay like DestinationPage,
+  // so it opens over whatever tab the recipient was on.
+  const [pendingRegion, setPendingRegion] = useState(() => readRegionFromUrl());
+
   // A shared TRIP link (#itin=at-salzburg-vienna-chain-5d, see lib/trips.js),
   // read once at startup and handed to the Destinations tab, exactly like a
   // shared trail, beach, lake or mountain. The hash carries nothing else, so
@@ -437,13 +471,14 @@ function TravelApp() {
     const onKey = (e) => {
       if (e.key !== 'Escape') return;
       if (sharedTrip) { setSharedTrip(null); return; }
+      if (guidesOpen) { setGuidesOpen(false); return; }
       if (accountOpen) { setAccountOpen(false); return; }
       if (savedTripsOpen) { setSavedTripsOpen(false); return; }
       if (selectedId) { setSelectedId(null); }
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [sharedTrip, accountOpen, savedTripsOpen, selectedId]);
+  }, [sharedTrip, guidesOpen, accountOpen, savedTripsOpen, selectedId]);
 
   // Stable so every Explore card's memo survives parent re-renders.
   const openDetail = useCallback((id) => {
@@ -772,6 +807,7 @@ function TravelApp() {
               indices={exploreIndices}
               choices={choices}
               onOpenLifestyle={() => setLifestyleOpen(true)}
+              onOpenGuides={openGuides}
               isMock={!!data.meta?.is_mock}
             />
           </div>
@@ -877,6 +913,29 @@ function TravelApp() {
         </div>
       )}
 
+      {/* The full-screen region page, hoisted for the same reason the
+          destination page is: a shared Costa de la Luz link opens over
+          whatever tab the recipient happens to be on. */}
+      {pendingRegion && (
+        <div onClick={(e) => e.stopPropagation()}>
+          <Suspense fallback={null}>
+            <RegionPage
+              id={pendingRegion.id}
+              onClose={() => setPendingRegion(null)}
+              onOpenRegion={(rid) => setPendingRegion({ id: rid })}
+              onOpenFeature={(layer, ref) => {
+                setPendingRegion(null);
+                if (layer === 'trails') setPendingTrail({ id: Number(ref.id), country: ref.cc });
+                else if (layer === 'beaches') setPendingBeach({ id: String(ref.id), cc: ref.cc });
+                else if (layer === 'lakes') setPendingLake({ id: String(ref.id), cc: ref.cc });
+                else if (layer === 'mountains') setPendingMountain({ id: String(ref.id), cc: ref.cc });
+                goToTab('places');
+              }}
+            />
+          </Suspense>
+        </div>
+      )}
+
       {/* The full-screen destination page, hoisted above the tab blocks so it
           opens over Explore AND Destinations without a tab hop. Renders from
           the dossier contract; the PDF export renders from the same file. */}
@@ -947,6 +1006,17 @@ function TravelApp() {
           />
         </div>
       )}
+      {guidesOpen && (
+        <Suspense fallback={<TabFallback />}>
+          <div onClick={(e) => e.stopPropagation()}>
+            <GuidesPanel
+              onClose={() => { setGuidesOpen(false); setPendingGuide(''); }}
+              destinations={data?.destinations}
+              openGuideId={pendingGuide || ''}
+            />
+          </div>
+        </Suspense>
+      )}
       {accountOpen && (
         <div onClick={(e) => e.stopPropagation()}>
           <AccountPanel
@@ -958,6 +1028,8 @@ function TravelApp() {
             onClose={() => setAccountOpen(false)}
             onOpenAdmin={() => setAdminOpen(true)}
             onOpenLifestyle={() => { setAccountOpen(false); setLifestyleOpen(true); }}
+            onOpenSaved={() => { setAccountOpen(false); setSavedTripsOpen(true); }}
+            onOpenGuides={openGuides}
             stayTier={choices.stay_tier || 'home'}
             lifestyle={choices.lifestyle}
             onOpenAuth={() => { setAccountOpen(false); setAuthModalMode('signin'); setAuthModalOpen(true); }}
