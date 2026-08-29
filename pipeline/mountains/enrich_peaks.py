@@ -67,9 +67,24 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 
+
+def _regions_assign():
+    """pipeline/regions/assign.py under a neutral name, loaded on first use.
+    Enrich owns the region assignment (stored in the cache, never recomputed
+    at export); the load is lazy so a clone without the spine still
+    enriches, and stamp_rows degrades to a warning in that case."""
+    mod = sys.modules.get("carta_regions_assign")
+    if mod is None:
+        path = HERE.parents[1] / "pipeline" / "regions" / "assign.py"
+        spec = importlib.util.spec_from_file_location("carta_regions_assign", path)
+        mod = importlib.util.module_from_spec(spec)
+        sys.modules["carta_regions_assign"] = mod
+        spec.loader.exec_module(mod)
+    return mod
+
 from peak_sources import (COMMONS_API, SourceError, cell,  # noqa: E402
-                          haversine_km, load_cache, mediawiki, overpass,
-                          save_cache, sparql, wikipedia_api)
+                          get_json, haversine_km, load_cache, mediawiki,
+                          overpass, save_cache, sparql, wikipedia_api)
 from harvest_peaks import (COUNTRY_QID, LOCAL_LANG, fold,  # noqa: E402
                            name_tokens, qid_of)
 
@@ -88,6 +103,24 @@ else:
     lake_images = importlib.util.module_from_spec(_lake_spec)
     sys.modules["carta_lake_images"] = lake_images
     _lake_spec.loader.exec_module(lake_images)
+
+
+# The photo engine's shared halves, same loading convention: the takedown
+# ledger every candidate pass must honour, and the Wikidata view
+# properties beyond P18.
+def _photo_module(name):
+    key = f"carta_photo_{name}"
+    if key not in sys.modules:
+        spec = importlib.util.spec_from_file_location(
+            key, ROOT / "pipeline" / "photos" / f"{name}.py")
+        mod = importlib.util.module_from_spec(spec)
+        sys.modules[key] = mod
+        spec.loader.exec_module(mod)
+    return sys.modules[key]
+
+
+photo_takedown = _photo_module("takedown")
+photo_views = _photo_module("wikidata_views")
 
 CACHE = ROOT / "cache"
 DEST_INDEX = CACHE / "mountains" / "dest_index.json"
@@ -605,6 +638,11 @@ def image_candidates(peak, lang):
             if title in seen:
                 continue
             seen.add(title)
+            # A file in the takedown ledger never re-enters the funnel,
+            # whatever asserts it: that is what makes a takedown
+            # permanent rather than lasting until the next enrich.
+            if photo_takedown.is_taken_down(title):
+                continue
             info = (page.get("imageinfo") or [{}])[0]
             if not info.get("url"):
                 continue
@@ -613,6 +651,14 @@ def image_candidates(peak, lang):
     p18 = commons_filename(peak.get("wd_img"))
     if p18:
         collect({"titles": p18, **IMAGE_PROPS}, "pinned")
+    # The other curated view properties, same claim as P18 for the same
+    # cost: P4640 panoramic, P8592 aerial, and P5252 winter, which only
+    # the mountain layer asks for because winter sells here.
+    if peak.get("wd"):
+        for _prop, title in photo_views.view_images(
+                lambda u: get_json(u), peak["wd"], "mountain"):
+            if title not in seen:
+                collect({"titles": title, **IMAGE_PROPS}, "pinned")
 
     files = article_files(peak, lang)
     for i in range(0, len(files), 25):
@@ -625,6 +671,18 @@ def image_candidates(peak, lang):
         # opens with eleven photographs of the observatory.
         collect({"generator": "categorymembers", "gcmtitle": f"Category:{cat}",
                  "gcmtype": "file", "gcmlimit": 60, **IMAGE_PROPS}, "category")
+        # Depth 2, because Commons files the pictures where they fit: the
+        # parent often holds the letter A while "Views of X" and "X in
+        # winter" hold the corpus. Only while the funnel is short; names
+        # announcing a non-subject are skipped; every file still faces
+        # score_image(), which is what guards against category drift.
+        if len(out) < IMAGES_WANTED + 6:
+            for sub in subcategories_of(cat):
+                if len(out) >= IMAGES_WANTED + 12:
+                    break
+                collect({"generator": "categorymembers",
+                         "gcmtitle": f"Category:{sub}", "gcmtype": "file",
+                         "gcmlimit": 12, **IMAGE_PROPS}, "category")
 
     # The name searches only run when the passes above left the ranking thin.
     # A mountain whose own category returned sixty files does not need them,
@@ -636,11 +694,45 @@ def image_candidates(peak, lang):
                  **IMAGE_PROPS}, "search")
 
     if len(out) < IMAGES_WANTED + 4:
+        # 50, up from 24: gslimit's real ceiling is 500, and a wider
+        # blind net costs nothing extra per call while the naming gate
+        # still refuses everything the mountain's name never touches.
         near_m = GEO_RADIUS_M.get(kind_hint(peak), 5000)
         collect({"generator": "geosearch", "ggsnamespace": 6,
                  "ggscoord": f"{peak['lat']}|{peak['lon']}",
-                 "ggsradius": near_m, "ggslimit": 24, **IMAGE_PROPS}, "geo")
+                 "ggsradius": near_m, "ggslimit": 50, **IMAGE_PROPS}, "geo")
     return out
+
+
+def subcategories_of(cat, limit=8):
+    """Subcategories of a mountain's Commons category, two hops down.
+    Names that announce a non-subject (maps of, coats of arms of) are
+    skipped to save the requests; the subject gate guards the rest."""
+    found, frontier = [], [cat]
+    for _hop in range(2):
+        next_frontier = []
+        for parent in frontier:
+            try:
+                data = mediawiki({"generator": "categorymembers",
+                                  "gcmtitle": f"Category:{parent}",
+                                  "gcmtype": "subcat", "gcmlimit": 40},
+                                 api=COMMONS_API)
+            except (SourceError, ValueError):
+                continue
+            for page in (data.get("query") or {}).get("pages") or []:
+                name = (page.get("title") or "").replace("Category:", "")
+                if not name or name in found:
+                    continue
+                if lake_images.NOT_THE_SUBJECT.search(name):
+                    continue
+                found.append(name)
+                next_frontier.append(name)
+                if len(found) >= limit:
+                    return found
+        frontier = next_frontier[:4]
+        if not frontier:
+            break
+    return found
 
 
 def strip_html(text):
@@ -1511,6 +1603,18 @@ def enrich_country(cc, refresh=False, dests=None, images=True, context=True,
                 peak["images"] = shots
                 kept += 1
         print(f"    photographs skipped, {kept} sets carried over")
+
+    # Region ids, local and free. Carried over from the previous cache
+    # first, then stamped for whatever is new; stored here so export reads,
+    # never recomputes.
+    for peak in peaks:
+        was = previous.get(peak.get("wd")) or {}
+        if not peak.get("rg") and was.get("rg") is not None:
+            peak["rg"] = was["rg"]
+    try:
+        _regions_assign().stamp_rows(peaks)
+    except Exception as exc:  # the spine is optional at enrich time
+        print(f"    rg stamping skipped ({type(exc).__name__}: {exc})")
 
     payload = {
         "cc": cc,

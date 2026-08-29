@@ -45,13 +45,24 @@ WIRE_DIRS = ("beaches", "lakes", "mountains", "trails", "trips",
 IMAGE_KEYS = ("u", "url", "thumb", "big", "full", "img")
 
 
+_ledger_cache = {"mtime": None, "rows": []}
+
+
 def load_ledger():
-    if not LEDGER.exists():
-        return []
+    """Cached by mtime: is_taken_down runs once per candidate in every
+    layer's image pass, and the ledger changes a few times a year."""
     try:
-        return json.loads(LEDGER.read_text(encoding="utf-8"))
-    except (ValueError, OSError):
+        mtime = LEDGER.stat().st_mtime
+    except OSError:
         return []
+    if _ledger_cache["mtime"] != mtime:
+        try:
+            _ledger_cache["rows"] = json.loads(
+                LEDGER.read_text(encoding="utf-8"))
+        except (ValueError, OSError):
+            _ledger_cache["rows"] = []
+        _ledger_cache["mtime"] = mtime
+    return _ledger_cache["rows"]
 
 
 def save_ledger(rows):

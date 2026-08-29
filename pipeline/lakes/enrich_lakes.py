@@ -60,11 +60,45 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 
-from water_sources import (COMMONS_API, SourceError, haversine_km,  # noqa: E402
-                           load_cache, mediawiki, overpass, request,
-                           save_cache, wikipedia_api)
+
+def _regions_assign():
+    """pipeline/regions/assign.py under a neutral name, loaded on first use.
+    Enrich owns the region assignment (stored in the cache, never recomputed
+    at export); the load is lazy so a clone without the spine still
+    enriches, and stamp_rows degrades to a warning in that case."""
+    import importlib.util
+    mod = sys.modules.get("carta_regions_assign")
+    if mod is None:
+        path = HERE.parents[1] / "pipeline" / "regions" / "assign.py"
+        spec = importlib.util.spec_from_file_location("carta_regions_assign", path)
+        mod = importlib.util.module_from_spec(spec)
+        sys.modules["carta_regions_assign"] = mod
+        spec.loader.exec_module(mod)
+    return mod
+
+from water_sources import (COMMONS_API, SourceError, get_json,  # noqa: E402
+                           haversine_km, load_cache, mediawiki, overpass,
+                           request, save_cache, wikipedia_api)
 from harvest_lakes import COUNTRIES, LOCAL_LANG, fold, name_tokens  # noqa: E402
 import lake_images  # noqa: E402
+
+# The photo engine's shared halves, loaded by path like lake_images is
+# loaded by the other layers: the takedown ledger every candidate pass
+# must honour, and the Wikidata view properties beyond P18.
+import importlib.util  # noqa: E402
+
+def _photo_module(name):
+    key = f"carta_photo_{name}"
+    if key not in sys.modules:
+        spec = importlib.util.spec_from_file_location(
+            key, HERE.parent / "photos" / f"{name}.py")
+        mod = importlib.util.module_from_spec(spec)
+        sys.modules[key] = mod
+        spec.loader.exec_module(mod)
+    return sys.modules[key]
+
+photo_takedown = _photo_module("takedown")
+photo_views = _photo_module("wikidata_views")
 
 ROOT = HERE.parents[1]
 CACHE = ROOT / "cache"
@@ -554,6 +588,11 @@ def image_candidates(lake, lang):
             if title in seen:
                 continue
             seen.add(title)
+            # A file in the takedown ledger never re-enters the funnel,
+            # whatever asserts it: that is what makes a takedown permanent
+            # rather than lasting until the next enrich.
+            if photo_takedown.is_taken_down(title):
+                continue
             info = (page.get("imageinfo") or [{}])[0]
             if not info.get("url"):
                 continue
@@ -567,6 +606,15 @@ def image_candidates(lake, lang):
     p18 = commons_filename(lake.get("wd_img"))
     if p18:
         collect({"titles": p18, **IMAGE_PROPS}, pinned=True)
+    # The other curated view properties, same claim as P18 for the same
+    # cost: P4640 panoramic, P8592 aerial (P5252 winter is mountains
+    # only). Community-picked single bests the first build never asked
+    # for. A failure here costs candidates, never the enrich.
+    if lake.get("wd"):
+        for _prop, title in photo_views.view_images(
+                lambda u: get_json(u), lake["wd"], "lake"):
+            if title not in seen:
+                collect({"titles": title, **IMAGE_PROPS}, pinned=True)
     if cat:
         # Commons files the good pictures in subcategories, and names them
         # after what they show: "Views of Lake Bled", "Panoramics of Lake
@@ -583,6 +631,19 @@ def image_candidates(lake, lang):
         collect({"generator": "categorymembers", "gcmtitle": f"Category:{cat}",
                  "gcmtype": "file", "gcmlimit": 20, **IMAGE_PROPS},
                 from_cat=True)
+        # Depth 2, because Commons files the pictures where they fit and
+        # not where a harvester looks: Category:Loch Maree holds a handful
+        # of files while "Loch Maree in winter" holds the corpus. Only
+        # runs while the funnel is still short, only through subcategory
+        # names that do not announce a non-subject (maps, coats of arms),
+        # and everything it adds still faces the same subject gate.
+        if len(out) < IMAGES_WANTED + 6:
+            for sub in all_subcategories(cat):
+                if len(out) >= IMAGES_WANTED + 10:
+                    break
+                collect({"generator": "categorymembers",
+                         "gcmtitle": f"Category:{sub}", "gcmtype": "file",
+                         "gcmlimit": 12, **IMAGE_PROPS}, from_cat=True)
     for name in queries[:2]:
         if len(out) >= IMAGES_WANTED + 8:
             break
@@ -596,9 +657,12 @@ def image_candidates(lake, lang):
     # which refuses anything nothing names. It is kept because for a small
     # lake with no Commons category it is the only source there is.
     if len(out) < IMAGES_WANTED + 2:
+        # 50, up from 20: gslimit's real ceiling is 500 (5000 with a bot
+        # flag), and a wider blind net costs nothing extra per call while
+        # the subject gate still refuses everything nothing names.
         collect({"generator": "geosearch", "ggsnamespace": 6,
                  "ggscoord": f"{lake['lat']}|{lake['lon']}",
-                 "ggsradius": near_m, "ggslimit": 20, **IMAGE_PROPS},
+                 "ggsradius": near_m, "ggslimit": 50, **IMAGE_PROPS},
                 near=True)
     return out
 
@@ -624,6 +688,40 @@ def view_subcategories(cat, limit=3):
     # winter", and the shorter name is almost always the broader category.
     wanted.sort(key=len)
     return wanted[:limit]
+
+
+def all_subcategories(cat, limit=8):
+    """Subcategories of a Commons category, walked one level further down
+    than view_subcategories and NOT filtered to view words: "Loch Maree
+    in winter" names no view and holds the photographs. Names that
+    announce a non-subject (maps of, coats of arms of) are skipped to
+    save the requests; every file collected still faces the subject gate,
+    which is what actually guards against category drift."""
+    found, frontier = [], [cat]
+    for _hop in range(2):
+        next_frontier = []
+        for parent in frontier:
+            try:
+                data = mediawiki({"generator": "categorymembers",
+                                  "gcmtitle": f"Category:{parent}",
+                                  "gcmtype": "subcat", "gcmlimit": 40},
+                                 api=COMMONS_API)
+            except (SourceError, ValueError):
+                continue
+            for page in (data.get("query") or {}).get("pages") or []:
+                name = (page.get("title") or "").replace("Category:", "")
+                if not name or name in found:
+                    continue
+                if lake_images.NOT_THE_SUBJECT.search(name):
+                    continue
+                found.append(name)
+                next_frontier.append(name)
+                if len(found) >= limit:
+                    return found
+        frontier = next_frontier[:4]
+        if not frontier:
+            break
+    return found
 
 
 def lake_tokens(lake):
@@ -1055,6 +1153,8 @@ def enrich_country(cc, shortlist_n=SHORTLIST, refresh=False, bathing=None,
         was = previous.get(lake["key"]) or {}
         if was.get("images") is not None:
             lake["images"] = was["images"]
+        if was.get("rg") is not None:
+            lake["rg"] = was["rg"]
 
     if images:
         shipping = published_ids(cc) if photos_published else None
@@ -1131,6 +1231,13 @@ def enrich_country(cc, shortlist_n=SHORTLIST, refresh=False, bathing=None,
         for lake in chunk:
             lake["context"] = found.get(lake["key"], {})
         print(f"    context batch {i}/{len(batches)}")
+
+    # Region ids, local and free. Stored here so export reads, never
+    # recomputes; rows the carry-over already stamped are skipped.
+    try:
+        _regions_assign().stamp_rows(short)
+    except Exception as exc:  # the spine is optional at enrich time
+        print(f"    rg stamping skipped ({type(exc).__name__}: {exc})")
 
     payload = {
         "country": cc,
