@@ -744,6 +744,19 @@ def harvest_country(cc, refresh=False, shortlist_n=SHORTLIST, use_spine=True):
             row = as_row(raw, cc)
             if row and in_europe(row):
                 rows.append(row)
+    else:
+        # --no-spine skips READING the spine, it does not forget what the
+        # spine already contributed: without this, a --no-spine --refresh
+        # rewrote the cache from the seed and the high points alone and the
+        # spine rows silently vanished from the pool. Same lesson as
+        # enrich's --no-images: a skip flag controls the source, never the
+        # data. The seed mark is cleared so resolve_seed below re-decides it
+        # under the current rules, the way lakes' --fix-seeds does.
+        for row in (load_cache(STAGE, cc) or {}).get("peaks") or []:
+            if row.get("wd"):
+                row = dict(row)
+                row.pop("seed", None)
+                rows.append(row)
     spine_n = len(rows)
 
     highs = [r for r in highpoint_rows(cc) if in_europe(r)]

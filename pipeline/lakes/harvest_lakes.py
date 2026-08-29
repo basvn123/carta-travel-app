@@ -640,7 +640,23 @@ def harvest_country(cc, refresh=False, classes=None, seed_only=False):
                 items.append(q)
 
     detail = details_for(items, cc, lang) if items else {}
+    n_wikidata = len(detail)
     rows = make_rows(detail)
+    if seed_only:
+        # --seed-only skips the country passes, it does not forget what they
+        # already found: without this, a --seed-only --refresh rewrote a
+        # country's cache with nothing but its seed rows, because `cached` is
+        # None under --refresh and the shrink guard below never fired. Same
+        # lesson as enrich's --no-images: the switch controls the network,
+        # never the data. Rows are repaired and their seed mark cleared the
+        # way --fix-seeds does, so resolve_seed below re-decides the seed
+        # under the current rules.
+        prior = cached or load_cache(STAGE, cc) or {}
+        n_wikidata = prior.get("n_wikidata") or 0
+        for row in prior.get("lakes") or []:
+            row = dict(row) if row.get("key") else as_row(row)
+            row.pop("seed", None)
+            rows.append(row)
     rows, seeded, missing = resolve_seed(cc, rows, lang)
 
     # Nothing replaces something, the same rule the beach harvest learned the
@@ -654,14 +670,14 @@ def harvest_country(cc, refresh=False, classes=None, seed_only=False):
     payload = {
         "country": cc,
         "harvested_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
-        "n_wikidata": len(detail),
+        "n_wikidata": n_wikidata,
         "n_seeded": seeded,
         "seed_missing": missing,
         "lakes": rows,
     }
     save_cache(STAGE, cc, payload)
     note = f", {len(missing)} seed entries UNRESOLVED" if missing else ""
-    print(f"  {cc}: {len(rows)} water bodies ({len(detail)} from Wikidata, "
+    print(f"  {cc}: {len(rows)} water bodies ({n_wikidata} from Wikidata, "
           f"{seeded} seeded){note}")
     if missing:
         print(f"    unresolved: {', '.join(missing)}")
