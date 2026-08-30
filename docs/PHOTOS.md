@@ -220,6 +220,18 @@ enriched sample rather than the 800 the brief asks for.
 
 ## Open items
 
+- **22 photographs still owe a credit nobody can supply.** Measured
+  2026-08-30 across the published lakes and mountains wires: of 42
+  author-less files, the widened metadata request recovers 11 names and
+  clears 9 as owing nothing, and the last 22 have no name in Commons at
+  all. They stop shipping the next time `fill_authors.py` runs, which is
+  after the layer rebuilds, per the sequencing rule above.
+- **The waiver does not reach the wire.** Commons' AttributionRequired
+  says 9 of those files owe no credit, `fill_authors.py` records that in
+  the cache as `no_attribution_required`, and no export ships it, so
+  `verify_photo_contract.mjs` still counts them as gaps. It is right to
+  keep failing until a wire field carries the waiver: a licence with no
+  name is a gap until something states otherwise.
 - **More labels, and human ones.** 29 of 800 manifest rows carry a
   label, all lakes, all model made. The review queue writes labels as a
   side effect of reviewing, so the cheapest path to the full set is
