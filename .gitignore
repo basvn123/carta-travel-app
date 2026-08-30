@@ -88,6 +88,17 @@ cache/lakes/
 # serves continent-app/public/trails; these only save a cold rebuild.
 cache/trails/
 
+# Region spine (pipeline/regions): ~600 MB of downloaded boundary sources
+# plus a 197 MB GeoPackage built from them, the single largest artifact any
+# layer produces. Same call as the caches below and more emphatically: it is
+# derived data with a one line rebuild, the app serves
+# continent-app/public/region, and this .git is already 3 GB. The sources are
+# static yearly files, so a cold rebuild is a download and a wait:
+#   python pipeline/regions/build_regions.py
+# Delete cache/regions/src to force a re-fetch of NUTS, LAU, ITL, GMBA and
+# the EEA layers.
+cache/regions/
+
 # Trip layer caches (pipeline/trips): the composed candidate set and the
 # Wikivoyage route harvest, both rewritten whole on every refresh. Same call
 # as the three above: derived data, the app serves continent-app/public/trips,
