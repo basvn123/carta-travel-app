@@ -159,13 +159,54 @@ cent precision on rejects and 80 per cent recall on the known-bad set;
 the overcast probe fires on bad heroes and not on good ones before
 `season.CONDITION_ENABLED` flips.
 
+## The margin, and how it was measured
+
+`relevance.MARGIN` is 0.02 on evidence rather than by guess, as of
+2026-08-30. 29 lake images were labelled by eye from contact sheets
+(`contact_sheet.py` builds them, `label_sheet.py` records the verdicts)
+across two deliberately enriched strata: everything the rejector vetoes,
+which is the precision measurement, and the lowest scoring images it
+lets through, which is where the misses live.
+
+```
+margin  reject-precision  subject-recall  vetoed
+ 0.000             1.000           0.812      13
+ 0.010             1.000           0.812      13
+ 0.020             1.000           0.812      13   <- kept
+ 0.030             1.000           0.750      12
+ 0.050             1.000           0.562       9
+```
+
+0.02 is the largest margin clearing both bars (0.95 precision, 0.80
+recall), so it vetoes as cautiously as the recall bar allows; every
+lower margin vetoes the same thirteen files, so loosening buys nothing.
+All thirteen vetoes were correct: rock art, a trail signpost, apartment
+blocks at dusk, a framed banner indoors, four churches and chapels, a
+car wheel, a castle ruin, a village street.
+
+Recall is measured over the SUBJECT class only. A foggy or drawn-down
+photograph of the right lake is not something a subject classifier
+should veto: the season term and the technical gate own those, and a
+relevance model judging weather is exactly the failure mode this package
+threw away three times in the lake layer. `evalset.py` splits the reason
+codes on that line.
+
+Two caveats worth keeping in view: the labels are model made
+(`by: claude-vision` in the manifest, overruled by any human pass
+through the review queue), and 29 images from one category is a small,
+enriched sample rather than the 800 the brief asks for.
+
 ## Open items
 
-- **Labels.** The manifest is built; the labels are human work. Until
-  they exist, the rejector's margin stays at the conservative default
-  (0.02, errs toward keeping) and the overcast probe stays off. A real
-  information board at Kernan Lake currently survives by 0.011 of
-  cosine; the margin sweep will decide whether 0.01 clears the bars.
+- **More labels, and human ones.** 29 of 800 manifest rows carry a
+  label, all lakes, all model made. The review queue writes labels as a
+  side effect of reviewing, so the cheapest path to the full set is
+  working the queue.
+- **The three misses are prompt shaped.** No margin catches a wrecked
+  car in a dry streambed, a cow pasture with no water in frame, or a
+  lake view with three tourists' heads across the bottom. Growing the
+  NEGATIVE list to name them is a model version change and needs its own
+  sweep; the machinery for that sweep now runs from cache in a second.
 - **NIMA weights.** The published checkpoint is Keras; this box runs
   torch. `aesthetics.py` loads `cache/photos/models/nima_mobilenet.pth`
   the moment a converted checkpoint lands, and renormalises without it.

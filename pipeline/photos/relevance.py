@@ -39,6 +39,7 @@ one list:
 ASCII clean, no em dashes, per project convention.
 """
 
+import hashlib
 import sys
 from pathlib import Path
 
@@ -75,22 +76,73 @@ POSITIVE = {
                "landscape",
 }
 
-# reject if max(sim NEGATIVE) > max(sim POSITIVE) + MARGIN. Provisional
-# until evalset.py has labels; a positive margin errs toward keeping,
-# which is the right error while untuned.
+# reject if max(sim NEGATIVE) > max(sim POSITIVE) + MARGIN.
+#
+# MEASURED, 2026-08-30, against 29 labelled lake images (13 good, 16 bad
+# on subject) drawn from two enriched strata: everything the rejector
+# vetoes, and the lowest scoring images it does not. `python
+# pipeline/photos/evalset.py stats` reproduces the table.
+#
+#   margin  reject-precision  subject-recall  vetoed
+#    0.000             1.000           0.812      13
+#    0.010             1.000           0.812      13
+#    0.020             1.000           0.812      13   <- kept
+#    0.030             1.000           0.750      12
+#    0.050             1.000           0.562       9
+#
+# 0.02 stays, and now for a reason: it is the LARGEST margin that clears
+# both bars (0.95 precision, 0.80 recall), so it vetoes as cautiously as
+# the recall bar allows. Every margin below it vetoes the same thirteen
+# files, so loosening buys nothing and only risks a good photograph.
+#
+# The three misses are prompt shaped rather than margin shaped, and no
+# margin catches them: a wrecked car in a dry streambed, a cow pasture
+# with no water in frame, and a lake view with three tourists' heads
+# across the bottom. They stay uncaught until the NEGATIVE list grows a
+# prompt that names them, which is a model version change and needs its
+# own measurement.
+#
+# Honest scope: the labels are model made (`by: claude-vision` in the
+# manifest), the sample is small and deliberately enriched for bad, and
+# a human pass through the review queue overrules any of them.
 MARGIN = 0.02
 
 _text_emb = None      # {(category): (neg_matrix, pos_vector)} per process
 
 
 def _prompts_for(category):
+    """The prompt embeddings for one category, from disk where possible.
+
+    The prompts are versioned in code, so their embeddings are a pure
+    function of this file and can be cached like any other. It matters
+    for more than speed: with them on disk, a sweep over already
+    embedded images needs no CLIP at all, which is the difference
+    between a one minute measurement and a second process trying to
+    load a 1.7 GB tower next to a running rescore."""
     global _text_emb
     if _text_emb is None:
         _text_emb = {}
-    if category not in _text_emb:
-        vecs = aesthetics.embed_texts(
-            NEGATIVE + [POSITIVE.get(category, POSITIVE["lake"])])
-        _text_emb[category] = (vecs[:-1], vecs[-1])
+    if category in _text_emb:
+        return _text_emb[category]
+
+    import numpy as np
+    prompts = NEGATIVE + [POSITIVE.get(category, POSITIVE["lake"])]
+    key = hashlib.sha1(("\n".join(prompts)).encode("utf-8")).hexdigest()
+    path = aesthetics.EMB_DIR / f"text_{key}.npy"
+    vecs = None
+    if path.exists():
+        try:
+            vecs = np.load(path)
+        except Exception:
+            vecs = None
+    if vecs is None:
+        vecs = aesthetics.embed_texts(prompts)
+        aesthetics.EMB_DIR.mkdir(parents=True, exist_ok=True)
+        tmp = path.with_suffix(".tmp")
+        with open(tmp, "wb") as fh:
+            np.save(fh, vecs)
+        tmp.replace(path)
+    _text_emb[category] = (vecs[:-1], vecs[-1])
     return _text_emb[category]
 
 
