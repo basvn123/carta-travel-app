@@ -260,6 +260,45 @@ Two caveats worth keeping in view: the labels are model made
 through the review queue), and 29 images from one category is a small,
 enriched sample rather than the 800 the brief asks for.
 
+## A score is not evidence that anything was looked at
+
+The engine wrote 507 beauty scores for photographs it never saw, and the
+scores were indistinguishable from real ones. Worth understanding rather
+than just fixed, because the shape recurs.
+
+Five components make up `beauty`, and two of them need no image:
+resolution comes from the stored width and height, season from the file
+name and the Commons metadata. So when `fetch()` failed, the remaining
+three dropped out, the weights renormalised exactly as invariant 6
+intends, and out came a confident number computed from a rectangle and a
+month. Renormalising over what answered is right; what was missing was
+any record of how much had answered.
+
+Two defences now, and they work at different distances:
+
+- `phash` beside the score. A perceptual hash can only be computed from
+  pixels, so its presence is the honest signature of "the bytes
+  arrived" in a way the score itself is not.
+  `verify_photo_contract.mjs` hard-fails a score without one, and
+  `rescore.py` refuses to write a score when the fetch fails.
+- `photo_read_rows` and `photo_read_share` in the lake layer's model
+  block, added by that layer: how many published rows had their pictures
+  actually looked at. The first defence catches the fault where it is
+  produced; the second makes a collapse legible from outside the caches,
+  which is what was missing when 430 fictional scores could not be told
+  apart from real ones.
+
+The limit of the first defence, worth stating so nobody over-trusts it:
+the pHash was unfakeable *by this bug* because it comes from the same
+bytes the model reads. A different bug computing a pHash from anything
+else would defeat both the check and the layer's guard just as quietly.
+Two records of one event only help while they stay independent.
+
+And the honest ordering: the invariant was written after the bug, not
+before. It was found by pulling on a loose thread, five photographs of a
+Kosovan lake carrying scores in identical pairs, which turned out to be
+resolution and season agreeing because nothing else had a vote.
+
 ## Open items
 
 - **22 photographs still owe a credit nobody can supply.** Measured
