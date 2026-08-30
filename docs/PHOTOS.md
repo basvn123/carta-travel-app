@@ -129,6 +129,28 @@ Order for a full refresh: rescore -> fill_authors -> the layer's export
 -> verify_photo_contract. Rescore before fill: both write the rich
 caches, and only ever run one writer per layer at a time.
 
+**Rescore runs AFTER a layer rebuild, never beside one.** Learned on
+2026-08-30, when a lakes sweep ran for eighteen CPU-hours next to five
+other sessions rebuilding their layers, and was superseded before it
+finished. Two independent reasons, and each is sufficient:
+
+- A rebuild regenerates the rows being annotated. Photographs carried
+  across unchanged keep their beauty fields (that is the enrich reuse
+  block doing its job), but every newly picked image arrives unscored,
+  so a sweep run mid-rebuild does work that has to be done again.
+- CLIP wants about 2.5 GB. Alongside a harvest fleet, this box refused
+  to load a second copy twice with `OSError 1455`, and free memory sat
+  at 0.2 GB of 15.6. The sweep is the polite one to stand down.
+
+Two mechanisms enforce it. A layer being rebuilt carries a hold file
+(`cache/<layer>/.rescore_hold`, one line saying who and why) and rescore
+refuses to start on it. And every scored image is stamped `rank_v`, so
+a later pass skips what the current model version already did and pays a
+thumbnail fetch only for pictures that are new. Bump
+`selection.MODEL["photo_rank"]` whenever a weight, prompt or threshold
+moves and the next pass rescores everything instead of trusting numbers
+the old model produced.
+
 ## Costs and politeness
 
 One CLIP embedding per image, cached by file title, reused by the

@@ -58,6 +58,12 @@ LAYERS = {
     "mountains": ("mountains", "peaks", "evidence", "mountain"),
 }
 
+# Stamped on every image this pass scores, so a later run can tell what
+# is already done from what is merely present. Bump it whenever a weight,
+# a prompt or a threshold moves: the next pass then rescores everything
+# rather than trusting numbers the old model produced.
+RANK_VERSION = selection.MODEL["photo_rank"]
+
 UA = ("CartaPhotos/1.0 (https://carta-europetravel.com; "
       "bas.vannieuwenhuyse123@gmail.com)")
 PACE_S = 0.3          # between thumbnail fetches; CPU dominates anyway
@@ -201,14 +207,14 @@ def _ratio(img):
         return 1.5
 
 
-def rescore_country(layer, cc, dry_run=False):
+def rescore_country(layer, cc, dry_run=False, force=False):
     cache_dir, row_key, evidence_field, category = LAYERS[layer]
     path = ROOT / "cache" / cache_dir / f"rich_{cc}.json"
     if not path.exists():
         return None
     data = json.loads(path.read_text(encoding="utf-8"))
     rows = data.get(row_key) or []
-    changed = vetoed_n = scored_n = 0
+    changed = vetoed_n = scored_n = skipped_n = 0
     for row in rows:
         images = row.get("images") or []
         # One image reorders to nothing and the transition rule would not
@@ -218,13 +224,26 @@ def rescore_country(layer, cc, dry_run=False):
             continue
         before = [i.get("file") or i.get("url") for i in images]
         for img in images:
+            # Already scored by this model version: skip it. The layers
+            # are rebuilt often, and a rebuild carries most of its
+            # photographs across unchanged, so a re-run should cost a
+            # thumbnail fetch only for the pictures that are new. Without
+            # this the second pass over a layer downloads every image
+            # again to recompute numbers that have not moved.
+            if (img.get("beauty") is not None and img.get("phash")
+                    and img.get("rank_v") == RANK_VERSION and not force):
+                skipped_n += 1
+                continue
             score_one(img, category, evidence_field)
+            img["rank_v"] = RANK_VERSION
             scored_n += 1
         vetoed_n += sum(1 for i in images if i.get("vetoed"))
         row["images"] = rerank(images, evidence_field)
         after = [i.get("file") or i.get("url") for i in row["images"]]
         if after != before:
             changed += 1
+    if skipped_n:
+        print(f"  {cc}: {skipped_n} already scored by {RANK_VERSION}")
     print(f"  {cc}: {scored_n} images scored, {vetoed_n} vetoed, "
           f"{changed} rows reordered")
     if not dry_run:
@@ -264,6 +283,9 @@ def main():
     ap.add_argument("--countries", default="",
                     help="comma separated ISO2, default every cached one")
     ap.add_argument("--dry-run", action="store_true")
+    ap.add_argument("--force", action="store_true",
+                    help="rescore images already stamped with this "
+                         "model version")
     ap.add_argument("--ignore-hold", action="store_true",
                     help="run even though the layer carries a hold file")
     args = ap.parse_args()
@@ -282,7 +304,8 @@ def main():
             for p in (ROOT / "cache" / cache_dir).glob("rich_??.json"))
     t0 = time.time()
     for cc in wanted:
-        rescore_country(args.layer, cc, dry_run=args.dry_run)
+        rescore_country(args.layer, cc, dry_run=args.dry_run,
+                        force=args.force)
     print(f"done in {(time.time() - t0) / 60:.1f} min")
 
 
