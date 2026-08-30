@@ -181,6 +181,31 @@ cent precision on rejects and 80 per cent recall on the known-bad set;
 the overcast probe fires on bad heroes and not on good ones before
 `season.CONDITION_ENABLED` flips.
 
+## What the four-photo target actually cost, measured
+
+The programme-wide bar of four photographs on a rated row (master spec
+section 8, this brief's target) landed in the beach layer on
+2026-08-30, implemented by that layer's own gate. Measured across the
+re-export, before and after:
+
+```
+              rated   listed
+before        1,095      159
+after           735    3,521
+```
+
+Read that as one trade, not two numbers. 360 beaches stopped being
+scored, and under the old binary gate they would have been DELETED:
+a stricter photo rule would have shown up as a coverage regression, and
+the pressure would then have been to weaken the rule. With the third
+outcome available they became listed rows instead, so the layer got
+stricter about what it scores and twenty times broader about what it
+admits exists, in the same change.
+
+That is worth writing down here because the photo engine is what makes
+strictness affordable. A gate can only be raised on a catalogue that has
+somewhere honest to put what falls through.
+
 ## The margin, and how it was measured
 
 `relevance.MARGIN` is 0.02 on evidence rather than by guess, as of
