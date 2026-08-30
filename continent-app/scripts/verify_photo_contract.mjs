@@ -64,40 +64,79 @@ const hamming = (a, b) => {
 for (const layer of LAYERS) {
   const wireDir = path.join(APP, 'public', layer.dir);
   if (!existsSync(wireDir)) continue;
-  let nImages = 0; let nRows = 0; let underFour = 0;
+  let nImages = 0; let nRows = 0; let underTarget = 0;
   let monthKnown = 0; let monthGood = 0;
+  let nListed = 0; let mapCards = 0;
+
+  // The photo bar is the layer's own, read off the model block it
+  // publishes, so this check follows a gate change instead of arguing
+  // with one. A wire that does not declare min_images is only reported
+  // against the programme target, never failed on it.
+  const indexPath = path.join(wireDir, 'index.json');
+  const declared = existsSync(indexPath)
+    ? ((readJson(indexPath).model || {}).min_images ?? null)
+    : null;
+
+  const checkImages = (row, images, where) => {
+    for (const img of images) {
+      nImages += 1;
+      if (!img.u && !img.big) failures.push(`${where}: image without a URL`);
+      if (!(img.lic || '').trim()) failures.push(`${where}: no licence`);
+      if (!(img.by || '').trim() && !NO_CREDIT_LIC.test(img.lic || '')) {
+        failures.push(`${where}: ${img.lic} with nobody named`);
+      }
+      if (!(img.licUrl || '').trim() && !NO_CREDIT_LIC.test(img.lic || '')
+          && !NO_URL_LIC.test((img.lic || '').trim())) {
+        failures.push(`${where}: no licence URL`);
+      }
+      if (!(img.page || '').trim()) failures.push(`${where}: no source page`);
+    }
+    if (images.length) {
+      const heroEv = images[0][layer.ev] || '';
+      if (NEVER_HERO.has(heroEv)) {
+        failures.push(`${where}: hero rides on ${heroEv} evidence`);
+      }
+    }
+  };
 
   for (const file of readdirSync(wireDir)) {
     if (!/^[A-Z]{2}\.json$/.test(file)) continue;
     const data = readJson(path.join(wireDir, file));
+
     for (const row of data[layer.key] || []) {
       const images = row.images || [];
       if (!images.length) continue;
       nRows += 1;
-      if (images.length < 4) underFour += 1;
+      if (images.length < 4) underTarget += 1;
+      const where = `${layer.name} ${file} ${row.name}`;
+      if (declared !== null && images.length < declared) {
+        failures.push(`${where}: rated row has ${images.length} `
+          + `photographs, its own model block declares ${declared}`);
+      }
+      checkImages(row, images, where);
+    }
 
-      const hero = images[0];
-      const heroEv = hero[layer.ev] || '';
-      if (NEVER_HERO.has(heroEv)) {
-        failures.push(`${layer.name} ${file} ${row.name}: hero rides on `
-          + `${heroEv} evidence`);
+    // The listed tier. A listed row makes a smaller claim (this place
+    // exists and is named) and so carries a smaller photo bar, but the
+    // one thing it must never do is ship nothing and say nothing: a row
+    // with no photograph has to carry the map-card code, or the app has
+    // an empty frame and no way to know it was deliberate.
+    for (const row of data.listed || []) {
+      nListed += 1;
+      const where = `${layer.name} ${file} ${row.name} (listed)`;
+      if ('score' in row) {
+        failures.push(`${where}: a listed row carries a score key`);
       }
-      for (const img of images) {
-        nImages += 1;
-        const where = `${layer.name} ${file} ${row.name}`;
-        if (!img.u && !img.big) failures.push(`${where}: image without a URL`);
-        if (!(img.lic || '').trim()) failures.push(`${where}: no licence`);
-        if (!(img.by || '').trim() && !NO_CREDIT_LIC.test(img.lic || '')) {
-          failures.push(`${where}: ${img.lic} with nobody named`);
-        }
-        if (!(img.licUrl || '').trim() && !NO_CREDIT_LIC.test(img.lic || '')
-            && !NO_URL_LIC.test((img.lic || '').trim())) {
-          failures.push(`${where}: no licence URL`);
-        }
-        if (!(img.page || '').trim()) {
-          failures.push(`${where}: no source page`);
+      const images = row.images || [];
+      const codes = (row.why || []).map((w) => w && w.k);
+      if (!images.length) {
+        if (!codes.includes('no_photo_map_card')) {
+          failures.push(`${where}: no photographs and no map-card code`);
+        } else {
+          mapCards += 1;
         }
       }
+      checkImages(row, images, where);
     }
   }
 
@@ -129,9 +168,12 @@ for (const layer of LAYERS) {
     }
   }
 
-  notes.push(`${layer.name}: ${nRows} rows, ${nImages} images, `
-    + `${nRows - underFour} rows at the 4-photo target `
-    + `(target hardens with the funnel re-harvest)`);
+  notes.push(`${layer.name}: ${nRows} rated rows, ${nListed} listed, `
+    + `${nImages} images, ${nRows - underTarget} rated rows at the `
+    + `4-photo target`
+    + (declared === null ? ' (no min_images declared, reported only)'
+      : `, gate declares ${declared}`)
+    + (mapCards ? `, ${mapCards} map cards` : ''));
   if (monthKnown >= 30) {
     const pct = Math.round((100 * monthGood) / monthKnown);
     const line = `${layer.name}: hero month preferred for ${pct}% of the `
@@ -145,9 +187,26 @@ for (const layer of LAYERS) {
 
 for (const note of notes) console.log('  note  ' + note);
 if (failures.length) {
-  for (const f of failures.slice(0, 40)) console.log('  FAIL  ' + f);
-  if (failures.length > 40) {
-    console.log(`  ... and ${failures.length - 40} more`);
+  for (const f of failures.slice(0, 25)) console.log('  FAIL  ' + f);
+  if (failures.length > 25) {
+    console.log(`  ... and ${failures.length - 25} more`);
+  }
+  // A flat list of hundreds says nothing about what is actually wrong.
+  // The kinds do, and they are what somebody fixes: one bad export
+  // stage produces one kind of failure a thousand times over.
+  const kinds = new Map();
+  for (const f of failures) {
+    const kind = f.split(': ').slice(1).join(': ')
+      .replace(/^(CC|Public domain|Attribution|GFDL|PD)[^ ]* /, 'LICENCE ')
+      .replace(/\d+ photographs/, 'N photographs')
+      .replace(/rides on \w+ evidence/, 'rides on a never-hero tier');
+    const layer = f.split(' ')[0];
+    const key = `${layer}: ${kind}`;
+    kinds.set(key, (kinds.get(key) || 0) + 1);
+  }
+  console.log('\nby kind:');
+  for (const [kind, n] of [...kinds].sort((a, b) => b[1] - a[1])) {
+    console.log(`  ${String(n).padStart(4)}  ${kind}`);
   }
   console.log(`\n${failures.length} photo contract failures`);
   process.exit(1);
