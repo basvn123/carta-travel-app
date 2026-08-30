@@ -57,6 +57,25 @@ app_data/app_data.json
 app_data/app_data.backup.json
 app_data/*.pre_*.json
 
+# ---------------------------------------------------------------------------
+# Adding a rule for a new cache directory? Two things, learned the same day by
+# two people who each thought they were the only one who had missed it.
+#
+# 1. A cache directory created after these conventions were written does not
+#    inherit them, and nobody notices until a `git add -A` sweeps the tree.
+#    cache/regions and cache/photos were both unignored months after the
+#    convention was set, the second at 1.6 GB.
+# 2. Before writing the rule, check whether the directory has quietly
+#    accumulated something that is a RECORD rather than an output: a ledger, a
+#    human decision, anything whose loss is not repaired by rebuilding. The
+#    rule written in a hurry is a plain `cache/thing/`, and that is the one
+#    shape whose contents cannot be re-admitted afterwards, because excluding
+#    a directory makes every negation inside it unreachable. Ignore the
+#    CONTENTS (`cache/thing/*`) whenever there is any doubt, and name the
+#    exceptions. cache/photos below is the worked example: two ledgers, one of
+#    which is what stops a taken-down photograph coming back.
+# ---------------------------------------------------------------------------
+
 # Beach layer harvest caches (pipeline/beaches): 159 MB and rewritten whole on
 # every refresh, which is the same treadmill as the master above. Note that the
 # LFS rule a few lines up is `cache/*.json`, which does NOT match a
