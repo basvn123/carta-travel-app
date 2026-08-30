@@ -162,9 +162,14 @@ def score_one(img, category, evidence_field):
 
 
 def rerank(images, evidence_field):
-    """New order for one row's images: beauty hero first, clean images
-    before vetoed ones, one image per dedupe cluster ahead of its twins.
-    Nothing is deleted here unless two clean images remain."""
+    """One row's images, reordered and de-duplicated.
+
+    Out comes the beauty hero, then the gallery, then any further
+    DISTINCT views the gallery cap held back. Two things are removed: a
+    second member of a dedupe cluster already shown (the same picture
+    twice), and the rejector's vetoes, though those survive while fewer
+    than two clean images remain, so no honest row unpublishes before
+    the funnel widens."""
     def hero_ok(img):
         tier = img.get(evidence_field) or "legacy"
         return tier not in selection.NEVER_HERO
@@ -189,10 +194,31 @@ def rerank(images, evidence_field):
         month_of=lambda i: i.get("month"),
         hero_ok=hero_ok)
     ordered = ([hero] if hero else []) + gallery
-    # Clean images the gallery cap or the cluster rule held back still
-    # belong to the row; they follow in beauty order.
-    rest = sorted((i for i in clean if i not in ordered),
-                  key=lambda i: -(i.get("beauty") or 0.0))
+    # What the gallery cap held back still belongs to the row; what the
+    # CLUSTER rule held back does not. The two look alike here and are
+    # opposites: a sixth distinct view is a photograph the row simply had
+    # no slot for, while a second member of a cluster already shown is
+    # the same picture twice, and shipping it behind its own twin is the
+    # thing the dedupe pass exists to stop. Trailing them was a real bug:
+    # verify_photo_contract.mjs fails any row publishing two images in
+    # one pHash bucket, so the engine was writing what its own contract
+    # rejects.
+    #
+    # Dropping can take a row under its layer's photo gate. That is the
+    # tier model working: it falls to `listed` rather than shipping a
+    # gallery padded with one photograph wearing four hats.
+    shown_clusters = {i.get("cluster") for i in ordered
+                      if i.get("cluster") is not None}
+    rest = []
+    for img in sorted(clean, key=lambda i: -(i.get("beauty") or 0.0)):
+        if img in ordered:
+            continue
+        cluster = img.get("cluster")
+        if cluster is not None and cluster in shown_clusters:
+            continue                # the same view, already published
+        rest.append(img)
+        if cluster is not None:
+            shown_clusters.add(cluster)
     ordered += rest
     if len(clean) >= 2:
         return ordered            # vetoed images finally dropped
