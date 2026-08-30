@@ -145,7 +145,15 @@ def scrub(needles=None):
                                           separators=(",", ":")),
                                encoding="utf-8")
                 tmp.replace(path)
-                touched[str(path.relative_to(ROOT))] = len(hits)
+                # Relative for a readable log, absolute when the wire is
+                # not under the repo (verify_takedown.py runs the scrub
+                # against a copy, and a progress line must never be the
+                # thing that fails a takedown).
+                try:
+                    label = str(path.relative_to(ROOT))
+                except ValueError:
+                    label = str(path)
+                touched[label] = len(hits)
     for rel, n in touched.items():
         print(f"  {rel}: removed {n}")
     if not touched:

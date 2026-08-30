@@ -235,15 +235,45 @@ def rescore_country(layer, cc, dry_run=False):
     return changed
 
 
+def held(cache_dir):
+    """The layer's hold file, or None.
+
+    Several sessions rebuild these caches at once (the layer briefs run in
+    parallel), and a rich_CC.json is a read, modify, write: whoever writes
+    a country last wins and silently drops the other's fields. A layer
+    being rebuilt right now therefore gets a hold file, and this refuses
+    to start rather than race it:
+
+        cache/mountains/.rescore_hold   one line saying who and why
+
+    Delete it when the rebuild is done. This is advisory and one way (it
+    only stops the photo engine), which is the honest scope: the other
+    writers are separate scripts owned by separate sessions."""
+    path = ROOT / "cache" / cache_dir / ".rescore_hold"
+    if not path.exists():
+        return None
+    try:
+        return path.read_text(encoding="utf-8").strip() or "no reason given"
+    except OSError:
+        return "unreadable hold file"
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     ap.add_argument("layer", choices=sorted(LAYERS))
     ap.add_argument("--countries", default="",
                     help="comma separated ISO2, default every cached one")
     ap.add_argument("--dry-run", action="store_true")
+    ap.add_argument("--ignore-hold", action="store_true",
+                    help="run even though the layer carries a hold file")
     args = ap.parse_args()
 
     cache_dir = LAYERS[args.layer][0]
+    hold = held(cache_dir)
+    if hold and not (args.ignore_hold or args.dry_run):
+        raise SystemExit(f"{args.layer} is held: {hold}\n"
+                         f"  (delete cache/{cache_dir}/.rescore_hold when "
+                         f"the rebuild is done, or pass --ignore-hold)")
     wanted = [c.strip().upper() for c in args.countries.split(",")
               if c.strip()]
     if not wanted:
