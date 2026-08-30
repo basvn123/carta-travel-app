@@ -37,6 +37,7 @@ import json
 import re
 import sys
 import time
+import urllib.error
 import urllib.request
 from pathlib import Path
 
@@ -70,17 +71,42 @@ PACE_S = 0.3          # between thumbnail fetches; CPU dominates anyway
 _last_fetch = [0.0]
 
 
+RETRIES = 3
+
+
 def fetch(url):
-    wait = _last_fetch[0] + PACE_S - time.time()
-    if wait > 0:
-        time.sleep(wait)
-    _last_fetch[0] = time.time()
-    req = urllib.request.Request(url, headers={"User-Agent": UA})
-    try:
-        with urllib.request.urlopen(req, timeout=60) as resp:
-            return resp.read()
-    except Exception:
-        return None
+    """The thumbnail's bytes, or None after RETRIES honest attempts.
+
+    One attempt was not enough, and the failure was invisible rather than
+    loud: 465 of 4,505 images in the first lakes sweep came back empty on
+    a single try, every one of which fetched fine minutes later. A
+    transient refusal during a run under memory pressure was writing a
+    permanent verdict. Every other harvester in this repo backs off and
+    retries; this one now does too, and treats 404 as final because a
+    file that is not there will not be there in two seconds."""
+    for attempt in range(RETRIES):
+        wait = _last_fetch[0] + PACE_S - time.time()
+        if wait > 0:
+            time.sleep(wait)
+        _last_fetch[0] = time.time()
+        req = urllib.request.Request(url, headers={"User-Agent": UA})
+        try:
+            with urllib.request.urlopen(req, timeout=60) as resp:
+                return resp.read()
+        except urllib.error.HTTPError as exc:
+            if exc.code in (404, 410):
+                return None
+            retry_after = 0
+            try:
+                retry_after = int(exc.headers.get("Retry-After") or 0)
+            except (TypeError, ValueError):
+                retry_after = 0
+            back_off = retry_after or (2 ** attempt) * 2
+        except Exception:
+            back_off = (2 ** attempt) * 2
+        if attempt < RETRIES - 1:
+            time.sleep(min(back_off, 30))
+    return None
 
 
 def assessment_from_stars(stars):
@@ -116,6 +142,19 @@ def score_one(img, category, evidence_field):
     the fetched bytes (for dedupe hashing) or None."""
     url = probe_url(img.get("url") or img.get("full") or "")
     data = fetch(url) if url else None
+    if data is None:
+        # No pixels, no beauty score. Without this the score still gets
+        # written from the two components that need no image, resolution
+        # and season, and lands in the same field as a fully assessed
+        # one: a well shaped summer photograph nobody could download
+        # outranking a picture the model actually looked at. Invariant 6
+        # says drop and renormalise rather than score a zero nobody
+        # earned; the honest reading of an image we could not fetch is
+        # that it has no reading at all. Any stale score is cleared so
+        # the next pass retries it rather than trusting this one.
+        for key in ("beauty", "aesthetic", "rank_v"):
+            img.pop(key, None)
+        return None
     emb = None
     if data is not None:
         try:
