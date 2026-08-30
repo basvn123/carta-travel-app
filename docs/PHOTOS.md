@@ -129,6 +129,23 @@ Order for a full refresh: rescore -> fill_authors -> the layer's export
 -> verify_photo_contract. Rescore before fill: both write the rich
 caches, and only ever run one writer per layer at a time.
 
+When several sessions are rebuilding layers at once, the agreed order
+per layer is:
+
+```
+layer owner   enrich / harvest until the layer goes quiet
+photo engine  rescore, then fill_authors      (cache passes)
+layer owner   export                          (its gate, its numbers)
+regions       coverage, then export_regions   (region pages go current)
+```
+
+The export belongs to the layer owner even though the photo engine
+could run it: the gate constants are that layer's decisions, and its
+working tree may hold an unfinished change that an export would ship.
+The cost of this order is one extra export when a layer exports the
+moment its enrich finishes, before the rescore has run. That is the
+right cost to pay.
+
 **Rescore runs AFTER a layer rebuild, never beside one.** Learned on
 2026-08-30, when a lakes sweep ran for eighteen CPU-hours next to five
 other sessions rebuilding their layers, and was superseded before it
