@@ -260,6 +260,33 @@ Two caveats worth keeping in view: the labels are model made
 through the review queue), and 29 images from one category is a small,
 enriched sample rather than the 800 the brief asks for.
 
+## A thin gallery is not a place with little to photograph
+
+A constraint for brief 08 and for anything else that aggregates this
+layer's output, found by the cycling layer on 2026-08-30 and recorded
+here because a photo-derived term has exactly the same shape.
+
+Cycling built a cross-layer score over our own published rows within
+5 km, and it reads `absent` for every Highland route, because Great
+Britain publishes 4 lakes and 21 peaks and all of them sit in the
+populated half. The Highlands did not score badly on scenery. They
+scored nothing, because we have not published what is there yet, and a
+join over published rows turns our own coverage gaps into a verdict
+about the places in them.
+
+Any per-region number derived from photographs inherits this. Photos per
+row, gallery depth, share of rows with a hero, `photo_read_share`: each
+of them measures what the pipeline has managed to do, not what the place
+looks like. A region with few photographs is not a region with little to
+photograph, and a layer that has not been rescored yet has an honest
+`photo_read_share` of zero.
+
+So the rule, which is invariant 6 again in a new place: read the coverage
+audit rather than the wire, distinguish `na` (the layer does not apply
+here, no coast, no relief) from `thin` (it applies and we have not
+published it), and treat `thin` as an ABSENT reading to drop and
+renormalise, never as a zero the place earned.
+
 ## Being asked to give up memory
 
 A sweep holds about 1 GB and is the most obviously interruptible thing on
