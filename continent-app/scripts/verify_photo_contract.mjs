@@ -148,6 +148,24 @@ for (const layer of LAYERS) {
       const data = readJson(path.join(cacheDir, file));
       for (const row of data[layer.cacheKey] || []) {
         const images = row.images || [];
+
+        // A beauty score with no pHash beside it was computed without
+        // the photograph. Two of the five components need no image
+        // (resolution and season), so a failed download used to produce
+        // a score that looked exactly like a real one and ordered
+        // galleries against pictures the model had actually seen. A
+        // pHash can only come from pixels, so it is the honest
+        // signature of "the bytes arrived" in a way the score is not.
+        // 430 records were in this state when the check was written.
+        for (const img of images) {
+          if (img.beauty !== undefined && img.beauty !== null
+              && !img.phash) {
+            failures.push(`${layer.name} ${file} ${row.name}: beauty `
+              + `${img.beauty} on an image with no pHash, so it was `
+              + `scored without the photograph`);
+          }
+        }
+
         const hashes = images
           .map((i) => i.phash)
           .filter((h) => typeof h === 'string' && h.length === 16);
@@ -199,6 +217,7 @@ if (failures.length) {
     const kind = f.split(': ').slice(1).join(': ')
       .replace(/^(CC|Public domain|Attribution|GFDL|PD)[^ ]* /, 'LICENCE ')
       .replace(/\d+ photographs/, 'N photographs')
+      .replace(/beauty [\d.]+ /, 'beauty N ')
       .replace(/rides on \w+ evidence/, 'rides on a never-hero tier');
     const layer = f.split(' ')[0];
     const key = `${layer}: ${kind}`;
