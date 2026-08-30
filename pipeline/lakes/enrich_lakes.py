@@ -13,7 +13,7 @@ the shortlist is cut from those, and only then does anything cost a request.
                     monitored. Lake and River sites only: a coastal site two
                     kilometres away says nothing about an inland lake.
     protection      the nearest protected area (cache/osm_protected_areas.json)
-    climate         WorldClim 2.1 monthly normals sampled at the lake's OWN
+    climate         CHELSA V2.1 monthly normals sampled at the lake's OWN
                     coordinate, which is what the swimming season estimate in
                     lake_index.py is built from. Local raster read, no network.
     walks           published hikes whose bounding box touches the lake
@@ -80,6 +80,7 @@ from water_sources import (COMMONS_API, SourceError, get_json,  # noqa: E402
                            haversine_km, load_cache, mediawiki, overpass,
                            request, save_cache, wikipedia_api)
 from harvest_lakes import COUNTRIES, LOCAL_LANG, fold, name_tokens  # noqa: E402
+import lake_climate  # noqa: E402
 import lake_images  # noqa: E402
 
 # The photo engine's shared halves, loaded by path like lake_images is
@@ -99,6 +100,7 @@ def _photo_module(name):
 
 photo_takedown = _photo_module("takedown")
 photo_views = _photo_module("wikidata_views")
+photo_credit = _photo_module("credit")
 
 ROOT = HERE.parents[1]
 CACHE = ROOT / "cache"
@@ -106,12 +108,19 @@ MASTER = ROOT / "app_data" / "app_data.json"
 DEST_INDEX = CACHE / "lakes" / "dest_index.json"
 BEACH_DEST_INDEX = CACHE / "beaches" / "dest_index.json"
 TRAILS_DIR = ROOT / "continent-app" / "public" / "trails"
-WORLDCLIM = CACHE / "worldclim"
 
 STAGE_IN = "raw"
 STAGE_OUT = "rich"
 
-SHORTLIST = 120          # water bodies per country that earn the network calls
+# Water bodies per country that earn the network calls. 120 until the OSM
+# spine landed, and 120 was a country level cap on a layer whose whole
+# coverage problem was country level caps: it gave Luxembourg and France the
+# same budget, and it is why the Netherlands published exactly 60 while Great
+# Britain published 8. The number is now a CEILING on a selection made region
+# by region (see shortlist_for). None means "size it from how many regions
+# this country actually has water in", which is the honest answer; a number
+# on the command line still overrides it for a targeted run.
+SHORTLIST = None
 IMAGES_WANTED = 5        # a lake is a place you look at, so it gets a gallery
 IMAGE_WORKERS = 2
 PROTECTED_MAX_KM = 8.0
@@ -362,88 +371,24 @@ def published_ids(cc):
 
 
 # ---------------------------------------------------------------------------
-# Climate: WorldClim monthly normals at the lake's own coordinate
+# Climate: CHELSA monthly normals at the lake's own coordinate
+#
+# WorldClim 2.1 stood here until 2026-08-30 and is licensed for
+# NON-COMMERCIAL use only, which a number printed under an affiliate link and
+# inside a redistributable PDF cannot stand on. CHELSA V2.1 is CC BY 4.0,
+# commercial use permitted with attribution, and at 30 arc seconds it is three
+# times finer than the grid it replaces. The reader is pipeline/lakes/
+# lake_climate.py; this is only the join.
 # ---------------------------------------------------------------------------
-
-WIN = (-32.0, 26.0, 46.0, 72.0)          # W, S, E, N, the same window the
-RES = "5m"                                # catalogue climate harvest reads
-_clim_cache = {}
-
-
-def load_climate_stacks():
-    """(tmin, tmax, transform), each a masked (12, H, W) array over Europe.
-
-    Read once per process and held. Twenty-four GeoTIFF windows is about a
-    second and 60 MB, which is cheap against a network call per lake, and it
-    is the difference between a modelled swimming season and none."""
-    if "stacks" in _clim_cache:
-        return _clim_cache["stacks"]
-    try:
-        import numpy as np
-        import rasterio
-        from rasterio.windows import from_bounds
-    except ImportError:
-        print("  note: rasterio not installed, the swimming season is skipped")
-        _clim_cache["stacks"] = (None, None, None)
-        return _clim_cache["stacks"]
-
-    def load(var):
-        stack, transform = [], None
-        for month in range(1, 13):
-            path = WORLDCLIM / f"wc2.1_{RES}_{var}_{month:02d}.tif"
-            if not path.exists():
-                return None, None
-            with rasterio.open(path) as ds:
-                win = from_bounds(WIN[0], WIN[1], WIN[2], WIN[3], ds.transform)
-                stack.append(ds.read(1, window=win, masked=True))
-                transform = ds.window_transform(win)
-        return np.ma.stack(stack), transform
-
-    tmin, transform = load("tmin")
-    tmax, _ = load("tmax")
-    if tmin is None or tmax is None:
-        print("  note: no WorldClim rasters, the swimming season is skipped")
-        _clim_cache["stacks"] = (None, None, None)
-    else:
-        _clim_cache["stacks"] = (tmin, tmax, transform)
-        print("  WorldClim normals loaded")
-    return _clim_cache["stacks"]
-
-
-def _sample12(stack, transform, lon, lat, maxr=6):
-    """The 12 month vector at the nearest valid pixel, or None.
-
-    The ring search matters here more than it does for cities: a lake IS a
-    water pixel, and a 5 arc-minute raster over a big lake is masked out in
-    the middle of it. Without the fallback, Vattern and Balaton would have no
-    climate at all."""
-    import numpy as np
-    height, width = stack.shape[1], stack.shape[2]
-    col = int((lon - transform.c) / transform.a)
-    row = int((lat - transform.f) / transform.e)
-    for rad in range(0, maxr + 1):
-        for d_row in range(-rad, rad + 1):
-            for d_col in range(-rad, rad + 1):
-                if max(abs(d_row), abs(d_col)) != rad:
-                    continue
-                r, c = row + d_row, col + d_col
-                if 0 <= r < height and 0 <= c < width and not stack.mask[0, r, c]:
-                    return stack[:, r, c].astype("float64").filled(np.nan)
-    return None
 
 
 def join_climate(lake):
-    tmin, tmax, transform = load_climate_stacks()
-    if tmin is None:
+    months = lake_climate.sample(lake["lat"], lake["lon"])
+    if not months:
         return
-    low = _sample12(tmin, transform, lake["lon"], lake["lat"])
-    high = _sample12(tmax, transform, lake["lon"], lake["lat"])
-    if low is None or high is None:
-        return
-    means = [round((float(high[i]) + float(low[i])) / 2.0, 1) for i in range(12)]
     lake["climate"] = {
-        "source": "WorldClim 2.1 (1970-2000 normals, 5 arc-min)",
-        "t_mean": means,
+        "source": lake_climate.MODEL_SOURCE,
+        "t_mean": months,
     }
 
 
@@ -502,7 +447,97 @@ def prelim_score(lake):
         score += 0.3
     if name_tokens(lake.get("name")):
         score += 0.2
+
+    # The OSM spine. Without these lines the second spine would be pointless:
+    # a water body found by the extract sweep has no sitelinks, no Commons
+    # category and no article, so it would score under two on the clauses
+    # above and never reach the shortlist that earns the network calls. What
+    # OSM knows instead is what is ON the shore, and a lake with a path round
+    # it, a beach and a car park is a lake people go to whatever Wikidata
+    # says about it.
+    shore = lake.get("osm_shore") or {}
+    if shore:
+        if (shore.get("path_m") or 0) >= 300:
+            score += 0.6
+        if shore.get("beach"):
+            score += 0.8
+        if shore.get("swim_place"):
+            score += 0.8
+        if shore.get("marina") or shore.get("slipway"):
+            score += 0.4
+        if shore.get("parking"):
+            score += 0.25
+        if shore.get("camp"):
+            score += 0.2
+        if shore.get("viewpoint"):
+            score += 0.3
+    tags = lake.get("osm_tags") or {}
+    if tags.get("wikipedia") and not lake.get("enwiki"):
+        score += 0.5
+    if tags.get("leisure") == "swimming_area":
+        score += 0.6
     return round(score, 3)
+
+
+# ---------------------------------------------------------------------------
+# The shortlist, region by region
+#
+# `lakes[:120]` was the whole selection until the region programme, and it is
+# the same mistake the publication cap made one stage later: a country is the
+# wrong unit. Sorted by prelim score, a flat cut hands the entire Scottish
+# budget to the Great Glen and never reaches Galloway, and it hands the
+# Norwegian budget to the lakes near Oslo that somebody wrote an article
+# about.
+#
+# So the cut is made per NUTS3 region and then interleaved, exactly as the
+# export gate cuts the published rows: every region's first pick outranks any
+# region's second, so the country ceiling below trims the deepest tails first
+# rather than whichever lakeland happened to sort last. A row the region spine
+# has not reached keeps its country as its group, which is the old behaviour
+# for exactly the rows the old behaviour was right for.
+# ---------------------------------------------------------------------------
+
+REGION_SHORTLIST = 40    # per NUTS3 region, before the country ceiling
+PER_REGION_BUDGET = 8    # what the automatic ceiling allows each region
+CEILING_MIN = 120
+CEILING_MAX = 900
+
+
+def shortlist_for(lakes, ceiling=None, per_region=REGION_SHORTLIST):
+    """The water bodies that earn the network calls, region by region.
+
+    `ceiling` of None sizes the country's budget from how many regions it
+    actually has water in, which is the whole difference between Luxembourg
+    and Great Britain and is the number a flat 120 was pretending did not
+    exist."""
+    groups = {}
+    for lake in lakes:
+        key = (lake.get("rg") or {}).get("n3") or lake.get("iso2") or "?"
+        groups.setdefault(key, []).append(lake)
+    if ceiling is None:
+        ceiling = max(CEILING_MIN,
+                      min(CEILING_MAX, len(groups) * PER_REGION_BUDGET))
+    # A country with few regions must still be allowed to spend its budget.
+    # Iceland is two NUTS3 regions and Faroe is one, so a flat 40 a region
+    # would cap Iceland at 80 whatever its ceiling said, and the brief names
+    # Iceland as one of the four holes this pass exists to close.
+    per_region = max(per_region, -(-ceiling // max(1, len(groups))))
+    ranked = []
+    for key, group in groups.items():
+        group.sort(key=lambda b: (-b["prelim"], b["name"]))
+        for rank, lake in enumerate(group[:per_region]):
+            ranked.append((rank, -lake["prelim"], lake["name"], lake))
+    ranked.sort(key=lambda t: t[:3])
+    short = [lake for _r, _p, _n, lake in ranked[:ceiling]]
+    # A seeded entry is pinned whatever the region budget said. That is the
+    # whole point of the seed, and San Marino is the proof: its one water
+    # body is a pond that scores 3.7 and a human put it on the list knowing
+    # exactly that.
+    have = {id(lake) for lake in short}
+    for lake in lakes:
+        if lake.get("seed") and id(lake) not in have:
+            short.append(lake)
+    return short
 
 
 # ---------------------------------------------------------------------------
@@ -521,8 +556,12 @@ IMAGE_PROPS = {
     "prop": "imageinfo|categories",
     "iiprop": "url|size|extmetadata",
     "iiurlwidth": 1280,
-    "iiextmetadatafilter": "LicenseShortName|LicenseUrl|Artist|ImageDescription"
-                           "|ObjectName",
+    # Artist alone is empty on a large minority of older uploads, which is
+    # how photographs came to ship a licence with nobody named. The credit
+    # fields and the flag that says whether a credit is owed at all live
+    # in pipeline/photos/credit.py, so the three layers cannot drift.
+    "iiextmetadatafilter": photo_credit.EXTMETA_CREDIT
+                           + "|ImageDescription|ObjectName",
     "cllimit": 500,
     "clshow": "!hidden",
 }
@@ -819,7 +858,7 @@ def pick_images(lake, lang, probe=True):
             "h": info.get("thumbheight") or info.get("height"),
             "license": licence,
             "license_url": meta_val("LicenseUrl"),
-            "author": meta_val("Artist")[:120],
+            "author": photo_credit.author_of(info.get("extmetadata")),
             "caption": meta_val("ImageDescription")[:200],
             "page": "https://commons.wikimedia.org/wiki/"
                     + urllib.parse.quote(cand["title"].replace(" ", "_")),
@@ -1098,11 +1137,21 @@ def enrich_country(cc, shortlist_n=SHORTLIST, refresh=False, bathing=None,
         join_climate(lake)
         lake["prelim"] = prelim_score(lake)
 
+    # Region ids first, because the shortlist is now cut region by region and
+    # a row with no rg would be grouped under its country. Stamping the WHOLE
+    # harvest rather than the shortlist also gives the coverage audit an
+    # honest denominator: it can say which region a rejected candidate was in.
+    try:
+        _regions_assign().stamp_rows(lakes)
+    except Exception as exc:  # the spine is optional at enrich time
+        print(f"    rg stamping skipped ({type(exc).__name__}: {exc})")
+
     lakes.sort(key=lambda b: (-b["prelim"], b["name"]))
-    short = lakes[:shortlist_n]
+    short = shortlist_for(lakes, shortlist_n)
     seeded = sum(1 for b in short if b.get("seed"))
+    regions = len({(b.get("rg") or {}).get("n3") for b in short})
     print(f"  {cc}: {len(lakes)} harvested, enriching {len(short)} "
-          f"({seeded} seeded)")
+          f"({seeded} seeded, {regions} regions)")
 
     # 1. Article facts and pageviews, one batch per wiki.
     lang = LOCAL_LANG.get(cc, "en")
@@ -1153,7 +1202,10 @@ def enrich_country(cc, shortlist_n=SHORTLIST, refresh=False, bathing=None,
         was = previous.get(lake["key"]) or {}
         if was.get("images") is not None:
             lake["images"] = was["images"]
-        if was.get("rg") is not None:
+        if lake.get("rg") is None and was.get("rg") is not None:
+            # Only ever FILLS. The fresh stamp above is the current spine's
+            # answer, and a carry-over that overwrote it would pin whatever
+            # the spine said the first time this row was enriched.
             lake["rg"] = was["rg"]
 
     if images:
@@ -1232,13 +1284,8 @@ def enrich_country(cc, shortlist_n=SHORTLIST, refresh=False, bathing=None,
             lake["context"] = found.get(lake["key"], {})
         print(f"    context batch {i}/{len(batches)}")
 
-    # Region ids, local and free. Stored here so export reads, never
-    # recomputes; rows the carry-over already stamped are skipped.
-    try:
-        _regions_assign().stamp_rows(short)
-    except Exception as exc:  # the spine is optional at enrich time
-        print(f"    rg stamping skipped ({type(exc).__name__}: {exc})")
-
+    # The rg block was stamped over the whole harvest before the shortlist was
+    # cut, so nothing is recomputed here; export reads what enrich stored.
     payload = {
         "country": cc,
         "enriched_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),

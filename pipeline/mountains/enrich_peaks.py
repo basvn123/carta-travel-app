@@ -86,7 +86,7 @@ from peak_sources import (COMMONS_API, SourceError, cell,  # noqa: E402
                           get_json, haversine_km, load_cache, mediawiki,
                           overpass, save_cache, sparql, wikipedia_api)
 from harvest_peaks import (COUNTRY_QID, LOCAL_LANG, fold,  # noqa: E402
-                           name_tokens, qid_of)
+                           name_tokens, qid_of, row_key)
 
 ROOT = HERE.parents[1]
 
@@ -121,6 +121,7 @@ def _photo_module(name):
 
 photo_takedown = _photo_module("takedown")
 photo_views = _photo_module("wikidata_views")
+photo_credit = _photo_module("credit")
 
 CACHE = ROOT / "cache"
 DEST_INDEX = CACHE / "mountains" / "dest_index.json"
@@ -155,7 +156,13 @@ DEST_MAX_KM = 120.0
 #
 # Seeded rows are never cut, whatever their pre score, because the seed is the
 # one place a human decided this mountain matters.
-ENRICH_TOP = 62
+# 62 in v1, and 62 was chosen when the export could publish 60. v2 publishes
+# on a region quota with a country floor and lists what it cannot rate, so
+# the pool has to be several times what the wire carries. 320 is the balance
+# this cycle can actually harvest: it is 43 countries times 320 rows of
+# Commons and Overpass questions, which is a day of wall clock, and every
+# stage of it resumes from the cache rather than starting over.
+ENRICH_TOP = 320
 
 # How far from the summit a lift still counts as this mountain's lift. Both
 # numbers are read by peak_index: inside SUMMIT_LIFT_M the wire says you can
@@ -507,9 +514,13 @@ IMAGE_PROPS = {
     # Categories and Assessments are the two that turned this from a guess
     # into a check. Categories say what the file is filed under; Assessments
     # carry Commons' own "quality", "featured", "valued" verdicts.
-    "iiextmetadatafilter": ("LicenseShortName|LicenseUrl|Artist|"
-                            "ImageDescription|ObjectName|Categories|"
-                            "Assessments"),
+    # Artist alone is empty on a large minority of older uploads, which is
+    # how photographs came to ship a licence with nobody named. The credit
+    # fields and the flag that says whether a credit is owed at all live
+    # in pipeline/photos/credit.py, so the three layers cannot drift.
+    "iiextmetadatafilter": (photo_credit.EXTMETA_CREDIT
+                            + "|ImageDescription|ObjectName|Categories|"
+                              "Assessments"),
 }
 
 # Words that say a photograph is of a landscape rather than of an object.
@@ -915,7 +926,7 @@ def pick_images(peak, lang="en"):
         licence = _meta(info, "LicenseShortName")
         if re.search(r"fair use|non[- ]free|copyright", licence, re.I):
             continue
-        author = _meta(info, "Artist")[:120]
+        author = photo_credit.author_of(info.get("extmetadata"))
         # One photographer's whole afternoon is not a gallery. Two per author,
         # so a set of six is a set of angles rather than a contact sheet.
         if author:
@@ -1108,12 +1119,31 @@ CONTEXT_CLAUSES = (
     '["man_made"~"^(tower|observatory|cross|survey_point|antenna)$"];\n'
     'way(around:{r},{lat},{lon})["sac_scale"];\n'
     'way(around:{r},{lat},{lon})["via_ferrata_scale"];\n'
+    'way(around:{r},{lat},{lon})["trail_visibility"];\n'
     'nwr(around:{r},{lat},{lon})["boundary"="national_park"];\n'
+    # The way up that is not a lift: a station, a halt or a bus stop
+    # within walking distance is the difference between "you need a
+    # car" and "you can get here", which is one of the seven filters
+    # brief 05 asks for. Asked as public_transport rather than as
+    # railway=station, because the railway key already means a rack or
+    # a funicular in this query and conflating the two would put a bus
+    # stop in lift_of().
+    'nwr(around:{r},{lat},{lon})'
+    '["public_transport"~"^(station|stop_position|platform)$"];\n'
 )
 
 CONTEXT_KEYS = ("aerialway", "railway", "tourism", "amenity", "natural",
-                "man_made", "sac_scale", "via_ferrata_scale", "boundary",
+                "man_made", "sac_scale", "via_ferrata_scale",
+                "trail_visibility", "public_transport", "boundary",
                 "leisure")
+
+# The tags whose GRADE and DISTANCE both matter. A sac_scale anywhere
+# inside a 2.6 km sweep says "somebody graded a path on this mountain";
+# the same tag 200 m from the summit says "this is the grade of the way
+# up". The difficulty facet brief 05 asks for is only allowed to read the
+# second kind, so the nearest distance per grade VALUE is kept rather
+# than a bare count.
+GRADE_KEYS = ("sac_scale", "via_ferrata_scale", "trail_visibility")
 
 # The tags whose DISTANCE matters, not just their presence.
 DISTANCE_KEYS = {
@@ -1124,6 +1154,8 @@ DISTANCE_TOURISM = {"alpine_hut": "hut_m", "wilderness_hut": "hut_m",
                     "viewpoint": "viewpoint_m"}
 DISTANCE_AMENITY = {"restaurant": "food_m", "cafe": "food_m",
                     "parking": "parking_m", "shelter": "shelter_m"}
+DISTANCE_TRANSIT = {"station": "transit_m", "stop_position": "transit_m",
+                    "platform": "transit_m"}
 
 CONTEXT_RADIUS = {
     "peak": 2600, "volcano": 3200, "massif": 4000, "ridge": 3200,
@@ -1153,7 +1185,8 @@ def context_for(batch):
     except SourceError as exc:
         print(f"    context batch failed: {str(exc)[:90]}")
         return {}
-    out = {b["wd"]: {"tags": {}, "near": {}, "names": {}} for b in batch}
+    out = {row_key(b): {"tags": {}, "near": {}, "names": {}, "grades": {}}
+           for b in batch}
     for el in elements:
         tags = el.get("tags") or {}
         centre = el.get("center") or {}
@@ -1170,13 +1203,18 @@ def context_for(batch):
                 best, best_km = b, km
         if best is None:
             continue
-        bucket = out[best["wd"]]
+        bucket = out[row_key(best)]
         metres = int(best_km * 1000)
         for key in CONTEXT_KEYS:
             value = tags.get(key)
             if not value:
                 continue
             bucket["tags"][f"{key}={value}"] = bucket["tags"].get(f"{key}={value}", 0) + 1
+            if key in GRADE_KEYS:
+                gkey = f"{key}={value}"
+                if (gkey not in bucket["grades"]
+                        or metres < bucket["grades"][gkey]):
+                    bucket["grades"][gkey] = metres
             field = None
             if key in DISTANCE_KEYS:
                 field = DISTANCE_KEYS[key]
@@ -1184,6 +1222,8 @@ def context_for(batch):
                 field = DISTANCE_TOURISM.get(value)
             elif key == "amenity":
                 field = DISTANCE_AMENITY.get(value)
+            elif key == "public_transport":
+                field = DISTANCE_TRANSIT.get(value)
             if field and (field not in bucket["near"] or metres < bucket["near"][field]):
                 bucket["near"][field] = metres
             # The name of the lift or the hut is worth keeping: "you can ride
@@ -1529,9 +1569,22 @@ def enrich_country(cc, refresh=False, dests=None, images=True, context=True,
         return None
     if not refresh:
         done = load_cache(STAGE_OUT, cc)
-        if done is not None:
+        # "Cached" has to mean "nothing left to do", not "a file exists".
+        #
+        # v2 grows the shortlist (SHORTLIST 110 -> 500, ENRICH_TOP 62 -> 320),
+        # and the first version of this check answered "cached" to every one
+        # of those countries, because a rich cache from the 62 row era is
+        # still a rich cache. The only honest test is whether the cache
+        # already holds every row this run would enrich; where it does not,
+        # the run goes ahead and the photograph reuse above means it pays
+        # only for the rows that are new.
+        want = min(top, len(raw.get("peaks") or []))
+        if done is not None and len(done.get("peaks") or []) >= want:
             print(f"  {cc}: cached")
             return done
+        if done is not None:
+            print(f"  {cc}: cache holds {len(done.get('peaks') or [])} of "
+                  f"{want} shortlisted rows, filling the rest")
 
     # What the previous cache already knows, kept even when this run is told
     # to skip the source that produced it.
@@ -1544,8 +1597,8 @@ def enrich_country(cc, refresh=False, dests=None, images=True, context=True,
     previous = {}
     old_cache = load_cache(STAGE_OUT, cc)
     for row in (old_cache or {}).get("peaks") or []:
-        if row.get("wd"):
-            previous[row["wd"]] = row
+        if row_key(row):
+            previous[row_key(row)] = row
 
     everything = [dict(p) for p in raw.get("peaks") or []]
     if not everything:
@@ -1553,8 +1606,9 @@ def enrich_country(cc, refresh=False, dests=None, images=True, context=True,
         return None
     ranked = sorted(everything, key=lambda p: -(p.get("pre") or 0))
     peaks = ranked[:top]
-    have = {p.get("wd") for p in peaks}
-    peaks += [p for p in ranked[top:] if p.get("seed") and p.get("wd") not in have]
+    have = {row_key(p) for p in peaks}
+    peaks += [p for p in ranked[top:]
+              if p.get("seed") and row_key(p) not in have]
     lang = LOCAL_LANG.get(cc, "en")
     print(f"  {cc}: {len(peaks)} of {len(everything)} shortlisted rows enriched")
 
@@ -1568,7 +1622,7 @@ def enrich_country(cc, refresh=False, dests=None, images=True, context=True,
     if not context:
         kept = 0
         for peak in peaks:
-            got = (previous.get(peak.get("wd")) or {}).get("osm")
+            got = (previous.get(row_key(peak)) or {}).get("osm")
             if got:
                 peak["osm"] = got
                 kept += 1
@@ -1581,24 +1635,55 @@ def enrich_country(cc, refresh=False, dests=None, images=True, context=True,
         for i, batch in enumerate(batches, 1):
             found = context_for(batch)
             for peak in batch:
-                got = found.get(peak["wd"])
+                got = found.get(row_key(peak))
                 if got:
                     peak["osm"] = got
             if i % 3 == 0:
                 print(f"      {i}/{len(batches)}")
 
     if images:
-        print("    photographs")
-        with ThreadPoolExecutor(max_workers=IMAGE_WORKERS) as pool:
-            shots_for = pool.map(lambda pk: pick_images(pk, lang), peaks)
-            for peak, shots in zip(peaks, shots_for):
-                peak["images"] = shots
-        have = sum(1 for p in peaks if len(p.get("images") or []) >= 2)
-        print(f"      {have}/{len(peaks)} with two or more")
+        # Photographs are the expensive half of this stage, so a row that
+        # already has a gallery keeps it and only the NEW rows are asked
+        # about. That is what makes growing the shortlist affordable: raising
+        # ENRICH_TOP from 62 to 320 costs the 258 new rows, not the 320.
+        # --refresh is how you say "ask Commons again anyway", and the photo
+        # engine's rescore.py is how you re-rank without asking at all.
+        fresh = [pk for pk in peaks
+                 if refresh or not (previous.get(row_key(pk)) or {}).get("images")]
+        kept = 0
+        for peak in peaks:
+            if peak in fresh:
+                continue
+            peak["images"] = (previous.get(row_key(peak)) or {})["images"]
+            kept += 1
+        print(f"    photographs: {len(fresh)} to fetch, {kept} carried over")
+        if fresh:
+            # One bad response costs one mountain, never the country.
+            #
+            # pool.map re-raises inside the zip, so a single IncompleteRead
+            # from Commons two thirds of the way through Lithuania threw out
+            # of enrich_country before the cache was written, and 217 rows of
+            # work went with it. Twice. The same rule the Overpass sweep has
+            # lived by since the first build: a source that breaks costs what
+            # it was fetching and nothing else.
+            def _shots(pk):
+                try:
+                    return pick_images(pk, lang)
+                except Exception as exc:              # noqa: BLE001
+                    print(f"      {pk.get('name', '?')}: photographs failed "
+                          f"({type(exc).__name__}: {str(exc)[:60]})")
+                    return (previous.get(row_key(pk)) or {}).get("images") or []
+
+            with ThreadPoolExecutor(max_workers=IMAGE_WORKERS) as pool:
+                shots_for = pool.map(_shots, fresh)
+                for peak, shots in zip(fresh, shots_for):
+                    peak["images"] = shots
+        have = sum(1 for p in peaks if len(p.get("images") or []) >= 4)
+        print(f"      {have}/{len(peaks)} with four or more")
     else:
         kept = 0
         for peak in peaks:
-            shots = (previous.get(peak.get("wd")) or {}).get("images")
+            shots = (previous.get(row_key(peak)) or {}).get("images")
             if shots:
                 peak["images"] = shots
                 kept += 1
@@ -1608,7 +1693,7 @@ def enrich_country(cc, refresh=False, dests=None, images=True, context=True,
     # first, then stamped for whatever is new; stored here so export reads,
     # never recomputes.
     for peak in peaks:
-        was = previous.get(peak.get("wd")) or {}
+        was = previous.get(row_key(peak)) or {}
         if not peak.get("rg") and was.get("rg") is not None:
             peak["rg"] = was["rg"]
     try:

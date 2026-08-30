@@ -52,6 +52,19 @@ import urllib.parse
 from datetime import datetime, timezone
 from pathlib import Path
 
+# Windows consoles default to cp1252, and this layer prints beach names:
+# "Ir-Ramla tal-Mixquqa" and "Plaza Zlatni Rat" both raise UnicodeEncodeError
+# on the way to a terminal that cannot spell them. Replacing the character is
+# right for a progress line and wrong for a data file, which is why this
+# touches stdout only; every cache and wire write goes through an explicit
+# encoding="utf-8".
+if sys.platform == "win32":
+    try:
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+        sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+    except (AttributeError, ValueError):
+        pass
+
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 
@@ -74,6 +87,7 @@ def _regions_assign():
         spec.loader.exec_module(mod)
     return mod
 from harvest_beaches import COUNTRIES, LOCAL_LANG, fold, name_tokens  # noqa: E402
+import eea_spine  # noqa: E402
 
 # The lake layer's image lore, loaded by path the same way the mountain layer
 # loads this layer's clients (pipeline/mountains/peak_sources.py): every layer
@@ -106,6 +120,7 @@ def _photo_module(name):
 
 photo_takedown = _photo_module("takedown")
 photo_views = _photo_module("wikidata_views")
+photo_credit = _photo_module("credit")
 
 ROOT = HERE.parents[1]
 CACHE = ROOT / "cache"
@@ -115,7 +130,15 @@ DEST_INDEX = CACHE / "beaches" / "dest_index.json"
 STAGE_IN = "raw"
 STAGE_OUT = "rich"
 
-SHORTLIST = 170          # beaches per country that earn the network calls
+# How many beaches per country earn the network calls. 170 was a flat number
+# from the era of a flat PUBLISH_MAX=120, and it is the wrong shape for the
+# same reason the cap was: Spain and Belgium do not have the same amount of
+# coast. Since 03-BEACHES.md the shortlist is sized from the country's own
+# publication target, which is the sum of its coastal stretches' quotas, so
+# the expensive work lands where there is something to publish.
+SHORTLIST = 170                  # the floor, and the fallback with no spine
+SHORTLIST_PER_QUOTA = 3.0        # candidates enriched per rated row wanted
+SHORTLIST_MAX = 2600             # a ceiling, so one country cannot eat a run
 IMAGES_WANTED = 4
 IMAGE_WORKERS = 2        # Commons calls in flight during the photograph pass
 BATHING_MAX_KM = 2.5     # a bathing water further out is not this beach's
@@ -223,6 +246,12 @@ def join_local(beach, bathing, protected, dests):
                                where=lambda p: p.get("type") in want)
     if site is None:
         site, km = bathing.nearest(lat, lon, BATHING_MAX_KM)
+    # The harvest's spine merge already stamped the register's own row onto
+    # every beach it could match by name, which is a better claim than "the
+    # nearest point within 2.5 km". Only a NEARER site may replace it.
+    held = beach.get("water") or {}
+    if site is not None and held and (held.get("km") or 99) <= (km or 99):
+        site = None
     if site is not None:
         beach["water"] = {
             "class": site.get("q") or "",
@@ -251,6 +280,47 @@ def join_local(beach, bathing, protected, dests):
 # ---------------------------------------------------------------------------
 # Shortlist: who earns the network calls
 # ---------------------------------------------------------------------------
+
+def _quotas():
+    """pipeline/regions/quotas.py, loaded lazily and tolerated missing."""
+    mod = sys.modules.get("carta_region_quotas")
+    if mod is None:
+        path = HERE.parents[1] / "pipeline" / "regions" / "quotas.py"
+        try:
+            spec = importlib.util.spec_from_file_location("carta_region_quotas",
+                                                          path)
+            mod = importlib.util.module_from_spec(spec)
+            sys.modules["carta_region_quotas"] = mod
+            spec.loader.exec_module(mod)
+        except Exception:
+            return None
+    return mod
+
+
+def shortlist_size(beaches, floor=SHORTLIST):
+    """How many of this country's beaches to enrich.
+
+    The sum of the quotas of every coastal stretch the country's beaches
+    actually sit on, times a headroom factor, because the score gate and the
+    photo gate will both refuse a share of what is enriched. A country with no
+    region assignment yet, or a run on a clone with no spine, falls back to the
+    flat floor."""
+    qmod = _quotas()
+    if qmod is None or not qmod.has_data():
+        return floor
+    seen, target = set(), 0
+    for beach in beaches:
+        key = (beach.get("rg") or {}).get("co") or (beach.get("rg") or {}).get("n3")
+        if not key or key in seen:
+            continue
+        seen.add(key)
+        try:
+            target += qmod.published_target(key, "beach")
+        except Exception:
+            continue
+    if not target:
+        return floor
+    return int(max(floor, min(SHORTLIST_MAX, target * SHORTLIST_PER_QUOTA)))
 
 SURFACE_GOOD = {"sand", "fine_gravel", "pebblestone", "pebbles", "gravel",
                 "shingle", "shells", "rock", "sand;pebblestone"}
@@ -292,6 +362,17 @@ def prelim_score(b):
 
     water = b.get("water") or {}
     score += 0.45 * BATHING_RANK.get(water.get("class"), 0)
+    # A site in the bathing water register is a place a government designated
+    # for swimming and has sampled for up to ten seasons. That is a stronger
+    # statement about "somebody swims here" than any tag, and the length of
+    # the record is the strength of it.
+    if "eea" in (b.get("sources") or []):
+        score += 0.5 + 0.1 * min(4, water.get("years") or 0)
+    # A measured length means the geometry is digitised, which correlates with
+    # a beach somebody cared enough to map properly, and it is the one input
+    # the v2 `space` component cannot do without.
+    if b.get("length_m"):
+        score += 0.3
     area = b.get("protected_area") or {}
     if area:
         score += 0.8 if area.get("national_park") else 0.45
@@ -341,8 +422,12 @@ IMAGE_PROPS = {
     "prop": "imageinfo",
     "iiprop": "url|size|extmetadata",
     "iiurlwidth": 1280,
-    "iiextmetadatafilter": "LicenseShortName|LicenseUrl|Artist|ImageDescription"
-                           "|Categories|ObjectName",
+    # Artist alone is empty on a large minority of older uploads, which is
+    # how photographs came to ship a licence with nobody named. The credit
+    # fields and the flag that says whether a credit is owed at all live
+    # in pipeline/photos/credit.py, so the three layers cannot drift.
+    "iiextmetadatafilter": photo_credit.EXTMETA_CREDIT
+                           + "|ImageDescription|Categories|ObjectName",
 }
 
 # Tight on purpose. 4 km used to be the name-search radius and it let a photo
@@ -690,7 +775,7 @@ def pick_images(beach, lang, probe=True):
             "h": info.get("thumbheight") or info.get("height"),
             "license": _meta(info, "LicenseShortName"),
             "license_url": _meta(info, "LicenseUrl"),
-            "author": _meta(info, "Artist")[:120],
+            "author": photo_credit.author_of(info.get("extmetadata")),
             "caption": _meta(info, "ImageDescription")[:200],
             "evidence": evidence,
             "score": round(score + delta, 2),
@@ -883,9 +968,26 @@ def coastal_guess(beach, bathing):
     return site.get("type") in ("Coastal", "Transitional")
 
 
-def enrich_country(cc, shortlist_n=SHORTLIST, refresh=False, bathing=None,
+def uk_bathing_covers(cc):
+    """Whether the UK bathing water harvest has landed for this country.
+
+    Kept as its own function rather than inlined because the answer is
+    expected to change: the Defra and Natural Resources Wales feeds are OGL
+    and documented, and are currently unreachable from this network (see
+    pipeline/beaches/uk_bathing.py). The moment the cache exists, Great
+    Britain stops being a no-source country and its beaches get a real class
+    instead of a dropped component."""
+    try:
+        import uk_bathing
+        return uk_bathing.covers(cc)
+    except Exception:
+        return False
+
+
+def enrich_country(cc, shortlist_n=None, refresh=False, bathing=None,
                    protected=None, dests=None, images=True, context=True,
-                   refresh_images=False, rephotograph=0):
+                   refresh_images=False, rephotograph=0, aspect_reader=None,
+                   protection_reader=None):
     raw = load_cache(STAGE_IN, cc)
     if not raw or not raw.get("beaches"):
         print(f"  {cc}: nothing harvested")
@@ -894,16 +996,34 @@ def enrich_country(cc, shortlist_n=SHORTLIST, refresh=False, bathing=None,
         b["key"]: b for b in (load_cache(STAGE_OUT, cc) or {}).get("beaches", [])
     }
 
+    # Whether the country has any bathing water source at all. Where it has
+    # none the water component is DROPPED and the weights renormalised, rather
+    # than defaulted to a class nobody measured (invariant 9). The flag rides
+    # in the cache so the export and the index both read the same answer.
+    no_water_source = not eea_spine.covers(cc) and not uk_bathing_covers(cc)
+
     beaches = [dict(b) for b in raw["beaches"]]
     for b in beaches:
-        b["_coastal"] = coastal_guess(b, bathing)
+        # A row that came out of the register already knows whether it is sea
+        # or lake, from the register's own water category. Only guess for the
+        # rows that do not.
+        if b.get("coastal") is None:
+            b["_coastal"] = coastal_guess(b, bathing)
+        else:
+            b["_coastal"] = b["coastal"]
         join_local(b, bathing, protected, dests)
         b["coastal"] = b.pop("_coastal")
+        if no_water_source:
+            b["no_water_source"] = True
         b["prelim"] = prelim_score(b)
 
     beaches.sort(key=lambda b: -b["prelim"])
+    if shortlist_n is None:
+        shortlist_n = shortlist_size(beaches)
     short = beaches[:shortlist_n]
-    print(f"  {cc}: {len(beaches)} harvested, enriching {len(short)}")
+    print(f"  {cc}: {len(beaches)} harvested, enriching {len(short)}"
+          + (" [no bathing water source for this country]"
+             if no_water_source else ""))
 
     # What the previous cache already knows, carried across before any phase
     # runs. This list is rebuilt from the HARVEST cache every time, so anything
@@ -936,6 +1056,14 @@ def enrich_country(cc, shortlist_n=SHORTLIST, refresh=False, bathing=None,
             b["images"] = was["images"]
         if was.get("rg") is not None:
             b["rg"] = was["rg"]
+        # Everything a phase may decide not to recompute has to be copied
+        # before the phases run, or the rewritten cache simply loses it. This
+        # list grew with v2 and the rule has not changed: a switch controls
+        # the network, never the data.
+        for field in ("aspect", "aspect_done", "shore_km", "sunset_facing",
+                      "protection", "sst", "approach"):
+            if was.get(field) is not None:
+                b[field] = was[field]
 
     # 1. Article facts and pageviews, one batch per wiki.
     lang = LOCAL_LANG.get(cc, "en")
@@ -1032,6 +1160,21 @@ def enrich_country(cc, shortlist_n=SHORTLIST, refresh=False, bathing=None,
     except Exception as exc:  # the spine is optional at enrich time
         print(f"    rg stamping skipped ({type(exc).__name__}: {exc})")
 
+    # 5. Which way the beach faces, and whether the sun sets over its water.
+    # Local, free and cached per row, so this is idempotent like everything
+    # above it. Skipped entirely on a clone with no EEA coastline.
+    if aspect_reader is not None and aspect_reader.ready:
+        stamped = aspect_reader.stamp(short)
+        if stamped:
+            facing = sum(1 for b in short if b.get("sunset_facing"))
+            print(f"    aspect on {stamped} beaches, {facing} face the sunset")
+
+    # 6. Protection, including outside the EU. Natura 2000 is the EU half and
+    # the Emerald Network is its non-EU twin, so the chip works in Norway and
+    # the Balkans rather than stopping at the EU border.
+    if protection_reader is not None and protection_reader.ready:
+        protection_reader.stamp(short)
+
     payload = {
         "country": cc,
         "enriched_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
@@ -1047,7 +1190,11 @@ def enrich_country(cc, shortlist_n=SHORTLIST, refresh=False, bathing=None,
 def main():
     parser = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     parser.add_argument("--countries", default="")
-    parser.add_argument("--shortlist", type=int, default=SHORTLIST)
+    parser.add_argument("--shortlist", type=int, default=None,
+                        help="beaches per country to enrich. Default: sized "
+                             "from the country's own region quotas.")
+    parser.add_argument("--no-aspect", action="store_true",
+                        help="skip the coastline aspect and sunset pass")
     parser.add_argument("--refresh", action="store_true")
     parser.add_argument("--no-images", action="store_true",
                         help="skip Commons, for a quick structural run")
@@ -1074,6 +1221,26 @@ def main():
     protected = load_protected()
     dests = NearIndex(build_dest_index())
 
+    # Both readers hold a continent of geometry, so they are built once for
+    # the whole run rather than once per country.
+    aspect_reader = None
+    if not args.no_aspect:
+        try:
+            import coastline
+            aspect_reader = coastline.AspectReader()
+            if not aspect_reader.ready:
+                print("  note: coastline unavailable, aspect skipped")
+        except Exception as exc:
+            print(f"  note: aspect pass unavailable ({type(exc).__name__}: {exc})")
+    protection_reader = None
+    try:
+        import protection
+        protection_reader = protection.ProtectionReader()
+        if not protection_reader.ready:
+            protection_reader = None
+    except Exception:
+        protection_reader = None
+
     for cc in countries:
         if load_cache(STAGE_IN, cc) is None:
             continue
@@ -1083,7 +1250,9 @@ def main():
                            images=not args.no_images,
                            context=not args.no_context,
                            refresh_images=args.refresh_images,
-                           rephotograph=args.rephotograph)
+                           rephotograph=args.rephotograph,
+                           aspect_reader=aspect_reader,
+                           protection_reader=protection_reader)
         except KeyboardInterrupt:
             raise
         except Exception as exc:
