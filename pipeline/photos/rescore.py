@@ -281,7 +281,7 @@ def rescore_country(layer, cc, dry_run=False, force=False):
 
 
 def held(cache_dir):
-    """The layer's hold file, or None.
+    """(reason, released) for the layer's hold file, or (None, set()).
 
     Several sessions rebuild these caches at once (the layer briefs run in
     parallel), and a rich_CC.json is a read, modify, write: whoever writes
@@ -291,16 +291,35 @@ def held(cache_dir):
 
         cache/mountains/.rescore_hold   one line saying who and why
 
-    Delete it when the rebuild is done. This is advisory and one way (it
-    only stops the photo engine), which is the honest scope: the other
-    writers are separate scripts owned by separate sessions."""
+    A rebuild can take days, though, and it finishes a country at a time.
+    Waiting for the whole layer stacks every country behind the slowest
+    one, so the hold may name the countries its owner has FINISHED:
+
+        released: AD,AL,AT
+
+    Those may be rescored while the rest stay held. The list belongs to
+    the layer's owner, and writing it into the hold rather than passing
+    --ignore-hold on a command line is the point: a partial handover
+    should be legible to whoever reads the file next, not implied by a
+    flag in somebody's shell history.
+
+    Delete the file when the rebuild is done. This is advisory and one
+    way (it only stops the photo engine), which is the honest scope: the
+    other writers are separate scripts owned by separate sessions."""
     path = ROOT / "cache" / cache_dir / ".rescore_hold"
     if not path.exists():
-        return None
+        return None, set()
     try:
-        return path.read_text(encoding="utf-8").strip() or "no reason given"
+        text = path.read_text(encoding="utf-8").strip()
     except OSError:
-        return "unreadable hold file"
+        return "unreadable hold file", set()
+    released = set()
+    for line in text.splitlines():
+        if line.lower().startswith("released:"):
+            released |= {c.strip().upper()
+                         for c in line.split(":", 1)[1].split(",")
+                         if c.strip()}
+    return (text or "no reason given"), released
 
 
 def main():
@@ -317,17 +336,31 @@ def main():
     args = ap.parse_args()
 
     cache_dir = LAYERS[args.layer][0]
-    hold = held(cache_dir)
-    if hold and not (args.ignore_hold or args.dry_run):
-        raise SystemExit(f"{args.layer} is held: {hold}\n"
-                         f"  (delete cache/{cache_dir}/.rescore_hold when "
-                         f"the rebuild is done, or pass --ignore-hold)")
+    hold, released = held(cache_dir)
     wanted = [c.strip().upper() for c in args.countries.split(",")
               if c.strip()]
     if not wanted:
         wanted = sorted(
             re.match(r"rich_([A-Z]{2})\.json", p.name).group(1)
             for p in (ROOT / "cache" / cache_dir).glob("rich_??.json"))
+
+    if hold and not (args.ignore_hold or args.dry_run):
+        blocked = [cc for cc in wanted if cc not in released]
+        if blocked and not released:
+            raise SystemExit(f"{args.layer} is held: {hold}\n"
+                             f"  (delete cache/{cache_dir}/.rescore_hold "
+                             f"when the rebuild is done, add a "
+                             f"'released: CC,CC' line to hand over part "
+                             f"of it, or pass --ignore-hold)")
+        if blocked:
+            print(f"  held, skipping {len(blocked)} country/ies still "
+                  f"being rebuilt: {','.join(blocked)}")
+            wanted = [cc for cc in wanted if cc in released]
+        if not wanted:
+            raise SystemExit("nothing released to rescore yet")
+        print(f"  running the {len(wanted)} country/ies the hold "
+              f"releases: {','.join(wanted)}")
+
     t0 = time.time()
     for cc in wanted:
         rescore_country(args.layer, cc, dry_run=args.dry_run,
