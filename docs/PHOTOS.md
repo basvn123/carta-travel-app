@@ -260,6 +260,38 @@ Two caveats worth keeping in view: the labels are model made
 through the review queue), and 29 images from one category is a small,
 enriched sample rather than the 800 the brief asks for.
 
+## Being asked to give up memory
+
+A sweep holds about 1 GB and is the most obviously interruptible thing on
+a shared box, so it gets asked. Say yes: a country is written atomically
+at its end, so a killed pass leaves the country unstarted rather than
+half-saved, and the expensive half survives regardless because
+embeddings are written to `cache/photos/emb` per image as they are
+computed. The bill for an interruption is the thumbnail re-fetches of
+one country, roughly ten paced minutes, and `rank_v` means finished
+countries cost nothing on the resumed run.
+
+One thing to check before yielding, learned by not checking it on
+2026-08-30: **is memory actually the constraint?** A sweep was paused for
+a session blocked on the trails lab, and the lab turned out to be wedged
+for an unrelated reason. It still timed out with 2 GB free after the
+pause, so the memory was never the problem and the pause bought nobody
+anything.
+
+The distinction that would have shown it in seconds, worth knowing
+because this box hosts the lab the trails and cycling layers depend on:
+
+- connections **time out** while port 5433 stays open: the VM. The open
+  port is only the Docker proxy on the host and says nothing about
+  what is behind it.
+- connections are **refused**: the database. Postgres busy, or out of
+  shared memory, which is the case memory pressure actually produces.
+
+Yielding on the evidence available was still right, and the decision and
+the evidence are worth separating: a fully blocked session with an
+exhausted retry budget has a stronger claim than a pass that is bounded
+and self-healing. The next correct answer will look identical.
+
 ## A score is not evidence that anything was looked at
 
 The engine wrote 507 beauty scores for photographs it never saw, and the
