@@ -273,10 +273,12 @@ countries cost nothing on the resumed run.
 
 One thing to check before yielding, learned by not checking it on
 2026-08-30: **is memory actually the constraint?** A sweep was paused for
-a session blocked on the trails lab, and the lab turned out to be wedged
-for an unrelated reason. It still timed out with 2 GB free after the
-pause, so the memory was never the problem and the pause bought nobody
-anything.
+a session blocked on the trails lab, and the lab was wedged for a reason
+memory could not fix: it still timed out with 2 GB free after the pause.
+The blocked session did finish its work in the end, because the lab came
+back on its own while that session was writing its resume point, but it
+came back for its own reasons and not because three sessions had freed
+memory for it.
 
 The distinction that would have shown it in seconds, worth knowing
 because this box hosts the lab the trails and cycling layers depend on:
