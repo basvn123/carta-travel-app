@@ -260,6 +260,32 @@ Two caveats worth keeping in view: the labels are model made
 through the review queue), and 29 images from one category is a small,
 enriched sample rather than the 800 the brief asks for.
 
+## Count a defect where the rows are, not where the survivors are
+
+Sizing a compliance gap from a published wire undercounts it by
+construction, and two sessions did it independently on the same day.
+The lake credit gap measured 29 from one wire and 37 from another; the
+caches held 85.
+
+The wire contains only what passed the gate. Photographs already
+dropped, and files that never cleared the harvest in the first place,
+are not in it to be counted, so any defect that CAUSES exclusion is
+invisible in the artifact that excluded it. Nobody reasoned their way
+into using the wire either. It was the thing in front of us and it was
+easy to count.
+
+So: measure a defect against the population it lives in, which for
+anything photographic is `cache/<layer>/rich_*.json`, not
+`continent-app/public/<layer>/`. The wire answers "what did we ship",
+which is a different question and usually the smaller number.
+
+The same shape has now appeared three times in this document. A beauty
+score computed without the photograph read as a real score; a region
+with no published rows read as a region with nothing to photograph; and
+a credit gap counted in the wire read as a fifth of its true size. Each
+time the reading was honest, the arithmetic was right, and the
+population was wrong.
+
 ## Fix it at the gate, not in the data
 
 `fill_authors.py` repairs the caches: it re-asks Commons for a name and
